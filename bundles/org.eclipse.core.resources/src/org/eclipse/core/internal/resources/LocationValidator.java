@@ -29,44 +29,6 @@ public class LocationValidator {
 	}
 
 	/**
-	 * Returns true if the given file system locations overlap. If "bothDirections" is true,
-	 * this means they are the same, or one is a proper prefix of the other.  If "bothDirections"
-	 * is false, this method only returns true if the locations are the same, or the first location
-	 * is a prefix of the second.  Returns false if the locations do not overlap
-	 * Does the right thing with respect to case insensitive platforms.
-	 */
-	protected boolean isOverlapping(IPath location1, IPath location2, boolean bothDirections) {
-		IPath one = location1;
-		IPath two = location2;
-		// If we are on a case-insensitive file system then convert to all lower case.
-		if (!Workspace.caseSensitive) {
-			one = new Path(location1.toOSString().toLowerCase());
-			two = new Path(location2.toOSString().toLowerCase());
-		}
-		return one.isPrefixOf(two) || (bothDirections && two.isPrefixOf(one));
-	}
-
-	/**
-	 * Returns true if the given file system locations overlap. If "bothDirections" is true,
-	 * this means they are the same, or one is a proper prefix of the other.  If "bothDirections"
-	 * is false, this method only returns true if the locations are the same, or the first location
-	 * is a prefix of the second.  Returns false if the locations do not overlap
-	 */
-	protected boolean isOverlapping(URI location1, URI location2, boolean bothDirections) {
-		if (location1.equals(location2))
-			return true;
-		String scheme1 = location1.getScheme();
-		String scheme2 = location2.getScheme();
-        if (scheme1 == null ? scheme2 != null : !scheme1.equals(scheme2))
-			return false;
-		if (EFS.SCHEME_FILE.equals(scheme1) && EFS.SCHEME_FILE.equals(scheme2))
-			return isOverlapping(new Path(location1.getSchemeSpecificPart()), new Path(location2.getSchemeSpecificPart()), bothDirections);
-		String string1 = location1.toString();
-		String string2 = location2.toString();
-		return string1.startsWith(string2) || (bothDirections && string2.startsWith(string1));
-	}
-
-	/**
 	 * Returns a string representation of a URI suitable for displaying to an end user.
 	 */
 	private String toString(URI uri) {
@@ -156,13 +118,13 @@ public class LocationValidator {
 			return result;
 		// test if the given location overlaps the platform metadata location
 		URI testLocation = workspace.getMetaArea().getLocation().toFile().toURI();
-		if (isOverlapping(location, testLocation, true)) {
+		if (FileUtil.isOverlapping(location, testLocation)) {
 			message = NLS.bind(Messages.links_invalidLocation, toString(location));
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		//test if the given path overlaps the location of the given project
 		testLocation = resource.getProject().getLocationURI();
-		if (testLocation != null && isOverlapping(location, testLocation, false)) {
+		if (testLocation != null && FileUtil.isPrefixOf(location, testLocation)) {
 			message = NLS.bind(Messages.links_locationOverlapsProject, toString(location));
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
@@ -177,7 +139,7 @@ public class LocationValidator {
 			// know that they have been created before and must have a description
 			IProjectDescription desc = ((Project) project).internalGetDescription();
 			testLocation = desc.getLocationURI();
-			if (testLocation != null && isOverlapping(location, testLocation, true)) {
+			if (testLocation != null && FileUtil.isOverlapping(location, testLocation)) {
 				message = NLS.bind(Messages.links_overlappingResource, toString(location));
 				return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, resource.getFullPath(), message);
 			}
@@ -195,7 +157,7 @@ public class LocationValidator {
 			for (int j = 0; j < children.length; j++) {
 				if (children[j].isLinked()) {
 					testLocation = children[j].getLocationURI();
-					if (testLocation != null && isOverlapping(location, testLocation, true)) {
+					if (testLocation != null && FileUtil.isOverlapping(location, testLocation)) {
 						message = NLS.bind(Messages.links_overlappingResource, toString(location));
 						return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, resource.getFullPath(), message);
 					}
@@ -360,7 +322,7 @@ public class LocationValidator {
 		}
 		// test if the given location overlaps the default default location
 		IPath defaultDefaultLocation = Platform.getLocation();
-		if (isOverlapping(location, defaultDefaultLocation.toFile().toURI(), true)) {
+		if (FileUtil.isOverlapping(location, defaultDefaultLocation.toFile().toURI())) {
 			message = NLS.bind(Messages.resources_overlapWorkspace, toString(location), defaultDefaultLocation.toOSString());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
@@ -379,7 +341,7 @@ public class LocationValidator {
 			//tolerate locations being the same if this is the project being tested
 			if (project.equals(context) && definedLocalLocation.equals(location))
 				continue;
-			if (isOverlapping(location, definedLocalLocation, true)) {
+			if (FileUtil.isOverlapping(location, definedLocalLocation)) {
 				message = NLS.bind(Messages.resources_overlapProject, toString(location), project.getName());
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
@@ -397,7 +359,7 @@ public class LocationValidator {
 				for (int i = 0; i < children.length; i++) {
 					if (children[i].isLinked()) {
 						URI testLocation = children[i].getLocationURI();
-						if (testLocation != null && isOverlapping(testLocation, location, false)) {
+						if (testLocation != null && FileUtil.isPrefixOf(testLocation, location)) {
 							message = NLS.bind(Messages.links_locationOverlapsLink, toString(location));
 							return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, context.getFullPath(), message);
 						}
