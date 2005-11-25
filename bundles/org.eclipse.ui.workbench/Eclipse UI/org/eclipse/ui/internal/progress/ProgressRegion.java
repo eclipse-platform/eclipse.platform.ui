@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.internal.IWindowTrim;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
@@ -161,10 +162,28 @@ public class ProgressRegion implements IWindowTrim {
 		return "org.eclipse.ui.internal.progress.ProgressRegion"; //$NON-NLS-1$
 	}
 
+	public String getDisplayName() {
+		return WorkbenchMessages.TrimCommon_Progress_TrimName;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#getValidSides()
 	 */
 	public int getValidSides() {
 		return SWT.BOTTOM;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#isCloseable()
+	 */
+	public boolean isCloseable() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#handleClose()
+	 */
+	public void handleClose() {
+		// nothing to do...
 	}
 }

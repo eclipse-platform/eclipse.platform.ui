@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tracker;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.DragCursors;
 
 /**
@@ -284,8 +285,9 @@ public class DragUtil {
         // HACK:
         // Some control needs to capture the mouse during the drag or other 
         // controls will interfere with the cursor
-        if (startControl != null) {
-            startControl.setCapture(true);
+        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        if (shell != null) {
+            shell.setCapture(true);
         }
 
         // Run tracker until mouse up occurs or escape key pressed.
@@ -293,8 +295,8 @@ public class DragUtil {
 
         // HACK:
         // Release the mouse now
-        if (startControl != null) {
-            startControl.setCapture(false);
+        if (shell != null) {
+            shell.setCapture(false);
         }
 
         Point finalLocation = display.getCursorLocation();

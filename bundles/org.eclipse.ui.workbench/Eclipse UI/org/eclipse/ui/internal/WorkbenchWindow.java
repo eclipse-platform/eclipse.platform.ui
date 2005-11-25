@@ -940,7 +940,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         topBar = new CBanner(shell, SWT.NONE);
         topBarTrim = new WindowTrimProxy(topBar, 
         		"org.eclipse.ui.internal.WorkbenchWindow.topBar",  //$NON-NLS-1$  
-        		SWT.TOP);
+        		WorkbenchMessages.TrimCommon_Main_TrimName, SWT.TOP);
 
         // the banner gets a curve along with the new tab style
         // TODO create a dedicated preference for this
@@ -1025,9 +1025,20 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 */
 	private void createHeapStatus(Composite parent) {
 		heapStatus = new HeapStatus(parent, PrefUtil.getInternalPreferenceStore());
+
+		// Subclass the trim to allow closing...
 		heapStatusTrim = new WindowTrimProxy(heapStatus, 
 				"org.eclipse.ui.internal.HeapStatus",  //$NON-NLS-1$
-				SWT.BOTTOM);
+				WorkbenchMessages.TrimCommon_HeapStatus_TrimName, SWT.BOTTOM | SWT.TOP) {
+
+			public void handleClose() {
+				getControl().dispose();
+			}
+
+			public boolean isCloseable() {
+				return true;
+			}
+		};
 	}
 	
     /**
@@ -1352,7 +1363,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		if (statusLineTrim==null) {
     		statusLineTrim = new WindowTrimProxy(getStatusLineManager().getControl(),
     				"org.eclipse.jface.action.StatusLineManager", //$NON-NLS-1$
-    				SWT.BOTTOM); 
+    				WorkbenchMessages.TrimCommon_StatusLine_TrimName, SWT.BOTTOM); 
     	}
     	return statusLineTrim;
     }
@@ -1893,6 +1904,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
                                                     .getString(IWorkbenchConstants.TAG_STANDBY))
                                     .booleanValue());
         }
+        result.add(restoreTrimState(memento.getChild(IWorkbenchConstants.TAG_TRIM)));
         return result;
     }
 
@@ -2342,15 +2354,87 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		IMemento actionBarAdvisorState = memento
 				.createChild(IWorkbenchConstants.TAG_ACTION_BAR_ADVISOR);
 		result.add(getActionBarAdvisor().saveState(actionBarAdvisorState));
+
+		IMemento trimState = memento.createChild(IWorkbenchConstants.TAG_TRIM);
+		result.add(saveTrimState(trimState));
 		
         return result;
     }
+    
+    /**
+     * Save the trim layout trim area and trim ordering.
+     * @param memento the memento to update
+     * @return the status, OK or not..
+     * @since 3.2
+     */
+    private IStatus saveTrimState(IMemento memento) {
+		int[] ids = defaultLayout.getAreaIDs();
+		for (int i = 0; i < ids.length; i++) {
+			int id = ids[i];
+			IWindowTrim[] trim = defaultLayout.getAreaDescription(id);
+			if (trim.length > 0) {
+				IMemento area = memento
+						.createChild(IWorkbenchConstants.TAG_TRIM_AREA, Integer
+								.toString(id));
+				for (int idx = 0; idx < trim.length; idx++) {
+					area.createChild(IWorkbenchConstants.TAG_TRIM_ITEM,
+							trim[idx].getId());
+				}
+			}
+		}
+		return Status.OK_STATUS;
+    }
+    
+    /**
+     * Restore the trim layout state from the memento.
+     * @param memento the memento to restore
+     * @return the status, OK or not
+     * @since 3.2
+     */
+    private IStatus restoreTrimState(IMemento memento) {
+		if (memento == null) {
+			return Status.OK_STATUS;
+		}
+
+		// first pass sets up ordering for all trim areas
+
+		IMemento[] areas = memento
+				.getChildren(IWorkbenchConstants.TAG_TRIM_AREA);
+		List[] trimOrder = new List[areas.length];
+		for (int i = 0; i < areas.length; i++) {
+			trimOrder[i] = new ArrayList();
+			IMemento area = areas[i];
+			IMemento[] items = area
+					.getChildren(IWorkbenchConstants.TAG_TRIM_ITEM);
+			for (int j = 0; j < items.length; j++) {
+				IMemento item = items[j];
+				IWindowTrim t = defaultLayout.getTrim(item.getID());
+				if (t!=null) {
+					trimOrder[i].add(t);
+				}
+			}
+		}
+
+		// second pass applies all of the window trim
+		for (int i = 0; i < areas.length; i++) {
+			IMemento area = areas[i];
+			int id = Integer.parseInt(area.getID());
+			defaultLayout.updateAreaDescription(id,
+					(IWindowTrim[]) trimOrder[i].toArray(new IWindowTrim[0]));
+		}
+
+		return Status.OK_STATUS;
+	}
+
+
 
     /**
-     * Sets the active page within the window.
-     *
-     * @param in identifies the new active page, or <code>null</code> for no active page
-     */
+	 * Sets the active page within the window.
+	 * 
+	 * @param in
+	 *            identifies the new active page, or <code>null</code> for no
+	 *            active page
+	 */
     public void setActivePage(final IWorkbenchPage in) {
         if (getActiveWorkbenchPage() == in)
             return;
@@ -3199,4 +3283,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		
 	}
 
+	/**
+	 * Return the trim layout.  This is for testing <b>ONLY</b>.
+	 * @return the trim layout.
+	 * @since 3.2
+	 */
+	public TrimLayout getTrimLayout() {
+		return defaultLayout;
+	}
 }

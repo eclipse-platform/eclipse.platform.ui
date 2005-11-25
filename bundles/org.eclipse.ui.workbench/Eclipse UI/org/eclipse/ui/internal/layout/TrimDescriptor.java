@@ -101,4 +101,15 @@ public class TrimDescriptor {
 			fDockingHandle.flush();
 		}
 	}
+	
+	/**
+	 * Update the visibility of the trim controls.
+	 * @param visible visible or not.
+	 */
+	public void setVisible(boolean visible) {
+		fTrim.getControl().setVisible(visible);
+		if (fDockingHandle!=null) {
+			fDockingHandle.getControl().setVisible(visible);
+		}
+	}
 }

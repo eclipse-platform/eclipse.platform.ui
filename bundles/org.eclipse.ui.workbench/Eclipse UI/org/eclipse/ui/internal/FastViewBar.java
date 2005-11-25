@@ -73,7 +73,7 @@ public class FastViewBar implements IWindowTrim {
 
     private IViewReference selection;
     
-    private OvalComposite control;
+    private Composite control;
 
     private CellData toolBarData;
 
@@ -354,7 +354,7 @@ public class FastViewBar implements IWindowTrim {
      * @param parent enclosing SWT composite
      */
     public void createControl(Composite parent) {
-        control = new OvalComposite(parent, side.get());
+        control = new Composite(parent, SWT.NONE);
 
         side.addChangeListener(new IChangeListener() {
             public void update(boolean changed) {
@@ -384,7 +384,6 @@ public class FastViewBar implements IWindowTrim {
         fastViewBar = new ToolBarManager(SWT.FLAT | SWT.WRAP | flags);
         fastViewBar.add(new ShowFastViewContribution(window));
 
-        control.setOrientation(newSide);
         CellLayout controlLayout;
         
         if (Geometry.isHorizontal(newSide)) {
@@ -404,11 +403,6 @@ public class FastViewBar implements IWindowTrim {
         String tip = WorkbenchMessages.FastViewBar_0; 
         control.setToolTipText(tip);
 
-        dragHandle = new DragHandle(control);
-        dragHandle.setHorizontal(!Geometry.isHorizontal(newSide));
-        dragHandle.setLayoutData(new CellData());
-        dragHandle.addListener(SWT.MenuDetect, menuListener);
-        dragHandle.setToolTipText(tip);
 
         fastViewBar.createControl(control);
 
@@ -890,12 +884,33 @@ public class FastViewBar implements IWindowTrim {
             }
         }
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#isCloseable()
+	 */
+	public boolean isCloseable() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#handleClose()
+	 */
+	public void handleClose() {
+		// nothing to do...
+	}
     
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#getId()
 	 */
 	public String getId() {
 		return "org.eclise.ui.internal.FastViewBar"; //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#getDisplayName()
+	 */
+	public String getDisplayName() {
+		return WorkbenchMessages.TrimCommon_FastView_TrimName;
 	}
 
 	/**

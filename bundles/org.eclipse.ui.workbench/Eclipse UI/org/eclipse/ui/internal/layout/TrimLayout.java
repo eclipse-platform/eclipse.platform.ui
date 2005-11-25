@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.ui.internal.IWindowTrim;
+import org.eclipse.ui.internal.dnd.DragUtil;
 
 /**
  * Lays out the children of a Composite. One control occupies the center of the
@@ -61,7 +62,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	/**
 	 * Each trimArea is a list of TrimDescriptors.
 	 */
-	private List[] fTrimArea;
+	private ArrayList[] fTrimArea;
 
 	private int[] trimSizes;
 
@@ -82,23 +83,48 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	// private Map mapControlOntoTrim = new HashMap();
 
 	// Position constants -- correspond to indices in the controls array, above.
-	private static final int TOP = 0;
+	/**
+	 * Trim area ID.
+	 */
+	public static final int TOP = 0;
 
-	private static final int BOTTOM = 1;
+	/**
+	 * Trim area ID.
+	 */
+	public static final int BOTTOM = 1;
 
-	private static final int LEFT = 2;
+	/**
+	 * Trim area ID.
+	 */
+	public static final int LEFT = 2;
 
-	private static final int RIGHT = 3;
+	/**
+	 * Trim area ID.
+	 */
+	public static final int RIGHT = 3;
 
-	private static final int NONTRIM = 4;
+	/**
+	 * Trim area ID.
+	 */
+	public static final int NONTRIM = 4;
 
 	private int spacing = 3;
+
+	/**
+	 * Are we using common drag handles.
+	 */
+	private boolean fUseCommonUI = true;
+
+	/**
+	 * Do we want WYSIWIG feedback during dragging
+	 */
+	private boolean fImmediate = true;
 
 	/**
 	 * Creates a new (initially empty) trim layout.
 	 */
 	public TrimLayout() {
-		fTrimArea = new List[4];
+		fTrimArea = new ArrayList[4];
 		trimSizes = new int[fTrimArea.length];
 
 		for (int idx = 0; idx < fTrimArea.length; idx++) {
@@ -204,10 +230,12 @@ public class TrimLayout extends Layout implements ICachingLayout {
 		while (iter.hasNext()) {
 			SizeCache next = (SizeCache) iter.next();
 
-			if (isResizable(next.getControl(), width)) {
-				resizable.add(next);
-			} else {
-				nonResizable.add(next);
+			if (next.getControl().isVisible()) {
+				if (isResizable(next.getControl(), width)) {
+					resizable.add(next);
+				} else {
+					nonResizable.add(next);
+				}
 			}
 		}
 	}
@@ -386,6 +414,10 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 *            inserted before the given widget.
 	 */
 	public void addTrim(IWindowTrim trim, int location, IWindowTrim position) {
+		// TODO: we need to "fix" location. If we're moving to
+		// Trim Areas with IDs, like TOP_LEFT, etc, we need to
+		// either deal in IDs or make sure we can do everything
+		// we want with SWT constants.
 		removeTrim(trim);
 
 		int id = convertSwtConstantToAreaId(location);
@@ -393,6 +425,13 @@ public class TrimLayout extends Layout implements ICachingLayout {
 
 		SizeCache cache = new SizeCache(trim.getControl());
 		TrimDescriptor desc = new TrimDescriptor(trim, cache, id);
+
+		if (fUseCommonUI) {
+			// TODO: replace temporary drag handle
+			Composite dockingHandle = new TrimCommonUIHandle(this, trim,
+					location);
+			desc.setDockingCache(new SizeCache(dockingHandle));
+		}
 
 		insertBefore(list, desc, position);
 	}
@@ -449,6 +488,14 @@ public class TrimLayout extends Layout implements ICachingLayout {
 			}
 		}
 
+		// If we had a trim UI handle then dispose it
+		if (target.getDockingCache() != null) {
+			Control ctrl = target.getDockingCache().getControl();
+			ctrl.setVisible(false);
+			// TODO: set the docking handle so it can be disposed.
+			
+			target.setDockingCache(null);
+		}
 		list.remove(target);
 	}
 
@@ -504,8 +551,31 @@ public class TrimLayout extends Layout implements ICachingLayout {
 			Iterator d = area.iterator();
 			while (d.hasNext()) {
 				TrimDescriptor desc = (TrimDescriptor) d.next();
-				if (desc.getTrim().getControl() == toQuery) {
+				if (desc.getTrim().getControl() == toQuery
+						|| (desc.getDockingCache() != null && desc
+								.getDockingCache().getControl() == toQuery)) {
 					return desc;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Return the window trim for a given id.
+	 * 
+	 * @param id
+	 *            the id
+	 * @return the window trim, or <code>null</code> if not found.
+	 */
+	public IWindowTrim getTrim(String id) {
+		for (int i = 0; i < fTrimArea.length; i++) {
+			List area = fTrimArea[i];
+			Iterator d = area.iterator();
+			while (d.hasNext()) {
+				TrimDescriptor desc = (TrimDescriptor) d.next();
+				if (desc.getTrim().getId().equals(id)) {
+					return desc.getTrim();
 				}
 			}
 		}
@@ -585,6 +655,9 @@ public class TrimLayout extends Layout implements ICachingLayout {
 		Iterator d = list.iterator();
 		while (d.hasNext()) {
 			TrimDescriptor desc = (TrimDescriptor) d.next();
+			if (desc.getDockingCache() != null) {
+				result.add(desc.getDockingCache());
+			}
 			result.add(desc.getCache());
 		}
 		return result;
@@ -713,25 +786,27 @@ public class TrimLayout extends Layout implements ICachingLayout {
 
 		while (iter.hasNext()) {
 			SizeCache next = (SizeCache) iter.next();
+			if (next.getControl().isVisible()) {
 
-			int thisSize;
-			if (isResizable(next.getControl(), horizontally)) {
-				thisSize = available / remainingResizable;
-				available -= thisSize;
-				remainingResizable--;
-			} else {
-				thisSize = sizes[idx];
-				idx++;
-			}
+				int thisSize;
+				if (isResizable(next.getControl(), horizontally)) {
+					thisSize = available / remainingResizable;
+					available -= thisSize;
+					remainingResizable--;
+				} else {
+					thisSize = sizes[idx];
+					idx++;
+				}
 
-			if (horizontally) {
-				next.getControl().setBounds(currentPosition.x,
-						currentPosition.y, thisSize, hint);
-				currentPosition.x += thisSize + spacing;
-			} else {
-				next.getControl().setBounds(currentPosition.x,
-						currentPosition.y, hint, thisSize);
-				currentPosition.y += thisSize + spacing;
+				if (horizontally) {
+					next.getControl().setBounds(currentPosition.x,
+							currentPosition.y, thisSize, hint);
+					currentPosition.x += thisSize + spacing;
+				} else {
+					next.getControl().setBounds(currentPosition.x,
+							currentPosition.y, hint, thisSize);
+					currentPosition.y += thisSize + spacing;
+				}
 			}
 		}
 	}
@@ -772,5 +847,362 @@ public class TrimLayout extends Layout implements ICachingLayout {
 				desc.flush();
 			}
 		}
+	}
+
+	/**
+	 * Return all of the IDs for the currently supported trim areas.
+	 * This is <b>experimental</b> and will be changing.
+	 * 
+	 * @return the list of IDs that can be used with area descriptions.
+	 */
+	public int[] getAreaIDs() {
+		int[] id = new int[fTrimArea.length];
+		for (int i = 0; i < id.length; ++i) {
+			id[i] = i;
+		}
+		return id;
+	}
+
+	/**
+	 * Return a copy of the IWindowTrim in an ordered array. This will not
+	 * return <code>null</code>.
+	 * 
+	 * @param id
+	 *            the trim area id
+	 * @return the IWindowTrim array
+	 * @since 3.2
+	 */
+	public IWindowTrim[] getAreaDescription(int id) {
+		IWindowTrim[] result = new IWindowTrim[fTrimArea[id].size()];
+		Iterator d = fTrimArea[id].iterator();
+		int i = 0;
+		while (d.hasNext()) {
+			TrimDescriptor desc = (TrimDescriptor) d.next();
+			result[i] = desc.getTrim();
+			++i;
+		}
+		return result;
+	}
+
+	/**
+	 * Update ID's area description with the new window trim ordering. This
+	 * applies the IWindowTrim contains in the array to the trim area named
+	 * "ID". Any trim in the trim area that's not contained in the array is
+	 * removed.
+	 * 
+	 * @param id
+	 *            the trim area ID
+	 * @param trim
+	 *            the trim array must not be <code>null</code>.
+	 * @since 3.2
+	 */
+	public void updateAreaDescription(int id, IWindowTrim[] trim) {
+		// sort out the trim that needs to be removed
+		// clone the list to avoid concurrent modification execptions
+		Iterator d = ((ArrayList) fTrimArea[id].clone()).iterator();
+		while (d.hasNext()) {
+			TrimDescriptor desc = (TrimDescriptor) d.next();
+			int i;
+			for (i = 0; i < trim.length; i++) {
+				IWindowTrim t = trim[i];
+				if (desc.getTrim() == t) {
+					break;
+				}
+			}
+			if (i >= trim.length) {
+				removeTrim(desc.getTrim());
+			}
+		}
+
+		// add back the trim ... this takes care of moving it
+		// from one trim area to another.
+		for (int i = 0; i < trim.length; i++) {
+			IWindowTrim t = trim[i];
+			addTrim(t, convertAreaIdToSwtConstant(id));
+		}
+	}
+
+	/**
+	 * Returns the control that the dragged control should be placed 'before'
+	 * 
+	 * @param swtSide
+	 *            The side to get the info for
+	 * @param pos
+	 *            the current cursor position (in device coords)
+	 * @return The control to be inserted before or null if it should go at the
+	 *         end
+	 * @since 3.2
+	 */
+	public IWindowTrim getInsertBefore(int swtSide, Point pos) {
+		int id = convertSwtConstantToAreaId(swtSide);
+		List area = fTrimArea[id];
+		if (area == null || area.size() == 0) {
+			return null;
+		}
+
+		boolean isHorizontal = swtSide == SWT.TOP || swtSide == SWT.BOTTOM;
+
+		Iterator d = area.iterator();
+		while (d.hasNext()) {
+			TrimDescriptor desc = (TrimDescriptor) d.next();
+			Rectangle bounds = DragUtil.getDisplayBounds(desc.getCache()
+					.getControl());
+			if (isHorizontal) {
+				// Left of center means 'insert before me'
+				if (pos.x < Geometry.centerPoint(bounds).x)
+					return desc.getTrim();
+			} else {
+				// Above center means 'insert before me'
+				if (pos.y < Geometry.centerPoint(bounds).y)
+					return desc.getTrim();
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns a 'snapRectangle' appropriate to the expected action for use by
+	 * the <code>TrimDropTarget</code>.
+	 * 
+	 * @param window
+	 *            The owner of this TrimLayout
+	 * @param swtSide
+	 *            The side that the dragged trim is currently over
+	 * @param dragRect
+	 *            The rectangle representing the dragged trim
+	 * @param insertBefore
+	 *            The trim that the dragged trim would be inserted before
+	 * 
+	 * @return the appropriate snap rectangle (in display coords)
+	 * @since 3.2
+	 */
+	public Rectangle getSnapRectangle(Composite window, int swtSide,
+			Rectangle dragRect, IWindowTrim insertBefore) {
+		int id = convertSwtConstantToAreaId(swtSide);
+		List area = fTrimArea[id];
+		Rectangle trimRect = getTrimRect(window, swtSide);
+		if (insertBefore == null) {
+			if (area != null && area.size() > 0) {
+				// Place the dragRect at the 'end' of the current controls
+				TrimDescriptor last = (TrimDescriptor) area
+						.get(area.size() - 1);
+				Rectangle lastRect = DragUtil.getDisplayBounds(last.getCache()
+						.getControl());
+
+				if (swtSide == SWT.BOTTOM || swtSide == SWT.TOP) {
+					Rectangle snapRect = new Rectangle(lastRect.x
+							+ lastRect.width, lastRect.y, dragRect.width,
+							dragRect.height);
+
+					// Force the rectangle back into the trim rect (in case it's
+					// 'full')
+					int dx = (trimRect.x + trimRect.width)
+							- (snapRect.x + snapRect.width);
+					if (dx < 0)
+						Geometry.moveRectangle(snapRect, new Point(dx, 0));
+					return snapRect;
+				} else if (swtSide == SWT.LEFT || swtSide == SWT.RIGHT) {
+					Rectangle snapRect = new Rectangle(lastRect.x, lastRect.y
+							+ lastRect.height, dragRect.width, dragRect.height);
+
+					// Force the rectangle back into the trim rect (in case it's
+					// 'full')
+					int dy = (trimRect.y + trimRect.height)
+							- (snapRect.y + snapRect.height);
+					if (dy < 0)
+						Geometry.moveRectangle(snapRect, new Point(dy, 0));
+
+					// If it's the RIGHT side then also force the rectangle
+					// inside the frame
+					if (swtSide == SWT.RIGHT) {
+						int dx = (trimRect.x + trimRect.width)
+								- (snapRect.x + snapRect.width);
+						if (dx < 0)
+							Geometry.moveRectangle(snapRect, new Point(dx, 0));
+					}
+
+					return snapRect;
+				}
+			} else {
+				Rectangle snapRect = new Rectangle(trimRect.x, trimRect.y,
+						dragRect.width, dragRect.height);
+
+				// If it's the RIGHT side then also force the rectangle inside
+				// the frame
+				if (swtSide == SWT.RIGHT) {
+					int dx = (trimRect.x + trimRect.width)
+							- (snapRect.x + snapRect.width);
+					if (dx < 0)
+						Geometry.moveRectangle(snapRect, new Point(dx, 0));
+				}
+
+				return snapRect;
+			}
+		}
+
+		// OK...we've got something to work with...
+
+		// First, get the drag handle associated with this control
+		Control trimControl = insertBefore.getControl();
+
+		// int index = getIndex(id, trimControl);
+		TrimDescriptor desc = getTrimDescription(trimControl);
+
+		Rectangle ctrlRect = DragUtil.getDisplayBounds(trimControl);
+
+		if (fUseCommonUI && desc != null) {
+			Control dragHandle = desc.getDockingCache().getControl();
+			ctrlRect = DragUtil.getDisplayBounds(dragHandle);
+		}
+
+		Rectangle snapRect;
+		if (swtSide == SWT.BOTTOM || swtSide == SWT.TOP)
+			snapRect = new Rectangle(ctrlRect.x - 2, ctrlRect.y - 2, 5,
+					ctrlRect.height + 4);
+		else
+			snapRect = new Rectangle(ctrlRect.x - 2, ctrlRect.y - 2,
+					ctrlRect.width + 4, 5);
+
+		// Rectangle snapRect = new
+		// Rectangle(ctrlRect.x,ctrlRect.y,dragRect.width,dragRect.height);
+		return snapRect;
+	}
+
+	/**
+	 * Return a trim area rectangle.
+	 * 
+	 * @param window
+	 *            the window that has the trim
+	 * @param side
+	 *            the side it's on
+	 * @return the area rectangle.
+	 * @since 3.2
+	 */
+	public Rectangle getTrimRect(Composite window, int side) {
+		Rectangle bb = window.getBounds();
+
+		Rectangle cr = window.getClientArea();
+		Rectangle tr = window.computeTrim(cr.x, cr.y, cr.width, cr.height);
+
+		// Place the Client Area 'within' its window
+		Geometry.moveRectangle(cr, new Point(bb.x - tr.x, bb.y - tr.y));
+
+		int[] trimSizes = getTrimSizes(cr.width, cr.height);
+
+		// Adjust the trim sizes to incorporate the margins for sides that
+		// don't currently have trim
+		if (trimSizes[TOP] == 0)
+			trimSizes[TOP] = marginHeight;
+		if (trimSizes[BOTTOM] == 0)
+			trimSizes[BOTTOM] = marginHeight;
+		if (trimSizes[LEFT] == 0)
+			trimSizes[LEFT] = marginWidth;
+		if (trimSizes[RIGHT] == 0)
+			trimSizes[RIGHT] = marginWidth;
+
+		Rectangle trimRect = new Rectangle(0, 0, 0, 0);
+		int layoutSide = convertSwtConstantToAreaId(side);
+		switch (layoutSide) {
+		case TOP:
+			trimRect.x = cr.x;
+			trimRect.width = cr.width;
+			trimRect.y = cr.y;
+			trimRect.height = trimSizes[TOP];
+			break;
+		case BOTTOM:
+			trimRect.x = cr.x;
+			trimRect.width = cr.width;
+			trimRect.y = (cr.y + cr.height) - trimSizes[BOTTOM];
+			trimRect.height = trimSizes[BOTTOM];
+			break;
+		case LEFT:
+			trimRect.x = cr.x;
+			trimRect.width = trimSizes[LEFT];
+			trimRect.y = cr.y + trimSizes[TOP];
+			trimRect.height = cr.height - (trimSizes[TOP] + trimSizes[BOTTOM]);
+			break;
+		case RIGHT:
+			trimRect.x = (cr.x + cr.width) - trimSizes[RIGHT];
+			trimRect.width = trimSizes[RIGHT];
+			trimRect.y = cr.y + trimSizes[TOP];
+			trimRect.height = cr.height - (trimSizes[TOP] + trimSizes[BOTTOM]);
+			break;
+		}
+
+		return trimRect;
+	}
+	
+	/**
+	 * This method returns an aggregate array of all trim items.
+	 * 
+	 * @return The array of all trim elements
+	 * @since 3.2
+	 */
+	public IWindowTrim[] getAllTrim() {
+		List trimList = new ArrayList();
+
+		// Walk all sides adding their trim into the list
+		for (int side = 0; side < fTrimArea.length; side++) {
+			List caches = fTrimArea[side];
+			for (Iterator iter = caches.iterator(); iter.hasNext();) {
+				TrimDescriptor cache = (TrimDescriptor) iter.next();
+				if (!trimList.contains(cache.getTrim()))
+					trimList.add(cache.getTrim());
+			}
+		}
+
+		return (IWindowTrim[]) trimList.toArray(new IWindowTrim[0]);
+	}
+
+	/**
+	 * Update the visibility of the trim controls. It updates any docking
+	 * handles as well.
+	 * 
+	 * @param trim
+	 *            the trim to update
+	 * @param visible
+	 *            visible or not
+	 * @since 3.2
+	 */
+	public void setTrimVisible(IWindowTrim trim, boolean visible) {
+		TrimDescriptor desc = getTrimDescription(trim.getControl());
+
+		if (desc != null) {
+			desc.setVisible(visible);
+		}
+	}
+
+	/**
+	 * Return whether common drag affordances are on or not.
+	 * @return <code>true</code> if we use a common UI for dragging
+	 */
+	public boolean useCommonUI() {
+		return fUseCommonUI;
+	}
+
+	/**
+	 * Set to <code>true</code> if we should use the common UI for dragging.
+	 * @param useCommonUI <code>true</code> or <code>false</code>
+	 */
+	public void setUseCommonUI(boolean useCommonUI) {
+		fUseCommonUI = useCommonUI;
+	}
+
+	/**
+	 * Return <code>true</code> if we are dragging in immediate mode.
+	 * @return <code>true</code> or <code>false</code>
+	 */
+	public boolean isImmediate() {
+		return fImmediate;
+	}
+
+	/**
+	 * Set to <code>true</code> if we should do trim dragging in immediate
+	 * mode.
+	 * @param immediate <code>true</code> or <code>false</code>
+	 */
+	public void setImmediate(boolean immediate) {
+		this.fImmediate = immediate;
 	}
 }

@@ -24,6 +24,7 @@ public class WindowTrimProxy implements IWindowTrim {
 	
 	private Control fTrimControl;
 	private String fId;
+	private String fDisplayName;
 	private int fValidSides;
 	
 	/**
@@ -33,9 +34,10 @@ public class WindowTrimProxy implements IWindowTrim {
 	 * @param validSides bitwise or of valid sides
 	 * @see #getValidSides()
 	 */
-	public WindowTrimProxy(Control c, String id, int validSides) {
+	public WindowTrimProxy(Control c, String id, String displayName, int validSides) {
 		fTrimControl = c;
 		fId = id;
+		fDisplayName = displayName;
 		fValidSides = validSides;
 	}
 
@@ -67,5 +69,26 @@ public class WindowTrimProxy implements IWindowTrim {
 	 */
 	public String getId() {
 		return fId;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#getDisplayName()
+	 */
+	public String getDisplayName() {
+		return fDisplayName;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#isCloseable()
+	 */
+	public boolean isCloseable() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#handleClose()
+	 */
+	public void handleClose() {
+		// nothing to do...
 	}
 }

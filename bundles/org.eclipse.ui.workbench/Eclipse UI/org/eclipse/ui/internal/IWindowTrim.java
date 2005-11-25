@@ -11,10 +11,23 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.internal.layout.TrimLayout;
 
 /**
  * Interface for trim controls that can be docked to the edge of a Workbench window using
  * drag-and-drop.
+ * 
+ * <p>
+ * <b>Note:</b> This interface is highly experimental, and will probably
+ * change between M4 and M5.  For example, it will support a "lifecycle"
+ * that allows the {@link TrimLayout} to update its modifiers 
+ * (like SWT.HORIZONTAL
+ * or SWT.VERTICAL) so the IWindowTrim can dispose and re-create its
+ * control.  This will likely effect methods like {@link #dock(int) },
+ * {@link #getControl() }, {@link #getValidSides() }, etc.
+ * </p>
+ * 
+ * @since 3.2
  */
 public interface IWindowTrim {
     /**
@@ -47,4 +60,32 @@ public interface IWindowTrim {
      * @since 3.2
      */
     public String getId();
+    
+    /**
+     * Returns the (localized) display name for this trim. This is used, for
+     * example, to construct menu items...
+     *  
+     * @return The display name for this trim
+     *  
+     * @since 3.2
+     */
+    public String getDisplayName();
+    
+    /**
+     * Determines whether a particular trim can be 'closed' using the common Trim UI.
+     * 
+     * @return true if the UI should profer the close affordance; false otherwise 
+     * 
+     * @since 3.2
+     */
+    public boolean isCloseable();
+    
+    /**
+     * This method is called when the trim UI has closed (hidden) the trim. The
+     * controls associated with the trim will have already been removed from the
+     * trim layout. The implementor should take any necessary clean up actions here. 
+     *
+     * @since 3.2
+     */
+    public void handleClose();
 }

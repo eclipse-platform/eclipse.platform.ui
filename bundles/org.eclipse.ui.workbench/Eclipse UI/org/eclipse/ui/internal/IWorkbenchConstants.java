@@ -446,6 +446,12 @@ public interface IWorkbenchConstants {
 
     public static final String TAG_PERSPECTIVE_BAR = "perspectiveBar"; //$NON-NLS-1$
 
+    public static final String TAG_TRIM = "trimLayout"; //$NON-NLS-1$
+    
+    public static final String TAG_TRIM_AREA = "trimArea"; //$NON-NLS-1$
+        
+    public static final String TAG_TRIM_ITEM = "trimItem"; //$NON-NLS-1$
+
     //Fonts
     public static final String SMALL_FONT = "org.eclipse.ui.smallFont"; //$NON-NLS-1$
 

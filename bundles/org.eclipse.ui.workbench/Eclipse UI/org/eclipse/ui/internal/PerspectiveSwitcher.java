@@ -1250,9 +1250,30 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#getDisplayName()
+	 */
+	public String getDisplayName() {
+		return WorkbenchMessages.TrimCommon_PerspectiveSwitcher_TrimName;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#getValidSides()
 	 */
 	public int getValidSides() {
 		return SWT.TOP|SWT.LEFT;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#isCloseable()
+	 */
+	public boolean isCloseable() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#handleClose()
+	 */
+	public void handleClose() {
+		// nothing to do...		
 	}
 }
