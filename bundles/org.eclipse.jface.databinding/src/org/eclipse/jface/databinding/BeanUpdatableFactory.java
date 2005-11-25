@@ -14,9 +14,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.Map;
 
 import org.eclipse.jface.databinding.internal.beans.JavaBeanUpdatableCollection;
@@ -66,16 +64,17 @@ final public class BeanUpdatableFactory implements IUpdatableFactory {
 					PropertyDescriptor descriptor = propertyDescriptors[i];
 					if (descriptor.getName().equals(
 							propertyDescription.getPropertyID())) {
-						if (descriptor.getPropertyType().isArray()
-								|| Collection.class.isAssignableFrom(descriptor
-										.getPropertyType())) {
-							Class elementType = descriptor.getPropertyType()
-									.isArray() ? descriptor.getPropertyType()
-									.getComponentType() : getCollectionType(descriptor,beanInfo.getBeanDescriptor().getBeanClass());
+						if (descriptor.getPropertyType().isArray() || Collection.class.isAssignableFrom(descriptor.getPropertyType())){
+							// If we are a collection them the type must be explicitly specified.  There is no way
+							// to derive it by name matching (because of different ways of plurals being made, e.g.
+							// getFlies() and addFly(Fly aFly) or getHooves() and addHoof(Hoof aHoof)							
+							Class elementType = descriptor.getPropertyType().isArray() ?
+									descriptor.getPropertyType().getComponentType() :
+									propertyDescription.getPropertyType();
 							Assert.isTrue(elementType != null);
 							return new JavaBeanUpdatableCollection(object,
 									descriptor, elementType);
-						}
+						}						
 						return new JavaBeanUpdatableValue(object, descriptor);
 					}
 				}
@@ -85,24 +84,4 @@ final public class BeanUpdatableFactory implements IUpdatableFactory {
 			return new JavaBeanUpdatableTree((ITree)description);
 		return null;
 	}
-	
-	private Class getCollectionType(PropertyDescriptor propertyDescriptor,Class beanClass){
-		// If the java.beans.PropertyDescriptor is typed to java.util.Collection then the signature does not tell us the type of its contents (unliked typed arrays)
-		// To determine the type of its contents look for an add method, e.g. for "foos" look for "addFoo(...)" where the argument will tell us the type of the contents		
-		StringBuffer addMethodName = new StringBuffer("add"); //$NON-NLS-1$
-		String propertyName = propertyDescriptor.getName();
-		addMethodName.append(propertyName.substring(0,1).toUpperCase(Locale.US));
-		if(propertyName.endsWith("s")){ //$NON-NLS-1$
-			addMethodName.append(propertyName.subSequence(1,propertyName.length()-1));
-		}		
-		Method[] methods = beanClass.getMethods();
-		for (int i = 0; i < methods.length; i++) {
-			String methodName = methods[i].getName();
-			if(methodName.equals(addMethodName.toString())){
-				return methods[i].getParameterTypes()[0];
-			}
-		}
-		return null;
-	}
-
 }

@@ -273,7 +273,7 @@ public class TableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addColumn("userId");
 		tableViewerDescription.addColumn("password");	
 		getDbc().bind(tableViewerDescription,
-				new Property(catalog, "signons"), null);	
+				new Property(catalog, "signons", Signon.class, null), null);	
 		Signon firstSignon = (Signon) catalog.getSignons().get(0);	
 		// Verify the UI matches the model
 		TableItem firstTableItem = tableViewer.getTable().getItem(0);
