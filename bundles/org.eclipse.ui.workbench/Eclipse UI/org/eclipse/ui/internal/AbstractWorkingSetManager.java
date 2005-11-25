@@ -209,19 +209,6 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
         return null;
     }
     
-    public IWorkingSet getWorkingSetByUniqueId(String workingSetId) {
-		if (workingSetId == null || workingSets == null)
-			return null;
-
-		Iterator iter = workingSets.iterator();
-		while (iter.hasNext()) {
-			IWorkingSet workingSet = (IWorkingSet) iter.next();
-			if (workingSetId.equals(workingSet.getLabel()))
-				return workingSet;
-		}
-		return null;
-	}
-    
     // ---- recent working set management --------------------------------------
     
     /* (non-Javadoc)
