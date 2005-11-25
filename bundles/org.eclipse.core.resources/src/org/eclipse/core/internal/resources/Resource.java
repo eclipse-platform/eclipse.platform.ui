@@ -887,9 +887,10 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#getLocation()
 	 */
 	public URI getLocationURI() {
-		//todo this can be optimized to avoid create the store object
-		// see the code in FileStoreRoot
-		return getStore().toURI();
+		IProject project = getProject();
+		if (project != null && !project.exists())
+			return null;
+		return getLocalManager().locationURIFor(this);
 	}
 
 	/* (non-Javadoc)
