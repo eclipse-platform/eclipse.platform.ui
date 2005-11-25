@@ -132,8 +132,6 @@ public final class InternalPlatform {
 	private ServiceRegistration legacyPreferencesService = null;
 	private ServiceRegistration customPreferencesService = null;
 
-	private static final String JOB_PLUGIN = "org.eclipse.core.jobs"; //$NON-NLS-1$
-
 	private ServiceTracker environmentTracker = null;
 	private ServiceTracker urlTracker = null;
 	private ServiceTracker logTracker = null;
@@ -994,7 +992,6 @@ public final class InternalPlatform {
 		if (adapterManagerListener != null)
 			adapterManagerListener.stop(); // before extension registry
 		stopRegistry();
-		stopJobs();
 		RuntimeLog.removeLogListener(platformLog); // effectively turns the platform logging off
 		initialized = false;
 		closeOSGITrackers();
@@ -1052,19 +1049,6 @@ public final class InternalPlatform {
 		if (registry != null) {
 			((EclipseExtensionRegistry) registry).stop();
 			registry = null;
-		}
-	}
-
-	/**
-	 * Stop all running jobs and shutdown Jobs manager
-	 */
-	private void stopJobs() {
-		Bundle jobBundle = getBundle(JOB_PLUGIN);
-		try {
-			jobBundle.stop();
-		} catch (BundleException e) {
-			message("InternalPlatfrom: unable to stop the Job bundle."); //$NON-NLS-1$
-			e.printStackTrace();
 		}
 	}
 
