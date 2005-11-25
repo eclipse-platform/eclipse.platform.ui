@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  *       </li> 
  * </ol>
  * The life cycle of a refactoring is as follows:
- * <ul>
+ * <ol>
  *   <li>the refactoring gets created</li>
  *   <li>the refactoring is initialized with the elements to be refactored. It is
  *       up to a concrete refactoring implementation to provide corresponding API.</li>
@@ -42,11 +42,15 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  *       can be called more than once. The method must not be called if  
  *       {@link #checkInitialConditions(IProgressMonitor)} returns a refactoring
  *       status of severity {@link RefactoringStatus#FATAL}.</li>
- *   <li>{@link #createChange(IProgressMonitor)} is called. The method must only 
- *       called once and should not be called if one of the condition checking methods
- *       return a refactoring status of severity {@link RefactoringStatus#FATAL}.
- *       </li>
- * </ul>
+ *   <li>{@link #createChange(IProgressMonitor)} is called. The method must only be
+ *       called once after each call to {@link #checkFinalConditions(IProgressMonitor)}
+ *       and should not be called if one of the condition checking methods
+ *       returns a refactoring status of severity {@link RefactoringStatus#FATAL}.
+ *   </li>
+ *   <li>steps 4 to 6 can be executed repeatedly (for example when the user goes
+ *       back from the preview page).
+ *   </li>
+ * </ol>
  * 
  * <p>
  * A refactoring can not assume that all resources are saved before any methods
