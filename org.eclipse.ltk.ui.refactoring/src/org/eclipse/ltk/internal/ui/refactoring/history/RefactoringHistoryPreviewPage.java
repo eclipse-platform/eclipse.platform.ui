@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
+import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.IErrorWizardPage;
@@ -30,8 +32,11 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
  */
 public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 
-	/** Is flipping to the next page enabled? */
-	private boolean fNextPageEnabled= true;
+	/** Is the current refactoring the last one? */
+	private boolean fLastRefactoring= false;
+
+	/** The current refactoring, or <code>null</code> */
+	private Refactoring fRefactoring;
 
 	/** The refactoring status */
 	private RefactoringStatus fStatus= new RefactoringStatus();
@@ -49,26 +54,31 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	 * {@inheritDoc}
 	 */
 	public boolean canFlipToNextPage() {
-		return fNextPageEnabled;
+		return !fLastRefactoring;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public IWizardPage getNextPage() {
-		if (fChange != null && !fStatus.hasFatalError()) {
+		if (fChange != null && fRefactoring != null && !fStatus.hasFatalError()) {
 			final RefactoringHistoryWizard result= getRefactoringHistoryWizard();
 			if (result != null) {
-				final RefactoringStatus status= result.performChange(fChange);
+				final RefactoringStatus status= result.performPreviewChange(fChange, fRefactoring);
 				if (!status.isOK()) {
-					final IErrorWizardPage page= result.getErrorPage();
-					if (page instanceof RefactoringHistoryErrorPage) {
-						final RefactoringHistoryErrorPage extended= (RefactoringHistoryErrorPage) page;
-						extended.setStatus(status);
-						extended.setLastRefactoring(!fNextPageEnabled);
-						extended.setTitle(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error_title);
-						extended.setDescription(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error);
-						return extended;
+					final RefactoringStatusEntry entry= status.getEntryWithHighestSeverity();
+					if (entry != null) {
+						if (entry.getSeverity() == RefactoringStatus.INFO && entry.getCode() == RefactoringHistoryWizard.STATUS_CODE_INTERRUPTED)
+							return this;
+						final IErrorWizardPage page= result.getErrorPage();
+						if (page instanceof RefactoringHistoryErrorPage) {
+							final RefactoringHistoryErrorPage extended= (RefactoringHistoryErrorPage) page;
+							extended.setStatus(status);
+							extended.setLastRefactoring(fLastRefactoring);
+							extended.setTitle(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error_title);
+							extended.setDescription(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error);
+							return extended;
+						}
 					}
 				}
 			}
@@ -84,6 +94,15 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	}
 
 	/**
+	 * Returns the current refactoring.
+	 * 
+	 * @return the current refactoring
+	 */
+	public Refactoring getRefactoring() {
+		return fRefactoring;
+	}
+
+	/**
 	 * Returns the refactoring history wizard.
 	 * 
 	 * @return the refactoring history wizard
@@ -96,6 +115,16 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	}
 
 	/**
+	 * Is the current refactoring the last one?
+	 * 
+	 * @return <code>true</code> if it is the last one, <code>false</code>
+	 *         otherwise
+	 */
+	public boolean isLastRefactoring() {
+		return fLastRefactoring;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	protected boolean performFinish() {
@@ -103,13 +132,31 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	}
 
 	/**
-	 * Determines whether flipping to the next page is enabled.
+	 * Determines whether the current refactoring is the last one.
 	 * 
-	 * @param enabled
-	 *            <code>true</code> to enable, <code>false</code> to disable
+	 * @param last
+	 *            <code>true</code> if it is the last one, <code>false</code>
+	 *            otherwise
 	 */
-	public void setNextPageEnabled(final boolean enabled) {
-		fNextPageEnabled= enabled;
+	public void setLastRefactoring(final boolean last) {
+		fLastRefactoring= last;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setPageComplete(final boolean complete) {
+		super.setPageComplete(!fLastRefactoring);
+	}
+
+	/**
+	 * Sets the current refactoring.
+	 * 
+	 * @param refactoring
+	 *            the current refactoring, or <code>null</code>
+	 */
+	public void setRefactoring(final Refactoring refactoring) {
+		fRefactoring= refactoring;
 	}
 
 	/**

@@ -49,9 +49,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	 * {@inheritDoc}
 	 */
 	public boolean canFlipToNextPage() {
-		if (fStatus != null && fStatus.hasFatalError())
-			return !fLastRefactoring;
-		return true;
+		return !fLastRefactoring;
 	}
 
 	/**
@@ -121,7 +119,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	 * {@inheritDoc}
 	 */
 	public void setPageComplete(final boolean complete) {
-		super.setPageComplete(!fLastRefactoring);
+		super.setPageComplete(true);
 	}
 
 	/**

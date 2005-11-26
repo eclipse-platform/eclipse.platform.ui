@@ -112,6 +112,13 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 	/**
 	 * {@inheritDoc}
 	 */
+	public void setPageComplete(final boolean complete) {
+		super.setPageComplete(true);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void setVisible(boolean visible) {
 		fHistoryControl.setRefactoringHistory(fRefactoringHistory);
 		super.setVisible(visible);
