@@ -105,7 +105,7 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 	public void run(final IProgressMonitor monitor) throws CoreException {
 		fExecutionStatus= new RefactoringStatus();
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
-		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringsOperation_perform_refactorings, 2 * proxies.length);
+		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringsOperation_perform_refactorings, 100 * proxies.length);
 		final RefactoringInstanceFactory factory= RefactoringInstanceFactory.getInstance();
 		IRefactoringExecutionListener listener= null;
 		final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
@@ -115,7 +115,7 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 			service.connect();
 			for (int index= 0; index < proxies.length && !fExecutionStatus.hasFatalError(); index++) {
 				boolean execute= false;
-				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 				if (descriptor != null && !descriptor.isUnknown()) {
 					final Refactoring refactoring= factory.createRefactoring(descriptor);
 					if (refactoring instanceof IInitializableRefactoringComponent) {
@@ -133,7 +133,7 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 					}
 					if (execute) {
 						final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
-						ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+						ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 90, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						if (fCurrentDescriptor != null && !fCurrentDescriptor.isUnknown())
 							RefactoringHistoryService.getInstance().setDependency(fCurrentDescriptor, descriptor);
 						fExecutionStatus.merge(operation.getConditionStatus());
