@@ -111,7 +111,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is a sample usage of the browser extension point:
+         The following is a sample usage of the content producer extension point:
 
 &lt;p&gt;
 &lt;pre&gt;
