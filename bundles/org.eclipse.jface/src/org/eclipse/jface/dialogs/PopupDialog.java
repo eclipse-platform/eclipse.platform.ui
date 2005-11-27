@@ -177,6 +177,24 @@ public class PopupDialog extends Window {
 	public final static int INFOPOPUPRESIZE_SHELLSTYLE = SWT.RESIZE;
 
 	/**
+	 * Margin width (in pixels) to be used in layouts inside popup dialogs
+	 * (value is 0).
+	 */
+	public final static int POPUP_MARGINWIDTH = 0;
+
+	/**
+	 * Margin height (in pixels) to be used in layouts inside popup dialogs
+	 * (value is 0).
+	 */
+	public final static int POPUP_MARGINHEIGHT = 0;
+
+	/**
+	 * Vertical spacing (in pixels) between cells in the layouts inside popup
+	 * dialogs (value is 1).
+	 */
+	public final static int POPUP_VERTICALSPACING = 1;
+
+	/**
 	 * Border thickness in pixels.
 	 */
 	private static final int BORDER_THICKNESS = 1;
@@ -333,11 +351,13 @@ public class PopupDialog extends Window {
 
 		shell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event event) {
-				// Close if we are deactivating and have no child shells.
-				// If we have child shells, we are deactivating due to their opening.
-				// On X, we receive this when a menu child (such as the system menu) of
-				// the shell opens, but I have not found a way to distinguish that 
-				// case here.  Hence bug #113577 still exists.
+				/*
+				 * Close if we are deactivating and have no child shells. If we
+				 * have child shells, we are deactivating due to their opening.
+				 * On X, we receive this when a menu child (such as the system
+				 * menu) of the shell opens, but I have not found a way to
+				 * distinguish that case here. Hence bug #113577 still exists.
+				 */
 				if (listenToDeactivate && event.widget == getShell()
 						&& getShell().getShells().length == 0) {
 					close();
@@ -394,9 +414,9 @@ public class PopupDialog extends Window {
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(1, false);
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.verticalSpacing = 1;
+		layout.marginHeight = POPUP_MARGINHEIGHT;
+		layout.marginWidth = POPUP_MARGINWIDTH;
+		layout.verticalSpacing = POPUP_VERTICALSPACING;
 		composite.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(gd);
@@ -446,8 +466,14 @@ public class PopupDialog extends Window {
 	 * @return the dialog area control
 	 */
 	protected Control createDialogArea(Composite parent) {
-		// by default, create an empty composite.
 		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = POPUP_MARGINHEIGHT;
+		layout.marginWidth = POPUP_MARGINWIDTH;
+		layout.verticalSpacing = POPUP_VERTICALSPACING;
+		composite.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		composite.setLayoutData(gd);
 		return composite;
 	}
 
@@ -506,6 +532,11 @@ public class PopupDialog extends Window {
 	 * <code>createTitleControl</code> to to customize the presentation of the
 	 * title.
 	 * 
+	 * <p>
+	 * If this method is overridden, the returned control's layout data must be
+	 * an instance of <code>GridData</code>. This method must not modify the
+	 * parent's layout.
+	 * 
 	 * @param parent
 	 *            The parent composite.
 	 * @return The Control representing the title and menu area.
@@ -534,6 +565,11 @@ public class PopupDialog extends Window {
 	 * representing the title text, or if something different than the title
 	 * should be displayed in location where the title text typically is shown.
 	 * 
+	 * <p>
+	 * If this method is overridden, the returned control's layout data must be
+	 * an instance of <code>GridData</code>. This method must not modify the
+	 * parent's layout.
+	 * 
 	 * @param parent
 	 *            The parent composite.
 	 * @return The Control representing the title area.
@@ -556,9 +592,13 @@ public class PopupDialog extends Window {
 	/**
 	 * Creates the optional info text area. This method is only called if the
 	 * <code>hasInfoArea()</code> method returns true. Subclasses typically
-	 * need not override this method, but may do so. If a different type of
-	 * title control is desired, subclasses may instead override
-	 * <code>createTitleControl</code>.
+	 * need not override this method, but may do so.
+	 * 
+	 * <p>
+	 * If this method is overridden, the returned control's layout data must be
+	 * an instance of <code>GridData</code>. This method must not modify the
+	 * parent's layout.
+	 * 
 	 * 
 	 * @param parent
 	 *            The parent composite.
@@ -696,10 +736,10 @@ public class PopupDialog extends Window {
 			menuManager = new MenuManager();
 			fillDialogMenu(menuManager);
 		}
-		// Setting this flag works around a problem that remains on X only, whereby activating 
-		// the menu deactivates our shell.  
+		// Setting this flag works around a problem that remains on X only,
+		// whereby activating the menu deactivates our shell.
 		listenToDeactivate = !"gtk".equals(SWT.getPlatform()); //$NON-NLS-1$
-		
+
 		Menu menu = menuManager.createContextMenu(getShell());
 		Rectangle bounds = toolBar.getBounds();
 		Point topLeft = new Point(bounds.x, bounds.y + bounds.height);
