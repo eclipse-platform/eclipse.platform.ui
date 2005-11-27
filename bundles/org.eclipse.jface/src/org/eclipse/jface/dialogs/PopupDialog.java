@@ -336,7 +336,6 @@ public class PopupDialog extends Window {
 	 */
 	protected void configureShell(Shell shell) {
 		GridLayout layout;
-		GridData gd;
 		Display display = shell.getDisplay();
 		shell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 
@@ -346,8 +345,6 @@ public class PopupDialog extends Window {
 		layout.marginHeight = border;
 		layout.marginWidth = border;
 		shell.setLayout(layout);
-		gd = new GridData(GridData.FILL_BOTH);
-		shell.setLayoutData(gd);
 
 		shell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event event) {
@@ -545,8 +542,9 @@ public class PopupDialog extends Window {
 
 		Composite titleAreaComposite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
+		layout.marginHeight = POPUP_MARGINHEIGHT;
+		layout.marginWidth = POPUP_MARGINWIDTH;
+		layout.verticalSpacing = POPUP_VERTICALSPACING;
 		titleAreaComposite.setLayout(layout);
 		titleAreaComposite
 				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
