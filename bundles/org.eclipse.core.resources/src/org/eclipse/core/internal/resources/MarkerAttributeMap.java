@@ -267,11 +267,12 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 		Object[] array = elements;
 		if (array == null)
 			return;
-		for (int i = 0; i < array.length; i++) {
+		//don't share keys because they are already interned
+		for (int i = 1; i < array.length; i = i + 2) {
 			Object o = array[i];
 			if (o instanceof String)
 				array[i] = set.add((String)o);
-			if (o instanceof IStringPoolParticipant)
+			else if (o instanceof IStringPoolParticipant)
 				((IStringPoolParticipant)o).shareStrings(set);
 		}
 	}
