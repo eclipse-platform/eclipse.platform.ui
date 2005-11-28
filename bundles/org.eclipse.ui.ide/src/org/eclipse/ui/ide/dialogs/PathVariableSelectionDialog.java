@@ -11,9 +11,8 @@
 
 package org.eclipse.ui.ide.dialogs;
 
-import java.io.File;
-
 import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -100,7 +99,7 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
             dialog.setInput(selection.path.toFile());
             if (dialog.open() == Window.OK
                     && pathVariablesGroup.performOk()) {
-                setExtensionResult(selection, (File) dialog.getResult()[0]);
+                setExtensionResult(selection, (IFileStore) dialog.getResult()[0]);
                 super.okPressed();
             }
         } else
@@ -176,8 +175,8 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
      * @param extensionFile file selected to extend the variable.
      */
     private void setExtensionResult(
-            PathVariablesGroup.PathVariableElement variable, File extensionFile) {
-        IPath extensionPath = new Path(extensionFile.getPath());
+            PathVariablesGroup.PathVariableElement variable, IFileStore extensionFile) {
+        IPath extensionPath = new Path(extensionFile.toString());
         int matchCount = extensionPath.matchingFirstSegments(variable.path);
         IPath resultPath = new Path(variable.name);
 

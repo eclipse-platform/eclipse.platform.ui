@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.ide.dialogs;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.eclipse.core.filesystem.EFS;
@@ -22,6 +23,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
@@ -110,7 +112,7 @@ public class IDEResourceInfoUtils {
 		try {
 			store = EFS.getStore(location);
 		} catch (CoreException e) {
-			IDEWorkbenchPlugin.log(e.getMessage(), e.getStatus());
+			log(e);
 			return null;
 		}
 		return store.fetchInfo();
@@ -142,7 +144,7 @@ public class IDEResourceInfoUtils {
 		try {
 			store = EFS.getStore(pathName.toFile().toURI());
 		} catch (CoreException e) {
-			IDEWorkbenchPlugin.log(e.getMessage(), e.getStatus());
+			log(e);
 			return null;
 		}
 		return store.fetchInfo();
@@ -355,9 +357,39 @@ public class IDEResourceInfoUtils {
 		try {
 			return EFS.getStore((new Path(string)).toFile().toURI());
 		} catch (CoreException e) {
-			IDEWorkbenchPlugin.log(e.getMessage(), e.getStatus());
+			log(e);
 			return null;
 		}
+	}
+
+	private static void log(CoreException e) {
+		IDEWorkbenchPlugin.log(e.getMessage(), e.getStatus());
+	}
+
+	/**
+	 * Return the file stores that are a child of store that the filter 
+	 * accepts.
+	 * @param store
+	 * @param fileFilter
+	 * @param monitor
+	 * @return IFileStore[]
+	 */
+	public static IFileStore[] listFileStores(IFileStore store, IFileStoreFilter fileFilter, IProgressMonitor monitor) {
+		ArrayList result = new ArrayList();
+		IFileStore[] children;
+		try {
+			children = store.childStores(EFS.NONE, monitor);
+		} catch (CoreException e) {
+			log(e);
+			return new IFileStore[0];
+		}
+		for (int i = 0; i < children.length; i++) {
+			if(fileFilter.accept(children[i]))
+				result.add(children[i]);			
+		}
+		IFileStore[] stores = new IFileStore[result.size()];
+		result.toArray(stores);
+		return stores;
 	}
 
 }
