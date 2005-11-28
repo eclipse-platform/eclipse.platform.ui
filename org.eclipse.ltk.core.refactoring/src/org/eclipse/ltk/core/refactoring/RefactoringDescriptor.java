@@ -49,7 +49,9 @@ public class RefactoringDescriptor implements Comparable {
 	 * Constant describing the API change flag (value: 1)
 	 * <p>
 	 * Clients should set this flag to indicate that the represented refactoring
-	 * may cause breaking API changes.
+	 * may cause breaking API changes. If clients set the
+	 * {@link #BREAKING_CHANGE} flag, they should set {@link #STRUCTURAL_CHANGE}
+	 * as well.
 	 * </p>
 	 */
 	public static final int BREAKING_CHANGE= 1 << 0;
@@ -61,8 +63,8 @@ public class RefactoringDescriptor implements Comparable {
 	 * Constant describing the structural change flag (value: 2)
 	 * <p>
 	 * Clients should set this flag to indicate that the change created by the
-	 * represented refactoring might be a structural change according to the semantics
-	 * of the associated programming language.
+	 * represented refactoring might be a structural change according to the
+	 * semantics of the associated programming language.
 	 * </p>
 	 */
 	public static final int STRUCTURAL_CHANGE= 1 << 1;
@@ -269,7 +271,7 @@ public class RefactoringDescriptor implements Comparable {
 	 *            the time stamp to set
 	 */
 	public final void setTimeStamp(final long stamp) {
-//		Assert.isTrue(fTimeStamp == -1);
+		// Assert.isTrue(fTimeStamp == -1);
 		Assert.isTrue(stamp >= 0);
 		fTimeStamp= stamp;
 	}
