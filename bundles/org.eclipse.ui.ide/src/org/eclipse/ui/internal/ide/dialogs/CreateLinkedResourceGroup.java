@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.ide.dialogs;
 
-import java.io.File;
-
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -299,32 +299,32 @@ public class CreateLinkedResourceGroup {
      * Opens a file or directory browser depending on the link type.
      */
     private void handleLinkTargetBrowseButtonPressed() {
-        File file = null;
+        IFileStore store = null;
         String selection = null;
 
-        if ("".equals(linkTarget) == false) { //$NON-NLS-1$
-            file = new File(linkTarget);
-            if (file.exists() == false)
-                file = null;
+        if (linkTarget.length() > 0) { 
+            store = IDEResourceInfoUtils.getFileStore(linkTarget);
+            if (!store.fetchInfo().exists())
+                store = null;
         }
         if (type == IResource.FILE) {
             FileDialog dialog = new FileDialog(linkTargetField.getShell());
-            if (file != null) {
-                if (file.isFile())
-                    dialog.setFileName(linkTarget);
+            if (store != null) {
+                if (store.fetchInfo().isDirectory())
+                	dialog.setFilterPath(linkTarget);
                 else
-                    dialog.setFilterPath(linkTarget);
+                    dialog.setFileName(linkTarget);
             }
             selection = dialog.open();
         } else {
             DirectoryDialog dialog = new DirectoryDialog(linkTargetField
                     .getShell());
-            if (file != null) {
-                String path = linkTarget;
-                if (file.isFile())
-                    path = file.getParent();
+            if (store != null) {
+                IFileStore path = store;
+                if (!store.fetchInfo().isDirectory())
+                    path = store.getParent();
                 if (path != null)
-                    dialog.setFilterPath(path);
+                    dialog.setFilterPath(store.toString());
             }
             dialog
                     .setMessage(IDEWorkbenchMessages.CreateLinkedResourceGroup_targetSelectionLabel);
@@ -431,14 +431,14 @@ public class CreateLinkedResourceGroup {
      * @return IStatus indicating the validation result. IStatus.OK if the 
      * 	given file is valid.
      */
-    private IStatus validateFileType(File linkTargetFile) {
-        if (type == IResource.FILE && linkTargetFile.isFile() == false) {
+    private IStatus validateFileType(IFileInfo linkTargetFile) {
+        if (type == IResource.FILE && linkTargetFile.isDirectory()) {
             return createStatus(IStatus.ERROR, IDEWorkbenchMessages.CreateLinkedResourceGroup_linkTargetNotFile);
         } else if (type == IResource.FOLDER
-                && linkTargetFile.isDirectory() == false) {
+                && !linkTargetFile.isDirectory()) {
             return createStatus(IStatus.ERROR, IDEWorkbenchMessages.CreateLinkedResourceGroup_linkTargetNotFolder);
         }
-        return createStatus(IStatus.OK, ""); //$NON-NLS-1$
+        return Status.OK_STATUS;
     }
 
     /**
@@ -471,7 +471,7 @@ public class CreateLinkedResourceGroup {
         // use the resolved link target name
         String resolvedLinkTarget = resolvedPathLabelData.getText();
         path = new Path(resolvedLinkTarget);
-        File linkTargetFile = new Path(resolvedLinkTarget).toFile();
+        IFileInfo linkTargetFile = IDEResourceInfoUtils.getFileInfo(resolvedLinkTarget);
         if (linkTargetFile.exists()) {
             IStatus fileTypeStatus = validateFileType(linkTargetFile);
             if (fileTypeStatus.isOK() == false)
