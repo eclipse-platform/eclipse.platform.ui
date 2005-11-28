@@ -55,8 +55,9 @@ public class OpenWithInfo {
 	}
 
 	/**
-	 * Returns the entry for Default (i.e. revert to factory defaults) entry, or <code>null</code> if none.
-	 *  
+	 * Returns the entry for Default (i.e. revert to factory defaults) entry, or
+	 * <code>null</code> if none.
+	 * 
 	 * @return the Default entry, or <code>null</code>
 	 */
 	public OpenWithEntry getDefaultEntry() {
@@ -73,7 +74,8 @@ public class OpenWithInfo {
 	}
 
 	/**
-	 * Returns the entry for the in-place system editor, or <code>null</code> if none.
+	 * Returns the entry for the in-place system editor, or <code>null</code>
+	 * if none.
 	 * 
 	 * @return the in-place entry, or <code>null</code>
 	 */
@@ -82,8 +84,9 @@ public class OpenWithInfo {
 	}
 
 	/**
-	 * Returns the preferred entry, or <code>null</code> if none.
-	 * This entry is typically highlighted with bold or a radio button in the Open With menu.
+	 * Returns the preferred entry, or <code>null</code> if none. This entry
+	 * is typically highlighted with bold or a radio button in the Open With
+	 * menu.
 	 * 
 	 * @return the preferred entry, or <code>null</code>
 	 */
@@ -92,7 +95,8 @@ public class OpenWithInfo {
 	}
 
 	/**
-	 * Returns the entry for the in-place external editor, or <code>null</code> if none.
+	 * Returns the entry for the in-place external editor, or <code>null</code>
+	 * if none.
 	 * 
 	 * @return the external entry, or <code>null</code>
 	 */
@@ -102,7 +106,8 @@ public class OpenWithInfo {
 
 	/**
 	 * Returns a new <code>OpenWithInfo</code> which is the result of merging
-	 * this <code>OpenWithInfo</code> with the given other <code>OpenWithInfo</code>.
+	 * this <code>OpenWithInfo</code> with the given other
+	 * <code>OpenWithInfo</code>.
 	 * 
 	 * @return the merged info
 	 */
