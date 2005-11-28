@@ -13,15 +13,17 @@
 package org.eclipse.ui.texteditor;
 
 
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.text.source.IVerticalRulerInfo;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.ISelection;
+
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorActionDelegate;
@@ -42,7 +44,7 @@ import org.eclipse.ui.actions.ActionDelegate;
 public abstract class AbstractRulerActionDelegate extends ActionDelegate implements IEditorActionDelegate, IActionDelegate2, MouseListener, IMenuListener {
 
 	/** The editor. */
-	private IEditorPart fEditor;
+	private ITextEditor fEditor;
 	/** The action calling the action delegate. */
 	private IAction fCallerAction;
 	/** The underlying action. */
@@ -74,17 +76,17 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 				((ITextEditorExtension) fEditor).removeRulerContextMenuListener(this);
 		}
 
-		fEditor= targetEditor;
+		fEditor= (ITextEditor)(targetEditor == null ? null : targetEditor.getAdapter(ITextEditor.class));
 		fCallerAction= callerAction;
 		fAction= null;
 
-		if (fEditor != null && fEditor instanceof ITextEditor) {
+		if (fEditor != null) {
 			if (fEditor instanceof ITextEditorExtension)
 				((ITextEditorExtension) fEditor).addRulerContextMenuListener(this);
 
 			IVerticalRulerInfo rulerInfo= (IVerticalRulerInfo) fEditor.getAdapter(IVerticalRulerInfo.class);
 			if (rulerInfo != null) {
-				fAction= createAction((ITextEditor) fEditor, rulerInfo);
+				fAction= createAction(fEditor, rulerInfo);
 				update();
 
 				Control control= rulerInfo.getControl();
