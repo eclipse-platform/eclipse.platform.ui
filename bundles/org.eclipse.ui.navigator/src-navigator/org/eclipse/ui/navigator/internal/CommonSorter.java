@@ -37,13 +37,16 @@ import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
+ * 
  * @since 3.2
  */
 public class CommonSorter extends ViewerSorter {
 
-	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry.getInstance();
- 
+	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry
+			.getInstance();
+
 	private Comparator comparator = null;
+
 	private INavigatorContentService contentService;
 
 	/**
@@ -60,9 +63,11 @@ public class CommonSorter extends ViewerSorter {
 	 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
 	 */
 	public int category(Object anElement) {
-		Set descriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(anElement);
+		Set descriptors = CONTENT_DESCRIPTOR_REGISTRY
+				.getEnabledContentDescriptors(anElement, contentService
+						.getViewerDescriptor());
 		Iterator dItr = descriptors.iterator();
-		if(dItr.hasNext())
+		if (dItr.hasNext())
 			return ((INavigatorContentDescriptor) dItr.next()).getPriority();
 		return Priority.NORMAL_PRIORITY_VALUE;
 	}
@@ -75,13 +80,16 @@ public class CommonSorter extends ViewerSorter {
 	 */
 	public int compare(Viewer viewer, Object lvalue, Object rvalue) {
 		int rank = category(rvalue) - category(lvalue);
-		if(rank == 0) { 
-			IStructuredSelection selection = new StructuredSelection(new Object[] {lvalue, rvalue});
-			NavigatorContentExtension[] descriptorInstances = contentService.findRelevantContentExtensions(selection);
-			if(descriptorInstances.length > 0)
-				return descriptorInstances[0].getComparator().compare(lvalue, rvalue);
+		if (rank == 0) {
+			IStructuredSelection selection = new StructuredSelection(
+					new Object[] { lvalue, rvalue });
+			NavigatorContentExtension[] descriptorInstances = ((NavigatorContentService) contentService)
+					.findRelevantContentExtensions(selection);
+			if (descriptorInstances.length > 0)
+				return descriptorInstances[0].getComparator().compare(lvalue,
+						rvalue);
 			return rank;
-			
+
 		}
 		return rank;
 	}
@@ -95,7 +103,6 @@ public class CommonSorter extends ViewerSorter {
 	public void sort(Viewer viewer, Object[] elements) {
 		Arrays.sort(elements, getComparator());
 	}
-	 
 
 	protected Comparator getComparator() {
 		if (comparator == null) {
@@ -103,7 +110,8 @@ public class CommonSorter extends ViewerSorter {
 				/*
 				 * (non-Javadoc)
 				 * 
-				 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+				 * @see java.util.Comparator#compare(java.lang.Object,
+				 *      java.lang.Object)
 				 */
 				public int compare(Object o1, Object o2) {
 					return CommonSorter.this.compare(null, o1, o2);
@@ -112,6 +120,5 @@ public class CommonSorter extends ViewerSorter {
 		}
 		return comparator;
 	}
-
 
 }

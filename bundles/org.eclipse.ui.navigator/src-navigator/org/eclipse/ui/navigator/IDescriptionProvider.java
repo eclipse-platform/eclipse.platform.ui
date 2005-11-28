@@ -11,26 +11,31 @@
 package org.eclipse.ui.navigator;
 
 /**
-* <p>
-* <strong>EXPERIMENTAL</strong>. This class or interface has been added as
-* part of a work in progress. There is a guarantee neither that this API will
-* work nor that it will remain the same. Please do not use this API without
-* consulting with the Platform/UI team.
-* </p>
-* @since 3.2
-*/
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
+ * </p>
+ * <p>
+ * Clients may implement this interface.
+ * </p>
+ * 
+ * @since 3.2
+ */
 public interface IDescriptionProvider {
-	
-	
+
 	/**
 	 * <p>
-	 * Provide a description for the status bar view, if available. A default string of the form
-	 * "(x) items selected" will be used if this method choosed to return null.
+	 * Provide a description for the status bar view, if available. A default
+	 * string of the form "(x) items selected" will be used if this method
+	 * choosed to return null.
 	 * </p>
 	 * 
 	 * <p>
-	 * The empty string ("") will be respected as a valid value if returned. Return <b>null </b> if
-	 * the extension defers to the default method of supplying status bar descriptions.
+	 * The empty string ("") will be respected as a valid value if returned.
+	 * Return <b>null </b> if the extension defers to the default method of
+	 * supplying status bar descriptions.
 	 * </p>
 	 * 
 	 * @param anElement

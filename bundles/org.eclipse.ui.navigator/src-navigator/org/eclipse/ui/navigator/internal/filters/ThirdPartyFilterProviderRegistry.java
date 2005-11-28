@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.navigator.internal.NavigatorMessages;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.navigator.internal.extensions.RegistryReader;
 
@@ -97,7 +97,7 @@ class ThirdPartyFilterProviderRegistry extends RegistryReader {
 				addThirdPartyFilterProviders(new ThirdPartyFilterProviderDescriptor(navigatorExtensionId, element));
 				return true;
 			}
-			NavigatorPlugin.log(NavigatorMessages.getString("ExtensionFilterRegistry.16")); //$NON-NLS-1$
+			NavigatorPlugin.log(CommonNavigatorMessages.ExtensionFilterRegistry_16);
 
 		}
 		return false;

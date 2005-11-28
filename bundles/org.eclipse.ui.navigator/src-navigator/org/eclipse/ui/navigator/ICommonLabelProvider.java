@@ -30,14 +30,14 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  * Common Navigator.
  * </p> 
  * <p>
- * Clients may implement this interface.
- * </p>
- * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
+ *<p>
+ * Clients may implement this interface.
+ *</p> 
  * @since 3.2
  */
 public interface ICommonLabelProvider extends ILabelProvider, IMementoAware,
@@ -45,12 +45,16 @@ public interface ICommonLabelProvider extends ILabelProvider, IMementoAware,
 
 	/**
 	 * <p>
-	 * Provides the viewer id for any label provider initialization.
+	 * Provides the state model for any initialization. 
 	 * </p>
 	 * 
-	 * @param aViewerId
-	 *            The ID of the viewer that will be associated with the current
-	 *            ICommonLabelProvider
+	 * @param aStateModel
+	 * 	The state model associated with this logical extension.
+	 * @param aContentProvider 
+	 * 	The associated content provider for this label provider.
+	 * 
+	 * @see ICommonContentProvider
+	 *
 	 */
 	void init(IExtensionStateModel aStateModel,
 			ITreeContentProvider aContentProvider);

@@ -15,17 +15,42 @@ import org.eclipse.ui.IMemento;
 
 /**
  * 
+ * The Common content provider allows extensions to vary their
+ * behavior based on properties in the extension model and the
+ * given memento. The state model should be initialized from values 
+ * in the memento if necessary. 
+ * 
+ * 
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
- * progress. There is a guarantee neither that this API will work nor that it will remain the same.
- * Please do not use this API without consulting with the Platform/UI team.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
  * </p>
  * 
- * @since 3.2 
- *
+ * <p>
+ * Clients may implement this interface.
+ * </p>
+ * 
+ * @since 3.2
+ * 
  */
-public interface ICommonContentProvider extends ITreeContentProvider, IMementoAware {
+public interface ICommonContentProvider extends ITreeContentProvider,
+		IMementoAware {
 
+	/**
+	 * Initialize the content provider with the given extension model and
+	 * memento.
+	 * 
+	 * @param aStateModel
+	 *            The state model associated with this logical extension.
+	 * @param aMemento
+	 *            The associated memento for the given viewer. Clients should
+	 *            ensure that the memento keys are unique; perhaps using the id
+	 *            of the content extension as a prefix.
+	 * 
+	 * @see ICommonLabelProvider
+	 */
 	void init(IExtensionStateModel aStateModel, IMemento aMemento);
 
 }

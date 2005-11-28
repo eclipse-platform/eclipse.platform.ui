@@ -18,7 +18,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.INavigatorExtensionFilter;
-import org.eclipse.ui.navigator.NavigatorActivationService;
+import org.eclipse.ui.navigator.internal.Utilities;
+import org.eclipse.ui.navigator.internal.NavigatorContentService;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
@@ -34,13 +35,12 @@ import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
  */
 public class CommonViewerFilter extends ViewerFilter {
 
-	private static final NavigatorActivationService NAVIGATOR_ACTIVATION_SERVICE = NavigatorActivationService.getInstance();
 	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry.getInstance();
 	private final CommonViewer commonViewer;
 	private final INavigatorContentService contentService;
 
 	/**
-	 *  
+	 *  @param aViewer The viewer that this filter will service.
 	 */
 	public CommonViewerFilter(CommonViewer aViewer) {
 		super();
@@ -48,20 +48,20 @@ public class CommonViewerFilter extends ViewerFilter {
 		contentService = aViewer.getNavigatorContentService();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/** 
 	 * 
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
 	 *      java.lang.Object, java.lang.Object)
 	 */
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		boolean select = true;
-		Set contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(element);
+		Set contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(element, contentService.getViewerDescriptor());
 
 		for (Iterator descriptorsIterator = contentDescriptors.iterator(); descriptorsIterator.hasNext() && select;) {
 			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) descriptorsIterator.next();
-			if (NAVIGATOR_ACTIVATION_SERVICE.isNavigatorExtensionActive(contentService.getViewerId(), descriptor.getId())) {
-
+			if (Utilities.isActive(contentService.getViewerDescriptor(), descriptor) &&
+					Utilities.isVisible(contentService.getViewerDescriptor(), descriptor)) 
+			{
 				ExtensionFilterDescriptor[] enabledFilters = ExtensionFilterRegistryManager.getInstance().getViewerRegistry(contentService.getViewerId()).getActiveDescriptors(descriptor.getId());
 
 				for (int filterindx = 0; filterindx < enabledFilters.length; filterindx++) {
@@ -74,7 +74,7 @@ public class CommonViewerFilter extends ViewerFilter {
 						return false; 
 					}
 				}
-				NavigatorContentExtension extension = contentService.getExtension(descriptor);
+				NavigatorContentExtension extension = ((NavigatorContentService)contentService).getExtension(descriptor);
 				
 				INavigatorExtensionFilter[] enforcedFilters = extension.getDuplicateContentFilters();
 				for(int i=0; i<enforcedFilters.length; i++)

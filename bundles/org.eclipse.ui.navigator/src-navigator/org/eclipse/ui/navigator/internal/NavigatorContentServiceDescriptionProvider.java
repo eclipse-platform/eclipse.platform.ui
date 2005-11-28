@@ -13,14 +13,14 @@ package org.eclipse.ui.navigator.internal;
 import java.util.Set;
 
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 import org.eclipse.ui.navigator.INavigatorContentService;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 
 /**
  * 
@@ -62,17 +62,18 @@ public final class NavigatorContentServiceDescriptionProvider implements
 		}
 			
 
-		Set contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(target);
+		Set contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(target, contentService.getViewerDescriptor());
 		if (contentDescriptors.isEmpty())
 			return getDefaultStatusBarMessage(0);
-		
-		/* Use the first Navigator Content Descriptor for now */
-		NavigatorContentDescriptor contentDescriptor = (NavigatorContentDescriptor) contentDescriptors.iterator().next();
-		NavigatorContentExtension contentDescriptorInstance = contentService.getExtension(contentDescriptor);
 
-		ICommonLabelProvider labelProvider = contentDescriptorInstance.getLabelProvider();
-
-		String message = labelProvider.getDescription(target);
+		String message = null;
+		ILabelProvider[] providers = contentService.findRelevantLabelProviders(target);
+		for(int i=0; i<providers.length; i++) {
+			if(providers[i] instanceof ICommonLabelProvider) {
+				message =  ((ICommonLabelProvider)providers[i]).getDescription(target);
+				break;
+			}  
+		}
 		message = (message != null) ? message : getDefaultStatusBarMessage(1);
 		return message;
 		 
@@ -83,8 +84,7 @@ public final class NavigatorContentServiceDescriptionProvider implements
 	 * @return A string of the form "# items selected"
 	 */
 	protected final String getDefaultStatusBarMessage(int aSize) {
-		return NavigatorMessages.format("Navigator.statusLineMultiSelect", //$NON-NLS-1$
-					new Object[]{new Integer(aSize)});
+		return NLS.bind(CommonNavigatorMessages.Navigator_statusLineMultiSelect, new Object[]{new Integer(aSize)});
 
 	}
 

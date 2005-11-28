@@ -14,17 +14,16 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 
-
 /**
  * <p>
- * Provides information to the Common Navigator on how to link selections with active editors and
- * vice versa.
+ * Provides information to the Common Navigator on how to link selections with
+ * active editors and vice versa.
  * </p>
  * <p>
- * The Common Navigator allows clients to plug-in their own custom logic for linking selections from
- * the Viewer to active editors. This interface is used by the
- * <b>org.eclipse.wst.common.navigator.views.linkHelper </b> extension point to gather information
- * and trigger editor activations.
+ * The Common Navigator allows clients to plug-in their own custom logic for
+ * linking selections from the Viewer to active editors. This interface is used
+ * by the <b>org.eclipse.wst.common.navigator.views.linkHelper </b> extension
+ * point to gather information and trigger editor activations.
  * </p>
  * 
  * <p>
@@ -33,13 +32,18 @@ import org.eclipse.ui.IWorkbenchPage;
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
+ * <p>
+ * Clients may implement this interface.
+ * </p>
+ * 
  * @since 3.2
  */
 public interface ILinkHelper {
 
 	/**
 	 * <p>
-	 * Determine the correct structured selection for the Common Navigator given anInput.
+	 * Determine the correct structured selection for the Common Navigator given
+	 * anInput.
 	 * </p>
 	 * 
 	 * @param anInput

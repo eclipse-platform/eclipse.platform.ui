@@ -1,0 +1,206 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.navigator">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.navigator" id="viewerContentBinding" name="viewerContentBinding"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="viewerContentBinding"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="viewerContentBinding">
+      <annotation>
+         <documentation>
+            When a viewer comes up, the default behavior is to select all 
+  content extensions that have a triggerPoints expression that 
+  matches the input element (provided through the workbench page). 
+  
+  Clients may override this behavior to select which content 
+  extensions which extensions are available to the viewer. 
+  Clients may define an &apos;includes&apos; element
+  to select which extensions are visible to the viewer, and 
+  similarly an &apos;excludes&apos; element 
+  for extensions that should not be made visible to the 
+  viewer. Clients may further define the extensions that
+  should be explicitly queried for root elements (through
+  ITreeContentProvider.getElements()). If one or more 
+  &apos;contentExtension&apos; elements with &apos;isRoot&apos; set to 
+  true are defined within the &apos;includes&apos; statement, 
+  only those extensions will be queried for root elements. 
+  The &apos;isRoot&apos; has no effect for exclusions.
+  
+  A viewer may have multiple viewerContentBindings 
+  defined, and their includes/excludes statements will be 
+  aggregated to produce the final behavior. The last 
+  viewerContentBinding to be read will set the popupMenuId.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="includes" minOccurs="0" maxOccurs="1"/>
+            <element ref="excludes" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="viewerId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  There should be a corresponding org.eclipse.ui.views extension that corresponds to this Id. That extension should specify an instance of org.eclipse.ui.navigator.CommonNavigator. 
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="popupMenuId" type="string">
+            <annotation>
+               <documentation>
+                  A custom popupMenuId to use for extensions that wish to contribute to the view ID. The default is set to the viewerId. The last popupMenuId to be read will be used.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="includes">
+      <annotation>
+         <documentation>
+            Define a set of patterns that should be included when 
+            looking for content extensions for the viewer that 
+            matches the viewerId attribute. When the includes 
+            and excludes statements intersect, the includes 
+            statement will be given precedence.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="contentExtension" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="excludes">
+      <annotation>
+         <documentation>
+            Define a set of patterns that should be excluded when 
+            looking for content extensions for the viewer that 
+            matches the viewerId attribute. When the includes 
+            and excludes statements intersect, the includes 
+            statement will be given precedence.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="contentExtension" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="contentExtension">
+      <annotation>
+         <documentation>
+            Indicates that the content extension should be queried by getElements() 
+            for the root of the viewer. Selecting root extensions using 
+            &apos;isRoot&apos; will override the extensions 
+            which would otherwise be enabled for the viewer input element. 
+              
+            See the documentation for &apos;viewerContentBinding&apos; for more information.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="pattern" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Content extensions may be selected exactly by using 
+                  their content extension id. Clients may also use a 
+                  regular expression pattern to select any content 
+                  extensions that have ids that match the pattern. 
+                  Patterns are regular expressions which match 
+                  unique identifiers. Please see the Java 
+                  documentation for java.util.regex.Pattern
+                  for further details.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isRoot" type="boolean">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

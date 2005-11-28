@@ -67,6 +67,9 @@
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -93,34 +96,47 @@
          </documentation>
       </annotation>
       <complexType>
-         <choice>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="not"/>
             <element ref="and"/>
             <element ref="or"/>
-            <element ref="not"/>
-            <element ref="objectClass"/>
-            <element ref="objectState"/>
-            <element ref="pluginState"/>
-            <element ref="systemProperty"/>
-         </choice>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+         </sequence>
       </complexType>
    </element>
 
    <element name="dropEnablement">
       <complexType>
-         <choice>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="not"/>
             <element ref="and"/>
             <element ref="or"/>
-            <element ref="not"/>
-            <element ref="objectClass"/>
-            <element ref="objectState"/>
-            <element ref="pluginState"/>
-            <element ref="systemProperty"/>
-         </choice>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+         </sequence>
          <attribute name="validatorClass" type="string">
             <annotation>
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -144,6 +160,9 @@
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string" use="required">

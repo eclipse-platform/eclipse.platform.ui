@@ -17,6 +17,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.navigator.ICommonActionProvider;
+import org.eclipse.ui.navigator.IMementoAware;
 import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
@@ -31,65 +32,56 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  */
 public class CommonActionProvider implements ICommonActionProvider {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider#init(org.eclipse.ui.IViewPart,
-	 *      org.eclipse.wst.common.navigator.internal.views.extensions.NavigatorContentService)
+	/**
+	 *   
+	 * @see ICommonActionProvider#init(String, IViewPart, INavigatorContentService, StructuredViewer)
 	 */
 	public void init(String anExtensionId, IViewPart aViewPart, INavigatorContentService aContentService, StructuredViewer aStructuredViewer) {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider#dispose()
+	/**
+	 *   
+	 * @see ICommonActionProvider#dispose()
 	 */
 	public void dispose() {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider#setActionContext(org.eclipse.ui.actions.ActionContext)
+	/**
+	 * @see ICommonActionProvider#setActionContext(ActionContext)
 	 */
 	public void setActionContext(ActionContext aContext) {
 
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	 * @see ICommonActionProvider#fillContextMenu(IMenuManager)
 	 */
 	public boolean fillContextMenu(IMenuManager aMenu) {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider#fillActionBars(org.eclipse.ui.IActionBars)
+	 * @see ICommonActionProvider#fillActionBars(IActionBars)
 	 */
 	public boolean fillActionBars(IActionBars theActionBars) {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider#restoreState(org.eclipse.ui.IMemento)
+	 * @see IMementoAware#restoreState(IMemento)
 	 */
 	public void restoreState(IMemento aMemento) {
 
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider#saveState(org.eclipse.ui.IMemento)
+	 * @see IMementoAware#saveState(IMemento)
 	 */
 	public void saveState(IMemento aMemento) {
 

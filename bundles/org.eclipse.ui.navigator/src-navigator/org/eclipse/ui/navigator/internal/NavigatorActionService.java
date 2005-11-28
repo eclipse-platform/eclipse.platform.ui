@@ -37,6 +37,7 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.navigator.ICommonActionProvider;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.navigator.INavigatorActionService;
+import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.internal.actions.CommonActionProviderDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.internal.extensions.RegistryReader;
@@ -53,10 +54,11 @@ public class NavigatorActionService implements INavigatorActionService {
 	private static final CommonActionProviderDescriptor[] NO_DESCRIPTORS= new CommonActionProviderDescriptor[0];
 
 	private static final IContributionItem NEW_GROUP= new Separator(ICommonMenuConstants.GROUP_NEW);
-	private static final IContributionItem GOTO_GROUP= new GroupMarker(ICommonMenuConstants.GROUP_GOTO);
+	private static final IContributionItem GOTO_GROUP= new GroupMarker(ICommonMenuConstants.GROUP_GOTO);	
 	private static final IContributionItem OPEN_GROUP= new Separator(ICommonMenuConstants.GROUP_OPEN);
+	private static final IContributionItem OPENWITH_GROUP= new Separator(ICommonMenuConstants.GROUP_OPEN_WITH);
 	private static final IContributionItem SHOW_GROUP= new GroupMarker(ICommonMenuConstants.GROUP_SHOW);
-	private static final IContributionItem EDIT_GROUP= new Separator(ICommonMenuConstants.COMMON_MENU_EDIT_ACTIONS);
+	private static final IContributionItem EDIT_GROUP= new Separator(ICommonMenuConstants.GROUP_EDIT);
 	private static final IContributionItem REORGANIZE_GROUP= new GroupMarker(ICommonMenuConstants.GROUP_REORGANIZE);
 	private static final IContributionItem PORT_GROUP= new GroupMarker(ICommonMenuConstants.GROUP_PORT);
 	private static final IContributionItem GENERATE_GROUP= new Separator(ICommonMenuConstants.GROUP_GENERATE);
@@ -83,17 +85,17 @@ public class NavigatorActionService implements INavigatorActionService {
 	/**
 	 * 
 	 */
-	public NavigatorActionService(IViewPart aViewPart, StructuredViewer aStructuredViewer, NavigatorContentService aContentService) {
+	public NavigatorActionService(IViewPart aViewPart, StructuredViewer aStructuredViewer, INavigatorContentService aContentService) {
 		this(aViewPart, aStructuredViewer, aContentService, true);
 	}
 
 	/**
 	 * 
 	 */
-	public NavigatorActionService(IViewPart aViewPart, StructuredViewer aStructuredViewer, NavigatorContentService aContentService, boolean toApplyActionsFromContentExtensions) {
+	public NavigatorActionService(IViewPart aViewPart, StructuredViewer aStructuredViewer, INavigatorContentService aContentService, boolean toApplyActionsFromContentExtensions) {
 		super();
 		viewPart= aViewPart;
-		contentService= aContentService;
+		contentService= (NavigatorContentService) aContentService;
 		structuredViewer= aStructuredViewer;
 		isApplyingActionsFromContentExtensions= toApplyActionsFromContentExtensions;
 
@@ -121,11 +123,10 @@ public class NavigatorActionService implements INavigatorActionService {
 				NavigatorContentExtension descriptorInstance= null;
 				for (Iterator iter= contentDescriptors.iterator(); iter.hasNext();) {
 					descriptorInstance= (NavigatorContentExtension) iter.next();
-					descriptorInstance.getActionProvider(this);
-// moved initialization to getActionProvider(this); 					
-//					initialize(descriptorInstance.getId(), provider);
+					descriptorInstance.getActionProvider(this); 
 				}
 			}
+			 
 
 		} catch (RuntimeException re) {
 			NavigatorPlugin.log(CommonNavigatorMessages.NavigatorActionService_0 + contentService.getViewerId() + CommonNavigatorMessages.NavigatorActionService_1 + re.getMessage());
@@ -143,6 +144,7 @@ public class NavigatorActionService implements INavigatorActionService {
 		aMenu.add(NEW_GROUP);
 		aMenu.add(GOTO_GROUP);
 		aMenu.add(OPEN_GROUP);
+		aMenu.add(OPENWITH_GROUP);
 		aMenu.add(SHOW_GROUP);
 		aMenu.add(EDIT_GROUP);
 		aMenu.add(REORGANIZE_GROUP);
@@ -216,6 +218,8 @@ public class NavigatorActionService implements INavigatorActionService {
 	 */
 	public void fillActionBars(IActionBars theActionBars, IStructuredSelection aStructuredSelection) {
 		complainIfDisposed();
+		
+		theActionBars.clearGlobalActionHandlers();
 
 		boolean actionBarsChanged= false;
 		ActionContext context= new ActionContext(aStructuredSelection);

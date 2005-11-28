@@ -15,9 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.ui.navigator.internal.ActionExpression;
+import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 
 /**
  * <p>
@@ -52,23 +57,23 @@ public class SerializerCollectionDescriptor {
 
 	private Map serializerIndex;
 
-	public SerializerCollectionDescriptor(String dropHandlerId, IConfigurationElement configurationElement, ActionExpression defaultEnablement) {
+	public SerializerCollectionDescriptor(String aDropHandlerId, IConfigurationElement aConfigurationElement, Expression theDefaultEnablement) {
 		super();
-		this.dropHandlerId = dropHandlerId;
-		Assert.isNotNull(configurationElement);
-		this.configurationElement = configurationElement;
-		init(defaultEnablement);
+		dropHandlerId = aDropHandlerId;
+		Assert.isNotNull(aConfigurationElement);
+		configurationElement = aConfigurationElement;
+		init(theDefaultEnablement);
 	}
 
 	/**
 	 *  
 	 */
-	private void init(ActionExpression defaultEnablement) {
-		IConfigurationElement[] elements = this.configurationElement.getChildren(ExtensionPointElements.SERIALIZER);
+	private void init(Expression defaultEnablement) {
+		IConfigurationElement[] elements = configurationElement.getChildren(ExtensionPointElements.SERIALIZER);
 		serializerElements = new SerializerDescriptor[elements.length];
 		if (elements != null && elements.length > 0) {
 			for (int i = 0; i < elements.length; i++)
-				serializerElements[i] = new SerializerDescriptor(this.dropHandlerId, elements[i], defaultEnablement);
+				serializerElements[i] = new SerializerDescriptor(dropHandlerId, elements[i], defaultEnablement);
 		}
 	}
 
@@ -77,8 +82,14 @@ public class SerializerCollectionDescriptor {
 		List results = new ArrayList();
 		SerializerDescriptor[] serializerArray = null;
 		for (int i = 0; i < serializerElements.length; i++) {
-			if (serializerElements[i].enablement.isEnabledFor(element))
-				results.add(serializerElements[i]);
+		
+			try {
+				 if (serializerElements[i].enablement.evaluate(new EvaluationContext(null, element)) == EvaluationResult.TRUE)
+						results.add(serializerElements[i]);
+			} catch (CoreException e) {
+				NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
+			}  
+		 
 		}
 		if (results.size() > 0)
 			results.toArray((serializerArray = new SerializerDescriptor[results.size()]));

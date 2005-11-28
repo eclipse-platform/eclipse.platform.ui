@@ -44,19 +44,21 @@
    <element name="actionProvider">
       <annotation>
          <documentation>
-            The action provider has an opportunity to contribute to the context menu and the retargetable actions defined in the IActionBars. Clients may also contribute directly to the view menu through the IActionBars view menu. 
+            The action provider has an opportunity to contribute to the context menu and the retargetable actions defined in the IActionBars. Clients may also contribute directly to the view menu through the IActionBars view menu.
          </documentation>
       </annotation>
       <complexType>
          <sequence>
             <element ref="enablement"/>
-            <element ref="emfEnablement"/>
          </sequence>
          <attribute name="class" type="string">
             <annotation>
                <documentation>
                   A class which implments the org.eclipse.navigator.ui.ICommonActionProvider interface.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -65,19 +67,24 @@
    <element name="enablement">
       <annotation>
          <documentation>
-            Clients must define an expression that will indicate to the framework when their IActionProvider should be invoked. Because of contributions to the IActionBars, clients must be invoked whenever an object they are interested in is selected. Therefore, clients should use discretion in deciding when their extension should be enabled. 
+            Clients must define an expression that will indicate to the framework when their IActionProvider should be invoked. Because of contributions to the IActionBars, clients must be invoked whenever an object they are interested in is selected. Therefore, clients should use discretion in deciding when their extension should be enabled.
          </documentation>
       </annotation>
       <complexType>
-         <choice>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="not"/>
             <element ref="and"/>
             <element ref="or"/>
-            <element ref="not"/>
-            <element ref="objectClass"/>
-            <element ref="objectState"/>
-            <element ref="pluginState"/>
-            <element ref="systemProperty"/>
-         </choice>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+         </sequence>
       </complexType>
    </element>
 

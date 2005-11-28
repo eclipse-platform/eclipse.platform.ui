@@ -16,9 +16,11 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -26,8 +28,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.RetargetAction;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorActionService;
-import org.eclipse.ui.navigator.internal.NavigatorContentService;
 import org.eclipse.ui.navigator.internal.NavigatorContentServiceDescriptionProvider;
 
 /**
@@ -51,7 +54,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 
 	private final CommonNavigator commonNavigator;
 
-	private final NavigatorContentService contentService;
+	private final INavigatorContentService contentService;
 
 	private INavigatorActionService actionService;
 
@@ -71,7 +74,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 *            The CommonNavigator managed by this class. Requires a non-null
 	 *            value.
 	 */
-	public CommonNavigatorManager(CommonNavigator aNavigator) {
+	protected CommonNavigatorManager(CommonNavigator aNavigator) {
 		super();
 		commonNavigator = aNavigator;
 		contentService = commonNavigator.getNavigatorContentService();
@@ -92,6 +95,17 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		// commonNavigator.getCommonViewer().addOpenListener(commonOpenService);
 		initContextMenu();
 		initViewMenu();
+		
+
+		final RetargetAction openAction = new RetargetAction(ICommonActionConstants.OPEN, CommonNavigatorMessages.Open_action_label);
+		commonNavigator.getViewSite().getPage().addPartListener(openAction);
+		openAction.setActionDefinitionId(ICommonActionConstants.OPEN);
+		
+		commonNavigator.getCommonViewer().addOpenListener(new IOpenListener() {
+			public void open(OpenEvent event) { 
+				openAction.run();				
+			}
+		});
 	}
 
 	/**

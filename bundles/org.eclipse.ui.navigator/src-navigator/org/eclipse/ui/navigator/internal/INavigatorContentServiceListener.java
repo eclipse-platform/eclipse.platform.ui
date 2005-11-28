@@ -8,18 +8,18 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Jan 31, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
-package org.eclipse.ui.navigator.internal.deferred;
+package org.eclipse.ui.navigator.internal;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
+
 
 /**
- * 
+ * <p>
+ * Used by clients who need to would like to listen for the load event of a
+ * NavigatorContentDescriptorInstance.
+ * <p>
+ * The following class is experimental until fully documented.
+ * </p>
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
  * progress. There is a guarantee neither that this API will work nor that it will remain the same.
@@ -28,8 +28,8 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  * 
  * @since 3.2
  */
-public interface DeferredAdapterProvider extends ITreeContentProvider {
+public interface INavigatorContentServiceListener {
 
-	public IDeferredElementAdapter[] getDeferredAdapters(Object element);
-
+	
+	void onLoad(NavigatorContentExtension anExtension);
 }

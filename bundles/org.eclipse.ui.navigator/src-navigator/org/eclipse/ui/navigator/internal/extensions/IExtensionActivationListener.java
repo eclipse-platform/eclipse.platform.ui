@@ -21,9 +21,12 @@ package org.eclipse.ui.navigator.internal.extensions;
  */
 public interface IExtensionActivationListener {
 	/**
-	 * @param viewerId
-	 * @param navigatorExtensionId
-	 * @param toEnable
+	 * @param aViewerId
+	 * 	The viewer id of the INavigatorContentService
+	 * @param theNavigatorExtensionIds
+	 * 	An array of updated extension ids
+	 * @param isActive
+	 * 	The new activation state of the extensions
 	 */
-	void onExtensionActivation(String viewerId, String navigatorExtensionId, boolean toEnable);
+	void onExtensionActivation(String aViewerId, String[] theNavigatorExtensionIds, boolean isActive);
 }

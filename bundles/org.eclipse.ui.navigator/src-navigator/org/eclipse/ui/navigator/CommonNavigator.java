@@ -30,9 +30,11 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.navigator.internal.CommonNavigatorActionGroup;
 import org.eclipse.ui.navigator.internal.CommonSorter;
 import org.eclipse.ui.navigator.internal.NavigatorContentService;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorViewerDescriptor;
+import org.eclipse.ui.navigator.internal.actions.CollapseAllAction;
+import org.eclipse.ui.navigator.internal.actions.LinkEditorAction;
 import org.eclipse.ui.navigator.internal.filters.CommonViewerFilter;
 import org.eclipse.ui.navigator.internal.filters.ExtensionFilterRegistryManager;
+import org.eclipse.ui.navigator.internal.filters.SelectFiltersAction;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.ViewPart;
 
@@ -121,15 +123,6 @@ import org.eclipse.ui.part.ViewPart;
  * @since 3.2
  */
 public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
-
-	/**
-	 * <p>
-	 * Provides a constant for the pop-up menu id for extensions that wish to contribute to the view
-	 * menu. The defualt value specified is "CommonNavigatorPopupMenu". The
-	 * <b>org.eclipse.common.navigator.views.navigatorViewer </b> may override the value to be used.
-	 * </p>
-	 */
-	public static final String POPUP_MENU_ID = NavigatorViewerDescriptor.DEFAULT_POPUP_MENU_ID;
 
 	/**
 	 * <p>
@@ -270,7 +263,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	/**
 	 * <p>
 	 * Linking is handled by
-	 * {@link org.eclipse.wst.common.navigator.internal.views.actions.LinkEditorAction}, which
+	 * {@link LinkEditorAction}, which
 	 * listens for changes to the {@link CommonNavigator#IS_LINKING_ENABLED_PROPERTY}. Custom
 	 * implementations that wish to override this functionality, need to override the action used by
 	 * CommonNavigatorActionGroup and listen for changes to the above property.
@@ -306,7 +299,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	/**
 	 * @return The Navigator Content Service which populates this instance of Common Navigator
 	 */
-	public NavigatorContentService getNavigatorContentService() {
+	public INavigatorContentService getNavigatorContentService() {
 		return getCommonViewer().getNavigatorContentService();
 	}
 	
@@ -390,11 +383,11 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 * <p>
 	 * The Common Navigator Manager handles the setup of the Common Navigator Menu, manages updates
 	 * to the ActionBars from
-	 * {@link org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider}&nbsp;
+	 * {@link ICommonActionProvider}&nbsp;
 	 * extensions as the user's selection changes, and also updates the status bar based on the
 	 * current selection.
 	 * 
-	 * @return
+	 * @return The Common Navigator Manager class which handles menu population and ActionBars
 	 */
 	protected CommonNavigatorManager createCommonManager() {
 		return new CommonNavigatorManager(this);
@@ -413,19 +406,19 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 * <li>
 	 * <p>
 	 * Link with editor support (
-	 * {@link org.eclipse.wst.common.navigator.internal.views.actions.LinkEditorAction}). Allows the
+	 * {@link LinkEditorAction}). Allows the
 	 * user to toggling linking the current selection with the active editors.
 	 * </p>
 	 * <li>
 	 * <p>
 	 * Collapse all (
-	 * {@link org.eclipse.wst.common.navigator.internal.views.actions.CollapseAllAction}). Collapses
+	 * {@link CollapseAllAction}). Collapses
 	 * all expanded nodes.
 	 * </p>
 	 * <li>
 	 * <p>
 	 * Select Filters (
-	 * {@link org.eclipse.wst.common.navigator.internal.views.filters.SelectFiltersAction}).
+	 * {@link SelectFiltersAction}).
 	 * Provides access to the "Select Filters" dialog that allows users to enable/disable filters
 	 * and also the Content Extension activations.
 	 * </p>
@@ -441,7 +434,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 * <p>
 	 * The default implementation hooks into the extensible navigator's framework for extensions to
 	 * provide filters. Custom implementations will probably require some changes to
-	 * {@link org.eclipse.wst.common.navigator.internal.views.filters.SelectFiltersAction}&nbsp;as
+	 * {@link SelectFiltersAction}&nbsp;as
 	 * well.
 	 * </p>
 	 * 
@@ -507,8 +500,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 		if (input == null) {
 			setPartName(viewName);
 			setTitleToolTip(""); //$NON-NLS-1$ 
-		} else {
-			ILabelProvider labelProvider = (ILabelProvider) commonViewer.getLabelProvider();
+		} else {			
 			String inputToolTip = getFrameToolTipText(input);
 			
 			setPartName(viewName);

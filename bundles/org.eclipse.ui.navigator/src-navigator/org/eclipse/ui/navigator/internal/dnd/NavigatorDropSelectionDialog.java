@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.navigator.internal.NavigatorMessages;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 
 
@@ -44,7 +44,7 @@ import org.eclipse.ui.navigator.internal.NavigatorPlugin;
  */
 public class NavigatorDropSelectionDialog extends Dialog {
 
-	public static final String SKIP_ON_SINGLE_SELECTION = NavigatorMessages.getString("NavigatorDropSelectionDialog.0"); //$NON-NLS-1$
+	public static final String SKIP_ON_SINGLE_SELECTION = CommonNavigatorMessages.NavigatorDropSelectionDialog_0;
 
 	private DropHandlerDescriptor[] descriptors;
 	private Button[] radios;
@@ -59,7 +59,7 @@ public class NavigatorDropSelectionDialog extends Dialog {
 	}
 
 	protected Control createDialogArea(Composite parent) {
-		getShell().setText(NavigatorMessages.getString("NavigatorDropSelectionDialog.1")); //$NON-NLS-1$
+		getShell().setText(CommonNavigatorMessages.NavigatorDropSelectionDialog_1);
 		Composite superComposite = (Composite) super.createDialogArea(parent);
 
 		Composite composite = new Composite(superComposite, SWT.NONE);
@@ -113,7 +113,7 @@ public class NavigatorDropSelectionDialog extends Dialog {
 		descriptionText.setBackground(superComposite.getBackground());
 
 		skipDialogOnSingleSelection = new Button(composite, SWT.CHECK);
-		skipDialogOnSingleSelection.setText(NavigatorMessages.getString("NavigatorDropSelectionDialog.3")); //$NON-NLS-1$
+		skipDialogOnSingleSelection.setText(CommonNavigatorMessages.NavigatorDropSelectionDialog_3);
 		skipDialogOnSingleSelection.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		checkedDefault = NavigatorPlugin.getDefault().getDialogSettings().getBoolean(NavigatorDropSelectionDialog.SKIP_ON_SINGLE_SELECTION);
 		skipDialogOnSingleSelection.setSelection(checkedDefault);

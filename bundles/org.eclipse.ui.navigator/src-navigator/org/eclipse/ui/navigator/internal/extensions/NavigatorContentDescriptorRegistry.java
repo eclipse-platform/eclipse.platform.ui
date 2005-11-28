@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.navigator.NavigatorActivationService;
+import org.eclipse.ui.navigator.internal.Utilities;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -42,7 +43,7 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 	private static final NavigatorContentDescriptorRegistry INSTANCE = new NavigatorContentDescriptorRegistry();
 	private static final NavigatorActivationService NAVIGATOR_ACTIVATION_SERVICE = NavigatorActivationService.getInstance();
 
-	protected static final String NAVIGATOR_CONTENT = "navigatorContent"; //$NON-NLS-1$
+	private static final String TAG_NAVIGATOR_CONTENT = "navigatorContent"; //$NON-NLS-1$
 	private static boolean isInitialized = false;
 
 	private final Map contentDescriptors = new HashMap();
@@ -81,7 +82,7 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 	 * @param anExtensionPoint
 	 */
 	public NavigatorContentDescriptorRegistry() {
-		super(NavigatorPlugin.PLUGIN_ID, NAVIGATOR_CONTENT);
+		super(NavigatorPlugin.PLUGIN_ID, TAG_NAVIGATOR_CONTENT);
 	}
 
 	/**  
@@ -99,41 +100,18 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 	 * 
 	 * Returns all content descriptor(s) which enable for the given element.
 	 * 
-	 * @param anElement
-	 *            the element to return the best content descriptor for
-	 * @return the best content descriptor for the given element.
-	 */
-	public Set getEnabledContentDescriptors(Object anElement) {
-		Set descriptors = new HashSet();
-
-		/* Find other ContentProviders which enable for this object */
-		for (Iterator contentDescriptorsItr = contentDescriptors.values().iterator(); contentDescriptorsItr.hasNext();) {
-			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) contentDescriptorsItr.next();
-
-			if (descriptor.isEnabledFor(anElement))
-				descriptors.add(descriptor);
-		}
-		//Collections.sort(descriptors, EXTENSION_COMPARATOR);
-
-		return descriptors;
-	}
-
-	/**
-	 * 
-	 * Returns all content descriptor(s) which enable for the given element.
-	 * 
 	 * @param aStructuredSelection
 	 *            the element to return the best content descriptor for
 	 * @return the best content descriptor for the given element.
 	 */
-	public Set getEnabledContentDescriptors(IStructuredSelection aStructuredSelection) {
+	public Set getEnabledContentDescriptors(IStructuredSelection aStructuredSelection, INavigatorViewerDescriptor aViewerDescriptor) {
 		Set descriptors = new HashSet();
 
 		/* Find other ContentProviders which enable for this object */
 		for (Iterator contentDescriptorsItr = contentDescriptors.values().iterator(); contentDescriptorsItr.hasNext();) {
 			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) contentDescriptorsItr.next();
 
-			if (descriptor.isEnabledFor(aStructuredSelection))
+			if (Utilities.isApplicable(aViewerDescriptor, descriptor, aStructuredSelection))
 				descriptors.add(descriptor);
 		}
 		// Collections.sort(descriptors, EXTENSION_COMPARATOR);
@@ -149,17 +127,15 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 	 *            the element to return the best content descriptor for
 	 * @return the best content descriptor for the given element.
 	 */
-	public Set getEnabledContentDescriptors(Object anElement, NavigatorViewerDescriptor aViewerDescriptor) {
+	public Set getEnabledContentDescriptors(Object anElement, INavigatorViewerDescriptor aViewerDescriptor) {
 		Set descriptors = new HashSet();
 
 		/* Find other ContentProviders which enable for this object */
 		for (Iterator contentDescriptorsItr = contentDescriptors.values().iterator(); contentDescriptorsItr.hasNext();) {
 			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) contentDescriptorsItr.next();
 
-			if (NAVIGATOR_ACTIVATION_SERVICE.isNavigatorExtensionActive(aViewerDescriptor.getViewerId(), descriptor.getId()) && !aViewerDescriptor.filtersContentDescriptor(descriptor)) {
-				if (descriptor.isEnabledFor(anElement))
-					descriptors.add(descriptor);
-			}
+			if (Utilities.isApplicable(aViewerDescriptor, descriptor, anElement))
+				descriptors.add(descriptor); 
 		}
 		// Collections.sort(descriptors, EXTENSION_COMPARATOR);
 
@@ -218,7 +194,7 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 	 * @see org.eclipse.wst.common.navigator.internal.views.extensions.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
 	 */
 	protected boolean readElement(IConfigurationElement element) {
-		if (NAVIGATOR_CONTENT.equals(element.getName())) {
+		if (TAG_NAVIGATOR_CONTENT.equals(element.getName())) {
 			try {
 				NavigatorContentDescriptor desc = new NavigatorContentDescriptor(element);
 				addNavigatorContentDescriptor(desc);

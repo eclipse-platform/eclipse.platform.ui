@@ -17,7 +17,7 @@ package org.eclipse.ui.navigator.internal.filters;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.navigator.CommonNavigator;
-import org.eclipse.ui.navigator.internal.NavigatorMessages;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 
 /**
  * 
@@ -34,8 +34,8 @@ public class SelectFiltersAction extends Action implements IAction {
 	private final CommonNavigator commonNavigator;
 
 	public SelectFiltersAction(CommonNavigator aCommonNavigator) {
-		super(NavigatorMessages.getString("SelectFiltersActionDelegate.0")); //$NON-NLS-1$
-		setToolTipText(NavigatorMessages.getString("SelectFiltersActionDelegate.1")); //$NON-NLS-1$
+		super(CommonNavigatorMessages.SelectFiltersActionDelegate_0); 
+		setToolTipText(CommonNavigatorMessages.SelectFiltersActionDelegate_1); 
 		commonNavigator = aCommonNavigator;
 	}
 

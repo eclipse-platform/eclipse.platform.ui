@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.navigator.internal.NavigatorContentService;
 
@@ -24,18 +25,40 @@ import org.eclipse.ui.navigator.internal.NavigatorContentService;
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
+ * 
  * @since 3.2  
  *
  */
 public final class NavigatorContentServiceFactory {
 	
+	/**
+	 * The singleton instance for creating NavigatorContentServices. 
+	 */
 	public static final NavigatorContentServiceFactory INSTANCE = new NavigatorContentServiceFactory(); 
 	
 	
+	/**
+	 * Returns an instance of INavigatorContentService configured 
+	 * for the given id. Instances are not shared for the same 
+	 * viewerId. 
+	 * 
+	 * @param aViewerId The viewer id of interest
+	 * @return An instance of INavigatorContentService configured for the given id. 
+	 */
 	public INavigatorContentService createContentService(String aViewerId) { 
 		return createContentService(aViewerId, null);
 	}
 	
+	/**
+	 * Returns an instance of INavigatorContentService configured 
+	 * for the given id. Instances are not shared for the same 
+	 * viewerId. 
+	 * 
+	 * @param aViewerId The viewer id of interest
+	 * @param aViewer The content service can use the given viewer to initialize content providers 
+	 * @return An instance of INavigatorContentService configured for the given id. 
+	 * @see IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, Object, Object)
+	 */
 	public INavigatorContentService createContentService(String aViewerId, StructuredViewer aViewer) {
 		if(aViewer == null)
 			return new NavigatorContentService(aViewerId);

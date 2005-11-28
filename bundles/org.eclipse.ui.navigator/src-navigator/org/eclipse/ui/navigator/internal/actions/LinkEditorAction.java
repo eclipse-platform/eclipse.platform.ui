@@ -32,9 +32,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ILinkHelper;
+import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
-import org.eclipse.ui.navigator.internal.NavigatorMessages;
 import org.eclipse.ui.navigator.internal.extensions.LinkHelperRegistry;
+import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -53,10 +54,16 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 	private IPartListener partListener;
 	private final CommonViewer commonViewer;
 	private final CommonNavigator commonNavigator;
+	private LinkHelperRegistry linkHelperRegistry;
 
+	/**
+	 * Create a LinkEditorAction for the given navigator and viewer. 
+	 * @param aNavigator The navigator which defines whether linking is enabled and implements {@link ISetSelectionTarget}.
+	 * @param aViewer The common viewer instance with a {@link INavigatorContentService}.
+	 */
 	public LinkEditorAction(CommonNavigator aNavigator, CommonViewer aViewer) {
-		super(NavigatorMessages.getString("LinkEditorActionDelegate.0")); //$NON-NLS-1$
-		setToolTipText(NavigatorMessages.getString("LinkEditorActionDelegate.1")); //$NON-NLS-1$ 
+		super(CommonNavigatorMessages.LinkEditorActionDelegate_0);
+		setToolTipText(CommonNavigatorMessages.LinkEditorActionDelegate_1); 
 		commonNavigator = aNavigator;
 		commonViewer = aViewer;
 		init();
@@ -83,7 +90,7 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {
-				ILinkHelper[] helpers = LinkHelperRegistry.getInstance().getLinkHelpersFor(aSelection);
+				ILinkHelper[] helpers = linkHelperRegistry.getLinkHelpersFor(aSelection);
 				if (helpers.length > 0)
 					helpers[0].activateEditor(commonNavigator.getSite().getPage(), aSelection);
 			}
@@ -131,6 +138,9 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 		updateLinkingEnabled(commonNavigator.isLinkingEnabled());
 
 		commonNavigator.addPropertyListener(this);
+		 
+		
+		linkHelperRegistry = new LinkHelperRegistry(commonViewer.getNavigatorContentService());
 	}
 
 	/**
@@ -140,7 +150,7 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 		if (anEditor != null) {
 
 			IEditorInput input = anEditor.getEditorInput();
-			ILinkHelper[] helpers = LinkHelperRegistry.getInstance().getLinkHelpersFor(input);
+			ILinkHelper[] helpers = linkHelperRegistry.getLinkHelpersFor(input);
 
 			IStructuredSelection selection = StructuredSelection.EMPTY;
 			IStructuredSelection newSelection = StructuredSelection.EMPTY;
@@ -155,10 +165,6 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 		}
 	}
 
-	/**
-	 * @param selection
-	 * @return
-	 */
 	private IStructuredSelection mergeSelection(IStructuredSelection aBase, IStructuredSelection aSelectionToAppend) {
 		if (aBase == null || aBase.isEmpty())
 			return (aSelectionToAppend != null) ? aSelectionToAppend : StructuredSelection.EMPTY;

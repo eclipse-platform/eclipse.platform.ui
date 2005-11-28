@@ -35,10 +35,10 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.IMementoAware;
 import org.eclipse.ui.navigator.INavigatorContentService;
-import org.eclipse.ui.navigator.INavigatorContentServiceListener;
 import org.eclipse.ui.navigator.NavigatorActivationService;
 import org.eclipse.ui.navigator.internal.extensions.IExtensionActivationListener;
 import org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor;
+import org.eclipse.ui.navigator.internal.extensions.INavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
@@ -123,8 +123,8 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		
 		Set enabledDescriptors = new HashSet();
 		final String viewerId = viewerDescriptor.getViewerId();
-		for(int extId = 0; extId < extensionIds.length; extId++) {
-			NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, extensionIds[extId], true);
+		NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, extensionIds, true);
+		for(int extId = 0; extId < extensionIds.length; extId++) {			
 			enabledDescriptors.add(CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(extensionIds[extId]));
 		}
 		
@@ -138,10 +138,12 @@ public class NavigatorContentService implements IExtensionActivationListener,
 					if(descriptors[descriptorIndx].getId().equals(extensionIds[extId]))
 						descriptorList.remove(descriptors[descriptorIndx]);
 			
+			String[] disabledExtensions = new String[descriptorList.size()];
 			for(int i=0; i<descriptorList.size(); i++) {
 				INavigatorContentDescriptor descriptor = (INavigatorContentDescriptor) descriptorList.get(i);
-				NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, descriptor.getId(), false);				
+				disabledExtensions[i] = descriptor.getId();		
 			}							
+			NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, disabledExtensions, false);		
 		}
 
 		if(enabledDescriptors.size() == 0)
@@ -153,8 +155,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 		Set enabledDescriptors = new HashSet();
 		final String viewerId = viewerDescriptor.getViewerId();
-		for(int extId = 0; extId < extensionIds.length; extId++) 
-			NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, extensionIds[extId], false); 
+		NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, extensionIds, false); 
 		
 		if(toEnableAllOthers) {
 			NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();			
@@ -166,11 +167,14 @@ public class NavigatorContentService implements IExtensionActivationListener,
 					if(descriptors[descriptorIndx].getId().equals(extensionIds[extId]))
 						descriptorList.remove(descriptors[descriptorIndx]); 
 			
+
+			String[] enabledExtensions = new String[descriptorList.size()];
 			for(int i=0; i<descriptorList.size(); i++) {
 				NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) descriptorList.get(i);
-				NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, descriptor.getId(), true);	
+				enabledExtensions[i] = descriptor.getId();	
 				enabledDescriptors.add(descriptor);
-			}							
+			}
+			NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, enabledExtensions, true);
 		}
 		if(enabledDescriptors.size() == 0)
 			return NO_DESCRIPTORS;
@@ -369,10 +373,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return contributionMemory;
 	}
 
-	/**
-	 * @param anElement
-	 * @return
-	 */
 	private Set getEnabledDescriptors(Object anElement) {
 		Set enabledByExpression = CONTENT_DESCRIPTOR_REGISTRY
 				.getEnabledContentDescriptors(anElement, viewerDescriptor);
@@ -382,16 +382,16 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return filterDescriptors(enabledByExpression);
 	}
 
-	/**
-	 * @param aSelection
-	 * @return
-	 */
 	private Set getEnabledDescriptors(IStructuredSelection aSelection) {
 		return filterDescriptors(CONTENT_DESCRIPTOR_REGISTRY
-				.getEnabledContentDescriptors(aSelection));
+				.getEnabledContentDescriptors(aSelection, viewerDescriptor));
 	}
 
 	private Set filterDescriptors(Set contentDescriptors) {
+		
+		if(exclusions.isEmpty())
+			return contentDescriptors;
+		
 		Set result = new HashSet();
 		for (Iterator contentDescriptorsItr = contentDescriptors.iterator(); contentDescriptorsItr.hasNext(); ) {
 			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) contentDescriptorsItr.next(); 
@@ -423,7 +423,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 *      java.lang.String, boolean)
 	 */
 	public void onExtensionActivation(String aViewerId,
-			String aNavigatorExtensionId, boolean toEnable) {
+			String[] aNavigatorExtensionId, boolean toEnable) {
 		update();
 	}
 
@@ -496,7 +496,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * 
 	 * @see org.eclipse.ui.navigator.internal.INavigatorContentService#getViewerDescriptor()
 	 */
-	public NavigatorViewerDescriptor getViewerDescriptor() {
+	public INavigatorViewerDescriptor getViewerDescriptor() {
 		return viewerDescriptor;
 	}
 
@@ -574,26 +574,25 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	protected final NavigatorContentExtension[] findRootContentDescriptors(
-			Object anElement, boolean toRespectViewerRoots) {
-		String[] rootDescriptorIds = viewerDescriptor
-				.getRootContentExtensionIds();
+			Object anElement, boolean toRespectViewerRoots) { 
 		NavigatorContentExtension[] resultInstances = null;
 
-		if (toRespectViewerRoots && rootDescriptorIds.length > 0) {
+		if (toRespectViewerRoots && viewerDescriptor.hasOverriddenRootExtensions()) {
 			List resultInstancesList = new ArrayList();
 
-			NavigatorContentDescriptor descriptor = null;
+			NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();
+			
 			NavigatorContentExtension extension = null;
-			for (int i = 0; i < rootDescriptorIds.length; i++) {
-				if (isActive(rootDescriptorIds[i])) {
-					descriptor = CONTENT_DESCRIPTOR_REGISTRY
-							.getContentDescriptor(rootDescriptorIds[i]);
-					extension = getExtension(descriptor);
+			for (int i = 0; i < descriptors.length; i++) {
+				if (isActive(descriptors[i].getId()) && 
+						viewerDescriptor.isRootExtension(descriptors[i].getId())) {
+					extension = getExtension(descriptors[i]);
 					if (!extension.hasLoadingFailed())
 						resultInstancesList.add(extension);
 				}
 			}
-			resultInstancesList
+			
+			resultInstances = (NavigatorContentExtension[]) resultInstancesList
 					.toArray((resultInstances = new NavigatorContentExtension[resultInstancesList
 							.size()]));
 		} else

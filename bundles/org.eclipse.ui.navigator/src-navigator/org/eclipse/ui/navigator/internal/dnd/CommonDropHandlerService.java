@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonDropActionDelegate;
-import org.eclipse.ui.navigator.internal.NavigatorMessages;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.navigator.internal.extensions.RegistryReader;
 
@@ -65,7 +65,7 @@ public class CommonDropHandlerService extends RegistryReader {
 				return (DropHandlerDescriptor[]) results.toArray(new DropHandlerDescriptor[results.size()]);
 			return NO_DROP_HANDLER_DESCRIPTORS;
 		} catch (Throwable t) {
-			NavigatorPlugin.log(NavigatorMessages.getString("CommonDropHandlerService.0") + t); //$NON-NLS-1$
+			NavigatorPlugin.log(CommonNavigatorMessages.CommonDropHandlerService_0 + t); 
 			return NO_DROP_HANDLER_DESCRIPTORS;
 		}
 	}
@@ -85,7 +85,7 @@ public class CommonDropHandlerService extends RegistryReader {
 				return (DropHandlerDescriptor[]) results.toArray(new DropHandlerDescriptor[results.size()]);
 			return NO_DROP_HANDLER_DESCRIPTORS;
 		} catch (Throwable t) {
-			NavigatorPlugin.log(NavigatorMessages.getString("CommonDropHandlerService.0") + t); //$NON-NLS-1$
+			NavigatorPlugin.log(CommonNavigatorMessages.CommonDropHandlerService_0 + t); 
 			return NO_DROP_HANDLER_DESCRIPTORS;
 		}
 	}
@@ -141,7 +141,7 @@ public class CommonDropHandlerService extends RegistryReader {
 				serializers = new SerializerDescriptor[0];
 
 		} catch (Throwable t) {
-			NavigatorPlugin.log(NavigatorMessages.getString("CommonDropHandlerService.0") + t); //$NON-NLS-1$
+			NavigatorPlugin.log(CommonNavigatorMessages.CommonDropHandlerService_0 + t);
 			serializers = new SerializerDescriptor[0];
 		}
 		return serializers;

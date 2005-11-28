@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator.internal.extensions;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.progress.UIJob;
@@ -95,9 +97,12 @@ public class StructuredViewerManager {
 	 */
 	public void safeRefresh() {
 		UIJob refreshJob= new UIJob(CommonNavigatorMessages.StructuredViewerManager_0) {
-			public IStatus runInUIThread(org.eclipse.core.runtime.IProgressMonitor monitor) {
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 				try {
-					if (viewer != null)
+					if(viewer.getControl().isDisposed())
+						return Status.OK_STATUS;					
+					Display display = viewer.getControl().getDisplay();
+					if (!display.isDisposed() && viewer != null)
 						viewer.refresh();
 				} catch (RuntimeException e) {
 					NavigatorPlugin.log(e.toString(), new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, 0, e.toString(), e));

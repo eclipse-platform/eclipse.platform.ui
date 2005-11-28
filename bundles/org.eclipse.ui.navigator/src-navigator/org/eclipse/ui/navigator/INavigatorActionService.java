@@ -39,7 +39,9 @@ import org.eclipse.ui.IMemento;
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
- * 
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ *</p>
  * @since 3.2
  *
  */

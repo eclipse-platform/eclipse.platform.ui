@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.navigator.INavigatorExtensionFilter;
-import org.eclipse.ui.navigator.internal.NavigatorMessages;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 
 /**
@@ -85,8 +85,8 @@ public class ExtensionFilterDescriptor {
 	}
 
 	public ExtensionFilterDescriptor(String filterId, String navigatorExtensionId, String name, String description, String viewerId, boolean enabledByDefault, ViewerFilter viewerFilter) {
-		Assert.isNotNull(filterId, NavigatorMessages.getString("ExtensionFilterDescriptor.10")); //$NON-NLS-1$
-		Assert.isNotNull(navigatorExtensionId, NavigatorMessages.getString("ExtensionFilterDescriptor.11")); //$NON-NLS-1$
+		Assert.isNotNull(filterId, CommonNavigatorMessages.ExtensionFilterDescriptor_10); 
+		Assert.isNotNull(navigatorExtensionId, CommonNavigatorMessages.ExtensionFilterDescriptor_11);
 		this.id = filterId;
 		this.navigatorExtensionId = navigatorExtensionId;
 		this.name = name;

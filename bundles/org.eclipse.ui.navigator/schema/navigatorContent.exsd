@@ -10,9 +10,7 @@
       </documentation>
    </annotation>
 
-   <include schemaLocation="commonExpression.exsd"/>
-
-   <include schemaLocation="emfEnablement.exsd"/>
+   <include schemaLocation="expressionLanguage.exsd"/>
 
    <element name="extension">
       <complexType>
@@ -46,15 +44,21 @@
    <element name="navigatorContent">
       <annotation>
          <documentation>
-            The root element of the extension schema. Defines information used by the Common Navigator to find available extensions.
+            A navigator content extension defines a content provider and label provider that can be used to provide children whenever an element matches the triggerPoints expression and also to provide a parent whenever an element matches the possibleChildren expression. Optionally, clients may also provide an action provider which can provide menu contributions and action bar contributions when an element is selected that the extension contributed, or that matches the triggerPoints expression. Clients may also choose to contribute a sorter to sort elements that are contributed by the extension.
          </documentation>
       </annotation>
       <complexType>
          <sequence>
-            <element ref="enablement"/>
+            <choice>
+               <element ref="enablement"/>
+               <sequence>
+                  <element ref="triggerPoints"/>
+                  <element ref="possibleChildren"/>
+               </sequence>
+            </choice>
             <element ref="duplicateContentFilter"/>
          </sequence>
-         <attribute name="id" type="string">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   A unique ID to identify this extension. Used for extension activation and by other extensions that would like to extend the defined extension (e.g. add another ICommonActionProvider)
@@ -86,7 +90,7 @@
                </restriction>
             </simpleType>
          </attribute>
-         <attribute name="contentProvider" type="string">
+         <attribute name="contentProvider" type="string" use="required">
             <annotation>
                <documentation>
                   Supplies the name of a class which implements org.eclipse.jface.viewers.ITreeContentProvider or org.eclipse.ui.navigator.INavigatorContentProvider.
@@ -94,7 +98,7 @@
 The content provider will be consulted when addeding children to the tree. Use the &apos;enablement&apos; clause to indicate what kinds of content should trigger a request to your content provider or label provider.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ITreeContentProvider"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -104,7 +108,7 @@ The content provider will be consulted when addeding children to the tree. Use t
                   Indicates the name of class which implements java.util.Comparator that knows how to sort the items supported by this extension. If the extension enables on types that it does not provide, but understands, it may be called upon to sort items that it did not contribute.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="java.util.Comparator"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -115,23 +119,11 @@ The content provider will be consulted when addeding children to the tree. Use t
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="enabledByDefault" type="boolean">
+         <attribute name="activeByDefault" type="boolean">
             <annotation>
                <documentation>
-                  Indicates whether the current extension will be enabled by default. True will enable the extension, False will disable the extension. Users can later choose to override this value.
+                  Indicates whether the current extension will be active by default. Each content extension may be turned on or off by the user. This state is referred to as the &apos;active&apos; state of a content extension. If this attribute is set to &apos;false&apos;, then the user will have to explicitly open the dialog and turn the extension on. 
                </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="openListener" type="string">
-            <annotation>
-               <documentation>
-                  Supplies the name of a class that implements org.eclipse.jface.views.OpenListener or org.eclipse.ui.navigator.ICommonOpenListener.
-
-This attribute is likely to be removed in the final version of the API. Instead, clients will be encouraged to supply an open action for a common retargetable action id.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="actionProvider" type="string">
@@ -140,17 +132,17 @@ This attribute is likely to be removed in the final version of the API. Instead,
                   Supplies the name of a class that implements org.eclipse.ui.navigator.ICommonActionProvider. The action provider has opportunities to contribute to the context menu and IActionBars (for retargetable actions and the view menu of the IViewPart).
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.ICommonActionProvider"/>
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="labelProvider" type="string">
+         <attribute name="labelProvider" type="string" use="required">
             <annotation>
                <documentation>
                   Supplies the name of a class which implements org.eclipse.jface.viewers.ILabelProvider or for more advanced functionality, the org.eclipse.ui.navigator.ICommonLabelProvider.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ILabelProvider"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -167,169 +159,86 @@ This attribute is likely to be removed in the final version of the API. Instead,
    <element name="enablement">
       <annotation>
          <documentation>
-            Objects which are accepted by the expression will cause the extension to be invoked. Clients must define objects that are considered &quot;trigger points&quot; for their extension to indicate when their content provider should be invoked, and also declare what types of content they contribute to indicate when their label provider should be invoked. 
-
-For example, a client that wants to contribute children of type org.acme.Child to an object contributed by another extension (say org.acme.Parent), then the extension must declare that it enables on both org.acme.Child and org.acme.Parent.
+            The enablement expression allows clients to specify the same expression for both triggerPoints and possibleChildren.
          </documentation>
       </annotation>
       <complexType>
-         <choice>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="not"/>
             <element ref="and"/>
             <element ref="or"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="triggerPoints">
+      <annotation>
+         <documentation>
+            The triggerPoints expression defines the nodes in a tree that should cause this extension to be invoked for children.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="not"/>
-            <element ref="objectClass"/>
-            <element ref="objectState"/>
-            <element ref="pluginState"/>
-            <element ref="systemProperty"/>
-         </choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+         </sequence>
       </complexType>
    </element>
 
-   <element name="contentProvider">
+   <element name="possibleChildren">
+      <annotation>
+         <documentation>
+            The possibleChildren expression defines the nodes in a tree that could be contributed by this extension. Clients should describes when this content extension could provide a parent for elements that match the expression.
+         </documentation>
+      </annotation>
       <complexType>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ITreeContentProvider"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="filterProvider">
-      <complexType>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.wst.common.navigator.internal.views.filters.ExtensionFilterProvider"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="linkWithEditorHandler">
-      <complexType>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.wst.common.navigator.internal.provisional.views.ILinkHelper"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="actionProvider">
-      <complexType>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="labelProvider">
-      <complexType>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ILabeltProvider"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="sorter">
-      <complexType>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="java.util.Comparator"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="not"/>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+         </sequence>
       </complexType>
    </element>
 
    <element name="duplicateContentFilter">
       <annotation>
          <documentation>
-            
-For extensions that which to augment or enhance the content provided by another existing extension (e.g. Resources), a client may specify a &quot;duplicateContentFilter&quot; which will be turned on and off with their extensions. Users will not have the capability to turn this special viewer filter on and off. 
+            For extensions that which to augment or enhance the content provided by another existing extension (e.g. Resources), a client may specify a &quot;duplicateContentFilter&quot; which will be turned on and off with their extensions. Users will not have the capability to turn this special viewer filter on and off.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="viewerFilter" type="string" use="required">
             <annotation>
                <documentation>
-                  
-A subclass of INavigatorExtensionFilter.
+                  A subclass of INavigatorExtensionFilter.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>

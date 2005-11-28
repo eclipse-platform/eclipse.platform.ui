@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.navigator.internal.NavigatorMessages;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 
 /**
@@ -112,7 +112,7 @@ public class NavigatorSelectionSerializer implements ISerializer {
 			}
 			result = byteArrayOutputStream.toByteArray();
 		} catch (IOException e) {
-			NavigatorPlugin.log(NavigatorMessages.getString("NavigatorSelectionSerializer.1") + e.toString()); //$NON-NLS-1$
+			NavigatorPlugin.log(CommonNavigatorMessages.NavigatorSelectionSerializer_1 + e.toString());  
 			result = null;
 		}
 		return result;

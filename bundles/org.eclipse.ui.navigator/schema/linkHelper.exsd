@@ -52,6 +52,9 @@
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string" use="required">
@@ -64,38 +67,48 @@
       </complexType>
    </element>
 
-   <element name="editorInputEnablement">   
+   <element name="editorInputEnablement">
       <complexType>
-         <choice>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="not"/>
             <element ref="and"/>
             <element ref="or"/>
-            <element ref="not"/>
-            <element ref="objectClass"/>
-            <element ref="objectState"/>
-            <element ref="pluginState"/>
-            <element ref="systemProperty"/>
-         </choice>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+         </sequence>
       </complexType>
    </element>
 
    <element name="selectionEnablement">
       <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="not"/>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+         </sequence>
          <attribute name="navigatorContentExtensionId" type="string">
             <annotation>
                <documentation>
                   
                </documentation>
             </annotation>
-         </attribute>         
-         <choice>
-            <element ref="and"/>
-            <element ref="or"/>
-            <element ref="not"/>
-            <element ref="objectClass"/>
-            <element ref="objectState"/>
-            <element ref="pluginState"/>
-            <element ref="systemProperty"/>
-         </choice> 
+         </attribute>
       </complexType>
    </element>
 

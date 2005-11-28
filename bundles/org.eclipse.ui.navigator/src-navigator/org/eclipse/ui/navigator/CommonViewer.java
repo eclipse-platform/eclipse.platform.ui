@@ -13,11 +13,6 @@ package org.eclipse.ui.navigator;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -31,10 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.navigator.internal.AdaptabilityUtility;
-import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorContentService;
-import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.navigator.internal.dnd.CommonNavigatorDragAdapter;
 import org.eclipse.ui.navigator.internal.dnd.CommonNavigatorDropAdapter;
 import org.eclipse.ui.part.PluginTransfer;
@@ -43,9 +35,10 @@ import org.eclipse.ui.part.PluginTransfer;
  * <p>
  * Provides the Tree Viewer for the Common Navigator. Content and labels are
  * provided by an instance of
- * {@link org.eclipse.ui.navigator.internal.NavigatorContentService}&nbsp;
+ * {@link INavigatorContentService}&nbsp;
  * which uses the ID supplied in the constructor
- * {@link CommonViewer#CommonViewer(String, Composite, int)}.
+ * {@link CommonViewer#CommonViewer(String, Composite, int)} or through 
+ * {@link NavigatorContentServiceFactory#createContentService(String, org.eclipse.jface.viewers.StructuredViewer)}.
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -70,7 +63,7 @@ public class CommonViewer extends TreeViewer {
 	 * documentation provided by {@link TreeViewer}.
 	 * </p>
 	 * 
-	 * @param anId
+	 * @param aViewerId
 	 *            An id tied to the extensions that is used to focus specific
 	 *            content to a particular instance of the Common Navigator
 	 * @param aParent
@@ -79,9 +72,9 @@ public class CommonViewer extends TreeViewer {
 	 *            A style mask that will be used to create the TreeViewer
 	 *            Composite.
 	 */
-	public CommonViewer(String aCommonNavigatorId, Composite aParent, int aStyle) {
+	public CommonViewer(String aViewerId, Composite aParent, int aStyle) {
 		super(aParent, aStyle);
-		contentService = new NavigatorContentService(aCommonNavigatorId, this);
+		contentService = new NavigatorContentService(aViewerId, this);
 		init();
 	}
 
@@ -101,6 +94,7 @@ public class CommonViewer extends TreeViewer {
 						.getLabelDecorator());
 		setLabelProvider(decoratingProvider); 
 		initDragAndDrop();
+		
 
 	}
 
@@ -119,14 +113,14 @@ public class CommonViewer extends TreeViewer {
 
 	/**
 	 * <p>
-	 * The {@link NavigatorContentService}provides the hook into the framework
+	 * The {@link INavigatorContentService}provides the hook into the framework
 	 * to provide content from the various extensions.
 	 * </p>
 	 * 
-	 * @return The {@link NavigatorContentService}that was created when the
+	 * @return The {@link INavigatorContentService}that was created when the
 	 *         viewer was created.
 	 */
-	public NavigatorContentService getNavigatorContentService() {
+	public INavigatorContentService getNavigatorContentService() {
 		return contentService;
 	}
 
@@ -208,38 +202,13 @@ public class CommonViewer extends TreeViewer {
 	 *      java.lang.Object, int)
 	 */
 	protected void createTreeItem(Widget parent, final Object element, int index) {
-		// TODO Auto-generated method stub
 		try {
 			super.createTreeItem(parent, element, index);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} catch (Error e) {
 			e.printStackTrace();
-		}
-		Job job = new Job(CommonNavigatorMessages.CommonViewer_0) {
-			public IStatus run(IProgressMonitor monitor) {
-				try {
-					contentService.findRelevantContentProviders(element);
-				} catch (RuntimeException ex) {
-					String msg = CommonNavigatorMessages.CommonViewer_1
-							+ element.getClass();
-					NavigatorPlugin.log(msg, new Status(IStatus.ERROR,
-							NavigatorPlugin.PLUGIN_ID, 0, msg, ex));
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		if (element instanceof ISchedulingRule)
-			job.setRule((ISchedulingRule) element);
-		else {
-			ISchedulingRule rule = (ISchedulingRule) AdaptabilityUtility
-					.getAdapter(element, ISchedulingRule.class);
-			if (rule != null) {
-				job.setRule(rule);
-			}
-		}
-
-		job.schedule();
+		} 
 
 	}
 

@@ -30,8 +30,8 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 
 	private static final NavigatorViewerDescriptorRegistry INSTANCE = new NavigatorViewerDescriptorRegistry();
 
-	protected static final String NAVIGATOR_VIEWER = "navigatorViewer"; //$NON-NLS-1$
-	protected static final String ATT_VIEWER_ID = "viewerId"; //$NON-NLS-1$
+	private static final String TAG_VIEWER_CONTENT_BINDING = "viewerContentBinding"; //$NON-NLS-1$
+	private static final String ATT_VIEWER_ID = "viewerId"; //$NON-NLS-1$
 	private static boolean isInitialized = false;
 
 	private final Map viewerDescriptors = new HashMap();
@@ -57,7 +57,7 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 	 * @param anExtensionPoint
 	 */
 	protected NavigatorViewerDescriptorRegistry() {
-		super(NavigatorPlugin.PLUGIN_ID, NAVIGATOR_VIEWER);
+		super(NavigatorPlugin.PLUGIN_ID, TAG_VIEWER_CONTENT_BINDING);
 	}
 
 	public NavigatorViewerDescriptor getNavigatorViewerDescriptor(String viewerId) {
@@ -70,7 +70,7 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 	 * @see org.eclipse.wst.common.navigator.internal.views.extensions.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
 	 */
 	protected boolean readElement(IConfigurationElement element) {
-		if (NAVIGATOR_VIEWER.equals(element.getName())) {
+		if (TAG_VIEWER_CONTENT_BINDING.equals(element.getName())) {
 			try {
 				String viewerId = element.getAttribute(ATT_VIEWER_ID);
 				NavigatorViewerDescriptor descriptor = getOrCreateNavigatorViewerDescriptor(viewerId);

@@ -14,6 +14,9 @@
  */
 package org.eclipse.ui.navigator.internal.filters;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -23,6 +26,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -41,35 +45,47 @@ import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorActionService;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorActivationService;
-import org.eclipse.ui.navigator.internal.CommonActivitiesUtilities;
-import org.eclipse.ui.navigator.internal.NavigatorMessages;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
+import org.eclipse.ui.navigator.internal.Utilities;
 import org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 
 /**
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
- * progress. There is a guarantee neither that this API will work nor that it will remain the same.
- * Please do not use this API without consulting with the Platform/UI team.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
  * </p>
  * 
  * @since 3.2
- *  
+ * 
  */
 public class CommonFilterSelectionDialog extends Dialog {
 
-	private static final NavigatorActivationService NAVIGATOR_ACTIVATION_SERVICE = NavigatorActivationService.getInstance();
-	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry.getInstance();
+	private static final NavigatorActivationService NAVIGATOR_ACTIVATION_SERVICE = NavigatorActivationService
+			.getInstance();
+
+	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry
+			.getInstance();
+
 	private static final Object[] NO_CHILDREN = new Object[0];
+
 	private CheckboxTableViewer extensionsCheckboxTableViewer;
+
 	private Text descriptionText;
+
 	private ISelectionChangedListener updateDescriptionSelectionListener;
+
 	private TabFolder filtersTabFolder;
+
 	private CheckboxTableViewer filtersCheckboxTableViewer;
-	
+
 	private CommonNavigator commonNavigator;
+
 	private final CommonViewer commonViewer;
+
 	private final INavigatorContentService contentService;
 
 	/**
@@ -78,7 +94,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 	public CommonFilterSelectionDialog(CommonNavigator aCommonNavigator) {
 		super(aCommonNavigator.getSite().getShell());
 		setShellStyle(SWT.RESIZE | getShellStyle());
-		
+
 		commonNavigator = aCommonNavigator;
 		commonViewer = commonNavigator.getCommonViewer();
 		contentService = commonViewer.getNavigatorContentService();
@@ -90,7 +106,8 @@ public class CommonFilterSelectionDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		getShell().setText(NavigatorMessages.getString("CommonFilterSelectionDialog.0")); //$NON-NLS-1$		
+		getShell().setText(
+				CommonNavigatorMessages.CommonFilterSelectionDialog_0);
 		Composite superComposite = (Composite) super.createDialogArea(parent);
 
 		createFiltersTabFolder(superComposite);
@@ -104,8 +121,12 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 		createDescriptionText(superComposite);
 
-		createTabItem(filtersTabFolder, NavigatorMessages.getString("CommonFilterSelectionDialog.0"), filtersComposite); //$NON-NLS-1$
-		createTabItem(filtersTabFolder, NavigatorMessages.getString("CommonFilterSelectionDialog.1"), extensionsComposite); //$NON-NLS-1$
+		createTabItem(filtersTabFolder,
+				CommonNavigatorMessages.CommonFilterSelectionDialog_0,
+				filtersComposite);
+		createTabItem(filtersTabFolder,
+				CommonNavigatorMessages.CommonFilterSelectionDialog_1,
+				extensionsComposite);
 
 		descriptionText.setBackground(superComposite.getBackground());
 
@@ -137,7 +158,8 @@ public class CommonFilterSelectionDialog extends Dialog {
 	 * @param filtersTabFolderArg
 	 * @param composite
 	 */
-	private void createTabItem(TabFolder filtersTabFolderArg, String label, Composite composite) {
+	private void createTabItem(TabFolder filtersTabFolderArg, String label,
+			Composite composite) {
 		TabItem extensionsTabItem = new TabItem(filtersTabFolderArg, SWT.NONE);
 		extensionsTabItem.setText(label);
 		extensionsTabItem.setControl(composite);
@@ -168,13 +190,12 @@ public class CommonFilterSelectionDialog extends Dialog {
 		return composite;
 	}
 
-
-
 	/**
 	 * @param composite
 	 */
 	private void createExtensionsInstructionsLabel(Composite composite) {
-		Label extensionsInstructionLabel = new Label(composite, SWT.BOLD | SWT.V_SCROLL);
+		Label extensionsInstructionLabel = new Label(composite, SWT.BOLD
+				| SWT.V_SCROLL);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.heightHint = convertHeightInCharsToPixels(1) + 3;
 		gridData.horizontalIndent = convertHorizontalDLUsToPixels(2);
@@ -183,14 +204,16 @@ public class CommonFilterSelectionDialog extends Dialog {
 		gridData.horizontalAlignment = GridData.HORIZONTAL_ALIGN_FILL;
 
 		extensionsInstructionLabel.setLayoutData(gridData);
-		extensionsInstructionLabel.setText(NavigatorMessages.getString("CommonFilterSelectionDialog.3")); //$NON-NLS-1$
+		extensionsInstructionLabel
+				.setText(CommonNavigatorMessages.CommonFilterSelectionDialog_3);
 	}
 
 	/**
 	 * @param composite
 	 */
 	private void createFiltersInstructionsLabel(Composite composite) {
-		Label filtersInstructionLabel = new Label(composite, SWT.BOLD | SWT.V_SCROLL);
+		Label filtersInstructionLabel = new Label(composite, SWT.BOLD
+				| SWT.V_SCROLL);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.heightHint = convertHeightInCharsToPixels(1) + 3;
 		gridData.horizontalIndent = convertHorizontalDLUsToPixels(2);
@@ -199,28 +222,33 @@ public class CommonFilterSelectionDialog extends Dialog {
 		gridData.horizontalAlignment = GridData.HORIZONTAL_ALIGN_FILL;
 
 		filtersInstructionLabel.setLayoutData(gridData);
-		filtersInstructionLabel.setText(NavigatorMessages.getString("CommonFilterSelectionDialog.4")); //$NON-NLS-1$
+		filtersInstructionLabel
+				.setText(CommonNavigatorMessages.CommonFilterSelectionDialog_4);
 	}
 
 	/**
 	 * @param composite
 	 */
 	private void createDescriptionText(Composite composite) {
-		descriptionText = new Text(composite, SWT.WRAP | SWT.V_SCROLL | SWT.BORDER);
-		GridData descriptionTextGridData = new GridData(GridData.FILL_HORIZONTAL);
+		descriptionText = new Text(composite, SWT.WRAP | SWT.V_SCROLL
+				| SWT.BORDER);
+		GridData descriptionTextGridData = new GridData(
+				GridData.FILL_HORIZONTAL);
 		descriptionTextGridData.heightHint = convertHeightInCharsToPixels(3);
 		descriptionText.setLayoutData(descriptionTextGridData);
 	}
-
 
 	/**
 	 * @param composite
 	 */
 	private void createFiltersTableViewer(Composite composite) {
-		filtersCheckboxTableViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER | SWT.RESIZE | SWT.FULL_SELECTION);
+		filtersCheckboxTableViewer = CheckboxTableViewer.newCheckList(
+				composite, SWT.BORDER | SWT.RESIZE | SWT.FULL_SELECTION);
 
-		filtersCheckboxTableViewer.setContentProvider(new CommonFilterContentProvider());
-		filtersCheckboxTableViewer.setLabelProvider(new CommonFilterLabelProvider());
+		filtersCheckboxTableViewer
+				.setContentProvider(new CommonFilterContentProvider());
+		filtersCheckboxTableViewer
+				.setLabelProvider(new CommonFilterLabelProvider());
 		filtersCheckboxTableViewer.setInput(contentService);
 
 		createFiltersInstructionsLabel(composite);
@@ -232,10 +260,13 @@ public class CommonFilterSelectionDialog extends Dialog {
 	 * @param composite
 	 */
 	private void createExtensionsTableViewer(Composite composite) {
-		extensionsCheckboxTableViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER | SWT.RESIZE);
+		extensionsCheckboxTableViewer = CheckboxTableViewer.newCheckList(
+				composite, SWT.BORDER | SWT.RESIZE);
 
-		extensionsCheckboxTableViewer.setContentProvider(new ExtensionContentProvider());
-		extensionsCheckboxTableViewer.setLabelProvider(new CommonFilterLabelProvider());
+		extensionsCheckboxTableViewer
+				.setContentProvider(new ExtensionContentProvider());
+		extensionsCheckboxTableViewer
+				.setLabelProvider(new CommonFilterLabelProvider());
 		extensionsCheckboxTableViewer.setInput(contentService);
 
 		createExtensionsInstructionsLabel(composite);
@@ -243,17 +274,16 @@ public class CommonFilterSelectionDialog extends Dialog {
 		createCheckboxTable(extensionsCheckboxTableViewer);
 	}
 
-
 	/**
-	 *  
+	 * 
 	 */
 	private void createCheckboxTable(CheckboxTableViewer tableViewer) {
 		Table table = tableViewer.getTable();
 		GridLayout tableLayout = new GridLayout();
-		tableLayout.marginHeight = 0; //convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		tableLayout.marginWidth = 0; //convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		tableLayout.verticalSpacing = 0; //convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		tableLayout.horizontalSpacing = 0; //convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		tableLayout.marginHeight = 0; // convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		tableLayout.marginWidth = 0; // convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		tableLayout.verticalSpacing = 0; // convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		tableLayout.horizontalSpacing = 0; // convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		tableLayout.numColumns = 2;
 		GridData tableGridData = new GridData(GridData.FILL_BOTH);
 		tableGridData.widthHint = convertHorizontalDLUsToPixels(100);
@@ -271,11 +301,14 @@ public class CommonFilterSelectionDialog extends Dialog {
 		 */
 		public void selectionChanged(SelectionChangedEvent event) {
 
-			IStructuredSelection structuredSelection = (IStructuredSelection) event.getSelection();
+			IStructuredSelection structuredSelection = (IStructuredSelection) event
+					.getSelection();
 			Object element = structuredSelection.getFirstElement();
 			if (element instanceof NavigatorContentDescriptor) {
 				INavigatorContentDescriptor ncd = (INavigatorContentDescriptor) element;
-				String desc = NavigatorMessages.format("CommonFilterSelectionDialog.2", new Object[]{ncd.getName()}); //$NON-NLS-1$ 
+				String desc = NLS.bind(
+						CommonNavigatorMessages.CommonFilterSelectionDialog_2,
+						new Object[] { ncd.getName() });
 				descriptionText.setText(desc);
 			} else if (element instanceof ExtensionFilterDescriptor) {
 				ExtensionFilterDescriptor efd = (ExtensionFilterDescriptor) element;
@@ -287,45 +320,54 @@ public class CommonFilterSelectionDialog extends Dialog {
 	}
 
 	/**
-	 *  
+	 * 
 	 */
 	protected void updateCheckedItems() {
 
-		extensionsCheckboxTableViewer.addSelectionChangedListener(getSelectionListener());
-		filtersCheckboxTableViewer.addSelectionChangedListener(getSelectionListener());
+		extensionsCheckboxTableViewer
+				.addSelectionChangedListener(getSelectionListener());
+		filtersCheckboxTableViewer
+				.addSelectionChangedListener(getSelectionListener());
 
 		updateExtensionsCheckState();
 		updateFiltersCheckState();
 	}
 
 	/**
-	 *  
+	 * 
 	 */
 	private void updateExtensionsCheckState() {
 		NavigatorContentDescriptor descriptor;
 		boolean enabled;
 
-		TableItem[] descriptorTableItems = extensionsCheckboxTableViewer.getTable().getItems();
+		TableItem[] descriptorTableItems = extensionsCheckboxTableViewer
+				.getTable().getItems();
 		for (int i = 0; i < descriptorTableItems.length; i++) {
 			if (descriptorTableItems[i].getData() instanceof NavigatorContentDescriptor) {
-				descriptor = (NavigatorContentDescriptor) descriptorTableItems[i].getData();
-				enabled = NAVIGATOR_ACTIVATION_SERVICE.isNavigatorExtensionActive(contentService.getViewerId(), descriptor.getId());
+				descriptor = (NavigatorContentDescriptor) descriptorTableItems[i]
+						.getData();
+				enabled = NAVIGATOR_ACTIVATION_SERVICE
+						.isNavigatorExtensionActive(contentService
+								.getViewerId(), descriptor.getId());
 				extensionsCheckboxTableViewer.setChecked(descriptor, enabled);
 			}
 		}
 	}
 
 	/**
-	 *  
+	 * 
 	 */
 	private void updateFiltersCheckState() {
-		IStructuredContentProvider contentProvider = (IStructuredContentProvider) filtersCheckboxTableViewer.getContentProvider();
+		IStructuredContentProvider contentProvider = (IStructuredContentProvider) filtersCheckboxTableViewer
+				.getContentProvider();
 		Object[] children = contentProvider.getElements(contentService);
-		ExtensionFilterViewerRegistry filterRegistry = ExtensionFilterRegistryManager.getInstance().getViewerRegistry(contentService.getViewerId());
+		ExtensionFilterViewerRegistry filterRegistry = ExtensionFilterRegistryManager
+				.getInstance().getViewerRegistry(contentService.getViewerId());
 		ExtensionFilterDescriptor filterDescriptor = null;
 		for (int i = 0; i < children.length; i++) {
 			filterDescriptor = (ExtensionFilterDescriptor) children[i];
-			filtersCheckboxTableViewer.setChecked(children[i], filterRegistry.getActivationManager().isFilterActive(filterDescriptor));
+			filtersCheckboxTableViewer.setChecked(children[i], filterRegistry
+					.getActivationManager().isFilterActive(filterDescriptor));
 		}
 	}
 
@@ -351,41 +393,55 @@ public class CommonFilterSelectionDialog extends Dialog {
 		NavigatorContentDescriptor descriptor = null;
 		ExtensionFilterDescriptor filterDescriptor = null;
 
-		ExtensionFilterViewerRegistry filterRegistry = ExtensionFilterRegistryManager.getInstance().getViewerRegistry(contentService.getViewerId());
-		TableItem[] extensionTableItems = extensionsCheckboxTableViewer.getTable().getItems();
+		ExtensionFilterViewerRegistry filterRegistry = ExtensionFilterRegistryManager
+				.getInstance().getViewerRegistry(contentService.getViewerId());
+		TableItem[] extensionTableItems = extensionsCheckboxTableViewer
+				.getTable().getItems();
 		for (int descriptorIndex = 0; descriptorIndex < extensionTableItems.length; descriptorIndex++) {
 
 			if (extensionTableItems[descriptorIndex].getData() instanceof NavigatorContentDescriptor) {
-				descriptor = (NavigatorContentDescriptor) extensionTableItems[descriptorIndex].getData();
+				descriptor = (NavigatorContentDescriptor) extensionTableItems[descriptorIndex]
+						.getData();
 
 				enabled = extensionsCheckboxTableViewer.getChecked(descriptor);
-				if (enabled != NAVIGATOR_ACTIVATION_SERVICE.isNavigatorExtensionActive(contentService.getViewerId(), descriptor.getId())) {
+				if (enabled != NAVIGATOR_ACTIVATION_SERVICE
+						.isNavigatorExtensionActive(contentService
+								.getViewerId(), descriptor.getId())) {
 					updateExtensionActivation = true;
-					NAVIGATOR_ACTIVATION_SERVICE.activateNavigatorExtension(contentService.getViewerId(), descriptor.getId(), enabled);
+					NAVIGATOR_ACTIVATION_SERVICE.activateNavigatorExtension(
+							contentService.getViewerId(), descriptor.getId(),
+							enabled);
 				}
 			}
 		}
 
-		TableItem[] filterTableItems = filtersCheckboxTableViewer.getTable().getItems();
+		TableItem[] filterTableItems = filtersCheckboxTableViewer.getTable()
+				.getItems();
 		for (int descriptorIndex = 0; descriptorIndex < filterTableItems.length; descriptorIndex++) {
 
 			if (filterTableItems[descriptorIndex].getData() instanceof ExtensionFilterDescriptor) {
-				filterDescriptor = (ExtensionFilterDescriptor) filterTableItems[descriptorIndex].getData();
-				enabled = filtersCheckboxTableViewer.getChecked(filterDescriptor);
-				if (filterRegistry.getActivationManager().isFilterActive(filterDescriptor) != enabled) {
+				filterDescriptor = (ExtensionFilterDescriptor) filterTableItems[descriptorIndex]
+						.getData();
+				enabled = filtersCheckboxTableViewer
+						.getChecked(filterDescriptor);
+				if (filterRegistry.getActivationManager().isFilterActive(
+						filterDescriptor) != enabled) {
 					updateFilterActivation = true;
-					filterRegistry.getActivationManager().activateFilter(filterDescriptor, enabled);
+					filterRegistry.getActivationManager().activateFilter(
+							filterDescriptor, enabled);
 				}
 			}
 		}
 		if (updateExtensionActivation)
-			NAVIGATOR_ACTIVATION_SERVICE.persistExtensionActivations(contentService.getViewerId());
+			NAVIGATOR_ACTIVATION_SERVICE
+					.persistExtensionActivations(contentService.getViewerId());
 		if (updateFilterActivation)
 			filterRegistry.getActivationManager().persistFilterActivations();
 		if (updateExtensionActivation || updateFilterActivation) {
 			contentService.update();
-			
-			INavigatorActionService actionService = commonNavigator.getNavigatorActionService();
+
+			INavigatorActionService actionService = commonNavigator
+					.getNavigatorActionService();
 			actionService.refresh();
 		}
 
@@ -394,15 +450,14 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 	class ExtensionContentProvider implements ITreeContentProvider {
 
-
-
 		/*
 		 * (non-Javadoc)
 		 * 
 		 * @see org.eclipse.wst.common.navigator.internal.views.navigator.INavigatorContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
-		public void inputChanged(Viewer aViewer, Object anOldInput, Object aNewInput) {
+		public void inputChanged(Viewer aViewer, Object anOldInput,
+				Object aNewInput) {
 		}
 
 		/*
@@ -438,7 +493,15 @@ public class CommonFilterSelectionDialog extends Dialog {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object anInputElement) {
-			return CommonActivitiesUtilities.filterByActivity(CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors());
+			List results = new ArrayList();
+			INavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY
+					.getAllContentDescriptors();
+			for (int i = 0; i < descriptors.length; i++)
+				if (Utilities.isVisible(contentService
+								.getViewerDescriptor(), descriptors[i]))
+					results.add(descriptors[i]);
+
+			return results.size() > 0 ? results.toArray() : NO_CHILDREN;
 		}
 
 		/*
