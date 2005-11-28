@@ -8,3 +8,6 @@ org.eclipse.jface.text/debug/ContentAssistSubjectAdapters= false
 
 # Prints debug information related to RevisionRulerColumn
 org.eclipse.jface.text.source/debug/RevisionRulerColumn= false
+
+# Enables checking of the FastPartitioner's position chache
+org.eclipse.jface.text/debug/FastPartitioner/PositionCache= false
