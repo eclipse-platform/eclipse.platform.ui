@@ -235,6 +235,12 @@ public class PopupDialog extends Window {
 	 * font.
 	 */
 	private Font infoFont;
+	
+	/**
+	 * Font to be used for the title area text. Computed based on the dialog's
+	 * font.
+	 */
+	private Font titleFont;
 
 	/**
 	 * Flags indicating whether we are listening for shell deactivate events,
@@ -390,6 +396,12 @@ public class PopupDialog extends Window {
 				}
 			});
 		}
+		
+		shell.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) {
+				handleDispose();
+			}
+		});
 	}
 
 	/**
@@ -579,8 +591,14 @@ public class PopupDialog extends Window {
 		if (!showDialogMenu)
 			gd.horizontalSpan = 2;
 		titleLabel.setLayoutData(gd);
-		titleLabel.setFont(JFaceResources.getBannerFont());
-
+		
+		Font font = titleLabel.getFont();
+		FontData[] fontDatas = font.getFontData();
+		for (int i = 0; i < fontDatas.length; i++)
+			fontDatas[i].setStyle(SWT.BOLD);
+		titleFont = new Font(titleLabel.getDisplay(), fontDatas);
+		titleLabel.setFont(titleFont);
+		
 		if (titleText != null) {
 			titleLabel.setText(titleText);
 		}
@@ -621,14 +639,6 @@ public class PopupDialog extends Window {
 		infoLabel.setLayoutData(gd);
 		infoLabel.setForeground(parent.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_DARK_SHADOW));
-
-		getShell().addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent event) {
-				if (infoFont != null && !infoFont.isDisposed())
-					infoFont.dispose();
-				infoFont = null;
-			}
-		});
 		return infoLabel;
 	}
 
@@ -1149,5 +1159,18 @@ public class PopupDialog extends Window {
 			}
 		}
 
+	}
+	
+	/**
+	 * The dialog is being disposed.  Dispose of any resources allocated.
+	 *
+	 */
+	private void handleDispose() {
+		if (infoFont != null && !infoFont.isDisposed())
+			infoFont.dispose();
+		infoFont = null;
+		if (titleFont != null && !titleFont.isDisposed())
+			titleFont.dispose();
+		titleFont = null;
 	}
 }
