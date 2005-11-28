@@ -16,8 +16,7 @@ import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
- * Handles content manipulation. Filters filter content in as opposed to filtering out. ie: if a
- * filter passes, content is displayed. 
+ * Handles content manipulation. Filters filter content in as opposed to filtering out.
  * 
  */
 public class UIContentFilterProcessor extends UAContentFilterProcessor {
@@ -42,12 +41,10 @@ public class UIContentFilterProcessor extends UAContentFilterProcessor {
 		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
 		IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
 		if (!activityManager.getCategory(categoryId).isDefined())
-			// if category is not defined, do not filter.
 			return false;
 
 		boolean categoryIsEnabled = WorkbenchActivityHelper.isEnabled(activityManager, categoryId);
 		if (categoryIsEnabled)
-			// category is enabled, filter content in => content is included.
 			return true;
 		return false;
 	}
@@ -60,12 +57,10 @@ public class UIContentFilterProcessor extends UAContentFilterProcessor {
 		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
 		IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
 		if (!activityManager.getActivity(activityId).isDefined())
-			// if activity is not defined, do not filter.
 			return false;
 
 		boolean activityIsEnabled = activityManager.getActivity(activityId).isEnabled();
 		if (activityIsEnabled)
-			// activity is enabled, filter content in => content is included.
 			return true;
 		return false;
 	}

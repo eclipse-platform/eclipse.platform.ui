@@ -77,16 +77,12 @@ public class UAContentParser {
 		try {
 			document = doParse(content);
 			if (document != null) {
-				// xml file is loaded. check that it is XHTML
+
 				Element rootElement = document.getDocumentElement();
 				// DocumentType docType = document.getDoctype();
 				if (rootElement.getTagName().equals(TAG_HTML)) {
-					// rely on root element to detect if we have an XHTML file
-					// and not on doctype. We need to support xhtml files with
-					// no doctype.
 					hasXHTMLContent = true;
 				} else
-					// not XHTML.
 					document = null;
 			}
 		} catch (Exception e) {
@@ -99,7 +95,6 @@ public class UAContentParser {
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			docFactory.setValidating(false);
-			// if this is not set, Document.getElementsByTagNameNS() will fail.
 			docFactory.setNamespaceAware(true);
 			docFactory.setExpandEntityReferences(false);
 			DocumentBuilder parser = docFactory.newDocumentBuilder();
@@ -112,8 +107,6 @@ public class UAContentParser {
 					if (systemId.equals(XHTML1_TRANSITIONAL) || systemId.equals(XHTML1_STRICT)
 							|| systemId.equals(XHTML1_FRAMESET)) {
 
-						// be carefull here to support running as a jarred
-						// plugin.
 						URL dtdURL = (URL) dtdMap.get(systemId);
 						InputSource in = new InputSource(dtdURL.openStream());
 						in.setSystemId(dtdURL.toExternalForm());
@@ -124,7 +117,6 @@ public class UAContentParser {
 			});
 			return parser;
 		} catch (ParserConfigurationException pce) {
-			// Parser with specified options can't be built
 			HelpPlugin.logError(pce.getMessage(), pce);
 		}
 		return null;
@@ -156,7 +148,6 @@ public class UAContentParser {
 			buffer.append("\n"); //$NON-NLS-1$   
 			buffer.append(spe.getMessage());
 
-			// Use the contained exception.
 			Exception x = spe;
 			if (spe.getException() != null)
 				x = spe.getException();

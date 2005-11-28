@@ -1,20 +1,22 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+/***************************************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ **************************************************************************************************/
 package org.eclipse.help.internal.toc;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.HelpPlugin;
 
 public class TocBuilder {
+
 	// list of all toc files
 	protected Collection contributedTocFiles;
 
@@ -39,8 +41,7 @@ public class TocBuilder {
 		for (Iterator it = contributedTocFiles.iterator(); it.hasNext();) {
 			TocFile tocFile = (TocFile) it.next();
 			Toc toc = tocFile.getToc();
-			if (toc != null && toc.getTocFile().isPrimary()
-					&& !isIntegrated(toc))
+			if (toc != null && toc.getTocFile().isPrimary() && !isIntegrated(toc))
 				tocCol.add((toc));
 		}
 		return tocCol;
@@ -129,8 +130,7 @@ public class TocBuilder {
 		TocFile tocFile = null;
 		for (Iterator it = contributedTocFiles.iterator(); it.hasNext();) {
 			tocFile = (TocFile) it.next();
-			if (tocFile.getPluginID().equals(plugin)
-					&& tocFile.getHref().equals(path))
+			if (tocFile.getPluginID().equals(plugin) && tocFile.getHref().equals(path))
 				break;
 			tocFile = null;
 		}
@@ -148,8 +148,7 @@ public class TocBuilder {
 		// check if there if there is TOC in ancestor hierarchy (depth first)
 		for (Iterator it = element.getParents().iterator(); it.hasNext();) {
 			TocNode parent = (TocNode) it.next();
-			if (parent instanceof Toc
-					&& ((Toc) parent).getTocFile().isPrimary()) {
+			if (parent instanceof Toc && ((Toc) parent).getTocFile().isPrimary()) {
 				return true;
 			} else if (isIntegrated(parent)) {
 				return true;

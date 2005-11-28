@@ -16,8 +16,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Handles content manipulation. Filters filter content in as opposed to filtering out. ie: if a
- * filter passes, content is displayed.
+ * Handles content manipulation. Filters filter content in as opposed to filtering out.
  * 
  */
 public class UAContentFilterProcessor {

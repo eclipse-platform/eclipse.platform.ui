@@ -96,7 +96,7 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		// hook UI filtering
+
 		XHTMLSupport.setFilterProcessor(new UIContentFilterProcessor());
 
 		// bundleContext = context;

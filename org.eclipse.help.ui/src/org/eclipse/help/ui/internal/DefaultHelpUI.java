@@ -1,14 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+/***************************************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *     Sebastian Davids <sdavids@gmx.de> - bug 93374
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation Sebastian Davids <sdavids@gmx.de> -
+ * bug 93374
+ **************************************************************************************************/
 package org.eclipse.help.ui.internal;
 
 import java.net.URL;
@@ -46,31 +44,32 @@ import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 
 /**
- * This class is an implementation of the Help UI. In is registered into the
- * helpSupport extension point, and is responsible for handling requests to
- * display help. The methods on this class interact with the actual UI component
- * handling the display.
+ * This class is an implementation of the Help UI. In is registered into the helpSupport extension
+ * point, and is responsible for handling requests to display help. The methods on this class
+ * interact with the actual UI component handling the display.
  * <p>
- * Most methods delegate most work to HelpDisplay class; only the UI specific
- * ones implemented in place.
+ * Most methods delegate most work to HelpDisplay class; only the UI specific ones implemented in
+ * place.
  * </p>
  */
 public class DefaultHelpUI extends AbstractHelpUI {
+
 	private ContextHelpDialog f1Dialog = null;
 	private ContextHelpWindow f1Window = null;
 	private static DefaultHelpUI instance;
 
 	private static final String HELP_VIEW_ID = "org.eclipse.help.ui.HelpView"; //$NON-NLS-1$
-	
+
 	class ExternalWorkbenchBrowser implements IBrowser {
+
 		public ExternalWorkbenchBrowser() {
 		}
-		
+
 		private IWebBrowser getExternalBrowser() throws PartInitException {
-			IWorkbenchBrowserSupport support = PlatformUI.getWorkbench()
-					.getBrowserSupport();
+			IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
 			return support.getExternalBrowser();
 		}
+
 		public void close() {
 		}
 
@@ -114,7 +113,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		// to use workbench external browser instead of its own.
 		BaseHelpSystem.getInstance().setBrowserInstance(new ExternalWorkbenchBrowser());
 	}
-	
+
 	static DefaultHelpUI getInstance() {
 		return instance;
 	}
@@ -125,14 +124,14 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	public void displayHelp() {
 		BaseHelpSystem.getHelpDisplay().displayHelp(useExternalBrowser(null));
 	}
-	
+
 	/**
 	 * Displays search.
 	 */
 	public void displaySearch() {
 		search(null);
 	}
-	
+
 	/**
 	 * Displays dynamic help.
 	 */
@@ -142,25 +141,24 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		if (window != null && isActiveShell(activeShell, window)) {
 			IIntroManager introMng = PlatformUI.getWorkbench().getIntroManager();
 			IIntroPart intro = introMng.getIntro();
-			if (intro!=null && !introMng.isIntroStandby(intro))
+			if (intro != null && !introMng.isIntroStandby(intro))
 				introMng.setIntroStandby(intro, true);
-			
+
 			IWorkbenchPage page = window.getActivePage();
 			Control c = activeShell.getDisplay().getFocusControl();
 			if (page != null) {
 				IWorkbenchPart activePart = page.getActivePart();
 				try {
 					IViewPart part = page.showView(HELP_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-					if (part!=null) {
-						HelpView view = (HelpView)part;
+					if (part != null) {
+						HelpView view = (HelpView) part;
 						view.showDynamicHelp(activePart, c);
 					}
 				} catch (PartInitException e) {
 				}
-			}
-			else {
+			} else {
 				// check the dialog
-				if (activeShell!=null) {
+				if (activeShell != null) {
 					Object data = activeShell.getData();
 					if (data instanceof Window) {
 						IContext context = ContextHelpPart.findHelpContext(c);
@@ -172,34 +170,33 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			}
 		}
 	}
-	
+
 	/**
 	 * Starts the search.
 	 */
-	
+
 	public void search(final String expression) {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		Shell activeShell = getActiveShell();
 		if (window != null && isActiveShell(activeShell, window)) {
 			IIntroManager introMng = PlatformUI.getWorkbench().getIntroManager();
 			IIntroPart intro = introMng.getIntro();
-			if (intro!=null && !introMng.isIntroStandby(intro))
+			if (intro != null && !introMng.isIntroStandby(intro))
 				introMng.setIntroStandby(intro, true);
-			
+
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
 				try {
 					IViewPart part = page.showView(HELP_VIEW_ID);
-					if (part!=null) {
-						HelpView view = (HelpView)part;
+					if (part != null) {
+						HelpView view = (HelpView) part;
 						view.startSearch(expression);
 					}
 				} catch (PartInitException e) {
 				}
-			}
-			else {
+			} else {
 				// check the dialog
-				if (activeShell!=null) {
+				if (activeShell != null) {
 					Object data = activeShell.getData();
 					if (data instanceof Window) {
 						displayContextAsHelpPane(activeShell, null);
@@ -209,10 +206,10 @@ public class DefaultHelpUI extends AbstractHelpUI {
 				warnNoOpenPerspective(window);
 			}
 		}
-	}	
+	}
 
 	private void warnNoOpenPerspective(IWorkbenchWindow window) {
-		MessageDialog.openInformation(window.getShell(), Messages.DefaultHelpUI_wtitle, 
+		MessageDialog.openInformation(window.getShell(), Messages.DefaultHelpUI_wtitle,
 				Messages.DefaultHelpUI_noPerspMessage);
 	}
 
@@ -221,16 +218,13 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	 * <ul>
 	 * <li>a URL in a format that can be returned by
 	 * {@link  org.eclipse.help.IHelpResource#getHref() IHelpResource.getHref()}
-	 * <li>a URL query in the format format
-	 * <em>key=value&amp;key=value ...</em> The valid keys are: "tab", "toc",
-	 * "topic", "contextId". For example,
-	 * <em>toc="/myplugin/mytoc.xml"&amp;topic="/myplugin/references/myclass.html"</em>
-	 * is valid.
+	 * <li>a URL query in the format format <em>key=value&amp;key=value ...</em> The valid keys
+	 * are: "tab", "toc", "topic", "contextId". For example,
+	 * <em>toc="/myplugin/mytoc.xml"&amp;topic="/myplugin/references/myclass.html"</em> is valid.
 	 * </ul>
 	 */
 	public void displayHelpResource(String href) {
-		BaseHelpSystem.getHelpDisplay().displayHelpResource(href,
-				useExternalBrowser(href));
+		BaseHelpSystem.getHelpDisplay().displayHelpResource(href, useExternalBrowser(href));
 	}
 
 	/**
@@ -246,16 +240,15 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	public void displayContext(IContext context, int x, int y) {
 		displayContext(context, x, y, false);
 	}
-	
+
 	void displayContext(IContext context, int x, int y, boolean noInfopop) {
 		if (context == null)
 			return;
 		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
 		boolean winfopop = pref.getBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
 		boolean dinfopop = pref.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
-		
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
+
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		Shell activeShell = getActiveShell();
 		if (window != null && isActiveShell(activeShell, window)) {
 			IWorkbenchPage page = window.getActivePage();
@@ -268,8 +261,8 @@ public class DefaultHelpUI extends AbstractHelpUI {
 					IWorkbenchPart activePart = page.getActivePart();
 					Control c = window.getShell().getDisplay().getFocusControl();
 					IViewPart part = page.showView(HELP_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-					if (part!=null) {
-						HelpView view = (HelpView)part;
+					if (part != null) {
+						HelpView view = (HelpView) part;
 						view.displayContext(context, activePart, c);
 					}
 					return;
@@ -281,29 +274,33 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			}
 		}
 		// check the dialog
-		if (activeShell!=null) {
+		if (activeShell != null) {
 			Object data = activeShell.getData();
 			if (data instanceof Window && (!dinfopop || noInfopop)) {
 				displayContextAsHelpPane(activeShell, context);
 				return;
 			}
 		}
-		//we are here either as a fallback or because of the user preferences
+		// we are here either as a fallback or because of the user preferences
 		displayContextAsInfopop(context, x, y);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.help.AbstractHelpUI#resolve(java.lang.String, boolean)
 	 */
 	public URL resolve(String href, boolean documentOnly) {
 		return BaseHelpSystem.resolve(href, documentOnly);
 	}
-	
+
 	public String unresolve(URL url) {
 		return BaseHelpSystem.unresolve(url);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.help.AbstractHelpUI#resolve(java.lang.String, boolean)
 	 */
 	private static Shell getActiveShell() {
@@ -324,13 +321,13 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		f1Dialog = new ContextHelpDialog(context, x, y);
 		f1Dialog.open();
 	}
-	
+
 	private void displayContextAsHelpPane(Shell activeShell, IContext context) {
-		Control c = activeShell.getDisplay().getFocusControl();		
-		if (f1Window!=null) {
+		Control c = activeShell.getDisplay().getFocusControl();
+		if (f1Window != null) {
 			Shell parentShell = activeShell;
 			if (activeShell.getData() instanceof ContextHelpWindow)
-				parentShell = (Shell)activeShell.getParent();
+				parentShell = (Shell) activeShell.getParent();
 			if (f1Window.getShell().getParent().equals(parentShell)) {
 				f1Window.update(context, c);
 				return;
@@ -342,13 +339,14 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		Shell helpShell = f1Window.getShell();
 		helpShell.setText(Messages.DefaultHelpUI_wtitle);
 		helpShell.setSize(300, pbounds.height);
-		if (context!=null)
+		if (context != null)
 			f1Window.update(context, c);
 		else
 			f1Window.showSearch();
-		if (!Platform.getWS().equals(Platform.WS_GTK))		
+		if (!Platform.getWS().equals(Platform.WS_GTK))
 			f1Window.dock(true);
 		helpShell.addDisposeListener(new DisposeListener() {
+
 			public void widgetDisposed(DisposeEvent e) {
 				f1Window = null;
 			}
@@ -357,8 +355,8 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	}
 
 	/**
-	 * Returns <code>true</code> if the context-sensitive help window is
-	 * currently being displayed, <code>false</code> if not.
+	 * Returns <code>true</code> if the context-sensitive help window is currently being
+	 * displayed, <code>false</code> if not.
 	 */
 	public boolean isContextHelpDisplayed() {
 		if (f1Dialog == null) {
@@ -369,15 +367,15 @@ public class DefaultHelpUI extends AbstractHelpUI {
 
 	private boolean useExternalBrowser(String url) {
 		// On non Windows platforms, use external when modal window is displayed
-//		 Commented out for bug 95478
-//		if (!Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())) {
-			Display display = Display.getCurrent();
-			if (display != null) {
-				if (insideModalParent(display))
-					return true;
-			}
-//		}
-		
+		// Commented out for bug 95478
+		// if (!Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())) {
+		Display display = Display.getCurrent();
+		if (display != null) {
+			if (insideModalParent(display))
+				return true;
+		}
+		// }
+
 		// Use external when no help frames are to be displayed, otherwise no
 		// navigation buttons.
 		if (url != null) {
@@ -388,15 +386,14 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		}
 		return false;
 	}
-	
+
 	private boolean insideModalParent(Display display) {
 		return isDisplayModal(display.getActiveShell());
 	}
 
 	public static boolean isDisplayModal(Shell activeShell) {
 		while (activeShell != null) {
-			if ((activeShell.getStyle() & (SWT.APPLICATION_MODAL
-					| SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL)) > 0)
+			if ((activeShell.getStyle() & (SWT.APPLICATION_MODAL | SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL)) > 0)
 				return true;
 			activeShell = (Shell) activeShell.getParent();
 		}

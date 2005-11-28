@@ -66,8 +66,6 @@ public class DOMUtil {
 
 	}
 
-
-	// <link rel="stylesheet" href="shared.css" type="text/css" />
 	public static void insertStyle(Document dom, String cssUrl) {
 		// there should only be one head and one base element dom.
 		NodeList headList = dom.getElementsByTagName(TAG_HEAD);

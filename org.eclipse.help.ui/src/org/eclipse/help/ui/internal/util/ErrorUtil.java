@@ -1,13 +1,11 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+/***************************************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ **************************************************************************************************/
 package org.eclipse.help.ui.internal.util;
 
 import org.eclipse.help.internal.HelpPlugin;
@@ -23,6 +21,7 @@ import org.eclipse.ui.PlatformUI;
  * Utiliy class for common error displaying tasks.
  */
 public class ErrorUtil implements IErrorUtil {
+
 	public void displayError(String msg) {
 		displayErrorDialog(msg);
 	}
@@ -30,6 +29,7 @@ public class ErrorUtil implements IErrorUtil {
 	public void displayError(final String msg, Thread uiThread) {
 		try {
 			Display.findDisplay(uiThread).asyncExec(new Runnable() {
+
 				public void run() {
 					displayErrorDialog(msg);
 				}
@@ -45,7 +45,7 @@ public class ErrorUtil implements IErrorUtil {
 	 *            error message to display and log.
 	 */
 	public static void displayErrorDialog(String msg) {
-		String title = Messages.Help_Error; 
+		String title = Messages.Help_Error;
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 		Shell shell;
 		if (workbenchWindow != null) {
@@ -63,7 +63,7 @@ public class ErrorUtil implements IErrorUtil {
 	 *            error message to display.
 	 */
 	public static void displayInfoDialog(String msg) {
-		String title = Messages.Help_Info; 
+		String title = Messages.Help_Info;
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 		Shell shell;
 		if (workbenchWindow != null) {
@@ -83,7 +83,7 @@ public class ErrorUtil implements IErrorUtil {
 	 * @return which button(Yes/No) was pressed by user
 	 */
 	public static boolean displayQuestionDialog(String msg) {
-		String title = Messages.Help_Question; 
+		String title = Messages.Help_Question;
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 		Shell shell;
 		if (workbenchWindow != null) {
