@@ -18,12 +18,13 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.SaveablePartDialog;
 import org.eclipse.team.ui.mapping.*;
-import org.eclipse.team.ui.synchronize.ParticipantPageDialog;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -143,7 +144,24 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 				ModelSynchronizeParticipant participant = new ModelSynchronizeParticipant(context);
 				CompareConfiguration cc = new CompareConfiguration();
 				ModelParticipantPageSavablePart input = new ModelParticipantPageSavablePart(getShell(), cc, participant.createPageConfiguration(), participant);
-				ParticipantPageDialog dialog = new ParticipantPageDialog(getShell(), input, participant);
+				SaveablePartDialog dialog = new SaveablePartDialog(getShell(), input) {
+					private Button doneButton;
+
+					protected void createButtonsForButtonBar(Composite parent) {
+						doneButton = createButton(parent, 10, "&Done", true); 
+						doneButton.setEnabled(true); 
+						// Don't call super because we don't want the OK button to appear
+					}
+					/* (non-Javadoc)
+					 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
+					 */
+					protected void buttonPressed(int buttonId) {
+						if (buttonId == 10)
+							super.buttonPressed(IDialogConstants.OK_ID);
+						else 
+							super.buttonPressed(buttonId);
+					}
+				};
 				int result = dialog.open();
 			}
 		});

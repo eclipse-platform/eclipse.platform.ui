@@ -319,6 +319,7 @@
             adaptableType="org.eclipse.core.resources.mapping.ModelProvider"
             class="org.eclipse.team.internal.ui.TeamAdapterFactory">
          <adapter type="org.eclipse.team.ui.mapping.IResourceMappingMerger"/>
+         <adapter type="org.eclipse.team.ui.mapping.ICompareInput"/>
       </factory>
    </extension>
    <extension
