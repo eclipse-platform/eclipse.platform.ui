@@ -77,8 +77,32 @@ public class IWorkspaceRootTest extends ResourceTest {
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		IFile[] result = root.findFilesForLocation(root.getLocation());
 		assertEquals("1.0", 0, result.length);
+		
+		IProject project = root.getProject("p1");
+		IFile existing = project.getFile("file1");
+		ensureExistsInWorkspace(existing, true);
+		
+		//existing file
+		result = root.findFilesForLocation(existing.getLocation());
+		assertResources("2.0", existing, result);
+		
+		//non-existing file
+		IFile nonExisting = project.getFile("nonExisting");
+		result = root.findFilesForLocation(nonExisting.getLocation());
+		assertResources("2.1", nonExisting, result);
 
 		// TODO add more tests
+	}
+
+	/**
+	 * Asserts that the given result array contains only the given resource.
+	 * @param string
+	 * @param file1
+	 * @param result
+	 */
+	private void assertResources(String message, IResource expected, IResource[] actual) {
+		assertEquals(message, 1, actual.length);
+		assertEquals(message, expected, actual[0]);
 	}
 
 	/**
