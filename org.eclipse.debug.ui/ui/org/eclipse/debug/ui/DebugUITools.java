@@ -40,8 +40,10 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDi
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.memory.MemoryRenderingManager;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIUtils;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
+import org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -686,4 +688,31 @@ public class DebugUITools {
     public static IMemoryRenderingManager getMemoryRenderingManager() {
         return MemoryRenderingManager.getDefault();
     }
+    
+	/**
+	 * Returns the image associated with the specified type of source container
+	 * or <code>null</code> if none.
+	 * 
+	 * @param id unique identifier for a source container type
+	 * @return image associated with the specified type of soure container
+	 *    or <code>null</code> if none
+	 * @since 3.2
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainerType
+	 */
+	public static Image getSourceContainerImage(String id){
+		return SourceLookupUIUtils.getSourceContainerImage(id);
+	}
+	
+	/**
+	 * Returns a new source container browser for the specified type of source container
+	 * or <code>null</code> if a browser has not been registered.
+	 * 
+	 * @param id unique identifier for a source container type
+	 * @return source container browser or <code>null</code> if none
+	 * @since 3.2
+	 * @see org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser
+	 */
+	public static ISourceContainerBrowser getSourceContainerBrowser(String id) {
+		return SourceLookupUIUtils.getSourceContainerBrowser(id);
+	}
 }

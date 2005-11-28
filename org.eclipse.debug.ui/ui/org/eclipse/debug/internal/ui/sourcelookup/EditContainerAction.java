@@ -11,9 +11,11 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 
 import java.util.Iterator;
+
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -78,7 +80,7 @@ public class EditContainerAction extends SourceContainerAction {
 				}
 			}
 			// all the same type, see if editing is supported
-			fBrowser = SourceLookupUIUtils.getSourceContainerBrowser(type.getId());
+			fBrowser = DebugUITools.getSourceContainerBrowser(type.getId());
 			if (fBrowser != null) {
 				return fBrowser.canEditSourceContainers(fDirector, fContainers);
 			}
