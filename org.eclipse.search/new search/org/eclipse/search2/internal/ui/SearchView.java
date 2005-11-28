@@ -331,6 +331,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private void initializeToolBar() {
 		IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
 		createToolBarGroups(tbm);
+		tbm.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fSearchAgainAction);
 		tbm.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fCancelAction);
 		tbm.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fSearchesDropDownAction);
 		getViewSite().getActionBars().updateActionBars();
