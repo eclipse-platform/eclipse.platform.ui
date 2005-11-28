@@ -26,8 +26,8 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringInstanceFactory;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringInstanceFactory;
 
 /**
  * Operation that, when run, executes a series of refactoring sequentially.
@@ -91,12 +91,34 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 	}
 
 	/**
+	 * Hook method which is called when the specified refactoring is going to be
+	 * executed.
+	 * 
+	 * @param refactoring
+	 *            the refactoring being executed
+	 */
+	protected void aboutToPerformRefactoring(final Refactoring refactoring) {
+		// Do nothing
+	}
+
+	/**
 	 * Returns the execution status. Guaranteed not to be <code>null</code>.
 	 * 
 	 * @return the status of the session
 	 */
 	public RefactoringStatus getExecutionStatus() {
 		return fExecutionStatus;
+	}
+
+	/**
+	 * Hook method which is called when the specified refactoring has been
+	 * performed.
+	 * 
+	 * @param refactoring
+	 *            the refactoring which has been performed
+	 */
+	protected void refactoringPerformed(final Refactoring refactoring) {
+		// Do nothing
 	}
 
 	/**
@@ -133,7 +155,12 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 					}
 					if (execute) {
 						final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
-						ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 90, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+						try {
+							aboutToPerformRefactoring(refactoring);
+							ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 90, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+						} finally {
+							refactoringPerformed(refactoring);
+						}
 						if (fCurrentDescriptor != null && !fCurrentDescriptor.isUnknown())
 							RefactoringHistoryService.getInstance().setDependency(fCurrentDescriptor, descriptor);
 						fExecutionStatus.merge(operation.getConditionStatus());

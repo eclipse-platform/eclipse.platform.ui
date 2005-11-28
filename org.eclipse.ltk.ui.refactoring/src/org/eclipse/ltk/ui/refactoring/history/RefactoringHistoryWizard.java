@@ -18,8 +18,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -119,6 +121,9 @@ public class RefactoringHistoryWizard extends Wizard {
 	 */
 	public static final int STATUS_CODE_INTERRUPTED= 10003;
 
+	/** Has the about to perform history event already been fired? */
+	private boolean fAboutToPerformFired= false;
+
 	/** The refactoring history control configuration to use */
 	private RefactoringHistoryControlConfiguration fControlConfiguration;
 
@@ -178,6 +183,30 @@ public class RefactoringHistoryWizard extends Wizard {
 	}
 
 	/**
+	 * Hook method which is called before the first refactoring of the history
+	 * is executed.
+	 * <p>
+	 * This method is guaranteed to be called exactly once during the lifetime
+	 * of a refactoring history wizard. Subclasses may reimplement this method
+	 * to perform any special processing.
+	 * </p>
+	 */
+	protected void aboutToPerformHistory() {
+		// Do nothing
+	}
+
+	/**
+	 * Hook method which is called when the specified refactoring is going to be
+	 * executed.
+	 * 
+	 * @param refactoring
+	 *            the refactoring being executed
+	 */
+	protected void aboutToPerformRefactoring(final Refactoring refactoring) {
+		// Do nothing
+	}
+
+	/**
 	 * {@inheritDoc}
 	 * 
 	 * Clients must contribute their wizard pages by reimplementing
@@ -209,8 +238,8 @@ public class RefactoringHistoryWizard extends Wizard {
 	/**
 	 * Adds user defined wizard pages in front of the wizard.
 	 * <p>
-	 * Clients may extend this method to add custom wizard pages in front of the
-	 * wizard.
+	 * Clients may reimplement this method to add custom wizard pages in front
+	 * of the wizard.
 	 * </p>
 	 */
 	protected void addUserDefinedPages() {
@@ -273,6 +302,48 @@ public class RefactoringHistoryWizard extends Wizard {
 		final CreateChangeOperation operation= new CreateChangeOperation(refactoring);
 		operation.run(monitor);
 		return operation.getChange();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void dispose() {
+		Platform.run(new ISafeRunnable() {
+
+			public void handleException(final Throwable exception) {
+				RefactoringUIPlugin.log(exception);
+			}
+
+			public final void run() throws Exception {
+				historyPerformed();
+			}
+		});
+		super.dispose();
+	}
+
+	/**
+	 * Fires the about to perform history event.
+	 * <p>
+	 * If the event has already been fired, nothing happens.
+	 * </p>
+	 */
+	private void fireAboutToPerformHistory() {
+		if (!fAboutToPerformFired) {
+			try {
+				Platform.run(new ISafeRunnable() {
+
+					public void handleException(final Throwable exception) {
+						RefactoringUIPlugin.log(exception);
+					}
+
+					public final void run() throws Exception {
+						aboutToPerformHistory();
+					}
+				});
+			} finally {
+				fAboutToPerformFired= true;
+			}
+		}
 	}
 
 	/**
@@ -459,7 +530,8 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * @return the first page, or <code>null</code>
 	 */
 	private IWizardPage getRefactoringPage() {
-		final IWizardPage[] result= { null };
+		fireAboutToPerformHistory();
+		final IWizardPage[] result= { null};
 		final IRunnableWithProgress runnable= new IRunnableWithProgress() {
 
 			public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -527,6 +599,19 @@ public class RefactoringHistoryWizard extends Wizard {
 	}
 
 	/**
+	 * Hook method which is called when all refactorings of the history have
+	 * been executed.
+	 * <p>
+	 * This method is guaranteed to be called exactly once during the lifetime
+	 * of a refactoring history wizard. Subclasses may reimplement this method
+	 * to perform any special processing.
+	 * </p>
+	 */
+	protected void historyPerformed() {
+		// Do nothing
+	}
+
+	/**
 	 * Is the current refactoring the last one?
 	 * 
 	 * @return <code>true</code> if it is the last one, <code>false</code>
@@ -550,6 +635,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * {@inheritDoc}
 	 */
 	public boolean performFinish() {
+		fireAboutToPerformHistory();
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptors();
 		final List list= new ArrayList(proxies.length);
 		for (int index= fCurrentRefactoring; index < proxies.length; index++)
@@ -564,7 +650,34 @@ public class RefactoringHistoryWizard extends Wizard {
 				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openWarning(getShell(), wizard.getShell().getText(), RefactoringUIMessages.RefactoringHistoryWizard_warning_finish, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
 				store.setValue(PREFERENCE_DO_NOT_WARN_FINISH, dialog.getToggleState());
 			}
-			final PerformMultipleRefactoringsOperation operation= new PerformMultipleRefactoringsOperation(new RefactoringHistoryImplementation(descriptors));
+			final PerformMultipleRefactoringsOperation operation= new PerformMultipleRefactoringsOperation(new RefactoringHistoryImplementation(descriptors)) {
+
+				protected void aboutToPerformRefactoring(final Refactoring refactoring) {
+					Platform.run(new ISafeRunnable() {
+
+						public void handleException(final Throwable exception) {
+							RefactoringUIPlugin.log(exception);
+						}
+
+						public final void run() throws Exception {
+							RefactoringHistoryWizard.this.aboutToPerformRefactoring(refactoring);
+						}
+					});
+				}
+
+				protected void refactoringPerformed(final Refactoring refactoring) {
+					Platform.run(new ISafeRunnable() {
+
+						public void handleException(final Throwable exception) {
+							RefactoringUIPlugin.log(exception);
+						}
+
+						public final void run() throws Exception {
+							RefactoringHistoryWizard.this.refactoringPerformed(refactoring);
+						}
+					});
+				}
+			};
 			try {
 				wizard.run(false, true, new WorkbenchRunnableAdapter(operation, ResourcesPlugin.getWorkspace().getRoot()));
 			} catch (InvocationTargetException exception) {
@@ -661,6 +774,17 @@ public class RefactoringHistoryWizard extends Wizard {
 			getContainer().updateButtons();
 		}
 		return new RefactoringStatus();
+	}
+
+	/**
+	 * Hook method which is called when the specified refactoring has been
+	 * performed.
+	 * 
+	 * @param refactoring
+	 *            the refactoring which has been performed
+	 */
+	protected void refactoringPerformed(final Refactoring refactoring) {
+		// Do nothing
 	}
 
 	/**
