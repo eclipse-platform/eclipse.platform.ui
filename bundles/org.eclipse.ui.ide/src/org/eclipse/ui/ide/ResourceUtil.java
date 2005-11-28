@@ -12,10 +12,16 @@ package org.eclipse.ui.ide;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
@@ -105,4 +111,155 @@ public final class ResourceUtil {
         return null;
     }
     
+    /**
+     * Returns the resource corresponding to the given model element, or <code>null</code>
+     * if there is no applicable resource.
+     * 
+     * @param element the model element, or <code>null</code>
+     * @return the resource corresponding to the model element, or <code>null</code>
+     * @since 3.2
+     */
+    public static IResource getResource(Object element) {
+		if (element == null) {
+			return null;
+		}
+		if (element instanceof IResource) {
+			return (IResource) element;
+		}
+		return (IResource) getAdapter(element, IResource.class, true);
+    }
+
+    /**
+     * Returns the file corresponding to the given model element, or <code>null</code>
+     * if there is no applicable file.
+     * 
+     * @param element the model element, or <code>null</code>
+     * @return the resource corresponding to the model element, or <code>null</code>
+     * @since 3.2
+     */
+    public static IFile getFile(Object element) {
+		if (element == null) {
+			return null;
+		}
+		
+		// try direct instanceof check
+		if (element instanceof IFile) {
+			return (IFile) element;
+		}
+		
+		// try for ResourceMapping
+		ResourceMapping mapping = getResourceMapping(element);
+		if (mapping != null) {
+			return getFileFromResourceMapping(mapping);
+		}
+		
+		// try for IFile adapter (before IResource adapter, since it's more specific)
+		Object adapter = getAdapter(element, IFile.class, true);
+		if (adapter instanceof IFile) {
+			return (IFile) adapter;
+		}
+		
+		// try for IResource adapter
+		adapter = getAdapter(element, IResource.class, true);
+		if (adapter instanceof IFile) {
+			return (IFile) adapter;
+		}
+		return null;
+    }
+
+	/**
+     * Returns the resource mapping corresponding to the given model element, or <code>null</code>
+     * if there is no applicable resource mapping.
+     * 
+     * @param element the model element, or <code>null</code>
+     * @return the resource mapping corresponding to the model element, or <code>null</code>
+     * @since 3.2
+     */
+    public static ResourceMapping getResourceMapping(Object element) {
+		if (element == null) {
+			return null;
+		}
+		
+		// try direct instanceof check
+		if (element instanceof ResourceMapping) {
+			return (ResourceMapping) element;
+		}
+		
+		// try for ResourceMapping adapter
+		Object adapter = getAdapter(element, ResourceMapping.class, true);
+		if (adapter instanceof ResourceMapping) {
+			return (ResourceMapping) adapter;
+		}
+		return null;
+	}
+    
+    /**
+     * Tries to extra a single file from the given resource mapping.
+     * Returns the file if the mapping maps to a single file, or <code>null</code>
+     * if it maps to zero or multiple files.
+     * 
+     * @param mapping the resource mapping
+     * @return the file, or <code>null</code>
+     */
+    private static IFile getFileFromResourceMapping(ResourceMapping mapping) {
+    	IResource resource = getResourceFromResourceMapping(mapping);
+    	if (resource instanceof IFile) {
+    		return (IFile) resource;
+    	}
+    	return null;
+    }
+    
+    /**
+     * Tries to extra a single resource from the given resource mapping.
+     * Returns the resource if the mapping maps to a single resource, or <code>null</code>
+     * if it maps to zero or multiple resources.
+     * 
+     * @param mapping the resource mapping
+     * @return the resource, or <code>null</code>
+     */
+    private static IResource getResourceFromResourceMapping(ResourceMapping mapping) {
+		try {
+			ResourceTraversal[] traversals = mapping.getTraversals(null, null);
+	    	if (traversals.length != 1) {
+	    		return null;
+	    	}
+	    	ResourceTraversal traversal = traversals[0];
+	    	// TODO: need to honour traversal flags
+	    	IResource[] resources = traversal.getResources();
+	    	if (resources.length != 1) {
+	    		return null;
+	    	}
+	    	return resources[0];
+		} catch (CoreException e) {
+			IDEWorkbenchPlugin.log("Error in ResourceUtil.getFileFromResourceMapping", e); //$NON-NLS-1$
+			return null;
+		}
+	}
+
+
+	/**
+     * Returns the specified adapter for the given element, or <code>null</code>
+     * if no such adapter was found.
+     * 
+     * @param element the model element
+	 * @param adapterType the type of adapter to look up
+	 * @param forceLoad <code>true</code> to force loading of the plug-in providing the adapter, 
+	 *   <code>false</code> otherwise
+     * @return the adapter
+     * @since 3.2
+     */
+	public static Object getAdapter(Object element, Class adapterType, boolean forceLoad) {
+		if (element instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) element;
+	        Object o = adaptable.getAdapter(adapterType);
+	        if (o != null) {
+	        	return o;
+	        }
+		}
+		if (forceLoad) {
+			return Platform.getAdapterManager().loadAdapter(element, adapterType.getName());
+		}
+		return Platform.getAdapterManager().getAdapter(element, adapterType);
+	}
+
 }
