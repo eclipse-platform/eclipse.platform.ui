@@ -6,15 +6,16 @@
          <meta.schema plugin="org.eclipse.help" id="contentProducer" name="Help Content Producer"/>
       </appInfo>
       <documentation>
-         For providing dynamic, generated at run time, help content.
+         For providing dynamic, generated at run time, help content. Content producers are registered per plug-in and only work within the plug-in scope. In order to reuse a content producer in another plug-in, &lt;code&gt;binding&lt;/code&gt; element should be used. This strategy prevents plug-ins from highjacking content producing for all the plug-ins. By binding to a content producer, a plug-in gives it permission to control content producing for all the documents in the granting plug-in.
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
-         <sequence>
-            <element ref="contentProducer" minOccurs="0" maxOccurs="1"/>
-         </sequence>
+         <choice>
+            <element ref="contentProducer"/>
+            <element ref="binding"/>
+         </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
@@ -91,6 +92,18 @@
             <annotation>
                <documentation>
                   value of a parameter passed to the implementation class
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="binding">
+      <complexType>
+         <attribute name="producerId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique name of a content producer defined elsewhere using &lt;samp&gt;contentProducer&lt;/samp&gt; element. Binding allows a plug-in to reuse a content producer registered in another plug-in instead of defining its own.
                </documentation>
             </annotation>
          </attribute>

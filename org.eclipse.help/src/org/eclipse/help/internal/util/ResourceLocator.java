@@ -17,6 +17,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +39,7 @@ import org.osgi.framework.Bundle;
 public class ResourceLocator {
 
 	public static final String CONTENTPRODUCER_XP_NAME = "contentProducer"; //$NON-NLS-1$
+	public static final String BINDING = "binding"; //$NON-NLS-1$
 
 	public static final String CONTENTPRODUCER_XP_FULLNAME = HelpPlugin.PLUGIN_ID
 			+ "." + CONTENTPRODUCER_XP_NAME; //$NON-NLS-1$
@@ -51,6 +53,22 @@ public class ResourceLocator {
 
 	// Map of document content providers by plug-in ID;
 	private static Map contentProducers = new HashMap(2, 0.5f);
+
+	static class ProducerDescriptor {
+
+		IHelpContentProducer producer;
+		IConfigurationElement config;
+
+		public ProducerDescriptor(IConfigurationElement config) {
+			this.config = config;
+		}
+
+		public boolean matches(String refId) {
+			IExtension ex = config.getDeclaringExtension();
+			String id = ex.getUniqueIdentifier();
+			return id != null && id.equals(refId);
+		}
+	}
 	static {
 		Platform.getExtensionRegistry().addRegistryChangeListener(new IRegistryChangeListener() {
 
@@ -83,20 +101,20 @@ public class ResourceLocator {
 	 */
 	private static IHelpContentProducer getContentProducer(String pluginId) {
 		synchronized (contentProducers) {
-			Object producer = contentProducers.get(pluginId);
-			if (producer == null) {
+			Object descriptor = contentProducers.get(pluginId);
+			if (descriptor == null) {
 				// first time for the plug-in, so attempt to
 				// find and instantiate provider
-				producer = createContentProducer(pluginId);
-				if (producer == null) {
-					producer = STATIC_DOCS_ONLY;
+				descriptor = createContentProducer(pluginId);
+				if (descriptor == null) {
+					descriptor = STATIC_DOCS_ONLY;
 				}
-				contentProducers.put(pluginId, producer);
+				contentProducers.put(pluginId, descriptor);
 			}
-			if (producer == STATIC_DOCS_ONLY) {
+			if (descriptor == STATIC_DOCS_ONLY) {
 				return null;
 			}
-			return (IHelpContentProducer) producer;
+			return ((ProducerDescriptor) descriptor).producer;
 		}
 	}
 
@@ -106,31 +124,50 @@ public class ResourceLocator {
 	 * @param pluginId
 	 * @return ITopicContentProvider or null
 	 */
-	private static IHelpContentProducer createContentProducer(String pluginId) {
-		IExtensionPoint xp = Platform.getExtensionRegistry().getExtensionPoint(CONTENTPRODUCER_XP_FULLNAME);
-		if (xp == null) {
+	private static ProducerDescriptor createContentProducer(String pluginId) {
+		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
+				CONTENTPRODUCER_XP_FULLNAME);
+		if (elements.length == 0) {
 			return null;
 		}
-		IExtension[] extensions = xp.getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			if (!extensions[i].getNamespace().equals(pluginId)) {
+
+		for (int i = 0; i < elements.length; i++) {
+			IConfigurationElement element = elements[i];
+			if (!elements[i].getNamespace().equals(pluginId)) {
 				continue;
 			}
-			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-			for (int j = 0; j < elements.length; j++) {
-				if (!CONTENTPRODUCER_XP_NAME.equals(elements[j].getName())) {
-					continue;
+			if (BINDING.equals(element.getName())) {
+				//producer binding - locate the descriptor
+				// with the matching reference Id
+				String refId = element.getAttribute("producerId");
+				if (refId != null) {
+					return findContentProducer(refId);
 				}
+			} else if (CONTENTPRODUCER_XP_NAME.equals(element.getName())) {
 				try {
-					Object o = elements[j].createExecutableExtension("producer"); //$NON-NLS-1$
+					Object o = element.createExecutableExtension("producer"); //$NON-NLS-1$
 					if (o instanceof IHelpContentProducer) {
-						return (IHelpContentProducer) o;
+						ProducerDescriptor ad = new ProducerDescriptor(element);
+						ad.producer = (IHelpContentProducer)o;
+						return ad;
 					}
 				} catch (CoreException ce) {
 					HelpPlugin
 							.logError(
 									"Exception occurred creating help content producer for plug-in " + pluginId + ".", ce); //$NON-NLS-1$ //$NON-NLS-2$
 				}
+			}
+		}
+		return null;
+	}
+
+	private static ProducerDescriptor findContentProducer(String refId) {
+		for (Iterator iter = contentProducers.values().iterator(); iter.hasNext();) {
+			Object obj = iter.next();
+			if (obj instanceof ProducerDescriptor) {
+				ProducerDescriptor desc = (ProducerDescriptor) obj;
+				if (desc.matches(refId))
+					return desc;
 			}
 		}
 		return null;
