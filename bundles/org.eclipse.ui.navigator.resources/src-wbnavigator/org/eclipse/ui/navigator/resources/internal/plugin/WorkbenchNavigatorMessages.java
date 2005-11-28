@@ -25,7 +25,7 @@ import org.eclipse.osgi.util.NLS;
  * @since 3.2
  */
 public class WorkbenchNavigatorMessages extends NLS { 
-	public static final String BUNDLE_NAME = "messages.properties"; //$NON-NLS-1$
+	public static final String BUNDLE_NAME = "messages"; //$NON-NLS-1$
 
 	public static String ResourceExtensionFilterProvider_Hides;
 	public static String ImportResourcesAction_text;
@@ -34,6 +34,8 @@ public class WorkbenchNavigatorMessages extends NLS {
 
 	public static String NewProjectWizard_errorTitle;
 	public static String NewProjectAction_text;
+
+	public static String OpenWithMenu_label;
 	
 	
 	static {
