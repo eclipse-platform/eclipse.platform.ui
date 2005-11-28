@@ -1,14 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+/***************************************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ **************************************************************************************************/
 package org.eclipse.help.ui.internal;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -16,7 +15,9 @@ import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.search.federated.IndexerJob;
+import org.eclipse.help.internal.xhtml.XHTMLSupport;
 import org.eclipse.help.ui.internal.util.ErrorUtil;
+import org.eclipse.help.ui.internal.xhtml.UIContentFilterProcessor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -27,42 +28,41 @@ import org.osgi.framework.BundleContext;
  * This class is Help UI plugin.
  */
 public class HelpUIPlugin extends AbstractUIPlugin {
+
 	public final static String PLUGIN_ID = "org.eclipse.help.ui"; //$NON-NLS-1$
 	// debug options
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_INFOPOP = false;
 
 	private static HelpUIPlugin plugin;
-	//private static BundleContext bundleContext;
+
+	// private static BundleContext bundleContext;
 	/**
-	 * Logs an Error message with an exception. Note that the message should
-	 * already be localized to proper locale. ie: Resources.getString() should
-	 * already have been called
+	 * Logs an Error message with an exception. Note that the message should already be localized to
+	 * proper locale. ie: Resources.getString() should already have been called
 	 */
 	public static synchronized void logError(String message, Throwable ex) {
 		logError(message, ex, true, false);
-	}	
+	}
 
 	public static synchronized void logError(String message, Throwable ex, boolean log, boolean openDialog) {
 		if (message == null)
 			message = ""; //$NON-NLS-1$
-		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
-				message, ex);
+		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
 		HelpPlugin.getDefault().getLog().log(errorStatus);
 		if (openDialog)
 			ErrorDialog.openError(null, null, null, errorStatus);
 	}
+
 	/**
-	 * Logs a Warning message with an exception. Note that the message should
-	 * already be localized to proper local. ie: Resources.getString() should
-	 * already have been called
+	 * Logs a Warning message with an exception. Note that the message should already be localized
+	 * to proper local. ie: Resources.getString() should already have been called
 	 */
 	public static synchronized void logWarning(String message) {
 		if (HelpPlugin.DEBUG) {
 			if (message == null)
 				message = ""; //$NON-NLS-1$
-			Status warningStatus = new Status(IStatus.WARNING, PLUGIN_ID,
-					IStatus.OK, message, null);
+			Status warningStatus = new Status(IStatus.WARNING, PLUGIN_ID, IStatus.OK, message, null);
 			HelpPlugin.getDefault().getLog().log(warningStatus);
 		}
 	}
@@ -75,6 +75,7 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	public static HelpUIPlugin getDefault() {
 		return plugin;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -82,10 +83,11 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
-		//Make sure we cancel indexer if it is currently running
+		// Make sure we cancel indexer if it is currently running
 		Platform.getJobManager().cancel(IndexerJob.FAMILY);
 		super.stop(context);
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -94,7 +96,10 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		//bundleContext = context;
+		// hook UI filtering
+		XHTMLSupport.setFilterProcessor(new UIContentFilterProcessor());
+
+		// bundleContext = context;
 		// Setup debugging options
 		DEBUG = isDebugging();
 		if (DEBUG) {
@@ -110,8 +115,7 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 			// use workbench activity support
 			IWorkbench workbench = PlatformUI.getWorkbench();
 			if (workbench != null) {
-				HelpBasePlugin.setActivitySupport(new HelpActivitySupport(
-						workbench));
+				HelpBasePlugin.setActivitySupport(new HelpActivitySupport(workbench));
 			}
 		}
 	}
