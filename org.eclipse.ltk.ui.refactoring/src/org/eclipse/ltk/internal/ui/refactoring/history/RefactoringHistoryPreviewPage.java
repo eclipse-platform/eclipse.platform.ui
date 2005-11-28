@@ -32,8 +32,8 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
  */
 public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 
-	/** Is the current refactoring the last one? */
-	private boolean fLastRefactoring= false;
+	/** Is the next wizard page disabled? */
+	private boolean fNextPageDisabled= false;
 
 	/** The current refactoring, or <code>null</code> */
 	private Refactoring fRefactoring;
@@ -54,7 +54,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	 * {@inheritDoc}
 	 */
 	public boolean canFlipToNextPage() {
-		return !fLastRefactoring;
+		return !fNextPageDisabled;
 	}
 
 	/**
@@ -74,7 +74,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 						if (page instanceof RefactoringHistoryErrorPage) {
 							final RefactoringHistoryErrorPage extended= (RefactoringHistoryErrorPage) page;
 							extended.setStatus(status);
-							extended.setLastRefactoring(fLastRefactoring);
+							extended.setNextPageDisabled(fNextPageDisabled);
 							extended.setTitle(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error_title);
 							extended.setDescription(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error);
 							return extended;
@@ -115,13 +115,12 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	}
 
 	/**
-	 * Is the current refactoring the last one?
+	 * Is the next wizard page disabled?
 	 * 
-	 * @return <code>true</code> if it is the last one, <code>false</code>
-	 *         otherwise
+	 * @return <code>true</code> if disabled, <code>false</code> otherwise
 	 */
-	public boolean isLastRefactoring() {
-		return fLastRefactoring;
+	public boolean isNextPageDisabled() {
+		return fNextPageDisabled;
 	}
 
 	/**
@@ -132,21 +131,20 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	}
 
 	/**
-	 * Determines whether the current refactoring is the last one.
+	 * Determines whether the next wizard page is disabled.
 	 * 
-	 * @param last
-	 *            <code>true</code> if it is the last one, <code>false</code>
-	 *            otherwise
+	 * @param disable
+	 *            <code>true</code> to disable, <code>false</code> otherwise
 	 */
-	public void setLastRefactoring(final boolean last) {
-		fLastRefactoring= last;
+	public void setNextPageDisabled(final boolean disable) {
+		fNextPageDisabled= disable;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setPageComplete(final boolean complete) {
-		super.setPageComplete(!fLastRefactoring);
+		super.setPageComplete(!fNextPageDisabled);
 	}
 
 	/**

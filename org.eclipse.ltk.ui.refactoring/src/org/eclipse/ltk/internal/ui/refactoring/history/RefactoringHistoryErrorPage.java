@@ -30,8 +30,8 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
  */
 public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 
-	/** Is the current refactoring the last one? */
-	private boolean fLastRefactoring= false;
+	/** Is the next wizard page disabled? */
+	private boolean fNextPageDisabled= false;
 
 	/** The current refactoring, or <code>null</code> */
 	private Refactoring fRefactoring;
@@ -49,7 +49,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	 * {@inheritDoc}
 	 */
 	public boolean canFlipToNextPage() {
-		return !fLastRefactoring;
+		return !fNextPageDisabled;
 	}
 
 	/**
@@ -88,13 +88,12 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	}
 
 	/**
-	 * Is the current refactoring the last one?
+	 * Is the next wizard page disabled?
 	 * 
-	 * @return <code>true</code> if it is the last one, <code>false</code>
-	 *         otherwise
+	 * @return <code>true</code> if disabled, <code>false</code> otherwise
 	 */
-	public boolean isLastRefactoring() {
-		return fLastRefactoring;
+	public boolean isNextPageDisabled() {
+		return fNextPageDisabled;
 	}
 
 	/**
@@ -105,14 +104,13 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	}
 
 	/**
-	 * Determines whether the current refactoring is the last one.
+	 * Determines whether the next wizard page is disabled.
 	 * 
-	 * @param last
-	 *            <code>true</code> if it is the last one, <code>false</code>
-	 *            otherwise
+	 * @param disable
+	 *            <code>true</code> to disable, <code>false</code> otherwise
 	 */
-	public void setLastRefactoring(final boolean last) {
-		fLastRefactoring= last;
+	public void setNextPageDisabled(final boolean disable) {
+		fNextPageDisabled= disable;
 	}
 
 	/**
@@ -168,7 +166,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 			if (fViewer != null && fViewer.getStatus() != fStatus)
 				fViewer.setStatus(fStatus);
 		} else
-			setPageComplete(!fLastRefactoring);
+			setPageComplete(!fNextPageDisabled);
 		getControl().setVisible(visible);
 	}
 

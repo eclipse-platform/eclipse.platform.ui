@@ -208,6 +208,10 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Adds user defined wizard pages in front of the wizard.
+	 * <p>
+	 * Clients may extend this method to add custom wizard pages in front of the
+	 * wizard.
+	 * </p>
 	 */
 	protected void addUserDefinedPages() {
 		Assert.isTrue(fInAddPages);
@@ -335,7 +339,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	/**
 	 * {@inheritDoc}
 	 */
-	public final IWizardPage getNextPage(final IWizardPage page) {
+	public IWizardPage getNextPage(final IWizardPage page) {
 		if (page == fOverviewPage) {
 			fCurrentRefactoring= 0;
 			return getRefactoringPage();
@@ -374,7 +378,7 @@ public class RefactoringHistoryWizard extends Wizard {
 						} catch (CoreException exception) {
 							throw new InvocationTargetException(exception);
 						} catch (OperationCanceledException exception) {
-							// Do nothing
+							throw new InterruptedException(exception.getLocalizedMessage());
 						} finally {
 							monitor.done();
 						}
@@ -390,17 +394,19 @@ public class RefactoringHistoryWizard extends Wizard {
 						return fErrorPage;
 					}
 				} catch (InterruptedException exception) {
-					// Display empty preview
+					return fErrorPage;
 				}
-			} else
+			} else {
 				fPreviewPage.setRefactoring(null);
+				fPreviewPage.setChange(null);
+			}
 			final RefactoringDescriptorProxy descriptor= getCurrentDescriptor();
 			if (descriptor != null)
 				fPreviewPage.setTitle(descriptor);
 			else
 				fPreviewPage.setTitle(RefactoringUIMessages.PreviewWizardPage_changes);
 			fPreviewPage.setStatus(status);
-			fPreviewPage.setLastRefactoring(isLastRefactoring());
+			fPreviewPage.setNextPageDisabled(isLastRefactoring());
 			return fPreviewPage;
 		}
 		return super.getNextPage(page);
@@ -418,7 +424,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	/**
 	 * {@inheritDoc}
 	 */
-	public final IWizardPage getPreviousPage(final IWizardPage page) {
+	public IWizardPage getPreviousPage(final IWizardPage page) {
 		if (page == fErrorPage || page == fPreviewPage)
 			return null;
 		return super.getPreviousPage(page);
@@ -448,15 +454,6 @@ public class RefactoringHistoryWizard extends Wizard {
 	}
 
 	/**
-	 * Returns the refactoring history.
-	 * 
-	 * @return the refactoring history
-	 */
-	public final RefactoringHistory getRefactoringHistory() {
-		return fRefactoringHistory;
-	}
-
-	/**
 	 * Returns the first page of a refactoring.
 	 * 
 	 * @return the first page, or <code>null</code>
@@ -475,10 +472,10 @@ public class RefactoringHistoryWizard extends Wizard {
 					if (descriptor != null) {
 						final boolean last= isLastRefactoring();
 						fPreviewPage.setTitle(descriptor);
-						fPreviewPage.setLastRefactoring(last);
+						fPreviewPage.setNextPageDisabled(last);
 						fPreviewPage.setPageComplete(!last);
 						fErrorPage.setTitle(descriptor);
-						fErrorPage.setLastRefactoring(last);
+						fErrorPage.setNextPageDisabled(last);
 						fErrorPage.setPageComplete(true);
 						final Refactoring refactoring= getCurrentRefactoring(status, new SubProgressMonitor(monitor, 10));
 						if (refactoring != null && status.isOK()) {
@@ -507,7 +504,7 @@ public class RefactoringHistoryWizard extends Wizard {
 				} catch (CoreException exception) {
 					throw new InvocationTargetException(exception);
 				} catch (OperationCanceledException exception) {
-					// Do nothing
+					throw new InterruptedException(exception.getLocalizedMessage());
 				} finally {
 					monitor.done();
 				}
@@ -524,6 +521,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 		} catch (InterruptedException exception) {
 			// Stay on same page
+			result[0]= null;
 		}
 		return result[0];
 	}
@@ -556,8 +554,8 @@ public class RefactoringHistoryWizard extends Wizard {
 		final List list= new ArrayList(proxies.length);
 		for (int index= fCurrentRefactoring; index < proxies.length; index++)
 			list.add(proxies[index]);
-		final RefactoringDescriptorProxy[] result= new RefactoringDescriptorProxy[list.size()];
-		list.toArray(result);
+		final RefactoringDescriptorProxy[] descriptors= new RefactoringDescriptorProxy[list.size()];
+		list.toArray(descriptors);
 		final boolean last= isLastRefactoring();
 		final IWizardContainer wizard= getContainer();
 		if (!last) {
@@ -566,30 +564,15 @@ public class RefactoringHistoryWizard extends Wizard {
 				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openWarning(getShell(), wizard.getShell().getText(), RefactoringUIMessages.RefactoringHistoryWizard_warning_finish, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
 				store.setValue(PREFERENCE_DO_NOT_WARN_FINISH, dialog.getToggleState());
 			}
-			final PerformMultipleRefactoringsOperation[] operation= { new PerformMultipleRefactoringsOperation(new RefactoringHistoryImplementation(result)) };
-			final IRunnableWithProgress runnable= new IRunnableWithProgress() {
-
-				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					Assert.isNotNull(monitor);
-					try {
-						operation[0].run(monitor);
-					} catch (CoreException exception) {
-						throw new InvocationTargetException(exception);
-					} catch (OperationCanceledException exception) {
-						throw new InterruptedException();
-					} finally {
-						monitor.done();
-					}
-				}
-			};
+			final PerformMultipleRefactoringsOperation operation= new PerformMultipleRefactoringsOperation(new RefactoringHistoryImplementation(descriptors));
 			try {
-				wizard.run(true, true, runnable);
+				wizard.run(false, true, new WorkbenchRunnableAdapter(operation, ResourcesPlugin.getWorkspace().getRoot()));
 			} catch (InvocationTargetException exception) {
 				final Throwable throwable= exception.getTargetException();
 				if (throwable != null) {
 					RefactoringUIPlugin.log(throwable);
 					fErrorPage.setStatus(RefactoringStatus.createFatalErrorStatus(throwable.getLocalizedMessage()));
-					fErrorPage.setLastRefactoring(true);
+					fErrorPage.setNextPageDisabled(true);
 					fErrorPage.setTitle(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error_title);
 					fErrorPage.setDescription(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error);
 					wizard.showPage(fErrorPage);
@@ -608,7 +591,7 @@ public class RefactoringHistoryWizard extends Wizard {
 					if (entry.getSeverity() == RefactoringStatus.INFO && entry.getCode() == RefactoringHistoryWizard.STATUS_CODE_INTERRUPTED)
 						return false;
 					fErrorPage.setStatus(status);
-					fErrorPage.setLastRefactoring(true);
+					fErrorPage.setNextPageDisabled(true);
 					fErrorPage.setTitle(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error_title);
 					fErrorPage.setDescription(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error);
 					wizard.showPage(fErrorPage);
@@ -674,7 +657,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		} catch (InterruptedException exception) {
 			return RefactoringStatus.create(new Status(IStatus.INFO, RefactoringUIPlugin.getPluginId(), STATUS_CODE_INTERRUPTED, exception.getLocalizedMessage(), exception));
 		} finally {
-			fPreviewPage.setLastRefactoring(isSecondLastRefactoring());
+			fPreviewPage.setNextPageDisabled(isSecondLastRefactoring());
 			getContainer().updateButtons();
 		}
 		return new RefactoringStatus();
@@ -689,7 +672,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * @param configuration
 	 *            the configuration to set
 	 */
-	public final void setControlConfiguration(final RefactoringHistoryControlConfiguration configuration) {
+	public final void setConfiguration(final RefactoringHistoryControlConfiguration configuration) {
 		Assert.isNotNull(configuration);
 		fControlConfiguration= configuration;
 	}
@@ -703,7 +686,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * @param history
 	 *            the refactoring history
 	 */
-	public final void setRefactoringHistory(final RefactoringHistory history) {
+	public final void setInput(final RefactoringHistory history) {
 		Assert.isNotNull(history);
 		fRefactoringHistory= history;
 	}
