@@ -1,5 +1,5 @@
 <project name="org.eclipse.ltk.core.refactoring" default="export" basedir="..">
-<!-- build script to create a plugin from org.eclipse.core.expressions -->
+<!-- build script to create a plugin from org.eclipse.ltk.core.refactoring -->
 
 	<target name="init">
 		<tstamp/>
