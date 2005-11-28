@@ -96,8 +96,10 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 	 * 
 	 * @param refactoring
 	 *            the refactoring being executed
+	 * @param monitor
+	 *            the progress monitor to use
 	 */
-	protected void aboutToPerformRefactoring(final Refactoring refactoring) {
+	protected void aboutToPerformRefactoring(final Refactoring refactoring, final IProgressMonitor monitor) {
 		// Do nothing
 	}
 
@@ -116,8 +118,10 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 	 * 
 	 * @param refactoring
 	 *            the refactoring which has been performed
+	 * @param monitor
+	 *            the progress monitor to use
 	 */
-	protected void refactoringPerformed(final Refactoring refactoring) {
+	protected void refactoringPerformed(final Refactoring refactoring, final IProgressMonitor monitor) {
 		// Do nothing
 	}
 
@@ -127,7 +131,7 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 	public void run(final IProgressMonitor monitor) throws CoreException {
 		fExecutionStatus= new RefactoringStatus();
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
-		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringsOperation_perform_refactorings, 100 * proxies.length);
+		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringsOperation_perform_refactorings, 160 * proxies.length);
 		final RefactoringInstanceFactory factory= RefactoringInstanceFactory.getInstance();
 		IRefactoringExecutionListener listener= null;
 		final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
@@ -156,10 +160,10 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 					if (execute) {
 						final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 						try {
-							aboutToPerformRefactoring(refactoring);
+							aboutToPerformRefactoring(refactoring, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 							ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 90, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						} finally {
-							refactoringPerformed(refactoring);
+							refactoringPerformed(refactoring, new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						}
 						if (fCurrentDescriptor != null && !fCurrentDescriptor.isUnknown())
 							RefactoringHistoryService.getInstance().setDependency(fCurrentDescriptor, descriptor);

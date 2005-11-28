@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -190,20 +191,39 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * of a refactoring history wizard. Subclasses may reimplement this method
 	 * to perform any special processing.
 	 * </p>
+	 * <p>
+	 * Returning a status of severity {@link RefactoringStatus#FATAL} will
+	 * terminate the execution of the refactorings.
+	 * </p>
+	 * 
+	 * @param monitor
+	 *            the progress monitor to use
+	 * 
+	 * @return a status describing the outcome of the operation
 	 */
-	protected void aboutToPerformHistory() {
-		// Do nothing
+	protected RefactoringStatus aboutToPerformHistory(final IProgressMonitor monitor) {
+		return new RefactoringStatus();
 	}
 
 	/**
 	 * Hook method which is called when the specified refactoring is going to be
 	 * executed.
+	 * <p>
+	 * Subclasses may reimplement this method to perform any special processing.
+	 * </p>
+	 * <p>
+	 * Returning a status of severity {@link RefactoringStatus#FATAL} will
+	 * terminate the execution of the refactorings.
+	 * </p>
 	 * 
 	 * @param refactoring
 	 *            the refactoring being executed
+	 * @param monitor
+	 *            the progress monitor to use
+	 * @return a status describing the outcome of the operation
 	 */
-	protected void aboutToPerformRefactoring(final Refactoring refactoring) {
-		// Do nothing
+	protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final IProgressMonitor monitor) {
+		return new RefactoringStatus();
 	}
 
 	/**
@@ -315,7 +335,9 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 
 			public final void run() throws Exception {
-				historyPerformed();
+				final RefactoringStatusEntry entry= historyPerformed(new NullProgressMonitor()).getEntryWithHighestSeverity();
+				if (entry != null)
+					RefactoringUIPlugin.log(new Status(entry.getSeverity(), entry.getPluginId(), entry.getCode(), entry.getMessage(), null));
 			}
 		});
 		super.dispose();
@@ -323,23 +345,54 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Fires the about to perform history event.
-	 * <p>
-	 * If the event has already been fired, nothing happens.
-	 * </p>
+	 * 
+	 * @param monitor
+	 *            the progress monitor to use
+	 * 
+	 * @return a status describing the outcome of the operation
 	 */
-	private void fireAboutToPerformHistory() {
+	private RefactoringStatus fireAboutToPerformHistory(final IProgressMonitor monitor) {
+		final RefactoringStatus status= new RefactoringStatus();
+
+		Platform.run(new ISafeRunnable() {
+
+			public void handleException(final Throwable exception) {
+				status.addFatalError(exception.getLocalizedMessage());
+			}
+
+			public final void run() throws Exception {
+				status.merge(aboutToPerformHistory(monitor));
+			}
+		});
+
+		return status;
+	}
+
+	/**
+	 * Fires the about to perform history event.
+	 * 
+	 * @param wizard
+	 *            the wizard container
+	 * @param status
+	 *            the refactoring status
+	 */
+	private void fireAboutToPerformHistory(final IWizardContainer wizard, final RefactoringStatus status) {
 		if (!fAboutToPerformFired) {
+			final IRunnableWithProgress runnable= new IRunnableWithProgress() {
+
+				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					Assert.isNotNull(monitor);
+					status.merge(fireAboutToPerformHistory(monitor));
+				}
+			};
 			try {
-				Platform.run(new ISafeRunnable() {
-
-					public void handleException(final Throwable exception) {
-						RefactoringUIPlugin.log(exception);
-					}
-
-					public final void run() throws Exception {
-						aboutToPerformHistory();
-					}
-				});
+				wizard.run(false, false, runnable);
+			} catch (InvocationTargetException exception) {
+				final Throwable throwable= exception.getTargetException();
+				if (throwable != null)
+					status.merge(RefactoringStatus.createFatalErrorStatus(throwable.getLocalizedMessage()));
+			} catch (InterruptedException exception) {
+				// Just continue
 			} finally {
 				fAboutToPerformFired= true;
 			}
@@ -530,7 +583,27 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * @return the first page, or <code>null</code>
 	 */
 	private IWizardPage getRefactoringPage() {
-		fireAboutToPerformHistory();
+		final RefactoringStatus status= new RefactoringStatus();
+		final IWizardContainer wizard= getContainer();
+
+		fireAboutToPerformHistory(wizard, status);
+
+		final boolean last= isLastRefactoring();
+		final RefactoringDescriptorProxy descriptor= getCurrentDescriptor();
+
+		fPreviewPage.setTitle(descriptor);
+		fPreviewPage.setNextPageDisabled(last);
+		fPreviewPage.setPageComplete(!last);
+		fPreviewPage.setStatus(status);
+
+		fErrorPage.setTitle(descriptor);
+		fErrorPage.setNextPageDisabled(last || status.hasFatalError());
+		fErrorPage.setPageComplete(!status.hasFatalError());
+		fErrorPage.setStatus(status);
+
+		if (!status.isOK())
+			return fErrorPage;
+
 		final IWizardPage[] result= { null};
 		final IRunnableWithProgress runnable= new IRunnableWithProgress() {
 
@@ -539,16 +612,7 @@ public class RefactoringHistoryWizard extends Wizard {
 				try {
 					monitor.beginTask("", 100); //$NON-NLS-1$
 					result[0]= null;
-					final RefactoringStatus status= new RefactoringStatus();
-					final RefactoringDescriptorProxy descriptor= getCurrentDescriptor();
 					if (descriptor != null) {
-						final boolean last= isLastRefactoring();
-						fPreviewPage.setTitle(descriptor);
-						fPreviewPage.setNextPageDisabled(last);
-						fPreviewPage.setPageComplete(!last);
-						fErrorPage.setTitle(descriptor);
-						fErrorPage.setNextPageDisabled(last);
-						fErrorPage.setPageComplete(true);
 						final Refactoring refactoring= getCurrentRefactoring(status, new SubProgressMonitor(monitor, 10));
 						if (refactoring != null && status.isOK()) {
 							fPreviewPage.setRefactoring(refactoring);
@@ -567,12 +631,9 @@ public class RefactoringHistoryWizard extends Wizard {
 							}
 						} else {
 							fErrorPage.setRefactoring(null);
-							fErrorPage.setStatus(status);
 							result[0]= fErrorPage;
 						}
 					}
-					fPreviewPage.setStatus(status);
-					fErrorPage.setStatus(status);
 				} catch (CoreException exception) {
 					throw new InvocationTargetException(exception);
 				} catch (OperationCanceledException exception) {
@@ -583,7 +644,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 		};
 		try {
-			getContainer().run(false, false, runnable);
+			wizard.run(false, false, runnable);
 		} catch (InvocationTargetException exception) {
 			final Throwable throwable= exception.getTargetException();
 			if (throwable != null) {
@@ -603,12 +664,20 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * been executed.
 	 * <p>
 	 * This method is guaranteed to be called exactly once during the lifetime
-	 * of a refactoring history wizard. Subclasses may reimplement this method
-	 * to perform any special processing.
+	 * of a refactoring history wizard. It is not guaranteed that the user
+	 * interface has not already been disposed of.
 	 * </p>
+	 * <p>
+	 * Subclasses may reimplement this method to perform any special processing.
+	 * </p>
+	 * 
+	 * @param monitor
+	 *            the progress monitor to use
+	 * 
+	 * @return a status describing the outcome of the operation
 	 */
-	protected void historyPerformed() {
-		// Do nothing
+	protected RefactoringStatus historyPerformed(IProgressMonitor monitor) {
+		return new RefactoringStatus();
 	}
 
 	/**
@@ -635,7 +704,17 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * {@inheritDoc}
 	 */
 	public boolean performFinish() {
-		fireAboutToPerformHistory();
+		final IWizardContainer wizard= getContainer();
+		final RefactoringStatus status= new RefactoringStatus();
+		fireAboutToPerformHistory(wizard, status);
+		if (!status.isOK()) {
+			fErrorPage.setStatus(status);
+			fErrorPage.setNextPageDisabled(status.hasFatalError());
+			fErrorPage.setTitle(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error_title);
+			fErrorPage.setDescription(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error);
+			wizard.showPage(fErrorPage);
+			return false;
+		}
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptors();
 		final List list= new ArrayList(proxies.length);
 		for (int index= fCurrentRefactoring; index < proxies.length; index++)
@@ -643,7 +722,6 @@ public class RefactoringHistoryWizard extends Wizard {
 		final RefactoringDescriptorProxy[] descriptors= new RefactoringDescriptorProxy[list.size()];
 		list.toArray(descriptors);
 		final boolean last= isLastRefactoring();
-		final IWizardContainer wizard= getContainer();
 		if (!last) {
 			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 			if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_FINISH)) {
@@ -652,7 +730,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 			final PerformMultipleRefactoringsOperation operation= new PerformMultipleRefactoringsOperation(new RefactoringHistoryImplementation(descriptors)) {
 
-				protected void aboutToPerformRefactoring(final Refactoring refactoring) {
+				protected void aboutToPerformRefactoring(final Refactoring refactoring, final IProgressMonitor monitor) {
 					Platform.run(new ISafeRunnable() {
 
 						public void handleException(final Throwable exception) {
@@ -660,12 +738,12 @@ public class RefactoringHistoryWizard extends Wizard {
 						}
 
 						public final void run() throws Exception {
-							RefactoringHistoryWizard.this.aboutToPerformRefactoring(refactoring);
+							RefactoringHistoryWizard.this.aboutToPerformRefactoring(refactoring, monitor);
 						}
 					});
 				}
 
-				protected void refactoringPerformed(final Refactoring refactoring) {
+				protected void refactoringPerformed(final Refactoring refactoring, final IProgressMonitor monitor) {
 					Platform.run(new ISafeRunnable() {
 
 						public void handleException(final Throwable exception) {
@@ -673,7 +751,7 @@ public class RefactoringHistoryWizard extends Wizard {
 						}
 
 						public final void run() throws Exception {
-							RefactoringHistoryWizard.this.refactoringPerformed(refactoring);
+							RefactoringHistoryWizard.this.refactoringPerformed(refactoring, monitor);
 						}
 					});
 				}
@@ -698,7 +776,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			final Refactoring refactoring= fPreviewPage.getRefactoring();
 			final Change change= fPreviewPage.getChange();
 			if (refactoring != null && change != null) {
-				final RefactoringStatus status= performPreviewChange(change, refactoring);
+				status.merge(performPreviewChange(change, refactoring));
 				if (!status.isOK()) {
 					final RefactoringStatusEntry entry= status.getEntryWithHighestSeverity();
 					if (entry.getSeverity() == RefactoringStatus.INFO && entry.getCode() == RefactoringHistoryWizard.STATUS_CODE_INTERRUPTED)
@@ -779,12 +857,22 @@ public class RefactoringHistoryWizard extends Wizard {
 	/**
 	 * Hook method which is called when the specified refactoring has been
 	 * performed.
+	 * <p>
+	 * Subclasses may reimplement this method to perform any special processing.
+	 * </p>
+	 * <p>
+	 * Returning a status of severity {@link RefactoringStatus#FATAL} will
+	 * terminate the execution of the refactorings.
+	 * </p>
 	 * 
 	 * @param refactoring
 	 *            the refactoring which has been performed
+	 * @param monitor
+	 *            the progress monitor to use
+	 * @return a status describing the outcome of the operation
 	 */
-	protected void refactoringPerformed(final Refactoring refactoring) {
-		// Do nothing
+	protected RefactoringStatus refactoringPerformed(final Refactoring refactoring, final IProgressMonitor monitor) {
+		return new RefactoringStatus();
 	}
 
 	/**
