@@ -123,12 +123,7 @@ public class UAContentParser {
 	}
 
 
-	/**
-	 * General parser method that can accept both String and InputStream for parsing.
-	 * 
-	 * @param fileObject
-	 * @return
-	 */
+
 	private Document doParse(Object fileObject) {
 		Document document = null;
 		try {

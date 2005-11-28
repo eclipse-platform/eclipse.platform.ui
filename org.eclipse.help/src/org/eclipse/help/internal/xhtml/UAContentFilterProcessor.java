@@ -25,7 +25,6 @@ public class UAContentFilterProcessor {
 		Element body = DOMUtil.getBodyElement(dom);
 		NodeList allChildElements = body.getChildNodes();
 		for (int i = 0; i < allChildElements.getLength(); i++) {
-			// not all nodes are Elements.
 			Node node = (Node) allChildElements.item(i);
 			if (!(node instanceof Element))
 				continue;
@@ -40,13 +39,11 @@ public class UAContentFilterProcessor {
 			boolean filteredIn = false;
 			filteredIn = processFilterAttribute(element);
 			if (!filteredIn)
-				// element failed filter, and is filtered out.
 				return;
 		}
 
 		NodeList allChildElements = element.getChildNodes();
 		for (int i = 0; i < allChildElements.getLength(); i++) {
-			// not all nodes are Elements.
 			Node node = (Node) allChildElements.item(i);
 			if (!(node instanceof Element))
 				continue;
@@ -56,7 +53,6 @@ public class UAContentFilterProcessor {
 	}
 
 	private static boolean hasFilterAttribute(Element element) {
-		// getAttribute returns an empty string if att is not defined.
 		if (element.getAttribute(DOMUtil.ATT_FILTER).equals(""))
 			return false;
 		return true;
