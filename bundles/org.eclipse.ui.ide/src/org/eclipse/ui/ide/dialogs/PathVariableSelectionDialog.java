@@ -13,6 +13,7 @@ package org.eclipse.ui.ide.dialogs;
 
 import java.io.File;
 
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -30,6 +31,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.FileFolderSelectionDialog;
+import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 import org.eclipse.ui.internal.ide.dialogs.PathVariablesGroup;
 
 /**
@@ -196,11 +198,12 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
         if (extendButton == null)
             return;
         if (selection.length == 1) {
-            File file = selection[0].path.toFile();
-            if (file.exists() == false || file.isFile())
-                extendButton.setEnabled(false);
+            IFileInfo info = IDEResourceInfoUtils.getFileInfo(selection[0].path);
+            if (info.exists() && info.isDirectory())
+            	extendButton.setEnabled(true);
             else
-                extendButton.setEnabled(true);
+                extendButton.setEnabled(false);
+                
         } else
             extendButton.setEnabled(false);
     }

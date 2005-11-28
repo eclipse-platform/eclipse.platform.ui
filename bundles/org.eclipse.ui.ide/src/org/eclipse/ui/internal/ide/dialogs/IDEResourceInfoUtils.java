@@ -129,6 +129,24 @@ public class IDEResourceInfoUtils {
 			return null;
 		return store.fetchInfo();
 	}
+	
+	/**
+	 * Return the fileInfo at pathName or <code>null</code> if the format is
+	 * invalid or if the file info cannot be determined.
+	 * 
+	 * @param pathName
+	 * @return IFileInfo or <code>null</code>
+	 */
+	public static IFileInfo getFileInfo(IPath pathName) {
+		IFileStore store;
+		try {
+			store = EFS.getStore(pathName.toFile().toURI());
+		} catch (CoreException e) {
+			IDEWorkbenchPlugin.log(e.getMessage(), e.getStatus());
+			return null;
+		}
+		return store.fetchInfo();
+	}
 
 	/**
 	 * Get the location of a resource
