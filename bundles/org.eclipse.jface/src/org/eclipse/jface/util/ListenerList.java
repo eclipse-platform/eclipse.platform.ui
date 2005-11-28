@@ -58,4 +58,16 @@ public class ListenerList extends org.eclipse.core.runtime.ListenerList {
 		// the runtime ListenerList does not support capacity
 		this();
 	}
+
+	/**
+	 * Removes all listeners from this list.
+	 */
+	public void clear() {
+		// TODO Bug 117519
+		// listenerList.clear();
+		final Object[] listeners = getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			remove(listeners[i]);
+		}
+	}
 }
