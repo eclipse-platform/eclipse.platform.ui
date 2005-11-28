@@ -56,8 +56,8 @@ public class ResourceLocator {
 
 	static class ProducerDescriptor {
 
-		IHelpContentProducer producer;
-		IConfigurationElement config;
+		private IHelpContentProducer producer;
+		private IConfigurationElement config;
 
 		public ProducerDescriptor(IConfigurationElement config) {
 			this.config = config;
@@ -67,6 +67,25 @@ public class ResourceLocator {
 			IExtension ex = config.getDeclaringExtension();
 			String id = ex.getUniqueIdentifier();
 			return id != null && id.equals(refId);
+		}
+		
+		public void reset() {
+			producer = null;
+		}
+
+		public IHelpContentProducer getProducer() {
+			if (producer == null) {
+				try {
+					Object o = config.createExecutableExtension("producer"); //$NON-NLS-1$
+					if (o instanceof IHelpContentProducer)
+						producer = (IHelpContentProducer) o;
+				} catch (CoreException ce) {
+					HelpPlugin
+							.logError(
+									"Exception occurred creating help content producer for plug-in " + config.getNamespace() + ".", ce); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			}
+			return producer;
 		}
 	}
 	static {
@@ -86,7 +105,11 @@ public class ResourceLocator {
 					// reset producer for the affected plugin,
 					// it will be recreated on demand
 					synchronized (contentProducers) {
-						contentProducers.remove(affectedPlugin);
+						Object obj = contentProducers.get(affectedPlugin);
+						if (obj instanceof ProducerDescriptor) {
+							ProducerDescriptor desc = (ProducerDescriptor) obj;
+							desc.reset();
+						}
 					}
 				}
 			}
@@ -114,7 +137,7 @@ public class ResourceLocator {
 			if (descriptor == STATIC_DOCS_ONLY) {
 				return null;
 			}
-			return ((ProducerDescriptor) descriptor).producer;
+			return ((ProducerDescriptor) descriptor).getProducer();
 		}
 	}
 
@@ -137,25 +160,14 @@ public class ResourceLocator {
 				continue;
 			}
 			if (BINDING.equals(element.getName())) {
-				//producer binding - locate the descriptor
+				// producer binding - locate the descriptor
 				// with the matching reference Id
 				String refId = element.getAttribute("producerId");
 				if (refId != null) {
 					return findContentProducer(refId);
 				}
 			} else if (CONTENTPRODUCER_XP_NAME.equals(element.getName())) {
-				try {
-					Object o = element.createExecutableExtension("producer"); //$NON-NLS-1$
-					if (o instanceof IHelpContentProducer) {
-						ProducerDescriptor ad = new ProducerDescriptor(element);
-						ad.producer = (IHelpContentProducer)o;
-						return ad;
-					}
-				} catch (CoreException ce) {
-					HelpPlugin
-							.logError(
-									"Exception occurred creating help content producer for plug-in " + pluginId + ".", ce); //$NON-NLS-1$ //$NON-NLS-2$
-				}
+				return new ProducerDescriptor(element);
 			}
 		}
 		return null;
