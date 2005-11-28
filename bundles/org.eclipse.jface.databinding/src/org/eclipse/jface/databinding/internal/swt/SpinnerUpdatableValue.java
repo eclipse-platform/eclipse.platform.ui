@@ -52,42 +52,52 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 		}
 	}
 
-	public void setValue(Object value) {
-		int oldValue;
-		int newValue;
-		try {
-			updating = true;
-			newValue = ((Integer) value).intValue();
-			if (attribute.equals(SWTProperties.SELECTION)) {
-				oldValue = spinner.getSelection();
-				spinner.setSelection(newValue);
-			} else if (attribute.equals(SWTProperties.MIN)) {
-				oldValue = spinner.getMinimum();
-				spinner.setMinimum(newValue);
-			} else if (attribute.equals(SWTProperties.MAX)) {
-				oldValue = spinner.getMaximum();
-				spinner.setMaximum(newValue);
-			} else {
-				Assert.isTrue(false, "invalid attribute name:" + attribute); //$NON-NLS-1$
-				return;
+	public void setValue(final Object value) {
+		AsyncRunnable runnable = new AsyncRunnable(){
+			public void run(){
+				int oldValue;
+				int newValue;
+				try {
+					updating = true;
+					newValue = ((Integer) value).intValue();
+					if (attribute.equals(SWTProperties.SELECTION)) {
+						oldValue = spinner.getSelection();
+						spinner.setSelection(newValue);
+					} else if (attribute.equals(SWTProperties.MIN)) {
+						oldValue = spinner.getMinimum();
+						spinner.setMinimum(newValue);
+					} else if (attribute.equals(SWTProperties.MAX)) {
+						oldValue = spinner.getMaximum();
+						spinner.setMaximum(newValue);
+					} else {
+						Assert.isTrue(false, "invalid attribute name:" + attribute); //$NON-NLS-1$
+						return;
+					}
+					fireChangeEvent(ChangeEvent.CHANGE, new Integer(
+							oldValue), new Integer(newValue));
+				} finally {
+					updating = false;
+				}				
 			}
-			fireChangeEvent(ChangeEvent.CHANGE, new Integer(
-					oldValue), new Integer(newValue));
-		} finally {
-			updating = false;
-		}
+		};
+		runnable.runOn(spinner.getDisplay());
 	}
 
 	public Object getValue() {
-		int value = 0;
-		if (attribute.equals(SWTProperties.SELECTION)) {
-			value = spinner.getSelection();
-		} else if (attribute.equals(SWTProperties.MIN)) {
-			value = spinner.getMinimum();
-		} else if (attribute.equals(SWTProperties.MAX)) {
-			value = spinner.getMaximum();
-		}
-		return new Integer(value);
+		SyncRunnable runnable = new SyncRunnable(){
+			public Object run(){
+				int value = 0;
+				if (attribute.equals(SWTProperties.SELECTION)) {
+					value = spinner.getSelection();
+				} else if (attribute.equals(SWTProperties.MIN)) {
+					value = spinner.getMinimum();
+				} else if (attribute.equals(SWTProperties.MAX)) {
+					value = spinner.getMaximum();
+				}
+				return new Integer(value);				
+			}
+		};
+		return runnable.runOn(spinner.getDisplay());
 	}
 
 	public Class getValueType() {

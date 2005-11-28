@@ -138,5 +138,33 @@ abstract public class ScenariosTestCase extends TestCase {
 	protected void assertArrayEquals(Object[] expected, Object[] actual) {
 		assertEquals(Arrays.asList(expected), Arrays.asList(actual));
 	}
-
+		
+	public static void invokeNonUI(final Runnable aRunnable){
+		
+		final RuntimeException[] nonUIException = new RuntimeException[1];
+		Thread t = new Thread(aRunnable){
+			public void run(){
+				try{
+					super.run();
+				} catch (Exception exc){
+					RuntimeException runtimeException = new RuntimeException(exc);
+					runtimeException.fillInStackTrace();
+					nonUIException[0] = runtimeException; 
+					exc.printStackTrace();
+				}
+			}
+		};
+		t.start();
+		while(t.isAlive()) {
+			while(Display.getCurrent().readAndDispatch());
+			try {
+				t.join(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		if(nonUIException[0] != null){
+			throw nonUIException[0];
+		}
+	}
 }

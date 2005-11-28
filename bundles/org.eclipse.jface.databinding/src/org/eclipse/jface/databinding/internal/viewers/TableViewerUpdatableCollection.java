@@ -15,6 +15,8 @@ import java.util.List;
 
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.internal.swt.AsyncRunnable;
+import org.eclipse.jface.databinding.internal.swt.SyncRunnable;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -55,8 +57,17 @@ public class TableViewerUpdatableCollection extends Updatable implements
 	public int getSize() {
 		return elements.size();
 	}
+	
+	public int addElement(final Object element, final int index){
+		SyncRunnable runnable = new SyncRunnable(){
+			public Object run(){
+				return new Integer(internalAddElement(element,index));
+			}
+		};
+		return ((Integer)runnable.runOn(viewer.getControl().getDisplay())).intValue();
+	}
 
-	public int addElement(Object element, int index) {
+	private int internalAddElement(Object element, int index) {
 		int position = primAddElement(element, index);
 		if (position == elements.size() - 1 || viewer.getSorter() != null)
 			viewer.add(element);
@@ -76,19 +87,36 @@ public class TableViewerUpdatableCollection extends Updatable implements
 		}
 		return position;
 	}
+	
+	public void removeElement(final int index){
+		// Even though this could be run Async because we don't need a result, we must run it sync otherwise
+		// it races against the sync code in addElement(...)
+		SyncRunnable runnable = new SyncRunnable(){
+			public Object run(){
+				internalRemoveElement(index);
+				return null;
+			}
+		};
+		runnable.runOn(viewer.getControl().getDisplay());
+	}
 
-	public void removeElement(int index) {
+	public void internalRemoveElement(int index) {
 		Object element = elements.remove(index);
 		viewer.remove(element);
 	}
 
-	public void setElement(int index, Object element) {
-		if (elements.get(index).equals(element)) {
-			viewer.update(element, null);
-		} else {
-			removeElement(index);
-			addElement(element, index);
-		}
+	public void setElement(final int index, final Object element) {
+		AsyncRunnable runnable = new AsyncRunnable(){
+			public void run(){
+				if (elements.get(index).equals(element)) {
+					viewer.update(element, null);
+				} else {
+					internalRemoveElement(index);
+					internalAddElement(element, index);
+				}				
+			}
+		};
+		runnable.runOn(viewer.getControl().getDisplay());
 	}
 
 	public Object getElement(int index) {

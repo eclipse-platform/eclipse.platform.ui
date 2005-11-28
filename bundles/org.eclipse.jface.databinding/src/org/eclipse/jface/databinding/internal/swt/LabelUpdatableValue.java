@@ -29,17 +29,29 @@ public class LabelUpdatableValue extends UpdatableValue {
 		this.label = label;
 	}
 
-	public void setValue(Object value) {
-		String oldValue = label.getText();
-		label.setText(value == null ? "" : value.toString()); //$NON-NLS-1$
-		fireChangeEvent(ChangeEvent.CHANGE, oldValue, label.getText());
+	public void setValue(final Object value) {
+		AsyncRunnable runnable = new AsyncRunnable(){
+			public void run(){
+				String oldValue = label.getText();
+				label.setText(value == null ? "" : value.toString()); //$NON-NLS-1$
+				fireChangeEvent(ChangeEvent.CHANGE, oldValue, label.getText());		
+			}
+		};	
+		runnable.runOn(label.getDisplay());
 	}
-
+ 
 	public Object getValue() {
-		return label.getText();
+		
+		SyncRunnable runnable = new SyncRunnable(){
+			public Object run(){
+				return label.getText();
+			}
+		};
+		return runnable.runOn(label.getDisplay());
 	}
 
 	public Class getValueType() {
 		return String.class;
 	}
+	
 }

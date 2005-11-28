@@ -164,6 +164,30 @@ public class TableScenarios extends ScenariosTestCase {
 		// The number of items should still match the number of accounts (i.e. test the model is reset)
 		assertEquals(tableViewer.getTable().getItemCount(),catalog.getAccounts().length);		
 		
+		// Test adding and removing to the model on a non UI thread
+		int numberOfAccounts = catalog.getAccounts().length;
+		final Account barney = new Account();
+		barney.setFirstName("Barney");
+		barney.setLastName("Smith");
+		barney.setLastName("CA");
+		invokeNonUI(new Runnable(){
+			public void run(){
+				catalog.addAccount(barney);
+			}
+		});
+		spinEventLoop(0);
+		// The number of items should have gone up by one		
+		assertEquals(tableViewer.getTable().getItemCount(),numberOfAccounts + 1);
+		
+		invokeNonUI(new Runnable(){
+			public void run(){
+				catalog.removeAccount(barney);
+			}
+		});
+		spinEventLoop(0);
+		// The number of items should have reverted to the original number before barney was added and removed		
+		assertEquals(tableViewer.getTable().getItemCount(),numberOfAccounts);
+		
 	}
 		
 	public void testScenario03() {
@@ -214,14 +238,24 @@ public class TableScenarios extends ScenariosTestCase {
 		getDbc().bind(tableViewerDescription,
 				new Property(catalog, "accounts"), null);
 		
-		Account account = catalog.getAccounts()[0];
+		final Account account = catalog.getAccounts()[0];
 		String lastName = tableViewer.getTable().getItem(0).getText(0);
 		// Check the firstName in the TableItem is the same as the model
 		assertEquals(lastName,account.getLastName());
 		// Now change the model and check again
 		account.setLastName("Gershwin");
 		lastName = tableViewer.getTable().getItem(0).getText(0);	
-		assertEquals(lastName,account.getLastName());		
+		assertEquals(lastName,account.getLastName());	
+		
+		// Test the model update on a non UI thread
+		invokeNonUI(new Runnable(){
+			public void run(){
+				account.setLastName("Mozart");				
+			}
+		});
+		spinEventLoop(0);
+		lastName = tableViewer.getTable().getItem(0).getText(0);		
+		assertEquals(lastName,account.getLastName());
 		
 	}
 	

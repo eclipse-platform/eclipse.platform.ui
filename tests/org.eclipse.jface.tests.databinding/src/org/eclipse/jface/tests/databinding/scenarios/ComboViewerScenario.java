@@ -68,7 +68,7 @@ public class ComboViewerScenario extends ScenariosTestCase {
 		assertEquals(null,((IStructuredSelection)comboViewer.getSelection()).getFirstElement());
 		
 		// Now bind the selection of the combo to the "defaultLodging" property of an adventure
-		Adventure adventure = SampleData.WINTER_HOLIDAY;
+		final Adventure adventure = SampleData.WINTER_HOLIDAY;
 		getDbc().bind(
 				new Property(comboViewer,ViewersProperties.SINGLE_SELECTION),
 				new Property(adventure, "defaultLodging"),
@@ -84,7 +84,15 @@ public class ComboViewerScenario extends ScenariosTestCase {
 		
 		// Change the combo selection and verify that the model changes
 		comboViewer.getCombo().select(3);
-		assertEquals(((IStructuredSelection)comboViewer.getSelection()).getFirstElement(),adventure.getDefaultLodging());		
+		assertEquals(((IStructuredSelection)comboViewer.getSelection()).getFirstElement(),adventure.getDefaultLodging());
 		
+		// Change the model on a non-UI thread and verify that the combo selection changes
+		invokeNonUI(new Runnable(){
+			public void run(){
+				adventure.setDefaultLodging(SampleData.YOUTH_HOSTEL);
+			}
+		});
+		spinEventLoop(0);
+		assertEquals(((IStructuredSelection)comboViewer.getSelection()).getFirstElement(),adventure.getDefaultLodging());		
 	}
 }

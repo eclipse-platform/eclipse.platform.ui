@@ -12,6 +12,8 @@ package org.eclipse.jface.databinding.internal.viewers;
 
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
+import org.eclipse.jface.databinding.internal.swt.AsyncRunnable;
+import org.eclipse.jface.databinding.internal.swt.SyncRunnable;
 import org.eclipse.jface.databinding.viewers.ViewersProperties;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
@@ -55,29 +57,39 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 		}
 	}
 
-	public void setValue(Object value) {
-		try {
-			updating = true;
-			if (attribute.equals(ViewersProperties.SINGLE_SELECTION)) {
-				Object oldValue= getValue();
-				viewer.setSelection(value == null ? StructuredSelection.EMPTY
-						: new StructuredSelection(value));
-				fireChangeEvent(ChangeEvent.CHANGE, oldValue, getValue());
+	public void setValue(final Object value) {
+		AsyncRunnable runnable = new AsyncRunnable(){
+			public void run(){
+				try {
+					updating = true;
+					if (attribute.equals(ViewersProperties.SINGLE_SELECTION)) {
+						Object oldValue= getValue();
+						viewer.setSelection(value == null ? StructuredSelection.EMPTY
+								: new StructuredSelection(value));
+						fireChangeEvent(ChangeEvent.CHANGE, oldValue, getValue());
+					}
+				} finally {
+					updating = false;
+				}
 			}
-		} finally {
-			updating = false;
-		}
+		};
+		runnable.runOn(viewer.getControl().getDisplay());
 	}
 
 	public Object getValue() {
-		if (attribute.equals(ViewersProperties.SINGLE_SELECTION)) {
-			ISelection selection = viewer.getSelection();
-			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection sel = (IStructuredSelection) selection;
-				return sel.getFirstElement();
+		SyncRunnable runnable = new SyncRunnable(){
+			public Object run(){
+				if (attribute.equals(ViewersProperties.SINGLE_SELECTION)) {
+					ISelection selection = viewer.getSelection();
+					if (selection instanceof IStructuredSelection) {
+						IStructuredSelection sel = (IStructuredSelection) selection;
+						return sel.getFirstElement();
+					}
+				}
+				return null;				
 			}
-		}
-		return null;
+		};
+		return runnable.runOn(viewer.getControl().getDisplay());
 	}
 
 	public Class getValueType() {

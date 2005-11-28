@@ -55,6 +55,17 @@ public class ButtonControlScenario extends ScenariosTestCase {
 		button.setSelection(newBoolean);
 		button.notifyListeners(SWT.Selection,null);
 		assertEquals(newBoolean,adventure.isPetsAllowed());
+		// Verify that changes to the model can occur in a non UI thread
+		newBoolean = !newBoolean;
+		final boolean finalNewBoolean = newBoolean;
+		invokeNonUI(new Runnable(){
+			public void run(){
+				adventure.setPetsAllowed(finalNewBoolean);
+			}
+		});
+		spinEventLoop(0);
+		assertEquals(newBoolean,button.getSelection());
+		
 	}
 	
 	public void testScenario02() {

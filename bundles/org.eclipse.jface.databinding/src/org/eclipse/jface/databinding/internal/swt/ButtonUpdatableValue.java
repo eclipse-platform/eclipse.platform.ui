@@ -44,15 +44,25 @@ public class ButtonUpdatableValue extends UpdatableValue {
 		}
 	}
 
-	public void setValue(Object value) {
-		button.setSelection(value == null ? false : ((Boolean) value)
-				.booleanValue());
-		fireChangeEvent(ChangeEvent.CHANGE, null, new Boolean(
-				button.getSelection()));
+	public void setValue(final Object value) {
+		AsyncRunnable runnable = new AsyncRunnable(){
+			public void run(){
+				button.setSelection(value == null ? false : ((Boolean) value)
+						.booleanValue());
+				fireChangeEvent(ChangeEvent.CHANGE, null, new Boolean(
+						button.getSelection()));				
+			}
+		};
+		runnable.runOn(button.getDisplay());
 	}
 
 	public Object getValue() {
-		return new Boolean(button.getSelection());
+		SyncRunnable runnable = new SyncRunnable(){
+			public Object run(){
+				return new Boolean(button.getSelection());				
+			}
+		};
+		return runnable.runOn(button.getDisplay());
 	}
 
 	public Class getValueType() {

@@ -13,6 +13,8 @@ package org.eclipse.jface.databinding.internal.swt;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Event;
@@ -42,12 +44,14 @@ public class TextUpdatableValue extends UpdatableValue {
 	private Listener updateListener = new Listener() {
 		public void handleEvent(Event event) {
 			if (!updating) {
-				fireChangeEvent(ChangeEvent.CHANGE, null, text.getText());
+				fireChangeEvent(ChangeEvent.CHANGE, null, text.getText());						
 			}
 		}
 	};
 
 	private VerifyListener verifyListener;
+	
+	private KeyListener keyListener; 
 
 	/**
 	 * @param text
@@ -75,21 +79,41 @@ public class TextUpdatableValue extends UpdatableValue {
 			}
 		};
 		text.addVerifyListener(verifyListener);
+		keyListener = new KeyListener(){
+			public void keyPressed(KeyEvent e) {
+				if(e.character == SWT.ESC){
+					e.toString();
+				}
+			}
+			public void keyReleased(KeyEvent e) {	
+			}
+		};
+		text.addKeyListener(keyListener);
 	}
 
-	public void setValue(Object value) {
-		String oldValue = text.getText();
-		try {
-			updating = true;
-			text.setText(value == null ? "" : value.toString()); //$NON-NLS-1$
-		} finally {
-			updating = false;
-		}
-		fireChangeEvent(ChangeEvent.CHANGE, oldValue, text.getText());
+	public void setValue(final Object value) {
+		AsyncRunnable runnable = new AsyncRunnable(){
+			public void run(){
+				String oldValue = text.getText();
+				try {
+					updating = true;
+					text.setText(value == null ? "" : value.toString()); //$NON-NLS-1$
+				} finally {
+					updating = false;
+				}
+				fireChangeEvent(ChangeEvent.CHANGE, oldValue, text.getText());				
+			}
+		};
+		runnable.runOn(text.getDisplay());
 	}
 
 	public Object getValue() {
-		return text.getText();
+		SyncRunnable runnable = new SyncRunnable(){
+			public Object run() {
+				return text.getText();
+			}			
+		};
+		return runnable.runOn(text.getDisplay());
 	}
 
 	public Class getValueType() {
