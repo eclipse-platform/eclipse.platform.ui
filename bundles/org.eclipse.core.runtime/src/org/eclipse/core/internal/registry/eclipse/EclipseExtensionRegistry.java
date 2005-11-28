@@ -10,40 +10,41 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry.eclipse;
 
-import java.io.File;
 import java.util.Hashtable;
+import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.registry.RegistryFactory;
-import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
 /**
  * Backward-compatible Eclipse registry implementation.
  */
-public class EclipseExtensionRegistry implements IExtensionRegistry {
 
-	private org.eclipse.equinox.registry.IExtensionRegistry theEquinoxHandle;
-	private Object registryKey = new Object();
-	ServiceRegistration registrationNew;
+// XXX Eclipse* classes should be renamed to be Legacy or some such
+// XXX EclipseRegistryAdaptor should be renamed to *Converter and the adapt() => convert() or some such
+
+public class EclipseExtensionRegistry implements IExtensionRegistry {
 	ServiceRegistration registrationOld;
+	// XXX this field name should be updated.  Something like "target" or "wrappee" :-)
+	private org.eclipse.equinox.registry.IExtensionRegistry theEquinoxHandle;
 
 	public EclipseExtensionRegistry() {
-		Location configuration = InternalPlatform.getDefault().getConfigurationLocation();
-		File theStorageDir = new File(configuration.getURL().getPath() + '/' + Platform.PI_RUNTIME);
-		EclipseRegistryStrategy registryStrategy = new EclipseRegistryStrategy(theStorageDir, configuration.isReadOnly(), registryKey);
-		theEquinoxHandle = RegistryFactory.createExtensionRegistry(registryStrategy, registryKey);
+		theEquinoxHandle = RegistryFactory.getRegistry();
+		if (theEquinoxHandle instanceof ExtensionRegistry) {
+			((ExtensionRegistry) theEquinoxHandle).setCompatibilityStrategy(new EclipseRegistryCompatibility());
+		}
 
-		// Register this registry both under old and new names
+		// XXX Did we used to register the registry as a service?  If so, bummer.  If not, we should consider 
+		//    Dropping this.  If we do have to register it, there should be a distinguishing property set so
+		//    someone can ensure they are getting the legacy registry.
+		// For compatibility, register this registry under old name as well
 		BundleContext context = InternalPlatform.getDefault().getBundleContext();
-		registrationNew = context.registerService(org.eclipse.equinox.registry.IExtensionRegistry.class.getName(), theEquinoxHandle, new Hashtable());
 		registrationOld = context.registerService(IExtensionRegistry.class.getName(), this, new Hashtable());
 	}
 
 	public void stop() {
-		theEquinoxHandle.stop(registryKey);
-		registrationNew.unregister();
 		registrationOld.unregister();
 	}
 

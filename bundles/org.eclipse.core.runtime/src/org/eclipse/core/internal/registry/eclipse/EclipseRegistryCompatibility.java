@@ -10,21 +10,15 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry.eclipse;
 
-import java.io.File;
 import java.util.EventListener;
 import java.util.Map;
 import org.eclipse.core.internal.registry.ICompatibilityStrategy;
-import org.eclipse.core.internal.registry.osgi.EquinoxRegistryStrategy;
 import org.eclipse.core.runtime.*;
 
 /**
- * The Eclipse registry strategy.
+ * The backward compatibility strategy typing "old" Eclipse and "new" Equinox registry.
  */
-public class EclipseRegistryStrategy extends EquinoxRegistryStrategy implements ICompatibilityStrategy {
-
-	public EclipseRegistryStrategy(File theStorageDir, boolean cacheReadOnly, Object key) {
-		super(theStorageDir, cacheReadOnly, key);
-	}
+public class EclipseRegistryCompatibility implements ICompatibilityStrategy {
 
 	/* --- ICompatibilityStrategy - my listeners expect objects in the o.e.c.runtime namespace --- */
 

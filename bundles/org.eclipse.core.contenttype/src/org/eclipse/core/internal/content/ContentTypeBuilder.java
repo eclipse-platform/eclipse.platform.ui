@@ -181,7 +181,7 @@ public class ContentTypeBuilder {
 	 * 		org.eclipse.core.contenttype.contentTypes
 	 */
 	protected IConfigurationElement[] getConfigurationElements() {
-		IExtensionRegistry registry = ContentOSGiUtils.getDefault().getExtensionRegistry();
+		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		IConfigurationElement[] oldConfigElements = emptyConfArray;
 		IConfigurationElement[] newConfigElements = emptyConfArray;
 		// "old" extenstion point

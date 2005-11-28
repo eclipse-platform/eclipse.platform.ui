@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.content;
 
 import javax.xml.parsers.SAXParserFactory;
-import org.eclipse.equinox.registry.IExtensionRegistry;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
@@ -23,7 +22,6 @@ import org.osgi.util.tracker.ServiceTracker;
  * @since org.eclipse.core.contenttype 1.0
  */
 public class ContentOSGiUtils {
-	private ServiceTracker registryTracker = null;
 	private ServiceTracker parserTracker = null;
 	private ServiceTracker debugTracker = null;
 
@@ -48,9 +46,6 @@ public class ContentOSGiUtils {
 			return;
 		}
 
-		registryTracker = new ServiceTracker(context, IExtensionRegistry.class.getName(), null);
-		registryTracker.open();
-
 		parserTracker = new ServiceTracker(context, "javax.xml.parsers.SAXParserFactory", null); //$NON-NLS-1$
 		parserTracker.open();
 
@@ -59,11 +54,6 @@ public class ContentOSGiUtils {
 	}
 
 	void closeServices() {
-		if (registryTracker != null) {
-			registryTracker.close();
-			registryTracker = null;
-		}
-
 		if (parserTracker != null) {
 			parserTracker.close();
 			parserTracker = null;
@@ -72,13 +62,6 @@ public class ContentOSGiUtils {
 			debugTracker.close();
 			debugTracker = null;
 		}
-	}
-
-	public IExtensionRegistry getExtensionRegistry() {
-		if (registryTracker != null)
-			return (IExtensionRegistry) registryTracker.getService();
-		ContentMessages.message("Registry tracker is not set"); //$NON-NLS-1$
-		return null;
 	}
 
 	public SAXParserFactory getFactory() {
