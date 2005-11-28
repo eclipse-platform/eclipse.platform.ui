@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -29,6 +30,9 @@ public class ResourceMappingLabelProvider extends LabelProvider {
 		if (element instanceof ModelProvider) {
 			ModelProvider provider = (ModelProvider) element;
 			return provider.getDescriptor().getLabel();
+		}
+		if (element instanceof IWorkspaceRoot) {
+			return "Workspace";
 		}
         String text = provider.getText(element);
         if (text != null && text.length() > 0)

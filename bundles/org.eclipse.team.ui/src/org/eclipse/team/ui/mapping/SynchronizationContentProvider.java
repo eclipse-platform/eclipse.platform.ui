@@ -50,11 +50,25 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
-	public Object[] getChildren(Object parentElement) {
-		if (parentElement == getModelProvider()) {
-			return filter(parentElement, getDelegateContentProvider().getChildren(getModelRoot()));
+	public Object[] getChildren(Object parent) {
+		if (parent instanceof IResourceMappingScope) {
+			IResourceMappingScope rms = (IResourceMappingScope) parent;
+			if (rms.getMappings(getModelProviderId()).length > 0) {
+				return new Object[] { getModelProvider() };
+			}
+			return new Object[0];
+		} else if (parent instanceof ISynchronizationContext) {
+			ISynchronizationContext sc = (ISynchronizationContext) parent;
+			if (sc.getScope().getMappings(getModelProviderId()).length > 0) {
+				if (filter(parent, getDelegateContentProvider().getChildren(getModelRoot())).length > 0)
+					return new Object[] { getModelProvider() };
+			}
+			return new Object[0];
 		}
-		return filter(parentElement, getDelegateContentProvider().getChildren(parentElement));
+		if (parent == getModelProvider()) {
+			return filter(parent, getDelegateContentProvider().getChildren(getModelRoot()));
+		}
+		return filter(parent, getDelegateContentProvider().getElements(parent));
 	}
 
 	/* (non-Javadoc)
@@ -85,6 +99,20 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
+		if (inputElement instanceof IResourceMappingScope) {
+			IResourceMappingScope rms = (IResourceMappingScope) inputElement;
+			if (rms.getMappings(getModelProviderId()).length > 0) {
+				return new Object[] { getModelProvider() };
+			}
+			return new Object[0];
+		} else if (inputElement instanceof ISynchronizationContext) {
+			ISynchronizationContext sc = (ISynchronizationContext) inputElement;
+			if (sc.getScope().getMappings(getModelProviderId()).length > 0) {
+				if (filter(inputElement, getDelegateContentProvider().getChildren(getModelRoot())).length > 0)
+					return new Object[] { getModelProvider() };
+			}
+			return new Object[0];
+		}
 		if (inputElement == getModelProvider()) {
 			return filter(inputElement, getDelegateContentProvider().getChildren(getModelRoot()));
 		}

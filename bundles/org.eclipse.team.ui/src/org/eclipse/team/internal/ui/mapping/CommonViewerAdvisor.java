@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ui.mapping;
 
 import java.util.*;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -24,7 +23,7 @@ import org.eclipse.team.ui.operations.ModelSynchronizePage;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.navigator.INavigatorContentServiceListener;
+import org.eclipse.ui.navigator.internal.INavigatorContentServiceListener;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 
 /**
@@ -36,6 +35,8 @@ public class CommonViewerAdvisor extends StructuredViewerAdvisor implements INav
 	
 	Set extensions = new HashSet();
 	Map properties = new HashMap();
+
+	private ISynchronizePageConfiguration configuration;
 	
 	/**
 	 * Create a common viewer
@@ -64,14 +65,19 @@ public class CommonViewerAdvisor extends StructuredViewerAdvisor implements INav
 	 */
 	public CommonViewerAdvisor(Composite parent, ISynchronizePageConfiguration configuration) {
 		super(configuration);
+		this.configuration = configuration;
 		CommonViewer viewer = CommonViewerAdvisor.createViewer(parent, configuration);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(data);
         viewer.getNavigatorContentService().addListener(this);
-        viewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
+        viewer.setInput(getInitialInput());
         initializeViewer(viewer);
 	}
 
+	private Object getInitialInput() {
+		return ((ModelSynchronizeParticipant)configuration.getParticipant()).getContext();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentServiceListener#onLoad(org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension)
 	 */

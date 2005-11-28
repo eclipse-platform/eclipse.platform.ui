@@ -334,33 +334,32 @@
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
             contentProvider="org.eclipse.team.internal.ui.mapping.ResourceTeamAwareContentProvider"
-            enabledByDefault="false"
             id="org.eclipse.team.ui.resourceContent"
             labelProvider="org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider"
             name="Resource Mappings">
          <enablement>
-         <or>         
-            <objectClass
-                  name="org.eclipse.core.internal.resources.mapping.ResourceModelProvider">
-            </objectClass>
-            <objectClass
-                  name="org.eclipse.core.resources.IResource">
-            </objectClass> 
-            <objectClass
-                  name="org.eclipse.team.ui.mapping.IResourceMappingScope">
-            </objectClass>
-            <objectClass
-                  name="org.eclipse.team.ui.mapping.ISynchronizationContext">
-            </objectClass> 
-         </or>
+           <or>         
+            <instanceof value="org.eclipse.core.internal.resources.mapping.ResourceModelProvider"/>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
+            <instanceof value="org.eclipse.team.ui.mapping.IResourceMappingScope"/>
+            <instanceof value="org.eclipse.team.ui.mapping.ISynchronizationContext"/>
+           </or>
          </enablement>
        </navigatorContent>
    </extension>
    <extension
-         point="org.eclipse.ui.navigator.navigatorViewer">
-      <navigatorViewer
-            rootContentExtensionId="org.eclipse.team.ui.navigatorContent"
-            viewerId="org.eclipse.team.ui.navigatorViewer"/>
+         point="org.eclipse.ui.navigator.viewerContentBinding">
+      <viewerContentBinding 
+         viewerId="org.eclipse.team.ui.navigatorViewer">                     
+         <includes>                     
+            <!-- <contentExtension   
+               pattern="org.eclipse.team.ui.navigatorContent" 
+               isRoot="true"/> -->
+            <contentExtension   
+               pattern="org.eclipse.team.ui.resourceContent" 
+               isRoot="true"/>
+         </includes>   
+       </viewerContentBinding>   
    </extension>
    
    <!-- *************** Synchronize View Participant **************** -->

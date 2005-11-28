@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ui.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
@@ -25,7 +24,7 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.IResourceMappingScope;
 import org.eclipse.team.ui.mapping.ISynchronizationContext;
 import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.navigator.INavigatorContentServiceListener;
+import org.eclipse.ui.navigator.internal.INavigatorContentServiceListener;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 
 public class ResourceMappingHierarchyArea extends DialogArea implements INavigatorContentServiceListener {
@@ -69,11 +68,17 @@ public class ResourceMappingHierarchyArea extends DialogArea implements INavigat
         data.widthHint = 300;
         viewer.getControl().setLayoutData(data);
         viewer.getNavigatorContentService().addListener(this);
-        viewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
+        viewer.setInput(getInitialInput());
         viewer.refresh();
         Object[] objects = getRootModelObjects();
         viewer.setSelection(new StructuredSelection(objects), true);
     }
+
+	private Object getInitialInput() {
+		if (context != null)
+			return context;
+		return scope;
+	}
 
 	private Object[] getRootModelObjects() {
 		if (scope == null)
