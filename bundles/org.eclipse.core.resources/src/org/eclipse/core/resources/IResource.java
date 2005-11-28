@@ -225,6 +225,16 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 */
 	public static final int BACKGROUND_REFRESH = 0x80;
 
+	/**
+	 * Update flag constant (bit mask value 256) indicating that creating
+	 * a link should replace any existing resource by the same name.
+	 *
+	 * @see IFile#createLink(URI, int, IProgressMonitor)
+	 * @see IFolder#createLink(URI, int, IProgressMonitor)
+	 * @since 3.2
+	 */
+	public static final int REPLACE_RESOURCE = 0x100;
+
 	/*====================================================================
 	 * Other constants:
 	 *====================================================================*/

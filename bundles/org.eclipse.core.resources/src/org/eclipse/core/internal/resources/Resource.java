@@ -142,8 +142,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	}
 
 	protected void assertLinkRequirements(URI localLocation, int updateFlags) throws CoreException {
-		checkDoesNotExist(getFlags(getResourceInfo(false, false)), true);
 		boolean allowMissingLocal = (updateFlags & IResource.ALLOW_MISSING_LOCAL) != 0;
+		if ((updateFlags & IResource.REPLACE_RESOURCE) == 0)
+			checkDoesNotExist(getFlags(getResourceInfo(false, false)), true);
 		IStatus locationStatus = workspace.validateLinkLocationURI(this, localLocation);
 		//we only tolerate an undefined path variable in the allow missing local case
 		final boolean variableUndefined = locationStatus.getCode() == IResourceStatus.VARIABLE_NOT_DEFINED_WARNING;
@@ -563,6 +564,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see org.eclipse.core.resources.IFile#createLink(IPath, int, IProgressMonitor)
 	 */
 	public void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(localLocation);
 		createLink(FileUtil.toURI(localLocation), updateFlags, monitor);
 	}
 	
@@ -571,6 +573,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see org.eclipse.core.resources.IFile#createLink(URI, int, IProgressMonitor)
 	 */
 	public void createLink(URI localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(localLocation);
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String message = NLS.bind(Messages.links_creating, getFullPath());
@@ -583,7 +586,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				assertLinkRequirements(localLocation, updateFlags);
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_CREATE, this));
 				workspace.beginOperation(true);
-				// resolve any variables used in the location path
+				//replace existing resource, if applicable
+				if ((updateFlags & REPLACE_RESOURCE) != 0) {
+					IResource existing = workspace.getRoot().findMember(getFullPath());
+					if (existing != null)
+						workspace.deleteResource(existing);
+				}
 				ResourceInfo info = workspace.createResource(this, false);
 				info.set(M_LINK);
 				getLocalManager().link(this, localLocation);

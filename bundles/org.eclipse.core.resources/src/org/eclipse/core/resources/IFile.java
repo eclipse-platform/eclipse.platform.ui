@@ -323,17 +323,28 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * path, or a relative path whose first segment is the name of a workspace path
 	 * variable.
 	 * <p>
-	 * The <code>ALLOW_MISSING_LOCAL</code> update flag controls how this 
+	 * The {@link IResource#ALLOW_MISSING_LOCAL} update flag controls how this 
 	 * method deals with cases where the local file system file to be linked does
 	 * not exist, or is relative to a workspace path variable that is not defined.
-	 * If <code>ALLOW_MISSING_LOCAL</code> is specified, the operation will suceed
+	 * If {@link IResource#ALLOW_MISSING_LOCAL} is specified, the operation will succeed
 	 * even if the local file is missing, or the path is relative to an undefined
-	 * variable. If <code>ALLOW_MISSING_LOCAL</code> is not specified, the operation
+	 * variable. If {@link IResource#ALLOW_MISSING_LOCAL} is not specified, the operation
 	 * will fail in the case where the local file system file does not exist or the
 	 * path is relative to an undefined variable.
 	 * </p>
 	 * <p>
-	 * Update flags other than <code>ALLOW_MISSING_LOCAL</code> are ignored.
+	 * The {@link IResource#REPLACE_RESOURCE} update flag controls how this 
+	 * method deals with cases where a resource of the same name as the 
+	 * prospective link already exists. If {@link IResource#REPLACE_RESOURCE}
+	 * is specified, then any existing resource with the same name is removed
+	 * from the workspace to make way for creation of the link.  This does <b>not</b>
+	 * cause the underlying file system contents of that resource to be deleted.
+	 * If {@link IResource#REPLACE_RESOURCE} is not specified, this method will
+	 * fail if an existing resource exists of the same name.
+	 * </p>
+	 * <p>
+	 * Update flags other than {@link IResource#ALLOW_MISSING_LOCAL} or
+	 * {@link IResource#REPLACE_RESOURCE} are ignored.
 	 * </p>
 	 * <p>
 	 * This method synchronizes this resource with the local file system at the given
@@ -399,7 +410,18 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * path is relative to an undefined variable.
 	 * </p>
 	 * <p>
-	 * Update flags other than <code>ALLOW_MISSING_LOCAL</code> are ignored.
+	 * The {@link IResource#REPLACE_RESOURCE} update flag controls how this 
+	 * method deals with cases where a resource of the same name as the 
+	 * prospective link already exists. If {@link IResource#REPLACE_RESOURCE}
+	 * is specified, then any existing resource with the same name is removed
+	 * from the workspace to make way for creation of the link.  This does <b>not</b>
+	 * cause the underlying file system contents of that resource to be deleted.
+	 * If {@link IResource#REPLACE_RESOURCE} is not specified, this method will
+	 * fail if an existing resource exists of the same name.
+	 * </p>
+	 * <p>
+	 * Update flags other than {@link IResource#ALLOW_MISSING_LOCAL} or
+	 * {@link IResource#REPLACE_RESOURCE} are ignored.
 	 * </p>
 	 * <p>
 	 * This method synchronizes this resource with the file system at the given

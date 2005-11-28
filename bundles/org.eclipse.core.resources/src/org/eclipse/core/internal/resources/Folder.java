@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.net.URI;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.utils.Messages;
@@ -59,7 +60,7 @@ public class Folder extends Container implements IFolder {
 		getPropertyManager().deleteProperties(this, IResource.DEPTH_INFINITE);
 		IFile result = workspace.getRoot().getFile(path);
 		if (isLinked()) {
-			IPath location = getRawLocation();
+			URI location = getRawLocationURI();
 			delete(IResource.NONE, null);
 			result.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
 		} else {
