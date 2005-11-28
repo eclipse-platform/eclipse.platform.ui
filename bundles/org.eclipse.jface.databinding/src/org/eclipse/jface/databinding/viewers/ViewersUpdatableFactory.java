@@ -20,6 +20,7 @@ import org.eclipse.jface.databinding.internal.viewers.StructuredViewerUpdatableV
 import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollection;
 import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollectionExtended;
 import org.eclipse.jface.databinding.internal.viewers.TreeViewerUpdatableTree;
+import org.eclipse.jface.databinding.internal.viewers.TreeViewerUpdatableTreeExtended;
 import org.eclipse.jface.databinding.internal.viewers.UpdatableCollectionViewer;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -84,6 +85,9 @@ final public class ViewersUpdatableFactory implements IUpdatableFactory {
 		} else if (description instanceof TableViewerDescription) {
 			return new TableViewerUpdatableCollectionExtended(
 					(TableViewerDescription) description, bindingContext);
+		} else if (description instanceof TreeViewerDescription) {
+			return new TreeViewerUpdatableTreeExtended(
+				(TreeViewerDescription) description, bindingContext);
 		}
 		return null;
 	}

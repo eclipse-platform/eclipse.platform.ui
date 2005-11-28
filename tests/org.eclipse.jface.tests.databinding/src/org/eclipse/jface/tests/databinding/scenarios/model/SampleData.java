@@ -225,6 +225,9 @@ public class SampleData {
 				else if (parentElement instanceof Category)
 				   return ((Category)parentElement).getAdventures();				
 				return null;
+			}
+			public Class[] getTypes() {				
+				return new Class[]  { Catalog.class, Category.class, Lodging.class, Account.class, Adventure.class } ;
 			}			
 		};
 	}

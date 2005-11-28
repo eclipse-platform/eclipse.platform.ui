@@ -20,7 +20,10 @@ package org.eclipse.jface.databinding;
  * </p>
  * 
  * A domain model has to implement this interface in order to establish a tree
- * binding. 
+ * binding. It is possible that the domain model is not organized as a tree, and hence provides 
+ * the ability to provide a tree facade.
+ * 
+ * @see TreeModelDescription for a simpler way to bind a tree. 
  * 
  * @since 3.2
  * 
@@ -43,15 +46,6 @@ public interface ITree {
 	public void setChildren(Object parentElement, Object[] children);
 
 	/**
-	 * Returns the parent for the given element, or <code>null</code> 
-	 * indicating that the parent can't be computed. 
-	 *
-	 * @param element the element
-	 * @return the parent element, or <code>null</code> if root element
-	 */
-	public Object getParent(Object element);
-
-	/**
 	 * Returns whether the given element has children.
 	 *
 	 * @param element the element
@@ -59,5 +53,10 @@ public interface ITree {
 	 *  and <code>false</code> if it has no children
 	 */
 	public boolean hasChildren(Object element);
+	
+	/**
+	 * @return types of all tree nodes
+	 */
+	public Class[] getTypes();
 
 }

@@ -68,7 +68,7 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 	 * @param tree
 	 */
 	public JavaBeanUpdatableTree (ITree tree)  {
-		this (tree, new Class[] { Object.class });
+		this (tree, tree.getTypes());
 	}
 	
 	/**
@@ -212,12 +212,7 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 
 	public Object[] getElements(Object parentElement) {
 		return tree.getChildren(parentElement);		
-	}
-
-	public Object getParent(Object element) {
-		return tree.getParent(element);
-	}
-	
+	}	
 
 	public void dispose() {
 		super.dispose();

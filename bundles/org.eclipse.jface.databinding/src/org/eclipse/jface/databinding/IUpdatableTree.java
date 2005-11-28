@@ -69,16 +69,7 @@ public interface IUpdatableTree extends IUpdatable {
 	 * 
 	 * @return the potential types of tree elements
 	 */
-	public Class[] getTypes();	
-		
-	/**
-	 * Returns the parent for the given element, or <code>null</code> 
-	 * indicating that the parent is at the root.
-	 * 
-	 * @param element 
-	 * @return parent element
-	 */
-	public Object getParent(Object element);
+	public Class[] getTypes();			
 	
 	
 }

@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
@@ -45,16 +42,21 @@ public class TreeBinding extends Binding implements IChangeListener {
 		this.target = target;
 		this.model = model;
 		
-		// some sanity check
+		// some sanity check, target should support all declared model elements
 		Class[] targetTypes=target.getTypes();
 		Class[] modelTypes=model.getTypes();
-		if (targetTypes==null || modelTypes==null || targetTypes.length!=modelTypes.length)
-			throw new BindingException("Target and Model do not have the same Types"); //$NON-NLS-1$
-		List targetList = Arrays.asList(targetTypes);
-		for (int i = 0; i < model.getTypes().length; i++) {
-			if (!targetList.contains(modelTypes[i]))
-				throw new BindingException("Model Type does not apply to target: " + modelTypes[i]); //$NON-NLS-1$
-		}
+		if (targetTypes==null || modelTypes==null)
+			throw new BindingException("Tree type is not set"); //$NON-NLS-1$
+						
+		// Allow the target to support more types that is given by the model
+		// TODO this really need to check for isAssignable
+//		if (targetTypes.length<modelTypes.length)
+//			throw new BindingException("Target does not supports all Model types"); //$NON-NLS-1$
+//		List targetList = Arrays.asList(targetTypes);
+//		for (int i = 0; i < modelTypes.length; i++) {
+//			if (!targetList.contains(modelTypes[i]))
+//				throw new BindingException("Target does not supports type: " + modelTypes[i]); //$NON-NLS-1$
+//		}
 	}
 
 	public void handleChange(ChangeEvent changeEvent) {

@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.Viewer;
 //TODO Thread safe
 public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree {
 			
-	private TreeViewer viewer;
+	protected TreeViewer viewer;
 	
 	private Map nodes = new HashMap();
 	

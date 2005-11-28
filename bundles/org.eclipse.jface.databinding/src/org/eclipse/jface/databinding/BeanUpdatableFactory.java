@@ -17,6 +17,7 @@ import java.beans.PropertyDescriptor;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.jface.databinding.internal.beans.JavaBeanTree;
 import org.eclipse.jface.databinding.internal.beans.JavaBeanUpdatableCollection;
 import org.eclipse.jface.databinding.internal.beans.JavaBeanUpdatableTree;
 import org.eclipse.jface.databinding.internal.beans.JavaBeanUpdatableValue;
@@ -82,6 +83,8 @@ final public class BeanUpdatableFactory implements IUpdatableFactory {
 		}
 		else if (description instanceof ITree)
 			return new JavaBeanUpdatableTree((ITree)description);
+		else if (description instanceof TreeModelDescription) 
+			return new JavaBeanUpdatableTree(new JavaBeanTree((TreeModelDescription)description));
 		return null;
 	}
 }
