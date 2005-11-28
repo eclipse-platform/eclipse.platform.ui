@@ -24,7 +24,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.memory.renderings.CreateRendering;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
@@ -290,7 +289,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 							// if memory view is visible and have a selection
 							// follow memory view's selection
 							
-							ISelection selection = DebugUIPlugin.getActiveWorkbenchWindow().getSelectionService().getSelection(IInternalDebugUIConstants.ID_MEMORY_VIEW);
+							ISelection selection = DebugUIPlugin.getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_MEMORY_VIEW);
 							IMemoryBlock blk = getMemoryBlock(selection);
 							
 							if (blk != null)
@@ -353,7 +352,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			{
 				// if the event comes from Memory View
 				// pick empty tab folder as the memory view is no longer displaying anything
-				if (part.getSite().getId().equals(IInternalDebugUIConstants.ID_MEMORY_VIEW))
+				if (part.getSite().getId().equals(IDebugUIConstants.ID_MEMORY_VIEW))
 				{
 					if (part == this.getMemoryRenderingSite().getSite().getPart())
 					{

@@ -13,6 +13,7 @@ package org.eclipse.debug.ui;
 
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
  
 /**
  * Constant definitions for debug UI plug-in.
@@ -1044,4 +1045,50 @@ public interface IDebugUIConstants {
 	 * @since 3.2
 	 */
 	public static final String BREAKPOINT_WORKINGSET_ID = "org.eclipse.debug.ui.breakpointWorkingSet"; //$NON-NLS-1$	
+
+	/**
+	 * Memory view identifier (value <code>"org.eclipse.debug.ui.MemoryView"</code>).
+	 * @since 3.2
+	 * 
+	 * TODO:  new api, needs review
+	 */
+	public static String ID_MEMORY_VIEW = "org.eclipse.debug.ui.MemoryView";  //$NON-NLS-1$
+
+	/**
+	 * Memory view's rendering view pane identifier for the rendering view pane
+	 * on the left. (value <code>"org.eclipse.debug.ui.MemoryView.RenderingViewPane.1"</code>).
+	 * @since 3.2
+	 * 
+	 * TODO:  new api, needs review
+	 */
+	public static String ID_RENDERING_VIEW_PANE_1 = IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE + ".1"; //$NON-NLS-1$
+
+	/**
+	 * Memory view's rendering view pane identifier for the rendering view pane
+	 * on the right. (value <code>"org.eclipse.debug.ui.MemoryView.RenderingViewPane.2"</code>).
+	 * @since 3.2
+	 * 
+	 * TODO:  new api, needs review
+	 */
+	public static String ID_RENDERING_VIEW_PANE_2 = IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE + ".2"; //$NON-NLS-1$
+
+	/**
+	 * Preference color to indicate that a <code>MemoryByte</code> does not have history.
+	 * (value <code> org.eclipse.debug.ui.MemoryHistoryUnknownColor </code>)
+	 * 
+	 * @since 3.2
+	 * 
+	 * TODO:  new api, needs review
+	 */
+	public static final String PREF_MEMORY_HISTORY_UNKNOWN_COLOR = PLUGIN_ID + ".MemoryHistoryUnknownColor"; //$NON-NLS-1$
+
+	/**
+	 * 	Preference color to indicate that a <code>MemoryByte</code> has history.
+	 * (value <code> org.eclipse.debug.ui.MemoryHistoryKnownColor </code>)
+	 * 
+	 * @since 3.2
+	 * 
+	 * TODO:  new api, needs review
+	 */
+	public static final String PREF_MEMORY_HISTORY_KNOWN_COLOR = PLUGIN_ID + ".MemoryHistoryKnownColor"; //$NON-NLS-1$
 }

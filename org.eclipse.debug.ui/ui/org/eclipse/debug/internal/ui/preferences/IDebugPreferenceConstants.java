@@ -34,7 +34,14 @@ public interface IDebugPreferenceConstants {
 	public static final String CONSOLE_SYS_OUT_COLOR= "org.eclipse.debug.ui.outColor"; //$NON-NLS-1$
 	public static final String CONSOLE_SYS_IN_COLOR= "org.eclipse.debug.ui.inColor"; //$NON-NLS-1$
 	
+	/**
+	 * @deprecated use IDebugUIConstants.PREF_MEMORY_HISTORY_UNKNOWN_COLOR instead
+	 */
 	public static final String MEMORY_VIEW_UNBUFFERED_LINE_COLOR = IDebugUIConstants.PLUGIN_ID + ".MemoryViewLineColor"; //$NON-NLS-1$
+	
+	/**
+	 * @deprecated use IDebugUIConstants.PREF_MEMORY_HISTORY_KNOWN_COLOR instead
+	 */
 	public static final String MEMORY_VIEW_BUFFERED_LINE_COLOR = IDebugUIConstants.PLUGIN_ID + ".MemoryViewBufferedLineColor"; //$NON-NLS-1$
 	
 	/**

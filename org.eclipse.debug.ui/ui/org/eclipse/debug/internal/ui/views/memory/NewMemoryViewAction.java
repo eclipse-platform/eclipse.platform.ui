@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -37,10 +37,10 @@ public class NewMemoryViewAction implements IViewActionDelegate {
 
 	public void run(IAction action) {
 		
-		String secondaryId = MemoryViewIdRegistry.getUniqueSecondaryId(IInternalDebugUIConstants.ID_MEMORY_VIEW);
+		String secondaryId = MemoryViewIdRegistry.getUniqueSecondaryId(IDebugUIConstants.ID_MEMORY_VIEW);
 		try {
 			IWorkbenchPage page = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
-			IViewPart newView = page.showView(IInternalDebugUIConstants.ID_MEMORY_VIEW, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
+			IViewPart newView = page.showView(IDebugUIConstants.ID_MEMORY_VIEW, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
 			
 			// set initial selection for new view
 			setInitialSelection(newView);

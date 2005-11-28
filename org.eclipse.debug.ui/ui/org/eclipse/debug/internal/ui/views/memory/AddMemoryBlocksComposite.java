@@ -514,12 +514,12 @@ public class AddMemoryBlocksComposite implements ISelectionListener, IDebugEvent
 		try {
 			if (primaryType != null)
 			{
-				createRenderingInContainer(memoryBlock, primaryType, IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_1);
+				createRenderingInContainer(memoryBlock, primaryType, IDebugUIConstants.ID_RENDERING_VIEW_PANE_1);
 			}
 			else if (renderingTypes.length > 0)
 			{
 				primaryType = renderingTypes[0];
-				createRenderingInContainer(memoryBlock, renderingTypes[0], IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_1);
+				createRenderingInContainer(memoryBlock, renderingTypes[0], IDebugUIConstants.ID_RENDERING_VIEW_PANE_1);
 			}
 		} catch (CoreException e1) {
 			DebugUIPlugin.log(e1);	
@@ -535,7 +535,7 @@ public class AddMemoryBlocksComposite implements ISelectionListener, IDebugEvent
 						create = false;
 				}
 				if (create)
-					createRenderingInContainer(memoryBlock, renderingTypes[i], IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_2);
+					createRenderingInContainer(memoryBlock, renderingTypes[i], IDebugUIConstants.ID_RENDERING_VIEW_PANE_2);
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
 			}

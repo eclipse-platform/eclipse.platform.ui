@@ -28,7 +28,6 @@ import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
@@ -79,13 +78,13 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	
 	private ArrayList fWeights = new ArrayList();
 	
-	private static final String VISIBILITY_PREF = IInternalDebugUIConstants.ID_MEMORY_VIEW+".viewPanesVisibility"; //$NON-NLS-1$
+	private static final String VISIBILITY_PREF = IDebugUIConstants.ID_MEMORY_VIEW+".viewPanesVisibility"; //$NON-NLS-1$
 	private static final String ID_MEMORY_VIEW_CONTEXT = "org.eclipse.debug.ui.memoryview"; //$NON-NLS-1$
 	private static final String ID_ADD_MEMORY_BLOCK_COMMAND = "org.eclipse.debug.ui.commands.addMemoryMonitor"; //$NON-NLS-1$
 	private static final String ID_TOGGLE_MEMORY_MONITORS_PANE_COMMAND = "org.eclipse.debug.ui.commands.toggleMemoryMonitorsPane"; //$NON-NLS-1$
 	private static final String ID_NEXT_MEMORY_BLOCK_COMMAND = "org.eclipse.debug.ui.commands.nextMemoryBlock"; //$NON-NLS-1$
 	
-	private String[] defaultVisiblePaneIds ={MemoryBlocksTreeViewPane.PANE_ID, IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_1};
+	private String[] defaultVisiblePaneIds ={MemoryBlocksTreeViewPane.PANE_ID, IDebugUIConstants.ID_RENDERING_VIEW_PANE_1};
 		
 	private MemoryBlocksTreeViewPane fMemBlkViewer;
 	
@@ -318,8 +317,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		fSelectionProvider = new MemoryViewSelectionProvider();
 		
 		createMemoryBlocksTreeViewPane(fSashForm);
-		createRenderingViewPane(IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_1);
-		createRenderingViewPane(IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_2);
+		createRenderingViewPane(IDebugUIConstants.ID_RENDERING_VIEW_PANE_1);
+		createRenderingViewPane(IDebugUIConstants.ID_RENDERING_VIEW_PANE_2);
 		
 		setVisible(true);
 		

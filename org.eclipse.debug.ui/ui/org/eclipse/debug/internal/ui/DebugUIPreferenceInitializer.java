@@ -66,9 +66,9 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR, new RGB(0, 200, 125));
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR, new RGB(255, 0, 0));
 		
-		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.MEMORY_VIEW_UNBUFFERED_LINE_COLOR, new RGB(114, 119, 129));
-		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.MEMORY_VIEW_BUFFERED_LINE_COLOR, new RGB(0, 0, 0));
-		
+		PreferenceConverter.setDefault(prefs, IDebugUIConstants.PREF_MEMORY_HISTORY_UNKNOWN_COLOR, new RGB(114, 119, 129));
+		PreferenceConverter.setDefault(prefs, IDebugUIConstants.PREF_MEMORY_HISTORY_KNOWN_COLOR, new RGB(0, 0, 0));
+
 		//LaunchHistoryPreferencePage
 		prefs.setDefault(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, 10);
 		

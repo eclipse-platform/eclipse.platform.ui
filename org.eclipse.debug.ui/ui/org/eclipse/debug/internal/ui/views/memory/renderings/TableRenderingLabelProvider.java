@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 import java.math.BigInteger;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryBlockTablePresentation;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -59,11 +59,11 @@ public class TableRenderingLabelProvider extends AbstractTableRenderingLabelProv
 			TableRenderingLine line = (TableRenderingLine)element;
 			
 			if (line.isMonitored) {
-				return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.MEMORY_VIEW_BUFFERED_LINE_COLOR);
+				return DebugUIPlugin.getPreferenceColor(IDebugUIConstants.PREF_MEMORY_HISTORY_KNOWN_COLOR);
 			}
-			return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.MEMORY_VIEW_UNBUFFERED_LINE_COLOR);
+			return DebugUIPlugin.getPreferenceColor(IDebugUIConstants.PREF_MEMORY_HISTORY_UNKNOWN_COLOR);
 		}
-		return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.MEMORY_VIEW_BUFFERED_LINE_COLOR);
+		return DebugUIPlugin.getPreferenceColor(IDebugUIConstants.PREF_MEMORY_HISTORY_KNOWN_COLOR);
 	}
 
 	/* (non-Javadoc)
