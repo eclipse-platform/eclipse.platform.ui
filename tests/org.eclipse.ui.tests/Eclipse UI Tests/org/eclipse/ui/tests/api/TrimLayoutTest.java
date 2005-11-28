@@ -12,11 +12,13 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.IWindowTrim;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.layout.TrimLayout;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -43,6 +45,8 @@ public class TrimLayoutTest extends UITestCase {
 			"org.eclipse.jface.action.StatusLineManager",
 			"org.eclipse.ui.internal.HeapStatus",
 			"org.eclise.ui.internal.FastViewBar", };
+
+	private boolean fHeapStatusPref;
 
 	/**
 	 * @param testName
@@ -277,4 +281,30 @@ public class TrimLayoutTest extends UITestCase {
 					retrievedIDs[i].getId());
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
+	 */
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
+		fHeapStatusPref = PrefUtil.getAPIPreferenceStore().getBoolean(
+				IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR);
+		PrefUtil.getAPIPreferenceStore().setValue(
+				IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
+	 */
+	protected void doTearDown() throws Exception {
+		PrefUtil.getAPIPreferenceStore().setValue(
+				IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR,
+				fHeapStatusPref);
+		super.doTearDown();
+	}
+
 }
