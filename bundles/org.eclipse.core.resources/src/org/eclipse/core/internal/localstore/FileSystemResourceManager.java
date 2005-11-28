@@ -57,7 +57,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			IProject project = projects[i];
 			//check the project location
 			URI testLocation = project.getLocationURI();
-			URI relative = location.relativize(testLocation);
+			URI relative = testLocation.relativize(location);
 			if (!relative.isAbsolute() && !relative.equals(testLocation)) {
 				IPath suffix = new Path(relative.getPath());
 				results.add(project.getFullPath().append(suffix));
