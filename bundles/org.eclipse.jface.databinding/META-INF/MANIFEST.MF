@@ -20,6 +20,5 @@ Export-Package: org.eclipse.jface.databinding,
  org.eclipse.jface.databinding.internal.beans;x-internal:=true,
  org.eclipse.jface.databinding.internal.swt;x-internal:=true,
  org.eclipse.jface.databinding.internal.viewers;x-internal:=true
-Require-Bundle: org.eclipse.jface,
- org.eclipse.equinox.common
+Require-Bundle: org.eclipse.jface
 Eclipse-LazyStart: true
