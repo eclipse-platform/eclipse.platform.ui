@@ -21,6 +21,9 @@ import org.eclipse.swt.widgets.Composite;
  * The compare adapter provides compare support for the model objects
  * associated with a model provider.
  * <p>
+ * Clients should not implement this interface but should subclass {@link AbstractCompareAdapter}
+ * instead.
+ * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
  * work nor that it will remain the same. Please do not use this API without
