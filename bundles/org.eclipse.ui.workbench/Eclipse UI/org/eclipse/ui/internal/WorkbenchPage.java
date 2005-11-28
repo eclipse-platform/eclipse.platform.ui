@@ -112,11 +112,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         IWorkbenchPage {
 	
 	private static final String ATT_AGGREGATE_WORKING_SET_ID = "aggregateWorkingSetId"; //$NON-NLS-1$
-	// editor matching flags
-	public static final int MATCH_NONE = 0;
-	public static final int MATCH_INPUT = 1;
-	public static final int MATCH_ID = 2;
-	public static final int MATCH_BOTH = MATCH_INPUT | MATCH_ID;
 	
     private WorkbenchWindow window;
 
@@ -2271,12 +2266,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 	
     /**
-	 * Opens an editor, optionally finding an existing one with the same input and/or id,
-	 * and optionally activating the resulting editor.
-	 * Shows the busy cursor while opening.
-	 * 
-	 * @since 3.1
-	 */
+     * See IWorkbenchPage.
+     */
     public IEditorPart openEditor(final IEditorInput input,
             final String editorID, final boolean activate, final int matchFlags)
             throws PartInitException {

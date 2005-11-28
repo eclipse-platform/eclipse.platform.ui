@@ -12,6 +12,8 @@ package org.eclipse.ui.internal.ide.model;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.model.WorkbenchAdapter;
 
@@ -32,7 +34,8 @@ public class WorkbenchRootResource extends WorkbenchAdapter {
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(Object)
      */
     public ImageDescriptor getImageDescriptor(Object object) {
-        return null;
+    	return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
+                ISharedImages.IMG_OBJ_ELEMENT);
     }
 
     /**

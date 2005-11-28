@@ -185,6 +185,30 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
     public static final int VIEW_CREATE = 3;
 
     /**
+     * Editor opening match mode specifying that no matching against existing
+     * editors should be done.
+     * 
+     * @since 3.2
+     */
+	public static final int MATCH_NONE = 0;
+	
+    /**
+     * Editor opening match mode specifying that the editor input should be
+     * considered when matching against existing editors.
+     * 
+     * @since 3.2
+     */
+	public static final int MATCH_INPUT = 1;
+
+    /**
+     * Editor opening match mode specifying that the editor id should be
+     * considered when matching against existing editors.
+     * 
+     * @since 3.2
+     */
+	public static final int MATCH_ID = 2;
+	
+    /**
      * Activates the given part. The part will be brought to the front and
      * given focus. The part must belong to this page.
      * 
@@ -539,6 +563,41 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
     public IEditorPart openEditor(IEditorInput input, String editorId,
             boolean activate) throws PartInitException;
 
+    /**
+	 * Opens an editor on the given input.
+	 * <p>
+	 * If this page already has an editor open that matches the given input
+	 * and/or editor id (as specified by the matchFlags argument), that editor
+	 * is brought to the front; otherwise, a new editor is opened. Two editor
+	 * inputs are considered the same if they equal. See
+	 * <code>Object.equals(Object)<code>
+	 * and <code>IEditorInput</code>. If <code>activate == true</code> the editor
+	 * will be activated.  
+	 * </p><p>
+	 * The editor type is determined by mapping <code>editorId</code> to an editor
+	 * extension registered with the workbench.  An editor id is passed rather than
+	 * an editor object to prevent the accidental creation of more than one editor
+	 * for the same input. It also guarantees a consistent lifecycle for editors,
+	 * regardless of whether they are created by the user or restored from saved 
+	 * data.
+	 * </p>
+	 * 
+	 * @param input the editor input
+	 * @param editorId the id of the editor extension to use
+	 * @param activate if <code>true</code> the editor will be activated
+	 * @param matchFlags a bit mask consisting of zero or more of the MATCH_* constants OR-ed together
+	 * @return an open editor, or <code>null</code> if an external editor was opened
+	 * @exception PartInitException if the editor could not be created or initialized
+	 * 
+	 * @see #MATCH_NONE
+	 * @see #MATCH_INPUT
+	 * @see #MATCH_ID
+	 * @since 3.2
+	 */
+    public IEditorPart openEditor(final IEditorInput input,
+			final String editorID, final boolean activate, final int matchFlags)
+			throws PartInitException;
+    		
     /**
      * Removes the property change listener.
      * 
