@@ -108,13 +108,9 @@ public class IDEResourceInfoUtils {
 	 * @return String or <code>null</code>
 	 */
 	public static IFileInfo getFileInfo(URI location) {
-		IFileStore store;
-		try {
-			store = EFS.getStore(location);
-		} catch (CoreException e) {
-			log(e);
+		IFileStore store = getFileStore(location);
+		if (store == null)
 			return null;
-		}
 		return store.fetchInfo();
 	}
 
@@ -127,7 +123,7 @@ public class IDEResourceInfoUtils {
 	 */
 	public static IFileInfo getFileInfo(String pathName) {
 		IFileStore store = getFileStore(pathName);
-		if(store == null)
+		if (store == null)
 			return null;
 		return store.fetchInfo();
 	}
@@ -140,13 +136,9 @@ public class IDEResourceInfoUtils {
 	 * @return IFileInfo or <code>null</code>
 	 */
 	public static IFileInfo getFileInfo(IPath pathName) {
-		IFileStore store;
-		try {
-			store = EFS.getStore(pathName.toFile().toURI());
-		} catch (CoreException e) {
-			log(e);
+		IFileStore store = getFileStore(pathName.toFile().toURI());
+		if (store == null)
 			return null;
-		}
 		return store.fetchInfo();
 	}
 
@@ -169,18 +161,19 @@ public class IDEResourceInfoUtils {
 			return NOT_EXIST_TEXT;
 		}
 
+		IFileStore store = getFileStore(location);
 		if (resolvedLocation != null && !isPathVariable(resource)) {
 			// No path variable used. Display the file not exist message
 			// in the location. Fixes bug 33318.
-			IFileInfo info = getFileInfo(location);
-			if (info == null)
+			if (store == null)
 				return UNKNOWN_LABEL;
-			if (!info.exists()) {
+			if (!store.fetchInfo().exists()) {
 				return NLS.bind(FILE_NOT_EXIST_TEXT, location.toString());
 			}
 		}
+		if (store != null)
+			return store.toString();
 		return location.toString();
-
 	}
 
 	/**
@@ -202,15 +195,14 @@ public class IDEResourceInfoUtils {
 			return NOT_EXIST_TEXT;
 		}
 
-		IFileInfo info = getFileInfo(location);
-		if (info == null)
+		IFileStore store = getFileStore(location);
+		if (store == null)
 			return UNKNOWN_LABEL;
 
-		if (!info.exists())
-			return NLS.bind(FILE_NOT_EXIST_TEXT, location.toString());
+		if (!store.fetchInfo().exists())
+			return NLS.bind(FILE_NOT_EXIST_TEXT, store.toString());
 
-		return location.toString();
-
+		return store.toString();
 	}
 
 	/**
@@ -335,12 +327,12 @@ public class IDEResourceInfoUtils {
 		if (!resource.isLinked())
 			return false;
 
-		IPath resolvedLocation = resource.getLocation();
+		URI resolvedLocation = resource.getLocationURI();
 		if (resolvedLocation == null) {
 			// missing path variable
 			return true;
 		}
-		IPath rawLocation = resource.getRawLocation();
+		URI rawLocation = resource.getRawLocationURI();
 		if (resolvedLocation.equals(rawLocation))
 			return false;
 
@@ -354,8 +346,18 @@ public class IDEResourceInfoUtils {
 	 * {@link CoreException}.
 	 */
 	public static IFileStore getFileStore(String string) {
+		return getFileStore(new Path(string).toFile().toURI());
+	}
+
+	/**
+	 * Get the file store for the URI.
+	 * @param uri
+	 * @return IFileStore or <code>null</code> if there is a
+	 * {@link CoreException}.
+	 */
+	public static IFileStore getFileStore(URI uri) {
 		try {
-			return EFS.getStore((new Path(string)).toFile().toURI());
+			return EFS.getStore(uri);
 		} catch (CoreException e) {
 			log(e);
 			return null;
