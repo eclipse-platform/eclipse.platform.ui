@@ -6,6 +6,14 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
+/**
+ * An entry in the Open With menu, responsible for providing a label and image descriptor,
+ * and for opening the editor when the entry is chosen.
+ *  
+ * @see IEditorOpenStrategy
+ * @see OpenWithInfo
+ * @since 3.2
+ */
 public abstract class OpenWithEntry {
 	
 	private IEditorDescriptor editorDesc;
