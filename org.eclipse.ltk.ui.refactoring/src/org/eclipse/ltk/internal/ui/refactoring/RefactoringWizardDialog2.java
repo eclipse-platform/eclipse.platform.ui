@@ -429,6 +429,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 
 	protected void okPressed() {
 		IWizardPage current= fCurrentPage;
+		saveInitialSize();
 		if (fWizard.performFinish()) {
 			saveSize();
 			super.okPressed();
@@ -447,7 +448,6 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 				return;
 			}
 		}
-		fCurrentPage= current;
 	}
 
 	private void showCurrentPage() {
@@ -471,11 +471,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	
 	private void nextOrPreviewPressed() {
 		IWizardPage current= fCurrentPage;
-		if (isFirstPage()) {
-			// Moving away from initial page;
-			// store size (may have changed any time)
-			fInitialSize= getShell().getBounds();
-		}
+		saveInitialSize();
 		fCurrentPage= fCurrentPage.getNextPage();
 		if (current == fCurrentPage)
 			return;
@@ -488,6 +484,14 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		}
 		
 		showCurrentPage();
+	}
+
+	private void saveInitialSize() {
+		if (isFirstPage()) {
+			// Moving away from initial page;
+			// store size (may have changed any time)
+			fInitialSize= getShell().getBounds();
+		}
 	}
 	
 	private boolean isFirstPage() {
