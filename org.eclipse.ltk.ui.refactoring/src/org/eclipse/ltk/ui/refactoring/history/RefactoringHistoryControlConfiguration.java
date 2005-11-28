@@ -101,20 +101,32 @@ public class RefactoringHistoryControlConfiguration {
 	}
 
 	/**
-	 * Returns the last month label.
+	 * Returns the message format pattern to use for last month.
+	 * <p>
+	 * Arguments:
+	 * <ul>
+	 * <li> {0}: month name </li>
+	 * </ul>
+	 * </p>
 	 * 
-	 * @return the last month label
+	 * @return the last month pattern
 	 */
-	public String getLastMonthLabel() {
+	public String getLastMonthPattern() {
 		return RefactoringUIMessages.RefactoringHistoryControlConfiguration_last_month_label;
 	}
 
 	/**
-	 * Returns the last week label.
+	 * Returns the message format pattern to use for last week.
+	 * <p>
+	 * Arguments:
+	 * <ul>
+	 * <li> {0}: week number </li>
+	 * </ul>
+	 * </p>
 	 * 
-	 * @return the last week label
+	 * @return the last week pattern
 	 */
-	public String getLastWeekLabel() {
+	public String getLastWeekPattern() {
 		return RefactoringUIMessages.RefactoringHistoryControlConfiguration_last_week_label;
 	}
 
@@ -175,20 +187,32 @@ public class RefactoringHistoryControlConfiguration {
 	}
 
 	/**
-	 * Returns the this month label.
+	 * Returns the message format pattern to use for this month.
+	 * <p>
+	 * Arguments:
+	 * <ul>
+	 * <li> {0}: month name </li>
+	 * </ul>
+	 * </p>
 	 * 
-	 * @return the this month label
+	 * @return the this month pattern
 	 */
-	public String getThisMonthLabel() {
+	public String getThisMonthPattern() {
 		return RefactoringUIMessages.RefactoringHistoryControlConfiguration_this_month_pattern;
 	}
 
 	/**
-	 * Returns the this week label.
+	 * Returns the message format pattern to use for this week.
+	 * <p>
+	 * Arguments:
+	 * <ul>
+	 * <li> {0}: week number </li>
+	 * </ul>
+	 * </p>
 	 * 
-	 * @return the this week label
+	 * @return the this week pattern
 	 */
-	public String getThisWeekLabel() {
+	public String getThisWeekPattern() {
 		return RefactoringUIMessages.RefactoringHistoryControlConfiguration_this_week_pattern;
 	}
 

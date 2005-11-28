@@ -30,6 +30,8 @@ import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.viewers.LabelProvider;
 
+import org.eclipse.osgi.util.NLS;
+
 /**
  * Label provider to display a refactoring history.
  * <p>
@@ -109,7 +111,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 			if (fControlConfiguration.isTimeDisplayed()) {
 				final long stamp= proxy.getTimeStamp();
 				if (stamp >= 0)
-					return MessageFormat.format(fControlConfiguration.getRefactoringPattern(), new String[] { DateFormat.getTimeInstance().format(new Date(stamp)), proxy.getDescription()});
+					return MessageFormat.format(fControlConfiguration.getRefactoringPattern(), new String[] { DateFormat.getTimeInstance().format(new Date(stamp)), proxy.getDescription() });
 			}
 			return proxy.getDescription();
 		} else if (element instanceof RefactoringHistoryNode) {
@@ -120,25 +122,21 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 				case RefactoringHistoryNode.COLLECTION:
 					buffer.append(fControlConfiguration.getCollectionLabel());
 					break;
-				case RefactoringHistoryNode.LAST_WEEK:
-					buffer.append(fControlConfiguration.getLastWeekLabel());
-					break;
-				case RefactoringHistoryNode.THIS_WEEK:
-					buffer.append(fControlConfiguration.getThisWeekLabel());
-					break;
-				case RefactoringHistoryNode.THIS_MONTH:
-					buffer.append(fControlConfiguration.getThisMonthLabel());
-					break;
-				case RefactoringHistoryNode.LAST_MONTH:
-					buffer.append(fControlConfiguration.getLastMonthLabel());
-					break;
 				default: {
 					if (node instanceof RefactoringHistoryDate) {
 						final RefactoringHistoryDate date= (RefactoringHistoryDate) node;
-						final long stamp= date.getTimeStamp();
+						final Date stamp= new Date(date.getTimeStamp());
 						Format format= null;
 						String pattern= ""; //$NON-NLS-1$
 						switch (kind) {
+							case RefactoringHistoryNode.THIS_WEEK:
+								pattern= fControlConfiguration.getThisWeekPattern();
+								format= new SimpleDateFormat("ww"); //$NON-NLS-1$
+								break;
+							case RefactoringHistoryNode.LAST_WEEK:
+								pattern= fControlConfiguration.getLastWeekPattern();
+								format= new SimpleDateFormat("ww"); //$NON-NLS-1$
+								break;
 							case RefactoringHistoryNode.WEEK:
 								pattern= fControlConfiguration.getWeekPattern();
 								format= new SimpleDateFormat("ww"); //$NON-NLS-1$
@@ -146,6 +144,14 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 							case RefactoringHistoryNode.YEAR:
 								pattern= fControlConfiguration.getYearPattern();
 								format= new SimpleDateFormat("yyyy"); //$NON-NLS-1$
+								break;
+							case RefactoringHistoryNode.THIS_MONTH:
+								pattern= fControlConfiguration.getThisMonthPattern();
+								format= new SimpleDateFormat("MMMMM"); //$NON-NLS-1$
+								break;
+							case RefactoringHistoryNode.LAST_MONTH:
+								pattern= fControlConfiguration.getLastMonthPattern();
+								format= new SimpleDateFormat("MMMMM"); //$NON-NLS-1$
 								break;
 							case RefactoringHistoryNode.MONTH:
 								pattern= fControlConfiguration.getMonthPattern();
@@ -155,7 +161,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								pattern= fControlConfiguration.getDayPattern();
 								final int type= node.getParent().getKind();
 								if (type == RefactoringHistoryNode.THIS_WEEK || type == RefactoringHistoryNode.LAST_WEEK)
-									format= new SimpleDateFormat("EEEE", new Locale(RefactoringUIMessages.RefactoringHistoryLabelProvider_label_language, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_country, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_variant)); //$NON-NLS-1$
+									format= new SimpleDateFormat(NLS.bind(RefactoringUIMessages.RefactoringHistoryControlConfiguration_day_detailed_pattern, DateFormat.getDateInstance().format(stamp)), new Locale(RefactoringUIMessages.RefactoringHistoryLabelProvider_label_language, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_country, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_variant));
 								else
 									format= DateFormat.getDateInstance();
 								break;
@@ -168,7 +174,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								format= DateFormat.getDateInstance();
 								break;
 						}
-						buffer.append(MessageFormat.format(pattern, new String[] { format.format(new Date(stamp))}));
+						buffer.append(NLS.bind(pattern, new String[] { format.format(stamp) }));
 					}
 				}
 			}

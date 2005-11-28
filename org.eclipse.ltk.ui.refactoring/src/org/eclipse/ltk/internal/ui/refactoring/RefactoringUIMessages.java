@@ -115,6 +115,7 @@ public final class RefactoringUIMessages extends NLS {
 	public static String RefactoringHistoryControlConfiguration_workspace_caption;
 	public static String RefactoringHistoryControlConfiguration_collection_label;
 	public static String RefactoringHistoryControlConfiguration_day_pattern;
+	public static String RefactoringHistoryControlConfiguration_day_detailed_pattern;
 	public static String RefactoringHistoryControlConfiguration_last_month_label;
 	public static String RefactoringHistoryControlConfiguration_last_week_label;
 	public static String RefactoringHistoryControlConfiguration_month_pattern;
