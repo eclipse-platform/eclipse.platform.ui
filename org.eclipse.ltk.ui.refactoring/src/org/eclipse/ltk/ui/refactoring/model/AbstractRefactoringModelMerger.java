@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.internal.ui.refactoring.model;
+package org.eclipse.ltk.ui.refactoring.model;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,11 +63,18 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfigura
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
 
 /**
- * Resource mapping merger for refactoring histories.
+ * Partial implementation of a refactoring-aware logical model merger.
+ * <p>
+ * Note: this class is intended to be extended outside the refactoring
+ * framework.
+ * </p>
+ * <p>
+ * Note: This API is considered experimental and may change in the near future.
+ * </p>
  * 
  * @since 3.2
  */
-public class RefactoringModelMerger implements IResourceMappingMerger {
+public abstract class AbstractRefactoringModelMerger implements IResourceMappingMerger {
 
 	/** Refactoring history control configuration */
 	private static final class RefactoringHistoryPreviewConfiguration extends RefactoringHistoryControlConfiguration {
@@ -116,20 +123,23 @@ public class RefactoringModelMerger implements IResourceMappingMerger {
 	}
 
 	/**
-	 * Returns the affected projects by the history.
+	 * Returns the affected scope by the refactoring history.
 	 * 
 	 * @param history
 	 *            the refactoring history
-	 * @return the affected projects
+	 * @return the affected projects, or <code>null</code> if the whole
+	 *         workspace is affected
 	 */
-	private static IProject[] getAffectedProjects(final RefactoringHistory history) {
+	private static IProject[] getAffectedScope(final RefactoringHistory history) {
 		final Set set= new HashSet();
 		final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
 		final IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		for (int index= 0; index < proxies.length; index++) {
 			final String name= proxies[index].getProject();
-			if (name != null)
+			if (name != null && !"".equals(name)) //$NON-NLS-1$
 				set.add(root.getProject(name));
+			else
+				return null;
 		}
 		final IProject[] projects= new IProject[set.size()];
 		set.toArray(projects);
@@ -142,7 +152,7 @@ public class RefactoringModelMerger implements IResourceMappingMerger {
 	 * @return a shell
 	 */
 	private static Shell getDialogShell() {
-		final Shell[] shell= new Shell[] { null};
+		final Shell[] shell= new Shell[] { null };
 		Display.getDefault().syncExec(new Runnable() {
 
 			public final void run() {
@@ -243,12 +253,12 @@ public class RefactoringModelMerger implements IResourceMappingMerger {
 	private final ModelProvider fModelProvider;
 
 	/**
-	 * Creates a new refactoring model merger.
+	 * Creates a new abstract refactoring model merger.
 	 * 
 	 * @param provider
 	 *            the model provider
 	 */
-	public RefactoringModelMerger(final ModelProvider provider) {
+	protected AbstractRefactoringModelMerger(final ModelProvider provider) {
 		Assert.isNotNull(provider);
 		fModelProvider= provider;
 	}
@@ -267,6 +277,19 @@ public class RefactoringModelMerger implements IResourceMappingMerger {
 			return new MergeStatus(status.getPlugin(), status.getMessage(), context.getScope().getMappings(fModelProvider.getDescriptor().getId()));
 		return status;
 	}
+
+	/**
+	 * Returns the dependent projects of the specified projects.
+	 * <p>
+	 * Subclasses must implement this method to return the dependent projects
+	 * according to the semantics of the programming language.
+	 * </p>
+	 * 
+	 * @param projects
+	 *            the projects
+	 * @return the dependent projects, or an empty array
+	 */
+	protected abstract IProject[] getDependentProjects(IProject[] projects);
 
 	/**
 	 * Returns the sync info tree computed from the context.
@@ -305,17 +328,25 @@ public class RefactoringModelMerger implements IResourceMappingMerger {
 			final SyncInfoTree tree= getSyncInfoTree(context, new SubProgressMonitor(monitor, 20));
 			final RefactoringHistory history= getRefactoringHistory(tree, new SubProgressMonitor(monitor, 100));
 			if (history != null && !history.isEmpty()) {
-				final IProject[] projects= getAffectedProjects(history);
-				final Shell shell= getDialogShell();
-				shell.getDisplay().syncExec(new Runnable() {
+				boolean execute= true;
+				final IProject[] projects= getAffectedScope(history);
+				if (projects != null) {
+					final IProject[] dependencies= getDependentProjects(projects);
+					if (dependencies.length == 0)
+						execute= false;
+				}
+				if (execute) {
+					final Shell shell= getDialogShell();
+					shell.getDisplay().syncExec(new Runnable() {
 
-					public final void run() {
-						final RefactoringHistoryWizard wizard= new RefactoringHistoryWizard(RefactoringUIMessages.RefactoringWizard_title, RefactoringUIMessages.RefactoringHistoryOverviewPage_title, RefactoringUIMessages.RefactoringHistoryOverviewPage_description);
-						wizard.setRefactoringHistory(history);
-						wizard.setControlConfiguration(new RefactoringHistoryPreviewConfiguration(projects.length == 1 ? projects[0] : null, true));
-						new WizardDialog(shell, wizard).open();
-					}
-				});
+						public final void run() {
+							final RefactoringHistoryWizard wizard= new RefactoringHistoryWizard(RefactoringUIMessages.RefactoringWizard_title, RefactoringUIMessages.RefactoringHistoryOverviewPage_title, RefactoringUIMessages.RefactoringHistoryOverviewPage_description);
+							wizard.setInput(history);
+							wizard.setConfiguration(new RefactoringHistoryPreviewConfiguration((projects != null && projects.length == 1) ? projects[0] : null, true));
+							new WizardDialog(shell, wizard).open();
+						}
+					});
+				}
 			}
 			return createMergeStatus(context, context.merge(tree, new SubProgressMonitor(monitor, 100)));
 		} finally {
