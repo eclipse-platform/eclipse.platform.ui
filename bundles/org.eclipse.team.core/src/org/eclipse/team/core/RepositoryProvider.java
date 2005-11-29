@@ -155,7 +155,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * session property fails from core
 	 */
 	private static RepositoryProvider mapNewProvider(final IProject project, final String id) throws TeamException {
-		RepositoryProvider provider = newProvider(id); 	// instantiate via extension point
+		final RepositoryProvider provider = newProvider(id); 	// instantiate via extension point
 
 		if(provider == null)
 			throw new TeamException(NLS.bind(Messages.RepositoryProvider_couldNotInstantiateProvider, new String[] { project.getName(), id })); 
@@ -166,7 +166,10 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				project.accept(new IResourceProxyVisitor() {
 					public boolean visit(IResourceProxy proxy) throws CoreException {
 						if (proxy.isLinked()) {
-							throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.LINKING_NOT_ALLOWED, NLS.bind(Messages.RepositoryProvider_linkedURIsExist, new String[] { project.getName(), id }), null));
+							if (!provider.canHandleLinkedResources() || 
+									proxy.requestFullPath().segmentCount() > 2 ||
+									!EFS.SCHEME_FILE.equals(proxy.requestResource().getLocationURI().getScheme()))
+								throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.LINKING_NOT_ALLOWED, NLS.bind(Messages.RepositoryProvider_linkedURIsExist, new String[] { project.getName(), id }), null));
 						}
 						return true;
 					}
