@@ -307,17 +307,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * case insensitive file systems.
 	 */
 	public String getLocalName(IFileStore target) {
-		IFileStore parent = target.getParent();
-		try {
-			String[] list = parent.childNames(EFS.NONE, null);
-			String targetName = target.getName();
-			for (int i = 0; i < list.length; i++)
-				if (targetName.equalsIgnoreCase(list[i]))
-					return list[i];
-		} catch (CoreException e) {
-			//fall through and treat non-accessible directory as non-existent directory
-		}
-		return null;
+		return target.fetchInfo().getName();
 	}
 
 	protected IPath getProjectDefaultLocation(IProject project) {
