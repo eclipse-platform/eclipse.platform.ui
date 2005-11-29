@@ -55,17 +55,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 			fail("1.99", e);
 		}
 		result = root.findContainersForLocation(p1.getLocation());
-		assertEquals("2.0", 2, result.length);
-		boolean p1Found = false, linkFound = false;
-		for (int i = 0; i < result.length; i++) {
-			if (result[i].equals(p1))
-				p1Found = true;
-			else if (result[i].equals(link))
-				linkFound = true;
-		}
-		assertTrue("2.1", p1Found);
-		assertTrue("2.2", linkFound);
-		
+		assertResources("2.0", p1, link, result);
 		// TODO add more tests
 	}
 
@@ -85,11 +75,15 @@ public class IWorkspaceRootTest extends ResourceTest {
 		//existing file
 		result = root.findFilesForLocation(existing.getLocation());
 		assertResources("2.0", existing, result);
+		result = root.findFilesForLocationURI(existing.getLocationURI());
+		assertResources("2.1", existing, result);
 		
 		//non-existing file
 		IFile nonExisting = project.getFile("nonExisting");
 		result = root.findFilesForLocation(nonExisting.getLocation());
 		assertResources("2.1", nonExisting, result);
+		result = root.findFilesForLocationURI(nonExisting.getLocationURI());
+		assertResources("2.2", nonExisting, result);
 
 		// TODO add more tests
 	}
@@ -103,6 +97,19 @@ public class IWorkspaceRootTest extends ResourceTest {
 	private void assertResources(String message, IResource expected, IResource[] actual) {
 		assertEquals(message, 1, actual.length);
 		assertEquals(message, expected, actual[0]);
+	}
+
+	/**
+	 * Asserts that the given result array contains only the two given resources
+	 */
+	private void assertResources(String message, IResource expected0, IResource expected1, IResource[] actual) {
+		assertEquals(message, 2, actual.length);
+		if (actual[0].equals(expected0))
+			assertEquals(message, expected1, actual[1]);
+		else if (actual[0].equals(expected1))
+			assertEquals(message, expected0, actual[1]);
+		else
+			assertEquals(message, expected0, actual[0]);
 	}
 
 	/**
