@@ -12,6 +12,57 @@
 <h1>Eclipse Platform Build Notes (3.2)<br>
 JFace and Workbench</h1>
 
+<p>Integration Build (November 29, 2005, 8:00 a.m.)</p>
+  <p>Problem reports fixed</p>
+  <p>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=42643">Bug 42643</a>. [Editor Mgmt] Need extension to intercept editor opening<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=49497">Bug 49497</a>. [RCP] JFace dependency on org.eclipse.core.runtime enlarges standalone JFace applications<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=88577">Bug 88577</a>. [Viewers] Deferred viewers in JFace have a dependency on Job<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=107839">Bug 107839</a>. [WorkbenchLauncher] Startup progress bar should announce loading, not loaded<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=109661">Bug 109661</a>. [Presentation] Improve customizable window trim<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=112000">Bug 112000</a>. [Viewers] TreeViewer SWT.VIRTUAL support.<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=112222">Bug 112222</a>. [WorkbenchParts] ISaveablePart2's DEFAULT constant is respected only if a single part is being closed<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=112237">Bug 112237</a>. [Graphics] Exporting key preferences shows icon of different type of key<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=113832">Bug 113832</a>. [WorkingSets] No way to disable window working sets.<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=114527">Bug 114527</a>. [DynamicUI] Race condition in Workbench leads to intermittent crashes (org.eclipse.ui.startup)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=114813">Bug 114813</a>. [DynamicUI] Incorrect synchronization will lead to JUnit failure (org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=114931">Bug 114931</a>. [CommonNavigator] Filtering by types of content shws all content types<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=114940">Bug 114940</a>. [CommonNavigator] [Discussion] Navigator extensions only operate at one level<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=114993">Bug 114993</a>. [CommonNavigator] Missing NLS message<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=115123">Bug 115123</a>. [CommonNavigator] [API] Update extension point schema doc for navigatorContent<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=115130">Bug 115130</a>. [CommonNavigator] Port the ActionExpression enablement classes to org.eclipse.core.expressions<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=115486">Bug 115486</a>. [CommonNavigator] [arch] Navigator viewers should be more configurable<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=115785">Bug 115785</a>. Quick dialogs don't appear after having used the menu<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=116460">Bug 116460</a>. [CommonNavigator] Code review comments<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=116685">Bug 116685</a>. [CommonNavigator] ClassCastException trying to execute action<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=116690">Bug 116690</a>. [CommonNavigator] View title is blank<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117043">Bug 117043</a>. [MPE] Allow MultiPageEditors to customize layout<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117065">Bug 117065</a>. [CommonNavigator] Should support better filtering of duplicate content<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117358">Bug 117358</a>. [IDE] CopyFilesAndFoldersOperation needs to remove the reference to java.io.File<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117360">Bug 117360</a>. [IDE] RefreshAction needs to remove reference to java.io.file<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117362">Bug 117362</a>. [IDE] Remove references to java.io.File in org.eclipse.ui.dialogs<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117363">Bug 117363</a>. PathVariableSelectionDialog has references to java.io.file<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117364">Bug 117364</a>. [IDE] org.eclipse.ui.internal.ide.dialogs has references to java.io.File<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117519">Bug 117519</a>. Provide clear() method on ListenerList<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117539">Bug 117539</a>. Intermittent failures in ImportExistingTest<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117543">Bug 117543</a>. [Dialogs] Make long PopupDialog titles readable<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117554">Bug 117554</a>. [WorkingSets] UI usage of getName() should be migrated to getLabel()<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117559">Bug 117559</a>. [WorkingSets] WorkingSetComparator logic is backwards<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117576">Bug 117576</a>. [WorkingSets] label changes dont cause event firings<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117591">Bug 117591</a>. [CommonNavigator] References to the AWT and Swing libraries should be removed<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117601">Bug 117601</a>. [Undo] - update org.eclipse.core.commands.operations to use new equinox common utils<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117707">Bug 117707</a>. Cannot launch UiTestSuite<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117816">Bug 117816</a>. Crash while running JFace test suite<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117899">Bug 117899</a>. [WorkingSets] document new empty-aggregate strategy<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=118025">Bug 118025</a>. [Dialogs] PopupDialog should set a grid data to the control returned from createDialogArea<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=118043">Bug 118043</a>. [Commands] parameters: Element 'commandParameter' is not legal as a child of element 'command'<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=118057">Bug 118057</a>. [CommonNavigator] ICommonContentProvider should be API<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=118081">Bug 118081</a>. [CommonNavigator] Failure in OpenTest.testNavigatorExtensionEnablement<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=118112">Bug 118112</a>. [CommonNavigator] Add API to programmatically enable/disable extensions<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=118163">Bug 118163</a>. [Dialogs] - PopupDialog should define constants for zero margins<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=118170">Bug 118170</a>. [CommonNavigator] [Resource] Support Open/Open With menu extensions<br>
+  </p>
+
 <p>Integration Build (November 22, 2005, 1:00 p.m.)</p>
   <p>Problem reports fixed</p>
   <p>
