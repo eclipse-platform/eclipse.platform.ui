@@ -54,7 +54,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 	        	if (insertBefore == draggedTrim)
 	        		return;
 	        	
-	            if (dropSide != layout.getTrimLocation(draggedTrim.getControl())) {
+	            if (dropSide != layout.getTrimAreaId(draggedTrim.getControl())) {
 	            	layout.removeTrim(draggedTrim);
 	                draggedTrim.dock(dropSide);
 	            }
@@ -115,7 +115,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
             if (trimControl.getParent() == windowComposite) {
                 Control targetTrim = getTrimControl(currentControl);
 
-                int side = layout.getTrimLocation(targetTrim);
+                int side = layout.getTrimAreaId(targetTrim);
 
                 if (side == SWT.DEFAULT) {
                     if (targetTrim == layout.getCenterControl()) {
@@ -134,7 +134,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
                 
                 if (side != SWT.DEFAULT && ((side & draggedTrim.getValidSides()) != 0)) {
                 	// get the side that the trim is currently on
-                	int curSide = layout.getTrimLocation(trimControl);
+                	int curSide = layout.getTrimAreaId(trimControl);
                     
                     // Determine the 'insertion' point for the trim based on the side and cursor pos
                     IWindowTrim insertBefore = layout.getInsertBefore(side, position);
@@ -221,7 +221,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
     	if (insertBefore == draggedTrim)
     		return;
     	
-        if (dropSide != layout.getTrimLocation(draggedTrim.getControl())) {
+        if (dropSide != layout.getTrimAreaId(draggedTrim.getControl())) {
         	layout.removeTrim(draggedTrim);
             draggedTrim.dock(dropSide);
         }

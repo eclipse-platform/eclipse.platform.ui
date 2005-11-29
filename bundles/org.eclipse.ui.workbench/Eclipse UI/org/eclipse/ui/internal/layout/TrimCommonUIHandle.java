@@ -1,5 +1,8 @@
 package org.eclipse.ui.internal.layout;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
@@ -339,12 +342,14 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
     					showMenu = new Menu(dockCascade);
     					
     					// Construct a 'hide/show' cascade from -all- the existing trim...
-    					IWindowTrim[] trimItems = layout.getAllTrim();
-    					for (int i = 0; i < trimItems.length; i++) {
+    					List trimItems = layout.getAllTrim();
+    					Iterator d = trimItems.iterator();
+    					while (d.hasNext()) {
+    						IWindowTrim trimItem = (IWindowTrim) d.next();
 							MenuItem item = new MenuItem(showMenu, SWT.CHECK);
-							item.setText(trimItems[i].getDisplayName());
-							item.setSelection(trimItems[i].getControl().getVisible());
-							item.setData(trimItems[i]);
+							item.setText(trimItem.getDisplayName());
+							item.setSelection(trimItem.getControl().getVisible());
+							item.setData(trimItem);
 							
 							// TODO: Make this work...wire it off for now
 							item.setEnabled(false);

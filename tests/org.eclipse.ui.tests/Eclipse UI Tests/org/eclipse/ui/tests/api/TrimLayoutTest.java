@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.XMLMemento;
@@ -63,10 +66,8 @@ public class TrimLayoutTest extends UITestCase {
 	public void testGetIDs() throws Throwable {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
 		TrimLayout layout = window.getTrimLayout();
-		int[] id = layout.getAreaIDs();
-		for (int i = 0; i < id.length; ++i) {
-			assertEquals("temporary IDs", i, id[i]);
-		}
+		int[] ids = layout.getAreaIds();
+		assertEquals("number of trim areas", 4, ids.length);
 	}
 
 	/**
@@ -78,8 +79,8 @@ public class TrimLayoutTest extends UITestCase {
 	public void testTrimInformation() throws Throwable {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
 		TrimLayout layout = window.getTrimLayout();
-		// layout.refreshAreaDescriptions();
-		IWindowTrim[] descs = layout.getAreaDescription(TrimLayout.BOTTOM);
+
+		List descs = layout.getAreaDescription(SWT.BOTTOM);
 		validatePositions(DEFAULT_BOTTOM, descs);
 	}
 
@@ -92,15 +93,15 @@ public class TrimLayoutTest extends UITestCase {
 	public void testMoveStatusLine() throws Throwable {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
 		TrimLayout layout = window.getTrimLayout();
-		// layout.refreshAreaDescriptions();
-		IWindowTrim[] trim = layout.getAreaDescription(TrimLayout.BOTTOM);
+
+		List trim = layout.getAreaDescription(TrimLayout.BOTTOM);
 		validatePositions(DEFAULT_BOTTOM, trim);
 
 		swapPostition(trim, 1, 3);
 		layout.updateAreaDescription(TrimLayout.BOTTOM, trim);
-		// layout.applyAreaDescriptions();
+
 		window.getShell().layout(true, true);
-		// layout.refreshAreaDescriptions();
+
 
 		trim = layout.getAreaDescription(TrimLayout.BOTTOM);
 		validatePositions(SWAPPED_STATUS_LINE, trim);
@@ -115,15 +116,14 @@ public class TrimLayoutTest extends UITestCase {
 	public void testMoveFastViewBar() throws Throwable {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
 		TrimLayout layout = window.getTrimLayout();
-		// layout.refreshAreaDescriptions();
-		IWindowTrim[] trim = layout.getAreaDescription(TrimLayout.BOTTOM);
+
+		List trim = layout.getAreaDescription(TrimLayout.BOTTOM);
 		validatePositions(DEFAULT_BOTTOM, trim);
 
 		swapPostition(trim, 0, 3);
 		layout.updateAreaDescription(TrimLayout.BOTTOM, trim);
-		// layout.applyAreaDescriptions();
+
 		window.getShell().layout(true, true);
-		// layout.refreshAreaDescriptions();
 
 		trim = layout.getAreaDescription(TrimLayout.BOTTOM);
 		validatePositions(SWAPPED_FASTVIEW, trim);
@@ -136,8 +136,7 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testSaveWorkbenchWindow() throws Throwable {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
-		// TrimLayout layout = window.getTrimLayout();
-		// layout.refreshAreaDescriptions();
+
 		XMLMemento state = XMLMemento
 				.createWriteRoot(IWorkbenchConstants.TAG_WINDOW);
 		IStatus rc = window.saveState(state);
@@ -146,7 +145,7 @@ public class TrimLayoutTest extends UITestCase {
 		IMemento trim = state.getChild(IWorkbenchConstants.TAG_TRIM);
 		assertNotNull(trim);
 
-		int[] ids = window.getTrimLayout().getAreaIDs();
+		int[] ids = window.getTrimLayout().getAreaIds();
 		IMemento[] children = trim
 				.getChildren(IWorkbenchConstants.TAG_TRIM_AREA);
 		assertTrue("Should have <= " + ids.length + " trim areas",
@@ -163,7 +162,7 @@ public class TrimLayoutTest extends UITestCase {
 	public void testRestoreStateWithChange() throws Throwable {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
 		TrimLayout layout = window.getTrimLayout();
-		// layout.refreshAreaDescriptions();
+
 		XMLMemento state = XMLMemento
 				.createWriteRoot(IWorkbenchConstants.TAG_WINDOW);
 		IStatus rc = window.saveState(state);
@@ -174,8 +173,10 @@ public class TrimLayoutTest extends UITestCase {
 				.getChildren(IWorkbenchConstants.TAG_TRIM_AREA);
 		int childIdx = 0;
 		IMemento bottomTrim = null;
+		String bottomId = new Integer(SWT.BOTTOM).toString();
+
 		for (; childIdx < children.length; childIdx++) {
-			if (children[childIdx].getID().equals("1")) {
+			if (children[childIdx].getID().equals(bottomId)) {
 				bottomTrim = children[childIdx];
 				break;
 			}
@@ -192,9 +193,8 @@ public class TrimLayoutTest extends UITestCase {
 		window.restoreState(state, window.getActivePage().getPerspective());
 		window.getShell().layout(true, true);
 
-		// TrimLayout layout = window.getTrimLayout();
-		// layout.refreshAreaDescriptions();
-		IWindowTrim[] windowTrim = layout.getAreaDescription(TrimLayout.BOTTOM);
+
+		List windowTrim = layout.getAreaDescription(TrimLayout.BOTTOM);
 		validatePositions(SWAPPED_FASTVIEW, windowTrim);
 	}
 
@@ -207,7 +207,7 @@ public class TrimLayoutTest extends UITestCase {
 	public void testRestoreStateWithLocationChange() throws Throwable {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
 		TrimLayout layout = window.getTrimLayout();
-		// layout.refreshAreaDescriptions();
+
 		XMLMemento state = XMLMemento
 				.createWriteRoot(IWorkbenchConstants.TAG_WINDOW);
 		IStatus rc = window.saveState(state);
@@ -219,8 +219,9 @@ public class TrimLayoutTest extends UITestCase {
 				.getChildren(IWorkbenchConstants.TAG_TRIM_AREA);
 		int childIdx = 0;
 		IMemento bottomTrim = null;
+		String bottomId = new Integer(SWT.BOTTOM).toString();
 		for (; childIdx < children.length; childIdx++) {
-			if (children[childIdx].getID().equals("1")) {
+			if (children[childIdx].getID().equals(bottomId)) {
 				bottomTrim = children[childIdx];
 				break;
 			}
@@ -233,19 +234,18 @@ public class TrimLayoutTest extends UITestCase {
 		String id = children[0].getID();
 		children[0].putString(IMemento.TAG_ID, children[3].getID());
 
-		IMemento left = trim
-				.createChild(IWorkbenchConstants.TAG_TRIM_AREA, "2");
+		IMemento left = trim.createChild(IWorkbenchConstants.TAG_TRIM_AREA,
+				new Integer(SWT.LEFT).toString());
 		left.createChild(IWorkbenchConstants.TAG_TRIM_ITEM, id);
 		window.restoreState(state, window.getActivePage().getPerspective());
 		window.getShell().layout(true, true);
 
-		// TrimLayout layout = window.getTrimLayout();
-		// layout.refreshAreaDescriptions();
-		IWindowTrim[] windowTrim = layout.getAreaDescription(TrimLayout.BOTTOM);
-		assertEquals(3, windowTrim.length);
+
+		List windowTrim = layout.getAreaDescription(TrimLayout.BOTTOM);
+		assertEquals(3, windowTrim.size());
 
 		windowTrim = layout.getAreaDescription(TrimLayout.LEFT);
-		assertEquals(1, windowTrim.length);
+		assertEquals(1, windowTrim.size());
 	}
 
 	/**
@@ -258,10 +258,10 @@ public class TrimLayoutTest extends UITestCase {
 	 * @param pos2
 	 *            position 2, from 0
 	 */
-	private void swapPostition(IWindowTrim[] trim, int pos1, int pos2) {
-		IWindowTrim tmp = trim[pos1];
-		trim[pos1] = trim[pos2];
-		trim[pos2] = tmp;
+	private void swapPostition(List trim, int pos1, int pos2) {
+		Object tmp = trim.get(pos1);
+		trim.set(pos1, trim.get(pos2));
+		trim.set(pos2, tmp);
 	}
 
 	/**
@@ -272,13 +272,13 @@ public class TrimLayoutTest extends UITestCase {
 	 * @param retrievedIDs
 	 *            the current IDs in order.
 	 */
-	private void validatePositions(String[] expectedIDs,
-			IWindowTrim[] retrievedIDs) {
+	private void validatePositions(String[] expectedIDs, List retrievedIDs) {
 		assertEquals("Number of trim items don't match", expectedIDs.length,
-				retrievedIDs.length);
+				retrievedIDs.size());
+
 		for (int i = 0; i < expectedIDs.length; ++i) {
 			assertEquals("Failed for postition " + i, expectedIDs[i],
-					retrievedIDs[i].getId());
+					((IWindowTrim) retrievedIDs.get(i)).getId());
 		}
 	}
 

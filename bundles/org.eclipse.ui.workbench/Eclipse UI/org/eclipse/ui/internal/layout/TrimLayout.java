@@ -11,8 +11,11 @@
 package org.eclipse.ui.internal.layout;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
@@ -55,16 +58,72 @@ import org.eclipse.ui.internal.dnd.DragUtil;
  */
 public class TrimLayout extends Layout implements ICachingLayout {
 
-	private static final TrimLayoutData defaultData = new TrimLayoutData();
+	/**
+	 * Trim area location.
+	 */
+	public static final int TOP = SWT.TOP;
+
+	/**
+	 * Trim area ID.
+	 */
+	public static final Integer TOP_ID = new Integer(TOP);
+
+	/**
+	 * Trim area location.
+	 */
+	public static final int BOTTOM = SWT.BOTTOM;
+
+	/**
+	 * Trim area ID.
+	 */
+	public static final Integer BOTTOM_ID = new Integer(BOTTOM);
+
+	/**
+	 * Trim area location.
+	 */
+	public static final int LEFT = SWT.LEFT;
+
+	/**
+	 * Trim area ID.
+	 */
+	public static final Integer LEFT_ID = new Integer(LEFT);
+
+	/**
+	 * Trim area location.
+	 */
+	public static final int RIGHT = SWT.RIGHT;
+
+	/**
+	 * Trim area ID.
+	 */
+	public static final Integer RIGHT_ID = new Integer(RIGHT);
+
+	/**
+	 * Trim area location.
+	 */
+	public static final int NONTRIM = SWT.DEFAULT;
+
+	/**
+	 * Trim area ID.
+	 */
+	public static final Integer NONTRIM_ID = new Integer(NONTRIM);
+
+	/**
+	 * IDs for the current trim areas we support.
+	 */
+	private static final int[] TRIM_ID_INFO = { TOP, BOTTOM, LEFT, RIGHT };
 
 	private SizeCache centerArea = new SizeCache();
 
 	/**
-	 * Each trimArea is a list of TrimDescriptors.
+	 * Map of TrimAreas by IDs.
 	 */
-	private ArrayList[] fTrimArea;
+	private Map fTrimArea = new HashMap();
 
-	private int[] trimSizes;
+	/**
+	 * Map of TrimDescriptors by IDs.
+	 */
+	private Map fTrimDescriptors = new HashMap();
 
 	private int marginWidth;
 
@@ -77,36 +136,6 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	private int leftSpacing;
 
 	private int rightSpacing;
-
-	// private Map mapControlOntoData = new HashMap();
-	//
-	// private Map mapControlOntoTrim = new HashMap();
-
-	// Position constants -- correspond to indices in the controls array, above.
-	/**
-	 * Trim area ID.
-	 */
-	public static final int TOP = 0;
-
-	/**
-	 * Trim area ID.
-	 */
-	public static final int BOTTOM = 1;
-
-	/**
-	 * Trim area ID.
-	 */
-	public static final int LEFT = 2;
-
-	/**
-	 * Trim area ID.
-	 */
-	public static final int RIGHT = 3;
-
-	/**
-	 * Trim area ID.
-	 */
-	public static final int NONTRIM = 4;
 
 	private int spacing = 3;
 
@@ -124,13 +153,18 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * Creates a new (initially empty) trim layout.
 	 */
 	public TrimLayout() {
-		fTrimArea = new ArrayList[4];
-		trimSizes = new int[fTrimArea.length];
+		createTrimArea(TOP_ID, TOP_ID.toString(), SWT.DEFAULT, SWT.TOP);
+		createTrimArea(BOTTOM_ID, BOTTOM_ID.toString(), SWT.DEFAULT, SWT.BOTTOM);
+		createTrimArea(LEFT_ID, LEFT_ID.toString(), SWT.DEFAULT, SWT.LEFT);
+		createTrimArea(RIGHT_ID, RIGHT_ID.toString(), SWT.DEFAULT, SWT.RIGHT);
+	}
 
-		for (int idx = 0; idx < fTrimArea.length; idx++) {
-			fTrimArea[idx] = new ArrayList();
-			trimSizes[idx] = SWT.DEFAULT;
-		}
+	private void createTrimArea(Integer id, String displayName, int trimSize,
+			int trimMods) {
+		TrimArea top = new TrimArea(id.intValue(), displayName);
+		top.setTrimSize(trimSize);
+		top.setControlModifiers(trimMods);
+		fTrimArea.put(id, top);
 	}
 
 	/**
@@ -166,203 +200,19 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	}
 
 	/**
-	 * Converts an SWT position constant into the trim area id.
-	 * 
-	 * @param positionConstant
-	 *            one of SWT.LEFT, SWT.RIGHT, SWT.TOP, or SWT.BOTTOM
-	 * @return the ID for the trim area
-	 */
-	private int convertSwtConstantToAreaId(int positionConstant) {
-		switch (positionConstant) {
-		case SWT.TOP:
-			return TrimLayout.TOP;
-		case SWT.BOTTOM:
-			return TrimLayout.BOTTOM;
-		case SWT.LEFT:
-			return TrimLayout.LEFT;
-		case SWT.RIGHT:
-			return TrimLayout.RIGHT;
-		}
-
-		return 0;
-	}
-
-	/**
-	 * Converts the trim area id into the corresponding SWT constants.
-	 * 
-	 * @param id
-	 *            the area id
-	 * @return the SWT constant
-	 */
-	private int convertAreaIdToSwtConstant(int id) {
-		switch (id) {
-		case TrimLayout.TOP:
-			return SWT.TOP;
-		case TrimLayout.BOTTOM:
-			return SWT.BOTTOM;
-		case TrimLayout.LEFT:
-			return SWT.LEFT;
-		case TrimLayout.RIGHT:
-			return SWT.RIGHT;
-		case TrimLayout.NONTRIM:
-			return SWT.DEFAULT;
-		}
-
-		return 0;
-	}
-
-	/**
-	 * This method separates resizable controls from non-resizable controls.
-	 * 
-	 * @param input
-	 *            the list of {@link SizeCache} to filter
-	 * @param resizable
-	 *            will contain resizable controls from the input list
-	 * @param nonResizable
-	 *            will contain non-resizable controls from the input list
-	 * @param width
-	 *            if true, we're interested in horizontally-resizable controls.
-	 *            Else we're interested in vertically resizable controls
-	 */
-	private static void filterResizable(List input, List resizable,
-			List nonResizable, boolean width) {
-		Iterator iter = input.iterator();
-		while (iter.hasNext()) {
-			SizeCache next = (SizeCache) iter.next();
-
-			if (next.getControl().isVisible()) {
-				if (isResizable(next.getControl(), width)) {
-					resizable.add(next);
-				} else {
-					nonResizable.add(next);
-				}
-			}
-		}
-	}
-
-	private static boolean isResizable(Control control, boolean horizontally) {
-		TrimLayoutData data = getData(control);
-
-		if (!data.resizable) {
-			return false;
-		}
-
-		if (horizontally) {
-			return data.widthHint == SWT.DEFAULT;
-		}
-
-		return data.heightHint == SWT.DEFAULT;
-	}
-
-	private static TrimLayoutData getData(Control control) {
-		TrimLayoutData data = (TrimLayoutData) control.getLayoutData();
-		if (data == null) {
-			data = defaultData;
-		}
-
-		return data;
-	}
-
-	private static Point computeSize(SizeCache toCompute, int widthHint,
-			int heightHint) {
-		TrimLayoutData data = getData(toCompute.getControl());
-
-		if (widthHint == SWT.DEFAULT) {
-			widthHint = data.widthHint;
-		}
-
-		if (heightHint == SWT.DEFAULT) {
-			heightHint = data.heightHint;
-		}
-
-		if (widthHint == SWT.DEFAULT || heightHint == SWT.DEFAULT) {
-			return toCompute.computeSize(widthHint, heightHint);
-		}
-
-		return new Point(widthHint, heightHint);
-	}
-
-	private static int getSize(SizeCache toCompute, int hint, boolean width) {
-		if (width) {
-			return computeSize(toCompute, SWT.DEFAULT, hint).x;
-		}
-
-		return computeSize(toCompute, hint, SWT.DEFAULT).y;
-	}
-
-	/**
-	 * Computes the maximum dimensions of controls in the given list
-	 * 
-	 * @param caches
-	 *            a list of {@link SizeCache}
-	 * @return pixel width
-	 */
-	private static int maxDimension(List caches, int hint, boolean width) {
-
-		if (hint == SWT.DEFAULT) {
-			int result = 0;
-			Iterator iter = caches.iterator();
-
-			while (iter.hasNext()) {
-				SizeCache next = (SizeCache) iter.next();
-
-				result = Math.max(getSize(next, SWT.DEFAULT, width), result);
-			}
-
-			return result;
-		}
-
-		List resizable = new ArrayList(caches.size());
-		List nonResizable = new ArrayList(caches.size());
-
-		filterResizable(caches, resizable, nonResizable, width);
-
-		int result = 0;
-		int usedHeight = 0;
-
-		Iterator iter = nonResizable.iterator();
-
-		while (iter.hasNext()) {
-			SizeCache next = (SizeCache) iter.next();
-
-			Point nextSize = computeSize(next, SWT.DEFAULT, SWT.DEFAULT);
-
-			if (width) {
-				result = Math.max(result, nextSize.x);
-				usedHeight += nextSize.y;
-			} else {
-				result = Math.max(result, nextSize.y);
-				usedHeight += nextSize.x;
-			}
-		}
-
-		if (resizable.size() > 0) {
-			int individualHint = (hint - usedHeight) / resizable.size();
-
-			iter = resizable.iterator();
-
-			while (iter.hasNext()) {
-				SizeCache next = (SizeCache) iter.next();
-
-				result = Math.max(result, getSize(next, individualHint, width));
-			}
-		}
-
-		return result;
-	}
-
-	/**
 	 * Sets the trimSize (pixels) for the given side of the layout. If
 	 * SWT.DEFAULT, then the trim size will be computed from child controls.
 	 * 
-	 * @param position
-	 *            one of SWT.TOP, SWT.BOTTOM, SWT.LEFT, SWT.RIGHT
+	 * @param areaId the area ID
 	 * @param size
+	 *            in pixels
+	 * @see #getAreaIds()
 	 */
-	public void setTrimSize(int position, int size) {
-		int id = convertSwtConstantToAreaId(position);
-
-		trimSizes[id] = size;
+	public void setTrimSize(int areaId, int size) {
+		TrimArea area = (TrimArea) fTrimArea.get(new Integer(areaId));
+		if (area != null) {
+			area.setTrimSize(size);
+		}
 	}
 
 	/**
@@ -373,23 +223,43 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * 
 	 * @param trimControl
 	 *            control to query
-	 * @return one of SWT.LEFT, SWT.RIGHT, SWT.TOP, SWT.BOTTOM, or SWT.DEFAULT
+	 * @return The area ID of this control.  If the
+	 * control is not part of our trim, return SWT.DEFAULT.
+	 * @see #getAreaIds()
 	 */
-	public int getTrimLocation(Control trimControl) {
-		return convertAreaIdToSwtConstant(getAreaId(trimControl));
+	public int getTrimAreaId(Control trimControl) {
+		TrimDescriptor desc = findTrimDescription(trimControl);
+		if (desc != null) {
+			return desc.getAreaId();
+		}
+		return SWT.DEFAULT;
+	}
+
+	/** 
+	 * @param control
+	 *            new window trim to be added
+	 * @param areaId the area ID
+	 * @see #getAreaIds()
+	 * @deprecated
+	 */
+	public void addTrim(IWindowTrim control, int areaId) {
+		addTrim(areaId, control, null);
 	}
 
 	/**
-	 * Adds the given control to the layout's trim at the given location. This
-	 * is equivalent to <code>addTrim(control, location, null)</code>.
 	 * 
-	 * @param control
+	 * @param trim
 	 *            new window trim to be added
-	 * @param location
-	 *            one of SWT.TOP, SWT.BOTTOM, SWT.LEFT, SWT.RIGHT
+	 * @param areaId the area ID
+	 * @param beforeMe
+	 *            if null, the control will be inserted as the last trim widget
+	 *            on this side of the layout. Otherwise, the control will be
+	 *            inserted before the given widget.
+	 * @see #getAreaIds()
+	 * @deprecated
 	 */
-	public void addTrim(IWindowTrim control, int location) {
-		addTrim(control, location, null);
+	public void addTrim(IWindowTrim trim, int areaId, IWindowTrim beforeMe) {
+		addTrim(areaId, trim, beforeMe);
 	}
 
 	/**
@@ -406,159 +276,76 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * 
 	 * @param trim
 	 *            new window trim to be added
-	 * @param location
-	 *            one of SWT.TOP, SWT.BOTTOM, SWT.LEFT, SWT.RIGHT
-	 * @param position
-	 *            if null, the control will be inserted as the last trim widget
-	 *            on this side of the layout. Otherwise, the control will be
-	 *            inserted before the given widget.
+	 * @param areaId the area ID
+	 * @param beforeMe
+	 *            trim to insert before
+	 * @see #getAreaIds()
 	 */
-	public void addTrim(IWindowTrim trim, int location, IWindowTrim position) {
-		// TODO: we need to "fix" location. If we're moving to
-		// Trim Areas with IDs, like TOP_LEFT, etc, we need to
-		// either deal in IDs or make sure we can do everything
-		// we want with SWT constants.
-		removeTrim(trim);
+	public void addTrim(int areaId, IWindowTrim trim, IWindowTrim beforeMe) {
+		TrimArea area = (TrimArea) fTrimArea.get(new Integer(areaId));
+		if (area == null) {
+			return;
+		}
 
-		int id = convertSwtConstantToAreaId(location);
-		List list = fTrimArea[id];
+		TrimDescriptor desc = (TrimDescriptor) fTrimDescriptors.get(trim
+				.getId());
 
+		if (desc != null) {
+			removeTrim(trim);
+		} else {
+			desc = new TrimDescriptor(trim, areaId);
+		}
+		
 		SizeCache cache = new SizeCache(trim.getControl());
-		TrimDescriptor desc = new TrimDescriptor(trim, cache, id);
-
+		desc.setCache(cache);
 		if (fUseCommonUI) {
-			// TODO: replace temporary drag handle
 			Composite dockingHandle = new TrimCommonUIHandle(this, trim,
-					location);
+					areaId);
 			desc.setDockingCache(new SizeCache(dockingHandle));
 		}
 
-		insertBefore(list, desc, position);
-	}
-
-	/**
-	 * Inserts the given object into the list before the specified position. If
-	 * the given position is null, the object is inserted at the end of the
-	 * list.
-	 * 
-	 * @param list
-	 *            a list of {@link TrimDescriptor}
-	 */
-	private static void insertBefore(List list, TrimDescriptor desc,
-			IWindowTrim position) {
-
-		if (position != null) {
-			int insertionPoint = 0;
-
-			Iterator iter = list.iterator();
-			while (iter.hasNext()) {
-				TrimDescriptor next = (TrimDescriptor) iter.next();
-
-				if (next.getTrim() == position) {
-					break;
-				}
-
-				insertionPoint++;
+		fTrimDescriptors.put(desc.getId(), desc);
+		
+		// insert before behaviour, revisited
+		if (beforeMe != null) {
+			TrimDescriptor beforeDesc = (TrimDescriptor) fTrimDescriptors
+					.get(beforeMe.getId());
+			if (beforeDesc != null && beforeDesc.getAreaId() == areaId) {
+				area.addTrim(desc, beforeDesc);
+			} else {
+				area.addTrim(desc);
 			}
-
-			list.add(insertionPoint, desc);
 		} else {
-			list.add(desc);
+			area.addTrim(desc);
 		}
-	}
-
-	/**
-	 * Remove window trim from list.
-	 * 
-	 * @param list
-	 *            a list of {@link TrimDescriptor}
-	 * @param toRemove
-	 *            the trim to remove.
-	 */
-	private static void remove(List list, IWindowTrim toRemove) {
-		TrimDescriptor target = null;
-
-		Iterator iter = list.iterator();
-		while (iter.hasNext()) {
-			TrimDescriptor next = (TrimDescriptor) iter.next();
-
-			if (next.getTrim() == toRemove) {
-				target = next;
-				break;
-			}
-		}
-
-		// If we had a trim UI handle then dispose it
-		if (target.getDockingCache() != null) {
-			Control ctrl = target.getDockingCache().getControl();
-			ctrl.setVisible(false);
-			// TODO: set the docking handle so it can be disposed.
-			
-			target.setDockingCache(null);
-		}
-		list.remove(target);
 	}
 
 	/**
 	 * Removes the given window trim. Note that this has no effect if window
 	 * trim is not our window trim.
 	 * 
-	 * @param toRemove
+	 * @param toRemove a piece of trim.
 	 */
 	public void removeTrim(IWindowTrim toRemove) {
-
-		int id = getAreaId(toRemove);
-
-		// If this isn't a trim widget.
-		if (id == NONTRIM) {
+		TrimDescriptor desc = (TrimDescriptor) fTrimDescriptors.remove(toRemove
+				.getId());
+		if (desc == null) {
 			return;
 		}
 
-		remove(fTrimArea[id], toRemove);
-	}
-
-	// private int getAreaId(TrimDescriptor desc) {
-	// return desc.getAreaId();
-	// }
-
-	private int getAreaId(IWindowTrim trim) {
-		return getAreaId(trim.getControl());
-	}
-
-	/**
-	 * Returns the area id indicating the position where this trim control is
-	 * located.
-	 * 
-	 * @param toQuery
-	 *            the control
-	 * @return the area id
-	 */
-	private int getAreaId(Control toQuery) {
-		TrimDescriptor desc = getTrimDescription(toQuery);
-		if (desc == null) {
-			return TrimLayout.NONTRIM;
+		TrimArea area = (TrimArea) fTrimArea.get(new Integer(desc.getAreaId()));
+		if (area != null) {
+			area.removeTrim(desc);
 		}
-		return desc.getAreaId();
-	}
 
-	// private TrimDescriptor getTrimDescription(IWindowTrim trim) {
-	// return getTrimDescription(trim.getControl());
-	// }
+		// If we had a trim UI handle then dispose it
+		if (desc.getDockingCache() != null) {
+			Control ctrl = desc.getDockingCache().getControl();
+			ctrl.setVisible(false);
+			// TODO: set the docking handle so it can be disposed.
 
-	private TrimDescriptor getTrimDescription(Control toQuery) {
-		for (int i = 0; i < fTrimArea.length; i++) {
-			List area = fTrimArea[i];
-			Iterator d = area.iterator();
-			while (d.hasNext()) {
-				TrimDescriptor desc = (TrimDescriptor) d.next();
-				if (desc.getTrim().getControl() == toQuery
-						|| (desc.getDockingCache() != null && desc
-								.getDockingCache().getControl() == toQuery)) {
-					return desc;
-				}
-			}
+			desc.setDockingCache(null);
 		}
-		return null;
 	}
 
 	/**
@@ -569,98 +356,31 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * @return the window trim, or <code>null</code> if not found.
 	 */
 	public IWindowTrim getTrim(String id) {
-		for (int i = 0; i < fTrimArea.length; i++) {
-			List area = fTrimArea[i];
-			Iterator d = area.iterator();
-			while (d.hasNext()) {
-				TrimDescriptor desc = (TrimDescriptor) d.next();
-				if (desc.getTrim().getId().equals(id)) {
-					return desc.getTrim();
-				}
-			}
+		TrimDescriptor desc = (TrimDescriptor) fTrimDescriptors.get(id);
+		if (desc != null) {
+			return desc.getTrim();
 		}
 		return null;
 	}
 
 	/**
-	 * Removes any disposed widgets from this layout
+	 * Removes any disposed widgets from this layout.  This is still
+	 * experimental code.
 	 */
 	private void removeDisposed() {
-		for (int idx = 0; idx < fTrimArea.length; idx++) {
-			List ctrl = fTrimArea[idx];
-
-			if (ctrl != null) {
-				Iterator iter = ctrl.iterator();
-
-				while (iter.hasNext()) {
-					TrimDescriptor next = (TrimDescriptor) iter.next();
-
-					Control nextControl = next.getTrim().getControl();
-
-					if (nextControl == null || nextControl.isDisposed()
-							|| next.getAreaId() != idx) {
-						iter.remove();
-					}
+		Iterator a = fTrimArea.values().iterator();
+		while (a.hasNext()) {
+			TrimArea area = (TrimArea) a.next();
+			Iterator d = area.getDescriptors().iterator();
+			while (d.hasNext()) {
+				TrimDescriptor desc = (TrimDescriptor) d.next();
+				Control nextControl = desc.getTrim().getControl();
+				if (nextControl == null || nextControl.isDisposed()) {
+					d.remove();
+					fTrimDescriptors.remove(desc.getId());
 				}
 			}
 		}
-	}
-
-	/**
-	 * Returns the size of the trim on each side of the layout
-	 * 
-	 * @return an array of trim sizes (pixels). See the index constants, above,
-	 *         for the meaning of the indices.
-	 */
-	private int[] getTrimSizes(int widthHint, int heightHint) {
-		int[] trimSize = new int[fTrimArea.length];
-
-		for (int idx = 0; idx < trimSizes.length; idx++) {
-			if (fTrimArea[idx].isEmpty()) {
-				trimSize[idx] = 0;
-			} else {
-				trimSize[idx] = trimSizes[idx];
-			}
-		}
-
-		if (trimSize[TOP] == SWT.DEFAULT) {
-			trimSize[TOP] = maxDimension(cacheList(fTrimArea[TOP]), widthHint,
-					false);
-		}
-		if (trimSize[BOTTOM] == SWT.DEFAULT) {
-			trimSize[BOTTOM] = maxDimension(cacheList(fTrimArea[BOTTOM]),
-					widthHint, false);
-		}
-		if (trimSize[LEFT] == SWT.DEFAULT) {
-			trimSize[LEFT] = maxDimension(cacheList(fTrimArea[LEFT]),
-					heightHint, true);
-		}
-		if (trimSize[RIGHT] == SWT.DEFAULT) {
-			trimSize[RIGHT] = maxDimension(cacheList(fTrimArea[RIGHT]),
-					heightHint, true);
-		}
-		return trimSize;
-	}
-
-	/**
-	 * Takes the trim area and turns it back into an array of {@link SizeCache}.
-	 * There can be more items in the return list than in the parameter list.
-	 * 
-	 * @param list
-	 *            a list of {@link TrimDescriptor}
-	 * @return a list of {@link SizeCache}
-	 */
-	private List cacheList(List list) {
-		ArrayList result = new ArrayList(list.size());
-		Iterator d = list.iterator();
-		while (d.hasNext()) {
-			TrimDescriptor desc = (TrimDescriptor) d.next();
-			if (desc.getDockingCache() != null) {
-				result.add(desc.getDockingCache());
-			}
-			result.add(desc.getCache());
-		}
-		return result;
 	}
 
 	/*
@@ -673,11 +393,17 @@ public class TrimLayout extends Layout implements ICachingLayout {
 			boolean flushCache) {
 		Point result = new Point(wHint, hHint);
 
-		int[] trimSize = getTrimSizes(wHint, hHint);
-		int horizontalTrim = trimSize[LEFT] + trimSize[RIGHT]
-				+ (2 * marginWidth) + leftSpacing + rightSpacing;
-		int verticalTrim = trimSize[TOP] + trimSize[BOTTOM]
-				+ (2 * marginHeight) + topSpacing + bottomSpacing;
+		TrimArea top = (TrimArea) fTrimArea.get(TOP_ID);
+		TrimArea bottom = (TrimArea) fTrimArea.get(BOTTOM_ID);
+		TrimArea left = (TrimArea) fTrimArea.get(LEFT_ID);
+		TrimArea right = (TrimArea) fTrimArea.get(RIGHT_ID);
+
+		int horizontalTrim = left.calculateTrimSize(wHint, hHint)
+				+ right.calculateTrimSize(wHint, hHint) + (2 * marginWidth)
+				+ leftSpacing + rightSpacing;
+		int verticalTrim = top.calculateTrimSize(wHint, hHint)
+				+ bottom.calculateTrimSize(wHint, hHint) + (2 * marginHeight)
+				+ topSpacing + bottomSpacing;
 
 		Point innerSize = centerArea.computeSize(wHint == SWT.DEFAULT ? wHint
 				: wHint - horizontalTrim, hHint == SWT.DEFAULT ? hHint : hHint
@@ -701,6 +427,11 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	protected void layout(Composite composite, boolean flushCache) {
 		removeDisposed();
 
+		TrimArea top = (TrimArea) fTrimArea.get(TOP_ID);
+		TrimArea bottom = (TrimArea) fTrimArea.get(BOTTOM_ID);
+		TrimArea left = (TrimArea) fTrimArea.get(LEFT_ID);
+		TrimArea right = (TrimArea) fTrimArea.get(RIGHT_ID);
+
 		Rectangle clientArea = composite.getClientArea();
 
 		clientArea.x += marginWidth;
@@ -708,33 +439,38 @@ public class TrimLayout extends Layout implements ICachingLayout {
 		clientArea.y += marginHeight;
 		clientArea.height -= 2 * marginHeight;
 
-		int[] trimSize = getTrimSizes(clientArea.width, clientArea.height);
+		int trim_top = top.calculateTrimSize(clientArea.width,
+				clientArea.height);
+		int trim_bottom = bottom.calculateTrimSize(clientArea.width,
+				clientArea.height);
+		int trim_left = left.calculateTrimSize(clientArea.width,
+				clientArea.height);
+		int trim_right = right.calculateTrimSize(clientArea.width,
+				clientArea.height);
 
 		int leftOfLayout = clientArea.x;
-		int leftOfCenterPane = leftOfLayout + trimSize[LEFT] + leftSpacing;
-		int widthOfCenterPane = clientArea.width - trimSize[LEFT]
-				- trimSize[RIGHT] - leftSpacing - rightSpacing;
-		int rightOfCenterPane = clientArea.x + clientArea.width
-				- trimSize[RIGHT];
+		int leftOfCenterPane = leftOfLayout + trim_left + leftSpacing;
+		int widthOfCenterPane = clientArea.width - trim_left - trim_right
+				- leftSpacing - rightSpacing;
+		int rightOfCenterPane = clientArea.x + clientArea.width - trim_right;
 
 		int topOfLayout = clientArea.y;
-		int topOfCenterPane = topOfLayout + trimSize[TOP] + topSpacing;
-		int heightOfCenterPane = clientArea.height - trimSize[TOP]
-				- trimSize[BOTTOM] - topSpacing - bottomSpacing;
-		int bottomOfCenterPane = clientArea.y + clientArea.height
-				- trimSize[BOTTOM];
+		int topOfCenterPane = topOfLayout + trim_top + topSpacing;
+		int heightOfCenterPane = clientArea.height - trim_top - trim_bottom
+				- topSpacing - bottomSpacing;
+		int bottomOfCenterPane = clientArea.y + clientArea.height - trim_bottom;
 
 		arrange(new Rectangle(leftOfLayout, topOfLayout, clientArea.width,
-				trimSize[TOP]), cacheList(fTrimArea[TOP]), true, spacing);
+				trim_top), top.getCaches(), !top.isVertical(), spacing);
 		arrange(new Rectangle(leftOfCenterPane, bottomOfCenterPane,
-				widthOfCenterPane, trimSize[BOTTOM]),
-				cacheList(fTrimArea[BOTTOM]), true, spacing);
-		arrange(new Rectangle(leftOfLayout, topOfCenterPane, trimSize[LEFT],
-				clientArea.height - trimSize[TOP]), cacheList(fTrimArea[LEFT]),
-				false, spacing);
-		arrange(new Rectangle(rightOfCenterPane, topOfCenterPane,
-				trimSize[RIGHT], clientArea.height - trimSize[TOP]),
-				cacheList(fTrimArea[RIGHT]), false, spacing);
+				widthOfCenterPane, trim_bottom), bottom.getCaches(), !bottom
+				.isVertical(), spacing);
+		arrange(new Rectangle(leftOfLayout, topOfCenterPane, trim_left,
+				clientArea.height - trim_top), left.getCaches(), !left
+				.isVertical(), spacing);
+		arrange(new Rectangle(rightOfCenterPane, topOfCenterPane, trim_right,
+				clientArea.height - trim_top), right.getCaches(), !right
+				.isVertical(), spacing);
 
 		if (centerArea.getControl() != null) {
 			centerArea.getControl().setBounds(leftOfCenterPane,
@@ -750,6 +486,8 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 *            area to be filled by the controls
 	 * @param caches
 	 *            a list of SizeCaches for controls that will span the rectangle
+	 * @param horizontally how we are filling the rectangle
+	 * @param spacing in pixels 
 	 */
 	private static void arrange(Rectangle area, List caches,
 			boolean horizontally, int spacing) {
@@ -758,7 +496,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 		List resizable = new ArrayList(caches.size());
 		List nonResizable = new ArrayList(caches.size());
 
-		filterResizable(caches, resizable, nonResizable, horizontally);
+		TrimArea.filterResizable(caches, resizable, nonResizable, horizontally);
 
 		int[] sizes = new int[nonResizable.size()];
 
@@ -772,7 +510,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 		while (iter.hasNext()) {
 			SizeCache next = (SizeCache) iter.next();
 
-			sizes[idx] = getSize(next, hint, horizontally);
+			sizes[idx] = TrimArea.getSize(next, hint, horizontally);
 			used += sizes[idx];
 			idx++;
 		}
@@ -789,7 +527,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 			if (next.getControl().isVisible()) {
 
 				int thisSize;
-				if (isResizable(next.getControl(), horizontally)) {
+				if (TrimArea.isResizable(next.getControl(), horizontally)) {
 					thisSize = available / remainingResizable;
 					available -= thisSize;
 					remainingResizable--;
@@ -842,7 +580,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 		if (dirtyControl == centerArea.getControl()) {
 			centerArea.flush();
 		} else {
-			TrimDescriptor desc = getTrimDescription(dirtyControl);
+			TrimDescriptor desc = findTrimDescription(dirtyControl);
 			if (desc != null) {
 				desc.flush();
 			}
@@ -850,99 +588,95 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	}
 
 	/**
-	 * Return all of the IDs for the currently supported trim areas.
-	 * This is <b>experimental</b> and will be changing.
+	 * Return all of the IDs for the currently supported trim areas. This is
+	 * <b>experimental</b> and will be changing.
 	 * 
 	 * @return the list of IDs that can be used with area descriptions.
+	 * We currently support SWT.TOP, SWT.BOTTOM, SWT.LEFT, and SWT.RIGHT.
+	 * @since 3.2
 	 */
-	public int[] getAreaIDs() {
-		int[] id = new int[fTrimArea.length];
-		for (int i = 0; i < id.length; ++i) {
-			id[i] = i;
-		}
-		return id;
+	public int[] getAreaIds() {
+		return (int[]) TRIM_ID_INFO.clone();
 	}
 
 	/**
 	 * Return a copy of the IWindowTrim in an ordered array. This will not
-	 * return <code>null</code>.
+	 * return <code>null</code>.  This array can be used to shuffle items
+	 * around in {@link #updateAreaDescription(int, List) }.
 	 * 
-	 * @param id
+	 * @param areaId
 	 *            the trim area id
 	 * @return the IWindowTrim array
 	 * @since 3.2
+	 * @see #getAreaIds()
 	 */
-	public IWindowTrim[] getAreaDescription(int id) {
-		IWindowTrim[] result = new IWindowTrim[fTrimArea[id].size()];
-		Iterator d = fTrimArea[id].iterator();
-		int i = 0;
-		while (d.hasNext()) {
-			TrimDescriptor desc = (TrimDescriptor) d.next();
-			result[i] = desc.getTrim();
-			++i;
+	public List getAreaDescription(int areaId) {
+		TrimArea area = (TrimArea) fTrimArea.get(new Integer(areaId));
+		if (area == null) {
+			return Collections.EMPTY_LIST;
 		}
-		return result;
+		return area.getTrims();
 	}
 
 	/**
 	 * Update ID's area description with the new window trim ordering. This
 	 * applies the IWindowTrim contains in the array to the trim area named
 	 * "ID". Any trim in the trim area that's not contained in the array is
-	 * removed.
+	 * removed from the TrimLayout.
 	 * 
 	 * @param id
 	 *            the trim area ID
 	 * @param trim
 	 *            the trim array must not be <code>null</code>.
 	 * @since 3.2
+	 * @see #getAreaIds()
 	 */
-	public void updateAreaDescription(int id, IWindowTrim[] trim) {
-		// sort out the trim that needs to be removed
-		// clone the list to avoid concurrent modification execptions
-		Iterator d = ((ArrayList) fTrimArea[id].clone()).iterator();
-		while (d.hasNext()) {
-			TrimDescriptor desc = (TrimDescriptor) d.next();
-			int i;
-			for (i = 0; i < trim.length; i++) {
-				IWindowTrim t = trim[i];
-				if (desc.getTrim() == t) {
-					break;
-				}
-			}
-			if (i >= trim.length) {
-				removeTrim(desc.getTrim());
-			}
+	public void updateAreaDescription(int id, List trim) {
+		TrimArea area = (TrimArea) fTrimArea.get(new Integer(id));
+		if (area == null) {
+			return;
 		}
+		List current = area.getTrims();
 
 		// add back the trim ... this takes care of moving it
 		// from one trim area to another.
-		for (int i = 0; i < trim.length; i++) {
-			IWindowTrim t = trim[i];
-			addTrim(t, convertAreaIdToSwtConstant(id));
+		Iterator i = trim.iterator();
+		while (i.hasNext()) {
+			IWindowTrim t = (IWindowTrim) i.next();
+			addTrim(id, t, null);
+			current.remove(t);
+		}
+
+		// if it wasn't removed from the current list, then it's extra
+		// trim we don't need.
+		i = current.iterator();
+		while (i.hasNext()) {
+			IWindowTrim t = (IWindowTrim) i.next();
+			removeTrim(t);
 		}
 	}
 
 	/**
-	 * Returns the control that the dragged control should be placed 'before'
+	 * Returns the control that the dragged control should be placed 'before'.
 	 * 
-	 * @param swtSide
+	 * @param areaId
 	 *            The side to get the info for
 	 * @param pos
 	 *            the current cursor position (in device coords)
 	 * @return The control to be inserted before or null if it should go at the
 	 *         end
 	 * @since 3.2
+	 * @see #getAreaIds()
 	 */
-	public IWindowTrim getInsertBefore(int swtSide, Point pos) {
-		int id = convertSwtConstantToAreaId(swtSide);
-		List area = fTrimArea[id];
-		if (area == null || area.size() == 0) {
+	public IWindowTrim getInsertBefore(int areaId, Point pos) {
+		TrimArea area = (TrimArea) fTrimArea.get(new Integer(areaId));
+		if (area == null || area.isEmpty()) {
 			return null;
 		}
 
-		boolean isHorizontal = swtSide == SWT.TOP || swtSide == SWT.BOTTOM;
+		boolean isHorizontal = !area.isVertical();
 
-		Iterator d = area.iterator();
+		Iterator d = area.getDescriptors().iterator();
 		while (d.hasNext()) {
 			TrimDescriptor desc = (TrimDescriptor) d.next();
 			Rectangle bounds = DragUtil.getDisplayBounds(desc.getCache()
@@ -967,7 +701,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * 
 	 * @param window
 	 *            The owner of this TrimLayout
-	 * @param swtSide
+	 * @param areaId
 	 *            The side that the dragged trim is currently over
 	 * @param dragRect
 	 *            The rectangle representing the dragged trim
@@ -976,21 +710,24 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * 
 	 * @return the appropriate snap rectangle (in display coords)
 	 * @since 3.2
+	 * @see #getAreaIds()
 	 */
-	public Rectangle getSnapRectangle(Composite window, int swtSide,
+	public Rectangle getSnapRectangle(Composite window, int areaId,
 			Rectangle dragRect, IWindowTrim insertBefore) {
-		int id = convertSwtConstantToAreaId(swtSide);
-		List area = fTrimArea[id];
-		Rectangle trimRect = getTrimRect(window, swtSide);
+		TrimArea area = (TrimArea) fTrimArea.get(new Integer(areaId));
+
+		Rectangle trimRect = getTrimRect(window, areaId);
+
 		if (insertBefore == null) {
-			if (area != null && area.size() > 0) {
+			if (area != null && !area.isEmpty()) {
 				// Place the dragRect at the 'end' of the current controls
-				TrimDescriptor last = (TrimDescriptor) area
-						.get(area.size() - 1);
+				List descs = area.getDescriptors();
+				TrimDescriptor last = (TrimDescriptor) descs
+						.get(descs.size() - 1);
 				Rectangle lastRect = DragUtil.getDisplayBounds(last.getCache()
 						.getControl());
 
-				if (swtSide == SWT.BOTTOM || swtSide == SWT.TOP) {
+				if (!area.isVertical()) {
 					Rectangle snapRect = new Rectangle(lastRect.x
 							+ lastRect.width, lastRect.y, dragRect.width,
 							dragRect.height);
@@ -1002,7 +739,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 					if (dx < 0)
 						Geometry.moveRectangle(snapRect, new Point(dx, 0));
 					return snapRect;
-				} else if (swtSide == SWT.LEFT || swtSide == SWT.RIGHT) {
+				} else if (area.isVertical()) {
 					Rectangle snapRect = new Rectangle(lastRect.x, lastRect.y
 							+ lastRect.height, dragRect.width, dragRect.height);
 
@@ -1015,7 +752,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 
 					// If it's the RIGHT side then also force the rectangle
 					// inside the frame
-					if (swtSide == SWT.RIGHT) {
+					if (areaId == RIGHT) {
 						int dx = (trimRect.x + trimRect.width)
 								- (snapRect.x + snapRect.width);
 						if (dx < 0)
@@ -1030,7 +767,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 
 				// If it's the RIGHT side then also force the rectangle inside
 				// the frame
-				if (swtSide == SWT.RIGHT) {
+				if (areaId == RIGHT) {
 					int dx = (trimRect.x + trimRect.width)
 							- (snapRect.x + snapRect.width);
 					if (dx < 0)
@@ -1047,7 +784,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 		Control trimControl = insertBefore.getControl();
 
 		// int index = getIndex(id, trimControl);
-		TrimDescriptor desc = getTrimDescription(trimControl);
+		TrimDescriptor desc = findTrimDescription(trimControl);
 
 		Rectangle ctrlRect = DragUtil.getDisplayBounds(trimControl);
 
@@ -1057,12 +794,13 @@ public class TrimLayout extends Layout implements ICachingLayout {
 		}
 
 		Rectangle snapRect;
-		if (swtSide == SWT.BOTTOM || swtSide == SWT.TOP)
+		if (!area.isVertical()) {
 			snapRect = new Rectangle(ctrlRect.x - 2, ctrlRect.y - 2, 5,
 					ctrlRect.height + 4);
-		else
+		} else {
 			snapRect = new Rectangle(ctrlRect.x - 2, ctrlRect.y - 2,
 					ctrlRect.width + 4, 5);
+		}
 
 		// Rectangle snapRect = new
 		// Rectangle(ctrlRect.x,ctrlRect.y,dragRect.width,dragRect.height);
@@ -1074,12 +812,13 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * 
 	 * @param window
 	 *            the window that has the trim
-	 * @param side
+	 * @param areaId
 	 *            the side it's on
 	 * @return the area rectangle.
 	 * @since 3.2
+	 * @see #getAreaIds()
 	 */
-	public Rectangle getTrimRect(Composite window, int side) {
+	public Rectangle getTrimRect(Composite window, int areaId) {
 		Rectangle bb = window.getBounds();
 
 		Rectangle cr = window.getClientArea();
@@ -1088,76 +827,81 @@ public class TrimLayout extends Layout implements ICachingLayout {
 		// Place the Client Area 'within' its window
 		Geometry.moveRectangle(cr, new Point(bb.x - tr.x, bb.y - tr.y));
 
-		int[] trimSizes = getTrimSizes(cr.width, cr.height);
+		TrimArea top = (TrimArea) fTrimArea.get(TOP_ID);
+		TrimArea bottom = (TrimArea) fTrimArea.get(BOTTOM_ID);
+		TrimArea left = (TrimArea) fTrimArea.get(LEFT_ID);
+		TrimArea right = (TrimArea) fTrimArea.get(RIGHT_ID);
+
+		int trim_top = top.calculateTrimSize(cr.width, cr.height);
+		int trim_bottom = bottom.calculateTrimSize(cr.width, cr.height);
+		int trim_left = left.calculateTrimSize(cr.width, cr.height);
+		int trim_right = right.calculateTrimSize(cr.width, cr.height);
 
 		// Adjust the trim sizes to incorporate the margins for sides that
 		// don't currently have trim
-		if (trimSizes[TOP] == 0)
-			trimSizes[TOP] = marginHeight;
-		if (trimSizes[BOTTOM] == 0)
-			trimSizes[BOTTOM] = marginHeight;
-		if (trimSizes[LEFT] == 0)
-			trimSizes[LEFT] = marginWidth;
-		if (trimSizes[RIGHT] == 0)
-			trimSizes[RIGHT] = marginWidth;
+		if (trim_top == 0)
+			trim_top = marginHeight;
+		if (trim_bottom == 0)
+			trim_bottom = marginHeight;
+		if (trim_left == 0)
+			trim_left = marginWidth;
+		if (trim_right == 0)
+			trim_right = marginWidth;
 
 		Rectangle trimRect = new Rectangle(0, 0, 0, 0);
-		int layoutSide = convertSwtConstantToAreaId(side);
-		switch (layoutSide) {
+		switch (areaId) {
 		case TOP:
 			trimRect.x = cr.x;
 			trimRect.width = cr.width;
 			trimRect.y = cr.y;
-			trimRect.height = trimSizes[TOP];
+			trimRect.height = trim_top;
 			break;
 		case BOTTOM:
 			trimRect.x = cr.x;
 			trimRect.width = cr.width;
-			trimRect.y = (cr.y + cr.height) - trimSizes[BOTTOM];
-			trimRect.height = trimSizes[BOTTOM];
+			trimRect.y = (cr.y + cr.height) - trim_bottom;
+			trimRect.height = trim_bottom;
 			break;
 		case LEFT:
 			trimRect.x = cr.x;
-			trimRect.width = trimSizes[LEFT];
-			trimRect.y = cr.y + trimSizes[TOP];
-			trimRect.height = cr.height - (trimSizes[TOP] + trimSizes[BOTTOM]);
+			trimRect.width = trim_left;
+			trimRect.y = cr.y + trim_top;
+			trimRect.height = cr.height - (trim_top + trim_bottom);
 			break;
 		case RIGHT:
-			trimRect.x = (cr.x + cr.width) - trimSizes[RIGHT];
-			trimRect.width = trimSizes[RIGHT];
-			trimRect.y = cr.y + trimSizes[TOP];
-			trimRect.height = cr.height - (trimSizes[TOP] + trimSizes[BOTTOM]);
+			trimRect.x = (cr.x + cr.width) - trim_right;
+			trimRect.width = trim_right;
+			trimRect.y = cr.y + trim_top;
+			trimRect.height = cr.height - (trim_top + trim_bottom);
 			break;
 		}
 
 		return trimRect;
 	}
-	
+
 	/**
-	 * This method returns an aggregate array of all trim items.
+	 * This method returns an aggregate array of all trim items known
+	 * to this TrimLayout.
 	 * 
-	 * @return The array of all trim elements
+	 * @return The List of all IWindowTrim elements
 	 * @since 3.2
 	 */
-	public IWindowTrim[] getAllTrim() {
-		List trimList = new ArrayList();
+	public List getAllTrim() {
+		List trimList = new ArrayList(fTrimDescriptors.size());
 
-		// Walk all sides adding their trim into the list
-		for (int side = 0; side < fTrimArea.length; side++) {
-			List caches = fTrimArea[side];
-			for (Iterator iter = caches.iterator(); iter.hasNext();) {
-				TrimDescriptor cache = (TrimDescriptor) iter.next();
-				if (!trimList.contains(cache.getTrim()))
-					trimList.add(cache.getTrim());
-			}
+		Iterator d = fTrimDescriptors.values().iterator();
+		while (d.hasNext()) {
+			TrimDescriptor desc = (TrimDescriptor) d.next();
+			trimList.add(desc.getTrim());
 		}
 
-		return (IWindowTrim[]) trimList.toArray(new IWindowTrim[0]);
+		return trimList;
 	}
 
 	/**
 	 * Update the visibility of the trim controls. It updates any docking
-	 * handles as well.
+	 * handles as well.  It has no effect on visiblity if the window
+	 * trim doesn't belong to this TrimLayout.
 	 * 
 	 * @param trim
 	 *            the trim to update
@@ -1166,7 +910,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * @since 3.2
 	 */
 	public void setTrimVisible(IWindowTrim trim, boolean visible) {
-		TrimDescriptor desc = getTrimDescription(trim.getControl());
+		TrimDescriptor desc = findTrimDescription(trim.getControl());
 
 		if (desc != null) {
 			desc.setVisible(visible);
@@ -1175,7 +919,9 @@ public class TrimLayout extends Layout implements ICachingLayout {
 
 	/**
 	 * Return whether common drag affordances are on or not.
+	 * 
 	 * @return <code>true</code> if we use a common UI for dragging
+	 * @since 3.2
 	 */
 	public boolean useCommonUI() {
 		return fUseCommonUI;
@@ -1183,7 +929,10 @@ public class TrimLayout extends Layout implements ICachingLayout {
 
 	/**
 	 * Set to <code>true</code> if we should use the common UI for dragging.
-	 * @param useCommonUI <code>true</code> or <code>false</code>
+	 * 
+	 * @param useCommonUI
+	 *            <code>true</code> or <code>false</code>
+	 * @since 3.2
 	 */
 	public void setUseCommonUI(boolean useCommonUI) {
 		fUseCommonUI = useCommonUI;
@@ -1191,7 +940,9 @@ public class TrimLayout extends Layout implements ICachingLayout {
 
 	/**
 	 * Return <code>true</code> if we are dragging in immediate mode.
+	 * 
 	 * @return <code>true</code> or <code>false</code>
+	 * @since 3.2
 	 */
 	public boolean isImmediate() {
 		return fImmediate;
@@ -1200,9 +951,35 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	/**
 	 * Set to <code>true</code> if we should do trim dragging in immediate
 	 * mode.
-	 * @param immediate <code>true</code> or <code>false</code>
+	 * 
+	 * @param immediate
+	 *            <code>true</code> or <code>false</code>
+	 * @since 3.2
 	 */
 	public void setImmediate(boolean immediate) {
 		this.fImmediate = immediate;
+	}
+
+	/**
+	 * Find the trim descriptor for this control.
+	 * 
+	 * @param trim
+	 *            the Control to find.
+	 * @return the trim descriptor, or <code>null</code> if not found.
+	 * @since 3.2
+	 */
+	private TrimDescriptor findTrimDescription(Control trim) {
+		Iterator d = fTrimDescriptors.values().iterator();
+		while (d.hasNext()) {
+			TrimDescriptor desc = (TrimDescriptor) d.next();
+			if (desc.getTrim().getControl() == trim) {
+				return desc;
+			}
+			if (desc.getDockingCache() != null
+					&& desc.getDockingCache().getControl() == trim) {
+				return desc;
+			}
+		}
+		return null;
 	}
 }

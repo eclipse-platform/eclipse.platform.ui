@@ -14,25 +14,44 @@ package org.eclipse.ui.internal.layout;
 import org.eclipse.ui.internal.IWindowTrim;
 
 /**
- * Manages the internal pieces of trim for each trim area.
+ * Manages the internal piece of trim for each trim area.
+ * 
  * @since 3.2
  */
 public class TrimDescriptor {
 
+	/**
+	 * The window trim object.
+	 */
 	private IWindowTrim fTrim;
+
+	/**
+	 * The cache for the window trim object's control.
+	 */
 	private SizeCache fCache;
+
+	/**
+	 * The cache for the common drag affordance, if available.
+	 */
 	private SizeCache fDockingHandle = null;
+
+	/**
+	 * The current area that we belong to.
+	 * 
+	 * @see TrimLayout#getAreaIds()
+	 */
 	private int fAreaId;
 
 	/**
 	 * Create a trim descriptor for the trim manager.
+	 * 
 	 * @param trim
-	 * @param cache
+	 *            the window trim
 	 * @param areaId
+	 *            the trim area we belong to.
 	 */
-	public TrimDescriptor(IWindowTrim trim, SizeCache cache, int areaId) {
+	public TrimDescriptor(IWindowTrim trim, int areaId) {
 		fTrim = trim;
-		fCache = cache;
 		fAreaId = areaId;
 	}
 
@@ -44,21 +63,36 @@ public class TrimDescriptor {
 	}
 
 	/**
+	 * Set the trim cache. Because of the requirements of possibly changing
+	 * orientation when docking on a different side, the same IWindowTrim
+	 * sometimes needs to have it's control SizeCache replaced.
+	 * 
+	 * @param c
+	 *            cache.
+	 */
+	public void setCache(SizeCache c) {
+		fCache = c;
+	}
+
+	/**
 	 * @return Returns the fTrim.
 	 */
 	public IWindowTrim getTrim() {
 		return fTrim;
 	}
-	
+
 	/**
-	 * @return return the docking handle
+	 * Return the cache for the common drag affordance.
+	 * 
+	 * @return return the docking handle cache
 	 */
 	public SizeCache getDockingCache() {
 		return fDockingHandle;
 	}
-	
+
 	/**
 	 * The trim ID.
+	 * 
 	 * @return the trim ID. This should not be <code>null</code>.
 	 */
 	public String getId() {
@@ -67,6 +101,7 @@ public class TrimDescriptor {
 
 	/**
 	 * Returns whether the control for this trim is visible.
+	 * 
 	 * @return <code>true</code> if the control is visible.
 	 */
 	public boolean isVisible() {
@@ -77,38 +112,60 @@ public class TrimDescriptor {
 	}
 
 	/**
-	 * Add the docking handle
-	 * @param cache the sizecache for the docking control
+	 * Set the cache for the common drag affordance.
+	 * 
+	 * @param cache
+	 *            the sizecache for the docking control
 	 */
 	public void setDockingCache(SizeCache cache) {
 		fDockingHandle = cache;
 	}
 
 	/**
-	 * The area ID this descriptor belongs to
+	 * The area ID this descriptor belongs to.
+	 * 
 	 * @return the ID
+	 * @see TrimLayout#getAreaIds()
 	 */
 	public int getAreaId() {
 		return fAreaId;
 	}
 
 	/**
+	 * Set the current area this descriptor belongs to.
+	 * 
+	 * @param id
+	 *            the area ID.
+	 * @see TrimLayout#getAreaIds()
+	 */
+	public void setAreaId(int id) {
+		fAreaId = id;
+	}
+
+	/**
 	 * Flush any contained size caches.
 	 */
 	public void flush() {
-		fCache.flush();
-		if (fDockingHandle!=null) {
+		if (fCache != null) {
+			fCache.flush();
+		}
+		if (fDockingHandle != null) {
 			fDockingHandle.flush();
 		}
 	}
-	
+
 	/**
 	 * Update the visibility of the trim controls.
-	 * @param visible visible or not.
+	 * 
+	 * @param visible
+	 *            visible or not.
 	 */
 	public void setVisible(boolean visible) {
-		fTrim.getControl().setVisible(visible);
-		if (fDockingHandle!=null) {
+		if (fTrim.getControl() != null && !fTrim.getControl().isDisposed()) {
+			fTrim.getControl().setVisible(visible);
+		}
+		if (fDockingHandle != null && fDockingHandle.getControl() != null
+				&& !fDockingHandle.getControl().isDisposed()) {
 			fDockingHandle.getControl().setVisible(visible);
 		}
 	}

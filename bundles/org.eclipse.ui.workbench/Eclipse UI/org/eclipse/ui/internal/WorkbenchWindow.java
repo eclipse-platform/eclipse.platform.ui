@@ -2368,22 +2368,24 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * @since 3.2
      */
     private IStatus saveTrimState(IMemento memento) {
-		int[] ids = defaultLayout.getAreaIDs();
+		int[] ids = defaultLayout.getAreaIds();
 		for (int i = 0; i < ids.length; i++) {
 			int id = ids[i];
-			IWindowTrim[] trim = defaultLayout.getAreaDescription(id);
-			if (trim.length > 0) {
+			List trim = defaultLayout.getAreaDescription(id);
+			if (!trim.isEmpty()) {
 				IMemento area = memento
 						.createChild(IWorkbenchConstants.TAG_TRIM_AREA, Integer
 								.toString(id));
-				for (int idx = 0; idx < trim.length; idx++) {
-					area.createChild(IWorkbenchConstants.TAG_TRIM_ITEM,
-							trim[idx].getId());
+				Iterator d = trim.iterator();
+				while (d.hasNext()) {
+					IWindowTrim item = (IWindowTrim) d.next();
+					area.createChild(IWorkbenchConstants.TAG_TRIM_ITEM, item
+							.getId());
 				}
 			}
 		}
 		return Status.OK_STATUS;
-    }
+	}
     
     /**
      * Restore the trim layout state from the memento.
@@ -2409,7 +2411,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			for (int j = 0; j < items.length; j++) {
 				IMemento item = items[j];
 				IWindowTrim t = defaultLayout.getTrim(item.getID());
-				if (t!=null) {
+				if (t != null) {
 					trimOrder[i].add(t);
 				}
 			}
@@ -2419,8 +2421,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		for (int i = 0; i < areas.length; i++) {
 			IMemento area = areas[i];
 			int id = Integer.parseInt(area.getID());
-			defaultLayout.updateAreaDescription(id,
-					(IWindowTrim[]) trimOrder[i].toArray(new IWindowTrim[0]));
+			defaultLayout.updateAreaDescription(id, trimOrder[i]);
 		}
 
 		return Status.OK_STATUS;
