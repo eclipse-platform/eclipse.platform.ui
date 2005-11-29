@@ -1302,10 +1302,11 @@ public class EditorManager implements IExtensionChangeHandler {
                 if (editorPane == editorPane.getWorkbook().getSelection())
                     editorMem.putString(IWorkbenchConstants.TAG_FOCUS, "true"); //$NON-NLS-1$
 
-                // TODO - DDW - dynamic UI - a check for a null input was deliberately removed here.
-                if (input instanceof IPathEditorInput) {
-                    editorMem.putString(IWorkbenchConstants.TAG_PATH,
-                            ((IPathEditorInput) input).getPath().toString());
+               if (input instanceof IPathEditorInput) {
+            	   IPath path = ((IPathEditorInput) input).getPath();
+            	   if(path != null)
+            		   editorMem.putString(IWorkbenchConstants.TAG_PATH,
+                            path.toString());
                 }
 
                 // Save input.
