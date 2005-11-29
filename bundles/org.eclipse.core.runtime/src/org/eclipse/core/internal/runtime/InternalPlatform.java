@@ -16,7 +16,7 @@ import java.net.*;
 import java.util.*;
 import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.preferences.*;
-import org.eclipse.core.internal.registry.eclipse.EclipseExtensionRegistry;
+import org.eclipse.core.internal.registry.eclipse.LegacyExtensionRegistry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -976,7 +976,7 @@ public final class InternalPlatform {
 		addLogListener(platformLog);
 
 		// start registry:
-		setExtensionRegistry(new EclipseExtensionRegistry());
+		setExtensionRegistry(new LegacyExtensionRegistry());
 		adapterManagerListener = new AdapterManagerListener(); // after extension registry
 		startServices();
 	}
@@ -1047,7 +1047,7 @@ public final class InternalPlatform {
 	 */
 	private void stopRegistry() {
 		if (registry != null) {
-			((EclipseExtensionRegistry) registry).stop();
+			((LegacyExtensionRegistry) registry).stop();
 			registry = null;
 		}
 	}

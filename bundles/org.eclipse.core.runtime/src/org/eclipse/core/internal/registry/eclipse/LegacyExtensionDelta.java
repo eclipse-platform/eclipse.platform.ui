@@ -18,24 +18,24 @@ import org.eclipse.core.runtime.IExtensionPoint;
  * 
  * For general use consider ExtensionDelta.
  */
-public class EclipseExtensionDelta implements org.eclipse.core.runtime.IExtensionDelta {
+public class LegacyExtensionDelta implements org.eclipse.core.runtime.IExtensionDelta {
 
-	private org.eclipse.equinox.registry.IExtensionDelta theEquinoxHandle;
+	private org.eclipse.equinox.registry.IExtensionDelta target;
 
-	public EclipseExtensionDelta(org.eclipse.equinox.registry.IExtensionDelta delta) {
-		theEquinoxHandle = delta;
+	public LegacyExtensionDelta(org.eclipse.equinox.registry.IExtensionDelta delta) {
+		target = delta;
 	}
 
 	public IExtensionPoint getExtensionPoint() {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getExtensionPoint());
+		return LegacyRegistryConverter.convert(target.getExtensionPoint());
 	}
 
 	public int getKind() {
-		return theEquinoxHandle.getKind();
+		return target.getKind();
 	}
 
 	public IExtension getExtension() {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getExtension());
+		return LegacyRegistryConverter.convert(target.getExtension());
 	}
 
 	/**
@@ -43,7 +43,7 @@ public class EclipseExtensionDelta implements org.eclipse.core.runtime.IExtensio
 	 * @return - Equinox handle 
 	 */
 	public org.eclipse.equinox.registry.IExtensionDelta getInternalHandle() {
-		return theEquinoxHandle;
+		return target;
 	}
 
 }

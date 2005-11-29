@@ -22,87 +22,87 @@ import org.eclipse.core.runtime.*;
  * 
  * @since org.eclipse.core.runtime 3.2 
  */
-public class EclipseConfigurationElementHandle implements org.eclipse.core.runtime.IConfigurationElement {
+public class LegacyConfigurationElementHandle implements org.eclipse.core.runtime.IConfigurationElement {
 
-	protected org.eclipse.equinox.registry.IConfigurationElement theEquinoxHandle;
+	protected org.eclipse.equinox.registry.IConfigurationElement target;
 
 	public boolean equals(Object object) {
-		if (object instanceof EclipseConfigurationElementHandle)
-			return theEquinoxHandle.equals(((EclipseConfigurationElementHandle) object).getInternalHandle());
+		if (object instanceof LegacyConfigurationElementHandle)
+			return target.equals(((LegacyConfigurationElementHandle) object).getInternalHandle());
 		return false;
 	}
 
 	public int hashCode() {
-		return theEquinoxHandle.hashCode();
+		return target.hashCode();
 	}
 
-	public EclipseConfigurationElementHandle(IObjectManager objectManager, int id) {
-		theEquinoxHandle = new ConfigurationElementHandle(objectManager, id);
+	public LegacyConfigurationElementHandle(IObjectManager objectManager, int id) {
+		target = new ConfigurationElementHandle(objectManager, id);
 	}
 
-	public EclipseConfigurationElementHandle(org.eclipse.equinox.registry.IConfigurationElement element) {
-		theEquinoxHandle = element;
+	public LegacyConfigurationElementHandle(org.eclipse.equinox.registry.IConfigurationElement element) {
+		target = element;
 	}
 
 	public String getAttribute(String propertyName) {
-		return theEquinoxHandle.getAttribute(propertyName);
+		return target.getAttribute(propertyName);
 	}
 
 	public String[] getAttributeNames() {
-		return theEquinoxHandle.getAttributeNames();
+		return target.getAttributeNames();
 	}
 
 	public IConfigurationElement[] getChildren() {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getChildren());
+		return LegacyRegistryConverter.convert(target.getChildren());
 	}
 
 	public Object createExecutableExtension(String propertyName) throws CoreException {
-		return theEquinoxHandle.createExecutableExtension(propertyName);
+		return target.createExecutableExtension(propertyName);
 
 	}
 
 	public String getAttributeAsIs(String name) {
-		return theEquinoxHandle.getAttributeAsIs(name);
+		return target.getAttributeAsIs(name);
 	}
 
 	public IConfigurationElement[] getChildren(String name) {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getChildren(name));
+		return LegacyRegistryConverter.convert(target.getChildren(name));
 	}
 
 	public IExtension getDeclaringExtension() {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getDeclaringExtension());
+		return LegacyRegistryConverter.convert(target.getDeclaringExtension());
 	}
 
 	public String getName() {
-		return theEquinoxHandle.getName();
+		return target.getName();
 	}
 
 	public Object getParent() {
-		Object internalResult = theEquinoxHandle.getParent();
+		Object internalResult = target.getParent();
 		if (internalResult instanceof org.eclipse.equinox.registry.IConfigurationElement)
-			return EclipseRegistryAdaptor.adapt((org.eclipse.equinox.registry.IConfigurationElement)internalResult);
+			return LegacyRegistryConverter.convert((org.eclipse.equinox.registry.IConfigurationElement)internalResult);
 		else if (internalResult instanceof org.eclipse.equinox.registry.IExtensionPoint)
-			return EclipseRegistryAdaptor.adapt((org.eclipse.equinox.registry.IExtensionPoint)internalResult);
+			return LegacyRegistryConverter.convert((org.eclipse.equinox.registry.IExtensionPoint)internalResult);
 		else if (internalResult instanceof org.eclipse.equinox.registry.IExtension)
-			return EclipseRegistryAdaptor.adapt((org.eclipse.equinox.registry.IExtension)internalResult);
+			return LegacyRegistryConverter.convert((org.eclipse.equinox.registry.IExtension)internalResult);
 		else 
 			return internalResult;
 	}
 
 	public String getValue() {
-		return theEquinoxHandle.getValue();
+		return target.getValue();
 	}
 
 	public String getValueAsIs() {
-		return theEquinoxHandle.getValueAsIs();
+		return target.getValueAsIs();
 	}
 
 	public String getNamespace() {
-		return theEquinoxHandle.getNamespace();
+		return target.getNamespace();
 	}
 
 	public boolean isValid() {
-		return theEquinoxHandle.isValid();
+		return target.isValid();
 	}
 
 	/**
@@ -110,6 +110,6 @@ public class EclipseConfigurationElementHandle implements org.eclipse.core.runti
 	 * @return - Equinox handle 
 	 */
 	public org.eclipse.equinox.registry.IConfigurationElement getInternalHandle() {
-		return theEquinoxHandle;
+		return target;
 	}
 }

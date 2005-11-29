@@ -21,25 +21,18 @@ import org.osgi.framework.ServiceRegistration;
 /**
  * Backward-compatible Eclipse registry implementation.
  */
-
-// XXX Eclipse* classes should be renamed to be Legacy or some such
-// XXX EclipseRegistryAdaptor should be renamed to *Converter and the adapt() => convert() or some such
-
-public class EclipseExtensionRegistry implements IExtensionRegistry {
+public class LegacyExtensionRegistry implements IExtensionRegistry {
 	ServiceRegistration registrationOld;
-	// XXX this field name should be updated.  Something like "target" or "wrappee" :-)
-	private org.eclipse.equinox.registry.IExtensionRegistry theEquinoxHandle;
+	private org.eclipse.equinox.registry.IExtensionRegistry target;
 
-	public EclipseExtensionRegistry() {
-		theEquinoxHandle = RegistryFactory.getRegistry();
-		if (theEquinoxHandle instanceof ExtensionRegistry) {
-			((ExtensionRegistry) theEquinoxHandle).setCompatibilityStrategy(new EclipseRegistryCompatibility());
+	public LegacyExtensionRegistry() {
+		target = RegistryFactory.getRegistry();
+		if (target instanceof ExtensionRegistry) {
+			((ExtensionRegistry) target).setCompatibilityStrategy(new LegacyRegistryCompatibility());
 		}
 
-		// XXX Did we used to register the registry as a service?  If so, bummer.  If not, we should consider 
-		//    Dropping this.  If we do have to register it, there should be a distinguishing property set so
-		//    someone can ensure they are getting the legacy registry.
-		// For compatibility, register this registry under old name as well
+		// For compatibility, continue to register this registry under 
+		// the org.eclipse.core.runtime.IExtentionRegistry name
 		BundleContext context = InternalPlatform.getDefault().getBundleContext();
 		registrationOld = context.registerService(IExtensionRegistry.class.getName(), this, new Hashtable());
 	}
@@ -49,63 +42,63 @@ public class EclipseExtensionRegistry implements IExtensionRegistry {
 	}
 
 	public void addRegistryChangeListener(IRegistryChangeListener listener, String namespace) {
-		theEquinoxHandle.addRegistryChangeListener(listener, namespace);
+		target.addRegistryChangeListener(listener, namespace);
 	}
 
 	public void addRegistryChangeListener(IRegistryChangeListener listener) {
-		theEquinoxHandle.addRegistryChangeListener(listener);
+		target.addRegistryChangeListener(listener);
 	}
 
 	public IConfigurationElement[] getConfigurationElementsFor(String extensionPointId) {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getConfigurationElementsFor(extensionPointId));
+		return LegacyRegistryConverter.convert(target.getConfigurationElementsFor(extensionPointId));
 	}
 
 	public IConfigurationElement[] getConfigurationElementsFor(String namespace, String extensionPointName) {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getConfigurationElementsFor(namespace, extensionPointName));
+		return LegacyRegistryConverter.convert(target.getConfigurationElementsFor(namespace, extensionPointName));
 	}
 
 	public IConfigurationElement[] getConfigurationElementsFor(String namespace, String extensionPointName, String extensionId) {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getConfigurationElementsFor(namespace, extensionPointName, extensionId));
+		return LegacyRegistryConverter.convert(target.getConfigurationElementsFor(namespace, extensionPointName, extensionId));
 
 	}
 
 	public IExtension getExtension(String extensionId) {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getExtension(extensionId));
+		return LegacyRegistryConverter.convert(target.getExtension(extensionId));
 	}
 
 	public IExtension getExtension(String extensionPointId, String extensionId) {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getExtension(extensionPointId, extensionId));
+		return LegacyRegistryConverter.convert(target.getExtension(extensionPointId, extensionId));
 	}
 
 	public IExtension getExtension(String namespace, String extensionPointName, String extensionId) {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getExtension(namespace, extensionPointName, extensionId));
+		return LegacyRegistryConverter.convert(target.getExtension(namespace, extensionPointName, extensionId));
 	}
 
 	public IExtensionPoint getExtensionPoint(String extensionPointId) {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getExtensionPoint(extensionPointId));
+		return LegacyRegistryConverter.convert(target.getExtensionPoint(extensionPointId));
 	}
 
 	public IExtensionPoint getExtensionPoint(String namespace, String extensionPointName) {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getExtensionPoint(namespace, extensionPointName));
+		return LegacyRegistryConverter.convert(target.getExtensionPoint(namespace, extensionPointName));
 	}
 
 	public IExtensionPoint[] getExtensionPoints() {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getExtensionPoints());
+		return LegacyRegistryConverter.convert(target.getExtensionPoints());
 	}
 
 	public IExtensionPoint[] getExtensionPoints(String namespace) {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getExtensionPoints(namespace));
+		return LegacyRegistryConverter.convert(target.getExtensionPoints(namespace));
 	}
 
 	public IExtension[] getExtensions(String namespace) {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getExtensions(namespace));
+		return LegacyRegistryConverter.convert(target.getExtensions(namespace));
 	}
 
 	public String[] getNamespaces() {
-		return theEquinoxHandle.getNamespaces();
+		return target.getNamespaces();
 	}
 
 	public void removeRegistryChangeListener(IRegistryChangeListener listener) {
-		theEquinoxHandle.removeRegistryChangeListener(listener);
+		target.removeRegistryChangeListener(listener);
 	}
 }

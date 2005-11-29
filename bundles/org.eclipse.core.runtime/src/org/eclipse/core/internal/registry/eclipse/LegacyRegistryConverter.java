@@ -16,63 +16,63 @@ import org.eclipse.core.runtime.*;
  * Helper class to deal with element conversion between Equinox registry elements
  * and Eclipse registry elements.
  */
-public class EclipseRegistryAdaptor {
+public class LegacyRegistryConverter {
 
-	public final static IExtension adapt(org.eclipse.equinox.registry.IExtension theExtension) {
+	public final static IExtension convert(org.eclipse.equinox.registry.IExtension theExtension) {
 		if (theExtension != null)
-			return new EclipseExtensionHandle(theExtension);
+			return new LegacyExtensionHandle(theExtension);
 		return null;
 	}
 
-	public final static IExtensionPoint adapt(org.eclipse.equinox.registry.IExtensionPoint theExtensionPoint) {
+	public final static IExtensionPoint convert(org.eclipse.equinox.registry.IExtensionPoint theExtensionPoint) {
 		if (theExtensionPoint != null)
-			return new EclipseExtensionPointHandle(theExtensionPoint);
+			return new LegacyExtensionPointHandle(theExtensionPoint);
 		return null;
 	}
 
-	public final static IConfigurationElement adapt(org.eclipse.equinox.registry.IConfigurationElement theConfigElement) {
+	public final static IConfigurationElement convert(org.eclipse.equinox.registry.IConfigurationElement theConfigElement) {
 		if (theConfigElement != null)
-			return new EclipseConfigurationElementHandle(theConfigElement);
+			return new LegacyConfigurationElementHandle(theConfigElement);
 		return null;
 	}
 
-	public final static IExtensionDelta adapt(org.eclipse.equinox.registry.IExtensionDelta delta) {
+	public final static IExtensionDelta convert(org.eclipse.equinox.registry.IExtensionDelta delta) {
 		if (delta != null)
-			return new EclipseExtensionDelta(delta);
+			return new LegacyExtensionDelta(delta);
 		return null;
 	}
 
-	public final static IConfigurationElement[] adapt(org.eclipse.equinox.registry.IConfigurationElement[] equinoxes) {
+	public final static IConfigurationElement[] convert(org.eclipse.equinox.registry.IConfigurationElement[] equinoxes) {
 		if (equinoxes == null)
 			return null;
 		IConfigurationElement[] result = new IConfigurationElement[equinoxes.length];
 		for (int i = 0; i < equinoxes.length; i++)
-			result[i] = adapt(equinoxes[i]);
+			result[i] = convert(equinoxes[i]);
 		return result;
 	}
 
-	public final static IExtensionPoint[] adapt(org.eclipse.equinox.registry.IExtensionPoint[] equinoxes) {
+	public final static IExtensionPoint[] convert(org.eclipse.equinox.registry.IExtensionPoint[] equinoxes) {
 		if (equinoxes == null)
 			return null;
 		IExtensionPoint[] result = new IExtensionPoint[equinoxes.length];
 		for (int i = 0; i < equinoxes.length; i++)
-			result[i] = adapt(equinoxes[i]);
+			result[i] = convert(equinoxes[i]);
 		return result;
 	}
 
-	public final static IExtension[] adapt(org.eclipse.equinox.registry.IExtension[] equinoxes) {
+	public final static IExtension[] convert(org.eclipse.equinox.registry.IExtension[] equinoxes) {
 		if (equinoxes == null)
 			return null;
 		IExtension[] result = new IExtension[equinoxes.length];
 		for (int i = 0; i < equinoxes.length; i++)
-			result[i] = adapt(equinoxes[i]);
+			result[i] = convert(equinoxes[i]);
 		return result;
 	}
 
-	public final static IExtensionDelta[] adapt(org.eclipse.equinox.registry.IExtensionDelta[] equinoxDeltas) {
+	public final static IExtensionDelta[] convert(org.eclipse.equinox.registry.IExtensionDelta[] equinoxDeltas) {
 		IExtensionDelta[] result = new IExtensionDelta[equinoxDeltas.length];
 		for (int i = 0; i < equinoxDeltas.length; i++)
-			result[i] = adapt(equinoxDeltas[i]);
+			result[i] = convert(equinoxDeltas[i]);
 		return result;
 	}
 

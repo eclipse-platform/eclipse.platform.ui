@@ -20,32 +20,32 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
  * 
  * For general use consider RegistryChangeEvent.
  */
-public final class EclipseRegistryChangeEvent implements IRegistryChangeEvent {
+public final class LegacyRegistryChangeEvent implements IRegistryChangeEvent {
 
-	private org.eclipse.equinox.registry.IRegistryChangeEvent theEquinoxHandle;
+	private org.eclipse.equinox.registry.IRegistryChangeEvent target;
 
-	public EclipseRegistryChangeEvent(org.eclipse.equinox.registry.IRegistryChangeEvent event) {
-		theEquinoxHandle = event;
+	public LegacyRegistryChangeEvent(org.eclipse.equinox.registry.IRegistryChangeEvent event) {
+		target = event;
 	}
 
-	public EclipseRegistryChangeEvent(Map deltas, String filter) {
-		theEquinoxHandle = new RegistryChangeEvent(deltas, filter);
+	public LegacyRegistryChangeEvent(Map deltas, String filter) {
+		target = new RegistryChangeEvent(deltas, filter);
 	}
 
 	public IExtensionDelta[] getExtensionDeltas() {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getExtensionDeltas());
+		return LegacyRegistryConverter.convert(target.getExtensionDeltas());
 	}
 
 	public IExtensionDelta[] getExtensionDeltas(String hostName) {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getExtensionDeltas(hostName));
+		return LegacyRegistryConverter.convert(target.getExtensionDeltas(hostName));
 	}
 
 	public IExtensionDelta[] getExtensionDeltas(String hostName, String extensionPoint) {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getExtensionDeltas(hostName, extensionPoint));
+		return LegacyRegistryConverter.convert(target.getExtensionDeltas(hostName, extensionPoint));
 	}
 
 	public IExtensionDelta getExtensionDelta(String hostName, String extensionPoint, String extension) {
-		return EclipseRegistryAdaptor.adapt(theEquinoxHandle.getExtensionDelta(hostName, extensionPoint, extension));
+		return LegacyRegistryConverter.convert(target.getExtensionDelta(hostName, extensionPoint, extension));
 	}
 
 	/**
@@ -53,6 +53,6 @@ public final class EclipseRegistryChangeEvent implements IRegistryChangeEvent {
 	 * @return - Equinox handle 
 	 */
 	public org.eclipse.equinox.registry.IRegistryChangeEvent getInternalHandle() {
-		return theEquinoxHandle;
+		return target;
 	}
 }
