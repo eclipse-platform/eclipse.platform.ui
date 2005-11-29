@@ -163,4 +163,12 @@ public class ActionMessages extends NLS {
 	public static String AddMemoryRenderingActionDelegate_1;
 
 	public static String AddMemoryRenderingActionDelegate_2;
+
+	public static String RulerEnableDisableBreakpointAction_0;
+
+	public static String RulerEnableDisableBreakpointAction_1;
+
+	public static String RulerEnableDisableBreakpointAction_2;
+
+	public static String RulerEnableDisableBreakpointAction_3;
 }

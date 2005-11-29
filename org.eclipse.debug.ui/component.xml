@@ -46,6 +46,7 @@
 	<type name="LaunchAsAction" subclass="false" />
 	<type name="LaunchShortcutsAction" />
 	<type name="OpenLaunchDialogAction" subclass="false" />
+	<type name="RulerEnableDisableBreakpointRulerActionDelegate" instantiate="false" subclass="false" />
 	<type name="RulerToggleBreakpointActionDelegate" instantiate="false" subclass="false" />
 	<type name="RunAction" subclass="false" />
 	<type name="RunToLineActionDelegate" instantiate="false" subclass="false" />
