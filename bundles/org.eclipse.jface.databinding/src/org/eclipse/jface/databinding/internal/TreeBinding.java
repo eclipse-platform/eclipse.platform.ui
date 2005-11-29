@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal;
 
+import java.util.Collection;
+
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
+import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableTree;
@@ -88,12 +91,21 @@ public class TreeBinding extends Binding implements IChangeListener {
 				updating ++;
 				if (event.getChangeType() == ChangeEvent.VIRTUAL)
 					source.setElements(parent, needsUpdate.getElements(parent));
-				else if (event.getChangeType() == ChangeEvent.CHANGE)
+				else if (event.getChangeType() == IChangeEvent.CHANGE)
 					needsUpdate.setElement(parent, index, event.getNewValue());
-				else if (event.getChangeType() == ChangeEvent.ADD)
+				else if (event.getChangeType() == IChangeEvent.ADD)
 					needsUpdate.addElement(parent, index, event.getNewValue());
-				else if (event.getChangeType() == ChangeEvent.REMOVE)
+				else if (event.getChangeType() == IChangeEvent.REMOVE)
 					needsUpdate.removeElement(parent, index);
+				else if (event.getChangeType() == IChangeEvent.REPLACE) {
+					Object val = event.getNewValue();
+					if (val.getClass().isArray())
+					   needsUpdate.setElements(parent, (Object[]) val);
+					else if (val instanceof Collection)
+						needsUpdate.setElements(parent, ((Collection)val).toArray());
+					else
+						throw new BindingException ("Invalid REPLACE event"); //$NON-NLS-1$
+				}
 			} finally {
 				updating --;				
 			}

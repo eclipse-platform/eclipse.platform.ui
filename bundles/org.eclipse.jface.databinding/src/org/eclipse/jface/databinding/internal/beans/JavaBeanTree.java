@@ -14,6 +14,8 @@ package org.eclipse.jface.databinding.internal.beans;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -38,6 +40,8 @@ public class JavaBeanTree implements ITree {
 	private TreeModelDescription modelDescription;
 	
 	private HashMap descriptors = new HashMap();
+	
+	private PropertyChangeSupport changeSupport = null;
 	
 	/**
 	 * @param modelDescripton
@@ -201,5 +205,22 @@ public class JavaBeanTree implements ITree {
 	public Class[] getTypes() {		
 		return modelDescription.getTypes();
 	}
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		if (listener==null)
+			return;
+		if (changeSupport==null)
+			changeSupport = new PropertyChangeSupport(this);
+		changeSupport.addPropertyChangeListener(listener);		
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		if (listener==null || changeSupport==null)
+			return;
+		
+		changeSupport.removePropertyChangeListener(listener);		
+	}
+
+
 
 }

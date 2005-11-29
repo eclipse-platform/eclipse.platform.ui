@@ -27,53 +27,8 @@ package org.eclipse.jface.databinding;
  * 
  * @since 3.2
  */
-public class ChangeEvent {
+public class ChangeEvent implements IChangeEvent {
 
-	/**
-	 * Position constant denoting a change affecting more than one element, or a
-	 * change with an unknown position.
-	 */
-	public static final int POSITION_UNKNOWN = -1;
-
-	/**
-	 * Change type constant denoting a general change. If the updatable is a
-	 * list, getPosition() returns the index of the changed element, or
-	 * <code>POSITION_UNKNOWN</code> if more than one element was changed,
-	 * added or removed, or if the position of the changed, added or removed
-	 * element is not known.
-	 */
-	public static final int CHANGE = 1;
-
-	/**
-	 * Change type constant denoting an addition of an element to a list. The
-	 * added element will be returned by getNewValue(), and the position of the
-	 * added element will be returned by getPosition().
-	 */
-	public static final int ADD = 2;
-
-	/**
-	 * Change type constant denoting a removal of an element from a list. The
-	 * removed element will be returned by getOldValue(), and the position of
-	 * the removed element before the removal will be returned by getPosition().
-	 */
-	public static final int REMOVE = 3;
-
-	/**
-	 * Change type constant used to inform listeners about a pending change that
-	 * can still be vetoed. The updatable's value has not been changed yet,
-	 * <code>getNewValue()</code> returns the new value that will be the
-	 * updatable's new value if the change is not vetoed by calling
-	 * <code>setVeto(true)</code>.
-	 * TODO turn this into flags, so that we can
-	 * express pre-add etc.
-	 */
-	public static final int VERIFY = 4;
-	
-	/**
-	 * Change type constant that is used to inform a listener that a virtual data is being
-	 * reauested.
-	 */
-	public static final int VIRTUAL = 5;
 
 	private final IUpdatable updatable;
 
@@ -199,6 +154,10 @@ public class ChangeEvent {
 		vetoed = veto;
 	}
 
+	/**
+	 * parent is typically used with tree structures.
+	 * @return parent
+	 */
 	public Object getParent() {
 		return parent;
 	}

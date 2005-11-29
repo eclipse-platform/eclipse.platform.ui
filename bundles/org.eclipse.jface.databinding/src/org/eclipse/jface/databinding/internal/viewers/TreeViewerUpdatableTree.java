@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.databinding.ChangeEvent;
+import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableTree;
 import org.eclipse.jface.databinding.Updatable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -212,7 +212,7 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 					viewer.add(parentElement == null ? viewerInput : parentElement,
 							value);			
 					if (fire) 
-						fireChangeEvent(ChangeEvent.ADD, null, value, parentElement, fireIndex);						
+						fireChangeEvent(IChangeEvent.ADD, null, value, parentElement, fireIndex);						
 				}			
 			});			
 		}
@@ -239,7 +239,7 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 					public void run() {
 							viewer.remove(element);		
 							if (fire)
-								fireChangeEvent(ChangeEvent.REMOVE, element, null, parentElement, index);
+								fireChangeEvent(IChangeEvent.REMOVE, element, null, parentElement, index);
 					}
 				});
 			}
@@ -249,7 +249,7 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 	}
 
 
-	public void setElement(Object parentElement, int index, final Object value) {
+	public void setElement(Object parentElement, int index, final Object value) {		
 		if (hasChildren(parentElement)) {
 			TreeNode parentNode = getTreeNode(parentElement);
 			List children = parentNode.getChildren();						
@@ -264,7 +264,7 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 				removeElement(parentElement,index, false);
 				addElement(parentElement, index, value, false);
 			}
-			fireChangeEvent(ChangeEvent.CHANGE, oldValue, value, parentElement, index );			
+			fireChangeEvent(IChangeEvent.CHANGE, oldValue, value, parentElement, index );			
 		}
 	}
 
@@ -327,7 +327,7 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 		if (!have && !updatingVirtual && !node.isRequestedChildren()) {	
 			    updatingVirtual=true;
 				try {					
-					fireChangeEvent(ChangeEvent.VIRTUAL, null, null, element, -1);
+					fireChangeEvent(IChangeEvent.VIRTUAL, null, null, element, -1);
 					// Once asked, the assumption is that the model will listen, and update
 					// if a new child is added
 					node.setRequestedChildren(true);
