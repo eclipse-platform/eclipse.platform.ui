@@ -660,7 +660,7 @@ M4 = Platform-specific fourth key -->
             id="org.eclipse.ant.ui.RulerPopupActions">
          <action
                label="%EnableBreakpoint.label"
-               class="org.eclipse.ant.internal.ui.editor.actions.EnableDisableBreakpointRulerActionDelegate"
+               class="org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate"
                menubarPath="debug"
                id="org.eclipse.ant.ui.actions.EnableDisableBreakpointRulerActionDelegate">
          </action>
