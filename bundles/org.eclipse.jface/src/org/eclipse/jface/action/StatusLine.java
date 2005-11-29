@@ -350,10 +350,14 @@ import org.eclipse.swt.widgets.ToolItem;
      * @private
      */
     protected void handleDispose() {
-        fStopButtonCursor.dispose();
-        fStopButtonCursor = null;
-        fProgressBar.dispose();
-        fProgressBar = null;
+    	if (fStopButtonCursor != null) {
+    		fStopButtonCursor.dispose();		
+    		fStopButtonCursor = null;
+    	}
+    	if (fProgressBar != null) {
+    		fProgressBar.dispose();
+    		fProgressBar = null;
+    	}
     }
 
     /**
