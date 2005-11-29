@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
+import java.net.URI;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -83,9 +84,9 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * If the path maps to the platform working location, the returned object will
 	 * be a single element array consisting of an object of type <code>ROOT</code>.
 	 * <p>
-	 *  If the path maps to a project, the resulting object will be a single
-	 * element array consisting of an object of type <code>PROJECT</code>; 
-	 * otherwise the resulting array will contain folders (type
+	 *  If the path maps to a project, the resulting array will contain a resource of 
+	 *  type <code>PROJECT</code>, along with any linked folders that share the
+	 *  same location.  Otherwise the resulting array will contain folders (type
 	 * <code>FOLDER</code>). 
 	 * <p>
 	 * The path must be absolute; its segments need not be valid names; a
@@ -99,6 +100,29 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	public IContainer[] findContainersForLocation(IPath location);
 
 	/**
+	 * Returns the handles to all the resources (workspace root, project, folder) in
+	 * the workspace which are mapped to the given URI. Returns an empty array 
+	 * if there are none.
+	 * <p>
+	 * If the path maps to the platform working location, the returned object will
+	 * be a single element array consisting of an object of type <code>ROOT</code>.
+	 * <p>
+	 *  If the path maps to a project, the resulting array will contain a resource of 
+	 *  type <code>PROJECT</code>, along with any linked folders that share the
+	 *  same location.  Otherwise the resulting array will contain folders (type
+	 * <code>FOLDER</code>). 
+	 * <p>
+	 * The URI must be absolute; its segments need not be valid names; a
+	 * trailing separator is ignored. The resulting resource(s) need not exist in the
+	 * workspace.
+	 * <p>
+	 * @param location a URI path into some file system
+	 * @return the corresponding containers in the workspace, or an empty array if none
+	 * @since 3.2
+	 */
+	public IContainer[] findContainersForLocationURI(URI location);
+
+	/**
 	 * Returns the handles of all files that are mapped to the given path 
 	 * in the local file system.  Returns an empty array if there are none.
 	 * The path must be absolute; its segments need not be valid names.
@@ -109,6 +133,18 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * @since 2.1
 	 */
 	public IFile[] findFilesForLocation(IPath location);
+
+	/**
+	 * Returns the handles of all files that are mapped to the given URI.
+	 * Returns an empty array if there are none.
+	 * The URI must be absolute; its path segments need not be valid names.
+	 * The resulting file(s) need not exist in the workspace.
+	 * <p>
+	 * @param location a URI path into some file system
+	 * @return the corresponding files in the workspace, or an empty array if none
+	 * @since 3.2
+	 */
+	public IFile[] findFilesForLocationURI(URI location);
 
 	/**
 	 * Returns a handle to the  workspace root, project or folder 

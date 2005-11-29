@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.net.URI;
 import java.util.HashMap;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
@@ -29,19 +30,19 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	}
 
 	/**
-	 * @see IResource#delete(boolean, IProgressMonitor)
-	 */
-	public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
-		int updateFlags = force ? IResource.FORCE : IResource.NONE;
-		delete(updateFlags, monitor);
-	}
-
-	/**
 	 * @see IWorkspaceRoot#delete(boolean, boolean, IProgressMonitor)
 	 */
 	public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
 		updateFlags |= deleteContent ? IResource.ALWAYS_DELETE_PROJECT_CONTENT : IResource.NEVER_DELETE_PROJECT_CONTENT;
+		delete(updateFlags, monitor);
+	}
+
+	/**
+	 * @see IResource#delete(boolean, IProgressMonitor)
+	 */
+	public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
+		int updateFlags = force ? IResource.FORCE : IResource.NONE;
 		delete(updateFlags, monitor);
 	}
 
@@ -53,14 +54,22 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * @see IWorkspaceRoot#findContainersForLocation(IPath)
 	 */
 	public IContainer[] findContainersForLocation(IPath location) {
-		return (IContainer[]) getLocalManager().allResourcesFor(FileUtil.toURI(location), false);
+		return findContainersForLocationURI(FileUtil.toURI(location));
+	}
+
+	public IContainer[] findContainersForLocationURI(URI location) {
+		return (IContainer[]) getLocalManager().allResourcesFor(location, false);
 	}
 
 	/**
 	 * @see IWorkspaceRoot#findFilesForLocation(IPath)
 	 */
 	public IFile[] findFilesForLocation(IPath location) {
-		return (IFile[]) getLocalManager().allResourcesFor(FileUtil.toURI(location), true);
+		return findFilesForLocationURI(FileUtil.toURI(location));
+	}
+
+	public IFile[] findFilesForLocationURI(URI location) {
+		return (IFile[]) getLocalManager().allResourcesFor(location, true);
 	}
 
 	/**
