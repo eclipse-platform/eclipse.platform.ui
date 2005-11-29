@@ -103,7 +103,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				Point right= textWidget.getLocationAtOffset(offset + length);
 
 				gc.setForeground(color);
-				int[] polyline= computePolyline(left, right, textWidget.getBaseline(), textWidget.getLineHeight(offset));
+				int[] polyline= computePolyline(left, right, textWidget.getBaseline(offset), textWidget.getLineHeight(offset));
 				gc.drawPolyline(polyline);
 
 			} else {

@@ -690,8 +690,6 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 		fSensitiveToTextChanges= bottomLine - topLine < getVisibleLinesInViewport();
 
-		int baselineBias= getBaselineBias(gc);
-
 		int y= -partialLineHidden;
 		int canvasheight= fCanvas.getSize().y;
 
@@ -704,6 +702,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 			String s= createDisplayString(line);
 			int indentation= fIndentation[s.length()];
+			int offset= fCachedTextWidget.getOffsetAtLine(line);
+			int baselineBias= getBaselineBias(gc, offset);
 			gc.drawString(s, indentation, y + baselineBias, true);
 		}
 	}
@@ -768,8 +768,6 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 		fSensitiveToTextChanges= modelBottomLine - modelTopLine < getVisibleLinesInViewport();
 
-		int baselineBias= getBaselineBias(gc);
-
 		int y= -partialLineHidden;
 		int canvasheight= fCanvas.getSize().y;
 
@@ -787,6 +785,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 			String s= createDisplayString(modelLine);
 			int indentation= fIndentation[s.length()];
+			int offset= fCachedTextWidget.getOffsetAtLine(widgetLine);
+			int baselineBias= getBaselineBias(gc, offset);
 			gc.drawString(s, indentation, y + baselineBias, true);
 			y+= lineheight;
 		}
@@ -799,17 +799,22 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * on the correct base line of the text widget.
 	 *
 	 * @param gc the <code>GC</code> to get the font metrics from
+	 * @param offset the offset
 	 * @return the baseline bias to use when drawing text that is lined up with
 	 *         <code>fCachedTextWidget</code>
 	 */
-	private int getBaselineBias(GC gc) {
+	private int getBaselineBias(GC gc, int offset) {
 		/*
 		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=62951
 		 * widget line height may be more than the font height used for the
-		 * linenumbers, since font styles (bold, italics...) can have larger
+		 * line numbers, since font styles (bold, italics...) can have larger
 		 * font metrics than the simple font used for the numbers.
 		 */
-		int widgetBaseline= fCachedTextWidget.getBaseline();
+		int widgetBaseline= fCachedTextWidget.getBaseline(offset);
+		
+		// FIXME: REMOVE ME!
+//		widgetBaseline= fCachedTextWidget.getBaseline();
+		
 		FontMetrics fm = gc.getFontMetrics();
 		int fontBaseline = fm.getAscent() + fm.getLeading();
 		Assert.isTrue(widgetBaseline >= fontBaseline);

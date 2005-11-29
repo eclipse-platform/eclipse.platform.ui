@@ -106,7 +106,7 @@ public class ProjectionSupport {
 						FontMetrics metrics= gc.getFontMetrics();
 
 						// baseline: where the dots are drawn
-						int baseline= textWidget.getBaseline();
+						int baseline= textWidget.getBaseline(offset);
 						// descent: number of pixels that the box extends over baseline
 						int descent= Math.min(2, textWidget.getLineHeight() - baseline);
 						// ascent: so much does the box stand up from baseline
