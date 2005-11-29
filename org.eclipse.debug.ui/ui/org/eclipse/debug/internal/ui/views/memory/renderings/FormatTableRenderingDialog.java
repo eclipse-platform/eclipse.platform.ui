@@ -12,9 +12,9 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.core.model.IPersistableDebugElement;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.memory.IPersistableDebugElement;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
