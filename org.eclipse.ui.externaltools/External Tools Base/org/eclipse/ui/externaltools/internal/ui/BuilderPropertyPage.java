@@ -476,7 +476,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			try {
 				ILaunchConfiguration[] configs= manager.getLaunchConfigurations((ILaunchConfigurationType) iter.next());
 				for (int i = 0; i < configs.length; i++) {
-					configurations.add(configs[i]);	
+					ILaunchConfiguration launchConfiguration = configs[i];
+					if (!DebugUITools.isPrivate(launchConfiguration)) {
+						configurations.add(launchConfiguration);
+					}
 				}
 			} catch (CoreException e) {
 			}
