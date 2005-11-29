@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core;
 
+import java.net.URI;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.ResourceRuleFactory;
 import org.eclipse.core.resources.team.TeamHook;
@@ -49,11 +51,35 @@ public class TeamHookDispatcher extends TeamHook {
 			return provider.validateCreateLink(file, updateFlags, location);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.team.TeamHook#validateCreateLink(org.eclipse.core.resources.IFile, int, java.net.URI)
+	 */
+	public IStatus validateCreateLink(IFile file, int updateFlags, URI location) {
+		RepositoryProvider provider = getProvider(file);
+		if (provider == null) {
+			return super.validateCreateLink(file, updateFlags, location);
+		} else {
+			return provider.validateCreateLink(file, updateFlags, location);
+		}
+	}
 
 	/**
 	 * @see org.eclipse.core.resources.team.TeamHook#validateCreateLink(org.eclipse.core.resources.IFolder, int, org.eclipse.core.runtime.IPath)
 	 */
 	public IStatus validateCreateLink(IFolder folder, int updateFlags, IPath location) {
+		RepositoryProvider provider = getProvider(folder);
+		if (provider == null) {
+			return super.validateCreateLink(folder, updateFlags, location);
+		} else {
+			return provider.validateCreateLink(folder, updateFlags, location);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.team.TeamHook#validateCreateLink(org.eclipse.core.resources.IFolder, int, java.net.URI)
+	 */
+	public IStatus validateCreateLink(IFolder folder, int updateFlags, URI location) {
 		RepositoryProvider provider = getProvider(folder);
 		if (provider == null) {
 			return super.validateCreateLink(folder, updateFlags, location);

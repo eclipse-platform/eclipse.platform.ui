@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.core;
 
+import java.net.URI;
 import java.util.*;
+
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
@@ -150,13 +154,31 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * @throws TeamException we can't instantiate the provider, or if the set
 	 * session property fails from core
 	 */
-	private static RepositoryProvider mapNewProvider(IProject project, String id) throws TeamException {
+	private static RepositoryProvider mapNewProvider(final IProject project, final String id) throws TeamException {
 		RepositoryProvider provider = newProvider(id); 	// instantiate via extension point
 
 		if(provider == null)
 			throw new TeamException(NLS.bind(Messages.RepositoryProvider_couldNotInstantiateProvider, new String[] { project.getName(), id })); 
 		
 		// validate that either the provider supports linked resources or the project has no linked resources
+		if (!provider.canHandleLinkedResourceURI()) {
+			try {
+				project.accept(new IResourceProxyVisitor() {
+					public boolean visit(IResourceProxy proxy) throws CoreException {
+						if (proxy.isLinked()) {
+							throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.LINKING_NOT_ALLOWED, NLS.bind(Messages.RepositoryProvider_linkedURIsExist, new String[] { project.getName(), id }), null));
+						}
+						return true;
+					}
+				}, IResource.NONE);
+			} catch (CoreException e) {
+				if (e instanceof TeamException) {
+					TeamException te = (TeamException) e;
+					throw te;
+				}
+				throw new TeamException(e);
+			}
+		}
 		if (!provider.canHandleLinkedResources()) {
 			try {
 				IResource[] members = project.members();
@@ -645,6 +667,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * 
 	 * @see RepositoryProvider#canHandleLinkedResources()
 	 * 
+	 * @deprecated see {@link #validateCreateLink(IResource, int, URI) } instead
 	 * @since 2.1
 	 */
 	public IStatus validateCreateLink(IResource resource, int updateFlags, IPath location) {
@@ -652,6 +675,36 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 			return Team.OK_STATUS;
 		} else {
 			return new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.LINKING_NOT_ALLOWED, NLS.bind(Messages.RepositoryProvider_linkedResourcesNotSupported, new String[] { getProject().getName(), getID() }), null); 
+		}
+	}
+	
+	/**
+	 * Method validateCreateLink is invoked by the Platform Core TeamHook when a
+	 * linked resource is about to be added to the provider's project. It should
+	 * not be called by other clients and it should not need to be overridden by
+	 * subclasses (although it is possible to do so in special cases).
+	 * Subclasses can indicate that they support linked resources by overriding
+	 * the <code>canHandleLinkedResourcesAtArbitraryDepth()</code> method.
+	 * 
+	 * @param resource see <code>org.eclipse.core.resources.team.TeamHook</code>
+	 * @param updateFlags see <code>org.eclipse.core.resources.team.TeamHook</code>
+	 * @param location see <code>org.eclipse.core.resources.team.TeamHook</code>
+	 * @return IStatus see <code>org.eclipse.core.resources.team.TeamHook</code>
+	 * 
+	 * @see RepositoryProvider#canHandleLinkedResourceURI()
+	 * 
+	 * @since 3.2
+	 */
+	public IStatus validateCreateLink(IResource resource, int updateFlags, URI location) {
+		if (resource.getProjectRelativePath().segmentCount() == 1 && EFS.SCHEME_FILE.equals(location.getScheme())) {
+			// This is compatible with the old style link so invoke the old
+			// validateLink
+			return validateCreateLink(resource, updateFlags, FileUtil.toPath(location));
+		}
+		if (canHandleLinkedResourceURI()) {
+			return Team.OK_STATUS;
+		} else {
+			return new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.LINKING_NOT_ALLOWED, NLS.bind(Messages.RepositoryProvider_linkedURIsNotSupported, new String[] { getProject().getName(), getID() }), null); 
 		}
 	}
 	
@@ -668,8 +721,34 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * @see org.eclipse.core.resources.team.IMoveDeleteHook
 	 * 
 	 * @since 2.1
+	 * 
+	 * @deprecated see {@link #canHandleLinkedResourceURI() }
 	 */
 	public boolean canHandleLinkedResources() {
+		return canHandleLinkedResourceURI();
+	}
+	
+	/**
+	 * Return whether this repository provider can handle linked resources that
+	 * are located via a URI (i.e. may not be on the local file system) or occur
+	 * at an arbitrary depth in the project. This should be overridden by
+	 * subclasses who support linked resources at arbitrary depth and/or in
+	 * non-local file systems. This is not enabled by default since linked
+	 * resources previously only occurred at the root of a project but now can
+	 * occur anywhere within a project. This method is called after the
+	 * RepositoryProvider is instantiated but before <code>setProject()</code>
+	 * is invoked so it will not have access to any state determined from the
+	 * <code>setProject()</code> method.
+	 * 
+	 * @return whether this repository provider can handle linked resources that
+	 *         are located via a URI or occur at an arbitrary depth in the
+	 *         project
+	 * 
+	 * @see #validateCreateLink(IResource, int, URI)
+	 * 
+	 * @since 3.2
+	 */
+	public boolean canHandleLinkedResourceURI() {
 		return false;
 	}
 	

@@ -30,6 +30,8 @@ public class Messages extends NLS {
 	public static String RepositoryProvider_No_Provider_Registered;
 	public static String RepositoryProvider_linkedResourcesExist;
 	public static String RepositoryProvider_linkedResourcesNotSupported;
+	public static String RepositoryProvider_linkedURIsExist;
+	public static String RepositoryProvider_linkedURIsNotSupported;
 	public static String RepositoryProvider_couldNotClearAfterError;
 	public static String RepositoryProvider_invalidClass;
     public static String RepositoryProvider_toString;
