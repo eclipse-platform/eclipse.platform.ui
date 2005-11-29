@@ -41,7 +41,7 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	private IResource fSelectedResource = null;
 	private ITextSelection fSelectedText = null;
 	private Stack fWindowStack = new Stack();
-	private ContextListner fDebugListener = new ContextListner();
+	private ContextListener fDebugListener = new ContextListener();
 	private IAdaptable fDebugContext = null;
 	
 	private SelectedResourceManager() {
@@ -58,7 +58,7 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	/**
 	 * Listens to selection changes in the debug view to update the debug context
 	 */
-	class ContextListner implements ISelectionListener {
+	class ContextListener implements ISelectionListener {
 
         /* (non-Javadoc)
          * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
