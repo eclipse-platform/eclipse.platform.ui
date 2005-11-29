@@ -899,6 +899,22 @@ abstract public class AbstractInformationControlManager {
 				location= computeInformationControlLocation(subjectArea, size);
 
 			informationControl.setLocation(location);
+			
+			Rectangle displayBounds= fSubjectControl.getDisplay().getClientArea();
+			
+			// Make sure it fits on the screen
+			boolean resize= false;
+			if (location.x + size.x > displayBounds.x + displayBounds.width) {
+				size.x= Math.max(0, displayBounds.x + displayBounds.width - location.x);
+				resize= true;
+			}
+			if (location.y + size.y > displayBounds.y + displayBounds.height) {
+				size.y= Math.max(0, displayBounds.y + displayBounds.height - location.y);
+				resize= true;
+			}
+				
+			if (resize)
+				informationControl.setSize(size.x, size.y);
 
 			showInformationControl(subjectArea);
 		}
