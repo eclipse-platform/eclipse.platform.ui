@@ -185,7 +185,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Hook method which is called before the first refactoring of the history
-	 * is executed.
+	 * is executed. This method may be called from non-UI threads.
 	 * <p>
 	 * This method is guaranteed to be called exactly once during the lifetime
 	 * of a refactoring history wizard. Subclasses may reimplement this method
@@ -207,7 +207,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Hook method which is called when the specified refactoring is going to be
-	 * executed.
+	 * executed. This method may be called from non-UI threads.
 	 * <p>
 	 * Subclasses may reimplement this method to perform any special processing.
 	 * </p>
@@ -335,9 +335,11 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 
 			public final void run() throws Exception {
-				final RefactoringStatusEntry entry= historyPerformed(new NullProgressMonitor()).getEntryWithHighestSeverity();
-				if (entry != null)
-					RefactoringUIPlugin.log(new Status(entry.getSeverity(), entry.getPluginId(), entry.getCode(), entry.getMessage(), null));
+				if (fAboutToPerformFired) {
+					final RefactoringStatusEntry entry= historyPerformed(new NullProgressMonitor()).getEntryWithHighestSeverity();
+					if (entry != null)
+						RefactoringUIPlugin.log(new Status(entry.getSeverity(), entry.getPluginId(), entry.getCode(), entry.getMessage(), null));
+				}
 			}
 		});
 		super.dispose();
@@ -386,7 +388,7 @@ public class RefactoringHistoryWizard extends Wizard {
 				}
 			};
 			try {
-				wizard.run(false, false, runnable);
+				wizard.run(true, false, runnable);
 			} catch (InvocationTargetException exception) {
 				final Throwable throwable= exception.getTargetException();
 				if (throwable != null)
@@ -472,6 +474,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			return getRefactoringPage();
 		} else if (page == fErrorPage) {
 			final RefactoringStatus status= fErrorPage.getStatus();
+			final IWizardContainer wizard= getContainer();
 			if (status.hasFatalError()) {
 				final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 				String message= null;
@@ -484,7 +487,7 @@ public class RefactoringHistoryWizard extends Wizard {
 					key= PREFERENCE_DO_NOT_SHOW_APPLY_ERROR;
 				}
 				if (!store.getBoolean(key)) {
-					final MessageDialogWithToggle dialog= MessageDialogWithToggle.openWarning(getShell(), getContainer().getShell().getText(), message, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
+					final MessageDialogWithToggle dialog= MessageDialogWithToggle.openWarning(getShell(), wizard.getShell().getText(), message, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
 					store.setValue(key, dialog.getToggleState());
 				}
 				fCurrentRefactoring++;
@@ -498,7 +501,13 @@ public class RefactoringHistoryWizard extends Wizard {
 						Assert.isNotNull(monitor);
 						try {
 							fPreviewPage.setRefactoring(refactoring);
-							fPreviewPage.setChange(createChange(refactoring, monitor));
+							final Change change= createChange(refactoring, monitor);
+							getShell().getDisplay().syncExec(new Runnable() {
+
+								public final void run() {
+									fPreviewPage.setChange(change);
+								}
+							});
 						} catch (CoreException exception) {
 							throw new InvocationTargetException(exception);
 						} catch (OperationCanceledException exception) {
@@ -509,7 +518,7 @@ public class RefactoringHistoryWizard extends Wizard {
 					}
 				};
 				try {
-					getContainer().run(false, false, runnable);
+					wizard.run(true, false, runnable);
 				} catch (InvocationTargetException exception) {
 					final Throwable throwable= exception.getTargetException();
 					if (throwable != null) {
@@ -591,15 +600,8 @@ public class RefactoringHistoryWizard extends Wizard {
 		final boolean last= isLastRefactoring();
 		final RefactoringDescriptorProxy descriptor= getCurrentDescriptor();
 
-		fPreviewPage.setTitle(descriptor);
-		fPreviewPage.setNextPageDisabled(last);
-		fPreviewPage.setPageComplete(!last);
-		fPreviewPage.setStatus(status);
-
-		fErrorPage.setTitle(descriptor);
-		fErrorPage.setNextPageDisabled(last || status.hasFatalError());
-		fErrorPage.setPageComplete(!status.hasFatalError());
-		fErrorPage.setStatus(status);
+		preparePreviewPage(status, descriptor, last);
+		prepareErrorPage(status, descriptor, status.hasFatalError(), last || status.hasFatalError());
 
 		if (!status.isOK())
 			return fErrorPage;
@@ -610,26 +612,36 @@ public class RefactoringHistoryWizard extends Wizard {
 			public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				Assert.isNotNull(monitor);
 				try {
-					monitor.beginTask("", 100); //$NON-NLS-1$
+					monitor.beginTask("", 150); //$NON-NLS-1$
 					result[0]= null;
 					if (descriptor != null) {
 						final Refactoring refactoring= getCurrentRefactoring(status, new SubProgressMonitor(monitor, 10));
 						if (refactoring != null && status.isOK()) {
 							fPreviewPage.setRefactoring(refactoring);
 							fErrorPage.setRefactoring(refactoring);
+							aboutToPerformRefactoring(refactoring, new SubProgressMonitor(monitor, 50));
 							status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 20), CheckConditionsOperation.INITIAL_CONDITONS));
-							if (!status.isOK())
+							if (!status.isOK()) {
+								prepareErrorPage(status, descriptor, status.hasFatalError(), last);
 								result[0]= fErrorPage;
-							else {
+							} else {
 								status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 65), CheckConditionsOperation.FINAL_CONDITIONS));
-								if (!status.isOK())
+								if (!status.isOK()) {
+									prepareErrorPage(status, descriptor, status.hasFatalError(), last);
 									result[0]= fErrorPage;
-								else {
-									fPreviewPage.setChange(createChange(refactoring, new SubProgressMonitor(monitor, 5)));
+								} else {
+									final Change change= createChange(refactoring, new SubProgressMonitor(monitor, 5));
+									getShell().getDisplay().syncExec(new Runnable() {
+
+										public final void run() {
+											fPreviewPage.setChange(change);
+										}
+									});
 									result[0]= fPreviewPage;
 								}
 							}
 						} else {
+							prepareErrorPage(status, descriptor, status.hasFatalError(), last);
 							fErrorPage.setRefactoring(null);
 							result[0]= fErrorPage;
 						}
@@ -644,7 +656,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 		};
 		try {
-			wizard.run(false, false, runnable);
+			wizard.run(true, false, runnable);
 		} catch (InvocationTargetException exception) {
 			final Throwable throwable= exception.getTargetException();
 			if (throwable != null) {
@@ -661,7 +673,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Hook method which is called when all refactorings of the history have
-	 * been executed.
+	 * been executed. This method may be called from non-UI threads.
 	 * <p>
 	 * This method is guaranteed to be called exactly once during the lifetime
 	 * of a refactoring history wizard. It is not guaranteed that the user
@@ -757,7 +769,7 @@ public class RefactoringHistoryWizard extends Wizard {
 				}
 			};
 			try {
-				wizard.run(false, true, new WorkbenchRunnableAdapter(operation, ResourcesPlugin.getWorkspace().getRoot()));
+				wizard.run(true, true, new WorkbenchRunnableAdapter(operation, ResourcesPlugin.getWorkspace().getRoot()));
 			} catch (InvocationTargetException exception) {
 				final Throwable throwable= exception.getTargetException();
 				if (throwable != null) {
@@ -809,7 +821,18 @@ public class RefactoringHistoryWizard extends Wizard {
 	public final RefactoringStatus performPreviewChange(final Change change, final Refactoring refactoring) {
 		Assert.isNotNull(change);
 		Assert.isNotNull(refactoring);
-		final UIPerformChangeOperation operation= new UIPerformChangeOperation(getShell().getDisplay(), change, getContainer());
+		final UIPerformChangeOperation operation= new UIPerformChangeOperation(getShell().getDisplay(), change, getContainer()) {
+
+			public void run(final IProgressMonitor monitor) throws CoreException {
+				try {
+					monitor.beginTask("", 12); //$NON-NLS-1$
+					super.run(new SubProgressMonitor(monitor, 10));
+					refactoringPerformed(refactoring, new SubProgressMonitor(monitor, 2));
+				} finally {
+					monitor.done();
+				}
+			}
+		};
 		final RefactoringStatus status= performPreviewChange(operation, refactoring);
 		if (status.isOK())
 			status.merge(operation.getValidationStatus());
@@ -855,8 +878,58 @@ public class RefactoringHistoryWizard extends Wizard {
 	}
 
 	/**
+	 * Prepares the error page to be displayed.
+	 * 
+	 * @param status
+	 *            the refactoring status
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 * @param fatal
+	 *            <code>true</code> if the error is fatal, <code>false</code>
+	 *            otherwise
+	 * @param disabled
+	 *            <code>true</code> if the next page is disabled,
+	 *            <code>false</code> otherwise
+	 */
+	private void prepareErrorPage(final RefactoringStatus status, final RefactoringDescriptorProxy descriptor, final boolean fatal, final boolean disabled) {
+		getShell().getDisplay().syncExec(new Runnable() {
+
+			public final void run() {
+				fErrorPage.setTitle(descriptor);
+				fErrorPage.setNextPageDisabled(disabled);
+				fErrorPage.setPageComplete(!fatal);
+				fErrorPage.setStatus(null);
+				fErrorPage.setStatus(status);
+			}
+		});
+	}
+
+	/**
+	 * Prepares the preview page to be displayed.
+	 * 
+	 * @param status
+	 *            the refactoring status
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 * @param disabled
+	 *            <code>true</code> if the next page is disabled,
+	 *            <code>false</code> otherwise
+	 */
+	private void preparePreviewPage(final RefactoringStatus status, final RefactoringDescriptorProxy descriptor, final boolean disabled) {
+		getShell().getDisplay().syncExec(new Runnable() {
+
+			public final void run() {
+				fPreviewPage.setTitle(descriptor);
+				fPreviewPage.setNextPageDisabled(disabled);
+				fPreviewPage.setPageComplete(!disabled);
+				fPreviewPage.setStatus(status);
+			}
+		});
+	}
+
+	/**
 	 * Hook method which is called when the specified refactoring has been
-	 * performed.
+	 * performed. This method may be called from non-UI threads.
 	 * <p>
 	 * Subclasses may reimplement this method to perform any special processing.
 	 * </p>

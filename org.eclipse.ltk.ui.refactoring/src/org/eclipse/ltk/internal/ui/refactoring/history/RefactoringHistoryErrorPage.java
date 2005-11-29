@@ -134,14 +134,15 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	 * {@inheritDoc}
 	 */
 	public void setStatus(final RefactoringStatus status) {
-		Assert.isNotNull(status);
 		super.setStatus(status);
-		final int severity= status.getSeverity();
-		if (severity >= RefactoringStatus.FATAL)
-			setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_fatal_error);
-		else if (severity >= RefactoringStatus.INFO)
-			setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_info_error);
-		if (fViewer != null && fViewer.getStatus() != status)
+		if (status != null) {
+			final int severity= status.getSeverity();
+			if (severity >= RefactoringStatus.FATAL)
+				setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_fatal_error);
+			else if (severity >= RefactoringStatus.INFO)
+				setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_info_error);
+		}
+		if (fViewer != null)
 			fViewer.setStatus(status);
 	}
 
