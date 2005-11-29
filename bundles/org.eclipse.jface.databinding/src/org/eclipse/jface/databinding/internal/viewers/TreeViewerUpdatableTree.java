@@ -343,6 +343,10 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 		return have;
 	}
 
+	/**
+	 * @param element
+	 * @return element's parent
+	 */
 	public Object getParent(Object element) {
 		TreeNode elementNode = (TreeNode)nodes.get(element);
 		return elementNode.getParent();
