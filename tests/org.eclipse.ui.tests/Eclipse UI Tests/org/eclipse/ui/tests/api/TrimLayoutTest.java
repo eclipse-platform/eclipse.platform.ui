@@ -15,12 +15,12 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ITrimManager;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.internal.IWindowTrim;
+import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -65,7 +65,7 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testGetIDs() throws Throwable {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
-		TrimLayout layout = window.getTrimLayout();
+		ITrimManager layout = window.getTrimManager();
 		int[] ids = layout.getAreaIds();
 		assertEquals("number of trim areas", 4, ids.length);
 	}
@@ -78,7 +78,7 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testTrimInformation() throws Throwable {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
-		TrimLayout layout = window.getTrimLayout();
+		ITrimManager layout = window.getTrimManager();
 
 		List descs = layout.getAreaDescription(SWT.BOTTOM);
 		validatePositions(DEFAULT_BOTTOM, descs);
@@ -92,18 +92,18 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testMoveStatusLine() throws Throwable {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
-		TrimLayout layout = window.getTrimLayout();
+		ITrimManager layout = window.getTrimManager();
 
-		List trim = layout.getAreaDescription(TrimLayout.BOTTOM);
+		List trim = layout.getAreaDescription(ITrimManager.BOTTOM);
 		validatePositions(DEFAULT_BOTTOM, trim);
 
 		swapPostition(trim, 1, 3);
-		layout.updateAreaDescription(TrimLayout.BOTTOM, trim);
+		layout.updateAreaDescription(ITrimManager.BOTTOM, trim);
 
 		window.getShell().layout(true, true);
 
 
-		trim = layout.getAreaDescription(TrimLayout.BOTTOM);
+		trim = layout.getAreaDescription(ITrimManager.BOTTOM);
 		validatePositions(SWAPPED_STATUS_LINE, trim);
 	}
 
@@ -115,17 +115,17 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testMoveFastViewBar() throws Throwable {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
-		TrimLayout layout = window.getTrimLayout();
+		ITrimManager layout = window.getTrimManager();
 
-		List trim = layout.getAreaDescription(TrimLayout.BOTTOM);
+		List trim = layout.getAreaDescription(ITrimManager.BOTTOM);
 		validatePositions(DEFAULT_BOTTOM, trim);
 
 		swapPostition(trim, 0, 3);
-		layout.updateAreaDescription(TrimLayout.BOTTOM, trim);
+		layout.updateAreaDescription(ITrimManager.BOTTOM, trim);
 
 		window.getShell().layout(true, true);
 
-		trim = layout.getAreaDescription(TrimLayout.BOTTOM);
+		trim = layout.getAreaDescription(ITrimManager.BOTTOM);
 		validatePositions(SWAPPED_FASTVIEW, trim);
 	}
 
@@ -145,7 +145,7 @@ public class TrimLayoutTest extends UITestCase {
 		IMemento trim = state.getChild(IWorkbenchConstants.TAG_TRIM);
 		assertNotNull(trim);
 
-		int[] ids = window.getTrimLayout().getAreaIds();
+		int[] ids = window.getTrimManager().getAreaIds();
 		IMemento[] children = trim
 				.getChildren(IWorkbenchConstants.TAG_TRIM_AREA);
 		assertTrue("Should have <= " + ids.length + " trim areas",
@@ -161,7 +161,7 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testRestoreStateWithChange() throws Throwable {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
-		TrimLayout layout = window.getTrimLayout();
+		ITrimManager layout = window.getTrimManager();
 
 		XMLMemento state = XMLMemento
 				.createWriteRoot(IWorkbenchConstants.TAG_WINDOW);
@@ -194,7 +194,7 @@ public class TrimLayoutTest extends UITestCase {
 		window.getShell().layout(true, true);
 
 
-		List windowTrim = layout.getAreaDescription(TrimLayout.BOTTOM);
+		List windowTrim = layout.getAreaDescription(ITrimManager.BOTTOM);
 		validatePositions(SWAPPED_FASTVIEW, windowTrim);
 	}
 
@@ -206,7 +206,7 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testRestoreStateWithLocationChange() throws Throwable {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
-		TrimLayout layout = window.getTrimLayout();
+		ITrimManager layout = window.getTrimManager();
 
 		XMLMemento state = XMLMemento
 				.createWriteRoot(IWorkbenchConstants.TAG_WINDOW);
@@ -241,10 +241,10 @@ public class TrimLayoutTest extends UITestCase {
 		window.getShell().layout(true, true);
 
 
-		List windowTrim = layout.getAreaDescription(TrimLayout.BOTTOM);
+		List windowTrim = layout.getAreaDescription(ITrimManager.BOTTOM);
 		assertEquals(3, windowTrim.size());
 
-		windowTrim = layout.getAreaDescription(TrimLayout.LEFT);
+		windowTrim = layout.getAreaDescription(ITrimManager.LEFT);
 		assertEquals(1, windowTrim.size());
 	}
 

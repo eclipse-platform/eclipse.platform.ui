@@ -76,6 +76,8 @@ import org.eclipse.ui.IPersistable;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.ITrimManager;
+import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -3020,7 +3022,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         if ((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar())
                 || (getPerspectiveBarVisible() && getWindowConfigurer()
                         .getShowPerspectiveBar())) {
-            defaultLayout.addTrim(topBarTrim, SWT.TOP, null);
+            defaultLayout.addTrim(SWT.TOP, topBarTrim);
             topBar.setVisible(true);
         } else {
             defaultLayout.removeTrim(topBarTrim);
@@ -3028,8 +3030,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         }
 
         if (getStatusLineVisible() && getWindowConfigurer().getShowStatusLine()) {
-            defaultLayout.addTrim(getStatusLineTrim(),
-                    SWT.BOTTOM, null);
+            defaultLayout.addTrim(SWT.BOTTOM, getStatusLineTrim());
             getStatusLineManager().getControl().setVisible(true);
         } else {
             defaultLayout.removeTrim(getStatusLineTrim());
@@ -3047,7 +3048,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 					heapStatus.setLayoutData(animationData);
 	            }
 
-	            defaultLayout.addTrim(heapStatusTrim, SWT.BOTTOM, null);
+	            defaultLayout.addTrim(SWT.BOTTOM, heapStatusTrim);
 				heapStatus.setVisible(true);
 			}
 		}
@@ -3069,7 +3070,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 progressRegion.getControl().setLayoutData(animationData);
             }
             defaultLayout
-                    .addTrim(progressRegion, SWT.BOTTOM, null);
+                    .addTrim(SWT.BOTTOM, progressRegion);
             progressRegion.getControl().setVisible(true);
         } else {
             if (progressRegion != null) {
@@ -3105,7 +3106,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
                         reference = getStatusLineTrim();
                     }
 
-                    defaultLayout.addTrim(fastViewBar, side,
+                    defaultLayout.addTrim(side, fastViewBar, 
                             reference);
                     WorkbenchPage page = getActiveWorkbenchPage();
 
@@ -3218,7 +3219,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
         trim.getControl().setLayoutData(new TrimLayoutData(false, SWT.DEFAULT,
                 SWT.DEFAULT));
-        defaultLayout.addTrim(trim, side, reference);
+        defaultLayout.addTrim(side, trim, reference);
     }
 
 	/* (non-Javadoc)
@@ -3284,12 +3285,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		
 	}
 
-	/**
-	 * Return the trim layout.  This is for testing <b>ONLY</b>.
-	 * @return the trim layout.
-	 * @since 3.2
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindow#getTrimManager()
 	 */
-	public TrimLayout getTrimLayout() {
+	public ITrimManager getTrimManager() {
 		return defaultLayout;
 	}
 }

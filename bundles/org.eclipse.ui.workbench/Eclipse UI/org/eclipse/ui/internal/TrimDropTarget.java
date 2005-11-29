@@ -24,6 +24,7 @@ import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.TrimLayout;
+import org.eclipse.ui.IWindowTrim;
 
 /**
  */
@@ -60,7 +61,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 	            }
 	
 	            // handle rearrangements within the trim
-		       	layout.addTrim(draggedTrim, dropSide, insertBefore);
+		       	layout.addTrim(dropSide, draggedTrim, insertBefore);
 	           	LayoutUtil.resize(draggedTrim.getControl());
         	}
         }
@@ -227,7 +228,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         }
 
         // handle rearrangements within the trim
-       	layout.addTrim(draggedTrim, dropSide, insertBefore);
+       	layout.addTrim(dropSide, draggedTrim, insertBefore);
        	LayoutUtil.resize(draggedTrim.getControl());    	
     }
     

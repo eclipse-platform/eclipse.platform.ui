@@ -1,0 +1,154 @@
+package org.eclipse.ui;
+
+import java.util.List;
+
+import org.eclipse.swt.SWT;
+
+/**
+ * Allow programmatic access to the workbench window trim areas.
+ * 
+ * <p>
+ * <b>Note:</b> This is highly experimental and will change between M4
+ * and M5.  For example, the current trim area IDs will be changes to
+ * Strings, amongst other things.
+ * </p>
+ * 
+ * @since 3.2
+ */
+public interface ITrimManager {
+
+	/**
+	 * Trim area location.
+	 */
+	public static final int TOP = SWT.TOP;
+
+	/**
+	 * Trim area location.
+	 */
+	public static final int BOTTOM = SWT.BOTTOM;
+
+	/**
+	 * Trim area location.
+	 */
+	public static final int LEFT = SWT.LEFT;
+
+	/**
+	 * Trim area location.
+	 */
+	public static final int RIGHT = SWT.RIGHT;
+
+	/**
+	 * Trim area location.
+	 */
+	public static final int NONTRIM = SWT.DEFAULT;
+
+	/**
+	 * Adds the given control to the layout's trim.  The same as calling
+	 * addTrim(areaId, trim, null);
+	 * 
+	 * @param trim
+	 *            new window trim to be added
+	 * @param areaId the area ID
+	 * @see #getAreaIds()
+	 * @see #addTrim(int, IWindowTrim, IWindowTrim)
+	 */
+	public void addTrim(int areaId, IWindowTrim trim);
+	
+	/**
+	 * Adds the given control to the layout's trim. Note that this must be
+	 * called for every trim control. If the given widget is already a trim
+	 * widget, it will be moved to the new position. Specifying a position
+	 * allows a new widget to be inserted between existing trim widgets.
+	 * 
+	 * <p>
+	 * For example, this method allows the caller to say "insert this new
+	 * control as trim along the bottom of the layout, to the left of this
+	 * existing control".
+	 * </p>
+	 * 
+	 * @param trim
+	 *            new window trim to be added
+	 * @param areaId the area ID
+	 * @param beforeMe
+	 *            trim to insert before, <code>null</code> to insert at the end
+	 * @see #getAreaIds()
+	 */
+	public void addTrim(int areaId, IWindowTrim trim, IWindowTrim beforeMe);
+
+	/**
+	 * Removes the given window trim. Note that this has no effect if window
+	 * trim is not our window trim.
+	 * 
+	 * @param toRemove a piece of trim.
+	 */
+	public void removeTrim(IWindowTrim toRemove);
+
+	/**
+	 * Return the window trim for a given id.
+	 * 
+	 * @param id
+	 *            the id
+	 * @return the window trim, or <code>null</code> if not found.
+	 */
+	public IWindowTrim getTrim(String id);
+
+	/**
+	 * Return all of the IDs for the currently supported trim areas. This is
+	 * <b>experimental</b> and will be changing.
+	 * 
+	 * @return the list of IDs that can be used with area descriptions.
+	 * We currently support SWT.TOP, SWT.BOTTOM, SWT.LEFT, and SWT.RIGHT.
+	 * @since 3.2
+	 */
+	public int[] getAreaIds();
+
+	/**
+	 * Return a copy of the IWindowTrim in an ordered array. This will not
+	 * return <code>null</code>.  This array can be used to shuffle items
+	 * around in {@link #updateAreaDescription(int, List) }.
+	 * 
+	 * @param areaId
+	 *            the trim area id
+	 * @return the IWindowTrim array
+	 * @since 3.2
+	 * @see #getAreaIds()
+	 */
+	public List getAreaDescription(int areaId);
+
+	/**
+	 * Update ID's area description with the new window trim ordering. This
+	 * applies the IWindowTrim contains in the array to the trim area named
+	 * "ID". Any trim in the specified trim area that's not contained in 
+	 * the List is removed from the window trim (but not disposed()).
+	 * 
+	 * @param id
+	 *            the trim area ID
+	 * @param trim
+	 *            the trim array must not be <code>null</code>.
+	 * @since 3.2
+	 * @see #getAreaIds()
+	 */
+	public void updateAreaDescription(int id, List trim);
+
+	/**
+	 * This method returns an aggregate array of all trim items known
+	 * to this TrimLayout.
+	 * 
+	 * @return The List of all IWindowTrim elements
+	 * @since 3.2
+	 */
+	public List getAllTrim();
+
+	/**
+	 * Update the visibility of the trim controls. It updates any docking
+	 * handles as well.  It has no effect on visiblity if the window
+	 * trim doesn't belong to this TrimLayout.
+	 * 
+	 * @param trim
+	 *            the trim to update
+	 * @param visible
+	 *            visible or not
+	 * @since 3.2
+	 */
+	public void setTrimVisible(IWindowTrim trim, boolean visible);
+}

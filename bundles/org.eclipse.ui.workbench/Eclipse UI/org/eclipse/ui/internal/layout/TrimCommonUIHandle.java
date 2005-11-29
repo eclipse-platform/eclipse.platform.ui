@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.internal.IChangeListener;
-import org.eclipse.ui.internal.IWindowTrim;
+import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.internal.IntModel;
 import org.eclipse.ui.internal.RadioMenu;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -167,7 +167,7 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
     private void handleShowOnChange() {
     	layout.removeTrim(trim);
     	trim.dock(radioVal.get());
-    	layout.addTrim(trim, radioVal.get());
+    	layout.addTrim(radioVal.get(), trim, null);
     	
     	// perform an optimized layout to show the trim in its new location
     	LayoutUtil.resize(trim.getControl());

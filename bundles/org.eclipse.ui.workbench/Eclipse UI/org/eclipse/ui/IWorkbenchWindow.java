@@ -200,4 +200,11 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext {
 	 * @since 3.1
 	 */
     public IExtensionTracker getExtensionTracker();
+    
+	/**
+	 * Return the trim layout manager.
+	 * @return the trim Manager.
+	 * @since 3.2
+	 */
+	public ITrimManager getTrimManager();
 }

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.layout;
 
-import org.eclipse.ui.internal.IWindowTrim;
+import org.eclipse.ui.IWindowTrim;
 
 /**
  * Manages the internal piece of trim for each trim area.
