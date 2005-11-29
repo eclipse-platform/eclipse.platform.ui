@@ -390,7 +390,6 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResource#isLinked()
 	 * @see IResource#ALLOW_MISSING_LOCAL
 	 * @since 2.1
-	 * @deprecated Use {{@link #createLink(URI, int, IProgressMonitor)} instead.
 	 */
 	public void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
