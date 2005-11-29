@@ -1973,4 +1973,97 @@ public class IWorkbenchPageTest extends UITestCase {
         assertTrue(part1 == part2);
         assertTrue(part2.getCallHistory().contains("showEditorInput"));
     }
+    
+    /**
+     * Tests that the openEditor and findEditor variants that accepts match flags work as expected.
+     * 
+     * @since 3.2
+     */
+    public void testOpenAndFindEditorWithMatchFlags() throws Exception {
+        IWorkbenchPage page = fActivePage;
+        proj = FileUtil.createProject("testOpenEditorMatchFlags");
+        IFile file1 = FileUtil.createFile("a.mock1", proj);
+        IFile file2 = FileUtil.createFile("a.mock2", proj);
+        FileEditorInput input1 = new FileEditorInput(file1);
+        FileEditorInput input2 = new FileEditorInput(file2);
+        String id1 = MockEditorPart.ID1;
+        String id2 = MockEditorPart.ID2;
+        
+        // first editor (no match)
+        MockEditorPart part1 = (MockEditorPart) page.openEditor(input1, id1, true, IWorkbenchPage.MATCH_INPUT);
+        assertNotNull(part1);
+        
+        // same input, same id, matching input (should match part1)
+        MockEditorPart part2 = (MockEditorPart) page.openEditor(input1, id1, true, IWorkbenchPage.MATCH_INPUT);
+        assertTrue(part1 == part2);
+        
+        // same input, different id, matching input (should match part1)
+        MockEditorPart part3 = (MockEditorPart) page.openEditor(input1, id2, true, IWorkbenchPage.MATCH_INPUT);
+        assertTrue(part1 == part3);
+        
+        // same input, different id, matching input and id (no match)
+        MockEditorPart part4 = (MockEditorPart) page.openEditor(input1, id2, true, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
+        assertNotNull(part4);
+        assertTrue(part4 != part1);
+        
+        // same input, same id, matching nothing (no match)
+        MockEditorPart part5 = (MockEditorPart) page.openEditor(input1, id1, true, IWorkbenchPage.MATCH_NONE);
+        assertNotNull(part5);
+        assertTrue(part5 != part1);
+        assertTrue(part5 != part4);
+        
+        // different input, same id, matching id (should match part5 instead of part1, because it was active)
+        MockEditorPart part6 = (MockEditorPart) page.openEditor(input2, id1, true, IWorkbenchPage.MATCH_ID);
+        assertTrue(part6 == part5);
+        
+        // different input, different id, matching input and id (no match)
+        MockEditorPart part7 = (MockEditorPart) page.openEditor(input2, id2, true, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
+        assertNotNull(part7);
+        assertTrue(part7 != part1);
+        assertTrue(part7 != part4);
+        assertTrue(part7 != part5);
+
+        // At this point, there are 4 editors open: 
+        //   part1 (input1, id1), part4 (input1, id2), part5 (input1, id1), and part7 (input2, id2).
+        // with part7 active.
+        
+        // find with MATCH_NONE is always empty
+        IEditorReference[] refs = page.findEditors(input1, id1, IWorkbenchPage.MATCH_NONE);
+        assertEquals(0, refs.length);
+
+        // find input1 with MATCH_INPUT finds 3 editors: part1, part4 and part5 (in order)
+        refs = page.findEditors(input1, null, IWorkbenchPage.MATCH_INPUT);
+        assertEquals(3, refs.length);
+        assertEquals(part1, refs[0].getPart(true));
+        assertEquals(part4, refs[1].getPart(true));
+        assertEquals(part5, refs[2].getPart(true));
+
+        // find input2 with MATCH_INPUT finds 1 editor: part7
+        refs = page.findEditors(input2, null, IWorkbenchPage.MATCH_INPUT);
+        assertEquals(1, refs.length);
+        assertEquals(part7, refs[0].getPart(true));
+        
+        // find id1 with MATCH_ID finds 2 editors: part1 and part5 (in order)
+        refs = page.findEditors(null, id1, IWorkbenchPage.MATCH_ID);
+        assertEquals(2, refs.length);
+        assertEquals(part1, refs[0].getPart(true));
+        assertEquals(part5, refs[1].getPart(true));
+
+        // find id2 with MATCH_ID finds 2 editors: part4 and part7 (with part7 first because it was active)
+        refs = page.findEditors(null, id2, IWorkbenchPage.MATCH_ID);
+        assertEquals(2, refs.length);
+        assertEquals(part7, refs[0].getPart(true));
+        assertEquals(part4, refs[1].getPart(true));
+
+        // find input1 and id1 with MATCH_INPUT and MATCH_ID finds 2 editors: part1 and part5 (in order)
+        refs = page.findEditors(input1, id1, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
+        assertEquals(2, refs.length);
+        assertEquals(part1, refs[0].getPart(true));
+        assertEquals(part5, refs[1].getPart(true));
+
+        // find input1 and id2 with MATCH_INPUT and MATCH_ID finds 1 editors: part4
+        refs = page.findEditors(input1, id2, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
+        assertEquals(1, refs.length);
+        assertEquals(part4, refs[0].getPart(true));
+    }
 }

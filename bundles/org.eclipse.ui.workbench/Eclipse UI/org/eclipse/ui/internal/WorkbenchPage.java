@@ -1791,11 +1791,20 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return (ISaveablePart[]) result.toArray(new ISaveablePart[result.size()]);
     }
   
-
+    /**
+     * See IWorkbenchPage.
+     */
     public IEditorPart findEditor(IEditorInput input) {
         return getEditorManager().findEditor(input);
     }
 
+    /**
+     * See IWorkbenchPage.
+     */
+    public IEditorReference[] findEditors(IEditorInput input, String editorId, int matchFlags) {
+    	return getEditorManager().findEditors(input, editorId, matchFlags);
+    }
+    
     /**
      * See IWorkbenchPage.
      */

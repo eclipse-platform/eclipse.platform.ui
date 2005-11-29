@@ -17,7 +17,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -66,9 +65,9 @@ public final class SystemMenuNewEditor extends Action implements ISelfUpdatingAc
 						String editorId = editor.getSite().getId();
 						if (editorId != null) {
 							try {
-								((WorkbenchPage) page).openEditor(editor
+								page.openEditor(editor
 										.getEditorInput(), editorId, true,
-										WorkbenchPage.MATCH_NONE);
+										IWorkbenchPage.MATCH_NONE);
 							} catch (PartInitException e) {
 								DialogUtil.openError(page.getWorkbenchWindow()
 										.getShell(), WorkbenchMessages.Error, e

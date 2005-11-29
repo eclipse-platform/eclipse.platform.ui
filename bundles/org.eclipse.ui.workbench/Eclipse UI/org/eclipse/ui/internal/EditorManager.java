@@ -65,6 +65,7 @@ import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -354,37 +355,54 @@ public class EditorManager implements IExtensionChangeHandler {
      * @return the matching editor, or <code>null</code> if no match fond
      */
     public IEditorPart findEditor(IEditorInput input) {
-    	return findEditor(null, input, WorkbenchPage.MATCH_INPUT);
+    	return findEditor(null, input, IWorkbenchPage.MATCH_INPUT);
     }
     
     /**
-     * Returns an open editor matching the given editor input.  
+     * Returns an open editor matching the given editor input and/or editor id, as specified by matchFlags.  
      * If none match, returns <code>null</code>.
      * 
+     * @param editorId the editor id
      * @param input the editor input
      * @param matchFlags flags specifying which aspects to match
      * @return the matching editor, or <code>null</code> if no match fond
      * @since 3.1
      */
     public IEditorPart findEditor(String editorId, IEditorInput input, int matchFlags) {
-    	if (matchFlags == WorkbenchPage.MATCH_NONE) {
+    	IEditorReference[] refs = findEditors(input, editorId, matchFlags);
+    	if (refs.length == 0) {
     		return null;
     	}
+    	return refs[0].getEditor(true);
+    }
+    
+    /**
+     * Returns the open editor references matching the given editor input and/or editor id, as specified by matchFlags.  
+     * If none match, returns an empty array.
+     * 
+     * @param editorId the editor id
+     * @param input the editor input
+     * @param matchFlags flags specifying which aspects to match
+     * @return the matching editor, or <code>null</code> if no match fond
+     * @since 3.1
+     */
+    public IEditorReference[] findEditors(IEditorInput input, String editorId, int matchFlags) {
+    	if (matchFlags == IWorkbenchPage.MATCH_NONE) {
+    		return new IEditorReference[0];
+    	}
+    	List result = new ArrayList();
     	ArrayList othersList = new ArrayList(Arrays.asList(page.getEditorReferences()));
-    	if (othersList.isEmpty()) {
-    		return null;
+    	if (!othersList.isEmpty()) {
+	    	IEditorReference active = page.getActiveEditorReference();
+	    	if (active != null) {
+		    	othersList.remove(active);
+		    	ArrayList activeList = new ArrayList(1);
+		    	activeList.add(active);
+		    	findEditors(activeList, input, editorId, matchFlags, result);
+	    	}
+	    	findEditors(othersList, input, editorId, matchFlags, result);
     	}
-    	IEditorReference active = page.getActiveEditorReference();
-    	if (active != null) {
-	    	othersList.remove(active);
-	    	ArrayList activeList = new ArrayList(1);
-	    	activeList.add(active);
-    		IEditorPart match = findEditor(editorId, input, activeList, matchFlags);
-    		if (match != null) {
-    			return match;
-    		}
-    	}
-    	return findEditor(editorId, input, othersList, matchFlags);
+    	return (IEditorReference[]) result.toArray(new IEditorReference[result.size()]);
     }
     
     /**
@@ -394,13 +412,16 @@ public class EditorManager implements IExtensionChangeHandler {
      * @param editorId the editor id
      * @param input the editor input
      * @param editorList a mutable list containing the references for the editors to check (warning: items may be removed) 
-     * @return the matching editor, or <code>null</code> if no match fond
+     * @param result the list to which matching editor references should be added
      * @since 3.1
      */
-    private IEditorPart findEditor(String editorId, IEditorInput input, ArrayList editorList, int matchFlags) {
+    private void findEditors(List editorList, IEditorInput input, String editorId, int matchFlags, List result) {
+    	if (matchFlags == IWorkbenchPage.MATCH_NONE) {
+    		return;
+    	}
 
     	// Phase 0: Remove editors whose ids don't match (if matching by id)
-        if (((matchFlags & WorkbenchPage.MATCH_ID) != 0) && editorId != null) {
+        if (((matchFlags & IWorkbenchPage.MATCH_ID) != 0) && editorId != null) {
             for (Iterator i = editorList.iterator(); i.hasNext();) {
                 EditorReference editor = (EditorReference) i.next();
                 if (!editorId.equals(editor.getId())) {
@@ -409,10 +430,11 @@ public class EditorManager implements IExtensionChangeHandler {
             }
         }
 
-        // If not matching on editor input, just return the first match, or null if none.  
+        // If not matching on editor input, just return the remaining editors.  
         // In practice, this case is never used.
-        if ((matchFlags & WorkbenchPage.MATCH_INPUT) == 0) {
-        	return editorList.isEmpty() ? null : ((IEditorReference) editorList.get(0)).getEditor(true);
+        if ((matchFlags & IWorkbenchPage.MATCH_INPUT) == 0) {
+        	result.addAll(editorList);
+        	return;
         }
 
         // Phase 1: check editors that have their own matching strategy
@@ -424,7 +446,7 @@ public class EditorManager implements IExtensionChangeHandler {
                 if (matchingStrategy != null) {
                     i.remove(); // We're handling this one here, so remove it from the list.
                     if (matchingStrategy.matches(editor, input)) {
-                        return editor.getEditor(true);
+                    	result.add(editor);
                     }
                 }
             }
@@ -432,12 +454,12 @@ public class EditorManager implements IExtensionChangeHandler {
         
         // Phase 2: check materialized editors (without their own matching strategy)
         for (Iterator i = editorList.iterator(); i.hasNext();) {
-            EditorReference editor = (EditorReference) i.next();
+            IEditorReference editor = (IEditorReference) i.next();
             IEditorPart part = (IEditorPart) editor.getPart(false);
             if (part != null) {
                 i.remove(); // We're handling this one here, so remove it from the list.
                 if (part.getEditorInput() != null && part.getEditorInput().equals(input)) {
-                    return part;
+                	result.add(editor);
                 }
             }
         }
@@ -448,10 +470,10 @@ public class EditorManager implements IExtensionChangeHandler {
         String name = input.getName();
         IPersistableElement persistable = input.getPersistable();
         if (name == null || persistable == null)
-            return null;
+            return;
         String id = persistable.getFactoryId();
         if (id == null)
-            return null;
+            return;
         for (Iterator i = editorList.iterator(); i.hasNext();) {
             EditorReference editor = (EditorReference) i.next();
             if (name.equals(editor.getName()) && id.equals(editor.getFactoryId())) {
@@ -459,14 +481,13 @@ public class EditorManager implements IExtensionChangeHandler {
                 try {
                     restoredInput = editor.getEditorInput();
                     if (Util.equals(restoredInput, input)) {
-                        return editor.getEditor(true);
+                        result.add(editor);
                     }
                 } catch (PartInitException e1) {
                     WorkbenchPlugin.log(e1);
                 }
             }
         }
-        return null;
     }
 
     /**

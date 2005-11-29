@@ -354,6 +354,23 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
     public IEditorPart findEditor(IEditorInput input);
 
     /**
+     * Returns an array of editor references that match the given input and/or editor id,
+     * as specified by the given match flags. 
+     * Returns an empty array if there are no matching editors, or if matchFlags is MATCH_NONE.
+     * 
+     * @param input the editor input, or <code>null</code> if MATCH_INPUT is not specified in matchFlags
+     * @param editorId the editor id, or <code>null</code> if MATCH_ID is not specified in matchFlags
+	 * @param matchFlags a bit mask consisting of zero or more of the MATCH_* constants OR-ed together
+     * @return the references for the matching editors
+     * 
+	 * @see #MATCH_NONE
+	 * @see #MATCH_INPUT
+	 * @see #MATCH_ID
+     * @since 3.2
+     */
+    public IEditorReference[] findEditors(IEditorInput input, String editorId, int matchFlags);
+    
+    /**
      * Returns a list of the editors open in this page.
      * <p>
      * Note that each page has its own editors; editors are never shared
@@ -367,7 +384,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
     public IEditorPart[] getEditors();
 
     /**
-     * Returns a array of references to open editors in this page.
+     * Returns an array of references to open editors in this page.
      * <p>
      * Note that each page has its own editors; editors are never shared
      * between pages.
