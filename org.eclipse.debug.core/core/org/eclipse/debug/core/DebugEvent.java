@@ -138,6 +138,7 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * <p>
  * Clients may instantiate this class. Clients are not intended to subclass this class.
  * </p>
+ * 
  */
 public final class DebugEvent extends EventObject {
 	
