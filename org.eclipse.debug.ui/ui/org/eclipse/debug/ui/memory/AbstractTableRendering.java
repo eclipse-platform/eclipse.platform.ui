@@ -159,40 +159,10 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	
 	/**
 	 * Property identifier for the row size in a table rendering
+	 * This property is used for synchronization between renderings.
 	 * @since 3.2
 	 */
 	public static final String PROPERTY_ROW_SIZE = "rowSize"; //$NON-NLS-1$
-	
-	/**
-	 * Preference identifiery for the row size in a table rendering.
-	 * This preference is expected to be saved by an IPersistableDebugElement.  
-	 * Memory Blocks can optionally provide and save this preference to customize
-	 * the initial format of a table rendering.
-	 * 
-	 * The value of this property is an Integer.  The value can be one of the
-	 * following values:  1, 2, 4, 8, 16.  This value must be greater than 
-	 * PREF_COL_SIZE and must also be divisible by PREF_COL_SIZE.
-	 * 
-	 * TODO:  New API, need review
-	 * @since 3.2
-	 */
-	public static final String PREF_ROW_SIZE = "org.eclipse.debug.ui.AbstractTableRendering.rowSize"; //$NON-NLS-1$
-	
-	/**
-	 * Preference identifiery for the column size in a table rendering.
-	 * This preference is expected to be saved by an IPersistableDebugElement.  
-	 * Memory Blocks can optionally provide and save this preference to customize
-	 * the initial format of a table rendering.
-	 * 
-	 * The value of this property is an Integer.  The value can be one of the
-	 * following values:  1, 2, 4, 8, 16.  This value must be smaller than
-	 * PREF_ROW_SIZE.  PREF_ROW_SIZE must be divisible by PREF_COL_SIZE.
-	 * 
-	 * TODO:  New API, need review
-	 * @since 3.2
-	 */
-	public static final String PREF_COL_SIZE = "org.eclipse.debug.ui.AbstractTableRendering.colSize"; //$NON-NLS-1$
-	
 	
 	private PageBook fPageBook;
 	private TableViewer fTableViewer;
@@ -996,8 +966,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			
 			if (elmt != null)
 			{
-				if (elmt.supportsProperty(this, PREF_COL_SIZE))
-					defaultColSize = getDefaultFromPersistableElement(PREF_COL_SIZE);
+				if (elmt.supportsProperty(this, IDebugPreferenceConstants.PREF_COL_SIZE_BY_MODEL))
+					defaultColSize = getDefaultFromPersistableElement(IDebugPreferenceConstants.PREF_COL_SIZE_BY_MODEL);
 			}
 			
 			if (defaultColSize <= 0)
@@ -1034,9 +1004,9 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			IPersistableDebugElement elmt = (IPersistableDebugElement)getMemoryBlock().getAdapter(IPersistableDebugElement.class);
 			if (elmt != null)
 			{
-				if (elmt.supportsProperty(this, PREF_ROW_SIZE))
+				if (elmt.supportsProperty(this, IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL))
 				{
-					defaultRowSize = getDefaultFromPersistableElement(PREF_ROW_SIZE);
+					defaultRowSize = getDefaultFromPersistableElement(IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL);
 					return defaultRowSize * getAddressableSize();
 				}
 			}

@@ -235,6 +235,33 @@ public interface IDebugPreferenceConstants {
 	 * @since 3.2
 	 */
 	public static final String RESET_VISIBLE = IDebugUIConstants.PLUGIN_ID + "resetMemoryBlock.visible"; //$NON-NLS-1$
+	
+	/**
+	 * Preference identifier for the row size in a table rendering.
+	 * This preference is expected to be saved by an </code>IPersistableDebugElement</code>.  
+	 * Memory Blocks can optionally provide and save this preference to customize
+	 * the initial format of a table rendering.
+	 * 
+	 * The value of this property is an Integer.  The value can be one of the
+	 * following values:  1, 2, 4, 8, 16.  This value must be greater than 
+	 * <code>PREF_COL_SIZE_BY_MODEL</code> and must also be divisible by <code>PREF_COL_SIZE_BY_MODEL</code>.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String PREF_ROW_SIZE_BY_MODEL = "org.eclipse.debug.ui.AbstractTableRendering.rowSize"; //$NON-NLS-1$
+	/**
+	 * Preference identifier for the column size in a table rendering.
+	 * This preference is expected to be saved by an <code>IPersistableDebugElement</code>.  
+	 * Memory Blocks can optionally provide and save this preference to customize
+	 * the initial format of a table rendering.
+	 * 
+	 * The value of this property is an Integer.  The value can be one of the
+	 * following values:  1, 2, 4, 8, 16.  This value must be smaller than
+	 * <code>PREF_ROW_SIZE_BY_MODEL</code>.  <code>PREF_ROW_SIZE_BY_MODEL</code> must be divisible by <code>PREF_COL_SIZE_BY_MODEL</code>.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String PREF_COL_SIZE_BY_MODEL = "org.eclipse.debug.ui.AbstractTableRendering.colSize"; //$NON-NLS-1$
 }
 
 

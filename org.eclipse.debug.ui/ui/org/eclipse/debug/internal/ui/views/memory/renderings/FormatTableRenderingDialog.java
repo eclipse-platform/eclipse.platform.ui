@@ -399,8 +399,8 @@ public class FormatTableRenderingDialog extends Dialog
 			IPersistableDebugElement elmt = (IPersistableDebugElement)fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
 			if (elmt != null)
 			{
-				if (elmt.supportsProperty(fRendering, AbstractTableRendering.PREF_ROW_SIZE))
-					return getDefaultFromPersistableElement(AbstractTableRendering.PREF_ROW_SIZE);
+				if (elmt.supportsProperty(fRendering, IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL))
+					return getDefaultFromPersistableElement(IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL);
 			}
 			
 			size = getDefaultRowSize(fRendering.getMemoryBlock().getModelIdentifier());
@@ -414,8 +414,8 @@ public class FormatTableRenderingDialog extends Dialog
 			IPersistableDebugElement elmt = (IPersistableDebugElement)fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
 			if (elmt != null)
 			{
-				if (elmt.supportsProperty(fRendering, AbstractTableRendering.PREF_COL_SIZE))
-					return getDefaultFromPersistableElement(AbstractTableRendering.PREF_COL_SIZE);
+				if (elmt.supportsProperty(fRendering, IDebugPreferenceConstants.PREF_COL_SIZE_BY_MODEL))
+					return getDefaultFromPersistableElement(IDebugPreferenceConstants.PREF_COL_SIZE_BY_MODEL);
 			}
 
 			size = getDefaultColumnSize(fRendering.getMemoryBlock().getModelIdentifier());
@@ -428,9 +428,9 @@ public class FormatTableRenderingDialog extends Dialog
 			if (row == 0)
 			{
 				DebugUITools.getPreferenceStore().setValue(getRowPrefId(modelId), IDebugPreferenceConstants.PREF_ROW_SIZE_DEFAULT);
+				row = DebugUITools.getPreferenceStore().getInt(getRowPrefId(modelId));
 			}
 			
-			row = DebugUITools.getPreferenceStore().getInt(getRowPrefId(modelId));
 			return row;
 			
 		}
@@ -442,9 +442,8 @@ public class FormatTableRenderingDialog extends Dialog
 			{
 				// if not yet defined, initialize with default
 				DebugUITools.getPreferenceStore().setValue(getColumnPrefId(modelId), IDebugPreferenceConstants.PREF_COLUMN_SIZE_DEFAULT);
+				col = DebugUITools.getPreferenceStore().getInt(getColumnPrefId(modelId));
 			}
-			
-			col = DebugUITools.getPreferenceStore().getInt(getColumnPrefId(modelId));
 			return col;
 		}
 
@@ -454,12 +453,12 @@ public class FormatTableRenderingDialog extends Dialog
 			
 			IPersistableDebugElement elmt = (IPersistableDebugElement)fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
 			
-			if (elmt != null && elmt.supportsProperty(fRendering, AbstractTableRendering.PREF_ROW_SIZE)
-				&& elmt.supportsProperty(fRendering, AbstractTableRendering.PREF_COL_SIZE))
+			if (elmt != null && elmt.supportsProperty(fRendering, IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL)
+				&& elmt.supportsProperty(fRendering, IDebugPreferenceConstants.PREF_COL_SIZE_BY_MODEL))
 			{
 				try {
-					elmt.setProperty(fRendering, AbstractTableRendering.PREF_ROW_SIZE, new Integer(rowSize));
-					elmt.setProperty(fRendering, AbstractTableRendering.PREF_COL_SIZE, new Integer(columnSize));
+					elmt.setProperty(fRendering, IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL, new Integer(rowSize));
+					elmt.setProperty(fRendering, IDebugPreferenceConstants.PREF_COL_SIZE_BY_MODEL, new Integer(columnSize));
 				} catch (CoreException e) {
 					DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.FormatTableRenderingDialog_4, DebugUIMessages.FormatTableRenderingDialog_5, e);
 				}
