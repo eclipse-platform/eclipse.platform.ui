@@ -595,7 +595,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * @since 3.2
 	 */
     public IEditorPart openEditor(final IEditorInput input,
-			final String editorID, final boolean activate, final int matchFlags)
+			final String editorId, final boolean activate, final int matchFlags)
 			throws PartInitException;
     		
     /**
