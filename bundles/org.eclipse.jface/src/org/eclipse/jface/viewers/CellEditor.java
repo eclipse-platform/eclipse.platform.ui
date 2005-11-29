@@ -231,7 +231,7 @@ public abstract class CellEditor {
         Assert.isTrue(control == null);
         control = createControl(parent);
         // See 1GD5CA6: ITPUI:ALL - TaskView.setSelection does not work
-        // Control is created with isVisible()==true by default.
+        // Control is created with getVisible()==true by default.
         // This causes composite.setFocus() to work incorrectly.
         // The cell editor's control grabs focus instead, even if it is not active.
         // Make the control invisible here by default.
@@ -451,10 +451,10 @@ public abstract class CellEditor {
      * Returns whether this cell editor is activated.
      *
      * @return <code>true</code> if this cell editor's control is
-     *   currently visible, and <code>false</code> if not visible
+     *   currently activated, and <code>false</code> if not activated
      */
     public boolean isActivated() {
-        return control != null && control.isVisible();
+        return control != null && control.getVisible();
     }
 
     /**
