@@ -454,6 +454,9 @@ public abstract class CellEditor {
      *   currently activated, and <code>false</code> if not activated
      */
     public boolean isActivated() {
+    	// Use the state of the visible style bit (getVisible()) rather than the
+    	// window's actual visibility (isVisible()) to get correct handling when
+    	// an ancestor control goes invisible, see bug 85331.
         return control != null && control.getVisible();
     }
 
