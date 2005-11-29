@@ -9,8 +9,7 @@
  **********************************************************************/
 package org.eclipse.core.internal.filesystem;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.filesystem.*;
@@ -20,9 +19,9 @@ import org.eclipse.core.runtime.*;
 
 /**
  * A null file store represents a file whose location is unknown,
- * such as a location based on an undefined variable.  Basic
- * handle queries can be performed on this class, but all operations that actually
- * require file system access will fail.
+ * such as a location based on an undefined variable.  This store
+ * acts much like /dev/null on *nix: writes are ignored, reads return
+ * empty streams, and modifications such as delete, mkdir, will fail.
  */
 public class NullFileStore extends FileStore {
 	private IPath path;
@@ -33,6 +32,10 @@ public class NullFileStore extends FileStore {
 	 */
 	public NullFileStore(IPath path) {
 		this.path = path;
+	}
+	
+	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) throws CoreException {
+		return EMPTY_FILE_INFO_ARRAY;
 	}
 
 	public String[] childNames(int options, IProgressMonitor monitor) {
@@ -76,13 +79,15 @@ public class NullFileStore extends FileStore {
 	}
 
 	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException {
-		fail();
-		return null;
+		return new ByteArrayInputStream(new byte[0]);
 	}
 
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
-		fail();
-		return null;
+		return new OutputStream() {
+			public void write(int b) throws IOException {
+				//do nothing
+			}
+		};
 	}
 
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
@@ -95,7 +100,7 @@ public class NullFileStore extends FileStore {
 
 	public URI toURI() {
 		try {
-			return new URI("null", null, path.toString(), null); //$NON-NLS-1$
+			return new URI(EFS.SCHEME_NULL, null, path.toString(), null);
 		} catch (URISyntaxException e) {
 			//should not happen
 			throw new Error(e);
