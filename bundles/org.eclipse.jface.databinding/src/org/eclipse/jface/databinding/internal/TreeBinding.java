@@ -63,10 +63,10 @@ public class TreeBinding extends Binding implements IChangeListener {
 	}
 
 	public void handleChange(ChangeEvent changeEvent) {
-		if (updating==0 || changeEvent.getChangeType()==ChangeEvent.VIRTUAL) {
+		if (updating==0 || changeEvent.getChangeType()==IChangeEvent.VIRTUAL) {
 			IUpdatable notifier = changeEvent.getUpdatable();
 			if (notifier == target) {
-				if (changeEvent.getChangeType() == ChangeEvent.VERIFY) {
+				if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
 					// No Conversion on the object itself
 				} else {
 					update(model, target, changeEvent);
@@ -89,7 +89,7 @@ public class TreeBinding extends Binding implements IChangeListener {
 		Object parent = event.getParent();
 			try {
 				updating ++;
-				if (event.getChangeType() == ChangeEvent.VIRTUAL)
+				if (event.getChangeType() == IChangeEvent.VIRTUAL)
 					source.setElements(parent, needsUpdate.getElements(parent));
 				else if (event.getChangeType() == IChangeEvent.CHANGE)
 					needsUpdate.setElement(parent, index, event.getNewValue());

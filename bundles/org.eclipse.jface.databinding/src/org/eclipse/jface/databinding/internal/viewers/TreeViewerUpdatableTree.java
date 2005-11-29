@@ -275,10 +275,8 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 			
 			List children = parentNode.getChildren();
 			if (children!=null) {
-				Object[] elements = children.toArray();
-				for (int i = 0; i < elements.length; i++) {
-					removeElement(parentElement, i);
-				}
+				while (children.size()>0)
+					removeElement(parentElement, 0);				
 			}
 			if (values!=null)
 				for (int i = 0; i < values.length; i++) {

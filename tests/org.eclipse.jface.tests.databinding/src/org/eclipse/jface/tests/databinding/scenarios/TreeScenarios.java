@@ -10,6 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+
+import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.ITree;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.TreeModelDescription;
@@ -33,7 +40,8 @@ public class TreeScenarios extends ScenariosTestCase {
 	Tree tree=null;
 	TreeViewer tviewer = null;
 	Catalog catalog = null;
-	ITree   treeModel = null;
+	ITree   catalogModelTree = null;
+	ITree   directoryModelTree = null;	
 	
 	
 
@@ -46,24 +54,100 @@ public class TreeScenarios extends ScenariosTestCase {
 		
 		catalog = SampleData.CATALOG_2005; // Lodging source
 		
-		treeModel = SampleData.CATEGORY_TREE;
+		catalogModelTree = SampleData.CATEGORY_TREE;
+		
+		directoryModelTree = new ITree() {					
+			private PropertyChangeSupport changeSupport = null;			
+			private Object[] rootObjects = Collections.EMPTY_LIST.toArray();
+
+			public Class[] getTypes() {
+				return new Class[] { File.class } ;
+			}
+		
+			public boolean hasChildren(Object element) {
+				return ((File)element).isDirectory();
+			}
+		
+			public void setChildren(Object parentElement, Object[] children) {
+				// Only allow to change change the root directory/ies
+				Object old;
+				if (parentElement==null) {
+					old = rootObjects;
+					rootObjects = children==null?Collections.EMPTY_LIST.toArray():children;
+				}
+				else {
+					old = getChildren(parentElement);
+					// this tree does not really create files
+					// This "set" is just to ring the door bell
+					// for the test
+				}
+				if (changeSupport!=null) {
+					ITree.ChangeEvent event = new ITree.ChangeEvent(this, IChangeEvent.REPLACE, parentElement, null, old, children, -1);								
+					changeSupport.firePropertyChange(event);
+				}				
+			}
+					
+			public Object[] getChildren(Object parentElement) {
+				if (parentElement==null)
+					return rootObjects;
+				
+				File[] children = ((File)parentElement).listFiles();
+				if (children==null) return Collections.EMPTY_LIST.toArray();
+				
+				return children;
+			}
+
+			public void addPropertyChangeListener(PropertyChangeListener listener) {
+				if (changeSupport==null)
+					changeSupport = new PropertyChangeSupport(this);
+				changeSupport.addPropertyChangeListener(listener);
+			}
+
+			public void removePropertyChangeListener(PropertyChangeListener listener) {
+				if (changeSupport!=null)
+					changeSupport.removePropertyChangeListener(listener);
+			}		
+		};
+				
+		File temp = File.createTempFile("TreeScenario","jUnit");
+		File root = new File (temp.getParent(),"TreeScenarioDir");
+		temp.delete();
+		
+		if (root.exists()) 
+			deleteFile(root);
+		// Create a tempopary directory
+		root.mkdirs();
+		
+		
+		directoryModelTree.setChildren(null, new Object[] {root});
 
 	}
 
+	private void deleteFile (File f) {
+		if (f.isDirectory()) {
+			File[] list = f.listFiles();
+			for (int i = 0; i < list.length; i++) 
+				deleteFile(list[i]);							
+		}
+		f.delete();
+	}
+	
 	protected void tearDown() throws Exception {
 		tree.dispose();
 		tree = null;
 		tviewer = null;
+		File root = (File) directoryModelTree.getChildren(null)[0];
+		deleteFile(root);
 		super.tearDown();
 	}
 	
 	
-	private void assertEqualsTreeNode (Object viewerNode, Object modelNode) {
+	private void assertEqualsTreeNode (Object viewerNode, Object modelNode, ITree model) {
 		assertEquals(viewerNode, modelNode);
 		Object[] viewerChildren = ((ITreeContentProvider)tviewer.getContentProvider()).getChildren(viewerNode);
 		if (viewerChildren.length==0)
 			viewerChildren=null;
-		Object[] modelChildren = treeModel.getChildren(modelNode);
+		Object[] modelChildren = model.getChildren(modelNode);
 		if (modelChildren!=null && modelChildren.length==0)
 			modelChildren=null;
 		
@@ -74,7 +158,7 @@ public class TreeScenarios extends ScenariosTestCase {
 		assertEquals(viewerChildren.length, modelChildren.length);
 		
 		for (int i = 0; i < modelChildren.length; i++) 
-			assertEqualsTreeNode(viewerChildren[i], modelChildren[i]);		
+			assertEqualsTreeNode(viewerChildren[i], modelChildren[i], model);		
 	}
 	
 	/**
@@ -86,11 +170,11 @@ public class TreeScenarios extends ScenariosTestCase {
 	 */
 	public void test_Trees_Scenario01() {
 		
-		getDbc().bind(new Property(tviewer, ViewersProperties.CONTENT), treeModel, null);
+		getDbc().bind(new Property(tviewer, ViewersProperties.CONTENT), catalogModelTree, null);
 				
 		
 		// null for a parent, represents root elements
-		assertEqualsTreeNode(null, null);
+		assertEqualsTreeNode(null, null, catalogModelTree);
 	
 	}
 	
@@ -115,9 +199,9 @@ public class TreeScenarios extends ScenariosTestCase {
 		treeDescription.addColumn(Account.class, "firstName");
 		treeDescription.addColumn(Account.class, "lastName");
 		
-		getDbc().bind(treeDescription, treeModel, null);
+		getDbc().bind(treeDescription, catalogModelTree, null);
 		
-		assertEqualsTreeNode(null, null);
+		assertEqualsTreeNode(null, null, catalogModelTree);
 		
 	}
 	
@@ -150,15 +234,74 @@ public class TreeScenarios extends ScenariosTestCase {
 		modelDescription.addChildrenProperty(Catalog.class, "categories");
 		modelDescription.addChildrenProperty(Catalog.class, "lodgings");
 		modelDescription.addChildrenProperty(Catalog.class, "accounts");
-		
-		
+				
 		modelDescription.addChildrenProperty(Category.class, "adventures");
+		
+		
 		
 		getDbc().bind(treeDescription, modelDescription, null);
 						
-		assertEqualsTreeNode(null, null);
+		assertEqualsTreeNode(null, null, catalogModelTree);
 		
 	}
 
+	
+	private File createFile(File directory, String name) {
+		File f = new File(directory, name);
+		try {
+			f.createNewFile();
+		} catch (IOException e) {
+			fail(e.getMessage());
+		}
+		return f;
+	}
+	
+	private File createDir(File directory, String name) {
+		File f = new File(directory, name);
+		f.mkdir();
+		return f;
+	}
+	
+	/**
+	 * Test a simple file system.
+	 */
+	public void test_Trees_Scenario04() {
+		
+		// Describe the Viewer
+		TreeViewerDescription treeDescription = new TreeViewerDescription(tviewer);
+		treeDescription.addColumn(File.class, "name");
+		
+		// Build  a file system.
+		File root = (File) directoryModelTree.getChildren(null)[0];
+		
+		createFile(root, "rootfile1");
+		createFile(root, "rootfile2");
+		createFile(root, "rootfile3");
+		
+		root = createDir(root, "secondLevel");
+		createFile(root, "secondfile1");
+		File file2 = createFile(root, "secondfile2");
+		createFile(root, "secondfile3");
+		
+		
+		
+		getDbc().bind(treeDescription, directoryModelTree, null);
+						
+		// Test that all is there 
+		assertEqualsTreeNode(null, null, directoryModelTree);
+		
+		File file4 = createFile(root, "secondLevel4");
+		directoryModelTree.setChildren(root, root.listFiles()); // This model does not listen to the file system.
+																// this call will induce it to fires the change event.
+		assertEqualsTreeNode(null, null, directoryModelTree);
+		
+		file2.delete();
+		directoryModelTree.setChildren(root, root.listFiles());
+		assertEqualsTreeNode(null, null, directoryModelTree);
+		
+		file4.delete();
+		directoryModelTree.setChildren(root, root.listFiles());
+		assertEqualsTreeNode(null, null, directoryModelTree);
+	}
 
 }
