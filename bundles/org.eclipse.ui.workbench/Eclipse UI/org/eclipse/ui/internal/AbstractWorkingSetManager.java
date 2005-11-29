@@ -537,7 +537,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 			return;
 		WorkingSetDescriptor[] descriptors= WorkbenchPlugin.getDefault()
         	.getWorkingSetRegistry().getDescriptorsForNamespace(event.getBundle().getSymbolicName());
-		synchronized(this) {
+		synchronized(updaters) {
 			for (int i= 0; i < descriptors.length; i++) {
 				WorkingSetDescriptor descriptor= descriptors[i];
 				List workingSets= getWorkingSetsForId(descriptor.getId());
@@ -568,7 +568,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 			.getWorkingSetRegistry().getWorkingSetDescriptor(workingSet.getId());
     	if (descriptor == null || !descriptor.isDeclaringPluginActive())
     		return;
-		synchronized(this) {
+		synchronized(updaters) {
 	    	IWorkingSetUpdater updater= getUpdater(descriptor);
 	    	if (!updater.contains(workingSet))
 	    		updater.add(workingSet);
@@ -589,11 +589,14 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		return updater;
 	}
 
-	private synchronized void removeFromUpdater(IWorkingSet workingSet) {
-    	IWorkingSetUpdater updater= (IWorkingSetUpdater)updaters.get(workingSet.getId());
-    	if (updater != null) {
-    		updater.remove(workingSet);
-    	}
+	private void removeFromUpdater(IWorkingSet workingSet) {
+		synchronized (updaters) {
+			IWorkingSetUpdater updater = (IWorkingSetUpdater) updaters
+					.get(workingSet.getId());
+			if (updater != null) {
+				updater.remove(workingSet);
+			}
+		}
     }	
     
     
