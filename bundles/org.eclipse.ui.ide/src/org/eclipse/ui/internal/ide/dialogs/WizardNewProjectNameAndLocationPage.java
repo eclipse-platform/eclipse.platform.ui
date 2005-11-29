@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
-import java.io.File;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -314,9 +312,8 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
      */
     private String getProjectNameFieldValue() {
         if (projectNameField == null)
-            return ""; //$NON-NLS-1$
-        else
-            return projectNameField.getText().trim();
+            return IDEResourceInfoUtils.EMPTY_STRING; 
+       return projectNameField.getText().trim();
     }
 
     /**
@@ -327,9 +324,8 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
      */
     private String getProjectLocationFieldValue() {
         if (locationPathField == null)
-            return ""; //$NON-NLS-1$
-        else
-            return locationPathField.getText().trim();
+        	return IDEResourceInfoUtils.EMPTY_STRING; 
+       return locationPathField.getText().trim();
     }
 
     /**
@@ -341,9 +337,8 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
         dialog.setMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_directoryLabel);
 
         String dirName = getProjectLocationFieldValue();
-        if (!dirName.equals("")) { //$NON-NLS-1$
-            File path = new File(dirName);
-            if (path.exists())
+        if (dirName.length() > 0) { 
+            if (IDEResourceInfoUtils.exists(dirName))
                 dialog.setFilterPath(new Path(dirName).toOSString());
         }
 

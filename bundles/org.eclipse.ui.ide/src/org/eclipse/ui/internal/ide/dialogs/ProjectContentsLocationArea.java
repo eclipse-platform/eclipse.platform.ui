@@ -266,7 +266,7 @@ public class ProjectContentsLocationArea {
 		String dirName = getPathFromLocationField();
 		if (!dirName.equals(IDEResourceInfoUtils.EMPTY_STRING)) {
 			IFileInfo info = IDEResourceInfoUtils.getFileInfo(dirName);
-			if (info.exists())
+			if (info != null && info.exists())
 				dialog.setFilterPath(dirName);
 		}
 

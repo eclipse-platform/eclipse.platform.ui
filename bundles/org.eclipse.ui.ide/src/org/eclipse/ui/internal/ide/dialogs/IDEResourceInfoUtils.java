@@ -393,5 +393,18 @@ public class IDEResourceInfoUtils {
 		result.toArray(stores);
 		return stores;
 	}
+	
+	/**
+	 * Return whether or not the file called pathName exists.
+	 * @param pathName
+	 * @return boolean <code>true</code> if the file exists.
+	 * @see IFileInfo#exists()
+	 */
+	public static boolean exists(String pathName) {
+		IFileInfo info = getFileInfo(pathName);
+		if(info == null)
+			return false;
+		return info.exists();
+	}
 
 }

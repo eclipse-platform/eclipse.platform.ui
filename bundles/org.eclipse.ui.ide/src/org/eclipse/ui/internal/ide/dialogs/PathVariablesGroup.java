@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -18,6 +17,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -64,8 +64,14 @@ public class PathVariablesGroup {
      * Simple data structure that holds a path variable name/value pair.
      */
     public static class PathVariableElement {
+        /**
+         * The name of the element.
+         */
         public String name;
 
+        /**
+         * The path of the element.
+         */
         public IPath path;
     }
 
@@ -446,13 +452,13 @@ public class PathVariablesGroup {
             TableItem item = new TableItem(variableTable, SWT.NONE);
             String varName = (String) varNames.next();
             IPath value = (IPath) tempPathVariables.get(varName);
-            File file = value.toFile();
+            IFileInfo file = IDEResourceInfoUtils.getFileInfo(value);
 
             item.setText(varName + " - " + value.toOSString()); //$NON-NLS-1$ 
             // the corresponding variable name is stored in each table widget item
             item.setData(varName);
-            item.setImage(file.exists() ? (file.isFile() ? FILE_IMG
-                    : FOLDER_IMG) : imageUnkown);
+            item.setImage(file.exists() ? (file.isDirectory() ? FOLDER_IMG 
+                    : FILE_IMG ) : imageUnkown);
             if (varName.equals(selectedVarName))
                 selectedVarIndex = variableTable.getItemCount() - 1;
         }
@@ -468,7 +474,7 @@ public class PathVariablesGroup {
     /**
      * Commits the temporary state to the path variable manager in response to user
      * confirmation.
-     *
+     * @return boolean <code>true</code> if there were no problems.
      * @see IPathVariableManager#setValue(String, IPath)
      */
     public boolean performOk() {

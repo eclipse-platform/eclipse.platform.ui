@@ -472,7 +472,7 @@ public class CreateLinkedResourceGroup {
         String resolvedLinkTarget = resolvedPathLabelData.getText();
         path = new Path(resolvedLinkTarget);
         IFileInfo linkTargetFile = IDEResourceInfoUtils.getFileInfo(resolvedLinkTarget);
-        if (linkTargetFile.exists()) {
+        if (linkTargetFile != null && linkTargetFile.exists()) {
             IStatus fileTypeStatus = validateFileType(linkTargetFile);
             if (fileTypeStatus.isOK() == false)
                 return fileTypeStatus;

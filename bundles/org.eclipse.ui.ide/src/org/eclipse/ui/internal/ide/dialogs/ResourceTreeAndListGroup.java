@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,7 +20,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.commands.common.EventManager;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -540,19 +541,12 @@ public class ResourceTreeAndListGroup extends EventManager implements
      * @return String
      */
     protected String getFullLabel(Object treeElement, String parentLabel) {
-        String parentName = parentLabel;
+        IPath parentName = new Path(parentLabel);
 
-        if (parentLabel == null)
-            parentName = ""; //$NON-NLS-1$
-
-        if (parentName.length() > 0 && (!parentName.endsWith(File.separator))) {
-            parentName += File.separatorChar;
-        }
-        
-        String elementText = treeLabelProvider.getText(treeElement);
+       String elementText = treeLabelProvider.getText(treeElement);
         if(elementText == null)
-        	return parentName;
-        return parentName + elementText;
+        	return parentName.toString();
+        return parentName.append(elementText).toString();
     }
 
     /**
@@ -616,6 +610,7 @@ public class ResourceTreeAndListGroup extends EventManager implements
 
     /**
      *	Set the initial checked state of the passed list element to true.
+     * @param element
      */
     public void initialCheckListItem(Object element) {
         Object parent = treeContentProvider.getParent(element);
@@ -628,8 +623,9 @@ public class ResourceTreeAndListGroup extends EventManager implements
     }
 
     /**
-     *	Set the initial checked state of the passed element to true,
-     *	as well as to all of its children and associated list elements
+     * Set the initial checked state of the passed element to true,
+     * as well as to all of its children and associated list elements
+     * @param element
      */
     public void initialCheckTreeItem(Object element) {
         treeItemChecked(element, true);
@@ -797,6 +793,7 @@ public class ResourceTreeAndListGroup extends EventManager implements
     /**
      * Select or deselect all of the elements in the tree depending on the value of the selection
      * boolean. Be sure to update the displayed files as well.
+     * @param selection
      */
     public void setAllSelections(final boolean selection) {
 
@@ -843,7 +840,8 @@ public class ResourceTreeAndListGroup extends EventManager implements
     }
 
     /**
-     *	Set the sorter that is to be applied to self's list viewer
+     * Set the sorter that is to be applied to self's list viewer
+     * @param sorter
      */
     public void setListSorter(ViewerSorter sorter) {
         listViewer.setSorter(sorter);
@@ -900,7 +898,8 @@ public class ResourceTreeAndListGroup extends EventManager implements
     }
 
     /**
-     *	Set the sorter that is to be applied to self's tree viewer
+     * Set the sorter that is to be applied to self's tree viewer
+     * @param sorter
      */
     public void setTreeSorter(ViewerSorter sorter) {
         treeViewer.setSorter(sorter);

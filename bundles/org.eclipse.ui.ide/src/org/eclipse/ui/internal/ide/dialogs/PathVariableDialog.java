@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
-import java.io.File;
 import java.util.Set;
 
 import org.eclipse.core.resources.IPathVariableManager;
@@ -529,7 +528,7 @@ public class PathVariableDialog extends TitleAreaDialog {
             // the variable value is a relative path
             message = IDEWorkbenchMessages.PathVariableDialog_pathIsRelativeMessage;
             newValidationStatus = IMessageProvider.ERROR;
-        } else if (!new File(variableValue).exists()) {
+        } else if (!IDEResourceInfoUtils.exists(variableValue)) {
             // the path does not exist (warning)
             message = IDEWorkbenchMessages.PathVariableDialog_pathDoesNotExistMessage;
             newValidationStatus = IMessageProvider.WARNING;
