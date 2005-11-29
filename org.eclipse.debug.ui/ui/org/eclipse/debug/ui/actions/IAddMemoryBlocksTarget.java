@@ -12,7 +12,6 @@
 package org.eclipse.debug.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -32,10 +31,9 @@ public interface IAddMemoryBlocksTarget {
 	 * 
 	 * @param part the part on which the action has been invoked
 	 * @param selection the selection on which the action has been invoked
-	 * @param target IMemoryBlockRetrieval element for adding the memory block
 	 * @throws CoreException if unable to perform the action 
 	 */
-	public boolean canAddMemoryBlocks(IWorkbenchPart part, ISelection selection, IMemoryBlockRetrieval target) throws CoreException;
+	public boolean canAddMemoryBlocks(IWorkbenchPart part, ISelection selection) throws CoreException;
 	
 	/**
 	 * Returns whether this target will support adding memory block from the specified
@@ -56,13 +54,11 @@ public interface IAddMemoryBlocksTarget {
 	 * 
 	 * @param part the part on which the action has been invoked
 	 * @param selection the selection on which the action has been invoked
-	 * @param target <code>IMemoryBlockRetrieval</code> element to perform the "add memory blocks" action on
-	 * @return a the memory blocks added
 	 * @throws CoreException if unable to perform the action 
 	 * 
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingManager
 	 * @see org.eclipse.debug.core.IMemoryBlockManager
 	 */
-	public void addMemoryBlocks(IWorkbenchPart part, ISelection selection, IMemoryBlockRetrieval target) throws CoreException;
+	public void addMemoryBlocks(IWorkbenchPart part, ISelection selection) throws CoreException;
 }

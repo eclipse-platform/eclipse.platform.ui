@@ -62,7 +62,6 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	private IWorkbenchPart fPart;
 	private ISelection fCurrentSelection;
 	private IAddMemoryRenderingsTarget fActionDelegate;
-	private IMemoryBlockRetrieval fRetrieval;
 	private IMenuCreator fMenuCreator;
 	private IAdaptable fDebugContext;
 	private IWorkbenchWindow fWindow;
@@ -78,10 +77,10 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 		}
 
 		public void runWithEvent(Event event) {
-			if (fActionDelegate != null && fRetrieval != null)
+			if (fActionDelegate != null)
 			{
 				try {
-					fActionDelegate.addMemoryRenderings(fPart, fCurrentSelection, fRetrieval, new IMemoryRenderingType[]{fRenderingType});
+					fActionDelegate.addMemoryRenderings(fPart, fCurrentSelection, new IMemoryRenderingType[]{fRenderingType});
 				} catch (CoreException e) {
 					DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.AddMemoryRenderingActionDelegate_0, ActionMessages.AddMemoryRenderingActionDelegate_1, e);
 				}
@@ -117,9 +116,9 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 		
 		private void fillMenu(Menu parent)
 		{
-			if (fActionDelegate != null && fRetrieval != null)
+			if (fActionDelegate != null)
 			{
-				IMemoryRenderingType[] types = fActionDelegate.getMemoryRenderingTypes(fPart, fCurrentSelection, fRetrieval);
+				IMemoryRenderingType[] types = fActionDelegate.getMemoryRenderingTypes(fPart, fCurrentSelection);
 				
 				for (int i=0; i<types.length; i++)
 				{
@@ -192,7 +191,6 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 		}
 		
 		fActionDelegate = target;
-		fRetrieval = retrieval;
 	}
 
 	public void init(IViewPart view) {
@@ -214,7 +212,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 		if (fActionDelegate != null)
 		{
 			try {
-				action.setEnabled(fActionDelegate.canAddMemoryRenderings(fPart, selection, fRetrieval));
+				action.setEnabled(fActionDelegate.canAddMemoryRenderings(fPart, selection));
 				bindAction(action);
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
@@ -281,7 +279,6 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 		fPart = null;
 		fCurrentSelection = null;
 		fActionDelegate = null;
-		fRetrieval = null;
 		
 		// remove debug context listener
 		bindPart(null);

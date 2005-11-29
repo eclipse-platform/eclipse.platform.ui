@@ -57,8 +57,7 @@ public class RetargetAddMemoryBlockAction extends AddMemoryBlockAction {
 			try {
 				if (target.supportsAddMemoryBlocks(getMemoryView()))
 				{
-					IMemoryBlockRetrieval standardMemRetrieval = getMemoryBlockRetrieval(selection);
-					target.addMemoryBlocks(getMemoryView(), getMemoryView().getSite().getSelectionProvider().getSelection(), standardMemRetrieval);
+					target.addMemoryBlocks(getMemoryView(), getMemoryView().getSite().getSelectionProvider().getSelection());
 				}
 				else
 					super.run();
@@ -81,9 +80,8 @@ public class RetargetAddMemoryBlockAction extends AddMemoryBlockAction {
 			{
 				if (target.supportsAddMemoryBlocks(getMemoryView()))
 				{
-					IMemoryBlockRetrieval standardMemRetrieval = getMemoryBlockRetrieval(debugContext);
 					if (getMemoryView().getSite().getSelectionProvider() != null)
-						setEnabled(target.canAddMemoryBlocks(getMemoryView(), getMemoryView().getSite().getSelectionProvider().getSelection(), standardMemRetrieval));
+						setEnabled(target.canAddMemoryBlocks(getMemoryView(), getMemoryView().getSite().getSelectionProvider().getSelection()));
 					else
 						super.updateAction(debugContext);
 				}

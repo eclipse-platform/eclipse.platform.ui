@@ -12,7 +12,6 @@
 package org.eclipse.debug.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
@@ -43,10 +42,9 @@ public interface IAddMemoryRenderingsTarget {
 	 * 
 	 * @param part the part on which the action has been invoked
 	 * @param selection the selection on which the action has been invoked
-	 * @param retrieval IMemoryBlockRetrieval element for adding the memory block
 	 * @throws CoreException if an error has occurred
 	 */
-	public boolean canAddMemoryRenderings(IWorkbenchPart part, ISelection selection, IMemoryBlockRetrieval retrieval) throws CoreException;
+	public boolean canAddMemoryRenderings(IWorkbenchPart part, ISelection selection) throws CoreException;
 	
 	/**
 	 * Returns whether this target will support adding memory renderings from the specified
@@ -65,7 +63,6 @@ public interface IAddMemoryRenderingsTarget {
 	 * 
 	 * @param part the part on which the action has been invoked
 	 * @param selection the selection on which the action has been invoked
-	 * @param retrieval <code>IMemoryBlockRetrieval</code> element to perform the "add memory block" action on
 	 * @param renderingTypes renderings to add
 	 * @throws CoreException if unable to perform the action 
 	 * 
@@ -75,15 +72,14 @@ public interface IAddMemoryRenderingsTarget {
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSite
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingContainer
 	 */
-	public void addMemoryRenderings(IWorkbenchPart part, ISelection selection, IMemoryBlockRetrieval retrieval, IMemoryRenderingType[] renderingTypes) throws CoreException;
+	public void addMemoryRenderings(IWorkbenchPart part, ISelection selection, IMemoryRenderingType[] renderingTypes) throws CoreException;
 	
 	/**
 	 * Return a list of rendering types that can be added based on the workbench part and its selection.
 	 * @param part the part asking for the list of rendering types
-	 * @param selection current selection from the part
-	 * @param retrieval <code>IMemoryBlockRetrieval</code> element to perform the "add memory block" action 
+	 * @param selection current selection from the part 
 	 * @return a list of rendering types applicable for the current selection, empty list if no applicable
 	 * type can be found.
 	 */
-	public IMemoryRenderingType[] getMemoryRenderingTypes(IWorkbenchPart part, ISelection selection, IMemoryBlockRetrieval retrieval);
+	public IMemoryRenderingType[] getMemoryRenderingTypes(IWorkbenchPart part, ISelection selection);
 }
