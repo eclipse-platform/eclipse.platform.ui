@@ -96,10 +96,12 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 	 * 
 	 * @param refactoring
 	 *            the refactoring being executed
+	 * @param descriptor
+	 *            the associated refactoring descriptor
 	 * @param monitor
 	 *            the progress monitor to use
 	 */
-	protected void aboutToPerformRefactoring(final Refactoring refactoring, final IProgressMonitor monitor) {
+	protected void aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
 		// Do nothing
 	}
 
@@ -160,7 +162,7 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 					if (execute) {
 						final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 						try {
-							aboutToPerformRefactoring(refactoring, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							aboutToPerformRefactoring(refactoring, descriptor, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 							ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 90, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						} finally {
 							refactoringPerformed(refactoring, new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));

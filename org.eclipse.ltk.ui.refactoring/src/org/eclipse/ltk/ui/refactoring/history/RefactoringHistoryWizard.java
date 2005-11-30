@@ -218,11 +218,13 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * 
 	 * @param refactoring
 	 *            the refactoring being executed
+	 * @param descriptor
+	 *            the associated refactoring descriptor
 	 * @param monitor
 	 *            the progress monitor to use
 	 * @return a status describing the outcome of the operation
 	 */
-	protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final IProgressMonitor monitor) {
+	protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
 		return new RefactoringStatus();
 	}
 
@@ -383,7 +385,11 @@ public class RefactoringHistoryWizard extends Wizard {
 	}
 
 	/**
-	 * Returns the current refactoring, in initialized state.
+	 * Returns the refactoring associated with the current refactoring
+	 * descriptor, in initialized state.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor
 	 * 
 	 * @param status
 	 *            the refactoring status
@@ -393,30 +399,16 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * @throws CoreException
 	 *             if an error occurs while creating the refactoring
 	 */
-	private Refactoring getCurrentRefactoring(final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
-		Assert.isNotNull(status);
-		Assert.isNotNull(monitor);
-		final RefactoringDescriptorProxy proxy= getCurrentDescriptor();
-		if (proxy != null) {
-			final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
-			try {
-				service.connect();
-				final RefactoringDescriptor descriptor= proxy.requestDescriptor(monitor);
-				if (descriptor != null && !descriptor.isUnknown()) {
-					final RefactoringInstanceFactory factory= RefactoringInstanceFactory.getInstance();
-					final Refactoring refactoring= factory.createRefactoring(descriptor);
-					if (refactoring instanceof IInitializableRefactoringComponent) {
-						final IInitializableRefactoringComponent component= (IInitializableRefactoringComponent) refactoring;
-						final RefactoringArguments arguments= factory.createArguments(descriptor);
-						if (arguments != null) {
-							status.merge(component.initialize(arguments));
-							if (!status.hasFatalError())
-								return refactoring;
-						}
-					}
-				}
-			} finally {
-				service.disconnect();
+	private Refactoring getCurrentRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
+		final RefactoringInstanceFactory factory= RefactoringInstanceFactory.getInstance();
+		final Refactoring refactoring= factory.createRefactoring(descriptor);
+		if (refactoring instanceof IInitializableRefactoringComponent) {
+			final IInitializableRefactoringComponent component= (IInitializableRefactoringComponent) refactoring;
+			final RefactoringArguments arguments= factory.createArguments(descriptor);
+			if (arguments != null) {
+				status.merge(component.initialize(arguments));
+				if (!status.hasFatalError())
+					return refactoring;
 			}
 		}
 		return null;
@@ -568,53 +560,66 @@ public class RefactoringHistoryWizard extends Wizard {
 			public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				Assert.isNotNull(monitor);
 				try {
-					monitor.beginTask(RefactoringUIMessages.RefactoringHistoryWizard_preparing_refactoring, 200);
+					monitor.beginTask(RefactoringUIMessages.RefactoringHistoryWizard_preparing_refactoring, 220);
 					result[0]= null;
 					if (!fAboutToPerformFired) {
 						try {
-							status.merge(fireAboutToPerformHistory(new SubProgressMonitor(monitor, 50)));
+							status.merge(fireAboutToPerformHistory(new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
 						} finally {
 							fAboutToPerformFired= true;
 						}
 					}
 					final boolean last= isLastRefactoring();
 					final boolean fatal= status.hasFatalError();
-					final RefactoringDescriptorProxy descriptor= getCurrentDescriptor();
-					preparePreviewPage(status, descriptor, last);
-					prepareErrorPage(status, descriptor, fatal, last || fatal);
+					final RefactoringDescriptorProxy proxy= getCurrentDescriptor();
+					preparePreviewPage(status, proxy, last);
+					prepareErrorPage(status, proxy, fatal, last || fatal);
 					fErrorPage.setRefactoring(null);
 					if (!status.isOK()) {
 						result[0]= fErrorPage;
-					} else if (descriptor != null) {
-						final Refactoring refactoring= getCurrentRefactoring(status, new SubProgressMonitor(monitor, 10));
-						if (refactoring != null && status.isOK()) {
-							fPreviewPage.setRefactoring(refactoring);
-							fErrorPage.setRefactoring(refactoring);
-							aboutToPerformRefactoring(refactoring, new SubProgressMonitor(monitor, 50));
-							status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 20), CheckConditionsOperation.INITIAL_CONDITONS));
-							if (!status.isOK()) {
-								prepareErrorPage(status, descriptor, fatal, last);
-								result[0]= fErrorPage;
-							} else {
-								status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 65), CheckConditionsOperation.FINAL_CONDITIONS));
-								if (!status.isOK()) {
-									prepareErrorPage(status, descriptor, fatal, last);
-									result[0]= fErrorPage;
-								} else {
-									final Change change= createChange(refactoring, new SubProgressMonitor(monitor, 5));
-									getShell().getDisplay().syncExec(new Runnable() {
+					} else if (proxy != null) {
+						final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+						try {
+							service.connect();
+							final RefactoringDescriptor descriptor= proxy.requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							if (descriptor != null && !descriptor.isUnknown()) {
+								final Refactoring refactoring= getCurrentRefactoring(descriptor, status, new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+								if (refactoring != null && status.isOK()) {
+									fPreviewPage.setRefactoring(refactoring);
+									fErrorPage.setRefactoring(refactoring);
+									aboutToPerformRefactoring(refactoring, descriptor, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+									status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), CheckConditionsOperation.INITIAL_CONDITONS));
+									if (!status.isOK()) {
+										prepareErrorPage(status, proxy, fatal, last);
+										result[0]= fErrorPage;
+									} else {
+										status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 65, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), CheckConditionsOperation.FINAL_CONDITIONS));
+										if (!status.isOK()) {
+											prepareErrorPage(status, proxy, fatal, last);
+											result[0]= fErrorPage;
+										} else {
+											final Change change= createChange(refactoring, new SubProgressMonitor(monitor, 5, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+											getShell().getDisplay().syncExec(new Runnable() {
 
-										public final void run() {
-											fPreviewPage.setChange(change);
+												public final void run() {
+													fPreviewPage.setChange(change);
+												}
+											});
+											result[0]= fPreviewPage;
 										}
-									});
-									result[0]= fPreviewPage;
+									}
 								}
+							} else {
+								status.merge(RefactoringStatus.createFatalErrorStatus(RefactoringUIMessages.RefactoringHistoryWizard_error_resolving_refactoring));
+								prepareErrorPage(status, proxy, fatal, last);
+								result[0]= fErrorPage;
 							}
-						} else {
-							prepareErrorPage(status, descriptor, fatal, last);
-							result[0]= fErrorPage;
+						} finally {
+							service.disconnect();
 						}
+					} else {
+						prepareErrorPage(status, proxy, fatal, last);
+						result[0]= fErrorPage;
 					}
 				} catch (CoreException exception) {
 					throw new InvocationTargetException(exception);
@@ -702,7 +707,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 			final PerformMultipleRefactoringsOperation operation= new PerformMultipleRefactoringsOperation(new RefactoringHistoryImplementation(descriptors)) {
 
-				protected void aboutToPerformRefactoring(final Refactoring refactoring, final IProgressMonitor monitor) {
+				protected void aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
 					Platform.run(new ISafeRunnable() {
 
 						public void handleException(final Throwable exception) {
@@ -710,7 +715,7 @@ public class RefactoringHistoryWizard extends Wizard {
 						}
 
 						public final void run() throws Exception {
-							RefactoringHistoryWizard.this.aboutToPerformRefactoring(refactoring, monitor);
+							RefactoringHistoryWizard.this.aboutToPerformRefactoring(refactoring, descriptor, monitor);
 						}
 					});
 				}
