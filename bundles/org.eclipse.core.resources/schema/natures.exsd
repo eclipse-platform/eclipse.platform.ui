@@ -10,7 +10,7 @@
 (or &quot;natures&quot; for short&quot;).  A nature associates lifecycle 
 behaviour with a project.  Natures are installed on 
 a per-project basis using the setDescription method defined on 
-&lt;samp&gt;org.eclipes.core.resources.IProject&lt;/samp&gt;.  They are 
+&lt;samp&gt;org.eclipse.core.resources.IProject&lt;/samp&gt;.  They are 
 configured when added to a project and deconfigured 
 when removed from the project.  For example, the Java nature 
 might install a Java builder and do other project 
