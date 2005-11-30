@@ -45,10 +45,16 @@ public class IdentityConverter extends Converter implements IConverter {
 	}
 
 	public Object convertTargetToModel(Object object) {
+		if (getModelType().equals(String.class) && object == null) {
+			return ""; //$NON-NLS-1$
+		}
 		return object;
 	}
 
 	public Object convertModelToTarget(Object object) {
+		if (getTargetType().equals(String.class) && object == null) {
+			return ""; //$NON-NLS-1$
+		}
 		return object;
 	}
 
