@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding;
 
+import java.util.EventObject;
+
 /**
  * An event describing a change to an updatable object.
  * <p>
@@ -27,10 +29,13 @@ package org.eclipse.jface.databinding;
  * 
  * @since 3.2
  */
-public class ChangeEvent implements IChangeEvent {
+public class ChangeEvent extends EventObject implements IChangeEvent {
 
 
-	private final IUpdatable updatable;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private final int changeType;
 
@@ -77,7 +82,7 @@ public class ChangeEvent implements IChangeEvent {
 	 */
 	public ChangeEvent(IUpdatable updatable, int changeType, Object oldValue,
 			Object newValue, Object parent, int position) {
-		this.updatable = updatable;
+		super(updatable);
 		this.oldValue = oldValue;
 		this.changeType = changeType;
 		this.newValue = newValue;
@@ -131,7 +136,7 @@ public class ChangeEvent implements IChangeEvent {
 	 * @return the updatable
 	 */
 	public IUpdatable getUpdatable() {
-		return updatable;
+		return (IUpdatable)getSource();
 	}
 
 	/**
