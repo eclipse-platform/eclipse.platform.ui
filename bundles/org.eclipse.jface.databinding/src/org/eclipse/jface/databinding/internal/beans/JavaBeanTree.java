@@ -39,7 +39,7 @@ public class JavaBeanTree implements ITree {
 	
 	private HashMap descriptors = new HashMap();
 	
-	private ITree.TreeChangeSupport changeSupport = null;
+	private ITree.ChangeSupport changeSupport = null;
 	
 	/**
 	 * @param modelDescripton
@@ -208,7 +208,7 @@ public class JavaBeanTree implements ITree {
 		if (listener==null)
 			return;
 		if (changeSupport==null)
-			changeSupport = new ITree.TreeChangeSupport(this);
+			changeSupport = new ITree.ChangeSupport(this);
 		changeSupport.addTreeChangeListener(listener);		
 	}
 

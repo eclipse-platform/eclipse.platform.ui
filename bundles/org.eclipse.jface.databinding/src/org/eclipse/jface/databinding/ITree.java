@@ -116,7 +116,7 @@ public interface ITree  {
 	 */
 	public static class ChangeSupport {
 		private ITree source;
-		List listeners = null;
+		private List listeners = null;
 		
 		/**
 		 * @param source
@@ -164,7 +164,8 @@ public interface ITree  {
 			Object oval = evt.getOldValue();
 			Object nval = evt.getNewValue();
 			
-			if (oval != null && nval != null && oval.equals(nval))
+			if (listeners==null ||
+				(oval != null && nval != null && oval.equals(nval)))
 				return;
 			
 			ChangeListener[] list = (ChangeListener[])listeners.toArray(new ChangeListener[listeners.size()]);

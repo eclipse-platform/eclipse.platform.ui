@@ -55,7 +55,7 @@ public class TreeScenarios extends ScenariosTestCase {
 		catalogModelTree = SampleData.CATEGORY_TREE;
 		
 		directoryModelTree = new ITree() {					
-			private ITree.TreeChangeSupport changeSupport = null;			
+			private ITree.ChangeSupport changeSupport = null;			
 			private Object[] rootObjects = Collections.EMPTY_LIST.toArray();
 
 			public Class[] getTypes() {
@@ -97,7 +97,7 @@ public class TreeScenarios extends ScenariosTestCase {
 
 			public void addTreeChangeListener(ITree.ChangeListener listener) {
 				if (changeSupport==null)
-					changeSupport = new ITree.TreeChangeSupport(this);
+					changeSupport = new ITree.ChangeSupport(this);
 				changeSupport.addTreeChangeListener(listener);
 			}
 
