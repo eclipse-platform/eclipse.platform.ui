@@ -204,7 +204,7 @@ public interface ITree  {
 	
     /**
      * The implementor of an ITree is responsible to provide the event
-     * model for changes on the tree shape and content.  It should be using 
+     * model for changes on the tree's shape and content.  It should be using 
      * <code>ITree.ChangeEvent</code> to notify the listener of any changes to the tree.
      * 
      * @param listener

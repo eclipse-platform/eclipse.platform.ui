@@ -16,9 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableCollection;
@@ -37,13 +35,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		public void propertyChange(java.beans.PropertyChangeEvent event) {
 			if (!updating) {
 				Object[] values = getValues();
-				// make a copy of the set of objects listened to
-				Set elementsToUnhook = hookToValues(values);
-				for (Iterator it = elementsToUnhook.iterator(); it.hasNext();) {
-					Object o = it.next();
-					elementsListenedTo.remove(new IdentityWrapper(o));
-					unhookListener(elementListener, o);
-				}
+				elementListenerSupport.setHookTargets(values);
 				fireChangeEvent(IChangeEvent.CHANGE, null,
 						null, IChangeEvent.POSITION_UNKNOWN);
 			}
@@ -69,7 +61,11 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 	
 	private Class elementType=null;
 	
-	private Set elementsListenedTo = new HashSet();
+	private ListenerSupport collectionListenSupport = new ListenerSupport(collectionListener);
+	
+	private ListenerSupport elementListenerSupport = new ListenerSupport(elementListener);
+	
+	
 	
 	private static class IdentityWrapper {
 		private final Object o;
@@ -95,35 +91,9 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 			PropertyDescriptor descriptor, Class elementType) {
 		this.object = object;
 		this.descriptor = descriptor;
-		this.elementType = elementType;		
-		hookListener(collectionListener, this.object);
-		hookToValues(getValues());
-	}
-
-	private void hookListener(PropertyChangeListener listener, Object target) {
-		Method addPropertyChangeListenerMethod = null;
-		try {
-			addPropertyChangeListenerMethod = target.getClass().getMethod(
-					"addPropertyChangeListener", //$NON-NLS-1$
-					new Class[] { PropertyChangeListener.class });
-		} catch (SecurityException e) {
-			// ignore
-		} catch (NoSuchMethodException e) {
-			// ignore
-		}
-		if (addPropertyChangeListenerMethod != null) {
-			try {
-				addPropertyChangeListenerMethod.invoke(target,
-						new Object[] { listener });
-				return;
-			} catch (IllegalArgumentException e) {
-				// ignore
-			} catch (IllegalAccessException e) {
-				// ignore
-			} catch (InvocationTargetException e) {
-				// ignore
-			}
-		}
+		this.elementType = elementType;	
+		collectionListenSupport.hookListener(this.object);
+		elementListenerSupport.setHookTargets(getValues());		
 	}
 
 	private void unhookListener(PropertyChangeListener listener, Object target) {
@@ -154,10 +124,8 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 
 	public void dispose() {
 		super.dispose();
-		for (Iterator it = elementsListenedTo.iterator(); it.hasNext();) {
-			unhookListener(elementListener, it.next());
-		}
-		unhookListener(collectionListener, object);
+		elementListenerSupport.dispose();
+		collectionListenSupport.dispose();
 	}
 
 	public int getSize() {
@@ -245,20 +213,6 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 
 	public Class getElementType() {		
 		return elementType;
-	}
-
-	private Set hookToValues(Object[] values) {
-		Set elementsToUnhook = new HashSet(elementsListenedTo);
-		for (int i = 0; i < values.length; i++) {
-			Object newValue = values[i];
-			IdentityWrapper identityWrapper = new IdentityWrapper(newValue);
-			if(!elementsToUnhook.remove(identityWrapper)) {
-				// element was not in the set, add listener to it
-				elementsListenedTo.add(identityWrapper);
-				hookListener(elementListener, newValue);
-			}
-		}
-		return elementsToUnhook;
 	}
 
 }

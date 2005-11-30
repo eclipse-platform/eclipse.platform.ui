@@ -233,6 +233,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 			Lodging l = catalog.getLodgings()[i];
 			l.setName("Changed: " + l.getName());
 		}
+		spinEventLoop(0); // force Async. efforts
 		assertEquals(getColumn(catalog.getLodgings(), "name"),
 				getComboContent());
 
