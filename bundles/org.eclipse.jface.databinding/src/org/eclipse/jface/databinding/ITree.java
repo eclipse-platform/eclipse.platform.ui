@@ -215,6 +215,11 @@ public interface ITree  {
      * @param listener
      */
     public void removeTreeChangeListener(ChangeListener listener);
+    
+    /** 
+     *
+     */
+    public void dispose();
 
 	
 	/**

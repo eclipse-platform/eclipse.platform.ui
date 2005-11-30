@@ -32,6 +32,7 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 			
 	protected TreeViewer viewer;
 	
+	// TODO use identityWrapper
 	private Map nodes = new HashMap();
 	
 	private Object rootKey=this;

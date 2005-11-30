@@ -140,6 +140,7 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 	public void dispose() {
 		super.dispose();
 		tree.removeTreeChangeListener(treeListener);
+		tree.dispose();
 	}
 
 	public Class[] getTypes() {

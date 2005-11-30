@@ -24,10 +24,12 @@ import java.util.Set;
  */
 public class ListenerSupport {
 
-	
-	
-	private static class IdentityWrapper {
-		private final Object o;
+	/**
+	 * @since 3.2
+	 *
+	 */
+	 static class IdentityWrapper {
+		final Object o;
 		IdentityWrapper(Object o) {
 			this.o = o;
 		}
@@ -159,5 +161,19 @@ public class ListenerSupport {
 			elementsListenedTo=null;
 			listener=null;
 		}
+	}
+	
+	/**
+	 * @return elements that were registred to
+	 */
+	public Object[] getHookedTargets() {
+		Object[] targets = null;
+		if (elementsListenedTo!=null && elementsListenedTo.size()>0) {
+			Object[] identityList = elementsListenedTo.toArray();
+			targets = new Object[identityList.length];
+			for (int i = 0; i < identityList.length; i++) 
+				targets[i]=((IdentityWrapper)identityList[i]).o;							
+		}
+		return targets;
 	}
 }

@@ -12,7 +12,10 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.ITree;
@@ -38,6 +41,9 @@ public class TreeScenarios extends ScenariosTestCase {
 	Tree tree=null;
 	TreeViewer tviewer = null;
 	Catalog catalog = null;
+	Account[] accounts;
+	Category[] categories;
+	Adventure[] adventures;
 	ITree   catalogModelTree = null;
 	ITree   directoryModelTree = null;	
 	
@@ -51,6 +57,13 @@ public class TreeScenarios extends ScenariosTestCase {
 		tviewer = new TreeViewer(tree);
 		
 		catalog = SampleData.CATALOG_2005; // Lodging source
+		accounts = catalog.getAccounts();
+		categories = catalog.getCategories();
+		List list = new ArrayList();
+		for (int i = 0; i < categories.length; i++) 
+			list.addAll(Arrays.asList(categories[i].getAdventures()));
+		adventures=(Adventure[]) list.toArray(new Adventure[list.size()]);
+		
 		
 		catalogModelTree = SampleData.CATEGORY_TREE;
 		
@@ -104,6 +117,10 @@ public class TreeScenarios extends ScenariosTestCase {
 			public void removeTreeChangeListener(ITree.ChangeListener listener) {
 				if (changeSupport!=null)
 					changeSupport.removeTreeChangeListener(listener);
+			}
+
+			public void dispose() {
+				changeSupport=null;
 			}		
 		};
 				
@@ -139,7 +156,7 @@ public class TreeScenarios extends ScenariosTestCase {
 		super.tearDown();
 	}
 	
-	
+	// Traverse both threes and ensure they are equivalent.
 	private void assertEqualsTreeNode (Object viewerNode, Object modelNode, ITree model) {
 		assertEquals(viewerNode, modelNode);
 		Object[] viewerChildren = ((ITreeContentProvider)tviewer.getContentProvider()).getChildren(viewerNode);
@@ -204,7 +221,7 @@ public class TreeScenarios extends ScenariosTestCase {
 	}
 	
 	/**
-	 * Simple binding of a TreeViewer to a Tree Description
+	 * Simple binding of a TreeViewer to a Tree Model Description
 	 */
 	public void test_Trees_Scenario03() {
 		
@@ -226,7 +243,7 @@ public class TreeScenarios extends ScenariosTestCase {
 		treeDescription.addColumn(Account.class, "lastName");
 		
 		// Describe the model
-		TreeModelDescription modelDescription = new TreeModelDescription(new Object[] {SampleData.CATALOG_2005});
+		TreeModelDescription modelDescription = new TreeModelDescription(new Object[] {catalog});
 		// The order properties are added, determine the order that the tree will list
 		// children that come from different properties
 		modelDescription.addChildrenProperty(Catalog.class, "categories");
@@ -238,9 +255,21 @@ public class TreeScenarios extends ScenariosTestCase {
 		
 		
 		getDbc().bind(treeDescription, modelDescription, null);
-						
+					
 		assertEqualsTreeNode(null, null, catalogModelTree);
 		
+		// Test the JavaBean event model of a TreeDescriptor based tree,
+		// Change properties and test that viewer got it all.
+		for (int i = 0; i < adventures.length; i++) 
+			adventures[i].setName("Changed: "+adventures[i].getName());
+			
+		for (int i = 0; i < accounts.length; i++) 
+			accounts[i].setFirstName("Changed: "+accounts[i].getFirstName());
+			
+		for (int i = 0; i < categories.length; i++) 
+			categories[i].setName("Changed: "+categories[i].getName());
+		
+		assertEqualsTreeNode(null, null, catalogModelTree);
 	}
 
 	

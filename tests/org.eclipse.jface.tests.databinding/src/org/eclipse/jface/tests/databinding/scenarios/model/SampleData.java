@@ -233,6 +233,8 @@ public class SampleData {
 			}
 			public void removeTreeChangeListener(ChangeListener listener) {
 			}
+			public void dispose() {				
+			}
 
 
 		};
