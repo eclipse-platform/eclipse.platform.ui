@@ -108,7 +108,7 @@ public class ProjectionSupport {
 						// baseline: where the dots are drawn
 						int baseline= textWidget.getBaseline(offset);
 						// descent: number of pixels that the box extends over baseline
-						int descent= Math.min(2, textWidget.getLineHeight() - baseline);
+						int descent= Math.min(2, textWidget.getLineHeight(offset) - baseline);
 						// ascent: so much does the box stand up from baseline
 						int ascent= metrics.getAscent();
 						// leading: free space from line top to box upper line
