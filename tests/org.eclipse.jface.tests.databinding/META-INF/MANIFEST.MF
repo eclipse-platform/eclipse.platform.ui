@@ -9,5 +9,6 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.jface.databinding,
  org.junit,
  org.eclipse.swt,
- org.eclipse.jface
+ org.eclipse.jface,
+ org.eclipse.core.runtime
 Export-Package: org.eclipse.jface.tests.databinding.util
