@@ -282,11 +282,13 @@
          <action
                class="org.eclipse.ui.internal.actions.SelectWorkingSetsAction"
                definitionId="org.eclipse.ui.navigate.selectWorkingSets"
+               icon="icons/full/elcl16/workingsets.gif"
                id="selectWorkingSets"
                label="%SelectWorkingSetsAction.label"
                menubarPath="window/additions"
                style="pulldown"
-               toolbarPath="workingSets"/>
+               toolbarPath="workingSets"
+               tooltip="%WorkingSetsActionSet.tooltip"/>
       </actionSet>
    </extension>
    
