@@ -29,6 +29,9 @@ public class ToStringConverter implements IConversionFunction {
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
 	 */
 	public Object convert(Object source) {
+		if (source == null) {
+			return ""; //$NON-NLS-1$
+		}
 		return source.toString();
 	}
 
