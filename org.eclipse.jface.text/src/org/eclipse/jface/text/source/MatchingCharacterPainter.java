@@ -182,7 +182,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 				bounds= fTextWidget.getTextBounds(offset, offset + length - 1);
 			else {
 				Point loc= fTextWidget.getLocationAtOffset(offset);
-				bounds= new Rectangle(loc.x, loc.y, 1, fTextWidget.getLineHeight());
+				bounds= new Rectangle(loc.x, loc.y, 1, fTextWidget.getLineHeight(offset));
 			}
 			
 			// draw box around line segment
