@@ -466,4 +466,11 @@ public interface IPageLayout {
     public void addStandaloneView(String viewId, boolean showTitle,
             int relationship, float ratio, String refId);
 
+    /**
+	 * Returns the perspective descriptor for the perspective being layed out.
+	 * 
+	 * @return the perspective descriptor for the perspective being layed out
+	 * @since 3.2
+	 */
+    public IPerspectiveDescriptor getDescriptor();
 }

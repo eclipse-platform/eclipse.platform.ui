@@ -468,9 +468,8 @@ public class PageLayout implements IPageLayout {
         return actionSets;
     }
 
-    /**
-     * @return Returns the <code>IPerspectiveDescriptor</code> that is driving 
-     * the creation of this <code>PageLayout</code>.
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPageLayout#getDescriptor()
      */
     public IPerspectiveDescriptor getDescriptor() {
         return descriptor;
