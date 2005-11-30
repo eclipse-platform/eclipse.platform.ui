@@ -346,7 +346,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			progressPart.subTask(NLS.bind(
 					MarkerMessages.MarkerResolutionDialog_WorkingSubTask,
 					marker.getDescription()));
-			if(resolutionMap.contains(marker.getMarker()))
+			if(resolutionMap.containsKey(marker.getMarker()))
 				continue;//Don't recalculate
 			
 			IMarkerResolution[] resolutions = IDE.getMarkerHelpRegistry()
@@ -471,7 +471,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 			 */
 			public String getText(Object element) {
-				return Util.getProperty(IMarker.MESSAGE, ((IMarker) element));
+				return getDescription((IMarker) element);
 			}
 
 			public Image getImage(Object element) {
@@ -545,6 +545,8 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		progressPart.beginTask(
 				MarkerMessages.MarkerResolutionDialog_Fixing, checked.length + 1);
 		progressPart.worked(1);
+		
+		boolean someNotApplied = false;
 
 		for (int i = 0; i < checked.length; i++) {
 			//Allow paint events and wake up the button
@@ -553,6 +555,11 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 				return;		
 			
 			IMarker marker = (IMarker) checked[i];
+			if(!marker.exists()){
+				someNotApplied = true;
+				continue;
+			}
+				
 			progressPart.subTask(Util.getProperty(IMarker.MESSAGE, marker));
 			
 			IMarkerResolution[] resolutions = (IMarkerResolution[]) resolutionMap.get(marker);
@@ -562,23 +569,21 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			else
 				matching = ((WorkbenchMarkerResolution) resolutions[index]).getUpdatedResolution();
 
-			if (matching == null) {
-				MessageDialog
-						.openInformation(
-								getShell(),
-								MarkerMessages.MarkerResolutionDialog_CannotFixTitle,
-								NLS
-										.bind(
-												MarkerMessages.MarkerResolutionDialog_NoMatchMessage,
-												getDescription(marker)));
-				progressPart.done();
-				return;
-			}
-			matching.run(marker);
+			if (matching == null) 
+				someNotApplied = true;
+			else
+				matching.run(marker);
 			progressPart.worked(1);
 
 		}
 		progressPart.done();
+		
+		if(someNotApplied)
+			MessageDialog
+			.openInformation(
+					getShell(),
+					MarkerMessages.MarkerResolutionDialog_CannotFixTitle,
+					MarkerMessages.MarkerResolutionDialog_NoMatchMessage);
 		
 		progressCancelled = false;
 		super.okPressed();
