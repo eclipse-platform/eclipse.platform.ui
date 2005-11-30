@@ -715,7 +715,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * Method canHandleLinkedResources should be overridden by subclasses who
 	 * support linked resources. At a minimum, supporting linked resources
 	 * requires changes to the move/delete hook 
-	 * (see org.eclipe.core.resources.team.IMoveDeleteHook). This method is
+	 * {@link org.eclipse.core.resources.team.IMoveDeleteHook}. This method is
 	 * called after the RepositoryProvider is instantiated but before
 	 * <code>setProject()</code> is invoked so it will not have access to any
 	 * state determined from the <code>setProject()</code> method.
