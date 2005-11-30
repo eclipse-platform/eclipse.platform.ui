@@ -314,8 +314,8 @@ public class Main {
 			rootURLs[0] = source.getLocation();
             System.arraycopy(bootPath, 0, rootURLs, 1, bootPath.length);
             // replace the security policy
-            Policy eclispePolicy = new EclipsePolicy(Policy.getPolicy(), rootURLs);
-            Policy.setPolicy(eclispePolicy);
+            Policy eclipsePolicy = new EclipsePolicy(Policy.getPolicy(), rootURLs);
+            Policy.setPolicy(eclipsePolicy);
             if (setSM)
                 System.setSecurityManager(sm);
         }
