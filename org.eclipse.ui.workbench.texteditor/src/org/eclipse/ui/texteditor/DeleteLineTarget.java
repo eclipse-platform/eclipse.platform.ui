@@ -257,41 +257,47 @@ class DeleteLineTarget {
 	 * Returns the document's delete region specified by position and type.
 	 *
 	 * @param document	the document
-	 * @param position	the position
+	 * @param offset the offset
+	 * @param length the length
 	 * @param type the line deletion type, must be one of
 	 * 	<code>WHOLE_LINE</code>, <code>TO_BEGINNING</code> or <code>TO_END</code>
 	 * @return the document's delete region
 	 * @throws BadLocationException
 	 */
-	private static IRegion getDeleteRegion(IDocument document, int position, int type) throws BadLocationException {
+	private static IRegion getDeleteRegion(IDocument document, int offset, int length, int type) throws BadLocationException {
 
-		int line= document.getLineOfOffset(position);
-		int offset= 0;
-		int length= 0;
+		int line= document.getLineOfOffset(offset);
+		int resultOffset= 0;
+		int resultLength= 0;
 
 		switch  (type) {
 		case DeleteLineAction.WHOLE:
-			offset= document.getLineOffset(line);
-			length= document.getLineLength(line);
+			resultOffset= document.getLineOffset(line);
+			int endOffset= offset + length;
+			IRegion endLineInfo= document.getLineInformationOfOffset(endOffset);
+			int endLine= endLine= document.getLineOfOffset(endLineInfo.getOffset()); 
+			if (endLineInfo.getOffset() == endOffset && endOffset > 0)
+				endLine= endLine - 1;
+			resultLength= document.getLineOffset(endLine) + document.getLineLength(endLine) - resultOffset;
 			break;
 
 		case DeleteLineAction.TO_BEGINNING:
-			offset= document.getLineOffset(line);
-			length= position - offset;
+			resultOffset= document.getLineOffset(line);
+			resultLength= offset - resultOffset;
 			break;
 
 		case DeleteLineAction.TO_END:
-			offset= position;
+			resultOffset= offset;
 
 			IRegion lineRegion= document.getLineInformation(line);
 			int end= lineRegion.getOffset() + lineRegion.getLength();
 
-			if (position == end) {
+			if (offset == end) {
 				String lineDelimiter= document.getLineDelimiter(line);
-				length= lineDelimiter == null ? 0 : lineDelimiter.length();
+				resultLength= lineDelimiter == null ? 0 : lineDelimiter.length();
 
 			} else {
-				length= end - offset;
+				resultLength= end - resultOffset;
 			}
 			break;
 
@@ -299,33 +305,34 @@ class DeleteLineTarget {
 			throw new IllegalArgumentException();
 		}
 
-		return new Region(offset, length);
+		return new Region(resultOffset, resultLength);
 	}
 
 	/**
 	 * Deletes the specified fraction of the line of the given offset.
 	 *
 	 * @param document the document
-	 * @param position the offset
+	 * @param offset the offset
+	 * @param length the length
 	 * @param type the line deletion type, must be one of
 	 * 	<code>WHOLE_LINE</code>, <code>TO_BEGINNING</code> or <code>TO_END</code>
 	 * @param copyToClipboard <code>true</code> if the deleted line should be copied to the clipboard
 	 * @throws BadLocationException if position is not valid in the given document
 	 */
-	public void deleteLine(IDocument document, int position, int type, boolean copyToClipboard) throws BadLocationException {
+	public void deleteLine(IDocument document, int offset, int length, int type, boolean copyToClipboard) throws BadLocationException {
 
-		IRegion deleteRegion= getDeleteRegion(document, position, type);
-		int offset= deleteRegion.getOffset();
-		int length= deleteRegion.getLength();
+		IRegion deleteRegion= getDeleteRegion(document, offset, length, type);
+		int deleteOffset= deleteRegion.getOffset();
+		int deleteLength= deleteRegion.getLength();
 
-		if (length == 0)
+		if (deleteLength == 0)
 			return;
 
 		if (copyToClipboard) {
 
 			fClipboard.checkState();
 			try {
-				fClipboard.append(document.get(offset, length));
+				fClipboard.append(document.get(deleteOffset, deleteLength));
 			} catch (SWTError e) {
 				if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 					throw e;
@@ -341,13 +348,13 @@ class DeleteLineTarget {
 			}
 
 			fClipboard.setDeleting(true);
-			document.replace(offset, length, null);
+			document.replace(deleteOffset, deleteLength, null);
 			fClipboard.setDeleting(false);
 
 			fClipboard.saveState();
 
 		} else {
-			document.replace(offset, length, null);
+			document.replace(deleteOffset, deleteLength, null);
 		}
 	}
 }

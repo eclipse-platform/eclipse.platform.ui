@@ -148,7 +148,7 @@ public class DeleteLineAction extends TextEditorAction {
 			return;
 
 		try {
-			fTarget.deleteLine(document, selection.getOffset(), fType, fCopyToClipboard);
+			fTarget.deleteLine(document, selection.getOffset(), selection.getLength(), fType, fCopyToClipboard);
 		} catch (BadLocationException e) {
 			// should not happen
 		}
