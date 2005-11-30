@@ -73,6 +73,12 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	private Hashtable resolutionMap = new Hashtable(0);
 
+	private boolean calculatingResolutions;
+
+	private boolean progressCancelled = false;
+
+	private Button addMatching;
+
 	/**
 	 * Create a new instance of the receiver with the given resolutions.
 	 * 
@@ -296,7 +302,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			}
 		});
 
-		final Button addMatching = new Button(buttonComposite, SWT.PUSH);
+		addMatching = new Button(buttonComposite, SWT.PUSH);
 		addMatching.setText(MarkerMessages.MarkerResolutionDialog_AddOthers);
 		addMatching
 				.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
@@ -308,8 +314,8 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent arg0) {
-				addMatchingMarkers();
-				addMatching.setEnabled(false);
+				if(addMatchingMarkers())
+					addMatching.setEnabled(false);
 			}
 		});
 
@@ -319,9 +325,11 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	/**
 	 * Add all of the markers that have resolutions compatible with the
 	 * receiver.
+	 * @return boolean <code>true</code> if the operation completed.
 	 */
-	protected void addMatchingMarkers() {
+	protected boolean addMatchingMarkers() {
 
+		calculatingResolutions = true;
 		Object[] all = markerView.getCurrentMarkers().getArray();
 		progressPart.beginTask(
 				MarkerMessages.MarkerResolutionDialog_CalculatingTask,
@@ -331,19 +339,47 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		System.arraycopy(resolutions, 0, existing, 0, existing.length);
 
 		for (int i = 0; i < all.length; i++) {
+			if(progressCancelled())
+				return false;
+			
 			ConcreteMarker marker = (ConcreteMarker) all[i];
 			progressPart.subTask(NLS.bind(
 					MarkerMessages.MarkerResolutionDialog_WorkingSubTask,
 					marker.getDescription()));
+			if(resolutionMap.contains(marker.getMarker()))
+				continue;//Don't recalculate
+			
 			IMarkerResolution[] resolutions = IDE.getMarkerHelpRegistry()
 					.getResolutions(marker.getMarker());
+			if(progressCancelled())
+				return false;
 			if (isCompatible(resolutions, existing)){
 				markersTable.add(marker.getMarker());
-				resolutionMap .put(marker.getMarker(),resolutions);
+				resolutionMap.put(marker.getMarker(),resolutions);
 			}
 			progressPart.worked(1);
 		}
 		progressPart.done();
+		progressCancelled = false;
+		calculatingResolutions = false;
+		return true;
+	}
+
+	/**
+	 * Spin the event loop and see if the cancel button
+	 * was pressed. If it was then clear the flags and return
+	 * <code>true</code>.
+	 * @return boolean
+	 */
+	private boolean progressCancelled() {
+		getShell().getDisplay().readAndDispatch();
+		if(progressCancelled){
+			progressCancelled = false;
+			calculatingResolutions = false;
+			progressPart.done();
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -511,11 +547,20 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		progressPart.worked(1);
 
 		for (int i = 0; i < checked.length; i++) {
+			//Allow paint events and wake up the button
+			getShell().getDisplay().readAndDispatch();
+			if(progressCancelled())
+				return;		
+			
 			IMarker marker = (IMarker) checked[i];
 			progressPart.subTask(Util.getProperty(IMarker.MESSAGE, marker));
 			
 			IMarkerResolution[] resolutions = (IMarkerResolution[]) resolutionMap.get(marker);
-			IMarkerResolution matching = ((WorkbenchMarkerResolution) resolutions[index]).getUpdatedResolution();
+			IMarkerResolution matching;
+			if(i == 0)//Always allow the first one
+				matching = resolutions[index];
+			else
+				matching = ((WorkbenchMarkerResolution) resolutions[index]).getUpdatedResolution();
 
 			if (matching == null) {
 				MessageDialog
@@ -526,6 +571,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 										.bind(
 												MarkerMessages.MarkerResolutionDialog_NoMatchMessage,
 												getDescription(marker)));
+				progressPart.done();
 				return;
 			}
 			matching.run(marker);
@@ -533,7 +579,20 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 		}
 		progressPart.done();
+		
+		progressCancelled = false;
 		super.okPressed();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
+	 */
+	protected void cancelPressed() {
+		if(calculatingResolutions){
+			progressCancelled = true;
+			return;
+		}
+		super.cancelPressed();
 	}
 
 }
