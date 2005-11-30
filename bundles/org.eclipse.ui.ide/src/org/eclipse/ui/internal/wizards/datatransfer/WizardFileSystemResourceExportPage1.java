@@ -14,7 +14,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -472,12 +472,10 @@ public class WizardFileSystemResourceExportPage1 extends
         if (root.getLocation().isPrefixOf(testPath))
             return DataTransferMessages.FileExport_rootName;
 
-        IProject[] projects = root.getProjects();
-
-        for (int i = 0; i < projects.length; i++) {
-            if (projects[i].getLocation().isPrefixOf(testPath))
-                return projects[i].getName();
-        }
+	    IContainer[] containers = root.findContainersForLocation(testPath);
+	    if (containers.length > 0){
+    		return containers[0].getName();
+	    }
 
         return null;
 
