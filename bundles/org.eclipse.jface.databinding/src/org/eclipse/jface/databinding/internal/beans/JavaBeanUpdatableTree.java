@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.beans;
 
-import java.beans.PropertyChangeListener;
-
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.ITree;
 import org.eclipse.jface.databinding.IUpdatableTree;
 import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.ITree.ChangeListener;
 
 
 
@@ -29,32 +28,13 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 	private Class[] classTypes;
 	
 	private boolean updating=false;
-	
 
-	private static class IdentityWrapper {
-		private final Object o;
-		IdentityWrapper(Object o) {
-			this.o = o;
-		}
-		public boolean equals(Object obj) {
-			if(obj.getClass()!=IdentityWrapper.class) {
-				return false;
-			}
-			return o==((IdentityWrapper)obj).o;
-		}
-		public int hashCode() {
-			return System.identityHashCode(o);
-		}
-	}
-	
-
-	
-	private PropertyChangeListener treeListener = new PropertyChangeListener() {
-		public void propertyChange(java.beans.PropertyChangeEvent event) {
+	// The Tree updatable relies on the ITree to provide change notification
+	private ChangeListener treeListener = new ITree.ChangeListener() {
+		public void treeChange(ITree.ChangeEvent e) {
 			if (!updating) {
 				updating=true; 
-				try {
-					ITree.ChangeEvent e = (ITree.ChangeEvent)event;
+				try {					
 					fireChangeEvent(e.getChangeType(), e.getOldValue(), e.getNewValue(), e.getParent(), e.getPosition());
 				} 
 				finally{
@@ -70,7 +50,7 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 	public JavaBeanUpdatableTree (ITree tree)  {
 		this.tree = tree;	
 		this.classTypes = tree.getTypes();
-		tree.addPropertyChangeListener(treeListener);	
+		tree.addTreeChangeListener(treeListener);	
 	}
 		
 	private Object[] primRemoveElement(Object[] source, int index) {
@@ -159,7 +139,7 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 
 	public void dispose() {
 		super.dispose();
-		tree.removePropertyChangeListener(treeListener);
+		tree.removeTreeChangeListener(treeListener);
 	}
 
 	public Class[] getTypes() {

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -57,7 +55,7 @@ public class TreeScenarios extends ScenariosTestCase {
 		catalogModelTree = SampleData.CATEGORY_TREE;
 		
 		directoryModelTree = new ITree() {					
-			private PropertyChangeSupport changeSupport = null;			
+			private ITree.TreeChangeSupport changeSupport = null;			
 			private Object[] rootObjects = Collections.EMPTY_LIST.toArray();
 
 			public Class[] getTypes() {
@@ -82,8 +80,8 @@ public class TreeScenarios extends ScenariosTestCase {
 					// for the test
 				}
 				if (changeSupport!=null) {
-					ITree.ChangeEvent event = new ITree.ChangeEvent(this, IChangeEvent.REPLACE, parentElement, null, old, children, -1);								
-					changeSupport.firePropertyChange(event);
+					ITree.ChangeEvent event = new ITree.ChangeEvent(this, IChangeEvent.REPLACE, parentElement, old, children, -1);								
+					changeSupport.fireTreeChange(event);
 				}				
 			}
 					
@@ -97,15 +95,15 @@ public class TreeScenarios extends ScenariosTestCase {
 				return children;
 			}
 
-			public void addPropertyChangeListener(PropertyChangeListener listener) {
+			public void addTreeChangeListener(ITree.ChangeListener listener) {
 				if (changeSupport==null)
-					changeSupport = new PropertyChangeSupport(this);
-				changeSupport.addPropertyChangeListener(listener);
+					changeSupport = new ITree.TreeChangeSupport(this);
+				changeSupport.addTreeChangeListener(listener);
 			}
 
-			public void removePropertyChangeListener(PropertyChangeListener listener) {
+			public void removeTreeChangeListener(ITree.ChangeListener listener) {
 				if (changeSupport!=null)
-					changeSupport.removePropertyChangeListener(listener);
+					changeSupport.removeTreeChangeListener(listener);
 			}		
 		};
 				

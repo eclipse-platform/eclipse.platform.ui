@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.EventObject;
+import java.util.List;
 
 
 /**
@@ -23,7 +24,7 @@ import java.beans.PropertyChangeListener;
  * </p>
  * 
  * A domain model has to implement this interface in order to establish a tree
- * binding. It is possible that the domain model is not organized as a tree, and hence provides 
+ * binding. It is possible that the domain model itself is not organized as a tree, and hence provides 
  * the ability to provide a tree facade.
  * 
  * @see TreeModelDescription for a simpler way to bind a tree. 
@@ -37,30 +38,33 @@ public interface ITree  {
 	 * @since 3.2
 	 *
 	 */
-	public static class ChangeEvent extends PropertyChangeEvent implements IChangeEvent {
+	public static class ChangeEvent extends EventObject implements IChangeEvent {
 		/**
 		 * Events to use on changes to the tree
 		 */
 		private static final long serialVersionUID = 1L;
 		private final Object   parent;
+		private final Object   oldValue;
+		private final Object   newValue;
 		private final int	   position;
 		private final int	   changeType;
 		
 		/**
-		 * @param source ITree that has been changed
+		 * @param source ITree that has changed
 		 * @param changeType 
 		 * @param parent parent node element
-		 * @param propertyName optional, for the children property that has been changed
 		 * @param oldValue
 		 * @param newValue
 		 * @param index 
 		 */
-		public ChangeEvent(ITree source, int changeType, Object parent, String propertyName, 
+		public ChangeEvent(ITree source, int changeType, Object parent, 
 						   Object oldValue, Object newValue, int index) {
-			super(source, propertyName, oldValue, newValue);
-			this.parent = parent;
-			this.position = index;
-			this.changeType = changeType;
+			super(source);
+			this.oldValue=oldValue;
+			this.newValue=newValue;
+			this.parent=parent;
+			this.position=index;
+			this.changeType=changeType;
 		}
 		
 		/**
@@ -84,6 +88,89 @@ public interface ITree  {
 		 */
 		public int getChangeType() {
 			return changeType;
+		}
+
+		public Object getNewValue() {
+			return newValue;
+		}
+
+		public Object getOldValue() {
+			return oldValue;
+		}
+	}
+	
+	/**
+	 * @since 3.2
+	 *
+	 */
+	public interface ChangeListener  {
+		/**
+		 * @param evt
+		 */
+		void treeChange(ChangeEvent evt);
+	}
+	
+	/**
+	 * @since 3.2
+	 *
+	 */
+	public static class TreeChangeSupport {
+		private ITree source;
+		List listeners = null;
+		
+		/**
+		 * @param source
+		 */
+		public TreeChangeSupport(ITree source){
+			this.source=source;
+		}
+		
+		/**
+		 * @param listener
+		 */
+		public void addTreeChangeListener(ChangeListener listener) {
+			if (listener!=null) {
+				if (listeners==null)
+					listeners=new ArrayList();
+				listeners.add(listener);
+			}
+		}
+		
+		/**
+		 * @param listener
+		 */
+		public void removeTreeChangeListener(ChangeListener listener) {
+			if (listener==null || listeners==null)
+				return;
+			listeners.remove(listener);
+		}
+		
+		/**
+		 * @param changeType
+		 * @param oldValue
+		 * @param newValue
+		 * @param parent
+		 * @param index
+		 */
+		public void fireTreeChange(int changeType, Object oldValue, Object newValue, Object parent, int index) {
+			ChangeEvent evt = new ChangeEvent(source, changeType, parent, oldValue, newValue, index);
+			fireTreeChange(evt);
+		}
+		
+		/**
+		 * @param evt
+		 */
+		public void fireTreeChange(ChangeEvent evt) {
+			Object oval = evt.getOldValue();
+			Object nval = evt.getNewValue();
+			
+			if (oval != null && nval != null && oval.equals(nval))
+				return;
+			
+			ChangeListener[] list = (ChangeListener[])listeners.toArray(new ChangeListener[listeners.size()]);
+			for (int i = 0; i < list.length; i++) {
+				list[i].treeChange(evt);
+			}
 		}
 	}
 	
@@ -115,14 +202,18 @@ public interface ITree  {
 	public boolean hasChildren(Object element);
 	
     /**
+     * The implementor of an ITree is responsible to provide the event
+     * model for changes on the tree shape and content.  It should be using 
+     * <code>ITree.ChangeEvent</code> to notify the listener of any changes to the tree.
+     * 
      * @param listener
      */
-    public void addPropertyChangeListener(PropertyChangeListener listener);
+    public void addTreeChangeListener(ChangeListener listener);
     
     /**
      * @param listener
      */
-    public void removePropertyChangeListener(PropertyChangeListener listener);
+    public void removeTreeChangeListener(ChangeListener listener);
 
 	
 	/**
