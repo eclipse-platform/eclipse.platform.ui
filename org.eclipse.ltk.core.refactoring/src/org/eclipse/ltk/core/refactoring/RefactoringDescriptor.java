@@ -95,6 +95,9 @@ public class RefactoringDescriptor implements Comparable {
 
 	/**
 	 * Creates a new refactoring descriptor.
+	 * <p>
+	 * The flags are initialized to {@link #NONE}.
+	 * </p>
 	 * 
 	 * @param id
 	 *            the unique id of the refactoring
