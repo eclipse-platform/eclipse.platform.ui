@@ -40,14 +40,13 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.AbstractHyperlink;
-import org.eclipse.ui.internal.IWindowTrim;
 import org.eclipse.ui.internal.RectangleAnimation;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
@@ -344,9 +343,8 @@ public class IntroLaunchBar implements IWindowTrim {
     public void createInActiveWindow() {
         IWorkbenchWindow window = PlatformUI.getWorkbench()
             .getActiveWorkbenchWindow();
-        WorkbenchWindow wwindow = (WorkbenchWindow) window;
         createControl(window.getShell());
-        wwindow.addToTrim(this, location);
+        window.getTrimManager().addTrim(location, this);
         window.getShell().layout();
     }
 
