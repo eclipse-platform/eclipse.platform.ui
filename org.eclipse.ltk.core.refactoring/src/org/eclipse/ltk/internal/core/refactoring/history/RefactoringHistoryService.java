@@ -325,7 +325,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 * Creates a new unknown refactoring descriptor.
 		 */
 		private UnknownRefactoringDescriptor() {
-			super(UNKNOWN_REFACTORING_ID, null, RefactoringCoreMessages.RefactoringHistoryService_unknown_refactoring_description, null, Collections.EMPTY_MAP);
+			super(UNKNOWN_REFACTORING_ID, null, RefactoringCoreMessages.RefactoringHistoryService_unknown_refactoring_description, null, Collections.EMPTY_MAP, RefactoringDescriptor.NONE);
 		}
 	}
 
