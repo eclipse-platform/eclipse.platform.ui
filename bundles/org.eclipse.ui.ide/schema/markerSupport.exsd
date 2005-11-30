@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui.ide">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui" id="markerSupport" name="Marker Support"/>
+         <meta.schema plugin="org.eclipse.ui.ide" id="markerSupport" name="Marker Support"/>
       </appInfo>
       <documentation>
          The Marker Support extension point defines extensions to the workbench tools that show markers such as the problems, bookmarks and tasks views.
