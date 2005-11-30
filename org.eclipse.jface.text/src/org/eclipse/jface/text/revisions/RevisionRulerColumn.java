@@ -511,19 +511,18 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 
 		fSensitiveToTextChanges= visibleModelLines.getNumberOfLines() <= getVisibleLinesInViewport();
 
-		int lineheight= fCachedTextWidget.getLineHeight();
 		fScrollPos= fCachedTextWidget.getTopPixel();
 
 		int y_shift= -fScrollPos;
 		List/*<ChangeRegion>*/ changes= getChangeRegions(visibleModelLines);
 		for (Iterator it= changes.iterator(); it.hasNext();) {
 			ChangeRegion region= (ChangeRegion) it.next();
-			paintChangeRegion(region, gc, y_shift, lineheight);
+			paintChangeRegion(region, gc, y_shift);
 		}
 		
 	}
 
-	private void paintChangeRegion(ChangeRegion region, GC gc, int y_shift, int lineheight) {
+	private void paintChangeRegion(ChangeRegion region, GC gc, int y_shift) {
 		Revision revision= region.getRevision();
 		gc.setBackground(lookupColor(revision, false));
 		if (revision == fFocusRevision)
