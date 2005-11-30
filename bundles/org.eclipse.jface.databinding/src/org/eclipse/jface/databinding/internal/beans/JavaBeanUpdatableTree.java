@@ -12,7 +12,7 @@ package org.eclipse.jface.databinding.internal.beans;
 
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.jface.databinding.ChangeEvent;
+import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.ITree;
 import org.eclipse.jface.databinding.IUpdatableTree;
 import org.eclipse.jface.databinding.Updatable;
@@ -49,7 +49,7 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 	
 
 	
-	private PropertyChangeListener listener = new PropertyChangeListener() {
+	private PropertyChangeListener treeListener = new PropertyChangeListener() {
 		public void propertyChange(java.beans.PropertyChangeEvent event) {
 			if (!updating) {
 				updating=true; 
@@ -68,19 +68,11 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 	 * @param tree
 	 */
 	public JavaBeanUpdatableTree (ITree tree)  {
-		this (tree, tree.getTypes());
-	}
-	
-	/**
-	 * @param tree
-	 * @param classTypes 
-	 */
-	public JavaBeanUpdatableTree (ITree tree, Class[] classTypes)  {
 		this.tree = tree;	
-		this.classTypes = classTypes;
-		tree.addPropertyChangeListener(listener);		
+		this.classTypes = tree.getTypes();
+		tree.addPropertyChangeListener(treeListener);	
 	}
-	
+		
 	private Object[] primRemoveElement(Object[] source, int index) {
 		Object[] newArray = new Object[source.length-1];		
 		System.arraycopy(source, 0, newArray, 0, index);		
@@ -104,7 +96,7 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 				index = list.length;
 			Object[] newList = primAddElement(list, value, index);	
 			tree.setChildren(parentElement, newList);
-			fireChangeEvent(ChangeEvent.ADD, null, value, parentElement, index);
+			fireChangeEvent(IChangeEvent.ADD, null, value, parentElement, index);
 			return index;
 		} finally {
 			updating=false;
@@ -121,7 +113,7 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 			Object o = list[index];
 			Object[] newList=primRemoveElement(list,index);
 			tree.setChildren(parentElement, newList);
-			fireChangeEvent(ChangeEvent.REMOVE, o, null, parentElement, index);
+			fireChangeEvent(IChangeEvent.REMOVE, o, null, parentElement, index);
 		} finally {
 			updating=false;
 		}
@@ -135,7 +127,7 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 			
 			Object oldValue = list[index];
 			list[index]= value;
-			fireChangeEvent(ChangeEvent.CHANGE, oldValue, value, parentElement, index);
+			fireChangeEvent(IChangeEvent.CHANGE, oldValue, value, parentElement, index);
 		} finally {
 			updating = false;
 		}
@@ -147,7 +139,7 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 		try {
 			Object[] list = tree.getChildren(parentElement);			
 			tree.setChildren(parentElement, values);			
-			fireChangeEvent(ChangeEvent.CHANGE, list, values, parentElement, -1);
+			fireChangeEvent(IChangeEvent.CHANGE, list, values, parentElement, -1);
 		} finally {
 			updating = false;
 		}
@@ -167,7 +159,7 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 
 	public void dispose() {
 		super.dispose();
-		tree.removePropertyChangeListener(listener);
+		tree.removePropertyChangeListener(treeListener);
 	}
 
 	public Class[] getTypes() {

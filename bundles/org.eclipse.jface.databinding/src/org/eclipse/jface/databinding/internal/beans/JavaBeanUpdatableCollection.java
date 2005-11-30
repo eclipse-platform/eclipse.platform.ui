@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.jface.databinding.ChangeEvent;
+import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.Updatable;
 import org.eclipse.jface.util.Assert;
@@ -44,8 +44,8 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 					elementsListenedTo.remove(new IdentityWrapper(o));
 					unhookListener(elementListener, o);
 				}
-				fireChangeEvent(ChangeEvent.CHANGE, null,
-						null, ChangeEvent.POSITION_UNKNOWN);
+				fireChangeEvent(IChangeEvent.CHANGE, null,
+						null, IChangeEvent.POSITION_UNKNOWN);
 			}
 		}
 	};
@@ -56,7 +56,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 				Object[] values = getValues();
 				int position = Arrays.asList(values).indexOf(event.getSource());
 				if(position!=-1){
-					fireChangeEvent(ChangeEvent.CHANGE, event.getSource(),
+					fireChangeEvent(IChangeEvent.CHANGE, event.getSource(),
 							event.getSource(), position);
 				}
 			}
@@ -202,7 +202,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		if (index <= 0 || index > list.size())
 			index = list.size();
 		list.add(value);	
-		fireChangeEvent(ChangeEvent.ADD, null, value, index);
+		fireChangeEvent(IChangeEvent.ADD, null, value, index);
 		return index;
 		
 	}
@@ -223,7 +223,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		}
 		if (o!=null) {
 		   list.remove(o);
-		   fireChangeEvent(ChangeEvent.REMOVE, o, null, index);
+		   fireChangeEvent(IChangeEvent.REMOVE, o, null, index);
 		}		
 	}
 
@@ -233,7 +233,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 			Object[] values = getValues();
 			Object oldValue = values[index];
 			values[index] = value;
-			fireChangeEvent(ChangeEvent.CHANGE, oldValue, value, index);
+			fireChangeEvent(IChangeEvent.CHANGE, oldValue, value, index);
 		} finally {
 			updating = false;
 		}
