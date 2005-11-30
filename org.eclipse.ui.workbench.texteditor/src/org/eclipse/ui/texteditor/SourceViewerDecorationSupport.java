@@ -102,7 +102,7 @@ public class SourceViewerDecorationSupport {
 					bounds= textWidget.getTextBounds(offset, offset + length - 1);
 				else {
 					Point loc= textWidget.getLocationAtOffset(offset);
-					bounds= new Rectangle(loc.x, loc.y, 1, textWidget.getLineHeight());
+					bounds= new Rectangle(loc.x, loc.y, 1, textWidget.getLineHeight(offset));
 				}
 
 				int y= bounds.y + bounds.height - 1;
@@ -139,7 +139,7 @@ public class SourceViewerDecorationSupport {
 					bounds= textWidget.getTextBounds(offset, offset + length - 1);
 				else {
 					Point loc= textWidget.getLocationAtOffset(offset);
-					bounds= new Rectangle(loc.x, loc.y, 1, textWidget.getLineHeight());
+					bounds= new Rectangle(loc.x, loc.y, 1, textWidget.getLineHeight(offset));
 				}
 
 				gc.setForeground(color);
@@ -169,7 +169,7 @@ public class SourceViewerDecorationSupport {
 				int y1= left.y;
 
 				gc.setForeground(color);
-				gc.drawLine(x1, y1, x1, left.y + textWidget.getLineHeight() - 1);
+				gc.drawLine(x1, y1, x1, left.y + textWidget.getLineHeight(offset) - 1);
 
 			} else {
 				textWidget.redrawRange(offset, length, true);

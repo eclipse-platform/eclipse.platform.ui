@@ -5124,8 +5124,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		// XXX this overwrite box is not proportional-font aware
 		// take 'a' as a medium sized character
 		Point charSize= gc.stringExtent("a"); //$NON-NLS-1$
+		
+		// XXX: Filed request to get a caret with auto-height: https://bugs.eclipse.org/bugs/show_bug.cgi?id=118612
 		caret.setSize(charSize.x, styledText.getLineHeight());
 		caret.setFont(styledText.getFont());
+		
 		gc.dispose();
 
 		return caret;
@@ -5133,8 +5136,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	private Caret createInsertCaret(StyledText styledText) {
 		Caret caret= new Caret(styledText, SWT.NULL);
+
+		// XXX: Filed request to get a caret with auto-height: https://bugs.eclipse.org/bugs/show_bug.cgi?id=118612
 		caret.setSize(getCaretWidthPreference(), styledText.getLineHeight());
 		caret.setFont(styledText.getFont());
+		
 		return caret;
 	}
 
@@ -5143,7 +5149,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		PaletteData caretPalette= new PaletteData(new RGB[] {new RGB (0,0,0), new RGB (255,255,255)});
 		int width= getCaretWidthPreference();
 		int widthOffset= width - 1;
+		
+		// XXX: Filed request to get a caret with auto-height: https://bugs.eclipse.org/bugs/show_bug.cgi?id=118612		
 		ImageData imageData= new ImageData(4 + widthOffset, styledText.getLineHeight(), 1, caretPalette);
+
 		Display display= styledText.getDisplay();
 		Image bracketImage= new Image(display, imageData);
 		GC gc= new GC (bracketImage);
@@ -5172,8 +5181,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		Image image= createRawInsertModeCaretImage(styledText);
 		if (image != null)
 			caret.setImage(image);
-		else
+		else {
+			// XXX: Filed request to get a caret with auto-height: https://bugs.eclipse.org/bugs/show_bug.cgi?id=118612
 			caret.setSize(getCaretWidthPreference(), styledText.getLineHeight());
+		}
 
 		caret.setFont(styledText.getFont());
 

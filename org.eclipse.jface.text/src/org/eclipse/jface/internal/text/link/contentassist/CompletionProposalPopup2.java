@@ -612,7 +612,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		p.x -= fProposalShell.getBorderWidth();
 		if (p.x < 0) p.x= 0;
 		if (p.y < 0) p.y= 0;
-		p= new Point(p.x, p.y + text.getLineHeight());
+		p= new Point(p.x, p.y + text.getLineHeight(selection.x));
 		p= text.toDisplay(p);
 		if (p.x < 0) p.x= 0;
 		if (p.y < 0) p.y= 0;

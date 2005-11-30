@@ -561,7 +561,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			Rectangle shellBounds= shell.getBounds();
 			Rectangle displayBounds= shell.getDisplay().getClientArea();
 
-			location.y= location.y + text.getLineHeight();
+			location.y= location.y + text.getLineHeight(offset);
 			shiftHorizontalLocation(location, shellBounds, displayBounds);
 			shiftVerticalLocation(location, shellBounds, displayBounds);
 
