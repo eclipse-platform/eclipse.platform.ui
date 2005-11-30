@@ -41,7 +41,7 @@ abstract public class Updatable implements IUpdatable {
 
 	protected ChangeEvent fireChangeEvent(int changeType, Object oldValue,
 			Object newValue) {
-		return fireChangeEvent(changeType, oldValue, newValue, 0);
+		return fireChangeEvent(changeType, oldValue, newValue, ChangeEvent.POSITION_UNKNOWN);
 	}
 	
 	protected ChangeEvent fireChangeEvent(int changeType, Object oldValue, Object newValue,  int position) {

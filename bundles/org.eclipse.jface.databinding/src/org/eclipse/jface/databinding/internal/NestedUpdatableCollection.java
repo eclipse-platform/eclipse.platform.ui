@@ -31,8 +31,11 @@ public class NestedUpdatableCollection extends Updatable implements
 	private IChangeListener innerChangeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
 			if (!updating) {
-				fireChangeEvent(changeEvent.getChangeType(), changeEvent
-						.getOldValue(), changeEvent.getNewValue());
+				ChangeEvent nestedEvent = fireChangeEvent(changeEvent.getChangeType(), changeEvent
+						.getOldValue(), changeEvent.getNewValue(), changeEvent.getParent(), changeEvent.getPosition());
+				if(nestedEvent.getVeto()) {
+					changeEvent.setVeto(true);
+				}
 			}
 		}
 	};
@@ -63,7 +66,7 @@ public class NestedUpdatableCollection extends Updatable implements
 		IChangeListener outerChangeListener = new IChangeListener() {
 			public void handleChange(ChangeEvent changeEvent) {
 				updateInnerUpdatableValue(outerUpdatableValue);
-				fireChangeEvent(ChangeEvent.CHANGE, null, null, -1);
+				fireChangeEvent(ChangeEvent.CHANGE, null, null);
 			}
 		};
 		outerUpdatableValue.addChangeListener(outerChangeListener);

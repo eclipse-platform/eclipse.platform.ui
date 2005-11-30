@@ -126,16 +126,16 @@ public class UpdatableTest extends TestCase {
 		Object o2 = new Object();
 
 		changeListenerMock.handleChange(new ChangeEvent(updatable, 0, null,
-				null, 0));
+				null, ChangeEvent.POSITION_UNKNOWN));
 		changeListenerMock.handleChange(new ChangeEvent(updatable, 0, null,
-				null, 0));
+				null, 1));
 		changeListenerMock.handleChange(new ChangeEvent(updatable,
-				ChangeEvent.CHANGE, o1, o2, 0));
+				ChangeEvent.CHANGE, o1, o2, ChangeEvent.POSITION_UNKNOWN));
 		changeListenerMock.handleChange(new ChangeEvent(updatable,
 				ChangeEvent.CHANGE, o1, o2, 42));
 		Mocks.startChecking(changeListenerMock);
 		updatable.fireChange(0, null, null);
-		updatable.fireChange(0, null, null, 0);
+		updatable.fireChange(0, null, null, 1);
 		updatable.fireChange(ChangeEvent.CHANGE, o1, o2);
 		updatable.fireChange(ChangeEvent.CHANGE, o1, o2, 42);
 		Mocks.verify(changeListenerMock);

@@ -57,7 +57,7 @@ public class ChangeEvent extends EventObject implements IChangeEvent {
 	 */
 	public ChangeEvent(IUpdatable updatable, int changeType, Object oldValue,
 			Object newValue) {
-		this(updatable, changeType, oldValue, newValue, 0);
+		this(updatable, changeType, oldValue, newValue, POSITION_UNKNOWN);
 	}
 
 	/**
