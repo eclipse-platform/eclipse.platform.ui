@@ -44,7 +44,7 @@ public class MessageConsoleStream extends IOConsoleOutputStream {
 	 * 
 	 * @param message message to append
 	 */
-	public void print(String message) {
+	public synchronized void print(String message) {
 		try {
             write(message);
         } catch (IOException e) {
@@ -56,7 +56,7 @@ public class MessageConsoleStream extends IOConsoleOutputStream {
 	/**
 	 * Appends a line separator string to this stream.
 	 */
-	public void println() {
+	public synchronized void println() {
 		try {
             write("\n"); //$NON-NLS-1$
         } catch (IOException e) {
@@ -70,7 +70,7 @@ public class MessageConsoleStream extends IOConsoleOutputStream {
 	 * 
 	 * @param message message to print
 	 */
-	public void println(String message) {
+	public synchronized void println(String message) {
 		print(message);
 		println();
 	}	
