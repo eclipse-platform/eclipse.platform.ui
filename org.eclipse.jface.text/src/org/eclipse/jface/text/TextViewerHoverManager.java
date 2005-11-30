@@ -271,9 +271,10 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		int start= 0;
 		int end= 0;
 		IRegion widgetRegion= modelRange2WidgetRange(region);
+		int offset= widgetRegion.getOffset();
 		if (widgetRegion != null) {
-			start= widgetRegion.getOffset();
-			end= widgetRegion.getOffset() + widgetRegion.getLength();
+			start= offset;
+			end= offset + widgetRegion.getLength();
 		}
 
 		StyledText styledText= fTextViewer.getTextWidget();
@@ -281,8 +282,8 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		if (end > 0 && start < end)
 			bounds= styledText.getTextBounds(start, end - 1);
 		else {
-			Point loc= styledText.getLocationAtOffset(widgetRegion.getOffset());
-			bounds= new Rectangle(loc.x, loc.y, fTextViewer.getAverageCharWidth(), styledText.getLineHeight());
+			Point loc= styledText.getLocationAtOffset(offset);
+			bounds= new Rectangle(loc.x, loc.y, fTextViewer.getAverageCharWidth(), styledText.getLineHeight(offset));
 		}
 		
 		return new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);

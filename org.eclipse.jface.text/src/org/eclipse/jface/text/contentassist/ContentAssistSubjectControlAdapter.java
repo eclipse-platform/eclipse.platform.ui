@@ -72,7 +72,8 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 	public int getLineHeight() {
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistSubjectControl.getLineHeight();
-		return fViewer.getTextWidget().getLineHeight();
+		
+		return fViewer.getTextWidget().getLineHeight(getCaretOffset());
 	}
 
 	/*

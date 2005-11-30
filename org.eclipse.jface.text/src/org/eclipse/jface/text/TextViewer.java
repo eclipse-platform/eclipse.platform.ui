@@ -673,7 +673,7 @@ public class TextViewer extends Viewer implements
 				Point upperLeft= fTextWidget.getLocationAtOffset(offset);
 				Point lowerRight= fTextWidget.getLocationAtOffset(offset + length);
 				int width= fTextWidget.getClientArea().width;
-				int height= fTextWidget.getLineHeight() + lowerRight.y - upperLeft.y;
+				int height= fTextWidget.getLineHeight(offset + length) + lowerRight.y - upperLeft.y;
 				fTextWidget.redraw(upperLeft.x, upperLeft.y, width, height, false);
 			}
 
