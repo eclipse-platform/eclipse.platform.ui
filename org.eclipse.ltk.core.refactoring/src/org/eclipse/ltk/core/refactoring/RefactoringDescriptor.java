@@ -56,6 +56,28 @@ public class RefactoringDescriptor implements Comparable {
 	 */
 	public static final int BREAKING_CHANGE= 1 << 0;
 
+	/**
+	 * Predefined argument called <code>input</code>.
+	 * <p>
+	 * This argument should be used to describe the element being refactored.
+	 * The value of this argument does not necessarily have to uniquely identify
+	 * the input element. However, it must be possible to uniquely identify the
+	 * input element using the value of this argument in conjunction with the
+	 * values of the other user-defined attributes.
+	 * </p>
+	 */
+	public static final String INPUT= "input"; //$NON-NLS-1$
+
+	/**
+	 * Predefined argument called <code>name</code>.
+	 * <p>
+	 * This argument should be used to describe the name of the element being
+	 * refactored. The value of this argument may be displayed in the user
+	 * interface.
+	 * </p>
+	 */
+	public static final String NAME= "name"; //$NON-NLS-1$
+
 	/** Constant describing the absence of any flags (value: 0) */
 	public static final int NONE= 0;
 
