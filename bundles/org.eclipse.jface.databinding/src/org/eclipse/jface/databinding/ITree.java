@@ -114,14 +114,14 @@ public interface ITree  {
 	 * @since 3.2
 	 *
 	 */
-	public static class TreeChangeSupport {
+	public static class ChangeSupport {
 		private ITree source;
 		List listeners = null;
 		
 		/**
 		 * @param source
 		 */
-		public TreeChangeSupport(ITree source){
+		public ChangeSupport(ITree source){
 			this.source=source;
 		}
 		

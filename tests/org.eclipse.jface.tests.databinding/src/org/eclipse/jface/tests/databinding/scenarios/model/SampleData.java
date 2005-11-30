@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios.model;
 
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -230,12 +229,11 @@ public class SampleData {
 			public Class[] getTypes() {				
 				return new Class[]  { Catalog.class, Category.class, Lodging.class, Account.class, Adventure.class } ;
 			}
-			public void addPropertyChangeListener(PropertyChangeListener listener) {
-				
+			public void addTreeChangeListener(ChangeListener listener) {		
 			}
-			public void removePropertyChangeListener(PropertyChangeListener listener) {
-			
+			public void removeTreeChangeListener(ChangeListener listener) {
 			}
+
 
 		};
 	}
