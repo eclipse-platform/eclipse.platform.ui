@@ -108,6 +108,7 @@ public final class PresentablePartFolder implements IPresentablePartList {
         
         //toolbarProxy = new ProxyControl(folder.getToolbarParent());
         
+        // NOTE: if the shape of contentProxy changes, the fix for bug 85899 in EmptyTabFolder.computeSize may need adjustment.
         contentProxy = new Composite(folder.getContentParent(), SWT.NONE);
         contentProxy.setVisible(false);
         for (Control current = contentProxy; current != folder.getControl().getParent(); current = current.getParent()) {

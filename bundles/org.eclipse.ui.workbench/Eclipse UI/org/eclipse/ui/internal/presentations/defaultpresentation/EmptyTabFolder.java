@@ -61,6 +61,22 @@ public class EmptyTabFolder extends AbstractTabFolder {
      */
     public Point computeSize(int widthHint, int heightHint) {
         if (childControl != null) {
+        	// Fix for bug 85899 [Perspectives] [RCP]Standalone view does not divide space in 
+        	//   proper ratio with reference when added to IPageLayout with showTitle parameter false
+        	// If the childControl is a content proxy (a Composite with no children -- see PresentablePartFolder constructor),
+        	// then computeSize returns 64x64, which is inappropriate.
+        	// Note that this happens even if the Composite has a Layout that returns 0@0.
+        	// Instead, use the sizes of the margins.  This is equivalent to calling control.computeSize(...)
+        	// if the childControl returned 0@0 for its preferred size.
+        	if (childControl instanceof Composite) {
+        		Composite composite = (Composite) childControl;
+        		if (composite.getChildren().length == 0) {
+        			EnhancedFillLayout layout = (EnhancedFillLayout) control.getLayout();
+        			int w = widthHint == SWT.DEFAULT ? layout.xmargin * 2 : widthHint;
+        			int h = heightHint == SWT.DEFAULT ? layout.ymargin * 2 : heightHint;
+        			return new Point(w, h);
+        		}
+        	}
             return childControl.computeSize(widthHint, heightHint);
         }
         return new Point(0,0);
