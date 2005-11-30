@@ -258,7 +258,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setRefactoringHistory(final RefactoringHistory history) {
+	public void setInput(final RefactoringHistory history) {
 		fHistoryViewer.setInput(history);
 		if (history != null) {
 			final RefactoringHistoryContentProvider provider= fControlConfiguration.getContentProvider();

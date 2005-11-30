@@ -122,8 +122,8 @@ public final class ExportRefactoringHistoryControl extends RefactoringHistoryCon
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setRefactoringHistory(final RefactoringHistory history) {
-		super.setRefactoringHistory(history);
+	public void setInput(final RefactoringHistory history) {
+		super.setInput(history);
 
 		fExportAllButton.setEnabled(history != null && !history.isEmpty());
 	}

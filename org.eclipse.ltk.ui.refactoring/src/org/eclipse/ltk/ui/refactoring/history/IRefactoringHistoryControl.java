@@ -44,5 +44,5 @@ public interface IRefactoringHistoryControl {
 	 * @param history
 	 *            the refactoring history, or <code>null</code>
 	 */
-	public void setRefactoringHistory(RefactoringHistory history);
+	public void setInput(RefactoringHistory history);
 }

@@ -151,7 +151,7 @@ public class RefactoringHistoryDialog extends Dialog {
 		getShell().setText(fDialogConfiguration.getDialogTitle());
 		fHistoryControl= createHistoryControl(composite);
 		fHistoryControl.createControl();
-		fHistoryControl.setRefactoringHistory(fRefactoringHistory);
+		fHistoryControl.setInput(fRefactoringHistory);
 		applyDialogFont(parent);
 		return composite;
 	}

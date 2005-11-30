@@ -120,7 +120,7 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 	 * {@inheritDoc}
 	 */
 	public void setVisible(boolean visible) {
-		fHistoryControl.setRefactoringHistory(fRefactoringHistory);
+		fHistoryControl.setInput(fRefactoringHistory);
 		super.setVisible(visible);
 	}
 }
