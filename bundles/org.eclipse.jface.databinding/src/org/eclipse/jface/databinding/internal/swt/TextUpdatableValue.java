@@ -32,7 +32,9 @@ public class TextUpdatableValue extends UpdatableValue {
 	private boolean updating = false;
 
 	private int updatePolicy;
-
+	
+	private String bufferedValue;	
+	
 	private Listener validateListener = new Listener() {
 		public void handleEvent(Event event) {
 			if (!updating) {
@@ -44,6 +46,10 @@ public class TextUpdatableValue extends UpdatableValue {
 	private Listener updateListener = new Listener() {
 		public void handleEvent(Event event) {
 			if (!updating) {
+				// If we are updating on focus lost then when we fire the change event change the buffered value				
+				if (updatePolicy == SWT.FocusOut){
+					bufferedValue = text.getText();					
+				}
 				fireChangeEvent(ChangeEvent.CHANGE, null, text.getText());						
 			}
 		}
@@ -58,12 +64,24 @@ public class TextUpdatableValue extends UpdatableValue {
 	 * @param validatePolicy
 	 * @param updatePolicy
 	 */
-	public TextUpdatableValue(Text text, int validatePolicy, int updatePolicy) {
+	public TextUpdatableValue(final Text text, int validatePolicy, int updatePolicy) {
 		this.text = text;
 		this.updatePolicy = updatePolicy;
 		if (updatePolicy != SWT.None) {
 			text.addListener(updatePolicy, updateListener);
 		}
+		// If the update policy is TIME_EARLY then the model is notified of changed on key stroke by key stroke
+		// When escape is pressed we need to rollback to the previous value which is done with a key listener, however
+		// the bufferedValue (the last remembered change value) must be changed on focus lost
+		if(updatePolicy == SWT.Modify){
+			text.addListener(SWT.FocusOut, new Listener(){
+				public void handleEvent(Event event){
+					if(!updating){
+						bufferedValue = text.getText();
+					}
+				}
+			});
+		}		
 		verifyListener = new VerifyListener() {
 			public void verifyText(VerifyEvent e) {
 				if (!updating) {
@@ -82,7 +100,8 @@ public class TextUpdatableValue extends UpdatableValue {
 		keyListener = new KeyListener(){
 			public void keyPressed(KeyEvent e) {
 				if(e.character == SWT.ESC){
-					e.toString();
+					// Revert the value in the text field to the model value
+					text.setText(bufferedValue);
 				}
 			}
 			public void keyReleased(KeyEvent e) {	
@@ -92,11 +111,13 @@ public class TextUpdatableValue extends UpdatableValue {
 	}
 
 	public void setValue(final Object value) {
+		
 		AsyncRunnable runnable = new AsyncRunnable(){
 			public void run(){
 				String oldValue = text.getText();
 				try {
 					updating = true;
+					bufferedValue = (String)value;					
 					text.setText(value == null ? "" : value.toString()); //$NON-NLS-1$
 				} finally {
 					updating = false;

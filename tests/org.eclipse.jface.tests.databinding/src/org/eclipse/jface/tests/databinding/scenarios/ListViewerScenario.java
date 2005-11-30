@@ -96,4 +96,5 @@ public class ListViewerScenario extends ScenariosTestCase {
 		assertEquals(((IStructuredSelection)listViewer.getSelection()).getFirstElement(),adventure.getDefaultLodging()); 
 		
 	}
+	
 }
