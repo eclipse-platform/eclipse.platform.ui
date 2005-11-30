@@ -13,7 +13,7 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * 
  * @since 3.2
  */
-public final class RefactoringDescriptorProxyAdapter extends RefactoringDescriptorProxy {
+final class RefactoringDescriptorProxyAdapter extends RefactoringDescriptorProxy {
 
 	/** The encapsulated descriptor */
 	private final RefactoringDescriptor fDescriptor;
@@ -24,7 +24,7 @@ public final class RefactoringDescriptorProxyAdapter extends RefactoringDescript
 	 * @param descriptor
 	 *            the descriptor to encapsulate
 	 */
-	public RefactoringDescriptorProxyAdapter(final RefactoringDescriptor descriptor) {
+	RefactoringDescriptorProxyAdapter(final RefactoringDescriptor descriptor) {
 		Assert.isNotNull(descriptor);
 		fDescriptor= descriptor;
 	}
