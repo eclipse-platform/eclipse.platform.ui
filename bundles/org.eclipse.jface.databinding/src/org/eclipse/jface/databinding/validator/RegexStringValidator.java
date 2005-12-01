@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * RegularExpressionVerifier.  A generic String validator that uses regular expressions to
  * specify validation rules.
  */
-public class RegularExpressionStringValidator implements IValidator {
+public class RegexStringValidator implements IValidator {
     
     private Pattern fragmentRegex;
     private Pattern fullValueRegex;
@@ -35,7 +35,7 @@ public class RegularExpressionStringValidator implements IValidator {
 	 * @param fullyValidRegex A regex that matches iff the value is fully valid
 	 * @param hint The hint to display if the value is invalid
 	 */
-	public RegularExpressionStringValidator(String partiallyValidRegex,
+	public RegexStringValidator(String partiallyValidRegex,
 			String fullyValidRegex, String hint) {
 		super();
 		this.fragmentRegex = Pattern.compile(partiallyValidRegex);

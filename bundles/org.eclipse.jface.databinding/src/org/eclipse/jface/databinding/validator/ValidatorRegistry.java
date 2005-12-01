@@ -98,18 +98,18 @@ public class ValidatorRegistry {
         associate(String.class, Date.class, new String2DateValidator());
         
         // Regex-implemented validators here...
-        associate(String.class, Character.TYPE, new RegularExpressionStringValidator(
+        associate(String.class, Character.TYPE, new RegexStringValidator(
                 "^.$|^$", ".", BindingMessages.getString("Validate_CharacterHelp"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        associate(String.class, Character.class, new RegularExpressionStringValidator(
+        associate(String.class, Character.class, new RegexStringValidator(
                 "^.$|^$", ".", BindingMessages.getString("Validate_CharacterHelp"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        associate(String.class, Boolean.TYPE, new RegularExpressionStringValidator(
+        associate(String.class, Boolean.TYPE, new RegexStringValidator(
         		BindingMessages.getString("Validate_BooleanPartialValidRegex"),  //$NON-NLS-1$
         		BindingMessages.getString("Validate_BooleanValidRegex"),  //$NON-NLS-1$
         		BindingMessages.getString("Validate_BooleanHelp"))); //$NON-NLS-1$
-        associate(String.class, Boolean.class, new RegularExpressionStringValidator(
+        associate(String.class, Boolean.class, new RegexStringValidator(
         		BindingMessages.getString("Validate_BooleanPartialValidRegex"),  //$NON-NLS-1$
         		BindingMessages.getString("Validate_BooleanValidRegex"),  //$NON-NLS-1$
         		BindingMessages.getString("Validate_BooleanHelp"))); //$NON-NLS-1$
-        associate(String.class, String.class, new RegularExpressionStringValidator("^.*$", "^.*$", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        associate(String.class, String.class, new RegexStringValidator("^.*$", "^.*$", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }
