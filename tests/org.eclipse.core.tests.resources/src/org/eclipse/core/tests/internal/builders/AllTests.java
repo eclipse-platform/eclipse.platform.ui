@@ -23,6 +23,7 @@ public class AllTests extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
+		suite.addTest(BuilderEventTest.suite());
 		suite.addTest(BuilderTest.suite());
 		suite.addTest(BuildDeltaVerificationTest.suite());
 		suite.addTest(MultiProjectBuildTest.suite());
