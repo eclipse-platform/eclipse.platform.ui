@@ -137,9 +137,12 @@ public class NotificationManager implements IManager, ILifecycleListener {
 				return;
 			isNotifying = true;
 			ResourceDelta delta = getDelta(lastState, type);
-			// if the delta is empty the root's change is undefined, there is nothing to do
-			if (delta == null || delta.getKind() == 0)
-				return;
+			//don't broadcast POST_CHANGE or incremental build events if the delta is empty
+			if (delta == null || delta.getKind() == 0) {
+				int trigger = event.getBuildKind();
+				if (trigger != IncrementalProjectBuilder.FULL_BUILD && trigger != IncrementalProjectBuilder.CLEAN_BUILD)
+					return;
+			}
 			event.setDelta(delta);
 			long start = System.currentTimeMillis();
 			notify(getListeners(), event, lockTree);
@@ -247,7 +250,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 				// away
 				if (event.resource.equals(event.newResource))
 					return;
-			//fall through
+				//fall through
 			case LifecycleEvent.PRE_PROJECT_DELETE :
 				if (!listeners.hasListenerFor(IResourceChangeEvent.PRE_DELETE))
 					return;
