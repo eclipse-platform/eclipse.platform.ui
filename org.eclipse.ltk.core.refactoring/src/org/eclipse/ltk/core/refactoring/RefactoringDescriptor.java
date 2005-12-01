@@ -57,6 +57,33 @@ public class RefactoringDescriptor implements Comparable {
 	public static final int BREAKING_CHANGE= 1 << 0;
 
 	/**
+	 * Constant describing the closure change flag (value: 4)
+	 * <p>
+	 * Clients should set this flag to indicate that the change created by the
+	 * represented refactoring might causes changes in other files than the
+	 * files of the input elements according to the semantics of the associated
+	 * programming language.
+	 * </p>
+	 */
+	public static final int CLOSURE_CHANGE= 1 << 2;
+
+	/**
+	 * Predefined argument called <code>element&lt;Number&gt;</code>.
+	 * <p>
+	 * This argument should be used to describe the elements being refactored.
+	 * The value of this argument does not necessarily have to uniquely identify
+	 * the elements. However, it must be possible to uniquely identify the
+	 * elements using the value of this argument in conjunction with the values
+	 * of the other user-defined attributes.
+	 * </p>
+	 * <p>
+	 * The element arguments are simply distinguished by appending a number to
+	 * the argument name, eg. element1.
+	 * </p>
+	 */
+	public static final String ELEMENT= "element"; //$NON-NLS-1$
+
+	/**
 	 * Predefined argument called <code>input</code>.
 	 * <p>
 	 * This argument should be used to describe the element being refactored.
