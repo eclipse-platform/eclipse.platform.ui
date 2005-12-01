@@ -127,12 +127,16 @@ public interface ISources {
 
 	/**
 	 * The priority given when the source includes the active editor identifier.
+	 * 
+	 * @since 3.2
 	 */
 	public static final int ACTIVE_EDITOR_ID = 1 << 18;
 
 	/**
 	 * The variable name for the active editor identifier. This is for use with
 	 * the <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 * 
+	 * @since 3.2
 	 */
 	public static final String ACTIVE_EDITOR_ID_NAME = "activeEditorId"; //$NON-NLS-1$
 
@@ -149,12 +153,16 @@ public interface ISources {
 
 	/**
 	 * The priority given when the source includes the active part id.
+	 * 
+	 * @since 3.2
 	 */
 	public static final int ACTIVE_PART_ID = 1 << 22;
 
 	/**
 	 * The variable name for the active part id. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 * 
+	 * @since 3.2
 	 */
 	public static final String ACTIVE_PART_ID_NAME = "activePartId"; //$NON-NLS-1$
 
