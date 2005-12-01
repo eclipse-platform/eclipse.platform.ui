@@ -150,8 +150,22 @@ public class ModalContext {
         public void block() {
             if (display == Display.getCurrent()) {
                 while (continueEventDispatching) {
-                    if (!display.readAndDispatch())
-                        display.sleep();
+                	// Run the event loop.  Handle any uncaught exceptions caused
+                	// by UI events.
+                   	try {
+                    	if (!display.readAndDispatch())
+                        	display.sleep();
+                	}
+                   	// ThreadDeath is a normal error when the thread is dying.  We must
+                   	// propagate it in order for it to properly terminate.
+                	catch (ThreadDeath e) {
+                   		throw (e);
+                	}
+                	// For all other exceptions, log the problem.
+                	catch (Throwable e) {
+                		System.err.println("Unhandled event loop exception during blocked modal context."); //$NON-NLS-1$
+             			e.printStackTrace();
+                	}
                 }
             } else {
                 try {
