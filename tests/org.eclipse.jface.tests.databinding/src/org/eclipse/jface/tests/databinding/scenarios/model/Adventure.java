@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios.model;
 
+import org.eclipse.jface.databinding.validator.IValidator;
+import org.eclipse.jface.databinding.validators.String2IntValidator;
+
 public class Adventure extends ModelObject {
 
 	private boolean petsAllowed;
@@ -44,7 +47,29 @@ public class Adventure extends ModelObject {
 		int oldValue = maxNumberOfPeople;
 		maxNumberOfPeople = anInt;
 		firePropertyChange("maxNumberOfPeople", oldValue, maxNumberOfPeople);
-	}	
+	}
+	
+	public IValidator getMaxNumberOfPeopleValidator() {
+		return new IValidator() {
+			IValidator delegate = new String2IntValidator();
+			public String isPartiallyValid(Object value) {
+				return delegate.isPartiallyValid(value);
+			}
+
+			public String isValid(Object value) {
+				String error = delegate.isValid(value);
+				if (error != null) {
+					return error;
+				}
+				int intValue = Integer.valueOf((String)value).intValue();
+				if (intValue < 1 || intValue > 20) {
+					return "Max number of people must be between 1 and 20 inclusive";
+				}
+				return null;
+			}
+			
+		};
+	}
 
 	public Lodging getDefaultLodging() {
 		return defaultLodging;

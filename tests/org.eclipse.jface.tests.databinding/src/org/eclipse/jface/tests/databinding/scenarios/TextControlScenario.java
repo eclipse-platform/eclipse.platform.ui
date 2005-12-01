@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import org.eclipse.jface.databinding.BeanBindSupportFactory;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
 import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
@@ -144,6 +145,21 @@ public class TextControlScenario extends ScenariosTestCase {
 		// Send an escape key	
 		text.notifyListeners(SWT.KeyDown,event);		
 		// Verify that the model has changed and has not reverted
-		assertEquals(newName,adventure.getName());		
+		assertEquals(newName,adventure.getName());
+	}
+	
+	public void testScenario05() {
+		// Show that the BeanBindSupportFactory will automatically pick up the
+		// validator on the MaxNumberOfPeople property
+		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_EARLY);	
+		getDbc().addBindSupportFactory(new BeanBindSupportFactory());
+		final Text text = new Text(getComposite(), SWT.BORDER);
+		getDbc().bind(text, new Property(adventure, "maxNumberOfPeople"), null);
+		// make sure we can set a value inside the validator's range
+		text.setText("4");
+		assertEquals(4, adventure.getMaxNumberOfPeople());
+		// Now try to set a value outside the validator's range
+		text.setText("999");
+		assertEquals(4, adventure.getMaxNumberOfPeople());
 	}
 }
