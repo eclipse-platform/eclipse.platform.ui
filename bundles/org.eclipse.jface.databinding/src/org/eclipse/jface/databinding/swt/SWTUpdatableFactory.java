@@ -96,9 +96,19 @@ final public class SWTUpdatableFactory implements IUpdatableFactory {
 	 */
 	public static final int TIME_NEVER = 2;
 	
-	private int updateTime = TIME_LATE;
+	/**
+	 * The default time used for when update should occur.  TIME_LATE or TIME_EARLY
+	 */
+	public static int DEFAULT_UPDATE_TIME = TIME_LATE;
 	
-	private int validateTime = TIME_EARLY;
+	/**
+	 * The default time used for when validation should occur.  TIME_LATE or TIME_EARLY
+	 */
+	public static int DEFAULT_VALIDATE_TIME = TIME_LATE;
+	
+	private int updateTime = DEFAULT_UPDATE_TIME;
+	
+	private int validateTime = DEFAULT_VALIDATE_TIME;
 	
 	public IUpdatable createUpdatable(Map properties,
 			Object description, IDataBindingContext bindingContext) {

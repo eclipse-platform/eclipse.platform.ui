@@ -99,7 +99,7 @@ public class TextUpdatableValue extends UpdatableValue {
 		text.addVerifyListener(verifyListener);
 		keyListener = new KeyListener(){
 			public void keyPressed(KeyEvent e) {
-				if(e.character == SWT.ESC){
+				if(e.character == SWT.ESC && bufferedValue != null){
 					// Revert the value in the text field to the model value
 					text.setText(bufferedValue);
 				}

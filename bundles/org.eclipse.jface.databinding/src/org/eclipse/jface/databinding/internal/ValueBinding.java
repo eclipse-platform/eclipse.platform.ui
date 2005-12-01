@@ -13,6 +13,7 @@ package org.eclipse.jface.databinding.internal;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IBindSpec;
+import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.validator.IValidator;
@@ -65,7 +66,7 @@ public class ValueBinding extends Binding {
 	public void handleChange(ChangeEvent changeEvent) {
 		if (!updating) {
 			if (changeEvent.getUpdatable() == target) {
-				if (changeEvent.getChangeType() == ChangeEvent.VERIFY) {
+				if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
 					// we are notified of a pending change, do validation
 					// and veto the change if it is not valid
 					Object value = changeEvent.getNewValue();
@@ -82,7 +83,11 @@ public class ValueBinding extends Binding {
 					updateModelFromTarget();
 				}
 			} else {
-				updateTargetFromModel();
+				// The model has changed so we must update the target
+				if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
+				} else {
+					updateTargetFromModel();
+				}
 			}
 		}
 	}

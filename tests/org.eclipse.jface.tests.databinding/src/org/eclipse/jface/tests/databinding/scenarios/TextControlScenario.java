@@ -22,6 +22,7 @@ import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.jface.tests.databinding.scenarios.model.Transportation;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -217,7 +218,6 @@ public class TextControlScenario extends ScenariosTestCase {
 		// validator on the MaxNumberOfPeople property
 		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_EARLY);	
 		getDbc().addBindSupportFactory(new BeanBindSupportFactory());
-		final Text text = new Text(getComposite(), SWT.BORDER);
 		getDbc().bind(text, new Property(adventure, "maxNumberOfPeople"), null);
 		// make sure we can set a value inside the validator's range
 		text.setText("4");
@@ -226,4 +226,41 @@ public class TextControlScenario extends ScenariosTestCase {
 		text.setText("999");
 		assertEquals(4, adventure.getMaxNumberOfPeople());
 	}
+	
+	public void testScenario09(){
+		
+		// Verify direct binding between a Text and Label following bugzilla 118696
+		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_LATE);
+		Label label = new Label(getComposite(),SWT.NONE);
+		getDbc().bind(text,label,null);
+		// Change the text
+		text.setText("Frog");
+		// Verify the label does not change
+		assertTrue(label.getText().length() == 0);
+		// Lose focus from the text field
+		text.notifyListeners(SWT.FocusOut,null);
+		assertEquals(label.getText(),"Frog");
+ 	
+	}
+	
+	public void testScenario10(){
+		
+		// Verify direct binding between a Text and Label following bugzilla 118696 with TIME_EARLY
+		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_EARLY);
+		Label label = new Label(getComposite(),SWT.NONE);
+		getDbc().bind(text,label,null);
+		// Change the text
+		String newTextValue = "Frog";
+		for (int i = 0; i < newTextValue.length(); i++) {
+			text.setText(newTextValue.substring(0,i+1));
+			// Verify the label has changed key by key			
+			assertEquals(text.getText(),label.getText());
+		}
+		// Lose focus
+		text.notifyListeners(SWT.FocusOut,null);
+		// Verify the text and label are the same following a lose focus
+		assertEquals(text.getText(),label.getText());
+ 
+		
+	}	
 }
