@@ -11,7 +11,6 @@ package org.eclipse.core.internal.filesystem.local;
 
 import java.io.*;
 import java.net.URI;
-import java.net.URISyntaxException;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.filesystem.provider.FileStore;
