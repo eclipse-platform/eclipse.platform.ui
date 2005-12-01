@@ -14,10 +14,8 @@ import java.io.*;
 import java.net.URI;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.CancelingProgressMonitor;
@@ -755,8 +753,8 @@ public class LinkedResourceTest extends ResourceTest {
 		IFileStore folderStore = getTempStore();
 		IFileStore subFolderStore = folderStore.getChild(subFolder.getName());
 		IFileStore fileStore = getTempStore();
-		IPath folderPath = FileUtil.toPath(folderStore.toURI());
-		IPath filePath = FileUtil.toPath(fileStore.toURI());
+		IPath folderPath = URIUtil.toPath(folderStore.toURI());
+		IPath filePath = URIUtil.toPath(fileStore.toURI());
 
 		try {
 			//create the structure on disk
@@ -1071,7 +1069,7 @@ public class LinkedResourceTest extends ResourceTest {
 				boolean isDeep = ((Boolean) args[2]).booleanValue();
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
 				IPath sourceLocation = resolve(localFile);
-				URI sourceLocationURI = FileUtil.toURI(sourceLocation);
+				URI sourceLocationURI = URIUtil.toURI(sourceLocation);
 				if (result == CANCELED)
 					return monitor instanceof CancelingProgressMonitor;
 				if (!destination.exists())

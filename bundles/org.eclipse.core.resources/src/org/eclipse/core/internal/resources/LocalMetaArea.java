@@ -12,9 +12,9 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.net.URI;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeChunkyOutputStream;
-import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -312,7 +312,7 @@ public class LocalMetaArea implements ICoreConstants {
 						if (location.startsWith(URI_PREFIX))
 							description.setLocationURI(URI.create(location.substring(URI_PREFIX.length())));
 						else
-							description.setLocationURI(FileUtil.toURI(Path.fromOSString(location)));
+							description.setLocationURI(URIUtil.toURI(Path.fromOSString(location)));
 					}
 				} catch (Exception e) {
 					//don't allow failure to read the location to propagate

@@ -11,6 +11,7 @@ package org.eclipse.core.internal.resources;
 
 import java.net.URI;
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
@@ -73,7 +74,7 @@ public class LocationValidator {
 		//if the location doesn't have a device, see if the OS will assign one
 		if (location.getDevice() == null)
 			location = new Path(location.toFile().getAbsolutePath());
-		return validateLinkLocationURI(resource, FileUtil.toURI(location));
+		return validateLinkLocationURI(resource, URIUtil.toURI(location));
 	}
 
 	public IStatus validateLinkLocationURI(IResource resource, URI unresolvedLocation) {
@@ -295,7 +296,7 @@ public class LocationValidator {
 				message = Messages.links_noPath;
 			return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED, null, message);
 		}
-		return validateProjectLocationURI(context, FileUtil.toURI(location));
+		return validateProjectLocationURI(context, URIUtil.toURI(location));
 	}
 
 	/* (non-Javadoc)

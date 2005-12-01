@@ -12,8 +12,8 @@ package org.eclipse.core.resources.team;
 
 import java.net.URI;
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.resources.InternalTeamHook;
-import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -160,7 +160,7 @@ public abstract class TeamHook extends InternalTeamHook {
 	public IStatus validateCreateLink(IFile file, int updateFlags, URI location) {
 		//forward to old method to ensure old hooks get a chance to validate in the local case
 		if (EFS.SCHEME_FILE.equals(location.getScheme()))
-			return validateCreateLink(file, updateFlags, FileUtil.toPath(location));
+			return validateCreateLink(file, updateFlags, URIUtil.toPath(location));
 		return Status.OK_STATUS;
 	}
 
@@ -224,7 +224,7 @@ public abstract class TeamHook extends InternalTeamHook {
 	public IStatus validateCreateLink(IFolder folder, int updateFlags, URI location) {
 		//forward to old method to ensure old hooks get a chance to validate in the local case
 		if (EFS.SCHEME_FILE.equals(location.getScheme()))
-			return validateCreateLink(folder, updateFlags, FileUtil.toPath(location));
+			return validateCreateLink(folder, updateFlags, URIUtil.toPath(location));
 		return Status.OK_STATUS;
 	}
 }

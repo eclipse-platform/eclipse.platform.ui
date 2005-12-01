@@ -346,7 +346,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			//this is the root, so we know where this must be located
 			//initialize root location
 			info = workspace.getResourceInfo(Path.ROOT, false, true);
-			setLocation(workspace.getRoot(), info, FileUtil.toURI(Platform.getLocation()));
+			setLocation(workspace.getRoot(), info, URIUtil.toURI(Platform.getLocation()));
 			return info.getFileStoreRoot();
 		}
 		root = getStoreRoot(parent);
@@ -605,7 +605,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		}
 		final boolean isDefaultLocation = projectLocation == null;
 		if (isDefaultLocation) {
-			projectLocation = FileUtil.toURI(getProjectDefaultLocation(target));
+			projectLocation = URIUtil.toURI(getProjectDefaultLocation(target));
 		}
 		IFileStore projectStore = initializeStore(target, projectLocation);
 		IFileStore descriptionStore = projectStore.getChild(IProjectDescription.DESCRIPTION_FILE_NAME);

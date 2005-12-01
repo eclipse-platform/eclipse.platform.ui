@@ -13,8 +13,8 @@ package org.eclipse.core.internal.resources;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.events.BuildCommand;
-import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
@@ -156,7 +156,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * no such link exists.
 	 */
 	public IPath getLinkLocation(IPath aPath) {
-		return FileUtil.toPath(getLinkLocationURI(aPath));
+		return URIUtil.toPath(getLinkLocationURI(aPath));
 	}
 
 	/**
@@ -184,7 +184,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * @deprecated
 	 */
 	public IPath getLocation() {
-		return FileUtil.toPath(location);
+		return URIUtil.toPath(location);
 	}
 
 	/* (non-Javadoc)
@@ -345,7 +345,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * @see IProjectDescription#setLocation(IPath)
 	 */
 	public void setLocation(IPath path) {
-		this.location = path == null ? null : FileUtil.toURI(path);
+		this.location = path == null ? null : URIUtil.toURI(path);
 	}
 
 	public void setLocationURI(URI location) {

@@ -565,7 +565,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 */
 	public void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(localLocation);
-		createLink(FileUtil.toURI(localLocation), updateFlags, monitor);
+		createLink(URIUtil.toURI(localLocation), updateFlags, monitor);
 	}
 	
 	/* (non-Javadoc)

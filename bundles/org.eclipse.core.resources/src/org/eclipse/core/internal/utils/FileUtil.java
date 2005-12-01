@@ -11,7 +11,6 @@ package org.eclipse.core.internal.utils;
 
 import java.io.*;
 import java.net.URI;
-import java.net.URISyntaxException;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.internal.resources.ResourceException;
@@ -158,52 +157,6 @@ public class FileUtil {
 		} catch (IOException e) {
 			//ignore
 		}
-	}
-
-	/**
-	 * Converts a URI to an IPath.  Returns null if the URI cannot be represented
-	 * as an IPath.
-	 */
-	public static IPath toPath(URI uri) {
-		if (uri == null)
-			return null;
-		final String scheme = uri.getScheme();
-		// null scheme represents path variable
-		if (scheme == null || EFS.SCHEME_FILE.equals(scheme))
-			return new Path(uri.getSchemeSpecificPart());
-		return null;
-	}
-
-	/**
-	 * Converts a path to a URI
-	 */
-	public static URI toURI(IPath path) {
-		if (path == null)
-			return null;
-		if (path.isAbsolute()) {
-			final File file = path.toFile();
-			String filePath = file.getAbsolutePath();
-			if (File.separatorChar != '/')
-				filePath = filePath.replace(File.separatorChar, '/');
-			final int length = filePath.length();
-			StringBuffer pathBuf = new StringBuffer(length + 1);
-			//There must be a leading slash in a hierarchical URI
-			if (length > 0 && (filePath.charAt(0) != '/'))
-				pathBuf.append('/');
-			//additional double-slash for UNC paths to distinguish from host separator
-			if (path.isUNC())
-				pathBuf.append('/').append('/');
-			pathBuf.append(filePath);
-			try {
-				return new URI(EFS.SCHEME_FILE, null, pathBuf.toString(), null);
-			} catch (URISyntaxException e) {
-				//try java.io implementation
-				return file.toURI();
-			}
-		}
-		//in the relative path case, we need to create a relative URI to ensure
-		//the path variable case is properly handled
-		return URI.create(escapeColons(path.toString()));
 	}
 
 	public static final void transferStreams(InputStream source, OutputStream destination, String path, IProgressMonitor monitor) throws CoreException {

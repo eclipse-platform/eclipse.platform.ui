@@ -16,12 +16,10 @@ import java.net.URL;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.localstore.SafeFileOutputStream;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
@@ -368,7 +366,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		assertEquals("3.6", new ICommand[0], projDesc.getBuildSpec());
 		LinkDescription link = (LinkDescription) projDesc.getLinks().values().iterator().next();
 		assertEquals("3.7", new Path("newLink"), link.getProjectRelativePath());
-		assertEquals("3.8", PATH_STRING, FileUtil.toPath(link.getLocation()).toString());
+		assertEquals("3.8", PATH_STRING, URIUtil.toPath(link.getLocation()).toString());
 	}
 
 	public void testInvalidWorkspaceDescription() {

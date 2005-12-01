@@ -12,7 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.net.URI;
 import java.util.HashMap;
-import org.eclipse.core.internal.utils.FileUtil;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -54,7 +54,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * @see IWorkspaceRoot#findContainersForLocation(IPath)
 	 */
 	public IContainer[] findContainersForLocation(IPath location) {
-		return findContainersForLocationURI(FileUtil.toURI(location));
+		return findContainersForLocationURI(URIUtil.toURI(location));
 	}
 
 	public IContainer[] findContainersForLocationURI(URI location) {
@@ -65,7 +65,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * @see IWorkspaceRoot#findFilesForLocation(IPath)
 	 */
 	public IFile[] findFilesForLocation(IPath location) {
-		return findFilesForLocationURI(FileUtil.toURI(location));
+		return findFilesForLocationURI(URIUtil.toURI(location));
 	}
 
 	public IFile[] findFilesForLocationURI(URI location) {
