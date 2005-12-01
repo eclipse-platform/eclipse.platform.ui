@@ -95,14 +95,24 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 	 * executed.
 	 * 
 	 * @param refactoring
-	 *            the refactoring being executed
+	 *            the refactoring about to be executed
 	 * @param descriptor
-	 *            the associated refactoring descriptor
+	 *            the refactoring descriptor
 	 * @param monitor
 	 *            the progress monitor to use
+	 * @return a status describing the outcome of the initialization
 	 */
-	protected void aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
-		// Do nothing
+	protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
+		Assert.isNotNull(refactoring);
+		Assert.isNotNull(descriptor);
+		final RefactoringStatus status= new RefactoringStatus();
+		if (refactoring instanceof IInitializableRefactoringComponent) {
+			final IInitializableRefactoringComponent component= (IInitializableRefactoringComponent) refactoring;
+			final RefactoringArguments arguments= RefactoringInstanceFactory.getInstance().createArguments(descriptor);
+			if (arguments != null)
+				status.merge(component.initialize(arguments));
+		}
+		return status;
 	}
 
 	/**
@@ -142,28 +152,17 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 			service.addExecutionListener(listener);
 			service.connect();
 			for (int index= 0; index < proxies.length && !fExecutionStatus.hasFatalError(); index++) {
-				boolean execute= false;
 				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 				if (descriptor != null && !descriptor.isUnknown()) {
 					final Refactoring refactoring= factory.createRefactoring(descriptor);
-					if (refactoring instanceof IInitializableRefactoringComponent) {
-						final IInitializableRefactoringComponent component= (IInitializableRefactoringComponent) refactoring;
-						final RefactoringArguments arguments= factory.createArguments(descriptor);
-						if (arguments != null) {
-							final RefactoringStatus status= component.initialize(arguments);
-							if (!status.hasFatalError())
-								execute= true;
-							else {
-								fExecutionStatus.merge(status);
-								break;
-							}
-						}
-					}
-					if (execute) {
+					if (refactoring != null) {
 						final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 						try {
-							aboutToPerformRefactoring(refactoring, descriptor, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-							ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 90, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							final RefactoringStatus status= aboutToPerformRefactoring(refactoring, descriptor, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							if (!status.hasFatalError())
+								ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 90, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							else
+								fExecutionStatus.merge(status);
 						} finally {
 							refactoringPerformed(refactoring, new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						}
