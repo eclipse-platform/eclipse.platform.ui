@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.*;
 
 import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.internal.utils.FileUtil;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
@@ -702,7 +702,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 		if (resource.getProjectRelativePath().segmentCount() == 1 && EFS.SCHEME_FILE.equals(location.getScheme())) {
 			// This is compatible with the old style link so invoke the old
 			// validateLink
-			return validateCreateLink(resource, updateFlags, FileUtil.toPath(location));
+			return validateCreateLink(resource, updateFlags, URIUtil.toPath(location));
 		}
 		if (canHandleLinkedResourceURI()) {
 			return Team.OK_STATUS;
