@@ -221,6 +221,10 @@ public interface IResourceChangeEvent {
 
 	/**
 	 * Returns an object identifying the source of this event.
+	 * <p>
+	 * If the event is a <code>PRE_BUILD</code> or <code>POST_BUILD</code>
+	 * then this will be the scope of the build (either the {@link IWorkspace} or a single {@link IProject}).
+	 * </p>
 	 *
 	 * @return an object identifying the source of this event 
 	 * @see java.util.EventObject
