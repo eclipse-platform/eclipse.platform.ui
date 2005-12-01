@@ -193,22 +193,6 @@ public class SampleData {
 				}
 				return false;				
 			}
-			public Object getParent(Object element) {
-				if (element instanceof Adventure) {
-					Category[] categories = catalog.getCategories();
-					for (int i = 0; i < categories.length; i++) {						
-						if (Arrays.asList(categories[i].getAdventures()).contains(element))
-							return categories[i];						
-					}
-				}
-				else if (element instanceof Lodging)
-					return catalog;
-				else if (element instanceof Account)
-					return catalog;
-				else if (element instanceof Category)
-					return catalog;
-				return null;					
-			}
 			public void setChildren(Object parentElement, Object[] children) {
 				// ReadOnly for Adding Elements
 			}

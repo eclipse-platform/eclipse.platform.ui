@@ -12,10 +12,7 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.ITree;
@@ -34,16 +31,19 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
  
 
 public class TreeScenarios extends ScenariosTestCase {
 	
 	Tree tree=null;
 	TreeViewer tviewer = null;
-	Catalog catalog = null;
-	Account[] accounts;
-	Category[] categories;
-	Adventure[] adventures;
+	TreeColumn firstCol = null;
+	TreeColumn secondCol = null;
+	
+	// model
+	Catalog catalog = null;	
 	ITree   catalogModelTree = null;
 	ITree   directoryModelTree = null;	
 	
@@ -54,19 +54,19 @@ public class TreeScenarios extends ScenariosTestCase {
 		getComposite().setLayout(new FillLayout());
 
 		tree = new Tree(getComposite(), SWT.NONE);
+		firstCol = new TreeColumn(tree, SWT.NONE);
+		firstCol.setWidth(100);
+		secondCol = new TreeColumn(tree, SWT.NONE);
+		secondCol.setWidth(100);
 		tviewer = new TreeViewer(tree);
 		
 		catalog = SampleData.CATALOG_2005; // Lodging source
-		accounts = catalog.getAccounts();
-		categories = catalog.getCategories();
-		List list = new ArrayList();
-		for (int i = 0; i < categories.length; i++) 
-			list.addAll(Arrays.asList(categories[i].getAdventures()));
-		adventures=(Adventure[]) list.toArray(new Adventure[list.size()]);
-		
-		
+			
 		catalogModelTree = SampleData.CATEGORY_TREE;
 		
+		// Create a read only ITree wrapper for disk
+		// File system.  A call to setChildren will just fire
+		// a change event.
 		directoryModelTree = new ITree() {					
 			private ITree.ChangeSupport changeSupport = null;			
 			private Object[] rootObjects = Collections.EMPTY_LIST.toArray();
@@ -124,6 +124,7 @@ public class TreeScenarios extends ScenariosTestCase {
 			}		
 		};
 				
+		// Find a temp directory
 		File temp = File.createTempFile("TreeScenario","jUnit");
 		File root = new File (temp.getParent(),"TreeScenarioDir");
 		temp.delete();
@@ -133,7 +134,7 @@ public class TreeScenarios extends ScenariosTestCase {
 		// Create a tempopary directory
 		root.mkdirs();
 		
-		
+		// prime the ITree 
 		directoryModelTree.setChildren(null, new Object[] {root});
 
 	}
@@ -156,7 +157,16 @@ public class TreeScenarios extends ScenariosTestCase {
 		super.tearDown();
 	}
 	
-	// Traverse both threes and ensure they are equivalent.
+
+	/*
+	 * Recursively travere tree levels, and asserts that elements (objects, not col.) 
+	 * in a given level are the equal.
+	 * 
+	 * viewer/model Nodes are the current traverse level.
+	 * model, is the model tree.  The viewer is always assumed for the target.
+	 * 
+	 * Note: a call to this assertion will pull the complete tree to the viewer.
+	 */
 	private void assertEqualsTreeNode (Object viewerNode, Object modelNode, ITree model) {
 		assertEquals(viewerNode, modelNode);
 		Object[] viewerChildren = ((ITreeContentProvider)tviewer.getContentProvider()).getChildren(viewerNode);
@@ -177,7 +187,7 @@ public class TreeScenarios extends ScenariosTestCase {
 	}
 	
 	/**
-	 * Simple TreeViewer binding.  No TreeDescription, in this case
+	 * Raw TreeViewer binding.  No TreeViewerDescription.  I in this case
 	 * it is assumed that a user will provide label provider and cell editors/modifier.
 	 * 
 	 * Ensure that tree model is propagated virtualy. 
@@ -186,38 +196,93 @@ public class TreeScenarios extends ScenariosTestCase {
 	public void test_Trees_Scenario01() {
 		
 		getDbc().bind(new Property(tviewer, ViewersProperties.CONTENT), catalogModelTree, null);
-				
-		
-		// null for a parent, represents root elements
+						
+		// Ensure that the catalog tree is fully propagated to the viewer
 		assertEqualsTreeNode(null, null, catalogModelTree);
 	
 	}
 	
+	private void assertLabelProvider(TreeItem item) {
+		
+//		This is the way the SAMPLE tree is adding children to the catalog (first level)
+//		Follow this order
+//		
+//		list.addAll(Arrays.asList(((Catalog)parentElement).getCategories()));
+//		list.addAll(Arrays.asList(((Catalog)parentElement).getLodgings()));
+//		list.addAll(Arrays.asList(((Catalog)parentElement).getAccounts()));
+//
+//      Also, make sure to maitained this order when using a  TreeModelDescription.
+//		
+//		modelDescription.addChildrenProperty(Catalog.class, "categories");
+//		modelDescription.addChildrenProperty(Catalog.class, "lodgings");
+//		modelDescription.addChildrenProperty(Catalog.class, "accounts");
+//				
+//		modelDescription.addChildrenProperty(Category.class, "adventures");		
+		
+
+		Account[] accounts = catalog.getAccounts();
+		Category[] categories = catalog.getCategories();
+		Lodging[] lodgings = catalog.getLodgings();
+		
+		tviewer.expandAll();
+		// Ensure that the label provider follows the TableViewerDescription map
+		TreeItem[] firstLevel = item.getItems();		
+		int index = 0;		
+		for (int i = 0; i < categories.length; i++, index++) { 
+			// Categories
+			assertEquals(categories[i].getName(), firstLevel[index].getText());
+			
+			// Adventures
+			TreeItem[] secondLevel = firstLevel[index].getItems();
+			Adventure[] adventures = categories[i].getAdventures();
+			for (int j = 0; j < secondLevel.length; j++) {
+				assertEquals(adventures[j].getName(), secondLevel[j].getText(0));
+				assertEquals(Double.toString(adventures[j].getPrice()), secondLevel[j].getText(1));				
+			}
+		}
+		// Lodging
+		for (int i = 0; i < lodgings.length; i++, index++) {
+			assertEquals(lodgings[i].getName(), firstLevel[index].getText(0));
+			assertEquals(lodgings[i].getDescription(), firstLevel[index].getText(1));
+		}
+		// Account
+		for (int i = 0; i < accounts.length; i++, index++) {
+			assertEquals(accounts[i].getFirstName(), firstLevel[index].getText(0));
+			assertEquals(accounts[i].getLastName(), firstLevel[index].getText(1));
+		}		
+	}
+	
 	/**
-	 * Simple binding of a TreeViewer to a ITree model element
+	 * Use a TreeViewerDescription to bind a TreeViewer to a ITree model.
 	 */
 	public void test_Trees_Scenario02() {
 		
 		//	Describe the Viewer
 		TreeViewerDescription treeDescription = new TreeViewerDescription(tviewer);
+		// catalog has no "name" property... so use getClass.getName()
 		treeDescription.addColumn(Catalog.class, "class.name");
-		
+		// Lodging will have two colums
 		treeDescription.addColumn(Lodging.class, "name");
-		treeDescription.addColumn(Lodging.class, "description");
-		
+		treeDescription.addColumn(Lodging.class, "description");		
+		// Adventures will have two columns
 		treeDescription.addColumn(Adventure.class, "name");
 		treeDescription.addColumn(Adventure.class, "price");
-		treeDescription.getColumn(Adventure.class, 1).setPropertyType(Double.TYPE);
-					
+		treeDescription.getColumn(Adventure.class, 1).setPropertyType(Double.TYPE);					
+		// Category will have one column
 		treeDescription.addColumn(Category.class, "name");
-		
+		// Account will have two columns
 		treeDescription.addColumn(Account.class, "firstName");
 		treeDescription.addColumn(Account.class, "lastName");
 		
 		getDbc().bind(treeDescription, catalogModelTree, null);
+		// Make sure that the catalog model has been propagated to the viewer
+		assertEqualsTreeNode(null, null, catalogModelTree);				
 		
-		assertEqualsTreeNode(null, null, catalogModelTree);
+		TreeItem item = tviewer.getTree().getItem(0);		
+		assertEquals(item.getText(), catalog.getClass().getName());
 		
+		assertLabelProvider(item);
+
 	}
 	
 	/**
@@ -251,25 +316,54 @@ public class TreeScenarios extends ScenariosTestCase {
 		modelDescription.addChildrenProperty(Catalog.class, "accounts");
 				
 		modelDescription.addChildrenProperty(Category.class, "adventures");
-		
-		
+				
 		
 		getDbc().bind(treeDescription, modelDescription, null);
-					
+		//	Make sure that the catalog model has been propagated to the viewer
 		assertEqualsTreeNode(null, null, catalogModelTree);
 		
-		// Test the JavaBean event model of a TreeDescriptor based tree,
-		// Change properties and test that viewer got it all.
-		for (int i = 0; i < adventures.length; i++) 
-			adventures[i].setName("Changed: "+adventures[i].getName());
-			
+				
+		TreeItem item = tviewer.getTree().getItem(0);		
+		assertEquals(item.getText(), catalog.getClass().getName());
+		
+		assertLabelProvider(item);
+
+		// Test the JavaBean event model of a TreeModelDescription based tree.
+		//
+		// Simple property changes ...  test that viewer got all of them,
+		Account[] accounts = catalog.getAccounts();
 		for (int i = 0; i < accounts.length; i++) 
 			accounts[i].setFirstName("Changed: "+accounts[i].getFirstName());
-			
-		for (int i = 0; i < categories.length; i++) 
+		Category[] categories = catalog.getCategories();
+		for (int i = 0; i < categories.length; i++) { 
 			categories[i].setName("Changed: "+categories[i].getName());
+			Adventure[] adventures = categories[i].getAdventures();
+			for (int j = 0; j < adventures.length; j++) 
+				adventures[j].setName("Changed: "+adventures[i].getName());
+		}
+		// compare TreeItems, and Model
+		assertLabelProvider(item);
 		
-		assertEqualsTreeNode(null, null, catalogModelTree);
+		//
+		// Test for adding and removing elements from the Tree Model
+		Account newAccount = new Account();
+		newAccount.setFirstName("NewBee");
+		newAccount.setLastName("Appended");
+		
+		//add to the end
+		catalog.addAccount(newAccount);
+		assertLabelProvider(item);
+		
+		// remove the first one
+		catalog.removeAccount(catalog.getAccounts()[0]);
+		assertLabelProvider(item);
+		
+		//	add to the end
+		Adventure newAdventure = new Adventure();
+		newAdventure.setName("Marriage");
+		newAdventure.setPrice(9999999999999L);
+		catalog.getCategories()[0].addAdventure(newAdventure);			
+		assertLabelProvider(item);
 	}
 
 	

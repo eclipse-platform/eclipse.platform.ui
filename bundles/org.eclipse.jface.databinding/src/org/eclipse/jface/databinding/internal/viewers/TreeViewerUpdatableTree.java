@@ -49,7 +49,6 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 		
 	private class TreeNode {
 		Object parent;
-		Class  type;
 		List   children;
 		boolean requestedChildren=false;
 		private TreeNode(Object parent, List children) {
@@ -76,12 +75,6 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 		 */
 		public void setChildren(List children) {
 			this.children = children;
-		}
-		/**
-		 * @return the Class for the TreeNode
-		 */
-		public Class getType() {
-			return type;
 		}
 		/**
 		 * @return true if VIRTUAL request has been made already
@@ -199,7 +192,7 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 		if (parentNode == null) return -1;
 			
 
-		if (!hasChildren(parentElement))
+		if (!hasChildren(parentElement) && parentNode.getChildren()==null)
 			parentNode.setChildren(new ArrayList());
 		List list = parentNode.getChildren();
 		int addedIndex = -1;
