@@ -296,7 +296,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * The map of services maintained by the workbench. These services are
 	 * initialized during workbench during the <code>init</code> method.
 	 */
-	final Map services = new HashMap();
+	private final Map services = new HashMap();
 	
 	/**
 	 * A count of how many plug-ins were loaded while restoring the
