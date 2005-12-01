@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import org.eclipse.jface.databinding.BindSpec;
 import org.eclipse.jface.databinding.BeanBindSupportFactory;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
+import org.eclipse.jface.tests.databinding.scenarios.model.Account;
 import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
+import org.eclipse.jface.tests.databinding.scenarios.model.PhoneConverter;
+import org.eclipse.jface.tests.databinding.scenarios.model.PhoneValidator;
 import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.jface.tests.databinding.scenarios.model.Transportation;
 import org.eclipse.swt.SWT;
@@ -29,26 +33,30 @@ import org.eclipse.swt.widgets.Text;
 
 public class TextControlScenario extends ScenariosTestCase {
 
+	private Text text;
 	private Adventure adventure;
-	private Transportation transportation;	
+	private Transportation transportation;
+	private Account account;	
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		// do any setup work here
 		adventure = SampleData.WINTER_HOLIDAY;
 		transportation = SampleData.EXECUTIVE_JET;
+		account = SampleData.PRESIDENT;		
+		text = new Text(getComposite(), SWT.BORDER);		
 	}
 
 	protected void tearDown() throws Exception {
-		// do any teardown work here
+		text.dispose();
+		text = null;
 		super.tearDown();
 	}
-/**
+
 	public void testScenario01() {
 		// Bind the adventure "name" property to a text field
 		// Change the UI and verify the model changes
 		// Change the model and verify the UI changes
-		final Text text = new Text(getComposite(), SWT.BORDER);
 		getDbc().bind(text, new Property(adventure, "name"), null);
 		assertEquals(adventure.getName(), text.getText());
 		text.setText("England");
@@ -70,7 +78,6 @@ public class TextControlScenario extends ScenariosTestCase {
 		// This is a Double.TYPE so we check that conversion and validation occurs
 		// Change the UI and verify the model changes
 		// Change the model and verify the UI changes
-		Text text = new Text(getComposite(), SWT.BORDER);
 		getDbc().bind(text, new Property(transportation, "price"), null);
 		assertEquals(Double.toString(transportation.getPrice()), text.getText());
 		text.setText("9876.54");
@@ -84,7 +91,6 @@ public class TextControlScenario extends ScenariosTestCase {
 		// Show that the Escape key can be pressed in the middle of editing and the value will revert
 		// the updatePolicy for this test is TIME_LATE so it occurs when focus is lost from the Text control 
 		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_LATE);		
-		final Text text = new Text(getComposite(), SWT.BORDER);
 		getDbc().bind(text, new Property(adventure, "name"), null);
 		String currentText = text.getText();
 		text.setText("Switzerland");
@@ -112,12 +118,11 @@ public class TextControlScenario extends ScenariosTestCase {
 		assertEquals(currentText,text.getText());
 		
 	}
-**/
+
 	public void testScenario04(){
 		// Show that the Escape key can be pressed in the middle of editing and the value will revert
 		// the updatePolicy for this test is TIME_EARLY so it occurs when each keystroke occurs 
 		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_EARLY);	
-		final Text text = new Text(getComposite(), SWT.BORDER);
 		getDbc().bind(text, new Property(adventure, "name"), null);
 		String originalName = adventure.getName();
 		// Change the text field character by character and ensure that the model changes
@@ -145,10 +150,69 @@ public class TextControlScenario extends ScenariosTestCase {
 		// Send an escape key	
 		text.notifyListeners(SWT.KeyDown,event);		
 		// Verify that the model has changed and has not reverted
-		assertEquals(newName,adventure.getName());
+		assertEquals(newName,adventure.getName());		
 	}
-	
-	public void testScenario05() {
+/**		
+	public void testScenario05(){
+		// Show that nesting of properties works.  Adventure has defaultLodging and Lodging has name
+		getDbc().bind(text,new Property(adventure,"defaultLodging.name"),null);
+		// Verify the GUI is showing the model value
+		assertEquals(text.getText(),adventure.getDefaultLodging().getName());
+		
+	}
+**/
+	public void testScenario06(){
+		// Show that partial validation works for TIME_EARLY
+		// We are using TIME_EARLY to verify that invalid states are not sent to the model		
+		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_EARLY);		
+		getDbc().bind(text, new Property(account, "phone"), new BindSpec(new PhoneConverter(),new PhoneValidator()));
+		// Verify we have no error message for partial validation or full validation yet
+		assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length() == 0);
+		assertTrue(((String)getDbc().getValidationMessage().getValue()).length() == 0);
+		// Update some of the phone number		
+		String originalPhoneNumber = account.getPhone();
+		text.setText("999");
+		// Verify that the phone number is partially invalid and there is no validation message
+		assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length() > 0);
+		assertTrue(((String)getDbc().getValidationMessage().getValue()).length() == 0);
+		// And that the model has not changed
+		assertEquals(account.getPhone(),originalPhoneNumber);
+		// Verify that fixing the phone removes the error and the model is updated too
+		text.setText("999-888-7777");		
+		assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length() == 0);
+		assertEquals(account.getPhone(),"9998887777");
+		
+	}
+/**	
+	public void testScenario07(){
+		// Show that partial validation works for TIME_LATE
+		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_LATE);
+		// Update some of the phone number		
+		String originalPhoneNumber = account.getPhone();
+		text.setText("222");
+		// Verify that we have no completion validation message and a partial one
+		assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length() > 0);
+		assertTrue(((String)getDbc().getValidationMessage().getValue()).length() == 0);
+		// Lose focus from the field
+		text.notifyListeners(SWT.FocusOut,null);
+		// Verify that we have a partial and complete validation message
+		assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length() > 0);
+		assertTrue(((String)getDbc().getValidationMessage().getValue()).length() > 0);
+		// Fix the error
+		text.setText("222-333-4444");
+		// Verify that we have no partial message and still the old complete one in error
+		assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length() == 0);
+		assertTrue(((String)getDbc().getValidationMessage().getValue()).length() > 0);
+		// The model should not be changed
+		assertEquals(originalPhoneNumber,account.getPhone());
+		// Lose focus and verify that the complete validation message is fixed
+		text.notifyListeners(SWT.FocusOut,null);
+		assertTrue(((String)getDbc().getValidationMessage().getValue()).length() == 0);
+		// The model should be changed
+		assertEquals(text.getText(),account.getPhone());
+	}
+**/	
+	public void testScenario08() {
 		// Show that the BeanBindSupportFactory will automatically pick up the
 		// validator on the MaxNumberOfPeople property
 		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_EARLY);	

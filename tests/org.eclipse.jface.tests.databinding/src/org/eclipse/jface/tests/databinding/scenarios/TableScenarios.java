@@ -14,6 +14,7 @@ import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.viewers.TableViewerDescription;
 import org.eclipse.jface.tests.databinding.scenarios.model.Account;
 import org.eclipse.jface.tests.databinding.scenarios.model.Catalog;
+import org.eclipse.jface.tests.databinding.scenarios.model.Category;
 import org.eclipse.jface.tests.databinding.scenarios.model.PhoneConverter;
 import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.jface.tests.databinding.scenarios.model.Signon;
@@ -41,6 +42,8 @@ public class TableScenarios extends ScenariosTestCase {
 	private TableViewer tableViewer;
 
 	private Catalog catalog;
+	
+	private Category category;
 
 	private TableColumn firstNameColumn;
 
@@ -60,6 +63,8 @@ public class TableScenarios extends ScenariosTestCase {
 		stateColumn.setWidth(50);		
 
 		catalog = SampleData.CATALOG_2005; // Lodging source
+		category = SampleData.WINTER_CATEGORY; 
+		
 	}
 
 	protected void tearDown() throws Exception {
@@ -324,5 +329,14 @@ public class TableScenarios extends ScenariosTestCase {
 		assertEquals("Cricket11Players",firstSignon.getPassword());
 		
 	}
-	
+/**	
+	public void testScenario09(){
+		// Verify that nested properties work.  Catalog has adventures.  Adventure has defaultLodging.  Loding has name.
+		TableViewerDescription tableViewerDescription = new TableViewerDescription(tableViewer);
+		tableViewerDescription.addColumn("name");
+		tableViewerDescription.addColumn("defaultLodging.name");
+		getDbc().bind(tableViewerDescription,new Property(category, "adventures"),null);
+		
+	}
+ **/	
 }

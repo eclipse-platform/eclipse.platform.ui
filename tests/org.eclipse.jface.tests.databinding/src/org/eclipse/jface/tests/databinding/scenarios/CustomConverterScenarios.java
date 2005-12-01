@@ -27,9 +27,11 @@ import org.eclipse.swt.widgets.Spinner;
 
 public class CustomConverterScenarios extends ScenariosTestCase {
 
+	private Adventure skiTrip;
+
 	protected void setUp() throws Exception {
 		super.setUp();
-		// do any setup work here
+		skiTrip = SampleData.WINTER_HOLIDAY;
 	}
 
 	protected void tearDown() throws Exception {
@@ -39,7 +41,6 @@ public class CustomConverterScenarios extends ScenariosTestCase {
 
 	public void testScenario01() {
 
-		Adventure skiTrip = SampleData.WINTER_HOLIDAY;
 		Spinner spinner_dollars = new Spinner(getComposite(), SWT.NONE);
 		spinner_dollars.setMaximum(10000);
 		Spinner spinner_cents = new Spinner(getComposite(), SWT.NONE);
@@ -91,4 +92,5 @@ public class CustomConverterScenarios extends ScenariosTestCase {
 		assertEquals(spinner_cents.getSelection(), 99);
 
 	}
+
 }
