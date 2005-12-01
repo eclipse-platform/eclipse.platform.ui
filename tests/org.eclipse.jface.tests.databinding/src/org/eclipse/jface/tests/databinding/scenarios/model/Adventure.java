@@ -49,26 +49,28 @@ public class Adventure extends ModelObject {
 		firePropertyChange("maxNumberOfPeople", oldValue, maxNumberOfPeople);
 	}
 	
-	public IValidator getMaxNumberOfPeopleValidator() {
-		return new IValidator() {
-			IValidator delegate = new String2IntValidator();
-			public String isPartiallyValid(Object value) {
-				return delegate.isPartiallyValid(value);
-			}
-
-			public String isValid(Object value) {
-				String error = delegate.isValid(value);
-				if (error != null) {
-					return error;
+	public IValidator getMaxNumberOfPeopleValidator(Class fromType) {
+		if (fromType.equals(String.class))
+			return new IValidator() {
+				IValidator delegate = new String2IntValidator();
+				public String isPartiallyValid(Object value) {
+					return delegate.isPartiallyValid(value);
 				}
-				int intValue = Integer.valueOf((String)value).intValue();
-				if (intValue < 1 || intValue > 20) {
-					return "Max number of people must be between 1 and 20 inclusive";
+	
+				public String isValid(Object value) {
+					String error = delegate.isValid(value);
+					if (error != null) {
+						return error;
+					}
+					int intValue = Integer.valueOf((String)value).intValue();
+					if (intValue < 1 || intValue > 20) {
+						return "Max number of people must be between 1 and 20 inclusive";
+					}
+					return null;
 				}
-				return null;
-			}
-			
-		};
+				
+			};
+		return null;
 	}
 
 	public Lodging getDefaultLodging() {

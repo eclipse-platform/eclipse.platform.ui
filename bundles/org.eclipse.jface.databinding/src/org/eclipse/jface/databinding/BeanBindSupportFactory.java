@@ -29,13 +29,13 @@ public class BeanBindSupportFactory implements IBindSupportFactory {
 			
 			Method getValidator;
 			try {
-				getValidator = objectClass.getMethod(getValidatorMethodName, new Class[] {});
+				getValidator = objectClass.getMethod(getValidatorMethodName, new Class[] {Class.class});
 			} catch (Exception e) {
 				return null;
 			}
 			
 			try {
-				IValidator result = (IValidator) getValidator.invoke(property.getObject(), new Object[] {});
+				IValidator result = (IValidator) getValidator.invoke(property.getObject(), new Object[] {fromType});
 				return result;
 			} catch (Exception e) {
 				return null;
