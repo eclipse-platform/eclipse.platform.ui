@@ -97,7 +97,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 		 */
 		int sourcePriorities = 0;
 		if (handlerSubmission.getActivePartId() != null) {
-			sourcePriorities |= ISources.ACTIVE_PART;
+			sourcePriorities |= ISources.ACTIVE_PART_ID;
 		}
 		if (handlerSubmission.getActiveShell() != null) {
 			sourcePriorities |= (ISources.ACTIVE_SHELL | ISources.ACTIVE_WORKBENCH_WINDOW);

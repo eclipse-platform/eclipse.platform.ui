@@ -69,7 +69,9 @@ public final class SourcePriorityNameMapping implements ISources {
 		addMapping(ACTIVE_CONTEXT_NAME, ACTIVE_CONTEXT);
 		addMapping(ACTIVE_CURRENT_SELECTION_NAME, ACTIVE_CURRENT_SELECTION);
 		addMapping(ACTIVE_EDITOR_NAME, ACTIVE_EDITOR);
+		addMapping(ACTIVE_EDITOR_ID_NAME, ACTIVE_EDITOR_ID);
 		addMapping(ACTIVE_PART_NAME, ACTIVE_PART);
+		addMapping(ACTIVE_PART_ID_NAME, ACTIVE_PART_ID);
 		addMapping(ACTIVE_SHELL_NAME, ACTIVE_SHELL);
 		addMapping(ACTIVE_SITE_NAME, ACTIVE_SITE);
 		addMapping(ACTIVE_WORKBENCH_WINDOW_NAME, ACTIVE_WORKBENCH_WINDOW);
@@ -127,11 +129,11 @@ public final class SourcePriorityNameMapping implements ISources {
 	 */
 	public static final int computeSourcePriority(final Expression expression) {
 		int sourcePriority = ISources.WORKBENCH;
-		
+
 		if (expression == null) {
 			return sourcePriority;
 		}
-		
+
 		final ExpressionInfo info = expression.computeExpressionInfo();
 
 		// Add the default variable, if any.

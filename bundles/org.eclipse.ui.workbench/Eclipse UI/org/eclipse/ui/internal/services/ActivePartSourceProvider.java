@@ -35,10 +35,22 @@ import org.eclipse.ui.internal.util.Util;
 public class ActivePartSourceProvider extends AbstractSourceProvider {
 
 	/**
+	 * The last active editor part seen as active by this provider. This value
+	 * may be <code>null</code> if there is no currently active editor.
+	 */
+	private IEditorPart lastActiveEditor = null;
+
+	/**
 	 * The last active editor id seen as active by this provider. This value may
 	 * be <code>null</code> if there is no currently active editor.
 	 */
 	private String lastActiveEditorId = null;
+
+	/**
+	 * The last active part seen as active by this provider. This value may be
+	 * <code>null</code> if there is no currently active part.
+	 */
+	private IWorkbenchPart lastActivePart = null;
 
 	/**
 	 * The last active part id seen as active by this provider. This value may
@@ -124,10 +136,16 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 		int sources = 0;
 
 		// Figure out what was changed.
-		final Object newActivePartId = currentState
+		final Object newActivePart = currentState
 				.get(ISources.ACTIVE_PART_NAME);
-		if (!Util.equals(newActivePartId, lastActivePartId)) {
+		if (!Util.equals(newActivePart, lastActivePart)) {
 			sources |= ISources.ACTIVE_PART;
+			lastActivePart = (IWorkbenchPart) newActivePart;
+		}
+		final Object newActivePartId = currentState
+				.get(ISources.ACTIVE_PART_ID_NAME);
+		if (!Util.equals(newActivePartId, lastActivePartId)) {
+			sources |= ISources.ACTIVE_PART_ID;
 			lastActivePartId = (String) newActivePartId;
 		}
 		final Object newActivePartSite = currentState
@@ -136,10 +154,16 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 			sources |= ISources.ACTIVE_SITE;
 			lastActivePartSite = (IWorkbenchPartSite) newActivePartSite;
 		}
-		final Object newActiveEditorId = currentState
+		final Object newActiveEditor = currentState
 				.get(ISources.ACTIVE_EDITOR_NAME);
-		if (!Util.equals(newActiveEditorId, lastActiveEditorId)) {
+		if (!Util.equals(newActiveEditor, lastActiveEditor)) {
 			sources |= ISources.ACTIVE_EDITOR;
+			lastActiveEditor = (IEditorPart) newActiveEditor;
+		}
+		final Object newActiveEditorId = currentState
+				.get(ISources.ACTIVE_EDITOR_ID_NAME);
+		if (!Util.equals(newActiveEditorId, lastActiveEditorId)) {
+			sources |= ISources.ACTIVE_EDITOR_ID;
 			lastActiveEditorId = (String) newActiveEditorId;
 		}
 
@@ -148,6 +172,10 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 			if (DEBUG) {
 				if ((sources & ISources.ACTIVE_PART) != 0) {
 					logDebuggingInfo("Active part changed to " //$NON-NLS-1$
+							+ lastActivePart);
+				}
+				if ((sources & ISources.ACTIVE_PART_ID) != 0) {
+					logDebuggingInfo("Active part id changed to " //$NON-NLS-1$
 							+ lastActivePartId);
 				}
 				if ((sources & ISources.ACTIVE_SITE) != 0) {
@@ -156,6 +184,10 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 				}
 				if ((sources & ISources.ACTIVE_EDITOR) != 0) {
 					logDebuggingInfo("Active editor changed to " //$NON-NLS-1$
+							+ lastActiveEditor);
+				}
+				if ((sources & ISources.ACTIVE_EDITOR_ID) != 0) {
+					logDebuggingInfo("Active editor id changed to " //$NON-NLS-1$
 							+ lastActiveEditorId);
 				}
 			}
@@ -171,7 +203,9 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 		final Map currentState = new HashMap(4);
 		currentState.put(ISources.ACTIVE_SITE_NAME, null);
 		currentState.put(ISources.ACTIVE_PART_NAME, null);
+		currentState.put(ISources.ACTIVE_PART_ID_NAME, null);
 		currentState.put(ISources.ACTIVE_EDITOR_NAME, null);
+		currentState.put(ISources.ACTIVE_EDITOR_ID_NAME, null);
 
 		final IWorkbenchWindow activeWorkbenchWindow = workbench
 				.getActiveWorkbenchWindow();
@@ -180,31 +214,33 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 					.getActivePage();
 			if (activeWorkbenchPage != null) {
 				// Check the active workbench part.
-				final IWorkbenchPart activeWorkbenchPart = activeWorkbenchPage
+				final IWorkbenchPart newActivePart = activeWorkbenchPage
 						.getActivePart();
-				if (activeWorkbenchPart != null) {
-					final IWorkbenchPartSite activeWorkbenchPartSite = activeWorkbenchPart
+				currentState.put(ISources.ACTIVE_PART_NAME, newActivePart);
+				if (newActivePart != null) {
+					final IWorkbenchPartSite activeWorkbenchPartSite = newActivePart
 							.getSite();
 					currentState.put(ISources.ACTIVE_SITE_NAME,
 							activeWorkbenchPartSite);
 					if (activeWorkbenchPartSite != null) {
 						final String newActivePartId = activeWorkbenchPartSite
 								.getId();
-						currentState.put(ISources.ACTIVE_PART_NAME,
+						currentState.put(ISources.ACTIVE_PART_ID_NAME,
 								newActivePartId);
 					}
 				}
 
 				// Check the active editor part.
-				final IEditorPart activeEditorPart = activeWorkbenchPage
+				final IEditorPart newActiveEditor = activeWorkbenchPage
 						.getActiveEditor();
-				if (activeEditorPart != null) {
-					final IEditorSite activeEditorSite = activeEditorPart
+				currentState.put(ISources.ACTIVE_EDITOR_NAME, newActiveEditor);
+				if (newActiveEditor != null) {
+					final IEditorSite activeEditorSite = newActiveEditor
 							.getEditorSite();
 					if (activeEditorSite != null) {
 						final String newActiveEditorId = activeEditorSite
 								.getId();
-						currentState.put(ISources.ACTIVE_EDITOR_NAME,
+						currentState.put(ISources.ACTIVE_EDITOR_ID_NAME,
 								newActiveEditorId);
 					}
 				}

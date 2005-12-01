@@ -84,7 +84,8 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 	 */
 	public final EvaluationResult evaluate(final IEvaluationContext context) {
 		if (activePartId != null) {
-			final Object value = context.getVariable(ISources.ACTIVE_PART_NAME);
+			final Object value = context
+					.getVariable(ISources.ACTIVE_PART_ID_NAME);
 			if (!activePartId.equals(value)) {
 				return EvaluationResult.FALSE;
 			}
@@ -113,7 +114,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 
 	public final void collectExpressionInfo(final ExpressionInfo info) {
 		if (activePartId != null) {
-			info.addVariableNameAccess(ISources.ACTIVE_PART_NAME);
+			info.addVariableNameAccess(ISources.ACTIVE_PART_ID_NAME);
 		}
 		if (activeShell != null) {
 			info.addVariableNameAccess(ISources.ACTIVE_SHELL_NAME);

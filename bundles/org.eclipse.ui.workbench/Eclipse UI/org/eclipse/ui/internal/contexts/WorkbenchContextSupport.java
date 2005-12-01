@@ -96,7 +96,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 		 */
 		int sourcePriorities = 0;
 		if (enabledSubmission.getActivePartId() != null) {
-			sourcePriorities |= ISources.ACTIVE_PART;
+			sourcePriorities |= ISources.ACTIVE_PART_ID;
 		}
 		if (enabledSubmission.getActiveShell() != null) {
 			sourcePriorities |= (ISources.ACTIVE_SHELL | ISources.ACTIVE_WORKBENCH_WINDOW);
