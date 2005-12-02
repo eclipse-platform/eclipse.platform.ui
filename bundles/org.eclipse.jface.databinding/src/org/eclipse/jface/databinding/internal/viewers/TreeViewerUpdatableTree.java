@@ -19,6 +19,8 @@ import java.util.Map;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableTree;
 import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.internal.swt.AsyncRunnable;
+import org.eclipse.jface.databinding.internal.swt.SyncRunnable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -176,18 +178,17 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 		}
 	}
 		
-	public int addElement(final Object parentElement, int index, final Object value) {
-		return addElement(parentElement, index, value, true);
+	public int addElement(final Object parentElement, final int index, final Object value) {
+		SyncRunnable runnable = new SyncRunnable() {
+			public Object run() {
+				return new Integer(addElement(parentElement, index, value, true));
+			}
+		};
+		return ((Integer)runnable.run()).intValue();
 	}
 	
-	/**
-	 * @param parentElement
-	 * @param index
-	 * @param value
-	 * @param fire
-	 * @return added index
-	 */
-	public int addElement(final Object parentElement, int index, final Object value, final boolean fire) {				
+	
+	protected int addElement(final Object parentElement, int index, final Object value, final boolean fire) {				
 		TreeNode parentNode = getTreeNode(parentElement);
 		if (parentNode == null) return -1;
 			
@@ -214,16 +215,18 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 	}
 
 
-	public void removeElement(Object parentElement, int index) {
-		removeElement(parentElement, index, true);
+	public void removeElement(final Object parentElement, final int index) {
+		SyncRunnable runnable = new SyncRunnable() {
+			public Object run() {
+				removeElement(parentElement, index, true);
+				return null;
+			}
+		};
+		runnable.run();
 	}
 	
-	/**
-	 * @param parentElement
-	 * @param index
-	 * @param fire
-	 */
-	public void removeElement(final Object parentElement, final int index, final boolean fire) {
+	
+	protected void removeElement(final Object parentElement, final int index, final boolean fire) {
 		if (hasChildren(parentElement)) {
 			TreeNode parentNode = getTreeNode(parentElement);
 			List children = parentNode.getChildren();
@@ -243,39 +246,53 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 	}
 
 
-	public void setElement(Object parentElement, int index, final Object value) {		
-		if (hasChildren(parentElement)) {
-			TreeNode parentNode = getTreeNode(parentElement);
-			List children = parentNode.getChildren();						
-			Object oldValue = children.get(index);
-			if (oldValue.equals(value)) {
-				updateViewer(new Runnable() {			
-					public void run() {
-						viewer.update(value, null);
+	public void setElement(final Object parentElement, final int index, final Object value) {	
+		AsyncRunnable runnable = new AsyncRunnable() {
+			public void run() {
+				if (hasChildren(parentElement)) {
+					TreeNode parentNode = getTreeNode(parentElement);
+					List children = parentNode.getChildren();
+					Object oldValue = children.get(index);
+					if (oldValue.equals(value)) {
+						updateViewer(new Runnable() {
+							public void run() {
+								viewer.update(value, null);
+							}
+						});
+					} else {
+						removeElement(parentElement, index, false);
+						addElement(parentElement, index, value, false);
 					}
-				});
-			} else {
-				removeElement(parentElement,index, false);
-				addElement(parentElement, index, value, false);
+					fireChangeEvent(IChangeEvent.CHANGE, oldValue, value,
+							parentElement, index);
+				}
+				
 			}
-			fireChangeEvent(IChangeEvent.CHANGE, oldValue, value, parentElement, index );			
-		}
+		};
+		runnable.run();
 	}
 
-	public void setElements(Object parentElement, Object[] values) {
-			hasChildren(parentElement); // prime Children if needed
-			TreeNode parentNode = getTreeNode(parentElement);
-			if (parentNode==null) return;
-			
-			List children = parentNode.getChildren();
-			if (children!=null) {
-				while (children.size()>0)
-					removeElement(parentElement, 0);				
+	public void setElements(final Object parentElement, final Object[] values) {
+		SyncRunnable runnable = new SyncRunnable() {
+			public Object run() {
+				hasChildren(parentElement); // prime Children if needed
+				TreeNode parentNode = getTreeNode(parentElement);
+				if (parentNode == null)
+					return null;
+
+				List children = parentNode.getChildren();
+				if (children != null) {
+					while (children.size() > 0)
+						removeElement(parentElement, 0, true);
+				}
+				if (values != null)
+					for (int i = 0; i < values.length; i++) {
+						addElement(parentElement, i, values[i], true);
+					}
+				return null;
 			}
-			if (values!=null)
-				for (int i = 0; i < values.length; i++) {
-					addElement(parentElement,i, values[i]);
-				}							
+		};
+		runnable.run();
 	}
 
 

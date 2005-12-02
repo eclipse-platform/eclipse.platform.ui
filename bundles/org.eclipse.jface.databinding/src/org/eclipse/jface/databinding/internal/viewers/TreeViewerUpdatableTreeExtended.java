@@ -419,7 +419,7 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 		return treeViewerDescription.getColumn(instanceType, columnIndex);
 	}
 	
-	public int addElement(final Object parentElement, int index, final Object value) {
+	protected int addElement(final Object parentElement, int index, final Object value, boolean fire) {
 		// Verify defaults, the first time data cames through
 		if(columnInfos != null && value!=null){
 			for (int i = 0; i < treeViewerDescription.getColumnCount(value.getClass()); i++) {
@@ -452,6 +452,6 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 			if (columnInfos.isEmpty())
 				columnInfos = null;	// No More checking
 		}
-		return super.addElement(parentElement, index, value);
+		return super.addElement(parentElement, index, value, fire);
 	}
 }

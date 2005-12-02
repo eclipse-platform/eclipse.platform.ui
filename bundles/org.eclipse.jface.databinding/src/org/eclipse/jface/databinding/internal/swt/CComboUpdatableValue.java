@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.ChangeEvent;
+import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
 import org.eclipse.jface.databinding.swt.SWTProperties;
 import org.eclipse.jface.databinding.viewers.ViewersProperties;
@@ -50,7 +50,7 @@ public class CComboUpdatableValue extends UpdatableValue {
 			ccombo.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
-						fireChangeEvent(ChangeEvent.CHANGE, null, null);
+						fireChangeEvent(IChangeEvent.CHANGE, null, null);
 					}
 				}
 			});
@@ -59,45 +59,52 @@ public class CComboUpdatableValue extends UpdatableValue {
 			throw new IllegalArgumentException();
 	}
 
-	public void setValue(Object value) {
-		String oldValue = ccombo.getText();
-		try {
-			updating = true;
-			if (attribute.equals(SWTProperties.TEXT)) {
-				String stringValue = value!=null?value.toString() : ""; //$NON-NLS-1$
-				ccombo.setText(stringValue);
-			} else if (attribute.equals(SWTProperties.SELECTION)) {
-				String items[] = ccombo.getItems();
-				int index = -1;
-				if (items != null && value != null) {
-					for (int i = 0; i < items.length; i++) {
-						if (value.equals(items[i])) {
-							index = i;
-							break;
+	public void setValue(final Object value) {
+		AsyncRunnable runnable = new AsyncRunnable() {
+			public void run() {
+				String oldValue = ccombo.getText();
+				try {
+					updating = true;
+					if (attribute.equals(SWTProperties.TEXT)) {
+						String stringValue = value != null ? value.toString()
+								: ""; //$NON-NLS-1$
+						ccombo.setText(stringValue);
+					} else if (attribute.equals(SWTProperties.SELECTION)) {
+						String items[] = ccombo.getItems();
+						int index = -1;
+						if (items != null && value != null) {
+							for (int i = 0; i < items.length; i++) {
+								if (value.equals(items[i])) {
+									index = i;
+									break;
+								}
+							}
+							ccombo.select(index); // -1 will not "unselect"
 						}
 					}
-					ccombo.select(index); // -1 will not "unselect"
+				} finally {
+					updating = false;
 				}
+				fireChangeEvent(IChangeEvent.CHANGE, oldValue, ccombo.getText());
 			}
-		} finally {
-			updating = false;
-		}
-		fireChangeEvent(ChangeEvent.CHANGE, oldValue, ccombo
-				.getText());
+		};
+		runnable.run();
 	}
 
 	public Object getValue() {
-		if (attribute.equals(SWTProperties.TEXT)) {
-			return ccombo.getText();
-		}
-		Assert.isTrue(attribute.equals(SWTProperties.SELECTION), "unexpected attribute: " + attribute); //$NON-NLS-1$
-		// The problem with a ccombo, is that it changes the text an fires before 
-		// it update its selection index
-		return ccombo.getText();
-//			int index = ccombo.getSelectionIndex();
-//			if (index >= 0)
-//				return ccombo.getItem(index);
-//			return null;
+		SyncRunnable runnable = new SyncRunnable() {
+			public Object run() {
+				if (attribute.equals(SWTProperties.TEXT)) 
+					return ccombo.getText();
+				
+				Assert.isTrue(attribute.equals(SWTProperties.SELECTION),
+						"unexpected attribute: " + attribute); //$NON-NLS-1$
+				// The problem with a ccombo, is that it changes the text and
+				// fires before it update its selection index
+				return ccombo.getText();
+			}
+		};
+		return runnable.run();
 	}
 
 	public Class getValueType() {

@@ -225,6 +225,7 @@ public class TreeScenarios extends ScenariosTestCase {
 		Lodging[] lodgings = catalog.getLodgings();
 		
 		tviewer.expandAll();
+		spinEventLoop(0);
 		// Ensure that the label provider follows the TableViewerDescription map
 		TreeItem[] firstLevel = item.getItems();		
 		int index = 0;		

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.ChangeEvent;
+import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
 import org.eclipse.jface.databinding.swt.SWTProperties;
 import org.eclipse.jface.databinding.viewers.ViewersProperties;
@@ -50,7 +50,7 @@ public class ComboUpdatableValue extends UpdatableValue {
 			combo.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
-						fireChangeEvent(ChangeEvent.CHANGE, null, null);
+						fireChangeEvent(IChangeEvent.CHANGE, null, null);
 					}
 				}
 			});
@@ -58,42 +58,53 @@ public class ComboUpdatableValue extends UpdatableValue {
 			throw new IllegalArgumentException();
 	}
 
-	public void setValue(Object value) {
-		String oldValue = combo.getText();
-		try {
-			updating = true;
-			if (attribute.equals(SWTProperties.TEXT)) {
-				String stringValue = value!=null?value.toString() : ""; //$NON-NLS-1$
-				combo.setText(stringValue);
-			} else if (attribute.equals(SWTProperties.SELECTION)) {
-				String items[] = combo.getItems();
-				int index = -1;
-				if (items != null && value != null) {
-					for (int i = 0; i < items.length; i++) {
-						if (value.equals(items[i])) {
-							index = i;
-							break;
+	public void setValue(final Object value) {
+		AsyncRunnable runnable = new AsyncRunnable() {
+			public void run() {
+				String oldValue = combo.getText();
+				try {
+					updating = true;
+					if (attribute.equals(SWTProperties.TEXT)) {
+						String stringValue = value != null ? value.toString()
+								: ""; //$NON-NLS-1$
+						combo.setText(stringValue);
+					} else if (attribute.equals(SWTProperties.SELECTION)) {
+						String items[] = combo.getItems();
+						int index = -1;
+						if (items != null && value != null) {
+							for (int i = 0; i < items.length; i++) {
+								if (value.equals(items[i])) {
+									index = i;
+									break;
+								}
+							}
+							combo.select(index); // -1 will not "unselect"
 						}
 					}
-					combo.select(index); // -1 will not "unselect"
+				} finally {
+					updating = false;
 				}
+				fireChangeEvent(IChangeEvent.CHANGE, oldValue, combo.getText());
 			}
-		} finally {
-			updating = false;
-		}
-		fireChangeEvent(ChangeEvent.CHANGE, oldValue, combo.getText());
+		};
+		runnable.run();
 	}
 
 	public Object getValue() {
-		if (attribute.equals(SWTProperties.TEXT)) {
-			return combo.getText();
-		}
-		Assert.isTrue(attribute.equals(SWTProperties.SELECTION),
-				"unexpected attribute" + attribute); //$NON-NLS-1$
-		int index = combo.getSelectionIndex();
-		if (index >= 0)
-			return combo.getItem(index);
-		return null;
+		SyncRunnable runnable = new SyncRunnable() {
+			public Object run() {
+				if (attribute.equals(SWTProperties.TEXT))
+					return combo.getText();
+
+				Assert.isTrue(attribute.equals(SWTProperties.SELECTION),
+						"unexpected attribute" + attribute); //$NON-NLS-1$
+				int index = combo.getSelectionIndex();
+				if (index >= 0)
+					return combo.getItem(index);
+				return null;
+			}
+		};
+		return runnable.run();
 	}
 
 	public Class getValueType() {
