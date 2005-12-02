@@ -59,6 +59,8 @@ public class RulerEnableDisableBreakpointAction extends RulerBreakpointAction im
 				}
 			} catch (CoreException e) {
 			}
+		} else {
+			setText(ActionMessages.RulerEnableDisableBreakpointAction_2);
 		}
 	}
 
