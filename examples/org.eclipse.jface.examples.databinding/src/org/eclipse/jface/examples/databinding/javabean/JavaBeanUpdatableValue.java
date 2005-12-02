@@ -61,7 +61,7 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 			return getMethod;
 		try {
 			String getMethodName = getMethodName(propertyName);
-			Method getMethod = object.getClass().getMethod(getMethodName, null);
+			getMethod = object.getClass().getMethod(getMethodName, null);
 		} catch (NoSuchMethodException e) {
 		}
 		return getMethod;
