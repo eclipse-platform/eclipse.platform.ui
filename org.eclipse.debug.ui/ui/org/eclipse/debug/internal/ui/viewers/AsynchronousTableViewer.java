@@ -44,8 +44,6 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public class AsynchronousTableViewer extends AsynchronousViewer {
 
-    private static final ISelection EMPTY = null;
-
     private Table fTable;
 
     private AsynchronousTableViewerContentManager fContentManager;
@@ -107,7 +105,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
             List list = ((IStructuredSelection) selection).toList();
             if (list == null) {
                 fTable.deselectAll();
-                return null;
+                return StructuredSelection.EMPTY;
             }
 
             int[] indices = new int[list.size()];
@@ -129,7 +127,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
                 fTable.showItem(item);
             }
         }
-        return EMPTY;
+        return StructuredSelection.EMPTY;
     }
 
     protected boolean acceptsSelection(ISelection selection) {
@@ -137,8 +135,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
     }
 
     protected ISelection getEmptySelection() {
-        // TODO EMPTY might need to be typed differently.
-        return EMPTY;
+        return StructuredSelection.EMPTY;
     }
 
     protected Widget getParent(Widget widget) {
