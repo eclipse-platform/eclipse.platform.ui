@@ -52,7 +52,9 @@ public class TreeModelDescription {
 	}
 	
 	/**
-	 * A given instanceType, may have multiple type of children
+	 * Register a property for getting, or setting the Tree's children(array or collection).
+	 * This property may or may not be an index property. 
+	 * A given instanceType, may have multiple children properties.
 	 * 
 	 * @param instanceType
 	 * @param childrenProperty
