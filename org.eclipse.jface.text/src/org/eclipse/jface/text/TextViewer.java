@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
 
+import org.eclipse.jface.internal.text.MigrationHelper;
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -2705,18 +2706,12 @@ public class TextViewer extends Viewer implements
 	}
 
 	/**
-	 * Returns the view port height in lines. The actual visible lines can be fewer if the
-	 * document is shorter than the view port.
+	 * Returns the visible lines in the view port.
 	 *
 	 * @return the view port height in lines
 	 */
 	protected int getVisibleLinesInViewport() {
-		if (fTextWidget != null) {
-			Rectangle clArea= fTextWidget.getClientArea();
-			if (!clArea.isEmpty())
-				return clArea.height / fTextWidget.getLineHeight();
-		}
-		return -1;
+		return MigrationHelper.getVisibleLinesInViewport(fTextWidget);
 	}
 
 	/*

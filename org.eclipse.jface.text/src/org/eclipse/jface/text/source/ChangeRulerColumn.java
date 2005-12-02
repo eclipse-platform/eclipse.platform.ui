@@ -62,6 +62,7 @@ import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 
+import org.eclipse.jface.internal.text.MigrationHelper;
 import org.eclipse.jface.internal.text.revisions.ChangeRegion;
 import org.eclipse.jface.internal.text.revisions.DiffApplier;
 
@@ -544,10 +545,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	 * @return the view port height in lines
 	 */
 	protected int getVisibleLinesInViewport() {
-		Rectangle clArea= fCachedTextWidget.getClientArea();
-		if (!clArea.isEmpty())
-			return clArea.height / fCachedTextWidget.getLineHeight();
-		return -1;
+		return MigrationHelper.getVisibleLinesInViewport(fCachedTextWidget);
 	}
 
 	/**
@@ -562,7 +560,6 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 
 		fSensitiveToTextChanges= visibleModelLines.getNumberOfLines() <= getVisibleLinesInViewport();
 
-		int lineheight= fCachedTextWidget.getLineHeight();
 		fScrollPos= fCachedTextWidget.getTopPixel();
 		
 		int y_shift= -fScrollPos;
@@ -571,12 +568,12 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		List/*<ChangeRegion>*/ changes= getChangeRegions(visibleModelLines);
 		for (Iterator it= changes.iterator(); it.hasNext();) {
 			ChangeRegion region= (ChangeRegion) it.next();
-			paintChangeRegion(region, gc, y_shift, lineheight);
+			paintChangeRegion(region, gc, y_shift);
 		}
 		
 		// draw diff info
 		for (int line= visibleModelLines.getStartLine(); line < end(visibleModelLines); line++) {
-			paintLine(line, y_shift, lineheight, gc);
+			paintLine(line, y_shift, gc);
 		}
 	}
 
@@ -608,7 +605,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		return fParentRuler;
 	}
 
-	private void paintLine(int line, int y_shift, int lineheight, GC gc) {
+	private void paintLine(int line, int y_shift, GC gc) {
 		int widgetLine= modelLineToWidgetLine(line);
 		if (widgetLine == -1)
 			return;
@@ -619,12 +616,13 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 			// width of the column
 			int width= getWidth();
 			
-			int y= widgetLine * lineheight + y_shift;
+			int lineHeight= fCachedTextWidget.getLineHeight(fCachedTextWidget.getOffsetAtLine(widgetLine));
+			int y= widgetLine * lineHeight + y_shift;
 
 			// draw background color if special
 			if (hasSpecialColor(info)) {
 				gc.setBackground(getColor(info));
-				gc.fillRectangle(0, y, width, lineheight);
+				gc.fillRectangle(0, y, width, lineHeight);
 			}
 
 			/* Deletion Indicator: Simply a horizontal line */
@@ -639,7 +637,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 				}
 
 				if (delBelow > 0) {
-					gc.drawLine(0, y + lineheight - 1, width, y + lineheight - 1);
+					gc.drawLine(0, y + lineHeight - 1, width, y + lineHeight - 1);
 				}
 			}
 		}
@@ -839,7 +837,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		throw new UnsupportedOperationException();
 	}
 
-	private void paintChangeRegion(ChangeRegion region, GC gc, int y_shift, int lineheight) {
+	private void paintChangeRegion(ChangeRegion region, GC gc, int y_shift) {
 		Revision revision= region.getRevision();
 		gc.setBackground(lookupColor(revision, false));
 		if (revision == fFocusRevision)
@@ -1032,9 +1030,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 			coverage= extension.getModelCoverage();
 			
 		} else {
-			topLine= fCachedTextViewer.getTopIndex();
-			if (fCachedTextWidget.getTopPixel() % fCachedTextWidget.getLineHeight() != 0)
-				topLine--;
+			topLine= MigrationHelper.getPartialTopIndex(fCachedTextViewer, fCachedTextWidget); 
 			coverage= fCachedTextViewer.getVisibleRegion();
 		}
 		
@@ -1112,14 +1108,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	}
 	
 	private final int getPartialTopIndex(StyledText widget) {
-		int topIndex= widget.getTopIndex();
-		if (topIndex > 0) {
-			int topPixel= widget.getTopPixel();
-			int lineHeight= widget.getLineHeight();
-			if (topPixel % lineHeight != 0)
-				topIndex--;
-		}
-		return topIndex;
+		return MigrationHelper.getPartialTopIndex(widget);
 	}
 
 	/*
@@ -1137,9 +1126,9 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		ILineRange widgetRange= modelLinesToWidgetLines(range);
 		if (widgetRange == null)
 			return null;
-		int lineHeight= fCachedTextWidget.getLineHeight();
-		int y= widgetRange.getStartLine() * lineHeight + y_shift;
-		int height= (widgetRange.getNumberOfLines()) * lineHeight - 1;
+		
+		int y= MigrationHelper.computeLineHeight(fCachedTextWidget, 0, widgetRange.getStartLine(), widgetRange.getStartLine()) + y_shift;
+		int height= MigrationHelper.computeLineHeight(fCachedTextWidget, widgetRange.getStartLine(), widgetRange.getStartLine() + widgetRange.getNumberOfLines(), widgetRange.getNumberOfLines()) - 1;
 		
 		return new Rectangle(0, y, getWidth(), height);
 	}
@@ -1300,7 +1289,9 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		
 		int widgetCurrentFocusLine= modelLinesToWidgetLines(new LineRange(documentHoverLine, 1)).getStartLine();
 		int widgetNextFocusLine= nextWidgetRange.getStartLine();
-		int newTopPixel= fCachedTextWidget.getTopPixel() + fCachedTextWidget.getLineHeight() * (widgetNextFocusLine - widgetCurrentFocusLine);
+		
+		 int newTopPixel= fCachedTextWidget.getTopPixel() + MigrationHelper.computeLineHeight(fCachedTextWidget, widgetCurrentFocusLine, widgetNextFocusLine, widgetNextFocusLine - widgetCurrentFocusLine);
+		
 		fCachedTextWidget.setTopPixel(newTopPixel);
 		if (newTopPixel < 0) {
 			Point cursorLocation= fCachedTextWidget.getDisplay().getCursorLocation();

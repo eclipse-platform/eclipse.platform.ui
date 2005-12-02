@@ -41,6 +41,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.internal.text.MigrationHelper;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -502,7 +504,8 @@ public class OverviewRuler implements IOverviewRuler {
 		int maxLines= textWidget.getLineCount();
 
 		Point size= fCanvas.getSize();
-		int writable= maxLines * textWidget.getLineHeight();
+		int writable= MigrationHelper.computeLineHeight(textWidget, 0, maxLines, maxLines);
+		
 		if (size.y > writable)
 			size.y= Math.max(writable - fHeader.getSize().y, 0);
 
@@ -587,7 +590,7 @@ public class OverviewRuler implements IOverviewRuler {
 
 		int maxLines= textWidget.getLineCount();
 		Point size= fCanvas.getSize();
-		int writable= maxLines * textWidget.getLineHeight();
+		int writable= MigrationHelper.computeLineHeight(textWidget, 0, maxLines, maxLines);
 		if (size.y > writable)
 			size.y= Math.max(writable - fHeader.getSize().y, 0);
 
@@ -719,7 +722,7 @@ public class OverviewRuler implements IOverviewRuler {
 		int maxLines= textWidget.getContent().getLineCount();
 
 		int rulerLength= fCanvas.getSize().y;
-		int writable= maxLines * textWidget.getLineHeight();
+		int writable= MigrationHelper.computeLineHeight(textWidget, 0, maxLines, maxLines);
 
 		if (rulerLength > writable)
 			rulerLength= Math.max(writable - fHeader.getSize().y, 0);

@@ -75,6 +75,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.IVerticalRulerListener;
 import org.eclipse.jface.text.source.LineRange;
 
+import org.eclipse.jface.internal.text.MigrationHelper;
 import org.eclipse.jface.internal.text.revisions.ChangeRegion;
 import org.eclipse.jface.internal.text.revisions.DiffApplier;
 
@@ -488,10 +489,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 	 * @return the view port height in lines
 	 */
 	private final int getVisibleLinesInViewport() {
-		Rectangle clArea= fCachedTextWidget.getClientArea();
-		if (!clArea.isEmpty())
-			return clArea.height / fCachedTextWidget.getLineHeight();
-		return -1;
+		return MigrationHelper.getVisibleLinesInViewport(fCachedTextWidget);
 	}
 
 	/**
@@ -709,15 +707,13 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 			
 			// ITextViewer.getTopIndex returns the fully visible line, but we want the partially
 			// visible one
-			int widgetTopLine= getPartialTopIndex(fCachedTextWidget);
+			int widgetTopLine= MigrationHelper.getPartialTopIndex(fCachedTextWidget);
 			topLine= extension.widgetLine2ModelLine(widgetTopLine);
 			
 			coverage= extension.getModelCoverage();
 			
 		} else {
-			topLine= fCachedTextViewer.getTopIndex();
-			if (fCachedTextWidget.getTopPixel() % fCachedTextWidget.getLineHeight() != 0)
-				topLine--;
+			topLine= MigrationHelper.getPartialTopIndex(fCachedTextViewer, fCachedTextWidget);
 			coverage= fCachedTextViewer.getVisibleRegion();
 		}
 		
@@ -775,17 +771,6 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		return new LineRange(widgetStartLine, widgetEndLine - widgetStartLine + 1);
 	}
 	
-	private final int getPartialTopIndex(StyledText widget) {
-		int topIndex= widget.getTopIndex();
-		if (topIndex > 0) {
-			int topPixel= widget.getTopPixel();
-			int lineHeight= widget.getLineHeight();
-			if (topPixel % lineHeight != 0)
-				topIndex--;
-		}
-		return topIndex;
-	}
-
 	/*
 	 * @see IVerticalRulerColumn#redraw()
 	 */
@@ -933,9 +918,8 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		ILineRange widgetRange= modelLinesToWidgetLines(range);
 		if (widgetRange == null)
 			return null;
-		int lineHeight= fCachedTextWidget.getLineHeight();
-		int y= widgetRange.getStartLine() * lineHeight + y_shift;
-		int height= (widgetRange.getNumberOfLines()) * lineHeight - 1;
+		int y= MigrationHelper.computeLineHeight(fCachedTextWidget, 0, widgetRange.getStartLine(), widgetRange.getStartLine()) + y_shift;
+		int height= MigrationHelper.computeLineHeight(fCachedTextWidget, widgetRange.getStartLine(), widgetRange.getStartLine() + widgetRange.getNumberOfLines(), widgetRange.getNumberOfLines()) - 1;
 		
 		return new Rectangle(0, y, getWidth(), height);
 	}
@@ -1096,7 +1080,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		
 		int widgetCurrentFocusLine= modelLinesToWidgetLines(new LineRange(documentHoverLine, 1)).getStartLine();
 		int widgetNextFocusLine= nextWidgetRange.getStartLine();
-		int newTopPixel= fCachedTextWidget.getTopPixel() + fCachedTextWidget.getLineHeight() * (widgetNextFocusLine - widgetCurrentFocusLine);
+		int newTopPixel= fCachedTextWidget.getTopPixel() + MigrationHelper.computeLineHeight(fCachedTextWidget, widgetCurrentFocusLine, widgetNextFocusLine, widgetNextFocusLine - widgetCurrentFocusLine);
 		fCachedTextWidget.setTopPixel(newTopPixel);
 		if (newTopPixel < 0) {
 			Point cursorLocation= fCachedTextWidget.getDisplay().getCursorLocation();

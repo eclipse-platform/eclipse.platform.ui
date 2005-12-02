@@ -33,6 +33,8 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.jface.internal.text.MigrationHelper;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IPaintPositionManager;
@@ -1099,19 +1101,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private int getInclusiveTopIndexStartOffset() {
 
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {
-			int top= -1;
-			if (fSourceViewer instanceof ITextViewerExtension5) {
-				top= fTextWidget.getTopIndex();
-				if ((fTextWidget.getTopPixel() % fTextWidget.getLineHeight()) != 0)
-					top--;
-				ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
-				top= extension.widgetLine2ModelLine(top);
-			} else {
-				top= fSourceViewer.getTopIndex();
-				if ((fTextWidget.getTopPixel() % fTextWidget.getLineHeight()) != 0)
-					top--;
-			}
-
+			int top= MigrationHelper.getPartialTopIndex(fSourceViewer, fTextWidget);
 			try {
 				IDocument document= fSourceViewer.getDocument();
 				return document.getLineOffset(top);
@@ -1131,9 +1121,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private int getExclusiveBottomIndexEndOffset() {
 
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {
-			int bottom= fSourceViewer.getBottomIndex();
-			if (((fTextWidget.getTopPixel() + fTextWidget.getClientArea().height) % fTextWidget.getLineHeight()) != 0)
-				bottom++;
+			int bottom= MigrationHelper.getBottomIndex(fSourceViewer);
 			try {
 				IDocument document= fSourceViewer.getDocument();
 

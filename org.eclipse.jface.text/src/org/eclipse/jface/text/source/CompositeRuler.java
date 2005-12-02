@@ -737,8 +737,12 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 			return -1;
 
 		StyledText text= fTextViewer.getTextWidget();
-		int line= ((y_coordinate + text.getTopPixel()) / text.getLineHeight());
-		return widgetLine2ModelLine(fTextViewer, line);
+		try {
+			int line= text.getLineAtOffset(text.getOffsetAtLocation(new Point(0, y_coordinate)));
+			return widgetLine2ModelLine(fTextViewer, line);
+		} catch (IllegalArgumentException ex) {
+			return -1;
+		}
 	}
 
 	/**

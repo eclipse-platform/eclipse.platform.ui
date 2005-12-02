@@ -31,6 +31,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.internal.text.MigrationHelper;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -251,19 +253,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 
 		StyledText textWidget= fTextViewer.getTextWidget();
 		if (textWidget != null && !textWidget.isDisposed()) {
-			int top= -1;
-			if (fTextViewer instanceof ITextViewerExtension5) {
-				top= textWidget.getTopIndex();
-				if ((textWidget.getTopPixel() % textWidget.getLineHeight()) != 0)
-					top--;
-				ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
-				top= extension.widgetLine2ModelLine(top);
-			} else {
-				top= fTextViewer.getTopIndex();
-				if ((textWidget.getTopPixel() % textWidget.getLineHeight()) != 0)
-					top--;
-			}
-
+			int top= MigrationHelper.getPartialTopIndex(fTextViewer, textWidget);
 			try {
 				IDocument document= fTextViewer.getDocument();
 				return document.getLineOffset(top);
@@ -299,7 +289,6 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 
 		Point d= fCanvas.getSize();
 		fScrollPos= styledText.getTopPixel();
-		int lineheight= styledText.getLineHeight();
 
 		int topLine= -1, bottomLine= -1;
 		try {
@@ -357,12 +346,12 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 					endLine -= topLine;
 
 					r.x= 0;
-					r.y= (startLine * lineheight) - fScrollPos;
+					r.y= MigrationHelper.computeLineHeight(styledText, 0, startLine, startLine)  - fScrollPos;
+					
 					r.width= d.x;
 					int lines= endLine - startLine;
-					if (lines < 0)
-						lines= -lines;
-					r.height= (lines+1) * lineheight;
+					
+					r.height= MigrationHelper.computeLineHeight(styledText, startLine, endLine + 1, (lines+1));
 
 					if (r.y < d.y && annotationAccessExtension != null)  // annotation within visible area
 						annotationAccessExtension.paint(annotation, gc, fCanvas, r);
@@ -395,7 +384,6 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		StyledText textWidget= fTextViewer.getTextWidget();
 
 		fScrollPos= textWidget.getTopPixel();
-		int lineheight= textWidget.getLineHeight();
 		Point dimension= fCanvas.getSize();
 
 		// draw Annotations
@@ -436,12 +424,12 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 					continue;
 
 				r.x= 0;
-				r.y= (startLine * lineheight) - fScrollPos;
+				r.y= MigrationHelper.computeLineHeight(textWidget, 0, startLine, startLine)  - fScrollPos;
+				
 				r.width= dimension.x;
 				int lines= endLine - startLine;
-				if (lines < 0)
-					lines= -lines;
-				r.height= (lines+1) * lineheight;
+				
+				r.height= MigrationHelper.computeLineHeight(textWidget, startLine, endLine + 1, lines+1);
 
 				if (r.y < dimension.y && annotationAccessExtension != null)  // annotation within visible area
 					annotationAccessExtension.paint(annotation, gc, fCanvas, r);
@@ -530,8 +518,12 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 			return -1;
 
 		StyledText text= fTextViewer.getTextWidget();
-		int line= ((y_coordinate + fScrollPos) / text.getLineHeight());
-		return widgetLine2ModelLine(fTextViewer, line);
+		try {
+			int line= text.getLineAtOffset(text.getOffsetAtLocation(new Point(0, y_coordinate)));
+			return widgetLine2ModelLine(fTextViewer, line);
+		} catch (IllegalArgumentException ex) {
+			return -1;
+		}
 	}
 
 	/**

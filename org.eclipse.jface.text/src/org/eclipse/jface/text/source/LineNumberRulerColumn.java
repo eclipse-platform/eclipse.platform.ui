@@ -34,7 +34,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.jface.internal.text.MigrationHelper;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -306,10 +307,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		 */
 		private int getInclusiveTopIndex() {
 			if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {
-				int top= fCachedTextViewer.getTopIndex();
-				if ((fCachedTextWidget.getTopPixel() % fCachedTextWidget.getLineHeight()) != 0)
-					-- top;
-				return top;
+				return MigrationHelper.getPartialTopIndex(fCachedTextViewer, fCachedTextWidget);
 			}
 			return -1;
 		}
@@ -590,7 +588,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	/**
 	 * Double buffer drawing.
 	 *
-	 * @param dest the gc to draw into
+	 * @param dest the GC to draw into
 	 */
 	private void doubleBufferPaint(GC dest) {
 
@@ -631,21 +629,18 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	}
 
 	/**
-	 * Returns the viewport height in lines.
+	 * Returns the view port height in lines.
 	 *
-	 * @return the viewport height in lines
+	 * @return the view port height in lines
 	 */
 	protected int getVisibleLinesInViewport() {
-		Rectangle clArea= fCachedTextWidget.getClientArea();
-		if (!clArea.isEmpty())
-			return clArea.height / fCachedTextWidget.getLineHeight();
-		return -1;
+		return MigrationHelper.getVisibleLinesInViewport(fCachedTextWidget);
 	}
 
 	/**
 	 * Draws the ruler column.
 	 *
-	 * @param gc the gc to draw into
+	 * @param gc the GC to draw into
 	 */
 	private void doPaint(GC gc) {
 
@@ -660,8 +655,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 		int topLine= fCachedTextWidget.getTopIndex();
 		fScrollPos= fCachedTextWidget.getTopPixel();
-		int lineheight= fCachedTextWidget.getLineHeight();
-		int partialLineHidden= fScrollPos % lineheight;
+		
+		int partialLineHidden= MigrationHelper.getPartialLineHidden(fCachedTextWidget);
 
 		if (partialLineHidden > 0 && topLine > 0) // widgetTopLine shows the first fully visible line
 			-- topLine;
@@ -693,18 +688,22 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		int y= -partialLineHidden;
 		int canvasheight= fCanvas.getSize().y;
 
-		for (int line= topLine; line <= bottomLine; line++, y+= lineheight) {
+		for (int line= topLine; line <= bottomLine; line++) {
+			
+			int lineheight= fCachedTextWidget.getLineHeight(fCachedTextWidget.getOffsetAtLine(line));
 
-			if (y >= canvasheight)
-				break;
-
-			paintLine(line, y, lineheight, gc, fCachedTextWidget.getDisplay());
-
-			String s= createDisplayString(line);
-			int indentation= fIndentation[s.length()];
-			int offset= fCachedTextWidget.getOffsetAtLine(line);
-			int baselineBias= getBaselineBias(gc, offset);
-			gc.drawString(s, indentation, y + baselineBias, true);
+			if (y < canvasheight) {
+				paintLine(line, y, lineheight, gc, fCachedTextWidget.getDisplay());
+	
+				String s= createDisplayString(line);
+				int indentation= fIndentation[s.length()];
+				int offset= fCachedTextWidget.getOffsetAtLine(line);
+				int baselineBias= getBaselineBias(gc, offset);
+				gc.drawString(s, indentation, y + baselineBias, true);
+			}
+			
+			y+= lineheight;
+			
 		}
 	}
 
@@ -724,7 +723,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * Draws the ruler column. Uses <code>ITextViewerExtension5</code> for the
 	 * implementation. Will replace <code>doPinat(GC)</code>.
 	 *
-	 * @param gc the gc to draw into
+	 * @param gc the GC to draw into
 	 */
 	private void doPaint1(GC gc) {
 
@@ -735,8 +734,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 		int widgetTopLine= fCachedTextWidget.getTopIndex();
 		fScrollPos= fCachedTextWidget.getTopPixel();
-		int lineheight= fCachedTextWidget.getLineHeight();
-		int partialLineHidden= fScrollPos % lineheight;
+
+		int partialLineHidden= MigrationHelper.getPartialLineHidden(fCachedTextWidget);
 
 		if (partialLineHidden > 0 && widgetTopLine > 0) // widgetTopLine shows the first fully visible line
 			-- widgetTopLine;
@@ -780,6 +779,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			int widgetLine= extension.modelLine2WidgetLine(modelLine);
 			if (widgetLine == -1)
 				continue;
+			
+			int lineheight= fCachedTextWidget.getLineHeight(fCachedTextWidget.getOffsetAtLine(widgetLine));
+			lineheight= MigrationHelper.checkValue(lineheight, MigrationHelper.getLineHeight(fCachedTextWidget));
 
 			paintLine(modelLine, y, lineheight, gc, fCachedTextWidget.getDisplay());
 
@@ -812,14 +814,10 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		 */
 		int widgetBaseline= fCachedTextWidget.getBaseline(offset);
 		
-		// FIXME: REMOVE ME!
-//		widgetBaseline= fCachedTextWidget.getBaseline();
-		
 		FontMetrics fm = gc.getFontMetrics();
 		int fontBaseline = fm.getAscent() + fm.getLeading();
-		Assert.isTrue(widgetBaseline >= fontBaseline);
 		int baselineBias= widgetBaseline - fontBaseline;
-		return baselineBias;
+		return Math.max(0, baselineBias);
 	}
 
 	/**
