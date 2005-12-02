@@ -355,6 +355,8 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		Map savedState= new HashMap(10);
 		saveEnableStateAndSet(getButton(PREVIEW_ID), savedState, "preview", false); //$NON-NLS-1$
 		saveEnableStateAndSet(getButton(IDialogConstants.OK_ID), savedState, "ok", false); //$NON-NLS-1$
+		saveEnableStateAndSet(getButton(IDialogConstants.BACK_ID), savedState, "back", false); //$NON-NLS-1$
+		saveEnableStateAndSet(getButton(IDialogConstants.NEXT_ID), savedState, "next", false); //$NON-NLS-1$
 		saveEnableStateAndSet(getButton(IDialogConstants.CANCEL_ID), savedState, "cancel", keepCancelEnabled); //$NON-NLS-1$
 		savedState.put("page", ControlEnableState.disable(fVisiblePage.getControl())); //$NON-NLS-1$
 		return savedState;
@@ -400,6 +402,8 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	private void restoreUIState(Map state) {
 		restoreEnableState(getButton(PREVIEW_ID), state, "preview");//$NON-NLS-1$
 		restoreEnableState(getButton(IDialogConstants.OK_ID), state, "ok");//$NON-NLS-1$
+		restoreEnableState(getButton(IDialogConstants.BACK_ID), state, "back"); //$NON-NLS-1$
+		restoreEnableState(getButton(IDialogConstants.NEXT_ID), state, "next"); //$NON-NLS-1$
 		restoreEnableState(getButton(IDialogConstants.CANCEL_ID), state, "cancel");//$NON-NLS-1$
 		ControlEnableState pageState = (ControlEnableState) state.get("page");//$NON-NLS-1$
 		pageState.restore();
