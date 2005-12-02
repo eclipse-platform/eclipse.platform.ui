@@ -71,7 +71,12 @@ public class URIUtil {
 			return null;
 		if (path.isAbsolute())
 			return toURI(path.toFile().getAbsolutePath());
-		return URI.create(escapeColons(path.toString()));
+		try {
+			//try to preserve the path as a relative path
+			return new URI(null, path.toString(), null);
+		} catch (URISyntaxException e) {
+			return toURI(path.toFile().getAbsolutePath());
+		}
 	}
 
 	/**
