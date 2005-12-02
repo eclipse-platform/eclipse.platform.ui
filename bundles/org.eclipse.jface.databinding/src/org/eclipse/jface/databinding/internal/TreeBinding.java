@@ -89,22 +89,32 @@ public class TreeBinding extends Binding implements IChangeListener {
 		Object parent = event.getParent();
 			try {
 				updating ++;
-				if (event.getChangeType() == IChangeEvent.VIRTUAL)
-					source.setElements(parent, needsUpdate.getElements(parent));
-				else if (event.getChangeType() == IChangeEvent.CHANGE)
-					needsUpdate.setElement(parent, index, event.getNewValue());
-				else if (event.getChangeType() == IChangeEvent.ADD)
-					needsUpdate.addElement(parent, index, event.getNewValue());
-				else if (event.getChangeType() == IChangeEvent.REMOVE)
-					needsUpdate.removeElement(parent, index);
-				else if (event.getChangeType() == IChangeEvent.REPLACE) {
-					Object val = event.getNewValue();
-					if (val.getClass().isArray())
-					   needsUpdate.setElements(parent, (Object[]) val);
-					else if (val instanceof Collection)
-						needsUpdate.setElements(parent, ((Collection)val).toArray());
-					else
-						throw new BindingException ("Invalid REPLACE event"); //$NON-NLS-1$
+				switch (event.getChangeType()) {
+					case IChangeEvent.VIRTUAL:
+						source.setElements(parent, needsUpdate.getElements(parent));
+						break;
+						
+					case IChangeEvent.CHANGE:
+						needsUpdate.setElement(parent, index, event.getNewValue());
+						break;
+						
+					case IChangeEvent.ADD:
+						needsUpdate.addElement(parent, index, event.getNewValue());
+						break;
+						
+					case IChangeEvent.REMOVE:
+						needsUpdate.removeElement(parent, index);
+						break;
+						
+					case IChangeEvent.REPLACE:
+						Object val = event.getNewValue();
+						if (val.getClass().isArray())
+						   needsUpdate.setElements(parent, (Object[]) val);
+						else if (val instanceof Collection)
+							needsUpdate.setElements(parent, ((Collection)val).toArray());
+						else
+							throw new BindingException ("Invalid REPLACE event"); //$NON-NLS-1$
+					    break;
 				}
 			} finally {
 				updating --;				

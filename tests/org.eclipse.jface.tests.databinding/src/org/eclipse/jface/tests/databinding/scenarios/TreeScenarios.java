@@ -267,7 +267,7 @@ public class TreeScenarios extends ScenariosTestCase {
 		// Adventures will have two columns
 		treeDescription.addColumn(Adventure.class, "name");
 		treeDescription.addColumn(Adventure.class, "price");
-		treeDescription.getColumn(Adventure.class, 1).setPropertyType(Double.TYPE);					
+//		treeDescription.getColumn(Adventure.class, 1).setPropertyType(Double.TYPE);					
 		// Category will have one column
 		treeDescription.addColumn(Category.class, "name");
 		// Account will have two columns
@@ -300,7 +300,7 @@ public class TreeScenarios extends ScenariosTestCase {
 		treeDescription.addColumn(Adventure.class, "name");
 		treeDescription.addColumn(Adventure.class, "price");
 		// TODO need to lazy set this
-		treeDescription.getColumn(Adventure.class, 1).setPropertyType(Double.TYPE);
+//		treeDescription.getColumn(Adventure.class, 1).setPropertyType(Double.TYPE);
 					
 		treeDescription.addColumn(Category.class, "name");
 		

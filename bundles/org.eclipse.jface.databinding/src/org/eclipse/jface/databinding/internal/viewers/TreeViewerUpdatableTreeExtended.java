@@ -13,6 +13,7 @@ package org.eclipse.jface.databinding.internal.viewers;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
@@ -21,6 +22,8 @@ import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
+import org.eclipse.jface.databinding.IUpdatableValue;
+import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.converters.IdentityConverter;
 import org.eclipse.jface.databinding.validator.IValidator;
@@ -42,11 +45,22 @@ import org.eclipse.swt.widgets.Item;
  *
  */
 public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
+	
+	class ColumnInfo{ // boolean default value is false
+		boolean converterDefaulted;
+		boolean validatorDefaulted;
+		boolean cellEditorDefaulted;
+	}
+	
+	private HashMap columnInfos = new HashMap();
+	
+	private IDataBindingContext dataBindingContext;
 
 	private final TreeViewerDescription treeViewerDescription;
 	
 	private class SetterMethod {
 		private Object target;
+		private String setterProperty;
 		private Method setter;
 		
 		
@@ -56,20 +70,19 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 		 */
 		public SetterMethod (Object element, Column column) {			    
 				try {
-					List getters = getNestedPorperties(column.getPropertyName());
-					String setterSig;					
+					List getters = getNestedPorperties(column.getPropertyName());								
 					if (getters.size()>1) {
-						setterSig = (String) getters.get(getters.size()-1);
+						setterProperty = (String) getters.get(getters.size()-1);
 						getters.remove(getters.size()-1);
 						target=getGetterValue(element,getters);
 					}
 					else {
-						setterSig = column.getPropertyName();
+						setterProperty = column.getPropertyName();
 						target = element;
 					}
 						
 					setter = target.getClass().getMethod(
-									"set" + setterSig.substring(0, 1).toUpperCase(Locale.ENGLISH) + setterSig.substring(1), new Class[] { column.getConverter().getModelType() }); //$NON-NLS-1$
+									"set" + setterProperty.substring(0, 1).toUpperCase(Locale.ENGLISH) + setterProperty.substring(1), new Class[] { column.getConverter().getModelType() }); //$NON-NLS-1$
 				} catch (SecurityException e) {
 					// TODO log
 					e.printStackTrace();
@@ -109,6 +122,18 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 					}
 				}
 				return null;
+			}
+			/**
+			 * @return setter's property
+			 */
+			public String getSetterProperty() {
+				return setterProperty;
+			}
+			/**
+			 * @return target
+			 */
+			public Object getTarget() {
+				return target;
 			}
 	}
 	
@@ -179,6 +204,8 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 			TreeViewerDescription treeViewerDescription, IDataBindingContext dataBindingContext) {
 		super(treeViewerDescription.getTreeViewer(), treeViewerDescription.getClassTypes());
 		this.treeViewerDescription = treeViewerDescription;
+		this.dataBindingContext=dataBindingContext;
+		
 		fillDescriptionDefaults(dataBindingContext);
 		TreeViewer tableViewer = treeViewerDescription.getTreeViewer();
 		// TODO synchronize columns on the widget side (create missing columns,
@@ -303,37 +330,69 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 			}
 		};
 	}
+	
+	private void initializeColumnConverter(Column column, Class propertyType){
+		   column.setConverter(dataBindingContext.createConverter(String.class, propertyType, treeViewerDescription));		
+	}
+	
+	private void initializeColumnValidator(Column column, Class propertyType){
+		column.setValidator(new IValidator() {
+			public String isPartiallyValid(Object value) {
+				return null;
+			}
+
+			public String isValid(Object value) {
+				return null;
+			}
+		});		
+	}
+	
+	protected CellEditor createCellEditor(final Column column) {
+		return new TextCellEditor(treeViewerDescription.getTreeViewer().getTree()) {				
+			protected void doSetValue(Object value) {
+				super.doSetValue( column.getConverter().convertModelToTarget(value));
+			}
+			protected Object doGetValue() {
+				String textValue = (String)super.doGetValue();
+				return column.getConverter().convertTargetToModel(textValue);
+			}
+		};
+		
+	}
 
 	private void fillDescriptionDefaults(final IDataBindingContext dataBindingContext) {
 		Class[] types = treeViewerDescription.getClassTypes();
 		if (types==null) return;
 		
 		for (int i=0; i<types.length; i++) {
-			for (int j = 0; j < treeViewerDescription.getColumnCount(types[i]); j++) {
+			int colCount = treeViewerDescription.getColumnCount(types[i]);					
+			for (int j = 0; j < colCount; j++) {
 				Column column = treeViewerDescription.getColumn(types[i], j);
+				ColumnInfo info = new ColumnInfo();
+				columnInfos.put(column, info);
 				if (column.getConverter() == null) {
+					info.converterDefaulted = true;
 					if (column.getPropertyType()!=null)
-					   column.setConverter(dataBindingContext.createConverter(String.class, column.getPropertyType(), treeViewerDescription));
+						initializeColumnConverter(column,column.getPropertyType());
 					else
 					   column.setConverter(new IdentityConverter(String.class));
 				}
 				if (column.getValidator() == null) {
-					column.setValidator(new IValidator() {
-	
-						public String isPartiallyValid(Object value) {
-							return null;
-						}
-	
-						public String isValid(Object value) {
-							return null;
-						}
-					});
+					info.validatorDefaulted = true;
+					initializeColumnValidator(column, column.getPropertyType());
 				}
+//				if (column.getCellEditor() == null) {
+//					info.cellEditorDefaulted = true;
+//					column.setCellEditor(createCellEditor(column));
+//				}
+				
 			}
 		}
-		if (treeViewerDescription.getCellModifier() == null) {
+		if (treeViewerDescription.getCellModifier() == null) {			
 			treeViewerDescription.setCellModifier(createCellModifier(dataBindingContext));
 		}
+		if (columnInfos.isEmpty())
+			columnInfos=null;
 	}
 
 	private List getNestedPorperties (String properties) {	
@@ -358,5 +417,41 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 	}
 	protected Column getColumn(Class instanceType, int columnIndex) {
 		return treeViewerDescription.getColumn(instanceType, columnIndex);
+	}
+	
+	public int addElement(final Object parentElement, int index, final Object value) {
+		// Verify defaults, the first time data cames through
+		if(columnInfos != null && value!=null){
+			for (int i = 0; i < treeViewerDescription.getColumnCount(value.getClass()); i++) {
+				Column column = treeViewerDescription.getColumn(value.getClass(), i);
+				ColumnInfo columnInfo = (ColumnInfo) columnInfos.remove(column);
+				if (columnInfo!=null) {
+					if(column.getPropertyType() == null && (columnInfo.cellEditorDefaulted || columnInfo.converterDefaulted || columnInfo.validatorDefaulted)){
+						// Work out the type of the column from the property name from the element type itself
+						SetterMethod setter = new SetterMethod(value, column);
+						// resolve nesting
+						Property columnPropertyDesc = new Property(setter.getTarget(), setter.getSetterProperty());
+						
+						IUpdatableValue dummyUpdatable = (IUpdatableValue) dataBindingContext.createUpdatable(columnPropertyDesc);
+						Class columnType = dummyUpdatable.getValueType();
+						if(columnType != null){
+							// We have a more explicit property type that was supplied
+							if(columnInfo.converterDefaulted){	
+								initializeColumnConverter(column,columnType);
+							}
+							if(columnInfo.validatorDefaulted){
+								initializeColumnValidator(column,columnType);
+							}
+//							if(columnInfo.cellEditorDefaulted){
+//								createCellEditor(column);							
+//							}
+						}
+					}
+				}
+			}			
+			if (columnInfos.isEmpty())
+				columnInfos = null;	// No More checking
+		}
+		return super.addElement(parentElement, index, value);
 	}
 }
