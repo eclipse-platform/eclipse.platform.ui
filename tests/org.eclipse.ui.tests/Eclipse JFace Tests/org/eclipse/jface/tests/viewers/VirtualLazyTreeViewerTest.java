@@ -105,50 +105,54 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     }
     
     public void testSetExpandedWithCycle() {
-    	// TODO fix failing test case
+    	// TODO fix failing test case (GTK, Windows)
     }
     
     public void testBulkExpand() {
-    	// TODO fix failing test case
+    	// TODO fix failing test case (GTK)
     }
     
     public void testRefreshWithDuplicateChild() {
-    	// TODO fix failing test case
+    	// TODO fix failing test case (GTK, Windows)
     }
     
     public void testInsertSibling() {
-    	// TODO fix failing test case
+    	// TODO fix failing test case (GTK)
     }
     
     public void testInsertSiblings() {
-    	// TODO fix failing test case
+    	// TODO fix failing test case (GTK)
     }
     
     public void testInsertSiblingSelectExpanded() {
-    	// TODO fix failing test case
+    	// TODO fix failing test case (GTK)
     }
-    
+
     public void testLabelProvider() {
-    	// TODO fix failing test case
+    	// TODO fix failing test case (GTK, Windows)
     }
     
     public void testLabelProviderStateChange() {
-    	// TODO fix failing test case
+    	// TODO fix failing test case (GTK, Windows)
     }
     
     public void testRenameWithLabelProvider() {
-    	// TODO fix failing test case
+    	// TODO fix failing test case (GTK, Windows)
     }
     
     public void testSetInput() {
-    	// TODO fix failing test case
+    	// TODO fix failing test case (GTK)
     }
     
     public void testSomeChildrenChanged() {
-    	// TODO fix failing test case
+    	// TODO fix failing test case (GTK, Windows)
     }
     
     public void testWorldChanged() {
-    	// TODO fix failing test case
+    	// TODO fix failing test case (GTK, Windows)
+    }
+    
+    public void testRefreshWithAddedChildren() {
+    	// TODO fix failing test case (Windows)
     }
 }
