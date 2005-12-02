@@ -548,7 +548,7 @@ abstract public class AbstractInformationControlManager {
 			fSizeConstraints= new Point (fWidthConstraint * width, fHeightConstraint * height);
 		}
 
-		return fSizeConstraints;
+		return new Point(fSizeConstraints.x, fSizeConstraints.y);
 	}
 
 	/**
