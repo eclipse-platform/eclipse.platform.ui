@@ -40,6 +40,9 @@ public class CoreTest extends TestCase {
 		// then print out the multistatus so we can see all the info.
 		if (e instanceof CoreException) {
 			IStatus status = ((CoreException) e).getStatus();
+			//if the status does not have an exception, print the stack for this one
+			if (status.getException() == null)
+				e.printStackTrace();
 			write(status, 0);
 		} else
 			e.printStackTrace();
