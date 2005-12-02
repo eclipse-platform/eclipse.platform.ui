@@ -289,9 +289,6 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
             listViewer.setSelection(new StructuredSelection(selections), true);
         }
         updateButtonAvailability();
-        //don't allow ok dismissal until a change has been made. 
-        //Fixes bug 22735.
-        getOkButton().setEnabled(false);
         return control;
     }
 
