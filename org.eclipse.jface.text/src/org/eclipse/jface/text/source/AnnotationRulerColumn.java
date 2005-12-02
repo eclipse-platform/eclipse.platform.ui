@@ -41,6 +41,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.internal.text.MigrationHelper;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -442,7 +444,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 			if (p == null || p.isDeleted())
 				continue;
 
-			if (p.overlapsWith(lineStart, lineLength))
+			if (p.overlapsWith(lineStart, lineLength) || p.length == 0 && p.offset == lineStart + lineLength)
 				return true;
 		}
 
@@ -523,28 +525,14 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * @return document offset of the upper left corner including partially visible lines
 	 */
 	protected int getInclusiveTopIndexStartOffset() {
-
 		if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {
-			int top= -1;
-			if (fCachedTextViewer instanceof ITextViewerExtension5) {
-				top= fCachedTextWidget.getTopIndex();
-				if ((fCachedTextWidget.getTopPixel() % fCachedTextWidget.getLineHeight()) != 0)
-					top--;
-				ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
-				top= extension.widgetLine2ModelLine(top);
-			} else {
-				top= fCachedTextViewer.getTopIndex();
-				if ((fCachedTextWidget.getTopPixel() % fCachedTextWidget.getLineHeight()) != 0)
-					top--;
-			}
-
+			int top= MigrationHelper.getPartialTopIndex(fCachedTextViewer, fCachedTextWidget);
 			try {
 				IDocument document= fCachedTextViewer.getDocument();
 				return document.getLineOffset(top);
 			} catch (BadLocationException x) {
 			}
 		}
-
 		return -1;
 	}
 
@@ -557,9 +545,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	private int getExclusiveBottomIndexEndOffset() {
 
 		if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {
-			int bottom= fCachedTextViewer.getBottomIndex();
-			if (((fCachedTextWidget.getTopPixel() + fCachedTextWidget.getClientArea().height) % fCachedTextWidget.getLineHeight()) != 0)
-				bottom++;
+			int bottom= MigrationHelper.getBottomIndex(fCachedTextViewer);
 			try {
 				IDocument document= fCachedTextViewer.getDocument();
 
@@ -608,7 +594,6 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		int viewPort= bottomRight - topLeft;
 
 		fScrollPos= fCachedTextWidget.getTopPixel();
-		int lineheight= fCachedTextWidget.getLineHeight();
 		Point dimension= fCanvas.getSize();
 
 		IDocument doc= fCachedTextViewer.getDocument();
@@ -671,12 +656,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 					endLine -= topLine;
 
 					r.x= 0;
-					r.y= (startLine * lineheight) - fScrollPos;
+					r.y= MigrationHelper.computeLineHeight(fCachedTextWidget, 0, startLine, startLine)  - fScrollPos;
+					
 					r.width= dimension.x;
 					int lines= endLine - startLine;
-					if (lines < 0)
-						lines= -lines;
-					r.height= (lines+1) * lineheight;
+					
+					r.height= MigrationHelper.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
 
 					if (r.y < dimension.y && fAnnotationAccessExtension != null)  // annotation within visible area
 						fAnnotationAccessExtension.paint(annotation, gc, fCanvas, r);
@@ -701,7 +686,6 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
 
 		fScrollPos= fCachedTextWidget.getTopPixel();
-		int lineheight= fCachedTextWidget.getLineHeight();
 		Point dimension= fCanvas.getSize();
 
 		int vOffset= getInclusiveTopIndexStartOffset();
@@ -764,12 +748,11 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 					continue;
 
 				r.x= 0;
-				r.y= (startLine * lineheight) - fScrollPos;
+				r.y= MigrationHelper.computeLineHeight(fCachedTextWidget, 0, startLine, startLine)  - fScrollPos;
+				
 				r.width= dimension.x;
 				int lines= endLine - startLine;
-				if (lines < 0)
-					lines= -lines;
-				r.height= (lines+1) * lineheight;
+				r.height= MigrationHelper.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
 
 				if (r.y < dimension.y && fAnnotationAccessExtension != null)  // annotation within visible area
 					fAnnotationAccessExtension.paint(annotation, gc, fCanvas, r);
@@ -875,7 +858,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	public int toDocumentLineNumber(int y_coordinate) {
 		return fParentRuler.toDocumentLineNumber(y_coordinate);
 	}
-
+	
 	/**
 	 * Removes the given annotation type from this annotation ruler column.
 	 * Annotations of the given type are no longer shown in this annotation
