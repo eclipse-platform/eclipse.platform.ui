@@ -5,7 +5,6 @@ import junit.framework.Assert;
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Display;
 
 public class TestModelLazyTreeContentProvider extends TestModelContentProvider
 		implements ILazyTreeContentProvider {
@@ -44,12 +43,6 @@ public class TestModelLazyTreeContentProvider extends TestModelContentProvider
 		treeViewer.getTree().setItemCount(0);
 		if (newInput != null) {
 			final TestElement testElement = (TestElement) newInput;
-			Display.getCurrent().asyncExec(new Runnable() {
-				public void run() {
-					treeViewer.setChildCount(newInput, testElement
-							.getChildCount());
-				};
-			});
 		}
 	}
 

@@ -120,7 +120,8 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     public void testDeleteInput() {
         TestElement first = fRootElement.getFirstChild();
         TestElement firstfirst = first.getFirstChild();
-        fViewer.setInput(first);
+        fRootElement = first;
+        setInput();
         fRootElement.deleteChild(first);
         assertNull("first child is not visible", fViewer
                 .testFindItem(firstfirst));
@@ -286,7 +287,8 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
         TestElement first = fRootElement.getFirstChild();
         TestElement firstfirst = first.getFirstChild();
 
-        fViewer.setInput(first);
+        fRootElement = first;
+        setInput();
         assertNotNull("first child is visible", fViewer
                 .testFindItem(firstfirst));
     }

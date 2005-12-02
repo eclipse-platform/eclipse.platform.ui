@@ -28,7 +28,7 @@ public class AllTests extends TestSuite {
 		addTestSuite(TreeViewerTest.class);
 		addTestSuite(VirtualTreeViewerTest.class);
 		addTestSuite(SimpleVirtualLazyTreeViewerTest.class);
-		// TODO disabled because of SWT crash, see bug 117816 addTestSuite(VirtualLazyTreeViewerTest.class);
+		addTestSuite(VirtualLazyTreeViewerTest.class);
 		addTestSuite(TableViewerTest.class);
 		addTestSuite(TreeViewerColumnTest.class);
 		addTestSuite(VirtualTableViewerTest.class);

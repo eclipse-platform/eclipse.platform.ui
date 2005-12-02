@@ -44,6 +44,11 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     	processEvents();
     }
     
+    protected void setInput() {
+		super.setInput();
+		((TreeViewer) fTreeViewer).setChildCount(fTreeViewer.getInput(), fRootElement.getChildCount());
+	}
+    
     public void tearDown() {
     	super.tearDown();
 //    	System.out.println("calls: " + setDataCalls);
@@ -67,44 +72,12 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     	assertTrue(fTreeViewer.isExpandable(nodeElement));
     }
     
-    public void testBulkExpand() {
-    	// TODO fix failing test case
-    }
-    
     public void testFilterExpanded() {
     	// no need to test since virtual trees do not support filtering
     }
     
-    public void testRefreshWithAddedChildren() {
-    	// TODO fix failing test case
-    }
-    
-    public void testRefreshWithDuplicateChild() {
-    	// TODO fix failing test case
-    }
-    
-    public void testSetDuplicateChild() {
-    	// TODO fix failing test case
-    }
-    
     public void testFilter() {
     	// no need to test since virtual trees do not support filtering
-    }
-    
-    public void testInsertSibling() {
-    	// TODO fix failing test case
-    }
-    
-    public void testInsertSiblingReveal() {
-    	// TODO fix failing test case
-    }
-    
-    public void testInsertSiblings() {
-    	// TODO fix failing test case
-    }
-    
-    public void testInsertSiblingSelectExpanded() {
-    	// TODO fix failing test case
     }
     
     public void testInsertSiblingWithFilterFiltered() {
@@ -118,6 +91,42 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     public void testInsertSiblingWithSorter() {
     	// no need to test since virtual trees do not support sorting
     }
+        
+    public void testRenameWithFilter() {
+    	// no need to test since virtual trees do not support filtering
+    }
+    
+    public void testRenameWithSorter() {
+    	// no need to test since virtual trees do not support sorting
+    }
+    
+    public void testSorter() {
+    	// no need to test since virtual trees do not support sorting
+    }
+    
+    public void testSetExpandedWithCycle() {
+    	// TODO fix failing test case
+    }
+    
+    public void testBulkExpand() {
+    	// TODO fix failing test case
+    }
+    
+    public void testRefreshWithDuplicateChild() {
+    	// TODO fix failing test case
+    }
+    
+    public void testInsertSibling() {
+    	// TODO fix failing test case
+    }
+    
+    public void testInsertSiblings() {
+    	// TODO fix failing test case
+    }
+    
+    public void testInsertSiblingSelectExpanded() {
+    	// TODO fix failing test case
+    }
     
     public void testLabelProvider() {
     	// TODO fix failing test case
@@ -127,16 +136,8 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     	// TODO fix failing test case
     }
     
-    public void testRenameWithFilter() {
-    	// no need to test since virtual trees do not support filtering
-    }
-    
     public void testRenameWithLabelProvider() {
     	// TODO fix failing test case
-    }
-    
-    public void testRenameWithSorter() {
-    	// no need to test since virtual trees do not support sorting
     }
     
     public void testSetInput() {
@@ -147,12 +148,7 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     	// TODO fix failing test case
     }
     
-    public void testSorter() {
-    	// no need to test since virtual trees do not support sorting
-    }
-    
     public void testWorldChanged() {
     	// TODO fix failing test case
     }
-    
 }

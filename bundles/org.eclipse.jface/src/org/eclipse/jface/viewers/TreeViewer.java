@@ -749,9 +749,13 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 	
     public boolean isExpandable(Object element) {
-    	if(getContentProvider() instanceof ILazyTreeContentProvider) {
+    	if (getContentProvider() instanceof ILazyTreeContentProvider) {
     		TreeItem treeItem = (TreeItem) internalExpand(element, false);
-    		return treeItem != null && treeItem.getItemCount() > 0;
+    		if (treeItem == null) {
+    			return false;
+    		}
+    		virtualMaterializeItem(treeItem);
+    		return treeItem.getItemCount() > 0;
     	}
     	return super.isExpandable(element);
     }
@@ -765,34 +769,70 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
     
     protected void createChildren(Widget widget) {
-    	if(getContentProvider() instanceof ILazyTreeContentProvider) {
+    	if (getContentProvider() instanceof ILazyTreeContentProvider) {
     		ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
-    		Object parentElement = widget.getData();
-    		int childCount;
-    		if(widget instanceof Tree) {
-    			childCount = ((Tree)widget).getItemCount();
-    		} else {
-    			childCount = ((TreeItem)widget).getItemCount();
+    		Object element = widget.getData();
+    		if (element == null && widget instanceof TreeItem) {
+    			// parent has not been materialized
+    			virtualMaterializeItem((TreeItem) widget);
+    			// try getting the element now that updateElement was called
+    			element = widget.getData();
     		}
-    		if(parentElement!=null && childCount>0) {
+    		int childCount;
+    		if (widget instanceof Tree) {
+    			childCount = ((Tree) widget).getItemCount();
+    		} else {
+    			childCount = ((TreeItem) widget).getItemCount();
+    		}
+    		if (element != null && childCount > 0) {
     			for (int i = 0; i < childCount; i++) {
-    				lazyTreeContentProvider.updateElement(parentElement, i);
-				}
+    				lazyTreeContentProvider.updateElement(element, i);
+    			}
     		}
     		return;
     	}
     	super.createChildren(widget);
     }
     
-    protected void internalAdd(Widget widget, Object parentElement, Object[] childElements) {
-    	if(getContentProvider() instanceof ILazyTreeContentProvider) {
-    		TreeItem ti = (TreeItem) widget;
-        	ti.setItemCount(ti.getItemCount()+1);
-        	ti.clearAll(false);
-            return;
+    protected void internalAdd(Widget widget, Object parentElement,
+    		Object[] childElements) {
+    	if (getContentProvider() instanceof ILazyTreeContentProvider) {
+    		if (widget instanceof TreeItem) {
+    			TreeItem ti = (TreeItem) widget;
+    			ti.setItemCount(ti.getItemCount() + 1);
+    			ti.clearAll(false);
+    		} else {
+    			Tree t = (Tree) widget;
+    			t.setItemCount(t.getItemCount() + 1);
+    			t.clearAll(false);
+    		}
+    		return;
     	}
     	super.internalAdd(widget, parentElement, childElements);
+    }
+
+	protected void virtualMaterializeItem(TreeItem treeItem) {
+		if (treeItem.getData() != null) {
+			// already materialized
+			return;
+		}
+		if (!(getContentProvider() instanceof ILazyTreeContentProvider)) {
+			return;
+		}
+		ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
+		int index;
+		Widget parent = treeItem.getParentItem();
+		if (parent == null) {
+			parent = treeItem.getParent();
+		}
+		Object parentElement = parent.getData();
+		if (parentElement != null) {
+			if (parent instanceof Tree) {
+				index = ((Tree) parent).indexOf(treeItem);
+			} else {
+				index = ((TreeItem) parent).indexOf(treeItem);
+			}
+			lazyTreeContentProvider.updateElement(parentElement, index);
+		}
 	}
-
-
 }

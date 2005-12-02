@@ -1125,9 +1125,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      */
     protected void internalExpandToLevel(Widget widget, int level) {
         if (level == ALL_LEVELS || level > 0) {
-        	if(!(getContentProvider() instanceof ILazyTreeContentProvider)) {
-        		createChildren(widget);
-        	}
+    		createChildren(widget);
             if (widget instanceof Item)
                 setExpanded((Item) widget, true);
             if (level == ALL_LEVELS || level > 1) {
@@ -1914,4 +1912,5 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             }
         }
     }
+
 }

@@ -158,7 +158,7 @@ public abstract class TestBrowser extends ApplicationWindow {
             Viewer viewer = createViewer(form);
             form.setContent(viewer.getControl());
             fViewer = viewer;
-            viewer.setInput(input);
+            setInput((TestElement) input);
         } else if (fPanes == 2) {
             SashForm sashForm = new SashForm(form, SWT.VERTICAL);
             form.setContent(sashForm);
@@ -241,7 +241,7 @@ public abstract class TestBrowser extends ApplicationWindow {
     }
 
     public void open(TestElement input) {
-        setInput(input);
+    	setInput(input);
         super.open();
     }
 

@@ -25,8 +25,8 @@ public class TestLazyVirtualTree extends TestTree {
 			}
 
 			public void handleEvent(Event event) {
-//				String position = getPosition((TreeItem) event.item);
-//				System.out.println("updating " + position);
+				String position = getPosition((TreeItem) event.item);
+				System.out.println("updating " + position);
 			}
 		});
 		TreeViewer viewer = new TreeViewer(tree);
@@ -36,6 +36,19 @@ public class TestLazyVirtualTree extends TestTree {
 		if (fViewer == null)
 			fViewer = viewer;
 		return viewer;
+	}
+	
+	public void setInput(TestElement input) {
+		if(fViewer!=null) {
+			Object oldInput = fViewer.getInput();
+			if(oldInput!=null) {
+				fViewer.setChildCount(oldInput, 0);
+			}
+		}
+		super.setInput(input);
+		if(fViewer!=null && input!=null) {
+			fViewer.setChildCount(input, input.getChildCount());
+		}
 	}
 
 	/**

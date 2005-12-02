@@ -43,11 +43,10 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
         fTreeViewer.expandToLevel(first, 2);
         fTreeViewer.expandToLevel(first2, 2);
         fTreeViewer.expandToLevel(last, 2);
-
         // get expand state
         Object[] list1 = fTreeViewer.getExpandedElements();
         // flush viewer
-        fViewer.setInput(fRootElement);
+        setInput();
 
         // restore old expand state
         fTreeViewer.collapseAll();
@@ -106,8 +105,10 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
     public void testExpandToLevel() {
         TestElement first = fRootElement.getFirstChild();
         TestElement first2 = first.getFirstChild();
-        fTreeViewer.expandToLevel(2);
+        TestElement first3 = first2.getFirstChild();
+        fTreeViewer.expandToLevel(3);
         assertNotNull("first2 is visible", fViewer.testFindItem(first2));
+        assertNotNull("first3 is visible", fViewer.testFindItem(first3));
     }
 
     public void testFilterExpanded() {

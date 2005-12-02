@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.util.ILogger;
+import org.eclipse.jface.util.ISafeRunnableRunner;
+import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -85,6 +91,18 @@ public abstract class ViewerTestCase extends TestCase {
 	}
 
 	public void setUp() {
+		Policy.setLog(new ILogger(){
+			public void log(IStatus status) {
+				fail(status.getMessage());
+			}});
+		SafeRunnable.setRunner(new ISafeRunnableRunner(){
+			public void run(ISafeRunnable code) {
+				try {
+					code.run();
+				} catch(Throwable th) {
+					throw new RuntimeException(th);
+				}
+			}});
 	    setUpModel();
 	    openBrowser();
 	}
