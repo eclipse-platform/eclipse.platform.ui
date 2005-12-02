@@ -494,6 +494,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
      */
     private void validateInput() {
         String errorMessage = null;
+        String infoMessage= null;
         String newText = text.getText();
 
         if (newText.equals(newText.trim()) == false) {
@@ -515,9 +516,10 @@ public class ResourceWorkingSetPage extends WizardPage implements
                 }
             }
         }
-        if (errorMessage == null && tree.getCheckedElements().length == 0) {
-            errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_resourceMustBeChecked;
+        if (infoMessage == null && tree.getCheckedElements().length == 0) {
+        	infoMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_resourceMustBeChecked;
         }
+        setMessage(infoMessage, INFORMATION);
         setErrorMessage(errorMessage);
         setPageComplete(errorMessage == null);
     }
