@@ -24,10 +24,11 @@ import org.eclipse.search.internal.core.SearchScope;
  */
 public class AmountOfWorkCalculator implements IResourceProxyVisitor {
 	
-	private SearchScope fScope;
-	private int fFileCount;
-	private boolean fVisitDerived;
+	private final SearchScope fScope;
+	private final boolean fVisitDerived;
 	private final MultiStatus fStatus;
+	
+	private int fFileCount;
 
 	AmountOfWorkCalculator(SearchScope scope, MultiStatus status, boolean visitDerived) {
 		fStatus= status;
@@ -36,11 +37,15 @@ public class AmountOfWorkCalculator implements IResourceProxyVisitor {
 	}
 		
 	public boolean visit(IResourceProxy proxy) {
+		if (!fVisitDerived && proxy.isDerived()) {
+			return false; // all resources in a derived folder are considered to be derived, see bug 103576
+		}
+		
 		if (proxy.getType() != IResource.FILE) {
 			return true;
 		}
 		
-		if ((fVisitDerived || !proxy.isDerived()) && fScope.matchesFileName(proxy.getName())) {
+		if (fScope.matchesFileName(proxy.getName())) {
 			fFileCount++;
 		}
 		return true;	

@@ -147,10 +147,15 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 	}
 
 	public boolean visit(IResourceProxy proxy) {
+		if (!fVisitDerived && proxy.isDerived()) {
+			return false; // all resources in a derived folder are considered to be derived, see bug 103576
+		}
+		
 		if (proxy.getType() != IResource.FILE) {
 			return true; // only interested in files
 		}
-		if (!fVisitDerived && proxy.isDerived() || !fScope.matchesFileName(proxy.getName())) {
+		
+		if (!fScope.matchesFileName(proxy.getName())) {
 			return false; // finish, files don't have children
 		}
 		
