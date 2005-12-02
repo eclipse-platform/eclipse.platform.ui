@@ -29,8 +29,8 @@ import org.eclipse.jface.databinding.viewers.TableViewerDescription;
 import org.eclipse.jface.databinding.viewers.TableViewerDescription.Column;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.ViewerLabel;
@@ -43,11 +43,9 @@ import org.eclipse.swt.widgets.Item;
  */
 public class TableViewerUpdatableCollectionExtended extends
 		TableViewerUpdatableCollection {
-
-	private final TableViewerDescription tableViewerDescription;
-			
-	private ITableLabelProvider tableLabelProvider = new ITableLabelProvider() {
-
+	
+	class TreeLableProvider extends LabelProvider implements
+			ITableLabelProvider {
 		private Object getValue(Object element, Column column) {
 			Object value = tableViewerDescription.getCellModifier().getValue(
 					element, column.getPropertyName());
@@ -60,9 +58,10 @@ public class TableViewerUpdatableCollectionExtended extends
 					value);
 			return convertedValue;
 		}
-		
+
 		public Image getColumnImage(Object element, int columnIndex) {
-			if (columnIndex<tableViewerDescription.getColumnCount() && columnIndex>=0) {
+			if (columnIndex < tableViewerDescription.getColumnCount()
+					&& columnIndex >= 0) {
 				Column column = getColumn(columnIndex);
 				IConverter converter = column.getConverter();
 				if (converter.getTargetType().equals(ViewerLabel.class)) {
@@ -75,35 +74,34 @@ public class TableViewerUpdatableCollectionExtended extends
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			Object convertedValue=null;
-			if (columnIndex<tableViewerDescription.getColumnCount() && columnIndex>=0) {
-			  Column column = getColumn(columnIndex);
-			  convertedValue = getConvertedValue(element, column);
-			  IConverter converter = column.getConverter();
-			  if (converter.getTargetType().equals(ViewerLabel.class)) {
+			Object convertedValue = null;
+			if (columnIndex < tableViewerDescription.getColumnCount()
+					&& columnIndex >= 0) {
+				Column column = getColumn(columnIndex);
+				convertedValue = getConvertedValue(element, column);
+				IConverter converter = column.getConverter();
+				if (converter.getTargetType().equals(ViewerLabel.class)) {
 					ViewerLabel viewerLabel = (ViewerLabel) convertedValue;
 					return viewerLabel.getText();
-			  }				
+				}
 			}
-			return convertedValue==null? "": (String) convertedValue; //$NON-NLS-1$
+			return convertedValue == null ? "" : (String) convertedValue; //$NON-NLS-1$
 		}
 
-		public void addListener(ILabelProviderListener listener) {
-			// ignore
+		// In case that no TreeColumn() was added to the visual
+		public Image getImage(Object element) {
+			return getColumnImage(element, 0);
 		}
 
-		public void dispose() {
-			// ignore
+		public String getText(Object element) {
+			return getColumnText(element, 0);
 		}
 
-		public boolean isLabelProperty(Object element, String property) {
-			return true;
-		}
+	}
 
-		public void removeListener(ILabelProviderListener listener) {
-			// ignore
-		}
-	};
+	private final TableViewerDescription tableViewerDescription;
+			
+	private ITableLabelProvider tableLabelProvider = new TreeLableProvider(); 
 
 	private IDataBindingContext dataBindingContext;
 
