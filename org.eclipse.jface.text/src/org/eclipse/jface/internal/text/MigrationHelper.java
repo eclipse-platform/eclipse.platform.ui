@@ -164,8 +164,8 @@ public final class MigrationHelper {
 				Rectangle trim= textWidget.computeTrim(0, 0, 0, 0);
 				int height= clArea.height - trim.height - 1;
 				
-				int first= textWidget.getLineIndex(0);
-				int last= textWidget.getLineIndex(height);
+				int first= getLineIndex(textWidget, 0);
+				int last= getLineIndex(textWidget, height);
 				
 				return MigrationHelper.getValue(last - first, clArea.height / textWidget.getLineHeight());
 			}
@@ -215,7 +215,8 @@ public final class MigrationHelper {
 		}
 		if (line == textWidget.getLineCount())
 			y= y + textWidget.getLineHeight(textWidget.getOffsetAtLine(line - 1));
-		return checkValue(y, textWidget.getLinePixel(line));
+//		return checkValue(y, textWidget.getLinePixel(line));
+		return y;
 	}
 	
 	/*
@@ -228,7 +229,8 @@ public final class MigrationHelper {
 		} catch (IllegalArgumentException ex) {
 			line= textWidget.getLineAtOffset(textWidget.getCharCount());
 		}
-		return checkValue(line, textWidget.getLineIndex(y));
+//		return checkValue(line, textWidget.getLineIndex(y));
+		return line;
 	}
 
 	/*
@@ -239,7 +241,8 @@ public final class MigrationHelper {
 		if (!isTopIndexTop(textWidget))
 			top--;
 		
-		return checkValue(top, textWidget.getPartialTopIndex());
+//		return checkValue(top, textWidget.getPartialTopIndex());
+		return top;
 	}
 
 	/**
