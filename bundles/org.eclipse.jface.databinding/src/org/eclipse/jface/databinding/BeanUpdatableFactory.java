@@ -21,7 +21,6 @@ import org.eclipse.jface.databinding.internal.beans.JavaBeanTree;
 import org.eclipse.jface.databinding.internal.beans.JavaBeanUpdatableCollection;
 import org.eclipse.jface.databinding.internal.beans.JavaBeanUpdatableTree;
 import org.eclipse.jface.databinding.internal.beans.JavaBeanUpdatableValue;
-import org.eclipse.jface.util.Assert;
 
 /**
  * A factory for creating updatable objects for properties of plain Java objects
@@ -72,7 +71,9 @@ final public class BeanUpdatableFactory implements IUpdatableFactory {
 							Class elementType = descriptor.getPropertyType().isArray() ?
 									descriptor.getPropertyType().getComponentType() :
 									propertyDescription.getPropertyType();
-							Assert.isTrue(elementType != null);
+							if (elementType == null) {
+								throw new BindingException("Element type of " + descriptor.getPropertyType().getName() + " is not known."); //$NON-NLS-1$ //$NON-NLS-2$
+							}
 							return new JavaBeanUpdatableCollection(object,
 									descriptor, elementType);
 						}						
