@@ -893,7 +893,7 @@ public class WelcomeEditor extends EditorPart {
             throws PartInitException {
         if (!(input instanceof WelcomeEditorInput))
             throw new PartInitException(
-                    "Invalid Input: Must be IFileEditorInput"); //$NON-NLS-1$
+                    "Invalid Input: Must be WelcomeEditorInput"); //$NON-NLS-1$
         setSite(site);
         setInput(input);
     }
