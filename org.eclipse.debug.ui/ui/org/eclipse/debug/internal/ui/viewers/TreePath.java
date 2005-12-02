@@ -178,5 +178,9 @@ public final class TreePath {
         }
         return true;
     }
+
+    public void replaceSegment(int index, Object replacement) {
+        fSegments[index] = replacement;
+    }
 }
 

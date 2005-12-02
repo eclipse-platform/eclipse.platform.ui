@@ -37,7 +37,7 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
      * 
      * @param widget widget to retrieve children for
      */
-    ChildrenRequestMonitor(Widget widget, AsynchronousTreeViewer viewer) {
+    ChildrenRequestMonitor(Widget widget, AsynchronousViewer viewer) {
         super(widget, viewer);
     }
     
@@ -68,7 +68,7 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
      * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#performUpdate()
      */
     protected void performUpdate() {
-        ((AsynchronousTreeViewer)getViewer()).setChildren(getWidget(), fChildren);
+        getViewer().setChildren(getWidget(), fChildren);
     }
 
 }

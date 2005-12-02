@@ -31,16 +31,18 @@ public interface IModelDelta {
 	//change type
 	public static int NOCHANGE = 0;
 	public static int ADDED = 1;
-	public static int REMOVED	 = 1 << 1;
+	public static int REMOVED = 1 << 1;
 	public static int CHANGED = 1 << 2;
+	public static int REPLACED = 1 << 3;
+	public static int INSERTED = 1 << 4;
 	
 	//how it changed.
 	public static int CONTENT = 1 << 10;
 	public static int STATE = 1 << 11;
 	
 	// action
-	public static int EXPAND = 1 << 12;
-	public static int SELECT = 1 << 13;
+	public static int EXPAND = 1 << 20;
+	public static int SELECT = 1 << 21;
 
 	// TODO: should be part of the implementation rather than the interface (i.e.
 	// interface should be read-only).

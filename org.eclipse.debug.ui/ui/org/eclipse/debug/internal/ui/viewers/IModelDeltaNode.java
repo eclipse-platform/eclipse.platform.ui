@@ -22,9 +22,12 @@ public interface IModelDeltaNode {
 	public Object getElement();
 	public int getFlags();
 	public ModelDeltaNode[] getNodes();
+	public Object getNewElement();
+	public int getIndex();
 	
 	// TODO: should be part of the implementation rather than the interface (i.e.
 	// interface should bre read-only).
 	public IModelDeltaNode addNode(Object object, int flags);
-	
+	public IModelDeltaNode addNode(Object element, Object newElement, int flags);
+	public IModelDeltaNode addNode(Object element, int index, int flags);
 }
