@@ -209,11 +209,14 @@ public interface IRefactoringHistoryService {
 	 * 
 	 * @param stream
 	 *            the input stream
+	 * @param filter
+	 *            the flags which must be present in order to be read from the
+	 *            input stream
 	 * @return a refactoring history
 	 * @throws CoreException
 	 *             if an error occurs
 	 */
-	public RefactoringHistory readRefactoringHistory(InputStream stream) throws CoreException;
+	public RefactoringHistory readRefactoringHistory(InputStream stream, int filter) throws CoreException;
 
 	/**
 	 * Removes the specified refactoring execution listener from this service.
@@ -267,8 +270,11 @@ public interface IRefactoringHistoryService {
 	 *            the refactoring descriptor proxies
 	 * @param stream
 	 *            the output stream
+	 * @param filter
+	 *            the flags which must be present in order to be written to the
+	 *            output stream
 	 * @throws CoreException
 	 *             if an error occurs
 	 */
-	public void writeRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, OutputStream stream) throws CoreException;
+	public void writeRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, OutputStream stream, int filter) throws CoreException;
 }

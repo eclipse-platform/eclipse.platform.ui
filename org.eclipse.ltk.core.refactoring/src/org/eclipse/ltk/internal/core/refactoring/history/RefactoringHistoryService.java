@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.Iterator;
@@ -795,13 +796,23 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * {@inheritDoc}
 	 */
-	public RefactoringHistory readRefactoringHistory(final InputStream stream) throws CoreException {
+	public RefactoringHistory readRefactoringHistory(final InputStream stream, int filter) throws CoreException {
 		Assert.isNotNull(stream);
+		Assert.isTrue(filter >= RefactoringDescriptor.NONE);
 		final RefactoringSessionDescriptor descriptor= new RefactoringSessionReader().readSession(new InputSource(stream));
 		final RefactoringDescriptor[] descriptors= descriptor.getRefactorings();
-		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[descriptors.length];
-		for (int index= 0; index < descriptors.length; index++)
-			proxies[index]= new RefactoringDescriptorProxyAdapter(descriptors[index]);
+		final List list= new ArrayList();
+		if (filter > RefactoringDescriptor.NONE) {
+			for (int index= 0; index < descriptors.length; index++) {
+				final int flags= descriptors[index].getFlags();
+				if ((flags | filter) == flags)
+					list.add(descriptors[index]);
+			}
+		} else
+			list.addAll(Arrays.asList(descriptors));
+		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[list.size()];
+		for (int index= 0; index < list.size(); index++)
+			proxies[index]= new RefactoringDescriptorProxyAdapter((RefactoringDescriptor) list.get(index));
 		return new RefactoringHistoryImplementation(proxies);
 	}
 
@@ -898,25 +909,22 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/**
-	 * Writes the specified refactoring descriptor proxies to the output stream.
-	 * 
-	 * @param proxies
-	 *            the refactoring descriptor proxies
-	 * @param stream
-	 *            the output stream
-	 * @throws CoreException
-	 *             if an error occurs
+	 * {@inheritDoc}
 	 */
-	public void writeRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final OutputStream stream) throws CoreException {
+	public void writeRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final OutputStream stream, final int filter) throws CoreException {
 		Assert.isNotNull(proxies);
 		Assert.isNotNull(stream);
+		Assert.isTrue(filter >= RefactoringDescriptor.NONE);
 		try {
 			connect();
 			final List list= new ArrayList(proxies.length);
 			for (int index= 0; index < proxies.length; index++) {
 				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new NullProgressMonitor());
-				if (descriptor != null)
-					list.add(descriptor);
+				if (descriptor != null) {
+					final int flags= descriptor.getFlags();
+					if ((flags | filter) == flags)
+						list.add(descriptor);
+				}
 			}
 			final RefactoringDescriptor[] descriptors= new RefactoringDescriptor[list.size()];
 			list.toArray(descriptors);

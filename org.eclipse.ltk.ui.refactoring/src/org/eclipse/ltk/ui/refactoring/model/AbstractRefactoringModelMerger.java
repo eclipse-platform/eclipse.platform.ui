@@ -41,6 +41,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
@@ -218,7 +219,7 @@ public abstract class AbstractRefactoringModelMerger implements IResourceMapping
 								InputStream stream= null;
 								try {
 									stream= storage.getContents();
-									final RefactoringHistory history= RefactoringHistoryService.getInstance().readRefactoringHistory(stream);
+									final RefactoringHistory history= RefactoringHistoryService.getInstance().readRefactoringHistory(stream, RefactoringDescriptor.NONE);
 									if (history != null && !history.isEmpty()) {
 										final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
 										for (int index= 0; index < proxies.length; index++)
