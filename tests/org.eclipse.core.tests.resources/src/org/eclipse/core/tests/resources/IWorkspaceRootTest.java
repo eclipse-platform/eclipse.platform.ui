@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
@@ -54,8 +56,38 @@ public class IWorkspaceRootTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
-		result = root.findContainersForLocation(p1.getLocation());
-		assertResources("2.0", p1, link, result);
+		assertResources("2.0", p1, link, root.findContainersForLocation(p1.getLocation()));
+		
+		//existing folder
+		IFolder existing = p2.getFolder("existing");
+		ensureExistsInWorkspace(existing, true);
+		assertResources("3.0", existing, root.findContainersForLocation(existing.getLocation()));
+		assertResources("3.1", existing, root.findContainersForLocationURI(existing.getLocationURI()));
+		
+		//non-existing
+		IFolder nonExisting = p2.getFolder("nonExisting");
+		assertResources("3.2", nonExisting, root.findContainersForLocation(nonExisting.getLocation()));
+		assertResources("3.3", nonExisting, root.findContainersForLocationURI(nonExisting.getLocationURI()));
+		
+		//relative path
+		assertResources("3.4", existing, root.findContainersForLocation(existing.getLocation().makeRelative()));
+		assertResources("3.5", nonExisting, root.findContainersForLocation(nonExisting.getLocation().makeRelative()));
+		
+		//relative URI is illegal
+		URI relative = null;
+		try {
+			relative = new URI(null, "hello", null);
+		} catch (URISyntaxException e) {
+			fail("4.99", e);
+		}
+		try {
+			root.findContainersForLocationURI(relative);
+			//should fail
+			fail("4.1");
+		} catch (RuntimeException e) {
+			//expected
+		}
+		
 		// TODO add more tests
 	}
 
@@ -84,7 +116,13 @@ public class IWorkspaceRootTest extends ResourceTest {
 		assertResources("2.1", nonExisting, result);
 		result = root.findFilesForLocationURI(nonExisting.getLocationURI());
 		assertResources("2.2", nonExisting, result);
-
+		
+		//relative path
+		result = root.findFilesForLocation(existing.getLocation().makeRelative());
+		assertResources("3.0", existing, result);
+		result = root.findFilesForLocation(nonExisting.getLocation().makeRelative());
+		assertResources("2.1", nonExisting, result);
+		
 		// TODO add more tests
 	}
 
