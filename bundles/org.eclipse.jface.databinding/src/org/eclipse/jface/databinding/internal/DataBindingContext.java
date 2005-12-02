@@ -284,7 +284,7 @@ public class DataBindingContext implements IDataBindingContext {
 				binding = new ValueBinding(this, target, model, bindSpec);
 			} else {
 				throw new BindingException(
-						"incompatible updatables (target is value, model is not)"); //$NON-NLS-1$
+						"incompatible updatables: target is value, model is " + modelUpdatable.getClass().getName()); //$NON-NLS-1$
 			}
 		} else if (targetUpdatable instanceof IUpdatableCollection) {
 			if (modelUpdatable instanceof IUpdatableCollection) {
@@ -295,7 +295,7 @@ public class DataBindingContext implements IDataBindingContext {
 				binding = new CollectionBinding(this, target, model, bindSpec);
 			} else {
 				throw new BindingException(
-						"incompatible updatables (target is collection, model is not)"); //$NON-NLS-1$
+						"incompatible updatables: target is collection, model is " + modelUpdatable.getClass().getName()); //$NON-NLS-1$
 			}
 		} else if (targetUpdatable instanceof IUpdatableTree) {
 			if (modelUpdatable instanceof IUpdatableTree) {
@@ -305,7 +305,7 @@ public class DataBindingContext implements IDataBindingContext {
 				binding = new TreeBinding(this, target, model);
 			} else {
 				throw new BindingException(
-						"incompatible updatables (target is collection, model is not)"); //$NON-NLS-1$
+						"incompatible updatables: target is collection, model is " + modelUpdatable.getClass().getName()); //$NON-NLS-1$
 			}
 			
 		} else {
