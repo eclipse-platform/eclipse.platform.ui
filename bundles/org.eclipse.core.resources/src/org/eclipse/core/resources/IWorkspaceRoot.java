@@ -89,7 +89,8 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 *  same location.  Otherwise the resulting array will contain folders (type
 	 * <code>FOLDER</code>). 
 	 * <p>
-	 * The path must be absolute; its segments need not be valid names; a
+	 * The path should be absolute; a relative path will be treated as
+	 * absolute.  The path segments need not be valid names; a
 	 * trailing separator is ignored. The resulting resource(s) need not exist in the
 	 * workspace.
 	 * <p>
@@ -125,7 +126,8 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	/**
 	 * Returns the handles of all files that are mapped to the given path 
 	 * in the local file system.  Returns an empty array if there are none.
-	 * The path must be absolute; its segments need not be valid names.
+	 * The path should be absolute; a relative path will be treated as
+	 * absolute.  The path segments need not be valid names.
 	 * The resulting file(s) need not exist in the workspace.
 	 * <p>
 	 * @param location a path in the local file system
@@ -155,8 +157,8 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * project, the resulting object will be
 	 * of type <code>PROJECT</code>; otherwise the resulting object 
 	 * will be a folder (type <code>FOLDER</code>).
-	 * The path must be absolute; its segments need not be valid names;
-	 * a trailing separator is ignored.
+	 * The path should be absolute; a relative path will be treated as
+	 * absolute.  The path segments need not be valid names; a trailing separator is ignored.
 	 * The resulting resource need not exist in the workspace.
 	 * <p>
 	 * This method returns null when the given file system location is not equal to 
@@ -180,7 +182,8 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	/**
 	 * Returns a handle to the file which is mapped to the given path 
 	 * in the local file system, or <code>null</code> if none.
-	 * The path must be absolute; its segments need not be valid names.
+	 * The path should be absolute; a relative path will be treated as
+	 * absolute.  The path segments need not be valid names.
 	 * The resulting file need not exist in the workspace.
 	 * <p>
 	 * This method returns null when the given file system location is not under

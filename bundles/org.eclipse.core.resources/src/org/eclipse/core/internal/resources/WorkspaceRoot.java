@@ -39,36 +39,49 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	}
 
 	/**
-	 * @see IResource#delete(boolean, IProgressMonitor)
+	 * @see org.eclipse.core.internal.resources.Resource#delete(boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
 		delete(updateFlags, monitor);
 	}
 
+	/**
+	 * @see org.eclipse.core.internal.resources.Resource#exists(int, boolean)
+	 */
 	public boolean exists(int flags, boolean checkType) {
 		return true;
 	}
 
 	/**
-	 * @see IWorkspaceRoot#findContainersForLocation(IPath)
+	 * @see org.eclipse.core.resources.IWorkspaceRoot#findContainersForLocation(org.eclipse.core.runtime.IPath)
 	 */
 	public IContainer[] findContainersForLocation(IPath location) {
-		return findContainersForLocationURI(URIUtil.toURI(location));
+		return findContainersForLocationURI(URIUtil.toURI(location.makeAbsolute()));
 	}
 
+	/**
+	 * @see org.eclipse.core.resources.IWorkspaceRoot#findContainersForLocationURI(java.net.URI)
+	 */
 	public IContainer[] findContainersForLocationURI(URI location) {
+		if (!location.isAbsolute())
+			throw new IllegalArgumentException();
 		return (IContainer[]) getLocalManager().allResourcesFor(location, false);
 	}
 
 	/**
-	 * @see IWorkspaceRoot#findFilesForLocation(IPath)
+	 * @see org.eclipse.core.resources.IWorkspaceRoot#findFilesForLocation(org.eclipse.core.runtime.IPath)
 	 */
 	public IFile[] findFilesForLocation(IPath location) {
-		return findFilesForLocationURI(URIUtil.toURI(location));
+		return findFilesForLocationURI(URIUtil.toURI(location.makeAbsolute()));
 	}
 
+	/**
+	 * @see org.eclipse.core.resources.IWorkspaceRoot#findFilesForLocationURI(java.net.URI)
+	 */
 	public IFile[] findFilesForLocationURI(URI location) {
+		if (!location.isAbsolute())
+			throw new IllegalArgumentException();
 		return (IFile[]) getLocalManager().allResourcesFor(location, true);
 	}
 
