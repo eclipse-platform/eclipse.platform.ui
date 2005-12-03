@@ -11,12 +11,10 @@
 
 package org.eclipse.jface.databinding;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+
+import org.eclipse.jface.databinding.internal.beans.PropertyHelper;
 
 
 /**
@@ -60,23 +58,10 @@ public class TreeModelDescription {
 	 * @param childrenProperty
 	 * @throws BindingException 
 	 */
-	public void addChildrenProperty (Class instanceType, String childrenProperty) throws BindingException{
-		boolean found = false;
-		try {
-			BeanInfo info = Introspector.getBeanInfo(instanceType);
-			PropertyDescriptor[] descriptors = info.getPropertyDescriptors();			
-			for (int i = 0; i < descriptors.length; i++) 
-				if (descriptors[i].getName().equals(childrenProperty)) { 				 							
-					if (!descriptors[i].getPropertyType().isArray() && Collection.class.isAssignableFrom(descriptors[i].getPropertyType()))
-						throw new BindingException("Invalid children property: "+childrenProperty); //$NON-NLS-1$
-					
-					found=true;
-					break;
-				}
-					
-		} catch (IntrospectionException e) {}
-		if (!found) 
-			throw new BindingException("Invalid children property: "+childrenProperty);		 //$NON-NLS-1$		
+	public void addChildrenProperty (Class instanceType, String childrenProperty) throws BindingException{		
+		PropertyHelper prop = new PropertyHelper(childrenProperty, instanceType);
+		if (prop.getGetter()==null)
+			throw new BindingException("Invalid children property: "+childrenProperty);		 //$NON-NLS-1$				
 		addType(instanceType);
 		childrenProperties.put(instanceType, addProperty(childrenProperty, (String[])childrenProperties.get(instanceType)));
 	}
@@ -140,7 +125,7 @@ public class TreeModelDescription {
 	 * @return Tree root objects
 	 */
 	public Object[] getRootObjects() {
-		return rootObjects;
+		return rootObjects==null? Collections.EMPTY_LIST.toArray(): rootObjects;
 	}
 
 	/**

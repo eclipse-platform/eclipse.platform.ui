@@ -198,6 +198,10 @@ public class JavaBeanTree implements ITree {
 		}
 		return desc;
 	}
+	
+	private Method[] getInvocationMethods(Object element) {
+		return null;
+	}
 		
 	private Method[] getReadMethods(Object element) {		
 		PropertyDescriptor[] desc = getChildrenProperties(getRelevantClass(element), READ);
@@ -233,7 +237,7 @@ public class JavaBeanTree implements ITree {
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement==null) {
 			Object[] elements = modelDescription.getRootObjects();
-			hookup(null, elements);
+			hookup(null, elements);			
 			trackChildren(null, elements);
 			return elements;
 		}
@@ -287,27 +291,28 @@ public class JavaBeanTree implements ITree {
 			trackChildren(null, children);
 			modelDescription.setRootObjects(children);
 		}
-		
-		Method[] setters = getWriteMethods(parentElement);
-		// TODO we can try to figure out (by type) which methods to invoke on which object
-		if (setters==null || setters.length!=1)
-			throw new BindingException("Can not determine children set method for: "+parentElement.getClass().getName()); //$NON-NLS-1$
-		
-		Method setter = setters[0];
-		Class[] parameters = setter.getParameterTypes();
-		Object arg;
-		if (parameters[0].isArray())
-			arg = children;
-		else
-			arg = Arrays.asList(children);		
-		try {
-			setter.invoke(parentElement, new Object[] { arg } );
-		} catch (IllegalArgumentException e) {
-			throw new BindingException(e.getLocalizedMessage());		
-		} catch (IllegalAccessException e) {
-			throw new BindingException(e.getLocalizedMessage());	
-		} catch (InvocationTargetException e) {
-			throw new BindingException(e.getLocalizedMessage());	
+		else {
+			Method[] setters = getWriteMethods(parentElement);
+			// TODO we can try to figure out (by type) which methods to invoke on which object
+			if (setters==null || setters.length!=1)
+				throw new BindingException("Can not determine children set method for: "+parentElement.getClass().getName()); //$NON-NLS-1$
+			
+			Method setter = setters[0];
+			Class[] parameters = setter.getParameterTypes();
+			Object arg;
+			if (parameters[0].isArray())
+				arg = children;
+			else
+				arg = Arrays.asList(children);		
+			try {
+				setter.invoke(parentElement, new Object[] { arg } );
+			} catch (IllegalArgumentException e) {
+				throw new BindingException(e.getLocalizedMessage());		
+			} catch (IllegalAccessException e) {
+				throw new BindingException(e.getLocalizedMessage());	
+			} catch (InvocationTargetException e) {
+				throw new BindingException(e.getLocalizedMessage());	
+			}
 		}
 		hookup(parentElement, children);
 		trackChildren(parentElement, children);

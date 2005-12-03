@@ -96,11 +96,13 @@ public class ListenerSupport {
 	 */
 	public void setHookTargets(Object[] targets) {		
 		Set elementsToUnhook = new HashSet(elementsListenedTo);
-		for (int i = 0; i < targets.length; i++) {
-			Object newValue = targets[i];
-			IdentityWrapper identityWrapper = new IdentityWrapper(newValue);
-			if(!elementsToUnhook.remove(identityWrapper)) 				
-				hookListener(newValue);
+		if (targets!=null) {
+			for (int i = 0; i < targets.length; i++) {
+				Object newValue = targets[i];
+				IdentityWrapper identityWrapper = new IdentityWrapper(newValue);
+				if(!elementsToUnhook.remove(identityWrapper)) 				
+					hookListener(newValue);
+			}
 		}
 			
 		for (Iterator it = elementsToUnhook.iterator(); it.hasNext();) {

@@ -119,7 +119,7 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 		try {
 			Object[] list = tree.getChildren(parentElement);			
 			tree.setChildren(parentElement, values);			
-			fireChangeEvent(IChangeEvent.CHANGE, list, values, parentElement, -1);
+			fireChangeEvent(IChangeEvent.REPLACE, list, values, parentElement, -1);
 		} finally {
 			updating = false;
 		}

@@ -128,7 +128,7 @@ public class TableViewerDescription {
 		}
 
 		/**
-		 * @param propertyType
+		 * @param leafClass
 		 */
 		public void setPropertyType(Class propertyType) {
 			this.propertyType = propertyType;

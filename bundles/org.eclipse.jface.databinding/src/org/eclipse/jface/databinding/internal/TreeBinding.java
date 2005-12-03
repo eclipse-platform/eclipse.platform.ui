@@ -51,15 +51,17 @@ public class TreeBinding extends Binding implements IChangeListener {
 		if (targetTypes==null || modelTypes==null)
 			throw new BindingException("Tree type is not set"); //$NON-NLS-1$
 						
-		// Allow the target to support more types that is given by the model
-		// TODO this really need to check for isAssignable
-//		if (targetTypes.length<modelTypes.length)
-//			throw new BindingException("Target does not supports all Model types"); //$NON-NLS-1$
-//		List targetList = Arrays.asList(targetTypes);
-//		for (int i = 0; i < modelTypes.length; i++) {
-//			if (!targetList.contains(modelTypes[i]))
-//				throw new BindingException("Target does not supports type: " + modelTypes[i]); //$NON-NLS-1$
-//		}
+		
+		for (int i = 0; i < modelTypes.length; i++) {
+			boolean canHandle=false;
+			for (int j = 0; j < targetTypes.length; j++) 
+				if (targetTypes[j].isAssignableFrom(modelTypes[i])) {
+					canHandle=true;
+					break;
+				}
+			if (!canHandle)
+				throw new BindingException("Target does not supports type: " + modelTypes[i]); //$NON-NLS-1$
+		}
 	}
 
 	public void handleChange(ChangeEvent changeEvent) {

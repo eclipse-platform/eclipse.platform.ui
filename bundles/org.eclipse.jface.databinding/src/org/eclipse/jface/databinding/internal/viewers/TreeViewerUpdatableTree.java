@@ -77,6 +77,7 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 		 */
 		public void setChildren(List children) {
 			this.children = children;
+			requestedChildren=false;
 		}
 		/**
 		 * @return true if VIRTUAL request has been made already
@@ -284,7 +285,8 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 				if (children != null) {
 					while (children.size() > 0)
 						removeElement(parentElement, 0, true);
-				}
+				}					
+				parentNode.setRequestedChildren(true);
 				if (values != null)
 					for (int i = 0; i < values.length; i++) {
 						addElement(parentElement, i, values[i], true);
