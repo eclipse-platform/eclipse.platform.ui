@@ -41,6 +41,10 @@ public class TreeModelDescription {
 	private Class[] types = new Class[0];
 	
 	private Object[] rootObjects;
+	
+	private ITree treeModel=null;
+	
+	private boolean updating = false;
 
 	/**
 	 * @param rootObject
@@ -131,8 +135,41 @@ public class TreeModelDescription {
 	/**
 	 * @param rootObjects
 	 */
-	public void setRootObjects(Object[] rootObjects) {
-		this.rootObjects = rootObjects;
+	public void setRootObjects(Object[] rootObjects) {		
+		if (!updating)
+			try {
+				updating = true;
+				this.rootObjects = rootObjects;
+				if (treeModel != null)
+					treeModel.setChildren(null, rootObjects);
+			} finally {
+				updating = false;
+			}
 	}
 
+	/**
+	 * @return ITree that is associated with this description
+	 */
+	public ITree getTreeModel() {
+		return treeModel;
+	}
+
+	/**
+	 * @param treeModel
+	 */
+	public void setTreeModel(ITree treeModel) {		
+		if (!updating) {
+			try {
+				updating=true;
+				if (this.treeModel!=null)
+					this.treeModel.setChildren(null, null);
+				this.treeModel = treeModel;
+				this.treeModel.setChildren(null, rootObjects);
+			}
+			finally {
+				updating=false;
+			}
+		}
+	}	
+    
 }

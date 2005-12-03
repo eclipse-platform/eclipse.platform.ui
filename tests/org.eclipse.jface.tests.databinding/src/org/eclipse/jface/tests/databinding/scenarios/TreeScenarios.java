@@ -385,7 +385,7 @@ public class TreeScenarios extends ScenariosTestCase {
 	}
 	
 	/**
-	 * Test a simple file system.
+	 * Test a simple file system, using an explicit ITree facade for the FS.
 	 */
 	public void test_Trees_Scenario04() {
 		
@@ -424,6 +424,40 @@ public class TreeScenarios extends ScenariosTestCase {
 		file4.delete();
 		directoryModelTree.setChildren(root, root.listFiles());
 		assertEqualsTreeNode(null, null, directoryModelTree);
+	}
+	
+	/**
+	 * Test a simple file system, using a TreeModelDescription.
+	 */
+	public void test_Trees_Scenario05() {
+
+		
+		// Build  a file system.
+		File root = (File) directoryModelTree.getChildren(null)[0];
+		
+		createFile(root, "rootfile1");
+		createFile(root, "rootfile2");
+		createFile(root, "rootfile3");
+		
+		File secondLevel = createDir(root, "secondLevel");
+		createFile(secondLevel, "secondfile1");
+		createFile(secondLevel, "secondfile2");
+		createFile(secondLevel, "secondfile3");
+		
+		
+		// Describe the Viewer
+		TreeViewerDescription treeDescription = new TreeViewerDescription(tviewer);
+		treeDescription.addColumn(File.class, "name");
+		
+		// Describe the Model
+		TreeModelDescription modelDescription = new TreeModelDescription(new Object[] {root} );
+		modelDescription.addChildrenProperty(File.class, "listFiles");
+				
+		getDbc().bind(treeDescription, modelDescription, null);
+						
+		// Test that all is there 
+		assertEqualsTreeNode(null, null, directoryModelTree);
+		
 	}
 
 }

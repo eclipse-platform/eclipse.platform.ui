@@ -102,7 +102,7 @@ public class PropertyHelper {
 		return getterList;
 	}
 	
-	private Method getSetter() {
+	public Method getSetter() {
 		if (setter!=null)
 			return setter;
 		
@@ -159,16 +159,6 @@ public class PropertyHelper {
 		return getters[getters.length-1];
 	}
 	
-	/**
-	 * @param root
-	 * @return setter method
-	 */
-	public Method getSetter(Class root) {
-		if (root==null)
-			return null;
-		
-		return getSetter(root);
-	}
 	
 	/**
 	 * @param root

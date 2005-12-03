@@ -11,11 +11,7 @@
 
 package org.eclipse.jface.databinding.internal.beans;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,7 +28,6 @@ import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.ITree;
 import org.eclipse.jface.databinding.TreeModelDescription;
-import org.eclipse.jface.util.Assert;
 
 /**
  * @since 3.2
@@ -125,12 +120,15 @@ public class JavaBeanTree implements ITree {
 		this.modelDescription = modelDescripton;
 		TreeNode root = new TreeNode(null);
 		nodes.put(this, root);
+		modelDescripton.setTreeModel(this);
 	}
 	
 	
 	// pick up the leaf most registered class that is assignable
 	// from o.class.
 	private Class getRelevantClass(Object o) {
+		if (o==null)
+			return null;
 		Class leafClass = null;
 		Class current = o.getClass();
 		Class[] list = modelDescription.getTypes();		
@@ -145,81 +143,57 @@ public class JavaBeanTree implements ITree {
 			}
 		return leafClass;
 	}
-	
-	private PropertyDescriptor[] addDescriptor(PropertyDescriptor desc, PropertyDescriptor[] list) {
-		if (list==null)
-			return new PropertyDescriptor[] { desc } ;
-		for (int i = 0; i < list.length; i++) 
-			if (list[i]==desc) return list;
 		
-		PropertyDescriptor[] newList = new PropertyDescriptor[list.length+1];
-		System.arraycopy(list,0, newList, 0, list.length);
-		newList[list.length]=desc;
-		return newList;		
-	}
-		
-
-	private PropertyDescriptor[]  getChildrenProperties(Class type, int paramCount) {
-		if (type==null)
+	private Method[] getInvocationMethods(Class clazz, int methodType) {
+		if (clazz==null)
 			return null;
 		String[] childrenProperties = modelDescription
-				.getChildrenProperties(type);
+				.getChildrenProperties(clazz);
 		if (childrenProperties == null || childrenProperties.length == 0)
 			return null;
 		
-		PropertyDescriptor[] desc = (PropertyDescriptor[]) descriptors.get(type);
+		PropertyHelper[] properties = (PropertyHelper[]) descriptors.get(clazz);
+		if (properties == null) {
+			List newpProperties = new ArrayList();
 
-		if (desc == null) {
-			try {												
-				BeanInfo info = Introspector.getBeanInfo(type);
-				PropertyDescriptor[] list = info.getPropertyDescriptors();
-				// Walk by properties to preserve the tree order
-				for (int j = 0; j < childrenProperties.length; j++) {
-					for (int k = 0; k < list.length; k++) {
-						//TODO need to deal with nested properties
-						if (list[k].getName().equals(childrenProperties[j])) {
-							desc = addDescriptor(list[k], desc);
-							Class parameters[] = list[k].getReadMethod()
-									.getParameterTypes();
-							if (paramCount == READ)
-								Assert.isTrue(parameters == null
-										|| parameters.length == 0);
-							else
-								Assert.isTrue(parameters.length == paramCount);
-						}
-					}
+			// Walk by properties to preserve the tree order
+			for (int i = 0; i < childrenProperties.length; i++) {
+				PropertyHelper property = new PropertyHelper(
+						childrenProperties[i], clazz);
+				if (property.getGetter() != null ||  property.getSetter() != null) {
+					newpProperties.add(property);
 				}
-				if (desc!=null)
-					descriptors.put(type, desc);
-
-			} catch (IntrospectionException e) {
-				return null;
 			}
+
+			properties = (PropertyHelper[]) newpProperties
+					.toArray(new PropertyHelper[newpProperties.size()]);
+			descriptors.put(clazz, properties);
+
 		}
-		return desc;
-	}
-	
-	private Method[] getInvocationMethods(Object element) {
-		return null;
+		List methods = new ArrayList();
+		for (int i = 0; i < properties.length; i++) {
+			if (methodType==READ)
+				methods.add(properties[i].getGetter());
+			else
+				methods.add(properties[i].getSetter());			
+		}		
+		return (Method[])methods.toArray(new Method[methods.size()]);
 	}
 		
 	private Method[] getReadMethods(Object element) {		
-		PropertyDescriptor[] desc = getChildrenProperties(getRelevantClass(element), READ);
-		if (desc == null)
-			return null;
-		Method[] methods = new Method[desc.length];
-		for (int i = 0; i < methods.length; i++) 
-			methods[i] = desc[i]!=null ? desc[i].getReadMethod() : null;			
+		Class clazz = getRelevantClass(element);
+		if (clazz==null) return null;
+		
+		Method[] methods = getInvocationMethods(clazz, READ);		
 		return methods;
 	}
 	
 	
 	private Method[] getWriteMethods (Object element) {
-		PropertyDescriptor[] desc = getChildrenProperties(getRelevantClass(element), WRITE);
-		Method[] methods = new Method[desc.length];
-		for (int i = 0; i < methods.length; i++) 
-		  methods[i] = desc[i]!=null ? desc[i].getWriteMethod() : null;
-		  return methods;
+		Class clazz = getRelevantClass(element);
+		if (clazz==null) return null;
+		Method[] methods = getInvocationMethods(clazz, WRITE);		
+		return methods;
 	}
 	
 	private void hookup (Object parent, Object[] children) {
@@ -250,10 +224,13 @@ public class JavaBeanTree implements ITree {
 		
 		try {
 			for (int i = 0; i < getters.length; i++) {
-				if (getters[i].getReturnType().isArray())
-					children.addAll(Arrays.asList((Object[]) getters[i].invoke(parentElement, new Object[0])));
-				else
-				    children.addAll((Collection) getters[i].invoke(parentElement, new Object[0]));
+				Object list = getters[i].invoke(parentElement, new Object[0]);
+				if (list!=null) {
+					if (getters[i].getReturnType().isArray()) 					
+						children.addAll(Arrays.asList((Object[])list));
+					else
+					    children.addAll((Collection) getters[i].invoke(parentElement, new Object[0]));
+				}
 			}
 		} catch (IllegalArgumentException e) {
 			throw new BindingException(e.getLocalizedMessage());	
@@ -272,14 +249,15 @@ public class JavaBeanTree implements ITree {
 		Object key = parentElement==null?JavaBeanTree.this : parentElement;
 		TreeNode node = (TreeNode) nodes.get(key);
 		Set removed = new HashSet(node.getChildren());
-		List newList = Arrays.asList(children);
-		for (int i=0; i<children.length; i++) {
-			if (!removed.remove(children[i])) {
-				// new child
-				TreeNode child = new TreeNode(parentElement);
-				nodes.put(children[i], child);
-			}				
-		}
+		List newList = children==null? new ArrayList(): Arrays.asList(children);
+		if (children!=null)
+			for (int i=0; i<children.length; i++) {
+				if (!removed.remove(children[i])) {
+					// new child
+					TreeNode child = new TreeNode(parentElement);
+					nodes.put(children[i], child);
+				}				
+			}
 		for (Iterator itr=removed.iterator(); itr.hasNext();)
 			nodes.remove(itr.next());
 		node.setChildren(newList);
@@ -287,8 +265,6 @@ public class JavaBeanTree implements ITree {
 
 	public void setChildren(Object parentElement, Object[] children) {
 		if (parentElement==null) {
-			hookup(null, children);
-			trackChildren(null, children);
 			modelDescription.setRootObjects(children);
 		}
 		else {
@@ -316,6 +292,8 @@ public class JavaBeanTree implements ITree {
 		}
 		hookup(parentElement, children);
 		trackChildren(parentElement, children);
+		if (changeSupport!=null)
+		   changeSupport.fireTreeChange(IChangeEvent.REPLACE, null, children, parentElement, -1);
 	}
 
 	public boolean hasChildren(Object element) {
