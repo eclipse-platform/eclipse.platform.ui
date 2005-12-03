@@ -327,7 +327,6 @@ public final class WorkbenchActivityHelper {
 					.getCategory(otherCategoryId);
 			Set otherCategoryActivityIds = expandActivityDependencies(getActivityIdsForCategory(otherCategory));
 
-			// TODO: not sure if this line should be here.
 			if (otherCategoryActivityIds.isEmpty())
 				continue;
 
@@ -371,7 +370,6 @@ public final class WorkbenchActivityHelper {
 					.getCategory(otherCategoryId);
 			Set otherCategoryActivityIds = expandActivityDependencies(getActivityIdsForCategory(otherCategory));
 
-			// TODO: not sure if this line should be here.
 			if (otherCategoryActivityIds.isEmpty())
 				continue;
 
@@ -402,6 +400,54 @@ public final class WorkbenchActivityHelper {
 				enabledCategories.add(categoryId);
 		}
 		return enabledCategories;
+	}
+	
+	/**
+	 * Return the set of partially enabled categories.
+	 * 
+	 * @param activityManager
+	 *            the activity manager to test against
+	 * @return the set of partially enabled categories
+	 * @since 3.2
+	 */
+	public static Set getPartiallyEnabledCategories(
+			IActivityManager activityManager) {
+		Set definedCategoryIds = activityManager.getDefinedCategoryIds();
+		Set partialCategories = new HashSet();
+		for (Iterator i = definedCategoryIds.iterator(); i.hasNext();) {
+			String categoryId = (String) i.next();
+			if (isPartiallyEnabled(activityManager, categoryId))
+				partialCategories.add(categoryId);
+		}
+
+		return partialCategories;
+	}
+
+	/**
+	 * Returns whether the given category is partially enabled. A partially
+	 * enabled category is one in which the number of enabled activites is both
+	 * non-zero and less than the total number of activities in the category.
+	 * 
+	 * @param activityManager
+	 *            the activity manager to test against
+	 * @param categoryId
+	 *            the category id
+	 * @return whether the category is enabled
+	 * @since 3.2
+	 */
+	public static boolean isPartiallyEnabled(IActivityManager activityManager,
+			String categoryId) {
+		Set activityIds = getActivityIdsForCategory(activityManager
+				.getCategory(categoryId));
+		int foundCount = 0;
+		for (Iterator i = activityIds.iterator(); i.hasNext();) {
+			String activityId = (String) i.next();
+			if (activityManager.getEnabledActivityIds().contains(activityId)) {
+				foundCount++;
+			}
+		}
+
+		return foundCount > 0 && foundCount != activityIds.size();
 	}
 
 	/**

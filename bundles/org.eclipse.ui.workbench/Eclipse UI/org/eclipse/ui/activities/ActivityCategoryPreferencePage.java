@@ -244,7 +244,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         public void activityManagerChanged(
                 ActivityManagerEvent activityManagerEvent) {
             if (activityManagerEvent.haveEnabledActivityIdsChanged()) {
-                categoryViewer.setCheckedElements(getEnabledCategories());
+                updateCategoryCheckState();
                 fireLabelProviderChanged(new LabelProviderChangedEvent(this));
             }
         }
@@ -492,36 +492,40 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         table.setFont(parent.getFont());
         table.addSelectionListener(new SelectionAdapter() {
 
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-             */
-            public void widgetSelected(SelectionEvent e) {
-                if (e.detail == SWT.CHECK) {
-                    TableItem tableItem = (TableItem) e.item;
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				if (e.detail == SWT.CHECK) {
+					TableItem tableItem = (TableItem) e.item;
 
-                    ICategory category = (ICategory) tableItem.getData();
-                    if (isLocked(category)) {
-                        tableItem.setChecked(true);
-                        e.doit = false; // veto the check
-                        return;
-                    }
-                    Set activitySet = WorkbenchActivityHelper
-                            .getActivityIdsForCategory(category);
-                    if (tableItem.getChecked())
-                        activitySet.addAll(workingCopy.getEnabledActivityIds());
-                    else {
-                        HashSet newSet = new HashSet(workingCopy
-                                .getEnabledActivityIds());
-                        newSet.removeAll(activitySet);
-                        activitySet = newSet;
-                    }
+					ICategory category = (ICategory) tableItem.getData();
+					if (isLocked(category)) {
+						tableItem.setChecked(true);
+						e.doit = false; // veto the check
+						return;
+					}
+					Set activitySet = WorkbenchActivityHelper
+							.getActivityIdsForCategory(category);
+					if (tableItem.getChecked())
+						activitySet.addAll(workingCopy.getEnabledActivityIds());
+					else {
+						HashSet newSet = new HashSet(workingCopy
+								.getEnabledActivityIds());
+						newSet.removeAll(activitySet);
+						activitySet = newSet;
+					}
 
-                    workingCopy.setEnabledActivityIds(activitySet);
-                }
-            }
-        });
+					workingCopy.setEnabledActivityIds(activitySet);
+					updateCategoryCheckState(); // even though we're reacting to
+					// a check change we may need to
+					// refresh a greying change.
+					// Just process the whole thing.
+				}
+			}
+		});
         categoryViewer = new CheckboxTableViewer(table);
         categoryViewer.getControl().setFont(parent.getFont());
         categoryViewer.getControl().setLayoutData(
@@ -550,13 +554,35 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                 });
         categoryViewer.setInput(workingCopy.getDefinedCategoryIds());
 
-        categoryViewer.setCheckedElements(getEnabledCategories());
+		updateCategoryCheckState(); 
     }
 
-    private ICategory[] getEnabledCategories() {
-        return WorkbenchActivityHelper.resolveCategories(workingCopy,
-                WorkbenchActivityHelper.getEnabledCategories(workingCopy));
-    }
+	/**
+	 * Updates the check and grey state of the categories in the category viewer.
+	 * 
+	 * @since 3.2
+	 */
+	private void updateCategoryCheckState() {
+		ICategory[] enabledCategories = getEnabledCategories();
+		ICategory[] partiallyEnabledCategories = getPartialCategories();
+		Object[] allChecked = new Object[enabledCategories.length
+				+ partiallyEnabledCategories.length];
+		System.arraycopy(enabledCategories, 0, allChecked, 0, enabledCategories.length);
+		System.arraycopy(partiallyEnabledCategories, 0, allChecked, enabledCategories.length, partiallyEnabledCategories.length);
+		categoryViewer.setCheckedElements(allChecked);
+		categoryViewer.setGrayedElements(partiallyEnabledCategories);
+	}
+
+    private ICategory[] getPartialCategories() {
+		return WorkbenchActivityHelper.resolveCategories(workingCopy,
+				WorkbenchActivityHelper
+						.getPartiallyEnabledCategories(workingCopy));
+	}
+
+	private ICategory[] getEnabledCategories() {
+		return WorkbenchActivityHelper.resolveCategories(workingCopy,
+				WorkbenchActivityHelper.getEnabledCategories(workingCopy));
+	}
 
     protected void setDetails(ICategory category) {
         if (category == null) {
