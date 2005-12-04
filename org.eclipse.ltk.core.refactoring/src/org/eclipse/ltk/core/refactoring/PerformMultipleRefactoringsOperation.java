@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -111,7 +113,10 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 			final RefactoringArguments arguments= RefactoringInstanceFactory.getInstance().createArguments(descriptor);
 			if (arguments != null)
 				status.merge(component.initialize(arguments));
-		}
+			else
+				status.addFatalError(MessageFormat.format(RefactoringCoreMessages.PerformRefactoringsOperation_init_error, new String[] {descriptor.getDescription()}));
+		} else
+			status.addFatalError(MessageFormat.format(RefactoringCoreMessages.PerformRefactoringsOperation_init_error, new String[] {descriptor.getDescription()}));
 		return status;
 	}
 

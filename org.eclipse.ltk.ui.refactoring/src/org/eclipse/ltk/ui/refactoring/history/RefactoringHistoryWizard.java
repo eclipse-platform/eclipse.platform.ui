@@ -11,6 +11,7 @@
 package org.eclipse.ltk.ui.refactoring.history;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -46,6 +47,7 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringInstanceFactory;
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.ChangeExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
@@ -234,10 +236,13 @@ public class RefactoringHistoryWizard extends Wizard {
 		final RefactoringStatus status= new RefactoringStatus();
 		if (refactoring instanceof IInitializableRefactoringComponent) {
 			final IInitializableRefactoringComponent component= (IInitializableRefactoringComponent) refactoring;
-			final RefactoringArguments arguments= RefactoringCore.getRefactoringInstanceCreator().createArguments(descriptor);
+			final RefactoringArguments arguments= RefactoringInstanceFactory.getInstance().createArguments(descriptor);
 			if (arguments != null)
 				status.merge(component.initialize(arguments));
-		}
+			else
+				status.addFatalError(MessageFormat.format(RefactoringUIMessages.PerformRefactoringsOperation_init_error, new String[] {descriptor.getDescription()}));
+		} else
+			status.addFatalError(MessageFormat.format(RefactoringUIMessages.PerformRefactoringsOperation_init_error, new String[] {descriptor.getDescription()}));
 		return status;
 	}
 
@@ -616,6 +621,9 @@ public class RefactoringHistoryWizard extends Wizard {
 											result[0]= fPreviewPage;
 										}
 									}
+								} else {
+									prepareErrorPage(status, proxy, fatal, last);
+									result[0]= fErrorPage;
 								}
 							} else {
 								status.merge(RefactoringStatus.createFatalErrorStatus(RefactoringUIMessages.RefactoringHistoryWizard_error_resolving_refactoring));
