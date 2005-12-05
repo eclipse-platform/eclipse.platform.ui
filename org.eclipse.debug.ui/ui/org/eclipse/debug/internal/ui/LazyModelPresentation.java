@@ -29,7 +29,9 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IInstructionPointerPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -45,7 +47,7 @@ import org.eclipse.ui.IEditorPart;
  * when it is needed.
  */
 
-public class LazyModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, IColorProvider, IFontProvider {
+public class LazyModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, IColorProvider, IFontProvider, IInstructionPointerPresentation {
 	
 	/**
 	 * A temporary mapping of attribute ids to their values
@@ -377,4 +379,16 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
         }
         return null;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerAnnotation(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
+	 */
+	public Annotation getInstructionPointerAnnotation(IEditorPart editorPart, IStackFrame frame) {
+		IDebugModelPresentation presentation = getPresentation();
+		if (presentation instanceof IInstructionPointerPresentation) {
+			IInstructionPointerPresentation pointerPresentation = (IInstructionPointerPresentation) presentation;
+			return pointerPresentation.getInstructionPointerAnnotation(editorPart, frame);
+		}
+		return null;
+	}
 }

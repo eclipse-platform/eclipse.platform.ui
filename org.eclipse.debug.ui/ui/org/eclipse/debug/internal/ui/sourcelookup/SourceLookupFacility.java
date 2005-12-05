@@ -30,14 +30,17 @@ import org.eclipse.debug.internal.ui.views.launch.Decoration;
 import org.eclipse.debug.internal.ui.views.launch.DecorationManager;
 import org.eclipse.debug.internal.ui.views.launch.SourceNotFoundEditorInput;
 import org.eclipse.debug.internal.ui.views.launch.StandardDecoration;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IInstructionPointerPresentation;
 import org.eclipse.debug.ui.ISourcePresentation;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -71,6 +74,11 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
      * page, when the 'resuse editor' preference is on. 
      */
     private Map fEditorsByPage;
+    
+    /**
+     * Used to generate annotations for stack frames
+     */
+    private IInstructionPointerPresentation fPresentation = (IInstructionPointerPresentation) DebugUITools.newDebugModelPresentation();
     
     /**
      * Whether to re-use editors when displaying source.
@@ -230,7 +238,8 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 				}
 				if (textEditor != null) {
 					positionEditor(textEditor, frame);
-					InstructionPointerManager.getDefault().addAnnotation(textEditor, frame);
+					Annotation annotation = fPresentation.getInstructionPointerAnnotation(textEditor, frame);
+					InstructionPointerManager.getDefault().addAnnotation(textEditor, frame, annotation);
 				}
 			}
 		}        
@@ -492,5 +501,6 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
     protected void dispose() {
         DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
         fEditorsByPage.clear();
+        fPresentation.dispose();
     }
 }

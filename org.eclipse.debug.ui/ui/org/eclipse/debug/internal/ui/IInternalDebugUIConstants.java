@@ -26,10 +26,6 @@ public interface IInternalDebugUIConstants {
     public static final String ID_CONSOLE_FOLDER_VIEW= "org.eclipse.debug.internal.ui.ConsoleFolderView"; //$NON-NLS-1$
     public static final String ID_OUTLINE_FOLDER_VIEW= "org.eclipse.debug.internal.ui.OutlineFolderView"; //$NON-NLS-1$
     
-    // annotation types for instruction pointers
-    public static final String ANN_INSTR_POINTER_CURRENT = "org.eclipse.debug.ui.currentIP"; //$NON-NLS-1$
-    public static final String ANN_INSTR_POINTER_SECONDARY = "org.eclipse.debug.ui.secondaryIP"; //$NON-NLS-1$
-    
     // tool images
     public static final String IMG_LCL_COLLAPSE_ALL = "IMG_LCL_COLLAPSE_ALL"; //$NON-NLS-1$
     public static final String IMG_LCL_TERMINATE = "IMG_LCL_TERMINATE"; //$NON-NLS-1$

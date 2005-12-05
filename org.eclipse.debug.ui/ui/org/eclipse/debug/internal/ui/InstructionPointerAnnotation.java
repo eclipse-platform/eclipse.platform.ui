@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui;
 
  
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.text.source.Annotation;
 
 /**
@@ -34,7 +35,7 @@ public class InstructionPointerAnnotation extends Annotation {
 	 * @param isTopFrame whether the given frame is the top stack frame in its thread 
 	 */
 	public InstructionPointerAnnotation(IStackFrame stackFrame, boolean isTopFrame) {
-		super(isTopFrame ? IInternalDebugUIConstants.ANN_INSTR_POINTER_CURRENT: IInternalDebugUIConstants.ANN_INSTR_POINTER_SECONDARY,
+		super(isTopFrame ? IDebugUIConstants.ANNOTATION_TYPE_INSTRUCTION_POINTER_CURRENT: IDebugUIConstants.ANNOTATION_TYPE_INSTRUCTION_POINTER_SECONDARY,
 						 false,
 						 isTopFrame ? DebugUIMessages.InstructionPointerAnnotation_0 : DebugUIMessages.InstructionPointerAnnotation_1); // 
 		fStackFrame = stackFrame;

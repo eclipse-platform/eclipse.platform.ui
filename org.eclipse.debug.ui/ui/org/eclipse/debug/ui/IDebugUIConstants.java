@@ -1091,4 +1091,24 @@ public interface IDebugUIConstants {
 	 * TODO:  new api, needs review
 	 */
 	public static final String PREF_MEMORY_HISTORY_KNOWN_COLOR = PLUGIN_ID + ".MemoryHistoryKnownColor"; //$NON-NLS-1$
+	
+    /**
+     * Annotation type identifier for default annotation of the current instruction
+     * pointer (top stack frame in a thread). Value is <code>org.eclipse.debug.ui.currentIP</code>,
+     * identifying a <code>org.eclipse.ui.editors.markerAnnotationSpecification</code>
+     * extension.
+     * 
+     * @since 3.2
+     */
+    public static final String ANNOTATION_TYPE_INSTRUCTION_POINTER_CURRENT = "org.eclipse.debug.ui.currentIP"; //$NON-NLS-1$
+    
+    /**
+     * Annotation type identifier for default annotation of secondary instruction pointers
+     * (non top stack frames). Value is <code>org.eclipse.debug.ui.secondaryIP</code>,
+     * identifying a <code>org.eclipse.ui.editors.markerAnnotationSpecification</code>
+     * extension.
+     * 
+     * @since 3.2
+     */
+    public static final String ANNOTATION_TYPE_INSTRUCTION_POINTER_SECONDARY = "org.eclipse.debug.ui.secondaryIP"; //$NON-NLS-1$	
 }

@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -29,7 +30,9 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IInstructionPointerPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -47,7 +50,7 @@ import org.eclipse.ui.IEditorPart;
  * asked to render an object from a debug model, this presentation delegates
  * to the extension registered for that debug model. 
  */
-public class DelegatingModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, IColorProvider, IFontProvider {
+public class DelegatingModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, IColorProvider, IFontProvider, IInstructionPointerPresentation {
 	
 	/**
 	 * A mapping of attribute ids to their values
@@ -64,10 +67,8 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 */
 	public void removeAnnotations(IEditorPart editorPart, IThread thread) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(thread);
-		if (presentation != null) {
-			if (presentation instanceof IDebugEditorPresentation) {
-				((IDebugEditorPresentation)presentation).removeAnnotations(editorPart, thread);
-			}
+		if (presentation instanceof IDebugEditorPresentation) {
+			((IDebugEditorPresentation)presentation).removeAnnotations(editorPart, thread);
 		}
 	}
 
@@ -76,10 +77,8 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 */
 	public boolean addAnnotations(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
-		if (presentation != null) {
-			if (presentation instanceof IDebugEditorPresentation) {
-				return((IDebugEditorPresentation)presentation).addAnnotations(editorPart, frame);
-			}
+		if (presentation instanceof IDebugEditorPresentation) {
+			return((IDebugEditorPresentation)presentation).addAnnotations(editorPart, frame);
 		}
 		return false;
 	}
@@ -346,4 +345,27 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
         }
         return null;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerAnnotation(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
+	 */
+	public Annotation getInstructionPointerAnnotation(IEditorPart editorPart, IStackFrame frame) {
+		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
+		Annotation annotation = null;
+		if (presentation instanceof IInstructionPointerPresentation) {
+			IInstructionPointerPresentation pointerPresentation = (IInstructionPointerPresentation) presentation;
+			annotation = pointerPresentation.getInstructionPointerAnnotation(editorPart, frame);
+		}
+		if (annotation == null) {
+			// use default annotation
+			IThread thread = frame.getThread();
+			IStackFrame tos = null;
+			try {
+				tos = thread.getTopStackFrame();
+			} catch (DebugException de) {
+			}
+			annotation = new InstructionPointerAnnotation(frame, frame.equals(tos));
+		}
+		return annotation;
+	}
 }

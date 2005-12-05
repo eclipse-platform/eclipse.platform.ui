@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui;
 
  
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -28,9 +29,9 @@ public class InstructionPointerContext {
 	/**
 	 * The vertical ruler annotation for this context.
 	 */
-	private InstructionPointerAnnotation fAnnotation;
+	private Annotation fAnnotation;
 
-	public InstructionPointerContext(ITextEditor textEditor, InstructionPointerAnnotation annotation) {
+	public InstructionPointerContext(ITextEditor textEditor, Annotation annotation) {
 		setTextEditor(textEditor);
 		setAnnotation(annotation);
 	}
@@ -61,11 +62,11 @@ public class InstructionPointerContext {
 		return fTextEditor;
 	}
 
-	private void setAnnotation(InstructionPointerAnnotation annotation) {
+	private void setAnnotation(Annotation annotation) {
 		fAnnotation = annotation;
 	}
 
-	public InstructionPointerAnnotation getAnnotation() {
+	public Annotation getAnnotation() {
 		return fAnnotation;
 	}
 }

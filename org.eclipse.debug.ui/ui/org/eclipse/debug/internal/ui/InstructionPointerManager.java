@@ -25,6 +25,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -69,7 +70,7 @@ public class InstructionPointerManager {
 	 * Add an instruction pointer annotation in the specified editor for the 
 	 * specified stack frame.
 	 */
-	public void addAnnotation(ITextEditor textEditor, IStackFrame stackFrame) {
+	public void addAnnotation(ITextEditor textEditor, IStackFrame frame, Annotation annotation) {
 		
 		IDocumentProvider docProvider = textEditor.getDocumentProvider();
 		IEditorInput editorInput = textEditor.getEditorInput();
@@ -78,22 +79,14 @@ public class InstructionPointerManager {
         if (annModel == null) {
             return;
         }        
-		IThread thread = stackFrame.getThread();
-		IStackFrame tos = null;
-		try {
-			tos = thread.getTopStackFrame();
-		} catch (DebugException de) {
-		}
-        // Create the annotation object
-		InstructionPointerAnnotation instPtrAnnotation = new InstructionPointerAnnotation(stackFrame, tos == null || stackFrame.equals(tos));
 		
 		// Create the Position object that specifies a location for the annotation
 		Position position = null;
 		int charStart = -1;
 		int length = -1; 
 		try {
-			charStart = stackFrame.getCharStart();
-			length = stackFrame.getCharEnd() - charStart;
+			charStart = frame.getCharStart();
+			length = frame.getCharEnd() - charStart;
 		} catch (DebugException de) {
 		}
 		if (charStart < 0) {
@@ -102,7 +95,7 @@ public class InstructionPointerManager {
 				return;
 			}
 			try {
-				int lineNumber = stackFrame.getLineNumber() - 1;
+				int lineNumber = frame.getLineNumber() - 1;
 				IRegion region = doc.getLineInformation(lineNumber);
 				charStart = region.getOffset();
 				length = region.getLength();
@@ -118,16 +111,17 @@ public class InstructionPointerManager {
 		position = new Position(charStart, length);
 		
 		// Add the annotation at the position to the editor's annotation model.
-		annModel.removeAnnotation(instPtrAnnotation);
-		annModel.addAnnotation(instPtrAnnotation, position);	
+		annModel.removeAnnotation(annotation);
+		annModel.addAnnotation(annotation, position);	
 		
 		// Retrieve the list of instruction pointer contexts
-		IDebugTarget debugTarget = stackFrame.getDebugTarget();
+		IDebugTarget debugTarget = frame.getDebugTarget();
 		Map threadMap = (Map) fDebugTargetMap.get(debugTarget);
 		if (threadMap == null) {
 			threadMap = new HashMap();	
 			fDebugTargetMap.put(debugTarget, threadMap);		
 		}
+		IThread thread = frame.getThread();
 		List contextList = (List) threadMap.get(thread);
 		if (contextList == null) {
 			contextList = new ArrayList();
@@ -135,7 +129,7 @@ public class InstructionPointerManager {
 		}
 		
 		// Create a context object & add it to the list
-		InstructionPointerContext context = new InstructionPointerContext(textEditor, instPtrAnnotation);
+		InstructionPointerContext context = new InstructionPointerContext(textEditor, annotation);
 		contextList.remove(context);
 		contextList.add(context);
 	}
@@ -202,7 +196,7 @@ public class InstructionPointerManager {
 	/**
 	 * Remove the specified annotation from the specified text editor.
 	 */
-	private void removeAnnotation(ITextEditor textEditor, InstructionPointerAnnotation annotation) {
+	private void removeAnnotation(ITextEditor textEditor, Annotation annotation) {
 		IDocumentProvider docProvider = textEditor.getDocumentProvider();
 		if (docProvider != null) {
 			IAnnotationModel annotationModel = docProvider.getAnnotationModel(textEditor.getEditorInput());
