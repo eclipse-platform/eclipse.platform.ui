@@ -61,7 +61,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * views for a debugger should subclass this class. Common function 
  * includes:
  * <ul>
- * <li>Debug view adpater implementation - <code>IDebugView</code></li>
+ * <li>Debug view adapter implementation - <code>IDebugView</code></li>
  * <li>Action registry - actions can be stored in this view
  * 		with a key. Actions that implement <code>IUpdate</code>
  *      are updated when <code>updateActions()</code> is
