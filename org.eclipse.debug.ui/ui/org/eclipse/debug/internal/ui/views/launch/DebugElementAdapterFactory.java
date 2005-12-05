@@ -25,6 +25,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.contexts.ISourceDisplayAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.DebugTargetTreeContentAdapter;
+import org.eclipse.debug.internal.ui.elements.adapters.ExpressionLabelAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.ExpressionManagerTreeContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.ExpressionTreeContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.LauchManagerTreeContentAdapter;
@@ -56,6 +57,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     
     private static IAsynchronousLabelAdapter fgDebugLabelAdapter = new AsynchronousDebugLabelAdapter();
     private static IAsynchronousLabelAdapter fgVariableLabelAdapter = new VariableLabelAdapter();
+    private static IAsynchronousLabelAdapter fgExpressionLabelAdapter = new ExpressionLabelAdapter();
     
     private static IAsynchronousTreeContentAdapter fgAsyncLaunchManager = new LauchManagerTreeContentAdapter();
     private static IAsynchronousTreeContentAdapter fgAsyncLaunch = new LaunchTreeContentAdapter();
@@ -109,11 +111,14 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
             }
         }
         
-        if (adapterType.equals(IAsynchronousLabelAdapter.class)) {
-        	if (adaptableObject instanceof IVariable) {
-        		return fgVariableLabelAdapter;
-        	}
-        	return fgDebugLabelAdapter;
+        if (adapterType.equals(IAsynchronousLabelAdapter.class)) {            
+            if (adaptableObject instanceof IExpression) {
+                return fgExpressionLabelAdapter;
+            }
+            if (adaptableObject instanceof IVariable) {
+                return fgVariableLabelAdapter;
+            }
+            return fgDebugLabelAdapter;
         }
         
         if (adapterType.equals(IModelProxyFactory.class)) {
