@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * A synchronization delta describes differences between different copies of the
+ * A delta describes differences between different copies of the
  * same file system. Typically a synchronization is either two-way or three-way.
  * 
  * <p>

@@ -20,27 +20,36 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.delta.*;
 import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.MergeStatus;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.delta.DeltaTree;
 
 /**
- * @author Administrator
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * A merge context that performs three-way merges using the {@link IStreamMerger}
+ * interface.
+ * <p>
+ * This class may be subclasses by clients
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ * @since 3.2
  */
 public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeContext {
 
 	/**
-	 * @param input
-	 * @param type
-	 * @param tree
-	 * @param deltaTree
+	 * Create a merge context
+	 * @param scope the scope of the merge
+	 * @param type the type of merge (TWO-WAY or THREE_WAY)
+	 * @param tree the sync info tree
+	 * @param deltaTree the delta tree
 	 */
-	protected MergeContext(IResourceMappingScope input, String type, SyncInfoTree tree, DeltaTree deltaTree) {
-		super(input, type, tree, deltaTree);
+	protected MergeContext(IResourceMappingScope scope, String type, SyncInfoTree tree, DeltaTree deltaTree) {
+		super(scope, type, tree, deltaTree);
 	}
 
 	private static final String TXT_EXTENTION = "txt"; //$NON-NLS-1$
