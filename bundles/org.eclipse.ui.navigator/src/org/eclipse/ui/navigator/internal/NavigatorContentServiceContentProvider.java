@@ -120,7 +120,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 				if (delegateChildren != null && delegateChildren.length > 0) 
 					resultElements.addAll(Arrays.asList(delegateChildren)); 
 			} catch (RuntimeException re) {
-				String msg = CommonNavigatorMessages.NavigatorContentServiceContentProvider_0 + delegateProviders[i].getClass();
+				String msg = CommonNavigatorMessages.Could_not_provide_children_for_element + delegateProviders[i].getClass();
 				NavigatorPlugin.log(msg, new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, 0, msg, re));
 			}
 		}
@@ -162,10 +162,10 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 				if (delegateChildren != null && delegateChildren.length > 0)
 					resultChildren.addAll(Arrays.asList(delegateChildren));
 			} catch (RuntimeException re) {
-				String msg = CommonNavigatorMessages.NavigatorContentServiceContentProvider_1 + delegateProviders[i].getClass();
+				String msg = CommonNavigatorMessages.Could_not_provide_children_for_element + delegateProviders[i].getClass();
 				NavigatorPlugin.log(msg, new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, 0, msg, re));
 			} catch (Error e) {
-				String msg = CommonNavigatorMessages.NavigatorContentServiceContentProvider_2 + delegateProviders[i].getClass();
+				String msg = CommonNavigatorMessages.Could_not_provide_children_for_element + delegateProviders[i].getClass();
 				NavigatorPlugin.log(msg, new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, 0, msg, e));
 
 			}
@@ -199,7 +199,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 				if ((parent = delegateProviders[i].getParent(anElement)) != null)
 					return parent;
 			} catch (RuntimeException re) {
-				String msg = CommonNavigatorMessages.NavigatorContentServiceContentProvider_3 + delegateProviders[i].getClass();
+				String msg = CommonNavigatorMessages.Could_not_provide_parent_for_element + delegateProviders[i].getClass();
 				NavigatorPlugin.log(msg, new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, 0, msg, re));
 			}
 		}

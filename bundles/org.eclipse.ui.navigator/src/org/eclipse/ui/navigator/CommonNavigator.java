@@ -41,7 +41,7 @@ import org.eclipse.ui.part.ViewPart;
 /**
  * <p>
  * This class provides the IViewPart for the Common Navigator 
- * framework into the Eclipse workbench. This class also serves
+ * framework in the Eclipse workbench. This class also serves
  * as the backbone for navigational viewers. The following types
  * are used by this class to render the Common Navigator:
  * <ul>
@@ -78,7 +78,7 @@ import org.eclipse.ui.part.ViewPart;
  * </ul>
  * <p>
  * Clients are not expected to subclass CommonNavigator. Clients 
- * that which to define their own custom extensible navigator 
+ * that wish to define their own custom extensible navigator 
  * view need to specify an instance of the <b>org.eclipse.ui.views</b>
  * extension point:
  * 

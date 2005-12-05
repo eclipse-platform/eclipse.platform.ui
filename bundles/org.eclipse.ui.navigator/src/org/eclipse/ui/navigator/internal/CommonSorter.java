@@ -19,9 +19,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.Priority;
-import org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 

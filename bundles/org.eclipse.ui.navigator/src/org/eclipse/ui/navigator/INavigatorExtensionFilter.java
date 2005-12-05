@@ -15,7 +15,7 @@ package org.eclipse.ui.navigator;
 /**
  * <p>
  * Handles the filtering responsibilities for extensions of the
- * <b>org.eclipse.wst.common.navigator.views.commonFilter </b> extension point.
+ * <b>org.eclipse.ui.navigator.commonFilter </b> extension point.
  * </p>
  * 
  *

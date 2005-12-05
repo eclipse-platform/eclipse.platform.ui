@@ -57,11 +57,7 @@ public class CustomResourceExtensionFilterProvider implements ExtensionFilterPro
 		}
 	}
 
-	/*
-	 * (non-Javadoc) @return a List of ExtensionFilterDescriptor (s)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.navigator.filters.ExtensionFilterProvider#getExtensionFilterDescriptors(java.lang.String)
-	 */
+ 
 	public List getExtensionFilterDescriptors(String extensionId, String viewerId) {
 		List extFilterDescriptors = new ArrayList();
 		ExtensionFilterDescriptor extFilterDescriptor = null;

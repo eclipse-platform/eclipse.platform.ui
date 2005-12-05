@@ -129,8 +129,7 @@ public class NavigatorActionService implements INavigatorActionService {
 			 
 
 		} catch (RuntimeException re) {
-			NavigatorPlugin.log(CommonNavigatorMessages.NavigatorActionService_0 + contentService.getViewerId() + CommonNavigatorMessages.NavigatorActionService_1 + re.getMessage());
-			re.printStackTrace();
+			NavigatorPlugin.logError(0, "Could not initialize NavigatorActionService for" +  contentService.getViewerId(), re);			 //$NON-NLS-1$
 		}
 		isInitialized= true;
 	}
@@ -316,7 +315,7 @@ public class NavigatorActionService implements INavigatorActionService {
 
 	private void complainIfDisposed() {
 		if (isDisposed)
-			throw new IllegalStateException(CommonNavigatorMessages.NavigatorActionService_2);
+			throw new IllegalStateException("INavigatorActionService has already been disposed!"); //$NON-NLS-1$
 	}
 
 	private class CommonActionRegistry extends RegistryReader {
@@ -327,11 +326,7 @@ public class NavigatorActionService implements INavigatorActionService {
 			super(NavigatorPlugin.PLUGIN_ID, ACTION_PROVIDER);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.wst.common.navigator.internal.views.extensions.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
-		 */
+ 
 		protected boolean readElement(IConfigurationElement anElement) {
 			if (ACTION_PROVIDER.equals(anElement.getName())) {
 				addActionDescriptor(new CommonActionProviderDescriptor(anElement));
@@ -356,7 +351,7 @@ public class NavigatorActionService implements INavigatorActionService {
 					}
 
 					public void handleException(Throwable exception) {
-						NavigatorPlugin.logError(0, CommonNavigatorMessages.NavigatorActionService_3 + provider.getClass() + CommonNavigatorMessages.NavigatorActionService_4, exception);
+						NavigatorPlugin.logError(0, "Could not restore state for action provider " + provider.getClass(), exception); //$NON-NLS-1$
 
 					}
 				};
@@ -378,7 +373,7 @@ public class NavigatorActionService implements INavigatorActionService {
 					}
 
 					public void handleException(Throwable exception) {
-						NavigatorPlugin.logError(0, CommonNavigatorMessages.NavigatorActionService_5 + provider.getClass() + CommonNavigatorMessages.NavigatorActionService_6, exception);
+						NavigatorPlugin.logError(0, "Could not restore state for action provider " + provider.getClass(), exception); //$NON-NLS-1$
 
 					}
 				};

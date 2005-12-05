@@ -82,7 +82,7 @@ public class CommonNavigatorDragAdapter extends DragSourceAdapter {
 		} else if (PluginTransfer.getInstance().isSupportedType(event.dataType)) {
 			IStructuredSelection selection = (IStructuredSelection) LocalSelectionTransfer.getInstance().getSelection();
 			byte data[] = getSerializer().toByteArray(selection);
-			event.data = new PluginTransferData("org.eclipse.wst.common.navigator.internal.views.navigator.dnd.PluginDropAction", data); //$NON-NLS-1$
+			event.data = new PluginTransferData("org.eclipse.navigator.ui.dnd.PluginDropAction", data); //$NON-NLS-1$
 			// System.out.println(getClass().getName()+".dragSetData(DragSourceEvent
 			// event=\""+event+"\"): Setting PluginTransfer");
 // Removed to allow RCP integration			

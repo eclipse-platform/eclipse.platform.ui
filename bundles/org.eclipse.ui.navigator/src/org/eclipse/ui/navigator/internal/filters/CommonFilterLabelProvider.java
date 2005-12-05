@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor;
+import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 /**

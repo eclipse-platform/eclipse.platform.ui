@@ -126,6 +126,7 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 			}
 
 			public void partClosed(IWorkbenchPart part) {
+				 
 			}
 
 			public void partDeactivated(IWorkbenchPart part) {
@@ -224,5 +225,7 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 			commonNavigator.getSite().getPage().removePartListener(partListener);
 		}
 	}
+	
+	
 
 }

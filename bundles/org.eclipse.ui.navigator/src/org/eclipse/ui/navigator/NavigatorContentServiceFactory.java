@@ -20,6 +20,15 @@ import org.eclipse.ui.navigator.internal.NavigatorContentService;
  * for given viewer ids.  
  * 
  * <p>
+ * Clients may supply the viewer in {@link #createContentService(String, StructuredViewer) }
+ * or wait until the content provider is created by the service 
+ * and set on the viewer. When the content provider is set, the 
+ * viewer will call inputChanged(), and the content service
+ * will update its managed viewer accordingly. Therefore, each
+ * content service should be attached to at most one viewer. 
+ * </p>
+ * 
+ * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
  * work nor that it will remain the same. Please do not use this API without

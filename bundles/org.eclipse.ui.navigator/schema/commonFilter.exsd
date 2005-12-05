@@ -1,12 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.views.navigator">
+<schema targetNamespace="org.eclipse.ui.navigator">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.views.navigator" id="filters" name="Common Navigator Filter"/>
+         <meta.schema plugin="org.eclipse.ui.navigator" id="filters" name="Common Navigator Filter"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         Defines a filter for a common viewer. 
+
+To be refined in M5.
+
+&lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This class or interface has been added as
+part of a work in progress. There is a guarantee neither that this API will
+work nor that it will remain the same. Please do not use this API without
+consulting with the Platform/UI team.
       </documentation>
    </annotation>
 
@@ -142,7 +149,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         3.2
       </documentation>
    </annotation>
 
@@ -151,7 +158,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         
       </documentation>
    </annotation>
 
@@ -160,7 +167,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         
       </documentation>
    </annotation>
 
@@ -169,7 +176,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         
       </documentation>
    </annotation>
 
@@ -178,7 +185,11 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made
+available under the terms of the Eclipse Public License v1.0 which accompanies
+this distribution, and is available at &lt;a 
+href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

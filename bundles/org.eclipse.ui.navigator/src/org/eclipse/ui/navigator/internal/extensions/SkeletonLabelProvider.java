@@ -92,20 +92,12 @@ public class SkeletonLabelProvider implements ICommonLabelProvider {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.extensions.ICommonLabelProvider#initialize(java.lang.String)
-	 */
+ 
 	public void init(IExtensionStateModel aStateModel, ITreeContentProvider aContentProvider) {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.extensions.ICommonLabelProvider#getDescription(java.lang.Object)
-	 */
+ 
 	public String getDescription(Object anElement) {
 		return null;
 	}

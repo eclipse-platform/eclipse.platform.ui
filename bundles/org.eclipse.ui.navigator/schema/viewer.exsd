@@ -3,17 +3,34 @@
 <schema targetNamespace="org.eclipse.ui.navigator">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.navigator" id="viewerContentBinding" name="viewerContentBinding"/>
+         <meta.schema plugin="org.eclipse.ui.navigator" id="viewer" name="Common Viewer Configuration"/>
       </appInfo>
       <documentation>
-         
+         &apos;viewer&apos; defines attributes for a common viewer. The extension
+may provide a custom popup menu id, override whether the viewer provides link with
+editor support, provides a filter dialog, and/or provides an &apos;available extensions&apos; 
+dialog.
+
+&apos;viewerContentBinding&apos; binds defined content extensions (through the navigatorContent 
+extension point) to viewers (defined through the 
+org.eclipse.ui.views extension point). Any content 
+extension bound to a viewer is described as &apos;visible&apos;. A
+content service (org.eclipse.ui.navigator.INavigatorContentService)
+will not return any extensions which are not visible for
+its viewer id.
+
+&lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This class or interface has been added as
+part of a work in progress. There is a guarantee neither that this API will
+work nor that it will remain the same. Please do not use this API without
+consulting with the Platform/UI team.
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="viewerContentBinding"/>
+            <element ref="viewer" minOccurs="0" maxOccurs="1"/>
+            <element ref="viewerContentBinding" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -33,6 +50,39 @@
             <annotation>
                <documentation>
                   
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="viewer">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="id"/>
+         </appInfo>
+         <documentation>
+            Provides basic configuration to establish the characteristics
+of a viewer. Clients must also define an org.eclipse.ui.views
+extension to create the view part.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id that matches the id provides in an org.eclipse.ui.views extension.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="popupMenuId" type="string">
+            <annotation>
+               <documentation>
+                  The popupMenuId of the defined viewer. If not specified, the
+popupMenuId defaults to the id of the viewer.
                </documentation>
             </annotation>
          </attribute>
@@ -74,14 +124,7 @@
          <attribute name="viewerId" type="string" use="required">
             <annotation>
                <documentation>
-                  There should be a corresponding org.eclipse.ui.views extension that corresponds to this Id. That extension should specify an instance of org.eclipse.ui.navigator.CommonNavigator. 
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="popupMenuId" type="string">
-            <annotation>
-               <documentation>
-                  A custom popupMenuId to use for extensions that wish to contribute to the view ID. The default is set to the viewerId. The last popupMenuId to be read will be used.
+                  There should be a corresponding org.eclipse.ui.views extension that corresponds to this Id. That extension should specify an instance of org.eclipse.ui.navigator.CommonNavigator.
                </documentation>
             </annotation>
          </attribute>
@@ -163,7 +206,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         3.2
       </documentation>
    </annotation>
 
@@ -172,7 +215,41 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         The following example configures the popup menu id for a viewer. 
+      
+&lt;p&gt;
+&lt;pre&gt;
+&lt;viewer 
+   id=&quot;org.eclipse.testViewer&quot; 
+   popupMenuId=&quot;org.eclipse.testViewer#PopupMenu&quot;/&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+
+         
+The following example declares that one content extension 
+(id: org.eclipse.ui.navigator.resourceContent) is bound
+to a viewer matching the id &apos;org.eclipse.ui.navigator.resourceContent&apos;. 
+Further, any id that begins with &apos;org.eclipse.ui.navigator.tests&apos;
+will be ignored. 
+
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ui.navigator.viewerContentBinding&quot;&gt;
+       &lt;viewerContentBinding 
+             viewerId=&quot;org.eclipse.ui.navigator.resourceContent&quot;&gt;
+            &lt;includes&gt;
+                &lt;contentExtension pattern=&quot;org.eclipse.ui.navigator.resourceContent&quot; /&gt;
+            &lt;/includes&gt;
+            &lt;excludes&gt;
+                &lt;contentExtension pattern=&quot;org.eclipse.ui.navigator.tests.*&quot; /&gt;
+            &lt;/excludes&gt;
+       &lt;/viewerContentBinding&gt;
+   &lt;/extension&gt;
+
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -181,7 +258,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         
       </documentation>
    </annotation>
 
@@ -190,7 +267,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         
       </documentation>
    </annotation>
 
@@ -199,7 +276,11 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made
+available under the terms of the Eclipse Public License v1.0 which accompanies
+this distribution, and is available at &lt;a 
+href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

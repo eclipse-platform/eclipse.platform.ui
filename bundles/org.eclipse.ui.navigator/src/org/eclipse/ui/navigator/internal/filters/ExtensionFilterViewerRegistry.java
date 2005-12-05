@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.navigator.internal.extensions.RegistryReader;
 
@@ -77,11 +76,7 @@ public class ExtensionFilterViewerRegistry extends RegistryReader {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.navigator.filters.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
-	 */
+ 
 	public boolean readElement(IConfigurationElement element) {
 		if (element.getName().equals(NAVIGATOR_FILTER)) {
 			ExtensionFilterDescriptor descriptor = new ExtensionFilterDescriptor(element);
@@ -178,13 +173,8 @@ public class ExtensionFilterViewerRegistry extends RegistryReader {
 				provider = ((ThirdPartyFilterProviderRegistry.ThirdPartyFilterProviderDescriptor) thirdPartyExtensionFilterProviders.get(i)).createProvider();
 				if (provider != null)
 					descriptors.addAll(provider.getExtensionFilterDescriptors(navigatorExtensionId, this.viewerId));
-			} catch (RuntimeException e) {
-				// TODO Log this more appropriately
-				System.err.println(CommonNavigatorMessages.ExtensionFilterViewerRegistry_0);
-				e.printStackTrace();
-			} catch (NoClassDefFoundError ncdfe) {
-				System.err.println(CommonNavigatorMessages.ExtensionFilterViewerRegistry_1);
-				ncdfe.printStackTrace();
+			} catch (RuntimeException e) {  
+			} catch (NoClassDefFoundError ncdfe) { 
 			}
 		}
 

@@ -20,8 +20,6 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
-import org.eclipse.ui.navigator.internal.extensions.IExtensionActivationListener;
-import org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 
 /**

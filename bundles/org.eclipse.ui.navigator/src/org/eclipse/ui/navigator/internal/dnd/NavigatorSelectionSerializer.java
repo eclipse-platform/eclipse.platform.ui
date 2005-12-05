@@ -118,11 +118,7 @@ public class NavigatorSelectionSerializer implements ISerializer {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.navigator.dnd.ISerializer#fromByteArray(byte[])
-	 */
+ 
 	public Object fromByteArray(byte[] data) {
 		Map results = new HashMap();
 

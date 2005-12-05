@@ -24,6 +24,8 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.navigator.INavigatorContentDescriptor;
+import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.NavigatorActivationService;
 import org.eclipse.ui.navigator.internal.Utilities;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
@@ -188,11 +190,7 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 		return image;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.extensions.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
-	 */
+ 
 	protected boolean readElement(IConfigurationElement element) {
 		if (TAG_NAVIGATOR_CONTENT.equals(element.getName())) {
 			try {

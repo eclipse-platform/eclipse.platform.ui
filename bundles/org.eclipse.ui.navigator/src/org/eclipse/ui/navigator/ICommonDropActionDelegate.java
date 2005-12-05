@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
-import org.eclipse.ui.navigator.internal.dnd.CommonNavigatorDropAdapter;
 import org.eclipse.ui.part.IDropActionDelegate;
+
 
 /**
  * <p>
- * Used by the <b>org.eclipse.ui.navigator.dropHandler</b> extension point to carry
- * out pluggable Drag and Drop actions.
+ * Used by the <b>org.eclipse.ui.navigator.dropHandler</b> extension point to
+ * carry out pluggable Drag and Drop actions.
  * </p>
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -24,11 +24,12 @@ import org.eclipse.ui.part.IDropActionDelegate;
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
- *<p>
+ * <p>
  * Clients may implement this interface.
- *</p> 
+ * </p>
+ * 
  * @since 3.2
- *  
+ * 
  */
 public interface ICommonDropActionDelegate extends IDropActionDelegate {
 
@@ -38,21 +39,21 @@ public interface ICommonDropActionDelegate extends IDropActionDelegate {
 	 * </p>
 	 * 
 	 * @param aViewer
-	 *            The instance of {@link CommonViewer}that the current ICommonDropActionDelegate
-	 *            will be associated with
+	 *            The instance of {@link CommonViewer}that the current
+	 *            ICommonDropActionDelegate will be associated with
 	 */
 	void init(CommonViewer aViewer);
 
 	/**
 	 * Carry out the DND operation
 	 * 
-	 * @param operation
-	 *            one of DND.DROP_MOVE|DND.DROP_COPY|DND.DROP_LINK
+	 * @param dropAdapter
+	 *            The adapter to handle the drop.
 	 * @param source
 	 *            The object being dragged
 	 * @param target
 	 *            The object being dragged onto
-	 * @return
+	 * @return True if the operation completed.
 	 */
-	boolean run(CommonNavigatorDropAdapter dropAdapter, Object source, Object target);
+	boolean run(ICommonDropAdapter dropAdapter, Object source, Object target);
 }

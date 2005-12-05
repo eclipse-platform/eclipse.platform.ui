@@ -18,12 +18,14 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.navigator.INavigatorContentDescriptor;
+import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 
 /**
  * Encapsulates the
- * <code>org.eclipse.wst.common.navigator.internal.views.navigator.navigatorViewer</code>
+ * <code>org.eclipse.ui.navigator.viewer</code>
  * extension.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
@@ -40,12 +42,7 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 	
 	private static final String TAG_CONTENT_EXTENSION = "contentExtension"; //$NON-NLS-1$
 	private static final String ATT_PATTERN = "pattern"; //$NON-NLS-1$
-	private static final String ATT_IS_ROOT = "isRoot"; //$NON-NLS-1$
-
-	private static final String ATT_VIEWER_ID = "viewerId"; //$NON-NLS-1$	
-	private static final String ATT_CONTENT_EXTENSION_ID = "rootContentExtensionId"; //$NON-NLS-1$
-	private static final String ATT_ROOTID = "rootContentExtensionId"; //$NON-NLS-1$
-	private static final String ATT_POPUP_MENU_ID = "popupMenuId"; //$NON-NLS-1$	
+	private static final String ATT_IS_ROOT = "isRoot"; //$NON-NLS-1$	
 
 	private final String viewerId; 
 	private String popupMenuId = null;
@@ -68,14 +65,6 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 	}
 
 	public void consume(IConfigurationElement element) throws WorkbenchException {
-
-		String rootExtensionId = element.getAttribute(ATT_ROOTID);
-		String thePopupMenuId = element.getAttribute(ATT_POPUP_MENU_ID);
-		if (thePopupMenuId != null) {
-			if (popupMenuId != null)
-				NavigatorPlugin.log(NLS.bind(CommonNavigatorMessages.NavigatorViewerDescriptor_Popup_Menu_Not_Specified, new Object [] {getViewerId(), popupMenuId, thePopupMenuId} ));					
-			popupMenuId = thePopupMenuId;
-		}
 		
 		IConfigurationElement[] includesElement = element.getChildren(TAG_INCLUDES);
 		
@@ -152,6 +141,16 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 	}
 
 
+	public void setPopupMenuId(String newPopupMenuId) {
+ 
+		if (newPopupMenuId != null) {
+			if (popupMenuId != null)
+				NavigatorPlugin.log(NLS.bind(CommonNavigatorMessages.NavigatorViewerDescriptor_Popup_Menu_Overridden, new Object [] {getViewerId(), popupMenuId, newPopupMenuId} ));					
+			popupMenuId = newPopupMenuId;
+		}
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorViewerDescriptor#getPopupMenuId()
 	 */

@@ -11,6 +11,7 @@
 package org.eclipse.ui.navigator.internal.dnd;
 
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.ui.navigator.ICommonDropAdapter;
 
 
 /**
@@ -24,6 +25,6 @@ import org.eclipse.swt.dnd.TransferData;
  */
 public interface IDropValidator {
 
-	boolean validateDrop(CommonNavigatorDropAdapter dropAdapter, Object target, int operation, TransferData transferType);
+	boolean validateDrop(ICommonDropAdapter dropAdapter, Object target, int operation, TransferData transferType);
 
 }

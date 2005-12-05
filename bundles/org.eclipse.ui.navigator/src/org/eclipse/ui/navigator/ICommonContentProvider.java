@@ -19,8 +19,7 @@ import org.eclipse.ui.IMemento;
  * behavior based on properties in the extension model and the
  * given memento. The state model should be initialized from values 
  * in the memento if necessary. 
- * 
- * 
+ *  
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will

@@ -36,12 +36,7 @@ public abstract class NavigatorExtensionFilter implements INavigatorExtensionFil
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.navigator.filters.INavigatorExtensionFilter#select(org.eclipse.wst.common.navigator.internal.views.navigator.INavigatorExtensionSite,
-	 *      java.lang.Object, java.lang.Object[])
-	 */
+ 
 	public Object[] select(CommonViewer aViewer, Object aParentElement, Object[] theElements) {
 		List results = new ArrayList();
 		for (int i = 0; i < theElements.length; i++)

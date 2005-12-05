@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.navigator.ILinkHelper;
+import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 
@@ -109,11 +110,7 @@ public class LinkHelperRegistry extends RegistryReader {
 		return helpers;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
-	 */
+ 
 	public boolean readElement(IConfigurationElement element) {
 		if (LinkHelperDescriptor.LINK_HELPER.equals(element.getName())) {
 			getDescriptors().add(new LinkHelperDescriptor(element));

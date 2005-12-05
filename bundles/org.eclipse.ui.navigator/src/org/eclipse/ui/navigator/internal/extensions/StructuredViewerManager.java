@@ -75,11 +75,7 @@ public class StructuredViewerManager {
 		cachedNewInput= aNewInput;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.extensions.IInitializationManager#initialize(org.eclipse.jface.viewers.IStructuredContentProvider)
-	 */
+ 
 	public boolean initialize(IStructuredContentProvider aContentProvider) {
 		boolean result= true;
 		try {

@@ -31,27 +31,21 @@ import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorPlug
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
+ * 
  * @since 3.2
-*/
+ */
 public class CommonWizardRegistry {
-	
-	public static final String WIZARD_TYPE_NEW = "new"; //$NON-NLS-1$
-	public static final String WIZARD_TYPE_IMPORT = "import"; //$NON-NLS-1$
-	public static final String WIZARD_TYPE_EXPORT = "export"; //$NON-NLS-1$
-	
-	
+
 	private static final CommonWizardRegistry INSTANCE = new CommonWizardRegistry();
+
 	private static boolean isInitialized = false;
+
 	private static final String[] NO_DESCRIPTORS = new String[0];
+
 	private Map commonWizardDescriptors = new HashMap();
 
-
-	public void init() {
-		new CommonWizardRegistryReader().readRegistry();
-	}
-
 	/**
-	 *  
+	 *  @return the singleton instance of the registry
 	 */
 	public static CommonWizardRegistry getInstance() {
 		if (isInitialized)
@@ -65,14 +59,17 @@ public class CommonWizardRegistry {
 		return INSTANCE;
 	}
 
-	/**
-	 * @param aDesc
-	 */
+
+	private void init() {
+		new CommonWizardRegistryReader().readRegistry();
+	} 
+	
 	private void addCommonWizardDescriptor(CommonWizardDescriptor aDesc) {
 		if (aDesc == null)
 			return;
 		synchronized (commonWizardDescriptors) {
-			Set descriptors = (HashSet) commonWizardDescriptors.get(aDesc.getType());
+			Set descriptors = (HashSet) commonWizardDescriptors.get(aDesc
+					.getType());
 			if (descriptors == null) {
 				descriptors = new HashSet();
 				commonWizardDescriptors.put(aDesc.getType(), descriptors);
@@ -83,7 +80,6 @@ public class CommonWizardRegistry {
 		}
 	}
 
-
 	/**
 	 * 
 	 * Returns all wizard id(s) which enable for the given element.
@@ -92,21 +88,24 @@ public class CommonWizardRegistry {
 	 *            the element to return the best content descriptor for
 	 * @return the best content descriptor for the given element.
 	 */
-	public String[] getEnabledCommonWizardDescriptorIds(Object anElement, String aType) {
+	public String[] getEnabledCommonWizardDescriptorIds(Object anElement,
+			String aType) {
 
 		Set commonDescriptors = (Set) commonWizardDescriptors.get(aType);
 		if (commonDescriptors == null)
 			return NO_DESCRIPTORS;
 		/* Find other Common Wizard providers which enable for this object */
 		List descriptorIds = new ArrayList();
-		for (Iterator commonWizardDescriptorsItr = commonDescriptors.iterator(); commonWizardDescriptorsItr.hasNext();) {
-			CommonWizardDescriptor descriptor = (CommonWizardDescriptor) commonWizardDescriptorsItr.next();
+		for (Iterator commonWizardDescriptorsItr = commonDescriptors.iterator(); commonWizardDescriptorsItr
+				.hasNext();) {
+			CommonWizardDescriptor descriptor = (CommonWizardDescriptor) commonWizardDescriptorsItr
+					.next();
 
 			if (descriptor.isEnabledFor(anElement))
 				descriptorIds.add(descriptor.getWizardId());
 		}
 		String[] wizardIds = new String[descriptorIds.size()];
-		return (String[]) descriptorIds.toArray(wizardIds); //Collections.unmodifiableList(descriptors);
+		return (String[]) descriptorIds.toArray(wizardIds); // Collections.unmodifiableList(descriptors);
 	}
 
 	/**
@@ -117,46 +116,45 @@ public class CommonWizardRegistry {
 	 *            the element to return the best content descriptor for
 	 * @return the best content descriptor for the given element.
 	 */
-	public String[] getEnabledCommonWizardDescriptorIds(IStructuredSelection aStructuredSelection, String aType) {
+	public String[] getEnabledCommonWizardDescriptorIds(
+			IStructuredSelection aStructuredSelection, String aType) {
 		Set commonDescriptors = (Set) commonWizardDescriptors.get(aType);
 		if (commonDescriptors == null)
 			return NO_DESCRIPTORS;
 		/* Find other Common Wizard providers which enable for this object */
 		List descriptorIds = new ArrayList();
-		for (Iterator commonWizardDescriptorsItr = commonDescriptors.iterator(); commonWizardDescriptorsItr.hasNext();) {
-			CommonWizardDescriptor descriptor = (CommonWizardDescriptor) commonWizardDescriptorsItr.next();
+		for (Iterator commonWizardDescriptorsItr = commonDescriptors.iterator(); commonWizardDescriptorsItr
+				.hasNext();) {
+			CommonWizardDescriptor descriptor = (CommonWizardDescriptor) commonWizardDescriptorsItr
+					.next();
 
 			if (descriptor.isEnabledFor(aStructuredSelection))
 				descriptorIds.add(descriptor.getWizardId());
 		}
 		String[] wizardIds = new String[descriptorIds.size()];
-		return (String[]) descriptorIds.toArray(wizardIds); //Collections.unmodifiableList(descriptors);
+		return (String[]) descriptorIds.toArray(wizardIds); // Collections.unmodifiableList(descriptors);
 	}
-
-
 
 	class CommonWizardRegistryReader extends RegistryReader {
 
 		private static final String COMMON_WIZARD = "commonWizard"; //$NON-NLS-1$
 
-
 		CommonWizardRegistryReader() {
 			super(WorkbenchNavigatorPlugin.PLUGIN_ID, COMMON_WIZARD);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.wst.common.navigator.internal.views.extensions.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
-		 */
+ 
 		protected boolean readElement(IConfigurationElement anElement) {
 			if (COMMON_WIZARD.equals(anElement.getName())) {
 				try {
-					addCommonWizardDescriptor(new CommonWizardDescriptor(anElement));
+					addCommonWizardDescriptor(new CommonWizardDescriptor(
+							anElement));
 					return true;
 				} catch (WorkbenchException e) {
 					// log an error since its not safe to open a dialog here
-					WorkbenchNavigatorPlugin.log("Unable to create common wizard descriptor.", e.getStatus());//$NON-NLS-1$
+					WorkbenchNavigatorPlugin
+							.log(
+									"Unable to create common wizard descriptor.", e.getStatus());//$NON-NLS-1$
 				}
 			}
 			return false;

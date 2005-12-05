@@ -3,7 +3,7 @@
 <plugin>
 
    <extension-point id="navigatorContent" name="%ExtPoint_navigatorContent" schema="schema/navigatorContent.exsd"/>
-   <extension-point id="viewerContentBinding" name="%ExtPoint_navigatorViewer" schema="schema/viewerContentBinding.exsd"/>
+   <extension-point id="viewer" name="%ExtPoint_navigatorViewer" schema="schema/viewer.exsd"/>
    <extension-point id="commonFilter" name="%ExtPoint_commonFilter" schema="schema/commonFilter.exsd"/>
    <extension-point id="dropHandler" name="%ExtPoint_dropHandler" schema="schema/dropHandler.exsd"/>
    <extension-point id="linkHelper" name="%Link_Helper" schema="schema/linkHelper.exsd"/>

@@ -84,12 +84,7 @@ class ThirdPartyFilterProviderRegistry extends RegistryReader {
 		readRegistry();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
-	 */
-	public boolean readElement(IConfigurationElement element) {
+ 	public boolean readElement(IConfigurationElement element) {
 		if (THIRD_PARTY_FILTER_PROVIDER.equals(element.getName())) {
 			String navigatorExtensionId = element.getAttribute(ATT_NAVIGATOR_EXTENSION_ID);
 

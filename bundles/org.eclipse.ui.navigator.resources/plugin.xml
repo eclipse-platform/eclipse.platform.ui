@@ -15,7 +15,11 @@
    </extension>
    
    <extension
-         point="org.eclipse.ui.navigator.viewerContentBinding">
+         point="org.eclipse.ui.navigator.viewer">
+       <viewer
+       	      id="org.eclipse.ui.navigator.resourceContent"
+       	      popupMenuId="org.eclipse.ui.navigator.resourceContent#PopupMenu" 
+       	/>
        <viewerContentBinding 
              viewerId="org.eclipse.ui.navigator.resourceContent">
 		          <includes>
@@ -30,7 +34,7 @@
       <navigatorContent
             name="%resource.extension.name"
             priority="low"
-            icon="icons/full/cview16/resource_persp.gif"
+            icon="icons/full/eview16/resource_persp.gif"
             activeByDefault="true"
 			            contentProvider="org.eclipse.ui.navigator.resources.internal.workbench.ResourceExtensionContentProvider"
             			labelProvider="org.eclipse.ui.navigator.resources.internal.workbench.ResourceExtensionLabelProvider"			
@@ -58,7 +62,7 @@
          point="org.eclipse.ui.navigator.dropHandler">
       <dropHandler
             class="org.eclipse.ui.navigator.resources.internal.workbench.ResourceDropAction"
-            id="org.eclipse.wst.navigator.resource.dropHandler"
+            id="org.eclipse.navigator.resources.dropHandler"
             name="%moveCopy.name"
             description="%moveCopy.desc">
          <dragEnablement>
@@ -67,17 +71,13 @@
                   <instanceof
                         value="org.eclipse.core.resources.IProject" /> 
                </not>
-               <instanceof
-                     adaptable="true"
-                     name="org.eclipse.core.resources.IResource"/> 
+               <adapt 
+                     type="org.eclipse.core.resources.IResource"/> 
             </and>
          </dragEnablement>
-         <dropEnablement>
-            <and>
-               <instanceof
-                     adaptable="true"
-                     name="org.eclipse.core.resources.IResource" /> 
-            </and>
+         <dropEnablement> 
+               <adapt 
+                     type="org.eclipse.core.resources.IResource" />  
          </dropEnablement>
       </dropHandler>
    </extension>
@@ -144,4 +144,13 @@
     </extension>
     --> 
     
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.ui.navigator.resources.expressions.ResourcePropertyTester"
+            id="org.eclipse.ui.navigator.resources"
+            namespace="org.eclipse.ui.navigator.resources"
+            properties="projectNature"
+            type="org.eclipse.core.resources.IResource"/>
+   </extension>
 </plugin> 

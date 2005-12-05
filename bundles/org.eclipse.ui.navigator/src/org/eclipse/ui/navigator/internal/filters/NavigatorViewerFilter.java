@@ -37,13 +37,7 @@ public class NavigatorViewerFilter extends NavigatorExtensionFilter implements I
 		viewerFilter = aViewerFilter;
 	}
 
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.navigator.filters.INavigatorExtensionFilter#select(org.eclipse.wst.common.navigator.internal.views.navigator.INavigatorExtensionSite,
-	 *      java.lang.Object, java.lang.Object)
-	 */
+ 
 	public boolean select(CommonViewer aViewer, Object aParentElement, Object anElement) {
 		if (viewerFilter != null)
 			return viewerFilter.select(aViewer, aParentElement, anElement);

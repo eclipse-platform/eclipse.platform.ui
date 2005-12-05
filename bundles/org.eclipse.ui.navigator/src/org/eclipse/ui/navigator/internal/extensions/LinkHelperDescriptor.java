@@ -26,7 +26,6 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.navigator.ILinkHelper;
-import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 
 public class LinkHelperDescriptor {
@@ -58,8 +57,8 @@ public class LinkHelperDescriptor {
 	private static final String SELECTION_ENABLEMENT = "selectionEnablement"; //$NON-NLS-1$
 
 	public LinkHelperDescriptor(IConfigurationElement element) {
-		Assert.isNotNull(element, CommonNavigatorMessages.LinkHelperRegistry_4);  
-		Assert.isLegal(LINK_HELPER.equals(element.getName()), CommonNavigatorMessages.LinkHelperRegistry_5); 
+		Assert.isNotNull(element, "LinkHelperRegistry.Descriptor objects cannot be null.");   //$NON-NLS-1$
+		Assert.isLegal(LINK_HELPER.equals(element.getName()), "LinkHelperRegistry.Descriptor objects must have the name \"linkHelper\".");  //$NON-NLS-1$
 		this.configElement = element;
 		init();
 	}
@@ -67,8 +66,7 @@ public class LinkHelperDescriptor {
 	void init() {
 		id = this.configElement.getAttribute(ATT_ID);
 		IConfigurationElement[] expressions = this.configElement.getChildren(EDITOR_INPUT_ENABLEMENT);
-		Assert.isNotNull(expressions, CommonNavigatorMessages.LinkHelperRegistry_6); 
-		Assert.isLegal(expressions.length == 1, CommonNavigatorMessages.LinkHelperRegistry_7);
+		Assert.isLegal(expressions.length == 1, "The linkHelper extension point requires exactly one editorInputEnablement child."); //$NON-NLS-1$
 		try {
 			editorInputEnablement = ElementHandler.getDefault().create(
 					ExpressionConverter.getDefault(), expressions[0]);

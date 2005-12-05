@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.navigator.internal.extensions;
+package org.eclipse.ui.navigator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -17,6 +17,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * The descriptor provides a handle to a content extension. Information such as
  * the Id, the name, the priority, and whether the descriptor provides one or
  * more root elements is provided.
+ * 
+ * 
+ * <p>
+ * There is one {@link INavigatorContentExtension} for each content 
+ * service. There is only one {@link INavigatorContentDescriptor}
+ * for each extension.
+ * </p>
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as

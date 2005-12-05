@@ -85,11 +85,7 @@ public class PortingActionExtension extends CommonActionProvider implements ICom
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider#init(org.eclipse.ui.IViewPart)
-	 */
+ 
 	public void init(String anExtensionId, IViewPart aViewPart, INavigatorContentService aContentService, StructuredViewer aStructuredViewer) {
 		contentService = aContentService;
 		IWorkbenchWindow window = (aViewPart.getViewSite() != null) ? aViewPart.getViewSite().getWorkbenchWindow() : null;
@@ -107,32 +103,19 @@ public class PortingActionExtension extends CommonActionProvider implements ICom
 		//dispose
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider#setActionContext(org.eclipse.ui.actions.ActionContext)
-	 */
+ 
 	public void setActionContext(ActionContext aContext) {
 		actionContext = aContext;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider#fillActionBars(org.eclipse.ui.IActionBars)
-	 */
+ 
 	public boolean fillActionBars(IActionBars theActionBars) {
 		theActionBars.setGlobalActionHandler(ActionFactory.IMPORT.getId(), importAction);
 		theActionBars.setGlobalActionHandler(ActionFactory.EXPORT.getId(), exportAction);
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.navigator.INavigatorActionsExtension#fillContextMenu(org.eclipse.jface.action.IMenuManager,
-	 *      org.eclipse.jface.viewers.IStructuredSelection)
-	 */
+ 
 	public boolean fillContextMenu(IMenuManager aMenu) {
 
 		aMenu.appendToGroup(ICommonMenuConstants.GROUP_REORGANIZE, GROUP_IMPORT_SEPARATOR);

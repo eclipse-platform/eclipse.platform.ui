@@ -33,6 +33,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.navigator.ICommonActionProvider;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
+import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorExtensionFilter;
 import org.eclipse.ui.navigator.Priority;
 import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
@@ -40,7 +41,7 @@ import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 
 /**
  * Encapsulates the
- * <code>org.eclipse.wst.common.navigator.internal.views.navigator.navigatorContent</code>
+ * <code>org.eclipse.ui.navigator.navigatorContent</code>
  * extension point.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as

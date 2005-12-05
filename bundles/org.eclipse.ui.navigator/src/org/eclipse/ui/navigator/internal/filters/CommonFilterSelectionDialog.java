@@ -43,11 +43,11 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorActionService;
+import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorActivationService;
 import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.Utilities;
-import org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 
@@ -450,13 +450,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 	class ExtensionContentProvider implements ITreeContentProvider {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.wst.common.navigator.internal.views.navigator.INavigatorContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-		 *      java.lang.Object, java.lang.Object)
-		 */
-		public void inputChanged(Viewer aViewer, Object anOldInput,
+ 		public void inputChanged(Viewer aViewer, Object anOldInput,
 				Object aNewInput) {
 		}
 

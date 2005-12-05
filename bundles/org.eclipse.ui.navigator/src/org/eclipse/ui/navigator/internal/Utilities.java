@@ -1,9 +1,9 @@
 package org.eclipse.ui.navigator.internal;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.navigator.INavigatorContentDescriptor;
+import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.NavigatorActivationService;
-import org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor;
-import org.eclipse.ui.navigator.internal.extensions.INavigatorViewerDescriptor;
 
 public class Utilities {
 

@@ -21,6 +21,7 @@ import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
+import org.eclipse.ui.navigator.ICommonDropAdapter;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.PluginTransfer;
@@ -36,7 +37,7 @@ import org.eclipse.ui.part.PluginTransferData;
  * 
  * @since 3.2
  */
-public class CommonNavigatorDropAdapter extends PluginDropAdapter {
+public class CommonNavigatorDropAdapter extends PluginDropAdapter implements ICommonDropAdapter {
 
 	private ISerializer serializer;
 
@@ -150,10 +151,8 @@ public class CommonNavigatorDropAdapter extends PluginDropAdapter {
 		return result;
 	}
 
-	/**
-	 * @param transferType
-	 * @return the selected object only if the transferType is of the type
-	 *         LocalSelectionTransfer.getInstance()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.dnd.ICommonDropAdapter#getSelectedObject(org.eclipse.swt.dnd.TransferData)
 	 */
 	public Object getSelectedObject(TransferData transferType) {
 		IStructuredSelection selection = null;
@@ -165,10 +164,8 @@ public class CommonNavigatorDropAdapter extends PluginDropAdapter {
 		return null;
 	}
 
-	/**
-	 * @param transferType
-	 * @return the selected object only if the transferType is of the type
-	 *         LocalSelectionTransfer.getInstance()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.dnd.ICommonDropAdapter#getSelectedObject(org.eclipse.swt.dnd.TransferData, java.lang.Object)
 	 */
 	public Object getSelectedObject(TransferData transferType, Object data) {
 		IStructuredSelection selection = null;
@@ -196,7 +193,7 @@ public class CommonNavigatorDropAdapter extends PluginDropAdapter {
 			} else if (PluginTransfer.getInstance().isSupportedType(event.dataTypes[i])) {
 				IStructuredSelection selection = (IStructuredSelection) LocalSelectionTransfer.getInstance().getSelection();
 				byte data[] = getSerializer().toByteArray(selection);
-				event.data = new PluginTransferData("org.eclipse.wst.common.navigator.internal.views.navigator.dnd.PluginDropAction", data); //$NON-NLS-1$
+				event.data = new PluginTransferData("org.eclipse.ui.navigator.PluginDropAction", data); //$NON-NLS-1$
 				//System.out.println(getClass().getName()+".dragEnter(DropTargetEvent
 				// event=\""+event+"\"): Setting PluginTransfer");
 				break;
@@ -222,7 +219,7 @@ public class CommonNavigatorDropAdapter extends PluginDropAdapter {
 		if (LocalSelectionTransfer.getInstance().isSupportedType(event.currentDataType)) {
 			IStructuredSelection selection = (IStructuredSelection) LocalSelectionTransfer.getInstance().getSelection();
 			byte data[] = getSerializer().toByteArray(selection);
-			event.data = new PluginTransferData("org.eclipse.wst.common.navigator.internal.views.navigator.dnd.GenericDropAction", data); //$NON-NLS-1$
+			event.data = new PluginTransferData("org.eclipse.ui.navigator.GenericDropAction", data); //$NON-NLS-1$
 		}
 	}
 
@@ -230,6 +227,9 @@ public class CommonNavigatorDropAdapter extends PluginDropAdapter {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getCurrentLocation()
+	 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.dnd.ICommonDropAdapter#getCurrentLocation()
 	 */
 	public int getCurrentLocation() {
 		return super.getCurrentLocation();
@@ -240,6 +240,9 @@ public class CommonNavigatorDropAdapter extends PluginDropAdapter {
 	 * 
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getCurrentOperation()
 	 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.dnd.ICommonDropAdapter#getCurrentOperation()
+	 */
 	public int getCurrentOperation() {
 		return super.getCurrentOperation();
 	}
@@ -248,6 +251,9 @@ public class CommonNavigatorDropAdapter extends PluginDropAdapter {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getCurrentTarget()
+	 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.dnd.ICommonDropAdapter#getCurrentTarget()
 	 */
 	public Object getCurrentTarget() {
 		return super.getCurrentTarget();
@@ -258,6 +264,9 @@ public class CommonNavigatorDropAdapter extends PluginDropAdapter {
 	 * 
 	 * @see org.eclipse.ui.part.PluginDropAdapter#getCurrentTransfer()
 	 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.dnd.ICommonDropAdapter#getCurrentTransfer()
+	 */
 	public TransferData getCurrentTransfer() {
 		return super.getCurrentTransfer();
 	}
@@ -266,6 +275,9 @@ public class CommonNavigatorDropAdapter extends PluginDropAdapter {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getSelectedObject()
+	 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.dnd.ICommonDropAdapter#getSelectedObject()
 	 */
 	public Object getSelectedObject() {
 		return super.getSelectedObject();

@@ -21,8 +21,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * vary how it exposes its content based on the state 
  * of a specific property in the model. 
  * </p>
- * 
- * 
+ *  
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will

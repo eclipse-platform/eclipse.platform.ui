@@ -200,11 +200,7 @@ public class NavigatorSiteEditor implements INavigatorSiteEditor {
 		return ((ILabelProvider) commonViewer.getLabelProvider()).getText(element);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.navigator.INavigatorSiteEditor#getText()
-	 */
+ 
 	public String getText() {
 		return text;
 	}
@@ -234,11 +230,7 @@ public class NavigatorSiteEditor implements INavigatorSiteEditor {
 		navigatorTree.getShell().getDisplay().asyncExec(editRunnable);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.navigator.INavigatorSiteEditor#setTextActionHandler(org.eclipse.ui.actions.TextActionHandler)
-	 */
+ 
 	public void setTextActionHandler(TextActionHandler actionHandler) {
 		textActionHandler = actionHandler;
 	}

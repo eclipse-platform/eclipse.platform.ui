@@ -233,6 +233,10 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 				.getDescription(aSelection));
 	}
 
+	/**
+	 * 
+	 * @return The action service used by this manager
+	 */
 	public INavigatorActionService getNavigatorActionService() {
 		return actionService;
 	}

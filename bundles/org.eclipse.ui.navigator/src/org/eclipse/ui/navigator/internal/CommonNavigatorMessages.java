@@ -29,56 +29,19 @@ public class CommonNavigatorMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.navigator.internal.navigator_messages"; //$NON-NLS-1$
 
 	public static String Link_With_Editor_Job_;
+ 
 
-	public static String NavigatorContentService_0;
+	public static String Could_not_provide_children_for_element;
 
-	public static String NavigatorContentService_1;
-
-	public static String CommonViewer_0;
-
-	public static String CommonViewer_1;
-
-	public static String NavigatorContentServiceContentProvider_0;
-
-	public static String NavigatorContentServiceContentProvider_1;
-
-	public static String NavigatorContentServiceContentProvider_2;
-
-	public static String NavigatorContentServiceContentProvider_3;
-
-	public static String NavigatorActionService_0;
-
-	public static String NavigatorActionService_1;
-
-	public static String NavigatorActionService_2;
-
-	public static String NavigatorActionService_3;
-
-	public static String NavigatorActionService_4;
-
-	public static String NavigatorActionService_5;
-
-	public static String NavigatorActionService_6;
+	public static String Could_not_provide_parent_for_element;
 
 	public static String TreeViewerElementCollector_0;
 
 	public static String TreeViewerElementCollector_1;
 
-	public static String NavigatorViewerDescriptor_Popup_Menu_Not_Specified;
-
-	public static String NavigatorContentExtension_0;
-
-	public static String NavigatorContentExtension_1;
-
-	public static String NavigatorContentExtension_2;
-
-	public static String NavigatorContentExtension_3;
+	public static String NavigatorViewerDescriptor_Popup_Menu_Overridden;
 
 	public static String StructuredViewerManager_0;
-
-	public static String ExtensionFilterViewerRegistry_0;
-
-	public static String ExtensionFilterViewerRegistry_1;
 
 	public static String PendingUpdateAdapter_PendingLabel;
 
@@ -107,24 +70,14 @@ public class CommonNavigatorMessages extends NLS {
 	public static String FetchElementsJob_0;
 
 	public static String NavigatorSelectionSerializer_0;
-
-	public static String CopyAction_title;
-
+ 
 	public static String DropHandlerDescriptor_10;
 
 	public static String Navigator_statusLineMultiSelect;
 
 	public static String DropHandlerRegistry_0;
 
-	public static String LinkHelperRegistry_7;
-
-	public static String LinkHelperRegistry_6;
-
-	public static String LinkHelperRegistry_5;
-
 	public static String PropertyDialog_toolTip;
-
-	public static String LinkHelperRegistry_4;
 
 	public static String PropertyDialog_text;
 
@@ -149,34 +102,15 @@ public class CommonNavigatorMessages extends NLS {
 	public static String SelectFiltersActionDelegate_0;
 
 	public static String CollapseAllActionDelegate_0;
-
-	public static String NavigatorViewer_8;
-
-	public static String NavigatorViewer_7;
-
-	public static String PasteAction_title;
+ 
 
 	public static String SerializerDescriptor_5;
 
-	public static String NavigatorViewer_6;
-
-	public static String NavigatorViewer_5;
-
 	public static String SerializerDescriptor_3;
-
-	public static String NavigatorViewer_4;
-
-	public static String NavigatorViewer_3;
 
 	public static String SerializerDescriptor_1;
 
-	public static String NavigatorViewer_2;
-
 	public static String SerializerDescriptor_0;
-
-	public static String NavigatorViewer_1;
-
-	public static String NavigatorViewer_0;
 
 	public static String CopyAction_toolTip;
 

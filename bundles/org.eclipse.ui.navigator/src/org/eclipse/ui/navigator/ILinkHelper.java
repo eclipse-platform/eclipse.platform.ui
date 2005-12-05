@@ -22,7 +22,7 @@ import org.eclipse.ui.IWorkbenchPage;
  * <p>
  * The Common Navigator allows clients to plug-in their own custom logic for
  * linking selections from the Viewer to active editors. This interface is used
- * by the <b>org.eclipse.wst.common.navigator.views.linkHelper </b> extension
+ * by the <b>org.eclipse.ui.navigator.linkHelper </b> extension
  * point to gather information and trigger editor activations.
  * </p>
  * 

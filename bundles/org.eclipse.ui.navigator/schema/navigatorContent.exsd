@@ -1,12 +1,31 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.wst.common.navigator.views">
+<schema targetNamespace="org.eclipse.ui.navigator">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.wst.common.navigator.views" id="navigatorContent" name="navigatorContent"/>
+         <meta.schema plugin="org.eclipse.ui.navigator" id="navigatorContent" name="navigatorContent"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         A content extension provides a content and label provider 
+that can be used by a navigator content service. The
+&apos;navigatorContent&apos; extension defines the specific classes 
+for the content provider, label provider, and action provider
+in addition to the types of elements the extension knows about. 
+
+The &apos;triggerPoints&apos; expression describes the elements that will
+cause this extension to be invoked for either children or for
+labels. The &apos;possibleChildren&apos; expression describes the elements 
+that the extension may be able to provide a parent for. Clients
+should describe all elements that could be set as the selection
+to ensure that the link with editor support can properly 
+expand to the right node.
+
+
+&lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This class or interface has been added as
+part of a work in progress. There is a guarantee neither that this API will
+work nor that it will remain the same. Please do not use this API without
+consulting with the Platform/UI team.
+
       </documentation>
    </annotation>
 
@@ -122,7 +141,7 @@ The content provider will be consulted when addeding children to the tree. Use t
          <attribute name="activeByDefault" type="boolean">
             <annotation>
                <documentation>
-                  Indicates whether the current extension will be active by default. Each content extension may be turned on or off by the user. This state is referred to as the &apos;active&apos; state of a content extension. If this attribute is set to &apos;false&apos;, then the user will have to explicitly open the dialog and turn the extension on. 
+                  Indicates whether the current extension will be active by default. Each content extension may be turned on or off by the user. This state is referred to as the &apos;active&apos; state of a content extension. If this attribute is set to &apos;false&apos;, then the user will have to explicitly open the dialog and turn the extension on.
                </documentation>
             </annotation>
          </attribute>
@@ -253,7 +272,7 @@ The content provider will be consulted when addeding children to the tree. Use t
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         3.2
       </documentation>
    </annotation>
 
@@ -262,7 +281,56 @@ The content provider will be consulted when addeding children to the tree. Use t
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         The following example describes a content extension that 
+provides resource content. The &apos;triggerPoints&apos; expression
+determines when this extension is initially invoked. If 
+a &apos;viewerContentBinding&apos; matches this extension with
+the &apos;isRoot&apos; attribute set to true, then the extension
+will be used, regardless of whether the root element
+matches the &apos;triggerPoints&apos; expression. 
+
+
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension  
+         point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt;
+      &lt;navigatorContent
+            name=&quot;%resource.extension.name&quot;
+            priority=&quot;low&quot;
+            icon=&quot;icons/full/eview16/resource_persp.gif&quot;
+            activeByDefault=&quot;true&quot;
+               contentProvider=&quot;org.eclipse.ui.navigator.resources.internal.workbench.ResourceExtensionContentProvider&quot;
+               labelProvider=&quot;org.eclipse.ui.navigator.resources.internal.workbench.ResourceExtensionLabelProvider&quot;   
+               sorter=&quot;org.eclipse.ui.navigator.resources.internal.workbench.ResourceSorter&quot;
+            id=&quot;org.eclipse.ui.navigator.resourceContent&quot;&gt;         
+         &lt;triggerPoints&gt;
+           &lt;or&gt;         
+              &lt;instanceof 
+                    value=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt; 
+              &lt;instanceof
+                    value=&quot;org.eclipse.core.resources.IProject&quot; /&gt;  
+              &lt;instanceof  
+                     value=&quot;org.eclipse.core.resources.IFolder&quot; /&gt; 
+           &lt;/or&gt;
+         &lt;/triggerPoints&gt;
+         &lt;possibleChildren&gt;
+           &lt;or&gt;         
+              &lt;instanceof 
+                    value=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt; 
+              &lt;instanceof
+                    value=&quot;org.eclipse.core.resources.IProject&quot; /&gt; 
+              &lt;instanceof 
+                     value=&quot;org.eclipse.core.resources.IResource&quot; /&gt; 
+              &lt;instanceof  
+                     value=&quot;org.eclipse.core.resources.IFolder&quot; /&gt;
+              &lt;instanceof 
+                     value=&quot;org.eclipse.core.resources.IFile&quot; /&gt; 
+           &lt;/or&gt;
+         &lt;/possibleChildren&gt;
+      &lt;/navigatorContent&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -271,7 +339,7 @@ The content provider will be consulted when addeding children to the tree. Use t
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         
       </documentation>
    </annotation>
 
@@ -280,7 +348,7 @@ The content provider will be consulted when addeding children to the tree. Use t
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         
       </documentation>
    </annotation>
 
@@ -289,7 +357,11 @@ The content provider will be consulted when addeding children to the tree. Use t
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made
+available under the terms of the Eclipse Public License v1.0 which accompanies
+this distribution, and is available at &lt;a 
+href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

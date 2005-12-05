@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonDropActionDelegate;
+import org.eclipse.ui.navigator.ICommonDropAdapter;
 
 /**
  * <p>
@@ -30,11 +31,7 @@ public abstract class NavigatorDropActionDelegate implements ICommonDropActionDe
 
 	private CommonViewer commonViewer;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.wst.common.navigator.internal.views.navigator.dnd.ICommonDropActionDelegate#init(org.eclipse.wst.common.navigator.internal.views.navigator.INavigatorExtensionSite)
-	 */
+ 
 	public final void init(CommonViewer aViewer) {
 		commonViewer = aViewer;
 		doInit();
@@ -61,7 +58,7 @@ public abstract class NavigatorDropActionDelegate implements ICommonDropActionDe
 	 *            The object being dragged onto
 	 * @return
 	 */
-	public abstract boolean run(CommonNavigatorDropAdapter dropAdapter, Object source, Object target);
+	public abstract boolean run(ICommonDropAdapter dropAdapter, Object source, Object target);
 
 	protected Display getDisplay() {
 		return getShell().getDisplay();
