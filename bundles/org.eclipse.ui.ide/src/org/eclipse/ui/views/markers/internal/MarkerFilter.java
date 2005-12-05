@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.PlatformUI;
 
 public class MarkerFilter implements Cloneable {
 
@@ -771,7 +771,7 @@ public class MarkerFilter implements Cloneable {
 		setting = settings.get(TAG_WORKING_SET);
 
 		if (setting != null)
-			setWorkingSet(WorkbenchPlugin.getDefault().getWorkingSetManager()
+			setWorkingSet(PlatformUI.getWorkbench().getWorkingSetManager()
 					.getWorkingSet(setting));
 	}
 
@@ -874,7 +874,7 @@ public class MarkerFilter implements Cloneable {
 		setting = memento.getString(TAG_WORKING_SET);
 
 		if (setting != null)
-			setWorkingSet(WorkbenchPlugin.getDefault().getWorkingSetManager()
+			setWorkingSet(PlatformUI.getWorkbench().getWorkingSetManager()
 					.getWorkingSet(setting));
 	}
 
