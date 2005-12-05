@@ -12,6 +12,9 @@ package org.eclipse.ltk.internal.core.refactoring.history;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
@@ -74,5 +77,17 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 	 */
 	public boolean isEmpty() {
 		return fDescriptorProxies.length == 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public RefactoringHistory removeAll(final RefactoringHistory history) {
+		final Set existing= new LinkedHashSet(Arrays.asList(fDescriptorProxies));
+		final Set other= new HashSet(Arrays.asList(history.getDescriptors()));
+		existing.removeAll(other);
+		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[existing.size()];
+		existing.toArray(proxies);
+		return new RefactoringHistoryImplementation(proxies);
 	}
 }

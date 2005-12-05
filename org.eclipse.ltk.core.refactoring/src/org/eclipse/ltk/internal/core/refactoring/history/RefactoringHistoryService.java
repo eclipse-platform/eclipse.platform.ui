@@ -95,6 +95,13 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		public boolean isEmpty() {
 			return true;
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public RefactoringHistory removeAll(final RefactoringHistory history) {
+			return this;
+		}
 	}
 
 	/** Stack of refactoring descriptors */
