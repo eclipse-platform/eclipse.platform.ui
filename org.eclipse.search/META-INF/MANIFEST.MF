@@ -6,7 +6,7 @@ Bundle-Version: 3.2.0.qualifier
 Bundle-Activator: org.eclipse.search.internal.ui.SearchPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.search.internal.core;x-internal:=true,
+Export-Package: org.eclipse.search.core.text,
  org.eclipse.search.internal.core.text;x-internal:=true,
  org.eclipse.search.internal.ui;x-internal:=true,
  org.eclipse.search.internal.ui.text;x-internal:=true,

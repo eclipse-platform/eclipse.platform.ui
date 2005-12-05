@@ -19,15 +19,35 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 <br>
 <br>
-========== Eclipse Build Input I20051205 ==========<br>
+========== Eclipse Build Input I20050329 ==========<br>
+<ul>
+  <li>Added support for filtered matches. Filtered matches are rendered differently
+      in th editor.</li>
+</ul>
+========== Eclipse Build Input I20041111 ==========<br>
+<br>
+
+<ul>
+<li>deprecated NewSearchUI.runQuery() (use
+NewSearchUI.runQueryInBackground() or
+NewSearchUI.runQueryInForeground()</li>
+<li>clarified Javadoc for return type of
+NewSearchUI.runQueryInForeground
+(returned status can be of kind IStatus.CANCEL)</li>
+<li>clarified Javadoc for return type of ISearchQuery.run():
+(OperationCancelled can be thorwn for cancelled searches)</li>
+</ul>
 <pre>
-- new API to use the text search programmatically<br>
-  package org.eclipse.search.core.text:
-    o TextSearchEngine
-    o TextSearchScope
-    o TextSearchMatchAccess
-    o TextSearchRequestor
 </pre>
+========== Eclipse Build Input I20041117 ==========<br>
+<br>
+<ul>
+<li>
+multi line text search/replace
+</li><li>
+changed text search infrastructure to nio buffers (performance improvement of around 25%)
+</li>
+</ul>
 <pre>
 </pre>
 

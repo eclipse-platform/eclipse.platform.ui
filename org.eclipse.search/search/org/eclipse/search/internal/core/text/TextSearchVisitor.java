@@ -15,6 +15,8 @@ import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -24,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -46,7 +49,10 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.ui.NewSearchUI;
 
-import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.core.text.TextSearchMatchAccess;
+import org.eclipse.search.core.text.TextSearchRequestor;
+import org.eclipse.search.core.text.TextSearchScope;
+
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -55,43 +61,84 @@ import org.eclipse.search.internal.ui.SearchPlugin;
  * The visitor that does the actual work.
  */
 public class TextSearchVisitor implements IResourceProxyVisitor {
+	
+	public static class ReusableMatchAccess extends TextSearchMatchAccess {
+		
+		private int fOffset;
+		private int fLength;
+		private IFile fFile;
+		private CharSequence fContent;
+		
+		public void initialize(IFile file, int offset, int length, CharSequence content) {
+			fFile= file;
+			fOffset= offset;
+			fLength= length;
+			fContent= content;
+		}
+				
+		public IFile getFile() {
+			return fFile;
+		}
+		
+		public int getMatchOffset() {
+			return fOffset;
+		}
+		
+		public int getMatchLength() {
+			return fLength;
+		}
 
-	private SearchScope fScope;
-	private ITextSearchResultCollector fCollector;
-	private MatchLocator fLocator;
+		public int getFileContentLength() {
+			return fContent.length();
+		}
+
+		public char getFileContentChar(int offset) {
+			return fContent.charAt(offset);
+		}
+
+		public String getFileContent(int offset, int length) {
+			return fContent.subSequence(offset, offset + length).toString(); // must pass a copy!
+		}
+	}
+	
+
+	private final TextSearchScope fScope;
+	private final TextSearchRequestor fCollector;
+	private final Matcher fMatcher;
 	
 	private Map fDocumentsInEditors;
 		
-	private IProgressMonitor fProgressMonitor;
+	private final IProgressMonitor fProgressMonitor;
 
 	private int fNumberOfScannedFiles;
 	private int fNumberOfFilesToScan;
 	private long fLastUpdateTime;
-	private boolean fVisitDerived;
+
 	private final MultiStatus fStatus;
 	
 	private final FileCharSequenceProvider fFileCharSequenceProvider;
 	
-	public TextSearchVisitor(MatchLocator locator, SearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MultiStatus status, int fileCount) {
+	private final ReusableMatchAccess fMatchAccess;
+	
+	public TextSearchVisitor(TextSearchScope scope, TextSearchRequestor collector, Pattern searchPattern, int fileCount, IProgressMonitor monitor) {
 		fScope= scope;
 		fCollector= collector;
-		fStatus= status;
-
-		fProgressMonitor= collector.getProgressMonitor();
-
-		fLocator= locator;
+		fProgressMonitor= monitor;
+		fStatus= new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, SearchMessages.TextSearchEngine_statusMessage, null);
+		
+		fMatcher= searchPattern.pattern().length() == 0 ? null : searchPattern.matcher(new String());
 		
 		fNumberOfScannedFiles= 0;
 		fNumberOfFilesToScan= fileCount;
-		fVisitDerived= visitDerived;
 		
 		fFileCharSequenceProvider= new FileCharSequenceProvider();
+		fMatchAccess= new ReusableMatchAccess();
 	}
 		
 	public void process() {
 		fDocumentsInEditors= evalNonFileBufferDocuments();
 		
-		IResource[] roots= fScope.getRootElements();
+		IResource[] roots= fScope.getRoots();
 		for (int i= 0; i < roots.length; i++) {
 			try {
 				roots[i].accept(this, 0);
@@ -101,6 +148,10 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 		}
 		
 		fDocumentsInEditors= null;
+	}
+	
+	public IStatus getStatus() {
+		return fStatus;
 	}
 
 	/**
@@ -133,7 +184,7 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 				ITextFileBufferManager bufferManager= FileBuffers.getTextFileBufferManager();
 				ITextFileBuffer textFileBuffer= bufferManager.getTextFileBuffer(file.getFullPath());
 				if (textFileBuffer != null) {
-					// filebuffer has precedence
+					// file buffer has precedence
 					result.put(file, textFileBuffer.getDocument());
 				} else {
 					// use document provider
@@ -147,32 +198,28 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 	}
 
 	public boolean visit(IResourceProxy proxy) {
-		if (!fVisitDerived && proxy.isDerived()) {
-			return false; // all resources in a derived folder are considered to be derived, see bug 103576
+		if (!fScope.contains(proxy)) {
+			return false;
 		}
-		
 		if (proxy.getType() != IResource.FILE) {
-			return true; // only interested in files
+			return true;
 		}
-		
-		if (!fScope.matchesFileName(proxy.getName())) {
-			return false; // finish, files don't have children
-		}
-		
 		try {
-			if (fLocator.isEmpty()) {
-				fCollector.accept(proxy, -1, 0);
-				return false; // finish, files don't have children
+			boolean res= fCollector.acceptFile(proxy);
+			if (!res || fMatcher == null) {
+				return false;
 			}
+			
 			IFile file= (IFile) proxy.requestResource();
 			IDocument document= getOpenDocument(file);
+			
 			if (document != null) {
-				fLocator.locateMatches(fProgressMonitor, new DocumentCharSequence(document), fCollector, proxy);
+				locateMatches(file, new DocumentCharSequence(document));
 			} else {
 				CharSequence seq= null;
 				try {
 					seq= fFileCharSequenceProvider.newCharSequence(file);
-					fLocator.locateMatches(fProgressMonitor, seq, fCollector, proxy);
+					locateMatches(file, seq);
 				} catch (FileCharSequenceProvider.FileCharSequenceException e) {
 					e.throwWrappedException();
 				} finally {
@@ -210,6 +257,30 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 		}		
 		return false; // finish, files don't have children
 	}
+	
+	private void locateMatches(IFile file, CharSequence searchInput) throws CoreException {
+		fMatcher.reset(searchInput);
+		int k= 0;
+		while (fMatcher.find()) {
+			int start= fMatcher.start();
+			int end= fMatcher.end();
+			if (end != start) { // don't report 0-length matches
+				fMatchAccess.initialize(file, start, end - start, searchInput);
+				boolean res= fCollector.acceptPatternMatch(fMatchAccess);
+				if (!res) {
+					return; // no further reporting requested
+				}
+			}
+			if (k++ == 20) {
+				if (fProgressMonitor.isCanceled()) {
+					throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled); 
+				}
+				k= 0;
+			}
+		}
+		fMatchAccess.initialize(null, 0, 0, new String()); // clear references
+	}
+	
 	
 	private String getExceptionMessage(Exception e) {
 		String message= e.getLocalizedMessage();
@@ -253,5 +324,30 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 		if (fProgressMonitor.isCanceled())
 			throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled); 
 	}
+	
+	
+	public static IStatus search(TextSearchScope scope, TextSearchRequestor collector, Pattern searchPattern, IProgressMonitor monitor) {
+		if (monitor == null) {
+			monitor= new NullProgressMonitor();
+		}
+		
+		int amountOfWork= new AmountOfWorkCalculator(scope).process();
+		try {
+			monitor.beginTask("", amountOfWork); //$NON-NLS-1$
+			if (amountOfWork > 0) {
+				Integer[] args= new Integer[] {new Integer(1), new Integer(amountOfWork)};
+				monitor.setTaskName(Messages.format(SearchMessages.TextSearchEngine_scanning, args)); 
+			}				
+			collector.beginReporting();
+			TextSearchVisitor visitor= new TextSearchVisitor(scope, collector, searchPattern, amountOfWork, monitor);
+			visitor.process();
+			return visitor.getStatus();
+		} finally {
+			monitor.done();
+			collector.endReporting();
+		}
+		
+	}
+	
 }
 

@@ -35,7 +35,7 @@ import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.internal.ui.text.FileSearchResult;
@@ -71,10 +71,11 @@ public class AnnotationManagerTest extends TestCase {
 		super.setUp();
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
 		
-		SearchScope scope= SearchScope.newWorkspaceScope();
+		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newWorkspaceScope();
 		scope.addFileNamePattern("*.java"); //$NON-NLS-1$
-		fQuery1= new FileSearchQuery(scope,  "", "Test", false);  //$NON-NLS-1$//$NON-NLS-2$
-		fQuery2= new FileSearchQuery(scope, "", "TestCase", false); //$NON-NLS-1$//$NON-NLS-2$
+		scope.setIncludeDerived(false);
+		fQuery1= new FileSearchQuery(scope,  "", "Test");  //$NON-NLS-1$//$NON-NLS-2$
+		fQuery2= new FileSearchQuery(scope, "", "TestCase"); //$NON-NLS-1$//$NON-NLS-2$
 	} 
 	
 	protected void tearDown() throws Exception {

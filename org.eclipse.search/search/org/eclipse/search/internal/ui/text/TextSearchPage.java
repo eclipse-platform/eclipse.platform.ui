@@ -71,7 +71,7 @@ import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 
-import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
 import org.eclipse.search.internal.ui.ISearchHelpContextIds;
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.ScopePart;
@@ -225,10 +225,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		SearchPatternData patternData= getPatternData();
 	
 		// Setup search scope
-		SearchScope scope= null;
+		FileNamePatternSearchScope scope= null;
 		switch (getContainer().getSelectedScope()) {
 			case ISearchPageContainer.WORKSPACE_SCOPE:
-				scope= SearchScope.newWorkspaceScope();
+				scope= FileNamePatternSearchScope.newWorkspaceScope();
 				break;
 			case ISearchPageContainer.SELECTION_SCOPE:
 				scope= getSelectedResourcesScope(false);
@@ -239,14 +239,15 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			case ISearchPageContainer.WORKING_SET_SCOPE:
 				IWorkingSet[] workingSets= getContainer().getSelectedWorkingSets();
 				String desc= Messages.format(SearchMessages.WorkingSetScope, ScopePart.toString(workingSets)); 
-				scope= SearchScope.newSearchScope(desc, workingSets);
+				scope= FileNamePatternSearchScope.newSearchScope(desc, workingSets);
 		}		
 		NewSearchUI.activateSearchResultView();
 		String[] fileExtensions= patternData.fileNamePatterns;
 		for (int i= 0; i < fileExtensions.length; i++) {
 			scope.addFileNamePattern(fileExtensions[i]);
 		}
-		return new FileSearchQuery(scope,  getSearchOptions(), patternData.textPattern, fSearchDerived);
+		scope.setIncludeDerived(fSearchDerived);
+		return new FileSearchQuery(scope,  getSearchOptions(), patternData.textPattern);
 	}
 
 	private String getPattern() {
@@ -601,7 +602,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return fContainer.getSelection();
 	}
 
-	private SearchScope getSelectedResourcesScope(boolean isProjectScope) {
+	private FileNamePatternSearchScope getSelectedResourcesScope(boolean isProjectScope) {
 		HashSet resources= new HashSet();
 		String firstProjectName= null;
 		ISelection selection= getSelection();
@@ -661,7 +662,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		}
 		removeCloseProjects(resources);
 		IResource[] arr= (IResource[]) resources.toArray(new IResource[resources.size()]);
-		return SearchScope.newSearchScope(name, arr);
+		return FileNamePatternSearchScope.newSearchScope(name, arr);
 	}
 
 	private void removeCloseProjects(Collection resources) {

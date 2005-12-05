@@ -8,13 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.search.internal.core;
+package org.eclipse.search.internal.core.text;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,23 +22,25 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.IWorkingSet;
 
-import org.eclipse.search.internal.core.text.PatternConstructor;
+import org.eclipse.search.core.text.TextSearchScope;
+
 import org.eclipse.search.internal.ui.SearchMessages;
 
-public class SearchScope {
+public class FileNamePatternSearchScope extends TextSearchScope {
 
 	/**
 	 * Returns a workspace scope.
 	 * @return a workspace scope.
 	 */
-	public static SearchScope newWorkspaceScope() {
-		return new SearchScope(SearchMessages.WorkspaceScope, new IResource[] { ResourcesPlugin.getWorkspace().getRoot() }); 
+	public static FileNamePatternSearchScope newWorkspaceScope() {
+		return new FileNamePatternSearchScope(SearchMessages.WorkspaceScope, new IResource[] { ResourcesPlugin.getWorkspace().getRoot() }); 
 	}
 	
 	/**
@@ -48,8 +49,8 @@ public class SearchScope {
 	 * @param resources the resources to be contained
 	 * @return a scope for the given resources.
 	 */
-	public static SearchScope newSearchScope(String description, IResource[] resources) {
-		return new SearchScope(description, removeRedundantEntries(resources));
+	public static FileNamePatternSearchScope newSearchScope(String description, IResource[] resources) {
+		return new FileNamePatternSearchScope(description, removeRedundantEntries(resources));
 	}
 
 	/**
@@ -58,22 +59,27 @@ public class SearchScope {
 	 * @param workingSets the working sets to be contained
 	 * @return a scope for the given working sets
 	 */
-	public static SearchScope newSearchScope(String description, IWorkingSet[] workingSets) {
-		return new SearchScope(description, convertToResources(workingSets));
+	public static FileNamePatternSearchScope newSearchScope(String description, IWorkingSet[] workingSets) {
+		return new FileNamePatternSearchScope(description, convertToResources(workingSets));
 	}
 	
 	private static final boolean IS_CASE_SENSITIVE_FILESYSTEM = !new File("Temp").equals(new File("temp")); //$NON-NLS-1$ //$NON-NLS-2$
 	
-	private String fDescription;
+	private final String fDescription;
 	private final IResource[] fRootElements;
 	
-	private Set fFileNamePatterns= new HashSet(3);
-	private Matcher[] fFileNameMatchers= null;
+	private final Set fFileNamePatterns;
+	private Matcher fFileNameMatcher;
+	
+	private boolean fVisitDerived;
 
-	private SearchScope(String description, IResource[] resources) {
+	private FileNamePatternSearchScope(String description, IResource[] resources) {
 		Assert.isNotNull(description);
 		fDescription= description;
 		fRootElements= resources;
+		fFileNamePatterns=  new HashSet(3);
+		fFileNameMatcher= null;
+		fVisitDerived= false;
 	}
 	
 	/**
@@ -84,12 +90,25 @@ public class SearchScope {
 		return fDescription;
 	}
 	
-	/**
-	 * Returns the root elements of this scope
-	 * @return the root elements of this scope
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.core.text.FileSearchScope#getRoots()
 	 */
-	public IResource[] getRootElements() {
+	public IResource[] getRoots() {
 		return fRootElements;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.core.text.FileSearchScope#contains(org.eclipse.core.resources.IResourceProxy)
+	 */
+	public boolean contains(IResourceProxy proxy) {
+		if (!fVisitDerived && proxy.isDerived()) {
+			return false; // all resources in a derived folder are considered to be derived, see bug 103576
+		}
+		
+		if (proxy.getType() == IResource.FILE) {
+			return matchesFileName(proxy.getName());
+		}
+		return true;
 	}
 		
 	/**
@@ -98,21 +117,50 @@ public class SearchScope {
 	 */
 	public void addFileNamePattern(String pattern) {
 		if (fFileNamePatterns.add(pattern)) {
-			fFileNameMatchers= null; // clear cache
+			fFileNameMatcher= null; // clear cache
 		}
 	}
+	
+	public void setFileNamePattern(Pattern pattern) {
+		fFileNameMatcher= pattern.matcher(""); //$NON-NLS-1$
+	}
+	
+	
+	public Pattern getFileNamePattern() {
+		return getFileNameMatcher().pattern();
+	}
+	
+	/**
+	 * Set to include also derived resources.
+	 * 
+	 * @param enable if set also derived resources are included.
+	 */
+	public void setIncludeDerived(boolean enable) {
+		fVisitDerived= enable;
+	}
+	
+	/**
+	 * Returns if derived resources are included in the scope.
+	 * 
+	 * @return if set derived resources are included in the scope.
+	 */
+	public boolean isIncludeDerived() {
+		return fVisitDerived;
+	}
+	
 
-	private Matcher[] getFileNameMatchers() {
-		if (fFileNameMatchers == null) {
-			fFileNameMatchers= new Matcher[fFileNamePatterns.size()];
-			int i= 0;
-			for (Iterator iter= fFileNamePatterns.iterator(); iter.hasNext();) {
-				String ext= (String) iter.next();
-				Pattern pattern= PatternConstructor.createPattern(ext, IS_CASE_SENSITIVE_FILESYSTEM, false); 
-				fFileNameMatchers[i++]= pattern.matcher(""); //$NON-NLS-1$
+	private Matcher getFileNameMatcher() {
+		if (fFileNameMatcher == null) {
+			Pattern pattern;
+			if (fFileNamePatterns.isEmpty()) {
+				pattern= Pattern.compile(".*"); //$NON-NLS-1$
+			} else {
+				String[] patternStrings= (String[]) fFileNamePatterns.toArray(new String[fFileNamePatterns.size()]);
+				pattern= PatternConstructor.createPattern(patternStrings, IS_CASE_SENSITIVE_FILESYSTEM, false);
 			}
+			fFileNameMatcher= pattern.matcher(""); //$NON-NLS-1$
 		}
-		return fFileNameMatchers;
+		return fFileNameMatcher;
 	}
 	
 	/**
@@ -120,14 +168,8 @@ public class SearchScope {
 	 * @param fileName The file name to test
 	 * @return returns true if the file name is matching to a file name pattern
 	 */
-	public boolean matchesFileName(String fileName) {
- 		Matcher[] matchers= getFileNameMatchers();
-		for (int i= 0; i < matchers.length; i++) {
-			if (matchers[i].reset(fileName).matches()) {
-				return true;
-			}
-		}
-		return matchers.length == 0;
+	private boolean matchesFileName(String fileName) {
+ 		return getFileNameMatcher().reset(fileName).matches();
 	}
 		
 	/**
@@ -185,4 +227,6 @@ public class SearchScope {
 		}
 		res.add(curr);
 	}
+
+
 }

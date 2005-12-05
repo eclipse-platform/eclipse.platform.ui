@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.util.regex.Pattern;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
@@ -21,53 +24,48 @@ import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 
-import org.eclipse.search.internal.core.SearchScope;
-import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
-import org.eclipse.search.internal.core.text.MatchLocator;
-import org.eclipse.search.internal.core.text.TextSearchEngine;
+import org.eclipse.search.core.text.TextSearchEngine;
+import org.eclipse.search.core.text.TextSearchMatchAccess;
+import org.eclipse.search.core.text.TextSearchRequestor;
+
+import org.eclipse.search.internal.core.text.PatternConstructor;
+import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 
 
 public class FileSearchQuery implements ISearchQuery {
 	
-	private final static class TextSearchResultCollector implements ITextSearchResultCollector {
+	private final static class TextSearchResultCollector extends TextSearchRequestor {
 		
 		private final AbstractTextSearchResult fResult;
-		private final IProgressMonitor fProgressMonitor;
+		private final boolean fIsFileSearchOnly;
 		
-		private TextSearchResultCollector(AbstractTextSearchResult result, IProgressMonitor monitor) {
-			super();
+		private TextSearchResultCollector(AbstractTextSearchResult result, boolean isFileSearchOnly) {
 			fResult= result;
-			fProgressMonitor= monitor;
+			fIsFileSearchOnly= isFileSearchOnly;
 		}
-		public IProgressMonitor getProgressMonitor() {
-			return fProgressMonitor;
+		
+		public boolean acceptFile(IResourceProxy proxy) throws CoreException {
+			if (fIsFileSearchOnly) {
+				fResult.addMatch(new FileMatch((IFile) proxy.requestResource(), 0, 0));
+			}
+			return true;
 		}
-		public void aboutToStart() {
-			// do nothing
+
+		public boolean acceptPatternMatch(TextSearchMatchAccess matchRequestor) throws CoreException {
+			fResult.addMatch(new FileMatch(matchRequestor.getFile(), matchRequestor.getMatchOffset(), matchRequestor.getMatchLength()));
+			return true;
 		}
-		public void accept(IResourceProxy proxy, int start, int length) {
-			IFile file= (IFile) proxy.requestResource();
-			if (start < 0)
-				start= 0;
-			if (length < 0)
-				length= 0;
-			fResult.addMatch(new FileMatch(file, start, length));
-		}
-		public void done() {
-			// do nothing
-		}
+
 	}
 
 	private String fSearchString;
 	private String fSearchOptions;
-	private SearchScope fScope;
+	private FileNamePatternSearchScope fScope;
 	private FileSearchResult fResult;
-	private boolean fVisitDerived;
 
-	public FileSearchQuery(SearchScope scope, String options, String searchString, boolean visitDerived) {
-		fVisitDerived= visitDerived;
+	public FileSearchQuery(FileNamePatternSearchScope scope, String options, String searchString) {
 		fScope= scope;
 		fSearchOptions= options;
 		fSearchString= searchString;
@@ -77,15 +75,15 @@ public class FileSearchQuery implements ISearchQuery {
 		return true;
 	}
 
-	public IStatus run(final IProgressMonitor pm) {
-		final AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
+	public IStatus run(final IProgressMonitor monitor) {
+		AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
 		textResult.removeAll();
-		ITextSearchResultCollector collector= new TextSearchResultCollector(textResult, pm);
-		String searchString= fSearchString;
-		if (searchString.trim().equals(String.valueOf('*'))) {
-			searchString= new String();
-		}
-		return new TextSearchEngine().search(fScope, fVisitDerived, collector, new MatchLocator(searchString, isCaseSensitive(), isRegexSearch()));
+		
+		Pattern searchPattern= getSearchPattern();
+		boolean isFileSearchOnly= searchPattern.pattern().length() == 0;
+		
+		TextSearchResultCollector collector= new TextSearchResultCollector(textResult, isFileSearchOnly);
+		return TextSearchEngine.create().search(fScope, collector, searchPattern, monitor);
 	}
 
 	public String getLabel() {
@@ -124,10 +122,23 @@ public class FileSearchQuery implements ISearchQuery {
 	 * @return returns the status of the operation
 	 */
 	public IStatus searchInFile(final AbstractTextSearchResult result, final IProgressMonitor monitor, IFile file) {
-		ITextSearchResultCollector collector= new TextSearchResultCollector(result, monitor);
-		SearchScope scope= SearchScope.newSearchScope("", new IResource[] { file }); //$NON-NLS-1$
-		return new TextSearchEngine().search(scope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
+		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("", new IResource[] { file }); //$NON-NLS-1$
+		
+		Pattern searchPattern= getSearchPattern();
+		boolean isFileSearchOnly= searchPattern.pattern().length() == 0;
+		TextSearchResultCollector collector= new TextSearchResultCollector(result, isFileSearchOnly);
+		
+		return TextSearchEngine.create().search(scope, collector, searchPattern, monitor);
 	}
+	
+	protected Pattern getSearchPattern() {
+		String searchString= fSearchString;
+		if (searchString.trim().equals(String.valueOf('*'))) {
+			searchString= new String();
+		}		
+		return PatternConstructor.createPattern(searchString, isCaseSensitive(), isRegexSearch());
+	}
+	
 	
 	public boolean isRegexSearch() {
 		return isRegexSearch(getSearchOptions());

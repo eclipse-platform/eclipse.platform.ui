@@ -33,7 +33,7 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
 import org.eclipse.search.internal.ui.text.FileSearchPage;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
 
@@ -59,9 +59,10 @@ public class SearchResultPageTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		SearchScope scope= SearchScope.newWorkspaceScope();
+		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newWorkspaceScope();
 		scope.addFileNamePattern("*.java");
-		fQuery1= new FileSearchQuery(scope, "", "Test", false);
+		scope.setIncludeDerived(false);
+		fQuery1= new FileSearchQuery(scope, "", "Test");
 	}
 
 	public void atestBasicDisplay() throws Exception {

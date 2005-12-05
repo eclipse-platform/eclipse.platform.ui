@@ -36,7 +36,7 @@ import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
 import org.eclipse.search.internal.ui.SearchPlugin;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
@@ -68,7 +68,7 @@ public class LineAnnotationManagerTest extends TestCase {
 		super.setUp();
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
 		
-		SearchScope scope= SearchScope.newWorkspaceScope();
+		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newWorkspaceScope();
 		scope.addFileNamePattern("*.java");
 	
 		fLineQuery= new LineBasedFileSearch(scope,  "", "Test");

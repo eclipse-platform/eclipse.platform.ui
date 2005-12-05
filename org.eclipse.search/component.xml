@@ -38,6 +38,12 @@
    <type name= "MatchEvent"/>
    <type name= "RemoveAllEvent"/>
  </package>
- 
+
+ <package name="org.eclipse.search.core.text">
+   <type name= "TextSearchEngine" subclass="false" instantiate="false"/>
+   <type name= "TextSearchMatchAccess" subclass="false" instantiate="false"/>
+ </package>
+
+
  <component-depends unrestricted="true"/>
 </component>

@@ -11,6 +11,8 @@
 
 package org.eclipse.search.tests.filesearch;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 
 import org.eclipse.core.runtime.CoreException;
@@ -19,7 +21,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResourceProxy;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -27,12 +28,13 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.search.internal.core.SearchScope;
-import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
-import org.eclipse.search.internal.core.text.MatchLocator;
-import org.eclipse.search.internal.core.text.TextSearchEngine;
+import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
+
+import org.eclipse.search.core.text.TextSearchEngine;
+import org.eclipse.search.core.text.TextSearchMatchAccess;
+import org.eclipse.search.core.text.TextSearchRequestor;
 
 /**
  */
@@ -57,39 +59,37 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 		
 	}
 	
-	private static class LineBasedTextSearchResultCollector implements ITextSearchResultCollector {
+	private static class LineBasedTextSearchResultCollector extends TextSearchRequestor {
 		
 		private final AbstractTextSearchResult fResult;
-		private final IProgressMonitor fProgressMonitor;
 		private IFile fLastFile;
 		private IDocument fLastDocument;	
 		
-		private LineBasedTextSearchResultCollector(AbstractTextSearchResult result, IProgressMonitor monitor) {
+		private LineBasedTextSearchResultCollector(AbstractTextSearchResult result) {
 			fResult= result;
-			fProgressMonitor= monitor;
 			fLastFile= null;
 			fLastDocument= null;
 		}
-		public IProgressMonitor getProgressMonitor() {
-			return fProgressMonitor;
-		}
-		public void aboutToStart() {
-			// do nothing
-		}
-		public void accept(IResourceProxy proxy, int start, int length) throws CoreException {
-			IFile file= (IFile) proxy.requestResource();
+
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.search.core.text.FileSearchRequestor#acceptPatternMatch(org.eclipse.search.core.text.FileSearchMatchRequestor)
+		 */
+		public boolean acceptPatternMatch(TextSearchMatchAccess matchRequestor) throws CoreException {
+			IFile file= matchRequestor.getFile();
 			try {
 				IDocument doc= getDocument(file);
 				if (doc == null) {
 					throw new IllegalArgumentException("No document for file: " + file.getName());
 				}
 
-				int startLine= doc.getLineOfOffset(start);
-				int endLine= doc.getLineOfOffset(start + length);
+				int startLine= doc.getLineOfOffset(matchRequestor.getMatchOffset());
+				int endLine= doc.getLineOfOffset(matchRequestor.getMatchOffset() + matchRequestor.getMatchLength());
 				fResult.addMatch(new LineBasedMatch(file, startLine, endLine - startLine + 1));
 			} catch (BadLocationException e) {
 				throw new CoreException(new Status(IStatus.ERROR, SearchPlugin.getID(), IStatus.ERROR, "bad location", e));
 			}
+			return true;
 		}
 
 		private IDocument getDocument(IFile file) throws CoreException {
@@ -106,27 +106,36 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 			return fLastDocument;
 		}
 		
-		public void done() throws CoreException {
+		/* (non-Javadoc)
+		 * @see org.eclipse.search.core.text.FileSearchRequestor#endReporting()
+		 */
+		public void endReporting() {
 			if (fLastFile != null) {
-				FileBuffers.getTextFileBufferManager().disconnect(fLastFile.getFullPath(), null);
+				try {
+					FileBuffers.getTextFileBufferManager().disconnect(fLastFile.getFullPath(), null);
+				} catch (CoreException e) {
+				}
 			}
 		}
 	}
 	
-	private final SearchScope fScope;
+	private final FileNamePatternSearchScope fScope;
 	
 	
-	public LineBasedFileSearch(SearchScope scope, String options, String searchString) {
-		super(scope, options, searchString, false);
+	public LineBasedFileSearch(FileNamePatternSearchScope scope, String options, String searchString) {
+		super(scope, options, searchString);
 		fScope= scope;
 	}
 
 
-	public IStatus run(final IProgressMonitor pm) {
-		final AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
+	public IStatus run(IProgressMonitor monitor) {
+		AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
 		textResult.removeAll();
-		ITextSearchResultCollector collector= new LineBasedTextSearchResultCollector(textResult, pm);
-		return new TextSearchEngine().search(fScope, false, collector, new MatchLocator(getSearchString(), isCaseSensitive(), isRegexSearch()));
+		
+		LineBasedTextSearchResultCollector collector= new LineBasedTextSearchResultCollector(textResult);
+		
+		Pattern searchPattern= getSearchPattern();
+		return TextSearchEngine.create().search(fScope, collector, searchPattern, monitor);
 	}
 	
 

@@ -11,54 +11,43 @@
 package org.eclipse.search.internal.core.text;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.MultiStatus;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 
-import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.core.text.TextSearchScope;
 
 /**
  * The visitor that does the actual work.
  */
 public class AmountOfWorkCalculator implements IResourceProxyVisitor {
 	
-	private final SearchScope fScope;
-	private final boolean fVisitDerived;
-	private final MultiStatus fStatus;
+	private final TextSearchScope fScope;
 	
 	private int fFileCount;
 
-	AmountOfWorkCalculator(SearchScope scope, MultiStatus status, boolean visitDerived) {
-		fStatus= status;
+	public AmountOfWorkCalculator(TextSearchScope scope) {
 		fScope= scope;
-		fVisitDerived= visitDerived;
 	}
 		
 	public boolean visit(IResourceProxy proxy) {
-		if (!fVisitDerived && proxy.isDerived()) {
-			return false; // all resources in a derived folder are considered to be derived, see bug 103576
-		}
+		boolean inScope= fScope.contains(proxy);
 		
-		if (proxy.getType() != IResource.FILE) {
-			return true;
-		}
-		
-		if (fScope.matchesFileName(proxy.getName())) {
+		if (inScope && proxy.getType() == IResource.FILE) {
 			fFileCount++;
 		}
-		return true;	
+		return inScope;
 	}
 	
 	public int process() {
 		fFileCount= 0;
-		IResource[] roots= fScope.getRootElements();
+		IResource[] roots= fScope.getRoots();
 		for (int i= 0; i < roots.length; i++) {
 			try {
 				roots[i].accept(this, 0);
 			} catch (CoreException ex) {
-				fStatus.add(ex.getStatus());
+				// ignore
 			}
 		}
 		return fFileCount;
