@@ -59,7 +59,7 @@ public class TrimLayoutData {
      * available space is always divided equally among all resizable controls on the 
      * same side of the layout, regardless of their preferred size.
      */
-    boolean resizable = true;
+    public boolean resizable = true;
 
     /**
      * Creates a default TrimLayoutData. The default trim layout data is resizable.
