@@ -359,4 +359,13 @@ public interface IWorkbenchPreferenceConstants {
      * @since 3.1
      */
     public static final String SHOW_MEMORY_MONITOR = "SHOW_MEMORY_MONITOR"; //$NON-NLS-1$
+    
+    /**
+	 * Stores whether or not to use the window working set as the default
+	 * working set for newly created views (without previously stored state).
+	 * This is a hint that view implementors should honor.
+	 * 
+	 * @since 3.2
+	 */
+    public static final String USE_WINDOW_WORKING_SET_BY_DEFAULT = "USE_WINDOW_WORKING_SET_BY_DEFAULT"; //$NON-NLS-1$
 }

@@ -827,29 +827,37 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     void initWorkingSetFilter() {
         String workingSetName = settings.get(STORE_WORKING_SET);
 
+        IWorkingSet workingSet = null;
+        
         if (workingSetName != null && workingSetName.equals("") == false) { //$NON-NLS-1$
-            IWorkingSetManager workingSetManager = getPlugin().getWorkbench()
-                    .getWorkingSetManager();
-            IWorkingSet workingSet = workingSetManager
-                    .getWorkingSet(workingSetName);
+			IWorkingSetManager workingSetManager = getPlugin().getWorkbench()
+					.getWorkingSetManager();
+			workingSet = workingSetManager.getWorkingSet(workingSetName);
+		} else if (PlatformUI
+				.getPreferenceStore()
+				.getBoolean(
+						IWorkbenchPreferenceConstants.USE_WINDOW_WORKING_SET_BY_DEFAULT)) {
+			// use the window set by default if the global preference is set
+			workingSet = getSite().getPage().getAggregateWorkingSet();
+		}
 
-            if (workingSet != null) {
-                // Only initialize filter. Don't set working set into viewer.
-                // Working set is set via WorkingSetFilterActionGroup
-                // during action creation.
-                workingSetFilter.setWorkingSet(workingSet);
-                internalSetWorkingSet(workingSet);
-            }
-        }
+		if (workingSet != null) {
+			// Only initialize filter. Don't set working set into viewer.
+			// Working set is set via WorkingSetFilterActionGroup
+			// during action creation.
+			workingSetFilter.setWorkingSet(workingSet);
+			internalSetWorkingSet(workingSet);
+		}
     }
 
     /**
-     * Returns whether the navigator selection automatically tracks the active
-     * editor.
-     *
-     * @return <code>true</code> if linking is enabled, <code>false</code> if not  
-     * @since 2.0 (this was protected in 2.0, but was made public in 2.1)
-     */
+	 * Returns whether the navigator selection automatically tracks the active
+	 * editor.
+	 * 
+	 * @return <code>true</code> if linking is enabled, <code>false</code>
+	 *         if not
+	 * @since 2.0 (this was protected in 2.0, but was made public in 2.1)
+	 */
     public boolean isLinkingEnabled() {
         return linkingEnabled;
     }
