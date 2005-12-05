@@ -243,6 +243,9 @@ class PreferencePageHistory {
 		backward.setImageDescriptor(WorkbenchPlugin.getDefault()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_BACK));
+		backward.setDisabledImageDescriptor(WorkbenchPlugin.getDefault()
+				.getSharedImages().getImageDescriptor(
+						ISharedImages.IMG_TOOL_BACK_DISABLED));		
 		registerKeybindings(backward);
 		historyToolbar.add(backward);
 
@@ -273,6 +276,9 @@ class PreferencePageHistory {
 		forward.setImageDescriptor(WorkbenchPlugin.getDefault()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_FORWARD));
+		forward.setDisabledImageDescriptor(WorkbenchPlugin.getDefault()
+				.getSharedImages().getImageDescriptor(
+						ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 		registerKeybindings(forward);
 		historyToolbar.add(forward);
 
