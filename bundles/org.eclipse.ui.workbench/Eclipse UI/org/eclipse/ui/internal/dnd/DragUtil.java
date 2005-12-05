@@ -39,7 +39,7 @@ public class DragUtil {
      * to determine where objects should be dropped.
      */
     private static TestDropLocation forcedDropTarget = null;
-
+    
     /**
      * List of IDragOverListener
      */
@@ -70,7 +70,7 @@ public class DragUtil {
     }
 
     private static List getTargetList(Control control) {
-        List result = (List) control.getData(DROP_TARGET_ID);
+        List result= (List) control.getData(DROP_TARGET_ID);;
         return result;
     }
 
@@ -130,6 +130,11 @@ public class DragUtil {
         }
 
         target.drop();
+
+        // If the target can handle a 'finished' notification then send one
+        if (target!= null && target instanceof IDropTarget2) {
+        	((IDropTarget2)target).dragFinished(true);
+        }
 
         return true;
     }
@@ -192,8 +197,8 @@ public class DragUtil {
             final boolean allowSnapping) {
         final Display display = Display.getCurrent();
 
+        // Testing...immediately 'drop' onto the test target
         if (forcedDropTarget != null) {
-
             Point location = forcedDropTarget.getLocation();
 
             Control currentControl = SwtUtil.findControl(forcedDropTarget.getShells(), location);
@@ -204,23 +209,27 @@ public class DragUtil {
         // Create a tracker.  This is just an XOR rect on the screen.
         // As it moves we notify the drag listeners.
         final Tracker tracker = new Tracker(display, SWT.NULL);
-
         tracker.setStippled(true);
 
         tracker.addListener(SWT.Move, new Listener() {
             public void handleEvent(final Event event) {
                 display.syncExec(new Runnable() {
                     public void run() {
+                    	// Get the curslor location as a point
                         Point location = new Point(event.x, event.y);
 
+                        // Select a drop target; use the global one by default
+                    	IDropTarget target = null;
+                    		
                         Control targetControl = display.getCursorControl();
 
-                        IDropTarget target = getDropTarget(targetControl,
+                        // Get the drop target for this location
+                        target = getDropTarget(targetControl,
                                 draggedItem, location,
                                 tracker.getRectangles()[0]);
 
+                    	// Set up the tracker feedback based on the target
                         Rectangle snapTarget = null;
-
                         if (target != null) {
                             snapTarget = target.getSnapRectangle();
 
@@ -230,8 +239,8 @@ public class DragUtil {
                                     .getCursor(DragCursors.INVALID));
                         }
 
+                        // If snapping then reset the tracker's rectangle based on the current drop target 
                         if (allowSnapping) {
-
                             if (snapTarget == null) {
                                 snapTarget = new Rectangle(sourceBounds.x
                                         + location.x - initialLocation.x,
@@ -242,14 +251,11 @@ public class DragUtil {
 
                             // Try to prevent flicker: don't change the rectangles if they're already in
                             // the right location
-
-                            Rectangle[] currentRectangles = tracker
-                                    .getRectangles();
+                            Rectangle[] currentRectangles = tracker.getRectangles();
 
                             if (!(currentRectangles.length == 1 && currentRectangles[0]
                                     .equals(snapTarget))) {
-                                tracker
-                                        .setRectangles(new Rectangle[] { snapTarget });
+                                tracker.setRectangles(new Rectangle[] { snapTarget });
                             }
                         }
                     }
@@ -257,6 +263,8 @@ public class DragUtil {
             }
         });
 
+        // Setup...when the drag starts we might already be over a valid target, check this...
+        // If there is a 'global' target then skip the check
         IDropTarget target = null;
         Control startControl = display.getCursorControl();
         
@@ -266,8 +274,8 @@ public class DragUtil {
                 sourceBounds);
         }
 
+        // Set up an initial tracker rectangle
         Rectangle startRect = sourceBounds;
-        
         if (target != null) {
             Rectangle rect = target.getSnapRectangle();
             
@@ -282,6 +290,9 @@ public class DragUtil {
             tracker.setRectangles(new Rectangle[] { Geometry.copy(startRect)});
         }
 
+        // Tracking Loop...tracking is preformed on the 'SWT.Move' listener registered
+        // against the tracker.
+        
         // HACK:
         // Some control needs to capture the mouse during the drag or other 
         // controls will interfere with the cursor
@@ -299,22 +310,31 @@ public class DragUtil {
             shell.setCapture(false);
         }
 
-        Point finalLocation = display.getCursorLocation();
-
+        // Done tracking...
+        
+        // Get the current drop target
         IDropTarget dropTarget = null;
-        if (trackingOk) {
-            Control targetControl = display.getCursorControl();
+        Point finalLocation = display.getCursorLocation();
+        Control targetControl = display.getCursorControl();
+        dropTarget = getDropTarget(targetControl, draggedItem,
+                finalLocation, tracker.getRectangles()[0]);
 
-            dropTarget = getDropTarget(targetControl, draggedItem,
-                    finalLocation, tracker.getRectangles()[0]);
-        }
-
-        // Cleanup.
+        // Cleanup...
         tracker.dispose();
-
-        return dropTarget;
+        
+        // if we're going to perform a 'drop' then delay the issuing of the 'finished'
+        // callback until after it's done...
+        if (trackingOk) {
+        	return dropTarget;
+        }
+        else if (dropTarget!= null && dropTarget instanceof IDropTarget2) {
+            // If the target can handle a 'finished' notification then send one
+        	((IDropTarget2)dropTarget).dragFinished(false);
+        }
+        
+        return null;
     }
-
+    
     /**
      * Given a list of IDragOverListeners and a description of what is being dragged, it returns
      * a IDropTarget for the current drop.
@@ -356,8 +376,8 @@ public class DragUtil {
      * @return
      */
     public static IDropTarget getDropTarget(Control toSearch,
-            Object draggedObject, Point position, Rectangle dragRectangle) {
-
+            Object draggedObject, Point position, Rectangle dragRectangle) {    	
+    	// Search for a listener by walking the control's parent hierarchy
         for (Control current = toSearch; current != null; current = current
                 .getParent()) {
             IDropTarget dropTarget = getDropTarget(getTargetList(current),

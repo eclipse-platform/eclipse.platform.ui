@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.internal.IChangeListener;
 import org.eclipse.ui.IWindowTrim;
+import org.eclipse.ui.internal.IChangeListener;
 import org.eclipse.ui.internal.IntModel;
 import org.eclipse.ui.internal.RadioMenu;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -282,22 +282,7 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
     				// populate from superclass
     				super.fill(menu, index);
     				
-    				// Add an 'immediate' 'pref'
-    				MenuItem dragStyle = new MenuItem(menu, SWT.CHECK, index++);
-    				dragStyle.setText(WorkbenchMessages.TrimCommon_Immediate);
-    				dragStyle.setSelection(layout.isImmediate());
-    				
-    				dragStyle.addSelectionListener(new SelectionListener() {
-						public void widgetSelected(SelectionEvent e) {
-							layout.setImmediate(!layout.isImmediate());
-						}
-
-						public void widgetDefaultSelected(SelectionEvent e) {
-						}
-    				});
-
-    				new MenuItem(menu, SWT.SEPARATOR, index++);
-    				
+    				// Add a 'Close' menu entry if the trim supports the operation
     				if (trim.isCloseable()) {
 	    				MenuItem closeItem = new MenuItem(menu, SWT.PUSH, index++);
 	    				closeItem.setText(WorkbenchMessages.TrimCommon_Close);
@@ -314,6 +299,7 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
 	    				new MenuItem(menu, SWT.SEPARATOR, index++);
     				}
     				
+    				// Create a cascading menu to allow the user to dock the trim
     				dockCascade = new MenuItem(menu, SWT.CASCADE, index++);
     				{
     					dockCascade.setText(WorkbenchMessages.TrimCommon_DockOn); 
@@ -333,6 +319,14 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
     					
     					dockCascade.setMenu(sidesMenu);
     				}
+
+    		    	// if the radioVal changes it means that the User wants to change the docking location
+    		    	radioVal.addChangeListener(new IChangeListener() {
+    					public void update(boolean changed) {
+    						if (changed)
+    							handleShowOnChange();
+    					}
+    		    	});
     				
     				// Provide Show / Hide trim capabilities
     				showCascade = new MenuItem(menu, SWT.CASCADE, index++);
@@ -369,14 +363,6 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
     					
     					showCascade.setMenu(showMenu);
     				}
-
-    		    	// if the radioVal changes it means that the User wants to change the docking location
-    		    	radioVal.addChangeListener(new IChangeListener() {
-    					public void update(boolean changed) {
-    						if (changed)
-    							handleShowOnChange();
-    					}
-    		    	});
     			}
     		};
     	}
@@ -415,14 +401,8 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
      * @param position initial mouse position
      */
     protected void startDraggingTrim(Point position) {
-        Rectangle dragRect = DragUtil.getDisplayBounds(toDrag);
-        
-        // If we're doing an 'immediate' drag then avoid showing the
-        // track rect at all to avoid cheese...
-        if (layout.isImmediate())
-        	dragRect = new Rectangle(0,0,0,0);
-
-        DragUtil.performDrag(trim, dragRect, position, true);
+    	Rectangle fakeBounds = new Rectangle(100000, 0,0,0);
+        DragUtil.performDrag(trim, fakeBounds, position, true);
     }
 
     /**

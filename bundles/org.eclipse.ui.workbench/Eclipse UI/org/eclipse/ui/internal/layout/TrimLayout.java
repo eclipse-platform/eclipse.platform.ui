@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.ui.ITrimManager;
 import org.eclipse.ui.IWindowTrim;
-import org.eclipse.ui.internal.dnd.DragUtil;
 
 /**
  * Lays out the children of a Composite. One control occupies the center of the
@@ -114,16 +113,6 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	private int rightSpacing;
 
 	private int spacing = 3;
-
-	/**
-	 * Are we using common drag handles.
-	 */
-	private boolean fUseCommonUI = true;
-
-	/**
-	 * Do we want WYSIWIG feedback during dragging
-	 */
-	private boolean fImmediate = true;
 
 	/**
 	 * Creates a new (initially empty) trim layout.
@@ -254,22 +243,18 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 			return;
 		}
 
-		TrimDescriptor desc = (TrimDescriptor) fTrimDescriptors.get(trim
-				.getId());
-
-		if (desc != null) {
-			removeTrim(trim);
-		} else {
-			desc = new TrimDescriptor(trim, areaId);
-		}
+		// remove the trim from the current layout
+		removeTrim(trim);
 		
+		// Create a new trim descriptor for the new area...
+		TrimDescriptor desc = new TrimDescriptor(trim, areaId);
+
+		// Create a 'docking' handle to allow dragging the trim
 		SizeCache cache = new SizeCache(trim.getControl());
 		desc.setCache(cache);
-		if (fUseCommonUI) {
-			Composite dockingHandle = new TrimCommonUIHandle(this, trim,
-					areaId);
-			desc.setDockingCache(new SizeCache(dockingHandle));
-		}
+		Composite dockingHandle = new TrimCommonUIHandle(this, trim,
+				areaId);
+		desc.setDockingCache(new SizeCache(dockingHandle));
 
 		fTrimDescriptors.put(desc.getId(), desc);
 		
@@ -594,157 +579,6 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	}
 
 	/**
-	 * Returns the control that the dragged control should be placed 'before'.
-	 * 
-	 * @param areaId
-	 *            The side to get the info for
-	 * @param pos
-	 *            the current cursor position (in device coords)
-	 * @return The control to be inserted before or null if it should go at the
-	 *         end
-	 * @since 3.2
-	 * @see #getAreaIds()
-	 */
-	public IWindowTrim getInsertBefore(int areaId, Point pos) {
-		TrimArea area = (TrimArea) fTrimArea.get(new Integer(areaId));
-		if (area == null || area.isEmpty()) {
-			return null;
-		}
-
-		boolean isHorizontal = !area.isVertical();
-
-		Iterator d = area.getDescriptors().iterator();
-		while (d.hasNext()) {
-			TrimDescriptor desc = (TrimDescriptor) d.next();
-			Rectangle bounds = DragUtil.getDisplayBounds(desc.getCache()
-					.getControl());
-			if (isHorizontal) {
-				// Left of center means 'insert before me'
-				if (pos.x < Geometry.centerPoint(bounds).x)
-					return desc.getTrim();
-			} else {
-				// Above center means 'insert before me'
-				if (pos.y < Geometry.centerPoint(bounds).y)
-					return desc.getTrim();
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Returns a 'snapRectangle' appropriate to the expected action for use by
-	 * the <code>TrimDropTarget</code>.
-	 * 
-	 * @param window
-	 *            The owner of this TrimLayout
-	 * @param areaId
-	 *            The side that the dragged trim is currently over
-	 * @param dragRect
-	 *            The rectangle representing the dragged trim
-	 * @param insertBefore
-	 *            The trim that the dragged trim would be inserted before
-	 * 
-	 * @return the appropriate snap rectangle (in display coords)
-	 * @since 3.2
-	 * @see #getAreaIds()
-	 */
-	public Rectangle getSnapRectangle(Composite window, int areaId,
-			Rectangle dragRect, IWindowTrim insertBefore) {
-		TrimArea area = (TrimArea) fTrimArea.get(new Integer(areaId));
-
-		Rectangle trimRect = getTrimRect(window, areaId);
-
-		if (insertBefore == null) {
-			if (area != null && !area.isEmpty()) {
-				// Place the dragRect at the 'end' of the current controls
-				List descs = area.getDescriptors();
-				TrimDescriptor last = (TrimDescriptor) descs
-						.get(descs.size() - 1);
-				Rectangle lastRect = DragUtil.getDisplayBounds(last.getCache()
-						.getControl());
-
-				if (!area.isVertical()) {
-					Rectangle snapRect = new Rectangle(lastRect.x
-							+ lastRect.width, lastRect.y, dragRect.width,
-							dragRect.height);
-
-					// Force the rectangle back into the trim rect (in case it's
-					// 'full')
-					int dx = (trimRect.x + trimRect.width)
-							- (snapRect.x + snapRect.width);
-					if (dx < 0)
-						Geometry.moveRectangle(snapRect, new Point(dx, 0));
-					return snapRect;
-				} else if (area.isVertical()) {
-					Rectangle snapRect = new Rectangle(lastRect.x, lastRect.y
-							+ lastRect.height, dragRect.width, dragRect.height);
-
-					// Force the rectangle back into the trim rect (in case it's
-					// 'full')
-					int dy = (trimRect.y + trimRect.height)
-							- (snapRect.y + snapRect.height);
-					if (dy < 0)
-						Geometry.moveRectangle(snapRect, new Point(dy, 0));
-
-					// If it's the RIGHT side then also force the rectangle
-					// inside the frame
-					if (areaId == RIGHT) {
-						int dx = (trimRect.x + trimRect.width)
-								- (snapRect.x + snapRect.width);
-						if (dx < 0)
-							Geometry.moveRectangle(snapRect, new Point(dx, 0));
-					}
-
-					return snapRect;
-				}
-			} else {
-				Rectangle snapRect = new Rectangle(trimRect.x, trimRect.y,
-						dragRect.width, dragRect.height);
-
-				// If it's the RIGHT side then also force the rectangle inside
-				// the frame
-				if (areaId == RIGHT) {
-					int dx = (trimRect.x + trimRect.width)
-							- (snapRect.x + snapRect.width);
-					if (dx < 0)
-						Geometry.moveRectangle(snapRect, new Point(dx, 0));
-				}
-
-				return snapRect;
-			}
-		}
-
-		// OK...we've got something to work with...
-
-		// First, get the drag handle associated with this control
-		Control trimControl = insertBefore.getControl();
-
-		// int index = getIndex(id, trimControl);
-		TrimDescriptor desc = findTrimDescription(trimControl);
-
-		Rectangle ctrlRect = DragUtil.getDisplayBounds(trimControl);
-
-		if (fUseCommonUI && desc != null) {
-			Control dragHandle = desc.getDockingCache().getControl();
-			ctrlRect = DragUtil.getDisplayBounds(dragHandle);
-		}
-
-		Rectangle snapRect;
-		if (!area.isVertical()) {
-			snapRect = new Rectangle(ctrlRect.x - 2, ctrlRect.y - 2, 5,
-					ctrlRect.height + 4);
-		} else {
-			snapRect = new Rectangle(ctrlRect.x - 2, ctrlRect.y - 2,
-					ctrlRect.width + 4, 5);
-		}
-
-		// Rectangle snapRect = new
-		// Rectangle(ctrlRect.x,ctrlRect.y,dragRect.width,dragRect.height);
-		return snapRect;
-	}
-
-	/**
 	 * Return a trim area rectangle.
 	 * 
 	 * @param window
@@ -843,49 +677,6 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	}
 
 	/**
-	 * Return whether common drag affordances are on or not.
-	 * 
-	 * @return <code>true</code> if we use a common UI for dragging
-	 * @since 3.2
-	 */
-	public boolean useCommonUI() {
-		return fUseCommonUI;
-	}
-
-	/**
-	 * Set to <code>true</code> if we should use the common UI for dragging.
-	 * 
-	 * @param useCommonUI
-	 *            <code>true</code> or <code>false</code>
-	 * @since 3.2
-	 */
-	public void setUseCommonUI(boolean useCommonUI) {
-		fUseCommonUI = useCommonUI;
-	}
-
-	/**
-	 * Return <code>true</code> if we are dragging in immediate mode.
-	 * 
-	 * @return <code>true</code> or <code>false</code>
-	 * @since 3.2
-	 */
-	public boolean isImmediate() {
-		return fImmediate;
-	}
-
-	/**
-	 * Set to <code>true</code> if we should do trim dragging in immediate
-	 * mode.
-	 * 
-	 * @param immediate
-	 *            <code>true</code> or <code>false</code>
-	 * @since 3.2
-	 */
-	public void setImmediate(boolean immediate) {
-		this.fImmediate = immediate;
-	}
-
-	/**
 	 * Find the trim descriptor for this control.
 	 * 
 	 * @param trim
@@ -906,5 +697,15 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Return the trim area associated with the given id
+	 * 
+	 * @param areaId The id of the trim area to get
+	 * @return The TrimArea or <code>null</code> if the id is not found
+	 */
+	public TrimArea getTrimArea(int areaId) {
+		return (TrimArea) fTrimArea.get(new Integer(areaId));
 	}
 }

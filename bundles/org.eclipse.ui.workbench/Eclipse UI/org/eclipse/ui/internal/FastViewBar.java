@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener2;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.IWorkbenchPage;
@@ -67,24 +68,24 @@ import org.osgi.framework.Bundle;
  */
 public class FastViewBar implements IWindowTrim {
     private ToolBarManager fastViewBar;
-
     private MenuManager fastViewBarMenuManager;
+    private FastViewBarContextMenuContribution contextContributionItem;
 
     private WorkbenchWindow window;
-
     private IViewReference selection;
     
-    private Composite control;
-
+    private Composite fvbComposite;
+    private ToolBar menuTB;
+    private ToolItem menuItem;
     private CellData toolBarData;
 
     private static final int HIDDEN_WIDTH = 5;
 
-    private Cursor moveCursor;
-
     IntModel side = new IntModel(getInitialSide());
 
     private int oldLength = 0;
+    
+    private ViewDropTarget dropTarget;
 
     private Listener dragListener = new Listener() {
         public void handleEvent(Event event) {
@@ -168,12 +169,6 @@ public class FastViewBar implements IWindowTrim {
 			return Geometry.toDisplay(getToolBar(), position.getBounds());
         }
     }
-    
-    ViewDropTarget dropTarget;
-
-    private DragHandle dragHandle;
-
-    private FastViewBarContextMenuContribution contextContributionItem;
     
     /**
      * Constructs a new fast view bar for the given workbench window.
@@ -348,14 +343,14 @@ public class FastViewBar implements IWindowTrim {
     }
 
     /**
-     * Creates the underlying SWT control for the fast view bar. Will add exactly
-     * one new control to the given composite. Makes no assumptions about the layout
+     * Creates the underlying SWT fvbComposite for the fast view bar. Will add exactly
+     * one new fvbComposite to the given composite. Makes no assumptions about the layout
      * being used in the parent composite.
      * 
      * @param parent enclosing SWT composite
      */
     public void createControl(Composite parent) {
-        control = new Composite(parent, SWT.NONE);
+        fvbComposite = new Composite(parent, SWT.NONE);
 
         side.addChangeListener(new IChangeListener() {
             public void update(boolean changed) {
@@ -365,24 +360,37 @@ public class FastViewBar implements IWindowTrim {
                 }
             }
         });
-        control.addListener(SWT.MenuDetect, menuListener);
-        PresentationUtil.addDragListener(control, dragListener);
+        fvbComposite.addListener(SWT.MenuDetect, menuListener);
+        PresentationUtil.addDragListener(fvbComposite, dragListener);
 
         createChildControls();
     }
 
     /**
-     * Create the contents of the fast view bar. The top-level control (created by createControl) is a 
+     * Create the contents of the fast view bar. The top-level fvbComposite (created by createControl) is a 
      * composite that is created once over the lifetime of the fast view bar. This method creates the 
      * rest of the widgetry inside that composite. The controls created by this method will be 
      * destroyed and recreated if the fast view bar is docked to a different side of the window.
      */
     protected void createChildControls() {
         int newSide = getSide();
-        int flags = Geometry.isHorizontal(newSide) ? SWT.HORIZONTAL
+        int orientation = Geometry.isHorizontal(newSide) ? SWT.HORIZONTAL
                 : SWT.VERTICAL;
+        
+        menuTB = new ToolBar(fvbComposite, SWT.FLAT | orientation);
 
-        fastViewBar = new ToolBarManager(SWT.FLAT | SWT.WRAP | flags);
+        // Construct an item to act as a 'menu button' (a la the PerspectiveSwitcher)
+        menuItem = new  ToolItem(menuTB, SWT.PUSH, 0);
+        menuItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(
+                ISharedImages.IMG_DEF_VIEW));
+        String menuTip = WorkbenchMessages.FastViewBar_0;
+        menuItem.setToolTipText(menuTip);
+        //new ToolItem(menuTB, SWT.SEPARATOR, 1);
+        menuItem.addListener(SWT.MenuDetect, menuListener);        
+        menuTB.addListener(SWT.MenuDetect, menuListener);        
+
+        // Construct the ToolBar containing the 'Fast' views
+        fastViewBar = new ToolBarManager(SWT.FLAT | SWT.WRAP | orientation);
         fastViewBar.add(new ShowFastViewContribution(window));
 
         CellLayout controlLayout;
@@ -400,12 +408,12 @@ public class FastViewBar implements IWindowTrim {
         		.setDefaultRow(Row.fixed())
         		.setRow(1, Row.growing());
         }
-        control.setLayout(controlLayout);
+        
+        fvbComposite.setLayout(controlLayout);
         String tip = WorkbenchMessages.FastViewBar_0; 
-        control.setToolTipText(tip);
+        fvbComposite.setToolTipText(tip);
 
-
-        fastViewBar.createControl(control);
+        fastViewBar.createControl(fvbComposite);
 
         getToolBar().addListener(SWT.MenuDetect, menuListener);
 
@@ -458,9 +466,6 @@ public class FastViewBar implements IWindowTrim {
         getToolBar().setLayoutData(toolBarData);
         PresentationUtil.addDragListener(getToolBar(), dragListener);
         DragUtil.addDragTarget(getControl(), fastViewDragTarget);
-        if (dragHandle != null) {
-            PresentationUtil.addDragListener(dragHandle, dragListener);
-        }
 
         update(true);
     }
@@ -537,7 +542,7 @@ public class FastViewBar implements IWindowTrim {
      */
     protected void startDraggingFastViewBar(Point position,
             boolean usingKeyboard) {
-        Rectangle dragRect = DragUtil.getDisplayBounds(control);
+        Rectangle dragRect = DragUtil.getDisplayBounds(fvbComposite);
 
         startDrag(this, dragRect, position, usingKeyboard);
     }
@@ -600,14 +605,14 @@ public class FastViewBar implements IWindowTrim {
     }
 
     /**
-     * Returns the underlying SWT control for the fast view bar, or null if
+     * Returns the underlying SWT fvbComposite for the fast view bar, or null if
      * createControl has not yet been invoked. The caller must not make any
      * assumptions about the type of Control that is returned.
      * 
-     * @return the underlying SWT control for the fast view bar
+     * @return the underlying SWT fvbComposite for the fast view bar
      */
     public Control getControl() {
-        return control;
+        return fvbComposite;
     }
 
     public void dispose() {
@@ -620,16 +625,9 @@ public class FastViewBar implements IWindowTrim {
         fastViewBar.dispose();
         fastViewBar = null;
         
-        if (dragHandle != null) {
-            dragHandle.dispose();
-            dragHandle = null;
-        }
-
-        if (moveCursor != null) {
-            moveCursor.dispose();
-            moveCursor = null;
-        }
-
+        menuItem.dispose();
+        menuTB.dispose();
+        
         oldLength = 0;
     }
 
@@ -672,7 +670,7 @@ public class FastViewBar implements IWindowTrim {
         }
    
         if (items.length != oldLength) {
-            LayoutUtil.resize(control);
+            LayoutUtil.resize(fvbComposite);
             oldLength = items.length;
         }
 	}
