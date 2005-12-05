@@ -11,8 +11,6 @@
 package org.eclipse.jface.internal.text.link.contentassist;
 
 
-
-
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
@@ -31,7 +29,7 @@ import org.eclipse.jface.text.TextPresentation;
  * Reads the text contents from a reader of HTML contents and translates
  * the tags or cut them out.
  */
-class HTML2TextReader extends SubstitutionTextReader {
+public class HTML2TextReader extends SubstitutionTextReader {
 
 	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
 	private static final Map fgEntityLookup;
@@ -42,6 +40,10 @@ class HTML2TextReader extends SubstitutionTextReader {
 		fgTags= new HashSet();
 		fgTags.add("b"); //$NON-NLS-1$
 		fgTags.add("br"); //$NON-NLS-1$
+		fgTags.add("h1"); //$NON-NLS-1$
+		fgTags.add("h2"); //$NON-NLS-1$
+		fgTags.add("h3"); //$NON-NLS-1$
+		fgTags.add("h4"); //$NON-NLS-1$
 		fgTags.add("h5"); //$NON-NLS-1$
 		fgTags.add("p"); //$NON-NLS-1$
 		fgTags.add("dl"); //$NON-NLS-1$
@@ -133,6 +135,8 @@ class HTML2TextReader extends SubstitutionTextReader {
 		if (html == null || html.length() == 0)
 			return EMPTY_STRING;
 
+		html= html.toLowerCase();
+		
 		String tag= html;
 		if ('/' == tag.charAt(0))
 			tag= tag.substring(1);
@@ -159,7 +163,7 @@ class HTML2TextReader extends SubstitutionTextReader {
 			return EMPTY_STRING;
 		}
 
-		if ("h5".equals(html) || "dt".equals(html)) { //$NON-NLS-1$ //$NON-NLS-2$
+		if ((html.length() > 1 && html.charAt(0) == 'h' && Character.isDigit(html.charAt(1))) || "dt".equals(html)) { //$NON-NLS-1$
 			startBold();
 			return EMPTY_STRING;
 		}
@@ -170,10 +174,9 @@ class HTML2TextReader extends SubstitutionTextReader {
 		if ("dd".equals(html)) //$NON-NLS-1$
 			return "\t"; //$NON-NLS-1$
 
-		if ("li".equals(html)) {  //$NON-NLS-1$
+		if ("li".equals(html)) //$NON-NLS-1$
 			// FIXME: this hard-coded prefix does not work for RTL languages, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=91682
 			return LINE_DELIM + ContentAssistMessages.getString("HTML2TextReader.listItemPrefix"); //$NON-NLS-1$
-		}
 
 		if ("/b".equals(html)) { //$NON-NLS-1$
 			stopBold();
@@ -194,7 +197,7 @@ class HTML2TextReader extends SubstitutionTextReader {
 			return inParagraph ? EMPTY_STRING : LINE_DELIM;
 		}
 
-		if ("/h5".equals(html) || "/dt".equals(html)) { //$NON-NLS-1$ //$NON-NLS-2$
+		if ((html.startsWith("/h") && html.length() > 2 && Character.isDigit(html.charAt(2))) || "/dt".equals(html)) { //$NON-NLS-1$ //$NON-NLS-2$
 			stopBold();
 			return LINE_DELIM;
 		}
@@ -206,7 +209,7 @@ class HTML2TextReader extends SubstitutionTextReader {
 	}
 
 	/*
-	 * A '<' has been read. Process a HTML tag
+	 * A '<' has been read. Process a html tag
 	 */
 	private String processHTMLTag() throws IOException {
 
