@@ -118,11 +118,9 @@ public class TableScenarios extends ScenariosTestCase {
 
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(
 				tableViewer);
-		tableViewerDescription.addColumn("firstName");
-		tableViewerDescription.addColumn("lastName", null,
-				new PhoneConverter());
-		tableViewerDescription.addColumn("state", null,
-				new StateConverter());
+		tableViewerDescription.addEditableColumn("firstName");
+		tableViewerDescription.addEditableColumn("lastName", null, null, new PhoneConverter());
+		tableViewerDescription.addEditableColumn("state", null, null, new StateConverter());
 		getDbc().bind(tableViewerDescription,
 				new Property(catalog, "accounts"), null);
 
@@ -201,10 +199,10 @@ public class TableScenarios extends ScenariosTestCase {
 
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(
 				tableViewer);
-		tableViewerDescription.addColumn("lastName");
-		tableViewerDescription.addColumn("phone", null,
+		tableViewerDescription.addEditableColumn("lastName");
+		tableViewerDescription.addEditableColumn("phone", null, null ,
 				new PhoneConverter());
-		tableViewerDescription.addColumn("state", null,
+		tableViewerDescription.addEditableColumn("state", null, null ,
 				new StateConverter());
 		getDbc().bind(tableViewerDescription,
 				new Property(catalog, "accounts"), null);
@@ -236,9 +234,9 @@ public class TableScenarios extends ScenariosTestCase {
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(
 				tableViewer);
 		tableViewerDescription.addColumn("lastName");
-		tableViewerDescription.addColumn("phone", null,
+		tableViewerDescription.addColumn("phone",
 				new PhoneConverter());
-		tableViewerDescription.addColumn("state", null,
+		tableViewerDescription.addColumn("state",
 				new StateConverter());
 		getDbc().bind(tableViewerDescription,
 				new Property(catalog, "accounts"), null);
@@ -265,10 +263,10 @@ public class TableScenarios extends ScenariosTestCase {
 	}
 	
 	public void testScenario06(){
-		// Check that defaulting of converters, validators and cell editors work based on the explicit type of the column being specified
+		// Check that explicit type means that defaulting of converters works
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(
 				tableViewer);
-		tableViewerDescription.addColumn("price");
+		tableViewerDescription.addEditableColumn("price");
 		tableViewerDescription.getColumn(0).setPropertyType(Double.TYPE);
 		getDbc().bind(tableViewerDescription,
 				new Property(catalog, "transporations"), null);
@@ -288,7 +286,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// Verify that even when a column's property type is not set, that it is worked out lazily from the target type 
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(
 				tableViewer);
-		tableViewerDescription.addColumn("price");
+		tableViewerDescription.addEditableColumn("price");
 		// The column's type is not set to be Double.TYPE.  This will be inferred once the first Transportation object is set
 		// into the UpdatableCollection
 		getDbc().bind(tableViewerDescription,
@@ -309,8 +307,8 @@ public class TableScenarios extends ScenariosTestCase {
 		// Verify that binding to a Collection property (rather than an array) works
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(
 				tableViewer);
-		tableViewerDescription.addColumn("userId");
-		tableViewerDescription.addColumn("password");	
+		tableViewerDescription.addEditableColumn("userId");
+		tableViewerDescription.addEditableColumn("password");	
 		getDbc().bind(tableViewerDescription,
 				new Property(catalog, "signons", Signon.class, null), null);	
 		Signon firstSignon = (Signon) catalog.getSignons().get(0);	

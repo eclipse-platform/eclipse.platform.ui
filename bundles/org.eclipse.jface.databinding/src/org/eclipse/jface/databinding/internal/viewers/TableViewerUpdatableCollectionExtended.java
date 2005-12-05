@@ -125,7 +125,9 @@ public class TableViewerUpdatableCollectionExtended extends
 		for (int i = 0; i < columnCount; i++) {
 			Column column = tableViewerDescription.getColumn(i);
 			columnProperties[i] = column.getPropertyName();
-			cellEditors[i] = column.getCellEditor();
+			if(column.isEditable()){
+				cellEditors[i] = column.getCellEditor();
+			}
 		}
 		tableViewer.setColumnProperties(columnProperties);
 		tableViewer.setCellEditors(cellEditors);
@@ -157,7 +159,8 @@ public class TableViewerUpdatableCollectionExtended extends
 			}
 
 			public boolean canModify(Object element, String property) {
-				return findColumn(property) != null;
+				Column column = findColumn(property);
+				return column != null && column.isEditable();
 			}
 
 			private List getNestedPorperties (String properties) {	
@@ -280,11 +283,11 @@ public class TableViewerUpdatableCollectionExtended extends
 				else
 				   column.setConverter(new IdentityConverter(String.class));
 			}
-			if (column.getValidator() == null) {
+			if (column.getValidator() == null && column.isEditable()) {
 				columnInfos[i].validatorDefaulted = true;
 				initializeColumnValidator(column, column.getPropertyType());
 			}
-			if (column.getCellEditor() == null) {
+			if (column.getCellEditor() == null && column.isEditable()) {
 				columnInfos[i].cellEditorDefaulted = true;
 				column.setCellEditor(createCellEditor(column));
 			}

@@ -44,7 +44,6 @@ public class TableViewerDescription {
 	 *
 	 */
 	public static class Column {
-		private String name;
 
 		private String propertyName;
 		
@@ -55,9 +54,10 @@ public class TableViewerDescription {
 		private IConverter converter;
 
 		private CellEditor cellEditor;
+		
+		private boolean readOnly = true;
 
 		/**
-		 * @param name
 		 * @param propertyName
 		 * @param cellEditor
 		 * @param validator
@@ -69,6 +69,14 @@ public class TableViewerDescription {
 			this.cellEditor = cellEditor;
 			this.validator = validator;
 			this.converter = converter;
+			readOnly = false;
+		}
+
+		
+		Column(String propertyName, IConverter converter) {
+			this.propertyName = propertyName;
+			this.converter = converter;
+			readOnly = true;
 		}
 
 		/**
@@ -128,10 +136,18 @@ public class TableViewerDescription {
 		}
 
 		/**
-		 * @param leafClass
+		 * @param propertyType
 		 */
 		public void setPropertyType(Class propertyType) {
 			this.propertyType = propertyType;
+		}
+
+
+		/**
+		 * @return boolean for whether the column is editable
+		 */
+		public boolean isEditable() {
+			return !readOnly;
 		}
 	}
 
@@ -156,7 +172,7 @@ public class TableViewerDescription {
 	 * @param converter
 	 *            converter from model objects to String, or ImageAndString.
 	 */
-	public void addColumn(int columnIndex, String propertyName,
+	public void addEditableColumn(int columnIndex, String propertyName,
 			CellEditor cellEditor, IValidator validator, IConverter converter) {
 		Column column = new Column(propertyName, cellEditor , validator,
 				converter);
@@ -167,52 +183,78 @@ public class TableViewerDescription {
 		}	
 	}
 	
+	private void addReadOnlyColumn(int columnIndex, String propertyName, IConverter converter) {
+		Column column = new Column(propertyName, converter);
+		if(columnIndex == -1){
+			columns.add(column);
+		} else {
+			columns.add(columnIndex,column);				
+		}	
+	}	
+	
 	/**
 	 * @param propertyName
 	 * @param cellEditor
 	 * @param validator
 	 * @param converter
 	 */
-	public void addColumn(String propertyName,
+	public void addEditableColumn(String propertyName,
 			CellEditor cellEditor, IValidator validator, IConverter converter) {
-		addColumn(-1,propertyName,cellEditor,validator,converter);
+		addEditableColumn(-1,propertyName,cellEditor,validator,converter);
 	}
 
 	/**
 	 * @param columnIndex
 	 * @param propertyName
-	 * @param validator
 	 * @param converter
 	 */
-	public void addColumn(int columnIndex, String propertyName,
-			IValidator validator, IConverter converter) {
-		addColumn(columnIndex,propertyName,null,validator,converter);
+	public void addColumn(int columnIndex, String propertyName,IConverter converter) {
+		addReadOnlyColumn(columnIndex,propertyName,converter);
 	}
 	
 	
 	/**
 	 * @param propertyName
-	 * @param validator
 	 * @param converter
 	 */
-	public void addColumn(String propertyName,
-			IValidator validator, IConverter converter) {	
-		addColumn(-1,propertyName,validator,converter);
+	public void addColumn(String propertyName,IConverter converter) {	
+		addReadOnlyColumn(-1,propertyName,converter);
 	}
 
 	/**
+	 * Add a column that is readOnly
 	 * @param propertyName
 	 */
 	public void addColumn(String propertyName) {
-		addColumn(-1, propertyName, null, null, null);
+		addReadOnlyColumn(-1, propertyName, null);
 	}
+	
+
+	/**
+	 * Add a column that is editable.  The cell editor will be defaulted based on the type of the property
+	 * or can be explicitly set using the more verbose API that includes the CellEditor argument
+	 * @param propertyName
+	 */
+	public void addEditableColumn(String propertyName) {
+		addEditableColumn(-1, propertyName);
+	}	
+	
+	/**
+	 * Add a column that is editable.  The cell editor will be defaulted based on the type of the property
+	 * or can be explicitly set using the more verbose API that includes the CellEditor argument
+	 * @param index				The column index
+	 * @param propertyName		The property name
+	 */
+	public void addEditableColumn(int index, String propertyName) {
+		addEditableColumn(index, propertyName,null,null,null);
+	}	
 	
 	/**
 	 * @param columnIndex
 	 * @param propertyName
 	 */
 	public void addColumn(int columnIndex, String propertyName) {
-		addColumn(columnIndex, propertyName, null, null, null);
+		addReadOnlyColumn(columnIndex, propertyName, null);
 	}	
 
 	/**
