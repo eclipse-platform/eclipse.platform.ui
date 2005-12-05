@@ -16,8 +16,6 @@ import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.converters.IdentityConverter;
 import org.eclipse.jface.databinding.internal.beans.PropertyHelper;
@@ -318,12 +316,7 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 					if(column.getPropertyType() == null && (columnInfo.cellEditorDefaulted || columnInfo.converterDefaulted || columnInfo.validatorDefaulted)){
 						// Work out the type of the column from the property name from the element type itself
 						PropertyHelper helper = new PropertyHelper(column.getPropertyName(), value.getClass());
-						
-						// resolve nesting
-						Property columnPropertyDesc = new Property(helper.getLeafTarget(value), helper.getLeafProperty());
-						
-						IUpdatableValue dummyUpdatable = (IUpdatableValue) dataBindingContext.createUpdatable(columnPropertyDesc);
-						Class columnType = dummyUpdatable.getValueType();
+						Class columnType =helper.getGetter().getReturnType();
 						if(columnType != null){
 							// We have a more explicit property type that was supplied
 							if(columnInfo.converterDefaulted){	

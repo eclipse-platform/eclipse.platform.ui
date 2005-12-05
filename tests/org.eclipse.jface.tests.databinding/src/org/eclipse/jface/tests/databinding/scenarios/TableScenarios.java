@@ -327,7 +327,7 @@ public class TableScenarios extends ScenariosTestCase {
 		assertEquals("Cricket11Players",firstSignon.getPassword());
 		
 	}
-/**	
+
 	public void testScenario09(){
 		// Verify that nested properties work.  Catalog has adventures.  Adventure has defaultLodging.  Loding has name.
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(tableViewer);
@@ -336,5 +336,5 @@ public class TableScenarios extends ScenariosTestCase {
 		getDbc().bind(tableViewerDescription,new Property(category, "adventures"),null);
 		
 	}
- **/	
+	
 }
