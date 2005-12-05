@@ -19,10 +19,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.mapping.IResourceMappingScope;
-import org.eclipse.team.ui.mapping.ISynchronizationContext;
 import org.eclipse.ui.navigator.*;
 
 public class ResourceMappingHierarchyArea extends DialogArea implements INavigatorContentServiceListener {

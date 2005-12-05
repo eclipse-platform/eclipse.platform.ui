@@ -11,12 +11,12 @@
 package org.eclipse.team.ui.operations;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.team.core.mapping.IMergeContext;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.mapping.MarkAsMergedAction;
 import org.eclipse.team.internal.ui.mapping.MergeIncomingChangesAction;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.mapping.IMergeContext;
-import org.eclipse.team.ui.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPageBookViewPage;

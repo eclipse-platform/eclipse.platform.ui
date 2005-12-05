@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.team.core.delta.ISyncDelta;
-import org.eclipse.team.ui.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 

@@ -17,6 +17,7 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
@@ -27,8 +28,8 @@ import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticip
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.delta.SyncDeltaTree;
 import org.eclipse.team.internal.core.delta.SyncInfoToDeltaConverter;
-import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.operations.MergeContext;
+import org.eclipse.team.ui.synchronize.ResourceScope;
 
 public class CVSMergeContext extends MergeContext {
 	
@@ -36,7 +37,7 @@ public class CVSMergeContext extends MergeContext {
 	private final SyncInfoToDeltaConverter converter;
 
 	public static IMergeContext createContext(IResourceMappingScope scope, IProgressMonitor monitor) {
-		WorkspaceSynchronizeParticipant participant = new WorkspaceSynchronizeParticipant(scope);
+		WorkspaceSynchronizeParticipant participant = new WorkspaceSynchronizeParticipant(new ResourceScope(scope.getRoots()));
 		participant.refreshNow(participant.getResources(), NLS.bind("Preparing to merge {0}", new String[] { "TODO: mapping description for CVS merge context initialization" }), monitor);
 		SyncDeltaTree tree = new SyncDeltaTree();
 		SyncInfoToDeltaConverter converter = new SyncInfoToDeltaConverter(participant.getSyncInfoSet(), tree);

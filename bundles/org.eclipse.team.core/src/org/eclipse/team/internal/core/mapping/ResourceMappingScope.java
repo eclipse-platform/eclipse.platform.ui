@@ -8,13 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.mapping;
+package org.eclipse.team.internal.core.mapping;
 
 import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.team.ui.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.IResourceMappingScope;
 
 /**
  * Concrete implementation of the {@link IResourceMappingScope}

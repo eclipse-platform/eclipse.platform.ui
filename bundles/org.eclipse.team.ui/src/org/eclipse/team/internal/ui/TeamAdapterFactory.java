@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.team.core.mapping.IResourceMappingMerger;
 import org.eclipse.team.internal.ui.mapping.DefaultResourceMappingMerger;
 import org.eclipse.team.internal.ui.synchronize.DiffNodeWorkbenchAdapter;
 import org.eclipse.team.ui.mapping.*;

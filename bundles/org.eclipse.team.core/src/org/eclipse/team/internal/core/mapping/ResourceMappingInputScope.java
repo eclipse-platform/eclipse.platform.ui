@@ -8,14 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.mapping;
+package org.eclipse.team.internal.core.mapping;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.team.ui.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.IResourceMappingScope;
 
 /**
  * This scope wraps another scope and treats the input mappings of
@@ -72,12 +72,5 @@ public class ResourceMappingInputScope extends AbstractResourceMappingScope {
 	 */
 	public boolean hasAdditionalMappings() {
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.ISynchronizeScope#getName()
-	 */
-	public String getName() {
-		return wrappedScope.getName();
 	}
 }

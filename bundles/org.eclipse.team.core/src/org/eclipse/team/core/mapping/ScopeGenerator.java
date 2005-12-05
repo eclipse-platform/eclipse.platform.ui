@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.operations;
+package org.eclipse.team.core.mapping;
 
 import java.util.*;
 
@@ -17,10 +17,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.mapping.ResourceMappingScope;
-import org.eclipse.team.ui.mapping.IResourceMappingScope;
+import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.core.mapping.ResourceMappingInputScope;
+import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
 
 /**
  * Class for translating a set of <code>ResourceMapping</code> objects
@@ -205,7 +205,7 @@ public class ScopeGenerator {
 					result.addAll(Arrays.asList(project.getDescription()
 							.getNatureIds()));
 				} catch (CoreException e) {
-					TeamUIPlugin.log(e);
+					TeamPlugin.log(e);
 				}
 			}
 		}
@@ -255,5 +255,20 @@ public class ScopeGenerator {
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Return a scope that provides a client access to 
+	 * the input mappings of the given scope as if
+	 * they were the complete resource mapping scope.
+	 * This is provided as a means to display the 
+	 * input resource mappings only.
+	 * @param scope a complete resource mapping scope
+	 * @return a scope that provides a client access to 
+	 * the input mappings of the given scope as if
+	 * they were the complete resource mapping scope
+	 */
+	public final IResourceMappingScope asInputScope(IResourceMappingScope scope) {
+		return new ResourceMappingInputScope(scope);
 	}
 }

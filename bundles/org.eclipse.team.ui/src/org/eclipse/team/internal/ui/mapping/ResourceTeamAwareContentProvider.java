@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.team.core.delta.ISyncDelta;
+import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.mapping.*;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -94,7 +96,7 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 	public void init(IExtensionStateModel aStateModel, IMemento aMemento) {
 		super.init(aStateModel, aMemento);
 		// TODO: must explicilty register for sync change events (perhaps this should be a flag of some sort)
-		org.eclipse.team.ui.mapping.ISynchronizationContext context = getContext();
+		org.eclipse.team.core.mapping.ISynchronizationContext context = getContext();
 		if (context != null)
 			context.getSyncDeltaTree().addSyncDeltaChangeListener(this);
 	}

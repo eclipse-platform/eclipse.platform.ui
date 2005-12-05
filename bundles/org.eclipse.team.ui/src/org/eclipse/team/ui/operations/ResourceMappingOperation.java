@@ -16,9 +16,8 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.window.Window;
+import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.dialogs.AdditionalMappingsDialog;
-import org.eclipse.team.ui.mapping.IResourceMappingScope;
-import org.eclipse.team.ui.mapping.ISynchronizationContext;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**

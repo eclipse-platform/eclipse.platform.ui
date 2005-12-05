@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.operations;
+package org.eclipse.team.core.mapping;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,15 +16,15 @@ import java.util.Set;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.core.delta.*;
 import org.eclipse.team.core.synchronize.ISyncInfoTree;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.delta.SyncDeltaTree;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.mapping.SynchronizationCache;
-import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.internal.core.mapping.SynchronizationCache;
 
 /**
  * Abstract implementation of the {@link ISynchronizationContext} interface.
@@ -142,7 +142,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 				}
 			}, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
-			TeamUIPlugin.log(e);
+			TeamPlugin.log(e);
 		}
 		return (ISyncDelta[]) result.toArray(new ISyncDelta[result.size()]);
 	}

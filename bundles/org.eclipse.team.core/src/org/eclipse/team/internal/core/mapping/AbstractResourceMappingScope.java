@@ -8,23 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.mapping;
+package org.eclipse.team.internal.core.mapping;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.team.ui.mapping.IResourceMappingScope;
-import org.eclipse.team.ui.synchronize.AbstractSynchronizeScope;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.team.core.mapping.IResourceMappingScope;
 
 /**
  * Class that contains common resource mapping scope code.
  */
-public abstract class AbstractResourceMappingScope extends
-		AbstractSynchronizeScope implements IResourceMappingScope {
+public abstract class AbstractResourceMappingScope implements IResourceMappingScope {
 
 	protected IResource[] roots;
+	private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeScope#contains(org.eclipse.core.resources.IResource)

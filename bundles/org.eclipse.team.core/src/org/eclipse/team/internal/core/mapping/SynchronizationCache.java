@@ -8,15 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.mapping;
+package org.eclipse.team.internal.core.mapping;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.team.ui.mapping.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.mapping.*;
 
 /**
  * A synchronize operation context that supports caching of
@@ -30,7 +28,7 @@ import org.eclipse.team.ui.mapping.*;
  * consulting with the Platform/Team team.
  * </p>
  * 
- * @see org.eclipse.team.ui.mapping.ISynchronizationCache
+ * @see org.eclipse.team.core.mapping.ISynchronizationCache
  * @since 3.2
  */
 public class SynchronizationCache implements ISynchronizationCache {
@@ -100,9 +98,13 @@ public class SynchronizationCache implements ISynchronizationCache {
 			Object[] allListeners = listeners.getListeners();
 			for (int i = 0; i < allListeners.length; i++) {
 				final Object listener = allListeners[i];
-				Platform.run(new SafeRunnable(){
+				Platform.run(new ISafeRunnable(){
 					public void run() throws Exception {
 						((IDisposeListener)listener).contextDisposed(context);
+					}
+					public void handleException(Throwable exception) {
+						// Ignore since the platform logs the error
+						
 					}
 				});
 			}

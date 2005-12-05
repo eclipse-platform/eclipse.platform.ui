@@ -14,6 +14,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonLabelProvider;

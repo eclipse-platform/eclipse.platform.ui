@@ -16,9 +16,8 @@ import java.util.Set;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.delta.ISyncDelta;
+import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.ui.mapping.*;
-import org.eclipse.team.ui.operations.MergeStatus;
 
 /**
  * A default merger that delegates the merge to the merge context.

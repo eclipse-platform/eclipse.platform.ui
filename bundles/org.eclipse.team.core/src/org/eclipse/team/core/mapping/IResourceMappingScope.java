@@ -8,19 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.mapping;
+package org.eclipse.team.core.mapping;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.team.ui.operations.ScopeGenerator;
-import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 
 /**
  * Interface which defines the protocol for translating a set of
  * <code>ResourceMapping</code> objects representing a view selection into the
  * complete set of resources to be operated on.
  * <p>
- * This interface is not intended to be implemented by clients.
+ * This interface is not intended to be implemented by clients. Instead, clients should
+ * use a {@link ScopeGenerator} to generate a resource mapping scope from
+ * a set of input resource mappings.
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -34,14 +34,13 @@ import org.eclipse.team.ui.synchronize.ISynchronizeScope;
  * 
  * @since 3.2
  */
-public interface IResourceMappingScope extends ISynchronizeScope {
-
+public interface IResourceMappingScope {
+	
 	/**
-	 * Property used to indicate that the roots of the scope have
-	 * not changes but the resources covered by the scope have.
-	 * @see ISynchronizeScope#contains(IResource)
+	 * Return the resources that are the roots of this scope.
+	 * @return the resources that are the roots of this scope
 	 */
-	public static final String CONTAINMENT = "prop_containment"; //$NON-NLS-1$
+	public IResource[] getRoots();
 	
 	/**
 	 * Return the array of mappings that acted as the input to the scope builder
@@ -122,7 +121,7 @@ public interface IResourceMappingScope extends ISynchronizeScope {
 
 	/**
 	 * Return the resource mapping in the scope associated with the given model
-	 * obejct or <code>null</code> if there isn't one. This method has no knowledge
+	 * object or <code>null</code> if there isn't one. This method has no knowledge
 	 * of hierarchical models so it only matches directly against the mappings
 	 * that are contained in the scope.
 	 * @param modelObject the model object

@@ -11,8 +11,8 @@
 package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.mapping.IResourceMappingScope;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.navigator.ICommonContentProvider;
