@@ -22,10 +22,12 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.filehistory.IFileHistoryProvider;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.*;
+import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileHistoryProvider;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
@@ -76,6 +78,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	
 	private static MoveDeleteHook moveDeleteHook= new MoveDeleteHook();
 	private static CVSCoreFileModificationValidator fileModificationValidator;
+	private static CVSFileHistoryProvider fileHistoryProvider;
 	
 	// property used to indicate whether new directories should be discovered for the project
 	private final static QualifiedName FETCH_ABSENT_DIRECTORIES_PROP_KEY = 
@@ -813,5 +816,12 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 */
 	public IResourceRuleFactory getRuleFactory() {
 		return RESOURCE_RULE_FACTORY;
+	}
+
+	public IFileHistoryProvider getFileHistoryProvider() {
+		   if (CVSTeamProvider.fileHistoryProvider == null) {
+	            CVSTeamProvider.fileHistoryProvider = new CVSFileHistoryProvider();
+	        }
+	        return CVSTeamProvider.fileHistoryProvider;
 	}
 }

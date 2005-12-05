@@ -16,12 +16,13 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.core.filehistory.ITag;
 
 /**
  * A tag in CVS gives a label  to a collection of revisions. The labels can represent a version, a branch, 
  * or a date.
  */
-public class CVSTag {
+public class CVSTag implements ITag {
 
 	public final static int HEAD = 0;
 	public final static int BRANCH = 1;

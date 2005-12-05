@@ -131,6 +131,12 @@
             class="org.eclipse.team.internal.ui.synchronize.SynchronizeView"
             id="org.eclipse.team.sync.views.SynchronizeView">
       </view>
+      <view
+            category="org.eclipse.team.ui"
+            class="org.eclipse.team.internal.ui.filehistory.GenericHistoryView"
+            icon="icons/full/obj/changeset_obj.gif"
+            id="org.eclipse.team.ui.GenericHistoryView"
+            name="Generic History View (Experimental)"/>
     <!--  <view
             name="%CompareView.name"
             icon="$nl$/icons/full/eview16/compare_view.gif"

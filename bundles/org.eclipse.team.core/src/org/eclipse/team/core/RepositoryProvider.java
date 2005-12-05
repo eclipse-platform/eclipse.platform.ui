@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.filehistory.IFileHistoryProvider;
 import org.eclipse.team.internal.core.*;
 
 /**
@@ -362,6 +363,16 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	
 	public IFileModificationValidator getFileModificationValidator() {
 		return null;
+	}
+	
+	/**
+	 * Returns an <code>IFileHistoryProvider</code> which can be used to access
+	 * file histories. By default, returns <code>null</code>. Subclasses may override.
+	 * @return an <code>IFileHistoryProvider</code> which can be used to access
+	 * file histories.
+	 */
+	public IFileHistoryProvider getFileHistoryProvider(){
+	   return null;
 	}
 	
 	/**
