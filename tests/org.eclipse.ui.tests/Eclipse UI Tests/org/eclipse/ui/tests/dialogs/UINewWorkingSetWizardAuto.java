@@ -134,24 +134,28 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
         /*
          * Test initial page state
          */
-        assertTrue(page.canFlipToNextPage() == false);
-        assertTrue(fWizard.canFinish() == false);
+        assertFalse(page.canFlipToNextPage());
+        assertFalse(fWizard.canFinish());
         assertNull(page.getErrorMessage());
+        assertNull(page.getMessage());
+        
         /*
          * Test page state with partial page input
          */
         setTextWidgetText(WORKING_SET_NAME_1, page);
-        assertTrue(page.canFlipToNextPage() == false);
-        assertTrue(fWizard.canFinish() == false);
-        assertNotNull(page.getErrorMessage());
+        assertFalse(page.canFlipToNextPage());
+        assertTrue(fWizard.canFinish());  // allow for empty sets
+        assertNull(page.getErrorMessage());
+        assertNotNull(page.getMessage());
 
         /*
          * Test page state with page complete input
          */
         checkTreeItems();
-        assertTrue(page.canFlipToNextPage() == false);
+        assertFalse(page.canFlipToNextPage());
         assertTrue(fWizard.canFinish());
         assertNull(page.getErrorMessage());
+        assertNull(page.getMessage());
 
         fWizard.performFinish();
         IWorkingSet workingSet = ((WorkingSetNewWizard) fWizard).getSelection();
