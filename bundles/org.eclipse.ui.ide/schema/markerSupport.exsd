@@ -82,8 +82,6 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                   </enumeration>
                   <enumeration value="ON_ANY_IN_SAME_CONTAINER">
                   </enumeration>
-                  <enumeration value="ON_WORKING_SET">
-                  </enumeration>
                </restriction>
             </simpleType>
          </attribute>

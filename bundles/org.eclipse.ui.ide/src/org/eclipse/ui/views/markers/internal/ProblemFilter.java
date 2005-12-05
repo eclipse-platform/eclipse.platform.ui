@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,15 @@ package org.eclipse.ui.views.markers.internal;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
+/**
+ * ProblemFilters are the filters used in the problems view.
+ * 
+ */
 public class ProblemFilter extends MarkerFilter {
 
 	private static final String TAG_CONTAINS = "contains"; //$NON-NLS-1$
@@ -33,10 +41,19 @@ public class ProblemFilter extends MarkerFilter {
 
 	final static int DEFAULT_SEVERITY = 0;
 
+	/**
+	 * Severity for errors
+	 */
 	public final static int SEVERITY_ERROR = 1 << 2;
 
+	/**
+	 * Severity for warnings
+	 */
 	public final static int SEVERITY_WARNING = 1 << 1;
 
+	/**
+	 * Severity for infos
+	 */
 	public final static int SEVERITY_INFO = 1 << 0;
 
 	private boolean contains;
@@ -46,9 +63,9 @@ public class ProblemFilter extends MarkerFilter {
 	private boolean selectBySeverity;
 
 	private int severity;
-	
+
 	private String id;
-	
+
 	/**
 	 * Create a new instance of the receiver with name filterName.
 	 * 
@@ -57,6 +74,18 @@ public class ProblemFilter extends MarkerFilter {
 	 */
 	public ProblemFilter(String filterName) {
 		super(filterName, new String[] { IMarker.PROBLEM });
+		if ((PlatformUI.getPreferenceStore()
+				.getBoolean(IWorkbenchPreferenceConstants.USE_WINDOW_WORKING_SET_BY_DEFAULT))) {
+			IWorkbenchWindow window = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow();
+			if (window != null) {
+				IWorkbenchPage page = window.getActivePage();
+				if (page != null) {
+					setOnResource(MarkerFilter.ON_WORKING_SET);
+					setWorkingSet(page.getAggregateWorkingSet());
+				}
+			}
+		}
 
 	}
 
@@ -96,34 +125,74 @@ public class ProblemFilter extends MarkerFilter {
 		return true;
 	}
 
+	/**
+	 * Get the value for if there is a check for containing a phrase.
+	 * 
+	 * @return boolean
+	 */
 	public boolean getContains() {
 		return contains;
 	}
 
+	/**
+	 * Get the value for the description.
+	 * 
+	 * @return boolean
+	 */
 	public String getDescription() {
 		return description;
 	}
 
+	/**
+	 * Get the value for if there is a check for severity.
+	 * 
+	 * @return boolean
+	 */
 	public boolean getSelectBySeverity() {
 		return selectBySeverity;
 	}
 
+	/**
+	 * Get the value for if there is a severity.
+	 * 
+	 * @return boolean
+	 */
 	public int getSeverity() {
 		return severity;
 	}
 
+	/**
+	 * Set the value for if there is a check for containing a phrase.
+	 * 
+	 * @param contains
+	 */
 	public void setContains(boolean contains) {
 		this.contains = contains;
 	}
 
+	/**
+	 * Set the value for the description.
+	 * 
+	 * @param description
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
+	/**
+	 * Set the value for if there is a check for severity
+	 * 
+	 * @param selectBySeverity
+	 */
 	public void setSelectBySeverity(boolean selectBySeverity) {
 		this.selectBySeverity = selectBySeverity;
 	}
 
+	/**
+	 * Set the value for the severity to match against.
+	 * 
+	 * @param severity
+	 */
 	public void setSeverity(int severity) {
 		this.severity = severity;
 	}
@@ -221,8 +290,9 @@ public class ProblemFilter extends MarkerFilter {
 	}
 
 	/**
-	 * Get the id of the filter. <code>null</code> if the
-	 * filter is user defined.
+	 * Get the id of the filter. <code>null</code> if the filter is user
+	 * defined.
+	 * 
 	 * @return String
 	 */
 	public String getId() {
@@ -231,7 +301,9 @@ public class ProblemFilter extends MarkerFilter {
 
 	/**
 	 * Set the id to id.
-	 * @param id String
+	 * 
+	 * @param id
+	 *            String
 	 */
 	public void setId(String id) {
 		this.id = id;

@@ -35,8 +35,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
-public class MarkerFilter implements Cloneable{
-
+public class MarkerFilter implements Cloneable {
 
 	private static final String TAG_ENABLED = "enabled"; //$NON-NLS-1$
 
@@ -47,6 +46,7 @@ public class MarkerFilter implements Cloneable{
 	private static final String TAG_WORKING_SET = "workingSet"; //$NON-NLS-1$
 
 	private static final String TAG_TYPES_DELIMITER = ":"; //$NON-NLS-1$
+
 	/**
 	 * New attribute to handle the selection status of marker types.
 	 */
@@ -188,8 +188,9 @@ public class MarkerFilter implements Cloneable{
 			}
 		}
 
-		mon.beginTask(
-			 MarkerMessages.MarkerFilter_searching, typesToSearch.size() * resources.length);
+		mon.beginTask(MarkerMessages.MarkerFilter_searching, typesToSearch
+				.size()
+				* resources.length);
 
 		// Use this hash set to determine if there are any resources in the
 		// list that appear along with their parent.
@@ -347,9 +348,18 @@ public class MarkerFilter implements Cloneable{
 		return unfiltered;
 	}
 
+	/**
+	 * Return the resources in the working set. If it is empty then
+	 * return the workspace root.
+	 * @return IResource[]
+	 */
 	IResource[] getResourcesInWorkingSet() {
 		if (workingSet == null) {
 			return new IResource[0];
+		}
+
+		if (workingSet.isEmpty()) {
+			return new IResource[] { ResourcesPlugin.getWorkspace().getRoot() };
 		}
 
 		IAdaptable[] elements = workingSet.getElements();
@@ -372,7 +382,7 @@ public class MarkerFilter implements Cloneable{
 	 * resource directly or indirectly contained in the working set. A resource
 	 * is in the working set iff its path name can be found in this set.
 	 * 
-	 * @return
+	 * @return Set
 	 */
 	private Set getWorkingSetAsSetOfPaths() {
 		if (cachedWorkingSet == null) {
@@ -427,22 +437,25 @@ public class MarkerFilter implements Cloneable{
 
 	/**
 	 * Return the projects for the elements.
-	 * @param elements collection of IResource or IResourceMapping
+	 * 
+	 * @param elements
+	 *            collection of IResource or IResourceMapping
 	 * @return Collection of IProject
 	 */
 	static Collection getProjectsAsCollection(Object[] elements) {
 		HashSet projects = new HashSet();
 
 		for (int idx = 0; idx < elements.length; idx++) {
-			if(elements[idx] instanceof IResource)
-				projects.add(((IResource)elements[idx]).getProject());
-			else{
-				IProject[] mappingProjects = (((ResourceMapping)elements[idx]).getProjects());
+			if (elements[idx] instanceof IResource)
+				projects.add(((IResource) elements[idx]).getProject());
+			else {
+				IProject[] mappingProjects = (((ResourceMapping) elements[idx])
+						.getProjects());
 				for (int i = 0; i < mappingProjects.length; i++) {
-					projects.add(mappingProjects[i]);					
+					projects.add(mappingProjects[i]);
 				}
 			}
-				
+
 		}
 
 		return projects;
@@ -479,8 +492,6 @@ public class MarkerFilter implements Cloneable{
 		IResource resource = marker.getResource();
 
 		if (onResource == ON_WORKING_SET) {
-			if (workingSet == null)
-				return true;
 
 			if (resource != null)
 				return isEnclosed(resource);
@@ -535,9 +546,11 @@ public class MarkerFilter implements Cloneable{
 	 *         otherwise.
 	 */
 	private boolean isEnclosed(IResource element) {
-		if (workingSet == null) {
+		if (workingSet == null)
 			return false;
-		}
+
+		if (workingSet.isEmpty())
+			return true; // Everything is in an empty working set
 		Set workingSetPaths = getWorkingSetAsSetOfPaths();
 
 		return workingSetPaths.contains(element.getFullPath().toString());
@@ -545,16 +558,15 @@ public class MarkerFilter implements Cloneable{
 
 	/**
 	 * <ul>
-	 * <li><code>MarkerFilter.ON_ANY</code> if showing items
-	 * associated with any resource.</li>
-	 * <li><code>MarkerFilter.ON_SELECTED_ONLY</code> if showing
-	 * items associated with the selected resource within the workbench.</li>
-	 * <li><code>MarkerFilter.ON_SELECTED_AND_CHILDREN</code> if
-	 * showing items associated with the selected resource within the workbench
-	 * and its children.</li>
-	 * <li><code>MarkerFilter.ON_ANY_OF_SAME_PROJECT</code> if
-	 * showing items in the same project as the selected resource within the
-	 * workbench.</li>
+	 * <li><code>MarkerFilter.ON_ANY</code> if showing items associated with
+	 * any resource.</li>
+	 * <li><code>MarkerFilter.ON_SELECTED_ONLY</code> if showing items
+	 * associated with the selected resource within the workbench.</li>
+	 * <li><code>MarkerFilter.ON_SELECTED_AND_CHILDREN</code> if showing
+	 * items associated with the selected resource within the workbench and its
+	 * children.</li>
+	 * <li><code>MarkerFilter.ON_ANY_OF_SAME_PROJECT</code> if showing items
+	 * in the same project as the selected resource within the workbench.</li>
 	 * <li><code>MarkerFilter.ON_WORKING_SET</code> if showing items in some
 	 * working set.</li>
 	 * </ul>
@@ -631,8 +643,7 @@ public class MarkerFilter implements Cloneable{
 	 * 
 	 * @param id
 	 *            the ID for a marker type
-	 * @return  MarkerType or <code>null</code> if it is not
-	 *  found.
+	 * @return MarkerType or <code>null</code> if it is not found.
 	 */
 	public MarkerType getMarkerType(String id) {
 		return typesModel.getType(id);
@@ -672,27 +683,27 @@ public class MarkerFilter implements Cloneable{
 		setWorkingSet(null);
 	}
 
-	
 	/**
 	 * Restore the state in the memento.
+	 * 
 	 * @param memento
 	 */
 	public final void restoreState(IMemento memento) {
-		resetState();		
+		resetState();
 		restoreFilterSettings(memento);
 
 	}
-	
+
 	/**
-	 * Restore the state of the receiver in the supplied settings.
-	 * This is kept for backwards compatibility with 3.1 dialog
-	 * settings.
+	 * Restore the state of the receiver in the supplied settings. This is kept
+	 * for backwards compatibility with 3.1 dialog settings.
+	 * 
 	 * @param settings
 	 */
 	public void restoreFilterSettings(IDialogSettings settings) {
-		
-		resetState();	
-		
+
+		resetState();
+
 		String setting = settings.get(TAG_ENABLED);
 
 		if (setting != null)
@@ -766,33 +777,36 @@ public class MarkerFilter implements Cloneable{
 
 	/**
 	 * Set the selected types based on the value.
+	 * 
 	 * @param selectedTypesValue
 	 */
 	void generateSelectedTypes(String selectedTypesValue) {
 		selectedTypes.clear();
-		StringTokenizer stringTokenizer = new StringTokenizer(selectedTypesValue);
+		StringTokenizer stringTokenizer = new StringTokenizer(
+				selectedTypesValue);
 
 		while (stringTokenizer.hasMoreTokens()) {
 			MarkerType markerType = getMarkerType(stringTokenizer
-				.nextToken(TAG_TYPES_DELIMITER));
+					.nextToken(TAG_TYPES_DELIMITER));
 
-			if (markerType != null
-					&& !selectedTypes.contains(markerType))
+			if (markerType != null && !selectedTypes.contains(markerType))
 				selectedTypes.add(markerType);
 		}
 	}
-	
+
 	/**
 	 * Find the markerType matching typeName
+	 * 
 	 * @param typeName
 	 * @return MarkerType
 	 */
-	MarkerType findMarkerType(String typeName){
+	MarkerType findMarkerType(String typeName) {
 		return typesModel.getType(typeName);
 	}
 
 	/**
 	 * Restore the state of the receiver in the supplied settings.
+	 * 
 	 * @param memento
 	 */
 	protected void restoreFilterSettings(IMemento memento) {
@@ -866,10 +880,11 @@ public class MarkerFilter implements Cloneable{
 
 	/**
 	 * Save the filter settings for the receiver.
+	 * 
 	 * @param settings
 	 */
 	public void saveFilterSettings(IMemento settings) {
-		
+
 		settings.putString(TAG_ENABLED, String.valueOf(enabled));
 		settings.putInteger(TAG_ON_RESOURCE, onResource);
 
@@ -901,19 +916,22 @@ public class MarkerFilter implements Cloneable{
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * Make a clone of the receiver.
+	 * 
 	 * @return MarkerFilter
 	 * @throws CloneNotSupportedException
 	 */
-	public MarkerFilter makeClone() throws CloneNotSupportedException{
+	public MarkerFilter makeClone() throws CloneNotSupportedException {
 		return (MarkerFilter) this.clone();
 	}
 
 	/**
 	 * Set the selected types.
-	 * @param selectedTypes List of MarkerType.
+	 * 
+	 * @param selectedTypes
+	 *            List of MarkerType.
 	 */
 	public void setSelectedTypes(List selectedTypes) {
 		this.selectedTypes = selectedTypes;

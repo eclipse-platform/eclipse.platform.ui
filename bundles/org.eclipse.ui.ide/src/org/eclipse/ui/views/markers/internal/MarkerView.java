@@ -53,6 +53,8 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
@@ -126,8 +128,8 @@ public abstract class MarkerView extends TableView {
 	private static final String OLD_FILTER_SECTION = "filter"; //$NON-NLS-1$
 
 	private class UpdateJob extends WorkbenchJob {
-		
-		boolean buildDone = true; 
+
+		boolean buildDone = true;
 
 		private Collection pendingMarkerUpdates = Collections
 				.synchronizedSet(new HashSet());
@@ -182,12 +184,14 @@ public abstract class MarkerView extends TableView {
 			return Status.OK_STATUS;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
 		 */
 		public boolean shouldRun() {
 			return buildDone;
-		}	
+		}
 	}
 
 	private UpdateJob updateJob = new UpdateJob();
@@ -201,7 +205,9 @@ public abstract class MarkerView extends TableView {
 	private Clipboard clipboard;
 
 	IResourceChangeListener markerUpdateListener = new IResourceChangeListener() {
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 		 */
 		public void resourceChanged(IResourceChangeEvent event) {
@@ -210,18 +216,18 @@ public abstract class MarkerView extends TableView {
 			Collection changedMarkers = new ArrayList();
 			Collection addedMarkers = new ArrayList();
 			Collection removedMarkers = new ArrayList();
-			
-			if(event.getType() == IResourceChangeEvent.PRE_BUILD){
+
+			if (event.getType() == IResourceChangeEvent.PRE_BUILD) {
 				updateJob.buildDone = false;
 				return;
 			}
-			
-			if(event.getType() == IResourceChangeEvent.POST_BUILD){
+
+			if (event.getType() == IResourceChangeEvent.POST_BUILD) {
 				updateJob.buildDone = true;
 				updateJob.schedule();
 				return;
 			}
-	
+
 			for (int idx = 0; idx < markerTypes.length; idx++) {
 				IMarkerDelta[] markerDeltas = event.findMarkerDeltas(
 						markerTypes[idx], true);
@@ -252,7 +258,8 @@ public abstract class MarkerView extends TableView {
 				}
 			}
 
-			if (addRefreshRequired(addedMarkers) || removeRefreshRequired(removedMarkers)) {
+			if (addRefreshRequired(addedMarkers)
+					|| removeRefreshRequired(removedMarkers)) {
 				updateJob.refreshAll();
 				getProgressService().schedule(updateJob);
 			}
@@ -260,22 +267,22 @@ public abstract class MarkerView extends TableView {
 		}
 
 		/**
-		 * Return whether or not any of the removedMarkers are being 
-		 * shown.
+		 * Return whether or not any of the removedMarkers are being shown.
+		 * 
 		 * @param removedMarkers
 		 * @return <code>boolean</code>
 		 */
 		private boolean removeRefreshRequired(Collection removedMarkers) {
-			if(removedMarkers.isEmpty())
+			if (removedMarkers.isEmpty())
 				return false;
-			
+
 			MarkerList currentList = getCurrentMarkers();
 			Iterator removes = removedMarkers.iterator();
-			while(removes.hasNext()){
-				if(currentList.getMarker((IMarker) removes.next())!= null)
+			while (removes.hasNext()) {
+				if (currentList.getMarker((IMarker) removes.next()) != null)
 					return true;
 			}
-			
+
 			return false;
 		}
 
@@ -367,6 +374,8 @@ public abstract class MarkerView extends TableView {
 	private MenuManager filtersMenu;
 
 	private MenuManager showInMenu;
+
+	private IPropertyChangeListener workingSetListener;
 
 	/**
 	 * Get the current markers for the receiver.
@@ -498,7 +507,6 @@ public abstract class MarkerView extends TableView {
 	 */
 	private void createDefaultFilter() {
 		MarkerFilter filter = createFilter(MarkerMessages.MarkerFilter_defaultFilterName);
-		filter.resetState();
 		setFilters(new MarkerFilter[] { filter });
 	}
 
@@ -533,8 +541,12 @@ public abstract class MarkerView extends TableView {
 		focusSelectionChanged(getSite().getPage().getActivePart(), getSite()
 				.getPage().getSelection());
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-				markerUpdateListener,IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_BUILD | IResourceChangeEvent.POST_BUILD);
-		
+				markerUpdateListener,
+				IResourceChangeEvent.POST_CHANGE
+						| IResourceChangeEvent.PRE_BUILD
+						| IResourceChangeEvent.POST_BUILD);
+		PlatformUI.getWorkbench().getWorkingSetManager()
+				.addPropertyChangeListener(getWorkingSetListener());
 
 		// Set help on the view itself
 		getViewer().getControl().addHelpListener(new HelpListener() {
@@ -602,6 +614,8 @@ public abstract class MarkerView extends TableView {
 
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(
 				markerUpdateListener);
+		PlatformUI.getWorkbench().getWorkingSetManager()
+				.removePropertyChangeListener(workingSetListener);
 		getSite().getPage().removeSelectionListener(focusListener);
 
 		// dispose of selection provider actions (may not have been created yet
@@ -827,7 +841,7 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#handleOpenEvent(org.eclipse.jface.viewers.OpenEvent)
 	 */
 	protected void handleOpenEvent(OpenEvent event) {
-		if(openAction.isEnabled())
+		if (openAction.isEnabled())
 			openAction.run();
 	}
 
@@ -1289,7 +1303,8 @@ public abstract class MarkerView extends TableView {
 	 * 
 	 */
 	private void createUIJob() {
-		countUpdateJob = new WorkbenchJob(MarkerMessages.MarkerView_refreshProgress) {
+		countUpdateJob = new WorkbenchJob(
+				MarkerMessages.MarkerView_refreshProgress) {
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				// Ensure that the view hasn't been disposed
@@ -1298,8 +1313,9 @@ public abstract class MarkerView extends TableView {
 				if (tree != null && !tree.isDisposed()) {
 					updateStatusMessage();
 					updateTitle();
-					//Expand all if the list is small
-					if(isHierarchalMode() && getCurrentMarkers().getSize() < 20)
+					// Expand all if the list is small
+					if (isHierarchalMode()
+							&& getCurrentMarkers().getSize() < 20)
 						getViewer().expandAll();
 				}
 				return Status.OK_STATUS;
@@ -1375,9 +1391,8 @@ public abstract class MarkerView extends TableView {
 			return;
 
 		IStructuredSelection structured = (IStructuredSelection) selection;
-		if(!Util.isSingleConcreteSelection(structured))
+		if (!Util.isSingleConcreteSelection(structured))
 			return;
-
 
 		menu.add(new Separator(MENU_SHOW_IN_GROUP));
 		// Don't add in the filters until they are set
@@ -1413,10 +1428,11 @@ public abstract class MarkerView extends TableView {
 			createUIJob();
 
 		countUpdateJob.schedule();
-		
-		if(getSite().getShell().getDisplay().getThread() == Thread.currentThread())
-			return; //Do not block the UI
-		
+
+		if (getSite().getShell().getDisplay().getThread() == Thread
+				.currentThread())
+			return; // Do not block the UI
+
 		try {
 			countUpdateJob.join();
 		} catch (InterruptedException e) {
@@ -1478,6 +1494,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Add a listener for the end of the update.
+	 * 
 	 * @param listener
 	 */
 	public void addUpdateFinishListener(IJobChangeListener listener) {
@@ -1487,10 +1504,29 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Remove a listener for the end of the update.
+	 * 
 	 * @param listener
 	 */
 	public void removeUpdateFinishListener(IJobChangeListener listener) {
 		updateJob.removeJobChangeListener(listener);
 
+	}
+	
+	/**
+	 * Create a listener for working set changes.
+	 * @return IPropertyChangeListener
+	 */
+	private IPropertyChangeListener getWorkingSetListener() {
+		workingSetListener = new IPropertyChangeListener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+			 */
+			public void propertyChange(PropertyChangeEvent event) {
+				clearEnabledFilters();
+				getViewer().refresh();
+				
+			}
+		};
+		return workingSetListener;
 	}
 }

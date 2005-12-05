@@ -398,7 +398,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				|| Boolean.valueOf(enabledValue).booleanValue());
 
 		int scopeValue = getScopeValue(element);
-		if (scopeValue > 0) {
+		if (scopeValue >= 0) {
 			filter.setOnResource(scopeValue);
 		}
 
