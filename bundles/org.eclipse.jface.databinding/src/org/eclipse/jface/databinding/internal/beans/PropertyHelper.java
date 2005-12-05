@@ -61,7 +61,7 @@ public class PropertyHelper {
 		catch (SecurityException e) {} 
 		catch (NoSuchMethodException e) {}
 		if (getter==null)  // allow for method invocation
-			getter =  c.getMethod(property, new Class[0]); //$NON-NLS-1$		
+			getter =  c.getMethod(property, new Class[0]);		
 			
 		return getter;		
 	}
@@ -77,7 +77,7 @@ public class PropertyHelper {
 		catch (SecurityException e) {} 
 		catch (NoSuchMethodException e) {}
 		if (setter==null)  // allow for method invocation
-			setter =  c.getMethod(property, new Class[] { argType }); //$NON-NLS-1$		
+			setter =  c.getMethod(property, new Class[] { argType });
 				
 		return setter;		
 	}
