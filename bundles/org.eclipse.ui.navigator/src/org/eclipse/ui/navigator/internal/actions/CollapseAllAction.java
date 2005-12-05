@@ -28,7 +28,7 @@ public class CollapseAllAction extends Action implements IAction {
 
 	public CollapseAllAction(CommonViewer aViewer) {
 		super(CommonNavigatorMessages.CollapseAllActionDelegate_0);
-		setToolTipText(CommonNavigatorMessages.CollapseAllActionDelegate_1); 
+		setToolTipText(CommonNavigatorMessages.CollapseAllActionDelegate_0); 
 		commonViewer = aViewer;
 	}
 

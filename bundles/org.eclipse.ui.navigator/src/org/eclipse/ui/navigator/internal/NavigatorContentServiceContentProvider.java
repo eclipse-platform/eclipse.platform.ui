@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 
@@ -162,10 +163,10 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 				if (delegateChildren != null && delegateChildren.length > 0)
 					resultChildren.addAll(Arrays.asList(delegateChildren));
 			} catch (RuntimeException re) {
-				String msg = CommonNavigatorMessages.Could_not_provide_children_for_element + delegateProviders[i].getClass();
+				String msg = NLS.bind(CommonNavigatorMessages.Could_not_provide_children_for_element, new Object[] {delegateProviders[i].getClass()});
 				NavigatorPlugin.log(msg, new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, 0, msg, re));
 			} catch (Error e) {
-				String msg = CommonNavigatorMessages.Could_not_provide_children_for_element + delegateProviders[i].getClass();
+				String msg = NLS.bind(CommonNavigatorMessages.Could_not_provide_children_for_element, new Object[] { delegateProviders[i].getClass()});
 				NavigatorPlugin.log(msg, new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, 0, msg, e));
 
 			}

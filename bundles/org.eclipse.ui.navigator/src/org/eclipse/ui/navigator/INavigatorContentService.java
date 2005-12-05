@@ -266,7 +266,7 @@ public interface INavigatorContentService {
 	/**
 	 * @return The set of visible extension ids for this content service
 	 */
-	String[] getVisibleExtensionIds()
+	String[] getVisibleExtensionIds();
 	
 	/**
 	 * @return The set of 'visible' content descriptors for this content service

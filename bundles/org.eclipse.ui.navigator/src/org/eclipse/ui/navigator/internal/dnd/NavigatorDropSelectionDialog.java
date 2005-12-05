@@ -44,7 +44,7 @@ import org.eclipse.ui.navigator.internal.NavigatorPlugin;
  */
 public class NavigatorDropSelectionDialog extends Dialog {
 
-	public static final String SKIP_ON_SINGLE_SELECTION = CommonNavigatorMessages.NavigatorDropSelectionDialog_0;
+	public static final String SKIP_ON_SINGLE_SELECTION = "NavigatorDropSelectionDialog.SKIP_ON_SINGLE_SELECTION";  //$NON-NLS-1$
 
 	private DropHandlerDescriptor[] descriptors;
 	private Button[] radios;

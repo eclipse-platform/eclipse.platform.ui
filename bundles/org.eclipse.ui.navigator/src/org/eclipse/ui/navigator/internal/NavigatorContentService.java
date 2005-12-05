@@ -80,6 +80,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	private static final ILabelProvider[] NO_LABEL_PROVIDERS = new ILabelProvider[0];
 
 	private static final INavigatorContentDescriptor[] NO_DESCRIPTORS = new INavigatorContentDescriptor[0];
+	private static final String[] NO_EXTENSION_IDS = new String[0];
 
 	private final NavigatorViewerDescriptor viewerDescriptor;
 
@@ -120,6 +121,22 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	public NavigatorContentService(String aViewerId, StructuredViewer aViewer) {
 		this(aViewerId);
 		structuredViewerManager = new StructuredViewerManager(aViewer);
+	}
+	
+	public String[] getVisibleExtensionIds() {
+
+		List visibleExtensionIds = new ArrayList();
+		
+		NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();
+		for (int i = 0; i < descriptors.length; i++) {
+			if (viewerDescriptor.isVisibleExtension(descriptors[i].getId())) 
+				visibleExtensionIds.add(descriptors[i].getId());
+		} 
+		if(visibleExtensionIds.isEmpty())
+			return NO_EXTENSION_IDS;
+		return (String[]) visibleExtensionIds.toArray(new String[visibleExtensionIds.size()]);
+		
+
 	}
 	
 	public INavigatorContentDescriptor[] getVisibleExtensions() {

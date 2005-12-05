@@ -29,7 +29,6 @@ public class CommonNavigatorMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.navigator.internal.navigator_messages"; //$NON-NLS-1$
 
 	public static String Link_With_Editor_Job_;
- 
 
 	public static String Could_not_provide_children_for_element;
 
@@ -70,7 +69,7 @@ public class CommonNavigatorMessages extends NLS {
 	public static String FetchElementsJob_0;
 
 	public static String NavigatorSelectionSerializer_0;
- 
+
 	public static String DropHandlerDescriptor_10;
 
 	public static String Navigator_statusLineMultiSelect;
@@ -95,14 +94,11 @@ public class CommonNavigatorMessages extends NLS {
 
 	public static String SelectFiltersActionDelegate_1;
 
-	public static String CollapseAllActionDelegate_1;
-
 	public static String CommonFilterSelectionDialog_0;
 
 	public static String SelectFiltersActionDelegate_0;
 
 	public static String CollapseAllActionDelegate_0;
- 
 
 	public static String SerializerDescriptor_5;
 
@@ -119,8 +115,6 @@ public class CommonNavigatorMessages extends NLS {
 	public static String NavigatorDropSelectionDialog_3;
 
 	public static String NavigatorDropSelectionDialog_1;
-
-	public static String NavigatorDropSelectionDialog_0;
 
 	public static String ExtensionFilterRegistry_16;
 
