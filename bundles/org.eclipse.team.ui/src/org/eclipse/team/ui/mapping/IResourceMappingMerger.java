@@ -11,9 +11,11 @@
 package org.eclipse.team.ui.mapping;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.mapping.ResourceMappingMerger;
 
 /**
- * @deprecated use {@link org.eclipse.team.core.mapping.IResourceMappingMerger}
+ * @deprecated use {@link org.eclipse.team.core.mapping.IResourceMappingMerger} or implement
+ * {@link ResourceMappingMerger}.
  */
 public interface IResourceMappingMerger {
 	IStatus merge(IMergeContext context, IProgressMonitor monitor) throws CoreException;
