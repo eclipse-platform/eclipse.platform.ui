@@ -401,33 +401,30 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 				thresholds[count]= calendar.getTimeInMillis();
 				kinds[count]= RefactoringHistoryNode.THIS_WEEK;
 				count++;
+				calendar.add(Calendar.WEEK_OF_YEAR, -1);
 			}
-			calendar.add(Calendar.WEEK_OF_YEAR, -1);
 			calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 			thresholds[count]= calendar.getTimeInMillis();
 			kinds[count]= RefactoringHistoryNode.LAST_WEEK;
 			count++;
-			final int week= calendar.get(Calendar.WEEK_OF_MONTH);
-			if (week != 1) {
-				calendar.setTimeInMillis(time);
-				calendar.set(Calendar.HOUR_OF_DAY, 0);
-				calendar.set(Calendar.MINUTE, 0);
-				calendar.set(Calendar.SECOND, 0);
-				calendar.set(Calendar.MILLISECOND, 0);
-				calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.setTimeInMillis(time);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			if (thresholds[count - 1] >= calendar.getTimeInMillis()) {
 				thresholds[count]= calendar.getTimeInMillis();
 				kinds[count]= RefactoringHistoryNode.THIS_MONTH;
 				count++;
 			}
 			calendar.add(Calendar.MONTH, -1);
-			calendar.set(Calendar.DAY_OF_MONTH, 1);
 			thresholds[count]= calendar.getTimeInMillis();
 			kinds[count]= RefactoringHistoryNode.LAST_MONTH;
 			count++;
 			final int month= calendar.get(Calendar.MONTH);
 			if (month != 0) {
 				calendar.set(Calendar.MONTH, 0);
-				calendar.set(Calendar.DAY_OF_MONTH, 1);
 				thresholds[count]= calendar.getTimeInMillis();
 				kinds[count]= RefactoringHistoryNode.YEAR;
 				count++;
@@ -435,7 +432,6 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 			if (stamp > 0) {
 				final long localized= stamp + zoneOffset + dstOffset;
 				calendar.set(Calendar.MONTH, 0);
-				calendar.set(Calendar.DAY_OF_MONTH, 1);
 				do {
 					calendar.add(Calendar.YEAR, -1);
 					thresholds[count]= calendar.getTimeInMillis();
