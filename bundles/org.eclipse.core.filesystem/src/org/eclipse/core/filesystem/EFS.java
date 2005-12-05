@@ -149,11 +149,6 @@ public class EFS {
 	 */
 	public static final String SCHEME_NULL = "null"; //$NON-NLS-1$
 
-	/**
-	 * Scheme constant (value "zip") indicating the zip file system scheme.
-	 */
-	public static final String SCHEME_ZIP = "zip"; //$NON-NLS-1$
-
 	/*
 	 * Status code definitions
 	 */
