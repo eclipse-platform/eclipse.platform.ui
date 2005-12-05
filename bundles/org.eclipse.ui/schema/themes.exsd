@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui" id="themes" name="Themes"/>
       </appInfo>
       <documentation>
-         This extension point is used to customize the appearance of the UI.  It allows definition of color and font entities as well as theme entitities.  Themes allow applications to selectivly override default color and font specifications for particular uses.
+         This extension point is used to customize the appearance of the UI.  It allows definition of color and font entities as well as theme entities.  Themes allow applications to selectively override default color and font specifications for particular uses.
       </documentation>
    </annotation>
 
@@ -53,7 +53,7 @@
             <meta.element labelAttribute="name" icon="icon"/>
          </appInfo>
          <documentation>
-            A collection of font, color and data overrides.  Such a collection may be used to alter the appearance of the workbench.  Many theme elements may exist with the same id.  This allows compontent authors to contribute to existing themes.
+            A collection of font, color and data overrides.  Such a collection may be used to alter the appearance of the workbench.  Many theme elements may exist with the same id.  This allows component authors to contribute to existing themes.
          </documentation>
       </annotation>
       <complexType>
@@ -173,7 +173,7 @@ Only one of &lt;code&gt;defaultsTo&lt;/code&gt;, &lt;code&gt;value&lt;/code&gt; 
                <documentation>
                   The default value of this color.  The value may be specified in the following ways:
 &lt;ul&gt;
-&lt;li&gt;a String containing comma seperated integers in the form red,green,blue 
+&lt;li&gt;a String containing comma separated integers in the form red,green,blue 
 &lt;li&gt;a String that maps to an SWT color constant (ie:  COLOR_RED).
 &lt;/ul&gt;
 Only one of &lt;code&gt;defaultsTo&lt;/code&gt;, &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&gt; may be defined.  If &lt;code&gt;value&lt;/code&gt; is specified, additional value definitions may be specified on a per platform/windowing system basis via the &lt;code&gt;colorValue&lt;/code&gt; element.
@@ -285,7 +285,7 @@ Only one (or neither) of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;defaultsT
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique id that can be used to identify this color definition override.  This should match an existing font identifier.  Strictly speaking, you may override colors that do not exist in the base theme although this practice is not recommended.  In effect, such overrides will have behaviour similar to &lt;code&gt;colorDefinition&lt;/code&gt;s that have &lt;code&gt;isEditable&lt;/code&gt; set to &lt;code&gt;false&lt;/code&gt;.
+                  a unique id that can be used to identify this color definition override.  This should match an existing font identifier.  Strictly speaking, you may override colors that do not exist in the base theme although this practice is not recommended.  In effect, such overrides will have behavior similar to &lt;code&gt;colorDefinition&lt;/code&gt;s that have &lt;code&gt;isEditable&lt;/code&gt; set to &lt;code&gt;false&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -294,7 +294,7 @@ Only one (or neither) of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;defaultsT
                <documentation>
                   the overriding value of this color.  The value may be specified in the following ways:
 &lt;ul&gt;
-&lt;li&gt;a String containing comma seperated integers in the form red,green,blue 
+&lt;li&gt;a String containing comma separated integers in the form red,green,blue 
 &lt;li&gt;a String that maps to an SWT color constant (ie:  COLOR_RED).
 &lt;/ul&gt;
 Only one of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&gt; may be defined.
@@ -318,7 +318,7 @@ Unlike a &lt;code&gt;colorDefinition&lt;/code&gt;, you may not supply a &lt;code
    <element name="fontOverride">
       <annotation>
          <documentation>
-            Allows overriding of fonts defined in &lt;code&gt;fontsDefinition&lt;/code&gt; elements.  These fonts will be applied when the theme is in use.
+            Allows overriding of fonts defined in &lt;code&gt;fontDefinition&lt;/code&gt; elements.  These fonts will be applied when the theme is in use.
          </documentation>
       </annotation>
       <complexType>
@@ -328,7 +328,7 @@ Unlike a &lt;code&gt;colorDefinition&lt;/code&gt;, you may not supply a &lt;code
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique id that can be used to identify this font definition override.  This should match an existing font identifier.  Strictly speaking, you may override fonts that do not exist in the base theme although this practice is not recommended.  In effect, such overrides will have behaviour similar to &lt;code&gt;fontDefinition&lt;/code&gt;s that have &lt;code&gt;isEditable&lt;/code&gt; set to &lt;code&gt;false&lt;/code&gt;.
+                  a unique id that can be used to identify this font definition override.  This should match an existing font identifier.  Strictly speaking, you may override fonts that do not exist in the base theme although this practice is not recommended.  In effect, such overrides will have behavior similar to &lt;code&gt;fontDefinition&lt;/code&gt;s that have &lt;code&gt;isEditable&lt;/code&gt; set to &lt;code&gt;false&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -414,7 +414,7 @@ Unlike a &lt;code&gt;fontDefinition&lt;/code&gt;, you may not supply a &lt;code&
       <annotation>
          <documentation>
             &lt;p&gt;An element that allows arbitrary data to be associated with a theme or the default theme.  This data may be gradient directions or percentages, labels, author information, etc.&lt;/p&gt;
-&lt;p&gt;This element has behaviour similar to definitions and overrides.  If a key is present in both the default theme and an identified theme, then the identified themes value will be used when that theme is accessed.  If the identified theme does not supply a value then the default is used.&lt;/p&gt;
+&lt;p&gt;This element has behavior similar to definitions and overrides.  If a key is present in both the default theme and an identified theme, then the identified themes value will be used when that theme is accessed.  If the identified theme does not supply a value then the default is used.&lt;/p&gt;
          </documentation>
       </annotation>
       <complexType>
@@ -464,7 +464,7 @@ Unlike a &lt;code&gt;fontDefinition&lt;/code&gt;, you may not supply a &lt;code&
                <documentation>
                   The default value of this color.  The value may be specified in the following ways:
 &lt;ul&gt;
-&lt;li&gt;a String containing comma seperated integers in the form red,green,blue 
+&lt;li&gt;a String containing comma separated integers in the form red,green,blue 
 &lt;li&gt;a String that maps to an SWT color constant (ie:  COLOR_RED).
 &lt;/ul&gt;
 Only one of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&gt; may be defined.
@@ -545,7 +545,7 @@ Only one of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbench provides the font definitions for the text, dialog, banner, header and part title fonts.  it also supplies color definitions for the hyperlink, active hyperlink, error, active part (background gradient parts and forground) and the inactive part (background gradient parts and forground).  The workbench also provides data constants for the title gradient percentages (active and inactive) and the gradient directions (active and inactive).  The workbench does not provide any named themes.
+         The workbench provides the font definitions for the text, dialog, banner, header and part title fonts.  it also supplies color definitions for the hyperlink, active hyperlink, error, active part (background gradient parts and foreground) and the inactive part (background gradient parts and foreground).  The workbench also provides data constants for the title gradient percentages (active and inactive) and the gradient directions (active and inactive).  The workbench does not provide any named themes.
       </documentation>
    </annotation>
 
@@ -604,7 +604,7 @@ href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse
           os=&quot;linux&quot;
           ws=&quot;gtk&quot;/&gt;
         &lt;description&gt;
-        This color is used for the forground color of the XYZ plugin editor.
+        This color is used for the foreground color of the XYZ plugin editor.
         &lt;/description&gt;
       &lt;/colorDefinition&gt;
       &lt;colorDefinition 
