@@ -644,29 +644,31 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * @param selectNeeded whether the element should be selected
 	 */
 	public void autoExpand(Object element, boolean selectNeeded) {
-		AsynchronousTreeViewer viewer = (AsynchronousTreeViewer) getViewer();
-		TreePath[] treePaths = viewer.getTreePaths(element);
-		if (element instanceof IStackFrame) {
-			IStackFrame frame = (IStackFrame) element;
-			if (treePaths != null) {
-				viewer.expand(new TreeSelection(treePaths));
-				if (selectNeeded) {
-					viewer.setSelection(new TreeSelection(treePaths));
-				}
-			} else {
-				ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-				ILaunch launch = frame.getLaunch();
-				IDebugTarget debugTarget = frame.getDebugTarget();
-				IThread thread = frame.getThread();
-				
-				TreePath treePath = new TreePath(new Object[] {launchManager, launch, debugTarget, thread, frame});
-				viewer.expand(new TreeSelection(new TreePath[] {treePath}));
-				if (selectNeeded) {
-					viewer.setSelection(new TreeSelection(new TreePath[] {treePath}));
-				}
-			}
-		}
-	}
+        AsynchronousTreeViewer viewer = (AsynchronousTreeViewer) getViewer();
+        if (viewer != null) {
+            TreePath[] treePaths = viewer.getTreePaths(element);
+            if (element instanceof IStackFrame) {
+                IStackFrame frame = (IStackFrame) element;
+                if (treePaths != null) {
+                    viewer.expand(new TreeSelection(treePaths));
+                    if (selectNeeded) {
+                        viewer.setSelection(new TreeSelection(treePaths));
+                    }
+                } else {
+                    ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+                    ILaunch launch = frame.getLaunch();
+                    IDebugTarget debugTarget = frame.getDebugTarget();
+                    IThread thread = frame.getThread();
+
+                    TreePath treePath = new TreePath(new Object[] { launchManager, launch, debugTarget, thread, frame });
+                    viewer.expand(new TreeSelection(new TreePath[] { treePath }));
+                    if (selectNeeded) {
+                        viewer.setSelection(new TreeSelection(new TreePath[] { treePath }));
+                    }
+                }
+            }
+        }
+    }
 		
 	/**
 	 * Sets whether this view is in the active page of a
