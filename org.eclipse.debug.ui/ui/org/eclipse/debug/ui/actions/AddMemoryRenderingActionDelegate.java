@@ -45,16 +45,16 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
- * A add memory rendering action that can be contributed to a an editor or view or by object contribution. 
- * The action will perform the "add memory rendering" operation for debug context the provides 
- * an appropriate <code>IMemoryBlockRetrieval</code> and <code>IAddMemoryRenderingTarget</code>.
+ * A cascade menu to add a memory rendering to the memory view. This action delegate can be
+ * contributed to a an editor, view or object via standard workbench extension points. 
+ * The action works on the {@link IAddMemoryRenderingsTarget} adapter provided 
+ * by the active debug context, creating a context menu to add applicable renderings
+ * to the memory view.
  * <p>
  * Clients may reference/contribute this class as an action delegate
  * in plug-in XML. This class is not intended to be subclassed.
  * </p>
  * @since 3.2
- * 
- * TODO:  new api, needs review
  */
 public class AddMemoryRenderingActionDelegate extends Action implements IViewActionDelegate, IEditorActionDelegate, IObjectActionDelegate, IActionDelegate2{
 	
@@ -193,14 +193,23 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 		fActionDelegate = target;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
+	 */
 	public void init(IViewPart view) {
 		bindPart(view);	
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 */
 	public void run(IAction action) {
 		// do nothing
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		bindAction(action);
 		fCurrentSelection = selection;
@@ -211,12 +220,8 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	{
 		if (fActionDelegate != null)
 		{
-			try {
-				action.setEnabled(fActionDelegate.canAddMemoryRenderings(fPart, selection));
-				bindAction(action);
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e);
-			}
+			action.setEnabled(fActionDelegate.canAddMemoryRenderings(fPart, selection));
+			bindAction(action);
 		}
 		else
 		{
@@ -250,18 +255,27 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 		return target;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
+	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		bindPart(targetEditor);
 		bindAction(action);
 		updateAction(action, fCurrentSelection);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
+	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		bindPart(targetPart);
 		bindAction(action);
 		updateAction(action, fCurrentSelection);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
+	 */
 	public void init(IAction action) {		
 		bindAction(action);
 		if (action != null)
@@ -273,6 +287,9 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 		}	
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#dispose()
+	 */
 	public void dispose() {
 		// remove as debug context listener
 		fAction = null;
@@ -284,6 +301,9 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 		bindPart(null);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
+	 */
 	public void runWithEvent(IAction action, Event event) {
 		// do nothing
 	}

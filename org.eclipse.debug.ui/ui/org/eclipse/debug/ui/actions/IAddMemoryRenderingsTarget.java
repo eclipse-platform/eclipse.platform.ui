@@ -17,52 +17,47 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * An adpater for "add memory rendering" operation.  The platform provides
- * retargettable Add Memory Rendering Action.  Client implementing this adapter
- * is expected to add the necessary memory blocks and renderings when the action
- * is invoked.
- * 
+ * Adpater for the platform's retargettable "add memory rendering" action. 
+ * Clients implementing this adapter are expected to add the necessary memory blocks
+ * and renderings when the adapter is invoked.
+ * <p>
  * Typically, to add a memory rendering, client needs to do the following:
- * (1)  Create a new memory block
- * (2)  Add the new memory block to the Memory Block Manager. (<code>IMemoryBlockManager</code>)
- * (3)  Create the new rendering from <code>IMemoryRenderingTypeDelegate</code>
- * (4)  Bring the required memory view to the top. (<code>IMemoryRenderingSite</code>)
- * (5)  Find the container from the memory view to host the new memory rendering. (<code>IMemoryRenderingContainer</code>) 
- * (6)  Initialize the new rendering with the appropriate memory block and container.
- * (7)  Add the new rendering to the container. 
- * 
- * TODO:  new api, needs review
- *
- *@since 3.2
+ * <ol>
+ * <li>Create a new memory block</li>
+ * <li>Add the new memory block to the Memory Block Manager. (<code>IMemoryBlockManager</code>)</li>
+ * <li>Create the new rendering from <code>IMemoryRenderingTypeDelegate</code></li>
+ * <li>Bring the required memory view to the top. (<code>IMemoryRenderingSite</code>)</li>
+ * <li>Find the container from the memory view to host the new memory rendering.
+ *    (<code>IMemoryRenderingContainer</code>)</li> 
+ * <li>Initialize the new rendering with the appropriate memory block and container.</li>
+ * <li>Add the new rendering to the container.</li>
+ * </ol> 
+ * </p>
+ * @since 3.2
+ * @see AddMemoryRenderingActionDelegate
  */
 public interface IAddMemoryRenderingsTarget {
 	/**
-	 * Returns whether an add memory rendering operation can be performed from the specified
-	 * part and the given selection.
+	 * Returns whether a memory rendering can be added from the specified
+	 * part, based on the the given selection, which is the active debug context
+	 * in the current workbench window.
 	 * 
 	 * @param part the part on which the action has been invoked
-	 * @param selection the selection on which the action has been invoked
+	 * @param selection the active debug context in the active workbench window	
 	 * @throws CoreException if an error has occurred
 	 */
-	public boolean canAddMemoryRenderings(IWorkbenchPart part, ISelection selection) throws CoreException;
+	public boolean canAddMemoryRenderings(IWorkbenchPart part, ISelection selection);
 	
 	/**
-	 * Returns whether this target will support adding memory renderings from the specified
-	 * part.
-	 * @param part
-	 * @return true if the target wants to support adding memory renderings from the given
-	 * part, false otherwise.
-	 */
-	public boolean supportsAddMemoryRenderings(IWorkbenchPart part);
-	
-	/**
-	 * Perform an add memory rendering operation. Based on the part, selection and retrieval, client
-	 * must first create and add the required memory block to the Memory Block Manager.
-	 * Once the memory block is added, client can create the specified renderings and add the renderings
-	 * to the appropriate memory rendering containers.
-	 * 
+	 * Adds memory renderings. Based on the part and selection (active debug context), this 
+	 * adapter does the following:
+	 * <ol>
+	 * <li>creates and adds the required memory block to the memory block manager</li>
+	 * <li>creates the specified renderings and add the them
+	 *   to the appropriate memory rendering containers</li>
+	 * </ol>
 	 * @param part the part on which the action has been invoked
-	 * @param selection the selection on which the action has been invoked
+	 * @param selection the active debug context
 	 * @param renderingTypes renderings to add
 	 * @throws CoreException if unable to perform the action 
 	 * 
@@ -75,11 +70,12 @@ public interface IAddMemoryRenderingsTarget {
 	public void addMemoryRenderings(IWorkbenchPart part, ISelection selection, IMemoryRenderingType[] renderingTypes) throws CoreException;
 	
 	/**
-	 * Return a list of rendering types that can be added based on the workbench part and its selection.
-	 * @param part the part asking for the list of rendering types
-	 * @param selection current selection from the part 
-	 * @return a list of rendering types applicable for the current selection, empty list if no applicable
-	 * type can be found.
+	 * Returns a list of rendering types that can be added from the given workbench part and active
+	 * debug context, possibly empty.
+	 * 
+	 * @param part the part on which the action has been invoked
+	 * @param selection the active debug context
+	 * @return a list of rendering types that can be added, possiby empty
 	 */
 	public IMemoryRenderingType[] getMemoryRenderingTypes(IWorkbenchPart part, ISelection selection);
 }
