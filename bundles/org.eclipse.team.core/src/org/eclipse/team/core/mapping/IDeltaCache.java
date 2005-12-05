@@ -12,7 +12,7 @@ package org.eclipse.team.core.mapping;
 
 
 /**
- * A cache that is associated with a synchronization context that allows clients
+ * A cache that is associated with a synchronization that allows clients
  * to cache synchronization state related to their model for the duration of the
  * operation. When the context is disposed, the cache will be disposed and any
  * listeners notified.
@@ -30,7 +30,7 @@ package org.eclipse.team.core.mapping;
  * 
  * @since 3.2
  */
-public interface ISynchronizationCache {
+public interface IDeltaCache {
 
 	/**
 	 * Cache the given property with this context.

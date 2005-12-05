@@ -92,7 +92,7 @@ public class MarkAsMergedAction extends ModelProviderAction {
 			}
 			if (resource != null && resource.getType() == IResource.FILE) {
 				ISynchronizationContext context = getContext();
-				IDelta delta = context.getSyncDeltaTree().getDelta(resource.getFullPath());
+				IDelta delta = context.getDeltaTree().getDelta(resource.getFullPath());
 				if (delta instanceof IThreeWayDelta) {
 					IThreeWayDelta twd = (IThreeWayDelta) delta;
 					if (twd.getDirection() == IThreeWayDelta.CONFLICTING) {

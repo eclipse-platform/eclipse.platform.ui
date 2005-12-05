@@ -94,7 +94,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getCache()
 	 */
-	public synchronized ISynchronizationCache getCache() {
+	public synchronized IDeltaCache getCache() {
 		if (cache == null) {
 			cache = new SynchronizationCache(this);
 		}
@@ -104,7 +104,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getSyncDeltaTree()
 	 */
-	public IDeltaTree getSyncDeltaTree() {
+	public IDeltaTree getDeltaTree() {
 		return deltaTree;
 	}
 	
@@ -130,7 +130,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	public IDelta[] getDeltas(final ResourceTraversal[] traversals) {
 		final Set result = new HashSet();
 		try {
-			getSyncDeltaTree().accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDeltaVisitor() {
+			getDeltaTree().accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDeltaVisitor() {
 				public boolean visit(IDelta delta) throws CoreException {
 					for (int i = 0; i < traversals.length; i++) {
 						ResourceTraversal traversal = traversals[i];

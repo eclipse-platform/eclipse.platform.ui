@@ -82,6 +82,8 @@ public interface ISynchronizationContext {
 	 * 
 	 * @return a tree that contains a <code>SyncInfo</code> node for any
 	 *         resources that are out-of-sync.
+	 *         
+	 * @deprecated use {@link #getDeltaTree() }
 	 */
 	public ISyncInfoTree getSyncInfoTree();
 	
@@ -105,7 +107,7 @@ public interface ISynchronizationContext {
 	 *         resources that are out-of-sync.
 	 *         
 	 */
-	public IDeltaTree getSyncDeltaTree();
+	public IDeltaTree getDeltaTree();
 
 	/**
 	 * Return the synchronization type. A type of <code>TWO_WAY</code>
@@ -132,7 +134,7 @@ public interface ISynchronizationContext {
 	 * applies.
 	 * @return the cache associated with this synchronization context
 	 */
-     public ISynchronizationCache getCache();
+     public IDeltaCache getCache();
     
 	/**
 	 * Dispose of the synchronization context and the cache of the context. This

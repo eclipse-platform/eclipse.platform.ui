@@ -145,7 +145,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * conflicts are dealt with before the merger is invoked.
 	 * <p>
 	 * The deltas provided to this method should be those obtained from the tree 
-	 * ({@link ISynchronizationContext#getSyncDeltaTree()})
+	 * ({@link ISynchronizationContext#getDeltaTree()})
 	 * of this context. Any resource changes triggered by this merge will be
 	 * reported through the resource delta mechanism and the change notification
 	 * mechanisms of the delta tree associated with this context.

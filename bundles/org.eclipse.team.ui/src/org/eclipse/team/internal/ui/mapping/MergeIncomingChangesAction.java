@@ -43,7 +43,7 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 						InterruptedException {
 					try {
 						performMerge(context, monitor);
-						if (context.getSyncDeltaTree().isEmpty() || !hasIncomingChanges(context.getSyncDeltaTree())) {
+						if (context.getDeltaTree().isEmpty() || !hasIncomingChanges(context.getDeltaTree())) {
 							promptForNoChanges();
 						}
 					} catch (CoreException e) {

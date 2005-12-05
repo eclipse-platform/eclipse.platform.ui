@@ -114,7 +114,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 		try {
 			monitor.beginTask(null, 100);
 			context = buildMergeContext(Policy.subMonitorFor(monitor, 75));
-			if (context.getSyncDeltaTree().isEmpty() || !hasIncomingChanges(context.getSyncDeltaTree())) {
+			if (context.getDeltaTree().isEmpty() || !hasIncomingChanges(context.getDeltaTree())) {
 				promptForNoChanges();
 				context.dispose();
 				return;

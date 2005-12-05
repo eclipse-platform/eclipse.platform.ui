@@ -13,25 +13,29 @@ package org.eclipse.team.core.mapping;
 import org.eclipse.core.runtime.*;
 
 /**
- * The purpose of this interface is to provide support for model level 
- * auto-merging. It is helpful in the
- * cases where a file may contain multiple model elements or a model element
- * consists of multiple files. It can also be used for cases where there is a
- * one-to-one mapping between model elements and files, although
- * <code>IStreamMerger</code> can also be used in that case.
+ * The purpose of this interface is to provide support for model level
+ * auto-merging. It is helpful in the cases where a file may contain multiple
+ * model elements or a model element consists of multiple files. It can also be
+ * used for cases where there is a one-to-one mapping between model elements and
+ * files, although <code>IStreamMerger</code> can also be used in that case.
  * 
- * Clients should group resource mappings by model provider and
- * then attempt to obtain a merger from the model provider
- * using the adaptable mechanism as follows:
+ * Clients should group resource mappings by model provider and then attempt to
+ * obtain a merger from the model provider using the adaptable mechanism as
+ * follows:
  * 
  * <pre>
- *     Object o = mapping.getModelProvider().getAdapter(IResourceMappingMerger.class);
- *     if (o instanceof IResourceMappingMerger.class) {
- *        IResourceMappingMerger merger = (IResourceMappingMerger)o;
- *        ...
- *     }
+ *      Object o = mapping.getModelProvider().getAdapter(IResourceMappingMerger.class);
+ *      if (o instanceof IResourceMappingMerger.class) {
+ *         IResourceMappingMerger merger = (IResourceMappingMerger)o;
+ *         ...
+ *      }
  * </pre>
  * 
+ * <p>
+ * Clients are not expected to implement this interface but should subclass
+ * {@link ResourceMappingMerger} instead.
+ * 
+ * @see ResourceMappingMerger
  * @see org.eclipse.compare.IStreamMerger
  * @see org.eclipse.core.resources.mapping.ResourceMapping
  * @see org.eclipse.core.resources.mapping.ModelProvider

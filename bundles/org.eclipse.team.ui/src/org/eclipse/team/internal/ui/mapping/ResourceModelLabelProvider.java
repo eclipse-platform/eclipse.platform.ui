@@ -41,7 +41,7 @@ public class ResourceModelLabelProvider extends
 		if (resource != null) {
 			ISynchronizationContext context = getContext();
 			if (context != null) {
-				IDelta delta = context.getSyncDeltaTree().getDelta(resource.getFullPath());
+				IDelta delta = context.getDeltaTree().getDelta(resource.getFullPath());
 				return delta;
 			}
 		}
