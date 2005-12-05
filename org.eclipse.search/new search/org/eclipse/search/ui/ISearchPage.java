@@ -14,7 +14,7 @@ import org.eclipse.jface.dialogs.IDialogPage;
 
 /**
  * Interface to be implemented by contributors to the extension point <code>org.eclipse.search.searchPages</code>.
- * Represents a page in the search dialog. Implementod typically subclass <code>DialogPage</code>.
+ * Represents a page in the search dialog. Implemented typically subclass <code>DialogPage</code>.
  * <p>
  * The search dialog calls the <code>performAction</code> method when the Search
  * button is pressed.
