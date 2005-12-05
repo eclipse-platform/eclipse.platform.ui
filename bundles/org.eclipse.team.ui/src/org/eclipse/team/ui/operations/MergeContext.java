@@ -19,9 +19,12 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.delta.*;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.core.delta.SyncDeltaTree;
+import org.eclipse.team.internal.core.delta.SyncInfoToDeltaConverter;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.mapping.*;
 
@@ -52,8 +55,8 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * Create a merge context.
 	 * @param type 
      */
-    protected MergeContext(IResourceMappingScope input, String type, SyncInfoTree tree) {
-    	super(input, type, tree);
+    protected MergeContext(IResourceMappingScope input, String type, SyncInfoTree tree, SyncDeltaTree deltaTree) {
+    	super(input, type, tree, deltaTree);
     }
 
     /**
@@ -107,7 +110,86 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 		}
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.team.ui.mapping.IMergeContext#merge(org.eclipse.team.core.delta.ISyncDelta[], boolean, org.eclipse.core.runtime.IProgressMonitor)
+     */
+    public IStatus merge(ISyncDelta[] deltas, boolean force, IProgressMonitor monitor) throws CoreException {
+		List failedFiles = new ArrayList();
+		for (int i = 0; i < deltas.length; i++) {
+			ISyncDelta delta = deltas[i];
+			IStatus s = merge(delta, force, monitor);
+			if (!s.isOK()) {
+				if (s.getCode() == IMergeStatus.CONFLICTS) {
+					failedFiles.addAll(Arrays.asList(((IMergeStatus)s).getConflictingFiles()));
+				} else {
+					return s;
+				}
+			}
+		}
+		if (failedFiles.isEmpty()) {
+			return Status.OK_STATUS;
+		} else {
+			return new MergeStatus(TeamPlugin.ID, "Could not merge all files", (IFile[]) failedFiles.toArray(new IFile[failedFiles.size()]));
+		}
+    }
+    
     /**
+	 * @param delta
+	 * @param monitor
+	 * @return
+	 */
+	public IStatus merge(ISyncDelta delta, boolean force, IProgressMonitor monitor) {
+		if (!isFileDelta(delta))
+			return Status.OK_STATUS;
+        try {
+        	if (delta instanceof IThreeWayDelta && !force) {
+				IThreeWayDelta twDelta = (IThreeWayDelta) delta;
+	        	int direction = twDelta.getDirection();
+	    		if (direction == IThreeWayDelta.OUTGOING) {
+	        		// There's nothing to do so return OK
+	        		return Status.OK_STATUS;
+	        	}
+	    		if (direction == IThreeWayDelta.INCOMING) {
+	    			// Just copy the stream since there are no conflicts
+	    			return performReplace(delta, monitor);
+	    		}
+				// direction == SyncInfo.CONFLICTING
+	    		int type = twDelta.getKind();
+	    		if (type == ISyncDelta.REMOVED) {
+	    			// TODO: either we need to spec mark as merged to work in this case
+	    			// or somehow involve the subclass (or just ignore it)
+	    			markAsMerged(getLocalFile(delta), false, monitor);
+	    			return Status.OK_STATUS;
+	    		}
+				// type == SyncInfo.CHANGE
+				ITwoWayDelta remoteChange = twDelta.getRemoteChange();
+				IResourceVariant base = null;
+	        	IResourceVariant remote = null;
+	        	if (remoteChange != null) {
+					base = (IResourceVariant)remoteChange.getBeforeState();
+		        	remote = (IResourceVariant)remoteChange.getAfterState();
+	        	}
+				if (base == null || remote == null || !getLocalFile(delta).exists()) {
+					// Nothing we can do so return a conflict status
+					// TODO: Should we handle the case where the local and remote have the same contents for a conflicting addition?
+					return new MergeStatus(TeamUIPlugin.ID, NLS.bind("Conflicting change could not be merged: {0}", new String[] { delta.getFullPath().toString() }), new IFile[] { getLocalFile(delta) });
+				}
+				// We have a conflict, a local, base and remote so we can do 
+				// a three-way merge
+	            return performThreeWayMerge(twDelta, monitor);
+        	} else {
+        		return performReplace(delta, monitor);
+        	}
+        } catch (CoreException e) {
+            return new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Merge of {0} failed due to an internal error.", new String[] { delta.getFullPath().toString() }), e);
+        }
+	}
+
+	private IFile getLocalFile(ISyncDelta delta) {
+		return ResourcesPlugin.getWorkspace().getRoot().getFile(delta.getFullPath());
+	}
+
+	/**
      * Method that can be called by the model merger to attempt a file level
      * merge. This is useful for cases where the model merger does not need to
      * do any special processing to perform the merge. By default, this method
@@ -136,13 +218,13 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	        	}
 	    		if (direction == SyncInfo.INCOMING) {
 	    			// Just copy the stream since there are no conflicts
-	    			return performReplace(info, monitor);
+	    			return performReplace(SyncInfoToDeltaConverter.getDeltaFor(info), monitor);
 	    		}
 				// direction == SyncInfo.CONFLICTING
 	    		int type = SyncInfo.getChange(info.getKind());
 	    		if (type == SyncInfo.DELETION) {
 	    			// Nothing needs to be done although subclasses
-	    			markAsMerged(file, monitor);
+	    			markAsMerged(file, false, monitor);
 	    			return Status.OK_STATUS;
 	    		}
 				// type == SyncInfo.CHANGE
@@ -155,9 +237,9 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 				}
 				// We have a conflict, a local, base and remote so we can do 
 				// a three-way merge
-	            return performThreeWayMerge(info, monitor);
+	            return performThreeWayMerge(SyncInfoToDeltaConverter.getDeltaFor(info), monitor);
         	} else {
-        		return performReplace(info, monitor);
+        		return performReplace(SyncInfoToDeltaConverter.getDeltaFor(info), monitor);
         	}
         } catch (CoreException e) {
             return new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Merge of {0} failed due to an internal error.", new String[] { file.getFullPath().toString() }), e);
@@ -168,9 +250,17 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * Replace the local contents with the remote contents.
      * The local resource must be a file.
      */
-    private IStatus performReplace(SyncInfo info, IProgressMonitor monitor) throws CoreException {
-    	IFile file = (IFile)info.getLocal();
-    	IResourceVariant remote = info.getRemote();
+    private IStatus performReplace(ISyncDelta delta, IProgressMonitor monitor) throws CoreException {
+    	ITwoWayDelta d;
+    	if (delta instanceof ITwoWayDelta) {
+			d = (ITwoWayDelta) delta;
+		} else {
+			d = ((IThreeWayDelta)delta).getRemoteChange();
+		}
+    	if (d == null)
+    		return Status.OK_STATUS;
+    	IFile file = getLocalFile(d);
+    	IResourceVariant remote = (IResourceVariant)d.getAfterState();
     	if (remote == null && file.exists()) {
     		file.delete(false, true, monitor);
     	} else if (remote != null) {
@@ -190,7 +280,8 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 				}
     		}
     	}
-    	markAsMerged(file, monitor);
+    	// Performing a replace should leave the file in-sync
+    	markAsMerged(file, true, monitor);
 		return Status.OK_STATUS;
 	}
 
@@ -199,8 +290,8 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * The local resource must be a file and all three
      * resources (local, base, remote) must exist.
      */
-	private IStatus performThreeWayMerge(SyncInfo info, IProgressMonitor monitor) throws CoreException {
-		IFile file = (IFile)info.getLocal();
+	private IStatus performThreeWayMerge(ISyncDelta delta, IProgressMonitor monitor) throws CoreException {
+		IFile file = getLocalFile(delta);
 		IContentDescription contentDescription = file.getContentDescription();
 		IStreamMerger merger = null;
 		if (contentDescription != null && contentDescription.getContentType() != null) {
@@ -216,7 +307,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 		    merger = CompareUI.createStreamMerger(TXT_EXTENTION);
 		if (merger == null)
 		    return  new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Auto-merge support for {0} is not available.", new String[] { file.getFullPath().toString() }), null);
-		return merge(merger, info, monitor);
+		return merge(merger, delta, monitor);
 	}
 
     /*
@@ -224,10 +315,10 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * stream merger. The local resource must be a file and all three
      * resources (local, base, remote) must exist.
      */
-    private IStatus merge(IStreamMerger merger, SyncInfo info, IProgressMonitor monitor) throws CoreException {
+    private IStatus merge(IStreamMerger merger, ISyncDelta delta, IProgressMonitor monitor) throws CoreException {
         
     	// Get the file involved
-    	IFile file = (IFile)info.getLocal();
+    	IFile file = (IFile)getLocalFile(delta);
     	
     	// Define all the input streams here so we can ensure they get closed
         InputStream ancestorStream = null;
@@ -238,7 +329,10 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 
         
             // Get the ancestor stream and encoding
-        	IResourceVariant base = info.getBase();
+        	IResourceVariant base = null;
+        	ITwoWayDelta remoteChange = ((IThreeWayDelta)delta).getRemoteChange();
+        	if (remoteChange != null)
+        		base = (IResourceVariant)remoteChange.getBeforeState();
             IStorage s = base.getStorage(monitor);
             String ancestorEncoding = null;
             if (s instanceof IEncodedStorage) {
@@ -251,7 +345,9 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
             ancestorStream = new BufferedInputStream(s.getContents());
             
             // Get the remote stream and encoding
-            IResourceVariant remote = info.getRemote();
+            IResourceVariant remote = null;
+            if (remoteChange != null)
+            	remote = (IResourceVariant)remoteChange.getAfterState();
             s = remote.getStorage(monitor);
             String remoteEncoding = null;
             if (s instanceof IEncodedStorage) {
@@ -272,7 +368,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
                 status = merger.merge(output, targetEncoding, ancestorStream, ancestorEncoding, targetStream, targetEncoding, remoteStream, remoteEncoding, monitor);
                 if (status.isOK()) {
                     file.setContents(getTempInputStream(file, output), false, true, monitor);
-                    markAsMerged(file, monitor);
+                    markAsMerged(file, false, monitor);
                 } else {
                 	status = new MergeStatus(status.getPlugin(), status.getMessage(), new IFile[]{file});
                 }

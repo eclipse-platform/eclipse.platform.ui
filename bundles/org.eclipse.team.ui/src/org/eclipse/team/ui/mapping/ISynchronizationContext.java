@@ -14,7 +14,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.delta.*;
 import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.ui.operations.MergeContext;
 import org.eclipse.team.ui.operations.SynchronizationContext;
 
@@ -86,30 +88,26 @@ public interface ISynchronizationContext {
 	public ISyncInfoTree getSyncInfoTree();
 	
 	/**
-	 * Returns synchronization info for the given resource, or <code>null</code>
-	 * if there is no synchronization info because the resource is not a
-	 * candidate for synchronization. This method can be used to obtain the
-	 * {@link SyncInfo} and hence the base and remote resource variant handles
-	 * for resources that are in-sync or out-of-sync. The sync info for
-	 * out-of-sync resources can also be obtained from the {@link #getSyncInfoTree()}
-	 * method.
+	 * Return a tree that contains {@link ISyncDelta} nodes for resources
+	 * that are out-of-sync. The tree will only contain deltas for out-of-sync
+	 * resources that are within the scope of this context. The tree
+	 * may include additional out-of-sync resources, which should be ignored by
+	 * the client. Clients can test for inclusion using the method 
+	 * {@link IResourceMappingScope#contains(IResource)}.
 	 * <p>
-	 * Note that sync info may be returned for non-existing resources or for
-	 * resources which have no corresponding remote resource.
-	 * </p>
-	 * <p>
-	 * This method will be quick. If synchronization calculation requires
-	 * content from the server it must be cached when the context is created or
-	 * refreshed. A client should call refresh before calling this method to
-	 * ensure that the latest information is available for computing the sync
-	 * state.
-	 * </p>
+	 * The {@link ISyncDeltaTree} and the {@link ITwoWayDelta} are a generic
+	 * delta data structure. The tree returned from this method will have
+	 * {@link IResourceVariant} objects as the before and after states
+	 * of any {@link ITwoWayDelta} instances that are obtained directly
+	 * or indirectly in the set.
 	 * 
-	 * @param resource the resource of interest
-	 * @return sync info
-	 * @throws CoreException
+	 * EXPERIMENTAL: Do not use yet!!!
+	 * 
+	 * @return a tree that contains a <code>SyncInfo</code> node for any
+	 *         resources that are out-of-sync.
+	 *         
 	 */
-	public SyncInfo getSyncInfo(IResource resource) throws CoreException;
+	public ISyncDeltaTree getSyncDeltaTree();
 
 	/**
 	 * Return the synchronization type. A type of <code>TWO_WAY</code>
@@ -128,13 +126,13 @@ public interface ISynchronizationContext {
 	public String getType();
 	
 	/**
-	 * Return the cache assocated with this synchronization context.
+	 * Return the cache associated with this synchronization context.
 	 * The cache is maintained for the lifetime of this context and is
 	 * disposed when the the context is disposed. It can be used by
 	 * clients to cache model state related to the context so that it can
-	 * be mainatined for the life of the operation to which the context
+	 * be maintained for the life of the operation to which the context
 	 * applies.
-	 * @return the cache assocated with this synchronization context
+	 * @return the cache associated with this synchronization context
 	 */
      public ISynchronizationCache getCache();
     
@@ -173,4 +171,29 @@ public interface ISynchronizationContext {
 	 *             </ul>
 	 */
     public void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Convenience method for return the set of deltas that
+	 * are covered by the given traversals.
+	 * @param traversals the traversals to search
+	 * @return the deltas that are found in the given traversals
+	 */
+	public ISyncDelta[] getDeltas(ResourceTraversal[] traversals);
+
+	/**
+	 * Convenience method for returning the resource associated
+	 * with a given delta.
+	 * @param delta a delta
+	 * @return the resource associated with that delta
+	 */
+	IResource getResource(ISyncDelta delta);
+
+	/**
+	 * Convenience method that returns whether the resource
+	 * associated with the given delta is a file.
+	 * @param delta the delta
+	 * @return whether the resource
+	 * associated with the given delta is a file
+	 */
+	boolean isFileDelta(ISyncDelta delta);
 }

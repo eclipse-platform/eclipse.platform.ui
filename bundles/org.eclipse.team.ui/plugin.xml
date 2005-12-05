@@ -349,7 +349,7 @@
        </navigatorContent>
    </extension>
    <extension
-         point="org.eclipse.ui.navigator.viewerContentBinding">
+         point="org.eclipse.ui.navigator.viewer">
       <viewerContentBinding 
          viewerId="org.eclipse.team.ui.navigatorViewer">                     
          <includes>                     

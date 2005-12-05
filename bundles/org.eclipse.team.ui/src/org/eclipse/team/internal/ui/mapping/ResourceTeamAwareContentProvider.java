@@ -12,10 +12,12 @@ package org.eclipse.team.internal.ui.mapping;
 
 import java.util.*;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.team.core.delta.ISyncDelta;
 import org.eclipse.team.ui.mapping.*;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -94,7 +96,7 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 		// TODO: must explicilty register for sync change events (perhaps this should be a flag of some sort)
 		org.eclipse.team.ui.mapping.ISynchronizationContext context = getContext();
 		if (context != null)
-			context.getSyncInfoTree().addSyncSetChangedListener(this);
+			context.getSyncDeltaTree().addSyncDeltaChangeListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -104,7 +106,7 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 		provider.dispose();
 		ISynchronizationContext context = getContext();
 		if (context != null)
-			context.getSyncInfoTree().removeSyncSetChangedListener(this);
+			context.getSyncDeltaTree().removeSyncDeltaChangeListener(this);
 		super.dispose();
 	}
 	
@@ -123,9 +125,21 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 					result.add(object);
 				}
 				IResource resource = (IResource) parent;
-				IResource[] resources = context.getSyncInfoTree().members(resource);
-				for (int i = 0; i < resources.length; i++) {
-					IResource child = resources[i];
+				IPath[] childPaths = context.getSyncDeltaTree().getChildren(resource.getFullPath());
+				for (int i = 0; i < childPaths.length; i++) {
+					IPath path = childPaths[i];
+					ISyncDelta delta = context.getSyncDeltaTree().getDelta(path);
+					IResource child;
+					if (delta == null) {
+						// the path has descendent deltas so it must be a folder
+						if (path.segmentCount() == 1) {
+							child = ((IWorkspaceRoot)resource).getProject(path.lastSegment());
+						} else {
+							child = ((IContainer)resource).getFolder(new Path(path.lastSegment()));
+						}
+					} else {
+						child = context.getResource(delta);
+					}
 					if (isInScope(parent, child)) {
 						result.add(child);
 					}

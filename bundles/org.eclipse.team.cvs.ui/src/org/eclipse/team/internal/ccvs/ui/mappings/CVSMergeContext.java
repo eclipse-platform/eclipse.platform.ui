@@ -25,25 +25,33 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.core.delta.SyncDeltaTree;
+import org.eclipse.team.internal.core.delta.SyncInfoToDeltaConverter;
 import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.operations.MergeContext;
 
 public class CVSMergeContext extends MergeContext {
 	
 	private WorkspaceSynchronizeParticipant participant;
+	private final SyncInfoToDeltaConverter converter;
 
 	public static IMergeContext createContext(IResourceMappingScope scope, IProgressMonitor monitor) {
 		WorkspaceSynchronizeParticipant participant = new WorkspaceSynchronizeParticipant(scope);
 		participant.refreshNow(participant.getResources(), NLS.bind("Preparing to merge {0}", new String[] { "TODO: mapping description for CVS merge context initialization" }), monitor);
-		return new CVSMergeContext(THREE_WAY, participant, scope);
+		SyncDeltaTree tree = new SyncDeltaTree();
+		SyncInfoToDeltaConverter converter = new SyncInfoToDeltaConverter(participant.getSyncInfoSet(), tree);
+		converter.connect(monitor);
+		participant.getSubscriberSyncInfoCollector().waitForCollector(monitor);
+		return new CVSMergeContext(THREE_WAY, participant, scope, converter);
 	}
 	
-	protected CVSMergeContext(String type, WorkspaceSynchronizeParticipant participant, IResourceMappingScope input) {
-		super(input, type, participant.getSyncInfoSet());
+	protected CVSMergeContext(String type, WorkspaceSynchronizeParticipant participant, IResourceMappingScope input, SyncInfoToDeltaConverter converter) {
+		super(input, type, participant.getSyncInfoSet(), converter.getTree());
 		this.participant = participant;
+		this.converter = converter;
 	}
 
-	public IStatus markAsMerged(IFile file, IProgressMonitor monitor) {
+	public IStatus markAsMerged(IFile file, boolean inSyncHint, IProgressMonitor monitor) {
 		try {
 			// Get the latest sync info for the file (i.e. not what is in the set).
 			// We do this because the client may have modified the file since the
@@ -152,6 +160,7 @@ public class CVSMergeContext extends MergeContext {
 	}
 	
 	public void dispose() {
+		converter.dispose();
 		participant.dispose();
 		super.dispose();
 	}

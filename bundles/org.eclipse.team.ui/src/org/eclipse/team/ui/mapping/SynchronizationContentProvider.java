@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.team.core.ITeamStatus;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.delta.*;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -40,7 +40,7 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
  * 
  * @since 3.2
  */
-public abstract class SynchronizationContentProvider implements ICommonContentProvider, ISyncInfoSetChangeListener, IPropertyChangeListener {
+public abstract class SynchronizationContentProvider implements ICommonContentProvider, ISyncDeltaChangeListener, IPropertyChangeListener {
 
 	private IResourceMappingScope scope;
 	private ISynchronizationContext context;
@@ -108,7 +108,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		} else if (inputElement instanceof ISynchronizationContext) {
 			ISynchronizationContext sc = (ISynchronizationContext) inputElement;
 			if (sc.getScope().getMappings(getModelProviderId()).length > 0) {
-				if (filter(inputElement, getDelegateContentProvider().getChildren(getModelRoot())).length > 0)
+				if (filter(getModelRoot(), getDelegateContentProvider().getChildren(getModelRoot())).length > 0)
 					return new Object[] { getModelProvider() };
 			}
 			return new Object[0];
@@ -167,22 +167,22 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * property on the state model provided by the view to determine what kinds
 	 * should be included.
 	 * 
-	 * @param kind the synchronization kind as described in the {@link SyncInfo}
+	 * @param direction the synchronization kind as described in the {@link SyncInfo}
 	 *            class
 	 * @return whether elements with the given synchronization kind should be
 	 *         included in the contents
 	 */
-	protected boolean includeKind(int kind) {
+	protected boolean includeDirection(int direction) {
 		int mode = stateModel.getIntProperty(ISynchronizePageConfiguration.P_MODE);
 		switch (mode) {
 		case ISynchronizePageConfiguration.BOTH_MODE:
 			return true;
 		case ISynchronizePageConfiguration.CONFLICTING_MODE:
-			return SyncInfo.getDirection(kind) == SyncInfo.CONFLICTING;
+			return direction == IThreeWayDelta.CONFLICTING;
 		case ISynchronizePageConfiguration.INCOMING_MODE:
-			return SyncInfo.getDirection(kind) == SyncInfo.CONFLICTING || SyncInfo.getDirection(kind) == SyncInfo.INCOMING;
+			return direction == IThreeWayDelta.CONFLICTING || direction == IThreeWayDelta.INCOMING;
 		case ISynchronizePageConfiguration.OUTGOING_MODE:
-			return SyncInfo.getDirection(kind) == SyncInfo.CONFLICTING || SyncInfo.getDirection(kind) == SyncInfo.OUTGOING;
+			return direction == IThreeWayDelta.CONFLICTING || direction == IThreeWayDelta.OUTGOING;
 		default:
 			break;
 		}
@@ -230,42 +230,18 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener#syncInfoSetReset(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeListener#syncDeltaTreeReset(org.eclipse.team.core.delta.ISyncDeltaTree, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void syncInfoSetReset(SyncInfoSet set, IProgressMonitor monitor) {
+	public void syncDeltaTreeReset(ISyncDeltaTree tree, IProgressMonitor monitor) {
 		// Nothing can be done at this level (i.e. content provider).
 		// The controller at the viewer level needs to handle this.
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener#syncInfoSetErrors(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.team.core.ITeamStatus[], org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void syncInfoSetErrors(SyncInfoSet set, ITeamStatus[] errors, IProgressMonitor monitor) {
-		// This should happen infrequently enough that a blanket refresh is acceptable
 		refresh();
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener#syncInfoChanged(org.eclipse.team.core.synchronize.ISyncInfoSetChangeEvent, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeListener#syncDeltaTreeChanged(org.eclipse.team.core.delta.ISyncDeltaChangeEvent, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void syncInfoChanged(ISyncInfoSetChangeEvent event, IProgressMonitor monitor) {
-		if (event instanceof ISyncInfoTreeChangeEvent) {
-			ISyncInfoTreeChangeEvent treeEvent = (ISyncInfoTreeChangeEvent) event;
-			syncStateChanged(treeEvent, monitor);
-		}
-	}
-	
-	/**
-	 * The set of out-of-sync resources has changed. The changes are described in the event.
-	 * This method is invoked by a non-ui thread. By default, this method refreshes the
-	 * subtree of this content provider. Subclasses may override.
-	 * 
-	 * TODO: Should reduce the resources to those that apply to this model.
-	 * 
-	 * @param event the event that indicates which resources have change sync state
-	 * @param monitor a progress monitor
-	 */
-	protected void syncStateChanged(ISyncInfoTreeChangeEvent event, IProgressMonitor monitor) {
+	public void syncDeltaTreeChanged(ISyncDeltaChangeEvent event, IProgressMonitor monitor) {
 		refresh();
 	}
 
@@ -379,14 +355,17 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		for (int i = 0; i < children.length; i++) {
 			Object object = children[i];
 			ResourceTraversal[] traversals = getTraversals(object);
-			SyncInfo[] infos = context.getSyncInfoTree().getSyncInfos(traversals);
-			if (infos.length > 0) {
+			ISyncDelta[] deltas = context.getDeltas(traversals);
+			if (deltas.length > 0) {
 				boolean include = false;
-				for (int j = 0; j < infos.length; j++) {
-					SyncInfo info = infos[j];
-					if (includeKind(info.getKind())) {
-						include = true;
-						break;
+				for (int j = 0; j < deltas.length; j++) {
+					ISyncDelta delta = deltas[j];
+					if (delta instanceof IThreeWayDelta) {
+						IThreeWayDelta twd = (IThreeWayDelta) delta;
+						if (includeDirection(twd.getDirection())) {
+							include = true;
+							break;
+						}
 					}
 				}
 				if (include)

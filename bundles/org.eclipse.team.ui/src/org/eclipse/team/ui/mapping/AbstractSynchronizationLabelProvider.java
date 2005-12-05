@@ -19,6 +19,8 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.team.core.delta.ISyncDelta;
+import org.eclipse.team.core.delta.IThreeWayDelta;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
 
@@ -163,6 +165,32 @@ public abstract class AbstractSynchronizationLabelProvider implements ILabelProv
 	 * @param element the element being tested
 	 * @return the sync kind of the given element
 	 */
-	protected abstract int getSyncKind(Object element);
+	protected abstract ISyncDelta getSyncDelta(Object element);
 
+	/**
+	 * TODO: temporary hack
+	 */
+	private int getSyncKind(Object element) {
+		ISyncDelta delta = getSyncDelta(element);
+		if (delta == null)
+			return 0;
+		int kind = delta.getKind();
+		switch (kind) {
+		case ISyncDelta.ADDED:
+			kind = SyncInfo.ADDITION;
+			break;
+		case ISyncDelta.REMOVED:
+			kind = SyncInfo.DELETION;
+			break;
+		case ISyncDelta.CHANGED:
+			kind = SyncInfo.CHANGE;
+			break;
+		}
+		if (delta instanceof IThreeWayDelta) {
+			IThreeWayDelta twd = (IThreeWayDelta) delta;
+			kind |= twd.getDirection();
+		}
+		return kind;
+	}
+	
 }

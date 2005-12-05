@@ -22,9 +22,7 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.operations.ModelSynchronizePage;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.navigator.internal.INavigatorContentServiceListener;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
+import org.eclipse.ui.navigator.*;
 
 /**
  * Provides a Common Navigator based viewer for use by a {@link ModelSynchronizePage}.
@@ -54,7 +52,7 @@ public class CommonViewerAdvisor extends StructuredViewerAdvisor implements INav
 				return provider;
 			}
 		};
-		v.getNavigatorContentService().enableExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
+		v.getNavigatorContentService().activateExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
 		configuration.getSite().setSelectionProvider(v);
 		return v;
 	}
@@ -81,7 +79,7 @@ public class CommonViewerAdvisor extends StructuredViewerAdvisor implements INav
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentServiceListener#onLoad(org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension)
 	 */
-	public void onLoad(NavigatorContentExtension anExtension) {
+	public void onLoad(INavigatorContentExtension anExtension) {
 		extensions.add(anExtension);
 		anExtension.getStateModel().setProperty(TeamUI.RESOURCE_MAPPING_SCOPE, getParticipant().getContext().getScope());
 		if (getParticipant().getContext() != null) {
@@ -117,7 +115,7 @@ public class CommonViewerAdvisor extends StructuredViewerAdvisor implements INav
 	public void setExtentionProperty(String property, int value) {
 		properties.put(property, new Integer(value));
 		for (Iterator iter = extensions.iterator(); iter.hasNext();) {
-			NavigatorContentExtension extension = (NavigatorContentExtension) iter.next();
+			INavigatorContentExtension extension = (INavigatorContentExtension) iter.next();
 			extension.getStateModel().setIntProperty(property, value);
 		}
 	}

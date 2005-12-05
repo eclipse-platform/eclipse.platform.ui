@@ -23,9 +23,7 @@ import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.IResourceMappingScope;
 import org.eclipse.team.ui.mapping.ISynchronizationContext;
-import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.navigator.internal.INavigatorContentServiceListener;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
+import org.eclipse.ui.navigator.*;
 
 public class ResourceMappingHierarchyArea extends DialogArea implements INavigatorContentServiceListener {
 
@@ -62,7 +60,7 @@ public class ResourceMappingHierarchyArea extends DialogArea implements INavigat
         		return provider;
         	};
         };
-        viewer.getNavigatorContentService().enableExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
+        viewer.getNavigatorContentService().activateExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
         GridData data = new GridData(GridData.FILL_BOTH);
         data.heightHint = 100;
         data.widthHint = 300;
@@ -99,7 +97,7 @@ public class ResourceMappingHierarchyArea extends DialogArea implements INavigat
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentServiceListener#onLoad(org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension)
 	 */
-	public void onLoad(NavigatorContentExtension anExtension) {
+	public void onLoad(INavigatorContentExtension anExtension) {
 		anExtension.getStateModel().setProperty(TeamUI.RESOURCE_MAPPING_SCOPE, scope);
 		if (context != null) {
 			anExtension.getStateModel().setProperty(TeamUI.SYNCHRONIZATION_CONTEXT, context);

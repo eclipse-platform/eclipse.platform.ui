@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import org.eclipse.core.resources.mapping.ModelProvider;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.delta.ISyncDelta;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.operations.MergeStatus;
@@ -37,28 +35,28 @@ public class DefaultResourceMappingMerger implements IResourceMappingMerger {
 
 	public IStatus merge(IMergeContext mergeContext, IProgressMonitor monitor) throws CoreException {
 		try {
-			SyncInfoTree tree = getSetToMerge(mergeContext);
+			ISyncDelta[] deltas = getSetToMerge(mergeContext);
 			monitor.beginTask(null, 100);
-			IStatus status = mergeContext.merge(tree, Policy.subMonitorFor(monitor, 75));
+			IStatus status = mergeContext.merge(deltas, false /* don't force */, Policy.subMonitorFor(monitor, 75));
 			return covertFilesToMappings(status, mergeContext);
 		} finally {
 			monitor.done();
 		}
 	}
 
-	private SyncInfoTree getSetToMerge(IMergeContext mergeContext) {
+	private ISyncDelta[] getSetToMerge(IMergeContext mergeContext) {
 		ResourceMapping[] mappings = mergeContext.getScope().getMappings(provider.getDescriptor().getId());
-		SyncInfoTree result = new SyncInfoTree();
+		Set result = new HashSet();
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
 			ResourceTraversal[] traversals = mergeContext.getScope().getTraversals(mapping);
-			SyncInfo[] infos = mergeContext.getSyncInfoTree().getSyncInfos(traversals);
-			for (int j = 0; j < infos.length; j++) {
-				SyncInfo info = infos[j];
-				result.add(info);
+			ISyncDelta[] deltas = mergeContext.getDeltas(traversals);
+			for (int j = 0; j < deltas.length; j++) {
+				ISyncDelta delta = deltas[j];
+				result.add(delta);
 			}
 		}
-		return result;
+		return (ISyncDelta[]) result.toArray(new ISyncDelta[result.size()]);
 	}
 
 	private IStatus covertFilesToMappings(IStatus status, IMergeContext mergeContext) {

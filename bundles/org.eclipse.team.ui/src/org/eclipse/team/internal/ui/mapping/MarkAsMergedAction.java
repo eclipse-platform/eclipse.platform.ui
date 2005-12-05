@@ -16,7 +16,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.delta.ISyncDelta;
+import org.eclipse.team.core.delta.IThreeWayDelta;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.IMergeContext;
 import org.eclipse.team.ui.mapping.ISynchronizationContext;
@@ -45,11 +46,11 @@ public class MarkAsMergedAction extends ModelProviderAction {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
 					try {
-						SyncInfo[] infos = getSelectedSyncInfos(getStructuredSelection());
-						for (int i = 0; i < infos.length; i++) {
-							SyncInfo info = infos[i];
+						ISyncDelta[] deltas = getSelectedDeltas(getStructuredSelection());
+						for (int i = 0; i < deltas.length; i++) {
+							ISyncDelta delta = deltas[i];
 							// TODO: mark as merged should support batching
-							IStatus status = context.markAsMerged((IFile)info.getLocal(), monitor);
+							IStatus status = context.markAsMerged((IFile)context.getResource(delta), false, monitor);
 							if (!status.isOK())
 								throw new CoreException(status);
 						}
@@ -70,10 +71,10 @@ public class MarkAsMergedAction extends ModelProviderAction {
 	 * @see org.eclipse.team.internal.ui.mapping.ModelProviderAction#isEnabledForSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected boolean isEnabledForSelection(IStructuredSelection selection) {
-		return getSelectedSyncInfos(selection).length > 0;
+		return getSelectedDeltas(selection).length > 0;
 	}
 
-	protected SyncInfo[] getSelectedSyncInfos(IStructuredSelection selection) {
+	protected ISyncDelta[] getSelectedDeltas(IStructuredSelection selection) {
 		// TODO: for now, just enable for files
 		if (selection.size() == 1) {
 			Object o = selection.getFirstElement();
@@ -91,13 +92,16 @@ public class MarkAsMergedAction extends ModelProviderAction {
 			}
 			if (resource != null && resource.getType() == IResource.FILE) {
 				ISynchronizationContext context = getContext();
-				SyncInfo info = context.getSyncInfoTree().getSyncInfo(resource);
-				if (info != null && SyncInfo.getDirection(info.getKind()) == SyncInfo.CONFLICTING) {
-					return new SyncInfo[] { info };
+				ISyncDelta delta = context.getSyncDeltaTree().getDelta(resource.getFullPath());
+				if (delta instanceof IThreeWayDelta) {
+					IThreeWayDelta twd = (IThreeWayDelta) delta;
+					if (twd.getDirection() == IThreeWayDelta.CONFLICTING) {
+						return new ISyncDelta[] { delta };
+					}
 				}
 			}
 		}
-		return new SyncInfo[0];
+		return new ISyncDelta[0];
 	}
 	
 	private ISynchronizationContext getContext() {

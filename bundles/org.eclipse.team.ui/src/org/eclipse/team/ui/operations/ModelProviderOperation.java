@@ -12,12 +12,16 @@ package org.eclipse.team.ui.operations;
 
 import java.util.*;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.delta.*;
 import org.eclipse.team.core.synchronize.ISyncInfoTree;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.mapping.DefaultResourceMappingMerger;
 import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.team.ui.mapping.*;
@@ -146,6 +150,33 @@ public abstract class ModelProviderOperation extends TeamOperation {
 			if (direction == SyncInfo.INCOMING || direction == SyncInfo.CONFLICTING) {
 				return true;
 			}
+		}
+		return false;
+	}
+	
+
+	protected boolean hasIncomingChanges(ISyncDeltaTree syncDeltaTree) {
+		final CoreException found = new CoreException(Status.OK_STATUS);
+		try {
+			syncDeltaTree.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new ISyncDeltaVisitor() {
+				public boolean visit(ISyncDelta delta) throws CoreException {
+					if (delta instanceof IThreeWayDelta) {
+						IThreeWayDelta twd = (IThreeWayDelta) delta;
+						int direction = twd.getDirection();
+						if (direction == IThreeWayDelta.INCOMING || direction == IThreeWayDelta.CONFLICTING) {
+							throw found;
+						}
+					} else {
+						throw found;
+					}
+					return false;
+				}
+			
+			}, IResource.DEPTH_INFINITE);
+		} catch (CoreException e) {
+			if (e == found)
+				return true;
+			TeamUIPlugin.log(e);
 		}
 		return false;
 	}
