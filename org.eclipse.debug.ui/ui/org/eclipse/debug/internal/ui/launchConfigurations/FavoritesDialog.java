@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -46,6 +51,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
@@ -435,58 +441,77 @@ public class FavoritesDialog extends Dialog {
 	}
 	
 	/**
-	 * Method performOK.
+	 * Method performOK. Uses scheduled Job format.
+	 * @since 3.2
 	 */
 	public void saveFavorites() {
-		ILaunchConfiguration[] initial = getInitialFavorites();
-		List current = getFavorites();
-		String groupId = getLaunchHistory().getLaunchGroup().getIdentifier();
 		
-		// removed favorites
-		for (int i = 0; i < initial.length; i++) {
-			ILaunchConfiguration configuration = initial[i];
-			if (current.contains(configuration)) {
-			} else {
-				// remove fav attributes
-				try {
-					ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
-					workingCopy.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
-					workingCopy.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
-					List groups = workingCopy.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
-					if (groups != null) {
-						groups.remove(groupId);
-						if (groups.isEmpty()) {
-							groups = null;	
-						}
-						workingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, groups);
+		final Job job = new Job(LaunchConfigurationsMessages.FavoritesDialog_8) {
+			protected IStatus run(IProgressMonitor monitor) {
+				ILaunchConfiguration[] initial = getInitialFavorites();
+				List current = getFavorites();
+				String groupId = getLaunchHistory().getLaunchGroup().getIdentifier();
+				
+				int taskSize = Math.abs(initial.length-current.size());//get task size
+				monitor.beginTask(LaunchConfigurationsMessages.FavoritesDialog_8, taskSize);//and set it
+				
+				// removed favorites
+				for (int i = 0; i < initial.length; i++) {
+					ILaunchConfiguration configuration = initial[i];
+					if (!current.contains(configuration)) {
+						// remove fav attributes
+						try {
+							ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
+							workingCopy.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
+							workingCopy.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
+							List groups = workingCopy.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
+							if (groups != null) {
+								groups.remove(groupId);
+								if (groups.isEmpty()) {
+									groups = null;	
+								}
+								workingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, groups);
+							}
+							workingCopy.doSave();
+						} catch (CoreException e) {
+							DebugUIPlugin.log(e);
+							return Status.CANCEL_STATUS;
+						} 
 					}
-					workingCopy.doSave();
-				} catch (CoreException e) {
-					DebugUIPlugin.log(e);
-				} 
-			}
-		}
-		// update added favorites
-		Iterator favs = current.iterator();
-		while (favs.hasNext()) {
-			ILaunchConfiguration configuration = (ILaunchConfiguration)favs.next();
-			try {
-				List groups = configuration.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
-				if (groups == null) {
-					groups = new ArrayList();
+					monitor.worked(1);
 				}
-				if (!groups.contains(groupId)) {
-					groups.add(groupId);
-					ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
-					workingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, groups);
-					workingCopy.doSave();
+				
+				// update added favorites
+				Iterator favs = current.iterator();
+				while (favs.hasNext()) {
+					ILaunchConfiguration configuration = (ILaunchConfiguration)favs.next();
+					try {
+						List groups = configuration.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
+						if (groups == null) {
+							groups = new ArrayList();
+						}
+						if (!groups.contains(groupId)) {
+							groups.add(groupId);
+							ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
+							workingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, groups);
+							workingCopy.doSave();
+						}
+					} catch (CoreException e) {
+						DebugUIPlugin.log(e);
+						return Status.CANCEL_STATUS;
+					}
+					monitor.worked(1);
 				}
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e);
-			}
-		}
-		 
-		fHistory.setFavorites(getArray(current));		
+				 
+				fHistory.setFavorites(getArray(current));
+				monitor.done();
+				return Status.OK_STATUS;
+			}			
+		};
+		job.setPriority(Job.LONG);
+		PlatformUI.getWorkbench().getProgressService().showInDialog(getParentShell(), job);
+		job.schedule();
+			
 	}	
 	
 	protected ILaunchConfiguration[] getArray(List list) {

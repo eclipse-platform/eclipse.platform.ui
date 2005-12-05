@@ -159,4 +159,6 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String SaveScopeResourcesHandler_2;
 	public static String SaveScopeResourcesHandler_3;
 
+	public static String FavoritesDialog_8;
+
 }
