@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
@@ -44,8 +42,6 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -83,8 +79,6 @@ import org.eclipse.ui.editors.text.IEncodingSupport;
 import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.dialogs.PreferencesUtil;
@@ -101,6 +95,7 @@ import org.eclipse.ui.operations.NonLocalUndoUserApprover;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
+import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 /**
  * An intermediate editor comprising functionality not present in the leaner <code>AbstractTextEditor</code>,
@@ -1718,28 +1713,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			try {
 				fIsUpdatingMarkerViews= true;
 				IWorkbenchPage page= getSite().getPage();
-				IViewPart view= null;
-				if (marker.isSubtypeOf(IMarker.PROBLEM))
-					view= page.findView(IPageLayout.ID_PROBLEM_VIEW);
-				else if (marker.isSubtypeOf(IMarker.TASK))
-					view= page.findView(IPageLayout.ID_TASK_LIST);
-				else if (marker.isSubtypeOf(IMarker.BOOKMARK))
-					view= page.findView(IPageLayout.ID_BOOKMARKS);
-				
-				
-				if (view != null) {
-					Method method= view.getClass().getMethod("setSelection", new Class[] { IStructuredSelection.class, boolean.class}); //$NON-NLS-1$
-					fIsUpdatingMarkerViews= true;
-					method.invoke(view, new Object[] {new StructuredSelection(marker), Boolean.TRUE });
-				}
-			} catch (CoreException x) {
-			} catch (NoSuchMethodException x) {
-			} catch (IllegalAccessException x) {
-			} catch (InvocationTargetException x) {
+				MarkerViewUtil.showMarker(page, marker, false);
 			} finally {
 				fIsUpdatingMarkerViews= false;
 			}
-			// ignore exceptions, don't update any of the lists, just set status line
 		}
 	}
 }
