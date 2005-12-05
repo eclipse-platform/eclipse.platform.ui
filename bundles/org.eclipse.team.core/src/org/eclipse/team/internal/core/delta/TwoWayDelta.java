@@ -16,7 +16,7 @@ import org.eclipse.team.core.delta.ITwoWayDelta;
 /**
  * An implementation of ITwoWayDelta
  */
-public class TwoWayDelta extends SyncDelta implements ITwoWayDelta {
+public class TwoWayDelta extends AbstractDelta implements ITwoWayDelta {
 
 	private final int flags;
 	

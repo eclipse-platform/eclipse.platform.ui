@@ -20,7 +20,7 @@ import org.eclipse.team.core.delta.*;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.core.delta.SyncDeltaTree;
+import org.eclipse.team.internal.core.delta.DeltaTree;
 import org.eclipse.team.internal.core.delta.SyncInfoToDeltaConverter;
 
 /**
@@ -48,7 +48,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * Create a merge context.
 	 * @param type 
      */
-    protected MergeContext(IResourceMappingScope input, String type, SyncInfoTree tree, SyncDeltaTree deltaTree) {
+    protected MergeContext(IResourceMappingScope input, String type, SyncInfoTree tree, DeltaTree deltaTree) {
     	super(input, type, tree, deltaTree);
     }
 
@@ -106,10 +106,10 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     /* (non-Javadoc)
      * @see org.eclipse.team.ui.mapping.IMergeContext#merge(org.eclipse.team.core.delta.ISyncDelta[], boolean, org.eclipse.core.runtime.IProgressMonitor)
      */
-    public IStatus merge(ISyncDelta[] deltas, boolean force, IProgressMonitor monitor) throws CoreException {
+    public IStatus merge(IDelta[] deltas, boolean force, IProgressMonitor monitor) throws CoreException {
 		List failedFiles = new ArrayList();
 		for (int i = 0; i < deltas.length; i++) {
-			ISyncDelta delta = deltas[i];
+			IDelta delta = deltas[i];
 			IStatus s = merge(delta, force, monitor);
 			if (!s.isOK()) {
 				if (s.getCode() == IMergeStatus.CONFLICTS) {
@@ -131,7 +131,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	 * @param monitor
 	 * @return
 	 */
-	public IStatus merge(ISyncDelta delta, boolean force, IProgressMonitor monitor) {
+	public IStatus merge(IDelta delta, boolean force, IProgressMonitor monitor) {
 		if (!isFileDelta(delta))
 			return Status.OK_STATUS;
         try {
@@ -148,7 +148,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	    		}
 				// direction == SyncInfo.CONFLICTING
 	    		int type = twDelta.getKind();
-	    		if (type == ISyncDelta.REMOVED) {
+	    		if (type == IDelta.REMOVED) {
 	    			// TODO: either we need to spec mark as merged to work in this case
 	    			// or somehow involve the subclass (or just ignore it)
 	    			markAsMerged(getLocalFile(delta), false, monitor);
@@ -165,7 +165,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 				if (base == null || remote == null || !getLocalFile(delta).exists()) {
 					// Nothing we can do so return a conflict status
 					// TODO: Should we handle the case where the local and remote have the same contents for a conflicting addition?
-					return new MergeStatus(TeamPlugin.ID, NLS.bind("Conflicting change could not be merged: {0}", new String[] { delta.getFullPath().toString() }), new IFile[] { getLocalFile(delta) });
+					return new MergeStatus(TeamPlugin.ID, NLS.bind("Conflicting change could not be merged: {0}", new String[] { delta.getPath().toString() }), new IFile[] { getLocalFile(delta) });
 				}
 				// We have a conflict, a local, base and remote so we can do 
 				// a three-way merge
@@ -174,7 +174,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
         		return performReplace(delta, monitor);
         	}
         } catch (CoreException e) {
-            return new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Merge of {0} failed due to an internal error.", new String[] { delta.getFullPath().toString() }), e);
+            return new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Merge of {0} failed due to an internal error.", new String[] { delta.getPath().toString() }), e);
         }
 	}
 
@@ -186,8 +186,8 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	 */
 	protected abstract IStatus performThreeWayMerge(IThreeWayDelta delta, IProgressMonitor monitor) throws CoreException;
 
-	private IFile getLocalFile(ISyncDelta delta) {
-		return ResourcesPlugin.getWorkspace().getRoot().getFile(delta.getFullPath());
+	private IFile getLocalFile(IDelta delta) {
+		return ResourcesPlugin.getWorkspace().getRoot().getFile(delta.getPath());
 	}
 
 	/**
@@ -251,7 +251,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * Replace the local contents with the remote contents.
      * The local resource must be a file.
      */
-    private IStatus performReplace(ISyncDelta delta, IProgressMonitor monitor) throws CoreException {
+    private IStatus performReplace(IDelta delta, IProgressMonitor monitor) throws CoreException {
     	ITwoWayDelta d;
     	if (delta instanceof ITwoWayDelta) {
 			d = (ITwoWayDelta) delta;

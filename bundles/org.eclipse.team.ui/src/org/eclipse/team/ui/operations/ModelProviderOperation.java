@@ -155,11 +155,11 @@ public abstract class ModelProviderOperation extends TeamOperation {
 	}
 	
 
-	protected boolean hasIncomingChanges(ISyncDeltaTree syncDeltaTree) {
+	protected boolean hasIncomingChanges(IDeltaTree syncDeltaTree) {
 		final CoreException found = new CoreException(Status.OK_STATUS);
 		try {
-			syncDeltaTree.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new ISyncDeltaVisitor() {
-				public boolean visit(ISyncDelta delta) throws CoreException {
+			syncDeltaTree.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDeltaVisitor() {
+				public boolean visit(IDelta delta) throws CoreException {
 					if (delta instanceof IThreeWayDelta) {
 						IThreeWayDelta twd = (IThreeWayDelta) delta;
 						int direction = twd.getDirection();

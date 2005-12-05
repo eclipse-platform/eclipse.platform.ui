@@ -14,14 +14,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * A sync delta tree provides access to a tree of {@link ISyncDelta} instances.
+ * A sync delta tree provides access to a tree of {@link IDelta} instances.
  * For efficiency reasons, the tree only provides deltas for paths that represent a change.
  * Paths that do not contain a delta represent nodes for which the files or folders
  * being compared are considered in-sync.
  * 
  * @since 3.2
  */
-public interface ISyncDeltaTree {
+public interface IDeltaTree {
 
 	/**
 	 * Add a listener to the tree. The listener will be informed of any changes
@@ -30,7 +30,7 @@ public interface ISyncDeltaTree {
 	 * 
 	 * @param listener the listener to be added
 	 */
-	public void addSyncDeltaChangeListener(ISyncDeltaChangeListener listener);
+	public void addSyncDeltaChangeListener(IDeltaChangeListener listener);
 
 	/**
 	 * Remove the listener from the tree. Removing a listener that is not
@@ -38,7 +38,7 @@ public interface ISyncDeltaTree {
 	 * 
 	 * @param listener the listener to be removed
 	 */
-	public void removeSyncDeltaChangeListener(ISyncDeltaChangeListener listener);
+	public void removeSyncDeltaChangeListener(IDeltaChangeListener listener);
 
 	/**
 	 * Accepts the given visitor. The only kinds of deltas visited are
@@ -51,9 +51,9 @@ public interface ISyncDeltaTree {
 	 * @param visitor the visitor
 	 * @param depth the depth to visit
 	 * @exception CoreException if the visitor failed with this exception.
-	 * @see ISyncDeltaVisitor#visit(ISyncDelta)
+	 * @see IDeltaVisitor#visit(IDelta)
 	 */
-	public void accept(IPath path, ISyncDeltaVisitor visitor, int depth)
+	public void accept(IPath path, IDeltaVisitor visitor, int depth)
 			throws CoreException;
 
 	/**
@@ -70,7 +70,7 @@ public interface ISyncDeltaTree {
 	 * @return the delta, or <code>null</code> if no such
 	 *         delta exists
 	 */
-	public ISyncDelta getDelta(IPath path);
+	public IDelta getDelta(IPath path);
 
 	/**
 	 * Returns the child paths of the given path that either point to

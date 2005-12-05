@@ -15,7 +15,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.delta.ISyncDelta;
+import org.eclipse.team.core.delta.IDelta;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.Policy;
 
@@ -34,7 +34,7 @@ public class DefaultResourceMappingMerger implements IResourceMappingMerger {
 
 	public IStatus merge(IMergeContext mergeContext, IProgressMonitor monitor) throws CoreException {
 		try {
-			ISyncDelta[] deltas = getSetToMerge(mergeContext);
+			IDelta[] deltas = getSetToMerge(mergeContext);
 			monitor.beginTask(null, 100);
 			IStatus status = mergeContext.merge(deltas, false /* don't force */, Policy.subMonitorFor(monitor, 75));
 			return covertFilesToMappings(status, mergeContext);
@@ -43,19 +43,19 @@ public class DefaultResourceMappingMerger implements IResourceMappingMerger {
 		}
 	}
 
-	private ISyncDelta[] getSetToMerge(IMergeContext mergeContext) {
+	private IDelta[] getSetToMerge(IMergeContext mergeContext) {
 		ResourceMapping[] mappings = mergeContext.getScope().getMappings(provider.getDescriptor().getId());
 		Set result = new HashSet();
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
 			ResourceTraversal[] traversals = mergeContext.getScope().getTraversals(mapping);
-			ISyncDelta[] deltas = mergeContext.getDeltas(traversals);
+			IDelta[] deltas = mergeContext.getDeltas(traversals);
 			for (int j = 0; j < deltas.length; j++) {
-				ISyncDelta delta = deltas[j];
+				IDelta delta = deltas[j];
 				result.add(delta);
 			}
 		}
-		return (ISyncDelta[]) result.toArray(new ISyncDelta[result.size()]);
+		return (IDelta[]) result.toArray(new IDelta[result.size()]);
 	}
 
 	private IStatus covertFilesToMappings(IStatus status, IMergeContext mergeContext) {

@@ -51,7 +51,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * being merged with local content (i.e. the file exists both locally and
 	 * remotely) with the exception that it can also be used to keep local
 	 * changes to a file that has been deleted. See the
-	 * {@link #merge(ISyncDelta[], boolean, IProgressMonitor) } method for more
+	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method for more
 	 * details. For other cases in which either the local file or remote file
 	 * does not exist, one of the <code>merge</code> methods should be used.
 	 * This is done to accommodate repositories that have special handling for
@@ -151,7 +151,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * mechanisms of the delta tree associated with this context.
 	 * <p>
 	 * For two-way merging, clients can either accept changes using the
-	 * {@link #merge(ISyncDelta[], boolean, IProgressMonitor) } method or reject
+	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method or reject
 	 * them using {@link #markAsMerged(IFile, boolean, IProgressMonitor) }.
 	 * Three-way changes are a bit more complicated. The following list
 	 * summarizes how particular remote file changes can be handled. The delta
@@ -160,33 +160,33 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * are indicated by the three-way delta itself.
 	 * <ul>
 	 * 
-	 * <li> When the delta kind is {@link ISyncDelta#ADDED} and the delta is
+	 * <li> When the delta kind is {@link IDelta#ADDED} and the delta is
 	 * also a move (i.e. the {@link ITwoWayDelta#MOVED_FROM} is set). The merge
 	 * can either use the
-	 * {@link #merge(ISyncDelta[], boolean, IProgressMonitor) } method to accept
+	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method to accept
 	 * the rename or perform an
 	 * {@link IFile#move(IPath, boolean, boolean, IProgressMonitor) } where the
 	 * source file is obtained using {@link ITwoWayDelta#getMovedFromPath()} and
-	 * the destination is the path of the delta ({@link ISyncDelta#getFullPath()}).
+	 * the destination is the path of the delta ({@link IDelta#getPath()}).
 	 * This later approach is helpful in the case where the local file and
 	 * remote file both contain content changes (i.e. the file can be moved by
 	 * the model and then the contents can be merged by the model). </li>
 	 * 
-	 * <li> When the delta kind is {@link ISyncDelta#REMOVED} and the delta is
+	 * <li> When the delta kind is {@link IDelta#REMOVED} and the delta is
 	 * also a move (i.e. the {@link ITwoWayDelta#MOVED_TO} is set). The merge
 	 * can either use the
-	 * {@link #merge(ISyncDelta[], boolean, IProgressMonitor) } method to accept
+	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method to accept
 	 * the rename or perform an
 	 * {@link IFile#move(IPath, boolean, boolean, IProgressMonitor) } where the
-	 * source file is obtained using {@link ISyncDelta#getFullPath()} and the
+	 * source file is obtained using {@link IDelta#getPath()} and the
 	 * destination is obtained from {@link ITwoWayDelta#getMovedToPath()}. This
 	 * later approach is helpful in the case where the local file and remote
 	 * file both contain content changes (i.e. the file can be moved by the
 	 * model and then the contents can be merged by the model). </li>
 	 * 
-	 * <li> When the delta kind is {@link ISyncDelta#ADDED} and it is not part
+	 * <li> When the delta kind is {@link IDelta#ADDED} and it is not part
 	 * of a move, the merger must use the
-	 * {@link #merge(ISyncDelta[], boolean, IProgressMonitor) } method to accept
+	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method to accept
 	 * this change. If there is a conflicting addition, the force flag can be
 	 * set to override the local change. If the model wishes to keep the local
 	 * changes, they can overwrite the file after merging it. Models should
@@ -194,9 +194,9 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * ({@link ITwoWayDelta#MOVED_FROM}).
 	 * </li>
 	 * 
-	 * <li>When the delta kind is {@link ISyncDelta#REMOVED} and it is not part
+	 * <li>When the delta kind is {@link IDelta#REMOVED} and it is not part
 	 * of a move, the merger can use the
-	 * {@link #merge(ISyncDelta[], boolean, IProgressMonitor) } method but could
+	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method but could
 	 * also perform the delete manually using any of the {@link IFile} delete
 	 * methods. In the case where there are local changes to the file being
 	 * deleted, the model may either choose to merge using the force flag (thus
@@ -204,18 +204,18 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * {@link #markAsMerged(IFile, boolean, IProgressMonitor) } on the file
 	 * which will convert the incoming deletion to an outgoing addition.</li>
 	 * 
-	 * <li>When the delta kind is {@link ISyncDelta#CHANGED} and there is no
+	 * <li>When the delta kind is {@link IDelta#CHANGED} and there is no
 	 * conflict, the model is advised to use the
-	 * {@link #merge(ISyncDelta[], boolean, IProgressMonitor) } method to merge
+	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method to merge
 	 * these changes as this is the most efficient means to do so. However, the
 	 * model can choose to perform the merge themselves and then invoke
 	 * {@link #markAsMerged(IFile, boolean, IProgressMonitor) } with the
 	 * <code>inSyncHint</code> set to <code>true</code> but this will be
 	 * less efficient. </li>
 	 * 
-	 * <li>When the delta kind is {@link ISyncDelta#CHANGED} and there is a
+	 * <li>When the delta kind is {@link IDelta#CHANGED} and there is a
 	 * conflict, the model can use the
-	 * {@link #merge(ISyncDelta[], boolean, IProgressMonitor) } method to merge
+	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method to merge
 	 * these changes. If the force flag is not set, an auto-merge is attempted
 	 * using an appropriate {@link IStreamMerger}. If the force flag is set,
 	 * the local changes are discarded. The model can choose to attempt the
@@ -227,7 +227,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * 
 	 * TODO: need to talk about ITwoWayDelta CONTENT and REPLACED
 	 * 
-	 * @see ISyncDeltaTree#addSyncDeltaChangeListener(org.eclipse.team.core.delta.ISyncDeltaChangeListener)
+	 * @see IDeltaTree#addSyncDeltaChangeListener(org.eclipse.team.core.delta.ISyncDeltaChangeListener)
 	 * @see org.eclipse.core.resources.IWorkspace#addResourceChangeListener(IResourceChangeListener)
 	 * 
 	 * @param deltas the deltas to be merged
@@ -238,7 +238,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 *         contain non-mergable conflicts and must be merged manually.
 	 * @throws CoreException if an error occurs
 	 */
-	public IStatus merge(ISyncDelta[] deltas, boolean force,
+	public IStatus merge(IDelta[] deltas, boolean force,
 			IProgressMonitor monitor) throws CoreException;
 
 	/**

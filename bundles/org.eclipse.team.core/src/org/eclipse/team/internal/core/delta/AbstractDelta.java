@@ -11,12 +11,12 @@
 package org.eclipse.team.internal.core.delta;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.core.delta.ISyncDelta;
+import org.eclipse.team.core.delta.IDelta;
 
 /**
- * Abstract implementation of {@link ISyncDelta}
+ * Abstract implementation of {@link IDelta}
  */
-public abstract class SyncDelta implements ISyncDelta {
+public abstract class AbstractDelta implements IDelta {
 
 	private final IPath path;
 	private final int kind;
@@ -26,7 +26,7 @@ public abstract class SyncDelta implements ISyncDelta {
 	 * @param path the path of the delta
 	 * @param kind the kind of the delta
 	 */
-	public SyncDelta(IPath path, int kind) {
+	public AbstractDelta(IPath path, int kind) {
 		this.path = path;
 		this.kind = kind;
 	}
@@ -34,7 +34,7 @@ public abstract class SyncDelta implements ISyncDelta {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ISyncDelta#getFullPath()
 	 */
-	public IPath getFullPath() {
+	public IPath getPath() {
 		return path;
 	}
 

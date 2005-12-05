@@ -23,7 +23,7 @@ import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.core.delta.SyncDeltaTree;
+import org.eclipse.team.internal.core.delta.DeltaTree;
 
 /**
  * @author Administrator
@@ -39,7 +39,7 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
 	 * @param tree
 	 * @param deltaTree
 	 */
-	protected MergeContext(IResourceMappingScope input, String type, SyncInfoTree tree, SyncDeltaTree deltaTree) {
+	protected MergeContext(IResourceMappingScope input, String type, SyncInfoTree tree, DeltaTree deltaTree) {
 		super(input, type, tree, deltaTree);
 	}
 
@@ -75,7 +75,7 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
      * stream merger. The local resource must be a file and all three
      * resources (local, base, remote) must exist.
      */
-    private IStatus merge(IStreamMerger merger, ISyncDelta delta, IProgressMonitor monitor) throws CoreException {
+    private IStatus merge(IStreamMerger merger, IDelta delta, IProgressMonitor monitor) throws CoreException {
         
     	// Get the file involved
     	IFile file = (IFile)getResource(delta);

@@ -17,7 +17,7 @@ import org.eclipse.team.core.delta.ITwoWayDelta;
 /**
  * Class for {@link IThreeWayDelta}.
  */
-public class ThreeWayDelta extends SyncDelta implements IThreeWayDelta {
+public class ThreeWayDelta extends AbstractDelta implements IThreeWayDelta {
 
 	private final ITwoWayDelta localChange;
 	private final ITwoWayDelta remoteChange;

@@ -23,7 +23,7 @@ import org.eclipse.team.core.synchronize.ISyncInfoTree;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.core.delta.SyncDeltaTree;
+import org.eclipse.team.internal.core.delta.DeltaTree;
 import org.eclipse.team.internal.core.mapping.SynchronizationCache;
 
 /**
@@ -45,7 +45,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	private IResourceMappingScope input;
     private final String type;
     private final SyncInfoTree tree;
-    private final SyncDeltaTree deltaTree;
+    private final DeltaTree deltaTree;
     private SynchronizationCache cache;
 
     /**
@@ -54,7 +54,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
      * @param type the type of synchronization (ONE_WAY or TWO_WAY)
      * @param tree the sync info tree that contains all out-of-sync resources
      */
-    protected SynchronizationContext(IResourceMappingScope input, String type, SyncInfoTree tree, SyncDeltaTree deltaTree) {
+    protected SynchronizationContext(IResourceMappingScope input, String type, SyncInfoTree tree, DeltaTree deltaTree) {
     	this.input = input;
 		this.type = type;
 		this.tree = tree;
@@ -104,14 +104,14 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getSyncDeltaTree()
 	 */
-	public ISyncDeltaTree getSyncDeltaTree() {
+	public IDeltaTree getSyncDeltaTree() {
 		return deltaTree;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getResource(org.eclipse.team.core.delta.ISyncDelta)
 	 */
-	public IResource getResource(ISyncDelta delta) {
+	public IResource getResource(IDelta delta) {
 		IResource resource = null;
 		if (delta instanceof IThreeWayDelta) {
 			IThreeWayDelta twd = (IThreeWayDelta) delta;
@@ -127,11 +127,11 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getDeltas(org.eclipse.core.resources.mapping.ResourceTraversal[])
 	 */
-	public ISyncDelta[] getDeltas(final ResourceTraversal[] traversals) {
+	public IDelta[] getDeltas(final ResourceTraversal[] traversals) {
 		final Set result = new HashSet();
 		try {
-			getSyncDeltaTree().accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new ISyncDeltaVisitor() {
-				public boolean visit(ISyncDelta delta) throws CoreException {
+			getSyncDeltaTree().accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDeltaVisitor() {
+				public boolean visit(IDelta delta) throws CoreException {
 					for (int i = 0; i < traversals.length; i++) {
 						ResourceTraversal traversal = traversals[i];
 						if (traversal.contains(getResource(delta))) {
@@ -144,13 +144,13 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 		} catch (CoreException e) {
 			TeamPlugin.log(e);
 		}
-		return (ISyncDelta[]) result.toArray(new ISyncDelta[result.size()]);
+		return (IDelta[]) result.toArray(new IDelta[result.size()]);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#isFileDelta(org.eclipse.team.core.delta.ISyncDelta)
 	 */
-	public boolean isFileDelta(ISyncDelta delta) {
+	public boolean isFileDelta(IDelta delta) {
 		IResource resource = getResource(delta);
 		return resource != null && resource.getType() == IResource.FILE;
 	}
@@ -170,7 +170,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 			}
 		}
 		if (variant != null) {
-			return internalGetResource(localChange.getFullPath(), variant.isContainer());
+			return internalGetResource(localChange.getPath(), variant.isContainer());
 		}
 		return null;
 	}

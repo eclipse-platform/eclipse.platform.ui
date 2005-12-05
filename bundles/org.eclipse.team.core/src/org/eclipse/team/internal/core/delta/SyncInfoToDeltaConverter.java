@@ -14,7 +14,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.delta.ISyncDelta;
+import org.eclipse.team.core.delta.IDelta;
 import org.eclipse.team.core.delta.ITwoWayDelta;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.variants.IResourceVariant;
@@ -25,9 +25,9 @@ import org.eclipse.team.core.variants.IResourceVariant;
 public class SyncInfoToDeltaConverter implements ISyncInfoSetChangeListener {
 
 	SyncInfoSet set;
-	SyncDeltaTree tree;
+	DeltaTree tree;
 	
-	public SyncInfoToDeltaConverter(SyncInfoTree set, SyncDeltaTree tree) {
+	public SyncInfoToDeltaConverter(SyncInfoTree set, DeltaTree tree) {
 		this.set = set;
 		this.tree = tree;
 	}
@@ -50,7 +50,7 @@ public class SyncInfoToDeltaConverter implements ISyncInfoSetChangeListener {
 			SyncInfo[] infos = set.getSyncInfos();
 			for (int i = 0; i < infos.length; i++) {
 				SyncInfo info = infos[i];
-				ISyncDelta delta = getDeltaFor(info);
+				IDelta delta = getDeltaFor(info);
 				tree.add(delta);
 			}
 		} finally {
@@ -67,13 +67,13 @@ public class SyncInfoToDeltaConverter implements ISyncInfoSetChangeListener {
 			SyncInfo[] added = event.getAddedResources();
 			for (int i = 0; i < added.length; i++) {
 				SyncInfo info = added[i];
-				ISyncDelta delta = getDeltaFor(info);
+				IDelta delta = getDeltaFor(info);
 				tree.add(delta);
 			}
 			SyncInfo[] changed = event.getChangedResources();
 			for (int i = 0; i < changed.length; i++) {
 				SyncInfo info = changed[i];
-				ISyncDelta delta = getDeltaFor(info);
+				IDelta delta = getDeltaFor(info);
 				tree.add(delta);
 			}
 			IResource[] removed = event.getRemovedResources();
@@ -86,7 +86,7 @@ public class SyncInfoToDeltaConverter implements ISyncInfoSetChangeListener {
 		}
 	}
 
-	public static ISyncDelta getDeltaFor(SyncInfo info) {
+	public static IDelta getDeltaFor(SyncInfo info) {
 		if (info.getComparator().isThreeWay()) {
 			ITwoWayDelta local = getLocalDelta(info);
 			ITwoWayDelta remote = getRemoteDelta(info);
@@ -103,17 +103,17 @@ public class SyncInfoToDeltaConverter implements ISyncInfoSetChangeListener {
 	}
 
 	private static ITwoWayDelta getDelta(SyncInfo info, IResourceVariant before, IResourceVariant after, int direction) {
-		int kind = ISyncDelta.NO_CHANGE;
+		int kind = IDelta.NO_CHANGE;
 		if ((SyncInfo.getDirection(info.getKind()) & direction) == 0) {
 			// There is no change so create a NO_CHANGE delta
 		} else if (before == null) {
-			kind = ISyncDelta.ADDED;
+			kind = IDelta.ADDED;
 		} else if (after == null) {
-			kind = ISyncDelta.REMOVED;
+			kind = IDelta.REMOVED;
 		} else {
-			kind = ISyncDelta.CHANGED;
+			kind = IDelta.CHANGED;
 		}
-		return new TwoWayDelta(info.getLocal().getFullPath(), kind, ISyncDelta.NO_CHANGE, before, after);
+		return new TwoWayDelta(info.getLocal().getFullPath(), kind, IDelta.NO_CHANGE, before, after);
 	}
 
 	private static ITwoWayDelta getLocalDelta(SyncInfo info) {
@@ -163,7 +163,7 @@ public class SyncInfoToDeltaConverter implements ISyncInfoSetChangeListener {
 		
 	}
 
-	public SyncDeltaTree getTree() {
+	public DeltaTree getTree() {
 		return tree;
 	}
 }

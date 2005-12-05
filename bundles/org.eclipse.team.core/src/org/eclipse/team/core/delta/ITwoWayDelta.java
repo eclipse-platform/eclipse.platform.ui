@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.internal.core.delta.SyncDelta;
+import org.eclipse.team.internal.core.delta.AbstractDelta;
 
 /**
  * A two-way delta represents the changes between two file resource trees.
@@ -25,14 +25,14 @@ import org.eclipse.team.internal.core.delta.SyncDelta;
  * <p>
  * This interface is not intended to be implemented by clients.
  * Clients that need to create deltas should instead use or subclass
- * {@link SyncDelta}
+ * {@link AbstractDelta}
  * </p>
  * 
- * @see ISyncDeltaTree
+ * @see IDeltaTree
  * 
  * @since 3.2
  */
-public interface ITwoWayDelta extends ISyncDelta {
+public interface ITwoWayDelta extends IDelta {
 
 	/*====================================================================
 	 * Constants which describe resource changes:
@@ -163,7 +163,7 @@ public interface ITwoWayDelta extends ISyncDelta {
 	 *
 	 * @return a path, or <code>null</code>
 	 * @see #getMovedToPath()
-	 * @see #getFullPath()
+	 * @see #getPath()
 	 * @see #getFlags()
 	 */
 	public IPath getMovedFromPath();
@@ -178,7 +178,7 @@ public interface ITwoWayDelta extends ISyncDelta {
 	 * 
 	 * @return a path, or <code>null</code>
 	 * @see #getMovedFromPath()
-	 * @see #getFullPath()
+	 * @see #getPath()
 	 * @see #getFlags()
 	 */
 	public IPath getMovedToPath();

@@ -16,11 +16,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.core.delta.*;
 
 /**
- * Implementation of {@link ISyncDeltaChangeEvent}
+ * Implementation of {@link IDeltaChangeEvent}
  */
-public class SyncDeltaChangeEvent implements ISyncDeltaChangeEvent {
+public class DeltaChangeEvent implements IDeltaChangeEvent {
 
-	private final ISyncDeltaTree tree;
+	private final IDeltaTree tree;
 	
 	// List that accumulate changes
 	// SyncInfo
@@ -33,22 +33,22 @@ public class SyncDeltaChangeEvent implements ISyncDeltaChangeEvent {
 	/**
 	 * 
 	 */
-	public SyncDeltaChangeEvent(ISyncDeltaTree tree) {
+	public DeltaChangeEvent(IDeltaTree tree) {
 		this.tree = tree;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeEvent#getTree()
 	 */
-	public ISyncDeltaTree getTree() {
+	public IDeltaTree getTree() {
 		return tree;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeEvent#getAdditions()
 	 */
-	public ISyncDelta[] getAdditions() {
-		return (ISyncDelta[]) addedResources.values().toArray(new ISyncDelta[addedResources.size()]);
+	public IDelta[] getAdditions() {
+		return (IDelta[]) addedResources.values().toArray(new IDelta[addedResources.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -61,21 +61,21 @@ public class SyncDeltaChangeEvent implements ISyncDeltaChangeEvent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeEvent#getChanges()
 	 */
-	public ISyncDelta[] getChanges() {
-		return (ISyncDelta[]) changedResources.values().toArray(new ISyncDelta[changedResources.size()]);
+	public IDelta[] getChanges() {
+		return (IDelta[]) changedResources.values().toArray(new IDelta[changedResources.size()]);
 	}
 	
-	public void added(ISyncDelta delta) {
-		if (removedResources.contains(delta.getFullPath())) {
+	public void added(IDelta delta) {
+		if (removedResources.contains(delta.getPath())) {
 			// A removal followed by an addition is treated as a change
-			removedResources.remove(delta.getFullPath());
+			removedResources.remove(delta.getPath());
 			changed(delta);
 		} else {
-			addedResources.put(delta.getFullPath(), delta);
+			addedResources.put(delta.getPath(), delta);
 		}
 	}
 	
-	public void removed(IPath path, ISyncDelta delta) {
+	public void removed(IPath path, IDelta delta) {
 		if (changedResources.containsKey(path)) {
 			// No use in reporting the change since it has subsequently been removed
 			changedResources.remove(path);
@@ -87,13 +87,13 @@ public class SyncDeltaChangeEvent implements ISyncDeltaChangeEvent {
 		removedResources.add(path);
 	}
 	
-	public void changed(ISyncDelta delta) {
-		if (addedResources.containsKey(delta.getFullPath())) {
+	public void changed(IDelta delta) {
+		if (addedResources.containsKey(delta.getPath())) {
 			// An addition followed by a change is an addition
-			addedResources.put(delta.getFullPath(), delta);
+			addedResources.put(delta.getPath(), delta);
 			return;
 		}
-		changedResources.put(delta.getFullPath(), delta);
+		changedResources.put(delta.getPath(), delta);
 	}
 
 	public void reset() {

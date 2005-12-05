@@ -86,14 +86,14 @@ public interface ISynchronizationContext {
 	public ISyncInfoTree getSyncInfoTree();
 	
 	/**
-	 * Return a tree that contains {@link ISyncDelta} nodes for resources
+	 * Return a tree that contains {@link IDelta} nodes for resources
 	 * that are out-of-sync. The tree will only contain deltas for out-of-sync
 	 * resources that are within the scope of this context. The tree
 	 * may include additional out-of-sync resources, which should be ignored by
 	 * the client. Clients can test for inclusion using the method 
 	 * {@link IResourceMappingScope#contains(IResource)}.
 	 * <p>
-	 * The {@link ISyncDeltaTree} and the {@link ITwoWayDelta} are a generic
+	 * The {@link IDeltaTree} and the {@link ITwoWayDelta} are a generic
 	 * delta data structure. The tree returned from this method will have
 	 * {@link IResourceVariant} objects as the before and after states
 	 * of any {@link ITwoWayDelta} instances that are obtained directly
@@ -105,7 +105,7 @@ public interface ISynchronizationContext {
 	 *         resources that are out-of-sync.
 	 *         
 	 */
-	public ISyncDeltaTree getSyncDeltaTree();
+	public IDeltaTree getSyncDeltaTree();
 
 	/**
 	 * Return the synchronization type. A type of <code>TWO_WAY</code>
@@ -176,7 +176,7 @@ public interface ISynchronizationContext {
 	 * @param traversals the traversals to search
 	 * @return the deltas that are found in the given traversals
 	 */
-	public ISyncDelta[] getDeltas(ResourceTraversal[] traversals);
+	public IDelta[] getDeltas(ResourceTraversal[] traversals);
 
 	/**
 	 * Convenience method for returning the resource associated
@@ -184,7 +184,7 @@ public interface ISynchronizationContext {
 	 * @param delta a delta
 	 * @return the resource associated with that delta
 	 */
-	IResource getResource(ISyncDelta delta);
+	IResource getResource(IDelta delta);
 
 	/**
 	 * Convenience method that returns whether the resource
@@ -193,5 +193,5 @@ public interface ISynchronizationContext {
 	 * @return whether the resource
 	 * associated with the given delta is a file
 	 */
-	boolean isFileDelta(ISyncDelta delta);
+	boolean isFileDelta(IDelta delta);
 }

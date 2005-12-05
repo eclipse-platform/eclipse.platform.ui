@@ -12,7 +12,7 @@ package org.eclipse.team.core.delta;
 
 
 /**
- * A three-way delta describes the synchronization state between
+ * A three-way delta that describe the synchronization state between
  * two contributors and an ancestor. For simplicity, we refer to
  * one of the contributors as the local and the other as the remote.
  * A three-way delta is represented as a combination of two two-way 
@@ -22,12 +22,12 @@ package org.eclipse.team.core.delta;
  * <p>
  * This interface is not intended to be implemented by clients.
  * Clients that need to create deltas should instead use or subclass
- * {@link SyncDelta}
+ * {@link AbstractDelta}
  * </p>
  * 
  * @since 3.2
  */
-public interface IThreeWayDelta extends ISyncDelta {
+public interface IThreeWayDelta extends IDelta {
 	
 	/*====================================================================
 	 * Constants defining synchronization direction: 
@@ -76,7 +76,7 @@ public interface IThreeWayDelta extends ISyncDelta {
 	/**
 	 * Return the local change associated with this delta.
 	 * If there is no local change, either a delta with kind 
-	 * {@link ISyncDelta#NO_CHANGE} is returned or <code>null</code>
+	 * {@link IDelta#NO_CHANGE} is returned or <code>null</code>
 	 * may be returned.
 	 * @return the local change associated with this delta or <code>null</code>
 	 */
@@ -85,7 +85,7 @@ public interface IThreeWayDelta extends ISyncDelta {
 	/**
 	 * Return the remote change associated with this delta.
 	 * If there is no remote change, either a delta with kind 
-	 * {@link ISyncDelta#NO_CHANGE} is returned or <code>null</code>
+	 * {@link IDelta#NO_CHANGE} is returned or <code>null</code>
 	 * may be returned.
 	 * @return the remote change associated with this delta or <code>null</code>
 	 */

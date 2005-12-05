@@ -20,14 +20,14 @@ import org.eclipse.core.runtime.IPath;
  * <p>
  * This interface is not intended to be implemented by clients.
  * Clients that need to create deltas should instead use or subclass
- * {@link SyncDelta}
+ * {@link AbstractDelta}
  * </p>
  * 
  * @see ITwoWayDelta
  * @see IThreeWayDelta
  * @since 3.2
  */
-public interface ISyncDelta {
+public interface IDelta {
 
 	/*
 	 * ====================================================================
@@ -39,7 +39,7 @@ public interface ISyncDelta {
 	 * Delta kind constant indicating that the resource has not been changed in
 	 * any way.
 	 * 
-	 * @see ISyncDelta#getKind()
+	 * @see IDelta#getKind()
 	 */
 	public static final int NO_CHANGE = 0;
 
@@ -48,7 +48,7 @@ public interface ISyncDelta {
 	 * added to its parent. That is, one that appears in the "after" state, not
 	 * in the "before" one.
 	 * 
-	 * @see ISyncDelta#getKind()
+	 * @see IDelta#getKind()
 	 */
 	public static final int ADDED = 0x1;
 
@@ -57,7 +57,7 @@ public interface ISyncDelta {
 	 * removed from its parent. That is, one that appears in the "before" state,
 	 * not in the "after" one.
 	 * 
-	 * @see ISyncDelta#getKind()
+	 * @see IDelta#getKind()
 	 */
 	public static final int REMOVED = 0x2;
 
@@ -66,14 +66,14 @@ public interface ISyncDelta {
 	 * changed. That is, one that appears in both the "before" and "after"
 	 * states.
 	 * 
-	 * @see ISyncDelta#getKind()
+	 * @see IDelta#getKind()
 	 */
 	public static final int CHANGED = 0x4;
 	
 	/**
 	 * The bit mask which describes all possible delta kinds.
 	 * 
-	 * @see ISyncDelta#getKind()
+	 * @see IDelta#getKind()
 	 */
 	public static final int ALL = CHANGED | ADDED | REMOVED;
 	
@@ -88,16 +88,16 @@ public interface ISyncDelta {
 	 * @see IResource#getFullPath()
 	 * @see #getProjectRelativePath()
 	 */
-	public IPath getFullPath();
+	public IPath getPath();
 
 	/**
 	 * Returns the kind of this resource delta. Normally, one of
 	 * <code>ADDED</code>, <code>REMOVED</code>, <code>CHANGED</code>.
 	 * 
 	 * @return the kind of this resource delta
-	 * @see ISyncDelta#ADDED
-	 * @see ISyncDelta#REMOVED
-	 * @see ISyncDelta#CHANGED
+	 * @see IDelta#ADDED
+	 * @see IDelta#REMOVED
+	 * @see IDelta#CHANGED
 	 */
 	public int getKind();
 }

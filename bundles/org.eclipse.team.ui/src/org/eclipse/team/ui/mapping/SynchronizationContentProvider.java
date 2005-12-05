@@ -42,7 +42,7 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
  * 
  * @since 3.2
  */
-public abstract class SynchronizationContentProvider implements ICommonContentProvider, ISyncDeltaChangeListener, IPropertyChangeListener {
+public abstract class SynchronizationContentProvider implements ICommonContentProvider, IDeltaChangeListener, IPropertyChangeListener {
 
 	private IResourceMappingScope scope;
 	private ISynchronizationContext context;
@@ -234,7 +234,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeListener#syncDeltaTreeReset(org.eclipse.team.core.delta.ISyncDeltaTree, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void syncDeltaTreeReset(ISyncDeltaTree tree, IProgressMonitor monitor) {
+	public void syncDeltaTreeReset(IDeltaTree tree, IProgressMonitor monitor) {
 		// Nothing can be done at this level (i.e. content provider).
 		// The controller at the viewer level needs to handle this.
 		refresh();
@@ -243,7 +243,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeListener#syncDeltaTreeChanged(org.eclipse.team.core.delta.ISyncDeltaChangeEvent, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void syncDeltaTreeChanged(ISyncDeltaChangeEvent event, IProgressMonitor monitor) {
+	public void syncDeltaTreeChanged(IDeltaChangeEvent event, IProgressMonitor monitor) {
 		refresh();
 	}
 
@@ -357,11 +357,11 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		for (int i = 0; i < children.length; i++) {
 			Object object = children[i];
 			ResourceTraversal[] traversals = getTraversals(object);
-			ISyncDelta[] deltas = context.getDeltas(traversals);
+			IDelta[] deltas = context.getDeltas(traversals);
 			if (deltas.length > 0) {
 				boolean include = false;
 				for (int j = 0; j < deltas.length; j++) {
-					ISyncDelta delta = deltas[j];
+					IDelta delta = deltas[j];
 					if (delta instanceof IThreeWayDelta) {
 						IThreeWayDelta twd = (IThreeWayDelta) delta;
 						if (includeDirection(twd.getDirection())) {

@@ -17,7 +17,7 @@ import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.team.core.delta.ISyncDelta;
+import org.eclipse.team.core.delta.IDelta;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.mapping.*;
@@ -130,7 +130,7 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 				IPath[] childPaths = context.getSyncDeltaTree().getChildren(resource.getFullPath());
 				for (int i = 0; i < childPaths.length; i++) {
 					IPath path = childPaths[i];
-					ISyncDelta delta = context.getSyncDeltaTree().getDelta(path);
+					IDelta delta = context.getSyncDeltaTree().getDelta(path);
 					IResource child;
 					if (delta == null) {
 						// the path has descendent deltas so it must be a folder

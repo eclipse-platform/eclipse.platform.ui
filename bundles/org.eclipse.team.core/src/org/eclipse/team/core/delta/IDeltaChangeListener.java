@@ -14,21 +14,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * 
- * @see ISyncDeltaTree
+ * @see IDeltaTree
  * @since 3.2
  */
-public interface ISyncDeltaChangeListener {
+public interface IDeltaChangeListener {
 
 	/**
 	 * @param event
 	 * @param monitor
 	 */
-	void syncDeltaTreeChanged(ISyncDeltaChangeEvent event, IProgressMonitor monitor);
+	void syncDeltaTreeChanged(IDeltaChangeEvent event, IProgressMonitor monitor);
 
 	/**
 	 * @param tree
 	 * @param monitor
 	 */
-	void syncDeltaTreeReset(ISyncDeltaTree tree, IProgressMonitor monitor);
+	void syncDeltaTreeReset(IDeltaTree tree, IProgressMonitor monitor);
 
 }

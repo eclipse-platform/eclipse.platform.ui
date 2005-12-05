@@ -14,23 +14,23 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * A change event that describes changes that have occurred
- * in an {@link ISyncDeltaTree}.
+ * in an {@link IDeltaTree}.
  * <p>
  * This interface is not intended to be implemented by clients.
  * 
  * @since 3.2
  */
-public interface ISyncDeltaChangeEvent {
+public interface IDeltaChangeEvent {
 	
 	/**
 	 * Returns the tree that has been changed.
 	 * @return the tree that has been changed.
 	 */
-	public ISyncDeltaTree getTree();
+	public IDeltaTree getTree();
 	
-	public ISyncDelta[] getAdditions();
+	public IDelta[] getAdditions();
 	
 	public IPath[] getRemovals();
 	
-	public ISyncDelta[] getChanges();
+	public IDelta[] getChanges();
 }

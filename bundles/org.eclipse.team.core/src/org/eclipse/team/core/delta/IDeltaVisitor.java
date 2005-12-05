@@ -41,11 +41,11 @@ import org.eclipse.core.runtime.CoreException;
  * Clients may implement this interface.
  * </p>
  *
- * @see ISyncDelta#accept(ISyncDeltaVisitor)
+ * @see IDelta#accept(ISyncDeltaVisitor)
  * 
  * @since 3.2
  */
-public interface ISyncDeltaVisitor {
+public interface IDeltaVisitor {
 
 	/** 
 	 * Visits the given delta.
@@ -54,5 +54,5 @@ public interface ISyncDeltaVisitor {
 	 *		be visited; <code>false</code> if they should be skipped.
 	 * @exception CoreException if the visit fails for some reason.
 	 */
-	public boolean visit(ISyncDelta delta) throws CoreException;
+	public boolean visit(IDelta delta) throws CoreException;
 }

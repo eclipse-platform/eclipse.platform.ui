@@ -18,9 +18,9 @@ import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
 
 /**
- * Implementation of {@link ISyncDeltaTree}.
+ * Implementation of {@link IDeltaTree}.
  */
-public class SyncDeltaTree implements ISyncDeltaTree {
+public class DeltaTree implements IDeltaTree {
 	
 	private ListenerList listeners = new ListenerList();
 	
@@ -28,37 +28,37 @@ public class SyncDeltaTree implements ISyncDeltaTree {
 	
 	private ILock lock = Platform.getJobManager().newLock();
 	
-	SyncDeltaChangeEvent changes;
+	DeltaChangeEvent changes;
 
 	protected boolean lockedForModification;
 
 	/**
 	 * Create a sync delta set
 	 */
-	public SyncDeltaTree() {
+	public DeltaTree() {
 		resetChanges();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ISyncDeltaTree#addSyncDeltaChangeListener(org.eclipse.team.core.synchronize.ISyncDeltaChangeListener)
 	 */
-	public void addSyncDeltaChangeListener(ISyncDeltaChangeListener listener) {
+	public void addSyncDeltaChangeListener(IDeltaChangeListener listener) {
 		listeners.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ISyncDeltaTree#removeSyncDeltaChangeListener(org.eclipse.team.core.synchronize.ISyncDeltaChangeListener)
 	 */
-	public void removeSyncDeltaChangeListener(ISyncDeltaChangeListener listener) {
+	public void removeSyncDeltaChangeListener(IDeltaChangeListener listener) {
 		listeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ISyncDeltaTree#accept(org.eclipse.core.runtime.IPath, org.eclipse.team.core.synchronize.ISyncDeltaVisitor)
 	 */
-	public void accept(IPath path, ISyncDeltaVisitor visitor, int depth)
+	public void accept(IPath path, IDeltaVisitor visitor, int depth)
 			throws CoreException {
-		ISyncDelta delta = getDelta(path);
+		IDelta delta = getDelta(path);
 		if (delta == null || visitor.visit(delta)) {
 			if (depth == IResource.DEPTH_ZERO)
 				return;
@@ -73,8 +73,8 @@ public class SyncDeltaTree implements ISyncDeltaTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ISyncDeltaTree#findMember(org.eclipse.core.runtime.IPath)
 	 */
-	public ISyncDelta getDelta(IPath path) {
-		return (ISyncDelta)pathTree.get(path);
+	public IDelta getDelta(IPath path) {
+		return (IDelta)pathTree.get(path);
 	}
 
 	/* (non-Javadoc)
@@ -86,7 +86,7 @@ public class SyncDeltaTree implements ISyncDeltaTree {
 
 
 	/**
-	 * Add the given {@link ISyncDelta} to the tree. A change event will
+	 * Add the given {@link IDelta} to the tree. A change event will
 	 * be generated unless the call to this method is nested in between calls
 	 * to <code>beginInput()</code> and <code>endInput(IProgressMonitor)</code>
 	 * in which case the event for this addition and any other sync set
@@ -100,10 +100,10 @@ public class SyncDeltaTree implements ISyncDeltaTree {
 	 * </p>
 	 * @param delta the delta to be added to this set.
 	 */
-	public void add(ISyncDelta delta) {
+	public void add(IDelta delta) {
 		try {
 			beginInput();
-			boolean alreadyExists = getDelta(delta.getFullPath()) != null;
+			boolean alreadyExists = getDelta(delta.getPath()) != null;
 			internalAdd(delta);
 			if (alreadyExists) {
 				internalChanged(delta);
@@ -123,7 +123,7 @@ public class SyncDeltaTree implements ISyncDeltaTree {
 	public synchronized void remove(IPath path) {
 		try {
 			beginInput();
-			ISyncDelta delta = getDelta(path);
+			IDelta delta = getDelta(path);
 			if (delta != null) {
 				internalRemove(delta);
 				internalRemoved(path, delta);
@@ -190,7 +190,7 @@ public class SyncDeltaTree implements ISyncDeltaTree {
 
 	private void fireChanges(final IProgressMonitor monitor) {
 		// Use a synchronized block to ensure that the event we send is static
-		final SyncDeltaChangeEvent event;
+		final DeltaChangeEvent event;
 		synchronized(this) {
 			event = getChangeEvent();
 			resetChanges();
@@ -198,7 +198,7 @@ public class SyncDeltaTree implements ISyncDeltaTree {
 		if(event.isEmpty() && ! event.isReset()) return;
 		Object[] listeners = this.listeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
-			final ISyncDeltaChangeListener listener = (ISyncDeltaChangeListener)listeners[i];
+			final IDeltaChangeListener listener = (IDeltaChangeListener)listeners[i];
 			Platform.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// don't log the exception....it is already being logged in Platform#run
@@ -207,7 +207,7 @@ public class SyncDeltaTree implements ISyncDeltaTree {
 					try {
 						lockedForModification = true;
 						if (event.isReset()) {
-							listener.syncDeltaTreeReset(SyncDeltaTree.this, Policy.subMonitorFor(monitor, 100));
+							listener.syncDeltaTreeReset(DeltaTree.this, Policy.subMonitorFor(monitor, 100));
 						} else {
 							listener.syncDeltaTreeChanged(event, Policy.subMonitorFor(monitor, 100));
 						}
@@ -220,7 +220,7 @@ public class SyncDeltaTree implements ISyncDeltaTree {
 		monitor.done();
 	}
 
-	private SyncDeltaChangeEvent getChangeEvent() {
+	private DeltaChangeEvent getChangeEvent() {
 		return changes;
 	}
 	
@@ -228,28 +228,28 @@ public class SyncDeltaTree implements ISyncDeltaTree {
 		changes = createEmptyChangeEvent();
 	}
 
-	private SyncDeltaChangeEvent createEmptyChangeEvent() {
-		return new SyncDeltaChangeEvent(this);
+	private DeltaChangeEvent createEmptyChangeEvent() {
+		return new DeltaChangeEvent(this);
 	}
 
-	private void internalAdd(ISyncDelta delta) {
+	private void internalAdd(IDelta delta) {
 		Assert.isTrue(!lockedForModification);
-		pathTree.put(delta.getFullPath(), delta);
+		pathTree.put(delta.getPath(), delta);
 	}
 	
-	private void internalRemove(ISyncDelta delta) {
+	private void internalRemove(IDelta delta) {
 		Assert.isTrue(!lockedForModification);
-		pathTree.remove(delta.getFullPath());
+		pathTree.remove(delta.getPath());
 	}
 	
-	private void internalAdded(ISyncDelta delta) {
+	private void internalAdded(IDelta delta) {
 		changes.added(delta);
 	}
 	
-	private void internalChanged(ISyncDelta delta) {
+	private void internalChanged(IDelta delta) {
 		changes.changed(delta);
 	}
-	private void internalRemoved(IPath path, ISyncDelta delta) {
+	private void internalRemoved(IPath path, IDelta delta) {
 		changes.removed(path, delta);
 	}
 	
