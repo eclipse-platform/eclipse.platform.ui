@@ -691,4 +691,32 @@ public class Geometry {
         return new Rectangle(position.x, position.y, size.x, size.y);
     }
     
+    /**
+     * Given an 'inner' and an 'outer' rectangle return a rectangle that is the
+     * 'inner' rectangle adjusted to lie completely within the bounds of the 'outer'
+     * rectangle. One use for this is to ensure that, when setting a control's bounds,
+     * that they will always lie within its parent's client area (to avoid clipping).
+     * 
+     * @param inner The 'inner' rectangle
+     * @param outer The 'outer' rectangle
+     * @return The 'inner' rectangle adjusted to be inside the 'outer' rectangle.
+     */
+    public static Rectangle forceRectInsideRect(Rectangle inner, Rectangle outer) {
+    	// adjust X
+    	if (inner.x < outer.x)
+    		inner.x = outer.x;
+    	if ((inner.x+inner.width) > (outer.x+outer.width)) {
+    		inner.x -= (inner.x+inner.width) - (outer.x+outer.width);
+    	}
+    	
+    	// Adjust Y
+    	if (inner.y < outer.y)
+    		inner.y = outer.y;
+    	if ((inner.y+inner.height) > (outer.y+outer.height)) {
+    		inner.y -= (inner.y+inner.height) - (outer.y+outer.height);
+    	}
+    	
+    	return inner;
+	}
+    
 }
