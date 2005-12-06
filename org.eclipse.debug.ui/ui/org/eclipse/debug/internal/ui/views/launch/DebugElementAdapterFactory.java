@@ -17,6 +17,8 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -30,6 +32,8 @@ import org.eclipse.debug.internal.ui.elements.adapters.ExpressionManagerTreeCont
 import org.eclipse.debug.internal.ui.elements.adapters.ExpressionTreeContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.LauchManagerTreeContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.LaunchTreeContentAdapter;
+import org.eclipse.debug.internal.ui.elements.adapters.MemoryBlockLabelAdapter;
+import org.eclipse.debug.internal.ui.elements.adapters.MemoryRetrievalContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.ProcessTreeAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.RegisterGroupTreeContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.StackFrameSourceDisplayAdapter;
@@ -58,6 +62,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IAsynchronousLabelAdapter fgDebugLabelAdapter = new AsynchronousDebugLabelAdapter();
     private static IAsynchronousLabelAdapter fgVariableLabelAdapter = new VariableLabelAdapter();
     private static IAsynchronousLabelAdapter fgExpressionLabelAdapter = new ExpressionLabelAdapter();
+    private static IAsynchronousLabelAdapter fgMemoryBlockLabelAdapter = new MemoryBlockLabelAdapter();
     
     private static IAsynchronousTreeContentAdapter fgAsyncLaunchManager = new LauchManagerTreeContentAdapter();
     private static IAsynchronousTreeContentAdapter fgAsyncLaunch = new LaunchTreeContentAdapter();
@@ -69,6 +74,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IAsynchronousTreeContentAdapter fgAsyncRegisterGroup = new RegisterGroupTreeContentAdapter();
     private static IAsynchronousTreeContentAdapter fgAsyncExpressionManager = new ExpressionManagerTreeContentAdapter();
     private static IAsynchronousTreeContentAdapter fgAsyncExpression = new ExpressionTreeContentAdapter();
+    private static IAsynchronousTreeContentAdapter fgAsyncMemoryRetrieval = new MemoryRetrievalContentAdapter();
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -87,6 +93,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
             }
             if (adaptableObject instanceof IDebugTarget) {
                 return fgAsyncTarget;
+            }
+            if (adaptableObject instanceof IMemoryBlockRetrieval) {
+            	return fgAsyncMemoryRetrieval;
             }
             if (adaptableObject instanceof IProcess) {
                 return fgAsyncProcess;
@@ -111,21 +120,24 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
             }
         }
         
-        if (adapterType.equals(IAsynchronousLabelAdapter.class)) {            
+        if (adapterType.equals(IAsynchronousLabelAdapter.class)) {
             if (adaptableObject instanceof IExpression) {
                 return fgExpressionLabelAdapter;
             }
             if (adaptableObject instanceof IVariable) {
                 return fgVariableLabelAdapter;
             }
-            return fgDebugLabelAdapter;
+        	if (adaptableObject instanceof IMemoryBlock) {
+        		return fgMemoryBlockLabelAdapter;
+        	}
+        	return fgDebugLabelAdapter;
         }
         
         if (adapterType.equals(IModelProxyFactory.class)) {
         	if (adaptableObject instanceof ILaunch || adaptableObject instanceof IDebugTarget ||
         			adaptableObject instanceof IProcess || adaptableObject instanceof ILaunchManager ||
         			adaptableObject instanceof IStackFrame || adaptableObject instanceof IExpressionManager ||
-        			adaptableObject instanceof IExpression)
+        			adaptableObject instanceof IExpression || adaptableObject instanceof IMemoryBlockRetrieval)
         	return fgModelProxyFactoryAdapter;
         }
         

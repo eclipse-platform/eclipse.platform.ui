@@ -130,11 +130,11 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 				if (selection == null)
 					return dropdown;
 				
-				if (selection instanceof StructuredSelection && !selection.isEmpty())
+				if (selection instanceof IStructuredSelection && !selection.isEmpty())
 				{	
-					if (((StructuredSelection)selection).getFirstElement() instanceof IDebugElement)
+					if (((IStructuredSelection)selection).getFirstElement() instanceof IDebugElement)
 					{	
-						IDebugElement element = (IDebugElement)((StructuredSelection)selection).getFirstElement(); 
+						IDebugElement element = (IDebugElement)((IStructuredSelection)selection).getFirstElement(); 
 						IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval)element.getAdapter(IMemoryBlockRetrieval.class);
 						
 						if (retrieval == null)

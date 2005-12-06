@@ -431,6 +431,7 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 						if (fUpdatePolicy instanceof IModelChangedListener) {
 							proxy.addModelChangedListener((IModelChangedListener)fUpdatePolicy);
 						}
+						proxy.setInitialState();
 					}
 				}
 			}

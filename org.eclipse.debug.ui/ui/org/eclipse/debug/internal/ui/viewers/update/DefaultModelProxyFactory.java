@@ -5,6 +5,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IWatchExpression;
@@ -53,6 +54,10 @@ public class DefaultModelProxyFactory implements IModelProxyFactory {
 				if (element instanceof IStackFrame) {
 					return new DefaultVariableViewModelProxy((IStackFrame)element);
 				}
+			}
+			if (IDebugUIConstants.ID_MEMORY_VIEW.equals(id)) {
+				if (element instanceof IMemoryBlockRetrieval)
+					return new MemoryRetrievalProxy((IMemoryBlockRetrieval)element);
 			}
 		}
 		return null;

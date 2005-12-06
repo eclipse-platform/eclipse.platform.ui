@@ -18,6 +18,7 @@ package org.eclipse.debug.internal.ui.viewers;
 public interface IModelProxy {
 
 	public void init(IPresentationContext context);
+	public void setInitialState();
 	public void dispose();
 	public void addModelChangedListener(IModelChangedListener listener);
 	public void removeModelChangedListener(IModelChangedListener listener);

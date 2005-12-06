@@ -63,4 +63,8 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 		fireModelChanged(delta);
 	}
 
+	public void setInitialState() {
+		
+	}
+
 }

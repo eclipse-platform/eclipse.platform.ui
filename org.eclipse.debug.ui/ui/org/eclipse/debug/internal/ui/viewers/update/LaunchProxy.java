@@ -56,4 +56,8 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 		}		
 	}
 
+	public void setInitialState() {
+		
+	}
+
 }

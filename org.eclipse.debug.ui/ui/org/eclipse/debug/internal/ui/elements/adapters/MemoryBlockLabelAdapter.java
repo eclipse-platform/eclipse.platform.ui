@@ -1,0 +1,60 @@
+/*******************************************************************************
+ * Copyright (c) 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.debug.internal.ui.elements.adapters;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.resource.ImageDescriptor;
+
+public class MemoryBlockLabelAdapter extends AsynchronousDebugLabelAdapter {
+	
+	protected ImageDescriptor[] getImageDescriptors(Object element, IPresentationContext context) throws CoreException {
+		if (element instanceof IMemoryBlock)
+			return new ImageDescriptor[]{DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_VARIABLE)};
+		
+		return new ImageDescriptor[0];
+	}
+
+	/**
+	 * @param memoryBlockLabel
+	 * @return
+	 */
+	private String getLabel(IMemoryBlock memoryBlock) {
+		
+		String memoryBlockLabel = " "; //$NON-NLS-1$
+		if (memoryBlock instanceof IMemoryBlockExtension)
+		{
+			// simply return the expression without the address
+			// do not want to keep track of changes in the address
+			if (((IMemoryBlockExtension)memoryBlock).getExpression() != null)
+			{
+				memoryBlockLabel += ((IMemoryBlockExtension)memoryBlock).getExpression();
+			}
+		}
+		else
+		{
+			long address = memoryBlock.getStartAddress();
+			memoryBlockLabel = Long.toHexString(address);
+		}
+		return memoryBlockLabel;
+	}
+
+	protected String[] getLabels(Object element, IPresentationContext context) throws CoreException {
+		if (element instanceof IMemoryBlock)
+			return new String[]{getLabel((IMemoryBlock)element)};
+		return super.getLabels(element, context);
+	}
+}

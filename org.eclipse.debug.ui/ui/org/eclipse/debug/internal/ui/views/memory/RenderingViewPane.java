@@ -17,6 +17,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -46,6 +49,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 
 
@@ -70,6 +74,8 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	private IMemoryRenderingSite fRenderingSite;
 	private Set fAddedRenderings = new HashSet();
 	private Set fAddedMemoryBlocks = new HashSet();
+
+	private boolean fIsDisposed = false;
 	
 	/**
 	 * @param parent is the view hosting this view pane
@@ -138,7 +144,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 								
 								setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
 							}
-							fTabFolderForDebugView.put(getMemoryBlockRetrieval(memory), fTabFolderForMemoryBlock.get(memory));
 							fViewPaneCanvas.layout();
 						}
 					} 
@@ -336,101 +341,113 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		try {
-			
-			if(part == this)
-				return;
-			
-			if (!(selection instanceof IStructuredSelection))
-				return;
-			
-			if (selection == AbstractMemoryViewPane.EMPTY)
-				return;
-			
-			if (selection == null || selection.isEmpty())
-			{
-				// if the event comes from Memory View
-				// pick empty tab folder as the memory view is no longer displaying anything
-				if (part.getSite().getId().equals(IDebugUIConstants.ID_MEMORY_VIEW))
-				{
-					if (part == this.getMemoryRenderingSite().getSite().getPart())
-					{
-						IMemoryViewTab lastViewTab = getTopMemoryTab();
-						
-						if (lastViewTab != null)
-							lastViewTab.setEnabled(false);
-						
-						emptyFolder();
-					}
-				}
-				
-				// do not do anything if there is no selection
-				// In the case when a debug adpater fires a debug event incorrectly, Launch View sets
-				// selection to nothing.  If the view tab is disabled, it erases all the "delta" information
-				// in the content.  This may not be desirable as it will cause memory to show up as
-				// unchanged when it's actually changed.  Do not disable the view tab until there is a 
-				// valid selection.
-				
-				return;
-			}
-			
-			// back up current view tab
-			IMemoryViewTab lastViewTab = getTopMemoryTab();
-			
-			if (!(selection instanceof IStructuredSelection))
-				return;
+	public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
+		if (fIsDisposed)
+			return;
+		
+		UIJob job = new UIJob("RenderingViewPane selectionChanged"){ //$NON-NLS-1$
 
-			Object elem = ((IStructuredSelection)selection).getFirstElement();
-			
-			if (elem instanceof IMemoryBlock)
-			{	
-				// if the selection event comes from this view
-				if (part == getMemoryRenderingSite())
-				{
-					// find the folder associated with the given IMemoryBlockRetrieval
-					IMemoryBlock memBlock = (IMemoryBlock)elem;
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				try {
+
+					if (fIsDisposed)
+						return Status.OK_STATUS;
 					
-					// should never get here... added code for safety
-					if (fTabFolderForMemoryBlock == null)
+					if(part == RenderingViewPane.this)
+						return Status.OK_STATUS;
+					
+					if (!(selection instanceof IStructuredSelection))
+						return Status.OK_STATUS;
+					
+					if (selection == AbstractMemoryViewPane.EMPTY)
+						return Status.OK_STATUS;
+					
+					if (selection == null || selection.isEmpty())
 					{
-						if (lastViewTab != null)
-							lastViewTab.setEnabled(false);
+						// if the event comes from Memory View
+						// pick empty tab folder as the memory view is no longer displaying anything
+						if (part.getSite().getId().equals(IDebugUIConstants.ID_MEMORY_VIEW))
+						{
+							if (part == getMemoryRenderingSite().getSite().getPart())
+							{
+								IMemoryViewTab lastViewTab = getTopMemoryTab();
+								
+								if (lastViewTab != null)
+									lastViewTab.setEnabled(false);
+								
+								emptyFolder();
+							}
+						}
 						
-						emptyFolder();
-						return;				
+						// do not do anything if there is no selection
+						// In the case when a debug adpater fires a debug event incorrectly, Launch View sets
+						// selection to nothing.  If the view tab is disabled, it erases all the "delta" information
+						// in the content.  This may not be desirable as it will cause memory to show up as
+						// unchanged when it's actually changed.  Do not disable the view tab until there is a 
+						// valid selection.
+						
+						return Status.OK_STATUS;
 					}
-	
-					handleMemoryBlockSelection(lastViewTab, memBlock);
+					
+					// back up current view tab
+					IMemoryViewTab lastViewTab = getTopMemoryTab();
+					
+					if (!(selection instanceof IStructuredSelection))
+						return Status.OK_STATUS;
+
+					Object elem = ((IStructuredSelection)selection).getFirstElement();
+					
+					if (elem instanceof IMemoryBlock)
+					{	
+						// if the selection event comes from this view
+						if (part == getMemoryRenderingSite())
+						{
+							// find the folder associated with the given IMemoryBlockRetrieval
+							IMemoryBlock memBlock = (IMemoryBlock)elem;
+							
+							// should never get here... added code for safety
+							if (fTabFolderForMemoryBlock == null)
+							{
+								if (lastViewTab != null)
+									lastViewTab.setEnabled(false);
+								
+								emptyFolder();
+								return Status.OK_STATUS;		
+							}
+			
+							handleMemoryBlockSelection(lastViewTab, memBlock);
+						}
+					}
+					else if (elem instanceof IDebugElement)
+					{	
+						handleDebugElementSelection(lastViewTab, (IDebugElement)elem);
+					}
+					else
+					{
+						if (part.getSite().getId().equals(IDebugUIConstants.ID_DEBUG_VIEW))
+						{
+							if (lastViewTab != null)
+								lastViewTab.setEnabled(false);
+							emptyFolder();
+						}
+						
+						updateToolBarActionsEnablement();
+						return Status.OK_STATUS;
+						
+					}
 				}
-			}
-			else if (elem instanceof IDebugElement)
-			{	
-				handleDebugElementSelection(lastViewTab, (IDebugElement)elem);
-			}
-			else
-			{
-				if (part.getSite().getId().equals(IDebugUIConstants.ID_DEBUG_VIEW))
+				catch(SWTException se)
 				{
-					if (lastViewTab != null)
-						lastViewTab.setEnabled(false);
-					emptyFolder();
+					DebugUIPlugin.log(se);
 				}
-				
-				updateToolBarActionsEnablement();
-				return;
-				
-			}
-		}
-		catch(SWTException se)
-		{
-			DebugUIPlugin.log(se);
-		}
+				return Status.OK_STATUS;
+			}};
+		job.setSystem(true);
+		job.schedule();
 
 	}
 	
 	public void handleMemoryBlockSelection(final IMemoryViewTab lastViewTab, final IMemoryBlock memBlock) {
-		
 		// don't do anything if the debug target is already terminated
 		if (memBlock.getDebugTarget().isDisconnected()
 				|| memBlock.getDebugTarget().isTerminated()) {
@@ -474,9 +491,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		// restore view tabs
 		IMemoryRendering[] renderings = fRenderingMgr.getRenderingsFromMemoryBlock(memBlock);
 		TabFolder toDisplay = (TabFolder) fStackLayout.topControl;
-
-		// remember tab folder for current debug target
-		fTabFolderForDebugView.put(getMemoryBlockRetrieval(memBlock),toDisplay);
 
 		if (toDisplay.getItemCount() == 0) {
 			restoreViewTabs(renderings);
@@ -551,7 +565,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 				}
 
 				TabFolder tabFolder = (TabFolder) fStackLayout.topControl;
-				fTabFolderForDebugView.put(getMemoryBlockRetrieval(memoryblk),tabFolder);
 
 				if (tabFolder.getItemCount() >= 1) {
 					// remove "Create rendering tab"
@@ -754,6 +767,12 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			if (currentRetrieve == null)
 			{
 				currentRetrieve = currentBlock.getDebugTarget();
+			}
+			
+			// backup current retrieve and tab folder
+			if (currentRetrieve != null && tabFolder != null)
+			{
+				fTabFolderForDebugView.put(currentRetrieve, tabFolder);
 			}
 		}
 		
@@ -1007,8 +1026,8 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	}
 	
 	public void dispose() {
+		fIsDisposed = true;
 		super.dispose();
-		
 		fAddMemoryRenderingAction.dispose();
 		
 		fTabFolderForMemoryBlock.clear();

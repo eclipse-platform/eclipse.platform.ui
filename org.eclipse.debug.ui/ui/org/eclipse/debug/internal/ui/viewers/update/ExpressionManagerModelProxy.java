@@ -65,7 +65,10 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 			node.addNode(expression, flags);
 		}
 		fireModelChanged(delta);
-    }    
+    }
+
+	public void setInitialState() {
+	}    
     
 
 }

@@ -457,6 +457,8 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 		} else {
 			internalRefresh(parent.getData(), parent);
 		}		
+		attemptExpansion();
+		attemptSelection(false);
 	}
 
 	/**

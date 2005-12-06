@@ -13,22 +13,16 @@ package org.eclipse.debug.internal.ui.elements.adapters;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
-public class DebugTargetTreeContentAdapter extends AsynchronousTreeContentAdapter {
+public class MemoryRetrievalContentAdapter extends AsynchronousTreeContentAdapter{
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
-	 */
 	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 		String id = context.getPart().getSite().getId();
-		if (id.equals(IDebugUIConstants.ID_DEBUG_VIEW))
-			return ((IDebugTarget) parent).getThreads();
-		else if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
+		if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
         {
 			if (parent instanceof IMemoryBlockRetrieval)
 			{
@@ -38,13 +32,8 @@ public class DebugTargetTreeContentAdapter extends AsynchronousTreeContentAdapte
 		return EMPTY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#hasChildren(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
-	 */
 	protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
 		String id = context.getPart().getSite().getId();
-		if (id.equals(IDebugUIConstants.ID_DEBUG_VIEW))
-			return ((IDebugTarget)element).hasThreads();
 		if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
         {
 			if (element instanceof IMemoryBlockRetrieval)
@@ -53,14 +42,11 @@ public class DebugTargetTreeContentAdapter extends AsynchronousTreeContentAdapte
         			return DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks((IMemoryBlockRetrieval)element).length > 0;
 			}
         }
-		return false;
+        return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#supportsPartId(java.lang.String)
-	 */
 	protected boolean supportsPartId(String id) {
-		return IDebugUIConstants.ID_DEBUG_VIEW.equals(id) || IDebugUIConstants.ID_MEMORY_VIEW.equals(id);
+		return id.equals(IDebugUIConstants.ID_MEMORY_VIEW);
 	}
 
 }

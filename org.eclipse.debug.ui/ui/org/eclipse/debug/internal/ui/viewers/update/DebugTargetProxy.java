@@ -36,4 +36,7 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
         return new DebugEventHandler[] { new DebugTargetEventHandler(this), new ThreadEventHandler(this) };
     }
 
+	public void setInitialState() {
+	}
+
 }
