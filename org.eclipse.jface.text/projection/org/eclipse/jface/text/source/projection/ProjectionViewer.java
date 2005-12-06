@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
-
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
@@ -28,7 +26,8 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Layout;
+
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -314,13 +313,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	public ProjectionViewer(Composite parent, IVerticalRuler ruler, IOverviewRuler overviewRuler, boolean showsAnnotationOverview, int styles) {
 		super(parent, ruler, overviewRuler, showsAnnotationOverview, styles);
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewer#createLayout()
-	 */
-	protected Layout createLayout() {
-		return new RulerLayout(1);
 	}
 
 	/**

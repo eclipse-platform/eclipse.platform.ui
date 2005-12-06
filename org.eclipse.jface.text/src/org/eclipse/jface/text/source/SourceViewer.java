@@ -130,8 +130,21 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		}
 	}
 
-	/** The size of the gap between the vertical ruler and the text widget */
+	/**
+	 * The size of the gap between the vertical ruler and the text widget
+	 * (value <code>2</code>).
+	 * <p>
+	 * Note: As of 3.2, the text editor framework is no longer using 2 as
+	 * gap but 1, see {{@link #GAP_SIZE_1 }.
+	 * </p>
+	 */
 	protected final static int GAP_SIZE= 2;
+	/**
+	 * The size of the gap between the vertical ruler and the text widget
+	 * (value <code>1</code>).
+	 * @since 3.2
+	 */
+	protected final static int GAP_SIZE_1= 1;
 	/**
 	 * Partial name of the position category to manage remembered selections.
 	 * @since 3.0
@@ -277,7 +290,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 * @since 3.0
 	 */
 	protected Layout createLayout() {
-		return new RulerLayout(GAP_SIZE);
+		return new RulerLayout(GAP_SIZE_1);
 	}
 
 	/*
