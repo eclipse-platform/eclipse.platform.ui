@@ -753,8 +753,8 @@ public class LinkedResourceTest extends ResourceTest {
 		IFileStore folderStore = getTempStore();
 		IFileStore subFolderStore = folderStore.getChild(subFolder.getName());
 		IFileStore fileStore = getTempStore();
-		IPath folderPath = URIUtil.toPath(folderStore.toURI());
-		IPath filePath = URIUtil.toPath(fileStore.toURI());
+		IPath folderLocation = URIUtil.toPath(folderStore.toURI());
+		IPath fileLocation = URIUtil.toPath(fileStore.toURI());
 
 		try {
 			//create the structure on disk
@@ -772,9 +772,9 @@ public class LinkedResourceTest extends ResourceTest {
 		}
 
 		//assert locations
-		assertEquals("1.0", folderPath, linkedFolder.getLocation());
-		assertEquals("1.1", folderPath.append(subFolder.getName()), subFolder.getLocation());
-		assertEquals("1.2", filePath, linkedFile.getLocation());
+		assertEquals("1.0", folderLocation, linkedFolder.getLocation());
+		assertEquals("1.1", folderLocation.append(subFolder.getName()), subFolder.getLocation());
+		assertEquals("1.2", fileLocation, linkedFile.getLocation());
 		//assert URIs
 		assertEquals("1.0", folderStore.toURI(), linkedFolder.getLocationURI());
 		assertEquals("1.1", subFolderStore.toURI(), subFolder.getLocationURI());

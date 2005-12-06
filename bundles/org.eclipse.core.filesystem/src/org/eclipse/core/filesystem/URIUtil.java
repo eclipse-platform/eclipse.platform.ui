@@ -12,8 +12,7 @@ package org.eclipse.core.filesystem;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 
 /**
  * This class provides utility methods for comparing, inspecting, and manipulating
@@ -43,21 +42,18 @@ public class URIUtil {
 	}
 
 	/**
-	 * Converts a {@link URI} to an {@link IPath}.  For most URIs, this method returns an
-	 * {@link IPath} instance representing the path component of the URI
-	 * as returned by {@link URI#getPath()}.  For URIs with a scheme equal to
-	 * {@link EFS#SCHEME_FILE} this method creates an {@link IPath} representing
-	 * the entire URI.
+	 * Returns an {@link IPath} representing this {@link URI}
+	 * in the local file system, or <code>null</code> if this URI does
+	 * not represent a file in the local file system.
 	 * 
 	 * @param uri The URI to convert
-	 * @return The path representing the provided URI
+	 * @return The path representing the provided URI, <code>null</code>
 	 */
 	public static IPath toPath(URI uri) {
-		if (uri == null)
-			return null;
+		Assert.isNotNull(uri);
 		if (EFS.SCHEME_FILE.equals(uri.getScheme()))
 			return new Path(uri.getSchemeSpecificPart());
-		return new Path(uri.getPath());
+		return null;
 	}
 
 	/**
