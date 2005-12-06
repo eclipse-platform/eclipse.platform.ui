@@ -35,7 +35,10 @@ public interface IUpdatableValue extends IUpdatable {
 	 * notified.
 	 * 
 	 * TODO we probably need to be able to veto a change. Maybe returning a
-	 * status?
+	 * status?  djo: if we do that, we will have to have a separate method
+	 * for that (2-phase commit) or we will have to have a rollback method
+	 * to handle the case where multiple updatables are listening and some have 
+	 * committed but one vetos the change.
 	 * 
 	 * @param value
 	 */
