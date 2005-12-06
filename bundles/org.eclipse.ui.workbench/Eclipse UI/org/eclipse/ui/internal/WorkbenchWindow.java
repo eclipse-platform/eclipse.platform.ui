@@ -78,7 +78,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ITrimManager;
 import org.eclipse.ui.IWindowTrim;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -103,7 +102,6 @@ import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.layout.CacheWrapper;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.TrimLayout;
-import org.eclipse.ui.internal.layout.TrimLayoutData;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
@@ -154,7 +152,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
     ProgressRegion progressRegion;
 
 	private HeapStatus heapStatus;
-	private IWindowTrim heapStatusTrim = null;
+	private WindowTrimProxy heapStatusTrim = null;
 
 
 	private boolean emptyWindowContentsCreated = false;
@@ -942,7 +940,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         topBar = new CBanner(shell, SWT.NONE);
         topBarTrim = new WindowTrimProxy(topBar, 
         		"org.eclipse.ui.internal.WorkbenchWindow.topBar",  //$NON-NLS-1$  
-        		WorkbenchMessages.TrimCommon_Main_TrimName, SWT.TOP);
+        		WorkbenchMessages.TrimCommon_Main_TrimName, SWT.TOP, true);
 
         // the banner gets a curve along with the new tab style
         // TODO create a dedicated preference for this
@@ -1365,7 +1363,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		if (statusLineTrim==null) {
     		statusLineTrim = new WindowTrimProxy(getStatusLineManager().getControl(),
     				"org.eclipse.jface.action.StatusLineManager", //$NON-NLS-1$
-    				WorkbenchMessages.TrimCommon_StatusLine_TrimName, SWT.BOTTOM); 
+    				WorkbenchMessages.TrimCommon_StatusLine_TrimName, SWT.BOTTOM,
+    				true); 
     	}
     	return statusLineTrim;
     }
@@ -3040,12 +3039,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		if (getShowHeapStatus()) {
 			if (heapStatus != null) {
 	            if (heapStatus.getLayoutData() == null) {
-	                TrimLayoutData animationData = new TrimLayoutData(false,
-							heapStatus.computeSize(SWT.DEFAULT,
-	                                SWT.DEFAULT).x, getStatusLineManager()
-	                                .getControl().computeSize(SWT.DEFAULT,
-	                                        SWT.DEFAULT).y);
-					heapStatus.setLayoutData(animationData);
+					heapStatusTrim.setWidthHint(heapStatus.computeSize(
+							SWT.DEFAULT, SWT.DEFAULT).x);
+					heapStatusTrim
+							.setHeightHint(getStatusLineManager().getControl()
+									.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 	            }
 
 	            defaultLayout.addTrim(SWT.BOTTOM, heapStatusTrim);
@@ -3061,13 +3059,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		
         if (getWindowConfigurer().getShowProgressIndicator()) {
             if (progressRegion.getControl().getLayoutData() == null) {
-                TrimLayoutData animationData = new TrimLayoutData(false,
-                        progressRegion.getControl().computeSize(SWT.DEFAULT,
-                                SWT.DEFAULT).x, getStatusLineManager()
-                                .getControl().computeSize(SWT.DEFAULT,
-                                        SWT.DEFAULT).y);
-
-                progressRegion.getControl().setLayoutData(animationData);
+            	progressRegion.setWidthHint(progressRegion.getControl().computeSize(
+						SWT.DEFAULT, SWT.DEFAULT).x);
+            	progressRegion
+						.setHeightHint(getStatusLineManager().getControl()
+								.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
             }
             defaultLayout
                     .addTrim(SWT.BOTTOM, progressRegion);
@@ -3092,38 +3088,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
         updateLayoutDataForContents();
 
         if (getWindowConfigurer().getShowFastViewBars() && fastViewBar != null) {
-            fastViewBar.addDockingListener(new IChangeListener() {
-                public void update(boolean changed) {
-                    IWindowTrim reference = null;
-                    int side = fastViewBar.getSide();
+			IWindowTrim reference = null;
+			int side = fastViewBar.getSide();
 
-                    fastViewBar.getControl().setLayoutData(
-                            new TrimLayoutData(false, SWT.DEFAULT,
-                                    SWT.DEFAULT));
+			if (side == SWT.BOTTOM && getWindowConfigurer().getShowStatusLine()) {
+				reference = getStatusLineTrim();
+			}
 
-                    if (side == SWT.BOTTOM
-                            && getWindowConfigurer().getShowStatusLine()) {
-                        reference = getStatusLineTrim();
-                    }
-
-                    defaultLayout.addTrim(side, fastViewBar, 
-                            reference);
-                    WorkbenchPage page = getActiveWorkbenchPage();
-
-                    if (page != null) {
-                        Perspective persp = page.getActivePerspective();
-                        IViewReference activeFastView = persp
-                                .getActiveFastView();
-                        if (activeFastView != null) {
-                            persp.setActiveFastView(null);
-                            persp.setActiveFastView(activeFastView);
-                        }
-                    }
-
-                    LayoutUtil.resize(fastViewBar.getControl());
-                }
-            });
-        }
+			defaultLayout.addTrim(side, fastViewBar, reference);
+			LayoutUtil.resize(fastViewBar.getControl());
+		}
+        
     }
 
     /**
@@ -3217,8 +3192,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 && getWindowConfigurer().getShowStatusLine())
             reference = getStatusLineTrim();
 
-        trim.getControl().setLayoutData(new TrimLayoutData(false, SWT.DEFAULT,
-                SWT.DEFAULT));
         defaultLayout.addTrim(side, trim, reference);
     }
 

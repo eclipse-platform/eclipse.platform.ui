@@ -35,6 +35,11 @@ public class ProgressRegion implements IWindowTrim {
     Composite region;
 
     WorkbenchWindow workbenchWindow;
+    
+	private int fWidthHint = SWT.DEFAULT;
+	
+	private int fHeightHint = SWT.DEFAULT;
+
 
     /**
      * Create a new instance of the receiver.
@@ -185,5 +190,46 @@ public class ProgressRegion implements IWindowTrim {
 	 */
 	public void handleClose() {
 		// nothing to do...
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWindowTrim#getWidthHint()
+	 */
+	public int getWidthHint() {
+		return fWidthHint;
+	}
+	
+	/**
+	 * Update the width hint for this control.
+	 * @param w pixels, or SWT.DEFAULT
+	 */
+	public void setWidthHint(int w) {
+		fWidthHint = w;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWindowTrim#getHeightHint()
+	 */
+	public int getHeightHint() {
+		return fHeightHint;
+	}
+	
+	/**
+	 * Update the height hint for this control.
+	 * @param h pixels, or SWT.DEFAULT
+	 */
+	public void setHeightHint(int h) {
+		fHeightHint = h;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWindowTrim#isResizeable()
+	 */
+	public boolean isResizeable() {
+		return false;
 	}
 }

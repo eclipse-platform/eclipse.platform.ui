@@ -25,6 +25,7 @@ import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.internal.IChangeListener;
 import org.eclipse.ui.internal.IntModel;
 import org.eclipse.ui.internal.RadioMenu;
+import org.eclipse.ui.internal.WindowTrimProxy;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.presentations.PresentationUtil;
@@ -177,8 +178,15 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
 	 * Set up the trim with its cursor, drag listener, context menu and menu listener
 	 */
 	private void setup() {    	
-        TrimLayoutData td = new TrimLayoutData(false, handleSize, handleSize);
-        setLayoutData(td);
+//        TrimLayoutData td = new TrimLayoutData(false, handleSize, handleSize);
+		
+		// is this another potential place to leak trim handles?
+		WindowTrimProxy proxy = new WindowTrimProxy(this, "NONE", "NONE", //$NON-NLS-1$ //$NON-NLS-2$
+				SWT.TOP | SWT.BOTTOM | SWT.LEFT | SWT.RIGHT, false);
+		proxy.setWidthHint(handleSize);
+		proxy.setHeightHint(handleSize);
+
+		setLayoutData(proxy);
     	
         // Listen to size changes to keep the CoolBar synched
         addControlListener(controlListener);

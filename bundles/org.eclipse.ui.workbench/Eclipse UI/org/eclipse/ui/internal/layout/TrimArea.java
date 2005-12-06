@@ -19,6 +19,8 @@ import java.util.ListIterator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IWindowTrim;
+import org.eclipse.ui.internal.WindowTrimProxy;
 
 /**
  * Represents one Trim Area.
@@ -26,7 +28,10 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.2
  */
 public class TrimArea {
-	private static final TrimLayoutData defaultData = new TrimLayoutData();
+	// this is no longer necessary, since every piece of window trim defined
+	// itself as the trim layout data.
+//	private static final TrimLayoutData defaultData = new TrimLayoutData();
+	private static final IWindowTrim defaultData = new WindowTrimProxy(null, null, null, 0, true);
 
 	/**
 	 * This method separates resizable controls from non-resizable controls.
@@ -64,21 +69,21 @@ public class TrimArea {
 	 * @return <code>true</code> if the control is resizeable.
 	 */
 	static boolean isResizable(Control control, boolean horizontally) {
-		TrimLayoutData data = getData(control);
+		IWindowTrim data = getData(control);
 
-		if (!data.resizable) {
+		if (!data.isResizeable()) {
 			return false;
 		}
 
 		if (horizontally) {
-			return data.widthHint == SWT.DEFAULT;
+			return data.getWidthHint() == SWT.DEFAULT;
 		}
 
-		return data.heightHint == SWT.DEFAULT;
+		return data.getHeightHint() == SWT.DEFAULT;
 	}
 
-	private static TrimLayoutData getData(Control control) {
-		TrimLayoutData data = (TrimLayoutData) control.getLayoutData();
+	private static IWindowTrim getData(Control control) {
+		IWindowTrim data = (IWindowTrim) control.getLayoutData();
 		if (data == null) {
 			data = defaultData;
 		}
@@ -95,14 +100,14 @@ public class TrimArea {
 	 */
 	private static Point computeSize(SizeCache toCompute, int widthHint,
 			int heightHint) {
-		TrimLayoutData data = getData(toCompute.getControl());
+		IWindowTrim data = getData(toCompute.getControl());
 
 		if (widthHint == SWT.DEFAULT) {
-			widthHint = data.widthHint;
+			widthHint = data.getWidthHint();
 		}
 
 		if (heightHint == SWT.DEFAULT) {
-			heightHint = data.heightHint;
+			heightHint = data.getHeightHint();
 		}
 
 		if (widthHint == SWT.DEFAULT || heightHint == SWT.DEFAULT) {

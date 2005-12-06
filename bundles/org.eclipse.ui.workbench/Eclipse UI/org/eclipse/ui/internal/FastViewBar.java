@@ -81,7 +81,6 @@ public class FastViewBar implements IWindowTrim {
 
     private static final int HIDDEN_WIDTH = 5;
 
-    IntModel side = new IntModel(getInitialSide());
 
     private int oldLength = 0;
     
@@ -112,6 +111,7 @@ public class FastViewBar implements IWindowTrim {
             }
         }
     };
+	private int fCurrentSide = SWT.DEFAULT;
 
     class ViewDropTarget extends AbstractDropTarget {
         List panes;
@@ -265,8 +265,9 @@ public class FastViewBar implements IWindowTrim {
      * fast view bar state is then persisted in the workbench.  This preference is just
      * used for applications that want the initial docking location to be somewhere other
      * than bottom. 
+     * @return the initial side to dock on
      */
-    private static int getInitialSide() {
+    public static int getInitialSide() {
         String loc = PrefUtil.getAPIPreferenceStore().getString(
                 IWorkbenchPreferenceConstants.INITIAL_FAST_VIEW_BAR_LOCATION);
 
@@ -352,14 +353,6 @@ public class FastViewBar implements IWindowTrim {
     public void createControl(Composite parent) {
         fvbComposite = new Composite(parent, SWT.NONE);
 
-        side.addChangeListener(new IChangeListener() {
-            public void update(boolean changed) {
-                if (changed) {
-                    disposeChildControls();
-                    createChildControls();
-                }
-            }
-        });
         fvbComposite.addListener(SWT.MenuDetect, menuListener);
         PresentationUtil.addDragListener(fvbComposite, dragListener);
 
@@ -750,21 +743,22 @@ public class FastViewBar implements IWindowTrim {
      * @see org.eclipse.ui.internal.IWindowTrim#docked(int)
      */
     public void dock(int side) {
-        this.side.set(side);
-    }
-
-    public int getSide() {
-        return this.side.get();
-    }
+    	fCurrentSide = side;
+		disposeChildControls();
+		createChildControls();
+	}
 
     /**
-     * Adds a listener that will be notified whenever
-     * 
-     * @param listener
+     * Get the current side.
+     * @return SWT.BOTTOM or SWT.RIGHT or SWT.LEFT
      */
-    public void addDockingListener(IChangeListener listener) {
-        this.side.addChangeListener(listener);
+    public int getSide() {
+    	if (fCurrentSide==SWT.DEFAULT) {
+    		fCurrentSide = getInitialSide();
+    	}
+        return fCurrentSide;
     }
+
 
     private boolean isHorizontal(IViewReference ref) {
         Integer orientation = (Integer) viewOrientation.get(ref.getId());
@@ -922,4 +916,25 @@ public class FastViewBar implements IWindowTrim {
     public FastViewBarContextMenuContribution testContextMenu() {
     	return contextContributionItem;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWindowTrim#getWidthHint()
+	 */
+	public int getWidthHint() {
+		return SWT.DEFAULT;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWindowTrim#getHeightHint()
+	 */
+	public int getHeightHint() {
+		return SWT.DEFAULT;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWindowTrim#isResizeable()
+	 */
+	public boolean isResizeable() {
+		return false;
+	}
 }

@@ -1277,4 +1277,25 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	public void handleClose() {
 		// nothing to do...		
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWindowTrim#getWidthHint()
+	 */
+	public int getWidthHint() {
+		return SWT.DEFAULT;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWindowTrim#getHeightHint()
+	 */
+	public int getHeightHint() {
+		return SWT.DEFAULT;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWindowTrim#isResizeable()
+	 */
+	public boolean isResizeable() {
+		return false;
+	}
 }

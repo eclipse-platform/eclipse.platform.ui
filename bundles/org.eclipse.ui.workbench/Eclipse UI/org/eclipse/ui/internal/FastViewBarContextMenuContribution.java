@@ -12,10 +12,8 @@ public class FastViewBarContextMenuContribution extends ContributionItem {
     private MenuItem orientationItem;
     private MenuItem restoreItem;
     private MenuItem closeItem;
-    private MenuItem showOn;
     private FastViewBar bar;
     private RadioMenu radioButtons;
-    private Menu sidesMenu;
     private IViewReference selectedView;
     private IntModel currentOrientation = new IntModel(SWT.VERTICAL);
     
@@ -76,26 +74,7 @@ public class FastViewBarContextMenuContribution extends ContributionItem {
             }
         });
 
-        new MenuItem(menu, SWT.SEPARATOR, index++);
-
-        showOn = new MenuItem(menu, SWT.CASCADE, index++);
-        {
-            showOn.setText(WorkbenchMessages.FastViewBar_dock_on); 
-
-            sidesMenu = new Menu(showOn);
-            radioButtons = new RadioMenu(sidesMenu, bar.side);
-
-            radioButtons.addMenuItem(WorkbenchMessages.FastViewBar_Left, new Integer(SWT.LEFT)); 
-            radioButtons
-                    .addMenuItem(
-                            WorkbenchMessages.FastViewBar_Right, new Integer(SWT.RIGHT)); 
-            radioButtons
-                    .addMenuItem(
-                            WorkbenchMessages.FastViewBar_Bottom, new Integer(SWT.BOTTOM));
-
-            showOn.setMenu(sidesMenu);
-        }
-        
+       
         boolean selectingView = (selectedView != null);
         WorkbenchPage page = bar.getWindow().getActiveWorkbenchPage();
         

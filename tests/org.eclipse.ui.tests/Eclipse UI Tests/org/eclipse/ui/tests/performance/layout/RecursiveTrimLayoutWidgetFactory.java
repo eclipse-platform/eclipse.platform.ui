@@ -19,7 +19,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WindowTrimProxy;
 import org.eclipse.ui.internal.layout.TrimLayout;
-import org.eclipse.ui.internal.layout.TrimLayoutData;
 
 /**
  * @since 3.1
@@ -92,17 +91,15 @@ public class RecursiveTrimLayoutWidgetFactory extends TestWidgetFactory {
             
             // Add a resizable child
             Composite child = new Composite(composite, SWT.NONE);
-            child.setData(new TrimLayoutData(true, SWT.DEFAULT, SWT.DEFAULT));
             WindowTrimProxy proxy = new WindowTrimProxy(child, 
-            		"child1." + side + "." + depth, "Resizable Child", side);
+            		"child1." + side + "." + depth, "Resizable Child", side, true);
             layout.addTrim(side, proxy);
             createTrimLayout(child, depth - 1, nextSide); 
 
             // Add a non-resizable child
             child = new Composite(composite, SWT.NONE);
-            child.setData(new TrimLayoutData(false, SWT.DEFAULT, SWT.DEFAULT));
             proxy = new WindowTrimProxy(child, 
-            		"child2." + side + "." + depth, "Non-Resizable Child", side);
+            		"child2." + side + "." + depth, "Non-Resizable Child", side, false);
             layout.addTrim(side, proxy);
             createTrimLayout(child, depth - 1, nextSide);
             

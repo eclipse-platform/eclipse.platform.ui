@@ -261,6 +261,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 
 		// Create a 'docking' handle to allow dragging the trim
 		SizeCache cache = new SizeCache(trim.getControl());
+		trim.getControl().setLayoutData(trim);
 		desc.setCache(cache);
 		Composite dockingHandle = new TrimCommonUIHandle(this, trim, areaId);
 		desc.setDockingCache(new SizeCache(dockingHandle));
