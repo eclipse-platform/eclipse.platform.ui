@@ -534,5 +534,50 @@ public class LineTrackerTest3 extends TestCase {
 		}
 
 	}
+	
+	public void testNegativeOffset() throws Exception {
+		try {
+			assertEquals(-1, fTracker.getLineNumberOfOffset(-1));
+			fail();
+		} catch (BadLocationException e) {
+		}
+		try {
+			fTracker.getLineInformationOfOffset(-1);
+			fail();
+		} catch (BadLocationException e) {
+		}
+		
+		try {
+			assertEquals(-1, fTracker.getLineNumberOfOffset(-1000));
+			fail();
+		} catch (BadLocationException e) {
+		}
+		try {
+			fTracker.getLineInformationOfOffset(-1000);
+			fail();
+		} catch (BadLocationException e) {
+		}		
+		
+		try {
+			fTracker.getLineInformationOfOffset(1000);
+			fail();
+		} catch (BadLocationException e) {
+		}		
+		try {
+			fTracker.getLineNumberOfOffset(1000);
+			fail();
+		} catch (BadLocationException e) {
+		}		
+		try {
+			fTracker.getLineOffset(-1000);
+			fail();
+		} catch (BadLocationException e) {
+		}		
+		try {
+			fTracker.getLineInformation(-1000);
+			fail();
+		} catch (BadLocationException e) {
+		}		
+	}
 
 }
