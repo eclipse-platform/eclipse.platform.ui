@@ -234,13 +234,10 @@ public class CVSWorkspaceRoot {
 		if (resource.getType() == IResource.PROJECT || resource.getType() == IResource.ROOT) {
 			return false;
 		}
-		IResource parent = resource.getParent();
-		while (parent != null && parent.getType() != IResource.PROJECT) {
-			if (parent.isLinked())
-				return true;
-			parent = resource.getParent();
-		};
-		return false;
+		// look one level under the project to see if the resource is part of a link
+		String linkedParentName = resource.getProjectRelativePath().segment(0);
+		IFolder linkedParent = resource.getProject().getFolder(linkedParentName);
+		return linkedParent.isLinked();
 	}
 	
 	/**
