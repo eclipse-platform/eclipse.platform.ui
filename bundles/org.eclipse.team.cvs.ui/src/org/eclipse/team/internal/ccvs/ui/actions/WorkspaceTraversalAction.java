@@ -11,28 +11,20 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceMappingContext;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
-import org.eclipse.team.core.mapping.ScopeGenerator;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.ui.PlatformUI;
-
 
 /**
  * A specialized workspace actions that operates on resource traversals
@@ -50,14 +42,14 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
      */
     protected ResourceMapping[] getCVSResourceMappings() {
         ResourceMapping[] selectedMappings = getSelectedResourceMappings(CVSProviderPlugin.getTypeId());
-        try {
-			IResourceMappingScope scope = new ScopeGenerator().prepareScope("CVS Operation", selectedMappings, getResourceMappingContext(), new NullProgressMonitor());
-			if (scope.hasAdditionalMappings()) {
-				return showAllMappings(scope);
-			}
-		} catch (CoreException e) {
-			CVSUIPlugin.log(e);
-		}
+//        try {
+//			IResourceMappingScope scope = new ScopeGenerator().prepareScope("CVS Operation", selectedMappings, getResourceMappingContext(), new NullProgressMonitor());
+//			if (scope.hasAdditionalMappings()) {
+//				return showAllMappings(scope);
+//			}
+//		} catch (CoreException e) {
+//			CVSUIPlugin.log(e);
+//		}
 		return selectedMappings;
     }
     
@@ -79,7 +71,7 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
     }
 
     protected static IResource[] getRootTraversalResources(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
-        List result = new ArrayList();
+        Set result = new HashSet();
         for (int i = 0; i < mappings.length; i++) {
             ResourceMapping mapping = mappings[i];
             ResourceTraversal[] traversals = mapping.getTraversals(context, monitor);
