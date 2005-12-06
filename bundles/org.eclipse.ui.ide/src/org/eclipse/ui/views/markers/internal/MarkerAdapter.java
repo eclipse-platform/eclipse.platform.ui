@@ -188,6 +188,8 @@ public class MarkerAdapter {
 			if (!isIntermediateCategory())
 				return EMPTY_MARKER_CATEGORIES;
 			MarkerNode[] children = getChildren();
+			if(children.length == 0 || children[0].isConcrete())
+				return EMPTY_MARKER_CATEGORIES;
 			MarkerCategory[] categories = new MarkerCategory[children.length];
 			System.arraycopy(children, 0, categories, 0, children.length);
 			return categories;
