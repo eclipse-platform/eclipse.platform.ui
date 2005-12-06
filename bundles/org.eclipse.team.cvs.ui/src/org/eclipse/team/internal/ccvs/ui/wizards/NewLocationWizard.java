@@ -46,7 +46,8 @@ public class NewLocationWizard extends Wizard {
 	public NewLocationWizard() {
 		IDialogSettings section = getLocationDialogSettings();
 		setDialogSettings(section);
-		setWindowTitle(CVSUIMessages.NewLocationWizard_title); 
+		setWindowTitle(CVSUIMessages.NewLocationWizard_title);
+		setNeedsProgressMonitor(true);
 	}
 	
 
@@ -82,7 +83,7 @@ public class NewLocationWizard extends Wizard {
 			
 			if (mainPage.getValidate()) {
 				try {
-					new ProgressMonitorDialog(getShell()).run(true, true, new IRunnableWithProgress() {
+					getContainer().run(true, true, new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							try {
 								location[0].validateConnection(monitor);
