@@ -19,9 +19,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorPart;
@@ -51,16 +53,22 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
-		if(source instanceof IProject[]) {
-			IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-			String save = store.getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
-			doSave((IProject[])source, !save.equals(MessageDialogWithToggle.NEVER), save.equals(MessageDialogWithToggle.PROMPT));
-		}
-		else {
-			DebugUIPlugin.preLaunchSave();
-		}
-		return Boolean.TRUE;
-	}
+        if (source instanceof ILaunchConfiguration) {
+            ILaunchConfiguration config = (ILaunchConfiguration) source;
+            if (DebugUITools.isPrivate(config)) {
+                return Boolean.TRUE;
+            }
+        } 
+
+        if (source instanceof IProject[]) {
+            IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+            String save = store.getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
+            doSave((IProject[]) source, !save.equals(MessageDialogWithToggle.NEVER), save.equals(MessageDialogWithToggle.PROMPT));
+        } else {
+            DebugUIPlugin.preLaunchSave();
+        }
+        return Boolean.TRUE;
+    }
 	
 	/**
 	 * 
