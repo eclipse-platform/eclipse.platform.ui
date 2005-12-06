@@ -16,6 +16,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +32,9 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
+import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.search.federated.IndexerJob;
+import org.eclipse.help.search.ISearchEngine2;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
@@ -160,6 +163,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	private IStatusLineManager statusLineManager;
 
 	private IActionBars actionBars;
+	
+	private EngineDescriptorManager engineManager;
 
 	private abstract class BusyRunAction extends Action {
 		public BusyRunAction(String name) {
@@ -1076,6 +1081,18 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			replace = false;
 			url = url.substring(3);
 		}
+		else if (url.startsWith("open:")) { //$NON-NLS-1$
+			int col = url.indexOf(':');
+			int qloc = url.indexOf('?');
+			String engineId = url.substring(col+1, qloc);
+			EngineDescriptor desc = getEngineManager().findEngine(engineId);
+			if (desc==null)
+				return;
+			HashMap args = new HashMap();
+			HelpURLConnection.parseQuery(url.substring(qloc+1), args);
+			((ISearchEngine2)desc.getEngine()).open((String)args.get("id"));
+			return;
+		}
 		if (replace) {
 			if (openInternalBrowser(url))
 				return;
@@ -1565,6 +1582,13 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		}
 		return buff.toString();
+	}
+	
+	EngineDescriptorManager getEngineManager() {
+		if (engineManager==null) {
+			engineManager = new EngineDescriptorManager();
+		}
+		return engineManager;
 	}
 }
 

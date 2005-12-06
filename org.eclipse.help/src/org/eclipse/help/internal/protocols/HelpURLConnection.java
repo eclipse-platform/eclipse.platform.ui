@@ -1,14 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+/***************************************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ **************************************************************************************************/
 package org.eclipse.help.internal.protocols;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -17,10 +16,12 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 import org.osgi.framework.*;
+
 /**
  * URLConnection to help documents in plug-ins
  */
 public class HelpURLConnection extends URLConnection {
+
 	private final static String LANG = "lang"; //$NON-NLS-1$
 	private final static String PRODUCT_PLUGIN = "PRODUCT_PLUGIN"; //$NON-NLS-1$
 	// document caching - disabled if running in dev mode
@@ -43,6 +44,7 @@ public class HelpURLConnection extends URLConnection {
 	protected String file;
 	protected String locale;
 	private static String appserverImplPluginId;
+
 	/**
 	 * Constructor for HelpURLConnection
 	 */
@@ -74,9 +76,10 @@ public class HelpURLConnection extends URLConnection {
 	 */
 	public void connect() throws IOException {
 	}
+
 	/**
-	 * see URLConnection#getInputStream(); Note: this method can throw
-	 * IOException, but should never return null
+	 * see URLConnection#getInputStream(); Note: this method can throw IOException, but should never
+	 * return null
 	 */
 	public InputStream getInputStream() throws IOException {
 		// must override parent implementation, since it does nothing.
@@ -94,10 +97,10 @@ public class HelpURLConnection extends URLConnection {
 			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
 
-		// first try using content provider, then try to find the file 
+		// first try using content provider, then try to find the file
 		// inside doc.zip, and finally try the file system
-		InputStream inputStream = ResourceLocator.openFromProducer(plugin,
-				query == null ? getFile() : getFile() + "?" + query, //$NON-NLS-1$
+		InputStream inputStream = ResourceLocator.openFromProducer(plugin, query == null ? getFile()
+				: getFile() + "?" + query, //$NON-NLS-1$
 				getLocale());
 
 		if (inputStream == null) {
@@ -105,8 +108,7 @@ public class HelpURLConnection extends URLConnection {
 					getFile(), getLocale());
 		}
 		if (inputStream == null) {
-			inputStream = ResourceLocator.openFromPlugin(plugin, getFile(),
-					getLocale());
+			inputStream = ResourceLocator.openFromPlugin(plugin, getFile(), getLocale());
 		}
 		if (inputStream == null) {
 			throw new IOException("Resource not found."); //$NON-NLS-1$
@@ -117,37 +119,41 @@ public class HelpURLConnection extends URLConnection {
 	public long getExpiration() {
 		return isCacheable() ? new Date().getTime() + 10000 : 0;
 	}
+
+	public static void parseQuery(String query, HashMap arguments) {
+		StringTokenizer stok = new StringTokenizer(query, "&"); //$NON-NLS-1$
+		while (stok.hasMoreTokens()) {
+			String aQuery = stok.nextToken();
+			int equalsPosition = aQuery.indexOf("="); //$NON-NLS-1$
+			if (equalsPosition > -1) { // well formed name/value pair
+				String arg = aQuery.substring(0, equalsPosition);
+				String val = aQuery.substring(equalsPosition + 1);
+				Object existing = arguments.get(arg);
+				if (existing == null)
+					arguments.put(arg, val);
+				else if (existing instanceof Vector) {
+					((Vector) existing).add(val);
+					arguments.put(arg, existing);
+				} else {
+					Vector v = new Vector(2);
+					v.add(existing);
+					v.add(val);
+					arguments.put(arg, v);
+				}
+			}
+		}
+	}
+
 	/**
-	 * NOTE: need to add support for multi-valued parameters (like filtering)
-	 * Multiple values are added as vectors
+	 * NOTE: need to add support for multi-valued parameters (like filtering) Multiple values are
+	 * added as vectors
 	 */
 	protected void parseQuery() {
 		if (query != null && !"".equals(query)) { //$NON-NLS-1$
 			if (arguments == null) {
 				arguments = new HashMap(5);
 			}
-
-			StringTokenizer stok = new StringTokenizer(query, "&"); //$NON-NLS-1$
-			while (stok.hasMoreTokens()) {
-				String aQuery = stok.nextToken();
-				int equalsPosition = aQuery.indexOf("="); //$NON-NLS-1$
-				if (equalsPosition > -1) { // well formed name/value pair
-					String arg = aQuery.substring(0, equalsPosition);
-					String val = aQuery.substring(equalsPosition + 1);
-					Object existing = arguments.get(arg);
-					if (existing == null)
-						arguments.put(arg, val);
-					else if (existing instanceof Vector) {
-						((Vector) existing).add(val);
-						arguments.put(arg, existing);
-					} else {
-						Vector v = new Vector(2);
-						v.add(existing);
-						v.add(val);
-						arguments.put(arg, v);
-					}
-				}
-			}
+			parseQuery(query, arguments);
 		}
 	}
 
@@ -170,8 +176,9 @@ public class HelpURLConnection extends URLConnection {
 			return "application/xsl"; //$NON-NLS-1$
 		return "text/plain"; //$NON-NLS-1$
 	}
+
 	/**
-	 *  
+	 * 
 	 */
 	public Vector getMultiValue(String name) {
 		if (arguments != null) {
@@ -182,8 +189,9 @@ public class HelpURLConnection extends URLConnection {
 		}
 		return null;
 	}
+
 	/**
-	 *  
+	 * 
 	 */
 	public String getValue(String name) {
 		if (arguments == null)
@@ -232,15 +240,16 @@ public class HelpURLConnection extends URLConnection {
 		}
 		return file;
 	}
+
 	protected Bundle getPlugin() {
 		if (plugin == null) {
 			// Assume the url is pluginID/path_to_topic.html
 			int i = pluginAndFile.indexOf('/');
 			String pluginId = i == -1 ? "" : pluginAndFile.substring(0, i); //$NON-NLS-1$
 			pluginId = URLCoder.decode(pluginId);
-			if(PRODUCT_PLUGIN.equals(pluginId)){
+			if (PRODUCT_PLUGIN.equals(pluginId)) {
 				IProduct product = Platform.getProduct();
-				if(product !=null){
+				if (product != null) {
 					plugin = product.getDefiningBundle();
 					return plugin;
 				}
@@ -249,11 +258,13 @@ public class HelpURLConnection extends URLConnection {
 		}
 		return plugin;
 	}
+
 	public boolean isCacheable() {
 		if (getValue("resultof") != null) //$NON-NLS-1$
 			return false;
 		return cachingEnabled;
 	}
+
 	public String toString() {
 		return pluginAndFile;
 	}
@@ -270,22 +281,18 @@ public class HelpURLConnection extends URLConnection {
 
 			// get the app server extension from the system plugin registry
 			IExtensionRegistry pluginRegistry = Platform.getExtensionRegistry();
-			IExtensionPoint point = pluginRegistry
-					.getExtensionPoint("org.eclipse.help.appserver.server"); //$NON-NLS-1$
+			IExtensionPoint point = pluginRegistry.getExtensionPoint("org.eclipse.help.appserver.server"); //$NON-NLS-1$
 			if (point != null) {
 				IExtension[] extensions = point.getExtensions();
 				if (extensions.length != 0) {
 					// We need to pick up the non-default configuration
-					IConfigurationElement[] elements = extensions[0]
-							.getConfigurationElements();
+					IConfigurationElement[] elements = extensions[0].getConfigurationElements();
 					if (elements.length == 0)
 						return null;
 					IConfigurationElement serverElement = null;
 					for (int i = 0; i < elements.length; i++) {
-						String defaultValue = elements[i]
-								.getAttribute("default"); //$NON-NLS-1$
-						if (defaultValue == null
-								|| defaultValue.equals("false")) { //$NON-NLS-1$
+						String defaultValue = elements[i].getAttribute("default"); //$NON-NLS-1$
+						if (defaultValue == null || defaultValue.equals("false")) { //$NON-NLS-1$
 							serverElement = elements[i];
 							break;
 						}
@@ -296,8 +303,7 @@ public class HelpURLConnection extends URLConnection {
 					}
 					//
 
-					appserverImplPluginId = serverElement
-							.getNamespace();
+					appserverImplPluginId = serverElement.getNamespace();
 
 				}
 			}

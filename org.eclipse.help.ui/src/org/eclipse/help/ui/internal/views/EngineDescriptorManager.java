@@ -69,6 +69,15 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		return (EngineDescriptor[]) descriptors
 				.toArray(new EngineDescriptor[descriptors.size()]);
 	}
+	
+	public EngineDescriptor findEngine(String engineId) {
+		for (int i=0; i<descriptors.size(); i++) {
+			EngineDescriptor desc = (EngineDescriptor)descriptors.get(i);
+			if (desc.getId().equals(engineId))
+				return desc;
+		}
+		return null;
+	}
 
 	public EngineTypeDescriptor[] getEngineTypes() {
 		return engineTypes;

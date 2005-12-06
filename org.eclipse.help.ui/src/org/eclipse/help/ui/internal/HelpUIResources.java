@@ -80,4 +80,15 @@ public class HelpUIResources {
 		getImageDescriptor(name);
 		return registry.get(name);
 	}
+	
+	public static Image getImage(URL url) {
+		ImageRegistry registry = HelpUIPlugin.getDefault().getImageRegistry();	
+		String name = url.toString();
+		ImageDescriptor desc = registry.getDescriptor(name);
+		if (desc==null) {
+			desc = ImageDescriptor.createFromURL(url);
+			registry.put(name, desc);
+		}
+		return registry.get(name);
+	}
 }
