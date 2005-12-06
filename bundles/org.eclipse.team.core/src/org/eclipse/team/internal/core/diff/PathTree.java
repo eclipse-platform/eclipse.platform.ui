@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.delta;
+package org.eclipse.team.internal.core.diff;
 
 import java.util.*;
 

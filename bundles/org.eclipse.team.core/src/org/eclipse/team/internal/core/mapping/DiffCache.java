@@ -31,7 +31,7 @@ import org.eclipse.team.core.mapping.*;
  * @see org.eclipse.team.core.mapping.IDiffCache
  * @since 3.2
  */
-public class SynchronizationCache implements IDiffCache {
+public class DiffCache implements IDiffCache {
 
 	Map properties;
 	ListenerList listeners;
@@ -40,7 +40,7 @@ public class SynchronizationCache implements IDiffCache {
 	/**
 	 * CCreate an empty cache
 	 */
-	public SynchronizationCache(ISynchronizationContext context) {
+	public DiffCache(ISynchronizationContext context) {
 		this.context = context;
 	}
 	

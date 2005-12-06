@@ -20,8 +20,8 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.core.delta.DeltaTree;
-import org.eclipse.team.internal.core.delta.SyncInfoToDeltaConverter;
+import org.eclipse.team.internal.core.diff.DiffTree;
+import org.eclipse.team.internal.core.diff.SyncInfoToDiffConverter;
 
 /**
  * Provides the context for an <code>IResourceMappingMerger</code>.
@@ -48,7 +48,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * Create a merge context.
 	 * @param type 
      */
-    protected MergeContext(IResourceMappingScope input, String type, SyncInfoTree tree, DeltaTree deltaTree) {
+    protected MergeContext(IResourceMappingScope input, String type, SyncInfoTree tree, DiffTree deltaTree) {
     	super(input, type, tree, deltaTree);
     }
 
@@ -132,7 +132,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	 * @return
 	 */
 	public IStatus merge(IDiffNode delta, boolean force, IProgressMonitor monitor) {
-		if (!isFileDiff(delta))
+		if (getResource(delta).getType() != IResource.FILE)
 			return Status.OK_STATUS;
         try {
         	if (delta instanceof IThreeWayDiff && !force) {
@@ -155,12 +155,12 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	    			return Status.OK_STATUS;
 	    		}
 				// type == SyncInfo.CHANGE
-				ITwoWayDiff remoteChange = twDelta.getRemoteChange();
+				IResourceDiff remoteChange = (IResourceDiff)twDelta.getRemoteChange();
 				IResourceVariant base = null;
 	        	IResourceVariant remote = null;
 	        	if (remoteChange != null) {
-					base = (IResourceVariant)remoteChange.getBeforeState();
-		        	remote = (IResourceVariant)remoteChange.getAfterState();
+					base = remoteChange.getBeforeState();
+		        	remote = remoteChange.getAfterState();
 	        	}
 				if (base == null || remote == null || !getLocalFile(delta).exists()) {
 					// Nothing we can do so return a conflict status
@@ -219,7 +219,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	        	}
 	    		if (direction == SyncInfo.INCOMING) {
 	    			// Just copy the stream since there are no conflicts
-	    			return performReplace(SyncInfoToDeltaConverter.getDeltaFor(info), monitor);
+	    			return performReplace(SyncInfoToDiffConverter.getDeltaFor(info), monitor);
 	    		}
 				// direction == SyncInfo.CONFLICTING
 	    		int type = SyncInfo.getChange(info.getKind());
@@ -238,9 +238,9 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 				}
 				// We have a conflict, a local, base and remote so we can do 
 				// a three-way merge
-	            return performThreeWayMerge((IThreeWayDiff)SyncInfoToDeltaConverter.getDeltaFor(info), monitor);
+	            return performThreeWayMerge((IThreeWayDiff)SyncInfoToDiffConverter.getDeltaFor(info), monitor);
         	} else {
-        		return performReplace(SyncInfoToDeltaConverter.getDeltaFor(info), monitor);
+        		return performReplace(SyncInfoToDiffConverter.getDeltaFor(info), monitor);
         	}
         } catch (CoreException e) {
             return new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Merge of {0} failed due to an internal error.", new String[] { file.getFullPath().toString() }), e);
@@ -252,16 +252,16 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * The local resource must be a file.
      */
     private IStatus performReplace(IDiffNode delta, IProgressMonitor monitor) throws CoreException {
-    	ITwoWayDiff d;
-    	if (delta instanceof ITwoWayDiff) {
-			d = (ITwoWayDiff) delta;
+    	IResourceDiff d;
+    	if (delta instanceof IResourceDiff) {
+			d = (IResourceDiff) delta;
 		} else {
-			d = ((IThreeWayDiff)delta).getRemoteChange();
+			d = (IResourceDiff)((IThreeWayDiff)delta).getRemoteChange();
 		}
     	if (d == null)
     		return Status.OK_STATUS;
     	IFile file = getLocalFile(d);
-    	IResourceVariant remote = (IResourceVariant)d.getAfterState();
+    	IResourceVariant remote = d.getAfterState();
     	if (remote == null && file.exists()) {
     		file.delete(false, true, monitor);
     	} else if (remote != null) {

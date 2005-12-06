@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.core.variants.IResourceVariant;
 
 /**
  * Allows a model provider to build a view of their model that includes
@@ -24,11 +23,11 @@ import org.eclipse.team.core.variants.IResourceVariant;
  * <p>
  * The scope of the context is defined when the context is created. The creator
  * of the scope may affect changes on the scope which will result in property
- * change events from the scope and may result in sync-info change events from
- * the sync-info tree. Clients should note that it is possible that a change in
- * the scope will result in new out-of-sync resources being covered by the scope
- * but not result in a sync-info change event from the sync-info tree. This can
- * occur because the set may already have contained the out-of-sync resource
+ * change events from the scope and may result in change events from
+ * the diff tree. Clients should note that it is possible that a change in
+ * the scope will result in new resources with differences being covered by the scope
+ * but not result in a change event from the diff tree. This can
+ * occur because the set may already have contained a diff for the resource
  * with the understanding that the client would have ignored it. Consequently,
  * clients should listen to both sources in order to guarantee that they update
  * any dependent state appropriately.
@@ -88,24 +87,26 @@ public interface ISynchronizationContext {
 	public ISyncInfoTree getSyncInfoTree();
 	
 	/**
-	 * Return a tree that contains {@link IDiffNode} nodes for resources
-	 * that are out-of-sync. The tree will only contain deltas for out-of-sync
-	 * resources that are within the scope of this context. The tree
-	 * may include additional out-of-sync resources, which should be ignored by
-	 * the client. Clients can test for inclusion using the method 
+	 * Return a tree that contains {@link IDiffNode} nodes for resources that
+	 * are out-of-sync. The tree will contain diffs for any out-of-sync
+	 * resources that are within the scope of this context. The tree may include
+	 * diffs for additional resources, which should be ignored by the client.
+	 * Clients can test for inclusion using the method
 	 * {@link IResourceMappingScope#contains(IResource)}.
 	 * <p>
-	 * The {@link IDiffTree} and the {@link ITwoWayDiff} are a generic
-	 * delta data structure. The tree returned from this method will have
-	 * {@link IResourceVariant} objects as the before and after states
-	 * of any {@link ITwoWayDiff} instances that are obtained directly
-	 * or indirectly in the set.
+	 * The returned {@link IDiffTree} will be homogeneous and contain either
+	 * {@link IResourceDiff} or {@link IThreeWayDiff} instances. Any
+	 * {@link IThreeWayDiff} contained in the returned tree will contain
+	 * {@link IResourceDiff} instances as the local and remote changes. This
+	 * interface also has several helper methods for handling diffs contained in
+	 * the returned diff tree.
 	 * 
 	 * EXPERIMENTAL: Do not use yet!!!
 	 * 
 	 * @return a tree that contains a <code>SyncInfo</code> node for any
 	 *         resources that are out-of-sync.
-	 *         
+	 * @see #getDiffs(ResourceTraversal[])
+	 * @see #getResource(IDiffNode)
 	 */
 	public IDiffTree getDiffTree();
 
@@ -173,27 +174,18 @@ public interface ISynchronizationContext {
     public void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Convenience method for return the set of deltas that
+	 * Convenience method for return the set of diffs that
 	 * are covered by the given traversals.
 	 * @param traversals the traversals to search
-	 * @return the deltas that are found in the given traversals
+	 * @return the diffs that are found in the given traversals
 	 */
 	public IDiffNode[] getDiffs(ResourceTraversal[] traversals);
 
 	/**
 	 * Convenience method for returning the resource associated
-	 * with a given delta.
-	 * @param delta a delta
-	 * @return the resource associated with that delta
+	 * with a given diff.
+	 * @param diff a diff
+	 * @return the resource associated with that diff
 	 */
 	IResource getResource(IDiffNode delta);
-
-	/**
-	 * Convenience method that returns whether the resource
-	 * associated with the given delta is a file.
-	 * @param delta the delta
-	 * @return whether the resource
-	 * associated with the given delta is a file
-	 */
-	boolean isFileDiff(IDiffNode delta);
 }

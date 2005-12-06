@@ -26,27 +26,27 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.core.delta.DeltaTree;
-import org.eclipse.team.internal.core.delta.SyncInfoToDeltaConverter;
+import org.eclipse.team.internal.core.diff.DiffTree;
+import org.eclipse.team.internal.core.diff.SyncInfoToDiffConverter;
 import org.eclipse.team.ui.operations.MergeContext;
 import org.eclipse.team.ui.synchronize.ResourceScope;
 
 public class CVSMergeContext extends MergeContext {
 	
 	private WorkspaceSynchronizeParticipant participant;
-	private final SyncInfoToDeltaConverter converter;
+	private final SyncInfoToDiffConverter converter;
 
 	public static IMergeContext createContext(IResourceMappingScope scope, IProgressMonitor monitor) {
 		WorkspaceSynchronizeParticipant participant = new WorkspaceSynchronizeParticipant(new ResourceScope(scope.getRoots()));
 		participant.refreshNow(participant.getResources(), NLS.bind("Preparing to merge {0}", new String[] { "TODO: mapping description for CVS merge context initialization" }), monitor);
-		DeltaTree tree = new DeltaTree();
-		SyncInfoToDeltaConverter converter = new SyncInfoToDeltaConverter(participant.getSyncInfoSet(), tree);
+		DiffTree tree = new DiffTree();
+		SyncInfoToDiffConverter converter = new SyncInfoToDiffConverter(participant.getSyncInfoSet(), tree);
 		converter.connect(monitor);
 		participant.getSubscriberSyncInfoCollector().waitForCollector(monitor);
 		return new CVSMergeContext(THREE_WAY, participant, scope, converter);
 	}
 	
-	protected CVSMergeContext(String type, WorkspaceSynchronizeParticipant participant, IResourceMappingScope input, SyncInfoToDeltaConverter converter) {
+	protected CVSMergeContext(String type, WorkspaceSynchronizeParticipant participant, IResourceMappingScope input, SyncInfoToDiffConverter converter) {
 		super(input, type, participant.getSyncInfoSet(), converter.getTree());
 		this.participant = participant;
 		this.converter = converter;

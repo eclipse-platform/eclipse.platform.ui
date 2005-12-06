@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.delta;
+package org.eclipse.team.internal.core.diff;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.core.diff.IThreeWayDiff;
@@ -28,7 +28,7 @@ import org.eclipse.team.core.diff.ITwoWayDiff;
  * 
  * @since 3.2
  */
-public class ThreeWayDelta extends AbstractDelta implements IThreeWayDiff {
+public class ThreeWayDiff extends AbstractDiffNode implements IThreeWayDiff {
 
 	private final ITwoWayDiff localChange;
 	private final ITwoWayDiff remoteChange;
@@ -41,7 +41,7 @@ public class ThreeWayDelta extends AbstractDelta implements IThreeWayDiff {
 	 * @param remoteChange the remote change in the model object or <code>null</code> if there is no local change
 	 * @param conflictHint
 	 */
-	public ThreeWayDelta(IPath path, ITwoWayDiff localChange, ITwoWayDiff remoteChange, int conflictHint) {
+	public ThreeWayDiff(IPath path, ITwoWayDiff localChange, ITwoWayDiff remoteChange, int conflictHint) {
 		super(path, calculateKind(localChange, remoteChange));
 		this.localChange = localChange;
 		this.remoteChange = remoteChange;

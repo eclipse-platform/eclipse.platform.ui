@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.core.diff;
 
-import org.eclipse.team.internal.core.delta.ThreeWayDelta;
+import org.eclipse.team.internal.core.diff.ThreeWayDiff;
 
 
 /**
@@ -24,7 +24,7 @@ import org.eclipse.team.internal.core.delta.ThreeWayDelta;
  * <p>
  * This interface is not intended to be implemented by clients.
  * Clients that need to create deltas should instead use
- * {@link ThreeWayDelta}
+ * {@link ThreeWayDiff}
  * </p>
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as

@@ -8,14 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.delta;
+package org.eclipse.team.internal.core.diff;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.diff.ITwoWayDiff;
 
 /**
- * Implementation of {@link IThreeWayDiff}.
+ * Implementation of {@link ITwoWayDiff}. By default, this implementation
+ * returns <code>null</code> for the {@link #getMovedFromPath() } and
+ * {@link #getMovedToPath() }. Subclasses that support move diffs
+ * should override these methods.
  * <p>
  * This class may be subclassed by clients.
  * 
@@ -28,25 +30,21 @@ import org.eclipse.team.core.diff.ITwoWayDiff;
  * 
  * @since 3.2
  */
-public class TwoWayDelta extends AbstractDelta implements ITwoWayDiff {
+public class TwoWayDiff extends AbstractDiffNode implements ITwoWayDiff {
 
 	private final int flags;	
-	private final Object before;
-	private final Object after;
 
 	/**
-	 * Create a two-way delta
+	 * Create a two-way diff
 	 * @param path the path of the model object that has changed
 	 * @param kind the kind of change
 	 * @param flags additional flags that describe the change
 	 * @param before the before state of the model object
 	 * @param after the after state of the model object
 	 */
-	public TwoWayDelta(IPath path, int kind, int flags, Object before, Object after) {
+	public TwoWayDiff(IPath path, int kind, int flags) {
 		super(path, kind);
 		this.flags = flags;
-		this.before = before;
-		this.after = after;
 	}
 
 	/* (non-Javadoc)
@@ -68,20 +66,6 @@ public class TwoWayDelta extends AbstractDelta implements ITwoWayDiff {
 	 */
 	public IPath getMovedFromPath() {
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.delta.ITwoWayDelta#getBeforeState()
-	 */
-	public Object getBeforeState() {
-		return before;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.delta.ITwoWayDelta#getAfterState()
-	 */
-	public Object getAfterState() {
-		return after;
 	}
 
 }

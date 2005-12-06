@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.delta;
+package org.eclipse.team.internal.core.diff;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
@@ -30,7 +30,7 @@ import org.eclipse.team.internal.core.Policy;
  * 
  * @since 3.2
  */
-public class DeltaTree implements IDiffTree {
+public class DiffTree implements IDiffTree {
 	
 	private ListenerList listeners = new ListenerList();
 	
@@ -38,14 +38,14 @@ public class DeltaTree implements IDiffTree {
 	
 	private ILock lock = Platform.getJobManager().newLock();
 	
-	private DeltaChangeEvent changes;
+	private DiffChangeEvent changes;
 
 	private  boolean lockedForModification;
 
 	/**
 	 * Create a delta set.
 	 */
-	public DeltaTree() {
+	public DiffTree() {
 		resetChanges();
 	}
 	
@@ -217,7 +217,7 @@ public class DeltaTree implements IDiffTree {
 
 	private void fireChanges(final IProgressMonitor monitor) {
 		// Use a synchronized block to ensure that the event we send is static
-		final DeltaChangeEvent event;
+		final DiffChangeEvent event;
 		synchronized(this) {
 			event = getChangeEvent();
 			resetChanges();
@@ -243,7 +243,7 @@ public class DeltaTree implements IDiffTree {
 		monitor.done();
 	}
 
-	private DeltaChangeEvent getChangeEvent() {
+	private DiffChangeEvent getChangeEvent() {
 		return changes;
 	}
 	
@@ -251,8 +251,8 @@ public class DeltaTree implements IDiffTree {
 		changes = createEmptyChangeEvent();
 	}
 
-	private DeltaChangeEvent createEmptyChangeEvent() {
-		return new DeltaChangeEvent(this);
+	private DiffChangeEvent createEmptyChangeEvent() {
+		return new DiffChangeEvent(this);
 	}
 
 	private void internalAdd(IDiffNode delta) {

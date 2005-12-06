@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.delta;
+package org.eclipse.team.internal.core.diff;
 
 import java.util.*;
 
@@ -18,7 +18,7 @@ import org.eclipse.team.core.diff.*;
 /**
  * Implementation of {@link IDiffChangeEvent}
  */
-public class DeltaChangeEvent implements IDiffChangeEvent {
+public class DiffChangeEvent implements IDiffChangeEvent {
 
 	private final IDiffTree tree;
 	
@@ -33,7 +33,7 @@ public class DeltaChangeEvent implements IDiffChangeEvent {
 	/**
 	 * 
 	 */
-	public DeltaChangeEvent(IDiffTree tree) {
+	public DiffChangeEvent(IDiffTree tree) {
 		this.tree = tree;
 	}
 

@@ -24,7 +24,7 @@ import org.eclipse.team.core.mapping.MergeStatus;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.core.delta.DeltaTree;
+import org.eclipse.team.internal.core.diff.DiffTree;
 
 /**
  * A merge context that performs three-way merges using the {@link IStreamMerger}
@@ -48,7 +48,7 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
 	 * @param tree the sync info tree
 	 * @param deltaTree the delta tree
 	 */
-	protected MergeContext(IResourceMappingScope scope, String type, SyncInfoTree tree, DeltaTree deltaTree) {
+	protected MergeContext(IResourceMappingScope scope, String type, SyncInfoTree tree, DiffTree deltaTree) {
 		super(scope, type, tree, deltaTree);
 	}
 
@@ -99,9 +99,9 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
         
             // Get the ancestor stream and encoding
         	IResourceVariant base = null;
-        	ITwoWayDiff remoteChange = ((IThreeWayDiff)delta).getRemoteChange();
+        	IResourceDiff remoteChange = (IResourceDiff)((IThreeWayDiff)delta).getRemoteChange();
         	if (remoteChange != null)
-        		base = (IResourceVariant)remoteChange.getBeforeState();
+        		base = remoteChange.getBeforeState();
             IStorage s = base.getStorage(monitor);
             String ancestorEncoding = null;
             if (s instanceof IEncodedStorage) {

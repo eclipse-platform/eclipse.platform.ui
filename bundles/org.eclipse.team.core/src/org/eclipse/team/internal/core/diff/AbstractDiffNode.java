@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.delta;
+package org.eclipse.team.internal.core.diff;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.core.diff.IDiffNode;
@@ -16,7 +16,7 @@ import org.eclipse.team.core.diff.IDiffNode;
 /**
  * Abstract implementation of {@link IDiffNode}
  */
-public abstract class AbstractDelta implements IDiffNode {
+public abstract class AbstractDiffNode implements IDiffNode {
 
 	private final IPath path;
 	private final int kind;
@@ -26,7 +26,7 @@ public abstract class AbstractDelta implements IDiffNode {
 	 * @param path the path of the delta
 	 * @param kind the kind of the delta
 	 */
-	public AbstractDelta(IPath path, int kind) {
+	public AbstractDiffNode(IPath path, int kind) {
 		this.path = path;
 		this.kind = kind;
 	}

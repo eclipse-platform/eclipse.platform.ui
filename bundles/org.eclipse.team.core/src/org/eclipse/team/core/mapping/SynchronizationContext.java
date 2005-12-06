@@ -23,8 +23,8 @@ import org.eclipse.team.core.synchronize.ISyncInfoTree;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.core.delta.DeltaTree;
-import org.eclipse.team.internal.core.mapping.SynchronizationCache;
+import org.eclipse.team.internal.core.diff.DiffTree;
+import org.eclipse.team.internal.core.mapping.DiffCache;
 
 /**
  * Abstract implementation of the {@link ISynchronizationContext} interface.
@@ -45,8 +45,8 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	private IResourceMappingScope input;
     private final String type;
     private final SyncInfoTree tree;
-    private final DeltaTree deltaTree;
-    private SynchronizationCache cache;
+    private final DiffTree deltaTree;
+    private DiffCache cache;
 
     /**
      * Create a synchronization context
@@ -54,7 +54,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
      * @param type the type of synchronization (ONE_WAY or TWO_WAY)
      * @param tree the sync info tree that contains all out-of-sync resources
      */
-    protected SynchronizationContext(IResourceMappingScope input, String type, SyncInfoTree tree, DeltaTree deltaTree) {
+    protected SynchronizationContext(IResourceMappingScope input, String type, SyncInfoTree tree, DiffTree deltaTree) {
     	this.input = input;
 		this.type = type;
 		this.tree = tree;
@@ -96,7 +96,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	 */
 	public synchronized IDiffCache getCache() {
 		if (cache == null) {
-			cache = new SynchronizationCache(this);
+			cache = new DiffCache(this);
 		}
 		return cache;
 	}
@@ -115,11 +115,11 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 		IResource resource = null;
 		if (delta instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) delta;
-			resource = internalGetResource(twd.getLocalChange());
+			resource = internalGetResource((IResourceDiff)twd.getLocalChange());
 			if (resource == null)
-				resource = internalGetResource(twd.getRemoteChange());
+				resource = internalGetResource((IResourceDiff)twd.getRemoteChange());
 		} else {
-			resource = internalGetResource((ITwoWayDiff)delta);
+			resource = internalGetResource((IResourceDiff)delta);
 		}
 		return resource;	
 	}
@@ -146,16 +146,8 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 		}
 		return (IDiffNode[]) result.toArray(new IDiffNode[result.size()]);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#isFileDelta(org.eclipse.team.core.delta.ISyncDelta)
-	 */
-	public boolean isFileDiff(IDiffNode delta) {
-		IResource resource = getResource(delta);
-		return resource != null && resource.getType() == IResource.FILE;
-	}
 
-	private IResource internalGetResource(ITwoWayDiff localChange) {
+	private IResource internalGetResource(IResourceDiff localChange) {
 		if (localChange == null)
 			return null;
 		Object before = localChange.getBeforeState();

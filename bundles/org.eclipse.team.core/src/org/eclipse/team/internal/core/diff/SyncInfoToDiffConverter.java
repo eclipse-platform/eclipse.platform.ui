@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.delta;
+package org.eclipse.team.internal.core.diff;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,12 +22,12 @@ import org.eclipse.team.core.variants.IResourceVariant;
 /**
  * Covert a SyncInfoSet into a SyncDeltaTree
  */
-public class SyncInfoToDeltaConverter implements ISyncInfoSetChangeListener {
+public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 
 	SyncInfoSet set;
-	DeltaTree tree;
+	DiffTree tree;
 	
-	public SyncInfoToDeltaConverter(SyncInfoTree set, DeltaTree tree) {
+	public SyncInfoToDiffConverter(SyncInfoTree set, DiffTree tree) {
 		this.set = set;
 		this.tree = tree;
 	}
@@ -90,7 +90,7 @@ public class SyncInfoToDeltaConverter implements ISyncInfoSetChangeListener {
 		if (info.getComparator().isThreeWay()) {
 			ITwoWayDiff local = getLocalDelta(info);
 			ITwoWayDiff remote = getRemoteDelta(info);
-			return new ThreeWayDelta(info.getLocal().getFullPath(), local, remote, 0);
+			return new ThreeWayDiff(info.getLocal().getFullPath(), local, remote, 0);
 		} else {
 			return getDelta(info, wrapLocal(info), info.getRemote(), 0);
 		}
@@ -113,7 +113,7 @@ public class SyncInfoToDeltaConverter implements ISyncInfoSetChangeListener {
 		} else {
 			kind = IDiffNode.CHANGED;
 		}
-		return new TwoWayDelta(info.getLocal().getFullPath(), kind, IDiffNode.NO_CHANGE, before, after);
+		return new ResourceDiff(info.getLocal().getFullPath(), kind, IDiffNode.NO_CHANGE, before, after);
 	}
 
 	private static ITwoWayDiff getLocalDelta(SyncInfo info) {
@@ -163,7 +163,7 @@ public class SyncInfoToDeltaConverter implements ISyncInfoSetChangeListener {
 		
 	}
 
-	public DeltaTree getTree() {
+	public DiffTree getTree() {
 		return tree;
 	}
 }
