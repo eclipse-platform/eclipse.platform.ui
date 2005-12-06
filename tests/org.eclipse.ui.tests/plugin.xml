@@ -1849,6 +1849,21 @@
             requiredActivityId="org.eclipse.activity7"
             activityId="org.eclipse.activity1">
       </activityRequirementBinding>
+      <activity
+            description="Activity for testing the problem filters"
+            id="problemFilterTestActivity"
+            name="ProblemFilterTest"/>
+      <activityPatternBinding
+            activityId="problemFilterTestActivity"
+            pattern="org\.eclipse\.ui\.tests/.*problemTest.*"/>
+      <category
+            description="category for the problem filter tests"
+            id="problemCategory"
+            name="Problem Filter Tests"/>
+      <categoryActivityBinding
+            activityId="problemFilterTestActivity"
+            categoryId="problemCategory"/>
+      <defaultEnablement id="problemFilterTestActivity"/>
    </extension>
 
   <extension
@@ -2650,39 +2665,39 @@
          point="org.eclipse.ui.ide.markerSupport">
       <problemFilter
             enabled="true"
-            id="org.eclipse.ui.tests.onAnyError"
+            id="problemTest.onAnyError"
             name="On Any Error"
             scope="ON_ANY"
             severity="ERROR"/>
       <problemFilter
             enabled="true"
-            id="org.eclipse.ui.tests.onSelectedWarning"
+            id="problemTest.onSelectedWarning"
             name="On Selected Warning"
             scope="ON_SELECTED_ONLY"
             severity="WARNING"/>
       <problemFilter
             enabled="true"
-            id="org.eclipse.ui.tests.infoAndChildren"
+            id="problemTest.infoAndChildren"
             name="On Selected Info And Children"
             scope="ON_SELECTED_AND_CHILDREN"
             severity="INFO"/>
       <problemFilter
             enabled="true"
-            id="org.eclipse.ui.tests.sameContainerNoSeverity"
+            id="problemTest.sameContainerNoSeverity"
             name="Same Container No Severity"
             scope="ON_ANY_IN_SAME_CONTAINER"/>
       <problemFilter
             enabled="true"
-            id="org.eclipse.ui.tests.onMethod"
+            id="problemTest.onMethod"
             name="On Method"
             onDescription="method"/>
       <problemFilter
-            id="org.eclipse.ui.tests.notOnMethod"
+            id="problemTest.notOnMethod"
             name="Not On Method"
             onDescription="!method"/>
       <problemFilter
             enabled="true"
-            id="org.eclipse.ui.tests.onProblem"
+            id="problemTest.onProblem"
             name="On MarkerType">
          <selectedType markerId="org.eclipse.core.resources.problemmarker"/>
       </problemFilter>

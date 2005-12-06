@@ -11,7 +11,8 @@
 package org.eclipse.ui.tests.internal;
 
 import org.eclipse.ui.tests.markers.Bug75909Test;
-import org.eclipse.ui.tests.markers.DeclarativeFilterTest;
+import org.eclipse.ui.tests.markers.DeclarativeFilterActivityTest;
+import org.eclipse.ui.tests.markers.DeclarativeFilterDeclarationTest;
 import org.eclipse.ui.tests.markers.ResourceMappingMarkersTest;
 
 import junit.framework.Test;
@@ -40,7 +41,8 @@ public class InternalTestSuite extends TestSuite {
         addTest(new TestSuite(Bug41931Test.class));
         addTest(Bug75909Test.suite());
         addTest(new TestSuite(Bug78470Test.class));
-        addTest(new TestSuite(DeclarativeFilterTest.class));
+        addTest(new TestSuite(DeclarativeFilterActivityTest.class));
+        addTest(new TestSuite(DeclarativeFilterDeclarationTest.class));
         addTest(new TestSuite(ResourceMappingMarkersTest.class));
         addTest(Bug99858Test.suite());
     }

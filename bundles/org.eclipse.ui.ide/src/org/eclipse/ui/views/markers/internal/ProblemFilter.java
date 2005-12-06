@@ -12,12 +12,15 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
  * ProblemFilters are the filters used in the problems view.
@@ -64,7 +67,7 @@ public class ProblemFilter extends MarkerFilter {
 
 	private int severity;
 
-	private String id;
+	private IPluginContribution contributionDescriptor = null;
 
 	/**
 	 * Create a new instance of the receiver with name filterName.
@@ -296,17 +299,45 @@ public class ProblemFilter extends MarkerFilter {
 	 * @return String
 	 */
 	public String getId() {
-		return id;
+		if(contributionDescriptor == null)
+			return null;
+		return contributionDescriptor.getLocalId();
 	}
 
-	/**
-	 * Set the id to id.
-	 * 
-	 * @param id
-	 *            String
-	 */
-	public void setId(String id) {
-		this.id = id;
+	void createContributionFrom(IConfigurationElement element){
+		final String id = element.getAttribute(MarkerSupportRegistry.ID);
+		final String namespace = element.getNamespace();
+		contributionDescriptor = new IPluginContribution(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.IPluginContribution#getLocalId()
+			 */
+			public String getLocalId() {
+				return id;
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.IPluginContribution#getPluginId()
+			 */
+			public String getPluginId() {
+				return namespace;
+			}
+		};
 	}
+	
+	/**
+	 * Return whether or not the receiver will be filtered out
+	 * due to an activity match.
+	 * @return boolean <code>true</code> if it is filtered out.
+	 */
+	public boolean isFilteredOutByActivity(){
+		if(contributionDescriptor == null)
+			return false;
+		return WorkbenchActivityHelper.filterItem(contributionDescriptor);
+	}
+	
+	public boolean isEnabled() {
+		return super.isEnabled() && !isFilteredOutByActivity();
+	}
+	
 
 }

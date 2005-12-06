@@ -37,7 +37,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final Object ERROR = "ERROR";//$NON-NLS-1$
 
-	private static final String ID = "id"; //$NON-NLS-1$
+	static final String ID = "id"; //$NON-NLS-1$
 
 	private static final Object INFO = "INFO";//$NON-NLS-1$
 
@@ -129,6 +129,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private MarkerType rootType;
 
+	private Collection filteredFilters;
+
 	/**
 	 * Create a new instance of the receiver and read the registry.
 	 */
@@ -167,7 +169,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				registeredFilters.add(filter);
 				tracker.registerObject(extension, filter,
 						IExtensionTracker.REF_STRONG);
-
+				
 				continue;
 			}
 			if (element.getName().equals(SUB_CATEGORY_PROVIDER)) {
@@ -236,6 +238,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 			}
 		}
+		filteredFilters = null;
 	}
 
 	/**
@@ -332,7 +335,17 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @return Collection of ProblemFilter
 	 */
 	public Collection getRegisteredFilters() {
-		return registeredFilters;
+		if(filteredFilters == null){
+			filteredFilters = new ArrayList();
+			Iterator registeredIterator = registeredFilters.iterator();
+			while(registeredIterator.hasNext()){
+				ProblemFilter next = (ProblemFilter) registeredIterator.next();
+				if(next.isFilteredOutByActivity())
+					continue;
+				filteredFilters.add(next);
+			}
+		}
+		return filteredFilters;
 	}
 
 	/**
@@ -391,7 +404,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private ProblemFilter newFilter(IConfigurationElement element) {
 		ProblemFilter filter = new ProblemFilter(element.getAttribute(NAME));
 
-		filter.setId(element.getAttribute(ID));
+		filter.createContributionFrom(element);
 
 		String enabledValue = element.getAttribute(ENABLED);
 		filter.setEnabled(enabledValue == null
@@ -468,6 +481,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			}
 
 		}
+		filteredFilters = null;
 
 	}
 
@@ -622,6 +636,14 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		}
 		return defaultSorter;
 
+	}
+
+	/**
+	 * Clear the cache of filtered filters as an activity change has occured.
+	 */
+	public void clearFilteredFilters() {
+		filteredFilters = null;
+		
 	}
 
 }

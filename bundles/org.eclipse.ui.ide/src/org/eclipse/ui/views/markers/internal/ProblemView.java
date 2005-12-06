@@ -29,8 +29,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.ActivityManagerEvent;
+import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -88,6 +91,8 @@ public class ProblemView extends MarkerView {
 
 	private ActionResolveMarker resolveMarkerAction;
 
+	private IActivityManagerListener activityManagerListener;
+
 	/**
 	 * Return a new instance of the receiver.
 	 */
@@ -133,10 +138,15 @@ public class ProblemView extends MarkerView {
 		return 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#dispose()
+	 */
 	public void dispose() {
 		if (resolveMarkerAction != null)
 			resolveMarkerAction.dispose();
 
+		PlatformUI.getWorkbench().getActivitySupport().getActivityManager()
+				.removeActivityManagerListener(activityManagerListener);
 		super.dispose();
 	}
 
@@ -522,7 +532,9 @@ public class ProblemView extends MarkerView {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.internal.TableView#setSorter(org.eclipse.ui.views.markers.internal.TableSorter)
 	 */
 	void setSorter(TableSorter sorter2) {
@@ -535,15 +547,46 @@ public class ProblemView extends MarkerView {
 		} else
 			super.setSorter(sorter2);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getTableSorter()
 	 */
 	public TableSorter getTableSorter() {
-		if(isHierarchalMode()){
+		if (isHierarchalMode()) {
 			CategorySorter sorter = (CategorySorter) getViewer().getSorter();
 			return sorter.innerSorter;
 		}
 		return super.getTableSorter();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		createActivityManagerListener();
+		PlatformUI.getWorkbench().getActivitySupport().getActivityManager()
+				.addActivityManagerListener(activityManagerListener);
+	}
+
+	/**
+	 * Create a new listener for activity changes.
+	 */
+	private void createActivityManagerListener() {
+		activityManagerListener = new IActivityManagerListener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.activities.IActivityManagerListener#activityManagerChanged(org.eclipse.ui.activities.ActivityManagerEvent)
+			 */
+			public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
+				MarkerSupportRegistry.getInstance().clearFilteredFilters();
+				clearEnabledFilters();
+				getViewer().refresh();
+			}
+		};
+		
 	}
 }
