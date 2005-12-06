@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Session;
@@ -105,8 +106,9 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 * @see ICVSFolder#mkdir()
 	 */
 	public void mkdir() throws CVSException {
+		ISchedulingRule rule = null;
 		try {
-			EclipseSynchronizer.getInstance().beginBatching(resource, null);
+			rule = EclipseSynchronizer.getInstance().beginBatching(resource, null);
 			if(resource.getType()==IResource.PROJECT) {
 				IProject project = (IProject)resource;
 				project.create(null);
@@ -121,7 +123,8 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		} catch (CoreException e) {
 			throw CVSException.wrapException(resource, NLS.bind(CVSMessages.EclipseFolder_problem_creating, new String[] { resource.getFullPath().toString(), e.getStatus().getMessage() }), e); 
 		} finally {
-			EclipseSynchronizer.getInstance().endBatching(resource, null);
+			if (rule != null)
+				EclipseSynchronizer.getInstance().endBatching(rule, null);
 		}
 	}
 		
