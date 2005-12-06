@@ -143,7 +143,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		layout.verticalSpacing= 2;
 		leftPane.setLayout(layout);
 		fHistoryPane= new CompareViewerPane(leftPane, SWT.BORDER | SWT.FLAT);
-		fHistoryPane.setImage(fCaptionImage);
+		if (fControlConfiguration.isTimeDisplayed())
+			fHistoryPane.setImage(fCaptionImage);
 		String text= null;
 		final IProject project= fControlConfiguration.getProject();
 		if (project != null)
