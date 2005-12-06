@@ -70,9 +70,8 @@ public class DiffApplierTest extends TestCase {
 		fDiffer= new DocumentLineDiffer();
 		setUpDiffer(fDiffer);
 		fDocument= new Document(CONTENT);
-		BooleanFuture future= waitForSynchronization(fDiffer);
 		fDiffer.connect(fDocument);
-		assertTrue(future.get());
+		assertTrue(waitForSynchronization());
 		
 		fApplier= new DiffApplier();
 		fRevision1= new MyRevision();
@@ -223,9 +222,8 @@ public class DiffApplierTest extends TestCase {
 	}
 
 	private void replace(int offset, int length, String text) throws BadLocationException, InterruptedException {
-		BooleanFuture future= waitForSynchronization(fDiffer);
 		fDocument.replace(offset, length, text);
-		assertTrue(future.get());
+		assertTrue(waitForSynchronization());
 		fApplier.applyDiff(fRegions, fDiffer, fDocument.getNumberOfLines());
 	}
 	
@@ -260,57 +258,9 @@ public class DiffApplierTest extends TestCase {
 		}
 	}
 	
-	protected void tearDown() throws Exception {
-		if (fFirstException != null)
-			throw fFirstException;
-		
-		super.tearDown();
-	}
-	
 	private TestReferenceProvider fReferenceProvider;
 	protected final void setUpDiffer(DocumentLineDiffer differ) {
 		differ.setReferenceProvider(fReferenceProvider);
-	}
-	
-	/**
-	 * Immediately returns a future variable for the synchronization
-	 * state of the differ. The caller is responsible for setting up the
-	 * reference provider and connecting the differ to a document.
-	 * 
-	 * @param differ the document line differ.
-	 * @return a future variable for the differ's synchronization state
-	 */
-	protected final BooleanFuture waitForSynchronization(final DocumentLineDiffer differ) {
-		final BooleanFuture future= new BooleanFuture();
-		Thread thread= new Thread(new Runner() {
-			void runProtected() {
-				synchronized (differ) {
-					try {
-						differ.notifyAll();
-						differ.wait(MAX_WAIT); // the initialization job notifies waiters upon finishing
-					} catch (InterruptedException x) {
-						return;
-					}
-				}
-				future.set(differ.isSynchronized());
-			}
-		});
-		future.setThread(thread);
-		synchronized (differ) {
-			thread.start();
-			try {
-				differ.wait();
-			} catch (InterruptedException x) {
-				throw new Error(x);
-			}
-		}
-		
-		return future;
-	}
-	private Exception fFirstException;
-	private synchronized void reportException(Exception x) {
-		if (fFirstException == null)
-			fFirstException= x;
 	}
 	
 	static boolean equals(ILineRange one, ILineRange two) {
@@ -363,78 +313,18 @@ public class DiffApplierTest extends TestCase {
 
 	}
 	
-	private abstract class Runner implements Runnable {
-
-		public final void run() {
-			try {
-				runProtected();
-			} catch (Exception x) {
-				reportException(x);
-			}
-		}
-
-		abstract void runProtected() throws Exception;
-		
-	}
-
-	protected static final class BooleanFuture {
-		private final Object fLock= new Object();
-		private Boolean fResult= null;
-		private Thread fThread;
-		private boolean fIsCanceled= false;
-		
-		/**
-		 * Returns the value of the future variable, waiting for
-		 * completion if not yet done.
-		 * 
-		 * @return the boolean value of the future variable
-		 * @throws InterruptedException
-		 */
-		public boolean get() throws InterruptedException {
-			synchronized (fLock) {
-				while (fResult == null && !fIsCanceled)
-					fLock.wait();
-				return fResult.booleanValue();
-			}
-		}
-		
-		void set(boolean b) {
-			synchronized (fLock) {
-				fResult= Boolean.valueOf(b);
-				fLock.notifyAll();
-			}
-		}
-
-		/**
-		 * Returns <code>true</code> if the future has completed
-		 * (computed, cancelled, interrupted), <code>false</code> if
-		 * not.
-		 * 
-		 * @return <code>true</code> if <code>get()</code> will
-		 *         return without blocking, <code>false</code> if it
-		 *         may block
-		 */
-		public boolean isDone() {
-			synchronized (fLock) {
-				return fResult != null || fIsCanceled;
-			}
-		}
-
-		/**
-		 * Cancels waiting for this future variable.
-		 */
-		public void cancel() {
-			synchronized (fLock) {
-				if (fResult != null)
-					return;
-				if (fThread != null)
-					fThread.interrupt();
-				fIsCanceled= true;
-			}
-		}
-
-		void setThread(Thread thread) {
-			fThread= thread;
+	/**
+	 * Returns true if the differ becomes synchronized before MAX_WAITelapses, false otherwise.
+	 * 
+	 * @return the true if the differ synchronized
+	 * @throws InterruptedException
+	 */
+	private boolean waitForSynchronization() throws InterruptedException {
+		synchronized (fDiffer) {
+			if (fDiffer.isSynchronized())
+				return true;
+			fDiffer.wait(MAX_WAIT);
+			return fDiffer.isSynchronized();
 		}
 	}
 	private static final long MAX_WAIT= 10000; // wait 10 seconds at most
