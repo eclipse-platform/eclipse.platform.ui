@@ -19,8 +19,8 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -116,7 +116,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
      */    
     public static final String ACTIVITY_PROMPT_BUTTON_TOOLTIP = "activityPromptButtonTooltip"; //$NON-NLS-1$
     
-    private class AdvancedDialog extends Dialog {
+    private class AdvancedDialog extends TrayDialog {
 
         ActivityEnabler enabler;
         /**

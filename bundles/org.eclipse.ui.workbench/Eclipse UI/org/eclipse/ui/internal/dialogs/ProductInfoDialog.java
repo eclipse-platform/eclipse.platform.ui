@@ -17,8 +17,8 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -47,7 +47,7 @@ import org.eclipse.ui.internal.about.AboutItem;
  * Abstract superclass of about dialogs 
  */
 
-public abstract class ProductInfoDialog extends Dialog {
+public abstract class ProductInfoDialog extends TrayDialog {
     private static final String ATT_HTTP = "http://"; //$NON-NLS-1$
 
     private AboutItem item;

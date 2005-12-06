@@ -24,9 +24,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -47,7 +47,7 @@ import org.eclipse.ui.internal.ide.StatusUtil;
 /**
  * Shows the properties of a new or existing marker
  */
-class DialogMarkerProperties extends Dialog {
+class DialogMarkerProperties extends TrayDialog {
 
     /**
      * The marker being shown, or <code>null</code> for a new marker

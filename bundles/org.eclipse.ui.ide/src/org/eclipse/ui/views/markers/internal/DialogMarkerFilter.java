@@ -16,11 +16,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -65,7 +65,7 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
  * org.eclipse.ui.views.MarkerFilter object. Not intended to be subclassed or
  * instantiated by clients.
  */
-public abstract class DialogMarkerFilter extends Dialog {
+public abstract class DialogMarkerFilter extends TrayDialog {
 	/**
 	 * button IDs
 	 */

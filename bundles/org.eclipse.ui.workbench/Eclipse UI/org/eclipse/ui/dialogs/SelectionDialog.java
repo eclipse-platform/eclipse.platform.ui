@@ -13,8 +13,8 @@ package org.eclipse.ui.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * Clients may subclass this dialog to inherit its selection facilities.
  * </p>
  */
-public abstract class SelectionDialog extends Dialog {
+public abstract class SelectionDialog extends TrayDialog {
     // the final collection of selected elements, or null if this dialog was
     // canceled
     private Object[] result;

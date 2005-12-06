@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Shell;
  * The TableSortDialog is the dialog that allows sort order to
  * be selected.
  */
-public class TableSortDialog extends Dialog {
+public class TableSortDialog extends TrayDialog {
 
     private TableSorter sorter;
 

@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogMessageArea;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -26,6 +25,7 @@ import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
@@ -77,7 +77,7 @@ import org.eclipse.swt.widgets.Tree;
  * dialog; when a node is selected, the corresponding page is shown on the right
  * hand side.
  */
-public class PreferenceDialog extends Dialog implements IPreferencePageContainer, IPageChangeProvider {
+public class PreferenceDialog extends TrayDialog implements IPreferencePageContainer, IPageChangeProvider {
 	/**
 	 * Layout for the page container.
 	 *  

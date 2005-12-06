@@ -30,7 +30,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -124,7 +124,7 @@ import org.eclipse.ui.wizards.IWizardCategory;
 
 // @issue add class doc
 // @issue need to break this not to show menu specific page
-public class CustomizePerspectiveDialog extends Dialog {
+public class CustomizePerspectiveDialog extends TrayDialog {
     private Perspective perspective;
 
     WorkbenchWindow window;

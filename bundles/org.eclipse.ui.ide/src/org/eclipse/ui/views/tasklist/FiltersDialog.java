@@ -17,8 +17,8 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -52,7 +52,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 
-class FiltersDialog extends Dialog {
+class FiltersDialog extends TrayDialog {
     /**
      * ID for the Reset button
      */
