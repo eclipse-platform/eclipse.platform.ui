@@ -41,9 +41,10 @@ public final class MigrationHelper {
 	private static final  boolean USE_OLD_API= Boolean.getBoolean("org.eclipse.jface.internal.text.useOldSTAPI"); //$NON-NLS-1$
 	
 	/*
-	 * XXX: This needs to be disabled for mixed font support.
+	 * XXX: This needs to be disabled for mixed font support
+	 * 		and for better performance.
 	 */
-	private static final  boolean DISABLE_CHECKING= Boolean.getBoolean("org.eclipse.jface.internal.text.disableChecking"); //$NON-NLS-1$
+	private static final  boolean DISABLE_CHECKING= true && !USE_OLD_API; // !!! Do not remove '&& !USE_OLD_API' !!!
 	
 	public static int checkLineHeightValue(int newAPIValue, StyledText textWidget, int lineCount) {
 		int oldAPIValue= textWidget.getLineHeight() * lineCount;
@@ -89,6 +90,11 @@ public final class MigrationHelper {
 	 */
 	public static int computeLineHeight(StyledText textWidget, int startLine, int endLine, int lineCount) {
 		
+		int fasterHeight= getLinePixel(textWidget, endLine) - getLinePixel(textWidget, startLine);
+		if (DISABLE_CHECKING)
+			return fasterHeight;
+
+		// Slow alternative:
 		int height= 0;
 		startLine= Math.max(startLine, 0);
 		endLine= Math.min(endLine, textWidget.getLineCount());
@@ -96,10 +102,8 @@ public final class MigrationHelper {
 			int offset= textWidget.getOffsetAtLine(i);
 			height= height + textWidget.getLineHeight(offset);
 		}
-		
-		// FASTER:
-		int fasterHeight= getLinePixel(textWidget, endLine) - getLinePixel(textWidget, startLine);
-		height= checkValue(height, fasterHeight);
+
+		height= checkValue(fasterHeight, height);
 		
 		return checkValue(height, lineCount * textWidget.getLineHeight());
 	}
@@ -123,6 +127,9 @@ public final class MigrationHelper {
 		if (!isTopIndexTop(textWidget))
 			top--;
 		
+		if (DISABLE_CHECKING)
+			return top;
+		
 		int oldTop= textViewer.getTopIndex();
 		if ((textWidget.getTopPixel() % textWidget.getLineHeight()) != 0)
 			oldTop--;
@@ -140,6 +147,10 @@ public final class MigrationHelper {
 		int topIndex= textWidget.getTopIndex();
 		
 		int res1= getLinePixel(textWidget, topIndex);
+		if (DISABLE_CHECKING)
+			return res1;
+		
+		// Alternative way
 		int res2= textWidget.getLocationAtOffset(textWidget.getOffsetAtLine(topIndex)).y;
 		
 		res1= checkValue(res1, res2);
@@ -147,7 +158,7 @@ public final class MigrationHelper {
 		if (res1 != 0)
 			res1= -getLinePixel(textWidget, topIndex - 1);
 
-		return MigrationHelper.checkValue(res1, textWidget.getTopPixel() % textWidget.getLineHeight());
+		return checkValue(res1, textWidget.getTopPixel() % textWidget.getLineHeight());
 	}
 	
 	/**
@@ -166,8 +177,11 @@ public final class MigrationHelper {
 				
 				int first= getLineIndex(textWidget, 0);
 				int last= getLineIndex(textWidget, height);
-				
-				return MigrationHelper.getValue(last - first, clArea.height / textWidget.getLineHeight());
+
+				if (DISABLE_CHECKING)
+					return last - first;
+
+				return getValue(last - first, clArea.height / textWidget.getLineHeight());
 			}
 		}
 		return -1;
@@ -185,10 +199,6 @@ public final class MigrationHelper {
 		if (textWidget.getClientArea().isEmpty())
 			return -1;
 		
-		int oldBottom= textViewer.getBottomIndex();
-		if (((textWidget.getTopPixel() + textWidget.getClientArea().height) % textWidget.getLineHeight()) != 0)
-			oldBottom++;
-		
 		Rectangle trim= textWidget.computeTrim(0, 0, 0, 0);
 		int height= textWidget.getClientArea().height - trim.height;
 		int last= getLineIndex(textWidget, height);
@@ -199,6 +209,13 @@ public final class MigrationHelper {
 		if (last == textWidget.getLineCount() && y > height || last < textWidget.getLineCount() && y + textWidget.getLineHeight(offset) > height)
 			bottom++;
 		
+		if (DISABLE_CHECKING)
+			return bottom;
+
+		int oldBottom= textViewer.getBottomIndex();
+		if (((textWidget.getTopPixel() + textWidget.getClientArea().height) % textWidget.getLineHeight()) != 0)
+			oldBottom++;
+
 		return checkValue(bottom, oldBottom, 1);
 	
 	}
