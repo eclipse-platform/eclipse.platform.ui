@@ -327,7 +327,7 @@ public class TableScenarios extends ScenariosTestCase {
 		assertEquals("Cricket11Players",firstSignon.getPassword());
 		
 	}
-
+	
 	public void testScenario09(){
 		// Verify that nested properties work.  Catalog has adventures.  Adventure has defaultLodging.  Loding has name.
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(tableViewer);
@@ -336,5 +336,32 @@ public class TableScenarios extends ScenariosTestCase {
 		getDbc().bind(tableViewerDescription,new Property(category, "adventures"),null);
 		
 	}
-	
+/**	
+	public void testScenario10(){
+		// Verify that for TIME_EARLY updating occurs on a per key basic for a TextCellEditor
+		// Show that converters work for table columns
+		Account[] accounts = catalog.getAccounts();
+		Account firstAccount = accounts[0];
+		SampleData.getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);
+		TableViewerDescription tableViewerDescription = new TableViewerDescription(tableViewer);
+		tableViewerDescription.addEditableColumn("lastName");
+		tableViewerDescription.addColumn("lastName");
+		getDbc().bind(tableViewerDescription,new Property(catalog, "accounts"), null);
+		
+		// Verify that the first account is shown in the first row with the last name correctly
+		assertEquals(tableViewer.getTable().getItem(0).getData(),firstAccount);
+		assertEquals(tableViewer.getTable().getItem(0).getText(0),firstAccount.getLastName());
+		assertEquals(tableViewer.getTable().getItem(0).getText(1),firstAccount.getLastName());
+		// Create a cell editor over the first column
+		tableViewer.editElement(firstAccount, 0);
+		// Set the text property of the cell editor which is now active over the "firstName" column
+		CellEditor[] cellEditors = tableViewer.getCellEditors();
+		TextCellEditor lastNameCellEditor = (TextCellEditor) cellEditors[0];
+		((Text)lastNameCellEditor.getControl()).setText("E");
+		// Verify that the key press goes to the model
+		assertEquals(firstAccount.getLastName(),"E");
+		
+	}
+ **/	
 }
+

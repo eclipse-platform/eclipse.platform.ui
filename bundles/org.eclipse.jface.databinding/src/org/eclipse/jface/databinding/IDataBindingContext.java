@@ -47,6 +47,18 @@ public interface IDataBindingContext {
 	 * {@link #updateTargets() }.
 	 */
 	public static final int POLICY_EXPLICIT = 2;
+	
+	/**
+	 * Constant specifiying that validation or update events from UI updatables
+	 * should be triggered early, typically on each keystroke.
+	 */
+	public static final int TIME_EARLY = 0;
+	/**
+	 * Constant specifiying that validation or update events from UI updatables
+	 * should be triggered late, typically on focus lost.
+	 */
+	public static final int TIME_LATE = 1;	
+	
 
 	/**
 	 * Adds a factory that can create converters and validators. The list of

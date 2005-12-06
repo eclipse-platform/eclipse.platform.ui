@@ -66,6 +66,7 @@ public class SampleData {
 	public static Signon SIGNON_JOEBLOGGS;	
 
 	private static SWTUpdatableFactory swtUpdatableFactory = new SWTUpdatableFactory();
+	private static ViewersUpdatableFactory viewersUpdatableFactory = new ViewersUpdatableFactory();
 
 	static {
 		initializeData();
@@ -227,12 +228,16 @@ public class SampleData {
 	public static IDataBindingContext getDatabindingContext(Control aControl) {
 		IDataBindingContext result = DataBinding.createContext(aControl,
 				new IUpdatableFactory[] { new BeanUpdatableFactory(),
-						swtUpdatableFactory, new ViewersUpdatableFactory() });
+						swtUpdatableFactory, viewersUpdatableFactory});
 		return result;
 	}
 
 	public static SWTUpdatableFactory getSWTUpdatableFactory() {
 		return swtUpdatableFactory;
+	}
+	
+	public static ViewersUpdatableFactory getViewersUpdatableFactory(){
+		return viewersUpdatableFactory;
 	}
 
 }

@@ -48,6 +48,22 @@ import org.eclipse.jface.viewers.TreeViewer;
  *
  */
 final public class ViewersUpdatableFactory implements IUpdatableFactory {
+	
+	private int updateTime;	
+	
+	/**
+	 * Create a factory that can create udatables for JFace viewers
+	 */
+	public ViewersUpdatableFactory(){
+	}
+
+	/**
+	 * @param updateTime.  		Update policy of IDataBindingContext.TIME_EARLY or TIME_LATE.  This is only a hint
+	 * 							that some editable viewers may support
+	 */
+	public ViewersUpdatableFactory(int updateTime) {
+		this.updateTime = updateTime;
+	}
 
 	public IUpdatable createUpdatable(Map properties, Object description,
 			IDataBindingContext bindingContext) {
@@ -84,7 +100,7 @@ final public class ViewersUpdatableFactory implements IUpdatableFactory {
 					(AbstractListViewer) description);
 		} else if (description instanceof TableViewerDescription) {
 			return new TableViewerUpdatableCollectionExtended(
-					(TableViewerDescription) description, bindingContext);
+					(TableViewerDescription) description, bindingContext, updateTime);
 		} else if (description instanceof TreeViewerDescription) {
 			return new TreeViewerUpdatableTreeExtended(
 				(TreeViewerDescription) description, bindingContext);

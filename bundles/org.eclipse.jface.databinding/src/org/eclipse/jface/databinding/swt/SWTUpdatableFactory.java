@@ -30,9 +30,7 @@ import org.eclipse.jface.databinding.internal.swt.TableUpdatableValue;
 import org.eclipse.jface.databinding.internal.swt.TextUpdatableValue;
 import org.eclipse.jface.databinding.internal.viewers.StructuredViewerUpdatableValue;
 import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollection;
-import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollectionExtended;
 import org.eclipse.jface.databinding.internal.viewers.UpdatableCollectionViewer;
-import org.eclipse.jface.databinding.viewers.TableViewerDescription;
 import org.eclipse.jface.databinding.viewers.ViewersProperties;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -79,36 +77,21 @@ import org.eclipse.swt.widgets.Text;
  */
 final public class SWTUpdatableFactory implements IUpdatableFactory {
 
-	/**
-	 * Constant specifiying that validation or update events from UI updatables
-	 * should be triggered early, typically on each keystroke.
-	 */
-	public static final int TIME_EARLY = 0;
-	/**
-	 * Constant specifiying that validation or update events from UI updatables
-	 * should be triggered late, typically on focus lost.
-	 */
-	public static final int TIME_LATE = 1;
-	/**
-	 * Constant specifiying that validation or update events from UI updatables
-	 * should never be triggered. Note that this means that the updatable will
-	 * not track the underlying widget's changes.
-	 */
-	public static final int TIME_NEVER = 2;
+	private int updateTime = IDataBindingContext.TIME_LATE;
 	
 	/**
-	 * The default time used for when update should occur.  TIME_LATE or TIME_EARLY
+	 * Create a factory that can create updatables for SWT controls
 	 */
-	public static int DEFAULT_UPDATE_TIME = TIME_LATE;
+	public SWTUpdatableFactory(){
+	}
 	
 	/**
-	 * The default time used for when validation should occur.  TIME_LATE or TIME_EARLY
+	 * @param updateTime	The update policy of IDataBineingContext.TIME_LATE or IDataBindingContext.TIME_EARLY is a hint
+	 * 						that some editable controls may implement (such as Text) to determine when to fire updates
 	 */
-	public static int DEFAULT_VALIDATE_TIME = TIME_LATE;
-	
-	private int updateTime = DEFAULT_UPDATE_TIME;
-	
-	private int validateTime = DEFAULT_VALIDATE_TIME;
+	public SWTUpdatableFactory(int updateTime){
+		this.updateTime = updateTime;
+	}
 	
 	public IUpdatable createUpdatable(Map properties,
 			Object description, IDataBindingContext bindingContext) {
@@ -131,8 +114,7 @@ final public class SWTUpdatableFactory implements IUpdatableFactory {
 			}
 			if (object instanceof Text
 					&& SWTProperties.TEXT.equals(attribute)) {
-				return new TextUpdatableValue((Text) object,
-						SWT.Modify, SWT.Modify);
+				return new TextUpdatableValue((Text) object,SWT.Modify);
 			}
 			if (object instanceof Label
 					&& SWTProperties.TEXT.equals(attribute)) {
@@ -202,10 +184,8 @@ final public class SWTUpdatableFactory implements IUpdatableFactory {
 			return new UpdatableCollectionViewer(
 					(AbstractListViewer) description);
 		} else if (description instanceof Text) {
-			int validatePolicy = new int[]{SWT.Modify,SWT.FocusOut,SWT.None}[validateTime];
 			int updatePolicy = new int[]{SWT.Modify,SWT.FocusOut,SWT.None}[updateTime];
-			return new TextUpdatableValue((Text) description,
-					validatePolicy, updatePolicy);
+			return new TextUpdatableValue((Text) description,updatePolicy);
 		} else if (description instanceof Button) {
 			int updatePolicy = new int[]{SWT.Modify,SWT.FocusOut,SWT.None}[updateTime];
 			return new ButtonUpdatableValue((Button) description,
@@ -224,19 +204,16 @@ final public class SWTUpdatableFactory implements IUpdatableFactory {
 		} else if (description instanceof List) {
 			return new ListUpdatableCollection((List) description,
 					ViewersProperties.CONTENT);
-		} else if (description instanceof TableViewerDescription) {
-			return new TableViewerUpdatableCollectionExtended(
-					(TableViewerDescription) description,
-					bindingContext);
 		}
 		return null;
 	}
 
+	/**
+	 * @param time.  Values are TIME_EARLY or TIME_LATE and specify when update occurs
+	 * 				 For example TIME_EARLY on Text control and update occurs per keystroke,
+	 * 				 TIME_LATE and validation occurs when the field loses focus
+	 */
 	public void setUpdateTime(int time) {
 		updateTime = time;
-	}
-
-	public void setValidationTime(int time) {
-		validateTime = time;
 	}
 }

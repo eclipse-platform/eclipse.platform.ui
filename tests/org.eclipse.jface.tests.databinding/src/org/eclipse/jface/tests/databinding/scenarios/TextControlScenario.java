@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.eclipse.jface.databinding.BindSpec;
 import org.eclipse.jface.databinding.BeanBindSupportFactory;
+import org.eclipse.jface.databinding.BindSpec;
+import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
 import org.eclipse.jface.tests.databinding.scenarios.model.Account;
 import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
 import org.eclipse.jface.tests.databinding.scenarios.model.PhoneConverter;
@@ -91,7 +91,7 @@ public class TextControlScenario extends ScenariosTestCase {
 	public void testScenario03(){
 		// Show that the Escape key can be pressed in the middle of editing and the value will revert
 		// the updatePolicy for this test is TIME_LATE so it occurs when focus is lost from the Text control 
-		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_LATE);		
+		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_LATE);		
 		getDbc().bind(text, new Property(adventure, "name"), null);
 		String currentText = text.getText();
 		text.setText("Switzerland");
@@ -123,7 +123,7 @@ public class TextControlScenario extends ScenariosTestCase {
 	public void testScenario04(){
 		// Show that the Escape key can be pressed in the middle of editing and the value will revert
 		// the updatePolicy for this test is TIME_EARLY so it occurs when each keystroke occurs 
-		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_EARLY);	
+		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);	
 		getDbc().bind(text, new Property(adventure, "name"), null);
 		String originalName = adventure.getName();
 		// Change the text field character by character and ensure that the model changes
@@ -165,7 +165,7 @@ public class TextControlScenario extends ScenariosTestCase {
 	public void testScenario06(){
 		// Show that partial validation works for TIME_EARLY
 		// We are using TIME_EARLY to verify that invalid states are not sent to the model		
-		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_EARLY);		
+		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);		
 		getDbc().bind(text, new Property(account, "phone"), new BindSpec(new PhoneConverter(),new PhoneValidator()));
 		// Verify we have no error message for partial validation or full validation yet
 		assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length() == 0);
@@ -184,39 +184,35 @@ public class TextControlScenario extends ScenariosTestCase {
 		assertEquals(account.getPhone(),"9998887777");
 		
 	}
-/**	
+	
 	public void testScenario07(){
 		// Show that partial validation works for TIME_LATE
-		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_LATE);
+		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_LATE);
+		getDbc().bind(text, new Property(account, "phone"), new BindSpec(new PhoneConverter(),new PhoneValidator()));		
 		// Update some of the phone number		
 		String originalPhoneNumber = account.getPhone();
 		text.setText("222");
 		// Verify that we have no completion validation message and a partial one
 		assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length() > 0);
 		assertTrue(((String)getDbc().getValidationMessage().getValue()).length() == 0);
-		// Lose focus from the field
-		text.notifyListeners(SWT.FocusOut,null);
-		// Verify that we have a partial and complete validation message
-		assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length() > 0);
-		assertTrue(((String)getDbc().getValidationMessage().getValue()).length() > 0);
 		// Fix the error
 		text.setText("222-333-4444");
-		// Verify that we have no partial message and still the old complete one in error
+		// Verify that the errors are both fixed
 		assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length() == 0);
-		assertTrue(((String)getDbc().getValidationMessage().getValue()).length() > 0);
+		assertTrue(((String)getDbc().getValidationMessage().getValue()).length() == 0);
 		// The model should not be changed
 		assertEquals(originalPhoneNumber,account.getPhone());
 		// Lose focus and verify that the complete validation message is fixed
 		text.notifyListeners(SWT.FocusOut,null);
 		assertTrue(((String)getDbc().getValidationMessage().getValue()).length() == 0);
 		// The model should be changed
-		assertEquals(text.getText(),account.getPhone());
+		assertEquals("2223334444",account.getPhone());
 	}
-**/	
+	
 	public void testScenario08() {
 		// Show that the BeanBindSupportFactory will automatically pick up the
 		// validator on the MaxNumberOfPeople property
-		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_EARLY);	
+		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);	
 		getDbc().addBindSupportFactory(new BeanBindSupportFactory());
 		getDbc().bind(text, new Property(adventure, "maxNumberOfPeople"), null);
 		// make sure we can set a value inside the validator's range
@@ -230,7 +226,7 @@ public class TextControlScenario extends ScenariosTestCase {
 	public void testScenario09(){
 		
 		// Verify direct binding between a Text and Label following bugzilla 118696
-		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_LATE);
+		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_LATE);
 		Label label = new Label(getComposite(),SWT.NONE);
 		getDbc().bind(text,label,null);
 		// Change the text
@@ -246,7 +242,7 @@ public class TextControlScenario extends ScenariosTestCase {
 	public void testScenario10(){
 		
 		// Verify direct binding between a Text and Label following bugzilla 118696 with TIME_EARLY
-		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_EARLY);
+		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);
 		Label label = new Label(getComposite(),SWT.NONE);
 		getDbc().bind(text,label,null);
 		// Change the text
@@ -260,7 +256,6 @@ public class TextControlScenario extends ScenariosTestCase {
 		text.notifyListeners(SWT.FocusOut,null);
 		// Verify the text and label are the same following a lose focus
 		assertEquals(text.getText(),label.getText());
- 
-		
-	}	
+	}
+	
 }

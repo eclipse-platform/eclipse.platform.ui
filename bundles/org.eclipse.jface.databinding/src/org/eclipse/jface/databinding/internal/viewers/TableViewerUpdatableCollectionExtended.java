@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 3.2
@@ -104,13 +105,17 @@ public class TableViewerUpdatableCollectionExtended extends
 
 	private IDataBindingContext dataBindingContext;
 
+	private int updateTime;
+	
 	/**
 	 * @param tableViewerDescription
 	 * @param dataBindingContext 
+ 	 * @param updateTime 
 	 */
 	public TableViewerUpdatableCollectionExtended(
-			TableViewerDescription tableViewerDescription, IDataBindingContext dataBindingContext) {
+			TableViewerDescription tableViewerDescription, IDataBindingContext dataBindingContext, int updateTime) {
 		super(tableViewerDescription.getTableViewer());
+		this.updateTime = updateTime;
 		this.tableViewerDescription = tableViewerDescription;
 		fillDescriptionDefaults(dataBindingContext);
 		TableViewer tableViewer = tableViewerDescription.getTableViewer();
@@ -286,9 +291,17 @@ public class TableViewerUpdatableCollectionExtended extends
 				columnInfos[i].validatorDefaulted = true;
 				initializeColumnValidator(column, column.getPropertyType());
 			}
-			if (column.getCellEditor() == null && column.isEditable()) {
-				columnInfos[i].cellEditorDefaulted = true;
-				column.setCellEditor(createCellEditor(column));
+			if(column.isEditable()){
+				// Default a cell editor if required
+				if (column.getCellEditor() == null) {
+					columnInfos[i].cellEditorDefaulted = true;
+					column.setCellEditor(createCellEditor(column));
+				}
+				// If the cell editor's control is a Text field and we are TIME_EARLY then we should implement an update policy whereby we try to commit on keystroke
+				if(updateTime == IDataBindingContext.TIME_EARLY && column.getCellEditor() != null && column.getCellEditor().getControl() instanceof Text){
+					Text textControl = (Text) column.getCellEditor().getControl();
+					// Add a modify listener to the cell editor
+				}
 			}
 		}
 		if (tableViewerDescription.getCellModifier() == null) {
