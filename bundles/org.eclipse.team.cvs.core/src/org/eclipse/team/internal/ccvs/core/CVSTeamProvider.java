@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.core;
  
 import java.io.*;
+import java.net.URI;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -39,13 +40,13 @@ import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
  * This class acts as both the ITeamNature and the ITeamProvider instances
  * required by the Team core.
  * 
- * The current stat of this class and it's plugin is EXPERIMENTAL.
+ * The current state of this class and it's plugin is EXPERIMENTAL.
  * As such, it is subject to change except in it's conformance to the
  * TEAM API which it implements.
  * 
  * Questions:
  * 
- * How should a project/reource rename/move effect the provider?
+ * How should a project/resource rename/move effect the provider?
  * 
  * Currently we always update with -P. Is this OK?
  *  - A way to allow customizable options would be nice
@@ -646,11 +647,22 @@ public class CVSTeamProvider extends RepositoryProvider {
 	public boolean canHandleLinkedResources() {
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.RepositoryProvider#canHandleLinkedResourceURI()
+	 */
+	public boolean canHandleLinkedResourceURI() {
+		return true;
+	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.RepositoryProvider#validateCreateLink(org.eclipse.core.resources.IResource, int, org.eclipse.core.runtime.IPath)
 	 */
 	public IStatus validateCreateLink(IResource resource, int updateFlags, IPath location) {
+		return internalValidateCreateLink(resource);
+	}
+
+	private IStatus internalValidateCreateLink(IResource resource) {
 		ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(resource.getParent().getFolder(new Path(resource.getName())));
 		try {
 			if (cvsFolder.isCVSFolder()) {
@@ -667,8 +679,14 @@ public class CVSTeamProvider extends RepositoryProvider {
 			CVSProviderPlugin.log(e);
 			return e.getStatus();
 		}
-
-		return super.validateCreateLink(resource, updateFlags, location);
+		return Status.OK_STATUS;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.RepositoryProvider#validateCreateLink(org.eclipse.core.resources.IResource, int, java.net.URI)
+	 */
+	public IStatus validateCreateLink(IResource resource, int updateFlags, URI location) {
+		return internalValidateCreateLink(resource);
 	}
 	
 	/**
