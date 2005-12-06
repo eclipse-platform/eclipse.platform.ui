@@ -30,7 +30,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
@@ -66,7 +65,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 		private TreeViewer viewer;
 
 		/**
-		 * Constructor for ImportExportTree
+		 * Constructor for CategorizedWizardSelectionTree
 		 * 
 		 * @param categories root wizard category for the wizard type
 		 * @param msg message describing what the user should choose from the tree.
@@ -97,7 +96,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 	        	messageLabel.setText(message);
 	        messageLabel.setFont(font);
 
-	        createTreeViewer(outerContainer);
+	        createFilteredTree(outerContainer);
 	        layoutTopControl(viewer.getControl());
 
 	        return outerContainer;
@@ -108,12 +107,12 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 		 * 
 		 * @param parent
 		 */
-		private void createTreeViewer(Composite parent){        
-			//Create a tree for the list
-	        Tree tree = new Tree(parent, SWT.SINGLE | SWT.H_SCROLL
-	                | SWT.V_SCROLL | SWT.BORDER);
-	        viewer = new TreeViewer(tree);
-	        tree.setFont(parent.getFont());
+		private void createFilteredTree(Composite parent){        
+			// Create a FilteredTree for the categories and wizards
+			FilteredTree filteredTree = new FilteredTree(parent, SWT.SINGLE | SWT.H_SCROLL
+	                | SWT.V_SCROLL | SWT.BORDER, new WizardPatternFilter(true));
+	        viewer = filteredTree.getViewer();
+	        filteredTree.setFont(parent.getFont());
 
 	        viewer.setContentProvider(new WizardContentProvider());
 	        viewer.setLabelProvider(new WorkbenchLabelProvider());
@@ -141,8 +140,6 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 	        AdaptableList input = new AdaptableList(inputArray);
 
 	        viewer.setInput(input);
-
-	        tree.setFont(parent.getFont());	        
 		}
 
 		/**

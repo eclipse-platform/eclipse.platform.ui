@@ -128,6 +128,8 @@ public class FilteredTree extends Composite {
         layout.marginWidth = 0;
         setLayout(layout);
 
+        setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        
         filterParent = new Composite(this, SWT.NONE);
         GridLayout filterLayout = new GridLayout();
         filterLayout.numColumns = 2;
@@ -135,8 +137,7 @@ public class FilteredTree extends Composite {
         filterLayout.marginWidth = 0;
         filterParent.setLayout(filterLayout);
         filterParent.setFont(parent.getFont());
-        filterParent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
-                | GridData.GRAB_HORIZONTAL));
+        filterParent.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
         createFilterControl(filterParent);
         getFilterControl().addKeyListener(new KeyAdapter() {
@@ -183,8 +184,7 @@ public class FilteredTree extends Composite {
 			}
 		});
 
-        GridData data = new GridData(GridData.FILL_HORIZONTAL
-                | GridData.GRAB_HORIZONTAL);
+        GridData data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
         getFilterControl().setLayoutData(data);
 
         ToolBar toolBar = new ToolBar(filterParent, SWT.FLAT | SWT.HORIZONTAL);
@@ -197,7 +197,7 @@ public class FilteredTree extends Composite {
         filterToolBar.getControl().setVisible(false);
 
         treeViewer = new TreeViewer(this, treeStyle);
-        data = new GridData(GridData.FILL_BOTH);
+        data = new GridData(SWT.FILL, SWT.FILL, true, true);
         treeViewer.getControl().setLayoutData(data);
         treeViewer.getControl().addDisposeListener(new DisposeListener(){
         	/* (non-Javadoc)
@@ -300,8 +300,10 @@ public class FilteredTree extends Composite {
      */
     public void setBackground(Color background) {
         super.setBackground(background);
-        filterParent.setBackground(background);
-        filterToolBar.getControl().setBackground(background);
+        if (filterParent != null)
+        	filterParent.setBackground(background);
+        if (filterToolBar != null && filterToolBar.getControl() != null)
+        	filterToolBar.getControl().setBackground(background);
     }
 
     /**

@@ -68,6 +68,11 @@ public class WizardContentProvider implements ITreeContentProvider {
             for (int i = 0; i < children.length; i++) {
                 handleChild(children[i], list);
             }
+            // if there is only one category, return it's children directly (flatten list)
+            if (list.size() == 1) {
+                return getChildren(list.get(0));
+            }
+                
             return list.toArray();
         } else
             return new Object[0];
@@ -95,8 +100,8 @@ public class WizardContentProvider implements ITreeContentProvider {
                     return input;
             }
             return ((WizardCollectionElement) element).getParent(element);
-        } else
-            return null;
+        } 
+        return null;
     }
 
     /**

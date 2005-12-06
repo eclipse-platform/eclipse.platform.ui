@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -48,8 +49,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -80,9 +79,11 @@ class NewWizardNewPage implements ISelectionChangedListener {
     private final static String STORE_SELECTED_ID = DIALOG_SETTING_SECTION_NAME
             + "STORE_SELECTED_ID"; //$NON-NLS-1$
 
-    private TreeViewer viewer;
-
     private NewWizardSelectionPage page;
+    
+    private FilteredTree filteredTree;
+    
+    private WizardPatternFilter filteredTreeFilter;
 
     //Keep track of the wizards we have previously selected
     private Hashtable selectedWizards = new Hashtable();
@@ -237,7 +238,8 @@ class NewWizardNewPage implements ISelectionChangedListener {
         outerContainer.setLayout(layout);
 
         Label wizardLabel = new Label(outerContainer, SWT.NONE);
-        GridData data = new GridData(GridData.FILL_VERTICAL);
+        GridData data = new GridData(SWT.BEGINNING, SWT.FILL, false, true);
+        outerContainer.setLayoutData(data);
         wizardLabel.setFont(wizardFont);
         wizardLabel.setText(WorkbenchMessages.NewWizardNewPage_wizardsLabel);    
 
@@ -247,11 +249,12 @@ class NewWizardNewPage implements ISelectionChangedListener {
         layout.marginWidth = 0;
         innerContainer.setLayout(layout);
         innerContainer.setFont(wizardFont);
-        data = new GridData(GridData.FILL_BOTH);
+        data = new GridData(SWT.FILL, SWT.FILL, true, true);	
         innerContainer.setLayoutData(data);
 
-        createViewer(innerContainer);
-
+        filteredTree = createFilteredTree(innerContainer);
+        createOptionsButtons(innerContainer);
+        
         createImage(innerContainer);
 
         updateDescription(null);
@@ -263,6 +266,208 @@ class NewWizardNewPage implements ISelectionChangedListener {
         return outerContainer;
     }
 
+    /**
+     * Create a new FilteredTree in the parent.
+     * 
+     * @param parent the parent <code>Composite</code>.
+     * @since 3.0
+     */
+    protected FilteredTree createFilteredTree(Composite parent){
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        composite.setLayout(layout);
+        
+        GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+        data.widthHint = SIZING_VIEWER_WIDTH;
+        data.horizontalSpan = 2;	 
+        data.grabExcessHorizontalSpace = true;
+        data.grabExcessVerticalSpace = true;
+
+        boolean needsHint = DialogUtil.inRegularFontMode(parent);
+
+        //Only give a height hint if the dialog is going to be too small
+        if (needsHint) {
+            data.heightHint = SIZING_LISTS_HEIGHT;
+        }
+        composite.setLayoutData(data);
+
+        filteredTreeFilter = new WizardPatternFilter(true);
+    	FilteredTree filterTree = new FilteredTree(composite, 
+    			SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, filteredTreeFilter);
+  	
+		final TreeViewer treeViewer = filterTree.getViewer();
+		treeViewer.setContentProvider(new WizardContentProvider());
+		treeViewer.setLabelProvider(new WorkbenchLabelProvider());
+		treeViewer.setSorter(NewWizardCollectionSorter.INSTANCE);
+		treeViewer.addSelectionChangedListener(this);
+
+        ArrayList inputArray = new ArrayList();
+
+        for (int i = 0; i < primaryWizards.length; i++) {
+            inputArray.add(primaryWizards[i]);
+        }
+
+        boolean expandTop = false;
+
+        if (wizardCategories != null) {
+            if (wizardCategories.getParent() == null) {
+                IWizardCategory [] children = wizardCategories.getCategories();
+                for (int i = 0; i < children.length; i++) {
+                    inputArray.add(children[i]);
+                }
+            } else {
+                expandTop = true;
+                inputArray.add(wizardCategories);
+            }
+        }
+
+        // ensure the category is expanded.  If there is a remembered expansion it will be set later.
+        if (expandTop)
+        	treeViewer.setAutoExpandLevel(2);
+
+        AdaptableList input = new AdaptableList(inputArray);
+
+        treeViewer.setInput(input);
+
+		filterTree.setBackground(parent.getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_BACKGROUND));
+		filterTree
+				.setInitialText(WorkbenchMessages.WorkbenchPreferenceDialog_FilterMessage);
+
+        treeViewer.getTree().setFont(parent.getFont());
+
+        treeViewer.addDoubleClickListener(new IDoubleClickListener() {
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
+             */
+            public void doubleClick(DoubleClickEvent event) {
+            	    IStructuredSelection s = (IStructuredSelection) event
+						.getSelection();
+				selectionChanged(new SelectionChangedEvent(event.getViewer(), s));
+				
+				Object element = s.getFirstElement();
+                if (treeViewer.isExpandable(element)) {
+                	treeViewer.setExpandedState(element, !treeViewer
+                            .getExpandedState(element));
+                } else if (element instanceof WorkbenchWizardElement) {
+                    page.advanceToNextPageOrFinish();
+                }
+            }
+        });
+        
+        treeViewer.addFilter(filter);
+        
+        if (projectsOnly) 
+        	treeViewer.addFilter(projectFilter);
+
+		Dialog.applyDialogFont(filterTree);
+		return filterTree;
+    }
+    
+    /**
+     * Create the Show All and help buttons at the bottom of the page.
+     * 
+     * @param parent the parent composite on which to create the widgets
+     */
+    private void createOptionsButtons(Composite parent){
+        if (needShowAll) {
+            showAllCheck = new Button(parent, SWT.CHECK);
+            GridData data = new GridData();
+            showAllCheck.setLayoutData(data);
+            showAllCheck.setFont(parent.getFont());
+            showAllCheck.setText(WorkbenchMessages.NewWizardNewPage_showAll); 
+            showAllCheck.setSelection(false);
+
+            // flipping tabs updates the selected node
+            showAllCheck.addSelectionListener(new SelectionAdapter() {
+
+                // the delta of expanded elements between the last 'show all'
+                // and the current 'no show all'
+                private Object[] delta = new Object[0];
+
+                public void widgetSelected(SelectionEvent e) {
+                    boolean showAll = showAllCheck.getSelection();
+
+                    if (showAll) {
+                    	filteredTree.getViewer().getControl().setRedraw(false);
+                    } else {
+                        // get the inital expanded elements when going from show
+                        // all-> no show all.
+                        // this isnt really the delta yet, we're just reusing
+                        // the variable.
+                        delta = filteredTree.getViewer().getExpandedElements();
+                    }
+
+                    try {
+                        if (showAll) {
+                        	filteredTree.getViewer().resetFilters();
+                        	filteredTree.getViewer().addFilter(filteredTreeFilter);
+                            if (projectsOnly) 
+                            	filteredTree.getViewer().addFilter(projectFilter);
+
+                            // restore the expanded elements that were present
+                            // in the last show all state but not in the 'no
+                            // show all' state.
+                            Object[] currentExpanded = filteredTree.getViewer()
+                                    .getExpandedElements();
+                            Object[] expanded = new Object[delta.length
+                                    + currentExpanded.length];
+                            System.arraycopy(currentExpanded, 0, expanded, 0,
+                                    currentExpanded.length);
+                            System.arraycopy(delta, 0, expanded,
+                                    currentExpanded.length, delta.length);
+                            filteredTree.getViewer().setExpandedElements(expanded);
+                        } else {
+                        	filteredTree.getViewer().addFilter(filter);
+                            if (projectsOnly) 
+                            	filteredTree.getViewer().addFilter(projectFilter);
+                        }
+                        filteredTree.getViewer().refresh(false);
+
+                        if (!showAll) {
+                            // if we're going from show all -> no show all
+                            // record the elements that were expanded in the
+                            // 'show all' state but not the 'no show all' state
+                            // (because they didnt exist).
+                            Object[] newExpanded = filteredTree.getViewer().getExpandedElements();
+                            List deltaList = new ArrayList(Arrays.asList(delta));
+                            deltaList.removeAll(Arrays.asList(newExpanded));
+                        }
+                    } finally {
+                        if (showAll)
+                        	filteredTree.getViewer().getControl().setRedraw(true);
+                    }
+                }
+            });
+        }
+
+        Image buttonImage = WorkbenchImages
+                .getImage(IWorkbenchGraphicConstants.IMG_LCL_LINKTO_HELP);
+        ToolBar toolBar = new ToolBar(parent, SWT.FLAT);
+        helpButton = new ToolItem(toolBar, SWT.NONE);
+        helpButton.setImage(buttonImage);
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
+                | GridData.VERTICAL_ALIGN_END);
+        if (!needShowAll)
+            data.horizontalSpan = 2;
+        toolBar.setLayoutData(data);
+
+        helpButton.addSelectionListener(new SelectionAdapter() {
+
+            /* (non-Javadoc)
+             * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+             */
+            public void widgetSelected(SelectionEvent e) {
+            	PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(
+						wizardHelpHref);
+            }
+        });
+    }
+    
     /**
      * Create the image controls.
      * 
@@ -291,193 +496,6 @@ class NewWizardNewPage implements ISelectionChangedListener {
     }
 
     /**
-     * Create a new viewer in the parent.
-     * 
-     * @param parent the parent <code>Composite</code>.
-     * @since 3.0
-     */
-    private void createViewer(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridData data = new GridData(GridData.FILL_BOTH);
-        data.widthHint = SIZING_VIEWER_WIDTH;
-
-        boolean needsHint = DialogUtil.inRegularFontMode(parent);
-
-        //Only give a height hint if the dialog is going to be too small
-        if (needsHint) {
-            data.heightHint = SIZING_LISTS_HEIGHT;
-        }
-        composite.setLayoutData(data);
-
-        GridLayout layout = new GridLayout(2, false);
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        composite.setLayout(layout);
-
-        Tree tree = new Tree(composite, SWT.SINGLE | SWT.H_SCROLL
-                | SWT.V_SCROLL | SWT.BORDER);
-        viewer = new TreeViewer(tree);
-
-        viewer.setContentProvider(new WizardContentProvider());
-        viewer.setLabelProvider(new WorkbenchLabelProvider());
-        viewer.setSorter(NewWizardCollectionSorter.INSTANCE);
-        viewer.addSelectionChangedListener(this);
-
-        ArrayList inputArray = new ArrayList();
-
-        for (int i = 0; i < primaryWizards.length; i++) {
-            inputArray.add(primaryWizards[i]);
-        }
-
-        boolean expandTop = false;
-
-        if (wizardCategories != null) {
-            if (wizardCategories.getParent() == null) {
-                IWizardCategory [] children = wizardCategories.getCategories();
-                for (int i = 0; i < children.length; i++) {
-                    inputArray.add(children[i]);
-                }
-            } else {
-                expandTop = true;
-                inputArray.add(wizardCategories);
-            }
-        }
-
-        // ensure the category is expanded.  If there is a remembered expansion it will be set later.
-        if (expandTop)
-            viewer.setAutoExpandLevel(2);
-
-        AdaptableList input = new AdaptableList(inputArray);
-
-        viewer.setInput(input);
-
-        tree.setFont(parent.getFont());
-
-        viewer.addDoubleClickListener(new IDoubleClickListener() {
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
-             */
-            public void doubleClick(DoubleClickEvent event) {
-            	    IStructuredSelection s = (IStructuredSelection) event
-						.getSelection();
-				selectionChanged(new SelectionChangedEvent(event.getViewer(), s));
-				
-				Object element = s.getFirstElement();
-                if (viewer.isExpandable(element)) {
-                    viewer.setExpandedState(element, !viewer
-                            .getExpandedState(element));
-                } else if (element instanceof WorkbenchWizardElement) {
-                    page.advanceToNextPageOrFinish();
-                }
-            }
-        });
-        
-        viewer.addFilter(filter);
-        
-        if (projectsOnly) 
-        	viewer.addFilter(projectFilter);
-
-        data = new GridData(GridData.FILL_BOTH);
-        data.horizontalSpan = 2;
-
-        tree.setLayoutData(data);
-
-        if (needShowAll) {
-            showAllCheck = new Button(composite, SWT.CHECK);
-            data = new GridData();
-            showAllCheck.setLayoutData(data);
-            showAllCheck.setFont(parent.getFont());
-            showAllCheck.setText(WorkbenchMessages.NewWizardNewPage_showAll); 
-            showAllCheck.setSelection(false);
-
-            // flipping tabs updates the selected node
-            showAllCheck.addSelectionListener(new SelectionAdapter() {
-
-                // the delta of expanded elements between the last 'show all'
-                // and the current 'no show all'
-                private Object[] delta = new Object[0];
-
-                public void widgetSelected(SelectionEvent e) {
-                    boolean showAll = showAllCheck.getSelection();
-
-                    if (showAll) {
-                        viewer.getControl().setRedraw(false);
-                    } else {
-                        // get the inital expanded elements when going from show
-                        // all-> no show all.
-                        // this isnt really the delta yet, we're just reusing
-                        // the variable.
-                        delta = viewer.getExpandedElements();
-                    }
-
-                    try {
-                        if (showAll) {
-                            viewer.resetFilters();
-                            if (projectsOnly) 
-                            	viewer.addFilter(projectFilter);
-
-                            // restore the expanded elements that were present
-                            // in the last show all state but not in the 'no
-                            // show all' state.
-                            Object[] currentExpanded = viewer
-                                    .getExpandedElements();
-                            Object[] expanded = new Object[delta.length
-                                    + currentExpanded.length];
-                            System.arraycopy(currentExpanded, 0, expanded, 0,
-                                    currentExpanded.length);
-                            System.arraycopy(delta, 0, expanded,
-                                    currentExpanded.length, delta.length);
-                            viewer.setExpandedElements(expanded);
-                        } else {
-                            viewer.addFilter(filter);
-                            if (projectsOnly) 
-                            	viewer.addFilter(projectFilter);
-                        }
-                        viewer.refresh(false);
-
-                        if (!showAll) {
-                            // if we're going from show all -> no show all
-                            // record the elements that were expanded in the
-                            // 'show all' state but not the 'no show all' state
-                            // (because they didnt exist).
-                            Object[] newExpanded = viewer.getExpandedElements();
-                            List deltaList = new ArrayList(Arrays.asList(delta));
-                            deltaList.removeAll(Arrays.asList(newExpanded));
-                        }
-                    } finally {
-                        if (showAll)
-                            viewer.getControl().setRedraw(true);
-                    }
-                }
-            });
-        }
-
-        Image buttonImage = WorkbenchImages
-                .getImage(IWorkbenchGraphicConstants.IMG_LCL_LINKTO_HELP);
-        ToolBar toolBar = new ToolBar(composite, SWT.FLAT);
-        helpButton = new ToolItem(toolBar, SWT.NONE);
-        helpButton.setImage(buttonImage);
-        data = new GridData(GridData.HORIZONTAL_ALIGN_END
-                | GridData.VERTICAL_ALIGN_END);
-        if (!needShowAll)
-            data.horizontalSpan = 2;
-        toolBar.setLayoutData(data);
-
-        helpButton.addSelectionListener(new SelectionAdapter() {
-
-            /* (non-Javadoc)
-             * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-             */
-            public void widgetSelected(SelectionEvent e) {
-            	PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(
-						wizardHelpHref);
-            }
-        });
-    }
-
-    /**
      * Expands the wizard categories in this page's category viewer that were
      * expanded last time this page was used. If a category that was previously
      * expanded no longer exists then it is ignored.
@@ -500,7 +518,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
         }
 
         if (!categoriesToExpand.isEmpty())
-            viewer.setExpandedElements(categoriesToExpand.toArray());
+        	filteredTree.getViewer().setExpandedElements(categoriesToExpand.toArray());
 
     }
 
@@ -585,9 +603,9 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
         //work around for 62039
         final StructuredSelection selection = new StructuredSelection(selected);
-        viewer.getControl().getDisplay().asyncExec(new Runnable() {
+        filteredTree.getViewer().getControl().getDisplay().asyncExec(new Runnable() {
             public void run() {
-                viewer.setSelection(selection, true);
+            	filteredTree.getViewer().setSelection(selection, true);
             }
         });
     }
@@ -607,7 +625,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
      * instance of this page.
      */
     protected void storeExpandedCategories() {
-        Object[] expandedElements = viewer.getExpandedElements();
+        Object[] expandedElements = filteredTree.getViewer().getExpandedElements();
         List expandedElementPaths = new ArrayList(expandedElements.length);
         for (int i = 0; i < expandedElements.length; ++i) {
             if (expandedElements[i] instanceof IWizardCategory)
@@ -625,8 +643,8 @@ class NewWizardNewPage implements ISelectionChangedListener {
      * order to recreate this page's state in the next instance of this page.
      */
     protected void storeSelectedCategoryAndWizard() {
-        Object selected = getSingleSelection((IStructuredSelection) viewer
-                .getSelection());
+        Object selected = getSingleSelection((IStructuredSelection) filteredTree
+        		.getViewer().getSelection());
 
         if (selected != null) {
             if (selected instanceof IWizardCategory)
@@ -721,7 +739,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
         } else {
             selectedNode = new WorkbenchWizardNode(page, selectedObject) {
                 public IWorkbenchWizard createWizard() throws CoreException {
-                    return (INewWizard) wizardElement.createWizard();
+                    return wizardElement.createWizard();
                 }
             };
             selectedWizards.put(selectedObject, selectedNode);
