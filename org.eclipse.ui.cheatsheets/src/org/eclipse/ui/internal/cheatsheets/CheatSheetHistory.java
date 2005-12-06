@@ -10,13 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.core.commands.util.ListenerList;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-
-import org.eclipse.ui.internal.cheatsheets.registry.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 
 /**
  * This is used to store the most recently used (MRU) list
