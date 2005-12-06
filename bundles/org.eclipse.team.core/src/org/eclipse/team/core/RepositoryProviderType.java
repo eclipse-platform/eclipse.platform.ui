@@ -20,10 +20,6 @@ import org.eclipse.team.internal.core.DefaultProjectSetCapability;
 import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
- * This class represents provisional API. A provider is not required to implement this API.
- * Implementers, and those who reference it, do so with the awareness that this class may be
- * removed or substantially changed at future times without warning.
- * <p>
  * This class represents things you can ask/do with a type of provider. This
  * is in the absence of a project, as opposed to RepositoryProvider which
  * requires a concrete project in order to be instantiated.
