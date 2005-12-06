@@ -19,25 +19,41 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 <br>
 <br>
-========== Eclipse Build Input November 22h 2005 ==========<br>
+========== Eclipse Build Input December 6th 2005 ==========<br>
+<pre>
+- converted code to support the new  mutli-font in StyledText widget:
+	- getBaseline() ==> getBaseline(int)
+	- getLineHeight() ==> getLineHeight(int)
+  open issues:
+  	- waiting for additional StyledText API (https://bugs.eclipse.org/bugs/show_bug.cgi?id=118670)
+	- we do not yet handle the case where the line number ruler font is bigger than the biggest line font (https://bugs.eclipse.org/bugs/show_bug.cgi?id=119232)
+	- incorrectly painting of projection summary end [..] (https://bugs.eclipse.org/bugs/show_bug.cgi?id=119235)
+	- problems with custom image and special sized carets (https://bugs.eclipse.org/bugs/show_bug.cgi?id=118612)
+	- StyledText computes the line base too high (https://bugs.eclipse.org/bugs/show_bug.cgi?id=119233)
+	- if multi-font is used performance is going down, e.g. when opening or scrolling large files like StyledText
+
+- bug fixing
+</pre>
+<br>
+========== Eclipse Build Input November 22nd 2005 ==========<br>
 <pre>
 - bug fixing
 </pre>
 <br>
-========== Eclipse Build Input October 11h 2005 ==========<br>
+========== Eclipse Build Input October 11th 2005 ==========<br>
 <pre>
 - adopted new Eclipse FS (details see https://bugs.eclipse.org/bugs/show_bug.cgi?id=106176)
 - bug fixing
 </pre>
 <br>
-========== Eclipse Build Input September 13h 2005 ==========<br>
+========== Eclipse Build Input September 13th 2005 ==========<br>
 <pre>
 - pushed down annotation navigation to JFace Text and added annotation
   navigation to all text editors
 - bug fixing
 </pre>
 <br>
-========== Eclipse Build Input September 6h 2005 ==========<br>
+========== Eclipse Build Input September 6th 2005 ==========<br>
 <pre>
 - pushed down annotation hovering to JFace Text and added text, vertical and
   overview ruler hover support to TextSourceViewerConfiguration which makes this
@@ -46,7 +62,7 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 - bug fixing
 </pre>
 <br>
-========== Eclipse Build Input August 30h 2005 ==========<br>
+========== Eclipse Build Input August 30th 2005 ==========<br>
 <pre>
 - hyperlink navigation is now also available if editor does not have focus
 - bug fixing
