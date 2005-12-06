@@ -190,9 +190,15 @@ public class PopupDialog extends Window {
 
 	/**
 	 * Vertical spacing (in pixels) between cells in the layouts inside popup
-	 * dialogs (value is 1).
+	 * dialogs (value is 1).  
 	 */
 	public final static int POPUP_VERTICALSPACING = 1;
+
+	/**
+	 * Vertical spacing (in pixels) between cells in the layouts inside popup
+	 * dialogs (value is 1).
+	 */
+	public final static int POPUP_HORIZONTALSPACING = 1;
 
 	/**
 	 * Border thickness in pixels.
@@ -426,6 +432,7 @@ public class PopupDialog extends Window {
 		layout.marginHeight = POPUP_MARGINHEIGHT;
 		layout.marginWidth = POPUP_MARGINWIDTH;
 		layout.verticalSpacing = POPUP_VERTICALSPACING;
+		layout.horizontalSpacing = POPUP_HORIZONTALSPACING;
 		composite.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(gd);
@@ -480,6 +487,7 @@ public class PopupDialog extends Window {
 		layout.marginHeight = POPUP_MARGINHEIGHT;
 		layout.marginWidth = POPUP_MARGINWIDTH;
 		layout.verticalSpacing = POPUP_VERTICALSPACING;
+		layout.horizontalSpacing = POPUP_HORIZONTALSPACING;
 		composite.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(gd);
@@ -557,6 +565,7 @@ public class PopupDialog extends Window {
 		layout.marginHeight = POPUP_MARGINHEIGHT;
 		layout.marginWidth = POPUP_MARGINWIDTH;
 		layout.verticalSpacing = POPUP_VERTICALSPACING;
+		layout.horizontalSpacing = POPUP_HORIZONTALSPACING;
 		titleAreaComposite.setLayout(layout);
 		titleAreaComposite
 				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
