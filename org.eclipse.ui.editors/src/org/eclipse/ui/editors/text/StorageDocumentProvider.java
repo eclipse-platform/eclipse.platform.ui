@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
@@ -30,6 +31,7 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 
 import org.eclipse.core.resources.IEncodedStorage;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -339,6 +341,21 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 			}
 		}
 		return super.isReadOnly(element);
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension5#isNotSynchronizedException(Object, CoreException)
+	 * @since 3.2
+	 */
+	public boolean isNotSynchronizedException(Object element, CoreException ex) {
+		IStatus status= ex.getStatus(); 
+		if (status == null || status instanceof MultiStatus)
+			return false;
+		
+		if (status.getException() != null)
+			return false;
+		
+		return status.getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL;
 	}
 
 	/*

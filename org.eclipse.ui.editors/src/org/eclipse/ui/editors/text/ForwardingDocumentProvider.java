@@ -26,6 +26,7 @@ import org.eclipse.ui.texteditor.IDocumentProviderExtension;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension2;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension4;
+import org.eclipse.ui.texteditor.IDocumentProviderExtension5;
 import org.eclipse.ui.texteditor.IElementStateListener;
 
 
@@ -58,7 +59,7 @@ import org.eclipse.ui.texteditor.IElementStateListener;
  *
  * @since 3.0
  */
-public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IDocumentProviderExtension4, IStorageDocumentProvider {
+public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IDocumentProviderExtension4, IDocumentProviderExtension5, IStorageDocumentProvider {
 
 	private IDocumentProvider fParentProvider;
 	private String fPartitioning;
@@ -222,7 +223,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 	 */
 	public boolean isReadOnly(Object element) {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
-			IDocumentProviderExtension extension= (IDocumentProviderExtension) fParentProvider;
+			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
 			return extension.isReadOnly(element);
 		}
 		return false;
@@ -233,7 +234,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 	 */
 	public boolean isModifiable(Object element) {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
-			IDocumentProviderExtension extension= (IDocumentProviderExtension) fParentProvider;
+			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
 			return extension.isModifiable(element);
 		}
 		return true;
@@ -244,7 +245,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 	 */
 	public void validateState(Object element, Object computationContext) throws CoreException {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
-			IDocumentProviderExtension extension= (IDocumentProviderExtension) fParentProvider;
+			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
 			extension.validateState(element, computationContext);
 		}
 	}
@@ -254,7 +255,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 	 */
 	public boolean isStateValidated(Object element) {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
-			IDocumentProviderExtension extension= (IDocumentProviderExtension) fParentProvider;
+			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
 			return extension.isStateValidated(element);
 		}
 		return true;
@@ -265,7 +266,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 	 */
 	public void updateStateCache(Object element) throws CoreException {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
-			IDocumentProviderExtension extension= (IDocumentProviderExtension) fParentProvider;
+			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
 			extension.updateStateCache(element);
 		}
 	}
@@ -275,7 +276,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 	 */
 	public void setCanSaveDocument(Object element) {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
-			IDocumentProviderExtension extension= (IDocumentProviderExtension) fParentProvider;
+			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
 			extension.setCanSaveDocument(element);
 		}
 	}
@@ -285,7 +286,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 	 */
 	public IStatus getStatus(Object element) {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
-			IDocumentProviderExtension extension= (IDocumentProviderExtension) fParentProvider;
+			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
 			return extension.getStatus(element);
 		}
 		return null;
@@ -296,7 +297,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 	 */
 	public void synchronize(Object element) throws CoreException {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
-			IDocumentProviderExtension extension= (IDocumentProviderExtension) fParentProvider;
+			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
 			extension.synchronize(element);
 		}
 	}
@@ -306,7 +307,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 	 */
 	public void setProgressMonitor(IProgressMonitor progressMonitor) {
 		if (fParentProvider instanceof IDocumentProviderExtension2) {
-			IDocumentProviderExtension2 extension= (IDocumentProviderExtension2) fParentProvider;
+			IDocumentProviderExtension2 extension= (IDocumentProviderExtension2)fParentProvider;
 			extension.setProgressMonitor(progressMonitor);
 		}
 	}
@@ -316,7 +317,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 	 */
 	public IProgressMonitor getProgressMonitor() {
 		if (fParentProvider instanceof IDocumentProviderExtension2) {
-			IDocumentProviderExtension2 extension= (IDocumentProviderExtension2) fParentProvider;
+			IDocumentProviderExtension2 extension= (IDocumentProviderExtension2)fParentProvider;
 			return extension.getProgressMonitor();
 		}
 		return null;
@@ -327,10 +328,22 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 	 */
 	public boolean isSynchronized(Object element) {
 		if (fParentProvider instanceof IDocumentProviderExtension3) {
-			IDocumentProviderExtension3 extension= (IDocumentProviderExtension3) fParentProvider;
+			IDocumentProviderExtension3 extension= (IDocumentProviderExtension3)fParentProvider;
 			return extension.isSynchronized(element);
 		}
 		return true;
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension5#isNotSynchronizedException(Object, CoreException)
+	 * @since 3.2
+	 */
+	public boolean isNotSynchronizedException(Object element, CoreException ex) {
+		if (fParentProvider instanceof IDocumentProviderExtension5) {
+			IDocumentProviderExtension5 extension= (IDocumentProviderExtension5)fParentProvider;
+			return extension.isNotSynchronizedException(element, ex);
+		}
+		return false;
 	}
 
 	/*
@@ -339,7 +352,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 	 */
 	public IContentType getContentType(Object element) throws CoreException {
 		if (fParentProvider instanceof IDocumentProviderExtension4) {
-			IDocumentProviderExtension4 extension= (IDocumentProviderExtension4) fParentProvider;
+			IDocumentProviderExtension4 extension= (IDocumentProviderExtension4)fParentProvider;
 			return extension.getContentType(element);
 		}
 		return null;
@@ -350,7 +363,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 	 */
 	public String getDefaultEncoding() {
 		if (fParentProvider instanceof IStorageDocumentProvider) {
-			IStorageDocumentProvider provider= (IStorageDocumentProvider) fParentProvider;
+			IStorageDocumentProvider provider= (IStorageDocumentProvider)fParentProvider;
 			return provider.getDefaultEncoding();
 		}
 		return null;
@@ -361,7 +374,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 	 */
 	public String getEncoding(Object element) {
 		if (fParentProvider instanceof IStorageDocumentProvider) {
-			IStorageDocumentProvider provider= (IStorageDocumentProvider) fParentProvider;
+			IStorageDocumentProvider provider= (IStorageDocumentProvider)fParentProvider;
 			return provider.getEncoding(element);
 		}
 		return null;
@@ -372,7 +385,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 	 */
 	public void setEncoding(Object element, String encoding) {
 		if (fParentProvider instanceof IStorageDocumentProvider) {
-			IStorageDocumentProvider provider= (IStorageDocumentProvider) fParentProvider;
+			IStorageDocumentProvider provider= (IStorageDocumentProvider)fParentProvider;
 			provider.setEncoding(element, encoding);
 		}
 	}

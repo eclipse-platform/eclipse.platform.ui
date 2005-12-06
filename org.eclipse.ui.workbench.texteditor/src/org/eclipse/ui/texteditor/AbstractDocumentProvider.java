@@ -49,7 +49,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * <code>createAnnotationModel</code>, and <code>doSaveDocument</code>.
  * </p>
  */
-public abstract class AbstractDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IDocumentProviderExtension4 {
+public abstract class AbstractDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IDocumentProviderExtension4, IDocumentProviderExtension5 {
 
 		/**
 		 * Operation created by the document provider and to be executed by the providers runnable context.
@@ -1025,6 +1025,14 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 */
 	public boolean isSynchronized(Object element) {
 		return true;
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension5#isNotSynchronizedException(Object, CoreException)
+	 * @since 3.2
+	 */
+	public boolean isNotSynchronizedException(Object element, CoreException ex) {
+		return false;
 	}
 
 	/*

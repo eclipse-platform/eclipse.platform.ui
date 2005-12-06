@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
@@ -81,6 +82,7 @@ import org.eclipse.ui.texteditor.IDocumentProviderExtension;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension2;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension4;
+import org.eclipse.ui.texteditor.IDocumentProviderExtension5;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.IElementStateListenerExtension;
 import org.eclipse.ui.texteditor.ISchedulingRuleProvider;
@@ -109,7 +111,7 @@ import org.eclipse.ui.texteditor.ISchedulingRuleProvider;
  *
  * @since 3.0
  */
-public class TextFileDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider, IDocumentProviderExtension4 {
+public class TextFileDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IDocumentProviderExtension5, IStorageDocumentProvider, IDocumentProviderExtension4 {
 
 	/**
 	 * Operation created by the document provider and to be executed by the providers runnable context.
@@ -143,7 +145,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		}
 	}
 
-	static protected class NullProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IDocumentProviderExtension4, IStorageDocumentProvider  {
+	static protected class NullProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IDocumentProviderExtension4, IDocumentProviderExtension5, IStorageDocumentProvider  {
 
 		static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.INFO, TextEditorMessages.NullProvider_error, null);
 
@@ -173,6 +175,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		public void setProgressMonitor(IProgressMonitor progressMonitor) {}
 		public IProgressMonitor getProgressMonitor() { return new NullProgressMonitor(); }
 		public boolean isSynchronized(Object element) { return true; }
+		public boolean isNotSynchronizedException(Object element, CoreException ex) { return false; }
 		public String getDefaultEncoding() { return null; }
 		public String getEncoding(Object element) { return null; }
 		public void setEncoding(Object element, String encoding) {}
@@ -1131,6 +1134,21 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		if (info != null)
 			return info.fTextFileBuffer.isSynchronized();
 		return ((IDocumentProviderExtension3) getParentProvider()).isSynchronized(element);
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension5#isNotSynchronizedException(Object, CoreException)
+	 * @since 3.2
+	 */
+	public boolean isNotSynchronizedException(Object element, CoreException ex) {
+		IStatus status= ex.getStatus(); 
+		if (status == null || status instanceof MultiStatus)
+			return false;
+		
+		if (status.getException() != null)
+			return false;
+		
+		return status.getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL;
 	}
 
 	/*

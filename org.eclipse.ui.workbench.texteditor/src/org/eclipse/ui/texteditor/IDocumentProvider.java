@@ -10,16 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-
-
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-
 
 /**
  * A document provider maps between domain elements and documents. A document provider has the
@@ -54,6 +49,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 		a predicate for querying synchronization state.</li>
  * <li>{@link org.eclipse.ui.texteditor.IDocumentProviderExtension4} since version 3.1 adding
  * 		a predicate for querying an element's the content description.</li>
+ * <li>{@link org.eclipse.ui.texteditor.IDocumentProviderExtension5} since version 3.2 adding
+ * 		the ability to detect a non-synchronized exception.</li>
  * </ul>
  * </p>
  *
@@ -63,6 +60,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @see org.eclipse.ui.texteditor.IDocumentProviderExtension2
  * @see org.eclipse.ui.texteditor.IDocumentProviderExtension3
  * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4
+ * @see org.eclipse.ui.texteditor.IDocumentProviderExtension5
  */
 public interface IDocumentProvider {
 

@@ -64,7 +64,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -3826,14 +3825,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			-- fErrorCorrectionOnSave;
 		}
 	}
-	
+
 	/**
 	 * Tells whether the given core exception is exactly the
 	 * exception which is thrown for a non-synchronized element.
-	 * <p>
-	 * XXX: After 3.1 this method must be delegated to the document provider
-	 * 		see 
-	 * </p>
 	 * 
 	 * @param ex the core exception
 	 * @return <code>true</code> iff the given core exception is exactly the
@@ -3841,18 +3836,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.1
 	 */
 	private boolean isNotSynchronizedException(CoreException ex) {
-		if (ex == null)
-			return false;
-		
-		IStatus status= ex.getStatus(); 
-		if (status == null || status instanceof MultiStatus)
-			return false;
-		
-		if (status.getException() != null)
-			return false;
-		
-		// Can't access IResourceStatus.OUT_OF_SYNC_LOCAL, using value: 274
-		return status.getCode() == 274;
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider instanceof IDocumentProviderExtension5)
+			return ((IDocumentProviderExtension5)provider).isNotSynchronizedException(getEditorInput(), ex);
+		return false;
 	}
 
 	/**
