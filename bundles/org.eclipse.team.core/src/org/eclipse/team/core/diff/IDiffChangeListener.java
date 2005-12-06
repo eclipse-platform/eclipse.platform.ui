@@ -8,12 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.delta;
+package org.eclipse.team.core.diff;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Delta change listener that reports changes in an {@link IDeltaTree}.
+ * Diff change listener that reports changes in an {@link IDiffTree}.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
@@ -21,17 +21,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * consulting with the Platform/Team team.
  * </p>
  * 
- * @see IDeltaTree
+ * @see IDiffTree
  * 
  * @since 3.2
  */
-public interface IDeltaChangeListener {
+public interface IDiffChangeListener {
 
 	/**
-	 * The delta contained in the originating tree has changed.
+	 * The diff contained in the originating tree has changed.
 	 * @param event the change event
 	 * @param monitor a progress monitor
 	 */
-	void deltaChanged(IDeltaChangeEvent event, IProgressMonitor monitor);
+	void diffChanged(IDiffChangeEvent event, IProgressMonitor monitor);
 
 }

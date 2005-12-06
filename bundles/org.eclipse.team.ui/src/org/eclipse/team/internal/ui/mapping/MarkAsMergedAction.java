@@ -16,8 +16,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.core.delta.IDelta;
-import org.eclipse.team.core.delta.IThreeWayDelta;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
@@ -46,9 +46,9 @@ public class MarkAsMergedAction extends ModelProviderAction {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
 					try {
-						IDelta[] deltas = getSelectedDeltas(getStructuredSelection());
+						IDiffNode[] deltas = getSelectedDeltas(getStructuredSelection());
 						for (int i = 0; i < deltas.length; i++) {
-							IDelta delta = deltas[i];
+							IDiffNode delta = deltas[i];
 							// TODO: mark as merged should support batching
 							IStatus status = context.markAsMerged((IFile)context.getResource(delta), false, monitor);
 							if (!status.isOK())
@@ -74,7 +74,7 @@ public class MarkAsMergedAction extends ModelProviderAction {
 		return getSelectedDeltas(selection).length > 0;
 	}
 
-	protected IDelta[] getSelectedDeltas(IStructuredSelection selection) {
+	protected IDiffNode[] getSelectedDeltas(IStructuredSelection selection) {
 		// TODO: for now, just enable for files
 		if (selection.size() == 1) {
 			Object o = selection.getFirstElement();
@@ -92,16 +92,16 @@ public class MarkAsMergedAction extends ModelProviderAction {
 			}
 			if (resource != null && resource.getType() == IResource.FILE) {
 				ISynchronizationContext context = getContext();
-				IDelta delta = context.getDeltaTree().getDelta(resource.getFullPath());
-				if (delta instanceof IThreeWayDelta) {
-					IThreeWayDelta twd = (IThreeWayDelta) delta;
-					if (twd.getDirection() == IThreeWayDelta.CONFLICTING) {
-						return new IDelta[] { delta };
+				IDiffNode delta = context.getDiffTree().getDelta(resource.getFullPath());
+				if (delta instanceof IThreeWayDiff) {
+					IThreeWayDiff twd = (IThreeWayDiff) delta;
+					if (twd.getDirection() == IThreeWayDiff.CONFLICTING) {
+						return new IDiffNode[] { delta };
 					}
 				}
 			}
 		}
-		return new IDelta[0];
+		return new IDiffNode[0];
 	}
 	
 	private ISynchronizationContext getContext() {

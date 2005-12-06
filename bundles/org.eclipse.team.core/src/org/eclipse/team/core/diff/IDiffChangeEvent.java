@@ -8,13 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.delta;
+package org.eclipse.team.core.diff;
 
 import org.eclipse.core.runtime.IPath;
 
 /**
  * A change event that describes changes that have occurred
- * in an {@link IDeltaTree}.
+ * in an {@link IDiffTree}.
  * <p>
  * This interface is not intended to be implemented by clients.
  * 
@@ -26,19 +26,19 @@ import org.eclipse.core.runtime.IPath;
  * </p>
  * @since 3.2
  */
-public interface IDeltaChangeEvent {
+public interface IDiffChangeEvent {
 	
 	/**
 	 * Returns the tree that has been changed.
 	 * @return the tree that has been changed.
 	 */
-	public IDeltaTree getTree();
+	public IDiffTree getTree();
 	
 	/**
 	 * Returns the delta nodes that have been added to the delta tree.
 	 * @return the delta nodes that have been added to the delta tree
 	 */
-	public IDelta[] getAdditions();
+	public IDiffNode[] getAdditions();
 	
 	/**
 	 * Return the paths of the delta nodes that have been removed from the delta tree.
@@ -50,5 +50,5 @@ public interface IDeltaChangeEvent {
 	 * Return the delta nodes contained in the delta tree that have changed in some way.
 	 * @return the delta nodes contained in the delta tree that have changed
 	 */
-	public IDelta[] getChanges();
+	public IDiffNode[] getChanges();
 }

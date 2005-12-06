@@ -11,12 +11,12 @@
 package org.eclipse.team.internal.core.delta;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.core.delta.IDelta;
+import org.eclipse.team.core.diff.IDiffNode;
 
 /**
- * Abstract implementation of {@link IDelta}
+ * Abstract implementation of {@link IDiffNode}
  */
-public abstract class AbstractDelta implements IDelta {
+public abstract class AbstractDelta implements IDiffNode {
 
 	private final IPath path;
 	private final int kind;

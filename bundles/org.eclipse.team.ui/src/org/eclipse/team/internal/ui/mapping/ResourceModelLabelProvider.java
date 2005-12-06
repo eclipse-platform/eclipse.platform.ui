@@ -13,7 +13,7 @@ package org.eclipse.team.internal.ui.mapping;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.team.core.delta.IDelta;
+import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
@@ -36,12 +36,12 @@ public class ResourceModelLabelProvider extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.AbstractSynchronizationLabelProvider#getSyncDelta(java.lang.Object)
 	 */
-	protected IDelta getSyncDelta(Object element) {
+	protected IDiffNode getSyncDelta(Object element) {
 		IResource resource = getResource(element);
 		if (resource != null) {
 			ISynchronizationContext context = getContext();
 			if (context != null) {
-				IDelta delta = context.getDeltaTree().getDelta(resource.getFullPath());
+				IDiffNode delta = context.getDiffTree().getDelta(resource.getFullPath());
 				return delta;
 			}
 		}

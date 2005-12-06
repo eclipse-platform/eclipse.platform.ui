@@ -17,7 +17,7 @@ import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.team.core.delta.IDelta;
+import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.mapping.*;
@@ -98,7 +98,7 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 		// TODO: must explicilty register for sync change events (perhaps this should be a flag of some sort)
 		org.eclipse.team.core.mapping.ISynchronizationContext context = getContext();
 		if (context != null)
-			context.getDeltaTree().addDeltaChangeListener(this);
+			context.getDiffTree().addDiffChangeListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -108,7 +108,7 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 		provider.dispose();
 		ISynchronizationContext context = getContext();
 		if (context != null)
-			context.getDeltaTree().removeDeltaChangeListener(this);
+			context.getDiffTree().removeDiffChangeListener(this);
 		super.dispose();
 	}
 	
@@ -127,10 +127,10 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 					result.add(object);
 				}
 				IResource resource = (IResource) parent;
-				IPath[] childPaths = context.getDeltaTree().getChildren(resource.getFullPath());
+				IPath[] childPaths = context.getDiffTree().getChildren(resource.getFullPath());
 				for (int i = 0; i < childPaths.length; i++) {
 					IPath path = childPaths[i];
-					IDelta delta = context.getDeltaTree().getDelta(path);
+					IDiffNode delta = context.getDiffTree().getDelta(path);
 					IResource child;
 					if (delta == null) {
 						// the path has descendent deltas so it must be a folder

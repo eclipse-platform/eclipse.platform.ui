@@ -28,10 +28,10 @@ import org.eclipse.team.core.mapping.*;
  * consulting with the Platform/Team team.
  * </p>
  * 
- * @see org.eclipse.team.core.mapping.IDeltaCache
+ * @see org.eclipse.team.core.mapping.IDiffCache
  * @since 3.2
  */
-public class SynchronizationCache implements IDeltaCache {
+public class SynchronizationCache implements IDiffCache {
 
 	Map properties;
 	ListenerList listeners;

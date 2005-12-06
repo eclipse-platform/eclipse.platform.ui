@@ -14,8 +14,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.delta.IDelta;
-import org.eclipse.team.core.delta.ITwoWayDelta;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.ITwoWayDiff;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.variants.IResourceVariant;
 
@@ -50,7 +50,7 @@ public class SyncInfoToDeltaConverter implements ISyncInfoSetChangeListener {
 			SyncInfo[] infos = set.getSyncInfos();
 			for (int i = 0; i < infos.length; i++) {
 				SyncInfo info = infos[i];
-				IDelta delta = getDeltaFor(info);
+				IDiffNode delta = getDeltaFor(info);
 				tree.add(delta);
 			}
 		} finally {
@@ -67,13 +67,13 @@ public class SyncInfoToDeltaConverter implements ISyncInfoSetChangeListener {
 			SyncInfo[] added = event.getAddedResources();
 			for (int i = 0; i < added.length; i++) {
 				SyncInfo info = added[i];
-				IDelta delta = getDeltaFor(info);
+				IDiffNode delta = getDeltaFor(info);
 				tree.add(delta);
 			}
 			SyncInfo[] changed = event.getChangedResources();
 			for (int i = 0; i < changed.length; i++) {
 				SyncInfo info = changed[i];
-				IDelta delta = getDeltaFor(info);
+				IDiffNode delta = getDeltaFor(info);
 				tree.add(delta);
 			}
 			IResource[] removed = event.getRemovedResources();
@@ -86,37 +86,37 @@ public class SyncInfoToDeltaConverter implements ISyncInfoSetChangeListener {
 		}
 	}
 
-	public static IDelta getDeltaFor(SyncInfo info) {
+	public static IDiffNode getDeltaFor(SyncInfo info) {
 		if (info.getComparator().isThreeWay()) {
-			ITwoWayDelta local = getLocalDelta(info);
-			ITwoWayDelta remote = getRemoteDelta(info);
+			ITwoWayDiff local = getLocalDelta(info);
+			ITwoWayDiff remote = getRemoteDelta(info);
 			return new ThreeWayDelta(info.getLocal().getFullPath(), local, remote, 0);
 		} else {
 			return getDelta(info, wrapLocal(info), info.getRemote(), 0);
 		}
 	}
 
-	private static ITwoWayDelta getRemoteDelta(SyncInfo info) {
+	private static ITwoWayDiff getRemoteDelta(SyncInfo info) {
 		IResourceVariant ancestor = info.getBase();
 		IResourceVariant remote = info.getRemote();
 		return getDelta(info, ancestor, remote, SyncInfo.INCOMING);
 	}
 
-	private static ITwoWayDelta getDelta(SyncInfo info, IResourceVariant before, IResourceVariant after, int direction) {
-		int kind = IDelta.NO_CHANGE;
+	private static ITwoWayDiff getDelta(SyncInfo info, IResourceVariant before, IResourceVariant after, int direction) {
+		int kind = IDiffNode.NO_CHANGE;
 		if ((SyncInfo.getDirection(info.getKind()) & direction) == 0) {
 			// There is no change so create a NO_CHANGE delta
 		} else if (before == null) {
-			kind = IDelta.ADDED;
+			kind = IDiffNode.ADDED;
 		} else if (after == null) {
-			kind = IDelta.REMOVED;
+			kind = IDiffNode.REMOVED;
 		} else {
-			kind = IDelta.CHANGED;
+			kind = IDiffNode.CHANGED;
 		}
-		return new TwoWayDelta(info.getLocal().getFullPath(), kind, IDelta.NO_CHANGE, before, after);
+		return new TwoWayDelta(info.getLocal().getFullPath(), kind, IDiffNode.NO_CHANGE, before, after);
 	}
 
-	private static ITwoWayDelta getLocalDelta(SyncInfo info) {
+	private static ITwoWayDiff getLocalDelta(SyncInfo info) {
 		IResourceVariant ancestor = info.getBase();
 		IResourceVariant local = wrapLocal(info);
 		return getDelta(info, ancestor, local, SyncInfo.OUTGOING);

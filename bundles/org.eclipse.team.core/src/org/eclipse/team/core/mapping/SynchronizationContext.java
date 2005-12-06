@@ -18,7 +18,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.core.delta.*;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.synchronize.ISyncInfoTree;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.core.variants.IResourceVariant;
@@ -94,7 +94,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getCache()
 	 */
-	public synchronized IDeltaCache getCache() {
+	public synchronized IDiffCache getCache() {
 		if (cache == null) {
 			cache = new SynchronizationCache(this);
 		}
@@ -104,22 +104,22 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getSyncDeltaTree()
 	 */
-	public IDeltaTree getDeltaTree() {
+	public IDiffTree getDiffTree() {
 		return deltaTree;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getResource(org.eclipse.team.core.delta.ISyncDelta)
 	 */
-	public IResource getResource(IDelta delta) {
+	public IResource getResource(IDiffNode delta) {
 		IResource resource = null;
-		if (delta instanceof IThreeWayDelta) {
-			IThreeWayDelta twd = (IThreeWayDelta) delta;
+		if (delta instanceof IThreeWayDiff) {
+			IThreeWayDiff twd = (IThreeWayDiff) delta;
 			resource = internalGetResource(twd.getLocalChange());
 			if (resource == null)
 				resource = internalGetResource(twd.getRemoteChange());
 		} else {
-			resource = internalGetResource((ITwoWayDelta)delta);
+			resource = internalGetResource((ITwoWayDiff)delta);
 		}
 		return resource;	
 	}
@@ -127,11 +127,11 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getDeltas(org.eclipse.core.resources.mapping.ResourceTraversal[])
 	 */
-	public IDelta[] getDeltas(final ResourceTraversal[] traversals) {
+	public IDiffNode[] getDiffs(final ResourceTraversal[] traversals) {
 		final Set result = new HashSet();
 		try {
-			getDeltaTree().accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDeltaVisitor() {
-				public boolean visit(IDelta delta) throws CoreException {
+			getDiffTree().accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
+				public boolean visit(IDiffNode delta) throws CoreException {
 					for (int i = 0; i < traversals.length; i++) {
 						ResourceTraversal traversal = traversals[i];
 						if (traversal.contains(getResource(delta))) {
@@ -144,18 +144,18 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 		} catch (CoreException e) {
 			TeamPlugin.log(e);
 		}
-		return (IDelta[]) result.toArray(new IDelta[result.size()]);
+		return (IDiffNode[]) result.toArray(new IDiffNode[result.size()]);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#isFileDelta(org.eclipse.team.core.delta.ISyncDelta)
 	 */
-	public boolean isFileDelta(IDelta delta) {
+	public boolean isFileDiff(IDiffNode delta) {
 		IResource resource = getResource(delta);
 		return resource != null && resource.getType() == IResource.FILE;
 	}
 
-	private IResource internalGetResource(ITwoWayDelta localChange) {
+	private IResource internalGetResource(ITwoWayDiff localChange) {
 		if (localChange == null)
 			return null;
 		Object before = localChange.getBeforeState();

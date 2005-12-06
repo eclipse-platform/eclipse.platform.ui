@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.delta.*;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.variants.IResourceVariant;
 
@@ -83,22 +83,22 @@ public interface ISynchronizationContext {
 	 * @return a tree that contains a <code>SyncInfo</code> node for any
 	 *         resources that are out-of-sync.
 	 *         
-	 * @deprecated use {@link #getDeltaTree() }
+	 * @deprecated use {@link #getDiffTree() }
 	 */
 	public ISyncInfoTree getSyncInfoTree();
 	
 	/**
-	 * Return a tree that contains {@link IDelta} nodes for resources
+	 * Return a tree that contains {@link IDiffNode} nodes for resources
 	 * that are out-of-sync. The tree will only contain deltas for out-of-sync
 	 * resources that are within the scope of this context. The tree
 	 * may include additional out-of-sync resources, which should be ignored by
 	 * the client. Clients can test for inclusion using the method 
 	 * {@link IResourceMappingScope#contains(IResource)}.
 	 * <p>
-	 * The {@link IDeltaTree} and the {@link ITwoWayDelta} are a generic
+	 * The {@link IDiffTree} and the {@link ITwoWayDiff} are a generic
 	 * delta data structure. The tree returned from this method will have
 	 * {@link IResourceVariant} objects as the before and after states
-	 * of any {@link ITwoWayDelta} instances that are obtained directly
+	 * of any {@link ITwoWayDiff} instances that are obtained directly
 	 * or indirectly in the set.
 	 * 
 	 * EXPERIMENTAL: Do not use yet!!!
@@ -107,7 +107,7 @@ public interface ISynchronizationContext {
 	 *         resources that are out-of-sync.
 	 *         
 	 */
-	public IDeltaTree getDeltaTree();
+	public IDiffTree getDiffTree();
 
 	/**
 	 * Return the synchronization type. A type of <code>TWO_WAY</code>
@@ -134,7 +134,7 @@ public interface ISynchronizationContext {
 	 * applies.
 	 * @return the cache associated with this synchronization context
 	 */
-     public IDeltaCache getCache();
+     public IDiffCache getCache();
     
 	/**
 	 * Dispose of the synchronization context and the cache of the context. This
@@ -178,7 +178,7 @@ public interface ISynchronizationContext {
 	 * @param traversals the traversals to search
 	 * @return the deltas that are found in the given traversals
 	 */
-	public IDelta[] getDeltas(ResourceTraversal[] traversals);
+	public IDiffNode[] getDiffs(ResourceTraversal[] traversals);
 
 	/**
 	 * Convenience method for returning the resource associated
@@ -186,7 +186,7 @@ public interface ISynchronizationContext {
 	 * @param delta a delta
 	 * @return the resource associated with that delta
 	 */
-	IResource getResource(IDelta delta);
+	IResource getResource(IDiffNode delta);
 
 	/**
 	 * Convenience method that returns whether the resource
@@ -195,5 +195,5 @@ public interface ISynchronizationContext {
 	 * @return whether the resource
 	 * associated with the given delta is a file
 	 */
-	boolean isFileDelta(IDelta delta);
+	boolean isFileDiff(IDiffNode delta);
 }

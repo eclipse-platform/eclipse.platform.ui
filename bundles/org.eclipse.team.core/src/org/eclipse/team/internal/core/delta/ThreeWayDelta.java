@@ -11,11 +11,11 @@
 package org.eclipse.team.internal.core.delta;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.core.delta.IThreeWayDelta;
-import org.eclipse.team.core.delta.ITwoWayDelta;
+import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.diff.ITwoWayDiff;
 
 /**
- * Implementation of {@link IThreeWayDelta}.
+ * Implementation of {@link IThreeWayDiff}.
  * <p>
  * This class is not intended to be subclasses by clients.
  * 
@@ -28,10 +28,10 @@ import org.eclipse.team.core.delta.ITwoWayDelta;
  * 
  * @since 3.2
  */
-public class ThreeWayDelta extends AbstractDelta implements IThreeWayDelta {
+public class ThreeWayDelta extends AbstractDelta implements IThreeWayDiff {
 
-	private final ITwoWayDelta localChange;
-	private final ITwoWayDelta remoteChange;
+	private final ITwoWayDiff localChange;
+	private final ITwoWayDiff remoteChange;
 	private final int conflictHint;
 
 	/**
@@ -41,14 +41,14 @@ public class ThreeWayDelta extends AbstractDelta implements IThreeWayDelta {
 	 * @param remoteChange the remote change in the model object or <code>null</code> if there is no local change
 	 * @param conflictHint
 	 */
-	public ThreeWayDelta(IPath path, ITwoWayDelta localChange, ITwoWayDelta remoteChange, int conflictHint) {
+	public ThreeWayDelta(IPath path, ITwoWayDiff localChange, ITwoWayDiff remoteChange, int conflictHint) {
 		super(path, calculateKind(localChange, remoteChange));
 		this.localChange = localChange;
 		this.remoteChange = remoteChange;
 		this.conflictHint = conflictHint;
 	}
 
-	private static int calculateKind(ITwoWayDelta localChange, ITwoWayDelta remoteChange) {
+	private static int calculateKind(ITwoWayDiff localChange, ITwoWayDiff remoteChange) {
 		int localKind = NO_CHANGE;
 		if (localChange != null)
 			localKind = localChange.getKind();
@@ -65,14 +65,14 @@ public class ThreeWayDelta extends AbstractDelta implements IThreeWayDelta {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.IThreeWayDelta#getLocalChange()
 	 */
-	public ITwoWayDelta getLocalChange() {
+	public ITwoWayDiff getLocalChange() {
 		return localChange;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.IThreeWayDelta#getRemoteChange()
 	 */
-	public ITwoWayDelta getRemoteChange() {
+	public ITwoWayDiff getRemoteChange() {
 		return remoteChange;
 	}
 

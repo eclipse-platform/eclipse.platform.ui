@@ -13,14 +13,14 @@ package org.eclipse.team.internal.core.delta;
 import java.util.*;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.core.delta.*;
+import org.eclipse.team.core.diff.*;
 
 /**
- * Implementation of {@link IDeltaChangeEvent}
+ * Implementation of {@link IDiffChangeEvent}
  */
-public class DeltaChangeEvent implements IDeltaChangeEvent {
+public class DeltaChangeEvent implements IDiffChangeEvent {
 
-	private final IDeltaTree tree;
+	private final IDiffTree tree;
 	
 	// List that accumulate changes
 	// SyncInfo
@@ -33,22 +33,22 @@ public class DeltaChangeEvent implements IDeltaChangeEvent {
 	/**
 	 * 
 	 */
-	public DeltaChangeEvent(IDeltaTree tree) {
+	public DeltaChangeEvent(IDiffTree tree) {
 		this.tree = tree;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeEvent#getTree()
 	 */
-	public IDeltaTree getTree() {
+	public IDiffTree getTree() {
 		return tree;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeEvent#getAdditions()
 	 */
-	public IDelta[] getAdditions() {
-		return (IDelta[]) addedResources.values().toArray(new IDelta[addedResources.size()]);
+	public IDiffNode[] getAdditions() {
+		return (IDiffNode[]) addedResources.values().toArray(new IDiffNode[addedResources.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -61,11 +61,11 @@ public class DeltaChangeEvent implements IDeltaChangeEvent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeEvent#getChanges()
 	 */
-	public IDelta[] getChanges() {
-		return (IDelta[]) changedResources.values().toArray(new IDelta[changedResources.size()]);
+	public IDiffNode[] getChanges() {
+		return (IDiffNode[]) changedResources.values().toArray(new IDiffNode[changedResources.size()]);
 	}
 	
-	public void added(IDelta delta) {
+	public void added(IDiffNode delta) {
 		if (removedResources.contains(delta.getPath())) {
 			// A removal followed by an addition is treated as a change
 			removedResources.remove(delta.getPath());
@@ -75,7 +75,7 @@ public class DeltaChangeEvent implements IDeltaChangeEvent {
 		}
 	}
 	
-	public void removed(IPath path, IDelta delta) {
+	public void removed(IPath path, IDiffNode delta) {
 		if (changedResources.containsKey(path)) {
 			// No use in reporting the change since it has subsequently been removed
 			changedResources.remove(path);
@@ -87,7 +87,7 @@ public class DeltaChangeEvent implements IDeltaChangeEvent {
 		removedResources.add(path);
 	}
 	
-	public void changed(IDelta delta) {
+	public void changed(IDiffNode delta) {
 		if (addedResources.containsKey(delta.getPath())) {
 			// An addition followed by a change is an addition
 			addedResources.put(delta.getPath(), delta);

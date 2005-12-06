@@ -13,12 +13,12 @@ package org.eclipse.team.internal.core.delta;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
-import org.eclipse.team.core.delta.*;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
 
 /**
- * Implementation of {@link IDeltaTree}.
+ * Implementation of {@link IDiffTree}.
  * <p>
  * This class is not intended to be subclassed by clients
  * <p>
@@ -30,7 +30,7 @@ import org.eclipse.team.internal.core.Policy;
  * 
  * @since 3.2
  */
-public class DeltaTree implements IDeltaTree {
+public class DeltaTree implements IDiffTree {
 	
 	private ListenerList listeners = new ListenerList();
 	
@@ -52,23 +52,23 @@ public class DeltaTree implements IDeltaTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ISyncDeltaTree#addSyncDeltaChangeListener(org.eclipse.team.core.synchronize.ISyncDeltaChangeListener)
 	 */
-	public void addDeltaChangeListener(IDeltaChangeListener listener) {
+	public void addDiffChangeListener(IDiffChangeListener listener) {
 		listeners.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ISyncDeltaTree#removeSyncDeltaChangeListener(org.eclipse.team.core.synchronize.ISyncDeltaChangeListener)
 	 */
-	public void removeDeltaChangeListener(IDeltaChangeListener listener) {
+	public void removeDiffChangeListener(IDiffChangeListener listener) {
 		listeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ISyncDeltaTree#accept(org.eclipse.core.runtime.IPath, org.eclipse.team.core.synchronize.ISyncDeltaVisitor)
 	 */
-	public void accept(IPath path, IDeltaVisitor visitor, int depth)
+	public void accept(IPath path, IDiffVisitor visitor, int depth)
 			throws CoreException {
-		IDelta delta = getDelta(path);
+		IDiffNode delta = getDelta(path);
 		if (delta == null || visitor.visit(delta)) {
 			if (depth == IResource.DEPTH_ZERO)
 				return;
@@ -83,8 +83,8 @@ public class DeltaTree implements IDeltaTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ISyncDeltaTree#findMember(org.eclipse.core.runtime.IPath)
 	 */
-	public IDelta getDelta(IPath path) {
-		return (IDelta)pathTree.get(path);
+	public IDiffNode getDelta(IPath path) {
+		return (IDiffNode)pathTree.get(path);
 	}
 
 	/* (non-Javadoc)
@@ -102,7 +102,7 @@ public class DeltaTree implements IDeltaTree {
 	}
 
 	/**
-	 * Add the given {@link IDelta} to the tree. A change event will
+	 * Add the given {@link IDiffNode} to the tree. A change event will
 	 * be generated unless the call to this method is nested in between calls
 	 * to <code>beginInput()</code> and <code>endInput(IProgressMonitor)</code>
 	 * in which case the event for this addition and any other sync set
@@ -116,7 +116,7 @@ public class DeltaTree implements IDeltaTree {
 	 * </p>
 	 * @param delta the delta to be added to this set.
 	 */
-	public void add(IDelta delta) {
+	public void add(IDiffNode delta) {
 		try {
 			beginInput();
 			boolean alreadyExists = getDelta(delta.getPath()) != null;
@@ -150,7 +150,7 @@ public class DeltaTree implements IDeltaTree {
 	public synchronized void remove(IPath path) {
 		try {
 			beginInput();
-			IDelta delta = getDelta(path);
+			IDiffNode delta = getDelta(path);
 			if (delta != null) {
 				internalRemove(delta);
 				internalRemoved(path, delta);
@@ -225,7 +225,7 @@ public class DeltaTree implements IDeltaTree {
 		if(event.isEmpty() && ! event.isReset()) return;
 		Object[] listeners = this.listeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
-			final IDeltaChangeListener listener = (IDeltaChangeListener)listeners[i];
+			final IDiffChangeListener listener = (IDiffChangeListener)listeners[i];
 			Platform.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// don't log the exception....it is already being logged in Platform#run
@@ -233,7 +233,7 @@ public class DeltaTree implements IDeltaTree {
 				public void run() throws Exception {
 					try {
 						lockedForModification = true;
-						listener.deltaChanged(event, Policy.subMonitorFor(monitor, 100));
+						listener.diffChanged(event, Policy.subMonitorFor(monitor, 100));
 					} finally {
 						lockedForModification = false;
 					}
@@ -255,24 +255,24 @@ public class DeltaTree implements IDeltaTree {
 		return new DeltaChangeEvent(this);
 	}
 
-	private void internalAdd(IDelta delta) {
+	private void internalAdd(IDiffNode delta) {
 		Assert.isTrue(!lockedForModification);
 		pathTree.put(delta.getPath(), delta);
 	}
 	
-	private void internalRemove(IDelta delta) {
+	private void internalRemove(IDiffNode delta) {
 		Assert.isTrue(!lockedForModification);
 		pathTree.remove(delta.getPath());
 	}
 	
-	private void internalAdded(IDelta delta) {
+	private void internalAdded(IDiffNode delta) {
 		changes.added(delta);
 	}
 	
-	private void internalChanged(IDelta delta) {
+	private void internalChanged(IDiffNode delta) {
 		changes.changed(delta);
 	}
-	private void internalRemoved(IPath path, IDelta delta) {
+	private void internalRemoved(IPath path, IDiffNode delta) {
 		changes.removed(path, delta);
 	}
 	

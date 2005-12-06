@@ -17,7 +17,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.delta.*;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.synchronize.ISyncInfoTree;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -155,15 +155,15 @@ public abstract class ModelProviderOperation extends TeamOperation {
 	}
 	
 
-	protected boolean hasIncomingChanges(IDeltaTree syncDeltaTree) {
+	protected boolean hasIncomingChanges(IDiffTree syncDeltaTree) {
 		final CoreException found = new CoreException(Status.OK_STATUS);
 		try {
-			syncDeltaTree.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDeltaVisitor() {
-				public boolean visit(IDelta delta) throws CoreException {
-					if (delta instanceof IThreeWayDelta) {
-						IThreeWayDelta twd = (IThreeWayDelta) delta;
+			syncDeltaTree.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
+				public boolean visit(IDiffNode delta) throws CoreException {
+					if (delta instanceof IThreeWayDiff) {
+						IThreeWayDiff twd = (IThreeWayDiff) delta;
 						int direction = twd.getDirection();
-						if (direction == IThreeWayDelta.INCOMING || direction == IThreeWayDelta.CONFLICTING) {
+						if (direction == IThreeWayDiff.INCOMING || direction == IThreeWayDiff.CONFLICTING) {
 							throw found;
 						}
 					} else {

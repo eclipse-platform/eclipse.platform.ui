@@ -8,15 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.delta;
+package org.eclipse.team.core.diff;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * A delta tree provides access to a tree of {@link IDelta} instances.
- * For efficiency reasons, the tree only provides deltas for paths that represent a change.
- * Paths that do not contain a delta represent but are returned from the tree will
+ * A diff tree provides access to a tree of {@link IDiffNode} instances.
+ * For efficiency reasons, the tree only provides diffs for paths that represent a change.
+ * Paths that do not contain a diff represent but are returned from the tree will
  * contain child paths in the set.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IPath;
  * </p>
  * @since 3.2
  */
-public interface IDeltaTree {
+public interface IDiffTree {
 
 	/**
 	 * Add a listener to the tree. The listener will be informed of any changes
@@ -35,7 +35,7 @@ public interface IDeltaTree {
 	 * 
 	 * @param listener the listener to be added
 	 */
-	public void addDeltaChangeListener(IDeltaChangeListener listener);
+	public void addDiffChangeListener(IDiffChangeListener listener);
 
 	/**
 	 * Remove the listener from the tree. Removing a listener that is not
@@ -43,7 +43,7 @@ public interface IDeltaTree {
 	 * 
 	 * @param listener the listener to be removed
 	 */
-	public void removeDeltaChangeListener(IDeltaChangeListener listener);
+	public void removeDiffChangeListener(IDiffChangeListener listener);
 
 	/**
 	 * Accepts the given visitor. The only kinds of deltas visited are
@@ -56,9 +56,9 @@ public interface IDeltaTree {
 	 * @param visitor the visitor
 	 * @param depth the depth to visit
 	 * @exception CoreException if the visitor failed with this exception.
-	 * @see IDeltaVisitor#visit(IDelta)
+	 * @see IDiffVisitor#visit(IDiffNode)
 	 */
-	public void accept(IPath path, IDeltaVisitor visitor, int depth)
+	public void accept(IPath path, IDiffVisitor visitor, int depth)
 			throws CoreException;
 
 	/**
@@ -75,7 +75,7 @@ public interface IDeltaTree {
 	 * @return the delta, or <code>null</code> if no such
 	 *         delta exists
 	 */
-	public IDelta getDelta(IPath path);
+	public IDiffNode getDelta(IPath path);
 
 	/**
 	 * Returns the child paths of the given path that either point to

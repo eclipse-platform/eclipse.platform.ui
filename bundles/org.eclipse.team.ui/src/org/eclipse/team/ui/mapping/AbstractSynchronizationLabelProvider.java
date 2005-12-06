@@ -19,8 +19,8 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.team.core.delta.IDelta;
-import org.eclipse.team.core.delta.IThreeWayDelta;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
 
@@ -165,29 +165,29 @@ public abstract class AbstractSynchronizationLabelProvider implements ILabelProv
 	 * @param element the element being tested
 	 * @return the sync kind of the given element
 	 */
-	protected abstract IDelta getSyncDelta(Object element);
+	protected abstract IDiffNode getSyncDelta(Object element);
 
 	/**
 	 * TODO: temporary hack
 	 */
 	private int getSyncKind(Object element) {
-		IDelta delta = getSyncDelta(element);
+		IDiffNode delta = getSyncDelta(element);
 		if (delta == null)
 			return 0;
 		int kind = delta.getKind();
 		switch (kind) {
-		case IDelta.ADDED:
+		case IDiffNode.ADDED:
 			kind = SyncInfo.ADDITION;
 			break;
-		case IDelta.REMOVED:
+		case IDiffNode.REMOVED:
 			kind = SyncInfo.DELETION;
 			break;
-		case IDelta.CHANGED:
+		case IDiffNode.CHANGED:
 			kind = SyncInfo.CHANGE;
 			break;
 		}
-		if (delta instanceof IThreeWayDelta) {
-			IThreeWayDelta twd = (IThreeWayDelta) delta;
+		if (delta instanceof IThreeWayDiff) {
+			IThreeWayDiff twd = (IThreeWayDiff) delta;
 			kind |= twd.getDirection();
 		}
 		return kind;

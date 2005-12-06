@@ -18,7 +18,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.delta.*;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.MergeStatus;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
@@ -59,7 +59,7 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
      * The local resource must be a file and all three
      * resources (local, base, remote) must exist.
      */
-	protected IStatus performThreeWayMerge(IThreeWayDelta delta, IProgressMonitor monitor) throws CoreException {
+	protected IStatus performThreeWayMerge(IThreeWayDiff delta, IProgressMonitor monitor) throws CoreException {
 		IFile file = (IFile)getResource(delta);
 		IContentDescription contentDescription = file.getContentDescription();
 		IStreamMerger merger = null;
@@ -84,7 +84,7 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
      * stream merger. The local resource must be a file and all three
      * resources (local, base, remote) must exist.
      */
-    private IStatus merge(IStreamMerger merger, IDelta delta, IProgressMonitor monitor) throws CoreException {
+    private IStatus merge(IStreamMerger merger, IDiffNode delta, IProgressMonitor monitor) throws CoreException {
         
     	// Get the file involved
     	IFile file = (IFile)getResource(delta);
@@ -99,7 +99,7 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
         
             // Get the ancestor stream and encoding
         	IResourceVariant base = null;
-        	ITwoWayDelta remoteChange = ((IThreeWayDelta)delta).getRemoteChange();
+        	ITwoWayDiff remoteChange = ((IThreeWayDiff)delta).getRemoteChange();
         	if (remoteChange != null)
         		base = (IResourceVariant)remoteChange.getBeforeState();
             IStorage s = base.getStorage(monitor);

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.delta;
+package org.eclipse.team.core.diff;
 
 import org.eclipse.team.internal.core.delta.ThreeWayDelta;
 
@@ -34,7 +34,7 @@ import org.eclipse.team.internal.core.delta.ThreeWayDelta;
  * </p> 
  * @since 3.2
  */
-public interface IThreeWayDelta extends IDelta {
+public interface IThreeWayDiff extends IDiffNode {
 	
 	/*====================================================================
 	 * Constants defining synchronization direction: 
@@ -43,14 +43,14 @@ public interface IThreeWayDelta extends IDelta {
 	/**
 	 * Sync constant (value 4) indicating a change to the local resource.
 	 * 
-	 * @see IThreeWayDelta#getDirection()
+	 * @see IThreeWayDiff#getDirection()
 	 */
 	public static final int OUTGOING = 4;
 	
 	/**
 	 * Sync constant (value 8) indicating a change to the remote resource.
 	 * 
-	 * @see IThreeWayDelta#getDirection()
+	 * @see IThreeWayDiff#getDirection()
 	 */
 	public static final int INCOMING = 8;
 	
@@ -59,7 +59,7 @@ public interface IThreeWayDelta extends IDelta {
 	 * remote and local resources. This flag is equivalent
 	 * to <code>OUTGOING | INCOMING</code>.
 	 * 
-	 * @see IThreeWayDelta#getDirection()
+	 * @see IThreeWayDiff#getDirection()
 	 */
 	public static final int CONFLICTING = OUTGOING | INCOMING;
 	
@@ -83,27 +83,27 @@ public interface IThreeWayDelta extends IDelta {
 	/**
 	 * Return the local change associated with this delta.
 	 * If there is no local change, either a delta with kind 
-	 * {@link IDelta#NO_CHANGE} is returned or <code>null</code>
+	 * {@link IDiffNode#NO_CHANGE} is returned or <code>null</code>
 	 * may be returned.
 	 * @return the local change associated with this delta or <code>null</code>
 	 */
-	public ITwoWayDelta getLocalChange();
+	public ITwoWayDiff getLocalChange();
 	
 	/**
 	 * Return the remote change associated with this delta.
 	 * If there is no remote change, either a delta with kind 
-	 * {@link IDelta#NO_CHANGE} is returned or <code>null</code>
+	 * {@link IDiffNode#NO_CHANGE} is returned or <code>null</code>
 	 * may be returned.
 	 * @return the remote change associated with this delta or <code>null</code>
 	 */
-	public ITwoWayDelta getRemoteChange();
+	public ITwoWayDiff getRemoteChange();
 	
 	/**
 	 * Return the direction of this three-way delta.
 	 * @return the direction of this three-way delta
-	 * @see IThreeWayDelta#INCOMING
-	 * @see IThreeWayDelta#OUTGOING
-	 * @see IThreeWayDelta#CONFLICTING
+	 * @see IThreeWayDiff#INCOMING
+	 * @see IThreeWayDiff#OUTGOING
+	 * @see IThreeWayDiff#CONFLICTING
 	 */
 	public int getDirection();
 	
@@ -112,8 +112,8 @@ public interface IThreeWayDelta extends IDelta {
 	 * May be one of <code>PSEUDO_CONFLICT</code> or <code>AUTOMERGE_CONFLICT</code>.
 	 * 
 	 * @return a hint as to the type of conflict
-	 * @see IThreeWayDelta#PSEUDO_CONFLICT
-	 * @see IThreeWayDelta#AUTOMERGE_CONFLICT
+	 * @see IThreeWayDiff#PSEUDO_CONFLICT
+	 * @see IThreeWayDiff#AUTOMERGE_CONFLICT
 	 */
 	public int getConflictHint();
 

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.delta;
+package org.eclipse.team.core.diff;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -33,11 +33,11 @@ import org.eclipse.team.internal.core.delta.TwoWayDelta;
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/Team team.
  * </p>
- * @see IDeltaTree
+ * @see IDiffTree
  * 
  * @since 3.2
  */
-public interface ITwoWayDelta extends IDelta {
+public interface ITwoWayDiff extends IDiffNode {
 
 	/*====================================================================
 	 * Constants which describe resource changes:
@@ -46,7 +46,7 @@ public interface ITwoWayDelta extends IDelta {
 	/**
 	 * Change constant (bit mask) indicating that the content of the resource has changed.
 	 * 
-	 * @see ITwoWayDelta#getFlags() 
+	 * @see ITwoWayDiff#getFlags() 
 	 */
 	public static final int CONTENT = 0x100;
 
@@ -54,7 +54,7 @@ public interface ITwoWayDelta extends IDelta {
 	 * Change constant (bit mask) indicating that the resource was moved from another location.
 	 * The location in the "before" state can be retrieved using <code>getMovedFromPath()</code>.
 	 * 
-	 * @see ITwoWayDelta#getFlags()
+	 * @see ITwoWayDiff#getFlags()
 	 */
 	public static final int MOVED_FROM = 0x1000;
 
@@ -62,7 +62,7 @@ public interface ITwoWayDelta extends IDelta {
 	 * Change constant (bit mask) indicating that the resource was moved to another location.
 	 * The location in the new state can be retrieved using <code>getMovedToPath()</code>.
 	 * 
-	 * @see ITwoWayDelta#getFlags()
+	 * @see ITwoWayDiff#getFlags()
 	 */
 	public static final int MOVED_TO = 0x2000;
 
@@ -71,7 +71,7 @@ public interface ITwoWayDelta extends IDelta {
 	 * TODO: I think that type changes would need to be handled by the
 	 * repository tooling before the delta tree is presented to the model
 	 * 
-	 * @see ITwoWayDelta#getFlags()
+	 * @see ITwoWayDiff#getFlags()
 	 */
 	public static final int TYPE = 0x8000;
 
@@ -80,7 +80,7 @@ public interface ITwoWayDelta extends IDelta {
 	 * replaced by another at the same location (i.e., the resource has 
 	 * been deleted and then added). 
 	 * 
-	 * @see ITwoWayDelta#getFlags()
+	 * @see ITwoWayDiff#getFlags()
 	 */
 	public static final int REPLACED = 0x40000;
 	
@@ -88,7 +88,7 @@ public interface ITwoWayDelta extends IDelta {
 	 * Change constant (bit mask) indicating that the encoding of the resource has changed.
 	 * TODO: I think that type changes would need to be handled by the
 	 * repository tooling before the delta tree is presented to the model
-	 * @see ITwoWayDelta#getFlags() 
+	 * @see ITwoWayDiff#getFlags() 
 	 * @since 3.0
 	 */
 	public static final int ENCODING = 0x100000;
@@ -145,12 +145,12 @@ public interface ITwoWayDelta extends IDelta {
 	 * </p>
 	 *
 	 * @return the flags
-	 * @see ITwoWayDelta#CONTENT
-	 * @see ITwoWayDelta#ENCODING
-	 * @see ITwoWayDelta#MOVED_TO
-	 * @see ITwoWayDelta#MOVED_FROM
-	 * @see ITwoWayDelta#TYPE
-	 * @see ITwoWayDelta#REPLACED
+	 * @see ITwoWayDiff#CONTENT
+	 * @see ITwoWayDiff#ENCODING
+	 * @see ITwoWayDiff#MOVED_TO
+	 * @see ITwoWayDiff#MOVED_FROM
+	 * @see ITwoWayDiff#TYPE
+	 * @see ITwoWayDiff#REPLACED
 	 * @see #getKind()
 	 * @see #getMovedFromPath()
 	 * @see #getMovedToPath()

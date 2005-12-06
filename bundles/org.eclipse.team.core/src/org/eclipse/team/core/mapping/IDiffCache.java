@@ -19,8 +19,6 @@ package org.eclipse.team.core.mapping;
  * <p>
  * This interface is not intended to be implemented by clients.
  * 
- * @see org.eclipse.team.internal.ui.mapping.SynchronizationCache
- * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
@@ -30,7 +28,7 @@ package org.eclipse.team.core.mapping;
  * 
  * @since 3.2
  */
-public interface IDeltaCache {
+public interface IDiffCache {
 
 	/**
 	 * Cache the given property with this context.

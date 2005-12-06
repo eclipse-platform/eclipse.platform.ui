@@ -7,9 +7,9 @@ Bundle-Activator: org.eclipse.team.internal.core.TeamPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.team.core,
- org.eclipse.team.core.delta,
- org.eclipse.team.core.mapping,
+ org.eclipse.team.core.diff,
  org.eclipse.team.core.filehistory,
+ org.eclipse.team.core.mapping,
  org.eclipse.team.core.subscribers,
  org.eclipse.team.core.synchronize,
  org.eclipse.team.core.variants,

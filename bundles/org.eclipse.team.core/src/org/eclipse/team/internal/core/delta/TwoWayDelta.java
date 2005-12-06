@@ -11,11 +11,11 @@
 package org.eclipse.team.internal.core.delta;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.core.delta.IThreeWayDelta;
-import org.eclipse.team.core.delta.ITwoWayDelta;
+import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.diff.ITwoWayDiff;
 
 /**
- * Implementation of {@link IThreeWayDelta}.
+ * Implementation of {@link IThreeWayDiff}.
  * <p>
  * This class may be subclassed by clients.
  * 
@@ -28,7 +28,7 @@ import org.eclipse.team.core.delta.ITwoWayDelta;
  * 
  * @since 3.2
  */
-public class TwoWayDelta extends AbstractDelta implements ITwoWayDelta {
+public class TwoWayDelta extends AbstractDelta implements ITwoWayDiff {
 
 	private final int flags;	
 	private final Object before;

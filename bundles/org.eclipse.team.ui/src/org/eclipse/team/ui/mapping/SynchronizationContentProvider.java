@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.team.core.delta.*;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -42,7 +42,7 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
  * 
  * @since 3.2
  */
-public abstract class SynchronizationContentProvider implements ICommonContentProvider, IDeltaChangeListener, IPropertyChangeListener {
+public abstract class SynchronizationContentProvider implements ICommonContentProvider, IDiffChangeListener, IPropertyChangeListener {
 
 	private IResourceMappingScope scope;
 	private ISynchronizationContext context;
@@ -180,11 +180,11 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		case ISynchronizePageConfiguration.BOTH_MODE:
 			return true;
 		case ISynchronizePageConfiguration.CONFLICTING_MODE:
-			return direction == IThreeWayDelta.CONFLICTING;
+			return direction == IThreeWayDiff.CONFLICTING;
 		case ISynchronizePageConfiguration.INCOMING_MODE:
-			return direction == IThreeWayDelta.CONFLICTING || direction == IThreeWayDelta.INCOMING;
+			return direction == IThreeWayDiff.CONFLICTING || direction == IThreeWayDiff.INCOMING;
 		case ISynchronizePageConfiguration.OUTGOING_MODE:
-			return direction == IThreeWayDelta.CONFLICTING || direction == IThreeWayDelta.OUTGOING;
+			return direction == IThreeWayDiff.CONFLICTING || direction == IThreeWayDiff.OUTGOING;
 		default:
 			break;
 		}
@@ -234,7 +234,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeListener#syncDeltaTreeChanged(org.eclipse.team.core.delta.ISyncDeltaChangeEvent, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void deltaChanged(IDeltaChangeEvent event, IProgressMonitor monitor) {
+	public void diffChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
 		refresh();
 	}
 
@@ -348,13 +348,13 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		for (int i = 0; i < children.length; i++) {
 			Object object = children[i];
 			ResourceTraversal[] traversals = getTraversals(object);
-			IDelta[] deltas = context.getDeltas(traversals);
+			IDiffNode[] deltas = context.getDiffs(traversals);
 			if (deltas.length > 0) {
 				boolean include = false;
 				for (int j = 0; j < deltas.length; j++) {
-					IDelta delta = deltas[j];
-					if (delta instanceof IThreeWayDelta) {
-						IThreeWayDelta twd = (IThreeWayDelta) delta;
+					IDiffNode delta = deltas[j];
+					if (delta instanceof IThreeWayDiff) {
+						IThreeWayDiff twd = (IThreeWayDiff) delta;
 						if (includeDirection(twd.getDirection())) {
 							include = true;
 							break;

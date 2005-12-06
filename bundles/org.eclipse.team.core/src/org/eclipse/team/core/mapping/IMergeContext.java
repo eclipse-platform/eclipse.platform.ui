@@ -12,7 +12,7 @@ package org.eclipse.team.core.mapping;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.delta.*;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.synchronize.*;
 
 /**
@@ -51,7 +51,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * being merged with local content (i.e. the file exists both locally and
 	 * remotely) with the exception that it can also be used to keep local
 	 * changes to a file that has been deleted. See the
-	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method for more
+	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method for more
 	 * details. For other cases in which either the local file or remote file
 	 * does not exist, one of the <code>merge</code> methods should be used.
 	 * This is done to accommodate repositories that have special handling for
@@ -145,58 +145,58 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * conflicts are dealt with before the merger is invoked.
 	 * <p>
 	 * The deltas provided to this method should be those obtained from the tree 
-	 * ({@link ISynchronizationContext#getDeltaTree()})
+	 * ({@link ISynchronizationContext#getDiffTree()})
 	 * of this context. Any resource changes triggered by this merge will be
 	 * reported through the resource delta mechanism and the change notification
 	 * mechanisms of the delta tree associated with this context.
 	 * <p>
 	 * For two-way merging, clients can either accept changes using the
-	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method or reject
+	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method or reject
 	 * them using {@link #markAsMerged(IFile, boolean, IProgressMonitor) }.
 	 * Three-way changes are a bit more complicated. The following list
 	 * summarizes how particular remote file changes can be handled. The delta
 	 * kind and flags mentioned in the descriptions are obtained the remote
-	 * change (see {@link IThreeWayDelta#getRemoteChange()}), whereas conflicts
+	 * change (see {@link IThreeWayDiff#getRemoteChange()}), whereas conflicts
 	 * are indicated by the three-way delta itself.
 	 * <ul>
 	 * 
-	 * <li> When the delta kind is {@link IDelta#ADDED} and the delta is
-	 * also a move (i.e. the {@link ITwoWayDelta#MOVED_FROM} is set). The merge
+	 * <li> When the delta kind is {@link IDiffNode#ADDED} and the delta is
+	 * also a move (i.e. the {@link ITwoWayDiff#MOVED_FROM} is set). The merge
 	 * can either use the
-	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method to accept
+	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method to accept
 	 * the rename or perform an
 	 * {@link IFile#move(IPath, boolean, boolean, IProgressMonitor) } where the
-	 * source file is obtained using {@link ITwoWayDelta#getMovedFromPath()} and
-	 * the destination is the path of the delta ({@link IDelta#getPath()}).
+	 * source file is obtained using {@link ITwoWayDiff#getMovedFromPath()} and
+	 * the destination is the path of the delta ({@link IDiffNode#getPath()}).
 	 * This later approach is helpful in the case where the local file and
 	 * remote file both contain content changes (i.e. the file can be moved by
 	 * the model and then the contents can be merged by the model). </li>
 	 * 
-	 * <li> When the delta kind is {@link IDelta#REMOVED} and the delta is
-	 * also a move (i.e. the {@link ITwoWayDelta#MOVED_TO} is set). The merge
+	 * <li> When the delta kind is {@link IDiffNode#REMOVED} and the delta is
+	 * also a move (i.e. the {@link ITwoWayDiff#MOVED_TO} is set). The merge
 	 * can either use the
-	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method to accept
+	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method to accept
 	 * the rename or perform an
 	 * {@link IFile#move(IPath, boolean, boolean, IProgressMonitor) } where the
-	 * source file is obtained using {@link IDelta#getPath()} and the
-	 * destination is obtained from {@link ITwoWayDelta#getMovedToPath()}. This
+	 * source file is obtained using {@link IDiffNode#getPath()} and the
+	 * destination is obtained from {@link ITwoWayDiff#getMovedToPath()}. This
 	 * later approach is helpful in the case where the local file and remote
 	 * file both contain content changes (i.e. the file can be moved by the
 	 * model and then the contents can be merged by the model). </li>
 	 * 
-	 * <li> When the delta kind is {@link IDelta#ADDED} and it is not part
+	 * <li> When the delta kind is {@link IDiffNode#ADDED} and it is not part
 	 * of a move, the merger must use the
-	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method to accept
+	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method to accept
 	 * this change. If there is a conflicting addition, the force flag can be
 	 * set to override the local change. If the model wishes to keep the local
 	 * changes, they can overwrite the file after merging it. Models should
 	 * consult the flags to see if the remote change is a rename 
-	 * ({@link ITwoWayDelta#MOVED_FROM}).
+	 * ({@link ITwoWayDiff#MOVED_FROM}).
 	 * </li>
 	 * 
-	 * <li>When the delta kind is {@link IDelta#REMOVED} and it is not part
+	 * <li>When the delta kind is {@link IDiffNode#REMOVED} and it is not part
 	 * of a move, the merger can use the
-	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method but could
+	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method but could
 	 * also perform the delete manually using any of the {@link IFile} delete
 	 * methods. In the case where there are local changes to the file being
 	 * deleted, the model may either choose to merge using the force flag (thus
@@ -204,18 +204,18 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * {@link #markAsMerged(IFile, boolean, IProgressMonitor) } on the file
 	 * which will convert the incoming deletion to an outgoing addition.</li>
 	 * 
-	 * <li>When the delta kind is {@link IDelta#CHANGED} and there is no
+	 * <li>When the delta kind is {@link IDiffNode#CHANGED} and there is no
 	 * conflict, the model is advised to use the
-	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method to merge
+	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method to merge
 	 * these changes as this is the most efficient means to do so. However, the
 	 * model can choose to perform the merge themselves and then invoke
 	 * {@link #markAsMerged(IFile, boolean, IProgressMonitor) } with the
 	 * <code>inSyncHint</code> set to <code>true</code> but this will be
 	 * less efficient. </li>
 	 * 
-	 * <li>When the delta kind is {@link IDelta#CHANGED} and there is a
+	 * <li>When the delta kind is {@link IDiffNode#CHANGED} and there is a
 	 * conflict, the model can use the
-	 * {@link #merge(IDelta[], boolean, IProgressMonitor) } method to merge
+	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method to merge
 	 * these changes. If the force flag is not set, an auto-merge is attempted
 	 * using an appropriate {@link IStreamMerger}. If the force flag is set,
 	 * the local changes are discarded. The model can choose to attempt the
@@ -227,10 +227,10 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * 
 	 * TODO: need to talk about ITwoWayDelta CONTENT and REPLACED
 	 * 
-	 * @see IDeltaTree#addDeltaChangeListener(org.eclipse.team.core.delta.ISyncDeltaChangeListener)
+	 * @see IDiffTree#addDiffChangeListener(org.eclipse.team.core.diff.ISyncDeltaChangeListener)
 	 * @see org.eclipse.core.resources.IWorkspace#addResourceChangeListener(IResourceChangeListener)
 	 * 
-	 * @param deltas the deltas to be merged
+	 * @param diffs the differences to be merged
 	 * @param force ignore any local changes when performing the merge.
 	 * @param monitor a progress monitor
 	 * @return a status indicating success or failure. A code of
@@ -238,7 +238,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 *         contain non-mergable conflicts and must be merged manually.
 	 * @throws CoreException if an error occurs
 	 */
-	public IStatus merge(IDelta[] deltas, boolean force,
+	public IStatus merge(IDiffNode[] diffs, boolean force,
 			IProgressMonitor monitor) throws CoreException;
 
 	/**

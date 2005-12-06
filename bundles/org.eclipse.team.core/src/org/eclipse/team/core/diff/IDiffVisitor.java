@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.delta;
+package org.eclipse.team.core.diff;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -46,11 +46,11 @@ import org.eclipse.core.runtime.CoreException;
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/Team team.
  * </p>
- * @see IDelta#accept(IDeltaVisitor)
+ * @see IDiffNode#accept(IDeltaVisitor)
  * 
  * @since 3.2
  */
-public interface IDeltaVisitor {
+public interface IDiffVisitor {
 
 	/** 
 	 * Visits the given delta.
@@ -59,5 +59,5 @@ public interface IDeltaVisitor {
 	 *		be visited; <code>false</code> if they should be skipped.
 	 * @exception CoreException if the visit fails for some reason.
 	 */
-	public boolean visit(IDelta delta) throws CoreException;
+	public boolean visit(IDiffNode delta) throws CoreException;
 }
