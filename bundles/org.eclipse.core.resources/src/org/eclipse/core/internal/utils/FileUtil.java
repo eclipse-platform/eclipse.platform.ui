@@ -159,6 +159,23 @@ public class FileUtil {
 		}
 	}
 
+	/**
+	 * Converts a URI to an IPath.  Returns null if the URI cannot be represented
+	 * as an IPath.
+	 * <p>
+	 * Note this method differs from URIUtil in its handling of relative URIs
+	 * as being relative to path variables.
+	 */
+	public static IPath toPath(URI uri) {
+		if (uri == null)
+			return null;
+		final String scheme = uri.getScheme();
+		// null scheme represents path variable
+		if (scheme == null || EFS.SCHEME_FILE.equals(scheme))
+			return new Path(uri.getSchemeSpecificPart());
+		return null;
+	}
+	
 	public static final void transferStreams(InputStream source, OutputStream destination, String path, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {

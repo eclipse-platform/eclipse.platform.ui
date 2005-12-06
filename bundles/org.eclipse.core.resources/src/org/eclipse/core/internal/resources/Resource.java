@@ -973,7 +973,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 */
 	public IPath getRawLocation() {
 		if (isLinked())
-			return ((Project) getProject()).internalGetDescription().getLinkLocation(getProjectRelativePath());
+			return FileUtil.toPath(((Project) getProject()).internalGetDescription().getLinkLocationURI(getProjectRelativePath()));
 		return getLocation();
 	}
 

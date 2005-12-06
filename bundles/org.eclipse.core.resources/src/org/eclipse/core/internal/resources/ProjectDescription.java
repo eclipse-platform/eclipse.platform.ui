@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.events.BuildCommand;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
@@ -155,14 +156,6 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * Returns the link location for the given resource name. Returns null if
 	 * no such link exists.
 	 */
-	public IPath getLinkLocation(IPath aPath) {
-		return URIUtil.toPath(getLinkLocationURI(aPath));
-	}
-
-	/**
-	 * Returns the link location for the given resource name. Returns null if
-	 * no such link exists.
-	 */
 	public URI getLinkLocationURI(IPath aPath) {
 		if (linkDescriptions == null)
 			return null;
@@ -184,7 +177,9 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * @deprecated
 	 */
 	public IPath getLocation() {
-		return URIUtil.toPath(location);
+		if (location == null)
+			return null;
+		return FileUtil.toPath(location);
 	}
 
 	/* (non-Javadoc)

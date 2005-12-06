@@ -15,9 +15,9 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.localstore.SafeFileOutputStream;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
@@ -100,7 +100,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 	 */
 	private void writeLocation(URI location, XMLWriter writer) {
 		if (EFS.SCHEME_FILE.equals(location.getScheme())) {
-			writer.printSimpleTag(LOCATION, URIUtil.toPath(location).toPortableString());
+			writer.printSimpleTag(LOCATION, FileUtil.toPath(location).toPortableString());
 		} else {
 			writer.printSimpleTag(LOCATION_URI, location.toASCIIString());
 		}
