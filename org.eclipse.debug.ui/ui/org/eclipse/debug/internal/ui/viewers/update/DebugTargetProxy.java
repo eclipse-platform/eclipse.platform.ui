@@ -24,7 +24,10 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
         Object source = event.getSource();
         if (source instanceof IDebugElement) {
             IDebugTarget debugTarget = ((IDebugElement) source).getDebugTarget();
-            return debugTarget.equals(fDebugTarget);
+            // an expression can return null for debug target
+            if (debugTarget != null) {
+            	return debugTarget.equals(fDebugTarget);
+            }
         }
         return false;
     }
