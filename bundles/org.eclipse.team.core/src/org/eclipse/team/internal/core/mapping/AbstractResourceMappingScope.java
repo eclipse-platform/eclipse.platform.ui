@@ -86,7 +86,9 @@ public abstract class AbstractResourceMappingScope implements IResourceMappingSc
 		ResourceMapping[] mappings = getMappings();
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
-			result.add(mapping.getModelProvider());
+			ModelProvider modelProvider = mapping.getModelProvider();
+			if (modelProvider != null)
+				result.add(modelProvider);
 		}
 		return (ModelProvider[]) result.toArray(new ModelProvider[result.size()]);
 	}

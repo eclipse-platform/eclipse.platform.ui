@@ -103,7 +103,7 @@ public abstract class ModelProviderOperation extends TeamOperation {
 	 * an automatic merge is attempted. After this, a manual merge (i.e. with user
 	 * intervention) is attempted on any mappings that could not be merged
 	 * automatically.
-	 * @param provider the model provider
+	 * @param provider the model provider IDocumentProviderExtension5 
 	 * @param mappings the mappings to be merged
 	 * @param monitor a progress monitor
 	 * @throws CoreException
@@ -128,9 +128,11 @@ public abstract class ModelProviderOperation extends TeamOperation {
 	 * it, a default merger that performs the merge at the file level
 	 * is returned.
 	 * @param provider the model provider of the elements to be merged
+	 * (must not be <code>null</code>)
 	 * @return a merger
 	 */
 	protected IResourceMappingMerger getMerger(ModelProvider provider) {
+		Assert.isNotNull(provider);
 		Object o = provider.getAdapter(IResourceMappingMerger.class);
 		if (o instanceof IResourceMappingMerger) {
 			return (IResourceMappingMerger) o;	
