@@ -30,6 +30,7 @@ public class CVSTestSetup extends TestSetup {
 	public static final int COMPRESSION_LEVEL;
 	public static final boolean FAIL_IF_EXCEPTION_LOGGED;
     public static final boolean RECORD_PROTOCOL_TRAFFIC;
+    public static final boolean ENSURE_SEQUENTIAL_ACCESS;
 	
 	public static CVSRepositoryLocation repository;
 	public static CVSTestLogListener logListener;
@@ -46,6 +47,7 @@ public class CVSTestSetup extends TestSetup {
 		COMPRESSION_LEVEL = Integer.parseInt(System.getProperty("eclipse.cvs.compressionLevel", "0"));
 		FAIL_IF_EXCEPTION_LOGGED = Boolean.valueOf(System.getProperty("eclipse.cvs.failLog", "true")).booleanValue();
         RECORD_PROTOCOL_TRAFFIC = Boolean.valueOf(System.getProperty("eclipse.cvs.recordProtocolTraffic", "false")).booleanValue();
+        ENSURE_SEQUENTIAL_ACCESS = Boolean.valueOf(System.getProperty("eclipse.cvs.sequentialAccess", "false")).booleanValue();
 	}
 
 	public static void loadProperties() {

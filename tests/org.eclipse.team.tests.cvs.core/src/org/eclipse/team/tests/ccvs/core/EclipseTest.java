@@ -935,7 +935,8 @@ public class EclipseTest extends ResourceTest {
 	}
     
     protected void setUp() throws Exception {
-        obtainCVSServerLock();
+    	if (CVSTestSetup.ENSURE_SEQUENTIAL_ACCESS)
+    		obtainCVSServerLock();
         super.setUp();
     }
 
@@ -943,7 +944,8 @@ public class EclipseTest extends ResourceTest {
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-        releaseCVSServerLock();
+		if (CVSTestSetup.ENSURE_SEQUENTIAL_ACCESS)
+			releaseCVSServerLock();
 		super.tearDown();
 		if (CVSTestSetup.logListener != null) {
 			try {
