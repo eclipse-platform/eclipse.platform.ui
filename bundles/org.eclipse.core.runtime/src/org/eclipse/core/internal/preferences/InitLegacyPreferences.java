@@ -38,11 +38,11 @@ public class InitLegacyPreferences implements ILegacyPreferences {
 		if (plugin == null && InternalPlatform.getDefault().getBundle(org.eclipse.core.internal.runtime.CompatibilityHelper.PI_RUNTIME_COMPATIBILITY) != null)
 			plugin = Platform.getPlugin(name);
 		if (plugin == null) {
-			if (InternalPlatform.DEBUG)
+			if (InternalPlatform.DEBUG_PLUGIN_PREFERENCES)
 				InternalPlatform.message("No plug-in object available to set plug-in default preference overrides for:" + name); //$NON-NLS-1$
 			return;
 		}
-		if (InternalPlatform.DEBUG)
+		if (InternalPlatform.DEBUG_PLUGIN_PREFERENCES)
 			InternalPlatform.message("Applying plug-in default preference overrides for plug-in: " + plugin.getDescriptor().getUniqueIdentifier()); //$NON-NLS-1$
 
 		plugin.internalInitializeDefaultPluginPreferences();
