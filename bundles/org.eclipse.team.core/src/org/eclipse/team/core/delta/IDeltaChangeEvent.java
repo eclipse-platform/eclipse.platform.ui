@@ -18,6 +18,12 @@ import org.eclipse.core.runtime.IPath;
  * <p>
  * This interface is not intended to be implemented by clients.
  * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
  * @since 3.2
  */
 public interface IDeltaChangeEvent {
@@ -28,9 +34,21 @@ public interface IDeltaChangeEvent {
 	 */
 	public IDeltaTree getTree();
 	
+	/**
+	 * Returns the delta nodes that have been added to the delta tree.
+	 * @return the delta nodes that have been added to the delta tree
+	 */
 	public IDelta[] getAdditions();
 	
+	/**
+	 * Return the paths of the delta nodes that have been removed from the delta tree.
+	 * @return the paths of the delta nodes that have been removed from the delta tree
+	 */
 	public IPath[] getRemovals();
 	
+	/**
+	 * Return the delta nodes contained in the delta tree that have changed in some way.
+	 * @return the delta nodes contained in the delta tree that have changed
+	 */
 	public IDelta[] getChanges();
 }

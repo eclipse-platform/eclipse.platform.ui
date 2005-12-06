@@ -232,18 +232,9 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeListener#syncDeltaTreeReset(org.eclipse.team.core.delta.ISyncDeltaTree, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void syncDeltaTreeReset(IDeltaTree tree, IProgressMonitor monitor) {
-		// Nothing can be done at this level (i.e. content provider).
-		// The controller at the viewer level needs to handle this.
-		refresh();
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeListener#syncDeltaTreeChanged(org.eclipse.team.core.delta.ISyncDeltaChangeEvent, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void syncDeltaTreeChanged(IDeltaChangeEvent event, IProgressMonitor monitor) {
+	public void deltaChanged(IDeltaChangeEvent event, IProgressMonitor monitor) {
 		refresh();
 	}
 

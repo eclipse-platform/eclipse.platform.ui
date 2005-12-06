@@ -9,20 +9,23 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.core.delta;
-
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * A delta describes differences between different copies of the
- * same file system. Typically a synchronization is either two-way or three-way.
+ * A delta describes differences between multiple states of the same tree
+ * based model. 
  * 
  * <p>
  * This interface is not intended to be implemented by clients.
- * Clients that need to create deltas should instead use or subclass
- * {@link AbstractDelta}
  * </p>
  * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ *  
  * @see ITwoWayDelta
  * @see IThreeWayDelta
  * @since 3.2
@@ -78,23 +81,21 @@ public interface IDelta {
 	public static final int ALL = CHANGED | ADDED | REMOVED;
 	
 	/**
-	 * Returns the full, absolute path of the resource with respect to the
-	 * workspace root to which this sync node is associated .
+	 * Returns the full, absolute path of the delta with respect to the
+	 * model root.
 	 * <p>
 	 * Note: the returned path never has a trailing separator.
 	 * </p>
 	 * 
-	 * @return the full, absolute path of this resource delta
-	 * @see IResource#getFullPath()
-	 * @see #getProjectRelativePath()
+	 * @return the full, absolute path of this delta
 	 */
 	public IPath getPath();
 
 	/**
-	 * Returns the kind of this resource delta. Normally, one of
+	 * Returns the kind of this delta. Normally, one of
 	 * <code>ADDED</code>, <code>REMOVED</code>, <code>CHANGED</code>.
 	 * 
-	 * @return the kind of this resource delta
+	 * @return the kind of this delta
 	 * @see IDelta#ADDED
 	 * @see IDelta#REMOVED
 	 * @see IDelta#CHANGED

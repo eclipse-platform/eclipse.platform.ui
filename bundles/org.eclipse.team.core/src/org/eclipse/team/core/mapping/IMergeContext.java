@@ -227,7 +227,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * 
 	 * TODO: need to talk about ITwoWayDelta CONTENT and REPLACED
 	 * 
-	 * @see IDeltaTree#addSyncDeltaChangeListener(org.eclipse.team.core.delta.ISyncDeltaChangeListener)
+	 * @see IDeltaTree#addDeltaChangeListener(org.eclipse.team.core.delta.ISyncDeltaChangeListener)
 	 * @see org.eclipse.core.resources.IWorkspace#addResourceChangeListener(IResourceChangeListener)
 	 * 
 	 * @param deltas the deltas to be merged

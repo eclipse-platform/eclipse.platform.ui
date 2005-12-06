@@ -15,7 +15,18 @@ import org.eclipse.team.core.delta.IThreeWayDelta;
 import org.eclipse.team.core.delta.ITwoWayDelta;
 
 /**
- * Class for {@link IThreeWayDelta}.
+ * Implementation of {@link IThreeWayDelta}.
+ * <p>
+ * This class is not intended to be subclasses by clients.
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ * 
+ * @since 3.2
  */
 public class ThreeWayDelta extends AbstractDelta implements IThreeWayDelta {
 
@@ -23,6 +34,13 @@ public class ThreeWayDelta extends AbstractDelta implements IThreeWayDelta {
 	private final ITwoWayDelta remoteChange;
 	private final int conflictHint;
 
+	/**
+	 * Create a three-way delta from the two changes
+	 * @param path the path of the model object that has changed
+	 * @param localChange the local change in the model object or <code>null</code> if there is no local change
+	 * @param remoteChange the remote change in the model object or <code>null</code> if there is no local change
+	 * @param conflictHint
+	 */
 	public ThreeWayDelta(IPath path, ITwoWayDelta localChange, ITwoWayDelta remoteChange, int conflictHint) {
 		super(path, calculateKind(localChange, remoteChange));
 		this.localChange = localChange;

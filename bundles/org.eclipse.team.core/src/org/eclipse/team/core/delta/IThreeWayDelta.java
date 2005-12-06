@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.core.delta;
 
+import org.eclipse.team.internal.core.delta.ThreeWayDelta;
+
 
 /**
  * A three-way delta that describe the synchronization state between
@@ -21,10 +23,15 @@ package org.eclipse.team.core.delta;
  * the before state of both the local and remote changes are the same.
  * <p>
  * This interface is not intended to be implemented by clients.
- * Clients that need to create deltas should instead use or subclass
- * {@link AbstractDelta}
+ * Clients that need to create deltas should instead use
+ * {@link ThreeWayDelta}
  * </p>
- * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p> 
  * @since 3.2
  */
 public interface IThreeWayDelta extends IDelta {

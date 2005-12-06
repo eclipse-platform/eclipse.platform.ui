@@ -19,6 +19,16 @@ import org.eclipse.team.internal.core.Policy;
 
 /**
  * Implementation of {@link IDeltaTree}.
+ * <p>
+ * This class is not intended to be subclassed by clients
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ * 
+ * @since 3.2
  */
 public class DeltaTree implements IDeltaTree {
 	
@@ -28,12 +38,12 @@ public class DeltaTree implements IDeltaTree {
 	
 	private ILock lock = Platform.getJobManager().newLock();
 	
-	DeltaChangeEvent changes;
+	private DeltaChangeEvent changes;
 
-	protected boolean lockedForModification;
+	private  boolean lockedForModification;
 
 	/**
-	 * Create a sync delta set
+	 * Create a delta set.
 	 */
 	public DeltaTree() {
 		resetChanges();
@@ -42,14 +52,14 @@ public class DeltaTree implements IDeltaTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ISyncDeltaTree#addSyncDeltaChangeListener(org.eclipse.team.core.synchronize.ISyncDeltaChangeListener)
 	 */
-	public void addSyncDeltaChangeListener(IDeltaChangeListener listener) {
+	public void addDeltaChangeListener(IDeltaChangeListener listener) {
 		listeners.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ISyncDeltaTree#removeSyncDeltaChangeListener(org.eclipse.team.core.synchronize.ISyncDeltaChangeListener)
 	 */
-	public void removeSyncDeltaChangeListener(IDeltaChangeListener listener) {
+	public void removeDeltaChangeListener(IDeltaChangeListener listener) {
 		listeners.remove(listener);
 	}
 
@@ -84,6 +94,12 @@ public class DeltaTree implements IDeltaTree {
 		return pathTree.getChildren(path);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.delta.ISyncDeltaTree#isEmpty()
+	 */
+	public boolean isEmpty() {
+		return pathTree.isEmpty();
+	}
 
 	/**
 	 * Add the given {@link IDelta} to the tree. A change event will
@@ -116,7 +132,18 @@ public class DeltaTree implements IDeltaTree {
 	}
 
 	/**
-	 * Remove the given local resource from the set.
+	 * Remove the given local resource from the set. A change event will
+	 * be generated unless the call to this method is nested in between calls
+	 * to <code>beginInput()</code> and <code>endInput(IProgressMonitor)</code>
+	 * in which case the event for this removal and any other sync set
+	 * change will be fired in a batched event when <code>endInput</code>
+	 * is invoked.
+	 * <p>
+	 * Invoking this method outside of the above mentioned block will result
+	 * in the <code>endInput(IProgressMonitor)</code> being invoked with a null
+	 * progress monitor. If responsiveness is required, the client should always
+	 * nest sync set modifications within <code>beginInput/endInput</code>.
+	 * </p>
 	 * 
 	 * @param resource the local resource to remove
 	 */
@@ -206,11 +233,7 @@ public class DeltaTree implements IDeltaTree {
 				public void run() throws Exception {
 					try {
 						lockedForModification = true;
-						if (event.isReset()) {
-							listener.syncDeltaTreeReset(DeltaTree.this, Policy.subMonitorFor(monitor, 100));
-						} else {
-							listener.syncDeltaTreeChanged(event, Policy.subMonitorFor(monitor, 100));
-						}
+						listener.deltaChanged(event, Policy.subMonitorFor(monitor, 100));
 					} finally {
 						lockedForModification = false;
 					}
@@ -255,13 +278,6 @@ public class DeltaTree implements IDeltaTree {
 	
 	private void internalReset() {
 		changes.reset();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.delta.ISyncDeltaTree#isEmpty()
-	 */
-	public boolean isEmpty() {
-		return pathTree.isEmpty();
 	}
 
 }

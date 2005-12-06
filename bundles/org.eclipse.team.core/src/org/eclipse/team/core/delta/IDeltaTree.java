@@ -14,11 +14,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * A sync delta tree provides access to a tree of {@link IDelta} instances.
+ * A delta tree provides access to a tree of {@link IDelta} instances.
  * For efficiency reasons, the tree only provides deltas for paths that represent a change.
- * Paths that do not contain a delta represent nodes for which the files or folders
- * being compared are considered in-sync.
- * 
+ * Paths that do not contain a delta represent but are returned from the tree will
+ * contain child paths in the set.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
  * @since 3.2
  */
 public interface IDeltaTree {
@@ -30,7 +35,7 @@ public interface IDeltaTree {
 	 * 
 	 * @param listener the listener to be added
 	 */
-	public void addSyncDeltaChangeListener(IDeltaChangeListener listener);
+	public void addDeltaChangeListener(IDeltaChangeListener listener);
 
 	/**
 	 * Remove the listener from the tree. Removing a listener that is not
@@ -38,7 +43,7 @@ public interface IDeltaTree {
 	 * 
 	 * @param listener the listener to be removed
 	 */
-	public void removeSyncDeltaChangeListener(IDeltaChangeListener listener);
+	public void removeDeltaChangeListener(IDeltaChangeListener listener);
 
 	/**
 	 * Accepts the given visitor. The only kinds of deltas visited are

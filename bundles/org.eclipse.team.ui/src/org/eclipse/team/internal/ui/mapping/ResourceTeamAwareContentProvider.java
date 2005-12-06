@@ -98,7 +98,7 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 		// TODO: must explicilty register for sync change events (perhaps this should be a flag of some sort)
 		org.eclipse.team.core.mapping.ISynchronizationContext context = getContext();
 		if (context != null)
-			context.getDeltaTree().addSyncDeltaChangeListener(this);
+			context.getDeltaTree().addDeltaChangeListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -108,7 +108,7 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 		provider.dispose();
 		ISynchronizationContext context = getContext();
 		if (context != null)
-			context.getDeltaTree().removeSyncDeltaChangeListener(this);
+			context.getDeltaTree().removeDeltaChangeListener(this);
 		super.dispose();
 	}
 	

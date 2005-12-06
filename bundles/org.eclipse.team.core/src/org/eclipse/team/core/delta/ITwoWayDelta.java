@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.internal.core.delta.AbstractDelta;
+import org.eclipse.team.internal.core.delta.TwoWayDelta;
 
 /**
  * A two-way delta represents the changes between two file resource trees.
@@ -25,9 +25,14 @@ import org.eclipse.team.internal.core.delta.AbstractDelta;
  * <p>
  * This interface is not intended to be implemented by clients.
  * Clients that need to create deltas should instead use or subclass
- * {@link AbstractDelta}
+ * {@link TwoWayDelta}
  * </p>
- * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
  * @see IDeltaTree
  * 
  * @since 3.2

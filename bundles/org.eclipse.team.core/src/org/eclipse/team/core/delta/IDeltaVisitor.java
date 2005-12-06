@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.CoreException;
  * <p> 
  * Usage:
  * <pre>
- * class Visitor implements ISyncDeltaVisitor {
- *     public boolean visit(ISyncDelta delta) {
+ * class Visitor implements IDeltaVisitor {
+ *     public boolean visit(IDelta delta) {
  *         switch (delta.getKind()) {
  *         case IResourceDelta.ADDED :
  *             // handle added resource
@@ -33,15 +33,20 @@ import org.eclipse.core.runtime.CoreException;
  *     return true;
  *     }
  * }
- * ISyncDelta rootDelta = ...;
+ * IDelta rootDelta = ...;
  * rootDelta.accept(new Visitor());
  * </pre>
  * </p>
  * <p>
  * Clients may implement this interface.
  * </p>
- *
- * @see IDelta#accept(ISyncDeltaVisitor)
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ * @see IDelta#accept(IDeltaVisitor)
  * 
  * @since 3.2
  */
