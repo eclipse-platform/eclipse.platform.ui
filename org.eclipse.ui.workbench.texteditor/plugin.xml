@@ -585,7 +585,7 @@
       <key
             locale="zh"
             commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
-   	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M3+/"/>
       <key
