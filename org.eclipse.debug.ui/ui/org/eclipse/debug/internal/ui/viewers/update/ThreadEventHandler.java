@@ -146,7 +146,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 		} catch (DebugException e) {
 		}
     	if (isEqual(frame, prev)) {
-    		node = node.addNode(thread, flags | IModelDelta.NOCHANGE); // TODO: expand?
+    		node = node.addNode(thread, flags | IModelDelta.CHANGED | IModelDelta.EXPAND);
     	} else {
 			node = node.addNode(thread, flags | IModelDelta.CHANGED | IModelDelta.CONTENT | IModelDelta.EXPAND);
     	}
