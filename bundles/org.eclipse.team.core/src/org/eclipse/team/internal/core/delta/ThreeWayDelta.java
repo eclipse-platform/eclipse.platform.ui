@@ -31,8 +31,12 @@ public class ThreeWayDelta extends AbstractDelta implements IThreeWayDelta {
 	}
 
 	private static int calculateKind(ITwoWayDelta localChange, ITwoWayDelta remoteChange) {
-		int localKind = localChange.getKind();
-		int remoteKind = remoteChange.getKind();
+		int localKind = NO_CHANGE;
+		if (localChange != null)
+			localKind = localChange.getKind();
+		int remoteKind = NO_CHANGE;
+		if (remoteChange != null)
+			remoteKind = remoteChange.getKind();
 		if (localKind == NO_CHANGE || localKind == remoteKind)
 			return remoteKind;
 		if (remoteKind == NO_CHANGE)
@@ -62,10 +66,10 @@ public class ThreeWayDelta extends AbstractDelta implements IThreeWayDelta {
 			return 0;
 		}
 		int direction = 0;
-		if (localChange.getKind() != NO_CHANGE) {
+		if (localChange != null && localChange.getKind() != NO_CHANGE) {
 			direction |= OUTGOING;
 		}
-		if (remoteChange.getKind() != NO_CHANGE) {
+		if (remoteChange != null && remoteChange.getKind() != NO_CHANGE) {
 			direction |= INCOMING;
 		}
 		return direction;
