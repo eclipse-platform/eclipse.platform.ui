@@ -12,18 +12,28 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
-class MarkerLabelProvider extends LabelProvider implements ITableLabelProvider {
+class MarkerLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider {
 
     IField[] properties;
 
+    /**
+     * Create a new instance of the receiver.
+     * @param properties
+     */
     public MarkerLabelProvider(IField[] properties) {
         this.properties = properties;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+     */
     public Image getColumnImage(Object element, int columnIndex) {
         if (element == null || !(element instanceof IMarker)
                 || properties == null || columnIndex >= properties.length)
@@ -32,11 +42,23 @@ class MarkerLabelProvider extends LabelProvider implements ITableLabelProvider {
         return properties[columnIndex].getImage(element);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+     */
     public String getColumnText(Object element, int columnIndex) {
         if (element == null || !(element instanceof IMarker)
                 || properties == null || columnIndex >= properties.length)
             return ""; //$NON-NLS-1$
 
         return properties[columnIndex].getValue(element);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
+     */
+    public Font getFont(Object element) {
+    	if (((MarkerNode) element).isStale())
+    		return JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT);
+    	return null;
     }
 }

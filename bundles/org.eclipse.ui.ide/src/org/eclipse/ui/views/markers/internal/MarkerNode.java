@@ -36,11 +36,23 @@ public abstract class MarkerNode {
 	 * @return boolean
 	 */
 	public abstract boolean isConcrete();
+	
+	/**
+	 * Return whether or not this is a stale node
+	 * @return boolean
+	 */
+	public abstract boolean isStale();
 
 	/**
 	 * Return the description of the receiver.
 	 * @return String
 	 */
 	public abstract String getDescription() ;
+
+	/**
+	 * Remove the child from the receiver.
+	 * @param marker
+	 */
+	public abstract void removeChild(MarkerNode marker);
 
 }

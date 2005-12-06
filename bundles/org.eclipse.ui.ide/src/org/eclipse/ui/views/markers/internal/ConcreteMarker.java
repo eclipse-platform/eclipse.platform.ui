@@ -58,6 +58,8 @@ public class ConcreteMarker extends MarkerNode{
 
 	private String subCategory = Util.EMPTY_STRING;
 
+	private boolean stale;
+
     public ConcreteMarker(IMarker toCopy) {
         marker = toCopy;
         refresh();
@@ -247,5 +249,28 @@ public class ConcreteMarker extends MarkerNode{
 	 */
 	public String getLocationString() {
 		return locationString;
+	}
+
+	/**
+	 * Mark the receiver as stale.
+	 */
+	public void markStale() {
+		stale = true;
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerNode#isStale()
+	 */
+	public boolean isStale() {
+		return stale;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerNode#removeChild(org.eclipse.ui.views.markers.internal.MarkerNode)
+	 */
+	public void removeChild(MarkerNode marker) {
+		//Do nothing. There are no children.
+		
 	}
 }
