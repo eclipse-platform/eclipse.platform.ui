@@ -89,22 +89,26 @@ public class KnownRepositories implements INodeChangeListener, IPreferenceChange
 
 	/**
 	 * Add the repository to the receiver's list of known repositories. Doing this will enable
-	 * password caching accross platform invokations.
+	 * password caching across platform invocations.
 	 */
 	public ICVSRepositoryLocation addRepository(final ICVSRepositoryLocation repository, boolean broadcast) {
-		// Check the cache for an equivalent instance and if there is one, just update the cache
-		CVSRepositoryLocation existingLocation = internalGetRepository(repository.getLocation(false));
-		if (existingLocation == null) {
-			// Store the location
-			store((CVSRepositoryLocation)repository);
-			existingLocation = (CVSRepositoryLocation)repository;
+		CVSRepositoryLocation existingLocation;
+		synchronized (this) {
+			// Check the cache for an equivalent instance and if there is one, just update the cache
+			existingLocation = internalGetRepository(repository.getLocation(false));
+			if (existingLocation == null) {
+				// Store the location
+				store((CVSRepositoryLocation)repository);
+				existingLocation = (CVSRepositoryLocation)repository;
+			}
 		}
 		// Notify no matter what since it may not have been broadcast before
 		if (broadcast) {
+			final CVSRepositoryLocation location = existingLocation;
 			((CVSRepositoryLocation)repository).updateCache();
 			fireNotification(new Notification() {
 				public void notify(ICVSListener listener) {
-					listener.repositoryAdded(repository);
+					listener.repositoryAdded(location);
 				}
 			});
 		}
@@ -117,8 +121,12 @@ public class KnownRepositories implements INodeChangeListener, IPreferenceChange
 	 * Removes any cached information about the repository such as a remembered password.
 	 */
 	public void disposeRepository(final ICVSRepositoryLocation repository) {
-		((CVSRepositoryLocation)repository).dispose();
-		if (getRepositoriesMap().remove(repository.getLocation(false)) != null) {
+		Object removed;
+		synchronized (this) {
+			((CVSRepositoryLocation)repository).dispose();
+			removed = getRepositoriesMap().remove(repository.getLocation(false));
+		}
+		if (removed != null) {
 			fireNotification(new Notification() {
 				public void notify(ICVSListener listener) {
 					listener.repositoryRemoved(repository);
@@ -129,16 +137,16 @@ public class KnownRepositories implements INodeChangeListener, IPreferenceChange
 
 	/**
 	 * Answer whether the provided repository location is known by the provider or not.
-	 * The location string corresponds to the Strin returned by ICVSRepositoryLocation#getLocation()
+	 * The location string corresponds to the String returned by ICVSRepositoryLocation#getLocation()
 	 */
-	public boolean isKnownRepository(String location) {
+	public synchronized boolean isKnownRepository(String location) {
 		return internalGetRepository(location) != null;
 	}
 
 	/** 
 	 * Return a list of the know repository locations
 	 */
-	public ICVSRepositoryLocation[] getRepositories() {
+	public synchronized ICVSRepositoryLocation[] getRepositories() {
 		return (ICVSRepositoryLocation[])getRepositoriesMap().values().toArray(new ICVSRepositoryLocation[getRepositoriesMap().size()]);
 	}
 	
@@ -164,7 +172,7 @@ public class KnownRepositories implements INodeChangeListener, IPreferenceChange
 	 * WARNING: Providing the password as part of the String will result in the password being part
 	 * of the location permanently. This means that it cannot be modified by the authenticator. 
 	 */
-	public ICVSRepositoryLocation getRepository(String location) throws CVSException {
+	public synchronized ICVSRepositoryLocation getRepository(String location) throws CVSException {
 		ICVSRepositoryLocation repository = internalGetRepository(location);
 		if (repository == null) {
 			repository = CVSRepositoryLocation.fromString(location);
