@@ -17,7 +17,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.core.ListenerList;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -29,7 +28,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 public abstract class SynchronizeModelElement extends DiffNode implements IAdaptable, ISynchronizeModelElement {
 
 	/*
-	 * Internal flags bits for stroing properties in the flags variable
+	 * Internal flags bits for storing properties in the flags variable
 	 */
 	private static final int BUSY_FLAG = 0x01;
 	private static final int PROPAGATED_CONFLICT_FLAG = 0x02;
@@ -58,7 +57,7 @@ public abstract class SynchronizeModelElement extends DiffNode implements IAdapt
 
 	public synchronized void addPropertyChangeListener(IPropertyChangeListener listener) {
 		if (listeners == null) {
-			listeners = new ListenerList();
+			listeners = new ListenerList(ListenerList.IDENTITY);
 		}
 		listeners.add(listener);
 	}

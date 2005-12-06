@@ -13,23 +13,16 @@ package org.eclipse.team.internal.ui.synchronize;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.actions.DefaultSynchronizePageActions;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
-import org.eclipse.team.ui.synchronize.ISynchronizePage;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
 
@@ -110,8 +103,8 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
     
 	private ISynchronizeParticipant participant;
 	private ISynchronizePageSite site;
-	private ListenerList propertyChangeListeners = new ListenerList();
-	private ListenerList actionContributions = new ListenerList();
+	private ListenerList propertyChangeListeners = new ListenerList(ListenerList.IDENTITY);
+	private ListenerList actionContributions = new ListenerList(ListenerList.IDENTITY);
 	private Map properties = new HashMap();
 	private int actionState = UNINITIALIZED;
 	private ISynchronizePage page;

@@ -15,12 +15,9 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.util.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IMemento;
 
@@ -43,7 +40,7 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 	/*
 	 * Scope change listeners
 	 */
-	private ListenerList listeners = new ListenerList();
+	private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
 	
 	/**
 	 * Save the scope to the given memento

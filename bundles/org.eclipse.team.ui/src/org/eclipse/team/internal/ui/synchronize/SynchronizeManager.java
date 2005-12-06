@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.*;
@@ -282,7 +281,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 	 */
 	public void addSynchronizeParticipantListener(ISynchronizeParticipantListener listener) {
 		if (fListeners == null) {
-			fListeners = new ListenerList(5);
+			fListeners = new ListenerList(ListenerList.IDENTITY);
 		}
 		fListeners.add(listener);
 	}

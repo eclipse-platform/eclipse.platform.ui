@@ -13,11 +13,9 @@ package org.eclipse.team.internal.core.subscribers;
 import java.util.*;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.internal.core.ListenerList;
 
 /**
  * This class defines the common aspects of collecting a set of change
@@ -27,7 +25,7 @@ import org.eclipse.team.internal.core.ListenerList;
  */
 public abstract class ChangeSetCollector {
 
-    private ListenerList listeners = new ListenerList();
+    private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
     private Set sets = new HashSet();
     
     private Object[] getListeners() {

@@ -25,11 +25,9 @@ import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.Assert;
-import org.eclipse.team.internal.core.ListenerList;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.synchronize.*;
 
 /**
@@ -1011,7 +1009,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
     public void addPropertyChangeListener(IPropertyChangeListener listener) {
         synchronized (this) {
             if (listeners == null) {
-                listeners = new ListenerList();
+                listeners = new ListenerList(ListenerList.IDENTITY);
             }
             listeners.add(listener);
         }

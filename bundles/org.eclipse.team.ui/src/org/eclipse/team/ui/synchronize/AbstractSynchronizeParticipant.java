@@ -19,7 +19,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.core.ListenerList;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.preferences.SyncViewerPreferencePage;
 import org.eclipse.team.internal.ui.registry.SynchronizeParticipantDescriptor;
@@ -198,7 +197,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListeners == null) {
-			fListeners = new ListenerList();
+			fListeners = new ListenerList(ListenerList.IDENTITY);
 		}
 		fListeners.add(listener);
 	}
@@ -387,12 +386,12 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
     }
     
 	/**
-	 * Return whether this particpant supports the contribution of actions to
+	 * Return whether this participant supports the contribution of actions to
 	 * the context menu by contributing a <code>viewerContribution</code>
 	 * to the <code>org.eclipse.ui.popupMenus</code> extension point. By default,
 	 * <code>false</code> is returned. If a subclasses overrides to return <code>true</code>,
 	 * the <code>id</code> of the participant is used as the <code>targetId</code>. Here is
-	 * an extension that could be added to the plugin manifets to contribute an action to
+	 * an extension that could be added to the plugin manifest to contribute an action to
 	 * the context menu for a participant
 	 * 
 	 * <pre>

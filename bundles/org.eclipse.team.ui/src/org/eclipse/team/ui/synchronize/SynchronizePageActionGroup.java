@@ -11,9 +11,10 @@
 package org.eclipse.team.ui.synchronize;
 
 import java.util.*;
+
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
@@ -70,7 +71,7 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	 */
 	private class VisibleRootsSelectionProvider extends SynchronizePageActionGroup implements ISelectionProvider {
 
-		private ListenerList selectionChangedListeners = new ListenerList();
+		private ListenerList selectionChangedListeners = new ListenerList(ListenerList.IDENTITY);
 		private ISelection selection;
 
 		protected VisibleRootsSelectionProvider(ISynchronizeModelElement element) {

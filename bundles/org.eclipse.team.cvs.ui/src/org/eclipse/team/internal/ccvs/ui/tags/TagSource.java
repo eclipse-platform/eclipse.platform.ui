@@ -15,7 +15,6 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -52,7 +51,7 @@ public abstract class TagSource {
         }
     };
     
-    private ListenerList listeners = new ListenerList();
+    private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
     
     /**
      * Simple interface for providing notification when the tags
