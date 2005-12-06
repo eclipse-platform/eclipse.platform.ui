@@ -71,7 +71,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         	border.setLocation(newPos.x, newPos.y);
     		Rectangle bb = border.getBounds();
     		Rectangle cr = windowComposite.getClientArea();
-    		bb = Geometry.forceRectInsideRect(bb,cr);
+    		Geometry.moveInside(bb,cr);
     		
     		// OK, now move the drag control and the border to their new locations
     		dragControl.setLocation(bb.x+1, bb.y+1);
@@ -195,7 +195,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 			// Force the control into the client rect
     		Rectangle bb = caretControl.getBounds();
     		Rectangle cr = windowComposite.getClientArea();
-    		bb = Geometry.forceRectInsideRect(bb,cr);
+    		Geometry.moveInside(bb,cr);
     		caretControl.setBounds(bb);
     		
 			caretControl.moveAbove(null);

@@ -1665,6 +1665,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// if the -debug command line argument is used and the event loop is being
 		// run while starting the Workbench, log a warning.
         if (WorkbenchPlugin.DEBUG) {
+        	System.out.println("debug mode"); //$NON-NLS-1$
 			display.asyncExec(new Runnable(){
 				public void run() {
 					if(isStarting()) {
