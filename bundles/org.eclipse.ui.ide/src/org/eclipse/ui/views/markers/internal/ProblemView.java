@@ -12,6 +12,7 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -274,7 +275,20 @@ public class ProblemView extends MarkerView {
 	 * @return a message ready for display
 	 */
 	protected String updateSummarySelected(IStructuredSelection selection) {
-		return getSummary(new MarkerList(selection.toList()),
+		Collection selectionList;
+		if(isHierarchalMode()){
+			selectionList = new ArrayList();
+			Iterator selectionIterator = selection.iterator();
+			while(selectionIterator.hasNext()){
+				MarkerNode next = (MarkerNode) selectionIterator.next();
+				if(next.isConcrete())
+					selectionList.add(next);
+			}
+		}
+		else
+			selectionList = selection.toList();
+		
+		return getSummary(new MarkerList(selectionList),
 				"problem.statusSummarySelected"); //$NON-NLS-1$
 	}
 
