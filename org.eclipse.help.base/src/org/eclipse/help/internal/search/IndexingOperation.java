@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,10 +28,13 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpBaseResources;
 import org.eclipse.help.internal.base.util.HelpProperties;
+import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.toc.Toc;
+import org.eclipse.help.search.LuceneSearchParticipant;
 
 /**
  * Indexing Operation represents a long operation, which performs indexing of
@@ -341,6 +345,7 @@ class IndexingOperation {
 	private Collection getAddedPlugins(SearchIndex index) {
 		// Get the list of added plugins
 		Collection addedPlugins = index.getDocPlugins().getAdded();
+
 		if (addedPlugins == null || addedPlugins.isEmpty())
 			return new ArrayList(0);
 		return addedPlugins;
@@ -369,6 +374,34 @@ class IndexingOperation {
 			if (url != null) {
 				addedDocs.add(url);
 			}
+		}
+		//Add documents from global search participants
+		LuceneSearchParticipant[] participants = BaseHelpSystem.getSearchManager().getGlobalParticipants();
+		for (int j=0; j<participants.length; j++) {
+			Set set = participants[j].getAllDocuments(index.getLocale());
+			for (Iterator docs = set.iterator(); docs.hasNext();) {
+				String doc = (String) docs.next();
+				String id = null;
+				int qloc = doc.indexOf('?');
+				if (qloc!= -1) {
+					String query = doc.substring(qloc+1);
+					doc = doc.substring(0, qloc);
+					HashMap arguments = new HashMap();
+					HelpURLConnection.parseQuery(query, arguments);
+					id = (String)arguments.get("id");
+				}
+				// Assume the url is /pluginID/path_to_topic.html
+				int i = doc.indexOf('/', 1);
+				String plugin = i == -1 ? "" : doc.substring(1, i); //$NON-NLS-1$
+				if (!addedPlugins.contains(plugin)) {
+					continue;
+				}
+
+				URL url = SearchIndex.getIndexableURL(index.getLocale(), doc, id, participants[j].getId());
+				if (url != null) {
+					addedDocs.add(url);
+				}
+			}			
 		}
 		return addedDocs;
 	}
@@ -419,6 +452,7 @@ class IndexingOperation {
 	 * Returns the collection of href's for all the help topics.
 	 */
 	private Set getAllDocuments(String locale) {
+		// Add documents from TOCs
 		HashSet hrefs = new HashSet();
 		IToc[] tocs = index.getTocManager().getTocs(locale);
 		for (int i = 0; i < tocs.length; i++) {

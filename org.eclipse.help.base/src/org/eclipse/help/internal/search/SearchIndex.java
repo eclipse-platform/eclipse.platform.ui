@@ -1,13 +1,11 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+/***************************************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ **************************************************************************************************/
 package org.eclipse.help.internal.search;
 
 import java.io.File;
@@ -22,6 +20,7 @@ import java.nio.channels.OverlappingFileLockException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -47,19 +46,22 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.util.HelpProperties;
+import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.toc.TocManager;
 import org.eclipse.help.internal.util.ResourceLocator;
+import org.eclipse.help.search.LuceneSearchParticipant;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
 /**
- * Text search index. Documents added to this index can than be searched against
- * a search query.
+ * Text search index. Documents added to this index can than be searched against a search query.
  */
 public class SearchIndex {
+
 	private IndexReader ir;
 
 	private IndexWriter iw;
@@ -120,10 +122,8 @@ public class SearchIndex {
 	 * @param analyzerDesc
 	 *            the analyzer used to index
 	 */
-	public SearchIndex(String locale, AnalyzerDescriptor analyzerDesc,
-			TocManager tocManager) {
-		this(new File(HelpBasePlugin.getConfigurationDirectory(),
-				"index/" + locale), //$NON-NLS-1$
+	public SearchIndex(String locale, AnalyzerDescriptor analyzerDesc, TocManager tocManager) {
+		this(new File(HelpBasePlugin.getConfigurationDirectory(), "index/" + locale), //$NON-NLS-1$
 				locale, analyzerDesc, tocManager, null);
 	}
 
@@ -137,8 +137,7 @@ public class SearchIndex {
 	 * @since 3.1
 	 */
 
-	public SearchIndex(File indexDir, String locale,
-			AnalyzerDescriptor analyzerDesc, TocManager tocManager,
+	public SearchIndex(File indexDir, String locale, AnalyzerDescriptor analyzerDesc, TocManager tocManager,
 			String relativePath) {
 		this.locale = locale;
 		this.analyzerDescriptor = analyzerDesc;
@@ -146,8 +145,7 @@ public class SearchIndex {
 		this.indexDir = indexDir;
 		this.relativePath = relativePath;
 		// System.out.println("Index for a relative path: "+relativePath);
-		inconsistencyFile = new File(indexDir.getParentFile(), locale
-				+ ".inconsistent"); //$NON-NLS-1$
+		inconsistencyFile = new File(indexDir.getParentFile(), locale + ".inconsistent"); //$NON-NLS-1$
 		parser = new HTMLDocParser();
 		if (!exists()) {
 			try {
@@ -168,8 +166,7 @@ public class SearchIndex {
 	}
 
 	/**
-	 * Indexes one document from a stream. Index has to be open and close
-	 * outside of this method
+	 * Indexes one document from a stream. Index has to be open and close outside of this method
 	 * 
 	 * @param name
 	 *            the document identifier (could be a URL)
@@ -184,20 +181,41 @@ public class SearchIndex {
 		}
 		try {
 			Document doc = new Document();
-			doc.add(Field.Keyword(FIELD_NAME, name)); 
+			doc.add(Field.Keyword(FIELD_NAME, name));
+			String pluginId = SearchManager.getPluginId(name);
 			if (relativePath != null)
-				doc.add(Field.Keyword(FIELD_INDEX_ID, relativePath)); 
+				doc.add(Field.Keyword(FIELD_INDEX_ID, relativePath));
+			// NEW: check for the explicit search participant.
+			LuceneSearchParticipant participant = null;
+			HelpURLConnection urlc = new HelpURLConnection(url);
+			String id = urlc.getValue("id");
+			String pid = urlc.getValue("participantId");
+			if (pid != null)
+				participant = BaseHelpSystem.getSearchManager().getGlobalParticipant(pid);
+			// NEW: check for file extension-based search participant;
+			if (participant == null)
+				participant = BaseHelpSystem.getSearchManager().getParticipant(pluginId, name);
+			if (participant != null) {
+				IStatus status = participant.addDocument(pluginId, name, url, locale, doc);
+				if (status.getSeverity() == IStatus.OK) {
+					indexedDocs.put(name, "0"); //$NON-NLS-1$
+					if (id!=null)
+						doc.add(Field.UnIndexed("id", id)); //$NON-NLS-1$
+					doc.add(Field.UnIndexed("participantId", pid)); //$NON-NLS-1$
+					iw.addDocument(doc);
+				}
+				return status;
+			}
 			try {
 				try {
 					parser.openDocument(url);
 				} catch (IOException ioe) {
-					return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID,
-							IStatus.ERROR, "Help document " //$NON-NLS-1$
+					return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
+							"Help document " //$NON-NLS-1$
 									+ name + " cannot be opened.", //$NON-NLS-1$
 							null);
 				}
-				ParsedDocument parsed = new ParsedDocument(parser
-						.getContentReader());
+				ParsedDocument parsed = new ParsedDocument(parser.getContentReader());
 				doc.add(Field.Text("contents", parsed.newContentReader())); //$NON-NLS-1$
 				doc.add(Field.Text("exact_contents", parsed //$NON-NLS-1$
 						.newContentReader()));
@@ -213,8 +231,7 @@ public class SearchIndex {
 			indexedDocs.put(name, "0"); //$NON-NLS-1$
 			return Status.OK_STATUS;
 		} catch (IOException e) {
-			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID,
-					IStatus.ERROR,
+			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
 					"IO exception occurred while adding document " + name //$NON-NLS-1$
 							+ " to index " + indexDir.getAbsolutePath() + ".", //$NON-NLS-1$ //$NON-NLS-2$
 					e);
@@ -230,9 +247,8 @@ public class SearchIndex {
 				iw.close();
 			}
 			boolean create = false;
-			if (!indexDir.exists() || !isLuceneCompatible()
-					|| !isAnalyzerCompatible() || inconsistencyFile.exists()
-					&& firstOperation) {
+			if (!indexDir.exists() || !isLuceneCompatible() || !isAnalyzerCompatible()
+					|| inconsistencyFile.exists() && firstOperation) {
 				create = true;
 				indexDir.mkdirs();
 				if (!indexDir.exists())
@@ -241,15 +257,12 @@ public class SearchIndex {
 			indexedDocs = new HelpProperties(INDEXED_DOCS_FILE, indexDir);
 			indexedDocs.restore();
 			setInconsistent(true);
-			iw = new IndexWriter(indexDir, analyzerDescriptor.getAnalyzer(),
-					create);
+			iw = new IndexWriter(indexDir, analyzerDescriptor.getAnalyzer(), create);
 			iw.mergeFactor = 20;
 			iw.maxFieldLength = 1000000;
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin
-					.logError(
-							"Exception occurred in search indexing at beginAddBatch.", e); //$NON-NLS-1$
+			HelpBasePlugin.logError("Exception occurred in search indexing at beginAddBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -268,9 +281,7 @@ public class SearchIndex {
 			ir = IndexReader.open(indexDir);
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin
-					.logError(
-							"Exception occurred in search indexing at beginDeleteBatch.", e); //$NON-NLS-1$
+			HelpBasePlugin.logError("Exception occurred in search indexing at beginDeleteBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -286,9 +297,7 @@ public class SearchIndex {
 			ir = IndexReader.open(indexDir);
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin
-					.logError(
-							"Exception occurred in search indexing at beginDeleteBatch.", e); //$NON-NLS-1$
+			HelpBasePlugin.logError("Exception occurred in search indexing at beginDeleteBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -304,15 +313,12 @@ public class SearchIndex {
 		if (HelpBasePlugin.DEBUG_SEARCH) {
 			System.out.println("SearchIndex.removeDocument(" + name + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		Term term = new Term(FIELD_NAME, name); 
+		Term term = new Term(FIELD_NAME, name);
 		try {
 			ir.delete(term);
 			indexedDocs.remove(name);
 		} catch (IOException e) {
-			return new Status(
-					IStatus.ERROR,
-					HelpBasePlugin.PLUGIN_ID,
-					IStatus.ERROR,
+			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
 					"IO exception occurred while removing document " + name //$NON-NLS-1$
 							+ " from index " + indexDir.getAbsolutePath() + ".", //$NON-NLS-1$ //$NON-NLS-2$
 					e);
@@ -323,8 +329,7 @@ public class SearchIndex {
 	/**
 	 * Finish additions. To be called after adding documents.
 	 */
-	public synchronized boolean endAddBatch(boolean optimize,
-			boolean lastOperation) {
+	public synchronized boolean endAddBatch(boolean optimize, boolean lastOperation) {
 		try {
 			if (iw == null)
 				return false;
@@ -344,8 +349,7 @@ public class SearchIndex {
 			}
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(
-					"Exception occurred in search indexing at endAddBatch.", e); //$NON-NLS-1$
+			HelpBasePlugin.logError("Exception occurred in search indexing at endAddBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -368,9 +372,7 @@ public class SearchIndex {
 			saveDependencies();
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin
-					.logError(
-							"Exception occurred in search indexing at endDeleteBatch.", e); //$NON-NLS-1$
+			HelpBasePlugin.logError("Exception occurred in search indexing at endDeleteBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -394,9 +396,7 @@ public class SearchIndex {
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin
-					.logError(
-							"Exception occurred in search indexing at endDeleteBatch.", e); //$NON-NLS-1$
+			HelpBasePlugin.logError("Exception occurred in search indexing at endDeleteBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -406,9 +406,8 @@ public class SearchIndex {
 	 * 
 	 * @param dirs
 	 * @param monitor
-	 * @return Map. Keys are /pluginid/href of all merged Docs. Values are null
-	 *         for added document, or String[] of indexIds with duplicates of
-	 *         the document
+	 * @return Map. Keys are /pluginid/href of all merged Docs. Values are null for added document,
+	 *         or String[] of indexIds with duplicates of the document
 	 */
 	public Map merge(PluginIndex[] pluginIndexes, IProgressMonitor monitor) {
 		ArrayList dirList = new ArrayList(pluginIndexes.length);
@@ -438,8 +437,7 @@ public class SearchIndex {
 							.println("SearchIndex.merge merging indexId=" + indexId + ", indexPath=" + indexPath); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
-				HelpProperties prebuiltDocs = new HelpProperties(
-						INDEXED_DOCS_FILE, new File(indexPath));
+				HelpProperties prebuiltDocs = new HelpProperties(INDEXED_DOCS_FILE, new File(indexPath));
 				prebuiltDocs.restore();
 				Set prebuiltHrefs = prebuiltDocs.keySet();
 				for (Iterator it = prebuiltHrefs.iterator(); it.hasNext();) {
@@ -457,8 +455,7 @@ public class SearchIndex {
 							} else {
 								// next duplicate
 								String[] newDups = new String[dups.length + 1];
-								System.arraycopy(dups, 0, newDups, 0,
-										dups.length);
+								System.arraycopy(dups, 0, newDups, 0, dups.length);
 								newDups[dups.length] = indexId;
 								mergedDocs.put(href, newDups);
 							}
@@ -476,8 +473,7 @@ public class SearchIndex {
 		for (Iterator it = mergedDocs.keySet().iterator(); it.hasNext();) {
 			indexedDocs.put(it.next(), "0"); //$NON-NLS-1$
 		}
-		Directory[] luceneDirs = (Directory[]) dirList
-				.toArray(new Directory[dirList.size()]);
+		Directory[] luceneDirs = (Directory[]) dirList.toArray(new Directory[dirList.size()]);
 		try {
 			iw.addIndexes(luceneDirs);
 		} catch (IOException ioe) {
@@ -511,10 +507,7 @@ public class SearchIndex {
 				removeDocuments(hrefDocs, indexDocs);
 			}
 		} catch (IOException ioe) {
-			return new Status(
-					IStatus.ERROR,
-					HelpBasePlugin.PLUGIN_ID,
-					IStatus.ERROR,
+			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
 					"IO exception occurred while removing duplicates of document " + name //$NON-NLS-1$
 							+ " from index " + indexDir.getAbsolutePath() + ".", //$NON-NLS-1$ //$NON-NLS-2$
 					ioe);
@@ -542,8 +535,7 @@ public class SearchIndex {
 	 * @param docs2
 	 * @throws IOException
 	 */
-	private void removeDocuments(TermDocs doc1, TermDocs docs2)
-			throws IOException {
+	private void removeDocuments(TermDocs doc1, TermDocs docs2) throws IOException {
 		if (!doc1.next()) {
 			return;
 		}
@@ -597,10 +589,9 @@ public class SearchIndex {
 			registerSearch(Thread.currentThread());
 			if (closed)
 				return;
-			QueryBuilder queryBuilder = new QueryBuilder(searchQuery
-					.getSearchWord(), analyzerDescriptor);
-			Query luceneQuery = queryBuilder.getLuceneQuery(searchQuery
-					.getFieldNames(), searchQuery.isFieldSearch());
+			QueryBuilder queryBuilder = new QueryBuilder(searchQuery.getSearchWord(), analyzerDescriptor);
+			Query luceneQuery = queryBuilder.getLuceneQuery(searchQuery.getFieldNames(), searchQuery
+					.isFieldSearch());
 			String highlightTerms = queryBuilder.gethighlightTerms();
 			if (luceneQuery != null) {
 				if (searcher == null) {
@@ -609,14 +600,13 @@ public class SearchIndex {
 				Hits hits = searcher.search(luceneQuery);
 				collector.addHits(hits, highlightTerms);
 			}
-		} catch (BooleanQuery.TooManyClauses tmc){
+		} catch (BooleanQuery.TooManyClauses tmc) {
 			throw new QueryTooComplexException();
 		} catch (QueryTooComplexException qe) {
 			throw qe;
 		} catch (Exception e) {
-			HelpBasePlugin.logError(
-					"Exception occurred performing search for: " //$NON-NLS-1$
-							+ searchQuery.getSearchWord() + ".", e); //$NON-NLS-1$
+			HelpBasePlugin.logError("Exception occurred performing search for: " //$NON-NLS-1$
+					+ searchQuery.getSearchWord() + ".", e); //$NON-NLS-1$
 		} finally {
 			unregisterSearch(Thread.currentThread());
 		}
@@ -627,21 +617,23 @@ public class SearchIndex {
 	}
 
 	/**
-	 * Returns the list of all the plugins in this session that have declared a
-	 * help contribution.
+	 * Returns the list of all the plugins in this session that have declared a help contribution.
 	 */
 	public PluginVersionInfo getDocPlugins() {
 		if (docPlugins == null) {
+			HashSet totalIds = new HashSet();
 			Collection docPluginsIds = tocManager.getContributingPlugins();
-			docPlugins = new PluginVersionInfo(INDEXED_CONTRIBUTION_INFO_FILE,
-					docPluginsIds, indexDir, !exists());
+			Collection additionalPluginIds = BaseHelpSystem.getSearchManager()
+					.getPluginsWithSearchParticipants();
+			totalIds.addAll(docPluginsIds);
+			totalIds.addAll(additionalPluginIds);
+			docPlugins = new PluginVersionInfo(INDEXED_CONTRIBUTION_INFO_FILE, totalIds, indexDir, !exists());
 		}
 		return docPlugins;
 	}
 
 	/**
-	 * Sets the list of all plug-ns in this session. This method is used for
-	 * external indexer.
+	 * Sets the list of all plug-ns in this session. This method is used for external indexer.
 	 * 
 	 * @param docPlugins
 	 */
@@ -650,35 +642,30 @@ public class SearchIndex {
 	}
 
 	/**
-	 * We use HelpProperties, but a list would suffice. We only need the key
-	 * values.
+	 * We use HelpProperties, but a list would suffice. We only need the key values.
 	 * 
 	 * @return HelpProperties, keys are URLs of indexed documents
 	 */
 	public HelpProperties getIndexedDocs() {
-		HelpProperties indexedDocs = new HelpProperties(INDEXED_DOCS_FILE,
-				indexDir);
+		HelpProperties indexedDocs = new HelpProperties(INDEXED_DOCS_FILE, indexDir);
 		if (exists())
 			indexedDocs.restore();
 		return indexedDocs;
 	}
 
 	/**
-	 * Gets properties with versions of Lucene plugin and Analyzer used in
-	 * existing index
+	 * Gets properties with versions of Lucene plugin and Analyzer used in existing index
 	 */
 	private HelpProperties getDependencies() {
 		if (dependencies == null) {
-			dependencies = new HelpProperties(DEPENDENCIES_VERSION_FILENAME,
-					indexDir);
+			dependencies = new HelpProperties(DEPENDENCIES_VERSION_FILENAME, indexDir);
 			dependencies.restore();
 		}
 		return dependencies;
 	}
 
 	private boolean isLuceneCompatible() {
-		String usedLuceneVersion = getDependencies().getProperty(
-				DEPENDENCIES_KEY_LUCENE); 
+		String usedLuceneVersion = getDependencies().getProperty(DEPENDENCIES_KEY_LUCENE);
 		return isLuceneCompatible(usedLuceneVersion);
 	}
 
@@ -686,8 +673,8 @@ public class SearchIndex {
 		String currentLuceneVersion = ""; //$NON-NLS-1$
 		Bundle lucenePluginDescriptor = Platform.getBundle(LUCENE_PLUGIN_ID);
 		if (lucenePluginDescriptor != null) {
-			currentLuceneVersion += (String) lucenePluginDescriptor
-					.getHeaders().get(Constants.BUNDLE_VERSION);
+			currentLuceneVersion += (String) lucenePluginDescriptor.getHeaders()
+					.get(Constants.BUNDLE_VERSION);
 		}
 		// Later might add code to return true for known cases
 		// of compatibility between 3.1 and post 3.1 versions.
@@ -695,8 +682,7 @@ public class SearchIndex {
 	}
 
 	private boolean isAnalyzerCompatible() {
-		String usedAnalyzer = getDependencies().getProperty(
-				DEPENDENCIES_KEY_ANALYZER); 
+		String usedAnalyzer = getDependencies().getProperty(DEPENDENCIES_KEY_ANALYZER);
 		return isAnalyzerCompatible(usedAnalyzer);
 	}
 
@@ -711,13 +697,12 @@ public class SearchIndex {
 	 * Saves Lucene version and analyzer identifier to a file.
 	 */
 	private void saveDependencies() {
-		getDependencies().put(DEPENDENCIES_KEY_ANALYZER,
-				analyzerDescriptor.getId()); 
+		getDependencies().put(DEPENDENCIES_KEY_ANALYZER, analyzerDescriptor.getId());
 		Bundle luceneBundle = Platform.getBundle(LUCENE_PLUGIN_ID);
 		if (luceneBundle != null) {
 			String luceneBundleVersion = "" //$NON-NLS-1$
 					+ luceneBundle.getHeaders().get(Constants.BUNDLE_VERSION);
-			getDependencies().put(DEPENDENCIES_KEY_LUCENE, luceneBundleVersion); 
+			getDependencies().put(DEPENDENCIES_KEY_LUCENE, luceneBundleVersion);
 		} else {
 			getDependencies().put(DEPENDENCIES_KEY_LUCENE, ""); //$NON-NLS-1$ 
 		}
@@ -725,9 +710,8 @@ public class SearchIndex {
 	}
 
 	/**
-	 * @return Returns true if index has been left in inconsistent state If
-	 *         analyzer has changed to incompatible one, index is treated as
-	 *         inconsistent as well.
+	 * @return Returns true if index has been left in inconsistent state If analyzer has changed to
+	 *         incompatible one, index is treated as inconsistent as well.
 	 */
 	public boolean isInconsistent() {
 		if (inconsistencyFile.exists()) {
@@ -761,9 +745,8 @@ public class SearchIndex {
 	}
 
 	/**
-	 * Closes IndexReader used by Searcher. Should be called on platform
-	 * shutdown, or when TOCs have changed when no more reading from this index
-	 * is to be performed.
+	 * Closes IndexReader used by Searcher. Should be called on platform shutdown, or when TOCs have
+	 * changed when no more reading from this index is to be performed.
 	 */
 	public void close() {
 		closed = true;
@@ -789,13 +772,11 @@ public class SearchIndex {
 	 * Finds and unzips prebuild index specified in preferences
 	 */
 	private void unzipProductIndex() {
-		String indexPluginId = HelpBasePlugin.getDefault()
-				.getPluginPreferences().getString("productIndex"); //$NON-NLS-1$
+		String indexPluginId = HelpBasePlugin.getDefault().getPluginPreferences().getString("productIndex"); //$NON-NLS-1$
 		if (indexPluginId == null || indexPluginId.length() <= 0) {
 			return;
 		}
-		InputStream zipIn = ResourceLocator.openFromPlugin(indexPluginId,
-				"doc_index.zip", getLocale()); //$NON-NLS-1$
+		InputStream zipIn = ResourceLocator.openFromPlugin(indexPluginId, "doc_index.zip", getLocale()); //$NON-NLS-1$
 		if (zipIn == null) {
 			return;
 		}
@@ -859,8 +840,7 @@ public class SearchIndex {
 	private void cleanOldIndex() {
 		IndexWriter cleaner = null;
 		try {
-			cleaner = new IndexWriter(indexDir, analyzerDescriptor
-					.getAnalyzer(), true);
+			cleaner = new IndexWriter(indexDir, analyzerDescriptor.getAnalyzer(), true);
 		} catch (IOException ioe) {
 		} finally {
 			try {
@@ -938,8 +918,7 @@ public class SearchIndex {
 	/**
 	 * Deletes the lock file. The lock must be released prior to this call.
 	 * 
-	 * @return <code>true</code> if the file has been deleted,
-	 *         <code>false</code> otherwise.
+	 * @return <code>true</code> if the file has been deleted, <code>false</code> otherwise.
 	 */
 
 	public synchronized boolean deleteLockFile() {
@@ -974,8 +953,8 @@ public class SearchIndex {
 			url = url.substring(0, url.lastIndexOf('#'));
 			// its a fragment, index whole document
 		} else {
-			// not indexable
-			return null;
+			// try search participants
+			return BaseHelpSystem.getSearchManager().isIndexable(url) ? url : null;
 		}
 		return url;
 	}
@@ -983,20 +962,39 @@ public class SearchIndex {
 	/**
 	 * Checks if document is indexable, and creates a URL to obtain contents.
 	 * 
+	 * @param locale
 	 * @param url
 	 *            specified in the navigation
 	 * @return URL to obtain document content or null
 	 */
 	public static URL getIndexableURL(String locale, String url) {
+		return getIndexableURL(locale, url, null, null);
+	}
+
+	/**
+	 * Checks if document is indexable, and creates a URL to obtain contents.
+	 * 
+	 * @param locale
+	 * @param url
+	 * @param participantId
+	 *            the search participant or <code>null</code> specified in the navigation
+	 * @return URL to obtain document content or null
+	 */
+	public static URL getIndexableURL(String locale, String url, String id, String participantId) {
 		url = getIndexableHref(url);
 		if (url == null)
 			return null;
 
 		try {
-			// return new URL("help:" + url + "?lang=" + index.getLocale());
+			StringBuffer query = new StringBuffer();
+			query.append("?");
+			query.append("lang=" + locale);
+			if (id!=null)
+				query.append("&id="+id);
+			if (participantId != null)
+				query.append("&participantId=" + participantId);
 			return new URL("help", //$NON-NLS-1$
-					null, -1, url + "?lang=" + locale, //$NON-NLS-1$
-					HelpURLStreamHandler.getDefault());
+					null, -1, url + query.toString(), HelpURLStreamHandler.getDefault());
 
 		} catch (MalformedURLException mue) {
 			return null;

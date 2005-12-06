@@ -107,12 +107,14 @@ public class SearchResults implements ISearchHitCollector {
 				label = href;
 			}
 			String summary = doc.get("summary");			 //$NON-NLS-1$
+			String id = doc.get("id"); //$NON-NLS-1$
+			String participantId = doc.get("participantId"); //$NON-NLS-1$
 			
 			j++;
 			
 			// Set document href
 			href = href + "?resultof=" + urlEncodedWords; //$NON-NLS-1$
-			searchHitList.add(new SearchHit(href, label, summary, score, toc));
+			searchHitList.add(new SearchHit(href, label, summary, score, toc, id, participantId));
 		}
 		searchHits = (SearchHit[]) searchHitList
 				.toArray(new SearchHit[searchHitList.size()]);

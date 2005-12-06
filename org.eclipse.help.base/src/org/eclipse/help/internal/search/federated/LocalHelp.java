@@ -21,7 +21,7 @@ import org.eclipse.help.search.*;
 /**
  * Local Help search engine participant in the federated search.
  */
-public class LocalHelp implements ISearchEngine {
+public class LocalHelp implements ISearchEngine2 {
 	private static final int MAX_HITS = 500;
 
 	/*
@@ -66,9 +66,15 @@ public class LocalHelp implements ISearchEngine {
 		// Filtering of results by activities
 		ArrayList enabledHits = new ArrayList();
 		for (int i = 0; i < searchHits.length; i++) {
-			if (HelpBasePlugin.getActivitySupport().isEnabledTopic(
-					searchHits[i].getHref(), Platform.getNL())) {
-				enabledHits.add(searchHits[i]);
+			SearchHit hit = searchHits[i];
+			if (hit.getParticipantId()!=null) {
+				// hit comes from a search participant
+				if (HelpBasePlugin.getActivitySupport().isEnabled(hit.getHref()))
+					enabledHits.add(hit);
+			}
+			else if (HelpBasePlugin.getActivitySupport().isEnabledTopic(
+					hit.getHref(), Platform.getNL())) {
+				enabledHits.add(hit);
 			}
 		}
 		collector.accept((SearchHit[]) enabledHits
@@ -77,5 +83,18 @@ public class LocalHelp implements ISearchEngine {
 
 	public String toAbsoluteHref(String href, boolean frames) {
 		return null;
+	}
+	
+	
+	public boolean open(String id) {
+		int sep = id.indexOf('/');
+		if (sep== -1)
+			return false;
+		String participantId = id.substring(0, sep);
+		id = id.substring(sep+1);
+		LuceneSearchParticipant participant = BaseHelpSystem.getSearchManager().getGlobalParticipant(participantId);
+		if (participant==null)
+			return false;
+		return participant.open(id);
 	}
 }

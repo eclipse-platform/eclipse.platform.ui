@@ -68,4 +68,12 @@
                value="true"/>
       </triggerPoint>
     </extension>
+   <extension
+         point="org.eclipse.help.base.luceneSearchParticipants">
+      <searchParticipant
+            icon="icons/obj16/cheatsheet_obj.gif"
+            id="org.eclipse.ui.cheatsheets"
+            name="Cheet Sheets"
+            participant="org.eclipse.ui.internal.cheatsheets.CheatsheetSearchParticipant"/>
+   </extension>
 </plugin>

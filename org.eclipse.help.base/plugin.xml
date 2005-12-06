@@ -7,6 +7,7 @@
    <extension-point id="webapp" name="%webapp_extension_point_name" schema="schema/webapp.exsd"/>
    <extension-point id="browser" name="%browser_extension_point_name" schema="schema/browser.exsd"/>
    <extension-point id="activitySupport" name="%activity_extension_point_name" schema="schema/activitySupport.exsd"/>
+   <extension-point id="luceneSearchParticipants" name="%search_participant_extension_point_name" schema="schema/luceneSearchParticipants.exsd"/>
 
 <!-- Stand-alone infocenter application -->
    <extension
