@@ -48,6 +48,11 @@ public class TrimLayoutTest extends UITestCase {
 			"org.eclipse.jface.action.StatusLineManager",
 			"org.eclipse.ui.internal.HeapStatus",
 			"org.eclise.ui.internal.FastViewBar", };
+	
+	public static final String[] REMOVED_HEAP_STATUS = {
+		"org.eclise.ui.internal.FastViewBar",
+		"org.eclipse.jface.action.StatusLineManager",
+		"org.eclipse.ui.internal.progress.ProgressRegion" };
 
 	private boolean fHeapStatusPref;
 
@@ -80,7 +85,7 @@ public class TrimLayoutTest extends UITestCase {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
 		ITrimManager layout = window.getTrimManager();
 
-		List descs = layout.getAreaDescription(SWT.BOTTOM);
+		List descs = layout.getAreaTrim(SWT.BOTTOM);
 		validatePositions(DEFAULT_BOTTOM, descs);
 	}
 
@@ -94,16 +99,16 @@ public class TrimLayoutTest extends UITestCase {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
 		ITrimManager layout = window.getTrimManager();
 
-		List trim = layout.getAreaDescription(ITrimManager.BOTTOM);
+		List trim = layout.getAreaTrim(ITrimManager.BOTTOM);
 		validatePositions(DEFAULT_BOTTOM, trim);
 
 		swapPostition(trim, 1, 3);
-		layout.updateAreaDescription(ITrimManager.BOTTOM, trim);
+		layout.updateAreaTrim(ITrimManager.BOTTOM, trim, false);
 
 		window.getShell().layout(true, true);
 
 
-		trim = layout.getAreaDescription(ITrimManager.BOTTOM);
+		trim = layout.getAreaTrim(ITrimManager.BOTTOM);
 		validatePositions(SWAPPED_STATUS_LINE, trim);
 	}
 
@@ -117,16 +122,38 @@ public class TrimLayoutTest extends UITestCase {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
 		ITrimManager layout = window.getTrimManager();
 
-		List trim = layout.getAreaDescription(ITrimManager.BOTTOM);
+		List trim = layout.getAreaTrim(ITrimManager.BOTTOM);
 		validatePositions(DEFAULT_BOTTOM, trim);
 
 		swapPostition(trim, 0, 3);
-		layout.updateAreaDescription(ITrimManager.BOTTOM, trim);
+		layout.updateAreaTrim(ITrimManager.BOTTOM, trim, false);
 
 		window.getShell().layout(true, true);
 
-		trim = layout.getAreaDescription(ITrimManager.BOTTOM);
+		trim = layout.getAreaTrim(ITrimManager.BOTTOM);
 		validatePositions(SWAPPED_FASTVIEW, trim);
+	}
+	
+	/**
+	 * This test isn't really about removing trim, just testing
+	 * that the if the heap status trim is not in the trim list, it's
+	 * removed from the bottom trim area.
+	 * @throws Throwable on error
+	 */
+	public void testRemoveHeapStatus() throws Throwable {
+		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
+		ITrimManager layout = window.getTrimManager();
+
+		List trim = layout.getAreaTrim(ITrimManager.BOTTOM);
+		validatePositions(DEFAULT_BOTTOM, trim);
+
+		trim.remove(2);
+		layout.updateAreaTrim(ITrimManager.BOTTOM, trim, true);
+
+		window.getShell().layout(true, true);
+
+		trim = layout.getAreaTrim(ITrimManager.BOTTOM);
+		validatePositions(REMOVED_HEAP_STATUS, trim);
 	}
 
 	/**
@@ -194,7 +221,7 @@ public class TrimLayoutTest extends UITestCase {
 		window.getShell().layout(true, true);
 
 
-		List windowTrim = layout.getAreaDescription(ITrimManager.BOTTOM);
+		List windowTrim = layout.getAreaTrim(ITrimManager.BOTTOM);
 		validatePositions(SWAPPED_FASTVIEW, windowTrim);
 	}
 
@@ -241,10 +268,10 @@ public class TrimLayoutTest extends UITestCase {
 		window.getShell().layout(true, true);
 
 
-		List windowTrim = layout.getAreaDescription(ITrimManager.BOTTOM);
+		List windowTrim = layout.getAreaTrim(ITrimManager.BOTTOM);
 		assertEquals(3, windowTrim.size());
 
-		windowTrim = layout.getAreaDescription(ITrimManager.LEFT);
+		windowTrim = layout.getAreaTrim(ITrimManager.LEFT);
 		assertEquals(1, windowTrim.size());
 	}
 

@@ -2373,7 +2373,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		int[] ids = defaultLayout.getAreaIds();
 		for (int i = 0; i < ids.length; i++) {
 			int id = ids[i];
-			List trim = defaultLayout.getAreaDescription(id);
+			List trim = defaultLayout.getAreaTrim(id);
 			if (!trim.isEmpty()) {
 				IMemento area = memento
 						.createChild(IWorkbenchConstants.TAG_TRIM_AREA, Integer
@@ -2423,7 +2423,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		for (int i = 0; i < areas.length; i++) {
 			IMemento area = areas[i];
 			int id = Integer.parseInt(area.getID());
-			defaultLayout.updateAreaDescription(id, trimOrder[i]);
+			defaultLayout.updateAreaTrim(id, trimOrder[i], false);
 		}
 
 		return Status.OK_STATUS;
