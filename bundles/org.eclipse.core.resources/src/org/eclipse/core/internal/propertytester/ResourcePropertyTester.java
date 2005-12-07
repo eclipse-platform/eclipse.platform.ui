@@ -104,11 +104,11 @@ public class ResourcePropertyTester extends PropertyTester {
 			return false;
 		IResource res = (IResource) receiver;
 		if (method.equals(NAME)) {
-			return new StringMatcher(toString(expectedValue), true, false).match(res.getName());
+			return new StringMatcher(toString(expectedValue)).match(res.getName());
 		} else if (method.equals(PATH)) {
-			return new StringMatcher(toString(expectedValue), true, false).match(res.getFullPath().toString());
+			return new StringMatcher(toString(expectedValue)).match(res.getFullPath().toString());
 		} else if (method.equals(EXTENSION)) {
-			return new StringMatcher(toString(expectedValue), true, false).match(res.getFileExtension());
+			return new StringMatcher(toString(expectedValue)).match(res.getFileExtension());
 		} else if (method.equals(READ_ONLY)) {
 			ResourceAttributes attr = res.getResourceAttributes();
 			return (attr != null && attr.isReadOnly()) == toBoolean(expectedValue);
