@@ -200,11 +200,12 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 				List result = new ArrayList();
 				for (int i = 0; i < roots.length; i++) {
 					IResource root = roots[i];
-					if (resource.getFullPath().isPrefixOf(root.getFullPath()));
-					mapping = scope.getMapping(object);
-					if (mapping != null) {
-						ResourceTraversal[] traversals = scope.getTraversals(mapping);
-						result.addAll(Arrays.asList(traversals));
+					if (resource.getFullPath().isPrefixOf(root.getFullPath())) {
+						mapping = scope.getMapping(root);
+						if (mapping != null) {
+							ResourceTraversal[] traversals = scope.getTraversals(mapping);
+							result.addAll(Arrays.asList(traversals));
+						}
 					}
 				}
 				return (ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]);
