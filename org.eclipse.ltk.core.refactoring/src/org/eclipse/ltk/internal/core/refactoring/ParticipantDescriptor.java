@@ -21,9 +21,8 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.expressions.IEvaluationContext;
 
-import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
+import org.eclipse.ltk.core.refactoring.participants.IParticipantDesciptorFilter;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
-import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 
 public class ParticipantDescriptor {
 	
@@ -34,7 +33,6 @@ public class ParticipantDescriptor {
 	private static final String NAME= "name";  //$NON-NLS-1$
 	private static final String CLASS= "class"; //$NON-NLS-1$
 	private static final String PROCESS_ON_CANCEL= "processOnCancel";  //$NON-NLS-1$
-	private static final String HANDLES_DERIVED= "handlesDerived"; //$NON-NLS-1$
 	
 	public ParticipantDescriptor(IConfigurationElement element) {
 		fConfigurationElement= element;
@@ -68,7 +66,9 @@ public class ParticipantDescriptor {
 			RefactoringCoreMessages.ParticipantDescriptor_correct, null); 
 	}
 	
-	public boolean matches(IEvaluationContext context) throws CoreException {
+	public boolean matches(IEvaluationContext context, IParticipantDesciptorFilter filter) throws CoreException {
+		if (filter != null && !filter.select(fConfigurationElement))
+			return false;
 		IConfigurationElement[] elements= fConfigurationElement.getChildren(ExpressionTagNames.ENABLEMENT);
 		if (elements.length == 0)
 			return false;
@@ -96,26 +96,9 @@ public class ParticipantDescriptor {
 		return Boolean.valueOf(attr).booleanValue();
 	}
 	
-	public boolean handlesDerived() {
-		String attr= fConfigurationElement.getAttribute(HANDLES_DERIVED);
-		if (attr == null)
-			return false;
-		return Boolean.valueOf(attr).booleanValue();
-	}
-	
 	private boolean convert(EvaluationResult eval) {
 		if (eval == EvaluationResult.FALSE)
 			return false;
-		return true;
-	}
-
-	public boolean isApplicable(RefactoringArguments arguments) {
-		if (arguments instanceof RenameArguments) {
-			RenameArguments arg= (RenameArguments) arguments;
-			if (!arg.getUpdateDerivedElements() || (arg.getUpdateDerivedElements() && handlesDerived()))
-				return true;
-			return false;
-		}
 		return true;
 	}
 }

@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.expressions.EvaluationContext;
 
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
@@ -66,7 +67,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 		return fName;
 	}
 
-	public RefactoringParticipant[] getParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, RefactoringArguments arguments, String[] affectedNatures, SharableParticipants shared) {
+	public RefactoringParticipant[] getParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, RefactoringArguments arguments, IParticipantDesciptorFilter filter, String[] affectedNatures, SharableParticipants shared) {
 		if (fParticipants == null)
 			init();
 		
@@ -78,22 +79,20 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 				iter.remove();
 			} else {
 				try {
-					if (descriptor.matches(evalContext) && descriptor.isApplicable(arguments)) {
+					if (descriptor.matches(evalContext, filter)) {
 						RefactoringParticipant participant= shared.get(descriptor);
 						if (participant != null) {
 							((ISharableParticipant)participant).addElement(element, arguments);
 						} else {
-							try {
-								participant= descriptor.createParticipant();
-								if (!fParticipantClass.isInstance(participant))
-									throw new ClassCastException();
+							participant= descriptor.createParticipant();
+							if (fParticipantClass.isInstance(participant)) {
 								if (participant.initialize(processor, element, arguments)) {
 									participant.setDescriptor(descriptor);
 									result.add(participant);
 									if (participant instanceof ISharableParticipant)
 										shared.put(descriptor, participant);
 								}
-							} catch(ClassCastException e) {
+							} else {
 								status.addError(Messages.format(
 									RefactoringCoreMessages.ParticipantExtensionPoint_participant_removed,  
 									descriptor.getName()));

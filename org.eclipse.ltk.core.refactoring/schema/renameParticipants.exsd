@@ -55,9 +55,10 @@ The default variable used during expression evaluation is bound to the element v
 
    <element name="renameParticipant">
       <complexType>
-         <all>
-            <element ref="enablement"/>
-         </all>
+         <sequence>
+            <element ref="param" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -85,10 +86,22 @@ The default variable used during expression evaluation is bound to the element v
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="handlesDerived" type="boolean" use="default" value="false">
+      </complexType>
+   </element>
+
+   <element name="param">
+      <complexType>
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  true if this participant is able to deal with processors which rename derived elements. Such processors implement the  org.eclipse.ltk.core.refactoring.IDerivedElementRefactoringProcessor API. Participants must ask their processor via getDerivedElements() about derived elements that are refactored as well. They can obtain a reference to an element after the refactoring has been applied via getRefactoredElement(Object). Note that an element may change in subtle ways e.g. if the element is renamed and its parent is renamed as well.
+                  the name of the additional parameter
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the value of the additional parameter
                </documentation>
             </annotation>
          </attribute>
@@ -157,7 +170,7 @@ Java nature and when the type to be renamed is a JUnit test.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2001, 2004 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2001, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
