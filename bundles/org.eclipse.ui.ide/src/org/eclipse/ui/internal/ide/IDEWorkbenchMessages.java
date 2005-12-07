@@ -586,6 +586,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_fileContentEncodingFormat;
 	public static String ResourceInfo_fileContainerEncodingFormat;
 	public static String ResourceInfo_containerEncodingFormat;
+	public static String ResourceInfo_exWarning;
+
 	// --- Project References ---
 	public static String ProjectReferencesPage_label;
 
@@ -838,7 +840,7 @@ public class IDEWorkbenchMessages extends NLS {
     public static String IDEEditorsPreferencePage_WorkbenchPreference_contentTypesRelatedLink;
 	public static String IDEWorkspacePreferencePage_WorkbenchPreference_relatedLink;
 	public static String WorkbenchEncoding_invalidCharset;
-    
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, IDEWorkbenchMessages.class);

@@ -438,6 +438,14 @@ public class ResourceInfoPage extends PropertyPage {
 				}
 			}
 			createDerivedButton(composite);
+			//create warning for executable flag
+			if (executableBox != null && resource.getType() == IResource.FOLDER) {
+		        Composite noteComposite = createNoteComposite(font, composite,
+		        		IDEWorkbenchMessages.Preference_note, IDEWorkbenchMessages.ResourceInfo_exWarning);
+		        GridData noteData = new GridData();
+		        noteData.horizontalSpan = 2;
+		        noteComposite.setLayoutData(noteData);
+			}
 		}
 	}
 
