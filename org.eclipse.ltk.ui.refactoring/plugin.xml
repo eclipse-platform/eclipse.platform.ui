@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-
    <extension-point id="statusContextViewers" name="%statusViewerExtensionPoint" schema="schema/statusContextViewers.exsd"/>
    <extension-point id="changePreviewViewers" name="%changeViewerExtensionPoint" schema="schema/changePreviewViewers.exsd"/>
-
    <extension point="org.eclipse.ltk.ui.refactoring.statusContextViewers">
       <statusContextViewer
             class="org.eclipse.ltk.internal.ui.refactoring.FileStatusContextViewer"
@@ -14,7 +12,6 @@
          </enablement>
       </statusContextViewer>
    </extension>
-   
    <extension point="org.eclipse.ltk.ui.refactoring.changePreviewViewers">
       <changePreviewViewer
             class="org.eclipse.ltk.internal.ui.refactoring.TextEditChangePreviewViewer"
@@ -40,5 +37,19 @@
             name="%RefactoringPropertyPage_name"
             objectClass="org.eclipse.core.resources.IProject"/>
    </extension>
-
+   <extension
+         point="org.eclipse.compare.streamMergers">
+      <streamMerger
+            class="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringIndexMerger"
+            id="org.eclipse.ltk.ui.refactoring.model.RefactoringIndexMerger"/>
+      <contentTypeBinding
+            contentTypeId="org.eclipse.ltk.core.refactoring.refactoringIndex"
+            streamMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringIndexMerger"/>
+      <streamMerger
+            class="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryMerger"
+            id="org.eclipse.ltk.ui.refactoring.model.RefactoringHistoryMerger"/>
+      <contentTypeBinding
+            contentTypeId="org.eclipse.ltk.core.refactoring.refactoringHistory"
+            streamMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringHistoryMerger"/>
+   </extension>
 </plugin>

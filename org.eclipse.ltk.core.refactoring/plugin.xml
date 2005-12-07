@@ -32,19 +32,4 @@
             name="%RefactoringIndexContent.name"
             priority="high"/>
    </extension>
-   <extension
-         point="org.eclipse.compare.streamMergers">
-      <streamMerger
-            class="org.eclipse.ltk.internal.core.refactoring.model.RefactoringIndexMerger"
-            id="org.eclipse.ltk.core.refactoring.model.RefactoringIndexMerger"/>
-      <contentTypeBinding
-            contentTypeId="org.eclipse.ltk.core.refactoring.refactoringIndex"
-            streamMergerId="org.eclipse.ltk.core.refactoring.model.RefactoringIndexMerger"/>
-      <streamMerger
-            class="org.eclipse.ltk.internal.core.refactoring.model.RefactoringHistoryMerger"
-            id="org.eclipse.ltk.core.refactoring.model.RefactoringHistoryMerger"/>
-      <contentTypeBinding
-            contentTypeId="org.eclipse.ltk.core.refactoring.refactoringHistory"
-            streamMergerId="org.eclipse.ltk.core.refactoring.model.RefactoringHistoryMerger"/>
-   </extension>
 </plugin>

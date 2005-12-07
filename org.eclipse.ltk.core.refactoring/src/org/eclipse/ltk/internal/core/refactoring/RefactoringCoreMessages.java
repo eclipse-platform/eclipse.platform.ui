@@ -79,8 +79,6 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String PerformRefactoringsOperation_init_error;
 	public static String PerformRefactoringsOperation_perform_refactorings;
 
-	public static String RefactoringHistoryStreamMerger_error_io;
-	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringCoreMessages.class);
 	}

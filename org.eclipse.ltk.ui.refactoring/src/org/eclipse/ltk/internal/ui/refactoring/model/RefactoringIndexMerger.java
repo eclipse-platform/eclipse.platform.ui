@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.internal.core.refactoring.model;
+package org.eclipse.ltk.internal.ui.refactoring.model;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,17 +18,17 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.compare.IStreamMerger;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
-import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
-import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManager;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+
+import org.eclipse.compare.IStreamMerger;
 
 /**
  * Stream merger for refactoring history indexes.
@@ -76,7 +76,7 @@ public final class RefactoringIndexMerger implements IStreamMerger {
 				output.write(buffer.toString().getBytes(outputEncoding));
 			}
 		} catch (IOException exception) {
-			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 1, RefactoringCoreMessages.RefactoringHistoryStreamMerger_error_io, exception);
+			return new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), 1, RefactoringUIMessages.RefactoringHistoryMerger_error_auto_merge, exception);
 		}
 		return Status.OK_STATUS;
 	}

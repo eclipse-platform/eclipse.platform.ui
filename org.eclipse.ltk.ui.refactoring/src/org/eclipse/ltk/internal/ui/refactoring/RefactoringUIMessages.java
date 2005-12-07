@@ -164,6 +164,8 @@ public final class RefactoringUIMessages extends NLS {
 	public static String RefactoringHistoryWizard_preparing_changes;
 	
 	public static String PerformRefactoringsOperation_init_error;
+
+	public static String RefactoringHistoryMerger_error_auto_merge;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringUIMessages.class);
