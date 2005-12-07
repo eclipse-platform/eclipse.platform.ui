@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -19,7 +20,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IActionBars;

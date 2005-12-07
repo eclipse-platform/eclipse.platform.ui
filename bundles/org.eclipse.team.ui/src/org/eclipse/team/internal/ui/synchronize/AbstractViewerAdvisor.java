@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IActionBars;
 

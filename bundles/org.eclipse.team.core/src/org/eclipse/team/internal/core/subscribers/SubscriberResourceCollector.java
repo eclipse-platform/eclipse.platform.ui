@@ -11,8 +11,8 @@
 package org.eclipse.team.internal.core.subscribers;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.team.core.subscribers.*;
-import org.eclipse.team.internal.core.Assert;
 
 /**
  * This class acts as a superclass for any class that is collecting subscriber

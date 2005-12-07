@@ -15,11 +15,13 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
-import org.eclipse.team.internal.ccvs.core.util.*;
+import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * Value (immutable) object that represents workspace state information about a resource contained in

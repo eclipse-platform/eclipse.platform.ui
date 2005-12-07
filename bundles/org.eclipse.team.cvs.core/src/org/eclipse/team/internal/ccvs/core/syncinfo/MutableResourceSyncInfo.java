@@ -12,10 +12,10 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 
 import java.util.Date;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * Mutable version of ResourceSyncInfo. Can be used when either creating a resource sync

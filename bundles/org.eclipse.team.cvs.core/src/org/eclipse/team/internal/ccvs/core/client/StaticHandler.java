@@ -11,12 +11,12 @@
 package org.eclipse.team.internal.ccvs.core.client;
 
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableFolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * Handles any "Set-static-directory" and "Clear-static-directory" responses

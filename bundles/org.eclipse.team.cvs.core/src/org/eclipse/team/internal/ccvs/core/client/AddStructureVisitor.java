@@ -11,11 +11,9 @@
 package org.eclipse.team.internal.ccvs.core.client;
 
 
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * This visitor is used by the Add command to ensure that the parent

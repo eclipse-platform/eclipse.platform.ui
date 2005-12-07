@@ -11,14 +11,12 @@
 package org.eclipse.team.internal.ccvs.core.client;
 
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableFolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 public class Add extends Command {
 	/*** Local options: specific to add ***/

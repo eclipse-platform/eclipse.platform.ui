@@ -13,6 +13,7 @@ package org.eclipse.team.internal.core;
 
 import java.util.*;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.team.core.Team;

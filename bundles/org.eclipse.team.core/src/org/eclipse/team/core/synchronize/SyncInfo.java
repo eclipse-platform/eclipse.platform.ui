@@ -11,11 +11,12 @@
 package org.eclipse.team.core.synchronize;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.variants.*;
-import org.eclipse.team.internal.core.Assert;
+import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.internal.core.Messages;
 
 /**

@@ -14,8 +14,8 @@ import java.util.*;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.Assert;
 
 /**
  * A <code>ResourceVariantByteStore</code> that caches the variant bytes in memory 

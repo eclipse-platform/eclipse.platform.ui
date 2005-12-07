@@ -14,6 +14,8 @@ package org.eclipse.team.internal.ccvs.core.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
+
 /**
  * A FileNameMatcher associates a String with a String pattern.
  */

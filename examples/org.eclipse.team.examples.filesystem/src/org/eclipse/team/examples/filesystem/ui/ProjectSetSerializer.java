@@ -15,17 +15,11 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.IProjectSetSerializer;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.examples.filesystem.FileSystemPlugin;
-import org.eclipse.team.examples.filesystem.FileSystemProvider;
-import org.eclipse.team.examples.filesystem.Policy;
-import org.eclipse.team.internal.core.Assert;
+import org.eclipse.team.core.*;
+import org.eclipse.team.examples.filesystem.*;
 
 /**
  * This is an old-style (pre-3.0) project set serializer used to test backwards compatibility

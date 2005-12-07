@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.internal.core.Assert;
 
 /**
  * RemoteResourceTypedElement

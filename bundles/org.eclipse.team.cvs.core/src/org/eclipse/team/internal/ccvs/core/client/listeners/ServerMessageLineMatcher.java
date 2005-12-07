@@ -10,18 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSMessages;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * This class extracts matches server lines to expected patterns and extracts
