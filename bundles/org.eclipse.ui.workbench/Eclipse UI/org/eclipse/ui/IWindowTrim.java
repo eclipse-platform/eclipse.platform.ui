@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004-2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Control;
  * <p>
  * <b>Note:</b> This interface is highly experimental, and will probably change
  * between M4 and M5. For example, it will support a "lifecycle" that allows the
- * {@link TrimLayout} to update its modifiers (like SWT.TOP or SWT.LEFT) so the
+ * {@link ITrimManager} to update its modifiers (like SWT.TOP or SWT.LEFT) so the
  * IWindowTrim can dispose and re-create its control. This will likely effect
  * methods like {@link #dock(int) }, {@link #getControl() },
  * {@link #getValidSides() }, etc.
@@ -39,7 +39,7 @@ public interface IWindowTrim {
 	/**
 	 * Returns the set of sides that this trim can be docked onto.
 	 * 
-	 * @return bitwise or of one or more of SWT.TOP, SWT.BOTTOM, SWT.LEFT, and
+	 * @return bitwise OR of one or more of SWT.TOP, SWT.BOTTOM, SWT.LEFT, and
 	 *         SWT.RIGHT
 	 */
 	int getValidSides();
