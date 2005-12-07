@@ -101,7 +101,9 @@ this:</p>
     if (PROPERTY_MATCHES_PATTERN.equals(method)) {
       String fileName= resource.getName();
       StringMatcher matcher= new StringMatcher((String)expectedValue, false, false);
-      return matcher.match(fileName);
+      return expectedValue == null
+          ? matcher.match(fileName)
+          : matcher.match(filename) == ((Boolean)expectedValue).booleanValue();
     } else if (...) {
     }
     Assert.isTrue(false);

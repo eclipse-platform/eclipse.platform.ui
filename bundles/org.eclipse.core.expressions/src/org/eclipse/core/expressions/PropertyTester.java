@@ -39,7 +39,9 @@ import org.osgi.framework.Bundle;
  *       public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
  *           IPackageFragment fragement= (IPackageFragment)receiver;
  *	         if ("isDefaultPackage".equals(property)) { 
- *               return fragement.isDefaultPackage();
+ *               return expectedValue == null
+ *               	? fragement.isDefaultPackage()
+ *               	: fragement.isDefaultPackage() == ((Boolean)expectedValue).booleanValue();
  *           }
  *           Assert.isTrue(false);
  *           return false;
