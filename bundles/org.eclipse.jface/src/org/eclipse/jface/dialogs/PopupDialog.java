@@ -256,6 +256,8 @@ public class PopupDialog extends Window {
 	private boolean listenToDeactivate;
 
 	private boolean listenToParentDeactivate;
+	
+	private Listener parentDeactivateListener;	
 
 	/**
 	 * Flag indicating whether focus should be taken when the dialog is opened.
@@ -391,7 +393,7 @@ public class PopupDialog extends Window {
 		});
 
 		if ((getShellStyle() & SWT.ON_TOP) != 0 && shell.getParent() != null) {
-			shell.getParent().addListener(SWT.Deactivate, new Listener() {
+			parentDeactivateListener= new Listener() {
 				public void handleEvent(Event event) {
 					if (listenToParentDeactivate) {
 						close();
@@ -400,7 +402,8 @@ public class PopupDialog extends Window {
 						listenToParentDeactivate = listenToDeactivate;
 					}
 				}
-			});
+			};
+			shell.getParent().addListener(SWT.Deactivate, parentDeactivateListener);
 		}
 		
 		shell.addDisposeListener(new DisposeListener() {
@@ -878,6 +881,11 @@ public class PopupDialog extends Window {
 		// We do this before disposal so that any received activate or
 		// deactivate events are duly ignored.
 		initializeWidgetState();
+		
+		if (parentDeactivateListener != null) {
+			getShell().getParent().removeListener(SWT.Deactivate, parentDeactivateListener);
+			parentDeactivateListener = null;
+		}
 
 		return super.close();
 	}
