@@ -785,15 +785,18 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 	 */
 	protected synchronized void attemptSelection(boolean reveal) {
 		if (fPendingSelection != null) {
-			fPendingSelection = doAttemptSelectionToWidget(fPendingSelection, reveal);
-			if (fPendingSelection.isEmpty()) {
-				fPendingSelection = null;
-			}
-			ISelection currentSelection = newSelectionFromWidget();
-			if (isSuppressEqualSelections() && currentSelection.equals(fCurrentSelection)) {
-				return;
-			}
-			updateSelection(currentSelection);
+            ISelection remaining = doAttemptSelectionToWidget(fPendingSelection, reveal);
+            if (!fPendingSelection.equals(remaining)) {
+                fPendingSelection = remaining;
+                if (fPendingSelection.isEmpty()) {
+                    fPendingSelection = null;
+                }
+                ISelection currentSelection = newSelectionFromWidget();
+                if (isSuppressEqualSelections() && currentSelection.equals(fCurrentSelection)) {
+                    return;
+                }
+                updateSelection(currentSelection);
+            }
 		}
 	}
 	
@@ -812,7 +815,7 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 	}
 	
 	/**
-	 * Attemtps to selection the specified selection and returns a selection
+	 * Attempts to selection the specified selection and returns a selection
 	 * representing the portion of the selection that could not be honored
 	 * and still needs to be selected.
 	 * 
@@ -906,6 +909,7 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 		if (!fCurrentSelection.equals(oldSelection))
 			handleInvalidSelection(oldSelection, fCurrentSelection);		
 	}
+    
 	/**
 	 * Sets the color attributes of the given widget.
 	 * 
