@@ -27,71 +27,69 @@ import org.eclipse.core.runtime.Status;
  */
 public class TextStreamMerger implements IStreamMerger {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.compare.internal.merge.IAutoMerger#automerge(java.io.OutputStream,
-     *      org.eclipse.core.resources.IEncodedStorage,
-     *      org.eclipse.core.resources.IEncodedStorage,
-     *      org.eclipse.core.resources.IEncodedStorage,
-     *      org.eclipse.core.runtime.IProgressMonitor)
-     */
-    public IStatus merge(OutputStream output, String outputEncoding,
-			InputStream ancestor, String ancestorEncoding,
-			InputStream target, String targetEncoding,
-			InputStream other, String otherEncoding,
-			IProgressMonitor monitor) {
-        
-        LineComparator a, t, o;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.compare.internal.merge.IAutoMerger#automerge(java.io.OutputStream,
+	 *      org.eclipse.core.resources.IEncodedStorage,
+	 *      org.eclipse.core.resources.IEncodedStorage,
+	 *      org.eclipse.core.resources.IEncodedStorage,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus merge(OutputStream output, String outputEncoding, InputStream ancestor, String ancestorEncoding, InputStream target, String targetEncoding, InputStream other, String otherEncoding, IProgressMonitor monitor) {
 
-        try {
-            a= new LineComparator(ancestor, ancestorEncoding);
-            t= new LineComparator(target, targetEncoding);
-            o= new LineComparator(other, otherEncoding);
-        } catch (UnsupportedEncodingException e) {
-            return new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, 1, MergeMessages.TextAutoMerge_inputEncodingError, e); 
-        }
+		LineComparator a, t, o;
 
-        try {
-            char lineSeparator= '\n';
-            
-            RangeDifference[] diffs = RangeDifferencer.findRanges(monitor, a, t, o);
+		try {
+			a= new LineComparator(ancestor, ancestorEncoding);
+			t= new LineComparator(target, targetEncoding);
+			o= new LineComparator(other, otherEncoding);
+		} catch (UnsupportedEncodingException e) {
+			return new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, 1, MergeMessages.TextAutoMerge_inputEncodingError, e);
+		}
 
-            for (int i = 0; i < diffs.length; i++) {
-                RangeDifference rd = diffs[i];
-                switch (rd.kind()) {
-                case RangeDifference.ANCESTOR:	// pseudo conflict
-                case RangeDifference.NOCHANGE:
-                case RangeDifference.RIGHT:
-                    for (int j = rd.rightStart(); j < rd.rightEnd(); j++) {
-                        String s= o.getLine(j);
-                        output.write(s.getBytes(outputEncoding));
-                        output.write(lineSeparator);
-                    }
-                    break;
+		try {
+			String lineSeparator= System.getProperty("line.separator"); //$NON-NLS-1$
+			if (lineSeparator == null)
+				lineSeparator= "\n"; //$NON-NLS-1$
 
-                case RangeDifference.LEFT:
-                    for (int j = rd.leftStart(); j < rd.leftEnd(); j++) {
-                        String s= t.getLine(j);
-                        output.write(s.getBytes(outputEncoding));
-                        output.write(lineSeparator);
-                    }
-                    break;
+			RangeDifference[] diffs= RangeDifferencer.findRanges(monitor, a, t, o);
 
-                case RangeDifference.CONFLICT:
-                    return new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, CONFLICT, MergeMessages.TextAutoMerge_conflict, null); 
+			for (int i= 0; i < diffs.length; i++) {
+				RangeDifference rd= diffs[i];
+				switch (rd.kind()) {
+				case RangeDifference.ANCESTOR: // pseudo conflict
+				case RangeDifference.NOCHANGE:
+				case RangeDifference.RIGHT:
+					for (int j= rd.rightStart(); j < rd.rightEnd(); j++) {
+						String s= o.getLine(j);
+						output.write(s.getBytes(outputEncoding));
+						output.write(lineSeparator.getBytes(outputEncoding));
+					}
+					break;
 
-                default:
-                    break;
-                }
-            }
- 
-        } catch (UnsupportedEncodingException e) {
-            return new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, 1, MergeMessages.TextAutoMerge_outputEncodingError, e); 
-        } catch (IOException e) {
-            return new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, 1, MergeMessages.TextAutoMerge_outputIOError, e); 
-        }
+				case RangeDifference.LEFT:
+					for (int j= rd.leftStart(); j < rd.leftEnd(); j++) {
+						String s= t.getLine(j);
+						output.write(s.getBytes(outputEncoding));
+						output.write(lineSeparator.getBytes(outputEncoding));
+					}
+					break;
 
-        return Status.OK_STATUS;
-    }
+				case RangeDifference.CONFLICT:
+					return new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, CONFLICT, MergeMessages.TextAutoMerge_conflict, null);
+
+				default:
+					break;
+				}
+			}
+
+		} catch (UnsupportedEncodingException e) {
+			return new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, 1, MergeMessages.TextAutoMerge_outputEncodingError, e);
+		} catch (IOException e) {
+			return new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, 1, MergeMessages.TextAutoMerge_outputIOError, e);
+		}
+
+		return Status.OK_STATUS;
+	}
 }

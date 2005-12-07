@@ -22,131 +22,139 @@ import org.eclipse.compare.internal.merge.TextStreamMerger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
-
 public class StreamMergerTest extends TestCase {
 
-    String encoding= "UTF-8"; //$NON-NLS-1$
+	private static final String ABC= "abc"; //$NON-NLS-1$
+	private static final String DEF= "def"; //$NON-NLS-1$
+	private static final String BAR= "bar"; //$NON-NLS-1$
+	private static final String FOO= "foo"; //$NON-NLS-1$
+	private static final String XYZ= "xyz"; //$NON-NLS-1$
+	private static final String _123= "123"; //$NON-NLS-1$
+	private static final String _456= "456"; //$NON-NLS-1$
 
-    public StreamMergerTest(String name) {
-        super(name);
-    }
+	String encoding= "UTF-8"; //$NON-NLS-1$
+	static final String SEPARATOR= System.getProperty("line.separator"); //$NON-NLS-1$
+
+	public StreamMergerTest(String name) {
+		super(name);
+	}
 
 	public void testIncomingAddition() throws UnsupportedEncodingException {
-	    
-        String a= "abc\ndef\nxyz"; //$NON-NLS-1$
-        String t= "abc\ndef\nxyz"; //$NON-NLS-1$
-        String o= "abc\ndef\n123\nxyz"; //$NON-NLS-1$
-        
-        StringBuffer output= new StringBuffer();
-        
-        IStatus status= merge(output, a, t, o);
-        
-        assertEquals(status.getSeverity(), IStatus.OK);
-        assertEquals(status.getCode(), IStatus.OK);
-        assertEquals(output.toString(), "abc\ndef\n123\nxyz\n"); //$NON-NLS-1$
+
+		String a= ABC + SEPARATOR + DEF + SEPARATOR + XYZ;
+		String t= ABC + SEPARATOR + DEF + SEPARATOR + XYZ;
+		String o= ABC + SEPARATOR + DEF + SEPARATOR + _123 + SEPARATOR + XYZ;
+
+		StringBuffer output= new StringBuffer();
+
+		IStatus status= merge(output, a, t, o);
+
+		assertEquals(status.getSeverity(), IStatus.OK);
+		assertEquals(status.getCode(), IStatus.OK);
+		assertEquals(output.toString(), ABC + SEPARATOR + DEF + SEPARATOR + _123 + SEPARATOR + XYZ + SEPARATOR);
 	}
-	
+
 	public void testIncomingDeletion() throws UnsupportedEncodingException {
-	    
-        String a= "abc\ndef\nxyz"; //$NON-NLS-1$
-        String t= "abc\ndef\nxyz"; //$NON-NLS-1$
-        String o= "abc\nxyz"; //$NON-NLS-1$
-        
-        StringBuffer output= new StringBuffer();
-        
-        IStatus status= merge(output, a, t, o);
-        
-        assertEquals(status.getSeverity(), IStatus.OK);
-        assertEquals(status.getCode(), IStatus.OK);
-        assertEquals(output.toString(), "abc\nxyz\n"); //$NON-NLS-1$
+
+		String a= ABC + SEPARATOR + DEF + SEPARATOR + XYZ;
+		String t= ABC + SEPARATOR + DEF + SEPARATOR + XYZ;
+		String o= ABC + SEPARATOR + XYZ;
+
+		StringBuffer output= new StringBuffer();
+
+		IStatus status= merge(output, a, t, o);
+
+		assertEquals(status.getSeverity(), IStatus.OK);
+		assertEquals(status.getCode(), IStatus.OK);
+		assertEquals(output.toString(), ABC + SEPARATOR + XYZ + SEPARATOR);
 	}
-	
+
 	public void testIncomingReplacement() throws UnsupportedEncodingException {
-	    
-        String a= "abc\ndef\nxyz"; //$NON-NLS-1$
-        String t= "abc\ndef\nxyz"; //$NON-NLS-1$
-        String o= "abc\n123\nxyz"; //$NON-NLS-1$
-        
-        StringBuffer output= new StringBuffer();
-        
-        IStatus status= merge(output, a, t, o);
-        
-        assertEquals(status.getSeverity(), IStatus.OK);
-        assertEquals(status.getCode(), IStatus.OK);
-        assertEquals(output.toString(), "abc\n123\nxyz\n"); //$NON-NLS-1$
+
+		String a= ABC + SEPARATOR + DEF + SEPARATOR + XYZ;
+		String t= ABC + SEPARATOR + DEF + SEPARATOR + XYZ;
+		String o= ABC + SEPARATOR + _123 + SEPARATOR + XYZ;
+
+		StringBuffer output= new StringBuffer();
+
+		IStatus status= merge(output, a, t, o);
+
+		assertEquals(status.getSeverity(), IStatus.OK);
+		assertEquals(status.getCode(), IStatus.OK);
+		assertEquals(output.toString(), ABC + SEPARATOR + _123 + SEPARATOR + XYZ + SEPARATOR);
 	}
-	
+
 	public void testNonConflictingMerge() throws UnsupportedEncodingException {
-	    
-        String a= "abc\ndef\nxyz"; //$NON-NLS-1$
-        String t= "abc\ndef\nxyz\nfoo"; //$NON-NLS-1$
-        String o= "abc\n123\n456\nxyz"; //$NON-NLS-1$
-        
-        StringBuffer output= new StringBuffer();
-        
-        IStatus status= merge(output, a, t, o);
-        
-        assertEquals(status.getSeverity(), IStatus.OK);
-        assertEquals(status.getCode(), IStatus.OK);
-        assertEquals(output.toString(), "abc\n123\n456\nxyz\nfoo\n"); //$NON-NLS-1$
+
+		String a= ABC + SEPARATOR + DEF + SEPARATOR + XYZ;
+		String t= ABC + SEPARATOR + DEF + SEPARATOR + XYZ + SEPARATOR + FOO;
+		String o= ABC + SEPARATOR + _123 + SEPARATOR + _456 + SEPARATOR + XYZ;
+
+		StringBuffer output= new StringBuffer();
+
+		IStatus status= merge(output, a, t, o);
+
+		assertEquals(status.getSeverity(), IStatus.OK);
+		assertEquals(status.getCode(), IStatus.OK);
+		assertEquals(output.toString(), ABC + SEPARATOR + _123 + SEPARATOR + _456 + SEPARATOR + XYZ + SEPARATOR + FOO + SEPARATOR);
 	}
-	
+
 	public void testConflictingReplacement() throws UnsupportedEncodingException {
-	    
-        String a= "abc\ndef\nxyz"; //$NON-NLS-1$
-        String t= "abc\nfoo\nxyz"; //$NON-NLS-1$
-        String o= "abc\nbar\nxyz"; //$NON-NLS-1$
 
-        StringBuffer output= new StringBuffer();
-        
-        IStatus status= merge(output, a, t, o);
+		String a= ABC + SEPARATOR + DEF + SEPARATOR + XYZ;
+		String t= ABC + SEPARATOR + FOO + SEPARATOR + XYZ;
+		String o= ABC + SEPARATOR + BAR + SEPARATOR + XYZ;
 
-        assertEquals(status.getSeverity(), IStatus.ERROR);
-        assertEquals(status.getCode(), IStreamMerger.CONFLICT);
+		StringBuffer output= new StringBuffer();
+
+		IStatus status= merge(output, a, t, o);
+
+		assertEquals(status.getSeverity(), IStatus.ERROR);
+		assertEquals(status.getCode(), IStreamMerger.CONFLICT);
 	}
-	
+
 	public void testConflictingAddition() throws UnsupportedEncodingException {
-	    
-        String a= "abc\ndef\nxyz"; //$NON-NLS-1$
-        String t= "abc\ndef\n123\nxyz"; //$NON-NLS-1$
-        String o= "abc\ndef\n123\nxyz"; //$NON-NLS-1$
 
-        StringBuffer output= new StringBuffer();
-        
-        IStatus status= merge(output, a, t, o);
+		String a= ABC + SEPARATOR + DEF + SEPARATOR + XYZ;
+		String t= ABC + SEPARATOR + DEF + SEPARATOR + _123 + SEPARATOR + XYZ;
+		String o= ABC + SEPARATOR + DEF + SEPARATOR + _123 + SEPARATOR + XYZ;
 
-        assertEquals(status.getSeverity(), IStatus.OK);
-        assertEquals(status.getCode(), IStatus.OK);
-        assertEquals(output.toString(), "abc\ndef\n123\nxyz\n"); //$NON-NLS-1$
+		StringBuffer output= new StringBuffer();
+
+		IStatus status= merge(output, a, t, o);
+
+		assertEquals(status.getSeverity(), IStatus.OK);
+		assertEquals(status.getCode(), IStatus.OK);
+		assertEquals(output.toString(), ABC + SEPARATOR + DEF + SEPARATOR + _123 + SEPARATOR + XYZ + SEPARATOR);
 	}
-	
+
 	public void testConflictingDeletion() throws UnsupportedEncodingException {
-	    
-        String a= "abc\ndef\nxyz"; //$NON-NLS-1$
-        String t= "abc\nxyz"; //$NON-NLS-1$
-        String o= "abc\nxyz"; //$NON-NLS-1$
 
-        StringBuffer output= new StringBuffer();
-        
-        IStatus status= merge(output, a, t, o);
+		String a= ABC + SEPARATOR + DEF + SEPARATOR + XYZ;
+		String t= ABC + SEPARATOR + XYZ;
+		String o= ABC + SEPARATOR + XYZ;
 
-        assertEquals(status.getSeverity(), IStatus.OK);
-        assertEquals(status.getCode(), IStatus.OK);
-        assertEquals(output.toString(), "abc\nxyz\n"); //$NON-NLS-1$
+		StringBuffer output= new StringBuffer();
+
+		IStatus status= merge(output, a, t, o);
+
+		assertEquals(status.getSeverity(), IStatus.OK);
+		assertEquals(status.getCode(), IStatus.OK);
+		assertEquals(output.toString(), ABC + SEPARATOR + XYZ + SEPARATOR);
 	}
-	
+
 	private IStatus merge(StringBuffer output, String a, String m, String y) throws UnsupportedEncodingException {
-        InputStream ancestor= new ByteArrayInputStream(a.getBytes(encoding));
-        InputStream target= new ByteArrayInputStream(m.getBytes(encoding));
-        InputStream other= new ByteArrayInputStream(y.getBytes(encoding));
-        
-        ByteArrayOutputStream os= new ByteArrayOutputStream();
+		InputStream ancestor= new ByteArrayInputStream(a.getBytes(encoding));
+		InputStream target= new ByteArrayInputStream(m.getBytes(encoding));
+		InputStream other= new ByteArrayInputStream(y.getBytes(encoding));
 
-        IStreamMerger merger= new TextStreamMerger();
-        IStatus status= merger.merge(os, encoding, ancestor, encoding, target, encoding, other, encoding, (IProgressMonitor)null);
+		ByteArrayOutputStream os= new ByteArrayOutputStream();
 
-        output.append(new String(os.toByteArray(), encoding));
- 
-        return status;
+		IStreamMerger merger= new TextStreamMerger();
+		IStatus status= merger.merge(os, encoding, ancestor, encoding, target, encoding, other, encoding, (IProgressMonitor) null);
+
+		output.append(new String(os.toByteArray(), encoding));
+
+		return status;
 	}
 }
