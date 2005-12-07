@@ -138,7 +138,10 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 	            viewer.setAutoExpandLevel(2);
 
 	        AdaptableList input = new AdaptableList(inputArray);
-
+	        
+	        // filter wizard list according to capabilities that are enabled
+	        viewer.addFilter(new WizardActivityFilter());
+	        
 	        viewer.setInput(input);
 		}
 
@@ -263,7 +266,6 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
                	updateSelectedNode((WorkbenchWizardElement)sel);
             }
             else{
-            	 
             	setSelectedNode(null);
             }
     	}

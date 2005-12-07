@@ -106,7 +106,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
     private IWizardDescriptor selectedElement;
 
-    private NewWizardActivityFilter filter = new NewWizardActivityFilter();
+    private WizardActivityFilter filter = new WizardActivityFilter();
 
     private boolean needShowAll;
 

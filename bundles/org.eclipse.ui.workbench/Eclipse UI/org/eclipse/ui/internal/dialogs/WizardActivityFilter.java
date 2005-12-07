@@ -23,7 +23,7 @@ import org.eclipse.ui.model.AdaptableList;
  * 
  * @since 3.0
  */
-public class NewWizardActivityFilter extends ViewerFilter {
+public class WizardActivityFilter extends ViewerFilter {
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
