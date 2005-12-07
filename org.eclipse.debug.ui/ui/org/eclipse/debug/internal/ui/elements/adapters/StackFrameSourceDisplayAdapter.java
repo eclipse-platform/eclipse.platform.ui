@@ -110,7 +110,7 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 		 * Constructs a new source display job
 		 */
 		public SourceDisplayJob(ISourceLookupResult result, IWorkbenchPage page) {
-			super("Debug Source Display"); 
+			super("Debug Source Display");  //$NON-NLS-1$
 			setSystem(true);
 			setPriority(Job.INTERACTIVE);
 			fResult = result;
