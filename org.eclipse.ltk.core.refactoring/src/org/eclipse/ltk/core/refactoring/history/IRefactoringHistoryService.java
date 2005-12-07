@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.resources.IProject;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
@@ -215,6 +216,7 @@ public interface IRefactoringHistoryService {
 	 * @return a refactoring history
 	 * @throws CoreException
 	 *             if an error occurs
+	 * @see RefactoringDescriptor#NONE
 	 */
 	public RefactoringHistory readRefactoringHistory(InputStream stream, int filter) throws CoreException;
 
@@ -275,6 +277,7 @@ public interface IRefactoringHistoryService {
 	 *            output stream
 	 * @throws CoreException
 	 *             if an error occurs
+	 * @see RefactoringDescriptor#NONE
 	 */
 	public void writeRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, OutputStream stream, int filter) throws CoreException;
 }
