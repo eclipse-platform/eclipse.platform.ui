@@ -154,6 +154,11 @@
          <modelProvider
                class="org.eclipse.core.internal.resources.mapping.ResourceModelProvider"
                name="%resourceModelName"/>
+          <enablement>
+           <with variable="element">
+   	         <instanceof value="org.eclipse.core.resources.IResource"/>
+           </with>
+       </enablement>
       </extension>
 
 </plugin>
