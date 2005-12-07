@@ -1900,6 +1900,15 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			fTableViewer.refresh();
 		}
 	}
+	
+	public String getLabel() {
+		if (fLabel == null)
+			fLabel = buildLabel(true);
+		
+		return fLabel;
+	}
+
+	
 	/**
 	 * Updates the label of this rendering, optionally displaying the
 	 * base address of this rendering's memory block.
@@ -1909,24 +1918,29 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	 */
 	protected void updateRenderingLabel(boolean showAddress)
 	{	
-		fLabel = ""; //$NON-NLS-1$
+		fLabel = buildLabel(showAddress);
+		firePropertyChangedEvent(new PropertyChangeEvent(this, IBasicPropertyConstants.P_TEXT, null, fLabel));
+	}
+
+	private String buildLabel(boolean showAddress) {
+		String label = ""; //$NON-NLS-1$
 		if (getMemoryBlock() instanceof IMemoryBlockExtension)
 		{
-			fLabel = ((IMemoryBlockExtension)getMemoryBlock()).getExpression();
+			label = ((IMemoryBlockExtension)getMemoryBlock()).getExpression();
 			
-			if (fLabel.startsWith("&")) //$NON-NLS-1$
-				fLabel = "&" + fLabel; //$NON-NLS-1$
+			if (label.startsWith("&")) //$NON-NLS-1$
+				label = "&" + label; //$NON-NLS-1$
 			
-			if (fLabel == null)
+			if (label == null)
 			{
-				fLabel = DebugUIMessages.AbstractTableRendering_8; 
+				label = DebugUIMessages.AbstractTableRendering_8; 
 			}
 			
 			try {
 				if (showAddress && ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress() != null)
 				{	
-					fLabel += " : 0x"; //$NON-NLS-1$
-					fLabel += ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress().toString(16).toUpperCase();
+					label += " : 0x"; //$NON-NLS-1$
+					label += ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress().toString(16).toUpperCase();
 				}
 			} catch (DebugException e) {
 				// do nothing, the label will not show the address
@@ -1935,15 +1949,18 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		else
 		{
 			long address = getMemoryBlock().getStartAddress();
-			fLabel = Long.toHexString(address).toUpperCase();
+			label = Long.toHexString(address).toUpperCase();
 		}
 		
 		String preName = DebugUITools.getMemoryRenderingManager().getRenderingType(getRenderingId()).getLabel();
 		
 		if (preName != null)
-			fLabel += " <" + preName + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+			label += " <" + preName + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 		
-		firePropertyChangedEvent(new PropertyChangeEvent(this, IBasicPropertyConstants.P_TEXT, null, fLabel));
+		if (fLabelDecorator != null)
+			label = fLabelDecorator.decorateText(label, this);
+		
+		return label;
 	}
 	
 	private void setColumnHeadings()
@@ -3229,7 +3246,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 					}
 	
 					public String getLabel(Object o) {
-						return getInstance().getLabel();
+						return AbstractTableRendering.this.getLabel();
 					}
 	
 					public Object getParent(Object o) {
@@ -3304,11 +3321,6 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		}	
 		
 		return super.getAdapter(adapter);
-	}
-	
-	private AbstractTableRendering getInstance()
-	{
-		return this;
 	}
 	
 	private boolean hasCustomizedDecorations()
@@ -3710,6 +3722,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	 * @return the bytes converted from a string
 	 */
 	abstract public byte[] getBytes(String renderingTypeId, BigInteger address, MemoryByte[] currentValues, String newValue);
+
 
 }	
 

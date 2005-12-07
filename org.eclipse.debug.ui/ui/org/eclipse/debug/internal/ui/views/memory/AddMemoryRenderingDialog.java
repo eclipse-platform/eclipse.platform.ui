@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
@@ -24,6 +25,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -248,11 +250,48 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		
 		fMouseListener =new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
+				IMemoryBlock[] oldBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks();
+				
 				RetargetAddMemoryBlockAction action = new RetargetAddMemoryBlockAction(fSite, false);
 				action.run();
-				populateDialog(memoryBlock, fViewer, action.getLastMemoryBlock());
+				
+				IMemoryBlock[] newBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks();
+				
+				IMemoryBlock mb = action.getLastMemoryBlock();
+				if (mb == null)
+				{
+					mb = findNewMemoryBlock(oldBlocks, newBlocks);
+				}
+				
+				populateDialog(memoryBlock, fViewer, mb);
 				action.dispose();
-			}}; 
+			}
+			
+			private IMemoryBlock findNewMemoryBlock(IMemoryBlock[] oldBlocks, IMemoryBlock[] newBlocks)
+			{
+				if (oldBlocks.length == newBlocks.length)
+					return newBlocks[newBlocks.length - 1];
+				
+				if (newBlocks.length > oldBlocks.length)
+				{
+					// search from the back as new memory blocks should be at the
+					// end of the list
+					for (int i=newBlocks.length - 1; i>=0; i++)
+					{
+						boolean found = false;
+						for (int j=0; j<oldBlocks.length; j++)
+						{
+							if (newBlocks[i] == oldBlocks[j])
+								found = true;
+						}
+						if (!found)
+							return newBlocks[i];
+					}
+				}	
+				
+				return newBlocks[newBlocks.length - 1];
+			}
+		}; 
 		
 		addNew.addMouseListener(fMouseListener);
 		
@@ -328,6 +367,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fSite = site;
 	}
+	
 	
 	private void populateDialog(Combo combo, ListViewer viewer, IMemoryBlock lastAdded)
 	{	
@@ -420,6 +460,11 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 			{
 				selectionIdx = i;
 			}
+			
+			// ask decorator to decorate to ensure consistent label
+			ILabelDecorator decorator = (ILabelDecorator)fMemoryBlocks[i].getAdapter(ILabelDecorator.class);
+			if (decorator != null)
+				text = decorator.decorateText(text, fMemoryBlocks[i]);
 			
 			combo.add(text);
 		}

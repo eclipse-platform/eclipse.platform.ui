@@ -24,6 +24,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
@@ -56,6 +57,13 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	private MenuManager fPopupMenuMgr;
 	private String fRenderingId;
 	
+	/*
+	* Cient may provide a label decorator adapter from its memory block
+	* to decorate the label of a rendering.
+	* @since 3.2 
+	*/
+	protected ILabelDecorator fLabelDecorator;
+	
 	/**
 	 * Constructs a new rendering of the given type.
 	 * 
@@ -72,6 +80,8 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	public void init(IMemoryRenderingContainer container, IMemoryBlock block) {
 		fContainer = container;
 		fMemoryBlock = block;
+		
+		fLabelDecorator = (ILabelDecorator)fMemoryBlock.getAdapter(ILabelDecorator.class);
 	}
 
 	/* (non-Javadoc)
@@ -170,6 +180,10 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getImage()
 	 */
 	public Image getImage() {
+		
+		if (fLabelDecorator != null)
+			return fLabelDecorator.decorateImage(null, this);
+		
 		return null;
 	}
 
@@ -226,6 +240,10 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 				label.append(">");  //$NON-NLS-1$
 			}
 		}
+		
+		if (fLabelDecorator != null)
+			return fLabelDecorator.decorateText(label.toString(), this);
+		
 		return label.toString();
 	}
 	

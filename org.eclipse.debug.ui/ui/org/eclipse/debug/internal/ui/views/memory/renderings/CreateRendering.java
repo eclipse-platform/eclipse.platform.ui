@@ -17,7 +17,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -291,43 +290,6 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 	public Control getControl() {
 		return fCanvas;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.memory.AbstractMemoryRendering#getLabel()
-	 */
-	public String getLabel() {
-		String memoryBlockLabel = " "; //$NON-NLS-1$
-		if (getMemoryBlock() instanceof IMemoryBlockExtension)
-		{
-			if (((IMemoryBlockExtension)getMemoryBlock()).getExpression() != null)
-			{
-				String prefix = ""; //$NON-NLS-1$
-				if (((IMemoryBlockExtension)getMemoryBlock()).getExpression().startsWith("&")) //$NON-NLS-1$
-				{
-					prefix = "&"; //$NON-NLS-1$
-					memoryBlockLabel += prefix;
-				}
-				memoryBlockLabel += ((IMemoryBlockExtension)getMemoryBlock()).getExpression();
-			}
-			
-			try {
-				if (((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress() != null)
-				{
-					memoryBlockLabel += " <0x" + ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress().toString(16).toUpperCase() + ">"; //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			} catch (DebugException e) {
-				// return whatever we have for label
-				return memoryBlockLabel;
-			}
-		}
-		else
-		{
-			long address = getMemoryBlock().getStartAddress();
-			memoryBlockLabel = Long.toHexString(address).toUpperCase();
-		}
-		return memoryBlockLabel;
-	}
-
 	public void memoryRenderingBindingsChanged() {
 		if (fViewer != null)
 			fViewer.refresh();
