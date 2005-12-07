@@ -139,6 +139,9 @@ public class ProblemView extends MarkerView {
 		return 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#dispose()
+	 */
 	public void dispose() {
 		if (resolveMarkerAction != null)
 			resolveMarkerAction.dispose();
@@ -457,7 +460,7 @@ public class ProblemView extends MarkerView {
 									true);
 					regenerateLayout();
 					getViewer().setSorter(buildSorter());
-					((MarkerAdapter) getViewerInput()).scheduleMarkerCalculation();
+					getViewer().refresh();
 				}
 			}
 
@@ -517,7 +520,7 @@ public class ProblemView extends MarkerView {
 									false);
 					regenerateLayout();
 					getViewer().setSorter(buildSorter());
-					((MarkerAdapter) getViewerInput()).scheduleMarkerCalculation();
+					getViewer().refresh();
 				}
 			}
 
@@ -543,7 +546,9 @@ public class ProblemView extends MarkerView {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.internal.TableView#setSorter(org.eclipse.ui.views.markers.internal.TableSorter)
 	 */
 	void setSorter(TableSorter sorter2) {
@@ -556,12 +561,14 @@ public class ProblemView extends MarkerView {
 		} else
 			super.setSorter(sorter2);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getTableSorter()
 	 */
 	public TableSorter getTableSorter() {
-		if(isHierarchalMode()){
+		if (isHierarchalMode()) {
 			CategorySorter sorter = (CategorySorter) getViewer().getSorter();
 			return sorter.innerSorter;
 		}

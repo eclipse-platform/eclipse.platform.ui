@@ -266,8 +266,4 @@ public class MarkerMessages extends NLS{
 	public static String Util_WorkspaceName;
 	public static String Util_ProjectRoot;
 	public static String Util_WorkspaceRoot;
-	
-	public static String Calculate_Markers_Job;
-	public static String Refresh_Markers_Job;
-	public static String Update_Viewer_Job;
 }

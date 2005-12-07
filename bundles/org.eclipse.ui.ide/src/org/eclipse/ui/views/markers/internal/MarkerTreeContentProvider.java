@@ -11,10 +11,13 @@ package org.eclipse.ui.views.markers.internal;
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.progress.DeferredTreeContentManager;
+import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 /**
  * The MarkerTreeContentProvider is the content provider for the marker trees.
@@ -24,9 +27,26 @@ import org.eclipse.ui.IWorkbenchPartSite;
  */
 public class MarkerTreeContentProvider implements ITreeContentProvider {
 
+	private class MarkerContentManager extends DeferredTreeContentManager {
+
+		/**
+		 * Create a new instance of the receiver.
+		 * 
+		 * @param provider
+		 * @param viewer
+		 * @param site
+		 */
+		public MarkerContentManager(ITreeContentProvider provider,
+				AbstractTreeViewer viewer, IWorkbenchPartSite site) {
+			super(provider, viewer, site);
+		}
+	}
+
+	MarkerContentManager manager;
+
 	TreeViewer viewer;
 
-	MarkerAdapter input;
+	IDeferredWorkbenchAdapter input;
 
 	IWorkbenchPartSite partSite;
 
@@ -78,7 +98,7 @@ public class MarkerTreeContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		return input.getChildren(inputElement);
+		return manager.getChildren(inputElement);
 	}
 
 	/*
@@ -98,8 +118,16 @@ public class MarkerTreeContentProvider implements ITreeContentProvider {
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (TreeViewer) viewer;
-		input = (MarkerAdapter) newInput;
+		manager = new MarkerContentManager(this, this.viewer, partSite);
+		input = (IDeferredWorkbenchAdapter) newInput;
 
+	}
+
+	/**
+	 * Refresh the children without changing the widget yet.
+	 */
+	public void refresh() {
+		getChildren(input);
 	}
 
 }

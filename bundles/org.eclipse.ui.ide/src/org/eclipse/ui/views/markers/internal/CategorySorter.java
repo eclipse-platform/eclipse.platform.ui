@@ -1,4 +1,14 @@
 package org.eclipse.ui.views.markers.internal;
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.CoreException;
@@ -142,16 +152,5 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 	 */
 	public int compare(Object arg0, Object arg1) {
 		return compare(arg0, arg1, 0, true);
-	}
-
-	/**
-	 * Return whether or not there would be an entry for
-	 * i for type type.
-	 * @param i
-	 * @param type
-	 * @return boolean
-	 */
-	public boolean hasField(int i, String type) {
-		return getCategoryFieldCount(type) >= i;
 	}
 }

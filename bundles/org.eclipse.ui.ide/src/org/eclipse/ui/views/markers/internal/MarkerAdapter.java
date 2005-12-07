@@ -13,23 +13,27 @@ package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.views.markers.internal.MarkerView.MarkerRefreshRecord;
+import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
+import org.eclipse.ui.progress.IElementCollector;
 
 /**
  * The MarkerAdapter is the adapter for the deferred update of markers.
  * 
- * @since 3.2
+ * @since 3.1
  * 
  */
-public class MarkerAdapter {
+public class MarkerAdapter implements IDeferredWorkbenchAdapter {
 
 	private class MarkerCategory extends MarkerNode {
 
@@ -46,6 +50,7 @@ public class MarkerAdapter {
 		private MarkerNode[] children;
 
 		private String name;
+
 		/**
 		 * Create a new instance of the receiver that has the markers between
 		 * startIndex and endIndex showing.
@@ -91,10 +96,10 @@ public class MarkerAdapter {
 
 			if (children == null) {
 
-				if (isIntermediateCategory()) {
+				if (view.getTableSorter().getFields().length >= fieldIndex) {
 					children = buildHierarchy(markerAdapter.lastMarkers, start,
 							end, fieldIndex + 1, this);
-					if (children.length > 0)// Did we find any?
+					if (children != null)// De we find any?
 						return children;
 				}
 
@@ -115,15 +120,6 @@ public class MarkerAdapter {
 			}
 			return children;
 
-		}
-
-		/**
-		 * Return whether or not there is a field below this one.
-		 * 
-		 * @return boolean
-		 */
-		private boolean isIntermediateCategory() {
-			return getCategorySorter().hasField(fieldIndex + 1, getType());
 		}
 
 		/*
@@ -152,61 +148,12 @@ public class MarkerAdapter {
 		public boolean isConcrete() {
 			return false;
 		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.views.markers.internal.MarkerNode#isStale()
-		 */
-		public boolean isStale() {
-			return false;
-		}
-
-		public void removeChild(MarkerNode marker) {
-
-		}
-
-		/**
-		 * Return whether or not this category has the same fields as the
-		 * receiver.
-		 * 
-		 * @param category
-		 * @return boolean
-		 */
-		public boolean isSameAs(MarkerCategory category) {
-			return category.fieldIndex == fieldIndex && category.start == start
-					&& category.end == end;
-		}
-
-		/**
-		 * Return the children if they are categories
-		 * 
-		 * @return MarkerCategory[]
-		 */
-		public MarkerCategory[] getCategoryChildren() {
-			
-			if (!isIntermediateCategory())
-				return EMPTY_MARKER_CATEGORIES;
-			MarkerNode[] children = getChildren();
-			if(children.length == 0 || children[0].isConcrete())
-				return EMPTY_MARKER_CATEGORIES;
-			MarkerCategory[] categories = new MarkerCategory[children.length];
-			System.arraycopy(children, 0, categories, 0, children.length);
-			return categories;
-
-		}
-
 	}
 
 	MarkerView view;
 
-	private MarkerList lastMarkers = null;
+	private MarkerList lastMarkers = new MarkerList();
 
-	private MarkerCategory[] categories = new MarkerCategory[0];
-
-	private Job markerJob;
-
-	private static final MarkerCategory[] EMPTY_MARKER_CATEGORIES = new MarkerCategory[0];
 
 	/**
 	 * Create a new instance of the receiver.
@@ -218,13 +165,42 @@ public class MarkerAdapter {
 	}
 
 	/**
-	 * Return the category sorter for the receiver. This should only be called
-	 * in hierarchal mode or there will be a ClassCastException.
+	 * Return the category sorter for the receiver.
+	 * This should only be called in hierarchal mode 
+	 * or there will be a ClassCastException.
 	 * 
 	 * @return CategorySorter
 	 */
 	public CategorySorter getCategorySorter() {
-		return (CategorySorter) view.getViewer().getSorter();
+		 return (CategorySorter) view.getViewer().getSorter();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object,
+	 *      org.eclipse.ui.progress.IElementCollector,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void fetchDeferredChildren(Object object,
+			IElementCollector collector, IProgressMonitor monitor) {
+
+		if (monitor.isCanceled())
+			return;
+
+		if (!view.isHierarchalMode() || object.equals(view.getViewerInput())) {
+			try {
+				Platform.getJobManager().beginRule(
+						ResourcesPlugin.getWorkspace().getRoot(), monitor);
+				buildAllMarkers(collector, monitor);
+			} finally {
+				Platform.getJobManager().endRule(
+						ResourcesPlugin.getWorkspace().getRoot());
+			}
+
+			view.scheduleCountUpdate();
+		} else
+			addChildren(object, collector, monitor);
 	}
 
 	/**
@@ -233,7 +209,8 @@ public class MarkerAdapter {
 	 * @param collector
 	 * @param monitor
 	 */
-	private void buildAllMarkers(IProgressMonitor monitor) {
+	private void buildAllMarkers(IElementCollector collector,
+			IProgressMonitor monitor) {
 		int markerLimit = view.getMarkerLimit();
 		monitor.beginTask(MarkerMessages.MarkerView_19, markerLimit == -1 ? 60
 				: 100);
@@ -260,21 +237,66 @@ public class MarkerAdapter {
 			return;
 		}
 
-		if (monitor.isCanceled())
+		if (monitor.isCanceled()) {
 			return;
+		}
 
-		view.getViewer().getSorter().sort(view.getViewer(),
-				lastMarkers.toArray());
+		ViewerSorter sorter = view.getViewer().getSorter();
+
+		if (markerLimit == -1) {
+			sorter.sort(view.getViewer(), lastMarkers.toArray());
+		}		
+		else{
+
+			monitor.subTask(MarkerMessages.MarkerView_18);
+			SubProgressMonitor mon = new SubProgressMonitor(monitor, 40);
+
+			
+			lastMarkers = SortUtil.getFirst(lastMarkers,(Comparator) sorter, markerLimit,
+					mon);
+			if (monitor.isCanceled())
+				return;
+			sorter.sort(view.getViewer(), lastMarkers.toArray());
+		}
+
+		if (lastMarkers.getSize() == 0) {
+			monitor.done();
+			return;
+		}
 
 		monitor.subTask(MarkerMessages.MarkerView_queueing_updates);
 
-		if (view.isHierarchalMode())
-			categories = buildHierarchy(lastMarkers, 0,
+		SubProgressMonitor sub = new SubProgressMonitor(monitor, 50);
+		if (view.isHierarchalMode()) {
+
+			MarkerCategory[] categories = buildHierarchy(lastMarkers, 0,
 					lastMarkers.getSize() - 1, 0, null);
+
+			if (categories == null)// Just add the markers
+				collector.add(lastMarkers.toArray(), sub);
+			else
+				collector.add(categories, sub);
+		} else
+			collector.add(lastMarkers.toArray(), sub);
+
 		if (monitor.isCanceled())
 			return;
 
 		monitor.done();
+
+	}
+
+	/**
+	 * Add the children of object to collector.
+	 * 
+	 * @param object
+	 * @param collector
+	 * @param monitor
+	 */
+	private void addChildren(Object object, IElementCollector collector,
+			IProgressMonitor monitor) {
+		MarkerCategory category = (MarkerCategory) object;
+		collector.add(category.getChildren(), monitor);
 
 	}
 
@@ -289,22 +311,18 @@ public class MarkerAdapter {
 	 * @param sortIndex -
 	 *            the parent of the field
 	 * @param parent
-	 * @return MarkerCategory[] 
+	 * @return MarkerCategory[] or <code>null</code> if we are at the bottom
+	 *         of the tree
 	 */
 	MarkerCategory[] buildHierarchy(MarkerList markers, int start, int end,
 			int sortIndex, MarkerCategory parent) {
-
-		if (end < start)
-			return EMPTY_MARKER_CATEGORIES;
-
 		CategorySorter sorter = getCategorySorter();
 
 		if (sortIndex >= sorter.getCategoryFieldCount(markers.getMarker(start)
-				.getType())) {
-			return EMPTY_MARKER_CATEGORIES;// Are we out of categories?
-		}
+				.getType()))
+			return null;// Are we out of categories?
 
-		Collection newCategories = new ArrayList();
+		Collection categories = new ArrayList();
 
 		Object previous = null;
 		int categoryStart = start;
@@ -316,7 +334,7 @@ public class MarkerAdapter {
 			if (previous != null) {
 				// Are we at a category boundary?
 				if (sorter.compare(previous, elements[i], sortIndex, false) != 0) {
-					newCategories.add(new MarkerCategory(this, categoryStart,
+					categories.add(new MarkerCategory(this, categoryStart,
 							i - 1, sortIndex, parent));
 					categoryStart = i;
 				}
@@ -326,74 +344,69 @@ public class MarkerAdapter {
 		}
 
 		if (end >= categoryStart) {
-			newCategories.add(new MarkerCategory(this, categoryStart, end,
+			categories.add(new MarkerCategory(this, categoryStart, end,
 					sortIndex, parent));
 		}
 
 		// Flatten single categories
-		if (newCategories.size() == 1) {
+		if (categories.size() == 1) {
 			return buildHierarchy(markers, start, end, sortIndex + 1, parent);
 		}
-		MarkerCategory[] nodes = new MarkerCategory[newCategories.size()];
-		newCategories.toArray(nodes);
+		MarkerCategory[] nodes = new MarkerCategory[categories.size()];
+		categories.toArray(nodes);
 		return nodes;
 
 	}
 
-	/**
-	 * Get the children of o.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param o
-	 * @return Object[]
+	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
+	 */
+	public boolean isContainer() {
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
+	 */
+	public ISchedulingRule getRule(Object object) {
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object o) {
-
-		if (lastMarkers == null) {
-			scheduleMarkerCalculation();
-			return new Object[0];
-		}
-		if (o instanceof MarkerNode)
-			return ((MarkerNode) o).getChildren();
-		if (view.isHierarchalMode() && categories != null && categories.length > 0)
-			return categories;
-		int markerLimit = view.getMarkerLimit();
-		if (markerLimit == -1 || markerLimit >= lastMarkers.getSize())
-			return lastMarkers.toArray();
-
-		Object[] returnValue = new Object[markerLimit];
-		System.arraycopy(lastMarkers.toArray(), 0, returnValue, 0, markerLimit);
-		return returnValue;
+		return ((MarkerNode) o).getChildren();
 	}
 
-	/**
-	 * Schedule the marker calculation.
-	 */
-	public void scheduleMarkerCalculation() {
-		if (markerJob == null) {
-			markerJob = new Job(MarkerMessages.Calculate_Markers_Job) {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-				 */
-				protected IStatus run(IProgressMonitor monitor) {
-					buildAllMarkers(monitor);
-					MarkerAdapter.this.view.scheduleRefresh();
-					return Status.OK_STATUS;
-				}
-
-			};
-			markerJob.setSystem(true);
-		}
-		markerJob.schedule();
-
-	}
-
-	/**
-	 * Get the parent of the object
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param o
-	 * @return Object
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
+	 */
+	public ImageDescriptor getImageDescriptor(Object object) {
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
+	 */
+	public String getLabel(Object o) {
+		return view.getSite().getRegisteredName();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object o) {
 		return ((MarkerNode) o).getParent();
@@ -408,89 +421,4 @@ public class MarkerAdapter {
 		return lastMarkers;
 	}
 
-	/**
-	 * Refresh the markers that have changes in record.
-	 * 
-	 * @param record
-	 * @param monitor
-	 */
-	public void refreshMarkers(MarkerRefreshRecord record,
-			IProgressMonitor monitor) {
-
-		if (monitor.isCanceled())
-			return;
-		
-		MarkerList removed = lastMarkers.removeMarkers(record
-				.getRemovedMarkers());
-
-		MarkerList added = lastMarkers.addMarkers(record.getAddedMarkers());
-
-		// Resort just in case of issues with marker limits
-		view.getViewer().getSorter().sort(view.getViewer(),
-				lastMarkers.toArray());
-
-		if (monitor.isCanceled())
-			return;
-
-		MarkerList changed = lastMarkers.findMarkers(record.changedMarkers);
-		changed.refreshAll();// Be sure to re-read the marker info
-
-		MarkerNodeRefreshRecord refreshRecord = new MarkerNodeRefreshRecord(
-				added.asList(), removed.asList(), changed.asList());
-
-		if (view.isHierarchalMode()) {
-			MarkerCategory[] oldCategories = categories;
-			categories = buildHierarchy(lastMarkers, 0,
-					lastMarkers.getSize() - 1, 0, null);
-			refreshStaleCategories(oldCategories, refreshRecord, categories);
-		}
-
-		view.refreshMarkerCounts(monitor);
-		view.refreshNodes(refreshRecord);
-	}
-
-	private void refreshStaleCategories(MarkerCategory[] oldCategories,
-			MarkerNodeRefreshRecord refreshRecord,
-			MarkerCategory[] newCategories) {
-
-		int newCategoryIndex = 0;
-		for (int i = 0; i < oldCategories.length; i++) {
-			int maxCategories = Math.min(oldCategories.length,
-					newCategories.length);
-			for (int j = newCategoryIndex; j < maxCategories; j++) {
-				if (newCategories[j].isSameAs(oldCategories[i])) {
-					newCategories[j] = oldCategories[i];
-					newCategoryIndex = j + 1;
-					refreshStaleCategories(oldCategories[i]
-							.getCategoryChildren(), refreshRecord,
-							newCategories[j].getCategoryChildren());
-					break;
-				}
-				refreshRecord.remove(oldCategories[i]);
-
-			}
-		}
-
-		for (int i = newCategoryIndex; i < newCategories.length; i++) {
-			refreshRecord.add(newCategories[i]);
-		}
-
-	}
-
-	/**
-	 * Mark all of the displayed markers as stale.
-	 */
-	public void markAllStale() {
-		if (lastMarkers == null)
-			return;
-
-		ConcreteMarker[] markers = lastMarkers.toArray();
-		for (int i = 0; i < markers.length; i++) {
-			markers[i].markStale();
-		}
-
-		lastMarkers = null;
-		scheduleMarkerCalculation();		
-
-	}
 }
