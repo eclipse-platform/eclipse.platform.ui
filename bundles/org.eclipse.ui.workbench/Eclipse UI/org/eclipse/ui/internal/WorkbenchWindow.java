@@ -3021,15 +3021,29 @@ public class WorkbenchWindow extends ApplicationWindow implements
         if ((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar())
                 || (getPerspectiveBarVisible() && getWindowConfigurer()
                         .getShowPerspectiveBar())) {
-            defaultLayout.addTrim(SWT.TOP, topBarTrim);
+        	if (defaultLayout.getTrim(topBarTrim.getId())==null) {
+        		defaultLayout.addTrim(SWT.TOP, topBarTrim);
+        	}
             topBar.setVisible(true);
         } else {
             defaultLayout.removeTrim(topBarTrim);
             topBar.setVisible(false);
         }
+        
+        if (getWindowConfigurer().getShowFastViewBars() && fastViewBar != null) {
+			int side = fastViewBar.getSide();
+
+			if (defaultLayout.getTrim(fastViewBar.getId())==null) {
+				defaultLayout.addTrim(side, fastViewBar);
+			}
+//			LayoutUtil.resize(fastViewBar.getControl());
+		}
+
 
         if (getStatusLineVisible() && getWindowConfigurer().getShowStatusLine()) {
-            defaultLayout.addTrim(SWT.BOTTOM, getStatusLineTrim());
+        	if (defaultLayout.getTrim(getStatusLineTrim().getId())==null) {
+        		defaultLayout.addTrim(SWT.BOTTOM, getStatusLineTrim());
+        	}
             getStatusLineManager().getControl().setVisible(true);
         } else {
             defaultLayout.removeTrim(getStatusLineTrim());
@@ -3046,7 +3060,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 									.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 	            }
 
-	            defaultLayout.addTrim(SWT.BOTTOM, heapStatusTrim);
+	            if (defaultLayout.getTrim(heapStatusTrim.getId())==null) {
+	            	defaultLayout.addTrim(SWT.BOTTOM, heapStatusTrim);
+	            }
 				heapStatus.setVisible(true);
 			}
 		}
@@ -3065,8 +3081,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 						.setHeightHint(getStatusLineManager().getControl()
 								.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
             }
-            defaultLayout
-                    .addTrim(SWT.BOTTOM, progressRegion);
+            if (defaultLayout.getTrim(progressRegion.getId()) == null) {
+				defaultLayout.addTrim(SWT.BOTTOM, progressRegion);
+            }
             progressRegion.getControl().setVisible(true);
         } else {
             if (progressRegion != null) {
@@ -3086,19 +3103,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     private void setLayoutDataForContents() {
         updateLayoutDataForContents();
-
-        if (getWindowConfigurer().getShowFastViewBars() && fastViewBar != null) {
-			IWindowTrim reference = null;
-			int side = fastViewBar.getSide();
-
-			if (side == SWT.BOTTOM && getWindowConfigurer().getShowStatusLine()) {
-				reference = getStatusLineTrim();
-			}
-
-			defaultLayout.addTrim(side, fastViewBar, reference);
-			LayoutUtil.resize(fastViewBar.getControl());
-		}
-        
     }
 
     /**

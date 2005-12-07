@@ -298,7 +298,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 			topBar.setBottom(null);
 			topBar.setRight(null);
 			LayoutUtil.resize(topBar);
-			((WorkbenchWindow) window).addToTrim(this, SWT.LEFT);
+			window.getTrimManager().addTrim(SWT.LEFT, this);
 			break;
 		default:
 			return;
