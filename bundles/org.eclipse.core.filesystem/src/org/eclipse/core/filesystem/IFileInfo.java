@@ -52,6 +52,14 @@ public interface IFileInfo extends Comparable, Cloneable {
 	/**
 	 * Returns the last modified time for this file, or {@link EFS#NONE}
 	 * if the file does not exist or the last modified time could not be computed.
+	 * <p>
+	 * The time format is the POSIX encoding of UTC, except the returned value
+	 * is in milliseconds rather than seconds.  Thus the returned value is:
+	 * 86,400,000 * days since (00:00:00 GMT, January 1, 1970) + number of UTC 
+	 * milliseconds since the beginning of that day (often incorrectly specified as the 
+	 * number of milliseconds since the epoch, which does not account for the 
+	 * insertion and removal of leap seconds).
+	 * </p>
 	 * 
 	 * @return the last modified time for this file, or {@link EFS#NONE}
 	 */
