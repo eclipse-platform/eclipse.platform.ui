@@ -22,12 +22,11 @@ import org.eclipse.ui.IPersistableElement;
 
 /**
  * Editor input for the <code>CommonSourceNotFoundEditor</code>. The editor
- * input can be created on a debug element or breakpoint.
- *
+ * input can be created on an artifact that has a source association.
+ * <p>
+ * This class may be instantiated and subclassed.
+ * </p>
  * @see CommonSourceNotFoundEditor
- * 
- * TODO:  new API, need review
- * 
  * @since 3.2
  */
 public class CommonSourceNotFoundEditorInput extends PlatformObject implements IEditorInput {
@@ -35,23 +34,22 @@ public class CommonSourceNotFoundEditorInput extends PlatformObject implements I
 	/**
 	 * input element label (cached on creation)
 	 */
-	protected String fLabel;
+	private String fLabel;
 	/**
-	 * the object that the editor is being brought up for
+	 * the artifact that the editor is being opened for
 	 */
-	protected Object fObject;
+	private Object fArtifact;
 	
 	/**
-	 * Constructs an editor input for the given debug element
-	 * or breakpoint.
+	 * Constructs an editor input for the given artifact associated with source.
 	 *
-	 * @param object debug element or breakpoint
+	 * @param artifact artifact associated with source
 	 */
-	public CommonSourceNotFoundEditorInput(Object object) {
-		fObject = object;
-		if (object != null) {
+	public CommonSourceNotFoundEditorInput(Object artifact) {
+		fArtifact = artifact;
+		if (artifact != null) {
 			IDebugModelPresentation pres = DebugUITools.newDebugModelPresentation();
-			fLabel = pres.getText(object);
+			fLabel = pres.getText(artifact);
 			pres.dispose();
 		}
 		if (fLabel == null) {
@@ -59,35 +57,35 @@ public class CommonSourceNotFoundEditorInput extends PlatformObject implements I
 		}
 	}	
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#exists()
 	 */
 	public boolean exists() {
 		return false;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		return DebugUITools.getDefaultImageDescriptor(fObject);
+		return DebugUITools.getDefaultImageDescriptor(fArtifact);
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#getName()
 	 */
 	public String getName() {
 		return fLabel;		
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#getPersistable()
 	 */
 	public IPersistableElement getPersistable() {
 		return null;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 	 */
 	public String getToolTipText() {
@@ -95,11 +93,12 @@ public class CommonSourceNotFoundEditorInput extends PlatformObject implements I
 	}
 		
 	/**
-	 * Returns the object that was the reason why source was being searched for (i.e., it was clicked on)
-	 * @return the object.
+	 * Returns the artifact that source was not found for.
+	 * 
+	 * @return artifact that source was not found for
 	 */
-	public Object getObject(){
-		return fObject;
+	public Object getArtifact(){
+		return fArtifact;
 	}
 	
 }

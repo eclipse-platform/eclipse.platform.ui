@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.sourcelookup;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
@@ -47,18 +45,17 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
 /**
- * Editor for when source is not found. Shows the source name and has 
- * a button to add new containers.
- * Editor ID: IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR = org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor
- * 
- * This class may be referenced and subclassed.  The class may be subclassed to provide additional 
- * buttons on the editor.   For example, a button may be added if the user has the additional 
- * option of using generated source for debugging.
- * 
+ * Default editor displayed when source is not found. Displays a button to modify
+ * the source lookup path.
+ * <p>
+ * This editor's id is <code>IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR</code>
+ * (value <code>org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor</code>).
+ * </p>
+ * <p>
+ * This class may be instantiated and subclassed.
+ * </p>
  * @see AbstractSourceLookupDirector
  * @see CommonSourceNotFoundEditorInput
- * 
- * TODO:  new API, need review
  * @since 3.2
  */
 public class CommonSourceNotFoundEditor extends EditorPart implements IReusableEditor  {
@@ -66,19 +63,14 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	/**
 	 * Text widgets used for this editor
 	 */
-	protected Text fText;	
-	
-    /**
-     * object for which the source is showing for (i.e., stackframe, breakpoint)
-     */
-	protected Object fObject; 
-	
+	private Text fText;	
 
 	private ILaunchesListener2 fLaunchesListener = new ILaunchesListener2() {
 
 		public void launchesTerminated(ILaunch[] launches) {
-			if (fObject instanceof IDebugElement) {
-				IDebugElement element = (IDebugElement)fObject;
+			Object artifact = getArtifact();
+			if (artifact instanceof IDebugElement) {
+				IDebugElement element = (IDebugElement)artifact;
 				for (int i = 0; i < launches.length; i++) {
 					ILaunch launch = launches[i];
 					if (launch.equals(element.getLaunch())) {
@@ -100,26 +92,20 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		}}; 
 	
 	
-	/**
-	 * @see org.eclipse.ui.IEditorPart#doSave(IProgressMonitor)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
 	}
 	
-	/**
-	 * @see org.eclipse.ui.IEditorPart#doSaveAs()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
 	 */
 	public void doSaveAs() {
 	}
 	
-	/**
-	 * @see org.eclipse.ui.IEditorPart#gotoMarker(IMarker)
-	 */
-	public void gotoMarker(IMarker marker) {
-	}
-	
-	/**
-	 * @see org.eclipse.ui.IEditorPart#init(IEditorSite, IEditorInput)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
 	 */
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
@@ -127,22 +113,22 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(fLaunchesListener);
 	}
 	
-	/**
-	 * @see org.eclipse.ui.IEditorPart#isDirty()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#isDirty()
 	 */
 	public boolean isDirty() {
 		return false;
 	}
 	
-	/**
-	 * @see org.eclipse.ui.IEditorPart#isSaveAsAllowed()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
 	
-	/**
-	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
 		GridLayout topLayout = new GridLayout();
@@ -172,6 +158,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 
 	/**
 	 * Create buttons to be displayed in this editor
+	 * 
 	 * @param parent composite to create the buttons in.
 	 */
 	protected void createButtons(Composite parent) {
@@ -184,17 +171,17 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		button.setText(SourceLookupUIMessages.addSourceLocation_addButton2); 
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
-				buttonSelected();
+				editSourceLookupPath();
 			}
 		});
 	}
 	
 	/**
-	 * Handles the event when the "add source container" button is selected.
-	 * Displays the <code>EditSourceLookupPathDialog</code> so the user 
-	 * can add additional source containers that should be searched.
+	 * Edits the source lookup path associated with the active debug context.
+	 * After the path is edited, source lookup is performed again and this
+	 * editor is closed.
 	 */
-	private void buttonSelected(){
+	protected void editSourceLookupPath(){
 		ISourceLocator locator = null;		
 		ILaunch launch = null;		
 		IAdaptable selection = DebugUITools.getDebugContext();
@@ -219,27 +206,13 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		int result = dialog.open();		
 		if(result == Window.OK) {
 			IWorkbenchPage page = getEditorSite().getPage();
-			SourceLookupManager.getDefault().displaySource(fObject, page, true);
+			SourceLookupManager.getDefault().displaySource(getArtifact(), page, true);
 			closeEditor();
 		}
 	}
 	
-	/**
-	 * Returns the line number associated with the breakpoint (marker).
-	 * @return the line number to scroll to
-	 */
-	protected int getLineNumber(){
-		int line = -1;
-		if(fObject instanceof IMarker) {
-			try{
-				line=((Integer)((IMarker)fObject).getAttribute(IMarker.LINE_NUMBER)).intValue();							
-			} catch(CoreException e){}
-		}
-		return line;
-	}
-	
-	/**
-	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
 		if (fText != null) {
@@ -247,14 +220,11 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		}
 	}
 	
-	/**
-	 * @see IReusableEditor#setInput(org.eclipse.ui.IEditorInput)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#setInput(org.eclipse.ui.IEditorInput)
 	 */
 	public void setInput(IEditorInput input) {
 		super.setInput(input);
-		if(input instanceof CommonSourceNotFoundEditorInput) {
-			fObject = ((CommonSourceNotFoundEditorInput)input).getObject();
-		}
 		setPartName(input.getName());
 		if (fText != null) {			
 			fText.setText(getText());
@@ -262,11 +232,12 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	}
 	
 	/**
-	 * Return the text to be displayed in this editor.
+	 * Return the text to be displayed in this editor. The text is reset each time
+	 * the editor input is set.
+	 * 
 	 * @return the text to be displayed in this editor
 	 */
-	protected String getText()
-	{
+	protected String getText() {
 		return getEditorInput().getToolTipText() + "\n"; //$NON-NLS-1$
 	}
 	
@@ -298,6 +269,21 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	public void dispose() {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fLaunchesListener);
 		super.dispose();
+	}
+	
+	/**
+	 * Returns the artifact this editor was opened for (i.e. the artifact that source
+	 * was not found for), or <code>null</code>
+	 * 
+	 * @return artifact with associated source or <code>null</code>
+	 */
+	protected Object getArtifact() {
+		IEditorInput editorInput = getEditorInput();
+		if (editorInput instanceof CommonSourceNotFoundEditorInput) {
+			CommonSourceNotFoundEditorInput input = (CommonSourceNotFoundEditorInput) editorInput;
+			return input.getArtifact();
+		}
+		return null;
 	}
 }
 
