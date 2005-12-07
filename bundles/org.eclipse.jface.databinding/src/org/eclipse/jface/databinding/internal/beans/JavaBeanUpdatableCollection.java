@@ -157,7 +157,11 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		else {
 			//TODO add jUnit for POJO (var. SettableValue) collections  
 			Collection list = (Collection) result;
-			values = list.toArray();
+			if (list != null) {
+				values = list.toArray();
+			} else {
+				values = new Object[] {};
+			}
 		}
 		return values;
 	}
