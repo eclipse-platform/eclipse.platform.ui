@@ -66,13 +66,13 @@ public class ResourceInfoPage extends PropertyPage {
 	private IContentDescription cachedContentDescription;
 
 	private ResourceEncodingFieldEditor encodingEditor;
-	
+
 	private LineDelimiterEditor lineDelimiterEditor;
 
 	private static String READ_ONLY = IDEWorkbenchMessages.ResourceInfo_readOnly;
 
 	private static String EXECUTABLE = IDEWorkbenchMessages.ResourceInfo_executable;
-	
+
 	private static String ARCHIVE = IDEWorkbenchMessages.ResourceInfo_archive;
 
 	private static String DERIVED = IDEWorkbenchMessages.ResourceInfo_derived;
@@ -89,12 +89,11 @@ public class ResourceInfoPage extends PropertyPage {
 
 	private static String TIMESTAMP_TITLE = IDEWorkbenchMessages.ResourceInfo_lastModified;
 
-
 	private static String FILE_ENCODING_TITLE = IDEWorkbenchMessages.WorkbenchPreference_encoding;
 
 	private static String CONTAINER_ENCODING_TITLE = IDEWorkbenchMessages.ResourceInfo_fileEncodingTitle;
 
-	//Max value width in characters before wrapping
+	// Max value width in characters before wrapping
 	private static final int MAX_VALUE_WIDTH = 80;
 
 	/**
@@ -122,7 +121,7 @@ public class ResourceInfoPage extends PropertyPage {
 		basicInfoComposite.setLayoutData(data);
 		basicInfoComposite.setFont(font);
 
-		//The group for path
+		// The group for path
 		Label pathLabel = new Label(basicInfoComposite, SWT.NONE);
 		pathLabel.setText(PATH_TITLE);
 		GridData gd = new GridData();
@@ -143,7 +142,7 @@ public class ResourceInfoPage extends PropertyPage {
 		pathValueText.setBackground(pathValueText.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
 
-		//The group for types
+		// The group for types
 		Label typeTitle = new Label(basicInfoComposite, SWT.LEFT);
 		typeTitle.setText(TYPE_TITLE);
 		typeTitle.setFont(font);
@@ -154,7 +153,7 @@ public class ResourceInfoPage extends PropertyPage {
 				SWT.COLOR_WIDGET_BACKGROUND));
 		typeValue.setFont(font);
 
-		//The group for location
+		// The group for location
 		Label locationTitle = new Label(basicInfoComposite, SWT.LEFT);
 		locationTitle.setText(LOCATION_TITLE);
 		gd = new GridData();
@@ -196,7 +195,7 @@ public class ResourceInfoPage extends PropertyPage {
 					.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		}
 		if (resource.getType() == IResource.FILE) {
-			//The group for size
+			// The group for size
 			Label sizeTitle = new Label(basicInfoComposite, SWT.LEFT);
 			sizeTitle.setText(SIZE_TITLE);
 			sizeTitle.setFont(font);
@@ -268,7 +267,7 @@ public class ResourceInfoPage extends PropertyPage {
 
 			}
 		});
-		
+
 		if (resource.getType() == IResource.PROJECT) {
 			lineDelimiterEditor = new LineDelimiterEditor(composite, resource.getProject());
 			lineDelimiterEditor.doLoad();
@@ -421,7 +420,7 @@ public class ResourceInfoPage extends PropertyPage {
 		timeStampValue.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
 				| GridData.GRAB_HORIZONTAL));
 
-		//Not relevant to projects
+		// Not relevant to projects
 		if (resource.getType() != IResource.PROJECT) {
 			URI location = resource.getLocationURI();
 			if (location != null) {
@@ -445,7 +444,7 @@ public class ResourceInfoPage extends PropertyPage {
 	private IContentDescription getContentDescription(IResource resource) {
 		if (resource.getType() != IResource.FILE)
 			return null;
-		
+
 		if (cachedContentDescription == null) {
 			try {
 				cachedContentDescription = ((IFile)resource).getContentDescription();
@@ -488,20 +487,20 @@ public class ResourceInfoPage extends PropertyPage {
 	 */
 	protected void performDefaults() {
 
-		//Nothing to update if we never made the box
+		// Nothing to update if we never made the box
 		if (this.editableBox != null)
 			this.editableBox.setSelection(false);
-		
-		//Nothing to update if we never made the box
+
+		// Nothing to update if we never made the box
 		if (this.executableBox != null)
 			this.executableBox.setSelection(false);
 
-		//Nothing to update if we never made the box
+		// Nothing to update if we never made the box
 		if (this.derivedBox != null)
 			this.derivedBox.setSelection(false);
 
 		encodingEditor.loadDefault();
-		
+
 		if (lineDelimiterEditor != null)
 			lineDelimiterEditor.loadDefault();
 
@@ -515,40 +514,48 @@ public class ResourceInfoPage extends PropertyPage {
 		IResource resource = (IResource) getElement();
 
 		encodingEditor.store();
-		
+
 		if (lineDelimiterEditor != null)
 			lineDelimiterEditor.store();
 
 		try {
-			//Nothing to update if we never made the box
-			if (editableBox != null && executableBox != null
-					&& archiveBox != null) {
-				boolean localReadOnlyValue = editableBox.getSelection();
-				boolean localExecutableValue = executableBox.getSelection();
-				boolean localArchiveValue = archiveBox.getSelection();
-				ResourceAttributes attrs = resource.getResourceAttributes();
-				if (attrs != null) {
-					attrs.setExecutable(localExecutableValue);
-					attrs.setReadOnly(localReadOnlyValue);
-					attrs.setArchive(localArchiveValue);
-					if (previousReadOnlyValue != localReadOnlyValue
-							|| previousExecutableValue != localExecutableValue
-							|| previousArchiveValue != localArchiveValue) {
-						resource.setResourceAttributes(attrs);
-						attrs = resource.getResourceAttributes();
-						if (attrs != null) {
-							previousReadOnlyValue = attrs.isReadOnly();
-							previousExecutableValue = attrs.isExecutable();
-							previousArchiveValue = attrs.isArchive();
+			ResourceAttributes attrs = resource.getResourceAttributes();
+			if (attrs != null) {
+				boolean hasChange = false;
+				// Nothing to update if we never made the box
+				if (editableBox != null
+						&& editableBox.getSelection() != previousReadOnlyValue) {
+					attrs.setReadOnly(editableBox.getSelection());
+					hasChange = true;
+				}
+				if (executableBox != null
+						&& executableBox.getSelection() != previousExecutableValue) {
+					attrs.setExecutable(executableBox.getSelection());
+					hasChange = true;
+				}
+				if (archiveBox != null
+						&& archiveBox.getSelection() != previousArchiveValue) {
+					attrs.setArchive(archiveBox.getSelection());
+					hasChange = true;
+				}
+				if (hasChange) {
+					resource.setResourceAttributes(attrs);
+					attrs = resource.getResourceAttributes();
+					if (attrs != null) {
+						previousReadOnlyValue = attrs.isReadOnly();
+						previousExecutableValue = attrs.isExecutable();
+						previousArchiveValue = attrs.isArchive();
+						if (editableBox != null)
 							editableBox.setSelection(attrs.isReadOnly());
+						if (executableBox != null)
 							executableBox.setSelection(attrs.isExecutable());
+						if (archiveBox != null)
 							archiveBox.setSelection(attrs.isArchive());
-						}
 					}
 				}
 			}
 
-			//Nothing to update if we never made the box
+			// Nothing to update if we never made the box
 			if (this.derivedBox != null) {
 				boolean localDerivedValue = derivedBox.getSelection();
 				if (previousDerivedValue != localDerivedValue) {
