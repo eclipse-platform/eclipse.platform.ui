@@ -89,6 +89,8 @@
 	<type name="SourceLookupDialog" subclass="false" />
 	<type name="SourceLookupTab" subclass="false" />
 	<type name="WorkingSetSourceContainer" subclass="false" />
+	<type name="CommonSourceNotFoundEditor" />
+	<type name="CommonSourceNotFoundEditorInput" />
  </package>  
  
  <component-depends unrestricted="true"/>
