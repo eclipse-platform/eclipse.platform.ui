@@ -218,8 +218,8 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
 	 */
 	public void insertCoolBar(int orientation) {
 		// Create the necessary parts...
-		cb = new CoolBar(this, orientation);
-		ci = new CoolItem(cb, SWT.NONE);
+		cb = new CoolBar(this, orientation | SWT.FLAT);
+		ci = new CoolItem(cb, SWT.FLAT);
 		dummy = new Composite(cb, SWT.NONE);
 
 		// Compute an initial value for the 'length' of the affordance
