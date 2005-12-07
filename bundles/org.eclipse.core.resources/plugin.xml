@@ -160,5 +160,27 @@
            </with>
        </enablement>
       </extension>
+<!-- Property testers -->
+   <extension
+        point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+           id="org.eclipse.core.resources.resourcePropertyTester"
+           class="org.eclipse.core.internal.propertytester.ResourcePropertyTester"
+           namespace="org.eclipse.core.resources"
+           properties="name,path,extension,readOnly,projectNature,persistentProperty,projectPersistentProperty,sessionProperty,projectSessionProperty"
+           type="org.eclipse.core.resources.IResource"/>
+      <propertyTester
+           id="org.eclipse.core.resources.filePropertyTester"
+           class="org.eclipse.core.internal.propertytester.FilePropertyTester"
+           namespace="org.eclipse.core.resources"
+           properties="contentTypeId"
+           type="org.eclipse.core.resources.IFile"/>
+      <propertyTester
+           id="org.eclipse.core.resources.projectPropertyTester"
+           class="org.eclipse.core.internal.propertytester.ProjectPropertyTester"
+           namespace="org.eclipse.core.resources"
+           properties="open"
+           type="org.eclipse.core.resources.IProject"/>
+   </extension>
 
 </plugin>
