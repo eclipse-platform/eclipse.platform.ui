@@ -82,33 +82,36 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 				Rectangle trimRect = layout.getTrimRect(windowComposite, areaIds[i]);
 				trimRect = Geometry.toControl(windowComposite, trimRect);
 
-				// TODO: more confusion binding 'areaIds' to SWT 'sides'
-	        	switch (areaIds[i]) {
-					case SWT.TOP:
-						if (pos.x >= trimRect.x &&
-							pos.x <= (trimRect.x+trimRect.width) &&
-							pos.y <= (trimRect.y+trimRect.height))
-								return areaIds[i];
-						break;
-					case SWT.LEFT:
-						if (pos.y >= trimRect.y &&
-							pos.y <= (trimRect.y+trimRect.height) &&
-							pos.x <= (trimRect.x+trimRect.width))
-								return areaIds[i];
-						break;
-					case SWT.RIGHT:
-						if (pos.y >= trimRect.y &&
-							pos.y <= (trimRect.y+trimRect.height) &&
-							pos.x >= trimRect.x)
-								return areaIds[i];
-						break;
-					case SWT.BOTTOM:
-						if (pos.x >= trimRect.x &&
-							pos.x <= (trimRect.x+trimRect.width) &&
-							pos.y >= trimRect.y)
-								return areaIds[i];
-						break;
+				// Only check 'valid' sides
+				if ( (areaIds[i] & getValidSides()) != 0) {
+					// TODO: more confusion binding 'areaIds' to SWT 'sides'
+		        	switch (areaIds[i]) {
+						case SWT.TOP:
+							if (pos.x >= trimRect.x &&
+								pos.x <= (trimRect.x+trimRect.width) &&
+								pos.y <= (trimRect.y+trimRect.height))
+									return areaIds[i];
+							break;
+						case SWT.LEFT:
+							if (pos.y >= trimRect.y &&
+								pos.y <= (trimRect.y+trimRect.height) &&
+								pos.x <= (trimRect.x+trimRect.width))
+									return areaIds[i];
+							break;
+						case SWT.RIGHT:
+							if (pos.y >= trimRect.y &&
+								pos.y <= (trimRect.y+trimRect.height) &&
+								pos.x >= trimRect.x)
+									return areaIds[i];
+							break;
+						case SWT.BOTTOM:
+							if (pos.x >= trimRect.x &&
+								pos.x <= (trimRect.x+trimRect.width) &&
+								pos.y >= trimRect.y)
+									return areaIds[i];
+							break;
 		        	}
+				}
 			}
         	
         	// not inside any trim area
@@ -330,7 +333,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         		border.setLocation(pos, true);
         		
         		// update the state vars
-        		curCaret = null;
+        		setCurCaret(null);
         		return;
         	}
         	
@@ -340,7 +343,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 
         	// We're over a -new- insertion point; update the feedback
         	// remember the new 'drop' location
-        	curCaret = closestCaret;
+        	setCurCaret(closestCaret);
 			
 			// 'snap' the control to the insertion point
 			Rectangle ctrlRect = draggedTrim.getControl().getBounds();
@@ -362,6 +365,18 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         	};
         }
 		
+        private void setCurCaret(InsertCaret newCaret) {
+        	// un-highlight the 'old' caret (if any)
+        	if (curCaret != null)
+        		curCaret.setHighlight(false);
+        	
+        	curCaret = newCaret;
+        	
+        	// highlight the 'new' caret (if any)
+        	if (curCaret != null)
+        		curCaret.setHighlight(true);
+        }
+        
 		private IWindowTrim getInsertTrim(int areaId, int index) {
 			TrimArea area = layout.getTrimArea(areaId);
 			List descs = area.getDescriptors();
@@ -541,7 +556,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
     	dropTarget.track(position);
     	
     	// Spin the paint loop after every track
-    	windowComposite.getShell().update();
+    	windowComposite.getDisplay().update();
     	
 		return dropTarget;
     }

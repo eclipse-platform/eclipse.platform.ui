@@ -23,6 +23,8 @@ public class InsertCaret {
 	private Canvas caretControl;
 	private static final int size = 10;
 	private Color baseColor;
+	private Color hilightColor;
+	private boolean isHighlight;
 	
 	private int areaId;
 	private IWindowTrim insertBefore;
@@ -47,12 +49,21 @@ public class InsertCaret {
 		this.insertBefore = insertBefore;
 
 		// set up the painting vars
-		baseColor = caretControl.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN);
+		isHighlight = false;
+		
+		// Use the SWT 'title' colors since they should always have a proper contrast
+		// and are 'related' (i.e. should look good together)
+		baseColor = caretControl.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		hilightColor = caretControl.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND);
 		
 		caretControl.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
-				e.gc.setBackground(baseColor);
-				e.gc.setForeground(baseColor);
+				if (isHighlight) {
+					e.gc.setBackground(hilightColor);
+				}
+				else {
+					e.gc.setBackground(baseColor);
+				}
 
 				switch (getAreaId()) {
 				case SWT.LEFT:
@@ -86,6 +97,11 @@ public class InsertCaret {
 		showCaret(pos, areaId);
 	}
 
+	public void setHighlight(boolean highlight) {
+		isHighlight = highlight;
+		caretControl.redraw();
+	}
+	
 	/**
 	 * @return The area ID that this caret is 'on'
 	 */
