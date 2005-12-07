@@ -241,7 +241,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
-		GC gc= new GC(tableComposite.getDisplay());
+		GC gc= new GC(getShell());
 		gc.setFont(JFaceResources.getDialogFont());
 		
 		TableColumn column1= new TableColumn(table, SWT.NONE);

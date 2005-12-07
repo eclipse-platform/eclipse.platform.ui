@@ -19,6 +19,7 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Drawable;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
@@ -62,9 +63,43 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		 * @param maxHeight the maximal height in pixels
 		 *
 		 * @return the manipulated information
+		 * @deprecated As of 3.2, replaced by {@link IInformationPresenterExtension#updatePresentation(Drawable, String, TextPresentation, int, int)}
+		 * 				see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=38528 for details.
 		 */
 		String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
 	}
+	
+	/**
+	 * An information presenter determines the style presentation
+	 * of information displayed in the default information control.
+	 * The interface can be implemented by clients.
+	 * 
+	 * @since 3.2
+	 */
+	public interface IInformationPresenterExtension {
+		
+		/**
+		 * Updates the given presentation of the given information and
+		 * thereby may manipulate the information to be displayed. The manipulation
+		 * could be the extraction of textual encoded style information etc. Returns the
+		 * manipulated information.
+		 * <p>
+		 * Replaces {@link IInformationPresenter#updatePresentation(Display, String, TextPresentation, int, int)}
+		 * <em>Make sure that you do not pass in a <code>Display</code></em> until
+		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=38528 is fixed.
+		 * </p>
+		 *
+		 * @param drawable the drawable of the information control
+		 * @param hoverInfo the information to be presented
+		 * @param presentation the presentation to be updated
+		 * @param maxWidth the maximal width in pixels
+		 * @param maxHeight the maximal height in pixels
+		 *
+		 * @return the manipulated information
+		 */
+		String updatePresentation(Drawable drawable, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
+	}
+	
 
 	/**
 	 * Outer border thickness in pixels.
@@ -258,7 +293,10 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 			fText.setText(content);
 		} else {
 			fPresentation.clear();
-			content= fPresenter.updatePresentation(fShell.getDisplay(), content, fPresentation, fMaxWidth, fMaxHeight);
+			if (fPresenter instanceof IInformationPresenterExtension)
+				content= ((IInformationPresenterExtension)fPresenter).updatePresentation(fShell, content, fPresentation, fMaxWidth, fMaxHeight);
+			else
+				content= fPresenter.updatePresentation(fShell.getDisplay(), content, fPresentation, fMaxWidth, fMaxHeight);
 			if (content != null) {
 				fText.setText(content);
 				TextPresentation.applyTextPresentation(fPresentation, fText);
