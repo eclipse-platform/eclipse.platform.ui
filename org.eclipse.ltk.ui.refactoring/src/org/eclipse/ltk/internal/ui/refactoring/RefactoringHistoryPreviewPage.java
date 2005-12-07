@@ -8,22 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.internal.ui.refactoring.history;
+package org.eclipse.ltk.internal.ui.refactoring;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 
-import org.eclipse.ltk.internal.ui.refactoring.Assert;
-import org.eclipse.ltk.internal.ui.refactoring.IErrorWizardPage;
-import org.eclipse.ltk.internal.ui.refactoring.PreviewWizardPage;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryErrorPage;
+import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPreviewChangeRequestor;
 
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -139,28 +132,6 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	public void setChange(final Change change) {
-		if (fChange == change)
-			return;
-		fTreeViewerInputChange= new CompositeChange("Dummy Change"); //$NON-NLS-1$
-		fChange= change;
-		if (fChange instanceof CompositeChange) {
-			final CompositeChange composite= (CompositeChange) fChange;
-			final Change[] changes= composite.getChildren();
-			final List list= new ArrayList(changes.length);
-			for (int index= 0; index < changes.length; index++) {
-				if (fRequestor.accept(changes[index]))
-					list.add(changes[index]);
-			}
-			fTreeViewerInputChange.addAll((Change[]) list.toArray(new Change[list.size()]));
-		} else
-			fTreeViewerInputChange.add(fChange);
-		setTreeViewerInput();
-	}
-
-	/**
 	 * Determines whether the next wizard page is disabled.
 	 * 
 	 * @param disable
@@ -220,6 +191,19 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 			setTitle(descriptor.getDescription());
 		else
 			setTitle(RefactoringUIMessages.RefactoringHistoryOverviewPage_title);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void setTreeViewerInput() {
+		if (fTreeViewer == null)
+			return;
+		PreviewNode input= null;
+		if (fTreeViewerInputChange != null) {
+			input= AbstractChangeNode.createNode(null, fRequestor, fTreeViewerInputChange);
+		}
+		fTreeViewer.setInput(input);
 	}
 
 	/**

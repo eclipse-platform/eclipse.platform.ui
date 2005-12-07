@@ -16,12 +16,17 @@ import java.util.List;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 
+import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPreviewChangeRequestor;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class CompositeChangeNode extends AbstractChangeNode {
 	
-	public CompositeChangeNode(PreviewNode parent, CompositeChange change) {
+	private final RefactoringPreviewChangeRequestor fRequestor;
+
+	public CompositeChangeNode(PreviewNode parent, RefactoringPreviewChangeRequestor requestor, CompositeChange change) {
 		super(parent, change);
+		fRequestor= requestor;
 	}
 	
 	int getActive() {
@@ -38,14 +43,16 @@ public class CompositeChangeNode extends AbstractChangeNode {
 		return (PreviewNode[])children.toArray(new PreviewNode[children.size()]);
 	}
 	
-	private static void getFlattendedChildren(List result, CompositeChangeNode parent, CompositeChange focus) {
+	private void getFlattendedChildren(List result, CompositeChangeNode parent, CompositeChange focus) {
 		Change[] changes= focus.getChildren();
 		for (int i= 0; i < changes.length; i++) {
 			Change change= changes[i];
-			if (change instanceof CompositeChange && ((CompositeChange)change).isSynthetic()) {
-				getFlattendedChildren(result, parent, (CompositeChange)change);
-			} else {
-				result.add(createNode(parent, change));
+			if (fRequestor.accept(change)) {
+				if (change instanceof CompositeChange && ((CompositeChange) change).isSynthetic()) {
+					getFlattendedChildren(result, parent, (CompositeChange) change);
+				} else {
+					result.add(createNode(parent, change));
+				}
 			}
 		}
 	}

@@ -53,6 +53,7 @@ import org.eclipse.ltk.internal.ui.refactoring.ChangeExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.IErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.IPreviewWizardPage;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringHistoryPreviewPage;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
@@ -60,7 +61,7 @@ import org.eclipse.ltk.internal.ui.refactoring.UIPerformChangeOperation;
 import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryErrorPage;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryOverviewPage;
-import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryPreviewPage;
+import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPreviewChangeRequestor;
 
 import org.eclipse.swt.widgets.Shell;
 
@@ -157,6 +158,17 @@ public class RefactoringHistoryWizard extends Wizard {
 	/** The refactoring history to execute */
 	private RefactoringHistory fRefactoringHistory;
 
+	/** The preview change requestor */
+	private RefactoringPreviewChangeRequestor fRequestor= new RefactoringPreviewChangeRequestor() {
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public final boolean accept(final Change change) {
+			return acceptPreviewChange(change);
+		}
+	};
+
 	/**
 	 * Creates a new refactoring history wizard.
 	 * <p>
@@ -180,6 +192,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		fOverviewDescription= description;
 		fErrorPage= new RefactoringHistoryErrorPage();
 		fPreviewPage= new RefactoringHistoryPreviewPage();
+		fPreviewPage.setRequestor(fRequestor);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(caption);
 		setDefaultPageImageDescriptor(RefactoringPluginImages.DESC_WIZBAN_REFACTOR);
@@ -244,6 +257,22 @@ public class RefactoringHistoryWizard extends Wizard {
 		} else
 			status.addFatalError(MessageFormat.format(RefactoringUIMessages.PerformRefactoringsOperation_init_error, new String[] { descriptor.getDescription()}));
 		return status;
+	}
+
+	/**
+	 * Hook method which is called for each change before it is displayed in a
+	 * preview.
+	 * <p>
+	 * Note: This API must not be used from outside the refactoring framework.
+	 * </p>
+	 * 
+	 * @param change
+	 *            the change to accept
+	 * @return <code>true</code> if the change is accepted, <code>false</code>
+	 *         otherwise
+	 */
+	protected boolean acceptPreviewChange(final Change change) {
+		return true;
 	}
 
 	/**

@@ -48,6 +48,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -96,7 +97,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.NEXT_CHANGE_ACTION);			
 		}
 		public void run() {
-			fTreeViewer.revealNext();	
+			((ChangeElementTreeViewer) fTreeViewer).revealNext();	
 		}
 	}
 	
@@ -109,7 +110,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.PREVIOUS_CHANGE_ACTION);			
 		}	
 		public void run() {
-			fTreeViewer.revealPrevious();
+			((ChangeElementTreeViewer) fTreeViewer).revealPrevious();
 		}
 	}
 	
@@ -200,7 +201,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	private Control fNullPage;
 	private FilterDropDownAction fFilterDropDownAction;
 	private ViewerPane fTreeViewerPane;
-	private ChangeElementTreeViewer fTreeViewer;
+	protected CheckboxTreeViewer fTreeViewer;
 	private PageBook fPreviewContainer;
 	private ChangePreviewViewerDescriptor fCurrentDescriptor;
 	private IChangePreviewViewer fCurrentPreviewViewer;
@@ -554,7 +555,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			fActiveGroupCategories.clear();
 		}
 		fActiveGroupCategories.add(category);
-		fTreeViewer.setGroupCategory(fActiveGroupCategories);
+		((ChangeElementTreeViewer) fTreeViewer).setGroupCategory(fActiveGroupCategories);
 		fTreeViewerPane.setText(Messages.format(
 			RefactoringUIMessages.PreviewWizardPage_changes_filtered, 
 			category.getName()));
@@ -562,7 +563,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	
 	private void clearGroupCategories() {
 		fActiveGroupCategories= null;
-		fTreeViewer.setGroupCategory(null);
+		((ChangeElementTreeViewer) fTreeViewer).setGroupCategory(null);
 		fTreeViewerPane.setText(RefactoringUIMessages.PreviewWizardPage_changes); 
 	}
 
