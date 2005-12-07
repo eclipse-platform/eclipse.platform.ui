@@ -18,20 +18,25 @@ import java.util.ArrayList;
  * @since 3.2
  */
 public class StringMatcher {
-	protected static final char fSingleWildCard = '\u0000';
+	private static final char SINGLE_WILD_CARD = '\u0000';
 
-	/* boundary value beyond which we don't need to search in the text */
-	protected int fBound = 0;
+	/**
+	 * Boundary value beyond which we don't need to search in the text 
+	 */
+	private int bound = 0;
 
-	protected boolean fHasLeadingStar;
+	private boolean hasLeadingStar;
 
-	protected boolean fHasTrailingStar;
+	private boolean hasTrailingStar;
 
-	protected final int fLength; // pattern length
+	private final String pattern;
 
-	protected final String fPattern;
+	private final int patternLength;
 
-	protected String fSegments[]; //the given pattern is split into * separated segments
+	/**
+	 * The pattern split into segments separated by *
+	 */
+	private String segments[];
 
 	/**
 	 * StringMatcher constructor takes in a String object that is a simple 
@@ -53,8 +58,8 @@ public class StringMatcher {
 	public StringMatcher(String pattern) {
 		if (pattern == null)
 			throw new IllegalArgumentException();
-		fPattern = pattern;
-		fLength = pattern.length();
+		this.pattern = pattern;
+		patternLength = pattern.length();
 		parseWildCards();
 	}
 
@@ -66,7 +71,7 @@ public class StringMatcher {
 	 * @return the starting index in the text of the pattern , or -1 if not found 
 	 */
 	private int findPosition(String text, int start, int end, String p) {
-		boolean hasWildCard = p.indexOf(fSingleWildCard) >= 0;
+		boolean hasWildCard = p.indexOf(SINGLE_WILD_CARD) >= 0;
 		int plen = p.length();
 		for (int i = start, max = end - plen; i <= max; ++i) {
 			if (hasWildCard) {
@@ -91,63 +96,60 @@ public class StringMatcher {
 	public boolean match(String text) {
 		if (text == null)
 			return false;
-		final int start = 0;
 		final int end = text.length();
-
-		int segCount = fSegments.length;
-		if (segCount == 0 && (fHasLeadingStar || fHasTrailingStar)) // pattern contains only '*'(s)
+		final int segmentCount = segments.length;
+		if (segmentCount == 0 && (hasLeadingStar || hasTrailingStar)) // pattern contains only '*'(s)
 			return true;
-		if (start == end)
-			return fLength == 0;
-		if (fLength == 0)
+		if (end == 0)
+			return patternLength == 0;
+		if (patternLength == 0)
 			return false;
-
-		int tCurPos = start;
-		if ((end - fBound) < 0)
+		int currentTextPosition = 0;
+		if ((end - bound) < 0)
 			return false;
-		int i = 0;
-		String current = fSegments[i];
-		int segLength = current.length();
+		int segmentIndex = 0;
+		String current = segments[segmentIndex];
 
 		/* process first segment */
-		if (!fHasLeadingStar) {
-			if (!regExpRegionMatches(text, start, current, 0, segLength))
+		if (!hasLeadingStar) {
+			int currentLength = current.length();
+			if (!regExpRegionMatches(text, 0, current, 0, currentLength))
 				return false;
-			++i;
-			tCurPos = tCurPos + segLength;
+			segmentIndex++;
+			currentTextPosition = currentTextPosition + currentLength;
 		}
-		if ((fSegments.length == 1) && (!fHasLeadingStar) && (!fHasTrailingStar)) {
+		if ((segmentCount == 1) && (!hasLeadingStar) && (!hasTrailingStar)) {
 			// only one segment to match, no wild cards specified
-			return tCurPos == end;
+			return currentTextPosition == end;
 		}
 		/* process middle segments */
-		while (i < segCount) {
-			current = fSegments[i];
-			int currentMatch = findPosition(text, tCurPos, end, current);
+		while (segmentIndex < segmentCount) {
+			current = segments[segmentIndex];
+			int currentMatch = findPosition(text, currentTextPosition, end, current);
 			if (currentMatch < 0)
 				return false;
-			tCurPos = currentMatch + current.length();
-			i++;
+			currentTextPosition = currentMatch + current.length();
+			segmentIndex++;
 		}
 
 		/* process final segment */
-		if (!fHasTrailingStar && tCurPos != end) {
-			int clen = current.length();
-			return regExpRegionMatches(text, end - clen, current, 0, clen);
+		if (!hasTrailingStar && currentTextPosition != end) {
+			int currentLength = current.length();
+			return regExpRegionMatches(text, end - currentLength, current, 0, currentLength);
 		}
-		return i == segCount;
+		return segmentIndex == segmentCount;
 	}
 
 	/**
 	 * Parses the pattern into segments separated by wildcard '*' characters.
 	 */
 	private void parseWildCards() {
-		if (fPattern.startsWith("*"))//$NON-NLS-1$
-			fHasLeadingStar = true;
-		if (fPattern.endsWith("*")) {//$NON-NLS-1$
+		if (pattern.startsWith("*"))//$NON-NLS-1$
+			hasLeadingStar = true;
+		if (pattern.endsWith("*")) {//$NON-NLS-1$
 			/* make sure it's not an escaped wildcard */
-			if (fLength > 1 && fPattern.charAt(fLength - 2) != '\\') {
-				fHasTrailingStar = true;
+			if (patternLength > 1 && pattern.charAt(patternLength - 2) != '\\') {
+				hasTrailingStar = true;
 			}
 		}
 
@@ -155,14 +157,14 @@ public class StringMatcher {
 
 		int pos = 0;
 		StringBuffer buf = new StringBuffer();
-		while (pos < fLength) {
-			char c = fPattern.charAt(pos++);
+		while (pos < patternLength) {
+			char c = pattern.charAt(pos++);
 			switch (c) {
 				case '\\' :
-					if (pos >= fLength) {
+					if (pos >= patternLength) {
 						buf.append(c);
 					} else {
-						char next = fPattern.charAt(pos++);
+						char next = pattern.charAt(pos++);
 						/* if it's an escape sequence */
 						if (next == '*' || next == '?' || next == '\\') {
 							buf.append(next);
@@ -177,13 +179,13 @@ public class StringMatcher {
 					if (buf.length() > 0) {
 						/* new segment */
 						temp.add(buf.toString());
-						fBound += buf.length();
+						bound += buf.length();
 						buf.setLength(0);
 					}
 					break;
 				case '?' :
 					/* append special character representing single match wildcard */
-					buf.append(fSingleWildCard);
+					buf.append(SINGLE_WILD_CARD);
 					break;
 				default :
 					buf.append(c);
@@ -193,9 +195,9 @@ public class StringMatcher {
 		/* add last buffer to segment list */
 		if (buf.length() > 0) {
 			temp.add(buf.toString());
-			fBound += buf.length();
+			bound += buf.length();
 		}
-		fSegments = (String[]) temp.toArray(new String[temp.size()]);
+		segments = (String[]) temp.toArray(new String[temp.size()]);
 	}
 
 	/**
@@ -212,7 +214,7 @@ public class StringMatcher {
 			char pchar = p.charAt(pStart++);
 
 			// process wild cards, skipping single wild cards
-			if (pchar == fSingleWildCard)
+			if (pchar == SINGLE_WILD_CARD)
 				continue;
 			if (pchar == tchar)
 				continue;
