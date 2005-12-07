@@ -43,7 +43,8 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 		Control control = getControl(resourceTable);
 		if (control==null)
 			return new Point(0,0);
-		Point size = control.computeSize(wHint, SWT.DEFAULT);
+		int realWhint = FormUtil.getWidthHint(wHint, control);
+		Point size = control.computeSize(realWhint, SWT.DEFAULT);
 		if (wHint!=SWT.DEFAULT && fill)
 			size.x = Math.max(size.x, wHint);
 		return size;

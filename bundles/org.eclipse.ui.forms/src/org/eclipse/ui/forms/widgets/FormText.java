@@ -133,10 +133,11 @@ public class FormText extends Canvas {
 	public int marginHeight = 1;
 
 	// private fields
-	private static final boolean DEBUG_TEXT = "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXT)); //$NON-NLS-1$
-	private static final boolean DEBUG_TEXTSIZE = "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXTSIZE)); //$NON-NLS-1$
+	//TODO We should remove the dependency on Platform
+	private static final boolean DEBUG_TEXT = false;//"true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXT)); //$NON-NLS-1$
+	private static final boolean DEBUG_TEXTSIZE = false;//"true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXTSIZE)); //$NON-NLS-1$
 
-	private static final boolean DEBUG_FOCUS = "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_FOCUS)); //$NON-NLS-1$		
+	private static final boolean DEBUG_FOCUS = false;//"true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_FOCUS)); //$NON-NLS-1$		
 
 	private boolean hasFocus;
 
