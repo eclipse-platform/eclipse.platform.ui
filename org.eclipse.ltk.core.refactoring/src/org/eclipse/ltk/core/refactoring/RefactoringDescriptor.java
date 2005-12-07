@@ -297,7 +297,10 @@ public class RefactoringDescriptor implements Comparable {
 	 * {@inheritDoc}
 	 */
 	public final int hashCode() {
-		return (int) (fDescription.hashCode() + 17 * fTimeStamp);
+		int code= fDescription.hashCode();
+		if (fTimeStamp >= 0)
+			code+= (17 * fTimeStamp);
+		return code;
 	}
 
 	/**

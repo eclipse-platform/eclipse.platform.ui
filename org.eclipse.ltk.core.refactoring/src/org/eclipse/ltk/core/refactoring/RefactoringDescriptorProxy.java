@@ -96,7 +96,11 @@ public abstract class RefactoringDescriptorProxy implements Comparable {
 	 * {@inheritDoc}
 	 */
 	public final int hashCode() {
-		return (int) (getDescription().hashCode() + 17 * getTimeStamp());
+		int code= getDescription().hashCode();
+		final long stamp= getTimeStamp();
+		if (stamp >= 0)
+			code+= (17 * stamp);
+		return code;
 	}
 
 	/**
