@@ -18,9 +18,9 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.contentassist.ContentAssistInvocationContext;
 
 /**
- * A content assist invocation context for text viewers. The context knows the
- * viewer, the invocation offset and can lazily compute the identifier
- * prefix preceding the invocation offset.
+ * A content assist invocation context for documents. The context knows the
+ * document, the invocation offset and can lazily compute the identifier
+ * prefix preceding the invocation offset. It may know the viewer.
  * <p>
  * Clients may instantiate and subclass.
  * </p>
@@ -34,6 +34,7 @@ public class TextContentAssistInvocationContext extends ContentAssistInvocationC
 	
 	/* state */
 	private final ITextViewer fViewer;
+	private final IDocument fDocument;
 	private final int fOffset;
 	
 	/* cached additional info */
@@ -58,6 +59,30 @@ public class TextContentAssistInvocationContext extends ContentAssistInvocationC
 	public TextContentAssistInvocationContext(ITextViewer viewer, int offset) {
 		Assert.isNotNull(viewer);
 		fViewer= viewer;
+		fDocument= null;
+		fOffset= offset;
+	}
+	
+	/**
+	 * Creates a new context with no viewer or invocation offset set.
+	 */
+	protected TextContentAssistInvocationContext() {
+		fDocument= null;
+		fViewer= null;
+		fOffset= -1;
+	}
+	
+	/**
+	 * Creates a new context for the given document and offset.
+	 * 
+	 * @param document the document that content assist is invoked in
+	 * @param offset the offset into the document where content assist is invoked at
+	 */
+	public TextContentAssistInvocationContext(IDocument document, int offset) {
+		Assert.isNotNull(document);
+		Assert.isTrue(offset >= 0);
+		fViewer= null;
+		fDocument= document;
 		fOffset= offset;
 	}
 	
@@ -71,33 +96,40 @@ public class TextContentAssistInvocationContext extends ContentAssistInvocationC
 	}
 	
 	/**
-	 * Returns the viewer.
+	 * Returns the viewer, <code>null</code> if not available.
 	 * 
-	 * @return the viewer
+	 * @return the viewer, possibly <code>null</code>
 	 */
 	public final ITextViewer getViewer() {
 		return fViewer;
 	}
 	
 	/**
-	 * Shortcut for <code>getViewer().getDocument()</code>.
+	 * Returns the document that content assist is inoked on, or <code>null</code> if not known.
 	 * 
-	 * @return the viewer's document
+	 * @return the document or <code>null</code>
 	 */
 	public IDocument getDocument() {
-		return getViewer().getDocument();
+		if (fDocument == null) {
+			if (fViewer == null)
+				return null;
+			return fViewer.getDocument();
+		}
+		return fDocument;
 	}
 	
 	/**
 	 * Computes the identifier (as specified by {@link Character#isJavaIdentifierPart(char)}) that
 	 * immediately precedes the invocation offset.
 	 * 
-	 * @return the prefix preceding the content assist invocation offset
+	 * @return the prefix preceding the content assist invocation offset, <code>null</code> if there is no document
 	 * @throws BadLocationException if accessing the document fails
 	 */
 	public CharSequence computeIdentifierPrefix() throws BadLocationException {
 		if (fPrefix == null) {
 			IDocument document= getDocument();
+			if (document == null)
+				return null;
 			int end= getInvocationOffset();
 			int start= end;
 			while (--start >= 0) {
@@ -118,13 +150,13 @@ public class TextContentAssistInvocationContext extends ContentAssistInvocationC
 		if (!super.equals(obj))
 			return false;
 		TextContentAssistInvocationContext other= (TextContentAssistInvocationContext) obj;
-		return fViewer.equals(other.fViewer) && fOffset == other.fOffset;
+		return (fViewer == null && other.fViewer == null || fViewer.equals(other.fViewer)) && fOffset == other.fOffset && (fDocument == null && other.fDocument == null || fDocument.equals(other.fDocument));
 	}
 	
 	/*
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return super.hashCode() << 5 | fViewer.hashCode() << 3 | fOffset;
+		return super.hashCode() << 5 | (fViewer == null ? 0 : fViewer.hashCode() << 3) | fOffset;
 	}
 }
