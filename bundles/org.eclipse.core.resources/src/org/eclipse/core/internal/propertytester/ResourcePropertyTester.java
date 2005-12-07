@@ -115,7 +115,7 @@ public class ResourcePropertyTester extends PropertyTester {
 		} else if (method.equals(PROJECT_NATURE)) {
 			try {
 				IProject proj = res.getProject();
-				return proj.isAccessible() && proj.hasNature(toString(expectedValue));
+				return proj != null && proj.isAccessible() && proj.hasNature(toString(expectedValue));
 			} catch (CoreException e) {
 				return false;
 			}
