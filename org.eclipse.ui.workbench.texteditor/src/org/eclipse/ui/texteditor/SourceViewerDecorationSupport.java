@@ -172,7 +172,7 @@ public class SourceViewerDecorationSupport {
 				gc.drawLine(x1, y1, x1, left.y + textWidget.getLineHeight(offset) - 1);
 
 			} else {
-				textWidget.redrawRange(offset, length, true);
+				textWidget.redrawRange(offset, length + 1, true);
 			}
 		}
 	}
