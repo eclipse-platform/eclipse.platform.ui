@@ -519,7 +519,13 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 				dock(previousAreaId, previousInsertBefore);
 			}
 			
+			// Set the draggedTrim to null. This indicates that we're no longer
+			// dragging the trim. The first call to the TrimDropTarget's 'drag' method
+			// will reset this the next time a drag starts.
 			draggedTrim = null;
+			
+			// Reset the 'global' drag listener to null
+			DragUtil.setGlobalDragListener(null);
 		}
     }
     
@@ -558,8 +564,14 @@ import org.eclipse.ui.internal.layout.TrimLayout;
     	
     	// If this is the -first- drag then inform the drop target
     	IWindowTrim trim = (IWindowTrim) draggedObject;
-    	if (dropTarget.draggedTrim == null)
+    	if (dropTarget.draggedTrim == null) {
     		dropTarget.setTrim(trim);
+    		
+    		// Make us the 'global' drag listener in order to prevent
+    		// other WorkbenchWindows from saying that they can accept
+    		// -our- trim.
+    		DragUtil.setGlobalDragListener(this);
+    	}
     	
     	dropTarget.track(position);
     	

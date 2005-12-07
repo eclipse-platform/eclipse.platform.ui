@@ -41,6 +41,15 @@ public class DragUtil {
     private static TestDropLocation forcedDropTarget = null;
     
     /**
+     * A global listener. If this is non-null then -all- events
+     * are routed to it; bypassing the standard mechanism of locating
+     * a listener from the control under the cursor. This is useful
+     * to constrain a drag gesture (i.e. trim dragging) to a particular
+     * WorkbenchWindow.
+     */
+    private static IDragOverListener globalDragListener = null;
+    
+    /**
      * List of IDragOverListener
      */
     private static List defaultTargets = new ArrayList();
@@ -69,8 +78,23 @@ public class DragUtil {
         }
     }
 
+    /**
+     * Return the list of 'IDragOverListener' elements associated with
+     * the given control. If there's a 'global' listener then always
+     * return it.
+     * 
+     * @param control
+     * @return
+     */
     private static List getTargetList(Control control) {
-        List result= (List) control.getData(DROP_TARGET_ID);;
+    	// If there's a 'global' listener then simply return it...
+    	if (globalDragListener != null) {
+    		List globalList = new ArrayList();
+    		globalList.add(globalDragListener);
+    		return globalList;
+    	}
+    	
+        List result = (List) control.getData(DROP_TARGET_ID);;
         return result;
     }
 
@@ -177,6 +201,19 @@ public class DragUtil {
         forcedDropTarget = forcedLocation;
     }
 
+    /**
+     * Define the given listener as a 'global' listener. If this is non-null then -all- events
+     * are routed to it; bypassing the standard mechanism of locating
+     * a listener from the control under the cursor. This is useful
+     * to constrain a drag gesture (i.e. trim dragging) to a particular
+     * WorkbenchWindow. 
+     * 
+     * @param listener The new listener to act as the 'global' listener
+     */
+    public static void setGlobalDragListener(IDragOverListener listener) {
+    	globalDragListener = listener;
+    }
+    
     /**
      * Drags the given item, given an initial bounding rectangle in display coordinates.
      * Due to a quirk in the Tracker class, changing the tracking rectangle when using the
@@ -376,7 +413,7 @@ public class DragUtil {
      * @return
      */
     public static IDropTarget getDropTarget(Control toSearch,
-            Object draggedObject, Point position, Rectangle dragRectangle) {    	
+            Object draggedObject, Point position, Rectangle dragRectangle) {
     	// Search for a listener by walking the control's parent hierarchy
         for (Control current = toSearch; current != null; current = current
                 .getParent()) {
