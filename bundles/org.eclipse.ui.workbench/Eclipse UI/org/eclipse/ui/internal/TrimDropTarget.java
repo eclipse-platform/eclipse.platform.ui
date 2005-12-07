@@ -171,7 +171,15 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 				trimDesc = (TrimDescriptor) iter.next();
 
 				// The insertion point is dependent on the orientation
-				Rectangle handleRect = trimDesc.getDockingCache().getControl().getBounds();
+				Rectangle handleRect = null;
+				
+				// If there's a docking handle then it's to the left of it
+				// Otherwise it's to the left of the actual trim control
+				if (trimDesc.getDockingCache() != null)
+					handleRect = trimDesc.getDockingCache().getControl().getBounds();
+				else
+					handleRect = trimDesc.getCache().getControl().getBounds();
+				
 				insertionPoints[curIndex++] = getInsertPoint(handleRect, areaId, false);
 			}
 			

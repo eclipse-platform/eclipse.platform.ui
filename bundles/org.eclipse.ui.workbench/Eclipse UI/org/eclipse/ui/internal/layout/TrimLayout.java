@@ -259,13 +259,19 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		// Create a new trim descriptor for the new area...
 		TrimDescriptor desc = new TrimDescriptor(trim, areaId);
 
-		// Create a 'docking' handle to allow dragging the trim
+		// If the trim can be relocated then add a docking handle
+		if (trim.getValidSides() != SWT.NONE) {
+			// Create a 'docking' handle to allow dragging the trim
+			Composite dockingHandle = new TrimCommonUIHandle(this, trim, areaId);
+			desc.setDockingCache(new SizeCache(dockingHandle));
+		}
+
+		// Add the trim control
 		SizeCache cache = new SizeCache(trim.getControl());
 		trim.getControl().setLayoutData(trim);
 		desc.setCache(cache);
-		Composite dockingHandle = new TrimCommonUIHandle(this, trim, areaId);
-		desc.setDockingCache(new SizeCache(dockingHandle));
 
+		// Add the new descriptor to the map
 		fTrimDescriptors.put(desc.getId(), desc);
 
 		// insert before behaviour, revisited

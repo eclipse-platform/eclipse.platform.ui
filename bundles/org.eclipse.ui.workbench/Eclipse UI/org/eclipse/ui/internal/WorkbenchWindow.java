@@ -940,7 +940,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         topBar = new CBanner(shell, SWT.NONE);
         topBarTrim = new WindowTrimProxy(topBar, 
         		"org.eclipse.ui.internal.WorkbenchWindow.topBar",  //$NON-NLS-1$  
-        		WorkbenchMessages.TrimCommon_Main_TrimName, SWT.TOP, true);
+        		WorkbenchMessages.TrimCommon_Main_TrimName, SWT.NONE, true);
 
         // the banner gets a curve along with the new tab style
         // TODO create a dedicated preference for this

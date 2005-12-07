@@ -286,10 +286,16 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	private void showPerspectiveBar() {
 		switch (currentLocation) {
 		case TOP_LEFT:
+			// Make sure that the 'trim'  is removed
+			window.getTrimManager().removeTrim(this);
+
 			topBar.setRight(null);
 			topBar.setBottom(perspectiveCoolBarWrapper.getControl());
 			break;
 		case TOP_RIGHT:
+			// Make sure that the 'trim'  is removed
+			window.getTrimManager().removeTrim(this);
+			
 			topBar.setBottom(null);
 			topBar.setRight(perspectiveCoolBarWrapper.getControl());
 			topBar.setRightWidth(DEFAULT_RIGHT_X);
@@ -428,6 +434,10 @@ public class PerspectiveSwitcher implements IWindowTrim {
 			unhookDragSupport();
 		}
 		// otherwise dispose the current controls and make new ones
+		
+		// First, make sure that the existing verion is removed from the trim layout
+		window.getTrimManager().removeTrim(this);
+
 		disposeChildControls();
 		if (newLocation == LEFT)
 			createControlForLeft();
@@ -1261,7 +1271,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	 * @see org.eclipse.ui.internal.IWindowTrim#getValidSides()
 	 */
 	public int getValidSides() {
-		return SWT.TOP|SWT.LEFT;
+		return SWT.NONE;
 	}
 
 	/* (non-Javadoc)
