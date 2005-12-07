@@ -286,16 +286,10 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	private void showPerspectiveBar() {
 		switch (currentLocation) {
 		case TOP_LEFT:
-			// Make sure that the 'trim'  is removed
-			window.getTrimManager().removeTrim(this);
-
 			topBar.setRight(null);
 			topBar.setBottom(perspectiveCoolBarWrapper.getControl());
 			break;
 		case TOP_RIGHT:
-			// Make sure that the 'trim'  is removed
-			window.getTrimManager().removeTrim(this);
-			
 			topBar.setBottom(null);
 			topBar.setRight(perspectiveCoolBarWrapper.getControl());
 			topBar.setRightWidth(DEFAULT_RIGHT_X);
