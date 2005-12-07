@@ -3187,15 +3187,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     public void addToTrim(IWindowTrim trim, int side) {
         IWindowTrim reference = null;
-
-        // the perspective bar should go before the fast view bar they're on the
-        // same side and before the status line if on the bottom
-        if (side == fastViewBar.getSide())
-            reference = fastViewBar;
-        else if (side == SWT.BOTTOM
-                && getWindowConfigurer().getShowStatusLine())
-            reference = getStatusLineTrim();
-
         defaultLayout.addTrim(side, trim, reference);
     }
 
