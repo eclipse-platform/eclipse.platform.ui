@@ -193,7 +193,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	
 	protected Change fChange;
 	private List fActiveGroupCategories;
-	private CompositeChange fTreeViewerInputChange;
+	protected CompositeChange fTreeViewerInputChange;
 	private PreviewNode fCurrentSelection;
 	private PageBook fPageContainer;
 	private Control fStandardPage;
@@ -427,7 +427,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		return focus;
 	}
 	
-	private void setTreeViewerInput() {
+	protected void setTreeViewerInput() {
 		if (fTreeViewer == null)
 			return;
 		PreviewNode input= null;

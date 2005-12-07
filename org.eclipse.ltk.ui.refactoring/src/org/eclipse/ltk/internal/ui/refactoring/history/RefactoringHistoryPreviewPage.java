@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -37,6 +42,9 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 
 	/** The current refactoring, or <code>null</code> */
 	private Refactoring fRefactoring;
+
+	/** The preview change requestor */
+	private RefactoringPreviewChangeRequestor fRequestor= new RefactoringPreviewChangeRequestor();
 
 	/** The refactoring status */
 	private RefactoringStatus fStatus= new RefactoringStatus();
@@ -131,6 +139,28 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public void setChange(final Change change) {
+		if (fChange == change)
+			return;
+		fTreeViewerInputChange= new CompositeChange("Dummy Change"); //$NON-NLS-1$
+		fChange= change;
+		if (fChange instanceof CompositeChange) {
+			final CompositeChange composite= (CompositeChange) fChange;
+			final Change[] changes= composite.getChildren();
+			final List list= new ArrayList(changes.length);
+			for (int index= 0; index < changes.length; index++) {
+				if (fRequestor.accept(changes[index]))
+					list.add(changes[index]);
+			}
+			fTreeViewerInputChange.addAll((Change[]) list.toArray(new Change[list.size()]));
+		} else
+			fTreeViewerInputChange.add(fChange);
+		setTreeViewerInput();
+	}
+
+	/**
 	 * Determines whether the next wizard page is disabled.
 	 * 
 	 * @param disable
@@ -155,6 +185,17 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	 */
 	public void setRefactoring(final Refactoring refactoring) {
 		fRefactoring= refactoring;
+	}
+
+	/**
+	 * Sets the preview change requestor.
+	 * 
+	 * @param requestor
+	 *            the preview change requestor to set
+	 */
+	public void setRequestor(final RefactoringPreviewChangeRequestor requestor) {
+		Assert.isNotNull(requestor);
+		fRequestor= requestor;
 	}
 
 	/**
