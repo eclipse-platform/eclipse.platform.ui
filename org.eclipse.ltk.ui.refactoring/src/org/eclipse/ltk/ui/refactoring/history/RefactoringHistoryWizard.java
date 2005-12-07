@@ -240,9 +240,9 @@ public class RefactoringHistoryWizard extends Wizard {
 			if (arguments != null)
 				status.merge(component.initialize(arguments));
 			else
-				status.addFatalError(MessageFormat.format(RefactoringUIMessages.PerformRefactoringsOperation_init_error, new String[] {descriptor.getDescription()}));
+				status.addFatalError(MessageFormat.format(RefactoringUIMessages.PerformRefactoringsOperation_init_error, new String[] { descriptor.getDescription()}));
 		} else
-			status.addFatalError(MessageFormat.format(RefactoringUIMessages.PerformRefactoringsOperation_init_error, new String[] {descriptor.getDescription()}));
+			status.addFatalError(MessageFormat.format(RefactoringUIMessages.PerformRefactoringsOperation_init_error, new String[] { descriptor.getDescription()}));
 		return status;
 	}
 
@@ -424,7 +424,8 @@ public class RefactoringHistoryWizard extends Wizard {
 			status.merge(aboutToPerformRefactoring(refactoring, descriptor, monitor));
 			if (!status.hasFatalError())
 				return refactoring;
-		}
+		} else
+			status.addFatalError(NLS.bind(RefactoringUIMessages.RefactoringHistoryWizard_error_instantiate_refactoring, descriptor.getDescription()));
 		return null;
 	}
 
