@@ -19,13 +19,13 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.mapping.IMergeContext;
+import org.eclipse.team.core.mapping.IMergeStatus;
+import org.eclipse.team.core.mapping.IResourceMappingMerger;
+import org.eclipse.team.core.mapping.MergeStatus;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.ui.mapping.IMergeContext;
-import org.eclipse.team.ui.mapping.IMergeStatus;
-import org.eclipse.team.ui.mapping.IResourceMappingMerger;
-import org.eclipse.team.ui.operations.MergeStatus;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
