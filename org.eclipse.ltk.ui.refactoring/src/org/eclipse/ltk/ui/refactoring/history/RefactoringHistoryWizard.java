@@ -757,14 +757,14 @@ public class RefactoringHistoryWizard extends Wizard {
 						monitor.beginTask(RefactoringUIMessages.RefactoringHistoryWizard_preparing_refactorings, 100);
 						if (!fAboutToPerformFired) {
 							try {
-								status.merge(fireAboutToPerformHistory(new SubProgressMonitor(monitor, 20)));
+								status.merge(fireAboutToPerformHistory(new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
 							} finally {
 								fAboutToPerformFired= true;
 							}
 						}
 						if (!status.isOK())
 							throw new CoreException(new Status(status.getSeverity(), RefactoringUIPlugin.getPluginId(), 0, null, null));
-						super.run(new SubProgressMonitor(monitor, 80));
+						super.run(new SubProgressMonitor(monitor, 80, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 					} finally {
 						monitor.done();
 					}
@@ -830,8 +830,8 @@ public class RefactoringHistoryWizard extends Wizard {
 			public void run(final IProgressMonitor monitor) throws CoreException {
 				try {
 					monitor.beginTask(RefactoringUIMessages.RefactoringHistoryWizard_preparing_changes, 12);
-					super.run(new SubProgressMonitor(monitor, 10));
-					refactoringPerformed(refactoring, new SubProgressMonitor(monitor, 2));
+					super.run(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+					refactoringPerformed(refactoring, new SubProgressMonitor(monitor, 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 				} finally {
 					monitor.done();
 				}
