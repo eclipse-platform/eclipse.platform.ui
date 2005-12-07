@@ -8,11 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.sourcelookup;
+package org.eclipse.debug.ui.sourcelookup;
 
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -22,10 +23,12 @@ import org.eclipse.ui.IPersistableElement;
 /**
  * Editor input for the <code>CommonSourceNotFoundEditor</code>. The editor
  * input can be created on a debug element or breakpoint.
- * 
+ *
  * @see CommonSourceNotFoundEditor
  * 
- * @since 3.0
+ * TODO:  new API, need review
+ * 
+ * @since 3.2
  */
 public class CommonSourceNotFoundEditorInput extends PlatformObject implements IEditorInput {
 	

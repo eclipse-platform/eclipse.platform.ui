@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.sourcelookup;
+package org.eclipse.debug.ui.sourcelookup;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -22,8 +22,9 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupManager;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.sourcelookup.SourceLookupDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.window.Window;
@@ -48,26 +49,56 @@ import org.eclipse.ui.part.EditorPart;
 /**
  * Editor for when source is not found. Shows the source name and has 
  * a button to add new containers.
- * Editor ID: IInternalDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR = org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor
+ * Editor ID: IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR = org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor
  * 
- * May be subclassed if a debugger requires additional buttons on the editor. For example,
- * a button may be added if the user has the additional option of using generated source
- * for debugging.
+ * This class may be referenced and subclassed.  The class may be subclassed to provide additional 
+ * buttons on the editor.   For example, a button may be added if the user has the additional 
+ * option of using generated source for debugging.
  * 
  * @see AbstractSourceLookupDirector
  * @see CommonSourceNotFoundEditorInput
- * @since 3.0
+ * 
+ * TODO:  new API, need review
+ * @since 3.2
  */
-public class CommonSourceNotFoundEditor extends EditorPart implements IReusableEditor, ILaunchesListener2 {
+public class CommonSourceNotFoundEditor extends EditorPart implements IReusableEditor  {
 	
 	/**
 	 * Text widgets used for this editor
 	 */
-	private Text fText;	
+	protected Text fText;	
+	
     /**
      * object for which the source is showing for (i.e., stackframe, breakpoint)
      */
 	protected Object fObject; 
+	
+
+	private ILaunchesListener2 fLaunchesListener = new ILaunchesListener2() {
+
+		public void launchesTerminated(ILaunch[] launches) {
+			if (fObject instanceof IDebugElement) {
+				IDebugElement element = (IDebugElement)fObject;
+				for (int i = 0; i < launches.length; i++) {
+					ILaunch launch = launches[i];
+					if (launch.equals(element.getLaunch())) {
+						closeEditor();
+						return;
+					}
+				}
+			}
+		}
+
+		public void launchesRemoved(ILaunch[] launches) {
+			launchesTerminated(launches);
+		}
+
+		public void launchesAdded(ILaunch[] launches) {
+		}
+
+		public void launchesChanged(ILaunch[] launches) {
+		}}; 
+	
 	
 	/**
 	 * @see org.eclipse.ui.IEditorPart#doSave(IProgressMonitor)
@@ -93,7 +124,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
 		setInput(input);
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(fLaunchesListener);
 	}
 	
 	/**
@@ -132,6 +163,19 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 			setInput(getEditorInput());
 		}
 		
+		createButtons(parent);		
+		
+		Dialog.applyDialogFont(parent);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugHelpContextIds.NO_SOURCE_EDITOR);
+	}
+
+	/**
+	 * Create buttons to be displayed in this editor
+	 * @param parent composite to create the buttons in.
+	 */
+	protected void createButtons(Composite parent) {
+		GridData data;
 		Button button = new Button(parent, SWT.PUSH);
 		data = new GridData();
 		data.grabExcessHorizontalSpace = false;
@@ -142,11 +186,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 			public void widgetSelected(SelectionEvent evt) {
 				buttonSelected();
 			}
-		});		
-		
-		Dialog.applyDialogFont(parent);
-		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugHelpContextIds.NO_SOURCE_EDITOR);
+		});
 	}
 	
 	/**
@@ -217,8 +257,17 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		}
 		setPartName(input.getName());
 		if (fText != null) {			
-			fText.setText(input.getToolTipText()+"\n"); //$NON-NLS-1$
+			fText.setText(getText());
 		}
+	}
+	
+	/**
+	 * Return the text to be displayed in this editor.
+	 * @return the text to be displayed in this editor
+	 */
+	protected String getText()
+	{
+		return getEditorInput().getToolTipText() + "\n"; //$NON-NLS-1$
 	}
 	
 	/**
@@ -227,65 +276,29 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	protected void closeEditor()
 	{
 		final IEditorPart editor = this;
-		DebugUIPlugin.getStandardDisplay().syncExec(
-				new Runnable() {
-					public void run() {											
-						IWorkbenchWindow activeWorkbenchWindow = DebugUIPlugin.getActiveWorkbenchWindow();
-						if (activeWorkbenchWindow != null) {
-							IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-							if (activePage != null) {
-								activePage.closeEditor(editor,false);
-							}
-						}										
-					}						
-				});			
+		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+			public void run() {
+				IWorkbenchWindow activeWorkbenchWindow = DebugUIPlugin.getActiveWorkbenchWindow();
+				if (activeWorkbenchWindow != null) {
+					IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+					if (activePage != null) {
+						activePage.closeEditor(editor, false);
+					}
+				}
+			}
+		});
 	}
 	
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fLaunchesListener);
 		super.dispose();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
-	 */
-	public void launchesTerminated(ILaunch[] launches) {
-		if (fObject instanceof IDebugElement) {
-			IDebugElement element = (IDebugElement)fObject;
-			for (int i = 0; i < launches.length; i++) {
-				ILaunch launch = launches[i];
-				if (launch.equals(element.getLaunch())) {
-					closeEditor();
-					return;
-				}
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
-	 */
-	public void launchesRemoved(ILaunch[] launches) {
-		launchesTerminated(launches);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
-	 */
-	public void launchesAdded(ILaunch[] launches) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
-	 */
-	public void launchesChanged(ILaunch[] launches) {
-	}
-	
-	
 }
 
 

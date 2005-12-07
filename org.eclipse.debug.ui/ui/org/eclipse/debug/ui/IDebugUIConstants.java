@@ -1104,4 +1104,12 @@ public interface IDebugUIConstants {
      * @since 3.2
      */
     public static final String ANNOTATION_TYPE_INSTRUCTION_POINTER_SECONDARY = "org.eclipse.debug.ui.secondaryIP"; //$NON-NLS-1$	
+
+	/**
+	 * Editor Identifier for the "Common Source Not Found" editor.
+	 * Value is <code>org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor</code>
+	 * 
+	 * @since 3.2
+	 */
+	public static final String ID_COMMON_SOURCE_NOT_FOUND_EDITOR="org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor"; //$NON-NLS-1$
 }

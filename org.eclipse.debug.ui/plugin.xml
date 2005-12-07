@@ -2042,7 +2042,7 @@ M4 = Platform-specific fourth key
       <editor
             name="%sourceNotFoundEditorName"
             icon="$nl$/icons/full/obj16/stckframe_obj.gif"
-            class="org.eclipse.debug.internal.ui.sourcelookup.CommonSourceNotFoundEditor"
+            class="org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor"
             id="org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor">
       </editor>
    </extension>

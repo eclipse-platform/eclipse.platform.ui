@@ -36,6 +36,7 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IInstructionPointerPresentation;
 import org.eclipse.debug.ui.ISourcePresentation;
+import org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditorInput;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -152,7 +153,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 			if (sourceElement == null) {
 				if (locator instanceof AbstractSourceLookupDirector) {
 				    editorInput = new CommonSourceNotFoundEditorInput(artifact);
-					editorId = IInternalDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
+					editorId = IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
 				} else {
 				    if (artifact instanceof IStackFrame) {
 				        IStackFrame frame = (IStackFrame)artifact;
