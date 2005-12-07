@@ -21,13 +21,14 @@ import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.graphics.Drawable;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 
 /**
  * * @see org.eclipse.jdt.internal.ui.text.HTMLPresenter
  */
-public class HTMLTextPresenter implements DefaultInformationControl.IInformationPresenter {
+public class HTMLTextPresenter implements DefaultInformationControl.IInformationPresenter, DefaultInformationControl.IInformationPresenterExtension {
 	
 	private static final String LINE_DELIM= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	
@@ -92,15 +93,23 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 		return (i == length ? line : line.substring(0, i)) + " "; //$NON-NLS-1$
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.DefaultInformationControl.IInformationPresenter#updatePresentation(org.eclipse.swt.widgets.Display, java.lang.String, org.eclipse.jface.text.TextPresentation, int, int)
+	/*
+	 * @see IHoverInformationPresenter#updatePresentation(Display display, String, TextPresentation, int, int)
 	 */
 	public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
+		return updatePresentation((Drawable)display, hoverInfo, presentation, maxWidth, maxHeight);
+	}
+	
+	/*
+	 * @see IHoverInformationPresenterExtension#updatePresentation(Drawable drawable, String, TextPresentation, int, int)
+	 * @since 3.2
+	 */
+	public String updatePresentation(Drawable drawable, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
 		
 		if (hoverInfo == null)
 			return null;
 			
-		GC gc= new GC(display);
+		GC gc= new GC(drawable);
 		try {
 			
 			StringBuffer buffer= new StringBuffer();
