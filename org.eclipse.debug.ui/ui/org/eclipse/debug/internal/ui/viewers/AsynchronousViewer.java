@@ -786,7 +786,8 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 	protected synchronized void attemptSelection(boolean reveal) {
 		if (fPendingSelection != null) {
             ISelection remaining = doAttemptSelectionToWidget(fPendingSelection, reveal);
-            if (!fPendingSelection.equals(remaining)) {
+            if (!fPendingSelection.equals(remaining) || 
+            		(fPendingSelection.isEmpty() && fPendingSelection.equals(remaining))) {
                 fPendingSelection = remaining;
                 if (fPendingSelection.isEmpty()) {
                     fPendingSelection = null;
