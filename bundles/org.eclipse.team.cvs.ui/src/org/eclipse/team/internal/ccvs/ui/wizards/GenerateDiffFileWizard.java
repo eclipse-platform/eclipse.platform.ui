@@ -988,7 +988,12 @@ public class GenerateDiffFileWizard extends Wizard {
         private void calculatePatchRoot(){
         	//check to see if this is a multi select patch, if so disable 
         	IResource[] tempResources = ((GenerateDiffFileWizard)this.getWizard()).resources;
-			if (((GenerateDiffFileWizard)this.getWizard()).resources.length > 1){
+        	
+        	//Guard for quick cancellation to avoid ArrayOutOfBounds (see Bug# 117234)
+			if (tempResources == null)
+				return;
+			
+			if (tempResources.length > 1){
 				//Check to see is the selected resources are contained by the same parent (climbing
 				//parent by parent to the project root)
 				//If so, then allow selection relative patches -> set the relative path to the common
@@ -1023,7 +1028,7 @@ public class GenerateDiffFileWizard extends Wizard {
 				}
 			} else {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				
+			
 				//take the file name off the path and use that as the patch root
 				//patchRoot = tempResources[0].getFullPath().removeLastSegments(1);
 				IPath fullPath = tempResources[0].getFullPath();
