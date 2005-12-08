@@ -119,16 +119,27 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 				context.dispose();
 				return;
 			}
-			if (showPreview(getJobName(), monitor)) {
+			if (isAttemptHeadlessMerge()) {
 				execute(context, Policy.subMonitorFor(monitor, 25));
 			} else {
-				context.dispose();
+				showPreview(getJobName(), monitor);
 			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
 			monitor.done();
 		}
+	}
+
+	/**
+	 * Return whether a headless merge should be attempted without showing a preview to
+	 * the user. If the merge succeeds, the operations finishes. However, if conflicts 
+	 * exist, the user will be prompted to handle these conflicts. By default, <code>false</code>
+	 * is returned.
+	 * @return whether a headless merge should be attempted
+	 */
+	protected boolean isAttemptHeadlessMerge() {
+		return false;
 	}
 
 	private void promptForNoChanges() {
@@ -139,7 +150,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 		});
 	}
 
-	private boolean showPreview(final String title, IProgressMonitor monitor) {
+	private void showPreview(final String title, IProgressMonitor monitor) {
 		calculateStates(context, Policy.subMonitorFor(monitor, 5));
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
@@ -167,7 +178,6 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 				int result = dialog.open();
 			}
 		});
-		return false;
 	}
 
 	private void calculateStates(ISynchronizationContext context, IProgressMonitor monitor) {
@@ -207,7 +217,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 		if (failedMerges.isEmpty()) {
 			context.dispose();
 		} else {
-			requiresManualMerge((ModelProvider[]) failedMerges.toArray(new ModelProvider[failedMerges.size()]), context);
+			showPreview(getJobName(), monitor);
 		}
 		monitor.done();
 	}
@@ -240,15 +250,6 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 		}
 		return false;
 	}
-
-	/**
-	 * One or more of the model elements for the given providers
-	 * requires a manual merge. When the manual merge is
-	 * @param providers the providers
-	 * @param context the merge context
-	 * @throws CoreException
-	 */
-	protected abstract void requiresManualMerge(ModelProvider[] providers, IMergeContext context) throws CoreException;
 
 	/**
 	 * Build and initialize a merge context for the input of this operation.

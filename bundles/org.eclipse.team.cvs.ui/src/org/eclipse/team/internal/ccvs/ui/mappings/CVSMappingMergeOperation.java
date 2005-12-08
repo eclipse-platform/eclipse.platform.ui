@@ -22,9 +22,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheRemoteContentsOperation;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
@@ -111,6 +109,13 @@ public class CVSMappingMergeOperation extends ResourceMappingMergeOperation {
 	 */
 	protected String getJobName() {
 		return CVSUIMessages.UpdateOperation_taskName;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.operations.ResourceMappingMergeOperation#isAttemptHeadlessMerge()
+	 */
+	protected boolean isAttemptHeadlessMerge() {
+		return CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_UPDATE_HANDLING).equals(ICVSUIConstants.PREF_UPDATE_HANDLING_PERFORM);
 	}
 
 }
