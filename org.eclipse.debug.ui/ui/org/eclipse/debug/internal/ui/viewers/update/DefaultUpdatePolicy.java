@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousViewer;
 import org.eclipse.debug.internal.ui.viewers.IModelChangedListener;
-import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.IModelDeltaNode;
 import org.eclipse.debug.internal.ui.viewers.TreePath;
 import org.eclipse.debug.internal.ui.viewers.TreeSelection;
@@ -27,9 +26,8 @@ import org.eclipse.debug.internal.ui.viewers.TreeSelection;
  */
 public class DefaultUpdatePolicy extends AbstractUpdatePolicy implements IModelChangedListener {
 
-	public void modelChanged(IModelDelta delta) {
-		IModelDeltaNode[] nodes = delta.getNodes();
-		updateNodes(nodes);
+	public void modelChanged(IModelDeltaNode delta) {
+		updateNodes(new IModelDeltaNode[]{delta});
 	}
 
 	protected void updateNodes(IModelDeltaNode[] nodes) {
@@ -37,11 +35,11 @@ public class DefaultUpdatePolicy extends AbstractUpdatePolicy implements IModelC
 			IModelDeltaNode node = nodes[i];
 			int flags = node.getFlags();
 
-			if ((flags & IModelDelta.CHANGED) != 0) {
+			if ((flags & IModelDeltaNode.CHANGED) != 0) {
 				handleChange(node);
-			} else if ((flags & IModelDelta.ADDED) != 0) {
+			} else if ((flags & IModelDeltaNode.ADDED) != 0) {
 				handleAdd(node);
-			} else if ((flags & IModelDelta.REMOVED) != 0) {
+			} else if ((flags & IModelDeltaNode.REMOVED) != 0) {
 				handleRemove(node);
 			}
 
@@ -53,18 +51,18 @@ public class DefaultUpdatePolicy extends AbstractUpdatePolicy implements IModelC
 		int flags = node.getFlags();
 		AsynchronousViewer viewer = getViewer();
 		if (viewer != null) {
-			if ((flags & IModelDelta.STATE) != 0) {
+			if ((flags & IModelDeltaNode.STATE) != 0) {
 				viewer.update(node.getElement());
 			}
-			if ((flags & IModelDelta.CONTENT) != 0) {
+			if ((flags & IModelDeltaNode.CONTENT) != 0) {
 				viewer.refresh(node.getElement());
 			}
-			if ((flags & IModelDelta.SELECT) != 0) {
+			if ((flags & IModelDeltaNode.SELECT) != 0) {
 				viewer.update(node.getElement());
 				TreePath treePath = getTreePath(node);
 				((AsynchronousTreeViewer) getViewer()).setSelection(new TreeSelection(treePath));
 			}
-			if ((flags & IModelDelta.EXPAND) != 0) {
+			if ((flags & IModelDeltaNode.EXPAND) != 0) {
 				viewer.update(node.getElement());
 				TreePath treePath = getTreePath(node);
 				((AsynchronousTreeViewer) getViewer()).expand(new TreeSelection(treePath));
@@ -78,16 +76,16 @@ public class DefaultUpdatePolicy extends AbstractUpdatePolicy implements IModelC
 
 		((AsynchronousTreeViewer) getViewer()).add(treePath);
 
-		if ((flags & IModelDelta.STATE) != 0) {
+		if ((flags & IModelDeltaNode.STATE) != 0) {
 			// do nothing??
 		}
-		if ((flags & IModelDelta.CONTENT) != 0) {
+		if ((flags & IModelDeltaNode.CONTENT) != 0) {
 			// do nothing??
 		}
-		if ((flags & IModelDelta.SELECT) != 0) {
+		if ((flags & IModelDeltaNode.SELECT) != 0) {
 			((AsynchronousTreeViewer) getViewer()).setSelection(new TreeSelection(treePath));
 		}
-		if ((flags & IModelDelta.EXPAND) != 0) {
+		if ((flags & IModelDeltaNode.EXPAND) != 0) {
 			((AsynchronousTreeViewer) getViewer()).expand(new TreeSelection(treePath));
 		}
 	}

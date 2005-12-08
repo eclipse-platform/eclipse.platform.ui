@@ -5,7 +5,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.viewers.AbstractModelProxy;
-import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.IModelDeltaNode;
 import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
 
@@ -24,47 +23,31 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	}
 
 	public void launchesTerminated(ILaunch[] launches) {
-		ModelDelta delta = new ModelDelta();
-		IModelDeltaNode node = delta.addNode(fLaunchManager, IModelDelta.NOCHANGE);
-		for (int i = 0; i < launches.length; i++) {
-			ILaunch launch = launches[i];
-			node.addNode(launch, IModelDelta.CHANGED | IModelDelta.CONTENT);	
-		}
-		fireModelChanged(delta);
+		fireDelta(launches, IModelDeltaNode.CHANGED | IModelDeltaNode.CONTENT);
 	}
 
 	public void launchesRemoved(ILaunch[] launches) {
-		ModelDelta delta = new ModelDelta();
-		IModelDeltaNode node = delta.addNode(fLaunchManager, IModelDelta.NOCHANGE);
-		for (int i = 0; i < launches.length; i++) {
-			ILaunch launch = launches[i];
-			node.addNode(launch, IModelDelta.REMOVED);	
-		}
-		fireModelChanged(delta);
+		fireDelta(launches, IModelDeltaNode.REMOVED);
 	}
 
 	public void launchesAdded(ILaunch[] launches) {
-		ModelDelta delta = new ModelDelta();
-		IModelDeltaNode node = delta.addNode(fLaunchManager, IModelDelta.NOCHANGE);
-		for (int i = 0; i < launches.length; i++) {
-			ILaunch launch = launches[i];
-			node.addNode(launch, IModelDelta.ADDED | IModelDelta.EXPAND);
-		}
-		fireModelChanged(delta);
+		fireDelta(launches, IModelDeltaNode.ADDED | IModelDeltaNode.EXPAND);
 	}
 
 	public void launchesChanged(ILaunch[] launches) {
-		ModelDelta delta = new ModelDelta();
-		IModelDeltaNode node = delta.addNode(fLaunchManager, IModelDelta.NOCHANGE);
-		for (int i = 0; i < launches.length; i++) {
-			ILaunch launch = launches[i];
-			node.addNode(launch, IModelDelta.CHANGED | IModelDelta.STATE);	
-		}
-		fireModelChanged(delta);
+		fireDelta(launches, IModelDeltaNode.CHANGED | IModelDeltaNode.STATE);
 	}
 
 	public void setInitialState() {
 		
+	}
+	
+	protected void fireDelta(ILaunch[] launches, int launchFlags) {
+		ModelDeltaNode delta = new ModelDeltaNode(fLaunchManager, IModelDeltaNode.NOCHANGE);
+		for (int i = 0; i < launches.length; i++) {
+			delta.addNode(launches[i], launchFlags);	
+		}
+		fireModelChanged(delta);		
 	}
 
 }

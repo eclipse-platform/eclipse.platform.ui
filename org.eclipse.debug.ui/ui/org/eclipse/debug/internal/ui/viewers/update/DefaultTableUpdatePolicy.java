@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewer;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousViewer;
 import org.eclipse.debug.internal.ui.viewers.IModelChangedListener;
-import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.IModelDeltaNode;
 import org.eclipse.jface.viewers.StructuredSelection;
 
@@ -24,7 +23,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 public class DefaultTableUpdatePolicy extends AbstractUpdatePolicy implements IModelChangedListener {
 
-    public void modelChanged(IModelDelta delta) {
+    public void modelChanged(IModelDeltaNode delta) {
         IModelDeltaNode[] nodes = delta.getNodes();
         updateNodes(nodes);
     }
@@ -33,10 +32,10 @@ public class DefaultTableUpdatePolicy extends AbstractUpdatePolicy implements IM
         AsynchronousViewer viewer = getViewer();
         if (viewer != null) {
             int flags = node.getFlags();
-            if ((flags & IModelDelta.STATE) != 0) {
+            if ((flags & IModelDeltaNode.STATE) != 0) {
                 viewer.update(node.getElement());
             }
-            if ((flags & IModelDelta.CONTENT) != 0) {
+            if ((flags & IModelDeltaNode.CONTENT) != 0) {
                 viewer.refresh(node.getElement());
             }
         }
@@ -45,7 +44,7 @@ public class DefaultTableUpdatePolicy extends AbstractUpdatePolicy implements IM
     private void updateSelection(Object element, int flags) {
         AsynchronousViewer viewer = getViewer();
         if (viewer != null) {
-            if ((flags & IModelDelta.SELECT) != 0) {
+            if ((flags & IModelDeltaNode.SELECT) != 0) {
                 ((AsynchronousTableViewer) getViewer()).setSelection(new StructuredSelection(element));
             }
         }
@@ -56,15 +55,15 @@ public class DefaultTableUpdatePolicy extends AbstractUpdatePolicy implements IM
             IModelDeltaNode node = nodes[i];
             int flags = node.getFlags();
 
-            if ((flags & IModelDelta.CHANGED) != 0) {
+            if ((flags & IModelDeltaNode.CHANGED) != 0) {
                 handleChange(node);
-            } else if ((flags & IModelDelta.ADDED) != 0) {
+            } else if ((flags & IModelDeltaNode.ADDED) != 0) {
                 handleAdd(node);
-            } else if ((flags & IModelDelta.REMOVED) != 0) {
+            } else if ((flags & IModelDeltaNode.REMOVED) != 0) {
                 handleRemove(node);
-            } else if ((flags & IModelDelta.REPLACED) != 0) {
+            } else if ((flags & IModelDeltaNode.REPLACED) != 0) {
                 handleReplace(node);
-            } else if ((flags & IModelDelta.INSERTED) != 0) {
+            } else if ((flags & IModelDeltaNode.INSERTED) != 0) {
                 handleInsert(node);
             }
 

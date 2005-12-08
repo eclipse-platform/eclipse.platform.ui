@@ -16,7 +16,7 @@ package org.eclipse.debug.internal.ui.viewers;
  *
  * @since 3.2
  * @see IModelProxy
- * @see IModelDelta
+ * @see IModelDeltaNode
  */
 public interface IModelChangedListener {
 	
@@ -25,6 +25,6 @@ public interface IModelChangedListener {
 	 * 
 	 * @param delta model delta
 	 */
-	public void modelChanged(IModelDelta delta);
+	public void modelChanged(IModelDeltaNode delta);
 
 }

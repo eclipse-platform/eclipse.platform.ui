@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ISuspendResume;
-import org.eclipse.debug.internal.ui.viewers.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.IModelDeltaNode;
 import org.eclipse.debug.internal.ui.viewers.IModelProxy;
 
 /**
@@ -43,8 +43,7 @@ public class VariablesViewEventHandler extends DebugEventHandler {
 				}
 			}
 			
-			ModelDelta delta = new ModelDelta();
-			delta.addNode(fFrame, IModelDelta.CHANGED | IModelDelta.CONTENT);
+			ModelDeltaNode delta = new ModelDeltaNode(fFrame, IModelDeltaNode.CHANGED | IModelDeltaNode.CONTENT);
 			fireDelta(delta);
 		}
 	}

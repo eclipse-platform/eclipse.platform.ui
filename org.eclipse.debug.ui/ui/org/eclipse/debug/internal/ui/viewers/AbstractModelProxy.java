@@ -37,7 +37,7 @@ public abstract class AbstractModelProxy implements IModelProxy {
 		}
 	}
 
-	public void fireModelChanged(final IModelDelta delta) {
+	public void fireModelChanged(final IModelDeltaNode delta) {
 		Object[] listeners = getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			final IModelChangedListener listener = (IModelChangedListener) listeners[i];
