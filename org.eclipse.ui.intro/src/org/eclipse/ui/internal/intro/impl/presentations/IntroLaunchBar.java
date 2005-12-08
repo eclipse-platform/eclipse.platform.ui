@@ -18,7 +18,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -26,7 +25,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -37,9 +35,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.ITrimManager;
 import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -71,7 +69,7 @@ public class IntroLaunchBar implements IWindowTrim {
 
     protected Composite handle;
 
-    protected CloseButton closeButton;
+    protected CloseButton closeButton = null;
 
     protected Image handleImage;
     
@@ -88,7 +86,7 @@ public class IntroLaunchBar implements IWindowTrim {
 
     protected String lastPageId;
 
-    protected Action closeAction;
+    protected Action closeAction = null;
 
     private IntroLaunchBarElement element;
 
@@ -276,7 +274,8 @@ public class IntroLaunchBar implements IWindowTrim {
                     if (handle!=null && ibounds != null)
                         y+= HANDLE_GAP;
                     int cx = carea.x+ carea.width/2-csize.x/2 +1;
-                    closeButton.setBounds(cx, y, csize.x, csize.y);
+                    if (closeButton!=null)
+                    	closeButton.setBounds(cx, y, csize.x, csize.y);
                     y += csize.y + CLOSE_SPACING;
                 }
                 toolBarManager.getControl().setBounds(x, y,
@@ -293,8 +292,8 @@ public class IntroLaunchBar implements IWindowTrim {
                     if (handle!=null && ibounds!=null)
                         x+= HANDLE_GAP;
                     int cy = carea.y+carea.height/2 - csize.y/2 +1;
-                    closeButton.setBounds(x, cy, csize.x,
-                        csize.y);
+                    if (closeButton!=null)
+                    	closeButton.setBounds(x, cy, csize.x,csize.y);
                     x += csize.x + CLOSE_SPACING;
                 }
                  toolBarManager.getControl().setBounds(x, y, tsize.x,
@@ -340,13 +339,20 @@ public class IntroLaunchBar implements IWindowTrim {
         settings.put(S_STORED_LOCATION, this.location);
     }
 
+    /**
+     * This method now calls dock(location) and then adds itself to the
+     * window trim.  This is to support the re-ordering of IWindowTrim
+     * lifecycle related to dock().
+     */
     public void createInActiveWindow() {
-        IWorkbenchWindow window = PlatformUI.getWorkbench()
-            .getActiveWorkbenchWindow();
-        createControl(window.getShell());
-        window.getTrimManager().addTrim(location, this);
-        window.getShell().layout();
-    }
+    	IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+    	
+    	dock(location);
+    	
+		ITrimManager trimManager = window.getTrimManager();
+		trimManager.addTrim(location, this);
+		window.getShell().layout();
+	}
 
     protected boolean isPlain() {
         return !"org.eclipse.ui.presentations.default".equals(presentationId); //$NON-NLS-1$
@@ -358,40 +364,8 @@ public class IntroLaunchBar implements IWindowTrim {
         container.setLayout(new BarLayout());
         // boolean vertical = (orientation & SWT.VERTICAL) != 0;
         toolBarManager = new ToolBarManager(SWT.FLAT | orientation);
-        Listener dragListener = new Listener() {
-            public void handleEvent(Event event) {
-                Point position = DragUtil.getEventLoc(event);
 
-                startDragging(position, false);
-            }
-        };
-        if (element.getCreateHandle()) {
-            if (element.getClose()) {
-                closeButton = new CloseButton(container, SWT.NULL);
-                closeButton.setBackground(bg);
-            }
-            handle = new Composite(container, SWT.NULL);
-            final Cursor dragCursor = new Cursor(parent.getDisplay(),
-                SWT.CURSOR_SIZEALL);
-            handle.setCursor(dragCursor);
-            handle.addDisposeListener(new DisposeListener() {
-                public void widgetDisposed(DisposeEvent e) {
-                    dragCursor.dispose();
-                }
-            });
-            ImageDescriptor desc = element.getHandleImageDescriptor();
-            if (desc != null)
-                handleImage = desc.createImage();
-            handle.setBackground(bg);
-            handle.addPaintListener(new PaintListener() {
-                public void paintControl(PaintEvent e) {
-                    onHandlePaint(e);
-                }
-            });
-            handle.addListener(SWT.DragDetect, dragListener);
-            handle.setCursor(dragCursor);
-            closeButton.addListener(SWT.DragDetect, dragListener);
-        }
+
         fillToolBar();
         // coolBar = new CoolBar(container, SWT.NULL);
         // CoolItem coolItem = new CoolItem(coolBar, SWT.NULL);
@@ -604,11 +578,17 @@ public class IntroLaunchBar implements IWindowTrim {
     }
 
     public void dispose() {
-        container.dispose();
-        toolBarManager.dispose();
-        toolBarManager.removeAll();
-        toolBarManager = null;
+    	if (container!=null) {
+    		container.dispose();
+    	}
+    	if (toolBarManager!=null) {
+    		toolBarManager.dispose();
+    		toolBarManager.removeAll();
+    	}
+
+    	toolBarManager = null;
         container = null;
+        
         if (bg != null)
             bg.dispose();
         if (fg != null)
@@ -673,9 +653,14 @@ public class IntroLaunchBar implements IWindowTrim {
     }
 
     protected IIntroPart closeLaunchBar(boolean restore) {
+    	
         IntroPlugin.getDefault().setLaunchBar(null);
         IWorkbenchWindow window = PlatformUI.getWorkbench()
             .getActiveWorkbenchWindow();
+        
+        // if we've already been removed, this won't hurt us
+        window.getTrimManager().removeTrim(this);
+        
         IIntroPart intro = null;
         if (restore) {
             intro = PlatformUI.getWorkbench().getIntroManager().showIntro(
@@ -718,14 +703,16 @@ public class IntroLaunchBar implements IWindowTrim {
     }
 
     protected void contextMenuAboutToShow(IMenuManager manager) {
-        manager.add(closeAction);
+    	if (closeButton!=null)
+    		manager.add(closeAction);
     }
 
     public void dock(int side) {
         dispose();
         setLocation(side);
         storeLocation();
-        createInActiveWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		createControl(window.getShell());
     }
 
     private void setLocation(int location) {
@@ -756,7 +743,7 @@ public class IntroLaunchBar implements IWindowTrim {
      * @see org.eclipse.ui.internal.IWindowTrim#isCloseable()
      */
     public boolean isCloseable() {
-        return true;
+        return element.getClose();
     }
 
     /* (non-Javadoc)
