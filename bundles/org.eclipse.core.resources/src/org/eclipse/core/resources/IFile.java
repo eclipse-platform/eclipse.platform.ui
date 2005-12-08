@@ -333,18 +333,18 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * path is relative to an undefined variable.
 	 * </p>
 	 * <p>
-	 * The {@link IResource#REPLACE_RESOURCE} update flag controls how this 
+	 * The {@link IResource#REPLACE} update flag controls how this 
 	 * method deals with cases where a resource of the same name as the 
-	 * prospective link already exists. If {@link IResource#REPLACE_RESOURCE}
+	 * prospective link already exists. If {@link IResource#REPLACE}
 	 * is specified, then any existing resource with the same name is removed
 	 * from the workspace to make way for creation of the link.  This does <b>not</b>
 	 * cause the underlying file system contents of that resource to be deleted.
-	 * If {@link IResource#REPLACE_RESOURCE} is not specified, this method will
+	 * If {@link IResource#REPLACE} is not specified, this method will
 	 * fail if an existing resource exists of the same name.
 	 * </p>
 	 * <p>
 	 * Update flags other than {@link IResource#ALLOW_MISSING_LOCAL} or
-	 * {@link IResource#REPLACE_RESOURCE} are ignored.
+	 * {@link IResource#REPLACE} are ignored.
 	 * </p>
 	 * <p>
 	 * This method synchronizes this resource with the local file system at the given
@@ -409,18 +409,18 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * path is relative to an undefined variable.
 	 * </p>
 	 * <p>
-	 * The {@link IResource#REPLACE_RESOURCE} update flag controls how this 
+	 * The {@link IResource#REPLACE} update flag controls how this 
 	 * method deals with cases where a resource of the same name as the 
-	 * prospective link already exists. If {@link IResource#REPLACE_RESOURCE}
+	 * prospective link already exists. If {@link IResource#REPLACE}
 	 * is specified, then any existing resource with the same name is removed
 	 * from the workspace to make way for creation of the link.  This does <b>not</b>
 	 * cause the underlying file system contents of that resource to be deleted.
-	 * If {@link IResource#REPLACE_RESOURCE} is not specified, this method will
+	 * If {@link IResource#REPLACE} is not specified, this method will
 	 * fail if an existing resource exists of the same name.
 	 * </p>
 	 * <p>
 	 * Update flags other than {@link IResource#ALLOW_MISSING_LOCAL} or
-	 * {@link IResource#REPLACE_RESOURCE} are ignored.
+	 * {@link IResource#REPLACE} are ignored.
 	 * </p>
 	 * <p>
 	 * This method synchronizes this resource with the file system at the given
