@@ -87,7 +87,7 @@ public class ComboUpdatableValue extends UpdatableValue {
 				fireChangeEvent(IChangeEvent.CHANGE, oldValue, combo.getText());
 			}
 		};
-		runnable.run();
+		runnable.runOn(combo.getDisplay());
 	}
 
 	public Object getValue() {

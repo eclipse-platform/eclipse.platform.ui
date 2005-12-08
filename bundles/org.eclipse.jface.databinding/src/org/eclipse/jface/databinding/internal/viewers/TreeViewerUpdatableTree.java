@@ -270,7 +270,7 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 				
 			}
 		};
-		runnable.run();
+		runnable.runOn(viewer.getTree().getDisplay());
 	}
 
 	public void setElements(final Object parentElement, final Object[] values) {

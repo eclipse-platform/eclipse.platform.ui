@@ -88,7 +88,7 @@ public class CComboUpdatableValue extends UpdatableValue {
 				fireChangeEvent(IChangeEvent.CHANGE, oldValue, ccombo.getText());
 			}
 		};
-		runnable.run();
+		runnable.runOn(ccombo.getDisplay());
 	}
 
 	public Object getValue() {
