@@ -11,9 +11,12 @@
 package org.eclipse.debug.internal.ui.viewers;
 
 /**
- * A model changed listener is notified of changes in a model.
+ * A model changed listener is notified of changes in a model. A model
+ * is represented by an {@link IModelProxy}.
  *
  * @since 3.2
+ * @see IModelProxy
+ * @see IModelDelta
  */
 public interface IModelChangedListener {
 	
