@@ -153,6 +153,7 @@ public abstract class ContentViewer extends Viewer {
             labelProvider.dispose();
             labelProvider = null;
         }
+        input = null;
     }
 
     /**
