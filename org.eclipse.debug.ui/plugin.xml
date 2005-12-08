@@ -2408,7 +2408,13 @@ M4 = Platform-specific fourth key
                 class="org.eclipse.debug.internal.ui.views.console.ConsoleTerminateActionDelegate"
                 menubarPath="additions"
                 id="org.eclipse.debug.ui.consoleTerminateAction"
-                helpContextId="console_terminate_action_context"/>
+                helpContextId="console_terminate_action_context"/> 
+          <action
+                label="%ConsolePreferencesAction.label"
+                tooltip="%ConsolePreferencesAction.tooltip"
+                class="org.eclipse.debug.internal.ui.views.console.ConsoleShowPreferencesAction"
+                menubarPath="preferences"
+                id="org.eclipse.debug.ui.consolePreferencesAction"/>                
        </viewerContribution>
     </extension>
     <extension

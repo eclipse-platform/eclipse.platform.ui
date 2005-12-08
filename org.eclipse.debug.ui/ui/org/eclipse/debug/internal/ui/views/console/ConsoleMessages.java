@@ -33,4 +33,6 @@ public class ConsoleMessages extends NLS {
     public static String ConsoleRemoveTerminatedAction_0;
 
     public static String ConsoleRemoveTerminatedAction_1;
+
+	public static String ConsoleShowPreferencesAction__run_debug_console;
 }
