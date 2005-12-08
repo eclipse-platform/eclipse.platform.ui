@@ -13,6 +13,8 @@
 package org.eclipse.core.internal.resources;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Iterator;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
@@ -143,7 +145,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 
 	protected void assertLinkRequirements(URI localLocation, int updateFlags) throws CoreException {
 		boolean allowMissingLocal = (updateFlags & IResource.ALLOW_MISSING_LOCAL) != 0;
-		if ((updateFlags & IResource.REPLACE_RESOURCE) == 0)
+		if ((updateFlags & IResource.REPLACE) == 0)
 			checkDoesNotExist(getFlags(getResourceInfo(false, false)), true);
 		IStatus locationStatus = workspace.validateLinkLocationURI(this, localLocation);
 		//we only tolerate an undefined path variable in the allow missing local case
@@ -567,7 +569,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		Assert.isNotNull(localLocation);
 		createLink(URIUtil.toURI(localLocation), updateFlags, monitor);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IFolder#createLink(URI, int, IProgressMonitor)
 	 * @see org.eclipse.core.resources.IFile#createLink(URI, int, IProgressMonitor)
@@ -587,7 +589,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_CREATE, this));
 				workspace.beginOperation(true);
 				//replace existing resource, if applicable
-				if ((updateFlags & REPLACE_RESOURCE) != 0) {
+				if ((updateFlags & REPLACE) != 0) {
 					IResource existing = workspace.getRoot().findMember(getFullPath());
 					if (existing != null)
 						workspace.deleteResource(existing);
@@ -1012,7 +1014,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		checkLocal(flags, DEPTH_ZERO);
 		return info.getSessionProperty(key);
 	}
-	
+
 	public IFileStore getStore() {
 		return getLocalManager().getStore(this);
 	}
@@ -1111,7 +1113,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			return flags != NULL_FLAG; // exists
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_LOCAL_EXISTS);
 	}
-	
+
 	/**
 	 * Returns whether a resource should be included in a traversal
 	 * based on the provided member flags.
@@ -1496,6 +1498,31 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#isLinked()
 	 */
 	public boolean isLinked() {
+		return isLinked(NONE);
+	}
+
+	/* (non-Javadoc)
+	 * @see IResource#isLinked()
+	 */
+	public boolean isLinked(int options) {
+		if ((options & CHECK_ANCESTORS) != 0) {
+			IProject project = getProject();
+			if (project == null)
+				return false;
+			ProjectDescription desc = ((Project)project).internalGetDescription();
+			if (desc == null)
+				return false;
+			HashMap links = desc.getLinks();
+			if (links == null)
+				return false;
+			IPath myPath = getProjectRelativePath();
+			for (Iterator it = links.values().iterator(); it.hasNext();) {
+				if (((LinkDescription) it.next()).getProjectRelativePath().isPrefixOf(myPath))
+					return true;
+			}
+			return false;
+		}
+		//the no ancestor checking case
 		ResourceInfo info = getResourceInfo(false, false);
 		return info != null && info.isSet(M_LINK);
 	}

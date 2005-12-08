@@ -197,16 +197,23 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 			((Resource) children[i]).internalSetLocal(flag, depth);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.resources.Resource#isLinked(int)
+	 */
+	public boolean isLinked(int options) {
+		return false;//the root is never linked
+	}
+	
 	/**
 	 * @see IResource#isLocal(int)
 	 */
 	public boolean isLocal(int depth) {
-		// the flags parm is ignored for the workspace root so pass anything
+		// the flags parameter is ignored for the workspace root so pass anything
 		return isLocal(-1, depth);
 	}
 
 	/**
-	 * @see IResource#isLocal(int)
+	 * @see IResource#isLocal(int, int)
 	 */
 	public boolean isLocal(int flags, int depth) {
 		// don't check the flags....workspace root is always local

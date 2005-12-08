@@ -671,6 +671,10 @@ public class Project extends Container implements IProject {
 	public boolean isAccessible() {
 		return isOpen();
 	}
+	
+	public boolean isLinked(int options) {
+		return false;//projects are never linked
+	}
 
 	/* (non-Javadoc)
 	 * @see IResource#isLocal(int)

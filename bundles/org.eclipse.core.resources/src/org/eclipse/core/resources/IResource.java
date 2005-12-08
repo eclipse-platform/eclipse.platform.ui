@@ -233,7 +233,16 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IFolder#createLink(URI, int, IProgressMonitor)
 	 * @since 3.2
 	 */
-	public static final int REPLACE_RESOURCE = 0x100;
+	public static final int REPLACE = 0x100;
+
+	/**
+	 * Update flag constant (bit mask value 512) indicating that ancestor
+	 * resources of the target resource should be checked.
+	 *
+	 * @see IResource#isLinked(int)
+	 * @since 3.2
+	 */
+	public static final int CHECK_ANCESTORS = 0x200;
 
 	/*====================================================================
 	 * Other constants:
@@ -1474,16 +1483,11 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public boolean isLocal(int depth);
 
 	/**
-	 * Returns <code>true</code> if this resource has been linked to 
-	 * a location other than the default location calculated by the platform. This
-	 * location can be outside the project's content area or another location
-	 * within the project. Returns <code>false</code>
-	 * in all other cases, including the case where this resource does not exist.
-	 * The workspace root and projects are never linked.
+	 * Returns whether this resource has been linked to 
+	 * a location other than the default location calculated by the platform. 
 	 * <p>
-	 * This method returns true only for a resource that has been linked using
-	 * the <code>createLink</code> method.  This method returns false for
-	 * children of linked resources.
+	 * 	 This is a convenience method, fully equivalent to 
+	 * <code>isLinked(IResource.NONE)</code>.
 	 * </p>
 	 * 
 	 * @return <code>true</code> if this resource is linked, and 
@@ -1493,6 +1497,36 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 2.1
 	 */
 	public boolean isLinked();
+
+	/**
+	 * Returns <code>true</code> if this resource has been linked to 
+	 * a location other than the default location calculated by the platform. This
+	 * location can be outside the project's content area or another location
+	 * within the project. Returns <code>false</code> in all other cases, including 
+	 * the case where this resource does not exist.  The workspace root and 
+	 * projects are never linked.
+	 * <p>
+	 * This method returns true only for a resource that has been linked using
+	 * the <code>createLink</code> method.  
+	 * </p>
+	 * <p>
+	 * The {@link #CHECK_ANCESTORS} option flag indicates whether this method
+	 * should consider ancestor resources in its calculation.  If the 
+	 * {@link #CHECK_ANCESTORS} flag is present, this method will return 
+	 * <code>true</code> if this resource, or any parent resource, is a linked 
+	 * resource.  If the {@link #CHECK_ANCESTORS} option flag is not specified,
+	 * this method returns false for children of linked resources.
+	 * </p>
+	 * 
+	 * @param options bit-wise or of option flag constants
+	 *  (only {@link #CHECK_ANCESTORS} is applicable)
+	 * @return <code>true</code> if this resource is linked, and 
+	 *   <code>false</code> otherwise
+	 * @see IFile#createLink(IPath, int, IProgressMonitor)
+	 * @see IFolder#createLink(IPath, int, IProgressMonitor)
+	 * @since 3.2
+	 */
+	public boolean isLinked(int options);
 
 	/**
 	 * Returns whether this resource is a phantom resource.
