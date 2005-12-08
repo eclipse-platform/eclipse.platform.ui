@@ -6,10 +6,12 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWindowTrim;
+import org.eclipse.ui.themes.ColorUtil;
 
 /**
  * This class provides 'insertion' feedback to the User. It draws a
@@ -19,13 +21,17 @@ import org.eclipse.ui.IWindowTrim;
  * @since 3.2
  */
 public class InsertCaret {
+	// Control info
 	private Composite clientControl;
 	private Canvas caretControl;
 	private static final int size = 10;
+
+	// Colors
 	private Color baseColor;
 	private Color hilightColor;
 	private boolean isHighlight;
 	
+	// 'Model' info
 	private int areaId;
 	private IWindowTrim insertBefore;
 	
@@ -53,8 +59,10 @@ public class InsertCaret {
 		
 		// Use the SWT 'title' colors since they should always have a proper contrast
 		// and are 'related' (i.e. should look good together)
-		baseColor = caretControl.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
-		hilightColor = caretControl.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND);
+		baseColor = caretControl.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
+		RGB background  = caretControl.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();
+		RGB blended = ColorUtil.blend(baseColor.getRGB(), background);
+		hilightColor = new Color(caretControl.getDisplay(), blended);
 		
 		caretControl.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
@@ -97,6 +105,10 @@ public class InsertCaret {
 		showCaret(pos, areaId);
 	}
 
+	/**
+	 * Sets the hilight 'mode' for the control.
+	 * @param highlight true if the caret should be drawn as 'hilighted'
+	 */
 	public void setHighlight(boolean highlight) {
 		isHighlight = highlight;
 		caretControl.redraw();
@@ -154,7 +166,9 @@ public class InsertCaret {
 	}
 
 	public void dispose() {
-		//baseColor.dispose();
+		// Dispose the control's resources (we don't have to dispose the
+		// 'bacseColor' because it's a system color
+		hilightColor.dispose();
 		caretControl.dispose();
 	}
 }

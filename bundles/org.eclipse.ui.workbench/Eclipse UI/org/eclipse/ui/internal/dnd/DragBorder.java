@@ -6,10 +6,12 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.themes.ColorUtil;
 
 /**
  * Utility class that wraps a given control with a black 'border'. Moving the
@@ -19,9 +21,15 @@ import org.eclipse.swt.widgets.Control;
  *
  */
 public class DragBorder {
+	// Controls
 	private Composite clientControl = null;
 	private Control dragControl = null;
 	private Canvas border = null;
+
+	// Colors
+	private Color baseColor;
+	private Color hilightColor;
+	private boolean isHighlight;
 
 	/**
 	 * Construct a new DragBorder.
@@ -38,15 +46,27 @@ public class DragBorder {
 		border = new Canvas(dragControl.getParent(), SWT.NONE);
 		border.setSize(dragSize.x+2, dragSize.y+2);
 		
+		// Use the SWT 'title' colors since they should always have a proper contrast
+		// and are 'related' (i.e. should look good together)
+		baseColor = border.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
+		RGB background  = border.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();
+		RGB blended = ColorUtil.blend(baseColor.getRGB(), background);
+		hilightColor = new Color(border.getDisplay(), blended);
+		
 		// Ensure the border is visible and the control is 'above' it...
 		border.moveAbove(null);
 		dragControl.moveAbove(null);
 		
 		border.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
-				Color black = border.getDisplay().getSystemColor(SWT.COLOR_BLACK);
-				e.gc.setBackground(black);
-				e.gc.setBackground(black);
+				if (isHighlight) {
+					e.gc.setForeground(hilightColor);
+				}
+				else {
+					e.gc.setForeground(baseColor);
+				}
+				
+				// Draw a rectangle as our 'border'
 				Rectangle bb = border.getBounds();
 				e.gc.drawRectangle(0,0,bb.width-1, bb.height-1);
 			}
@@ -80,11 +100,20 @@ public class DragBorder {
 		border.setBounds(bb);
     }
 
+	/**
+	 * Sets the hilight 'mode' for the control.
+	 * @param highlight true if the border should be drawn as 'hilighted'
+	 */
+	public void setHighlight(boolean highlight) {
+		isHighlight = highlight;
+		border.redraw();
+	}
 
 	/**
 	 * Dispose the controls owned by the border.
 	 */
 	public void dispose() {
+		hilightColor.dispose();
 		border.dispose();
 	}
 

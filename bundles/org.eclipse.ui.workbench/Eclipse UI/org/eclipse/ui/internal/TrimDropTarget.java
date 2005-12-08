@@ -50,7 +50,8 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         // Holder for the position of trim that is 'floating' with the cursor
     	private int cursorAreaId;
         private int previousAreaId;
-        private IWindowTrim previousInsertBefore;
+        private IWindowTrim previousInsertBefore;        
+		private Rectangle previousLocation;
 
         private ActualTrimDropTarget() {
             super();
@@ -375,14 +376,18 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 		
         private void setCurCaret(InsertCaret newCaret) {
         	// un-highlight the 'old' caret (if any)
-        	if (curCaret != null)
+        	if (curCaret != null) {
         		curCaret.setHighlight(false);
+        		border.setHighlight(false);
+        	}
         	
         	curCaret = newCaret;
         	
         	// highlight the 'new' caret (if any)
-        	if (curCaret != null)
+        	if (curCaret != null) {
         		curCaret.setHighlight(true);
+        		border.setHighlight(true);
+        	}
         }
         
 		private IWindowTrim getInsertTrim(int areaId, int index) {
@@ -412,6 +417,20 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 			}
 		}
 
+        /**
+         * The user either cancelled the drag or tried to drop the trim in an invalid
+         * area...put the trim back in the last location it was in
+         */
+        private void redock() {
+        	// Since the control might move 'far' we'll provide an animation
+        	Rectangle startRect = DragUtil.getDisplayBounds(draggedTrim.getControl());
+            RectangleAnimation animation = new RectangleAnimation(
+                    windowComposite.getShell(), startRect, previousLocation, 300);
+            animation.schedule();
+
+            dock(previousAreaId, previousInsertBefore);
+        }
+        
 		/* (non-Javadoc)
          * @see org.eclipse.ui.internal.dnd.IDropTarget#drop()
          */
@@ -422,7 +441,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         	
         	// If we try to drop while in no-man's land then re-dock to the last known location
         	if (curCaret == null) {
-        		dock(previousAreaId, previousInsertBefore);
+        		redock();
                	return;
         	}
         	
@@ -449,6 +468,9 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 						previousInsertBefore = null;
 				}
 			}
+        	
+        	// Remember the location that the controlused to be at for animation purposes
+        	previousLocation = DragUtil.getDisplayBounds(draggedTrim.getControl());
         	
         	// Remove the trim from the layout
         	layout.removeTrim(draggedTrim);
@@ -516,7 +538,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 			// If we didn't perform a drop then restore the original position
 			if (!dropPerformed && !docked) {
 				// Force the dragged trim back into its original position...				
-				dock(previousAreaId, previousInsertBefore);
+				redock();
 			}
 			
 			// Set the draggedTrim to null. This indicates that we're no longer
