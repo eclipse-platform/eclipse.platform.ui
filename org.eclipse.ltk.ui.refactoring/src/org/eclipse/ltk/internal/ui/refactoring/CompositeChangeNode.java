@@ -47,7 +47,7 @@ public class CompositeChangeNode extends AbstractChangeNode {
 		Change[] changes= focus.getChildren();
 		for (int i= 0; i < changes.length; i++) {
 			Change change= changes[i];
-			if (fRequestor.accept(change)) {
+			if (fRequestor == null || fRequestor.accept(change)) {
 				if (change instanceof CompositeChange && ((CompositeChange) change).isSynthetic()) {
 					getFlattendedChildren(result, parent, (CompositeChange) change);
 				} else {
