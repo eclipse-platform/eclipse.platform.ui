@@ -66,7 +66,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	private Text fText;	
 	
 	/**
-	 * Launch listener to handle launch events.
+	 * Launch listener to handle launch events, or <code>null</code> if none
 	 */
 	private ILaunchesListener2 fLaunchesListener;
 	
@@ -267,6 +267,9 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	
 	/**
 	 * Initialize this editor.
+	 * Called after <code>init(IEditorSite, IEditorInput)</code>. By default, a launch
+	 * listener is added to close this editor when the associated launch terminates.
+	 * Subclasses may override.
 	 */
 	protected void initialize()
 	{
