@@ -110,6 +110,9 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
+				
+				if (fIsDisposed)
+					return;
 						
 				// check condition before doing anything
 				if (memoryBlocks == null || memoryBlocks.length <= 0)
@@ -536,6 +539,10 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
+				
+				if (fIsDisposed)
+					return;
+				
 				if (fAddedRenderings.contains(rendering))
 					return;
 
