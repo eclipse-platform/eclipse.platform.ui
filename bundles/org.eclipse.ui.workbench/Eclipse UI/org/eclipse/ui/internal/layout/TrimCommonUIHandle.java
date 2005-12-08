@@ -265,12 +265,12 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
     	if (sideCount == 1) {
     		// If there's only one valid side then 'curSide' must be it...
         	if (curSide == SWT.TOP || curSide == SWT.BOTTOM)
-    			dragCursor = new Cursor(toDrag.getDisplay(), SWT.CURSOR_SIZEWE);
+    			dragCursor = toDrag.getDisplay().getSystemCursor(SWT.CURSOR_SIZEWE);
     		else
-    			dragCursor = new Cursor(toDrag.getDisplay(), SWT.CURSOR_SIZENS);
+    			dragCursor = toDrag.getDisplay().getSystemCursor(SWT.CURSOR_SIZENS);
     	}
     	else {
-    		dragCursor = new Cursor(toDrag.getDisplay(), SWT.CURSOR_SIZEALL);
+    		dragCursor = toDrag.getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL);
     	}
     	
     	setCursor(dragCursor);
