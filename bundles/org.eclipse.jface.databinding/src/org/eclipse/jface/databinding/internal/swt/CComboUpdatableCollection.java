@@ -86,8 +86,9 @@ public class CComboUpdatableCollection extends Updatable implements IUpdatableCo
 				index=getSize();
 			String[] newItems = new String[getSize()-1];
 			String old = ccombo.getItem(index);
-			System.arraycopy(ccombo.getItems(), 0, newItems,0, index);			
-			System.arraycopy(ccombo.getItems(), index, newItems,index-1, getSize()-index);			
+			System.arraycopy(ccombo.getItems(), 0, newItems,0, index);	
+			if (newItems.length > 0)
+				System.arraycopy(ccombo.getItems(), index, newItems,index-1, getSize()-index);			
 			ccombo.setItems(newItems);
 			fireChangeEvent(ChangeEvent.REMOVE, old, null, index);
 		}

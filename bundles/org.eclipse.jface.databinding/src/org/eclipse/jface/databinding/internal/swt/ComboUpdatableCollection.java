@@ -86,8 +86,9 @@ public class ComboUpdatableCollection extends Updatable implements IUpdatableCol
 				index=getSize();
 			String[] newItems = new String[getSize()-1];
 			String old = combo.getItem(index);
-			System.arraycopy(combo.getItems(), 0, newItems,0, index);			
-			System.arraycopy(combo.getItems(), index, newItems,index-1, getSize()-index);			
+			System.arraycopy(combo.getItems(), 0, newItems,0, index);
+			if (newItems.length > 0)
+				System.arraycopy(combo.getItems(), index, newItems,index-1, getSize()-index);			
 			combo.setItems(newItems);
 			fireChangeEvent(IChangeEvent.REMOVE, old, null, index);
 		}
