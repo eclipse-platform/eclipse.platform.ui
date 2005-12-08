@@ -24,6 +24,6 @@ public interface IModelProxy {
 	public void removeModelChangedListener(IModelChangedListener listener);
 	
 	// TODO: should be part of the implementation rather than the interface
-	public void fireModelChanged(IModelDeltaNode delta);
+	public void fireModelChanged(IModelDelta delta);
 	
 }

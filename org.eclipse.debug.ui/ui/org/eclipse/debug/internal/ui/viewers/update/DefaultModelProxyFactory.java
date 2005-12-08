@@ -1,7 +1,6 @@
 package org.eclipse.debug.internal.ui.viewers.update;
 
 import org.eclipse.debug.core.IExpressionManager;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
@@ -24,9 +23,6 @@ public class DefaultModelProxyFactory implements IModelProxyFactory {
 			if (IDebugUIConstants.ID_DEBUG_VIEW.equals(id)) {
 				if (element instanceof IDebugTarget) {
 					return new DebugTargetProxy((IDebugTarget)element);
-				}
-				if (element instanceof ILaunch) {
-					return new LaunchProxy((ILaunch)element);
 				}
 				if (element instanceof ILaunchManager) {
 					return new LaunchManagerProxy();

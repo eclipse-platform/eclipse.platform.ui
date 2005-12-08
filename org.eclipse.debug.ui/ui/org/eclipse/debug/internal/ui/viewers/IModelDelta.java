@@ -31,10 +31,9 @@ import org.eclipse.debug.internal.ui.viewers.update.ModelDeltaNode;
  * {@link org.eclipse.debug.internal.ui.viewers.update.ModelDelta}.
  * </p>
  * </p>
- * @see IModelDelta
  * @since 3.2
  */
-public interface IModelDeltaNode {
+public interface IModelDelta {
 	
 	// types of changes
 	
@@ -97,7 +96,7 @@ public interface IModelDeltaNode {
 	 * 
 	 * @return parent node or <code>null</code> if this is a root node
 	 */
-	public IModelDeltaNode getParent();
+	public IModelDelta getParent();
 	
 	/**
 	 * Returns the model element this node describes.
@@ -127,7 +126,7 @@ public interface IModelDeltaNode {
 	 *  
 	 * @return replacement element or <code>null</code>
 	 */
-	public Object getNewElement();
+	public Object getReplacementElement();
 	
 	/**
 	 * When a node indicates the <code>IModelDelta.INSERTED</code> flag, this method
@@ -140,7 +139,7 @@ public interface IModelDeltaNode {
 	
 	// TODO: should be part of the implementation rather than the interface (i.e.
 	// interface should bre read-only).
-	public IModelDeltaNode addNode(Object object, int flags);
-	public IModelDeltaNode addNode(Object element, Object newElement, int flags);
-	public IModelDeltaNode addNode(Object element, int index, int flags);
+	public IModelDelta addNode(Object object, int flags);
+	public IModelDelta addNode(Object element, Object newElement, int flags);
+	public IModelDelta addNode(Object element, int index, int flags);
 }

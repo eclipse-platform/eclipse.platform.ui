@@ -5,7 +5,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.viewers.AbstractModelProxy;
-import org.eclipse.debug.internal.ui.viewers.IModelDeltaNode;
+import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
 
 public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesListener2 {
@@ -23,19 +23,19 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	}
 
 	public void launchesTerminated(ILaunch[] launches) {
-		fireDelta(launches, IModelDeltaNode.CHANGED | IModelDeltaNode.CONTENT);
+		fireDelta(launches, IModelDelta.CHANGED | IModelDelta.CONTENT);
 	}
 
 	public void launchesRemoved(ILaunch[] launches) {
-		fireDelta(launches, IModelDeltaNode.REMOVED);
+		fireDelta(launches, IModelDelta.REMOVED);
 	}
 
 	public void launchesAdded(ILaunch[] launches) {
-		fireDelta(launches, IModelDeltaNode.ADDED | IModelDeltaNode.EXPAND);
+		fireDelta(launches, IModelDelta.ADDED | IModelDelta.EXPAND);
 	}
 
 	public void launchesChanged(ILaunch[] launches) {
-		fireDelta(launches, IModelDeltaNode.CHANGED | IModelDeltaNode.STATE);
+		fireDelta(launches, IModelDelta.CHANGED | IModelDelta.STATE | IModelDelta.CONTENT);
 	}
 
 	public void setInitialState() {
@@ -43,7 +43,7 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	}
 	
 	protected void fireDelta(ILaunch[] launches, int launchFlags) {
-		ModelDeltaNode delta = new ModelDeltaNode(fLaunchManager, IModelDeltaNode.NOCHANGE);
+		ModelDeltaNode delta = new ModelDeltaNode(fLaunchManager, IModelDelta.NOCHANGE);
 		for (int i = 0; i < launches.length; i++) {
 			delta.addNode(launches[i], launchFlags);	
 		}

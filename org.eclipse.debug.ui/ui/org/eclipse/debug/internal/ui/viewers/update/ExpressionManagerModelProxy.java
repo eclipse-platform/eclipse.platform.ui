@@ -15,7 +15,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionsListener;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.ui.viewers.AbstractModelProxy;
-import org.eclipse.debug.internal.ui.viewers.IModelDeltaNode;
+import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
 
 
@@ -39,25 +39,25 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsAdded(org.eclipse.debug.core.model.IExpression[])
 	 */
 	public void expressionsAdded(IExpression[] expressions) {
-		updateExpressions(expressions, IModelDeltaNode.ADDED);
+		updateExpressions(expressions, IModelDelta.ADDED);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsRemoved(org.eclipse.debug.core.model.IExpression[])
 	 */
 	public void expressionsRemoved(IExpression[] expressions) {
-		updateExpressions(expressions, IModelDeltaNode.REMOVED);
+		updateExpressions(expressions, IModelDelta.REMOVED);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsChanged(org.eclipse.debug.core.model.IExpression[])
 	 */
 	public void expressionsChanged(IExpression[] expressions) {
-		updateExpressions(expressions, IModelDeltaNode.CHANGED | IModelDeltaNode.CONTENT | IModelDeltaNode.STATE);		
+		updateExpressions(expressions, IModelDelta.CHANGED | IModelDelta.CONTENT | IModelDelta.STATE);		
 	}
     
     private void updateExpressions(IExpression[] expressions, int flags) {
-		ModelDeltaNode delta = new ModelDeltaNode(DebugPlugin.getDefault() .getExpressionManager(), IModelDeltaNode.NOCHANGE);
+		ModelDeltaNode delta = new ModelDeltaNode(DebugPlugin.getDefault() .getExpressionManager(), IModelDelta.NOCHANGE);
 		for (int i = 0; i < expressions.length; i++) {
 			IExpression expression = expressions[i];
 			delta.addNode(expression, flags);

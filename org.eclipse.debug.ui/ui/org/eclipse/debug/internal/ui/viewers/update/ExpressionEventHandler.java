@@ -14,7 +14,7 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.internal.ui.viewers.IModelDeltaNode;
+import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.IModelProxy;
 
 /**
@@ -34,7 +34,7 @@ public class ExpressionEventHandler extends DebugEventHandler {
     }
 
     protected void handleChange(DebugEvent event) {
-    	ModelDeltaNode delta = new ModelDeltaNode(DebugPlugin.getDefault().getExpressionManager(), IModelDeltaNode.NOCHANGE);
+    	ModelDeltaNode delta = new ModelDeltaNode(DebugPlugin.getDefault().getExpressionManager(), IModelDelta.NOCHANGE);
 		IExpression expression = null;
     	if (event.getSource() instanceof IExpression) {
     		expression = (IExpression) event.getSource();
@@ -46,13 +46,13 @@ public class ExpressionEventHandler extends DebugEventHandler {
 			}
 		}
     	if (expression != null) {
-	    	delta.addNode(expression, IModelDeltaNode.CHANGED | IModelDeltaNode.CONTENT | IModelDeltaNode.STATE);
+	    	delta.addNode(expression, IModelDelta.CHANGED | IModelDelta.CONTENT | IModelDelta.STATE);
 			fireDelta(delta);
     	}
     }
 
     protected void refreshRoot(DebugEvent event) {
-        ModelDeltaNode delta = new ModelDeltaNode(DebugPlugin.getDefault().getExpressionManager(), IModelDeltaNode.CHANGED | IModelDeltaNode.CONTENT);
+        ModelDeltaNode delta = new ModelDeltaNode(DebugPlugin.getDefault().getExpressionManager(), IModelDelta.CHANGED | IModelDelta.CONTENT);
         fireDelta(delta);
     }
     

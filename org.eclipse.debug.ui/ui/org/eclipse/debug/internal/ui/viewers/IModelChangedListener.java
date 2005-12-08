@@ -25,6 +25,6 @@ public interface IModelChangedListener {
 	 * 
 	 * @param delta model delta
 	 */
-	public void modelChanged(IModelDeltaNode delta);
+	public void modelChanged(IModelDelta delta);
 
 }

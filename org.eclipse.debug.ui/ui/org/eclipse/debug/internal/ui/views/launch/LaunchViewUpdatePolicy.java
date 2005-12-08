@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.launch;
 
-import org.eclipse.debug.internal.ui.viewers.IModelDeltaNode;
+import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultUpdatePolicy;
 
 /**
@@ -36,9 +36,9 @@ public class LaunchViewUpdatePolicy extends DefaultUpdatePolicy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DefaultUpdatePolicy#handleChange(org.eclipse.debug.internal.ui.viewers.IModelDeltaNode)
 	 */
-	protected void handleChange(IModelDeltaNode node) {
+	protected void handleChange(IModelDelta node) {
 		super.handleChange(node);
-		if ((node.getFlags() & IModelDeltaNode.STATE) != 0) {
+		if ((node.getFlags() & IModelDelta.STATE) != 0) {
 			fView.possibleContextChange(node.getElement());
 		}
 	}

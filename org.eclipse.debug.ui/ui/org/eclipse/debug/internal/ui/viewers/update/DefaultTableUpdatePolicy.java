@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewer;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousViewer;
 import org.eclipse.debug.internal.ui.viewers.IModelChangedListener;
-import org.eclipse.debug.internal.ui.viewers.IModelDeltaNode;
+import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
@@ -23,19 +23,19 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 public class DefaultTableUpdatePolicy extends AbstractUpdatePolicy implements IModelChangedListener {
 
-    public void modelChanged(IModelDeltaNode delta) {
-        IModelDeltaNode[] nodes = delta.getNodes();
+    public void modelChanged(IModelDelta delta) {
+        IModelDelta[] nodes = delta.getNodes();
         updateNodes(nodes);
     }
 
-    private void updateElementContent(IModelDeltaNode node) {
+    private void updateElementContent(IModelDelta node) {
         AsynchronousViewer viewer = getViewer();
         if (viewer != null) {
             int flags = node.getFlags();
-            if ((flags & IModelDeltaNode.STATE) != 0) {
+            if ((flags & IModelDelta.STATE) != 0) {
                 viewer.update(node.getElement());
             }
-            if ((flags & IModelDeltaNode.CONTENT) != 0) {
+            if ((flags & IModelDelta.CONTENT) != 0) {
                 viewer.refresh(node.getElement());
             }
         }
@@ -44,35 +44,35 @@ public class DefaultTableUpdatePolicy extends AbstractUpdatePolicy implements IM
     private void updateSelection(Object element, int flags) {
         AsynchronousViewer viewer = getViewer();
         if (viewer != null) {
-            if ((flags & IModelDeltaNode.SELECT) != 0) {
+            if ((flags & IModelDelta.SELECT) != 0) {
                 ((AsynchronousTableViewer) getViewer()).setSelection(new StructuredSelection(element));
             }
         }
     }
 
-    protected void updateNodes(IModelDeltaNode[] nodes) {
+    protected void updateNodes(IModelDelta[] nodes) {
         for (int i = 0; i < nodes.length; i++) {
-            IModelDeltaNode node = nodes[i];
+            IModelDelta node = nodes[i];
             int flags = node.getFlags();
 
-            if ((flags & IModelDeltaNode.CHANGED) != 0) {
+            if ((flags & IModelDelta.CHANGED) != 0) {
                 handleChange(node);
-            } else if ((flags & IModelDeltaNode.ADDED) != 0) {
+            } else if ((flags & IModelDelta.ADDED) != 0) {
                 handleAdd(node);
-            } else if ((flags & IModelDeltaNode.REMOVED) != 0) {
+            } else if ((flags & IModelDelta.REMOVED) != 0) {
                 handleRemove(node);
-            } else if ((flags & IModelDeltaNode.REPLACED) != 0) {
+            } else if ((flags & IModelDelta.REPLACED) != 0) {
                 handleReplace(node);
-            } else if ((flags & IModelDeltaNode.INSERTED) != 0) {
+            } else if ((flags & IModelDelta.INSERTED) != 0) {
                 handleInsert(node);
             }
 
-            IModelDeltaNode[] childNodes = node.getNodes();
+            IModelDelta[] childNodes = node.getNodes();
             updateNodes(childNodes);
         }
     }
 
-    private void handleInsert(IModelDeltaNode node) {
+    private void handleInsert(IModelDelta node) {
         AsynchronousTableViewer viewer = (AsynchronousTableViewer) getViewer();
         if (viewer != null) {
             viewer.insert(node.getElement(), node.getIndex());
@@ -80,25 +80,25 @@ public class DefaultTableUpdatePolicy extends AbstractUpdatePolicy implements IM
         }
     }
 
-    private void handleReplace(IModelDeltaNode node) {
+    private void handleReplace(IModelDelta node) {
         AsynchronousTableViewer viewer = (AsynchronousTableViewer) getViewer();
         if (viewer != null) {
-            viewer.replace(node.getElement(), node.getNewElement());
-            updateSelection(node.getNewElement(), node.getFlags());
+            viewer.replace(node.getElement(), node.getReplacementElement());
+            updateSelection(node.getReplacementElement(), node.getFlags());
         }
     }
 
-    protected void handleChange(IModelDeltaNode node) {
+    protected void handleChange(IModelDelta node) {
         updateElementContent(node);
         updateSelection(node.getElement(), node.getFlags());
     }
 
-    protected void handleAdd(IModelDeltaNode node) {
+    protected void handleAdd(IModelDelta node) {
         ((AsynchronousTableViewer) getViewer()).add(node.getElement());
         updateSelection(node.getElement(), node.getFlags());
     }
 
-    protected void handleRemove(IModelDeltaNode node) {
+    protected void handleRemove(IModelDelta node) {
         ((AsynchronousTableViewer) getViewer()).remove(node.getElement());
     }
 }

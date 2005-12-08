@@ -3,7 +3,7 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.internal.ui.viewers.IModelDeltaNode;
+import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 
 public class ProcessProxy extends EventHandlerModelProxy {
 
@@ -18,10 +18,10 @@ public class ProcessProxy extends EventHandlerModelProxy {
 			ModelDeltaNode delta = null;
         	synchronized (ProcessProxy.this) {
         		if (!isDisposed()) {
-                    delta = new ModelDeltaNode(DebugPlugin.getDefault().getLaunchManager(), IModelDeltaNode.NOCHANGE);
-                    IModelDeltaNode node = delta;
-                    node = node.addNode(fProcess.getLaunch(), IModelDeltaNode.NOCHANGE);
-                    node.addNode(fProcess, IModelDeltaNode.CHANGED | IModelDeltaNode.STATE);        			
+                    delta = new ModelDeltaNode(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
+                    IModelDelta node = delta;
+                    node = node.addNode(fProcess.getLaunch(), IModelDelta.NOCHANGE);
+                    node.addNode(fProcess, IModelDelta.CHANGED | IModelDelta.STATE);        			
         		}
 			}
         	if (delta != null && !isDisposed()) {

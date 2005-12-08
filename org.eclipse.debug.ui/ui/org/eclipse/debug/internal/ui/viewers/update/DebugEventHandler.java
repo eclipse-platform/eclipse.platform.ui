@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.viewers.update;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.internal.ui.viewers.IModelDeltaNode;
+import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.IModelProxy;
 
 /**
@@ -148,7 +148,7 @@ public abstract class DebugEventHandler {
 	 * better reflect the actual change in the model.
 	 */
 	protected void refreshRoot(DebugEvent event) {
-		ModelDeltaNode delta = new ModelDeltaNode(DebugPlugin.getDefault().getLaunchManager(), IModelDeltaNode.CHANGED | IModelDeltaNode.CONTENT);
+		ModelDeltaNode delta = new ModelDeltaNode(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.CHANGED | IModelDelta.CONTENT);
 		fireDelta(delta);
 	}
 	
@@ -157,7 +157,7 @@ public abstract class DebugEventHandler {
 	 * 
 	 * @param delta
 	 */
-	protected void fireDelta(IModelDeltaNode delta) {
+	protected void fireDelta(IModelDelta delta) {
 		IModelProxy modelProxy = getModelProxy();
 		if (modelProxy != null) {
 			modelProxy.fireModelChanged(delta);

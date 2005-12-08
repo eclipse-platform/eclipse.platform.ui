@@ -3,11 +3,11 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.debug.internal.ui.viewers.IModelDeltaNode;
+import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 
-public class ModelDeltaNode implements IModelDeltaNode {
+public class ModelDeltaNode implements IModelDelta {
 
-	private IModelDeltaNode fParent;
+	private IModelDelta fParent;
 	private Object fElement;
 	private int fFlags;
 	private List fNodes = new ArrayList();
@@ -39,21 +39,21 @@ public class ModelDeltaNode implements IModelDeltaNode {
 		return fFlags;
 	}
 
-	public IModelDeltaNode addNode(Object element, int flags) {
+	public IModelDelta addNode(Object element, int flags) {
 		ModelDeltaNode node = new ModelDeltaNode(element, flags);
 		node.setParent(this);
 		fNodes.add(node);
 		return node;
 	}
 
-    public IModelDeltaNode addNode(Object element, Object replacement, int flags) {
+    public IModelDelta addNode(Object element, Object replacement, int flags) {
         ModelDeltaNode node = new ModelDeltaNode(element, replacement, flags);
         node.setParent(this);
         fNodes.add(node);
         return node;
     }
 
-    public IModelDeltaNode addNode(Object element, int index, int flags) {
+    public IModelDelta addNode(Object element, int index, int flags) {
         ModelDeltaNode node = new ModelDeltaNode(element, index, flags);
         node.setParent(this);
         fNodes.add(node);
@@ -64,11 +64,11 @@ public class ModelDeltaNode implements IModelDeltaNode {
 		fParent = node;
 	}
 	
-	public IModelDeltaNode getParent() {
+	public IModelDelta getParent() {
 		return fParent;
 	}
 
-    public Object getNewElement() {
+    public Object getReplacementElement() {
         return fNewElement;
     }
 
