@@ -43,4 +43,12 @@ public interface ICompletionProposalComputer {
 	 * @return an array of context information objects (element type: {@link IContextInformation})
 	 */
 	List computeContextInformation(TextContentAssistInvocationContext context, IProgressMonitor monitor);
+
+	/**
+	 * Returns the reason why this computer was unable to produce any completion proposals or
+	 * context information.
+	 * 
+	 * @return an error message or <code>null</code> if no error occurred
+	 */
+	String getErrorMessage();
 }
