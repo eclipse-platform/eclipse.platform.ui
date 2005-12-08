@@ -72,6 +72,7 @@ class SelectResourcesDialog extends Dialog {
 
 	public SelectResourcesDialog(Shell parentShell, String title, String instruction, IFilter acceptableLocationsFilter) {
 		super(parentShell);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fTitle= title;
 		fInstruction= instruction;
 		fAcceptableLocationsFilter= acceptableLocationsFilter;
@@ -91,6 +92,7 @@ class SelectResourcesDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
+		
 		if (fTitle != null)
 			newShell.setText(fTitle);
 	}
