@@ -26,6 +26,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
@@ -38,6 +40,8 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
  * extension.
  */
 public class LaunchConfigurationType extends PlatformObject implements ILaunchConfigurationType {
+	
+	private static String MIGRATION_DELEGATE = "migrationDelegate";  //$NON-NLS-1$
 	
 	/**
 	 * The configuration element of the extension.
@@ -72,32 +76,13 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		setConfigurationElement(element);
 	}
 	
-	/**
-	 * Sets this type's configuration element.
-	 * 
-	 * @param element this type's configuration element
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getAttribute(java.lang.String)
 	 */
-	private void setConfigurationElement(IConfigurationElement element) {
-		fElement = element;
+	public String getAttribute(String attributeName) {
+		return getConfigurationElement().getAttribute(attributeName);
 	}
 	
-	/**
-	 * Returns this type's configuration element.
-	 * 
-	 * @return this type's configuration element
-	 */
-	protected IConfigurationElement getConfigurationElement() {
-		return fElement;
-	}	
-
-
-	/**
-	 * @see ILaunchConfigurationType#supportsMode(String)
-	 */
-	public boolean supportsMode(String mode) {
-		return getBaseModes().contains(mode) || getContributedModes().contains(mode);
-	}
-
 	/**
 	 * Returns the set of modes specified in the configuration data.
 	 * 
@@ -116,19 +101,23 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 			}
 		}
 		return fBaseModes;
-	}
-	
-	/**
-	 * Returns all of the modes supported by this launch configuration type
-	 * fix for bug 79709
-	 * @return the complete listing of supported modes for this launch configuration
-	 * @since 3.2
+	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getCategory()
 	 */
-	public Set getSupportedModes() {
-		HashSet modes = new HashSet(getBaseModes());
-		modes.addAll(getContributedModes());
-		return modes;
-	}//end getSupportedModes
+	public String getCategory() {
+		return getConfigurationElement().getAttribute("category"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns this type's configuration element.
+	 * 
+	 * @return this type's configuration element
+	 */
+	protected IConfigurationElement getConfigurationElement() {
+		return fElement;
+	}
 	
 	/**
 	 * Returns the set of modes delegates have been contributed for
@@ -149,76 +138,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 			}
 		}
 		return fContributedModes;
-	}
-
-	/**
-	 * @see ILaunchConfigurationType#getName()
-	 */
-	public String getName() {
-		return getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
-	}
-	
-	/**
-	 * @see ILaunchConfigurationType#getSourcePathComputer()
-	 */
-	public ISourcePathComputer getSourcePathComputer() {
-		String id = getConfigurationElement().getAttribute("sourcePathComputerId"); //$NON-NLS-1$
-		if (id == null) {
-			// check for specification by mode specific delegate
-			List delegates = ((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).getContributedDelegates();
-			Iterator iterator = delegates.iterator();
-			while (iterator.hasNext() && id == null) {
-				ContributedDelegate delegate = (ContributedDelegate)iterator.next();
-				if (delegate.getLaunchConfigurationType().equals(getIdentifier())) {
-					id = delegate.getSourcePathComputerId();
-				}
-			}
-		}
-		if (id != null && id.length() > 0) {
-			return DebugPlugin.getDefault().getLaunchManager().getSourcePathComputer(id);
-		}
-		return null;
-	}
-
-	/**
-	 * @see ILaunchConfigurationType#getIdentifier()
-	 */
-	public String getIdentifier() {
-		return getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @see ILaunchConfigurationType#getCategory()
-	 */
-	public String getCategory() {
-		return getConfigurationElement().getAttribute("category"); //$NON-NLS-1$
-	}
-	
-	/**
-	 * @see ILaunchConfigurationType#getAttribute(String)
-	 */
-	public String getAttribute(String attributeName) {
-		return getConfigurationElement().getAttribute(attributeName);
-	}	
-	
-	/**
-	 * @see ILaunchConfigurationType#isPublic()
-	 */
-	public boolean isPublic() {
-		String publicString = getConfigurationElement().getAttribute("public"); //$NON-NLS-1$
-		if (publicString != null) {
-			if (publicString.equalsIgnoreCase("false")) { //$NON-NLS-1$
-				return false;
-			}
-		} 
-		return true;
-	}
-
-	/**
-	 * @see ILaunchConfigurationType#newInstance(IContainer, String)
-	 */
-	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name) {
-			return new LaunchConfigurationWorkingCopy(container, name, this);
 	}
 	
 	/**
@@ -285,6 +204,27 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getIdentifier()
+	 */
+	public String getIdentifier() {
+		return getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getName()
+	 */
+	public String getName() {
+		return getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getPluginId()
+	 */
+	public String getPluginIdentifier() {
+		return fElement.getNamespace();
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getSourceLocatorId()
 	 */
 	public String getSourceLocatorId() {
@@ -301,13 +241,121 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 			}
 		}
 		return id;
+	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getSourcePathComputer()
+	 */
+	public ISourcePathComputer getSourcePathComputer() {
+		String id = getConfigurationElement().getAttribute("sourcePathComputerId"); //$NON-NLS-1$
+		if (id == null) {
+			// check for specification by mode specific delegate
+			List delegates = ((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).getContributedDelegates();
+			Iterator iterator = delegates.iterator();
+			while (iterator.hasNext() && id == null) {
+				ContributedDelegate delegate = (ContributedDelegate)iterator.next();
+				if (delegate.getLaunchConfigurationType().equals(getIdentifier())) {
+					id = delegate.getSourcePathComputerId();
+				}
+			}
+		}
+		if (id != null && id.length() > 0) {
+			return DebugPlugin.getDefault().getLaunchManager().getSourcePathComputer(id);
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getPluginId()
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getSupportedModes()
 	 */
-	public String getPluginIdentifier() {
-		return fElement.getNamespace();
+	public Set getSupportedModes() {
+		HashSet modes = new HashSet(getBaseModes());
+		modes.addAll(getContributedModes());
+		return modes;
+	}
+
+	/**
+	 * determines if the specified candidate is suitable for migration by loading it delegate.
+	 * @param candidate the candidate to inspect for migration suitability
+	 * @return true if the specified launch configuration is suitable for migration, false otherwise
+	 * @throws CoreException
+	 * 
+	 * @since 3.2
+	 */
+	public boolean isMigrationCandidate(ILaunchConfiguration candidate) throws CoreException {
+		if(getAttribute(MIGRATION_DELEGATE) != null) {
+			if(fDelegates == null) {
+				fDelegates = new Hashtable();
+			}
+			Object delegate = fDelegates.get(MIGRATION_DELEGATE);
+			if(delegate == null) {
+				delegate = getConfigurationElement().createExecutableExtension(MIGRATION_DELEGATE);
+				fDelegates.put(MIGRATION_DELEGATE, delegate);
+			}
+			if(delegate instanceof ILaunchConfigurationMigrationDelegate) {
+				return ((ILaunchConfigurationMigrationDelegate)delegate).isCandidate(candidate);
+			}
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#isPublic()
+	 */
+	public boolean isPublic() {
+		String publicString = getConfigurationElement().getAttribute("public"); //$NON-NLS-1$
+		if (publicString != null) {
+			if (publicString.equalsIgnoreCase("false")) { //$NON-NLS-1$
+				return false;
+			}
+		} 
+		return true;
+	}
+
+	/**
+	 * migrates the specified launch configuration by loading its delegate
+	 * @param candidate the candidate launch configuration to migrate
+	 * @throws CoreException
+	 * 
+	 * @since 3.2
+	 */
+	public void migrate(ILaunchConfiguration candidate) throws CoreException {
+		if(getAttribute(MIGRATION_DELEGATE) != null) { 
+			if(fDelegates == null) {
+				fDelegates = new Hashtable();
+			}
+			Object delegate = fDelegates.get(MIGRATION_DELEGATE);
+			if(delegate == null) {
+				delegate = getConfigurationElement().createExecutableExtension(MIGRATION_DELEGATE);
+				fDelegates.put(MIGRATION_DELEGATE, delegate);
+			}
+			if(delegate instanceof ILaunchConfigurationMigrationDelegate) {
+				((ILaunchConfigurationMigrationDelegate)delegate).migrate(candidate);
+			}
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#newInstance(org.eclipse.core.resources.IContainer, java.lang.String)
+	 */
+	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name) {
+			return new LaunchConfigurationWorkingCopy(container, name, this);
+	}
+
+	/**
+	 * Sets this type's configuration element.
+	 * 
+	 * @param element this type's configuration element
+	 */
+	private void setConfigurationElement(IConfigurationElement element) {
+		fElement = element;
+	}
+
+	/**
+	 * @see ILaunchConfigurationType#supportsMode(String)
+	 */
+	public boolean supportsMode(String mode) {
+		return getBaseModes().contains(mode) || getContributedModes().contains(mode);
 	}
 }
 

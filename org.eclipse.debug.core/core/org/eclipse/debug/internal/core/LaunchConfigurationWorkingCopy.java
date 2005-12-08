@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -80,7 +82,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * stored in when saved.
 	 */
 	private IContainer fContainer;
-
+	
 	/**
 	 * Constructs a working copy of the specified launch 
 	 * configuration.
@@ -338,7 +340,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * working copy to the current values of the given
 	 * configuration.
 	 * 
-	 * @param originl the launch configuration this working
+	 * @param original the launch configuration this working
 	 *  copy is based on.
 	 * @exception CoreException if unable to initialize this
 	 *  working copy based on the original's current attribute
@@ -552,5 +554,21 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		getInfo().setAttributes(attributes);
 	}
 
-}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setResource(org.eclipse.core.resources.IResource)
+	 */
+	public void setMappedResources(IResource[] resource) {
+		if(resource != null) {
+			ArrayList resources = new ArrayList(resource.length);
+			for (int i = 0; i < resource.length; i++) {
+				if(resource[i] != null) {
+					resources.add(resource[i].getFullPath().toPortableString());
+				}
+			}
+			getInfo().setAttribute(LaunchConfiguration.ATTR_MAPPED_RESOURCE, resources);
+			setDirty();
+		}
+	}//end setResource
+
+}//end class
 

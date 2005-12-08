@@ -9,6 +9,8 @@
          This extension point provides a configurable mechanism for launching applications.
 Each launch configuration type has a name, supports one or more modes (run and/or debug), and specifies a delegate
 responsible for the implementation of launching an application.
+
+As of 3.2 the types can also define a migration delegate that can be used to set resource mappings between projects and the launch configurations that launch them.
       </documentation>
    </annotation>
 
@@ -112,6 +114,17 @@ Launch configuration instances of this type will delegate to instances of this c
                <documentation>
                   The unique identifier of a sourceLocator extension that is used to create the source locator for sessions launched using launch configurations of this type. This atttribute was added in the 3.0 release.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="migrationDelegate" type="string">
+            <annotation>
+               <documentation>
+                  Allows providers to specify a delegate which is used to migrate launch configurations, which typically involves a mapping being created such that launch configurations can be filtered based on resource availablity.
+since 3.2
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

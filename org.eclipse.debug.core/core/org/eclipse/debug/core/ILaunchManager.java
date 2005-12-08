@@ -68,67 +68,23 @@ public interface ILaunchManager {
 	public static final String ATTR_APPEND_ENVIRONMENT_VARIABLES = DebugPlugin.getUniqueIdentifier() + ".appendEnvironmentVariables"; //$NON-NLS-1$	
 	
 	/**
-	 * Adds the given listener to the collection of registered launch listeners.
-	 * Has no effect if an identical listener is already registerd.
-	 *
-	 * @param listener the listener to register
-	 */
-	public void addLaunchListener(ILaunchListener listener);
-	/**
-	 * Adds the given listener to the collection of registered launch listeners.
-	 * Has no effect if an identical listener is already registerd.
-	 *
-	 * @param listener the listener to register
-	 * @since 2.1
-	 */
-	public void addLaunchListener(ILaunchesListener listener);	
-	/**
-	 * Removes the specified launch and notifies listeners.
-	 * Has no effect if an identical launch is not already
-	 * registered.
-	 *
-	 * @param launch the launch to remove
-	 * @since 2.0
-	 */
-	public void removeLaunch(ILaunch launch);	
-	/**
-	 * Removes the specified launch objects and notifies listeners.
-	 * Has no effect on identical launch objects that are not already
-	 * registered.
-	 *
-	 * @param launches the launch objects to remove
-	 * @since 2.1
-	 */
-	public void removeLaunches(ILaunch[] launches);		
-	/**
-	 * Returns the collection of debug targets currently registered with this
-	 * launch manager.
-	 *
-	 * @return an array of debug targets
-	 */
-	public IDebugTarget[] getDebugTargets();
-	/**
-	 * Returns the collection of launches currently registered
-	 * with this launch manager.
-	 * 
-	 * @return an array of launches
-	 */
-	public ILaunch[] getLaunches();
-	/**
-	 * Returns the collection of processes currently registered with this
-	 * launch manager.
-	 *
-	 * @return an array of processes
-	 */
-	public IProcess[] getProcesses();
-	/**
 	 * Adds the specified launch and notifies listeners. Has no
 	 * effect if an identical launch is already registered.
 	 * 
 	 * @param launch the launch to add
 	 * @since 2.0
 	 */
-	public void addLaunch(ILaunch launch);	
+	public void addLaunch(ILaunch launch);
+	/**
+	 * Adds the given launch configuration listener to the list
+	 * of listeners notified when a launch configuration is
+	 * added, removed, or changed. Has no effect if the given listener
+	 * is already registered.
+	 * 
+	 * @param listener launch configuration listener
+	 * @since 2.0
+	 */
+	public void addLaunchConfigurationListener(ILaunchConfigurationListener listener);	
 	/**
 	 * Adds the specified launch objects and notifies listeners. Has no
 	 * effect on identical launch objects already registered.
@@ -136,42 +92,51 @@ public interface ILaunchManager {
 	 * @param launches the launch objects to add
 	 * @since 2.1
 	 */
-	public void addLaunches(ILaunch[] launches);		
+	public void addLaunches(ILaunch[] launches);	
 	/**
-	 * Removes the given listener from the collection of registered launch listeners.
-	 * Has no effect if an identical listener is not already registerd.
+	 * Adds the given listener to the collection of registered launch listeners.
+	 * Has no effect if an identical listener is already registerd.
 	 *
-	 * @param listener the listener to deregister
-	 */
-	public void removeLaunchListener(ILaunchListener listener);
-	/**
-	 * Removes the given listener from the collection of registered launch listeners.
-	 * Has no effect if an identical listener is not already registerd.
-	 *
-	 * @param listener the listener to deregister
+	 * @param listener the listener to register
 	 * @since 2.1
 	 */
-	public void removeLaunchListener(ILaunchesListener listener);	
+	public void addLaunchListener(ILaunchesListener listener);		
 	/**
-	 * Returns all launch configurations defined in the workspace.
+	 * Adds the given listener to the collection of registered launch listeners.
+	 * Has no effect if an identical listener is already registerd.
+	 *
+	 * @param listener the listener to register
+	 */
+	public void addLaunchListener(ILaunchListener listener);
+	/**
+	 * Return a String that can be used as the name of a launch configuration.  The name
+	 * is guaranteed to be unique (no existing launch configurations will have this name).
+	 * The name that is returned uses the <code>namePrefix</code> as a starting point.  If 
+	 * there is no existing launch configuration with this name, then <code>namePrefix</code>
+	 * is returned.  Otherwise, the value returned consists of the specified prefix plus
+	 * some suffix that guarantees uniqueness.
 	 * 
-	 * @return all launch configurations defined in the workspace
-	 * @exception CoreException if an exception occurs retrieving configurations
+	 * @param namePrefix the String that the returned name must begin with
 	 * @since 2.0
 	 */
-	public ILaunchConfiguration[] getLaunchConfigurations() throws CoreException;
-	
+	public String generateUniqueLaunchConfigurationNameFrom(String namePrefix);
 	/**
-	 * Returns all launch configurations of the specified type defined in the workspace
-	 * 
-	 * @param type a launch configuration type
-	 * @return all launch configurations of the specified type defined in the workspace
-	 * @exception CoreException if an error occurs while retreiving
-	 *  a launch configuration
-	 * @since 2.0
+	 * Returns the collection of debug targets currently registered with this
+	 * launch manager.
+	 *
+	 * @return an array of debug targets
 	 */
-	public ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException;
-	
+	public IDebugTarget[] getDebugTargets();
+	/** 
+	 * Returns an array of environment variables to be used when
+	 * launching the given configuration or <code>null</code> if unspecified.
+	 * 
+	 * @param configuration launch configuration
+	 * @throws CoreException if unable to access associated attribute or if
+	 * unable to resolve a variable in an environment variable's value
+	 * @since 3.0
+	 */
+	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException;	
 	/**
 	 * Returns a handle to the launch configuration contained
 	 * in the specified file. The file is not verified to exist
@@ -182,8 +147,7 @@ public interface ILaunchManager {
 	 *  in the specified file
 	 * @since 2.0
 	 */
-	public ILaunchConfiguration getLaunchConfiguration(IFile file);
-	
+	public ILaunchConfiguration getLaunchConfiguration(IFile file);		
 	/**
 	 * Returns a handle to the launch configuration specified by
 	 * the given memento. The configuration may not exist.
@@ -196,14 +160,24 @@ public interface ILaunchManager {
 	 * @since 2.0
 	 */
 	public ILaunchConfiguration getLaunchConfiguration(String memento) throws CoreException;
-	
 	/**
-	 * Returns all defined launch configuration type extensions
+	 * Returns all launch configurations defined in the workspace.
 	 * 
-	 * @return all defined launch configuration type extensions
+	 * @return all launch configurations defined in the workspace
+	 * @exception CoreException if an exception occurs retrieving configurations
 	 * @since 2.0
 	 */
-	public ILaunchConfigurationType[] getLaunchConfigurationTypes();
+	public ILaunchConfiguration[] getLaunchConfigurations() throws CoreException;	
+	/**
+	 * Returns all launch configurations of the specified type defined in the workspace
+	 * 
+	 * @param type a launch configuration type
+	 * @return all launch configurations of the specified type defined in the workspace
+	 * @exception CoreException if an error occurs while retreiving
+	 *  a launch configuration
+	 * @since 2.0
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException;
 	
 	/**
 	 * Returns the launch configuration type extension with the specified
@@ -217,62 +191,46 @@ public interface ILaunchManager {
 	public ILaunchConfigurationType getLaunchConfigurationType(String id);
 	
 	/**
-	 * Adds the given launch configuration listener to the list
-	 * of listeners notified when a launch configuration is
-	 * added, removed, or changed. Has no effect if the given listener
-	 * is already registered.
+	 * Returns all defined launch configuration type extensions
 	 * 
-	 * @param listener launch configuration listener
+	 * @return all defined launch configuration type extensions
 	 * @since 2.0
 	 */
-	public void addLaunchConfigurationListener(ILaunchConfigurationListener listener);
+	public ILaunchConfigurationType[] getLaunchConfigurationTypes();
 	
 	/**
-	 * Removes the given launch configuration listener from the list
-	 * of listeners notified when a launch configuration is
-	 * added, removed, or changed. Has no effect if the given listener
-	 * is not already registered.
+	 * Returns the collection of launches currently registered
+	 * with this launch manager.
 	 * 
-	 * @param listener launch configuration listener
-	 * @since 2.0
+	 * @return an array of launches
 	 */
-	public void removeLaunchConfigurationListener(ILaunchConfigurationListener listener);	
+	public ILaunch[] getLaunches();
 	
 	/**
-	 * Return <code>true</code> if there is a launch configuration with the specified name, 
-	 * <code>false</code> otherwise.
+	 * Returns the launch mode registered with the given mode identifier,
+	 * or <code>null</code> if none.
 	 * 
-	 * @param name the name of the launch configuration whose existence is being checked
-	 * @exception CoreException if unable to retrieve existing launch configuration names
-	 * @since 2.0
+	 * @param mode mode identifier
+	 * @return launch mode or <code>null</code>
+	 * @since 3.0
 	 */
-	public boolean isExistingLaunchConfigurationName(String name) throws CoreException;
-
+	public ILaunchMode getLaunchMode(String mode);
+	
 	/**
-	 * Return a String that can be used as the name of a launch configuration.  The name
-	 * is guaranteed to be unique (no existing launch configurations will have this name).
-	 * The name that is returned uses the <code>namePrefix</code> as a starting point.  If 
-	 * there is no existing launch configuration with this name, then <code>namePrefix</code>
-	 * is returned.  Otherwise, the value returned consists of the specified prefix plus
-	 * some suffix that guarantees uniqueness.
+	 * Returns all registered launch modes.
 	 * 
-	 * @param namePrefix the String that the returned name must begin with
-	 * @since 2.0
+	 * @return all registered launch modes
+	 * @since 3.0
 	 */
-	public String generateUniqueLaunchConfigurationNameFrom(String namePrefix);
-
+	public ILaunchMode[] getLaunchModes();
+	
 	/**
-	 * Creates and returns a new source locator of the specified
-	 * type.
+	 * Returns a list of candidates suitable for migration based on defined migration delegates
+	 * @return the list of migration candidates
 	 * 
-	 * @param identifier the identifier associated with a 
-	 *  persistable source locator extension
-	 * @return a source locator
-	 * @exception CoreException if an exception occurs creating
-	 *  the source locator
-	 * @since 2.0
+	 * @since 3.2
 	 */
-	public IPersistableSourceLocator newSourceLocator(String identifier) throws CoreException;
+	public ILaunchConfiguration[] getMigrationCandidates() throws CoreException;
 	
 	/**
 	 * When a launch configuration is created or moved, registered launch
@@ -320,37 +278,77 @@ public interface ILaunchManager {
 	 * result of a move
 	 * @since 2.1
 	 */
-	public ILaunchConfiguration getMovedTo(ILaunchConfiguration removedConfiguration);
+	public ILaunchConfiguration getMovedTo(ILaunchConfiguration removedConfiguration);	
+	
+	/**
+	 * Returns the native system environment variables as a map of
+	 * variable names and values (Strings).
+	 * <p>
+	 * Note that WIN32 system environment preserves
+	 * the case of variable names but is otherwise case insensitive.
+	 * Depending on what you intend to do with the environment, the
+	 * lack of normalization may or may not be create problems. On 
+	 * WIN32, this method normalizes mixed-case keys variable names
+	 * to uppercase. Use {@link #getNativeEnvironmentCasePreserved()}
+	 * instead to get a WIN32 system environment where the keys are
+	 * the mixed-case variable names recorded by the OS.
+	 * </p>
+	 * 
+	 * @return the native system environment variables; on WIN32, mixed-case
+	 * variable names (keys) have been normalized to uppercase
+	 * (key type: <code>String</code>; value type: <code>String</code>)
+	 * @since 3.0
+	 */	
+	public Map getNativeEnvironment();
 
 	/**
-	 * Returns all registered launch modes.
+	 * Returns the native system environment variables as a map of
+	 * variable names and values (Strings).
+	 * <p>
+	 * Note that WIN32 system environment preserves
+	 * the case of variable names but is otherwise case insensitive.
+	 * Depending on what you intend to do with the environment, the
+	 * lack of normalization may or may not be create problems. This
+	 * method returns mixed-case keys using the variable names 
+	 * recorded by the OS.
+	 * Use {@link #getNativeEnvironment()} instead to get a WIN32 system
+	 * environment where all keys have been normalized to uppercase.
+	 * </p>
 	 * 
-	 * @return all registered launch modes
-	 * @since 3.0
+	 * @return the native system environment variables; on WIN32, mixed-case
+	 * variable names (keys) are returned without normalization
+	 * (key type: <code>String</code>; value type: <code>String</code>)
+	 * @since 3.1
+	 */	
+	public Map getNativeEnvironmentCasePreserved();
+
+	/**
+	 * Returns the collection of processes currently registered with this
+	 * launch manager.
+	 *
+	 * @return an array of processes
 	 */
-	public ILaunchMode[] getLaunchModes();
+	public IProcess[] getProcesses();
 	
 	/**
-	 * Returns the launch mode registered with the given mode identifier,
-	 * or <code>null</code> if none.
+	 * Returns the source container type extension registered with the
+	 * given unique identifier, or <code>null</code> if none.
 	 * 
-	 * @param mode mode identifier
-	 * @return launch mode or <code>null</code>
+	 * @param id unique identifier of a source container type extension
+	 * @return the source container type extension registered with the
+	 * given unique identifier, or <code>null</code> if none
 	 * @since 3.0
 	 */
-	public ILaunchMode getLaunchMode(String mode);	
+	public ISourceContainerType getSourceContainerType(String id);
 	
-	/** 
-	 * Returns an array of environment variables to be used when
-	 * launching the given configuration or <code>null</code> if unspecified.
+	/**
+	 * Returns all registered source container type extensions.
 	 * 
-	 * @param configuration launch configuration
-	 * @throws CoreException if unable to access associated attribute or if
-	 * unable to resolve a variable in an environment variable's value
+	 * @return all registered source container type extensions
 	 * @since 3.0
 	 */
-	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException;
-	
+	public ISourceContainerType[] getSourceContainerTypes();
+
 	/**
 	 * Returns a source path computer to compute a default source lookup path for
 	 * the given launch configuration, or <code>null</code> if a source path
@@ -375,69 +373,17 @@ public interface ILaunchManager {
 	 * unique identifier, or <code>null</code> if none
 	 * @since 3.0
 	 */
-	public ISourcePathComputer getSourcePathComputer(String id);
-
-	/**
-	 * Returns the native system environment variables as a map of
-	 * variable names and values (Strings).
-	 * <p>
-	 * Note that WIN32 system environment preserves
-	 * the case of variable names but is otherwise case insensitive.
-	 * Depending on what you intend to do with the environment, the
-	 * lack of normalization may or may not be create problems. This
-	 * method returns mixed-case keys using the variable names 
-	 * recorded by the OS.
-	 * Use {@link #getNativeEnvironment()} instead to get a WIN32 system
-	 * environment where all keys have been normalized to uppercase.
-	 * </p>
-	 * 
-	 * @return the native system environment variables; on WIN32, mixed-case
-	 * variable names (keys) are returned without normalization
-	 * (key type: <code>String</code>; value type: <code>String</code>)
-	 * @since 3.1
-	 */	
-	public Map getNativeEnvironmentCasePreserved();
-
-	/**
-	 * Returns the native system environment variables as a map of
-	 * variable names and values (Strings).
-	 * <p>
-	 * Note that WIN32 system environment preserves
-	 * the case of variable names but is otherwise case insensitive.
-	 * Depending on what you intend to do with the environment, the
-	 * lack of normalization may or may not be create problems. On 
-	 * WIN32, this method normalizes mixed-case keys variable names
-	 * to uppercase. Use {@link #getNativeEnvironmentCasePreserved()}
-	 * instead to get a WIN32 system environment where the keys are
-	 * the mixed-case variable names recorded by the OS.
-	 * </p>
-	 * 
-	 * @return the native system environment variables; on WIN32, mixed-case
-	 * variable names (keys) have been normalized to uppercase
-	 * (key type: <code>String</code>; value type: <code>String</code>)
-	 * @since 3.0
-	 */	
-	public Map getNativeEnvironment();
-
+	public ISourcePathComputer getSourcePathComputer(String id);	
 	
 	/**
-	 * Returns all registered source container type extensions.
+	 * Return <code>true</code> if there is a launch configuration with the specified name, 
+	 * <code>false</code> otherwise.
 	 * 
-	 * @return all registered source container type extensions
-	 * @since 3.0
+	 * @param name the name of the launch configuration whose existence is being checked
+	 * @exception CoreException if unable to retrieve existing launch configuration names
+	 * @since 2.0
 	 */
-	public ISourceContainerType[] getSourceContainerTypes();
-	
-	/**
-	 * Returns the source container type extension registered with the
-	 * given unique identifier, or <code>null</code> if none.
-	 * 
-	 * @param id unique identifier of a source container type extension
-	 * @return the source container type extension registered with the
-	 * given unique identifier, or <code>null</code> if none
-	 * @since 3.0
-	 */
-	public ISourceContainerType getSourceContainerType(String id);
+	public boolean isExistingLaunchConfigurationName(String name) throws CoreException;
 	
 	/**
 	 * Returns whether the given launch is currently registered.
@@ -447,6 +393,68 @@ public interface ILaunchManager {
 	 * @since 3.1
 	 */
 	public boolean isRegistered(ILaunch launch);
+	
+	/**
+	 * Creates and returns a new source locator of the specified
+	 * type.
+	 * 
+	 * @param identifier the identifier associated with a 
+	 *  persistable source locator extension
+	 * @return a source locator
+	 * @exception CoreException if an exception occurs creating
+	 *  the source locator
+	 * @since 2.0
+	 */
+	public IPersistableSourceLocator newSourceLocator(String identifier) throws CoreException;
+
+	/**
+	 * Removes the specified launch and notifies listeners.
+	 * Has no effect if an identical launch is not already
+	 * registered.
+	 *
+	 * @param launch the launch to remove
+	 * @since 2.0
+	 */
+	public void removeLaunch(ILaunch launch);
+
+	/**
+	 * Removes the given launch configuration listener from the list
+	 * of listeners notified when a launch configuration is
+	 * added, removed, or changed. Has no effect if the given listener
+	 * is not already registered.
+	 * 
+	 * @param listener launch configuration listener
+	 * @since 2.0
+	 */
+	public void removeLaunchConfigurationListener(ILaunchConfigurationListener listener);
+
+	
+	/**
+	 * Removes the specified launch objects and notifies listeners.
+	 * Has no effect on identical launch objects that are not already
+	 * registered.
+	 *
+	 * @param launches the launch objects to remove
+	 * @since 2.1
+	 */
+	public void removeLaunches(ILaunch[] launches);
+	
+	/**
+	 * Removes the given listener from the collection of registered launch listeners.
+	 * Has no effect if an identical listener is not already registerd.
+	 *
+	 * @param listener the listener to deregister
+	 * @since 2.1
+	 */
+	public void removeLaunchListener(ILaunchesListener listener);
+	
+	/**
+	 * Removes the given listener from the collection of registered launch listeners.
+	 * Has no effect if an identical listener is not already registerd.
+	 *
+	 * @param listener the listener to deregister
+	 */
+	public void removeLaunchListener(ILaunchListener listener);
 	
 }
 

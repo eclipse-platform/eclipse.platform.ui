@@ -112,989 +112,147 @@ import org.xml.sax.helpers.DefaultHandler;
 public class LaunchManager extends PlatformObject implements ILaunchManager, IResourceChangeListener {
 	
 	/**
-	 * Collection of defined launch configuration type
-	 * extensions.
+	 * Notifies a launch config listener in a safe runnable to handle
+	 * exceptions.
 	 */
-	private List fLaunchConfigurationTypes = null;
-	
-	/**
-	 * Launch configuration cache. Keys are <code>LaunchConfiguration</code>,
-	 * values are <code>LaunchConfigurationInfo</code>.
-	 */
-	private Map fLaunchConfigurations = new HashMap(10);
-	
-	/**
-	 * A cache of launch configuration names currently in the workspace.
-	 */
-	private String[] fSortedConfigNames = null;
-	
-	/**
-	 * Collection of all launch configurations in the workspace.
-	 * <code>List</code> of <code>ILaunchConfiguration</code>.
-	 */
-	private List fLaunchConfigurationIndex = null;
-	
-	/**
-	 * Launch configuration comparator extensions,
-	 * keyed by attribute name.
-	 */
-	private Map fComparators = null;
-	
-	/**
-	 * Registered launch modes, or <code>null</code> if not initialized.
-	 * Keys are mode identifiers, values are <code>ILaunchMode</code>s.
-	 */
-	private Map fLaunchModes = null;
-	
-	/**
-	 * List of contributed launch delegates (delegates contributed for existing
-	 * launch configuration types).
-	 */
-	private List fContributedDelegates = null;
-	
-	/**
-	 * Types of notifications
-	 */
-	public static final int ADDED = 0;
-	public static final int REMOVED= 1;
-	public static final int CHANGED= 2;
-	public static final int TERMINATE= 3;
-	
-	/**
-	 * The collection of native environment variables on the user's system. Cached
-	 * after being computed once as the environment cannot change.
-	 */
-	private static HashMap fgNativeEnv= null;
-	private static HashMap fgNativeEnvCasePreserved= null;
-
-	/**
-	 * Collection of launches
-	 */
-	private List fLaunches= new ArrayList(10);
-	
-	/**
-	 * Set of launches for efficient 'isRegistered()' check
-	 */
-	private Set fLaunchSet = new HashSet(10); 
-
-	/**
-	 * Collection of listeners
-	 */
-	private ListenerList fListeners= new ListenerList();
-	
-	/**
-	 * Collection of "plural" listeners.
-	 * @since 2.1
-	 */
-	private ListenerList fLaunchesListeners = new ListenerList();
-	
-	/**
-	 * Visitor used to process resource deltas,
-	 * to update launch configuration index.
-	 */
-	private LaunchManagerVisitor fgVisitor;
-	
-	/**
-	 * Whether this manager is listening for resouce change events
-	 */
-	private boolean fListening = false;
-	
-	/**
-	 * Launch configuration listeners
-	 */
-	private ListenerList fLaunchConfigurationListeners = new ListenerList();
-	
-	/**
-	 * Table of source locator extensions. Keys
-	 * are identifiers, and values are associated
-	 * configuration elements.
-	 */
-	private Map fSourceLocators = null;
-
-	/**
-	 * The handles of launch configurations being moved, or <code>null</code>
-	 */
-	private ILaunchConfiguration fFrom;
-	private ILaunchConfiguration fTo;
-	
-	/**
-	 * Path to the local directory where local launch configurations
-	 * are stored with the workspace.
-	 */
-	protected static final IPath LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH =
-		DebugPlugin.getDefault().getStateLocation().append(".launches"); //$NON-NLS-1$
+	class ConfigurationNotifier implements ISafeRunnable {
 		
-	
-	/**
-	 * Map of source container type extensions. Keys are extension ids
-	 * and values are associated configuration elements.
-	 */
-	private Map sourceContainerTypes;	
-	
-	/**
-	 * Map of source path computer extensions. Keys are extension ids
-	 * and values are associated configuration elements.
-	 */
-	private Map sourcePathComputers;
-	
-	/**
-	 * Serializes a XML document into a string - encoded in UTF8 format,
-	 * with platform line separators.
-	 * 
-	 * @param doc document to serialize
-	 * @return the document as a string
-	 * @throws TransformerException if an unrecoverable error occurs during the serialization
-	 * @throws IOException if the encoding attempted to be used is not supported
-	 */
-	public static String serializeDocument(Document doc) throws TransformerException, IOException {
-		ByteArrayOutputStream s= new ByteArrayOutputStream();
+		private ILaunchConfigurationListener fListener;
+		private int fType;
+		private ILaunchConfiguration fConfiguration;
 		
-		TransformerFactory factory= TransformerFactory.newInstance();
-		Transformer transformer= factory.newTransformer();
-		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
-		
-		DOMSource source= new DOMSource(doc);
-		StreamResult outputTarget= new StreamResult(s);
-		transformer.transform(source, outputTarget);
-		
-		return s.toString("UTF8"); //$NON-NLS-1$			
-	}
-	
-	/**
-	 * Returns a Document that can be used to build a DOM tree
-	 * @return the Document
-	 * @throws ParserConfigurationException if an exception occurs creating the document builder
-	 * @since 3.0
-	 */
-	public static Document getDocument() throws ParserConfigurationException {
-		DocumentBuilderFactory dfactory= DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder= dfactory.newDocumentBuilder();
-		Document doc= docBuilder.newDocument();
-		return doc;
-	}
-			
-	/**
-	 * @see ILaunchManager#addLaunchListener(ILaunchListener)
-	 */
-	public void addLaunchListener(ILaunchListener listener) {
-		fListeners.add(listener);
-	}
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchManager_An_exception_occurred_during_launch_configuration_change_notification__3, exception); 
+			DebugPlugin.log(status);
+		}
 
-	/**
-	 * Returns a collection of all launch configuration handles in 
-	 * the workspace. This collection is initialized lazily.
-	 * 
-	 * @return all launch configuration handles
-	 */
-	private List getAllLaunchConfigurations() {
-		if (fLaunchConfigurationIndex == null) {
-			try {			
-				fLaunchConfigurationIndex = new ArrayList(20);
-				List configs = findLocalLaunchConfigurations();
-				verifyConfigurations(configs, fLaunchConfigurationIndex);
-				configs = findLaunchConfigurations(getWorkspaceRoot());
-				verifyConfigurations(configs, fLaunchConfigurationIndex);
-			} finally {
-				hookResourceChangeListener();				
-			}
-		}
-		return fLaunchConfigurationIndex;
-	}
-	
-	/**
-     * Starts listening for resource change events
-     */
-    private synchronized void hookResourceChangeListener() {
-        if (!fListening) {
-            getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_DELETE);
-            fListening = true;
-        }
-    }
-
-    /**
-	 * Verify basic integrity of launch configurations in the given list,
-	 * adding valid configs to the collection of all launch configurations.
-	 * Exceptions are logged for invalid configs.
-	 * 
-	 * @param verify the list of configs to verify
-	 * @param valid the list to place valid configrations in
-	 */
-	protected void verifyConfigurations(List verify, List valid) {
-		Iterator configs = verify.iterator();
-		while (configs.hasNext()) {
-			ILaunchConfiguration config = (ILaunchConfiguration)configs.next();
-			if (isValid(config)) {
-				valid.add(config);
-			}
-		}		
-	}
-	
-	/**
-	 * Returns whether the given launch configuration passes a basic
-	 * integritiy test by retrieving its type.
-	 * 
-	 * @param config the configuration to verify
-	 * @return whether the config meets basic integrity constraints
-	 */
-	protected boolean isValid(ILaunchConfiguration config) {
-		try {
-			config.getType();
-		} catch (CoreException e) {
-			if (e.getStatus().getCode() != DebugException.MISSING_LAUNCH_CONFIGURATION_TYPE) {
-				// only log warnings due to something other than a missing
-				// launch config type
-				DebugPlugin.log(e);
-			}
-			return false;
-		}
-		return true;
-	}
-	
-	/**
-	 * Clears all launch configurations (if any have been accessed)
-	 */
-	private void clearAllLaunchConfigurations() {
-		if (fLaunchConfigurationTypes != null) {
-			fLaunchConfigurationTypes.clear();
-		}
-		if (fLaunchConfigurationIndex != null) {
-			fLaunchConfigurationIndex.clear();
-		}
-	}
-		
-	/**
-	 * @see ILaunchManager#removeLaunch(ILaunch)
-	 */
-	public void removeLaunch(ILaunch launch) {
-		if (internalRemoveLaunch(launch)) {
-			fireUpdate(launch, REMOVED);
-			fireUpdate(new ILaunch[] {launch}, REMOVED);
-		}
-	}	
-	
-	/**
-	 * Removes the given launch object from the collection of registered
-	 * launches. Returns whether the launch was removed.
-	 * 
-	 * @param launch the launch to remove
-	 * @return whether the launch was removed
-	 */
-	protected boolean internalRemoveLaunch(ILaunch launch) {
-		if (launch == null) {
-			return false;
-		}
-		synchronized (fLaunches) {
-			fLaunchSet.remove(launch);
-			return fLaunches.remove(launch);
-		}
-	}
-	
-	/**
-	 * Fires notification to (single) listeners that a launch has been
-	 * added/changed/removed..
-	 */
-	public void fireUpdate(ILaunch launch, int update) {
-		getLaunchNotifier().notify(launch, update);
-	}	
-	
-	/**
-	 * Fires notification to (multi) listeners that a launch has been
-	 * added/changed/removed.
-	 */
-	public void fireUpdate(ILaunch[] launches, int update) {
-		getLaunchesNotifier().notify(launches, update);
-	}	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#isRegistered(org.eclipse.debug.core.ILaunch)
-	 */
-	public boolean isRegistered(ILaunch launch) {
-		synchronized (fLaunches) {
-			return fLaunchSet.contains(launch);
-		}
-	}
-
-	/**
-	 * @see ILaunchManager#getDebugTargets()
-	 */
-	public IDebugTarget[] getDebugTargets() {
-		synchronized (fLaunches) {
-			List allTargets= new ArrayList(fLaunches.size());
-			if (fLaunches.size() > 0) {
-				Iterator e= fLaunches.iterator();
-				while (e.hasNext()) {
-					IDebugTarget[] targets= ((ILaunch) e.next()).getDebugTargets();
-					for (int i = 0; i < targets.length; i++) {
-						allTargets.add(targets[i]);
-					}
+		/**
+		 * Notifies the given listener of the add/change/remove
+		 * 
+		 * @param configuration the configuration that has changed
+		 * @param update the type of change
+		 */
+		public void notify(ILaunchConfiguration configuration, int update) {
+			fConfiguration = configuration;
+			fType = update;
+			if (fLaunchConfigurationListeners.size() > 0) {
+				Object[] listeners = fLaunchConfigurationListeners.getListeners();
+				for (int i = 0; i < listeners.length; i++) {
+					fListener = (ILaunchConfigurationListener)listeners[i];
+					Platform.run(this);
 				}
 			}
-			return (IDebugTarget[])allTargets.toArray(new IDebugTarget[allTargets.size()]);
+			fConfiguration = null;
+			fListener = null;			
 		}
-	}
-			
-	/**
-	 * @see ILaunchManager#getLaunches()
-	 */
-	public ILaunch[] getLaunches() {
-		synchronized (fLaunches) {
-			return (ILaunch[])fLaunches.toArray(new ILaunch[fLaunches.size()]);
-		}
-	}
 
-	/**
-	 * @see ILaunchManager#getProcesses()
-	 */
-	public IProcess[] getProcesses() {
-		synchronized (fLaunches) {
-			List allProcesses= new ArrayList(fLaunches.size());
-			Iterator e= fLaunches.iterator();
-			while (e.hasNext()) {
-				IProcess[] processes= ((ILaunch) e.next()).getProcesses();
-				for (int i= 0; i < processes.length; i++) {
-					allProcesses.add(processes[i]);
-				}
-			}
-			return (IProcess[])allProcesses.toArray(new IProcess[allProcesses.size()]);
-		}
-	}
-	
-	/**
-	 * @see ILaunchManager#addLaunch(ILaunch)
-	 */
-	public void addLaunch(ILaunch launch) {
-		if (internalAddLaunch(launch)) {
-			fireUpdate(launch, ADDED);
-			fireUpdate(new ILaunch[] {launch}, ADDED);
-		}
-	}	
-	
-	/**
-	 * Adds the given launch object to the list of registered launches,
-	 * and returns whether the launch was added.
-	 * 
-	 * @param launch launch to register
-	 * @return whether the launch was added
-	 */
-	protected boolean internalAddLaunch(ILaunch launch) {
-		synchronized (fLaunches) {
-			if (fLaunches.contains(launch)) {
-				return false;
-			}
-			fLaunches.add(launch);
-			fLaunchSet.add(launch);
-			return true;
-		}
-	}
-	
-	/**
-	 * @see ILaunchManager#removeLaunchListener(ILaunchListener)
-	 */
-	public void removeLaunchListener(ILaunchListener listener) {
-		fListeners.remove(listener);
-	}
-		
-	/**
-	 * Return a LaunchConfigurationInfo object initialized from XML contained in
-	 * the specified stream.  Simply pass out any exceptions encountered so that
-	 * caller can deal with them.  This is important since caller may need access to the
-	 * actual exception.
-	 */
-	protected LaunchConfigurationInfo createInfoFromXML(InputStream stream) throws CoreException,
-																			 ParserConfigurationException,
-																			 IOException,
-																			 SAXException {
-		Element root = null;
-		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		parser.setErrorHandler(new DefaultHandler());
-		root = parser.parse(new InputSource(stream)).getDocumentElement();
-		LaunchConfigurationInfo info = new LaunchConfigurationInfo();
-		info.initializeFromXML(root);
-		return info;
-	}
-
-	/**
-	 * Terminates/Disconnects any active debug targets/processes.
-	 * Clears launch configuration types.
-	 */
-	public void shutdown() {
-		fListeners = new ListenerList();
-        fLaunchesListeners = new ListenerList();
-        fLaunchConfigurationListeners = new ListenerList();
-		ILaunch[] launches = getLaunches();
-		for (int i= 0; i < launches.length; i++) {
-			ILaunch launch= launches[i];
-			try {
-                if (launch instanceof IDisconnect) {
-                    IDisconnect disconnect = (IDisconnect)launch;
-                    if (disconnect.canDisconnect()) {
-                        disconnect.disconnect();
-                    }
-                }
-                if (launch.canTerminate()) {
-                    launch.terminate();
-                }
-			} catch (DebugException e) {
-				DebugPlugin.log(e);
-			}
-		}
-		
-		clearAllLaunchConfigurations();
-
-		getWorkspace().removeResourceChangeListener(this);
-	}
-							
-	/**
-	 * Returns the info object for the specified launch configuration.
-	 * If the configuration exists, but is not yet in the cache,
-	 * an info object is built and added to the cache.
-	 * 
-	 * @exception CoreException if an exception occurs building
-	 *  the info object
-	 * @exception DebugException if the config does not exist
-	 */
-	protected LaunchConfigurationInfo getInfo(ILaunchConfiguration config) throws CoreException {
-		LaunchConfigurationInfo info = (LaunchConfigurationInfo)fLaunchConfigurations.get(config);
-		if (info == null) {
-			if (config.exists()) {
-				InputStream stream = null;
-				try {
-					if (config.isLocal()) {
-						IPath path = config.getLocation();
-						File file = path.toFile();				
-						stream = new FileInputStream(file);
-					} else {
-						IFile file = ((LaunchConfiguration) config).getFile();
-						if (file == null) {
-							throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager_30, new String[] {config.getName()}), null); 
-						}
-						stream = file.getContents();
-					}
-					info = createInfoFromXML(stream);
-					fLaunchConfigurations.put(config, info);
-				} catch (FileNotFoundException e) {
-					throwException(config, e);					
-				} catch (SAXException e) {
-					throwException(config, e);					
-				} catch (ParserConfigurationException e) {
-					throwException(config, e);					
-				} catch (IOException e) {
-					throwException(config, e);					
-				} finally {
-					if (stream != null) {
-						try {
-							stream.close();
-						} catch (IOException e) {
-							throwException(config, e);					
-						}
-					}
-				}
-		
-			} else {
-				throw createDebugException(
-					MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist, new String[]{config.getName(), config.getLocation().toOSString()}), null); 
-			}
-		}
-		return info;
-	}
-	
-	/**
-	 * Throws a debug exception with the given throwable that occurred
-	 * while processing the given configuration.
-	 */
-	private void throwException(ILaunchConfiguration config, Throwable e) throws DebugException {
-		IPath path = config.getLocation();
-		throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager__0__occurred_while_reading_launch_configuration_file__1___1, new String[]{e.toString(), path.toOSString()}), e); 
-	}
-	
-	/**
-	 * Return an instance of DebugException containing the specified message and Throwable.
-	 */
-	protected DebugException createDebugException(String message, Throwable throwable) {
-		return new DebugException(
-					new Status(
-					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, message, throwable 
-					)
-				);
-	}
-	
-	/**
-	 * Removes the given launch configuration from the cache of configurations.
-	 * When a local configuration is deleted, this method is called, as there will
-	 * be no resource delta generated to auto-update the cache.
-	 * 
-	 * @param configuration the configuration to remove
-	 */
-	private void removeInfo(ILaunchConfiguration configuration) {
-		fLaunchConfigurations.remove(configuration);
-	}
-	
-	/**
-	 * @see ILaunchManager#getLaunchConfigurations()
-	 */
-	public ILaunchConfiguration[] getLaunchConfigurations() {
-		List allConfigs = getAllLaunchConfigurations();
-		return (ILaunchConfiguration[])allConfigs.toArray(new ILaunchConfiguration[allConfigs.size()]);
-	}	
-	
-	/**
-	 * @see ILaunchManager#getLaunchConfigurations(ILaunchConfigurationType)
-	 */
-	public ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException {
-		Iterator iter = getAllLaunchConfigurations().iterator();
-		List configs = new ArrayList();
-		while (iter.hasNext()) {
-			ILaunchConfiguration config = (ILaunchConfiguration)iter.next();
-			if (config.getType().equals(type)) {
-				configs.add(config);
-			}
-		}
-		return (ILaunchConfiguration[])configs.toArray(new ILaunchConfiguration[configs.size()]);
-	}
-	
-	/**
-	 * Returns all launch configurations that are stored as resources
-	 * in the given project.
-	 * 
-	 * @param project a project
-	 * @return collection of launch configurations that are stored as resources
-	 *  in the given project
-	 */
-	protected List getLaunchConfigurations(IProject project) {
-		Iterator iter = getAllLaunchConfigurations().iterator();
-		List configs = new ArrayList();
-		while (iter.hasNext()) {
-			ILaunchConfiguration config = (ILaunchConfiguration)iter.next();
-			IFile file = config.getFile();
-			if (file != null && file.getProject().equals(project)) {
-				configs.add(config);
-			}
-		}
-		return configs;
-	}	
-	
-	/**
-	 * Returns all launch configurations that are stored locally.
-	 * 
-	 * @return collection of launch configurations stored lcoally
-	 */
-	protected List getLocalLaunchConfigurations() {
-		Iterator iter = getAllLaunchConfigurations().iterator();
-		List configs = new ArrayList();
-		while (iter.hasNext()) {
-			ILaunchConfiguration config = (ILaunchConfiguration)iter.next();
-			if (config.isLocal()) {
-				configs.add(config);
-			}
-		}
-		return configs;
-	}		
-	
-	/**
-	 * @see ILaunchManager#getLaunchConfiguration(IFile)
-	 */
-	public ILaunchConfiguration getLaunchConfiguration(IFile file) {
-		hookResourceChangeListener();				
-		return new LaunchConfiguration(file.getLocation());
-	}
-	
-	/**
-	 * @see ILaunchManager#getLaunchConfiguration(String)
-	 */
-	public ILaunchConfiguration getLaunchConfiguration(String memento) throws CoreException {
-		hookResourceChangeListener();
-		return new LaunchConfiguration(memento);
-	}
-	
-	/**
-	 * @see ILaunchManager#getLaunchConfigurationTypes()
-	 */
-	public ILaunchConfigurationType[] getLaunchConfigurationTypes() {
-		List types= getLaunchConfigurationTypeList();
-		return (ILaunchConfigurationType[])types.toArray(new ILaunchConfigurationType[types.size()]);
-	}
-	
-	/**
-	 * @see ILaunchManager#getLaunchConfigurationType(String)
-	 */
-	public ILaunchConfigurationType getLaunchConfigurationType(String id) {
-		Iterator iter = getLaunchConfigurationTypeList().iterator();
-		while (iter.hasNext()) {
-			ILaunchConfigurationType type = (ILaunchConfigurationType)iter.next();
-			if (type.getIdentifier().equals(id)) {
-				return type;
-			}
-		}
-		return null;
-	}
-	
-	private List getLaunchConfigurationTypeList() {
-		initializeLaunchConfigurationTypes();
-		return fLaunchConfigurationTypes;
-	}
-	
-	private synchronized void initializeLaunchConfigurationTypes() {
-		if (fLaunchConfigurationTypes == null) {
-			hookResourceChangeListener();
-			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES);
-			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-			fLaunchConfigurationTypes= new ArrayList(infos.length);
-			for (int i= 0; i < infos.length; i++) {
-				IConfigurationElement configurationElement = infos[i];
-				LaunchConfigurationType configType = new LaunchConfigurationType(configurationElement); 			
-				fLaunchConfigurationTypes.add(configType);
-			}
-		}
-	}
-	
-	/**
-	 * Initializes contributed launch delegates (i.e. delegates contributed
-	 * to an existing launch configuration type).
-	 */
-	private synchronized void initializeContributedDelegates() {
-		if (fContributedDelegates == null) {
-			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_DELEGATES);
-			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-			fContributedDelegates= new ArrayList(infos.length);
-			for (int i= 0; i < infos.length; i++) {
-				IConfigurationElement configurationElement = infos[i];
-				ContributedDelegate delegate = new ContributedDelegate(configurationElement); 			
-				fContributedDelegates.add(delegate);
-			}
-		}
-	}	
-	
-	/**
-	 * Returns a list of launch delegates contributed for existing launch configuration
-	 * types.
-	 * 
-	 * @return list of ContributedDelegate
-	 */
-	protected List getContributedDelegates() {
-		initializeContributedDelegates();
-		return fContributedDelegates;
-	}
-	/**
-	 * Notifies the launch manager that a launch configuration
-	 * has been deleted. The configuration is removed from the
-	 * cache of infos and from the index of configurations by
-	 * project, and listeners are notified.
-	 * 
-	 * @param config the launch configuration that was deleted
-	 */
-	protected void launchConfigurationDeleted(ILaunchConfiguration config) {
-		removeInfo(config);
-		getAllLaunchConfigurations().remove(config);
-		getConfigurationNotifier().notify(config, REMOVED);
-		clearConfigNameCache();			
-	}
-	
-	/**
-	 * Notifies the launch manager that a launch configuration
-	 * has been added. The configuration is added to the index of
-	 * configurations by project, and listeners are notified.
-	 * 
-	 * @param config the launch configuration that was added
-	 */
-	protected void launchConfigurationAdded(ILaunchConfiguration config) {
-		if (config.isWorkingCopy()) {
-			return;
-		}
-		if (isValid(config)) {
-			List allConfigs = getAllLaunchConfigurations();
-			if (!allConfigs.contains(config)) {
-				allConfigs.add(config);
-				getConfigurationNotifier().notify(config, ADDED);
-				clearConfigNameCache();
-			}
-		} else {
-			launchConfigurationDeleted(config);
-		}
-	}
-	
-	/**
-	 * Notifies the launch manager that a launch configuration
-	 * has been changed. The configuration is removed from the
-	 * cache of info objects such that the new attributes will
-	 * be updated on the next access. Listeners are notified of
-	 * the change.
-	 * 
-	 * @param config the launch configuration that was changed
-	 */
-	protected void launchConfigurationChanged(ILaunchConfiguration config) {
-		removeInfo(config);
-		clearConfigNameCache();
-		if (isValid(config)) {
-			// in case the config has been refreshed and it was removed from the
-			// index due to 'out of synch with local file system' (see bug 36147),
-			// add it back (will only add if required)
-			launchConfigurationAdded(config);
-			getConfigurationNotifier().notify(config, CHANGED);
-		} else {
-			launchConfigurationDeleted(config);
-		}								
-	}
-	
-	/**
-	 * @see ILaunchManager#isExistingLaunchConfigurationName(String)
-	 */
-	public boolean isExistingLaunchConfigurationName(String name) {
-		String[] sortedConfigNames = getAllSortedConfigNames();
-		int index = Arrays.binarySearch(sortedConfigNames, name);
-		if (index < 0) {
-			return false;
-		} 
-		return true;
-	}
-	
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#generateUniqueLaunchConfigurationNameFrom(String)
-	 */
-	public String generateUniqueLaunchConfigurationNameFrom(String baseName) {
-		int index = 1;
-		int length= baseName.length();
-		int copyIndex = baseName.lastIndexOf(" ("); //$NON-NLS-1$
-		if (copyIndex > -1 && length > copyIndex + 2 && baseName.charAt(length - 1) == ')') {
-			String trailer = baseName.substring(copyIndex + 2, length -1);
-			if (isNumber(trailer)) {
-				try {
-					index = Integer.parseInt(trailer);
-					baseName = baseName.substring(0, copyIndex);
-				} catch (NumberFormatException nfe) {
-				}
-			}
-		} 
-		String newName = baseName;
-		
-		StringBuffer buffer= null;
-		while (isExistingLaunchConfigurationName(newName)) {
-			buffer = new StringBuffer(baseName);
-			buffer.append(" ("); //$NON-NLS-1$
-			buffer.append(String.valueOf(index));
-			index++;
-			buffer.append(')');
-			newName = buffer.toString();		
-		}		
-		
-		return newName;
-	}
-	
-	/**
-	 * Returns whether the given String is composed solely of digits
-	 */
-	private boolean isNumber(String string) {
-		int numChars= string.length();
-		if (numChars == 0) {
-			return false;
-		}
-		for (int i= 0; i < numChars; i++) {
-			if (!Character.isDigit(string.charAt(i))) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	/**
-	 * Return a sorted array of the names of all <code>ILaunchConfiguration</code>s in 
-	 * the workspace.  These are cached, and cache is cleared when a new config is added,
-	 * deleted or changed.
-	 */
-	protected String[] getAllSortedConfigNames() {
-		if (fSortedConfigNames == null) {
-			ILaunchConfiguration[] configs = getLaunchConfigurations();
-			fSortedConfigNames = new String[configs.length];
-			for (int i = 0; i < configs.length; i++) {
-				fSortedConfigNames[i] = configs[i].getName();
-			}
-			Arrays.sort(fSortedConfigNames);
-		}
-		return fSortedConfigNames;
-	}
-	
-	/**
-	 * The launch config name cache is cleared when a config is added, deleted or changed.
-	 */
-	protected void clearConfigNameCache() {
-		fSortedConfigNames = null;
-	}
-		
-	/**
-	 * Finds and returns all local launch configurations.
-	 *
-	 * @return all local launch configurations
-	 * @exception CoreException if there is a lower level
-	 *  IO exception
-	 */
-	protected List findLocalLaunchConfigurations() {
-		IPath containerPath = LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH;
-		List configs = new ArrayList(10);
-		final File directory = containerPath.toFile();
-		if (directory.isDirectory()) {
-			FilenameFilter filter = new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return dir.equals(directory) &&
-							name.endsWith(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION);
-				}
-			};
-			String[] files = directory.list(filter);
-			for (int i = 0; i < files.length; i++) {
-				LaunchConfiguration config = new LaunchConfiguration(containerPath.append(files[i]));
-				configs.add(config);
-			}
-		}
-		return configs;
-	}
-	
-	/**
-	 * Finds and returns all launch configurations in the given
-	 * container (and subcontainers)
-	 * 
-	 * @param container the container to search
-	 * @exception CoreException an exception occurs traversing
-	 *  the container.
-	 * @return all launch configurations in the given container
-	 */
-	protected List findLaunchConfigurations(IContainer container) {
-		List list = new ArrayList(10);
-		if (container instanceof IProject && !((IProject)container).isOpen()) {
-			return list;
-		}
-		ResourceProxyVisitor visitor= new ResourceProxyVisitor(list);
-		try {
-			container.accept(visitor, IResource.NONE);
-		} catch (CoreException ce) {
-			//Closed project...should not be possible with previous check
-		}
-		Iterator iter = list.iterator();
-		List configs = new ArrayList(list.size());
-		while (iter.hasNext()) {
-			IFile file = (IFile)iter.next();
-			configs.add(getLaunchConfiguration(file));
-		}
-		return configs;
-	}
-	
-	/**
-	 * Traverses the delta looking for added/removed/changed launch
-	 * configuration files.
-	 * 
-	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		IResourceDelta delta= event.getDelta();
-		if (delta == null) {
-		    // pre-delete
-		    LaunchManagerVisitor visitor = getDeltaVisitor();
-		    IResource resource = event.getResource();
-		    if (resource instanceof IProject) {
-                IProject project = (IProject) resource;
-                visitor.preDelete(project);
-            }
-		} else {
-			try {
-			    LaunchManagerVisitor visitor = getDeltaVisitor();
-				delta.accept(visitor);
-				visitor.reset();
-			} catch (CoreException e) {
-				DebugPlugin.log(e);
-			}
-		}		
-	}
-	
-	/**
-	 * Returns the resource delta visitor for the launch manager.
-	 * 
-	 * @return the resource delta visitor for the launch manager
-	 */
-	private LaunchManagerVisitor getDeltaVisitor() {
-	    if (fgVisitor == null) {
-			fgVisitor= new LaunchManagerVisitor();
-		}
-	    return fgVisitor;
-	}
-	
-	/**
-	 * Returns the launch configurations specified by the given
-	 * XML document.
-	 * 
-	 * @param root XML document
-	 * @return list of launch configurations
-	 * @exception IOException if an exception occurs reading the XML
-	 */	
-	protected List getConfigsFromXML(Element root) throws CoreException {
-		DebugException invalidFormat = 
-			new DebugException(
-				new Status(
-				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchManager_Invalid_launch_configuration_index__18, null 
-				)
-			);		
-			
-		if (!root.getNodeName().equalsIgnoreCase("launchConfigurations")) { //$NON-NLS-1$
-			throw invalidFormat;
-		}
-		
-		// read each launch configuration 
-		List configs = new ArrayList(4);	
-		NodeList list = root.getChildNodes();
-		int length = list.getLength();
-		for (int i = 0; i < length; ++i) {
-			Node node = list.item(i);
-			short type = node.getNodeType();
-			if (type == Node.ELEMENT_NODE) {
-				Element entry = (Element) node;
-				String nodeName = entry.getNodeName();
-				if (!nodeName.equals("launchConfiguration")) { //$NON-NLS-1$
-					throw invalidFormat;
-				}
-				String memento = entry.getAttribute("memento"); //$NON-NLS-1$
-				if (memento == null) {
-					throw invalidFormat;
-				}
-				configs.add(getLaunchConfiguration(memento));
-			}
-		}
-		return configs;
-	}		
-	
-	/**
-	 * The specified project has just opened - add all launch
-	 * configs in the project to the index of all configs.
-	 * 
-	 * @param project the project that has been opened
-	 * @exception CoreException if reading the index fails
-	 */
-	protected void projectOpened(IProject project) {
-		List configs = findLaunchConfigurations(project);
-		if (!configs.isEmpty()) {
-			Iterator iterator = configs.iterator();
-			while (iterator.hasNext()) {
-				ILaunchConfiguration config = (ILaunchConfiguration) iterator.next();
-				launchConfigurationAdded(config);
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			switch (fType) {
+				case ADDED:
+					fListener.launchConfigurationAdded(fConfiguration);
+					break;
+				case REMOVED:
+					fListener.launchConfigurationRemoved(fConfiguration);
+					break;
+				case CHANGED:
+					fListener.launchConfigurationChanged(fConfiguration);
+					break;
 			}			
 		}
 	}
 	
 	/**
-	 * The specified project has just closed - remove its
-	 * launch configurations from the cached index.
-	 * 
-	 * @param project the project that has been closed
-	 * @exception CoreException if writing the index fails
+	 * Notifies a launch listener (multiple launches) in a safe runnable to
+	 * handle exceptions.
 	 */
-	protected void projectClosed(IProject project) {
-		List configs = getLaunchConfigurations(project);
-		if (!configs.isEmpty()) {
-			Iterator iterator = configs.iterator();
-			while (iterator.hasNext()) {
-				ILaunchConfiguration configuration = (ILaunchConfiguration)iterator.next();
-				launchConfigurationDeleted(configuration);
+	class LaunchesNotifier implements ISafeRunnable {
+		
+		private ILaunchesListener fListener;
+		private int fType;
+		private ILaunch[] fNotifierLaunches;
+		private ILaunch[] fRegistered;
+		
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchManager_An_exception_occurred_during_launch_change_notification__1, exception); 
+			DebugPlugin.log(status);
+		}
+
+		/**
+		 * Notifies the given listener of the adds/changes/removes
+		 * 
+		 * @param launches the launches that changed
+		 * @param update the type of change
+		 */
+		public void notify(ILaunch[] launches, int update) {
+			fNotifierLaunches = launches;
+			fType = update;
+			fRegistered = null;
+			Object[] copiedListeners= fLaunchesListeners.getListeners();
+			for (int i= 0; i < copiedListeners.length; i++) {
+				fListener = (ILaunchesListener)copiedListeners[i];
+				Platform.run(this);
+			}	
+			fNotifierLaunches = null;
+			fRegistered = null;
+			fListener = null;			
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			switch (fType) {
+				case ADDED:
+					fListener.launchesAdded(fNotifierLaunches);
+					break;
+				case REMOVED:
+					fListener.launchesRemoved(fNotifierLaunches);
+					break;
+				case CHANGED:
+				case TERMINATE:
+					if (fRegistered == null) {
+						List registered = null;
+						for (int j = 0; j < fNotifierLaunches.length; j++) {
+							if (isRegistered(fNotifierLaunches[j])) {
+								if (registered != null) {
+									registered.add(fNotifierLaunches[j]);
+								} 
+							} else {
+								if (registered == null) {
+									registered = new ArrayList(fNotifierLaunches.length);
+									for (int k = 0; k < j; k++) {
+										registered.add(fNotifierLaunches[k]);
+									}
+								}
+							}
+						}
+						if (registered == null) {
+							fRegistered = fNotifierLaunches;
+						} else {
+							fRegistered = (ILaunch[])registered.toArray(new ILaunch[registered.size()]);
+						}
+					}
+					if (fRegistered.length > 0) {
+						if (fType == CHANGED) {
+							fListener.launchesChanged(fRegistered);
+						}
+						if (fType == TERMINATE && fListener instanceof ILaunchesListener2) {
+							((ILaunchesListener2)fListener).launchesTerminated(fRegistered);
+						}
+					}
+					break;
 			}
 		}
-	}	
+	}
 	
 	/**
 	 * Visitor for handling resource deltas.
@@ -1108,6 +266,28 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	    private Map fFileToConfig = new HashMap();
 	    
 		/**
+         * Builds a cache of configs that will be deleted in the given project
+         */
+        public void preDelete(IProject project) {
+            List list = findLaunchConfigurations(project);
+            Iterator configs = list.iterator();
+            while (configs.hasNext()) {
+                ILaunchConfiguration configuration = (ILaunchConfiguration) configs.next();
+                IFile file = configuration.getFile();
+                if (file != null) {
+                    fFileToConfig.put(file, configuration);
+                }
+            }
+        }	
+		
+		/**
+		 * Resets this resource delta visitor for a new pass.
+		 */
+		public void reset() {
+		      fFileToConfig.clear();
+		}
+
+        /**
 		 * @see IResourceDeltaVisitor#visit(IResourceDelta)
 		 */
 		public boolean visit(IResourceDelta delta) {
@@ -1157,223 +337,64 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				return true;
 			}
 			return true;
-		}	
+		}
+	}
+	
+	/**
+	 * Notifies a launch listener (single launch) in a safe runnable to handle
+	 * exceptions.
+	 */
+	class LaunchNotifier implements ISafeRunnable {
+		
+		private ILaunchListener fListener;
+		private int fType;
+		private ILaunch fLaunch;
 		
 		/**
-         * Builds a cache of configs that will be deleted in the given project
-         */
-        public void preDelete(IProject project) {
-            List list = findLaunchConfigurations(project);
-            Iterator configs = list.iterator();
-            while (configs.hasNext()) {
-                ILaunchConfiguration configuration = (ILaunchConfiguration) configs.next();
-                IFile file = configuration.getFile();
-                if (file != null) {
-                    fFileToConfig.put(file, configuration);
-                }
-            }
-        }
-
-        /**
-		 * Resets this resource delta visitor for a new pass.
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
-		public void reset() {
-		      fFileToConfig.clear();
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchManager_An_exception_occurred_during_launch_change_notification__1, exception); 
+			DebugPlugin.log(status);
 		}
-	}
-	
-	/**
-	 * @see ILaunchManager#addLaunchConfigurationListener(ILaunchConfigurationListener)
-	 */
-	public void addLaunchConfigurationListener(ILaunchConfigurationListener listener) {
-		fLaunchConfigurationListeners.add(listener);
-	}
 
-	/**
-	 * @see ILaunchManager#removeLaunchConfigurationListener(ILaunchConfigurationListener)
-	 */
-	public void removeLaunchConfigurationListener(ILaunchConfigurationListener listener) {
-		fLaunchConfigurationListeners.remove(listener);
-	}
+		/**
+		 * Notifies the given listener of the add/change/remove
+		 * 
+		 * @param listener the listener to notify
+		 * @param launch the launch that has changed
+		 * @param update the type of change
+		 */
+		public void notify(ILaunch launch, int update) {
+			fLaunch = launch;
+			fType = update;
+			Object[] copiedListeners= fListeners.getListeners();
+			for (int i= 0; i < copiedListeners.length; i++) {
+				fListener = (ILaunchListener)copiedListeners[i];
+				Platform.run(this);
+			}	
+			fLaunch = null;
+			fListener = null;		
+		}
 
-	/**
-	 * Register source locators.
-	 * 
-	 * @exception CoreException if an exception occurs reading
-	 *  the extensions
-	 */
-	private synchronized void initializeSourceLocators() {
-		if (fSourceLocators == null) {
-			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_SOURCE_LOCATORS);
-			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-			fSourceLocators= new HashMap(infos.length);
-			for (int i= 0; i < infos.length; i++) {
-				IConfigurationElement configurationElement = infos[i];
-				String id = configurationElement.getAttribute("id"); //$NON-NLS-1$			
-				if (id != null) {
-					fSourceLocators.put(id,configurationElement);
-				} else {
-					// invalid status handler
-					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-					MessageFormat.format(DebugCoreMessages.LaunchManager_Invalid_source_locator_extentsion_defined_by_plug_in____0_______id___not_specified_12, new String[] {configurationElement.getNamespace()} ), null);  
-					DebugPlugin.log(s);
-				}
-			}
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			switch (fType) {
+				case ADDED:
+					fListener.launchAdded(fLaunch);
+					break;
+				case REMOVED:
+					fListener.launchRemoved(fLaunch);
+					break;
+				case CHANGED:
+					if (isRegistered(fLaunch)) {
+						fListener.launchChanged(fLaunch);
+					}
+					break;
+			}			
 		}
-	}
-	
-	
-	/**
-	 * Load comparator extensions.
-	 */
-	private synchronized void initializeComparators() {
-		if (fComparators == null) {
-			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_COMPARATORS);
-			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-			fComparators = new HashMap(infos.length);
-			for (int i= 0; i < infos.length; i++) {
-				IConfigurationElement configurationElement = infos[i];
-				String attr = configurationElement.getAttribute("attribute"); //$NON-NLS-1$			
-				if (attr != null) {
-					fComparators.put(attr, new LaunchConfigurationComparator(configurationElement));
-				} else {
-					// invalid status handler
-					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-					MessageFormat.format(DebugCoreMessages.LaunchManager_Invalid_launch_configuration_comparator_extension_defined_by_plug_in__0____attribute_not_specified_1, new String[] {configurationElement.getNamespace()}), null); 
-					DebugPlugin.log(s);
-				}
-			}
-		}
-	}
-		
-	/**
-	 * @see ILaunchManager#newSourceLocator(String)
-	 */
-	public IPersistableSourceLocator newSourceLocator(String identifier) throws CoreException {
-		initializeSourceLocators();
-		IConfigurationElement config = (IConfigurationElement)fSourceLocators.get(identifier);
-		if (config == null) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-				MessageFormat.format(DebugCoreMessages.LaunchManager_Source_locator_does_not_exist___0__13, new String[] {identifier} ), null)); 
-		} 
-		IPersistableSourceLocator sourceLocator = (IPersistableSourceLocator)config.createExecutableExtension("class"); //$NON-NLS-1$
-		if (sourceLocator instanceof AbstractSourceLookupDirector) {
-			((AbstractSourceLookupDirector)sourceLocator).setId(identifier);
-		}
-		return sourceLocator;
-	}
-
-	/**
-	 * Returns the comparator registered for the given attribute, or
-	 * <code>null</code> if none.
-	 * 
-	 * @param attributeName attribute for which a comparator is required
-	 * @return comparator, or <code>null</code> if none
-	 */
-	protected Comparator getComparator(String attributeName) {
-		 Map map = getComparators();
-		 return (Comparator)map.get(attributeName);
-	}
-	
-	/**
-	 * Returns comparators, loading if required
-	 */
-	protected Map getComparators() {
-		initializeComparators();
-		return fComparators;
-	}
-	
-	private IWorkspace getWorkspace() {
-		return ResourcesPlugin.getWorkspace();
-	}
-	
-	private IWorkspaceRoot getWorkspaceRoot() {
-		return getWorkspace().getRoot();
-	}
-	
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#addLaunches(org.eclipse.debug.core.ILaunch)
-	 */
-	public void addLaunches(ILaunch[] launches) {
-		List added = new ArrayList(launches.length);
-		for (int i = 0; i < launches.length; i++) {
-			if (internalAddLaunch(launches[i])) {
-				added.add(launches[i]);
-			}
-		}
-		if (!added.isEmpty()) {
-			ILaunch[] addedLaunches = (ILaunch[])added.toArray(new ILaunch[added.size()]);
-			fireUpdate(addedLaunches, ADDED);
-			for (int i = 0; i < addedLaunches.length; i++) {
-				fireUpdate(launches[i], ADDED);
-			}
-		}
-	}
-
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#addLaunchListener(org.eclipse.debug.core.ILaunchesListener)
-	 */
-	public void addLaunchListener(ILaunchesListener listener) {
-		fLaunchesListeners.add(listener);
-	}
-
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#removeLaunches(org.eclipse.debug.core.ILaunch)
-	 */
-	public void removeLaunches(ILaunch[] launches) {
-		List removed = new ArrayList(launches.length);
-		for (int i = 0; i < launches.length; i++) {
-			if (internalRemoveLaunch(launches[i])) {
-				removed.add(launches[i]);
-			}
-		}
-		if (!removed.isEmpty()) {
-			ILaunch[] removedLaunches = (ILaunch[])removed.toArray(new ILaunch[removed.size()]);
-			fireUpdate(removedLaunches, REMOVED);
-			for (int i = 0; i < removedLaunches.length; i++) {
-				fireUpdate(removedLaunches[i], REMOVED);
-			}
-		}
-	}
-
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#removeLaunchListener(org.eclipse.debug.core.ILaunchesListener)
-	 */
-	public void removeLaunchListener(ILaunchesListener listener) {
-		fLaunchesListeners.remove(listener);
-	}
-
-	/**
-	 * Indicates the given launch configuration is being moved from the given
-	 * location to the new location.
-	 * 
-	 * @param from the location a launch configuration is being moved from, or
-	 * <code>null</code>
-	 * @param to the location a launch configuration is being moved to,
-	 * or <code>null</code>
-	 */
-	protected void setMovedFromTo(ILaunchConfiguration from, ILaunchConfiguration to) {
-		fFrom = from;
-		fTo = to;
-	}
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#getMovedFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
-	public ILaunchConfiguration getMovedFrom(ILaunchConfiguration addedConfiguration) {
-		if (addedConfiguration.equals(fTo)) {
-			return fFrom;
-		}
-		return null;
-	}
-
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#getMovedTo(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
-	public ILaunchConfiguration getMovedTo(ILaunchConfiguration removedConfiguration) {
-		if (removedConfiguration.equals(fFrom)) {
-			return fTo;
-		}
-		return null;
 	}
 	
 	/**
@@ -1400,332 +421,218 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			return true;
 		}
 	}
-
-	private LaunchNotifier getLaunchNotifier() {
-		return new LaunchNotifier();
-	}
 	
 	/**
-	 * Notifies a launch listener (single launch) in a safe runnable to handle
-	 * exceptions.
+	 * Types of notifications
 	 */
-	class LaunchNotifier implements ISafeRunnable {
-		
-		private ILaunchListener fListener;
-		private int fType;
-		private ILaunch fLaunch;
-		
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
-		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchManager_An_exception_occurred_during_launch_change_notification__1, exception); 
-			DebugPlugin.log(status);
-		}
-
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
-		public void run() throws Exception {
-			switch (fType) {
-				case ADDED:
-					fListener.launchAdded(fLaunch);
-					break;
-				case REMOVED:
-					fListener.launchRemoved(fLaunch);
-					break;
-				case CHANGED:
-					if (isRegistered(fLaunch)) {
-						fListener.launchChanged(fLaunch);
-					}
-					break;
-			}			
-		}
-
-		/**
-		 * Notifies the given listener of the add/change/remove
-		 * 
-		 * @param listener the listener to notify
-		 * @param launch the launch that has changed
-		 * @param update the type of change
-		 */
-		public void notify(ILaunch launch, int update) {
-			fLaunch = launch;
-			fType = update;
-			Object[] copiedListeners= fListeners.getListeners();
-			for (int i= 0; i < copiedListeners.length; i++) {
-				fListener = (ILaunchListener)copiedListeners[i];
-				Platform.run(this);
-			}	
-			fLaunch = null;
-			fListener = null;		
-		}
-	}
-	
-	private LaunchesNotifier getLaunchesNotifier() {
-		return new LaunchesNotifier();
-	}
+	public static final int ADDED = 0;
+	public static final int REMOVED= 1;
+	public static final int CHANGED= 2;
+	public static final int TERMINATE= 3;
 	
 	/**
-	 * Notifies a launch listener (multiple launches) in a safe runnable to
-	 * handle exceptions.
+	 * The collection of native environment variables on the user's system. Cached
+	 * after being computed once as the environment cannot change.
 	 */
-	class LaunchesNotifier implements ISafeRunnable {
-		
-		private ILaunchesListener fListener;
-		private int fType;
-		private ILaunch[] fNotifierLaunches;
-		private ILaunch[] fRegistered;
-		
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
-		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchManager_An_exception_occurred_during_launch_change_notification__1, exception); 
-			DebugPlugin.log(status);
-		}
-
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
-		public void run() throws Exception {
-			switch (fType) {
-				case ADDED:
-					fListener.launchesAdded(fNotifierLaunches);
-					break;
-				case REMOVED:
-					fListener.launchesRemoved(fNotifierLaunches);
-					break;
-				case CHANGED:
-				case TERMINATE:
-					if (fRegistered == null) {
-						List registered = null;
-						for (int j = 0; j < fNotifierLaunches.length; j++) {
-							if (isRegistered(fNotifierLaunches[j])) {
-								if (registered != null) {
-									registered.add(fNotifierLaunches[j]);
-								} 
-							} else {
-								if (registered == null) {
-									registered = new ArrayList(fNotifierLaunches.length);
-									for (int k = 0; k < j; k++) {
-										registered.add(fNotifierLaunches[k]);
-									}
-								}
-							}
-						}
-						if (registered == null) {
-							fRegistered = fNotifierLaunches;
-						} else {
-							fRegistered = (ILaunch[])registered.toArray(new ILaunch[registered.size()]);
-						}
-					}
-					if (fRegistered.length > 0) {
-						if (fType == CHANGED) {
-							fListener.launchesChanged(fRegistered);
-						}
-						if (fType == TERMINATE && fListener instanceof ILaunchesListener2) {
-							((ILaunchesListener2)fListener).launchesTerminated(fRegistered);
-						}
-					}
-					break;
-			}
-		}
-
-		/**
-		 * Notifies the given listener of the adds/changes/removes
-		 * 
-		 * @param launches the launches that changed
-		 * @param update the type of change
-		 */
-		public void notify(ILaunch[] launches, int update) {
-			fNotifierLaunches = launches;
-			fType = update;
-			fRegistered = null;
-			Object[] copiedListeners= fLaunchesListeners.getListeners();
-			for (int i= 0; i < copiedListeners.length; i++) {
-				fListener = (ILaunchesListener)copiedListeners[i];
-				Platform.run(this);
-			}	
-			fNotifierLaunches = null;
-			fRegistered = null;
-			fListener = null;			
-		}
-	}
-	
-	protected ConfigurationNotifier getConfigurationNotifier() {
-		return new ConfigurationNotifier();
-	}
+	private static HashMap fgNativeEnv= null;
+	private static HashMap fgNativeEnvCasePreserved= null;
 	
 	/**
-	 * Notifies a launch config listener in a safe runnable to handle
-	 * exceptions.
+	 * Path to the local directory where local launch configurations
+	 * are stored with the workspace.
 	 */
-	class ConfigurationNotifier implements ISafeRunnable {
-		
-		private ILaunchConfigurationListener fListener;
-		private int fType;
-		private ILaunchConfiguration fConfiguration;
-		
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
-		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchManager_An_exception_occurred_during_launch_configuration_change_notification__3, exception); 
-			DebugPlugin.log(status);
-		}
-
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
-		public void run() throws Exception {
-			switch (fType) {
-				case ADDED:
-					fListener.launchConfigurationAdded(fConfiguration);
-					break;
-				case REMOVED:
-					fListener.launchConfigurationRemoved(fConfiguration);
-					break;
-				case CHANGED:
-					fListener.launchConfigurationChanged(fConfiguration);
-					break;
-			}			
-		}
-
-		/**
-		 * Notifies the given listener of the add/change/remove
-		 * 
-		 * @param configuration the configuration that has changed
-		 * @param update the type of change
-		 */
-		public void notify(ILaunchConfiguration configuration, int update) {
-			fConfiguration = configuration;
-			fType = update;
-			if (fLaunchConfigurationListeners.size() > 0) {
-				Object[] listeners = fLaunchConfigurationListeners.getListeners();
-				for (int i = 0; i < listeners.length; i++) {
-					fListener = (ILaunchConfigurationListener)listeners[i];
-					Platform.run(this);
-				}
-			}
-			fConfiguration = null;
-			fListener = null;			
-		}
-	}
-	
+	protected static final IPath LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH =
+		DebugPlugin.getDefault().getStateLocation().append(".launches"); //$NON-NLS-1$
 	/**
-	 * Load comparator extensions.
+	 * Returns a Document that can be used to build a DOM tree
+	 * @return the Document
+	 * @throws ParserConfigurationException if an exception occurs creating the document builder
+	 * @since 3.0
+	 */
+	public static Document getDocument() throws ParserConfigurationException {
+		DocumentBuilderFactory dfactory= DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder= dfactory.newDocumentBuilder();
+		Document doc= docBuilder.newDocument();
+		return doc;
+	}
+
+	/**
+	 * Serializes a XML document into a string - encoded in UTF8 format,
+	 * with platform line separators.
 	 * 
-	 * @exception CoreException if an exception occurs reading
-	 *  the extensions
+	 * @param doc document to serialize
+	 * @return the document as a string
+	 * @throws TransformerException if an unrecoverable error occurs during the serialization
+	 * @throws IOException if the encoding attempted to be used is not supported
 	 */
-	private synchronized void initializeLaunchModes() {
-		if (fLaunchModes == null) {
-			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_MODES);
-			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-			fLaunchModes = new HashMap();
-			for (int i= 0; i < infos.length; i++) {
-				IConfigurationElement configurationElement = infos[i];
-				try {
-					ILaunchMode mode = new LaunchMode(configurationElement);
-					fLaunchModes.put(mode.getIdentifier(), mode);
-				} catch (CoreException e) {
-					DebugPlugin.log(e);
-				}
-				
+	public static String serializeDocument(Document doc) throws TransformerException, IOException {
+		ByteArrayOutputStream s= new ByteArrayOutputStream();
+		
+		TransformerFactory factory= TransformerFactory.newInstance();
+		Transformer transformer= factory.newTransformer();
+		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+		
+		DOMSource source= new DOMSource(doc);
+		StreamResult outputTarget= new StreamResult(s);
+		transformer.transform(source, outputTarget);
+		
+		return s.toString("UTF8"); //$NON-NLS-1$			
+	}
+	
+	/**
+	 * Collection of defined launch configuration type
+	 * extensions.
+	 */
+	private List fLaunchConfigurationTypes = null; 
+
+	/**
+	 * Launch configuration cache. Keys are <code>LaunchConfiguration</code>,
+	 * values are <code>LaunchConfigurationInfo</code>.
+	 */
+	private Map fLaunchConfigurations = new HashMap(10);
+	
+	/**
+	 * A cache of launch configuration names currently in the workspace.
+	 */
+	private String[] fSortedConfigNames = null;
+	
+	/**
+	 * Collection of all launch configurations in the workspace.
+	 * <code>List</code> of <code>ILaunchConfiguration</code>.
+	 */
+	private List fLaunchConfigurationIndex = null;
+	
+	/**
+	 * Launch configuration comparator extensions,
+	 * keyed by attribute name.
+	 */
+	private Map fComparators = null;
+	
+	/**
+	 * Registered launch modes, or <code>null</code> if not initialized.
+	 * Keys are mode identifiers, values are <code>ILaunchMode</code>s.
+	 */
+	private Map fLaunchModes = null;
+	
+	/**
+	 * List of contributed launch delegates (delegates contributed for existing
+	 * launch configuration types).
+	 */
+	private List fContributedDelegates = null;
+
+	/**
+	 * Collection of launches
+	 */
+	private List fLaunches= new ArrayList(10);
+	/**
+	 * Set of launches for efficient 'isRegistered()' check
+	 */
+	private Set fLaunchSet = new HashSet(10);
+	
+	/**
+	 * Collection of listeners
+	 */
+	private ListenerList fListeners= new ListenerList();
+		
+	
+	/**
+	 * Collection of "plural" listeners.
+	 * @since 2.1
+	 */
+	private ListenerList fLaunchesListeners = new ListenerList();	
+	
+	/**
+	 * Visitor used to process resource deltas,
+	 * to update launch configuration index.
+	 */
+	private LaunchManagerVisitor fgVisitor;
+	
+	/**
+	 * Whether this manager is listening for resouce change events
+	 */
+	private boolean fListening = false;
+	
+	/**
+	 * Launch configuration listeners
+	 */
+	private ListenerList fLaunchConfigurationListeners = new ListenerList();
+			
+	/**
+	 * Table of source locator extensions. Keys
+	 * are identifiers, and values are associated
+	 * configuration elements.
+	 */
+	private Map fSourceLocators = null;
+
+	/**
+	 * The handles of launch configurations being moved, or <code>null</code>
+	 */
+	private ILaunchConfiguration fFrom;
+	
+	private ILaunchConfiguration fTo;
+
+    /**
+	 * Map of source container type extensions. Keys are extension ids
+	 * and values are associated configuration elements.
+	 */
+	private Map sourceContainerTypes;
+	
+	/**
+	 * Map of source path computer extensions. Keys are extension ids
+	 * and values are associated configuration elements.
+	 */
+	private Map sourcePathComputers;
+	
+	/**
+	 * @see ILaunchManager#addLaunch(ILaunch)
+	 */
+	public void addLaunch(ILaunch launch) {
+		if (internalAddLaunch(launch)) {
+			fireUpdate(launch, ADDED);
+			fireUpdate(new ILaunch[] {launch}, ADDED);
+		}
+	}
+		
+	/**
+	 * @see ILaunchManager#addLaunchConfigurationListener(ILaunchConfigurationListener)
+	 */
+	public void addLaunchConfigurationListener(ILaunchConfigurationListener listener) {
+		fLaunchConfigurationListeners.add(listener);
+	}	
+	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#addLaunches(org.eclipse.debug.core.ILaunch)
+	 */
+	public void addLaunches(ILaunch[] launches) {
+		List added = new ArrayList(launches.length);
+		for (int i = 0; i < launches.length; i++) {
+			if (internalAddLaunch(launches[i])) {
+				added.add(launches[i]);
+			}
+		}
+		if (!added.isEmpty()) {
+			ILaunch[] addedLaunches = (ILaunch[])added.toArray(new ILaunch[added.size()]);
+			fireUpdate(addedLaunches, ADDED);
+			for (int i = 0; i < addedLaunches.length; i++) {
+				fireUpdate(launches[i], ADDED);
 			}
 		}
 	}
 	
-	/** 
-	 * Returns an array of environment variables to be used when
-	 * launching the given configuration or <code>null</code> if unspecified.
-	 * 
-	 * @param configuration launch configuration
-	 * @throws CoreException if unable to access associated attribute or if
-	 * unable to resolve a variable in an environment variable's value
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#addLaunchListener(org.eclipse.debug.core.ILaunchesListener)
 	 */
-	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException {
-		Map configEnv = configuration.getAttribute(ATTR_ENVIRONMENT_VARIABLES, (Map) null);
-		if (configEnv == null) {
-			return null;
-		}
-		Map env = null;
-		// build base environment
-		env= new HashMap();
-		boolean append= configuration.getAttribute(ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
-		if (append) {
-			env.putAll(getNativeEnvironmentCasePreserved());
-		}
-		
-		// Add variables from config
-		Iterator iter= configEnv.entrySet().iterator();
-		boolean win32= Platform.getOS().equals(Constants.OS_WIN32);
-		while (iter.hasNext()) {
-			Map.Entry entry= (Map.Entry) iter.next();
-			String key= (String) entry.getKey();
-            String value = (String) entry.getValue();
-            // translate any string substitution variables
-            value = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
-            boolean added= false;
-			if (win32) {
-                // First, check if the key is an exact match for an existing key.
-                Object nativeValue= env.get(key);
-                if (nativeValue != null) {
-                    // If an exact match is found, just replace the value
-                    env.put(key, value);
-                } else {
-                    // Win32 vars are case-insensitive. If an exact match isn't found, iterate to
-                    // check for a case-insensitive match. We maintain the key's case (see bug 86725),
-                    // but do a case-insensitive comparison (for example, "pAtH" will still override "PATH").
-                    Iterator envIter= env.entrySet().iterator();
-                    while (envIter.hasNext()) {
-                        Map.Entry nativeEntry = (Map.Entry) envIter.next();
-                        String nativeKey= (String) (nativeEntry).getKey();
-                        if (nativeKey.equalsIgnoreCase(key)) {
-                            nativeEntry.setValue(value);
-                            added= true;
-                            break;
-                        }
-                    }
-                }
-			}
-            if (!added) {
-                env.put(key, value);
-            }
-		}		
-		
-		iter= env.entrySet().iterator();
-		List strings= new ArrayList(env.size());
-		while (iter.hasNext()) {
-			Map.Entry entry = (Map.Entry) iter.next();
-			StringBuffer buffer= new StringBuffer((String) entry.getKey());
-			buffer.append('=').append((String) entry.getValue());
-			strings.add(buffer.toString());
-		}
-		return (String[]) strings.toArray(new String[strings.size()]);
-	}
+	public void addLaunchListener(ILaunchesListener listener) {
+		fLaunchesListeners.add(listener);
+	}	
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getNativeEnvironment()
+	/**
+	 * @see ILaunchManager#addLaunchListener(ILaunchListener)
 	 */
-	public synchronized Map getNativeEnvironment() {
-		if (fgNativeEnv == null) {
-			Map casePreserved = getNativeEnvironmentCasePreserved();
-			if (Platform.getOS().equals(Constants.OS_WIN32)) {
-				fgNativeEnv= new HashMap();
-				Iterator entries = casePreserved.entrySet().iterator();
-				while (entries.hasNext()) {
-					Map.Entry entry = (Entry) entries.next();
-					String key = ((String)entry.getKey()).toUpperCase();
-					fgNativeEnv.put(key, entry.getValue());
-				}
-			} else {
-				fgNativeEnv = new HashMap(casePreserved);
-			}
-		}
-		return new HashMap(fgNativeEnv);
-	}
+	public void addLaunchListener(ILaunchListener listener) {
+		fListeners.add(listener);
+	}	
 	
 	/**
 	 * Computes and caches the native system environment variables as a map of
@@ -1803,6 +710,625 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			// This can easily happen and is not useful to log.
 		}
 	}
+
+	/**
+	 * Clears all launch configurations (if any have been accessed)
+	 */
+	private void clearAllLaunchConfigurations() {
+		if (fLaunchConfigurationTypes != null) {
+			fLaunchConfigurationTypes.clear();
+		}
+		if (fLaunchConfigurationIndex != null) {
+			fLaunchConfigurationIndex.clear();
+		}
+	}
+			
+	/**
+	 * The launch config name cache is cleared when a config is added, deleted or changed.
+	 */
+	protected void clearConfigNameCache() {
+		fSortedConfigNames = null;
+	}
+
+	/**
+	 * Return an instance of DebugException containing the specified message and Throwable.
+	 */
+	protected DebugException createDebugException(String message, Throwable throwable) {
+		return new DebugException(
+					new Status(
+					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+					 DebugException.REQUEST_FAILED, message, throwable 
+					)
+				);
+	}
+	
+	/**
+	 * Return a LaunchConfigurationInfo object initialized from XML contained in
+	 * the specified stream.  Simply pass out any exceptions encountered so that
+	 * caller can deal with them.  This is important since caller may need access to the
+	 * actual exception.
+	 */
+	protected LaunchConfigurationInfo createInfoFromXML(InputStream stream) throws CoreException,
+																			 ParserConfigurationException,
+																			 IOException,
+																			 SAXException {
+		Element root = null;
+		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		parser.setErrorHandler(new DefaultHandler());
+		root = parser.parse(new InputSource(stream)).getDocumentElement();
+		LaunchConfigurationInfo info = new LaunchConfigurationInfo();
+		info.initializeFromXML(root);
+		return info;
+	}	
+	
+	/**
+	 * Finds and returns all launch configurations in the given
+	 * container (and subcontainers)
+	 * 
+	 * @param container the container to search
+	 * @exception CoreException an exception occurs traversing
+	 *  the container.
+	 * @return all launch configurations in the given container
+	 */
+	protected List findLaunchConfigurations(IContainer container) {
+		List list = new ArrayList(10);
+		if (container instanceof IProject && !((IProject)container).isOpen()) {
+			return list;
+		}
+		ResourceProxyVisitor visitor= new ResourceProxyVisitor(list);
+		try {
+			container.accept(visitor, IResource.NONE);
+		} catch (CoreException ce) {
+			//Closed project...should not be possible with previous check
+		}
+		Iterator iter = list.iterator();
+		List configs = new ArrayList(list.size());
+		while (iter.hasNext()) {
+			IFile file = (IFile)iter.next();
+			configs.add(getLaunchConfiguration(file));
+		}
+		return configs;
+	}
+	
+	/**
+	 * Finds and returns all local launch configurations.
+	 *
+	 * @return all local launch configurations
+	 * @exception CoreException if there is a lower level
+	 *  IO exception
+	 */
+	protected List findLocalLaunchConfigurations() {
+		IPath containerPath = LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH;
+		List configs = new ArrayList(10);
+		final File directory = containerPath.toFile();
+		if (directory.isDirectory()) {
+			FilenameFilter filter = new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return dir.equals(directory) &&
+							name.endsWith(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION);
+				}
+			};
+			String[] files = directory.list(filter);
+			for (int i = 0; i < files.length; i++) {
+				LaunchConfiguration config = new LaunchConfiguration(containerPath.append(files[i]));
+				configs.add(config);
+			}
+		}
+		return configs;
+	}
+		
+	/**
+	 * Fires notification to (single) listeners that a launch has been
+	 * added/changed/removed..
+	 */
+	public void fireUpdate(ILaunch launch, int update) {
+		getLaunchNotifier().notify(launch, update);
+	}
+
+	/**
+	 * Fires notification to (multi) listeners that a launch has been
+	 * added/changed/removed.
+	 */
+	public void fireUpdate(ILaunch[] launches, int update) {
+		getLaunchesNotifier().notify(launches, update);
+	}
+							
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#generateUniqueLaunchConfigurationNameFrom(String)
+	 */
+	public String generateUniqueLaunchConfigurationNameFrom(String baseName) {
+		int index = 1;
+		int length= baseName.length();
+		int copyIndex = baseName.lastIndexOf(" ("); //$NON-NLS-1$
+		if (copyIndex > -1 && length > copyIndex + 2 && baseName.charAt(length - 1) == ')') {
+			String trailer = baseName.substring(copyIndex + 2, length -1);
+			if (isNumber(trailer)) {
+				try {
+					index = Integer.parseInt(trailer);
+					baseName = baseName.substring(0, copyIndex);
+				} catch (NumberFormatException nfe) {
+				}
+			}
+		} 
+		String newName = baseName;
+		
+		StringBuffer buffer= null;
+		while (isExistingLaunchConfigurationName(newName)) {
+			buffer = new StringBuffer(baseName);
+			buffer.append(" ("); //$NON-NLS-1$
+			buffer.append(String.valueOf(index));
+			index++;
+			buffer.append(')');
+			newName = buffer.toString();		
+		}		
+		
+		return newName;
+	}
+	
+	/**
+	 * Returns a collection of all launch configuration handles in 
+	 * the workspace. This collection is initialized lazily.
+	 * 
+	 * @return all launch configuration handles
+	 */
+	private List getAllLaunchConfigurations() {
+		if (fLaunchConfigurationIndex == null) {
+			try {			
+				fLaunchConfigurationIndex = new ArrayList(20);
+				List configs = findLocalLaunchConfigurations();
+				verifyConfigurations(configs, fLaunchConfigurationIndex);
+				configs = findLaunchConfigurations(getWorkspaceRoot());
+				verifyConfigurations(configs, fLaunchConfigurationIndex);
+			} finally {
+				hookResourceChangeListener();				
+			}
+		}
+		return fLaunchConfigurationIndex;
+	}
+	
+	/**
+	 * Return a sorted array of the names of all <code>ILaunchConfiguration</code>s in 
+	 * the workspace.  These are cached, and cache is cleared when a new config is added,
+	 * deleted or changed.
+	 */
+	protected String[] getAllSortedConfigNames() {
+		if (fSortedConfigNames == null) {
+			ILaunchConfiguration[] configs = getLaunchConfigurations();
+			fSortedConfigNames = new String[configs.length];
+			for (int i = 0; i < configs.length; i++) {
+				fSortedConfigNames[i] = configs[i].getName();
+			}
+			Arrays.sort(fSortedConfigNames);
+		}
+		return fSortedConfigNames;
+	}
+	
+	/**
+	 * Returns the comparator registered for the given attribute, or
+	 * <code>null</code> if none.
+	 * 
+	 * @param attributeName attribute for which a comparator is required
+	 * @return comparator, or <code>null</code> if none
+	 */
+	protected Comparator getComparator(String attributeName) {
+		 Map map = getComparators();
+		 return (Comparator)map.get(attributeName);
+	}
+	
+	/**
+	 * Returns comparators, loading if required
+	 */
+	protected Map getComparators() {
+		initializeComparators();
+		return fComparators;
+	}	
+	
+	/**
+	 * Returns the launch configurations specified by the given
+	 * XML document.
+	 * 
+	 * @param root XML document
+	 * @return list of launch configurations
+	 * @exception IOException if an exception occurs reading the XML
+	 */	
+	protected List getConfigsFromXML(Element root) throws CoreException {
+		DebugException invalidFormat = 
+			new DebugException(
+				new Status(
+				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchManager_Invalid_launch_configuration_index__18, null 
+				)
+			);		
+			
+		if (!root.getNodeName().equalsIgnoreCase("launchConfigurations")) { //$NON-NLS-1$
+			throw invalidFormat;
+		}
+		
+		// read each launch configuration 
+		List configs = new ArrayList(4);	
+		NodeList list = root.getChildNodes();
+		int length = list.getLength();
+		for (int i = 0; i < length; ++i) {
+			Node node = list.item(i);
+			short type = node.getNodeType();
+			if (type == Node.ELEMENT_NODE) {
+				Element entry = (Element) node;
+				String nodeName = entry.getNodeName();
+				if (!nodeName.equals("launchConfiguration")) { //$NON-NLS-1$
+					throw invalidFormat;
+				}
+				String memento = entry.getAttribute("memento"); //$NON-NLS-1$
+				if (memento == null) {
+					throw invalidFormat;
+				}
+				configs.add(getLaunchConfiguration(memento));
+			}
+		}
+		return configs;
+	}
+	
+	protected ConfigurationNotifier getConfigurationNotifier() {
+		return new ConfigurationNotifier();
+	}	
+	
+	/**
+	 * Returns a list of launch delegates contributed for existing launch configuration
+	 * types.
+	 * 
+	 * @return list of ContributedDelegate
+	 */
+	protected List getContributedDelegates() {
+		initializeContributedDelegates();
+		return fContributedDelegates;
+	}		
+	
+	/**
+	 * @see ILaunchManager#getDebugTargets()
+	 */
+	public IDebugTarget[] getDebugTargets() {
+		synchronized (fLaunches) {
+			List allTargets= new ArrayList(fLaunches.size());
+			if (fLaunches.size() > 0) {
+				Iterator e= fLaunches.iterator();
+				while (e.hasNext()) {
+					IDebugTarget[] targets= ((ILaunch) e.next()).getDebugTargets();
+					for (int i = 0; i < targets.length; i++) {
+						allTargets.add(targets[i]);
+					}
+				}
+			}
+			return (IDebugTarget[])allTargets.toArray(new IDebugTarget[allTargets.size()]);
+		}
+	}
+	
+	/**
+	 * Returns the resource delta visitor for the launch manager.
+	 * 
+	 * @return the resource delta visitor for the launch manager
+	 */
+	private LaunchManagerVisitor getDeltaVisitor() {
+	    if (fgVisitor == null) {
+			fgVisitor= new LaunchManagerVisitor();
+		}
+	    return fgVisitor;
+	}
+	
+	/** 
+	 * Returns an array of environment variables to be used when
+	 * launching the given configuration or <code>null</code> if unspecified.
+	 * 
+	 * @param configuration launch configuration
+	 * @throws CoreException if unable to access associated attribute or if
+	 * unable to resolve a variable in an environment variable's value
+	 */
+	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException {
+		Map configEnv = configuration.getAttribute(ATTR_ENVIRONMENT_VARIABLES, (Map) null);
+		if (configEnv == null) {
+			return null;
+		}
+		Map env = null;
+		// build base environment
+		env= new HashMap();
+		boolean append= configuration.getAttribute(ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
+		if (append) {
+			env.putAll(getNativeEnvironmentCasePreserved());
+		}
+		
+		// Add variables from config
+		Iterator iter= configEnv.entrySet().iterator();
+		boolean win32= Platform.getOS().equals(Constants.OS_WIN32);
+		while (iter.hasNext()) {
+			Map.Entry entry= (Map.Entry) iter.next();
+			String key= (String) entry.getKey();
+            String value = (String) entry.getValue();
+            // translate any string substitution variables
+            value = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
+            boolean added= false;
+			if (win32) {
+                // First, check if the key is an exact match for an existing key.
+                Object nativeValue= env.get(key);
+                if (nativeValue != null) {
+                    // If an exact match is found, just replace the value
+                    env.put(key, value);
+                } else {
+                    // Win32 vars are case-insensitive. If an exact match isn't found, iterate to
+                    // check for a case-insensitive match. We maintain the key's case (see bug 86725),
+                    // but do a case-insensitive comparison (for example, "pAtH" will still override "PATH").
+                    Iterator envIter= env.entrySet().iterator();
+                    while (envIter.hasNext()) {
+                        Map.Entry nativeEntry = (Map.Entry) envIter.next();
+                        String nativeKey= (String) (nativeEntry).getKey();
+                        if (nativeKey.equalsIgnoreCase(key)) {
+                            nativeEntry.setValue(value);
+                            added= true;
+                            break;
+                        }
+                    }
+                }
+			}
+            if (!added) {
+                env.put(key, value);
+            }
+		}		
+		
+		iter= env.entrySet().iterator();
+		List strings= new ArrayList(env.size());
+		while (iter.hasNext()) {
+			Map.Entry entry = (Map.Entry) iter.next();
+			StringBuffer buffer= new StringBuffer((String) entry.getKey());
+			buffer.append('=').append((String) entry.getValue());
+			strings.add(buffer.toString());
+		}
+		return (String[]) strings.toArray(new String[strings.size()]);
+	}
+	
+	/**
+	 * Returns the info object for the specified launch configuration.
+	 * If the configuration exists, but is not yet in the cache,
+	 * an info object is built and added to the cache.
+	 * 
+	 * @exception CoreException if an exception occurs building
+	 *  the info object
+	 * @exception DebugException if the config does not exist
+	 */
+	protected LaunchConfigurationInfo getInfo(ILaunchConfiguration config) throws CoreException {
+		LaunchConfigurationInfo info = (LaunchConfigurationInfo)fLaunchConfigurations.get(config);
+		if (info == null) {
+			if (config.exists()) {
+				InputStream stream = null;
+				try {
+					if (config.isLocal()) {
+						IPath path = config.getLocation();
+						File file = path.toFile();				
+						stream = new FileInputStream(file);
+					} else {
+						IFile file = ((LaunchConfiguration) config).getFile();
+						if (file == null) {
+							throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager_30, new String[] {config.getName()}), null); 
+						}
+						stream = file.getContents();
+					}
+					info = createInfoFromXML(stream);
+					fLaunchConfigurations.put(config, info);
+				} catch (FileNotFoundException e) {
+					throwException(config, e);					
+				} catch (SAXException e) {
+					throwException(config, e);					
+				} catch (ParserConfigurationException e) {
+					throwException(config, e);					
+				} catch (IOException e) {
+					throwException(config, e);					
+				} finally {
+					if (stream != null) {
+						try {
+							stream.close();
+						} catch (IOException e) {
+							throwException(config, e);					
+						}
+					}
+				}
+		
+			} else {
+				throw createDebugException(
+					MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist, new String[]{config.getName(), config.getLocation().toOSString()}), null); 
+			}
+		}
+		return info;
+	}
+	
+	/**
+	 * @see ILaunchManager#getLaunchConfiguration(IFile)
+	 */
+	public ILaunchConfiguration getLaunchConfiguration(IFile file) {
+		hookResourceChangeListener();				
+		return new LaunchConfiguration(file.getLocation());
+	}
+	
+	/**
+	 * @see ILaunchManager#getLaunchConfiguration(String)
+	 */
+	public ILaunchConfiguration getLaunchConfiguration(String memento) throws CoreException {
+		hookResourceChangeListener();
+		return new LaunchConfiguration(memento);
+	}
+	
+	/**
+	 * @see ILaunchManager#getLaunchConfigurations()
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations() {
+		List allConfigs = getAllLaunchConfigurations();
+		return (ILaunchConfiguration[])allConfigs.toArray(new ILaunchConfiguration[allConfigs.size()]);
+	}	
+	
+	/**
+	 * @see ILaunchManager#getLaunchConfigurations(ILaunchConfigurationType)
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException {
+		Iterator iter = getAllLaunchConfigurations().iterator();
+		List configs = new ArrayList();
+		while (iter.hasNext()) {
+			ILaunchConfiguration config = (ILaunchConfiguration)iter.next();
+			if (config.getType().equals(type)) {
+				configs.add(config);
+			}
+		}
+		return (ILaunchConfiguration[])configs.toArray(new ILaunchConfiguration[configs.size()]);
+	}
+	
+	
+	/**
+	 * Returns all launch configurations that are stored as resources
+	 * in the given project.
+	 * 
+	 * @param project a project
+	 * @return collection of launch configurations that are stored as resources
+	 *  in the given project
+	 */
+	protected List getLaunchConfigurations(IProject project) {
+		Iterator iter = getAllLaunchConfigurations().iterator();
+		List configs = new ArrayList();
+		while (iter.hasNext()) {
+			ILaunchConfiguration config = (ILaunchConfiguration)iter.next();
+			IFile file = config.getFile();
+			if (file != null && file.getProject().equals(project)) {
+				configs.add(config);
+			}
+		}
+		return configs;
+	}
+	
+	/**
+	 * @see ILaunchManager#getLaunchConfigurationType(String)
+	 */
+	public ILaunchConfigurationType getLaunchConfigurationType(String id) {
+		Iterator iter = getLaunchConfigurationTypeList().iterator();
+		while (iter.hasNext()) {
+			ILaunchConfigurationType type = (ILaunchConfigurationType)iter.next();
+			if (type.getIdentifier().equals(id)) {
+				return type;
+			}
+		}
+		return null;
+	}
+	
+	private List getLaunchConfigurationTypeList() {
+		initializeLaunchConfigurationTypes();
+		return fLaunchConfigurationTypes;
+	}
+	
+	/**
+	 * @see ILaunchManager#getLaunchConfigurationTypes()
+	 */
+	public ILaunchConfigurationType[] getLaunchConfigurationTypes() {
+		List types= getLaunchConfigurationTypeList();
+		return (ILaunchConfigurationType[])types.toArray(new ILaunchConfigurationType[types.size()]);
+	}
+	
+	/**
+	 * @see ILaunchManager#getLaunches()
+	 */
+	public ILaunch[] getLaunches() {
+		synchronized (fLaunches) {
+			return (ILaunch[])fLaunches.toArray(new ILaunch[fLaunches.size()]);
+		}
+	}
+	
+	private LaunchesNotifier getLaunchesNotifier() {
+		return new LaunchesNotifier();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchMode(java.lang.String)
+	 */
+	public ILaunchMode getLaunchMode(String mode) {
+		initializeLaunchModes();
+		return (ILaunchMode) fLaunchModes.get(mode);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchModes()
+	 */
+	public ILaunchMode[] getLaunchModes() {
+		initializeLaunchModes();
+		Collection collection = fLaunchModes.values();
+		return (ILaunchMode[]) collection.toArray(new ILaunchMode[collection.size()]);
+	}
+	
+	private LaunchNotifier getLaunchNotifier() {
+		return new LaunchNotifier();
+	}
+		
+	/**
+	 * Returns all launch configurations that are stored locally.
+	 * 
+	 * @return collection of launch configurations stored lcoally
+	 */
+	protected List getLocalLaunchConfigurations() {
+		Iterator iter = getAllLaunchConfigurations().iterator();
+		List configs = new ArrayList();
+		while (iter.hasNext()) {
+			ILaunchConfiguration config = (ILaunchConfiguration)iter.next();
+			if (config.isLocal()) {
+				configs.add(config);
+			}
+		}
+		return configs;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getMigrationCandidates()
+	 */
+	public ILaunchConfiguration[] getMigrationCandidates() throws CoreException {
+		List configs = new ArrayList();
+		ILaunchConfiguration[] candidates = getLaunchConfigurations();
+		for(int i = 0; i < candidates.length; i++) {
+			if(candidates[i].isMigrationCandidate()) {
+				configs.add(candidates[i]);
+			}
+		}
+		return (ILaunchConfiguration[])configs.toArray(new ILaunchConfiguration[configs.size()]);
+	}
+	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#getMovedFrom(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public ILaunchConfiguration getMovedFrom(ILaunchConfiguration addedConfiguration) {
+		if (addedConfiguration.equals(fTo)) {
+			return fFrom;
+		}
+		return null;
+	}
+	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#getMovedTo(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public ILaunchConfiguration getMovedTo(ILaunchConfiguration removedConfiguration) {
+		if (removedConfiguration.equals(fFrom)) {
+			return fTo;
+		}
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getNativeEnvironment()
+	 */
+	public synchronized Map getNativeEnvironment() {
+		if (fgNativeEnv == null) {
+			Map casePreserved = getNativeEnvironmentCasePreserved();
+			if (Platform.getOS().equals(Constants.OS_WIN32)) {
+				fgNativeEnv= new HashMap();
+				Iterator entries = casePreserved.entrySet().iterator();
+				while (entries.hasNext()) {
+					Map.Entry entry = (Entry) entries.next();
+					String key = ((String)entry.getKey()).toUpperCase();
+					fgNativeEnv.put(key, entry.getValue());
+				}
+			} else {
+				fgNativeEnv = new HashMap(casePreserved);
+			}
+		}
+		return new HashMap(fgNativeEnv);
+	}		
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchManager#getNativeEnvironmentCasePreserved()
@@ -1813,7 +1339,42 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			cacheNativeEnvironment(fgNativeEnvCasePreserved);
 		}
 		return new HashMap(fgNativeEnvCasePreserved);
+	}
+	
+	/**
+	 * @see ILaunchManager#getProcesses()
+	 */
+	public IProcess[] getProcesses() {
+		synchronized (fLaunches) {
+			List allProcesses= new ArrayList(fLaunches.size());
+			Iterator e= fLaunches.iterator();
+			while (e.hasNext()) {
+				IProcess[] processes= ((ILaunch) e.next()).getProcesses();
+				for (int i= 0; i < processes.length; i++) {
+					allProcesses.add(processes[i]);
+				}
+			}
+			return (IProcess[])allProcesses.toArray(new IProcess[allProcesses.size()]);
+		}
 	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getSourceContainerType(java.lang.String)
+	 */
+	public ISourceContainerType getSourceContainerType(String id) {
+		initializeSourceContainerTypes();
+		return (ISourceContainerType) sourceContainerTypes.get(id);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getSourceContainerTypes()
+	 */
+	public ISourceContainerType[] getSourceContainerTypes() {
+		initializeSourceContainerTypes();
+		Collection containers = sourceContainerTypes.values();
+		return (ISourceContainerType[]) containers.toArray(new ISourceContainerType[containers.size()]);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchManager#newSourcePathComputer(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -1827,7 +1388,112 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 		return getSourcePathComputer(id);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getSourcePathComputer(java.lang.String)
+	 */
+	public ISourcePathComputer getSourcePathComputer(String id) {
+		initializeSourceContainerTypes();
+		return (ISourcePathComputer) sourcePathComputers.get(id);
+	}
 	
+	
+	private IWorkspace getWorkspace() {
+		return ResourcesPlugin.getWorkspace();
+	}
+		
+	private IWorkspaceRoot getWorkspaceRoot() {
+		return getWorkspace().getRoot();
+	}
+
+	/**
+     * Starts listening for resource change events
+     */
+    private synchronized void hookResourceChangeListener() {
+        if (!fListening) {
+            getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_DELETE);
+            fListening = true;
+        }
+    }
+	
+	/**
+	 * Load comparator extensions.
+	 */
+	private synchronized void initializeComparators() {
+		if (fComparators == null) {
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_COMPARATORS);
+			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+			fComparators = new HashMap(infos.length);
+			for (int i= 0; i < infos.length; i++) {
+				IConfigurationElement configurationElement = infos[i];
+				String attr = configurationElement.getAttribute("attribute"); //$NON-NLS-1$			
+				if (attr != null) {
+					fComparators.put(attr, new LaunchConfigurationComparator(configurationElement));
+				} else {
+					// invalid status handler
+					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
+					MessageFormat.format(DebugCoreMessages.LaunchManager_Invalid_launch_configuration_comparator_extension_defined_by_plug_in__0____attribute_not_specified_1, new String[] {configurationElement.getNamespace()}), null); 
+					DebugPlugin.log(s);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Initializes contributed launch delegates (i.e. delegates contributed
+	 * to an existing launch configuration type).
+	 */
+	private synchronized void initializeContributedDelegates() {
+		if (fContributedDelegates == null) {
+			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_DELEGATES);
+			IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
+			fContributedDelegates= new ArrayList(infos.length);
+			for (int i= 0; i < infos.length; i++) {
+				IConfigurationElement configurationElement = infos[i];
+				ContributedDelegate delegate = new ContributedDelegate(configurationElement); 			
+				fContributedDelegates.add(delegate);
+			}
+		}
+	}
+	
+	private synchronized void initializeLaunchConfigurationTypes() {
+		if (fLaunchConfigurationTypes == null) {
+			hookResourceChangeListener();
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES);
+			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+			fLaunchConfigurationTypes= new ArrayList(infos.length);
+			for (int i= 0; i < infos.length; i++) {
+				IConfigurationElement configurationElement = infos[i];
+				LaunchConfigurationType configType = new LaunchConfigurationType(configurationElement); 			
+				fLaunchConfigurationTypes.add(configType);
+			}
+		}
+	}
+	
+	/**
+	 * Load comparator extensions.
+	 * 
+	 * @exception CoreException if an exception occurs reading
+	 *  the extensions
+	 */
+	private synchronized void initializeLaunchModes() {
+		if (fLaunchModes == null) {
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_MODES);
+			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+			fLaunchModes = new HashMap();
+			for (int i= 0; i < infos.length; i++) {
+				IConfigurationElement configurationElement = infos[i];
+				try {
+					ILaunchMode mode = new LaunchMode(configurationElement);
+					fLaunchModes.put(mode.getIdentifier(), mode);
+				} catch (CoreException e) {
+					DebugPlugin.log(e);
+				}
+				
+			}
+		}
+	}
+
 	/**
 	 * Initializes source container type and source path computer extensions.
 	 */
@@ -1851,45 +1517,394 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			}
 		}
 	}
+
+	/**
+	 * Register source locators.
+	 * 
+	 * @exception CoreException if an exception occurs reading
+	 *  the extensions
+	 */
+	private synchronized void initializeSourceLocators() {
+		if (fSourceLocators == null) {
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_SOURCE_LOCATORS);
+			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+			fSourceLocators= new HashMap(infos.length);
+			for (int i= 0; i < infos.length; i++) {
+				IConfigurationElement configurationElement = infos[i];
+				String id = configurationElement.getAttribute("id"); //$NON-NLS-1$			
+				if (id != null) {
+					fSourceLocators.put(id,configurationElement);
+				} else {
+					// invalid status handler
+					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
+					MessageFormat.format(DebugCoreMessages.LaunchManager_Invalid_source_locator_extentsion_defined_by_plug_in____0_______id___not_specified_12, new String[] {configurationElement.getNamespace()} ), null);  
+					DebugPlugin.log(s);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Adds the given launch object to the list of registered launches,
+	 * and returns whether the launch was added.
+	 * 
+	 * @param launch launch to register
+	 * @return whether the launch was added
+	 */
+	protected boolean internalAddLaunch(ILaunch launch) {
+		synchronized (fLaunches) {
+			if (fLaunches.contains(launch)) {
+				return false;
+			}
+			fLaunches.add(launch);
+			fLaunchSet.add(launch);
+			return true;
+		}
+	}
+
+	/**
+	 * Removes the given launch object from the collection of registered
+	 * launches. Returns whether the launch was removed.
+	 * 
+	 * @param launch the launch to remove
+	 * @return whether the launch was removed
+	 */
+	protected boolean internalRemoveLaunch(ILaunch launch) {
+		if (launch == null) {
+			return false;
+		}
+		synchronized (fLaunches) {
+			fLaunchSet.remove(launch);
+			return fLaunches.remove(launch);
+		}
+	}
+	/**
+	 * @see ILaunchManager#isExistingLaunchConfigurationName(String)
+	 */
+	public boolean isExistingLaunchConfigurationName(String name) {
+		String[] sortedConfigNames = getAllSortedConfigNames();
+		int index = Arrays.binarySearch(sortedConfigNames, name);
+		if (index < 0) {
+			return false;
+		} 
+		return true;
+	}
+
+	/**
+	 * Returns whether the given String is composed solely of digits
+	 */
+	private boolean isNumber(String string) {
+		int numChars= string.length();
+		if (numChars == 0) {
+			return false;
+		}
+		for (int i= 0; i < numChars; i++) {
+			if (!Character.isDigit(string.charAt(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getSourceContainerType(java.lang.String)
+	 * @see org.eclipse.debug.core.ILaunchManager#isRegistered(org.eclipse.debug.core.ILaunch)
 	 */
-	public ISourceContainerType getSourceContainerType(String id) {
-		initializeSourceContainerTypes();
-		return (ISourceContainerType) sourceContainerTypes.get(id);
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getSourceContainerTypes()
-	 */
-	public ISourceContainerType[] getSourceContainerTypes() {
-		initializeSourceContainerTypes();
-		Collection containers = sourceContainerTypes.values();
-		return (ISourceContainerType[]) containers.toArray(new ISourceContainerType[containers.size()]);
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getSourcePathComputer(java.lang.String)
-	 */
-	public ISourcePathComputer getSourcePathComputer(String id) {
-		initializeSourceContainerTypes();
-		return (ISourcePathComputer) sourcePathComputers.get(id);
+	public boolean isRegistered(ILaunch launch) {
+		synchronized (fLaunches) {
+			return fLaunchSet.contains(launch);
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchModes()
+	/**
+	 * Returns whether the given launch configuration passes a basic
+	 * integritiy test by retrieving its type.
+	 * 
+	 * @param config the configuration to verify
+	 * @return whether the config meets basic integrity constraints
 	 */
-	public ILaunchMode[] getLaunchModes() {
-		initializeLaunchModes();
-		Collection collection = fLaunchModes.values();
-		return (ILaunchMode[]) collection.toArray(new ILaunchMode[collection.size()]);
+	protected boolean isValid(ILaunchConfiguration config) {
+		try {
+			config.getType();
+		} catch (CoreException e) {
+			if (e.getStatus().getCode() != DebugException.MISSING_LAUNCH_CONFIGURATION_TYPE) {
+				// only log warnings due to something other than a missing
+				// launch config type
+				DebugPlugin.log(e);
+			}
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Notifies the launch manager that a launch configuration
+	 * has been added. The configuration is added to the index of
+	 * configurations by project, and listeners are notified.
+	 * 
+	 * @param config the launch configuration that was added
+	 */
+	protected void launchConfigurationAdded(ILaunchConfiguration config) {
+		if (config.isWorkingCopy()) {
+			return;
+		}
+		if (isValid(config)) {
+			List allConfigs = getAllLaunchConfigurations();
+			if (!allConfigs.contains(config)) {
+				allConfigs.add(config);
+				getConfigurationNotifier().notify(config, ADDED);
+				clearConfigNameCache();
+			}
+		} else {
+			launchConfigurationDeleted(config);
+		}
+	}
+	
+	/**
+	 * Notifies the launch manager that a launch configuration
+	 * has been changed. The configuration is removed from the
+	 * cache of info objects such that the new attributes will
+	 * be updated on the next access. Listeners are notified of
+	 * the change.
+	 * 
+	 * @param config the launch configuration that was changed
+	 */
+	protected void launchConfigurationChanged(ILaunchConfiguration config) {
+		removeInfo(config);
+		clearConfigNameCache();
+		if (isValid(config)) {
+			// in case the config has been refreshed and it was removed from the
+			// index due to 'out of synch with local file system' (see bug 36147),
+			// add it back (will only add if required)
+			launchConfigurationAdded(config);
+			getConfigurationNotifier().notify(config, CHANGED);
+		} else {
+			launchConfigurationDeleted(config);
+		}								
+	}
+	
+	/**
+	 * Notifies the launch manager that a launch configuration
+	 * has been deleted. The configuration is removed from the
+	 * cache of infos and from the index of configurations by
+	 * project, and listeners are notified.
+	 * 
+	 * @param config the launch configuration that was deleted
+	 */
+	protected void launchConfigurationDeleted(ILaunchConfiguration config) {
+		removeInfo(config);
+		getAllLaunchConfigurations().remove(config);
+		getConfigurationNotifier().notify(config, REMOVED);
+		clearConfigNameCache();			
+	}
+	
+	/**
+	 * @see ILaunchManager#newSourceLocator(String)
+	 */
+	public IPersistableSourceLocator newSourceLocator(String identifier) throws CoreException {
+		initializeSourceLocators();
+		IConfigurationElement config = (IConfigurationElement)fSourceLocators.get(identifier);
+		if (config == null) {
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
+				MessageFormat.format(DebugCoreMessages.LaunchManager_Source_locator_does_not_exist___0__13, new String[] {identifier} ), null)); 
+		} 
+		IPersistableSourceLocator sourceLocator = (IPersistableSourceLocator)config.createExecutableExtension("class"); //$NON-NLS-1$
+		if (sourceLocator instanceof AbstractSourceLookupDirector) {
+			((AbstractSourceLookupDirector)sourceLocator).setId(identifier);
+		}
+		return sourceLocator;
+	}
+	
+	/**
+	 * The specified project has just closed - remove its
+	 * launch configurations from the cached index.
+	 * 
+	 * @param project the project that has been closed
+	 * @exception CoreException if writing the index fails
+	 */
+	protected void projectClosed(IProject project) {
+		List configs = getLaunchConfigurations(project);
+		if (!configs.isEmpty()) {
+			Iterator iterator = configs.iterator();
+			while (iterator.hasNext()) {
+				ILaunchConfiguration configuration = (ILaunchConfiguration)iterator.next();
+				launchConfigurationDeleted(configuration);
+			}
+		}
+	}
+	
+	/**
+	 * The specified project has just opened - add all launch
+	 * configs in the project to the index of all configs.
+	 * 
+	 * @param project the project that has been opened
+	 * @exception CoreException if reading the index fails
+	 */
+	protected void projectOpened(IProject project) {
+		List configs = findLaunchConfigurations(project);
+		if (!configs.isEmpty()) {
+			Iterator iterator = configs.iterator();
+			while (iterator.hasNext()) {
+				ILaunchConfiguration config = (ILaunchConfiguration) iterator.next();
+				launchConfigurationAdded(config);
+			}			
+		}
+	}
+	
+	/**
+	 * Removes the given launch configuration from the cache of configurations.
+	 * When a local configuration is deleted, this method is called, as there will
+	 * be no resource delta generated to auto-update the cache.
+	 * 
+	 * @param configuration the configuration to remove
+	 */
+	private void removeInfo(ILaunchConfiguration configuration) {
+		fLaunchConfigurations.remove(configuration);
+	}
+	
+	/**
+	 * @see ILaunchManager#removeLaunch(ILaunch)
+	 */
+	public void removeLaunch(ILaunch launch) {
+		if (internalRemoveLaunch(launch)) {
+			fireUpdate(launch, REMOVED);
+			fireUpdate(new ILaunch[] {launch}, REMOVED);
+		}
+	}
+	
+	/**
+	 * @see ILaunchManager#removeLaunchConfigurationListener(ILaunchConfigurationListener)
+	 */
+	public void removeLaunchConfigurationListener(ILaunchConfigurationListener listener) {
+		fLaunchConfigurationListeners.remove(listener);
+	}
+	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#removeLaunches(org.eclipse.debug.core.ILaunch)
+	 */
+	public void removeLaunches(ILaunch[] launches) {
+		List removed = new ArrayList(launches.length);
+		for (int i = 0; i < launches.length; i++) {
+			if (internalRemoveLaunch(launches[i])) {
+				removed.add(launches[i]);
+			}
+		}
+		if (!removed.isEmpty()) {
+			ILaunch[] removedLaunches = (ILaunch[])removed.toArray(new ILaunch[removed.size()]);
+			fireUpdate(removedLaunches, REMOVED);
+			for (int i = 0; i < removedLaunches.length; i++) {
+				fireUpdate(removedLaunches[i], REMOVED);
+			}
+		}
+	}	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#removeLaunchListener(org.eclipse.debug.core.ILaunchesListener)
+	 */
+	public void removeLaunchListener(ILaunchesListener listener) {
+		fLaunchesListeners.remove(listener);
+	}
+	
+	/**
+	 * @see ILaunchManager#removeLaunchListener(ILaunchListener)
+	 */
+	public void removeLaunchListener(ILaunchListener listener) {
+		fListeners.remove(listener);
+	}
+	
+	/**
+	 * Traverses the delta looking for added/removed/changed launch
+	 * configuration files.
+	 * 
+	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		IResourceDelta delta= event.getDelta();
+		if (delta == null) {
+		    // pre-delete
+		    LaunchManagerVisitor visitor = getDeltaVisitor();
+		    IResource resource = event.getResource();
+		    if (resource instanceof IProject) {
+                IProject project = (IProject) resource;
+                visitor.preDelete(project);
+            }
+		} else {
+			try {
+			    LaunchManagerVisitor visitor = getDeltaVisitor();
+				delta.accept(visitor);
+				visitor.reset();
+			} catch (CoreException e) {
+				DebugPlugin.log(e);
+			}
+		}		
+	}
+	/**
+	 * Indicates the given launch configuration is being moved from the given
+	 * location to the new location.
+	 * 
+	 * @param from the location a launch configuration is being moved from, or
+	 * <code>null</code>
+	 * @param to the location a launch configuration is being moved to,
+	 * or <code>null</code>
+	 */
+	protected void setMovedFromTo(ILaunchConfiguration from, ILaunchConfiguration to) {
+		fFrom = from;
+		fTo = to;
+	}
+	/**
+	 * Terminates/Disconnects any active debug targets/processes.
+	 * Clears launch configuration types.
+	 */
+	public void shutdown() {
+		fListeners = new ListenerList();
+        fLaunchesListeners = new ListenerList();
+        fLaunchConfigurationListeners = new ListenerList();
+		ILaunch[] launches = getLaunches();
+		for (int i= 0; i < launches.length; i++) {
+			ILaunch launch= launches[i];
+			try {
+                if (launch instanceof IDisconnect) {
+                    IDisconnect disconnect = (IDisconnect)launch;
+                    if (disconnect.canDisconnect()) {
+                        disconnect.disconnect();
+                    }
+                }
+                if (launch.canTerminate()) {
+                    launch.terminate();
+                }
+			} catch (DebugException e) {
+				DebugPlugin.log(e);
+			}
+		}
+		
+		clearAllLaunchConfigurations();
+
+		getWorkspace().removeResourceChangeListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchMode(java.lang.String)
+	/**
+	 * Throws a debug exception with the given throwable that occurred
+	 * while processing the given configuration.
 	 */
-	public ILaunchMode getLaunchMode(String mode) {
-		initializeLaunchModes();
-		return (ILaunchMode) fLaunchModes.get(mode);
+	private void throwException(ILaunchConfiguration config, Throwable e) throws DebugException {
+		IPath path = config.getLocation();
+		throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager__0__occurred_while_reading_launch_configuration_file__1___1, new String[]{e.toString(), path.toOSString()}), e); 
+	}
+
+	/**
+	 * Verify basic integrity of launch configurations in the given list,
+	 * adding valid configs to the collection of all launch configurations.
+	 * Exceptions are logged for invalid configs.
+	 * 
+	 * @param verify the list of configs to verify
+	 * @param valid the list to place valid configrations in
+	 */
+	protected void verifyConfigurations(List verify, List valid) {
+		Iterator configs = verify.iterator();
+		while (configs.hasNext()) {
+			ILaunchConfiguration config = (ILaunchConfiguration)configs.next();
+			if (isValid(config)) {
+				valid.add(config);
+			}
+		}		
 	}
 	
 	

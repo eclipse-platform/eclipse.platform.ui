@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.core;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -58,6 +60,17 @@ import org.xml.sax.helpers.DefaultHandler;
  * @see ILaunchConfiguration
  */
 public class LaunchConfiguration extends PlatformObject implements ILaunchConfiguration {
+	
+	/**
+	 * Launch configuration attribute that specifies the resource mapped to it.
+	 * Not all launch configurations will have a mapped resource unless migrated
+	 * (as of 3.2). The mapping is provided to put tighter constraints on launch configuration
+	 * choices presented to the user during context sensitive launching and for project state changes (i.e. launch
+	 * configuration not available for close projects).
+	 * 
+	 * @since 3.2
+	 */
+	public static final String ATTR_MAPPED_RESOURCE = DebugPlugin.getUniqueIdentifier() + ".MAPPED_RESOURCE"; //$NON-NLS-1$
 	
 	/**
 	 * Location this configuration is stored in. This 
@@ -131,179 +144,35 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		IStatus s = newStatus(DebugCoreMessages.LaunchConfiguration_Exception_occurred_parsing_memento_5, DebugException.INTERNAL_ERROR, ex); 
 		throw new CoreException(s);
 	}
-	
-	/**
-	 * Creates and returns a new error status based on 
-	 * the given message, code, and exception.
-	 * 
-	 * @param message error message
-	 * @param code error code
-	 * @param e exception or <code>null</code>
-	 * @return status
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#contentsEqual(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	protected IStatus newStatus(String message, int code, Throwable e) {
-		return new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), code, message, e);
-	}
-	
-	/**
-	 * @see ILaunchConfiguration#launch(String, IProgressMonitor)
-	 */
-	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException {
-		return launch(mode, monitor, false);
-	}
-	
-	/**
-	 * Set the source locator to use with the launch, if specified 
-	 * by this configuration.
-	 * 
-	 * @param launch the launch on which to set the source locator
-	 */
-	protected void initializeSourceLocator(ILaunch launch) throws CoreException {
-		if (launch.getSourceLocator() == null) {
-			String type = getAttribute(ATTR_SOURCE_LOCATOR_ID, (String)null);
-			if (type == null) {
-				type = getType().getSourceLocatorId();
+	public boolean contentsEqual(ILaunchConfiguration object) {
+		try {
+			if (object instanceof LaunchConfiguration) {
+				LaunchConfiguration otherConfig = (LaunchConfiguration) object;
+				return getName().equals(otherConfig.getName())
+				 	 && getType().equals(otherConfig.getType())
+				 	 && getLocation().equals(otherConfig.getLocation())
+					 && getInfo().equals(otherConfig.getInfo());
 			}
-			if (type != null) {
-				IPersistableSourceLocator locator = getLaunchManager().newSourceLocator(type);
-				String memento = getAttribute(ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
-				if (memento == null) {
-					locator.initializeDefaults(this);
-				} else {
-					if(locator instanceof IPersistableSourceLocator2)
-						((IPersistableSourceLocator2)locator).initializeFromMemento(memento, this);
-					else
-						locator.initializeFromMemento(memento);
-				}
-				launch.setSourceLocator(locator);
-			}
+			return false;
+		} catch (CoreException ce) {
+			return false;
 		}
 	}
 
-	/**
-	 * @see ILaunchConfiguration#supportsMode(String)
-	 */
-	public boolean supportsMode(String mode) throws CoreException {
-		return getType().supportsMode(mode);
-	}
-
-	/**
-	 * A configuration's name is that of the last segment
-	 * in it's location (subtract the ".launch" extension).
-	 * 
-	 * @see ILaunchConfiguration#getName()
-	 */
-	public String getName() {
-		return getLastLocationSegment();
-	}
-	
-	private String getLastLocationSegment() {
-		String name = getLocation().lastSegment();
-		if (name.length() > LAUNCH_CONFIGURATION_FILE_EXTENSION.length()) {
-			name = name.substring(0, name.length() - (LAUNCH_CONFIGURATION_FILE_EXTENSION.length() + 1));
-		}
-		return name;
-	}
-
-	/**
-	 * @see ILaunchConfiguration#getLocation()
-	 */
-	public IPath getLocation() {
-		return fLocation;
-	}
-
-	/**
-	 * Sets the location of this configuration's underlying
-	 * file.
-	 * 
-	 * @param location the location of this configuration's underlying
-	 *  file
-	 */
-	private void setLocation(IPath location) {
-		fLocation = location;
-	}
-
-	/**
-	 * @see ILaunchConfiguration#exists()
-	 */
-	public boolean exists() {
-		return getLocation().toFile().exists();
-	}
-
-	/**
-	 * @see ILaunchConfiguration#getAttribute(String, int)
-	 */
-	public int getAttribute(String attributeName, int defaultValue) throws CoreException {
-		return getInfo().getIntAttribute(attributeName, defaultValue);
-	}
-
-	/**
-	 * @see ILaunchConfiguration#getAttribute(String, String)
-	 */
-	public String getAttribute(String attributeName, String defaultValue) throws CoreException {
-		return getInfo().getStringAttribute(attributeName, defaultValue);
-	}
-
-	/**
-	 * @see ILaunchConfiguration#getAttribute(String, boolean)
-	 */
-	public boolean getAttribute(String attributeName, boolean defaultValue) throws CoreException {
-		return getInfo().getBooleanAttribute(attributeName, defaultValue);
-	}
-
-	/**
-	 * @see ILaunchConfiguration#getAttribute(String, List)
-	 */
-	public List getAttribute(String attributeName, List defaultValue) throws CoreException {
-		return getInfo().getListAttribute(attributeName, defaultValue);
-	}
-
-	/**
-	 * @see ILaunchConfiguration#getAttribute(String, Map)
-	 */
-	public Map getAttribute(String attributeName, Map defaultValue) throws CoreException {
-		return getInfo().getMapAttribute(attributeName, defaultValue);
-	}
-
-	/**
-	 * @see ILaunchConfiguration#getType()
-	 */
-	public ILaunchConfigurationType getType() throws CoreException {
-		return getInfo().getType();
-	}
-
-	/**
-	 * @see ILaunchConfiguration#isLocal()
-	 */
-	public boolean isLocal() {
-		IPath localPath = LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH;
-		return localPath.isPrefixOf(getLocation());
-	}
-
-	/**
-	 * @see ILaunchConfiguration#getWorkingCopy()
-	 */
-	public ILaunchConfigurationWorkingCopy getWorkingCopy() throws CoreException {
-		return new LaunchConfigurationWorkingCopy(this);
-	}
-	
-	/**
-	 * @see ILaunchConfiguration#copy(String name)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#copy(java.lang.String)
 	 */
 	public ILaunchConfigurationWorkingCopy copy(String name) throws CoreException {
 		ILaunchConfigurationWorkingCopy copy = new LaunchConfigurationWorkingCopy(this, name);
 		return copy;
-	}	
-
-	/**
-	 * @see ILaunchConfiguration#isWorkingCopy()
-	 */
-	public boolean isWorkingCopy() {
-		return false;
 	}
-
-	/**
-	 * @see ILaunchConfiguration#delete()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#delete()
 	 */
 	public void delete() throws CoreException {
 		if (exists()) {
@@ -336,19 +205,104 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			}
 		}
 	}
-	
+
 	/**
-	 * Returns the info object containing the attributes
-	 * of this configuration
+	 * Returns whether this configuration is equal to the
+	 * given configuration. Two configurations are equal if
+	 * they are stored in the same location (and neither one
+	 * is a working copy).
 	 * 
-	 * @return info for this handle
-	 * @exception CoreException if unable to retrieve the
-	 *  info object
+	 * @return whether this configuration is equal to the
+	 *  given configuration
+	 * @see Object#equals(Object)
 	 */
-	protected LaunchConfigurationInfo getInfo() throws CoreException {
-		return getLaunchManager().getInfo(this);
+	public boolean equals(Object object) {
+		if (object instanceof ILaunchConfiguration) {
+			if (isWorkingCopy()) {
+				return this == object;
+			} 
+			ILaunchConfiguration config = (ILaunchConfiguration) object;
+			if (!config.isWorkingCopy()) {
+				return config.getLocation().equals(getLocation());
+			}
+		}
+		return false;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#exists()
+	 */
+	public boolean exists() {
+		return getLocation().toFile().exists();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, boolean)
+	 */
+	public boolean getAttribute(String attributeName, boolean defaultValue) throws CoreException {
+		return getInfo().getBooleanAttribute(attributeName, defaultValue);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, int)
+	 */
+	public int getAttribute(String attributeName, int defaultValue) throws CoreException {
+		return getInfo().getIntAttribute(attributeName, defaultValue);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, java.util.List)
+	 */
+	public List getAttribute(String attributeName, List defaultValue) throws CoreException {
+		return getInfo().getListAttribute(attributeName, defaultValue);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, java.util.Map)
+	 */
+	public Map getAttribute(String attributeName, Map defaultValue) throws CoreException {
+		return getInfo().getMapAttribute(attributeName, defaultValue);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, java.lang.String)
+	 */
+	public String getAttribute(String attributeName, String defaultValue) throws CoreException {
+		return getInfo().getStringAttribute(attributeName, defaultValue);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttributes()
+	 */
+	public Map getAttributes() throws CoreException {
+		LaunchConfigurationInfo info = getInfo();
+		return info.getAttributes();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getCategory()
+	 */
+	public String getCategory() throws CoreException {
+		return getType().getCategory();
+	}
+
+	/**
+	 * Returns the container this launch configuration is 
+	 * stored in, or <code>null</code> if this launch configuration
+	 * is stored locally.
+	 * 
+	 * @return the container this launch configuration is 
+	 * stored in, or <code>null</code> if this launch configuration
+	 * is stored locally
+	 */
+	protected IContainer getContainer() {
+		IFile file = getFile();
+		if (file != null) {
+			return file.getParent();
+		}
+		return null;
+	}
+
 	/**
 	 * Returns the launch configuration delegate for this
 	 * launch configuration, for the specified launch mode.
@@ -361,6 +315,44 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	protected ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException {
 		return getType().getDelegate(mode);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getFile()
+	 */
+	public IFile getFile() {
+		if (isLocal()) {
+			return null;
+		}
+		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(getLocation());
+		if (files.length > 0) {
+			return files[0];
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the info object containing the attributes
+	 * of this configuration
+	 * 
+	 * @return info for this handle
+	 * @exception CoreException if unable to retrieve the
+	 *  info object
+	 */
+	protected LaunchConfigurationInfo getInfo() throws CoreException {
+		return getLaunchManager().getInfo(this);
+	}
+
+	/**
+	 * Returns the last segment from the location
+	 * @return the last segment from the location
+	 */
+	private String getLastLocationSegment() {
+		String name = getLocation().lastSegment();
+		if (name.length() > LAUNCH_CONFIGURATION_FILE_EXTENSION.length()) {
+			name = name.substring(0, name.length() - (LAUNCH_CONFIGURATION_FILE_EXTENSION.length() + 1));
+		}
+		return name;
+	}
 	
 	/**
 	 * Returns the launch manager
@@ -369,10 +361,33 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	protected LaunchManager getLaunchManager() {
 		return (LaunchManager)DebugPlugin.getDefault().getLaunchManager();
+	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getLocation()
+	 */
+	public IPath getLocation() {
+		return fLocation;
 	}
 
-	/**
-	 * @see ILaunchConfiguration#getMemento()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getResource()
+	 */
+	public IResource[] getMappedResources() throws CoreException {
+		List name = getInfo().getListAttribute(ATTR_MAPPED_RESOURCE, new ArrayList());
+		ArrayList list = new ArrayList();
+		IResource res = null;
+		for(int i = 0; i < name.size(); i++) {
+			res = ResourcesPlugin.getWorkspace().getRoot().findMember(name.get(i).toString());
+			if(res != null) {
+				list.add(res);
+			}
+		}
+		return (IResource[])list.toArray(new IResource[list.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getMemento()
 	 */
 	public String getMemento() throws CoreException {
 		IPath relativePath = null;
@@ -414,98 +429,89 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		
 	}
 
-	/**
-	 * @see ILaunchConfiguration#getFile()
-	 */	
-	public IFile getFile() {
-		if (isLocal()) {
-			return null;
-		}
-		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(getLocation());
-		if (files.length > 0) {
-			return files[0];
-		}
-		return null;
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getName()
+	 */
+	public String getName() {
+		return getLastLocationSegment();
 	}
 
-	/**
-	 * @see ILaunchConfiguration#contentsEqual(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getType()
 	 */
-	public boolean contentsEqual(ILaunchConfiguration object) {
-		try {
-			if (object instanceof LaunchConfiguration) {
-				LaunchConfiguration otherConfig = (LaunchConfiguration) object;
-				return getName().equals(otherConfig.getName())
-				 	 && getType().equals(otherConfig.getType())
-				 	 && getLocation().equals(otherConfig.getLocation())
-					 && getInfo().equals(otherConfig.getInfo());
-			}
-			return false;
-		} catch (CoreException ce) {
-			return false;
-		}
+	public ILaunchConfigurationType getType() throws CoreException {
+		return getInfo().getType();
 	}
 
-	/**
-	 * Returns whether this configuration is equal to the
-	 * given configuration. Two configurations are equal if
-	 * they are stored in the same location (and neither one
-	 * is a working copy).
-	 * 
-	 * @return whether this configuration is equal to the
-	 *  given configuration
-	 * @see Object#equals(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getWorkingCopy()
 	 */
-	public boolean equals(Object object) {
-		if (object instanceof ILaunchConfiguration) {
-			if (isWorkingCopy()) {
-				return this == object;
-			} 
-			ILaunchConfiguration config = (ILaunchConfiguration) object;
-			if (!config.isWorkingCopy()) {
-				return config.getLocation().equals(getLocation());
-			}
-		}
-		return false;
+	public ILaunchConfigurationWorkingCopy getWorkingCopy() throws CoreException {
+		return new LaunchConfigurationWorkingCopy(this);
 	}
-	
-	/**
-	 * @see Object#hashCode()
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
 		return getLocation().hashCode();
 	}
-	
-	/**
-	 * Returns the container this launch configuration is 
-	 * stored in, or <code>null</code> if this launch configuration
-	 * is stored locally.
-	 * 
-	 * @return the container this launch configuration is 
-	 * stored in, or <code>null</code> if this launch configuration
-	 * is stored locally
-	 */
-	protected IContainer getContainer() {
-		IFile file = getFile();
-		if (file != null) {
-			return file.getParent();
-		}
-		return null;
-	}
-	
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getCategory()
-	 */
-	public String getCategory() throws CoreException {
-		return getType().getCategory();
-	}
 
 	/**
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttributes()
+	 * Set the source locator to use with the launch, if specified 
+	 * by this configuration.
+	 * 
+	 * @param launch the launch on which to set the source locator
 	 */
-	public Map getAttributes() throws CoreException {
-		LaunchConfigurationInfo info = getInfo();
-		return info.getAttributes();
+	protected void initializeSourceLocator(ILaunch launch) throws CoreException {
+		if (launch.getSourceLocator() == null) {
+			String type = getAttribute(ATTR_SOURCE_LOCATOR_ID, (String)null);
+			if (type == null) {
+				type = getType().getSourceLocatorId();
+			}
+			if (type != null) {
+				IPersistableSourceLocator locator = getLaunchManager().newSourceLocator(type);
+				String memento = getAttribute(ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
+				if (memento == null) {
+					locator.initializeDefaults(this);
+				} else {
+					if(locator instanceof IPersistableSourceLocator2)
+						((IPersistableSourceLocator2)locator).initializeFromMemento(memento, this);
+					else
+						locator.initializeFromMemento(memento);
+				}
+				launch.setSourceLocator(locator);
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#isLocal()
+	 */
+	public boolean isLocal() {
+		IPath localPath = LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH;
+		return localPath.isPrefixOf(getLocation());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#isMigrationCandidate()
+	 */
+	public boolean isMigrationCandidate() throws CoreException {
+		return ((LaunchConfigurationType)getType()).isMigrationCandidate(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#isWorkingCopy()
+	 */
+	public boolean isWorkingCopy() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#launch(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException {
+		return launch(mode, monitor, false);
 	}
 
 	/* (non-Javadoc)
@@ -514,9 +520,8 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build) throws CoreException {
 	    return launch(mode, monitor, build, true);
 	}
-	
-	
-    /* (non-Javadoc)
+
+	/* (non-Javadoc)
      * @see org.eclipse.debug.core.ILaunchConfiguration#launch(java.lang.String, org.eclipse.core.runtime.IProgressMonitor, boolean, boolean)
      */
     public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException {
@@ -600,5 +605,44 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		}
 		return launch;
     }
-}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.ILaunchConfiguration#migrate()
+     */
+    public void migrate() throws CoreException {
+		((LaunchConfigurationType)getType()).migrate(this);
+	}
+
+	/**
+	 * Creates and returns a new error status based on 
+	 * the given message, code, and exception.
+	 * 
+	 * @param message error message
+	 * @param code error code
+	 * @param e exception or <code>null</code>
+	 * @return status
+	 */
+	protected IStatus newStatus(String message, int code, Throwable e) {
+		return new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), code, message, e);
+	}
+
+	/**
+	 * Sets the location of this configuration's underlying
+	 * file.
+	 * 
+	 * @param location the location of this configuration's underlying
+	 *  file
+	 */
+	private void setLocation(IPath location) {
+		fLocation = location;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#supportsMode(java.lang.String)
+	 */
+	public boolean supportsMode(String mode) throws CoreException {
+		return getType().supportsMode(mode);
+	}
+	
+}//end class
 

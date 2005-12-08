@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -161,4 +162,11 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @since 2.1
 	 */
 	public void setAttributes(Map attributes);
+	
+	/**
+	 * Sets the resource to be mapped to this launch configuration
+	 * @since 3.2
+	 * @param resource the resource to map to this launch configuration
+	 */
+	public void setMappedResources(IResource[] resource);
 }

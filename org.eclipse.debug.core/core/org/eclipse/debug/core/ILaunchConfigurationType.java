@@ -82,16 +82,59 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 public interface ILaunchConfigurationType extends IAdaptable {
 		
 	/**
-	 * Returns whether this type of launch configuration supports
-	 * the specified mode.
+	 * Returns the attribute with the given name, as specified by this launch
+	 * configuration type's extension definition, or <code>null</code> if
+	 * unspecified.
 	 * 
-	 * @param mode a mode in which a configuration can be launched, one of
-	 *  the mode constants defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or
-	 *  <code>DEBUG_MODE</code>.
-	 * @return whether this kind of launch configuration supports the
-	 *  specified mode
+	 * @param attributeName attribute name
+	 * @return the specified extension attribute, or <code>null</code>
+	 * @since 2.1
 	 */
-	public boolean supportsMode(String mode);
+	public String getAttribute(String attributeName);
+	
+	/**
+	 * Returns this launch configuration type's category, or <code>null</code>
+	 * if unspecified. This corresponds to the category attribute specified in
+	 * the extension definition.
+	 * 
+	 * @return this launch configuration type's category, or <code>null</code>
+	 * @since 2.1
+	 */
+	public String getCategory();
+	
+	/**
+	 * Returns the launch configuration delegate for launch
+	 * configurations of this type, for <code>run</code> mode.
+	 * The first time this method is called, the delegate is instantiated.
+	 * 
+	 * @return launch configuration delegate
+	 * @exception CoreException if unable to instantiate the
+	 *  delegate
+	 * @deprecated use <code>getDelegate(String)</code> to specify mode
+	 */	
+	public ILaunchConfigurationDelegate getDelegate() throws CoreException;
+	
+	/**
+	 * Returns the launch configuration delegate for launch
+	 * configurations of this type, for the specified mode. The first time
+	 * this method is called for a mode, the delegate is instantiated.
+	 * Launch delegates may be contributed to a launch configuration type
+	 * via the extension point <code>org.eclipse.debug.core.launchDelegates</code>
+	 * 
+	 * @param mode launch mode
+	 * @return launch configuration delegate
+	 * @exception CoreException if unable to instantiate the
+	 *  delegate
+	 * @since 3.0
+	 */	
+	public ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException;
+	
+	/**
+	 * Returns the unique identifier for this type of launch configuration
+	 * 
+	 * @return the unique identifier for this type of launch configuration
+	 */
+	public String getIdentifier();
 	
 	/**
 	 * Returns the name of this type of launch configuration.
@@ -101,11 +144,45 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	public String getName();
 	
 	/**
-	 * Returns the unique identifier for this type of launch configuration
+	 * Returns the identifier of the plug-in that contributes this launch configuration type.
 	 * 
-	 * @return the unique identifier for this type of launch configuration
+	 * @return the identifier of the plug-in that contributes this launch configuration type
+	 * @since 3.0
 	 */
-	public String getIdentifier();
+	public String getPluginIdentifier();
+	
+	/**
+	 * Returns the identifier of the persistable source locator registered with
+	 * this launch configurations type, or <code>null</code> if unspecified.
+	 * Launch configuration types optionally specify this attribue
+	 * in their plug-in XML via the <code>sourceLocatorId</code> attribute.  
+	 *  
+	 * @return the identifier of the persistable source locator registered with
+	 *  this launch configurations type, or <code>null</code> if unspecified
+	 * @since 3.0
+	 */
+	public String getSourceLocatorId();
+	
+	/**
+	 * Returns the source path computer registered with this launch configuration
+	 * type or <code>null</code> if unspecified. A source path computer can be
+	 * registered with a launch configuration type in plug-in XML via the
+	 * <code>sourcePathComputerId</code> attribute.
+	 * 
+	 * @return the source path computer registered with this launch configuration
+	 * type or <code>null</code> if unspecified
+	 * @since 3.0
+	 */
+	public ISourcePathComputer getSourcePathComputer();	
+	
+	/**
+	 * Returns all of the registered supported modes for this launch configuration type.
+	 * This method does not return null.
+	 * 
+	 * @return the set of all supported modes
+	 * @since 3.2
+	 */
+	public Set getSupportedModes();
 	
 	/**
 	 * Returns whether this launch configuration type is public.  Public configuration
@@ -137,91 +214,14 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name) throws CoreException;
 	
 	/**
-	 * Returns the launch configuration delegate for launch
-	 * configurations of this type, for <code>run</code> mode.
-	 * The first time this method is called, the delegate is instantiated.
+	 * Returns whether this type of launch configuration supports
+	 * the specified mode.
 	 * 
-	 * @return launch configuration delegate
-	 * @exception CoreException if unable to instantiate the
-	 *  delegate
-	 * @deprecated use <code>getDelegate(String)</code> to specify mode
-	 */	
-	public ILaunchConfigurationDelegate getDelegate() throws CoreException;
-	
-	/**
-	 * Returns the launch configuration delegate for launch
-	 * configurations of this type, for the specified mode. The first time
-	 * this method is called for a mode, the delegate is instantiated.
-	 * Launch delegates may be contributed to a launch configuration type
-	 * via the extension point <code>org.eclipse.debug.core.launchDelegates</code>
-	 * 
-	 * @param mode launch mode
-	 * @return launch configuration delegate
-	 * @exception CoreException if unable to instantiate the
-	 *  delegate
-	 * @since 3.0
-	 */	
-	public ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException;
-	
-	/**
-	 * Returns this launch configuration type's category, or <code>null</code>
-	 * if unspecified. This corresponds to the category attribute specified in
-	 * the extension definition.
-	 * 
-	 * @return this launch configuration type's category, or <code>null</code>
-	 * @since 2.1
+	 * @param mode a mode in which a configuration can be launched, one of
+	 *  the mode constants defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or
+	 *  <code>DEBUG_MODE</code>.
+	 * @return whether this kind of launch configuration supports the
+	 *  specified mode
 	 */
-	public String getCategory();
-	
-	/**
-	 * Returns the attribute with the given name, as specified by this launch
-	 * configuration type's extension definition, or <code>null</code> if
-	 * unspecified.
-	 * 
-	 * @param attributeName attribute name
-	 * @return the specified extension attribute, or <code>null</code>
-	 * @since 2.1
-	 */
-	public String getAttribute(String attributeName);	
-	
-	/**
-	 * Returns the source path computer registered with this launch configuration
-	 * type or <code>null</code> if unspecified. A source path computer can be
-	 * registered with a launch configuration type in plug-in XML via the
-	 * <code>sourcePathComputerId</code> attribute.
-	 * 
-	 * @return the source path computer registered with this launch configuration
-	 * type or <code>null</code> if unspecified
-	 * @since 3.0
-	 */
-	public ISourcePathComputer getSourcePathComputer();
-	
-	/**
-	 * Returns the identifier of the persistable source locator registered with
-	 * this launch configurations type, or <code>null</code> if unspecified.
-	 * Launch configuration types optionally specify this attribue
-	 * in their plug-in XML via the <code>sourceLocatorId</code> attribute.  
-	 *  
-	 * @return the identifier of the persistable source locator registered with
-	 *  this launch configurations type, or <code>null</code> if unspecified
-	 * @since 3.0
-	 */
-	public String getSourceLocatorId();
-	
-	/**
-	 * Returns the identifier of the plug-in that contributes this launch configuration type.
-	 * 
-	 * @return the identifier of the plug-in that contributes this launch configuration type
-	 * @since 3.0
-	 */
-	public String getPluginIdentifier();
-	
-	/**
-	 * Returns all of the registered supported modes for this launch configuration type.
-	 * This method does not return null.
-	 * 
-	 * @return the set of all supported modes
-	 * @since 3.2
-	 */
-	public Set getSupportedModes();
+	public boolean supportsMode(String mode);
 }
