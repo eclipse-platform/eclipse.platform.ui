@@ -29,8 +29,9 @@ consulting with the Platform/UI team.
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="viewer" minOccurs="0" maxOccurs="1"/>
+            <element ref="viewer" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="viewerContentBinding" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="viewerActionBinding" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -92,28 +93,36 @@ popupMenuId defaults to the id of the viewer.
    <element name="viewerContentBinding">
       <annotation>
          <documentation>
-            When a viewer comes up, the default behavior is to select all 
-  content extensions that have a triggerPoints expression that 
-  matches the input element (provided through the workbench page). 
+            Clients must define one or more &apos;viwerContentBinding&apos; elements to describe which content extensions are &apos;visible&apos; to the viewer. A content extension is &apos;visible&apos; if the id of the content extension matches an &apos;includes&apos; statement under a viewerContentBinding and is not excluded by an &apos;excludes&apos; statement. If a content extension is not &apos;visible&apos; to a viewer, then the extension will never be asked for content by a content service for that viewer. 
   
-  Clients may override this behavior to select which content 
-  extensions which extensions are available to the viewer. 
-  Clients may define an &apos;includes&apos; element
-  to select which extensions are visible to the viewer, and 
-  similarly an &apos;excludes&apos; element 
-  for extensions that should not be made visible to the 
-  viewer. Clients may further define the extensions that
-  should be explicitly queried for root elements (through
-  ITreeContentProvider.getElements()). If one or more 
-  &apos;contentExtension&apos; elements with &apos;isRoot&apos; set to 
-  true are defined within the &apos;includes&apos; statement, 
-  only those extensions will be queried for root elements. 
-  The &apos;isRoot&apos; has no effect for exclusions.
+Clients may define an &apos;includes&apos; element to select which extensions are visible to the viewer, and similarly an &apos;excludes&apos; element for extensions that should not be made visible to the viewer. Clients may further define the extensions that should be explicitly queried for root elements (through  ITreeContentProvider.getElements()) by the &apos;isRoot&apos; attribute. If one or more &apos;contentExtension&apos; elements have &apos;isRoot&apos; set to true within the &apos;includes&apos; statement, only those extensions will be queried for root elements. The &apos;isRoot&apos; attribute has no effect for exclusions.
   
-  A viewer may have multiple viewerContentBindings 
-  defined, and their includes/excludes statements will be 
-  aggregated to produce the final behavior. The last 
-  viewerContentBinding to be read will set the popupMenuId.
+A viewer may have multiple viewerContentBindings defined, and their includes/excludes statements will be aggregated to produce the final behavior.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="includes" minOccurs="0" maxOccurs="1"/>
+            <element ref="excludes" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="viewerId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  There should be a corresponding org.eclipse.ui.views extension that corresponds to this Id. That extension should specify an instance of org.eclipse.ui.navigator.CommonNavigator.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="viewerActionBinding">
+      <annotation>
+         <documentation>
+            Clients must define which action providers are visible to their viewer. Clients may define an &apos;includes&apos; element to select which extensions are visible to the viewer, and  similarly an &apos;excludes&apos; element for extensions that should not be made visible to the viewer. 
+  
+A viewer may have multiple viewerActionBindings defined, and their includes/excludes statements will be aggregated to produce the final behavior.
+  
+For &apos;actionProvider&apos; definitions which are not nested under a &apos;navigatorContent&apos; definition, clients may specify a custom id. If clients do not specify an id, the id defaults to &apos;org.eclipse.ui.navigator.actionProvider&apos;. For clients that wish to pick up actionProviders with no specific id, clients must define a &apos;viewerActionBinding&apos; for the default id. See the examples section for how this is done.
          </documentation>
       </annotation>
       <complexType>
@@ -142,9 +151,14 @@ popupMenuId defaults to the id of the viewer.
          </documentation>
       </annotation>
       <complexType>
-         <sequence>
-            <element ref="contentExtension" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
+         <choice>
+            <sequence>
+               <element ref="contentExtension" minOccurs="1" maxOccurs="unbounded"/>
+            </sequence>
+            <sequence>
+               <element ref="actionExtension" minOccurs="1" maxOccurs="unbounded"/>
+            </sequence>
+         </choice>
       </complexType>
    </element>
 
@@ -159,21 +173,28 @@ popupMenuId defaults to the id of the viewer.
          </documentation>
       </annotation>
       <complexType>
-         <sequence>
-            <element ref="contentExtension" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
+         <choice>
+            <sequence>
+               <element ref="contentExtension" minOccurs="1" maxOccurs="unbounded"/>
+            </sequence>
+            <sequence>
+               <element ref="actionExtension" minOccurs="1" maxOccurs="unbounded"/>
+            </sequence>
+         </choice>
       </complexType>
    </element>
 
    <element name="contentExtension">
       <annotation>
          <documentation>
-            Indicates that the content extension should be queried by getElements() 
-            for the root of the viewer. Selecting root extensions using 
-            &apos;isRoot&apos; will override the extensions 
-            which would otherwise be enabled for the viewer input element. 
+            Indicates that the content extension should be queried by getElements() or getChildren()
+for the root of the viewer. 
+
+Clients may specify &apos;isRoot&apos; to select specific root extensions to override 
+the extensions which would otherwise be enabled for the viewer input element
+(based on the matching &apos;triggerPoints&apos; expression for the viewer input element). 
               
-            See the documentation for &apos;viewerContentBinding&apos; for more information.
+See the documentation for &apos;viewerContentBinding&apos; for more information.
          </documentation>
       </annotation>
       <complexType>
@@ -201,6 +222,34 @@ popupMenuId defaults to the id of the viewer.
       </complexType>
    </element>
 
+   <element name="actionExtension">
+      <annotation>
+         <documentation>
+            Indicates that the action extension that should be given opportunities
+to contribute to the context menu and action bars. 
+
+              
+See the documentation for &apos;viewerActionBinding&apos; for more information.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="pattern" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Content extensions may be selected exactly by using 
+                  their content extension id. Clients may also use a 
+                  regular expression pattern to select any content 
+                  extensions that have ids that match the pattern. 
+                  Patterns are regular expressions which match 
+                  unique identifiers. Please see the Java 
+                  documentation for java.util.regex.Pattern
+                  for further details.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -219,14 +268,17 @@ popupMenuId defaults to the id of the viewer.
       
 &lt;p&gt;
 &lt;pre&gt;
-&lt;viewer 
-   id=&quot;org.eclipse.testViewer&quot; 
-   popupMenuId=&quot;org.eclipse.testViewer#PopupMenu&quot;/&gt;
+
+   &lt;extension
+         point=&quot;org.eclipse.ui.navigator.viewer&quot;&gt;
+      &lt;viewer 
+         id=&quot;org.eclipse.testViewer&quot; 
+         popupMenuId=&quot;org.eclipse.testViewer#PopupMenu&quot;/&gt;
+   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
-
-         
+ 
 The following example declares that one content extension 
 (id: org.eclipse.ui.navigator.resourceContent) is bound
 to a viewer matching the id &apos;org.eclipse.ui.navigator.resourceContent&apos;. 
@@ -236,7 +288,7 @@ will be ignored.
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension
-         point=&quot;org.eclipse.ui.navigator.viewerContentBinding&quot;&gt;
+         point=&quot;org.eclipse.ui.navigator.viewer&quot;&gt;
        &lt;viewerContentBinding 
              viewerId=&quot;org.eclipse.ui.navigator.resourceContent&quot;&gt;
             &lt;includes&gt;
@@ -246,8 +298,54 @@ will be ignored.
                 &lt;contentExtension pattern=&quot;org.eclipse.ui.navigator.tests.*&quot; /&gt;
             &lt;/excludes&gt;
        &lt;/viewerContentBinding&gt;
-   &lt;/extension&gt;
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
 
+The following example declares a &apos;viewerActionBinding&apos; for all actionProviders (not 
+nested under a navigatorContent extension) that match the regular expression
+&quot;org.acme.actions.*&quot; but not &quot;org.acme.actions.tests.*&quot;. This expression 
+will make any actionProvider whose id begins with &quot;org.acme.actions.&quot; but not &quot;org.acme.actions.tests.&quot; visible to the viewer with the id &quot;org.acme.viewer&quot;.
+Of course, the &apos;viewerActionBindings&apos; only apply to &apos;actionProvider&apos; elements that 
+are not nested under a &apos;navigatorContent&apos; element. The visibility of nested 
+&apos;actionProvider&apos; elements is controlled by &apos;viewerContentBindings&apos; for the enclosing
+&apos;navigatorContent&apos; element.
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ui.navigator.viewer&quot;&gt;
+       &lt;viewerActionBinding 
+             viewerId=&quot;org.acme.viewer&quot;&gt;
+            &lt;includes&gt;
+                &lt;contentExtension pattern=&quot;org.acme.actions.*&quot; /&gt;
+            &lt;/includes&gt;
+            &lt;excludes&gt;
+                &lt;contentExtension pattern=&quot;org.acme.actions.tests.*&quot; /&gt;
+            &lt;/excludes&gt;
+       &lt;/viewerActionBinding&gt;
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+
+The following example makes any actionProvider with no &apos;id&apos; attribute visible
+to the viewer &apos;org.acme.viewer&apos;. The actionProviders with no &apos;id&apos; attribute
+have a default id of &quot;org.eclipse.ui.navigator.actionProvider&quot;. Of course,
+the &apos;viewerActionBindings&apos; only apply to &apos;actionProvider&apos; elements that 
+are not nested under a &apos;navigatorContent&apos; element. The visibility of nested 
+&apos;actionProvider&apos; elements is controlled by &apos;viewerContentBindings&apos; for the enclosing
+&apos;navigatorContent&apos; element.
+
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ui.navigator.viewer&quot;&gt;
+       &lt;viewerActionBinding 
+             viewerId=&quot;org.acme.viewer&quot;&gt;
+            &lt;includes&gt;
+                &lt;contentExtension pattern=&quot;org.eclipse.ui.navigator.actionProvider&quot; /&gt;
+            &lt;/includes&gt; 
+       &lt;/viewerActionBinding&gt;
+   &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>

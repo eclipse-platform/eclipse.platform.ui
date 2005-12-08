@@ -19,8 +19,16 @@ public class Utilities {
 		return NavigatorActivationService.getInstance().isNavigatorExtensionActive(aViewerDescriptor.getViewerId(), aContentDescriptor.getId());
 	}
 	
+	public static boolean isActive(INavigatorViewerDescriptor aViewerDescriptor, String aContentExtensionId) {
+		return NavigatorActivationService.getInstance().isNavigatorExtensionActive(aViewerDescriptor.getViewerId(), aContentExtensionId);
+	}
+	
 	public static boolean isVisible(INavigatorViewerDescriptor aViewerDescriptor, INavigatorContentDescriptor aContentDescriptor) {
-		return aViewerDescriptor.isVisibleExtension(aContentDescriptor.getId());
+		return aViewerDescriptor.isVisibleContentExtension(aContentDescriptor.getId());
+	}
+
+	public static boolean isVisible(INavigatorViewerDescriptor aViewerDescriptor, String aContentExtensionId) {
+		return aViewerDescriptor.isVisibleContentExtension(aContentExtensionId);
 	}
 
 	public static boolean isEnabled(INavigatorContentDescriptor aContentDescriptor, Object anElement) {

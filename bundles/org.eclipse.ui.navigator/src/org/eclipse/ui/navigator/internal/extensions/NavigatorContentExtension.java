@@ -19,12 +19,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.navigator.ICommonActionProvider;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.IMementoAware;
-import org.eclipse.ui.navigator.INavigatorActionService;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorExtensionFilter;
@@ -52,17 +50,13 @@ public class NavigatorContentExtension implements IMementoAware, INavigatorConte
 
 	private ICommonLabelProvider labelProvider;
 
-	private ICommonActionProvider actionProvider;
-
 	private IExtensionStateModel stateModel;
 
 	private Comparator comparator;
 
 	private boolean labelProviderInitializationFailed = false;
 
-	private boolean contentProviderInitializationFailed = false;
-
-	private boolean actionProviderInitializationFailed = false;
+	private boolean contentProviderInitializationFailed = false; 
 
 	private boolean comparatorInitializationFailed = false;
 
@@ -184,37 +178,6 @@ public class NavigatorContentExtension implements IMementoAware, INavigatorConte
 		}
 		return labelProvider;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentExtension#getActionProvider(org.eclipse.ui.navigator.INavigatorActionService)
-	 */
-	public ICommonActionProvider getActionProvider(
-			INavigatorActionService theActionService) {
-		if (actionProvider != null || actionProviderInitializationFailed)
-			return actionProvider; 
-		synchronized (this) {
-			try {
-				if (actionProvider == null) {
-					actionProvider = descriptor.createActionProvider();
-					if (actionProvider == null)
-						actionProvider = SkeletonActionProvider.INSTANCE;
-					else if (theActionService != null)
-						theActionService.initialize(descriptor.getId(),
-								actionProvider);
-				}
-			} catch (CoreException e) {
-				actionProviderInitializationFailed = true;
-				e.printStackTrace();
-			} catch (RuntimeException e) {
-				actionProviderInitializationFailed = true;
-				e.printStackTrace();
-			}
-			if (actionProviderInitializationFailed)
-				actionProvider = SkeletonActionProvider.INSTANCE;
-		}
-		return actionProvider;
-	}
-
  
 	public INavigatorExtensionFilter[] getDuplicateContentFilters() {
 		if (viewerFilters != null)
@@ -236,9 +199,7 @@ public class NavigatorContentExtension implements IMementoAware, INavigatorConte
 				if (contentProvider != null)
 					contentProvider.dispose();
 				if (labelProvider != null)
-					labelProvider.dispose();
-				if (actionProvider != null)
-					actionProvider.dispose();
+					labelProvider.dispose(); 
 			}
 		} finally {
 			isDisposed = true;
@@ -308,8 +269,7 @@ public class NavigatorContentExtension implements IMementoAware, INavigatorConte
 		synchronized (this) {
 			appliedMemento = aMemento;
 			applyMemento(contentProvider);
-			applyMemento(labelProvider);
-			applyMemento(actionProvider);
+			applyMemento(labelProvider); 
 
 		}
 	}

@@ -129,7 +129,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		
 		NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
-			if (viewerDescriptor.isVisibleExtension(descriptors[i].getId())) 
+			if (viewerDescriptor.isVisibleContentExtension(descriptors[i].getId())) 
 				visibleExtensionIds.add(descriptors[i].getId());
 		} 
 		if(visibleExtensionIds.isEmpty())
@@ -144,7 +144,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		
 		NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
-			if (viewerDescriptor.isVisibleExtension(descriptors[i].getId())) 
+			if (viewerDescriptor.isVisibleContentExtension(descriptors[i].getId())) 
 				visibleDescriptors.add(descriptors[i]);
 		} 
 		if(visibleDescriptors.isEmpty())

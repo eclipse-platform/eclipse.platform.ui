@@ -18,6 +18,7 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -40,45 +41,102 @@ import org.eclipse.ui.navigator.internal.extensions.SkeletonActionProvider;
  */
 public class CommonActionProviderDescriptor {
 
-	private static final String ENABLEMENT = "enablement"; //$NON-NLS-1$
+	private static final String TAG_ACTION_PROVIDER = "actionProvider"; //$NON-NLS-1$
+
+	private static final String TAG_ENABLEMENT = "enablement"; //$NON-NLS-1$
+
+	private static final String TAG_TRIGGER_POINTS = "triggerPoints"; //$NON-NLS-1$
 
 	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
 
+	private static final String DEFAULT_ID = "org.eclipse.ui.navigator.actionProvider"; //$NON-NLS-1$
+
+	private static final String ATT_ID = "id"; //$NON-NLS-1$
+
 	private final IConfigurationElement configurationElement;
+
+	private IConfigurationElement enablementElement;
 
 	private Expression enablement;
 
 	private boolean hasLoadingFailed;
 
+	private String id;
+
+	private final boolean isNested;
+
 	/**
-	 * 
+	 * @param aConfigElement
+	 *            A configuration element with the name 'actionProvider' and a
+	 *            'class' attribute conforming to the
+	 *            {@link ICommonActionProvider} interface.
 	 */
 	public CommonActionProviderDescriptor(IConfigurationElement aConfigElement) {
 		super();
+		Assert.isTrue(TAG_ACTION_PROVIDER.equals(aConfigElement.getName()));
 		configurationElement = aConfigElement;
+		isNested = false;
 		init();
 	}
 
 	/**
-	 * 
+	 * @param aConfigElement
+	 *            A configuration element with the name 'actionProvider' and a
+	 *            'class' attribute conforming to the
+	 *            {@link ICommonActionProvider} interface.
+	 * @param anEnablementExpression
+	 *            A configuration element with the name 'enablement' or
+	 *            'triggerPoints' and containing an Eclipse Core Expression
+	 * @param anOverrideId
+	 *            A unique identifier for this descriptor. Ids can be used as a
+	 *            filtering device for activities or viewer***Bindings.
 	 */
+	public CommonActionProviderDescriptor(IConfigurationElement aConfigElement,
+			IConfigurationElement anEnablementExpression, String anOverrideId,
+			boolean nestedUnderNavigatorContent) {
+		super();
+		Assert.isTrue(TAG_ACTION_PROVIDER.equals(aConfigElement.getName()));
+		Assert.isTrue(TAG_TRIGGER_POINTS.equals(anEnablementExpression
+				.getName())
+				|| TAG_ENABLEMENT.equals(anEnablementExpression.getName()));
+		configurationElement = aConfigElement;
+		enablementElement = anEnablementExpression;
+		id = anOverrideId;
+		isNested = nestedUnderNavigatorContent;
+		init();
+	}
+
 	private void init() {
 
-		IConfigurationElement[] children = configurationElement
-				.getChildren(ENABLEMENT);
-		if (children.length == 1) {
-			try {
+		try {
+
+			// we try the id attribute if no override id was supplied.
+			if (id == null)
+				id = configurationElement.getAttribute(ATT_ID);
+			// if there was no id attribute, use the default id.
+			if (id == null)
+				id = DEFAULT_ID;
+
+			IConfigurationElement[] children = configurationElement
+					.getChildren(TAG_ENABLEMENT);
+			// if no child enablement is specified, and we have an override, use it
+			if (children.length == 0 && enablementElement != null) {
+				enablement = ElementHandler.getDefault().create(
+						ExpressionConverter.getDefault(), enablementElement);
+			// otherwise the child enablement takes priority
+			} else if (children.length == 1) {
 				enablement = ElementHandler.getDefault().create(
 						ExpressionConverter.getDefault(), children[0]);
-			} catch (CoreException e) {
-				NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
+
+			} else {
+				System.err.println("Incorrect number of expressions: " + //$NON-NLS-1$
+						TAG_ENABLEMENT
+						+ " in navigator extension: " + //$NON-NLS-1$
+						configurationElement.getDeclaringExtension()
+								.getUniqueIdentifier());
 			}
-		} else if (children.length > 1) {
-			System.err.println("More than one element: " + //$NON-NLS-1$
-					ENABLEMENT
-					+ " in navigator extension: " + //$NON-NLS-1$
-					configurationElement.getDeclaringExtension()
-							.getUniqueIdentifier());
+		} catch (CoreException e) {
+			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
 		}
 	}
 
@@ -103,9 +161,6 @@ public class CommonActionProviderDescriptor {
 		return provider;
 	}
 
-	/**
-	 * @return
-	 */
 	private String getClassName() {
 		return configurationElement.getAttribute(ATT_CLASS);
 	}
@@ -130,7 +185,7 @@ public class CommonActionProviderDescriptor {
 		while (elements.hasNext()) {
 			context = new EvaluationContext(null, elements.next());
 			try {
-				if (enablement.evaluate(context) == EvaluationResult.FALSE)
+				if (enablement.evaluate(context) == EvaluationResult.FALSE || enablement.evaluate(context) == EvaluationResult.NOT_LOADED)
 					return false;
 			} catch (CoreException e) {
 				NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
@@ -157,6 +212,19 @@ public class CommonActionProviderDescriptor {
 			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
 		}
 		return false;
+	}
+
+	/**
+	 * 
+	 * @return An identifier for this ICommonActionProvider. Defaults to
+	 *         'org.eclipse.ui.navigator.actionProvider'. May not be unique.
+	 */
+	public String getId() {
+		return id;
+	}
+
+	public boolean isNested() {
+		return isNested;
 	}
 
 }

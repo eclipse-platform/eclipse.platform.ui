@@ -34,7 +34,7 @@ public interface INavigatorViewerDescriptor {
 	String getPopupMenuId();
 
 	/**
-	 * Returns true if the extension of the given id is 'visible'. 
+	 * Returns true if the content extension of the given id is 'visible'. 
 	 * A content extension is 'visible' if it matches a 
 	 * viewerContentBinding for the given viewer id. 
 	 * 
@@ -43,10 +43,23 @@ public interface INavigatorViewerDescriptor {
 	 * 	True if the content extension matches a 
 	 * 	viewerContentBinding for the viewer id of this descriptor.
 	 */
-	boolean isVisibleExtension(String aContentExtensionId);
+	boolean isVisibleContentExtension(String aContentExtensionId);
+	
 
 	/**
-	 * Returns true if the given extension of the given id 
+	 * Returns true if the action extension of the given id is 'visible'. 
+	 * An action extension is 'visible' if it matches a 
+	 * viewerActionBinding for the given viewer id. 
+	 * 
+	 * @param anActionExtensionId The id to query
+	 * @return 
+	 * 	True if the action extension matches a 
+	 * 	viewerActionBinding for the viewer id of this descriptor.
+	 */
+	boolean isVisibleActionExtension(String anActionExtensionId);
+
+	/**
+	 * Returns true if the content extension of the given id 
 	 * matches a viewerContentBinding extension that declares
 	 * isRoot as true. 
 	 * 

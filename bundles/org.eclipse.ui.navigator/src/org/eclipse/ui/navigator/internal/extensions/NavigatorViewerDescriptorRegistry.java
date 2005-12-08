@@ -34,6 +34,8 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 	private static final String TAG_VIEWER = "viewer"; //$NON-NLS-1$
 
 	private static final String TAG_VIEWER_CONTENT_BINDING = "viewerContentBinding"; //$NON-NLS-1$
+	private static final String TAG_VIEWER_ACTION_BINDING = "viewerActionBinding"; //$NON-NLS-1$
+	
 
 	private static final String ATT_VIEWER_ID = "viewerId"; //$NON-NLS-1$
 
@@ -68,14 +70,14 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 
 	public NavigatorViewerDescriptor getNavigatorViewerDescriptor(
 			String viewerId) {
-		return getOrCreateNavigatorViewerDescriptor(viewerId);
+		return getViewerDescriptor(viewerId);
 	}
 
  
 	protected boolean readElement(IConfigurationElement element) {
 		if (TAG_VIEWER.equals(element.getName())) {
 			String viewerId = element.getAttribute(ATT_VIEWER_ID);
-			NavigatorViewerDescriptor descriptor = getOrCreateNavigatorViewerDescriptor(viewerId);
+			NavigatorViewerDescriptor descriptor = getViewerDescriptor(viewerId);
 			String popupMenuId = element.getAttribute(ATT_POPUP_MENU_ID);
 			if (popupMenuId != null)
 				descriptor.setPopupMenuId(popupMenuId);
@@ -84,8 +86,20 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 		if (TAG_VIEWER_CONTENT_BINDING.equals(element.getName())) {
 			try {
 				String viewerId = element.getAttribute(ATT_VIEWER_ID);
-				NavigatorViewerDescriptor descriptor = getOrCreateNavigatorViewerDescriptor(viewerId);
-				descriptor.consume(element);
+				NavigatorViewerDescriptor descriptor = getViewerDescriptor(viewerId);
+				descriptor.consumeContentBinding(element);
+				return true;
+			} catch (WorkbenchException e) {
+				// log an error since its not safe to open a dialog here
+				NavigatorPlugin
+						.log("Unable to create navigator view descriptor.", e.getStatus());//$NON-NLS-1$
+			}
+		}
+		if (TAG_VIEWER_ACTION_BINDING.equals(element.getName())) {
+			try {
+				String viewerId = element.getAttribute(ATT_VIEWER_ID);
+				NavigatorViewerDescriptor descriptor = getViewerDescriptor(viewerId);
+				descriptor.consumeActionBinding(element);
 				return true;
 			} catch (WorkbenchException e) {
 				// log an error since its not safe to open a dialog here
@@ -100,7 +114,7 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 	 * @param aViewerId
 	 * @return
 	 */
-	private NavigatorViewerDescriptor getOrCreateNavigatorViewerDescriptor(
+	private NavigatorViewerDescriptor getViewerDescriptor(
 			String aViewerId) {
 		NavigatorViewerDescriptor viewerDescriptor = null;
 		synchronized (viewerDescriptors) {

@@ -65,22 +65,22 @@ public interface INavigatorContentExtension extends IAdaptable {
 	 * @see ILabelProvider
 	 */
 	ICommonLabelProvider getLabelProvider();
-
-	/**
-	 * @param theActionService
-	 *            An action service is required to initialize the action
-	 *            provider. Clients should only use one action service. Never
-	 *            call this method with different action services.
-	 * 
-	 * 
-	 * @return The action provider defined by <b>navigatorContent</b>
-	 *         extension, if any. A singleton no-op action provider may be
-	 *         returned if the extension does not define an action provider.
-	 * @see ICommonActionProvider
-	 * @see ICommonActionConstants
-	 */
-	ICommonActionProvider getActionProvider(
-			INavigatorActionService theActionService);
+// Considering removing
+//	/**
+//	 * @param theActionService
+//	 *            An action service is required to initialize the action
+//	 *            provider. Clients should only use one action service. Never
+//	 *            call this method with different action services.
+//	 * 
+//	 * 
+//	 * @return The action provider defined by <b>navigatorContent</b>
+//	 *         extension, if any. A singleton no-op action provider may be
+//	 *         returned if the extension does not define an action provider.
+//	 * @see ICommonActionProvider
+//	 * @see ICommonActionConstants
+//	 */
+//	ICommonActionProvider getActionProvider(
+//			INavigatorActionService theActionService);
 
 	/**
 	 * 

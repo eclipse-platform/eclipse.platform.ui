@@ -81,11 +81,21 @@
          </dropEnablement>
       </dropHandler>
    </extension>
-   
-   
+
+   <extension 
+         point="org.eclipse.ui.navigator.viewer">
+      <viewerActionBinding
+            viewerId="org.eclipse.ui.navigator.resourceContent">
+         <includes>
+             <actionExtension pattern="org.eclipse.ui.navigator.resources.*" />
+         </includes>
+      </viewerActionBinding>
+   </extension>
+
    <extension
-         point="org.eclipse.ui.navigator.actionProvider">
+         point="org.eclipse.ui.navigator.navigatorContent">
       <actionProvider 
+      	      id="org.eclipse.ui.navigator.resources.OpenActions"
             class="org.eclipse.ui.navigator.resources.internal.actions.OpenActionProvider">
 			         <enablement>
 				            <or>
@@ -95,12 +105,9 @@
                <adapt type="org.eclipse.core.resources.IWorkspaceRoot" />	
 				            </or>
 			         </enablement>
-      </actionProvider>
-   </extension>
-   
-   <extension
-         point="org.eclipse.ui.navigator.actionProvider">
+      </actionProvider> 
       <actionProvider 
+            id="org.eclipse.ui.navigator.resources.PortingActions"
             class="org.eclipse.ui.navigator.resources.internal.actions.PortingActionExtension">
 			         <enablement>
 				            <or>

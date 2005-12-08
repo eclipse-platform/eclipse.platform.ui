@@ -14,8 +14,9 @@ work nor that it will remain the same. Please do not use this API without
 consulting with the Platform/UI team.
       </documentation>
    </annotation>
-
-   <include schemaLocation="commonExpression.exsd"/>
+   
+<include
+schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
       <complexType>

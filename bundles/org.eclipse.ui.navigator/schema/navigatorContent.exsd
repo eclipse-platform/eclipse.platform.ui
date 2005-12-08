@@ -25,16 +25,18 @@ expand to the right node.
 part of a work in progress. There is a guarantee neither that this API will
 work nor that it will remain the same. Please do not use this API without
 consulting with the Platform/UI team.
-
       </documentation>
    </annotation>
 
-   <include schemaLocation="expressionLanguage.exsd"/>
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="navigatorContent"/>
+            <choice>
+               <element ref="navigatorContent" minOccurs="0" maxOccurs="1"/>
+               <element ref="actionProvider" minOccurs="0" maxOccurs="1"/>
+            </choice>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -62,6 +64,9 @@ consulting with the Platform/UI team.
 
    <element name="navigatorContent">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
          <documentation>
             A navigator content extension defines a content provider and label provider that can be used to provide children whenever an element matches the triggerPoints expression and also to provide a parent whenever an element matches the possibleChildren expression. Optionally, clients may also provide an action provider which can provide menu contributions and action bar contributions when an element is selected that the extension contributed, or that matches the triggerPoints expression. Clients may also choose to contribute a sorter to sort elements that are contributed by the extension.
          </documentation>
@@ -75,7 +80,8 @@ consulting with the Platform/UI team.
                   <element ref="possibleChildren"/>
                </sequence>
             </choice>
-            <element ref="duplicateContentFilter"/>
+            <element ref="actionProvider" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="duplicateContentFilter" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -145,16 +151,6 @@ The content provider will be consulted when addeding children to the tree. Use t
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="actionProvider" type="string">
-            <annotation>
-               <documentation>
-                  Supplies the name of a class that implements org.eclipse.ui.navigator.ICommonActionProvider. The action provider has opportunities to contribute to the context menu and IActionBars (for retargetable actions and the view menu of the IViewPart).
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.ICommonActionProvider"/>
-               </appInfo>
-            </annotation>
-         </attribute>
          <attribute name="labelProvider" type="string" use="required">
             <annotation>
                <documentation>
@@ -179,6 +175,8 @@ The content provider will be consulted when addeding children to the tree. Use t
       <annotation>
          <documentation>
             The enablement expression allows clients to specify the same expression for both triggerPoints and possibleChildren.
+
+In the case of &apos;actionProvider&apos;, clients must define an expression that will indicate to the framework when their ICommonActionProvider should be invoked. Because of contributions to the IActionBars, clients must be invoked whenever an object they are interested in is selected. Therefore, clients should use discretion in deciding when their extension should be enabled.
          </documentation>
       </annotation>
       <complexType>
@@ -262,6 +260,46 @@ The content provider will be consulted when addeding children to the tree. Use t
                <appInfo>
                   <meta.attribute kind="java"/>
                </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="actionProvider">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="class"/>
+         </appInfo>
+         <documentation>
+            Supplies the name of a class that implements org.eclipse.ui.navigator.ICommonActionProvider. The action provider has an opportunity to contribute to the context menu and the retargetable actions defined in the IActionBars for the view that holds the navigator. Clients may also contribute directly to the view menu through the IActionBars view menu.
+
+For actionProviders that are nested under a navigatorContent element, the visibility will be controlled by the id of the navigatorContent extension id. Child action providers will automatically
+be picked up by matching viewerContentBindings. Peer actionProviders require their own viewerActionBinding. (see org.eclipse.ui.navigator.viewer)
+
+Clients may provider &apos;actionProvider&apos;(s) under the root &apos;extention&apos; element (peer to &apos;navigatorContent&apos;) in order to better control the binding (see &apos;veiwerActionBinding&apos;) and their enablement (the root level &apos;actionProvider&apos; element supports a nested &apos;enablement&apos; Eclipse core expression).
+
+For root &apos;actionProviders&apos; with no id, the id defaults to &apos;org.eclipse.ui.navigator.actionProvider&apos;. For these actionProviders to be given the opportunity to contribute the menus or action bars of a viewer, a viewerActionBinding must be defined (as part of the org.eclipse.ui.navigator.viewer extension point) which declares a binding between the specific viewer and the default id (&quot;org.eclipse.ui.navigator.actionProvider&quot;). See the documentation for &apos;viewerActionBinding&apos; under the schema documentation of org.eclipse.ui.navigator.viewer for more information.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  Clients may optionally define an id to use for filtering purposes (either through activities or viewerContentBindings).
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

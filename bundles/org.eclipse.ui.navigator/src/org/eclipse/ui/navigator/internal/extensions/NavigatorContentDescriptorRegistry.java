@@ -26,9 +26,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
-import org.eclipse.ui.navigator.NavigatorActivationService;
-import org.eclipse.ui.navigator.internal.Utilities;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
+import org.eclipse.ui.navigator.internal.Utilities;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -42,8 +41,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class NavigatorContentDescriptorRegistry extends RegistryReader {
 
-	private static final NavigatorContentDescriptorRegistry INSTANCE = new NavigatorContentDescriptorRegistry();
-	private static final NavigatorActivationService NAVIGATOR_ACTIVATION_SERVICE = NavigatorActivationService.getInstance();
+	private static final NavigatorContentDescriptorRegistry INSTANCE = new NavigatorContentDescriptorRegistry(); 
 
 	private static final String TAG_NAVIGATOR_CONTENT = "navigatorContent"; //$NON-NLS-1$
 	private static boolean isInitialized = false;
@@ -193,18 +191,15 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
  
 	protected boolean readElement(IConfigurationElement element) {
 		if (TAG_NAVIGATOR_CONTENT.equals(element.getName())) {
-			try {
-				NavigatorContentDescriptor desc = new NavigatorContentDescriptor(element);
-				addNavigatorContentDescriptor(desc);
-				return true;
+			try { 
+				addNavigatorContentDescriptor(new NavigatorContentDescriptor(element));
+				
 			} catch (WorkbenchException e) {
 				// log an error since its not safe to open a dialog here
-				NavigatorPlugin.log("Unable to create navigator descriptor.", e.getStatus());//$NON-NLS-1$
+				NavigatorPlugin.log("Unable to create navigator descriptor.", e.getStatus()); //$NON-NLS-1$
 			}
-		} else {
-			NavigatorPlugin.log("The tag " + element.getName() + " is not yet supported."); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return false;
+		}  
+		return true;
 	}
 
 	/**
