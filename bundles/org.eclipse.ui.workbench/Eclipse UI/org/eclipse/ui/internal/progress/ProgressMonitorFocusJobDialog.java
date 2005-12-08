@@ -263,6 +263,10 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 					public void run() {
 						if (alreadyClosed)
 							return;//Check again as the async  may come too late
+						Shell shell = getShell();
+						if(shell != null && shell.isDisposed())
+							return;
+						
 						runnable.run();
 					}
 				});
