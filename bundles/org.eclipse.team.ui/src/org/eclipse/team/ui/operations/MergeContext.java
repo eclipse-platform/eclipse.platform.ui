@@ -209,6 +209,9 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
         File tmpFile = getTempFile(file);
         if (tmpFile.exists())
             tmpFile.delete();
+        File parent = tmpFile.getParentFile();
+        if (!parent.exists())
+        	parent.mkdirs();
         try {
             return new BufferedOutputStream(new FileOutputStream(tmpFile));
         } catch (FileNotFoundException e) {
