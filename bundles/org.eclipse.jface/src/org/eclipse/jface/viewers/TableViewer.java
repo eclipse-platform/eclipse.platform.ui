@@ -964,6 +964,9 @@ public class TableViewer extends StructuredViewer {
 	 */
 	public void remove(final Object[] elements) {
 		assertElementsNotNull(elements);
+        if (elements.length == 0) {
+        	return;
+        }
 		preservingSelection(new Runnable() {
 			public void run() {
 				internalRemove(elements);
