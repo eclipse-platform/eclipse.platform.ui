@@ -111,7 +111,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				
-				if (fIsDisposed)
+				if (isDisposed())
 					return;
 						
 				// check condition before doing anything
@@ -353,7 +353,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				try {
 
-					if (fIsDisposed)
+					if (isDisposed())
 						return Status.OK_STATUS;
 					
 					if(part == RenderingViewPane.this)
@@ -540,7 +540,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				
-				if (fIsDisposed)
+				if (isDisposed())
 					return;
 				
 				if (fAddedRenderings.contains(rendering))
@@ -1305,5 +1305,10 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			if (service != null)
 				service.setSynchronizationProvider(originalProvider);
 		}
+	}
+	
+	private boolean isDisposed()
+	{
+		return fIsDisposed;
 	}
 }
