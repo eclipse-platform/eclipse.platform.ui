@@ -16,17 +16,17 @@ import java.util.List;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 
-import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPreviewChangeRequestor;
+import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPreviewChangeFilter;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class CompositeChangeNode extends AbstractChangeNode {
 	
-	private final RefactoringPreviewChangeRequestor fRequestor;
+	private final RefactoringPreviewChangeFilter fFilter;
 
-	public CompositeChangeNode(PreviewNode parent, RefactoringPreviewChangeRequestor requestor, CompositeChange change) {
+	public CompositeChangeNode(PreviewNode parent, RefactoringPreviewChangeFilter filter, CompositeChange change) {
 		super(parent, change);
-		fRequestor= requestor;
+		fFilter= filter;
 	}
 	
 	int getActive() {
@@ -47,7 +47,7 @@ public class CompositeChangeNode extends AbstractChangeNode {
 		Change[] changes= focus.getChildren();
 		for (int i= 0; i < changes.length; i++) {
 			Change change= changes[i];
-			if (fRequestor == null || fRequestor.accept(change)) {
+			if (fFilter == null || fFilter.select(change)) {
 				if (change instanceof CompositeChange && ((CompositeChange) change).isSynthetic()) {
 					getFlattendedChildren(result, parent, (CompositeChange) change);
 				} else {

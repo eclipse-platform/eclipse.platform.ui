@@ -16,7 +16,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryErrorPage;
-import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPreviewChangeRequestor;
+import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPreviewChangeFilter;
 
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -36,8 +36,8 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	/** The current refactoring, or <code>null</code> */
 	private Refactoring fRefactoring;
 
-	/** The preview change requestor */
-	private RefactoringPreviewChangeRequestor fRequestor= new RefactoringPreviewChangeRequestor();
+	/** The preview change filter */
+	private RefactoringPreviewChangeFilter fFilter= new RefactoringPreviewChangeFilter();
 
 	/** The refactoring status */
 	private RefactoringStatus fStatus= new RefactoringStatus();
@@ -161,12 +161,12 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	/**
 	 * Sets the preview change requestor.
 	 * 
-	 * @param requestor
+	 * @param filter
 	 *            the preview change requestor to set
 	 */
-	public void setRequestor(final RefactoringPreviewChangeRequestor requestor) {
-		Assert.isNotNull(requestor);
-		fRequestor= requestor;
+	public void setFilter(final RefactoringPreviewChangeFilter filter) {
+		Assert.isNotNull(filter);
+		fFilter= filter;
 	}
 
 	/**
@@ -201,7 +201,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 			return;
 		PreviewNode input= null;
 		if (fTreeViewerInputChange != null) {
-			input= AbstractChangeNode.createNode(null, fRequestor, fTreeViewerInputChange);
+			input= AbstractChangeNode.createNode(null, fFilter, fTreeViewerInputChange);
 		}
 		fTreeViewer.setInput(input);
 	}

@@ -18,7 +18,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 
-import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPreviewChangeRequestor;
+import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPreviewChangeFilter;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -31,9 +31,9 @@ public abstract class AbstractChangeNode extends PreviewNode {
 	private Change fChange;
 	private PreviewNode[] fChildren;
 
-	public static PreviewNode createNode(PreviewNode parent, RefactoringPreviewChangeRequestor requestor, Change change) {
+	public static PreviewNode createNode(PreviewNode parent, RefactoringPreviewChangeFilter filter, Change change) {
 		if (change instanceof CompositeChange) {
-			return new CompositeChangeNode(parent, requestor, (CompositeChange)change);
+			return new CompositeChangeNode(parent, filter, (CompositeChange)change);
 		} else if (change instanceof TextEditBasedChange) {
 			InternalTextEditChangeNode result= (TextEditChangeNode)change.getAdapter(TextEditChangeNode.class);
 			if (result == null) {

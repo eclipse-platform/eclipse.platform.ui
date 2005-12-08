@@ -13,21 +13,21 @@ package org.eclipse.ltk.internal.ui.refactoring.history;
 import org.eclipse.ltk.core.refactoring.Change;
 
 /**
- * Interface for refactoring preview change requestors.
+ * Interface for refactoring preview change filters.
  * 
  * @since 3.2
  */
-public class RefactoringPreviewChangeRequestor {
+public class RefactoringPreviewChangeFilter {
 
 	/**
-	 * Is the specified change accepted?
+	 * Is the specified change accepted by the filter?
 	 * 
 	 * @param change
 	 *            the change to test
 	 * @return <code>true</code> if it is accepted for preview,
 	 *         <code>false</code> otherwise
 	 */
-	public boolean accept(final Change change) {
+	public boolean select(final Change change) {
 		return true;
 	}
 }
