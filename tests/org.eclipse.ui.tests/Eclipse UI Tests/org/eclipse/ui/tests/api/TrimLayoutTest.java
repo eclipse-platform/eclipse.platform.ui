@@ -178,12 +178,13 @@ public class TrimLayoutTest extends UITestCase {
 	public void testAddExtraTrim() throws Throwable {
 		IWorkbenchWindow window = openTestWindow();
 		ITrimManager trimManager = window.getTrimManager();
-		TrimList trimList = new TrimList(window.getShell());
 
 		assertTrue(
 				"The window should have it's top banner in place",
 				trimManager
 						.getTrim("org.eclipse.ui.internal.WorkbenchWindow.topBar") != null);
+		
+		TrimList trimList = new TrimList(window.getShell());
 		trimManager.addTrim(ITrimManager.TOP, trimList);
 		window.getShell().layout();
 
@@ -192,24 +193,29 @@ public class TrimLayoutTest extends UITestCase {
 	}
 
 	/**
-	 * Test the public API to add a piece of trim before an existing
-	 * piece of trim.
+	 * Test the public API to add a piece of trim before an existing piece of
+	 * trim.
 	 * 
 	 * @throws Throwable
 	 */
 	public void testPlaceExtraTrim() throws Throwable {
 		IWorkbenchWindow window = openTestWindow();
 		ITrimManager trimManager = window.getTrimManager();
+		
 		TrimList trimList = new TrimList(window.getShell());
 		trimManager.addTrim(ITrimManager.TOP, trimList);
 
+		// WindowTrimProxy is an internal "quick and dirty" way
+		// to just provide a control to the trim ... not public API
 		Button b = new Button(window.getShell(), SWT.PUSH);
 		b.setText("B");
-		WindowTrimProxy bp = new WindowTrimProxy(b, BUTTON_B_ID, "Button B",
-				SWT.TOP | SWT.BOTTOM, false);
+		IWindowTrim buttonTrim = new WindowTrimProxy(b, BUTTON_B_ID,
+				"Button B", SWT.TOP | SWT.BOTTOM, false);
+		
+		// find an existing piece of trim to use as a reference
 		IWindowTrim trim = trimManager.getTrim(TrimList.TRIM_LIST_ID);
 		assertTrue(trimList == trim);
-		trimManager.addTrim(ITrimManager.TOP, bp, trim);
+		trimManager.addTrim(ITrimManager.TOP, buttonTrim, trim);
 		window.getShell().layout();
 
 		List topTrim = trimManager.getAreaTrim(ITrimManager.TOP);
