@@ -61,7 +61,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		 * @param maxHeight the maximal height in pixels
 		 *
 		 * @return the manipulated information
-		 * @deprecated As of 3.2, replaced by {@link IInformationPresenterExtension#updatePresentation(Drawable, String, TextPresentation, int, int)}
+		 * @deprecated As of 3.2, replaced by {@link DefaultInformationControl.IInformationPresenterExtension#updatePresentation(Drawable, String, TextPresentation, int, int)}
 		 * 				see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=38528 for details.
 		 */
 		String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
@@ -83,7 +83,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		 * could be the extraction of textual encoded style information etc. Returns the
 		 * manipulated information.
 		 * <p>
-		 * Replaces {@link IInformationPresenter#updatePresentation(Display, String, TextPresentation, int, int)}
+		 * Replaces {@link DefaultInformationControl.IInformationPresenter#updatePresentation(Display, String, TextPresentation, int, int)}
 		 * <em>Make sure that you do not pass in a <code>Display</code></em> until
 		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=38528 is fixed.
 		 * </p>
