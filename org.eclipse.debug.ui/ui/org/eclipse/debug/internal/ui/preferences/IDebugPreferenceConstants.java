@@ -98,12 +98,6 @@ public interface IDebugPreferenceConstants {
 	public static final String VARIABLES_DETAIL_PANE_HIDDEN = "Variables.detail.orientation.hidden"; //$NON-NLS-1$
 	
 	/**
-	 * The symbolic name for the color to indicate a changed variable
-	 * @see org.eclipse.jface.resource.ColorRegistry
-	 */
-	public static final String CHANGED_VARIABLE_COLOR= "org.eclipse.debug.ui.changedVariableColor"; //$NON-NLS-1$
-	
-	/**
 	 * Memento for the last selected launch config in the
 	 * launch config dialog.
 	 * 

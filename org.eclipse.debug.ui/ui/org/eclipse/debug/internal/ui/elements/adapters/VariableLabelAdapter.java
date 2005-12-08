@@ -14,9 +14,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.graphics.RGB;
 
 /**
@@ -34,7 +34,7 @@ public class VariableLabelAdapter extends AsynchronousDebugLabelAdapter {
         	IVariable variable = (IVariable) element;
         	try {
 				if (variable.hasValueChanged()) {
-					return new RGB[] {DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CHANGED_VARIABLE_COLOR).getRGB()};
+					return new RGB[] {DebugUIPlugin.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR).getRGB()};
 				}
 			} catch (DebugException e) {
 			}

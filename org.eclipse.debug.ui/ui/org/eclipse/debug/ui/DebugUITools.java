@@ -50,6 +50,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -714,5 +715,18 @@ public class DebugUITools {
 	 */
 	public static ISourceContainerBrowser getSourceContainerBrowser(String id) {
 		return SourceLookupUIUtils.getSourceContainerBrowser(id);
+	}
+	
+	/**
+	 * Returns the color associated with the specified preference identifier.
+	 * @param id preference identifier of the color
+	 * @return the color associated with the specified preference identifier
+	 * @since 3.2
+	 * @see <code>IDebugUIConstants</cod> for available preference colors.
+	 * TODO:  New API, needs review
+	 */
+	public static Color getPreferenceColor(String id)
+	{
+		return DebugUIPlugin.getPreferenceColor(id);
 	}
 }

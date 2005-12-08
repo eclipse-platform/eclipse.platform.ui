@@ -519,7 +519,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		String propertyName= event.getProperty();
-		if (propertyName.equals(IDebugPreferenceConstants.CHANGED_VARIABLE_COLOR)) {
+		if (propertyName.equals(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR)) {
 			getViewer().refresh();
 		} else if (propertyName.equals(IInternalDebugUIConstants.DETAIL_PANE_FONT)) {
 			getDetailViewer().getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));			
