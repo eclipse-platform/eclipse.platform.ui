@@ -368,4 +368,12 @@ public interface IWorkbenchPreferenceConstants {
 	 * @since 3.2
 	 */
     public static final String USE_WINDOW_WORKING_SET_BY_DEFAULT = "USE_WINDOW_WORKING_SET_BY_DEFAULT"; //$NON-NLS-1$
+    
+    /**
+     * Stores whether or not to show the text widget that allows type-ahead search 
+     * in the case where a FilteredTree is used to display and filter tree items.
+     * 
+     * @since 3.2
+     */
+    public static final String SHOW_FILTERED_TEXTS = "SHOW_FILTERED_TEXTS";	//$NON-NLS-1$
 }

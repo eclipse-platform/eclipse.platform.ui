@@ -101,6 +101,9 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
         // Default for using window working sets 
         node.putBoolean(IWorkbenchPreferenceConstants.USE_WINDOW_WORKING_SET_BY_DEFAULT, false);
 
+        // Default for showing filter text widget that determines what is shown in a FilteredTree
+        node.putBoolean(IWorkbenchPreferenceConstants.SHOW_FILTERED_TEXTS, true);
+        
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);

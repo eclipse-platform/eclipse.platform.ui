@@ -39,6 +39,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -115,14 +116,15 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		TreeViewer tree = filteredTree.getViewer();
-		filteredTree.setInitialText(WorkbenchMessages.WorkbenchPreferenceDialog_FilterMessage);
 
 		setContentAndLabelProviders(tree);
 		tree.setInput(getPreferenceManager());
 		
 		//if the tree has only one or zero pages, make the combo area disable
 		if(hasAtMostOnePage(tree)){
-			filteredTree.getFilterControl().setEnabled(false);
+			Text filterText = filteredTree.getFilterControl();
+			if (filterText != null)
+				filteredTree.getFilterControl().setEnabled(false);
 		}		
 		
 		tree.addFilter(new CapabilityFilter());
@@ -391,7 +393,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		super.selectSavedItem();
 		if(getTreeViewer().getTree().getItemCount() > 1) {
 			//unfortunately super will force focus to the list but we want the type ahead combo to get it.
-			filteredTree.getFilterControl().setFocus();
+			Text filterText = filteredTree.getFilterControl();
+			if (filterText != null)
+				filterText.setFocus();
 		}
 	}
 	

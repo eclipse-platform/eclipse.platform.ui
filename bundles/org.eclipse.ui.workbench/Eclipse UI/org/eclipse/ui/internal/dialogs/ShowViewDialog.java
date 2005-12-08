@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -167,12 +168,12 @@ public class ShowViewDialog extends Dialog implements
 
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
-		filteredTree
-				.setInitialText(WorkbenchMessages.WorkbenchPreferenceDialog_FilterMessage);
 
-		// if the tree has only one or zero views, make the combo area disable
+		// if the tree has only one or zero views, disable the filter text control
 		if (hasAtMostOneView(filteredTree.getViewer())) {
-			filteredTree.getFilterControl().setEnabled(false);
+			Text filterText = filteredTree.getFilterControl();
+			if (filterText != null)
+				filterText.setEnabled(false);
 		}
 
 		applyDialogFont(filteredTree);

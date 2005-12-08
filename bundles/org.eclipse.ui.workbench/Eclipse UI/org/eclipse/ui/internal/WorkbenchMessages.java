@@ -480,7 +480,6 @@ public class WorkbenchMessages extends NLS {
 	public static String Error;
 	public static String Information;
 
-	public static String WorkbenchPreferenceDialog_FilterMessage;
 	public static String ErrorPreferencePage_errorMessage;
 
 	public static String ListSelection_title;
@@ -815,7 +814,7 @@ public class WorkbenchMessages extends NLS {
 	public static String RectangleAnimation_Animating_Rectangle;
 	public static String FilteredList_UpdateJobName;
 	public static String FilteredTree_ClearToolTip;
-	public static String FilteredTree_FilteredMessage;
+	public static String FilteredTree_FilterMessage;
 	public static String FilteredTree_FilteredDialogTitle;
 	public static String Workbench_restoreDisabled;
 	public static String Workbench_noStateToRestore;

@@ -333,8 +333,6 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
 		filterTree.setBackground(parent.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
-		filterTree
-				.setInitialText(WorkbenchMessages.WorkbenchPreferenceDialog_FilterMessage);
 
         treeViewer.getTree().setFont(parent.getFont());
 

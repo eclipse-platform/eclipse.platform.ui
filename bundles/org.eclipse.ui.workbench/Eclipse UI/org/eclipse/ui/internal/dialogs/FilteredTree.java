@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -129,7 +130,37 @@ public class FilteredTree extends Composite {
         setLayout(layout);
 
         setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+        boolean showText = PlatformUI.getPreferenceStore()
+				.getBoolean(IWorkbenchPreferenceConstants.SHOW_FILTERED_TEXTS);
+
+        if (showText){
+        	createFilterWidgets(parent);
+        }
         
+        treeViewer = new TreeViewer(this, treeStyle);
+        GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+        treeViewer.getControl().setLayoutData(data);
+        treeViewer.getControl().addDisposeListener(new DisposeListener(){
+        	/* (non-Javadoc)
+        	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+        	 */
+        	public void widgetDisposed(DisposeEvent e) {
+        		refreshJob.cancel();
+        	}
+        });
+        treeViewer.addFilter(patternFilter);
+        
+        createRefreshJob();
+        setInitialText(WorkbenchMessages.FilteredTree_FilterMessage);
+    }
+    
+    /**
+     * Create the filter text and corresponding tool bar button that clears
+     * the contents of the text.  
+     *
+     */
+    protected void createFilterWidgets(Composite parent){
         filterParent = new Composite(this, SWT.NONE);
         GridLayout filterLayout = new GridLayout();
         filterLayout.numColumns = 2;
@@ -137,10 +168,9 @@ public class FilteredTree extends Composite {
         filterLayout.marginWidth = 0;
         filterParent.setLayout(filterLayout);
         filterParent.setFont(parent.getFont());
-        filterParent.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-
-        createFilterControl(filterParent);
-        getFilterControl().addKeyListener(new KeyAdapter() {
+        filterParent.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));    	
+        createFilterText(filterParent);
+        filterText.addKeyListener(new KeyAdapter() {
             /*
              * (non-Javadoc)
              * 
@@ -161,7 +191,7 @@ public class FilteredTree extends Composite {
         });
         
         // enter key set focus to tree
-        getFilterControl().addTraverseListener( new TraverseListener () {
+        filterText.addTraverseListener( new TraverseListener () {
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_RETURN) {
 					e.doit = false;
@@ -170,7 +200,7 @@ public class FilteredTree extends Composite {
 					} else {
 						// if the initial filter text hasn't changed, do not try to match
 						boolean hasFocus = getViewer().getTree().setFocus();
-						boolean textChanged = !getInitialText().equals(getFilterControl().getText().trim());
+						boolean textChanged = !getInitialText().equals(filterText.getText().trim());
 						if (hasFocus && textChanged){
 							TreeItem item = getFirstHighlightedItem(getViewer().getTree().getItems());
 							if (item != null){
@@ -185,7 +215,7 @@ public class FilteredTree extends Composite {
 		});
 
         GridData data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-        getFilterControl().setLayoutData(data);
+        filterText.setLayoutData(data);
 
         ToolBar toolBar = new ToolBar(filterParent, SWT.FLAT | SWT.HORIZONTAL);
         filterToolBar = new ToolBarManager(toolBar);
@@ -195,23 +225,14 @@ public class FilteredTree extends Composite {
         filterToolBar.update(false);
         // initially there is no text to clear
         filterToolBar.getControl().setVisible(false);
-
-        treeViewer = new TreeViewer(this, treeStyle);
-        data = new GridData(SWT.FILL, SWT.FILL, true, true);
-        treeViewer.getControl().setLayoutData(data);
-        treeViewer.getControl().addDisposeListener(new DisposeListener(){
-        	/* (non-Javadoc)
-        	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-        	 */
-        	public void widgetDisposed(DisposeEvent e) {
-        		refreshJob.cancel();
-        	}
-        });
-        treeViewer.addFilter(patternFilter);
-        
-        createRefreshJob();
     }
 
+    /**
+     * Return the first item in the tree that matches the filter pattern.
+     * 
+     * @param items
+     * @return the first matching TreeItem
+     */
     private TreeItem getFirstHighlightedItem(TreeItem[] items){
 		for (int i = 0; i < items.length; i++){
 			if (patternFilter.isElementMatch(treeViewer, items[i].getData()) && patternFilter.isElementSelectable(items[i].getData())){
@@ -221,6 +242,7 @@ public class FilteredTree extends Composite {
 		}
 		return null;
     }
+    
     /**
      * Create the refresh job for the receiver.
      *
@@ -234,29 +256,34 @@ public class FilteredTree extends Composite {
 				if(treeViewer.getControl().isDisposed())
 					return Status.CANCEL_STATUS;
 				
-				String filterText = getFilterControl().getText();
-		        boolean initial = initialText != null && filterText.equals(initialText); 
+				String text = getFilterString();
+				if (text == null)	// filter text not being used
+					return Status.OK_STATUS;
+				
+		        boolean initial = initialText != null && initialText.equals(text); 
 		        if (initial) {
 		            patternFilter.setPattern(null);
-		        } else {
-		            patternFilter.setPattern(filterText);
+		        } else if (text != null){
+		            patternFilter.setPattern(text);
 		        }       
 		        treeViewer.getControl().setRedraw(false);
 		        treeViewer.refresh(true);
 		        treeViewer.getControl().setRedraw(true);
 		       
-		        if (filterText.length() > 0 && !initial) {
+		        if (text.length() > 0 && !initial) {
 		            treeViewer.expandAll();
 		            TreeItem[] items = getViewer().getTree().getItems();
 		            if (items.length > 0)
 		            	treeViewer.getTree().showItem(items[0]);	// to prevent scrolling
 		            // enabled toolbar is a hint that there is text to clear
 		            // and the list is currently being filtered
-		            filterToolBar.getControl().setVisible(true);
+		            if (filterToolBar != null)
+		            	filterToolBar.getControl().setVisible(true);
 		        } else {
 		            // disabled toolbar is a hint that there is no text to clear
 		            // and the list is currently not filtered
-		            filterToolBar.getControl().setVisible(viewerFilter != null);
+		            if (filterToolBar != null)
+		            	filterToolBar.getControl().setVisible(viewerFilter != null);
 		        }
 		        return Status.OK_STATUS;
 			}
@@ -268,7 +295,7 @@ public class FilteredTree extends Composite {
 	/**
 	 * Create the filter control.
 	 */
-	protected void createFilterControl(Composite parent) {
+	protected void createFilterText(Composite parent) {
 		filterText =  new Text(parent, SWT.SINGLE | SWT.BORDER);
 		filterText.getAccessible().addAccessibleListener(
 				new AccessibleAdapter(){
@@ -276,7 +303,7 @@ public class FilteredTree extends Composite {
 					 * @see org.eclipse.swt.accessibility.AccessibleListener#getName(org.eclipse.swt.accessibility.AccessibleEvent)
 					 */
 					public void getName(AccessibleEvent e) {
-						String filterTextString = getFilterControl().getText();
+						String filterTextString = filterText.getText();
 						if(filterTextString.length() == 0){
 							e.result = initialText;
 						}
@@ -353,8 +380,10 @@ public class FilteredTree extends Composite {
 	 * @param string
 	 */
 	protected void setFilterText(String string) {
-		filterText.setText(string);
-		selectAll();		
+		if (filterText != null){
+			filterText.setText(string);
+			selectAll();		
+		}
 	}
 
 	/**
@@ -367,16 +396,29 @@ public class FilteredTree extends Composite {
     }
 
     /**
-     * Get the filter text field associated with this control.
+     * Get the filter text field associated with this control,  
+     * if it was created. Otherwise return null.
      * 
-     * @return the text field
+     * @return the filter Text, or null if it was not created
      */
     public Text getFilterControl() {
         return filterText;
     }
+    
+    /**
+     * Convenience method to return the text of the filter control.
+     * If the text widget is not created, then null is returned.
+     * 
+     * @return String in the text, or null if the text does not exist
+     */
+    protected String getFilterString(){
+    	return filterText != null ? filterText.getText() : null;
+    }
 
     /**
      * Set the text that will be shown until the first focus.
+     * A default value is provided, so this method only need be 
+     * called if overriding the default initial text is desired.
      * 
      * @param text
      */
@@ -388,7 +430,8 @@ public class FilteredTree extends Composite {
         listener = new FocusListener() {
             public void focusGained(FocusEvent event) {
                 selectAll();
-                getFilterControl().removeFocusListener(listener);
+                if (filterText != null)
+                	filterText.removeFocusListener(listener);
             }
 
             /*
@@ -399,11 +442,13 @@ public class FilteredTree extends Composite {
             public void focusLost(FocusEvent e) {
             }
         };
-        getFilterControl().addFocusListener(listener);
+        if (filterText != null)
+        	filterText.addFocusListener(listener);
     }
 
 	protected void selectAll() {
-		filterText.selectAll();
+		if (filterText != null)
+			filterText.selectAll();
 	}
 
 	/**
@@ -415,16 +460,16 @@ public class FilteredTree extends Composite {
 	}
 
 	/**
-	 * Add the filter to the viewer.
+	 * Add an optional filter to the viewer.
 	 * @param filter
 	 */
 	public void addFilter(ViewerFilter filter) {
 		viewerFilter = filter;
 		getViewer().addFilter(filter);
-		setInitialText(WorkbenchMessages.FilteredTree_FilteredMessage);
+		setInitialText(WorkbenchMessages.FilteredTree_FilterMessage);
 		
-		if(getFilterControl() != null){
-			setFilterText(WorkbenchMessages.FilteredTree_FilteredMessage);
+		if(filterText != null){
+			setFilterText(WorkbenchMessages.FilteredTree_FilterMessage);
 			textChanged();
 		}
 		
@@ -452,17 +497,20 @@ public class FilteredTree extends Composite {
 	 */
 	protected static Font getBoldFont(Object element, FilteredTree tree,
 			PatternFilter filter) {
-		String filterText = tree.getFilterControl().getText();
+		String filterText = tree.getFilterString();
 
+		if (filterText == null)	// filter text not being used
+			return null;
+		
 		// Do nothing if it's empty string
 		String initialText = tree.getInitialText();
-		if (!(filterText.equals("") || filterText.equals(initialText))) {//$NON-NLS-1$
+		if (!("".equals(filterText) || initialText.equals(filterText))) {//$NON-NLS-1$
 
 			boolean initial = initialText != null
-					&& filterText.equals(initialText);
+					&& initialText.equals(filterText);
 			if (initial) {
 				filter.setPattern(null);
-			} else {
+			} else if (filterText != null){
 				filter.setPattern(filterText);
 			}
 
