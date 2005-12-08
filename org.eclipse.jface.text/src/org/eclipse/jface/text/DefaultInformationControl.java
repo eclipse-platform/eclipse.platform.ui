@@ -13,23 +13,21 @@ package org.eclipse.jface.text;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Drawable;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.dialogs.PopupDialog;
 
 
 /**
@@ -41,7 +39,7 @@ import org.eclipse.swt.widgets.Shell;
  *
  * @since 2.0
  */
-public class DefaultInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3,  DisposeListener {
+public class DefaultInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3 {
 
 	/**
 	 * An information presenter determines the style presentation
@@ -68,6 +66,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		 */
 		String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
 	}
+	
 	
 	/**
 	 * An information presenter determines the style presentation
@@ -102,18 +101,35 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	
 
 	/**
-	 * Outer border thickness in pixels.
-	 * @since 3.1
+	 * Subclass to access some protected methods of {@link PopupDialog}.
+	 * <p>
+	 * XXX: Filed the following enhancement request to make saveDialogBounds(Shell) public:
+	 *  	https://bugs.eclipse.org/bugs/show_bug.cgi?id=119598
+	 * </p>
+	 * 
+	 * @since 3.2
 	 */
-	private static final int OUTER_BORDER= 1;
+	private static class InformationPopup extends PopupDialog {
+		public InformationPopup(Shell parent, int shellStyle, boolean takeFocusOnOpen, boolean persistBounds, boolean showDialogMenu, boolean showPersistAction, String titleText, String infoText) {
+			super(parent, shellStyle, takeFocusOnOpen, persistBounds, showDialogMenu, showPersistAction, titleText, infoText);
+		}
+		public void saveDialogBounds(Shell shell) {
+			super.saveDialogBounds(shell);
+		}
+	}
+
+	
 	/**
 	 * Inner border thickness in pixels.
 	 * @since 3.1
 	 */
 	private static final int INNER_BORDER= 1;
 
-	/** The control's shell */
-	private Shell fShell;
+	/**
+	 * The control's popup dialog.
+	 * @since 3.2
+	 */
+	private InformationPopup fPopupDialog;
 	/** The control's text widget */
 	private StyledText fText;
 	/** The information presenter */
@@ -124,12 +140,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	private int fMaxWidth= -1;
 	/** The control height constraint */
 	private int fMaxHeight= -1;
-	/**
-	 * The font of the optional status text label.
-	 *
-	 * @since 3.0
-	 */
-	private Font fStatusTextFont;
+	
 
 	/**
 	 * Creates a default information control with the given shell as parent. The given
@@ -150,7 +161,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * information presenter is used to process the information to be displayed. The given
 	 * styles are applied to the created styled text widget.
 	 *
-	 * @param parent the parent shell
+	 * @param parentShell the parent shell
 	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the styled text widget
 	 * @param presenter the presenter to be used
@@ -158,79 +169,33 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 *                         or <code>null</code> if the status field should be hidden
 	 * @since 3.0
 	 */
-	public DefaultInformationControl(Shell parent, int shellStyle, int style, IInformationPresenter presenter, String statusFieldText) {
-		GridLayout layout;
-		GridData gd;
+	public DefaultInformationControl(Shell parentShell, int shellStyle, final int style, IInformationPresenter presenter, String statusFieldText) {
 
-		fShell= new Shell(parent, SWT.NO_FOCUS | SWT.ON_TOP | shellStyle);
-		Display display= fShell.getDisplay();
-		fShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		fPopupDialog= new InformationPopup(parentShell, shellStyle | PopupDialog.HOVER_SHELLSTYLE, false, false, false, false, null, statusFieldText) {
+			protected Control createDialogArea(Composite parent) {
+				// Text field
+				fText= new StyledText(parent, SWT.MULTI | SWT.READ_ONLY | style);
+				GridData gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
+				gd.horizontalIndent= INNER_BORDER;
+				gd.verticalIndent= INNER_BORDER;
+				fText.setLayoutData(gd);
+				fText.addKeyListener(new KeyListener() {
 
-		Composite composite= fShell;
-		layout= new GridLayout(1, false);
-		int border= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : OUTER_BORDER;
-		layout.marginHeight= border;
-		layout.marginWidth= border;
-		composite.setLayout(layout);
-		gd= new GridData(GridData.FILL_BOTH);
-		composite.setLayoutData(gd);
+					public void keyPressed(KeyEvent e)  {
+						if (e.character == 0x1B) // ESC
+							close();
+					}
 
-		composite= new Composite(composite, SWT.NONE);
-		layout= new GridLayout(1, false);
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		layout.verticalSpacing= 1;
-		composite.setLayout(layout);
-		gd= new GridData(GridData.FILL_BOTH);
-		composite.setLayoutData(gd);
-		composite.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-		composite.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-
-		// Text field
-		fText= new StyledText(composite, SWT.MULTI | SWT.READ_ONLY | style);
-		gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
-		gd.horizontalIndent= INNER_BORDER;
-		gd.verticalIndent= INNER_BORDER;
-		fText.setLayoutData(gd);
-		fText.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-		fText.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		fText.addKeyListener(new KeyListener() {
-
-			public void keyPressed(KeyEvent e)  {
-				if (e.character == 0x1B) // ESC
-					fShell.dispose();
+					public void keyReleased(KeyEvent e) {}
+				});
+				return fText;
 			}
-
-			public void keyReleased(KeyEvent e) {}
-		});
+		};
 
 		fPresenter= presenter;
 
-		// Status field
-		if (statusFieldText != null) {
-
-			// Horizontal separator line
-			Label separator= new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
-			separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-			// Status field label
-			Label statusField= new Label(composite, SWT.RIGHT);
-			statusField.setText(statusFieldText);
-			Font font= statusField.getFont();
-			FontData[] fontDatas= font.getFontData();
-			for (int i= 0; i < fontDatas.length; i++)
-				fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
-			fStatusTextFont= new Font(statusField.getDisplay(), fontDatas);
-			statusField.setFont(fStatusTextFont);
-			gd= new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
-			statusField.setLayoutData(gd);
-
-			statusField.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-
-			statusField.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		}
-
-		addDisposeListener(this);
+		// Force create early so that listeners can be added at all times with API.
+		fPopupDialog.create();
 	}
 
 	/**
@@ -294,9 +259,9 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		} else {
 			fPresentation.clear();
 			if (fPresenter instanceof IInformationPresenterExtension)
-				content= ((IInformationPresenterExtension)fPresenter).updatePresentation(fShell, content, fPresentation, fMaxWidth, fMaxHeight);
+				content= ((IInformationPresenterExtension)fPresenter).updatePresentation(fPopupDialog.getShell(), content, fPresentation, fMaxWidth, fMaxHeight);
 			else
-				content= fPresenter.updatePresentation(fShell.getDisplay(), content, fPresentation, fMaxWidth, fMaxHeight);
+				content= fPresenter.updatePresentation(fPopupDialog.getShell().getDisplay(), content, fPresentation, fMaxWidth, fMaxHeight);
 			if (content != null) {
 				fText.setText(content);
 				TextPresentation.applyTextPresentation(fPresentation, fText);
@@ -310,48 +275,38 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
-			fShell.setVisible(visible);
+		if (visible)
+			fPopupDialog.open();
+		else {
+			fPopupDialog.saveDialogBounds(fPopupDialog.getShell());
+			fPopupDialog.getShell().setVisible(false);
+		}
 	}
 
 	/*
 	 * @see IInformationControl#dispose()
 	 */
 	public void dispose() {
-		if (fShell != null && !fShell.isDisposed())
-			fShell.dispose();
-		else
-			widgetDisposed(null);
-	}
-
-	/*
-	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-	 * @since 3.0
-	 */
-	public void widgetDisposed(DisposeEvent event) {
-		if (fStatusTextFont != null && !fStatusTextFont.isDisposed())
-			fStatusTextFont.dispose();
-
-		fShell= null;
-		fText= null;
-		fStatusTextFont= null;
+		fPopupDialog.close();
+		fPopupDialog= null;
 	}
 
 	/*
 	 * @see IInformationControl#setSize(int, int)
 	 */
 	public void setSize(int width, int height) {
-		fShell.setSize(width, height);
+		fPopupDialog.getShell().setSize(width, height);
 	}
 
 	/*
 	 * @see IInformationControl#setLocation(Point)
 	 */
 	public void setLocation(Point location) {
-		Rectangle trim= fShell.computeTrim(0, 0, 0, 0);
+		Rectangle trim= computeTrim();
 		Point textLocation= fText.getLocation();
 		location.x += trim.x - textLocation.x;
 		location.y += trim.y - textLocation.y;
-		fShell.setLocation(location);
+		fPopupDialog.getShell().setLocation(location);
 	}
 
 	/*
@@ -366,7 +321,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#computeSizeHint()
 	 */
 	public Point computeSizeHint() {
-		return fShell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		return fPopupDialog.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	}
 
 	/*
@@ -374,7 +329,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @since 3.0
 	 */
 	public Rectangle computeTrim() {
-		return fShell.computeTrim(0, 0, 0, 0);
+		return fPopupDialog.getShell().computeTrim(0, 0, 0, 0);
 	}
 
 	/*
@@ -382,7 +337,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @since 3.0
 	 */
 	public Rectangle getBounds() {
-		return fShell.getBounds();
+		return fPopupDialog.getShell().getBounds();
 	}
 
 	/*
@@ -405,14 +360,14 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#addDisposeListener(DisposeListener)
 	 */
 	public void addDisposeListener(DisposeListener listener) {
-		fShell.addDisposeListener(listener);
+		fPopupDialog.getShell().addDisposeListener(listener);
 	}
 
 	/*
 	 * @see IInformationControl#removeDisposeListener(DisposeListener)
 	 */
 	public void removeDisposeListener(DisposeListener listener) {
-		fShell.removeDisposeListener(listener);
+		fPopupDialog.getShell().removeDisposeListener(listener);
 	}
 
 	/*
@@ -440,7 +395,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#setFocus()
 	 */
 	public void setFocus() {
-		fShell.forceFocus();
+		fPopupDialog.getShell().forceFocus();
 		fText.setFocus();
 	}
 
