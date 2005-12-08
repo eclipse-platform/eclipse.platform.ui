@@ -45,10 +45,7 @@ public class DefaultUpdatePolicy extends AbstractUpdatePolicy implements IModelC
 				handleRemove(node);
 			}
 
-			IModelDeltaNode[] childNodes = node.getNodes();
-			for (int j = 0; j < childNodes.length; j++) {
-				updateNodes(childNodes);
-			}
+			updateNodes(node.getNodes());
 		}
 	}
 
