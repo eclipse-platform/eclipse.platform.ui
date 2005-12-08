@@ -181,6 +181,12 @@
            namespace="org.eclipse.core.resources"
            properties="open"
            type="org.eclipse.core.resources.IProject"/>
+      <propertyTester
+            namespace="org.eclipse.core.resources"
+            type="org.eclipse.core.resources.mapping.ResourceMapping"
+            class="org.eclipse.core.internal.propertytester.ResourceMappingPropertyTester"
+            properties="projectPersistentProperty"
+            id="org.eclipse.core.resources.mappingPropertyTester"/>
    </extension>
 
 </plugin>

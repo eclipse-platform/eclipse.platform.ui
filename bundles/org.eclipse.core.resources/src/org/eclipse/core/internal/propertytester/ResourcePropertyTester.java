@@ -27,19 +27,19 @@ public class ResourcePropertyTester extends PropertyTester {
 	 * A property indicating the file extension (value <code>"extension"</code>).
 	 * "*" and "?" wild cards are supported.
 	 */
-	private static final String EXTENSION = "extension"; //$NON-NLS-1$
+	protected static final String EXTENSION = "extension"; //$NON-NLS-1$
 
 	/**
 	 * A property indicating the file name (value <code>"name"</code>). "*"
 	 * and "?" wild cards are supported.
 	 */
-	private static final String NAME = "name"; //$NON-NLS-1$
+	protected static final String NAME = "name"; //$NON-NLS-1$
 
 	/**
 	 * A property indicating the file path (value <code>"path"</code>). "*"
 	 * and "?" wild cards are supported.
 	 */
-	private static final String PATH = "path"; //$NON-NLS-1$
+	protected static final String PATH = "path"; //$NON-NLS-1$
 
 	/**
 	 * A property indicating a persistent property on the selected resource
@@ -49,13 +49,13 @@ public class ResourcePropertyTester extends PropertyTester {
 	 * given, this treats it as the property name, and simply tests for existence of
 	 * the property on the resource.
 	 */
-	private static final String PERSISTENT_PROPERTY = "persistentProperty"; //$NON-NLS-1$
+	protected static final String PERSISTENT_PROPERTY = "persistentProperty"; //$NON-NLS-1$
 
 	/**
 	 * A property indicating the project nature (value
 	 * <code>"projectNature"</code>).
 	 */
-	private static final String PROJECT_NATURE = "projectNature"; //$NON-NLS-1$
+	protected static final String PROJECT_NATURE = "projectNature"; //$NON-NLS-1$
 
 	/**
 	 * A property indicating a persistent property on the selected resource's
@@ -65,7 +65,7 @@ public class ResourcePropertyTester extends PropertyTester {
 	 * expected value) is given, this treats it as the property name, and simply
 	 * tests for existence of the property on the resource.
 	 */
-	private static final String PROJECT_PERSISTENT_PROPERTY = "projectPersistentProperty"; //$NON-NLS-1$
+	protected static final String PROJECT_PERSISTENT_PROPERTY = "projectPersistentProperty"; //$NON-NLS-1$
 
 	/**
 	 * A property indicating a session property on the selected resource's
@@ -75,13 +75,13 @@ public class ResourcePropertyTester extends PropertyTester {
 	 * expected value) is given, this treats it as the property name, and simply
 	 * tests for existence of the property on the resource.
 	 */
-	private static final String PROJECT_SESSION_PROPERTY = "projectSessionProperty"; //$NON-NLS-1$
+	protected static final String PROJECT_SESSION_PROPERTY = "projectSessionProperty"; //$NON-NLS-1$
 
 	/**
 	 * A property indicating whether the file is read only (value
 	 * <code>"readOnly"</code>).
 	 */
-	private static final String READ_ONLY = "readOnly"; //$NON-NLS-1$
+	protected static final String READ_ONLY = "readOnly"; //$NON-NLS-1$
 
 	/**
 	 * A property indicating a session property on the selected resource (value
@@ -91,7 +91,7 @@ public class ResourcePropertyTester extends PropertyTester {
 	 * given, this treats it as the property name, and simply tests for existence of
 	 * the property on the resource.
 	 */
-	private static final String SESSION_PROPERTY = "sessionProperty"; //$NON-NLS-1$
+	protected static final String SESSION_PROPERTY = "sessionProperty"; //$NON-NLS-1$
 
 	/*
 	 * (non-Javadoc)
@@ -153,7 +153,7 @@ public class ResourcePropertyTester extends PropertyTester {
 	 *            used only if args is of length 0 (see Javadoc for args parameter) 
 	 * @return whether there is a match
 	 */
-	private boolean testProperty(IResource resource, boolean persistentFlag, Object[] args, Object expectedValue) {
+	protected boolean testProperty(IResource resource, boolean persistentFlag, Object[] args, Object expectedValue) {
 		//the project of IWorkspaceRoot is null
 		if (resource == null)
 			return false;
@@ -202,7 +202,7 @@ public class ResourcePropertyTester extends PropertyTester {
 	 * @param name the name
 	 * @return the qualified name
 	 */
-	private QualifiedName toQualifedName(String name) {
+	protected QualifiedName toQualifedName(String name) {
 		QualifiedName key;
 		int dot = name.lastIndexOf('.');
 		if (dot != -1) {
