@@ -19,11 +19,14 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoFilter;
+import org.eclipse.team.core.synchronize.SyncInfoFilter.ContentComparisonSyncInfoFilter;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.diff.DiffTree;
@@ -61,6 +64,18 @@ public class CVSMergeContext extends MergeContext {
 			if (info instanceof CVSSyncInfo) {
 				CVSSyncInfo cvsInfo = (CVSSyncInfo) info;		
 				cvsInfo.makeOutgoing(monitor);
+				if (inSyncHint) {
+					// Compare the contents of the file with the remote
+					// and make the file in-sync if they match
+					ContentComparisonSyncInfoFilter comparator = new SyncInfoFilter.ContentComparisonSyncInfoFilter(false);
+					IResource resource = info.getLocal();
+					if (resource.getType() == IResource.FILE && info.getRemote() != null) {
+						if (comparator.compareContents((IFile)resource, info.getRemote(), Policy.subMonitorFor(monitor, 100))) {
+							ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
+							cvsFile.checkedIn(null, false /* not a commit */);
+						}
+					}
+				}
 			}
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
