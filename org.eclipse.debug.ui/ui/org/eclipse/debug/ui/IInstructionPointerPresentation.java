@@ -31,8 +31,8 @@ public interface IInstructionPointerPresentation extends IDebugModelPresentation
 	 * By default, the debug platform uses different annotations for top stack
 	 * frames and non-top stack frames in a thread. The default platform annotations
 	 * are contributed as <code>markerAnnotationSpecification</code> extensions with
-	 * the identifiers {@link IDebugUIConstants.ANNOTATION_INSTRUCTION_POINTER_CURRENT}
-	 * and @link {@link IDebugUIConstants.ANNOTAION_INSTRUCTION_POINTER_SECONDARY}.
+	 * the identifiers <code>IDebugUIConstants.ANNOTATION_INSTRUCTION_POINTER_CURRENT</code>
+	 * and <code>IDebugUIConstants.ANNOTAION_INSTRUCTION_POINTER_SECONDARY</code>.
 	 * </p>
 	 * @param editorPart the editor the debugger has opened
 	 * @param frame the stack frame for which the debugger is displaying
