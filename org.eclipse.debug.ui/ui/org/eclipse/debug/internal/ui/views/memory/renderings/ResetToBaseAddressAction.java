@@ -63,17 +63,12 @@ public class ResetToBaseAddressAction extends Action {
 				} catch (DebugException e) {
 					MemoryViewUtil.openError(DebugUIMessages.AbstractTableRendering_12, DebugUIMessages.AbstractTableRendering_13, e); //
 				}
+				return;
 			}
-			else
-			{
-				// call old method
-				fRendering.reset();
-			}
-			
 		} catch (SecurityException e) {
-			fRendering.reset();
 		} catch (NoSuchMethodException e) {
-			fRendering.reset();
 		}
+		// call old method
+		fRendering.reset();
     }
 }
