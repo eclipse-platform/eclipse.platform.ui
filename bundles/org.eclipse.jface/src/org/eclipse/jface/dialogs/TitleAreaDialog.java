@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Text;
  * <p>
  * This dialog class may be subclassed.
  */
-public class TitleAreaDialog extends TrayDialog {
+public class TitleAreaDialog extends Dialog {
     /**
      * Image registry key for error message image.
      */
@@ -133,21 +133,22 @@ public class TitleAreaDialog extends TrayDialog {
      * @see Dialog.createContents(Composite)
      */
     protected Control createContents(Composite parent) {
-    	// create the overall composite
-    	Composite contents = new Composite(parent, SWT.NONE);
-        contents.setLayoutData(new GridData(GridData.FILL_BOTH));
         // initialize the dialog units
-        initializeDialogUnits(contents);
+        initializeDialogUnits(parent);
         FormLayout layout = new FormLayout();
-        contents.setLayout(layout);
+        parent.setLayout(layout);
+        FormData data = new FormData();
+        data.top = new FormAttachment(0, 0);
+        data.bottom = new FormAttachment(100, 0);
+        parent.setLayoutData(data);
         //Now create a work area for the rest of the dialog
-        workArea = new Composite(contents, SWT.NONE);
+        workArea = new Composite(parent, SWT.NULL);
         GridLayout childLayout = new GridLayout();
         childLayout.marginHeight = 0;
         childLayout.marginWidth = 0;
         childLayout.verticalSpacing = 0;
         workArea.setLayout(childLayout);
-        Control top = createTitleArea(contents);
+        Control top = createTitleArea(parent);
         resetWorkAreaAttachments(top);
         workArea.setFont(JFaceResources.getDialogFont());
         // initialize the dialog units
@@ -155,7 +156,7 @@ public class TitleAreaDialog extends TrayDialog {
         // create the dialog area and button bar
         dialogArea = createDialogArea(workArea);
         buttonBar = createButtonBar(workArea);
-        return contents;
+        return parent;
     }
 
     /**
