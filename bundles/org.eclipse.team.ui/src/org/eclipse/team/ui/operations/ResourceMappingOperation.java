@@ -12,8 +12,7 @@ package org.eclipse.team.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.team.core.mapping.*;
@@ -87,17 +86,80 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 	/**
 	 * Adjust the input of the operation according to the selected
 	 * resource mappings and the set of interested participants
-	 * @param monitor 
+	 * @param monitor a progress monitor
 	 */
 	protected void buildScope(IProgressMonitor monitor) throws InvocationTargetException {
 		try {
 			scope = getScopeBuilder().prepareScope(getJobName(), selectedMappings, context, monitor);
+			IResourceMappingScope inputScope = new ScopeGenerator().asInputScope(scope);
 			if (scope.hasAdditionalMappings()) {
-				promptForInputChange(monitor);
+				// There are additional mappings so we may need to prompt
+				ModelProvider[] inputModelProviders = inputScope.getModelProviders();
+				if (scope.hasAdditonalResources()) {
+					// We definitely need to prompt to indicate that additional resources
+					promptForInputChange(monitor);
+				} else if (inputModelProviders.length == 1) {
+					// We may need to prompt depending on the nature of the additional mappings
+					// We need to prompt if the additional mappings are from the same model as
+					// the input or if they are from a model that has no relationship to the input model
+					String modelProviderId = inputModelProviders[0].getDescriptor().getId();
+					ResourceMapping[] mappings = scope.getMappings();
+					boolean prompt = false;
+					for (int i = 0; i < mappings.length; i++) {
+						ResourceMapping mapping = mappings[i];
+						if (inputScope.getTraversals(mapping) == null) {
+							// This mapping was not in the input
+							String id = mapping.getModelProviderId();
+							if (id.equals(modelProviderId)) {
+								prompt = true;
+								break;
+							} else if (isIndependantModel(modelProviderId, id)) {
+								prompt = true;
+								break;
+							}
+						}
+					}
+					if (prompt)
+						promptForInputChange(monitor);
+				} else {
+					// The input had mixed mappings so just prompt with the additional mappings
+					// TODO: Perhaps we could do better (bug 119921)
+					promptForInputChange(monitor);
+				}
 			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		}
+	}
+
+	private boolean isIndependantModel(String modelProviderId, String id) {
+		IModelProviderDescriptor desc1 = ModelProvider.getModelProviderDescriptor(modelProviderId);
+		IModelProviderDescriptor desc2 = ModelProvider.getModelProviderDescriptor(id);
+		
+		return !(isExtension(desc1, desc2) || isExtension(desc2, desc1));
+	}
+
+	/*
+	 * Return whether the desc1 model extends the desc2 model
+	 */
+	private boolean isExtension(IModelProviderDescriptor desc1, IModelProviderDescriptor desc2) {
+		String[] ids = desc1.getExtendedModels();
+		// First check direct extension
+		for (int i = 0; i < ids.length; i++) {
+			String id = ids[i];
+			if (id.equals(desc2.getId())) {
+				return true;
+			}
+		}
+		// Now check for indirect extension
+		for (int i = 0; i < ids.length; i++) {
+			String id = ids[i];
+			IModelProviderDescriptor desc3 = ModelProvider.getModelProviderDescriptor(id);
+			if (isExtension(desc3, desc2)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

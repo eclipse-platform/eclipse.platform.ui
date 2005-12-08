@@ -64,13 +64,34 @@ public class ResourceMappingInputScope extends AbstractResourceMappingScope {
 	 * @see org.eclipse.team.ui.mapping.IResourceMappingScope#getTraversals(org.eclipse.core.resources.mapping.ResourceMapping)
 	 */
 	public ResourceTraversal[] getTraversals(ResourceMapping mapping) {
+		if (!contains(mapping)) {
+			return null;
+		}
 		return wrappedScope.getTraversals(mapping);
+	}
+
+	private boolean contains(ResourceMapping mapping) {
+		ResourceMapping[] mappings = getMappings();
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping child = mappings[i];
+			if (child.equals(mapping)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.IResourceMappingScope#hasAdditionalMappings()
 	 */
 	public boolean hasAdditionalMappings() {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingScope#hasAdditonalResources()
+	 */
+	public boolean hasAdditonalResources() {
 		return false;
 	}
 }

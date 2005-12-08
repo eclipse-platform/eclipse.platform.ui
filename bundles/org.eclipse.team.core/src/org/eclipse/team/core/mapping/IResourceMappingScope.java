@@ -97,6 +97,15 @@ public interface IResourceMappingScope {
 	public boolean hasAdditionalMappings();
 
 	/**
+	 * Return whether the scope has additional resources added due to additional
+	 * resource mappings.
+	 * 
+	 * @return whether the input has additional resources added due to
+	 *         additional resource mappings
+	 */
+	public boolean hasAdditonalResources();
+	
+	/**
 	 * Return all the model providers that have mappings in this scope.
 	 * 
 	 * @return all the model providers that have mappings in this scope

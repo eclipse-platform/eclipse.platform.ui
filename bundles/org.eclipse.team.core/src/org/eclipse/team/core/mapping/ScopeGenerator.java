@@ -72,6 +72,8 @@ public class ScopeGenerator {
 		}
 		Set handledResources = new HashSet();
 		Set newResources;
+		boolean firstTime = true;
+		boolean hasAdditionalResources = false;
 		do {
 			newResources = addMappingsToScope(scope, targetMappings, context,
 					Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
@@ -92,9 +94,14 @@ public class ScopeGenerator {
 			}
 
 			handledResources.addAll(newResources);
-
+			if (firstTime) {
+				firstTime = false;
+			} else if (!hasAdditionalResources) {
+				hasAdditionalResources = !newResources.isEmpty();
+			}
 		} while (!newResources.isEmpty());
 		setHasAdditionalMappings(scope, hasAdditionalMappings(scope));
+		scope.setHasAdditionalResources(hasAdditionalResources);
 		return scope;
 	}
 
@@ -103,8 +110,8 @@ public class ScopeGenerator {
 	 * intended to be subclassed.
 	 * 
 	 * @param scope the scope
-	 * @param hasAdditionalMappings a bollean indicating if the scope has
-	 *            additonal mappings
+	 * @param hasAdditionalMappings a boolean indicating if the scope has
+	 *            additional mappings
 	 */
 	protected void setHasAdditionalMappings(
 			ResourceMappingScope scope, boolean hasAdditionalMappings) {

@@ -39,6 +39,7 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	private final Map mappingsToTraversals = new HashMap();
 	private boolean hasAdditionalMappings;
 	private final String label;
+	private boolean hasAdditionalResources;
 
 	public static ResourceTraversal[] combineTraversals(ResourceTraversal[] allTraversals) {
 		Set zero = new HashSet();
@@ -149,5 +150,21 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	 */
 	public String getName() {
 		return label;
+	}
+
+	/**
+	 * Set whether this scope has additional resources.
+	 * This method should only be invoked during the scope building process.
+	 * @param hasAdditionalResources whether the scope has additional resources
+	 */
+	public void setHasAdditionalResources(boolean hasAdditionalResources) {
+		this.hasAdditionalResources = hasAdditionalResources;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingScope#hasAdditonalResources()
+	 */
+	public boolean hasAdditonalResources() {
+		return hasAdditionalResources;
 	}
 }
