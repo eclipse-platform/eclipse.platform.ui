@@ -141,7 +141,7 @@ public interface IPreferenceStore {
      *
      * @param name the name of the preference
      * @return <code>true</code> if either a current value or a default
-     *  value is known for the named preference, and <code>false</code>otherwise
+     *  value is known for the named preference, and <code>false</code> otherwise
      */
     public boolean contains(String name);
 
