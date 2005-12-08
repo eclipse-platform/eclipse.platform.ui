@@ -252,4 +252,11 @@ public final class HippieProposalComputer implements ICompletionProposalComputer
 
 		return (String[]) uniqueSuggestions.toArray(new String[0]);
 	}
+
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalComputer#getErrorMessage()
+	 */
+	public String getErrorMessage() {
+		return null; // no custom error message
+	}
 }
