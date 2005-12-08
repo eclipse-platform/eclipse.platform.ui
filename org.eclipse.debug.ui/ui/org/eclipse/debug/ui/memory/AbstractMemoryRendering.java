@@ -57,12 +57,12 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	private MenuManager fPopupMenuMgr;
 	private String fRenderingId;
 	
-	/*
-	* Cient may provide a label decorator adapter from its memory block
-	* to decorate the label of a rendering.
-	* @since 3.2 
-	*/
-	protected ILabelDecorator fLabelDecorator;
+	/**
+	 * Cient may provide a label decorator adapter from its memory block
+	 * to decorate the label of a rendering.
+	 * @since 3.2 
+	 */
+	private ILabelDecorator fLabelDecorator;
 	
 	/**
 	 * Constructs a new rendering of the given type.
@@ -180,11 +180,20 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getImage()
 	 */
 	public Image getImage() {
-		
+		return decorateImage(null);
+	}
+	
+	/**
+	 * Decorates and returns this rendering's image.
+	 * 
+	 * @param label base image
+	 * @return decorated image
+	 * @since 3.2
+	 */	
+	protected Image decorateImage(Image image) {
 		if (fLabelDecorator != null)
-			return fLabelDecorator.decorateImage(null, this);
-		
-		return null;
+			return fLabelDecorator.decorateImage(image, this);
+		return image;		
 	}
 
 	/* (non-Javadoc)
@@ -241,10 +250,20 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 			}
 		}
 		
+		return decorateLabel(label.toString());
+	}
+	
+	/**
+	 * Decorates and returns this rendering's label.
+	 * 
+	 * @param label base label
+	 * @return decorated label
+	 * @since 3.2
+	 */
+	protected String decorateLabel(String label) {
 		if (fLabelDecorator != null)
 			return fLabelDecorator.decorateText(label.toString(), this);
-		
-		return label.toString();
+		return label.toString();		
 	}
 	
 	/**

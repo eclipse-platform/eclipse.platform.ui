@@ -1957,10 +1957,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		if (preName != null)
 			label += " <" + preName + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 		
-		if (fLabelDecorator != null)
-			label = fLabelDecorator.decorateText(label, this);
-		
-		return label;
+		return decorateLabel(label);
 	}
 	
 	private void setColumnHeadings()
