@@ -741,6 +741,35 @@ public class LinkedResourceTest extends ResourceTest {
 	}
 
 	/**
+	 * Tests the {@link org.eclipse.core.resources.IResource#isLinked(int)} method.
+	 */
+	public void testIsLinked() {
+		//initially nothing is linked
+		IResource[] toTest = new IResource[] {closedProject, existingFileInExistingProject, existingFolderInExistingFolder, existingFolderInExistingProject, existingProject, nonExistingFileInExistingFolder, nonExistingFileInExistingProject, nonExistingFileInOtherExistingProject, nonExistingFolderInExistingFolder, nonExistingFolderInExistingProject, nonExistingFolderInNonExistingFolder, nonExistingFolderInNonExistingProject, nonExistingFolderInOtherExistingProject, nonExistingProject, otherExistingProject};
+		for (int i = 0; i < toTest.length; i++) {
+			assertTrue("1.0 " + toTest[i], !toTest[i].isLinked());
+			assertTrue("1.1 " + toTest[i], !toTest[i].isLinked(IResource.NONE));
+			assertTrue("1.2 " + toTest[i], !toTest[i].isLinked(IResource.CHECK_ANCESTORS));
+		}
+		//create a link
+		IFolder link = nonExistingFolderInExistingProject;
+		try {
+			link.createLink(localFolder, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		IFile child = link.getFile(childName);
+		assertTrue("2.0", child.exists());
+		assertTrue("2.1", link.isLinked());
+		assertTrue("2.2", link.isLinked(IResource.NONE));
+		assertTrue("2.3", link.isLinked(IResource.CHECK_ANCESTORS));
+		assertTrue("2.1", !child.isLinked());
+		assertTrue("2.2", !child.isLinked(IResource.NONE));
+		assertTrue("2.3", child.isLinked(IResource.CHECK_ANCESTORS));
+		
+	}
+
+	/**
 	 * Specific testing of links within links.
 	 */
 	public void testLinkedFileInLinkedFolder() {
