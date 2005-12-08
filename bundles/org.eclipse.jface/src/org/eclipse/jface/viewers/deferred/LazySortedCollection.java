@@ -249,7 +249,7 @@ public class LazySortedCollection {
      * 
      * @param subTree index of the subtree to insert elementToAdd into. If -1, 
      *                then a new subtree will be created for elementToAdd
-     * @param idxToAdd index of the element to add to the subtree. If -1, this method
+     * @param elementToAdd index of the element to add to the subtree. If -1, this method
      *                 is a NOP.
      * @since 3.1
      */
@@ -442,7 +442,7 @@ public class LazySortedCollection {
      * created node.
      * 
      * @param value
-     * @return
+     * @return the index of the newly created node
      * @since 3.1
      */
     private final int createNode(Object value) {
@@ -487,7 +487,7 @@ public class LazySortedCollection {
      * Returns the current tree index for the given object.
      * 
      * @param value
-     * @return
+     * @return the current tree index
      * @since 3.1
      */
     private int getObjectIndex(Object value) {
@@ -564,8 +564,7 @@ public class LazySortedCollection {
     /**
      * Recomputes the tree size for the given node.
      * 
-     * @param toRecompute
-     * @param stopAtNode
+     * @param node
      * @since 3.1
      */
     private void recomputeTreeSize(int node) {
@@ -593,7 +592,8 @@ public class LazySortedCollection {
     }
     
     /**
-     * @param subTree
+     * Destroy the node at the given index in the tree
+     * @param nodeToDestroy
      * @since 3.1
      */
     private void destroyNode(int nodeToDestroy) {
@@ -1032,7 +1032,7 @@ public class LazySortedCollection {
      * Returns the new root of the subtree
      * 
      * @param subTree
-     * @return
+     * @return the index of the new root
      * @since 3.1
      */
     private final int removeNode(int subTree) {
