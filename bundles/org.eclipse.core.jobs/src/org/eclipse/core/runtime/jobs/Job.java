@@ -131,6 +131,16 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	public static final int RUNNING = 0x04;
 
 	/**
+	 * Returns the job manager.
+	 * 
+	 * @return the job manager
+	 * @since org.eclipse.core.jobs 3.2
+	 */
+	public static final IJobManager getJobManager() {
+		return manager;
+	}
+
+	/**
 	 * Creates a new job with the specified name.  The job name is a human-readable
 	 * value that is displayed to users.  The name does not need to be unique, but it
 	 * must not be <code>null</code>.
@@ -632,14 +642,5 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 */
 	public final void wakeUp(long delay) {
 		super.wakeUp(delay);
-	}
-
-	/**
-	 * Returns the job manager.
-	 * @return the job manager
-	 * @since org.eclipse.core.jobs 1.0
-	 */
-	public final static IJobManager getJobManager() {
-		return manager;
 	}
 }

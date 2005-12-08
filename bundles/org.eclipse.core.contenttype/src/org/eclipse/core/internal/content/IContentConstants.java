@@ -13,11 +13,11 @@ package org.eclipse.core.internal.content;
 /**
  * Container for the constants used by this plugin. 
  * 
- * @since org.eclipse.core.contenttype 1.0
+ * @since org.eclipse.core.contenttype 3.2
  */
 public interface IContentConstants {
 	/**
-	 * Backward compatibilty: name of the original runtime plugin
+	 * Backward compatibility: name of the original runtime plugin
 	 */
 	public static final String RUNTIME_NAME = "org.eclipse.core.runtime"; //$NON-NLS-1$
 

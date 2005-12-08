@@ -20,11 +20,11 @@ import org.osgi.util.tracker.ServiceTracker;
  * The class contains a set of helper methods for the runtime Jobs plugin.
  * The following utility methods are supplied:
  * - provides access to debug options
- * - provides some bundle discovery funtionality
+ * - provides some bundle discovery functionality
  * 
  * The closeServices() method should be called before the plugin is stopped. 
  * 
- * @since org.eclipse.core.jobs 1.0
+ * @since org.eclipse.core.jobs 3.2
  */
 public class JobsOSGiUtils {
 	private ServiceTracker debugTracker = null;

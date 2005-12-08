@@ -19,7 +19,7 @@ import org.osgi.util.tracker.ServiceTracker;
  * This class contains a set of OSGi-related helper methods for the Content plugin.
  * The closeServices() method should be called before the plugin is stopped. 
  * 
- * @since org.eclipse.core.contenttype 1.0
+ * @since org.eclipse.core.contenttype 3.2
  */
 public class ContentOSGiUtils {
 	private ServiceTracker parserTracker = null;
