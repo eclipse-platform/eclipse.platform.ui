@@ -64,33 +64,11 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	 * Text widgets used for this editor
 	 */
 	private Text fText;	
-
-	private ILaunchesListener2 fLaunchesListener = new ILaunchesListener2() {
-
-		public void launchesTerminated(ILaunch[] launches) {
-			Object artifact = getArtifact();
-			if (artifact instanceof IDebugElement) {
-				IDebugElement element = (IDebugElement)artifact;
-				for (int i = 0; i < launches.length; i++) {
-					ILaunch launch = launches[i];
-					if (launch.equals(element.getLaunch())) {
-						closeEditor();
-						return;
-					}
-				}
-			}
-		}
-
-		public void launchesRemoved(ILaunch[] launches) {
-			launchesTerminated(launches);
-		}
-
-		public void launchesAdded(ILaunch[] launches) {
-		}
-
-		public void launchesChanged(ILaunch[] launches) {
-		}}; 
 	
+	/**
+	 * Launch listener to handle launch events.
+	 */
+	private ILaunchesListener2 fLaunchesListener;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
@@ -110,7 +88,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
 		setInput(input);
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(fLaunchesListener);
+		initialize();
 	}
 	
 	/* (non-Javadoc)
@@ -267,7 +245,8 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fLaunchesListener);
+		if (fLaunchesListener != null)
+			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fLaunchesListener);
 		super.dispose();
 	}
 	
@@ -284,6 +263,39 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 			return input.getArtifact();
 		}
 		return null;
+	}
+	
+	/**
+	 * Initialize this editor.
+	 */
+	protected void initialize()
+	{
+		fLaunchesListener = new ILaunchesListener2() {
+			public void launchesTerminated(ILaunch[] launches) {
+				Object artifact = getArtifact();
+				if (artifact instanceof IDebugElement) {
+					IDebugElement element = (IDebugElement)artifact;
+					for (int i = 0; i < launches.length; i++) {
+						ILaunch launch = launches[i];
+						if (launch.equals(element.getLaunch())) {
+							closeEditor();
+							return;
+						}
+					}
+				}
+			}
+
+			public void launchesRemoved(ILaunch[] launches) {
+				launchesTerminated(launches);
+			}
+
+			public void launchesAdded(ILaunch[] launches) {
+			}
+
+			public void launchesChanged(ILaunch[] launches) {
+			}}; 
+			
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(fLaunchesListener);
 	}
 }
 
