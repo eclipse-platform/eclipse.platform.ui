@@ -718,15 +718,16 @@ public class DebugUITools {
 	}
 	
 	/**
-	 * Returns the color associated with the specified preference identifier.
+	 * Returns the color associated with the specified preference identifier or 
+	 * <code>null</code> if none.
+	 * 
 	 * @param id preference identifier of the color
 	 * @return the color associated with the specified preference identifier
+	 * 	or <code>null</code> if none
 	 * @since 3.2
-	 * @see <code>IDebugUIConstants</cod> for available preference colors.
-	 * TODO:  New API, needs review
+	 * @see IDebugUIConstants
 	 */
-	public static Color getPreferenceColor(String id)
-	{
+	public static Color getPreferenceColor(String id) {
 		return DebugUIPlugin.getPreferenceColor(id);
 	}
 }

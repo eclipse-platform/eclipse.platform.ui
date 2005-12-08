@@ -1114,11 +1114,13 @@ public interface IDebugUIConstants {
 	public static final String ID_COMMON_SOURCE_NOT_FOUND_EDITOR="org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor"; //$NON-NLS-1$
 
 	/**
-	 * Preference color to indicate changes in debug elements.
-	 * (value <code>org.eclipse.debug.ui.changedDebugElement</code>)
+	 * Preference color used to render debug elements that have changed
+	 * (value <code>org.eclipse.debug.ui.changedDebugElement</code>).
+	 * For example, when a variable value changes, variables are rendered in this
+	 * color.
+	 * 
 	 * @since 3.2
-	 * @see </code>DebugUITools</code>
-	 * TODO:  new API, need review
+	 * @see DebugUITools
 	 */
 	public static final String PREF_CHANGED_DEBUG_ELEMENT_COLOR= "org.eclipse.debug.ui.changedDebugElement"; //$NON-NLS-1$
 }
