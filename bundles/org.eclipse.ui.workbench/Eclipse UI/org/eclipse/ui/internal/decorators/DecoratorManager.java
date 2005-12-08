@@ -896,6 +896,8 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
 	 */
 	public void removeExtension(IExtension source, Object[] objects) {
+		
+		boolean shouldClear = false;
         for (int i = 0; i < objects.length; i++) {
             if (objects[i] instanceof DecoratorDefinition) {
                 DecoratorDefinition definition = (DecoratorDefinition) objects[i];
@@ -908,17 +910,17 @@ public class DecoratorManager implements IDelayedLabelDecorator,
                                         oldDefs,
                                         fullDefinitions = new FullDecoratorDefinition[fullDefinitions.length - 1],
                                         idx);                   
-                        clearCaches();
-                        updateForEnablementChange();
+                        shouldClear = true;
                     }
-                } else {
-                    if (getLightweightManager().removeDecorator(
-                            (LightweightDecoratorDefinition) definition)) {
-                        clearCaches();
-                        updateForEnablementChange();
-                    }
-                }           
+                } else 
+                    shouldClear |= getLightweightManager().removeDecorator(
+                            (LightweightDecoratorDefinition) definition);         
             }    
+        }
+        
+        if(shouldClear){
+        	  clearCaches();
+              updateForEnablementChange();
         }
 		
 	}
