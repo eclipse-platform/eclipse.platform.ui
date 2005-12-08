@@ -13,6 +13,7 @@ package org.eclipse.ui.views.markers.internal;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -303,6 +304,25 @@ public final class Util {
 			Object first = selection.getFirstElement();
 			if(first instanceof MarkerNode)
 			 return((MarkerNode) first).isConcrete();
+		}
+		return false;	
+	}
+
+	/**
+	 * Return whether or not all of the elements in the selection
+	 * are concrete.
+	 * @param selection
+	 * @return <true>code</true> if all of the elements are concrete.
+	 */
+	public static boolean allConcreteSelection(IStructuredSelection selection) {
+		if( selection != null && selection.size()>0){
+			Iterator nodes = selection.iterator();
+			while(nodes.hasNext()){
+				if(((MarkerNode) nodes.next()).isConcrete())
+					continue;
+				return false;
+			}
+			return true;
 		}
 		return false;	
 	}
