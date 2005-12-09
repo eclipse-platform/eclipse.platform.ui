@@ -529,6 +529,15 @@ public class RefactoringHistoryWizard extends Wizard {
 			fPreviewPage.setStatus(status);
 			fPreviewPage.setNextPageDisabled(isLastRefactoring());
 			return fPreviewPage;
+		} else {
+			final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptors();
+			if (proxies == null || proxies.length == 0) {
+				fErrorPage.setStatus(RefactoringStatus.createFatalErrorStatus(RefactoringUIMessages.RefactoringHistoryWizard_no_refactorings_message));
+				fErrorPage.setNextPageDisabled(true);
+				fErrorPage.setTitle(RefactoringUIMessages.ChangeExceptionHandler_refactoring);
+				fErrorPage.setDescription(RefactoringUIMessages.RefactoringHistoryWizard_no_refactorings_error);
+				return fErrorPage;
+			}
 		}
 		return super.getNextPage(page);
 	}
