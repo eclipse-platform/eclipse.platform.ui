@@ -59,8 +59,8 @@ public class DebugTargetEventHandler extends DebugEventHandler {
 	}
 
 	private void fireDelta(IDebugTarget target, int flags) {
-		IModelDelta root = new ModelDeltaNode(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
-		IModelDelta delta = root.addNode(target.getLaunch(), IModelDelta.NOCHANGE);
+		ModelDelta root = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
+		ModelDelta delta = root.addNode(target.getLaunch(), IModelDelta.NOCHANGE);
 		delta.addNode(target, flags);
 		fireDelta(root);
 	}

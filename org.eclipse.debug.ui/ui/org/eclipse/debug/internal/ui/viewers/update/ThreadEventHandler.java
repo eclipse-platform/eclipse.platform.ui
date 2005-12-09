@@ -60,8 +60,8 @@ public class ThreadEventHandler extends DebugEventHandler {
 	protected void handleSuspend(DebugEvent event) {
         IThread thread = (IThread) event.getSource();
 		if (event.isEvaluation()) {
-        	IModelDelta delta = buildRootDelta();
-    		IModelDelta node = addPathToThraed(delta, thread);
+        	ModelDelta delta = buildRootDelta();
+    		ModelDelta node = addPathToThraed(delta, thread);
 			try {
 				IStackFrame frame = thread.getTopStackFrame();
 				node.addNode(frame, IModelDelta.CHANGED | IModelDelta.STATE);
@@ -115,18 +115,18 @@ public class ThreadEventHandler extends DebugEventHandler {
 		fireDeltaAndClearTopFrame(thread, IModelDelta.CHANGED | IModelDelta.CONTENT);
 	}
 	
-	private IModelDelta buildRootDelta() {
-		return new ModelDeltaNode(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
+	private ModelDelta buildRootDelta() {
+		return new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
 	}
 	
-	private IModelDelta addPathToThraed(IModelDelta delta, IThread thread) {
+	private ModelDelta addPathToThraed(ModelDelta delta, IThread thread) {
 		delta = delta.addNode(thread.getLaunch(), IModelDelta.NOCHANGE);
 		return delta.addNode(thread.getDebugTarget(), IModelDelta.NOCHANGE);
 	}
 
 	private void fireDeltaAndClearTopFrame(IThread thread, int flags) {
-		IModelDelta delta = buildRootDelta();
-		IModelDelta node = addPathToThraed(delta, thread);
+		ModelDelta delta = buildRootDelta();
+		ModelDelta node = addPathToThraed(delta, thread);
 		node.addNode(thread, flags);
 		synchronized (this) {
 			fLastTopFrame.remove(thread);
@@ -135,8 +135,8 @@ public class ThreadEventHandler extends DebugEventHandler {
 	}
 	
 	private void fireDeltaUpdatingTopFrame(IThread thread, int flags) {
-		IModelDelta delta = buildRootDelta();
-		IModelDelta node = addPathToThraed(delta, thread);
+		ModelDelta delta = buildRootDelta();
+		ModelDelta node = addPathToThraed(delta, thread);
     	IStackFrame prev = null;
     	synchronized (this) {
     		 prev = (IStackFrame) fLastTopFrame.get(thread);

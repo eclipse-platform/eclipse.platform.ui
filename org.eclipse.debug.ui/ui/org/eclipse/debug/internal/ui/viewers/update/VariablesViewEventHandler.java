@@ -43,7 +43,7 @@ public class VariablesViewEventHandler extends DebugEventHandler {
 				}
 			}
 			
-			ModelDeltaNode delta = new ModelDeltaNode(fFrame, IModelDelta.CHANGED | IModelDelta.CONTENT);
+			ModelDelta delta = new ModelDelta(fFrame, IModelDelta.CHANGED | IModelDelta.CONTENT);
 			fireDelta(delta);
 		}
 	}

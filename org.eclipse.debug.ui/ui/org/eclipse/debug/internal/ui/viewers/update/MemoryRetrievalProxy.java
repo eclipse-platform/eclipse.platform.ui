@@ -37,7 +37,7 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 	
 	public void memoryBlocksAdded(IMemoryBlock[] memory) {
 		
-		ModelDeltaNode delta = new ModelDeltaNode(fRetrieval, IModelDelta.NOCHANGE);
+		ModelDelta delta = new ModelDelta(fRetrieval, IModelDelta.NOCHANGE);
 		
 		for (int i=0; i<memory.length; i++){
 			IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval)memory[i].getAdapter(IMemoryBlockRetrieval.class);
@@ -60,7 +60,7 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 	}
 
 	public void memoryBlocksRemoved(IMemoryBlock[] memory) {
-		ModelDeltaNode delta = new ModelDeltaNode(fRetrieval, IModelDelta.NOCHANGE);
+		ModelDelta delta = new ModelDelta(fRetrieval, IModelDelta.NOCHANGE);
 		
 		// find a memory block to select
 		
@@ -95,7 +95,7 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 		DebugPlugin.getDefault().getMemoryBlockManager().removeListener(this);
 	}
 
-	private void addSelectDeltaNode(IModelDelta delta)
+	private void addSelectDeltaNode(ModelDelta delta)
 	{
 		IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(fRetrieval);
 		if (memoryBlocks != null && memoryBlocks.length > 0)
@@ -139,7 +139,7 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 		IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(fRetrieval);
 		if (memoryBlocks.length > 0)
 		{
-			ModelDeltaNode delta = new ModelDeltaNode(fRetrieval, IModelDelta.NOCHANGE);
+			ModelDelta delta = new ModelDelta(fRetrieval, IModelDelta.NOCHANGE);
 			addSelectDeltaNode(delta);
 			fireModelChanged(delta);
 		}

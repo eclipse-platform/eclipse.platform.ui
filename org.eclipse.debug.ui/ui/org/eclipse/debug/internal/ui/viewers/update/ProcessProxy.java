@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.update;
 
 import org.eclipse.debug.core.DebugEvent;
@@ -15,11 +25,11 @@ public class ProcessProxy extends EventHandlerModelProxy {
         }
 
 		protected void handleChange(DebugEvent event) {
-			ModelDeltaNode delta = null;
+			ModelDelta delta = null;
         	synchronized (ProcessProxy.this) {
         		if (!isDisposed()) {
-                    delta = new ModelDeltaNode(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
-                    IModelDelta node = delta;
+                    delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
+                    ModelDelta node = delta;
                     node = node.addNode(fProcess.getLaunch(), IModelDelta.NOCHANGE);
                     node.addNode(fProcess, IModelDelta.CHANGED | IModelDelta.STATE);        			
         		}

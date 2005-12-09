@@ -57,7 +57,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	}
     
     private void updateExpressions(IExpression[] expressions, int flags) {
-		ModelDeltaNode delta = new ModelDeltaNode(DebugPlugin.getDefault() .getExpressionManager(), IModelDelta.NOCHANGE);
+		ModelDelta delta = new ModelDelta(DebugPlugin.getDefault() .getExpressionManager(), IModelDelta.NOCHANGE);
 		for (int i = 0; i < expressions.length; i++) {
 			IExpression expression = expressions[i];
 			delta.addNode(expression, flags);

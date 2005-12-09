@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers;
 
-import org.eclipse.debug.internal.ui.viewers.update.ModelDeltaNode;
+import org.eclipse.debug.internal.ui.viewers.update.ModelDelta;
 
 /**
  * Describes a change within a model. A delta is a hierarchical description of changes
@@ -118,7 +118,7 @@ public interface IModelDelta {
 	 *  
 	 * @return changed children, possibly empty
 	 */
-	public ModelDeltaNode[] getNodes();
+	public ModelDelta[] getNodes();
 	
 	/**
 	 * When a node indicates the <code>IModelDelta.REPLACED</code> flag, this method
@@ -137,9 +137,4 @@ public interface IModelDelta {
 	 */
 	public int getIndex();
 	
-	// TODO: should be part of the implementation rather than the interface (i.e.
-	// interface should bre read-only).
-	public IModelDelta addNode(Object object, int flags);
-	public IModelDelta addNode(Object element, Object newElement, int flags);
-	public IModelDelta addNode(Object element, int index, int flags);
 }

@@ -148,7 +148,7 @@ public abstract class DebugEventHandler {
 	 * better reflect the actual change in the model.
 	 */
 	protected void refreshRoot(DebugEvent event) {
-		ModelDeltaNode delta = new ModelDeltaNode(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.CHANGED | IModelDelta.CONTENT);
+		ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.CHANGED | IModelDelta.CONTENT);
 		fireDelta(delta);
 	}
 	
