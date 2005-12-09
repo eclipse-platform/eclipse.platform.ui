@@ -265,6 +265,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     	if (remote == null && file.exists()) {
     		file.delete(false, true, monitor);
     	} else if (remote != null) {
+    		ensureParentsExist(file);
     		InputStream stream = remote.getStorage(monitor).getContents();
     		stream = new BufferedInputStream(stream);
     		try {
@@ -284,5 +285,22 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     	// Performing a replace should leave the file in-sync
     	markAsMerged(file, true, monitor);
 		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Ensure that the parent folders of the given resource exist 
+	 * @param resource a resource
+	 * @throws CoreException 
+	 */
+	protected void ensureParentsExist(IResource resource) throws CoreException {
+		IContainer parent = resource.getParent();
+		if (parent.getType() != IResource.FOLDER) {
+			// this method will only create folders
+			return;
+		}
+		if (!parent.exists()) {
+			ensureParentsExist(parent);
+			((IFolder)parent).create(false, true, null);
+		}
 	}
 }
