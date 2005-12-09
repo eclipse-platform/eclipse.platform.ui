@@ -228,16 +228,7 @@ public class CVSWorkspaceRoot {
 	 * @return boolean
 	 */
 	public static boolean isLinkedResource(IResource resource) {
-		// check the resource directly first
-		if (resource.isLinked()) return true;
-		// projects and root cannot be links
-		if (resource.getType() == IResource.PROJECT || resource.getType() == IResource.ROOT) {
-			return false;
-		}
-		// look one level under the project to see if the resource is part of a link
-		String linkedParentName = resource.getProjectRelativePath().segment(0);
-		IFolder linkedParent = resource.getProject().getFolder(linkedParentName);
-		return linkedParent.isLinked();
+		return resource.isLinked(IResource.CHECK_ANCESTORS);
 	}
 	
 	/**
