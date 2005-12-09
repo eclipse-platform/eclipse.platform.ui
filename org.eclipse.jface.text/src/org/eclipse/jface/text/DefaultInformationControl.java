@@ -101,25 +101,6 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	
 
 	/**
-	 * Subclass to access some protected methods of {@link PopupDialog}.
-	 * <p>
-	 * XXX: Filed the following enhancement request to make saveDialogBounds(Shell) public:
-	 *  	https://bugs.eclipse.org/bugs/show_bug.cgi?id=119598
-	 * </p>
-	 * 
-	 * @since 3.2
-	 */
-	private static class InformationPopup extends PopupDialog {
-		public InformationPopup(Shell parent, int shellStyle, boolean takeFocusOnOpen, boolean persistBounds, boolean showDialogMenu, boolean showPersistAction, String titleText, String infoText) {
-			super(parent, shellStyle, takeFocusOnOpen, persistBounds, showDialogMenu, showPersistAction, titleText, infoText);
-		}
-		public void saveDialogBounds(Shell shell) {
-			super.saveDialogBounds(shell);
-		}
-	}
-
-	
-	/**
 	 * Inner border thickness in pixels.
 	 * @since 3.1
 	 */
@@ -129,7 +110,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * The control's popup dialog.
 	 * @since 3.2
 	 */
-	private InformationPopup fPopupDialog;
+	private PopupDialog fPopupDialog;
 	/** The control's text widget */
 	private StyledText fText;
 	/** The information presenter */
@@ -171,7 +152,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 */
 	public DefaultInformationControl(Shell parentShell, int shellStyle, final int style, IInformationPresenter presenter, String statusFieldText) {
 
-		fPopupDialog= new InformationPopup(parentShell, shellStyle | PopupDialog.HOVER_SHELLSTYLE, false, false, false, false, null, statusFieldText) {
+		fPopupDialog= new PopupDialog(parentShell, shellStyle | PopupDialog.HOVER_SHELLSTYLE, false, false, false, false, null, statusFieldText) {
 			protected Control createDialogArea(Composite parent) {
 				// Text field
 				fText= new StyledText(parent, SWT.MULTI | SWT.READ_ONLY | style);
@@ -277,10 +258,8 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	public void setVisible(boolean visible) {
 		if (visible)
 			fPopupDialog.open();
-		else {
-			fPopupDialog.saveDialogBounds(fPopupDialog.getShell());
+		else
 			fPopupDialog.getShell().setVisible(false);
-		}
 	}
 
 	/*
