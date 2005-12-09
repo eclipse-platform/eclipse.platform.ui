@@ -12,8 +12,10 @@ package org.eclipse.team.internal.ui.mapping;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.mapping.IMergeContext;
@@ -42,17 +44,36 @@ public class MarkAsMergedAction extends ModelProviderAction {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
 					try {
-						IDiffNode[] deltas = getFileDeltas(getStructuredSelection());
-						for (int i = 0; i < deltas.length; i++) {
-							IDiffNode delta = deltas[i];
-							// TODO: mark as merged should support batching
-							IStatus status = context.markAsMerged((IFile)context.getDiffTree().getResource(delta), false, monitor);
-							if (!status.isOK())
-								throw new CoreException(status);
-						}
+						final IDiffNode[] deltas = getFileDeltas(getStructuredSelection());
+						ISchedulingRule rule = getMergeRule(context, deltas);
+						context.run(new IWorkspaceRunnable() {
+							public void run(IProgressMonitor monitor) throws CoreException {
+								markAsMerged(deltas, context, monitor);
+							}
+						
+						}, rule, IResource.NONE, monitor);
+						
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
+				}
+
+				private ISchedulingRule getMergeRule(IMergeContext context, IDiffNode[] deltas) {
+					ISchedulingRule result = null;
+					for (int i = 0; i < deltas.length; i++) {
+						IDiffNode node = deltas[i];
+						ISchedulingRule rule = context.getMergeRule(node);
+						if (result == null) {
+							result = rule;
+						} else {
+							result = MultiRule.combine(result, rule);
+						}
+					}
+					return result;
+				}
+
+				private void markAsMerged(IDiffNode[] deltas, final IMergeContext context, IProgressMonitor monitor) throws CoreException {
+					context.markAsMerged(deltas, false, monitor);
 				}
 			
 			}.run();

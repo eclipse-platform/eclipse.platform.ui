@@ -135,7 +135,7 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
                 status = merger.merge(output, targetEncoding, ancestorStream, ancestorEncoding, targetStream, targetEncoding, remoteStream, remoteEncoding, monitor);
                 if (status.isOK()) {
                     file.setContents(getTempInputStream(file, output), false, true, monitor);
-                    markAsMerged(file, false, monitor);
+                    markAsMerged(delta, false, monitor);
                 } else {
                 	status = new MergeStatus(status.getPlugin(), status.getMessage(), new IFile[]{file});
                 }

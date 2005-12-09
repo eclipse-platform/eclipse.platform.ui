@@ -15,12 +15,13 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.core.diff.SyncInfoToDiffConverter;
 
 /**
  * Provides the context for an <code>IResourceMappingMerger</code>.
@@ -28,8 +29,6 @@ import org.eclipse.team.internal.core.diff.SyncInfoToDiffConverter;
  * so that resource mapping mergers can attempt head-less auto-merges.
  * The ancestor context is only required for merges while the remote
  * is required for both merge and replace.
- * 
- * TODO: Need to have a story for folder merging (see bug 113898)
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -50,74 +49,41 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     protected MergeContext(IResourceMappingScope input, String type, SyncInfoTree tree, IResourceDiffTree deltaTree) {
     	super(input, type, tree, deltaTree);
     }
-
-    /**
-	 * Method that can be called by the model merger to attempt a file-system
-	 * level merge. This is useful for cases where the model merger does not
-	 * need to do any special processing to perform the merge. By default, this
-	 * method attempts to use an appropriate <code>IStreamMerger</code> to
-	 * merge the files covered by the provided traversals. If a stream merger
-	 * cannot be found, the text merger is used. If this behavior is not
-	 * desired, sub-classes may override this method.
-	 * <p>
-	 * This method does a best-effort attempt to merge all the files covered
-	 * by the provided traversals. Files that could not be merged will be 
-	 * indicated in the returned status. If the status returned has the code
-	 * <code>MergeStatus.CONFLICTS</code>, the list of failed files can be 
-	 * obtained by calling the <code>MergeStatus#getConflictingFiles()</code>
-	 * method.
-	 * <p>
-	 * Any resource changes triggered by this merge will be reported through the 
-	 * resource delta mechanism and the sync-info tree associated with this context.
-	 * 
-	 * @see SyncInfoSet#addSyncSetChangedListener(ISyncInfoSetChangeListener)
-	 * @see org.eclipse.core.resources.IWorkspace#addResourceChangeListener(IResourceChangeListener)
-	 * 
-	 * @param infos
-	 *            the array of sync info to be merged
-	 * @param monitor
-	 *            a progress monitor
-	 * @return a status indicating success or failure. A code of
-	 *         <code>MergeStatus.CONFLICTS</code> indicates that the file
-	 *         contain non-mergable conflicts and must be merged manually.
-     * @throws CoreException if an error occurs
-	 */
-    public IStatus merge(ISyncInfoSet infos, IProgressMonitor monitor) throws CoreException {
-		List failedFiles = new ArrayList();
-		for (Iterator iter = infos.iterator(); iter.hasNext();) {
-			SyncInfo info = (SyncInfo) iter.next();
-			IStatus s = merge(info, monitor);
-			if (!s.isOK()) {
-				if (s.getCode() == IMergeStatus.CONFLICTS) {
-					failedFiles.addAll(Arrays.asList(((IMergeStatus)s).getConflictingFiles()));
-				} else {
-					return s;
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.core.mapping.IMergeContext#markAsMerged(org.eclipse.team.core.diff.IDiffNode[], boolean, org.eclipse.core.runtime.IProgressMonitor)
+     */
+    public void markAsMerged(final IDiffNode[] nodes, final boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
+		run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				for (int i = 0; i < nodes.length; i++) {
+					IDiffNode node = nodes[i];
+					markAsMerged(node, inSyncHint, monitor);
 				}
 			}
-		}
-		if (failedFiles.isEmpty()) {
-			return Status.OK_STATUS;
-		} else {
-			return new MergeStatus(TeamPlugin.ID, "Could not merge all files", (IFile[]) failedFiles.toArray(new IFile[failedFiles.size()]));
-		}
+		}, getMergeRule(nodes), IResource.NONE, monitor);
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.team.ui.mapping.IMergeContext#merge(org.eclipse.team.core.delta.ISyncDelta[], boolean, org.eclipse.core.runtime.IProgressMonitor)
      */
-    public IStatus merge(IDiffNode[] deltas, boolean force, IProgressMonitor monitor) throws CoreException {
-		List failedFiles = new ArrayList();
-		for (int i = 0; i < deltas.length; i++) {
-			IDiffNode delta = deltas[i];
-			IStatus s = merge(delta, force, monitor);
-			if (!s.isOK()) {
-				if (s.getCode() == IMergeStatus.CONFLICTS) {
-					failedFiles.addAll(Arrays.asList(((IMergeStatus)s).getConflictingFiles()));
-				} else {
-					return s;
+    public IStatus merge(final IDiffNode[] deltas, final boolean force, IProgressMonitor monitor) throws CoreException {
+		final List failedFiles = new ArrayList();
+		run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				for (int i = 0; i < deltas.length; i++) {
+					IDiffNode delta = deltas[i];
+					IStatus s = merge(delta, force, monitor);
+					if (!s.isOK()) {
+						if (s.getCode() == IMergeStatus.CONFLICTS) {
+							failedFiles.addAll(Arrays.asList(((IMergeStatus)s).getConflictingFiles()));
+						} else {
+							throw new CoreException(s);
+						}
+					}
 				}
 			}
-		}
+		}, getMergeRule(deltas), IResource.NONE, monitor);
 		if (failedFiles.isEmpty()) {
 			return Status.OK_STATUS;
 		} else {
@@ -125,12 +91,10 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 		}
     }
     
-    /**
-	 * @param delta
-	 * @param monitor
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IMergeContext#merge(org.eclipse.team.core.diff.IDiffNode, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IStatus merge(IDiffNode delta, boolean force, IProgressMonitor monitor) {
+	public IStatus merge(IDiffNode delta, boolean force, IProgressMonitor monitor) throws CoreException {
 		if (getDiffTree().getResource(delta).getType() != IResource.FILE)
 			return Status.OK_STATUS;
         try {
@@ -150,7 +114,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	    		if (type == IDiffNode.REMOVED) {
 	    			// TODO: either we need to spec mark as merged to work in this case
 	    			// or somehow involve the subclass (or just ignore it)
-	    			markAsMerged(getLocalFile(delta), false, monitor);
+	    			markAsMerged(delta, false, monitor);
 	    			return Status.OK_STATUS;
 	    		}
 				// type == SyncInfo.CHANGE
@@ -189,63 +153,6 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 		return ResourcesPlugin.getWorkspace().getRoot().getFile(delta.getPath());
 	}
 
-	/**
-     * Method that can be called by the model merger to attempt a file level
-     * merge. This is useful for cases where the model merger does not need to
-     * do any special processing to perform the merge. By default, this method
-     * attempts to use an appropriate <code>IStreamMerger</code> to perform the
-     * merge. If a stream merger cannot be found, the text merger is used. If this behavior
-     * is not desired, sub-classes may override this method.
-     * 
-     * @param file the file to be merged
-     * @param monitor a progress monitor
-     * @return a status indicating success or failure. A code of
-     *         <code>MergeStatus.CONFLICTS</code> indicates that the file contain
-     *         non-mergable conflicts and must be merged manually.
-     * @see org.eclipse.team.core.mapping.MergeContext#merge(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
-     */
-    public IStatus merge(SyncInfo info, IProgressMonitor monitor) {
-		IResource r = info.getLocal();
-		if (r.getType() != IResource.FILE)
-			return Status.OK_STATUS;
-		IFile file = (IFile)r;
-        try {
-        	if (info.getComparator().isThreeWay()) {
-	        	int direction = SyncInfo.getDirection(info.getKind());
-	    		if (direction == SyncInfo.OUTGOING) {
-	        		// There's nothing to do so return OK
-	        		return Status.OK_STATUS;
-	        	}
-	    		if (direction == SyncInfo.INCOMING) {
-	    			// Just copy the stream since there are no conflicts
-	    			return performReplace(SyncInfoToDiffConverter.getDeltaFor(info), monitor);
-	    		}
-				// direction == SyncInfo.CONFLICTING
-	    		int type = SyncInfo.getChange(info.getKind());
-	    		if (type == SyncInfo.DELETION) {
-	    			// Nothing needs to be done although subclasses
-	    			markAsMerged(file, false, monitor);
-	    			return Status.OK_STATUS;
-	    		}
-				// type == SyncInfo.CHANGE
-				IResourceVariant base = info.getBase();
-	        	IResourceVariant remote = info.getRemote();
-				if (base == null || remote == null || !file.exists()) {
-					// Nothing we can do so return a conflict status
-					// TODO: Should we handle the case where the local and remote have the same contents for a conflicting addition?
-					return new MergeStatus(TeamPlugin.ID, NLS.bind("Conflicting change could not be merged: {0}", new String[] { file.getFullPath().toString() }), new IFile[] { file });
-				}
-				// We have a conflict, a local, base and remote so we can do 
-				// a three-way merge
-	            return performThreeWayMerge((IThreeWayDiff)SyncInfoToDiffConverter.getDeltaFor(info), monitor);
-        	} else {
-        		return performReplace(SyncInfoToDiffConverter.getDeltaFor(info), monitor);
-        	}
-        } catch (CoreException e) {
-            return new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Merge of {0} failed due to an internal error.", new String[] { file.getFullPath().toString() }), e);
-        }
-    }
-
     /*
      * Replace the local contents with the remote contents.
      * The local resource must be a file.
@@ -282,7 +189,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     		}
     	}
     	// Performing a replace should leave the file in-sync
-    	markAsMerged(file, true, monitor);
+    	markAsMerged(delta, true, monitor);
 		return Status.OK_STATUS;
 	}
 
@@ -301,5 +208,37 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 			ensureParentsExist(parent);
 			((IFolder)parent).create(false, true, null);
 		}
+	}
+	
+	/**
+	 * Default implementation of <code>run</code> that invokes the
+	 * corresponding <code>run</code> on {@link IWorkspace}.
+	 * @see org.eclipse.team.core.mapping.IMergeContext#run(org.eclipse.core.resources.IWorkspaceRunnable, org.eclipse.core.runtime.jobs.ISchedulingRule, int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void run(IWorkspaceRunnable runnable, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException {
+		ResourcesPlugin.getWorkspace().run(runnable, rule, flags, monitor);
+	}
+	
+	/**
+	 * Default implementation that returns the resource itself.
+	 * Subclass should override to provide the appropriate rule.
+	 * @see org.eclipse.team.core.mapping.IMergeContext#getMergeRule(org.eclipse.core.resources.IResource)
+	 */
+	public ISchedulingRule getMergeRule(IDiffNode node) {
+		return getDiffTree().getResource(node);
+	}
+	
+	public ISchedulingRule getMergeRule(IDiffNode[] deltas) {
+		ISchedulingRule result = null;
+		for (int i = 0; i < deltas.length; i++) {
+			IDiffNode node = deltas[i];
+			ISchedulingRule rule = getMergeRule(node);
+			if (result == null) {
+				result = rule;
+			} else {
+				result = MultiRule.combine(result, rule);
+			}
+		}
+		return result;
 	}
 }
