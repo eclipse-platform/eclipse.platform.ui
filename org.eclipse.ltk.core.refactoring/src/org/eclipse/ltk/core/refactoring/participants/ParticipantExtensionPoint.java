@@ -67,7 +67,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 		return fName;
 	}
 
-	public RefactoringParticipant[] getParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, RefactoringArguments arguments, IParticipantDesciptorFilter filter, String[] affectedNatures, SharableParticipants shared) {
+	public RefactoringParticipant[] getParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, RefactoringArguments arguments, IParticipantDescriptorFilter filter, String[] affectedNatures, SharableParticipants shared) {
 		if (fParticipants == null)
 			init();
 		
@@ -79,7 +79,8 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 				iter.remove();
 			} else {
 				try {
-					if (descriptor.matches(evalContext, filter)) {
+					RefactoringStatus filterStatus= new RefactoringStatus();
+					if (descriptor.matches(evalContext, filter, filterStatus)) {
 						RefactoringParticipant participant= shared.get(descriptor);
 						if (participant != null) {
 							((ISharableParticipant)participant).addElement(element, arguments);
@@ -103,6 +104,8 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 								iter.remove();
 							}
 						}
+					} else {
+						status.merge(filterStatus);
 					}
 				} catch (CoreException e) {
 					status.addError(Messages.format(

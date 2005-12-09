@@ -67,7 +67,7 @@ public class ParticipantManager {
 	 * 
 	 * @since 3.2
 	 */
-	public static RenameParticipant[] loadRenameParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, RenameArguments arguments, IParticipantDesciptorFilter filter, String[] affectedNatures, SharableParticipants shared) {
+	public static RenameParticipant[] loadRenameParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, RenameArguments arguments, IParticipantDescriptorFilter filter, String[] affectedNatures, SharableParticipants shared) {
 		RefactoringParticipant[] participants= fgRenameInstance.getParticipants(status, processor, element, arguments, filter, affectedNatures, shared);
 		RenameParticipant[] result= new RenameParticipant[participants.length];
 		System.arraycopy(participants, 0, result, 0, participants.length);
@@ -114,7 +114,7 @@ public class ParticipantManager {
 	 * 
 	 * @since 3.2
 	 */
-	public static MoveParticipant[] loadMoveParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, MoveArguments arguments, IParticipantDesciptorFilter filter, String[] affectedNatures, SharableParticipants shared) {
+	public static MoveParticipant[] loadMoveParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, MoveArguments arguments, IParticipantDescriptorFilter filter, String[] affectedNatures, SharableParticipants shared) {
 		RefactoringParticipant[] participants= fgMoveExtensions.getParticipants(status, processor, element, arguments, filter, affectedNatures, shared);
 		MoveParticipant[] result= new MoveParticipant[participants.length];
 		System.arraycopy(participants, 0, result, 0, participants.length);
@@ -159,7 +159,7 @@ public class ParticipantManager {
 	 * 
 	 * @since 3.2
 	 */
-	public static DeleteParticipant[] loadDeleteParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, DeleteArguments arguments, IParticipantDesciptorFilter filter, String[] affectedNatures, SharableParticipants shared) {
+	public static DeleteParticipant[] loadDeleteParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, DeleteArguments arguments, IParticipantDescriptorFilter filter, String[] affectedNatures, SharableParticipants shared) {
 		RefactoringParticipant[] participants= fgDeleteInstance.getParticipants(status, processor, element, arguments, filter, affectedNatures, shared);
 		DeleteParticipant[] result= new DeleteParticipant[participants.length];
 		System.arraycopy(participants, 0, result, 0, participants.length);
@@ -206,7 +206,7 @@ public class ParticipantManager {
 	 * 
 	 * @since 3.2
 	 */
-	public static CreateParticipant[] loadCreateParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, CreateArguments arguments, IParticipantDesciptorFilter filter, String affectedNatures[], SharableParticipants shared) {
+	public static CreateParticipant[] loadCreateParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, CreateArguments arguments, IParticipantDescriptorFilter filter, String affectedNatures[], SharableParticipants shared) {
 		RefactoringParticipant[] participants= fgCreateInstance.getParticipants(status, processor, element, arguments, filter, affectedNatures, shared);
 		CreateParticipant[] result= new CreateParticipant[participants.length];
 		System.arraycopy(participants, 0, result, 0, participants.length);
@@ -255,7 +255,7 @@ public class ParticipantManager {
 	 *
 	 * @since 3.2
 	 */
-	public static CopyParticipant[] loadCopyParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, CopyArguments arguments, IParticipantDesciptorFilter filter, String affectedNatures[], SharableParticipants shared) {
+	public static CopyParticipant[] loadCopyParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, CopyArguments arguments, IParticipantDescriptorFilter filter, String affectedNatures[], SharableParticipants shared) {
 		RefactoringParticipant[] participants= fgCopyInstance.getParticipants(status, processor, element, arguments, filter, affectedNatures, shared);
 		CopyParticipant[] result= new CopyParticipant[participants.length];
 		System.arraycopy(participants, 0, result, 0, participants.length);

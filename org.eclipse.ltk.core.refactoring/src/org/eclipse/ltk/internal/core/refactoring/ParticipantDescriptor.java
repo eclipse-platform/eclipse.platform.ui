@@ -21,7 +21,9 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.expressions.IEvaluationContext;
 
-import org.eclipse.ltk.core.refactoring.participants.IParticipantDesciptorFilter;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+
+import org.eclipse.ltk.core.refactoring.participants.IParticipantDescriptorFilter;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
 
 public class ParticipantDescriptor {
@@ -66,15 +68,18 @@ public class ParticipantDescriptor {
 			RefactoringCoreMessages.ParticipantDescriptor_correct, null); 
 	}
 	
-	public boolean matches(IEvaluationContext context, IParticipantDesciptorFilter filter) throws CoreException {
-		if (filter != null && !filter.select(fConfigurationElement))
-			return false;
+	public boolean matches(IEvaluationContext context, IParticipantDescriptorFilter filter, RefactoringStatus status) throws CoreException {
 		IConfigurationElement[] elements= fConfigurationElement.getChildren(ExpressionTagNames.ENABLEMENT);
 		if (elements.length == 0)
 			return false;
 		Assert.isTrue(elements.length == 1);
 		Expression exp= ExpressionConverter.getDefault().perform(elements[0]);
-		return convert(exp.evaluate(context));
+		if (!convert(exp.evaluate(context)))
+			return false;
+		if (filter != null && !filter.select(fConfigurationElement, status))
+			return false;
+		
+		return true;
 	}
 
 	public RefactoringParticipant createParticipant() throws CoreException {
