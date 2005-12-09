@@ -16,8 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.FocusEvent;
@@ -42,6 +40,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
@@ -357,6 +357,11 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			 */
 			Shell fHoverShell;
 			/**
+			 * This info hover's shell region.
+			 * @since 3.1.2
+			 */
+			Region fHoverRegion;
+			/**
 			 * The info hover text.
 			 */
 			String fText= ""; //$NON-NLS-1$
@@ -390,6 +395,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			void dispose() {
 				if (!fHoverShell.isDisposed())
 					fHoverShell.dispose();
+				if (fHoverRegion != null)
+					fHoverRegion.dispose();
 			}
 
 			void setVisible(boolean visible) {
@@ -411,9 +418,11 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 					fHoverShell.redraw();
 					Point newSize= getExtent();
 					if (!oldSize.equals(newSize)) {
-						Region region= new Region();
-						region.add(getPolygon(false));
-						fHoverShell.setRegion(region);
+						Region oldRegion= fHoverRegion;
+						fHoverRegion= new Region();
+						fHoverRegion.add(getPolygon(false));
+						fHoverShell.setRegion(fHoverRegion);
+						oldRegion.dispose();
 					}
 				}
 			}
