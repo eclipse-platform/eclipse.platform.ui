@@ -529,13 +529,6 @@ public class FilteredList extends Composite {
 		 * Programmatic selections requested while this job was running.
 		 */
 		int[] indicesToSelect;
-
-		/*
-		 * Original selections when job first started. Used to force selection
-		 * notifications when the original selection was maintained, because the
-		 * items themselves are different. See
-		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=119456
-		 */
 		
 		private boolean readyForSelection = false;
 
