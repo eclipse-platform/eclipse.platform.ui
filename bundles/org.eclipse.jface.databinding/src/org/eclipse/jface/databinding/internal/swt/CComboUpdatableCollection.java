@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
+import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.Updatable;
@@ -83,7 +84,7 @@ public class CComboUpdatableCollection extends Updatable implements IUpdatableCo
 		updating=true;		
 		try {
 			if (index<0 || index > getSize() - 1)
-				index=getSize() - 1;
+				throw new BindingException("Request to remove an element out of the collection bounds"); //$NON-NLS-1$
 			
 			String[] newItems = new String[getSize()-1];
 			String old = ccombo.getItem(index);
