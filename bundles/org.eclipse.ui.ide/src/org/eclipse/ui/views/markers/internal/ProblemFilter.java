@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
@@ -68,6 +69,8 @@ public class ProblemFilter extends MarkerFilter {
 	private int severity;
 
 	private IPluginContribution contributionDescriptor = null;
+
+	private IIdentifier identifier;
 
 	/**
 	 * Create a new instance of the receiver with name filterName.
@@ -299,23 +302,27 @@ public class ProblemFilter extends MarkerFilter {
 	 * @return String
 	 */
 	public String getId() {
-		if(contributionDescriptor == null)
+		if (contributionDescriptor == null)
 			return null;
 		return contributionDescriptor.getLocalId();
 	}
 
-	void createContributionFrom(IConfigurationElement element){
+	void createContributionFrom(IConfigurationElement element) {
 		final String id = element.getAttribute(MarkerSupportRegistry.ID);
 		final String namespace = element.getNamespace();
-		contributionDescriptor = new IPluginContribution(){
-			/* (non-Javadoc)
+		contributionDescriptor = new IPluginContribution() {
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.IPluginContribution#getLocalId()
 			 */
 			public String getLocalId() {
 				return id;
 			}
-			
-			/* (non-Javadoc)
+
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 			 */
 			public String getPluginId() {
@@ -323,21 +330,25 @@ public class ProblemFilter extends MarkerFilter {
 			}
 		};
 	}
-	
+
 	/**
-	 * Return whether or not the receiver will be filtered out
-	 * due to an activity match.
+	 * Return whether or not the receiver will be filtered out due to an
+	 * activity match.
+	 * 
 	 * @return boolean <code>true</code> if it is filtered out.
 	 */
-	public boolean isFilteredOutByActivity(){
-		if(contributionDescriptor == null)
+	public boolean isFilteredOutByActivity() {
+		if (contributionDescriptor == null)
 			return false;
-		return WorkbenchActivityHelper.filterItem(contributionDescriptor);
+		if (identifier == null) {
+			identifier = WorkbenchActivityHelper
+					.getIdentifier(contributionDescriptor);
+		}
+		return !identifier.isEnabled();
 	}
-	
+
 	public boolean isEnabled() {
 		return super.isEnabled() && !isFilteredOutByActivity();
 	}
-	
 
 }

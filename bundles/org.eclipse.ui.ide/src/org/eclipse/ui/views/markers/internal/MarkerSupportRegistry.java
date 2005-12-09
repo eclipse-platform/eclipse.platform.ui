@@ -129,8 +129,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private MarkerType rootType;
 
-	private Collection filteredFilters;
-
 	/**
 	 * Create a new instance of the receiver and read the registry.
 	 */
@@ -169,7 +167,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				registeredFilters.add(filter);
 				tracker.registerObject(extension, filter,
 						IExtensionTracker.REF_STRONG);
-				
+
 				continue;
 			}
 			if (element.getName().equals(SUB_CATEGORY_PROVIDER)) {
@@ -238,7 +236,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 			}
 		}
-		filteredFilters = null;
 	}
 
 	/**
@@ -335,16 +332,15 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @return Collection of ProblemFilter
 	 */
 	public Collection getRegisteredFilters() {
-		if(filteredFilters == null){
-			filteredFilters = new ArrayList();
-			Iterator registeredIterator = registeredFilters.iterator();
-			while(registeredIterator.hasNext()){
-				ProblemFilter next = (ProblemFilter) registeredIterator.next();
-				if(next.isFilteredOutByActivity())
-					continue;
-				filteredFilters.add(next);
-			}
+		Collection filteredFilters = new ArrayList();
+		Iterator registeredIterator = registeredFilters.iterator();
+		while (registeredIterator.hasNext()) {
+			ProblemFilter next = (ProblemFilter) registeredIterator.next();
+			if (next.isFilteredOutByActivity())
+				continue;
+			filteredFilters.add(next);
 		}
+
 		return filteredFilters;
 	}
 
@@ -450,7 +446,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		}
 
 		if (selectedTypes.size() > 0) // Only set the types if there are any
-										// specified
+			// specified
 			filter.setSelectedTypes(selectedTypes);
 
 		return filter;
@@ -481,7 +477,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			}
 
 		}
-		filteredFilters = null;
 
 	}
 
@@ -506,9 +501,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 						keysToRemove.add(key);
 					break;
 				}
-			}
-			else{
-				if(cache.get(key).equals(value))
+			} else {
+				if (cache.get(key).equals(value))
 					keysToRemove.add(key);
 			}
 		}
@@ -636,14 +630,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		}
 		return defaultSorter;
 
-	}
-
-	/**
-	 * Clear the cache of filtered filters as an activity change has occured.
-	 */
-	public void clearFilteredFilters() {
-		filteredFilters = null;
-		
 	}
 
 }

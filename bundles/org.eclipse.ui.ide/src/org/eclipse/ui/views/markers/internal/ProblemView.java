@@ -596,7 +596,6 @@ public class ProblemView extends MarkerView {
 			 * @see org.eclipse.ui.activities.IActivityManagerListener#activityManagerChanged(org.eclipse.ui.activities.ActivityManagerEvent)
 			 */
 			public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
-				MarkerSupportRegistry.getInstance().clearFilteredFilters();
 				clearEnabledFilters();
 				getViewer().refresh();
 			}
