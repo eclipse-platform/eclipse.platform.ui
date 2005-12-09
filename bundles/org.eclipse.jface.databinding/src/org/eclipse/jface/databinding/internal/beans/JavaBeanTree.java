@@ -30,7 +30,6 @@ import org.eclipse.jface.databinding.ITree;
 import org.eclipse.jface.databinding.TreeModelDescription;
 
 /**
- * @since 3.2
  *
  */
 public class JavaBeanTree implements ITree {
@@ -73,6 +72,8 @@ public class JavaBeanTree implements ITree {
 	private final static int WRITE = 0;
 
 	private TreeModelDescription modelDescription;
+	
+	private Object[]  rootElements;
 	
 	private HashMap descriptors = new HashMap();
 	
@@ -118,9 +119,15 @@ public class JavaBeanTree implements ITree {
 	 */
 	public JavaBeanTree(TreeModelDescription modelDescripton) {
 		this.modelDescription = modelDescripton;
+		if (modelDescripton.getRoot()==null)
+			rootElements = Collections.EMPTY_LIST.toArray();
+		else
+			rootElements = modelDescripton.getRoot().getClass().isArray()?
+				          (Object[]) modelDescripton.getRoot():
+				           new Object[] { modelDescripton.getRoot() };
 		TreeNode root = new TreeNode(null);
 		nodes.put(this, root);
-		modelDescripton.setTreeModel(this);
+		hookup(null, rootElements);		
 	}
 	
 	
@@ -203,18 +210,16 @@ public class JavaBeanTree implements ITree {
 		if (support==null) {
 			support = new ListenerSupport(elementListener);
 			listenerSupport.put(key, support);
-		}
-			
-		support.setHookTargets(children);		
+		}			
+		support.setHookTargets(children);
+		// Track a child's index
+		trackChildren(parent, children);
 	}
 		
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement==null) {
-			Object[] elements = modelDescription.getRootObjects();
-			hookup(null, elements);			
-			trackChildren(null, elements);
-			return elements;
-		}
+		if (parentElement==null) 
+			return rootElements;
+		
 		
 		Method[] getters = getReadMethods(parentElement);
 		if (getters==null)
@@ -264,34 +269,31 @@ public class JavaBeanTree implements ITree {
 	}
 
 	public void setChildren(Object parentElement, Object[] children) {
-		if (parentElement==null) {
-			modelDescription.setRootObjects(children);
+		if (parentElement==null) 
+			throw new BindingException ("Changing root element/s is not supported"); //$NON-NLS-1$
+		
+		Method[] setters = getWriteMethods(parentElement);
+		// TODO we can try to figure out (by type) which methods to invoke on which object
+		if (setters==null || setters.length!=1)
+			throw new BindingException("Can not determine children set method for: "+parentElement.getClass().getName()); //$NON-NLS-1$
+		
+		Method setter = setters[0];
+		Class[] parameters = setter.getParameterTypes();
+		Object arg;
+		if (parameters[0].isArray())
+			arg = children;
+		else
+			arg = Arrays.asList(children);		
+		try {
+			setter.invoke(parentElement, new Object[] { arg } );
+		} catch (IllegalArgumentException e) {
+			throw new BindingException(e.getLocalizedMessage());		
+		} catch (IllegalAccessException e) {
+			throw new BindingException(e.getLocalizedMessage());	
+		} catch (InvocationTargetException e) {
+			throw new BindingException(e.getLocalizedMessage());	
 		}
-		else {
-			Method[] setters = getWriteMethods(parentElement);
-			// TODO we can try to figure out (by type) which methods to invoke on which object
-			if (setters==null || setters.length!=1)
-				throw new BindingException("Can not determine children set method for: "+parentElement.getClass().getName()); //$NON-NLS-1$
-			
-			Method setter = setters[0];
-			Class[] parameters = setter.getParameterTypes();
-			Object arg;
-			if (parameters[0].isArray())
-				arg = children;
-			else
-				arg = Arrays.asList(children);		
-			try {
-				setter.invoke(parentElement, new Object[] { arg } );
-			} catch (IllegalArgumentException e) {
-				throw new BindingException(e.getLocalizedMessage());		
-			} catch (IllegalAccessException e) {
-				throw new BindingException(e.getLocalizedMessage());	
-			} catch (InvocationTargetException e) {
-				throw new BindingException(e.getLocalizedMessage());	
-			}
-		}
-		hookup(parentElement, children);
-		trackChildren(parentElement, children);
+		hookup(parentElement, children);		
 		if (changeSupport!=null)
 		   changeSupport.fireTreeChange(IChangeEvent.REPLACE, null, children, parentElement, -1);
 	}

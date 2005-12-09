@@ -72,8 +72,11 @@ public class PropertyHelper {
 			catch (NoSuchMethodException e) {}
 			
 			if (getter==null)  // allow for method invocation
-				getter =  c.getMethod(property, new Class[0]);
+				getter =  c.getMethod(property, new Class[0]);			
 		}
+		
+		if (getter!=null && !getter.isAccessible())
+			getter.setAccessible(true);
 			
 		return getter;		
 	}
@@ -90,6 +93,9 @@ public class PropertyHelper {
 		catch (NoSuchMethodException e) {}
 		if (setter==null)  // allow for method invocation
 			setter =  c.getMethod(property, new Class[] { argType });
+		
+		if (setter!=null && !setter.isAccessible())
+			setter.setAccessible(true);
 				
 		return setter;		
 	}
@@ -114,6 +120,9 @@ public class PropertyHelper {
 		return getterList;
 	}
 	
+	/**
+	 * @return setter
+	 */
 	public Method getSetter() {
 		if (setter!=null)
 			return setter;

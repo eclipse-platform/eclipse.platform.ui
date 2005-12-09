@@ -84,8 +84,11 @@ final public class BeanUpdatableFactory implements IUpdatableFactory {
 		}
 		else if (description instanceof ITree)
 			return new JavaBeanUpdatableTree((ITree)description);
-		else if (description instanceof TreeModelDescription) 
-			return new JavaBeanUpdatableTree(new JavaBeanTree((TreeModelDescription)description));
+		else if (description instanceof TreeModelDescription) {
+			Object root = ((TreeModelDescription)description).getRoot();			
+			if (root==null || ! (root instanceof IUpdatable) && !(root instanceof Property)) // TODO workaround until the context's factory is driven first		     			
+			    return new JavaBeanUpdatableTree(new JavaBeanTree((TreeModelDescription)description));						 							
+		}
 		return null;
 	}
 }

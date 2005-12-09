@@ -11,7 +11,6 @@
 
 package org.eclipse.jface.databinding;
 
-import java.util.Collections;
 import java.util.HashMap;
 
 import org.eclipse.jface.databinding.internal.beans.PropertyHelper;
@@ -40,17 +39,14 @@ public class TreeModelDescription {
 	
 	private Class[] types = new Class[0];
 	
-	private Object[] rootObjects;
+	private Object root;
+			
 	
-	private ITree treeModel=null;
-	
-	private boolean updating = false;
-
 	/**
-	 * @param rootObject
+	 * @param root element/s or for the tree.  
 	 */
-	public TreeModelDescription(Object[] rootObject) {
-		this.rootObjects = rootObject;
+	public TreeModelDescription(Object root) { // IUpdatable or Property
+		this.root = root;
 	}
 	
 	/**
@@ -128,48 +124,7 @@ public class TreeModelDescription {
 	/**
 	 * @return Tree root objects
 	 */
-	public Object[] getRootObjects() {
-		return rootObjects==null? Collections.EMPTY_LIST.toArray(): rootObjects;
-	}
-
-	/**
-	 * @param rootObjects
-	 */
-	public void setRootObjects(Object[] rootObjects) {		
-		if (!updating)
-			try {
-				updating = true;
-				this.rootObjects = rootObjects;
-				if (treeModel != null)
-					treeModel.setChildren(null, rootObjects);
-			} finally {
-				updating = false;
-			}
-	}
-
-	/**
-	 * @return ITree that is associated with this description
-	 */
-	public ITree getTreeModel() {
-		return treeModel;
-	}
-
-	/**
-	 * @param treeModel
-	 */
-	public void setTreeModel(ITree treeModel) {		
-		if (!updating) {
-			try {
-				updating=true;
-				if (this.treeModel!=null)
-					this.treeModel.setChildren(null, null);
-				this.treeModel = treeModel;
-				this.treeModel.setChildren(null, rootObjects);
-			}
-			finally {
-				updating=false;
-			}
-		}
-	}	
-    
+	public Object getRoot() {
+		return root;
+	}    
 }

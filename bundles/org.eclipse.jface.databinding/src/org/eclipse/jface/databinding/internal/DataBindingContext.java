@@ -26,6 +26,7 @@ import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IUpdatableTree;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.Property;
+import org.eclipse.jface.databinding.TreeModelDescription;
 import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.converterfunction.ConversionFunctionRegistry;
 import org.eclipse.jface.databinding.converters.FunctionalConverter;
@@ -197,6 +198,29 @@ public class DataBindingContext implements IDataBindingContext {
 								propertyDescription.getPropertyType() == null ? Object.class
 										: propertyDescription.getPropertyType());
 					}
+				} else if (description instanceof TreeModelDescription) {
+					TreeModelDescription treeModelDescription = (TreeModelDescription) description;
+					if (treeModelDescription.getRoot()!=null) {
+						if (treeModelDescription.getRoot() instanceof IUpdatable) { 						
+							if (treeModelDescription.getRoot() instanceof IUpdatableTree)
+								return (IUpdatableTree) treeModelDescription.getRoot();
+							//	Nest the TreeModelDescription's root
+							return new NestedUpdatableTree(DataBindingContext.this, treeModelDescription);
+						}
+						else if (treeModelDescription.getRoot() instanceof Property) {
+							// Create an Updatable for the TreeModelDescription's root first
+							TreeModelDescription newDescription = 
+								new TreeModelDescription(DataBindingContext.this.createUpdatable(treeModelDescription.getRoot()));
+							Class[] types = treeModelDescription.getTypes();
+							for (int i = 0; i < types.length; i++) {
+								String[] props = treeModelDescription.getChildrenProperties(types[i]);
+								for (int j = 0; j < props.length; j++) 
+									newDescription.addChildrenProperty(types[i], props[j]);
+							}	
+							return DataBindingContext.this.createUpdatable(newDescription);
+						}
+					}
+					return null;
 				}
 				return null;
 			}
