@@ -11,7 +11,6 @@
 package org.eclipse.jface.databinding;
 
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.List;
 
 
@@ -38,82 +37,6 @@ public interface ITree  {
 	 * @since 3.2
 	 *
 	 */
-	public static class ChangeEvent extends EventObject implements IChangeEvent {
-		/**
-		 * Events to use on changes to the tree
-		 */
-		private static final long serialVersionUID = 1L;
-		private final Object   parent;
-		private final Object   oldValue;
-		private final Object   newValue;
-		private final int	   position;
-		private final int	   changeType;
-		
-		/**
-		 * @param source ITree that has changed
-		 * @param changeType 
-		 * @param parent parent node element
-		 * @param oldValue
-		 * @param newValue
-		 * @param index 
-		 */
-		public ChangeEvent(ITree source, int changeType, Object parent, 
-						   Object oldValue, Object newValue, int index) {
-			super(source);
-			this.oldValue=oldValue;
-			this.newValue=newValue;
-			this.parent=parent;
-			this.position=index;
-			this.changeType=changeType;
-		}
-		
-		/**
-		 * @return parent element
-		 */
-		public Object getParent() {
-			return parent;
-		}
-		
-		/**
-		 * @return position of changed element 
-		 */
-		public int getPosition() {
-			return position;
-		}
-
-		/**
-		 * Returns the change type (CHANGE, ADD, or REMOVE).
-		 * 
-		 * @return the change type
-		 */
-		public int getChangeType() {
-			return changeType;
-		}
-
-		public Object getNewValue() {
-			return newValue;
-		}
-
-		public Object getOldValue() {
-			return oldValue;
-		}
-	}
-	
-	/**
-	 * @since 3.2
-	 *
-	 */
-	public interface ChangeListener  {
-		/**
-		 * @param evt
-		 */
-		void treeChange(ChangeEvent evt);
-	}
-	
-	/**
-	 * @since 3.2
-	 *
-	 */
 	public static class ChangeSupport {
 		private ITree source;
 		private List listeners = null;
@@ -128,7 +51,7 @@ public interface ITree  {
 		/**
 		 * @param listener
 		 */
-		public void addTreeChangeListener(ChangeListener listener) {
+		public void addTreeChangeListener(IChangeListener listener) {
 			if (listener!=null) {
 				if (listeners==null)
 					listeners=new ArrayList();
@@ -139,7 +62,7 @@ public interface ITree  {
 		/**
 		 * @param listener
 		 */
-		public void removeTreeChangeListener(ChangeListener listener) {
+		public void removeTreeChangeListener(IChangeListener listener) {
 			if (listener==null || listeners==null)
 				return;
 			listeners.remove(listener);
@@ -153,7 +76,7 @@ public interface ITree  {
 		 * @param index
 		 */
 		public void fireTreeChange(int changeType, Object oldValue, Object newValue, Object parent, int index) {
-			ChangeEvent evt = new ChangeEvent(source, changeType, parent, oldValue, newValue, index);
+			ChangeEvent evt = new ChangeEvent(source, changeType, oldValue, newValue, parent, index);
 			fireTreeChange(evt);
 		}
 		
@@ -168,9 +91,9 @@ public interface ITree  {
 				(oval != null && nval != null && oval.equals(nval)))
 				return;
 			
-			ChangeListener[] list = (ChangeListener[])listeners.toArray(new ChangeListener[listeners.size()]);
+			IChangeListener[] list = (IChangeListener[])listeners.toArray(new IChangeListener[listeners.size()]);
 			for (int i = 0; i < list.length; i++) {
-				list[i].treeChange(evt);
+				list[i].handleChange(evt);
 			}
 		}
 	}
@@ -209,12 +132,12 @@ public interface ITree  {
      * 
      * @param listener
      */
-    public void addTreeChangeListener(ChangeListener listener);
+    public void addTreeChangeListener(IChangeListener listener);
     
     /**
      * @param listener
      */
-    public void removeTreeChangeListener(ChangeListener listener);
+    public void removeTreeChangeListener(IChangeListener listener);
     
     /** 
      *

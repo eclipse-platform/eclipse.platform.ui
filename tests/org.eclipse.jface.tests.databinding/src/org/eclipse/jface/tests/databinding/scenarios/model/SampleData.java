@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.jface.databinding.BeanUpdatableFactory;
 import org.eclipse.jface.databinding.DataBinding;
+import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.ITree;
 import org.eclipse.jface.databinding.IUpdatableFactory;
@@ -214,9 +215,9 @@ public class SampleData {
 			public Class[] getTypes() {				
 				return new Class[]  { Catalog.class, Category.class, Lodging.class, Account.class, Adventure.class } ;
 			}
-			public void addTreeChangeListener(ChangeListener listener) {		
+			public void addTreeChangeListener(IChangeListener listener) {		
 			}
-			public void removeTreeChangeListener(ChangeListener listener) {
+			public void removeTreeChangeListener(IChangeListener listener) {
 			}
 			public void dispose() {				
 			}

@@ -14,7 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
+import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.ITree;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.TreeModelDescription;
@@ -93,7 +94,7 @@ public class TreeScenarios extends ScenariosTestCase {
 					// for the test
 				}
 				if (changeSupport!=null) {
-					ITree.ChangeEvent event = new ITree.ChangeEvent(this, IChangeEvent.REPLACE, parentElement, old, children, -1);								
+					ChangeEvent event = new ChangeEvent(this, ChangeEvent.REPLACE, old, children, parentElement, -1);								
 					changeSupport.fireTreeChange(event);
 				}				
 			}
@@ -108,13 +109,13 @@ public class TreeScenarios extends ScenariosTestCase {
 				return children;
 			}
 
-			public void addTreeChangeListener(ITree.ChangeListener listener) {
+			public void addTreeChangeListener(IChangeListener listener) {
 				if (changeSupport==null)
 					changeSupport = new ITree.ChangeSupport(this);
 				changeSupport.addTreeChangeListener(listener);
 			}
 
-			public void removeTreeChangeListener(ITree.ChangeListener listener) {
+			public void removeTreeChangeListener(IChangeListener listener) {
 				if (changeSupport!=null)
 					changeSupport.removeTreeChangeListener(listener);
 			}

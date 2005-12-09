@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.Updatable;
 import org.eclipse.jface.util.Assert;
@@ -36,8 +36,8 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 			if (!updating) {
 				Object[] values = getValues();
 				elementListenerSupport.setHookTargets(values);
-				fireChangeEvent(IChangeEvent.CHANGE, null,
-						null, IChangeEvent.POSITION_UNKNOWN);
+				fireChangeEvent(ChangeEvent.CHANGE, null,
+						null, ChangeEvent.POSITION_UNKNOWN);
 			}
 		}
 	};
@@ -48,7 +48,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 				Object[] values = getValues();
 				int position = Arrays.asList(values).indexOf(event.getSource());
 				if(position!=-1){
-					fireChangeEvent(IChangeEvent.CHANGE, event.getSource(),
+					fireChangeEvent(ChangeEvent.CHANGE, event.getSource(),
 							event.getSource(), position);
 				}
 			}
@@ -174,7 +174,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		if (index <= 0 || index > list.size())
 			index = list.size();
 		list.add(value);	
-		fireChangeEvent(IChangeEvent.ADD, null, value, index);
+		fireChangeEvent(ChangeEvent.ADD, null, value, index);
 		return index;
 		
 	}
@@ -195,7 +195,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		}
 		if (o!=null) {
 		   list.remove(o);
-		   fireChangeEvent(IChangeEvent.REMOVE, o, null, index);
+		   fireChangeEvent(ChangeEvent.REMOVE, o, null, index);
 		}		
 	}
 
@@ -205,7 +205,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 			Object[] values = getValues();
 			Object oldValue = values[index];
 			values[index] = value;
-			fireChangeEvent(IChangeEvent.CHANGE, oldValue, value, index);
+			fireChangeEvent(ChangeEvent.CHANGE, oldValue, value, index);
 		} finally {
 			updating = false;
 		}

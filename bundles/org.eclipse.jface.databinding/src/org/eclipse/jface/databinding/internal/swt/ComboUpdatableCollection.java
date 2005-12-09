@@ -11,7 +11,7 @@
 package org.eclipse.jface.databinding.internal.swt;
 
 import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.Updatable;
 import org.eclipse.jface.databinding.swt.SWTProperties;
@@ -49,7 +49,7 @@ public class ComboUpdatableCollection extends Updatable implements IUpdatableCol
 			combo.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
-						fireChangeEvent(IChangeEvent.CHANGE, null, null);
+						fireChangeEvent(ChangeEvent.CHANGE, null, null);
 					}
 				}
 			});
@@ -72,7 +72,7 @@ public class ComboUpdatableCollection extends Updatable implements IUpdatableCol
 			newItems[index]=(String)value;
 			System.arraycopy(combo.getItems(), index, newItems,index+1, getSize()-index);
 			combo.setItems(newItems);
-			fireChangeEvent(IChangeEvent.ADD, null, value, index);
+			fireChangeEvent(ChangeEvent.ADD, null, value, index);
 		}
 		finally{
 			updating=false;
@@ -96,7 +96,7 @@ public class ComboUpdatableCollection extends Updatable implements IUpdatableCol
 				}
 			}
 			combo.setItems(newItems);
-			fireChangeEvent(IChangeEvent.REMOVE, old, null, index);
+			fireChangeEvent(ChangeEvent.REMOVE, old, null, index);
 		}
 		finally{
 			updating=false;
@@ -106,7 +106,7 @@ public class ComboUpdatableCollection extends Updatable implements IUpdatableCol
 	public void setElement(int index, Object value) {
 		String old = combo.getItem(index);
 		combo.setItem(index, (String)value);
-		fireChangeEvent(IChangeEvent.CHANGE, old, value, index);
+		fireChangeEvent(ChangeEvent.CHANGE, old, value, index);
 	}
 
 	public Object getElement(int index) {

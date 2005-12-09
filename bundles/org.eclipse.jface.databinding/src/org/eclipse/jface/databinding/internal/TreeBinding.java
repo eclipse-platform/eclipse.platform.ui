@@ -14,7 +14,6 @@ import java.util.Collection;
 
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IUpdatableTree;
 
@@ -67,10 +66,10 @@ public class TreeBinding extends Binding {
 
 	private IChangeListener targetChangeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
-			if (updating != 0  && changeEvent.getChangeType()!=IChangeEvent.VIRTUAL)
+			if (updating != 0  && changeEvent.getChangeType()!=ChangeEvent.VIRTUAL)
 				return;
 
-			if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
+			if (changeEvent.getChangeType() == ChangeEvent.VERIFY) {
 				// No Conversion on the object itself
 			} else {
 				update(model, target, changeEvent);
@@ -80,7 +79,7 @@ public class TreeBinding extends Binding {
 
 	private IChangeListener modelChangeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
-			if (updating != 0  && changeEvent.getChangeType()!=IChangeEvent.VIRTUAL)
+			if (updating != 0  && changeEvent.getChangeType()!=ChangeEvent.VIRTUAL)
 				return;
 
 			update(target, model, changeEvent);
@@ -100,23 +99,23 @@ public class TreeBinding extends Binding {
 			try {
 				updating ++;
 				switch (event.getChangeType()) {
-					case IChangeEvent.VIRTUAL:
+					case ChangeEvent.VIRTUAL:
 						source.setElements(parent, needsUpdate.getElements(parent));
 						break;
 						
-					case IChangeEvent.CHANGE:
+					case ChangeEvent.CHANGE:
 						needsUpdate.setElement(parent, index, event.getNewValue());
 						break;
 						
-					case IChangeEvent.ADD:
+					case ChangeEvent.ADD:
 						needsUpdate.addElement(parent, index, event.getNewValue());
 						break;
 						
-					case IChangeEvent.REMOVE:
+					case ChangeEvent.REMOVE:
 						needsUpdate.removeElement(parent, index);
 						break;
 						
-					case IChangeEvent.REPLACE:
+					case ChangeEvent.REPLACE:
 						Object val = event.getNewValue();
 						if (val.getClass().isArray())
 						   needsUpdate.setElements(parent, (Object[]) val);

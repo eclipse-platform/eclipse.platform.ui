@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
+import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.ITree;
 import org.eclipse.jface.databinding.TreeModelDescription;
 
@@ -92,7 +93,7 @@ public class JavaBeanTree implements ITree {
 				if (properties!=null && event.getPropertyName()!=null && 
 						Arrays.asList(properties).contains(event.getPropertyName())) {
 					// Assume children have changed
-					changeSupport.fireTreeChange(IChangeEvent.REPLACE, null, getChildren(event.getSource()), event.getSource(), -1);
+					changeSupport.fireTreeChange(ChangeEvent.REPLACE, null, getChildren(event.getSource()), event.getSource(), -1);
 				}
 				else {
 					// Assume a property has changed that may change the way this element
@@ -104,8 +105,8 @@ public class JavaBeanTree implements ITree {
 						if (children!=null) {
 							index = Arrays.asList(children).indexOf(event.getSource());
 						}
-						if (index<0) index = IChangeEvent.POSITION_UNKNOWN;
-					    changeSupport.fireTreeChange(IChangeEvent.CHANGE, null, event.getSource(), node.getParent(), index);
+						if (index<0) index = ChangeEvent.POSITION_UNKNOWN;
+					    changeSupport.fireTreeChange(ChangeEvent.CHANGE, null, event.getSource(), node.getParent(), index);
 					}
 				}
 			}
@@ -295,7 +296,7 @@ public class JavaBeanTree implements ITree {
 		}
 		hookup(parentElement, children);		
 		if (changeSupport!=null)
-		   changeSupport.fireTreeChange(IChangeEvent.REPLACE, null, children, parentElement, -1);
+		   changeSupport.fireTreeChange(ChangeEvent.REPLACE, null, children, parentElement, -1);
 	}
 
 	public boolean hasChildren(Object element) {
@@ -307,7 +308,7 @@ public class JavaBeanTree implements ITree {
 		return modelDescription.getTypes();
 	}
 
-	public void addTreeChangeListener(ITree.ChangeListener listener) {
+	public void addTreeChangeListener(IChangeListener listener) {
 		if (listener==null)
 			return;
 		if (changeSupport==null)
@@ -315,7 +316,7 @@ public class JavaBeanTree implements ITree {
 		changeSupport.addTreeChangeListener(listener);		
 	}
 
-	public void removeTreeChangeListener(ITree.ChangeListener listener) {
+	public void removeTreeChangeListener(IChangeListener listener) {
 		if (listener==null || changeSupport==null)
 			return;
 		

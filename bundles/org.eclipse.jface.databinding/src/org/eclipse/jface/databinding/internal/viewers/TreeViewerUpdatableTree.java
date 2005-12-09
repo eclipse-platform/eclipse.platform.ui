@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableTree;
 import org.eclipse.jface.databinding.Updatable;
 import org.eclipse.jface.databinding.internal.swt.AsyncRunnable;
@@ -208,7 +208,7 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 					viewer.add(parentElement == null ? viewerInput : parentElement,
 							value);			
 					if (fire) 
-						fireChangeEvent(IChangeEvent.ADD, null, value, parentElement, fireIndex);						
+						fireChangeEvent(ChangeEvent.ADD, null, value, parentElement, fireIndex);						
 				}			
 			});			
 		}
@@ -237,7 +237,7 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 					public void run() {
 							viewer.remove(element);		
 							if (fire)
-								fireChangeEvent(IChangeEvent.REMOVE, element, null, parentElement, index);
+								fireChangeEvent(ChangeEvent.REMOVE, element, null, parentElement, index);
 					}
 				});
 			}
@@ -264,7 +264,7 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 						removeElement(parentElement, index, false);
 						addElement(parentElement, index, value, false);
 					}
-					fireChangeEvent(IChangeEvent.CHANGE, oldValue, value,
+					fireChangeEvent(ChangeEvent.CHANGE, oldValue, value,
 							parentElement, index);
 				}
 				
@@ -294,7 +294,7 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 				return null;
 			}
 		};
-		runnable.run();
+		runnable.runOn(viewer.getTree().getDisplay());
 	}
 
 
@@ -338,7 +338,7 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 		if (!have && !updatingVirtual && !node.isRequestedChildren()) {	
 			    updatingVirtual=true;
 				try {					
-					fireChangeEvent(IChangeEvent.VIRTUAL, null, null, element, -1);
+					fireChangeEvent(ChangeEvent.VIRTUAL, null, null, element, -1);
 					// Once asked, the assumption is that the model will listen, and update
 					// if a new child is added
 					node.setRequestedChildren(true);

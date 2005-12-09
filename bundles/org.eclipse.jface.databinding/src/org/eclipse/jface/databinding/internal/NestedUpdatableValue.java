@@ -11,7 +11,6 @@
 package org.eclipse.jface.databinding.internal;
 
 import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatableValue;
@@ -62,7 +61,7 @@ public class NestedUpdatableValue extends UpdatableValue {
 			public void handleChange(ChangeEvent changeEvent) {
 				Object oldValue = getValue();
 				updateInnerUpdatableValue(outerUpdatableValue);
-				fireChangeEvent(IChangeEvent.CHANGE, oldValue, getValue());
+				fireChangeEvent(ChangeEvent.CHANGE, oldValue, getValue());
 			}
 		};
 		outerUpdatableValue.addChangeListener(outerChangeListener);

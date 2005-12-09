@@ -15,7 +15,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
 
 /**
@@ -45,7 +45,7 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 		listener = new PropertyChangeListener() {
 			public void propertyChange(java.beans.PropertyChangeEvent event) {
 				if (!updating) {
-					fireChangeEvent(IChangeEvent.CHANGE, event.getOldValue(),
+					fireChangeEvent(ChangeEvent.CHANGE, event.getOldValue(),
 							event.getNewValue());
 				}
 			}
@@ -87,7 +87,7 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 			}
 			writeMethod.invoke(object,
 					new Object[] { value });
-			fireChangeEvent(IChangeEvent.CHANGE, oldValue, getValue());
+			fireChangeEvent(ChangeEvent.CHANGE, oldValue, getValue());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
