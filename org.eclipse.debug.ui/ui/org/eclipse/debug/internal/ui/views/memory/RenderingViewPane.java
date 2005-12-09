@@ -348,21 +348,22 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		if (fIsDisposed)
 			return;
 		
+		// do not schedule job if any of these conditions are true
+		if(part == RenderingViewPane.this)
+			return;
+		
+		if (!(selection instanceof IStructuredSelection))
+			return;
+		
+		if (selection == AbstractMemoryViewPane.EMPTY)
+			return;
+		
 		UIJob job = new UIJob("RenderingViewPane selectionChanged"){ //$NON-NLS-1$
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				try {
 
 					if (isDisposed())
-						return Status.OK_STATUS;
-					
-					if(part == RenderingViewPane.this)
-						return Status.OK_STATUS;
-					
-					if (!(selection instanceof IStructuredSelection))
-						return Status.OK_STATUS;
-					
-					if (selection == AbstractMemoryViewPane.EMPTY)
 						return Status.OK_STATUS;
 					
 					if (selection == null || selection.isEmpty())
@@ -447,7 +448,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			}};
 		job.setSystem(true);
 		job.schedule();
-
 	}
 	
 	public void handleMemoryBlockSelection(final IMemoryViewTab lastViewTab, final IMemoryBlock memBlock) {
@@ -856,9 +856,15 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	
 	protected void addListeners() {
 		super.addListeners();
+		
+		// must directly listen for selection events from parent's selection provider
+		// to ensure that we get the selection event from the tree viewer pane even
+		// if the view does not have focuse
+		fParent.getSite().getSelectionProvider().addSelectionChangedListener(this);
 	}
 	protected void removeListeners() {
 		super.removeListeners();
+		fParent.getSite().getSelectionProvider().removeSelectionChangedListener(this);
 	}
 
 	/* (non-Javadoc)

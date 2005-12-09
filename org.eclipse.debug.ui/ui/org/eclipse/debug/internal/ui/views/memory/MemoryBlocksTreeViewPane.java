@@ -474,9 +474,26 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 							return;
 					}
 					
-					TreePath[] paths = getTreePaths(obj);
-					if (paths != null)
-						fTreeViewer.setSelection(new TreeSelection(paths));
+					// fTreeViewer must take a TreeSelection
+					// When selection is set, the tree may not have been populated with the 
+					// selected object yet.  As a result, we will not be able to compute the tree
+					// path and create tree selection for client.
+					// As a work around, clients may create TreeSelection and set it as the selection
+					// in the Memory View.
+					// Need to think about if this is the way to go.  Added this code to make sure
+					// clients can set selections successfully.
+					if (selection instanceof TreeSelection)
+					{
+						// if already a tree selection, set selection
+						fTreeViewer.setSelection(selection);
+					}
+					else
+					{
+						// otherwise, try to convert to a tree selection
+						TreePath[] paths = getTreePaths(obj);
+						if (paths != null)
+							fTreeViewer.setSelection(new TreeSelection(paths));
+					}
 				}
 			}
 		}

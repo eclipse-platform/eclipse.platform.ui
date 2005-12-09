@@ -316,6 +316,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		fSashForm = new SashForm(parent, SWT.HORIZONTAL);
 		fSelectionProvider = new MemoryViewSelectionProvider();
 		
+		// set up selection provider and listeners
+		getSite().setSelectionProvider(fSelectionProvider);
+
 		createMemoryBlocksTreeViewPane(fSashForm);
 		createRenderingViewPane(IDebugUIConstants.ID_RENDERING_VIEW_PANE_1);
 		createRenderingViewPane(IDebugUIConstants.ID_RENDERING_VIEW_PANE_2);
@@ -332,11 +335,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		fSashForm.setWeights(intWeights);
 
 		loadViewPanesVisibility();
-		
-		// set up selection provider and listeners
-		
-		getSite().setSelectionProvider(fSelectionProvider);
-
 		
 		fPartListener = new MemoryViewPartListener(this);
 		getSite().getPage().addPartListener(fPartListener);
