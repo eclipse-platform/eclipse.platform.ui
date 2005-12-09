@@ -36,7 +36,7 @@ public interface ILaunchConfigurationMigrationDelegate {
 	 * </p>
 	 * 
 	 * This method does not return null, if no suitable candidates are found an empty array is returned.
-	 * @param candidate, the candidate to detemrine the migraiton status of 
+	 * @param candidate the candidate to detemrine the migraiton status of 
 	 * @return if the configuration is a migration candidate or not
 	 * @throws CoreException
 	 */

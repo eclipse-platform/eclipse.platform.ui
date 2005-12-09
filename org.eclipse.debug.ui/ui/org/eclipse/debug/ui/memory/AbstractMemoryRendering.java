@@ -186,7 +186,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	/**
 	 * Decorates and returns this rendering's image.
 	 * 
-	 * @param label base image
+	 * @param image base image
 	 * @return decorated image
 	 * @since 3.2
 	 */	
