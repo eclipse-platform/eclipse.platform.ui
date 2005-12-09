@@ -55,6 +55,7 @@ public final class Messages extends NLS {
 	public static String ReusableHelpPart_openInfoCenterAction_label;
 	public static String ReusableHelpPart_openAction_label;
 	public static String ReusableHelpPart_openInHelpContentsAction_label;
+	public static String ReusableHelpPart_closeAction_tooltip;
 	public static String ReusableHelpPart_copyAction_label;
 	public static String ReusableHelpPart_bookmarkAction_label;
 	public static String ReusableHelpPart_status;

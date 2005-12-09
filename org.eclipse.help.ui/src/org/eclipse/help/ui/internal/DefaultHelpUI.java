@@ -11,7 +11,6 @@ package org.eclipse.help.ui.internal;
 
 import java.net.URL;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.IContext;
 import org.eclipse.help.browser.IBrowser;
@@ -20,14 +19,14 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.ui.internal.util.ErrorUtil;
 import org.eclipse.help.ui.internal.views.ContextHelpPart;
-import org.eclipse.help.ui.internal.views.ContextHelpWindow;
+import org.eclipse.help.ui.internal.views.HelpTray;
 import org.eclipse.help.ui.internal.views.HelpView;
+import org.eclipse.help.ui.internal.views.ReusableHelpPart;
+import org.eclipse.jface.dialogs.DialogTray;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -55,7 +54,6 @@ import org.eclipse.ui.intro.IIntroPart;
 public class DefaultHelpUI extends AbstractHelpUI {
 
 	private ContextHelpDialog f1Dialog = null;
-	private ContextHelpWindow f1Window = null;
 	private static DefaultHelpUI instance;
 
 	private static final String HELP_VIEW_ID = "org.eclipse.help.ui.HelpView"; //$NON-NLS-1$
@@ -160,9 +158,9 @@ public class DefaultHelpUI extends AbstractHelpUI {
 				// check the dialog
 				if (activeShell != null) {
 					Object data = activeShell.getData();
-					if (data instanceof Window) {
+					if (data instanceof TrayDialog) {
 						IContext context = ContextHelpPart.findHelpContext(c);
-						displayContextAsHelpPane(activeShell, context);
+						displayContextAsHelpTray(activeShell, context);
 						return;
 					}
 				}
@@ -199,7 +197,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 				if (activeShell != null) {
 					Object data = activeShell.getData();
 					if (data instanceof Window) {
-						displayContextAsHelpPane(activeShell, null);
+						displayContextAsHelpTray(activeShell, null);
 						return;
 					}
 				}
@@ -277,7 +275,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		if (activeShell != null) {
 			Object data = activeShell.getData();
 			if (data instanceof Window && (!dinfopop || noInfopop)) {
-				displayContextAsHelpPane(activeShell, context);
+				displayContextAsHelpTray(activeShell, context);
 				return;
 			}
 		}
@@ -322,36 +320,28 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		f1Dialog.open();
 	}
 
-	private void displayContextAsHelpPane(Shell activeShell, IContext context) {
-		Control c = activeShell.getDisplay().getFocusControl();
-		if (f1Window != null) {
-			Shell parentShell = activeShell;
-			if (activeShell.getData() instanceof ContextHelpWindow)
-				parentShell = (Shell) activeShell.getParent();
-			if (f1Window.getShell().getParent().equals(parentShell)) {
-				f1Window.update(context, c);
-				return;
+	private void displayContextAsHelpTray(Shell activeShell, IContext context) {
+		Control controlInFocus = activeShell.getDisplay().getFocusControl();
+		TrayDialog dialog = (TrayDialog)activeShell.getData();
+		
+		DialogTray tray = dialog.getTray();
+		if (tray == null) {
+			tray = new HelpTray();
+			dialog.openTray(tray);
+		}
+		if (tray instanceof HelpTray) {
+			ReusableHelpPart helpPart = ((HelpTray)tray).getHelpPart();
+			if (context != null) {
+				helpPart.showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
+				helpPart.update(context, null, controlInFocus);
+			}
+			else {
+				helpPart.showPage(IHelpUIConstants.HV_FSEARCH_PAGE, true);
 			}
 		}
-		Rectangle pbounds = activeShell.getBounds();
-		f1Window = new ContextHelpWindow(activeShell);
-		f1Window.create();
-		Shell helpShell = f1Window.getShell();
-		helpShell.setText(Messages.DefaultHelpUI_wtitle);
-		helpShell.setSize(300, pbounds.height);
-		if (context != null)
-			f1Window.update(context, c);
-		else
-			f1Window.showSearch();
-		if (!Platform.getWS().equals(Platform.WS_GTK))
-			f1Window.dock(true);
-		helpShell.addDisposeListener(new DisposeListener() {
-
-			public void widgetDisposed(DisposeEvent e) {
-				f1Window = null;
-			}
-		});
-		helpShell.open();
+		else {
+			// someone else was occupying the tray; not supported
+		}
 	}
 
 	/**
