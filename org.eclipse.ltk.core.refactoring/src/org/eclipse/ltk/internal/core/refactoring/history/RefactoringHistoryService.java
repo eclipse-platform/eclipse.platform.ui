@@ -43,6 +43,7 @@ import org.eclipse.core.commands.operations.TriggeredOperations;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -891,26 +892,32 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		final String name= project.getName();
 		final URI uri= project.getLocationURI();
 		if (uri != null) {
-			if (enable) {
-				final IFileStore source= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(name);
-				if (source.fetchInfo().exists()) {
-					IFileStore destination= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
-					if (destination.fetchInfo().exists())
-						destination.delete(EFS.NONE, null);
-					destination.mkdir(EFS.NONE, null);
-					source.copy(destination, EFS.OVERWRITE, null);
-					source.delete(EFS.NONE, null);
+			try {
+				if (enable) {
+					final IFileStore source= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(name);
+					if (source.fetchInfo().exists()) {
+						IFileStore destination= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
+						if (destination.fetchInfo().exists())
+							destination.delete(EFS.NONE, null);
+						destination.mkdir(EFS.NONE, null);
+						source.copy(destination, EFS.OVERWRITE, null);
+						source.delete(EFS.NONE, null);
+					}
+				} else {
+					final IFileStore source= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
+					if (source.fetchInfo().exists()) {
+						IFileStore destination= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(name);
+						if (destination.fetchInfo().exists())
+							destination.delete(EFS.NONE, null);
+						destination.mkdir(EFS.NONE, null);
+						source.copy(destination, EFS.OVERWRITE, null);
+						source.delete(EFS.NONE, null);
+					}
 				}
-			} else {
-				final IFileStore source= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
-				if (source.fetchInfo().exists()) {
-					IFileStore destination= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(name);
-					if (destination.fetchInfo().exists())
-						destination.delete(EFS.NONE, null);
-					destination.mkdir(EFS.NONE, null);
-					source.copy(destination, EFS.OVERWRITE, null);
-					source.delete(EFS.NONE, null);
-				}
+			} finally {
+				final IFolder folder= project.getFolder(NAME_HISTORY_FOLDER);
+				if (folder.exists())
+					folder.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 			}
 		}
 	}
