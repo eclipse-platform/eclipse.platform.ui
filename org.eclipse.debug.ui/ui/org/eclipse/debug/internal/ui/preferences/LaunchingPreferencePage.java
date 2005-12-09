@@ -41,6 +41,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -52,7 +53,9 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  * A preference page for configuring launching preferences.
  */
 public class LaunchingPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-	
+	/**
+	 * to monitor the proress of the migration process
+	 */
 	private ProgressMonitorPart fMonitor;
 	
 	/**
@@ -100,11 +103,75 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 				 parent,
 				 true));
 		createLaunchHistoryEditor(parent);
-		createSpacer(parent, 1);
-		createMigrationEditor(parent);
 		createSpacer(parent, 2);
+		createMigrationEditor(parent);
+		createSpacer(parent, 1);
+		fMonitor = new ProgressMonitorPart(parent, new GridLayout());
 	}
 
+	/**
+	 * Creates the launch history section of the page
+	 */
+	private void createLaunchHistoryEditor(Composite parent) {
+		final IntegerFieldEditor editor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, DebugPreferencesMessages.DebugPreferencePage_10, parent); 
+		int historyMax = IDebugPreferenceConstants.MAX_LAUNCH_HISTORY_SIZE;
+		editor.setTextLimit(Integer.toString(historyMax).length());
+		editor.setErrorMessage(MessageFormat.format(DebugPreferencesMessages.DebugPreferencePage_11, new Object[] { new Integer(1), new Integer(historyMax)})); 
+		editor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+		editor.setValidRange(1, historyMax);		
+		editor.setPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
+					setValid(editor.isValid());
+			}
+		});
+		addField(editor);
+	}
+	
+	/**
+	 * Create the section that handles migration
+	 * 
+	 * @since 3.2
+	 */
+	private void createMigrationEditor(Composite parent) {
+		Group group = new Group(parent, SWT.NONE);
+		group.setLayout(new GridLayout(1, true));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		group.setLayoutData(gd);
+		group.setText(DebugPreferencesMessages.LaunchingPreferencePage_35);
+		Label label = new Label(group, SWT.LEFT | SWT.WRAP);
+		gd.widthHint = 450;
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.verticalIndent = 4;
+		label.setLayoutData(gd);
+		label.setText(DebugPreferencesMessages.LaunchingPreferencePage_26);
+		Button migratenow = SWTUtil.createPushButton(group, DebugPreferencesMessages.LaunchingPreferencePage_27, null);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.widthHint = 100;
+		gd.verticalIndent = 4;
+		migratenow.setLayoutData(gd);
+		migratenow.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetSelected(SelectionEvent e) {
+				handleMigrateNowSelected();
+			}			
+		});
+	}
+	
+	/**
+	 * Creates a horozontal spacer in a composite which is as wide as the specified column span 
+	 * @param composite the parent to add the spacer to
+	 * @param columnSpan the number of columns to add the spacer to.
+	 */
+	protected void createSpacer(Composite composite, int columnSpan) {
+		Label label = new Label(composite, SWT.NONE);
+		GridData gd = new GridData();
+		gd.horizontalSpan = columnSpan;
+		label.setLayoutData(gd);
+	}
+	
+	
 	/**
 	 * handles the Migrate button being clicked
 	 *
@@ -136,62 +203,6 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 			}
 		}
 		catch (CoreException e) {DebugUIPlugin.log(e);}
-	}
-	
-	
-	/**
-	 * Creates a horozontal spacer in a composite which is as wide as the specified column span 
-	 * @param composite the parent to add the spacer to
-	 * @param columnSpan the number of columns to add the spacer to.
-	 */
-	protected void createSpacer(Composite composite, int columnSpan) {
-		Label label = new Label(composite, SWT.NONE);
-		GridData gd = new GridData();
-		gd.horizontalSpan = columnSpan;
-		label.setLayoutData(gd);
-	}
-	
-	/**
-	 * Create the section that handles migration
-	 * 
-	 * @since 3.2
-	 */
-	private void createMigrationEditor(Composite parent) {
-		Label label = new Label(parent, SWT.LEFT | SWT.WRAP);
-		GridData gd = new GridData();
-		gd.widthHint = 450;
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
-		label.setText(DebugPreferencesMessages.LaunchingPreferencePage_26);
-		Button msabod = SWTUtil.createPushButton(parent, DebugPreferencesMessages.LaunchingPreferencePage_27, null);
-		msabod.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				handleMigrateNowSelected();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {}			
-		});
-		new Label(parent, SWT.NONE);
-		fMonitor = new ProgressMonitorPart(parent, new GridLayout());
-	}
-	
-	
-	/**
-	 * Creates the launch history section of the page
-	 */
-	private void createLaunchHistoryEditor(Composite parent) {
-		final IntegerFieldEditor editor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, DebugPreferencesMessages.DebugPreferencePage_10, parent); 
-		int historyMax = IDebugPreferenceConstants.MAX_LAUNCH_HISTORY_SIZE;
-		editor.setTextLimit(Integer.toString(historyMax).length());
-		editor.setErrorMessage(MessageFormat.format(DebugPreferencesMessages.DebugPreferencePage_11, new Object[] { new Integer(1), new Integer(historyMax)})); 
-		editor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		editor.setValidRange(1, historyMax);		
-		editor.setPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
-					setValid(editor.isValid());
-			}
-		});
-		addField(editor);
 	}
 
 	/* (non-Javadoc)

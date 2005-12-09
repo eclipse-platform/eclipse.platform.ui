@@ -129,4 +129,12 @@ public class DebugPreferencesMessages extends NLS {
 
 	public static String LaunchingPreferencePage_31;
 
+	public static String LaunchingPreferencePage_32;
+
+	public static String LaunchingPreferencePage_33;
+
+	public static String LaunchingPreferencePage_34;
+
+	public static String LaunchingPreferencePage_35;
+
 }
