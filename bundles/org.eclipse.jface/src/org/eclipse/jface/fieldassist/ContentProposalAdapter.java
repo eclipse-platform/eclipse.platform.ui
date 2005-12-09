@@ -94,6 +94,11 @@ public class ContentProposalAdapter {
 	private KeyStroke triggerKeyStroke;
 
 	/*
+	 * The String containing characters that auto-activate the popup.
+	 */
+	private String autoActivateString;
+
+	/*
 	 * A flag indicating how an accepted proposal should affect the control. One
 	 * of PROPOSAL_IGNORE, PROPOSAL_INSERT, or PROPOSAL_REPLACE.
 	 */
@@ -143,12 +148,20 @@ public class ContentProposalAdapter {
 	 * @param keyStroke
 	 *            the keystroke that will invoke the content proposal popup. If
 	 *            this value is <code>null</code>, then proposals will be
-	 *            shown as soon as any valid content key is typed (type-ahead
-	 *            mode).
+	 *            activated automatically when any of the trigger characters are
+	 *            typed.
+	 * @param autoActivationCharacters
+	 *            An array of characters that trigger auto-activation of content
+	 *            proposal. This parameter is only consulted if the keyStroke
+	 *            paramter is <code>null</code>. If the keyStroke parameter
+	 *            is <code>null</code> and this keyStroke is null, then all
+	 *            alphanumeric characters will be considered as auto-activating
+	 *            characters.
 	 * @param propagateKeyStroke
 	 *            a boolean that indicates whether the triggering keystroke
 	 *            should be propagated to the adapted control, as well as
-	 *            subsequent keystrokes typed into the control.
+	 *            subsequent keystrokes typed into the control when the proposal
+	 *            popup is open.
 	 * @param acceptance
 	 *            a constant indicating how an accepted proposal should affect
 	 *            the control's content. Should be one of
@@ -160,13 +173,16 @@ public class ContentProposalAdapter {
 			IControlContentAdapter controlContentAdapter,
 			IContentProposalProvider proposalProvider,
 			ILabelProvider labelProvider, KeyStroke keyStroke,
-			boolean propagateKeyStroke, int acceptance) {
+			char[] autoActivationCharacters, boolean propagateKeyStroke,
+			int acceptance) {
 		super();
 		this.control = control;
 		this.controlContentAdapter = controlContentAdapter;
 		this.proposalProvider = proposalProvider;
 		this.labelProvider = labelProvider;
 		this.triggerKeyStroke = keyStroke;
+		if (autoActivationCharacters != null)
+			this.autoActivateString = new String(autoActivationCharacters);
 		this.propagateKeyStroke = propagateKeyStroke;
 		this.acceptance = acceptance;
 		addControlListener(control);
@@ -289,9 +305,9 @@ public class ContentProposalAdapter {
 			return;
 		controlListener = new Listener() {
 			public void handleEvent(Event e) {
-				if (!isEnabled) 
+				if (!isEnabled)
 					return;
-				
+
 				switch (e.type) {
 				case SWT.KeyDown:
 					if (DEBUG)
@@ -308,9 +324,11 @@ public class ContentProposalAdapter {
 										.getModifierKeys() & e.stateMask) == triggerKeyStroke
 										.getModifierKeys()))) {
 							e.doit = propagateKeyStroke;
-							// Open the popup in an async so that this keystroke
-							// finishes processing before the popup registers
-							// its own listeners.
+							/*
+							 * Open the popup in an async so that this keystroke
+							 * finishes processing before the popup registers
+							 * its own listeners.
+							 */
 							if (popup == null) {
 								getControl().getDisplay().asyncExec(
 										new Runnable() {
@@ -322,14 +340,31 @@ public class ContentProposalAdapter {
 							return;
 						}
 					} else {
-						// Keystroke is null. We don't trigger in an async
-						// because
-						// we want this keystroke to fall through to the popup.
-						if (e.character != 0
-								&& Character.isLetterOrDigit(e.character)) {
-							e.doit = propagateKeyStroke;
-							if (popup == null)
-								openProposalPopup();
+						/*
+						 * The trigger keystroke is null, signifying
+						 * auto-activation. We check for the specified
+						 * auto-activation characters, or if none are specified,
+						 * alphanumeric characters.
+						 */
+						if (e.character != 0) {
+							boolean autoActivated = false;
+							if (autoActivateString != null) {
+							  if (autoActivateString.indexOf(e.character) >= 0) {
+								  autoActivated = true;
+							  }
+							} else if (Character.isLetterOrDigit(e.character)) {
+								autoActivated = true;
+							}
+							/*
+							 * When autoactivating, we do not open the proposal popup in
+							 * an async, because we want the target popup to process the key
+							 * stroke.
+							 */
+							if (autoActivated) {
+								e.doit = propagateKeyStroke;
+								if (popup == null)
+									openProposalPopup();
+							}
 						}
 					}
 					// If the popup is not open, we always propagate keys.
