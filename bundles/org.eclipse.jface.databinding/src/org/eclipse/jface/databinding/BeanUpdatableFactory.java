@@ -65,14 +65,18 @@ final public class BeanUpdatableFactory implements IUpdatableFactory {
 					if (descriptor.getName().equals(
 							propertyDescription.getPropertyID())) {
 						if (descriptor.getPropertyType().isArray() || Collection.class.isAssignableFrom(descriptor.getPropertyType())){
-							// If we are a collection them the type must be explicitly specified.  There is no way
-							// to derive it by name matching (because of different ways of plurals being made, e.g.
-							// getFlies() and addFly(Fly aFly) or getHooves() and addHoof(Hoof aHoof)							
+							// If we are a collection them the type must be explicitly specified in order to be edited.
+							// There is no way to derive it by name matching (because of different ways of plurals being made, 
+							// e.g. getFlies() and addFly(Fly aFly) or getHooves() and addHoof(Hoof aHoof)
 							Class elementType = descriptor.getPropertyType().isArray() ?
 									descriptor.getPropertyType().getComponentType() :
 									propertyDescription.getPropertyType();
 							if (elementType == null) {
-								throw new BindingException("Element type of " + descriptor.getPropertyType().getName() + " is not known."); //$NON-NLS-1$ //$NON-NLS-2$
+								// If we don't know the element type, use the polymorphic converter
+								// This should usually get us object to string, but won't get us string
+								// back to the object.  At least this handles the read-only case for
+								// tables and handles Combos and Lists.
+								elementType = Object.class;
 							}
 							return new JavaBeanUpdatableCollection(object,
 									descriptor, elementType);

@@ -303,14 +303,39 @@ public class TableScenarios extends ScenariosTestCase {
 		
 	}
 	
-	public void testScenario08(){
-		// Verify that binding to a Collection property (rather than an array) works
+	public void testScenario08_00(){
+		// Verify that binding to a Collection property (rather than an array) works when specifying data type
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(
 				tableViewer);
 		tableViewerDescription.addEditableColumn("userId");
 		tableViewerDescription.addEditableColumn("password");	
 		getDbc().bind(tableViewerDescription,
 				new Property(catalog, "signons", Signon.class, null), null);	
+		Signon firstSignon = (Signon) catalog.getSignons().get(0);	
+		// Verify the UI matches the model
+		TableItem firstTableItem = tableViewer.getTable().getItem(0);
+		assertEquals(firstTableItem.getText(1),firstSignon.getPassword());
+		// Change the model and ensure the UI refreshes
+		firstSignon.setPassword("Eclipse123Rocks");
+		assertEquals("Eclipse123Rocks",firstSignon.getPassword());		
+		assertEquals(firstTableItem.getText(1),firstSignon.getPassword());
+		// Change the GUI and ensure the model refreshes
+		tableViewer.editElement(firstSignon, 1);
+		CellEditor[] cellEditors = tableViewer.getCellEditors();
+		TextCellEditor passwordEditor = (TextCellEditor) cellEditors[1];
+		enterText((Text) passwordEditor.getControl(), "Cricket11Players");
+		assertEquals("Cricket11Players",firstSignon.getPassword());
+		
+	}
+	
+	public void testScenario08_01(){
+		// Verify that binding to a Collection property (rather than an array) works without specifying data type
+		TableViewerDescription tableViewerDescription = new TableViewerDescription(
+				tableViewer);
+		tableViewerDescription.addEditableColumn("userId");
+		tableViewerDescription.addEditableColumn("password");	
+		getDbc().bind(tableViewerDescription,
+				new Property(catalog, "signons"), null);	
 		Signon firstSignon = (Signon) catalog.getSignons().get(0);	
 		// Verify the UI matches the model
 		TableItem firstTableItem = tableViewer.getTable().getItem(0);
