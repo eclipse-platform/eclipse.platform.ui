@@ -348,8 +348,8 @@
            <or>         
             <instanceof value="org.eclipse.core.internal.resources.mapping.ResourceModelProvider"/>
             <instanceof value="org.eclipse.core.resources.IResource"/>
-            <instanceof value="org.eclipse.team.ui.mapping.IResourceMappingScope"/>
-            <instanceof value="org.eclipse.team.ui.mapping.ISynchronizationContext"/>
+            <instanceof value="org.eclipse.team.core.mapping.IResourceMappingScope"/>
+            <instanceof value="org.eclipse.team.core.mapping.ISynchronizationContext"/>
            </or>
          </enablement>
        </navigatorContent>
