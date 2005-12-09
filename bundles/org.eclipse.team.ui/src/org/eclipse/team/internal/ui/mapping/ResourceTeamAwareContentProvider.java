@@ -18,9 +18,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
@@ -214,4 +215,22 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 		return new ResourceTraversal[0];
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#hasChildren(java.lang.Object)
+	 */
+	public boolean hasChildren(Object element) {
+		if (super.hasChildren(element)) {
+			return true;
+		}
+		if (element instanceof IFolder) {
+			IFolder folder = (IFolder) element;
+			// For folders check to see if the delta contains any children
+			ISynchronizationContext context = getContext();
+			IDiffTree tree = context.getDiffTree();
+			if (tree.getChildren(folder.getFullPath()).length > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
