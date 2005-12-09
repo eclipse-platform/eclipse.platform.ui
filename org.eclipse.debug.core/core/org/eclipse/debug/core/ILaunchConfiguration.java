@@ -347,14 +347,12 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public boolean isLocal();
 	
 	/**
-	 * Returns if the launch configuration is a candidate for migration.
-	 * Migration in this context, defines the creation of a resource mapping between
-	 * the launch configuration and the resources it launches. This mapping can then be exploited
-	 * to filter launch conifugraitons fomr the launch configurations dialog based on resource availability
+	 * Returns whether this launch configuration is a candidate for migration.
 	 * 
+	 * @return whether this launch configuration is a candidate for migration
 	 * @throws CoreException
+	 * @see ILaunchConfigurationMigrationDelegate
 	 * @since 3.2
-	 * @return if the launch configuration can be migrated
 	 */
 	public boolean isMigrationCandidate() throws CoreException ;
 	
@@ -481,10 +479,12 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException;
 	
 	/**
-	 * Performs the actual migration of the launch configuration.
-	 * The process of migration takes place via a launch configuration migration delegate.
-	 * @throws CoreException
+	 * Migrates this launch configuration to be compatible with current tooling.
+	 * Has no effect if this configuration is not a candidate for migration.
+	 * Migration is performed by a launch configuration migration delegate.
+	 * @throws CoreException if migration fails
 	 * @since 3.2
+	 * @see ILaunchConfigurationMigrationDelegate
 	 */
 	public void migrate() throws CoreException;
 	
