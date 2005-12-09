@@ -45,514 +45,525 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * @since 2.0
  */
 public class FilteredList extends Composite {
-    /**
-     * The FilterMatcher is the interface used to check filtering criterea.
-     */
-    public interface FilterMatcher {
-        /**
-         * Sets the filter.
-         * 
-         * @param pattern
-         *            the filter pattern.
-         * @param ignoreCase
-         *            a flag indicating whether pattern matching is case
-         *            insensitive or not.
-         * @param ignoreWildCards
-         *            a flag indicating whether wildcard characters are
-         *            interpreted or not.
-         */
-        void setFilter(String pattern, boolean ignoreCase,
-                boolean ignoreWildCards);
+	/**
+	 * The FilterMatcher is the interface used to check filtering criterea.
+	 */
+	public interface FilterMatcher {
+		/**
+		 * Sets the filter.
+		 * 
+		 * @param pattern
+		 *            the filter pattern.
+		 * @param ignoreCase
+		 *            a flag indicating whether pattern matching is case
+		 *            insensitive or not.
+		 * @param ignoreWildCards
+		 *            a flag indicating whether wildcard characters are
+		 *            interpreted or not.
+		 */
+		void setFilter(String pattern, boolean ignoreCase,
+				boolean ignoreWildCards);
 
-        /**
-         * @param element
-         *            The element to test against.
-         * @return <code>true</code> if the object matches the pattern,
-         *         <code>false</code> otherwise. <code>setFilter()</code>
-         *         must have been called at least once prior to a call to this
-         *         method.
-         */
-        boolean match(Object element);
-    }
+		/**
+		 * @param element
+		 *            The element to test against.
+		 * @return <code>true</code> if the object matches the pattern,
+		 *         <code>false</code> otherwise. <code>setFilter()</code>
+		 *         must have been called at least once prior to a call to this
+		 *         method.
+		 */
+		boolean match(Object element);
+	}
 
-    private class DefaultFilterMatcher implements FilterMatcher {
-        private StringMatcher fMatcher;
+	private class DefaultFilterMatcher implements FilterMatcher {
+		private StringMatcher fMatcher;
 
-        public void setFilter(String pattern, boolean ignoreCase,
-                boolean ignoreWildCards) {
-            fMatcher = new StringMatcher(pattern + '*', ignoreCase,
-                    ignoreWildCards);
-        }
+		public void setFilter(String pattern, boolean ignoreCase,
+				boolean ignoreWildCards) {
+			fMatcher = new StringMatcher(pattern + '*', ignoreCase,
+					ignoreWildCards);
+		}
 
-        public boolean match(Object element) {
-            return fMatcher.match(fLabelProvider.getText(element));
-        }
-    }
+		public boolean match(Object element) {
+			return fMatcher.match(fLabelProvider.getText(element));
+		}
+	}
 
-    private Table fList;
+	private Table fList;
 
-    ILabelProvider fLabelProvider;
+	ILabelProvider fLabelProvider;
 
-    private boolean fMatchEmptyString = true;
+	private boolean fMatchEmptyString = true;
 
-    private boolean fIgnoreCase;
+	private boolean fIgnoreCase;
 
-    private boolean fAllowDuplicates;
+	private boolean fAllowDuplicates;
 
-    private String fFilter = ""; //$NON-NLS-1$
+	private String fFilter = ""; //$NON-NLS-1$
 
-    private TwoArrayQuickSorter fSorter;
+	private TwoArrayQuickSorter fSorter;
 
-    Object[] fElements = new Object[0];
+	Object[] fElements = new Object[0];
 
-    Label[] fLabels;
+	Label[] fLabels;
 
-    Vector fImages = new Vector();
+	Vector fImages = new Vector();
 
-    int[] fFoldedIndices;
+	int[] fFoldedIndices;
 
-    int fFoldedCount;
+	int fFoldedCount;
 
-    int[] fFilteredIndices;
+	int[] fFilteredIndices;
 
-    int fFilteredCount;
+	int fFilteredCount;
 
-    private FilterMatcher fFilterMatcher = new DefaultFilterMatcher();
+	private FilterMatcher fFilterMatcher = new DefaultFilterMatcher();
 
-    Comparator fComparator;
+	Comparator fComparator;
 
-    TableUpdateJob fUpdateJob;
-    
-    /**
-     * Label is a private class used for comparing list objects
-     */
-    private static class Label {
-        /**
-         * The string portion of the label.
-         */
-        public final String string;
+	TableUpdateJob fUpdateJob;
 
-        /**
-         * The image portion of the label.
-         */
-        public final Image image;
+	/**
+	 * Label is a private class used for comparing list objects
+	 */
+	private static class Label {
+		/**
+		 * The string portion of the label.
+		 */
+		public final String string;
 
-        /**
-         * Create a new instance of label.
-         * 
-         * @param newString
-         * @param image
-         */
-        public Label(String newString, Image image) {
-        	if(newString == null)
-        		this.string = Util.ZERO_LENGTH_STRING;
-        	else
-        		this.string = newString;
-            this.image = image;
-        }
+		/**
+		 * The image portion of the label.
+		 */
+		public final Image image;
 
-        /**
-         * Return whether or not the receiver is the same as label.
-         * 
-         * @param label
-         * @return boolean
-         */
-        public boolean equals(Label label) {
-            if (label == null)
-                return false;
-            // If the string portions match (whether null or not), fall
-            // through and check the image portion.
-            if (string == null && label.string != null)
-                return false;
-            if ((string != null) && (!string.equals(label.string)))
-                return false;
-            if (image == null)
-                return label.image == null;
-            return image.equals(label.image);
-        }
-    }
+		/**
+		 * Create a new instance of label.
+		 * 
+		 * @param newString
+		 * @param image
+		 */
+		public Label(String newString, Image image) {
+			if (newString == null)
+				this.string = Util.ZERO_LENGTH_STRING;
+			else
+				this.string = newString;
+			this.image = image;
+		}
 
-    private final class LabelComparator implements Comparator {
-        private boolean labelIgnoreCase;
+		/**
+		 * Return whether or not the receiver is the same as label.
+		 * 
+		 * @param label
+		 * @return boolean
+		 */
+		public boolean equals(Label label) {
+			if (label == null)
+				return false;
+			// If the string portions match (whether null or not), fall
+			// through and check the image portion.
+			if (string == null && label.string != null)
+				return false;
+			if ((string != null) && (!string.equals(label.string)))
+				return false;
+			if (image == null)
+				return label.image == null;
+			return image.equals(label.image);
+		}
+	}
 
-        LabelComparator(boolean ignoreCase) {
-            labelIgnoreCase = ignoreCase;
-        }
+	private final class LabelComparator implements Comparator {
+		private boolean labelIgnoreCase;
 
-        public int compare(Object left, Object right) {
-            Label leftLabel = (Label) left;
-            Label rightLabel = (Label) right;
-            int value;
-            if (fComparator == null) {
-                value = labelIgnoreCase ? leftLabel.string
-                        .compareToIgnoreCase(rightLabel.string)
-                        : leftLabel.string.compareTo(rightLabel.string);
-            } else {
-                value = fComparator
-                        .compare(leftLabel.string, rightLabel.string);
-            }
-            if (value != 0)
-                return value;
-            // images are allowed to be null
-            if (leftLabel.image == null) {
-                return (rightLabel.image == null) ? 0 : -1;
-            } else if (rightLabel.image == null) {
-                return +1;
-            } else {
-                return fImages.indexOf(leftLabel.image)
-                        - fImages.indexOf(rightLabel.image);
-            }
-        }
-    }
+		LabelComparator(boolean ignoreCase) {
+			labelIgnoreCase = ignoreCase;
+		}
 
-    /**
-     * Constructs a new filtered list.
-     * 
-     * @param parent
-     *            the parent composite
-     * @param style
-     *            the widget style
-     * @param labelProvider
-     *            the label renderer
-     * @param ignoreCase
-     *            specifies whether sorting and folding is case sensitive
-     * @param allowDuplicates
-     *            specifies whether folding of duplicates is desired
-     * @param matchEmptyString
-     *            specifies whether empty filter strings should filter
-     *            everything or nothing
-     */
-    public FilteredList(Composite parent, int style,
-            ILabelProvider labelProvider, boolean ignoreCase,
-            boolean allowDuplicates, boolean matchEmptyString) {
-        super(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        setLayout(layout);
-        fList = new Table(this, style);
-        fList.setLayoutData(new GridData(GridData.FILL_BOTH));
-        fList.setFont(parent.getFont());
-        fList.addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent e) {
-                fLabelProvider.dispose();
-                if (fUpdateJob != null)
-                    fUpdateJob.cancel();
-            }
-        });
-        fLabelProvider = labelProvider;
-        fIgnoreCase = ignoreCase;
-        fSorter = new TwoArrayQuickSorter(new LabelComparator(ignoreCase));
-        fAllowDuplicates = allowDuplicates;
-        fMatchEmptyString = matchEmptyString;
-    }
+		public int compare(Object left, Object right) {
+			Label leftLabel = (Label) left;
+			Label rightLabel = (Label) right;
+			int value;
+			if (fComparator == null) {
+				value = labelIgnoreCase ? leftLabel.string
+						.compareToIgnoreCase(rightLabel.string)
+						: leftLabel.string.compareTo(rightLabel.string);
+			} else {
+				value = fComparator
+						.compare(leftLabel.string, rightLabel.string);
+			}
+			if (value != 0)
+				return value;
+			// images are allowed to be null
+			if (leftLabel.image == null) {
+				return (rightLabel.image == null) ? 0 : -1;
+			} else if (rightLabel.image == null) {
+				return +1;
+			} else {
+				return fImages.indexOf(leftLabel.image)
+						- fImages.indexOf(rightLabel.image);
+			}
+		}
+	}
 
-    /**
-     * Sets the list of elements.
-     * 
-     * @param elements
-     *            the elements to be shown in the list.
-     */
-    public void setElements(Object[] elements) {
-        if (elements == null) {
-            fElements = new Object[0];
-        } else {
-            // copy list for sorting
-            fElements = new Object[elements.length];
-            System.arraycopy(elements, 0, fElements, 0, elements.length);
-        }
-        int length = fElements.length;
-        // fill labels
-        fLabels = new Label[length];
-        Set imageSet = new HashSet();
-        for (int i = 0; i != length; i++) {
-            String text = fLabelProvider.getText(fElements[i]);
-            Image image = fLabelProvider.getImage(fElements[i]);
-            fLabels[i] = new Label(text, image);
-            imageSet.add(image);
-        }
-        fImages.clear();
-        fImages.addAll(imageSet);
-        fSorter.sort(fLabels, fElements);
-        fFilteredIndices = new int[length];
-        fFoldedIndices = new int[length];
-        updateList();
-    }
+	/**
+	 * Constructs a new filtered list.
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 * @param style
+	 *            the widget style
+	 * @param labelProvider
+	 *            the label renderer
+	 * @param ignoreCase
+	 *            specifies whether sorting and folding is case sensitive
+	 * @param allowDuplicates
+	 *            specifies whether folding of duplicates is desired
+	 * @param matchEmptyString
+	 *            specifies whether empty filter strings should filter
+	 *            everything or nothing
+	 */
+	public FilteredList(Composite parent, int style,
+			ILabelProvider labelProvider, boolean ignoreCase,
+			boolean allowDuplicates, boolean matchEmptyString) {
+		super(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		setLayout(layout);
+		fList = new Table(this, style);
+		fList.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fList.setFont(parent.getFont());
+		fList.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				fLabelProvider.dispose();
+				if (fUpdateJob != null)
+					fUpdateJob.cancel();
+			}
+		});
+		fLabelProvider = labelProvider;
+		fIgnoreCase = ignoreCase;
+		fSorter = new TwoArrayQuickSorter(new LabelComparator(ignoreCase));
+		fAllowDuplicates = allowDuplicates;
+		fMatchEmptyString = matchEmptyString;
+	}
 
-    /**
-     * Tests if the list (before folding and filtering) is empty.
-     * 
-     * @return returns <code>true</code> if the list is empty,
-     *         <code>false</code> otherwise.
-     */
-    public boolean isEmpty() {
-        return (fElements == null) || (fElements.length == 0);
-    }
+	/**
+	 * Sets the list of elements.
+	 * 
+	 * @param elements
+	 *            the elements to be shown in the list.
+	 */
+	public void setElements(Object[] elements) {
+		if (elements == null) {
+			fElements = new Object[0];
+		} else {
+			// copy list for sorting
+			fElements = new Object[elements.length];
+			System.arraycopy(elements, 0, fElements, 0, elements.length);
+		}
+		int length = fElements.length;
+		// fill labels
+		fLabels = new Label[length];
+		Set imageSet = new HashSet();
+		for (int i = 0; i != length; i++) {
+			String text = fLabelProvider.getText(fElements[i]);
+			Image image = fLabelProvider.getImage(fElements[i]);
+			fLabels[i] = new Label(text, image);
+			imageSet.add(image);
+		}
+		fImages.clear();
+		fImages.addAll(imageSet);
+		fSorter.sort(fLabels, fElements);
+		fFilteredIndices = new int[length];
+		fFoldedIndices = new int[length];
+		updateList();
+	}
 
-    /**
-     * Sets the filter matcher.
-     * 
-     * @param filterMatcher
-     */
-    public void setFilterMatcher(FilterMatcher filterMatcher) {
-        Assert.isNotNull(filterMatcher);
-        fFilterMatcher = filterMatcher;
-    }
+	/**
+	 * Tests if the list (before folding and filtering) is empty.
+	 * 
+	 * @return returns <code>true</code> if the list is empty,
+	 *         <code>false</code> otherwise.
+	 */
+	public boolean isEmpty() {
+		return (fElements == null) || (fElements.length == 0);
+	}
 
-    /**
-     * Sets a custom comparator for sorting the list.
-     * 
-     * @param comparator
-     */
-    public void setComparator(Comparator comparator) {
-        Assert.isNotNull(comparator);
-        fComparator = comparator;
-    }
+	/**
+	 * Sets the filter matcher.
+	 * 
+	 * @param filterMatcher
+	 */
+	public void setFilterMatcher(FilterMatcher filterMatcher) {
+		Assert.isNotNull(filterMatcher);
+		fFilterMatcher = filterMatcher;
+	}
 
-    /**
-     * Adds a selection listener to the list.
-     * 
-     * @param listener
-     *            the selection listener to be added.
-     */
-    public void addSelectionListener(SelectionListener listener) {
-        fList.addSelectionListener(listener);
-    }
+	/**
+	 * Sets a custom comparator for sorting the list.
+	 * 
+	 * @param comparator
+	 */
+	public void setComparator(Comparator comparator) {
+		Assert.isNotNull(comparator);
+		fComparator = comparator;
+	}
 
-    /**
-     * Removes a selection listener from the list.
-     * 
-     * @param listener
-     *            the selection listener to be removed.
-     */
-    public void removeSelectionListener(SelectionListener listener) {
-        fList.removeSelectionListener(listener);
-    }
+	/**
+	 * Adds a selection listener to the list.
+	 * 
+	 * @param listener
+	 *            the selection listener to be added.
+	 */
+	public void addSelectionListener(SelectionListener listener) {
+		fList.addSelectionListener(listener);
+	}
 
-    /**
-     * Sets the selection of the list. Empty or null array removes selection.
-     * 
-     * @param selection
-     *            an array of indices specifying the selection.
-     */
-    public void setSelection(int[] selection) {
-        if (selection == null || selection.length == 0)
-            fList.deselectAll();
-        else {
-            //If there is no working update job, or the update job is ready to
-        	// accept selections, set the selection immediately.
-            if (fUpdateJob == null) {
-                fList.setSelection(selection);
-                fList.notifyListeners(SWT.Selection, new Event());
-            } else
-            	// There is an update job doing the population of the list, so
-            	// it should update the selection.
-                fUpdateJob.updateSelection(selection);
-        }
-    }
+	/**
+	 * Removes a selection listener from the list.
+	 * 
+	 * @param listener
+	 *            the selection listener to be removed.
+	 */
+	public void removeSelectionListener(SelectionListener listener) {
+		fList.removeSelectionListener(listener);
+	}
 
-    /**
-     * Returns the selection of the list.
-     * 
-     * @return returns an array of indices specifying the current selection.
-     */
-    public int[] getSelectionIndices() {
-        return fList.getSelectionIndices();
-    }
+	/**
+	 * Sets the selection of the list. Empty or null array removes selection.
+	 * 
+	 * @param selection
+	 *            an array of indices specifying the selection.
+	 */
+	public void setSelection(int[] selection) {
+		if (selection == null || selection.length == 0)
+			fList.deselectAll();
+		else {
+			// If there is no working update job, or the update job is ready to
+			// accept selections, set the selection immediately.
+			if (fUpdateJob == null) {
+				fList.setSelection(selection);
+				fList.notifyListeners(SWT.Selection, new Event());
+			} else
+				// There is an update job doing the population of the list, so
+				// it should update the selection.
+				fUpdateJob.updateSelection(selection);
+		}
+	}
 
-    /**
-     * Returns the selection of the list. This is a convenience function for
-     * <code>getSelectionIndices()</code>.
-     * 
-     * @return returns the index of the selection, -1 for no selection.
-     */
-    public int getSelectionIndex() {
-        return fList.getSelectionIndex();
-    }
+	/**
+	 * Returns the selection of the list.
+	 * 
+	 * @return returns an array of indices specifying the current selection.
+	 */
+	public int[] getSelectionIndices() {
+		return fList.getSelectionIndices();
+	}
 
-    /**
-     * Sets the selection of the list. Empty or null array removes selection.
-     * 
-     * @param elements
-     *            the array of elements to be selected.
-     */
-    public void setSelection(Object[] elements) {
-        if (elements == null || elements.length == 0) {
-            fList.deselectAll();
-            return;
-        }
-        if (fElements == null)
-            return;
-        // fill indices
-        int[] indices = new int[elements.length];
-        for (int i = 0; i != elements.length; i++) {
-            int j;
-            for (j = 0; j != fFoldedCount; j++) {
-                int max = (j == fFoldedCount - 1) ? fFilteredCount
-                        : fFoldedIndices[j + 1];
-                int l;
-                for (l = fFoldedIndices[j]; l != max; l++) {
-                    // found matching element?
-                    if (fElements[fFilteredIndices[l]].equals(elements[i])) {
-                        indices[i] = j;
-                        break;
-                    }
-                }
-                if (l != max)
-                    break;
-            }
-            // not found
-            if (j == fFoldedCount)
-                indices[i] = 0;
-        }
-        setSelection(indices);
-    }
+	/**
+	 * Returns the selection of the list. This is a convenience function for
+	 * <code>getSelectionIndices()</code>.
+	 * 
+	 * @return returns the index of the selection, -1 for no selection.
+	 */
+	public int getSelectionIndex() {
+		return fList.getSelectionIndex();
+	}
 
-    /**
-     * Returns an array of the selected elements. The type of the elements
-     * returned in the list are the same as the ones passed with
-     * <code>setElements</code>. The array does not contain the rendered
-     * strings.
-     * 
-     * @return returns the array of selected elements.
-     */
-    public Object[] getSelection() {
-        if (fList.isDisposed() || (fList.getSelectionCount() == 0))
-            return new Object[0];
-        int[] indices = fList.getSelectionIndices();
-        Object[] elements = new Object[indices.length];
-        for (int i = 0; i != indices.length; i++)
-            elements[i] = fElements[fFilteredIndices[fFoldedIndices[indices[i]]]];
-        return elements;
-    }
+	/**
+	 * Sets the selection of the list. Empty or null array removes selection.
+	 * 
+	 * @param elements
+	 *            the array of elements to be selected.
+	 */
+	public void setSelection(Object[] elements) {
+		if (elements == null || elements.length == 0) {
+			fList.deselectAll();
+			return;
+		}
+		if (fElements == null)
+			return;
+		// fill indices
+		int[] indices = new int[elements.length];
+		for (int i = 0; i != elements.length; i++) {
+			int j;
+			for (j = 0; j != fFoldedCount; j++) {
+				int max = (j == fFoldedCount - 1) ? fFilteredCount
+						: fFoldedIndices[j + 1];
+				int l;
+				for (l = fFoldedIndices[j]; l != max; l++) {
+					// found matching element?
+					if (fElements[fFilteredIndices[l]].equals(elements[i])) {
+						indices[i] = j;
+						break;
+					}
+				}
+				if (l != max)
+					break;
+			}
+			// not found
+			if (j == fFoldedCount)
+				indices[i] = 0;
+		}
+		setSelection(indices);
+	}
 
-    /**
-     * Sets the filter pattern. Current only prefix filter patterns are
-     * supported.
-     * 
-     * @param filter
-     *            the filter pattern.
-     */
-    public void setFilter(String filter) {
-        fFilter = (filter == null) ? "" : filter; //$NON-NLS-1$
-        updateList();
-    }
+	/**
+	 * Returns an array of the selected elements. The type of the elements
+	 * returned in the list are the same as the ones passed with
+	 * <code>setElements</code>. The array does not contain the rendered
+	 * strings.
+	 * 
+	 * @return returns the array of selected elements.
+	 */
+	public Object[] getSelection() {
+		if (fList.isDisposed() || (fList.getSelectionCount() == 0))
+			return new Object[0];
+		int[] indices = fList.getSelectionIndices();
+		Object[] elements = new Object[indices.length];
+		for (int i = 0; i != indices.length; i++)
+			elements[i] = fElements[fFilteredIndices[fFoldedIndices[indices[i]]]];
+		return elements;
+	}
 
-    private void updateList() {
-        fFilteredCount = filter();
-        fFoldedCount = fold();
-        if (fUpdateJob != null)
-            fUpdateJob.cancel();
-        fUpdateJob = new TableUpdateJob(fList, fFoldedCount);
-        fUpdateJob.schedule();
-    }
+	/**
+	 * Sets the filter pattern. Current only prefix filter patterns are
+	 * supported.
+	 * 
+	 * @param filter
+	 *            the filter pattern.
+	 */
+	public void setFilter(String filter) {
+		fFilter = (filter == null) ? "" : filter; //$NON-NLS-1$
+		updateList();
+	}
 
-    /**
-     * Returns the filter pattern.
-     * 
-     * @return returns the filter pattern.
-     */
-    public String getFilter() {
-        return fFilter;
-    }
+	private void updateList() {
+		fFilteredCount = filter();
+		fFoldedCount = fold();
+		if (fUpdateJob != null)
+			fUpdateJob.cancel();
+		fUpdateJob = new TableUpdateJob(fList, fFoldedCount);
+		fUpdateJob.schedule();
+	}
 
-    /**
-     * Returns all elements which are folded together to one entry in the list.
-     * 
-     * @param index
-     *            the index selecting the entry in the list.
-     * @return returns an array of elements folded together, <code>null</code>
-     *         if index is out of range.
-     */
-    public Object[] getFoldedElements(int index) {
-        if ((index < 0) || (index >= fFoldedCount))
-            return null;
-        int start = fFoldedIndices[index];
-        int count = (index == fFoldedCount - 1) ? fFilteredCount - start
-                : fFoldedIndices[index + 1] - start;
-        Object[] elements = new Object[count];
-        for (int i = 0; i != count; i++)
-            elements[i] = fElements[fFilteredIndices[start + i]];
-        return elements;
-    }
+	/**
+	 * Returns the filter pattern.
+	 * 
+	 * @return returns the filter pattern.
+	 */
+	public String getFilter() {
+		return fFilter;
+	}
 
-    /*
-     * Folds duplicate entries. Two elements are considered as a pair of
-     * duplicates if they coiincide in the rendered string and image. @return
-     * returns the number of elements after folding.
-     */
-    private int fold() {
-        if (fAllowDuplicates) {
-            for (int i = 0; i != fFilteredCount; i++)
-                fFoldedIndices[i] = i; // identity mapping
-            return fFilteredCount;
-        }
-        int k = 0;
-        Label last = null;
-        for (int i = 0; i != fFilteredCount; i++) {
-            int j = fFilteredIndices[i];
-            Label current = fLabels[j];
-            if (!current.equals(last)) {
-                fFoldedIndices[k] = i;
-                k++;
-                last = current;
-            }
-        }
-        return k;
-    }
+	/**
+	 * Returns all elements which are folded together to one entry in the list.
+	 * 
+	 * @param index
+	 *            the index selecting the entry in the list.
+	 * @return returns an array of elements folded together, <code>null</code>
+	 *         if index is out of range.
+	 */
+	public Object[] getFoldedElements(int index) {
+		if ((index < 0) || (index >= fFoldedCount))
+			return null;
+		int start = fFoldedIndices[index];
+		int count = (index == fFoldedCount - 1) ? fFilteredCount - start
+				: fFoldedIndices[index + 1] - start;
+		Object[] elements = new Object[count];
+		for (int i = 0; i != count; i++)
+			elements[i] = fElements[fFilteredIndices[start + i]];
+		return elements;
+	}
 
-    /*
-     * Filters the list with the filter pattern. @return returns the number of
-     * elements after filtering.
-     */
-    private int filter() {
-        if (((fFilter == null) || (fFilter.length() == 0))
-                && !fMatchEmptyString)
-            return 0;
-        fFilterMatcher.setFilter(fFilter.trim(), fIgnoreCase, false);
-        int k = 0;
-        for (int i = 0; i != fElements.length; i++) {
-            if (fFilterMatcher.match(fElements[i]))
-                fFilteredIndices[k++] = i;
-        }
-        return k;
-    }
+	/*
+	 * Folds duplicate entries. Two elements are considered as a pair of
+	 * duplicates if they coiincide in the rendered string and image. @return
+	 * returns the number of elements after folding.
+	 */
+	private int fold() {
+		if (fAllowDuplicates) {
+			for (int i = 0; i != fFilteredCount; i++)
+				fFoldedIndices[i] = i; // identity mapping
+			return fFilteredCount;
+		}
+		int k = 0;
+		Label last = null;
+		for (int i = 0; i != fFilteredCount; i++) {
+			int j = fFilteredIndices[i];
+			Label current = fLabels[j];
+			if (!current.equals(last)) {
+				fFoldedIndices[k] = i;
+				k++;
+				last = current;
+			}
+		}
+		return k;
+	}
 
-    private class TableUpdateJob extends WorkbenchJob {
-        final Table fTable;
+	/*
+	 * Filters the list with the filter pattern. @return returns the number of
+	 * elements after filtering.
+	 */
+	private int filter() {
+		if (((fFilter == null) || (fFilter.length() == 0))
+				&& !fMatchEmptyString)
+			return 0;
+		fFilterMatcher.setFilter(fFilter.trim(), fIgnoreCase, false);
+		int k = 0;
+		for (int i = 0; i != fElements.length; i++) {
+			if (fFilterMatcher.match(fElements[i]))
+				fFilteredIndices[k++] = i;
+		}
+		return k;
+	}
 
-        final int fCount;
+	private class TableUpdateJob extends WorkbenchJob {
+		final Table fTable;
 
-        private int currentIndex = 0;
+		final int fCount;
 
-        int[] indicesToSelect;
-        
-        private boolean readyForSelection = false;
-           
-        /**
-         * Create a new instance of a job used to update the table.
-         * 
-         * @param table
-         * @param count
-         *            The number of items to update per running.
-         */
-        public TableUpdateJob(Table table, int count) {
-            super(WorkbenchMessages.FilteredList_UpdateJobName);
-            setSystem(true);
-            fTable = table;
-            fCount = count;
-        }
+		private int currentIndex = 0;
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-         */
-        public IStatus runInUIThread(IProgressMonitor monitor) {
+		/*
+		 * Programmatic selections requested while this job was running.
+		 */
+		int[] indicesToSelect;
+
+		/*
+		 * Original selections when job first started. Used to force selection
+		 * notifications when the original selection was maintained, because the
+		 * items themselves are different. See
+		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=119456
+		 */
+		
+		private boolean readyForSelection = false;
+
+		/**
+		 * Create a new instance of a job used to update the table.
+		 * 
+		 * @param table
+		 * @param count
+		 *            The number of items to update per running.
+		 */
+		public TableUpdateJob(Table table, int count) {
+			super(WorkbenchMessages.FilteredList_UpdateJobName);
+			setSystem(true);
+			fTable = table;
+			fCount = count;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+public IStatus runInUIThread(IProgressMonitor monitor) {
             if (fTable.isDisposed())
                 return Status.CANCEL_STATUS;
             int itemCount = fTable.getItemCount();
-            //Remove excess items
+                        
+            // Remove excess items
             if (fCount < itemCount) {
                 fTable.setRedraw(false);
                 fTable.remove(fCount, itemCount - 1);
@@ -564,7 +575,7 @@ public class FilteredList extends Composite {
                 fTable.notifyListeners(SWT.Selection, new Event());
                 return Status.OK_STATUS;
             }
-            //How many we are going to do this time.
+            // How many we are going to do this time.
             int iterations = Math.min(10, fCount - currentIndex);
             for (int i = 0; i < iterations; i++) {
                 if (monitor.isCanceled())
@@ -583,11 +594,20 @@ public class FilteredList extends Composite {
                 schedule(100);
             else {
                 if (indicesToSelect == null) {
-                 	// Check whether a selection has already been made in the
-                	// table.  If so, honor it.  If not, then set up a default.
-                 	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=112146
-                    if (fCount > 0 && fTable.getSelectionIndices().length == 0)
-                        defaultSelect();
+                 	// Make a default selection in the table if there is none.
+                	// If a selection has already been made, honor it.
+                	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=112146
+                    if (fCount > 0) {
+                    	if (fTable.getSelectionIndices().length == 0) {
+                    		defaultSelect();
+                    	} else {
+                    		// There is a selection, but it likely hasn't changed since the
+                    		// job started.  Force a selection notification, since the
+                    		// items represented by the selection have changed.
+							// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=119456
+                    		fTable.notifyListeners(SWT.Selection, new Event());
+                    	}
+                    }
                 } else {
                 	// Set the selection as indicated.
                     selectAndNotify(indicesToSelect);
@@ -598,124 +618,123 @@ public class FilteredList extends Composite {
             }
             return Status.OK_STATUS;
         }
+		/**
+		 * Update the selection for the supplied indices.
+		 * 
+		 * @param indices
+		 */
+		void updateSelection(final int[] indices) {
+			indicesToSelect = indices;
+			if (readyForSelection) {
+				selectAndNotify(indices);
+			}
+		}
 
-        /**
-         * Update the selection for the supplied indices.
-         * 
-         * @param indices
-         */
-        void updateSelection(final int[] indices) {
-        	indicesToSelect = indices;
-        	if (readyForSelection) {
-        		selectAndNotify(indices);
-        	}
-    }
-        
-        /**
-         * Select the first element if there is no selection
-         */
-        private void defaultSelect() {
-            /**
-             * Reset to the first selection if no index has been queued.
-             */
-            selectAndNotify(new int[] { 0 });
-        }
+		/**
+		 * Select the first element if there is no selection
+		 */
+		private void defaultSelect() {
+			/**
+			 * Reset to the first selection if no index has been queued.
+			 */
+			selectAndNotify(new int[] { 0 });
+		}
 
-        /**
-         * Select the supplied indices and notify any listeners
-         * 
-         * @param indices
-         */
-        private void selectAndNotify(final int[] indices) {
-            //It is possible that the table was disposed
-            //before the update finished. If so then leave
-            if (fTable.isDisposed())
-                return;
-            fTable.setSelection(indices);
-            fTable.notifyListeners(SWT.Selection, new Event());
-        }
-    }
+		/**
+		 * Select the supplied indices and notify any listeners
+		 * 
+		 * @param indices
+		 */
+		private void selectAndNotify(final int[] indices) {
+			// It is possible that the table was disposed
+			// before the update finished. If so then leave
+			if (fTable.isDisposed())
+				return;
+			fTable.setSelection(indices);
+			fTable.notifyListeners(SWT.Selection, new Event());
+		}
+	}
 
-    /**
-     * Returns whether or not duplicates are allowed.
-     * 
-     * @return <code>true</code> indicates duplicates are allowed
-     */
-    public boolean getAllowDuplicates() {
-        return fAllowDuplicates;
-    }
+	/**
+	 * Returns whether or not duplicates are allowed.
+	 * 
+	 * @return <code>true</code> indicates duplicates are allowed
+	 */
+	public boolean getAllowDuplicates() {
+		return fAllowDuplicates;
+	}
 
-    /**
-     * Sets whether or not duplicates are allowed. If this value is set the
-     * items should be set again for this value to take effect.
-     * 
-     * @param allowDuplicates
-     *            <code>true</code> indicates duplicates are allowed
-     */
-    public void setAllowDuplicates(boolean allowDuplicates) {
-        this.fAllowDuplicates = allowDuplicates;
-    }
+	/**
+	 * Sets whether or not duplicates are allowed. If this value is set the
+	 * items should be set again for this value to take effect.
+	 * 
+	 * @param allowDuplicates
+	 *            <code>true</code> indicates duplicates are allowed
+	 */
+	public void setAllowDuplicates(boolean allowDuplicates) {
+		this.fAllowDuplicates = allowDuplicates;
+	}
 
-    /**
-     * Returns whether or not case should be ignored.
-     * 
-     * @return <code>true</code> if case should be ignored
-     */
-    public boolean getIgnoreCase() {
-        return fIgnoreCase;
-    }
+	/**
+	 * Returns whether or not case should be ignored.
+	 * 
+	 * @return <code>true</code> if case should be ignored
+	 */
+	public boolean getIgnoreCase() {
+		return fIgnoreCase;
+	}
 
-    /**
-     * Sets whether or not case should be ignored If this value is set the items
-     * should be set again for this value to take effect.
-     * 
-     * @param ignoreCase
-     *            <code>true</code> if case should be ignored
-     */
-    public void setIgnoreCase(boolean ignoreCase) {
-        this.fIgnoreCase = ignoreCase;
-    }
+	/**
+	 * Sets whether or not case should be ignored If this value is set the items
+	 * should be set again for this value to take effect.
+	 * 
+	 * @param ignoreCase
+	 *            <code>true</code> if case should be ignored
+	 */
+	public void setIgnoreCase(boolean ignoreCase) {
+		this.fIgnoreCase = ignoreCase;
+	}
 
-    /**
-     * Returns whether empty filter strings should filter everything or nothing.
-     * 
-     * @return <code>true</code> for the empty string to match all items,
-     *         <code>false</code> to match none
-     */
-    public boolean getMatchEmptyString() {
-        return fMatchEmptyString;
-    }
+	/**
+	 * Returns whether empty filter strings should filter everything or nothing.
+	 * 
+	 * @return <code>true</code> for the empty string to match all items,
+	 *         <code>false</code> to match none
+	 */
+	public boolean getMatchEmptyString() {
+		return fMatchEmptyString;
+	}
 
-    /**
-     * Sets whether empty filter strings should filter everything or nothing. If
-     * this value is set the items should be set again for this value to take
-     * effect.
-     * 
-     * @param matchEmptyString
-     *            <code>true</code> for the empty string to match all items,
-     *            <code>false</code> to match none
-     */
-    public void setMatchEmptyString(boolean matchEmptyString) {
-        this.fMatchEmptyString = matchEmptyString;
-    }
+	/**
+	 * Sets whether empty filter strings should filter everything or nothing. If
+	 * this value is set the items should be set again for this value to take
+	 * effect.
+	 * 
+	 * @param matchEmptyString
+	 *            <code>true</code> for the empty string to match all items,
+	 *            <code>false</code> to match none
+	 */
+	public void setMatchEmptyString(boolean matchEmptyString) {
+		this.fMatchEmptyString = matchEmptyString;
+	}
 
-    /**
-     * Returns the label provider for the items.
-     * 
-     * @return the label provider
-     */
-    public ILabelProvider getLabelProvider() {
-        return fLabelProvider;
-    }
+	/**
+	 * Returns the label provider for the items.
+	 * 
+	 * @return the label provider
+	 */
+	public ILabelProvider getLabelProvider() {
+		return fLabelProvider;
+	}
 
-    /**
-     * Sets the label provider. If this value is set the items should be set
-     * again for this value to take effect.
-     * 
-     * @param labelProvider
-     *            the label provider
-     */
-    public void setLabelProvider(ILabelProvider labelProvider) {
-        this.fLabelProvider = labelProvider;
-    }
+	/**
+	 * Sets the label provider. If this value is set the items should be set
+	 * again for this value to take effect.
+	 * 
+	 * @param labelProvider
+	 *            the label provider
+	 */
+	public void setLabelProvider(ILabelProvider labelProvider) {
+		this.fLabelProvider = labelProvider;
+	}
 }
