@@ -20,6 +20,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * Abstract baseclass for IWorkingSet implementations.
@@ -43,6 +44,12 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 	private String label;
 
 	/**
+	 * Whether or not the label value should follow the name value. It should do
+	 * this until a call to setLabel() differentiates it from the name.
+	 */
+	private boolean labelBoundToName;
+
+	/**
 	 * Create a new instance of this class
 	 * 
 	 * @param name the unique name for this working set
@@ -52,6 +59,7 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 		Assert.isNotNull(name, "name must not be null"); //$NON-NLS-1$
 		this.name = name;
 		this.label = label;
+		labelBoundToName = Util.equals(name, label);
 	}
 	
 	/**
@@ -79,6 +87,11 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 	    
 	    name = newName;
 	    fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE, null);
+	    
+	    if (labelBoundToName) {
+	    		label = newName;
+	    		fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_LABEL_CHANGE, null);
+	    }
 	}
 
 	/**
@@ -156,6 +169,8 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 
 	public void setLabel(String label) {
 		this.label = label == null ? getName() : label;
+		labelBoundToName = Util.equals(label, name);  // rebind the label to the name
+		
 		fireWorkingSetChanged(
 				IWorkingSetManager.CHANGE_WORKING_SET_LABEL_CHANGE, null);
 	}
