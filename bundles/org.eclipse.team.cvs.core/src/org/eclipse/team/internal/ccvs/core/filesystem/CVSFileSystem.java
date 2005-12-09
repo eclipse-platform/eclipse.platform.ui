@@ -1,0 +1,84 @@
+/**********************************************************************
+ * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
+package org.eclipse.team.internal.ccvs.core.filesystem;
+import java.net.URI;
+import java.util.HashMap;
+
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
+
+public class CVSFileSystem {
+
+
+	private CVSFileTree cvsTree;
+
+	public CVSFileSystem() {
+		super();
+	}
+
+	public IFileStore getStore(URI uri) {
+		return new CVSFileStore(CVSURI.fromUri(uri), null);
+	}
+
+	public boolean canReturnFullTree(){
+		return true;
+	}
+	
+	public CVSFileTree getFullTree(URI uri, IProgressMonitor monitor){
+		try{
+		monitor.beginTask("Getting the full tree", 100);
+		//always return new tree
+		//monitor.subTask(NLS.bind(message, binding));
+		if (cvsTree != null)
+		return cvsTree;
+
+		return this.refreshTree(uri, monitor);
+		}
+		finally{
+			monitor.done();
+		}
+	}
+	
+
+	public CVSFileTree refreshTree(URI uri, IProgressMonitor monitor){
+	    CVSURI cvsURI = CVSURI.fromUri(uri);
+		
+		//Make sure that we're building the tree from the topmost level - keep cycling until you hit null
+		ICVSRemoteFolder folder = cvsURI.getProjectURI().toFolder();
+		
+		try {
+			RemoteLogger logger = new RemoteLogger(folder);
+
+			RemoteFolderTree remoteTree = logger.fetchTree(new SubProgressMonitor(monitor,80));
+			HashMap folderMap = logger.getFolderMap();
+			HashMap logMap = logger.getLogMap();
+			folderMap.put(folder.getName(), remoteTree);
+			//Save tree
+			cvsTree = new CVSFileTree(new CVSFileStore(cvsURI, null), cvsURI, remoteTree, folderMap, logMap);
+
+			return cvsTree;
+		} catch (CoreException e) {
+			// TODO Need to handle this somehow
+			CVSProviderPlugin.log(e);
+			return null;
+		}
+		
+	
+	}
+	//add method or interface to adapt to interface to get tree
+	
+	//file store no notion of tree; separate classes
+	
+	
+	
+}

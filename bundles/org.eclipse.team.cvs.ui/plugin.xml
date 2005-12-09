@@ -431,6 +431,11 @@
                menubarPath="miscGroup"
                id="org.eclipse.team.ccvs.ui.addToBranch">
          </action>
+         <action
+               class="org.eclipse.team.internal.ccvs.ui.actions.FetchAllMembersAction"
+               id="org.eclipse.team.ccvs.ui.fetchAllMembers"
+               label="Fetch All Members"
+               menubarPath="miscGroup"/>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.team.internal.ccvs.core.ICVSRemoteFile"

@@ -206,5 +206,11 @@
             extension="cvsignore">
       </fileTypes>
    </extension>
+   <extension
+         point="org.eclipse.core.filesystem.filesystems">
+      <filesystem scheme="cvs">
+         <run class="org.eclipse.team.internal.ccvs.core.filesystem.CVSFileSystem"/>
+      </filesystem>
+   </extension>
 
 </plugin>

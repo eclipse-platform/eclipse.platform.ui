@@ -128,7 +128,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.repo.RemoteViewPart#getContentProvider()
 	 */
-	protected RemoteContentProvider getContentProvider() {
+	public RemoteContentProvider getContentProvider() {
 		if (contentProvider == null) {
 			contentProvider = new RemoteContentProvider();
 		}
@@ -346,6 +346,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 	protected void refreshViewer() {
 		if (viewer == null) return;
 		((RemoteContentProvider)viewer.getContentProvider()).cancelJobs(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryRoots());
+		((RemoteContentProvider)viewer.getContentProvider()).purgeCache();
 		CVSUIPlugin.getPlugin().getRepositoryManager().purgeCache();
 		updateWorkingSetMenu();
         viewer.getControl().setRedraw(false);
@@ -386,7 +387,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 	 * Returns the viewer.
 	 * @return TreeViewer
 	 */
-	protected TreeViewer getViewer() {
+	public TreeViewer getViewer() {
 		return viewer;
 	}
 

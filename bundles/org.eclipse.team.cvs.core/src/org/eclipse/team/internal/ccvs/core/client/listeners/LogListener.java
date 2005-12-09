@@ -45,6 +45,9 @@ public class LogListener extends CommandOutputListener {
     private final int SYMBOLIC_NAMES = 1;
     private final int BEGIN = 0;
     
+    //Tag used for accumulating all of a branch's revision info
+    public final static String BRANCH_REVISION = "branchRevision"; //$NON-NLS-1$
+    
     // Instance variables for accumulating Log information
     private RemoteFile currentFile;
     private int state = BEGIN;
@@ -121,6 +124,19 @@ public class LogListener extends CommandOutputListener {
     			} else if (line.startsWith("revision ")) { //$NON-NLS-1$
     				revision = line.substring(9);
     				state = REVISION;
+    			} else if (line.startsWith("total revisions:")){
+    				//if there are no current revision selected and this is a branch then we are in the 
+    				//case where there have been no changes made on the branch since the initial branching
+    				//and we need to get the revision that the branch was made from
+    				int indexOfSelectedRevisions = line.lastIndexOf("selected revisions: ");
+    				//20 for length of "selected revisions: "
+    				String selectedRevisions = line.substring(indexOfSelectedRevisions + 20).trim();
+    				if (selectedRevisions.equals("0")){
+    					//ok put into comment state to await ======= and add info to log
+    					state = COMMENT;
+    					revision = BRANCH_REVISION;
+    					comment = new StringBuffer();
+    				}
     			}
     			break;
     		case SYMBOLIC_NAMES:
@@ -157,6 +173,10 @@ public class LogListener extends CommandOutputListener {
     				state = DONE;
     				break;
     			}
+    			//check for null if we are in the waiting to finish case (brought on by branches)
+    			if (comment == null)
+    				break; 
+    			
     			if (comment.length() != 0) comment.append('\n');
     			comment.append(line);
     			break;
@@ -164,6 +184,8 @@ public class LogListener extends CommandOutputListener {
     	if (state == DONE) {
     		// we are only interested in tag names for this revision, remove all others.
     		List thisRevisionTags = new ArrayList(3);
+    		//a parallel lists for revision tags (used only for branches with no commits on them)
+    		List revisionVersions = new ArrayList(3);
     		for (int i = 0; i < tagNames.size(); i++) {
     			String tagName = (String) tagNames.get(i);
     			String tagRevision = (String) tagRevisions.get(i);
@@ -182,15 +204,23 @@ public class LogListener extends CommandOutputListener {
     					tagRevision = tagRevision.substring(0, lastDot);
     				}
     			}
-    			if (tagRevision.equals(revision)) {
+    			if (tagRevision.equals(revision) ||
+    				revision.equals(BRANCH_REVISION)) {
     				int type = isBranch ? CVSTag.BRANCH : CVSTag.VERSION;
     				thisRevisionTags.add(new CVSTag(tagName, type));
+    				if (revision.equals(BRANCH_REVISION)){
+    					//also record the tag revision
+    					revisionVersions.add(tagRevision);
+    				}
     			}
     		}
-    		Date date = convertFromLogTime(creationDate);
+    		Date date = null;
+    		if (creationDate != null)
+    			date = convertFromLogTime(creationDate);
+    		
     		if (currentFile != null) {
     			LogEntry entry = new LogEntry(currentFile, revision, author, date,
-    				comment.toString(), fileState, (CVSTag[]) thisRevisionTags.toArray(new CVSTag[0]));
+    				comment.toString(), fileState, (CVSTag[]) thisRevisionTags.toArray(new CVSTag[0]), (String[]) revisionVersions.toArray(new String[revisionVersions.size()]));
     			addEntry(entry);
     		}
     		state = BEGIN;

@@ -27,7 +27,8 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 	private String comment;
 	private String state;
 	private CVSTag[] tags;
-
+    private String[] revisions;
+    
 	public LogEntry(RemoteFile file, String revision, String author, Date date, String comment, String state, CVSTag[] tags) {
 		this.file = file.toRevision(revision);
 		this.author = author;
@@ -37,6 +38,11 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 		this.tags = tags;
 	}
 	
+	public LogEntry(RemoteFile file, String revision, String author, Date date, String comment, String state, CVSTag[] tags, String[] revisions) {
+		this(file,revision,author,date,comment,state,tags);
+		this.revisions=revisions;
+	}
+
 	/**
 	 * @see ILogEntry#getRevision()
 	 */
@@ -95,5 +101,19 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 		return getState().equals("dead"); //$NON-NLS-1$
 	}
 
+	/**
+	 * In the case where files on a branch haven't been modified since their initial branch point, 
+	 * they keep the revision number of their predecessor. In this case no revision info will be displayed
+	 * while doing a log, so all branch revision numbers are recorded. This allows the user to pick which revision
+	 * they are interested in.
+	 * @return an array of branch revision strings or an empty array if no branch revisions were recorded
+	 */
+	public String[] getBranchRevisions(){
+		
+		if (revisions != null)
+			return revisions;
+		
+		return new String[0];
+	}
 }
 

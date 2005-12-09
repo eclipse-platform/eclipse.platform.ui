@@ -22,7 +22,8 @@ public class RLog extends RemoteCommand {
 	/*** Local options: specific to rlog ***/
 	public static final LocalOption NO_TAGS = new LocalOption("-N"); //$NON-NLS-1$ 
 	public static final LocalOption ONLY_INCLUDE_CHANGES = new LocalOption("-S"); //$NON-NLS-1$ 
-	
+	public static final LocalOption REVISIONS_ON_DEFAULT_BRANCH = new LocalOption("-b"); //$NON-NLS-1$ 
+	public static final LocalOption LOCAL_DIRECTORY_ONLY = new LocalOption("-l"); //$NON-NLS-1$ 
 	/**
 	 * Makes a -r option for rlog. Here are the currently supported options:
 	 * 
@@ -85,6 +86,36 @@ public class RLog extends RemoteCommand {
 				// Unknow tag type!!!
 				throw new IllegalArgumentException();
 		}
+	}
+	
+	/***
+	 * Experimental - Used for obtaining the latest revisions on HEAD or the specified branch. 
+	 * @param tag1
+	 * @return the option to use
+	 * 
+	 * Valid for rlog
+	 */
+	public static LocalOption getCurrentTag(CVSTag tag1) {
+		
+		int type = tag1.getType();
+		
+		switch (type){
+			case CVSTag.HEAD:
+			return new LocalOption("-r"); //$NON-NLS-1$
+		
+			case CVSTag.BRANCH:
+			return new LocalOption("-r" + tag1.getName() + "."); //$NON-NLS-1$ //$NON-NLS-2$
+		
+			case CVSTag.VERSION:
+			return new LocalOption("-r" + tag1.getName()); //$NON-NLS-1$
+			
+			case CVSTag.DATE:
+			return new LocalOption("-d", tag1.asDate().toString()); //$NON-NLS-1$
+			default:
+				// Unknow tag type!!!
+				throw new IllegalArgumentException();
+		}
+		
 	}
 	
 	/* (non-Javadoc)
