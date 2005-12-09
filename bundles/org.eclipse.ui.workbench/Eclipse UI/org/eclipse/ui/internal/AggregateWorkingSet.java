@@ -94,7 +94,8 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 	}
 
 	public ImageDescriptor getImage() {
-		return null;
+		return WorkbenchImages
+				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_WORKING_SETS);
 	}
 
 	/**

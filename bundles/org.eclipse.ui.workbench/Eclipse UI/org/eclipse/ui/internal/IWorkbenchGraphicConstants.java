@@ -164,5 +164,12 @@ public interface IWorkbenchGraphicConstants {
      * 
      * @since 3.0
      */
-    public static final String IMG_OBJ_THEME_CATEGORY = "IMG_OBJ_THEME_CATEGORY"; //$NON-NLS-1$    
+    public static final String IMG_OBJ_THEME_CATEGORY = "IMG_OBJ_THEME_CATEGORY"; //$NON-NLS-1$
+    
+    /**
+     * Generic working set icon.
+     * 
+     * @since 3.2
+     */
+    public static final String IMG_OBJ_WORKING_SETS = "IMG_OBJ_WORKING_SETS"; //$NON-NLS-1$
 }
