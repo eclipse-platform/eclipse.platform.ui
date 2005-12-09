@@ -62,11 +62,10 @@ import org.xml.sax.helpers.DefaultHandler;
 public class LaunchConfiguration extends PlatformObject implements ILaunchConfiguration {
 	
 	/**
-	 * Launch configuration attribute that specifies the resource mapped to it.
-	 * Not all launch configurations will have a mapped resource unless migrated
-	 * (as of 3.2). The mapping is provided to put tighter constraints on launch configuration
-	 * choices presented to the user during context sensitive launching and for project state changes (i.e. launch
-	 * configuration not available for close projects).
+	 * Launch configuration attribute that specifies the resources mapped to it.
+	 * Not all launch configurations will have a mapped resource unless migrated.
+	 * Value is a list of resource paths stored as portabable strings, or <code>null</code>
+	 * if none.
 	 * 
 	 * @since 3.2
 	 */

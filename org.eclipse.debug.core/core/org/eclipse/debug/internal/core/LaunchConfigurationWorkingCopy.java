@@ -558,16 +558,17 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setResource(org.eclipse.core.resources.IResource)
 	 */
 	public void setMappedResources(IResource[] resource) {
+		ArrayList resources = null;
 		if(resource != null) {
-			ArrayList resources = new ArrayList(resource.length);
+			resources = new ArrayList(resource.length);
 			for (int i = 0; i < resource.length; i++) {
 				if(resource[i] != null) {
 					resources.add(resource[i].getFullPath().toPortableString());
 				}
 			}
-			getInfo().setAttribute(LaunchConfiguration.ATTR_MAPPED_RESOURCE, resources);
-			setDirty();
+			setAttribute(LaunchConfiguration.ATTR_MAPPED_RESOURCE, resources);
 		}
+		setAttribute(LaunchConfiguration.ATTR_MAPPED_RESOURCE, resources);
 	}//end setResource
 
 }//end class
