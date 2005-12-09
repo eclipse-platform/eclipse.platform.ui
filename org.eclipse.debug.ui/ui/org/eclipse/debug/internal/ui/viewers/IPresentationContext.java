@@ -15,8 +15,8 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * Context in which an asynchronous request has been made.
  * <p>
- * Clients are may implement and extend this interface to provide
- * special contexts.
+ * Clients may implement and extend this interface to provide
+ * special contexts. Implementations must subclass {@link PresentationContext}.
  * </p>
  * @since 3.2
  */

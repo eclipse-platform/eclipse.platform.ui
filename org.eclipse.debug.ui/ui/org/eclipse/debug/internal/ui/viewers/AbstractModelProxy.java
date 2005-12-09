@@ -15,6 +15,13 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 
+/**
+ * Common function for model proxies.
+ * <p>
+ * Clients may subclass this class.
+ * </p>
+ * @since 3.2
+ */
 public abstract class AbstractModelProxy implements IModelProxy {
 	
 	private IPresentationContext fContext;
