@@ -26,7 +26,7 @@ import org.w3c.dom.Document;
 public class XHTMLContentProducer implements IHelpContentProducer {
 
 	public InputStream getInputStream(String pluginID, String href, Locale locale) {
-		if (!href.endsWith("xhtml"))
+		if (!href.endsWith("xhtml")) //$NON-NLS-1$
 			return null;
 		return openXHTMLFromPlugin(pluginID, href, locale.toString());
 	}

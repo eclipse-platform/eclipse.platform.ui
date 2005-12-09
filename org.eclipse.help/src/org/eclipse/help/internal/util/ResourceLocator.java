@@ -123,21 +123,25 @@ public class ResourceLocator {
 	 */
 	private static IHelpContentProducer getContentProducer(String pluginId) {
 		synchronized (contentProducers) {
-			Object descriptor = contentProducers.get(pluginId);
-			if (descriptor == null) {
-				// first time for the plug-in, so attempt to
-				// find and instantiate provider
-				descriptor = createContentProducer(pluginId);
-				if (descriptor == null) {
-					descriptor = STATIC_DOCS_ONLY;
-				}
-				contentProducers.put(pluginId, descriptor);
-			}
-			if (descriptor == STATIC_DOCS_ONLY) {
+			Object obj = getProducerDescriptor(pluginId);
+			if (obj == null || obj == STATIC_DOCS_ONLY)
 				return null;
-			}
-			return ((ProducerDescriptor) descriptor).getProducer();
+			return ((ProducerDescriptor) obj).getProducer();
 		}
+	}
+
+	private static Object getProducerDescriptor(String pluginId) {
+		Object descriptor = contentProducers.get(pluginId);
+		if (descriptor == null) {
+			// first time for the plug-in, so attempt to
+			// find and instantiate provider
+			descriptor = createContentProducer(pluginId);
+			if (descriptor == null) {
+				descriptor = STATIC_DOCS_ONLY;
+			}
+			contentProducers.put(pluginId, descriptor);
+		}
+		return descriptor;
 	}
 
 	/**
@@ -152,7 +156,7 @@ public class ResourceLocator {
 		if (elements.length == 0) {
 			return null;
 		}
-
+		
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (!elements[i].getNamespace().equals(pluginId)) {
@@ -161,9 +165,9 @@ public class ResourceLocator {
 			if (BINDING.equals(element.getName())) {
 				// producer binding - locate the descriptor
 				// with the matching reference Id
-				String refId = element.getAttribute("producerId");
+				String refId = element.getAttribute("producerId"); //$NON-NLS-1$
 				if (refId != null) {
-					return findContentProducer(refId);
+					return findContentProducer(elements, refId);
 				}
 			} else if (CONTENTPRODUCER_XP_NAME.equals(element.getName())) {
 				return new ProducerDescriptor(element);
@@ -172,13 +176,27 @@ public class ResourceLocator {
 		return null;
 	}
 
-	private static ProducerDescriptor findContentProducer(String refId) {
+	private static ProducerDescriptor findContentProducer(IConfigurationElement [] elements, String refId) {
+		// try existing ones
 		for (Iterator iter = contentProducers.values().iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (obj instanceof ProducerDescriptor) {
 				ProducerDescriptor desc = (ProducerDescriptor) obj;
 				if (desc.matches(refId))
 					return desc;
+			}
+		}
+		// not created yet. Find the matching configuration element,
+		// take its contributing pluginId and get the descriptor
+		// for that plug-in
+		for (int i=0; i<elements.length; i++) {
+			if (CONTENTPRODUCER_XP_NAME.equals(elements[i].getName())) {
+				String id = elements[i].getDeclaringExtension().getUniqueIdentifier();
+				if (refId.equals(id)) {
+					Object obj = getProducerDescriptor(elements[i].getNamespace());
+					if (obj instanceof ProducerDescriptor)
+						return (ProducerDescriptor)obj;
+				}
 			}
 		}
 		return null;

@@ -1090,7 +1090,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				return;
 			HashMap args = new HashMap();
 			HelpURLConnection.parseQuery(url.substring(qloc+1), args);
-			((ISearchEngine2)desc.getEngine()).open((String)args.get("id"));
+			((ISearchEngine2)desc.getEngine()).open((String)args.get("id")); //$NON-NLS-1$
 			return;
 		}
 		if (replace) {

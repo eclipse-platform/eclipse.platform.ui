@@ -160,5 +160,12 @@
             library="ant_tasks/helpbase-ant.jar">
       </extraClasspathEntry>
    </extension>
+   <extension
+         point="org.eclipse.help.base.luceneSearchParticipants">
+      <searchParticipant
+            extensions="xhtml"
+            id="org.eclipse.help.base.xhtml"
+            participant="org.eclipse.help.internal.search.XHTMLSearchParticipant"/>
+   </extension>
 
 </plugin>

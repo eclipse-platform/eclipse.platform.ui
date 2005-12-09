@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -59,17 +60,19 @@ public abstract class LuceneSearchParticipant {
 	 * called by the help system - subclasses are not supposed to call it.
 	 * 
 	 * @param id
+	 *            the unique identifier of this participant
+	 * @param index
+	 *            the search index for the current locale
 	 */
 
 	public final void init(String id) {
-		if (this.id == null)
 			this.id = id;
 	}
 
 	/**
 	 * Returns the unique identifier of this participant.
 	 * 
-	 * @return
+	 * @return the unique id
 	 */
 	public String getId() {
 		return id;
@@ -78,20 +81,25 @@ public abstract class LuceneSearchParticipant {
 	/**
 	 * Adds the document to the search index.
 	 * 
+	 * @param index
+	 *            the abstract representation of the help index that is currently running. Indexing
+	 *            known file types in participants that manage documents outside the TOC can be
+	 *            delegated to the index.
 	 * @param pluginId
 	 *            the plug-in that owns the document
 	 * @param name
 	 *            the name of the document to index
 	 * @param url
 	 *            the url of the document to index
-	 * @param locale
-	 *            used by the client.
+	 * @param id
+	 *            the unique id associated with this document
 	 * @param doc
 	 *            the Lucene document to add searchable content to
 	 * @return the status of the indexing operation. A successful operation should return
 	 *         <code>Status.OK</code>.
 	 */
-	public abstract IStatus addDocument(String pluginId, String name, URL url, String locale, Document doc);
+	public abstract IStatus addDocument(ISearchIndex index, String pluginId, String name, URL url, String id,
+			Document doc);
 
 	/**
 	 * Returns all the documents that this participant knows about. This method is only used for
@@ -117,6 +125,18 @@ public abstract class LuceneSearchParticipant {
 		return EMPTY_SET;
 	}
 
+	/**
+	 * A utility method that resolves a file name that contains '$'-based substitution variables.
+	 * 
+	 * @param pluginId
+	 *            the identifier of the originating plug-in
+	 * @param fileName
+	 *            the source file name
+	 * @param locale
+	 *            the locale to use when resolving nl variable
+	 * @return the plug-in relative file name with resolved variables
+	 */
+
 	protected static String resolveVariables(String pluginId, String fileName, String locale) {
 		if (fileName.indexOf('$') == -1)
 			return fileName;
@@ -125,8 +145,23 @@ public abstract class LuceneSearchParticipant {
 		if (bundle == null)
 			return fileName;
 		URL url = ResourceLocator.find(bundle, new Path(fileName), prefix);
-		URL root = Platform.find(bundle, new Path(""));
+		URL root = Platform.find(bundle, new Path("")); //$NON-NLS-1$
 		return url.toString().substring(root.toString().length());
+	}
+
+	/**
+	 * A utility method that adds a document title to the Lucene document.
+	 * 
+	 * @param title
+	 *            the title string
+	 * @param doc
+	 *            the Lucene document
+	 */
+
+	protected void addTitle(String title, Document doc) {
+		doc.add(Field.UnStored("title", title)); //$NON-NLS-1$
+		doc.add(Field.UnStored("exact_title", title)); //$NON-NLS-1$
+		doc.add(Field.UnIndexed("raw_title", title)); //$NON-NLS-1$
 	}
 
 	/**
@@ -146,5 +181,13 @@ public abstract class LuceneSearchParticipant {
 
 	public boolean open(String id) {
 		return false;
+	}
+
+	/**
+	 * Signals to the participant that the indexing operation has finished and that cached resources
+	 * can be disposed to free up memory. The participant itself is still kept around (hence this is
+	 * semantically different from <code>dispose</code>).
+	 */
+	public void clear() {
 	}
 }

@@ -44,15 +44,15 @@ public class UAContentParser {
 		String dtdBaseLocation = "dtds/xhtml1-20020801/"; //$NON-NLS-1$
 
 		String dtdLocation = dtdBaseLocation + "xhtml1-transitional.dtd"; //$NON-NLS-1$
-		URL dtdURL_T = BundleUtil.getResourceAsURL(dtdLocation, "org.eclipse.ui.intro");
+		URL dtdURL_T = BundleUtil.getResourceAsURL(dtdLocation, "org.eclipse.ui.intro"); //$NON-NLS-1$
 		dtdMap.put(XHTML1_TRANSITIONAL, dtdURL_T);
 
 		dtdLocation = dtdBaseLocation + "xhtml1-strict.dtd"; //$NON-NLS-1$
-		URL dtdURL_S = BundleUtil.getResourceAsURL(dtdLocation, "org.eclipse.ui.intro");
+		URL dtdURL_S = BundleUtil.getResourceAsURL(dtdLocation, "org.eclipse.ui.intro"); //$NON-NLS-1$
 		dtdMap.put(XHTML1_STRICT, dtdURL_S);
 
 		dtdLocation = dtdBaseLocation + "xhtml1-frameset.dtd"; //$NON-NLS-1$
-		URL dtdURL_F = BundleUtil.getResourceAsURL(dtdLocation, "org.eclipse.ui.intro");
+		URL dtdURL_F = BundleUtil.getResourceAsURL(dtdLocation, "org.eclipse.ui.intro"); //$NON-NLS-1$
 		dtdMap.put(XHTML1_FRAMESET, dtdURL_F);
 	}
 

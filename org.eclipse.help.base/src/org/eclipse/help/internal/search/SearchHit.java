@@ -136,7 +136,7 @@ public class SearchHit implements ISearchEngineResult2 {
 	}
 
 	public String getId() {
-		return participantId + "/" + id;
+		return participantId + "/" + id; //$NON-NLS-1$
 	}
 
 	public String getParticipantId() {

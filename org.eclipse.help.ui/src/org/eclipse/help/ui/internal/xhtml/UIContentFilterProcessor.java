@@ -23,9 +23,9 @@ public class UIContentFilterProcessor extends UAContentFilterProcessor {
 
 	protected boolean isFilteredIn(String filter, String value) {
 		boolean filtered_in = false;
-		if (filter.equals("category")) {
+		if (filter.equals("category")) { //$NON-NLS-1$
 			filtered_in = filterByCategory(value);
-		} else if (filter.equals("activity")) {
+		} else if (filter.equals("activity")) { //$NON-NLS-1$
 			filtered_in = filterByActivity(value);
 		} else
 			filtered_in = super.isFilteredIn(filter, value);

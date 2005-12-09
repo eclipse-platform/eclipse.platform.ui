@@ -6,6 +6,11 @@
    <extension-point id="toc" name="%toc_extension_point_name" schema="schema/toc.exsd"/>
    <extension-point id="contentProducer" name="%content_producer_extension_point_name" schema="schema/contentProducer.exsd"/>
    <extension-point id="index" name="%index_extension_point_name"/>
+   <extension
+         id="xhtml"
+         point="org.eclipse.help.contentProducer">
+      <contentProducer producer="org.eclipse.help.internal.xhtml.XHTMLContentProducer"/>
+   </extension>
 
 
 </plugin>

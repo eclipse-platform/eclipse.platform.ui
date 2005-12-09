@@ -358,7 +358,7 @@ public class TocData extends ActivitiesData {
 			out.write(imagesDirectory);
 			out
 					.write("/plus.gif' class='collapsed' alt=\"" + ServletResources.getString("topicClosed", request) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			out.write("<a href=" +"\""+ UrlUtil.getHelpURL(topic.getHref()) + "\""+">"); //$NON-NLS-1$ //$NON-NLS-2$
+			out.write("<a href=" +"\""+ UrlUtil.getHelpURL(topic.getHref()) + "\""+">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
 			out.write("/container_obj.gif' alt=\"\">"); //$NON-NLS-1$
@@ -396,7 +396,7 @@ public class TocData extends ActivitiesData {
 			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
 			out.write("/plus.gif' class='h' alt=\"\">"); //$NON-NLS-1$
-			out.write("<a href=" +"\""+ UrlUtil.getHelpURL(topic.getHref()) + "\""+">"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			out.write("<a href=" +"\""+ UrlUtil.getHelpURL(topic.getHref()) + "\""+">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
 			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
 			out.write("/topic.gif' alt=\"\">"); //$NON-NLS-1$
@@ -434,7 +434,7 @@ public class TocData extends ActivitiesData {
 			if (getSelectedTopicHelpHref().equals(topic.getHref())) {
 				out.write("name=\"selectedItem\" "); //$NON-NLS-1$
 			}
-			out.write("href="+"\"" + UrlUtil.getHelpURL(topic.getHref())+"\"" + ">"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			out.write("href="+"\"" + UrlUtil.getHelpURL(topic.getHref())+"\"" + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
 			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
 			out.write("/container_obj.gif' alt=\"\" border=0>&nbsp;"); //$NON-NLS-1$
@@ -455,7 +455,7 @@ public class TocData extends ActivitiesData {
 			if (getSelectedTopicHelpHref().equals(topic.getHref())) {
 				out.write("name=\"selectedItem\" "); //$NON-NLS-1$
 			}
-			out.write("href="+"\"" + UrlUtil.getHelpURL(topic.getHref()) +"\""+ ">"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			out.write("href="+"\"" + UrlUtil.getHelpURL(topic.getHref()) +"\""+ ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
 			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
 			out.write("/topic.gif' alt=\"\" border=0>&nbsp;"); //$NON-NLS-1$

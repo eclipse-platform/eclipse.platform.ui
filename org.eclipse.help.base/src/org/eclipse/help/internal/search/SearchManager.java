@@ -1,13 +1,11 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+/***************************************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ **************************************************************************************************/
 package org.eclipse.help.internal.search;
 
 import java.net.URL;
@@ -44,38 +42,42 @@ import org.osgi.framework.Bundle;
  * Manages indexing and search for all infosets
  */
 public class SearchManager implements ITocsChangedListener {
-	private static final String SEARCH_PARTICIPANT_XP_FULLNAME = "org.eclipse.help.base.luceneSearchParticipants";
-	private static final String SEARCH_PARTICIPANT_XP_NAME = "searchParticipant";
-	private static final String BINDING_XP_NAME = "binding";
+
+	private static final String SEARCH_PARTICIPANT_XP_FULLNAME = "org.eclipse.help.base.luceneSearchParticipants"; //$NON-NLS-1$
+	private static final String SEARCH_PARTICIPANT_XP_NAME = "searchParticipant"; //$NON-NLS-1$
+	private static final String BINDING_XP_NAME = "binding"; //$NON-NLS-1$
 	private static final Object PARTICIPANTS_NOT_FOUND = new Object();
 	/** Search indexes, by locale */
 	private Map indexes = new HashMap();
 
 	/** Caches analyzer descriptors for each locale */
 	private Map analyzerDescriptors = new HashMap();
-	
+
 	/**
 	 * Caches search participants
 	 */
 	private Map searchParticipants = new HashMap();
-	
+
 	private ArrayList globalSearchParticipants;
-	
+
 	private static class ParticipantDescriptor implements IHelpResource {
+
 		private IConfigurationElement element;
 		private LuceneSearchParticipant participant;
 
 		public ParticipantDescriptor(IConfigurationElement element) {
 			this.element = element;
 		}
+
 		public String getId() {
-			return element.getAttribute("id");
+			return element.getAttribute("id"); //$NON-NLS-1$
 		}
+
 		public boolean matches(String extension) {
-			String ext = element.getAttribute("extensions");
-			if (ext==null)
+			String ext = element.getAttribute("extensions"); //$NON-NLS-1$
+			if (ext == null)
 				return false;
-			StringTokenizer stok = new StringTokenizer(ext, ",");
+			StringTokenizer stok = new StringTokenizer(ext, ","); //$NON-NLS-1$
 			for (; stok.hasMoreTokens();) {
 				String token = stok.nextToken().trim();
 				if (token.equalsIgnoreCase(extension))
@@ -83,47 +85,56 @@ public class SearchManager implements ITocsChangedListener {
 			}
 			return false;
 		}
+
 		public boolean hasExtensions() {
-			return element.getAttribute("extensions")!=null;
+			return element.getAttribute("extensions") != null; //$NON-NLS-1$
 		}
+
 		public IHelpResource getCategory() {
 			return this;
 		}
+
 		public LuceneSearchParticipant getParticipant() {
-			if (participant==null) {
+			if (participant == null) {
 				try {
-					Object obj = element.createExecutableExtension("participant");
+					Object obj = element.createExecutableExtension("participant"); //$NON-NLS-1$
 					if (obj instanceof LuceneSearchParticipant) {
-						participant = (LuceneSearchParticipant)obj;
+						participant = (LuceneSearchParticipant) obj;
 						participant.init(getId());
 					}
-				}
-				catch (CoreException e) {
-					HelpPlugin
-					.logError(
-						"Exception occurred creating Lucene search participant.", e); //$NON-NLS-1$ //$NON-NLS-2$				
+				} catch (CoreException e) {
+					HelpPlugin.logError("Exception occurred creating Lucene search participant.", e); //$NON-NLS-1$
 				}
 			}
 			return participant;
 		}
+
 		public boolean contains(IConfigurationElement el) {
 			return element.equals(el);
 		}
+
 		public String getHref() {
 			return null;
 		}
+
 		public String getLabel() {
-			return element.getAttribute("name");
+			return element.getAttribute("name"); //$NON-NLS-1$
 		}
+
 		public URL getIconURL() {
-			String relativePath = element.getAttribute("icon");
-			if (relativePath ==null)
+			String relativePath = element.getAttribute("icon"); //$NON-NLS-1$
+			if (relativePath == null)
 				return null;
 			String bundleId = element.getNamespace();
 			Bundle bundle = Platform.getBundle(bundleId);
-			if (bundle==null)
+			if (bundle == null)
 				return null;
 			return Platform.find(bundle, new Path(relativePath));
+		}
+
+		public void clear() {
+			if (participant != null)
+				participant.clear();
 		}
 	}
 
@@ -142,25 +153,23 @@ public class SearchManager implements ITocsChangedListener {
 		synchronized (indexes) {
 			Object index = indexes.get(locale);
 			if (index == null) {
-				index = new SearchIndexWithIndexingProgress(locale,
-						getAnalyzer(locale), HelpPlugin.getTocManager());
+				index = new SearchIndexWithIndexingProgress(locale, getAnalyzer(locale), HelpPlugin
+						.getTocManager());
 				indexes.put(locale, index);
 			}
 			return (SearchIndexWithIndexingProgress) index;
 		}
 	}
-	
+
 	/**
-	 * Obtains AnalyzerDescriptor that indexing and search should use for a
-	 * given locale.
+	 * Obtains AnalyzerDescriptor that indexing and search should use for a given locale.
 	 * 
 	 * @param locale
 	 *            2 or 5 character locale representation
 	 */
 	private AnalyzerDescriptor getAnalyzer(String locale) {
 		// get an analyzer from cache
-		AnalyzerDescriptor analyzerDesc = (AnalyzerDescriptor) analyzerDescriptors
-				.get(locale);
+		AnalyzerDescriptor analyzerDesc = (AnalyzerDescriptor) analyzerDescriptors.get(locale);
 		if (analyzerDesc != null)
 			return analyzerDesc;
 
@@ -174,124 +183,155 @@ public class SearchManager implements ITocsChangedListener {
 
 		return analyzerDesc;
 	}
-	
+
 	public static String trimQuery(String href) {
 		// trim the query
 		int qloc = href.indexOf('?');
-		if (qloc!= -1)
+		if (qloc != -1)
 			return href.substring(0, qloc);
 		return href;
 	}
-	
+
 	public boolean isIndexable(String url) {
 		url = trimQuery(url);
 		ArrayList list = getParticipantDescriptors(getPluginId(url));
-		if (list==null)
+		if (list == null)
 			return false;
 		int dotLoc = url.lastIndexOf('.');
-		String ext = url.substring(dotLoc+1);
-		for (int i=0; i<list.size(); i++) {
-			ParticipantDescriptor desc = (ParticipantDescriptor)list.get(i);
+		String ext = url.substring(dotLoc + 1);
+		for (int i = 0; i < list.size(); i++) {
+			ParticipantDescriptor desc = (ParticipantDescriptor) list.get(i);
 			if (desc.matches(ext))
 				return true;
 		}
 		return false;
 	}
-	
+
 	public static String getPluginId(String href) {
 		href = trimQuery(href);
 		// Assume the url is pluginID/path_to_topic.html
+		if (href.charAt(0) == '/')
+			href = href.substring(1);
 		int i = href.indexOf('/');
 		String pluginId = i == -1 ? "" : href.substring(0, i); //$NON-NLS-1$
 		pluginId = URLCoder.decode(pluginId);
-		if ("PRODUCT_PLUGIN".equals(pluginId)){
+		if ("PRODUCT_PLUGIN".equals(pluginId)) { //$NON-NLS-1$
 			IProduct product = Platform.getProduct();
-			if(product !=null) {
+			if (product != null) {
 				pluginId = product.getDefiningBundle().getSymbolicName();
 			}
 		}
 		return pluginId;
 	}
-	
+
 	public LuceneSearchParticipant getGlobalParticipant(String participantId) {
 		ParticipantDescriptor desc = getGlobalParticipantDescriptor(participantId);
-		return desc!=null?desc.getParticipant():null;
+		return desc != null ? desc.getParticipant() : null;
 	}
-	
+
 	public IHelpResource getParticipantCategory(String participantId) {
 		ParticipantDescriptor desc = getGlobalParticipantDescriptor(participantId);
-		return desc!=null?desc.getCategory():null;
+		return desc != null ? desc.getCategory() : null;
 	}
-	
+
 	public URL getParticipantIconURL(String participantId) {
 		ParticipantDescriptor desc = getGlobalParticipantDescriptor(participantId);
-		return desc!=null?desc.getIconURL():null;
+		return desc != null ? desc.getIconURL() : null;
 	}
-	
+
 	private ParticipantDescriptor getGlobalParticipantDescriptor(String participantId) {
-		if (globalSearchParticipants==null) {
+		if (globalSearchParticipants == null) {
 			createGlobalSearchParticipants();
 		}
-		for (int i=0; i<globalSearchParticipants.size(); i++) {
-			ParticipantDescriptor desc = (ParticipantDescriptor)globalSearchParticipants.get(i);
+		for (int i = 0; i < globalSearchParticipants.size(); i++) {
+			ParticipantDescriptor desc = (ParticipantDescriptor) globalSearchParticipants.get(i);
 			if (desc.getId().equals(participantId)) {
 				return desc;
 			}
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Returns a TOC file participant for the provided plug-in and file name.
+	 * 
 	 * @param pluginId
 	 * @param fileName
 	 * @return
 	 */
-	
+
 	public LuceneSearchParticipant getParticipant(String pluginId, String fileName) {
 		ArrayList list = getParticipantDescriptors(pluginId);
-		if (list==null)
+		if (list == null)
 			return null;
 		int dotLoc = fileName.lastIndexOf('.');
-		String ext = fileName.substring(dotLoc+1);
-		for (int i=0; i<list.size(); i++) {
-			ParticipantDescriptor desc = (ParticipantDescriptor)list.get(i);
+		String ext = fileName.substring(dotLoc + 1);
+		for (int i = 0; i < list.size(); i++) {
+			ParticipantDescriptor desc = (ParticipantDescriptor) list.get(i);
 			if (desc.matches(ext))
 				return desc.getParticipant();
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Returns a set of plug-in Ids that have search participants
-	 * or bindings.
+	 * Returns a set of plug-in Ids that have search participants or bindings.
+	 * 
 	 * @return a set of plug-in Ids
 	 */
 
 	public Set getPluginsWithSearchParticipants() {
 		HashSet set = new HashSet();
-		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(SEARCH_PARTICIPANT_XP_FULLNAME);
+		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
+				SEARCH_PARTICIPANT_XP_FULLNAME);
 
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (element.getName().equals("binding") ||
-					element.getName().equals("searchParticipant"))
+			if (element.getName().equals("binding") || element.getName().equals("searchParticipant"))  //$NON-NLS-1$//$NON-NLS-2$
 				set.add(element.getNamespace());
 		}
 		// must ask global search participants directly
-		LuceneSearchParticipant [] gps = getGlobalParticipants();
-		for (int i=0; i<gps.length; i++) {
+		LuceneSearchParticipant[] gps = getGlobalParticipants();
+		for (int i = 0; i < gps.length; i++) {
 			Set ids = gps[i].getContributingPlugins();
 			set.addAll(ids);
 		}
 		return set;
 	}
-	
+
+	/**
+	 * Loops through all the loaded search participants and notifies them that they can drop the
+	 * cached data to reduce runtime memory footprint.
+	 */
+
+	public void clearSearchParticipants() {
+		// global participants
+		if (globalSearchParticipants != null) {
+			for (int i = 0; i < globalSearchParticipants.size(); i++) {
+				ParticipantDescriptor desc = (ParticipantDescriptor) globalSearchParticipants.get(i);
+				desc.clear();
+			}
+		}
+		// file search participants
+		Collection values = searchParticipants.values();
+		for (Iterator iter=values.iterator(); iter.hasNext();) {
+			Object slot = iter.next();
+			if (slot instanceof ArrayList) {
+				ArrayList list = (ArrayList)slot;
+				for (int i = 0; i < list.size(); i++) {
+					ParticipantDescriptor desc = (ParticipantDescriptor) list.get(i);
+					desc.clear();
+				}
+			}
+		}
+	}
+
 	private ArrayList createSearchParticipants(String pluginId) {
-		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(SEARCH_PARTICIPANT_XP_FULLNAME);
-		if (elements.length==0)
+		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
+				SEARCH_PARTICIPANT_XP_FULLNAME);
+		if (elements.length == 0)
 			return null;
-		ArrayList list=null;
+		ArrayList list = null;
 
 		ArrayList binding = null;
 		for (int i = 0; i < elements.length; i++) {
@@ -301,169 +341,167 @@ public class SearchManager implements ITocsChangedListener {
 			}
 			if (BINDING_XP_NAME.equals(element.getName())) {
 				// binding - locate the referenced participant
-				String refId = element.getAttribute("participantId");
-				for (int j=0; j<elements.length; j++) {
+				String refId = element.getAttribute("participantId"); //$NON-NLS-1$
+				for (int j = 0; j < elements.length; j++) {
 					IConfigurationElement rel = elements[j];
-					if (!rel.getName().equals("searchParticipant"))
+					if (!rel.getName().equals("searchParticipant")) //$NON-NLS-1$
 						continue;
 					// don't allow binding the global participants
-					if (rel.getAttribute("extensions")==null)
+					if (rel.getAttribute("extensions") == null) //$NON-NLS-1$
 						continue;
-					String id = rel.getAttribute("id");
-					if (id!=null && id.equals(refId)) {
+					String id = rel.getAttribute("id"); //$NON-NLS-1$
+					if (id != null && id.equals(refId)) {
 						// match
-						if (binding==null)
+						if (binding == null)
 							binding = new ArrayList();
 						binding.add(rel);
 						break;
 					}
 				}
-			}
-			else if (SEARCH_PARTICIPANT_XP_NAME.equals(element.getName())) {
+			} else if (SEARCH_PARTICIPANT_XP_NAME.equals(element.getName())) {
 				// ignore global participant
-				if (element.getAttribute("extensions")==null)
+				if (element.getAttribute("extensions") == null) //$NON-NLS-1$
 					continue;
-				if (list==null)
+				if (list == null)
 					list = new ArrayList();
 				list.add(new ParticipantDescriptor(element));
 			}
 		}
-		if (binding!=null)
+		if (binding != null)
 			list = addBoundDescriptors(list, binding);
 		return list;
 	}
-	
+
 	/**
-	 * Locates the 
+	 * Locates the
+	 * 
 	 * @param list
 	 * @param binding
 	 * @return
 	 */
-	
+
 	private ArrayList addBoundDescriptors(ArrayList list, ArrayList binding) {
-		for (int i=0; i<binding.size(); i++) {
-			IConfigurationElement refEl = (IConfigurationElement)binding.get(i);
+		for (int i = 0; i < binding.size(); i++) {
+			IConfigurationElement refEl = (IConfigurationElement) binding.get(i);
 			Collection collection = searchParticipants.values();
-			boolean found=false;
+			boolean found = false;
 			for (Iterator iter = collection.iterator(); iter.hasNext();) {
-				if (found) break;
+				if (found)
+					break;
 				Object entry = iter.next();
-				if (entry==PARTICIPANTS_NOT_FOUND)
+				if (entry == PARTICIPANTS_NOT_FOUND)
 					continue;
-				ArrayList participants = (ArrayList)entry;
-				for (int j=0; j<participants.size(); j++) {
-					ParticipantDescriptor desc = (ParticipantDescriptor)participants.get(j);
+				ArrayList participants = (ArrayList) entry;
+				for (int j = 0; j < participants.size(); j++) {
+					ParticipantDescriptor desc = (ParticipantDescriptor) participants.get(j);
 					if (desc.contains(refEl)) {
 						// found the matching rescriptor - add it to the list
-						if (list==null)
+						if (list == null)
 							list = new ArrayList();
 						list.add(desc);
-						found=true;
+						found = true;
 						break;
 					}
 				}
 			}
 			if (!found) {
-				if (list==null)
+				if (list == null)
 					list = new ArrayList();
 				list.add(new ParticipantDescriptor(refEl));
 			}
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Returns an array of search participants with the global scope (no extensions).
 	 * 
 	 * @return an array of the global search participants.
 	 */
 
-	public LuceneSearchParticipant [] getGlobalParticipants() {
-		if (globalSearchParticipants==null) {
+	public LuceneSearchParticipant[] getGlobalParticipants() {
+		if (globalSearchParticipants == null) {
 			createGlobalSearchParticipants();
 		}
 		ArrayList result = new ArrayList();
-		for (int i=0; i<globalSearchParticipants.size(); i++) {
-			ParticipantDescriptor desc = (ParticipantDescriptor)globalSearchParticipants.get(i);
+		for (int i = 0; i < globalSearchParticipants.size(); i++) {
+			ParticipantDescriptor desc = (ParticipantDescriptor) globalSearchParticipants.get(i);
 			LuceneSearchParticipant p = desc.getParticipant();
-			if (p!=null)
+			if (p != null)
 				result.add(p);
 		}
-		return (LuceneSearchParticipant[])result.toArray(new LuceneSearchParticipant[result.size()]);
+		return (LuceneSearchParticipant[]) result.toArray(new LuceneSearchParticipant[result.size()]);
 	}
 
 	private void createGlobalSearchParticipants() {
-		globalSearchParticipants = new ArrayList();		
-		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(SEARCH_PARTICIPANT_XP_FULLNAME);
-		for (int i=0; i<elements.length; i++) {
+		globalSearchParticipants = new ArrayList();
+		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
+				SEARCH_PARTICIPANT_XP_FULLNAME);
+		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (!element.getName().equals(SEARCH_PARTICIPANT_XP_NAME))
 				continue;
-			if (element.getAttribute("extensions")!=null)
+			if (element.getAttribute("extensions") != null) //$NON-NLS-1$
 				continue;
 			ParticipantDescriptor desc = new ParticipantDescriptor(element);
 			globalSearchParticipants.add(desc);
 		}
 	}
-	
+
 	private ArrayList getParticipantDescriptors(String pluginId) {
 		Object result = searchParticipants.get(pluginId);
-		if (result==null) {
+		if (result == null) {
 			result = createSearchParticipants(pluginId);
-			if (result==null)
+			if (result == null)
 				result = PARTICIPANTS_NOT_FOUND;
 			searchParticipants.put(pluginId, result);
 		}
-		if (result==PARTICIPANTS_NOT_FOUND)
+		if (result == PARTICIPANTS_NOT_FOUND)
 			return null;
-		return (ArrayList)result;
+		return (ArrayList) result;
 	}
+
 	/**
 	 * Searches index for documents containing an expression.
 	 */
-	public void search(ISearchQuery searchQuery, ISearchHitCollector collector,
-			IProgressMonitor pm) throws QueryTooComplexException {
+	public void search(ISearchQuery searchQuery, ISearchHitCollector collector, IProgressMonitor pm)
+			throws QueryTooComplexException {
 
-		SearchIndexWithIndexingProgress index = getIndex(searchQuery
-				.getLocale());
+		SearchIndexWithIndexingProgress index = getIndex(searchQuery.getLocale());
 		try {
 			ensureIndexUpdated(pm, index);
 			if (!index.exists()) {
-				//no indexable documents, hence no index
-				//or index is corrupted
+				// no indexable documents, hence no index
+				// or index is corrupted
 				return;
 			}
 		} catch (IndexingOperation.IndexingException ie) {
 			if (HelpBasePlugin.DEBUG_SEARCH) {
-				System.out.println(this.getClass().getName()
-						+ " IndexUpdateException occurred."); //$NON-NLS-1$
+				System.out.println(this.getClass().getName() + " IndexUpdateException occurred."); //$NON-NLS-1$
 			}
 		}
 		index.search(searchQuery, collector);
 	}
-	
+
 	/**
 	 * Performs the federated search.
 	 */
-	
-	public void search(String expression, FederatedSearchEntry [] entries) {
-		for (int i=0; i<entries.length; i++) {
+
+	public void search(String expression, FederatedSearchEntry[] entries) {
+		for (int i = 0; i < entries.length; i++) {
 			FederatedSearchJob job = new FederatedSearchJob(expression, entries[i]);
 			job.schedule();
 		}
 	}
-	
+
 	/**
-	 * Updates index. Checks if all contributions were indexed. If not, it
-	 * indexes them.
+	 * Updates index. Checks if all contributions were indexed. If not, it indexes them.
 	 * 
 	 * @throws OperationCanceledException
 	 *             if indexing was cancelled
 	 */
-	public void ensureIndexUpdated(IProgressMonitor pm,
-			SearchIndexWithIndexingProgress index)
-			throws OperationCanceledException,
-			IndexingOperation.IndexingException {
+	public void ensureIndexUpdated(IProgressMonitor pm, SearchIndexWithIndexingProgress index)
+			throws OperationCanceledException, IndexingOperation.IndexingException {
 
 		ProgressDistributor progressDistrib = index.getProgressDistributor();
 		progressDistrib.addMonitor(pm);
@@ -520,9 +558,8 @@ public class SearchManager implements ITocsChangedListener {
 	 * @param progressDistrib
 	 * @throws IndexingException
 	 */
-	private synchronized void updateIndex(IProgressMonitor pm,
-			SearchIndex index, ProgressDistributor progressDistrib)
-			throws IndexingException {
+	private synchronized void updateIndex(IProgressMonitor pm, SearchIndex index,
+			ProgressDistributor progressDistrib) throws IndexingException {
 		if (index.isClosed() || !index.needsUpdating()) {
 			pm.beginTask("", 1); //$NON-NLS-1$
 			pm.worked(1);
@@ -568,8 +605,7 @@ public class SearchManager implements ITocsChangedListener {
 			activeIndexes.addAll(indexes.values());
 		}
 		for (Iterator it = activeIndexes.iterator(); it.hasNext();) {
-			SearchIndexWithIndexingProgress ix = (SearchIndexWithIndexingProgress) it
-					.next();
+			SearchIndexWithIndexingProgress ix = (SearchIndexWithIndexingProgress) it.next();
 			ix.close();
 			synchronized (indexes) {
 				indexes.remove(ix.getLocale());
@@ -580,6 +616,5 @@ public class SearchManager implements ITocsChangedListener {
 				SearchProgressMonitor.reinit(ix.getLocale());
 			}
 		}
-
 	}
 }

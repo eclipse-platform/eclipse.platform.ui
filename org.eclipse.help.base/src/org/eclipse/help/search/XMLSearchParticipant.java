@@ -64,26 +64,29 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 	 * 
 	 */
 	private static class ParsedXMLContent implements IParsedXMLContent {
+
 		private StringBuffer buffer = new StringBuffer();
 		private StringBuffer summary = new StringBuffer();
 		private String title;
-		private static int SUMMARY_LENGTH = 200;		
+		private static int SUMMARY_LENGTH = 200;
 
 		public void setTitle(String title) {
 			this.title = title;
 		}
 
 		public void addToSummary(String text) {
-			if (summary.length()>=SUMMARY_LENGTH)
+			if (summary.length() >= SUMMARY_LENGTH)
 				return;
-			if (summary.length()>0)
-				summary.append(" ");
+			if (summary.length() > 0)
+				summary.append(" "); //$NON-NLS-1$
 			summary.append(text);
-			if (summary.length()>SUMMARY_LENGTH)
+			if (summary.length() > SUMMARY_LENGTH)
 				summary.delete(SUMMARY_LENGTH, summary.length());
 		}
 
 		public void addText(String text) {
+			if (buffer.length() >0)
+				buffer.append(" "); //$NON-NLS-1$
 			buffer.append(text);
 		}
 
@@ -232,7 +235,8 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 	/*
 	 * @see LuceneSearchParticipant#addDocument(String, String, URL, String, Document)
 	 */
-	public IStatus addDocument(String pluginId, String name, URL url, String locale, Document doc) {
+	public IStatus addDocument(ISearchIndex index, String pluginId, String name, URL url, String id,
+			Document doc) {
 		InputStream stream = null;
 		try {
 			if (parser == null)
@@ -246,11 +250,8 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 			doc.add(Field.Text("exact_contents", parsed //$NON-NLS-1$
 					.newContentReader()));
 			String title = parsed.getTitle();
-			if (title != null) {
-				doc.add(Field.UnStored("title", title)); //$NON-NLS-1$
-				doc.add(Field.UnStored("exact_title", title)); //$NON-NLS-1$
-				doc.add(Field.UnIndexed("raw_title", title)); //$NON-NLS-1$
-			}
+			if (title != null)
+				addTitle(title, doc);
 			String summary = parsed.getSummary();
 			if (summary != null)
 				doc.add(Field.UnIndexed("summary", summary)); //$NON-NLS-1$
@@ -290,7 +291,7 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < stack.size(); i++) {
 			if (i > 0)
-				buf.append("/");
+				buf.append("/"); //$NON-NLS-1$
 			buf.append((String) stack.get(i));
 		}
 		return buf.toString();

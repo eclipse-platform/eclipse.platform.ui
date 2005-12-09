@@ -53,7 +53,7 @@ public class UAContentFilterProcessor {
 	}
 
 	private static boolean hasFilterAttribute(Element element) {
-		if (element.getAttribute(DOMUtil.ATT_FILTER).equals(""))
+		if (element.getAttribute(DOMUtil.ATT_FILTER).equals("")) //$NON-NLS-1$
 			return false;
 		return true;
 	}
@@ -66,7 +66,7 @@ public class UAContentFilterProcessor {
 	 */
 	private boolean processFilterAttribute(Element element) {
 		String filterString = element.getAttribute(DOMUtil.ATT_FILTER);
-		String[] parsedFilterString = filterString.split("=");
+		String[] parsedFilterString = filterString.split("="); //$NON-NLS-1$
 		String filter = parsedFilterString[0];
 		String value = parsedFilterString[1];
 
@@ -86,9 +86,9 @@ public class UAContentFilterProcessor {
 	 */
 	protected boolean isFilteredIn(String filter, String value) {
 		boolean filtered_in = false;
-		if (filter.equals("ws")) {
+		if (filter.equals("ws")) { //$NON-NLS-1$
 			filtered_in = filterByWS(value);
-		} else if (filter.equals("os")) {
+		} else if (filter.equals("os")) { //$NON-NLS-1$
 			filtered_in = filterByOS(value);
 		} else
 			filtered_in = filterBySystemProperty(filter, value);

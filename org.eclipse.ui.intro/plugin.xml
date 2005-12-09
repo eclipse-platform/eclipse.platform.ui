@@ -24,6 +24,14 @@
             class="org.eclipse.ui.internal.intro.impl.parts.EmptyStandbyContentPart"
             id="org.eclipse.ui.intro.config.emptyStandby">
       </standbyContentPart> 
+   </extension>
+   <extension
+         point="org.eclipse.help.base.luceneSearchParticipants">
+      <searchParticipant
+            icon="icons/welcome_item.gif"
+            id="org.eclipse.ui.intro"
+            name="Welcome"
+            participant="org.eclipse.ui.internal.intro.impl.model.IntroSearchParticipant"/>
    </extension>     
    
  

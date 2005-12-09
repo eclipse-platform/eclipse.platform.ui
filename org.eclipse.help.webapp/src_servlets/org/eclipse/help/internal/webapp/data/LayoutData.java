@@ -89,8 +89,8 @@ public class LayoutData extends RequestData {
 		View indexview = null;
 		if (HelpPlugin.getIndexManager().getIndex(Platform.getNL())
 				.getEntries().size() > 0) {
-			indexview = new View("index", "", preferences.getImagesDirectory()
-					+ "/index_view.gif", 'I');
+			indexview = new View("index", "", preferences.getImagesDirectory() //$NON-NLS-1$ //$NON-NLS-2$
+					+ "/index_view.gif", 'I'); //$NON-NLS-1$
 		}
 		
 		View linksview = null;

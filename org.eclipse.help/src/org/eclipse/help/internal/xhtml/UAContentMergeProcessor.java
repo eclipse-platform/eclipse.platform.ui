@@ -34,7 +34,7 @@ public class UAContentMergeProcessor {
 
 	public Document resolveIncludes(Document document, String locale) {
 
-		NodeList includes = document.getElementsByTagNameNS("*", "include");
+		NodeList includes = document.getElementsByTagNameNS("*", "include"); //$NON-NLS-1$ //$NON-NLS-2$
 		Node[] nodes = getArray(includes);
 		for (int i = 0; i < nodes.length; i++) {
 			Element includeElement = (Element) nodes[i];
@@ -64,11 +64,11 @@ public class UAContentMergeProcessor {
 	 */
 	private Element findIncludeTarget(UAInclude include, String locale) {
 		String path = include.getPath();
-		int index = path.indexOf("/");
+		int index = path.indexOf("/"); //$NON-NLS-1$
 		if (index < 0)
 			return null;
 		String pluginID = path.substring(0, index);
-		int lastIndex = path.lastIndexOf("/");
+		int lastIndex = path.lastIndexOf("/"); //$NON-NLS-1$
 		String pluginRelativePath = path.substring(index + 1, lastIndex);
 		String include_id = path.substring(lastIndex + 1, path.length());
 
@@ -80,7 +80,7 @@ public class UAContentMergeProcessor {
 				InputStream inputStream = flatFileURL.openStream();
 				UAContentParser parser = new UAContentParser(inputStream);
 				Document dom = parser.getDocument();
-				return DOMUtil.getElementById(dom, include_id, "*");
+				return DOMUtil.getElementById(dom, include_id, "*"); //$NON-NLS-1$
 			} catch (IOException e) {
 				return null;
 			}

@@ -162,7 +162,7 @@ public class UrlUtil {
 	public static String getIEVersion(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
 		if (agent==null)
-		    return "0";
+		    return "0"; //$NON-NLS-1$
 
 		agent=agent.toLowerCase(Locale.ENGLISH);
 		// When accessing with Bobby identified Bobby return 5.5 to allow
@@ -200,7 +200,7 @@ public class UrlUtil {
 	public static String getMozillaVersion(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
 		if (agent==null)
-		    return "0";
+		    return "0"; //$NON-NLS-1$
 		agent=agent.toLowerCase(Locale.ENGLISH);
 		if (agent.indexOf("mozilla/5") < 0) //$NON-NLS-1$
 			return "0"; //$NON-NLS-1$
@@ -240,7 +240,7 @@ public class UrlUtil {
 		if (matched) {
 			version = m.group(1);
 			while (version.length() < 3) {
-				version = "0" + version;
+				version = "0" + version; //$NON-NLS-1$
 			}
 		}
 		return version;
@@ -462,11 +462,11 @@ public class UrlUtil {
 	
 	private static void initializeIcDirection() {
 		// from property
-		String orientation = System.getProperty("eclipse.orientation");
-		if ("rtl".equals(orientation)) {
+		String orientation = System.getProperty("eclipse.orientation"); //$NON-NLS-1$
+		if ("rtl".equals(orientation)) { //$NON-NLS-1$
 			infocenterDirection = INFOCENTER_DIRECTION_RTL;
 			return;
-		} else if ("ltr".equals(orientation)) {
+		} else if ("ltr".equals(orientation)) { //$NON-NLS-1$
 			infocenterDirection = INFOCENTER_DIRECTION_LTR;
 			return;
 		}
@@ -498,9 +498,9 @@ public class UrlUtil {
 				return false;
 			}
 			String locale = getLocale(request, response);
-			if (locale.startsWith("ar") || locale.startsWith("fa")
-					|| locale.startsWith("he") || locale.startsWith("iw")
-					| locale.startsWith("ur")) {
+			if (locale.startsWith("ar") || locale.startsWith("fa") //$NON-NLS-1$ //$NON-NLS-2$
+					|| locale.startsWith("he") || locale.startsWith("iw") //$NON-NLS-1$ //$NON-NLS-2$
+					| locale.startsWith("ur")) { //$NON-NLS-1$
 				return true;
 			}
 			return false;

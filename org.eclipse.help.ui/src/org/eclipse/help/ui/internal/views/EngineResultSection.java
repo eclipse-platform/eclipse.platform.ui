@@ -344,7 +344,7 @@ public class EngineResultSection {
 			if (hit instanceof ISearchEngineResult2) {
 				ISearchEngineResult2 hit2 = (ISearchEngineResult2)hit;
 				if (((ISearchEngineResult2)hit).canOpen()) {
-					href = "open:"+desc.getId()+"?id="+hit2.getId();
+					href = "open:"+desc.getId()+"?id="+hit2.getId(); //$NON-NLS-1$ //$NON-NLS-2$
 					directOpen=true;
 				}
 			}

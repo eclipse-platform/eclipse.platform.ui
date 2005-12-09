@@ -53,6 +53,7 @@ import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.toc.TocManager;
 import org.eclipse.help.internal.util.ResourceLocator;
+import org.eclipse.help.search.ISearchIndex;
 import org.eclipse.help.search.LuceneSearchParticipant;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
@@ -60,7 +61,7 @@ import org.osgi.framework.Constants;
 /**
  * Text search index. Documents added to this index can than be searched against a search query.
  */
-public class SearchIndex {
+public class SearchIndex implements ISearchIndex {
 
 	private IndexReader ir;
 
@@ -99,7 +100,7 @@ public class SearchIndex {
 
 	private File inconsistencyFile;
 
-	private HTMLDocParser parser;
+	private HTMLSearchParticipant htmlSearchParticipant;
 
 	private IndexSearcher searcher;
 
@@ -146,7 +147,7 @@ public class SearchIndex {
 		this.relativePath = relativePath;
 		// System.out.println("Index for a relative path: "+relativePath);
 		inconsistencyFile = new File(indexDir.getParentFile(), locale + ".inconsistent"); //$NON-NLS-1$
-		parser = new HTMLDocParser();
+		htmlSearchParticipant = new HTMLSearchParticipant(indexDir.getAbsolutePath());
 		if (!exists()) {
 			try {
 				if (tryLock()) {
@@ -188,48 +189,32 @@ public class SearchIndex {
 			// NEW: check for the explicit search participant.
 			LuceneSearchParticipant participant = null;
 			HelpURLConnection urlc = new HelpURLConnection(url);
-			String id = urlc.getValue("id");
-			String pid = urlc.getValue("participantId");
+			String id = urlc.getValue("id"); //$NON-NLS-1$
+			String pid = urlc.getValue("participantId"); //$NON-NLS-1$
 			if (pid != null)
 				participant = BaseHelpSystem.getSearchManager().getGlobalParticipant(pid);
 			// NEW: check for file extension-based search participant;
 			if (participant == null)
 				participant = BaseHelpSystem.getSearchManager().getParticipant(pluginId, name);
 			if (participant != null) {
-				IStatus status = participant.addDocument(pluginId, name, url, locale, doc);
+				IStatus status = participant.addDocument(this, pluginId, name, url, id, doc);
 				if (status.getSeverity() == IStatus.OK) {
 					indexedDocs.put(name, "0"); //$NON-NLS-1$
 					if (id!=null)
 						doc.add(Field.UnIndexed("id", id)); //$NON-NLS-1$
-					doc.add(Field.UnIndexed("participantId", pid)); //$NON-NLS-1$
+					if (pid!=null)
+						doc.add(Field.UnIndexed("participantId", pid)); //$NON-NLS-1$
 					iw.addDocument(doc);
 				}
 				return status;
 			}
-			try {
-				try {
-					parser.openDocument(url);
-				} catch (IOException ioe) {
-					return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
-							"Help document " //$NON-NLS-1$
-									+ name + " cannot be opened.", //$NON-NLS-1$
-							null);
-				}
-				ParsedDocument parsed = new ParsedDocument(parser.getContentReader());
-				doc.add(Field.Text("contents", parsed.newContentReader())); //$NON-NLS-1$
-				doc.add(Field.Text("exact_contents", parsed //$NON-NLS-1$
-						.newContentReader()));
-				String title = parser.getTitle();
-				doc.add(Field.UnStored("title", title)); //$NON-NLS-1$
-				doc.add(Field.UnStored("exact_title", title)); //$NON-NLS-1$
-				doc.add(Field.UnIndexed("raw_title", title)); //$NON-NLS-1$
-				doc.add(Field.UnIndexed("summary", parser.getSummary())); //$NON-NLS-1$
+			// default to html
+			IStatus status = htmlSearchParticipant.addDocument(this, pluginId, name, url, id, doc);
+			if (status.getSeverity() == IStatus.OK) {
+				indexedDocs.put(name, "0"); //$NON-NLS-1$
 				iw.addDocument(doc);
-			} finally {
-				parser.closeDocument();
 			}
-			indexedDocs.put(name, "0"); //$NON-NLS-1$
-			return Status.OK_STATUS;
+			return status;
 		} catch (IOException e) {
 			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
 					"IO exception occurred while adding document " + name //$NON-NLS-1$
@@ -981,23 +966,34 @@ public class SearchIndex {
 	 * @return URL to obtain document content or null
 	 */
 	public static URL getIndexableURL(String locale, String url, String id, String participantId) {
-		url = getIndexableHref(url);
+		if (participantId==null)
+			url = getIndexableHref(url);
 		if (url == null)
 			return null;
 
 		try {
 			StringBuffer query = new StringBuffer();
-			query.append("?");
-			query.append("lang=" + locale);
+			query.append("?"); //$NON-NLS-1$
+			query.append("lang=" + locale); //$NON-NLS-1$
 			if (id!=null)
-				query.append("&id="+id);
+				query.append("&id="+id); //$NON-NLS-1$
 			if (participantId != null)
-				query.append("&participantId=" + participantId);
+				query.append("&participantId=" + participantId); //$NON-NLS-1$
 			return new URL("help", //$NON-NLS-1$
 					null, -1, url + query.toString(), HelpURLStreamHandler.getDefault());
 
 		} catch (MalformedURLException mue) {
 			return null;
 		}
+	}
+	
+	public IStatus addDocument(String pluginId, String name, URL url, String id, Document doc) {
+		//try a registered participant for the file format
+		LuceneSearchParticipant participant = BaseHelpSystem.getSearchManager().getParticipant(pluginId, name);
+		if (participant != null) {
+			return participant.addDocument(this, pluginId, name, url, id, doc);
+		}
+		// default to html
+		return htmlSearchParticipant.addDocument(this, pluginId, name, url, id, doc);
 	}
 }

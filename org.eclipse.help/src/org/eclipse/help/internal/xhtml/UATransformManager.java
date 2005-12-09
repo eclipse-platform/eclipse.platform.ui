@@ -90,7 +90,7 @@ public class UATransformManager {
 		byte[] ba = null;
 		String xhtml = convertToString(document);
 		try {
-			ba = xhtml.getBytes("UTF-8");
+			ba = xhtml.getBytes("UTF-8"); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException ue) {
 			;
 		}

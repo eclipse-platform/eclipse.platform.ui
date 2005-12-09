@@ -31,7 +31,7 @@ public class SelectTopicData extends IndexData {
 							HttpServletRequest request, 
 							HttpServletResponse response) {
 		super(context, request, response);
-		entry = getIndexEntry(request.getParameter("entry").split("\\,"));
+		entry = getIndexEntry(request.getParameter("entry").split("\\,")); //$NON-NLS-1$ //$NON-NLS-2$
 
 	}
 	
@@ -39,14 +39,14 @@ public class SelectTopicData extends IndexData {
 		List topics = entry.getTopics();
 		for(int i = 0; i< topics.size(); i++) {
 			IIndexTopic topic = (IIndexTopic) topics.get(i); 
-			out.write("<tr><td class=\"c0\"><input type=\"radio\" name=\"hrefs\" value=\"");
+			out.write("<tr><td class=\"c0\"><input type=\"radio\" name=\"hrefs\" value=\""); //$NON-NLS-1$
 			out.write(UrlUtil.getHelpURL(topic.getHref())); 
-			out.write("\" id=\"r" + i + "\"></td>");
-			out.write("<td class=\"c1\"><label for=\"r" + i + "\">");
+			out.write("\" id=\"r" + i + "\"></td>"); //$NON-NLS-1$ //$NON-NLS-2$
+			out.write("<td class=\"c1\"><label for=\"r" + i + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 			out.write(UrlUtil.htmlEncode(topic.getLabel()));
-			out.write("</label></td><td class=\"c2\"><label for=\"r" + i +"\">");
+			out.write("</label></td><td class=\"c2\"><label for=\"r" + i +"\">"); //$NON-NLS-1$ //$NON-NLS-2$
 			out.write(UrlUtil.htmlEncode(topic.getLocation()));
-			out.write("</label></td></tr>");
+			out.write("</label></td></tr>"); //$NON-NLS-1$
 		}
 	}
 }

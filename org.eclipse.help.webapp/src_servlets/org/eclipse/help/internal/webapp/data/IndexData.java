@@ -72,7 +72,7 @@ public class IndexData extends ActivitiesData {
 	 Iterator iter = index.getEntries().values().iterator();
 	 while(iter.hasNext()) {
 		 IIndexEntry entry = (IIndexEntry) iter.next();
-		 generateIndexEntry(entry, 0, "");
+		 generateIndexEntry(entry, 0, ""); //$NON-NLS-1$
 	 }
  }
  
@@ -84,22 +84,22 @@ public class IndexData extends ActivitiesData {
 	 if(size == 1) {
 		 IIndexTopic topic = (IIndexTopic) topics.get(0);
 		 String href =  UrlUtil.getHelpURL(topic.getHref());
-		 funcOut.write("case " + entryIndex + ": openTopic(\"" + href + "\"); break;\n");
+		 funcOut.write("case " + entryIndex + ": openTopic(\"" + href + "\"); break;\n");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	 }
 	 else if (size == 0) {
-		 funcOut.write("case " + entryIndex + ": alertEmpty(); break;\n");
+		 funcOut.write("case " + entryIndex + ": alertEmpty(); break;\n");  //$NON-NLS-1$//$NON-NLS-2$
 	 }
 
-	 out.write("<option value='"+ UrlUtil.htmlEncode(parent + label)+"'>");
+	 out.write("<option value='"+ UrlUtil.htmlEncode(parent + label)+"'>"); //$NON-NLS-1$ //$NON-NLS-2$
 	 for(int i=0; i<depth; i++) out.write(indent); 
-	 out.write(UrlUtil.htmlEncode(label) + "</option>");
+	 out.write(UrlUtil.htmlEncode(label) + "</option>"); //$NON-NLS-1$
 	 entryIndex++;
 	 
 	 Iterator iter = entry.getEntries().values().iterator();
 	 if(iter.hasNext()) {
 		 do {
 			 IIndexEntry childEntry = (IIndexEntry) iter.next();
-			 generateIndexEntry(childEntry, depth+1, parent+label+",");
+			 generateIndexEntry(childEntry, depth+1, parent+label+","); //$NON-NLS-1$
 		 } while(iter.hasNext());
 	 }
  }
