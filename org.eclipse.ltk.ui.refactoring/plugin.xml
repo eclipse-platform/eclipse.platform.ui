@@ -22,13 +22,6 @@
       </changePreviewViewer>
    </extension>
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            class="org.eclipse.ltk.internal.ui.refactoring.history.WorkInProgressPreferencePage"
-            id="org.eclipse.ltk.ui.refactoring.work.in.progress"
-            name="%WorkInProgressPage_name"/>
-   </extension>
-   <extension
          point="org.eclipse.ui.propertyPages">
       <page
             adaptable="true"

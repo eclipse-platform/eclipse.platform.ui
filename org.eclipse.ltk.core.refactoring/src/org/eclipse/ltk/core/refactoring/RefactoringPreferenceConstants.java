@@ -24,9 +24,6 @@ public final class RefactoringPreferenceConstants {
 	/** The project refactoring history preference */
 	public static final String PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY= "org.eclipse.ltk.core.refactoring.enable.project.refactoring.history"; //$NON-NLS-1$
 
-	/** The workspace refactoring history preference */
-	public static final String PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY= "org.eclipse.ltk.core.refactoring.enable.workspace.refactoring.history"; //$NON-NLS-1$
-
 	private RefactoringPreferenceConstants() {
 		// Not for instantiation
 	}

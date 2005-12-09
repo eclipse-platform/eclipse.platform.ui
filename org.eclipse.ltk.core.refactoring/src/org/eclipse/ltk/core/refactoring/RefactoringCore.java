@@ -11,7 +11,6 @@
 package org.eclipse.ltk.core.refactoring;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Preferences;
 
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 
@@ -58,35 +57,7 @@ public class RefactoringCore {
 	private RefactoringCore() {
 		// no instance
 	}
-	
-	/**
-	 * Returns the refactoring core preferences.
-	 * <p>
-	 * This method is NOT official API. It is a special method for the
-	 * refactoring UI plug-in to access refactoring preferences.
-	 * </p>
-	 * 
-	 * @return the refactoring preferences
-	 * 
-	 * @since 3.2
-	 */
-	public static Preferences internalGetPreferences() {
-		return RefactoringCorePlugin.getDefault().getPluginPreferences();
-	}
-	
-	/**
-	 * Saves the refactoring core preferences.
-	 * <p>
-	 * This method is NOT official API. It is a special method for the refactoring UI 
-	 * plug-in to access refactoring preferences.
-	 * </p>
-	 * 
-	 * @since 3.2
-	 */
-	public static void internalSavePreferences() {
-		RefactoringCorePlugin.getDefault().savePluginPreferences();
-	}
-	
+
 	/**
 	 * Returns the singleton undo manager for the refactoring undo
 	 * stack.

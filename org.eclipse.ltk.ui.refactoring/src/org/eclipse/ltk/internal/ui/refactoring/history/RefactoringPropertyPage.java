@@ -86,7 +86,6 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		fEnableButton.setLayoutData(data);
 
 		fEnableButton.setSelection(hasProjectHistory());
-		fEnableButton.setEnabled(RefactoringCore.internalGetPreferences().getBoolean(RefactoringPreferenceConstants.PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY));
 
 		applyDialogFont(result);
 		return result;
