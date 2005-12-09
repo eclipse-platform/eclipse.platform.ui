@@ -73,7 +73,7 @@ import org.eclipse.ui.progress.UIJob;
 /**
  * Tree viewer for memory blocks
  */
-public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryViewPane{
+public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionChangedListener,  IMemoryViewPane{
 	
 	public static final String PANE_ID = DebugUIPlugin.getUniqueIdentifier() + ".MemoryView.MemoryBlocksTreeViewPane"; //$NON-NLS-1$
 	
@@ -333,6 +333,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		fTreeViewer.setInput(retrieval);
 		fRetrieval = retrieval;
 		
+		fParent.getViewSite().getSelectionProvider().addSelectionChangedListener(this);
 		fParent.getViewSite().getPage().addSelectionListener(this);
 		
 		fDebugContextListener = new TreeViewPaneContextListener();
@@ -446,6 +447,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 	
 	public void dispose()
 	{
+		fParent.getViewSite().getSelectionProvider().removeSelectionChangedListener(this);
 		fParent.getViewSite().getPage().removeSelectionListener(this); 
 		fAddMemoryBlockAction.dispose();
 		DebugContextManager.getDefault().removeDebugContextListener(fDebugContextListener, fParent.getSite().getWorkbenchWindow());
@@ -637,6 +639,14 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		{
 			fRemoveMemoryBlockAction.setEnabled(false);
 			fRemoveAllMemoryBlocksAction.setEnabled(false);
+		}
+	}
+
+	public void selectionChanged(SelectionChangedEvent event) {
+		// only handle selection changed from parent's selection provider
+		if (event.getSource() == fParent.getSite().getSelectionProvider())
+		{
+			MemoryBlocksTreeViewPane.this.selectionChanged(fParent, event.getSelection());
 		}
 	}
 }
