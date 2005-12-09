@@ -19,7 +19,6 @@ import org.eclipse.jface.databinding.BindSpec;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.IBindSpec;
 import org.eclipse.jface.databinding.IBindSupportFactory;
-import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableCollection;
@@ -220,7 +219,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 * @param listener
 	 * @param partialValidationErrorOrNull
 	 */
-	public void updatePartialValidationError(IChangeListener listener,
+	public void updatePartialValidationError(Binding listener,
 			String partialValidationErrorOrNull) {
 		removeValidationListenerAndMessage(partialValidationMessages, listener);
 		if (partialValidationErrorOrNull != null) {
@@ -239,7 +238,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 * @param listener
 	 * @param validationErrorOrNull
 	 */
-	public void updateValidationError(IChangeListener listener,
+	public void updateValidationError(Binding listener,
 			String validationErrorOrNull) {
 		removeValidationListenerAndMessage(validationMessages, listener);
 		if (validationErrorOrNull != null) {
@@ -311,8 +310,9 @@ public class DataBindingContext implements IDataBindingContext {
 		} else {
 			throw new BindingException("not yet implemented"); //$NON-NLS-1$
 		}
-		targetUpdatable.addChangeListener(binding);
-		modelUpdatable.addChangeListener(binding);
+		// DJO: Each binder is now responsible for adding its own change listeners.
+//		targetUpdatable.addChangeListener(binding);
+//		modelUpdatable.addChangeListener(binding);
 		binding.updateTargetFromModel();
 	}
 

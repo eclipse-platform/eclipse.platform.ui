@@ -17,11 +17,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.converters.IdentityConverter;
+import org.eclipse.jface.databinding.internal.Binding;
 import org.eclipse.jface.databinding.internal.beans.PropertyHelper;
 import org.eclipse.jface.databinding.validator.IValidator;
 import org.eclipse.jface.databinding.viewers.TableViewerDescription;
@@ -150,6 +149,14 @@ public class TableViewerUpdatableCollectionExtended extends
 		
 	}
 	
+	private static final class DummyBinding extends Binding {
+		public DummyBinding() {
+			super(null);
+		}
+		public void updateTargetFromModel() {
+		}
+	}
+	
 	protected ICellModifier createCellModifier(final IDataBindingContext dataBindingContext) {
 		return new ICellModifier() {
 			private Column findColumn(String property) {
@@ -221,10 +228,7 @@ public class TableViewerUpdatableCollectionExtended extends
 				if(columnValidator != null){
 					String errorMessage = columnValidator.isValid(value);
 					if(errorMessage != null){
-						dataBindingContext.updateValidationError(new IChangeListener(){
-							public void handleChange(ChangeEvent changeEvent) {									
-							}								
-						},errorMessage);
+						dataBindingContext.updateValidationError(new DummyBinding(), errorMessage);
 						return;
 					}
 				}

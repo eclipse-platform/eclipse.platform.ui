@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal;
 
-import org.eclipse.jface.databinding.IChangeListener;
 
 /**
  * @since 3.2
  *
  */
-abstract public class Binding implements IChangeListener {
+abstract public class Binding {
 
 	protected final DataBindingContext context;
 

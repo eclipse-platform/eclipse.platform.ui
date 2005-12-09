@@ -14,6 +14,7 @@ import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IBindSpec;
 import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.validator.IValidator;
@@ -61,36 +62,44 @@ public class ValueBinding extends Binding {
 		if (validator == null) {
 			throw new BindingException("Missing validator"); //$NON-NLS-1$
 		}
+		target.addChangeListener(targetChangeListener);
+		model.addChangeListener(modelChangeListener);
 	}
 
-	public void handleChange(ChangeEvent changeEvent) {
-		if (!updating) {
-			if (changeEvent.getUpdatable() == target) {
-				if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
-					// we are notified of a pending change, do validation
-					// and veto the change if it is not valid
-					Object value = changeEvent.getNewValue();
-					String partialValidationError = validator
-							.isPartiallyValid(value);
-					context.updatePartialValidationError(this,
-							partialValidationError);
-					if (partialValidationError != null) {
-						changeEvent.setVeto(true);
-					}
-				} else {
-					// the target (usually a widget) has changed, validate
-					// the value and update the source
-					updateModelFromTarget();
+	private IChangeListener targetChangeListener = new IChangeListener() {
+		public void handleChange(ChangeEvent changeEvent) {
+			if (updating) 
+				return;
+			if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
+				// we are notified of a pending change, do validation
+				// and veto the change if it is not valid
+				Object value = changeEvent.getNewValue();
+				String partialValidationError = validator
+						.isPartiallyValid(value);
+				context.updatePartialValidationError(ValueBinding.this,
+						partialValidationError);
+				if (partialValidationError != null) {
+					changeEvent.setVeto(true);
 				}
 			} else {
-				// The model has changed so we must update the target
-				if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
-				} else {
-					updateTargetFromModel();
-				}
+				// the target (usually a widget) has changed, validate
+				// the value and update the source
+				updateModelFromTarget();
 			}
 		}
-	}
+	};
+	
+	private IChangeListener modelChangeListener = new IChangeListener() {
+		public void handleChange(ChangeEvent changeEvent) {
+			if (updating) 
+				return;
+			// The model has changed so we must update the target
+			if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
+			} else {
+				updateTargetFromModel();
+			}
+		}
+	};
 
 	/**
 	 * This also does validation.

@@ -16,7 +16,6 @@ import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableTree;
 
 /**
@@ -26,7 +25,7 @@ import org.eclipse.jface.databinding.IUpdatableTree;
  *    o <code>ChangeEvent.VIRTUAL</code> event will request children as needed
  * 
  */
-public class TreeBinding extends Binding implements IChangeListener {
+public class TreeBinding extends Binding {
 
 	private final IUpdatableTree target;
 
@@ -62,23 +61,32 @@ public class TreeBinding extends Binding implements IChangeListener {
 			if (!canHandle)
 				throw new BindingException("Target does not supports type: " + modelTypes[i]); //$NON-NLS-1$
 		}
+		target.addChangeListener(targetChangeListener);
+		model.addChangeListener(modelChangeListener);
 	}
 
-	public void handleChange(ChangeEvent changeEvent) {
-		if (updating==0 || changeEvent.getChangeType()==IChangeEvent.VIRTUAL) {
-			IUpdatable notifier = changeEvent.getUpdatable();
-			if (notifier == target) {
-				if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
-					// No Conversion on the object itself
-				} else {
-					update(model, target, changeEvent);
-				}
-			} else if (notifier == model) {				
-				update(target, model, changeEvent);
+	private IChangeListener targetChangeListener = new IChangeListener() {
+		public void handleChange(ChangeEvent changeEvent) {
+			if (updating != 0  && changeEvent.getChangeType()!=IChangeEvent.VIRTUAL)
+				return;
+
+			if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
+				// No Conversion on the object itself
+			} else {
+				update(model, target, changeEvent);
 			}
 		}
-	}
-		
+	};
+
+	private IChangeListener modelChangeListener = new IChangeListener() {
+		public void handleChange(ChangeEvent changeEvent) {
+			if (updating != 0  && changeEvent.getChangeType()!=IChangeEvent.VIRTUAL)
+				return;
+
+			update(target, model, changeEvent);
+		}
+	};
+
 	/**
 	 * Update the collection from the event.
 	 * 

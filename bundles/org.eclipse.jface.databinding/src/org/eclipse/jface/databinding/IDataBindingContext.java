@@ -11,6 +11,7 @@
 package org.eclipse.jface.databinding;
 
 import org.eclipse.jface.databinding.converter.IConverter;
+import org.eclipse.jface.databinding.internal.Binding;
 import org.eclipse.jface.databinding.validator.IValidator;
 
 /**
@@ -218,7 +219,7 @@ public interface IDataBindingContext {
 	 * @param listener
 	 * @param validationMessage the new message, or <code>null</code>
 	 */
-	public void updateValidationError(IChangeListener listener,
+	public void updateValidationError(Binding listener,
 			String validationMessage);
 
 }
