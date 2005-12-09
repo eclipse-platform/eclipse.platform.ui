@@ -19,6 +19,9 @@ import java.util.Set;
 
 
 /**
+ * This is a helpr that will hook up and listen for <code>PropertyChangeEvent</code> events
+ * for a set of target JavaBeans
+ * 
  * @since 3.2
  *
  */
@@ -26,7 +29,6 @@ public class ListenerSupport {
 
 	/**
 	 * @since 3.2
-	 *
 	 */
 	 static class IdentityWrapper {
 		final Object o;
@@ -49,7 +51,9 @@ public class ListenerSupport {
 	private PropertyChangeListener listener;
 	
 	/**
-	 * @param listener
+	 * @param listener is the callback that will be called
+	 * 		when a <code>PropertyChangeEvent</code> is fired on any
+	 * 		of the target objects.
 	 */
 	public ListenerSupport (PropertyChangeListener listener) {
 		this.listener=listener;
@@ -89,8 +93,9 @@ public class ListenerSupport {
 	}
 		
 	/**
-	 * Add listeners for new targets (those <code>listener</code> do not already listen to),
-	 * Remove <code>listener</code> from currently listened to elements that are not in targets 
+	 * Add listeners for new targets (those this instance of<code>ListenerSupport</code> does not 
+	 * already listen to),
+	 * Stop to listen to those object that this instance listen to and is one of the object in targets 
 	 * 
 	 * @param targets 
 	 */
@@ -158,8 +163,7 @@ public class ListenerSupport {
 			Object[] targets = elementsListenedTo.toArray();		
 			for (int i = 0; i < targets.length; i++) {		
 				unhookListener(targets[i]);
-			}
-			elementsListenedTo.clear();
+			}			
 			elementsListenedTo=null;
 			listener=null;
 		}

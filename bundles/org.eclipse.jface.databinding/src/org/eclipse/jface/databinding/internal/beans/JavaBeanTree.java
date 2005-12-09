@@ -31,10 +31,15 @@ import org.eclipse.jface.databinding.ITree;
 import org.eclipse.jface.databinding.TreeModelDescription;
 
 /**
- *
+ * This class is a JavaBean implementation for a ITree.  It is a ITree facade that is built
+ * from a <code>TreeModelDescription</code>
  */
 public class JavaBeanTree implements ITree {
 	
+	/**
+	 * Keep track of element parents, and children
+	 * @since 3.2
+	 */
 	private class TreeNode {
 		private Object parent;
 		private List children;
@@ -70,7 +75,7 @@ public class JavaBeanTree implements ITree {
 	
 	private final static int READ = 0;
 	
-	private final static int WRITE = 0;
+	private final static int WRITE = 1;
 
 	private TreeModelDescription modelDescription;
 	
@@ -79,17 +84,18 @@ public class JavaBeanTree implements ITree {
 	private HashMap descriptors = new HashMap();
 	
 	private ITree.ChangeSupport changeSupport = null;
-	
-	// TODO use IdentityWrapper
+		
 	private HashMap nodes = new HashMap();
 	
 	private boolean updating = false;
 	
-		
+	
 	private PropertyChangeListener elementListener = new PropertyChangeListener() {
 		public void propertyChange(java.beans.PropertyChangeEvent event) {
 			if (!updating && changeSupport!=null) {	
 				String[] properties = modelDescription.getChildrenProperties(event.getSource().getClass());
+				// Determine if the change is on a children Property, in which case
+				// that level of the tree has changed.
 				if (properties!=null && event.getPropertyName()!=null && 
 						Arrays.asList(properties).contains(event.getPropertyName())) {
 					// Assume children have changed
@@ -97,7 +103,7 @@ public class JavaBeanTree implements ITree {
 				}
 				else {
 					// Assume a property has changed that may change the way this element
-					// is rendered in a viewer
+					// is rendered in a viewer, use our tracking to figure out the index.
 					TreeNode node = (TreeNode)nodes.get(event.getSource());
 					if (node!=null) {
 						int index = -1;
@@ -327,7 +333,7 @@ public class JavaBeanTree implements ITree {
 		if (listenerSupport!=null) {
 		  for (Iterator itr=listenerSupport.values().iterator(); itr.hasNext();) 
 		   ((ListenerSupport)itr.next()).dispose();
-		  listenerSupport.clear();
+		  listenerSupport=null;
 		  descriptors=null;
 		  changeSupport=null;
 		  modelDescription=null;

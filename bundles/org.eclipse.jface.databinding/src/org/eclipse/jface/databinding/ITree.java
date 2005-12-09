@@ -23,8 +23,9 @@ import java.util.List;
  * </p>
  * 
  * A domain model has to implement this interface in order to establish a tree
- * binding. It is possible that the domain model itself is not organized as a tree, and hence provides 
- * the ability to provide a tree facade.
+ * binding. It is possible that the domain model itself is not organized as a tree and
+ * requires specific logic that is beyond the support of a <code>TreeModelDescription</code>
+ * 
  * 
  * @see TreeModelDescription for a simpler way to bind a tree. 
  * 
@@ -34,6 +35,9 @@ import java.util.List;
 public interface ITree  {
 		
 	/**
+	 * This is a helper class for ITree implementors and simplify the change notification
+	 * handling.
+	 * 
 	 * @since 3.2
 	 *
 	 */
@@ -42,7 +46,7 @@ public interface ITree  {
 		private List listeners = null;
 		
 		/**
-		 * @param source
+		 * @param source tree
 		 */
 		public ChangeSupport(ITree source){
 			this.source=source;
@@ -98,11 +102,9 @@ public interface ITree  {
 		}
 	}
 	
-	
-	//public static final String 
 		
 	/**
-	 * Returns the child elements of the given parent element.
+	 * Returns the children elements of the given parent element.
 	 *
 	 * @param parentElement the parent element, <code>null</code> for root elements
 	 * @return an array of child elements
@@ -146,7 +148,7 @@ public interface ITree  {
 
 	
 	/**
-	 * @return types of all tree nodes
+	 * @return types of all tree nodes that are expected on this tree.
 	 */
 	public Class[] getTypes();
 
