@@ -75,7 +75,7 @@ public interface IDiffTree {
 	 * @return the delta, or <code>null</code> if no such
 	 *         delta exists
 	 */
-	public IDiffNode getDelta(IPath path);
+	public IDiffNode getDiff(IPath path);
 
 	/**
 	 * Returns the child paths of the given path that either point to

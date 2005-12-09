@@ -10,20 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.core.mapping;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.diff.IResourceDiffTree;
 import org.eclipse.team.core.synchronize.ISyncInfoTree;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
-import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.core.diff.DiffTree;
 import org.eclipse.team.internal.core.mapping.DiffCache;
 
 /**
@@ -45,7 +34,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	private IResourceMappingScope input;
     private final String type;
     private final SyncInfoTree tree;
-    private final DiffTree deltaTree;
+    private final IResourceDiffTree deltaTree;
     private DiffCache cache;
 
     /**
@@ -54,7 +43,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
      * @param type the type of synchronization (ONE_WAY or TWO_WAY)
      * @param tree the sync info tree that contains all out-of-sync resources
      */
-    protected SynchronizationContext(IResourceMappingScope input, String type, SyncInfoTree tree, DiffTree deltaTree) {
+    protected SynchronizationContext(IResourceMappingScope input, String type, SyncInfoTree tree, IResourceDiffTree deltaTree) {
     	this.input = input;
 		this.type = type;
 		this.tree = tree;
@@ -104,75 +93,8 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getSyncDeltaTree()
 	 */
-	public IDiffTree getDiffTree() {
+	public IResourceDiffTree getDiffTree() {
 		return deltaTree;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getResource(org.eclipse.team.core.delta.ISyncDelta)
-	 */
-	public IResource getResource(IDiffNode delta) {
-		IResource resource = null;
-		if (delta instanceof IThreeWayDiff) {
-			IThreeWayDiff twd = (IThreeWayDiff) delta;
-			resource = internalGetResource((IResourceDiff)twd.getLocalChange());
-			if (resource == null)
-				resource = internalGetResource((IResourceDiff)twd.getRemoteChange());
-		} else {
-			resource = internalGetResource((IResourceDiff)delta);
-		}
-		return resource;	
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getDeltas(org.eclipse.core.resources.mapping.ResourceTraversal[])
-	 */
-	public IDiffNode[] getDiffs(final ResourceTraversal[] traversals) {
-		final Set result = new HashSet();
-		try {
-			getDiffTree().accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
-				public boolean visit(IDiffNode delta) throws CoreException {
-					for (int i = 0; i < traversals.length; i++) {
-						ResourceTraversal traversal = traversals[i];
-						if (traversal.contains(getResource(delta))) {
-							result.add(delta);
-						}
-					}
-					return true;
-				}
-			}, IResource.DEPTH_INFINITE);
-		} catch (CoreException e) {
-			TeamPlugin.log(e);
-		}
-		return (IDiffNode[]) result.toArray(new IDiffNode[result.size()]);
-	}
-
-	private IResource internalGetResource(IResourceDiff localChange) {
-		if (localChange == null)
-			return null;
-		Object before = localChange.getBeforeState();
-		IResourceVariant variant = null;
-		if (before instanceof IResourceVariant) {
-			variant = (IResourceVariant) before;
-		}
-		if (variant == null) {
-			Object after = localChange.getAfterState();
-			if (after instanceof IResourceVariant) {
-				variant = (IResourceVariant) after;
-			}
-		}
-		if (variant != null) {
-			return internalGetResource(localChange.getPath(), variant.isContainer());
-		}
-		return null;
-	}
-
-	private IResource internalGetResource(IPath fullPath, boolean container) {
-		if (container)
-			return ResourcesPlugin.getWorkspace().getRoot().getFolder(fullPath);
-		return ResourcesPlugin.getWorkspace().getRoot().getFile(fullPath);
-	}
-	
-	
 
 }

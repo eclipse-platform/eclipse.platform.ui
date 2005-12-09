@@ -29,7 +29,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.core.diff.DiffTree;
+import org.eclipse.team.internal.core.diff.ResourceDiffTree;
 import org.eclipse.team.internal.core.diff.SyncInfoToDiffConverter;
 import org.eclipse.team.ui.operations.MergeContext;
 import org.eclipse.team.ui.synchronize.ResourceScope;
@@ -42,7 +42,7 @@ public class CVSMergeContext extends MergeContext {
 	public static IMergeContext createContext(IResourceMappingScope scope, IProgressMonitor monitor) {
 		WorkspaceSynchronizeParticipant participant = new WorkspaceSynchronizeParticipant(new ResourceScope(scope.getRoots()));
 		participant.refreshNow(participant.getResources(), NLS.bind("Preparing to merge {0}", new String[] { "TODO: mapping description for CVS merge context initialization" }), monitor);
-		DiffTree tree = new DiffTree();
+		ResourceDiffTree tree = new ResourceDiffTree();
 		SyncInfoToDiffConverter converter = new SyncInfoToDiffConverter(participant.getSyncInfoSet(), tree);
 		converter.connect(monitor);
 		participant.getSubscriberSyncInfoCollector().waitForCollector(monitor);

@@ -49,7 +49,7 @@ public class DefaultResourceMappingMerger implements IResourceMappingMerger {
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
 			ResourceTraversal[] traversals = mergeContext.getScope().getTraversals(mapping);
-			IDiffNode[] deltas = mergeContext.getDiffs(traversals);
+			IDiffNode[] deltas = mergeContext.getDiffTree().getDiffs(traversals);
 			for (int j = 0; j < deltas.length; j++) {
 				IDiffNode delta = deltas[j];
 				result.add(delta);

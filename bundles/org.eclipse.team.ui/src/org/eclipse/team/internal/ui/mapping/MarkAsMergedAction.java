@@ -13,17 +13,13 @@ package org.eclipse.team.internal.ui.mapping;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.diff.IDiffNode;
-import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.IMergeContext;
-import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.operations.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.ui.IContributorResourceAdapter;
 
 /**
  * Action contributed by the {@link ModelSynchronizeParticipant} that 
@@ -46,11 +42,11 @@ public class MarkAsMergedAction extends ModelProviderAction {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
 					try {
-						IDiffNode[] deltas = getSelectedDeltas(getStructuredSelection());
+						IDiffNode[] deltas = getFileDeltas(getStructuredSelection());
 						for (int i = 0; i < deltas.length; i++) {
 							IDiffNode delta = deltas[i];
 							// TODO: mark as merged should support batching
-							IStatus status = context.markAsMerged((IFile)context.getResource(delta), false, monitor);
+							IStatus status = context.markAsMerged((IFile)context.getDiffTree().getResource(delta), false, monitor);
 							if (!status.isOK())
 								throw new CoreException(status);
 						}
@@ -71,41 +67,7 @@ public class MarkAsMergedAction extends ModelProviderAction {
 	 * @see org.eclipse.team.internal.ui.mapping.ModelProviderAction#isEnabledForSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected boolean isEnabledForSelection(IStructuredSelection selection) {
-		return getSelectedDeltas(selection).length > 0;
-	}
-
-	protected IDiffNode[] getSelectedDeltas(IStructuredSelection selection) {
-		// TODO: for now, just enable for files
-		if (selection.size() == 1) {
-			Object o = selection.getFirstElement();
-			IResource resource = null;
-			if (o instanceof IResource) {
-				resource = (IResource) o;
-			} else if (o instanceof IAdaptable) {
-				IAdaptable adaptable = (IAdaptable) o;
-				resource = (IResource)adaptable.getAdapter(IResource.class);
-				if (resource == null) {
-					IContributorResourceAdapter adapter = (IContributorResourceAdapter)adaptable.getAdapter(IContributorResourceAdapter.class);
-					if (adapter != null)
-						resource = adapter.getAdaptedResource(adaptable);
-				}
-			}
-			if (resource != null && resource.getType() == IResource.FILE) {
-				ISynchronizationContext context = getContext();
-				IDiffNode delta = context.getDiffTree().getDelta(resource.getFullPath());
-				if (delta instanceof IThreeWayDiff) {
-					IThreeWayDiff twd = (IThreeWayDiff) delta;
-					if (twd.getDirection() == IThreeWayDiff.CONFLICTING) {
-						return new IDiffNode[] { delta };
-					}
-				}
-			}
-		}
-		return new IDiffNode[0];
-	}
-	
-	private ISynchronizationContext getContext() {
-		return ((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
+		return getFileDeltas(selection).length > 0;
 	}
 
 }

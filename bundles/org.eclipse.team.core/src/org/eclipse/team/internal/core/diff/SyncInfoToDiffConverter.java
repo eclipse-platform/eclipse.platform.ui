@@ -14,8 +14,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.diff.IDiffNode;
-import org.eclipse.team.core.diff.ITwoWayDiff;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.variants.IResourceVariant;
 
@@ -25,9 +24,9 @@ import org.eclipse.team.core.variants.IResourceVariant;
 public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 
 	SyncInfoSet set;
-	DiffTree tree;
+	ResourceDiffTree tree;
 	
-	public SyncInfoToDiffConverter(SyncInfoTree set, DiffTree tree) {
+	public SyncInfoToDiffConverter(SyncInfoTree set, ResourceDiffTree tree) {
 		this.set = set;
 		this.tree = tree;
 	}
@@ -163,7 +162,7 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 		
 	}
 
-	public DiffTree getTree() {
+	public IResourceDiffTree getTree() {
 		return tree;
 	}
 }

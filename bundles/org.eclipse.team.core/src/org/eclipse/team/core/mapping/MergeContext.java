@@ -20,7 +20,6 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.core.diff.DiffTree;
 import org.eclipse.team.internal.core.diff.SyncInfoToDiffConverter;
 
 /**
@@ -48,7 +47,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * Create a merge context.
 	 * @param type 
      */
-    protected MergeContext(IResourceMappingScope input, String type, SyncInfoTree tree, DiffTree deltaTree) {
+    protected MergeContext(IResourceMappingScope input, String type, SyncInfoTree tree, IResourceDiffTree deltaTree) {
     	super(input, type, tree, deltaTree);
     }
 
@@ -132,7 +131,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	 * @return
 	 */
 	public IStatus merge(IDiffNode delta, boolean force, IProgressMonitor monitor) {
-		if (getResource(delta).getType() != IResource.FILE)
+		if (getDiffTree().getResource(delta).getType() != IResource.FILE)
 			return Status.OK_STATUS;
         try {
         	if (delta instanceof IThreeWayDiff && !force) {

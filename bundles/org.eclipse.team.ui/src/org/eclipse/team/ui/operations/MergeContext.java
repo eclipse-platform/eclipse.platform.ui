@@ -20,11 +20,9 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.core.mapping.MergeStatus;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.core.diff.DiffTree;
 
 /**
  * A merge context that performs three-way merges using the {@link IStreamMerger}
@@ -48,7 +46,7 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
 	 * @param tree the sync info tree
 	 * @param deltaTree the delta tree
 	 */
-	protected MergeContext(IResourceMappingScope scope, String type, SyncInfoTree tree, DiffTree deltaTree) {
+	protected MergeContext(IResourceMappingScope scope, String type, SyncInfoTree tree, IResourceDiffTree deltaTree) {
 		super(scope, type, tree, deltaTree);
 	}
 
@@ -60,7 +58,7 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
      * resources (local, base, remote) must exist.
      */
 	protected IStatus performThreeWayMerge(IThreeWayDiff delta, IProgressMonitor monitor) throws CoreException {
-		IFile file = (IFile)getResource(delta);
+		IFile file = (IFile)getDiffTree().getResource(delta);
 		IContentDescription contentDescription = file.getContentDescription();
 		IStreamMerger merger = null;
 		if (contentDescription != null && contentDescription.getContentType() != null) {
@@ -87,7 +85,7 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
     private IStatus merge(IStreamMerger merger, IDiffNode delta, IProgressMonitor monitor) throws CoreException {
         
     	// Get the file involved
-    	IFile file = (IFile)getResource(delta);
+    	IFile file = (IFile)getDiffTree().getResource(delta);
     	
     	// Define all the input streams here so we can ensure they get closed
         InputStream ancestorStream = null;

@@ -348,7 +348,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		for (int i = 0; i < children.length; i++) {
 			Object object = children[i];
 			ResourceTraversal[] traversals = getTraversals(object);
-			IDiffNode[] deltas = context.getDiffs(traversals);
+			IDiffNode[] deltas = context.getDiffTree().getDiffs(traversals);
 			if (deltas.length > 0) {
 				boolean include = false;
 				for (int j = 0; j < deltas.length; j++) {

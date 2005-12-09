@@ -14,8 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.mapping.MarkAsMergedAction;
-import org.eclipse.team.internal.ui.mapping.MergeIncomingChangesAction;
+import org.eclipse.team.internal.ui.mapping.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IWorkbenchPart;
@@ -59,6 +58,14 @@ public class ModelSynchronizeParticipant extends
 						updateToolbarAction);
 			}
 			
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP,
+					new MergeAction(configuration, false));
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP,
+					new MergeAction(configuration, true));
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CONTEXT_MENU_CONTRIBUTION_GROUP,

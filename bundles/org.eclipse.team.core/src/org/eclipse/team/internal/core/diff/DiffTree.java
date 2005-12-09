@@ -67,7 +67,7 @@ public class DiffTree implements IDiffTree {
 	 */
 	public void accept(IPath path, IDiffVisitor visitor, int depth)
 			throws CoreException {
-		IDiffNode delta = getDelta(path);
+		IDiffNode delta = getDiff(path);
 		if (delta == null || visitor.visit(delta)) {
 			if (depth == IResource.DEPTH_ZERO)
 				return;
@@ -82,7 +82,7 @@ public class DiffTree implements IDiffTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ISyncDeltaTree#findMember(org.eclipse.core.runtime.IPath)
 	 */
-	public IDiffNode getDelta(IPath path) {
+	public IDiffNode getDiff(IPath path) {
 		return (IDiffNode)pathTree.get(path);
 	}
 
@@ -118,7 +118,7 @@ public class DiffTree implements IDiffTree {
 	public void add(IDiffNode delta) {
 		try {
 			beginInput();
-			boolean alreadyExists = getDelta(delta.getPath()) != null;
+			boolean alreadyExists = getDiff(delta.getPath()) != null;
 			internalAdd(delta);
 			if (alreadyExists) {
 				internalChanged(delta);
@@ -149,7 +149,7 @@ public class DiffTree implements IDiffTree {
 	public synchronized void remove(IPath path) {
 		try {
 			beginInput();
-			IDiffNode delta = getDelta(path);
+			IDiffNode delta = getDiff(path);
 			if (delta != null) {
 				internalRemove(delta);
 				internalRemoved(path, delta);

@@ -131,7 +131,7 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 				IPath[] childPaths = context.getDiffTree().getChildren(resource.getFullPath());
 				for (int i = 0; i < childPaths.length; i++) {
 					IPath path = childPaths[i];
-					IDiffNode delta = context.getDiffTree().getDelta(path);
+					IDiffNode delta = context.getDiffTree().getDiff(path);
 					IResource child;
 					if (delta == null) {
 						// the path has descendent deltas so it must be a folder
@@ -141,7 +141,7 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 							child = ((IContainer)resource).getFolder(new Path(path.lastSegment()));
 						}
 					} else {
-						child = context.getResource(delta);
+						child = context.getDiffTree().getResource(delta);
 					}
 					if (isInScope(parent, child)) {
 						result.add(child);

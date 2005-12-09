@@ -12,26 +12,30 @@ package org.eclipse.team.internal.ui.mapping;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.operations.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
- * Action that performs an optimistic merge
+ * Action that merges the selected files
  */
-public class MergeIncomingChangesAction extends ModelProviderAction {
-
-	public MergeIncomingChangesAction(ISynchronizePageConfiguration configuration) {
-		super(null, configuration);
-		Utils.initAction(this, "action.mergeAll."); //$NON-NLS-1$
-	}
+public class MergeAction extends ModelProviderAction {
 	
+	private final boolean overwrite;
+
+	public MergeAction(ISynchronizePageConfiguration configuration, boolean overwrite) {
+		super(null, configuration);
+		this.overwrite = overwrite;
+		if (overwrite)
+			Utils.initAction(this, "action.overwrite."); //$NON-NLS-1$
+		else
+			Utils.initAction(this, "action.merge."); //$NON-NLS-1$
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
@@ -42,14 +46,15 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
 					try {
-						performMerge(context, monitor);
-						if (context.getDiffTree().isEmpty() || !hasIncomingChanges(context.getDiffTree())) {
-							promptForNoChanges();
-						}
+						IDiffNode[] diffs = getFileDeltas(getStructuredSelection());
+						IStatus status = context.merge(diffs, overwrite, monitor);
+						if (!status.isOK())
+							throw new CoreException(status);
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
 				}
+			
 			}.run();
 		} catch (InvocationTargetException e) {
 			Utils.handle(e);
@@ -58,21 +63,10 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 		}
 	}
 
-	private void promptForNoChanges() {
-		Display.getDefault().syncExec(new Runnable() {
-			public void run() {
-				MessageDialog.openInformation(getConfiguration().getSite().getShell(), "Merge Success", "All changes were merged successfully");
-			};
-		});
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.mapping.ModelProviderAction#isEnabledForSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected boolean isEnabledForSelection(IStructuredSelection selection) {
-		// This action is always enabled
-		return true;
+		return getFileDeltas(selection).length > 0;
 	}
-	
-
 }

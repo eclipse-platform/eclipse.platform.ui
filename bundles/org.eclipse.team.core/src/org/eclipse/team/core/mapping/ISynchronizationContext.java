@@ -103,12 +103,12 @@ public interface ISynchronizationContext {
 	 * 
 	 * EXPERIMENTAL: Do not use yet!!!
 	 * 
-	 * @return a tree that contains a <code>SyncInfo</code> node for any
+	 * @return a tree that contains an <code>IDiffNode</code> node for any
 	 *         resources that are out-of-sync.
 	 * @see #getDiffs(ResourceTraversal[])
 	 * @see #getResource(IDiffNode)
 	 */
-	public IDiffTree getDiffTree();
+	public IResourceDiffTree getDiffTree();
 
 	/**
 	 * Return the synchronization type. A type of <code>TWO_WAY</code>
@@ -173,19 +173,4 @@ public interface ISynchronizationContext {
 	 */
     public void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException;
 
-	/**
-	 * Convenience method for return the set of diffs that
-	 * are covered by the given traversals.
-	 * @param traversals the traversals to search
-	 * @return the diffs that are found in the given traversals
-	 */
-	public IDiffNode[] getDiffs(ResourceTraversal[] traversals);
-
-	/**
-	 * Convenience method for returning the resource associated
-	 * with a given diff.
-	 * @param diff a diff
-	 * @return the resource associated with that diff
-	 */
-	IResource getResource(IDiffNode delta);
 }
