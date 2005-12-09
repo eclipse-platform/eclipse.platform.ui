@@ -11,31 +11,10 @@
 
 package org.eclipse.team.internal.core;
 
-import java.net.URI;
-
-import org.eclipse.core.resources.IStorage;
 import org.eclipse.team.core.filehistory.IFileRevision;
 import org.eclipse.team.core.filehistory.ITag;
 
 public abstract class FileRevision implements IFileRevision {
-
-	public abstract IStorage getStorage();
-
-	public abstract String getContentIndentifier();
-
-	public abstract URI getURI();
-
-	public abstract long getTimestamp();
-	
-	public abstract boolean isDeletion();
-
-	public String getAuthor() {
-		return ""; //$NON-NLS-1$
-	}
-
-	public String getComment() {
-		return ""; //$NON-NLS-1$
-	}
 
 	public ITag[] getTags() {
 		return new ITag[0];

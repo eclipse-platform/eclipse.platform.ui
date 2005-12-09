@@ -19,18 +19,26 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
@@ -39,12 +47,20 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.filehistory.IFileHistory;
 import org.eclipse.team.core.filehistory.IFileRevision;
+import org.eclipse.team.core.filehistory.ITag;
+import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.filehistory.actions.OpenRevisionAction;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 
@@ -58,41 +74,28 @@ public class GenericHistoryView extends ViewPart {
 	private GenericHistoryTableProvider historyTableProvider;
 
 	private TableViewer tableViewer;
+	private TextViewer textViewer;
+	private TableViewer tagViewer;
 
-	/*
-	 * private TextViewer textViewer; private TableViewer tagViewer;
-	 * 
-	 * private OpenLogEntryAction openAction; private IAction toggleTextAction;
-	 * private IAction toggleTextWrapAction; private IAction toggleListAction;
-	 * private TextViewerAction copyAction; private TextViewerAction
-	 * selectAllAction; private Action getContentsAction; private Action
-	 * getRevisionAction; private Action refreshAction; private Action
-	 * tagWithExistingAction; private Action linkWithEditorAction;
-	 */
-
+	
+	private OpenRevisionAction openAction;
+	private IAction toggleTextAction;
+	private IAction toggleTextWrapAction;
+	private IAction toggleListAction;
+	private Action refreshAction;
+	private Action getPredecessor;
+	private Action getDirectDescendents;
+	
 	private SashForm sashForm;
-
 	private SashForm innerSashForm;
 
-	private Image branchImage;
-
-	private Image versionImage;
-
 	protected IFileRevision currentSelection;
-
-	private boolean linkingEnabled;
-
-	private IPreferenceStore settings;
 
 	private FetchLogEntriesJob fetchLogEntriesJob;
 
 	private boolean shutdown = false;
-
-	private Action refreshAction;
-	private Action getPredecessor;
-	private Action getDirectDescendents;
-
-	public static final String VIEW_ID = "org.eclipse.team.ccvs.ui.HistoryView"; //$NON-NLS-1$
+	
+	public static final String VIEW_ID = "org.eclipse.team.ui.GenericHistoryView"; //$NON-NLS-1$
 
 	public void createPartControl(Composite parent) {
 
@@ -102,15 +105,15 @@ public class GenericHistoryView extends ViewPart {
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		tableViewer = createTable(sashForm);
-		// innerSashForm = new SashForm(sashForm, SWT.HORIZONTAL);
-		// tagViewer = createTagTable(innerSashForm);
-		// textViewer = createText(innerSashForm);
-		// sashForm.setWeights(new int[] { 70, 30 });
-		// innerSashForm.setWeights(new int[] { 50, 50 });//
+		innerSashForm = new SashForm(sashForm, SWT.HORIZONTAL);
+		tagViewer = createTagTable(innerSashForm);
+		textViewer = createText(innerSashForm);
+		sashForm.setWeights(new int[] { 70, 30 });
+		innerSashForm.setWeights(new int[] { 50, 50 });
 
 		contributeActions();
 
-		// setViewerVisibility();
+		setViewerVisibility();
 
 		// set F1 help
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(sashForm,
@@ -123,9 +126,57 @@ public class GenericHistoryView extends ViewPart {
 		// getSite().getPage().addPartListener(partListener2);
 	}
 
-	public void setFocus() {
-		// TODO Auto-generated method stub
+	private TextViewer createText(SashForm parent) {
+		TextViewer result = new TextViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.READ_ONLY);
+		result.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				//copyAction.update();
+			}
+		});
+		return result;
+	}
 
+	private TableViewer createTagTable(SashForm parent) {
+		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		TableViewer result = new TableViewer(table);
+		TableLayout layout = new TableLayout();
+		layout.addColumnData(new ColumnWeightData(100));
+		table.setLayout(layout);
+		result.setContentProvider(new SimpleContentProvider() {
+			public Object[] getElements(Object inputElement) {
+				if (inputElement == null) return new Object[0];
+				ITag[] tags = (ITag[])inputElement;
+				return tags;
+			}
+		});
+		result.setLabelProvider(new LabelProvider() {
+			public Image getImage(Object element) {
+				if (element == null) return null;
+				ITag tag = (ITag)element;
+				//Need an image
+				return null;
+			}
+			public String getText(Object element) {
+				return ((ITag)element).getName();
+			}
+		});
+		result.setSorter(new ViewerSorter() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				if (!(e1 instanceof ITag) || !(e2 instanceof ITag)) return super.compare(viewer, e1, e2);
+				ITag tag1 = (ITag)e1;
+				ITag tag2 = (ITag)e2;
+				/*int type1 = tag1.getType();
+				int type2 = tag2.getType();
+				if (type1 != type2) {
+					return type2 - type1;
+				}*/
+				return super.compare(viewer, tag1, tag2);
+			}
+		});
+		return result;
+	}
+
+	public void setFocus() {
 	}
 
 	/**
@@ -140,13 +191,23 @@ public class GenericHistoryView extends ViewPart {
 	}
 
 	protected void contributeActions() {
-		refreshAction = new Action("Refresh", null) {
+		
+		// Double click open action
+		openAction = new OpenRevisionAction();
+		tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
+			public void handleEvent(Event e) {
+				openAction.selectionChanged(null, tableViewer.getSelection());
+				openAction.run(null);
+			}
+		});
+		
+		refreshAction = new Action(TeamUIMessages.GenericHistoryView_Refresh, null) {
 			public void run() {
 				refresh();
 			}
 		};
 		
-		getDirectDescendents = new Action("Get Direct Descendents", null) {
+		getDirectDescendents = new Action(TeamUIMessages.GenericHistoryView_GetDirectDescendents, null) {
 			public void run() {
 				IFileHistory currentHistory = historyTableProvider.getIFileHistory();
 				try {
@@ -156,9 +217,8 @@ public class GenericHistoryView extends ViewPart {
 				tableViewer.refresh();
 			}
 		};
-		
-
-		getPredecessor = new Action("Get Predecessor", null) {
+	
+		getPredecessor = new Action(TeamUIMessages.GenericHistoryView_GetPredecessor, null) {
 			public void run() {
 				IFileHistory currentHistory = historyTableProvider.getIFileHistory();
 				try {
@@ -169,7 +229,44 @@ public class GenericHistoryView extends ViewPart {
 			}
 		};
 		
-//		 Contribute actions to popup menu
+		// Toggle text visible action
+		final IPreferenceStore store = TeamUIPlugin.getPlugin().getPreferenceStore();
+		toggleTextAction = new Action(TeamUIMessages.GenericHistoryView_ShowCommentViewer) { 
+			public void run() {
+				setViewerVisibility();
+				store.setValue(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_SHOW_COMMENTS, toggleTextAction.isChecked());
+			}
+		};
+		toggleTextAction.setChecked(store.getBoolean(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_SHOW_COMMENTS));
+        //PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleTextAction, IHelpContextIds.SHOW_COMMENT_IN_HISTORY_ACTION);	
+
+        // Toggle wrap comments action
+        toggleTextWrapAction = new Action(TeamUIMessages.GenericHistoryView_WrapComments) { 
+          public void run() {
+            setViewerVisibility();
+            store.setValue(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_WRAP_COMMENTS, toggleTextWrapAction.isChecked());
+          }
+        };
+        toggleTextWrapAction.setChecked(store.getBoolean(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_WRAP_COMMENTS));
+        //PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleTextWrapAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);   
+		
+        // Toggle list visible action
+		toggleListAction = new Action(TeamUIMessages.GenericHistoryView_ShowTagViewer) { 
+			public void run() {
+				setViewerVisibility();
+				store.setValue(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_SHOW_TAGS, toggleListAction.isChecked());
+			}
+		};
+		toggleListAction.setChecked(store.getBoolean(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_SHOW_TAGS));
+        //PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleListAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);	
+		
+		
+		//Create the local tool bar
+		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+		tbm.add(refreshAction);
+		tbm.update(false);
+        
+		//Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
 		Menu menu = menuMgr.createContextMenu(tableViewer.getTable());
 		menuMgr.addMenuListener(new IMenuListener() {
@@ -180,26 +277,19 @@ public class GenericHistoryView extends ViewPart {
 		menuMgr.setRemoveAllWhenShown(true);
 		tableViewer.getTable().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, tableViewer);
+		
+		// Contribute toggle text visible to the toolbar drop-down
+		IActionBars actionBars = getViewSite().getActionBars();
+		IMenuManager actionBarsMenu = actionBars.getMenuManager();
+		actionBarsMenu.add(toggleTextWrapAction);
+		actionBarsMenu.add(new Separator());
+		actionBarsMenu.add(toggleTextAction);
+		actionBarsMenu.add(toggleListAction);
 
 	}
 
 	private void fillTableMenu(IMenuManager manager) {
 		// file actions go first (view file)
-		/*manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
-		if (file != null) {
-			// Add the "Add to Workspace" action if 1 revision is selected.
-			ISelection sel = tableViewer.getSelection();
-			if (!sel.isEmpty()) {
-				if (sel instanceof IStructuredSelection) {
-					if (((IStructuredSelection)sel).size() == 1) {
-						manager.add(refreshAction);
-						manager.add(getRevisionAction);
-						manager.add(new Separator());
-						manager.add(tagWithExistingAction);
-					}
-				}
-			}
-		}*/
 		manager.add(getPredecessor);
 		manager.add(getDirectDescendents);
 		manager.add(new Separator("additions")); //$NON-NLS-1$
@@ -275,87 +365,29 @@ public class GenericHistoryView extends ViewPart {
 						IStructuredSelection ss = (IStructuredSelection) selection;
 						currentSelection = (IFileRevision) ss.getFirstElement();
 				}
-				/*
-				 * if (selection == null || !(selection instanceof
-				 * IStructuredSelection)) { textViewer.setDocument(new
-				 * Document("")); //$NON-NLS-1$ tagViewer.setInput(null);
-				 * return; } IStructuredSelection ss =
-				 * (IStructuredSelection)selection; if (ss.size() != 1) {
-				 * textViewer.setDocument(new Document("")); //$NON-NLS-1$
-				 * tagViewer.setInput(null); return; } ILogEntry entry =
-				 * (ILogEntry)ss.getFirstElement(); textViewer.setDocument(new
-				 * Document(entry.getComment()));
-				 * tagViewer.setInput(entry.getTags());
-				 */
+				
+				 if (selection == null || !(selection instanceof IStructuredSelection)) { 
+					 textViewer.setDocument(new Document("")); //$NON-NLS-1$ 
+					 tagViewer.setInput(null);
+				  return; } 
+				 
+				 IStructuredSelection ss =(IStructuredSelection)selection;
+				  if (ss.size() != 1) {
+				     textViewer.setDocument(new Document("")); //$NON-NLS-1$
+				     tagViewer.setInput(null); 
+				     return; 
+				 } 
+				  
+				  IFileRevision entry =(IFileRevision)ss.getFirstElement(); 
+				  textViewer.setDocument(new Document(entry.getComment()));
+				  tagViewer.setInput(entry.getTags());
+				 
 			}
 		});
 
 		return viewer;
 	}
-
-	/*
-	 * protected TextViewer createText(Composite parent) { TextViewer result =
-	 * new TextViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI |
-	 * SWT.BORDER | SWT.READ_ONLY); result.addSelectionChangedListener(new
-	 * ISelectionChangedListener() { public void
-	 * selectionChanged(SelectionChangedEvent event) { copyAction.update(); }
-	 * }); return result; }
-	 */
-
-	/*private Action getContextMenuAction(String title,
-			final boolean needsProgressDialog, final IWorkspaceRunnable action) {
-		return new Action(title) {
-			public void run() {
-				try {
-					if (file == null)
-						return;
-					ISelection selection = tableViewer.getSelection();
-					if (!(selection instanceof IStructuredSelection))
-						return;
-					IStructuredSelection ss = (IStructuredSelection) selection;
-					Object o = ss.getFirstElement();
-					currentSelection = (IFileHistory) o;
-					if (needsProgressDialog) {
-						PlatformUI.getWorkbench().getProgressService().run(
-								true, true, new IRunnableWithProgress() {
-									public void run(IProgressMonitor monitor)
-											throws InvocationTargetException,
-											InterruptedException {
-										try {
-											action.run(monitor);
-										} catch (CoreException e) {
-											throw new InvocationTargetException(
-													e);
-										}
-									}
-								});
-					} else {
-						try {
-							action.run(null);
-						} catch (CoreException e) {
-							throw new InvocationTargetException(e);
-						}
-					}
-				} catch (InvocationTargetException e) {
-					// CVSUIPlugin.openError(getViewSite().getShell(), null,
-					// null, e, CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
-				} catch (InterruptedException e) {
-					// Do nothing
-				}
-			}
-
-			public boolean isEnabled() {
-				ISelection selection = tableViewer.getSelection();
-				if (!(selection instanceof IStructuredSelection))
-					return false;
-				IStructuredSelection ss = (IStructuredSelection) selection;
-				if (ss.size() != 1)
-					return false;
-				return true;
-			}
-		};
-	}*/
-
+	
 	/*
 	 * Refresh the view by refetching the log entries for the remote file
 	 */
@@ -367,14 +399,6 @@ public class GenericHistoryView extends ViewPart {
 						// if a local file was fed to the history view then we
 						// will have to refetch the handle
 						// to properly display the current revision marker.
-						/*
-						 * if(file != null) { ICVSRemoteFile remoteFile; try {
-						 * remoteFile = (ICVSRemoteFile)
-						 * CVSWorkspaceRoot.getRemoteResourceFor(file);
-						 * historyTableProvider.setFile(remoteFile); } catch
-						 * (CVSException e) { // use previously fetched remote
-						 * file, but log error CVSUIPlugin.log(e); } }
-						 */
 						tableViewer.refresh();
 					}
 				});
@@ -407,23 +431,6 @@ public class GenericHistoryView extends ViewPart {
 			historyTableProvider.setFile(fileHistory);
 			tableViewer.setInput(fileHistory);
 			setContentDescription(newfile.getName());
-
-			/*
-			 * RepositoryProvider teamProvider =
-			 * RepositoryProvider.getProvider(file.getProject(),
-			 * CVSProviderPlugin.getTypeId()); if (teamProvider != null) { try { //
-			 * for a file this will return the base //ICVSRemoteFile remoteFile =
-			 * (ICVSRemoteFile)CVSWorkspaceRoot.getRemoteResourceFor(file);
-			 * if(remoteFile != null) {
-			 * historyTableProvider.setFile(remoteFile); // input is set
-			 * asynchronously so we can't assume that the view // has been
-			 * populated until the job that queries for the history // has
-			 * completed. tableViewer.setInput(remoteFile);
-			 * setContentDescription(remoteFile.getName());
-			 * setTitleToolTip(resource.getFullPath().toString()); } } catch
-			 * (TeamException e) {
-			 * //CVSUIPlugin.openError(getViewSite().getShell(), null, null, e); } }
-			 */
 		} else {
 			this.file = null;
 			tableViewer.setInput(null);
@@ -431,12 +438,33 @@ public class GenericHistoryView extends ViewPart {
 			setTitleToolTip(""); //$NON-NLS-1$
 		}
 	}
+	
+	private void setViewerVisibility() {
+		boolean showText = toggleTextAction.isChecked();
+		boolean showList = toggleListAction.isChecked();
+		if (showText && showList) {
+			sashForm.setMaximizedControl(null);
+			innerSashForm.setMaximizedControl(null);
+		} else if (showText) {
+			sashForm.setMaximizedControl(null);
+			innerSashForm.setMaximizedControl(textViewer.getTextWidget());
+		} else if (showList) {
+			sashForm.setMaximizedControl(null);
+			innerSashForm.setMaximizedControl(tagViewer.getTable());
+		} else {
+			sashForm.setMaximizedControl(tableViewer.getControl());
+		}
+        
+		boolean wrapText = toggleTextWrapAction.isChecked();
+        textViewer.getTextWidget().setWordWrap(wrapText);
+	}
+	
 
 	private class FetchLogEntriesJob extends Job {
 		public IFileHistory fileHistory;
 
 		public FetchLogEntriesJob() {
-			super("Generic File History Fetcher");
+			super(TeamUIMessages.GenericHistoryView_GenericFileHistoryFetcher);
 		}
 
 		public void setRemoteFile(IFileHistory file) {
@@ -468,4 +496,37 @@ public class GenericHistoryView extends ViewPart {
 			return this.fileHistory;
 		}
 	};
+    
+	/**
+	 * A default content provider to prevent subclasses from
+	 * having to implement methods they don't need.
+	 */
+	private class SimpleContentProvider implements IStructuredContentProvider {
+
+		/**
+		 * SimpleContentProvider constructor.
+		 */
+		public SimpleContentProvider() {
+			super();
+		}
+		
+		/*
+		 * @see SimpleContentProvider#dispose()
+		 */
+		public void dispose() {
+		}
+		
+		/*
+		 * @see SimpleContentProvider#getElements()
+		 */
+		public Object[] getElements(Object element) {
+			return new Object[0];
+		}
+		
+		/*
+		 * @see SimpleContentProvider#inputChanged()
+		 */
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+	}
 }

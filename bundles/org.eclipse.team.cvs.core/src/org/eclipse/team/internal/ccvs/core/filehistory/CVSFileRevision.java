@@ -11,12 +11,10 @@
 
 package org.eclipse.team.internal.ccvs.core.filehistory;
 
-import java.io.InputStream;
 import java.net.URI;
 
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.filehistory.IFileRevision;
 import org.eclipse.team.core.filehistory.ITag;
@@ -40,11 +38,6 @@ public class CVSFileRevision extends FileRevision {
 		return entry.getAuthor();
 	}
 
-	public InputStream getContents(IProgressMonitor monitor) throws TeamException {
-
-		return entry.getRemoteFile().getContents(monitor);
-	}
-
 	public String getComment() {
 		return entry.getComment();
 	}
@@ -59,16 +52,20 @@ public class CVSFileRevision extends FileRevision {
 		return (this.getTimestamp() > compareRevisionTime);
 	}
 
-	public IStorage getStorage() {
+	public IStorage getStorage(IProgressMonitor monitor) {
 		RemoteFile remoteFile = (RemoteFile) entry.getRemoteFile();
 		try {
-			return remoteFile.getStorage(new NullProgressMonitor());
+			return remoteFile.getStorage(monitor);
 		} catch (TeamException e) {
 		}
 
 		return null;
 	}
 
+	public String getName(){
+		return entry.getRemoteFile().getName();
+	}
+	
 	public String getContentIndentifier() {
 		return entry.getRevision();
 	}

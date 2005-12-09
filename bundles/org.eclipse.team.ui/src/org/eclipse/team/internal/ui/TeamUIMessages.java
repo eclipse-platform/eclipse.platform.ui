@@ -305,6 +305,28 @@ public class TeamUIMessages extends NLS {
 	public static String FileTypeTable_6;
 	public static String OpenWithActionGroup_0;
 
+	public static String nameAndRevision;
+	public static String internal;
+	
+	public static String TeamCompareEditorInput_repository;
+	public static String TeamCompareEditorInput_titleAncestor;
+	public static String TeamCompareEditorInput_titleNoAncestor;
+	public static String TeamCompareEditorInput_titleNoAncestorDifferent;
+	public static String TeamCompareEditorInput_different;
+	
+	public static String TeamCompareEditorInput_comparing;
+	public static String TeamCompareEditorInput_new;
+	public static String TeamCompareEditorInput_deleted;
+	
+	public static String TeamCompareEditorInput_fileProgress;
+	
+	public static String GenericHistoryView_Refresh;
+	public static String GenericHistoryView_GetDirectDescendents;
+	public static String GenericHistoryView_GetPredecessor;
+	public static String GenericHistoryView_ShowCommentViewer;
+	public static String GenericHistoryView_WrapComments;
+	public static String GenericHistoryView_ShowTagViewer;
+	public static String GenericHistoryView_GenericFileHistoryFetcher;
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, TeamUIMessages.class);

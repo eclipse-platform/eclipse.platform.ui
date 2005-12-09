@@ -14,6 +14,7 @@ package org.eclipse.team.core.filehistory;
 import java.net.URI;
 
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Represents an individual revision of a file
@@ -31,8 +32,14 @@ public interface IFileRevision {
 	 * Returns the storage for this file revision.
 	 * @return IStorage containing file storage 
 	 */
-	public abstract IStorage getStorage();
+	public abstract IStorage getStorage(IProgressMonitor monitor);
 
+	/**
+	 * Returns the name of this file revision
+	 * @return String containing the name of the file revision
+	 */
+	public abstract String getName();
+	
 	/**
 	 * Returns the <em>unique</em> identifier for this file revision 
 	 * @return a String containing the id

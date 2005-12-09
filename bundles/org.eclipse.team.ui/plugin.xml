@@ -113,6 +113,20 @@
                enablesFor="*"
                id="nonbound.org.eclipse.team.ui.ImportProjectSetAction">
          </action>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.eclipse.team.ui.FileRevisionsContribution"
+            objectClass="org.eclipse.team.core.filehistory.IFileRevision">
+         <action
+               class="org.eclipse.team.internal.ui.filehistory.actions.OpenRevisionAction"
+               id="org.eclipse.team.ui.OpenRevisionAction"
+               label="%FileRevision.OpenAction.name"/>
+         <action
+               class="org.eclipse.team.internal.ui.filehistory.actions.CompareRevisionAction"
+               enablesFor="2"
+               id="org.eclipse.team.ui.CompareRevisionAction"
+               label="%FileRevision.Compare.name"/>
       </objectContribution>    
    </extension>
 <!-- ************** Views ********************** -->
