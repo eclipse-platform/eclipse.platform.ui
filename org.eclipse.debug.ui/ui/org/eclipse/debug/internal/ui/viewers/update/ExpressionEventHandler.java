@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.internal.ui.viewers.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.IModelProxy;
 
@@ -25,7 +26,7 @@ import org.eclipse.debug.internal.ui.viewers.IModelProxy;
  */
 public class ExpressionEventHandler extends DebugEventHandler {
 
-    public ExpressionEventHandler(IModelProxy proxy) {
+    public ExpressionEventHandler(AbstractModelProxy proxy) {
         super(proxy);
     }
 

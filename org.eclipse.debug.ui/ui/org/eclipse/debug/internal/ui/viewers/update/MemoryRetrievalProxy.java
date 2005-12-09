@@ -27,7 +27,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryBlockListener {
 	private IMemoryBlockRetrieval fRetrieval;
-	private IPresentationContext fPresentationContext;
 
 	public MemoryRetrievalProxy(IMemoryBlockRetrieval retrieval)
 	{
@@ -87,11 +86,12 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 	}
 
 	public void init(IPresentationContext context) {
-		fPresentationContext = context;
+		super.init(context);
 		DebugPlugin.getDefault().getMemoryBlockManager().addListener(this);
 	}
 
 	public synchronized void dispose() {
+		super.dispose();
 		DebugPlugin.getDefault().getMemoryBlockManager().removeListener(this);
 	}
 
@@ -106,7 +106,7 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 	
 	private IStructuredSelection getCurrentSelection()
 	{
-		ISelection selection = fPresentationContext.getPart().getSite().getSelectionProvider().getSelection();
+		ISelection selection = getPresentationContext().getPart().getSite().getSelectionProvider().getSelection();
 		
 		if (selection instanceof IStructuredSelection)
 			return (IStructuredSelection)selection;
@@ -152,10 +152,10 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 		if (memoryBlocks.length == 1)
 			return true;
 		
-		if (fPresentationContext instanceof MemoryViewPresentationContext)
+		if (getPresentationContext() instanceof MemoryViewPresentationContext)
 		{
 			// if registered, meaning the memory block is added from this view, select
-			MemoryViewPresentationContext context = (MemoryViewPresentationContext)fPresentationContext;
+			MemoryViewPresentationContext context = (MemoryViewPresentationContext)getPresentationContext();
 			if (context.isMemoryBlockRegistered(memoryBlock))
 				return true;
 			// if display is not pinned, select

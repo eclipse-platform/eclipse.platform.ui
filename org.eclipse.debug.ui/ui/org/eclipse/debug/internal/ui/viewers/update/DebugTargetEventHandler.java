@@ -13,8 +13,8 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.internal.ui.viewers.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.IModelProxy;
 
 
 /**
@@ -27,7 +27,7 @@ public class DebugTargetEventHandler extends DebugEventHandler {
 	 * 
 	 * @param viewer
 	 */
-	public DebugTargetEventHandler(IModelProxy proxy) {
+	public DebugTargetEventHandler(AbstractModelProxy proxy) {
 		super(proxy);
 	}
 

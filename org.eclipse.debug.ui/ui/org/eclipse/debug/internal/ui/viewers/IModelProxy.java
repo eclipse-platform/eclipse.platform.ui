@@ -11,19 +11,59 @@
 package org.eclipse.debug.internal.ui.viewers;
 
 /**
- * 
- *
+ * A model proxy represents a model for a specific presentation context and
+ * fires deltas to notify listeners of changes in the model. A model proxy
+ * is created by a model proxy factory.
+ * <p>
+ * When an element is added to an asynchronous viewer, its associated model proxy
+ * factory is queried to create a model proxy for that element. The model proxy
+ * is then installed into the viewer and the viewer listens to model deltas
+ * in order to update that element. Generally, a model proxy factory creates
+ * model proxies for root elements in a model, and then represents all elements
+ * within that model for a specific presentation context. 
+ * </p>
+ * <p>
+ * Clients may implement this interface. Implementation of this interface
+ * must subclass {@link AbstractModelProxy}.
+ * </p>
+ * @see IModelDelta
+ * @see IModelProxyFactory
+ * @see IModelChangedListener
  * @since 3.2
  */
 public interface IModelProxy {
 
+	/**
+	 * Notification this model proxy is about to be installed in the following
+	 * context. This is the first method called after a model proxy is created.
+	 * 
+	 * @param context presentation context in which the proxy will be installed
+	 */
 	public void init(IPresentationContext context);
-	public void setInitialState();
-	public void dispose();
-	public void addModelChangedListener(IModelChangedListener listener);
-	public void removeModelChangedListener(IModelChangedListener listener);
 	
-	// TODO: should be part of the implementation rather than the interface
-	public void fireModelChanged(IModelDelta delta);
+	/** 
+	 * Notification this model proxy has been installed in its presentation 
+	 * context.
+	 */
+	public void setInitialState();
+	
+	/**
+	 * Disposes this model proxy.
+	 */
+	public void dispose();
+	
+	/**
+	 * Registers the given listener for model delta notification.
+	 * 
+	 * @param listener model delta listener
+	 */
+	public void addModelChangedListener(IModelChangedListener listener);
+	
+	/**
+	 * Deregisters the given listener from model delta notification.
+	 * 
+	 * @param listener model delta listener
+	 */
+	public void removeModelChangedListener(IModelChangedListener listener);
 	
 }

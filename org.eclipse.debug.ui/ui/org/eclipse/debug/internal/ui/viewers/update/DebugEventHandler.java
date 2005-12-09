@@ -12,8 +12,8 @@ package org.eclipse.debug.internal.ui.viewers.update;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.internal.ui.viewers.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.IModelProxy;
 
 /**
  * Handles debug events for an event update policy in a viewer.
@@ -22,14 +22,14 @@ import org.eclipse.debug.internal.ui.viewers.IModelProxy;
  */
 public abstract class DebugEventHandler {
 	
-	private IModelProxy fModelProxy;
+	private AbstractModelProxy fModelProxy;
 
 	/**
 	 * Constructs an event handler for the given model proxy.
 	 * 
 	 * @param policy
 	 */
-	public DebugEventHandler(IModelProxy proxy) {
+	public DebugEventHandler(AbstractModelProxy proxy) {
 		fModelProxy = proxy;
 	}
 	
@@ -46,7 +46,7 @@ public abstract class DebugEventHandler {
 	 * 
 	 * @return
 	 */
-	protected synchronized IModelProxy getModelProxy() {
+	protected synchronized AbstractModelProxy getModelProxy() {
 		return fModelProxy;
 	}
 
@@ -158,7 +158,7 @@ public abstract class DebugEventHandler {
 	 * @param delta
 	 */
 	protected void fireDelta(IModelDelta delta) {
-		IModelProxy modelProxy = getModelProxy();
+		AbstractModelProxy modelProxy = getModelProxy();
 		if (modelProxy != null) {
 			modelProxy.fireModelChanged(delta);
 		}

@@ -92,6 +92,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
     protected abstract DebugEventHandler[] createEventHandlers();
 
     public synchronized void dispose() {
+    	super.dispose();
         fDisposed = true;
         fTimer.cancel();
         fTimerTasks.clear();
@@ -103,6 +104,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
     }
 
     public void init(IPresentationContext context) {
+    	super.init(context);
         DebugPlugin.getDefault().addDebugEventListener(this);
         fHandlers = createEventHandlers();
     }

@@ -23,11 +23,13 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	private ILaunchManager fLaunchManager;
 
 	public void init(IPresentationContext context) {
+		super.init(context);
 		fLaunchManager = DebugPlugin.getDefault().getLaunchManager();
 		fLaunchManager.addLaunchListener(this);
 	}
 
-	public void dispose() {		
+	public void dispose() {	
+		super.dispose();
 		fLaunchManager.removeLaunchListener(this);
 		fLaunchManager = null;
 	}

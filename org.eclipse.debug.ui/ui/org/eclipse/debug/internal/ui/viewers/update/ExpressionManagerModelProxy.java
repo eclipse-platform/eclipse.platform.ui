@@ -25,6 +25,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#init(org.eclipse.debug.internal.ui.viewers.IPresentationContext)
 	 */
 	public void init(IPresentationContext context) {
+		super.init(context);
 		DebugPlugin.getDefault().getExpressionManager().addExpressionListener(this);
 	}
 	
@@ -32,6 +33,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#dispose()
 	 */
 	public synchronized void dispose() {
+		super.dispose();
 		DebugPlugin.getDefault().getExpressionManager().removeExpressionListener(this);
 	}
 

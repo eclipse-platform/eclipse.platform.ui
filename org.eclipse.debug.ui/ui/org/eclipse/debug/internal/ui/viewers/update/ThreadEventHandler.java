@@ -20,8 +20,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.internal.ui.viewers.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.IModelProxy;
 
 /**
  * @since 3.2
@@ -44,7 +44,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 	 * 
 	 * @param viewer
 	 */
-	public ThreadEventHandler(IModelProxy proxy) {
+	public ThreadEventHandler(AbstractModelProxy proxy) {
 		super(proxy);
 	}
 

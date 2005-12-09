@@ -16,8 +16,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 
 public abstract class AbstractModelProxy implements IModelProxy {
+	
+	private IPresentationContext fContext;
 
-	protected ListenerList fListeners = new ListenerList();
+	private ListenerList fListeners = new ListenerList();
 
 	protected Object[] getListeners() {
 		synchronized (fListeners) {
@@ -25,18 +27,29 @@ public abstract class AbstractModelProxy implements IModelProxy {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.IModelProxy#addModelChangedListener(org.eclipse.debug.internal.ui.viewers.IModelChangedListener)
+	 */
 	public void addModelChangedListener(IModelChangedListener listener) {
 		synchronized (fListeners) {
 			fListeners.add(listener);
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.IModelProxy#removeModelChangedListener(org.eclipse.debug.internal.ui.viewers.IModelChangedListener)
+	 */
 	public void removeModelChangedListener(IModelChangedListener listener) {
 		synchronized (fListeners) {
 			fListeners.remove(listener);
 		}
 	}
 
+	/**
+	 * Notifies registered listeners of the given delta.
+	 * 
+	 * @param delta model delta to broadcast
+	 */
 	public void fireModelChanged(final IModelDelta delta) {
 		Object[] listeners = getListeners();
 		for (int i = 0; i < listeners.length; i++) {
@@ -54,5 +67,31 @@ public abstract class AbstractModelProxy implements IModelProxy {
 			Platform.run(safeRunnable);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.IModelProxy#dispose()
+	 */
+	public synchronized void dispose() {
+		fContext = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.IModelProxy#init(org.eclipse.debug.internal.ui.viewers.IPresentationContext)
+	 */
+	public void init(IPresentationContext context) {
+		fContext = context;
+	}
+	
+	/**
+	 * Returns the context this model proxy is installed in.
+	 * 
+	 * @return presentation context, or <code>null</code> if this
+	 *  model proxy has been disposed
+	 */
+	protected IPresentationContext getPresentationContext() {
+		return fContext;
+	}
+	
+	
 
 }

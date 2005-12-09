@@ -13,8 +13,8 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ISuspendResume;
+import org.eclipse.debug.internal.ui.viewers.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.IModelProxy;
 
 /**
  *
@@ -24,7 +24,7 @@ public class VariablesViewEventHandler extends DebugEventHandler {
 
 	private IStackFrame fFrame;
 
-	public VariablesViewEventHandler(IModelProxy proxy, IStackFrame frame) {
+	public VariablesViewEventHandler(AbstractModelProxy proxy, IStackFrame frame) {
 		super(proxy);
 		fFrame = frame;
 	}
