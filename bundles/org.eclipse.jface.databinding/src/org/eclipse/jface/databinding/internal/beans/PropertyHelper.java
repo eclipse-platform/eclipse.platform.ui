@@ -54,14 +54,24 @@ public class PropertyHelper {
 		if (c==null || property==null) 
 			return null;
 		Method getter=null;
+		// Try a vanilla getter
 		try {
 			getter = c.getMethod(
-					"get"+ property.substring(0, 1).toUpperCase(Locale.ENGLISH) + property.substring(1), new Class[0]); //$NON-NLS-1$
+					"get"+ property.substring(0, 1).toUpperCase(Locale.ENGLISH) + property.substring(1), new Class[0]); //$NON-NLS-1$			
 		} 
 		catch (SecurityException e) {} 
 		catch (NoSuchMethodException e) {}
-		if (getter==null)  // allow for method invocation
-			getter =  c.getMethod(property, new Class[0]);		
+		if (getter==null) {
+			// vanilla boolean;
+			try {
+				getter = c.getMethod(
+						"is"+ property.substring(0, 1).toUpperCase(Locale.ENGLISH) + property.substring(1), new Class[0]); //$NON-NLS-1$
+			} 
+			catch (SecurityException e) {} 
+			catch (NoSuchMethodException e) {}
+			if (getter==null)  // allow for method invocation
+				getter =  c.getMethod(property, new Class[0]);
+		}
 			
 		return getter;		
 	}
