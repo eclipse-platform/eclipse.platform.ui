@@ -373,14 +373,20 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getResource()
 	 */
 	public IResource[] getMappedResources() throws CoreException {
-		List name = getInfo().getListAttribute(ATTR_MAPPED_RESOURCE, new ArrayList());
+		List paths = getAttribute(ATTR_MAPPED_RESOURCE, (List)null);
+		if (paths == null || paths.size() == 0) {
+			return null;
+		}
 		ArrayList list = new ArrayList();
-		IResource res = null;
-		for(int i = 0; i < name.size(); i++) {
-			res = ResourcesPlugin.getWorkspace().getRoot().findMember(name.get(i).toString());
+		for(int i = 0; i < paths.size(); i++) {
+			String path = (String) paths.get(i);
+			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(Path.fromPortableString(path));
 			if(res != null) {
 				list.add(res);
 			}
+		}
+		if (list.isEmpty()) {
+			return null;
 		}
 		return (IResource[])list.toArray(new IResource[list.size()]);
 	}
