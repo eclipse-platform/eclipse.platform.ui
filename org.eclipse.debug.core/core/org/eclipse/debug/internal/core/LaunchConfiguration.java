@@ -26,6 +26,7 @@ import javax.xml.transform.TransformerException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -62,14 +63,23 @@ import org.xml.sax.helpers.DefaultHandler;
 public class LaunchConfiguration extends PlatformObject implements ILaunchConfiguration {
 	
 	/**
-	 * Launch configuration attribute that specifies the resources mapped to it.
+	 * Launch configuration attribute that specifies the resources paths mapped to it.
 	 * Not all launch configurations will have a mapped resource unless migrated.
 	 * Value is a list of resource paths stored as portabable strings, or <code>null</code>
 	 * if none.
 	 * 
 	 * @since 3.2
 	 */
-	public static final String ATTR_MAPPED_RESOURCE = DebugPlugin.getUniqueIdentifier() + ".MAPPED_RESOURCE"; //$NON-NLS-1$
+	public static final String ATTR_MAPPED_RESOURCE_PATHS = DebugPlugin.getUniqueIdentifier() + ".MAPPED_RESOURCE_PATHS"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute that specifies the resources types mapped to it.
+	 * Not all launch configurations will have a mapped resource unless migrated.
+	 * Value is a list of resource type intergers, or <code>null</code> if none.
+	 * 
+	 * @since 3.2
+	 */	
+	public static final String ATTR_MAPPED_RESOURCE_TYPES = DebugPlugin.getUniqueIdentifier() + ".MAPPED_RESOURCE_TYPES"; //$NON-NLS-1$
 	
 	/**
 	 * Location this configuration is stored in. This 
@@ -373,14 +383,43 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getResource()
 	 */
 	public IResource[] getMappedResources() throws CoreException {
-		List paths = getAttribute(ATTR_MAPPED_RESOURCE, (List)null);
+		List paths = getAttribute(ATTR_MAPPED_RESOURCE_PATHS, (List)null);
 		if (paths == null || paths.size() == 0) {
 			return null;
 		}
+		List types = getAttribute(ATTR_MAPPED_RESOURCE_TYPES, (List)null);
+		if (types == null || types.size() != paths.size()) {
+			throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_10, DebugPlugin.INTERNAL_ERROR, null));
+		}
 		ArrayList list = new ArrayList();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		for(int i = 0; i < paths.size(); i++) {
-			String path = (String) paths.get(i);
-			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(Path.fromPortableString(path));
+			String pathStr = (String) paths.get(i);
+			String typeStr= (String) types.get(i);
+			int type = -1;
+			try {
+				type = Integer.decode(typeStr).intValue();
+			} catch (NumberFormatException e) {
+				throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_10, DebugPlugin.INTERNAL_ERROR, e));
+			}
+			IPath path = Path.fromPortableString(pathStr);
+			IResource res = null;
+			switch (type) {
+			case IResource.FILE:
+				res = root.getFile(path);
+				break;
+			case IResource.PROJECT:
+				res = root.getProject(pathStr);
+				break;
+			case IResource.FOLDER:
+				res = root.getFolder(path);
+				break;
+			case IResource.ROOT:
+				res = root;
+				break;
+			default:
+				throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_10, DebugPlugin.INTERNAL_ERROR, null));
+			}
 			if(res != null) {
 				list.add(res);
 			}

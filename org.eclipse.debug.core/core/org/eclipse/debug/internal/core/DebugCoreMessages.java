@@ -108,4 +108,6 @@ public class DebugCoreMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugCoreMessages.class);
 	}
+
+	public static String LaunchConfiguration_10;
 }
