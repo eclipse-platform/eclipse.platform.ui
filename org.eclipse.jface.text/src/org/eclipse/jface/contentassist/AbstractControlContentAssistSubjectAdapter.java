@@ -355,16 +355,16 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			/**
 			 * This info hover's shell.
 			 */
-			Shell fHoverShell;
+			private Shell fHoverShell;
 			/**
 			 * This info hover's shell region.
 			 * @since 3.1.2
 			 */
-			Region fHoverRegion;
+			private Region fHoverRegion;
 			/**
 			 * The info hover text.
 			 */
-			String fText= ""; //$NON-NLS-1$
+			private String fText= ""; //$NON-NLS-1$
 
 			Hover(Shell parent) {
 				final Display display= parent.getDisplay();
@@ -422,7 +422,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 						fHoverRegion= new Region();
 						fHoverRegion.add(getPolygon(false));
 						fHoverShell.setRegion(fHoverRegion);
-						oldRegion.dispose();
+						if (oldRegion != null)
+							oldRegion.dispose();
 					}
 				}
 			}
