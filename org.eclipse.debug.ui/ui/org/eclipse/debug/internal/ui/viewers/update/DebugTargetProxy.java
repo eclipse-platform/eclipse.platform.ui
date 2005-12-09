@@ -11,9 +11,19 @@
 package org.eclipse.debug.internal.ui.viewers.update;
 
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 
+/**
+ * Default model proxy for a debug target.
+ * 
+ * @since 3.2
+ */
 public class DebugTargetProxy extends EventHandlerModelProxy {
 
     private IDebugTarget fDebugTarget;
@@ -30,6 +40,9 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
 		fDebugTarget = null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#containsEvent(org.eclipse.debug.core.DebugEvent)
+	 */
 	protected boolean containsEvent(DebugEvent event) {
         Object source = event.getSource();
         if (source instanceof IDebugElement) {
@@ -42,11 +55,42 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#createEventHandlers()
+     */
     protected DebugEventHandler[] createEventHandlers() {
         return new DebugEventHandler[] { new DebugTargetEventHandler(this), new ThreadEventHandler(this) };
     }
 
-	public void setInitialState() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#installed()
+	 */
+	public void installed() {
+		// select any thread that is already suspended after installation
+		IDebugTarget target = fDebugTarget;
+		if (target != null) {
+			try {
+				IThread[] threads = target.getThreads();
+				for (int i = 0; i < threads.length; i++) {
+					IThread thread = threads[i];
+					if (thread.isSuspended()) {
+						IStackFrame frame = thread.getTopStackFrame();
+						if (frame != null) {
+							ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
+							ModelDelta node = delta.addNode(target.getLaunch(), IModelDelta.NOCHANGE);
+							node = node.addNode(target, IModelDelta.NOCHANGE);
+							node = node.addNode(thread, IModelDelta.NOCHANGE | IModelDelta.EXPAND);
+							node = node.addNode(frame, IModelDelta.NOCHANGE | IModelDelta.SELECT);
+							fireModelChanged(delta);
+							return;
+						}
+					}
+				}
+			} catch (DebugException e) {
+			}
+		}
 	}
+    
+    
 
 }

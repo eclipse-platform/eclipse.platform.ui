@@ -98,6 +98,15 @@ public abstract class AbstractModelProxy implements IModelProxy {
 	protected IPresentationContext getPresentationContext() {
 		return fContext;
 	}
+
+	/* (non-Javadoc)
+	 * Subclasses should override as required.
+	 * 
+	 * @see org.eclipse.debug.internal.ui.viewers.IModelProxy#installed()
+	 */
+	public void installed() {	
+	}
+	
 	
 	
 

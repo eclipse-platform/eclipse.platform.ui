@@ -34,21 +34,34 @@ package org.eclipse.debug.internal.ui.viewers;
 public interface IModelProxy {
 
 	/**
-	 * Notification this model proxy is about to be installed in the following
-	 * context. This is the first method called after a model proxy is created.
-	 * 
+	 * Notification this model proxy has been created and is about to be installed
+	 * in the following context. This is the first method called after a model proxy
+	 * is created.
+	 * <p>
+	 * This method is called by the asynchronous viewer framework and should not
+	 * be called by clients.
+	 * </p>
 	 * @param context presentation context in which the proxy will be installed
 	 */
 	public void init(IPresentationContext context);
 	
 	/** 
 	 * Notification this model proxy has been installed in its presentation 
-	 * context.
+	 * context. This indicates that the model proxy has been created and registered
+	 * model change listeners are ready to process deltas.
+	 * <p>
+	 * This method is called by the asynchronous viewer framework and should not
+	 * be called by clients.
+	 * </p>
 	 */
-	public void setInitialState();
+	public void installed();
 	
 	/**
 	 * Disposes this model proxy.
+	 * <p>
+	 * This method is called by the asynchronous viewer framework and should not
+	 * be called by clients.
+	 * </p>
 	 */
 	public void dispose();
 	

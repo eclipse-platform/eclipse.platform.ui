@@ -60,8 +60,5 @@ public class DefaultExpressionModelProxy extends EventHandlerModelProxy {
 	protected IExpression getExpression() {
 		return fExpression;
 	}
-
-	public void setInitialState() {
-	}
 	
 }

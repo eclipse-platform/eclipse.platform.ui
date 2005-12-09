@@ -65,6 +65,4 @@ public class ProcessProxy extends EventHandlerModelProxy {
         return new DebugEventHandler[] {fProcessEventHandler};
     }
 
-	public void setInitialState() {
-	}
 }

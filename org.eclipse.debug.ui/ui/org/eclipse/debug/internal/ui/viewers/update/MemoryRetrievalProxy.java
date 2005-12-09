@@ -135,7 +135,7 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 		return false;
 	}
 
-	public void setInitialState() {
+	public void installed() {
 		IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(fRetrieval);
 		if (memoryBlocks.length > 0)
 		{

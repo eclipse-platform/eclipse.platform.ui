@@ -60,8 +60,4 @@ public class DefaultVariableViewModelProxy extends EventHandlerModelProxy {
         return false;
     }
 
-	public void setInitialState() {
-		
-	}	
-
 }

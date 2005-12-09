@@ -67,8 +67,4 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 		fireModelChanged(delta);
     }
 
-	public void setInitialState() {
-	}    
-    
-
 }
