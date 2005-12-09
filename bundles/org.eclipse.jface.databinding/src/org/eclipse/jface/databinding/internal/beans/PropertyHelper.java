@@ -61,6 +61,7 @@ public class PropertyHelper {
 		} 
 		catch (SecurityException e) {} 
 		catch (NoSuchMethodException e) {}
+		
 		if (getter==null) {
 			// vanilla boolean;
 			try {
@@ -69,6 +70,7 @@ public class PropertyHelper {
 			} 
 			catch (SecurityException e) {} 
 			catch (NoSuchMethodException e) {}
+			
 			if (getter==null)  // allow for method invocation
 				getter =  c.getMethod(property, new Class[0]);
 		}
