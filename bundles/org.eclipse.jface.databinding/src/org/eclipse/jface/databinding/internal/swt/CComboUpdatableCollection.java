@@ -82,13 +82,17 @@ public class CComboUpdatableCollection extends Updatable implements IUpdatableCo
 	public void removeElement(int index) {
 		updating=true;		
 		try {
-			if (index<0 || index>getSize())
-				index=getSize();
+			if (index<0 || index > getSize() - 1)
+				index=getSize() - 1;
+			
 			String[] newItems = new String[getSize()-1];
 			String old = ccombo.getItem(index);
-			System.arraycopy(ccombo.getItems(), 0, newItems,0, index);	
-			if (newItems.length > 0)
-				System.arraycopy(ccombo.getItems(), index, newItems,index-1, getSize()-index);			
+			if (newItems.length > 0) {
+				System.arraycopy(ccombo.getItems(), 0, newItems,0, index);
+				if (getSize() - 1 > index) {
+					System.arraycopy(ccombo.getItems(), index + 1, newItems, index, getSize() - index - 1);
+				}
+			}
 			ccombo.setItems(newItems);
 			fireChangeEvent(ChangeEvent.REMOVE, old, null, index);
 		}

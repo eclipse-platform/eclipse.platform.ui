@@ -82,13 +82,17 @@ public class ComboUpdatableCollection extends Updatable implements IUpdatableCol
 	public void removeElement(int index) {
 		updating=true;		
 		try {
-			if (index<0 || index>getSize())
-				index=getSize();
+			if (index<0 || index > getSize() - 1)
+				index=getSize() - 1;
 			String[] newItems = new String[getSize()-1];
 			String old = combo.getItem(index);
 			System.arraycopy(combo.getItems(), 0, newItems,0, index);
-			if (newItems.length > 0)
-				System.arraycopy(combo.getItems(), index, newItems,index-1, getSize()-index);			
+			if (newItems.length > 0) {
+				System.arraycopy(combo.getItems(), 0, newItems,0, index);
+				if (getSize() - 1 > index) {
+					System.arraycopy(combo.getItems(), index + 1, newItems, index, getSize() - index - 1);
+				}
+			}
 			combo.setItems(newItems);
 			fireChangeEvent(IChangeEvent.REMOVE, old, null, index);
 		}
