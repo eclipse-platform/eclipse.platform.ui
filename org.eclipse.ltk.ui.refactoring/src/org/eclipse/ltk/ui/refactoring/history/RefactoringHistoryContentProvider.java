@@ -98,41 +98,43 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		if (element instanceof RefactoringHistoryNode && fRefactoringHistory != null) {
 			final RefactoringHistoryNode node= (RefactoringHistoryNode) element;
 			final RefactoringDescriptorProxy[] proxies= getRefactoringHistoryDescriptors();
-			final long[][] structure= getRefactoringRootStructure(proxies[0].getTimeStamp());
-			final int kind= node.getKind();
-			switch (kind) {
-				case RefactoringHistoryNode.COLLECTION:
-					return getRefactoringHistoryEntries(node);
-				default: {
-					if (node instanceof RefactoringHistoryDate) {
-						final RefactoringHistoryDate date= (RefactoringHistoryDate) node;
-						final Calendar calendar= Calendar.getInstance();
-						final long stamp= date.getTimeStamp();
-						switch (kind) {
-							case RefactoringHistoryNode.TODAY:
-								return getRefactoringHistoryEntries(node, stamp, Long.MAX_VALUE);
-							case RefactoringHistoryNode.YESTERDAY:
-								return getRefactoringHistoryEntries(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.TODAY)][0] - 1);
-							case RefactoringHistoryNode.THIS_WEEK:
-								return getRefactoringHistoryDays(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.YESTERDAY)][0] - 1);
-							case RefactoringHistoryNode.LAST_WEEK:
-								return getRefactoringHistoryDays(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.THIS_WEEK)][0] - 1);
-							case RefactoringHistoryNode.THIS_MONTH:
-								return getRefactoringHistoryWeeks(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.LAST_WEEK)][0] - 1);
-							case RefactoringHistoryNode.LAST_MONTH:
-								return getRefactoringHistoryWeeks(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.THIS_MONTH)][0] - 1);
-							case RefactoringHistoryNode.DAY:
-								return getRefactoringHistoryEntries(node, stamp, stamp + 1000 * 60 * 60 * 24 - 1);
-							case RefactoringHistoryNode.WEEK:
-								return getRefactoringHistoryDays(node, stamp, stamp + 1000 * 60 * 60 * 24 * 7 - 1);
-							case RefactoringHistoryNode.MONTH:
-								calendar.setTimeInMillis(stamp);
-								calendar.add(Calendar.MONTH, 1);
-								return getRefactoringHistoryWeeks(node, stamp, calendar.getTimeInMillis() - 1);
-							case RefactoringHistoryNode.YEAR:
-								calendar.setTimeInMillis(stamp);
-								calendar.add(Calendar.YEAR, 1);
-								return getRefactoringHistoryMonths(node, stamp, calendar.getTimeInMillis() - 1);
+			if (proxies != null && proxies.length > 0) {
+				final long[][] structure= getRefactoringRootStructure(proxies[0].getTimeStamp());
+				final int kind= node.getKind();
+				switch (kind) {
+					case RefactoringHistoryNode.COLLECTION:
+						return getRefactoringHistoryEntries(node);
+					default: {
+						if (node instanceof RefactoringHistoryDate) {
+							final RefactoringHistoryDate date= (RefactoringHistoryDate) node;
+							final Calendar calendar= Calendar.getInstance();
+							final long stamp= date.getTimeStamp();
+							switch (kind) {
+								case RefactoringHistoryNode.TODAY:
+									return getRefactoringHistoryEntries(node, stamp, Long.MAX_VALUE);
+								case RefactoringHistoryNode.YESTERDAY:
+									return getRefactoringHistoryEntries(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.TODAY)][0] - 1);
+								case RefactoringHistoryNode.THIS_WEEK:
+									return getRefactoringHistoryDays(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.YESTERDAY)][0] - 1);
+								case RefactoringHistoryNode.LAST_WEEK:
+									return getRefactoringHistoryDays(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.THIS_WEEK)][0] - 1);
+								case RefactoringHistoryNode.THIS_MONTH:
+									return getRefactoringHistoryWeeks(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.LAST_WEEK)][0] - 1);
+								case RefactoringHistoryNode.LAST_MONTH:
+									return getRefactoringHistoryWeeks(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.THIS_MONTH)][0] - 1);
+								case RefactoringHistoryNode.DAY:
+									return getRefactoringHistoryEntries(node, stamp, stamp + 1000 * 60 * 60 * 24 - 1);
+								case RefactoringHistoryNode.WEEK:
+									return getRefactoringHistoryDays(node, stamp, stamp + 1000 * 60 * 60 * 24 * 7 - 1);
+								case RefactoringHistoryNode.MONTH:
+									calendar.setTimeInMillis(stamp);
+									calendar.add(Calendar.MONTH, 1);
+									return getRefactoringHistoryWeeks(node, stamp, calendar.getTimeInMillis() - 1);
+								case RefactoringHistoryNode.YEAR:
+									calendar.setTimeInMillis(stamp);
+									calendar.add(Calendar.YEAR, 1);
+									return getRefactoringHistoryMonths(node, stamp, calendar.getTimeInMillis() - 1);
+							}
 						}
 					}
 				}
