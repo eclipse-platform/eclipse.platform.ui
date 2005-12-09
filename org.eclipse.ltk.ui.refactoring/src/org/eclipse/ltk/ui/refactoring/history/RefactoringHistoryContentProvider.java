@@ -464,18 +464,20 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		final List list= new ArrayList();
 		if (!fRefactoringHistory.isEmpty()) {
 			final RefactoringDescriptorProxy[] proxies= getRefactoringHistoryDescriptors();
-			final long[][] structure= getRefactoringRootStructure(proxies[0].getTimeStamp());
-			int begin= 0;
-			long end= Long.MAX_VALUE;
-			for (int index= 0; index < proxies.length; index++) {
-				final long stamp= proxies[index].getTimeStamp();
-				for (int offset= begin; offset < structure.length; offset++) {
-					final long start= structure[offset][0];
-					if (stamp >= start && stamp <= end) {
-						list.add(new RefactoringHistoryDate(null, start, (int) structure[offset][1]));
-						begin= offset + 1;
-						end= start - 1;
-						break;
+			if (proxies != null && proxies.length > 0) {
+				final long[][] structure= getRefactoringRootStructure(proxies[0].getTimeStamp());
+				int begin= 0;
+				long end= Long.MAX_VALUE;
+				for (int index= 0; index < proxies.length; index++) {
+					final long stamp= proxies[index].getTimeStamp();
+					for (int offset= begin; offset < structure.length; offset++) {
+						final long start= structure[offset][0];
+						if (stamp >= start && stamp <= end) {
+							list.add(new RefactoringHistoryDate(null, start, (int) structure[offset][1]));
+							begin= offset + 1;
+							end= start - 1;
+							break;
+						}
 					}
 				}
 			}
