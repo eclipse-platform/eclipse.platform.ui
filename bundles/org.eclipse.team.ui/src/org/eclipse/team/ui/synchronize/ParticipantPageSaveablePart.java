@@ -286,6 +286,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 			((ISynchronizePage)page).getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
 					ICompareInput input = getCompareInput(event.getSelection());
+					prepareCompareInput(input);
 					setInput(input);
 				}
 			});
@@ -371,6 +372,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	 */
 	private void feedInput2(ISelection sel) {
 		ICompareInput input = getCompareInput(sel);
+		prepareCompareInput(input);
 		if (input != null)
 			fContentPane.setInput(input);
 	}
@@ -400,34 +402,43 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 					if (node == null) {
 						ICompareInput input = getCompareInput(s);
 						if (input != null) {
-							hookContentChangeListener(input);
+							prepareCompareInput(input);
 						}
 					} else {
-						IResource resource = node.getResource();
-						if (resource != null && resource.getType() == IResource.FILE) {
-							// Cache the contents because compare doesn't show progress
-							// when calling getContents on a diff node.
-							IProgressService manager = PlatformUI.getWorkbench().getProgressService();
-							try {
-								manager.busyCursorWhile(new IRunnableWithProgress() {
-									public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-										try {	
-										    participant.prepareCompareInput(node, cc, monitor);
-											hookContentChangeListener(node);
-										} catch (TeamException e) {
-											Utils.handle(e);
-										}
-									}
-								});
-							} catch (InvocationTargetException e) {
-								Utils.handle(e);
-							} catch (InterruptedException e) {
-								return;
-							}
-						}
+						prepareCompareInput(node);
 					}
 				}
 			});
+		}
+	}
+	
+	/* package */ void prepareCompareInput(final ICompareInput input) {
+		if (input instanceof SyncInfoModelElement) {
+			final SyncInfoModelElement node = (SyncInfoModelElement) input;
+			IResource resource = node.getResource();
+			if (resource != null && resource.getType() == IResource.FILE) {
+				// Cache the contents because compare doesn't show progress
+				// when calling getContents on a diff node.
+				IProgressService manager = PlatformUI.getWorkbench().getProgressService();
+				try {
+					manager.busyCursorWhile(new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {	
+								participant.prepareCompareInput(node, cc, monitor);
+								hookContentChangeListener(node);
+							} catch (TeamException e) {
+								Utils.handle(e);
+							}
+						}
+					});
+				} catch (InvocationTargetException e) {
+					Utils.handle(e);
+				} catch (InterruptedException e) {
+					// Ignore
+				}
+			}
+		} else if (input != null) {
+			hookContentChangeListener(input);
 		}
 	}
 	
