@@ -119,8 +119,7 @@ Launch configuration instances of this type will delegate to instances of this c
          <attribute name="migrationDelegate" type="string">
             <annotation>
                <documentation>
-                  Allows providers to specify a delegate which is used to migrate launch configurations, which typically involves a mapping being created such that launch configurations can be filtered based on resource availablity.
-since 3.2
+                  Optional delegate used to migrate launch configurations of this type to be compatible with current tooling, since 3.2
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate"/>

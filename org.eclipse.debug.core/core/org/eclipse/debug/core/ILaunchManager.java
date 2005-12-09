@@ -225,9 +225,12 @@ public interface ILaunchManager {
 	public ILaunchMode[] getLaunchModes();
 	
 	/**
-	 * Returns a list of candidates suitable for migration based on defined migration delegates
-	 * @return the list of migration candidates
+	 * Returns a collection of launch configurations that required migration to be
+	 * compatible with current tooling.
 	 * 
+	 * @return a collection of launch configurations that required migration
+	 * @exception org.eclipse.core.runtime.CoreException if an exception occurrs determining
+	 * 	 migration candidates
 	 * @since 3.2
 	 */
 	public ILaunchConfiguration[] getMigrationCandidates() throws CoreException;

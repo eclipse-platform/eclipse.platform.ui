@@ -164,9 +164,12 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	public void setAttributes(Map attributes);
 	
 	/**
-	 * Sets the resource to be mapped to this launch configuration
+	 * Sets the resources associated with this launch configuration, possibly <code>null</code>.
+	 * Clients contributing launch configuration types are responsible for maintaining
+	 * resource mappings.
+	 *  
+	 * @param resources the resource to map to this launch configuration or <code>null</code>
 	 * @since 3.2
-	 * @param resource the resource to map to this launch configuration
 	 */
-	public void setMappedResources(IResource[] resource);
+	public void setMappedResources(IResource[] resources);
 }

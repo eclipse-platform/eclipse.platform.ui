@@ -14,46 +14,35 @@ package org.eclipse.debug.core;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Provides API for migrating pre 3.2 launch configurations to the new style, which have specific resources mapped to them.
- * This change in mapping allows for a more robust context sensitive launching framework, as well as filtering and managing of
- * launch configurations for projects not immediately available (i.e. closed or remote)
- * 
+ * Responsible for migrating launch configurations between different versions of Eclipse.
+ * A migration delegate is contributed as an optional attribute of a 
+ * <code>launchConfigurationType</code> extension and is responsible for identifying
+ * migration candidates and migrating launch configurations of that type.
+ * <p> 
+ * For example, since 3.2 launch configurations may have resources mapped to them. A migration
+ * delegate could assign appropriate resources to a launch configuration create in an earlier
+ * version.
+ * </p>
  * @since 3.2
  */
 public interface ILaunchConfigurationMigrationDelegate {
 
 	/**
-	 * Gets the list of candidates from the <code>LaunchManager</code> which would be suitable
-	 * for migration, typically those that have not been migrated thus far. 
-	 * <p>
-	 * More specifically though, candiates are chosen based on:
-	 * <ul>
-	 * <li> Type of the delegate, i.e. Java Application, Java Applet, etc</li>
-	 * <li> If the project exists</li>
-	 * <li> If the project is accessible</li>
-	 * <li> If the project has not been migrated thus far</li>
-	 * </ul>
-	 * </p>
+	 * Returns whether the given launch configuration requires migration.  
 	 * 
-	 * This method does not return null, if no suitable candidates are found an empty array is returned.
-	 * @param candidate the candidate to detemrine the migraiton status of 
-	 * @return if the configuration is a migration candidate or not
-	 * @throws CoreException
+	 * @param candidate potential migration candidate 
+	 * @return whether the given launch configuration requires migration
+	 * @throws CoreException if an exception occurrs determing the status of the
+	 *  given configuration
 	 */
 	public boolean isCandidate(ILaunchConfiguration candidate) throws CoreException;
 	
 	/**
-	 * Method that performs the actual migration of pre 3.2 launch configurations.
+	 * Migrates the given launch configuration to be compatible with the current tooling.
 	 * 
-	 * <p>
-	 * Example code usage as follows:
-	 * ILaunchConfiguration[] configs = getCandidates();
-	 * for(int i = 0; i < configs.length; i++) {
-	 * 		migrate(configs[i]);
-	 * }
-	 * </p>
-	 * @param candidate the candidate to be migrated, which can either be a launch configuration, or working copy.
-	 * @throws CoreException
+	 * @param candidate the candidate to be migrated, which can be a launch configuration
+	 *  or working copy
+	 * @throws CoreException if an exception occurrs during migration
 	 */
 	public void migrate(ILaunchConfiguration candidate) throws CoreException;
 	

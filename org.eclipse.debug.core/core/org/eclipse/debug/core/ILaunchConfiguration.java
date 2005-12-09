@@ -272,12 +272,13 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public IPath getLocation();
 	
 	/**
-	 * Returns the resource that is mapped to this launch configuration.
-	 * If no mapping exists, null is returned.
+	 * Returns the resources this launch configuration is associated with or <code>null</code>
+	 * if none. Clients contributing launch configuration types are responsible for maintaining
+	 * resource mappings as appropriate.
 	 * 
-	 * @since 3.2
-	 * @return the resource that this launch configuration is mapped to, or null if no mapping exists
+	 * @return the resources this launch configuration is associated with or <code>null</code>
 	 * @throws CoreException unable to get the mapped resource
+	 * @since 3.2
 	 */
 	public IResource[] getMappedResources() throws CoreException;
 		
