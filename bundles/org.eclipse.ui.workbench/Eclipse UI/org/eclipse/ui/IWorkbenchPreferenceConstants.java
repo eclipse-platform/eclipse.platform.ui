@@ -376,4 +376,11 @@ public interface IWorkbenchPreferenceConstants {
      * @since 3.2
      */
     public static final String SHOW_FILTERED_TEXTS = "SHOW_FILTERED_TEXTS";	//$NON-NLS-1$
+
+	/**
+	 * Stores whether or not views may be detached. The default is <code>true</code>.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String ENABLE_DETACHED_VIEWS = "ENABLE_DETACHED_VIEWS"; //$NON-NLS-1$
 }

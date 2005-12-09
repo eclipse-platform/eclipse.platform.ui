@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
@@ -28,6 +29,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
@@ -192,22 +195,34 @@ public class PerspectiveHelper {
             ViewSashContainer mainLayout, Perspective perspective) {
         this.page = workbenchPage;
         this.mainLayout = mainLayout;
-        // Determine if reparenting is allowed by checking if some arbitrary
-        // Composite supports reparenting. This is used to determine if
-        // detached views should be enabled.
-        this.detachable = false;
+        
+		// Views can be detached if the feature is enabled (true by default,
+		// use the plug-in customization file to disable), and if the platform
+		// supports detaching.
+         
+        final IPreferenceStore store = PlatformUI.getPreferenceStore();
+        this.detachable = store.getBoolean(IWorkbenchPreferenceConstants.ENABLE_DETACHED_VIEWS);
 
-        Composite client = workbenchPage.getClientComposite();
-        if (client != null) {
-            Composite testChild = new Composite(client, SWT.NONE);
-            this.detachable = testChild.isReparentable();
-            testChild.dispose();
-        }
+        if (this.detachable) {
+			// Check if some arbitrary Composite supports reparenting. If it
+			// doesn't, views cannot be detached.
+
+			Composite client = workbenchPage.getClientComposite();
+			if (client == null) {
+				// The workbench page is not initialized. I don't think this can happen,
+				// but if it does, silently set detachable to false.
+				this.detachable = false;
+			} else {
+				Composite testChild = new Composite(client, SWT.NONE);
+				this.detachable = testChild.isReparentable();
+				testChild.dispose();
+			}
+		}
     }
 
     /**
-     * Show the presentation.
-     */
+	 * Show the presentation.
+	 */
     public void activate(Composite parent) {
 
         if (active)

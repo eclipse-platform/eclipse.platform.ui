@@ -104,6 +104,9 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
         // Default for showing filter text widget that determines what is shown in a FilteredTree
         node.putBoolean(IWorkbenchPreferenceConstants.SHOW_FILTERED_TEXTS, true);
         
+        // Default for enabling detached views
+        node.putBoolean(IWorkbenchPreferenceConstants.ENABLE_DETACHED_VIEWS, true);
+        
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);
