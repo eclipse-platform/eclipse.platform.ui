@@ -60,6 +60,8 @@ public class SampleData {
 
 	public static AdventureFactory FACTORY;
 	
+	public static ITree CATALOG_TREE;
+	
 	public static ITree CATEGORY_TREE;
 	
 	public static Signon SIGNON_ADMINISTRATOR;
@@ -180,7 +182,7 @@ public class SampleData {
 
 		CART = FACTORY.createCart();
 		
-		CATEGORY_TREE = new ITree() {
+		CATALOG_TREE = new ITree() {
 			Catalog catalog = CATALOG_2005;						
 			public boolean hasChildren(Object element) {
 				if (element instanceof Catalog) {					
@@ -221,8 +223,39 @@ public class SampleData {
 			}
 			public void dispose() {				
 			}
-
-
+		};
+		
+		CATEGORY_TREE = new ITree() {
+			Catalog catalog = CATALOG_2005;						
+			public boolean hasChildren(Object element) {
+				if (element instanceof Catalog) {					
+					return true;  
+				}
+				else if (element instanceof Category) {
+					Adventure[] list = ((Category)element).getAdventures();
+					return list==null?true:list.length>0;
+				}			
+				return false;				
+			}
+			public void setChildren(Object parentElement, Object[] children) {
+				// ReadOnly for Adding Elements
+			}
+			public Object[] getChildren(Object parentElement) {
+				if (parentElement==null)
+					return catalog.getCategories();
+				else if (parentElement instanceof Category)
+				   return ((Category)parentElement).getAdventures();				
+				return null;
+			}
+			public Class[] getTypes() {				
+				return new Class[]  { Category.class, Account.class } ;
+			}
+			public void addTreeChangeListener(IChangeListener listener) {		
+			}
+			public void removeTreeChangeListener(IChangeListener listener) {
+			}
+			public void dispose() {				
+			}
 		};
 	}
 

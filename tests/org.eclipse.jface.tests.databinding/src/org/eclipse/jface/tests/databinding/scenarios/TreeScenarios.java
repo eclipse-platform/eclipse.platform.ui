@@ -63,7 +63,7 @@ public class TreeScenarios extends ScenariosTestCase {
 		
 		catalog = SampleData.CATALOG_2005; // Lodging source
 			
-		catalogModelTree = SampleData.CATEGORY_TREE;
+		catalogModelTree = SampleData.CATALOG_TREE;
 		
 		// Create a read only ITree wrapper for disk
 		// File system.  A call to setChildren will just fire
@@ -169,6 +169,7 @@ public class TreeScenarios extends ScenariosTestCase {
 	 * Note: a call to this assertion will pull the complete tree to the viewer.
 	 */
 	private void assertEqualsTreeNode (Object viewerNode, Object modelNode, ITree model) {
+		
 		assertEquals(viewerNode, modelNode);
 		Object[] viewerChildren = ((ITreeContentProvider)tviewer.getContentProvider()).getChildren(viewerNode);
 		if (viewerChildren.length==0)
@@ -301,8 +302,6 @@ public class TreeScenarios extends ScenariosTestCase {
 		
 		treeDescription.addColumn(Adventure.class, "name");
 		treeDescription.addColumn(Adventure.class, "price");
-		// TODO need to lazy set this
-//		treeDescription.getColumn(Adventure.class, 1).setPropertyType(Double.TYPE);
 					
 		treeDescription.addColumn(Category.class, "name");
 		
@@ -368,6 +367,44 @@ public class TreeScenarios extends ScenariosTestCase {
 		assertLabelProvider(item);
 	}
 
+	/**
+	 * Simple binding of a TreeViewer to a Tree Model Description, using a nested TreeUpdatable
+	 */
+	public void test_Trees_Scenario04() {
+		
+		// Describe the Viewer
+		TreeViewerDescription treeDescription = new TreeViewerDescription(tviewer);	
+		
+		treeDescription.addColumn(Adventure.class, "name");
+		treeDescription.addColumn(Adventure.class, "price");
+					
+		treeDescription.addColumn(Category.class, "name");
+		
+		// Describe the model with a Property Root object.  This will be translated to a Nested Updatable Tree
+		TreeModelDescription modelDescription = new TreeModelDescription(new Property(catalog, "categories"));
+		modelDescription.addChildrenProperty(Category.class, "adventures");
+				
+		
+		getDbc().bind(treeDescription, modelDescription, null);
+		//	Make sure that the catalog's categories have been propagated to the viewer
+		assertEqualsTreeNode(null, null, SampleData.CATEGORY_TREE);
+		
+		
+		// Make a change, make sure that it is propagated
+		Adventure newAdventure = new Adventure();
+		newAdventure.setName("new Adventure");
+		catalog.getCategories()[0].addAdventure(newAdventure);
+		
+		assertEqualsTreeNode(null, null, SampleData.CATEGORY_TREE);
+		
+		// Adding a new category, will change the root of the tree
+		// Ensure that the nested Tree drives this
+		Category newCategory = new Category();				
+		newCategory.setName("new Empty Category");
+		catalog.addCategory(newCategory);
+		
+		assertEqualsTreeNode(null, null, SampleData.CATEGORY_TREE);		
+	}	
 	
 	private File createFile(File directory, String name) {
 		File f = new File(directory, name);
@@ -388,7 +425,7 @@ public class TreeScenarios extends ScenariosTestCase {
 	/**
 	 * Test a simple file system, using an explicit ITree facade for the FS.
 	 */
-	public void test_Trees_Scenario04() {
+	public void test_Trees_Scenario05() {
 		
 		// Describe the Viewer
 		TreeViewerDescription treeDescription = new TreeViewerDescription(tviewer);
@@ -430,7 +467,7 @@ public class TreeScenarios extends ScenariosTestCase {
 	/**
 	 * Test a simple file system, using a TreeModelDescription.
 	 */
-	public void test_Trees_Scenario05() {
+	public void test_Trees_Scenario06() {
 
 		
 		// Build  a file system.

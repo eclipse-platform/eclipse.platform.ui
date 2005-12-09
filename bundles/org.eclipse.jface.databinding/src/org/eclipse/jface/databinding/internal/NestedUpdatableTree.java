@@ -54,7 +54,7 @@ public class NestedUpdatableTree extends Updatable implements IUpdatableTree {
 	public NestedUpdatableTree(IDataBindingContext databindingContext, TreeModelDescription description) {
 		this.databindingContext=databindingContext;
 		this.originalDescription=description;	
-		Assert.isTrue(description.getRoot() instanceof IUpdatableValue);
+		Assert.isTrue(description.getRoot() instanceof IUpdatable);
 		
 		final IUpdatable outerUpdatableValue = (IUpdatable) description.getRoot();		
 		updateInnerUpdatableValue(outerUpdatableValue);
