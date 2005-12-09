@@ -15,6 +15,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
 
@@ -98,6 +99,9 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 	public Object getValue() {
 		try {
 			Method readMethod = propertyDescriptor.getReadMethod();
+			if (readMethod == null) {
+				throw new BindingException(propertyDescriptor.getName() + " property does not have a read method."); //$NON-NLS-1$
+			}
 			if (!readMethod.isAccessible()) {
 				readMethod.setAccessible(true);
 			}
