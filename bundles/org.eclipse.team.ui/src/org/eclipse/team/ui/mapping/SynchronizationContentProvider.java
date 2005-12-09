@@ -94,7 +94,30 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		if (element instanceof ModelProvider) {
 			element = getModelRoot();
 		}
-		return getDelegateContentProvider().hasChildren(element) && filter(element, getChildren(element)).length > 0;
+		if (getDelegateContentProvider().hasChildren(element) && filter(element, getChildren(element)).length > 0) {
+			return true;
+		}
+		return hasPhantomChildren(element);
+	}
+
+	/**
+	 * Return whether the given element has children that are not 
+	 * part of the local model but do have a child in the scope.
+	 * By default, this method returns true if the traversals for
+	 * the element contain any diffs. This will result in false 
+	 * positives. Subclasses should override to provide a more
+	 * precise answer.
+	 * @param element a model element.
+	 * @return whether the given element has children that are not 
+	 * part of the local model but do have a child in the scope
+	 */
+	protected boolean hasPhantomChildren(Object element) {
+		ISynchronizationContext context = getContext();
+		if (context != null) {
+			ResourceTraversal[] traversals = getTraversals(element);
+			return context.getDiffTree().getDiffs(traversals).length > 0;
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)

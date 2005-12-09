@@ -48,8 +48,7 @@ public abstract class AbstractSynchronizationLabelProvider implements ILabelProv
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
-		ILabelProvider modelLabelProvider = getDelegateLabelProvider();
-		Image base = modelLabelProvider.getImage(element);
+		Image base = getDelegateImage(element);
 		if (isDecorationEnabled() && base != null) {
 			int kind = getSyncKind(element);
 			Image decoratedImage;
@@ -59,6 +58,17 @@ public abstract class AbstractSynchronizationLabelProvider implements ILabelProv
 			// are consistent.
 			return decoratedImage;				
 		}
+		return base;
+	}
+
+	/**
+	 * Return the image for the item from the delegate label provider.
+	 * @param element the element
+	 * @return the image for the item from the delegate label provider
+	 */
+	protected Image getDelegateImage(Object element) {
+		ILabelProvider modelLabelProvider = getDelegateLabelProvider();
+		Image base = modelLabelProvider.getImage(element);
 		return base;
 	}
 

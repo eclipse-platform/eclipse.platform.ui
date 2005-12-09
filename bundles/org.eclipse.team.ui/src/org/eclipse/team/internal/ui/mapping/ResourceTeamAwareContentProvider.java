@@ -214,14 +214,12 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 		}
 		return new ResourceTraversal[0];
 	}
+	
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#hasChildren(java.lang.Object)
+	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#hasPhantomChildren(java.lang.Object)
 	 */
-	public boolean hasChildren(Object element) {
-		if (super.hasChildren(element)) {
-			return true;
-		}
+	protected boolean hasPhantomChildren(Object element) {
 		if (element instanceof IFolder) {
 			IFolder folder = (IFolder) element;
 			// For folders check to see if the delta contains any children
