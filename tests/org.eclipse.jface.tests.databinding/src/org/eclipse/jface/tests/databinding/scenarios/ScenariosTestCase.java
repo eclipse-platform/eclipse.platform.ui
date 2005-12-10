@@ -19,7 +19,6 @@ import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
 import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -91,6 +90,17 @@ abstract public class ScenariosTestCase extends TestCase {
 			Thread.currentThread().interrupt();
 		}
 	}
+	
+	protected void interact() {
+		if (!getShell().isVisible()) {
+			getShell().open();
+		}
+		while (!getShell().isDisposed()) {
+			if (!getShell().getDisplay().readAndDispatch()) {
+				getShell().getDisplay().sleep();
+			}
+		}
+	}
 
 	protected void setButtonSelectionWithEvents(Button button, boolean value) {
 		if (button.getSelection() == value) {
@@ -106,7 +116,7 @@ abstract public class ScenariosTestCase extends TestCase {
 
 	protected void setUp() throws Exception {
 		composite = new Composite(getShell(), SWT.NONE);
-		composite.setLayout(new GridLayout());
+		composite.setLayout(new FillLayout());
 		SampleData.initializeData(); // test may manipulate the data... let
 		// all start from fresh
 		dbc = SampleData.getDatabindingContext(composite);

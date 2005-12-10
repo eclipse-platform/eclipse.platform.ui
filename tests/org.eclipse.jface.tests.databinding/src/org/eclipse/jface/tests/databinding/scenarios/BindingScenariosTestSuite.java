@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -44,6 +45,7 @@ public class BindingScenariosTestSuite extends TestSuite {
 					d = display;
 				}
 				shell = new Shell(d, SWT.SHELL_TRIM);
+				shell.setLayout(new FillLayout());
 			}
 
 			protected void tearDown() throws Exception {
