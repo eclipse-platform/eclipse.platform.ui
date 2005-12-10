@@ -434,7 +434,8 @@
          <action
                class="org.eclipse.team.internal.ccvs.ui.actions.FetchAllMembersAction"
                id="org.eclipse.team.ccvs.ui.fetchAllMembers"
-               label="Fetch All Members"
+               label="%FetchAllMembers.label"
+               tooltip="%FetchAllMembers.tooltip"
                menubarPath="miscGroup"/>
       </objectContribution>
       <objectContribution
