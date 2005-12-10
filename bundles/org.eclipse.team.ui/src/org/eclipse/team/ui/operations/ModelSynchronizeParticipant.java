@@ -124,7 +124,7 @@ public class ModelSynchronizeParticipant extends
 	 * Create a participant for the given context
 	 * @param context the synchronization context
 	 */
-	public ModelSynchronizeParticipant(ISynchronizationContext context) {
+	public ModelSynchronizeParticipant(ISynchronizationContext context, String name) {
 		initializeContext(context);
 		try {
 			setInitializationData(TeamUI.getSynchronizeManager().getParticipantDescriptor("org.eclipse.team.ui.synchronization_context_synchronize_participant"));
@@ -132,6 +132,7 @@ public class ModelSynchronizeParticipant extends
 			TeamUIPlugin.log(e);
 		}
 		setSecondaryId(Long.toString(System.currentTimeMillis()));
+		setName(name);
 	}
 
 	/* (non-Javadoc)

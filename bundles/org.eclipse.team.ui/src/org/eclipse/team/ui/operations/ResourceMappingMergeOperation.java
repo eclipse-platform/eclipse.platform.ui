@@ -154,7 +154,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 		calculateStates(context, Policy.subMonitorFor(monitor, 5));
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				ModelSynchronizeParticipant participant = new ModelSynchronizeParticipant(context);
+				ModelSynchronizeParticipant participant = new ModelSynchronizeParticipant(context, title);
 				CompareConfiguration cc = new CompareConfiguration();
 				ModelParticipantPageSavablePart input = new ModelParticipantPageSavablePart(getShell(), cc, participant.createPageConfiguration(), participant);
 				SaveablePartDialog dialog = new SaveablePartDialog(getShell(), input) {
