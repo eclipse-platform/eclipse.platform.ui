@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import org.eclipse.compare.internal.INavigatable;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -63,14 +61,12 @@ import org.eclipse.ui.actions.ActionGroup;
  * @see TreeViewerAdvisor
  * @since 3.0
  */
-public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor implements IAdaptable {
+public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 	
 	// Special actions that could not be contributed using an ActionGroup
 	private StatusLineContributionGroup statusLine;
 	
-	private INavigatable nav;
-	
-	// Property change listener which reponds to:
+	// Property change listener which responds to:
 	//    - working set selection by the user
 	//    - decorator format change selected by the user
 	private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
@@ -111,25 +107,6 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor impl
 		hookContextMenu(viewer);
 	}
 	
-	/* (non-Javadoc)
-	 * Allow adding an advisor to the PartNavigator and support coordinated
- 	 * navigation between several objects.
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		if(adapter == INavigatable.class) {
-			if(nav == null) {
-				nav = new INavigatable() {
-					public boolean gotoDifference(boolean next) {
-						return StructuredViewerAdvisor.this.navigate(next);
-					}
-				};
-			}
-			return nav;
-		}
-		return null;
-	}
-	
 	private void initializeStatusLine() {
 		statusLine = new StatusLineContributionGroup(
 				getConfiguration().getSite().getShell(), 
@@ -148,15 +125,6 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor impl
 		}
 		TeamUIPlugin.getPlugin().getPreferenceStore().removePropertyChangeListener(propertyListener);
 	}
-	
-	/**
-	 * Subclasses must implement to allow navigation of their viewers.
-	 * 
-	 * @param next if <code>true</code> then navigate forwards, otherwise navigate
-	 * backwards.
-	 * @return <code>true</code> if the end is reached, and <code>false</code> otherwise.
-	 */
-	public abstract boolean navigate(boolean next);
 	
 	/**
 	 * Method invoked from <code>initializeViewer(Composite, StructuredViewer)</code>

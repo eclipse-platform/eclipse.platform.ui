@@ -36,7 +36,8 @@ public class ModelSynchronizeParticipant extends
 		AbstractSynchronizeParticipant {
 
 	public static final String TOOLBAR_CONTRIBUTION_GROUP = "toolbar_group_1"; //$NON-NLS-1$
-	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP = "context_menu_group_1"; //$NON-NLS-1$
+	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_1 = "context_menu_group_1"; //$NON-NLS-1$
+	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_2 = "context_menu_group_2"; //$NON-NLS-1$
 	
 	private ISynchronizationContext context;
 
@@ -60,15 +61,15 @@ public class ModelSynchronizeParticipant extends
 			
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP,
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
 					new MergeAction(configuration, false));
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP,
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
 					new MergeAction(configuration, true));
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP,
+					CONTEXT_MENU_CONTRIBUTION_GROUP_2,
 					new MarkAsMergedAction(configuration));
 //			appendToGroup(
 //					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
@@ -138,9 +139,9 @@ public class ModelSynchronizeParticipant extends
 	 */
 	protected void initializeConfiguration(
 			ISynchronizePageConfiguration configuration) {
-		configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {ISynchronizePageConfiguration.MODE_GROUP, TOOLBAR_CONTRIBUTION_GROUP});
+		configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {ISynchronizePageConfiguration.NAVIGATE_GROUP, ISynchronizePageConfiguration.MODE_GROUP, TOOLBAR_CONTRIBUTION_GROUP});
 		configuration.addActionContribution(new ModelActionContribution());
-		configuration.setProperty(ISynchronizePageConfiguration.P_CONTEXT_MENU, new String[] { CONTEXT_MENU_CONTRIBUTION_GROUP });
+		configuration.setProperty(ISynchronizePageConfiguration.P_CONTEXT_MENU, new String[] { ISynchronizePageConfiguration.NAVIGATE_GROUP, CONTEXT_MENU_CONTRIBUTION_GROUP_1, CONTEXT_MENU_CONTRIBUTION_GROUP_2});
 		configuration.setSupportedModes(ISynchronizePageConfiguration.INCOMING_MODE | ISynchronizePageConfiguration.CONFLICTING_MODE);
 		configuration.setMode(ISynchronizePageConfiguration.INCOMING_MODE);
 	}

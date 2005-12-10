@@ -152,7 +152,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 
 	private void showPreview(final String title, IProgressMonitor monitor) {
 		calculateStates(context, Policy.subMonitorFor(monitor, 5));
-		Display.getDefault().syncExec(new Runnable() {
+		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				ModelSynchronizeParticipant participant = new ModelSynchronizeParticipant(context);
 				CompareConfiguration cc = new CompareConfiguration();
@@ -176,6 +176,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 					}
 				};
 				int result = dialog.open();
+				context.dispose();
 			}
 		});
 	}

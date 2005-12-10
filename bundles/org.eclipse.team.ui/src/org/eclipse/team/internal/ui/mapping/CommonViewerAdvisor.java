@@ -13,11 +13,13 @@ package org.eclipse.team.internal.ui.mapping;
 import java.util.*;
 
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
-import org.eclipse.team.internal.ui.synchronize.StructuredViewerAdvisor;
+import org.eclipse.team.internal.ui.synchronize.AbstractTreeViewerAdvisor;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.operations.ModelSynchronizePage;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
@@ -27,7 +29,23 @@ import org.eclipse.ui.navigator.*;
 /**
  * Provides a Common Navigator based viewer for use by a {@link ModelSynchronizePage}.
  */
-public class CommonViewerAdvisor extends StructuredViewerAdvisor implements INavigatorContentServiceListener {
+public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements INavigatorContentServiceListener {
+
+	private static final class NavigableCommonViewer extends CommonViewer implements ITreeViewerAccessor {
+		private NavigableCommonViewer(String id, Composite parent, int style) {
+			super(id, parent, style);
+		}
+		protected ILabelProvider wrapLabelProvider(ILabelProvider provider) {
+			// Don't wrap since we don't want any decoration
+			return provider;
+		}
+		public void createChildren(TreeItem item) {
+			super.createChildren(item);
+		}
+		public void openSelection() {
+			fireOpen(new OpenEvent(this, getSelection()));
+		}
+	}
 
 	private static final String TEAM_NAVIGATOR_CONTENT = "org.eclipse.team.ui.navigatorViewer"; //$NON-NLS-1$
 	
@@ -43,15 +61,7 @@ public class CommonViewerAdvisor extends StructuredViewerAdvisor implements INav
 	 * @return a newly created common viewer
 	 */
 	private static CommonViewer createViewer(Composite parent, ISynchronizePageConfiguration configuration) {
-		CommonViewer v = new CommonViewer(TEAM_NAVIGATOR_CONTENT, parent, SWT.NONE) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.navigator.CommonViewer#wrapLabelProvider(org.eclipse.jface.viewers.ILabelProvider)
-			 */
-			protected ILabelProvider wrapLabelProvider(ILabelProvider provider) {
-				// Don't wrap since we don't want any decoration
-				return provider;
-			}
-		};
+		CommonViewer v = new NavigableCommonViewer(TEAM_NAVIGATOR_CONTENT, parent, SWT.NONE);
 		v.getNavigatorContentService().activateExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
 		configuration.getSite().setSelectionProvider(v);
 		return v;
@@ -97,14 +107,6 @@ public class CommonViewerAdvisor extends StructuredViewerAdvisor implements INav
 
 	private ModelSynchronizeParticipant getParticipant() {
 		return (ModelSynchronizeParticipant)getConfiguration().getParticipant();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.synchronize.StructuredViewerAdvisor#navigate(boolean)
-	 */
-	public boolean navigate(boolean next) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	/**

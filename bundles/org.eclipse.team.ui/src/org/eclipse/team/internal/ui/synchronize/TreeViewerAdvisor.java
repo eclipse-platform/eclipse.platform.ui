@@ -10,25 +10,23 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import org.eclipse.compare.internal.INavigatable;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.synchronize.actions.ExpandAllAction;
-import org.eclipse.team.internal.ui.synchronize.actions.NavigateAction;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.part.ResourceTransfer;
@@ -48,69 +46,17 @@ import org.eclipse.ui.part.ResourceTransfer;
  * <p>
  * @since 3.0
  */
-public class TreeViewerAdvisor extends StructuredViewerAdvisor {
+public class TreeViewerAdvisor extends AbstractTreeViewerAdvisor {
 	
 	/**
 	 * Style bit that indicates that a checkbox viewer is desired.
 	 */
 	public static final int CHECKBOX = 1;
 	
-	private ExpandAllAction expandAllAction;
-	private Action collapseAll;
-	private NavigateAction gotoNext;
-	private NavigateAction gotoPrevious;
-	
 	private SynchronizeModelManager modelManager;
 	
-	class NavigationActionGroup extends SynchronizePageActionGroup {
-		public void initialize(ISynchronizePageConfiguration configuration) {
-			super.initialize(configuration);
-			final StructuredViewer viewer = getViewer();
-			if (viewer instanceof AbstractTreeViewer) {
-				
-				expandAllAction = new ExpandAllAction((AbstractTreeViewer) viewer);
-				Utils.initAction(expandAllAction, "action.expandAll."); //$NON-NLS-1$
-				
-				collapseAll = new Action() {
-					public void run() {
-						if (viewer == null || viewer.getControl().isDisposed() || !(viewer instanceof AbstractTreeViewer)) return;
-						viewer.getControl().setRedraw(false);		
-						((AbstractTreeViewer)viewer).collapseToLevel(viewer.getInput(), AbstractTreeViewer.ALL_LEVELS);
-						viewer.getControl().setRedraw(true);
-					}
-				};
-				Utils.initAction(collapseAll, "action.collapseAll."); //$NON-NLS-1$
-				
-				ISynchronizeParticipant participant = configuration.getParticipant();
-				ISynchronizePageSite site = configuration.getSite();
-
-				gotoNext = new NavigateAction(site, participant, configuration, true /*next*/);		
-				gotoPrevious = new NavigateAction(site, participant, configuration, false /*previous*/);
-			}
-		}
-		public void fillContextMenu(IMenuManager manager) {
-			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, expandAllAction);
-		}
-		public void fillActionBars(IActionBars actionBars) {
-			IToolBarManager manager = actionBars.getToolBarManager();
-			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, gotoNext);
-			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, gotoPrevious);
-			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, collapseAll);
-		}
-	}
-	
- 	/**
-	 * Interface used to implement navigation for tree viewers. This interface is used by
-	 * {@link TreeViewerAdvisor#navigate(TreeViewer, boolean, boolean, boolean) to open 
-	 * selections and navigate.
-	 */
-	public interface ITreeViewerAccessor {
-		public void createChildren(TreeItem item);
-		public void openSelection();
-	}
-	
 	/**
-	 * A navigable checkboxec tree viewer that will work with the <code>navigate</code> method of
+	 * A navigable checkbox tree viewer that will work with the <code>navigate</code> method of
 	 * this advisor.
 	 */
 	public static class NavigableCheckboxTreeViewer extends ContainerCheckedTreeViewer implements ITreeViewerAccessor {
@@ -183,11 +129,6 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 		Assert.isNotNull(modelManager, "model manager must be set"); //$NON-NLS-1$
 		modelManager.setViewerAdvisor(this);
 		
-		INavigatable nav = (INavigatable)configuration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
-		if (nav == null) {
-			configuration.setProperty(SynchronizePageConfiguration.P_NAVIGATOR, getAdapter(INavigatable.class));
-		}
-		configuration.addActionContribution(new NavigationActionGroup());
 		StructuredViewer viewer = TreeViewerAdvisor.createViewer(parent, configuration);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(data);
@@ -221,38 +162,10 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#navigate(boolean)
-	 */
-	public boolean navigate(boolean next) {
-		return TreeViewerAdvisor.navigate((TreeViewer)getViewer(), next, false, false);
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#initializeViewer(org.eclipse.jface.viewers.StructuredViewer)
 	 */
 	public boolean validateViewer(StructuredViewer viewer) {
 		return viewer instanceof AbstractTreeViewer;
-	}
-	
-	/**
-	 * Handles a double-click event from the viewer. Expands or collapses a folder when double-clicked.
-	 * 
-	 * @param viewer the viewer
-	 * @param event the double-click event
-	 */
-	protected boolean handleDoubleClick(StructuredViewer viewer, DoubleClickEvent event) {
-		if (super.handleDoubleClick(viewer, event)) return true;
-		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-		Object element = selection.getFirstElement();
-		AbstractTreeViewer treeViewer = (AbstractTreeViewer) getViewer();
-		if(element != null) {
-			if (treeViewer.getExpandedState(element)) {
-				treeViewer.collapseToLevel(element, AbstractTreeViewer.ALL_LEVELS);
-			} else {
-				TreeViewerAdvisor.navigate((TreeViewer)getViewer(), true /* next */, false /* no-open */, true /* only-expand */);
-			}
-		}
-		return true;
 	}
 	
 	/* (non-Javadoc)
@@ -292,134 +205,6 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 			return selection.size() + TeamUIMessages.SynchronizeView_13; 
 		}
 		return ""; //$NON-NLS-1$
-	}
-	
-	private static TreeItem findNextPrev(TreeViewer viewer, TreeItem item, boolean next) {
-		if (item == null || !(viewer instanceof ITreeViewerAccessor))
-			return null;
-		TreeItem children[] = null;
-		ITreeViewerAccessor treeAccessor = (ITreeViewerAccessor) viewer;
-		if (!next) {
-			TreeItem parent = item.getParentItem();
-			if (parent != null)
-				children = parent.getItems();
-			else
-				children = item.getParent().getItems();
-			if (children != null && children.length > 0) {
-				// goto previous child
-				int index = 0;
-				for (; index < children.length; index++)
-					if (children[index] == item)
-						break;
-				if (index > 0) {
-					item = children[index - 1];
-					while (true) {
-						treeAccessor.createChildren(item);
-						int n = item.getItemCount();
-						if (n <= 0)
-							break;
-						item.setExpanded(true);
-						item = item.getItems()[n - 1];
-					}
-					// previous
-					return item;
-				}
-			}
-			// go up
-			return parent;
-		} else {
-			item.setExpanded(true);
-			treeAccessor.createChildren(item);
-			if (item.getItemCount() > 0) {
-				// has children: go down
-				children = item.getItems();
-				return children[0];
-			}
-			while (item != null) {
-				children = null;
-				TreeItem parent = item.getParentItem();
-				if (parent != null)
-					children = parent.getItems();
-				else
-					children = item.getParent().getItems();
-				if (children != null && children.length > 0) {
-					// goto next child
-					int index = 0;
-					for (; index < children.length; index++)
-						if (children[index] == item)
-							break;
-					if (index < children.length - 1) {
-						// next
-						return children[index + 1];
-					}
-				}
-				// go up
-				item = parent;
-			}
-		}
-		return item;
-	}
-
-	private static void setSelection(TreeViewer viewer, TreeItem ti, boolean fireOpen, boolean expandOnly) {
-		if (ti != null) {
-			Object data= ti.getData();
-			if (data != null) {
-				// Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
-				ISelection selection = new StructuredSelection(data);
-				if (expandOnly) {
-					viewer.expandToLevel(data, 0);
-				} else {
-					viewer.setSelection(selection, true);
-					ISelection currentSelection = viewer.getSelection();
-					if (fireOpen && currentSelection != null && selection.equals(currentSelection)) {
-						if (viewer instanceof ITreeViewerAccessor) {
-							((ITreeViewerAccessor) viewer).openSelection();
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Selects the next (or previous) node of the current selection.
-	 * If there is no current selection the first (last) node in the tree is selected.
-	 * Wraps around at end or beginning.
-	 * Clients may not override. 
-	 *
-	 * @param next if <code>true</code> the next node is selected, otherwise the previous node
-	 * @return <code>true</code> if at end (or beginning)
-	 */
-	public static boolean navigate(TreeViewer viewer, boolean next, boolean fireOpen, boolean expandOnly) {
-		Tree tree = viewer.getTree();
-		if (tree == null)
-			return false;
-		TreeItem item = null;
-		TreeItem children[] = tree.getSelection();
-		if (children != null && children.length > 0)
-			item = children[0];
-		if (item == null) {
-			children = tree.getItems();
-			if (children != null && children.length > 0) {
-				item = children[0];
-				if (item != null && item.getItemCount() <= 0) {
-					setSelection(viewer, item, fireOpen, expandOnly); // Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
-					return false;
-				}
-			}
-		}
-		while (true) {
-			item = findNextPrev(viewer, item, next);
-			if (item == null)
-				break;
-			if (item.getItemCount() <= 0)
-				break;
-		}
-		if (item != null) {
-			setSelection(viewer, item, fireOpen, expandOnly); // Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
-			return false;
-		}
-		return true;
 	}
 	
 	/**
