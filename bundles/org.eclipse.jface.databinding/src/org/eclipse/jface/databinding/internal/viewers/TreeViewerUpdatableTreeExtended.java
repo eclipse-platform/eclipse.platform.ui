@@ -52,7 +52,13 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 		}
 
 		private Object getConvertedValue(Object element, Column column) {
-			Object value = getValue(element, column);
+			String propertyName = column.getPropertyName();
+			Object value;
+			if (propertyName == null) 
+				value = element;
+			else 
+				value = getValue(element, column);
+			
 			Object convertedValue = column.getConverter().convertModelToTarget(
 					value);
 			return convertedValue;
@@ -188,7 +194,7 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 					element = ((Item) element).getData();
 				}
 				Column column = findColumn(element.getClass(), property);
-				if (column!=null) {
+				if (column!=null && column.getPropertyName()!=null) {
 					return new PropertyHelper(column.getPropertyName(), element.getClass()).canSet(element); 
 				}
 				return false;
@@ -314,7 +320,7 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 			for (int i = 0; i < treeViewerDescription.getColumnCount(value.getClass()); i++) {
 				Column column = treeViewerDescription.getColumn(value.getClass(), i);
 				ColumnInfo columnInfo = (ColumnInfo) columnInfos.remove(column);
-				if (columnInfo!=null) {
+				if (columnInfo!=null && column.getPropertyName()!=null) {
 					if(column.getPropertyType() == null && (columnInfo.cellEditorDefaulted || columnInfo.converterDefaulted || columnInfo.validatorDefaulted)){
 						// Work out the type of the column from the property name from the element type itself
 						PropertyHelper helper = new PropertyHelper(column.getPropertyName(), value.getClass());

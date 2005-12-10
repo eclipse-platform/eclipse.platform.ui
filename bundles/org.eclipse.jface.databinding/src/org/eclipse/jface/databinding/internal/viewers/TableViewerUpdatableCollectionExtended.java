@@ -44,13 +44,13 @@ import org.eclipse.swt.widgets.Text;
 public class TableViewerUpdatableCollectionExtended extends
 		TableViewerUpdatableCollection {
 	
-	class TreeLableProvider extends LabelProvider implements
+	class TableLabelProvider extends LabelProvider implements
 			ITableLabelProvider {
 		private Object getValue(Object element, Column column) {
 			String propertyName = column.getPropertyName();
-			if (propertyName == null) {
+			if (propertyName == null) 
 				return element;
-			}
+			
 			Object value = tableViewerDescription.getCellModifier().getValue(
 					element, propertyName);
 			return value;
@@ -105,7 +105,7 @@ public class TableViewerUpdatableCollectionExtended extends
 
 	private final TableViewerDescription tableViewerDescription;
 			
-	private ITableLabelProvider tableLabelProvider = new TreeLableProvider(); 
+	private ITableLabelProvider tableLabelProvider = new TableLabelProvider(); 
 
 	private IDataBindingContext dataBindingContext;
 
