@@ -176,7 +176,8 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 					}
 				};
 				int result = dialog.open();
-				context.dispose();
+				input.dispose();
+				participant.dispose();
 			}
 		});
 	}
