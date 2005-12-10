@@ -143,6 +143,8 @@ public class CVSMergeContext extends MergeContext {
 			}
 		
 		}, rule, flags, monitor);
+		// TODO: wait for the collector so that clients will have an up-to-date diff tree
+		participant.getSubscriberSyncInfoCollector().waitForCollector(monitor);
 	}
 	
 	/* (non-Javadoc)
