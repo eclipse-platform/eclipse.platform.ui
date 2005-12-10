@@ -14,6 +14,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
@@ -24,9 +25,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.actions.StatusLineContributionGroup;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.part.ResourceTransfer;
@@ -47,6 +48,9 @@ import org.eclipse.ui.part.ResourceTransfer;
  * @since 3.0
  */
 public class TreeViewerAdvisor extends AbstractTreeViewerAdvisor {
+	
+	// Special actions that could not be contributed using an ActionGroup
+	private StatusLineContributionGroup statusLine;
 	
 	/**
 	 * Style bit that indicates that a checkbox viewer is desired.
@@ -312,5 +316,28 @@ public class TreeViewerAdvisor extends AbstractTreeViewerAdvisor {
 			return provider;
 		}
 		return new DecoratingColorLabelProvider(provider, decorators);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.synchronize.StructuredViewerAdvisor#dispose()
+	 */
+	public void dispose() {
+		if (statusLine != null) {
+			statusLine.dispose();
+		}
+		super.dispose();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.synchronize.StructuredViewerAdvisor#initializeStatusLine(org.eclipse.ui.IActionBars)
+	 */
+	protected void initializeStatusLine(IActionBars actionBars) {
+		statusLine = new StatusLineContributionGroup(
+				getConfiguration().getSite().getShell(), 
+				getConfiguration());
+		IStatusLineManager statusLineMgr = actionBars.getStatusLineManager();
+		if (statusLineMgr != null && statusLine != null) {
+			statusLine.fillActionBars(actionBars);
+		}
 	}
 }

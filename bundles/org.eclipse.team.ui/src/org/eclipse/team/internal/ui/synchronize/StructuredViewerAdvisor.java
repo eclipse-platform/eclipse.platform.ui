@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.synchronize.actions.StatusLineContributionGroup;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
@@ -63,9 +62,6 @@ import org.eclipse.ui.actions.ActionGroup;
  */
 public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 	
-	// Special actions that could not be contributed using an ActionGroup
-	private StatusLineContributionGroup statusLine;
-	
 	// Property change listener which responds to:
 	//    - working set selection by the user
 	//    - decorator format change selected by the user
@@ -107,19 +103,10 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 		hookContextMenu(viewer);
 	}
 	
-	private void initializeStatusLine() {
-		statusLine = new StatusLineContributionGroup(
-				getConfiguration().getSite().getShell(), 
-				getConfiguration());
-	}
-	
 	/**
 	 * Must be called when an advisor is no longer needed.
 	 */
 	public void dispose() {
-		if (statusLine != null) {
-			statusLine.dispose();
-		}
 		if (getActionGroup() != null) {
 			getActionGroup().dispose();
 		}
@@ -216,18 +203,13 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 					o = ISynchronizePageConfiguration.DEFAULT_VIEW_MENU;
 				}
 				groups = (String[]) o;
-				initializeStatusLine();
+				initializeStatusLine(actionBars);
 				for (int i = 0; i < groups.length; i++) {
 					String group = groups[i];
 					// The groupIds must be converted to be unique since the
 					// view menu is shared
 					menu.add(new Separator(getGroupId(group)));
 				}
-			}
-			// status line
-			IStatusLineManager statusLineMgr = actionBars.getStatusLineManager();
-			if (statusLineMgr != null && statusLine != null) {
-				statusLine.fillActionBars(actionBars);
 			}
 			
 			getActionGroup().fillActionBars(actionBars);
@@ -239,6 +221,14 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 		}		
 	}
 	
+	/**
+	 * Initialize the status line
+	 * @param actionBars the action bars
+	 */
+	protected void initializeStatusLine(IActionBars actionBars) {
+		// Do nothing
+	}
+
 	/*
 	 * Method invoked from <code>initializeViewer(StructuredViewer)</code>
 	 * in order to configure the viewer to call <code>fillContextMenu(StructuredViewer, IMenuManager)</code>
