@@ -28,6 +28,8 @@ public class IWorkingSetManagerTest extends UITestCase {
     final static String WORKING_SET_NAME_1 = "ws1";
 
     final static String WORKING_SET_NAME_2 = "ws2";
+    
+    final static String WORKING_SET_NAME_3 = "ws3";
 
     IWorkingSetManager fWorkingSetManager;
 
@@ -94,17 +96,21 @@ public class IWorkingSetManagerTest extends UITestCase {
         assertEquals(null, fChangeNewValue);
 
         resetChangeData();
-        fWorkingSet.setName(WORKING_SET_NAME_2);
-        assertEquals(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE,
-                fChangeProperty);
-        assertEquals(null, fChangeOldValue);
-        assertEquals(fWorkingSet, fChangeNewValue);
-        
-        resetChangeData();
-        fWorkingSet.setLabel(WORKING_SET_NAME_2);
-        assertEquals(IWorkingSetManager.CHANGE_WORKING_SET_LABEL_CHANGE, fChangeProperty);
-        assertEquals(null, fChangeOldValue);
-        assertEquals(fWorkingSet, fChangeNewValue);
+		fWorkingSet.setLabel(WORKING_SET_NAME_3); // set the label first to
+													// something other than the
+													// new name. This will allow
+													// us to test for the name
+													// property apart from the
+													// label property
+		assertEquals(IWorkingSetManager.CHANGE_WORKING_SET_LABEL_CHANGE,
+				fChangeProperty);
+		assertEquals(null, fChangeOldValue);
+		assertEquals(fWorkingSet, fChangeNewValue);
+		fWorkingSet.setName(WORKING_SET_NAME_2);
+		assertEquals(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE,
+				fChangeProperty);
+		assertEquals(null, fChangeOldValue);
+		assertEquals(fWorkingSet, fChangeNewValue);
 
         resetChangeData();
         fWorkingSet.setElements(new IAdaptable[] {});
@@ -210,33 +216,38 @@ public class IWorkingSetManagerTest extends UITestCase {
     }
 
     public void testGetWorkingSets() throws Throwable {
-        assertTrue(ArrayUtil.equals(new IWorkingSet[] {}, fWorkingSetManager
-                .getWorkingSets()));
+		assertTrue(ArrayUtil.equals(new IWorkingSet[] {}, fWorkingSetManager
+				.getWorkingSets()));
 
-        fWorkingSetManager.addWorkingSet(fWorkingSet);
-        assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
-                fWorkingSetManager.getWorkingSets()));
+		fWorkingSetManager.addWorkingSet(fWorkingSet);
+		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
+				fWorkingSetManager.getWorkingSets()));
 
-        try {
-            fWorkingSetManager.addWorkingSet(fWorkingSet);
-        } catch (RuntimeException exception) {
-        }
-        assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
-                fWorkingSetManager.getWorkingSets()));
+		try {
+			fWorkingSetManager.addWorkingSet(fWorkingSet);
+			fail("Added the same set twice");
+		} catch (RuntimeException exception) {
+		}
+		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
+				fWorkingSetManager.getWorkingSets()));
 
-        IWorkingSet workingSet2 = fWorkingSetManager.createWorkingSet(
-                WORKING_SET_NAME_2, new IAdaptable[] { fWorkspace.getRoot() });
-        fWorkingSetManager.addWorkingSet(workingSet2);
-        assertTrue(ArrayUtil.contains(fWorkingSetManager.getWorkingSets(),
-                workingSet2));
-        assertTrue(ArrayUtil.contains(fWorkingSetManager.getWorkingSets(),
-                fWorkingSet));
-        
-        IWorkingSet workingSet3 = fWorkingSetManager.createWorkingSet(WORKING_SET_NAME_2, new IAdaptable[] {fWorkspace.getRoot()});
-        workingSet3.setName("ws0");
-        fWorkingSetManager.addWorkingSet(workingSet3);
-        
-        // asserts the order is correct - the name of set three should push it
+		IWorkingSet workingSet2 = fWorkingSetManager.createWorkingSet(
+				WORKING_SET_NAME_2, new IAdaptable[] { fWorkspace.getRoot() });
+		fWorkingSetManager.addWorkingSet(workingSet2);
+		assertTrue(ArrayUtil.contains(fWorkingSetManager.getWorkingSets(),
+				workingSet2));
+		assertTrue(ArrayUtil.contains(fWorkingSetManager.getWorkingSets(),
+				fWorkingSet));
+
+		IWorkingSet workingSet3 = fWorkingSetManager.createWorkingSet(
+				WORKING_SET_NAME_2, new IAdaptable[] { fWorkspace.getRoot() });
+		workingSet3.setName("ws0");
+		workingSet3.setLabel(WORKING_SET_NAME_2); // reset the label - it
+													// would be set to ws0 by
+													// the above call.
+		fWorkingSetManager.addWorkingSet(workingSet3);
+
+		// asserts the order is correct - the name of set three should push it
 		// above set two even though their labels are the same
 		IWorkingSet[] sets = fWorkingSetManager.getWorkingSets();
 		assertEquals(fWorkingSet, sets[0]);
