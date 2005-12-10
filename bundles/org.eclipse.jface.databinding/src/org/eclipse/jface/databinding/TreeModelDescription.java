@@ -56,9 +56,8 @@ public class TreeModelDescription {
 	 * 
 	 * @param instanceType
 	 * @param childrenProperty
-	 * @throws BindingException 
 	 */
-	public void addChildrenProperty (Class instanceType, String childrenProperty) throws BindingException{		
+	public void addChildrenProperty (Class instanceType, String childrenProperty) {		
 		PropertyHelper prop = new PropertyHelper(childrenProperty, instanceType);
 		if (prop.getGetter()==null)
 			throw new BindingException("Invalid children property: "+childrenProperty);		 //$NON-NLS-1$				
