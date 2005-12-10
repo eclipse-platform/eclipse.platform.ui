@@ -47,8 +47,12 @@ public class TableViewerUpdatableCollectionExtended extends
 	class TreeLableProvider extends LabelProvider implements
 			ITableLabelProvider {
 		private Object getValue(Object element, Column column) {
+			String propertyName = column.getPropertyName();
+			if (propertyName == null) {
+				return element;
+			}
 			Object value = tableViewerDescription.getCellModifier().getValue(
-					element, column.getPropertyName());
+					element, propertyName);
 			return value;
 		}
 

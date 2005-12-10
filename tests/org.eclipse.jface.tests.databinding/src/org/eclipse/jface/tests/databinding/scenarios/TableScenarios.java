@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import java.util.Random;
+
 import org.eclipse.jface.databinding.Property;
+import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.viewers.TableViewerDescription;
 import org.eclipse.jface.tests.databinding.scenarios.model.Account;
 import org.eclipse.jface.tests.databinding.scenarios.model.Catalog;
@@ -24,7 +27,9 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -51,20 +56,32 @@ public class TableScenarios extends ScenariosTestCase {
 
 	private TableColumn stateColumn;
 
+	private Image[] images;
+
+	private TableColumn fancyColumn;
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		getComposite().setLayout(new FillLayout());
 		tableViewer = new TableViewer(getComposite());
+		tableViewer.getTable().setLinesVisible(true);
+		tableViewer.getTable().setHeaderVisible(true);
 		firstNameColumn = new TableColumn(tableViewer.getTable(), SWT.NONE);
 		firstNameColumn.setWidth(50);
 		lastNameColumn = new TableColumn(tableViewer.getTable(), SWT.NONE);
 		lastNameColumn.setWidth(50);		
 		stateColumn = new TableColumn(tableViewer.getTable(), SWT.NONE);
 		stateColumn.setWidth(50);		
+		fancyColumn = new TableColumn(tableViewer.getTable(), SWT.NONE);
+		fancyColumn.setWidth(250);		
 
 		catalog = SampleData.CATALOG_2005; // Lodging source
 		category = SampleData.WINTER_CATEGORY; 
-		
+
+		images = new Image[] {
+				getShell().getDisplay().getSystemImage(SWT.ICON_ERROR),
+				getShell().getDisplay().getSystemImage(SWT.ICON_WARNING),
+				getShell().getDisplay().getSystemImage(SWT.ICON_INFORMATION), };
 	}
 
 	protected void tearDown() throws Exception {
@@ -145,8 +162,28 @@ public class TableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addColumn("firstName");
 		tableViewerDescription.addColumn("lastName");
 		tableViewerDescription.addColumn("state");
+		tableViewerDescription.addColumn(null,new IConverter(){
+			
+			public Class getModelType() {
+				return Account.class;
+			}
+			
+			public Class getTargetType() {
+				return ViewerLabel.class;
+			}
+			
+			public Object convertTargetToModel(Object targetObject) {
+				return null;
+			}
+			
+			public Object convertModelToTarget(Object modelObject) {
+				Account account = (Account) modelObject;
+				return new ViewerLabel(account.toString(), images[new Random().nextInt(images.length)]);
+			}});
 		getDbc().bind(tableViewerDescription,
 				new Property(catalog, "accounts"), null);
+
+		//interact();
 		
 		// Verify the number of accounts matches the number of items in the table
 		assertEquals(tableViewer.getTable().getItemCount(),accounts.length);
