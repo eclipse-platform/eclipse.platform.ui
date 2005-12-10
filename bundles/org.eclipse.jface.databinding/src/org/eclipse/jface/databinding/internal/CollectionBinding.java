@@ -64,7 +64,7 @@ public class CollectionBinding extends Binding {
 		model.addChangeListener(modelChangeListener);
 	}
 	
-	private IChangeListener targetChangeListener = new IChangeListener() {
+	private final IChangeListener targetChangeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
 			if (updating)
 				return;
@@ -74,7 +74,7 @@ public class CollectionBinding extends Binding {
 				Object value = changeEvent.getNewValue();
 				String partialValidationError = validator
 						.isPartiallyValid(value);
-				context.updatePartialValidationError(CollectionBinding.this,
+				context.updatePartialValidationError(this,
 						partialValidationError);
 				if (partialValidationError != null) {
 					changeEvent.setVeto(true);
@@ -85,8 +85,9 @@ public class CollectionBinding extends Binding {
 				String validationError = null;
 				if (changeEvent.getChangeType() != ChangeEvent.REMOVE) {
 					Object value = changeEvent.getNewValue();
-					validationError = doValidateTarget(value);
-					context.updateValidationError(CollectionBinding.this, validationError);
+					validationError = validator.isValid(value);
+					context.updatePartialValidationError(this, null);
+					context.updateValidationError(this, validationError);
 				}
 				if (validationError == null) 
 				     update(model, target, changeEvent);
@@ -102,13 +103,6 @@ public class CollectionBinding extends Binding {
 			update(target, model, changeEvent);
 		}
 	};
-
-	private String doValidateTarget(Object value) {
-		String validationError = validator.isValid(value);
-		context.updatePartialValidationError(this, null);
-		context.updateValidationError(this, validationError);
-		return validationError;
-	}
 
 	/**
 	 * Update the collection from the event.

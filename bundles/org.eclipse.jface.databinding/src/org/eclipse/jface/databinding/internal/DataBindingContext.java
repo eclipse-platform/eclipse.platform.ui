@@ -19,6 +19,7 @@ import org.eclipse.jface.databinding.BindSpec;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.IBindSpec;
 import org.eclipse.jface.databinding.IBindSupportFactory;
+import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableCollection;
@@ -243,7 +244,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 * @param listener
 	 * @param partialValidationErrorOrNull
 	 */
-	public void updatePartialValidationError(Binding listener,
+	public void updatePartialValidationError(IChangeListener listener,
 			String partialValidationErrorOrNull) {
 		removeValidationListenerAndMessage(partialValidationMessages, listener);
 		if (partialValidationErrorOrNull != null) {
@@ -262,7 +263,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 * @param listener
 	 * @param validationErrorOrNull
 	 */
-	public void updateValidationError(Binding listener,
+	public void updateValidationError(IChangeListener listener,
 			String validationErrorOrNull) {
 		removeValidationListenerAndMessage(validationMessages, listener);
 		if (validationErrorOrNull != null) {

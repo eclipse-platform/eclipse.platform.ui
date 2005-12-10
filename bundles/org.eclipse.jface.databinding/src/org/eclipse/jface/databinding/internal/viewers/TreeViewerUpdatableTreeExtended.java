@@ -13,10 +13,11 @@ package org.eclipse.jface.databinding.internal.viewers;
 import java.util.HashMap;
 
 import org.eclipse.jface.databinding.BindingException;
+import org.eclipse.jface.databinding.ChangeEvent;
+import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.converters.IdentityConverter;
-import org.eclipse.jface.databinding.internal.Binding;
 import org.eclipse.jface.databinding.internal.beans.PropertyHelper;
 import org.eclipse.jface.databinding.validator.IValidator;
 import org.eclipse.jface.databinding.viewers.TreeViewerDescription;
@@ -101,7 +102,11 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 	private IDataBindingContext dataBindingContext;
 
 	private final TreeViewerDescription treeViewerDescription;
-		
+
+	private final IChangeListener dummyListener = new IChangeListener() {
+		public void handleChange(ChangeEvent changeEvent) {
+		}
+	};
 
 	/**
 	 * @param treeViewerDescription
@@ -170,16 +175,9 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 		
 	}
 	
-	private static final class DummyBinding extends Binding {
-		public DummyBinding() {
-			super(null);
-		}
-		public void updateTargetFromModel() {
-		}
-	}
-	
 	protected ICellModifier createCellModifier(final IDataBindingContext dataBindingContext) {
 		return new ICellModifier() {
+
 			private Column findColumn(Class instanceType, String property) {
 				int index = Integer.parseInt(property);
 				return treeViewerDescription.getColumn(instanceType, index);
@@ -229,7 +227,7 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 				if(columnValidator != null){
 					String errorMessage = columnValidator.isValid(value);
 					if(errorMessage != null){
-						dataBindingContext.updateValidationError(new DummyBinding(),errorMessage);
+						dataBindingContext.updateValidationError(dummyListener, errorMessage);
 						return;
 					}
 				}

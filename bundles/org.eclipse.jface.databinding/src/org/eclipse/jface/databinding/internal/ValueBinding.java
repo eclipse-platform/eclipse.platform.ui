@@ -65,7 +65,7 @@ public class ValueBinding extends Binding {
 		model.addChangeListener(modelChangeListener);
 	}
 
-	private IChangeListener targetChangeListener = new IChangeListener() {
+	private final IChangeListener targetChangeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
 			if (updating) 
 				return;
@@ -75,7 +75,7 @@ public class ValueBinding extends Binding {
 				Object value = changeEvent.getNewValue();
 				String partialValidationError = validator
 						.isPartiallyValid(value);
-				context.updatePartialValidationError(ValueBinding.this,
+				context.updatePartialValidationError(this,
 						partialValidationError);
 				if (partialValidationError != null) {
 					changeEvent.setVeto(true);
@@ -106,13 +106,13 @@ public class ValueBinding extends Binding {
 	public void updateModelFromTarget() {
 		Object value = target.getValue();
 		String validationError = doValidateTarget(value);
-		context.updateValidationError(this, validationError);
+		context.updateValidationError(targetChangeListener, validationError);
 		if (validationError == null) {
 			try {
 				updating = true;
 				model.setValue(converter.convertTargetToModel(value));
 			} catch (Exception ex) {
-				context.updateValidationError(this, BindingMessages
+				context.updateValidationError(targetChangeListener, BindingMessages
 						.getString("ValueBinding_ErrorWhileSettingValue")); //$NON-NLS-1$
 			} finally {
 				updating = false;
@@ -130,8 +130,8 @@ public class ValueBinding extends Binding {
 
 	private String doValidateTarget(Object value) {
 		String validationError = validator.isValid(value);
-		context.updatePartialValidationError(this, null);
-		context.updateValidationError(this, validationError);
+		context.updatePartialValidationError(targetChangeListener, null);
+		context.updateValidationError(targetChangeListener, validationError);
 		return validationError;
 	}
 
