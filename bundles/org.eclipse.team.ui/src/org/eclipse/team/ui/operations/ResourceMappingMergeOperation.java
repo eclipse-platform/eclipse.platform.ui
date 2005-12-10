@@ -26,7 +26,8 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.SaveablePartDialog;
-import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.ICompareAdapter;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -165,9 +166,6 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 						doneButton.setEnabled(true); 
 						// Don't call super because we don't want the OK button to appear
 					}
-					/* (non-Javadoc)
-					 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
-					 */
 					protected void buttonPressed(int buttonId) {
 						if (buttonId == 10)
 							super.buttonPressed(IDialogConstants.OK_ID);
@@ -177,7 +175,8 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 				};
 				int result = dialog.open();
 				input.dispose();
-				participant.dispose();
+				if (TeamUI.getSynchronizeManager().get(participant.getId(), participant.getSecondaryId()) == null)
+					participant.dispose();
 			}
 		});
 	}
