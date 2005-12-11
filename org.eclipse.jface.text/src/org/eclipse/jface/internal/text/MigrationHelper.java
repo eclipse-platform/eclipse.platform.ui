@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.text;
 
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Rectangle;
 
 
 /**
@@ -226,30 +224,14 @@ public final class MigrationHelper {
 	 * @see StyledText#getLinePixel(int)
 	 */
 	public static int getLinePixel(StyledText textWidget, int line) {
-		int y;
-		try {
-			 y= textWidget.getLocationAtOffset(textWidget.getOffsetAtLine(line)).y;
-		} catch (IllegalArgumentException ex) {
-			y= textWidget.getLocationAtOffset(textWidget.getCharCount()).y;
-		}
-		if (line == textWidget.getLineCount())
-			y= y + textWidget.getLineHeight(textWidget.getOffsetAtLine(line - 1));
-//		return checkValue(y, textWidget.getLinePixel(line));
-		return y;
+		return textWidget.getLinePixel(line);
 	}
 	
 	/*
 	 * @see StyledText#getLineIndent(int)
 	 */
 	public static int getLineIndex(StyledText textWidget, int y) {
-		int line;
-		try {
-			line= textWidget.getLineAtOffset(textWidget.getOffsetAtLocation(new Point(0, y)));
-		} catch (IllegalArgumentException ex) {
-			line= textWidget.getLineAtOffset(textWidget.getCharCount());
-		}
-//		return checkValue(line, textWidget.getLineIndex(y));
-		return line;
+		return textWidget.getLineIndex(y);
 	}
 
 	/*
