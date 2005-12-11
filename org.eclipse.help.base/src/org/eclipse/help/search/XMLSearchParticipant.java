@@ -33,6 +33,11 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 	 * Class that implements this interface is used to store data obtained during the parsing phase.
 	 */
 	protected interface IParsedXMLContent {
+		/**
+		 * Returns the locale of the index.
+		 * @return the locale string
+		 */
+		String getLocale();
 
 		/**
 		 * Sets the title of the parsed document for indexing.
@@ -68,7 +73,16 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 		private StringBuffer buffer = new StringBuffer();
 		private StringBuffer summary = new StringBuffer();
 		private String title;
+		private String locale;
 		private static int SUMMARY_LENGTH = 200;
+		
+		public ParsedXMLContent(String locale) {
+			this.locale = locale;
+		}
+		
+		public String getLocale() {
+			return locale;
+		}
 
 		public void setTitle(String title) {
 			this.title = title;
@@ -242,7 +256,7 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 			if (parser == null)
 				parser = SAXParserFactory.newInstance().newSAXParser();
 			stack.clear();
-			ParsedXMLContent parsed = new ParsedXMLContent();
+			ParsedXMLContent parsed = new ParsedXMLContent(index.getLocale());
 			XMLHandler handler = new XMLHandler(parsed);
 			stream = url.openStream();
 			parser.parse(stream, handler);

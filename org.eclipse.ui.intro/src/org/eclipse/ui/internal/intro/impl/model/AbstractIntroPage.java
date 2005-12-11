@@ -144,6 +144,16 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             sharedStyle = "true"; //$NON-NLS-1$
 
     }
+    
+    /**
+     * Returns unresolved content value as found in the source file.
+     * the source file.
+     * @return the unresolved content value
+     */
+    
+    public String getRawContent() {
+    	return getAttribute(element, ATT_CONTENT);
+    }
 
     /**
      * Initialize styles. Take first style in style attribute and make it the
@@ -617,8 +627,9 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         ModelUtil.updateResourceAttributes(dom.getDocumentElement(), this);
 
         // now add shared style.
-        String style = IntroPlugin.getDefault().getIntroModelRoot()
-            .getPresentation().getImplementationStyle();
+        IntroModelRoot modelRoot = (IntroModelRoot)getParent();
+        IntroPartPresentation presentation = modelRoot.getPresentation();
+        String style = presentation!=null?presentation.getImplementationStyle():null;
         if (style != null && injectSharedStyle()) {
             ModelUtil.insertStyle(dom, style);
         }

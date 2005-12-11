@@ -112,7 +112,7 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 			IntroPage page = pages[i];
 			Bundle bundle = page.getBundle();
 			String bundleId = bundle.getSymbolicName();
-			String content = page.getContent();
+			String content = page.getRawContent();
 			String pageId = page.getId();
 			String href;
 			if (content != null)
