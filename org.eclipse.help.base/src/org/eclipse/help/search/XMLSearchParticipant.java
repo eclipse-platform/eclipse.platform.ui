@@ -23,9 +23,9 @@ import org.xml.sax.helpers.DefaultHandler;
  * An abstract search participants for adding XML documents to the Lucene search index. Subclass it
  * and implement or override protected methods to handle parsing of the document.
  * 
+ * @since 3.2
  */
 public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
-
 	private Stack stack = new Stack();
 	private SAXParser parser;
 
@@ -33,8 +33,10 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 	 * Class that implements this interface is used to store data obtained during the parsing phase.
 	 */
 	protected interface IParsedXMLContent {
+
 		/**
 		 * Returns the locale of the index.
+		 * 
 		 * @return the locale string
 		 */
 		String getLocale();
@@ -69,17 +71,16 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 	 * 
 	 */
 	private static class ParsedXMLContent implements IParsedXMLContent {
-
 		private StringBuffer buffer = new StringBuffer();
 		private StringBuffer summary = new StringBuffer();
 		private String title;
 		private String locale;
 		private static int SUMMARY_LENGTH = 200;
-		
+
 		public ParsedXMLContent(String locale) {
 			this.locale = locale;
 		}
-		
+
 		public String getLocale() {
 			return locale;
 		}
@@ -99,7 +100,7 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 		}
 
 		public void addText(String text) {
-			if (buffer.length() >0)
+			if (buffer.length() > 0)
 				buffer.append(" "); //$NON-NLS-1$
 			buffer.append(text);
 		}
