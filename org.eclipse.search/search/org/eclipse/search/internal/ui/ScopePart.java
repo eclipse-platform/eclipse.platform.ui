@@ -396,7 +396,7 @@ public class ScopePart {
 			Arrays.sort(workingSets, new WorkingSetComparator());
 			boolean firstFound= false;
 			for (int i= 0; i < workingSets.length; i++) {
-				String workingSetName= workingSets[i].getName();
+				String workingSetName= workingSets[i].getLabel();
 				if (firstFound)
 					result= Messages.format(SearchMessages.ScopePart_workingSetConcatenation, new String[] { result, workingSetName }); 
 				else {
