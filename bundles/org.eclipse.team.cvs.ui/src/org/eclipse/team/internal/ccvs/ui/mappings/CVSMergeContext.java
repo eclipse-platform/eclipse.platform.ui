@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -86,6 +87,17 @@ public class CVSMergeContext extends MergeContext {
 	 * @see org.eclipse.team.core.mapping.MergeContext#merge(org.eclipse.team.core.diff.IDiffNode, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus merge(IDiffNode delta, boolean force, IProgressMonitor monitor) throws CoreException {
+		// First, verify that the provided delta matches the current state
+		// i.e. it is possible that a concurrent change has occurred
+		SyncInfo info = getSyncInfo(getDiffTree().getResource(delta));
+		if (info == null || info.getKind() == SyncInfo.IN_SYNC) {
+			// Seems like this one was already merged so return OK
+			return Status.OK_STATUS;
+		}
+		IDiffNode currentState = SyncInfoToDiffConverter.getDeltaFor(info);
+		if (!equals(currentState, delta)) {
+			throw new CVSException(NLS.bind("The state of {0} has been changed concurrently.", delta.getPath()));
+		}
 		IStatus status = super.merge(delta, force, monitor);
 		if (status.isOK() && delta.getKind() == IDiffNode.REMOVED) {
 			IResource resource = getDiffTree().getResource(delta);
@@ -99,6 +111,16 @@ public class CVSMergeContext extends MergeContext {
 		return status;
 	}
 	
+	private boolean equals(IDiffNode currentState, IDiffNode delta) {
+		if (currentState.getKind() != delta.getKind())
+			return false;
+		if (!currentState.getPath().equals(delta.getPath()))
+			return false;
+		if (((IThreeWayDiff)currentState).getDirection() != ((IThreeWayDiff)delta).getDirection())
+			return false;
+		return true;
+	}
+
 	private void pruneEmptyParents(IDiffNode[] deltas) throws CVSException {
 		// TODO: A more explicit tie in to the pruning mechanism would be preferable.
 		// i.e. I don't like referencing the option and visitor directly
