@@ -107,7 +107,8 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	        	}
 	    		if (direction == IThreeWayDiff.INCOMING) {
 	    			// Just copy the stream since there are no conflicts
-	    			return performReplace(delta, monitor);
+	    			performReplace(delta, monitor);
+	    			return Status.OK_STATUS;
 	    		}
 				// direction == SyncInfo.CONFLICTING
 	    		int type = twDelta.getKind();
@@ -134,7 +135,8 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 				// a three-way merge
 	            return performThreeWayMerge(twDelta, monitor);
         	} else {
-        		return performReplace(delta, monitor);
+        		performReplace(delta, monitor);
+        		return Status.OK_STATUS;
         	}
         } catch (CoreException e) {
             return new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Merge of {0} failed due to an internal error.", new String[] { delta.getPath().toString() }), e);
@@ -157,40 +159,43 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * Replace the local contents with the remote contents.
      * The local resource must be a file.
      */
-    private IStatus performReplace(IDiffNode delta, IProgressMonitor monitor) throws CoreException {
-    	IResourceDiff d;
+    private void performReplace(final IDiffNode delta, IProgressMonitor monitor) throws CoreException {
+    	final IResourceDiff d;
     	if (delta instanceof IResourceDiff) {
-			d = (IResourceDiff) delta;
-		} else {
-			d = (IResourceDiff)((IThreeWayDiff)delta).getRemoteChange();
-		}
-    	if (d == null)
-    		return Status.OK_STATUS;
-    	IFile file = getLocalFile(d);
-    	IResourceVariant remote = d.getAfterState();
-    	if (remote == null && file.exists()) {
-    		file.delete(false, true, monitor);
-    	} else if (remote != null) {
-    		ensureParentsExist(file);
-    		InputStream stream = remote.getStorage(monitor).getContents();
-    		stream = new BufferedInputStream(stream);
-    		try {
-	    		if (file.exists()) {
-	    			file.setContents(stream, false, true, monitor);
-	    		} else {
-	    			file.create(stream, false, monitor);
-	    		}
-    		} finally {
-    			try {
-					stream.close();
-				} catch (IOException e) {
-					// Ignore
-				}
-    		}
+    		d = (IResourceDiff) delta;
+    	} else {
+    		d = (IResourceDiff)((IThreeWayDiff)delta).getRemoteChange();
     	}
-    	// Performing a replace should leave the file in-sync
-    	markAsMerged(delta, true, monitor);
-		return Status.OK_STATUS;
+    	if (d == null)
+    		return;
+    	run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IFile file = getLocalFile(d);
+				IResourceVariant remote = d.getAfterState();
+				if (remote == null && file.exists()) {
+					file.delete(false, true, monitor);
+				} else if (remote != null) {
+					ensureParentsExist(file);
+					InputStream stream = remote.getStorage(monitor).getContents();
+					stream = new BufferedInputStream(stream);
+					try {
+						if (file.exists()) {
+							file.setContents(stream, false, true, monitor);
+						} else {
+							file.create(stream, false, monitor);
+						}
+					} finally {
+						try {
+							stream.close();
+						} catch (IOException e) {
+							// Ignore
+						}
+					}
+				}
+				// Performing a replace should leave the file in-sync
+				markAsMerged(delta, true, monitor);
+			}
+		}, getMergeRule(delta), IResource.NONE, monitor);
 	}
 
 	/**

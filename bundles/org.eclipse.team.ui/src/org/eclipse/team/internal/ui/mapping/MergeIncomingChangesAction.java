@@ -42,9 +42,10 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
 					try {
-						performMerge(context, monitor);
-						if (context.getDiffTree().isEmpty() || !hasIncomingChanges(context.getDiffTree())) {
+						if (performMerge(context, monitor)) {
 							promptForNoChanges();
+						} else {
+							promptForMergeFailure();
 						}
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
@@ -56,6 +57,14 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 		} catch (InterruptedException e) {
 			// Ignore
 		}
+	}
+
+	protected void promptForMergeFailure() {
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				MessageDialog.openInformation(getConfiguration().getSite().getShell(), "Merge Failures", "Some changes could not be auto-merged. Please merge them manually.");
+			};
+		});
 	}
 
 	private void promptForNoChanges() {

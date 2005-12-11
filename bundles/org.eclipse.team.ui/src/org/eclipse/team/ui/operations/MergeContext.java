@@ -57,24 +57,32 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
      * The local resource must be a file and all three
      * resources (local, base, remote) must exist.
      */
-	protected IStatus performThreeWayMerge(IThreeWayDiff delta, IProgressMonitor monitor) throws CoreException {
-		IFile file = (IFile)getDiffTree().getResource(delta);
-		IContentDescription contentDescription = file.getContentDescription();
-		IStreamMerger merger = null;
-		if (contentDescription != null && contentDescription.getContentType() != null) {
-		    merger = CompareUI.createStreamMerger(contentDescription.getContentType());
-		} else {
-		    String fileExtension = file.getFileExtension();
-		    if (fileExtension != null)
-		        merger = CompareUI.createStreamMerger(fileExtension);
-		}
-		// If we couldn't find a registered merger, fallback to text
-		// since we know we have one of those registered.
-		if (merger == null)
-		    merger = CompareUI.createStreamMerger(TXT_EXTENTION);
-		if (merger == null)
-		    return  new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Auto-merge support for {0} is not available.", new String[] { file.getFullPath().toString() }), null);
-		return merge(merger, delta, monitor);
+	protected IStatus performThreeWayMerge(final IThreeWayDiff delta, IProgressMonitor monitor) throws CoreException {
+		final IStatus[] result = new IStatus[] { Status.OK_STATUS };
+		run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IFile file = (IFile)getDiffTree().getResource(delta);
+				IContentDescription contentDescription = file.getContentDescription();
+				IStreamMerger merger = null;
+				if (contentDescription != null && contentDescription.getContentType() != null) {
+					merger = CompareUI.createStreamMerger(contentDescription.getContentType());
+				} else {
+					String fileExtension = file.getFileExtension();
+					if (fileExtension != null)
+						merger = CompareUI.createStreamMerger(fileExtension);
+				}
+				// If we couldn't find a registered merger, fallback to text
+				// since we know we have one of those registered.
+				if (merger == null)
+					merger = CompareUI.createStreamMerger(TXT_EXTENTION);
+				if (merger == null) {
+					result[0] = new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Auto-merge support for {0} is not available.", new String[] { file.getFullPath().toString() }), null);
+					return;
+				}
+				result[0] = merge(merger, delta, monitor);
+			}
+		}, getMergeRule(delta), IResource.NONE, monitor);
+		return result[0];
 	}
 
     /*

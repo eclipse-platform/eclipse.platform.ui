@@ -12,8 +12,7 @@ package org.eclipse.team.ui.operations;
 
 import java.util.*;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
@@ -84,17 +83,21 @@ public abstract class ModelProviderOperation extends TeamOperation {
 	 * TODO should return more useful information
 	 * @throws CoreException
 	 */
-	protected boolean performMerge(IMergeContext context, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
-		ModelProvider[] providers = context.getScope().getModelProviders();
-		List failedMerges = new ArrayList();
-		for (int i = 0; i < providers.length; i++) {
-			ModelProvider provider = providers[i];
-			if (!performMerge(provider, context, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN))) {
-				failedMerges.add(provider);
+	protected boolean performMerge(final IMergeContext context, IProgressMonitor monitor) throws CoreException {
+		final ModelProvider[] providers = context.getScope().getModelProviders();
+		final List failedMerges = new ArrayList();
+		context.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {	
+				monitor.beginTask(null, IProgressMonitor.UNKNOWN);
+				for (int i = 0; i < providers.length; i++) {
+					ModelProvider provider = providers[i];
+					if (!performMerge(provider, context, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN))) {
+						failedMerges.add(provider);
+					}
+				}
+				monitor.done();
 			}
-		}
-		monitor.done();
+		}, null /* scheduling rule */, IResource.NONE, monitor);
 		return failedMerges.isEmpty();
 	}
 

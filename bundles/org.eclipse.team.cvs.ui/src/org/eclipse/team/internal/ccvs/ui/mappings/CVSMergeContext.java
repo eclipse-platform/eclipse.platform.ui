@@ -53,30 +53,33 @@ public class CVSMergeContext extends MergeContext {
 		this.converter = converter;
 	}
 
-	public void markAsMerged(IDiffNode node, boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
-		// Get the latest sync info for the file (i.e. not what is in the set).
-		// We do this because the client may have modified the file since the
-		// set was populated.
-		IResource resource = getDiffTree().getResource(node);
-		if (resource.getType() != IResource.FILE)
-			return;
-		SyncInfo info = getSyncInfo(resource);
-		if (info instanceof CVSSyncInfo) {
-			CVSSyncInfo cvsInfo = (CVSSyncInfo) info;		
-			cvsInfo.makeOutgoing(monitor);
-			if (inSyncHint) {
-				// Compare the contents of the file with the remote
-				// and make the file in-sync if they match
-				ContentComparisonSyncInfoFilter comparator = new SyncInfoFilter.ContentComparisonSyncInfoFilter(false);
-				if (resource.getType() == IResource.FILE && info.getRemote() != null) {
-					if (comparator.compareContents((IFile)resource, info.getRemote(), Policy.subMonitorFor(monitor, 100))) {
-						ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
-						cvsFile.checkedIn(null, false /* not a commit */);
+	public void markAsMerged(final IDiffNode node, final boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
+		run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				// Get the latest sync info for the file (i.e. not what is in the set).
+				// We do this because the client may have modified the file since the
+				// set was populated.
+				IResource resource = getDiffTree().getResource(node);
+				if (resource.getType() != IResource.FILE)
+					return;
+				SyncInfo info = getSyncInfo(resource);
+				if (info instanceof CVSSyncInfo) {
+					CVSSyncInfo cvsInfo = (CVSSyncInfo) info;		
+					cvsInfo.makeOutgoing(monitor);
+					if (inSyncHint) {
+						// Compare the contents of the file with the remote
+						// and make the file in-sync if they match
+						ContentComparisonSyncInfoFilter comparator = new SyncInfoFilter.ContentComparisonSyncInfoFilter(false);
+						if (resource.getType() == IResource.FILE && info.getRemote() != null) {
+							if (comparator.compareContents((IFile)resource, info.getRemote(), Policy.subMonitorFor(monitor, 100))) {
+								ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
+								cvsFile.checkedIn(null, false /* not a commit */);
+							}
+						}
 					}
 				}
 			}
-		}
-		return;
+		}, getMergeRule(node), IResource.NONE, monitor);
 	}
 
 	/* (non-Javadoc)
