@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.jface.fieldassist;
 
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
@@ -39,21 +40,38 @@ public class TextContentAdapter implements IControlContentAdapter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.dialogs.taskassistance.IControlContentAdapter#setControlContents(org.eclipse.swt.widgets.Control,
-	 *      java.lang.String)
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#setControlContents(org.eclipse.swt.widgets.Control,
+	 *      java.lang.String, int)
 	 */
-	public void setControlContents(Control control, String text) {
+	public void setControlContents(Control control, String text,
+			int cursorPosition) {
 		((Text) control).setText(text);
-		((Text) control).setSelection(text.length(), text.length());
+		((Text) control).setSelection(cursorPosition, cursorPosition);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.dialogs.taskassistance.IControlContentAdapter#insertControlContents(org.eclipse.swt.widgets.Control,
-	 *      java.lang.String)
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#insertControlContents(org.eclipse.swt.widgets.Control,
+	 *      java.lang.String, int)
 	 */
-	public void insertControlContents(Control control, String text) {
+	public void insertControlContents(Control control, String text,
+			int cursorPosition) {
+		Point selection = ((Text) control).getSelection();
 		((Text) control).insert(text);
+		// Insert will leave the cursor at the end of the inserted text. If this
+		// is not what we wanted, reset the selection.
+		if (cursorPosition < text.length())
+			((Text) control).setSelection(selection.x + cursorPosition,
+					selection.x + cursorPosition);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#getCursorPosition(org.eclipse.swt.widgets.Control)
+	 */
+	public int getCursorPosition(Control control) {
+		return ((Text) control).getCaretPosition();
 	}
 }

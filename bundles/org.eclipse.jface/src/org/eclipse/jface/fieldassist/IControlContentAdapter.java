@@ -34,8 +34,11 @@ public interface IControlContentAdapter {
 	 *            the control whose contents are to be set (replaced).
 	 * @param contents
 	 *            the String specifying the new control content.
+	 * @param cursorPosition
+	 *            the zero-based index representing the desired cursor position
+	 *            in the control's contents after the contents are set.
 	 */
-	public void setControlContents(Control control, String contents);
+	public void setControlContents(Control control, String contents, int cursorPosition);
 
 	/**
 	 * Insert the specified contents into the control's current contents. Must
@@ -45,8 +48,11 @@ public interface IControlContentAdapter {
 	 *            the control whose contents are to be altered.
 	 * @param contents
 	 *            the String to be inserted into the control contents.
+	 * @param cursorPosition
+	 *            the zero-based index representing the desired cursor position
+	 *            in the control's contents after the insertion is made.
 	 */
-	public void insertControlContents(Control control, String contents);
+	public void insertControlContents(Control control, String contents, int cursorPosition);
 
 	/**
 	 * Get the text contents of the control.
@@ -56,4 +62,17 @@ public interface IControlContentAdapter {
 	 * @return the String contents of the control.
 	 */
 	public String getControlContents(Control control);
+
+	/**
+	 * Get the current cursor position in the control. The position is specified
+	 * as a zero-based index into the string. Valid ranges are from 0 to N,
+	 * where N is the size of the contents string. A value of N indicates that
+	 * the cursor is at the end of the contents.
+	 * 
+	 * @param control
+	 *            the control whose position is to be retrieved.
+	 * @return the zero-based index representing the cursor position in the
+	 *         control's contents.
+	 */
+	public int getCursorPosition(Control control);
 }

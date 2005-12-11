@@ -12,6 +12,7 @@ package org.eclipse.jface.fieldassist;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
@@ -105,10 +106,16 @@ public class ContentProposalAdapter {
 	private int acceptance;
 
 	/*
-	 * A boolean that indicates whether keystrokes received while the proposal
+	 * A boolean that indicates whether keys events received while the proposal
 	 * popup is open should also be propagated to the control.
 	 */
-	private boolean propagateKeyStroke;
+	private boolean propagateKeys;
+
+	/*
+	 * A boolean that indicates whether proposals should be filtered as keys are
+	 * typed when the popup is open.
+	 */
+	private boolean filterProposals;
 
 	/*
 	 * The listener we install on the control.
@@ -133,9 +140,11 @@ public class ContentProposalAdapter {
 	 * 
 	 * @param control
 	 *            the control for which the adapter is providing content assist.
+	 *            May not be <code>null</code>.
 	 * @param controlContentAdapter
 	 *            the <code>IControlContentAdapter</code> used to obtain and
-	 *            update the control's contents as proposals are accepted.
+	 *            update the control's contents as proposals are accepted. May
+	 *            not be <code>null</code>.
 	 * @param proposalProvider
 	 *            the <code>IContentProposalProvider</code> used to obtain
 	 *            content proposals for this control, or <code>null</code> if
@@ -148,20 +157,25 @@ public class ContentProposalAdapter {
 	 * @param keyStroke
 	 *            the keystroke that will invoke the content proposal popup. If
 	 *            this value is <code>null</code>, then proposals will be
-	 *            activated automatically when any of the trigger characters are
-	 *            typed.
+	 *            activated automatically when any of the auto activation
+	 *            characters are typed.
 	 * @param autoActivationCharacters
 	 *            An array of characters that trigger auto-activation of content
-	 *            proposal. This parameter is only consulted if the keyStroke
-	 *            paramter is <code>null</code>. If the keyStroke parameter
-	 *            is <code>null</code> and this keyStroke is null, then all
-	 *            alphanumeric characters will be considered as auto-activating
-	 *            characters.
-	 * @param propagateKeyStroke
-	 *            a boolean that indicates whether the triggering keystroke
-	 *            should be propagated to the adapted control, as well as
-	 *            subsequent keystrokes typed into the control when the proposal
-	 *            popup is open.
+	 *            proposal. If specified, these characters will trigger
+	 *            auto-activation of the proposal popup, regardless of whether
+	 *            an explicit invocation keyStroke was specified. If this
+	 *            paramter is <code>null</code>, then only a specified
+	 *            keyStroke will invoke content proposal. If this parameter is
+	 *            <code>null</code> and the keyStroke parameter is
+	 *            <code>null</code>, then all alphanumeric characters will
+	 *            auto-activate content proposal.
+	 * @param propagateKeys
+	 *            a boolean that indicates whether key events (including
+	 *            auto-activation characters) should be propagated to the
+	 *            adapted control when the proposal popup is open.
+	 * @param filterProposals
+	 *            a boolean that indicates whether the proposal popup should
+	 *            filter its contents based on keys typed when it is open
 	 * @param acceptance
 	 *            a constant indicating how an accepted proposal should affect
 	 *            the control's content. Should be one of
@@ -173,17 +187,23 @@ public class ContentProposalAdapter {
 			IControlContentAdapter controlContentAdapter,
 			IContentProposalProvider proposalProvider,
 			ILabelProvider labelProvider, KeyStroke keyStroke,
-			char[] autoActivationCharacters, boolean propagateKeyStroke,
-			int acceptance) {
+			char[] autoActivationCharacters, boolean propagateKeys,
+			boolean filterProposals, int acceptance) {
 		super();
+		// We always assume the control and content adapter are valid.
+		Assert.isNotNull(control);
+		Assert.isNotNull(controlContentAdapter);
 		this.control = control;
 		this.controlContentAdapter = controlContentAdapter;
+
+		// The rest of these may be null
 		this.proposalProvider = proposalProvider;
 		this.labelProvider = labelProvider;
 		this.triggerKeyStroke = keyStroke;
 		if (autoActivationCharacters != null)
 			this.autoActivateString = new String(autoActivationCharacters);
-		this.propagateKeyStroke = propagateKeyStroke;
+		this.propagateKeys = propagateKeys;
+		this.filterProposals = filterProposals;
 		this.acceptance = acceptance;
 		addControlListener(control);
 	}
@@ -323,7 +343,9 @@ public class ContentProposalAdapter {
 								(triggerKeyStroke.getNaturalKey() == e.keyCode && ((triggerKeyStroke
 										.getModifierKeys() & e.stateMask) == triggerKeyStroke
 										.getModifierKeys()))) {
-							e.doit = propagateKeyStroke;
+							// We never propagate an explicit keystroke
+							// invocation
+							e.doit = false;
 							/*
 							 * Open the popup in an async so that this keystroke
 							 * finishes processing before the popup registers
@@ -339,37 +361,41 @@ public class ContentProposalAdapter {
 							}
 							return;
 						}
-					} else {
-						/*
-						 * The trigger keystroke is null, signifying
-						 * auto-activation. We check for the specified
-						 * auto-activation characters, or if none are specified,
-						 * alphanumeric characters.
-						 */
-						if (e.character != 0) {
-							boolean autoActivated = false;
-							if (autoActivateString != null) {
-							  if (autoActivateString.indexOf(e.character) >= 0) {
-								  autoActivated = true;
-							  }
-							} else if (Character.isLetterOrDigit(e.character)) {
+					}
+					/*
+					 * The triggering keystroke was not invoked. Check for
+					 * autoactivation characters.
+					 */
+					if (e.character != 0) {
+						boolean autoActivated = false;
+						// Auto-activation characters were specified. Check
+						// them.
+						if (autoActivateString != null) {
+							if (autoActivateString.indexOf(e.character) >= 0) {
 								autoActivated = true;
 							}
-							/*
-							 * When autoactivating, we do not open the proposal popup in
-							 * an async, because we want the target popup to process the key
-							 * stroke.
-							 */
-							if (autoActivated) {
-								e.doit = propagateKeyStroke;
-								if (popup == null)
-									openProposalPopup();
-							}
+							// Auto-activation characters were not specified. If
+							// there was no key stroke specified, assume
+							// activation for alphanumeric characters.
+						} else if (triggerKeyStroke == null
+								&& Character.isLetterOrDigit(e.character)) {
+							autoActivated = true;
+						}
+						/*
+						 * When autoactivating, we do not open the proposal
+						 * popup in an async, because we want the target popup
+						 * to process the key stroke.
+						 */
+						if (autoActivated) {
+							e.doit = propagateKeys;
+							if (popup == null)
+								openProposalPopup();
 						}
 					}
+
 					// If the popup is not open, we always propagate keys.
 					// If the popup is open, consult the flag.
-					e.doit = popup == null || propagateKeyStroke;
+					e.doit = popup == null || propagateKeys;
 					break;
 
 				default:
@@ -415,7 +441,7 @@ public class ContentProposalAdapter {
 	private void openProposalPopup() {
 		if (popup == null) {
 			popup = new ContentProposalPopup(this, control, proposalProvider,
-					null, labelProvider);
+					null, labelProvider, filterProposals);
 			popup.open();
 			popup.getShell().addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent event) {
@@ -429,16 +455,18 @@ public class ContentProposalAdapter {
 	 * A content proposal has been accepted. Update the control contents
 	 * accordingly and notify any listeners.
 	 * 
-	 * @param text
-	 *            the text that was accepted as the proposal.
+	 * @param proposal
+	 *            the accepted proposal
 	 */
-	public void proposalAccepted(String text) {
+	public void proposalAccepted(IContentProposal proposal) {
 		switch (acceptance) {
 		case (PROPOSAL_REPLACE):
-			setControlContent(text);
+			setControlContent(proposal.getContent(), proposal
+					.getCursorPosition());
 			break;
 		case (PROPOSAL_INSERT):
-			insertControlContent(text);
+			insertControlContent(proposal.getContent(), proposal
+					.getCursorPosition());
 			break;
 		default:
 			// do nothing. Typically a listener is installed to handle this in
@@ -450,34 +478,27 @@ public class ContentProposalAdapter {
 		final Object[] listenerArray = proposalListeners.getListeners();
 		for (int i = 0; i < listenerArray.length; i++)
 			((IContentProposalListener) listenerArray[i])
-					.proposalAccepted(text);
-	}
-
-	/**
-	 * Return the text content of the control.
-	 * 
-	 * @return the String contents of the control. Never <code>null</code>.
-	 */
-	public String getControlContent() {
-		if (isValid())
-			return controlContentAdapter.getControlContents(control);
-		return ""; //$NON-NLS-1$
+					.proposalAccepted(proposal);
 	}
 
 	/*
-	 * Set the text content of the control to the specified text.
+	 * Set the text content of the control to the specified text, setting the
+	 * cursorPosition at the desired location within the new contents.
 	 */
-	private void setControlContent(String text) {
+	private void setControlContent(String text, int cursorPosition) {
 		if (isValid())
-			controlContentAdapter.setControlContents(control, text);
+			controlContentAdapter.setControlContents(control, text,
+					cursorPosition);
 	}
 
 	/*
-	 * Insert the specified text into the control content.
+	 * Insert the specified text into the control content, setting the
+	 * cursorPosition at hte desired location within the new contents.
 	 */
-	private void insertControlContent(String text) {
+	private void insertControlContent(String text, int cursorPosition) {
 		if (isValid())
-			controlContentAdapter.insertControlContents(control, text);
+			controlContentAdapter.insertControlContents(control, text,
+					cursorPosition);
 	}
 
 	/*

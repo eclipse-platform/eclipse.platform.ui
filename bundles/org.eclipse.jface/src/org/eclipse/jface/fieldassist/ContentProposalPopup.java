@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.jface.fieldassist;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.PopupDialog;
@@ -68,10 +70,9 @@ public class ContentProposalPopup extends PopupDialog {
 	private static final int POPUP_DELAY = 500;
 
 	/*
-	 * The character width hint for the popup and secondary popup. Used as a
-	 * minimum width.
+	 * The character height hint for the popup.
 	 */
-	private static final int POPUP_CHARWIDTH = 20;
+	private static final int POPUP_CHARHEIGHT = 10;
 
 	/*
 	 * Empty string.
@@ -182,7 +183,7 @@ public class ContentProposalPopup extends PopupDialog {
 
 			case SWT.BS:
 				// Backspace should back out of any stored filter text
-				if (proposalProvider instanceof IFilteringContentProposalProvider) {
+				if (filter) {
 					filterText = filterText.substring(0,
 							filterText.length() - 1);
 					recomputeProposals(filterText);
@@ -193,8 +194,7 @@ public class ContentProposalPopup extends PopupDialog {
 				// If the key is a defined unicode character, and not one of the
 				// special cases processed above, update the filter text and
 				// filter the proposals.
-				if (proposalProvider instanceof IFilteringContentProposalProvider
-						&& Character.isDefined(key)) {
+				if (filter && Character.isDefined(key)) {
 					filterText = filterText + String.valueOf(key);
 					recomputeProposals(filterText);
 				}
@@ -303,7 +303,7 @@ public class ContentProposalPopup extends PopupDialog {
 	/*
 	 * The proposals to be shown (cached to avoid repeated requests).
 	 */
-	private Object[] proposals;
+	private IContentProposal[] proposals;
 
 	/*
 	 * A label provider used to show the proposals in the table.
@@ -317,10 +317,14 @@ public class ContentProposalPopup extends PopupDialog {
 	private InfoPopupDialog infoPopup;
 
 	/*
-	 * Filter text - tracked while popup is open, only if the
-	 * IContentProposalProvider implements filtering.
+	 * Filter text - tracked while popup is open, only if we are told to filter
 	 */
 	private String filterText = EMPTY;
+
+	/*
+	 * Boolean that indicates whether we are filtering.
+	 */
+	private boolean filter = false;
 
 	/**
 	 * Constructs a new instance of this popup, specifying the control for which
@@ -339,10 +343,13 @@ public class ContentProposalPopup extends PopupDialog {
 	 * @param labelProvider
 	 *            the {@link ILabelProvider} used to obtain visual content for
 	 *            the proposals. Must never be <code>null</code>.
+	 * @param filter
+	 *            a boolean indicating whether proposals should be filtered as
+	 *            keys are typed in the popup.
 	 */
 	public ContentProposalPopup(ContentProposalAdapter adapter,
 			Control control, IContentProposalProvider proposalProvider,
-			String infoText, ILabelProvider labelProvider) {
+			String infoText, ILabelProvider labelProvider, boolean filter) {
 		super(control.getShell(), PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE,
 				false, false, false, false, null, infoText);
 		this.adapter = adapter;
@@ -350,6 +357,7 @@ public class ContentProposalPopup extends PopupDialog {
 		this.labelProvider = labelProvider;
 		this.proposalProvider = proposalProvider;
 		this.proposals = getProposals(filterText);
+		this.filter = filter;
 	}
 
 	/*
@@ -390,8 +398,9 @@ public class ContentProposalPopup extends PopupDialog {
 						infoPopup.close();
 				} else {
 					TableItem item = (TableItem) e.item;
-					String description = getProposalDescription(item.getData());
-					showProposalDescription(description);
+					IContentProposal proposal = (IContentProposal) item
+							.getData();
+					showProposalDescription(proposal.getDescription());
 				}
 			}
 
@@ -401,16 +410,16 @@ public class ContentProposalPopup extends PopupDialog {
 			}
 		});
 
-		// Compute a minimum width for the table.
+		// Compute a height and width for the table.
 		GridData data = new GridData(GridData.FILL_BOTH);
 		GC gc = new GC(proposalTable);
 		gc.setFont(proposalTable.getFont());
 		FontMetrics fontMetrics = gc.getFontMetrics();
 		gc.dispose();
-		data.widthHint = Dialog.convertWidthInCharsToPixels(fontMetrics,
-				POPUP_CHARWIDTH);
+		data.widthHint = control.getBounds().width;
+		data.heightHint = Dialog.convertHeightInCharsToPixels(fontMetrics,
+				POPUP_CHARHEIGHT);
 		proposalTable.setLayoutData(data);
-
 		return proposalTable;
 	}
 
@@ -436,7 +445,7 @@ public class ContentProposalPopup extends PopupDialog {
 		int index = proposalTable.indexOf(item);
 
 		if (0 <= index && index < proposals.length) {
-			Object current = proposals[index];
+			IContentProposal current = proposals[index];
 			item.setText(getString(current));
 			item.setImage(getImage(current));
 			item.setData(current);
@@ -449,15 +458,15 @@ public class ContentProposalPopup extends PopupDialog {
 	 * Caches the specified proposals and repopulates the table if it has been
 	 * created.
 	 */
-	private void setProposals(Object[] proposals) {
-		if (proposals == null || proposals.length == 0) {
-			proposals = getEmptyProposalArray();
+	private void setProposals(IContentProposal[] newProposals) {
+		if (newProposals == null || newProposals.length == 0) {
+			newProposals = getEmptyProposalArray();
 		}
-		this.proposals = proposals;
+		this.proposals = newProposals;
 
 		// If there is a table
 		if (isValid()) {
-			final int newSize = proposals.length;
+			final int newSize = newProposals.length;
 			if (USE_VIRTUAL) {
 				// Set and clear the virtual table. Data will be
 				// provided in the SWT.SetData event handler.
@@ -470,7 +479,7 @@ public class ContentProposalPopup extends PopupDialog {
 				TableItem[] items = proposalTable.getItems();
 				for (int i = 0; i < items.length; i++) {
 					TableItem item = items[i];
-					Object proposal = proposals[i];
+					IContentProposal proposal = newProposals[i];
 					item.setText(getString(proposal));
 					item.setImage(getImage(proposal));
 					item.setData(proposal);
@@ -478,7 +487,7 @@ public class ContentProposalPopup extends PopupDialog {
 				proposalTable.setRedraw(true);
 			}
 			// Default to the first selection if there is content.
-			if (proposals.length > 0) {
+			if (newProposals.length > 0) {
 				selectProposal(0);
 			} else {
 				// No selection, close the secondary popup if it was open
@@ -493,11 +502,12 @@ public class ContentProposalPopup extends PopupDialog {
 	 * Get the string for the specified proposal. Always return a String of some
 	 * kind.
 	 */
-	private String getString(Object proposal) {
+	private String getString(IContentProposal proposal) {
 		if (proposal == null)
 			return EMPTY;
 		if (labelProvider == null)
-			return proposal.toString();
+			return proposal.getLabel() == null ? proposal.getContent()
+					: proposal.getLabel();
 		return labelProvider.getText(proposal);
 	}
 
@@ -505,7 +515,7 @@ public class ContentProposalPopup extends PopupDialog {
 	 * Get the image for the specified proposal. If there is no image available,
 	 * return null.
 	 */
-	private Image getImage(Object proposal) {
+	private Image getImage(IContentProposal proposal) {
 		if (proposal == null || labelProvider == null)
 			return null;
 		return labelProvider.getImage(proposal);
@@ -515,8 +525,8 @@ public class ContentProposalPopup extends PopupDialog {
 	 * Return an empty array. Used so that something always shows in the
 	 * proposal popup, even if no proposal provider was specified.
 	 */
-	private Object[] getEmptyProposalArray() {
-		return new Object[0];
+	private IContentProposal[] getEmptyProposalArray() {
+		return new IContentProposal[0];
 	}
 
 	/*
@@ -549,7 +559,7 @@ public class ContentProposalPopup extends PopupDialog {
 	/*
 	 * Return the current selected proposal.
 	 */
-	private Object getSelectedProposal() {
+	private IContentProposal getSelectedProposal() {
 		if (isValid()) {
 			int i = proposalTable.getSelectionIndex();
 			if (proposals == null || i < 0 || i >= proposals.length)
@@ -569,8 +579,7 @@ public class ContentProposalPopup extends PopupDialog {
 		proposalTable.setSelection(index);
 		proposalTable.showSelection();
 
-		String description = getProposalDescription(proposals[index]);
-		showProposalDescription(description);
+		showProposalDescription(proposals[index].getDescription());
 	}
 
 	/**
@@ -585,7 +594,7 @@ public class ContentProposalPopup extends PopupDialog {
 	public int open() {
 		addControlListener();
 		int value = super.open();
-		showProposalDescription(getProposalDescription(getSelectedProposal()));
+		showProposalDescription(getSelectedProposal().getDescription());
 		return value;
 	}
 
@@ -605,22 +614,19 @@ public class ContentProposalPopup extends PopupDialog {
 	 * Get the proposals from the proposal provider. The provider may or may not
 	 * filter the proposals based on the specified filter text.
 	 */
-	private Object[] getProposals(String filter) {
+	private IContentProposal[] getProposals(String filterString) {
 		if (proposalProvider == null)
 			return null;
-		if (proposalProvider instanceof IFilteringContentProposalProvider)
-			return ((IFilteringContentProposalProvider) proposalProvider)
-					.getProposals(filter);
-		return proposalProvider.getProposals();
-	}
-
-	/*
-	 * Get the description for the specified proposal.
-	 */
-	private String getProposalDescription(Object proposal) {
-		if (proposalProvider == null)
-			return null;
-		return proposalProvider.getProposalDescription(proposal);
+		int position = adapter.getControlContentAdapter().getCursorPosition(
+				adapter.getControl());
+		String contents = adapter.getControlContentAdapter()
+				.getControlContents(adapter.getControl());
+		IContentProposal[] proposals = proposalProvider.getProposals(contents,
+				position);
+		if (filter) {
+			return filterProposals(proposals, filterString);
+		}
+		return proposals;
 	}
 
 	/*
@@ -644,12 +650,13 @@ public class ContentProposalPopup extends PopupDialog {
 						public void run() {
 							// The selection may have changed by the time we
 							// open, so double check it.
-							Object p = getSelectedProposal();
+							IContentProposal p = getSelectedProposal();
 							if (p != null) {
-								infoPopup = new InfoPopupDialog(getShell());
-								infoPopup
-										.setContents(getProposalDescription(p));
-								infoPopup.open();
+								if (infoPopup == null) {
+									infoPopup = new InfoPopupDialog(getShell());
+									infoPopup.open();
+								}
+								infoPopup.setContents(p.getDescription());
 								infoPopup.getShell().addDisposeListener(
 										new DisposeListener() {
 											public void widgetDisposed(
@@ -674,7 +681,7 @@ public class ContentProposalPopup extends PopupDialog {
 	 * Accept the current proposal.
 	 */
 	private void acceptCurrentProposal() {
-		adapter.proposalAccepted(getString(getSelectedProposal()));
+		adapter.proposalAccepted(getSelectedProposal());
 		close();
 	}
 
@@ -684,5 +691,29 @@ public class ContentProposalPopup extends PopupDialog {
 	 */
 	private void recomputeProposals(String filterText) {
 		setProposals(getProposals(filterText));
+	}
+
+	/*
+	 * Filter the provided list of content proposals according to the filter
+	 * text.
+	 */
+	private IContentProposal[] filterProposals(IContentProposal[] proposals,
+			String filterString) {
+		if (filterString.length() == 0)
+			return proposals;
+
+		// Check each string for a match. Use the string displayed to the user,
+		// not the proposal content.
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < proposals.length; i++) {
+			String string = getString(proposals[i]);
+			if (string.length() >= filterString.length()
+					&& string.substring(0, filterString.length())
+							.equalsIgnoreCase(filterString))
+				list.add(proposals[i]);
+
+		}
+		return (IContentProposal[]) list.toArray(new IContentProposal[list
+				.size()]);
 	}
 }

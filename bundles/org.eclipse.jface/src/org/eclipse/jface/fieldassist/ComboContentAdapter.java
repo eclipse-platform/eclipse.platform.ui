@@ -40,29 +40,38 @@ public class ComboContentAdapter implements IControlContentAdapter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.dialogs.taskassistance.IControlContentAdapter#setControlContents(org.eclipse.swt.widgets.Control,
-	 *      java.lang.String)
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#setControlContents(org.eclipse.swt.widgets.Control,
+	 *      java.lang.String, int)
 	 */
-	public void setControlContents(Control control, String text) {
+	public void setControlContents(Control control, String text,
+			int cursorPosition) {
 		((Combo) control).setText(text);
-		((Combo) control).setSelection(new Point(text.length(), text.length()));
+		((Combo) control).setSelection(new Point(cursorPosition, cursorPosition));
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.dialogs.taskassistance.IControlContentAdapter#insertControlContents(org.eclipse.swt.widgets.Control,
-	 *      java.lang.String)
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#insertControlContents(org.eclipse.swt.widgets.Control,
+	 *      java.lang.String, int)
 	 */
-	public void insertControlContents(Control control, String text) {
-		Combo combo = (Combo)control;
+	public void insertControlContents(Control control, String text,
+			int cursorPosition) {
+		Combo combo = (Combo) control;
 		String contents = combo.getText();
 		Point selection = combo.getSelection();
 		StringBuffer sb = new StringBuffer();
 		sb.append(contents.substring(0, selection.x));
 		sb.append(text);
-		if (selection.y > contents.length()) 
+		if (selection.y > contents.length())
 			sb.append(contents.substring(selection.y, contents.length()));
 		combo.setText(sb.toString());
+		selection.x = selection.x + cursorPosition;
+		selection.y = selection.x;
+		combo.setSelection(selection);
+	}
+
+	public int getCursorPosition(Control control) {
+		return ((Combo) control).getSelection().x;
 	}
 }

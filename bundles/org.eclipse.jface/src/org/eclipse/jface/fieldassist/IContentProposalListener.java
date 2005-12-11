@@ -21,7 +21,7 @@ public interface IContentProposalListener {
 	 * A content proposal has been accepted.
 	 * 
 	 * @param proposal
-	 *            the proposed content string.
+	 *            the accepted content proposal
 	 */
-	public void proposalAccepted(String proposal);
+	public void proposalAccepted(IContentProposal proposal);
 }

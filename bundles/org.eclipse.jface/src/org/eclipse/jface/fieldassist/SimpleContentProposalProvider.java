@@ -11,8 +11,8 @@
 package org.eclipse.jface.fieldassist;
 
 /**
- * SimpleContentProposalProvider is a class designed to return a static list
- * of items when queried for content proposals.
+ * SimpleContentProposalProvider is a class designed to map a static list of
+ * Strings to content proposals.
  * <p>
  * This API is considered experimental. It is still evolving during 3.2 and is
  * subject to change. It is being released to obtain feedback from early
@@ -20,59 +20,75 @@ package org.eclipse.jface.fieldassist;
  * 
  * @see IContentProposalProvider
  * @since 3.2
- *
+ * 
  */
 public class SimpleContentProposalProvider implements IContentProposalProvider {
 
 	/*
-	 * The proposals to display.
+	 * The proposals provided.
 	 */
-	private Object[] proposals;
+	private String[] proposals;
+
+	/*
+	 * The proposals mapped to IContentProposal.
+	 */
+	private IContentProposal[] contentProposals;
 
 	/**
 	 * Construct a SimpleContentProposalProvider whose content proposals are
 	 * always the specified array of Objects.
 	 * 
 	 * @param proposals
-	 *            the array of Objects to be returned whenever proposals are
+	 *            the array of Strings to be returned whenever proposals are
 	 *            requested.
 	 */
-	public SimpleContentProposalProvider(Object[] proposals) {
+	public SimpleContentProposalProvider(String[] proposals) {
 		super();
 		this.proposals = proposals;
 	}
 
 	/**
 	 * Return an array of Objects representing the valid content proposals for a
-	 * field.
+	 * field. Ignore the current contents of the field.
 	 * 
+	 * @param contents
+	 *            the current contents of the field (ignored)
+	 * @param position
+	 *            the current cursor position within the field (ignored)
 	 * @return the array of Objects that represent valid proposals for the field
 	 *         given its current content.
 	 */
-	public Object[] getProposals() {
-		return this.proposals;
+public IContentProposal [] getProposals(String contents, int position) {
+		if (contentProposals == null) {
+			contentProposals = new IContentProposal[proposals.length];
+			for (int i=0; i<proposals.length; i++) {
+				final String proposal = proposals[i];
+				contentProposals[i] = new IContentProposal() {
+					public String getContent() {
+						return proposal;
+					}
+					public String getDescription() {
+						return null;
+					}
+					public String getLabel() {
+						return null;
+					}
+					public int getCursorPosition() {
+						return proposal.length();
+					}
+				};
+			}
+		}
+		return contentProposals;
 	}
-
 	/**
-	 * Set the proposals to be returned by the receiver whenever content
-	 * proposals are requested.
+	 * Set the Strings to be used as content proposals.
 	 * 
 	 * @param items
-	 *            Object[]
+	 *            the array of Strings to be used as proposals.
 	 */
-	public void setProposals(Object[] items) {
+	public void setProposals(String[] items) {
 		this.proposals = items;
-	}
-
-	/**
-	 * Return a String that describes the given proposal in more detail.
-	 * 
-	 * @param proposal
-	 *            the Object representing a valid proposal
-	 * @return return <code>null</code> to indicate that there is no
-	 *         description available.
-	 */
-	public String getProposalDescription(Object proposal) {
-		return null;
+		contentProposals = null;
 	}
 }
