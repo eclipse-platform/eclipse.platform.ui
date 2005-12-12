@@ -146,7 +146,7 @@ public final class MigrationHelper {
 	 * partially visible line, zero is returned.
 	 * 
 	 * @param textWidget the widget
-	 * @return the number of hidden pixels of the first partial line, alway &gt;= 0
+	 * @return the number of hidden pixels of the first partial line, always &gt;= 0
 	 */
 	public static int getPartialLineHidden(StyledText textWidget) {
 		int topIndex= textWidget.getTopIndex();
@@ -154,6 +154,9 @@ public final class MigrationHelper {
 		int res= getLinePixel(textWidget, topIndex);
 		if (res > 0)
 			res= textWidget.getLineHeight(topIndex - 1) - res;
+		else if (res < 0)
+			res= -res;
+		
 		if (DISABLE_CHECKING)
 			return res;
 		
