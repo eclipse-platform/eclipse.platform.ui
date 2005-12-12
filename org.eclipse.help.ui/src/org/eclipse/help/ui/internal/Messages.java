@@ -141,7 +141,7 @@ public final class Messages extends NLS {
 	public static String BrowsersPreferencePage_wgroup;
 	public static String BrowsersPreferencePage_view;
 	public static String BrowsersPreferencePage_dgroup;
-	public static String BrowsersPreferencePage_window;
+	public static String BrowsersPreferencePage_tray;
 	public static String InfoCenterPage_url;
 	public static String InfoCenterPage_invalidURL;
 	public static String InfoCenterPage_tocError;

@@ -53,7 +53,7 @@ public class BrowsersPreferencePage extends PreferencePage implements
 
 	private Button whelpAsInfopopButton;
 
-	private Button dhelpAsWindowButton;
+	private Button dhelpAsTrayButton;
 
 	private Button dhelpAsInfopopButton;
 
@@ -181,13 +181,13 @@ public class BrowsersPreferencePage extends PreferencePage implements
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		group.setLayout(layout);
 		group.setText(Messages.BrowsersPreferencePage_dgroup);
-		dhelpAsWindowButton = new Button(group, SWT.RADIO);
-		dhelpAsWindowButton.setText(Messages.BrowsersPreferencePage_window);
+		dhelpAsTrayButton = new Button(group, SWT.RADIO);
+		dhelpAsTrayButton.setText(Messages.BrowsersPreferencePage_tray);
 		dhelpAsInfopopButton = new Button(group, SWT.RADIO);
 		dhelpAsInfopopButton.setText(Messages.BrowsersPreferencePage_dinfopop);
 		boolean dinfopop = HelpBasePlugin.getDefault().getPluginPreferences()
 				.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
-		dhelpAsWindowButton.setSelection(!dinfopop);
+		dhelpAsTrayButton.setSelection(!dinfopop);
 		dhelpAsInfopopButton.setSelection(dinfopop);
 
 		if (PlatformUI.getWorkbench().getBrowserSupport()
@@ -304,7 +304,7 @@ public class BrowsersPreferencePage extends PreferencePage implements
 
 		boolean dinfopop = HelpBasePlugin.getDefault().getPluginPreferences()
 				.getDefaultBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
-		dhelpAsWindowButton.setSelection(!dinfopop);
+		dhelpAsTrayButton.setSelection(!dinfopop);
 		dhelpAsInfopopButton.setSelection(dinfopop);
 		
 		if (openInPlaceButton!=null) {

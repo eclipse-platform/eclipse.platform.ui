@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
@@ -72,8 +71,12 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 				item.setToolTipText(Messages.ReusableHelpPart_closeAction_tooltip);
 				item.addListener(SWT.Selection, new Listener() {
 					public void handleEvent(Event event) {
+						// close the tray
 						TrayDialog dialog = (TrayDialog)shell.getData();
 						dialog.closeTray();
+						
+						// set focus back to shell
+						shell.setFocus();
 					}
 				});
 			}
@@ -215,23 +218,21 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 	 * @param event the page change event
 	 */
 	public void pageChanged(PageChangedEvent event) {
-		if (IHelpUIConstants.HV_CONTEXT_HELP_PAGE.equals(helpPart.getCurrentPageId())) {
-			Object page = event.getSelectedPage();
-			Control c = null;
-			if (page instanceof IDialogPage) {
-				c = ((IDialogPage) page).getControl();
-			} else {
-				c = shell.getDisplay().getFocusControl();
-				if (c instanceof TabFolder) {
-					TabFolder folder = (TabFolder) c;
-					TabItem[] selection = folder.getSelection();
-					if (selection.length == 1) {
-						c = selection[0].getControl();
-					}
+		Object page = event.getSelectedPage();
+		Control c = null;
+		if (page instanceof IDialogPage) {
+			c = ((IDialogPage) page).getControl();
+		} else {
+			c = shell.getDisplay().getFocusControl();
+			if (c instanceof TabFolder) {
+				TabFolder folder = (TabFolder) c;
+				TabItem[] selection = folder.getSelection();
+				if (selection.length == 1) {
+					c = selection[0].getControl();
 				}
 			}
-			helpPart.update(null, null, c);
 		}
+		helpPart.update(null, null, c);
 	}
 	
 	/**

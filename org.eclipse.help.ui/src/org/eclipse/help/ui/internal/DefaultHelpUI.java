@@ -25,7 +25,6 @@ import org.eclipse.help.ui.internal.views.ReusableHelpPart;
 import org.eclipse.jface.dialogs.DialogTray;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TrayDialog;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -196,8 +195,13 @@ public class DefaultHelpUI extends AbstractHelpUI {
 				// check the dialog
 				if (activeShell != null) {
 					Object data = activeShell.getData();
-					if (data instanceof Window) {
+					if (data instanceof TrayDialog) {
 						displayContextAsHelpTray(activeShell, null);
+						return;
+					}
+					else {
+						// tried to summon help from a non-tray dialog
+						// not supported
 						return;
 					}
 				}
@@ -274,7 +278,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		// check the dialog
 		if (activeShell != null) {
 			Object data = activeShell.getData();
-			if (data instanceof Window && (!dinfopop || noInfopop)) {
+			if (data instanceof TrayDialog && (!dinfopop || noInfopop)) {
 				displayContextAsHelpTray(activeShell, context);
 				return;
 			}
@@ -306,7 +310,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		return display.getActiveShell();
 	}
 
-	private static boolean isActiveShell(Shell activeShell, IWorkbenchWindow window) {
+	static boolean isActiveShell(Shell activeShell, IWorkbenchWindow window) {
 		// Test if the active shell belongs to this window
 		return activeShell != null && activeShell.equals(window.getShell());
 	}
