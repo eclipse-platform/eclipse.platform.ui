@@ -27,6 +27,7 @@ public final class NavigatorTestSuite extends TestSuite {
 	 */
 	public NavigatorTestSuite() {
 		addTest(new TestSuite(OpenTest.class));
+		addTest(new TestSuite(INavigatorContentServiceTests.class));
 	}
 
 }
