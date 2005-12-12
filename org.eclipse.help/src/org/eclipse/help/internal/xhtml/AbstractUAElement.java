@@ -33,22 +33,6 @@ public abstract class AbstractUAElement {
 	}
 
 
-	/**
-	 * Constructor used when model elements are being loaded from an xml content file. Bundle AND
-	 * base is propagated down the model to enable resolving resources relative to the xml content
-	 * file. The base is set to point to the relative location of the parent folder that holds the
-	 * content file. In the case of a configExtension, it is set to point to the relative position
-	 * of the parent folder that holds the extension. Only when needed, the base field is stored in
-	 * a model element. This saves memory.
-	 * 
-	 * @param element
-	 * @param pd
-	 */
-	AbstractUAElement(Element element, Bundle bundle, String base) {
-		this(element, bundle);
-	}
-
-
 
 	/**
 	 * DOM getAttribute retruns an empty string (not null) if attribute is not defined. Override

@@ -13,7 +13,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.HelpPlugin;
@@ -31,15 +35,41 @@ import org.w3c.dom.NodeList;
  */
 public class UAContentMergeProcessor {
 
+	protected static final String CONTENT_EXTENSION = "org.eclipse.help.contentExtension"; //$NON-NLS-1$
 
-	public Document resolveIncludes(Document document, String locale) {
+	protected static IExtensionRegistry registry;
+	protected static IConfigurationElement[] contentExtensionElements;
+	static {
+		registry = Platform.getExtensionRegistry();
+		contentExtensionElements = getContentExtensions();
+	}
+
+	private Hashtable unresolvedConfigExt = new Hashtable();
+
+
+	private String pluginID = null;
+	private String file = null;
+	private Document document = null;
+	private String locale = null;
+
+
+	protected UAContentMergeProcessor(String pluginID, String file, Document document, String locale) {
+		this.pluginID = pluginID;
+		this.file = file;
+		this.document = document;
+		this.locale = locale;
+
+	}
+
+
+	public Document resolveIncludes() {
 
 		NodeList includes = document.getElementsByTagNameNS("*", "include"); //$NON-NLS-1$ //$NON-NLS-2$
 		Node[] nodes = getArray(includes);
 		for (int i = 0; i < nodes.length; i++) {
 			Element includeElement = (Element) nodes[i];
 			UAInclude include = new UAInclude(includeElement);
-			Element targetElement = findIncludeTarget(include, locale);
+			Element targetElement = findIncludeTarget(include);
 			if (targetElement == null) {
 				String message = "Could not resolve following include:  "; //$NON-NLS-1$;
 				HelpPlugin.logWarning(message);
@@ -54,15 +84,7 @@ public class UAContentMergeProcessor {
 
 
 
-	/**
-	 * Find the target Element pointed to by the path in the include. It is assumed that configId
-	 * always points to an external config, and not the same config of the inlcude.
-	 * 
-	 * @param include
-	 * @param path
-	 * @return
-	 */
-	private Element findIncludeTarget(UAInclude include, String locale) {
+	private Element findIncludeTarget(UAInclude include) {
 		String path = include.getPath();
 		int index = path.indexOf("/"); //$NON-NLS-1$
 		if (index < 0)
@@ -89,14 +111,136 @@ public class UAContentMergeProcessor {
 
 
 
-	/**
-	 * Returns an array version of the passed NodeList. Used to work around DOM design issues.
-	 */
+
 	public static Node[] getArray(NodeList nodeList) {
 		Node[] nodes = new Node[nodeList.getLength()];
 		for (int i = 0; i < nodeList.getLength(); i++)
 			nodes[i] = nodeList.item(i);
 		return nodes;
+	}
+
+
+
+	protected static IConfigurationElement[] getContentExtensions() {
+		IConfigurationElement[] contentExtensionElements = registry
+				.getConfigurationElementsFor(CONTENT_EXTENSION);
+		return contentExtensionElements;
+	}
+
+
+	public Document resolveContentExtensions() {
+		for (int i = 0; i < contentExtensionElements.length; i++)
+			resolveContentExtension(contentExtensionElements[i]);
+		return document;
+	}
+
+
+	private void resolveContentExtension(IConfigurationElement contentExtElement) {
+		Document contentExtensionDom = loadContentExtension(contentExtElement);
+		if (contentExtensionDom == null)
+			return;
+		resolveContentExtension(contentExtensionDom, contentExtElement);
+	}
+
+
+	private void resolveContentExtension(Document contentExtensionDom, IConfigurationElement contentExtElement) {
+		Bundle bundle = BundleUtil.getBundleFromConfigurationElement(contentExtElement);
+		Element[] topicExtensions = DOMUtil.getElementsByTagName(contentExtensionDom, "topicExtension"); //$NON-NLS-1$
+		if (topicExtensions == null)
+			return;
+		for (int i = 0; i < topicExtensions.length; i++)
+			doResolveContentExtension(topicExtensions[i], bundle);
+	}
+
+	private void doResolveContentExtension(Element topicExtension, Bundle bundle) {
+		UATopicExtension topicExtensionModel = new UATopicExtension(topicExtension, bundle);
+		boolean isExtensionToCurrentPage = resolveTopicExtension(topicExtensionModel);
+		if (isExtensionToCurrentPage) {
+			if (topicExtension.hasAttribute("failed")) { //$NON-NLS-1$
+				if (!unresolvedConfigExt.containsKey(topicExtension))
+					unresolvedConfigExt.put(topicExtension, bundle);
+			} else {
+				unresolvedConfigExt.remove(topicExtension);
+				tryResolvingExtensions();
+			}
+		}
+	}
+
+
+	private void tryResolvingExtensions() {
+		Enumeration keys = unresolvedConfigExt.keys();
+		while (keys.hasMoreElements()) {
+			Element topicExtensionElement = (Element) keys.nextElement();
+			doResolveContentExtension(topicExtensionElement, (Bundle) unresolvedConfigExt
+					.get(topicExtensionElement));
+		}
+	}
+
+
+
+
+	/**
+	 * Insert the topic extension content into the target page if the target page happens to be this
+	 * page.
+	 * 
+	 * @param extensionContent
+	 * @return
+	 */
+	private boolean resolveTopicExtension(UATopicExtension topicExtension) {
+
+		Element anchorElement = findAnchor(topicExtension, locale);
+		if (anchorElement == null) {
+			if (topicExtension.getElement().hasAttribute("failed")) //$NON-NLS-1$
+				return true;
+			else
+				return false;
+		}
+
+		Document topicExtensionDom = topicExtension.getDocument();
+		if (topicExtensionDom == null)
+			return false;
+
+		Element extensionBody = DOMUtil.getBodyElement(topicExtensionDom);
+		Element[] children = DOMUtil.getElementsByTagName(extensionBody, "*"); //$NON-NLS-1$
+		for (int i = 0; i < children.length; i++) {
+			Node targetNode = document.importNode(children[i], true);
+			anchorElement.getParentNode().insertBefore(targetNode, anchorElement);
+		}
+
+
+		return true;
+
+	}
+
+
+
+	private Element findAnchor(UATopicExtension topicExtension, String locale) {
+		String path = topicExtension.getPath();
+		int index = path.indexOf("/"); //$NON-NLS-1$
+		if (index < 0)
+			return null;
+		String pluginID = path.substring(0, index);
+		int lastIndex = path.lastIndexOf("/"); //$NON-NLS-1$
+		String pluginRelativePath = path.substring(index + 1, lastIndex);
+		String anchor_id = path.substring(lastIndex + 1, path.length());
+
+		if (this.pluginID.equals(pluginID) && this.file.equals(pluginRelativePath)) {
+			Element anchor = DOMUtil.getElementById(document, anchor_id, "*"); //$NON-NLS-1$ 
+			if (anchor == null)
+				topicExtension.getElement().setAttribute("failed", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+			return anchor;
+		}
+		return null;
+	}
+
+
+
+
+	protected Document loadContentExtension(IConfigurationElement cfgElement) {
+		String content = cfgElement.getAttribute("file"); //$NON-NLS-1$
+		content = BundleUtil.getResourceLocation(content, cfgElement);
+		Document document = new UAContentParser(content).getDocument();
+		return document;
 	}
 
 

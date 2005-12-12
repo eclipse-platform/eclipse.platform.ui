@@ -82,8 +82,7 @@ public class UAContentParser {
 				// DocumentType docType = document.getDoctype();
 				if (rootElement.getTagName().equals(TAG_HTML)) {
 					hasXHTMLContent = true;
-				} else
-					document = null;
+				}
 			}
 		} catch (Exception e) {
 			HelpPlugin.logError("Could not load content file: " + content, e); //$NON-NLS-1$

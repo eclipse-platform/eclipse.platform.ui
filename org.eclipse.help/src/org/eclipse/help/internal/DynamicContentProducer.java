@@ -64,11 +64,12 @@ public class DynamicContentProducer implements IHelpContentProducer {
 		if (inputStream != null) {
 			UAContentParser parser = new UAContentParser(inputStream);
 			Document dom = parser.getDocument();
+			XHTMLSupport support = new XHTMLSupport(pluginID, file, dom, locale);
+			dom = support.processDOM();
 			try {
 				inputStream.close();
 			} catch (IOException e) {
 			}
-			dom = XHTMLSupport.processDOM(dom, locale);
 			return UATransformManager.getAsInputStream(dom);
 		}
 		return null;

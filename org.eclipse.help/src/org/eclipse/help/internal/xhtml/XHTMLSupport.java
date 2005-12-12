@@ -19,16 +19,32 @@ public class XHTMLSupport {
 
 	// singleton for performance.
 	private static UAContentFilterProcessor filterProcessor = new UAContentFilterProcessor();
-	// singleton for performance.
-	private static UAContentMergeProcessor mergeProcessor = new UAContentMergeProcessor();
 
-	public static Document processDOM(Document document, String locale) {
+
+
+
+	private Document document = null;
+
+	private UAContentMergeProcessor mergeProcessor = null;
+
+
+	public XHTMLSupport(String pluginID, String file, Document document, String locale) {
+		this.document = document;
+		mergeProcessor = new UAContentMergeProcessor(pluginID, file, document, locale);
+
+	}
+
+
+	public Document processDOM() {
 
 		// resolve filters.
 		filterProcessor.applyFilters(document);
 
 		// resolve includes.
-		mergeProcessor.resolveIncludes(document, locale);
+		mergeProcessor.resolveIncludes();
+
+		// resolve anchors.
+		mergeProcessor.resolveContentExtensions();
 
 		return document;
 	}
