@@ -345,15 +345,6 @@
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
-            contentProvider="org.eclipse.team.internal.ui.mapping.NavigatorExtensionContentProvider"
-            id="org.eclipse.team.ui.navigatorContent"
-            labelProvider="org.eclipse.team.internal.ui.mapping.NavigatorExtensionLabelProvider"
-            name="Team">
-      </navigatorContent>
-   </extension>
-   <extension
-         point="org.eclipse.ui.navigator.navigatorContent">
-      <navigatorContent
             contentProvider="org.eclipse.team.internal.ui.mapping.ResourceTeamAwareContentProvider"
             id="org.eclipse.team.ui.resourceContent"
             labelProvider="org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider"

@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.filehistory;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -62,7 +63,13 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.filehistory.actions.OpenRevisionAction;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 
@@ -73,14 +80,14 @@ public class GenericHistoryView extends ViewPart {
 	// cached for efficiency
 	private IFileRevision[] entries;
 
-	private GenericHistoryTableProvider historyTableProvider;
+	protected GenericHistoryTableProvider historyTableProvider;
 
 	private TableViewer tableViewer;
-	private TextViewer textViewer;
-	private TableViewer tagViewer;
+	protected TextViewer textViewer;
+	protected TableViewer tagViewer;
 
 	
-	private OpenRevisionAction openAction;
+	protected OpenRevisionAction openAction;
 	private IAction toggleTextAction;
 	private IAction toggleTextWrapAction;
 	private IAction toggleListAction;
@@ -94,7 +101,7 @@ public class GenericHistoryView extends ViewPart {
 
 	protected IFileRevision currentSelection;
 
-	private FetchLogEntriesJob fetchLogEntriesJob;
+	protected FetchLogEntriesJob fetchLogEntriesJob;
 
 	private boolean shutdown = false;
 
@@ -102,10 +109,47 @@ public class GenericHistoryView extends ViewPart {
 	
 	public static final String VIEW_ID = "org.eclipse.team.ui.GenericHistoryView"; //$NON-NLS-1$
 
+	private IPartListener partListener = new IPartListener() {
+		public void partActivated(IWorkbenchPart part) {
+			if (part instanceof IEditorPart)
+				editorActivated((IEditorPart) part);
+		}
+		public void partBroughtToTop(IWorkbenchPart part) {
+			if(part == GenericHistoryView.this)
+				editorActivated(getViewSite().getPage().getActiveEditor());
+		}
+		public void partOpened(IWorkbenchPart part) {
+			if(part == GenericHistoryView.this)
+				editorActivated(getViewSite().getPage().getActiveEditor());
+		}
+		public void partClosed(IWorkbenchPart part) {
+		}
+		public void partDeactivated(IWorkbenchPart part) {
+		}
+	};
+	
+	private IPartListener2 partListener2 = new IPartListener2() {
+		public void partActivated(IWorkbenchPartReference ref) {
+		}
+		public void partBroughtToTop(IWorkbenchPartReference ref) {
+		}
+		public void partClosed(IWorkbenchPartReference ref) {
+		}
+		public void partDeactivated(IWorkbenchPartReference ref) {
+		}
+		public void partOpened(IWorkbenchPartReference ref) {
+		}
+		public void partHidden(IWorkbenchPartReference ref) {
+		}
+		public void partVisible(IWorkbenchPartReference ref) {
+			if(ref.getPart(true) == GenericHistoryView.this)
+				editorActivated(getViewSite().getPage().getActiveEditor());
+		}
+		public void partInputChanged(IWorkbenchPartReference ref) {
+		}
+	};
+
 	public void createPartControl(Composite parent) {
-
-		// initializeImages();
-
 		sashForm = new SashForm(parent, SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -116,6 +160,8 @@ public class GenericHistoryView extends ViewPart {
 		sashForm.setWeights(new int[] { 70, 30 });
 		innerSashForm.setWeights(new int[] { 50, 50 });
 
+		this.linkingEnabled = TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_EDITOR_LINKING);
+		
 		contributeActions();
 
 		setViewerVisibility();
@@ -127,8 +173,8 @@ public class GenericHistoryView extends ViewPart {
 
 		// add listener for editor page activation - this is to support editor
 		// linking
-		// getSite().getPage().addPartListener(partListener);
-		// getSite().getPage().addPartListener(partListener2);
+		getSite().getPage().addPartListener(partListener);
+		getSite().getPage().addPartListener(partListener2);
 	}
 
 	private TextViewer createText(SashForm parent) {
@@ -475,13 +521,12 @@ public class GenericHistoryView extends ViewPart {
 	
 	/**
 	 * Enabled linking to the active editor
-	 * @since 3.0
 	 */
 	public void setLinkingEnabled(boolean enabled) {
 		this.linkingEnabled = enabled;
 
 		// remember the last setting in the dialog settings		
-		//settings.setValue(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_EDITOR_LINKING, enabled);
+		TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_EDITOR_LINKING, enabled);
 	
 		// if turning linking on, update the selection to correspond to the active editor
 		if (enabled) {
@@ -500,7 +545,7 @@ public class GenericHistoryView extends ViewPart {
 		if (editor == null || !isLinkingEnabled() || !checkIfPageIsVisible()) {
 			return;
 		}		
-		/*IEditorInput input = editor.getEditorInput();
+		IEditorInput input = editor.getEditorInput();
 		
 		if (input instanceof FileRevisionEditorInput){
 			IFile file;
@@ -510,7 +555,13 @@ public class GenericHistoryView extends ViewPart {
 	                showHistory(file, false);
 	            }
 			} catch (CoreException e) {}
-		}*/
+		} // Handle regular file editors
+		else {
+	        IFile file = ResourceUtil.getFile(input);
+	        if(file != null) {
+	            showHistory(file, false /* don't fetch if already cached */);
+	        }
+		}
 	}
 	
 	private boolean checkIfPageIsVisible() {

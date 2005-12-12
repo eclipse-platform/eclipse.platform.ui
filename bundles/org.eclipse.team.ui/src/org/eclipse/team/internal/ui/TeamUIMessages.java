@@ -328,10 +328,16 @@ public class TeamUIMessages extends NLS {
 	public static String GenericHistoryView_ShowTagViewer;
 	public static String GenericHistoryView_GenericFileHistoryFetcher;
 	public static String GenericHistoryView_LinkWithEditor;
+	public static String GenericHistoryTableProvider_Revision;
+	public static String GenericHistoryTableProvider_RevisionTime;
+	public static String GenericHistoryTableProvider_Author;
+	public static String GenericHistoryTableProvider_Comment;
+	public static String OpenRevisionAction_DeletedRevisionTitle;
+	public static String OpenRevisionAction_DeletedRevisionMessage;
 	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, TeamUIMessages.class);
 	}
-	
+
 }

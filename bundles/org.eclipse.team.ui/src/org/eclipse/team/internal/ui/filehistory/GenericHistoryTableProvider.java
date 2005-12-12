@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.core.filehistory.IFileHistory;
 import org.eclipse.team.core.filehistory.IFileRevision;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 
 public class GenericHistoryTableProvider {
 
@@ -66,24 +67,9 @@ public class GenericHistoryTableProvider {
 			switch (columnIndex) {
 				case COL_REVISIONID:
 					String revision = entry.getContentIndentifier();
-				/*	String currentRevision = getCurrentRevision();
-					if (currentRevision != null && currentRevision.equals(revision)) {
-						revision = NLS.bind(CVSUIMessages.currentRevision, new String[] { revision }); 
-					}*/
 					return revision;
-				/*case COL_TAGS:
-					CVSTag[] tags = entry.getTags();
-					StringBuffer result = new StringBuffer();
-					for (int i = 0; i < tags.length; i++) {
-						result.append(tags[i].getName());
-						if (i < tags.length - 1) {
-							result.append(", "); //$NON-NLS-1$
-						}
-					}
-					return result.toString();*/
 				case COL_DATE:
 					long date = entry.getTimestamp();
-					//if (date == null) return CVSUIMessages.notAvailable; 
 					Date dateFromLong = new Date(date);
 					return DateFormat.getInstance().format(dateFromLong);
 				case COL_AUTHOR:
@@ -91,15 +77,6 @@ public class GenericHistoryTableProvider {
 				case COL_COMMENT:
 					String comment = entry.getComment();
 					return comment;
-				/*	int index = comment.indexOf("\n"); //$NON-NLS-1$
-					switch (index) {
-						case -1:
-							return comment;
-						case 0:
-							return CVSUIMessages.HistoryView_______4; 
-						default:
-							return NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_truncate, new String[] { comment.substring(0, index) }); 
-					}*/
 			}
 			return ""; //$NON-NLS-1$
 		}
@@ -197,16 +174,6 @@ public class GenericHistoryTableProvider {
 			switch (columnNumber) {
 				case 0: /* revision */
 					return e1.getContentIndentifier().compareTo(e2.getContentIndentifier());
-				/*case 1:  tags 
-					CVSTag[] tags1 = e1.getTags();
-					CVSTag[] tags2 = e2.getTags();
-					if (tags2.length == 0) {
-						return -1;
-					}
-					if (tags1.length == 0) {
-						return 1;
-					}
-					return getCollator().compare(tags1[0].getName(), tags2[0].getName());*/
 				case 1: /* date */
 					long date1 = e1.getTimestamp();
 					long date2 = e2.getTimestamp();
@@ -303,35 +270,28 @@ public class GenericHistoryTableProvider {
 		// revision
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText("IFileRevision ID"); 
+		col.setText(TeamUIMessages.GenericHistoryTableProvider_Revision); 
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
-	
-/*		// tags
-		col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
-		col.setText(CVSUIMessages.HistoryView_tags); 
-		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(20, true));*/
 	
 		// creation date
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText("Revision Time"); 
+		col.setText(TeamUIMessages.GenericHistoryTableProvider_RevisionTime); 
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		// author
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText("Author"); 
+		col.setText(TeamUIMessages.GenericHistoryTableProvider_Author); 
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		//comment
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText("Comment"); 
+		col.setText(TeamUIMessages.GenericHistoryTableProvider_Comment); 
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(50, true));
 	}
