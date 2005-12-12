@@ -19,6 +19,8 @@ import java.util.Map;
 
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -270,6 +272,18 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		SizeCache cache = new SizeCache(trim.getControl());
 		trim.getControl().setLayoutData(trim);
 		desc.setCache(cache);
+		
+		// Add a dispose listener so we can clean up if the Client disposes the trim
+		trim.getControl().addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				Control control = (Control) e.widget;
+				if (control.getLayoutData() instanceof IWindowTrim) {
+					IWindowTrim trim = (IWindowTrim) control.getLayoutData();
+					removeTrim(trim);
+					forceLayout();
+				}
+			}
+		});
 
 		// Add the new descriptor to the map
 		fTrimDescriptors.put(desc.getId(), desc);
@@ -288,6 +302,21 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		}
 	}
 
+	/**
+	 * Force a layout of the trim...we hack this by calling the
+	 * LayoutUtil with the first piece of trim that we find...(kludge!!)
+	 */
+	protected void forceLayout() {
+		Iterator d = fTrimDescriptors.values().iterator();
+		while (d.hasNext()) {
+			TrimDescriptor desc = (TrimDescriptor) d.next();
+			if (desc.getTrim().getControl() != null) {
+				LayoutUtil.resize(desc.getTrim().getControl());
+				return;
+			}
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -303,14 +332,13 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		TrimArea area = (TrimArea) fTrimArea.get(new Integer(desc.getAreaId()));
 		if (area != null) {
 			area.removeTrim(desc);
+			desc.getCache().getControl().setLayoutData(null);
 		}
 
 		// If we had a trim UI handle then dispose it
 		if (desc.getDockingCache() != null) {
 			Control ctrl = desc.getDockingCache().getControl();
-			ctrl.setVisible(false);
-			// TODO: set the docking handle so it can be disposed.
-
+			ctrl.dispose();
 			desc.setDockingCache(null);
 		}
 	}
@@ -341,7 +369,10 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 				TrimDescriptor desc = (TrimDescriptor) d.next();
 				Control nextControl = desc.getTrim().getControl();
 				if (nextControl == null || nextControl.isDisposed()) {
-					d.remove();
+					// Remvoe the trim from the area's list (not the local copy)
+					area.removeTrim(desc);
+					
+					// Remove it from the map
 					fTrimDescriptors.remove(desc.getId());
 				}
 			}
