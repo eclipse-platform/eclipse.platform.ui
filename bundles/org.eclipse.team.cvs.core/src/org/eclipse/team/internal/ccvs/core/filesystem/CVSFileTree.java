@@ -86,17 +86,14 @@ public class CVSFileTree {
 
 	public IFileInfo getFileInfo(IFileStore store) {
 		ICVSRemoteFolder folder=null;
-		String repoName = null, resourceName = null;
+		String resourceName = null;
 		CVSURI cvsUri = CVSURI.fromUri(store.toURI());
 		
-	
-			
-		repoName = cvsUri.getRepositoryName();
 		folder = cvsUri.getParentFolder();
 		resourceName = cvsUri.getLastSegment();
 		
-		if (folder.getName().equals("")) {
-			// this is the repo root so return an info that indicates this
+		if (folder.getName().equals(ICVSRemoteFolder.REPOSITORY_ROOT_FOLDER_NAME)) {
+			// this is the repository root so return an info that indicates this
 			FileInfo info = new FileInfo();
 			info.setExists(true);
 			info.setName(resourceName);
@@ -129,7 +126,6 @@ public class CVSFileTree {
 			}
 			return getFileInfo(resource, new NullProgressMonitor());
 		} catch (CoreException e) {
-			// TODO Need to handle this somehow
 			CVSProviderPlugin.log(e);
 			return null;
 		}

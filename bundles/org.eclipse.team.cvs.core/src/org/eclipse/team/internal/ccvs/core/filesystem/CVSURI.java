@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSMessages;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
@@ -27,7 +28,7 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 
 public class CVSURI {
 
-	private static final String SCHEME = "cvs";
+	private static final String SCHEME = "cvs"; //$NON-NLS-1$
 	private final ICVSRepositoryLocation repository;
 	private final IPath path;
 	private final CVSTag tag;
@@ -40,7 +41,7 @@ public class CVSURI {
 			return new CVSURI(repository, path, tag);
 		} catch (CVSException e) {
 			CVSProviderPlugin.log(e);
-			throw new IllegalArgumentException(NLS.bind("Invalid uri {0}: {1}", new String[] {uri.toString(), e.getMessage()}));
+			throw new IllegalArgumentException(NLS.bind(CVSMessages.CVSURI_InvalidURI, new String[] {uri.toString(), e.getMessage()}));
 		}
 	}
 
@@ -65,8 +66,8 @@ public class CVSURI {
 
 	private static ICVSRepositoryLocation getRepository(URI uri) throws CVSException {
 		String ssp = uri.getSchemeSpecificPart();
-		if (!ssp.startsWith(":")) {
-			ssp = ":" + ssp;
+		if (!ssp.startsWith(":")) { //$NON-NLS-1$
+			ssp = ":" + ssp; //$NON-NLS-1$
 		}
 		return CVSRepositoryLocation.fromString(ssp);
 	}
@@ -93,7 +94,7 @@ public class CVSURI {
 		try {
 			String fragment = path.toString();
 			if (tag != null && tag.getType() != CVSTag.HEAD) {
-				fragment += ","+tag.getName();
+				fragment += ","+tag.getName(); //$NON-NLS-1$
 			}
 			return new URI(SCHEME, repository.getLocation(false), fragment);
 		} catch (URISyntaxException e) {

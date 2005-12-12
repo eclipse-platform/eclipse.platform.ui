@@ -124,14 +124,14 @@ public class LogListener extends CommandOutputListener {
     			} else if (line.startsWith("revision ")) { //$NON-NLS-1$
     				revision = line.substring(9);
     				state = REVISION;
-    			} else if (line.startsWith("total revisions:")){
+    			} else if (line.startsWith("total revisions:")){ //$NON-NLS-1$
     				//if there are no current revision selected and this is a branch then we are in the 
     				//case where there have been no changes made on the branch since the initial branching
     				//and we need to get the revision that the branch was made from
-    				int indexOfSelectedRevisions = line.lastIndexOf("selected revisions: ");
+    				int indexOfSelectedRevisions = line.lastIndexOf("selected revisions: "); //$NON-NLS-1$
     				//20 for length of "selected revisions: "
     				String selectedRevisions = line.substring(indexOfSelectedRevisions + 20).trim();
-    				if (selectedRevisions.equals("0")){
+    				if (selectedRevisions.equals("0")){ //$NON-NLS-1$
     					//ok put into comment state to await ======= and add info to log
     					state = COMMENT;
     					revision = BRANCH_REVISION;

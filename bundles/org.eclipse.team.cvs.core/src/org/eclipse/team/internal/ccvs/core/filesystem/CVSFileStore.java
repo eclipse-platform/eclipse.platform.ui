@@ -26,8 +26,6 @@ public class CVSFileStore extends FileStore {
 	private final CVSURI uri;
 	private IFileInfo info;
 	
-	//cvs:extssh:bog:1001ara@bgheorgh-linux:/home/bog/repo#BogLibTester,HEAD
-
 	public CVSFileStore(CVSURI uri, IFileInfo info) {
 		this.uri = uri;
 		this.info = info;
@@ -114,7 +112,6 @@ public class CVSFileStore extends FileStore {
 		FileInfo info = new FileInfo();
 		info.setExists(true);
 		info.setName(resource.getName());
-		//info.setAttribute(EFS.ATTRIBUTE_ARCHIVE, resource.isFolder());
 		if (!resource.isFolder()) {
 			ICVSRemoteFile file = (ICVSRemoteFile) resource;
 			ILogEntry entry = file.getLogEntry(monitor);

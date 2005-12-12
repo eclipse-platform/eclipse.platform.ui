@@ -246,10 +246,12 @@ public class CVSMessages extends NLS {
 	public static String SyncFileWriter_0;
 	public static String ResponseHandler_0;
 
+	public static String CVSTeamProviderType_0;
+	public static String CVSFileSystem_FetchTree;
+	public static String CVSURI_InvalidURI;
+		
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, CVSMessages.class);
 	}
-
-    public static String CVSTeamProviderType_0;
 }

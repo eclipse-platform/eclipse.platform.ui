@@ -13,6 +13,7 @@ import java.util.HashMap;
 
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.ccvs.core.CVSMessages;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
@@ -36,7 +37,7 @@ public class CVSFileSystem {
 	
 	public CVSFileTree getFullTree(URI uri, IProgressMonitor monitor){
 		try{
-		monitor.beginTask("Getting the full tree", 100);
+		monitor.beginTask(CVSMessages.CVSFileSystem_FetchTree, 100);
 		//always return new tree
 		//monitor.subTask(NLS.bind(message, binding));
 		if (cvsTree != null)
@@ -68,17 +69,10 @@ public class CVSFileSystem {
 
 			return cvsTree;
 		} catch (CoreException e) {
-			// TODO Need to handle this somehow
 			CVSProviderPlugin.log(e);
 			return null;
 		}
 		
 	
 	}
-	//add method or interface to adapt to interface to get tree
-	
-	//file store no notion of tree; separate classes
-	
-	
-	
 }
