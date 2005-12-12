@@ -138,7 +138,9 @@ public class CommonViewer extends TreeViewer {
 	 */
 	protected void internalAdd(Widget widget, Object parentElement,
 			Object[] childElements) {
-		super.internalRefresh(widget, parentElement, true, true);
+		//super.internalRefresh(widget, parentElement, true, true);
+		super.internalAdd(widget, parentElement, childElements);
+		
 	}
 
 	/**
