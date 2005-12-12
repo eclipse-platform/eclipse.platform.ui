@@ -348,7 +348,8 @@
             contentProvider="org.eclipse.team.internal.ui.mapping.ResourceTeamAwareContentProvider"
             id="org.eclipse.team.ui.resourceContent"
             labelProvider="org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider"
-            name="Resource Mappings">
+            name="Resource Mappings"
+            sorter="org.eclipse.team.internal.ui.mapping.ResourceModelSorter">
          <enablement>
            <or>         
             <instanceof value="org.eclipse.core.internal.resources.mapping.ResourceModelProvider"/>

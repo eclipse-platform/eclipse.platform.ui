@@ -25,6 +25,7 @@ import org.eclipse.team.ui.operations.ModelSynchronizePage;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.navigator.*;
+import org.eclipse.ui.navigator.internal.CommonSorter;
 
 /**
  * Provides a Common Navigator based viewer for use by a {@link ModelSynchronizePage}.
@@ -44,6 +45,14 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 		}
 		public void openSelection() {
 			fireOpen(new OpenEvent(this, getSelection()));
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.navigator.CommonViewer#init()
+		 */
+		protected void init() {
+			super.init();
+			setSorter(new CommonSorter(getNavigatorContentService()));
 		}
 	}
 
