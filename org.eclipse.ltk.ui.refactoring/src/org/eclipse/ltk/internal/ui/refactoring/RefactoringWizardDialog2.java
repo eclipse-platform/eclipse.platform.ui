@@ -457,9 +457,9 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	private void showCurrentPage() {
 		if (fCurrentPage.getControl() == null)
 			fCurrentPage.createControl(fPageContainer);
+		resize();
 		makeVisible(fCurrentPage);
 		updateButtons();
-		resize();
 	}
 	
 	protected void handleShellCloseEvent() {
