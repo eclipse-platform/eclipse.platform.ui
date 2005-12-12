@@ -83,6 +83,8 @@ public class SWTUtil {
 				if (ms < 30) ms += 10;
 				delays.add(new Integer(ms));
 			}
+			size.x += 4;
+			size.y += 4;
 			return images;
 		}
 		catch (IllegalArgumentException e) {

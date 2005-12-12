@@ -1139,10 +1139,10 @@ public class Form extends Composite {
 			return;
 		this.busy = busy;
 		if (busy) {
-			busyLabel = new Label(this, SWT.NULL);
-			if (toolBarManager!=null)
-				busyLabel.setBackground(toolBarManager.getControl().getBackground());
-			else
+			busyLabel = new Label(this, SWT.CENTER);
+			//if (toolBarManager!=null)
+				//busyLabel.setBackground(toolBarManager.getControl().getBackground());
+			//else
 				busyLabel.setBackground(getBackground());
 				
 			final Image[] busyImages = FormsResources
@@ -1152,13 +1152,14 @@ public class Form extends Composite {
 			}
 			busyLabel.moveAbove(null);
 			layout();
-			final int[] index = new int[1];
+			final int[] index = new int[] {0};
 			if (busyImages != null && busyImages.length > 1) {
 				getDisplay().timerExec(FormsResources.getProgressDelay(0),
 						new Runnable() {
 							public void run() {
 								if (isDisposed() || !isBusy())
 									return;
+								getDisplay().update();
 								index[0]++;
 								if (index[0] == busyImages.length)
 									index[0] = 0;
