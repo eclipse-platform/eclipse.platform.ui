@@ -11,6 +11,7 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation.LogEntryCache;
@@ -182,7 +183,7 @@ public class FetchAllMembersOperation extends RemoteOperation {
 	}
 	
 	protected String getTaskName() {
-		return "Fetch All Members Operation";
+		return CVSUIMessages.FetchAllMembersOperation_0;
 	}
 
 

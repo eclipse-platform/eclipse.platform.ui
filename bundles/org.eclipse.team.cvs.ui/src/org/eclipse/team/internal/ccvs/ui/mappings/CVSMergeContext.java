@@ -26,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.core.diff.ResourceDiffTree;
@@ -40,7 +41,7 @@ public class CVSMergeContext extends MergeContext {
 
 	public static IMergeContext createContext(IResourceMappingScope scope, IProgressMonitor monitor) {
 		WorkspaceSynchronizeParticipant participant = new WorkspaceSynchronizeParticipant(new ResourceScope(scope.getRoots()));
-		participant.refreshNow(participant.getResources(), NLS.bind("Preparing to merge {0}", new String[] { "TODO: mapping description for CVS merge context initialization" }), monitor);
+		participant.refreshNow(participant.getResources(), CVSUIMessages.CVSMergeContext_0, monitor);
 		ResourceDiffTree tree = new ResourceDiffTree();
 		SyncInfoToDiffConverter converter = new SyncInfoToDiffConverter(participant.getSyncInfoSet(), tree);
 		converter.connect(monitor);
@@ -96,7 +97,7 @@ public class CVSMergeContext extends MergeContext {
 		}
 		IDiffNode currentState = SyncInfoToDiffConverter.getDeltaFor(info);
 		if (!equals(currentState, delta)) {
-			throw new CVSException(NLS.bind("The state of {0} has been changed concurrently.", delta.getPath()));
+			throw new CVSException(NLS.bind(CVSUIMessages.CVSMergeContext_1, delta.getPath()));
 		}
 		IStatus status = super.merge(delta, force, monitor);
 		if (status.isOK() && delta.getKind() == IDiffNode.REMOVED) {
@@ -147,7 +148,7 @@ public class CVSMergeContext extends MergeContext {
 	public void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException {
 		// TODO: Shouldn't need to use a scope here
 		IResource[] resources = getScope().getRoots();
-		participant.refreshNow(resources, "TODO: CVS Merge Context Refresh", monitor);
+		participant.refreshNow(resources, CVSUIMessages.CVSMergeContext_2, monitor);
 	}
 	
 	/* (non-Javadoc)

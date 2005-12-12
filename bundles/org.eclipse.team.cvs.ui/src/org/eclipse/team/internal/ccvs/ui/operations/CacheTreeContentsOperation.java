@@ -24,6 +24,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -116,11 +117,11 @@ public abstract class CacheTreeContentsOperation extends SingleCommandOperation 
 	}
 	
 	protected String getTaskName(CVSTeamProvider provider) {
-		return NLS.bind("Fetching contents for changed files in {0}", new String[] {provider.getProject().getName()});
+		return NLS.bind(CVSUIMessages.CacheTreeContentsOperation_0, new String[] {provider.getProject().getName()});
 	}
 
 	protected String getTaskName() {
-		return "Fetching contents for changed files";
+		return CVSUIMessages.CacheTreeContentsOperation_1;
 	}
 
 }

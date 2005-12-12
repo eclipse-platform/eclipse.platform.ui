@@ -27,11 +27,11 @@ public class WorkInProgressPage extends CVSFieldEditorPreferencePage {
 		addField(enableClientUpdate);
 		updateStyle = new RadioGroupFieldEditor(
 						ICVSUIConstants.PREF_UPDATE_HANDLING,
-						"When performing a Team Update",
+						CVSUIMessages.WorkInProgressPage_0,
 						1,
 						new String[][] {
-							new String[] {"Show all changes in the merge dialog",  ICVSUIConstants.PREF_UPDATE_HANDLING_PREVIEW},
-							new String[] {"Merge all non-conflicting changes and only show conflicts in the dialog", ICVSUIConstants.PREF_UPDATE_HANDLING_PERFORM }
+							new String[] {CVSUIMessages.WorkInProgressPage_1,  ICVSUIConstants.PREF_UPDATE_HANDLING_PREVIEW},
+							new String[] {CVSUIMessages.WorkInProgressPage_2, ICVSUIConstants.PREF_UPDATE_HANDLING_PERFORM }
 						},
 						getFieldEditorParent(),
 						true);

@@ -1016,8 +1016,19 @@ public class CVSUIMessages extends NLS {
     public static String CVSMappingMergeOperation_MergeInfoTitle;
 	public static String CVSMappingMergeOperation_MergeInfoText;
 	
+	public static String WorkInProgressPage_0;
+	public static String WorkInProgressPage_1;
+	public static String WorkInProgressPage_2;
+	public static String FetchAllMembersOperation_0;
+	public static String CacheTreeContentsOperation_0;
+	public static String CacheTreeContentsOperation_1;
+	public static String CVSMergeContext_0;
+	public static String CVSMergeContext_1;
+	public static String CVSMergeContext_2;
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, CVSUIMessages.class);
 	}
+
 }
