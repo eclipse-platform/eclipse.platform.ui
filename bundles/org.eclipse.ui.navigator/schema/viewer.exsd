@@ -72,7 +72,7 @@ extension to create the view part.
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="id" type="string" use="required">
+         <attribute name="viewerId" type="string" use="required">
             <annotation>
                <documentation>
                   The id that matches the id provides in an org.eclipse.ui.views extension.

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator.internal;
 
-import java.util.Set;
-
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -60,14 +58,10 @@ public final class NavigatorContentServiceDescriptionProvider implements
 		} else {
 			target = anElement;
 		}
-			
-
-		Set contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(target, contentService.getViewerDescriptor());
-		if (contentDescriptors.isEmpty())
-			return getDefaultStatusBarMessage(0);
-
 		String message = null;
 		ILabelProvider[] providers = contentService.findRelevantLabelProviders(target);
+		if (providers.length == 0)
+			return getDefaultStatusBarMessage(0);
 		for(int i=0; i<providers.length; i++) {
 			if(providers[i] instanceof ICommonLabelProvider) {
 				message =  ((ICommonLabelProvider)providers[i]).getDescription(target);

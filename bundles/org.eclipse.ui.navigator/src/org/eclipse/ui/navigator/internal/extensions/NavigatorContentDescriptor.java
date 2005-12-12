@@ -37,11 +37,11 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorExtensionFilter;
 import org.eclipse.ui.navigator.Priority;
 import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
+import org.eclipse.ui.navigator.internal.CustomAndExpression;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 
 /**
- * Encapsulates the
- * <code>org.eclipse.ui.navigator.navigatorContent</code>
+ * Encapsulates the <code>org.eclipse.ui.navigator.navigatorContent</code>
  * extension point.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -199,7 +199,8 @@ public final class NavigatorContentDescriptor implements
 	 * 
 	 * @param anElement
 	 *            The element that should be used for the evaluation.
-	 * @return True if and only if the extension might provide an object of this type as a child.
+	 * @return True if and only if the extension might provide an object of this
+	 *         type as a child.
 	 */
 	public boolean isPossibleChild(Object anElement) {
 
@@ -300,9 +301,14 @@ public final class NavigatorContentDescriptor implements
 			}
 		}
 		if (id == null) {
-			throw new WorkbenchException(
-					NLS.bind(CommonNavigatorMessages.Attribute_Missing_Warning, 
-							new Object [] {ATT_ID, configElement.getDeclaringExtension().getUniqueIdentifier(), configElement.getDeclaringExtension().getNamespace()} ));
+			throw new WorkbenchException(NLS.bind(
+					CommonNavigatorMessages.Attribute_Missing_Warning,
+					new Object[] {
+							ATT_ID,
+							configElement.getDeclaringExtension()
+									.getUniqueIdentifier(),
+							configElement.getDeclaringExtension()
+									.getNamespace() }));
 		}
 
 		IConfigurationElement[] children = configElement
@@ -311,42 +317,47 @@ public final class NavigatorContentDescriptor implements
 
 			children = configElement.getChildren(TAG_TRIGGER_POINTS);
 			if (children.length == 1) {
-				try {
-					enablement = ElementHandler.getDefault().create(
-							ExpressionConverter.getDefault(), children[0]);
-				} catch (CoreException e) {
-					NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
-				}
+				enablement = new CustomAndExpression(children[0]);
 			} else if (children.length > 1) {
-				throw new WorkbenchException(NLS.bind(CommonNavigatorMessages.Attribute_Missing_Warning, 
-						new Object [] {TAG_TRIGGER_POINTS, configElement.getDeclaringExtension().getUniqueIdentifier(), configElement.getDeclaringExtension().getNamespace()} ));
+				throw new WorkbenchException(NLS.bind(
+						CommonNavigatorMessages.Attribute_Missing_Warning,
+						new Object[] {
+								TAG_TRIGGER_POINTS,
+								configElement.getDeclaringExtension()
+										.getUniqueIdentifier(),
+								configElement.getDeclaringExtension()
+										.getNamespace() }));
 			}
 
 			children = configElement.getChildren(TAG_POSSIBLE_CHILDREN);
 			if (children.length == 1) {
-				try {
-					possibleChildren = ElementHandler.getDefault().create(
-							ExpressionConverter.getDefault(), children[0]);
-				} catch (CoreException e) {
-					NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
-				}
+				possibleChildren = new CustomAndExpression(children[0]);
 			} else if (children.length > 1) {
-				throw new WorkbenchException(NLS.bind(CommonNavigatorMessages.Attribute_Missing_Warning, 
-						new Object [] {TAG_POSSIBLE_CHILDREN, configElement.getDeclaringExtension().getUniqueIdentifier(), configElement.getDeclaringExtension().getNamespace()} ));
+				throw new WorkbenchException(NLS.bind(
+						CommonNavigatorMessages.Attribute_Missing_Warning,
+						new Object[] {
+								TAG_POSSIBLE_CHILDREN,
+								configElement.getDeclaringExtension()
+										.getUniqueIdentifier(),
+								configElement.getDeclaringExtension()
+										.getNamespace() }));
 			}
-		} else {
-			children = configElement.getChildren(TAG_ENABLEMENT);
-			if (children.length == 1) {
-				try {
-					enablement = ElementHandler.getDefault().create(
-							ExpressionConverter.getDefault(), children[0]);
-				} catch (CoreException e) {
-					NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
-				}
-			} else if (children.length > 1) {
-				throw new WorkbenchException(NLS.bind(CommonNavigatorMessages.Attribute_Missing_Warning, 
-						new Object [] {TAG_ENABLEMENT, configElement.getDeclaringExtension().getUniqueIdentifier(), configElement.getDeclaringExtension().getNamespace()} ));
+		} else if (children.length == 1) {
+			try {
+				enablement = ElementHandler.getDefault().create(
+						ExpressionConverter.getDefault(), children[0]);
+			} catch (CoreException e) {
+				NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
 			}
+		} else if (children.length > 1) {
+			throw new WorkbenchException(NLS.bind(
+					CommonNavigatorMessages.Attribute_Missing_Warning,
+					new Object[] {
+							TAG_ENABLEMENT,
+							configElement.getDeclaringExtension()
+									.getUniqueIdentifier(),
+							configElement.getDeclaringExtension()
+									.getNamespace() }));
 		}
 
 		contribution = new IPluginContribution() {
@@ -450,13 +461,15 @@ public final class NavigatorContentDescriptor implements
 	}
 
 	/**
-	 * The content provider could be an instance of {@link ICommonContentProvider},
-	 * but only {@link ITreeContentProvider} is required. 
+	 * The content provider could be an instance of
+	 * {@link ICommonContentProvider}, but only {@link ITreeContentProvider} is
+	 * required.
 	 * 
 	 * 
 	 * @return An instance of the Content provider defined for this extension.
-	 * @throws CoreException if an instance of the executable extension
-	 *   could not be created for any reason
+	 * @throws CoreException
+	 *             if an instance of the executable extension could not be
+	 *             created for any reason
 	 * 
 	 */
 	public ITreeContentProvider createContentProvider() throws CoreException {
@@ -467,26 +480,27 @@ public final class NavigatorContentDescriptor implements
 	/**
 	 * 
 	 * The content provider could be an instance of {@link ICommonLabelProvider},
-	 * but only {@link ILabelProvider} is required. 
+	 * but only {@link ILabelProvider} is required.
 	 * 
 	 * @return An instance of the Label provider defined for this extension
-	 * @throws CoreException if an instance of the executable extension
-	 *   could not be created for any reason
+	 * @throws CoreException
+	 *             if an instance of the executable extension could not be
+	 *             created for any reason
 	 */
 	public ILabelProvider createLabelProvider() throws CoreException {
 		return (ILabelProvider) configElement
 				.createExecutableExtension(ATT_LABEL_PROVIDER);
 	}
 
-	
 	/**
 	 * 
-	 * The action provider is an instance of {@link ICommonActionProvider}. 
+	 * The action provider is an instance of {@link ICommonActionProvider}.
 	 * Extensions may or may not define an action provider.
 	 * 
 	 * @return An instance of the Action provider defined for this extension
-	 * @throws CoreException if an instance of the executable extension
-	 *   could not be created for any reason
+	 * @throws CoreException
+	 *             if an instance of the executable extension could not be
+	 *             created for any reason
 	 * @see ICommonActionProvider
 	 */
 	public ICommonActionProvider createActionProvider() throws CoreException {
@@ -496,15 +510,15 @@ public final class NavigatorContentDescriptor implements
 		return null;
 	}
 
-	
 	/**
-	 * Extensions may or may not define a comparator. Without a 
-	 * comparator, items are sorted in the same order they are
-	 * returned from the content provider. 
+	 * Extensions may or may not define a comparator. Without a comparator,
+	 * items are sorted in the same order they are returned from the content
+	 * provider.
 	 * 
 	 * @return An instance of the Comparator defined for this extension
-	 * @throws CoreException if an instance of the executable extension
-	 *   could not be created for any reason
+	 * @throws CoreException
+	 *             if an instance of the executable extension could not be
+	 *             created for any reason
 	 */
 	public Comparator createComparator() throws CoreException {
 		if (configElement.getAttribute(ATT_SORTER) != null)

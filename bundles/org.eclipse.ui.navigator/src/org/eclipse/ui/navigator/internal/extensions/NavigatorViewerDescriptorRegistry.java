@@ -110,10 +110,7 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 		return false;
 	}
 
-	/**
-	 * @param aViewerId
-	 * @return
-	 */
+ 
 	private NavigatorViewerDescriptor getViewerDescriptor(
 			String aViewerId) {
 		NavigatorViewerDescriptor viewerDescriptor = null;

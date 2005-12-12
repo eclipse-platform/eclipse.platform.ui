@@ -104,7 +104,7 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	} 
 	 
 	public static IStatus createStatus(int severity, int aCode, String aMessage, Throwable exception) {
-		return new Status(severity, PLUGIN_ID, aCode, aMessage, exception);
+		return new Status(severity, PLUGIN_ID, aCode, aMessage != null ? aMessage : "No message.", exception); //$NON-NLS-1$
 	}
  
 	public static IStatus createErrorStatus(int aCode, String aMessage, Throwable exception) {

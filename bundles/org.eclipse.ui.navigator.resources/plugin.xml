@@ -17,7 +17,7 @@
    <extension
          point="org.eclipse.ui.navigator.viewer">
        <viewer
-       	      id="org.eclipse.ui.navigator.resourceContent"
+       	      viewerId="org.eclipse.ui.navigator.resourceContent"
        	      popupMenuId="org.eclipse.ui.navigator.resourceContent#PopupMenu" 
        	/>
        <viewerContentBinding 
@@ -99,10 +99,7 @@
             class="org.eclipse.ui.navigator.resources.internal.actions.OpenActionProvider">
 			         <enablement>
 				            <or>
-					               <adapt type="org.eclipse.core.resources.IFile" />	
-					               <adapt type="org.eclipse.core.resources.IFolder" />
-         					      <adapt type="org.eclipse.core.resources.IProject" /> 
-               <adapt type="org.eclipse.core.resources.IWorkspaceRoot" />	
+					               <adapt type="org.eclipse.core.resources.IFile" /> 	
 				            </or>
 			         </enablement>
       </actionProvider> 
@@ -110,6 +107,17 @@
             id="org.eclipse.ui.navigator.resources.PortingActions"
             class="org.eclipse.ui.navigator.resources.internal.actions.PortingActionExtension">
 			         <enablement>
+				            <or> 	
+					               <adapt type="org.eclipse.core.resources.IFolder" />
+         					      <adapt type="org.eclipse.core.resources.IProject" /> 
+               <adapt type="org.eclipse.core.resources.IWorkspaceRoot" />	
+				            </or>
+			         </enablement>
+      </actionProvider>
+      <actionProvider
+            class="org.eclipse.ui.navigator.resources.internal.actions.NewActionProvider"
+            id="org.eclipse.ui.navigator.resources.NewActions"> 
+            			         <enablement>
 				            <or>
 					               <adapt type="org.eclipse.core.resources.IFile" />	
 					               <adapt type="org.eclipse.core.resources.IFolder" />
@@ -117,7 +125,7 @@
                <adapt type="org.eclipse.core.resources.IWorkspaceRoot" />	
 				            </or>
 			         </enablement>
-      </actionProvider>
+ 			     </actionProvider>
    </extension>
     
     

@@ -42,6 +42,8 @@ public class CommonWizardRegistry {
 
 	private static final String[] NO_DESCRIPTORS = new String[0];
 
+	public static final String WIZARD_TYPE_NEW = "new"; //$NON-NLS-1$
+
 	private Map commonWizardDescriptors = new HashMap();
 
 	/**

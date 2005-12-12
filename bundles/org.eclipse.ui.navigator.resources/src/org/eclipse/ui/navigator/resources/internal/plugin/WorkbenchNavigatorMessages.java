@@ -35,6 +35,7 @@ public class WorkbenchNavigatorMessages extends NLS {
 	public static String NewProjectWizard_errorTitle;
 	public static String NewProjectAction_text;
 
+	public static String Workbench_new;
 	public static String OpenWithMenu_label;
 	
 	

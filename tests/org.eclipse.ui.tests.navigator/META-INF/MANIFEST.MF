@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundlename
-Bundle-SymbolicName: org.eclipse.ui.tests.navigator; singleton:=true
+Bundle-SymbolicName: org.eclipse.ui.tests.navigator;singleton:=true
 Bundle-Activator: org.eclipse.ui.tests.navigator.NavigatorTestsPlugin
 Bundle-Version: 3.2.0.qualifier
 Bundle-Localization: plugin
