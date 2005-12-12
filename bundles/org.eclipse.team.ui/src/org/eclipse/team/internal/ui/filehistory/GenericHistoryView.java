@@ -56,11 +56,13 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.filehistory.IFileHistory;
 import org.eclipse.team.core.filehistory.IFileRevision;
 import org.eclipse.team.core.filehistory.ITag;
+import org.eclipse.team.internal.ui.ITeamUIImages;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.filehistory.actions.OpenRevisionAction;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 
@@ -83,6 +85,7 @@ public class GenericHistoryView extends ViewPart {
 	private IAction toggleTextWrapAction;
 	private IAction toggleListAction;
 	private Action refreshAction;
+	private Action linkWithEditorAction;
 	private Action getPredecessor;
 	private Action getDirectDescendents;
 	
@@ -94,6 +97,8 @@ public class GenericHistoryView extends ViewPart {
 	private FetchLogEntriesJob fetchLogEntriesJob;
 
 	private boolean shutdown = false;
+
+	private boolean linkingEnabled;
 	
 	public static final String VIEW_ID = "org.eclipse.team.ui.GenericHistoryView"; //$NON-NLS-1$
 
@@ -191,6 +196,7 @@ public class GenericHistoryView extends ViewPart {
 	}
 
 	protected void contributeActions() {
+		TeamUIPlugin plugin = TeamUIPlugin.getPlugin();
 		
 		// Double click open action
 		openAction = new OpenRevisionAction();
@@ -201,12 +207,19 @@ public class GenericHistoryView extends ViewPart {
 			}
 		});
 		
-		refreshAction = new Action(TeamUIMessages.GenericHistoryView_Refresh, null) {
+		refreshAction = new Action(TeamUIMessages.GenericHistoryView_Refresh,  plugin.getImageDescriptor(ITeamUIImages.IMG_REFRESH)) {
 			public void run() {
 				refresh();
 			}
 		};
 		
+		linkWithEditorAction = new Action(TeamUIMessages.GenericHistoryView_LinkWithEditor, plugin.getImageDescriptor(ITeamUIImages.IMG_LINK_WITH)) { 
+			 public void run() {
+				 setLinkingEnabled(isChecked());
+			 }
+		 };
+		 linkWithEditorAction.setChecked(isLinkingEnabled());
+		 
 		getDirectDescendents = new Action(TeamUIMessages.GenericHistoryView_GetDirectDescendents, null) {
 			public void run() {
 				IFileHistory currentHistory = historyTableProvider.getIFileHistory();
@@ -264,6 +277,7 @@ public class GenericHistoryView extends ViewPart {
 		//Create the local tool bar
 		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
 		tbm.add(refreshAction);
+		tbm.add(linkWithEditorAction);
 		tbm.update(false);
         
 		//Contribute actions to popup menu
@@ -459,6 +473,57 @@ public class GenericHistoryView extends ViewPart {
         textViewer.getTextWidget().setWordWrap(wrapText);
 	}
 	
+	/**
+	 * Enabled linking to the active editor
+	 * @since 3.0
+	 */
+	public void setLinkingEnabled(boolean enabled) {
+		this.linkingEnabled = enabled;
+
+		// remember the last setting in the dialog settings		
+		//settings.setValue(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_EDITOR_LINKING, enabled);
+	
+		// if turning linking on, update the selection to correspond to the active editor
+		if (enabled) {
+			editorActivated(getSite().getPage().getActiveEditor());
+		}
+	}
+	
+	/**
+	 * An editor has been activated.  Fetch the history if the file is shared and the history view
+	 * is visible in the current page.
+	 * 
+	 * @param editor the active editor
+	 */
+	protected void editorActivated(IEditorPart editor) {
+		// Only fetch contents if the view is shown in the current page.
+		if (editor == null || !isLinkingEnabled() || !checkIfPageIsVisible()) {
+			return;
+		}		
+		/*IEditorInput input = editor.getEditorInput();
+		
+		if (input instanceof FileRevisionEditorInput){
+			IFile file;
+			try {
+				file = ResourceUtil.getFile(((FileRevisionEditorInput) input).getStorage().getFullPath());
+				if(file != null) {
+	                showHistory(file, false);
+	            }
+			} catch (CoreException e) {}
+		}*/
+	}
+	
+	private boolean checkIfPageIsVisible() {
+		return getViewSite().getPage().isPartVisible(this);
+	}
+	
+	/**
+	 * Returns if linking to the ative editor is enabled or disabled.
+	 * @return boolean indicating state of editor linking.
+	 */
+	private boolean isLinkingEnabled() {
+		return linkingEnabled;
+	}
 
 	private class FetchLogEntriesJob extends Job {
 		public IFileHistory fileHistory;

@@ -327,8 +327,11 @@ public class TeamUIMessages extends NLS {
 	public static String GenericHistoryView_WrapComments;
 	public static String GenericHistoryView_ShowTagViewer;
 	public static String GenericHistoryView_GenericFileHistoryFetcher;
+	public static String GenericHistoryView_LinkWithEditor;
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, TeamUIMessages.class);
 	}
+	
 }

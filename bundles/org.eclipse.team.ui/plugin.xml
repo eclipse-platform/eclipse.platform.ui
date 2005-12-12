@@ -150,7 +150,7 @@
             class="org.eclipse.team.internal.ui.filehistory.GenericHistoryView"
             icon="icons/full/obj/changeset_obj.gif"
             id="org.eclipse.team.ui.GenericHistoryView"
-            name="Generic History View (Experimental)"/>
+            name="File History View (Experimental)"/>
     <!--  <view
             name="%CompareView.name"
             icon="$nl$/icons/full/eview16/compare_view.gif"
