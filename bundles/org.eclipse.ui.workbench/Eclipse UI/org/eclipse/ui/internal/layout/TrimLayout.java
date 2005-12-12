@@ -280,7 +280,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 				if (control.getLayoutData() instanceof IWindowTrim) {
 					IWindowTrim trim = (IWindowTrim) control.getLayoutData();
 					removeTrim(trim);
-					forceLayout();
+					//forceLayout();
 				}
 			}
 		});
@@ -307,6 +307,8 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * LayoutUtil with the first piece of trim that we find...(kludge!!)
 	 */
 	protected void forceLayout() {
+		removeDisposed();
+		
 		Iterator d = fTrimDescriptors.values().iterator();
 		while (d.hasNext()) {
 			TrimDescriptor desc = (TrimDescriptor) d.next();
