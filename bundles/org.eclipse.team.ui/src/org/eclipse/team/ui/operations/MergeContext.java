@@ -23,6 +23,7 @@ import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 
 /**
  * A merge context that performs three-way merges using the {@link IStreamMerger}
@@ -76,7 +77,7 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
 				if (merger == null)
 					merger = CompareUI.createStreamMerger(TXT_EXTENTION);
 				if (merger == null) {
-					result[0] = new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Auto-merge support for {0} is not available.", new String[] { file.getFullPath().toString() }), null);
+					result[0] = new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind(TeamUIMessages.MergeContext_0, new String[] { file.getFullPath().toString() }), null);
 					return;
 				}
 				result[0] = merge(merger, delta, monitor);
@@ -190,7 +191,7 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
         try {
             return new BufferedInputStream(new FileInputStream(tmpFile));
         } catch (FileNotFoundException e) {
-            throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Could not read from temporary file {0}: {1}", new String[] { tmpFile.getAbsolutePath(), e.getMessage() }), e));
+            throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind(TeamUIMessages.MergeContext_1, new String[] { tmpFile.getAbsolutePath(), e.getMessage() }), e));
         }
     }
 
@@ -221,7 +222,7 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeCo
         try {
             return new BufferedOutputStream(new FileOutputStream(tmpFile));
         } catch (FileNotFoundException e) {
-            TeamPlugin.log(IStatus.ERROR, NLS.bind("Could not open temporary file {0} for writing: {1}", new String[] { tmpFile.getAbsolutePath(), e.getMessage() }), e);
+            TeamPlugin.log(IStatus.ERROR, NLS.bind("Could not open temporary file {0} for writing: {1}", new String[] { tmpFile.getAbsolutePath(), e.getMessage() }), e); //$NON-NLS-1$
             return new ByteArrayOutputStream();
         }
     }

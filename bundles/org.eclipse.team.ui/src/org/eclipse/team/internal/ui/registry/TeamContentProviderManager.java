@@ -36,7 +36,7 @@ public class TeamContentProviderManager {
 			boolean enable = TeamContentProviderManager.getInstance().isTeamContentProvider(descriptor.getId());
 			NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, descriptor.getId(), enable);
 		}
-		NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, "org.eclipse.team.ui.navigatorContent", true);
+		NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, "org.eclipse.team.ui.navigatorContent", true); //$NON-NLS-1$
 	}
 	
 	public static TeamContentProviderManager getInstance() {
@@ -68,7 +68,7 @@ public class TeamContentProviderManager {
 			TeamContentProviderDescriptor descriptor = descriptors[i];
 			result.add(descriptor.getContentExtensionId());
 		}
-		result.add("org.eclipse.team.ui.navigatorContent");
+		result.add("org.eclipse.team.ui.navigatorContent"); //$NON-NLS-1$
 		return (String[]) result.toArray(new String[result.size()]);
 	}
 	

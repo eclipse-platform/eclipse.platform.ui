@@ -127,7 +127,7 @@ public class ModelSynchronizeParticipant extends
 	public ModelSynchronizeParticipant(ISynchronizationContext context, String name) {
 		initializeContext(context);
 		try {
-			setInitializationData(TeamUI.getSynchronizeManager().getParticipantDescriptor("org.eclipse.team.ui.synchronization_context_synchronize_participant"));
+			setInitializationData(TeamUI.getSynchronizeManager().getParticipantDescriptor("org.eclipse.team.ui.synchronization_context_synchronize_participant")); //$NON-NLS-1$
 		} catch (CoreException e) {
 			TeamUIPlugin.log(e);
 		}

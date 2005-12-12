@@ -23,8 +23,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.SaveablePartDialog;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ICompareAdapter;
@@ -146,7 +145,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	private void promptForNoChanges() {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-				MessageDialog.openInformation(getShell(), "No Incoming Changes", "There are no incoming changes for the selected elements");
+				MessageDialog.openInformation(getShell(), TeamUIMessages.ResourceMappingMergeOperation_0, TeamUIMessages.ResourceMappingMergeOperation_1);
 			};
 		});
 	}
@@ -162,7 +161,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 					private Button doneButton;
 
 					protected void createButtonsForButtonBar(Composite parent) {
-						doneButton = createButton(parent, 10, "&Done", true); 
+						doneButton = createButton(parent, 10, TeamUIMessages.ResourceMappingMergeOperation_2, true); 
 						doneButton.setEnabled(true); 
 						// Don't call super because we don't want the OK button to appear
 					}

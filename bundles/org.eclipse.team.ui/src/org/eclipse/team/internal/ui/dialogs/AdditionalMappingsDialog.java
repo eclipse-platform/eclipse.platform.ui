@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 
 public class AdditionalMappingsDialog extends DetailsDialog {
 
@@ -29,7 +30,7 @@ public class AdditionalMappingsDialog extends DetailsDialog {
     }
 
 	protected void createMainDialogArea(Composite parent) {
-        createWrappingLabel(parent, "Additional elements must be included in the current operation due to the relationship between the selected elements and the files in which they are stored.");
+        createWrappingLabel(parent, TeamUIMessages.AdditionalMappingsDialog_0);
         createSelectedMappingsArea(parent);
         createAllMappingsArea(parent);
     }
@@ -40,7 +41,7 @@ public class AdditionalMappingsDialog extends DetailsDialog {
     private void createSelectedMappingsArea(Composite parent) {
         Composite composite = createComposite(parent);
         selectedMappingsArea = ResourceMappingHierarchyArea.create(new ScopeGenerator().asInputScope(scope), null /* no context */);
-        selectedMappingsArea.setDescription("These are the elements you selected");
+        selectedMappingsArea.setDescription(TeamUIMessages.AdditionalMappingsDialog_1);
         selectedMappingsArea.createArea(composite);
         // Create a separator between the two sets of buttons
         Label seperator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -53,7 +54,7 @@ public class AdditionalMappingsDialog extends DetailsDialog {
     private void createAllMappingsArea(Composite parent) {
         Composite composite = createComposite(parent);
         allMappingsArea = ResourceMappingHierarchyArea.create(scope, context);
-        allMappingsArea.setDescription("These are the elements that will be included in the operation");
+        allMappingsArea.setDescription(TeamUIMessages.AdditionalMappingsDialog_2);
         //allMappingsArea.addPropertyChangeListener(this);
         allMappingsArea.createArea(composite);
     }

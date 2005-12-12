@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ui.registry;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 
 /**
@@ -40,7 +41,7 @@ public class TeamContentProviderDescriptor {
 		//read the extension
 		id = extension.getUniqueIdentifier();
 		if (id == null)
-			fail(NLS.bind("An extension registered with extension point {0} is missing an identifier", new String[] {TeamContentProviderManager.PT_TEAM_CONTENT_PROVIDERS}));
+			fail(NLS.bind(TeamUIMessages.TeamContentProviderDescriptor_0, new String[] {TeamContentProviderManager.PT_TEAM_CONTENT_PROVIDERS}));
 		IConfigurationElement[] elements = extension.getConfigurationElements();
 		int count = elements.length;
 		for (int i = 0; i < count; i++) {
@@ -52,9 +53,9 @@ public class TeamContentProviderDescriptor {
 			}
 		}
 		if (modelProviderId == null)
-			fail(NLS.bind("Attribute {0} of extension point {1} missing for extension with identifier {2}", new String[] { ATT_MODEL_PROVIDER_ID, TAG_TEAM_CONTENT_PROVIDER, id}));
+			fail(NLS.bind(TeamUIMessages.TeamContentProviderDescriptor_1, new String[] { ATT_MODEL_PROVIDER_ID, TAG_TEAM_CONTENT_PROVIDER, id}));
 		if (contentExtensionId == null)
-			fail(NLS.bind("Attribute {0} of extension point {1} missing for extension with identifier {2}", new String[] { ATT_CONTENT_EXTENSION_ID, TAG_TEAM_CONTENT_PROVIDER, id}));
+			fail(NLS.bind(TeamUIMessages.TeamContentProviderDescriptor_2, new String[] { ATT_CONTENT_EXTENSION_ID, TAG_TEAM_CONTENT_PROVIDER, id}));
 	}
 	
 	protected void fail(String reason) throws CoreException {

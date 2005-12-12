@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.mapping.IMergeContext;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.operations.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -62,7 +63,7 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 	protected void promptForMergeFailure() {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-				MessageDialog.openInformation(getConfiguration().getSite().getShell(), "Merge Failures", "Some changes could not be auto-merged. Please merge them manually.");
+				MessageDialog.openInformation(getConfiguration().getSite().getShell(), TeamUIMessages.MergeIncomingChangesAction_0, TeamUIMessages.MergeIncomingChangesAction_1);
 			};
 		});
 	}
@@ -70,7 +71,7 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 	private void promptForNoChanges() {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-				MessageDialog.openInformation(getConfiguration().getSite().getShell(), "Merge Success", "All changes were merged successfully");
+				MessageDialog.openInformation(getConfiguration().getSite().getShell(), TeamUIMessages.MergeIncomingChangesAction_2, TeamUIMessages.MergeIncomingChangesAction_3);
 			};
 		});
 	}
