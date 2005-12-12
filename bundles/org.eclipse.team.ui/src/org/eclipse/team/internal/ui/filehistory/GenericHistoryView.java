@@ -40,6 +40,7 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
@@ -93,8 +94,6 @@ public class GenericHistoryView extends ViewPart {
 	private IAction toggleListAction;
 	private Action refreshAction;
 	private Action linkWithEditorAction;
-	private Action getPredecessor;
-	private Action getDirectDescendents;
 	
 	private SashForm sashForm;
 	private SashForm innerSashForm;
@@ -265,29 +264,7 @@ public class GenericHistoryView extends ViewPart {
 			 }
 		 };
 		 linkWithEditorAction.setChecked(isLinkingEnabled());
-		 
-		getDirectDescendents = new Action(TeamUIMessages.GenericHistoryView_GetDirectDescendents, null) {
-			public void run() {
-				IFileHistory currentHistory = historyTableProvider.getIFileHistory();
-				try {
-					entries=currentHistory.getDirectDescendents(currentSelection);
-				} catch (TeamException e) {}
-				
-				tableViewer.refresh();
-			}
-		};
-	
-		getPredecessor = new Action(TeamUIMessages.GenericHistoryView_GetPredecessor, null) {
-			public void run() {
-				IFileHistory currentHistory = historyTableProvider.getIFileHistory();
-				try {
-					entries=new IFileRevision[] {currentHistory.getPredecessor(currentSelection)};
-				} catch (TeamException e) {}
-				
-				tableViewer.refresh();
-			}
-		};
-		
+		 		
 		// Toggle text visible action
 		final IPreferenceStore store = TeamUIPlugin.getPlugin().getPreferenceStore();
 		toggleTextAction = new Action(TeamUIMessages.GenericHistoryView_ShowCommentViewer) { 
@@ -350,8 +327,6 @@ public class GenericHistoryView extends ViewPart {
 
 	private void fillTableMenu(IMenuManager manager) {
 		// file actions go first (view file)
-		manager.add(getPredecessor);
-		manager.add(getDirectDescendents);
 		manager.add(new Separator("additions")); //$NON-NLS-1$
 		manager.add(refreshAction);
 		manager.add(new Separator("additions-end")); //$NON-NLS-1$
@@ -398,6 +373,7 @@ public class GenericHistoryView extends ViewPart {
 						try {
 							fetchLogEntriesJob.join();
 						} catch (InterruptedException e) {
+							TeamUIPlugin.log(new TeamException(NLS.bind(TeamUIMessages.GenericHistoryView_ErrorFetchingEntries, new String[] { "" }), e));   //$NON-NLS-1$
 						}
 					}
 					fetchLogEntriesJob.setRemoteFile(remoteFile);
@@ -488,7 +464,7 @@ public class GenericHistoryView extends ViewPart {
 			} catch (TeamException e) {
 
 			}
-			historyTableProvider.setFile(fileHistory);
+			historyTableProvider.setFile(fileHistory, file);
 			tableViewer.setInput(fileHistory);
 			setContentDescription(newfile.getName());
 		} else {
@@ -576,6 +552,23 @@ public class GenericHistoryView extends ViewPart {
 		return linkingEnabled;
 	}
 
+	public void dispose() {
+		shutdown = true;
+
+		if(fetchLogEntriesJob != null) {
+			if(fetchLogEntriesJob.getState() != Job.NONE) {
+				fetchLogEntriesJob.cancel();
+				try {
+					fetchLogEntriesJob.join();
+				} catch (InterruptedException e) {
+					TeamUIPlugin.log(new TeamException(NLS.bind(TeamUIMessages.GenericHistoryView_ErrorFetchingEntries, new String[] { "" }), e));   //$NON-NLS-1$
+				}
+			}
+		}
+		getSite().getPage().removePartListener(partListener);
+		getSite().getPage().removePartListener(partListener2);
+	}	
+	
 	private class FetchLogEntriesJob extends Job {
 		public IFileHistory fileHistory;
 
@@ -611,7 +604,7 @@ public class GenericHistoryView extends ViewPart {
 		public IFileHistory getRemoteFile() {
 			return this.fileHistory;
 		}
-	};
+	}
     
 	/**
 	 * A default content provider to prevent subclasses from

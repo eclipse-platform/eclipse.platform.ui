@@ -55,19 +55,15 @@ public class GenericHistoryDropAdapter extends ViewerDropAdapter {
     		if (sources.length == 0) return false;
     		IResource resource = sources[0];
     		if (!(resource instanceof IFile)) return false;
-    		view.showHistory(resource, true /* fetch */);
+    			view.showHistory(resource, true /* fetch */);
     		return true;
-        } /*else if( data instanceof ICVSRemoteFile) {
-            view.showHistory((ICVSRemoteFile) data, true  fetch );
-            return true;
-        }*/
+        }
         return false;
 	}
 	
 	public boolean validateDrop(Object target, int operation, TransferData transferType) {
         if (transferType != null && 
-            ResourceTransfer.getInstance().isSupportedType(transferType) /*||
-             CVSResourceTransfer.getInstance().isSupportedType(transferType))*/) {
+            ResourceTransfer.getInstance().isSupportedType(transferType)) {
 			return true;
 		}
 		return false;

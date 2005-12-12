@@ -334,6 +334,7 @@ public class TeamUIMessages extends NLS {
 	public static String GenericHistoryTableProvider_Comment;
 	public static String OpenRevisionAction_DeletedRevisionTitle;
 	public static String OpenRevisionAction_DeletedRevisionMessage;
+	public static String GenericHistoryView_ErrorFetchingEntries;
 	
 	static {
 		// load message values from bundle file

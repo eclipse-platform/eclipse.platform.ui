@@ -14,7 +14,9 @@ package org.eclipse.team.internal.ui.filehistory;
 import java.text.DateFormat;
 import java.util.Date;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -32,18 +34,22 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.filehistory.IFileHistory;
 import org.eclipse.team.core.filehistory.IFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 
 public class GenericHistoryTableProvider {
 
-	private IFileHistory currentFile;
+	private IFileHistory currentFileHistory;
+	private IFile currentFile;
 	private String currentRevision;
 	private TableViewer viewer;
 	private Font currentRevisionFont;
@@ -84,12 +90,11 @@ public class GenericHistoryTableProvider {
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */
 		public Color getForeground(Object element) {
-		/*	ILogEntry entry = adaptToLogEntry(element);
+			IFileRevision entry = adaptToFileRevision(element);
 			if (entry.isDeletion())  {
 				return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-			} else  {
-				return null;
-			}*/
+			} 
+			
 			return null;
 		}
 		/* (non-Javadoc)
@@ -103,12 +108,12 @@ public class GenericHistoryTableProvider {
 		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 		 */
 		public Font getFont(Object element) {
-	/*		ILogEntry entry = adaptToLogEntry(element);
+			IFileRevision entry = adaptToFileRevision(element);
 			if (entry == null)
 				return null;
-			String revision = entry.getRevision();
-			String currentRevision = getCurrentRevision();
-			if (currentRevision != null && currentRevision.equals(revision)) {
+			String revision = entry.getContentIndentifier();
+			String tempCurrentRevision = getCurrentRevision();
+			if (tempCurrentRevision != null && tempCurrentRevision.equals(revision)) {
 				if (currentRevisionFont == null) {
 					Font defaultFont = JFaceResources.getDefaultFont();
 					FontData[] data = defaultFont.getFontData();
@@ -118,7 +123,7 @@ public class GenericHistoryTableProvider {
 					currentRevisionFont = new Font(viewer.getTable().getDisplay(), data);
 				}
 				return currentRevisionFont;
-			}*/
+			}
 			return null;
 		}
 	}
@@ -245,15 +250,15 @@ public class GenericHistoryTableProvider {
 		viewer.setLabelProvider(new HistoryLabelProvider());
 		
 		// By default, reverse sort by revision.
-		HistorySorter sorter = new HistorySorter(COL_AUTHOR);
+		HistorySorter sorter = new HistorySorter(COL_REVISIONID);
 		sorter.setReversed(true);
 		viewer.setSorter(sorter);
 		
 		table.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				/*if(currentRevisionFont != null) {
+				if(currentRevisionFont != null) {
 					currentRevisionFont.dispose();
-				}*/
+				}
 			}
 		});
 		
@@ -331,12 +336,28 @@ public class GenericHistoryTableProvider {
 		};
 	}
 	
-	public void setFile(IFileHistory file)  {
-		this.currentFile = file;
-		//this.currentRevision = getRevision(this.currentFile);
+	public void setFile(IFileHistory fileHistory, IFile file)  {
+		this.currentFileHistory = fileHistory;
+		this.currentFile= file;
+		this.currentRevision = findCurrentRevision();
+	}
+	
+	private String findCurrentRevision() {
+		
+		RepositoryProvider teamProvider = RepositoryProvider.getProvider(currentFile.getProject());
+		IFileRevision fileRevision = teamProvider.getFileHistoryProvider().getWorkspaceFileRevision(currentFile);
+		
+		if (fileRevision != null )
+			return fileRevision.getContentIndentifier();
+		
+		return null;
 	}
 
 	public IFileHistory getIFileHistory() {
-		return this.currentFile;
+		return this.currentFileHistory;
+	}
+	
+	public String getCurrentRevision() {
+		return currentRevision;
 	}
 }

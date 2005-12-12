@@ -35,5 +35,15 @@ public interface IFileHistoryProvider {
 	 * @return the history of the file
 	 */
 	public abstract IFileHistory getFileHistoryFor(IResource resource, IProgressMonitor monitor);
+	
+
+	/**
+	 * Returns the file revision of the passed in resourrce or null if that file revision cannot be
+	 * determined
+	 * 
+	 * @param resource
+	 * @return the file revision belonging to the passed in resource or null
+	 */
+	public abstract IFileRevision getWorkspaceFileRevision(IResource resource);
 
 }

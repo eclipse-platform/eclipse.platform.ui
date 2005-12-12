@@ -11,17 +11,8 @@
 
 package org.eclipse.team.internal.core;
 
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.filehistory.IFileHistory;
-import org.eclipse.team.core.filehistory.IFileRevision;
 
 public abstract class FileHistory implements IFileHistory {
 
-	public abstract IFileRevision[] getFileRevisions() throws TeamException;
-
-	public abstract IFileRevision getFileRevision(String id) throws TeamException;
-
-	public abstract IFileRevision getPredecessor(IFileRevision revision) throws TeamException;
-
-	public abstract IFileRevision[] getDirectDescendents(IFileRevision revision) throws TeamException;
 }

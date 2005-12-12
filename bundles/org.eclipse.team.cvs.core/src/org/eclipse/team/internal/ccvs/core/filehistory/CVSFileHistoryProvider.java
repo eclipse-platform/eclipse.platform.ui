@@ -14,13 +14,18 @@ package org.eclipse.team.internal.ccvs.core.filehistory;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.filehistory.IFileHistory;
-import org.eclipse.team.core.filehistory.IFileHistoryProvider;
+import org.eclipse.team.core.filehistory.IFileRevision;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.core.FileHistoryProvider;
 
-public class CVSFileHistoryProvider implements IFileHistoryProvider {
+public class CVSFileHistoryProvider extends FileHistoryProvider {
 
 	/**
 	 * see <code>org.eclipse.team.core.IFileHistoryProvider</code>
@@ -39,6 +44,23 @@ public class CVSFileHistoryProvider implements IFileHistoryProvider {
 		} catch (CVSException e) {	
 		} finally {
 			monitor.done();
+		}
+		
+		return null;
+	}
+
+	public IFileRevision getWorkspaceFileRevision(IResource resource) {
+		
+		ICVSRemoteResource remoteResource;
+		try {
+			remoteResource = CVSWorkspaceRoot.getRemoteResourceFor(resource);
+			if (remoteResource != null && 
+				remoteResource instanceof RemoteFile){
+				ResourceSyncInfo syncInfo = remoteResource.getSyncInfo();
+				LogEntry cvsEntry = new LogEntry((RemoteFile) remoteResource, syncInfo.getRevision(), "", null,"","", new CVSTag[0]);  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				return new CVSFileRevision(cvsEntry);
+			}
+		} catch (CVSException e) {
 		}
 		
 		return null;
