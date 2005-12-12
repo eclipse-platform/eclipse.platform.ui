@@ -27,6 +27,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -86,6 +87,11 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 					long address = memBlk.getStartAddress();
 					text = Long.toHexString(address);
 				}
+				
+				ILabelDecorator decorator = (ILabelDecorator)memBlk.getAdapter(ILabelDecorator.class);
+				if (decorator != null)
+					text = decorator.decorateText(text, memBlk);
+				
 				super.setText(text);
 				
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(this, DebugUIPlugin.getUniqueIdentifier() + ".switchToAction_context"); //$NON-NLS-1$

@@ -602,7 +602,10 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			fVisible = visible;
 			
 			if(fVisible)
+			{
 				fTreeViewer.refresh();
+				fTreeViewer.getControl().setFocus();
+			}
 		}
 	}
 
