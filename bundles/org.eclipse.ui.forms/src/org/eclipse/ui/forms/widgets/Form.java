@@ -29,11 +29,14 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
 import org.eclipse.ui.internal.forms.widgets.FormsResources;
 
@@ -45,7 +48,13 @@ import org.eclipse.ui.internal.forms.widgets.FormsResources;
  * capability.
  * <p>
  * Form can have a title if set. If not set, title area will not be left empty -
- * form body will be resized to fill the entire form.
+ * form body will be resized to fill the entire form. In addition, an optional
+ * title image can be set and is rendered to the left of the title.
+ * <p>
+ * Since 3.2, the form supports status messages. These messages can have
+ * various severity (error, warning, info or none). Message tray can 
+ * be minimized and later restored by the user, but can only be
+ * closed programmatically.
  * <p>
  * Form can have a background image behind the title text. The image can be
  * painted as-is, or tiled as many times as needed to fill the title area.
@@ -81,11 +90,13 @@ public class Form extends Composite {
 	private int TITLE_VMARGIN = 5;
 
 	private int TITLE_GAP = 5;
-	
-	private static final int S_TILED = 1 <<1;
-	private static final int S_CLIPPED = 1<<2;
-	private static final int S_SEPARATOR = 1<<3;
-	
+
+	private static final int S_TILED = 1 << 1;
+
+	private static final int S_CLIPPED = 1 << 2;
+
+	private static final int S_SEPARATOR = 1 << 3;
+
 	private int style = S_CLIPPED | SWT.LEFT;
 
 	private Image backgroundImage;
@@ -106,8 +117,6 @@ public class Form extends Composite {
 
 	private SizeCache toolbarCache = new SizeCache();
 
-	private SizeCache messageAreaCache = new SizeCache();
-
 	private FormText selectionText;
 
 	private Rectangle titleRect;
@@ -123,32 +132,135 @@ public class Form extends Composite {
 	}
 
 	private class MessageArea extends Composite {
+		static final int BUTTON_BORDER = SWT.COLOR_WIDGET_DARK_SHADOW;
+
+		static final int BUTTON_FILL = SWT.COLOR_LIST_BACKGROUND;
+
+		static final int BUTTON_SIZE = 18;
+
+		private Image normal;
+
+		private Image hot;
+
+		static final int CLOSED = 0;
+
+		static final int OPENNING = 1;
+
+		static final int OPEN = 2;
+
+		static final int CLOSING = 3;
+
 		private CLabel label;
 
-		private boolean inTransition;
+		private ImageHyperlink rlink;
+
+		private ImageHyperlink mlink;
+
+		private int state = CLOSED;
+
+		private boolean minimized;
 
 		private boolean animationStart;
 
 		public MessageArea(Composite parent, int style) {
 			super(parent, SWT.NULL);
-
-			GridLayout layout = new GridLayout();
-			setLayout(layout);
-			layout.marginHeight = 2;
-			layout.marginWidth = 2;
-			label = new CLabel(this, SWT.NULL);
-			GridData gd = new GridData(GridData.FILL_BOTH);
-			label.setLayoutData(gd);
+			Composite container = new Composite(this, SWT.NULL);
+			GridLayout glayout = new GridLayout();
+			glayout.numColumns = 2;
+			glayout.marginWidth = 0;
+			glayout.marginHeight = 0;
+			container.setLayout(glayout);
+			label = new CLabel(container, SWT.NULL);
+			label.setLayoutData(new GridData(GridData.FILL_BOTH));
+			mlink = new ImageHyperlink(container, SWT.NULL);
+			mlink.addHyperlinkListener(new HyperlinkAdapter() {
+				public void linkActivated(HyperlinkEvent e) {
+					setMinimized(true);
+				}
+			});
+			mlink.setToolTipText("Minimize");
+			rlink = new ImageHyperlink(this, SWT.NULL);
+			rlink.addHyperlinkListener(new HyperlinkAdapter() {
+				public void linkActivated(HyperlinkEvent e) {
+					setMinimized(false);
+				}
+			});
+			rlink.setVisible(false);
+			rlink.setToolTipText("Restore");
+			createMinimizedImages();
 			addPaintListener(new PaintListener() {
 				public void paintControl(PaintEvent e) {
 					onPaint(e);
 				}
 			});
+			addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					disposeMinimizeImages();
+				}
+			});
+			setLayout(new Layout() {
+				public void layout(Composite parent, boolean changed) {
+					Rectangle carea = getClientArea();
+					if (minimized) {
+						rlink.setBounds(carea.x, carea.y, carea.width,
+								carea.height);
+					} else {
+						label.getParent().setBounds(carea.x + 2, carea.y + 2,
+								carea.width - 4, carea.height - 4);
+					}
+				}
+
+				public Point computeSize(Composite parent, int wHint,
+						int hHint, boolean changed) {
+					Point size = new Point(0, 0);
+					if (minimized)
+						size = rlink.computeSize(wHint, hHint, changed);
+					else
+						size = label.getParent().computeSize(wHint, hHint,
+								changed);
+					if (!minimized) {
+						size.x += 4;
+						size.y += 4;
+					}
+					return size;
+				}
+			});
+		}
+
+		public void setMinimized(boolean minimized) {
+			this.minimized = minimized;
+			if (minimized) {
+				rlink.setImage(label.getImage());
+			}
+			rlink.setVisible(minimized);
+			label.getParent().setVisible(!minimized);
+			layout();
+			Form.this.layout();
+			Form.this.redraw();
+		}
+
+		public boolean isMinimized() {
+			return minimized;
+		}
+
+		public synchronized void setState(int state) {
+			this.state = state;
+			if (state == OPENNING)
+				setVisible(true);
+			else if (state == CLOSED)
+				setVisible(false);
+		}
+
+		public int getState() {
+			return state;
 		}
 
 		public void setBackground(Color bg) {
 			super.setBackground(bg);
 			label.setBackground(bg);
+			mlink.setBackground(bg);
+			label.getParent().setBackground(bg);
+			createMinimizedImages();
 		}
 
 		public void setText(String text) {
@@ -160,14 +272,12 @@ public class Form extends Composite {
 		}
 
 		public boolean isInTransition() {
-			return inTransition;
-		}
-
-		public synchronized void setInTransition(boolean inTransition) {
-			this.inTransition = inTransition;
+			return state == OPENNING || state == CLOSING;
 		}
 
 		private void onPaint(PaintEvent e) {
+			if (minimized)
+				return;
 			Rectangle carea = getClientArea();
 			e.gc.setForeground(getForeground());
 			e.gc.drawPolyline(new int[] { carea.x, carea.y + carea.height - 1,
@@ -183,7 +293,54 @@ public class Form extends Composite {
 
 		public void setAnimationStart(boolean animationStart) {
 			this.animationStart = animationStart;
-			inTransition = false;
+		}
+
+		private void createMinimizedImages() {
+			disposeMinimizeImages();
+			normal = new Image(getDisplay(), BUTTON_SIZE, BUTTON_SIZE);
+			GC gc = new GC(normal);
+			paintNormalImage(getDisplay(), gc);
+			gc.dispose();
+			hot = new Image(getDisplay(), BUTTON_SIZE, BUTTON_SIZE);
+			gc = new GC(hot);
+			paintHotImage(getDisplay(), gc);
+			gc.dispose();
+			mlink.setImage(normal);
+			mlink.setHoverImage(hot);
+		}
+
+		private void disposeMinimizeImages() {
+			if (normal != null) {
+				normal.dispose();
+				normal = null;
+			}
+			if (hot != null) {
+				hot.dispose();
+				hot = null;
+			}
+		}
+
+		private void paintNormalImage(Display display, GC gc) {
+			gc.setForeground(display.getSystemColor(BUTTON_BORDER));
+			// gc.setBackground(display.getSystemColor(BUTTON_FILL));
+			gc.setBackground(getBackground());
+			paintInnerContent(gc);
+		}
+
+		private void paintHotImage(Display display, GC gc) {
+			gc.setForeground(display.getSystemColor(BUTTON_BORDER));
+			// gc.setBackground(display.getSystemColor(BUTTON_FILL));
+			// gc.setBackground(getBackground());
+			// gc.fillRoundRectangle(0, 0, BUTTON_SIZE, BUTTON_SIZE, 6, 6);
+			gc.drawRoundRectangle(0, 0, BUTTON_SIZE - 1, BUTTON_SIZE - 1, 6, 6);
+			paintInnerContent(gc);
+		}
+
+		private void paintInnerContent(GC gc) {
+			int x = BUTTON_SIZE / 2 - 5;
+			int y = 2;
+			gc.fillRectangle(x, y, 9, 3);
+			gc.drawRectangle(x, y, 9, 3);
 		}
 	}
 
@@ -219,12 +376,23 @@ public class Form extends Composite {
 					height = tbsize.y;
 				}
 			}
+			int iwidth = 0;
+			int iheight = 0;
 			if (image != null) {
 				Rectangle ibounds = image.getBounds();
+				iheight = ibounds.height;
+				iwidth = ibounds.width;
+			}
+			if (messageArea != null && messageArea.isMinimized()) {
+				Point rsize = messageArea.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				iwidth = Math.max(iwidth, rsize.x);
+				iheight = Math.max(iheight, rsize.y);
+			}
+			if (iwidth > 0) {
 				if (text != null)
 					width += TITLE_GAP;
-				width += ibounds.width;
-				height = Math.max(height, ibounds.height);
+				width += iwidth;
+				height = Math.max(height, iheight);
 			}
 			if (text != null) {
 				GC gc = new GC(composite);
@@ -243,9 +411,8 @@ public class Form extends Composite {
 				gc.dispose();
 			}
 			if (messageArea != null) {
-				messageAreaCache.setControl(messageArea);
-				Point masize = messageAreaCache.computeSize(SWT.DEFAULT,
-						SWT.DEFAULT);
+				Point masize = messageArea
+						.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				height = Math.max(masize.y, height);
 			}
 			if (backgroundImage != null && !isBackgroundImageClipped()) {
@@ -279,7 +446,9 @@ public class Form extends Composite {
 			int height = 0;
 			Point tbsize = null;
 			int twidth = carea.width - TITLE_HMARGIN * 2;
-			if ((image != null || text != null) && toolBarManager != null) {
+			if ((image != null || text != null || (messageArea != null && messageArea
+					.isMinimized()))
+					&& toolBarManager != null) {
 				ToolBar toolBar = toolBarManager.getControl();
 				if (toolBar != null) {
 					toolbarCache.setControl(toolBar);
@@ -293,12 +462,23 @@ public class Form extends Composite {
 				twidth -= tbsize.x + TITLE_GAP;
 			}
 			int tx = TITLE_HMARGIN;
+			int iwidth = 0;
 			if (image != null) {
 				Rectangle ibounds = image.getBounds();
-				twidth -= ibounds.width;
+				iwidth = ibounds.width;
+			}
+			Point msize = null;
+			int mx = 0;
+			if (messageArea != null && messageArea.isMinimized()) {
+				msize = messageArea.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				iwidth = Math.max(msize.x, iwidth);
+				mx = tx;
+			}
+			if (iwidth > 0) {
+				tx += iwidth + TITLE_GAP;
 				if (text != null)
 					twidth -= TITLE_GAP;
-				tx += ibounds.width + TITLE_GAP;
+				twidth -= iwidth;
 			}
 			if (text != null) {
 				GC gc = new GC(composite);
@@ -309,6 +489,12 @@ public class Form extends Composite {
 					height = Math.max(tbsize.y, height);
 				titleRect = new Rectangle(tx, TITLE_VMARGIN, twidth, height);
 			}
+
+			if (msize != null) {
+				messageArea.setBounds(mx, titleRect.y + titleRect.height / 2
+						- msize.y / 2, msize.x, msize.y);
+			}
+
 			if (backgroundImage != null && !isBackgroundImageClipped()) {
 				Rectangle ibounds = backgroundImage.getBounds();
 				if (height < ibounds.height)
@@ -318,13 +504,15 @@ public class Form extends Composite {
 				height += TITLE_VMARGIN * 2;
 			if (isSeparatorVisible())
 				height += 2;
-			if (messageArea != null && !messageArea.isInTransition()
-					&& messageArea.isVisible()) {
-				messageAreaCache.setControl(messageArea);
-				Point masize = messageAreaCache.computeSize(SWT.DEFAULT,
-						SWT.DEFAULT);
-				int may = messageArea.isAnimationStart() ? height - 1 : height
-						- 1 - masize.y;
+			if (messageArea != null
+					&& !messageArea.isMinimized()
+					&& (messageArea.isAnimationStart() || !messageArea
+							.isInTransition()) && messageArea.isVisible()) {
+				Point masize = messageArea
+						.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				int may = messageArea.isAnimationStart()
+						&& messageArea.getState() == MessageArea.OPENNING ? height - 1
+						: height - 1 - masize.y;
 				int mawidth = carea.width - TITLE_HMARGIN - TITLE_HMARGIN;
 				if (tbsize != null)
 					mawidth -= tbsize.x + TITLE_GAP;
@@ -660,7 +848,7 @@ public class Form extends Composite {
 	 * @return Returns the backgroundImageTiled.
 	 */
 	public boolean isBackgroundImageTiled() {
-		return (style & S_TILED)!=0;
+		return (style & S_TILED) != 0;
 	}
 
 	/**
@@ -683,11 +871,11 @@ public class Form extends Composite {
 	 * @since 3.1
 	 */
 	public int getBackgroundImageAlignment() {
-		if ((style & SWT.LEFT)>0)
+		if ((style & SWT.LEFT) > 0)
 			return SWT.LEFT;
-		if ((style & SWT.RIGHT)>0)
+		if ((style & SWT.RIGHT) > 0)
 			return SWT.RIGHT;
-		if ((style & SWT.CENTER)>0)
+		if ((style & SWT.CENTER) > 0)
 			return SWT.CENTER;
 		return SWT.NULL;
 	}
@@ -709,7 +897,7 @@ public class Form extends Composite {
 	 * @since 3.1
 	 */
 	public boolean isBackgroundImageClipped() {
-		return (style & S_CLIPPED) !=0;
+		return (style & S_CLIPPED) != 0;
 	}
 
 	/**
@@ -734,10 +922,11 @@ public class Form extends Composite {
 	/**
 	 * TODO add javadoc experimental - do not use yet
 	 * 
-	 * @return <code>true</code> if the receiver is a visible separator, <code>false</code> otherwise
+	 * @return <code>true</code> if the receiver is a visible separator,
+	 *         <code>false</code> otherwise
 	 */
 	public boolean isSeparatorVisible() {
-		return (style&S_SEPARATOR)!=0;
+		return (style & S_SEPARATOR) != 0;
 	}
 
 	/**
@@ -751,8 +940,7 @@ public class Form extends Composite {
 	}
 
 	/**
-	 * experimental - do not use yet
-	 * TODO add javadoc
+	 * experimental - do not use yet TODO add javadoc
 	 */
 
 	public Color getSeparatorColor() {
@@ -760,8 +948,7 @@ public class Form extends Composite {
 	}
 
 	/**
-	 * experimental - do not use yet
-	 * TODO add javadoc
+	 * experimental - do not use yet TODO add javadoc
 	 */
 	public void setSeparatorColor(Color separatorColor) {
 		this.separatorColor = separatorColor;
@@ -834,51 +1021,77 @@ public class Form extends Composite {
 	}
 
 	private void setMessageAreaVisible(boolean visible) {
-		if (messageArea.isInTransition() && visible)
-			return;
-		if (!visible) {
-			messageArea.setInTransition(false);
-			messageArea.getParent().moveBelow(body);
-			messageArea.setVisible(false);
-			layout(true);
-		} else {
-			messageArea.setAnimationStart(true);
-			messageArea.setVisible(true);
-			layout(true);
-			messageArea.setInTransition(true);
-			Rectangle startBounds = messageArea.getBounds();
-			final int endY = startBounds.y - startBounds.height;
-			Runnable runnable = new Runnable() {
-				public void run() {
-					final boolean[] result = new boolean[1];
-					for (;;) {
-						getDisplay().syncExec(new Runnable() {
-							public void run() {
-								Point loc = messageArea.getLocation();
+		if (messageArea.isMinimized()) {
+			if (!visible)
+				messageArea.setState(MessageArea.CLOSED);
+			messageArea.setMinimized(false);
+		}
+		// check if we need to do anything
+		switch (messageArea.getState()) {
+		case MessageArea.OPENNING:
+		case MessageArea.OPEN:
+			if (visible)
+				return;
+			break;
+		case MessageArea.CLOSING:
+		case MessageArea.CLOSED:
+			if (!visible)
+				return;
+			break;
+		}
+		// we do
+		messageArea.setAnimationStart(true);
+		messageArea.setState(visible ? MessageArea.OPENNING
+				: MessageArea.CLOSING);
+		messageArea.getParent().moveBelow(body);
+		layout(true);
+		Rectangle startBounds = messageArea.getBounds();
+		final int endY = visible ? startBounds.y - startBounds.height
+				: startBounds.y + startBounds.height;
+
+		Runnable runnable = new Runnable() {
+			public void run() {
+				final boolean[] result = new boolean[1];
+				for (;;) {
+					getDisplay().syncExec(new Runnable() {
+						public void run() {
+							Point loc = messageArea.getLocation();
+							if (messageArea.getState() == MessageArea.OPENNING) {
+								// opening
 								loc.y--;
 								if (loc.y > endY)
 									messageArea.setLocation(loc);
 								else {
 									result[0] = true;
-									messageArea.setInTransition(false);
+									messageArea.setState(MessageArea.OPEN);
+									layout(true);
+								}
+							} else {
+								// closing
+								loc.y++;
+								if (loc.y < endY)
+									messageArea.setLocation(loc);
+								else {
+									result[0] = true;
+									messageArea.setState(MessageArea.CLOSED);
 									layout(true);
 								}
 							}
-						});
-						if (result[0])
-							break;
-						Thread.yield();
-						try {
-							Thread.sleep(5);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
 						}
+					});
+					if (result[0])
+						break;
+					Thread.yield();
+					try {
+						Thread.sleep(5);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				}
-			};
-			Thread t = new Thread(runnable);
-			t.start();
-		}
+			}
+		};
+		Thread t = new Thread(runnable);
+		t.start();
 	}
 }
