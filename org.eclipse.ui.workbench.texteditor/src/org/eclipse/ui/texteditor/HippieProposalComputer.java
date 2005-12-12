@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Genady Beryozkin, me@genady.org - #getSuggestions implementation copied from HippieCompleteAction
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 

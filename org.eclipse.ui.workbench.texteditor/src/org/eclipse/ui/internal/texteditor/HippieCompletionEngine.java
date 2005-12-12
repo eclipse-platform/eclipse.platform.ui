@@ -15,6 +15,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
@@ -43,6 +45,18 @@ public final class HippieCompletionEngine {
 //	private static final String COMPLETION_WORD_REGEX= "[\\p{L}[\\p{Mn}[\\p{Pc}[\\p{Nd}[\\p{Nl}]]]]]+"; //$NON-NLS-1$
 	// java identifier part (unicode id part + currency symbols)
 	private static final String COMPLETION_WORD_REGEX= "[\\p{L}[\\p{Mn}[\\p{Pc}[\\p{Nd}[\\p{Nl}[\\p{Sc}]]]]]]+"; //$NON-NLS-1$
+	/**
+	 * The pre-compiled word pattern.
+	 * 
+	 * @since 3.2
+	 */
+	private static final Pattern COMPLETION_WORD_PATTERN= Pattern.compile(COMPLETION_WORD_REGEX);
+	/**
+	 * The word boundary pattern string.
+	 * 
+	 * @since 3.2
+	 */
+	private static final String COMPLETION_BOUNDARY= "(^|[\\s\\p{Z}[\\p{P}&&[\\P{Pc}]][\\p{S}&&[\\P{Sc}]]]+)";  //$NON-NLS-1$
 	// with a 1.5 JRE, you can do this:
 //	private static final String COMPLETION_WORD_REGEX= "\\p{javaUnicodeIdentifierPart}+"; //$NON-NLS-1$
 //	private static final String COMPLETION_WORD_REGEX= "\\p{javaJavaIdentifierPart}+"; //$NON-NLS-1$
@@ -134,13 +148,15 @@ public final class HippieCompletionEngine {
 		FindReplaceDocumentAdapter searcher= new FindReplaceDocumentAdapter(document);
 
 		// search only at word boundaries
-		String searchPattern= "\\b" + asRegPattern(prefix); //$NON-NLS-1$
+		String searchPattern= COMPLETION_BOUNDARY + asRegPattern(prefix);
 
 		IRegion reg= searcher.find(firstPosition, searchPattern, true, CASE_SENSITIVE, false, true);
 		while (reg != null) {
+			// since the boundary may be of nonzero length
+			int wordSearchPos= reg.getOffset() + reg.getLength() - prefix.length();
 			// try to complete to a word. case is irrelevant here.
-			IRegion word= searcher.find(reg.getOffset(), COMPLETION_WORD_REGEX, true, true, false, true);
-			if (word.getLength() > reg.getLength() ) { // empty suggestion will be added later
+			IRegion word= searcher.find(wordSearchPos, COMPLETION_WORD_REGEX, true, true, false, true);
+			if (word.getLength() > prefix.length() ) { // empty suggestion will be added later
 				String found= document.get(word.getOffset(), word.getLength());
 				res.add(found.substring(prefix.length()));
 			}
@@ -157,7 +173,7 @@ public final class HippieCompletionEngine {
 	/**
 	 * Search for possible completions in the backward direction. If there
      * is a possible completion that begins before <code>firstPosition</code>
-     * but ends after that position, it will be included in the resutls.
+     * but ends after that position, it will be included in the results.
 	 *
 	 * @param document the document to be scanned
 	 * @param prefix the completion prefix
@@ -179,16 +195,18 @@ public final class HippieCompletionEngine {
 		FindReplaceDocumentAdapter searcher= new FindReplaceDocumentAdapter(document);
 
 		// search only at word boundaries
-		String searchPattern= "\\b" + asRegPattern(prefix); //$NON-NLS-1$
+		String searchPattern= COMPLETION_BOUNDARY + asRegPattern(prefix); 
 
 		IRegion reg= searcher.find(0, searchPattern, true, CASE_SENSITIVE, false, true);
 		while (reg != null) {
+			// since the boundary may be of nonzero length
+			int wordSearchPos= reg.getOffset() + reg.getLength() - prefix.length();
 			// try to complete to a word. case is of no matter here
-			IRegion word= searcher.find(reg.getOffset(), COMPLETION_WORD_REGEX, true, true, false, true);
+			IRegion word= searcher.find(wordSearchPos, COMPLETION_WORD_REGEX, true, true, false, true);
             if (word.getOffset() > firstPosition) {
                 break;
             }
-			if (word.getLength() > reg.getLength() ) { // empty suggestion will be added later
+			if (word.getLength() > prefix.length() ) { // empty suggestion will be added later
 				String found= document.get(word.getOffset(), word.getLength());
 				res.add(found.substring(prefix.length()));
 			}
@@ -201,6 +219,31 @@ public final class HippieCompletionEngine {
         Collections.reverse(res);
 
 		return res;
+	}
+
+	/**
+	 * Returns the text between the provided position and the preceding word boundary.
+	 * 
+	 * @param doc the document that will be scanned.
+	 * @param pos the caret position.
+	 * @return the text if found, or null.
+	 * @throws BadLocationException if an error occurs.
+	 * @since 3.2
+	 */
+	public String getPrefixString(IDocument doc, int pos) throws BadLocationException {
+		Matcher m= COMPLETION_WORD_PATTERN.matcher(""); //$NON-NLS-1$
+		int prevNonAlpha= pos;
+		while (prevNonAlpha > 0) {
+			m.reset(doc.get(prevNonAlpha-1, pos - prevNonAlpha + 1));
+			if (!m.matches()) {
+				break;
+			}
+			prevNonAlpha--;
+		}
+		if (prevNonAlpha != pos) {
+			return doc.get(prevNonAlpha, pos - prevNonAlpha);
+		}
+		return null;
 	}
 
 	/**

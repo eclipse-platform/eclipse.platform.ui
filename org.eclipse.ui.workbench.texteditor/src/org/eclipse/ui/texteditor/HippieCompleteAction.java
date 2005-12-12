@@ -223,16 +223,7 @@ final class HippieCompleteAction extends TextEditorAction {
 		if (selection.getLength() > 0) {
 			return null;
 		}
-		int pos= selection.getOffset();
-
-		int prevNonAlpha= pos;
-		while (prevNonAlpha > 0 && Character.isJavaIdentifierPart(fDocument.getChar(prevNonAlpha-1))) {
-			prevNonAlpha--;
-		}
-		if (prevNonAlpha != pos) {
-			return fDocument.get(prevNonAlpha, pos - prevNonAlpha);
-		}
-		return null;
+		return fEngine.getPrefixString(fDocument, selection.getOffset());
 	}
 
 	/**
