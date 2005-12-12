@@ -21,6 +21,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.internal.core.Messages;
 import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
@@ -87,7 +88,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 		if (failedFiles.isEmpty()) {
 			return Status.OK_STATUS;
 		} else {
-			return new MergeStatus(TeamPlugin.ID, "Could not merge all files", (IFile[]) failedFiles.toArray(new IFile[failedFiles.size()]));
+			return new MergeStatus(TeamPlugin.ID, Messages.MergeContext_0, (IFile[]) failedFiles.toArray(new IFile[failedFiles.size()]));
 		}
     }
     
@@ -129,7 +130,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 				if (base == null || remote == null || !getLocalFile(delta).exists()) {
 					// Nothing we can do so return a conflict status
 					// TODO: Should we handle the case where the local and remote have the same contents for a conflicting addition?
-					return new MergeStatus(TeamPlugin.ID, NLS.bind("Conflicting change could not be merged: {0}", new String[] { delta.getPath().toString() }), new IFile[] { getLocalFile(delta) });
+					return new MergeStatus(TeamPlugin.ID, NLS.bind(Messages.MergeContext_1, new String[] { delta.getPath().toString() }), new IFile[] { getLocalFile(delta) });
 				}
 				// We have a conflict, a local, base and remote so we can do 
 				// a three-way merge
@@ -139,7 +140,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
         		return Status.OK_STATUS;
         	}
         } catch (CoreException e) {
-            return new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Merge of {0} failed due to an internal error.", new String[] { delta.getPath().toString() }), e);
+            return new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind(Messages.MergeContext_2, new String[] { delta.getPath().toString() }), e);
         }
 	}
 
