@@ -689,11 +689,33 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
                 }
                 return true;
             }
+        }            
+        if(target instanceof IBreakpoint){
+        	IBreakpoint bp = (IBreakpoint)target;
+        	BreakpointContainer cont = getBreakpointContainer(bp);
+        	if(cont!=null){
+        		return canPaste(cont,selection);	
+        	}
         }
         return false;
     }   
     
-    public void performRemove(BreakpointContainer[] containers, ISelection ss) {
+    /**
+     * Returns the BreakpointContainer which holds the 
+     * given breakpoint, or null if such a container cannot be found.
+     * @param breakpoint the breakpoint whose container is to be returned
+     * @return the container of the given breakpoint.
+     * @since 3.2
+     */
+    private BreakpointContainer getBreakpointContainer(IBreakpoint breakpoint) {
+    	BreakpointContainer[] containers = fContentProvider.getContainers(breakpoint);
+    	if (containers != null && containers.length > 0) {
+    		return containers[0];
+    	}
+		return null;
+	}
+
+	public void performRemove(BreakpointContainer[] containers, ISelection ss) {
         if (ss instanceof IStructuredSelection) {
             // remove from source on move operation
             IStructuredSelection selection = (IStructuredSelection) ss;
@@ -711,7 +733,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
     /** 
      * Pastes the selection into the given target
      * 
-     * @param target breakpoint container
+     * @param target target of the paste, either a BreakpointContainer,
+     * or a Breakpoint within a BreakpointContainer
      * @param selection breakpoints
      * @return whehther successful
      */
@@ -723,6 +746,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
                 container.getOrganizer().addBreakpoint((IBreakpoint)objects[i], container.getCategory());
             }
             return true;
+        }
+        if(target instanceof IBreakpoint){
+        	return performPaste(getBreakpointContainer((IBreakpoint)target),selection);
         }
         return false;
     }      
