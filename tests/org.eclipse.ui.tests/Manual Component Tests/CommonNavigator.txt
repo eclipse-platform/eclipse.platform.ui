@@ -1,0 +1,64 @@
+This is a test list for the Common Navigator view. This list is a trimmed 
+down version of the Resource Navigator view component test plan.
+
+Edit Actions (Not yet supported in Common Navigator test pass [Coming in M5])
+	Verify that enablement of Copy, Delete, Add Bookmark is consistent with that of the Navigator view's context menu, and that 
+		the same behaviour occurs.
+
+Presentation
+	Verify that appropriate strings appear in all menu items and text fields.
+	Verify icons for file, folder and project.
+	Verify that the view shows appropriate scrollbars when its contents extends beyond its client area.
+
+Standard Object Actions (Not yet supported in Common Navigator test pass [Coming in M5])
+	Verify menu items: Copy, Move, Rename, Delete for all resouces.
+	Verify that the DELETE key maps to the Delete action.
+	Verify Delete on a read-only resource.
+	Verify Properties for projects, folders, files, and combinations of the same. 
+	Verify that when the view is active, the status bar shows the full path of the selected resource.
+
+Actions on Multiselected Items (Not yet supported in Common Navigator test pass [Coming in M5])
+	If two or more resources are multiselected, Rename is disabled.
+	If a project and its resource(s) are multiselected, Copy and Move are disabled.
+	If a folder and its child resource(s) are multiselected, Copy and Move are disabled. 
+	Verify Delete on multiselected resources.
+	Verify Copy and Move on multiselected files in the same project.
+
+File Specific Actions 
+	Verify menu content when file selected.	[Should include New> with 'Project' and 'Other', Open, and Open With, in addition to basic object contributions] 	 
+	Verify Add Bookmark only appears on files and the bookmark is created when invoked. (Not yet supported in Common Navigator test pass [Coming in M5])
+
+Folder Specific Actions (Not yet supported in Common Navigator test pass [Coming in M5])
+	Verify the copy to the same folder and the different folder.
+
+Project Specific Actions (Not yet supported in Common Navigator test pass [Coming in M5])
+	Menu includes group with Build, Refresh, Close Project and Open Project
+	Close Project appears only on an open project
+	Open Project appears only on a closed project
+	Both Open Project and Close Project appear when selection includes both an open and a closed project
+	For a closed project, Rename is disabled and Go Into, Build, Refresh, Close Project do not appear
+
+New Object Actions 
+	Invoke File New .. projects, items, other.	
+	Verify that the view's New menu is the same as File | New in the Window. (Not yet supported in Common Navigator test pass [Coming in M5])
+
+View Actions (Not yet supported in Common Navigator test pass [Coming in M5])
+	Invoke Sort | by Name, | by Type in the pulldown menu. Avoid using only a.java and b.txt for a testing case since the result is the same
+		regardless of the sort key.
+	Invoke Filters... with Select All, Deselect All options.
+	
+Navigation Actions (Not yet supported in Common Navigator test pass [Coming in M5])
+	The view keeps track of navigation history. Go Into and Go Up add an item. Back and Forward change the cursor in the history list.
+	Select a project or folder, invoke Go Into, Go to | Back, Go to | Forward, and Go to | Up.
+	Verify enablement of Go xx actions reflect selection and navigation history.
+		- Go Into is enabled when an open, non-empty project or a non-empty folder is selected 		
+		- Go Up is enabled when the input has a parent .  
+		- Go Forward is enabled when there are following items in the list, Go Back enabled when there are previous items.
+	Verify that the view's titlebar displays the simple name of its input, and that its tooltip displays the full path of its input.
+	Verify that the enablement and the actions of the navigation buttons in the local toolbar are consistent with the Navigate main menu.
+	Verify that when a navigation button in the local toolbar is enabled, the fullpath of where the button leads to is appended to the button's tooltip.
+		e.g If the path of the view's input is Project/Folder/MyFolder, the 'Up' button has the tooltip that says 'Up to Project/Folder'
+
+Persistence (Not yet supported in Common Navigator test pass [Coming in M5])
+	Verify that the sort type remains the same after closing and reopening the Navigator view
+	Verify that the input is persistent between sessions.

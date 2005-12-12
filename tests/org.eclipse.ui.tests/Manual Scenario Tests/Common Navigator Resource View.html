@@ -1,0 +1,192 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Test Scenario: Common Navigator Resource View</title>
+</head>
+<body>
+<h3>
+Common Navigator Resource View</h3>
+Purpose: To test the Common Navigator Resource view in Eclipse.&nbsp; We will start out
+with an empty workspace, create some projects and files, open files, open
+some new perspectives, delete some files, test the filtering and sorting
+options, and test the persistance of view state between sessions. The Common
+Navigator Resource view tests are derived from the Navigator View tests. The following
+test plan is a trimmed down version of the current Resource view test plan. 
+<p>Setup:
+<ol>
+<li>
+Install Eclipse Platform.</li>
+
+<li>
+Delete the metadata for org.eclipse.ui.</li>
+</ol>
+Method:
+<ol>
+<li>
+Start the workbench.&nbsp; Confirm that the default perspective (Resource)
+and welcome editor both appear.</li>
+
+
+<li>
+Open the Common Navigator Resource View (Window>Show View>Basic>Experimental Resource Navigator)</li>
+
+<li>
+Create a project using the File > New wizard and verify that it appears
+in the navigator.</li>
+
+<li>
+Create another project by invoking New > Project from the navigator popup
+menu.&nbsp; Verify that it appears in the navigator.</li>
+
+<li>
+Create a .txt file, a .html file, and a .java file by invoking New > File
+from the navigator popup menu.&nbsp; Verify that these files appear in
+the navigator and that an editor is opened on each.&nbsp; Close all of
+these editors.</li>
+<!--  Not yet supported 
+<li>
+In the Navigator you can change the input.&nbsp; To test this create a
+couple of nested folders in a project using the New > Folder action in
+the navigator context menu.&nbsp; Then select the top level folder and
+and invoke Go Into.&nbsp; Verify that the input for the view changes (it
+is shown in the view title) and that only the resources in the input folder
+are visible.&nbsp; If you perform the same operation many times you create
+a history list in the navigator.&nbsp; Try navigating up and down the history
+by using the Back and Forward buttons on the view toolbar.</li>
+ -->
+<li>
+If you select a file you can open it from the context menu.&nbsp; Open
+a .txt file and verify that the default text editor opens.&nbsp; Open a
+.java file and verify that the java editor opens.</li>
+
+<li>
+You can also open a file in a specific editor.&nbsp; Select a .java file
+and invoke Open With > Default Text Editor.&nbsp; The default text editor
+should open rather than the java editor.&nbsp; If you select Open With
+> System Editor something like notepad should open.&nbsp; The preferred
+editor for a file is always indicated with a check mark in the Open With
+menu.</li>
+<!--  Not yet supported 
+<li>
+In the navigator you can open new perspectives.&nbsp; Select a project
+or folder in the navigator and invoke Open Perspective > Java from the
+context menu. Verify that a new perspective appears with the Java Perspective
+and that the input for the navigator is the project.&nbsp;&nbsp;&nbsp;
+Close it and go back to the first perspective.</li>
+-->
+<!--  Not yet supported 
+<li>
+The contents of the Open Perspective menu are determined by the perspective
+properties.&nbsp; Note the contents of this menu.&nbsp; Then invoke Perspective
+> Customize and change the checked perspectives.&nbsp; Press OK and verify
+that the contents of Open Perspective reflect the new options.</li>
+-->
+<!--  Not yet supported 
+<li>
+The Navigator has support for drag and drop.&nbsp; Try dragging a file
+from one project to another.&nbsp; A cursor should appear to indicate the
+drop target.&nbsp; If you release the file it will be moved to the target.</li>
+-->
+<!--  Not yet supported 
+<li>
+In the navigator select a project, folder or file and try out Copy, Move
+and Rename in the context menu.</li>
+-->
+<!--  Not yet supported 
+<li>
+Select a project, folder or file and invoke Delete in the context menu
+to delete it.&nbsp; Verify that the item disappears from the navigator.&nbsp;
+The delete action is also available in the window Edit menu.&nbsp; Select
+an item, invoke Edit > Delete, and verify that it has the same behavior.</li>
+-->
+<!--  Not yet supported 
+<li>
+Select a file in the navigator and invoke Add Bookmark from the context
+menu.&nbsp; Open up the Bookmark view and verify that a bookmark now exists.&nbsp;
+If you double click on the bookmark an editor should open on the bookmark
+source file.&nbsp; Verify that Add Bookmark is not available if a project
+or folder is selected in the navigator.</li>
+-->
+<!--  Not yet supported 
+<li>
+Select a project and invoke Close Project from the context menu.&nbsp;
+At this point the icon should change to a closed folder and all of the
+contents will be hidden.&nbsp; Invoke Open Project to reopen it and navigate
+the contents.</li>
+-->
+<!--  Not yet supported 
+<li>
+If you select a resource and invoke Properties.. a properties dialog should
+appear.&nbsp; It will contain at least an Info, Project Referenes and Team
+page for projects, and an Info and Team page for folders or files.</li>
+-->
+<!--  Not yet supported 
+<li>
+In the navigator you can sort items by name or type.&nbsp; Try out these
+options in the pulldown menu and verify that they have the correct affect.&nbsp;
+All sorting is done in ascending order.&nbsp; You can also filter items
+out.&nbsp; Create a couple of .class and .* files and experiment with the
+filter options.&nbsp; You should be able to hide or show these files as
+desired.</li>
+-->
+<!--  Not yet supported 
+<li>
+The selection in the navigator is linked to the active editor.&nbsp; Open
+a couple of files.&nbsp; Then switch between the editors and verify that
+the editor input is selected in the navigator.&nbsp; Now select one of
+the open files in the navigator and verify that the corresponding editor
+is activated.&nbsp; You can disable this option by turning off "Link navigator
+selection to active editor" in the workbench preferences.&nbsp; Then verify
+that no selection occurs in the navigator as you switch between editors.&nbsp;
+Turn it back on and verify that selection works again.</li>
+-->
+<!--  Not yet supported 
+<li>
+The state of the navigator (input, expansion) should be stored between
+sessions.&nbsp; To test this open a perspective with the navigator, change
+the input and expansions state, and then close the workbench.&nbsp; Restart
+the workbench and verify that the input and expansion state is restored.</li>
+-->
+
+</ol>
+
+<h3>Common Navigator Test Viewer </h3>
+<ol>
+<li>Create a file named 'model.properties' in the root of a project. Add 
+the following entries to the file:
+<pre>
+root=Parent
+Parent=Child1,Child2,Child3
+Child1=Grandchild1,Grandchild2
+Child2=Grandchild3
+</pre>
+</li>
+
+<li>After creating the file, open the 'Test Navigator Viewer' 
+(Show View>Other>Test Navigator View).</li>
+
+<li>Expand the project in test viewer. Verify that in addition to 
+the resources, a logical model matching the structure from the properties
+file is presented. Verify that each item has the correct label ('Parent', 
+'Child1', etc) and the correct icon (each element should have the shared
+'element' icon from the workbench).</li>
+
+<li>Verify that no context menu appears when a logical node is selected.</li>
+
+<li>Deactivatethe 'Test Navigator Extension' by opening the Filters dialog, going
+to the 'Types of Content' tab, and unchecking the 'Test Navigator Extension'
+item. Verify that the logical model elements disappear from the tree.</li>
+
+<li>Reactivatethe 'Test Navigator Extension' by opening the Filters dialog, going
+to the 'Types of Content' tab, and checking the 'Test Navigator Extension'
+item. Verify that the logical model elements reappear from the tree.</li>  
+
+<li>Deactivatethe 'Resources extension'. Verify that the tree becomes empty.</li>
+
+</ol>
+
+
+
+</body>
+</html>
