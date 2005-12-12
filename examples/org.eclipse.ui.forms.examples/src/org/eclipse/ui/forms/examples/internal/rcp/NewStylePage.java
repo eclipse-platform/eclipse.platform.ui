@@ -86,6 +86,20 @@ public class NewStylePage extends FormPage {
 				form.getForm().setMessage(null);
 			}
 		});		
+		
+		final Button busy = toolkit.createButton(form.getBody(), "Start", SWT.PUSH);
+		busy.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (form.getForm().isBusy()) {
+					form.getForm().setBusy(false);
+					busy.setText("Start");
+				}
+				else {
+					form.getForm().setBusy(true);
+					busy.setText("Stop");
+				}
+			}
+		});		
 		Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {
 			public void run() {
 			}

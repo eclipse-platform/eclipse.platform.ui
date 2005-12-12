@@ -31,12 +31,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.internal.forms.Messages;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
 import org.eclipse.ui.internal.forms.widgets.FormsResources;
 
@@ -51,10 +53,9 @@ import org.eclipse.ui.internal.forms.widgets.FormsResources;
  * form body will be resized to fill the entire form. In addition, an optional
  * title image can be set and is rendered to the left of the title.
  * <p>
- * Since 3.2, the form supports status messages. These messages can have
- * various severity (error, warning, info or none). Message tray can 
- * be minimized and later restored by the user, but can only be
- * closed programmatically.
+ * Since 3.2, the form supports status messages. These messages can have various
+ * severity (error, warning, info or none). Message tray can be minimized and
+ * later restored by the user, but can only be closed programmatically.
  * <p>
  * Form can have a background image behind the title text. The image can be
  * painted as-is, or tiled as many times as needed to fill the title area.
@@ -117,11 +118,15 @@ public class Form extends Composite {
 
 	private SizeCache toolbarCache = new SizeCache();
 
+	private Label busyLabel;
+
 	private FormText selectionText;
 
 	private Rectangle titleRect;
 
 	private MessageArea messageArea;
+
+	private boolean busy;
 
 	private class GradientInfo {
 		Color[] gradientColors;
@@ -178,15 +183,16 @@ public class Form extends Composite {
 					setMinimized(true);
 				}
 			});
-			mlink.setToolTipText("Minimize");
+			mlink.setToolTipText(Messages.Form_tooltip_minimize);
 			rlink = new ImageHyperlink(this, SWT.NULL);
 			rlink.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					setMinimized(false);
 				}
 			});
+			rlink.setBackground(getBackground());
 			rlink.setVisible(false);
-			rlink.setToolTipText("Restore");
+			rlink.setToolTipText(Messages.Form_tooltip_restore);
 			createMinimizedImages();
 			addPaintListener(new PaintListener() {
 				public void paintControl(PaintEvent e) {
@@ -388,6 +394,11 @@ public class Form extends Composite {
 				iwidth = Math.max(iwidth, rsize.x);
 				iheight = Math.max(iheight, rsize.y);
 			}
+			if (busy && busyLabel != null) {
+				Point bsize = FormsResources.getProgressSize();
+				iwidth = Math.max(iwidth, bsize.x);
+				iheight = Math.max(iheight, bsize.y);
+			}
 			if (iwidth > 0) {
 				if (text != null)
 					width += TITLE_GAP;
@@ -468,10 +479,16 @@ public class Form extends Composite {
 				iwidth = ibounds.width;
 			}
 			Point msize = null;
+			Point bsize = null;
 			int mx = 0;
 			if (messageArea != null && messageArea.isMinimized()) {
 				msize = messageArea.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				iwidth = Math.max(msize.x, iwidth);
+				mx = tx;
+			}
+			if (busy && busyLabel != null) {
+				bsize = FormsResources.getProgressSize();
+				iwidth = Math.max(bsize.x, iwidth);
 				mx = tx;
 			}
 			if (iwidth > 0) {
@@ -493,6 +510,10 @@ public class Form extends Composite {
 			if (msize != null) {
 				messageArea.setBounds(mx, titleRect.y + titleRect.height / 2
 						- msize.y / 2, msize.x, msize.y);
+			}
+			if (bsize != null) {
+				busyLabel.setBounds(mx, titleRect.y + titleRect.height / 2
+						- bsize.y / 2, bsize.x, bsize.y);
 			}
 
 			if (backgroundImage != null && !isBackgroundImageClipped()) {
@@ -1093,5 +1114,67 @@ public class Form extends Composite {
 		};
 		Thread t = new Thread(runnable);
 		t.start();
+	}
+
+	/**
+	 * Tests if the form is in the 'busy' state.
+	 * 
+	 * @return <code>true</code> if busy, <code>false</code> otherwise.
+	 */
+
+	public boolean isBusy() {
+		return busy;
+	}
+
+	/**
+	 * Sets the form's busy state. Busy form will display 'busy' animation in
+	 * the area of the title image.
+	 * 
+	 * @param busy
+	 *            the form's busy state
+	 */
+
+	public void setBusy(boolean busy) {
+		if (busy == this.busy)
+			return;
+		this.busy = busy;
+		if (busy) {
+			busyLabel = new Label(this, SWT.NULL);
+			if (toolBarManager!=null)
+				busyLabel.setBackground(toolBarManager.getControl().getBackground());
+			else
+				busyLabel.setBackground(getBackground());
+				
+			final Image[] busyImages = FormsResources
+					.getProgressImages(getDisplay());
+			if (busyImages != null) {
+				busyLabel.setImage(busyImages[0]);
+			}
+			busyLabel.moveAbove(null);
+			layout();
+			final int[] index = new int[1];
+			if (busyImages != null && busyImages.length > 1) {
+				getDisplay().timerExec(FormsResources.getProgressDelay(0),
+						new Runnable() {
+							public void run() {
+								if (isDisposed() || !isBusy())
+									return;
+								index[0]++;
+								if (index[0] == busyImages.length)
+									index[0] = 0;
+								Image image = busyImages[index[0]];
+								busyLabel.setImage(image);
+								getDisplay().timerExec(
+										FormsResources
+												.getProgressDelay(index[0]),
+										this);
+							}
+						});
+			}
+		} else {
+			busyLabel.dispose();
+			busyLabel = null;
+			layout();
+		}
 	}
 }
