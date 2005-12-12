@@ -39,7 +39,7 @@ public class DynamicContentProducer implements IHelpContentProducer {
 		int loc = href.lastIndexOf('.');
 		if (loc != -1) {
 			String extension = href.substring(loc + 1).toLowerCase();
-			if ("xhtml".equals(extension))
+			if ("xhtml".equals(extension)) //$NON-NLS-1$
 				return openXHTMLFromPlugin(pluginID, href, locale.toString());
 			// place support for other formats here
 		}

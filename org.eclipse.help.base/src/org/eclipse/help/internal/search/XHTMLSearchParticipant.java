@@ -32,7 +32,7 @@ public class XHTMLSearchParticipant extends XMLSearchParticipant {
 
 		public void startElement(String uri, String localName, String qName, Attributes attributes)
 				throws SAXException {
-			String eid = attributes.getValue("id");
+			String eid = attributes.getValue("id"); //$NON-NLS-1$
 			if (eid != null && eid.equals(id)) {
 				stack.push(qName);
 				active = true;
@@ -69,8 +69,8 @@ public class XHTMLSearchParticipant extends XMLSearchParticipant {
 	}
 
 	protected void handleStartElement(String name, Attributes attributes, IParsedXMLContent data) {
-		if (name.equalsIgnoreCase("include")) {
-			processIncludedContent(attributes.getValue("path"), data);
+		if (name.equalsIgnoreCase("include")) { //$NON-NLS-1$
+			processIncludedContent(attributes.getValue("path"), data); //$NON-NLS-1$
 		}
 	}
 
