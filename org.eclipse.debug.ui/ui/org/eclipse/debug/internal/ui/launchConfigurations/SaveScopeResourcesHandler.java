@@ -50,20 +50,33 @@ import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 public class SaveScopeResourcesHandler implements IStatusHandler {
 
 	/* (non-Javadoc)
+	 * 
+	 * Source object is an array - a launch configuration and an array of projects to save resources for.
+	 * 
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
-        if (source instanceof ILaunchConfiguration) {
-            ILaunchConfiguration config = (ILaunchConfiguration) source;
+		// unmarshal config and projets
+		ILaunchConfiguration config = null;
+		IProject[] projects = null;
+		if (source instanceof Object[]) {
+			Object[] objects = (Object[]) source;
+			if (objects.length == 2) {
+				 config = (ILaunchConfiguration) objects[0];
+				 projects = (IProject[]) objects[1];
+			}
+		}
+		
+        if (config != null) {
             if (DebugUITools.isPrivate(config)) {
                 return Boolean.TRUE;
             }
         } 
 
-        if (source instanceof IProject[]) {
+        if (projects != null) {
             IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
             String save = store.getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
-            doSave((IProject[]) source, !save.equals(MessageDialogWithToggle.NEVER), save.equals(MessageDialogWithToggle.PROMPT));
+            doSave(projects, !save.equals(MessageDialogWithToggle.NEVER), save.equals(MessageDialogWithToggle.PROMPT));
         } else {
             DebugUIPlugin.preLaunchSave();
         }

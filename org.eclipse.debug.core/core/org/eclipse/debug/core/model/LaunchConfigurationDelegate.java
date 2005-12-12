@@ -200,7 +200,8 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
 		if(prompter != null) {
 			//do save here and remove saving from DebugUIPlugin to avoid it 'trumping' this save
-			if(!((Boolean)prompter.handleStatus(saveScopedDirtyEditors, getBuildOrder(configuration, mode))).booleanValue()) {
+			IProject[] buildOrder = getBuildOrder(configuration, mode);
+			if(!((Boolean)prompter.handleStatus(saveScopedDirtyEditors, new Object[]{configuration, buildOrder})).booleanValue()) {
 				return false;
 			}
 		}
