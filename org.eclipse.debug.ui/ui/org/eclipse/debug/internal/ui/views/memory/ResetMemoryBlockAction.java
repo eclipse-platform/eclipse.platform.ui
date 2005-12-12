@@ -17,6 +17,7 @@ import java.util.Iterator;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -78,6 +79,8 @@ public class ResetMemoryBlockAction  implements IViewActionDelegate{
 			{
 				if (objs[i] instanceof IMemoryBlock)
 					fSelectedMB.add(objs[i]);
+				if (objs[i] instanceof IMemoryRendering)
+					fSelectedMB.add(((IMemoryRendering)objs[i]).getMemoryBlock());
 			}
 		}
 	}
