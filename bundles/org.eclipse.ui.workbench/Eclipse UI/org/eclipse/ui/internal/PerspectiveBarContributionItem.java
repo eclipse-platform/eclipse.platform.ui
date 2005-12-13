@@ -26,6 +26,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.util.PrefUtil;
 
+/**
+ * A  {@link ContributionItem} specifically for contributions to the perspective switcher.
+ *
+ */
 public class PerspectiveBarContributionItem extends ContributionItem {
 
     private IPerspectiveDescriptor perspective;
@@ -39,6 +43,12 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
     private IWorkbenchPage workbenchPage;
 
+    /**
+     * Create a new perspective contribution item
+     * 
+     * @param perspective the descriptor for the perspective
+     * @param workbenchPage the page that this perspective is in
+     */
     public PerspectiveBarContributionItem(IPerspectiveDescriptor perspective,
             IWorkbenchPage workbenchPage) {
         super(perspective.getId());
@@ -104,6 +114,9 @@ public class PerspectiveBarContributionItem extends ContributionItem {
         return image;
     }
 
+    /**
+     * Select this perspective
+     */
     public void select() {
         if (workbenchPage.getPerspective() != perspective) {
             workbenchPage.setPerspective(perspective);
@@ -130,6 +143,10 @@ public class PerspectiveBarContributionItem extends ContributionItem {
         }
     }
 
+    /**
+     * Update this item with a new perspective descriptor
+     * @param newDesc
+     */
     public void update(IPerspectiveDescriptor newDesc) {
         perspective = newDesc;
         if (toolItem != null && !toolItem.isDisposed()) {
@@ -158,12 +175,24 @@ public class PerspectiveBarContributionItem extends ContributionItem {
         return toolItem;
     }
 
+    /**
+     * Answer whether the receiver is a match for the provided 
+     * perspective descriptor
+     * 
+     * @param perspective the perspective descriptor
+     * @param workbenchPage the page
+     * @return <code>true</code> if it is a match
+     */
     public boolean handles(IPerspectiveDescriptor perspective,
             IWorkbenchPage workbenchPage) {
         return this.perspective == perspective
                 && this.workbenchPage == workbenchPage;
     }
 
+    /**
+     * Set the current perspective
+     * @param newPerspective
+     */
     public void setPerspective(IPerspectiveDescriptor newPerspective) {
         this.perspective = newPerspective;
     }
@@ -184,7 +213,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
         if (textValue == null || toolItem == null || toolItem.isDisposed())
             return null;
         String returnText = textValue;
-        GC gc = new GC(item.getDisplay());
+        GC gc = new GC(item.getParent());
         int maxWidth = getMaxWidth(item.getImage());
         if (gc.textExtent(textValue).x >= maxWidth) {
             for (int i = textValue.length(); i > 0; i--) {

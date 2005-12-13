@@ -997,7 +997,7 @@ public class ActionContributionItem extends ContributionItem {
         if (textValue == null)
             return null;
 
-        GC gc = new GC(item.getDisplay());
+        GC gc = new GC(item.getParent());
 
         int maxWidth = item.getImage().getBounds().width * 4;
 

@@ -1107,8 +1107,7 @@ public class NewProgressViewer extends TreeViewer implements
      */
     static String shortenText(Control control, String textValue) {
         if (textValue != null) {
-            Display display = control.getDisplay();
-            GC gc = new GC(display);
+            GC gc = new GC(control);
             int maxWidth = control.getBounds().width;
             textValue = shortenText(gc, maxWidth, textValue);
             gc.dispose();

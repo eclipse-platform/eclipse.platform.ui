@@ -20,7 +20,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -130,8 +129,7 @@ public class ProgressManagerUtil {
     static String shortenText(String textValue, Control control) {
         if (textValue == null)
             return null;
-        Display display = control.getDisplay();
-        GC gc = new GC(display);
+        GC gc = new GC(control);
         int maxWidth = control.getBounds().width - 5;
         if (gc.textExtent(textValue).x < maxWidth) {
             gc.dispose();

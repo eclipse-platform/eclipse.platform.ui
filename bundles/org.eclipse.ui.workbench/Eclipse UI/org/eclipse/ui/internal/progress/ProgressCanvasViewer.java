@@ -214,7 +214,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
         Display display = canvas.getDisplay();
 
-        GC gc = new GC(display);
+        GC gc = new GC(canvas);
         FontMetrics fm = gc.getFontMetrics();
         int charWidth = fm.getAverageCharWidth();
         int charHeight = fm.getHeight();
