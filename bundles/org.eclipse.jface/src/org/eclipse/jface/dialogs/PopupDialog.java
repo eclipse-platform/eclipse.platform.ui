@@ -190,7 +190,7 @@ public class PopupDialog extends Window {
 
 	/**
 	 * Vertical spacing (in pixels) between cells in the layouts inside popup
-	 * dialogs (value is 1).
+	 * dialogs (value is 1).  
 	 */
 	public final static int POPUP_VERTICALSPACING = 1;
 
@@ -201,48 +201,9 @@ public class PopupDialog extends Window {
 	public final static int POPUP_HORIZONTALSPACING = 1;
 
 	/**
-	 * The symbolic font name for the popup info font (value
-	 * <code>"org.eclipse.jface.dialogs.popupinfofont"</code>).
-	 */
-	private final static String POPUP_INFOFONT = "org.eclipse.jface.dialogs.popuptitlefont"; //$NON-NLS-1$
-
-	/**
 	 * Border thickness in pixels.
 	 */
 	private static final int BORDER_THICKNESS = 1;
-
-	/**
-	 * Get the info font for popups, using the specified font as a base.
-	 * 
-	 * @param font
-	 *            the font on which to base the info font.
-	 * 
-	 * @return the info font
-	 */
-	protected static Font getInfoFont(Font font) {
-		if (!JFaceResources.getFontRegistry().hasValueFor(POPUP_INFOFONT)) {
-			FontData[] fontDatas = font.getFontData();
-			for (int i = 0; i < fontDatas.length; i++)
-				fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
-			Font infoFont = new Font(font.getDevice(), fontDatas);
-			JFaceResources.getFontRegistry().put(POPUP_INFOFONT,
-					infoFont.getFontData());
-			infoFont.dispose();
-		}
-
-		return JFaceResources.getFontRegistry().get(POPUP_INFOFONT);
-
-	}
-
-	/**
-	 * Get the title font for popups.
-	 * 
-	 * @return the title font
-	 */
-	protected static Font getTitleFont() {
-		return JFaceResources.getFontRegistry().getBold(
-				JFaceResources.DIALOG_FONT);
-	}
 
 	/**
 	 * The dialog's toolbar for the move and resize capabilities.
@@ -276,6 +237,18 @@ public class PopupDialog extends Window {
 	private Image menuImage, disabledMenuImage = null;
 
 	/**
+	 * Font to be used for the info area text. Computed based on the dialog's
+	 * font.
+	 */
+	private Font infoFont;
+	
+	/**
+	 * Font to be used for the title area text. Computed based on the dialog's
+	 * font.
+	 */
+	private Font titleFont;
+
+	/**
 	 * Flags indicating whether we are listening for shell deactivate events,
 	 * either those or our parent's. Used to prevent closure when a menu command
 	 * is chosen or a secondary popup is launched.
@@ -283,8 +256,8 @@ public class PopupDialog extends Window {
 	private boolean listenToDeactivate;
 
 	private boolean listenToParentDeactivate;
-
-	private Listener parentDeactivateListener;
+	
+	private Listener parentDeactivateListener;	
 
 	/**
 	 * Flag indicating whether focus should be taken when the dialog is opened.
@@ -420,7 +393,7 @@ public class PopupDialog extends Window {
 		});
 
 		if ((getShellStyle() & SWT.ON_TOP) != 0 && shell.getParent() != null) {
-			parentDeactivateListener = new Listener() {
+			parentDeactivateListener= new Listener() {
 				public void handleEvent(Event event) {
 					if (listenToParentDeactivate) {
 						close();
@@ -430,9 +403,14 @@ public class PopupDialog extends Window {
 					}
 				}
 			};
-			shell.getParent().addListener(SWT.Deactivate,
-					parentDeactivateListener);
+			shell.getParent().addListener(SWT.Deactivate, parentDeactivateListener);
 		}
+		
+		shell.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) {
+				handleDispose();
+			}
+		});
 	}
 
 	/**
@@ -625,9 +603,14 @@ public class PopupDialog extends Window {
 		if (!showDialogMenu)
 			gd.horizontalSpan = 2;
 		titleLabel.setLayoutData(gd);
-
-		titleLabel.setFont(getTitleFont());
-
+		
+		Font font = titleLabel.getFont();
+		FontData[] fontDatas = font.getFontData();
+		for (int i = 0; i < fontDatas.length; i++)
+			fontDatas[i].setStyle(SWT.BOLD);
+		titleFont = new Font(titleLabel.getDisplay(), fontDatas);
+		titleLabel.setFont(titleFont);
+		
 		if (titleText != null) {
 			titleLabel.setText(titleText);
 		}
@@ -656,7 +639,12 @@ public class PopupDialog extends Window {
 		// Status label
 		infoLabel = new Label(parent, SWT.RIGHT);
 		infoLabel.setText(infoText);
-		infoLabel.setFont(getInfoFont(infoLabel.getFont()));
+		Font font = infoLabel.getFont();
+		FontData[] fontDatas = font.getFontData();
+		for (int i = 0; i < fontDatas.length; i++)
+			fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
+		infoFont = new Font(infoLabel.getDisplay(), fontDatas);
+		infoLabel.setFont(infoFont);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.HORIZONTAL_ALIGN_BEGINNING
 				| GridData.VERTICAL_ALIGN_BEGINNING);
@@ -893,10 +881,9 @@ public class PopupDialog extends Window {
 		// We do this before disposal so that any received activate or
 		// deactivate events are duly ignored.
 		initializeWidgetState();
-
+		
 		if (parentDeactivateListener != null) {
-			getShell().getParent().removeListener(SWT.Deactivate,
-					parentDeactivateListener);
+			getShell().getParent().removeListener(SWT.Deactivate, parentDeactivateListener);
 			parentDeactivateListener = null;
 		}
 
@@ -1189,5 +1176,18 @@ public class PopupDialog extends Window {
 			}
 		}
 
+	}
+	
+	/**
+	 * The dialog is being disposed.  Dispose of any resources allocated.
+	 *
+	 */
+	private void handleDispose() {
+		if (infoFont != null && !infoFont.isDisposed())
+			infoFont.dispose();
+		infoFont = null;
+		if (titleFont != null && !titleFont.isDisposed())
+			titleFont.dispose();
+		titleFont = null;
 	}
 }
