@@ -740,7 +740,7 @@ final class ContextAuthority extends ExpressionAuthority {
 		 * "none".
 		 */
 		if ((name != null)
-				&& (!ISources.ACTIVE_WORKBENCH_WINDOW_NAME.equals(name))) {
+				&& (!ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME.equals(name))) {
 			/*
 			 * We need to track shell activation ourselves, as some special
 			 * contexts are automatically activated in response to different

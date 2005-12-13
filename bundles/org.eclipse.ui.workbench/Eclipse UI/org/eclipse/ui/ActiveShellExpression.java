@@ -72,7 +72,7 @@ public final class ActiveShellExpression extends Expression {
 			Object value = context.getVariable(ISources.ACTIVE_SHELL_NAME);
 			if (!activeShell.equals(value)) {
 				value = context
-						.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+						.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME);
 				if (!activeShell.equals(value)) {
 					return EvaluationResult.FALSE;
 				}

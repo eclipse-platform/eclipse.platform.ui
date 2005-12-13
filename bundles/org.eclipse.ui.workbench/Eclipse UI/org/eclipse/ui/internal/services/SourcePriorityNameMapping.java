@@ -75,6 +75,8 @@ public final class SourcePriorityNameMapping implements ISources {
 		addMapping(ACTIVE_SHELL_NAME, ACTIVE_SHELL);
 		addMapping(ACTIVE_SITE_NAME, ACTIVE_SITE);
 		addMapping(ACTIVE_WORKBENCH_WINDOW_NAME, ACTIVE_WORKBENCH_WINDOW);
+		addMapping(ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
+				ACTIVE_WORKBENCH_WINDOW_SHELL);
 	}
 
 	/**

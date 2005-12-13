@@ -50,7 +50,7 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 	 * <code>workbench.getActiveWorkbenchWindow()</code> returned
 	 * <code>null</code>.
 	 */
-	private Shell lastActiveWorkbenchWindow = null;
+	private Shell lastActiveWorkbenchWindowShell = null;
 
 	/**
 	 * The listener to shell activations on the display.
@@ -63,35 +63,42 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 			if (!(event.widget instanceof Shell)) {
 				return;
 			}
-			
+
 			final Map currentState = getCurrentState();
 			final Shell newActiveShell = (Shell) currentState
 					.get(ISources.ACTIVE_SHELL_NAME);
-			final Shell newActiveWorkbenchWindowShell = (Shell) currentState
+			final IWorkbenchWindow newActiveWorkbenchWindow = (IWorkbenchWindow) currentState
 					.get(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+			final Shell newActiveWorkbenchWindowShell = (Shell) currentState
+					.get(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME);
 
 			// Figure out which variables have changed.
 			final boolean shellChanged = newActiveShell != lastActiveShell;
-			final boolean windowChanged = newActiveWorkbenchWindowShell != lastActiveWorkbenchWindow;
+			final boolean windowChanged = newActiveWorkbenchWindowShell != lastActiveWorkbenchWindowShell;
 
 			// Fire an event for those sources that have changed.
 			if (shellChanged && windowChanged) {
-				final Map sourceValuesByName = new HashMap(4);
+				final Map sourceValuesByName = new HashMap(5);
 				sourceValuesByName.put(ISources.ACTIVE_SHELL_NAME,
 						newActiveShell);
 				sourceValuesByName.put(ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
+						newActiveWorkbenchWindow);
+				sourceValuesByName.put(
+						ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
 						newActiveWorkbenchWindowShell);
-				
+
 				if (DEBUG) {
 					logDebuggingInfo("Active shell changed to " //$NON-NLS-1$
 							+ newActiveShell);
 					logDebuggingInfo("Active workbench window changed to " //$NON-NLS-1$
+							+ newActiveWorkbenchWindow);
+					logDebuggingInfo("Active workbench window shell changed to " //$NON-NLS-1$
 							+ newActiveWorkbenchWindowShell);
 				}
-				
+
 				fireSourceChanged(ISources.ACTIVE_SHELL
 						| ISources.ACTIVE_WORKBENCH_WINDOW, sourceValuesByName);
-				
+
 			} else if (shellChanged) {
 				if (DEBUG) {
 					logDebuggingInfo("Active shell changed to " //$NON-NLS-1$
@@ -99,21 +106,31 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 				}
 				fireSourceChanged(ISources.ACTIVE_SHELL,
 						ISources.ACTIVE_SHELL_NAME, newActiveShell);
-				
+
 			} else if (windowChanged) {
+				final Map sourceValuesByName = new HashMap(4);
+				sourceValuesByName.put(ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
+						newActiveWorkbenchWindow);
+				sourceValuesByName.put(
+						ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
+						newActiveWorkbenchWindowShell);
+
 				if (DEBUG) {
 					logDebuggingInfo("Active workbench window changed to " //$NON-NLS-1$
+							+ newActiveWorkbenchWindow);
+					logDebuggingInfo("Active workbench window shell changed to " //$NON-NLS-1$
 							+ newActiveWorkbenchWindowShell);
 				}
-				fireSourceChanged(ISources.ACTIVE_WORKBENCH_WINDOW,
-						ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
-						newActiveWorkbenchWindowShell);
-				
+
+				fireSourceChanged(ISources.ACTIVE_WORKBENCH_WINDOW
+						| ISources.ACTIVE_WORKBENCH_WINDOW_SHELL,
+						sourceValuesByName);
+
 			}
 
 			// Update the member variables.
 			lastActiveShell = newActiveShell;
-			lastActiveWorkbenchWindow = newActiveWorkbenchWindowShell;
+			lastActiveWorkbenchWindowShell = newActiveWorkbenchWindowShell;
 		}
 	};
 
@@ -163,6 +180,8 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 						.getShell();
 			}
 			currentState.put(ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
+					newActiveWorkbenchWindow);
+			currentState.put(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
 					newActiveWorkbenchWindowShell);
 		}
 

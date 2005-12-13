@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.commands;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.eclipse.core.commands.common.EventManager;
 
 /**
  * <p>
@@ -26,26 +25,13 @@ import java.util.List;
  * 
  * @since 3.1
  */
-public abstract class AbstractHandler implements IHandler {
-
-	/**
-	 * Those interested in hearing about changes to this instance of
-	 * <code>IHandler</code>. This member is null iff there are no listeners
-	 * attached to this handler. (Most handlers don't have any listeners, and
-	 * this optimization saves some memory.)
-	 */
-	private List handlerListeners;
+public abstract class AbstractHandler extends EventManager implements IHandler {
 
 	/**
 	 * @see IHandler#addHandlerListener(IHandlerListener)
 	 */
 	public void addHandlerListener(final IHandlerListener handlerListener) {
-		if (handlerListener == null)
-			throw new NullPointerException();
-		if (handlerListeners == null)
-			handlerListeners = new ArrayList();
-		if (!handlerListeners.contains(handlerListener))
-			handlerListeners.add(handlerListener);
+		addListenerObject(handlerListener);
 	}
 
 	/**
@@ -77,10 +63,12 @@ public abstract class AbstractHandler implements IHandler {
 	protected void fireHandlerChanged(final HandlerEvent handlerEvent) {
 		if (handlerEvent == null)
 			throw new NullPointerException();
-		if (handlerListeners != null)
-			for (int i = 0; i < handlerListeners.size(); i++)
-				((IHandlerListener) handlerListeners.get(i))
-						.handlerChanged(handlerEvent);
+
+		final Object[] listeners = getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			final IHandlerListener listener = (IHandlerListener) listeners[i];
+			listener.handlerChanged(handlerEvent);
+		}
 	}
 
 	/**
@@ -121,24 +109,13 @@ public abstract class AbstractHandler implements IHandler {
 	 *         AbstractHandler
 	 */
 	protected boolean hasListeners() {
-		return handlerListeners != null;
+		return isListenerAttached();
 	}
 
 	/**
 	 * @see IHandler#removeHandlerListener(IHandlerListener)
 	 */
-	public void removeHandlerListener(
-			final IHandlerListener handlerListener) {
-		if (handlerListener == null)
-			throw new NullPointerException();
-		if (handlerListeners == null) {
-			return;
-		}
-
-		if (handlerListeners != null)
-			handlerListeners.remove(handlerListener);
-		if (handlerListeners.isEmpty()) {
-			handlerListeners = null;
-		}
+	public void removeHandlerListener(final IHandlerListener handlerListener) {
+		removeListenerObject(handlerListener);
 	}
 }

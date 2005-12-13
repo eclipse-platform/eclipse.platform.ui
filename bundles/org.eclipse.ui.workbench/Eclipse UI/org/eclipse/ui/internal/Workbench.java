@@ -87,6 +87,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -1000,10 +1001,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 		bindingService.readRegistryAndPreferences(commandService);
 		commandImageService.readRegistry();
 		menuService.readRegistry();
-		final LegacyActionPersistence deprecatedSupport = new LegacyActionPersistence(
-				commandManager, handlerService, bindingManager,
-				commandImageManager, menuService);
-		deprecatedSupport.read();
 
 		/*
 		 * Phase 3 of the initialization of commands. The source providers that
@@ -1030,16 +1027,18 @@ public final class Workbench extends EventManager implements IWorkbench {
 		handlerService.addSourceProvider(currentSelectionSourceProvider);
 		contextService.addSourceProvider(currentSelectionSourceProvider);
 		menuService.addSourceProvider(currentSelectionSourceProvider);
-		
 
 		/*
 		 * Phase 4 of the initialization of commands. This handles the creation
 		 * of wrappers for legacy APIs. By the time this phase completes, any
 		 * code trying to access commands through legacy APIs should work.
-		 * 
-		 * TODO This is the deprecated support. It would be nice to pull out all
-		 * of this except for the Workbench*Support constructors.
 		 */
+		final ISourceProvider[] sourceProviders = { activeShellSourceProvider,
+				activePartSourceProvider, currentSelectionSourceProvider };
+		final LegacyActionPersistence deprecatedSupport = new LegacyActionPersistence(
+				commandManager, handlerService, bindingManager,
+				commandImageManager, menuService, sourceProviders);
+		deprecatedSupport.read();
 		workbenchContextSupport = new WorkbenchContextSupport(this,
 				contextManager);
 		workbenchCommandSupport = new WorkbenchCommandSupport(bindingManager,

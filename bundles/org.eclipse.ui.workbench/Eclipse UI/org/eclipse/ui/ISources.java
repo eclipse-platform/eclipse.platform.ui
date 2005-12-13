@@ -104,6 +104,19 @@ public interface ISources {
 
 	/**
 	 * The priority given when the source includes the currently active
+	 * workbench window shell.
+	 */
+	public static final int ACTIVE_WORKBENCH_WINDOW_SHELL = 1 << 12;
+
+	/**
+	 * The variable name for the active workbench window shell. This is for use
+	 * with the <code>ISourceProvider</code> and
+	 * <code>IEvaluationContext</code>.
+	 */
+	public static final String ACTIVE_WORKBENCH_WINDOW_SHELL_NAME = "activeWorkbenchWindowShell"; //$NON-NLS-1$
+
+	/**
+	 * The priority given when the source includes the currently active
 	 * workbench window.
 	 */
 	public static final int ACTIVE_WORKBENCH_WINDOW = 1 << 14;

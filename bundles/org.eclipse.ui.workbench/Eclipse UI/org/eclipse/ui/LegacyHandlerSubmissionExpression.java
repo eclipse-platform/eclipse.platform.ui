@@ -95,7 +95,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 			Object value = context.getVariable(ISources.ACTIVE_SHELL_NAME);
 			if (!activeShell.equals(value)) {
 				value = context
-						.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+						.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME);
 				if (!activeShell.equals(value)) {
 					return EvaluationResult.FALSE;
 				}
@@ -118,7 +118,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 		}
 		if (activeShell != null) {
 			info.addVariableNameAccess(ISources.ACTIVE_SHELL_NAME);
-			info.addVariableNameAccess(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+			info.addVariableNameAccess(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME);
 		}
 		if (activeSite != null) {
 			info.addVariableNameAccess(ISources.ACTIVE_SITE_NAME);

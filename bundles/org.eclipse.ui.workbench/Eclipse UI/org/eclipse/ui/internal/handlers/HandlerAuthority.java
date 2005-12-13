@@ -21,11 +21,8 @@ import java.util.Set;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
-import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.internal.misc.Policy;
@@ -93,13 +90,6 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 * should be removed entirely.
 	 */
 	private final Map handlerActivationsByCommandId = new HashMap();
-
-	/**
-	 * The collection of source providers used by this authority. This
-	 * collection is consulted whenever a handler is activated. This collection
-	 * only contains instances of <code>ISourceProvider</code>.
-	 */
-	private final Collection providers = new ArrayList();
 
 	/**
 	 * Constructs a new instance of <code>HandlerAuthority</code>.
@@ -230,47 +220,12 @@ final class HandlerAuthority extends ExpressionAuthority {
 	}
 
 	/**
-	 * Queries the source providers, and fills in the variables for the given
-	 * evaluation context.
-	 * 
-	 * @param context
-	 *            The context to fill in; must not be <code>null</code>.
-	 */
-	private final void fillInCurrentState(final IEvaluationContext context) {
-		final Iterator providerItr = providers.iterator();
-		while (providerItr.hasNext()) {
-			final ISourceProvider provider = (ISourceProvider) providerItr
-					.next();
-			final Map currentState = provider.getCurrentState();
-			final Iterator variableItr = currentState.entrySet().iterator();
-			while (variableItr.hasNext()) {
-				final Map.Entry entry = (Map.Entry) variableItr.next();
-				final String variableName = (String) entry.getKey();
-				final Object variableValue = entry.getValue();
-				if (variableName != null) {
-					if (variableValue == null) {
-						context.removeVariable(variableName);
-					} else {
-						context.addVariable(variableName, variableValue);
-					}
-				}
-			}
-		}
-	}
-
-	/**
 	 * Returns the currently active shell.
 	 * 
 	 * @return The currently active shell; may be <code>null</code>.
 	 */
 	final Shell getActiveShell() {
 		return (Shell) getVariable(ISources.ACTIVE_SHELL_NAME);
-	}
-
-	final IEvaluationContext getCurrentState() {
-		final IEvaluationContext context = new EvaluationContext(null, this);
-		fillInCurrentState(context);
-		return context;
 	}
 
 	/**
