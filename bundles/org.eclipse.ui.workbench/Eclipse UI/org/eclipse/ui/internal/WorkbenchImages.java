@@ -259,12 +259,12 @@ public/*final*/class WorkbenchImages {
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE,
                 PATH_EVIEW + "default_persp.gif", false); //$NON-NLS-1$
 
-//        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN
-//                        + "new_wiz.gif", false); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN
+                        + "new_wiz.gif", false); //$NON-NLS-1$
 
 	// testing PNG images cross platform, allows designers to pickup nightly builds
-        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN
-                + "new_wiz.png", false); //$NON-NLS-1$
+//        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN
+//                + "new_wiz.png", false); //$NON-NLS-1$
 
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_IMPORT_WIZ, PATH_ETOOL
                         + "import_wiz.gif", false); //$NON-NLS-1$
