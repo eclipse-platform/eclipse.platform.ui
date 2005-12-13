@@ -13,6 +13,7 @@ package org.eclipse.jface.text;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
@@ -39,7 +40,7 @@ import org.eclipse.jface.dialogs.PopupDialog;
  *
  * @since 2.0
  */
-public class DefaultInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3 {
+public class DefaultInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, DisposeListener {
 
 	/**
 	 * An information presenter determines the style presentation
@@ -397,6 +398,14 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 */
 	public boolean hasContents() {
 		return fText.getCharCount() > 0;
+	}
+
+	/**
+	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+	 * @since 3.0
+	 * @deprecated As of 3.2, no longer used and called
+	 */
+	public void widgetDisposed(DisposeEvent event) {
 	}
 }
 
