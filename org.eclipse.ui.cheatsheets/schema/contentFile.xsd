@@ -4,7 +4,7 @@
 	<xsd:annotation>
 		<xsd:documentation xml:lang="en">
 		Schema for cheat sheet content file.
- 		Copyright (c) 2004, 2005 IBM Corporation and others.&lt;br&gt;
+ 		Copyright (c) 2004 IBM Corporation and others.&lt;br&gt;
 		All rights reserved. This program and the accompanying materials are made 
 		available under the terms of the Eclipse Public License v1.0 which 
 		accompanies this distribution, and is available at 
@@ -57,7 +57,6 @@
 	            </xsd:choice>
             </xsd:choice>
             <xsd:attribute name="title" type="xsd:string" use="required"/>
-            <xsd:attribute name="dialog" type="xsd:boolean" use="optional" default="false"/>
             <xsd:attribute name="skip" type="xsd:boolean" use="optional" default="false"/>
             <xsd:attribute name="contextId" type="xsd:string" use="optional"/>
             <xsd:attribute name="href" type="xsd:string" use="optional"/>

@@ -55,7 +55,6 @@ public final class Messages extends NLS {
 	public static String ReusableHelpPart_openInfoCenterAction_label;
 	public static String ReusableHelpPart_openAction_label;
 	public static String ReusableHelpPart_openInHelpContentsAction_label;
-	public static String ReusableHelpPart_closeAction_tooltip;
 	public static String ReusableHelpPart_copyAction_label;
 	public static String ReusableHelpPart_bookmarkAction_label;
 	public static String ReusableHelpPart_status;
@@ -141,7 +140,7 @@ public final class Messages extends NLS {
 	public static String BrowsersPreferencePage_wgroup;
 	public static String BrowsersPreferencePage_view;
 	public static String BrowsersPreferencePage_dgroup;
-	public static String BrowsersPreferencePage_tray;
+	public static String BrowsersPreferencePage_window;
 	public static String InfoCenterPage_url;
 	public static String InfoCenterPage_invalidURL;
 	public static String InfoCenterPage_tocError;

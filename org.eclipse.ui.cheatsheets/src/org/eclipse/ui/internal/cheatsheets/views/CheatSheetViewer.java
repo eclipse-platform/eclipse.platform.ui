@@ -24,11 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.help.ui.internal.views.HelpTray;
-import org.eclipse.help.ui.internal.views.IHelpPartPage;
-import org.eclipse.help.ui.internal.views.ReusableHelpPart;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -39,11 +35,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.cheatsheets.ICheatSheetEvent;
 import org.eclipse.ui.cheatsheets.ICheatSheetViewer;
@@ -90,24 +82,19 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	private ArrayList viewItemList = new ArrayList();
 
 	//Composites
-	protected Composite control;
+	private Composite control;
 
 	private Cursor busyCursor;
 	
 	private ErrorPage errorPage;
 	private CheatSheetPage cheatSheetPage;
 	private Label howToBegin;
-	private boolean inDialog;
-	private Listener listener;
 
 	/**
 	 * The constructor.
-	 * 
-	 * @param inDialog whether or not this viewer will be placed in a modal dialog
 	 */
-	public CheatSheetViewer(boolean inDialog) {
+	public CheatSheetViewer() {
 		currentItemNum = -1;
-		this.inDialog = inDialog;
 		saveHelper = new CheatSheetSaveHelper();
 	}
 
@@ -553,21 +540,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 				dispose();
 			}
 		});
-		
-		/*
-		 * org.eclipse.help.ui is an optional dependency; only perform this
-		 * step is this plugin is present.
-		 */
-		if (!inDialog && (Platform.getBundle("org.eclipse.help.ui") != null)) {
-			listener = new Listener() {
-				public void handleEvent(Event event) {
-					if (isTrayDialog(event.widget)) {
-						dialogOpened((TrayDialog)((Shell)event.widget).getData());
-					}
-				}
-			};
-			Display.getCurrent().addFilter(SWT.Show, listener);
-		}
 
 		howToBegin = new Label(control, SWT.WRAP);
 		howToBegin.setText(Messages.INITIAL_VIEW_DIRECTIONS);
@@ -583,53 +555,11 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	}
 
 	/**
-	 * Called when any TrayDialog is opened. The viewer must react by disabling
-	 * itself and moving the cheat sheet to the dialog's tray if the current item
-	 * was flagged as one that opens a modal dialog.
-	 * 
-	 * @param dialog the dialog that was opened
-	 */
-	private void dialogOpened(TrayDialog dialog) {
-		if (isInDialogItem()) {
-			final String id = getCheatSheetID();
-			HelpTray tray = (HelpTray)dialog.getTray();
-			if (tray == null) {
-				tray = new HelpTray();
-				dialog.openTray(tray);
-			}
-			ReusableHelpPart helpPart = tray.getHelpPart();
-			IHelpPartPage page = helpPart.createPage(CheatSheetHelpPart.ID, null, null);
-			page.setVerticalSpacing(0);
-			page.setHorizontalMargin(0);
-			helpPart.addPart(CheatSheetHelpPart.ID, new CheatSheetHelpPart(helpPart.getForm().getForm().getBody(), helpPart.getForm().getToolkit(), page.getToolBarManager(), id));
-			page.addPart(CheatSheetHelpPart.ID, true);
-			helpPart.addPage(page);
-			helpPart.showPage(CheatSheetHelpPart.ID);
-			
-			/*
-			 * Disable the viewer until the tray is closed, then show it again.
-			 */
-			control.setVisible(false);
-			Display.getCurrent().removeFilter(SWT.Show, listener);
-
-			helpPart.getControl().addListener(SWT.Dispose, new Listener() {
-				public void handleEvent(Event event) {
-					control.setVisible(true);
-					Display.getCurrent().addFilter(SWT.Show, listener);
-					checkSavedState();
-				}
-			});
-		}
-	}
-
-	/**
 	 * Disposes of this cheat sheet viewer.
 	 */
 	private void dispose() {
-		if (listener != null) {
-			Display.getCurrent().removeFilter(SWT.Show, listener);
-		}
 		internalDispose();
+
 		if (busyCursor != null)
 			busyCursor.dispose();
 	}
@@ -699,17 +629,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 	private ViewItem getViewItemAtIndex(int index) {
 		return (ViewItem) viewItemList.get(index);
-	}
-	
-	/**
-	 * Returns whether or not this viewer contains the given Control, which
-	 * is currently in focus.
-	 * 
-	 * @param control the Control currently in focus
-	 * @return whether this viewer contains the given Control or not
-	 */
-	public boolean hasFocusControl(Control control) {
-		return (control == this.control) || (cheatSheetPage.getForm() == control);
 	}
 	
 	private void initCheatSheetView() {
@@ -802,38 +721,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			cheatSheetPage.dispose();
 		}
 	}
-
-	/**
-	 * Returns whether or not the currently active item requires opening a
-	 * modal dialog.
-	 * 
-	 * @return whether the current item opens a modal dialog
-	 */
-	private boolean isInDialogItem() {
-		ViewItem item = getViewItemAtIndex(currentItemNum);
-		return item.getItem().isDialog();
-	}
 	
-	/**
-	 * Returns whether or not this cheat sheet viewer is inside a modal
-	 * dialog.
-	 * 
-	 * @return whether this viewer is inside a modal dialog
-	 */
-	public boolean isInDialogMode() {
-		return inDialog;
-	}
-	
-	/**
-	 * Returns whether the given widget is a TrayDialog.
-	 * 
-	 * @param widget the widget to check
-	 * @return whether or not the widget is a TrayDialog
-	 */
-	private boolean isTrayDialog(Widget widget) {
-		return (widget instanceof Shell && ((Shell)widget).getData() instanceof TrayDialog);
-	}
-
 	/**
 	* Read the contents of the welcome page
 	*/

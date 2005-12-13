@@ -505,8 +505,6 @@ public class CheatSheetParser {
 					item.setHref(attribute.getNodeValue());
 				} else if (attributeName.equals(IParserTags.SKIP)) {
 					item.setSkip(attribute.getNodeValue().equals(TRUE_STRING));
-				} else if (attributeName.equals(IParserTags.DIALOG)) {
-					item.setDialog(attribute.getNodeValue().equals(TRUE_STRING));
 				} else {
 					AbstractItemExtensionElement[] ie = handleUnknownItemAttribute(attribute, itemNode);
 					if (ie != null)

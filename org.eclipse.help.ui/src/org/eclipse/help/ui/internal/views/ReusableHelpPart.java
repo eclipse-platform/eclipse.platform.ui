@@ -269,7 +269,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		}
 	}
 
-	private class HelpPartPage implements IHelpPartPage {
+	private class HelpPartPage {
 		private String id;
 
 		private String iconId;
@@ -643,40 +643,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			indexerJob.schedule();
 		}
 	}
-	
-	/**
-	 * Adds the given page to this part.
-	 * 
-	 * @param page the page to add
-	 */
-	public void addPage(IHelpPartPage page) {
-		pages.add(page);		
-	}
-	
-	/**
-	 * Adds the given part to this one. The part can then be used inside
-	 * any page and referred to by id.
-	 * 
-	 * @param id the part's unique id
-	 * @param part the part to add
-	 */
-	public void addPart(String id, IHelpPart part) {
-		part.init(this, id, memento);
-		mform.addPart(part);
-	}
-	
-	/**
-	 * Creates a new page for this part.
-	 * 
-	 * @param id the page's unique id
-	 * @param text the page's heading, or null for none
-	 * @param iconId the page's icon
-	 * @return the newly created page
-	 */
-	public IHelpPartPage createPage(String id, String text, String iconId) {
-		return new HelpPartPage(id, text, iconId);
-	}
-	
+
 	private void definePages() {
 		pages = new ArrayList();
 		// federated search page

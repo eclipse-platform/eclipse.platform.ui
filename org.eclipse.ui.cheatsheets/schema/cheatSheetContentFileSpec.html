@@ -11,7 +11,7 @@
 <body>
 
 <h1>Cheat Sheet Content File XML Format</h1>
-<p>Version 3.2</p>
+<p>Version 3.0</p>
 <p>This document describes the cheat sheet content file structure as a series of
 DTD fragments (machine readable <a href="contentFile.xsd">XML schema</a>).</p>
 <h2><code>cheatsheet</code></h2>
@@ -70,7 +70,6 @@ whitespace immediately before the &lt;<b>/description</b>&gt; tag.</p>
 <pre>&lt;!ELEMENT item (description ([action|perform-when] | (subitem|repeated-subitem|conditional-subitem)*))&gt;&nbsp;
 &lt;!ATTLIST item&nbsp;
 &nbsp; title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-&nbsp; dialog  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&quot;true&quot; | &quot;false&quot;) &quot;false&quot;
 &nbsp; skip   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&quot;true&quot; | &quot;false&quot;) &quot;false&quot;
 &nbsp; contextId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;
 &nbsp; href &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
@@ -80,9 +79,6 @@ whitespace immediately before the &lt;<b>/description</b>&gt; tag.</p>
 follows:</p>
 <ul type="disc">
   <li><b>title</b> - The title of the cheat sheet item.
-  <li><b>dialog</b> - dialog=&quot;true&quot; means this step involves opening
-    a modal dialog. This is a hint to the system that it should allow the user
-    to continue using the cheat sheet while in the modal dialog.</li>
   <li><b>skip</b> - skip=&quot;true&quot; means that the whole step can be
     skipped; the UI generally shows a button that the user can press to indicate
     that they are skipping this step</li>
@@ -326,8 +322,8 @@ to
   &lt;intro&gt;
     &lt;description&gt;Example cheat sheet with two steps.&lt;/description&gt;
   &lt;/intro&gt;
-  &lt;item title=&quot;Step 1&quot; dialog=&quot;true&quot;&gt;
-     &lt;description&gt;This is a step with an action that involves opening a modal dialog.&lt;/description&gt;
+  &lt;item title=&quot;Step 1&quot;&gt;
+     &lt;description&gt;This is a step with an action.&lt;/description&gt;
      &lt;action class=&quot;com.xyz.myaction&quot; pluginId=&quot;com.xyz&quot;/&gt;
   &lt;/item&gt;
   &lt;item title=&quot;Step 2&quot;&gt;
@@ -337,7 +333,7 @@ to
 
 <br>
 <p class=note id=copyright>
-Copyright (c) 2004, 2005 IBM Corporation and others.<br>
+Copyright (c) 2004 IBM Corporation and others.<br>
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which accompanies 
 this distribution, and is available at 
