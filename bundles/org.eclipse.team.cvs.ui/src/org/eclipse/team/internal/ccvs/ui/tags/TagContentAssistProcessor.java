@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.tags;
 import java.util.*;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.contentassist.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.*;
