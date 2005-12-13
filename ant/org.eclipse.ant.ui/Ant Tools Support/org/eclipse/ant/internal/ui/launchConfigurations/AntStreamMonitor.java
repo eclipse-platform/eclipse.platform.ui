@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IFlushableStreamMonitor;
-import org.eclipse.jface.util.ListenerList;
 
 /**
  * Stream monitor implementation for an Ant build process.
