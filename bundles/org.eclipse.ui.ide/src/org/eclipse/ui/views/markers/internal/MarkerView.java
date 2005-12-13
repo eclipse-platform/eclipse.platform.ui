@@ -190,7 +190,7 @@ public abstract class MarkerView extends TableView {
 		 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
 		 */
 		public boolean shouldRun() {
-			return buildDone;
+			return buildDone && !getViewer().getControl().isDisposed();
 		}
 	}
 
@@ -633,6 +633,8 @@ public abstract class MarkerView extends TableView {
 		}
 		if (showInMenu != null)
 			showInMenu.dispose();
+		
+		updateJob.cancel();
 	}
 
 	/*
