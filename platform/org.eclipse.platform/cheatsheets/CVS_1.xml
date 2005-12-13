@@ -18,8 +18,7 @@ In this step you must determine the name of the branch or version that contains 
 
 	<item
 		href="/org.eclipse.platform.doc.user/tasks/tasks-100b.htm"
-		title="Load the Destination into your Workspace"
-		dialog="true">
+		title="Load the Destination into your Workspace">
 		<description>
 Select the project and choose Replace With &gt; Another Branch or Version from the context menu. Then select the branch to replace with. In this step you must ensure that the destination is loaded into your workspace. This is a manual task, you will need to perform the work and click the "Click to complete" button to move to the next step.
 		</description>
@@ -27,8 +26,7 @@ Select the project and choose Replace With &gt; Another Branch or Version from t
 
 	<item
 		href="/org.eclipse.platform.doc.user/tasks/tasks-100b.htm" 
-		title="Merge Details"
-		dialog="true">
+		title="Merge Details">
 		<description>
 Select the project, choose Team &gt; Merge and complete the wizard as required. This step specifies the details of the merge.  This is a manual task, you will need to perform the work and click the "Click to complete" button to move to the next step.
 		</description>
