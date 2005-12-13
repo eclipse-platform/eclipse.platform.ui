@@ -73,7 +73,7 @@ public class AsynchronousTreeNavigationModel extends LabelProvider {
 		if (item != null) {
 			return item.getText();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	/**

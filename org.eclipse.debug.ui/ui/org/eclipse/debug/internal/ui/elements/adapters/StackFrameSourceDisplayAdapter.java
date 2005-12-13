@@ -72,7 +72,7 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 		 * Constructs a new source lookup job.
 		 */
 		public SourceLookupJob(IStackFrame frame, ISourceLocator locator, IWorkbenchPage page) {
-			super("Debug Source Lookup"); 
+			super("Debug Source Lookup");  //$NON-NLS-1$
 			setPriority(Job.INTERACTIVE);
 			setSystem(true);
 			fTarget = frame;

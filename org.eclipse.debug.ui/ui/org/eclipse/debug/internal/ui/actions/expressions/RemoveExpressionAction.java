@@ -48,10 +48,10 @@ public class RemoveExpressionAction extends AbstractRemoveActionDelegate {
 	public void run(IAction action) {
 		WorkbenchJob job = new WorkbenchJob("remove expression") { //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				IExpressionManager manager = DebugPlugin.getDefault().getExpressionManager();
+				IExpressionManager expManager = DebugPlugin.getDefault().getExpressionManager();
 				IExpression[] exp = getExpressions();
 				if (exp != null) {
-					manager.removeExpressions(exp);
+					expManager.removeExpressions(exp);
 				}
 				return Status.OK_STATUS;
 			}

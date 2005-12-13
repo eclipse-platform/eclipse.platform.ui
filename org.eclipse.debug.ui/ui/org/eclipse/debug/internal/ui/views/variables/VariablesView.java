@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Map.Entry;
 
-import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
