@@ -35,6 +35,7 @@ public class ApiTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public ApiTestSuite() {
+        addTest(new TestSuite(IPageLayoutTest.class));
         addTest(new TestSuite(PlatformUITest.class));
         addTest(new TestSuite(IWorkbenchTest.class));
         addTest(new TestSuite(IWorkbenchWindowTest.class));

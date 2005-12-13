@@ -29,6 +29,26 @@ public class EmptyPerspective implements IPerspectiveFactory {
      */
     public static final String PERSP_ID2 = "org.eclipse.ui.tests.util.EmptyPerspective2";
 
+    private static String LastPerspective;
+    
+    /**
+     * Returns the descriptor for the perspective last opened using this factory.
+     * 
+     * @return the descriptor for the perspective last opened using this factory, or <code>null</code>
+     */
+	public static String getLastPerspective() {
+		return LastPerspective;
+	}
+
+    /**
+     * Sets the descriptor for the perspective last opened using this factory.
+     * 
+     * @param persp the descriptor for the perspective last opened using this factory, or <code>null</code>
+     */
+	public static void setLastPerspective(String perspId) {
+		LastPerspective = perspId;
+	}
+    
     /**
      * Constructs a new Default layout engine.
      */
@@ -51,6 +71,7 @@ public class EmptyPerspective implements IPerspectiveFactory {
      * @param factory the factory used to add views to the perspective
      */
     public void createInitialLayout(IPageLayout layout) {
-        // do nothing, this is the empty perspective
+    	setLastPerspective(layout.getDescriptor().getId());
+        // do no layout, this is the empty perspective
     }
 }
