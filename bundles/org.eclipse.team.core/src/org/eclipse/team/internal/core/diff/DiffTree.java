@@ -279,4 +279,12 @@ public class DiffTree implements IDiffTree {
 		changes.reset();
 	}
 
+	/**
+	 * Return the paths in this tree that contain diffs.
+	 * @return the paths in this tree that contain diffs.
+	 */
+	public IPath[] getPaths() {
+		return pathTree.getPaths();
+	}
+
 }

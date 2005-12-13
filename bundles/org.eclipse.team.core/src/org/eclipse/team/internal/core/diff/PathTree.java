@@ -168,4 +168,17 @@ public class PathTree {
 		return objects.isEmpty();
 	}
 
+	/**
+	 * Return the paths in this tree that contain diffs.
+	 * @return the paths in this tree that contain diffs.
+	 */
+	public IPath[] getPaths() {
+		List result = new ArrayList();
+		for (Iterator iter = objects.keySet().iterator(); iter.hasNext();) {
+			IPath path = (IPath) iter.next();
+			result.add(path);
+		}
+		return (IPath[]) result.toArray(new IPath[result.size()]);
+	}
+
 }
