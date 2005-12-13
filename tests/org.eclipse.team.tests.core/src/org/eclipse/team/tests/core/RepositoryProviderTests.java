@@ -318,9 +318,30 @@ public class RepositoryProviderTests extends TeamTest {
 	public void testMapSuccess() throws CoreException, TeamException {
 		IProject project = getUniqueTestProject("testLinkSuccess");
 		buildResources(project, new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" }, true);
+		
+		// Test shallow link when URI not allowed
 		IFolder folder = project.getFolder("link");
 		folder.createLink(getRandomLocation(), IResource.ALLOW_MISSING_LOCAL, null);
 		RepositoryProviderWithLinking.setCanHandleLinking(true);
+		RepositoryProviderWithLinking.setCanHandleLinkedURI(false);
+		RepositoryProvider.map(project, RepositoryProviderWithLinking.TYPE_ID);
+		
+		// Test shallow link when URI is allowed
+		RepositoryProvider.unmap(project);
+		folder.delete(false, null);
+		folder = project.getFolder("link");
+		folder.createLink(getRandomLocation(), IResource.ALLOW_MISSING_LOCAL, null);
+		RepositoryProviderWithLinking.setCanHandleLinking(true);
+		RepositoryProviderWithLinking.setCanHandleLinkedURI(true);
+		RepositoryProvider.map(project, RepositoryProviderWithLinking.TYPE_ID);
+		
+		// Test deep link when URI is allowed
+		RepositoryProvider.unmap(project);
+		folder.delete(false, null);
+		folder = project.getFolder("folder1/folder2");
+		folder.createLink(getRandomLocation(), IResource.ALLOW_MISSING_LOCAL, null);
+		RepositoryProviderWithLinking.setCanHandleLinking(true);
+		RepositoryProviderWithLinking.setCanHandleLinkedURI(true);
 		RepositoryProvider.map(project, RepositoryProviderWithLinking.TYPE_ID);
 	}
 	
@@ -328,43 +349,123 @@ public class RepositoryProviderTests extends TeamTest {
 		IProject project = getUniqueTestProject("testLinkSuccess");
 		buildResources(project, new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" }, true);
 		RepositoryProviderWithLinking.setCanHandleLinking(true);
+		RepositoryProviderWithLinking.setCanHandleLinkedURI(false);
 		RepositoryProvider.map(project, RepositoryProviderWithLinking.TYPE_ID);
+		// Test shallow link when URI not allowed
 		IFolder folder = project.getFolder("link");
+		folder.createLink(getRandomLocation(), IResource.ALLOW_MISSING_LOCAL, null);
+		// Test shallow link when URI is allowed
+		RepositoryProviderWithLinking.setCanHandleLinkedURI(true);
+		folder.delete(false, null);
+		folder = project.getFolder("link");
+		folder.createLink(getRandomLocation(), IResource.ALLOW_MISSING_LOCAL, null);
+		// Test deep link
+		RepositoryProviderWithLinking.setCanHandleLinkedURI(true);
+		folder = project.getFolder("folder1/folder2");
 		folder.createLink(getRandomLocation(), IResource.ALLOW_MISSING_LOCAL, null);
 	}
 
 	public void testMapFailure() throws CoreException, TeamException {
-		IProject project = getUniqueTestProject("testLinkSuccess");
+		IProject project = getUniqueTestProject("testMapFailure");
 		buildResources(project, new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" }, true);
 		IFolder folder = project.getFolder("link");
 		folder.createLink(getRandomLocation(), IResource.ALLOW_MISSING_LOCAL, null);
+		RepositoryProviderWithLinking.setCanHandleLinking(false);
+		RepositoryProviderWithLinking.setCanHandleLinkedURI(false);
+		// Test shallow link
+		boolean fail = true;
 		try {
-			RepositoryProviderWithLinking.setCanHandleLinking(false);
 			RepositoryProvider.map(project, RepositoryProviderWithLinking.TYPE_ID);
 		} catch (TeamException e) {
 			if (e.getStatus().getCode() != IResourceStatus.LINKING_NOT_ALLOWED) {
 				throw e;
 			}
-			return;
+			fail = false;
 		}
-		fail("Link should be disallowed");
+		if (fail)
+			fail("Link should be disallowed");
+		// Test deep link
+		folder.delete(false, null);
+		folder = project.getFolder("folder1/folder2");
+		folder.createLink(getRandomLocation(), IResource.ALLOW_MISSING_LOCAL, null);
+		fail = true;
+		try {
+			RepositoryProvider.map(project, RepositoryProviderWithLinking.TYPE_ID);
+		} catch (TeamException e) {
+			if (e.getStatus().getCode() != IResourceStatus.LINKING_NOT_ALLOWED) {
+				throw e;
+			}
+			fail = false;
+		}
+		if (fail)
+			fail("Link should be disallowed");
+		
+		// Test deep failure when shallow is allowed
+		folder.delete(false, null);
+		RepositoryProviderWithLinking.setCanHandleLinking(true);
+		folder = project.getFolder("folder1/folder2");
+		folder.createLink(getRandomLocation(), IResource.ALLOW_MISSING_LOCAL, null);
+		fail = true;
+		try {
+			RepositoryProvider.map(project, RepositoryProviderWithLinking.TYPE_ID);
+		} catch (TeamException e) {
+			if (e.getStatus().getCode() != IResourceStatus.LINKING_NOT_ALLOWED) {
+				throw e;
+			}
+			fail = false;
+		}
+		if (fail)
+			fail("Link should be disallowed");
 	}
+	
 
 	public void testLinkFailure() throws CoreException, TeamException {
-		IProject project = getUniqueTestProject("testLinkSuccess");
+		IProject project = getUniqueTestProject("testLinkFailure");
 		buildResources(project, new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" }, true);
 		RepositoryProviderWithLinking.setCanHandleLinking(false);
+		RepositoryProviderWithLinking.setCanHandleLinkedURI(false);
 		RepositoryProvider.map(project, RepositoryProviderWithLinking.TYPE_ID);
 		IFolder folder = project.getFolder("link");
+		// Test shallow link
+		boolean fail = true;
 		try {
 			folder.createLink(getRandomLocation(), IResource.ALLOW_MISSING_LOCAL, null);
 		} catch (CoreException e) {
 			if (e.getStatus().getCode() != IResourceStatus.LINKING_NOT_ALLOWED) {
 				throw e;
 			}
-			return;
+			fail = false;
 		}
-		fail("Link should be disallowed");
+		if (fail)
+			fail("Link should be disallowed");
+		// Test deep link
+		folder = project.getFolder("folder1/folder2");
+		fail = true;
+		try {
+			folder.createLink(getRandomLocation(), IResource.ALLOW_MISSING_LOCAL, null);
+		} catch (CoreException e) {
+			if (e.getStatus().getCode() != IResourceStatus.LINKING_NOT_ALLOWED) {
+				throw e;
+			}
+			fail = false;
+		}
+		if (fail)
+			fail("Link should be disallowed");
+		
+		// Test deep link when shallow allowed
+		RepositoryProviderWithLinking.setCanHandleLinking(true);
+		folder = project.getFolder("folder1/folder2");
+		fail = true;
+		try {
+			folder.createLink(getRandomLocation(), IResource.ALLOW_MISSING_LOCAL, null);
+		} catch (CoreException e) {
+			if (e.getStatus().getCode() != IResourceStatus.LINKING_NOT_ALLOWED) {
+				throw e;
+			}
+			fail = false;
+		}
+		if (fail)
+			fail("Link should be disallowed");
 	}
 	
 	public void testIsShared() throws CoreException, TeamException {

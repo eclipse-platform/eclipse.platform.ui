@@ -72,6 +72,9 @@ public class LinkResourcesTest extends EclipseTest {
 		IFolder folder = project.getFolder("link");
 		folder.createLink(Platform.getLocation().append("temp"), IResource.ALLOW_MISSING_LOCAL, null);
 		assertIsIgnored(folder, true);
+		folder = project.getFolder("folder1/folder2/");
+		folder.createLink(Platform.getLocation().append("temp"), IResource.ALLOW_MISSING_LOCAL, null);
+		assertIsIgnored(folder, true);
 	}
 	
 	public void testLinkCVSFolder() throws CoreException, TeamException, IOException {
