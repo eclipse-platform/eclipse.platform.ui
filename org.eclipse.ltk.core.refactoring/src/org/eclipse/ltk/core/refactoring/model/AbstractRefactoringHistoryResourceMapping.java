@@ -27,11 +27,12 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
 /**
- * Resource mapping for a refactoring history object.
+ * Partial implementation of a resource mapping for a refactoring history
+ * object.
  * 
  * @since 3.2
  */
-public final class RefactoringHistoryResourceMapping extends ResourceMapping {
+public abstract class AbstractRefactoringHistoryResourceMapping extends ResourceMapping {
 
 	/** The refactoring history */
 	private final RefactoringHistory fRefactoringHistory;
@@ -40,12 +41,12 @@ public final class RefactoringHistoryResourceMapping extends ResourceMapping {
 	private ResourceTraversal[] fResourceTraversals= null;
 
 	/**
-	 * Creates a new refactoring history resource mapping.
+	 * Creates a new abstract refactoring history resource mapping.
 	 * 
 	 * @param history
 	 *            the refactoring history
 	 */
-	public RefactoringHistoryResourceMapping(final RefactoringHistory history) {
+	protected AbstractRefactoringHistoryResourceMapping(final RefactoringHistory history) {
 		Assert.isNotNull(history);
 		fRefactoringHistory= history;
 	}
@@ -54,8 +55,8 @@ public final class RefactoringHistoryResourceMapping extends ResourceMapping {
 	 * {@inheritDoc}
 	 */
 	public boolean equals(final Object object) {
-		if (object instanceof RefactoringHistoryResourceMapping) {
-			final RefactoringHistoryResourceMapping mapping= (RefactoringHistoryResourceMapping) object;
+		if (object instanceof AbstractRefactoringHistoryResourceMapping) {
+			final AbstractRefactoringHistoryResourceMapping mapping= (AbstractRefactoringHistoryResourceMapping) object;
 			return mapping.fRefactoringHistory.equals(fRefactoringHistory);
 		}
 		return false;
@@ -64,14 +65,14 @@ public final class RefactoringHistoryResourceMapping extends ResourceMapping {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Object getModelObject() {
+	public final Object getModelObject() {
 		return fRefactoringHistory;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public IProject[] getProjects() {
+	public final IProject[] getProjects() {
 		final IProject[] projects= { null};
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
 		for (int index= 0; index < proxies.length; index++) {
@@ -85,7 +86,7 @@ public final class RefactoringHistoryResourceMapping extends ResourceMapping {
 	/**
 	 * {@inheritDoc}
 	 */
-	public ResourceTraversal[] getTraversals(final ResourceMappingContext context, final IProgressMonitor monitor) throws CoreException {
+	public final ResourceTraversal[] getTraversals(final ResourceMappingContext context, final IProgressMonitor monitor) throws CoreException {
 		if (fResourceTraversals == null) {
 			final IProject[] projects= getProjects();
 			final ResourceTraversal[] traversals= new ResourceTraversal[projects.length];

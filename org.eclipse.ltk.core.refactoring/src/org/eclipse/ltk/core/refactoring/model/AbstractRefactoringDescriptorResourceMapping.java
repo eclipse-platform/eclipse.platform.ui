@@ -29,11 +29,12 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManag
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
 /**
- * Resource mapping for a refactoring descriptor object.
+ * Partial implementation of a resource mapping for a refactoring descriptor
+ * object.
  * 
  * @since 3.2
  */
-public final class RefactoringDescriptorResourceMapping extends ResourceMapping {
+public abstract class AbstractRefactoringDescriptorResourceMapping extends ResourceMapping {
 
 	/** The refactoring descriptor */
 	private final RefactoringDescriptorProxy fDescriptor;
@@ -42,12 +43,12 @@ public final class RefactoringDescriptorResourceMapping extends ResourceMapping 
 	private ResourceTraversal[] fResourceTraversals= null;
 
 	/**
-	 * Creates a new refactoring descriptor resource mapping.
+	 * Creates a new abstract refactoring descriptor resource mapping.
 	 * 
 	 * @param descriptor
 	 *            the refactoring descriptor
 	 */
-	public RefactoringDescriptorResourceMapping(final RefactoringDescriptorProxy descriptor) {
+	protected AbstractRefactoringDescriptorResourceMapping(final RefactoringDescriptorProxy descriptor) {
 		Assert.isNotNull(descriptor);
 		fDescriptor= descriptor;
 	}
@@ -56,8 +57,8 @@ public final class RefactoringDescriptorResourceMapping extends ResourceMapping 
 	 * {@inheritDoc}
 	 */
 	public boolean equals(final Object object) {
-		if (object instanceof RefactoringDescriptorResourceMapping) {
-			final RefactoringDescriptorResourceMapping mapping= (RefactoringDescriptorResourceMapping) object;
+		if (object instanceof AbstractRefactoringDescriptorResourceMapping) {
+			final AbstractRefactoringDescriptorResourceMapping mapping= (AbstractRefactoringDescriptorResourceMapping) object;
 			return mapping.fDescriptor.equals(fDescriptor);
 		}
 		return false;
@@ -66,14 +67,14 @@ public final class RefactoringDescriptorResourceMapping extends ResourceMapping 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Object getModelObject() {
+	public final Object getModelObject() {
 		return fDescriptor;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public IProject[] getProjects() {
+	public final IProject[] getProjects() {
 		final String project= fDescriptor.getProject();
 		if (project != null && !"".equals(project)) //$NON-NLS-1$
 			return new IProject[] { ResourcesPlugin.getWorkspace().getRoot().getProject(project)};
@@ -83,7 +84,7 @@ public final class RefactoringDescriptorResourceMapping extends ResourceMapping 
 	/**
 	 * {@inheritDoc}
 	 */
-	public ResourceTraversal[] getTraversals(final ResourceMappingContext context, final IProgressMonitor monitor) throws CoreException {
+	public final ResourceTraversal[] getTraversals(final ResourceMappingContext context, final IProgressMonitor monitor) throws CoreException {
 		if (fResourceTraversals == null) {
 			fResourceTraversals= new ResourceTraversal[] {};
 			final long stamp= fDescriptor.getTimeStamp();
