@@ -15,7 +15,6 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.navigator.internal.NavigatorContentService;
 
 /**
  * <p>
@@ -59,7 +58,7 @@ public interface ICommonActionProvider extends IMementoAware {
 	/**
 	 * <p>
 	 * Clean up any long-lived objects or resources. Do not dispose of any of the components
-	 * supplied during {@link #init(IViewPart, StructuredViewer, NavigatorContentService)}.
+	 * supplied during {@link #init(String, IViewPart, INavigatorContentService, StructuredViewer)}.
 	 * </p>
 	 *  
 	 */

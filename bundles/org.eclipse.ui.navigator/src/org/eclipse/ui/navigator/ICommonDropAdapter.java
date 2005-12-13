@@ -42,7 +42,7 @@ public interface ICommonDropAdapter {
      *
      * @return one of the <code>LOCATION_* </code> constants defined in this type
      *
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getCurrentLocation()
+	 *  
 	 */
 	int getCurrentLocation();
 
@@ -54,16 +54,14 @@ public interface ICommonDropAdapter {
      * @see DND#DROP_COPY
      * @see DND#DROP_MOVE
      * @see DND#DROP_LINK
-     * @see DND#DROP_NONE
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getCurrentOperation()
+     * @see DND#DROP_NONE 
 	 */
 	int getCurrentOperation();
 
     /**
      * Returns the target object currently under the mouse.
      *
-     * @return the current target object
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getCurrentTarget()
+     * @return the current target object 
 	 */
 	Object getCurrentTarget();
  
@@ -73,8 +71,7 @@ public interface ICommonDropAdapter {
      *
      * @return the selected object, or <code>null</code> if either no object or 
      *   multiple objects are selected
-     *   
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getSelectedObject()
+     *    
 	 */
 	Object getSelectedObject();
 	
@@ -82,7 +79,8 @@ public interface ICommonDropAdapter {
 	/**
 	 * Return the current transfer data.
 	 * 
-	 * @see org.eclipse.ui.part.PluginDropAdapter#getCurrentTransfer()
+	 * @return The current transfer data for this drop.
+	 *  
 	 */ 
 	TransferData getCurrentTransfer(); 
 	

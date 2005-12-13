@@ -108,7 +108,8 @@ import org.eclipse.ui.part.ViewPart;
  * </p>
  * <p>
  * Clients that wish to extend the view menu provided via the org.eclipse.ui.popupMenus extension
- * may specify the {@link POPUP_MENU_ID}&nbsp;as their target menu id.
+ * may specify the the popupMenuId specified by <b>org.eclipse.ui.navigator.viewer</b> of their
+ * target viewer as their target menu id.
  * 
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
