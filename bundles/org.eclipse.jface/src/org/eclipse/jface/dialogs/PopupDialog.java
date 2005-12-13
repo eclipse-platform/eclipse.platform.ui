@@ -447,7 +447,12 @@ public class PopupDialog extends Window {
 		}
 		// Content
 		dialogArea = createDialogArea(composite);
-
+		// Create a grid data layout data if one was not provided.
+		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=118025
+		if (dialogArea.getLayoutData() == null) {
+			dialogArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+		}
+		
 		// Info field
 		if (hasInfoArea()) {
 			infoSeparator = createHorizontalSeparator(composite);
