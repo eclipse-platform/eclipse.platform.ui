@@ -274,7 +274,7 @@ In the case of &apos;actionProvider&apos;, clients must define an expression tha
             Supplies the name of a class that implements org.eclipse.ui.navigator.ICommonActionProvider. The action provider has an opportunity to contribute to the context menu and the retargetable actions defined in the IActionBars for the view that holds the navigator. Clients may also contribute directly to the view menu through the IActionBars view menu.
 
 For actionProviders that are nested under a navigatorContent element, the visibility will be controlled by the id of the navigatorContent extension id. Child action providers will automatically
-be picked up by matching viewerContentBindings. Peer actionProviders require their own viewerActionBinding. (see org.eclipse.ui.navigator.viewer)
+be picked up by matching viewerContentBindings. Peer actionProviders require their own viewerActionBinding (see org.eclipse.ui.navigator.viewer).
 
 Clients may provider &apos;actionProvider&apos;(s) under the root &apos;extention&apos; element (peer to &apos;navigatorContent&apos;) in order to better control the binding (see &apos;veiwerActionBinding&apos;) and their enablement (the root level &apos;actionProvider&apos; element supports a nested &apos;enablement&apos; Eclipse core expression).
 
