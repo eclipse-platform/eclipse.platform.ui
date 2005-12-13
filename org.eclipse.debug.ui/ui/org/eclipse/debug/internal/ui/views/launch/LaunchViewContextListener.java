@@ -28,7 +28,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.core.model.IProcess;
@@ -61,6 +63,7 @@ import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.contexts.NotDefinedException;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * A context listener which automatically opens/closes/activates views in
@@ -78,7 +81,7 @@ import org.eclipse.ui.progress.UIJob;
  * an element with the specified debug model identifier is selected,
  * the specified activity will be enabled.
  */
-public class LaunchViewContextListener implements IContextManagerListener, IActivityManagerListener {
+public class LaunchViewContextListener implements IContextManagerListener, IActivityManagerListener, ILaunchesListener2 {
 
 	private static final String DEBUG_MODEL_ACTIVITY_SUFFIX = "/debugModel"; //$NON-NLS-1$
 	public static final String ID_CONTEXT_VIEW_BINDINGS= "contextViewBindings"; //$NON-NLS-1$
@@ -200,6 +203,8 @@ public class LaunchViewContextListener implements IContextManagerListener, IActi
 		IActivityManager activityManager = workbench.getActivitySupport().getActivityManager();
 		activityManager.addActivityManagerListener(this);
 		enabledActivities = activityManager.getEnabledActivityIds();
+        
+        DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
 	
 	/**
@@ -1029,16 +1034,25 @@ public class LaunchViewContextListener implements IContextManagerListener, IActi
 	 * 
 	 * @param launches the terminated launches
 	 */
-	protected void launchesTerminated(ILaunch[] launches) {
-		List allSubmissions= new ArrayList();
-		for (int i = 0; i < launches.length; i++) {
-			List submissions= (List) fContextSubmissions.remove(launches[i]);
-			if (submissions != null) {
-				allSubmissions.addAll(submissions);
-			}
-		}
-		PlatformUI.getWorkbench().getContextSupport().removeEnabledSubmissions(allSubmissions);
-	}
+	public void launchesTerminated(final ILaunch[] launches) {
+        WorkbenchJob job = new WorkbenchJob("LaunchViewContextListener.launchesTerminated") { //$NON-NLS-1$
+            public IStatus runInUIThread(IProgressMonitor monitor) {
+                if (!monitor.isCanceled()) {
+                    List allSubmissions = new ArrayList();
+                    for (int i = 0; i < launches.length; i++) {
+                        List submissions = (List) fContextSubmissions.remove(launches[i]);
+                        if (submissions != null) {
+                            allSubmissions.addAll(submissions);
+                        }
+                    }
+                    PlatformUI.getWorkbench().getContextSupport().removeEnabledSubmissions(allSubmissions);
+                }
+                return Status.OK_STATUS;
+            }
+        };
+        job.setSystem(true);
+        job.schedule();
+    }
 	
 	/**
 	 * Returns the view identifier associated with the given extension
@@ -1238,6 +1252,7 @@ public class LaunchViewContextListener implements IContextManagerListener, IActi
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getContextSupport().getContextManager().removeContextManagerListener(this);
 		workbench.getActivitySupport().getActivityManager().removeActivityManagerListener(this);
+        DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 	}
 
 	/**
@@ -1257,5 +1272,17 @@ public class LaunchViewContextListener implements IContextManagerListener, IActi
 		}
 		
 	}
+
+    public void launchesRemoved(ILaunch[] launches) {
+        //do nothing
+    }
+
+    public void launchesAdded(ILaunch[] launches) {
+        //do nothing
+    }
+
+    public void launchesChanged(ILaunch[] launches) {
+        //do nothing
+    }
 
 }
