@@ -52,7 +52,6 @@ public class AnalyzerDescriptor {
 			this.luceneAnalyzer = new DefaultAnalyzer(locale);
 			this.lang = locale;
 		}
-
 	}
 
 	/**
@@ -151,8 +150,22 @@ public class AnalyzerDescriptor {
 		// e.g. org.eclipse.help.base#3.1.0?locale=ru then indexes might be
 		// compatible
 		// for analyzers from org.eclipse.help.base plug-in this is true.
+		
 		if (id.startsWith(analyzerId)) {
 			return true;
+		}
+		// no direct match - try compatible
+		String prefix = HelpBasePlugin.PLUGIN_ID + "#"; //$NON-NLS-1$
+		if (analyzerId.startsWith(prefix) && 
+				id.startsWith(prefix)) {
+			// no changes in analyzers between 3.1 and 3.2
+			Version aidVersion = getVersion(analyzerId);
+			Version idVersion = getVersion(id);
+			if (idVersion.getMajor()==3 &&
+					aidVersion.getMajor()==3 &&
+					idVersion.getMinor()>=1 &&
+					aidVersion.getMinor()>=1)
+				return true;
 		}
 		
 		// analyzers between some versions of org.eclipse.help plugin
@@ -167,5 +180,11 @@ public class AnalyzerDescriptor {
 		//		}
 		return false;
 	}
-
+	
+	private Version getVersion(String id) {
+		int idStart = id.indexOf('#');
+		int idStop = id.indexOf('?');
+		String value = idStop== -1?id.substring(idStart+1):id.substring(idStart+1, idStop);
+		return new Version(value);
+	}
 }

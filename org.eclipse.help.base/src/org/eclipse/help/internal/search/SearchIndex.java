@@ -45,6 +45,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
@@ -57,6 +58,7 @@ import org.eclipse.help.search.ISearchIndex;
 import org.eclipse.help.search.LuceneSearchParticipant;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 
 /**
  * Text search index. Documents added to this index can than be searched against a search query.
@@ -200,9 +202,9 @@ public class SearchIndex implements ISearchIndex {
 				IStatus status = participant.addDocument(this, pluginId, name, url, id, doc);
 				if (status.getSeverity() == IStatus.OK) {
 					indexedDocs.put(name, "0"); //$NON-NLS-1$
-					if (id!=null)
+					if (id != null)
 						doc.add(Field.UnIndexed("id", id)); //$NON-NLS-1$
-					if (pid!=null)
+					if (pid != null)
 						doc.add(Field.UnIndexed("participantId", pid)); //$NON-NLS-1$
 					iw.addDocument(doc);
 				}
@@ -661,9 +663,19 @@ public class SearchIndex implements ISearchIndex {
 			currentLuceneVersion += (String) lucenePluginDescriptor.getHeaders()
 					.get(Constants.BUNDLE_VERSION);
 		}
-		// Later might add code to return true for known cases
-		// of compatibility between 3.1 and post 3.1 versions.
-		return currentLuceneVersion.equals(luceneVersion);
+		Version version = new Version(currentLuceneVersion);
+		Version currentVersion = new Version(luceneVersion);
+		if (version.getMajor() == 1 && version.getMinor() == 4 && version.getMicro() >= 103) {
+			// this is compatible with 1.4.3 after moving to the
+			// new format
+			version = new Version("1.4.3"); //$NON-NLS-1$
+		}
+		// must not compare with the qualifier because they
+		// change from build to build
+		return version.getMajor() == currentVersion.getMajor()
+				&& version.getMinor() == currentVersion.getMinor()
+				&& version.getMicro() == currentVersion.getMicro();
+		// return currentLuceneVersion.equals(luceneVersion);
 	}
 
 	private boolean isAnalyzerCompatible() {
@@ -966,7 +978,7 @@ public class SearchIndex implements ISearchIndex {
 	 * @return URL to obtain document content or null
 	 */
 	public static URL getIndexableURL(String locale, String url, String id, String participantId) {
-		if (participantId==null)
+		if (participantId == null)
 			url = getIndexableHref(url);
 		if (url == null)
 			return null;
@@ -975,8 +987,8 @@ public class SearchIndex implements ISearchIndex {
 			StringBuffer query = new StringBuffer();
 			query.append("?"); //$NON-NLS-1$
 			query.append("lang=" + locale); //$NON-NLS-1$
-			if (id!=null)
-				query.append("&id="+id); //$NON-NLS-1$
+			if (id != null)
+				query.append("&id=" + id); //$NON-NLS-1$
 			if (participantId != null)
 				query.append("&participantId=" + participantId); //$NON-NLS-1$
 			return new URL("help", //$NON-NLS-1$
@@ -986,10 +998,11 @@ public class SearchIndex implements ISearchIndex {
 			return null;
 		}
 	}
-	
+
 	public IStatus addDocument(String pluginId, String name, URL url, String id, Document doc) {
-		//try a registered participant for the file format
-		LuceneSearchParticipant participant = BaseHelpSystem.getSearchManager().getParticipant(pluginId, name);
+		// try a registered participant for the file format
+		LuceneSearchParticipant participant = BaseHelpSystem.getSearchManager()
+				.getParticipant(pluginId, name);
 		if (participant != null) {
 			return participant.addDocument(this, pluginId, name, url, id, doc);
 		}
