@@ -12,6 +12,7 @@ package org.eclipse.core.filebuffers;
 
 
 import java.io.File;
+import java.net.URI;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -128,8 +129,12 @@ public final class FileBuffers {
 
 		IFile file= getWorkspaceFileAtLocation(location);
 		try {
-			if (file != null)
-				return EFS.getStore(file.getLocationURI());
+			if (file != null) {
+				URI uri= file.getLocationURI();
+				if (uri == null)
+					return null;
+				return EFS.getStore(uri);
+			}
 		} catch (CoreException e) {
 			//fall through and assume it is a local file
 		}

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
+import java.net.URI;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 
@@ -477,7 +479,10 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 */
 	public long getModificationStamp() {
 		try {
-			IFileInfo info= EFS.getStore(fFile.getLocationURI()).fetchInfo();
+			URI uri= fFile.getLocationURI();
+			if (uri == null)
+				return IResource.NULL_STAMP;
+			IFileInfo info= EFS.getStore(uri).fetchInfo();
 			if (info.exists())
 				return info.getLastModified();
 		} catch (CoreException e) {
@@ -512,7 +517,10 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 */
 	public boolean isCommitable() {
 		try {
-			IFileInfo info= EFS.getStore(fFile.getLocationURI()).fetchInfo();
+			URI uri= fFile.getLocationURI();
+			if (uri == null)
+				return false;
+			IFileInfo info= EFS.getStore(uri).fetchInfo();
 			return info.exists() && !info.getAttribute(EFS.ATTRIBUTE_READ_ONLY);
 		} catch (CoreException e) {
 			return false;
