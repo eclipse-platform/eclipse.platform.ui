@@ -27,6 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -39,7 +40,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener2;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.IWorkbenchPage;
@@ -408,8 +408,10 @@ public class FastViewBar implements IWindowTrim {
 
         // Construct an item to act as a 'menu button' (a la the PerspectiveSwitcher)
         menuItem = new  ToolItem(menuTB, SWT.PUSH, 0);
-        menuItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(
-                ISharedImages.IMG_DEF_VIEW));
+        
+        Image tbImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW);
+        menuItem.setImage(tbImage);
+        
         String menuTip = WorkbenchMessages.FastViewBar_0;
         menuItem.setToolTipText(menuTip);
         //new ToolItem(menuTB, SWT.SEPARATOR, 1);
