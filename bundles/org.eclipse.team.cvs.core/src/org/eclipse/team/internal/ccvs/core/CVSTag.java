@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.core.filehistory.ITag;
+import org.eclipse.team.core.history.ITag;
 
 /**
  * A tag in CVS gives a label  to a collection of revisions. The labels can represent a version, a branch, 

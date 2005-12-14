@@ -20,7 +20,7 @@ import org.eclipse.team.core.variants.IResourceVariant;
  * <p>
  * This interface is not intended to be implemented by clients.
  * Clients that need to create deltas should instead use or subclass
- * {@link ResourceDiff}
+ * {@link org.eclipse.team.core.mapping.provider.ResourceDiff}
  * </p>
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as

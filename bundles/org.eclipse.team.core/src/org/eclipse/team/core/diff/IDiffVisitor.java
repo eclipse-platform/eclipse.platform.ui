@@ -13,7 +13,7 @@ package org.eclipse.team.core.diff;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * An objects that visits sync deltas.
+ * An objects that visits diffs in a diff tree.
  * <p> 
  * Usage:
  * <pre>
@@ -53,9 +53,9 @@ import org.eclipse.core.runtime.CoreException;
 public interface IDiffVisitor {
 
 	/** 
-	 * Visits the given delta.
+	 * Visits the given diff.
 	 * 
-	 * @return <code>true</code> if the delta's children should
+	 * @return <code>true</code> if the diff's children should
 	 *		be visited; <code>false</code> if they should be skipped.
 	 * @exception CoreException if the visit fails for some reason.
 	 */

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.core.diff;
 
-import org.eclipse.team.internal.core.diff.ThreeWayDiff;
+import org.eclipse.team.core.mapping.provider.ThreeWayDiff;
 
 
 /**
@@ -41,44 +41,28 @@ public interface IThreeWayDiff extends IDiffNode {
 	 *====================================================================*/
 	
 	/**
-	 * Sync constant (value 4) indicating a change to the local resource.
+	 * Constant (bit mask) indicating that there is a local change.
 	 * 
 	 * @see IThreeWayDiff#getDirection()
 	 */
-	public static final int OUTGOING = 4;
+	public static final int OUTGOING = 0x1000;
 	
 	/**
-	 * Sync constant (value 8) indicating a change to the remote resource.
+	 * Constant (bit mask) indicating that there is a local change.
 	 * 
 	 * @see IThreeWayDiff#getDirection()
 	 */
-	public static final int INCOMING = 8;
+	public static final int INCOMING = 0x2000;
 	
 	/**
-	 * Sync constant (value 12) indicating a change to both the 
-	 * remote and local resources. This flag is equivalent
+	 * Constant (bit mask) indicating that there is both a local change
+	 * and a remote change. 
+	 * This flag is equivalent
 	 * to <code>OUTGOING | INCOMING</code>.
 	 * 
 	 * @see IThreeWayDiff#getDirection()
 	 */
 	public static final int CONFLICTING = OUTGOING | INCOMING;
-	
-	/*====================================================================
-	 * Constants defining synchronization conflict types:
-	 *====================================================================*/
-	
-	/**
-	 * Sync constant (value 16) indication that both the local and remote resources have changed 
-	 * relative to the base but their contents are the same. 
-	 */
-	public static final int PSEUDO_CONFLICT = 16;
-	
-	/**
-	 * Sync constant (value 32) indicating that both the local and remote resources have changed 
-	 * relative to the base but their content changes do not conflict (e.g. source file changes on different 
-	 * lines). These conflicts could be merged automatically.
-	 */
-	public static final int AUTOMERGE_CONFLICT = 32;
 	
 	/**
 	 * Return the local change associated with this delta.
@@ -106,15 +90,5 @@ public interface IThreeWayDiff extends IDiffNode {
 	 * @see IThreeWayDiff#CONFLICTING
 	 */
 	public int getDirection();
-	
-	/**
-	 * For conflicts, return a hint as to the type of conflict.
-	 * May be one of <code>PSEUDO_CONFLICT</code> or <code>AUTOMERGE_CONFLICT</code>.
-	 * 
-	 * @return a hint as to the type of conflict
-	 * @see IThreeWayDiff#PSEUDO_CONFLICT
-	 * @see IThreeWayDiff#AUTOMERGE_CONFLICT
-	 */
-	public int getConflictHint();
 
 }

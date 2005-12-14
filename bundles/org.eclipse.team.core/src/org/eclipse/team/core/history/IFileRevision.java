@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.core.filehistory;
+package org.eclipse.team.core.history;
 
 import java.net.URI;
 

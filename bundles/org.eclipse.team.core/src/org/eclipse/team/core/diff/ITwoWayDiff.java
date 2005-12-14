@@ -12,7 +12,7 @@ package org.eclipse.team.core.diff;
 
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.internal.core.diff.TwoWayDiff;
+import org.eclipse.team.core.mapping.provider.TwoWayDiff;
 
 /**
  * A two-way diff represents the changes between two states of the same object,
@@ -52,7 +52,7 @@ public interface ITwoWayDiff extends IDiffNode {
 	 * 
 	 * @see ITwoWayDiff#getFlags()
 	 */
-	public static final int MOVED_FROM = 0x1000;
+	public static final int MOVED_FROM = 0x200;
 
 	/**
 	 * Change constant (bit mask) indicating that the object was moved to another location.
@@ -60,7 +60,7 @@ public interface ITwoWayDiff extends IDiffNode {
 	 * 
 	 * @see ITwoWayDiff#getFlags()
 	 */
-	public static final int MOVED_TO = 0x2000;
+	public static final int MOVED_TO = 0x400;
 
 	/**
 	 * Change constant (bit mask) indicating that the object has been
@@ -69,7 +69,7 @@ public interface ITwoWayDiff extends IDiffNode {
 	 * 
 	 * @see ITwoWayDiff#getFlags()
 	 */
-	public static final int REPLACED = 0x40000;
+	public static final int REPLACED = 0x800;
 	
 	/**
 	 * Returns flags which describe in more detail how a object has been affected.

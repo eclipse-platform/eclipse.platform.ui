@@ -8,8 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.diff;
+package org.eclipse.team.core.mapping.provider;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.diff.ITwoWayDiff;
@@ -28,24 +29,33 @@ import org.eclipse.team.core.diff.ITwoWayDiff;
  * 
  * @since 3.2
  */
-public class ThreeWayDiff extends AbstractDiffNode implements IThreeWayDiff {
+public class ThreeWayDiff extends DiffNode implements IThreeWayDiff {
 
 	private final ITwoWayDiff localChange;
 	private final ITwoWayDiff remoteChange;
-	private final int conflictHint;
 
 	/**
-	 * Create a three-way delta from the two changes
-	 * @param path the path of the model object that has changed
+	 * Create a three-way delta from the two changes. At least one change
+	 * must be provided (i.e. either change may be <code>null</code>
+	 * but at least one must be non-<code>null</code>).
 	 * @param localChange the local change in the model object or <code>null</code> if there is no local change
 	 * @param remoteChange the remote change in the model object or <code>null</code> if there is no local change
-	 * @param conflictHint
 	 */
-	public ThreeWayDiff(IPath path, ITwoWayDiff localChange, ITwoWayDiff remoteChange, int conflictHint) {
-		super(path, calculateKind(localChange, remoteChange));
+	public ThreeWayDiff(ITwoWayDiff localChange, ITwoWayDiff remoteChange) {
+		super(calculatePath(localChange, remoteChange), calculateKind(localChange, remoteChange));
 		this.localChange = localChange;
 		this.remoteChange = remoteChange;
-		this.conflictHint = conflictHint;
+	}
+
+	private static IPath calculatePath(ITwoWayDiff localChange, ITwoWayDiff remoteChange) {
+		if (localChange != null && remoteChange != null)
+			Assert.isTrue(localChange.getPath().equals(remoteChange.getPath()));
+		if (localChange != null)
+			return localChange.getPath();
+		if (remoteChange != null)
+			return remoteChange.getPath();
+		Assert.isLegal(false, "Either or local or remote change must be supplied"); //$NON-NLS-1$
+		return null; // Will never be reached
 	}
 
 	private static int calculateKind(ITwoWayDiff localChange, ITwoWayDiff remoteChange) {
@@ -91,13 +101,6 @@ public class ThreeWayDiff extends AbstractDiffNode implements IThreeWayDiff {
 			direction |= INCOMING;
 		}
 		return direction;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.IThreeWayDelta#getConflictHint()
-	 */
-	public int getConflictHint() {
-		return conflictHint;
 	}
 
 }

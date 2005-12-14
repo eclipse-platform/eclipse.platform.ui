@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.filehistory.IFileHistoryProvider;
+import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.internal.core.*;
 
 /**

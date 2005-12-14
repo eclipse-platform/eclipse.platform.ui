@@ -12,6 +12,7 @@ package org.eclipse.team.core.mapping;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
+import org.eclipse.team.core.mapping.provider.ScopeGenerator;
 
 /**
  * Interface which defines the protocol for translating a set of

@@ -8,9 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.mapping;
+package org.eclipse.team.core.mapping.provider;
 
 import org.eclipse.team.core.diff.IResourceDiffTree;
+import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.synchronize.ISyncInfoTree;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.core.mapping.DiffCache;

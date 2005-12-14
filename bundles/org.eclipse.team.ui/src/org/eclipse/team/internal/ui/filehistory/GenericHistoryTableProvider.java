@@ -42,8 +42,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.filehistory.IFileHistory;
-import org.eclipse.team.core.filehistory.IFileRevision;
+import org.eclipse.team.core.history.IFileHistory;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 
 public class GenericHistoryTableProvider {

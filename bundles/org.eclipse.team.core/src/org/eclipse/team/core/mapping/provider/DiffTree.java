@@ -8,13 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.diff;
+package org.eclipse.team.core.mapping.provider;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.mapping.DiffChangeEvent;
+import org.eclipse.team.internal.core.mapping.PathTree;
 
 /**
  * Implementation of {@link IDiffTree}.
@@ -42,7 +44,7 @@ public class DiffTree implements IDiffTree {
 	private  boolean lockedForModification;
 
 	/**
-	 * Create a delta set.
+	 * Create an empty diff tree.
 	 */
 	public DiffTree() {
 		resetChanges();

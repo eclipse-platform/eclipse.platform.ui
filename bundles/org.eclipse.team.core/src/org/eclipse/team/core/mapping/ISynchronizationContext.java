@@ -15,6 +15,8 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.mapping.provider.MergeContext;
+import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.core.synchronize.*;
 
 /**

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.diff;
+package org.eclipse.team.internal.core.mapping;
 
 import java.util.*;
 
@@ -31,7 +31,8 @@ public class DiffChangeEvent implements IDiffChangeEvent {
 	private boolean reset = false;
 
 	/**
-	 * 
+	 * Create a diff change event
+	 * @param tree the originating tree
 	 */
 	public DiffChangeEvent(IDiffTree tree) {
 		this.tree = tree;

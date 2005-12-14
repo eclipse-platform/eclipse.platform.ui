@@ -8,13 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.diff;
+package org.eclipse.team.internal.core.mapping;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.mapping.provider.*;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.variants.IResourceVariant;
 
@@ -89,7 +90,7 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 		if (info.getComparator().isThreeWay()) {
 			ITwoWayDiff local = getLocalDelta(info);
 			ITwoWayDiff remote = getRemoteDelta(info);
-			return new ThreeWayDiff(info.getLocal().getFullPath(), local, remote, 0);
+			return new ThreeWayDiff(local, remote);
 		} else {
 			return getDelta(info, wrapLocal(info), info.getRemote(), 0);
 		}

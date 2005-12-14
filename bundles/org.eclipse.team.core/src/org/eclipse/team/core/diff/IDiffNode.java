@@ -37,7 +37,7 @@ public interface IDiffNode {
 	 */
 
 	/**
-	 * Diff kind constant indicating that the resource has not been changed in
+	 * Diff kind constant (bit mask) indicating that the resource has not been changed in
 	 * any way.
 	 * 
 	 * @see IDiffNode#getKind()

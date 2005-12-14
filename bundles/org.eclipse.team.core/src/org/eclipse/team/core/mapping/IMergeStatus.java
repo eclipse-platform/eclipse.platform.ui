@@ -13,6 +13,7 @@ package org.eclipse.team.core.mapping;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.core.mapping.provider.MergeStatus;
 
 /**
  * A special status that is returned when the return code 

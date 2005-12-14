@@ -11,8 +11,8 @@
 
 package org.eclipse.team.internal.core;
 
-import org.eclipse.team.core.filehistory.IFileRevision;
-import org.eclipse.team.core.filehistory.ITag;
+import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.core.history.ITag;
 
 public abstract class FileRevision implements IFileRevision {
 

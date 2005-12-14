@@ -1,9 +1,10 @@
-package org.eclipse.team.core.mapping;
+package org.eclipse.team.core.mapping.provider;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.team.core.mapping.IMergeStatus;
 
 /**
  * A special status that is returned when the return code 

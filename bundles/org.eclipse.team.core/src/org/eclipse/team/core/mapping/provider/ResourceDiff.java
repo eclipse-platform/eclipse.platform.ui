@@ -8,16 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.diff;
+package org.eclipse.team.core.mapping.provider;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.core.diff.ITwoWayDiff;
+import org.eclipse.team.core.diff.IResourceDiff;
+import org.eclipse.team.core.variants.IResourceVariant;
 
 /**
- * Implementation of {@link ITwoWayDiff}. By default, this implementation
- * returns <code>null</code> for the {@link #getMovedFromPath() } and
- * {@link #getMovedToPath() }. Subclasses that support move diffs
- * should override these methods.
+ * Implementation of {@link IResourceDiff}.
  * <p>
  * This class may be subclassed by clients.
  * 
@@ -30,42 +28,37 @@ import org.eclipse.team.core.diff.ITwoWayDiff;
  * 
  * @since 3.2
  */
-public class TwoWayDiff extends AbstractDiffNode implements ITwoWayDiff {
+public class ResourceDiff extends TwoWayDiff implements IResourceDiff {
 
-	private final int flags;	
+	private final IResourceVariant before;
+	private final IResourceVariant after;
 
 	/**
-	 * Create a two-way diff
+	 * Create a two-way resource diff
 	 * @param path the path of the model object that has changed
 	 * @param kind the kind of change
 	 * @param flags additional flags that describe the change
 	 * @param before the before state of the model object
 	 * @param after the after state of the model object
 	 */
-	public TwoWayDiff(IPath path, int kind, int flags) {
-		super(path, kind);
-		this.flags = flags;
+	public ResourceDiff(IPath path, int kind, int flags, IResourceVariant before, IResourceVariant after) {
+		super(path, kind, flags);
+		this.before = before;
+		this.after = after;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ITwoWayDelta#getFlags()
+	 * @see org.eclipse.team.core.diff.IResourceDiff#getBeforeState()
 	 */
-	public int getFlags() {
-		return flags;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.delta.ITwoWayDelta#getMovedToPath()
-	 */
-	public IPath getMovedToPath() {
-		return null;
+	public IResourceVariant getBeforeState() {
+		return before;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.delta.ITwoWayDelta#getMovedFromPath()
+	 * @see org.eclipse.team.core.diff.IResourceDiff#getAfterState()
 	 */
-	public IPath getMovedFromPath() {
-		return null;
+	public IResourceVariant getAfterState() {
+		return after;
 	}
 
 }

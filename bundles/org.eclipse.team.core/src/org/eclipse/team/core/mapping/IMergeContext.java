@@ -14,6 +14,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.mapping.provider.MergeContext;
 
 /**
  * Provides the context for an <code>IResourceMappingMerger</code> or a model

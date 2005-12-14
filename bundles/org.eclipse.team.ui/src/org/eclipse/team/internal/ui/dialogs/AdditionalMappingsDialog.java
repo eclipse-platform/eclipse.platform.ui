@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.provider.ScopeGenerator;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 
 public class AdditionalMappingsDialog extends DetailsDialog {

@@ -11,7 +11,7 @@
 
 package org.eclipse.team.internal.core;
 
-import org.eclipse.team.core.filehistory.IFileHistory;
+import org.eclipse.team.core.history.IFileHistory;
 
 public abstract class FileHistory implements IFileHistory {
 
