@@ -3,8 +3,6 @@
 	<name>org.eclipse.ui.forms</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.runtime</project>
-		<project>org.eclipse.ui</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
