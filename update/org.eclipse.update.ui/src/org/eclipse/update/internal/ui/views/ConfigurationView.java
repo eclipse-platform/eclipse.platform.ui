@@ -641,7 +641,7 @@ public class ConfigurationView
 		if (selection instanceof IStructuredSelection
 			&& !selection.isEmpty()) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
-			System.out.println(ssel.size());
+			
 			if (ssel.size() == 1)
 				return ssel.getFirstElement();
 			else
@@ -681,7 +681,7 @@ public class ConfigurationView
 			manager.add(new Separator());
 		} else if ( (obj instanceof ConfiguredFeatureAdapter) && !areMultipleFeaturesSelected){
 			try {
-				System.out.println(" not areMultipleFeaturesSelected");
+				
 				MenuManager mgr = new MenuManager(UpdateUIMessages.ConfigurationView_replaceWith); 
 				
 				manager.add(findUpdatesAction);
@@ -706,7 +706,7 @@ public class ConfigurationView
 			} catch (CoreException e) {
 			}
 		} else if (areMultipleFeaturesSelected) {
-System.out.println("areMultipleFeaturesSelected");
+
 				manager.add(findUpdatesAction);
 				manager.add(new Separator());
 
