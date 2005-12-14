@@ -77,6 +77,8 @@ public class FastViewBar implements IWindowTrim {
     private WorkbenchWindow window;
     private IViewReference selection;
     
+    // "New Fast View" 'Button' fields
+    private MenuManager newFastViewMenuMgr;
     private Composite fvbComposite;
     private ToolBar menuTB;
     private ToolItem menuItem;
@@ -260,7 +262,8 @@ public class FastViewBar implements IWindowTrim {
                }
            }
         });
-        
+
+        // Construct the context menu for the fast view bar area
         fastViewBarMenuManager = new MenuManager();
         contextContributionItem = new FastViewBarContextMenuContribution(this);
         showViewMenuMgr = new MenuManager(WorkbenchMessages.FastViewBar_show_view, "showView"); //$NON-NLS-1$
@@ -269,6 +272,11 @@ public class FastViewBar implements IWindowTrim {
         
         fastViewBarMenuManager.add(contextContributionItem);
         fastViewBarMenuManager.add(showViewMenuMgr);
+
+        // Construct the context menu for the "New Fast View" 'button'
+        newFastViewMenuMgr = new MenuManager(WorkbenchMessages.FastViewBar_show_view, "showView"); //$NON-NLS-1$
+        showViewMenu = new ShowViewMenu(window, ShowViewMenu.class.getName(), true);
+        newFastViewMenuMgr.add(showViewMenu);
     }
 
     /**
@@ -637,7 +645,7 @@ public class FastViewBar implements IWindowTrim {
      * Shows the popup menu for an item in the fast view bar.
      */
     private void showAddFastViewPopup(Point pt) {
-        Menu menu = showViewMenuMgr.createContextMenu(menuTB);
+        Menu menu = newFastViewMenuMgr.createContextMenu(menuTB);
         menu.setLocation(pt.x, pt.y);
         menu.setVisible(true);
     }
