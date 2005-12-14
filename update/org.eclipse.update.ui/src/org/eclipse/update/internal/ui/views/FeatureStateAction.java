@@ -10,26 +10,32 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.operations.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.update.internal.operations.UpdateUtils;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
+import org.eclipse.update.internal.ui.model.ConfiguredFeatureAdapter;
+import org.eclipse.update.operations.IOperation;
+import org.eclipse.update.operations.OperationsManager;
 
-public class FeatureStateAction extends Action {
+public class FeatureStateAction extends FeatureAction {
+
 	private ConfiguredFeatureAdapter adapter;
-    private ConfigurationView parent;
 
-    public FeatureStateAction(ConfigurationView parent) {
-        this.parent = parent;
+    public FeatureStateAction(Shell shell, String text) {
+        super(shell, text);
+        setWindowTitle(UpdateUIMessages.FeatureStateAction_dialogTitle);
     }
     
-	public void setFeature(ConfiguredFeatureAdapter adapter) {
-		this.adapter = adapter;
+	public void setSelection(IStructuredSelection selection) {
+		
+		this.adapter = (ConfiguredFeatureAdapter) selection.getFirstElement();
 		if (adapter.isConfigured()) {
 			setText(UpdateUIMessages.FeatureStateAction_disable); 
 		} else {
@@ -78,19 +84,16 @@ public class FeatureStateAction extends Action {
 			UpdateUI.requestRestart(restartNeeded);
 
 		} catch (CoreException e) {
-			ErrorDialog.openError(parent.getConfigurationWindow().getShell(),
+			ErrorDialog.openError(shell,
                     null, null, e.getStatus());
 		} catch (InvocationTargetException e) {
 			// This should not happen
 			UpdateUtils.logException(e.getTargetException());
 		}
 	}
-
-	private boolean confirm(String message) {
-		return MessageDialog.openConfirm(
-            parent.getConfigurationWindow().getShell(),
-			UpdateUIMessages.FeatureStateAction_dialogTitle, 
-			message);
+	
+	public boolean canExecuteAction() {
+		return true;
 	}
 
 }

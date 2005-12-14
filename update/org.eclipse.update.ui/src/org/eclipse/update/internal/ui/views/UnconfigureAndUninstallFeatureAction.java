@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
 import java.lang.reflect.InvocationTargetException;
@@ -18,6 +8,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.update.internal.core.InstallRegistry;
+import org.eclipse.update.internal.operations.OperationFactory;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.UpdateUIMessages;
@@ -26,13 +17,13 @@ import org.eclipse.update.operations.IFeatureOperation;
 import org.eclipse.update.operations.IOperation;
 import org.eclipse.update.operations.OperationsManager;
 
-public class UninstallFeatureAction extends FeatureAction {
-	
+public class UnconfigureAndUninstallFeatureAction extends FeatureAction {
+
 	private ConfiguredFeatureAdapter adapter;
 
-	public UninstallFeatureAction(Shell shell, String text) {
+	public UnconfigureAndUninstallFeatureAction(Shell shell, String text) {
 		super(shell, text);
-		setWindowTitle(UpdateUIMessages.FeatureUninstallAction_dialogTitle);
+		setWindowTitle(UpdateUIMessages.FeatureUnconfigureAndUninstallAction_dialogTitle);
 	}
 
 	public void run() {
@@ -41,7 +32,7 @@ public class UninstallFeatureAction extends FeatureAction {
 			if (status != null)
 				throw new CoreException(status);
 			
-			if (adapter == null || !confirm(UpdateUIMessages.FeatureUninstallAction_uninstallQuestion)) 
+			if (adapter == null || !confirm(UpdateUIMessages.FeatureUnconfigureAndUninstallAction_question)) 
 				return;
 
 			// If current config is broken, confirm with the user to continue
@@ -49,14 +40,10 @@ public class UninstallFeatureAction extends FeatureAction {
 					!confirm(UpdateUIMessages.Actions_brokenConfigQuestion)) 
 				return;
 
-			IOperation uninstallOperation =
-				OperationsManager
-					.getOperationFactory()
-					.createUninstallOperation(
-					adapter.getConfiguredSite(),
-					adapter.getFeature(null));
+			IOperation operation =
+				((OperationFactory)OperationsManager.getOperationFactory()).createUnconfigureAndUninstallFeatureOperation( adapter.getConfiguredSite(), adapter.getFeature(null));
 
-			boolean restartNeeded = uninstallOperation.execute(null, null);
+			boolean restartNeeded = operation.execute(null, null);
 			UpdateUI.requestRestart(restartNeeded);
 
 		} catch (CoreException e) {
@@ -72,14 +59,15 @@ public class UninstallFeatureAction extends FeatureAction {
 	public void setSelection(IStructuredSelection selection) {
 		
 		this.adapter = (ConfiguredFeatureAdapter) selection.getFirstElement();
-		setText(UpdateUIMessages.FeatureUninstallAction_uninstall); 
+		setText(UpdateUIMessages.FeatureUnconfigureAndUninstallAction_uninstall); 
 	}
-
+	
+	
 	public boolean canExecuteAction() {
 		if (adapter == null)
 			return false;
 		
-		if (adapter.isConfigured())
+		if (!adapter.isConfigured())
 			return false;
 		
 		try {

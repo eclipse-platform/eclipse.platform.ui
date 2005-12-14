@@ -10,14 +10,20 @@
  *******************************************************************************/
 package org.eclipse.update.internal.operations;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.update.internal.core.Messages;
-import org.eclipse.update.operations.*;
+import org.eclipse.update.operations.IInstallFeatureOperation;
 
 
 /**

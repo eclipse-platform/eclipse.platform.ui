@@ -32,6 +32,7 @@ public class UninstallOperation extends FeatureOperation implements IUninstallFe
 	}
 
 	public boolean execute(IProgressMonitor pm, IOperationListener listener) throws CoreException {
+		
 		if (targetSite == null)
 			targetSite = UpdateUtils.getConfigSite(feature, SiteManager.getLocalSite().getCurrentConfiguration());
 

@@ -74,4 +74,35 @@ public class OperationFactory implements IOperationFactory {
 		IConfiguredSite site) {
 		return new ToggleSiteOperation(site);
 	}
+	
+	public IUnconfigureAndUninstallFeatureOperation createUnconfigureAndUninstallFeatureOperation(
+			IConfiguredSite targetSite,
+			IFeature feature) {
+			return new UnconfigureAndUninstallFeatureOperation(targetSite, feature);
+	}
+	
+	public IUnconfigureFeaturesOperation createUnconfigureFeaturesOperation (
+			IConfiguredSite[] targetSites,
+			IFeature[] features) {
+			return new UnconfigureFeaturesOperation(targetSites, features);
+		}
+
+	public IConfigureFeaturesOperation createConfigureFeaturesOperation(
+			IConfiguredSite[] targetSites,
+			IFeature[] features) {
+		
+			return new ConfigureFeaturesOperation(targetSites, features);		
+	}
+			
+	public IUninstallFeaturesOperation createUninstallFeaturesOperation(
+			IConfiguredSite[] targetSites,
+			IFeature[] features) {
+			return new UninstallFeaturesOperation(targetSites, features);
+	}
+	
+	public IUnconfigureAndUninstallFeaturesOperation createUnconfigureAndUninstallFeaturesOperation(
+			IConfiguredSite[] targetSites,
+			IFeature[] features) {
+			return new UnconfigureAndUninstallFeaturesOperation(targetSites, features);
+	}
 }

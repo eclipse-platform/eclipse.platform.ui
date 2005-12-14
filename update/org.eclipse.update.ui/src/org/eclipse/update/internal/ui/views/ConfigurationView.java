@@ -64,6 +64,10 @@ public class ConfigurationView
 	private ReplaceVersionAction swapVersionAction;
 	private FeatureStateAction featureStateAction;
 	private UninstallFeatureAction uninstallFeatureAction;
+	private UnconfigureAndUninstallFeatureAction unconfigureAndUninstallFeatureAction;
+	private FeaturesStateAction featuresStateAction;
+	private UninstallFeaturesAction uninstallFeaturesAction;
+	private UnconfigureAndUninstallFeaturesAction unconfigureAndUninstallFeaturesAction;
 	private InstallOptionalFeatureAction installOptFeatureAction;
 	private Action showUnconfFeaturesAction;
 	private RevertConfigurationAction revertAction;
@@ -76,7 +80,7 @@ public class ConfigurationView
 	private SashForm splitter;
 	private ConfigurationPreview preview;
 	private Hashtable previewTasks;
-
+	
 	private IUpdateModelChangedListener modelListener;
 	private boolean refreshLock = false;
 	private Image eclipseImage;
@@ -502,7 +506,8 @@ public class ConfigurationView
 
 		drillDownAdapter = new DrillDownAdapter(treeViewer);
 
-		featureStateAction = new FeatureStateAction(this);
+		featureStateAction = new FeatureStateAction(this.getConfigurationWindow().getShell(), ""); //$NON-NLS-1$
+		featuresStateAction = new FeaturesStateAction(this.getConfigurationWindow().getShell(), ""); //$NON-NLS-1$
 
 		siteStateAction = new SiteStateAction(getConfigurationWindow().getShell());
 
@@ -531,7 +536,12 @@ public class ConfigurationView
 			"org.eclipse.update.ui.CofigurationView_propertiesAction"); //$NON-NLS-1$
 
 		uninstallFeatureAction = new UninstallFeatureAction(getConfigurationWindow().getShell(), UpdateUIMessages.ConfigurationView_uninstall); 
+		unconfigureAndUninstallFeatureAction = new UnconfigureAndUninstallFeatureAction(getConfigurationWindow().getShell(), UpdateUIMessages.ConfigurationView_uninstall); 
+		
+		uninstallFeaturesAction = new UninstallFeaturesAction(getConfigurationWindow().getShell(), UpdateUIMessages.ConfigurationView_uninstall); 
+		unconfigureAndUninstallFeaturesAction = new UnconfigureAndUninstallFeaturesAction(getConfigurationWindow().getShell(), UpdateUIMessages.ConfigurationView_unconfigureAndUninstall); 
 
+		
 		installOptFeatureAction =
 			new InstallOptionalFeatureAction(
 				getControl().getShell(),
@@ -631,14 +641,29 @@ public class ConfigurationView
 		if (selection instanceof IStructuredSelection
 			&& !selection.isEmpty()) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
+			System.out.println(ssel.size());
 			if (ssel.size() == 1)
 				return ssel.getFirstElement();
+			else
+				return ssel.toArray();
 		}
 		return null;
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
 		Object obj = getSelectedObject();
+		boolean areMultipleFeaturesSelected = true;
+		
+		if ( obj instanceof Object[]) {
+			Object[] array = (Object[])obj;
+			for( int i = 0; i < array.length; i++) {
+				if (!(array[i] instanceof ConfiguredFeatureAdapter)) {
+					areMultipleFeaturesSelected = false;
+				}
+			}
+		} else {
+			areMultipleFeaturesSelected = false;
+		}
 
 		if (obj instanceof ILocalSite) {
 			manager.add(findUpdatesAction);
@@ -654,8 +679,9 @@ public class ConfigurationView
 			mgr.add(newExtensionLocationAction);
 			manager.add(mgr);
 			manager.add(new Separator());
-		} else if (obj instanceof ConfiguredFeatureAdapter) {
+		} else if ( (obj instanceof ConfiguredFeatureAdapter) && !areMultipleFeaturesSelected){
 			try {
+				System.out.println(" not areMultipleFeaturesSelected");
 				MenuManager mgr = new MenuManager(UpdateUIMessages.ConfigurationView_replaceWith); 
 				
 				manager.add(findUpdatesAction);
@@ -665,6 +691,7 @@ public class ConfigurationView
 				manager.add(mgr);
 
 				manager.add(featureStateAction);
+				
 
 				IFeature feature =
 					((ConfiguredFeatureAdapter) obj).getFeature(null);
@@ -672,11 +699,24 @@ public class ConfigurationView
 					manager.add(installOptFeatureAction);
 				} else {
 					manager.add(uninstallFeatureAction);
+					manager.add(unconfigureAndUninstallFeatureAction);
 				}
 				manager.add(new Separator());
 
 			} catch (CoreException e) {
 			}
+		} else if (areMultipleFeaturesSelected) {
+System.out.println("areMultipleFeaturesSelected");
+				manager.add(findUpdatesAction);
+				manager.add(new Separator());
+
+				manager.add(featuresStateAction);
+				
+				manager.add(uninstallFeaturesAction);
+				manager.add(unconfigureAndUninstallFeaturesAction);
+				
+				manager.add(new Separator());
+
 		}
 
 		drillDownAdapter.addNavigationActions(manager);
@@ -977,6 +1017,20 @@ public class ConfigurationView
 
 	protected void handleSelectionChanged(IStructuredSelection ssel) {
 		Object obj = ssel.getFirstElement();
+		
+		boolean areMultipleFeaturesSelected = true;
+		
+		if (ssel.size() > 1) {
+			Object[] array = ssel.toArray();
+			for( int i = 0; i < array.length; i++) {
+				if (!(array[i] instanceof ConfiguredFeatureAdapter)) {
+					areMultipleFeaturesSelected = false;
+				}
+			}
+		} else {
+			areMultipleFeaturesSelected = false;
+		}
+		
 		if (obj!=null) {
 			ILabelProvider labelProvider = (ILabelProvider)treeViewer.getLabelProvider();
 			String text = labelProvider.getText(obj);
@@ -986,6 +1040,19 @@ public class ConfigurationView
 		}
 		else
 			configurationWindow.updateStatusLine(null, null);
+		
+		if (areMultipleFeaturesSelected && (ssel.size() > 1)) {
+			
+			uninstallFeaturesAction.setSelection(ssel);
+			uninstallFeaturesAction.setEnabled(uninstallFeatureAction.canExecuteAction());
+			unconfigureAndUninstallFeaturesAction.setSelection(ssel);
+			unconfigureAndUninstallFeaturesAction.setEnabled(unconfigureAndUninstallFeatureAction.canExecuteAction());
+			featuresStateAction.setSelection(ssel);
+			featuresStateAction.setEnabled(featuresStateAction.canExecuteAction());
+			preview.setSelection(ssel);
+			return;
+		}
+		
 		if (obj instanceof IFeatureAdapter) {
 			try {
 				propertiesAction.setEnabled(true);
@@ -996,9 +1063,11 @@ public class ConfigurationView
 				boolean enable = !missing
 						&& ((adapter.isOptional() || !adapter.isIncluded()));
 
-				uninstallFeatureAction.setFeature(adapter);
+				uninstallFeatureAction.setSelection(ssel);
 				uninstallFeatureAction.setEnabled(enable
-						&& uninstallFeatureAction.canUninstall());
+						&& uninstallFeatureAction.canExecuteAction());
+				unconfigureAndUninstallFeatureAction.setSelection(ssel);
+				unconfigureAndUninstallFeatureAction.setEnabled(enable && unconfigureAndUninstallFeatureAction.canExecuteAction());
 				if (adapter.isConfigured())
 					setDescriptionOnTask(
 							uninstallFeatureAction,
@@ -1010,7 +1079,7 @@ public class ConfigurationView
 							adapter,
 							UpdateUIMessages.ConfigurationView_uninstallDesc);
 
-				featureStateAction.setFeature(adapter);
+				featureStateAction.setSelection(ssel);
 				featureStateAction.setEnabled(enable);
 				swapVersionAction.setEnabled(false);
 				if (enable) {
@@ -1067,6 +1136,16 @@ public class ConfigurationView
 					.getConfiguredSite());
 			siteStateAction.setEnabled(true);
 		}
+		
+		if (areMultipleFeaturesSelected) {
+			uninstallFeaturesAction.setSelection(ssel);
+			uninstallFeaturesAction.setEnabled(uninstallFeatureAction.canExecuteAction());
+			unconfigureAndUninstallFeaturesAction.setSelection(ssel);
+			unconfigureAndUninstallFeaturesAction.setEnabled(unconfigureAndUninstallFeatureAction.canExecuteAction());
+			featuresStateAction.setSelection(ssel);
+			featuresStateAction.setEnabled(featuresStateAction.canExecuteAction());
+		}
+		
 		preview.setSelection(ssel);
 	}
 

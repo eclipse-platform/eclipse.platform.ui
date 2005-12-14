@@ -149,6 +149,7 @@ public final class UpdateUIMessages extends NLS {
 	public static String ConfigurationView_installHistory;
 	public static String ConfigurationView_extLocation;
 	public static String ConfigurationView_uninstall;
+	public static String ConfigurationView_unconfigureAndUninstall;
 	public static String ConfigurationView_install;
 	public static String ConfigurationView_anotherVersion;
 	public static String ConfigurationView_findUpdates;
@@ -199,6 +200,9 @@ public final class UpdateUIMessages extends NLS {
 	public static String FeatureUninstallAction_uninstall;
 	public static String FeatureUninstallAction_uninstallQuestion;
 	public static String FeatureUninstallAction_dialogTitle;
+	public static String FeatureUnconfigureAndUninstallAction_uninstall;
+	public static String FeatureUnconfigureAndUninstallAction_question;
+	public static String FeatureUnconfigureAndUninstallAction_dialogTitle;
 	public static String SiteStateAction_dialogTitle;
 	public static String SiteStateAction_disableLabel;
 	public static String SiteStateAction_disableMessage;
