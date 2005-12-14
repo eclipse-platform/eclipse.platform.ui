@@ -340,7 +340,11 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		// If we had a trim UI handle then dispose it
 		if (desc.getDockingCache() != null) {
 			Control ctrl = desc.getDockingCache().getControl();
-			ctrl.dispose();
+			
+			// KLUDGE!! we'll leak a handle rather than losing the
+			// mouse capture (for now...)
+			ctrl.setVisible(false);
+			//ctrl.dispose();
 			desc.setDockingCache(null);
 		}
 	}
