@@ -234,7 +234,15 @@ public final class MigrationHelper {
 	 * @see StyledText#getLineIndent(int)
 	 */
 	public static int getLineIndex(StyledText textWidget, int y) {
-		return textWidget.getLineIndex(y);
+		int lineIndex= textWidget.getLineIndex(y);
+		
+		/*
+		 * XXX: Make sure that the line index >= 0
+		 *      see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=120573
+		 */
+		lineIndex= Math.max(0, lineIndex);
+		
+		return lineIndex;
 	}
 
 	/*
