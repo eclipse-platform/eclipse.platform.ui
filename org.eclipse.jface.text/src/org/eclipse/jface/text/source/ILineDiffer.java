@@ -42,7 +42,7 @@ public interface ILineDiffer {
 	 * Determines the line state for line <code>line</code> in the targeted document.
 	 *
 	 * @param line the line to get diff information for
-	 * @return the line information object for <code>line</code>.
+	 * @return the line information object for <code>line</code> or <code>null</code> if none
 	 */
 	ILineDiffInfo getLineInfo(int line);
 

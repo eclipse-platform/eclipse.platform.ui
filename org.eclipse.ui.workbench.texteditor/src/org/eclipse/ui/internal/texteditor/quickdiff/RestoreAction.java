@@ -63,6 +63,8 @@ public class RestoreAction extends QuickDiffRestoreAction {
 			// take the line below
 		}
 		info= differ.getLineInfo(fLine);
+		if (info == null)
+			return false;
 		if (info.getRemovedLinesBelow() == 1)
 			setText(QuickDiffMessages.RestoreAction_label);
 		else
