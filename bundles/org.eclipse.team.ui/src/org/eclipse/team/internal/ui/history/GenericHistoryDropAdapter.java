@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.internal.ui.filehistory;
+package org.eclipse.team.internal.ui.history;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;

@@ -17,6 +17,7 @@ import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.provider.MergeStatus;
 import org.eclipse.team.internal.ui.Policy;
 
 /**

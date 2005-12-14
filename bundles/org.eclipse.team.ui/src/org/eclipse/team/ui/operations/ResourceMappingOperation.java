@@ -16,6 +16,7 @@ import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.provider.ScopeGenerator;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.dialogs.AdditionalMappingsDialog;
 import org.eclipse.ui.IWorkbenchPart;

@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.provider.MergeStatus;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
@@ -38,7 +39,7 @@ import org.eclipse.team.internal.ui.TeamUIMessages;
  * </p>
  * @since 3.2
  */
-public abstract class MergeContext extends org.eclipse.team.core.mapping.MergeContext {
+public abstract class MergeContext extends org.eclipse.team.core.mapping.provider.MergeContext {
 
 	/**
 	 * Create a merge context

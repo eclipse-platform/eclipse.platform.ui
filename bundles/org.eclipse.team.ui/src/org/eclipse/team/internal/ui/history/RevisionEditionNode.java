@@ -1,4 +1,4 @@
-package org.eclipse.team.internal.ui.filehistory;
+package org.eclipse.team.internal.ui.history;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

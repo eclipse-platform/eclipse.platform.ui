@@ -119,11 +119,11 @@
             id="org.eclipse.team.ui.FileRevisionsContribution"
             objectClass="org.eclipse.team.core.filehistory.IFileRevision">
          <action
-               class="org.eclipse.team.internal.ui.filehistory.actions.OpenRevisionAction"
+               class="org.eclipse.team.internal.ui.history.actions.OpenRevisionAction"
                id="org.eclipse.team.ui.OpenRevisionAction"
                label="%FileRevision.OpenAction.name"/>
          <action
-               class="org.eclipse.team.internal.ui.filehistory.actions.CompareRevisionAction"
+               class="org.eclipse.team.internal.ui.history.actions.CompareRevisionAction"
                enablesFor="2"
                id="org.eclipse.team.ui.CompareRevisionAction"
                label="%FileRevision.Compare.name"/>
@@ -147,10 +147,10 @@
       </view>
       <view
             category="org.eclipse.team.ui"
-            class="org.eclipse.team.internal.ui.filehistory.GenericHistoryView"
+            class="org.eclipse.team.internal.ui.history.GenericHistoryView"
             icon="icons/full/obj/changeset_obj.gif"
             id="org.eclipse.team.ui.GenericHistoryView"
-            name="File History View (Experimental)"/>
+            name="History"/>
     <!--  <view
             name="%CompareView.name"
             icon="$nl$/icons/full/eview16/compare_view.gif"

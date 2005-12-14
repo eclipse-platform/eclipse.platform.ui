@@ -1,4 +1,4 @@
-package org.eclipse.team.internal.ui.filehistory.actions;
+package org.eclipse.team.internal.ui.history.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -12,8 +12,8 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.actions.TeamAction;
-import org.eclipse.team.internal.ui.filehistory.CompareFileRevisionEditorInput;
-import org.eclipse.team.internal.ui.filehistory.RevisionEditionNode;
+import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
+import org.eclipse.team.internal.ui.history.RevisionEditionNode;
 
 public class CompareRevisionAction extends TeamAction {
 

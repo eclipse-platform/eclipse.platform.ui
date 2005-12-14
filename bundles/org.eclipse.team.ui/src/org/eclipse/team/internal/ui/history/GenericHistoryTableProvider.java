@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.internal.ui.filehistory;
+package org.eclipse.team.internal.ui.history;
 
 import java.text.DateFormat;
 import java.util.Date;

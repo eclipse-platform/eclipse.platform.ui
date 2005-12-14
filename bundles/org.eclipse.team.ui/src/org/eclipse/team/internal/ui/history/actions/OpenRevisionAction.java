@@ -1,4 +1,4 @@
-package org.eclipse.team.internal.ui.filehistory.actions;
+package org.eclipse.team.internal.ui.history.actions;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +17,7 @@ import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.actions.TeamAction;
-import org.eclipse.team.internal.ui.filehistory.FileRevisionEditorInput;
+import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
