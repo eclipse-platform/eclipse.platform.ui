@@ -46,7 +46,6 @@ public class ConsolePatternMatcher implements IDocumentListener {
 
     public ConsolePatternMatcher(TextConsole console) {
         fConsole = console;
-        fMatchJob.setRule(fConsole.getSchedulingRule());
     }
 
     private class MatchJob extends Job {
@@ -164,6 +163,12 @@ public class ConsolePatternMatcher implements IDocumentListener {
 
             return Status.OK_STATUS;
         }
+
+        public boolean belongsTo(Object family) {
+            return family == fConsole;
+        }
+        
+        
     }
 
     private class CompiledPatternMatchListener {

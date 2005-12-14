@@ -389,7 +389,13 @@ public abstract class TextConsole extends AbstractConsole {
     /**
      * Returns a scheduling rule which can be used to prevent jobs from running
      * while this console's pattern matcher is active.
-     * 
+     * <p>
+     * Although this scheduling rule prevents jobs from running at the same time as
+     * pattern matching jobs for this console, it does not enforce any ordering of jobs.
+     * Since 3.2, pattern matching jobs belong to the job family identified by the console
+     * object that matching is occurring on. To ensure a job runs after all scheduled pattern
+     * matching is complete, clients must join on this console's job family.
+     * </p>
      * @return a scheduling rule which can be used to prevent jobs from running
      * while this console's pattern matcher is active
      */
