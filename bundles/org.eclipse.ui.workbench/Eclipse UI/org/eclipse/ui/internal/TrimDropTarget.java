@@ -49,9 +49,9 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         
         // Holder for the position of trim that is 'floating' with the cursor
     	private int cursorAreaId;
-        private int previousAreaId;
-        private IWindowTrim previousInsertBefore;        
-		private Rectangle previousLocation;
+        private int initialAreaId;
+        private IWindowTrim initialInsertBefore;        
+		private Rectangle initialLocation;
 
         private ActualTrimDropTarget() {
             super();
@@ -59,19 +59,35 @@ import org.eclipse.ui.internal.layout.TrimLayout;
             draggedTrim = null;
             docked = true;
             
-            previousAreaId = SWT.NONE;
-            previousInsertBefore = null;
+            initialAreaId = SWT.NONE;
+            initialInsertBefore = null;
         }
         
         public void setTrim(IWindowTrim trim) {
         	// Are we starting a new drag?
         	if (draggedTrim != trim) {
-        		previousAreaId = SWT.NONE;
-        		previousInsertBefore = null;
-            	
             	// remember the dragged trim
             	draggedTrim = trim;
             	
+            	// Remember the location that we were in initially so we
+            	// can go back there on an cancel...
+            	initialAreaId = layout.getTrimAreaId(draggedTrim.getControl());
+            	
+            	// Determine who we were placed 'before' in the trim
+            	List trimDescs = layout.getTrimArea(initialAreaId).getDescriptors();
+            	for (Iterator iter = trimDescs.iterator(); iter.hasNext();) {
+    				TrimDescriptor tDesc = (TrimDescriptor) iter.next();
+    				if (tDesc.getTrim() == draggedTrim) {
+    					if (iter.hasNext())
+    						initialInsertBefore = ((TrimDescriptor)iter.next()).getTrim();
+    					else
+    						initialInsertBefore = null;
+    				}
+    			}
+            	
+            	// Remember the location that the controlused to be at for animation purposes
+            	initialLocation = DragUtil.getDisplayBounds(draggedTrim.getControl());
+            	            	
             	// The dragged trim is always initially docked
             	docked = true;
         	}
@@ -425,10 +441,10 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         	// Since the control might move 'far' we'll provide an animation
         	Rectangle startRect = DragUtil.getDisplayBounds(draggedTrim.getControl());
             RectangleAnimation animation = new RectangleAnimation(
-                    windowComposite.getShell(), startRect, previousLocation, 300);
+                    windowComposite.getShell(), startRect, initialLocation, 300);
             animation.schedule();
 
-            dock(previousAreaId, previousInsertBefore);
+            dock(initialAreaId, initialInsertBefore);
         }
         
 		/* (non-Javadoc)
@@ -454,24 +470,6 @@ import org.eclipse.ui.internal.layout.TrimLayout;
          * to the cursor...
          */
         private void undock() {
-        	// Remember the location that we -were- in...
-        	previousAreaId = layout.getTrimAreaId(draggedTrim.getControl());
-        	
-        	// Determine who we were placed 'before' in the trim
-        	List trimDescs = layout.getTrimArea(previousAreaId).getDescriptors();
-        	for (Iterator iter = trimDescs.iterator(); iter.hasNext();) {
-				TrimDescriptor tDesc = (TrimDescriptor) iter.next();
-				if (tDesc.getTrim() == draggedTrim) {
-					if (iter.hasNext())
-						previousInsertBefore = ((TrimDescriptor)iter.next()).getTrim();
-					else
-						previousInsertBefore = null;
-				}
-			}
-        	
-        	// Remember the location that the controlused to be at for animation purposes
-        	previousLocation = DragUtil.getDisplayBounds(draggedTrim.getControl());
-        	
         	// Remove the trim from the layout
         	layout.removeTrim(draggedTrim);
            	LayoutUtil.resize(draggedTrim.getControl());
