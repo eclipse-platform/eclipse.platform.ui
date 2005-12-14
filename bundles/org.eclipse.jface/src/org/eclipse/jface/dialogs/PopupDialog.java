@@ -741,10 +741,17 @@ public class PopupDialog extends Window {
 		Rectangle[] r = new Rectangle[] { shell.getBounds() };
 		tracker.setRectangles(r);
 
+		// Ignore any deactivate events caused by opening the tracker.
+		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=120656
+		boolean oldListenToDeactivate = listenToDeactivate;
+		listenToDeactivate = false;
 		if (tracker.open()) {
-			shell.setBounds(tracker.getRectangles()[0]);
-
+			if (shell != null && !shell.isDisposed()) {
+				shell.setBounds(tracker.getRectangles()[0]);
+			}
 		}
+		listenToDeactivate = oldListenToDeactivate;
+
 	}
 
 	/**
