@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -50,15 +51,32 @@ public abstract class AbstractSynchronizationLabelProvider implements ILabelProv
 	public Image getImage(Object element) {
 		Image base = getDelegateImage(element);
 		if (isDecorationEnabled() && base != null) {
-			int kind = getSyncKind(element);
-			Image decoratedImage;
-			decoratedImage = getCompareImage(base, kind);				
-			// The reason we still overlay the compare image is to
-			// ensure that the image width for all images shown in the viewer
-			// are consistent.
-			return decoratedImage;				
+			return decorateImage(base, element);				
 		}
 		return base;
+	}
+
+	/**
+	 * Decorate the image with the appropriate diff decorations.
+	 * By default, this method uses the diff associated with
+	 * the given element to determine how to decorate the image.
+	 * It then uses the {@link CompareConfiguration#getImage(Image, int)}
+	 * method to apply the decoration to the base image.
+	 * @param base the base image to be decorated.
+	 * @param element the element
+	 * @return the image decorated appropriately using the diff associated with
+	 * the element
+	 * @see #getDiff(Object)
+	 * @see CompareConfiguration#getImage(Image, int)
+	 */
+	protected Image decorateImage(Image base, Object element) {
+		IDiffNode node = getDiff(element);
+		Image decoratedImage;
+		decoratedImage = getCompareImage(base, node);				
+		// The reason we still overlay the compare image is to
+		// ensure that the image width for all images shown in the viewer
+		// are consistent.
+		return decoratedImage;
 	}
 
 	/**
@@ -72,22 +90,56 @@ public abstract class AbstractSynchronizationLabelProvider implements ILabelProv
 		return base;
 	}
 
-	private Image getCompareImage(Image base, int kind) {
-		switch (kind & SyncInfo.DIRECTION_MASK) {
-			case SyncInfo.OUTGOING :
-				kind = (kind & ~SyncInfo.OUTGOING) | SyncInfo.INCOMING;
+	private Image getCompareImage(Image base, IDiffNode node) {
+		int compareKind = 0;
+		if (node != null) {
+			switch (node.getKind()) {
+			case IDiffNode.ADDED:
+				compareKind = Differencer.ADDITION;
 				break;
-			case SyncInfo.INCOMING :
-				kind = (kind & ~SyncInfo.INCOMING) | SyncInfo.OUTGOING;
+			case IDiffNode.REMOVED:
+				compareKind = Differencer.DELETION;
 				break;
-		}
-		return compareConfig.getImage(base, kind);
+			case IDiffNode.CHANGED:
+				compareKind = Differencer.CHANGE;
+				break;
+			}
+			if (node instanceof IThreeWayDiff) {
+				IThreeWayDiff twd = (IThreeWayDiff) node;			
+				switch (twd.getDirection()) {
+				case IThreeWayDiff.OUTGOING :
+					compareKind |= Differencer.RIGHT;
+					break;
+				case IThreeWayDiff.INCOMING :
+					compareKind |= Differencer.LEFT;
+					break;
+				case IThreeWayDiff.CONFLICTING :
+					compareKind |= Differencer.LEFT;
+					compareKind |= Differencer.RIGHT;
+					break;
+				}
+			}
+		}	
+		return compareConfig.getImage(base, compareKind);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object element) {
+		String base = getDelegateText(element);
+		if (isSyncInfoInTextEnabled()) {
+			return decorateText(base, element);
+		}
+		return base;
+	}
+
+	/**
+	 * Obtain the text for the object from the delegate label provider.
+	 * @param element the element
+	 * @return the text label for the element
+	 */
+	protected String getDelegateText(Object element) {
 		ILabelProvider modelLabelProvider = getDelegateLabelProvider();
 		String base = modelLabelProvider.getText(element);
 		if (base == null || base.length() == 0) {
@@ -96,16 +148,28 @@ public abstract class AbstractSynchronizationLabelProvider implements ILabelProv
 				base = provider.getDescriptor().getLabel();
 			}
 		}
-		if (isSyncInfoInTextEnabled()) {
-			int kind = getSyncKind(element);
-			if (kind != SyncInfo.IN_SYNC) {
-				String syncKindString = SyncInfo.kindToString(kind);
-				return NLS.bind(TeamUIMessages.TeamSubscriberSyncPage_labelWithSyncKind, new String[] { base, syncKindString }); // 
-			}
+		return base;
+	}
+	
+	/**
+	 * Decorate the text with the appropriate diff decorations.
+	 * By default, this method uses the diff associated with
+	 * the given element to determine how to decorate the text.
+	 * @param base the base text to be decorated.
+	 * @param element the element
+	 * @return the text decorated appropriately using the diff associated with
+	 * the element
+	 * @see #getDiff(Object)
+	 */
+	protected String decorateText(String base, Object element) {
+		IDiffNode node = getDiff(element);
+		if (node != null && node.getKind() != IDiffNode.NO_CHANGE) {			
+			String syncKindString = node.toDiffString();
+			return NLS.bind(TeamUIMessages.AbstractSynchronizationLabelProvider_0, new String[] { base, syncKindString }); 
 		}
 		return base;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
@@ -175,32 +239,6 @@ public abstract class AbstractSynchronizationLabelProvider implements ILabelProv
 	 * @param element the element being tested
 	 * @return the sync kind of the given element
 	 */
-	protected abstract IDiffNode getSyncDelta(Object element);
-
-	/**
-	 * TODO: temporary hack
-	 */
-	private int getSyncKind(Object element) {
-		IDiffNode delta = getSyncDelta(element);
-		if (delta == null)
-			return 0;
-		int kind = delta.getKind();
-		switch (kind) {
-		case IDiffNode.ADDED:
-			kind = SyncInfo.ADDITION;
-			break;
-		case IDiffNode.REMOVED:
-			kind = SyncInfo.DELETION;
-			break;
-		case IDiffNode.CHANGED:
-			kind = SyncInfo.CHANGE;
-			break;
-		}
-		if (delta instanceof IThreeWayDiff) {
-			IThreeWayDiff twd = (IThreeWayDiff) delta;
-			kind |= twd.getDirection();
-		}
-		return kind;
-	}
+	protected abstract IDiffNode getDiff(Object element);
 	
 }

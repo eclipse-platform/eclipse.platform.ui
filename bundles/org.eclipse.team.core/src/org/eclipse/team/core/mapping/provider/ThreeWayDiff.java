@@ -12,8 +12,11 @@ package org.eclipse.team.core.mapping.provider;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.diff.ITwoWayDiff;
+import org.eclipse.team.internal.core.Messages;
 
 /**
  * Implementation of {@link IThreeWayDiff}.
@@ -101,6 +104,25 @@ public class ThreeWayDiff extends DiffNode implements IThreeWayDiff {
 			direction |= INCOMING;
 		}
 		return direction;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.IDiffNode#toDiffString()
+	 */
+	public String toDiffString() {
+		int kind = getKind();
+		String label = ""; //$NON-NLS-1$
+		if(kind==IDiffNode.NO_CHANGE) {
+			label = super.toDiffString(); 
+		} else {
+			switch(getDirection()) {
+				case IThreeWayDiff.CONFLICTING: label = Messages.RemoteSyncElement_conflicting; break; 
+				case IThreeWayDiff.OUTGOING: label = Messages.RemoteSyncElement_outgoing; break; 
+				case IThreeWayDiff.INCOMING: label = Messages.RemoteSyncElement_incoming; break; 
+			}	
+			label = NLS.bind(Messages.concatStrings, new String[] { label, super.toDiffString() });
+		}
+		return label; 
 	}
 
 }

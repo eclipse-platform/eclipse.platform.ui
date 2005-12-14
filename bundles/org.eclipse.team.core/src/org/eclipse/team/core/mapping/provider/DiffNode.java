@@ -12,7 +12,7 @@ package org.eclipse.team.core.mapping.provider;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.internal.core.Messages;
 
 /**
  * Abstract implementation of {@link IDiffNode} that can be subclassed by
@@ -85,4 +85,21 @@ public abstract class DiffNode implements IDiffNode {
 		return status;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.IDiffNode#toDiffString()
+	 */
+	public String toDiffString() {
+		int kind = getKind();
+		String label = ""; //$NON-NLS-1$
+		if(kind==IDiffNode.NO_CHANGE) {
+			label = Messages.RemoteSyncElement_insync; 
+		} else {
+			switch(kind) {
+				case IDiffNode.CHANGED: label = Messages.RemoteSyncElement_change ; break;
+				case IDiffNode.ADDED: label = Messages.RemoteSyncElement_addition; break;
+				case IDiffNode.REMOVED: label = Messages.RemoteSyncElement_deletion; break; 
+			}
+		}
+		return label; 
+	}
 }

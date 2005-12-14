@@ -12,8 +12,14 @@ package org.eclipse.team.internal.ui;
 import org.eclipse.osgi.util.NLS;
 
 public class TeamUIMessages extends NLS {
+	
 	private static final String BUNDLE_NAME = "org.eclipse.team.internal.ui.messages";//$NON-NLS-1$
 
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, TeamUIMessages.class);
+	}
+	
     public static String information;
     
 	public static String ConfigureProjectAction_configureProject;
@@ -351,10 +357,6 @@ public class TeamUIMessages extends NLS {
 	public static String ResourceMappingMergeOperation_1;
 	public static String ResourceMappingMergeOperation_2;
 	public static String ResourceMappingOperation_0;
-	
-	static {
-		// load message values from bundle file
-		NLS.initializeMessages(BUNDLE_NAME, TeamUIMessages.class);
-	}
+	public static String AbstractSynchronizationLabelProvider_0;
 
 }

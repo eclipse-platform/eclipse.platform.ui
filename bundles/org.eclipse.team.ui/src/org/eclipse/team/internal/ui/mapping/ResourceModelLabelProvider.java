@@ -36,7 +36,7 @@ public class ResourceModelLabelProvider extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.AbstractSynchronizationLabelProvider#getSyncDelta(java.lang.Object)
 	 */
-	protected IDiffNode getSyncDelta(Object element) {
+	protected IDiffNode getDiff(Object element) {
 		IResource resource = getResource(element);
 		if (resource != null) {
 			ISynchronizationContext context = getContext();

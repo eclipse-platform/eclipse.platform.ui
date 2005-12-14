@@ -99,4 +99,12 @@ public interface IDiffNode {
 	 * @see IDiffNode#CHANGED
 	 */
 	public int getKind();
+
+	/**
+	 * Return a string that describes the difference represented by
+	 * this node.
+	 * @return a string that describes the difference represented by
+	 * this node
+	 */
+	public String toDiffString();
 }
