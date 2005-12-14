@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.refresh;
 
 import java.util.ArrayList;
+import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
@@ -167,6 +168,9 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 
 	private void poll(IResource resource) {
 		if (resource.isSynchronized(IResource.DEPTH_INFINITE))
+			return;
+		//don't refresh links with no local content
+		if (resource.isLinked() && !((Resource)resource).getStore().fetchInfo().exists())
 			return;
 		//submit refresh request
 		manager.refresh(resource);
