@@ -635,6 +635,8 @@ public abstract class MarkerView extends TableView {
 			showInMenu.dispose();
 		
 		updateJob.cancel();
+		if(countUpdateJob != null)
+			countUpdateJob.cancel();
 	}
 
 	/*
@@ -1426,12 +1428,16 @@ public abstract class MarkerView extends TableView {
 	 * Schedule an update of the summary counts.
 	 */
 	public void scheduleCountUpdate() {
+		
+		if(!PlatformUI.isWorkbenchRunning())
+			return; //Don't bother after shutdown
+		
 		if (countUpdateJob == null)
 			createUIJob();
 
 		countUpdateJob.schedule();
 
-		if (getSite().getShell().getDisplay().getThread() == Thread
+		if (PlatformUI.getWorkbench().getDisplay().getThread() == Thread
 				.currentThread())
 			return; // Do not block the UI
 
