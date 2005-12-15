@@ -656,6 +656,7 @@ public class SearchIndex implements ISearchIndex {
 	}
 
 	public boolean isLuceneCompatible(String luceneVersion) {
+		//if (luceneVersion==null) return false;
 		String currentLuceneVersion = ""; //$NON-NLS-1$
 		Bundle lucenePluginDescriptor = Platform.getBundle(LUCENE_PLUGIN_ID);
 		if (lucenePluginDescriptor != null) {
