@@ -239,6 +239,15 @@ public abstract class AbstractSynchronizationLabelProvider implements ILabelProv
 	 * @param element the element being tested
 	 * @return the sync kind of the given element
 	 */
-	protected abstract IDiffNode getDiff(Object element);
+	protected IDiffNode getDiff(Object element) {
+		return getSyncDelta(element);
+	}
+	
+	/**
+	 * @deprecated use {@link #getDiff(Object) }
+	 */
+	protected IDiffNode getSyncDelta(Object element) {
+		return null;
+	}
 	
 }
