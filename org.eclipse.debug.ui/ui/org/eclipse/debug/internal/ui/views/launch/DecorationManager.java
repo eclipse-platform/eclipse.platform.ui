@@ -53,19 +53,9 @@ public class DecorationManager {
      *            to remove editor decorations for
      */
     public static void removeDecorations(IDebugTarget target) {
-        synchronized (fDecorations) {
-            List list = (List) fDecorations.get(target);
-            if (list != null) {
-                ListIterator iterator = list.listIterator();
-                while (iterator.hasNext()) {
-                    Decoration decoration = (Decoration) iterator.next();
-                    decoration.remove();
-                    iterator.remove();
-                }
-            }
-        }
+    	doRemoveDecorations(target);
     }
-
+    
     /**
      * Removes any decorations for the given thread
      * 
@@ -73,19 +63,28 @@ public class DecorationManager {
      *            thread to remove decorations for
      */
     public static void removeDecorations(IThread thread) {
+    	doRemoveDecorations(thread.getDebugTarget());
+    }
+
+	private static void doRemoveDecorations(IDebugTarget target) {
+		ArrayList decorationsToRemove = new ArrayList();
         synchronized (fDecorations) {
-            List list = (List) fDecorations.get(thread.getDebugTarget());
+            List list = (List) fDecorations.get(target);
             if (list != null) {
-                Iterator iterator = list.iterator();
+                ListIterator iterator = list.listIterator();
                 while (iterator.hasNext()) {
                     Decoration decoration = (Decoration) iterator.next();
-                    if (thread.equals(decoration.getThread())) {
-                        decoration.remove();
-                        iterator.remove();
-                    }
+                    decorationsToRemove.add(decoration);
+                    iterator.remove();
                 }
             }
         }
-    }
-
+        
+        Iterator iter = decorationsToRemove.iterator();
+        while (iter.hasNext())
+        {
+        	Decoration decoration = (Decoration)iter.next();
+        	decoration.remove();
+        }
+	}
 }
