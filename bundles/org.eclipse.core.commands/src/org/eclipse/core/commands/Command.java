@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.commands;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.internal.commands.util.Util;
+import org.eclipse.core.runtime.ListenerList;
 
 /**
  * <p>
@@ -74,16 +72,10 @@ public final class Command extends NamedHandleObjectWithState implements
 	private Category category = null;
 
 	/**
-	 * A collection of objects listening to changes to this command. This
-	 * collection is <code>null</code> if there are no listeners.
-	 */
-	private transient Collection commandListeners = null;
-
-	/**
 	 * A collection of objects listening to the execution of this command. This
 	 * collection is <code>null</code> if there are no listeners.
 	 */
-	private transient Collection executionListeners = null;
+	private transient ListenerList executionListeners = null;
 
 	/**
 	 * The handler currently associated with this command. This value may be
@@ -123,14 +115,7 @@ public final class Command extends NamedHandleObjectWithState implements
 		if (commandListener == null) {
 			throw new NullPointerException("Cannot add a null command listener"); //$NON-NLS-1$
 		}
-
-		if (commandListeners == null) {
-			commandListeners = new ArrayList(1);
-		} else if (commandListeners.contains(commandListener)) {
-			return;
-		}
-
-		commandListeners.add(commandListener);
+		addListenerObject(commandListener);
 	}
 
 	/**
@@ -148,9 +133,7 @@ public final class Command extends NamedHandleObjectWithState implements
 		}
 
 		if (executionListeners == null) {
-			executionListeners = new ArrayList(1);
-		} else if (executionListeners.contains(executionListener)) {
-			return;
+			executionListeners = new ListenerList(ListenerList.IDENTITY);
 		}
 
 		executionListeners.add(executionListener);
@@ -267,7 +250,9 @@ public final class Command extends NamedHandleObjectWithState implements
 	/**
 	 * Executes this command by delegating to the current handler, if any. If
 	 * the debugging flag is set, then this method prints information about
-	 * which handler is selected for performing this command.
+	 * which handler is selected for performing this command. This method will
+	 * succeed regardless of whether the command is enabled or defined. It is
+	 * generally preferred to call {@link #executeWithChecks(ExecutionEvent)}.
 	 * 
 	 * @param event
 	 *            An event containing all the information about the current
@@ -279,6 +264,8 @@ public final class Command extends NamedHandleObjectWithState implements
 	 *             If the handler has problems executing this command.
 	 * @throws NotHandledException
 	 *             If there is no handler.
+	 * @deprecated Please use {@link #executeWithChecks(ExecutionEvent)}
+	 *             instead.
 	 */
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException, NotHandledException {
@@ -319,6 +306,83 @@ public final class Command extends NamedHandleObjectWithState implements
 	}
 
 	/**
+	 * Executes this command by delegating to the current handler, if any. If
+	 * the debugging flag is set, then this method prints information about
+	 * which handler is selected for performing this command. This does checks
+	 * to see if the command is enabled and defined. If it is not both enabled
+	 * and defined, then the execution listeners will be notified and an
+	 * exception thrown.
+	 * 
+	 * @param event
+	 *            An event containing all the information about the current
+	 *            state of the application; must not be <code>null</code>.
+	 * @return The result of the execution; may be <code>null</code>. This
+	 *         result will be available to the client executing the command, and
+	 *         execution listeners.
+	 * @throws ExecutionException
+	 *             If the handler has problems executing this command.
+	 * @throws NotDefinedException
+	 *             If the command you are trying to execute is not defined.
+	 * @throws NotEnabledException
+	 *             If the command you are trying to execute is not enabled.
+	 * @throws NotHandledException
+	 *             If there is no handler.
+	 * @since 3.2
+	 */
+	public final Object executeWithChecks(final ExecutionEvent event)
+			throws ExecutionException, NotDefinedException,
+			NotEnabledException, NotHandledException {
+		firePreExecute(event);
+		final IHandler handler = this.handler;
+
+		// Debugging output
+		if (DEBUG_COMMAND_EXECUTION) {
+			System.out.print("COMMANDS >>> executing "); //$NON-NLS-1$ 
+			if (handler == null) {
+				System.out.print("no handler"); //$NON-NLS-1$
+			} else {
+				System.out.print('\'');
+				System.out.print(handler.getClass().getName());
+				System.out.print("'("); //$NON-NLS-1$" +
+				System.out.print(handler.hashCode());
+				System.out.print(')');
+			}
+			System.out.println();
+		}
+
+		if (!isDefined()) {
+			final NotDefinedException exception = new NotDefinedException(
+					"Trying to execute a command that is not defined"); //$NON-NLS-1$
+			fireNotDefined(exception);
+			throw exception;
+		}
+
+		if (!isEnabled()) {
+			final NotEnabledException exception = new NotEnabledException(
+					"Trying to execute a disabled command"); //$NON-NLS-1$
+			fireNotEnabled(exception);
+			throw exception;
+		}
+
+		// Perform the execution, if there is a handler.
+		if ((handler != null) && (handler.isHandled())) {
+			try {
+				final Object returnValue = handler.execute(event);
+				firePostExecuteSuccess(returnValue);
+				return returnValue;
+			} catch (final ExecutionException e) {
+				firePostExecuteFailure(e);
+				throw e;
+			}
+		}
+
+		final NotHandledException e = new NotHandledException(
+				"There is no handler to execute."); //$NON-NLS-1$
+		fireNotHandled(e);
+		throw e;
+	}
+
+	/**
 	 * Notifies the listeners for this command that it has changed in some way.
 	 * 
 	 * @param commandEvent
@@ -330,19 +394,52 @@ public final class Command extends NamedHandleObjectWithState implements
 			throw new NullPointerException("Cannot fire a null event"); //$NON-NLS-1$
 		}
 
-		if (commandListeners != null) {
-			final int commandListenersSize = commandListeners.size();
-			if (commandListenersSize > 0) {
-				/*
-				 * Bug 88629. Copying to an array avoids a
-				 * ConcurrentModificationException if someone tries to remove
-				 * the listener while handling the event.
-				 */
-				final ICommandListener[] listeners = (ICommandListener[]) commandListeners
-						.toArray(new ICommandListener[commandListenersSize]);
-				for (int i = 0; i < commandListenersSize; i++) {
-					final ICommandListener listener = listeners[i];
-					listener.commandChanged(commandEvent);
+		final Object[] listeners = getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			final ICommandListener listener = (ICommandListener) listeners[i];
+			listener.commandChanged(commandEvent);
+		}
+	}
+
+	/**
+	 * Notifies the execution listeners for this command that an attempt to
+	 * execute has failed because the command is not defined.
+	 * 
+	 * @param e
+	 *            The exception that is about to be thrown; never
+	 *            <code>null</code>.
+	 * @since 3.2
+	 */
+	private final void fireNotDefined(final NotDefinedException e) {
+		if (executionListeners != null) {
+			final Object[] listeners = executionListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				final Object object = listeners[i];
+				if (object instanceof IExecutionListenerWithChecks) {
+					final IExecutionListenerWithChecks listener = (IExecutionListenerWithChecks) object;
+					listener.notDefined(getId(), e);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Notifies the execution listeners for this command that an attempt to
+	 * execute has failed because there is no handler.
+	 * 
+	 * @param e
+	 *            The exception that is about to be thrown; never
+	 *            <code>null</code>.
+	 * @since 3.2
+	 */
+	private final void fireNotEnabled(final NotEnabledException e) {
+		if (executionListeners != null) {
+			final Object[] listeners = executionListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				final Object object = listeners[i];
+				if (object instanceof IExecutionListenerWithChecks) {
+					final IExecutionListenerWithChecks listener = (IExecutionListenerWithChecks) object;
+					listener.notEnabled(getId(), e);
 				}
 			}
 		}
@@ -358,19 +455,10 @@ public final class Command extends NamedHandleObjectWithState implements
 	 */
 	private final void fireNotHandled(final NotHandledException e) {
 		if (executionListeners != null) {
-			final int executionListenersSize = executionListeners.size();
-			if (executionListenersSize > 0) {
-				/*
-				 * Bug 88629. Copying to an array avoids a
-				 * ConcurrentModificationException if someone tries to remove
-				 * the listener while handling the event.
-				 */
-				final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-						.toArray(new IExecutionListener[executionListenersSize]);
-				for (int i = 0; i < executionListenersSize; i++) {
-					final IExecutionListener listener = listeners[i];
-					listener.notHandled(getId(), e);
-				}
+			final Object[] listeners = executionListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				final IExecutionListener listener = (IExecutionListener) listeners[i];
+				listener.notHandled(getId(), e);
 			}
 		}
 	}
@@ -386,19 +474,10 @@ public final class Command extends NamedHandleObjectWithState implements
 	 */
 	private final void firePostExecuteFailure(final ExecutionException e) {
 		if (executionListeners != null) {
-			final int executionListenersSize = executionListeners.size();
-			if (executionListenersSize > 0) {
-				/*
-				 * Bug 88629. Copying to an array avoids a
-				 * ConcurrentModificationException if someone tries to remove
-				 * the listener while handling the event.
-				 */
-				final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-						.toArray(new IExecutionListener[executionListenersSize]);
-				for (int i = 0; i < executionListenersSize; i++) {
-					final IExecutionListener listener = listeners[i];
-					listener.postExecuteFailure(getId(), e);
-				}
+			final Object[] listeners = executionListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				final IExecutionListener listener = (IExecutionListener) listeners[i];
+				listener.postExecuteFailure(getId(), e);
 			}
 		}
 	}
@@ -412,19 +491,10 @@ public final class Command extends NamedHandleObjectWithState implements
 	 */
 	private final void firePostExecuteSuccess(final Object returnValue) {
 		if (executionListeners != null) {
-			final int executionListenersSize = executionListeners.size();
-			if (executionListenersSize > 0) {
-				/*
-				 * Bug 88629. Copying to an array avoids a
-				 * ConcurrentModificationException if someone tries to remove
-				 * the listener while handling the event.
-				 */
-				final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-						.toArray(new IExecutionListener[executionListenersSize]);
-				for (int i = 0; i < executionListenersSize; i++) {
-					final IExecutionListener listener = listeners[i];
-					listener.postExecuteSuccess(getId(), returnValue);
-				}
+			final Object[] listeners = executionListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				final IExecutionListener listener = (IExecutionListener) listeners[i];
+				listener.postExecuteSuccess(getId(), returnValue);
 			}
 		}
 	}
@@ -438,19 +508,10 @@ public final class Command extends NamedHandleObjectWithState implements
 	 */
 	private final void firePreExecute(final ExecutionEvent event) {
 		if (executionListeners != null) {
-			final int executionListenersSize = executionListeners.size();
-			if (executionListenersSize > 0) {
-				/*
-				 * Bug 88629. Copying to an array avoids a
-				 * ConcurrentModificationException if someone tries to remove
-				 * the listener while handling the event.
-				 */
-				final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-						.toArray(new IExecutionListener[executionListenersSize]);
-				for (int i = 0; i < executionListenersSize; i++) {
-					final IExecutionListener listener = listeners[i];
-					listener.preExecute(getId(), event);
-				}
+			final Object[] listeners = executionListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				final IExecutionListener listener = (IExecutionListener) listeners[i];
+				listener.preExecute(getId(), event);
 			}
 		}
 	}
@@ -538,12 +599,7 @@ public final class Command extends NamedHandleObjectWithState implements
 					"Cannot remove a null command listener"); //$NON-NLS-1$
 		}
 
-		if (commandListeners != null) {
-			commandListeners.remove(commandListener);
-			if (commandListeners.isEmpty()) {
-				commandListeners = null;
-			}
-		}
+		removeListenerObject(commandListener);
 	}
 
 	/**
