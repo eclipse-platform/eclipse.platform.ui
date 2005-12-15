@@ -311,6 +311,62 @@ public final class ParameterizedCommand implements Comparable {
 	}
 
 	/**
+	 * Executes this command with its parameters. This method will succeed
+	 * regardless of whether the command is enabled or defined. It is
+	 * preferrable to use {@link #executeWithChecks(Object, Object)}.
+	 * 
+	 * @param trigger
+	 *            The object that triggered the execution; may be
+	 *            <code>null</code>.
+	 * @param applicationContext
+	 *            The state of the application at the time the execution was
+	 *            triggered; may be <code>null</code>.
+	 * @return The result of the execution; may be <code>null</code>.
+	 * @throws ExecutionException
+	 *             If the handler has problems executing this command.
+	 * @throws NotHandledException
+	 *             If there is no handler.
+	 * @deprecated Please use {@link #executeWithChecks(Object, Object)}
+	 *             instead.
+	 */
+	public final Object execute(final Object trigger,
+			final Object applicationContext) throws ExecutionException,
+			NotHandledException {
+		return command.execute(new ExecutionEvent(getParameterMap(), trigger,
+				applicationContext));
+	}
+
+	/**
+	 * Executes this command with its parameters. This does extra checking to
+	 * see if the command is enabled and defined. If it is not both enabled and
+	 * defined, then the execution listeners will be notified and an exception
+	 * thrown.
+	 * 
+	 * @param trigger
+	 *            The object that triggered the execution; may be
+	 *            <code>null</code>.
+	 * @param applicationContext
+	 *            The state of the application at the time the execution was
+	 *            triggered; may be <code>null</code>.
+	 * @return The result of the execution; may be <code>null</code>.
+	 * @throws ExecutionException
+	 *             If the handler has problems executing this command.
+	 * @throws NotDefinedException
+	 *             If the command you are trying to execute is not defined.
+	 * @throws NotEnabledException
+	 *             If the command you are trying to execute is not enabled.
+	 * @throws NotHandledException
+	 *             If there is no handler.
+	 * @since 3.2
+	 */
+	public final Object executeWithChecks(final Object trigger,
+			final Object applicationContext) throws ExecutionException,
+			NotDefinedException, NotEnabledException, NotHandledException {
+		return command.executeWithChecks(new ExecutionEvent(getParameterMap(),
+				trigger, applicationContext));
+	}
+
+	/**
 	 * Returns the base command. It is possible for more than one parameterized
 	 * command to have the same identifier.
 	 * 
@@ -390,58 +446,6 @@ public final class ParameterizedCommand implements Comparable {
 		return parameterMap;
 	}
 
-	/**
-	 * Executes this command with its parameters.
-	 * 
-	 * @param trigger
-	 *            The object that triggered the execution; may be
-	 *            <code>null</code>.
-	 * @param applicationContext
-	 *            The state of the application at the time the execution was
-	 *            triggered; may be <code>null</code>.
-	 * @return The result of the execution; may be <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the handler has problems executing this command.
-	 * @throws NotHandledException
-	 *             If there is no handler.
-	 */
-	public final Object execute(final Object trigger,
-			final Object applicationContext) throws ExecutionException,
-			NotHandledException {
-		return command.execute(new ExecutionEvent(getParameterMap(), trigger,
-				applicationContext));
-	}
-
-	/**
-	 * Executes this command with its parameters. This does extra checking to
-	 * see if the command is enabled and defined. If it is not both enabled and
-	 * defined, then the execution listeners will be notified and an exception
-	 * thrown.
-	 * 
-	 * @param trigger
-	 *            The object that triggered the execution; may be
-	 *            <code>null</code>.
-	 * @param applicationContext
-	 *            The state of the application at the time the execution was
-	 *            triggered; may be <code>null</code>.
-	 * @return The result of the execution; may be <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the handler has problems executing this command.
-	 * @throws NotDefinedException
-	 *             If the command you are trying to execute is not defined.
-	 * @throws NotEnabledException
-	 *             If the command you are trying to execute is not enabled.
-	 * @throws NotHandledException
-	 *             If there is no handler.
-	 * @since 3.2
-	 */
-	public final Object executeWithChecks(final Object trigger,
-			final Object applicationContext) throws ExecutionException,
-			NotDefinedException, NotEnabledException, NotHandledException {
-		return command.executeWithChecks(new ExecutionEvent(getParameterMap(),
-				trigger, applicationContext));
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -450,8 +454,8 @@ public final class ParameterizedCommand implements Comparable {
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(command);
-            hashCode = hashCode * HASH_FACTOR
-                    + Util.hashCode(parameterizations);
+			hashCode = hashCode * HASH_FACTOR
+					+ Util.hashCode(parameterizations);
 			if (hashCode == HASH_CODE_NOT_COMPUTED) {
 				hashCode++;
 			}
