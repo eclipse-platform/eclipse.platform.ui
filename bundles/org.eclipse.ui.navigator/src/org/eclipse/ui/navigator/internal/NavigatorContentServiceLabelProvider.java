@@ -125,7 +125,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 		for (int i = 0; i < labelProviders.length && text == null; i++)
 			text = labelProviders[i].getText(anElement);
 		// decorate the element
-		return text == null ? "" : decorator.decorateText(text, anElement); //$NON-NLS-1$
+		return text == null ? "" : text; //$NON-NLS-1$
 	}
 
 	/**

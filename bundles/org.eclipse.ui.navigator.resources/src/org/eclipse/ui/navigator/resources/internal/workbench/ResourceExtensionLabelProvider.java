@@ -11,10 +11,8 @@
 package org.eclipse.ui.navigator.resources.internal.workbench;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
@@ -28,10 +26,11 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
  * </p>
  * @since 3.2
  */
-public class ResourceExtensionLabelProvider extends DecoratingLabelProvider implements ICommonLabelProvider {
+public class ResourceExtensionLabelProvider extends WorkbenchLabelProvider implements ICommonLabelProvider {
 
 	public ResourceExtensionLabelProvider() {
-		super(new WorkbenchLabelProvider(), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());
+		//super(new WorkbenchLabelProvider(), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());
+		
 	}
 
  
