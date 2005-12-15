@@ -72,7 +72,7 @@ public class ThreeWayDiff extends DiffNode implements IThreeWayDiff {
 			return remoteKind;
 		if (remoteKind == NO_CHANGE)
 			return localKind;
-		return CHANGED;
+		return CHANGE;
 	}
 
 	/* (non-Javadoc)

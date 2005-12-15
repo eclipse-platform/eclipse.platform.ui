@@ -114,7 +114,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	    		}
 				// direction == SyncInfo.CONFLICTING
 	    		int type = twDelta.getKind();
-	    		if (type == IDiffNode.REMOVED) {
+	    		if (type == IDiffNode.REMOVE) {
 	    			// TODO: either we need to spec mark as merged to work in this case
 	    			// or somehow involve the subclass (or just ignore it)
 	    			markAsMerged(delta, false, monitor);

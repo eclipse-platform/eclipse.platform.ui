@@ -108,11 +108,11 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 		if ((SyncInfo.getDirection(info.getKind()) & direction) == 0) {
 			// There is no change so create a NO_CHANGE delta
 		} else if (before == null) {
-			kind = IDiffNode.ADDED;
+			kind = IDiffNode.ADD;
 		} else if (after == null) {
-			kind = IDiffNode.REMOVED;
+			kind = IDiffNode.REMOVE;
 		} else {
-			kind = IDiffNode.CHANGED;
+			kind = IDiffNode.CHANGE;
 		}
 		return new ResourceDiff(info.getLocal(), kind, IDiffNode.NO_CHANGE, before, after);
 	}

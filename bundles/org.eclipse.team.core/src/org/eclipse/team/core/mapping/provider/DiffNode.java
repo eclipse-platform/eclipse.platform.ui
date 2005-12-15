@@ -95,9 +95,9 @@ public abstract class DiffNode implements IDiffNode {
 			label = Messages.RemoteSyncElement_insync; 
 		} else {
 			switch(kind) {
-				case IDiffNode.CHANGED: label = Messages.RemoteSyncElement_change ; break;
-				case IDiffNode.ADDED: label = Messages.RemoteSyncElement_addition; break;
-				case IDiffNode.REMOVED: label = Messages.RemoteSyncElement_deletion; break; 
+				case IDiffNode.CHANGE: label = Messages.RemoteSyncElement_change ; break;
+				case IDiffNode.ADD: label = Messages.RemoteSyncElement_addition; break;
+				case IDiffNode.REMOVE: label = Messages.RemoteSyncElement_deletion; break; 
 			}
 		}
 		return label; 

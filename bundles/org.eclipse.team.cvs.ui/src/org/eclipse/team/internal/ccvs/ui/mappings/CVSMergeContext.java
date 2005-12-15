@@ -100,7 +100,7 @@ public class CVSMergeContext extends MergeContext {
 			throw new CVSException(NLS.bind(CVSUIMessages.CVSMergeContext_1, delta.getPath()));
 		}
 		IStatus status = super.merge(delta, force, monitor);
-		if (status.isOK() && delta.getKind() == IDiffNode.REMOVED) {
+		if (status.isOK() && delta.getKind() == IDiffNode.REMOVE) {
 			IResource resource = getDiffTree().getResource(delta);
 			if (resource.getType() == IResource.FILE && !resource.exists()) {
 				// TODO: This behavior is specific to an update from the same branch

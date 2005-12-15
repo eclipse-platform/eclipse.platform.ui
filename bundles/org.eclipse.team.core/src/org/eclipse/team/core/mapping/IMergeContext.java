@@ -146,38 +146,38 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * are indicated by the three-way delta itself.
 	 * <ul>
 	 * 
-	 * <li> When the delta kind is {@link IDiffNode#ADDED} and the delta is also
-	 * a move (i.e. the {@link ITwoWayDiff#MOVED_FROM} is set). The merge can
+	 * <li> When the delta kind is {@link IDiffNode#ADD} and the delta is also
+	 * a move (i.e. the {@link ITwoWayDiff#MOVE_FROM} is set). The merge can
 	 * either use the {@link #merge(IDiffNode[], boolean, IProgressMonitor) }
 	 * method to accept the rename or perform an
 	 * {@link IFile#move(IPath, boolean, boolean, IProgressMonitor) } where the
-	 * source file is obtained using {@link ITwoWayDiff#getMovedFromPath()} and
+	 * source file is obtained using {@link ITwoWayDiff#getFromPath()} and
 	 * the destination is the path of the delta ({@link IDiffNode#getPath()}).
 	 * This later approach is helpful in the case where the local file and
 	 * remote file both contain content changes (i.e. the file can be moved by
 	 * the model and then the contents can be merged by the model). </li>
 	 * 
-	 * <li> When the delta kind is {@link IDiffNode#REMOVED} and the delta is
-	 * also a move (i.e. the {@link ITwoWayDiff#MOVED_TO} is set). The merge can
+	 * <li> When the delta kind is {@link IDiffNode#REMOVE} and the delta is
+	 * also a move (i.e. the {@link ITwoWayDiff#MOVE_TO} is set). The merge can
 	 * either use the {@link #merge(IDiffNode[], boolean, IProgressMonitor) }
 	 * method to accept the rename or perform an
 	 * {@link IFile#move(IPath, boolean, boolean, IProgressMonitor) } where the
 	 * source file is obtained using {@link IDiffNode#getPath()} and the
-	 * destination is obtained from {@link ITwoWayDiff#getMovedToPath()}. This
+	 * destination is obtained from {@link ITwoWayDiff#getToPath()}. This
 	 * later approach is helpful in the case where the local file and remote
 	 * file both contain content changes (i.e. the file can be moved by the
 	 * model and then the contents can be merged by the model). </li>
 	 * 
-	 * <li> When the delta kind is {@link IDiffNode#ADDED} and it is not part of
+	 * <li> When the delta kind is {@link IDiffNode#ADD} and it is not part of
 	 * a move, the merger must use the
 	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method to accept
 	 * this change. If there is a conflicting addition, the force flag can be
 	 * set to override the local change. If the model wishes to keep the local
 	 * changes, they can overwrite the file after merging it. Models should
-	 * consult the flags to see if the remote change is a rename ({@link ITwoWayDiff#MOVED_FROM}).
+	 * consult the flags to see if the remote change is a rename ({@link ITwoWayDiff#MOVE_FROM}).
 	 * </li>
 	 * 
-	 * <li>When the delta kind is {@link IDiffNode#REMOVED} and it is not part
+	 * <li>When the delta kind is {@link IDiffNode#REMOVE} and it is not part
 	 * of a move, the merger can use the
 	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method but could
 	 * also perform the delete manually using any of the {@link IFile} delete
@@ -187,7 +187,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * {@link #markAsMerged(IFile, boolean, IProgressMonitor) } on the file
 	 * which will convert the incoming deletion to an outgoing addition.</li>
 	 * 
-	 * <li>When the delta kind is {@link IDiffNode#CHANGED} and there is no
+	 * <li>When the delta kind is {@link IDiffNode#CHANGE} and there is no
 	 * conflict, the model is advised to use the
 	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method to merge
 	 * these changes as this is the most efficient means to do so. However, the
@@ -196,7 +196,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * <code>inSyncHint</code> set to <code>true</code> but this will be
 	 * less efficient. </li>
 	 * 
-	 * <li>When the delta kind is {@link IDiffNode#CHANGED} and there is a
+	 * <li>When the delta kind is {@link IDiffNode#CHANGE} and there is a
 	 * conflict, the model can use the
 	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method to merge
 	 * these changes. If the force flag is not set, an auto-merge is attempted

@@ -37,7 +37,7 @@ public class ResourceDiff extends TwoWayDiff implements IResourceDiff {
 	/**
 	 * Create a two-way resource diff
 	 * @param resource the resource
-	 * @param kind the kind of change
+	 * @param kind the kind of change (ADDED, REMOVED or CHANGED)
 	 * @param flags additional flags that describe the change
 	 * @param before the before state of the model object
 	 * @param after the after state of the model object
@@ -47,6 +47,17 @@ public class ResourceDiff extends TwoWayDiff implements IResourceDiff {
 		this.resource = resource;
 		this.before = before;
 		this.after = after;
+	}
+
+	/**
+	 * Convenience constructor for creating a simple resource diff
+	 * that consists of a resource and a kind only. It is equivalent to
+	 * <code>ResourceDiff(resource, kind, 0, null, null)<code>
+	 * @param resource a resource
+	 * @param kind the kind of change (ADDED, REMOVED or CHANGED)
+	 */
+	public ResourceDiff(IResource resource, int kind) {
+		this(resource, kind, 0, null, null);
 	}
 
 	/* (non-Javadoc)

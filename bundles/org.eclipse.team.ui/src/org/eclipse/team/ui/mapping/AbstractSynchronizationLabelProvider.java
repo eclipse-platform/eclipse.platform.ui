@@ -94,13 +94,13 @@ public abstract class AbstractSynchronizationLabelProvider implements ILabelProv
 		int compareKind = 0;
 		if (node != null) {
 			switch (node.getKind()) {
-			case IDiffNode.ADDED:
+			case IDiffNode.ADD:
 				compareKind = Differencer.ADDITION;
 				break;
-			case IDiffNode.REMOVED:
+			case IDiffNode.REMOVE:
 				compareKind = Differencer.DELETION;
 				break;
-			case IDiffNode.CHANGED:
+			case IDiffNode.CHANGE:
 				compareKind = Differencer.CHANGE;
 				break;
 			}

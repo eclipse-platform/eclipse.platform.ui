@@ -48,20 +48,28 @@ public interface ITwoWayDiff extends IDiffNode {
 
 	/**
 	 * Change constant (bit mask) indicating that the object was moved from another location.
-	 * The location in the "before" state can be retrieved using <code>getMovedFromPath()</code>.
+	 * The location in the "before" state can be retrieved using <code>getFromPath()</code>.
 	 * 
 	 * @see ITwoWayDiff#getFlags()
 	 */
-	public static final int MOVED_FROM = 0x200;
+	public static final int MOVE_FROM = 0x200;
 
 	/**
 	 * Change constant (bit mask) indicating that the object was moved to another location.
-	 * The location in the new state can be retrieved using <code>getMovedToPath()</code>.
+	 * The location in the new state can be retrieved using <code>getToPath()</code>.
 	 * 
 	 * @see ITwoWayDiff#getFlags()
 	 */
-	public static final int MOVED_TO = 0x400;
+	public static final int MOVE_TO = 0x400;
 
+	/**
+	 * Change constant (bit mask) indicating that the object was copied from another location.
+	 * The location in the "before" state can be retrieved using <code>getFromPath()</code>.
+	 * 
+	 * @see ITwoWayDiff#getFlags()
+	 */
+	public static final int COPY_FROM = 0x800;
+	
 	/**
 	 * Change constant (bit mask) indicating that the object has been
 	 * replaced by another at the same location (i.e., the object has 
@@ -69,38 +77,40 @@ public interface ITwoWayDiff extends IDiffNode {
 	 * 
 	 * @see ITwoWayDiff#getFlags()
 	 */
-	public static final int REPLACED = 0x800;
+	public static final int REPLACE = 0x1000;
 	
 	/**
 	 * Returns flags which describe in more detail how a object has been affected.
 	 * <p>
-	 * The following codes (bit masks) are used when kind is <code>CHANGED</code>, and
+	 * The following codes (bit masks) are used when kind is <code>CHANGE</code>, and
 	 * also when the object is involved in a move:
 	 * <ul>
 	 * <li><code>CONTENT</code> - The bytes contained by the resource have 
 	 * 		been altered.</li>
-	 * <li><code>REPLACED</code> - The object
+	 * <li><code>REPLACE</code> - The object
 	 *  was deleted (either by a delete or move), and was subsequently re-created
 	 *  (either by a create, move, or copy).</li>
 	 * </ul>
-	 * The following code is only used if kind is <code>REMOVED</code>
-	 * (or <code>CHANGED</code> in conjunction with <code>REPLACED</code>):
+	 * The following code is only used if kind is <code>REMOVE</code>
+	 * (or <code>CHANGE</code> in conjunction with <code>REPLACE</code>):
 	 * <ul>
-	 * <li><code>MOVED_TO</code> - The object has moved.
-	 * 	<code>getMovedToPath</code> will return the path of where it was moved to.</li>
+	 * <li><code>MOVE_TO</code> - The object has moved.
+	 * 	<code>getToPath</code> will return the path of where it was moved to.</li>
 	 * </ul>
-	 * The following code is only used if kind is <code>ADDED</code>
-	 * (or <code>CHANGED</code> in conjunction with <code>REPLACED</code>):
+	 * The following code is only used if kind is <code>ADD</code>
+	 * (or <code>CHANGE</code> in conjunction with <code>REPLACE</code>):
 	 * <ul>
-	 * <li><code>MOVED_FROM</code> - The object has moved.
-	 * 	<code>getMovedFromPath</code> will return the path of where it was moved from.</li>
+	 * <li><code>MOVE_FROM</code> - The object has moved.
+	 * 	<code>getFromPath</code> will return the path of where it was moved from.</li>
+	 * <li><code>COPY_FROM</code> - The object has copied.
+	 * 	<code>getFromPath</code> will return the path of where it was copied from.</li>
 	 * </ul>
 	 * A simple move operation would result in the following diff information.
 	 * If a object is moved from A to B (with no other changes to A or B), 
-	 * then A will have kind <code>REMOVED</code>, with flag <code>MOVED_TO</code>, 
-	 * and <code>getMovedToPath</code> on A will return the path for B.  
-	 * B will have kind <code>ADDED</code>, with flag <code>MOVED_FROM</code>, 
-	 * and <code>getMovedFromPath</code> on B will return the path for A.
+	 * then A will have kind <code>REMOVE</code>, with flag <code>MOVE_TO</code>, 
+	 * and <code>getToPath</code> on A will return the path for B.  
+	 * B will have kind <code>ADD</code>, with flag <code>MOVE_FROM</code>, 
+	 * and <code>getFromPath</code> on B will return the path for A.
 	 * B's other flags will describe any other changes to the resource, as compared
 	 * to its previous location at A.
 	 * </p>
@@ -113,43 +123,44 @@ public interface ITwoWayDiff extends IDiffNode {
 	 *
 	 * @return the flags
 	 * @see ITwoWayDiff#CONTENT
-	 * @see ITwoWayDiff#MOVED_TO
-	 * @see ITwoWayDiff#MOVED_FROM
-	 * @see ITwoWayDiff#REPLACED
+	 * @see ITwoWayDiff#MOVE_TO
+	 * @see ITwoWayDiff#MOVE_FROM
+	 * @see ITwoWayDiff#COPY_FROM
+	 * @see ITwoWayDiff#REPLACE
 	 * @see #getKind()
-	 * @see #getMovedFromPath()
-	 * @see #getMovedToPath()
+	 * @see #getFromPath()
+	 * @see #getToPath()
 	 */
 	public int getFlags();
 	
 	/**
 	 * Returns the full path (in the "before" state) from which this resource 
 	 * (in the "after" state) was moved.  This value is only valid 
-	 * if the <code>MOVED_FROM</code> change flag is set; otherwise,
+	 * if the <code>MOVE_FROM</code> change flag is set; otherwise,
 	 * <code>null</code> is returned.
 	 * <p>
 	 * Note: the returned path never has a trailing separator.
 	 *
 	 * @return a path, or <code>null</code>
-	 * @see #getMovedToPath()
+	 * @see #getToPath()
 	 * @see #getPath()
 	 * @see #getFlags()
 	 */
-	public IPath getMovedFromPath();
+	public IPath getFromPath();
 
 	/**
 	 * Returns the full path (in the "after" state) to which this resource 
 	 * (in the "before" state) was moved.  This value is only valid if the 
-	 * <code>MOVED_TO</code> change flag is set; otherwise,
+	 * <code>MOVE_TO</code> change flag is set; otherwise,
 	 * <code>null</code> is returned.
 	 * <p>
 	 * Note: the returned path never has a trailing separator.
 	 * 
 	 * @return a path, or <code>null</code>
-	 * @see #getMovedFromPath()
+	 * @see #getFromPath()
 	 * @see #getPath()
 	 * @see #getFlags()
 	 */
-	public IPath getMovedToPath();
+	public IPath getToPath();
 
 }

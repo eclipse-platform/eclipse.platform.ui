@@ -42,7 +42,7 @@ public interface IResourceDiffTree extends IDiffTree {
 	 * @return the diff associated with the resource or <code>null</code> if
 	 *         the resource does not have any changes.
 	 */
-	IDiffNode getDiff(IResource resource);
+	IResourceDiff getDiff(IResource resource);
 
 	/**
 	 * Return the resource associated with the given diff. This method will only
@@ -71,7 +71,7 @@ public interface IResourceDiffTree extends IDiffTree {
 	 * @return all the diffs in the tree that are contained in the given
 	 *         traversals
 	 */
-	IDiffNode[] getDiffs(final ResourceTraversal[] traversals);
+	IDiffNode[] getDiffs(ResourceTraversal[] traversals);
 
 	/**
 	 * Return the members of the given resource that either have diffs in this

@@ -15,8 +15,8 @@ import org.eclipse.team.core.diff.ITwoWayDiff;
 
 /**
  * Implementation of {@link ITwoWayDiff}. By default, this implementation
- * returns <code>null</code> for the {@link #getMovedFromPath() } and
- * {@link #getMovedToPath() }. Subclasses that support move diffs
+ * returns <code>null</code> for the {@link #getFromPath() } and
+ * {@link #getToPath() }. Subclasses that support move diffs
  * should override these methods.
  * <p>
  * This class may be subclassed by clients.
@@ -64,14 +64,14 @@ public class TwoWayDiff extends DiffNode implements ITwoWayDiff {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.delta.ITwoWayDelta#getMovedToPath()
 	 */
-	public IPath getMovedToPath() {
+	public IPath getToPath() {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.delta.ITwoWayDelta#getMovedFromPath()
 	 */
-	public IPath getMovedFromPath() {
+	public IPath getFromPath() {
 		return null;
 	}
 

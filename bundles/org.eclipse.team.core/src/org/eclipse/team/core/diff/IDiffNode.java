@@ -51,7 +51,7 @@ public interface IDiffNode {
 	 * 
 	 * @see IDiffNode#getKind()
 	 */
-	public static final int ADDED = 0x1;
+	public static final int ADD = 0x1;
 
 	/**
 	 * Diff kind constant (bit mask) indicating that the resource has been
@@ -60,7 +60,7 @@ public interface IDiffNode {
 	 * 
 	 * @see IDiffNode#getKind()
 	 */
-	public static final int REMOVED = 0x2;
+	public static final int REMOVE = 0x2;
 
 	/**
 	 * Diff kind constant (bit mask) indicating that the resource has been
@@ -69,14 +69,14 @@ public interface IDiffNode {
 	 * 
 	 * @see IDiffNode#getKind()
 	 */
-	public static final int CHANGED = 0x4;
+	public static final int CHANGE = 0x4;
 	
 	/**
 	 * The bit mask which describes all possible diff kinds.
 	 * 
 	 * @see IDiffNode#getKind()
 	 */
-	public static final int ALL = CHANGED | ADDED | REMOVED;
+	public static final int ALL = CHANGE | ADD | REMOVE;
 	
 	/**
 	 * Returns the full, absolute path of the object to which the diff applies
@@ -94,9 +94,9 @@ public interface IDiffNode {
 	 * <code>ADDED</code>, <code>REMOVED</code>, <code>CHANGED</code>.
 	 * 
 	 * @return the kind of this diff
-	 * @see IDiffNode#ADDED
-	 * @see IDiffNode#REMOVED
-	 * @see IDiffNode#CHANGED
+	 * @see IDiffNode#ADD
+	 * @see IDiffNode#REMOVE
+	 * @see IDiffNode#CHANGE
 	 */
 	public int getKind();
 

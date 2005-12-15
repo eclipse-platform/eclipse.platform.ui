@@ -40,8 +40,8 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IResourceDiffTree#getDiff(org.eclipse.core.resources.IResource)
 	 */
-	public IDiffNode getDiff(IResource resource) {
-		return getDiff(resource.getFullPath());
+	public IResourceDiff getDiff(IResource resource) {
+		return (IResourceDiff)getDiff(resource.getFullPath());
 	}
 
 	/* (non-Javadoc)
