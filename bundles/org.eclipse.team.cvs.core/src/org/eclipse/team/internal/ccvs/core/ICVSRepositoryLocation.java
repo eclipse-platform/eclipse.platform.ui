@@ -87,7 +87,7 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	public String getEncoding();
 		
 	/**
-	 * Return the conection timeout value in milliseconds.
+	 * Return the connection timeout value in seconds.
 	 * A value of 0 means there is no timeout value.
 	 */
 	public int getTimeout();
