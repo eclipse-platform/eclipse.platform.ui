@@ -35,6 +35,8 @@ public class TwoWayDiff extends DiffNode implements ITwoWayDiff {
 	/**
 	 * Constant (bit mask) that defines the area of the status that is reserved
 	 * for use by this abstract class for encoding the flags of the diff.
+	 * However, subclasses may include their own bits in the flag
+	 * as long as they do not overlap with the bits in the <code>FLAG_MASK</code>
 	 * 
 	 * @see DiffNode#getStatus()
 	 */
@@ -49,14 +51,14 @@ public class TwoWayDiff extends DiffNode implements ITwoWayDiff {
 	 * @param after the after state of the model object
 	 */
 	public TwoWayDiff(IPath path, int kind, int flags) {
-		super(path, (kind & KIND_MASK) | (flags & FLAG_MASK));
+		super(path, (kind & KIND_MASK) | (flags & ~KIND_MASK));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ITwoWayDelta#getFlags()
 	 */
 	public int getFlags() {
-		return getStatus() & FLAG_MASK;
+		return getStatus() & ~KIND_MASK;
 	}
 	
 	/* (non-Javadoc)

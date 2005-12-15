@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.core.mapping.provider;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.core.diff.IResourceDiff;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.variants.IResourceVariant;
 
 /**
@@ -32,17 +32,19 @@ public class ResourceDiff extends TwoWayDiff implements IResourceDiff {
 
 	private final IResourceVariant before;
 	private final IResourceVariant after;
+	private final IResource resource;
 
 	/**
 	 * Create a two-way resource diff
-	 * @param path the path of the model object that has changed
+	 * @param resource the resource
 	 * @param kind the kind of change
 	 * @param flags additional flags that describe the change
 	 * @param before the before state of the model object
 	 * @param after the after state of the model object
 	 */
-	public ResourceDiff(IPath path, int kind, int flags, IResourceVariant before, IResourceVariant after) {
-		super(path, kind, flags);
+	public ResourceDiff(IResource resource, int kind, int flags, IResourceVariant before, IResourceVariant after) {
+		super(resource.getFullPath(), kind, flags);
+		this.resource = resource;
 		this.before = before;
 		this.after = after;
 	}
@@ -59,6 +61,13 @@ public class ResourceDiff extends TwoWayDiff implements IResourceDiff {
 	 */
 	public IResourceVariant getAfterState() {
 		return after;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.IResourceDiff#getResource()
+	 */
+	public IResource getResource() {
+		return resource;
 	}
 
 }

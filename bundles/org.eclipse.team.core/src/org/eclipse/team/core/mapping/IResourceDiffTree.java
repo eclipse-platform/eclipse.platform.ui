@@ -8,11 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.diff;
+package org.eclipse.team.core.mapping;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.team.core.diff.*;
 
 /**
  * A resource diff tree provides access to a tree of {@link IDiffNode} instances
@@ -81,5 +82,13 @@ public interface IResourceDiffTree extends IDiffTree {
 	 *         tree of contain descendants that have diffs in this tree
 	 */
 	IResource[] members(IResource resource);
+
+	/**
+	 * Return all resources that contain diffs in this
+	 * diff tree.
+	 * @return all resources that contain diffs in this
+	 * diff tree
+	 */
+	IResource[] getAffectedResources();
 
 }

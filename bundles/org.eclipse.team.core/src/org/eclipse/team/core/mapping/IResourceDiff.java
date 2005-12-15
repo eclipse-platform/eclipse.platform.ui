@@ -8,8 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.diff;
+package org.eclipse.team.core.mapping;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.team.core.diff.IDiffTree;
+import org.eclipse.team.core.diff.ITwoWayDiff;
 import org.eclipse.team.core.variants.IResourceVariant;
 
 /**
@@ -34,6 +37,30 @@ import org.eclipse.team.core.variants.IResourceVariant;
  */
 public interface IResourceDiff extends ITwoWayDiff {
 
+	/**
+	 * Change constant (bit mask) indicating that the resource was opened or closed.
+	 * For example, if the current state of the resource is open then 
+	 * it was previously closed.
+	 * 
+	 * @see ITwoWayDelta#getFlags()
+	 * @see org.eclipse.core.resources.IResourceDelta#OPEN
+	 */
+	public static final int OPEN = 0x10000;
+	
+	/**
+	 * Change constant (bit mask) indicating that a project's description has changed. 
+	 * 
+	 * @see ITwoWayDelta#getFlags()
+	 * @see org.eclipse.core.resources.IResourceDelta#DESCRIPTION
+	 */
+	public static final int DESCRIPTION = 0x20000;
+	
+	/**
+	 * Return the local resource to which this diff applies.
+	 * @return the local resource to which this diff applies
+	 */
+	public IResource getResource();
+	
 	/**
 	 * Return a handle to the resource variant representing the
 	 * "before" state used to calculate this diff.

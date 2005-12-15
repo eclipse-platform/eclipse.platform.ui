@@ -288,5 +288,13 @@ public class DiffTree implements IDiffTree {
 	public IPath[] getPaths() {
 		return pathTree.getPaths();
 	}
+	
+	/**
+	 * Return all the diffs contained in this diff tree.
+	 * @return all the diffs contained in this diff tree
+	 */
+	public IDiffNode[] getDiffs() {
+		return (IDiffNode[]) pathTree.values().toArray(new IDiffNode[pathTree.size()]);
+	}
 
 }

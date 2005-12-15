@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.mapping;
 
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.ITeamStatus;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.provider.*;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.variants.IResourceVariant;
@@ -113,7 +114,7 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 		} else {
 			kind = IDiffNode.CHANGED;
 		}
-		return new ResourceDiff(info.getLocal().getFullPath(), kind, IDiffNode.NO_CHANGE, before, after);
+		return new ResourceDiff(info.getLocal(), kind, IDiffNode.NO_CHANGE, before, after);
 	}
 
 	private static ITwoWayDiff getLocalDelta(SyncInfo info) {
@@ -124,33 +125,7 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 
 	private static IResourceVariant wrapLocal(final SyncInfo info) {
 		if (info.getLocal().exists()) {
-			return new IResourceVariant() {
-				public byte[] asBytes() {
-					return getContentIdentifier().getBytes();
-				}
-			
-				public String getContentIdentifier() {
-					return info.getLocalContentIdentifier();
-				}
-			
-				public IStorage getStorage(IProgressMonitor monitor) throws TeamException {
-					IResource local = info.getLocal();
-					if (local.getType() == IResource.FILE) {
-						return (IFile)local;
-					}
-					return null;
-				}
-			
-				public boolean isContainer() {
-					IResource local = info.getLocal();
-					return local.getType() != IResource.FILE;
-				}
-			
-				public String getName() {
-					return info.getLocal().getName();
-				}
-			
-			};
+			return new LocalResourceVariant(info.getLocal());
 		}
 		return null;
 	}

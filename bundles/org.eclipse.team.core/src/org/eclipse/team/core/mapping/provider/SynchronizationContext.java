@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.core.mapping.provider;
 
-import org.eclipse.team.core.diff.IResourceDiffTree;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.synchronize.ISyncInfoTree;
 import org.eclipse.team.core.synchronize.SyncInfoTree;

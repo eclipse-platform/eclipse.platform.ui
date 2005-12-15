@@ -181,4 +181,19 @@ public class PathTree {
 		return (IPath[]) result.toArray(new IPath[result.size()]);
 	}
 
+	/**
+	 * Return all the values contained in this path tree.
+	 */
+	public Collection values() {
+		return objects.values();
+	}
+
+	/**
+	 * Return the number of nodes contained in this path tree.
+	 * @return the number of nodes contained in this path tree
+	 */
+	public int size() {
+		return objects.size();
+	}
+
 }

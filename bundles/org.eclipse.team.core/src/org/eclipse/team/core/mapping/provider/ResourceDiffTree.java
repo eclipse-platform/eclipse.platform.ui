@@ -15,9 +15,10 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.mapping.IResourceDiff;
+import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
 
@@ -132,6 +133,36 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 			}
 		}
 		return (IResource[]) result.toArray(new IResource[result.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceDiffTree#getAffectedResources()
+	 */
+	public IResource[] getAffectedResources() {
+		List result = new ArrayList();
+		IDiffNode[] nodes = getDiffs();
+		for (int i = 0; i < nodes.length; i++) {
+			IResourceDiff node = (IResourceDiff)nodes[i];
+			result.add(node.getResource());
+		}
+		return (IResource[]) result.toArray(new IResource[result.size()]);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.provider.DiffTree#add(org.eclipse.team.core.diff.IDiffNode)
+	 */
+	public void add(IDiffNode delta) {
+		Assert.isTrue(delta instanceof IResourceDiff);
+		super.add(delta);
+	}
+	
+	/**
+	 * Remove the diff associated with the given resource from
+	 * the tree.
+	 * @param resource the resource
+	 */
+	public void remove(IResource resource) {
+		remove(resource.getFullPath());
 	}
 	
 }
