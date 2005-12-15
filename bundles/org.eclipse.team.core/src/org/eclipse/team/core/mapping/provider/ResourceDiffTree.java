@@ -40,24 +40,23 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IResourceDiffTree#getDiff(org.eclipse.core.resources.IResource)
 	 */
-	public IResourceDiff getDiff(IResource resource) {
-		return (IResourceDiff)getDiff(resource.getFullPath());
+	public IDiffNode getDiff(IResource resource) {
+		return getDiff(resource.getFullPath());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IResourceDiffTree#getResource(org.eclipse.team.core.diff.IDiffNode)
 	 */
 	public IResource getResource(IDiffNode diff) {
-		IResource resource = null;
 		if (diff instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) diff;
-			resource = internalGetResource((IResourceDiff)twd.getLocalChange());
-			if (resource == null)
-				resource = internalGetResource((IResourceDiff)twd.getRemoteChange());
+			IResourceDiff localChange = ((IResourceDiff)twd.getLocalChange());
+			if (localChange != null)
+				return localChange.getResource();
+			return ((IResourceDiff)twd.getRemoteChange()).getResource();
 		} else {
-			resource = internalGetResource((IResourceDiff)diff);
+			return ((IResourceDiff)diff).getResource();
 		}
-		return resource;
 	}
 
 	/* (non-Javadoc)
@@ -152,7 +151,7 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 	 * @see org.eclipse.team.core.mapping.provider.DiffTree#add(org.eclipse.team.core.diff.IDiffNode)
 	 */
 	public void add(IDiffNode delta) {
-		Assert.isTrue(delta instanceof IResourceDiff);
+		Assert.isTrue(delta instanceof IResourceDiff || delta instanceof IThreeWayDiff);
 		super.add(delta);
 	}
 	

@@ -13,7 +13,7 @@ package org.eclipse.team.core.mapping;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.diff.ITwoWayDiff;
-import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.core.history.IFileState;
 
 /**
  * A resource diff represents the changes between two resources.
@@ -62,22 +62,28 @@ public interface IResourceDiff extends ITwoWayDiff {
 	public IResource getResource();
 	
 	/**
-	 * Return a handle to the resource variant representing the
-	 * "before" state used to calculate this diff.
-	 * A <code>null</code> is returned if the resource did
-	 * not exist in the before state.
-	 * @return a handle to the resource variant representing the
-	 * "before" state used to calculate this diff
+	 * Return a handle to the file state representing the "before" state
+	 * of the file used to calculate this diff. A <code>null</code> is
+	 * returned if the resource is not a file or if the file does not exist in
+	 * the before state. If a file state is returned, clients should still
+	 * check the {@link IFileState#exists()} method to see if the file 
+	 * existed in the before state.
+	 * 
+	 * @return a handle to the file state representing the "before" state
+	 *         used to calculate this diff
 	 */
-	public IResourceVariant getBeforeState();
+	public IFileState getBeforeState();
 	
 	/**
-	 * Return a handle to the resource variant representing the
-	 * "after" state used to calculate this diff.
-	 * A <code>null</code> is returned if the resource does
-	 * not exist in the after state.
-	 * @return a handle to the resource variant representing the
-	 * "after" state used to calculate this diff
+	 * Return a handle to the file state representing the "after" state
+	 * of the file used to calculate this diff. A <code>null</code> is
+	 * returned if the resource is not a file or if the file does not exist in
+	 * the after state. If a file state is returned, clients should still
+	 * check the {@link IFileState#exists()} method to see if the file 
+	 * existed in the after state.
+	 * 
+	 * @return a handle to the file state representing the "before" state
+	 *         used to calculate this diff
 	 */
-	public IResourceVariant getAfterState();
+	public IFileState getAfterState();
 }

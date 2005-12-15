@@ -78,7 +78,7 @@ public class CVSFileRevision extends FileRevision {
 		return entry.getTags();
 	}
 
-	public boolean isDeletion() {
+	public boolean exists() {
 		return entry.isDeletion();
 	}
 }

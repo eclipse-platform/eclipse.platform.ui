@@ -18,11 +18,12 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.history.IFileState;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.MergeStatus;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
-import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 
@@ -106,7 +107,7 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.provide
 
         
             // Get the ancestor stream and encoding
-        	IResourceVariant base = null;
+        	IFileState base = null;
         	IResourceDiff remoteChange = (IResourceDiff)((IThreeWayDiff)delta).getRemoteChange();
         	if (remoteChange != null)
         		base = remoteChange.getBeforeState();
@@ -122,9 +123,9 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.provide
             ancestorStream = new BufferedInputStream(s.getContents());
             
             // Get the remote stream and encoding
-            IResourceVariant remote = null;
+            IFileState remote = null;
             if (remoteChange != null)
-            	remote = (IResourceVariant)remoteChange.getAfterState();
+            	remote = remoteChange.getAfterState();
             s = remote.getStorage(monitor);
             String remoteEncoding = null;
             if (s instanceof IEncodedStorage) {

@@ -11,13 +11,19 @@
 package org.eclipse.team.internal.core.mapping;
 
 
+import java.util.*;
+
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.ITeamStatus;
-import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.ITwoWayDiff;
+import org.eclipse.team.core.history.IFileState;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.provider.*;
 import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.variants.FileState;
 import org.eclipse.team.core.variants.IResourceVariant;
 
 /**
@@ -27,6 +33,7 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 
 	SyncInfoSet set;
 	ResourceDiffTree tree;
+	List errors = new ArrayList();
 	
 	public SyncInfoToDiffConverter(SyncInfoTree set, ResourceDiffTree tree) {
 		this.set = set;
@@ -93,39 +100,89 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 			ITwoWayDiff remote = getRemoteDelta(info);
 			return new ThreeWayDiff(local, remote);
 		} else {
-			return getDelta(info, wrapLocal(info), info.getRemote(), 0);
+			if (info.getKind() != SyncInfo.IN_SYNC) {
+				IResourceVariant remote = info.getBase();
+				IResource local = info.getLocal();
+				int kind;
+				if (remote == null) {
+					kind = IDiffNode.REMOVE;
+				} else if (!local.exists()) {
+					kind = IDiffNode.ADD;
+				} else {
+					kind = IDiffNode.CHANGE;
+				}
+				if (local.getType() == IResource.FILE) {
+					IFileState after = asFileState(remote);
+					IFileState before = FileState.getFileStateFor((IFile)local);
+					return new ResourceDiff(info.getLocal(), kind, 0, before, after);
+				}
+				// For folders, we don't need file states
+				return new ResourceDiff(info.getLocal(), kind);
+			}
+			return null;
 		}
 	}
 
 	private static ITwoWayDiff getRemoteDelta(SyncInfo info) {
-		IResourceVariant ancestor = info.getBase();
-		IResourceVariant remote = info.getRemote();
-		return getDelta(info, ancestor, remote, SyncInfo.INCOMING);
+		int direction = SyncInfo.getDirection(info.getKind());
+		if (direction == SyncInfo.INCOMING || direction == SyncInfo.CONFLICTING) {
+			IResourceVariant ancestor = info.getBase();
+			IResourceVariant remote = info.getRemote();
+			int kind;
+			if (ancestor == null) {
+				kind = IDiffNode.ADD;
+			} else if (remote == null) {
+				kind = IDiffNode.REMOVE;
+			} else {
+				kind = IDiffNode.CHANGE;
+			}
+			// For folders, we don't need file states
+			if (info.getLocal().getType() == IResource.FILE) {
+				IFileState before = asFileState(ancestor);
+				IFileState after = asFileState(remote);
+				return new ResourceDiff(info.getLocal(), kind, 0, before, after);
+			}
+
+			return new ResourceDiff(info.getLocal(), kind);
+		}
+		return null;
 	}
 
-	private static ITwoWayDiff getDelta(SyncInfo info, IResourceVariant before, IResourceVariant after, int direction) {
-		int kind = IDiffNode.NO_CHANGE;
-		if ((SyncInfo.getDirection(info.getKind()) & direction) == 0) {
-			// There is no change so create a NO_CHANGE delta
-		} else if (before == null) {
-			kind = IDiffNode.ADD;
-		} else if (after == null) {
-			kind = IDiffNode.REMOVE;
-		} else {
-			kind = IDiffNode.CHANGE;
-		}
-		return new ResourceDiff(info.getLocal(), kind, IDiffNode.NO_CHANGE, before, after);
+	private static IFileState asFileState(final IResourceVariant variant) {
+		if (variant == null)
+			return null;
+		return new FileState() {
+			public IStorage getStorage(IProgressMonitor monitor) throws CoreException {
+				return variant.getStorage(monitor);
+			}
+			public String getName() {
+				return variant.getName();
+			}
+		
+		};
 	}
 
 	private static ITwoWayDiff getLocalDelta(SyncInfo info) {
-		IResourceVariant ancestor = info.getBase();
-		IResourceVariant local = wrapLocal(info);
-		return getDelta(info, ancestor, local, SyncInfo.OUTGOING);
-	}
-
-	private static IResourceVariant wrapLocal(final SyncInfo info) {
-		if (info.getLocal().exists()) {
-			return new LocalResourceVariant(info.getLocal());
+		int direction = SyncInfo.getDirection(info.getKind());
+		if (direction == SyncInfo.OUTGOING || direction == SyncInfo.CONFLICTING) {
+			IResourceVariant ancestor = info.getBase();
+			IResource local = info.getLocal();
+			int kind;
+			if (ancestor == null) {
+				kind = IDiffNode.ADD;
+			} else if (!local.exists()) {
+				kind = IDiffNode.REMOVE;
+			} else {
+				kind = IDiffNode.CHANGE;
+			}
+			if (local.getType() == IResource.FILE) {
+				IFileState before = asFileState(ancestor);
+				IFileState after = FileState.getFileStateFor((IFile)local);
+				return new ResourceDiff(info.getLocal(), kind, 0, before, after);
+			}
+			// For folders, we don't need file states
+			return new ResourceDiff(info.getLocal(), kind);
+			
 		}
 		return null;
 	}
@@ -134,8 +191,8 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 	 * @see org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener#syncInfoSetErrors(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.team.core.ITeamStatus[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void syncInfoSetErrors(SyncInfoSet set, ITeamStatus[] errors, IProgressMonitor monitor) {
-		// TODO Need to do something here
-		
+		// TODO: How to handle errors (Bug 121121)
+		this.errors.addAll(Arrays.asList(errors));
 	}
 
 	public IResourceDiffTree getTree() {

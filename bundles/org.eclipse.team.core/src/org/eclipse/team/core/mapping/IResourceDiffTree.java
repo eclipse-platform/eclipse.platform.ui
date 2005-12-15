@@ -42,7 +42,7 @@ public interface IResourceDiffTree extends IDiffTree {
 	 * @return the diff associated with the resource or <code>null</code> if
 	 *         the resource does not have any changes.
 	 */
-	IResourceDiff getDiff(IResource resource);
+	IDiffNode getDiff(IResource resource);
 
 	/**
 	 * Return the resource associated with the given diff. This method will only

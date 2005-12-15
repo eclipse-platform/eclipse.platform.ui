@@ -7,6 +7,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -22,7 +23,12 @@ public class FileRevisionEditorInput implements IWorkbenchAdapter,IStorageEditor
 	public FileRevisionEditorInput(IFileRevision file) {
 		this.file = file;
 		//TODO: need a monitor
-		this.storage = file.getStorage(new NullProgressMonitor());
+		try {
+			this.storage = file.getStorage(new NullProgressMonitor());
+		} catch (CoreException e) {
+			// TODO Need to get storage before creating input
+			TeamUIPlugin.log(e);
+		}
 	}
 	
 	public IStorage getStorage() throws CoreException {

@@ -8,13 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.team.core.history;
 
-import java.net.URI;
-
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Represents an individual revision of a file
@@ -26,41 +21,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @since 3.2
  */
-public interface IFileRevision {
+public interface IFileRevision extends IFileState {
 
-	/**
-	 * Returns the storage for this file revision.
-	 * @return IStorage containing file storage 
-	 */
-	public abstract IStorage getStorage(IProgressMonitor monitor);
-
-	/**
-	 * Returns the name of this file revision
-	 * @return String containing the name of the file revision
-	 */
-	public abstract String getName();
-	
 	/**
 	 * Returns the <em>unique</em> identifier for this file revision 
 	 * @return a String containing the id
 	 */
 	public abstract String getContentIndentifier();
-
-	/**
-	 * Returns the URI for this file revision
-	 * @return URI
-	 */
-	public abstract URI getURI();
-
-	/**
-	 * Returns the time stamp of this revision as a long.
-	 * 
-	 * @return a long that represents the time of this revision as the number of milliseconds
-	 * since the base time
-	 *
-	 * @see java.lang.System#currentTimeMillis()
-	 */
-	public abstract long getTimestamp();
 
 	/**
 	 *  Returns a String containing the author of this revision
@@ -83,10 +50,4 @@ public interface IFileRevision {
 	 * if no tags exist
 	 */
 	public abstract ITag[] getTags();
-	
-	/**
-	 * Returns whether this particular revision represents a deletion of the file
-	 * @return true if this revision is a deletion of the file; false otherwise
-	 */
-	public abstract boolean isDeletion();
 }

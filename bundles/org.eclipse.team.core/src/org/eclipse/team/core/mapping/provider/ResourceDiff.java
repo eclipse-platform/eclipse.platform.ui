@@ -11,8 +11,9 @@
 package org.eclipse.team.core.mapping.provider;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.team.core.history.IFileState;
 import org.eclipse.team.core.mapping.IResourceDiff;
-import org.eclipse.team.core.variants.IResourceVariant;
 
 /**
  * Implementation of {@link IResourceDiff}.
@@ -30,8 +31,8 @@ import org.eclipse.team.core.variants.IResourceVariant;
  */
 public class ResourceDiff extends TwoWayDiff implements IResourceDiff {
 
-	private final IResourceVariant before;
-	private final IResourceVariant after;
+	private final IFileState before;
+	private final IFileState after;
 	private final IResource resource;
 
 	/**
@@ -42,7 +43,7 @@ public class ResourceDiff extends TwoWayDiff implements IResourceDiff {
 	 * @param before the before state of the model object
 	 * @param after the after state of the model object
 	 */
-	public ResourceDiff(IResource resource, int kind, int flags, IResourceVariant before, IResourceVariant after) {
+	public ResourceDiff(IResource resource, int kind, int flags, IFileState before, IFileState after) {
 		super(resource.getFullPath(), kind, flags);
 		this.resource = resource;
 		this.before = before;
@@ -50,7 +51,7 @@ public class ResourceDiff extends TwoWayDiff implements IResourceDiff {
 	}
 
 	/**
-	 * Convenience constructor for creating a simple resource diff
+	 * Convenience constructor for creating a simple folder diff
 	 * that consists of a resource and a kind only. It is equivalent to
 	 * <code>ResourceDiff(resource, kind, 0, null, null)<code>
 	 * @param resource a resource
@@ -58,19 +59,20 @@ public class ResourceDiff extends TwoWayDiff implements IResourceDiff {
 	 */
 	public ResourceDiff(IResource resource, int kind) {
 		this(resource, kind, 0, null, null);
+		Assert.isTrue(resource.getType() != IResource.FILE);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IResourceDiff#getBeforeState()
 	 */
-	public IResourceVariant getBeforeState() {
+	public IFileState getBeforeState() {
 		return before;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IResourceDiff#getAfterState()
 	 */
-	public IResourceVariant getAfterState() {
+	public IFileState getAfterState() {
 		return after;
 	}
 

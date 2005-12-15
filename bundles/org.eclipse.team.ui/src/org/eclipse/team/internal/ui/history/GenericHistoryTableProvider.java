@@ -91,7 +91,7 @@ public class GenericHistoryTableProvider {
 		 */
 		public Color getForeground(Object element) {
 			IFileRevision entry = adaptToFileRevision(element);
-			if (entry.isDeletion())  {
+			if (!entry.exists())  {
 				return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 			} 
 			

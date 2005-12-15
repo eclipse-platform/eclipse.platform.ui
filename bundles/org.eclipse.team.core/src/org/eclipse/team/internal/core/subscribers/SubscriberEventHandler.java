@@ -433,7 +433,11 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 			syncSetInput.handleError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, ITeamStatus.SYNC_INFO_SET_CANCELLATION, Messages.SubscriberEventHandler_12, e, ResourcesPlugin.getWorkspace().getRoot())); 
 		} catch (RuntimeException e) {
 			// handle the exception and keep processing
-			handleException(new TeamException(Messages.SubscriberEventHandler_10, e), event.getResource(), ITeamStatus.SYNC_INFO_SET_ERROR, NLS.bind(Messages.SubscriberEventHandler_11, new String[] { event.getResource().getFullPath().toString(), e.getMessage() })); // 
+			if (event.getType() == RunnableEvent.RUNNABLE) {
+				handleException(new TeamException(Messages.SubscriberEventHandler_10, e));
+			} else {
+				handleException(new TeamException(Messages.SubscriberEventHandler_10, e), event.getResource(), ITeamStatus.SYNC_INFO_SET_ERROR, NLS.bind(Messages.SubscriberEventHandler_11, new String[] { event.getResource().getFullPath().toString(), e.getMessage() }));
+			}
 		}
 	}
 		

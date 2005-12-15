@@ -18,10 +18,11 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.history.IFileState;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
-import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.Messages;
 import org.eclipse.team.internal.core.TeamPlugin;
 
@@ -99,50 +100,46 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	public IStatus merge(IDiffNode delta, boolean force, IProgressMonitor monitor) throws CoreException {
 		if (getDiffTree().getResource(delta).getType() != IResource.FILE)
 			return Status.OK_STATUS;
-        try {
-        	if (delta instanceof IThreeWayDiff && !force) {
-				IThreeWayDiff twDelta = (IThreeWayDiff) delta;
-	        	int direction = twDelta.getDirection();
-	    		if (direction == IThreeWayDiff.OUTGOING) {
-	        		// There's nothing to do so return OK
-	        		return Status.OK_STATUS;
-	        	}
-	    		if (direction == IThreeWayDiff.INCOMING) {
-	    			// Just copy the stream since there are no conflicts
-	    			performReplace(delta, monitor);
-	    			return Status.OK_STATUS;
-	    		}
-				// direction == SyncInfo.CONFLICTING
-	    		int type = twDelta.getKind();
-	    		if (type == IDiffNode.REMOVE) {
-	    			// TODO: either we need to spec mark as merged to work in this case
-	    			// or somehow involve the subclass (or just ignore it)
-	    			markAsMerged(delta, false, monitor);
-	    			return Status.OK_STATUS;
-	    		}
-				// type == SyncInfo.CHANGE
-				IResourceDiff remoteChange = (IResourceDiff)twDelta.getRemoteChange();
-				IResourceVariant base = null;
-	        	IResourceVariant remote = null;
-	        	if (remoteChange != null) {
-					base = remoteChange.getBeforeState();
-		        	remote = remoteChange.getAfterState();
-	        	}
-				if (base == null || remote == null || !getLocalFile(delta).exists()) {
-					// Nothing we can do so return a conflict status
-					// TODO: Should we handle the case where the local and remote have the same contents for a conflicting addition?
-					return new MergeStatus(TeamPlugin.ID, NLS.bind(Messages.MergeContext_1, new String[] { delta.getPath().toString() }), new IFile[] { getLocalFile(delta) });
-				}
-				// We have a conflict, a local, base and remote so we can do 
-				// a three-way merge
-	            return performThreeWayMerge(twDelta, monitor);
-        	} else {
-        		performReplace(delta, monitor);
+    	if (delta instanceof IThreeWayDiff && !force) {
+			IThreeWayDiff twDelta = (IThreeWayDiff) delta;
+        	int direction = twDelta.getDirection();
+    		if (direction == IThreeWayDiff.OUTGOING) {
+        		// There's nothing to do so return OK
         		return Status.OK_STATUS;
         	}
-        } catch (CoreException e) {
-            return new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind(Messages.MergeContext_2, new String[] { delta.getPath().toString() }), e);
-        }
+    		if (direction == IThreeWayDiff.INCOMING) {
+    			// Just copy the stream since there are no conflicts
+    			performReplace(delta, monitor);
+    			return Status.OK_STATUS;
+    		}
+			// direction == SyncInfo.CONFLICTING
+    		int type = twDelta.getKind();
+    		if (type == IDiffNode.REMOVE) {
+    			// TODO: either we need to spec mark as merged to work in this case
+    			// or somehow involve the subclass (or just ignore it)
+    			markAsMerged(delta, false, monitor);
+    			return Status.OK_STATUS;
+    		}
+			// type == SyncInfo.CHANGE
+			IResourceDiff remoteChange = (IResourceDiff)twDelta.getRemoteChange();
+			IFileState base = null;
+			IFileState remote = null;
+        	if (remoteChange != null) {
+				base = remoteChange.getBeforeState();
+	        	remote = remoteChange.getAfterState();
+        	}
+			if (base == null || remote == null || !getLocalFile(delta).exists()) {
+				// Nothing we can do so return a conflict status
+				// TODO: Should we handle the case where the local and remote have the same contents for a conflicting addition?
+				return new MergeStatus(TeamPlugin.ID, NLS.bind(Messages.MergeContext_1, new String[] { delta.getPath().toString() }), new IFile[] { getLocalFile(delta) });
+			}
+			// We have a conflict, a local, base and remote so we can do 
+			// a three-way merge
+            return performThreeWayMerge(twDelta, monitor);
+    	} else {
+    		performReplace(delta, monitor);
+    		return Status.OK_STATUS;
+    	}
 	}
 
 	/**
@@ -173,8 +170,8 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     	run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IFile file = getLocalFile(d);
-				IResourceVariant remote = d.getAfterState();
-				if (remote == null && file.exists()) {
+				IFileState remote = d.getAfterState();
+				if ((remote == null || !remote.exists()) && file.exists()) {
 					file.delete(false, true, monitor);
 				} else if (remote != null) {
 					ensureParentsExist(file);
