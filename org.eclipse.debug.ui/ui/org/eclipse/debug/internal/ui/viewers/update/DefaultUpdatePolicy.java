@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import java.util.ArrayList;
 
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousViewer;
 import org.eclipse.debug.internal.ui.viewers.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.TreePath;
@@ -26,84 +25,90 @@ import org.eclipse.debug.internal.ui.viewers.TreeSelection;
  */
 public class DefaultUpdatePolicy extends AbstractUpdatePolicy implements IModelChangedListener {
 
-	public void modelChanged(IModelDelta delta) {
-		updateNodes(new IModelDelta[]{delta});
-	}
+    public void modelChanged(IModelDelta delta) {
+        updateNodes(new IModelDelta[] { delta });
+    }
 
-	protected void updateNodes(IModelDelta[] nodes) {
-		for (int i = 0; i < nodes.length; i++) {
-			IModelDelta node = nodes[i];
-			int flags = node.getFlags();
+    protected void updateNodes(IModelDelta[] nodes) {
+        AsynchronousTreeViewer viewer = (AsynchronousTreeViewer) getViewer();
+        if (viewer == null) {
+            return;
+        }
 
-			if ((flags & IModelDelta.CHANGED) != 0) {
-				handleChange(node);
-			} else if ((flags & IModelDelta.ADDED) != 0) {
-				handleAdd(node);
-			} else if ((flags & IModelDelta.REMOVED) != 0) {
-				handleRemove(node);
-			}
+        for (int i = 0; i < nodes.length; i++) {
+            IModelDelta node = nodes[i];
+            int flags = node.getFlags();
 
-			updateNodes(node.getNodes());
-		}
-	}
+            TreePath treePath = getTreePath(node);
+            if ((flags & IModelDelta.ADDED) != 0) {
+                handleAdd(viewer, treePath);
+            }
+            if ((flags & IModelDelta.REMOVED) != 0) {
+                handleRemove(viewer, treePath);
+            }
+            if ((flags & IModelDelta.CHANGED) != 0) {
+                handleChange(viewer, node.getElement());
+            }
+            if ((flags & IModelDelta.CONTENT) != 0) {
+                handleContent(viewer, node.getElement());
+            }
+            if ((flags & IModelDelta.EXPAND) != 0) {
+                handleExpand(viewer, treePath);
+            }
+            if ((flags & IModelDelta.SELECT) != 0) {
+                handleSelect(viewer, treePath);
+            }
+            if ((flags & IModelDelta.STATE) != 0) {
+                handleState(viewer, node.getElement());
+            }
+            if ((flags & IModelDelta.INSERTED) != 0) {
+                // TODO
+            }
+            if ((flags & IModelDelta.REPLACED) != 0) {
+                // TODO
+            }
 
-	protected void handleChange(IModelDelta node) {
-		int flags = node.getFlags();
-		AsynchronousViewer viewer = getViewer();
-		if (viewer != null) {
-			if ((flags & IModelDelta.STATE) != 0) {
-				viewer.update(node.getElement());
-			}
-			if ((flags & IModelDelta.CONTENT) != 0) {
-				viewer.refresh(node.getElement());
-			}
-			if ((flags & IModelDelta.SELECT) != 0) {
-				viewer.update(node.getElement());
-				TreePath treePath = getTreePath(node);
-				((AsynchronousTreeViewer) getViewer()).setSelection(new TreeSelection(treePath));
-			}
-			if ((flags & IModelDelta.EXPAND) != 0) {
-				viewer.update(node.getElement());
-				TreePath treePath = getTreePath(node);
-				((AsynchronousTreeViewer) getViewer()).expand(new TreeSelection(treePath));
-			}
-		}
-	}
+            updateNodes(node.getNodes());
+        }
+    }
 
-	protected void handleAdd(IModelDelta node) {
-		int flags = node.getFlags();
-		final TreePath treePath = getTreePath(node);
+    protected void handleChange(AsynchronousTreeViewer viewer, Object element) {
+        //do nothing...
+    }
 
-		((AsynchronousTreeViewer) getViewer()).add(treePath);
+    protected void handleState(AsynchronousTreeViewer viewer, Object element) {
+        viewer.update(element);
+    }
 
-		if ((flags & IModelDelta.STATE) != 0) {
-			// do nothing??
-		}
-		if ((flags & IModelDelta.CONTENT) != 0) {
-			// do nothing??
-		}
-		if ((flags & IModelDelta.SELECT) != 0) {
-			((AsynchronousTreeViewer) getViewer()).setSelection(new TreeSelection(treePath));
-		}
-		if ((flags & IModelDelta.EXPAND) != 0) {
-			((AsynchronousTreeViewer) getViewer()).expand(new TreeSelection(treePath));
-		}
-	}
+    protected void handleSelect(AsynchronousTreeViewer viewer, TreePath treePath) {
+        viewer.setSelection(new TreeSelection(treePath));
+    }
 
-	protected void handleRemove(IModelDelta node) {
-		TreePath treePath = getTreePath(node);
-		((AsynchronousTreeViewer) getViewer()).remove(treePath);
-	}
+    protected void handleExpand(AsynchronousTreeViewer viewer, TreePath treePath) {
+        viewer.expand(new TreeSelection(treePath));
+    }
 
-	protected TreePath getTreePath(IModelDelta node) {
-		ArrayList list = new ArrayList();
-		list.add(0, node.getElement());
-		while (node.getParent() != null) {
-			node = node.getParent();
-			list.add(0, node.getElement());
-		}
+    protected void handleContent(AsynchronousTreeViewer viewer, Object element) {
+        viewer.refresh(element);
+    }
 
-		return new TreePath(list.toArray());
-	}
+    protected void handleRemove(AsynchronousTreeViewer viewer, TreePath treePath) {
+        viewer.remove(treePath);
+    }
+
+    protected void handleAdd(AsynchronousTreeViewer viewer, TreePath treePath) {
+        viewer.add(treePath);
+    }
+
+    protected TreePath getTreePath(IModelDelta node) {
+        ArrayList list = new ArrayList();
+        list.add(0, node.getElement());
+        while (node.getParent() != null) {
+            node = node.getParent();
+            list.add(0, node.getElement());
+        }
+
+        return new TreePath(list.toArray());
+    }
 
 }

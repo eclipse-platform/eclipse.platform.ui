@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.launch;
 
-import org.eclipse.debug.internal.ui.viewers.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultUpdatePolicy;
 
 /**
@@ -33,14 +33,10 @@ public class LaunchViewUpdatePolicy extends DefaultUpdatePolicy {
 		fView = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.DefaultUpdatePolicy#handleChange(org.eclipse.debug.internal.ui.viewers.IModelDeltaNode)
-	 */
-	protected void handleChange(IModelDelta node) {
-		super.handleChange(node);
-		if ((node.getFlags() & IModelDelta.STATE) != 0) {
-			fView.possibleContextChange(node.getElement());
-		}
+
+    protected void handleState(AsynchronousTreeViewer viewer, Object element) {
+        super.handleState(viewer, element);
+        fView.possibleContextChange(element);
 	}
 	
 }
