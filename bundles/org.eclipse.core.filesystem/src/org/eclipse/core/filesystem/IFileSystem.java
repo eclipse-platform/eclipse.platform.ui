@@ -11,8 +11,7 @@ package org.eclipse.core.filesystem;
 
 import java.net.URI;
 import org.eclipse.core.filesystem.provider.FileSystem;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 
 /**
  * This is the main interface to a single file system.  Each file system instance
@@ -44,7 +43,7 @@ public interface IFileSystem extends IAdaptable {
 	 * Returns whether this file system supports deletion
 	 * 
 	 * @return <code>true</code> if this file system allows deletion
-	 * of files and directories, and <code>false</code> otherwise.
+	 * of files and directories, and <code>false</code> otherwise
 	 */
 	public boolean canDelete();
 
@@ -52,9 +51,33 @@ public interface IFileSystem extends IAdaptable {
 	 * Returns whether this file system supports modification.
 	 * 
 	 * @return <code>true</code> if this file system allows modification
-	 * of files and directories, and <code>false</code> otherwise.
+	 * of files and directories, and <code>false</code> otherwise
 	 */
 	public boolean canWrite();
+
+	/**
+	 * Returns a file tree containing information about the complete sub-tree
+	 * rooted at the given store.  Returns <code>null</code> if this file
+	 * system does not support the creation of such file trees.
+	 * <p>
+	 * A file tree accurately represents the state of a portion of a file system
+	 * at the time it is created, but it is never updated. Clients using a file
+	 * tree must tolerate the fact that the actual file system contents may 
+	 * change after the tree is generated.
+	 * </p>
+	 * 
+	 * @param root The store to use as the root of the file tree
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting and cancellation are not desired
+	 * @return an {@link IFileTree} containing the sub-tree of the given store,
+	 * or <code>null</code>
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>Problems occurred while contacting the file system.</li>
+	 * </ul>
+	 * @see IFileTree
+	 */
+	public abstract IFileTree fetchFileTree(IFileStore root, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns the URI scheme of this file system.
@@ -62,7 +85,7 @@ public interface IFileSystem extends IAdaptable {
 	 * @return the URI scheme of this file system.
 	 */
 	public String getScheme();
-	
+
 	/**
 	 * Returns a handle to a file store in this file system.  This method succeeds
 	 * regardless of whether a file exists at that path in this file system.

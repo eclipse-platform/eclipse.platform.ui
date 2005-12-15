@@ -11,8 +11,13 @@ package org.eclipse.core.filesystem.provider;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.eclipse.core.filesystem.*;
+
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileSystem;
+import org.eclipse.core.filesystem.IFileTree;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -62,7 +67,7 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	public boolean canDelete() {
 		return false;
 	}
-
+	
 	/**
 	 * This is the default implementation of {@link IFileSystem#canWrite()}.  
 	 * This implementation always returns <code>false</code>.
@@ -116,6 +121,17 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	 */
 	public abstract IFileStore getStore(URI uri);
 
+	/**
+	 * The default implementation of 
+	 * {@link IFileSystem#fetchFileTree(IFileStore, IProgressMonitor)}.
+	 * This default implementation always returns <code>null</code>.  Subclasses 
+	 * that can efficiently provide an {@link IFileTree} rooted at the given file store 
+	 * should override.
+	 */
+	public IFileTree fetchFileTree(IFileStore root, IProgressMonitor monitor){
+		return null;
+	}
+	
 	/**
 	 * Initializes this file system instance with the provided scheme.
 	 * <p>
