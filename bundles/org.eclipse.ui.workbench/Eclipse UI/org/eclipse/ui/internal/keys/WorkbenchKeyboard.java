@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
@@ -457,16 +458,17 @@ public final class WorkbenchKeyboard {
 			}
 		}
 
-		if (commandDefined && commandEnabled) {
-			try {
-				final IHandlerService handlerService = (IHandlerService) workbench
-						.getAdapter(IHandlerService.class);
-				final IEvaluationContext context = handlerService
-						.getCurrentState();
-				parameterizedCommand.execute(trigger, context);
-			} catch (final NotHandledException e) {
-				// There is no handler.  Forwarded to the IExecutionListener.
-			}
+		try {
+			final IHandlerService handlerService = (IHandlerService) workbench
+					.getAdapter(IHandlerService.class);
+			final IEvaluationContext context = handlerService.getCurrentState();
+			parameterizedCommand.executeWithChecks(trigger, context);
+		} catch (final NotDefinedException e) {
+			// The command is not defined. Forwarded to the IExecutionListener.
+		} catch (final NotEnabledException e) {
+			// The command is not enabled. Forwarded to the IExecutionListener.
+		} catch (final NotHandledException e) {
+			// There is no handler. Forwarded to the IExecutionListener.
 		}
 
 		/*
