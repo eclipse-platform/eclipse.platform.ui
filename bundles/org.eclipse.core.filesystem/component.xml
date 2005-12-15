@@ -19,9 +19,13 @@
    <type name="IFileInfo" implement="false" />
    <type name="IFileStore" implement="false" />
    <type name="IFileSystem" implement="false" />
+   <type name="IFileTree" implement="false" />
+   <type name="URIUtil" subclass="false"/>
  </package>
- <package name="org.eclipse.core.resources.provider">
+ <package name="org.eclipse.core.filesystem.provider">
+   <type name="FileInfo" subclass="false" />
    <type name="FileStore" subclass="true" />
    <type name="FileSystem" subclass="true" />
+   <type name="FileTree" subclass="true" />
  </package>
 </component>
