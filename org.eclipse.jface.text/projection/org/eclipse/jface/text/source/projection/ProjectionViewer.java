@@ -621,6 +621,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		} else {
 			try {
 				fHandleProjectionChanges= false;
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=108258
+				// make sure the document range is strictly line based
+				int end= offset + length;
+				offset= toLineStart(projection.getMasterDocument(), offset, false);
+				length= toLineStart(projection.getMasterDocument(), end, true) - offset;
 				projection.addMasterDocumentRange(offset, length);
 			} finally {
 				fHandleProjectionChanges= true;
@@ -646,6 +651,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		} else {
 			try {
 				fHandleProjectionChanges= false;
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=108258
+				// make sure the document range is strictly line based
+				int end= offset + length;
+				offset= toLineStart(projection.getMasterDocument(), offset, false);
+				length= toLineStart(projection.getMasterDocument(), end, true) - offset;
 				projection.removeMasterDocumentRange(offset, length);
 			} finally {
 				fHandleProjectionChanges= true;
@@ -653,6 +663,27 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 	}
 	
+	/**
+	 * Returns the first line offset &lt;= <code>offset</code>. If <code>testLastLine</code>
+	 * is <code>true</code> and the offset is on last line then <code>offset</code> is returned.
+	 * 
+	 * @param document the document
+	 * @param offset the master document offset
+	 * @param testLastLine <code>true</code> if the test for the last line should be performed
+	 * @return the closest line offset &gt;= <code>offset</code>
+	 * @throws BadLocationException if the offset is invalid
+	 * @since 3.2
+	 */
+	private int toLineStart(IDocument document, int offset, boolean testLastLine) throws BadLocationException {
+		if (document == null)
+			return offset;
+		
+		if (testLastLine && offset >= document.getLineInformationOfOffset(document.getLength() - 1).getOffset())
+			return offset;
+		
+		return document.getLineInformationOfOffset(offset).getOffset();
+	}
+
 	/*
 	 * @see org.eclipse.jface.text.TextViewer#setVisibleRegion(int, int)
 	 */
@@ -786,13 +817,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 
 	/**
-	 * Makes the given range visible again while keeping the given collapsed
+	 * Makes the given range visible again while not changing the folding state of any contained
 	 * ranges. If requested, a redraw request is issued.
-	 *
+	 * 
 	 * @param offset the offset of the range to be expanded
 	 * @param length the length of the range to be expanded
-	 * @param fireRedraw <code>true</code> if a redraw request should be
-	 *            issued, <code>false</code> otherwise
+	 * @param fireRedraw <code>true</code> if a redraw request should be issued,
+	 *        <code>false</code> otherwise
 	 * @throws BadLocationException in case the range is invalid
 	 */
 	private void expand(int offset, int length, boolean fireRedraw) throws BadLocationException {
@@ -1053,10 +1084,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			ProjectionAnnotation annotation= (ProjectionAnnotation) removedAnnotations[i];
 			if (annotation.isCollapsed()) {
 				Position expanded= event.getPositionOfRemovedAnnotation(annotation);
-				IRegion[] regions= computeCollapsedRegions(expanded);
-				if (regions != null)
-					for (int j= 0; j < regions.length; j++)
-						expand(regions[j].getOffset(), regions[j].getLength(), fireRedraw);
+				expand(expanded.getOffset(), expanded.getLength(), fireRedraw);
 			}
 		}
 	}
@@ -1161,10 +1189,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 						for (int j= 0; j < regions.length; j++)
 							collapse(regions[j].getOffset(), regions[j].getLength(), fireRedraw);
 				} else {
-					IRegion[] regions= computeCollapsedRegions(position);
-					if (regions != null)
-						for (int j= 0; j < regions.length; j++)
-							expand(regions[j].getOffset(), regions[j].getLength(), fireRedraw);
+					expand(position.getOffset(), position.getLength(), fireRedraw);
 				}
 			}
 		}
