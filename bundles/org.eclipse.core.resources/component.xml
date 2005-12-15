@@ -43,6 +43,13 @@
    <type name="ResourcesPlugin" subclass="false" instantiate="false" />
  </package>
  <package name="org.eclipse.core.resources.mapping">
+   <type name="CompositeResourceMapping" subclass="false" />
+   <type name="IModelProviderDescriptor" implement="false" />
+   <type name="ModelProvider" subclass="true" />
+   <type name="RemoteResourceMappingContext" subclass="true" />
+   <type name="ResourceMapping" subclass="true" />
+   <type name="ResourceMappingContext" subclass="true" />
+   <type name="ResourceTraversal" subclass="true" />
  </package>
  <package name="org.eclipse.core.resources.refresh">
    <type name="IRefreshResult" implement="false" />
