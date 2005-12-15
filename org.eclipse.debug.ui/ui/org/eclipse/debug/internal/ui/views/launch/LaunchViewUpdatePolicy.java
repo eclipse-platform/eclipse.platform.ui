@@ -33,7 +33,9 @@ public class LaunchViewUpdatePolicy extends DefaultUpdatePolicy {
 		fView = null;
 	}
 
-
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.update.DefaultUpdatePolicy#handleState(org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer, java.lang.Object)
+     */
     protected void handleState(AsynchronousTreeViewer viewer, Object element) {
         super.handleState(viewer, element);
         fView.possibleContextChange(element);
