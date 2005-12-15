@@ -160,7 +160,8 @@ public class HelpURLConnection extends URLConnection {
 	public String getContentType() {
 		// Check if the file is hypertext or plain text
 		String file = pluginAndFile.toLowerCase(Locale.US);
-		if (file.endsWith(".html") || file.endsWith(".htm")) //$NON-NLS-1$ //$NON-NLS-2$
+		if (file.endsWith(".html") || file.endsWith(".htm") //$NON-NLS-1$ //$NON-NLS-2$
+			|| file.endsWith(".xhtml"))  //$NON-NLS-1$
 			return "text/html"; //$NON-NLS-1$
 		else if (file.endsWith(".css")) //$NON-NLS-1$
 			return "text/css"; //$NON-NLS-1$
