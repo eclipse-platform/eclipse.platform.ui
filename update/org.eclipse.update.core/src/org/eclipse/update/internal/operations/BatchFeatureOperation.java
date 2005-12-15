@@ -49,7 +49,9 @@ public abstract class BatchFeatureOperation extends Operation implements IBatchF
 
 		for ( int i = 0; i < operations.length; i ++) { 
 			try {
-				restartNeeded = restartNeeded || operations[i].execute(pm, listener);
+				boolean status = operations[i].execute(pm, listener);
+				if (status)
+					restartNeeded = true; 
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
