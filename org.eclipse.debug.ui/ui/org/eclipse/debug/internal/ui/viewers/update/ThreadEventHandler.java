@@ -154,7 +154,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 			node = node.addNode(thread, flags | IModelDelta.CHANGED | IModelDelta.CONTENT | IModelDelta.EXPAND);
     	}
     	if (frame != null) {
-            node.addNode(frame, IModelDelta.CHANGED | IModelDelta.SELECT);
+            node.addNode(frame, IModelDelta.CHANGED | IModelDelta.STATE | IModelDelta.SELECT);
         }
     	synchronized (this) {
     		if (!isDisposed()) {
