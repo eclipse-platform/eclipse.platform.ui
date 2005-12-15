@@ -53,23 +53,31 @@ public final class ParameterizedCommand implements Comparable {
 
 	/**
 	 * The index of the parameter id in the parameter values.
+	 * 
+	 * @deprecated no longer used
 	 */
 	public static final int INDEX_PARAMETER_ID = 0;
 
 	/**
 	 * The index of the human-readable name of the parameter itself, in the
 	 * parameter values.
+	 * 
+	 * @deprecated no longer used
 	 */
 	public static final int INDEX_PARAMETER_NAME = 1;
 
 	/**
 	 * The index of the human-readable name of the value of the parameter for
 	 * this command.
+	 * 
+	 * @deprecated no longer used
 	 */
 	public static final int INDEX_PARAMETER_VALUE_NAME = 2;
 
 	/**
 	 * The index of the value of the parameter that the command can understand.
+	 * 
+	 * @deprecated no longer used
 	 */
 	public static final int INDEX_PARAMETER_VALUE_VALUE = 3;
 
@@ -237,13 +245,11 @@ public final class ParameterizedCommand implements Comparable {
 	 *            The command that is parameterized; must not be
 	 *            <code>null</code>.
 	 * @param parameterizations
-	 *            The parameterization of the command. This value may be
-	 *            <code>null</code>. If it is not <code>null</code> then it
-	 *            should be an array of quadruples (<code>String[]</code>).
-	 *            These quadruples are indexed using the <code>INDEX</code>
-	 *            constants defined in this class. This argument is not copied;
-	 *            if you need to make changes to it after constructing this
-	 *            parameterized command, then make a copy yourself.
+	 *            An array of parameterizations binding parameters to values for
+	 *            the command. This value may be <code>null</code>. This
+	 *            argument is not copied; if you need to make changes to it
+	 *            after constructing this parameterized command, then make a
+	 *            copy yourself.
 	 */
 	public ParameterizedCommand(final Command command,
 			final Parameterization[] parameterizations) {
@@ -257,7 +263,9 @@ public final class ParameterizedCommand implements Comparable {
 				: parameterizations;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public final int compareTo(final Object object) {
@@ -280,7 +288,9 @@ public final class ParameterizedCommand implements Comparable {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public final boolean equals(final Object object) {
@@ -402,7 +412,158 @@ public final class ParameterizedCommand implements Comparable {
 				applicationContext));
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Executes this command with its parameters. This does extra checking to
+	 * see if the command is enabled and defined. If it is not both enabled and
+	 * defined, then the execution listeners will be notified and an exception
+	 * thrown.
+	 * 
+	 * @param trigger
+	 *            The object that triggered the execution; may be
+	 *            <code>null</code>.
+	 * @param applicationContext
+	 *            The state of the application at the time the execution was
+	 *            triggered; may be <code>null</code>.
+	 * @return The result of the execution; may be <code>null</code>.
+	 * @throws ExecutionException
+	 *             If the handler has problems executing this command.
+	 * @throws NotDefinedException
+	 *             If the command you are trying to execute is not defined.
+	 * @throws NotEnabledException
+	 *             If the command you are trying to execute is not enabled.
+	 * @throws NotHandledException
+	 *             If there is no handler.
+	 * @since 3.2
+	 */
+	public final Object executeWithChecks(final Object trigger,
+			final Object applicationContext) throws ExecutionException,
+			NotDefinedException, NotEnabledException, NotHandledException {
+		return command.executeWithChecks(new ExecutionEvent(getParameterMap(),
+				trigger, applicationContext));
+	}
+
+	/**
+	 * Returns a <code>String</code> containing the command id and the
+	 * parameter ids and parameter values for this
+	 * <code>ParameterizedCommand</code>. The returned <code>String</code>
+	 * can be stored by a client and later used to recontruct an equivalent
+	 * <code>ParameterizedCommand</code> using the
+	 * {@link CommandManager#deserialize(String)} method.
+	 * <p>
+	 * The syntax of the returned <code>String</code> is as follows:
+	 * </p>
+	 * <blockquote> <table cellpadding=0 cellspacing=0 summary="layout">
+	 * <tr>
+	 * <td><code>serialization = <u>commandId</u> [ '?' parameters ]</code></td>
+	 * </tr>
+	 * <tr>
+	 * <td><code>parameters = parameter [ '&' parameters ]</code></td>
+	 * </tr>
+	 * <tr>
+	 * <td><code>parameter = <u>parameterId</u> [ '=' <u>parameterValue</code></u> ]</td>
+	 * </tr>
+	 * </table> </blockquote>
+	 * <p>
+	 * In the syntax above, sections inside square-brackets are optional. The
+	 * characters in single quotes (<code>'?'</code>, <code>'&'</code> and
+	 * <code>'='</code>) indicate literal characters.
+	 * </p>
+	 * <p>
+	 * <code><u>commandId</u></code> represents the command id encoded with
+	 * UTF-8 encoding. <code><u>parameterId</u></code> and
+	 * <code><u>parameterValue</u></code> represent the parameter ids and
+	 * values encoded with UTF-8 encoding. The order of the parameters is not
+	 * defined (and not important). A missing <code><u>parameterValue</u></code>
+	 * indicates that the value of the parameter is <code>null</code>.
+	 * </p>
+	 * <p>
+	 * For example, the string shown below represents a serialized parameterized
+	 * command that can be used to show the Resource perspective:
+	 * </p>
+	 * <p>
+	 * <tt>org.eclipse.ui.perspectives.showPerspective?org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.ui.resourcePerspective</tt>
+	 * </p>
+	 * <p>
+	 * This example shows the more general form with multiple parameters and
+	 * null value parameters.
+	 * </p>
+	 * <p>
+	 * <tt>command.id?param1.id=value1&amp;param2.id&amp;param3.id=value3</tt>
+	 * </p>
+	 * <p>
+	 * The syntax used here was intentionally chosen to be "URI-friendly". The
+	 * use of the <code>'?'</code>, <code>'&'</code> and <code>'='</code>
+	 * characters and the UTF-8 encoding of the ids and values allows the String
+	 * returned to form the suffix of a well-formed URI.
+	 * </p>
+	 * 
+	 * @return A <code>String</code> containing the UTF-8 encoded command id,
+	 *         parameter ids and parameter values.
+	 * @throws SerializationException
+	 *             if there is a problem creating the serialization
+	 *             <code>String</code>
+	 * @see CommandManager#deserialize(String)
+	 * @since 3.2
+	 */
+	public final String serialize() throws SerializationException {
+
+		final String encodedId = encodeUTF8(getId());
+
+		if ((parameterizations == null) || (parameterizations.length == 0)) {
+			return encodedId;
+		}
+
+		final StringBuffer buffer = new StringBuffer(encodedId);
+		buffer.append('?');
+
+		for (int i = 0; i < parameterizations.length; i++) {
+
+			if (i > 0) {
+				// insert separator between parameters
+				buffer.append('&');
+			}
+
+			final Parameterization parameterization = parameterizations[i];
+			final String parameterId = parameterization.getParameter().getId();
+			final String encodedParameterId = encodeUTF8(parameterId);
+
+			buffer.append(encodedParameterId);
+
+			final String parameterValue = parameterization.getValue();
+			if (parameterValue != null) {
+				final String encodedParameterValue = encodeUTF8(parameterValue);
+				buffer.append('=');
+				buffer.append(encodedParameterValue);
+			}
+		}
+
+		return buffer.toString();
+	}
+
+	/**
+	 * Encodes a <code>String</code> with UTF-8 encoding.
+	 * 
+	 * @param rawText
+	 *            a <code>String</code> to encode with UTF-8 encoding
+	 * @return a <code>String</code> representing <code>rawText</code>
+	 *         encoded with UTF-8 encoding
+	 * @throws SerializationException
+	 *             if UTF-8 encoding is not supported on this platform.
+	 * @since 3.2
+	 */
+	private final String encodeUTF8(String rawText)
+			throws SerializationException {
+		try {
+			return URLEncoder.encode(rawText, UTF_8_ENCODING);
+
+		} catch (UnsupportedEncodingException ex) {
+			throw new SerializationException("UTF-8 Encoding not supported", ex); //$NON-NLS-1$
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	public final int hashCode() {
@@ -419,11 +580,11 @@ public final class ParameterizedCommand implements Comparable {
     
     public final String toString() {
         final StringBuffer buffer = new StringBuffer();
-        buffer.append("ParameterizedCommand("); //$NON-NLS-1$
-        buffer.append(command);
-        buffer.append(',');
-        buffer.append(parameterizations);
-        buffer.append(')');
-        return buffer.toString();
-    }
+		buffer.append("ParameterizedCommand("); //$NON-NLS-1$
+		buffer.append(command);
+		buffer.append(',');
+		buffer.append(parameterizations);
+		buffer.append(')');
+		return buffer.toString();
+	}
 }
