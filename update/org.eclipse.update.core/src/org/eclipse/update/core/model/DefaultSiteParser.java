@@ -777,7 +777,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			} else {
 				mirrorsURL = mirrorsURL + "?"; //$NON-NLS-1$
 			}			
-			mirrorsURL = mirrorsURL + "countryCode=" + countryCode + "&timeZone=" + timeZone + "&responseType=xml";
+			mirrorsURL = mirrorsURL + "countryCode=" + countryCode + "&timeZone=" + timeZone + "&responseType=xml"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		    DocumentBuilderFactory domFactory = 
 		    DocumentBuilderFactory.newInstance();

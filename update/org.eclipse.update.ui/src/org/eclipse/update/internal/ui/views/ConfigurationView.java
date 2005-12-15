@@ -698,8 +698,11 @@ public class ConfigurationView
 				if (feature instanceof MissingFeature) {
 					manager.add(installOptFeatureAction);
 				} else {
-					manager.add(uninstallFeatureAction);
-					manager.add(unconfigureAndUninstallFeatureAction);
+					boolean configured = ((ConfiguredFeatureAdapter)obj).isConfigured();
+					if (!configured)
+						manager.add(uninstallFeatureAction);
+					else
+						manager.add(unconfigureAndUninstallFeatureAction);
 				}
 				manager.add(new Separator());
 

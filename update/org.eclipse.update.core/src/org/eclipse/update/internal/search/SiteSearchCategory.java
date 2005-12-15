@@ -43,7 +43,7 @@ public class SiteSearchCategory extends BaseSearchCategory {
 
 			List siteFeatureReferences = new ArrayList(Arrays.asList(refs));
 			monitor.beginTask("", refs.length); //$NON-NLS-1$
-			ThreadGroup featureDownloaders = new ThreadGroup("FeatureDownloader");
+			ThreadGroup featureDownloaders = new ThreadGroup("FeatureDownloader"); //$NON-NLS-1$
 			int numberOfThreads = (refs.length > 5)? 5: refs.length;
 			
 			for( int i = 0; i < numberOfThreads; i++) {

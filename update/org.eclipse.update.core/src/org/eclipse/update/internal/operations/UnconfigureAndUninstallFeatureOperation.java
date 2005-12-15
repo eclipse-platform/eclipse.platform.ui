@@ -36,7 +36,7 @@ public class UnconfigureAndUninstallFeatureOperation extends FeatureOperation
 		
 		File f = new File(platformXML.getFile());
 
-		f = new File(f.getParentFile(), "toBeUninstalled");
+		f = new File(f.getParentFile(), "toBeUninstalled"); //$NON-NLS-1$
 		try {
 			if (!f.exists()) {
 				f.createNewFile();
@@ -44,10 +44,10 @@ public class UnconfigureAndUninstallFeatureOperation extends FeatureOperation
 			FileInputStream fis = new FileInputStream(f);
 			Properties toBeUninstalled = new Properties();
 			toBeUninstalled.load(fis);
-			toBeUninstalled.put(new Integer(toBeUninstalled.size()+1).toString(), targetSite.getSite().getURL() + ";" + feature.getVersionedIdentifier().toString());
+			toBeUninstalled.put(new Integer(toBeUninstalled.size()+1).toString(), targetSite.getSite().getURL() + ";" + feature.getVersionedIdentifier().toString()); //$NON-NLS-1$
 			fis.close();
 			FileOutputStream fos = new FileOutputStream(f);
-			toBeUninstalled.store(fos, "to be uninstalled on start-up");
+			toBeUninstalled.store(fos, "to be uninstalled on start-up"); //$NON-NLS-1$
 			fos.close();
 			
 		} catch (IOException ioe) {
