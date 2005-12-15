@@ -22,11 +22,18 @@ import org.eclipse.core.runtime.*;
  * Represents the workspace's tree merged with the file system's tree.
  */
 public class UnifiedTree {
-	/** tree's root */
-	protected IResource root;
+	/** special node to mark the separation of a node's children */
+	protected static final UnifiedTreeNode childrenMarker = new UnifiedTreeNode(null, null, null, null, false);
 
-	/** tree's actual level */
-	protected int level;
+	private static final Iterator EMPTY_ITERATOR = Collections.EMPTY_LIST.iterator();
+
+	/** special node to mark the beginning of a level in the tree */
+	protected static final UnifiedTreeNode levelMarker = new UnifiedTreeNode(null, null, null, null, false);
+
+	private static final IFileInfo[] NO_CHILDREN = new IFileInfo[0];
+
+	/** Singleton to indicate no local children */
+	private static final IResource[] NO_RESOURCES = new IResource[0];
 
 	/**
 	 * True if the level of the children of the current node are valid according
@@ -34,28 +41,36 @@ public class UnifiedTree {
 	 */
 	protected boolean childLevelValid = false;
 
-	/** our queue */
-	protected Queue queue;
+	/** an IFileTree which can be used to build a unified tree*/
+	protected IFileTree fileTree = null;
 
 	/** Spare node objects available for reuse */
 	protected ArrayList freeNodes = new ArrayList();
+	/** tree's actual level */
+	protected int level;
+	/** our queue */
+	protected Queue queue;
 
-	/** special node to mark the beginning of a level in the tree */
-	protected static final UnifiedTreeNode levelMarker = new UnifiedTreeNode(null, null, null, null, false);
-
-	/** special node to mark the separation of a node's children */
-	protected static final UnifiedTreeNode childrenMarker = new UnifiedTreeNode(null, null, null, null, false);
-
-	/** Singleton to indicate no local children */
-	private static final IResource[] NO_RESOURCES = new IResource[0];
-	private static final IFileInfo[] NO_CHILDREN = new IFileInfo[0];
-	private static final Iterator EMPTY_ITERATOR = Collections.EMPTY_LIST.iterator();
+	/** tree's root */
+	protected IResource root;
 
 	/**
 	 * The root must only be a file or a folder.
 	 */
 	public UnifiedTree(IResource root) {
 		setRoot(root);
+	}
+
+	/**
+	 * Pass in a a root for the tree, a file tree containing all of the entries for this 
+	 * tree and a flag indicating whether the UnifiedTree should consult the fileTree where
+	 * possible for entries
+	 * @param target
+	 * @param fileTree
+	 */
+	public UnifiedTree(IResource root, IFileTree fileTree) {
+		this(root);
+		this.fileTree = fileTree;
 	}
 
 	public void accept(IUnifiedTreeVisitor visitor) throws CoreException {
@@ -166,14 +181,6 @@ public class UnifiedTree {
 			addChildrenMarker();
 	}
 
-	/**
-	 * Creates a tree node for a resource that is linked in a different file system location.
-	 */
-	protected UnifiedTreeNode createChildForLinkedResource(IResource target) {
-		IFileStore store = ((Resource) target).getStore();
-		return createNode(target, store, store.fetchInfo(), true);
-	}
-
 	protected void addChildrenFromFileSystem(UnifiedTreeNode node, IFileInfo[] childInfos, int index) {
 		if (childInfos == null)
 			return;
@@ -217,11 +224,19 @@ public class UnifiedTree {
 		//don't refresh in closed projects
 		if (!root.getProject().isAccessible())
 			return;
-		IFileStore rootStore = ((Resource) root).getStore();
-		UnifiedTreeNode node = createNode(root, rootStore, rootStore.fetchInfo(), root.exists());
-		if (!node.existsInFileSystem() && !node.existsInWorkspace())
-			return;
-		addElementToQueue(node);
+		IFileStore store = ((Resource) root).getStore();
+		IFileInfo fileInfo = fileTree != null ? fileTree.getFileInfo(store) : store.fetchInfo();
+		UnifiedTreeNode node = createNode(root, store, fileInfo, root.exists());
+		if (node.existsInFileSystem() || node.existsInWorkspace())
+			addElementToQueue(node);
+	}
+
+	/**
+	 * Creates a tree node for a resource that is linked in a different file system location.
+	 */
+	protected UnifiedTreeNode createChildForLinkedResource(IResource target) {
+		IFileStore store = ((Resource) target).getStore();
+		return createNode(target, store, store.fetchInfo(), true);
 	}
 
 	/**
@@ -288,33 +303,23 @@ public class UnifiedTree {
 	}
 
 	protected IFileInfo[] getLocalList(UnifiedTreeNode node) {
-		IFileInfo[] list;
 		try {
-			list = node.getStore().childInfos(EFS.NONE, null);
+			final IFileStore store = node.getStore();
+			IFileInfo[] list = fileTree != null ? fileTree.getChildInfos(store) : store.childInfos(EFS.NONE, null);
+			if (list == null)
+				return NO_CHILDREN;
+			int size = list.length;
+			if (size > 1)
+				quickSort(list, 0, size - 1);
+			return list;
 		} catch (CoreException e) {
 			//treat failure to access the directory as a non-existent directory
 			return NO_CHILDREN;
 		}
-		if (list == null)
-			return NO_CHILDREN;
-		int size = list.length;
-		if (size > 1)
-			quickSort(list, 0, size - 1);
-		return list;
 	}
 
 	protected Workspace getWorkspace() {
 		return (Workspace) root.getWorkspace();
-	}
-
-	/**
-	 * Increases the current tree level by one. Returns true if the new
-	 * level is still valid for the given depth
-	 */
-	protected boolean setLevel(int newLevel, int depth) {
-		level = newLevel;
-		childLevelValid = isValidLevel(level + 1, depth);
-		return isValidLevel(level, depth);
 	}
 
 	protected void initializeQueue() {
@@ -354,25 +359,6 @@ public class UnifiedTree {
 	}
 
 	/**
-	 * Remove from the last element of the queue to the first child of the
-	 * given node.
-	 */
-	protected void removeNodeChildrenFromQueue(UnifiedTreeNode node) {
-		UnifiedTreeNode first = node.getFirstChild();
-		if (first == null)
-			return;
-		while (true) {
-			if (first.equals(queue.removeTail()))
-				break;
-		}
-		node.setFirstChild(null);
-	}
-
-	private void setRoot(IResource root) {
-		this.root = root;
-	}
-
-	/**
 	 * Sorts the given array of strings in place.  This is
 	 * not using the sorting framework to avoid casting overhead.
 	 */
@@ -398,5 +384,34 @@ public class UnifiedTree {
 		if (left < originalRight)
 			quickSort(infos, left, originalRight);
 		return;
+	}
+
+	/**
+	 * Remove from the last element of the queue to the first child of the
+	 * given node.
+	 */
+	protected void removeNodeChildrenFromQueue(UnifiedTreeNode node) {
+		UnifiedTreeNode first = node.getFirstChild();
+		if (first == null)
+			return;
+		while (true) {
+			if (first.equals(queue.removeTail()))
+				break;
+		}
+		node.setFirstChild(null);
+	}
+
+	/**
+	 * Increases the current tree level by one. Returns true if the new
+	 * level is still valid for the given depth
+	 */
+	protected boolean setLevel(int newLevel, int depth) {
+		level = newLevel;
+		childLevelValid = isValidLevel(level + 1, depth);
+		return isValidLevel(level, depth);
+	}
+
+	private void setRoot(IResource root) {
+		this.root = root;
 	}
 }

@@ -62,7 +62,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				IPath suffix = new Path(relative.getPath());
 				results.add(project.getFullPath().append(suffix));
 			}
-			ProjectDescription description = ((Project)project).internalGetDescription();
+			ProjectDescription description = ((Project) project).internalGetDescription();
 			if (description == null)
 				continue;
 			HashMap links = description.getLinks();
@@ -526,7 +526,6 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		return getStoreRoot(target).computeURI(target.getFullPath());
 	}
 
-	
 	public void move(IResource source, IFileStore destination, int flags, IProgressMonitor monitor) throws CoreException {
 		IFileStore sourceStore = getStore(source);
 		int storeFlags = 0;
@@ -674,7 +673,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			case IResource.PROJECT :
 				if (!target.isAccessible())
 					return false;
-			//fall through
+				//fall through
 			case IResource.FOLDER :
 			case IResource.FILE :
 				return refreshResource(target, depth, updateAliases, monitor);
@@ -689,7 +688,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		try {
 			monitor.beginTask(title, totalWork);
 			RefreshLocalVisitor visitor = updateAliases ? new RefreshLocalAliasVisitor(monitor) : new RefreshLocalVisitor(monitor);
-			UnifiedTree tree = new UnifiedTree(target);
+			IFileStore fileStore = ((Resource) target).getStore();
+			//try to get all info in one shot, if file system supports it
+			IFileTree fileTree = fileStore.getFileSystem().fetchFileTree(fileStore, new SubProgressMonitor(monitor, 0));
+			UnifiedTree tree = fileTree == null ? new UnifiedTree(target) : new UnifiedTree(target, fileTree);
 			tree.accept(visitor, depth);
 			IStatus result = visitor.getErrorStatus();
 			if (!result.isOK())
