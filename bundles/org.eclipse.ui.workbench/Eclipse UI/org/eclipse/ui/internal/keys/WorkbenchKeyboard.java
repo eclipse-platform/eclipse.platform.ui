@@ -21,6 +21,7 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.Binding;
@@ -458,7 +459,11 @@ public final class WorkbenchKeyboard {
 
 		if (commandDefined && commandEnabled) {
 			try {
-				parameterizedCommand.execute(trigger, null);
+				final IHandlerService handlerService = (IHandlerService) workbench
+						.getAdapter(IHandlerService.class);
+				final IEvaluationContext context = handlerService
+						.getCurrentState();
+				parameterizedCommand.execute(trigger, context);
 			} catch (final NotHandledException e) {
 				// There is no handler.  Forwarded to the IExecutionListener.
 			}
