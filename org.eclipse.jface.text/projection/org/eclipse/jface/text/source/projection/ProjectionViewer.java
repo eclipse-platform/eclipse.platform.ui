@@ -736,7 +736,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			int topIndex= getTopIndex();
 			Point selection= getSelectedRange();
 			setVisibleDocument(visibleDocument);
-			setSelectedRange(selection.x, selection.y);
+			Point currentSelection= getSelectedRange();
+			if (currentSelection.x != selection.x || currentSelection.y != selection.y)
+				setSelectedRange(selection.x, selection.y);
 			setTopIndex(topIndex);
 
 		} finally {
