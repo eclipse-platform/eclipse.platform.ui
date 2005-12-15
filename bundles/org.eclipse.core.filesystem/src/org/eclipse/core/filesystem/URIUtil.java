@@ -17,6 +17,9 @@ import org.eclipse.core.runtime.*;
 /**
  * This class provides utility methods for comparing, inspecting, and manipulating
  * URIs.
+ * <p>
+ * This class is not intended to be instantiated or subclassed.
+ * </p>
  * 
  * @since org.eclipse.core.filesystem 1.0
  */
@@ -101,5 +104,12 @@ public class URIUtil {
 			//try java.io implementation
 			return new File(pathString).toURI();
 		}
+	}
+
+	/**
+	 * Private constructor to prevent instantiation.
+	 */
+	private URIUtil() {
+		super();
 	}
 }
