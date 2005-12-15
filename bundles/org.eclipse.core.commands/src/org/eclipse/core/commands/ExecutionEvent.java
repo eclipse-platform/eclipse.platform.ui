@@ -68,7 +68,7 @@ public final class ExecutionEvent {
      * 
      * @param parameters
      *            The parameters to qualify the execution; must not be
-     *            <code>null</code>. This must be a map of parameter names (<code>String</code>)
+     *            <code>null</code>. This must be a map of parameter ids (<code>String</code>)
      *            to parameter values (<code>String</code>).
      * @param trigger
      *            The object that triggered the execution; may be
@@ -100,16 +100,16 @@ public final class ExecutionEvent {
 	}
 
 	/**
-	 * Returns the parameter of the given name.
+	 * Returns the value of the parameter with the given id.
 	 * 
-	 * @param parameterName
-	 *            The name of the parameter to retrieve; may be
+	 * @param parameterId
+	 *            The id of the parameter to retrieve; may be
 	 *            <code>null</code>.
 	 * @return The parameter value; <code>null</code> if the parameter cannot
 	 *         be found.
 	 */
-	public final String getParameter(final String parameterName) {
-		return (String) parameters.get(parameterName);
+	public final String getParameter(final String parameterId) {
+		return (String) parameters.get(parameterId);
 	}
 
 	/**
