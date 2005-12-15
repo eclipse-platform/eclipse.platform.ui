@@ -53,7 +53,7 @@ public class DecorationManager {
      *            to remove editor decorations for
      */
     public static void removeDecorations(IDebugTarget target) {
-    	doRemoveDecorations(target);
+    	doRemoveDecorations(target, null);
     }
     
     /**
@@ -63,10 +63,10 @@ public class DecorationManager {
      *            thread to remove decorations for
      */
     public static void removeDecorations(IThread thread) {
-    	doRemoveDecorations(thread.getDebugTarget());
+    	doRemoveDecorations(thread.getDebugTarget(), thread);
     }
 
-	private static void doRemoveDecorations(IDebugTarget target) {
+	private static void doRemoveDecorations(IDebugTarget target, IThread thread) {
 		ArrayList decorationsToRemove = new ArrayList();
         synchronized (fDecorations) {
             List list = (List) fDecorations.get(target);
@@ -74,12 +74,13 @@ public class DecorationManager {
                 ListIterator iterator = list.listIterator();
                 while (iterator.hasNext()) {
                     Decoration decoration = (Decoration) iterator.next();
-                    decorationsToRemove.add(decoration);
-                    iterator.remove();
+                    if (thread == null || thread.equals(decoration.getThread())) {
+	                    decorationsToRemove.add(decoration);
+	                    iterator.remove();
+                    }
                 }
             }
         }
-        
         Iterator iter = decorationsToRemove.iterator();
         while (iter.hasNext())
         {
@@ -87,4 +88,5 @@ public class DecorationManager {
         	decoration.remove();
         }
 	}
+	
 }
