@@ -64,8 +64,10 @@ public class ThreadEventHandler extends DebugEventHandler {
     		ModelDelta node = addPathToThraed(delta, thread);
 			try {
 				IStackFrame frame = thread.getTopStackFrame();
-				node.addNode(frame, IModelDelta.CHANGED | IModelDelta.STATE);
-				fireDelta(delta);
+                if (frame != null) { 
+                    node.addNode(frame, IModelDelta.CHANGED | IModelDelta.STATE);
+                    fireDelta(delta);
+                }
 			} catch (DebugException e) {
 			}
         } else {
