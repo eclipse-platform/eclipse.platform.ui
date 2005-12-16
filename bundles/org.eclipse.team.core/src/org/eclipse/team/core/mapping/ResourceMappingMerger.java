@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.core.mapping;
 
+import org.eclipse.core.runtime.*;
+
 
 /**
  * Abstract implementation of {@link IResourceMappingMerger}.
@@ -30,4 +32,10 @@ package org.eclipse.team.core.mapping;
  */
 public abstract class ResourceMappingMerger implements IResourceMappingMerger {
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingMerger#validateMerge(org.eclipse.team.core.mapping.IMergeContext, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus validateMerge(IMergeContext mergeContext, IProgressMonitor monitor) {
+		return Status.OK_STATUS;
+	}
 }

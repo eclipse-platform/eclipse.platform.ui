@@ -16,8 +16,7 @@ import java.util.List;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.*;
@@ -120,15 +119,36 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 				return;
 			}
 			if (isAttemptHeadlessMerge()) {
-				execute(context, Policy.subMonitorFor(monitor, 25));
-			} else {
-				showPreview(getJobName(), monitor);
+				IStatus status = validateMerge(context,Policy.subMonitorFor(monitor, 5));
+				if (status.isOK()) {
+					// The execute will prompt if there are conflicts
+					execute(context, Policy.subMonitorFor(monitor, 20));
+					return;
+				}
 			}
+			showPreview(getJobName(), Policy.subMonitorFor(monitor, 25));
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
 			monitor.done();
 		}
+	}
+
+	private IStatus validateMerge(IMergeContext context, IProgressMonitor monitor) {
+		ModelProvider[] providers = getScope().getModelProviders();
+		monitor.beginTask(null, 100 * providers.length);
+		List notOK = new ArrayList();
+		for (int i = 0; i < providers.length; i++) {
+			ModelProvider provider = providers[i];
+			IStatus status = validateMerge(provider, context, Policy.subMonitorFor(monitor, 100));
+			if (!status.isOK())
+				notOK.add(status);
+		}
+		if (notOK.isEmpty())
+			return Status.OK_STATUS;
+		if (notOK.size() == 1)
+			return (IStatus)notOK.get(0);
+		return new MultiStatus(TeamUIPlugin.ID, 0, (IStatus[]) notOK.toArray(new IStatus[notOK.size()]), "", null);
 	}
 
 	/**

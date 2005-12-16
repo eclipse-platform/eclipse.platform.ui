@@ -78,7 +78,6 @@ public interface IResourceMappingMerger {
 	 * decide whether it wants to break one of the provided resource mappings
 	 * into several sub-mappings and attempt auto-merging at that level.
 	 * 
-	 * @param mappings the set of resource mappings being merged
 	 * @param mergeContext a context that provides access to the resources
 	 *            involved in the merge. The context must not be
 	 *            <code>null</code>.
@@ -92,5 +91,32 @@ public interface IResourceMappingMerger {
 	 */
     public IStatus merge(IMergeContext mergeContext,
             IProgressMonitor monitor) throws CoreException;
+    
+    /**
+     * Validate an auto-merge for the given context. This 
+     * method must be invoked for all mergers involved
+     * in the merge before the auto-merge is attempted.
+     * The purpose of the validation is to indicate whether there
+     * are conditions in the merge context that make an auto-merge
+     * undesirable. The purpose is not to indicate that conflicts
+     * exist (this is done by the <code>merge</code> method) but instead
+     * to indicate that the nature of one of more incoming changes
+     * is such that performing an auto-merge may be undesirable.
+     * <p>
+     * Clients should validate before performing the merge and, if
+     * any of the returned status are not OK, should prompt the
+     * user to make them aware of the potential side effects.
+     * The user may still decide to attempt an auto-merge, in which case
+     * the client may still invoke the <code>merge</code> method.
+     * 
+	 * @param mergeContext a context that provides access to the resources
+	 *            involved in the merge. The context must not be
+	 *            <code>null</code>.
+	 * @param monitor a progress monitor
+     * @return a status indicating any potential side effects of
+     * performing an auto-merge.
+     */
+    public IStatus validateMerge(IMergeContext mergeContext,
+            IProgressMonitor monitor);
 
 }

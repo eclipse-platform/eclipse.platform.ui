@@ -125,6 +125,19 @@ public abstract class ModelProviderOperation extends TeamOperation {
 	}
 	
 	/**
+	 * Validate the merge by obtaining the {@link IResourceMappingMerger} for the
+	 * given provider.
+	 * @param provider the model provider
+	 * @param context the merge context
+	 * @param monitor a progress monitor
+	 * @return the status obtained from the merger for the provider
+	 */
+	protected IStatus validateMerge(ModelProvider provider, IMergeContext context, IProgressMonitor monitor) {
+		IResourceMappingMerger merger = getMerger(provider);
+		return merger.validateMerge(context, monitor);
+	}
+	
+	/**
 	 * Return the auto-merger associated with the given model provider
 	 * view the adaptable mechanism.
 	 * If the model provider does not have a merger associated with

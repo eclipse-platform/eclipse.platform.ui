@@ -25,7 +25,7 @@ import org.eclipse.team.internal.ui.Policy;
  * This is registered against ModelProvider so any model providers that
  * don't provide a custom merger will get this one.
  */
-public class DefaultResourceMappingMerger implements IResourceMappingMerger {
+public class DefaultResourceMappingMerger extends ResourceMappingMerger {
 	
 	private final ModelProvider provider;
 
