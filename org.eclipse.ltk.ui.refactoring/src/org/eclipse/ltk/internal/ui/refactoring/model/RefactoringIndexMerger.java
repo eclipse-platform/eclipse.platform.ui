@@ -69,6 +69,7 @@ public final class RefactoringIndexMerger implements IStreamMerger {
 			final StringBuffer buffer= new StringBuffer(256);
 			for (int index= 0; index < outputProxies.length; index++) {
 				final RefactoringDescriptorProxy proxy= outputProxies[index];
+				buffer.setLength(0);
 				buffer.append(proxy.getTimeStamp());
 				buffer.append(RefactoringHistoryManager.DELIMITER_STAMP);
 				buffer.append(proxy.getDescription());
