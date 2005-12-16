@@ -16,10 +16,10 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
  * Default implementation of a refactoring history.

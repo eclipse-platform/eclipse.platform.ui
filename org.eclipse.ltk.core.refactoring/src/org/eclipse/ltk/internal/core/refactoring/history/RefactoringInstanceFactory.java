@@ -13,6 +13,7 @@ package org.eclipse.ltk.internal.core.refactoring.history;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ltk.core.refactoring.IRefactoringInstanceCreator;
@@ -20,8 +21,6 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
-
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
  * Factory class to create refactoring instances from refactoring descriptors.

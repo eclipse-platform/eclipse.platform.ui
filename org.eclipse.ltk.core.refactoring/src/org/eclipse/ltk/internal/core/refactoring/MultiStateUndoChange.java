@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.UndoEdit;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;

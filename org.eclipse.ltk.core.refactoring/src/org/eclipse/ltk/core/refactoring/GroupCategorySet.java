@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * A special set to manage group categories. Group category sets are value

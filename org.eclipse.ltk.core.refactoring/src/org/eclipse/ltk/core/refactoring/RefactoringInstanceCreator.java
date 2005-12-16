@@ -13,10 +13,10 @@ package org.eclipse.ltk.core.refactoring;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.ltk.core.refactoring.participants.GenericRefactoringArguments;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
-
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
  * Partial implementation of a refactoring instance creator.

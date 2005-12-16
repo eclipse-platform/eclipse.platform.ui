@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
  * An abstract base implementation for object representing a generic change 

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.history;
 
+import org.eclipse.core.runtime.PlatformObject;
+
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
@@ -31,7 +33,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
  * 
  * @since 3.2
  */
-public abstract class RefactoringHistory {
+public abstract class RefactoringHistory extends PlatformObject {
 
 	/**
 	 * Returns the refactoring descriptors of this history, in ascending order

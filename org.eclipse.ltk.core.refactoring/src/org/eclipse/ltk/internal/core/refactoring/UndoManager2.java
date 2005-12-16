@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
@@ -112,7 +113,7 @@ public class UndoManager2 implements IUndoManager {
 	
 	public void addListener(IUndoManagerListener listener) {
 		if (fListeners == null) {
-			fListeners= new ListenerList();
+			fListeners= new ListenerList(ListenerList.IDENTITY);
 			fOperationHistoryListener= new OperationHistroyListener();
 			fOperationHistroy.addOperationHistoryListener(fOperationHistoryListener);
 		}

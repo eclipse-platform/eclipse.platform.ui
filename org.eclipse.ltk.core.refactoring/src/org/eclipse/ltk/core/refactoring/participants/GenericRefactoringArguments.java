@@ -13,7 +13,7 @@ package org.eclipse.ltk.core.refactoring.participants;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Refactoring arguments which provide the ability to set arguments using

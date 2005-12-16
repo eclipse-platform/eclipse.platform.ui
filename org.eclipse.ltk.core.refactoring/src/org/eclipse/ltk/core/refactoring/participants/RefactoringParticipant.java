@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -18,7 +19,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextChange;
-import org.eclipse.ltk.internal.core.refactoring.Assert;
+
 import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
 
 /**

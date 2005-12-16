@@ -13,21 +13,21 @@ package org.eclipse.ltk.core.refactoring;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.UndoEdit;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
-import org.eclipse.core.resources.IFile;
-
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 
+import org.eclipse.core.resources.IFile;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.BufferValidationState;
 import org.eclipse.ltk.internal.core.refactoring.Changes;
 import org.eclipse.ltk.internal.core.refactoring.ContentStamps;

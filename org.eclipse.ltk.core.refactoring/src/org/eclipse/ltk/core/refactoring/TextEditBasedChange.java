@@ -19,6 +19,7 @@ import org.eclipse.text.edits.TextEditCopier;
 import org.eclipse.text.edits.TextEditGroup;
 import org.eclipse.text.edits.TextEditProcessor;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -26,7 +27,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.Changes;
 
 /**

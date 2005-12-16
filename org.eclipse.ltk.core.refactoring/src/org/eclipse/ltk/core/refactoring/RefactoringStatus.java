@@ -14,10 +14,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
  * A <code>RefactoringStatus</code> object represents the outcome of a

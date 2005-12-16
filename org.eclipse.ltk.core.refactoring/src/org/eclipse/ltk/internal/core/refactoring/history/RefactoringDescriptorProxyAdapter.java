@@ -1,11 +1,10 @@
 package org.eclipse.ltk.internal.core.refactoring.history;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
  * Adapter class which adapts refactoring descriptors to refactoring descriptor

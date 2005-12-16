@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.model;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,7 +25,6 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManager;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 

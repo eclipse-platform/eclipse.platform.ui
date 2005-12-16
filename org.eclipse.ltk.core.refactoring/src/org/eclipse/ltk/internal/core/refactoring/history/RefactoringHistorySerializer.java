@@ -12,6 +12,7 @@ package org.eclipse.ltk.internal.core.refactoring.history;
 
 import java.net.URI;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -26,7 +27,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistoryEvent;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**

@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
  * Implementors of refactorings uses instances of <code>RefactoringTickProvider</code>

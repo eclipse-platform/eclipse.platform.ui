@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -17,7 +18,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.NotCancelableProgressMonitor;
 
 /**

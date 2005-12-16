@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Descriptor object of a refactoring session. Refactoring session descriptors

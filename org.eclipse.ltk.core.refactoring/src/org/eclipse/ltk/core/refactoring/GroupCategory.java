@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * A group category is used to annotate change groups so that

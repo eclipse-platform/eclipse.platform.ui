@@ -13,9 +13,9 @@ package org.eclipse.ltk.core.refactoring;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditGroup;
 
-import org.eclipse.jface.text.IRegion;
+import org.eclipse.core.runtime.Assert;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
+import org.eclipse.jface.text.IRegion;
 
 /**
  * This class is a wrapper around a {@link TextEditGroup TextEditGroup}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.core.resources.IFile;

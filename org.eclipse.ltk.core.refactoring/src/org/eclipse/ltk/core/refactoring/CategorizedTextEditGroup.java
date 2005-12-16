@@ -13,7 +13,7 @@ package org.eclipse.ltk.core.refactoring;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditGroup;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * A special text edit group that manages an additional set of

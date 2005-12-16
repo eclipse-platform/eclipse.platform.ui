@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring.model;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.core.resources.IProject;
@@ -17,8 +18,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
  * Default implementation for a resource mapping for the refactoring model

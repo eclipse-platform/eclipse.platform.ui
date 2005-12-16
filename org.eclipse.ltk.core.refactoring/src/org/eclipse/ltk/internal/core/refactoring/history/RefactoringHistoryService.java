@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -63,7 +64,6 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringExecutionEvent;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistoryEvent;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.UndoableOperation2ChangeAdapter;

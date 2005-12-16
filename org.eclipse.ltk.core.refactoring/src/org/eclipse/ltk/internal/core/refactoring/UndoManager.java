@@ -14,9 +14,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Stack;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -65,7 +67,7 @@ public class UndoManager implements IUndoManager {
 	 */
 	public void addListener(IUndoManagerListener listener) {
 		if (fListeners == null)
-			fListeners= new ListenerList();
+			fListeners= new ListenerList(ListenerList.IDENTITY);
 		fListeners.add(listener);
 	}
 

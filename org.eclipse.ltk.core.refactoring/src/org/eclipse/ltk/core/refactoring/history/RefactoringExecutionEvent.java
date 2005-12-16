@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.history;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.core.runtime.Assert;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
 /**
  * Event object to communicate refactoring execution notifications. These

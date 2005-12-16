@@ -30,6 +30,7 @@ import org.eclipse.text.edits.TextEditGroup;
 import org.eclipse.text.edits.TextEditProcessor;
 import org.eclipse.text.edits.UndoEdit;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -57,11 +58,10 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.BufferValidationState;
 import org.eclipse.ltk.internal.core.refactoring.Changes;
-import org.eclipse.ltk.internal.core.refactoring.MultiStateUndoChange;
 import org.eclipse.ltk.internal.core.refactoring.ContentStamps;
+import org.eclipse.ltk.internal.core.refactoring.MultiStateUndoChange;
 import org.eclipse.ltk.internal.core.refactoring.NonDeletingPositionUpdater;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 

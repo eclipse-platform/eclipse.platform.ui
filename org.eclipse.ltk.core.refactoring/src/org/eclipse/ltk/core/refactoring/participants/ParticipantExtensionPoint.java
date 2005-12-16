@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -25,7 +26,6 @@ import org.eclipse.core.expressions.EvaluationContext;
 
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;

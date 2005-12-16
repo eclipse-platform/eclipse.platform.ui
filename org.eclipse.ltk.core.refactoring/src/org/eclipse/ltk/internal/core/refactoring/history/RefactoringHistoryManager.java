@@ -39,6 +39,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -59,7 +60,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringDescriptorProxyImplementation;
