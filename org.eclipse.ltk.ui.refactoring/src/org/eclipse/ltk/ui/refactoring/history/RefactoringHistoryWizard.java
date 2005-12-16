@@ -730,7 +730,24 @@ public class RefactoringHistoryWizard extends Wizard {
 		final RefactoringDescriptorProxy[] descriptors= new RefactoringDescriptorProxy[list.size()];
 		list.toArray(descriptors);
 		final boolean last= isLastRefactoring();
-		if (!last) {
+		if (wizard.getCurrentPage() == fPreviewPage && last) {
+			final Refactoring refactoring= fPreviewPage.getRefactoring();
+			final Change change= fPreviewPage.getChange();
+			if (refactoring != null && change != null) {
+				status.merge(performPreviewChange(change, refactoring));
+				if (!status.isOK()) {
+					final RefactoringStatusEntry entry= status.getEntryWithHighestSeverity();
+					if (entry.getSeverity() == RefactoringStatus.INFO && entry.getCode() == RefactoringHistoryWizard.STATUS_CODE_INTERRUPTED)
+						return false;
+					fErrorPage.setStatus(status);
+					fErrorPage.setNextPageDisabled(true);
+					fErrorPage.setTitle(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error_title);
+					fErrorPage.setDescription(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error);
+					wizard.showPage(fErrorPage);
+					return false;
+				}
+			}
+		} else {
 			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 			if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_FINISH)) {
 				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openWarning(getShell(), wizard.getShell().getText(), RefactoringUIMessages.RefactoringHistoryWizard_warning_finish, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
@@ -785,7 +802,7 @@ public class RefactoringHistoryWizard extends Wizard {
 				}
 			};
 			try {
-				wizard.run(true, true, new WorkbenchRunnableAdapter(operation, ResourcesPlugin.getWorkspace().getRoot()));
+				wizard.run(false, false, new WorkbenchRunnableAdapter(operation, ResourcesPlugin.getWorkspace().getRoot()));
 			} catch (InvocationTargetException exception) {
 				final Throwable throwable= exception.getTargetException();
 				if (throwable != null) {
@@ -801,23 +818,6 @@ public class RefactoringHistoryWizard extends Wizard {
 				}
 			} catch (InterruptedException exception) {
 				// Just close wizard
-			}
-		} else if (wizard.getCurrentPage() == fPreviewPage) {
-			final Refactoring refactoring= fPreviewPage.getRefactoring();
-			final Change change= fPreviewPage.getChange();
-			if (refactoring != null && change != null) {
-				status.merge(performPreviewChange(change, refactoring));
-				if (!status.isOK()) {
-					final RefactoringStatusEntry entry= status.getEntryWithHighestSeverity();
-					if (entry.getSeverity() == RefactoringStatus.INFO && entry.getCode() == RefactoringHistoryWizard.STATUS_CODE_INTERRUPTED)
-						return false;
-					fErrorPage.setStatus(status);
-					fErrorPage.setNextPageDisabled(true);
-					fErrorPage.setTitle(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error_title);
-					fErrorPage.setDescription(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error);
-					wizard.showPage(fErrorPage);
-					return false;
-				}
 			}
 		}
 		return true;
@@ -874,7 +874,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		final IWizardContainer wizard= getContainer();
 		final Shell shell= wizard.getShell();
 		try {
-			wizard.run(false, true, new WorkbenchRunnableAdapter(operation, ResourcesPlugin.getWorkspace().getRoot()));
+			wizard.run(false, false, new WorkbenchRunnableAdapter(operation, ResourcesPlugin.getWorkspace().getRoot()));
 		} catch (InvocationTargetException exception) {
 			final Throwable throwable= exception.getTargetException();
 			if (operation.changeExecutionFailed()) {
