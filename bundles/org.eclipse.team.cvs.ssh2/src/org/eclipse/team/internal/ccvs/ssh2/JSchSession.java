@@ -36,7 +36,10 @@ class JSchSession {
     private final ICVSRepositoryLocation location;
 
     protected static int getCVSTimeoutInMillis() {
-        return CVSProviderPlugin.getPlugin().getTimeout() * 1000;
+        //return CVSProviderPlugin.getPlugin().getTimeout() * 1000;
+    	// TODO Hard-code the timeout for now since Jsch doesn't respect CVS timeout
+    	// See bug 92887
+    	return 60000;
     }
     
 	public static class SimpleSocketFactory implements SocketFactory {
