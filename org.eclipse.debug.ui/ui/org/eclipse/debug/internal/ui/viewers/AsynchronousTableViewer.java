@@ -145,6 +145,11 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
         return null;
     }
 
+    /*this is wrong... should look in content manager
+     * as the data may not be set on the widget yet.
+     * (non-Javadoc)
+     * @see org.eclipse.jface.viewers.StructuredViewer#doFindInputItem(java.lang.Object)
+     */
     protected Widget doFindInputItem(Object element) {
         if (element.equals(getInput())) {
             return fTable;
