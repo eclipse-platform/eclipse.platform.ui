@@ -139,13 +139,11 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 	 * {@inheritDoc}
 	 */
 	public void init(final IWorkbench workbench, final IStructuredSelection selection) {
-		if (selection.size() == 1) {
+		if (selection != null && selection.size() == 1) {
 			final Object element= selection.getFirstElement();
 			if (element instanceof IFile) {
 				final IFile file= (IFile) element;
 				fScriptURI= file.getRawLocationURI();
-
-				// TODO: implement
 			}
 		}
 	}
@@ -172,6 +170,7 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 	 */
 	public void setRefactoringHistory(final RefactoringHistory history) {
 		fRefactoringHistory= history;
+		getContainer().updateButtons();
 	}
 
 	/**
@@ -182,5 +181,6 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 	 */
 	public void setRefactoringScript(final URI uri) {
 		fScriptURI= uri;
+		getContainer().updateButtons();
 	}
 }

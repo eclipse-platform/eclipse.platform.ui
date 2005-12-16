@@ -58,17 +58,18 @@ public final class ApplyRefactoringScriptAction implements IWorkbenchWindowActio
 	 */
 	public void run(final IAction action) {
 		if (fWindow != null) {
+			final IWorkbenchWizard wizard= new ApplyRefactoringScriptWizard();
 			final ISelection selection= fWindow.getSelectionService().getSelection();
 			if (selection instanceof IStructuredSelection) {
 				final IStructuredSelection structured= (IStructuredSelection) selection;
-				final IWorkbenchWizard wizard= new ApplyRefactoringScriptWizard();
 				wizard.init(fWindow.getWorkbench(), structured);
-				final WizardDialog dialog= new WizardDialog(fWindow.getShell(), wizard);
-				dialog.create();
-				dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT);
-				PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IRefactoringHelpContextIds.REFACTORING_APPLY_SCRIPT_PAGE);
-				dialog.open();
-			}
+			} else
+				wizard.init(fWindow.getWorkbench(), null);
+			final WizardDialog dialog= new WizardDialog(fWindow.getShell(), wizard);
+			dialog.create();
+			dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IRefactoringHelpContextIds.REFACTORING_APPLY_SCRIPT_PAGE);
+			dialog.open();
 		}
 	}
 

@@ -10,10 +10,22 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.scripting;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
 
 import org.eclipse.swt.SWT;
@@ -105,12 +117,12 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 	 */
 	protected void createLocationGroup(final Composite parent) {
 		Assert.isNotNull(parent);
-		new Label(parent, SWT.NONE).setText("Location of the refactoring script file:");
+		new Label(parent, SWT.NONE).setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_location_caption);
 		final Composite composite= new Composite(parent, SWT.NONE);
 		composite.setLayoutData(createGridData(GridData.FILL_HORIZONTAL, 6, 0));
 		composite.setLayout(new GridLayout(3, false));
 		final Label label= new Label(composite, SWT.NONE);
-		label.setText("Script File:");
+		label.setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_location_label);
 		label.setLayoutData(createGridData(GridData.HORIZONTAL_ALIGN_BEGINNING, 1, 0));
 		fLocationField= new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fLocationField.setLayoutData(createGridData(GridData.FILL_HORIZONTAL, 1, 0));
@@ -122,7 +134,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 		});
 		fLocationField.setFocus();
 		final Button button= new Button(composite, SWT.PUSH);
-		button.setText("&Browse...");
+		button.setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_browse_label);
 		button.setLayoutData(createGridData(GridData.HORIZONTAL_ALIGN_FILL, 1, 0));
 		SWTUtil.setButtonDimensionHint(button);
 		button.addSelectionListener(new SelectionAdapter() {
@@ -139,9 +151,9 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 	 */
 	protected void handleBrowseButtonSelected() {
 		final FileDialog file= new FileDialog(getShell(), SWT.OPEN);
-		file.setText("Browse for Script File");
-		file.setFilterNames(new String[] { "*.xml", "*.*"});
-		file.setFilterExtensions(new String[] { "*.xml", "*.*"});
+		file.setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_browse_caption);
+		file.setFilterNames(new String[] { ScriptingMessages.ApplyRefactoringScriptWizardPage_filter_name_script, ScriptingMessages.ApplyRefactoringScriptWizardPage_filter_name_wildcard});
+		file.setFilterExtensions(new String[] { ScriptingMessages.ApplyRefactoringScriptWizardPage_filter_extension_script, ScriptingMessages.ApplyRefactoringScriptWizardPage_filter_extension_wildcard});
 		final String path= file.open();
 		if (path != null)
 			fLocationField.setText(path);
@@ -165,13 +177,62 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 		if (fLocationField != null) {
 			final String path= fLocationField.getText();
 			if ("".equals(path)) { //$NON-NLS-1$
-				setErrorMessage("Script file location must not be empty.");
+				setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_invalid_location);
 				setPageComplete(false);
 				return;
-			} else {
-				// TODO: implement
+			}
+			final File file= new File(path);
+			if (!file.exists()) {
+				setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_invalid_script_file);
+				setPageComplete(false);
+				return;
+			}
+			InputStream stream= null;
+			try {
+				stream= new BufferedInputStream(new FileInputStream(file));
+				fWizard.setRefactoringScript(file.toURI());
+				fWizard.setRefactoringHistory(RefactoringCore.getRefactoringHistoryService().readRefactoringHistory(stream, RefactoringDescriptor.NONE));
+			} catch (IOException exception) {
+				setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_error_cannot_read);
+				setPageComplete(false);
+				return;
+			} catch (CoreException exception) {
+				RefactoringUIPlugin.log(exception);
+				setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_invalid_format);
+				setPageComplete(false);
+				return;
+			} finally {
+				if (stream != null) {
+					try {
+						stream.close();
+					} catch (IOException exception) {
+						// Do nothing
+					}
+				}
 			}
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setVisible(final boolean visible) {
+		if (visible) {
+			final URI uri= fWizard.getRefactoringScript();
+			if (uri != null) {
+				try {
+					final String path= new File(uri).getCanonicalPath();
+					if (path != null) {
+						fLocationField.setText(path);
+						handleScriptFileChanged();
+					}
+				} catch (IOException exception) {
+					RefactoringUIPlugin.log(exception);
+				} catch (IllegalArgumentException exception) {
+					RefactoringUIPlugin.log(exception);
+				}
+			}
+		}
+		super.setVisible(visible);
+	}
 }
