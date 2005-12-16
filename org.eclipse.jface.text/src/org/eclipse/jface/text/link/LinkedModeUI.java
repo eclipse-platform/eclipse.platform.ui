@@ -1179,7 +1179,7 @@ public class LinkedModeUI {
 		};
 
 		// remove positions (both exit positions AND linked positions in the
-		// model) async to make sure that the annotation painter
+		// model) asynchronously to make sure that the annotation painter
 		// gets correct document offsets.
 		if (display != null)
 			display.asyncExec(runnable);
