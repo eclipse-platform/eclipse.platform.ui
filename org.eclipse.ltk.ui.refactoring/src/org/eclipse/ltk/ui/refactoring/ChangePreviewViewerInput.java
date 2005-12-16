@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.internal.ui.refactoring.Assert;
 
 /**
  * Instances of this class represent the input for an {@link IChangePreviewViewer}.

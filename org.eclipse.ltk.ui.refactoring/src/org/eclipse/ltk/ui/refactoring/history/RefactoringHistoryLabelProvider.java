@@ -17,9 +17,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.core.runtime.Assert;
 
-import org.eclipse.ltk.internal.ui.refactoring.Assert;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
+
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryDate;
@@ -91,11 +93,27 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	}
 
 	/**
+	 * Returns the label for the specified refactoring descriptor.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 * @return the label of the descriptor
+	 */
+	private String getDescriptorLabel(final RefactoringDescriptorProxy descriptor) {
+		if (fControlConfiguration.isTimeDisplayed()) {
+			final long stamp= descriptor.getTimeStamp();
+			if (stamp >= 0)
+				return MessageFormat.format(fControlConfiguration.getRefactoringPattern(), new String[] { DateFormat.getTimeInstance().format(new Date(stamp)), descriptor.getDescription()});
+		}
+		return descriptor.getDescription();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public Image getImage(final Object element) {
 		final boolean time= fControlConfiguration.isTimeDisplayed();
-		if (element instanceof RefactoringHistoryEntry)
+		if (element instanceof RefactoringHistoryEntry || element instanceof RefactoringDescriptorProxy)
 			return time ? fElementImage : fItemImage;
 		else
 			return time ? fContainerImage : fCollectionImage;
@@ -107,13 +125,11 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	public String getText(Object element) {
 		if (element instanceof RefactoringHistoryEntry) {
 			final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) element;
-			final RefactoringDescriptorProxy proxy= entry.getDescriptor();
-			if (fControlConfiguration.isTimeDisplayed()) {
-				final long stamp= proxy.getTimeStamp();
-				if (stamp >= 0)
-					return MessageFormat.format(fControlConfiguration.getRefactoringPattern(), new String[] { DateFormat.getTimeInstance().format(new Date(stamp)), proxy.getDescription() });
-			}
-			return proxy.getDescription();
+			return getDescriptorLabel(entry.getDescriptor());
+		} else if (element instanceof RefactoringDescriptorProxy) {
+			return getDescriptorLabel((RefactoringDescriptorProxy) element);
+		} else if (element instanceof RefactoringHistory) {
+			return RefactoringUIMessages.RefactoringHistoryControlConfiguration_collection_label;
 		} else if (element instanceof RefactoringHistoryNode) {
 			final RefactoringHistoryNode node= (RefactoringHistoryNode) element;
 			final StringBuffer buffer= new StringBuffer(32);
@@ -174,7 +190,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								format= DateFormat.getDateInstance();
 								break;
 						}
-						buffer.append(NLS.bind(pattern, new String[] { format.format(stamp) }));
+						buffer.append(NLS.bind(pattern, new String[] { format.format(stamp)}));
 					}
 				}
 			}

@@ -12,6 +12,7 @@ package org.eclipse.ltk.ui.refactoring;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobManager;
@@ -31,7 +32,7 @@ import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.internal.ui.refactoring.Assert;
+
 import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;

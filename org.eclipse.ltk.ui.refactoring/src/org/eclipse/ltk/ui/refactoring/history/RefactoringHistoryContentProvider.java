@@ -15,10 +15,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
-import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryContainer;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryDate;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEntry;

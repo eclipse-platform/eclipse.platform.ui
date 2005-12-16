@@ -13,6 +13,7 @@ package org.eclipse.ltk.ui.refactoring;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -33,7 +34,6 @@ import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.ChangeExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
@@ -170,7 +170,7 @@ public abstract class RefactoringWizard extends Wizard {
 		Assert.isTrue(flags < LAST);
 		if ((flags & DIALOG_BASED_USER_INTERFACE) == 0) 
 			flags |= WIZARD_BASED_USER_INTERFACE;
-		Assert.isTrue((flags & DIALOG_BASED_USER_INTERFACE) != 0 || (flags & WIZARD_BASED_USER_INTERFACE) != 0);
+		org.eclipse.core.runtime.Assert.isTrue((flags & DIALOG_BASED_USER_INTERFACE) != 0 || (flags & WIZARD_BASED_USER_INTERFACE) != 0);
 		fRefactoring= refactoring;
 		fFlags= flags;
 		setNeedsProgressMonitor(true);

@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -48,7 +49,6 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringInstanceFactory;
-import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.ChangeExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.IErrorWizardPage;

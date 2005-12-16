@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
-import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 import org.eclipse.swt.SWT;

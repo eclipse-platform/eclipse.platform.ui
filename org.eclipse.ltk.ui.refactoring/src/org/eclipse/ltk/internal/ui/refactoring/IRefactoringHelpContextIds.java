@@ -33,4 +33,7 @@ public interface IRefactoringHelpContextIds {
 
 	/** @since 3.2 */
 	public static final String REFACTORING_HISTORY_EXPORT_DIALOG= PREFIX + "refactoring_history_export_dialog"; //$NON-NLS-1$
+
+	/** @since 3.2 */
+	public static final String REFACTORING_APPLY_SCRIPT_PAGE= PREFIX + "refactoring_apply_script_page"; //$NON-NLS-1$
 }

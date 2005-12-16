@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import org.eclipse.ltk.internal.ui.refactoring.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Date node of a refactoring history.

@@ -12,6 +12,7 @@ package org.eclipse.ltk.internal.ui.refactoring;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ltk.core.refactoring.Change;
