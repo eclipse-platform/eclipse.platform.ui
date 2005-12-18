@@ -31,9 +31,12 @@ public class RefactoringHistoryDialogConfiguration extends RefactoringHistoryCon
 	 * @param time
 	 *            <code>true</code> to display time information,
 	 *            <code>false</code> otherwise
+	 * @param checkable
+	 *            <code>true</code> if the refactorings should be checkable,
+	 *            <code>false</code> otherwise
 	 */
-	public RefactoringHistoryDialogConfiguration(final IProject project, final boolean time) {
-		super(project, time);
+	public RefactoringHistoryDialogConfiguration(final IProject project, final boolean time, final boolean checkable) {
+		super(project, time, checkable);
 	}
 
 	/**

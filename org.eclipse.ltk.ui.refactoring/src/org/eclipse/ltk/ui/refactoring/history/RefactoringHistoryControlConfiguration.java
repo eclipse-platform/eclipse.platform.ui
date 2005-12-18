@@ -24,9 +24,16 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
  * Note: This API is considered experimental and may change in the near future.
  * </p>
  * 
+ * @see IRefactoringHistoryControl
+ * @see RefactoringHistoryLabelProvider
+ * @see RefactoringHistoryContentProvider
+ * 
  * @since 3.2
  */
 public class RefactoringHistoryControlConfiguration {
+
+	/** Should the refactorings be checkable? */
+	protected final boolean fCheckable;
 
 	/** The project, or <code>null</code> */
 	protected final IProject fProject;
@@ -42,10 +49,14 @@ public class RefactoringHistoryControlConfiguration {
 	 * @param time
 	 *            <code>true</code> to display time information,
 	 *            <code>false</code> otherwise
+	 * @param checkable
+	 *            <code>true</code> if the refactorings should be checkable,
+	 *            <code>false</code> otherwise
 	 */
-	public RefactoringHistoryControlConfiguration(final IProject project, final boolean time) {
+	public RefactoringHistoryControlConfiguration(final IProject project, final boolean time, final boolean checkable) {
 		fProject= project;
 		fTime= time;
+		fCheckable= checkable;
 	}
 
 	/**
@@ -150,7 +161,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * 
 	 * @return the project, or <code>null</code>
 	 */
-	public IProject getProject() {
+	public final IProject getProject() {
 		return fProject;
 	}
 
@@ -287,12 +298,22 @@ public class RefactoringHistoryControlConfiguration {
 	}
 
 	/**
+	 * Returns whether the control should make the refactorings checkable.
+	 * 
+	 * @return <code>true</code> if the control should make refactorings
+	 *         checkable, <code>false</code> otherwise
+	 */
+	public final boolean isCheckableViewer() {
+		return fCheckable;
+	}
+
+	/**
 	 * Returns whether the control should display time information.
 	 * 
 	 * @return <code>true</code> to display time information,
 	 *         <code>false</code> otherwise
 	 */
-	public boolean isTimeDisplayed() {
+	public final boolean isTimeDisplayed() {
 		return fTime;
 	}
 }

@@ -104,7 +104,7 @@ public final class ExportRefactoringHistoryDialog extends RefactoringHistoryDial
 	 * Handles the export event.
 	 */
 	protected void handleExport() {
-		handleExport(RefactoringUIMessages.ExportRefactoringHistoryDialog_export_caption, fHistoryControl.getSelectedDescriptors());
+		handleExport(RefactoringUIMessages.ExportRefactoringHistoryDialog_export_caption, fHistoryControl.getCheckedDescriptors());
 	}
 
 	/**

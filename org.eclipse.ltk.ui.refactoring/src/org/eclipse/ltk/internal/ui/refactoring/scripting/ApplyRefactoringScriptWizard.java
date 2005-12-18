@@ -91,7 +91,7 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 			fNewSettings= false;
 			setDialogSettings(section);
 		}
-		setConfiguration(new RefactoringHistoryControlConfiguration(null, false) {
+		setConfiguration(new RefactoringHistoryControlConfiguration(null, false, false) {
 
 			public String getProjectPattern() {
 				return ScriptingMessages.ApplyRefactoringScriptWizard_project_pattern;

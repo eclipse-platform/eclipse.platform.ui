@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -194,7 +195,10 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	protected TreeViewer createHistoryViewer(final Composite parent) {
 		Assert.isNotNull(parent);
-		return new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+		if (fControlConfiguration.isCheckableViewer())
+			return new CheckboxTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+		else
+			return new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 	}
 
 	/**
@@ -208,20 +212,59 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	/**
 	 * {@inheritDoc}
 	 */
+	public final RefactoringDescriptorProxy[] getCheckedDescriptors() {
+		if (fHistoryViewer instanceof CheckboxTreeViewer) {
+			final CheckboxTreeViewer viewer= (CheckboxTreeViewer) fHistoryViewer;
+			final Set set= new HashSet();
+			final Object[] elements= viewer.getCheckedElements();
+			for (int index= 0; index < elements.length; index++)
+				getDescriptorProxies(set, elements[index]);
+			return (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]);
+		}
+		return getSelectedDescriptors();
+	}
+
+	/**
+	 * Gets the refactoring descriptor proxies represented by the specified
+	 * element.
+	 * 
+	 * @param set
+	 *            the set of refactoring descriptors
+	 * @param element
+	 *            the element
+	 */
+	private void getDescriptorProxies(final Set set, final Object element) {
+		if (element instanceof RefactoringHistoryEntry) {
+			set.add(((RefactoringHistoryEntry) element).getDescriptor());
+		} else if (element instanceof RefactoringHistoryNode) {
+			final RefactoringHistoryContentProvider provider= (RefactoringHistoryContentProvider) fHistoryViewer.getContentProvider();
+			if (provider != null) {
+				final Object[] elements= provider.getChildren(element);
+				for (int index= 0; index < elements.length; index++)
+					getDescriptorProxies(set, elements[index]);
+			}
+		}
+	}
+
+	/**
+	 * Returns the input of the refactoring history control.
+	 * 
+	 * @return the input, or <code>null</code>
+	 */
+	public RefactoringHistory getInput() {
+		return (RefactoringHistory) fHistoryViewer.getInput();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public final RefactoringDescriptorProxy[] getSelectedDescriptors() {
 		final Set set= new HashSet();
 		final ISelection selection= fHistoryViewer.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection structured= (IStructuredSelection) selection;
-			for (final Iterator iterator= structured.iterator(); iterator.hasNext();) {
-				final Object element= iterator.next();
-				if (element instanceof RefactoringHistoryEntry) {
-					final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) element;
-					set.add(entry.getDescriptor());
-				}
-
-				// TODO: handle parent elements
-			}
+			for (final Iterator iterator= structured.iterator(); iterator.hasNext();)
+				getDescriptorProxies(set, iterator.next());
 		}
 		return (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]);
 	}

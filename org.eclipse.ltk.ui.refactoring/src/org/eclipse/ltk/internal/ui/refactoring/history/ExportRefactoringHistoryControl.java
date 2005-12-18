@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
@@ -90,7 +91,10 @@ public final class ExportRefactoringHistoryControl extends RefactoringHistoryCon
 	 */
 	protected TreeViewer createHistoryViewer(final Composite parent) {
 		Assert.isNotNull(parent);
-		return new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
+		if (fControlConfiguration.isCheckableViewer())
+			return new CheckboxTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
+		else
+			return new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 	}
 
 	/**

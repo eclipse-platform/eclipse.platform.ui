@@ -22,6 +22,10 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
  * Note: This API is considered experimental and may change in the near future.
  * </p>
  * 
+ * @see RefactoringHistoryControlConfiguration
+ * @see RefactoringHistoryContentProvider
+ * @see RefactoringHistoryLabelProvider
+ * 
  * @since 3.2
  */
 public interface IRefactoringHistoryControl {
@@ -30,6 +34,19 @@ public interface IRefactoringHistoryControl {
 	 * Creates the control.
 	 */
 	public void createControl();
+
+	/**
+	 * Returns the checked refactoring descriptors.
+	 * <p>
+	 * In case the refactoring history control is created with a non-checkable
+	 * tree viewer, this method is equivalent to
+	 * {@link #getSelectedDescriptors()}.
+	 * </p>
+	 * 
+	 * @return the selected refactoring descriptors
+	 * @see RefactoringHistoryControlConfiguration#isCheckableViewer()
+	 */
+	public RefactoringDescriptorProxy[] getCheckedDescriptors();
 
 	/**
 	 * Returns the selected refactoring descriptors.
