@@ -915,9 +915,13 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					}
 				}
 			} finally {
-				final IFolder folder= project.getFolder(NAME_HISTORY_FOLDER);
-				if (folder.exists())
-					folder.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+				if (enable)
+					project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+				else {
+					final IFolder folder= project.getFolder(NAME_HISTORY_FOLDER);
+					if (folder.exists())
+						folder.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+				}
 			}
 		}
 	}
