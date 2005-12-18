@@ -26,6 +26,7 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringStatusDialog;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog2;
 import org.eclipse.ltk.internal.ui.refactoring.UIPerformChangeOperation;
+import org.eclipse.ltk.internal.ui.refactoring.history.ExportRefactoringHistoryControl;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryControl;
 
 /**
@@ -58,6 +59,21 @@ public class RefactoringUI {
 		return new RefactoringHistoryControl(parent, configuration);
 	}
 	
+	/**
+	 * Creates a control capable of exporting a refactoring history. Clients
+	 * of this method can assume that the returned composite is an instance of
+	 * {@link IRefactoringHistoryControl}.
+	 * 
+	 * @param parent the parent control
+	 * @param configuration the refactoring history control configuration
+	 * @return the refactoring history control
+	 * 
+	 * @since 3.2
+	 */
+	public static Composite createRefactoringExportControl(Composite parent, RefactoringHistoryControlConfiguration configuration) {
+		return new ExportRefactoringHistoryControl(parent, configuration);
+	}
+
 	/**
 	 * Creates a dialog to present a {@link RefactoringStatus} to the user. The following values are 
 	 * returned from the dialogs open method: 
