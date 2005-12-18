@@ -10,6 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Comparator;
+
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -18,26 +28,36 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringPreferenceConstants;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferencePageContainer;
 
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
+
+import org.eclipse.ltk.ui.refactoring.RefactoringUI;
+import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -51,8 +71,11 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	/** The enable history button, or <code>null</code> */
 	private Button fEnableButton= null;
 
-	/** The initial value of the refactoring preference */
+	/** The refactoring preference */
 	private boolean fHasProjectHistory= false;
+
+	/** The refactoring history control */
+	private ExportRefactoringHistoryControl fHistoryControl= null;
 
 	/** The preferences working copy manager, or <code>null</code> */
 	private IWorkingCopyManager fManager= null;
@@ -60,35 +83,62 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected final Control createContents(final Composite parent) {
+	protected Control createContents(final Composite parent) {
 		initializeDialogUnits(parent);
 
 		final IPreferencePageContainer container= getContainer();
 		if (container instanceof IWorkbenchPreferenceContainer)
 			fManager= ((IWorkbenchPreferenceContainer) container).getWorkingCopyManager();
 
-		Composite result= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		final Composite composite= new Composite(parent, SWT.NONE);
+		final GridLayout layout= new GridLayout();
 		layout.marginWidth= 0;
-		layout.verticalSpacing= convertVerticalDLUsToPixels(10);
+		layout.marginHeight= 0;
 		layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-		result.setLayout(layout);
+		composite.setLayout(layout);
 
-		Label label= new Label(result, SWT.WRAP);
+		final Label label= new Label(composite, SWT.WRAP);
 		label.setText(RefactoringUIMessages.RefactoringPropertyPage_label_message);
 
-		fEnableButton= new Button(result, SWT.CHECK);
+		fHistoryControl= (ExportRefactoringHistoryControl) RefactoringUI.createRefactoringExportControl(composite, new RefactoringHistoryControlConfiguration(getCurrentProject(), true, true));
+		fHistoryControl.createControl();
+
+		fHistoryControl.getExportAllButton().addSelectionListener(new SelectionAdapter() {
+
+			public final void widgetSelected(final SelectionEvent event) {
+				final RefactoringHistory history= fHistoryControl.getInput();
+				if (history != null)
+					handleExport(RefactoringUIMessages.ExportRefactoringHistoryDialog_export_all_caption, history.getDescriptors());
+			}
+		});
+		fHistoryControl.getExportButton().addSelectionListener(new SelectionAdapter() {
+
+			public final void widgetSelected(final SelectionEvent event) {
+				handleExport(RefactoringUIMessages.ExportRefactoringHistoryDialog_export_caption, fHistoryControl.getCheckedDescriptors());
+			}
+		});
+
+		fEnableButton= new Button(composite, SWT.CHECK);
 		fEnableButton.setText(RefactoringUIMessages.RefactoringPropertyPage_enable_message);
 		fEnableButton.setData(RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY);
 
-		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		fEnableButton.setLayoutData(data);
+		fEnableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		fEnableButton.setSelection(hasRefactoringHistory());
 
-		fEnableButton.setSelection(hasProjectHistory());
+		new Label(composite, SWT.NONE);
 
-		applyDialogFont(result);
-		return result;
+		applyDialogFont(composite);
+
+		return composite;
+	}
+
+	/**
+	 * Returns the project currently associated with this property page.
+	 * 
+	 * @return the currently associated project, or <code>null</code>
+	 */
+	private IProject getCurrentProject() {
+		return (IProject) getElement().getAdapter(IProject.class);
 	}
 
 	/**
@@ -101,10 +151,65 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	 * @return the preferences
 	 */
 	private IEclipsePreferences getPreferences(final IWorkingCopyManager manager, final IScopeContext context) {
-		IEclipsePreferences preferences= context.getNode(RefactoringCore.ID_PLUGIN);
+		final IEclipsePreferences preferences= context.getNode(RefactoringCore.ID_PLUGIN);
 		if (manager != null)
 			return manager.getWorkingCopy(preferences);
 		return preferences;
+	}
+
+	/**
+	 * Handles the export event.
+	 * 
+	 * @param caption
+	 *            the caption of the export dialog
+	 * @param proxies
+	 *            the refactoring descriptor proxies to export
+	 */
+	private void handleExport(final String caption, final RefactoringDescriptorProxy[] proxies) {
+		Assert.isNotNull(caption);
+		Assert.isNotNull(proxies);
+		final FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
+		dialog.setText(caption);
+		dialog.setFilterNames(new String[] { RefactoringUIMessages.ExportRefactoringHistoryDialog_file_filter_name });
+		dialog.setFilterExtensions(new String[] { RefactoringUIMessages.ExportRefactoringHistoryDialog_file_filter_extension });
+		dialog.setFileName(RefactoringUIMessages.ExportRefactoringHistoryDialog_file_default_name);
+		final String path= dialog.open();
+		if (path != null) {
+			final File file= new File(path);
+			if (file.exists()) {
+				if (!MessageDialog.openQuestion(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, RefactoringUIMessages.ExportRefactoringHistoryDialog_file_overwrite_query))
+					return;
+			}
+			OutputStream stream= null;
+			try {
+				stream= new BufferedOutputStream(new FileOutputStream(file));
+				Arrays.sort(proxies, new Comparator() {
+
+					public final int compare(final Object first, final Object second) {
+						final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
+						final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
+						return (int) (predecessor.getTimeStamp() - successor.getTimeStamp());
+					}
+				});
+				RefactoringCore.getRefactoringHistoryService().writeRefactoringDescriptors(proxies, stream, RefactoringDescriptor.NONE);
+			} catch (CoreException exception) {
+				final Throwable throwable= exception.getStatus().getException();
+				if (throwable instanceof IOException)
+					MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
+				else
+					RefactoringUIPlugin.log(exception);
+			} catch (FileNotFoundException exception) {
+				MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, exception.getLocalizedMessage());
+			} finally {
+				if (stream != null) {
+					try {
+						stream.close();
+					} catch (IOException exception) {
+						// Do nothing
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -113,8 +218,8 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	 * @return <code>true</code> if the project contains an explicit project
 	 *         history, <code>false</code> otherwise
 	 */
-	private boolean hasProjectHistory() {
-		final IProject project= (IProject) getElement().getAdapter(IProject.class);
+	private boolean hasRefactoringHistory() {
+		final IProject project= getCurrentProject();
 		if (project != null)
 			return RefactoringCore.getRefactoringHistoryService().hasProjectHistory(project);
 		return false;
@@ -125,7 +230,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	 */
 	protected void performDefaults() {
 		super.performDefaults();
-		final IProject project= (IProject) getElement().getAdapter(IProject.class);
+		final IProject project= getCurrentProject();
 		if (project != null)
 			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, null);
 	}
@@ -134,7 +239,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	 * {@inheritDoc}
 	 */
 	public boolean performOk() {
-		final IProject project= (IProject) getElement().getAdapter(IProject.class);
+		final IProject project= getCurrentProject();
 		if (project != null)
 			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.valueOf(fEnableButton.getSelection()).toString());
 		if (fManager != null)
@@ -165,17 +270,29 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	 *            the value of the preference
 	 */
 	private void setPreference(final IWorkingCopyManager manager, final IScopeContext context, final String key, final String value) {
+		final IEclipsePreferences preferences= getPreferences(manager, context);
 		if (value != null)
-			getPreferences(manager, context).put(key, value);
+			preferences.put(key, value);
 		else
-			getPreferences(manager, context).remove(key);
+			preferences.remove(key);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setVisible(final boolean visible) {
-		fHasProjectHistory= hasProjectHistory();
+		fHasProjectHistory= hasRefactoringHistory();
+		final IProject project= getCurrentProject();
+		if (project != null) {
+			final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+			try {
+				service.connect();
+				fHistoryControl.setInput(service.getProjectHistory(project, null));
+			} finally {
+				service.disconnect();
+			}
+		} else
+			fHistoryControl.setInput(null);
 		super.setVisible(visible);
 	}
 }
