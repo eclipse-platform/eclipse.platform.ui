@@ -24,6 +24,9 @@ import org.eclipse.ltk.core.refactoring.RefactoringCore;
  * Note: This API is considered experimental and may change in the near future.
  * </p>
  * 
+ * @see IRefactoringHistoryService
+ * @see RefactoringExecutionEvent
+ * 
  * @since 3.2
  */
 public interface IRefactoringExecutionListener {

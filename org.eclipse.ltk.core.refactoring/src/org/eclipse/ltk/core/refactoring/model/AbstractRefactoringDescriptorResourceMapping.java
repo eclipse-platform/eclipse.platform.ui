@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
@@ -31,6 +32,16 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
 /**
  * Partial implementation of a resource mapping for a refactoring descriptor
  * object.
+ * <p>
+ * Note: this class is intended to be implemented by clients which need to
+ * enhance a model provider with a refactoring model.
+ * </p>
+ * <p>
+ * Note: This API is considered experimental and may change in the near future.
+ * </p>
+ * 
+ * @see ResourceMapping
+ * @see ModelProvider
  * 
  * @since 3.2
  */
@@ -77,7 +88,7 @@ public abstract class AbstractRefactoringDescriptorResourceMapping extends Resou
 	public final IProject[] getProjects() {
 		final String project= fDescriptor.getProject();
 		if (project != null && !"".equals(project)) //$NON-NLS-1$
-			return new IProject[] { ResourcesPlugin.getWorkspace().getRoot().getProject(project)};
+			return new IProject[] { ResourcesPlugin.getWorkspace().getRoot().getProject(project) };
 		return new IProject[] {};
 	}
 
@@ -94,7 +105,7 @@ public abstract class AbstractRefactoringDescriptorResourceMapping extends Resou
 					final IProject[] projects= getProjects();
 					if (projects != null && projects.length == 1 && projects[0] != null) {
 						final IFolder folder= projects[0].getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER).getFolder(path);
-						fResourceTraversals= new ResourceTraversal[] { new ResourceTraversal(new IResource[] { folder.getFile(RefactoringHistoryService.NAME_HISTORY_FILE)}, IResource.DEPTH_ZERO, IResource.NONE), new ResourceTraversal(new IResource[] { folder.getFile(RefactoringHistoryService.NAME_INDEX_FILE)}, IResource.DEPTH_ZERO, IResource.NONE)};
+						fResourceTraversals= new ResourceTraversal[] { new ResourceTraversal(new IResource[] { folder.getFile(RefactoringHistoryService.NAME_HISTORY_FILE) }, IResource.DEPTH_ZERO, IResource.NONE), new ResourceTraversal(new IResource[] { folder.getFile(RefactoringHistoryService.NAME_INDEX_FILE) }, IResource.DEPTH_ZERO, IResource.NONE) };
 					}
 				}
 			}

@@ -47,6 +47,9 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringInstanceFact
  * </p>
  * 
  * @see org.eclipse.core.resources.IWorkspace
+ * @see PerformRefactoringOperation
+ * @see RefactoringHistory
+ * @see RefactoringHistoryService
  * 
  * @since 3.2
  */

@@ -16,6 +16,8 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
+
 /**
  * Descriptor object of a refactoring.
  * <p>
@@ -40,6 +42,9 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * Note: This API is considered experimental and may change in the near future.
  * </p>
+ * 
+ * @see RefactoringDescriptorProxy
+ * @see IRefactoringHistoryService
  * 
  * @since 3.2
  */

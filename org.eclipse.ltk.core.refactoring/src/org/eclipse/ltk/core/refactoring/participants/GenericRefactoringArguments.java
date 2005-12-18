@@ -15,12 +15,18 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.ltk.core.refactoring.IRefactoringInstanceCreator;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+
 /**
  * Refactoring arguments which provide the ability to set arguments using
  * key-value pairs of strings.
  * <p>
  * Note: This API is considered experimental and may change in the near future.
  * </p>
+ * 
+ * @see IRefactoringInstanceCreator
+ * @see RefactoringDescriptor
  * 
  * @since 3.2
  */

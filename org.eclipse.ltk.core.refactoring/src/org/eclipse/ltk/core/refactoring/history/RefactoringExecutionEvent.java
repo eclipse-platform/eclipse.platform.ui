@@ -29,6 +29,9 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
  * Note: This API is considered experimental and may change in the near future.
  * </p>
  * 
+ * @see IRefactoringExecutionListener
+ * @see IRefactoringHistoryService
+ * 
  * @since 3.2
  */
 public final class RefactoringExecutionEvent {

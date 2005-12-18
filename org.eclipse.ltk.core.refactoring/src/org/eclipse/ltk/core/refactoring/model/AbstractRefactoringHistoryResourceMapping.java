@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
@@ -29,6 +30,16 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
 /**
  * Partial implementation of a resource mapping for a refactoring history
  * object.
+ * <p>
+ * Note: this class is intended to be implemented by clients which need to
+ * enhance a model provider with a refactoring model.
+ * </p>
+ * <p>
+ * Note: This API is considered experimental and may change in the near future.
+ * </p>
+ * 
+ * @see ResourceMapping
+ * @see ModelProvider
  * 
  * @since 3.2
  */

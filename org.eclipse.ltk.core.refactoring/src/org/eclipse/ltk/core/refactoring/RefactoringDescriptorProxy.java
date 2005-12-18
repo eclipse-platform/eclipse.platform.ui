@@ -13,6 +13,9 @@ package org.eclipse.ltk.core.refactoring;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
 
+import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
+
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
 /**
@@ -43,6 +46,9 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
  * <p>
  * Note: This API is considered experimental and may change in the near future.
  * </p>
+ * 
+ * @see IRefactoringHistoryService
+ * @see RefactoringHistory
  * 
  * @since 3.2
  */
