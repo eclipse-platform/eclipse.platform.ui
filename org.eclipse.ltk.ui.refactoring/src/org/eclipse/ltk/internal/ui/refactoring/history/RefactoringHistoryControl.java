@@ -42,7 +42,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -167,6 +169,15 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 					handleSelectionChanged((IStructuredSelection) selection);
 			}
 		});
+		if (fHistoryViewer instanceof CheckboxTreeViewer) {
+			final CheckboxTreeViewer viewer= (CheckboxTreeViewer) fHistoryViewer;
+			viewer.addCheckStateListener(new ICheckStateListener() {
+
+				public final void checkStateChanged(final CheckStateChangedEvent event) {
+					handleCheckStateChanged();
+				}
+			});
+		}
 		fHistoryPane.setContent(fHistoryViewer.getControl());
 		fCommentPane= new CompareViewerSwitchingPane(fSplitterControl, SWT.BORDER | SWT.FLAT) {
 
@@ -267,6 +278,13 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 				getDescriptorProxies(set, iterator.next());
 		}
 		return (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]);
+	}
+
+	/**
+	 * Handles the check state changed event.
+	 */
+	protected void handleCheckStateChanged() {
+		// Do nothing
 	}
 
 	/**

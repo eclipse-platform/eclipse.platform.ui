@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
@@ -118,10 +117,8 @@ public final class ExportRefactoringHistoryControl extends RefactoringHistoryCon
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void handleSelectionChanged(final IStructuredSelection selection) {
-		super.handleSelectionChanged(selection);
-
-		fExportButton.setEnabled(!selection.isEmpty());
+	protected void handleCheckStateChanged() {
+		fExportButton.setEnabled(getCheckedDescriptors().length > 0);
 	}
 
 	/**
