@@ -98,13 +98,12 @@ public final class RefactoringUIMessages extends NLS {
 	
 	public static String ValidationCheckResultQuery_error_message;
 
-	public static String ExportRefactoringHistoryDialog_file_filter_name;
-	public static String ExportRefactoringHistoryDialog_file_filter_extension;
-	public static String ExportRefactoringHistoryDialog_file_default_name;
-	public static String ExportRefactoringHistoryDialog_file_overwrite_query;
-	public static String ExportRefactoringHistoryDialog_export_caption;
-	public static String ExportRefactoringHistoryDialog_export_all_caption;
-
+	public static String ExportRefactoringHistoryControl_file_filter_name;
+	public static String ExportRefactoringHistoryControl_file_filter_extension;
+	public static String ExportRefactoringHistoryControl_file_default_name;
+	public static String ExportRefactoringHistoryControl_file_overwrite_query;
+	public static String ExportRefactoringHistoryControl_export_caption;
+	public static String ExportRefactoringHistoryControl_export_all_caption;
 	public static String ExportRefactoringHistoryControl_export_label;
 	public static String ExportRefactoringHistoryControl_export_all_label;
 
@@ -173,4 +172,7 @@ public final class RefactoringUIMessages extends NLS {
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringUIMessages.class);
 	}
+
+	public static String ExportRefactoringHistoryControl_wildcard_filter_name;
+	public static String ExportRefactoringHistoryControl_wildcard_filter_extension;
 }

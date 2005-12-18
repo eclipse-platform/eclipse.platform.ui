@@ -104,7 +104,7 @@ public final class ExportRefactoringHistoryDialog extends RefactoringHistoryDial
 	 * Handles the export event.
 	 */
 	protected void handleExport() {
-		handleExport(RefactoringUIMessages.ExportRefactoringHistoryDialog_export_caption, fHistoryControl.getCheckedDescriptors());
+		handleExport(RefactoringUIMessages.ExportRefactoringHistoryControl_export_caption, fHistoryControl.getCheckedDescriptors());
 	}
 
 	/**
@@ -120,14 +120,14 @@ public final class ExportRefactoringHistoryDialog extends RefactoringHistoryDial
 		Assert.isNotNull(proxies);
 		final FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
 		dialog.setText(caption);
-		dialog.setFilterNames(new String[] { RefactoringUIMessages.ExportRefactoringHistoryDialog_file_filter_name});
-		dialog.setFilterExtensions(new String[] { RefactoringUIMessages.ExportRefactoringHistoryDialog_file_filter_extension});
-		dialog.setFileName(RefactoringUIMessages.ExportRefactoringHistoryDialog_file_default_name);
+		dialog.setFilterNames(new String[] { RefactoringUIMessages.ExportRefactoringHistoryControl_file_filter_name, RefactoringUIMessages.ExportRefactoringHistoryControl_wildcard_filter_name });
+		dialog.setFilterExtensions(new String[] { RefactoringUIMessages.ExportRefactoringHistoryControl_file_filter_extension, RefactoringUIMessages.ExportRefactoringHistoryControl_wildcard_filter_extension });
+		dialog.setFileName(RefactoringUIMessages.ExportRefactoringHistoryControl_file_default_name);
 		final String path= dialog.open();
 		if (path != null) {
 			final File file= new File(path);
 			if (file.exists()) {
-				if (!MessageDialog.openQuestion(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, RefactoringUIMessages.ExportRefactoringHistoryDialog_file_overwrite_query))
+				if (!MessageDialog.openQuestion(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, RefactoringUIMessages.ExportRefactoringHistoryControl_file_overwrite_query))
 					return;
 			}
 			OutputStream stream= null;
@@ -166,6 +166,6 @@ public final class ExportRefactoringHistoryDialog extends RefactoringHistoryDial
 	 * Handles the export all event.
 	 */
 	protected void handleExportAll() {
-		handleExport(RefactoringUIMessages.ExportRefactoringHistoryDialog_export_all_caption, fRefactoringHistory.getDescriptors());
+		handleExport(RefactoringUIMessages.ExportRefactoringHistoryControl_export_all_caption, fRefactoringHistory.getDescriptors());
 	}
 }
