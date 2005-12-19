@@ -14,20 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.ITeamStatus;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamStatus;
+import org.eclipse.team.core.*;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiffVisitor;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.internal.core.*;
-import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 
 /**
  * A Subscriber provides synchronization between local resources and a
@@ -122,17 +119,25 @@ abstract public class Subscriber {
 	 * <p>
 	 * Note that sync info may be returned for non-existing or for resources
 	 * which have no corresponding remote resource.
-	 * </p><p>
-	 * This method will be quick. If synchronization calculation requires content from
-	 * the server it must be cached when the subscriber is refreshed. A client should
-	 * call refresh before calling this method to ensure that the latest information
-	 * is available for computing the sync state.
 	 * </p>
+	 * <p>
+	 * This method will be quick. If synchronization calculation requires
+	 * content from the server it must be cached when the subscriber is
+	 * refreshed. A client should call refresh before calling this method to
+	 * ensure that the latest information is available for computing the sync
+	 * state.
+	 * </p>
+	 * <p>
+	 * The sync-info node returned by this method does not fully describe
+	 * all types of changes. A more descriptive change can be obtained from
+	 * the {@link #getDiff(IResource) } method.
+	 * 
 	 * @param resource the resource of interest
 	 * @return sync info
+	 * @see #getDiff(IResource)
 	 */
 	abstract public SyncInfo getSyncInfo(IResource resource) throws TeamException;
-
+	
 	/**
 	 * Returns the comparison criteria that will be used by the sync info
 	 * created by this subscriber.
@@ -329,5 +334,87 @@ abstract public class Subscriber {
 		}
 		// Tick the monitor to give the owner a chance to do something
 		monitor.worked(1);
+	}
+	
+	/**
+	 * Returns synchronization info, in the form of an {@link IDiffNode} for the
+	 * given resource, or <code>null</code> if there is no synchronization
+	 * info because the subscriber does not apply to this resource.
+	 * <p>
+	 * Note that a diff may be returned for non-existing or for resources
+	 * which have no corresponding remote resource.
+	 * </p>
+	 * <p>
+	 * This method will be quick. If synchronization calculation requires
+	 * content from the server it must be cached when the subscriber is
+	 * refreshed. A client should call refresh before calling this method to
+	 * ensure that the latest information is available for computing the diff.
+	 * </p>
+	 * <p>
+	 * The diff node returned by this method describes the changes associated
+	 * with the given resource in more detail than the sync-info returned
+	 * by calling {@link #getSyncInfo(IResource) }.
+	 * 
+	 * @param resource the resource of interest
+	 * @return the diff for the resource or <code>null</code>
+	 * @throws TeamException if errors occur
+	 * @since 3.2
+	 */
+	public IDiffNode getDiff(IResource resource) throws CoreException {
+		SyncInfo info = getSyncInfo(resource);
+		if (info == null)
+			return null;
+		return SyncInfoToDiffConverter.getDeltaFor(info);
+	}
+	
+	/**
+	 * Visit any out-of-sync resources covered by the given traversals.
+	 * @param traversals the traversals to be visited
+	 * @param visitor the visitor
+	 * @throws TeamException if errors occur
+	 * @since 3.2
+	 */
+	public void accept(ResourceTraversal[] traversals, IDiffVisitor visitor) throws CoreException {
+		for (int i = 0; i < traversals.length; i++) {
+			ResourceTraversal traversal = traversals[i];
+			accept(traversal.getResources(), traversal.getDepth(), visitor);
+		}
+	}
+	
+	/**
+	 * Visit any out-of-sync resources in the given resources visited to the
+	 * given depth.
+	 * 
+	 * @param resources the root of the resource subtrees from which out-of-sync
+	 *            sync info should be visited
+	 * @param depth the depth to which sync info should be collected (one of
+	 *            <code>IResource.DEPTH_ZERO</code>,
+	 *            <code>IResource.DEPTH_ONE</code>, or
+	 *            <code>IResource.DEPTH_INFINITE</code>)
+	 * @param visitor the visitor
+	 * @throws TeamException if errors occur
+	 * @since 3.2
+	 */
+	public void accept(IResource[] resources, int depth, IDiffVisitor visitor) throws CoreException {
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			accept(resource, depth, visitor);
+		}
+	}
+
+	private void accept(IResource resource, int depth, IDiffVisitor visitor) throws CoreException {
+		IDiffNode node = getDiff(resource);
+		if (node != null && node.getKind() != IDiffNode.NO_CHANGE) {
+			if (!visitor.visit(node))
+				return;
+		}
+		if (depth != IResource.DEPTH_ZERO) {
+			IResource[] members = members(resource);
+			int newDepth = depth == IResource.DEPTH_INFINITE ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO;
+			for (int i = 0; i < members.length; i++) {
+				IResource member = members[i];
+				accept(member, newDepth, visitor);
+			}
+		}
 	}
 }
