@@ -45,7 +45,7 @@ public class ControlUpdatableValue extends UpdatableValue {
 	}
 
 	public Class getValueType() {
-		return Boolean.class;
+		return Boolean.TYPE;
 	}
 
 }
