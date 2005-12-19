@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.commands;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +18,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.commands.common.HandleObjectManager;
+import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.ListenerList;
 
 /**
  * <p>
@@ -42,22 +42,43 @@ public final class CommandManager extends HandleObjectManager implements
 	 * 
 	 * @since 3.1
 	 */
-	private final class ExecutionListener implements IExecutionListener {
+	private final class ExecutionListener implements
+			IExecutionListenerWithChecks {
+
+		public void notDefined(String commandId, NotDefinedException exception) {
+			if (executionListeners != null) {
+				final Object[] listeners = executionListeners.getListeners();
+				for (int i = 0; i < listeners.length; i++) {
+					final Object object = listeners[i];
+					if (object instanceof IExecutionListenerWithChecks) {
+						final IExecutionListenerWithChecks listener = (IExecutionListenerWithChecks) object;
+						listener.notDefined(commandId, exception);
+					}
+				}
+			}
+		}
+
+		public void notEnabled(String commandId, NotEnabledException exception) {
+			if (executionListeners != null) {
+				final Object[] listeners = executionListeners.getListeners();
+				for (int i = 0; i < listeners.length; i++) {
+					final Object object = listeners[i];
+					if (object instanceof IExecutionListenerWithChecks) {
+						final IExecutionListenerWithChecks listener = (IExecutionListenerWithChecks) object;
+						listener.notEnabled(commandId, exception);
+					}
+				}
+			}
+		}
 
 		public final void notHandled(final String commandId,
 				final NotHandledException exception) {
 			if (executionListeners != null) {
-				final int executionListenersSize = executionListeners.size();
-				if (executionListenersSize > 0) {
-					/*
-					 * Bug 88629. Copying to an array avoids a
-					 * ConcurrentModificationException if someone tries to
-					 * remove the listener while handling the event.
-					 */
-					final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-							.toArray(new IExecutionListener[executionListenersSize]);
-					for (int i = 0; i < executionListenersSize; i++) {
-						final IExecutionListener listener = listeners[i];
+				final Object[] listeners = executionListeners.getListeners();
+				for (int i = 0; i < listeners.length; i++) {
+					final Object object = listeners[i];
+					if (object instanceof IExecutionListener) {
+						final IExecutionListener listener = (IExecutionListener) object;
 						listener.notHandled(commandId, exception);
 					}
 				}
@@ -67,17 +88,11 @@ public final class CommandManager extends HandleObjectManager implements
 		public final void postExecuteFailure(final String commandId,
 				final ExecutionException exception) {
 			if (executionListeners != null) {
-				final int executionListenersSize = executionListeners.size();
-				if (executionListenersSize > 0) {
-					/*
-					 * Bug 88629. Copying to an array avoids a
-					 * ConcurrentModificationException if someone tries to
-					 * remove the listener while handling the event.
-					 */
-					final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-							.toArray(new IExecutionListener[executionListenersSize]);
-					for (int i = 0; i < executionListenersSize; i++) {
-						final IExecutionListener listener = listeners[i];
+				final Object[] listeners = executionListeners.getListeners();
+				for (int i = 0; i < listeners.length; i++) {
+					final Object object = listeners[i];
+					if (object instanceof IExecutionListener) {
+						final IExecutionListener listener = (IExecutionListener) object;
 						listener.postExecuteFailure(commandId, exception);
 					}
 				}
@@ -87,17 +102,11 @@ public final class CommandManager extends HandleObjectManager implements
 		public final void postExecuteSuccess(final String commandId,
 				final Object returnValue) {
 			if (executionListeners != null) {
-				final int executionListenersSize = executionListeners.size();
-				if (executionListenersSize > 0) {
-					/*
-					 * Bug 88629. Copying to an array avoids a
-					 * ConcurrentModificationException if someone tries to
-					 * remove the listener while handling the event.
-					 */
-					final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-							.toArray(new IExecutionListener[executionListenersSize]);
-					for (int i = 0; i < executionListenersSize; i++) {
-						final IExecutionListener listener = listeners[i];
+				final Object[] listeners = executionListeners.getListeners();
+				for (int i = 0; i < listeners.length; i++) {
+					final Object object = listeners[i];
+					if (object instanceof IExecutionListener) {
+						final IExecutionListener listener = (IExecutionListener) object;
 						listener.postExecuteSuccess(commandId, returnValue);
 					}
 				}
@@ -107,17 +116,11 @@ public final class CommandManager extends HandleObjectManager implements
 		public final void preExecute(final String commandId,
 				final ExecutionEvent event) {
 			if (executionListeners != null) {
-				final int executionListenersSize = executionListeners.size();
-				if (executionListenersSize > 0) {
-					/*
-					 * Bug 88629. Copying to an array avoids a
-					 * ConcurrentModificationException if someone tries to
-					 * remove the listener while handling the event.
-					 */
-					final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-							.toArray(new IExecutionListener[executionListenersSize]);
-					for (int i = 0; i < executionListenersSize; i++) {
-						final IExecutionListener listener = listeners[i];
+				final Object[] listeners = executionListeners.getListeners();
+				for (int i = 0; i < listeners.length; i++) {
+					final Object object = listeners[i];
+					if (object instanceof IExecutionListener) {
+						final IExecutionListener listener = (IExecutionListener) object;
 						listener.preExecute(commandId, event);
 					}
 				}
@@ -155,7 +158,7 @@ public final class CommandManager extends HandleObjectManager implements
 	 * The collection of execution listeners. This collection is
 	 * <code>null</code> if there are no listeners.
 	 */
-	private Collection executionListeners = null;
+	private ListenerList executionListeners = null;
 
 	/**
 	 * Adds a listener to this command manager. The listener will be notified
@@ -185,7 +188,7 @@ public final class CommandManager extends HandleObjectManager implements
 		}
 
 		if (executionListeners == null) {
-			executionListeners = new ArrayList(1);
+			executionListeners = new ListenerList(ListenerList.IDENTITY);
 
 			// Add an execution listener to every command.
 			executionListener = new ExecutionListener();
@@ -194,9 +197,6 @@ public final class CommandManager extends HandleObjectManager implements
 				final Command command = (Command) commandItr.next();
 				command.addExecutionListener(executionListener);
 			}
-
-		} else if (executionListeners.contains(listener)) {
-			return; // Listener already exists
 
 		}
 

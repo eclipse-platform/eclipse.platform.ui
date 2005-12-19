@@ -357,15 +357,15 @@ public final class Command extends NamedHandleObjectWithState implements
 			throw exception;
 		}
 
-		if (!isEnabled()) {
-			final NotEnabledException exception = new NotEnabledException(
-					"Trying to execute a disabled command"); //$NON-NLS-1$
-			fireNotEnabled(exception);
-			throw exception;
-		}
-
 		// Perform the execution, if there is a handler.
 		if ((handler != null) && (handler.isHandled())) {
+			if (!isEnabled()) {
+				final NotEnabledException exception = new NotEnabledException(
+						"Trying to execute a disabled command"); //$NON-NLS-1$
+				fireNotEnabled(exception);
+				throw exception;
+			}
+			
 			try {
 				final Object returnValue = handler.execute(event);
 				firePostExecuteSuccess(returnValue);
