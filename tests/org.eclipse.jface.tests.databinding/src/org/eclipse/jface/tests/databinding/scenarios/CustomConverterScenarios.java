@@ -88,8 +88,8 @@ public class CustomConverterScenarios extends ScenariosTestCase {
 		// Change the model to be $60.99 dollars and make sure the
 		// spinner_dollars is 60 and spinner_cents is 99
 		skiTrip.setPrice(60.99);
-		assertEquals(spinner_dollars.getSelection(), 60);
-		assertEquals(spinner_cents.getSelection(), 99);
+		assertEquals(60, spinner_dollars.getSelection());
+		assertEquals(99, spinner_cents.getSelection());
 
 	}
 

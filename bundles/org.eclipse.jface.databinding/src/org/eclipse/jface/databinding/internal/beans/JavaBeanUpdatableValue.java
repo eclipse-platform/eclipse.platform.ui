@@ -39,10 +39,10 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 	public JavaBeanUpdatableValue(Object object, PropertyDescriptor descriptor) {
 		this.object = object;
 		this.propertyDescriptor = descriptor;
-		hookListener();
+		hookListener(descriptor.getName());
 	}
 
-	private void hookListener() {
+	private void hookListener(String propertyName) {
 		listener = new PropertyChangeListener() {
 			public void propertyChange(java.beans.PropertyChangeEvent event) {
 				if (!updating) {
@@ -55,7 +55,7 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 		try {
 			addPropertyChangeListenerMethod = object.getClass().getMethod(
 					"addPropertyChangeListener", //$NON-NLS-1$
-					new Class[] { PropertyChangeListener.class });
+					new Class[] { String.class, PropertyChangeListener.class });
 		} catch (SecurityException e) {
 			// ignore
 		} catch (NoSuchMethodException e) {
@@ -64,7 +64,7 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 		if (addPropertyChangeListenerMethod != null) {
 			try {
 				addPropertyChangeListenerMethod.invoke(object,
-						new Object[] { listener });
+						 new Object[] { propertyName,listener });
 				return;
 			} catch (IllegalArgumentException e) {
 				// ignore
