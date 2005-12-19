@@ -31,6 +31,7 @@ import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
+import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.bindings.keys.KeyStroke;
@@ -403,7 +404,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 */
 	private final void clearCache() {
 		if (DEBUG) {
-			System.out.println("BINDINGS >> Clearing cache"); //$NON-NLS-1$
+			Tracing.printTrace("BINDINGS", "Clearing cache"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		cachedBindings.clear();
 		clearSolution();
@@ -608,9 +609,9 @@ public final class BindingManager extends HandleObjectManager implements
 							activeContextTree);
 					if (winner == null) {
 						if (DEBUG) {
-							System.out
-									.println("BINDINGS >> A conflict occurred for " + trigger); //$NON-NLS-1$
-							System.out.println("BINDINGS >>     " + match); //$NON-NLS-1$
+							Tracing.printTrace("BINDINGS", //$NON-NLS-1$
+									"A conflict occurred for " + trigger); //$NON-NLS-1$
+							Tracing.printTrace("BINDINGS", "    " + match); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					} else {
 						bindingsByTrigger.put(trigger, winner);
@@ -798,7 +799,7 @@ public final class BindingManager extends HandleObjectManager implements
 			}
 		} catch (NotDefinedException e) {
 			if (DEBUG) {
-				System.out.println("BINDINGS >>> NotDefinedException('" //$NON-NLS-1$
+				Tracing.printTrace("BINDINGS", "NotDefinedException('" //$NON-NLS-1$ //$NON-NLS-2$
 						+ e.getMessage()
 						+ "') while filtering dialog/window contexts"); //$NON-NLS-1$
 			}
@@ -917,7 +918,7 @@ public final class BindingManager extends HandleObjectManager implements
 		Map commandIdsByTrigger = existingCache.getBindingsByTrigger();
 		if (commandIdsByTrigger != null) {
 			if (DEBUG) {
-				System.out.println("BINDINGS >> Cache hit"); //$NON-NLS-1$
+				Tracing.printTrace("BINDINGS", "Cache hit"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			return Collections.unmodifiableMap(commandIdsByTrigger);
@@ -925,7 +926,7 @@ public final class BindingManager extends HandleObjectManager implements
 
 		// There is no cached entry for this.
 		if (DEBUG) {
-			System.out.println("BINDINGS >> Cache miss"); //$NON-NLS-1$
+			Tracing.printTrace("BINDINGS", "Cache miss"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		// Compute the active bindings.
@@ -978,7 +979,7 @@ public final class BindingManager extends HandleObjectManager implements
 				.getTriggersByCommandId();
 		if (triggersByParameterizedCommand != null) {
 			if (DEBUG) {
-				System.out.println("BINDINGS >> Cache hit"); //$NON-NLS-1$
+				Tracing.printTrace("BINDINGS", "Cache hit"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			return Collections.unmodifiableMap(triggersByParameterizedCommand);
@@ -986,7 +987,7 @@ public final class BindingManager extends HandleObjectManager implements
 
 		// There is no cached entry for this.
 		if (DEBUG) {
-			System.out.println("BINDINGS >> Cache miss"); //$NON-NLS-1$
+			Tracing.printTrace("BINDINGS", "Cache miss"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		// Compute the active bindings.
@@ -1605,7 +1606,7 @@ public final class BindingManager extends HandleObjectManager implements
 		Map commandIdsByTrigger = existingCache.getBindingsByTrigger();
 		if (commandIdsByTrigger != null) {
 			if (DEBUG) {
-				System.out.println("BINDINGS >> Cache hit"); //$NON-NLS-1$
+				Tracing.printTrace("BINDINGS", "Cache hit"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			setActiveBindings(commandIdsByTrigger, existingCache
 					.getTriggersByCommandId(), existingCache.getPrefixTable());
@@ -1614,7 +1615,7 @@ public final class BindingManager extends HandleObjectManager implements
 
 		// There is no cached entry for this.
 		if (DEBUG) {
-			System.out.println("BINDINGS >> Cache miss"); //$NON-NLS-1$
+			Tracing.printTrace("BINDINGS", "Cache miss"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		// Compute the active bindings.
@@ -1752,8 +1753,8 @@ public final class BindingManager extends HandleObjectManager implements
 		}
 
 		if (DEBUG) {
-			System.out
-					.println("BINDINGS >> There are " + deletions.size() + " deletion markers"); //$NON-NLS-1$//$NON-NLS-2$
+			Tracing.printTrace("BINDINGS", "There are " + deletions.size() //$NON-NLS-1$ //$NON-NLS-2$
+					+ " deletion markers"); //$NON-NLS-1$
 		}
 
 		// Remove the deleted items.

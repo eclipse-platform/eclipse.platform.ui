@@ -27,6 +27,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.HandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -818,9 +819,9 @@ final class BindingPersistence extends PreferencePersistence {
 			throws IOException {
 		// Print out debugging information, if requested.
 		if (DEBUG) {
-			System.out.println("BINDINGS >> Persisting active scheme '" //$NON-NLS-1$
-					+ activeScheme.getId() + "'"); //$NON-NLS-1$
-			System.out.println("BINDINGS >> Persisting bindings"); //$NON-NLS-1$
+			Tracing.printTrace("BINDINGS", "Persisting active scheme '" //$NON-NLS-1$ //$NON-NLS-2$
+					+ activeScheme.getId() + '\'');
+			Tracing.printTrace("BINDINGS", "Persisting bindings"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		// Write the simple preference key to the UI preference store.

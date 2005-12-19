@@ -22,6 +22,7 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -98,23 +99,25 @@ public final class WorkbenchKeyboard {
 			}
 
 			if (DEBUG && DEBUG_VERBOSE) {
-				System.out.print("KEYS >>> Listener.handleEvent(type = "); //$NON-NLS-1$
+				final StringBuffer buffer = new StringBuffer(
+						"Listener.handleEvent(type = "); //$NON-NLS-1$
 				switch (event.type) {
 				case SWT.KeyDown:
-					System.out.print("KeyDown"); //$NON-NLS-1$
+					buffer.append("KeyDown"); //$NON-NLS-1$
 					break;
 				case SWT.Traverse:
-					System.out.print("Traverse"); //$NON-NLS-1$
+					buffer.append("Traverse"); //$NON-NLS-1$
 					break;
 				default:
-					System.out.print(event.type);
+					buffer.append(event.type);
 				}
-				System.out.println(", stateMask = 0x" //$NON-NLS-1$
+				buffer.append(", stateMask = 0x" //$NON-NLS-1$
 						+ Integer.toHexString(event.stateMask)
 						+ ", keyCode = 0x" //$NON-NLS-1$
 						+ Integer.toHexString(event.keyCode) + ", time = " //$NON-NLS-1$
 						+ event.time + ", character = 0x" //$NON-NLS-1$
 						+ Integer.toHexString(event.character) + ")"); //$NON-NLS-1$
+				Tracing.printTrace("KEYS", buffer.toString()); //$NON-NLS-1$
 			}
 
 			filterKeySequenceBindings(event);
@@ -433,10 +436,10 @@ public final class WorkbenchKeyboard {
 				.getParameterizedCommand();
 
 		if (DEBUG) {
-			System.out
-					.println("KEYS >>> WorkbenchKeyboard.executeCommand(commandId = '" //$NON-NLS-1$
+			Tracing.printTrace("KEYS", //$NON-NLS-1$
+					"WorkbenchKeyboard.executeCommand(commandId = '" //$NON-NLS-1$
 							+ parameterizedCommand.getId() + "', parameters = " //$NON-NLS-1$
-							+ parameterizedCommand.getParameterMap() + ")"); //$NON-NLS-1$
+							+ parameterizedCommand.getParameterMap() + ')');
 		}
 
 		// Reset the key binding state (close window, clear status line, etc.)
@@ -450,11 +453,11 @@ public final class WorkbenchKeyboard {
 
 		if (DEBUG && DEBUG_VERBOSE) {
 			if (!commandDefined) {
-				System.out.println("KEYS >>>     not defined"); //$NON-NLS-1$
+				Tracing.printTrace("KEYS", "    not defined"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (!commandHandled) {
-				System.out.println("KEYS >>>     not handled"); //$NON-NLS-1$
+				Tracing.printTrace("KEYS", "    not handled"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (!commandEnabled) {
-				System.out.println("KEYS >>>     not enabled"); //$NON-NLS-1$
+				Tracing.printTrace("KEYS", "    not enabled"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
@@ -736,9 +739,9 @@ public final class WorkbenchKeyboard {
 	 */
 	public boolean press(List potentialKeyStrokes, Event event) {
 		if (DEBUG && DEBUG_VERBOSE) {
-			System.out
-					.println("KEYS >>> WorkbenchKeyboard.press(potentialKeyStrokes = " //$NON-NLS-1$
-							+ potentialKeyStrokes + ")"); //$NON-NLS-1$
+			Tracing.printTrace("KEYS", //$NON-NLS-1$
+					"WorkbenchKeyboard.press(potentialKeyStrokes = " //$NON-NLS-1$
+							+ potentialKeyStrokes + ')');
 		}
 
 		/*

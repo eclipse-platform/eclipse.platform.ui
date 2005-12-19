@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -467,21 +468,24 @@ final class ContextAuthority extends ExpressionAuthority {
 
 		// Debugging output
 		if (DEBUG) {
-			System.out.print("CONTEXTS >> register shell '" + shell + "' as "); //$NON-NLS-1$ //$NON-NLS-2$
+			final StringBuffer buffer = new StringBuffer("register shell '"); //$NON-NLS-1$
+			buffer.append(shell);
+			buffer.append("' as "); //$NON-NLS-1$
 			switch (type) {
 			case IContextService.TYPE_DIALOG:
-				System.out.println("dialog"); //$NON-NLS-1$
+				buffer.append("dialog"); //$NON-NLS-1$
 				break;
 			case IContextService.TYPE_WINDOW:
-				System.out.println("window"); //$NON-NLS-1$
+				buffer.append("window"); //$NON-NLS-1$
 				break;
 			case IContextService.TYPE_NONE:
-				System.out.println("none"); //$NON-NLS-1$
+				buffer.append("none"); //$NON-NLS-1$
 				break;
 			default:
-				System.out.println("unknown"); //$NON-NLS-1$
+				buffer.append("unknown"); //$NON-NLS-1$
 				break;
 			}
+			Tracing.printTrace("CONTEXTS", buffer.toString()); //$NON-NLS-1$
 		}
 
 		// Build the list of submissions.

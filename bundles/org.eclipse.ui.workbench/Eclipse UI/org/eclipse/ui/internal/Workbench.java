@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.commands.contexts.ContextManager;
@@ -965,6 +966,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		 * all the services and managers will exist, and be accessible via the
 		 * getService(Object) method.
 		 */
+		Command.DEBUG_COMMAND_EXECUTION = Policy.DEBUG_COMMANDS;
 		commandManager = new CommandManager();
 		final CommandService commandService = new CommandService(commandManager);
 		services.put(ICommandService.class, commandService);

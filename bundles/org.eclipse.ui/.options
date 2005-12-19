@@ -81,6 +81,9 @@ org.eclipse.ui/trace/keyBindings=false
 # Report every event received by the key binding architecture
 org.eclipse.ui/trace/keyBindings.verbose=false
 
+# Report information about command execution
+org.eclipse.ui/trace/commands=false
+
 # Report every change in the list of contexts.
 org.eclipse.ui/trace/contexts=false
 

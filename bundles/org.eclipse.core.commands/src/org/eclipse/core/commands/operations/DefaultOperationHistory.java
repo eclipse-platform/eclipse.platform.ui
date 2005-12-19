@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -316,9 +317,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// used again.
 		if (flushContext) {
 			if (DEBUG_OPERATION_HISTORY_DISPOSE) {
-				System.out.print("OPERATIONHISTORY >>> Flushing context "); //$NON-NLS-1$ 
-				System.out.print(context);
-				System.out.println();
+				Tracing.printTrace("OPERATIONHISTORY", "Flushing context "  //$NON-NLS-1$//$NON-NLS-2$
+						+ context);
 			}
 			flushUndo(context);
 			flushRedo(context);
@@ -351,19 +351,15 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			} catch (ExecutionException e) {
 				notifyNotOK(operation);
 				if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-					System.out
-							.print("OPERATIONHISTORY >>> ExecutionException while redoing "); //$NON-NLS-1$ 
-					System.out.print(operation);
-					System.out.println();
+					Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+							"ExecutionException while redoing " + operation); //$NON-NLS-1$
 				}
 				throw e;
 			} catch (Exception e) {
 				notifyNotOK(operation);
 				if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-					System.out
-							.print("OPERATIONHISTORY >>> Exception while redoing "); //$NON-NLS-1$ 
-					System.out.print(operation);
-					System.out.println();
+					Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+							"Exception while redoing " + operation); //$NON-NLS-1$
 				}
 				throw new ExecutionException(
 						"While redoing the operation, an exception occurred", e); //$NON-NLS-1$
@@ -420,19 +416,15 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			} catch (ExecutionException e) {
 				notifyNotOK(operation);
 				if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-					System.out
-							.print("OPERATIONHISTORY >>> ExecutionException while undoing "); //$NON-NLS-1$ 
-					System.out.print(operation);
-					System.out.println();
+					Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+							"ExecutionException while undoing " + operation); //$NON-NLS-1$
 				}
 				throw e;
 			} catch (Exception e) {
 				notifyNotOK(operation);
 				if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-					System.out
-							.print("OPERATIONHISTORY >>> Exception while undoing "); //$NON-NLS-1$ 
-					System.out.print(operation);
-					System.out.println();
+					Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+							"Exception while undoing " + operation); //$NON-NLS-1$
 				}
 				throw new ExecutionException(
 						"While undoing the operation, an exception occurred", e); //$NON-NLS-1$
@@ -589,9 +581,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void flushRedo(IUndoContext context) {
 		if (DEBUG_OPERATION_HISTORY_DISPOSE) {
-			System.out.print("OPERATIONHISTORY >>> Flushing redo history for "); //$NON-NLS-1$ 
-			System.out.print(context);
-			System.out.println();
+			Tracing.printTrace("OPERATIONHISTORY", "Flushing redo history for " //$NON-NLS-1$ //$NON-NLS-2$
+					+ context);
 		}
 
 		Object[] filtered = filter(redoList, context);
@@ -615,9 +606,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void flushUndo(IUndoContext context) {
 		if (DEBUG_OPERATION_HISTORY_DISPOSE) {
-			System.out.print("OPERATIONHISTORY >>> Flushing undo history for "); //$NON-NLS-1$ 
-			System.out.print(context);
-			System.out.println();
+			Tracing.printTrace("OPERATIONHISTORY", "Flushing undo history for " //$NON-NLS-1$ //$NON-NLS-2$
+					+ context);
 		}
 
 		Object[] filtered = filter(undoList, context);
@@ -752,13 +742,10 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			IStatus approval = approver.proceedRedoing(operation, this, info);
 			if (!approval.isOK()) {
 				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
-					System.out
-							.print("OPERATIONHISTORY >>> Redo not approved by "); //$NON-NLS-1$ 
-					System.out.print(approver);
-					System.out.print("for operation "); //$NON-NLS-1$ 
-					System.out.print(operation);
-					System.out.print(approval);
-					System.out.println();
+					Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+							"Redo not approved by " + approver //$NON-NLS-1$
+									+ "for operation " + operation //$NON-NLS-1$
+									+ " approved by " + approval); //$NON-NLS-1$
 				}
 				return approval;
 			}
@@ -809,14 +796,10 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			IStatus approval = approver.proceedUndoing(operation, this, info);
 			if (!approval.isOK()) {
 				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
-					System.out
-							.print("OPERATIONHISTORY >>> Undo not approved by "); //$NON-NLS-1$ 
-					System.out.print(approver);
-					System.out.print("for operation "); //$NON-NLS-1$ 
-					System.out.print(operation);
-					System.out.print(" with status "); //$NON-NLS-1$ 
-					System.out.print(approval);
-					System.out.println();
+					Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+							"Undo not approved by " + approver //$NON-NLS-1$
+									+ "for operation " + operation //$NON-NLS-1$
+									+ " with status " + approval); //$NON-NLS-1$
 				}
 				return approval;
 			}
@@ -883,9 +866,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	private void notifyAboutToExecute(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			System.out.print("OPERATIONHISTORY >>> ABOUT_TO_EXECUTE "); //$NON-NLS-1$ 
-			System.out.print(operation);
-			System.out.println();
+			Tracing.printTrace("OPERATIONHISTORY", "ABOUT_TO_EXECUTE " //$NON-NLS-1$ //$NON-NLS-2$
+					+ operation);
 		}
 
 		notifyListeners(new OperationHistoryEvent(
@@ -897,9 +879,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyAboutToRedo(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			System.out.print("OPERATIONHISTORY >>> ABOUT_TO_REDO "); //$NON-NLS-1$ 
-			System.out.print(operation);
-			System.out.println();
+			Tracing
+					.printTrace("OPERATIONHISTORY", "ABOUT_TO_REDO " //$NON-NLS-1$ //$NON-NLS-2$
+							+ operation);
 		}
 
 		notifyListeners(new OperationHistoryEvent(
@@ -911,9 +893,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyAboutToUndo(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			System.out.print("OPERATIONHISTORY >>> ABOUT_TO_UNDO "); //$NON-NLS-1$ 
-			System.out.print(operation);
-			System.out.println();
+			Tracing
+					.printTrace("OPERATIONHISTORY", "ABOUT_TO_UNDO " //$NON-NLS-1$ //$NON-NLS-2$
+							+ operation);
 		}
 
 		notifyListeners(new OperationHistoryEvent(
@@ -925,9 +907,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyAdd(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			System.out.print("OPERATIONHISTORY >>> OPERATION_ADDED "); //$NON-NLS-1$ 
-			System.out.print(operation);
-			System.out.println();
+			Tracing.printTrace("OPERATIONHISTORY", "OPERATION_ADDED " //$NON-NLS-1$ //$NON-NLS-2$
+					+ operation);
 		}
 
 		notifyListeners(new OperationHistoryEvent(
@@ -938,10 +919,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * Notify listeners that an operation is done executing.
 	 */
 	private void notifyDone(IUndoableOperation operation) {
-		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			System.out.print("OPERATIONHISTORY >>> DONE "); //$NON-NLS-1$ 
-			System.out.print(operation);
-			System.out.println();
+		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {Tracing
+			.printTrace("OPERATIONHISTORY", "DONE " + operation); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.DONE,
@@ -965,9 +944,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyNotOK(IUndoableOperation operation, IStatus status) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			System.out.print("OPERATIONHISTORY >>> OPERATION_NOT_OK "); //$NON-NLS-1$ 
-			System.out.print(operation);
-			System.out.println();
+			Tracing.printTrace("OPERATIONHISTORY", "OPERATION_NOT_OK " //$NON-NLS-1$ //$NON-NLS-2$
+					+ operation);
 		}
 
 		notifyListeners(new OperationHistoryEvent(
@@ -979,9 +957,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyRedone(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			System.out.print("OPERATIONHISTORY >>> REDONE "); //$NON-NLS-1$ 
-			System.out.print(operation);
-			System.out.println();
+			Tracing.printTrace("OPERATIONHISTORY", "REDONE " + operation); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.REDONE,
@@ -993,9 +969,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyRemoved(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			System.out.print("OPERATIONHISTORY >>> OPERATION_REMOVED "); //$NON-NLS-1$ 
-			System.out.print(operation);
-			System.out.println();
+			Tracing.printTrace("OPERATIONHISTORY", "OPERATION_REMOVED " //$NON-NLS-1$ //$NON-NLS-2$
+					+ operation);
 		}
 
 		notifyListeners(new OperationHistoryEvent(
@@ -1007,9 +982,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyUndone(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			System.out.print("OPERATIONHISTORY >>> UNDONE "); //$NON-NLS-1$ 
-			System.out.print(operation);
-			System.out.println();
+			Tracing.printTrace("OPERATIONHISTORY", "UNDONE " + operation); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.UNDONE,
@@ -1021,9 +994,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyChanged(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			System.out.print("OPERATIONHISTORY >>> OPERATION_CHANGED "); //$NON-NLS-1$ 
-			System.out.print(operation);
-			System.out.println();
+			Tracing.printTrace("OPERATIONHISTORY", "OPERATION_CHANGED "  //$NON-NLS-1$//$NON-NLS-2$
+					+ operation);
 		}
 
 		notifyListeners(new OperationHistoryEvent(
@@ -1070,10 +1042,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// error if operation is invalid
 		if (!operation.canRedo()) {
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-				System.out
-						.print("OPERATIONHISTORY >>> Redo operation not valid - "); //$NON-NLS-1$ 
-				System.out.print(operation);
-				System.out.println();
+				Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+						"Redo operation not valid - " + operation); //$NON-NLS-1$
 			}
 
 			return IOperationHistory.OPERATION_INVALID_STATUS;
@@ -1102,10 +1072,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			}
 		} else {
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-				System.out
-						.print("OPERATIONHISTORY >>> Redo operation not valid - "); //$NON-NLS-1$ 
-				System.out.print(operation);
-				System.out.println();
+				Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+						"Redo operation not valid - " + operation); //$NON-NLS-1$
 			}
 
 			status = IOperationHistory.OPERATION_INVALID_STATUS;
@@ -1246,10 +1214,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// error if operation is invalid
 		if (!operation.canUndo()) {
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-				System.out
-						.print("OPERATIONHISTORY >>> Undo operation not valid - "); //$NON-NLS-1$ 
-				System.out.print(operation);
-				System.out.println();
+				Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+						"Undo operation not valid - " + operation); //$NON-NLS-1$
 			}
 			return IOperationHistory.OPERATION_INVALID_STATUS;
 		}
@@ -1276,10 +1242,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			}
 		} else {
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-				System.out
-						.print("OPERATIONHISTORY >>> Undo operation not valid - "); //$NON-NLS-1$ 
-				System.out.print(operation);
-				System.out.println();
+				Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+						"Undo operation not valid - " + operation); //$NON-NLS-1$
 			}
 			status = IOperationHistory.OPERATION_INVALID_STATUS;
 		}
@@ -1296,12 +1260,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			if (openComposite != null && openComposite != operation) {
 				// unexpected nesting of operations.
 				if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-					System.out
-							.print("OPERATIONHISTORY >>> Open operation called while another operation is open.  old: "); //$NON-NLS-1$ 
-					System.out.print(openComposite);
-					System.out.print("new:  "); //$NON-NLS-1$
-					System.out.print(operation);
-					System.out.println();
+					Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+							"Open operation called while another operation is open.  old: " //$NON-NLS-1$
+									+ openComposite + "; new:  " + operation); //$NON-NLS-1$
 				}
 
 				throw new IllegalStateException(
@@ -1310,9 +1271,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			openComposite = operation;
 		}
 		if (DEBUG_OPERATION_HISTORY_OPENOPERATION) {
-			System.out.print("OPERATIONHISTORY >>> Opening operation "); //$NON-NLS-1$ 
-			System.out.print(openComposite);
-			System.out.println();
+			Tracing.printTrace("OPERATIONHISTORY", "Opening operation " //$NON-NLS-1$ //$NON-NLS-2$
+					+ openComposite);
 		}
 
 		if (mode == EXECUTE) {
@@ -1333,18 +1293,16 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		synchronized (openCompositeLock) {
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
 				if (openComposite == null) {
-					System.out
-							.print("OPERATIONHISTORY >>> Attempted to close operation when none was open "); //$NON-NLS-1$ 
-					System.out.println();
+					Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+							"Attempted to close operation when none was open"); //$NON-NLS-1$
 					return;
 				}
 			}
 			// notifications will occur outside the synchonized block
 			if (openComposite != null) {
 				if (DEBUG_OPERATION_HISTORY_OPENOPERATION) {
-					System.out.print("OPERATIONHISTORY >>> Closing operation "); //$NON-NLS-1$ 
-					System.out.print(openComposite);
-					System.out.println();
+					Tracing.printTrace("OPERATIONHISTORY", "Closing operation " //$NON-NLS-1$ //$NON-NLS-2$
+							+ openComposite);
 				}
 				endedComposite = openComposite;
 				openComposite = null;
@@ -1388,10 +1346,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// This plug-in is intended to run stand-alone outside of the
 		// platform, so we do not employ standard platform exception logging.
 		if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-			System.out
-					.print("OPERATIONHISTORY >>> Exception during notification callback "); //$NON-NLS-1$ 
-			System.out.print(e);
-			System.out.println();
+			Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+					"Exception during notification callback " + e); //$NON-NLS-1$
 		}
 		e.printStackTrace();
 	}

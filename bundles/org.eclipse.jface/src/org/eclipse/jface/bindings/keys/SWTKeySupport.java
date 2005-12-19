@@ -56,7 +56,7 @@ public final class SWTKeySupport {
 	 * <p>
 	 * Converts the given event into an SWT accelerator value -- considering the
 	 * modified character with the shift modifier. This is the third accelerator
-	 * value that should be checked.  >>>>should be checked...?? when...??
+	 * value that should be checked when processing incoming key events.
 	 * </p>
 	 * <p>
 	 * For example, on a standard US keyboard, "Ctrl+Shift+5" would be viewed as
@@ -77,8 +77,9 @@ public final class SWTKeySupport {
 	 * <p>
 	 * Converts the given event into an SWT accelerator value -- considering the
 	 * unmodified character with all modifier keys. This is the first
-	 * accelerator value that should be checked >>>>when...???. However, all alphabetic
-	 * characters are considered as their uppercase equivalents.
+	 * accelerator value that should be checked when processing incoming key
+	 * events. However, all alphabetic characters are considered as their
+	 * uppercase equivalents.
 	 * </p>
 	 * <p>
 	 * For example, on a standard US keyboard, "Ctrl+Shift+5" would be viewed as
@@ -145,9 +146,9 @@ public final class SWTKeySupport {
 	/**
 	 * Converts the given event into an SWT accelerator value -- considering the
 	 * modified character without the shift modifier. This is the second
-	 * accelerator value that should be checked >>>>>when.... Key strokes with alphabetic
-	 * natural keys are run through
-	 * <code>convertEventToUnmodifiedAccelerator</code>
+	 * accelerator value that should be checked when processing incoming key
+	 * events. Key strokes with alphabetic natural keys are run through
+	 * <code>convertEventToUnmodifiedAccelerator</code>.
 	 * 
 	 * @param event
 	 *            The event to be converted; must not be <code>null</code>.

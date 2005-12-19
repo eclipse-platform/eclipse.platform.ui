@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.ui.internal.misc.Policy;
 
 /**
@@ -116,7 +117,7 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 	 */
 	protected final void logDebuggingInfo(final String message) {
 		if (DEBUG && (message != null)) {
-			System.out.println("SOURCES >> " + message); //$NON-NLS-1$
+			Tracing.printTrace("SOURCES", message); //$NON-NLS-1$
 		}
 	}
 

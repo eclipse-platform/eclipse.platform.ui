@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.commands.common.HandleObjectManager;
+import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.internal.commands.util.Util;
 
 /**
@@ -63,7 +64,7 @@ public final class ContextManager extends HandleObjectManager implements
 		activeContextIds.add(contextId);
 
 		if (DEBUG) {
-			System.out.println("CONTEXTS >> " + activeContextIds); //$NON-NLS-1$
+			Tracing.printTrace("CONTEXTS", activeContextIds.toString()); //$NON-NLS-1$
 		}
 
 		fireContextManagerChanged(new ContextManagerEvent(this, null, false,
@@ -190,7 +191,7 @@ public final class ContextManager extends HandleObjectManager implements
 		activeContextIds.remove(contextId);
 
 		if (DEBUG) {
-			System.out.println("CONTEXTS >> " + activeContextIds); //$NON-NLS-1$
+			Tracing.printTrace("CONTEXTS", activeContextIds.toString()); //$NON-NLS-1$
 		}
 
 		fireContextManagerChanged(new ContextManagerEvent(this, null, false,
@@ -231,7 +232,7 @@ public final class ContextManager extends HandleObjectManager implements
 		}
 
 		if (DEBUG) {
-			System.out.println("CONTEXTS >> " + activeContextIds); //$NON-NLS-1$
+			Tracing.printTrace("CONTEXTS", activeContextIds.toString()); //$NON-NLS-1$
 		}
 
 		fireContextManagerChanged(new ContextManagerEvent(this, null, false,

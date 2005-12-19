@@ -14,6 +14,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
+import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.ui.internal.commands.ILegacyAttributeNames;
 import org.eclipse.ui.internal.misc.Policy;
 
@@ -93,15 +94,15 @@ public final class LegacyHandlerWrapper implements IHandler {
 			throws ExecutionException {
 		// Debugging output
 		if (DEBUG_HANDLERS) {
-			System.out
-					.print("HANDLERS >>> Executing LegacyHandlerWrapper for "); //$NON-NLS-1$
+			final StringBuffer buffer = new StringBuffer("Executing LegacyHandlerWrapper for "); //$NON-NLS-1$
 			if (handler == null) {
-				System.out.println("no handler"); //$NON-NLS-1$
+				buffer.append("no handler"); //$NON-NLS-1$
 			} else {
-				System.out.print('\'');
-				System.out.print(handler.getClass().getName());
-				System.out.println('\'');
+				buffer.append('\'');
+				buffer.append(handler.getClass().getName());
+				buffer.append('\'');
 			}
+			Tracing.printTrace("HANDLERS", buffer.toString()); //$NON-NLS-1$
 		}
 
 		try {

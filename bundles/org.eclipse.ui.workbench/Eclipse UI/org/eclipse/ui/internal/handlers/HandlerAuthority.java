@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISources;
@@ -339,15 +340,17 @@ final class HandlerAuthority extends ExpressionAuthority {
 		// If we are logging information, now is the time to do it.
 		if (DEBUG) {
 			if (conflict) {
-				System.out
-						.println("HANDLERS >>> Unresolved conflict detected for '" //$NON-NLS-1$
-								+ commandId + '\'');
+				Tracing
+						.printTrace("HANDLERS", //$NON-NLS-1$
+								"Unresolved conflict detected for '" //$NON-NLS-1$
+										+ commandId + '\'');
 			} else if ((DEBUG_VERBOSE)
 					&& ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
 							.equals(commandId)))) {
-				System.out
-						.println("HANDLERS >>> Resolved conflict detected.  The following activation won: "); //$NON-NLS-1$
-				System.out.println("HANDLERS >>>     " + bestActivation); //$NON-NLS-1$
+				Tracing
+						.printTrace("HANDLERS", //$NON-NLS-1$
+								"Resolved conflict detected.  The following activation won: "); //$NON-NLS-1$
+				Tracing.printTrace("HANDLERS", "    " + bestActivation); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 

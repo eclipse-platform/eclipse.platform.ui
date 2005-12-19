@@ -61,6 +61,11 @@ public class Policy {
     public static boolean DEBUG_TOOLBAR_DISPOSAL = DEFAULT;
 
     /**
+     * Whether to print debugging information about the execution of commands
+     */
+    public static boolean DEBUG_COMMANDS = DEFAULT;
+
+    /**
      * Whether to print debugging information about the internal state of the 
      * context support within the workbench.
      */
@@ -132,6 +137,7 @@ public class Policy {
             DEBUG_KEY_BINDINGS = getDebugOption("/trace/keyBindings"); //$NON-NLS-1$
             DEBUG_KEY_BINDINGS_VERBOSE = getDebugOption("/trace/keyBindings.verbose"); //$NON-NLS-1$
             DEBUG_TOOLBAR_DISPOSAL = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface/trace/toolbarDisposal")); //$NON-NLS-1$ //$NON-NLS-2$
+            DEBUG_COMMANDS = getDebugOption("/trace/commands"); //$NON-NLS-1$
             DEBUG_CONTEXTS = getDebugOption("/trace/contexts"); //$NON-NLS-1$
             DEBUG_CONTEXTS_VERBOSE = getDebugOption("/trace/contexts.verbose"); //$NON-NLS-1$
             DEBUG_HANDLERS = getDebugOption("/trace/handlers"); //$NON-NLS-1$

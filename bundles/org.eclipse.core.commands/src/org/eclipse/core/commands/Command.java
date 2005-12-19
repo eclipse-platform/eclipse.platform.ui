@@ -11,6 +11,7 @@
 package org.eclipse.core.commands;
 
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.internal.commands.util.Util;
 import org.eclipse.core.runtime.ListenerList;
 
@@ -272,21 +273,6 @@ public final class Command extends NamedHandleObjectWithState implements
 		firePreExecute(event);
 		final IHandler handler = this.handler;
 
-		// Debugging output
-		if (DEBUG_COMMAND_EXECUTION) {
-			System.out.print("COMMANDS >>> executing "); //$NON-NLS-1$ 
-			if (handler == null) {
-				System.out.print("no handler"); //$NON-NLS-1$
-			} else {
-				System.out.print('\'');
-				System.out.print(handler.getClass().getName());
-				System.out.print("'("); //$NON-NLS-1$" +
-				System.out.print(handler.hashCode());
-				System.out.print(')');
-			}
-			System.out.println();
-		}
-
 		// Perform the execution, if there is a handler.
 		if ((handler != null) && (handler.isHandled())) {
 			try {
@@ -334,21 +320,6 @@ public final class Command extends NamedHandleObjectWithState implements
 			NotEnabledException, NotHandledException {
 		firePreExecute(event);
 		final IHandler handler = this.handler;
-
-		// Debugging output
-		if (DEBUG_COMMAND_EXECUTION) {
-			System.out.print("COMMANDS >>> executing "); //$NON-NLS-1$ 
-			if (handler == null) {
-				System.out.print("no handler"); //$NON-NLS-1$
-			} else {
-				System.out.print('\'');
-				System.out.print(handler.getClass().getName());
-				System.out.print("'("); //$NON-NLS-1$" +
-				System.out.print(handler.hashCode());
-				System.out.print(')');
-			}
-			System.out.println();
-		}
 
 		if (!isDefined()) {
 			final NotDefinedException exception = new NotDefinedException(
@@ -411,6 +382,12 @@ public final class Command extends NamedHandleObjectWithState implements
 	 * @since 3.2
 	 */
 	private final void fireNotDefined(final NotDefinedException e) {
+		// Debugging output
+		if (DEBUG_COMMAND_EXECUTION) {
+			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
+					+ "not defined: id=" + getId() + "; exception=" + e); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -433,6 +410,12 @@ public final class Command extends NamedHandleObjectWithState implements
 	 * @since 3.2
 	 */
 	private final void fireNotEnabled(final NotEnabledException e) {
+		// Debugging output
+		if (DEBUG_COMMAND_EXECUTION) {
+			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
+					+ "not enabled: id=" + getId() + "; exception=" + e); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -454,6 +437,12 @@ public final class Command extends NamedHandleObjectWithState implements
 	 *            <code>null</code>.
 	 */
 	private final void fireNotHandled(final NotHandledException e) {
+		// Debugging output
+		if (DEBUG_COMMAND_EXECUTION) {
+			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
+					+ "not handled: id=" + getId() + "; exception=" + e); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -473,6 +462,12 @@ public final class Command extends NamedHandleObjectWithState implements
 	 *            again.
 	 */
 	private final void firePostExecuteFailure(final ExecutionException e) {
+		// Debugging output
+		if (DEBUG_COMMAND_EXECUTION) {
+			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
+					+ "failure: id=" + getId() + "; exception=" + e); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -490,6 +485,14 @@ public final class Command extends NamedHandleObjectWithState implements
 	 *            The return value from the command; may be <code>null</code>.
 	 */
 	private final void firePostExecuteSuccess(final Object returnValue) {
+		// Debugging output
+		if (DEBUG_COMMAND_EXECUTION) {
+			Tracing
+					.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
+							+ "success: id=" + getId() + "; returnValue=" //$NON-NLS-1$ //$NON-NLS-2$
+							+ returnValue);
+		}
+		
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -507,6 +510,12 @@ public final class Command extends NamedHandleObjectWithState implements
 	 *            The execution event that will be used; never <code>null</code>.
 	 */
 	private final void firePreExecute(final ExecutionEvent event) {
+		// Debugging output
+		if (DEBUG_COMMAND_EXECUTION) {
+			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
+					+ "starting: id=" + getId() + "; event=" + event); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -681,15 +690,17 @@ public final class Command extends NamedHandleObjectWithState implements
 		if ((DEBUG_HANDLERS)
 				&& ((DEBUG_HANDLERS_COMMAND_ID == null) || (DEBUG_HANDLERS_COMMAND_ID
 						.equals(id)))) {
-			System.out.print("HANDLERS >>> Command('" + id //$NON-NLS-1$
-					+ "') has changed to "); //$NON-NLS-1$
+			final StringBuffer buffer = new StringBuffer("Command('"); //$NON-NLS-1$
+			buffer.append(id);
+			buffer.append("') has changed to "); //$NON-NLS-1$
 			if (handler == null) {
-				System.out.println("no handler"); //$NON-NLS-1$
+				buffer.append("no handler"); //$NON-NLS-1$
 			} else {
-				System.out.print("'"); //$NON-NLS-1$
-				System.out.print(handler);
-				System.out.println("' as its handler"); //$NON-NLS-1$
+				buffer.append('\'');
+				buffer.append(handler);
+				buffer.append("' as its handler"); //$NON-NLS-1$
 			}
+			Tracing.printTrace("HANDLERS", buffer.toString());  //$NON-NLS-1$
 		}
 
 		// Send notification
