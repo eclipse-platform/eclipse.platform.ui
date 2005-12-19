@@ -19,11 +19,10 @@ import java.util.Set;
 
 
 /**
- * This is a helpr that will hook up and listen for <code>PropertyChangeEvent</code> events
+ * This is a helper that will hook up and listen for <code>PropertyChangeEvent</code> events
  * for a set of target JavaBeans
  * 
  * @since 3.2
- *
  */
 public class ListenerSupport {
 
