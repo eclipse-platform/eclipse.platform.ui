@@ -30,7 +30,7 @@ import org.eclipse.jface.databinding.UpdatableValue;
  */
 public abstract class ConditionalUpdatableValue extends UpdatableValue {
 
-	private final IUpdatableValue innerUpdatableValue;
+	private final IUpdatableValue[] innerUpdatableValues;
 
 	IChangeListener changeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
@@ -44,24 +44,39 @@ public abstract class ConditionalUpdatableValue extends UpdatableValue {
 	 * @param innerUpdatableValue
 	 */
 	public ConditionalUpdatableValue(IUpdatableValue innerUpdatableValue) {
-		this.innerUpdatableValue = innerUpdatableValue;
-		innerUpdatableValue.addChangeListener(changeListener);
+		this(new IUpdatableValue[]{innerUpdatableValue});
 	}
 
+	/**
+	 * Creates a new instance.
+	 * 
+	 * @param innerUpdatableValues
+	 */
+	public ConditionalUpdatableValue(IUpdatableValue[] innerUpdatableValues) {
+		this.innerUpdatableValues = innerUpdatableValues;
+		for (int i = 0; i < innerUpdatableValues.length; i++) {
+			innerUpdatableValues[i].addChangeListener(changeListener);
+		}
+	}
+	
 	public void setValue(Object value) {
 		throw new UnsupportedOperationException();
 	}
 
 	public Object getValue() {
-		Object currentValue = innerUpdatableValue.getValue();
-		return new Boolean(compute(currentValue));
+		Object[] currentValues = new Object[innerUpdatableValues.length];
+		for (int i = 0; i < currentValues.length; i++) {
+			currentValues[i] = innerUpdatableValues[i].getValue();
+		}		
+		return new Boolean(compute(currentValues.length==1?currentValues[0]:currentValues));
 	}
 
 	/**
 	 * To be implemented by subclasses.
 	 * 
 	 * @param currentValue
-	 *            the current value of the tracked updatable value.
+	 *            the current value of the tracked updatable value, or
+	 *            the array of the current values of the tracked updatable values.
 	 * @return a boolean result
 	 */
 	abstract protected boolean compute(Object currentValue);
@@ -72,7 +87,9 @@ public abstract class ConditionalUpdatableValue extends UpdatableValue {
 
 	public void dispose() {
 		super.dispose();
-		innerUpdatableValue.removeChangeListener(changeListener);
+		for (int i = 0; i < innerUpdatableValues.length; i++) {
+			innerUpdatableValues[i].removeChangeListener(changeListener);
+		}		
 	}
 
 }
