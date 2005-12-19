@@ -282,17 +282,19 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	 */
 	public void setVisible(final boolean visible) {
 		fHasProjectHistory= hasRefactoringHistory();
-		final IProject project= getCurrentProject();
-		if (project != null) {
-			final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
-			try {
-				service.connect();
-				fHistoryControl.setInput(service.getProjectHistory(project, null));
-			} finally {
-				service.disconnect();
-			}
-		} else
-			fHistoryControl.setInput(null);
 		super.setVisible(visible);
+		if (visible) {
+			final IProject project= getCurrentProject();
+			if (project != null) {
+				final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+				try {
+					service.connect();
+					fHistoryControl.setInput(service.getProjectHistory(project, null));
+				} finally {
+					service.disconnect();
+				}
+			} else
+				fHistoryControl.setInput(null);
+		}
 	}
 }
