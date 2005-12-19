@@ -91,6 +91,10 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * remote has changed since the last time the local resource was updated
 	 * with the remote contents.
 	 * <p>
+	 * For two-way comparisons, return <code>true</code> if the remote contents 
+	 * differ from the local contents. In this case, this method is equivalent 
+	 * to <code>contentsDiffer</code>.
+	 * <p>
 	 * This can be used by clients to determine if they need to fetch the remote
 	 * contents in order to determine if the resources that constitute the model
 	 * element are different in the remote location. If the local file exists
@@ -116,8 +120,6 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 *             SERVER_CONTACT_PROHIBITED. </li>
 	 *             <li>The corresponding remote resource is not a container
 	 *             (status code will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
-	 *             <li>The comparison type is two-way (status code will be
-	 *             INVALID_FOR_COMPARISON_TYPE)
 	 *             </ul>
 	 */
     public abstract boolean hasRemoteChange(IResource resource, IProgressMonitor monitor) throws CoreException;
@@ -128,7 +130,18 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
      * @param resource the resource being tested
      * @param monitor a progress monitor
      * @return whether the resource contains local modifications
-     * @throws CoreException
+	 * @throws CoreException if the contents could not be compared. Reasons
+	 *             include:
+	 *             <ul>
+	 *             <li>The server could not be contacted for some reason (e.g.
+	 *             the context in which the operation is being called must be
+	 *             short running). The status code will be
+	 *             SERVER_CONTACT_PROHIBITED. </li>
+	 *             <li>The corresponding remote resource is not a container
+	 *             (status code will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
+	 *             <li>The comparison type is two-way (status code will be
+	 *             INVALID_FOR_COMPARISON_TYPE)
+	 *             </ul>
      */
     public abstract boolean hasLocalChange(IResource resource, IProgressMonitor monitor) throws CoreException;
     

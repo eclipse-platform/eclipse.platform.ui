@@ -155,10 +155,8 @@
                class="org.eclipse.core.internal.resources.mapping.ResourceModelProvider"
                name="%resourceModelName"/>
           <enablement>
-           <with variable="element">
-   	         <instanceof value="org.eclipse.core.resources.IResource"/>
-           </with>
-       </enablement>
+            <instanceof value="org.eclipse.core.resources.IResource" />
+          </enablement>
       </extension>
 <!-- Property testers -->
    <extension

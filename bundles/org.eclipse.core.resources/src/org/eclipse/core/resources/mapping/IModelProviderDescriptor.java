@@ -71,10 +71,9 @@ public interface IModelProviderDescriptor {
 	 * for the returned resources can then be obtained by invoking
 	 * {@link ModelProvider#getMappings(IResource[], ResourceMappingContext, IProgressMonitor)}
 	 * @param resources the resources
-	 * @param affectedNatures the natures of projects containing the resources
 	 * @return the resources that match the descriptor's enablement rule
 	 */
-	public IResource[] getMatchingResources(IResource[] resources, String[] affectedNatures) throws CoreException;
+	public IResource[] getMatchingResources(IResource[] resources) throws CoreException;
 
 	/**
 	 * Return the model provider for this descriptor, instantiating it if it is

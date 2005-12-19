@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.resources.mapping;
 
 import java.util.*;
+
 import org.eclipse.core.expressions.*;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.utils.Messages;
@@ -29,10 +30,8 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 	private ModelProvider provider;
 	private Expression enablementRule;
 
-	private static EvaluationContext createEvaluationContext(Object element, String[] affectedNatures) {
+	private static EvaluationContext createEvaluationContext(Object element) {
 		EvaluationContext result = new EvaluationContext(null, element);
-		result.addVariable("element", element); //$NON-NLS-1$
-		result.addVariable("affectedNatures", Arrays.asList(affectedNatures)); //$NON-NLS-1$
 		return result;
 	}
 
@@ -62,11 +61,11 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 		return label;
 	}
 
-	public IResource[] getMatchingResources(IResource[] resources, String[] affectedNatures) throws CoreException {
+	public IResource[] getMatchingResources(IResource[] resources) throws CoreException {
 		Set result = new HashSet();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			EvaluationContext evalContext = createEvaluationContext(resource, affectedNatures);
+			EvaluationContext evalContext = createEvaluationContext(resource);
 			if (matches(evalContext)) {
 				result.add(resource);
 			}
