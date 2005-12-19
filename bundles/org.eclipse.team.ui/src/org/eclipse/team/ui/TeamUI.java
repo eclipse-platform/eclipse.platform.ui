@@ -53,6 +53,15 @@ public class TeamUI {
 	public static final String RESOURCE_MAPPING_SCOPE = "org.eclipse.team.ui.resourceMappingScope"; //$NON-NLS-1$
 
 	/**
+	 * Property constant used to store and retrieve the synchronization page configuration
+	 * from the {@link org.eclipse.ui.navigator.IExtensionStateModel} used by the Common Navigator framework.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String SYNCHRONIZATION_PAGE_CONFIGURATION = "org.eclipse.team.ui.synchronizationPageConfiguration"; //$NON-NLS-1$
+
+	
+	/**
 	 * Return the synchronize manager.
 	 * 
 	 * @return the synchronize manager

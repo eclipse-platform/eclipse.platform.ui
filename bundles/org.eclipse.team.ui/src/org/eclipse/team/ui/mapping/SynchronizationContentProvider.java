@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -232,6 +232,16 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 */
 	protected IResourceMappingScope getScope() {
 		return scope;
+	}
+	
+	/**
+	 * Return the synchronization page configuration associated with the view to which
+	 * this content provider applies. A <code>null</code> is returned if
+	 * no configuration is available.
+	 * @return the synchronization page configuration or <code>null</code>
+	 */
+	protected ISynchronizePageConfiguration getConfiguration() {
+		return (ISynchronizePageConfiguration)stateModel.getProperty(TeamUI.SYNCHRONIZATION_PAGE_CONFIGURATION);
 	}
 	
 	/* (non-Javadoc)
