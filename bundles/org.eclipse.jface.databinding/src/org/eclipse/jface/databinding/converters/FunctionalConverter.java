@@ -1,3 +1,4 @@
+// TODO djo: copyright
 package org.eclipse.jface.databinding.converters;
 
 import org.eclipse.jface.databinding.converter.Converter;
