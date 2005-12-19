@@ -57,20 +57,20 @@ public class ModelSynchronizeParticipant extends
 						ISynchronizePageConfiguration.P_TOOLBAR_MENU,
 						TOOLBAR_CONTRIBUTION_GROUP,
 						updateToolbarAction);
+				appendToGroup(
+						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+						CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+						new MergeAction(configuration, false));
+				appendToGroup(
+						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+						CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+						new MergeAction(configuration, true));
+				appendToGroup(
+						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+						CONTEXT_MENU_CONTRIBUTION_GROUP_2,
+						new MarkAsMergedAction(configuration));
 			}
 			
-			appendToGroup(
-					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-					new MergeAction(configuration, false));
-			appendToGroup(
-					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-					new MergeAction(configuration, true));
-			appendToGroup(
-					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP_2,
-					new MarkAsMergedAction(configuration));
 //			appendToGroup(
 //					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 //					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
