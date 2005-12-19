@@ -16,8 +16,9 @@ import org.eclipse.team.core.subscribers.*;
 
 /**
  * This class acts as a superclass for any class that is collecting subscriber
- * resources. It provides funtionality that listens to resource deltas and subscriber change events
- * in order to determine when the state of resources that are supervised by a subscriber may have changed.
+ * resources. It provides functionality that listens to resource deltas and
+ * subscriber change events in order to determine when the state of resources
+ * that are supervised by a subscriber may have changed.
  */
 public abstract class SubscriberResourceCollector implements IResourceChangeListener, ISubscriberChangeListener {
     
@@ -44,7 +45,7 @@ public abstract class SubscriberResourceCollector implements IResourceChangeList
 	}
 	
     /**
-     * Deregister the listeners for this collector.
+     * De-register the listeners for this collector.
      */
 	public void dispose() {
 		getSubscriber().removeListener(this);		
@@ -82,8 +83,8 @@ public abstract class SubscriberResourceCollector implements IResourceChangeList
 
     /**
      * This method is invoked at the beginning of a subscriber change event
-     * or resource delta event. The endInput methos will be invoked at some point
-     * following this. There may be several invokations of remove or change
+     * or resource delta event. The endInput method will be invoked at some point
+     * following this. There may be several invocations of remove or change
      * in between.
      */
     protected void beginInput() {
@@ -116,7 +117,7 @@ public abstract class SubscriberResourceCollector implements IResourceChangeList
 	 * Process the resource delta and posts all necessary events to the background
 	 * event handler.
 	 * 
-	 * @param delta the resource delta to analyse
+	 * @param delta the resource delta to analyze
 	 */
 	protected void processDelta(IResourceDelta delta, IResource[] roots) {
 		IResource resource = delta.getResource();
