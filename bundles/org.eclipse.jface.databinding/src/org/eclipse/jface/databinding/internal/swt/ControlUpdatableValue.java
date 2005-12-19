@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Control;
 public class ControlUpdatableValue extends UpdatableValue {
 
 	private final Control control;
+	private final String attribute;
 
 	/**
 	 * @param control
@@ -29,19 +30,24 @@ public class ControlUpdatableValue extends UpdatableValue {
 	 */
 	public ControlUpdatableValue(Control control, String attribute) {
 		this.control = control;
-		if (!attribute.equals(SWTProperties.ENABLED)) {
+		this.attribute = attribute;
+		if (!attribute.equals(SWTProperties.ENABLED) && !attribute.equals(SWTProperties.VISIBLE)) {
 			throw new IllegalArgumentException();
 		}
 	}
 
 	public void setValue(Object value) {
-		boolean oldValue = control.getEnabled();
-		control.setEnabled(((Boolean) value).booleanValue());
-		fireChangeEvent(ChangeEvent.CHANGE, new Boolean(oldValue), value);
+		Object oldValue = getValue();
+		if (attribute.equals(SWTProperties.ENABLED)) {
+			control.setEnabled(((Boolean) value).booleanValue());
+		} else if (attribute.equals(SWTProperties.VISIBLE)) {
+			control.setVisible(((Boolean) value).booleanValue());
+		}
+		fireChangeEvent(ChangeEvent.CHANGE, oldValue, value);
 	}
 
 	public Object getValue() {
-		return new Boolean(control.getEnabled());
+		return new Boolean(attribute.equals(SWTProperties.ENABLED) ? control.getEnabled() : control.getVisible());
 	}
 
 	public Class getValueType() {

@@ -23,6 +23,10 @@ public interface SWTProperties {
 	 */
 	public static final String ENABLED = "enabled"; //$NON-NLS-1$
 	/**
+	 * Applies to Control
+	 */
+	public static final String VISIBLE = "visible"; //$NON-NLS-1$
+	/**
 	 * Applies to
 	 */
 	public static final String ITEMS = "items"; //$NON-NLS-1$

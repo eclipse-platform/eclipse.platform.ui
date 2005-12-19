@@ -105,6 +105,11 @@ final public class SWTUpdatableFactory implements IUpdatableFactory {
 				return new ControlUpdatableValue((Control) object,
 						(String) attribute);
 			}
+			if (object instanceof Control
+					&& SWTProperties.VISIBLE.equals(attribute)) {
+				return new ControlUpdatableValue((Control) object,
+						(String) attribute);
+			}
 			if (object instanceof Spinner
 					&& (SWTProperties.SELECTION.equals(attribute)
 					|| SWTProperties.MIN.equals(attribute)

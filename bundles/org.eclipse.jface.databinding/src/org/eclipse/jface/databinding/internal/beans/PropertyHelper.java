@@ -25,6 +25,7 @@ public class PropertyHelper {
 	
 	/**
 	 * nested property seperator
+	 * TODO discuss nesting with .
 	 */
 	public final static String PROPERTY_NESTING_SEPERATOR = ".";  //$NON-NLS-1$
 	
