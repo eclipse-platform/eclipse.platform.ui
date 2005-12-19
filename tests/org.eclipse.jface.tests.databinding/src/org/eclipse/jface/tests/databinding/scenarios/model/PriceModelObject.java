@@ -33,7 +33,7 @@ public class PriceModelObject extends ModelObject {
 	}
 
 	public int getCents(){
-		return (int) ((price - new Double(price).intValue()) * 100);
+		return (int) (100*price - 100*Math.floor(price));
 	}
 	
 	public void setCents(int cents){
