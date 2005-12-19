@@ -32,6 +32,7 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
@@ -174,7 +175,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			viewer.addCheckStateListener(new ICheckStateListener() {
 
 				public final void checkStateChanged(final CheckStateChangedEvent event) {
-					handleCheckStateChanged();
+					handleCheckStateChanged(event);
 				}
 			});
 		}
@@ -282,9 +283,17 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Handles the check state changed event.
+	 * 
+	 * @param event
+	 *            the check state changed event
 	 */
-	protected void handleCheckStateChanged() {
-		// Do nothing
+	protected void handleCheckStateChanged(final CheckStateChangedEvent event) {
+		BusyIndicator.showWhile(getDisplay(), new Runnable() {
+
+			public final void run() {
+				// TODO: implement
+			}
+		});
 	}
 
 	/**

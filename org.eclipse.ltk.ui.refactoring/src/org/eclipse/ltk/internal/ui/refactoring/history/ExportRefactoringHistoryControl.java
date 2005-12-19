@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 
@@ -117,7 +118,8 @@ public final class ExportRefactoringHistoryControl extends RefactoringHistoryCon
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void handleCheckStateChanged() {
+	protected void handleCheckStateChanged(final CheckStateChangedEvent event) {
+		super.handleCheckStateChanged(event);
 		fExportButton.setEnabled(getCheckedDescriptors().length > 0);
 	}
 
@@ -126,7 +128,6 @@ public final class ExportRefactoringHistoryControl extends RefactoringHistoryCon
 	 */
 	public void setInput(final RefactoringHistory history) {
 		super.setInput(history);
-
 		fExportAllButton.setEnabled(history != null && !history.isEmpty());
 	}
 }

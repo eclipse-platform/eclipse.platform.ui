@@ -127,6 +127,16 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 		new Label(composite, SWT.NONE);
 
+		final IProject project= getCurrentProject();
+		if (project != null) {
+			final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+			try {
+				service.connect();
+				fHistoryControl.setInput(service.getProjectHistory(project, null));
+			} finally {
+				service.disconnect();
+			}
+		}
 		applyDialogFont(composite);
 
 		return composite;
@@ -283,18 +293,5 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	public void setVisible(final boolean visible) {
 		fHasProjectHistory= hasRefactoringHistory();
 		super.setVisible(visible);
-		if (visible) {
-			final IProject project= getCurrentProject();
-			if (project != null) {
-				final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
-				try {
-					service.connect();
-					fHistoryControl.setInput(service.getProjectHistory(project, null));
-				} finally {
-					service.disconnect();
-				}
-			} else
-				fHistoryControl.setInput(null);
-		}
 	}
 }
