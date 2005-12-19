@@ -14,17 +14,82 @@ import org.eclipse.jface.databinding.converter.IConverter;
  
 public class StateConverter implements IConverter {
 	
+	/*
+	 * State Abbreviations
+	 *  
+	 * From: http://www.usps.com/ncsc/lookups/usps_abbreviations.html
+	 * 
+	 * ALABAMA -> AL
+	 * ALASKA -> AK
+	 * AMERICAN SAMOA -> AS
+	 * ARIZONA -> AZ
+	 * ARKANSAS -> AR
+	 * CALIFORNIA -> CA
+	 * COLORADO -> CO
+	 * CONNECTICUT -> CT
+	 * DELAWARE -> DE
+	 * DISTRICT OF COLUMBIA -> DC
+	 * FEDERATED STATES OF MICRONESIA -> FM
+	 * FLORIDA -> FL
+	 * GEORGIA -> GA
+	 * GUAM -> GU
+	 * HAWAII -> HI
+	 * IDAHO -> ID
+	 * ILLINOIS -> IL
+	 * INDIANA -> IN
+	 * IOWA -> IA
+	 * KANSAS -> KS
+	 * KENTUCKY -> KY
+	 * LOUISIANA -> LA
+	 * MAINE -> ME
+	 * MARSHALL ISLANDS -> MH
+	 * MARYLAND -> MD
+	 * MASSACHUSETTS -> MA
+	 * MICHIGAN -> MI
+	 * MINNESOTA -> MN
+	 * MISSISSIPPI -> MS
+	 * MISSOURI -> MO
+	 * MONTANA -> MT
+	 * NEBRASKA -> NE
+	 * NEVADA -> NV
+	 * NEW HAMPSHIRE -> NH
+	 * NEW JERSEY -> NJ
+	 * NEW MEXICO -> NM
+	 * NEW YORK -> NY
+	 * NORTH CAROLINA -> NC
+	 * NORTH DAKOTA -> ND
+	 * NORTHERN MARIANA ISLANDS -> MP
+	 * OHIO -> OH
+	 * OKLAHOMA -> OK
+	 * OREGON -> OR
+	 * PALAU -> PW
+	 * PENNSYLVANIA -> PA
+	 * PUERTO RICO -> PR
+	 * RHODE ISLAND -> RI
+	 * SOUTH CAROLINA -> SC
+	 * SOUTH DAKOTA -> SD
+	 * TENNESSEE -> TN
+	 * TEXAS -> TX
+	 * UTAH -> UT
+	 * VERMONT -> VT
+	 * VIRGIN ISLANDS -> VI
+	 * VIRGINIA -> VA
+	 * WASHINGTON -> WA
+	 * WEST VIRGINIA -> WV
+	 * WISCONSIN -> WI
+	 * WYOMING -> WY
+	 */
 	public final static String[] STATE_LETTERS = new String[] {
 			  "AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA","GU","HI",
 			  "ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS",
 			  "MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR",
-			  "PA","PR","RI","SC","SD","TN","TX","UT","VA","VI","WA","WV","WI" 
+			  "PA","PR","RI","SC","SD","TN","TX","UT","VA","VI","WA","WV","WI", "WY" 
 	};
 	public final static String[] STATE_NAMES = new String[] {
-			"Alabama","Arkansaw","Arizona","??AR??","California","Colombia","Conetticut","Delaware","Washington DC","Florida","Georgia","??GU??","??HI??",
-			"Idaho","Illinois","Indiana","??","Kansas","Kentucyky","??LA??","??ME??","??MD??","Michigan","Maryland","Minnesota","??MS??",
-			"Montana","Massachutets","??NE??","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","??ND??","Ohio","Oklahmoa","Oregon",
-			"Pensylvania","??PR??","Rhode Island","South Carolina","??SD??","Tenesee","Texas","Utah","Vancouver","Virginia","Washington","West Virginia","Wisconsin"
+			"Alabama","Alaska","Arizona","Arkansas","California","Colorado","CONNECTICUT","Delaware","Washington DC","Florida","Georgia","GUAM","Hawaii",
+			"Idaho","Illinois","Indiana","Iowa","Kansas","KENTUCKY","LOUISIANA","MAINE","MARYLAND","Michigan","MASSACHUSETTS","Minnesota","Mississippi",
+			"MISSOURI","MONTANA","NEBRASKA","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahmoa","Oregon",
+			"Pensylvania","PUERTO RICO","Rhode Island","South Carolina","South Dakota","TENNESSEE","Texas","Utah","VERMONT", "VIRGIN ISLANDS","Virginia","Washington","West Virginia","Wisconsin", "Wyoming"
 	};
 
 	public Class getModelType() {
