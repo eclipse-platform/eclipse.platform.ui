@@ -119,7 +119,7 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 			try {
 				removePropertyChangeListenerMethod = object.getClass()
 						.getMethod("removePropertyChangeListener", //$NON-NLS-1$
-								new Class[] { PropertyChangeListener.class });
+								new Class[] { String.class, PropertyChangeListener.class });
 			} catch (SecurityException e) {
 				// best effort - ignore
 			} catch (NoSuchMethodException e) {
@@ -128,7 +128,7 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 			if (removePropertyChangeListenerMethod != null) {
 				try {
 					removePropertyChangeListenerMethod.invoke(object,
-							new Object[] { listener });
+							new Object[] { propertyDescriptor.getName(), listener });
 				} catch (IllegalArgumentException e) {
 					// best effort - ignore
 				} catch (IllegalAccessException e) {
