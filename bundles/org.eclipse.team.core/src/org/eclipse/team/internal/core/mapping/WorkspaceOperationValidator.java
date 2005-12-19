@@ -51,7 +51,7 @@ public class WorkspaceOperationValidator extends ResourceOperationValidator {
 			IModelProviderDescriptor descriptor = descriptors[i];
 			try {
 				//TODO Need to fix the use of the nature id by adding a nature property tester
-				IResource[] matchingResources = descriptor.getMatchingResources(resources, resources[0].getProject().getDescription().getNatureIds());
+				IResource[] matchingResources = descriptor.getMatchingResources(resources);
 				if (matchingResources.length > 0) {
 					result.add(descriptor.getModelProvider());
 				}

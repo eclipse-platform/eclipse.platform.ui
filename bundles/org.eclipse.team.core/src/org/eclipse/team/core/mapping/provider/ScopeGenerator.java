@@ -12,14 +12,12 @@ package org.eclipse.team.core.mapping.provider;
 
 import java.util.*;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.mapping.ResourceMappingInputScope;
 import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
 
@@ -80,7 +78,7 @@ public class ScopeGenerator {
 					Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 			IResource[] adjusted = adjustNewResources(newResources);
 			targetMappings = internalGetMappingsFromProviders(adjusted,
-					getAffectedNatures(targetMappings), context, Policy
+					context, Policy
 							.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 
 			// TODO: The new resources aren't really just the new ones so reduce
@@ -202,26 +200,8 @@ public class ScopeGenerator {
 		return adjusted;
 	}
 
-	private String[] getAffectedNatures(Set targetMappings) {
-		Set result = new HashSet();
-		for (Iterator iter = targetMappings.iterator(); iter.hasNext();) {
-			ResourceMapping mapping = (ResourceMapping) iter.next();
-			IProject[] projects = mapping.getProjects();
-			for (int j = 0; j < projects.length; j++) {
-				IProject project = projects[j];
-				try {
-					result.addAll(Arrays.asList(project.getDescription()
-							.getNatureIds()));
-				} catch (CoreException e) {
-					TeamPlugin.log(e);
-				}
-			}
-		}
-		return (String[]) result.toArray(new String[result.size()]);
-	}
-
 	private Set internalGetMappingsFromProviders(IResource[] resources,
-			String[] affectedNatures, ResourceMappingContext context,
+			ResourceMappingContext context,
 			IProgressMonitor monitor) throws CoreException {
 		Set result = new HashSet();
 		IModelProviderDescriptor[] descriptors = ModelProvider
@@ -229,18 +209,18 @@ public class ScopeGenerator {
 		for (int i = 0; i < descriptors.length; i++) {
 			IModelProviderDescriptor descriptor = descriptors[i];
 			ResourceMapping[] mappings = getMappings(descriptor, resources,
-					affectedNatures, context, monitor);
+					context, monitor);
 			result.addAll(Arrays.asList(mappings));
 		}
 		return result;
 	}
 
 	private ResourceMapping[] getMappings(IModelProviderDescriptor descriptor,
-			IResource[] resources, String[] affectedNatures,
+			IResource[] resources,
 			ResourceMappingContext context, IProgressMonitor monitor)
 			throws CoreException {
 		IResource[] matchingResources = descriptor.getMatchingResources(
-				resources, affectedNatures);
+				resources);
 		return descriptor.getModelProvider().getMappings(matchingResources,
 				context, monitor);
 	}
