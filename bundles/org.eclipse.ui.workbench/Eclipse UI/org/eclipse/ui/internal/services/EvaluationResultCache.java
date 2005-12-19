@@ -15,10 +15,7 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.ISources;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * <p>
@@ -76,9 +73,12 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 			try {
 				evaluationResult = expression.evaluate(context);
 			} catch (final CoreException e) {
-				final IStatus status = new Status(IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH, 0, e.getMessage(), e);
-				WorkbenchPlugin.log("Could not evaluate an expression", status); //$NON-NLS-1$
+				/*
+				 * Swallow the exception. It simply means the variable is not
+				 * valid it some (most frequently, that the value is null). This
+				 * kind of information is not really useful to us, so we can
+				 * just treat it as null.
+				 */
 				return false;
 			}
 		}

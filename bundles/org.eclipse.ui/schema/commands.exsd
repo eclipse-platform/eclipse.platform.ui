@@ -129,7 +129,7 @@ This element has been replaced with a preference.  If your application needs to 
          <sequence>
             <element ref="defaultHandler" minOccurs="0" maxOccurs="1"/>
             <element ref="state" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="commandParameter"/>
+            <element ref="commandParameter" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="category" type="string">
             <annotation>

@@ -19,7 +19,11 @@ package org.eclipse.core.commands.common;
  * @since 3.1
  */
 public abstract class CommandException extends Exception {
-
+	
+	/**
+	 * This member variable is required here to allow us to compile against JCL
+	 * foundation libraries.  The value may be <code>null</code>.
+	 */
 	private Throwable cause;
 	
     /**

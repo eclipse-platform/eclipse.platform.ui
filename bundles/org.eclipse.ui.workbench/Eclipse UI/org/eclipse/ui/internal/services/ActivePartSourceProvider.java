@@ -200,7 +200,7 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 	}
 
 	public final Map getCurrentState() {
-		final Map currentState = new HashMap(4);
+		final Map currentState = new HashMap(7);
 		currentState.put(ISources.ACTIVE_SITE_NAME, null);
 		currentState.put(ISources.ACTIVE_PART_NAME, null);
 		currentState.put(ISources.ACTIVE_PART_ID_NAME, null);

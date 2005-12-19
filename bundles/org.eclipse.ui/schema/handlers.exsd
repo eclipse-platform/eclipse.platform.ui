@@ -51,9 +51,6 @@ These conditions are used to avoid unnecessary plug-in loading.  These handler d
                <documentation>
                   
                </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -61,11 +58,11 @@ These conditions are used to avoid unnecessary plug-in loading.  These handler d
 
    <element name="handler">
       <complexType>
-         <choice>
+         <sequence>
             <element ref="activeWhen" minOccurs="0" maxOccurs="1"/>
             <element ref="class" minOccurs="0" maxOccurs="1"/>
             <element ref="enabledWhen" minOccurs="0" maxOccurs="1"/>
-         </choice>
+         </sequence>
          <attribute name="commandId" type="string" use="required">
             <annotation>
                <documentation>
@@ -126,9 +123,9 @@ These conditions are used to avoid unnecessary plug-in loading.  These handler d
 
    <element name="class">
       <complexType>
-         <choice>
+         <sequence>
             <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
-         </choice>
+         </sequence>
          <attribute name="class" type="string">
             <annotation>
                <documentation>
