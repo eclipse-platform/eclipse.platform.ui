@@ -39,6 +39,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
@@ -63,12 +67,116 @@ import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryContentProvider;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
+import org.eclipse.osgi.util.NLS;
+
 /**
  * Control which is capable of displaying refactoring histories.
  * 
  * @since 3.2
  */
 public class RefactoringHistoryControl extends Composite implements IRefactoringHistoryControl {
+
+	/** Checkbox treeviewer for the refactoring history */
+	protected final class RefactoringHistoryTreeViewer extends CheckboxTreeViewer {
+
+		/**
+		 * Creates a new refactoring history tree viewer.
+		 * 
+		 * @param parent
+		 *            the parent control
+		 * @param style
+		 *            the style
+		 */
+		public RefactoringHistoryTreeViewer(final Composite parent, final int style) {
+			super(parent, style);
+		}
+
+		/**
+		 * Finds the widget corresponding to the specified element.
+		 * 
+		 * @param element
+		 *            the element
+		 * @return the corresponding widget
+		 */
+		public Widget findWidget(final Object element) {
+			return findItem(element);
+		}
+
+		/**
+		 * Returns the child items of the specified widget.
+		 * 
+		 * @param widget
+		 *            the widget
+		 * @return the child items
+		 */
+		protected Item[] getChildItems(final Widget widget) {
+			if (widget instanceof TreeItem)
+				return ((TreeItem) widget).getItems();
+			if (widget instanceof Tree)
+				return ((Tree) widget).getItems();
+			return null;
+		}
+
+		/**
+		 * Is the specified element to be displayed as grayed out?
+		 * 
+		 * @param parent
+		 *            the parent element to test
+		 * @param children
+		 *            the child elements
+		 * @return <code>true</code> if the element needs to be grayed out,
+		 *         <code>false</code> otherwise
+		 */
+		protected boolean isGrayedElement(final Object parent, final Object[] children) {
+			int elements= 0;
+			for (int index= 0; index < children.length; index++) {
+				if (getGrayed(children[index]) || getChecked(children[index]))
+					elements++;
+			}
+			return !(elements == 0 || elements == children.length);
+		}
+
+		/**
+		 * Sets the children to gray.
+		 * 
+		 * @param items
+		 *            the tree items
+		 * @param grayed
+		 *            <code>true</code> to set to gray, <code>false</code>
+		 *            otherwise
+		 */
+		protected void setChildrenGrayed(final Item[] items, final boolean grayed) {
+			for (int index= 0; index < items.length; index++) {
+				if (items[index] instanceof TreeItem) {
+					final TreeItem item= (TreeItem) items[index];
+					if (item.getGrayed() != grayed) {
+						item.setGrayed(grayed);
+						setChildrenGrayed(getChildItems(item), grayed);
+					}
+				}
+			}
+		}
+
+		/**
+		 * Sets the subtree of the specified element to gray.
+		 * 
+		 * @param element
+		 *            the element
+		 * @param grayed
+		 *            <code>true</code> to set to gray, <code>false</code>
+		 *            otherwise
+		 */
+		protected void setSubtreeGrayed(final Object element, final boolean grayed) {
+			final Widget widget= findWidget(element);
+			if (widget instanceof TreeItem) {
+				final TreeItem item= (TreeItem) widget;
+				if (item.getGrayed() != grayed) {
+					item.setGrayed(grayed);
+					setChildrenGrayed(getChildItems(item), grayed);
+				}
+			}
+		}
+	}
 
 	/** The caption image */
 	private Image fCaptionImage= null;
@@ -149,13 +257,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		fHistoryPane= new CompareViewerPane(leftPane, SWT.BORDER | SWT.FLAT);
 		if (fControlConfiguration.isTimeDisplayed())
 			fHistoryPane.setImage(fCaptionImage);
-		String text= null;
-		final IProject project= fControlConfiguration.getProject();
-		if (project != null)
-			text= MessageFormat.format(fControlConfiguration.getProjectPattern(), new String[] { project.getName()});
-		else
-			text= fControlConfiguration.getWorkspaceCaption();
-		fHistoryPane.setText(text);
+		fHistoryPane.setText(getHistoryPaneText());
 		fHistoryPane.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		fHistoryViewer= createHistoryViewer(fHistoryPane);
 		if (!fControlConfiguration.isTimeDisplayed())
@@ -170,8 +272,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 					handleSelectionChanged((IStructuredSelection) selection);
 			}
 		});
-		if (fHistoryViewer instanceof CheckboxTreeViewer) {
-			final CheckboxTreeViewer viewer= (CheckboxTreeViewer) fHistoryViewer;
+		if (fHistoryViewer instanceof RefactoringHistoryTreeViewer) {
+			final RefactoringHistoryTreeViewer viewer= (RefactoringHistoryTreeViewer) fHistoryViewer;
 			viewer.addCheckStateListener(new ICheckStateListener() {
 
 				public final void checkStateChanged(final CheckStateChangedEvent event) {
@@ -208,7 +310,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	protected TreeViewer createHistoryViewer(final Composite parent) {
 		Assert.isNotNull(parent);
 		if (fControlConfiguration.isCheckableViewer())
-			return new CheckboxTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+			return new RefactoringHistoryTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		else
 			return new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 	}
@@ -225,37 +327,63 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 * {@inheritDoc}
 	 */
 	public final RefactoringDescriptorProxy[] getCheckedDescriptors() {
-		if (fHistoryViewer instanceof CheckboxTreeViewer) {
-			final CheckboxTreeViewer viewer= (CheckboxTreeViewer) fHistoryViewer;
+		if (fHistoryViewer instanceof RefactoringHistoryTreeViewer) {
+			final RefactoringHistoryTreeViewer viewer= (RefactoringHistoryTreeViewer) fHistoryViewer;
 			final Set set= new HashSet();
 			final Object[] elements= viewer.getCheckedElements();
 			for (int index= 0; index < elements.length; index++)
-				getDescriptorProxies(set, elements[index]);
+				getDescriptorProxies(viewer, set, elements[index]);
 			return (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]);
 		}
 		return getSelectedDescriptors();
 	}
 
 	/**
-	 * Gets the refactoring descriptor proxies represented by the specified
-	 * element.
+	 * Computes the refactoring descriptor proxies of the specified element.
 	 * 
+	 * @param viewer
+	 *            the refactoring history viewer
 	 * @param set
 	 *            the set of refactoring descriptors
 	 * @param element
-	 *            the element
+	 *            the element to compute the descriptors for
 	 */
-	private void getDescriptorProxies(final Set set, final Object element) {
+	private void getDescriptorProxies(final TreeViewer viewer, final Set set, final Object element) {
 		if (element instanceof RefactoringHistoryEntry) {
+			if (viewer instanceof RefactoringHistoryTreeViewer) {
+				final RefactoringHistoryTreeViewer extended= (RefactoringHistoryTreeViewer) viewer;
+				if (!extended.getChecked(element))
+					return;
+			}
 			set.add(((RefactoringHistoryEntry) element).getDescriptor());
 		} else if (element instanceof RefactoringHistoryNode) {
-			final RefactoringHistoryContentProvider provider= (RefactoringHistoryContentProvider) fHistoryViewer.getContentProvider();
+			if (viewer instanceof RefactoringHistoryTreeViewer) {
+				final RefactoringHistoryTreeViewer extended= (RefactoringHistoryTreeViewer) viewer;
+				if (!extended.getChecked(element))
+					return;
+			}
+			final RefactoringHistoryContentProvider provider= (RefactoringHistoryContentProvider) viewer.getContentProvider();
 			if (provider != null) {
 				final Object[] elements= provider.getChildren(element);
 				for (int index= 0; index < elements.length; index++)
-					getDescriptorProxies(set, elements[index]);
+					getDescriptorProxies(viewer, set, elements[index]);
 			}
 		}
+	}
+
+	/**
+	 * Returns the text to be displayed in the history pane.
+	 * 
+	 * @return the text in the history pane
+	 */
+	private String getHistoryPaneText() {
+		String text= null;
+		final IProject project= fControlConfiguration.getProject();
+		if (project != null)
+			text= MessageFormat.format(fControlConfiguration.getProjectPattern(), new String[] { project.getName()});
+		else
+			text= fControlConfiguration.getWorkspaceCaption();
+		return text;
 	}
 
 	/**
@@ -263,7 +391,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 * 
 	 * @return the input, or <code>null</code>
 	 */
-	public RefactoringHistory getInput() {
+	public final RefactoringHistory getInput() {
 		return (RefactoringHistory) fHistoryViewer.getInput();
 	}
 
@@ -276,7 +404,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection structured= (IStructuredSelection) selection;
 			for (final Iterator iterator= structured.iterator(); iterator.hasNext();)
-				getDescriptorProxies(set, iterator.next());
+				getDescriptorProxies(fHistoryViewer, set, iterator.next());
 		}
 		return (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]);
 	}
@@ -288,10 +416,25 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 *            the check state changed event
 	 */
 	protected void handleCheckStateChanged(final CheckStateChangedEvent event) {
+		final RefactoringHistoryTreeViewer viewer= (RefactoringHistoryTreeViewer) fHistoryViewer;
 		BusyIndicator.showWhile(getDisplay(), new Runnable() {
 
 			public final void run() {
-				// TODO: implement
+				final RefactoringHistoryContentProvider provider= (RefactoringHistoryContentProvider) viewer.getContentProvider();
+				final Object element= event.getElement();
+				final boolean checked= event.getChecked();
+				viewer.setSubtreeChecked(element, checked);
+				viewer.setSubtreeGrayed(element, false);
+				Object parent= provider.getParent(element);
+				while (parent != null) {
+					final boolean grayed= viewer.isGrayedElement(parent, provider.getChildren(parent));
+					viewer.setChecked(parent, checked || grayed);
+					viewer.setGrayed(parent, grayed);
+					parent= provider.getParent(parent);
+				}
+				final RefactoringDescriptorProxy[] proxies= getCheckedDescriptors();
+				final RefactoringDescriptorProxy[] total= getInput().getDescriptors();
+				fHistoryPane.setText(NLS.bind(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { getHistoryPaneText(), String.valueOf(proxies.length), String.valueOf(total.length)}));
 			}
 		});
 	}
@@ -332,7 +475,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	public void setInput(final RefactoringHistory history) {
 		fHistoryViewer.setInput(history);
 		if (history != null) {
-			final RefactoringHistoryContentProvider provider= fControlConfiguration.getContentProvider();
+			final RefactoringHistoryContentProvider provider= (RefactoringHistoryContentProvider) fHistoryViewer.getContentProvider();
 			if (provider != null) {
 				provider.inputChanged(fHistoryViewer, null, history);
 				final Object[] roots= provider.getRootElements();

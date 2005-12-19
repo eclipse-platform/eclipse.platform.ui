@@ -106,9 +106,12 @@ public final class RefactoringUIMessages extends NLS {
 	public static String ExportRefactoringHistoryControl_export_all_caption;
 	public static String ExportRefactoringHistoryControl_export_label;
 	public static String ExportRefactoringHistoryControl_export_all_label;
-
+	public static String ExportRefactoringHistoryControl_wildcard_filter_name;
+	public static String ExportRefactoringHistoryControl_wildcard_filter_extension;
+	
 	public static String RefactoringHistoryControl_resolving_information;
-
+	public static String RefactoringHistoryControl_selection_pattern;
+	
 	public static String RefactoringHistoryControlConfiguration_comment_caption;
 	public static String RefactoringHistoryControlConfiguration_project_pattern;
 	public static String RefactoringHistoryControlConfiguration_workspace_caption;
@@ -143,6 +146,7 @@ public final class RefactoringUIMessages extends NLS {
 	public static String RefactoringHistoryPreviewPage_description;
 	public static String RefactoringHistoryPreviewPage_apply_error;
 	public static String RefactoringHistoryPreviewPage_apply_error_title;
+	public static String RefactoringHistoryPreviewPage_refactoring_pattern;
 	
 	public static String RefactoringHistoryWizard_fatal_error_message;
 	public static String RefactoringHistoryWizard_do_not_show_message;
@@ -172,7 +176,4 @@ public final class RefactoringUIMessages extends NLS {
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringUIMessages.class);
 	}
-
-	public static String ExportRefactoringHistoryControl_wildcard_filter_name;
-	public static String ExportRefactoringHistoryControl_wildcard_filter_extension;
 }

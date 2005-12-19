@@ -25,6 +25,8 @@ import org.eclipse.jface.wizard.IWizardPage;
 
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
 
+import org.eclipse.osgi.util.NLS;
+
 /**
  * Preview page for refactoring history wizards.
  * 
@@ -32,14 +34,14 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
  */
 public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 
+	/** The preview change filter */
+	private RefactoringPreviewChangeFilter fFilter= new RefactoringPreviewChangeFilter();
+
 	/** Is the next wizard page disabled? */
 	private boolean fNextPageDisabled= false;
 
 	/** The current refactoring, or <code>null</code> */
 	private Refactoring fRefactoring;
-
-	/** The preview change filter */
-	private RefactoringPreviewChangeFilter fFilter= new RefactoringPreviewChangeFilter();
 
 	/** The refactoring status */
 	private RefactoringStatus fStatus= new RefactoringStatus();
@@ -134,6 +136,17 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	}
 
 	/**
+	 * Sets the preview change requestor.
+	 * 
+	 * @param filter
+	 *            the preview change requestor to set
+	 */
+	public void setFilter(final RefactoringPreviewChangeFilter filter) {
+		Assert.isNotNull(filter);
+		fFilter= filter;
+	}
+
+	/**
 	 * Determines whether the next wizard page is disabled.
 	 * 
 	 * @param disable
@@ -161,17 +174,6 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	}
 
 	/**
-	 * Sets the preview change requestor.
-	 * 
-	 * @param filter
-	 *            the preview change requestor to set
-	 */
-	public void setFilter(final RefactoringPreviewChangeFilter filter) {
-		Assert.isNotNull(filter);
-		fFilter= filter;
-	}
-
-	/**
 	 * Sets the status of the change generation.
 	 * 
 	 * @param status
@@ -187,12 +189,18 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	 * 
 	 * @param descriptor
 	 *            the refactoring descriptor, or <code>null</code>
+	 * @param current
+	 *            the non-zero based index of the current refactoring
+	 * @param total
+	 *            the total number of refactorings
 	 */
-	public void setTitle(final RefactoringDescriptorProxy descriptor) {
+	public void setTitle(final RefactoringDescriptorProxy descriptor, final int current, final int total) {
+		final String message;
 		if (descriptor != null)
-			setTitle(descriptor.getDescription());
+			message= descriptor.getDescription();
 		else
-			setTitle(RefactoringUIMessages.RefactoringHistoryOverviewPage_title);
+			message= RefactoringUIMessages.RefactoringHistoryOverviewPage_title;
+		setTitle(NLS.bind(RefactoringUIMessages.RefactoringHistoryPreviewPage_refactoring_pattern, new String[] { message, String.valueOf(current + 1), String.valueOf(total)}));
 	}
 
 	/**

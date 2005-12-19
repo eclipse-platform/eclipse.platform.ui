@@ -24,6 +24,8 @@ import org.eclipse.jface.wizard.IWizardPage;
 
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
 
+import org.eclipse.osgi.util.NLS;
+
 /**
  * Error page for refactoring history wizards.
  * 
@@ -152,12 +154,18 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	 * 
 	 * @param descriptor
 	 *            the refactoring descriptor, or <code>null</code>
+	 * @param current
+	 *            the non-zero based index of the current refactoring
+	 * @param total
+	 *            the total number of refactorings
 	 */
-	public void setTitle(final RefactoringDescriptorProxy descriptor) {
+	public void setTitle(final RefactoringDescriptorProxy descriptor, final int current, final int total) {
+		final String message;
 		if (descriptor != null)
-			setTitle(descriptor.getDescription());
+			message= descriptor.getDescription();
 		else
-			setTitle(RefactoringUIMessages.RefactoringHistoryOverviewPage_title);
+			message= RefactoringUIMessages.RefactoringHistoryOverviewPage_title;
+		setTitle(NLS.bind(RefactoringUIMessages.RefactoringHistoryPreviewPage_refactoring_pattern, new String[] { message, String.valueOf(current + 1), String.valueOf(total)}));
 	}
 
 	/**

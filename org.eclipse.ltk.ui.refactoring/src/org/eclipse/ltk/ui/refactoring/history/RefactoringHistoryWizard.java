@@ -523,7 +523,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 			final RefactoringDescriptorProxy descriptor= getCurrentDescriptor();
 			if (descriptor != null)
-				fPreviewPage.setTitle(descriptor);
+				fPreviewPage.setTitle(descriptor, fCurrentRefactoring, fDescriptorProxies.length);
 			else
 				fPreviewPage.setTitle(RefactoringUIMessages.PreviewWizardPage_changes);
 			fPreviewPage.setStatus(status);
@@ -913,7 +913,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		getShell().getDisplay().syncExec(new Runnable() {
 
 			public final void run() {
-				fErrorPage.setTitle(descriptor);
+				fErrorPage.setTitle(descriptor, fCurrentRefactoring, fDescriptorProxies.length);
 				fErrorPage.setNextPageDisabled(disabled);
 				fErrorPage.setPageComplete(!fatal);
 				fErrorPage.setStatus(null);
@@ -937,7 +937,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		getShell().getDisplay().syncExec(new Runnable() {
 
 			public final void run() {
-				fPreviewPage.setTitle(descriptor);
+				fPreviewPage.setTitle(descriptor, fCurrentRefactoring, fDescriptorProxies.length);
 				fPreviewPage.setNextPageDisabled(disabled);
 				fPreviewPage.setPageComplete(!disabled);
 				fPreviewPage.setStatus(status);
