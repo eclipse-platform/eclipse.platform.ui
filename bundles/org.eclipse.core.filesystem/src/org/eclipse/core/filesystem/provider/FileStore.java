@@ -1,12 +1,13 @@
-/**********************************************************************
- * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
- * program and the accompanying materials are made available under the terms of
- * the Common Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/cpl-v10.html
+/*******************************************************************************
+ * Copyright (c) 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: 
- * IBM - Initial API and implementation
- **********************************************************************/
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.core.filesystem.provider;
 
 import java.io.*;
@@ -294,8 +295,8 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 		for (int i = 0, imax = path.segmentCount(); i < imax; i++)
 			result = result.getChild(path.segment(i));
 		return result;
-	} 
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#getChild(java.lang.String)
 	 */
@@ -407,6 +408,15 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 */
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
 		Policy.error(EFS.ERROR_WRITE, NLS.bind(Messages.noImplWrite, toString()));
+	}
+
+	/**
+	 * The default implementation of {@link IFileStore#toLocalFile(int, IProgressMonitor)}.
+	 * This implementation creates and returns a copy of this store that exists
+	 * in the local file system.
+	 */
+	public java.io.File toLocalFile(int options, IProgressMonitor monitor) throws CoreException {
+		return null;
 	}
 
 	/**

@@ -1,12 +1,13 @@
-/**********************************************************************
- * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
- * program and the accompanying materials are made available under the terms of
- * the Common Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/cpl-v10.html
+/*******************************************************************************
+ * Copyright (c) 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: 
- * IBM - Initial API and implementation
- **********************************************************************/
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.core.filesystem;
 
 import java.io.InputStream;
@@ -57,8 +58,9 @@ public interface IFileStore extends IAdaptable {
 	 * <ul>
 	 * <li> This store does not exist.</li>
 	 * </ul>
+	 * @see IFileTree#getChildInfos(IFileStore)
 	 */
-	public abstract IFileInfo[] childInfos(int options, IProgressMonitor monitor) throws CoreException;
+	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns the names of the files and directories contained within this store.
@@ -73,7 +75,7 @@ public interface IFileStore extends IAdaptable {
 	 * <li> This store does not exist.</li>
 	 * </ul>
 	 */
-	public abstract String[] childNames(int options, IProgressMonitor monitor) throws CoreException;
+	public String[] childNames(int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an {@link IFileStore} instance for each file and directory contained 
@@ -88,8 +90,9 @@ public interface IFileStore extends IAdaptable {
 	 * <ul>
 	 * <li> This store does not exist.</li>
 	 * </ul>
+	 * @see IFileTree#getChildStores(IFileStore)
 	 */
-	public abstract IFileStore[] childStores(int options, IProgressMonitor monitor) throws CoreException;
+	public IFileStore[] childStores(int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Copies the file represented by this store to the provided destination store.
@@ -126,7 +129,7 @@ public interface IFileStore extends IAdaptable {
 	 * same name already exists at the copy destination.</li>
 	 * </ul>
 	 */
-	public abstract void copy(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException;
+	public void copy(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Deletes the files and directories represented by this store. Deletion of a file
@@ -144,7 +147,7 @@ public interface IFileStore extends IAdaptable {
 	 * <li>Files or directories could not be deleted.
 	 * </ul>
 	 */
-	public abstract void delete(int options, IProgressMonitor monitor) throws CoreException;
+	public void delete(int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Fetches and returns information about this file from the underlying file
@@ -156,7 +159,7 @@ public interface IFileStore extends IAdaptable {
 	 * @return A structure containing information about this file.
 	 * @see #fetchInfo(int, IProgressMonitor)
 	 */
-	public abstract IFileInfo fetchInfo();
+	public IFileInfo fetchInfo();
 
 	/**
 	 * Fetches and returns information about this file from the underlying file
@@ -176,10 +179,10 @@ public interface IFileStore extends IAdaptable {
 	 * <ul>
 	 * <li>Problems occurred while contacting the file system.</li>
 	 * </ul>
+	 * @see IFileTree#getFileInfo(IFileStore)
 	 */
-	public abstract IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException;
+	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException;
 
-	
 	/**
 	 * Returns a child of this store as specified by the provided path.  The
 	 * path is treated as relative to this store.  This is equivalent to
@@ -199,8 +202,8 @@ public interface IFileStore extends IAdaptable {
 	 * @param path The path of the child store to return
 	 * @return A child file store.
 	 */
-	public abstract IFileStore getChild(IPath path);
-
+	public IFileStore getChild(IPath path);
+	
 	/**
 	 * Returns a child store with the provided name whose parent is
 	 * this store.  This is a handle-only method; a child is provided regardless
@@ -210,14 +213,14 @@ public interface IFileStore extends IAdaptable {
 	 * @param name The name of the child store to return
 	 * @return A child file store.
 	 */
-	public abstract IFileStore getChild(String name);
+	public IFileStore getChild(String name);
 
 	/**
 	 * Returns the file system this store belongs to.
 	 * 
 	 * @return The file system this store belongs to.
 	 */
-	public abstract IFileSystem getFileSystem();
+	public IFileSystem getFileSystem();
 
 	/**
 	 * Returns the name of this store.  This is a handle-only method; the name
@@ -230,7 +233,7 @@ public interface IFileStore extends IAdaptable {
 	 * </p>
 	 * @return The name of this store
 	 */
-	public abstract String getName();
+	public String getName();
 
 	/**
 	 * Returns the parent of this store.  This is a handle only method; the parent
@@ -241,7 +244,7 @@ public interface IFileStore extends IAdaptable {
 	 * @return The parent store, or <code>null</code> if this store is the root
 	 * of a file system.
 	 */
-	public abstract IFileStore getParent();
+	public IFileStore getParent();
 
 	/**
 	 * Returns whether this store is a parent of the provided store.  This
@@ -263,7 +266,7 @@ public interface IFileStore extends IAdaptable {
 	 * @return <code>true</code> if this store is a parent of the provided
 	 * store, and <code>false</code> otherwise.
 	 */
-	public abstract boolean isParentOf(IFileStore other);
+	public boolean isParentOf(IFileStore other);
 
 	/**
 	 * Creates a directory, and optionally its parent directories.  If the directory 
@@ -288,7 +291,7 @@ public interface IFileStore extends IAdaptable {
 	 * specified and the parent of this directory does not exist.</li>
 	 * </ul>
 	 */
-	public abstract IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException;
+	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Moves the file represented by this store to the provided destination store.
@@ -317,7 +320,7 @@ public interface IFileStore extends IAdaptable {
 	 * same name already exists at the destination.</li>
 	 * </ul>
 	 */
-	public abstract void move(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException;
+	public void move(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an open input stream on the contents of this file.  The caller
@@ -339,7 +342,7 @@ public interface IFileStore extends IAdaptable {
 	 * <li>This store represents a directory.</li>
 	 * </ul>
 	 */
-	public abstract InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException;
+	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an open output stream on the contents of this file.  The caller
@@ -370,7 +373,7 @@ public interface IFileStore extends IAdaptable {
 	 * <li>The parent of this store does not exist.</li>
 	 * </ul>
 	 */
-	public abstract OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException;
+	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Writes information about this file to the underlying file system. Only 
@@ -412,7 +415,39 @@ public interface IFileStore extends IAdaptable {
 	 * </ul>
 	 * @see EFS#createFileInfo()
 	 */
-	public abstract void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException;
+	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Returns a file in the local file system with the same state as this file.
+	 * <p>
+	 * The returned file is intended to be used for read operations only.
+	 * No guarantee is made about synchronization between the returned file and this
+	 * store.  If the returned file is modified in any way, those changes may
+	 * not be reflected in this store, but may affect other callers who are
+	 * using the local representation of this store.
+	 * </p>
+	 * <p>
+	 * While the implementation of this method may use caching to return the
+	 * same result for multiple calls to this method, it is guaranteed that the 
+	 * returned file will reflect the state of this file store at the time of this call.
+	 * As such, this method will always contact the backing file system of
+	 * this store, either to validate cache consistency or to fetch new contents.
+	 * </p>
+	 * <p>
+	 * The caller is not responsible for deleting this file when they are done with
+	 * using it.  If the returned file is a cached copy, it will be deleted automatically
+	 * at the end of this session (Eclipse shutdown or virtual machine exit).
+	 * </p>
+	 * @param options 
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting and cancellation are not desired
+	 * @return A local file with the same state as this file.
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>A corresponding file could not be created in the local file system.</li>
+	 * </ul>
+	 */
+	public java.io.File toLocalFile(int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns a string representation of this store.  The string will be translated
@@ -431,5 +466,5 @@ public interface IFileStore extends IAdaptable {
 	 * @return A URI corresponding to this store.
 	 * @see EFS#getStore(URI)
 	 */
-	public abstract URI toURI();
+	public URI toURI();
 }
