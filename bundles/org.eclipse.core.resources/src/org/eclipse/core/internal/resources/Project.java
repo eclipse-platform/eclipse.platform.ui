@@ -148,7 +148,7 @@ public class Project extends Container implements IProject {
 			// throw an Overlapping mapping exception in this case) So if the source description's location
 			// is null (we are using the default) or if the locations aren't equal, then validate the location
 			// of the new description. Otherwise both locations aren't null and they are equal so ignore validation.
-			IPath sourceLocation = internalGetDescription().getLocation();
+			URI sourceLocation = internalGetDescription().getLocationURI();
 			if (sourceLocation == null || !sourceLocation.equals(location))
 				status.merge(workspace.validateProjectLocationURI(project, location));
 		} else
