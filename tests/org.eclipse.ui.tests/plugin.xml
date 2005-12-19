@@ -2139,7 +2139,59 @@
       </command>
    </extension>
 
-
+   <!--parameterized command serialization -->
+   <extension
+         point="org.eclipse.ui.commands">
+         <command
+            name="Zero Parameter Command"
+            id="org.eclipse.ui.tests.commands.zeroParameterCommand">
+      </command>
+         <command
+               id="org.eclipse.ui.tests.commands.oneParameterCommand"
+               name="One Parameter Command">
+            <commandParameter
+                  id="param1.1"
+                  name="Parameter1"
+                  optional="true"/>
+         </command>
+         <command
+               id="org.eclipse.ui.tests.commands.twoParameterCommand"
+               name="Two Parameter Command">
+            <commandParameter
+                  id="param2.1"
+                  name="Parameter1"
+                  optional="true"/>
+            <commandParameter
+                  id="param2.2"
+                  name="Parameter2"
+                  optional="true"/>
+         </command>
+         <command
+               id="org.eclipse.ui.tests.commands.threeParameterCommand"
+               name="Three Parameter Command">
+            <commandParameter
+                  id="param3.1"
+                  name="Parameter1"
+                  optional="true"/>
+            <commandParameter
+                  id="param3.2"
+                  name="Parameter2"
+                  optional="true"/>
+            <commandParameter
+                  id="param3.3"
+                  name="Parameter3"
+                  optional="true"/>
+         </command>
+         <command
+               id="org.eclipse.ui.tests.command.with.f&amp;?@#$%:.name"
+               name="Command with funny name">
+            <commandParameter
+                  id="param.with.F({&apos;&gt;&lt;+|.name"
+                  name="Param with funny name"
+                  optional="true"/>
+         </command>
+   </extension>
+   
 	<!--malformed activity definitions -->
    <extension
          name="Actvities for PersistanceTest"
