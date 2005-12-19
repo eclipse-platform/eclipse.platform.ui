@@ -128,13 +128,13 @@ public class PropertyHelper {
 			return setter;
 		
 		Method[] list = getGetters(rootClass);
+		Class target = list.length>1? list[list.length-2].getReturnType(): rootClass;
 		try {
-			setter = getSetterMethod(list[list.length-2].getReturnType(), 
+			setter = getSetterMethod(target, 
 									propertyList[propertyList.length-1],
 					                list[list.length-1].getReturnType());
 		} catch (SecurityException e) {			
-		} catch (NoSuchMethodException e) {
-			throw new BindingException("Invalid property: "+propertyString); //$NON-NLS-1$		
+		} catch (NoSuchMethodException e) {					
 		}
 		return setter;
 		
