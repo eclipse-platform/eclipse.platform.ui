@@ -49,11 +49,12 @@ public class ValueBinding extends Binding {
 		if (converter == null) {
 			throw new BindingException("Missing converter from " + target.getValueType() + " to " + model.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (!converter.getModelType().equals(model.getValueType())) {
+		// FIXME: Waiting for M4 to ship to commit; also need to write a test case
+		if (!converter.getModelType().isAssignableFrom(model.getValueType())) {
 			throw new BindingException(
 					"Converter does not apply to model type. Expected: " + model.getValueType() + ", actual: " + converter.getModelType()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (!converter.getTargetType().equals(target.getValueType())) {
+		if (!converter.getTargetType().isAssignableFrom(target.getValueType())) {
 			throw new BindingException(
 					"Converter does not apply to target type. Expected: " + target.getValueType() + ", actual: " + converter.getTargetType()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
