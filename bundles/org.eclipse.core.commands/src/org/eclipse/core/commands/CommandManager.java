@@ -147,7 +147,7 @@ public final class CommandManager extends HandleObjectManager implements
 	static final char ID_VALUE_CHAR = '=';
 
 	/**
-	 * The character that indicates the start of a list of parameters.
+	 * The character that indicates the end of a list of parameters.
 	 */
 	static final char PARAMETER_END_CHAR = ')';
 
@@ -157,7 +157,7 @@ public final class CommandManager extends HandleObjectManager implements
 	static final char PARAMETER_SEPARATOR_CHAR = ',';
 
 	/**
-	 * The character that indicates the end of a list of parameters.
+	 * The character that indicates the start of a list of parameters.
 	 */
 	static final char PARAMETER_START_CHAR = '(';
 
