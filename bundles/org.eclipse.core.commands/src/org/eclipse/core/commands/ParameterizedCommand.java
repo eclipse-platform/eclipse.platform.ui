@@ -83,9 +83,13 @@ public final class ParameterizedCommand implements Comparable {
 
 	/**
 	 * Escapes special characters in the command id, parameter ids and parameter
-	 * values for {@link #serialize()}. The special characters <code>(</code>,
-	 * <code>)</code>, <code>=</code>, <code>,</code> and <code>%</code>
-	 * are escaped by prepending a <code>%</code> character.
+	 * values for {@link #serialize()}. The special characters
+	 * {@link CommandManager#PARAMETER_START_CHAR},
+	 * {@link CommandManager#PARAMETER_END_CHAR},
+	 * {@link CommandManager#ID_VALUE_CHAR},
+	 * {@link CommandManager#PARAMETER_SEPARATOR_CHAR} and
+	 * {@link CommandManager#ESCAPE_CHAR} are escaped by prepending a
+	 * {@link CommandManager#ESCAPE_CHAR} character.
 	 * 
 	 * @param rawText
 	 *            a <code>String</code> to escape special characters in for
@@ -96,22 +100,22 @@ public final class ParameterizedCommand implements Comparable {
 	 * @since 3.2
 	 */
 	private static final String escape(final String rawText) {
-		
+
 		// defer initialization of a StringBuffer until we know we need one
 		StringBuffer buffer = null;
-		
+
 		for (int i = 0; i < rawText.length(); i++) {
-			
+
 			char c = rawText.charAt(i);
 			switch (c) {
-			case '(':
-			case ')':
-			case '=':
-			case ',':
-			case '%':
+			case CommandManager.PARAMETER_START_CHAR:
+			case CommandManager.PARAMETER_END_CHAR:
+			case CommandManager.ID_VALUE_CHAR:
+			case CommandManager.PARAMETER_SEPARATOR_CHAR:
+			case CommandManager.ESCAPE_CHAR:
 				if (buffer == null)
 					buffer = new StringBuffer(rawText.substring(0, i));
-				buffer.append('%');
+				buffer.append(CommandManager.ESCAPE_CHAR);
 				buffer.append(c);
 				break;
 			default:
@@ -119,10 +123,11 @@ public final class ParameterizedCommand implements Comparable {
 					buffer.append(c);
 				break;
 			}
-			
+
 		}
-		
-		if (buffer == null) return rawText;
+
+		if (buffer == null)
+			return rawText;
 		return buffer.toString();
 	}
 
@@ -332,7 +337,7 @@ public final class ParameterizedCommand implements Comparable {
 					"Concurrent modification of a command's defined state"); //$NON-NLS-1$
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -535,9 +540,9 @@ public final class ParameterizedCommand implements Comparable {
 	 * <code><u>parameterValue</u></code> represent the parameter ids and
 	 * values encoded with separator characters escaped. The separator
 	 * characters <code>(</code>, <code>)</code>, <code>,</code> and
-	 * <code>=</code> are escaped by prepending a <code>%</code> character.
-	 * This requires the <code>%</code> character to be escaped, which is also
-	 * done by prepending a <code>%</code>.
+	 * <code>=</code> are escaped by prepending a <code>%</code>. This
+	 * requires <code>%</code> to be escaped, which is also done by prepending
+	 * a <code>%</code>.
 	 * </p>
 	 * <p>
 	 * The order of the parameters is not defined (and not important). A missing
@@ -573,13 +578,13 @@ public final class ParameterizedCommand implements Comparable {
 		}
 
 		final StringBuffer buffer = new StringBuffer(escapedId);
-		buffer.append('(');
+		buffer.append(CommandManager.PARAMETER_START_CHAR);
 
 		for (int i = 0; i < parameterizations.length; i++) {
 
 			if (i > 0) {
 				// insert separator between parameters
-				buffer.append(',');
+				buffer.append(CommandManager.PARAMETER_SEPARATOR_CHAR);
 			}
 
 			final Parameterization parameterization = parameterizations[i];
@@ -591,12 +596,12 @@ public final class ParameterizedCommand implements Comparable {
 			final String parameterValue = parameterization.getValue();
 			if (parameterValue != null) {
 				final String escapedParameterValue = escape(parameterValue);
-				buffer.append('=');
+				buffer.append(CommandManager.ID_VALUE_CHAR);
 				buffer.append(escapedParameterValue);
 			}
 		}
 
-		buffer.append(')');
+		buffer.append(CommandManager.PARAMETER_END_CHAR);
 
 		return buffer.toString();
 	}
