@@ -360,6 +360,15 @@ public class LocalFile extends FileStore {
 		if ((options & EFS.SET_LAST_MODIFIED) != 0)
 			file.setLastModified(info.getLastModified());
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.filesystem.provider.FileStore#toLocalFile(int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public File toLocalFile(int options, IProgressMonitor monitor) throws CoreException {
+		if (options == EFS.CACHE)
+			return super.toLocalFile(options, monitor);
+		return file;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#toString()

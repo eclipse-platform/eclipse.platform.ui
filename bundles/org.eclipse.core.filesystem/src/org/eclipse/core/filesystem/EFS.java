@@ -94,6 +94,15 @@ public class EFS {
 	public static final int SET_LAST_MODIFIED = 1 << 11;
 
 	/**
+	 * Option flag constant (value 1 &lt;&lt;12) indicating that
+	 * a cached representation of a file should be created if
+	 * necessary.
+	 * 
+	 * @see IFileStore#toLocalFile(int, IProgressMonitor)
+	 */
+	public static final int CACHE = 1 << 12;
+
+	/**
 	 * Attribute constant (value 1 &lt;&lt;1) indicating that a
 	 * file is read only.
 	 * 

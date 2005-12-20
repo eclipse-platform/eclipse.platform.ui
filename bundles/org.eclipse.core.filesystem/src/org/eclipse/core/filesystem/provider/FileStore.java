@@ -15,6 +15,7 @@ import java.net.URI;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.filesystem.Messages;
 import org.eclipse.core.internal.filesystem.Policy;
+import org.eclipse.core.internal.filesystem.local.LocalFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
@@ -412,11 +413,36 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 
 	/**
 	 * The default implementation of {@link IFileStore#toLocalFile(int, IProgressMonitor)}.
-	 * This implementation creates and returns a copy of this store that exists
-	 * in the local file system.
+	 * When the {@link EFS#CACHE} option is specified, this method returns
+	 * a cached copy of this store in the local file system, or <code>null</code> if
+	 * this store does not exist.
 	 */
 	public java.io.File toLocalFile(int options, IProgressMonitor monitor) throws CoreException {
-		return null;
+		//caching is the only recognized option
+		if (options != EFS.CACHE)
+			return null;
+		try {
+			monitor.beginTask(NLS.bind(Messages.copying, toString()), 100);
+			IFileInfo myInfo = fetchInfo(EFS.NONE, Policy.subMonitorFor(monitor, 25));
+			if (!myInfo.exists())
+				return null;
+			java.io.File result = File.createTempFile(getFileSystem().getScheme(), "efs"); //$NON-NLS-1$
+			monitor.worked(25);
+			if (myInfo.isDirectory()) {
+				result.delete();
+				result.mkdir();
+			}
+			monitor.worked(25);
+			IFileStore resultStore = new LocalFile(result);
+			resultStore.putInfo(myInfo, EFS.SET_ATTRIBUTES | EFS.SET_LAST_MODIFIED, Policy.subMonitorFor(monitor, 25));
+			result.deleteOnExit();
+			return result;
+		} catch (IOException e) {
+			Policy.error(EFS.ERROR_WRITE, NLS.bind(Messages.couldNotWrite, toString()));
+			return null;//can't get here
+		} finally {
+			monitor.done();
+		}
 	}
 
 	/**

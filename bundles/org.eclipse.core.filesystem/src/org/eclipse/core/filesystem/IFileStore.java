@@ -420,11 +420,19 @@ public interface IFileStore extends IAdaptable {
 	/**
 	 * Returns a file in the local file system with the same state as this file.
 	 * <p>
-	 * The returned file is intended to be used for read operations only.
-	 * No guarantee is made about synchronization between the returned file and this
-	 * store.  If the returned file is modified in any way, those changes may
-	 * not be reflected in this store, but may affect other callers who are
-	 * using the local representation of this store.
+	 * The {@link EFS#CACHE} option flag indicates whether this method
+	 * should return the actual underlying file or a cached local copy.
+	 * When the {@link EFS#CACHE} flag is specified, this method will return a 
+	 * cached local file with the same state and contents as this file. When
+	 * the {@link EFS#CACHE} flag is not specified, this method will return
+	 * the actual underlying local file, or <code>null</code> if this store
+	 * is not a local file.
+	 * <p>
+	 * In the case of a cached file, the returned file is intended to be used for 
+	 * read operations only. No guarantee is made about synchronization between 
+	 * the returned file and this store.  If the cached file is modified in any way, 
+	 * those changes may not be reflected in this store, but may affect other callers 
+	 * who are using the local representation of this store.
 	 * </p>
 	 * <p>
 	 * While the implementation of this method may use caching to return the
@@ -438,7 +446,8 @@ public interface IFileStore extends IAdaptable {
 	 * using it.  If the returned file is a cached copy, it will be deleted automatically
 	 * at the end of this session (Eclipse shutdown or virtual machine exit).
 	 * </p>
-	 * @param options 
+	 * @param options bit-wise or of option flag constants (
+	 * only {@link EFS#CACHE} applies).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @return A local file with the same state as this file.
