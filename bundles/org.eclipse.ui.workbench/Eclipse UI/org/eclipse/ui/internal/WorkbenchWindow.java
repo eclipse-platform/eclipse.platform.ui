@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -108,7 +107,6 @@ import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
-import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.util.PrefUtil;
@@ -341,16 +339,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	private IWindowTrim statusLineTrim = null;
 
     /**
-     * The handlers for action set actions that were last submitted to the
-     * workbench command support. This is a map of command identifiers to
-     * <code>ActionHandler</code>. This map is never <code>null</code>,
-     * and is never empty as long as at least one action set has been
-     * registered. The items in this map may not all be submitted, as global
-     * actions take priority.
-     */
-    private Map actionSetHandlersByCommandId = new HashMap();
-
-    /**
      * The handlers for global actions that were last submitted to the workbench
      * command support. This is a map of command identifiers to
      * <code>ActionHandler</code>. This map is never <code>null</code>,
@@ -452,77 +440,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
         }
     };
 
-
-    
-
-    void registerActionSets(IActionSet[] actionSets) {
-        
-        HashMap newActionSetHandlersByCommandId = new HashMap();
-        
-        /*
-         * For each action in each action, create a new action handler. If there
-         * are duplicates, then dispose of the earlier handler before clobbering
-         * it. This avoids memory leaks.
-         */
-        for (int i = 0; i < actionSets.length; i++) {
-            if (actionSets[i] instanceof PluginActionSet) {
-                PluginActionSet pluginActionSet = (PluginActionSet) actionSets[i];
-                IAction[] pluginActions = pluginActionSet.getPluginActions();
-
-                for (int j = 0; j < pluginActions.length; j++) {
-                    IAction pluginAction = pluginActions[j];
-                    String commandId = pluginAction.getActionDefinitionId();
-
-                    if (commandId != null) {
-                        ActionHandler value = (ActionHandler)actionSetHandlersByCommandId
-                                .get(commandId);
-                        
-                        // If we don't have a compatible handler already, create a new one
-                        if (value == null || value.getAction() != pluginAction) {
-                            value = new ActionHandler(pluginAction);
-                        }
-
-                        // In the bizarre event that we were given two IActions with the same
-                        // command ID, dispose the old one before we clobber it 
-                        ActionHandler clobberedHandler = (ActionHandler)newActionSetHandlersByCommandId.get(commandId);
-                        if (clobberedHandler != null && clobberedHandler != value) {
-                            clobberedHandler.dispose();
-                        }
-                        
-                        // We either had a suitable handler already or we created a new one
-                        // for the action. Add it to the new map.
-                        
-                        newActionSetHandlersByCommandId.put(commandId, value);                        
-                    }
-                }
-            }
-        }
-        
-        // Dispose any unused entries
-        Collection entrySet = actionSetHandlersByCommandId.entrySet();
-        Iterator iter = entrySet.iterator();
-        
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry)iter.next();
-            
-            Object key = entry.getKey();
-            
-            // If the old handler isn't being reused, dispose it.
-            ActionHandler oldHandler = (ActionHandler)entry.getValue();
-            ActionHandler newHandler = (ActionHandler)newActionSetHandlersByCommandId.get(key);
-            if (oldHandler != newHandler) {
-                oldHandler.dispose();
-            }
-        }
-        
-        actionSetHandlersByCommandId = newActionSetHandlersByCommandId;
-
-        /* Submit the new amalgamated list of action set handlers and global
-         * handlers.
-         */
-        submitActionSetAndGlobalHandlers();
-    }
-
     void registerGlobalAction(IAction globalAction) {
         String commandId = globalAction.getActionDefinitionId();
 
@@ -538,7 +455,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
                     globalAction));
         }
 
-        submitActionSetAndGlobalHandlers();
+        submitGlobalActions();
     }
 
     /**
@@ -555,7 +472,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * that that submission will become the handler.
      * </p>
      */
-    void submitActionSetAndGlobalHandlers() {
+    void submitGlobalActions() {
 		final IHandlerService handlerService = (IHandlerService) PlatformUI
 				.getWorkbench().getAdapter(IHandlerService.class);
 		
@@ -563,7 +480,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
          * taking priority.
          */
         Map handlersByCommandId = new HashMap();
-        handlersByCommandId.putAll(actionSetHandlersByCommandId);
         handlersByCommandId.putAll(globalActionHandlersByCommandId);
         
         List newHandlers = new ArrayList(handlersByCommandId.size());
@@ -1417,7 +1333,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				activation.getHandler().dispose();
 			}
             handlerActivations.clear();
-            actionSetHandlersByCommandId.clear();
             globalActionHandlersByCommandId.clear();
 
             // Remove the enabled submissions. Bug 64024.
@@ -2667,10 +2582,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 + IWorkbenchActionConstants.M_LAUNCH;
         IMenuManager manager = getMenuBarManager().findMenuUsingPath(path);
         IContributionItem item = getMenuBarManager().findUsingPath(path);
-
-        // TODO remove: updateActiveActions();
-        IActionSet actionSets[] = actionPresentation.getActionSets();
-        registerActionSets(actionSets);
 
         if (manager == null || item == null)
             return;
