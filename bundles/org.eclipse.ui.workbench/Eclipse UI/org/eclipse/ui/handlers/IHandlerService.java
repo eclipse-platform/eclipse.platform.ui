@@ -176,6 +176,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 *            activations; may be <code>null</code>.
 	 * @return <code>true</code> if there might be a conflict;
 	 *         <code>false</code> otherwise.
+	 * @since 3.2
 	 */
 	public boolean isConflict(String commandId, Expression expression);
 
