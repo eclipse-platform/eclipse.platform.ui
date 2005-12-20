@@ -16,6 +16,9 @@ import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IExecutionListener;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.SerializationException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.commands.ICommandService;
 
 /**
@@ -62,6 +65,12 @@ public final class CommandService implements ICommandService {
 	public final void defineUncategorizedCategory(final String name,
 			final String description) {
 		commandManager.defineUncategorizedCategory(name, description);
+	}
+
+	public final ParameterizedCommand deserialize(
+			final String serializedParameterizedCommand)
+			throws NotDefinedException, SerializationException {
+		return commandManager.deserialize(serializedParameterizedCommand);
 	}
 
 	public final void dispose() {

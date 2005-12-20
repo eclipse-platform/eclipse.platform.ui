@@ -82,6 +82,56 @@ public final class ParameterizedCommand implements Comparable {
 	public static final int INDEX_PARAMETER_VALUE_VALUE = 3;
 
 	/**
+	 * Escapes special characters in the command id, parameter ids and parameter
+	 * values for {@link #serialize()}. The special characters
+	 * {@link CommandManager#PARAMETER_START_CHAR},
+	 * {@link CommandManager#PARAMETER_END_CHAR},
+	 * {@link CommandManager#ID_VALUE_CHAR},
+	 * {@link CommandManager#PARAMETER_SEPARATOR_CHAR} and
+	 * {@link CommandManager#ESCAPE_CHAR} are escaped by prepending a
+	 * {@link CommandManager#ESCAPE_CHAR} character.
+	 * 
+	 * @param rawText
+	 *            a <code>String</code> to escape special characters in for
+	 *            serialization.
+	 * @return a <code>String</code> representing <code>rawText</code> with
+	 *         special serialization characters escaped
+	 * @see CommandManager#unescape(String)
+	 * @since 3.2
+	 */
+	private static final String escape(final String rawText) {
+
+		// defer initialization of a StringBuffer until we know we need one
+		StringBuffer buffer = null;
+
+		for (int i = 0; i < rawText.length(); i++) {
+
+			char c = rawText.charAt(i);
+			switch (c) {
+			case CommandManager.PARAMETER_START_CHAR:
+			case CommandManager.PARAMETER_END_CHAR:
+			case CommandManager.ID_VALUE_CHAR:
+			case CommandManager.PARAMETER_SEPARATOR_CHAR:
+			case CommandManager.ESCAPE_CHAR:
+				if (buffer == null)
+					buffer = new StringBuffer(rawText.substring(0, i));
+				buffer.append(CommandManager.ESCAPE_CHAR);
+				buffer.append(c);
+				break;
+			default:
+				if (buffer != null)
+					buffer.append(c);
+				break;
+			}
+
+		}
+
+		if (buffer == null)
+			return rawText;
+		return buffer.toString();
+	}
+
+	/**
 	 * Generates every possible combination of parameter values for the given
 	 * parameters. Parameters values that cannot be initialized are just
 	 * ignored. Optional parameters are considered.
@@ -462,9 +512,102 @@ public final class ParameterizedCommand implements Comparable {
 		}
 		return hashCode;
 	}
-    
-    public final String toString() {
-        final StringBuffer buffer = new StringBuffer();
+
+	/**
+	 * Returns a {@link String} containing the command id, parameter ids and
+	 * parameter values for this {@link ParameterizedCommand}. The returned
+	 * {@link String} can be stored by a client and later used to recontruct an
+	 * equivalent {@link ParameterizedCommand} using the
+	 * {@link CommandManager#deserialize(String)} method.
+	 * <p>
+	 * The syntax of the returned {@link String} is as follows:
+	 * </p>
+	 * 
+	 * <blockquote>
+	 * <code>serialization = <u>commandId</u> [ '(' parameters ')' ]</code><br>
+	 * <code>parameters = parameter [ ',' parameters ]</code><br>
+	 * <code>parameter = <u>parameterId</u> [ '=' <u>parameterValue</u> ]</code>
+	 * </blockquote>
+	 * 
+	 * <p>
+	 * In the syntax above, sections inside square-brackets are optional. The
+	 * characters in single quotes (<code>(</code>, <code>)</code>,
+	 * <code>,</code> and <code>=</code>) indicate literal characters.
+	 * </p>
+	 * <p>
+	 * <code><u>commandId</u></code> represents the command id encoded with
+	 * separator characters escaped. <code><u>parameterId</u></code> and
+	 * <code><u>parameterValue</u></code> represent the parameter ids and
+	 * values encoded with separator characters escaped. The separator
+	 * characters <code>(</code>, <code>)</code>, <code>,</code> and
+	 * <code>=</code> are escaped by prepending a <code>%</code>. This
+	 * requires <code>%</code> to be escaped, which is also done by prepending
+	 * a <code>%</code>.
+	 * </p>
+	 * <p>
+	 * The order of the parameters is not defined (and not important). A missing
+	 * <code><u>parameterValue</u></code> indicates that the value of the
+	 * parameter is <code>null</code>.
+	 * </p>
+	 * <p>
+	 * For example, the string shown below represents a serialized parameterized
+	 * command that can be used to show the Resource perspective:
+	 * </p>
+	 * <p>
+	 * <code>org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.ui.resourcePerspective)</code>
+	 * </p>
+	 * <p>
+	 * This example shows the more general form with multiple parameters,
+	 * <code>null</code> value parameters, and escaped <code>=</code> in the
+	 * third parameter value.
+	 * </p>
+	 * <p>
+	 * <code>command.id(param1.id=value1,param2.id,param3.id=esc%=val3)</code>
+	 * </p>
+	 * 
+	 * @return A string containing the escaped command id, parameter ids and
+	 *         parameter values; never <code>null</code>.
+	 * @see CommandManager#deserialize(String)
+	 * @since 3.2
+	 */
+	public final String serialize() {
+		final String escapedId = escape(getId());
+
+		if ((parameterizations == null) || (parameterizations.length == 0)) {
+			return escapedId;
+		}
+
+		final StringBuffer buffer = new StringBuffer(escapedId);
+		buffer.append(CommandManager.PARAMETER_START_CHAR);
+
+		for (int i = 0; i < parameterizations.length; i++) {
+
+			if (i > 0) {
+				// insert separator between parameters
+				buffer.append(CommandManager.PARAMETER_SEPARATOR_CHAR);
+			}
+
+			final Parameterization parameterization = parameterizations[i];
+			final String parameterId = parameterization.getParameter().getId();
+			final String escapedParameterId = escape(parameterId);
+
+			buffer.append(escapedParameterId);
+
+			final String parameterValue = parameterization.getValue();
+			if (parameterValue != null) {
+				final String escapedParameterValue = escape(parameterValue);
+				buffer.append(CommandManager.ID_VALUE_CHAR);
+				buffer.append(escapedParameterValue);
+			}
+		}
+
+		buffer.append(CommandManager.PARAMETER_END_CHAR);
+
+		return buffer.toString();
+	}
+
+	public final String toString() {
+		final StringBuffer buffer = new StringBuffer();
 		buffer.append("ParameterizedCommand("); //$NON-NLS-1$
 		buffer.append(command);
 		buffer.append(',');
