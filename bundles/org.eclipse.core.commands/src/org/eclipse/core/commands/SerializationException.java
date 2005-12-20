@@ -29,18 +29,22 @@ import org.eclipse.core.commands.common.CommandException;
  * @since 3.2
  */
 public final class SerializationException extends CommandException {
-	
-	/**
-	 * This member variable is required here to allow us to compile against JCL
-	 * foundation libraries.  The value may be <code>null</code>.
-	 */
-	private Throwable cause;
 
 	/**
 	 * Generated serial version UID for this class.
 	 */
 	private static final long serialVersionUID = 2691599674561684949L;
 
+	/**
+	 * Creates a new instance of this class with the specified detail message.
+	 * 
+	 * @param message
+	 *            the detail message; may be <code>null</code>.
+	 */
+	public SerializationException(final String message) {
+		super(message);
+	}
+	
 	/**
 	 * Creates a new instance of this class with the specified detail message
 	 * and cause.
@@ -51,19 +55,6 @@ public final class SerializationException extends CommandException {
 	 *            the cause; may be <code>null</code>.
 	 */
 	public SerializationException(final String message, final Throwable cause) {
-		super(message);
-		// don't pass the cause to super, to allow compilation against JCL
-		// Foundation
-		this.cause = cause;
-	}
-
-	/**
-	 * Returns the cause of this throwable or <code>null</code> if the cause
-	 * is nonexistent or unknown.
-	 * 
-	 * @return the cause or <code>null</code>
-	 */
-	public Throwable getCause() {
-		return cause;
+		super(message, cause);
 	}
 }

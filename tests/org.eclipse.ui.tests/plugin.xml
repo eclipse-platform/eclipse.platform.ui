@@ -2183,10 +2183,10 @@
                   optional="true"/>
          </command>
          <command
-               id="org.eclipse.ui.tests.command.with.f&amp;?@#$%:.name"
+               id="org.eclipse.ui.tests.command.with.f=%)(,unny.name"
                name="Command with funny name">
             <commandParameter
-                  id="param.with.F({&apos;&gt;&lt;+|.name"
+                  id="param.with.F({&apos;&gt;&lt;+|.)=,%.name"
                   name="Param with funny name"
                   optional="true"/>
          </command>

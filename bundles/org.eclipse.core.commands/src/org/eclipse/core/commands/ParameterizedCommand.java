@@ -11,8 +11,6 @@
 
 package org.eclipse.core.commands;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -84,9 +82,49 @@ public final class ParameterizedCommand implements Comparable {
 	public static final int INDEX_PARAMETER_VALUE_VALUE = 3;
 
 	/**
-	 * The encoding to use for serializing a parameterized command.
+	 * Escapes special characters in the command id, parameter ids and parameter
+	 * values for {@link #serialize()}. The special characters <code>(</code>,
+	 * <code>)</code>, <code>=</code>, <code>,</code> and <code>%</code>
+	 * are escaped by prepending a <code>%</code> character.
+	 * 
+	 * @param rawText
+	 *            a <code>String</code> to escape special characters in for
+	 *            serialization.
+	 * @return a <code>String</code> representing <code>rawText</code> with
+	 *         special serialization characters escaped
+	 * @see CommandManager#unescape(String)
+	 * @since 3.2
 	 */
-	static final String UTF_8_ENCODING = "UTF-8"; //$NON-NLS-1$
+	private static final String escape(final String rawText) {
+		
+		// defer initialization of a StringBuffer until we know we need one
+		StringBuffer buffer = null;
+		
+		for (int i = 0; i < rawText.length(); i++) {
+			
+			char c = rawText.charAt(i);
+			switch (c) {
+			case '(':
+			case ')':
+			case '=':
+			case ',':
+			case '%':
+				if (buffer == null)
+					buffer = new StringBuffer(rawText.substring(0, i));
+				buffer.append('%');
+				buffer.append(c);
+				break;
+			default:
+				if (buffer != null)
+					buffer.append(c);
+				break;
+			}
+			
+		}
+		
+		if (buffer == null) return rawText;
+		return buffer.toString();
+	}
 
 	/**
 	 * Generates every possible combination of parameter values for the given
@@ -294,27 +332,7 @@ public final class ParameterizedCommand implements Comparable {
 					"Concurrent modification of a command's defined state"); //$NON-NLS-1$
 		}
 	}
-
-	/**
-	 * Encodes a <code>String</code> with UTF-8 encoding.
-	 * 
-	 * @param rawText
-	 *            a <code>String</code> to encode with UTF-8 encoding; m
-	 * @return a <code>String</code> representing <code>rawText</code>
-	 *         encoded with UTF-8 encoding
-	 * @throws SerializationException
-	 *             if UTF-8 encoding is not supported on this platform.
-	 * @since 3.2
-	 */
-	private final String encodeUTF8(final String rawText)
-			throws SerializationException {
-		try {
-			return URLEncoder.encode(rawText, UTF_8_ENCODING);
-		} catch (final UnsupportedEncodingException e) {
-			throw new SerializationException("UTF-8 Encoding not supported", e); //$NON-NLS-1$
-		}
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -491,96 +509,94 @@ public final class ParameterizedCommand implements Comparable {
 	}
 
 	/**
-	 * Returns a {@link String} containing the command id and the parameter ids
-	 * and parameter values for this {@link ParameterizedCommand}. The returned
+	 * Returns a {@link String} containing the command id, parameter ids and
+	 * parameter values for this {@link ParameterizedCommand}. The returned
 	 * {@link String} can be stored by a client and later used to recontruct an
 	 * equivalent {@link ParameterizedCommand} using the
 	 * {@link CommandManager#deserialize(String)} method.
 	 * <p>
 	 * The syntax of the returned {@link String} is as follows:
 	 * </p>
-	 * <blockquote> <table cellpadding=0 cellspacing=0 summary="layout">
-	 * <tr>
-	 * <td><code>serialization = <u>commandId</u> [ '?' parameters ]</code></td>
-	 * </tr>
-	 * <tr>
-	 * <td><code>parameters = parameter [ '&' parameters ]</code></td>
-	 * </tr>
-	 * <tr>
-	 * <td><code>parameter = <u>parameterId</u> [ '=' <u>parameterValue</code></u> ]</td>
-	 * </tr>
-	 * </table> </blockquote>
+	 * 
+	 * <blockquote>
+	 * <code>serialization = <u>commandId</u> [ '(' parameters ')' ]</code><br>
+	 * <code>parameters = parameter [ ',' parameters ]</code><br>
+	 * <code>parameter = <u>parameterId</u> [ '=' <u>parameterValue</u> ]</code>
+	 * </blockquote>
+	 * 
 	 * <p>
 	 * In the syntax above, sections inside square-brackets are optional. The
-	 * characters in single quotes (<code>'?'</code>, <code>'&'</code> and
-	 * <code>'='</code>) indicate literal characters.
+	 * characters in single quotes (<code>(</code>, <code>)</code>,
+	 * <code>,</code> and <code>=</code>) indicate literal characters.
 	 * </p>
 	 * <p>
 	 * <code><u>commandId</u></code> represents the command id encoded with
-	 * UTF-8 encoding. <code><u>parameterId</u></code> and
+	 * separator characters escaped. <code><u>parameterId</u></code> and
 	 * <code><u>parameterValue</u></code> represent the parameter ids and
-	 * values encoded with UTF-8 encoding. The order of the parameters is not
-	 * defined (and not important). A missing <code><u>parameterValue</u></code>
-	 * indicates that the value of the parameter is <code>null</code>.
+	 * values encoded with separator characters escaped. The separator
+	 * characters <code>(</code>, <code>)</code>, <code>,</code> and
+	 * <code>=</code> are escaped by prepending a <code>%</code> character.
+	 * This requires the <code>%</code> character to be escaped, which is also
+	 * done by prepending a <code>%</code>.
+	 * </p>
+	 * <p>
+	 * The order of the parameters is not defined (and not important). A missing
+	 * <code><u>parameterValue</u></code> indicates that the value of the
+	 * parameter is <code>null</code>.
 	 * </p>
 	 * <p>
 	 * For example, the string shown below represents a serialized parameterized
 	 * command that can be used to show the Resource perspective:
 	 * </p>
 	 * <p>
-	 * <code>org.eclipse.ui.perspectives.showPerspective?org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.ui.resourcePerspective</code>
+	 * <code>org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.ui.resourcePerspective)</code>
 	 * </p>
 	 * <p>
-	 * This example shows the more general form with multiple parameters and
-	 * <code>null</code> value parameters.
+	 * This example shows the more general form with multiple parameters,
+	 * <code>null</code> value parameters, and escaped <code>=</code> in the
+	 * third parameter value.
 	 * </p>
 	 * <p>
-	 * <code>command.id?param1.id=value1&amp;param2.id&amp;param3.id=value3</code>
-	 * </p>
-	 * <p>
-	 * The syntax used here was intentionally chosen to be "URI-friendly". The
-	 * use of the <code>'?'</code>, <code>'&'</code> and <code>'='</code>
-	 * characters and the UTF-8 encoding of the ids and values allows the String
-	 * returned to form the suffix of a well-formed URI.
+	 * <code>command.id(param1.id=value1,param2.id,param3.id=esc%=val3)</code>
 	 * </p>
 	 * 
-	 * @return A string containing the UTF-8 encoded command id, parameter ids
-	 *         and parameter values; never <code>null</code>.
-	 * @throws SerializationException
-	 *             if there is a problem creating the serialization string.
+	 * @return A string containing the escaped command id, parameter ids and
+	 *         parameter values; never <code>null</code>.
 	 * @see CommandManager#deserialize(String)
 	 * @since 3.2
 	 */
-	public final String serialize() throws SerializationException {
-		final String encodedId = encodeUTF8(getId());
+	public final String serialize() {
+		final String escapedId = escape(getId());
 
 		if ((parameterizations == null) || (parameterizations.length == 0)) {
-			return encodedId;
+			return escapedId;
 		}
 
-		final StringBuffer buffer = new StringBuffer(encodedId);
-		buffer.append('?');
+		final StringBuffer buffer = new StringBuffer(escapedId);
+		buffer.append('(');
 
 		for (int i = 0; i < parameterizations.length; i++) {
 
 			if (i > 0) {
 				// insert separator between parameters
-				buffer.append('&');
+				buffer.append(',');
 			}
 
 			final Parameterization parameterization = parameterizations[i];
 			final String parameterId = parameterization.getParameter().getId();
-			final String encodedParameterId = encodeUTF8(parameterId);
+			final String escapedParameterId = escape(parameterId);
 
-			buffer.append(encodedParameterId);
+			buffer.append(escapedParameterId);
 
 			final String parameterValue = parameterization.getValue();
 			if (parameterValue != null) {
-				final String encodedParameterValue = encodeUTF8(parameterValue);
+				final String escapedParameterValue = escape(parameterValue);
 				buffer.append('=');
-				buffer.append(encodedParameterValue);
+				buffer.append(escapedParameterValue);
 			}
 		}
+
+		buffer.append(')');
 
 		return buffer.toString();
 	}
