@@ -8,12 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.internal.ui.refactoring.history;
+package org.eclipse.ltk.internal.ui.refactoring;
 
 import org.eclipse.ltk.core.refactoring.Change;
 
 /**
- * Interface for refactoring preview change filters.
+ * Implementation for a refactoring preview change filter.
  * 
  * @since 3.2
  */

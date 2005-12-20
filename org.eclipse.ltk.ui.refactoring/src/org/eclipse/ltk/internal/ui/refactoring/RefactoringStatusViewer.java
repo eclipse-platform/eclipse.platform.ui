@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusContext;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
+
 import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
 import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
 
@@ -127,6 +128,7 @@ public class RefactoringStatusViewer extends SashForm {
 	private StatusContextViewerDescriptor fCurrentDescriptor;
 	private IStatusContextViewer fCurrentContextViewer;
 	private NullContextViewer fNullContextViewer;
+	private RefactoringStatusEntryFilter fFilter= null;
 	
 	private NextProblem fNextProblem;
 	private PreviousProblem fPreviousProblem;
@@ -134,6 +136,16 @@ public class RefactoringStatusViewer extends SashForm {
 	public RefactoringStatusViewer(Composite parent, int style) {
 		super(parent, style | SWT.VERTICAL);
 		createContents();
+	}
+
+	/**
+	 * Sets the status entry filter.
+	 * 
+	 * @param filter
+	 *            the status entry filter to set, or <code>null</code>
+	 */
+	public void setFilter(final RefactoringStatusEntryFilter filter) {
+		fFilter= filter;
 	}
 
 	/**
@@ -239,7 +251,7 @@ public class RefactoringStatusViewer extends SashForm {
 
 	private void showContextViewer(RefactoringStatusEntry entry) {
 		RefactoringStatusContext context= entry.getContext();
-		if (context == null) {
+		if (context == null || (fFilter != null && !fFilter.select(entry))) {
 			showNullContextViewer();
 		} else {
 			try {

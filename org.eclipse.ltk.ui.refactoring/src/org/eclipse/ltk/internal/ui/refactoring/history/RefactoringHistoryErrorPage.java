@@ -17,7 +17,10 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringStatusEntryFilter;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+
+import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -32,6 +35,9 @@ import org.eclipse.osgi.util.NLS;
  * @since 3.2
  */
 public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
+
+	/** The status entry filter */
+	private RefactoringStatusEntryFilter fFilter= new RefactoringStatusEntryFilter();
 
 	/** Is the next wizard page disabled? */
 	private boolean fNextPageDisabled= false;
@@ -53,6 +59,14 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	 */
 	public boolean canFlipToNextPage() {
 		return !fNextPageDisabled;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void createControl(final Composite parent) {
+		super.createControl(parent);
+		fViewer.setFilter(fFilter);
 	}
 
 	/**
@@ -104,6 +118,17 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	 */
 	protected boolean performFinish() {
 		return true;
+	}
+
+	/**
+	 * Sets the status entry filter.
+	 * 
+	 * @param filter
+	 *            the status entry filter to set
+	 */
+	public void setFilter(final RefactoringStatusEntryFilter filter) {
+		Assert.isNotNull(filter);
+		fFilter= filter;
 	}
 
 	/**

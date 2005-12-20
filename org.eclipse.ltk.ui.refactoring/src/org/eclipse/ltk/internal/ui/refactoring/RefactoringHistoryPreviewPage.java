@@ -18,7 +18,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryErrorPage;
-import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPreviewChangeFilter;
 
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -136,10 +135,10 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	}
 
 	/**
-	 * Sets the preview change requestor.
+	 * Sets the preview change filter.
 	 * 
 	 * @param filter
-	 *            the preview change requestor to set
+	 *            the preview change filter to set
 	 */
 	public void setFilter(final RefactoringPreviewChangeFilter filter) {
 		Assert.isNotNull(filter);

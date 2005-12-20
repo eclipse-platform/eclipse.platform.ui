@@ -16,8 +16,6 @@ import java.util.List;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 
-import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPreviewChangeFilter;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class CompositeChangeNode extends AbstractChangeNode {

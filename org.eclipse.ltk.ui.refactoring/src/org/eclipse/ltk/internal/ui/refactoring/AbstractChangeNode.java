@@ -19,8 +19,6 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 
-import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPreviewChangeFilter;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;

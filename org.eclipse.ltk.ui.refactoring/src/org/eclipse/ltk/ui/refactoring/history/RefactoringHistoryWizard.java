@@ -55,13 +55,14 @@ import org.eclipse.ltk.internal.ui.refactoring.IErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.IPreviewWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringHistoryPreviewPage;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringPreviewChangeFilter;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringStatusEntryFilter;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.internal.ui.refactoring.UIPerformChangeOperation;
 import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryErrorPage;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryOverviewPage;
-import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPreviewChangeFilter;
 
 import org.eclipse.swt.widgets.Shell;
 
@@ -140,17 +141,6 @@ public class RefactoringHistoryWizard extends Wizard {
 	/** The error wizard page */
 	private final RefactoringHistoryErrorPage fErrorPage;
 
-	/** The preview change filter */
-	private RefactoringPreviewChangeFilter fFilter= new RefactoringPreviewChangeFilter() {
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public final boolean select(final Change change) {
-			return selectPreviewChange(change);
-		}
-	};
-
 	/** Are we currently in method <code>addPages</code>? */
 	private boolean fInAddPages= false;
 
@@ -163,11 +153,33 @@ public class RefactoringHistoryWizard extends Wizard {
 	/** The title of the overview page */
 	private final String fOverviewTitle;
 
+	/** The preview change filter */
+	private RefactoringPreviewChangeFilter fPreviewChangeFilter= new RefactoringPreviewChangeFilter() {
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public final boolean select(final Change change) {
+			return selectPreviewChange(change);
+		}
+	};
+
 	/** The preview wizard page */
 	private final RefactoringHistoryPreviewPage fPreviewPage;
 
 	/** The refactoring history to execute */
 	private RefactoringHistory fRefactoringHistory;
+
+	/** The status entry filter */
+	private RefactoringStatusEntryFilter fStatusEntryFilter= new RefactoringStatusEntryFilter() {
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public final boolean select(final RefactoringStatusEntry entry) {
+			return selectStatusEntry(entry);
+		}
+	};
 
 	/**
 	 * Creates a new refactoring history wizard.
@@ -191,8 +203,9 @@ public class RefactoringHistoryWizard extends Wizard {
 		fOverviewTitle= title;
 		fOverviewDescription= description;
 		fErrorPage= new RefactoringHistoryErrorPage();
+		fErrorPage.setFilter(fStatusEntryFilter);
 		fPreviewPage= new RefactoringHistoryPreviewPage();
-		fPreviewPage.setFilter(fFilter);
+		fPreviewPage.setFilter(fPreviewChangeFilter);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(caption);
 		setDefaultPageImageDescriptor(RefactoringPluginImages.DESC_WIZBAN_REFACTOR);
@@ -305,7 +318,12 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * {@inheritDoc}
 	 */
 	public boolean canFinish() {
-		return getContainer().getCurrentPage() != fErrorPage;
+		final IWizardPage page= getContainer().getCurrentPage();
+		if (page == fErrorPage) {
+			final RefactoringStatus status= fErrorPage.getStatus();
+			return status == null || !status.hasFatalError();
+		}
+		return true;
 	}
 
 	/**
@@ -914,7 +932,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 			public final void run() {
 				fErrorPage.setTitle(descriptor, fCurrentRefactoring, fDescriptorProxies.length);
-				fErrorPage.setNextPageDisabled(disabled);
+				fErrorPage.setNextPageDisabled(disabled && fatal);
 				fErrorPage.setPageComplete(!fatal);
 				fErrorPage.setStatus(null);
 				fErrorPage.setStatus(status);
@@ -970,7 +988,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Hook method which is called for each change before it is displayed in a
-	 * preview.
+	 * preview page.
 	 * <p>
 	 * Note: This API must not be used from outside the refactoring framework.
 	 * </p>
@@ -981,6 +999,22 @@ public class RefactoringHistoryWizard extends Wizard {
 	 *         <code>false</code> otherwise
 	 */
 	protected boolean selectPreviewChange(final Change change) {
+		return true;
+	}
+
+	/**
+	 * Hook method which is called for each status entry before it is displayed
+	 * in a wizard page.
+	 * <p>
+	 * Note: This API must not be used from outside the refactoring framework.
+	 * </p>
+	 * 
+	 * @param entry
+	 *            the status entry to accept
+	 * @return <code>true</code> if the status entry is accepted by the
+	 *         filter, <code>false</code> otherwise
+	 */
+	protected boolean selectStatusEntry(final RefactoringStatusEntry entry) {
 		return true;
 	}
 
