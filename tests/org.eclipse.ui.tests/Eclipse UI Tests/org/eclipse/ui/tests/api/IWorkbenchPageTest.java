@@ -984,11 +984,65 @@ public class IWorkbenchPageTest extends UITestCase {
 			// don't leave the view showing, or the UI will block on window
 			// close
 		} finally {
-			SaveableHelper.testSetAutomatedResponse(-1); // restore default
+			SaveableHelper.testSetAutomatedResponse(SaveableHelper.USER_RESPONSE); // restore default
 			// (prompt)
 		}
 	}
 
+    /**
+     * Tests that a close will fall back to the default if the view returns
+     * ISaveable2.DEFAULT.
+     * 
+     * @throws Throwable
+     */
+    public void testSaveEffectsSharedModel() throws Throwable {
+		String viewId = UserSaveableSharedViewPart.ID;
+		UserSaveableSharedViewPart view = null;
+
+		UserSaveableSharedViewPart view2 = null;
+
+		assertEquals(fActivePage.findView(UserSaveableSharedViewPart.ID), null);
+
+		try {
+			SaveableHelper.testSetAutomatedResponse(3); // DEFAULT
+			UserSaveableSharedViewPart.SharedModel model = new UserSaveableSharedViewPart.SharedModel();
+			view = (UserSaveableSharedViewPart) fActivePage.showView(viewId);
+			view.setSharedModel(model);
+
+			view2 = (UserSaveableSharedViewPart) fActivePage.showView(viewId,
+					"2", IWorkbenchPage.VIEW_ACTIVATE);
+			assertNotNull(view2);
+			view2.setSharedModel(model);
+
+			WorkbenchPage page = (WorkbenchPage) fActivePage;
+			page.getEditorManager().saveAll(true, false);
+
+			assertFalse(view.isDirty());
+			assertFalse(view2.isDirty());
+
+			CallHistory callTrace = view.getCallHistory();
+			CallHistory call2 = view2.getCallHistory();
+
+			assertTrue(callTrace.contains("isDirty"));
+			assertTrue(call2.contains("isDirty"));
+			assertTrue("At least one should call doSave", callTrace
+					.contains("doSave")
+					|| call2.contains("doSave"));
+			assertFalse("Both should not call doSave", callTrace
+					.contains("doSave")
+					&& call2.contains("doSave"));
+
+			// don't leave the view showing, or the UI will block on window
+			// close
+		} finally {
+			SaveableHelper
+					.testSetAutomatedResponse(SaveableHelper.USER_RESPONSE); // restore
+																				// default
+			// (prompt)
+			fActivePage.hideView(view);
+			fActivePage.hideView(view2);
+		}
+	}
 	
     public void testClose() throws Throwable {
         IWorkbenchPage page = openTestPage(fWin);

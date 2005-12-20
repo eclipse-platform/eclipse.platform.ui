@@ -999,6 +999,7 @@ public class EditorManager implements IExtensionChangeHandler {
     public static boolean saveAll(List dirtyParts, boolean confirm,
             final IWorkbenchWindow window) {
         if (confirm) {
+        	boolean saveable2Processed = false;
          	// Process all parts that implement ISaveablePart2.
         	// These parts are removed from the list after saving 
 			// them.  We then need to restore the workbench to 
@@ -1047,6 +1048,7 @@ public class EditorManager implements IExtensionChangeHandler {
 						// be an unexpected switch from the current state.
 						return false;
 					} else if (choice!=ISaveablePart2.DEFAULT) {
+						saveable2Processed = true;
 						listIterator.remove();
 					}
                 }
@@ -1059,10 +1061,23 @@ public class EditorManager implements IExtensionChangeHandler {
     			}
     		}
             
+            
+            // if processing a ISaveablePart2 caused other parts to be
+            // saved, remove them from the list presented to the user.
+            if (saveable2Processed) {
+            	listIterator = dirtyParts.listIterator();
+            	while (listIterator.hasNext()) {
+            		ISaveablePart part = (ISaveablePart) listIterator.next();
+            		if (!part.isDirty()) {
+            			listIterator.remove();
+            		}
+            	}
+            }
+
         	// If the editor list is empty return.
             if (dirtyParts.isEmpty())
             	return true;
-            
+
             // Convert the list into an element collection.
             AdaptableList input = new AdaptableList(dirtyParts);
 
@@ -1098,19 +1113,7 @@ public class EditorManager implements IExtensionChangeHandler {
         // Create save block.
         // @issue reference to workspace runnable!
         final List finalParts = dirtyParts;
-        /*		final IWorkspaceRunnable workspaceOp = new IWorkspaceRunnable() {
-         public void run(IProgressMonitor monitor) {
-         monitor.beginTask("", finalEditors.size()); //$NON-NLS-1$
-         Iterator enum = finalEditors.iterator();
-         while (enum.hasNext()) {
-         IEditorPart part = (IEditorPart) enum.next();
-         part.doSave(new SubProgressMonitor(monitor, 1));
-         if (monitor.isCanceled())
-         break;
-         }
-         }
-         };
-         */
+        
         IRunnableWithProgress progressOp = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor) {
                 //				try {
@@ -1124,22 +1127,14 @@ public class EditorManager implements IExtensionChangeHandler {
                 Iterator itr = finalParts.iterator();
                 while (itr.hasNext()) {
                     ISaveablePart part = (ISaveablePart) itr.next();
-                    part.doSave(new SubProgressMonitor(monitorWrap, 1));
+                    if (part.isDirty()) {
+                    	part.doSave(new SubProgressMonitor(monitorWrap, 1));
+                    }
                     if (monitorWrap.isCanceled())
                         break;
                 }
                 //-----------
                 monitorWrap.done();
-                /*				} catch (CoreException e) {
-                 IStatus status = new Status(Status.WARNING, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.getString("EditorManager.saveFailed"), e); //$NON-NLS-1$
-                 WorkbenchPlugin.log(WorkbenchMessages.getString("EditorManager.saveFailed"), status); //$NON-NLS-1$
-                 ErrorDialog.openError(
-                 window.getShell(), 
-                 WorkbenchMessages.getString("Error"), //$NON-NLS-1$
-                 WorkbenchMessages.format("EditorManager.saveFailedMessage", new Object[] { e.getMessage()}), //$NON-NLS-1$
-                 e.getStatus());
-                 }
-                 */
             }
         };
 
