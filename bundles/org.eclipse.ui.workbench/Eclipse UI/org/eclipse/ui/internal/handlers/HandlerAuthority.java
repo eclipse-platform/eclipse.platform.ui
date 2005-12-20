@@ -255,11 +255,12 @@ final class HandlerAuthority extends ExpressionAuthority {
 				final IHandlerActivation handlerActivation = (IHandlerActivation) handlerActivationItr
 						.next();
 				final Expression expression = handlerActivation.getExpression();
-				final int currentSourcePriority = SourcePriorityNameMapping
-						.computeSourcePriority(expression);
 				if (Util.equals(expression, activeWhenExpression)) {
 					return true;
 				}
+				
+				final int currentSourcePriority = SourcePriorityNameMapping
+				.computeSourcePriority(expression);
 				if (sourcePriorityToCheck == currentSourcePriority) {
 					return true;
 				}
@@ -268,11 +269,12 @@ final class HandlerAuthority extends ExpressionAuthority {
 		} else if (object instanceof IHandlerActivation) {
 			final IHandlerActivation handlerActivation = (IHandlerActivation) object;
 			final Expression expression = handlerActivation.getExpression();
-			final int currentSourcePriority = SourcePriorityNameMapping
-					.computeSourcePriority(expression);
 			if (Util.equals(expression, activeWhenExpression)) {
 				return true;
 			}
+			
+			final int currentSourcePriority = SourcePriorityNameMapping
+			.computeSourcePriority(expression);
 			if (sourcePriorityToCheck == currentSourcePriority) {
 				return true;
 			}
