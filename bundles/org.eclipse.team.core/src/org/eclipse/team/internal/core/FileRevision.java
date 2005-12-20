@@ -13,9 +13,20 @@ package org.eclipse.team.internal.core;
 
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.ITag;
+import org.eclipse.team.core.variants.FileState;
 
-public abstract class FileRevision implements IFileRevision {
+public abstract class FileRevision extends FileState implements IFileRevision {
 
+	public String getContentIdentifier() {
+		return null;
+	}
+	public String getAuthor() {
+		return null;
+	}
+	public String getComment() {
+		return null;
+	}
+	
 	public ITag[] getTags() {
 		return new ITag[0];
 	}

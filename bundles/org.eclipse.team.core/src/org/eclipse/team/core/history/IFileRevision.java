@@ -27,7 +27,7 @@ public interface IFileRevision extends IFileState {
 	 * Returns the <em>unique</em> identifier for this file revision 
 	 * @return a String containing the id
 	 */
-	public abstract String getContentIndentifier();
+	public abstract String getContentIdentifier();
 
 	/**
 	 *  Returns a String containing the author of this revision

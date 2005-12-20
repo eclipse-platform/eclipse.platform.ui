@@ -25,6 +25,7 @@ import org.eclipse.team.core.mapping.provider.*;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.variants.FileState;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.internal.core.FileRevision;
 
 /**
  * Covert a SyncInfoSet into a SyncDeltaTree
@@ -151,14 +152,19 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 	private static IFileState asFileState(final IResourceVariant variant) {
 		if (variant == null)
 			return null;
-		return new FileState() {
+		return new FileRevision() {
 			public IStorage getStorage(IProgressMonitor monitor) throws CoreException {
 				return variant.getStorage(monitor);
 			}
 			public String getName() {
 				return variant.getName();
 			}
-		
+			/* (non-Javadoc)
+			 * @see org.eclipse.team.internal.core.FileRevision#getContentIndentifier()
+			 */
+			public String getContentIdentifier() {
+				return variant.getContentIdentifier();
+			}
 		};
 	}
 

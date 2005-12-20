@@ -56,7 +56,7 @@ public class CVSFileHistory extends FileHistory {
 		CVSFileRevision[] revisions = getCVSFileRevisions();
 		
 		for (int i = 0; i < revisions.length; i++) {
-			if (revisions[i].getContentIndentifier().equals(id))
+			if (revisions[i].getContentIdentifier().equals(id))
 				return revisions[i];
 		}
 		return null;

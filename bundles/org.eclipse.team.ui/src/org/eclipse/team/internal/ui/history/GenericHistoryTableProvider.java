@@ -72,7 +72,7 @@ public class GenericHistoryTableProvider {
 			if (entry == null) return ""; //$NON-NLS-1$
 			switch (columnIndex) {
 				case COL_REVISIONID:
-					String revision = entry.getContentIndentifier();
+					String revision = entry.getContentIdentifier();
 					return revision;
 				case COL_DATE:
 					long date = entry.getTimestamp();
@@ -111,7 +111,7 @@ public class GenericHistoryTableProvider {
 			IFileRevision entry = adaptToFileRevision(element);
 			if (entry == null)
 				return null;
-			String revision = entry.getContentIndentifier();
+			String revision = entry.getContentIdentifier();
 			String tempCurrentRevision = getCurrentRevision();
 			if (tempCurrentRevision != null && tempCurrentRevision.equals(revision)) {
 				if (currentRevisionFont == null) {
@@ -178,7 +178,7 @@ public class GenericHistoryTableProvider {
 		int compareColumnValue(int columnNumber, IFileRevision e1, IFileRevision e2) {
 			switch (columnNumber) {
 				case 0: /* revision */
-					return e1.getContentIndentifier().compareTo(e2.getContentIndentifier());
+					return e1.getContentIdentifier().compareTo(e2.getContentIdentifier());
 				case 1: /* date */
 					long date1 = e1.getTimestamp();
 					long date2 = e2.getTimestamp();
@@ -348,7 +348,7 @@ public class GenericHistoryTableProvider {
 		IFileRevision fileRevision = teamProvider.getFileHistoryProvider().getWorkspaceFileRevision(currentFile);
 		
 		if (fileRevision != null )
-			return fileRevision.getContentIndentifier();
+			return fileRevision.getContentIdentifier();
 		
 		return null;
 	}

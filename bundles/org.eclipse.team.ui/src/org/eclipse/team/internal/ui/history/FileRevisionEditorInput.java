@@ -45,7 +45,7 @@ public class FileRevisionEditorInput implements IWorkbenchAdapter,IStorageEditor
 	}
 
 	public String getName() {
-		return NLS.bind(TeamUIMessages.nameAndRevision, new String[] { file.getName(), file.getContentIndentifier()}); 
+		return NLS.bind(TeamUIMessages.nameAndRevision, new String[] { file.getName(), file.getContentIdentifier()}); 
 	}
 
 	public IPersistableElement getPersistable() {
@@ -55,7 +55,7 @@ public class FileRevisionEditorInput implements IWorkbenchAdapter,IStorageEditor
 
 	public String getToolTipText() {
 		// TODO Auto-generated method stub
-		return file.getContentIndentifier();
+		return file.getContentIdentifier();
 	}
 
 	public Object getAdapter(Class adapter) {

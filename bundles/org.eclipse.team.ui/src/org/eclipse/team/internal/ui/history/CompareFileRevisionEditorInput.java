@@ -92,7 +92,7 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput {
 	private String getLabel(ITypedElement element) {
 		if (element instanceof RevisionEditionNode) {
 			IFileRevision revision = ((RevisionEditionNode)element).getFileRevision();
-			return NLS.bind(TeamUIMessages.nameAndRevision, new String[]{revision.getName(), revision.getContentIndentifier()});
+			return NLS.bind(TeamUIMessages.nameAndRevision, new String[]{revision.getName(), revision.getContentIdentifier()});
 		}
 		return element.getName();
 	}
@@ -104,7 +104,7 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput {
 		if (element instanceof RevisionEditionNode) {
 			IFileRevision revision = ((RevisionEditionNode)element).getFileRevision();
 			//try {
-				return revision.getContentIndentifier();
+				return revision.getContentIdentifier();
 			/*} catch (TeamException e) {
 				handle(e);
 				// Fall through and get the default label

@@ -66,7 +66,7 @@ public class CVSFileRevision extends FileRevision {
 		return entry.getRemoteFile().getName();
 	}
 	
-	public String getContentIndentifier() {
+	public String getContentIdentifier() {
 		return entry.getRevision();
 	}
 
