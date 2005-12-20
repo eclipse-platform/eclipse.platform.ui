@@ -13,9 +13,7 @@ package org.eclipse.core.filesystem.provider;
 import java.io.*;
 import java.net.URI;
 import org.eclipse.core.filesystem.*;
-import org.eclipse.core.internal.filesystem.Messages;
-import org.eclipse.core.internal.filesystem.Policy;
-import org.eclipse.core.internal.filesystem.local.LocalFile;
+import org.eclipse.core.internal.filesystem.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
@@ -47,6 +45,8 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * that return String[] to avoid creating garbage objects.
 	 */
 	protected static final String[] EMPTY_STRING_ARRAY = new String[0];
+
+	private FileCache fileCache;
 
 	/**
 	 * Closes a stream and ignores any resulting exception.
@@ -303,6 +303,12 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 */
 	public abstract IFileStore getChild(String name);
 
+	private FileCache getFileCache() throws CoreException {
+		if (fileCache == null)
+			fileCache = new FileCache();
+		return fileCache;
+	}
+
 	/**
 	 * The default implementation of {@link IFileStore#getFileSystem()}.
 	 * Subclasses may override.
@@ -421,28 +427,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 		//caching is the only recognized option
 		if (options != EFS.CACHE)
 			return null;
-		try {
-			monitor.beginTask(NLS.bind(Messages.copying, toString()), 100);
-			IFileInfo myInfo = fetchInfo(EFS.NONE, Policy.subMonitorFor(monitor, 25));
-			if (!myInfo.exists())
-				return null;
-			java.io.File result = File.createTempFile(getFileSystem().getScheme(), "efs"); //$NON-NLS-1$
-			monitor.worked(25);
-			if (myInfo.isDirectory()) {
-				result.delete();
-				result.mkdir();
-			}
-			monitor.worked(25);
-			IFileStore resultStore = new LocalFile(result);
-			resultStore.putInfo(myInfo, EFS.SET_ATTRIBUTES | EFS.SET_LAST_MODIFIED, Policy.subMonitorFor(monitor, 25));
-			result.deleteOnExit();
-			return result;
-		} catch (IOException e) {
-			Policy.error(EFS.ERROR_WRITE, NLS.bind(Messages.couldNotWrite, toString()));
-			return null;//can't get here
-		} finally {
-			monitor.done();
-		}
+		return getFileCache().cache(this, monitor);
 	}
 
 	/**
