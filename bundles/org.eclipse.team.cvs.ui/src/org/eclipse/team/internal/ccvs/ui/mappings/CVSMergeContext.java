@@ -17,12 +17,14 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IThreeWayDiff;
-import org.eclipse.team.core.mapping.IMergeContext;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.core.history.IFileState;
+import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfoFilter.ContentComparisonSyncInfoFilter;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -65,6 +67,7 @@ public class CVSMergeContext extends MergeContext {
 				if (resource.getType() != IResource.FILE)
 					return;
 				SyncInfo info = getSyncInfo(resource);
+				ensureRemotesMatch(resource, node, info);
 				if (info instanceof CVSSyncInfo) {
 					CVSSyncInfo cvsInfo = (CVSSyncInfo) info;		
 					cvsInfo.makeOutgoing(monitor);
@@ -82,6 +85,31 @@ public class CVSMergeContext extends MergeContext {
 				}
 			}
 		}, getMergeRule(node), IResource.NONE, monitor);
+	}
+
+	protected void ensureRemotesMatch(IResource resource, IDiffNode node, SyncInfo info) throws CVSException {
+		IResourceVariant variant = info.getRemote();
+		IFileState remote = getRemote(node);
+		if (variant != null && remote != null && remote instanceof IFileRevision) {
+			String ci1 = variant.getContentIdentifier();
+			String ci2 = ((IFileRevision)remote).getContentIdentifier();
+			if (!ci1.equals(ci2)) {
+				throw new CVSException(NLS.bind("Could not update the meta-data for file {0} due to inconsistent internal state.", resource.getFullPath().toString()));
+			}
+		}
+	}
+
+	private IFileState getRemote(IDiffNode node) {
+		if (node == null) return null;
+		if (node instanceof IThreeWayDiff) {
+			IThreeWayDiff twd = (IThreeWayDiff) node;
+			return getRemote(twd.getRemoteChange());
+		}
+		if (node instanceof IResourceDiff) {
+			IResourceDiff rd = (IResourceDiff) node;
+			return rd.getAfterState();
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
