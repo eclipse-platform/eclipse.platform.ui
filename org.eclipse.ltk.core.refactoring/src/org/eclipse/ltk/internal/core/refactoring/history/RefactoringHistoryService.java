@@ -865,25 +865,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/**
-	 * Returns the descriptor the specified handle points to.
-	 * <p>
-	 * The refactoring history must be in connected state.
-	 * </p>
-	 * 
-	 * @param source
-	 *            the source refactoring descriptor
-	 * @param target
-	 *            the target refactoring descriptor
-	 */
-	public void setDependency(final RefactoringDescriptor source, final RefactoringDescriptor target) {
-		Assert.isNotNull(source);
-		Assert.isNotNull(target);
-		Assert.isTrue(!target.isUnknown());
-
-		// TODO: implement
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	public void setProjectHistory(final IProject project, final boolean enable) throws CoreException {

@@ -20,9 +20,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.ltk.core.refactoring.history.IRefactoringExecutionListener;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
-import org.eclipse.ltk.core.refactoring.history.RefactoringExecutionEvent;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
@@ -54,29 +52,6 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringInstanceFact
  * @since 3.2
  */
 public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable {
-
-	/** Refactoring execution listener */
-	private class RefactoringExecutionListener implements IRefactoringExecutionListener {
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public void executionNotification(final RefactoringExecutionEvent event) {
-			if (event.getEventType() == RefactoringExecutionEvent.PERFORMED) {
-				final RefactoringDescriptor descriptor= event.getDescriptor();
-				if (!descriptor.isUnknown())
-					fCurrentDescriptor= descriptor;
-				else
-					fCurrentDescriptor= null;
-			}
-		}
-	}
-
-	/**
-	 * The descriptor of the currently executed refactoring, or
-	 * <code>null</code>
-	 */
-	private RefactoringDescriptor fCurrentDescriptor= null;
 
 	/** The status of the execution */
 	private RefactoringStatus fExecutionStatus= new RefactoringStatus();
@@ -117,9 +92,9 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 			if (arguments != null)
 				status.merge(component.initialize(arguments));
 			else
-				status.addFatalError(MessageFormat.format(RefactoringCoreMessages.PerformRefactoringsOperation_init_error, new String[] {descriptor.getDescription()}));
+				status.addFatalError(MessageFormat.format(RefactoringCoreMessages.PerformRefactoringsOperation_init_error, new String[] { descriptor.getDescription()}));
 		} else
-			status.addFatalError(MessageFormat.format(RefactoringCoreMessages.PerformRefactoringsOperation_init_error, new String[] {descriptor.getDescription()}));
+			status.addFatalError(MessageFormat.format(RefactoringCoreMessages.PerformRefactoringsOperation_init_error, new String[] { descriptor.getDescription()}));
 		return status;
 	}
 
@@ -153,11 +128,8 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
 		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringsOperation_perform_refactorings, 160 * proxies.length);
 		final RefactoringInstanceFactory factory= RefactoringInstanceFactory.getInstance();
-		IRefactoringExecutionListener listener= null;
 		final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
 		try {
-			listener= new RefactoringExecutionListener();
-			service.addExecutionListener(listener);
 			service.connect();
 			for (int index= 0; index < proxies.length && !fExecutionStatus.hasFatalError(); index++) {
 				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
@@ -174,8 +146,6 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 						} finally {
 							refactoringPerformed(refactoring, new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						}
-						if (fCurrentDescriptor != null && !fCurrentDescriptor.isUnknown())
-							RefactoringHistoryService.getInstance().setDependency(fCurrentDescriptor, descriptor);
 						fExecutionStatus.merge(operation.getConditionStatus());
 						if (!fExecutionStatus.hasFatalError())
 							fExecutionStatus.merge(operation.getValidationStatus());
@@ -183,13 +153,8 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 				}
 			}
 		} finally {
-			monitor.done();
-			fCurrentDescriptor= null;
-			if (listener != null) {
-				service.removeExecutionListener(listener);
-				listener= null;
-			}
 			service.disconnect();
+			monitor.done();
 		}
 	}
 }
