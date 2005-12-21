@@ -195,7 +195,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 					//As it is possible for user code to run the event 
 		            //loop check here.
 					if (item.isDisposed()) {
-		                unmapElement(element);
+		                unmapElement(element, item);
 		                return;
 		            }   
 					

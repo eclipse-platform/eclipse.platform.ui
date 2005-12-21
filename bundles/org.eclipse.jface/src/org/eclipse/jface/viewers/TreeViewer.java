@@ -14,14 +14,15 @@ package org.eclipse.jface.viewers;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -30,8 +31,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.util.Assert;
 
 /**
  * A concrete viewer based on an SWT <code>Tree</code> control.
@@ -197,7 +196,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			return;
 		TreeItem treeItem = (TreeItem) item;
 		if (treeItem.isDisposed()) {
-			unmapElement(element);
+			unmapElement(element, treeItem);
 			return;
 		}
 
@@ -236,7 +235,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			// As it is possible for user code to run the event
 			// loop check here.
 			if (treeItem.isDisposed()) {
-				unmapElement(element);
+				unmapElement(element, treeItem);
 				return;
 			}
 
@@ -266,7 +265,7 @@ public class TreeViewer extends AbstractTreeViewer {
 						// As it is possible for user code to run the event
 						// loop check here.
 						if (treeItem.isDisposed()) {
-							unmapElement(element);
+							unmapElement(element, treeItem);
 							return;
 						}
 
@@ -407,7 +406,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	protected Item getParentItem(Item item) {
 		return ((TreeItem) item).getParentItem();
 	}
-
+	
 	/*
 	 * (non-Javadoc) Method declared in AbstractTreeViewer.
 	 */
@@ -482,7 +481,7 @@ public class TreeViewer extends AbstractTreeViewer {
 				treeEditor.setEditor(w, (TreeItem) item, columnNumber);
 			}
 
-			void setSelection(StructuredSelection selection, boolean b) {
+			void setSelection(IStructuredSelection selection, boolean b) {
 				TreeViewer.this.setSelection(selection, b);
 			}
 
@@ -707,10 +706,10 @@ public class TreeViewer extends AbstractTreeViewer {
 			tree.setItemCount(count);
 			return;
 		}
-		TreeItem item = (TreeItem) findItem(element);
-		if (item != null) {
-			item.setItemCount(count);
-		}
+		Widget[] items = findItems(element);
+		for (int i = 0; i < items.length; i++) {
+			((TreeItem)items[i]).setItemCount(count);
+		}		
 	}
 
 	/**
@@ -738,14 +737,15 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @since 3.2
 	 */
 	public void replace(Object parent, int index, Object element) {
-		Widget item;
 		if(parent.equals(getInput())) {
-			item = tree.getItem(index);
+			updateItem(tree.getItem(index), element);
 		} else {
-			TreeItem parentItem = (TreeItem) findItem(parent);
-			item = parentItem.getItem(index);
+			Widget[] parentItems = findItems(parent);
+			for (int i = 0; i < parentItems.length; i++) {
+				TreeItem item = ((TreeItem) parentItems[i]).getItem(index);
+				updateItem(item, element);
+			}			
 		}
-		updateItem(item, element);
 	}
 	
     public boolean isExpandable(Object element) {
@@ -761,7 +761,7 @@ public class TreeViewer extends AbstractTreeViewer {
     }
 
     protected Object getParentElement(Object element) {
-    	if(getContentProvider() instanceof ILazyTreeContentProvider) {
+    	if(!(element instanceof TreePath) && (getContentProvider() instanceof ILazyTreeContentProvider)) {
     		ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
     		return lazyTreeContentProvider.getParent(element);
     	}

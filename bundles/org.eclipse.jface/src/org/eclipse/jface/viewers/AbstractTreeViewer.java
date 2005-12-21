@@ -12,7 +12,10 @@
 package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.ListenerList;
@@ -116,12 +119,14 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         Assert.isNotNull(parentElement);
         assertElementsNotNull(childElements);
 
-        Widget widget = findItem(parentElement);
+        Widget[] widgets = findItems(parentElement);
         // If parent hasn't been realized yet, just ignore the add.
-        if (widget == null)
+        if (widgets.length == 0)
             return;
 
-        internalAdd(widget, parentElement, childElements);
+		for (int i = 0; i < widgets.length; i++) {
+			internalAdd(widgets[i], parentElement, childElements);
+		}        
     }
 
 	/**
@@ -457,17 +462,17 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     }
 
     /**
-     * Collapses the subtree rooted at the given element to the given level.
+     * Collapses the subtree rooted at the given element or tree path to the given level.
      * 
-     * @param element
-     *           the element
+     * @param elementOrTreePath
+     *           the element or tree path
      * @param level
      *           non-negative level, or <code>ALL_LEVELS</code> to collapse
      *           all levels of the tree
      */
-    public void collapseToLevel(Object element, int level) {
-        Assert.isNotNull(element);
-        Widget w = findItem(element);
+    public void collapseToLevel(Object elementOrTreePath, int level) {
+        Assert.isNotNull(elementOrTreePath);
+        Widget w = internalGetWidgetToSelect(elementOrTreePath);
         if (w != null)
             internalCollapseToLevel(w, level);
     }
@@ -613,6 +618,10 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             if (fullMap) {
                 associate(element, item);
             } else {
+            	Object data = item.getData();
+            	if (data != null) {
+            		unmapElement(data, item);
+            	}
                 item.setData(element);
                 mapElement(element, item);
             }
@@ -642,18 +651,18 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     }
 
     /**
-     * Expands all ancestors of the given element so that the given element
+     * Expands all ancestors of the given element or tree path so that the given element
      * becomes visible in this viewer's tree control, and then expands the
      * subtree rooted at the given element to the given level.
      * 
-     * @param element
+     * @param elementOrTreePath
      *           the element
      * @param level
      *           non-negative level, or <code>ALL_LEVELS</code> to expand all
      *           levels of the tree
      */
-    public void expandToLevel(Object element, int level) {
-        Widget w = internalExpand(element, true);
+    public void expandToLevel(Object elementOrTreePath, int level) {
+        Widget w = internalExpand(elementOrTreePath, true);
         if (w != null)
             internalExpandToLevel(w, level);
     }
@@ -758,23 +767,31 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * @see #setExpandedElements
      */
     public Object[] getExpandedElements() {
-        ArrayList v = new ArrayList();
-        internalCollectExpanded(v, getControl());
-        return v.toArray();
+        ArrayList items = new ArrayList();
+        internalCollectExpandedItems(items, getControl());
+        ArrayList result = new ArrayList(items.size());
+        for(Iterator it = items.iterator(); it.hasNext();) {
+        	Item item = (Item) it.next();
+        	Object data = item.getData();
+        	if (data != null) {
+        		result.add(data);
+        	}
+        }
+        return result.toArray();
     }
 
     /**
-     * Returns whether the node corresponding to the given element is expanded
+     * Returns whether the node corresponding to the given element or tree path is expanded
      * or collapsed.
      * 
-     * @param element
+     * @param elementOrTreePath
      *           the element
      * @return <code>true</code> if the node is expanded, and <code>false</code>
      *         if collapsed
      */
-    public boolean getExpandedState(Object element) {
-        Assert.isNotNull(element);
-        Widget item = findItem(element);
+    public boolean getExpandedState(Object elementOrTreePath) {
+        Assert.isNotNull(elementOrTreePath);
+        Widget item = internalGetWidgetToSelect(elementOrTreePath);
         if (item instanceof Item)
             return getExpanded((Item) item);
         return false;
@@ -1022,51 +1039,50 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     }
 
     /**
-     * Recursively collects all expanded elements from the given widget.
+     * Recursively collects all expanded items from the given widget.
      * 
      * @param result
-     *           a list (element type: <code>Object</code>) into which to
+     *           a list (element type: <code>Item</code>) into which to
      *           collect the elements
      * @param widget
      *           the widget
      */
-    private void internalCollectExpanded(List result, Widget widget) {
+    private void internalCollectExpandedItems(List result, Widget widget) {
         Item[] items = getChildren(widget);
         for (int i = 0; i < items.length; i++) {
             Item item = items[i];
             if (getExpanded(item)) {
-                Object data = item.getData();
-                if (data != null)
-                    result.add(data);
+            	result.add(item);
             }
-            internalCollectExpanded(result, item);
+            internalCollectExpandedItems(result, item);
         }
     }
 
     /**
-     * Tries to create a path of tree items for the given element. This method
-     * recursively walks up towards the root of the tree and assumes that
+     * Tries to create a path of tree items for the given element or tree path.
+     * This method recursively walks up towards the root of the tree and in the
+     * case of an element (rather than a tree path) assumes that
      * <code>getParent</code> returns the correct parent of an element.
      * 
-     * @param element
+     * @param elementOrPath
      *           the element
      * @param expand
      *           <code>true</code> if all nodes on the path should be
      *           expanded, and <code>false</code> otherwise
      * @return Widget
      */
-    protected Widget internalExpand(Object element, boolean expand) {
+    protected Widget internalExpand(Object elementOrPath, boolean expand) {
 
-        if (element == null)
+        if (elementOrPath == null)
             return null;
 
-        Widget w = internalGetWidgetToSelect(element);
+        Widget w = internalGetWidgetToSelect(elementOrPath);
         if (w == null) {
-            if (equals(element, getRoot())) { // stop at root
+            if (equals(elementOrPath, getRoot())) { // stop at root
                 return null;
             }
             // my parent has to create me
-            Object parent = getParentElement(element);
+            Object parent = getParentElement(elementOrPath);
             if (parent != null) {
                 Widget pw = internalExpand(parent, false);
                 if (pw != null) {
@@ -1075,6 +1091,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                     // expand parent and find me
                     if (pw instanceof Item) {
                         Item item = (Item) pw;
+                        Object element = internalToElement(elementOrPath);
                         w = internalFindChild(item, element);
                         if (expand) {
                         	// expand parent items bottom-up after they have all been materialized, to reduce flicker
@@ -1090,24 +1107,71 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         return w;
     }
 
-    protected Object getParentElement(Object element) {
+    /**
+     * If the argument is a tree path, returns its last segment, otherwise
+     * return the argument
+     * @param elementOrPath an element or a tree path
+     * @return the element, or the last segment of the tree path
+     */
+	private Object internalToElement(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath) {
+			return ((TreePath)elementOrPath).getLastSegment();
+		}
+		return elementOrPath;
+	}
+
+    /**
+	 * This method takes a tree path or an element. If the argument is not a
+	 * tree path, returns the parent of the given element or <code>null</code>
+	 * if the parent is not known. If the argument is a tree path with more than
+	 * one segment, returns its parent tree path, otherwise returns
+	 * <code>null</code>.
+	 * 
+	 * @param elementOrTreePath
+	 * @return the parent element, or parent path, or <code>null</code>
+	 */ 
+    protected Object getParentElement(Object elementOrTreePath) {
+    	if(elementOrTreePath instanceof TreePath) {
+    		TreePath treePath = (TreePath)elementOrTreePath;
+    		if(treePath.getSegmentCount() <= 1) {
+    			return null;
+    		}
+			return (treePath).getParentPath();
+    	}
         ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
         if (cp == null) {
             return null;
         }
-        return cp.getParent(element);
+        return cp.getParent(elementOrTreePath);
 	}
 
 	/**
-     * Returns the widget to be selected for the given element.
+     * Returns the widget to be selected for the given element or tree path.
      * 
-     * @param element the element to select
+     * @param elementOrTreePath the element or tree path to select
      * @return the widget to be selected, or <code>null</code> if not found
      * 
      * @since 3.1
      */
-	protected Widget internalGetWidgetToSelect(Object element) {
-		return findItem(element);
+	protected Widget internalGetWidgetToSelect(Object elementOrTreePath) {
+		if(elementOrTreePath instanceof TreePath) {
+			TreePath treePath = (TreePath) elementOrTreePath;
+			if(treePath.getSegmentCount()==0) {
+				return null;
+			}
+			Widget[] candidates = findItems(treePath.getLastSegment());
+			for (int i = 0; i < candidates.length; i++) {
+				Widget candidate = candidates[i];
+				if(!(candidate instanceof Item)) {
+					continue;
+				}
+				if(treePath.equals(getTreePathFromItem((Item) candidate), getComparer())) {
+					return candidate;
+				}
+			}
+			return null;
+		}
+		return findItem(elementOrTreePath);
 	}
 
     /**
@@ -1201,10 +1265,12 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             internalRefresh(getControl(), getRoot(), true, updateLabels);
             return;
         }
-        Widget item = findItem(element);
-        if (item != null) {
-            // pick up structure changes too
-            internalRefresh(item, element, true, updateLabels);
+        Widget[] items = findItems(element);
+        if (items.length != 0) {
+			for (int i = 0; i < items.length; i++) {
+				// pick up structure changes too
+				internalRefresh(items[i], element, true, updateLabels);
+			}            
         }
     }
 
@@ -1308,15 +1374,18 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 setInput(null);
                 return;
             }
-            Widget childItem = findItem(elements[i]);
-            if (childItem instanceof Item) {
-                Item parentItem = getParentItem((Item) childItem);
-                if (parentItem != null) {
-                    parentItems.put(parentItem, parentItem);
-                }
-                disassociate((Item) childItem);
-                childItem.dispose();
-            }
+            Widget[] childItems = findItems(elements[i]);
+			for (int j = 0; j < childItems.length; j++) {
+				Widget childItem = childItems[j];
+				if (childItem instanceof Item) {
+					Item parentItem = getParentItem((Item) childItem);
+					if (parentItem != null) {
+						parentItems.put(parentItem, parentItem);
+					}
+					disassociate((Item) childItem);
+					childItem.dispose();
+				}
+			}            
         }
         Control tree = getControl();
         for (Enumeration e = parentItems.keys(); e.hasMoreElements();) {
@@ -1365,6 +1434,37 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             internalSetExpanded(expandedElements, item);
         }
     }
+
+    /**
+     * Sets the expanded state of all items to correspond to the given set of
+     * expanded tree paths.
+     * 
+     * @param expandedTreePaths
+     *           the set (element type: <code>TreePath</code>) of elements
+     *           which are expanded
+     * @param widget
+     *           the widget
+     */
+    private void internalSetExpandedTreePaths(CustomHashtable expandedTreePaths, Widget widget, TreePath currentPath) {
+        Item[] items = getChildren(widget);
+        for (int i = 0; i < items.length; i++) {
+            Item item = items[i];
+            Object data = item.getData();
+            TreePath childPath = data==null ? null: currentPath.createChildPath(data);
+            if (data != null && childPath!=null) {
+                // remove the element to avoid an infinite loop
+                // if the same element appears on a child item
+                boolean expanded = expandedTreePaths.remove(childPath) != null;
+                if (expanded != getExpanded(item)) {
+                    if (expanded) {
+                        createChildren(item);
+                    }
+                    setExpanded(item, expanded);
+                }
+            }
+            internalSetExpandedTreePaths(expandedTreePaths, item, childPath);
+        }
+	}
 
     /**
      * Return whether the tree node representing the given element can be
@@ -1470,10 +1570,12 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         treeListeners.remove(listener);
     }
 
-    /* Non-Javadoc. Method defined on StructuredViewer. */
-    public void reveal(Object element) {
-        Assert.isNotNull(element);
-        Widget w = internalExpand(element, true);
+    /**
+     * This implementation of reveal() reveals the given element or tree path.
+     */
+    public void reveal(Object elementOrTreePath) {
+        Assert.isNotNull(elementOrTreePath);
+        Widget w = internalExpand(elementOrTreePath, true);
         if (w instanceof Item)
             showItem((Item) w);
     }
@@ -1576,26 +1678,75 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         CustomHashtable expandedElements = newHashtable(elements.length * 2 + 1);
         for (int i = 0; i < elements.length; ++i) {
             Object element = elements[i];
-            // Ensure item exists for element
+            // Ensure item exists for element. This will materialize items for
+            // each element and their parents, if possible. This is important
+            // to support expanding of inner tree nodes without necessarily
+            // expanding their parents.
             internalExpand(element, false);
             expandedElements.put(element, element);
         }
+        // this will traverse all existing items, and create children for
+        // elements that need to be expanded. If the tree contains multiple
+        // equal elements, and those are in the set of elements to be expanded,
+        // only the first item found for each element will be expanded.
         internalSetExpanded(expandedElements, getControl());
     }
 
     /**
-     * Sets whether the node corresponding to the given element is expanded or
+     * Sets which nodes are expanded in this viewer's tree. The given list
+     * contains the tree paths that are to be expanded; all other nodes are to
+     * be collapsed.
+     * <p>
+     * This method is typically used when restoring the interesting state of a
+     * viewer captured by an earlier call to <code>getExpandedTreePaths</code>.
+     * </p>
+     * 
+     * @param treePaths
+     *           the array of expanded tree paths
+     * @see #getExpandedTreePaths()
+     */
+    public void setExpandedTreePaths(TreePath[] treePaths) {
+        assertElementsNotNull(treePaths);
+        final IElementComparer comparer = getComparer();
+        IElementComparer treePathComparer = new IElementComparer(){
+
+			public boolean equals(Object a, Object b) {
+				return ((TreePath)a).equals(((TreePath)b), comparer);
+			}
+
+			public int hashCode(Object element) {
+				return ((TreePath)element).hashCode(comparer);
+			}};
+        CustomHashtable expandedTreePaths = new CustomHashtable(treePaths.length * 2 + 1, treePathComparer);
+        for (int i = 0; i < treePaths.length; ++i) {
+            TreePath treePath = treePaths[i];
+            // Ensure item exists for element. This will materialize items for
+            // each element and their parents, if possible. This is important
+            // to support expanding of inner tree nodes without necessarily
+            // expanding their parents.
+            internalExpand(treePath, false);
+            expandedTreePaths.put(treePath, treePath);
+        }
+        // this will traverse all existing items, and create children for
+        // elements that need to be expanded. If the tree contains multiple
+        // equal elements, and those are in the set of elements to be expanded,
+        // only the first item found for each element will be expanded.
+        internalSetExpandedTreePaths(expandedTreePaths, getControl(), new TreePath(new Object[0]));
+    }
+
+	/**
+     * Sets whether the node corresponding to the given element or tree path is expanded or
      * collapsed.
      * 
-     * @param element
+     * @param elementOrTreePath
      *           the element
      * @param expanded
      *           <code>true</code> if the node is expanded, and <code>false</code>
      *           if collapsed
      */
-    public void setExpandedState(Object element, boolean expanded) {
-        Assert.isNotNull(element);
-        Widget item = internalExpand(element, false);
+    public void setExpandedState(Object elementOrTreePath, boolean expanded) {
+        Assert.isNotNull(elementOrTreePath);
+        Widget item = internalExpand(elementOrTreePath, false);
         if (item instanceof Item) {
             if (expanded) {
                 createChildren(item);
@@ -1612,7 +1763,10 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      */
     protected abstract void setSelection(List items);
 
-    /* (non-Javadoc) Method declared on StructuredViewer. */
+    /**
+     *  This implementation of setSelectionToWidget accepts a list of elements
+     *  or a list of tree paths.
+     **/
     protected void setSelectionToWidget(List v, boolean reveal) {
         if (v == null) {
             setSelection(new ArrayList(0));
@@ -1773,6 +1927,10 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                         // although the elements
                         // may be equal, they may still have different labels
                         // or children
+                    	Object data = item.getData();
+                    	if (data != null) {
+                    		unmapElement(data, item);
+                    	}
                         item.setData(newElement);
                         mapElement(newElement, item);
                     } else {
@@ -1914,6 +2072,75 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 internalCollectVisibleExpanded(result, item);
             }
         }
+    }
+
+    protected TreePath getTreePathFromItem(Item item) {
+		LinkedList segments = new LinkedList();
+		while(item!=null) {
+			Object segment = item.getData();
+			Assert.isNotNull(segment);
+			segments.addFirst(segment);
+			item = getParentItem(item);
+		}
+		return new TreePath(segments.toArray());
+	}
+
+	/**
+	 * This implementation of getSelection() returns an instance of
+	 * ITreeSelection.
+	 * 
+	 * @since 3.2
+	 */
+	public ISelection getSelection() {
+		Control control = getControl();
+		if (control == null || control.isDisposed()) {
+			return TreeSelection.EMPTY;
+		}
+		Widget[] items = getSelection(getControl());
+		ArrayList list = new ArrayList(items.length);
+		for (int i = 0; i < items.length; i++) {
+			Widget item = items[i];
+			if (item.getData() != null) {
+				list.add(getTreePathFromItem((Item) item));
+			}
+		}
+		return new TreeSelection((TreePath[]) list.toArray(new TreePath[list
+				.size()]));
+	}
+	
+	protected void setSelectionToWidget(ISelection selection, boolean reveal) {
+		if(selection instanceof ITreeSelection) {
+			ITreeSelection treeSelection = (ITreeSelection) selection;
+			setSelectionToWidget(Arrays.asList(treeSelection.getPaths()), reveal);
+		} else {
+			super.setSelectionToWidget(selection, reveal);
+		}
+	}
+
+    /**
+     * Returns a list of tree paths corresponding to expanded nodes in this
+     * viewer's tree, including currently hidden ones that are marked as
+     * expanded but are under a collapsed ancestor.
+     * <p>
+     * This method is typically used when preserving the interesting state of a
+     * viewer; <code>setExpandedElements</code> is used during the restore.
+     * </p>
+     * 
+     * @return the array of expanded tree paths
+     * @see #setExpandedElements
+     */
+    public TreePath[] getExpandedTreePaths() {
+        ArrayList items = new ArrayList();
+        internalCollectExpandedItems(items, getControl());
+        ArrayList result = new ArrayList(items.size());
+        for(Iterator it = items.iterator(); it.hasNext();) {
+        	Item item = (Item) it.next();
+        	TreePath treePath = getTreePathFromItem(item);
+        	if (treePath != null) {
+        		result.add(treePath);
+        	}
+        }
+        return (TreePath[]) result.toArray(new TreePath[items.size()]);
     }
 
 }

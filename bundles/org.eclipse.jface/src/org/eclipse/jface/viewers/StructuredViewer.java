@@ -11,6 +11,7 @@
 package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -123,6 +124,11 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @since 3.1
 	 */
 	private ColorAndFontCollector colorAndFontCollector = new ColorAndFontCollector();
+	
+	/**
+	 * Empty array of widgets.
+	 */
+	private static Widget[] NO_WIDGETS = new Widget[0];
 
 	/**
 	 * The ColorAndFontCollector is a helper class for viewers
@@ -434,7 +440,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			doUpdateItem(widget, element, fullMap);
 		}
 	}
-
+	
 	/**
 	 * Creates a structured element viewer. The viewer has no input, no content
 	 * provider, a default label provider, no sorter, and no filters.
@@ -692,13 +698,46 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @return the corresponding widget, or <code>null</code> if none
 	 */
 	protected final Widget findItem(Object element) {
+		Widget[] result = findItems(element);
+		return result.length == 0 ? null : result[0];
+	}
+
+	/**
+	 * Finds the widgets which represent the given element. The returned array
+	 * must not be changed by clients; it might change upon calling other
+	 * methods on this viewer.
+	 * <p>
+	 * The default implementation of this method tries first to find the widget
+	 * for the given element assuming that it is the viewer's input; this is
+	 * done by calling <code>doFindInputItem</code>. If it is not found
+	 * there, the widgets are looked up in the internal element map provided that this
+	 * feature has been enabled. If the element map is disabled, the widget is
+	 * found via <code>doFindInputItem</code>.
+	 * </p>
+	 * 
+	 * @param element
+	 *            the element
+	 * @return the corresponding widgets
+	 * 
+	 * @since 3.2
+	 */
+	protected final Widget[] findItems(Object element) {
 		Widget result = doFindInputItem(element);
 		if (result != null)
-			return result;
+			return new Widget[] { result };
 		// if we have an element map use it, otherwise search for the item.
-		if (elementMap != null)
-			return (Widget) elementMap.get(element);
-		return doFindItem(element);
+		if (usingElementMap()) {
+			Object widgetOrWidgets = elementMap.get(element);
+			if (widgetOrWidgets==null) {
+				return NO_WIDGETS;
+			} else if (widgetOrWidgets instanceof Widget) {
+				return new Widget[] {(Widget) widgetOrWidgets};
+			} else {
+				return (Widget[])widgetOrWidgets;
+			}
+		}
+		result = doFindItem(element);
+		return result == null ? NO_WIDGETS : new Widget[] { result };
 	}
 
 	/**
@@ -1123,8 +1162,27 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *            the corresponding widget
 	 */
 	protected void mapElement(Object element, Widget item) {
-		if (elementMap != null)
-			elementMap.put(element, item);
+		if (elementMap != null) {
+			Object widgetOrWidgets = elementMap.get(element);
+			if (widgetOrWidgets == null) {
+				elementMap.put(element, item);
+			} else if (widgetOrWidgets instanceof Widget) {
+				if (widgetOrWidgets != item) {
+					elementMap.put(element, new Widget[] {
+							(Widget) widgetOrWidgets, item });
+				}
+			} else {
+				Widget[] widgets = (Widget[]) widgetOrWidgets;
+				int indexOfItem = Arrays.asList(widgets).indexOf(item);
+				if (indexOfItem == -1) {
+					int length = widgets.length;
+					System.arraycopy(widgets, 0,
+							widgets = new Widget[length + 1], 0, length);
+					widgets[length] = item;
+					elementMap.put(element, widgets);
+				}
+			}
+		}
 	}
 
 	/**
@@ -1555,6 +1613,16 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	}
 
 	/**
+	 * Hook for testing.
+	 * @param element
+	 * @return Widget[]
+	 * @since 3.2
+	 */
+	public Widget[] testFindItems(Object element) {
+		return findItems(element);
+	}
+	
+	/**
 	 * Removes all elements from the map.
 	 * <p>
 	 * This method is internal to the framework; subclassers should not call
@@ -1602,9 +1670,37 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	protected void unmapElement(Object element, Widget item) {
 		// double-check that the element actually maps to the given item before
 		// unmapping it
-		if (elementMap != null && elementMap.get(element) == item) {
-			// call unmapElement for backwards compatibility
-			unmapElement(element);
+		if (elementMap != null) {
+			Object widgetOrWidgets = elementMap.get(element);
+			if (widgetOrWidgets == null) {
+				// item was not mapped, return
+				return;
+			} else if (widgetOrWidgets instanceof Widget) {
+				if (item == widgetOrWidgets) {
+					elementMap.remove(element);
+				}
+			} else {
+				Widget[] widgets = (Widget[]) widgetOrWidgets;
+				int indexOfItem = Arrays.asList(widgets).indexOf(item);
+				if (indexOfItem == -1) {
+					return;
+				}
+				int length = widgets.length;
+				if (indexOfItem == 0) {
+					if(length == 1) {
+						elementMap.remove(element);
+					} else {
+						Widget[] updatedWidgets = new Widget[length - 1];
+						System.arraycopy(widgets, 1, updatedWidgets, 0, length -1 );
+						elementMap.put(element, updatedWidgets);
+					}
+				} else {
+					Widget[] updatedWidgets = new Widget[length - 1];
+					System.arraycopy(widgets, 0, updatedWidgets, 0, indexOfItem);
+					System.arraycopy(widgets, indexOfItem + 1, updatedWidgets, indexOfItem, length - indexOfItem - 1);
+					elementMap.put(element, updatedWidgets);
+				}
+			}
 		}
 	}
 
@@ -1690,11 +1786,11 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 */
 	public void update(Object element, String[] properties) {
 		Assert.isNotNull(element);
-		Widget item = findItem(element);
-		if (item == null)
-			return;
+		Widget[] items = findItems(element);
 
-		internalUpdate(item, element, properties);
+		for (int i = 0; i < items.length; i++) {
+			internalUpdate(items[i], element, properties);
+		}		
 	}
 
 	/**

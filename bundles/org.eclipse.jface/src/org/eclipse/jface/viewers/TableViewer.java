@@ -415,6 +415,10 @@ public class TableViewer extends StructuredViewer {
 			if (fullMap) {
 				associate(element, item);
 			} else {
+            	Object data = item.getData();
+            	if (data != null) {
+            		unmapElement(data, item);
+            	}
 				item.setData(element);
 				mapElement(element, item);
 			}
@@ -462,7 +466,7 @@ public class TableViewer extends StructuredViewer {
 //						As it is possible for user code to run the event 
 			            //loop check here.
 						if (item.isDisposed()) {
-			                unmapElement(element);
+			                unmapElement(element, item);
 			                return;
 			            }   
 						

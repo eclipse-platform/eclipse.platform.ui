@@ -198,7 +198,13 @@ import org.eclipse.swt.widgets.Item;
         if (cellEditor != null)
             applyEditorValue();
 
-        setSelection(new StructuredSelection(element), true);
+        IStructuredSelection structuredSelection;
+        if(element instanceof TreePath) {
+        	structuredSelection = new TreeSelection((TreePath)element);
+        } else {
+        	structuredSelection = new StructuredSelection(element);
+        }
+        setSelection(structuredSelection, true);
         Item[] selection = getSelection();
         if (selection.length != 1)
             return;
@@ -339,7 +345,7 @@ import org.eclipse.swt.widgets.Item;
 
     abstract void setLayoutData(CellEditor.LayoutData layoutData);
 
-    abstract void setSelection(StructuredSelection selection, boolean b);
+    abstract void setSelection(IStructuredSelection selection, boolean b);
 
     abstract void showSelection();
 
