@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.mapping;
 
-
 import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.ITeamStatus;
-import org.eclipse.team.core.diff.IDiffNode;
-import org.eclipse.team.core.diff.ITwoWayDiff;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.history.IFileState;
+import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.provider.*;
 import org.eclipse.team.core.synchronize.*;
@@ -31,6 +30,33 @@ import org.eclipse.team.internal.core.FileRevision;
  * Covert a SyncInfoSet into a SyncDeltaTree
  */
 public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
+
+	public static final class ResourceVariantFileRevision extends FileRevision {
+		private final IResourceVariant variant;
+
+		private ResourceVariantFileRevision(IResourceVariant variant) {
+			this.variant = variant;
+		}
+
+		public IStorage getStorage(IProgressMonitor monitor) throws CoreException {
+			return variant.getStorage(monitor);
+		}
+
+		public String getName() {
+			return variant.getName();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.internal.core.FileRevision#getContentIndentifier()
+		 */
+		public String getContentIdentifier() {
+			return variant.getContentIdentifier();
+		}
+
+		public IResourceVariant getVariant() {
+			return variant;
+		}
+	}
 
 	SyncInfoSet set;
 	ResourceDiffTree tree;
@@ -152,20 +178,7 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 	private static IFileState asFileState(final IResourceVariant variant) {
 		if (variant == null)
 			return null;
-		return new FileRevision() {
-			public IStorage getStorage(IProgressMonitor monitor) throws CoreException {
-				return variant.getStorage(monitor);
-			}
-			public String getName() {
-				return variant.getName();
-			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.team.internal.core.FileRevision#getContentIndentifier()
-			 */
-			public String getContentIdentifier() {
-				return variant.getContentIdentifier();
-			}
-		};
+		return new ResourceVariantFileRevision(variant);
 	}
 
 	private static ITwoWayDiff getLocalDelta(SyncInfo info) {
@@ -203,5 +216,33 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 
 	public IResourceDiffTree getTree() {
 		return tree;
+	}
+
+	/**
+	 * @param twd
+	 * @return
+	 */
+	public static IResourceVariant getRemoteVariant(IThreeWayDiff twd) {
+		IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
+		if (diff != null)
+			return ((ResourceVariantFileRevision)diff.getAfterState()).getVariant();
+		diff = (IResourceDiff)twd.getLocalChange();
+		if (diff != null)
+			return ((ResourceVariantFileRevision)diff.getBeforeState()).getVariant();
+		return null;
+	}
+
+	/**
+	 * @param twd
+	 * @return
+	 */
+	public static IResourceVariant getBaseVariant(IThreeWayDiff twd) {
+		IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
+		if (diff != null)
+			return ((ResourceVariantFileRevision)diff.getBeforeState()).getVariant();
+		diff = (IResourceDiff)twd.getLocalChange();
+		if (diff != null)
+			return ((ResourceVariantFileRevision)diff.getBeforeState()).getVariant();
+		return null;
 	}
 }

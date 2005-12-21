@@ -11,6 +11,8 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.*;
@@ -18,6 +20,8 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.synchronize.SyncInfoFilter.ContentComparisonSyncInfoFilter;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -25,6 +29,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
+import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -67,9 +72,24 @@ public class RefreshDirtyStateOperation extends CVSSubscriberOperation {
 	}
 	
 	private void ensureBaseContentsCached(IProject project, SyncInfo[] infos, IProgressMonitor monitor) throws CVSException {
+		List diffs = new ArrayList();
+		for (int i = 0; i < infos.length; i++) {
+			SyncInfo info = infos[i];
+			IDiffNode node = SyncInfoToDiffConverter.getDeltaFor(info);
+			diffs.add(node);
+		}
+		ensureBaseContentsCached(project, (IDiffNode[]) diffs.toArray(new IDiffNode[diffs.size()]), monitor);
+	}
+
+	private void ensureBaseContentsCached(IProject project, IDiffNode[] nodes, IProgressMonitor monitor) throws CVSException {
 		try {
+			ResourceDiffTree tree = new ResourceDiffTree();
+			for (int i = 0; i < nodes.length; i++) {
+				IDiffNode node = nodes[i];
+				tree.add(node);
+			}
 			new CacheBaseContentsOperation(getPart(), new ResourceMapping[] { (ResourceMapping)project.getAdapter(ResourceMapping.class) },
-					new SyncInfoTree(infos), true).run(monitor);
+					tree, true).run(monitor);
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);
 		} catch (InterruptedException e) {

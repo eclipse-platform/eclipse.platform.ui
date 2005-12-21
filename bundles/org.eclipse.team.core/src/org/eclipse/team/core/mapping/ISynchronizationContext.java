@@ -17,7 +17,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
 
 /**
  * Allows a model provider to build a view of their model that includes
@@ -72,21 +73,6 @@ public interface ISynchronizationContext {
 	 * @return the input that defined the scope of this synchronization context.
 	 */
 	IResourceMappingScope getScope();
-
-	/**
-	 * Return a tree that contains <code>SyncInfo</code> nodes for resources
-	 * that are out-of-sync. The tree will contain sync-info for any out-of-sync
-	 * resources that are within the scope of this context. The tree
-	 * may include additional out-of-sync resources, which should be ignored by
-	 * the client. Clients can test for inclusion using the method 
-	 * {@link IResourceMappingScope#contains(IResource)}.
-	 * 
-	 * @return a tree that contains a <code>SyncInfo</code> node for any
-	 *         resources that are out-of-sync.
-	 *         
-	 * @deprecated use {@link #getDiffTree() }
-	 */
-	public ISyncInfoTree getSyncInfoTree();
 	
 	/**
 	 * Return a tree that contains {@link IDiffNode} nodes for resources that
@@ -102,8 +88,6 @@ public interface ISynchronizationContext {
 	 * {@link IResourceDiff} instances as the local and remote changes. This
 	 * interface also has several helper methods for handling diffs contained in
 	 * the returned diff tree.
-	 * 
-	 * EXPERIMENTAL: Do not use yet!!!
 	 * 
 	 * @return a tree that contains an <code>IDiffNode</code> node for any
 	 *         resources that are out-of-sync.

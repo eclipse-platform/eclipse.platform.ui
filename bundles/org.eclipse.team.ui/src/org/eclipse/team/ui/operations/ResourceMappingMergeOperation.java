@@ -276,7 +276,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	 * @param monitor a progress monitor
 	 * @return a merge context for merging the mappings of the input
 	 */ 
-	protected abstract IMergeContext buildMergeContext(IProgressMonitor monitor);
+	protected abstract IMergeContext buildMergeContext(IProgressMonitor monitor) throws CoreException;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.operations.ResourceMappingOperation#getContext()

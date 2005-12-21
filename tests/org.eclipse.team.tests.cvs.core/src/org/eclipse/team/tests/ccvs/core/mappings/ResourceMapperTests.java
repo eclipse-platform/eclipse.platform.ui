@@ -23,6 +23,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.mapping.IResourceDiffTree;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.variants.CachedResourceVariant;
 import org.eclipse.team.core.variants.IResourceVariant;
@@ -35,6 +38,7 @@ import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheRemoteContentsOperation;
 import org.eclipse.team.internal.core.ResourceVariantCache;
 import org.eclipse.team.internal.core.ResourceVariantCacheEntry;
+import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
 /**
@@ -394,6 +398,17 @@ public class ResourceMapperTests extends EclipseTest {
         return set;
     }
     
+    private IResourceDiffTree getAllDiffs(IProject[] projects) throws CoreException {
+        final ResourceDiffTree tree = new ResourceDiffTree();
+        CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().accept(projects, IResource.DEPTH_INFINITE, new IDiffVisitor() {
+			public boolean visit(IDiffNode delta) throws CoreException {
+				tree.add(delta);
+				return true;
+			}
+		});
+        return tree;
+    }
+    
     private void visit(ResourceMapping mapper, ResourceMappingContext context, IResourceVisitor visitor) throws CoreException {
         ResourceTraversal[] traversals = mapper.getTraversals(context, null);
         for (int i = 0; i < traversals.length; i++) {
@@ -548,7 +563,7 @@ public class ResourceMapperTests extends EclipseTest {
         IProject copy = checkoutCopy(project, "-copy");
         
         // First, make some local changes and then cache the bases
-        setContentsAndEnsureModified(project.getFile("changed.txt"), "Uncomited text");
+        setContentsAndEnsureModified(project.getFile("changed.txt"), "Uncommitted text");
         setContentsAndEnsureModified(project.getFile("folder1/b.txt"));
         project.getFile("deleted.txt").delete(false, true, null);
         cacheBase(project, true /* cache for outgoing and conflicting */);
@@ -566,7 +581,7 @@ public class ResourceMapperTests extends EclipseTest {
         IProject copy = checkoutCopy(project, "-copy");
         
         // Make some remote changes
-        setContentsAndEnsureModified(copy.getFile("changed.txt"), "Uncomited text");
+        setContentsAndEnsureModified(copy.getFile("changed.txt"), "Uncommitted text");
         setContentsAndEnsureModified(copy.getFile("folder1/b.txt"));
         commitProject(copy);
         // Delete a local file
@@ -574,10 +589,10 @@ public class ResourceMapperTests extends EclipseTest {
         cacheRemote(project);
     }
 
-	private void cacheRemote(IProject project) throws TeamException {
+	private void cacheRemote(IProject project) throws CoreException {
 		clearCache(project);
 		CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().refresh(new IProject[] { project }, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-		SyncInfoTree tree = getAllOutOfSync(new IProject[] { project });
+		IResourceDiffTree tree = getAllDiffs(new IProject[] { project });
 		ResourceMapping[] mappings = new ResourceMapping[] {new SimpleResourceMapping(project)};
 		CacheRemoteContentsOperation op = new CacheRemoteContentsOperation(null, mappings, tree);
 		executeHeadless(op);
@@ -587,54 +602,64 @@ public class ResourceMapperTests extends EclipseTest {
 	private void cacheBase(IProject project, boolean includeOutgoing) throws CoreException {
 		clearCache(project);
 		CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().refresh(new IProject[] { project }, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-		SyncInfoTree tree = getAllOutOfSync(new IProject[] { project });
+		IResourceDiffTree tree = getAllDiffs(new IProject[] { project });
 		ResourceMapping[] mappings = new ResourceMapping[] {new SimpleResourceMapping(project)};
 		CacheBaseContentsOperation op = new CacheBaseContentsOperation(null, mappings, tree, includeOutgoing);
 		executeHeadless(op);
 		ensureBaseCached(tree, includeOutgoing);
 	}
 
-	private void ensureRemoteCached(SyncInfoTree tree) {
-		for (Iterator iter = tree.iterator(); iter.hasNext();) {
-			SyncInfo info = (SyncInfo) iter.next();
-			IResourceVariant remote = info.getRemote();
-			if (remote != null) {
-				boolean isCached = ((CachedResourceVariant)remote).isContentsCached();
-				int direction = SyncInfo.getDirection(info.getKind());
-				if (direction == SyncInfo.CONFLICTING || direction == SyncInfo.INCOMING) {
-					assertTrue(NLS.bind("The remote contents should be cached for {0}", new String[] {info.getLocal().getFullPath().toString()}), isCached);
-				} else {
-					assertFalse(NLS.bind("The base contents should NOT be cached for {0}", new String[] {info.getLocal().getFullPath().toString()}), isCached);
+	private void ensureRemoteCached(IResourceDiffTree tree) {
+		IResource[] resources = tree.getAffectedResources();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			IDiffNode node = tree.getDiff(resource);
+			if (node instanceof IThreeWayDiff) {
+				IThreeWayDiff twd = (IThreeWayDiff) node;
+				IResourceVariant remote = SyncInfoToDiffConverter.getRemoteVariant(twd);
+				if (remote != null) {
+					boolean isCached = ((CachedResourceVariant)remote).isContentsCached();
+					int direction = twd.getDirection();
+					if (direction == IThreeWayDiff.CONFLICTING || direction == IThreeWayDiff.INCOMING) {
+						assertTrue(NLS.bind("The remote contents should be cached for {0}", new String[] {resource.getFullPath().toString()}), isCached);
+					} else {
+						assertFalse(NLS.bind("The base contents should NOT be cached for {0}", new String[] {resource.getFullPath().toString()}), isCached);
+					}
 				}
 			}
 		}
 	}
 	
-	private void ensureBaseCached(SyncInfoTree tree, boolean includeOutgoing) throws TeamException, CoreException {
-		for (Iterator iter = tree.iterator(); iter.hasNext();) {
-			SyncInfo info = (SyncInfo) iter.next();
-			IResourceVariant base = info.getBase();
-			if (base != null) {
-				boolean isCached = ((CachedResourceVariant)base).isContentsCached();
-				int direction = SyncInfo.getDirection(info.getKind());
-				if (direction == SyncInfo.CONFLICTING || (includeOutgoing && direction == SyncInfo.OUTGOING)) {
-					assertTrue(NLS.bind("The base contents should be cached for {0}", new String[] {info.getLocal().getFullPath().toString()}), isCached);
-					// For conflicts, ensure that the cache contents do not match the remote
-					if (direction == SyncInfo.CONFLICTING) {
-						IResourceVariant remote = info.getRemote();
-						if (remote != null) {
-							InputStream baseIn = base.getStorage(DEFAULT_MONITOR).getContents();
-							if (baseIn == null) {
-								fail(NLS.bind("Base was not fetched for for {0}", new String[] {info.getLocal().getFullPath().toString()}));
-							}
-							InputStream remoteIn = remote.getStorage(DEFAULT_MONITOR).getContents();
-							if (compareContent(baseIn, remoteIn)) {
-								fail(NLS.bind("The remote was fetched instead of the base for {0}", new String[] {info.getLocal().getFullPath().toString()}));
+	private void ensureBaseCached(IResourceDiffTree tree, boolean includeOutgoing) throws TeamException, CoreException {
+		IResource[] resources = tree.getAffectedResources();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			IDiffNode node = tree.getDiff(resource);
+			if (node instanceof IThreeWayDiff) {
+				IThreeWayDiff twd = (IThreeWayDiff) node;
+				IResourceVariant base = SyncInfoToDiffConverter.getBaseVariant(twd);
+				if (base != null) {
+					boolean isCached = ((CachedResourceVariant)base).isContentsCached();
+					int direction = twd.getDirection();
+					if (direction == IThreeWayDiff.CONFLICTING || (includeOutgoing && direction == IThreeWayDiff.OUTGOING)) {
+						assertTrue(NLS.bind("The base contents should be cached for {0}", new String[] {resource.getFullPath().toString()}), isCached);
+						// For conflicts, ensure that the cache contents do not match the remote
+						if (direction == SyncInfo.CONFLICTING) {
+							IResourceVariant remote = SyncInfoToDiffConverter.getRemoteVariant(twd);
+							if (remote != null) {
+								InputStream baseIn = base.getStorage(DEFAULT_MONITOR).getContents();
+								if (baseIn == null) {
+									fail(NLS.bind("Base was not fetched for for {0}", new String[] {resource.getFullPath().toString()}));
+								}
+								InputStream remoteIn = remote.getStorage(DEFAULT_MONITOR).getContents();
+								if (compareContent(baseIn, remoteIn)) {
+									fail(NLS.bind("The remote was fetched instead of the base for {0}", new String[] {resource.getFullPath().toString()}));
+								}
 							}
 						}
+					} else {
+						assertFalse(NLS.bind("The base contents should NOT be cached for {0}", new String[] {resource.getFullPath().toString()}), isCached);
 					}
-				} else {
-					assertFalse(NLS.bind("The base contents should NOT be cached for {0}", new String[] {info.getLocal().getFullPath().toString()}), isCached);
 				}
 			}
 		}

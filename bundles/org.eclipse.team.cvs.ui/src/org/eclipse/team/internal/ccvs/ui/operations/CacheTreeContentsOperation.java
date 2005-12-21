@@ -19,13 +19,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.ISyncInfoTree;
-import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.history.IFileState;
+import org.eclipse.team.core.mapping.IResourceDiffTree;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -34,9 +39,9 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public abstract class CacheTreeContentsOperation extends SingleCommandOperation {
 
-	private final ISyncInfoTree tree;
+	private final IResourceDiffTree tree;
 
-	public CacheTreeContentsOperation(IWorkbenchPart part, ResourceMapping[] mappers, ISyncInfoTree tree) {
+	public CacheTreeContentsOperation(IWorkbenchPart part, ResourceMapping[] mappers, IResourceDiffTree tree) {
 		super(part, mappers, Command.NO_LOCAL_OPTIONS);
 		this.tree = tree;
 	}
@@ -51,19 +56,51 @@ public abstract class CacheTreeContentsOperation extends SingleCommandOperation 
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			SyncInfo[] infos = tree.getSyncInfos(resource, recurse ? IResource.DEPTH_INFINITE: IResource.DEPTH_ONE);
-			for (int j = 0; j < infos.length; j++) {
-				SyncInfo info = infos[j];
-				if (needsContents(info)) {
-					result.add(info.getLocal());
+			IDiffNode[] nodes = tree.getDiffs(resource, recurse ? IResource.DEPTH_INFINITE: IResource.DEPTH_ONE);
+			for (int j = 0; j < nodes.length; j++) {
+				IDiffNode node = nodes[j];
+				if (needsContents(node)) {
+					result.add(tree.getResource(node));
 				}
 			}
 		}
 		return (IResource[]) result.toArray(new IResource[result.size()]);
 	}
 
-	protected abstract boolean needsContents(SyncInfo info);
+	protected boolean needsContents(IDiffNode node) {
+		if (node instanceof IThreeWayDiff) {
+			IThreeWayDiff twd = (IThreeWayDiff) node;	
+			IResource local = getTree().getResource(node);
+			IFileState remote = getRemoteFileState(twd);
+			if (local.getType() == IResource.FILE 
+					&& isEnabledForDirection(twd.getDirection()) 
+					&& remote instanceof SyncInfoToDiffConverter.ResourceVariantFileRevision) {
+				IResourceVariant variant = ((SyncInfoToDiffConverter.ResourceVariantFileRevision) remote).getVariant();
+				if (variant instanceof RemoteFile) {
+					RemoteFile rf = (RemoteFile) variant;
+					if (!rf.isContentsCached()) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 	
+	/**
+	 * Get the remote file state that is of interest.
+	 * @param twd a three way diff
+	 * @return the remote file state that is of interest
+	 */
+	protected abstract IFileState getRemoteFileState(IThreeWayDiff twd);
+
+	/**
+	 * Return whether the direction is of interest.
+	 * @param direction the direction of a diff
+	 * @return whether the direction is of interest
+	 */
+	protected abstract boolean isEnabledForDirection(int direction);
+
 	/* (non-Javadoc)
 	 * 
 	 * Use a local root that is really the base tree so we can cache
@@ -122,6 +159,10 @@ public abstract class CacheTreeContentsOperation extends SingleCommandOperation 
 
 	protected String getTaskName() {
 		return CVSUIMessages.CacheTreeContentsOperation_1;
+	}
+
+	protected IResourceDiffTree getTree() {
+		return tree;
 	}
 
 }

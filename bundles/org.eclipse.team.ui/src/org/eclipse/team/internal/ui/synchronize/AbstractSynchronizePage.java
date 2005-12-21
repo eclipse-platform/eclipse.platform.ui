@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -110,10 +109,16 @@ public abstract class AbstractSynchronizePage extends Page implements ISynchroni
 		composite.setLayoutData(data);
 		
 		// Create the changes section which, in turn, creates the changes viewer and its configuration
-		this.changesSection = new ChangesSection(composite, this, configuration);
-		this.changesViewer = createChangesViewer(changesSection.getComposite());
+		this.changesSection = createChangesSection(composite);
+		this.changesViewer = createChangesViewer(changesSection.getContainer());
 		changesSection.setViewer(changesViewer);
 	}
+
+	/**
+	 * Create the changes section that will contain the changes viewer.
+	 * @return the changes section that will contain the changes viewer
+	 */
+	protected abstract ChangesSection createChangesSection(Composite parent);
 	
 	/**
 	 * Return the viewer that will display the changes associated

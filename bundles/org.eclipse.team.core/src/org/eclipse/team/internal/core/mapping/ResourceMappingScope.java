@@ -38,7 +38,6 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	private ResourceMapping[] inputMappings;
 	private final Map mappingsToTraversals = new HashMap();
 	private boolean hasAdditionalMappings;
-	private final String label;
 	private boolean hasAdditionalResources;
 
 	public static ResourceTraversal[] combineTraversals(ResourceTraversal[] allTraversals) {
@@ -75,8 +74,7 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	/**
 	 * @param selectedMappings
 	 */
-	public ResourceMappingScope(String label, ResourceMapping[] selectedMappings) {
-		this.label = label;
+	public ResourceMappingScope(ResourceMapping[] selectedMappings) {
 		inputMappings = selectedMappings;
 	}
 	
@@ -88,9 +86,7 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	 */
 	public void addMapping(ResourceMapping mapping, ResourceTraversal[] traversals) {
 		mappingsToTraversals.put(mapping, traversals);
-		roots = null;
 	}
-
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.IResourceMappingOperationScope#getInputMappings()
@@ -143,13 +139,6 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	 */
 	public void setHasAdditionalMappings(boolean hasAdditionalMappings) {
 		this.hasAdditionalMappings = hasAdditionalMappings;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.ISynchronizeScope#getName()
-	 */
-	public String getName() {
-		return label;
 	}
 
 	/**

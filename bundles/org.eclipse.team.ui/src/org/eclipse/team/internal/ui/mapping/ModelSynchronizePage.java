@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.operations;
+package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
@@ -19,9 +19,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.internal.ui.mapping.CommonViewerAdvisor;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.mapping.ICompareAdapter;
+import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IContributorResourceAdapter;
 import org.eclipse.ui.ide.IContributorResourceAdapter2;
@@ -45,15 +45,15 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 	 * Create a page from the given configuration
 	 * @param configuration a page configuration
 	 */
-	protected ModelSynchronizePage(ISynchronizePageConfiguration configuration) {
+	public ModelSynchronizePage(ISynchronizePageConfiguration configuration) {
 		super(configuration);
 		this.participant = (ModelSynchronizeParticipant)configuration.getParticipant();
 		configuration.setComparisonType(isThreeWay() 
 						? ISynchronizePageConfiguration.THREE_WAY 
 						: ISynchronizePageConfiguration.TWO_WAY);
-		configuration.setProperty(ISynchronizePageConfiguration.P_SYNC_INFO_SET, getParticipant().getContext().getSyncInfoTree());
 		// TODO: This is a hack to get something working
-		configuration.setProperty(SynchronizePageConfiguration.P_WORKING_SET_SYNC_INFO_SET, getParticipant().getContext().getSyncInfoTree());
+		//configuration.setProperty(ISynchronizePageConfiguration.P_SYNC_INFO_SET, new SyncInfoTree());
+		//configuration.setProperty(SynchronizePageConfiguration.P_WORKING_SET_SYNC_INFO_SET, new SyncInfoTree());
 	}
 
 	private boolean isThreeWay() {
@@ -178,6 +178,13 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 		if (adapter != null)
 			return adapter.findContentViewer(parent, oldViewer, input, configuration);
 		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.synchronize.AbstractSynchronizePage#createChangesSection()
+	 */
+	protected ChangesSection createChangesSection(Composite parent) {
+		return new ChangesSection(parent, this, getConfiguration());
 	}
 
 }

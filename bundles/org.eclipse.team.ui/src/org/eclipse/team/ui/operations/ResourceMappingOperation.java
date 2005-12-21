@@ -92,7 +92,7 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 	 */
 	protected void buildScope(IProgressMonitor monitor) throws InvocationTargetException {
 		try {
-			scope = getScopeBuilder().prepareScope(getJobName(), selectedMappings, context, monitor);
+			scope = getScopeBuilder().prepareScope(selectedMappings, context, monitor);
 			IResourceMappingScope inputScope = new ScopeGenerator().asInputScope(scope);
 			if (scope.hasAdditionalMappings()) {
 				// There are additional mappings so we may need to prompt

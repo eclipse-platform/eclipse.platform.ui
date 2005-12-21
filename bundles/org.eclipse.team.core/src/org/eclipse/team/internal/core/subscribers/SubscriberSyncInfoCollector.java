@@ -32,7 +32,7 @@ public final class SubscriberSyncInfoCollector extends SubscriberResourceCollect
 
 	private final SyncSetInputFromSubscriber subscriberInput;
 	private SyncSetInputFromSyncSet filteredInput;
-	private SubscriberEventHandler eventHandler;
+	private SubscriberSyncInfoEventHandler eventHandler;
 	private IResource[] roots;
 	
 	/**
@@ -40,14 +40,14 @@ public final class SubscriberSyncInfoCollector extends SubscriberResourceCollect
 	 * the given roots. If the roots are <code>null</code>, then all out-of-sync resources
 	 * from the subscriber are collected. An empty array of roots will cause no resources
 	 * to be collected. The <code>start()</code> method must be called after creation
-	 * to rpime the collector's sync sets.
+	 * to prime the collector's sync sets.
 	 * @param subscriber the Subscriber
 	 * @param roots the roots of the out-of-sync resources to be collected
 	 */
 	public SubscriberSyncInfoCollector(Subscriber subscriber, IResource[] roots) {
 	    super(subscriber);
 		this.roots = roots;
-		this.eventHandler = new SubscriberEventHandler(subscriber, roots);
+		this.eventHandler = new SubscriberSyncInfoEventHandler(subscriber, roots);
 		this.subscriberInput = eventHandler.getSyncSetInput();
 		filteredInput = new SyncSetInputFromSyncSet(subscriberInput.getSyncSet(), getEventHandler());
 		filteredInput.setFilter(new SyncInfoFilter() {

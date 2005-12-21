@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.*;
@@ -42,7 +43,10 @@ public class CVSMappingMergeOperation extends ResourceMappingMergeOperation {
 		super(part, selectedMappings, context);
 	}
 
-	protected IMergeContext buildMergeContext(IProgressMonitor monitor) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.operations.ResourceMappingMergeOperation#buildMergeContext(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IMergeContext buildMergeContext(IProgressMonitor monitor) throws TeamException {
 		monitor.beginTask(null, 100);
 		IMergeContext context = CVSMergeContext.createContext(getScope(), Policy.subMonitorFor(monitor, 50));
 		// cache the base and remote contents
@@ -50,10 +54,10 @@ public class CVSMappingMergeOperation extends ResourceMappingMergeOperation {
 		// OPTIMIZE: remote state and contents could be obtained in 1
 		// OPTIMIZE: Based could be avoided if we always cached base locally
 		try {
-			new CacheBaseContentsOperation(getPart(), getScope().getMappings(), context.getSyncInfoTree(), true).run(Policy.subMonitorFor(monitor, 25));
-			new CacheRemoteContentsOperation(getPart(), getScope().getMappings(), context.getSyncInfoTree()).run(Policy.subMonitorFor(monitor, 25));
+			new CacheBaseContentsOperation(getPart(), getScope().getMappings(), context.getDiffTree(), true).run(Policy.subMonitorFor(monitor, 25));
+			new CacheRemoteContentsOperation(getPart(), getScope().getMappings(), context.getDiffTree()).run(Policy.subMonitorFor(monitor, 25));
 		} catch (InvocationTargetException e) {
-			CVSUIPlugin.log(CVSException.wrapException(e));
+			throw CVSException.wrapException(e);
 		} catch (InterruptedException e) {
 			// Ignore
 		}

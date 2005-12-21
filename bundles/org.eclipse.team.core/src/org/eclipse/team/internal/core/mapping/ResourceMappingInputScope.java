@@ -26,6 +26,7 @@ public class ResourceMappingInputScope extends AbstractResourceMappingScope {
 	IResourceMappingScope wrappedScope;
 	
 	public ResourceMappingInputScope(IResourceMappingScope wrappedScope) {
+		
 		this.wrappedScope = wrappedScope;
 	}
 	

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.core.mapping;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.team.core.mapping.provider.ScopeGenerator;
 
@@ -35,13 +34,7 @@ import org.eclipse.team.core.mapping.provider.ScopeGenerator;
  * 
  * @since 3.2
  */
-public interface IResourceMappingScope {
-	
-	/**
-	 * Return the resources that are the roots of this scope.
-	 * @return the resources that are the roots of this scope
-	 */
-	public IResource[] getRoots();
+public interface IResourceMappingScope extends ISynchronizationScope {
 	
 	/**
 	 * Return the array of mappings that acted as the input to the scope builder
@@ -121,13 +114,6 @@ public interface IResourceMappingScope {
 	 * @return all the mappings for the given model provider id
 	 */
 	public ResourceMapping[] getMappings(String modelProviderId);
-
-	/**
-	 * Return whether the given resource is contained in this scope.
-	 * @param resource the resource to be tested
-	 * @return whether the given resource is contained in this scope
-	 */
-	public boolean contains(IResource resource);
 
 	/**
 	 * Return the resource mapping in the scope associated with the given model

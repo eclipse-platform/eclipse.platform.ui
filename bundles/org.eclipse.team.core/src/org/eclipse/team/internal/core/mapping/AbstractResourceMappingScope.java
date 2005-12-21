@@ -13,51 +13,19 @@ package org.eclipse.team.internal.core.mapping;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.resources.mapping.ModelProvider;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.internal.core.subscribers.AbstractSynchronizationScope;
 
 /**
  * Class that contains common resource mapping scope code.
  */
-public abstract class AbstractResourceMappingScope implements IResourceMappingScope {
-
-	protected IResource[] roots;
-	private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
+public abstract class AbstractResourceMappingScope extends AbstractSynchronizationScope implements IResourceMappingScope {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeScope#contains(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingScope#getMapping(java.lang.Object)
 	 */
-	public boolean contains(IResource resource) {
-		ResourceTraversal[] traversals = getTraversals();
-		for (int i = 0; i < traversals.length; i++) {
-			ResourceTraversal traversal = traversals[i];
-			if (traversal.contains(resource)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public IResource[] getRoots() {
-		if (roots == null) {
-			Set result = new HashSet();
-			ResourceTraversal[] traversals = getTraversals();
-			for (int i = 0; i < traversals.length; i++) {
-				ResourceTraversal traversal = traversals[i];
-				IResource[] resources = traversal.getResources();
-				for (int j = 0; j < resources.length; j++) {
-					IResource resource = resources[j];
-					//TODO: should we check for parent/child relationships?
-					result.add(resource);
-				}
-			}
-			roots = (IResource[]) result.toArray(new IResource[result.size()]);
-		}
-		return roots;
-	}
-
 	public ResourceMapping getMapping(Object modelObject) {
 		ResourceMapping[] mappings = getMappings();
 		for (int i = 0; i < mappings.length; i++) {
@@ -68,6 +36,9 @@ public abstract class AbstractResourceMappingScope implements IResourceMappingSc
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingScope#getMappings(java.lang.String)
+	 */
 	public ResourceMapping[] getMappings(String id) {
 		Set result = new HashSet();
 		ResourceMapping[] mappings = getMappings();
@@ -81,6 +52,9 @@ public abstract class AbstractResourceMappingScope implements IResourceMappingSc
 	
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingScope#getModelProviders()
+	 */
 	public ModelProvider[] getModelProviders() {
 		Set result = new HashSet();
 		ResourceMapping[] mappings = getMappings();

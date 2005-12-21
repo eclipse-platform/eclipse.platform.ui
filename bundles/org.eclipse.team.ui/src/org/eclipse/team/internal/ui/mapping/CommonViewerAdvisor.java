@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.internal.ui.synchronize.AbstractTreeViewerAdvisor;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.operations.ModelSynchronizePage;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.navigator.*;

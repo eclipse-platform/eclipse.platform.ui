@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
-import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
@@ -37,6 +36,30 @@ import org.eclipse.team.internal.core.TeamPlugin;
  */
 public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 
+	/**
+	 * Get the resource for the diff node that was obtained from an
+	 * {@link IResourceDiffTree}.
+	 * @param node the diff node.
+	 * @return the resource for the diff node
+	 */
+	public static IResource getResourceFor(IDiffNode node) {
+		if (node instanceof IResourceDiff) {
+			IResourceDiff rd = (IResourceDiff) node;
+			return rd.getResource();
+		}
+		if (node instanceof IThreeWayDiff) {
+			IThreeWayDiff twd = (IThreeWayDiff) node;
+			IDiffNode child = twd.getLocalChange();
+			if (child != null)
+				return getResourceFor(child);
+			child = twd.getRemoteChange();
+			if (child != null)
+				return getResourceFor(child);
+		}
+		Assert.isLegal(false);
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IResourceDiffTree#getDiff(org.eclipse.core.resources.IResource)
 	 */
@@ -90,24 +113,11 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 		return (IDiffNode[]) result.toArray(new IDiffNode[result.size()]);
 	}
 	
-	private IResource internalGetResource(IResourceDiff localChange) {
-		if (localChange == null)
-			return null;
-		Object before = localChange.getBeforeState();
-		IResourceVariant variant = null;
-		if (before instanceof IResourceVariant) {
-			variant = (IResourceVariant) before;
-		}
-		if (variant == null) {
-			Object after = localChange.getAfterState();
-			if (after instanceof IResourceVariant) {
-				variant = (IResourceVariant) after;
-			}
-		}
-		if (variant != null) {
-			return internalGetResource(localChange.getPath(), variant.isContainer());
-		}
-		return null;
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceDiffTree#getDiffs(org.eclipse.core.resources.IResource, int)
+	 */
+	public IDiffNode[] getDiffs(IResource resource, int depth) {
+		return getDiffs(new ResourceTraversal[] { new ResourceTraversal(new IResource[] { resource }, depth, IResource.NONE) } );
 	}
 
 	private IResource internalGetResource(IPath fullPath, boolean container) {
@@ -162,6 +172,5 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 	 */
 	public void remove(IResource resource) {
 		remove(resource.getFullPath());
-	}
-	
+	}	
 }

@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.ISyncInfoTree;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.history.IFileState;
+import org.eclipse.team.core.mapping.IResourceDiff;
+import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -27,28 +26,30 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class CacheRemoteContentsOperation extends CacheTreeContentsOperation {
 
-	public CacheRemoteContentsOperation(IWorkbenchPart part, ResourceMapping[] mappers, ISyncInfoTree tree) {
+	public CacheRemoteContentsOperation(IWorkbenchPart part, ResourceMapping[] mappers, IResourceDiffTree tree) {
 		super(part, mappers, tree);
 	}
-
-	protected boolean needsContents(SyncInfo info) {
-		IResource local = info.getLocal();
-		IResourceVariant remote = info.getRemote();
-		if (remote != null && local.getType() == IResource.FILE) {
-			int direction = SyncInfo.getDirection(info.getKind());
-			if (direction == SyncInfo.CONFLICTING || 
-					direction == SyncInfo.INCOMING) {
-		        if (remote instanceof RemoteFile) {
-		            RemoteFile remoteFile = (RemoteFile) remote;
-		            if (!remoteFile.isContentsCached()) {
-		            	return true;
-		            }
-		        }
-			}
-		}
-		return false;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.CacheTreeContentsOperation#getRemoteFileState(org.eclipse.team.core.diff.IThreeWayDiff)
+	 */
+	protected IFileState getRemoteFileState(IThreeWayDiff twd) {
+		IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
+		if (diff == null)
+			return null;
+		return diff.getBeforeState();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.CacheTreeContentsOperation#isEnabledForDirection(int)
+	 */
+	protected boolean isEnabledForDirection(int direction) {
+		return direction == IThreeWayDiff.CONFLICTING || 
+			direction == IThreeWayDiff.INCOMING;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.CacheTreeContentsOperation#buildTree(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
+	 */
 	protected ICVSRemoteResource buildTree(CVSTeamProvider provider) throws TeamException {
 		return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().buildRemoteTree(provider.getProject(), true, new NullProgressMonitor());
 	}

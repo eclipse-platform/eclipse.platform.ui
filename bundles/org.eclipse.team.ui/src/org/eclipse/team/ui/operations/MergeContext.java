@@ -23,7 +23,6 @@ import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileState;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.MergeStatus;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 
@@ -46,11 +45,10 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.provide
 	 * Create a merge context
 	 * @param scope the scope of the merge
 	 * @param type the type of merge (TWO-WAY or THREE_WAY)
-	 * @param tree the sync info tree
 	 * @param deltaTree the delta tree
 	 */
-	protected MergeContext(IResourceMappingScope scope, String type, SyncInfoTree tree, IResourceDiffTree deltaTree) {
-		super(scope, type, tree, deltaTree);
+	protected MergeContext(IResourceMappingScope scope, String type, IResourceDiffTree deltaTree) {
+		super(scope, type, deltaTree);
 	}
 
 	private static final String TXT_EXTENTION = "txt"; //$NON-NLS-1$

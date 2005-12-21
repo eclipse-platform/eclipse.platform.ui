@@ -54,14 +54,13 @@ public class ScopeGenerator {
 	 * @throws CoreException
 	 */
 	public IResourceMappingScope prepareScope(
-			String label,
 			ResourceMapping[] selectedMappings, ResourceMappingContext context,
 			IProgressMonitor monitor) throws CoreException {
 
 		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 
 		// Create the scope
-		ResourceMappingScope scope = createScope(label, selectedMappings);
+		ResourceMappingScope scope = createScope(selectedMappings);
 
 		// Accumulate the initial set of mappings we need traversals for
 		Set targetMappings = new HashSet();
@@ -126,8 +125,8 @@ public class ScopeGenerator {
 	 *         builder
 	 */
 	protected ResourceMappingScope createScope(
-			String label, ResourceMapping[] inputMappings) {
-		return new ResourceMappingScope(label, inputMappings);
+			ResourceMapping[] inputMappings) {
+		return new ResourceMappingScope(inputMappings);
 	}
 
 	/**

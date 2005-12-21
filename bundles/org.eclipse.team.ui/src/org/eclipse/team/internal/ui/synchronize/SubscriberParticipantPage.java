@@ -135,4 +135,11 @@ public final class SubscriberParticipantPage extends AbstractSynchronizePage imp
 		super.dispose();
 		collector.dispose();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.synchronize.AbstractSynchronizePage#createChangesSection(org.eclipse.swt.widgets.Composite)
+	 */
+	protected ChangesSection createChangesSection(Composite parent) {
+		return new SyncInfoSetChangesSection(parent, this, getConfiguration());
+	}
 }

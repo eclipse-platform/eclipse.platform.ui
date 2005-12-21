@@ -22,7 +22,6 @@ import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileState;
 import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.core.Messages;
 import org.eclipse.team.internal.core.TeamPlugin;
 
@@ -49,8 +48,8 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * Create a merge context.
 	 * @param type 
      */
-    protected MergeContext(IResourceMappingScope input, String type, SyncInfoTree tree, IResourceDiffTree deltaTree) {
-    	super(input, type, tree, deltaTree);
+    protected MergeContext(IResourceMappingScope input, String type, IResourceDiffTree deltaTree) {
+    	super(input, type, deltaTree);
     }
     
     /* (non-Javadoc)

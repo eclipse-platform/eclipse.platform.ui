@@ -15,6 +15,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
 import org.eclipse.team.ui.synchronize.*;
 
 /**

@@ -339,7 +339,8 @@ abstract public class Subscriber {
 	/**
 	 * Returns synchronization info, in the form of an {@link IDiffNode} for the
 	 * given resource, or <code>null</code> if there is no synchronization
-	 * info because the subscriber does not apply to this resource.
+	 * info because the subscriber does not apply to this resource or the resource
+	 * is in-sync.
 	 * <p>
 	 * Note that a diff may be returned for non-existing or for resources
 	 * which have no corresponding remote resource.
@@ -362,7 +363,7 @@ abstract public class Subscriber {
 	 */
 	public IDiffNode getDiff(IResource resource) throws CoreException {
 		SyncInfo info = getSyncInfo(resource);
-		if (info == null)
+		if (info == null || info.getKind() == SyncInfo.IN_SYNC)
 			return null;
 		return SyncInfoToDiffConverter.getDeltaFor(info);
 	}
@@ -416,5 +417,22 @@ abstract public class Subscriber {
 				accept(member, newDepth, visitor);
 			}
 		}
+	}
+
+	/**
+	 * Refresh the subscriber for the given traversals. By default this method calls
+	 * {@link #refresh(IResource[], int, IProgressMonitor) } for each traversal. Subclasses
+	 * may override.
+	 * @param traversals the traversals to be refreshed
+	 * @param monitor a progress monitor
+	 * @throws TeamException if errors occur
+	 */
+	public void refresh(ResourceTraversal[] traversals, IProgressMonitor monitor) throws TeamException {
+		monitor.beginTask(null, 100 * traversals.length);
+		for (int i = 0; i < traversals.length; i++) {
+			ResourceTraversal traversal = traversals[i];
+			refresh(traversal.getResources(), traversal.getDepth(), Policy.subMonitorFor(monitor, 100));
+		}
+		monitor.done();
 	}
 }

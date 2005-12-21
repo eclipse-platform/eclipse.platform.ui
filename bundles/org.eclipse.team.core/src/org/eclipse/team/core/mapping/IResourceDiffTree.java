@@ -74,6 +74,17 @@ public interface IResourceDiffTree extends IDiffTree {
 	IDiffNode[] getDiffs(ResourceTraversal[] traversals);
 
 	/**
+	 * Return all the diffs in the tree that are found for
+	 * the given resource when traversed to the given depth.
+	 * 
+	 * @param resource the resource
+	 * @param depth the depth
+	 * @return all the diffs in the tree that are found for
+	 * the given resource when traversed to the given depth
+	 */
+	IDiffNode[] getDiffs(IResource resource, int depth);
+	
+	/**
 	 * Return the members of the given resource that either have diffs in this
 	 * tree of contain descendants that have diffs in this tree.
 	 * 

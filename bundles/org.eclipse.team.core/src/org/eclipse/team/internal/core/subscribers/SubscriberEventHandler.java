@@ -13,15 +13,17 @@ package org.eclipse.team.internal.core.subscribers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.*;
+import org.eclipse.team.core.ITeamStatus;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.*;
 
 /**
@@ -31,10 +33,7 @@ import org.eclipse.team.internal.core.*;
  * Exceptions that occur when the job is processing the events are collected and
  * returned as part of the Job's status.
  */
-public class SubscriberEventHandler extends BackgroundEventHandler {
-	// The set that receives notification when the resource synchronization state
-	// has been calculated by the job.
-	private final SyncSetInputFromSubscriber syncSetInput;
+public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 
 	// Changes accumulated by the event handler
 	private List resultCache = new ArrayList();
@@ -46,7 +45,10 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 
 	private int ticks;
 
-	private IResource[] roots;
+	private final Subscriber subscriber;
+	private ISynchronizationScope scope;
+
+	private IPropertyChangeListener scopeChangeListener;
 	
 	/**
 	 * Internal resource synchronization event. Can contain a result.
@@ -55,21 +57,9 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 		static final int REMOVAL = 1;
 		static final int CHANGE = 2;
 		static final int INITIALIZE = 3;
-		SyncInfo result;
 
 		SubscriberEvent(IResource resource, int type, int depth) {
 			super(resource, type, depth);
-		}
-		public SubscriberEvent(
-			IResource resource,
-			int type,
-			int depth,
-			SyncInfo result) {
-				this(resource, type, depth);
-				this.result = result;
-		}
-		public SyncInfo getResult() {
-			return result;
 		}
 		protected String getTypeString() {
 			switch (getType()) {
@@ -83,14 +73,17 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 					return "INVALID"; //$NON-NLS-1$
 			}
 		}
+		public ResourceTraversal asTraversal() {
+			return new ResourceTraversal(new IResource[] { getResource() }, getDepth(), IResource.NONE);
+		}
 	}
 	
 	/**
 	 * This is a special event used to reset and connect sync sets.
-	 * The preemtive flag is used to indicate that the runnable should take
+	 * The preemptive flag is used to indicate that the runnable should take
 	 * the highest priority and thus be placed on the front of the queue
-	 * and be processed as soon as possible, preemting any event that is currently
-	 * being processed. The curent event will continue processing once the 
+	 * and be processed as soon as possible, preempting any event that is currently
+	 * being processed. The current event will continue processing once the 
 	 * high priority event has been processed
 	 */
 	public class RunnableEvent extends Event {
@@ -115,26 +108,40 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	 * the set.
 	 * @param set the subscriber set to feed changes into
 	 */
-	public SubscriberEventHandler(Subscriber subscriber, IResource[] roots) {
+	public SubscriberEventHandler(Subscriber subscriber, ISynchronizationScope scope) {
 		super(
 			NLS.bind(Messages.SubscriberEventHandler_jobName, new String[] { subscriber.getName() }), 
-			NLS.bind(Messages.SubscriberEventHandler_errors, new String[] { subscriber.getName() })); 
-		this.roots = roots;
-		this.syncSetInput = new SyncSetInputFromSubscriber(subscriber, this);
+			NLS.bind(Messages.SubscriberEventHandler_errors, new String[] { subscriber.getName() }));
+		this.subscriber = subscriber;
+		this.scope = scope;
+		scopeChangeListener = new IPropertyChangeListener() {
+					public void propertyChange(PropertyChangeEvent event) {
+						if (event.getProperty().equals(ISynchronizationScope.TRAVERSALS)) {
+							reset((ResourceTraversal[])event.getOldValue(), (ResourceTraversal[])event.getNewValue());
+						}
+					}
+				};
+		this.scope.addPropertyChangeListener(scopeChangeListener);
 	}
 	
+	/**
+	 * The traversals of the scope have changed
+	 * @param oldTraversals the old traversals
+	 * @param newTraversals the new traversals
+	 */
+	protected synchronized void reset(ResourceTraversal[] oldTraversals, ResourceTraversal[] newTraversals) {
+		reset(scope.getRoots(), SubscriberEvent.CHANGE);
+	}
+
 	/**
 	 * Start the event handler by queuing events to prime the sync set input with the out-of-sync 
 	 * resources of the subscriber.
 	 */
 	public synchronized void start() {
-		// Set the started flag to enable event queueing.
-		// We are gaurenteed to be the first since this method is synchronized.
+		// Set the started flag to enable event queuing.
+		// We are guaranteed to be the first since this method is synchronized.
 		started = true;
-		IResource[] resources = this.roots;
-		if (resources == null) {
-			resources = syncSetInput.getSubscriber().roots();
-		}
+		IResource[] resources = scope.getRoots();
 		reset(resources, SubscriberEvent.INITIALIZE);
 		initializing = false;
 	}
@@ -171,29 +178,6 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	}
 	
 	/**
-	 * Initialize all resources for the subscriber associated with the set. This will basically recalculate
-	 * all synchronization information for the subscriber.
-	 * <p>
-	 * This method is sycnrhonized with the queueEvent method to ensure that the two events
-	 * queued by this method are back-to-back
-	 */
-	public synchronized void reset(IResource[] roots) {
-		if (roots == null) {
-			roots = syncSetInput.getSubscriber().roots();
-		} else {
-			this.roots = roots;
-		}
-		// First, reset the sync set input to clear the sync set
-		run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				syncSetInput.reset(monitor);
-			}
-		}, false /* keep ordering the same */);
-		// Then, prime the set from the subscriber
-		reset(roots, SubscriberEvent.CHANGE);
-	}
-	
-	/**
 	 * Called by a client to indicate that a resource has changed and its synchronization state
 	 * should be recalculated.  
 	 * @param resource the changed resource
@@ -222,14 +206,14 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 		int depth,
 		IProgressMonitor monitor) {
 		
-		// handle any preemtive events before continuing
+		// handle any preemptive events before continuing
 		handlePreemptiveEvents(monitor);
 		
 		if (resource.getType() != IResource.FILE
 			&& depth != IResource.DEPTH_ZERO) {
 			try {
 				IResource[] members =
-					syncSetInput.getSubscriber().members(resource);
+					getSubscriber().members(resource);
 				for (int i = 0; i < members.length; i++) {
 					collect(
 						members[i],
@@ -248,23 +232,30 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 
 		monitor.subTask(NLS.bind(Messages.SubscriberEventHandler_2, new String[] { resource.getFullPath().toString() })); 
 		try {
-			SyncInfo info = syncSetInput.getSubscriber().getSyncInfo(resource);
-			// resource is no longer under the subscriber control
-			if (info == null) {
-				resultCache.add(
-					new SubscriberEvent(resource, SubscriberEvent.REMOVAL, IResource.DEPTH_ZERO));
-			} else {
-				resultCache.add(
-					new SubscriberEvent(resource, SubscriberEvent.CHANGE, IResource.DEPTH_ZERO, info));
-			}
+			handleChange(resource);
 			handlePendingDispatch(monitor);
-		} catch (TeamException e) {
+		} catch (CoreException e) {
 			handleException(e, resource, ITeamStatus.RESOURCE_SYNC_INFO_ERROR, NLS.bind(Messages.SubscriberEventHandler_9, new String[] { resource.getFullPath().toString(), e.getMessage() })); 
 		}
 		monitor.worked(1);
 	}
-	
-	private void handlePendingDispatch(IProgressMonitor monitor) {
+
+	/**
+	 * Return the subscriber associated with this event handler
+	 * @return the subscriber associated with this event handler
+	 */
+	protected Subscriber getSubscriber() {
+		return subscriber;
+	}
+
+	/**
+	 * The given resource has changed. Subclasses should handle
+	 * this in an appropriate fashion
+	 * @param resource the resource whose state has changed
+	 */
+	protected abstract void handleChange(IResource resource) throws CoreException;
+
+	protected void handlePendingDispatch(IProgressMonitor monitor) {
 		if (isReadyForDispatch(false /*don't wait if queue is empty*/)) {
 			try {
 				dispatchEvents(Policy.subMonitorFor(monitor, 5));
@@ -274,15 +265,14 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 		}
 	}
 
-	/*
+	/**
 	 * Handle the exception by returning it as a status from the job but also by
 	 * dispatching it to the sync set input so any down stream views can react
 	 * accordingly.
 	 * The resource passed may be null.
 	 */
-	private void handleException(CoreException e, IResource resource, int code, String message) {
+	protected void handleException(CoreException e, IResource resource, int code, String message) {
 		handleException(e);
-		syncSetInput.handleError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, code, message, e, resource));
 	}
 
 	/**
@@ -294,98 +284,17 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	 * @return Event[] the change events
 	 * @throws TeamException
 	 */
-	private void collectAll(
+	protected abstract void collectAll(
 		IResource resource,
 		int depth,
-		IProgressMonitor monitor) {
-		
-		
-		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
-		try {
-			
-			// Create a monitor that will handle preemptions and dispatch if required
-			IProgressMonitor collectionMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN) {
-				boolean dispatching = false;
-				public void subTask(String name) {
-					dispatch();
-					super.subTask(name);
-				}
-				private void dispatch() {
-					if (dispatching) return;
-					try {
-						dispatching = true;
-						handlePreemptiveEvents(this);
-						handlePendingDispatch(this);
-					} finally {
-						dispatching = false;
-					}
-				}
-				public void worked(int work) {
-					dispatch();
-					super.worked(work);
-				}
-			};
-			
-			// Create a sync set that queues up resources and errors for dispatch
-			SyncInfoSet collectionSet = new SyncInfoSet() {
-				public void add(SyncInfo info) {
-					super.add(info);
-					resultCache.add(
-							new SubscriberEvent(info.getLocal(), SubscriberEvent.CHANGE, IResource.DEPTH_ZERO, info));
-				}
-				public void addError(ITeamStatus status) {
-					if (status instanceof TeamStatus) {
-						TeamStatus ts = (TeamStatus) status;
-						IResource resource = ts.getResource();
-						if (resource != null && !resource.getProject().isAccessible()) {
-							// The project was closed while we were collecting sync info.
-							// The close delta will cause us to clean up properly
-							return;
-						}
-					}
-					super.addError(status);
-					TeamPlugin.getPlugin().getLog().log(status);
-					syncSetInput.handleError(status);
-				}
-				public void remove(IResource resource) {
-					super.remove(resource);
-					resultCache.add(
-							new SubscriberEvent(resource, SubscriberEvent.REMOVAL, IResource.DEPTH_ZERO));
-				}
-			};
-			
-			syncSetInput.getSubscriber().collectOutOfSync(new IResource[] { resource }, depth, collectionSet, collectionMonitor);
-			
-		} finally {
-			monitor.done();
-		}
-	}
+		IProgressMonitor monitor);
 
 	/**
 	 * Feed the given events to the set. The appropriate method on the set is called
 	 * for each event type. 
 	 * @param events
 	 */
-	private void dispatchEvents(SubscriberEvent[] events, IProgressMonitor monitor) {
-		// this will batch the following set changes until endInput is called.
-		SubscriberSyncInfoSet syncSet = syncSetInput.getSyncSet();
-        try {
-			syncSet.beginInput();
-			for (int i = 0; i < events.length; i++) {
-				SubscriberEvent event = events[i];
-				switch (event.getType()) {
-					case SubscriberEvent.CHANGE :
-						syncSetInput.collect(event.getResult(), monitor);
-						break;
-					case SubscriberEvent.REMOVAL :
-						syncSet.remove(event.getResource(), event.getDepth());
-						break;
-				}
-			}
-		} finally {
-			syncSet.endInput(monitor);
-		}
-	}
+	protected abstract void dispatchEvents(SubscriberEvent[] events, IProgressMonitor monitor);
 	
 	/**
 	 * Initialize all resources for the subscriber associated with the set. This will basically recalculate
@@ -393,7 +302,7 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	 * @param type can be Event.CHANGE to recalculate all states or Event.INITIALIZE to perform the
 	 *   optimized recalculation if supported by the subscriber.
 	 */
-	private void reset(IResource[] roots, int type) {
+	protected void reset(IResource[] roots, int type) {
 		IResource[] resources = roots;
 		for (int i = 0; i < resources.length; i++) {
 			queueEvent(new SubscriberEvent(resources[i], type, IResource.DEPTH_INFINITE), false);
@@ -410,7 +319,7 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 					executeRunnable(event, monitor);
 					break;
 				case SubscriberEvent.REMOVAL :
-					resultCache.add(event);
+					queueDispatchEvent(event);
 					break;
 				case SubscriberEvent.CHANGE :
 					collect(
@@ -427,10 +336,9 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 					break;
 			}
 		} catch (OperationCanceledException e) {
-			// the job has been cancelled. 
-			// Clear the queue and propogate the cancellation through the sets.
-			resultCache.clear();
-			syncSetInput.handleError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, ITeamStatus.SYNC_INFO_SET_CANCELLATION, Messages.SubscriberEventHandler_12, e, ResourcesPlugin.getWorkspace().getRoot())); 
+			// the job has been canceled. 
+			// Clear the queue and propagate the cancellation through the sets.
+			handleCancel(e); 
 		} catch (RuntimeException e) {
 			// handle the exception and keep processing
 			if (event.getType() == RunnableEvent.RUNNABLE) {
@@ -439,6 +347,22 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 				handleException(new TeamException(Messages.SubscriberEventHandler_10, e), event.getResource(), ITeamStatus.SYNC_INFO_SET_ERROR, NLS.bind(Messages.SubscriberEventHandler_11, new String[] { event.getResource().getFullPath().toString(), e.getMessage() }));
 			}
 		}
+	}
+
+	/**
+	 * Queue the event to be handle during the dispatch phase.
+	 * @param event the event
+	 */
+	protected void queueDispatchEvent(Event event) {
+		resultCache.add(event);
+	}
+
+	/**
+	 * Handle the cancel exception
+	 * @param e the cancel exception
+	 */
+	protected void handleCancel(OperationCanceledException e) {
+		resultCache.clear();
 	}
 		
 	/*
@@ -477,24 +401,33 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	public void run(IWorkspaceRunnable runnable, boolean frontOnQueue) {
 		queueEvent(new RunnableEvent(runnable, frontOnQueue), frontOnQueue);
 	}
-
-	/**
-	 * Return the sync set input that was created by this event handler
-	 * @return
-	 */
-	public SyncSetInputFromSubscriber getSyncSetInput() {
-		return syncSetInput;
-	}
 	
 	public void setProgressGroupHint(IProgressMonitor progressGroup, int ticks) {
 		this.progressGroup = progressGroup;
 		this.ticks = ticks;
 	}
 	
-	private void handlePreemptiveEvents(IProgressMonitor monitor) {
+	protected void handlePreemptiveEvents(IProgressMonitor monitor) {
 		Event event = peek();
 		if (event instanceof RunnableEvent && ((RunnableEvent)event).isPreemtive()) {
 			executeRunnable(nextElement(), monitor);
 		}
+	}
+
+	/**
+	 * Return the scope of this event handler. The scope is
+	 * used to determine the resources that are processed by the handler
+	 * @return the scope of this event handler
+	 */
+	protected ISynchronizationScope getScope() {
+		return scope;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.BackgroundEventHandler#shutdown()
+	 */
+	public void shutdown() {
+		super.shutdown();
+		scope.removePropertyChangeListener(scopeChangeListener);
 	}
 }
