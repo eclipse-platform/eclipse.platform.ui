@@ -151,8 +151,8 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 		List result = new ArrayList();
 		IDiffNode[] nodes = getDiffs();
 		for (int i = 0; i < nodes.length; i++) {
-			IResourceDiff node = (IResourceDiff)nodes[i];
-			result.add(node.getResource());
+			IDiffNode node = nodes[i];
+			result.add(getResource(node));
 		}
 		return (IResource[]) result.toArray(new IResource[result.size()]);
 	}
