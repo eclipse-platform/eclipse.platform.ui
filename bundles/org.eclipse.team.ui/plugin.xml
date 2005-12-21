@@ -117,7 +117,7 @@
       <objectContribution
             adaptable="false"
             id="org.eclipse.team.ui.FileRevisionsContribution"
-            objectClass="org.eclipse.team.core.filehistory.IFileRevision">
+            objectClass="org.eclipse.team.core.history.IFileRevision">
          <action
                class="org.eclipse.team.internal.ui.history.actions.OpenRevisionAction"
                id="org.eclipse.team.ui.OpenRevisionAction"
