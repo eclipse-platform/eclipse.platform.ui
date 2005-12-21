@@ -55,12 +55,14 @@ public interface IParserTags {
 	 * <!ELEMENT item (description [action|perform-when] | (subitem|repeated-subitem|conditional-subitem)*)>
 	 * <!ATTLIST item
 	 *   title               CDATA #REQUIRED
+	 *   dialog              ("true" | "false") "false"
 	 *   skip                ("true" | "false") "false"
 	 *   contextId           CDATA #IMPLIED
 	 *   href                CDATA #IMPLIED
 	 * >
 	 */
 	public static final String ITEM = "item"; //$NON-NLS-1$
+	public static final String DIALOG = "dialog"; //$NON-NLS-1$
 	public static final String SKIP = "skip"; //$NON-NLS-1$
 
 	/*

@@ -15,6 +15,7 @@ import java.util.*;
 public class Item extends Intro implements IActionItem, IPerformWhenItem, ISubItemItem {
 	private String title;
 	private boolean skip;
+	private boolean dialog;
 	private ArrayList itemExtensions;
 	
 	private Action action;
@@ -29,10 +30,11 @@ public class Item extends Intro implements IActionItem, IPerformWhenItem, ISubIt
 		super();
 	}
 	
-	public Item(String title, String description, String href, String contextId, boolean skip) {
+	public Item(String title, String description, String href, String contextId, boolean skip, boolean dialog) {
 		super(description, href, contextId);
 		this.title = title;
 		this.skip = skip;
+		this.dialog = dialog;
 	}
 	
 	/**
@@ -59,6 +61,14 @@ public class Item extends Intro implements IActionItem, IPerformWhenItem, ISubIt
 	}
 
 	/**
+	 * Returns whether or not this item requires opening a dialog.
+	 * @return whether the item requires opening a dialog
+	 */
+	public boolean isDialog() {
+		return this.dialog;
+	}
+	
+	/**
 	 * Returns the skip.
 	 * @return boolean
 	 */
@@ -66,6 +76,14 @@ public class Item extends Intro implements IActionItem, IPerformWhenItem, ISubIt
 		return this.skip;
 	}
 
+	/**
+	 * Sets whether or not this item requires opening a dialog.
+	 * @param dialog whether the item requires opening a dialog
+	 */
+	public void setDialog(boolean dialog) {
+		this.dialog = dialog;
+	}
+	
 	/**
 	 * @param skip The skip to set.
 	 */

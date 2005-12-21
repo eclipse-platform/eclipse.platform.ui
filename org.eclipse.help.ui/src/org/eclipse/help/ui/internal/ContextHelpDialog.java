@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -21,6 +22,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -303,16 +305,23 @@ public class ContextHelpDialog {
 		for (int i = 0; i < relatedTopics.length; i++) {
 			createLink(composite, relatedTopics[i]);
 		}
-		// Create separator.
-		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		label.setBackground(backgroundColour);
-		label.setForeground(foregroundColour);
-		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING
-				| GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		label.setLayoutData(data);
-		// create link to the dynamic help
-		createDynamicHelpLink(composite);
+
+		// create dynamic help link if current context allows dynamic help
+		Object shellData = parentShell.getData();
+		IWorkbenchWindow wbWindow = HelpUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		if (DefaultHelpUI.isActiveShell(parentShell, wbWindow) || shellData instanceof TrayDialog) {
+			// Create separator.
+			label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+			label.setBackground(backgroundColour);
+			label.setForeground(foregroundColour);
+			data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING
+					| GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
+			data.horizontalSpan = 2;
+			label.setLayoutData(data);
+
+			// create link to the dynamic help
+			createDynamicHelpLink(composite);
+		}
 		
 		return composite;
 	}

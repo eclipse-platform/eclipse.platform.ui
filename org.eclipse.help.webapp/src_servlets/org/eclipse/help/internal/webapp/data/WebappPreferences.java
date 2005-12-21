@@ -39,6 +39,10 @@ public class WebappPreferences {
 		return prefs.getString("help_home"); //$NON-NLS-1$
 	}
 
+	public boolean isIndexView() {
+		return "true".equals(prefs.getString("indexView")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
 	public boolean isBookmarksView() {
 		return BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER
 				&& "true".equals(prefs.getString("bookmarksView")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -109,4 +113,19 @@ public class WebappPreferences {
 		return "true".equalsIgnoreCase(prefs.getString("activeHelp")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	public boolean isIndexInstruction() {
+		return "true".equalsIgnoreCase(prefs.getString("indexInstruction")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public boolean isIndexButton() {
+		return "true".equalsIgnoreCase(prefs.getString("indexButton")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public boolean isIndexPlusMinus() {
+		return "true".equalsIgnoreCase(prefs.getString("indexPlusMinus")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public boolean isIndexExpandAll() {
+		return "true".equalsIgnoreCase(prefs.getString("indexExpandAll")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 }

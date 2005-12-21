@@ -131,6 +131,7 @@ public class QueryBuilder {
 	 * QueryWordsToken's.
 	 */
 	private List analyzeTokens(List tokens) {
+		boolean isTokenAfterNot = false;
 		List newTokens = new ArrayList();
 		int wildCardTermCount = 0;
 		for (int i = 0; i < tokens.size(); i++) {
@@ -147,7 +148,7 @@ public class QueryBuilder {
 						newTokens.add(QueryWordsToken.word(token.value
 								.toLowerCase(locale)));
 						// add word to the list of words to highlight
-						if (!highlightWords.contains(token.value)) {
+						if (!isTokenAfterNot && !highlightWords.contains(token.value)) {
 							highlightWords.add(token.value);
 						}
 					} else {
@@ -157,7 +158,7 @@ public class QueryBuilder {
 					List wordList = analyzeText(analyzer, "contents", //$NON-NLS-1$
 							token.value);
 					if (wordList.size() > 0) {
-						if (!highlightWords.contains(token.value)) {
+						if (!isTokenAfterNot && !highlightWords.contains(token.value)) {
 							// add original word to the list of words to
 							// highlight
 							highlightWords.add(token.value);
@@ -168,7 +169,7 @@ public class QueryBuilder {
 							// add analyzed word to the list of words to
 							// highlight
 							// this is required to highlight stemmed words
-							if (!highlightWords.contains(word)) {
+							if (!isTokenAfterNot && !highlightWords.contains(word)) {
 								highlightWords.add(word);
 							}
 						} else {
@@ -189,7 +190,7 @@ public class QueryBuilder {
 								// highlighted all over (bug 30263)
 								if (!analyzerDesc.getId().startsWith(
 										HelpBasePlugin.PLUGIN_ID + "#")) { //$NON-NLS-1$
-									if (!highlightWords.contains(word)) {
+									if (!isTokenAfterNot && !highlightWords.contains(word)) {
 										highlightWords.add(word);
 									}
 								}
@@ -209,7 +210,7 @@ public class QueryBuilder {
 				List wordList = analyzeText(analyzer, "exact_contents", //$NON-NLS-1$
 						token.value);
 				if (wordList.size() > 0) {
-					if (!highlightWords.contains(token.value)) {
+					if (!isTokenAfterNot && !highlightWords.contains(token.value)) {
 						// add original word to the list of words to highlight
 						highlightWords.add(token.value);
 					}
@@ -227,6 +228,7 @@ public class QueryBuilder {
 					newTokens.add(phrase);
 				}
 			}
+			isTokenAfterNot = (token.type == QueryWordsToken.NOT);
 		}
 		return newTokens;
 	}

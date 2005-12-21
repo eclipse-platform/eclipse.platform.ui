@@ -63,7 +63,14 @@ public class CoreItem extends ViewItem {
 	}
 
 	private void createButtons(Action action) {
-		if (action != null ) {
+		/*
+		 * When the cheat sheet is displayed in a dialog's tray, hide
+		 * the action that was just invoked to open the dialog.
+		 */
+		boolean inDialog = isInDialogMode();
+		boolean isDialogAction = getItem().isDialog();
+		boolean hideAction = isDialogAction && inDialog;
+		if (action != null && !hideAction) {
 			final ImageHyperlink startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, Messages.PERFORM_TASK_TOOLTIP);
 			page.getToolkit().adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {

@@ -333,6 +333,16 @@ public abstract class ViewItem {
 		return mainItemComposite.isExpanded();
 	}
 
+	/**
+     * Returns whether or not cheat sheet viewer containing this item is in
+     * a modal dialog.
+     * 
+     * @return whether the cheat sheet viewer is in a modal dialog
+	 */
+	public boolean isInDialogMode() {
+		return viewer.isInDialogMode();
+	}
+	
 	/*package*/
 	boolean isSkipped() {
 		return isSkipped;

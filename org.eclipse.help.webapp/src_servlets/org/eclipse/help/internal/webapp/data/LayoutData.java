@@ -82,20 +82,17 @@ public class LayoutData extends RequestData {
 		View tocview = new View("toc", //$NON-NLS-1$
 				"", //$NON-NLS-1$
 				preferences.getImagesDirectory() + "/contents_view.gif", 'C'); //$NON-NLS-1$
+		View indexview = null;
 		View searchview = new View("search", //$NON-NLS-1$
 				"", //$NON-NLS-1$
 				preferences.getImagesDirectory() + "/search_results_view.gif", 'R'); //$NON-NLS-1$
-		
-		View indexview = null;
-		if (HelpPlugin.getIndexManager().getIndex(Platform.getNL())
-				.getEntries().size() > 0) {
-			indexview = new View("index", "", preferences.getImagesDirectory() //$NON-NLS-1$ //$NON-NLS-2$
-					+ "/index_view.gif", 'I'); //$NON-NLS-1$
-		}
-		
 		View linksview = null;
 		View bookmarksview = null;
 
+		if (preferences.isIndexView() && HelpPlugin.getIndexManager().getIndex(Platform.getNL()).getEntries().size() > 0)
+			indexview = new View("index", //$NON-NLS-1$
+					"", //$NON-NLS-1$
+					preferences.getImagesDirectory() + "/index_view.gif", 'I'); //$NON-NLS-1$
 		if (preferences.isLinksView())
 			linksview = new View("links", //$NON-NLS-1$
 					"", //$NON-NLS-1$
@@ -107,14 +104,14 @@ public class LayoutData extends RequestData {
 
 		ArrayList viewList = new ArrayList();
 		viewList.add(tocview);
-		viewList.add(searchview);
-		if (indexview != null){
+		if (indexview != null) {
 			viewList.add(indexview);
 		}
-		if (linksview != null){
+		viewList.add(searchview);
+		if (linksview != null) {
 			viewList.add(linksview);
 		}
-		if (bookmarksview !=null){
+		if (bookmarksview !=null) {
 			viewList.add(bookmarksview);
 		}
 		

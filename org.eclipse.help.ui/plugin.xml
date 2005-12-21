@@ -123,6 +123,39 @@
             label="%LocalHelp.label">
       </engine>
     </extension>
+    <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.help.ui.category.help"
+            defaultHandler="org.eclipse.help.ui.internal.CloseHelpTrayHandler"
+            description="%command.closeTray.description"
+            id="org.eclipse.help.ui.closeTray"
+            name="%command.closeTray.name">
+      </command>
+      <category
+            description="%command.category.help.description"
+            id="org.eclipse.help.ui.category.help"
+            name="%command.category.help.name"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.help.ui.closeTray"
+            contextId="org.eclipse.ui.contexts.dialog"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+W"/>
+      <key
+            commandId="org.eclipse.help.ui.closeTray"
+            contextId="org.eclipse.ui.contexts.dialog"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+F4"/>
+      <key
+            commandId="org.eclipse.help.ui.closeTray"
+            contextId="org.eclipse.ui.contexts.dialog"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"
+            sequence="CTRL+X K"/>
+   </extension>
+    
 <!--
    <extension
          point="org.eclipse.ui.actionSets">

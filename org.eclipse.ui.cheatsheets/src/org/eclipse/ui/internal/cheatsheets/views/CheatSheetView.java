@@ -94,7 +94,7 @@ public class CheatSheetView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		CheatSheetStopWatch.startStopWatch("CheatSheetView.createPartControl"); //$NON-NLS-1$
 
-		viewer = new CheatSheetViewer();
+		viewer = new CheatSheetViewer(false);
 		viewer.createPartControl(parent);
 	
 		if (!actionBarContributed) {
