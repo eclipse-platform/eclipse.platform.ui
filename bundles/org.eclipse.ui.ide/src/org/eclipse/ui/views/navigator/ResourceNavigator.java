@@ -723,7 +723,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                     if (dragDetected == false) {
                         ISelection sel = viewer.getSelection();
                         if (sel instanceof IStructuredSelection) {
-                            IStructuredSelection selection = (StructuredSelection)sel;
+                            IStructuredSelection selection = (IStructuredSelection)sel;
                         
                             // only synchronize with editor when the selection is not the result 
                             // of a drag. Fixes bug 22274.
