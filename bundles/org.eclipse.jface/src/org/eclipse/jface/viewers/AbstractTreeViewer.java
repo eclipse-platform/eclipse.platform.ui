@@ -1094,10 +1094,15 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                         Object element = internalToElement(elementOrPath);
                         w = internalFindChild(item, element);
                         if (expand) {
-                        	// expand parent items bottom-up after they have all been materialized, to reduce flicker
+                        	// expand parent items top-down
+                        	LinkedList toExpandList = new LinkedList();
                         	while (item != null && !getExpanded(item)) {
-                        		setExpanded(item, true);
+                        		toExpandList.addFirst(item);
                         		item = getParentItem(item);
+                        	}
+                        	for(Iterator it = toExpandList.iterator(); it.hasNext();) {
+                        		Item toExpand = (Item) it.next();
+                        		setExpanded(toExpand, true);
                         	}
                         }
                     }
