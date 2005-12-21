@@ -12,4 +12,4 @@ Require-Bundle: org.eclipse.jface,
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.jface.examples.databinding.compositetable,
  org.eclipse.jface.examples.databinding.compositetable.reflect,
- org.eclipse.jface.examples.databinding.javabean
+ org.eclipse.jface.examples.databinding.model

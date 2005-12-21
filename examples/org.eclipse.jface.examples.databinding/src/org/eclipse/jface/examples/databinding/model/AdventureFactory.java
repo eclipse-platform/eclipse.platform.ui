@@ -8,23 +8,36 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.databinding.scenarios.model;
+package org.eclipse.jface.examples.databinding.model;
 
-import org.eclipse.jface.databinding.validator.IValidator;
+public class AdventureFactory {
 
-public class PhoneValidator implements IValidator {
-
-	public String isPartiallyValid(Object value) {
-		return isValid(value);
+	public Catalog createCatalog() {
+		return new Catalog();
 	}
 
-	public String isValid(Object value) {
-		String rawPhoneNumber = PhoneConverter.removeFormatting((String)value);
-		if(rawPhoneNumber.length() != 10){
-			return "Phone number must be 10 characters";
-		} else {
-			return null;
-		}
+	public Category createCategory() {
+		return new Category();
+	}
+
+	public Adventure createAdventure() {
+		return new Adventure();
+	}
+
+	public Lodging createLodging() {
+		return new Lodging();
+	}
+
+	public Transportation createTransportation() {
+		return new Transportation();
+	}
+
+	public Account createAccount() {
+		return new Account();
+	}
+
+	public Cart createCart() {
+		return new Cart();
 	}
 
 }

@@ -8,36 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.databinding.scenarios.model;
+package org.eclipse.jface.examples.databinding.model;
 
-public class AdventureFactory {
+public class Cart {
 
-	public Catalog createCatalog() {
-		return new Catalog();
+	public void setAdventureDays(int i) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	public Category createCategory() {
-		return new Category();
-	}
-
-	public Adventure createAdventure() {
-		return new Adventure();
-	}
-
-	public Lodging createLodging() {
-		return new Lodging();
-	}
-
-	public Transportation createTransportation() {
-		return new Transportation();
-	}
-
-	public Account createAccount() {
-		return new Account();
-	}
-
-	public Cart createCart() {
-		return new Cart();
+	public int getLodgingDays() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

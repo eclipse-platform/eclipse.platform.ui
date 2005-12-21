@@ -8,31 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.databinding.scenarios.model;
+package org.eclipse.jface.examples.databinding.model;
 
-public class Lodging extends ModelObject {
+import org.eclipse.jface.databinding.validator.IValidator;
 
-	private String name;
-	private String description;
+public class PhoneValidator implements IValidator {
 
-	public String getDescription() {
-		return description;
+	public String isPartiallyValid(Object value) {
+		return isValid(value);
 	}
 
-	public void setDescription(String string) {
-		Object oldValue = description;
-		description = string;
-		firePropertyChange("description",oldValue,description);
-	}
-
-	public void setName(String string) {
-		Object oldValue = name;
-		name = string;
-		firePropertyChange("name",oldValue,name);
-	}
-	
-	public String getName() {
-		return name;
+	public String isValid(Object value) {
+		String rawPhoneNumber = PhoneConverter.removeFormatting((String)value);
+		if(rawPhoneNumber.length() != 10){
+			return "Phone number must be 10 characters";
+		} else {
+			return null;
+		}
 	}
 
 }

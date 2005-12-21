@@ -8,18 +8,31 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.databinding.scenarios.model;
+package org.eclipse.jface.examples.databinding.model;
 
-public class Cart {
+public class Lodging extends ModelObject {
 
-	public void setAdventureDays(int i) {
-		// TODO Auto-generated method stub
-		
+	private String name;
+	private String description;
+
+	public String getDescription() {
+		return description;
 	}
 
-	public int getLodgingDays() {
-		// TODO Auto-generated method stub
-		return 0;
+	public void setDescription(String string) {
+		Object oldValue = description;
+		description = string;
+		firePropertyChange("description",oldValue,description);
+	}
+
+	public void setName(String string) {
+		Object oldValue = name;
+		name = string;
+		firePropertyChange("name",oldValue,name);
+	}
+	
+	public String getName() {
+		return name;
 	}
 
 }

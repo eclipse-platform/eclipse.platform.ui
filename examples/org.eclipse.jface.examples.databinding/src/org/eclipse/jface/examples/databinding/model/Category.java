@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.databinding.scenarios.model;
+package org.eclipse.jface.examples.databinding.model;
 
 public class Category extends ModelObject {
 

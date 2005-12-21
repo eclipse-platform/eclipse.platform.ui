@@ -12,9 +12,9 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.viewers.ViewersProperties;
-import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
-import org.eclipse.jface.tests.databinding.scenarios.model.Catalog;
-import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
+import org.eclipse.jface.examples.databinding.model.Adventure;
+import org.eclipse.jface.examples.databinding.model.Catalog;
+import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
