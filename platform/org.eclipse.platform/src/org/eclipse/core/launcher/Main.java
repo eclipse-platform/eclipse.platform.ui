@@ -465,7 +465,7 @@ public class Main {
     private URL[] getDevPath(URL base) throws IOException {
         ArrayList result = new ArrayList(5);
         if (inDevelopmentMode)
-            addDevEntries(base, result); //$NON-NLS-1$
+            addDevEntries(base, result);
         //The jars from the base always need to be added, even when running in dev mode (bug 46772)
         addBaseJars(base, result);
         return (URL[]) result.toArray(new URL[result.size()]);
@@ -583,7 +583,7 @@ public class Main {
                     addEntry(base, result);
                 }
                 URL url = null;
-                if (string.startsWith(FILE_SCHEME)) //$NON-NLS-1$
+                if (string.startsWith(FILE_SCHEME))
                     url = new File(string.substring(5)).toURL();
                 else
                     url = new URL(string);
@@ -670,7 +670,7 @@ public class Main {
                 return candidate.getName().equals(target) || candidate.getName().startsWith(target + "_"); //$NON-NLS-1$
             }
         };
-        File[] candidates = new File(start).listFiles(filter); //$NON-NLS-1$
+        File[] candidates = new File(start).listFiles(filter);
         if (candidates == null)
             return null;
         String[] arrays = new String[candidates.length];
@@ -765,7 +765,7 @@ public class Main {
     private static URL buildURL(String spec, boolean trailingSlash) {
         if (spec == null)
             return null;
-        boolean isFile = spec.startsWith(FILE_SCHEME); //$NON-NLS-1$
+        boolean isFile = spec.startsWith(FILE_SCHEME);
         try {
             if (isFile) {
                 File toAdjust = new File(spec.substring(5));
@@ -1013,7 +1013,7 @@ public class Main {
         if (exitData == null || data == null)
             return;
         // sync call to the launcher
-        runCommand(true, new String[] {EXITDATA, exitData, data}); //$NON-NLS-1$
+        runCommand(true, new String[] {EXITDATA, exitData, data});
     }
 
     /**
@@ -1542,7 +1542,7 @@ public class Main {
         if (location == null)
             return;
         // async call to the launcher
-        showProcess = runCommand(false, new String[] {SHOWSPLASH, showSplash, location}); //$NON-NLS-1$
+        showProcess = runCommand(false, new String[] {SHOWSPLASH, showSplash, location});
     }
     
     private Process runCommand(boolean block, String[] extraArgs) {
@@ -1559,7 +1559,7 @@ public class Main {
         if (debug) {
             System.out.print("runCommand:\n    ");//$NON-NLS-1$ 
             for (int i = 0; i < args.length; i++) {
-                System.out.print('<' + args[i] + '>');//$NON-NLS-1$ //$NON-NLS-2$ 
+                System.out.print('<' + args[i] + '>');
             }
             System.out.println();
         }
@@ -1840,7 +1840,7 @@ public class Main {
      */
     private String resolve(String urlString) {
         // handle the case where people mistakenly spec a refererence: url.
-        if (urlString.startsWith(REFERENCE_SCHEME)) { //$NON-NLS-1$
+        if (urlString.startsWith(REFERENCE_SCHEME)) {
             urlString = urlString.substring(10);
             System.getProperties().put(PROP_FRAMEWORK, urlString);
         }

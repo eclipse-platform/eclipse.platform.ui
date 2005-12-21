@@ -135,7 +135,7 @@ public class WebStartMain extends Main {
 	}
 
 	private void printArray(String header, String[] values) {
-		System.err.println(header); //$NON-NLS-1$
+		System.err.println(header);
 		for (int i = 0; i < values.length; i++) {
 			System.err.println("\t" + values[i]); //$NON-NLS-1$
 		}
@@ -289,7 +289,7 @@ public class WebStartMain extends Main {
 
 		System.getProperties().put(PROP_OSGI_BUNDLES, finalBundleList.toString());
 		if (debug)
-			log(finalBundleList.toString()); //$NON-NLS-1$
+			log(finalBundleList.toString());
 	}
 
 }
