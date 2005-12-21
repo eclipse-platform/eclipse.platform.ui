@@ -822,6 +822,14 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @throws BadLocationException if document access fails somewhere
 	 */
 	void handleChanged(DocumentEvent event) throws BadLocationException {
+		
+		/*
+		 * This can be called by the initializer job at a point
+		 * where the differ is already uninstalled.
+		 */
+		if (fLeftDocument == null || fLeftEquivalent == null)
+			return;
+		
 		/*
 		 * Now, here we have a great example of object oriented programming.
 		 */
