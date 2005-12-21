@@ -12,6 +12,7 @@ package org.eclipse.ui.tests.navigator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PartInitException;
 
@@ -36,7 +37,8 @@ public class NavigatorTest extends AbstractNavigatorTest {
         ISelectionProvider selProv = navigator.getSite().getSelectionProvider();
         StructuredSelection sel = new StructuredSelection(testFile);
         selProv.setSelection(sel);
-        assertEquals(sel, selProv.getSelection());
+        assertEquals(sel.size(), ((IStructuredSelection)selProv.getSelection()).size());
+        assertEquals(sel.getFirstElement(), ((IStructuredSelection)selProv.getSelection()).getFirstElement());
     }
 
     /**
@@ -51,7 +53,8 @@ public class NavigatorTest extends AbstractNavigatorTest {
         ISelectionProvider selProv = navigator.getSite().getSelectionProvider();
         StructuredSelection sel = new StructuredSelection(testFile);
         selProv.setSelection(sel);
-        assertEquals(sel, selProv.getSelection());
+        assertEquals(sel.size(), ((IStructuredSelection)selProv.getSelection()).size());
+        assertEquals(sel.getFirstElement(), ((IStructuredSelection)selProv.getSelection()).getFirstElement());
     }
 
 }
