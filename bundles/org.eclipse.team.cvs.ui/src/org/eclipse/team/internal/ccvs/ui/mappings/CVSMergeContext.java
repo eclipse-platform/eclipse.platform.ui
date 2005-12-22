@@ -37,7 +37,7 @@ public class CVSMergeContext extends SubscriberMergeContext {
 	public static IMergeContext createContext(IResourceMappingScope scope, IProgressMonitor monitor) throws CoreException {
 		Subscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
 		CVSMergeContext mergeContext = new CVSMergeContext(subscriber, scope);
-		mergeContext.initialize(monitor);
+		mergeContext.initialize(monitor, true);
 		return mergeContext;
 	}
 	

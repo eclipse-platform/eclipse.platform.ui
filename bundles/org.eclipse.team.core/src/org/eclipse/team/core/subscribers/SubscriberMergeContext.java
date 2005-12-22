@@ -56,12 +56,14 @@ public abstract class SubscriberMergeContext extends MergeContext {
 	 * Initialize the diff tree of this context. This method must
 	 * be called before the context is given to clients.
 	 * @param monitor a progress monitor
+	 * @param refresh indicate whether the subscriber should be refreshed
 	 * @throws CoreException
 	 */
-	protected void initialize(IProgressMonitor monitor) throws CoreException {
-		subscriber.refresh(getScope().getTraversals(), monitor);
+	protected void initialize(IProgressMonitor monitor, boolean refresh) throws CoreException {
 		handler = new SubscriberDiffTreeEventHandler(subscriber, getScope(), (ResourceDiffTree)getDiffTree());
 		handler.start();
+		if (refresh)
+			subscriber.refresh(getScope().getTraversals(), monitor);
 		handler.waitUntilIdle(monitor);
 	}
 	
