@@ -123,9 +123,8 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		assertSyncEquals(getName(), getSubscriber(), project, strings, refresh, kinds);
 	}
 	
-	private void assertSyncEquals(String message, IResource resource, int syncKind) throws TeamException {
+	private void assertSyncEquals(String message, IResource resource, int syncKind) throws CoreException {
 		assertSyncEquals(message, getSubscriber(), resource, syncKind);
-		
 	}
 
 	/* (non-Javadoc)
@@ -238,7 +237,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	}
 	
 	/******************************************************************
-	 * Subscriber Actions: commit/update and overide and commit/update
+	 * Subscriber Actions: commit/update and override and commit/update
 	 * These actions are those contributed to the Synchronize View by
 	 * the CVS plugin.
 	 ******************************************************************/
@@ -285,7 +284,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);
 		} catch (InterruptedException e) {
-			fail("Operation was interupted");
+			fail("Operation was interrupted");
 		}
 	}
 
@@ -296,7 +295,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/*
 	 * Perform a simple test that checks for the different types of incoming changes
 	 */
-	public void testIncomingChanges() throws IOException, TeamException, CoreException, InvocationTargetException, InterruptedException {
+	public void testIncomingChanges() throws IOException, TeamException, CoreException {
 		// Create a test project
 		IProject project = createProject("testIncomingChanges", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		
@@ -429,7 +428,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		// Test conflicting changes
 		IProject copy = checkoutCopy(project, "-copy");
 		appendText(copy.getFile("file1.txt"), "prefix" + eol, true);
-		setContentsAndEnsureModified(copy.getFile("folder1/a.txt"), "Use a custom string to avoid intermitant errors!");
+		setContentsAndEnsureModified(copy.getFile("folder1/a.txt"), "Use a custom string to avoid intermittent errors!");
 		commitProject(copy);
 
 		// Make the same modifications to the original (We need to test both M and C!!!)
@@ -458,7 +457,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/*
 	 * Perform a simple test that checks for the different types of outgoing changes
 	 */
-	public void testOverrideOutgoingChanges() throws IOException, TeamException, CoreException, InvocationTargetException, InterruptedException {
+	public void testOverrideOutgoingChanges() throws IOException, TeamException, CoreException {
 		// Create a test project (which commits it as well)
 		IProject project = createProject("testOverrideOutgoingChanges", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		// Checkout a copy for later verification
@@ -554,7 +553,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/*
 	 * Test simple file conflicts
 	 */
-	public void testFileConflict() throws IOException, TeamException, CoreException, InvocationTargetException, InterruptedException {
+	public void testFileConflict() throws IOException, TeamException, CoreException {
 		// Create a test project (which commits it as well)
 		IProject project = createProject("testFileConflict", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		
@@ -565,7 +564,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		// Checkout a copy and make some modifications
 		IProject copy = checkoutCopy(project, "-copy");
 		appendText(copy.getFile("file1.txt"), "prefix" + eol, true);
-		setContentsAndEnsureModified(copy.getFile("folder1/a.txt"), "Use a custom string to avoid intermitant errors!");
+		setContentsAndEnsureModified(copy.getFile("folder1/a.txt"), "Use a custom string to avoid intermittent errors!");
 		commitProject(copy);
 
 		// Make the same modifications to the original (We need to test both M and C!!!)
@@ -606,19 +605,19 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/*
 	 * Test conflicts involving additions
 	 */
-	public void testAdditionConflicts() throws TeamException, CoreException, InvocationTargetException, InterruptedException {
+	public void testAdditionConflicts() throws CoreException {
 		
 		// CASE 1: The user adds (using CVS add) a remotely added file
-		//     (a) catchup is simply get?
+		//     (a) catch-up is simply get?
 		//     (b) release must do a merge
 		// CASE 2: The user adds (but not using cvs add) a remotely added file
-		//     (a) catchup is simply get?
+		//     (a) catch-up is simply get?
 		//     (b) release must do a merge
 		// CASE 3: The user adds a remotely added then deleted file
-		//     catchup is not applicable
+		//     catch-up is not applicable
 		//     release is normal
 		
-		// Create a test project (which commits it as well) and add an uncommited resource
+		// Create a test project (which commits it as well) and add an uncommitted resource
 		IProject project = createProject("testAdditionConflicts", new String[] { "file.txt"});
 		addResources(project, new String[] { "add1a.txt", "add1b.txt" }, false);
 		addResources(project, new String[] { "add3.txt" }, false);
@@ -668,22 +667,22 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/*
 	 * Test conflicts involving deletions
 	 */
-	public void testDeletionConflicts() throws TeamException, CoreException, InvocationTargetException, InterruptedException {
+	public void testDeletionConflicts() throws CoreException {
 		
 		// CASE 1: The user deletes a remotely modified file
-		//    (a) catchup must do an update
+		//    (a) catch-up must do an update
 		//    (b) release must do a merge
 		// CASE 2: The user deletes (and removes) a remotely modified file	
-		//    (a) catchup must do an unmanage and update
+		//    (a) catch-up must do an unmanage and update
 		//    (b) release must do a merge
 		// CASE 3: The user modified a remotely deleted file
-		//    (a) catchup must do an unmanage and local delete
+		//    (a) catch-up must do an unmanage and local delete
 		//    (b) release must do a merge
 		// CASE 4: The user deletes a remotely deleted file
-		//    (a) catchup can update (or unmanage?)
+		//    (a) catch-up can update (or unmanage?)
 		//    (b) release must unmanage
 		// CASE 5: The user deletes (and removes) a remotely deleted file
-		//    (a) catchup can update (or unmanage?)
+		//    (a) catch-up can update (or unmanage?)
 		//    (b) release must unmanage
 		
 		// Perform the test case for case A first
@@ -796,27 +795,9 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	}
 	
 	/*
-	 * Test syncing on a folder that has been deleted from the server
+	 * Test a conflict with an incoming folder addition and an unmanaged local folder
 	 */
-	public void testSyncOnDeletedFolder() throws TeamException {
-	}
-	
-	/*
-	 * Test syncing on a folder that is empty on the server and has been pruned, then added locally
-	 */
-	public void testSyncOnPrunedFolder() throws TeamException {
-	}
-	
-	/*
-	 * Test sync involving pruned directories
-	 */
-	public void testSyncWithPruning() throws TeamException {
-	}
-	
-	/*
-	 * Test a conflict with an incomming foler addition and an unmanaqged lcoal folder
-	 */
-	public void testFolderConflict()  throws TeamException, CoreException, InvocationTargetException, InterruptedException {
+	public void testFolderConflict() throws CoreException {
 		
 		// Create a test project (which commits it as well) and delete the resource without committing
 		IProject project = createProject("testFolderConflict", new String[] { "file.txt"});
@@ -891,7 +872,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/*
 	 * Test catching up to an incoming addition
 	 */
-	public void testIncomingAddition() throws TeamException, CoreException, InvocationTargetException, InterruptedException {
+	public void testIncomingAddition() throws CoreException {
 		// Create a test project
 		IProject project = createProject("testIncomingAddition", new String[] { "file1.txt", "folder1/", "folder1/a.txt"});
 		
@@ -923,7 +904,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.IN_SYNC});
 	}
 	 
-	 public void testSyncOnBranch() throws TeamException, CoreException, IOException {
+	 public void testSyncOnBranch() throws CoreException {
 	 	
 		// Create a test project and a branch
 		IProject project = createProject(new String[] { "file1.txt", "file2.txt", "file3.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
@@ -961,7 +942,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.INCOMING | SyncInfo.ADDITION});
 	 }
 	 
-	public void testRenameProject() throws TeamException, CoreException, IOException {
+	public void testRenameProject() throws CoreException {
 		String[] resourceNames = new String[] { "changed.txt", "folder1/", "folder1/a.txt" };
 		int[] inSync = new int[] {SyncInfo.IN_SYNC, SyncInfo.IN_SYNC, SyncInfo.IN_SYNC};
 		IProject project = createProject("testRenameProject", new String[] { "changed.txt", "folder1/", "folder1/a.txt" });
@@ -976,7 +957,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		assertSyncEquals("sync should be in sync", project, resourceNames, true, inSync);
 	}
 	
-	public void testDeleteProject() throws CoreException, IOException, TeamException, InterruptedException {
+	public void testDeleteProject() throws CoreException {
 		String[] resourceNames = new String[] { "deleted.txt", "file1.txt", "folder1/", "folder1/a.txt" };
 		int[] inSync = new int[] {SyncInfo.IN_SYNC, SyncInfo.IN_SYNC, SyncInfo.IN_SYNC, SyncInfo.IN_SYNC};
 		IProject project = createProject("testDeleteProject", resourceNames);
@@ -1025,7 +1006,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		// commit folder1/a.txt
 		commit(project, new String[] { "folder1/a.txt" });
 		
-		// Resync and verify that above file is gone and others remain the same
+		// Re-sync and verify that above file is gone and others remain the same
 		assertSyncEquals("testFolderDeletion sync check", project,
 						 new String[] { "folder1/", "folder1/folder2/", "folder1/folder2/file.txt"},
 						 true, new int[] { SyncInfo.IN_SYNC,
@@ -1036,7 +1017,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		// Commit folder1/folder2/file.txt
 		commit(project, new String[] { "folder1/folder2/file.txt" });
 		
-		// Resync and verify that all are deleted
+		// Re-sync and verify that all are deleted
 		assertDeleted("testFolderDeletion", project, new String[] {"folder1/", "folder1/folder2/", "folder1/folder2/file.txt"});
 	}
 	/**
@@ -1126,10 +1107,9 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		assertTrue("Folder should still exist", project.getFolder("folder2").exists());
 	}
 	
-	public void testDisconnectingProject() throws CoreException, TeamException, InterruptedException {
+	public void testDisconnectingProject() throws CoreException {
 		// Create a test project (which commits it as well)
 		IProject project = createProject("testDisconnect", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
-		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project);
 		RepositoryProvider.unmap(project);
 		assertProjectRemoved(getWorkspaceSubscriber(), project);
 	}
@@ -1137,16 +1117,16 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/*
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=40221
 	 */
-	public void testConflictingFolderDeletion() throws TeamException, CoreException {
+	public void testConflictingFolderDeletion() throws CoreException {
 		// Create a test project (which commits it as well)
 		IProject project = createProject("testConflictingFolderDeletion", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		
 		// Checkout a copy
 		IProject copy = checkoutCopy(project, "-copy");
 		
-		// Delete a folder in both projects and checkin one of the deletions
-		deleteResources(project, new String[] { "folder1/" }, false /* checkin */);
-		deleteResources(copy, new String[] { "folder1/" }, true /* checkin */);
+		// Delete a folder in both projects and check-in one of the deletions
+		deleteResources(project, new String[] { "folder1/" }, false /* check-in */);
+		deleteResources(copy, new String[] { "folder1/" }, true /* check-in */);
 		
 		// The files should show up as outgoing deletions
 		assertSyncEquals("testConflictingFolderDeletion sync check", project,
@@ -1181,7 +1161,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		assertProjectRemoved(getWorkspaceSubscriber(), project);
 	}
 	
-	public void testUpdateBinaryConflict() throws TeamException, CoreException, InvocationTargetException, InterruptedException {
+	public void testUpdateBinaryConflict() throws CoreException{
 		// Create a shared project with a binary file
 		IProject project = createProject(new String[] { "binary.gif"});
 		assertIsBinary(project.getFile("binary.gif"));
@@ -1210,7 +1190,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	}
 
 	private void assertIsBinary(IFile local) throws CVSException {
-		ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile)local);
+		ICVSFile file = CVSWorkspaceRoot.getCVSFileFor(local);
 		byte[] syncBytes = file.getSyncBytes();
 		if (syncBytes != null) {
 			assertTrue(ResourceSyncInfo.isBinary(syncBytes));
