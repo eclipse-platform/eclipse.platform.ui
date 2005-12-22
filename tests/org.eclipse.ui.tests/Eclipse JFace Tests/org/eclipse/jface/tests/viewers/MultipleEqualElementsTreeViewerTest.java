@@ -56,6 +56,10 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 
 	private TreePath treePath_1_2_21;
 
+	private TreePath treePath_1_2;
+
+	private TreePath treePath_2;
+
 	public MultipleEqualElementsTreeViewerTest(String name) {
 		super(name);
 	}
@@ -79,6 +83,8 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 		treePath_1_2_21 = new TreePath(new Object[] { element_1, element_2,
 				element_2_1 });
 		treePath_1 = new TreePath(new Object[] { element_1 });
+		treePath_2 = new TreePath(new Object[] { element_2 });
+		treePath_1_2 = new TreePath(new Object[] { element_1, element_2 });
 		treePath_1_21 = new TreePath(new Object[] { element_1, element_2_1 });
 		treePath_1_21_212 = new TreePath(new Object[] { element_1, element_2_1,
 				element_2_1_2 });
@@ -136,9 +142,8 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 		assertEqualsArray("path expansion", new Object[] { treePath_1,
 				treePath_1_21 }, getTreeViewer().getExpandedTreePaths());
 		getTreeViewer().setExpandedTreePaths(
-				new TreePath[] { treePath_1_2_21, treePath_2_21 });
-		assertEqualsArray("path expansion", new Object[] { treePath_1_2_21,
-				treePath_2_21 }, getTreeViewer().getExpandedTreePaths());
+				new TreePath[] { treePath_1, treePath_1_2, treePath_1_2_21, treePath_2, treePath_2_21 });
+		assertEqualsArray("path expansion", new Object[] { treePath_1, treePath_1_2, treePath_1_2_21, treePath_2, treePath_2_21 }, getTreeViewer().getExpandedTreePaths());
 	}
 
 	private void assertMatchingPath(TreePath expectedPath, TreeItem item) {
