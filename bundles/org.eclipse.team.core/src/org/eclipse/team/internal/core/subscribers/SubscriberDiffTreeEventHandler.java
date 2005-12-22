@@ -30,6 +30,7 @@ import org.eclipse.team.internal.core.Policy;
 public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 
 	private ResourceDiffTree tree;
+	private SubscriberDiffCollector collector;
 
 	/*
 	 * An event used to represent a change in a diff
@@ -46,6 +47,37 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 		}
 	}
 	
+	/*
+	 * Collects resource and subscriber changes
+	 */
+	private class SubscriberDiffCollector extends SubscriberResourceCollector {
+
+		public SubscriberDiffCollector(Subscriber subscriber) {
+			super(subscriber);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.internal.core.subscribers.SubscriberResourceCollector#hasMembers(org.eclipse.core.resources.IResource)
+		 */
+		protected boolean hasMembers(IResource resource) {
+			return tree.members(resource).length > 0;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.internal.core.subscribers.SubscriberResourceCollector#remove(org.eclipse.core.resources.IResource)
+		 */
+		protected void remove(IResource resource) {
+			SubscriberDiffTreeEventHandler.this.remove(resource);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.internal.core.subscribers.SubscriberResourceCollector#change(org.eclipse.core.resources.IResource, int)
+		 */
+		protected void change(IResource resource, int depth) {
+			SubscriberDiffTreeEventHandler.this.change(resource, depth);
+		}
+	}
+	
 	/**
 	 * Create the handler
 	 * @param subscriber the subscriber for the handler
@@ -55,6 +87,7 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	public SubscriberDiffTreeEventHandler(Subscriber subscriber, ISynchronizationScope scope, ResourceDiffTree tree) {
 		super(subscriber, scope);
 		this.tree = tree;
+		this.collector = new SubscriberDiffCollector(subscriber);
 	}
 
 	/* (non-Javadoc)
@@ -157,6 +190,14 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	 */
 	public Subscriber getSubscriber() {
 		return super.getSubscriber();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.subscribers.SubscriberEventHandler#shutdown()
+	 */
+	public void shutdown() {
+		collector.dispose();
+		super.shutdown();
 	}
 
 }

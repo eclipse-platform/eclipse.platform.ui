@@ -29,9 +29,7 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
-import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 import org.eclipse.team.ui.operations.FileMerger;
 
 public class CVSMergeContext extends SubscriberMergeContext {
@@ -114,10 +112,10 @@ public class CVSMergeContext extends SubscriberMergeContext {
 			// Seems like this one was already merged so return OK
 			return Status.OK_STATUS;
 		}
-		IDiffNode currentState = SyncInfoToDiffConverter.getDeltaFor(info);
-		if (!equals(currentState, delta)) {
-			throw new CVSException(NLS.bind(CVSUIMessages.CVSMergeContext_1, delta.getPath()));
-		}
+//		IDiffNode currentState = SyncInfoToDiffConverter.getDeltaFor(info);
+//		if (!equals(currentState, delta)) {
+//			throw new CVSException(NLS.bind(CVSUIMessages.CVSMergeContext_1, delta.getPath()));
+//		}
 		IStatus status = super.merge(delta, force, monitor);
 		if (status.isOK() && delta.getKind() == IDiffNode.REMOVE) {
 			IResource resource = getDiffTree().getResource(delta);
