@@ -11,6 +11,10 @@
 package org.eclipse.jface.databinding;
 
 /**
+ * 
+ * IMPORTANT: This interface is not intended to be implemented directly by clients.  
+ * Instead, extend UpdatableCollection.
+ * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will remain
