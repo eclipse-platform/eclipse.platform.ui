@@ -11,7 +11,7 @@
  */
 package org.eclipse.jface.databinding.validator;
 
-import org.eclipse.jface.databinding.internal.BindingMessages;
+import org.eclipse.jface.internal.databinding.BindingMessages;
 
 
 /**

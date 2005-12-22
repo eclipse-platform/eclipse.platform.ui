@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding;
 
-import org.eclipse.jface.databinding.internal.DataBindingContext;
 import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
 import org.eclipse.jface.databinding.viewers.ViewersUpdatableFactory;
+import org.eclipse.jface.internal.databinding.DataBindingContext;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;

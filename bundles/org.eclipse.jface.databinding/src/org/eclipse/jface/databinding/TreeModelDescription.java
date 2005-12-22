@@ -12,7 +12,7 @@ package org.eclipse.jface.databinding;
 
 import java.util.HashMap;
 
-import org.eclipse.jface.databinding.internal.beans.PropertyHelper;
+import org.eclipse.jface.internal.databinding.beans.PropertyHelper;
 
 
 /**

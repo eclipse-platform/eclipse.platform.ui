@@ -14,8 +14,6 @@ package org.eclipse.jface.databinding.validator;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.eclipse.jface.databinding.internal.BindingMessages;
-import org.eclipse.jface.databinding.internal.Pair;
 import org.eclipse.jface.databinding.validators.String2ByteValidator;
 import org.eclipse.jface.databinding.validators.String2DateValidator;
 import org.eclipse.jface.databinding.validators.String2DoubleValidator;
@@ -23,6 +21,8 @@ import org.eclipse.jface.databinding.validators.String2FloatValidator;
 import org.eclipse.jface.databinding.validators.String2IntValidator;
 import org.eclipse.jface.databinding.validators.String2LongValidator;
 import org.eclipse.jface.databinding.validators.String2ShortValidator;
+import org.eclipse.jface.internal.databinding.BindingMessages;
+import org.eclipse.jface.internal.databinding.Pair;
 
 
 /**

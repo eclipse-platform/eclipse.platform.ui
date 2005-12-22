@@ -17,10 +17,10 @@ import java.beans.PropertyDescriptor;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eclipse.jface.databinding.internal.beans.CopyOfJavaBeanUpdatableCollection;
-import org.eclipse.jface.databinding.internal.beans.JavaBeanTree;
-import org.eclipse.jface.databinding.internal.beans.JavaBeanUpdatableTree;
-import org.eclipse.jface.databinding.internal.beans.JavaBeanUpdatableValue;
+import org.eclipse.jface.internal.databinding.beans.CopyOfJavaBeanUpdatableCollection;
+import org.eclipse.jface.internal.databinding.beans.JavaBeanTree;
+import org.eclipse.jface.internal.databinding.beans.JavaBeanUpdatableTree;
+import org.eclipse.jface.internal.databinding.beans.JavaBeanUpdatableValue;
 
 /**
  * A factory for creating updatable objects for properties of plain Java objects

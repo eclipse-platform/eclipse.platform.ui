@@ -12,7 +12,7 @@
 package org.eclipse.jface.databinding.converterfunctions;
 
 import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
-import org.eclipse.jface.databinding.internal.BindingMessages;
+import org.eclipse.jface.internal.databinding.BindingMessages;
 
 
 
