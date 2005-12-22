@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Leon J. Breedt - Added multiple folder creation support (in WizardNewFolderMainPage)
+ *     
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
