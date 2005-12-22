@@ -11,7 +11,6 @@
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -20,7 +19,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 
 /**
@@ -48,9 +48,9 @@ public class CVSCompareSubscriberTest extends CVSSyncSubscriberTest {
 
 	/**
 	 * Test the basic changes that can occur when comparing the local workspace to a remote
-	 * lineup.
+	 * line-up.
 	 */
-	public void testStandardChanges() throws InvocationTargetException, InterruptedException, CVSException, CoreException, IOException {
+	public void testStandardChanges() throws CoreException, IOException {
 		// Create a test project
 		IProject project = createProject("testCompareChanges", new String[]{"file1.txt", "file2.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder2/", "folder2/deleted.txt"});
 		// Checkout and branch a copy
@@ -66,7 +66,7 @@ public class CVSCompareSubscriberTest extends CVSSyncSubscriberTest {
 		appendText(project.getFile("file1.txt"), "Appended text 2", false);
 		commitProject(project);
 		// modify file2 in both branch and head and ensure it's merged properly 
-		appendText(project.getFile("file2.txt"), "appened text", false);
+		appendText(project.getFile("file2.txt"), "appended text", false);
 		commitProject(project);
 		// create a merge subscriber
 		CVSCompareSubscriber subscriber = getSyncInfoSource().createCompareSubscriber(project, tag);
@@ -107,7 +107,7 @@ public class CVSCompareSubscriberTest extends CVSSyncSubscriberTest {
 	public void testInvalidTag() throws TeamException, CoreException {
 		IProject project = createProject(new String[]{"file1.txt", "file2.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder2/", "folder2/deleted.txt"});
 		// Create and compare with a non-existant tag
-		CVSTag tag = new CVSTag("nonexistant", CVSTag.VERSION);
+		CVSTag tag = new CVSTag("non-existant", CVSTag.VERSION);
 		CVSCompareSubscriber subscriber = getSyncInfoSource().createCompareSubscriber(project.getFolder("folder1"), tag);
 		// All files should be additions
 		assertSyncEquals("testInvalidTag", subscriber, project.getFolder("folder1"), 

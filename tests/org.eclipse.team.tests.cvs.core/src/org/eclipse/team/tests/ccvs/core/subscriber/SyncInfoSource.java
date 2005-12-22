@@ -16,9 +16,9 @@ import junit.framework.AssertionFailedError;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -55,6 +55,13 @@ public class SyncInfoSource {
 	 */
 	public SyncInfo getSyncInfo(Subscriber subscriber, IResource resource) throws TeamException {
 		return subscriber.getSyncInfo(resource);
+	}
+	
+	/**
+	 * Return the diff for the given subscriber for the given resource.
+	 */
+	public IDiffNode getDiff(Subscriber subscriber, IResource resource) throws CoreException {
+		return subscriber.getDiff(resource);
 	}
 	
 	/**

@@ -11,28 +11,21 @@
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import junit.framework.AssertionFailedError;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
-import org.eclipse.team.core.subscribers.ISubscriberChangeListener;
-import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.mapping.provider.DiffNode;
+import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber;
 import org.eclipse.team.internal.ccvs.ui.subscriber.ConfirmMergedOperation;
+import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
@@ -85,7 +78,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 		
 	}
 	
-	protected void assertSyncEquals(String message, Subscriber subscriber, IResource resource, int syncKind) throws TeamException {
+	protected void assertSyncEquals(String message, Subscriber subscriber, IResource resource, int syncKind) throws CoreException {
 		int conflictTypeMask = 0x0F; // ignore manual and auto merge sync types for now.
 		SyncInfo info = getSyncInfo(subscriber, resource);
 		int kind;
@@ -103,14 +96,54 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 					&& (syncKind & SyncInfo.ADDITION) != 0) {
 				return;
 			}
+		} else {
+			// Only test if kinds are equal
+			assertDiffKindEquals(message, subscriber, resource, SyncInfoToDiffConverter.asDiffFlags(syncKind));
 		}
 		assertTrue(message + ": improper sync state for " + resource + " expected " + 
 				   SyncInfo.kindToString(kindOther) + " but was " +
 				   SyncInfo.kindToString(kind), kind == kindOther);
+		
 	}
 	
 	protected SyncInfo getSyncInfo(Subscriber subscriber, IResource resource) throws TeamException {
 		return getSyncInfoSource().getSyncInfo(subscriber, resource);
+	}
+	
+	protected void assertDiffKindEquals(String message, Subscriber subscriber, IContainer root, String[] resourcePaths, boolean refresh, int[] diffKinds) throws CoreException, TeamException {
+		assertTrue(resourcePaths.length == diffKinds.length);
+		if (refresh) refresh(subscriber, root);
+		IResource[] resources = getResources(root, resourcePaths);
+		for (int i=0;i<resources.length;i++) {
+			assertDiffKindEquals(message, subscriber, resources[i], diffKinds[i]);
+		}
+	}
+	
+	protected void assertDiffKindEquals(String message, Subscriber subscriber, IResource resource, int expectedFlags) throws CoreException {
+		IDiffNode node = getDiff(subscriber, resource);
+		int actualFlags;
+		if (node == null) {
+			actualFlags = IDiffNode.NO_CHANGE;
+		} else {
+			actualFlags = ((DiffNode)node).getStatus();
+		}
+		// Special handling for folders
+		if (actualFlags != expectedFlags && resource.getType() == IResource.FOLDER) {
+			// The only two states for folders are outgoing addition and in-sync.
+			// Other additions will appear as in-sync
+			int expectedKind = expectedFlags & DiffNode.KIND_MASK;
+			int actualKind = actualFlags & DiffNode.KIND_MASK;
+			if (actualKind == IDiffNode.NO_CHANGE 
+					&& expectedKind == IDiffNode.ADD) {
+				return;
+			}
+		}
+		assertTrue(message + ": improper diff for " + resource + " expected " + 
+				expectedFlags + " but was " + actualFlags, actualFlags == expectedFlags);
+	}
+	
+	protected IDiffNode getDiff(Subscriber subscriber, IResource resource) throws CoreException {
+		return getSyncInfoSource().getDiff(subscriber, resource);
 	}
 
 	protected void assertSyncChangesMatch(ISubscriberChangeEvent[] changes, IResource[] resources) {

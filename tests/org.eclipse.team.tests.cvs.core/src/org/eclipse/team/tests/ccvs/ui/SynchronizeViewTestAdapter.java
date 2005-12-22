@@ -16,15 +16,18 @@ import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.subscriber.*;
+import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.*;
@@ -80,6 +83,17 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 			}
 		}
 		return info;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#getDiff(org.eclipse.team.core.subscribers.Subscriber, org.eclipse.core.resources.IResource)
+	 */
+	public IDiffNode getDiff(Subscriber subscriber, IResource resource) throws CoreException {
+		SyncInfo info = getSyncInfo(subscriber, resource);
+		if (info == null || info.getKind() == SyncInfo.IN_SYNC) {
+			return null;
+		}
+		return SyncInfoToDiffConverter.getDeltaFor(info);
 	}
 	
 	public static SubscriberParticipant getParticipant(Subscriber subscriber) {
