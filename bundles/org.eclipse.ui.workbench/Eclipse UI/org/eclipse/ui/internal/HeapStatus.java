@@ -70,7 +70,6 @@ public class HeapStatus extends Composite {
         public void run() {
             if (!isDisposed()) {
                 updateStats();
-                adjustPosition();
                 if (hasChanged) {
                     updateToolTip();
                     redraw();
@@ -126,7 +125,7 @@ public class HeapStatus extends Composite {
 		bgCol = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		sepCol = topLeftCol = armCol = display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 		bottomRightCol = display.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW);
-		markCol = textCol = display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
+		markCol = textCol = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 		
 		createContextMenu();
 		
@@ -274,6 +273,7 @@ public class HeapStatus extends Composite {
     private void setMark() {
     	updateStats();  // get up-to-date stats before taking the mark
         mark = usedMem;
+        hasChanged = true;
         redraw();
     }
 
@@ -282,6 +282,7 @@ public class HeapStatus extends Composite {
      */
     private void clearMark() {
         mark = -1;
+        hasChanged = true;
         redraw();
     }
     
@@ -347,7 +348,7 @@ public class HeapStatus extends Composite {
 		gc.setBackground(usedMemCol);
         gc.fillRectangle(x + 1, y + 1, uw, h - 2);
         
-        String s = NLS.bind(WorkbenchMessages.HeapStatus_status, convertToMeg(usedMem), convertToMeg(totalMem));
+        String s = NLS.bind(WorkbenchMessages.HeapStatus_status, convertToMegString(usedMem), convertToMegString(totalMem));
         Point p = gc.textExtent(s);
         int sx = (rect.width - 15 - p.x) / 2 + rect.x + 1;
         int sy = (rect.height - 2 - p.y) / 2 + rect.y + 1;
@@ -406,7 +407,7 @@ public class HeapStatus extends Composite {
         }
 
         String s = NLS.bind(WorkbenchMessages.HeapStatus_status, 
-				convertToMeg(usedMem), convertToMeg(totalMem));
+				convertToMegString(usedMem), convertToMegString(totalMem));
         Point p = gc.textExtent(s);
         int sx = (rect.width - 15 - p.x) / 2 + rect.x + 1;
         int sy = (rect.height - 2 - p.y) / 2 + rect.y + 1;
@@ -432,8 +433,8 @@ public class HeapStatus extends Composite {
         totalMem = runtime.totalMemory();
         long freeMem = runtime.freeMemory();
         usedMem = totalMem - freeMem;
-        // Compare the numbers to within approximately 1Mb
-        if ((prevUsedMem >> 20) != (usedMem >> 20)) {
+
+        if (convertToMeg(prevUsedMem) != convertToMeg(usedMem)) {
             prevUsedMem = usedMem;
             this.hasChanged = true;
         }
@@ -445,10 +446,10 @@ public class HeapStatus extends Composite {
     }
 
     private void updateToolTip() {
-    	String usedStr = convertToMeg(usedMem);
-    	String totalStr = convertToMeg(totalMem);
-    	String maxStr = maxMemKnown ? convertToMeg(maxMem) : WorkbenchMessages.HeapStatus_maxUnknown;
-    	String markStr = mark == -1 ? WorkbenchMessages.HeapStatus_noMark : convertToMeg(mark);
+    	String usedStr = convertToMegString(usedMem);
+    	String totalStr = convertToMegString(totalMem);
+    	String maxStr = maxMemKnown ? convertToMegString(maxMem) : WorkbenchMessages.HeapStatus_maxUnknown;
+    	String markStr = mark == -1 ? WorkbenchMessages.HeapStatus_noMark : convertToMegString(mark);
         String toolTip = NLS.bind(WorkbenchMessages.HeapStatus_memoryToolTip, new Object[] { usedStr, totalStr, maxStr, markStr });
         if (!toolTip.equals(getToolTipText())) {
             setToolTipText(toolTip);
@@ -458,14 +459,17 @@ public class HeapStatus extends Composite {
     /**
      * Converts the given number of bytes to a printable number of megabytes (rounded up).
      */
-    private String convertToMeg(long numBytes) {
-        return NLS.bind(WorkbenchMessages.HeapStatus_meg, new Long((numBytes + (512 * 1024)) / (1024 * 1024)));
+    private String convertToMegString(long numBytes) {
+        return NLS.bind(WorkbenchMessages.HeapStatus_meg, new Long(convertToMeg(numBytes)));
     }
 
+    /**
+     * Converts the given number of bytes to the corresponding number of megabytes (rounded up).
+     */
+	private long convertToMeg(long numBytes) {
+		return (numBytes + (512 * 1024)) / (1024 * 1024);
+	}
 
-    protected void adjustPosition() {
-		// do nothing
-    }
 
     class SetMarkAction extends Action {
         SetMarkAction() {
