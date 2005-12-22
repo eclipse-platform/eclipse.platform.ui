@@ -43,6 +43,19 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * @since 3.2
  */
 public abstract class MergeContext extends SynchronizationContext implements IMergeContext {
+	
+	private IFileMerger merger;
+	
+	/**
+	 * Interface that allows a 3-way file merger to be plugged into
+	 * a merge context. The purpose of this interface is to 
+	 * work-around the fact that the org.eclipse.compare plugin
+	 * defines the IStreamMerger interface but has dependencies on
+	 * UI.
+	 */
+	public interface IFileMerger {
+		IStatus merge(MergeContext context, IThreeWayDiff diff, IProgressMonitor monitor) throws CoreException;
+	}
 
 	/**
      * Create a merge context.
@@ -142,12 +155,18 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	}
 
 	/**
-	 * Perform a three-way merge on the given trhee-way delta that contains a content conflict.
-	 * @param delta the delta
+	 * Perform a three-way merge on the given thee-way diff that contains a content conflict.
+	 * By default, the {@link IFileMerger} supplied the subclass is used
+	 * to perform the merge. If a merger is not provided, subclasses must
+	 * override this method.
+	 * @see #setMerger(org.eclipse.team.core.mapping.provider.MergeContext.IFileMerger)
+	 * @param diff the diff
 	 * @param monitor a progress monitor
 	 * @return a status indicating the results of the merge
 	 */
-	protected abstract IStatus performThreeWayMerge(IThreeWayDiff delta, IProgressMonitor monitor) throws CoreException;
+	protected IStatus performThreeWayMerge(IThreeWayDiff diff, IProgressMonitor monitor) throws CoreException {
+		return merger.merge(this, diff, monitor);
+	}
 
 	private IFile getLocalFile(IDiffNode delta) {
 		return ResourcesPlugin.getWorkspace().getRoot().getFile(delta.getPath());
@@ -243,5 +262,15 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Set the file merger that is used by the {@link #performThreeWayMerge(IThreeWayDiff, IProgressMonitor) }
+	 * method. It is the responsibility of subclasses to provide a merger.
+	 * If a merger is not provided, subclasses must override <code>performThreeWayMerge</code>.
+	 * @param merger the merger used to merge files
+	 */
+	protected void setMerger(IFileMerger merger) {
+		this.merger = merger;
 	}
 }

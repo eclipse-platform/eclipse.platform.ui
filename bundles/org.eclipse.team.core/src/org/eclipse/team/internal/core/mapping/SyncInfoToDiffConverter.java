@@ -121,6 +121,37 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 		}
 	}
 
+	public static int asDiffFlags(int syncInfoFlags) {
+		if (syncInfoFlags == SyncInfo.IN_SYNC)
+			return IDiffNode.NO_CHANGE;
+		int kind = SyncInfo.getChange(syncInfoFlags);
+		int diffFlags = 0;
+		switch (kind) {
+		case SyncInfo.ADDITION:
+			diffFlags = IDiffNode.ADD;
+			break;
+		case SyncInfo.DELETION:
+			diffFlags = IDiffNode.REMOVE;
+			break;
+		case SyncInfo.CHANGE:
+			diffFlags = IDiffNode.CHANGE;
+			break;
+		}
+		int direction = SyncInfo.getDirection(syncInfoFlags);
+		switch (direction) {
+		case SyncInfo.INCOMING:
+			diffFlags |= IThreeWayDiff.INCOMING;
+			break;
+		case SyncInfo.OUTGOING:
+			diffFlags |= IThreeWayDiff.OUTGOING;
+			break;
+		case SyncInfo.CONFLICTING:
+			diffFlags |= IThreeWayDiff.CONFLICTING;
+			break;
+		}
+		return diffFlags;
+	}
+	
 	public static IDiffNode getDeltaFor(SyncInfo info) {
 		if (info.getComparator().isThreeWay()) {
 			ITwoWayDiff local = getLocalDelta(info);

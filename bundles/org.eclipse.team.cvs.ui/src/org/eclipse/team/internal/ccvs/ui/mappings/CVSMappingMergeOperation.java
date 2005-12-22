@@ -12,15 +12,12 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.mapping.ModelProvider;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.*;
@@ -30,9 +27,7 @@ import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticip
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.operations.ResourceMappingMergeOperation;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.ResourceScope;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class CVSMappingMergeOperation extends ResourceMappingMergeOperation {
@@ -46,7 +41,7 @@ public class CVSMappingMergeOperation extends ResourceMappingMergeOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.operations.ResourceMappingMergeOperation#buildMergeContext(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IMergeContext buildMergeContext(IProgressMonitor monitor) throws TeamException {
+	protected IMergeContext buildMergeContext(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 100);
 		IMergeContext context = CVSMergeContext.createContext(getScope(), Policy.subMonitorFor(monitor, 50));
 		// cache the base and remote contents

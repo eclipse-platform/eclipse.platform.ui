@@ -72,13 +72,6 @@ public interface IDiffNode {
 	public static final int CHANGE = 0x4;
 	
 	/**
-	 * The bit mask which describes all possible diff kinds.
-	 * 
-	 * @see IDiffNode#getKind()
-	 */
-	public static final int ALL = CHANGE | ADD | REMOVE;
-	
-	/**
 	 * Returns the full, absolute path of the object to which the diff applies
 	 * with respect to the model root.
 	 * <p>

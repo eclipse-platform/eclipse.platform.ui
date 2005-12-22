@@ -37,7 +37,7 @@ public abstract class DiffNode implements IDiffNode {
 	 * 
 	 * @see #getStatus()
 	 */
-	protected static final int KIND_MASK = 0xFF;
+	public static final int KIND_MASK = 0xFF;
 
 	private final IPath path;
 
@@ -81,7 +81,7 @@ public abstract class DiffNode implements IDiffNode {
 	 * 
 	 * @return the status of the diff node
 	 */
-	protected final int getStatus() {
+	public final int getStatus() {
 		return status;
 	}
 

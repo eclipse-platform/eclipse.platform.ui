@@ -45,7 +45,7 @@ public class ThreeWayDiff extends DiffNode implements IThreeWayDiff {
 	 * @param remoteChange the remote change in the model object or <code>null</code> if there is no local change
 	 */
 	public ThreeWayDiff(ITwoWayDiff localChange, ITwoWayDiff remoteChange) {
-		super(calculatePath(localChange, remoteChange), calculateKind(localChange, remoteChange));
+		super(calculatePath(localChange, remoteChange), calculateKind(localChange, remoteChange) | calculateDirection(localChange, remoteChange));
 		this.localChange = localChange;
 		this.remoteChange = remoteChange;
 	}
@@ -61,6 +61,17 @@ public class ThreeWayDiff extends DiffNode implements IThreeWayDiff {
 		return null; // Will never be reached
 	}
 
+	private static int calculateDirection(ITwoWayDiff localChange, ITwoWayDiff remoteChange) {
+		int direction = 0;
+		if (localChange != null && localChange.getKind() != NO_CHANGE) {
+			direction |= OUTGOING;
+		}
+		if (remoteChange != null && remoteChange.getKind() != NO_CHANGE) {
+			direction |= INCOMING;
+		}
+		return direction;
+	}
+	
 	private static int calculateKind(ITwoWayDiff localChange, ITwoWayDiff remoteChange) {
 		int localKind = NO_CHANGE;
 		if (localChange != null)
@@ -93,17 +104,7 @@ public class ThreeWayDiff extends DiffNode implements IThreeWayDiff {
 	 * @see org.eclipse.team.core.synchronize.IThreeWayDelta#getDirection()
 	 */
 	public int getDirection() {
-		if (getKind() == NO_CHANGE) {
-			return 0;
-		}
-		int direction = 0;
-		if (localChange != null && localChange.getKind() != NO_CHANGE) {
-			direction |= OUTGOING;
-		}
-		if (remoteChange != null && remoteChange.getKind() != NO_CHANGE) {
-			direction |= INCOMING;
-		}
-		return direction;
+		return getStatus() & CONFLICTING;
 	}
 
 	/* (non-Javadoc)

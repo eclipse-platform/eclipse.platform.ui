@@ -12,7 +12,6 @@ package org.eclipse.team.core.diff;
 
 import org.eclipse.team.core.mapping.provider.ThreeWayDiff;
 
-
 /**
  * A three-way delta that describe the synchronization state between
  * two contributors and an ancestor. For simplicity, we refer to
@@ -45,14 +44,14 @@ public interface IThreeWayDiff extends IDiffNode {
 	 * 
 	 * @see IThreeWayDiff#getDirection()
 	 */
-	public static final int OUTGOING = 0x1000;
+	public static final int OUTGOING = 0x100;
 	
 	/**
 	 * Constant (bit mask) indicating that there is a local change.
 	 * 
 	 * @see IThreeWayDiff#getDirection()
 	 */
-	public static final int INCOMING = 0x2000;
+	public static final int INCOMING = 0x200;
 	
 	/**
 	 * Constant (bit mask) indicating that there is both a local change

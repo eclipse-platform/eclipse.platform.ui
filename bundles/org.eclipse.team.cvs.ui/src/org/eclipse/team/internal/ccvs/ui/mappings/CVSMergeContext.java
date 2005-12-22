@@ -11,17 +11,16 @@
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.IFileState;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.subscribers.SubscriberMergeContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfoFilter.ContentComparisonSyncInfoFilter;
@@ -33,25 +32,20 @@ import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
-import org.eclipse.team.internal.core.subscribers.SubscriberDiffTreeEventHandler;
-import org.eclipse.team.ui.operations.MergeContext;
+import org.eclipse.team.ui.operations.FileMerger;
 
-public class CVSMergeContext extends MergeContext {
+public class CVSMergeContext extends SubscriberMergeContext {
 
-	private final SubscriberDiffTreeEventHandler handler;
-
-	public static IMergeContext createContext(IResourceMappingScope scope, IProgressMonitor monitor) throws TeamException {
+	public static IMergeContext createContext(IResourceMappingScope scope, IProgressMonitor monitor) throws CoreException {
 		Subscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
-		subscriber.refresh(scope.getTraversals(), monitor);
-		SubscriberDiffTreeEventHandler handler = new SubscriberDiffTreeEventHandler(subscriber, scope);
-		handler.start();
-		handler.waitUntilIdle(monitor);
-		return new CVSMergeContext(THREE_WAY, handler, scope);
+		CVSMergeContext mergeContext = new CVSMergeContext(subscriber, scope);
+		mergeContext.initialize(monitor);
+		return mergeContext;
 	}
 	
-	protected CVSMergeContext(String type, SubscriberDiffTreeEventHandler handler, IResourceMappingScope input) {
-		super(input, type, handler.getTree());
-		this.handler = handler;
+	protected CVSMergeContext(Subscriber subscriber, IResourceMappingScope scope) {
+		super(subscriber, scope);
+		setMerger(new FileMerger());
 	}
 
 	public void markAsMerged(final IDiffNode node, final boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
@@ -160,19 +154,6 @@ public class CVSMergeContext extends MergeContext {
 			cvsResources);
 	}
 	
-	public void dispose() {
-		handler.shutdown();
-		super.dispose();
-	}
-
-	public SyncInfo getSyncInfo(IResource resource) throws CoreException {
-		return handler.getSubscriber().getSyncInfo(resource);
-	}
-
-	public void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException {
-		handler.getSubscriber().refresh(traversals, monitor);
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.MergeContext#run(org.eclipse.core.resources.IWorkspaceRunnable, org.eclipse.core.runtime.jobs.ISchedulingRule, int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -191,8 +172,6 @@ public class CVSMergeContext extends MergeContext {
 			}
 		
 		}, rule, flags, monitor);
-		// TODO: wait for the collector so that clients will have an up-to-date diff tree
-		handler.waitUntilIdle(monitor);
 	}
 	
 	/* (non-Javadoc)

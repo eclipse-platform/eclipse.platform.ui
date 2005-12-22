@@ -29,7 +29,7 @@ import org.eclipse.team.internal.core.Policy;
  */
 public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 
-	private ResourceDiffTree tree = new ResourceDiffTree();
+	private ResourceDiffTree tree;
 
 	/*
 	 * An event used to represent a change in a diff
@@ -50,9 +50,11 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	 * Create the handler
 	 * @param subscriber the subscriber for the handler
 	 * @param scope the scope of the handler
+	 * @param tree the tree to be populated by this handler
 	 */
-	public SubscriberDiffTreeEventHandler(Subscriber subscriber, ISynchronizationScope scope) {
+	public SubscriberDiffTreeEventHandler(Subscriber subscriber, ISynchronizationScope scope, ResourceDiffTree tree) {
 		super(subscriber, scope);
+		this.tree = tree;
 	}
 
 	/* (non-Javadoc)

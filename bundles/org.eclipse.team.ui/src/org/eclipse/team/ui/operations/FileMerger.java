@@ -21,7 +21,9 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileState;
-import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.IMergeStatus;
+import org.eclipse.team.core.mapping.IResourceDiff;
+import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.MergeStatus;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.TeamUIMessages;
@@ -39,17 +41,7 @@ import org.eclipse.team.internal.ui.TeamUIMessages;
  * </p>
  * @since 3.2
  */
-public abstract class MergeContext extends org.eclipse.team.core.mapping.provider.MergeContext {
-
-	/**
-	 * Create a merge context
-	 * @param scope the scope of the merge
-	 * @param type the type of merge (TWO-WAY or THREE_WAY)
-	 * @param deltaTree the delta tree
-	 */
-	protected MergeContext(IResourceMappingScope scope, String type, IResourceDiffTree deltaTree) {
-		super(scope, type, deltaTree);
-	}
+public class FileMerger implements MergeContext.IFileMerger {
 
 	private static final String TXT_EXTENTION = "txt"; //$NON-NLS-1$
 	
@@ -58,11 +50,11 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.provide
      * The local resource must be a file and all three
      * resources (local, base, remote) must exist.
      */
-	protected IStatus performThreeWayMerge(final IThreeWayDiff delta, IProgressMonitor monitor) throws CoreException {
+	protected IStatus performThreeWayMerge(final MergeContext context, final IThreeWayDiff delta, IProgressMonitor monitor) throws CoreException {
 		final IStatus[] result = new IStatus[] { Status.OK_STATUS };
-		run(new IWorkspaceRunnable() {
+		context.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IFile file = (IFile)getDiffTree().getResource(delta);
+				IFile file = (IFile)context.getDiffTree().getResource(delta);
 				IContentDescription contentDescription = file.getContentDescription();
 				IStreamMerger merger = null;
 				if (contentDescription != null && contentDescription.getContentType() != null) {
@@ -80,9 +72,9 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.provide
 					result[0] = new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind(TeamUIMessages.MergeContext_0, new String[] { file.getFullPath().toString() }), null);
 					return;
 				}
-				result[0] = merge(merger, delta, monitor);
+				result[0] = merge(context, merger, delta, monitor);
 			}
-		}, getMergeRule(delta), IResource.NONE, monitor);
+		}, context.getMergeRule(delta), IResource.NONE, monitor);
 		return result[0];
 	}
 
@@ -91,10 +83,10 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.provide
      * stream merger. The local resource must be a file and all three
      * resources (local, base, remote) must exist.
      */
-    private IStatus merge(IStreamMerger merger, IDiffNode delta, IProgressMonitor monitor) throws CoreException {
+    private IStatus merge(MergeContext context, IStreamMerger merger, IDiffNode delta, IProgressMonitor monitor) throws CoreException {
         
     	// Get the file involved
-    	IFile file = (IFile)getDiffTree().getResource(delta);
+    	IFile file = (IFile)context.getDiffTree().getResource(delta);
     	
     	// Define all the input streams here so we can ensure they get closed
         InputStream ancestorStream = null;
@@ -144,7 +136,7 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.provide
                 status = merger.merge(output, targetEncoding, ancestorStream, ancestorEncoding, targetStream, targetEncoding, remoteStream, remoteEncoding, monitor);
                 if (status.isOK()) {
                     file.setContents(getTempInputStream(file, output), false, true, monitor);
-                    markAsMerged(delta, false, monitor);
+                    context.markAsMerged(delta, false, monitor);
                 } else {
                 	status = new MergeStatus(status.getPlugin(), status.getMessage(), new IFile[]{file});
                 }
@@ -230,5 +222,12 @@ public abstract class MergeContext extends org.eclipse.team.core.mapping.provide
     private File getTempFile(IFile file) {
         return TeamPlugin.getPlugin().getStateLocation().append(".tmp").append(file.getName() + ".tmp").toFile(); //$NON-NLS-1$ //$NON-NLS-2$
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.provider.MergeContext.IFileMerger#merge(org.eclipse.team.core.mapping.provider.MergeContext, org.eclipse.team.core.diff.IThreeWayDiff, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus merge(MergeContext context, IThreeWayDiff diff, IProgressMonitor monitor) throws CoreException {
+		return performThreeWayMerge(context, diff, monitor);
+	}
 
 }
