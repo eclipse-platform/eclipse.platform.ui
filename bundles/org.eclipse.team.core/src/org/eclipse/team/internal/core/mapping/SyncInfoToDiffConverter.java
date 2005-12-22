@@ -159,7 +159,7 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 			return new ThreeWayDiff(local, remote);
 		} else {
 			if (info.getKind() != SyncInfo.IN_SYNC) {
-				IResourceVariant remote = info.getBase();
+				IResourceVariant remote = info.getRemote();
 				IResource local = info.getLocal();
 				int kind;
 				if (remote == null) {
