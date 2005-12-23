@@ -34,6 +34,7 @@ import org.eclipse.jface.databinding.converters.FunctionalConverter;
 import org.eclipse.jface.databinding.converters.IdentityConverter;
 import org.eclipse.jface.databinding.updatables.SettableValue;
 import org.eclipse.jface.databinding.validator.IValidator;
+import org.eclipse.jface.databinding.validator.ValidatorRegistry;
 import org.eclipse.jface.util.Assert;
 
 /**
@@ -130,16 +131,31 @@ public class DataBindingContext implements IDataBindingContext {
 
 			public IValidator createValidator(Class fromType, Class toType,
 					Object modelDescription) {
-				return new IValidator() {
+		    	if (fromType == null || toType == null) {
+//		    		System.err.println("FIXME: Boris, is this a bug?  In registerDefaultBindSupportFactory.addBindSupportFactory.createValidator: fromType is null or toType is null!!!!!"); //$NON-NLS-1$
+//					try {
+//						throw new BindingException("Cannot create proper IValidator."); //$NON-NLS-1$
+//					} catch (BindingException e) {
+//						e.printStackTrace();
+//						System.err.println();
+//					}
+		    		return new IValidator() {
 
-					public String isPartiallyValid(Object value) {
-						return null;
-					}
+						public String isPartiallyValid(Object value) {
+							return null;
+						}
 
-					public String isValid(Object value) {
-						return null;
-					}
-				};
+						public String isValid(Object value) {
+							return null;
+						}
+					};
+		    	}
+
+		    	IValidator dataTypeValidator = ValidatorRegistry.getDefault().get(fromType, toType);
+				if (dataTypeValidator == null) {
+					throw new BindingException("No IValidator is registered for conversions from " + fromType.getName() + " to " + toType.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				return dataTypeValidator;
 			}
 
 			public IConverter createConverter(Class fromType, Class toType,
