@@ -85,12 +85,14 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 	 * {@inheritDoc}
 	 */
 	public final IProject[] getProjects() {
-		final IProject[] projects= { null};
+		IProject[] projects= {};
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
 		for (int index= 0; index < proxies.length; index++) {
 			final String name= proxies[index].getProject();
-			if (name != null && !"".equals(name)) //$NON-NLS-1$
-				projects[0]= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			if (name != null && !"".equals(name)) { //$NON-NLS-1$
+				projects= new IProject[] { ResourcesPlugin.getWorkspace().getRoot().getProject(name)};
+				break;
+			}
 		}
 		return projects;
 	}
