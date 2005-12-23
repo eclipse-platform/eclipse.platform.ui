@@ -46,11 +46,18 @@ public class TextUpdatableValue extends UpdatableValue {
 	private Listener updateListener = new Listener() {
 		public void handleEvent(Event event) {
 			if (!updating) {
+				String oldValue = bufferedValue;
+				String newValue = text.getText();
+				
 				// If we are updating on focus lost then when we fire the change event change the buffered value				
 				if (updatePolicy == SWT.FocusOut){
-					bufferedValue = text.getText();					
+					bufferedValue = text.getText();
+					if (!oldValue.equals(newValue)) {
+						fireChangeEvent(ChangeEvent.CHANGE, null, text.getText());						
+					}
+				} else {
+					fireChangeEvent(ChangeEvent.CHANGE, null, text.getText());						
 				}
-				fireChangeEvent(ChangeEvent.CHANGE, null, text.getText());						
 			}
 		}
 	};
