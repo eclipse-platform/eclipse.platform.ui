@@ -723,18 +723,20 @@ public class R21EditorStackPresentation extends StackPresentation {
 		if (toSelect == current) {
 			return;
 		}
-
-		if (current != null) {
-			current.setVisible(false);
-		}
+		
+		IPresentablePart oldPart = current;
 
 		current = toSelect;
-
+		
 		if (current != null) {
 			tabFolder.setSelection(indexOf(current));
 			current.setVisible(true);
 			setControlSize();
 
+		}
+
+		if (oldPart != null) {
+			oldPart.setVisible(false);
 		}
 	}
 

@@ -865,17 +865,19 @@ public class R21BasicStackPresentation extends StackPresentation {
 			return;
 		}
 
-		if (current != null) {
-			current.setVisible(false);
-		}
+		IPresentablePart oldPart = current;
 
 		current = toSelect;
-
+		
 		if (current != null) {
 			paneFolder.setSelection(indexOf(current));
 			current.setVisible(true);
 			updateCloseButton();
 			setControlSize();
+		}
+
+		if (oldPart != null) {
+			oldPart.setVisible(false);
 		}
 	}
 
