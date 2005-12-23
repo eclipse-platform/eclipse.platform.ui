@@ -64,7 +64,11 @@ public class RefactoringPluginImages {
 	public static final ImageDescriptor DESC_OBJS_REFACTORING_DATE= createUnManaged(T_OBJ, "date_obj.gif"); //$NON-NLS-1$
 	/** @since 3.2 */
 	public static final ImageDescriptor DESC_OBJS_REFACTORING_TIME= createUnManaged(T_OBJ, "time_obj.gif"); //$NON-NLS-1$
-	
+	/** @since 3.2 */
+	public static final ImageDescriptor DESC_OBJS_REFACTORING= createUnManaged(T_OBJ, "refactoring.gif"); //$NON-NLS-1$
+	/** @since 3.2 */
+	public static final ImageDescriptor DESC_OBJS_REFACTORING_COLL= createUnManaged(T_OBJ, "refactoring_coll.gif"); //$NON-NLS-1$
+
 	public static final ImageDescriptor DESC_OBJS_DEFAULT_CHANGE= createUnManaged(T_OBJ, "change.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_COMPOSITE_CHANGE= createUnManaged(T_OBJ, "composite_change.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_FILE_CHANGE= createUnManaged(T_OBJ, "file_change.gif"); //$NON-NLS-1$
