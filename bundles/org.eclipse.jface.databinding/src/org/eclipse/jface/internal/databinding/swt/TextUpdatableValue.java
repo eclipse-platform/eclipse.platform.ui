@@ -68,7 +68,6 @@ public class TextUpdatableValue extends UpdatableValue {
 
 	/**
 	 * @param text
-	 * @param validatePolicy
 	 * @param updatePolicy
 	 */
 	public TextUpdatableValue(final Text text, int updatePolicy) {
