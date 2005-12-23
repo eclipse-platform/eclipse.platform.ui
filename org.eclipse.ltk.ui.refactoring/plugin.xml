@@ -80,4 +80,12 @@
             name="%ActionDefinition.apply.name">
       </command>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorCompareInput"
+            class="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringModelAdapterFactory">
+         <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
+      </factory>
+   </extension>
 </plugin>

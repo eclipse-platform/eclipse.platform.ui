@@ -25,6 +25,7 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
 /**
@@ -92,6 +93,25 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 				projects[0]= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 		}
 		return projects;
+	}
+
+	/**
+	 * Returns the associated resource.
+	 * 
+	 * @return the associated resource, or <code>null</code>
+	 */
+	public final IResource getResource() {
+		try {
+			final ResourceTraversal[] traversals= getTraversals(null, null);
+			if (traversals.length > 0) {
+				final IResource[] resources= traversals[0].getResources();
+				if (resources.length > 0)
+					return resources[0];
+			}
+		} catch (CoreException exception) {
+			RefactoringCorePlugin.log(exception);
+		}
+		return null;
 	}
 
 	/**
