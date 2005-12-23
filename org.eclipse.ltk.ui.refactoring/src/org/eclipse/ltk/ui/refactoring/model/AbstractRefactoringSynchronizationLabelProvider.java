@@ -48,7 +48,7 @@ public abstract class AbstractRefactoringSynchronizationLabelProvider extends Sy
 	 */
 	protected IDiffNode getDiff(final Object element) {
 		if (element instanceof RefactoringDescriptorProxy)
-			return new RefactoringDescriptorDiffNode((RefactoringDescriptorProxy) element, IDiffNode.ADD, IThreeWayDiff.INCOMING);
+			return new RefactoringDescriptorDiffNode((RefactoringDescriptorProxy) element, IDiffNode.CHANGE, IThreeWayDiff.INCOMING);
 		return super.getDiff(element);
 	}
 }
