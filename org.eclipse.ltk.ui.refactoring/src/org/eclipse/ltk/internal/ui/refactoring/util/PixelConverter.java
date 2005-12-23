@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,13 @@ import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.dialogs.Dialog;
 
-public class PixelConverter {
-	
+/**
+ * Utility class for pixel-related functions.
+ */
+public final class PixelConverter {
+
 	private FontMetrics fFontMetrics;
-	
+
 	public PixelConverter(Control control) {
 		GC gc= null;
 		try {
@@ -31,7 +34,7 @@ public class PixelConverter {
 				gc.dispose();
 		}
 	}
-	
+
 	public int convertHeightInCharsToPixels(int chars) {
 		return Dialog.convertHeightInCharsToPixels(fFontMetrics, chars);
 	}
@@ -43,8 +46,8 @@ public class PixelConverter {
 	public int convertVerticalDLUsToPixels(int dlus) {
 		return Dialog.convertVerticalDLUsToPixels(fFontMetrics, dlus);
 	}
-	
+
 	public int convertWidthInCharsToPixels(int chars) {
 		return Dialog.convertWidthInCharsToPixels(fFontMetrics, chars);
-	}	
+	}
 }

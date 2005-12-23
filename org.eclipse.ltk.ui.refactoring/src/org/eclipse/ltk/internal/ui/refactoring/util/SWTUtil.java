@@ -29,7 +29,9 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 
 /**
- * Utility class to simplify access to some SWT resources.
+ * Utility class for swt-related functions.
+ * 
+ * @since 3.2
  */
 public final class SWTUtil {
 
@@ -82,5 +84,6 @@ public final class SWTUtil {
 	}
 
 	private SWTUtil() {
+		// Not for instantiation
 	}
 }
