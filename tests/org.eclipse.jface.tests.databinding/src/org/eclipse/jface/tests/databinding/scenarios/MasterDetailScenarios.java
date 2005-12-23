@@ -115,6 +115,22 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		assertEquals(SampleData.FIVE_STAR_HOTEL.getName(), txtName.getText());
 		SampleData.FIVE_STAR_HOTEL.setName("barfoo");
 		assertEquals("barfoo", txtName.getText());
+		
+		// Now make sure that the event listeners get removed on dispose()
+		// Values should no longer be updated
+//		selectedLodging.dispose();
+//		
+//		selectedLodging.setValue(SampleData.CAMP_GROUND);
+//		assertNotSame(SampleData.CAMP_GROUND, getViewerSelection(listViewer));
+//		assertNotSame(txtName.getText(), SampleData.CAMP_GROUND.getName());
+//		enterText(txtName, "foobar");
+//		assertNotSame("foobar", SampleData.CAMP_GROUND.getName());
+//		listViewer.setSelection(new StructuredSelection(
+//				SampleData.FIVE_STAR_HOTEL));
+//		assertNotSame(SampleData.FIVE_STAR_HOTEL, selectedLodging.getValue());
+//		assertNotSame(SampleData.FIVE_STAR_HOTEL.getName(), txtName.getText());
+//		SampleData.FIVE_STAR_HOTEL.setName("barfoo");
+//		assertNotSame("barfoo", txtName.getText());
 	}
 
 	public void testScenario02() {

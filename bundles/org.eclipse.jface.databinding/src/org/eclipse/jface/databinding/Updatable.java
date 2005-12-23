@@ -36,6 +36,9 @@ abstract public class Updatable implements IUpdatable {
 	}
 
 	public void removeChangeListener(IChangeListener changeListener) {
+		if (changeListeners == null) {
+			return;
+		}
 		changeListeners.remove(changeListener);
 	}
 

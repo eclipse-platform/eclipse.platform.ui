@@ -45,6 +45,8 @@ public class NestedUpdatableValue extends UpdatableValue {
 
 	private Class featureType;
 
+	protected final IUpdatableValue outerUpdatableValue;
+
 	/**
 	 * @param databindingContext
 	 * @param outerUpdatableValue
@@ -52,21 +54,24 @@ public class NestedUpdatableValue extends UpdatableValue {
 	 * @param featureType 
 	 */
 	public NestedUpdatableValue(IDataBindingContext databindingContext,
-			final IUpdatableValue outerUpdatableValue, Object feature, Class featureType) {
+			IUpdatableValue outerUpdatableValue, Object feature, Class featureType) {
 		this.databindingContext = databindingContext;
 		this.feature = feature;
 		this.featureType = featureType;
+		this.outerUpdatableValue = outerUpdatableValue;
 		updateInnerUpdatableValue(outerUpdatableValue);
-		IChangeListener outerChangeListener = new IChangeListener() {
-			public void handleChange(ChangeEvent changeEvent) {
-				Object oldValue = getValue();
-				updateInnerUpdatableValue(outerUpdatableValue);
-				fireChangeEvent(ChangeEvent.CHANGE, oldValue, getValue());
-			}
-		};
+		
 		outerUpdatableValue.addChangeListener(outerChangeListener);
 	}
 
+	IChangeListener outerChangeListener = new IChangeListener() {
+		public void handleChange(ChangeEvent changeEvent) {
+			Object oldValue = getValue();
+			updateInnerUpdatableValue(outerUpdatableValue);
+			fireChangeEvent(ChangeEvent.CHANGE, oldValue, getValue());
+		}
+	};
+	
 	private void updateInnerUpdatableValue(IUpdatableValue outerUpdatableValue) {
 		currentOuterValue = outerUpdatableValue.getValue();
 		if (innerUpdatableValue != null) {
@@ -104,6 +109,11 @@ public class NestedUpdatableValue extends UpdatableValue {
 
 	public void dispose() {
 		super.dispose();
+
+		if (outerUpdatableValue != null) {
+			outerUpdatableValue.removeChangeListener(outerChangeListener);
+			outerUpdatableValue.dispose();
+		}
 		if (innerUpdatableValue != null) {
 			innerUpdatableValue.removeChangeListener(innerChangeListener);
 			innerUpdatableValue.dispose();
