@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public final class ModelMessages extends NLS {
 
-	private static final String BUNDLE_NAME= "org.eclipse.ltk.internal.ui.refactoring.model.Modelmessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME= "org.eclipse.ltk.internal.ui.refactoring.model.ModelMessages"; //$NON-NLS-1$
 
 	public static String RefactoringDescriptorCompareInput_pending_refactoring;
 
