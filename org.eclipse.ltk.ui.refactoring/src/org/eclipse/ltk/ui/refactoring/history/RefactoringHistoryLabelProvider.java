@@ -74,10 +74,10 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	public RefactoringHistoryLabelProvider(final RefactoringHistoryControlConfiguration configuration) {
 		Assert.isNotNull(configuration);
 		fControlConfiguration= configuration;
-		fItemImage= RefactoringPluginImages.DESC_OBJS_DEFAULT_CHANGE.createImage();
+		fItemImage= RefactoringPluginImages.DESC_OBJS_REFACTORING.createImage();
 		fContainerImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_DATE.createImage();
 		fElementImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_TIME.createImage();
-		fCollectionImage= RefactoringPluginImages.DESC_OBJS_COMPOSITE_CHANGE.createImage();
+		fCollectionImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_COLL.createImage();
 	}
 
 	/**
