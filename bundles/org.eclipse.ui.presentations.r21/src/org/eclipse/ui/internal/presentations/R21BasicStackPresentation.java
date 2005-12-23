@@ -607,6 +607,12 @@ public class R21BasicStackPresentation extends StackPresentation {
 			titleLabel.setText(current.getTitle());
 			titleLabel.setImage(current.getTitleImage());
 			titleLabel.setVisible(true);
+
+			// set tooltip (https://bugs.eclipse.org/bugs/show_bug.cgi?id=67513)
+			String toolTipText = current.getTitleToolTip();
+			titleLabel.setToolTipText(toolTipText
+					.equals(Util.ZERO_LENGTH_STRING) ? null : toolTipText);
+			
 		}
 
 		Control currentToolbar = getCurrentToolbar();
@@ -777,10 +783,10 @@ public class R21BasicStackPresentation extends StackPresentation {
 
 		// tabItem.setImage(part.getTitleImage());
 
-		String toolTipText = part.getTitleToolTip();
-		if (!toolTipText.equals(Util.ZERO_LENGTH_STRING)) {
-			tabItem.setToolTipText(toolTipText);
-		}
+		// String toolTipText = part.getTitleToolTip();
+		// if (!toolTipText.equals(Util.ZERO_LENGTH_STRING)) {
+		// tabItem.setToolTipText(toolTipText);
+		// }
 
 		// FontRegistry registry =
 		// PlatformUI.getWorkbench().
@@ -868,7 +874,7 @@ public class R21BasicStackPresentation extends StackPresentation {
 		IPresentablePart oldPart = current;
 
 		current = toSelect;
-		
+
 		if (current != null) {
 			paneFolder.setSelection(indexOf(current));
 			current.setVisible(true);
