@@ -268,7 +268,7 @@ public class R21BasicStackPresentation extends StackPresentation {
         // PR#1GE56QT - Avoid creation of unnecessary image.
         pullDownButton.setImage(hoverImage);
         pullDownButton.setToolTipText(R21PresentationMessages
-                .getString("BasicStackPresentation.menu")); //$NON-NLS-1$
+                .getString("BasicStackPresentation.menu.tooltip")); //$NON-NLS-1$
         pullDownButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 showPaneMenu();
@@ -718,7 +718,7 @@ public class R21BasicStackPresentation extends StackPresentation {
         closeButton.setImage(WorkbenchImages
                 .getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW));
         closeButton.setToolTipText(R21PresentationMessages
-                .getString("BasicStackPresentation.close")); //$NON-NLS-1$
+                .getString("BasicStackPresentation.close.tooltip")); //$NON-NLS-1$
         closeButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 close(getCurrent());
