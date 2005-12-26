@@ -263,21 +263,12 @@ public abstract class AbstractHyperlink extends Canvas {
 		Rectangle clientArea = getClientArea();
 		if (clientArea.width == 0 || clientArea.height == 0)
 			return;
-		Image buffer = new Image(getDisplay(), clientArea.width,
-				clientArea.height);
-		buffer.setBackground(getBackground());
-		GC bufferGC = new GC(buffer, gc.getStyle());
-		bufferGC.setBackground(getBackground());
-		bufferGC.fillRectangle(0, 0, clientArea.width, clientArea.height);
-		paintHyperlink(bufferGC);
+		paintHyperlink(gc);
 		if (hasFocus) {
 			Rectangle carea = getClientArea();
-			bufferGC.setForeground(getForeground());
-			bufferGC.drawFocus(0, 0, carea.width, carea.height);
+			gc.setForeground(getForeground());
+			gc.drawFocus(0, 0, carea.width, carea.height);
 		}
-		gc.drawImage(buffer, 0, 0);
-		bufferGC.dispose();
-		buffer.dispose();
 	}
 
 	private void handleMouseUp(Event e) {

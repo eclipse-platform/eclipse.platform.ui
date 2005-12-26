@@ -2,12 +2,6 @@
 <projectDescription>
 	<name>org.eclipse.ui.forms.examples</name>
 	<comment></comment>
-	<projects>
-		<project>org.eclipse.core.resources</project>
-		<project>org.eclipse.core.runtime.compatibility</project>
-		<project>org.eclipse.ui</project>
-		<project>org.eclipse.ui.forms</project>
-	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>

@@ -42,7 +42,7 @@ public class Twistie extends ToggleHyperlink {
 	 *            the style
 	 */
 	public Twistie(Composite parent, int style) {
-		super(parent, SWT.NO_BACKGROUND | style);
+		super(parent, style);
 		innerWidth = 9;
 		innerHeight = 9;
 	}

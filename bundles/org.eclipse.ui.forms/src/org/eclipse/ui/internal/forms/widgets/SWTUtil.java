@@ -9,16 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
-import java.io.InputStream;
-import java.util.ArrayList;
-
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DropTarget;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageLoader;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Caret;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -66,29 +58,5 @@ public class SWTUtil {
 			return ((ScrollBar) widget).getParent().getShell();
 
 		return null;
-	}
-
-	public static Image [] loadProgressImages(Display display, InputStream is, ArrayList delays, Point size) {
-		ImageLoader loader = new ImageLoader();
-		try {
-			ImageData[] imageDataArray = loader.load(is);
-			Image [] images = new Image[imageDataArray.length];
-			for (int i=0; i<imageDataArray.length; i++) {
-				images[i] = new Image(display, imageDataArray[i]);
-				Rectangle bounds = images[i].getBounds();
-				size.x = Math.max(size.x, bounds.width);
-				size.y = Math.max(size.y, bounds.height);
-				int ms = imageDataArray[i].delayTime * 10;
-				if (ms < 20) ms += 30;
-				if (ms < 30) ms += 10;
-				delays.add(new Integer(ms));
-			}
-			size.x += 4;
-			size.y += 4;
-			return images;
-		}
-		catch (IllegalArgumentException e) {
-			return null;
-		}
 	}
 }

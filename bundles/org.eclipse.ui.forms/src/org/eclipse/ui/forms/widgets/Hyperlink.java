@@ -41,7 +41,7 @@ public class Hyperlink extends AbstractHyperlink {
 	 *            the widget style
 	 */
 	public Hyperlink(Composite parent, int style) {
-		super(parent, SWT.NO_BACKGROUND | style);
+		super(parent, style);
 		initAccessible();
 	}
 

@@ -18,7 +18,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.internal.forms.widgets.FormHeading;
@@ -67,7 +66,7 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * 
  * @since 3.0
  */
-public class Form extends Composite {
+public class OldForm extends Composite {
 	private FormHeading head;
 	private Composite body;
 	private SizeCache bodyCache = new SizeCache();
@@ -128,7 +127,7 @@ public class Form extends Composite {
 	 * @param parent
 	 *            the parent widget
 	 */
-	public Form(Composite parent, int style) {
+	public OldForm(Composite parent, int style) {
 		super(parent, SWT.NO_BACKGROUND | style);
 		super.setLayout(new FormLayout());
 		head = new FormHeading(this, SWT.NULL);
@@ -279,39 +278,7 @@ public class Form extends Composite {
 	public void updateToolBar() {
 		head.updateToolBar();
 	}
-	
-	/**
-	 * Returns the container that occupies the head of the form (the form area
-	 * above the body). Use this container as a parent for the head client.
-	 * 
-	 * @return the head of the form.
-	 * @since 3.2
-	 */
-	public Composite getHead() {
-		return head;
-	}
-	
-	/**
-	 * Returns the optional head client if set.
-	 * @return the head client or <code>null</code> if not set.
-	 */
-	public Control getHeadClient() {
-		return head.getHeadClient();
-	}
-	
-	/**
-	 * Sets the optional head client. Head client is placed after
-	 * the form title. This option causes the tool bar
-	 * to be placed in the second raw of the header (below
-	 * the head client).
-	 * <p>The head client must be a child of the composite
-	 * returned by <code>getHead()</code> method.
-	 * @param headClient the optional child of the head
-	 */
-	public void setHeadClient(Control headClient) {
-		head.setHeadClient(headClient);
-		layout();
-	}
+
 	/**
 	 * Returns the container that occupies the body of the form (the form area
 	 * below the title). Use this container as a parent for the controls that
