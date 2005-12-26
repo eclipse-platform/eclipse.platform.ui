@@ -600,6 +600,8 @@ public class FormToolkit {
 		form.setExpandVertical(true);
 		form.setBackground(colors.getBackground());
 		form.setForeground(colors.getColor(FormColors.TITLE));
+		colors.initializeSectionToolBarColors();
+		form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
 		form.setFont(JFaceResources.getHeaderFont());
 		return form;
 	}
@@ -618,6 +620,8 @@ public class FormToolkit {
 		Form formContent = new Form(parent, orientation);
 		formContent.setBackground(colors.getBackground());
 		formContent.setForeground(colors.getColor(FormColors.TITLE));
+		colors.initializeSectionToolBarColors();
+		formContent.setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
 		formContent.setFont(JFaceResources.getHeaderFont());
 		return formContent;
 	}

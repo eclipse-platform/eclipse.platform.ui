@@ -55,6 +55,8 @@ public class FormHeading extends Composite {
 
 	private int TITLE_GAP = 5;
 
+	private int SEPARATOR_HEIGHT = 6;
+
 	private static final int S_TILED = 1 << 1;
 
 	private static final int S_CLIPPED = 1 << 2;
@@ -413,7 +415,7 @@ public class FormHeading extends Composite {
 			if (secondRowHeight > 0)
 				height += secondRowHeight;
 			if (isSeparatorVisible())
-				height += 2;
+				height += SEPARATOR_HEIGHT;
 			if (height != 0)
 				height += TITLE_VMARGIN * 2;
 			if (width != 0)
@@ -528,12 +530,13 @@ public class FormHeading extends Composite {
 							- tbsize.x, TITLE_VMARGIN + height, tbsize.x,
 							tbsize.y);
 					height += tbsize.y;
+					//height += TITLE_GAP;
 				}
 			}
 			if (height > 0)
 				height += TITLE_VMARGIN * 2;
 			if (isSeparatorVisible())
-				height += 2;
+				height += SEPARATOR_HEIGHT;
 			if (messageArea != null
 					&& !messageArea.isMinimized()
 					&& (messageArea.isAnimationStart() || !messageArea
@@ -541,10 +544,12 @@ public class FormHeading extends Composite {
 				Point masize = messageArea
 						.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				int may = messageArea.isAnimationStart()
-						&& messageArea.getState() == MessageArea.OPENNING ? height - 1
-						: height - 1 - masize.y;
-				if (headClient!=null)
-					 may -= TITLE_GAP;
+						&& messageArea.getState() == MessageArea.OPENNING ? height-1
+						: height-1 - masize.y;
+				if (isSeparatorVisible())
+					may -= SEPARATOR_HEIGHT;
+				if (headClient != null)
+					may -= 2;
 				int mawidth = carea.width - TITLE_HMARGIN - TITLE_HMARGIN;
 				if (tbsize != null)
 					mawidth -= tbsize.x + TITLE_GAP;
@@ -763,13 +768,31 @@ public class FormHeading extends Composite {
 		if (!isSeparatorVisible())
 			return;
 		Rectangle carea = getClientArea();
+		// gradient
+		if (gradientInfo != null && gradientInfo.gradientColors.length >= 2) {
+			gc.setBackground(gradientInfo.gradientColors[0]);
+			gc.setForeground(gradientInfo.gradientColors[gradientInfo.gradientColors.length - 1]);
+			gc.fillGradientRectangle(0, carea.height - SEPARATOR_HEIGHT + 3,
+					carea.width, SEPARATOR_HEIGHT - 2, gradientInfo.vertical);
+		}
+		// bg separator
 		gc.setForeground(baseBg);
-		gc.drawLine(0, carea.height - 2, carea.width - 2, carea.height - 2);
+		gc.drawPolyline(new int[] { 0, carea.height - SEPARATOR_HEIGHT + 2, 2,
+				carea.height - SEPARATOR_HEIGHT, carea.width - 3,
+				carea.height - SEPARATOR_HEIGHT, carea.width - 1,
+				carea.height - SEPARATOR_HEIGHT + 2 });
+		// color separator
 		if (separatorColor != null)
 			gc.setForeground(separatorColor);
 		else
 			gc.setForeground(getForeground());
-		gc.drawLine(0, carea.height - 1, carea.width - 1, carea.height - 1);
+		gc.drawPolyline(new int[] { 
+				0, carea.height,
+				0, carea.height - SEPARATOR_HEIGHT + 3, 
+				2, carea.height - SEPARATOR_HEIGHT + 1, 
+				carea.width - 3, carea.height - SEPARATOR_HEIGHT + 1, 
+				carea.width - 1, carea.height - SEPARATOR_HEIGHT + 3,
+				carea.width - 1, carea.height });
 	}
 
 	private void updateGradientImage() {
@@ -995,7 +1018,7 @@ public class FormHeading extends Composite {
 			if (messageArea == null) {
 				messageArea = new MessageArea(this, SWT.NULL);
 				messageArea.setBackground(baseBg);
-				messageArea.setForeground(separatorColor);
+				messageArea.setForeground(separatorColor!=null?separatorColor:getForeground());
 			}
 			messageArea.setText(newMessage);
 			messageArea.setImage(newImage);

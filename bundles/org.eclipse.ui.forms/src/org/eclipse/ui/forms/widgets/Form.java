@@ -33,14 +33,23 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * <p>
  * Form can have a title if set. If not set, title area will not be left empty -
  * form body will be resized to fill the entire form. In addition, an optional
- * title image can be set and is rendered to the left of the title.
+ * title image can be set and is rendered to the left of the title (since 3.2).
  * <p>
- * Since 3.2, the form supports status messages. These messages can have various
+ * The form supports status messages. These messages can have various
  * severity (error, warning, info or none). Message tray can be minimized and
  * later restored by the user, but can only be closed programmatically.
  * <p>
  * Form can have a background image behind the title text. The image can be
  * painted as-is, or tiled as many times as needed to fill the title area.
+ * Alternatively, gradient background can be painted vertically or
+ * horizontally.
+ * <p>Form can be put in the 'busy' state. While in this state,
+ * title image is replaced with an animation that lasts as long as the
+ * 'busy' state is active.
+ * <p>It is possible to create an optional head client control.
+ * When created, this control is placed next to the title. If title tool
+ * bar is also present, a new row is created in the header, and the tool
+ * bar is right-justified in the second row.
  * <p>
  * Form has a custom layout manager that is wrap-enabled. If a form is placed in
  * a composite whose layout manager implements ILayoutExtension, the body of the
@@ -69,9 +78,13 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  */
 public class Form extends Composite {
 	private FormHeading head;
+
 	private Composite body;
+
 	private SizeCache bodyCache = new SizeCache();
+
 	private SizeCache headCache = new SizeCache();
+
 	private FormText selectionText;
 
 	private class FormLayout extends Layout implements ILayoutExtension {
@@ -94,12 +107,12 @@ public class Form extends Composite {
 
 			int width = 0;
 			int height = 0;
-			
+
 			Point hsize = headCache.computeSize(FormUtil.getWidthHint(wHint,
 					head), SWT.DEFAULT);
 			width = Math.max(hsize.x, width);
 			height = hsize.y;
-			
+
 			Point bsize = bodyCache.computeSize(FormUtil.getWidthHint(wHint,
 					body), SWT.DEFAULT);
 			width = Math.max(bsize.x, width);
@@ -114,11 +127,12 @@ public class Form extends Composite {
 			}
 			bodyCache.setControl(body);
 			headCache.setControl(head);
-			Rectangle carea = composite.getClientArea();			
-			
+			Rectangle carea = composite.getClientArea();
+
 			Point hsize = headCache.computeSize(carea.width, SWT.DEFAULT);
 			headCache.setBounds(0, 0, carea.width, hsize.y);
-			bodyCache.setBounds(0, hsize.y, carea.width, carea.height - hsize.y);
+			bodyCache
+					.setBounds(0, hsize.y, carea.width, carea.height - hsize.y);
 		}
 	}
 
@@ -141,6 +155,7 @@ public class Form extends Composite {
 	 * Passes the menu to the form body.
 	 * 
 	 * @param menu
+	 *            the parent menu
 	 */
 	public void setMenu(Menu menu) {
 		super.setMenu(menu);
@@ -174,7 +189,7 @@ public class Form extends Composite {
 	/**
 	 * Returns the title image that will be rendered to the left of the title.
 	 * 
-	 * @return the title image
+	 * @return the title image or <code>null</code> if not set.
 	 * @since 3.2
 	 */
 	public Image getImage() {
@@ -184,6 +199,9 @@ public class Form extends Composite {
 	/**
 	 * Sets the foreground color of the form. This color will also be used for
 	 * the body.
+	 * 
+	 * @param fg
+	 *            the foreground color
 	 */
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
@@ -194,15 +212,21 @@ public class Form extends Composite {
 	/**
 	 * Sets the background color of the form. This color will also be used for
 	 * the body.
+	 * 
+	 * @param bg
+	 *            the background color
 	 */
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
 		head.setBackground(bg);
 		body.setBackground(bg);
 	}
-	
+
 	/**
 	 * Sets the font of the header text.
+	 * 
+	 * @param font
+	 *            the new font
 	 */
 	public void setFont(Font font) {
 		super.setFont(font);
@@ -235,16 +259,29 @@ public class Form extends Composite {
 		redraw();
 	}
 
+	/**
+	 * Sets the background colors to be painted behind the title text in a
+	 * gradient.
+	 * 
+	 * @param gradientColors
+	 *            the array of colors that form the gradient
+	 * @param percents
+	 *            the partition of the overall space between the gradient colors
+	 * @param vertical
+	 *            of <code>true</code>, the gradient will be rendered
+	 *            vertically, if <code>false</code> the orientation will be
+	 *            horizontal.
+	 */
+
 	public void setTextBackground(Color[] gradientColors, int[] percents,
 			boolean vertical) {
 		head.setTextBackground(gradientColors, percents, vertical);
 	}
 
 	/**
-	 * Returns the optional background image of this form. The image is rendered
-	 * starting at the position 0,0 and is painted behind the title.
+	 * Returns the optional background image of the form head.
 	 * 
-	 * @return Returns the background image.
+	 * @return the background image or <code>null</code> if not specified.
 	 */
 	public Image getBackgroundImage() {
 		return head.getBackgroundImage();
@@ -255,11 +292,11 @@ public class Form extends Composite {
 	 * starting at the position 0,0.
 	 * 
 	 * @param backgroundImage
-	 *            The backgroundImage to set.
+	 *            the head background image.
+	 * 
 	 */
 	public void setBackgroundImage(Image backgroundImage) {
 		head.setBackgroundImage(backgroundImage);
-		redraw();
 	}
 
 	/**
@@ -279,7 +316,7 @@ public class Form extends Composite {
 	public void updateToolBar() {
 		head.updateToolBar();
 	}
-	
+
 	/**
 	 * Returns the container that occupies the head of the form (the form area
 	 * above the body). Use this container as a parent for the head client.
@@ -290,28 +327,35 @@ public class Form extends Composite {
 	public Composite getHead() {
 		return head;
 	}
-	
+
 	/**
 	 * Returns the optional head client if set.
+	 * 
 	 * @return the head client or <code>null</code> if not set.
+	 * @see #setHeadClient(Control)
+	 * @since 3.2
 	 */
 	public Control getHeadClient() {
 		return head.getHeadClient();
 	}
-	
+
 	/**
-	 * Sets the optional head client. Head client is placed after
-	 * the form title. This option causes the tool bar
-	 * to be placed in the second raw of the header (below
-	 * the head client).
-	 * <p>The head client must be a child of the composite
-	 * returned by <code>getHead()</code> method.
-	 * @param headClient the optional child of the head
+	 * Sets the optional head client. Head client is placed after the form
+	 * title. This option causes the tool bar to be placed in the second raw of
+	 * the header (below the head client).
+	 * <p>
+	 * The head client must be a child of the composite returned by
+	 * <code>getHead()</code> method.
+	 * 
+	 * @param headClient
+	 *            the optional child of the head
+	 * @since 3.2
 	 */
 	public void setHeadClient(Control headClient) {
 		head.setHeadClient(headClient);
 		layout();
 	}
+
 	/**
 	 * Returns the container that occupies the body of the form (the form area
 	 * below the title). Use this container as a parent for the controls that
@@ -322,8 +366,9 @@ public class Form extends Composite {
 	public Composite getBody() {
 		return body;
 	}
+
 	/**
-	 * TODO add javadoc
+	 * TODO add javadoc -
 	 * 
 	 * @return Returns the backgroundImageTiled.
 	 */
@@ -393,14 +438,22 @@ public class Form extends Composite {
 	}
 
 	/**
-	 * experimental - do not use yet TODO add javadoc
+	 * If set, adds a separator between the head and body. If gradient text
+	 * background is used, the separator will use gradient colors.
+	 * 
+	 * @param addSeparator
+	 *            <code>true</code> to make the separator visible,
+	 *            <code>false</code> otherwise.
+	 * @since 3.2
 	 */
 	public void setSeparatorVisible(boolean addSeparator) {
-head.setSeparatorVisible(addSeparator);
+		head.setSeparatorVisible(addSeparator);
 	}
 
 	/**
-	 * experimental - do not use yet TODO add javadoc
+	 * Returns the color used to render the optional head separator.
+	 * 
+	 * @return separator color or <code>null</code> if not set.
 	 */
 
 	public Color getSeparatorColor() {
@@ -408,17 +461,24 @@ head.setSeparatorVisible(addSeparator);
 	}
 
 	/**
-	 * experimental - do not use yet TODO add javadoc
+	 * Sets the color to be used to render the optional head separator.
+	 * 
+	 * @param separatorColor
+	 *            the color to render the head separator or <code>null</code>
+	 *            to use the default color.
+	 * @since 3.2
 	 */
 	public void setSeparatorColor(Color separatorColor) {
 		head.setSeparatorColor(separatorColor);
 	}
 
 	/**
-	 * Sets the message for this form.
+	 * Sets the message for this form. Message text is rendered in the form head
+	 * when shown.
 	 * 
 	 * @param message
 	 *            the message, or <code>null</code> to clear the message
+	 * @see #setMessage(String, int)
 	 * @since 3.2
 	 */
 	public void setMessage(String message) {
@@ -445,10 +505,13 @@ head.setSeparatorVisible(addSeparator);
 	public void setMessage(String newMessage, int newType) {
 		head.setMessage(newMessage, newType);
 	}
+
 	/**
-	 * Tests if the form is in the 'busy' state.
+	 * Tests if the form is in the 'busy' state. Busy form displays 'busy'
+	 * animation in the area of the title image.
 	 * 
 	 * @return <code>true</code> if busy, <code>false</code> otherwise.
+	 * @since 3.2
 	 */
 
 	public boolean isBusy() {
@@ -461,6 +524,7 @@ head.setSeparatorVisible(addSeparator);
 	 * 
 	 * @param busy
 	 *            the form's busy state
+	 * @since 3.2
 	 */
 
 	public void setBusy(boolean busy) {
