@@ -254,6 +254,9 @@ public class BusyIndicator extends Canvas {
 	 * Process the paint event
 	 */
 	protected void onPaint(PaintEvent event) {
+		if (animationImage!=null && animationImage.isDisposed()) {
+			animationImage=null;
+		}
 		Rectangle rect = getClientArea();
 		if (rect.width == 0 || rect.height == 0)
 			return;

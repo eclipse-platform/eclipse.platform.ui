@@ -66,7 +66,7 @@ public class FormHeading extends Composite {
 	private Image gradientImage;
 
 	private Image image;
-	
+
 	private Color baseBg;
 
 	private Color separatorColor;
@@ -81,10 +81,12 @@ public class FormHeading extends Composite {
 
 	private SizeCache toolbarCache = new SizeCache();
 
+	private SizeCache clientCache = new SizeCache();
+
 	private BusyIndicator busyLabel;
 
 	private Label titleLabel;
-	
+
 	private Control headClient;
 
 	private MessageArea messageArea;
@@ -151,7 +153,7 @@ public class FormHeading extends Composite {
 					setMinimized(false);
 				}
 			});
-			if (gradientInfo==null && getBackgroundImage()==null)
+			if (gradientInfo == null && getBackgroundImage() == null)
 				rlink.setBackground(getBackground());
 			rlink.setVisible(false);
 			rlink.setToolTipText(Messages.Form_tooltip_restore);
@@ -196,7 +198,7 @@ public class FormHeading extends Composite {
 		}
 
 		public void setMinimized(boolean minimized) {
-			setBackground(minimized?null:baseBg);
+			setBackground(minimized ? null : baseBg);
 			this.minimized = minimized;
 			if (minimized) {
 				rlink.setImage(label.getImage());
@@ -204,7 +206,7 @@ public class FormHeading extends Composite {
 			rlink.setVisible(minimized);
 			label.getParent().setVisible(!minimized);
 			layout();
-			
+
 			FormHeading.this.layout();
 			FormHeading.this.redraw();
 		}
@@ -329,21 +331,34 @@ public class FormHeading extends Composite {
 			if (flushCache) {
 				titleCache.flush();
 				toolbarCache.flush();
+				clientCache.flush();
 			}
 
 			int width = 0;
 			int height = 0;
+			Point tbsize = null;
+
+			if (headClient != null) {
+				clientCache.setControl(headClient);
+				Point clsize = clientCache
+						.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				if (text != null)
+					width += TITLE_GAP;
+				width += clsize.x;
+				height += clsize.y;
+			}
 
 			if (toolBarManager != null) {
 				ToolBar toolBar = toolBarManager.getControl();
 				if (toolBar != null) {
 					toolbarCache.setControl(toolBar);
-					Point tbsize = toolbarCache.computeSize(SWT.DEFAULT,
-							SWT.DEFAULT);
-					if (text != null)
-						width += TITLE_GAP;
-					width += tbsize.x;
-					height = tbsize.y;
+					tbsize = toolbarCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					if (headClient == null) {
+						if (text != null)
+							width += TITLE_GAP;
+						width += tbsize.x;
+						height = tbsize.y;
+					}
 				}
 			}
 			int iwidth = 0;
@@ -380,11 +395,23 @@ public class FormHeading extends Composite {
 				}
 				gc.dispose();
 			}
+			int secondRowHeight = 0;
+			if (headClient != null) {
+				if (tbsize != null)
+					secondRowHeight = tbsize.y;
+			}
+
 			if (messageArea != null) {
 				Point masize = messageArea
 						.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				height = Math.max(masize.y, height);
+				if (headClient == null)
+					height = Math.max(masize.y, height);
+				else {
+					secondRowHeight = Math.max(secondRowHeight, masize.y);
+				}
 			}
+			if (secondRowHeight > 0)
+				height += secondRowHeight;
 			if (isSeparatorVisible())
 				height += 2;
 			if (height != 0)
@@ -404,6 +431,7 @@ public class FormHeading extends Composite {
 			Rectangle carea = composite.getClientArea();
 			int height = 0;
 			Point tbsize = null;
+			Point clsize = null;
 			int twidth = carea.width - TITLE_HMARGIN * 2;
 			if ((image != null || text != null || (messageArea != null && messageArea
 					.isMinimized()))
@@ -412,12 +440,25 @@ public class FormHeading extends Composite {
 				if (toolBar != null) {
 					toolbarCache.setControl(toolBar);
 					tbsize = toolbarCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					toolbarCache.setBounds(carea.width - 1 - TITLE_HMARGIN
-							- tbsize.x, TITLE_VMARGIN, tbsize.x, tbsize.y);
-					height = tbsize.y;
+					if (headClient == null) {
+						toolbarCache.setBounds(carea.width - 1 - TITLE_HMARGIN
+								- tbsize.x, TITLE_VMARGIN, tbsize.x, tbsize.y);
+						height = tbsize.y;
+					}
 				}
 			}
-			if (tbsize != null) {
+
+			Rectangle clientRect = null;
+
+			if (headClient != null) {
+				clientCache.setControl(headClient);
+				clsize = clientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				clientRect = new Rectangle(carea.width - 1 - TITLE_HMARGIN
+						- clsize.x, TITLE_VMARGIN, clsize.x, clsize.y);
+				height = clsize.y;
+				twidth -= clsize.x + TITLE_GAP;
+			}
+			if (headClient == null && tbsize != null) {
 				twidth -= tbsize.x + TITLE_GAP;
 			}
 			int tx = TITLE_HMARGIN;
@@ -447,12 +488,30 @@ public class FormHeading extends Composite {
 			}
 			Rectangle titleRect = new Rectangle(0, 0, 0, 0);
 			if (text != null) {
-				height = titleCache.computeSize(twidth, SWT.DEFAULT).y;
-				if (tbsize != null)
-					height = Math.max(tbsize.y, height);
-				titleCache.setBounds(tx, TITLE_VMARGIN, twidth, height);
+				Point tsize = titleCache.computeSize(twidth, SWT.DEFAULT);
+				height = tsize.y;
+				if (headClient == null) {
+					if (tbsize != null)
+						height = Math.max(tbsize.y, height);
+				} else {
+					height = Math.max(clsize.y, height);
+				}
+				int minTextWidth = tsize.x;
+				Point realtsize = titleCache.computeSize(SWT.DEFAULT,
+						SWT.DEFAULT);
+				minTextWidth = Math.min(realtsize.x, minTextWidth);
+				titleCache.setBounds(tx, TITLE_VMARGIN, minTextWidth, height);
 				titleRect = titleCache.getControl().getBounds();
+				if (minTextWidth < tsize.x && headClient != null) {
+					// fix up the head client to use the extra space
+					int hx = tx + minTextWidth + TITLE_GAP;
+					int hwidth = carea.width - TITLE_HMARGIN - hx;
+					clientRect.x = hx;
+					clientRect.width = hwidth;
+				}
 			}
+			if (headClient != null && clientRect != null)
+				clientCache.setBounds(clientRect);
 
 			if (msize != null) {
 				messageArea.setBounds(mx, titleRect.y + titleRect.height / 2
@@ -461,6 +520,15 @@ public class FormHeading extends Composite {
 			if (bsize != null) {
 				busyLabel.setBounds(mx, titleRect.y + titleRect.height / 2
 						- bsize.y / 2, bsize.x, bsize.y);
+			}
+			if (headClient != null) {
+				if (tbsize != null) {
+					height += TITLE_GAP;
+					toolbarCache.setBounds(carea.width - 1 - TITLE_HMARGIN
+							- tbsize.x, TITLE_VMARGIN + height, tbsize.x,
+							tbsize.y);
+					height += tbsize.y;
+				}
 			}
 			if (height > 0)
 				height += TITLE_VMARGIN * 2;
@@ -475,6 +543,8 @@ public class FormHeading extends Composite {
 				int may = messageArea.isAnimationStart()
 						&& messageArea.getState() == MessageArea.OPENNING ? height - 1
 						: height - 1 - masize.y;
+				if (headClient!=null)
+					 may -= TITLE_GAP;
 				int mawidth = carea.width - TITLE_HMARGIN - TITLE_HMARGIN;
 				if (tbsize != null)
 					mawidth -= tbsize.x + TITLE_GAP;
@@ -500,18 +570,18 @@ public class FormHeading extends Composite {
 		});
 		addListener(SWT.Dispose, new Listener() {
 			public void handleEvent(Event e) {
-				if (gradientImage!=null) {
+				if (gradientImage != null) {
 					gradientImage.dispose();
-					gradientImage=null;
+					gradientImage = null;
 				}
 			}
 		});
 		addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event e) {
-				if (gradientInfo!=null)
+				if (gradientInfo != null)
 					updateGradientImage();
 			}
-		});		
+		});
 		super.setLayout(new FormHeadingLayout());
 		titleLabel = new Label(this, SWT.WRAP);
 		titleCache = new SizeCache(titleLabel);
@@ -590,7 +660,7 @@ public class FormHeading extends Composite {
 		layout();
 		redraw();
 	}
-	
+
 	public void setFont(Font font) {
 		super.setFont(font);
 		titleLabel.setFont(font);
@@ -609,23 +679,22 @@ public class FormHeading extends Composite {
 			toolBarManager.getControl().setVisible(
 					image != null || text != null);
 		}
-		if (image!=null) {
+		if (image != null) {
 			createBusyLabel();
-		}
-		else if (image==null && busyLabel!=null) {
+		} else if (image == null && busyLabel != null) {
 			if (!busyLabel.isBusy()) {
 				busyLabel.dispose();
-				busyLabel=null;
+				busyLabel = null;
 			}
 		}
 		busyLabel.setImage(image);
 		layout();
 	}
-	
+
 	private void createBusyLabel() {
-		if (busyLabel==null) {
+		if (busyLabel == null) {
 			busyLabel = new BusyIndicator(this, SWT.NULL);
-			if (gradientInfo==null && getBackgroundImage()==null)
+			if (gradientInfo == null && getBackgroundImage() == null)
 				busyLabel.setBackground(getBackground());
 		}
 	}
@@ -638,20 +707,20 @@ public class FormHeading extends Composite {
 		gradientInfo.vertical = vertical;
 		titleLabel.setBackground(null);
 		super.setBackground(null);
-		if (toolBarManager!=null)
+		if (toolBarManager != null)
 			toolBarManager.getControl().setBackground(null);
-		if (busyLabel!=null)
+		if (busyLabel != null)
 			busyLabel.setBackground(null);
 		updateGradientImage();
 	}
 
 	public void setBackgroundImage(Image image) {
 		super.setBackgroundImage(image);
-		if (image!=null) {
+		if (image != null) {
 			titleLabel.setBackground(null);
-			if (toolBarManager!=null)
+			if (toolBarManager != null)
 				toolBarManager.getControl().setBackground(null);
-			if (busyLabel!=null)
+			if (busyLabel != null)
 				busyLabel.setBackground(null);
 		}
 	}
@@ -691,44 +760,27 @@ public class FormHeading extends Composite {
 	}
 
 	private void onPaint(GC gc) {
-		if (text == null)
+		if (!isSeparatorVisible())
 			return;
 		Rectangle carea = getClientArea();
-		gc.setFont(getFont());
-		int theight = 0;
-
-		Rectangle titleRect = titleLabel.isVisible() ? titleLabel.getBounds()
-				: new Rectangle(0, 0, 0, 0);
-
-		theight = TITLE_VMARGIN + titleRect.height + TITLE_VMARGIN;
-		if (isSeparatorVisible())
-			theight += 2;
-		if (toolBarManager != null) {
-			ToolBar toolBar = toolBarManager.getControl();
-			if (toolBar != null) {
-				Point tbsize = toolBar.getSize();
-				theight = Math.max(theight, tbsize.y);
-			}
-		}
-		if (isSeparatorVisible()) {
-			gc.setForeground(baseBg);
-			gc.drawLine(0, theight - 2, carea.width - 2, theight - 2);
-			if (separatorColor != null)
-				gc.setForeground(separatorColor);
-			else
-				gc.setForeground(getForeground());
-			gc.drawLine(0, theight - 1, carea.width - 1, theight - 1);
-		}
+		gc.setForeground(baseBg);
+		gc.drawLine(0, carea.height - 2, carea.width - 2, carea.height - 2);
+		if (separatorColor != null)
+			gc.setForeground(separatorColor);
+		else
+			gc.setForeground(getForeground());
+		gc.drawLine(0, carea.height - 1, carea.width - 1, carea.height - 1);
 	}
 
 	private void updateGradientImage() {
 		Rectangle rect = getBounds();
 		boolean vertical = gradientInfo.vertical;
-		if (gradientImage!=null)
+		if (gradientImage != null)
 			gradientImage.dispose();
-		int width = vertical?1:rect.width;
-		int height = vertical?rect.height:1;
-		gradientImage = new Image(getDisplay(), Math.max(width, 1), Math.max(height, 1));
+		int width = vertical ? 1 : rect.width;
+		int height = vertical ? rect.height : 1;
+		gradientImage = new Image(getDisplay(), Math.max(width, 1), Math.max(
+				height, 1));
 		GC gc = new GC(gradientImage);
 		drawTextGradient(gc, width, height);
 		gc.dispose();
@@ -983,6 +1035,10 @@ public class FormHeading extends Composite {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				final boolean[] result = new boolean[1];
+				/*
+				 * getDisplay().syncExec(new Runnable() { public void run() { if
+				 * (headClient!=null) headClient.setRedraw(false); } });
+				 */
 				for (;;) {
 					getDisplay().syncExec(new Runnable() {
 						public void run() {
@@ -1010,8 +1066,14 @@ public class FormHeading extends Composite {
 							}
 						}
 					});
-					if (result[0])
+					if (result[0]) {
+						/*
+						 * getDisplay().syncExec(new Runnable() { public void
+						 * run() { if (headClient!=null)
+						 * headClient.setRedraw(true); } });
+						 */
 						break;
+					}
 					Thread.yield();
 					try {
 						Thread.sleep(5);
@@ -1033,7 +1095,7 @@ public class FormHeading extends Composite {
 	 */
 
 	public boolean isBusy() {
-		return busyLabel!=null && busyLabel.isBusy();
+		return busyLabel != null && busyLabel.isBusy();
 	}
 
 	/**
@@ -1058,7 +1120,7 @@ public class FormHeading extends Composite {
 	}
 
 	public void setHeadClient(Control headClient) {
-		Assert.isTrue(headClient.getParent()==this);
+		Assert.isTrue(headClient.getParent() == this);
 		this.headClient = headClient;
 		layout();
 	}
