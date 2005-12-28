@@ -17,12 +17,15 @@ import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
 
 
 /**
- * Convert a Java.util.Date to a String using the current locale.
+ * Convert a Java.util.Date to a String using the current locale.  Null date
+ * values are converted to an empty string.
  * 
  * @since 3.2
  */
 public class ConvertDate2String extends DateConversionSupport implements IConversionFunction {	
 	public Object convert(Object source) {
-		return format((Date)source);
+		if (source != null)
+			return format((Date)source);
+		return ""; //$NON-NLS-1$
 	}	
 }
