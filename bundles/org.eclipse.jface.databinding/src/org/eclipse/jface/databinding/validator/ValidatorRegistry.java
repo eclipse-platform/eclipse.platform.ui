@@ -11,9 +11,11 @@
  */
 package org.eclipse.jface.databinding.validator;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.eclipse.jface.databinding.validators.String2BigDecimalValidator;
 import org.eclipse.jface.databinding.validators.String2ByteValidator;
 import org.eclipse.jface.databinding.validators.String2DateValidator;
 import org.eclipse.jface.databinding.validators.String2DoubleValidator;
@@ -96,6 +98,8 @@ public class ValidatorRegistry {
         associate(String.class, Float.class, new String2FloatValidator());
         associate(String.class, Double.class, new String2DoubleValidator());
         associate(String.class, Date.class, new String2DateValidator());
+        
+        associate(String.class, BigDecimal.class, new String2BigDecimalValidator());
         
         // Regex-implemented validators here...
         associate(String.class, Character.TYPE, new RegexStringValidator(

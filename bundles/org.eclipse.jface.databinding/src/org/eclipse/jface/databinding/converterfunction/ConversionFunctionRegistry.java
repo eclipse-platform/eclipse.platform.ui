@@ -11,11 +11,13 @@
  */
 package org.eclipse.jface.databinding.converterfunction;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 
 import org.eclipse.jface.databinding.converterfunctions.ConvertDate2String;
 import org.eclipse.jface.databinding.converterfunctions.ConvertObject2String;
+import org.eclipse.jface.databinding.converterfunctions.ConvertString2BigDecimal;
 import org.eclipse.jface.databinding.converterfunctions.ConvertString2Boolean;
 import org.eclipse.jface.databinding.converterfunctions.ConvertString2Byte;
 import org.eclipse.jface.databinding.converterfunctions.ConvertString2Character;
@@ -213,6 +215,9 @@ public class ConversionFunctionRegistry {
         
         associate(Date.class, String.class, new ConvertDate2String());
         associate(String.class, Date.class, new ConvertString2Date());
+        
+        associate(BigDecimal.class, String.class, ToStringConverter.TOSTRINGFUNCTION);
+        associate(String.class, BigDecimal.class, new ConvertString2BigDecimal());
     }
 }
 

@@ -45,7 +45,9 @@ public class String2DoubleValidator implements IValidator {
     }
 
 	private String getHint() {
-		return BindingMessages.getString("Validate_Like") + " 1.234, " + Double.MIN_VALUE +   //$NON-NLS-1$//$NON-NLS-2$
+		return BindingMessages.getString("Validate_Like") +  //$NON-NLS-1$
+			BindingMessages.getString("Validate_Number_Examples") //$NON-NLS-1$
+			+ Double.MIN_VALUE + 
 			", " + Double.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 

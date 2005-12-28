@@ -11,15 +11,22 @@
  */
 package org.eclipse.jface.databinding.validators;
 
+import java.math.BigDecimal;
+
 import org.eclipse.jface.databinding.validator.IValidator;
 import org.eclipse.jface.internal.databinding.BindingMessages;
 
 
 /**
- * FloatValidator.  Verify string to float data conversion
+ * DoubleValidator.  Verify data input for Doubles
+ *
+ * @author djo
  */
-public class String2FloatValidator implements IValidator {
+public class String2BigDecimalValidator implements IValidator {
     
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)
+	 */
 	public String isPartiallyValid(Object fragment) {
 		if (((String)fragment).matches("\\-?[0-9]*\\.?[0-9]*([0-9]+[e|E]\\-?([0-9]+\\.)?[0-9]*)?")) //$NON-NLS-1$
             return null;
@@ -27,20 +34,21 @@ public class String2FloatValidator implements IValidator {
         return getHint();
 	}
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ICellEditorValidator#isValid(java.lang.Object)
+     */
     public String isValid(Object value) {
         try {
-            Float.parseFloat((String)value);
+        	new BigDecimal((String)value);
             return null;
-        } catch (Exception e) {
+        } catch (Throwable t) {
             return getHint();
         }
     }
 
 	private String getHint() {
 		return BindingMessages.getString("Validate_Like") +  //$NON-NLS-1$
-		BindingMessages.getString("Validate_Number_Examples") //$NON-NLS-1$
-		+ Float.MIN_VALUE + 
-		", " + Float.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
+			BindingMessages.getString("Validate_Number_Examples"); //$NON-NLS-1$
 	}
 
 }
