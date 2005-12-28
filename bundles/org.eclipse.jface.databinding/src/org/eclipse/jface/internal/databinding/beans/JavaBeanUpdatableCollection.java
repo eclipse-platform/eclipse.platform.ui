@@ -176,7 +176,6 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		list.add(value);	
 		fireChangeEvent(ChangeEvent.ADD, null, value, index);
 		return index;
-		
 	}
 
 	public void removeElement(int index) {

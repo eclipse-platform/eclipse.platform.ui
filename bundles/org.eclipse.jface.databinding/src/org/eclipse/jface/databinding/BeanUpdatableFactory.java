@@ -78,8 +78,21 @@ final public class BeanUpdatableFactory implements IUpdatableFactory {
 								// tables and handles Combos and Lists.
 								elementType = Object.class;
 							}
+							/*
+							 * FIXME: CopyOfJavaBeanUpdatableCollection is the new IUpdatableCollection
+							 * that fixes bug #119930.  It seems to work now.  Unfortunately, there is
+							 * a bunch of code that depends on the IUpdatableCollections themselves
+							 * listening to the generic change event on each of the collections' elements.
+							 * 
+							 * Examples of this include StructuredViewerUpdatableValue and the table
+							 * implementations.  These need to be fixed to use IUpdatableValues
+							 * pointing to the specific properties being displayed/edited rather than
+							 * expecting the IUpdatableCollection to be registered to the generic 
+							 * property change event.
+							 */
 							return new JavaBeanUpdatableCollection(object,
 									descriptor, elementType);
+//							return new CopyOfJavaBeanUpdatableCollection(object, descriptor, elementType);
 						}						
 						return new JavaBeanUpdatableValue(object, descriptor);
 					}

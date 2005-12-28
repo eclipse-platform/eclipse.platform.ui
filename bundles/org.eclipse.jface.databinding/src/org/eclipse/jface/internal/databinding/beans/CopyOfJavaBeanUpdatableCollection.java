@@ -11,16 +11,18 @@
 package org.eclipse.jface.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.eclipse.jface.databinding.ChangeEvent;
+import org.eclipse.jface.databinding.DataBinding;
+import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableCollection;
+import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IUpdatableValue;
+import org.eclipse.jface.databinding.JavaBeansScalarUpdatableValueFactory;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.Updatable;
 import org.eclipse.jface.util.Assert;
@@ -62,83 +64,72 @@ public class CopyOfJavaBeanUpdatableCollection extends Updatable implements
 
 	private boolean updating = false;
 
-	private final Object object;
 	private PropertyDescriptor descriptor;
 	private Class elementType=null;
-	private IDataBindingContext dataBindingContext;
 	
 	private IUpdatableValue objectUpdatable;
-	private List elementUpdatables = new LinkedList();
 	
 	/**
-	 * @param propertyDescription The property description object
-	 * @param dataBindingContext The parent data binding context
 	 * @param object The collection object we're binding
 	 * @param descriptor A java.beans.PropertyDescriptor
 	 * @param elementType  The element data type (still needed?)
 	 */
-	public CopyOfJavaBeanUpdatableCollection(Object propertyDescription,
-			IDataBindingContext dataBindingContext, Object object,
+	public CopyOfJavaBeanUpdatableCollection(Object object,
 			PropertyDescriptor descriptor, Class elementType) {
-		this.object = object;
 		this.descriptor = descriptor;
 		this.elementType = elementType;
-		this.dataBindingContext = dataBindingContext;
 		
 		// Create an IUpdatableValue for the collection itself
-		objectUpdatable = (IUpdatableValue) dataBindingContext
-				.createUpdatable(propertyDescription);
-
-		// Create an IUpdatableValue for each collection element
-		Object result = objectUpdatable.getValue();
-		Object[] values = null;
-		if (descriptor.getPropertyType().isArray())
-			values = (Object[])result;
-		else {
-			//TODO add jUnit for POJO (var. SettableValue) collections  
-			Collection list = (Collection) result;
-			if (list != null) {
-				values = list.toArray();
-			} else {
-				values = new Object[] {};
+		IDataBindingContext dbc = DataBinding.createContext(new IUpdatableFactory[] {
+				new JavaBeansScalarUpdatableValueFactory()
+		});
+		objectUpdatable = (IUpdatableValue) dbc.createUpdatable(new Property(object, descriptor.getName()));
+		objectUpdatable.addChangeListener(changeListener);
+	}
+	
+	private IChangeListener changeListener = new IChangeListener() {
+		public void handleChange(ChangeEvent changeEvent) {
+			if (!updating) {
+				fireChangeEvent(changeEvent.getChangeType(), null,
+						null, ChangeEvent.POSITION_UNKNOWN);
 			}
 		}
-		for (int i = 0; i < values.length; i++) {
-			CollectionElement element = new CollectionElement(values[i]);
-			elementUpdatables.add(dataBindingContext.createUpdatable(new Property(element, "value"))); //$NON-NLS-1$
-		} 
-	}
+	};
 
 	public void dispose() {
 		super.dispose();
-		for (Iterator i = elementUpdatables.iterator(); i.hasNext();) {
-			IUpdatable element = (IUpdatable) i.next();
-			element.dispose();
-		}
 		objectUpdatable.dispose();
 	}
 
+	private Collection collection() {
+		return (Collection)objectUpdatable.getValue();
+	}
+
+	private Object[] array() {
+		return (Object[])objectUpdatable.getValue();
+	}
+
 	public int getSize() {
-		return elementUpdatables.size();
+		if (descriptor.getPropertyType().isArray()) {
+			return array().length;
+		}
+		return collection().size();
 	}
 
 	public int addElement(Object value, int index) {
 		if (descriptor.getPropertyType().isArray())
 			Assert.isTrue(false, "cannot add elements"); //$NON-NLS-1$		   
 		
-		Collection list = (Collection)objectUpdatable.getValue();
+		Collection list = collection();
 		list.add(value);	
 		if (index <= 0 || index > list.size())
 			index = list.size();
 		fireChangeEvent(ChangeEvent.ADD, null, value, index);
 		return index;
 	}
-
-	public void removeElement(int index) {
-		if (descriptor.getPropertyType().isArray())
-			Assert.isTrue(false, "cannot remove elements"); //$NON-NLS-1$		   
-		
-		Collection list = (Collection)objectUpdatable.getValue();
+	
+	private Object findElement(int index) {
+		Collection list = collection();
 		Object o = null;
 		int i=0;
 		for (Iterator iter = list.iterator(); iter.hasNext(); i++) {
@@ -148,27 +139,56 @@ public class CopyOfJavaBeanUpdatableCollection extends Updatable implements
 			}
 			iter.next();
 		}
+		return o;
+	}
+
+	public void removeElement(int index) {
+		if (descriptor.getPropertyType().isArray())
+			Assert.isTrue(false, "cannot remove elements"); //$NON-NLS-1$		   
+		
+		Object o = findElement(index);
 		if (o!=null) {
-		   list.remove(o);
+		   collection().remove(o);
 		   fireChangeEvent(ChangeEvent.REMOVE, o, null, index);
 		}		
 	}
 
 	public void setElement(int index, Object value) {
+		if (updating) {
+			return;
+		}
 		updating = true;
 		try {
-//			Object[] values = getValues();
-//			Object oldValue = values[index];
-//			values[index] = value;
-//			fireChangeEvent(ChangeEvent.CHANGE, oldValue, value, index);
+			Object oldValue;
+			if (descriptor.getPropertyType().isArray()) {
+				oldValue = array()[index];
+				array()[index] = value;
+			} else {
+				Collection c = collection();
+				oldValue = findElement(index);
+				try {
+					// Try to preserve collection order if possible
+					Method setMethod = c.getClass().getMethod("set", new Class[] {Integer.TYPE, Object.class}); //$NON-NLS-1$
+					setMethod.invoke(c, new Object[] {new Integer(index), value});
+				} catch (Exception e) {
+					// If we can't preserve order
+					if (oldValue != null) {
+						c.remove(oldValue);
+					}
+					c.add(value);
+				}
+			}
+			fireChangeEvent(ChangeEvent.CHANGE, oldValue, value, index);
 		} finally {
 			updating = false;
 		}
 	}
 
 	public Object getElement(int index) {
-//		return getValues()[index];
-		return null;
+		if (descriptor.getPropertyType().isArray()) {
+			return array()[index];
+		}
+		return findElement(index);
 	}
 
 	public Class getElementType() {		
