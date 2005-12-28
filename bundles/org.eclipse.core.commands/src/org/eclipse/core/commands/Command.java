@@ -336,7 +336,7 @@ public final class Command extends NamedHandleObjectWithState implements
 				fireNotEnabled(exception);
 				throw exception;
 			}
-			
+
 			try {
 				final Object returnValue = handler.execute(event);
 				firePostExecuteSuccess(returnValue);
@@ -387,7 +387,7 @@ public final class Command extends NamedHandleObjectWithState implements
 			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
 					+ "not defined: id=" + getId() + "; exception=" + e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -415,7 +415,7 @@ public final class Command extends NamedHandleObjectWithState implements
 			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
 					+ "not enabled: id=" + getId() + "; exception=" + e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -442,7 +442,7 @@ public final class Command extends NamedHandleObjectWithState implements
 			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
 					+ "not handled: id=" + getId() + "; exception=" + e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -467,7 +467,7 @@ public final class Command extends NamedHandleObjectWithState implements
 			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
 					+ "failure: id=" + getId() + "; exception=" + e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -487,12 +487,11 @@ public final class Command extends NamedHandleObjectWithState implements
 	private final void firePostExecuteSuccess(final Object returnValue) {
 		// Debugging output
 		if (DEBUG_COMMAND_EXECUTION) {
-			Tracing
-					.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
-							+ "success: id=" + getId() + "; returnValue=" //$NON-NLS-1$ //$NON-NLS-2$
-							+ returnValue);
+			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
+					+ "success: id=" + getId() + "; returnValue=" //$NON-NLS-1$ //$NON-NLS-2$
+					+ returnValue);
 		}
-		
+
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -515,7 +514,7 @@ public final class Command extends NamedHandleObjectWithState implements
 			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
 					+ "starting: id=" + getId() + "; event=" + event); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -542,6 +541,39 @@ public final class Command extends NamedHandleObjectWithState implements
 	}
 
 	/**
+	 * Returns the parameter with the provided id or <code>null</code> if this
+	 * command does not have a parameter with the id.
+	 * 
+	 * @param parameterId
+	 *            The id of the parameter to retrieve.
+	 * @return The parameter with the provided id or <code>null</code> if this
+	 *         command does not have a parameter with the id.
+	 * @throws NotDefinedException
+	 *             If the handle is not currently defined.
+	 * @since 3.2
+	 */
+	public final IParameter getParameter(final String parameterId)
+			throws NotDefinedException {
+		if (!isDefined()) {
+			throw new NotDefinedException(
+					"Cannot get a parameter from an undefined command"); //$NON-NLS-1$
+		}
+
+		if (parameters == null) {
+			return null;
+		}
+
+		for (int i = 0; i < parameters.length; i++) {
+			final IParameter parameter = parameters[i];
+			if (parameter.getId().equals(parameterId)) {
+				return parameter;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Returns the parameters for this command. This call triggers provides a
 	 * copy of the array, so excessive calls to this method should be avoided.
 	 * 
@@ -563,6 +595,31 @@ public final class Command extends NamedHandleObjectWithState implements
 		final IParameter[] returnValue = new IParameter[parameters.length];
 		System.arraycopy(parameters, 0, returnValue, 0, parameters.length);
 		return returnValue;
+	}
+
+	/**
+	 * Returns the {@link ParameterType} for the parameter with the provided id
+	 * or <code>null</code> if this command does not have a parameter type
+	 * with the id.
+	 * 
+	 * @param parameterId
+	 *            The id of the parameter to retrieve the {@link ParameterType}
+	 *            of.
+	 * @return The {@link ParameterType} for the parameter with the provided id
+	 *         or <code>null</code> if this command does not have a parameter
+	 *         type with the provided id.
+	 * @throws NotDefinedException
+	 *             If the handle is not currently defined.
+	 * @since 3.2
+	 */
+	public final ParameterType getParameterType(final String parameterId)
+			throws NotDefinedException {
+		final IParameter parameter = getParameter(parameterId);
+		if (parameter instanceof IParameterWithType) {
+			final IParameterWithType parameterWithType = (IParameterWithType) parameter;
+			return parameterWithType.getParameterType();
+		}
+		return null;
 	}
 
 	/**
@@ -700,7 +757,7 @@ public final class Command extends NamedHandleObjectWithState implements
 				buffer.append(handler);
 				buffer.append("' as its handler"); //$NON-NLS-1$
 			}
-			Tracing.printTrace("HANDLERS", buffer.toString());  //$NON-NLS-1$
+			Tracing.printTrace("HANDLERS", buffer.toString()); //$NON-NLS-1$
 		}
 
 		// Send notification
