@@ -16,6 +16,7 @@ import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IExecutionListener;
+import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -99,6 +100,18 @@ public final class CommandService implements ICommandService {
 
 	public final Command[] getDefinedCommands() {
 		return commandManager.getDefinedCommands();
+	}
+	
+	public Collection getDefinedParameterTypeIds() {
+		return commandManager.getDefinedParameterTypeIds();
+	}
+	
+	public ParameterType[] getDefinedParameterTypes() {
+		return commandManager.getDefinedParameterTypes();
+	}
+	
+	public ParameterType getParameterType(final String parameterTypeId) {
+		return commandManager.getParameterType(parameterTypeId);
 	}
 
 	public final void readRegistry() {
