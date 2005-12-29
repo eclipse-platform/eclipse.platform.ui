@@ -30,15 +30,4 @@ public interface ITypedParameter {
 	 *         <code>null</code> if the parameter does not declare a type
 	 */
 	public ParameterType getParameterType();
-
-	/**
-	 * Returns the id of the parameter type associated with a command parameter
-	 * or <code>null</code> if the parameter does not declare a type.
-	 * 
-	 * @return a string representing the id of the parameter type associated
-	 *         with a command parameter or <code>null</code> if the parameter
-	 *         does not declare a type
-	 */
-	public String getTypeId();
-
 }
