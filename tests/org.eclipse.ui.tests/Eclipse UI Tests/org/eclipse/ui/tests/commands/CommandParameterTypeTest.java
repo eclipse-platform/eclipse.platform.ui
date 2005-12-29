@@ -48,7 +48,7 @@ public class CommandParameterTypeTest extends UITestCase {
 			testSubtract(new Integer(3), Boolean.FALSE, 3);
 			fail("expected ParameterValueConversionException");
 		}
-		catch (ParameterValueConversionException ex) {
+		catch (ClassCastException ex) {
 			// passed
 		}
 		catch (Exception ex) {
@@ -136,7 +136,10 @@ public class CommandParameterTypeTest extends UITestCase {
 			try {
 				converted = type.getValueConverter().convertToString(value);
 				fail("expected ParameterValueConversionException");
-			} catch (ParameterValueConversionException ex) {
+			} catch (ClassCastException ex) {
+				// passed
+				return;
+			} catch (NullPointerException ex) {
 				// passed
 				return;
 			} catch (Exception ex) {
