@@ -615,8 +615,8 @@ public final class Command extends NamedHandleObjectWithState implements
 	public final ParameterType getParameterType(final String parameterId)
 			throws NotDefinedException {
 		final IParameter parameter = getParameter(parameterId);
-		if (parameter instanceof IParameterWithType) {
-			final IParameterWithType parameterWithType = (IParameterWithType) parameter;
+		if (parameter instanceof ITypedParameter) {
+			final ITypedParameter parameterWithType = (ITypedParameter) parameter;
 			return parameterWithType.getParameterType();
 		}
 		return null;

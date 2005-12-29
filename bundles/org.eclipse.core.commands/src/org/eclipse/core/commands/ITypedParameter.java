@@ -17,7 +17,7 @@ package org.eclipse.core.commands;
  * 
  * @since 3.2
  */
-public interface IParameterWithType {
+public interface ITypedParameter {
 
 	/**
 	 * Returns the {@link ParameterType} associated with a command parameter or
