@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.commands;
 
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.IParameterValues;
+import org.eclipse.core.commands.ITypedParameter;
+import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterValuesException;
 import org.eclipse.core.commands.common.HandleObject;
 import org.eclipse.core.runtime.CoreException;
@@ -34,7 +36,7 @@ import org.eclipse.ui.internal.util.Util;
  * 
  * @since 3.1
  */
-public final class Parameter implements IParameter {
+public final class Parameter implements IParameter, ITypedParameter {
 
 	/**
 	 * The name of the configuration element attribute contain the values. This
@@ -85,6 +87,12 @@ public final class Parameter implements IParameter {
 	private final boolean optional;
 
 	/**
+	 * The type for this parameter. This value may be <code>null</code> if the
+	 * parameter is not typed.
+	 */
+	private final ParameterType parameterType;
+
+	/**
 	 * The string representation of this object. This string is for debugging
 	 * purposes only, and is not meant to be displayed to the user. This value
 	 * is computed lazily, and is cleared if one of its dependent values
@@ -117,11 +125,18 @@ public final class Parameter implements IParameter {
 	 *            The name for this parameter; must not be <code>null</code>.
 	 * @param values
 	 *            The values for this parameter; must not be <code>null</code>.
+	 * @param parameterType
+	 *            the type for this parameter; may be <code>null</code> if the
+	 *            parmeter doesn't declare type.
 	 * @param optional
-	 *            Whether this parameter is option (as opposed to required).
+	 *            Whether this parameter is optional (as opposed to required).
+	 * @param commandService
+	 *            The command service from which parameter types can be
+	 *            retrieved; must not be <code>null</code>.
 	 */
 	public Parameter(final String id, final String name,
-			final IConfigurationElement values, final boolean optional) {
+			final IConfigurationElement values,
+			final ParameterType parameterType, final boolean optional) {
 		if (id == null) {
 			throw new NullPointerException(
 					"Cannot create a parameter with a null id"); //$NON-NLS-1$
@@ -140,6 +155,7 @@ public final class Parameter implements IParameter {
 		this.id = id;
 		this.name = name;
 		this.valuesConfigurationElement = values;
+		this.parameterType = parameterType;
 		this.optional = optional;
 	}
 
@@ -179,8 +195,12 @@ public final class Parameter implements IParameter {
 		return id;
 	}
 
-	public String getName() {
+	public final String getName() {
 		return name;
+	}
+
+	public final ParameterType getParameterType() {
+		return parameterType;
 	}
 
 	public final IParameterValues getValues() throws ParameterValuesException {
@@ -199,7 +219,7 @@ public final class Parameter implements IParameter {
 
 		return values;
 	}
-	
+
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(id);
@@ -209,7 +229,7 @@ public final class Parameter implements IParameter {
 		}
 		return hashCode;
 	}
-	
+
 	public final boolean isOptional() {
 		return optional;
 	}
