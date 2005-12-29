@@ -196,7 +196,7 @@ final class CommandPersistence extends RegistryPersistence {
 
 			// Read out the parameters.
 			final Parameter[] parameters = readParameters(configurationElement,
-					warningsToLog);
+					warningsToLog, commandService);
 
 			final Command command = commandService.getCommand(commandId);
 			final Category category = commandService.getCategory(categoryId);
@@ -231,12 +231,15 @@ final class CommandPersistence extends RegistryPersistence {
 	 *            The list of warnings found during parsing. Warnings found
 	 *            while parsing the parameters will be appended to this list.
 	 *            This value must not be <code>null</code>.
+	 * @param commandService
+	 *            The command service from which the parameter can get parameter
+	 *            types; must not be <code>null</code>.
 	 * @return The array of parameters found for this configuration element;
 	 *         <code>null</code> if none can be found.
 	 */
 	private static final Parameter[] readParameters(
 			final IConfigurationElement configurationElement,
-			final List warningsToLog) {
+			final List warningsToLog, final ICommandService commandService) {
 		final IConfigurationElement[] parameterElements = configurationElement
 				.getChildren(ELEMENT_COMMAND_PARAMETER);
 		if ((parameterElements == null) || (parameterElements.length == 0)) {
@@ -274,8 +277,15 @@ final class CommandPersistence extends RegistryPersistence {
 			final boolean optional = readBoolean(parameterElement,
 					ATTRIBUTE_OPTIONAL, true);
 
+			final ParameterType type;
+			if (typeId == null) {
+				type = null;
+			} else {
+				type = commandService.getParameterType(typeId);
+			}
+
 			final Parameter parameter = new Parameter(id, name,
-					parameterElement, typeId, optional);
+					parameterElement, type, optional);
 			parameters[insertionIndex++] = parameter;
 		}
 
