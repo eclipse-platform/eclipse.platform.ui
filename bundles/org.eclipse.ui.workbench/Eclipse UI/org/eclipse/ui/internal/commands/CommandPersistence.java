@@ -16,7 +16,9 @@ import java.util.List;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.AbstractParameterValueConverter;
 import org.eclipse.core.commands.IState;
+import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.common.HandleObject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
@@ -52,6 +54,14 @@ final class CommandPersistence extends RegistryPersistence {
 	 * @see CommandPersistence#read()
 	 */
 	private static final int INDEX_COMMAND_DEFINITIONS = 1;
+
+	/**
+	 * The index of the commandParameterType elements in the indexed array.
+	 * 
+	 * @see CommandPersistence#read()
+	 * @since 3.2
+	 */
+	private static final int INDEX_PARAMETER_TYPE_DEFINITIONS = 2;
 
 	/**
 	 * The preference key prefix for all handler state.
@@ -256,12 +266,16 @@ final class CommandPersistence extends RegistryPersistence {
 			 * IExecutableExtension.
 			 */
 
+			// Read out the typeId attribute, if present.
+			final String typeId = readOptional(parameterElement,
+					ATTRIBUTE_TYPE_ID);
+
 			// Read out the optional attribute, if present.
 			final boolean optional = readBoolean(parameterElement,
 					ATTRIBUTE_OPTIONAL, true);
 
 			final Parameter parameter = new Parameter(id, name,
-					parameterElement, optional);
+					parameterElement, typeId, optional);
 			parameters[insertionIndex++] = parameter;
 		}
 
@@ -273,6 +287,76 @@ final class CommandPersistence extends RegistryPersistence {
 		}
 
 		return parameters;
+	}
+
+	/**
+	 * Reads all of the commandParameterType definitions from the commands
+	 * extension point.
+	 * 
+	 * @param configurationElements
+	 *            The configuration elements in the commands extension point;
+	 *            must not be <code>null</code>, but may be empty.
+	 * @param configurationElementCount
+	 *            The number of configuration elements that are really in the
+	 *            array.
+	 * @param commandService
+	 *            The command service to which the commands should be added;
+	 *            must not be <code>null</code>.
+	 * @since 3.2
+	 */
+	private static final void readParameterTypesFromRegistry(
+			final IConfigurationElement[] configurationElements,
+			final int configurationElementCount,
+			final ICommandService commandService) {
+
+		// Undefine all the previous handle objects.
+		final HandleObject[] handleObjects = commandService
+				.getDefinedParameterTypes();
+		if (handleObjects != null) {
+			for (int i = 0; i < handleObjects.length; i++) {
+				handleObjects[i].undefine();
+			}
+		}
+
+		final List warningsToLog = new ArrayList(1);
+
+		for (int i = 0; i < configurationElementCount; i++) {
+			final IConfigurationElement configurationElement = configurationElements[i];
+
+			// Read out the commandParameterType identifier.
+			final String parameterTypeId = readRequired(configurationElement,
+					ATTRIBUTE_ID, warningsToLog,
+					"Command parameter types need an id"); //$NON-NLS-1$
+			if (parameterTypeId == null) {
+				continue;
+			}
+
+			// Read out the type.
+			final String type = readOptional(configurationElement,
+					ATTRIBUTE_TYPE);
+
+			// Read out the converter.
+			final String converter = readOptional(configurationElement,
+					ATTRIBUTE_CONVERTER);
+
+			/*
+			 * if the converter attribute was given, create a proxy
+			 * AbstractParameterValueConverter for the ParameterType, otherwise
+			 * null indicates there is no converter
+			 */
+			final AbstractParameterValueConverter parameterValueConverter = (converter == null) ? null
+					: new ParameterValueConverterProxy(configurationElement);
+
+			final ParameterType parameterType = commandService
+					.getParameterType(parameterTypeId);
+			parameterType.define(type, parameterValueConverter);
+		}
+
+		// If there were any warnings, then log them now.
+		logWarnings(
+				warningsToLog,
+				"Warnings while parsing the commandParameterTypes from the 'org.eclipse.ui.commands' extension point."); //$NON-NLS-1$
+
 	}
 
 	/**
@@ -371,7 +455,8 @@ final class CommandPersistence extends RegistryPersistence {
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int commandDefinitionCount = 0;
 		int categoryDefinitionCount = 0;
-		final IConfigurationElement[][] indexedConfigurationElements = new IConfigurationElement[2][];
+		int parameterTypeDefinitionCount = 0;
+		final IConfigurationElement[][] indexedConfigurationElements = new IConfigurationElement[3][];
 
 		// Sort the commands extension point based on element name.
 		final IConfigurationElement[] commandsExtensionPoint = registry
@@ -389,6 +474,11 @@ final class CommandPersistence extends RegistryPersistence {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements,
 						INDEX_CATEGORY_DEFINITIONS, categoryDefinitionCount++);
+			} else if (ELEMENT_COMMAND_PARAMETER_TYPE.equals(name)) {
+				addElementToIndexedArray(configurationElement,
+						indexedConfigurationElements,
+						INDEX_PARAMETER_TYPE_DEFINITIONS,
+						parameterTypeDefinitionCount++);
 			}
 		}
 
@@ -411,5 +501,9 @@ final class CommandPersistence extends RegistryPersistence {
 		readCommandsFromRegistry(
 				indexedConfigurationElements[INDEX_COMMAND_DEFINITIONS],
 				commandDefinitionCount, commandService);
+		readParameterTypesFromRegistry(
+				indexedConfigurationElements[INDEX_PARAMETER_TYPE_DEFINITIONS],
+				parameterTypeDefinitionCount, commandService);
+
 	}
 }
