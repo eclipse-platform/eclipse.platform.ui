@@ -186,7 +186,7 @@ public final class ExecutionEvent {
 			throw new ExecutionException("Command is not defined", e); //$NON-NLS-1$
 		} catch (final ParameterValueConversionException e) {
 			throw new ExecutionException(
-					"The parameter string could not be converted to an object"); //$NON-NLS-1$
+					"The parameter string could not be converted to an object", e); //$NON-NLS-1$
 		}
 	}
 

@@ -20,7 +20,7 @@ package org.eclipse.core.commands;
  * <p>
  * This class offers multiple handlers of a command a consistent way of
  * converting string parameter values into the objects that the handlers would
- * prefer to deal with. This interface also gives clients a way to serialize
+ * prefer to deal with. This class also gives clients a way to serialize
  * object parameters as strings so that entire parameterized commands can be
  * serialized, stored and later deserialized and executed.
  * </p>

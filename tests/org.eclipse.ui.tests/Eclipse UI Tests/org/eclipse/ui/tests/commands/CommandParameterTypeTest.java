@@ -11,6 +11,8 @@
 package org.eclipse.ui.tests.commands;
 
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IParameter;
+import org.eclipse.core.commands.ITypedParameter;
 import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterValueConversionException;
 import org.eclipse.core.commands.Parameterization;
@@ -37,18 +39,29 @@ public class CommandParameterTypeTest extends UITestCase {
 		super(testName);
 	}
 	
+	/**
+	 * Tests invoking a command that subtracts one number from another. The
+	 * handler for the subtract command will convert the string parameters to
+	 * integers to perform the operation. This test drives much of the command
+	 * parameter type infrastructure including obtaining parameter types and
+	 * performing stringToObject and objectToString conversions.
+	 */
 	public void testSubtract() throws CommandException {
 		testSubtract(8, 5, 3);
 		testSubtract(-4, 12, -16);
 	}
 	
+	/**
+	 * Test subtract again with invalid parameters and check for failure
+	 * exception.
+	 */
 	public void testSubtractTypeError() {
 		try {
 			// try to pass a Boolean instead of an Integer
 			testSubtract(new Integer(3), Boolean.FALSE, 3);
 			fail("expected ParameterValueConversionException");
 		}
-		catch (ClassCastException ex) {
+		catch (ParameterValueConversionException ex) {
 			// passed
 		}
 		catch (Exception ex) {
@@ -56,7 +69,10 @@ public class CommandParameterTypeTest extends UITestCase {
 		}
 	}
 	
-	public void testSubtract(int minuend, int subtrahend, int difference) throws CommandException {
+	/**
+	 * Test the complete execution flow for the subtract command
+	 */
+	private void testSubtract(int minuend, int subtrahend, int difference) throws CommandException {
 		testSubtract(new Integer(minuend), new Integer(subtrahend), difference);
 	}
 	
@@ -88,6 +104,10 @@ public class CommandParameterTypeTest extends UITestCase {
 		assertEquals(difference, result.intValue());
 	}
 	
+	/**
+	 * Tests AbstractParameterValueConverter.convertToObject for the Integer
+	 * converter used in this test suite.
+	 */
 	public void testConvertStringToInteger() throws CommandException {
 		testConvertStringToInteger("33", 33, false);
 		testConvertStringToInteger("-1", -1, false);
@@ -118,6 +138,10 @@ public class CommandParameterTypeTest extends UITestCase {
 		assertEquals(new Integer(expected), converted);
 	}
 	
+	/**
+	 * Tests AbstractParameterValueConverter.convertToString for the Integer
+	 * converter used in this test suite.
+	 */
 	public void testConvertIntegerToString() throws CommandException {
 		testConvertIntegerToString(new Integer(6), "6", false);
 		testConvertIntegerToString(new Integer(0), "0", false);
@@ -136,10 +160,7 @@ public class CommandParameterTypeTest extends UITestCase {
 			try {
 				converted = type.getValueConverter().convertToString(value);
 				fail("expected ParameterValueConversionException");
-			} catch (ClassCastException ex) {
-				// passed
-				return;
-			} catch (NullPointerException ex) {
+			} catch (ParameterValueConversionException ex) {
 				// passed
 				return;
 			} catch (Exception ex) {
@@ -150,6 +171,77 @@ public class CommandParameterTypeTest extends UITestCase {
 		}
 		assertEquals(expected, converted);
 	}
+	
+	/**
+	 * Tests ParameterType.isCompatible for various values with the Integer
+	 * parameter type used in this test suite.
+	 */
+	public void testIsCompatible() throws CommandException {
+		ICommandService commandService = getCommandService();
+		ParameterType type = commandService.getParameterType(TYPE);
+		
+		assertTrue(type.isCompatible(new Integer(4)));
+		assertTrue(type.isCompatible(new Integer(0)));
+		assertTrue(type.isCompatible(new Integer(-434)));
+		assertFalse(type.isCompatible(null));
+		assertFalse(type.isCompatible("4"));
+	}
+	
+	/**
+	 * Try to find a command that takes integers as parameters. We might find
+	 * multiple commands - just make sure we can at least find the subtract
+	 * command used elsewhere in this test suite.
+	 */
+	public void testFindIntegerParamCommand() throws CommandException {
+		Integer value = new Integer(6);
+		
+		ICommandService commandService = getCommandService();
+		Command[] commands = commandService.getDefinedCommands();
+		
+		boolean foundSubtract = false;
+		
+		for (int i = 0; i < commands.length; i++) {
+			Command command = commands[i];
+			if (!command.isDefined())
+				continue;
+			
+			IParameter[] parameters = command.getParameters();
+			if (parameters == null)
+				continue;
+			
+			if (parameters.length == 0)
+				continue;
+			
+			if (checkParamType1(command, parameters[0], value)
+					&& checkParamType2(parameters[0], value)) {
+				if (SUBTRACT.equals(command.getId())) {
+					foundSubtract = true;
+					break;
+				}
+			}
+		}
+		
+		assertTrue(foundSubtract);
+	}
+	
+	private boolean checkParamType1(Command command, IParameter parameter,
+			Object value) throws CommandException {
+		ParameterType type = command.getParameterType(parameter.getId());
+		if (type == null)
+			return false;
+		return type.isCompatible(value);
+	}
+	
+	private boolean checkParamType2(IParameter parameter, Object value)
+			throws CommandException {
+		if (!(parameter instanceof ITypedParameter))
+			return false;
+		ParameterType type = ((ITypedParameter) parameter).getParameterType();
+		if (type == null)
+			return false;
+		return type.isCompatible(value);
+	}
+	
 	
 	private ICommandService getCommandService() {
 		Object serviceObject = getWorkbench().getAdapter(ICommandService.class);

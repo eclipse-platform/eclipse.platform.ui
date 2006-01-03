@@ -173,10 +173,7 @@ public final class ParameterType extends HandleObject implements Comparable {
 		final boolean definedChanged = !this.defined;
 		this.defined = true;
 
-		// TODO: do we need eventing for type and converter??
-
 		this.type = (type == null) ? Object.class.getName() : type;
-
 		this.parameterTypeConverter = parameterTypeConverter;
 
 		fireParameterTypeChanged(new ParameterTypeEvent(this, definedChanged));
@@ -288,12 +285,7 @@ public final class ParameterType extends HandleObject implements Comparable {
 		final boolean definedChanged = defined;
 		defined = false;
 
-		// TODO: do we need eventing for type and converter??
-
-		// final boolean typeChanged = type != null;
 		type = null;
-
-		// final boolean converterChanged = converter != null;
 		parameterTypeConverter = null;
 
 		fireParameterTypeChanged(new ParameterTypeEvent(this, definedChanged));
