@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.Image;
  * FieldResource is the field for the resource.
  *
  */
-public class FieldResource implements IField {
+public class FieldResource extends AbstractField {
 
     private String description;
 
@@ -99,4 +99,17 @@ public class FieldResource implements IField {
                 marker2.getResourceName());
     }
 
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
+	 */
+	public int getDefaultDirection() {
+		return TableSorter.ASCENDING;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
+	 */
+	public int getPreferredWidth() {
+		return 75;
+	}
 }

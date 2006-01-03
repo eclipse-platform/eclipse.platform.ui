@@ -57,7 +57,7 @@ public interface IDEInternalPreferences {
     public static final String PROBLEMS_LIMIT = "PROBLEMS_LIMIT"; //$NON-NLS-1$
     
 //  problem limits
-    public static final String PROBLEMS_HIERARCHAL_MODE = "PROBLEMS_HIERARCHAL_MODE"; //$NON-NLS-1$
+    public static final String PROBLEMS_GROUPING = "PROBLEMS_GROUPING"; //$NON-NLS-1$
     
     //Whether or not to limit tasks
     public static final String LIMIT_TASKS = "LIMIT_TASKS"; //$NON-NLS-1$

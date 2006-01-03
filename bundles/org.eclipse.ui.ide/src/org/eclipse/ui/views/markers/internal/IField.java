@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,4 +61,31 @@ public interface IField {
      *  <li>a positive number if the value of obj1 is greater than the value of obj2 for this field.
      */
     int compare(Object obj1, Object obj2);
+    
+    /**
+     * Get the default direction for the receiver. Return either 
+     * {@link TableSorter#ASCENDING } or {@link TableSorter#DESCENDING }
+     * @return int
+     */
+   int getDefaultDirection();
+   
+   /**
+    * Get the preferred width of the receiver.
+    * @return int
+    */
+   int getPreferredWidth();
+
+   /**
+    * Return whether not the receiver is showing.
+    * @return boolean
+    */
+   boolean isShowing();
+   
+   /**
+    * Set whether or not the receiver is showing.
+    * @param showing
+    */
+  void setShowing(boolean showing);
+   
+ 
 }

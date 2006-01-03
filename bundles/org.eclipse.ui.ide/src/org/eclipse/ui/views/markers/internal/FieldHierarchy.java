@@ -16,7 +16,7 @@ import org.eclipse.swt.graphics.Image;
  * The FieldCategory is the field for the category entries.
  *
  */
-public class FieldHierarchy implements IField {
+public class FieldHierarchy extends AbstractField {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
@@ -85,4 +85,17 @@ public class FieldHierarchy implements IField {
 				marker2.getDescription());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
+	 */
+	public int getDefaultDirection() {
+		return TableSorter.ASCENDING;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
+	 */
+	public int getPreferredWidth() {
+		return 150;
+	}
 }

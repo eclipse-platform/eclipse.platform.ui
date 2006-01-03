@@ -97,5 +97,33 @@ public class FieldId implements IField {
         return (int)(marker1.getId() - marker2.getId());
     }
 
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
+	 */
+	public int getDefaultDirection() {
+		return TableSorter.ASCENDING;
+	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
+	 */
+	public int getPreferredWidth() {
+		return 0;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#isShowing()
+	 */
+	public boolean isShowing() {
+		// Never show id
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#setShowing(boolean)
+	 */
+	public void setShowing(boolean showing) {
+		// Ignore
+		
+	}
 }

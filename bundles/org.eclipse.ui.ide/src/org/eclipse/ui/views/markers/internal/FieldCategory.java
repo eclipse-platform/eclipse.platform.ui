@@ -6,7 +6,7 @@ import org.eclipse.swt.graphics.Image;
  * FieldCategory is the field for showing categories of markers.
  * 
  */
-public class FieldCategory implements IField {
+public class FieldCategory extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
@@ -52,12 +52,9 @@ public class FieldCategory implements IField {
 	public String getValue(Object obj) {
 
 		if (obj instanceof ConcreteMarker) {
-			String category = MarkerSupportRegistry.getInstance().getCategory(
-					((ConcreteMarker) obj).getMarker());
-			if (category != null)
-				return category;
+			return ((ConcreteMarker) obj).getCategory();
 		}
-		return MarkerMessages.FieldCategory_Uncategorized;
+		return Util.EMPTY_STRING;
 	}
 
 	/*
@@ -77,6 +74,20 @@ public class FieldCategory implements IField {
 	 */
 	public int compare(Object obj1, Object obj2) {
 		return getValue(obj1).compareTo(getValue(obj2));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
+	 */
+	public int getDefaultDirection() {
+		return TableSorter.ASCENDING;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
+	 */
+	public int getPreferredWidth() {
+		return 200;
 	}
 
 

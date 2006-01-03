@@ -86,7 +86,6 @@ public class MarkerFilter implements Cloneable {
 
 	protected boolean enabled;
 
-	private MarkerTypesModel typesModel;
 
 	private IResource[] focusResource;
 
@@ -106,10 +105,9 @@ public class MarkerFilter implements Cloneable {
 	MarkerFilter(String filterName, String[] rootTypes) {
 
 		name = filterName;
-		typesModel = new MarkerTypesModel();
 
 		for (int i = 0; i < rootTypes.length; i++) {
-			MarkerType type = typesModel.getType(rootTypes[i]);
+			MarkerType type = MarkerTypesModel.getInstance().getType(rootTypes[i]);
 
 			if (!this.rootTypes.contains(type))
 				this.rootTypes.add(type);
@@ -471,7 +469,7 @@ public class MarkerFilter implements Cloneable {
 	}
 
 	private boolean selectByType(ConcreteMarker marker) {
-		return selectedTypes.contains(typesModel.getType(marker.getType()));
+		return selectedTypes.contains(MarkerTypesModel.getInstance().getType(marker.getType()));
 	}
 
 	/**
@@ -646,7 +644,7 @@ public class MarkerFilter implements Cloneable {
 	 * @return MarkerType or <code>null</code> if it is not found.
 	 */
 	public MarkerType getMarkerType(String id) {
-		return typesModel.getType(id);
+		return MarkerTypesModel.getInstance().getType(id);
 	}
 
 	/**
@@ -738,7 +736,7 @@ public class MarkerFilter implements Cloneable {
 					status = stringTokenizer.nextToken(TAG_TYPES_DELIMITER);
 				}
 
-				MarkerType markerType = typesModel.getType(id);
+				MarkerType markerType = MarkerTypesModel.getInstance().getType(id);
 				if (markerType != null) {
 					newTypes.remove(markerType);
 
@@ -801,7 +799,7 @@ public class MarkerFilter implements Cloneable {
 	 * @return MarkerType
 	 */
 	MarkerType findMarkerType(String typeName) {
-		return typesModel.getType(typeName);
+		return MarkerTypesModel.getInstance().getType(typeName);
 	}
 
 	/**
@@ -841,7 +839,7 @@ public class MarkerFilter implements Cloneable {
 					status = stringTokenizer.nextToken(TAG_TYPES_DELIMITER);
 				}
 
-				MarkerType markerType = typesModel.getType(id);
+				MarkerType markerType = MarkerTypesModel.getInstance().getType(id);
 				if (markerType != null) {
 					newTypes.remove(markerType);
 

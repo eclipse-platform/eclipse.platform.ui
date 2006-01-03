@@ -15,84 +15,107 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * The FieldSeverity is the field for setting severities.
- *
+ * 
  */
-public class FieldSeverity implements IField {
+public class FieldSeverity extends AbstractField {
 
-    private String description;
+	private String description;
 
-    /**
-     * Create a new instance of the receiver.
-     */
-    public FieldSeverity() {
-        description = MarkerMessages.problemSeverity_description;
-    }
+	/**
+	 * Create a new instance of the receiver.
+	 */
+	public FieldSeverity() {
+		description = MarkerMessages.problemSeverity_description;
+	}
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
-     */
-    public String getDescription() {
-        return description;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
+	 */
+	public String getDescription() {
+		return description;
+	}
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
-     */
-    public Image getDescriptionImage() {
-        return null;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
+	 */
+	public Image getDescriptionImage() {
+		return null;
+	}
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
-     */
-    public String getColumnHeaderText() {
-        return ""; //$NON-NLS-1$
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
+	 */
+	public String getColumnHeaderText() {
+		return ""; //$NON-NLS-1$
+	}
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
-     */
-    public Image getColumnHeaderImage() {
-        return null;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
+	 */
+	public Image getColumnHeaderImage() {
+		return null;
+	}
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
-     */
-    public String getValue(Object obj) {
-    	return Util.getSeverityText(((ProblemMarker) obj).getSeverity());
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
+	 */
+	public String getValue(Object obj) {
+		return Util.getSeverityText(((ProblemMarker) obj).getSeverity());
+	}
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
-     */
-    public Image getImage(Object obj) {
-        if (obj == null || !(obj instanceof ProblemMarker)) {
-            return null;
-        }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
+	 */
+	public Image getImage(Object obj) {
+		if (obj == null || !(obj instanceof ProblemMarker)) {
+			return null;
+		}
 
-       return Util.getImage(((ProblemMarker) obj).getSeverity());
-    }
- 
+		return Util.getImage(((ProblemMarker) obj).getSeverity());
+	}
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object, java.lang.Object)
-     */
-    public int compare(Object obj1, Object obj2) {
-        if (obj1 == null || obj2 == null || !(obj1 instanceof ProblemMarker)
-                || !(obj2 instanceof ProblemMarker)) {
-            return 0;
-        }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object,
+	 *      java.lang.Object)
+	 */
+	public int compare(Object obj1, Object obj2) {
+		if (obj1 == null || obj2 == null || !(obj1 instanceof ProblemMarker)
+				|| !(obj2 instanceof ProblemMarker)) {
+			return 0;
+		}
 
-        int severity1 = ((ProblemMarker) obj1).getSeverity();
-        int severity2 = ((ProblemMarker) obj2).getSeverity();
-        return severity1 - severity2;
-    }
+		int severity1 = ((ProblemMarker) obj1).getSeverity();
+		int severity2 = ((ProblemMarker) obj2).getSeverity();
+		return severity1 - severity2;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
+	 */
+	public int getDefaultDirection() {
+		return TableSorter.DESCENDING;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
+	 */
+	public int getPreferredWidth() {
+		return 16;
+	}
 }

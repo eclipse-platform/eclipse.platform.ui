@@ -11,19 +11,19 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.resource.DeviceResourceException;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 
 /**
- * The message field is the field for the description
- * of the marker.
+ * The message field is the field for the description of the marker.
+ * 
  * @since 3.1
- *
+ * 
  */
-public class FieldMessage implements IField {
-
+public class FieldMessage extends AbstractField {
 
 	/**
 	 * Create an instance of the receiver.
@@ -37,7 +37,7 @@ public class FieldMessage implements IField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
 	 */
 	public String getDescription() {
-		return  MarkerMessages.description_message;
+		return MarkerMessages.description_message;
 	}
 
 	/*
@@ -76,24 +76,10 @@ public class FieldMessage implements IField {
 		if (obj == null)
 			return MarkerMessages.FieldMessage_NullMessage;
 
-		if (obj instanceof MarkerNode){
-			MarkerNode node = (MarkerNode) obj;
-	    	if(node.isConcrete()){
-	    		//Refresh as there is a still unknown empty description issue
-	    		if(node.getDescription().length() == 0)
-	    			((ConcreteMarker) node).refresh();
-	    		return node.getDescription();
-	    	}
-	    	return Util.EMPTY_STRING;
+		if (obj instanceof MarkerNode) {
+			return ((MarkerNode) obj).getDescription();
 		}
-		
-		if(obj instanceof IWorkbenchAdapter)
-			return ((IWorkbenchAdapter) obj).getLabel(obj);
-		
-		if(obj instanceof IMarker)
-			return Util.getProperty(IMarker.MESSAGE, (IMarker) obj); 
-		
-		return NLS.bind(MarkerMessages.FieldMessage_WrongType,obj.toString());
+		return NLS.bind(MarkerMessages.FieldMessage_WrongType, obj.toString());
 	}
 
 	/*
@@ -102,11 +88,26 @@ public class FieldMessage implements IField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object obj) {
-		  if (obj == null || !(obj instanceof ProblemMarker)) {
-	            return null;
-	        }
+		if (obj == null || !(obj instanceof MarkerNode)) {
+			return null;
+		}
 
-	       return Util.getImage(((ProblemMarker) obj).getSeverity());
+		MarkerNode node = (MarkerNode) obj;
+		if (node.isConcrete()) {
+			if (node instanceof ProblemMarker)
+				return Util.getImage(((ProblemMarker) obj).getSeverity());
+			return null;
+		}
+
+		try {
+			return JFaceResources
+					.getResources()
+					.createImage(
+							IDEInternalWorkbenchImages
+									.getImageDescriptor(IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEM_CATEGORY));
+		} catch (DeviceResourceException e) {
+			return null;
+		}
 	}
 
 	/*
@@ -128,4 +129,21 @@ public class FieldMessage implements IField {
 				marker2.getDescriptionKey());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
+	 */
+	public int getDefaultDirection() {
+		return TableSorter.ASCENDING;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
+	 */
+	public int getPreferredWidth() {
+		return 250;
+	}
 }

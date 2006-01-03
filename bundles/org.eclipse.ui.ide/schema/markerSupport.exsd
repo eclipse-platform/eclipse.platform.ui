@@ -14,9 +14,8 @@
       <complexType>
          <sequence>
             <element ref="problemFilter" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="subCategoryProvider" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="markerCategory" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="hierarchy" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerAttributeCategory" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerTypeCategory" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -143,30 +142,12 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
       </complexType>
    </element>
 
-   <element name="subCategoryProvider">
+   <element name="markerTypeCategory">
       <annotation>
          <documentation>
-            A subCategoryProvider provides a sub category for organizing marker types.
+            The markerTypeCategory is an element for grouping marker types into a single category.
          </documentation>
       </annotation>
-      <complexType>
-         <sequence>
-            <element ref="markerTypeReference"/>
-         </sequence>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The class is the name of the class that provides the category. It must implement org.eclipse.ui.views.markers.ISubCategoryProvider.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.views.markers.ICategoryProvider"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="markerCategory">
       <complexType>
          <sequence>
             <element ref="markerTypeReference"/>
@@ -201,64 +182,47 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
       </complexType>
    </element>
 
-   <element name="hierarchy">
+   <element name="markerAttributeCategory">
       <annotation>
          <documentation>
-            The hierachy specifies the way a marker view tree is organized in hierarchal mode. The hierarchy is determined by the hierarchy references in order.
+            A markerAttributeCategory is a category definition that checks an attribute to determine the category declaratively.
          </documentation>
       </annotation>
       <complexType>
          <sequence>
-            <element ref="markerTypeReference"/>
-            <element ref="hierarchyReference" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="markerTypeReference" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerAttributeMapping" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
+         <attribute name="attribute" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The attribute is the name of the marker attribute to test for this category.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
-   <element name="hierarchyReference">
+   <element name="markerAttributeMapping">
       <annotation>
          <documentation>
-            hierarchyReferences are used to build the tree in the hierarchy mode of marker views. The hierarchy is built in order of the hierarchy references supplied to a hierarchy.
+            A markerAttributeMapping maps a marker attribute to a name.
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="type">
+         <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The value is the value of the attribute that is used in this mapping.
                </documentation>
             </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="PROJECT">
-                  </enumeration>
-                  <enumeration value="PATH">
-                  </enumeration>
-                  <enumeration value="MESSAGE">
-                  </enumeration>
-                  <enumeration value="SEVERITY">
-                  </enumeration>
-                  <enumeration value="SUBCATEGORY">
-                  </enumeration>
-                  <enumeration value="RESOURCE">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
-         <attribute name="direction">
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  The direction is the sort direction, either ascending or descending.
+                  The name of the category that this attribute value indicates
                </documentation>
             </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="ASCENDING">
-                  </enumeration>
-                  <enumeration value="DESCENDING">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
       </complexType>
    </element>

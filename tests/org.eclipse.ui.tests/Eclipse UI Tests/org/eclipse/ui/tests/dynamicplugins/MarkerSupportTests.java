@@ -55,7 +55,7 @@ public class MarkerSupportTests extends DynamicTestCase {
 		assertFalse(hasFilter(FILTER2));
 		assertFalse(hasFilter(FILTER3));
 	}
-	
+
 	public void testSubCategories() {
 		assertFalse(hasSubCategory());
 		getBundle();
@@ -63,7 +63,7 @@ public class MarkerSupportTests extends DynamicTestCase {
 		removeBundle();
 		assertFalse(hasSubCategory());
 	}
-	
+
 	public void testCategories() {
 		assertFalse(hasCategory());
 		getBundle();
@@ -71,7 +71,7 @@ public class MarkerSupportTests extends DynamicTestCase {
 		removeBundle();
 		assertFalse(hasCategory());
 	}
-	
+
 	public void testHierarchies() {
 		assertFalse(hasHierarchy());
 		getBundle();
@@ -79,8 +79,10 @@ public class MarkerSupportTests extends DynamicTestCase {
 		removeBundle();
 		assertFalse(hasHierarchy());
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getMarkerClass()
 	 */
 	protected String getMarkerClass() {
@@ -88,8 +90,9 @@ public class MarkerSupportTests extends DynamicTestCase {
 	}
 
 	/**
-	 * Return whether or not there is a hierarchy for the 
-	 * dynamic type or if it is using the default.
+	 * Return whether or not there is a hierarchy for the dynamic type or if it
+	 * is using the default.
+	 * 
 	 * @return
 	 */
 	private boolean hasHierarchy() {
@@ -98,16 +101,14 @@ public class MarkerSupportTests extends DynamicTestCase {
 				.getSorterFor(PROBLEM_MARKER);
 	}
 
-	private boolean hasSubCategory() {
-		return MarkerSupportRegistry.getInstance().getSubCategoryProviders(
+private boolean hasSubCategory() {
+		return MarkerSupportRegistry.getInstance().getAttributeCategoryProviders(
 				DYNAMIC_PROBLEM_MARKER) != null;
-	}
-
-	/**
-	 * Return whether or not there is a filter for the dynamic category
-	 * 
-	 * @return
-	 */
+	}	/**
+		 * Return whether or not there is a filter for the dynamic category
+		 * 
+		 * @return
+		 */
 	private boolean hasCategory() {
 		return MarkerSupportRegistry.getInstance().getCategory(
 				DYNAMIC_PROBLEM_MARKER) != null;

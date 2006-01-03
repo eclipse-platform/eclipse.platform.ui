@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.Image;
  * Folder field. Designed to display and compare the names of the folders that contain
  * IMarker objects.
  */
-public class FieldFolder implements IField {
+public class FieldFolder extends AbstractField {
 
     /**
      * Create a new instance of the receiver.
@@ -92,5 +92,18 @@ public class FieldFolder implements IField {
         return marker1.getFolder().compareTo(marker2.getFolder());
     }
 
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
+	 */
+	public int getDefaultDirection() {
+		return TableSorter.ASCENDING;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
+	 */
+	public int getPreferredWidth() {
+		return 150;
+	}
 
 }

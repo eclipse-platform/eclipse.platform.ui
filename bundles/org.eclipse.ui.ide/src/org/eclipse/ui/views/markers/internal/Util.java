@@ -12,6 +12,8 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.text.DateFormat;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -46,6 +48,10 @@ public final class Util {
 	private static final String IMAGE_INFO_PATH = "obj16/info_tsk.gif"; //$NON-NLS-1$
 
 	static final MarkerNode[] EMPTY_MARKER_ARRAY = new MarkerNode[0];
+	
+	static final ConcreteMarker[] EMPTY_CONCRETE_MARKER_ARRAY = new ConcreteMarker[0];
+
+	protected static final Collection EMPTY_COLLECTION = Arrays.asList(new MarkerNode[0]);
 
 	/**
 	 * Get the propery called property from the marker. If it is not found
@@ -327,4 +333,20 @@ public final class Util {
 		return false;	
 	}
 	
+	/**
+	 * Return the name of the marker type if it can be determined.
+	 * @param marker
+	 * @param model
+	 * @return String or <code>null</code>
+	 */
+	public static String getMarkerTypeName(ConcreteMarker marker) {
+		try {
+			String typeId =  marker.getMarker().getType();
+			MarkerType type = MarkerTypesModel.getInstance().getType(typeId);
+			return type.getLabel();
+		} catch (CoreException e) {
+			IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e.getStatus());
+			return null;
+		}
+	}
 }

@@ -118,6 +118,8 @@ public final class IDEInternalWorkbenchImages {
     public final static String IMG_ETOOL_DEF_PERSPECTIVE = "IMG_ETOOL_DEF_PERSPECTIVE"; //$NON-NLS-1$
 
     public final static String IMG_ETOOL_DEF_PERSPECTIVE_HOVER = "IMG_ETOOL_DEF_PERSPECTIVE_HOVER"; //$NON-NLS-1$
+    
+    public final static String IMG_ETOOL_PROBLEM_CATEGORY = "IMG_ETOOL_PROBLEM_CATEGORY"; //$NON-NLS-1$
 
     // local toolbars
     public final static String IMG_LCL_CLOSE_VIEW = "IMG_LCL_CLOSE_VIEW"; //$NON-NLS-1$

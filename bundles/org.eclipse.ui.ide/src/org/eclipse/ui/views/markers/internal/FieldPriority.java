@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * priority.
  *
  */
-public class FieldPriority implements IField {
+public class FieldPriority extends AbstractField {
 
     static final String DESCRIPTION_IMAGE_PATH = "obj16/header_priority.gif"; //$NON-NLS-1$
 
@@ -125,4 +125,18 @@ public class FieldPriority implements IField {
         int priority2 = ((TaskMarker) obj2).getPriority();
         return priority1 - priority2;
     }
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
+	 */
+	public int getDefaultDirection() {
+		return TableSorter.ASCENDING;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
+	 */
+	public int getPreferredWidth() {
+		return 16;
+	}
 }

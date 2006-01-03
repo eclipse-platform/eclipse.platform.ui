@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.text.Collator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.views.markers.ISubCategoryProvider;
 
 /**
  * This is a concrete class that stores the same type of information as the IMarkers
@@ -56,7 +55,7 @@ public class ConcreteMarker extends MarkerNode{
 
 	private String shortFolder;
 
-	private String subCategory = Util.EMPTY_STRING;
+	private String category;
 
     public ConcreteMarker(IMarker toCopy) {
         marker = toCopy;
@@ -102,21 +101,33 @@ public class ConcreteMarker extends MarkerNode{
         // store the marker ID locally
         id = marker.getId();
         
-        ISubCategoryProvider[] providers =  MarkerSupportRegistry.getInstance().getSubCategoryProviders(marker);
-        if(providers == null)
-        	subCategory = Util.EMPTY_STRING;
-        else{
+        processCategory();
+        	
+    }
+
+	/**
+	 * Process the category. Use the subcategory if there is one and 
+	 * use the type category if not. If neither exist then just use the 
+	 * type name of the receiver.
+	 */
+	private void processCategory() {
+		AttributeCategoryProvider[] providers =  MarkerSupportRegistry.getInstance().getAttributeCategoryProviders(marker);
+        if(providers != null){
         	for (int i = 0; i < providers.length; i++) {
-				String category = providers[i].categoryFor(marker);
-				if(category != null){
-					subCategory = category;
-					break;
+				String registeredCategory = providers[i].categoryFor(marker);
+				if(registeredCategory != null){
+					category = registeredCategory;
+					return;
 				}
 				
 			}
         }
-        	
-    }
+        
+        category = MarkerSupportRegistry.getInstance().getCategory(
+				getMarker());
+        if(category == null)
+        	category = Util.getMarkerTypeName(this);
+	}
 
     public IResource getResource() {
         return marker.getResource();
@@ -232,13 +243,6 @@ public class ConcreteMarker extends MarkerNode{
 		return shortFolder;
 	}
 
-	/**
-	 * Return the subcategory for the receiver.
-	 * @return String
-	 */
-	public String getSubCategory() {
-		return subCategory;
-	}
 
 	/**
 	 * Get the location string. If the {@link IMarker#LOCATION }
@@ -247,5 +251,13 @@ public class ConcreteMarker extends MarkerNode{
 	 */
 	public String getLocationString() {
 		return locationString;
+	}
+
+	/**
+	 * Return the category for the receiver
+	 * @return
+	 */
+	public String getCategory() {
+		return category;
 	}
 }

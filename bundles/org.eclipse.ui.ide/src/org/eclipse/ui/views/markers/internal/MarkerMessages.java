@@ -192,6 +192,8 @@ public class MarkerMessages extends NLS{
 	public static String MarkerView_searching_for_markers;
 	public static String MarkerView_refreshing_counts;
 	public static String MarkerView_queueing_updates;
+	public static String MarkerView_processUpdates;
+	
 	public static String DeferredQueue_setting_contents;
 	public static String DeferredQueue_enqueueing_items;
 	public static String MarkerView_18;
@@ -260,8 +262,10 @@ public class MarkerMessages extends NLS{
 	
 	public static String MarkerResolutionDialog_AddOthers;
 	
-	public static String ProblemView_hierarchyMenu;
-	public static String ProblemView_flatMenu;
+	public static String ProblemView_GroupByMenu;
+	public static String ProblemView_Severity;
+	public static String ProblemView_Category;
+	public static String ProblemView_None;
 	
 	public static String Util_WorkspaceName;
 	public static String Util_ProjectRoot;

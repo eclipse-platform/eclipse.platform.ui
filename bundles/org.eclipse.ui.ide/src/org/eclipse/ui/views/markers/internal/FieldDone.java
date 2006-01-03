@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * FieldDone is the field for the done marker in tasks.
  *
  */
-public class FieldDone implements IField {
+public class FieldDone extends AbstractField {
 
 	static final String DESCRIPTION_IMAGE_PATH = "obj16/header_complete.gif"; //$NON-NLS-1$
 
@@ -131,6 +131,20 @@ public class FieldDone implements IField {
 		int value1 = marker1.getDone();
 		int value2 = marker2.getDone();
 		return value1 - value2;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
+	 */
+	public int getDefaultDirection() {
+		return TableSorter.ASCENDING;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
+	 */
+	public int getPreferredWidth() {
+		return 20;
 	}
 
 }

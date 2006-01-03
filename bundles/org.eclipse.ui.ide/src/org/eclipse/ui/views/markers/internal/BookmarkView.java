@@ -18,7 +18,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -35,11 +34,11 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  *
  */
 public class BookmarkView extends MarkerView {
-
-	private final ColumnPixelData[] DEFAULT_COLUMN_LAYOUTS = {
-			new ColumnPixelData(0,false,false),
-			new ColumnPixelData(200), new ColumnPixelData(75),
-			new ColumnPixelData(150), new ColumnPixelData(60) };
+//
+//	private final ColumnPixelData[] DEFAULT_COLUMN_LAYOUTS = {
+//			new ColumnPixelData(0,false,false),
+//			new ColumnPixelData(200), new ColumnPixelData(75),
+//			new ColumnPixelData(150), new ColumnPixelData(60) };
 
 	private final IField[] HIDDEN_FIELDS = { new FieldCreationTime() };
 
@@ -53,7 +52,7 @@ public class BookmarkView extends MarkerView {
 
 	private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.bookmark"; //$NON-NLS-1$
 
-	private final IField[] VISIBLE_FIELDS = {new FieldHierarchy(), new FieldMessage(),
+	private final IField[] VISIBLE_FIELDS = {new FieldDummy(), new FieldMessage(),
 			new FieldResource(), new FieldFolder(), new FieldLineNumber() };
 
 	private ICellModifier cellModifier = new ICellModifier() {
@@ -126,10 +125,6 @@ public class BookmarkView extends MarkerView {
 		super.dispose();
 	}
 
-	protected ColumnPixelData[] getDefaultColumnLayouts() {
-		return DEFAULT_COLUMN_LAYOUTS;
-	}
-
 	protected IDialogSettings getDialogSettings() {
 		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
 				.getPlugin(PlatformUI.PLUGIN_ID);
@@ -147,22 +142,25 @@ public class BookmarkView extends MarkerView {
 	 * @see org.eclipse.ui.views.markers.internal.TableView#getSortingFields()
 	 */
 	protected IField[] getSortingFields() {
-		IField[] visible = getVisibleFields();
-		IField[] all = new IField[visible.length + HIDDEN_FIELDS.length];
+		IField[] all = new IField[VISIBLE_FIELDS.length + HIDDEN_FIELDS.length];
 		
-		System.arraycopy(visible, 0, all, 0, visible.length);
-		System.arraycopy(HIDDEN_FIELDS, 0, all, visible.length, HIDDEN_FIELDS.length);
+		System.arraycopy(VISIBLE_FIELDS, 0, all, 0, VISIBLE_FIELDS.length);
+		System.arraycopy(HIDDEN_FIELDS, 0, all, VISIBLE_FIELDS.length, HIDDEN_FIELDS.length);
 		
 		return all;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.TableView#getAllFields()
+	 */
+	protected IField[] getAllFields() {
+		return getSortingFields();
 	}
 
 	protected String[] getRootTypes() {
 		return ROOT_TYPES;
 	}
 
-	protected IField[] getVisibleFields() {
-		return VISIBLE_FIELDS;
-	}
 
 	public void setSelection(IStructuredSelection structuredSelection,
 			boolean reveal) {

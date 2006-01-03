@@ -533,6 +533,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
         declareWorkbenchImage(ideBundle,
                 IDEInternalWorkbenchImages.IMG_LCL_HIERARCHICAL_LAYOUT, PATH_ELOCALTOOL
                         + "hierarchicalLayout.gif", true); //$NON-NLS-1$
+        declareWorkbenchImage(ideBundle,
+                IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEM_CATEGORY, PATH_ETOOL
+                        + "problem_category.gif", true); //$NON-NLS-1$
 
         // synchronization indicator objects
         //declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_WBET_STAT, PATH_OVERLAY+"wbet_stat.gif");

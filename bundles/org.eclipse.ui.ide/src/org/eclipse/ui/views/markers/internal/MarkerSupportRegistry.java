@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -20,7 +19,6 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.views.markers.ISubCategoryProvider;
 
 /**
  * The ProblemFilterRegistryReader is the registry reader for declarative
@@ -68,11 +66,9 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final String SEVERITY = "severity";//$NON-NLS-1$
 
-	private static final Object SUB_CATEGORY_PROVIDER = "subCategoryProvider"; //$NON-NLS-1$
+	private static final Object ATTRIBUTE_CATEGORY_REFERENCE = "markerAttributeReference"; //$NON-NLS-1$
 
 	private static final String MARKER_TYPE_REFERENCE = "markerTypeReference"; //$NON-NLS-1$
-
-	private static final String CLASS = "class";//$NON-NLS-1$
 
 	private static final Object MARKER_CATEGORY = "markerCategory";//$NON-NLS-1$
 
@@ -82,13 +78,9 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final String TYPE = "type";//$NON-NLS-1$
 
-	private static final String PROJECT = "PROJECT";//$NON-NLS-1$
-
 	private static final String PATH = "PATH";//$NON-NLS-1$
 
 	private static final String MESSAGE = "MESSAGE";//$NON-NLS-1$
-
-	private static final String SUBCATEGORY = "SUBCATEGORY";//$NON-NLS-1$
 
 	private static final String RESOURCE = "RESOURCE";//$NON-NLS-1$
 
@@ -97,6 +89,12 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private static final String DIRECTION = "direction";//$NON-NLS-1$
 
 	private static final String ASCENDING = "ASCENDING"; //$NON-NLS-1$
+
+	private static final String ATTRIBUTE_MAPPING = "markerAttributeMapping"; //$NON-NLS-1$
+
+	private static final String ATTRIBUTE = "attribute"; //$NON-NLS-1$
+
+	private static final String VALUE = "value"; //$NON-NLS-1$
 
 	private static MarkerSupportRegistry singleton;
 
@@ -121,7 +119,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private Collection registeredFilters = new ArrayList();
 
-	private HashMap registeredProviders = new HashMap();
+	private HashMap attributeCategoryProviders = new HashMap();
 
 	private HashMap categories = new HashMap();
 
@@ -170,22 +168,22 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 				continue;
 			}
-			if (element.getName().equals(SUB_CATEGORY_PROVIDER)) {
+			if (element.getName().equals(ATTRIBUTE_CATEGORY_REFERENCE)) {
 
 				String[] markerTypes = getMarkerTypes(element);
-				ISubCategoryProvider provider = getProvider(element);
+				AttributeCategoryProvider provider = getProvider(element);
 
 				if (provider != null) {
 					for (int i = 0; i < markerTypes.length; i++) {
 						String markerType = markerTypes[i];
 						Collection providers;
-						if (registeredProviders.containsKey(markerType))
-							providers = (Collection) registeredProviders
+						if (attributeCategoryProviders.containsKey(markerType))
+							providers = (Collection) attributeCategoryProviders
 									.get(markerType);
 						else
 							providers = new ArrayList();
 						providers.add(provider);
-						registeredProviders.put(markerType, providers);
+						attributeCategoryProviders.put(markerType, providers);
 						tracker.registerObject(extension, provider,
 								IExtensionTracker.REF_STRONG);
 					}
@@ -245,16 +243,12 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @return IField or <code>null</code> if there is no matching field.
 	 */
 	private IField getFieldFor(String attribute) {
-		if (attribute.equals(PROJECT))
-			return new FieldProject();
 		if (attribute.equals(PATH))
 			return new FieldFolder();
 		if (attribute.equals(MESSAGE))
 			return new FieldMessage();
 		if (attribute.equals(SEVERITY_HIERARCHY))
 			return new FieldSeverity();
-		if (attribute.equals(SUBCATEGORY))
-			return new FieldSubCategory();
 		if (attribute.equals(RESOURCE))
 			return new FieldResource();
 
@@ -284,36 +278,21 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @param element
 	 * @return ICategoryProvider
 	 */
-	private ISubCategoryProvider getProvider(final IConfigurationElement element) {
+	private AttributeCategoryProvider getProvider(
+			final IConfigurationElement element) {
 
-		final ISubCategoryProvider[] providers = new ISubCategoryProvider[1];
-		final CoreException[] exceptions = new CoreException[1];
+		IConfigurationElement[] mappings = element
+				.getChildren(ATTRIBUTE_MAPPING);
 
-		Platform.run(new ISafeRunnable() {
-			public void run() {
-				try {
-					providers[0] = (ISubCategoryProvider) IDEWorkbenchPlugin
-							.createExtension(element, CLASS);
-
-				} catch (CoreException exception) {
-					exceptions[0] = exception;
-				}
-			}
-
-			/*
-			 * (non-Javadoc) Method declared on ISafeRunnable.
-			 */
-			public void handleException(Throwable e) {
-				// Do nothing as Core will handle the logging
-			}
-		});
-
-		if (exceptions[0] != null) {
-			Util.log(exceptions[0]);
-			return null;
+		AttributeCategoryProvider provider = new AttributeCategoryProvider(
+				element.getAttribute(ATTRIBUTE));
+		for (int i = 0; i < mappings.length; i++) {
+			IConfigurationElement mappingElement = mappings[i];
+			provider.put(mappingElement.getAttribute(VALUE), mappingElement
+					.getAttribute(NAME));
 		}
 
-		return providers[0];
+		return provider;
 	}
 
 	/*
@@ -464,8 +443,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			if (objects[i] instanceof ProblemFilter)
 				registeredFilters.remove(objects[i]);
 
-			if (objects[i] instanceof ISubCategoryProvider) {
-				removeValues(objects[i], registeredProviders);
+			if (objects[i] instanceof AttributeCategoryProvider) {
+				removeValues(objects[i], attributeCategoryProviders);
 			}
 
 			if (objects[i] instanceof String) {
@@ -513,15 +492,16 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Get the ICategoryProviders associated with marker. Return
+	 * Get the AttributeCategoryProvider associated with marker. Return
 	 * <code>null</code> if there are none.
 	 * 
 	 * @param marker
 	 * @return ICategoryProvider[] or <code>null</code>
 	 */
-	public ISubCategoryProvider[] getSubCategoryProviders(IMarker marker) {
+	public AttributeCategoryProvider[] getAttributeCategoryProviders(
+			IMarker marker) {
 		try {
-			return getSubCategoryProviders(marker.getType());
+			return getAttributeCategoryProviders(marker.getType());
 		} catch (CoreException e) {
 			Util.log(e);
 			return null;
@@ -530,19 +510,19 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Return the subcategory providers for markers of type marker type.
+	 * Return the AttributeCategoryProvider for markers of type marker type.
 	 * 
 	 * @param markerType
 	 * @return ISubCategoryProvider[] or <code>null</code>
 	 */
-	public ISubCategoryProvider[] getSubCategoryProviders(String markerType) {
+	public AttributeCategoryProvider[] getAttributeCategoryProviders(String markerType) {
 		Object providers;
-		providers = registeredProviders.get(markerType);
+		providers = attributeCategoryProviders.get(markerType);
 
 		if (providers == null)
 			return null;
 		Collection providerCollection = (Collection) providers;
-		ISubCategoryProvider[] providerArray = new ISubCategoryProvider[providerCollection
+		AttributeCategoryProvider[] providerArray = new AttributeCategoryProvider[providerCollection
 				.size()];
 		providerCollection.toArray(providerArray);
 		return providerArray;
@@ -600,7 +580,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	private MarkerType getRootType() {
 		if (rootType == null) {
-			rootType = (new MarkerTypesModel()).getType(IMarker.PROBLEM);
+			rootType = (MarkerTypesModel.getInstance())
+					.getType(IMarker.PROBLEM);
 		}
 		return rootType;
 	}

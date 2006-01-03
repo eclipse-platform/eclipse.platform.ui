@@ -2760,15 +2760,22 @@
             name="On MarkerType">
          <selectedType markerId="org.eclipse.core.resources.problemmarker"/>
       </problemFilter>
-      <subCategoryProvider
-            class="org.eclipse.ui.tests.markers.TestCategoryProvider">
-         <markerTypeReference id="org.eclipse.ui.tests.categoryTestMarker"/>
-      </subCategoryProvider>
-      <markerCategory name="Test Markers">
+     
+       <markerTypeCategory name="Test Markers">
          <markerTypeReference id="org.eclipse.ui.tests.categoryTestMarker"/>
          <markerTypeReference id="org.eclipse.ui.tests.testmarker"/>
          <markerTypeReference id="org.eclipse.ui.tests.testmarker2"/>
-      </markerCategory>
+      </markerTypeCategory>
+       <markerAttributeCategory attribute="testAttribute">
+          <markerAttributeCategory attribute="category">
+             <markerAttributeMapping
+                   name="Category 0"
+                   value="0"/>
+             <markerAttributeMapping
+                   name="Category 1"
+                   value="1"/>
+          </markerAttributeCategory>
+       </markerAttributeCategory>
      
    </extension>
    <extension

@@ -11,13 +11,9 @@ package org.eclipse.ui.views.markers.internal;
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.progress.DeferredTreeContentManager;
-import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 /**
  * The MarkerTreeContentProvider is the content provider for the marker trees.
@@ -27,38 +23,16 @@ import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
  */
 public class MarkerTreeContentProvider implements ITreeContentProvider {
 
-	private class MarkerContentManager extends DeferredTreeContentManager {
-
-		/**
-		 * Create a new instance of the receiver.
-		 * 
-		 * @param provider
-		 * @param viewer
-		 * @param site
-		 */
-		public MarkerContentManager(ITreeContentProvider provider,
-				AbstractTreeViewer viewer, IWorkbenchPartSite site) {
-			super(provider, viewer, site);
-		}
-	}
-
-	MarkerContentManager manager;
-
 	TreeViewer viewer;
-
-	IDeferredWorkbenchAdapter input;
-
-	IWorkbenchPartSite partSite;
 
 	boolean hierarchalMode = true;
 
+	private MarkerAdapter adapter;
+
 	/**
 	 * Create a new content provider for the view.
-	 * 
-	 * @param site
 	 */
-	MarkerTreeContentProvider(IWorkbenchPartSite site) {
-		partSite = site;
+	MarkerTreeContentProvider() {
 	}
 
 	/*
@@ -67,7 +41,7 @@ public class MarkerTreeContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
-		if(parentElement instanceof MarkerNode)
+		if (parentElement instanceof MarkerNode)
 			return ((MarkerNode) parentElement).getChildren();
 		return Util.EMPTY_MARKER_ARRAY;
 	}
@@ -78,16 +52,18 @@ public class MarkerTreeContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		if(element instanceof MarkerNode)
+		if (element instanceof MarkerNode)
 			return ((MarkerNode) element).getParent();
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		if(element instanceof MarkerNode)
+		if (element instanceof MarkerNode)
 			return ((MarkerNode) element).getChildren().length > 0;
 		return false;
 	}
@@ -98,7 +74,7 @@ public class MarkerTreeContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		return manager.getChildren(inputElement);
+		return adapter.getElements();
 	}
 
 	/*
@@ -118,16 +94,7 @@ public class MarkerTreeContentProvider implements ITreeContentProvider {
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (TreeViewer) viewer;
-		manager = new MarkerContentManager(this, this.viewer, partSite);
-		input = (IDeferredWorkbenchAdapter) newInput;
+		adapter = (MarkerAdapter) newInput;
 
 	}
-
-	/**
-	 * Refresh the children without changing the widget yet.
-	 */
-	public void refresh() {
-		getChildren(input);
-	}
-
 }

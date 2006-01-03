@@ -1,27 +1,24 @@
 package org.eclipse.ui.views.markers.internal;
-/*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+
 import java.util.Comparator;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
- * CategorySorter is the sorter that takes categories and the viewer into account.
- *
+ * CategorySorter is the sorter that takes categories and the viewer into
+ * account.
+ * 
  */
 public class CategorySorter extends ViewerSorter implements Comparator {
 	TableSorter innerSorter;
+
+	IField categoryField;
+
+	boolean reverseSort = false;
+	
+	private final String TAG_FIELD = "categoryField"; //$NON-NLS-1$
 
 	/**
 	 * Create a new instance of the receiver wrapping a sorter.
@@ -31,12 +28,6 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 	CategorySorter(TableSorter sorter) {
 		innerSorter = sorter;
 	}
-
-	IField typeField = new FieldMarkerType();
-
-	IField categoryField = new FieldCategory();
-	
-	IField hierarchyField = new FieldHierarchy();
 
 	/**
 	 * Compare obj1 and obj starting with field depth.
@@ -49,90 +40,41 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 	 * @see ViewerSorter#compare(Viewer, Object, Object)
 	 */
 	int compare(Object obj1, Object obj2, int depth, boolean continueSearching) {
-		
+
 		if (obj1 == null || obj2 == null || !(obj1 instanceof MarkerNode)
 				|| !(obj2 instanceof MarkerNode)) {
 			return 0;
 		}
 
-		MarkerNode marker1 = (MarkerNode) obj1;
-		MarkerNode marker2 = (MarkerNode) obj2;
-		
-		if(!marker1.isConcrete() || !marker2.isConcrete())
-			return marker1.getDescription().compareTo(
-				marker2.getDescription());
-	
+		MarkerNode marker1;
+		MarkerNode marker2;
+		if (reverseSort) {
+			marker1 = (MarkerNode) obj2;
+			marker2 = (MarkerNode) obj1;
+		} else {
+			marker1 = (MarkerNode) obj1;
+			marker2 = (MarkerNode) obj2;
+		}
 
-		if (depth == 0) { // Is this the type check?
-			int result = categoryField.compare(obj1, obj2);
+		if (!marker1.isConcrete() || !marker2.isConcrete())
+			return marker1.getDescription().compareTo(marker2.getDescription());
+
+		if (categoryField == null)
+			return innerSorter.compare(marker1, marker2, depth,
+					continueSearching);
+
+		if (depth == 0) { // Is this the hierachy check
+			int result = categoryField.compare(marker1, marker2);
 			if (continueSearching && result == 0)
-				return compare(obj1, obj2, depth + 1, continueSearching);
+				return innerSorter.compare(marker1, marker2, 0,
+						continueSearching);
 			return result;
 		}
 
-		if (depth == 1) { // Is this the type check?
-			int result = typeField.compare(obj1, obj2);
-			if (continueSearching && result == 0)
-				return compare(obj1, obj2, depth + 1, continueSearching);
-			return result;
-		}
+		// Now head for the table sorter
+		return innerSorter.compare(marker1, marker2, depth - 1,
+				continueSearching);
 
-		// Now we just use the sorters are we are past the two reserved depths
-
-		String type;
-		int categoryDepth = depth - 2;
-		try {
-			type = ((ConcreteMarker) marker1).getMarker().getType();
-		} catch (CoreException e) {
-			IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
-			return 0;
-		}
-		TableSorter categorySorter = MarkerSupportRegistry.getInstance()
-				.getSorterFor(type);
-
-		int categoryCount = categorySorter.getFields().length;
-
-		if (categoryDepth > categoryCount)// Are we past categories?
-			return innerSorter.compare(obj1, obj2, depth - 2 - categoryCount,
-					continueSearching);
-		int result = categorySorter.getFields()[categoryDepth].compare(obj1,
-				obj2);
-		if (continueSearching && result == 0)
-			return categorySorter.compare(obj1, obj2, categoryDepth + 1,
-					continueSearching);
-		return result;
-	}
-
-	/**
-	 * Return the category field at index field index.
-	 * 
-	 * @param fieldIndex
-	 * @param type
-	 * @return IField
-	 */
-	public IField getCategoryField(int fieldIndex, String type) {
-		switch (fieldIndex) {
-		case 0:
-			return categoryField;
-		case 1:
-			return typeField;
-
-		default:
-			return MarkerSupportRegistry.getInstance().getSorterFor(type)
-					.getFields()[fieldIndex - 2];
-		}
-
-	}
-
-	/**
-	 * Return the number of categories possible for type type.
-	 * 
-	 * @param type
-	 * @return int
-	 */
-	public int getCategoryFieldCount(String type) {
-		return MarkerSupportRegistry.getInstance().getSorterFor(type)
-				.getFields().length + 2;
 	}
 
 	/*
@@ -152,5 +94,89 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 	 */
 	public int compare(Object arg0, Object arg1) {
 		return compare(arg0, arg1, 0, true);
+	}
+
+	/**
+	 * Get the category field.
+	 * 
+	 * @return IField
+	 */
+	public IField getCategoryField() {
+		return categoryField;
+	}
+
+	/**
+	 * Set the field that we are categorizing by.
+	 * 
+	 * @param field
+	 */
+	public void setCategoryField(IField field) {
+		this.categoryField = field;
+		reverseSort = false;
+	}
+
+	/**
+	 * Reverse the direction we are sorting in
+	 */
+	public void reverseSortDirection() {
+		reverseSort = !reverseSort;
+
+	}
+
+	/**
+	 * Set the inner sorter to the new sorter.
+	 * @param sorter2
+	 */
+	public void setTableSorter(TableSorter sorter2) {
+		innerSorter = sorter2;
+		
+	}
+
+	/**
+	 * Save the state of the receiver.
+	 * @param dialogSettings
+	 */
+	public void saveState(IDialogSettings dialogSettings) {
+		if (dialogSettings == null) {
+			return;
+		}
+
+		IDialogSettings settings = dialogSettings
+				.getSection(TableSorter.TAG_DIALOG_SECTION);
+		if (settings == null) {
+			settings = dialogSettings.addNewSection(TableSorter.TAG_DIALOG_SECTION);
+		}
+		
+		String description = Util.EMPTY_STRING;
+		if(categoryField != null)
+			description = categoryField.getDescription();
+		
+		settings.put(TAG_FIELD, description);
+		
+	}
+
+	/**
+	 * Restore the state of the receiver from the dialog settings.
+	 * @param dialogSettings
+	 * @param view
+	 */
+	public void restoreState(IDialogSettings dialogSettings, ProblemView view) {
+		if (dialogSettings == null) {
+			return;
+		}
+
+		IDialogSettings settings = dialogSettings
+				.getSection(TableSorter.TAG_DIALOG_SECTION);
+		if (settings == null) 
+			return;
+		
+		String description = settings.get(TAG_FIELD);
+		
+		if(description.length() == 0){
+			categoryField = null;
+			return;
+		}
+		
+		categoryField = view.findField(description);
 	}
 }

@@ -20,7 +20,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * FieldLineNumber is the field for line numbers.
  *
  */
-public class FieldLineNumber implements IField {
+public class FieldLineNumber extends AbstractField {
 
     private String description;
 
@@ -129,4 +129,17 @@ public class FieldLineNumber implements IField {
         return location1.compareTo(location2);
     }
 
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
+	 */
+	public int getDefaultDirection() {
+		return TableSorter.ASCENDING;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
+	 */
+	public int getPreferredWidth() {
+		return 60;
+	}
 }

@@ -10,20 +10,22 @@ package org.eclipse.ui.views.markers.internal;
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
+
 import org.eclipse.swt.graphics.Image;
 
 /**
- * FieldCategory is the field to support categories
- * added via ICategoryProvider.
+ * FieldDummy is a dummy field used to eat up the column of the tree
+ * which has layout issues,
+ * @since 3.2
  *
  */
-public class FieldSubCategory implements IField {
+public class FieldDummy extends AbstractField implements IField {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
 	 */
 	public String getDescription() {
-		return MarkerMessages.description_subcategory;
+		return Util.EMPTY_STRING;
 	}
 
 	/* (non-Javadoc)
@@ -37,7 +39,6 @@ public class FieldSubCategory implements IField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
 	 */
 	public String getColumnHeaderText() {
-		
 		return Util.EMPTY_STRING;
 	}
 
@@ -52,9 +53,6 @@ public class FieldSubCategory implements IField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
 	 */
 	public String getValue(Object obj) {
-		MarkerNode node = (MarkerNode) obj;
-		if(node.isConcrete())
-			return ((ConcreteMarker) obj).getSubCategory();
 		return Util.EMPTY_STRING;
 	}
 
@@ -69,14 +67,21 @@ public class FieldSubCategory implements IField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare(Object obj1, Object obj2) {
-		   if (obj1 == null || obj2 == null || !(obj1 instanceof ConcreteMarker)
-	                || !(obj2 instanceof ConcreteMarker)) {
-	            return 0;
-	        }
-
-	        ConcreteMarker marker1 = (ConcreteMarker) obj1;
-	        ConcreteMarker marker2 = (ConcreteMarker) obj2;
-	        
-	        return marker1.getSubCategory().compareTo(marker2.getSubCategory());
+		return 0;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
+	 */
+	public int getDefaultDirection() {
+		return TableSorter.ASCENDING;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
+	 */
+	public int getPreferredWidth() {
+		return 0;
+	}
+
 }

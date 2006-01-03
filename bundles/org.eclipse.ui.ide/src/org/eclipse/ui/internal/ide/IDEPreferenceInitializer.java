@@ -59,7 +59,7 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		//Set up marker limits
 		node.putBoolean(IDEInternalPreferences.LIMIT_PROBLEMS, true);
 		node.putInt(IDEInternalPreferences.PROBLEMS_LIMIT, 100);
-		node.putBoolean(IDEInternalPreferences.PROBLEMS_HIERARCHAL_MODE, false);
+		node.put(IDEInternalPreferences.PROBLEMS_GROUPING, "");//$NON-NLS-1$
 		
 		node.putBoolean(IDEInternalPreferences.LIMIT_BOOKMARKS, true);
 		node.putInt(IDEInternalPreferences.BOOKMARKS_LIMIT, 100);

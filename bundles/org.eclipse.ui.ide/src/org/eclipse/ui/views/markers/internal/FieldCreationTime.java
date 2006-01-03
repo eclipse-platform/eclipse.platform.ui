@@ -16,7 +16,7 @@ import org.eclipse.swt.graphics.Image;
 /**
  * Creation time field. Designed to display and compare creation times of IMarker objects.
  */
-public class FieldCreationTime implements IField {
+public class FieldCreationTime extends AbstractField {
 
     private String description;
 
@@ -102,4 +102,18 @@ public class FieldCreationTime implements IField {
         } else
             return 0;
     }
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
+	 */
+	public int getDefaultDirection() {
+		return TableSorter.ASCENDING;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
+	 */
+	public int getPreferredWidth() {
+		return 0;
+	}
 }

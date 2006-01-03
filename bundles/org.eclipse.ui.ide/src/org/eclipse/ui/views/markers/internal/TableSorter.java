@@ -40,15 +40,15 @@ public class TableSorter extends ViewerSorter implements Comparator {
 
 	protected int[] defaultDirections;
 
-	private final String TAG_DIALOG_SECTION = "sorter"; //$NON-NLS-1$
+	public static final String TAG_DIALOG_SECTION = "sorter"; //$NON-NLS-1$
 
-	private final String TAG_PRIORITY = "priority"; //$NON-NLS-1$ 
+	private static final String TAG_PRIORITY = "priority"; //$NON-NLS-1$ 
 
-	private final String TAG_DIRECTION = "direction"; //$NON-NLS-1$
+	private static final String TAG_DIRECTION = "direction"; //$NON-NLS-1$
 
-	private final String TAG_DEFAULT_PRIORITY = "defaultPriority"; //$NON-NLS-1$
+	private static final String TAG_DEFAULT_PRIORITY = "defaultPriority"; //$NON-NLS-1$
 
-	private final String TAG_DEFAULT_DIRECTION = "defaultDirection"; //$NON-NLS-1$
+	private static final String TAG_DEFAULT_DIRECTION = "defaultDirection"; //$NON-NLS-1$
 
 	public TableSorter(TableSorter other) {
 		this(other.getFields(), other.getDefaultPriorities(), other
@@ -85,6 +85,26 @@ public class TableSorter extends ViewerSorter implements Comparator {
 			System.arraycopy(defaultDirections, 0, this.defaultDirections, 0,
 					defaultDirections.length);
 		}
+	}
+
+	/**
+	 * Return a TableSorter based on the supplied fields.
+	 * 
+	 * @param sortingFields
+	 */
+	static TableSorter createTableSorter(IField[] sortingFields) {
+		int[] defaultPriorities = new int[sortingFields.length];
+		for (int i = 0; i < defaultPriorities.length; i++) {
+			defaultPriorities[i] = i;
+		}
+
+		int[] directions = new int[sortingFields.length];
+		for (int i = 0; i < directions.length; i++) {
+			directions[i] = sortingFields[i].getDefaultDirection();
+
+		}
+
+		return new TableSorter(sortingFields, defaultPriorities, directions);
 	}
 
 	protected void resetState() {
@@ -143,6 +163,15 @@ public class TableSorter extends ViewerSorter implements Comparator {
 
 	public int getTopPriority() {
 		return priorities[0];
+	}
+
+	/**
+	 * Return the field at the top priority.
+	 * 
+	 * @return IField
+	 */
+	public IField getTopField() {
+		return fields[getTopPriority()];
 	}
 
 	public int[] getPriorities() {
@@ -315,6 +344,7 @@ public class TableSorter extends ViewerSorter implements Comparator {
 	/**
 	 * Sorts the given elements in-place, modifying the given array from index
 	 * start to index end. <
+	 * 
 	 * @param viewer
 	 * @param elements
 	 * @param start
