@@ -1462,11 +1462,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
 	public void detachView(IViewReference ref){
 		Perspective persp = getActivePerspective();
-		PerspectiveHelper presentation = persp.getPresentation();
-		
 		if(persp == null)
 			return;
 		
+		PerspectiveHelper presentation = persp.getPresentation();		
 		presentation.detachPart(ref);
 	}
 	
