@@ -822,14 +822,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @throws BadLocationException if document access fails somewhere
 	 */
 	void handleChanged(DocumentEvent event) throws BadLocationException {
-		
-		/*
-		 * This can be called by the initializer job at a point
-		 * where the differ is already uninstalled.
-		 */
-		if (fLeftDocument == null || fLeftEquivalent == null)
-			return;
-		
 		/*
 		 * Now, here we have a great example of object oriented programming.
 		 */
@@ -1332,11 +1324,19 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * Uninstalls all components and dereferences any objects.
 	 */
 	private void uninstall() {
+		Job job= fInitializationJob;
+		if (job != null) {
+			job.cancel();
+			try {
+				job.join();
+			} catch (InterruptedException x) {
+				// ignore
+			}
+		}
+
 		synchronized (this) {
 			fState= SUSPENDED;
 			fIgnoreDocumentEvents= true;
-			if (fInitializationJob != null)
-				fInitializationJob.cancel();
 			fInitializationJob= null;
 
 			if (fLeftDocument != null)
@@ -1442,25 +1442,34 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	/*
 	 * @see org.eclipse.ui.internal.texteditor.quickdiff.ILineDifferExtension#suspend()
 	 */
-	public synchronized void suspend() {
-		if (fInitializationJob != null) {
-			fInitializationJob.cancel();
-			fInitializationJob= null;
+	public void suspend() {
+		Job job= fInitializationJob;
+		if (job != null) {
+			job.cancel();
+			try {
+				job.join();
+			} catch (InterruptedException x) {
+				// ignore
+			}
 		}
-		if (fRightDocument != null)
-			fRightDocument.removeDocumentListener(this);
-		if (fLeftDocument != null)
-			fLeftDocument.removeDocumentListener(this);
-		fLeftDocument= null;
-		fLeftEquivalent= null;
-
-		fLastDifference= null;
-		fStoredEvents.clear();
-		fDifferences.clear();
-
-		fState= SUSPENDED;
-
-		fireModelChanged();
+		
+		synchronized (this) {
+			fInitializationJob= null;
+			if (fRightDocument != null)
+				fRightDocument.removeDocumentListener(this);
+			if (fLeftDocument != null)
+				fLeftDocument.removeDocumentListener(this);
+			fLeftDocument= null;
+			fLeftEquivalent= null;
+			
+			fLastDifference= null;
+			fStoredEvents.clear();
+			fDifferences.clear();
+			
+			fState= SUSPENDED;
+			
+			fireModelChanged();
+		}
 	}
 
 	/*
