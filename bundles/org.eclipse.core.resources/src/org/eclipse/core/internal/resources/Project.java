@@ -73,23 +73,29 @@ public class Project extends Container implements IProject {
 	 * @see IProject#build(int, String, Map, IProgressMonitor)
 	 */
 	public void build(int trigger, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
+		monitor = Policy.monitorFor(monitor);
 		final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
 		try {
-			workspace.prepareOperation(rule, monitor);
-			ResourceInfo info = getResourceInfo(false, false);
-			int flags = getFlags(info);
-			if (!exists(flags, true) || !isOpen(flags))
-				return;
+			monitor.beginTask(null, Policy.opWork);
+			try {
+				workspace.prepareOperation(rule, monitor);
+				ResourceInfo info = getResourceInfo(false, false);
+				int flags = getFlags(info);
+				if (!exists(flags, true) || !isOpen(flags))
+					return;
 
-			workspace.beginOperation(true);
-			workspace.aboutToBuild(this, trigger);
-			workspace.getBuildManager().build(this, trigger, builderName, args, monitor);
-			workspace.broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
+				workspace.beginOperation(true);
+				workspace.aboutToBuild(this, trigger);
+				workspace.getBuildManager().build(this, trigger, builderName, args, Policy.subMonitorFor(monitor, Policy.opWork));
+				workspace.broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
+			} finally {
+				//building may close the tree, but we are still inside an operation so open it
+				if (workspace.getElementTree().isImmutable())
+					workspace.newWorkingTree();
+				workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
+			}
 		} finally {
-			//building may close the tree, but we are still inside an operation so open it
-			if (workspace.getElementTree().isImmutable())
-				workspace.newWorkingTree();
-			workspace.endOperation(rule, false, null);
+			monitor.done();
 		}
 	}
 
@@ -97,23 +103,29 @@ public class Project extends Container implements IProject {
 	 * @see IProject#build(int, IProgressMonitor)
 	 */
 	public void build(int trigger, IProgressMonitor monitor) throws CoreException {
+		monitor = Policy.monitorFor(monitor);
 		final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
 		try {
-			workspace.prepareOperation(rule, monitor);
-			ResourceInfo info = getResourceInfo(false, false);
-			int flags = getFlags(info);
-			if (!exists(flags, true) || !isOpen(flags))
-				return;
+			monitor.beginTask(null, Policy.opWork);
+			try {
+				workspace.prepareOperation(rule, monitor);
+				ResourceInfo info = getResourceInfo(false, false);
+				int flags = getFlags(info);
+				if (!exists(flags, true) || !isOpen(flags))
+					return;
 
-			workspace.beginOperation(true);
-			workspace.aboutToBuild(this, trigger);
-			workspace.getBuildManager().build(this, trigger, monitor);
-			workspace.broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
+				workspace.beginOperation(true);
+				workspace.aboutToBuild(this, trigger);
+				workspace.getBuildManager().build(this, trigger, Policy.subMonitorFor(monitor, Policy.opWork));
+				workspace.broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
+			} finally {
+				//building may close the tree, but we are still inside an operation so open it
+				if (workspace.getElementTree().isImmutable())
+					workspace.newWorkingTree();
+				workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
+			}
 		} finally {
-			//building may close the tree, but we are still inside an operation so open it
-			if (workspace.getElementTree().isImmutable())
-				workspace.newWorkingTree();
-			workspace.endOperation(rule, false, null);
+			monitor.done();
 		}
 	}
 
@@ -552,7 +564,7 @@ public class Project extends Container implements IProject {
 
 				// set the description
 				destination.internalSetDescription(destDesc, false);
-				
+
 				//create the directory for the new project
 				destination.getStore().mkdir(EFS.NONE, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
 
@@ -671,7 +683,7 @@ public class Project extends Container implements IProject {
 	public boolean isAccessible() {
 		return isOpen();
 	}
-	
+
 	public boolean isLinked(int options) {
 		return false;//projects are never linked
 	}
