@@ -15,10 +15,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
@@ -36,12 +39,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.commands.Priority;
+import org.eclipse.ui.handlers.IHandlerService;
 
 
 /**
@@ -75,18 +73,18 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	        fMode = mode;
 	    }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.commands.IHandler#execute(java.util.Map)
-         */
-        public Object execute(Map parameterValuesByName) throws ExecutionException {
-            LaunchShortcutAction action = new LaunchShortcutAction(fMode, fShortcut);
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+		 */
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+           LaunchShortcutAction action = new LaunchShortcutAction(fMode, fShortcut);
             if (action.isEnabled()) {
                 action.run();
             } else {
                 fShortcut.launch(new StructuredSelection(), fMode);
             }
             return null;
-        }
+		}
 	}
 	
 	/**
@@ -113,13 +111,12 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 */
     private void registerLaunchCommandHandlers() {
         Iterator modes = getModes().iterator();
-        IWorkbenchCommandSupport commandSupport = PlatformUI.getWorkbench().getCommandSupport();
+        IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
         while (modes.hasNext()) {
             String mode = (String) modes.next();
             String id = getId() + "." + mode; //$NON-NLS-1$
 	        IHandler handler = new LaunchCommandHandler(this, mode);
-	        HandlerSubmission submission = new HandlerSubmission(null, null, null, id, handler, Priority.MEDIUM);
-            commandSupport.addHandlerSubmission(submission);
+	        handlerService.activateHandler(id, handler);
         }
     }	
 	
