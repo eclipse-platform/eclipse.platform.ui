@@ -26,13 +26,13 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 /**
  * <p>
  * Provides relevant labels based on the associated
- * {@link org.eclipse.ui.navigator.internal.NavigatorContentService}for the contents of a
+ * {@link INavigatorContentService}for the contents of a
  * TreeViewer .
  * <p>
  * 
  * <p>
  * Except for the dependency on
- * {@link org.eclipse.ui.navigator.internal.NavigatorContentService}, this class has no
+ * {@link INavigatorContentService}, this class has no
  * dependencies on the rest of the Common Navigator framework. Tree viewers that would like to use
  * the extensions defined by the Common Navigator, without using the actual view part or other
  * pieces of functionality (filters, sorting, etc) may choose to use this class, in effect using an
