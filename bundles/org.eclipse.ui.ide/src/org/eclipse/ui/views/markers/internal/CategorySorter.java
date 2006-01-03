@@ -172,7 +172,7 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 		
 		String description = settings.get(TAG_FIELD);
 		
-		if(description.length() == 0){
+		if(description == null || description.length() == 0){
 			categoryField = null;
 			return;
 		}
