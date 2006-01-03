@@ -11,9 +11,6 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
@@ -90,11 +87,10 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	private String actionId;
 
 	/**
-	 * A map of the fake action that proxies all of the command-based services.
-	 * This value is never <code>null</code>. It is keyed by workbench
-	 * window.
+	 * The fake action that proxies all of the command-based services. This
+	 * value is never <code>null</code>.
 	 */
-	private final Map actionsByWindow = new HashMap(3);
+	private CommandLegacyActionWrapper action;
 
 	/**
 	 * The binding service that will be used to provide information about the
@@ -133,10 +129,9 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	private final String delegateAttributeName;
 
 	/**
-	 * The delegates grouped by workbench window. Each workbench window requires
-	 * the creation of a new delegate.
+	 * The delegate, if it has been created yet.
 	 */
-	private final Map delegatesByWindow = new HashMap(3);
+	private IActionDelegate delegate;
 
 	/**
 	 * The configuration element from which the handler can be created. This
@@ -314,26 +309,16 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	 *         active workbench window.
 	 */
 	private final CommandLegacyActionWrapper getAction() {
-		final Object variable = getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-		if (variable instanceof IWorkbenchWindow) {
-			final Object action = actionsByWindow.get(variable);
-			if (action instanceof CommandLegacyActionWrapper) {
-				return (CommandLegacyActionWrapper) action;
-			}
-
-			final CommandLegacyActionWrapper newAction = new CommandLegacyActionWrapper(
-					actionId, command, commandService, bindingService,
-					commandImageService, style);
-			actionsByWindow.put(variable, newAction);
-			newAction.addPropertyChangeListener(new IPropertyChangeListener() {
+		if (action == null) {
+			action = new CommandLegacyActionWrapper(actionId, command,
+					commandService, bindingService, commandImageService, style);
+			action.addPropertyChangeListener(new IPropertyChangeListener() {
 				public final void propertyChange(final PropertyChangeEvent event) {
 					// TODO Update the state somehow.
 				}
 			});
-			return newAction;
 		}
-
-		return null;
+		return action;
 	}
 
 	/**
@@ -343,15 +328,7 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	 * @return The current delegate; or <code>null</code> if none.
 	 */
 	private final IActionDelegate getDelegate() {
-		final Object variable = getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-		if (variable instanceof IWorkbenchWindow) {
-			final Object delegate = delegatesByWindow.get(variable);
-			if (delegate instanceof IActionDelegate) {
-				return (IActionDelegate) delegate;
-			}
-		}
-
-		return null;
+		return delegate;
 	}
 
 	public IState getState(String stateId) {
@@ -486,8 +463,6 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	 *         <code>false</code> otherwise.
 	 */
 	private final boolean loadDelegate() {
-		IActionDelegate delegate = getDelegate();
-
 		/*
 		 * Get the currently active workbench window. A delegate needs to be
 		 * associated with a workbench window.
@@ -520,7 +495,6 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 			try {
 				delegate = (IActionDelegate) element
 						.createExecutableExtension(delegateAttributeName);
-				delegatesByWindow.put(activeWindow, delegate);
 				initDelegate(activeWindow);
 				return true;
 
