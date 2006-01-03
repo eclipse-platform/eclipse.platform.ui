@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * A workbench window is a top level window in a workbench. Visually, a
@@ -33,7 +34,8 @@ import org.eclipse.swt.widgets.Shell;
  * 
  * @see IWorkbenchPage
  */
-public interface IWorkbenchWindow extends IPageService, IRunnableContext {
+public interface IWorkbenchWindow extends IPageService, IRunnableContext,
+		IServiceLocator {
     /**
      * Closes this workbench window.
      * <p>

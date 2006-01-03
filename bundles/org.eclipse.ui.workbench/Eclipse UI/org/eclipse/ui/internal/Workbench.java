@@ -88,7 +88,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -134,6 +133,8 @@ import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.ActivePartSourceProvider;
 import org.eclipse.ui.internal.services.ActiveShellSourceProvider;
 import org.eclipse.ui.internal.services.CurrentSelectionSourceProvider;
+import org.eclipse.ui.internal.services.ISourceProviderService;
+import org.eclipse.ui.internal.services.SourceProviderService;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
@@ -961,95 +962,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		workbenchActivitySupport = new WorkbenchActivitySupport();
 		activityHelper = ActivityPersistanceHelper.getInstance();
 
-		/*
-		 * Phase 1 of the initialization of commands. When this phase completes,
-		 * all the services and managers will exist, and be accessible via the
-		 * getService(Object) method.
-		 */
-		Command.DEBUG_COMMAND_EXECUTION = Policy.DEBUG_COMMANDS;
-		commandManager = new CommandManager();
-		final CommandService commandService = new CommandService(commandManager);
-		services.put(ICommandService.class, commandService);
-		ContextManager.DEBUG = Policy.DEBUG_CONTEXTS;
-		contextManager = new ContextManager();
-		final IContextService contextService = new ContextService(
-				contextManager);
-		services.put(IContextService.class, contextService);
-		final IHandlerService handlerService = new HandlerService(
-				commandManager);
-		services.put(IHandlerService.class, handlerService);
-		BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
-		bindingManager = new BindingManager(contextManager, commandManager);
-		final IBindingService bindingService = new BindingService(
-				bindingManager, commandService, this);
-		services.put(IBindingService.class, bindingService);
-		final CommandImageManager commandImageManager = new CommandImageManager();
-		final CommandImageService commandImageService = new CommandImageService(
-				commandImageManager, commandService);
-		services.put(ICommandImageService.class, commandImageService);
-		final SMenuManager menuManager = new SMenuManager();
-		final IMenuService menuService = new MenuService(menuManager,
-				commandService);
-		services.put(IMenuService.class, menuService);
-
-		/*
-		 * Phase 2 of the initialization of commands. The registry and
-		 * preference store are parsed into memory. When this phase completes,
-		 * all persisted state should be available to the application.
-		 */
-		commandService.readRegistry();
-		handlerService.readRegistry();
-		contextService.readRegistry();
-		bindingService.readRegistryAndPreferences(commandService);
-		commandImageService.readRegistry();
-		menuService.readRegistry();
-
-		/*
-		 * Phase 3 of the initialization of commands. The source providers that
-		 * the workbench provides are creating and registered with the above
-		 * services. These source providers notify the services when particular
-		 * pieces of workbench state change.
-		 */
-		final ActiveShellSourceProvider activeShellSourceProvider = new ActiveShellSourceProvider(
-				this);
-		handlerService.addSourceProvider(activeShellSourceProvider);
-		contextService.addSourceProvider(activeShellSourceProvider);
-		menuService.addSourceProvider(activeShellSourceProvider);
-		final ActivePartSourceProvider activePartSourceProvider = new ActivePartSourceProvider(
-				this);
-		handlerService.addSourceProvider(activePartSourceProvider);
-		contextService.addSourceProvider(activePartSourceProvider);
-		menuService.addSourceProvider(activePartSourceProvider);
-		final ActiveContextSourceProvider activeContextSourceProvider = new ActiveContextSourceProvider(
-				contextService);
-		handlerService.addSourceProvider(activeContextSourceProvider);
-		menuService.addSourceProvider(activeContextSourceProvider);
-		final CurrentSelectionSourceProvider currentSelectionSourceProvider = new CurrentSelectionSourceProvider(
-				this);
-		handlerService.addSourceProvider(currentSelectionSourceProvider);
-		contextService.addSourceProvider(currentSelectionSourceProvider);
-		menuService.addSourceProvider(currentSelectionSourceProvider);
-
-		/*
-		 * Phase 4 of the initialization of commands. This handles the creation
-		 * of wrappers for legacy APIs. By the time this phase completes, any
-		 * code trying to access commands through legacy APIs should work.
-		 */
-		final ISourceProvider[] sourceProviders = { activeShellSourceProvider,
-				activePartSourceProvider, currentSelectionSourceProvider };
-		final LegacyActionPersistence deprecatedSupport = new LegacyActionPersistence(
-				commandManager, handlerService, bindingManager,
-				commandImageManager, menuService, sourceProviders);
-		deprecatedSupport.read();
-		workbenchContextSupport = new WorkbenchContextSupport(this,
-				contextManager);
-		workbenchCommandSupport = new WorkbenchCommandSupport(bindingManager,
-				commandManager, contextManager, handlerService);
-		initializeCommandResolver();
-
-		addWindowListener(windowListener); 
-		bindingManager.addBindingManagerListener(bindingManagerListener);
-
+		initializeDefaultServices();
 		initializeFonts();
 		initializeColors();
 		initializeApplicationColors();
@@ -1193,6 +1106,104 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	public boolean isClosing() {
 		return isClosing;
+	}
+	
+	/**
+	 * Initializes all of the default command-based services for the workbench.
+	 * This also parses the registry and hooks up all the required listeners.
+	 */
+	private final void initializeDefaultServices() {
+		/*
+		 * Phase 1 of the initialization of commands. When this phase completes,
+		 * all the services and managers will exist, and be accessible via the
+		 * getService(Object) method.
+		 */
+		Command.DEBUG_COMMAND_EXECUTION = Policy.DEBUG_COMMANDS;
+		commandManager = new CommandManager();
+		final CommandService commandService = new CommandService(commandManager);
+		services.put(ICommandService.class, commandService);
+		ContextManager.DEBUG = Policy.DEBUG_CONTEXTS;
+		contextManager = new ContextManager();
+		final IContextService contextService = new ContextService(
+				contextManager);
+		services.put(IContextService.class, contextService);
+		final IHandlerService handlerService = new HandlerService(
+				commandManager);
+		services.put(IHandlerService.class, handlerService);
+		BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
+		bindingManager = new BindingManager(contextManager, commandManager);
+		final IBindingService bindingService = new BindingService(
+				bindingManager, commandService, this);
+		services.put(IBindingService.class, bindingService);
+		final CommandImageManager commandImageManager = new CommandImageManager();
+		final CommandImageService commandImageService = new CommandImageService(
+				commandImageManager, commandService);
+		services.put(ICommandImageService.class, commandImageService);
+		final SMenuManager menuManager = new SMenuManager();
+		final IMenuService menuService = new MenuService(menuManager,
+				commandService);
+		services.put(IMenuService.class, menuService);
+
+		/*
+		 * Phase 2 of the initialization of commands. The registry and
+		 * preference store are parsed into memory. When this phase completes,
+		 * all persisted state should be available to the application.
+		 */
+		commandService.readRegistry();
+		handlerService.readRegistry();
+		contextService.readRegistry();
+		bindingService.readRegistryAndPreferences(commandService);
+		commandImageService.readRegistry();
+		menuService.readRegistry();
+
+		/*
+		 * Phase 3 of the initialization of commands. The source providers that
+		 * the workbench provides are creating and registered with the above
+		 * services. These source providers notify the services when particular
+		 * pieces of workbench state change.
+		 */
+		final ISourceProviderService sourceProviderService = new SourceProviderService();
+		services.put(ISourceProviderService.class, sourceProviderService);
+		final ActiveShellSourceProvider activeShellSourceProvider = new ActiveShellSourceProvider(
+				this);
+		handlerService.addSourceProvider(activeShellSourceProvider);
+		contextService.addSourceProvider(activeShellSourceProvider);
+		menuService.addSourceProvider(activeShellSourceProvider);
+		sourceProviderService.registerProvider(activeShellSourceProvider);
+		final ActivePartSourceProvider activePartSourceProvider = new ActivePartSourceProvider(
+				this);
+		handlerService.addSourceProvider(activePartSourceProvider);
+		contextService.addSourceProvider(activePartSourceProvider);
+		menuService.addSourceProvider(activePartSourceProvider);
+		sourceProviderService.registerProvider(activePartSourceProvider);
+		final ActiveContextSourceProvider activeContextSourceProvider = new ActiveContextSourceProvider(
+				contextService);
+		handlerService.addSourceProvider(activeContextSourceProvider);
+		menuService.addSourceProvider(activeContextSourceProvider);
+		final CurrentSelectionSourceProvider currentSelectionSourceProvider = new CurrentSelectionSourceProvider(
+				this);
+		handlerService.addSourceProvider(currentSelectionSourceProvider);
+		contextService.addSourceProvider(currentSelectionSourceProvider);
+		menuService.addSourceProvider(currentSelectionSourceProvider);
+		sourceProviderService.registerProvider(currentSelectionSourceProvider);
+
+		/*
+		 * Phase 4 of the initialization of commands. This handles the creation
+		 * of wrappers for legacy APIs. By the time this phase completes, any
+		 * code trying to access commands through legacy APIs should work.
+		 */
+		final LegacyActionPersistence deprecatedSupport = new LegacyActionPersistence(
+				commandManager, bindingManager, commandImageManager,
+				menuService);
+		deprecatedSupport.read();
+		workbenchContextSupport = new WorkbenchContextSupport(this,
+				contextManager);
+		workbenchCommandSupport = new WorkbenchCommandSupport(bindingManager,
+				commandManager, contextManager, handlerService);
+		initializeCommandResolver();
+
+		addWindowListener(windowListener); 
+		bindingManager.addBindingManagerListener(bindingManagerListener);
 	}
 
 	/**
@@ -2678,5 +2689,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 		}
 		createdWindows = null;
+	}
+
+	public final Object getService(final Object key) {
+		return services.get(key);
 	}
 }

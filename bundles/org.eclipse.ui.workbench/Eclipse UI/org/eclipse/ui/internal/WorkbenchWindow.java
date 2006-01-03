@@ -75,6 +75,7 @@ import org.eclipse.ui.IPersistable;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ITrimManager;
 import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.IWorkbench;
@@ -90,6 +91,8 @@ import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+import org.eclipse.ui.commands.ICommandImageService;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerActivation;
@@ -97,6 +100,8 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.SwtUtil;
+import org.eclipse.ui.internal.handlers.LegacyActionHandlerPersistence;
+import org.eclipse.ui.internal.handlers.SlaveHandlerService;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.layout.CacheWrapper;
 import org.eclipse.ui.internal.layout.LayoutUtil;
@@ -109,827 +114,868 @@ import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.services.INestable;
+import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.keys.IBindingService;
 
 /**
  * A window within the workbench.
  */
 public class WorkbenchWindow extends ApplicationWindow implements
-        IWorkbenchWindow {
+		IWorkbenchWindow {
 
-    private WorkbenchWindowAdvisor windowAdvisor;
-    
-    private ActionBarAdvisor actionBarAdvisor;
-    
-    private int number;
+	private WorkbenchWindowAdvisor windowAdvisor;
 
-    private PageList pageList = new PageList();
+	private ActionBarAdvisor actionBarAdvisor;
 
-    private PageListenerList pageListeners = new PageListenerList();
+	private int number;
 
-    private PerspectiveListenerList perspectiveListeners = new PerspectiveListenerList();
+	private PageList pageList = new PageList();
 
-    private WWinPartService partService = new WWinPartService(this);
+	private PageListenerList pageListeners = new PageListenerList();
 
-    private ActionPresentation actionPresentation;
+	private PerspectiveListenerList perspectiveListeners = new PerspectiveListenerList();
 
-    private WWinActionBars actionBars;
+	private WWinPartService partService = new WWinPartService(this);
 
-    private boolean updateDisabled = true;
+	private ActionPresentation actionPresentation;
 
-    private boolean closing = false;
+	private WWinActionBars actionBars;
 
-    private boolean shellActivated = false;
+	private boolean updateDisabled = true;
 
-    private FastViewBar fastViewBar;
+	private boolean closing = false;
 
-    private PerspectiveSwitcher perspectiveSwitcher;
+	private boolean shellActivated = false;
 
-    private TrimLayout defaultLayout;
+	private FastViewBar fastViewBar;
 
-    ProgressRegion progressRegion;
+	private PerspectiveSwitcher perspectiveSwitcher;
+
+	private TrimLayout defaultLayout;
+
+	ProgressRegion progressRegion;
+
+	/**
+	 * The map of services maintained by the workbench window. These services
+	 * are initialized during workbench window during the
+	 * {@link #configureShell(Shell)}.
+	 */
+	private final Map services = new HashMap();
 
 	private HeapStatus heapStatus;
-	private WindowTrimProxy heapStatusTrim = null;
 
+	private WindowTrimProxy heapStatusTrim = null;
 
 	private boolean emptyWindowContentsCreated = false;
 
 	private Control emptyWindowContents;
 
-    private Rectangle normalBounds;
+	private Rectangle normalBounds;
 
-    private boolean asMaximizedState = false;
+	private boolean asMaximizedState = false;
 
-    private CBanner topBar;
-    private IWindowTrim topBarTrim;
+	private CBanner topBar;
 
-    // Previous shell size. Used to prevent the CBanner from triggering redundant layouts
-    private Point lastShellSize = new Point(0, 0);
+	private IWindowTrim topBarTrim;
 
-    /**
-     * The composite under which workbench pages create their controls.
-     * 
-     * @since 3.0
-     */
-    private Composite pageComposite;
+	// Previous shell size. Used to prevent the CBanner from triggering
+	// redundant layouts
+	private Point lastShellSize = new Point(0, 0);
 
-    /**
-     * Bit flags indication which submenus (New, Show Views, ...) this
-     * window contains. Initially none.
-     * 
-     * @since 3.0
-     */
-    private int submenus = 0x00;
+	/**
+	 * The composite under which workbench pages create their controls.
+	 * 
+	 * @since 3.0
+	 */
+	private Composite pageComposite;
 
-    /**
-     * Object for configuring this workbench window. Lazily initialized to
-     * an instance unique to this window.
-     *  
-     * @since 3.0
-     */
-    private WorkbenchWindowConfigurer windowConfigurer = null;
+	/**
+	 * Bit flags indication which submenus (New, Show Views, ...) this window
+	 * contains. Initially none.
+	 * 
+	 * @since 3.0
+	 */
+	private int submenus = 0x00;
 
-    private ShellPool detachedWindowShells;
-    
-    // constants for shortcut bar group ids 
-    static final String GRP_PAGES = "pages"; //$NON-NLS-1$
+	/**
+	 * Object for configuring this workbench window. Lazily initialized to an
+	 * instance unique to this window.
+	 * 
+	 * @since 3.0
+	 */
+	private WorkbenchWindowConfigurer windowConfigurer = null;
 
-    static final String GRP_PERSPECTIVES = "perspectives"; //$NON-NLS-1$
+	private ShellPool detachedWindowShells;
 
-    static final String GRP_FAST_VIEWS = "fastViews"; //$NON-NLS-1$
+	// constants for shortcut bar group ids
+	static final String GRP_PAGES = "pages"; //$NON-NLS-1$
 
-    // static fields for inner classes.
-    static final int VGAP = 0;
+	static final String GRP_PERSPECTIVES = "perspectives"; //$NON-NLS-1$
 
-    static final int CLIENT_INSET = 3;
+	static final String GRP_FAST_VIEWS = "fastViews"; //$NON-NLS-1$
 
-    static final int BAR_SIZE = 23;
+	// static fields for inner classes.
+	static final int VGAP = 0;
 
-    /**
-     * Constant (bit mask) indicating which the Show View submenu is
-     * probably present somewhere in this window.
-     * 
-     * @see #addSubmenu
-     * @since 3.0
-     */
-    public static final int SHOW_VIEW_SUBMENU = 0x01;
+	static final int CLIENT_INSET = 3;
 
-    /**
-     * Constant (bit mask) indicating which the Open Perspective submenu is
-     * probably present somewhere in this window.
-     *
-     * @see #addSubmenu
-     * @since 3.0
-     */
-    public static final int OPEN_PERSPECTIVE_SUBMENU = 0x02;
+	static final int BAR_SIZE = 23;
 
-    /**
-     * Constant (bit mask) indicating which the New Wizard submenu is
-     * probably present somewhere in this window.
-     * 
-     * @see #addSubmenu
-     * @since 3.0
-     */
-    public static final int NEW_WIZARD_SUBMENU = 0x04;
+	/**
+	 * Constant (bit mask) indicating which the Show View submenu is probably
+	 * present somewhere in this window.
+	 * 
+	 * @see #addSubmenu
+	 * @since 3.0
+	 */
+	public static final int SHOW_VIEW_SUBMENU = 0x01;
 
-    /**
-     * Remembers that this window contains the given submenu.
-     * 
-     * @param type the type of submenu, one of: 
-     * {@link #NEW_WIZARD_SUBMENU NEW_WIZARD_SUBMENU},
-     * {@link #OPEN_PERSPECTIVE_SUBMENU OPEN_PERSPECTIVE_SUBMENU},
-     * {@link #SHOW_VIEW_SUBMENU SHOW_VIEW_SUBMENU}
-     * @see #containsSubmenu
-     * @since 3.0
-     */
-    public void addSubmenu(int type) {
-        submenus |= type;
-    }
+	/**
+	 * Constant (bit mask) indicating which the Open Perspective submenu is
+	 * probably present somewhere in this window.
+	 * 
+	 * @see #addSubmenu
+	 * @since 3.0
+	 */
+	public static final int OPEN_PERSPECTIVE_SUBMENU = 0x02;
 
-    /**
-     * Checks to see if this window contains the given type of submenu.
-     * 
-     * @param type the type of submenu, one of: 
-     * {@link #NEW_WIZARD_SUBMENU NEW_WIZARD_SUBMENU},
-     * {@link #OPEN_PERSPECTIVE_SUBMENU OPEN_PERSPECTIVE_SUBMENU},
-     * {@link #SHOW_VIEW_SUBMENU SHOW_VIEW_SUBMENU}
-     * @return <code>true</code> if window contains submenu,
-     * <code>false</code> otherwise
-     * @see #addSubmenu
-     * @since 3.0
-     */
-    public boolean containsSubmenu(int type) {
-        return ((submenus & type) != 0);
-    }
+	/**
+	 * Constant (bit mask) indicating which the New Wizard submenu is probably
+	 * present somewhere in this window.
+	 * 
+	 * @see #addSubmenu
+	 * @since 3.0
+	 */
+	public static final int NEW_WIZARD_SUBMENU = 0x04;
 
-    /**
-     * Constant indicating that all the actions bars should be
-     * filled.
-     * 
-     * @since 3.0
-     */
-    private static final int FILL_ALL_ACTION_BARS = ActionBarAdvisor.FILL_MENU_BAR
-            | ActionBarAdvisor.FILL_COOL_BAR
-            | ActionBarAdvisor.FILL_STATUS_LINE;
+	/**
+	 * Remembers that this window contains the given submenu.
+	 * 
+	 * @param type
+	 *            the type of submenu, one of:
+	 *            {@link #NEW_WIZARD_SUBMENU NEW_WIZARD_SUBMENU},
+	 *            {@link #OPEN_PERSPECTIVE_SUBMENU OPEN_PERSPECTIVE_SUBMENU},
+	 *            {@link #SHOW_VIEW_SUBMENU SHOW_VIEW_SUBMENU}
+	 * @see #containsSubmenu
+	 * @since 3.0
+	 */
+	public void addSubmenu(int type) {
+		submenus |= type;
+	}
 
-    /**
-     * Creates and initializes a new workbench window.
-     * 
-     * @param number the number for the window
-     */
-    public WorkbenchWindow(int number) {
-        super(null);
-        this.number = number;
+	/**
+	 * Checks to see if this window contains the given type of submenu.
+	 * 
+	 * @param type
+	 *            the type of submenu, one of:
+	 *            {@link #NEW_WIZARD_SUBMENU NEW_WIZARD_SUBMENU},
+	 *            {@link #OPEN_PERSPECTIVE_SUBMENU OPEN_PERSPECTIVE_SUBMENU},
+	 *            {@link #SHOW_VIEW_SUBMENU SHOW_VIEW_SUBMENU}
+	 * @return <code>true</code> if window contains submenu,
+	 *         <code>false</code> otherwise
+	 * @see #addSubmenu
+	 * @since 3.0
+	 */
+	public boolean containsSubmenu(int type) {
+		return ((submenus & type) != 0);
+	}
 
-        // Make sure there is a workbench. This call will throw
-        // an exception if workbench not created yet. 
-        PlatformUI.getWorkbench();
+	/**
+	 * Constant indicating that all the actions bars should be filled.
+	 * 
+	 * @since 3.0
+	 */
+	private static final int FILL_ALL_ACTION_BARS = ActionBarAdvisor.FILL_MENU_BAR
+			| ActionBarAdvisor.FILL_COOL_BAR
+			| ActionBarAdvisor.FILL_STATUS_LINE;
 
-        // Add contribution managers that are exposed to other plugins.
-        addMenuBar();
-        addCoolBar(SWT.FLAT);
-        addStatusLine();
+	/**
+	 * Creates and initializes a new workbench window.
+	 * 
+	 * @param number
+	 *            the number for the window
+	 */
+	public WorkbenchWindow(int number) {
+		super(null);
+		this.number = number;
 
-        actionPresentation = new ActionPresentation(this);
-        
-        // register with the tracker
-        getExtensionTracker()
-                .registerHandler(
-                        actionSetHandler,
-                        ExtensionTracker
-                                .createExtensionPointFilter(getActionSetExtensionPoint()));
+		// Make sure there is a workbench. This call will throw
+		// an exception if workbench not created yet.
+		PlatformUI.getWorkbench();
 
-        fireWindowOpening();
+		// Add contribution managers that are exposed to other plugins.
+		addMenuBar();
+		addCoolBar(SWT.FLAT);
+		addStatusLine();
 
-        // set the shell style
-        setShellStyle(getWindowConfigurer().getShellStyle());
+		actionPresentation = new ActionPresentation(this);
 
-        // Fill the action bars
-        fillActionBars(FILL_ALL_ACTION_BARS);
-    }
-    
-    /**
-     * Return the action set extension point.
-     * 
-     * @return the action set extension point
-     * @since 3.1
-     */
-    private IExtensionPoint getActionSetExtensionPoint() {
-        return Platform.getExtensionRegistry().getExtensionPoint(
-                PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTION_SETS);
-    }
+		// register with the tracker
+		getExtensionTracker()
+				.registerHandler(
+						actionSetHandler,
+						ExtensionTracker
+								.createExtensionPointFilter(getActionSetExtensionPoint()));
 
-    /**
-     * Return the style bits for the shortcut bar.
-     * @return int
-     */
-    protected int perspectiveBarStyle() {
-        return SWT.FLAT | SWT.WRAP | SWT.RIGHT | SWT.HORIZONTAL;
-    }
+		fireWindowOpening();
 
-    private TrimDropTarget trimDropTarget;
+		// set the shell style
+		setShellStyle(getWindowConfigurer().getShellStyle());
 
-    private boolean coolBarVisible = true;
+		// Fill the action bars
+		fillActionBars(FILL_ALL_ACTION_BARS);
+	}
 
-    private boolean perspectiveBarVisible = true;
+	/**
+	 * Return the action set extension point.
+	 * 
+	 * @return the action set extension point
+	 * @since 3.1
+	 */
+	private IExtensionPoint getActionSetExtensionPoint() {
+		return Platform.getExtensionRegistry().getExtensionPoint(
+				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTION_SETS);
+	}
 
-    private boolean statusLineVisible = true;
-    
+	/**
+	 * Return the style bits for the shortcut bar.
+	 * 
+	 * @return int
+	 */
+	protected int perspectiveBarStyle() {
+		return SWT.FLAT | SWT.WRAP | SWT.RIGHT | SWT.HORIZONTAL;
+	}
+
+	private TrimDropTarget trimDropTarget;
+
+	private boolean coolBarVisible = true;
+
+	private boolean perspectiveBarVisible = true;
+
+	private boolean statusLineVisible = true;
+
 	private IWindowTrim statusLineTrim = null;
 
-    /**
-     * The handlers for global actions that were last submitted to the workbench
-     * command support. This is a map of command identifiers to
-     * <code>ActionHandler</code>. This map is never <code>null</code>,
-     * and is never empty as long as at least one global action has been
-     * registered.
-     */
-    private Map globalActionHandlersByCommandId = new HashMap();
+	/**
+	 * The handlers for global actions that were last submitted to the workbench
+	 * command support. This is a map of command identifiers to
+	 * <code>ActionHandler</code>. This map is never <code>null</code>,
+	 * and is never empty as long as at least one global action has been
+	 * registered.
+	 */
+	private Map globalActionHandlersByCommandId = new HashMap();
 
-    /**
-     * The list of handler submissions submitted to the workbench command
-     * support. This list may be empty, but it is never <code>null</code>.
-     */
-    private List handlerActivations = new ArrayList();
-    
-    /**
-     * The number of large updates that are currently going on. If this is
-     * number is greater than zero, then UI updateActionBars is a no-op.
-     * 
-     * @since 3.1
-     */
-    private int largeUpdates = 0;
+	/**
+	 * The list of handler submissions submitted to the workbench command
+	 * support. This list may be empty, but it is never <code>null</code>.
+	 */
+	private List handlerActivations = new ArrayList();
+
+	/**
+	 * The number of large updates that are currently going on. If this is
+	 * number is greater than zero, then UI updateActionBars is a no-op.
+	 * 
+	 * @since 3.1
+	 */
+	private int largeUpdates = 0;
 
 	private IExtensionTracker tracker;
-    
-    private IExtensionChangeHandler actionSetHandler = new IExtensionChangeHandler() {
 
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamichelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
-         */
-        public void addExtension(IExtensionTracker tracker, IExtension extension) {
-            // this assumes that the workbench-level tracker will have already
-            // updated the registry
+	private IExtensionChangeHandler actionSetHandler = new IExtensionChangeHandler() {
 
-            ArrayList setsToActivate = new ArrayList();
-            // look for all new sets that are on by default. Examine the tracker
-            // at the workbench level to see what descriptors are registered
-            // against this extension
-            Object[] registeredObjects = getWorkbench().getExtensionTracker()
-                    .getObjects(extension);
-            for (int i = 0; i < registeredObjects.length; i++) {
-                if (registeredObjects[i] instanceof IActionSetDescriptor) {
-                    IActionSetDescriptor desc = (IActionSetDescriptor) registeredObjects[i];
-                    if (desc.isInitiallyVisible()) {
-                        setsToActivate.add(desc);
-                    }
-                }
-            }
-            
-            // if none of the new sets are marked as initially visible, abort.
-            if (setsToActivate.isEmpty())
-                return;
-            
-            IActionSetDescriptor[] descriptors = (IActionSetDescriptor[]) setsToActivate
-                .toArray(new IActionSetDescriptor[setsToActivate.size()]);
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamichelpers.IExtensionTracker,
+		 *      org.eclipse.core.runtime.IExtension)
+		 */
+		public void addExtension(IExtensionTracker tracker, IExtension extension) {
+			// this assumes that the workbench-level tracker will have already
+			// updated the registry
 
-            WorkbenchPage page = getActiveWorkbenchPage();
-            if (page != null) {
-	            Perspective[] perspectives = page.getOpenInternalPerspectives();
-	
-	            for (int i = 0; i < perspectives.length; i++) {
-                    perspectives[i].turnOnActionSets(descriptors);
-	            }
-            }
+			ArrayList setsToActivate = new ArrayList();
+			// look for all new sets that are on by default. Examine the tracker
+			// at the workbench level to see what descriptors are registered
+			// against this extension
+			Object[] registeredObjects = getWorkbench().getExtensionTracker()
+					.getObjects(extension);
+			for (int i = 0; i < registeredObjects.length; i++) {
+				if (registeredObjects[i] instanceof IActionSetDescriptor) {
+					IActionSetDescriptor desc = (IActionSetDescriptor) registeredObjects[i];
+					if (desc.isInitiallyVisible()) {
+						setsToActivate.add(desc);
+					}
+				}
+			}
 
-            updateActionSets();
-        }
+			// if none of the new sets are marked as initially visible, abort.
+			if (setsToActivate.isEmpty())
+				return;
 
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
-         */
-        public void removeExtension(IExtension extension, Object[] objects) {
-            // remove the contributions from the window bars and dispose of the
-            // actions
-            for (int i = 0; i < objects.length; i++) {
-                if (objects[i] instanceof PluginActionSetBuilder.Binding) {
-                    PluginActionSetBuilder.Binding binding = (PluginActionSetBuilder.Binding) objects[i];
-                    binding.builder.removeActionExtensions(binding.set, binding.window);
-                    binding.set.dispose();
-                }
-            }
+			IActionSetDescriptor[] descriptors = (IActionSetDescriptor[]) setsToActivate
+					.toArray(new IActionSetDescriptor[setsToActivate.size()]);
 
-            // update all opened perspectives
-            Perspective[] perspectives = getActiveWorkbenchPage()
-                    .getOpenInternalPerspectives();
-            boolean updateNeeded = true;
-            for (int i = 0; i < perspectives.length; i++) {
-                
-                for (int j = 0; j < objects.length; j++) {
-                    if (objects[j] instanceof IActionSetDescriptor) {
-                        perspectives[i].removeActionSet((IActionSetDescriptor)objects[j]);
-                    }
-                }
-            }
+			WorkbenchPage page = getActiveWorkbenchPage();
+			if (page != null) {
+				Perspective[] perspectives = page.getOpenInternalPerspectives();
 
-            if (updateNeeded) {
-                // refresh the window
-                updateActionSets();
-            }
-        }
-    };
+				for (int i = 0; i < perspectives.length; i++) {
+					perspectives[i].turnOnActionSets(descriptors);
+				}
+			}
 
-    void registerGlobalAction(IAction globalAction) {
-        String commandId = globalAction.getActionDefinitionId();
+			updateActionSets();
+		}
 
-        if (commandId != null) {
-            final Object value = globalActionHandlersByCommandId.get(commandId);
-            if (value instanceof ActionHandler) {
-                // This handler is about to get clobbered, so dispose it.
-                final ActionHandler handler = (ActionHandler) value;
-                handler.dispose();
-            }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension,
+		 *      java.lang.Object[])
+		 */
+		public void removeExtension(IExtension extension, Object[] objects) {
+			// remove the contributions from the window bars and dispose of the
+			// actions
+			for (int i = 0; i < objects.length; i++) {
+				if (objects[i] instanceof PluginActionSetBuilder.Binding) {
+					PluginActionSetBuilder.Binding binding = (PluginActionSetBuilder.Binding) objects[i];
+					binding.builder.removeActionExtensions(binding.set,
+							binding.window);
+					binding.set.dispose();
+				}
+			}
 
-            globalActionHandlersByCommandId.put(commandId, new ActionHandler(
-                    globalAction));
-        }
+			// update all opened perspectives
+			Perspective[] perspectives = getActiveWorkbenchPage()
+					.getOpenInternalPerspectives();
+			boolean updateNeeded = true;
+			for (int i = 0; i < perspectives.length; i++) {
 
-        submitGlobalActions();
-    }
+				for (int j = 0; j < objects.length; j++) {
+					if (objects[j] instanceof IActionSetDescriptor) {
+						perspectives[i]
+								.removeActionSet((IActionSetDescriptor) objects[j]);
+					}
+				}
+			}
 
-    /**
-     * <p>
-     * Submits the action handlers for action set actions and global actions.
-     * Global actions are given priority, so that if a global action and an
-     * action set action both handle the same command, the global action is
-     * given priority.
-     * </p>
-     * <p>
-     * These submissions are submitted as <code>Priority.LEGACY</code>, which
-     * means that they are the lowest priority. This means that if a higher
-     * priority submission handles the same command under the same conditions,
-     * that that submission will become the handler.
-     * </p>
-     */
-    void submitGlobalActions() {
+			if (updateNeeded) {
+				// refresh the window
+				updateActionSets();
+			}
+		}
+	};
+
+	void registerGlobalAction(IAction globalAction) {
+		String commandId = globalAction.getActionDefinitionId();
+
+		if (commandId != null) {
+			final Object value = globalActionHandlersByCommandId.get(commandId);
+			if (value instanceof ActionHandler) {
+				// This handler is about to get clobbered, so dispose it.
+				final ActionHandler handler = (ActionHandler) value;
+				handler.dispose();
+			}
+
+			globalActionHandlersByCommandId.put(commandId, new ActionHandler(
+					globalAction));
+		}
+
+		submitGlobalActions();
+	}
+
+	/**
+	 * <p>
+	 * Submits the action handlers for action set actions and global actions.
+	 * Global actions are given priority, so that if a global action and an
+	 * action set action both handle the same command, the global action is
+	 * given priority.
+	 * </p>
+	 * <p>
+	 * These submissions are submitted as <code>Priority.LEGACY</code>, which
+	 * means that they are the lowest priority. This means that if a higher
+	 * priority submission handles the same command under the same conditions,
+	 * that that submission will become the handler.
+	 * </p>
+	 */
+	void submitGlobalActions() {
 		final IHandlerService handlerService = (IHandlerService) PlatformUI
 				.getWorkbench().getAdapter(IHandlerService.class);
-		
-        /* Mash the action sets and global actions together, with global actions
-         * taking priority.
-         */
-        Map handlersByCommandId = new HashMap();
-        handlersByCommandId.putAll(globalActionHandlersByCommandId);
-        
-        List newHandlers = new ArrayList(handlersByCommandId.size());
-        
-        Iterator existingIter = handlerActivations.iterator();
-        while (existingIter.hasNext()) {
-            IHandlerActivation next = (IHandlerActivation) existingIter.next();
-            
-            String cmdId = next.getCommandId();
-            
-            Object handler = handlersByCommandId.get(cmdId);
-            if (handler == next.getHandler()) {
-                handlersByCommandId.remove(cmdId);
-                newHandlers.add(next);
-            } else {
-                handlerService.deactivateHandler(next);
-            }
-        }
-        
-        final Shell shell = getShell();
-        if (shell != null) {
+
+		/*
+		 * Mash the action sets and global actions together, with global actions
+		 * taking priority.
+		 */
+		Map handlersByCommandId = new HashMap();
+		handlersByCommandId.putAll(globalActionHandlersByCommandId);
+
+		List newHandlers = new ArrayList(handlersByCommandId.size());
+
+		Iterator existingIter = handlerActivations.iterator();
+		while (existingIter.hasNext()) {
+			IHandlerActivation next = (IHandlerActivation) existingIter.next();
+
+			String cmdId = next.getCommandId();
+
+			Object handler = handlersByCommandId.get(cmdId);
+			if (handler == next.getHandler()) {
+				handlersByCommandId.remove(cmdId);
+				newHandlers.add(next);
+			} else {
+				handlerService.deactivateHandler(next);
+			}
+		}
+
+		final Shell shell = getShell();
+		if (shell != null) {
 			final Expression expression = new ActiveShellExpression(shell);
-            for (Iterator iterator = handlersByCommandId.entrySet().iterator(); iterator
-                    .hasNext();) {
-                Map.Entry entry = (Map.Entry) iterator.next();
-                String commandId = (String) entry.getKey();
-                IHandler handler = (IHandler) entry.getValue();
+			for (Iterator iterator = handlersByCommandId.entrySet().iterator(); iterator
+					.hasNext();) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				String commandId = (String) entry.getKey();
+				IHandler handler = (IHandler) entry.getValue();
 				newHandlers.add(handlerService.activateHandler(commandId,
 						handler, expression));
-            }
-        }
-        
-        handlerActivations = newHandlers;
-    }
+			}
+		}
 
-    /*
-     * Adds an listener to the part service.
-     */
-    public void addPageListener(IPageListener l) {
-        pageListeners.addPageListener(l);
-    }
+		handlerActivations = newHandlers;
+	}
 
-    /**
-     * @see org.eclipse.ui.IPageService
-     */
-    public void addPerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
-        perspectiveListeners.addPerspectiveListener(l);
-    }
+	/*
+	 * Adds an listener to the part service.
+	 */
+	public void addPageListener(IPageListener l) {
+		pageListeners.addPageListener(l);
+	}
 
-    /**
-     * Configures this window to have a perspecive bar.
-     * Does nothing if it already has one.
-     */
-    protected void addPerspectiveBar(int style) {
-        Assert.isTrue(perspectiveSwitcher == null);
-        perspectiveSwitcher = new PerspectiveSwitcher(this, topBar, style);
-    }
+	/**
+	 * @see org.eclipse.ui.IPageService
+	 */
+	public void addPerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
+		perspectiveListeners.addPerspectiveListener(l);
+	}
 
-    /**
-     * Close the window.
-     * 
-     * Assumes that busy cursor is active.
-     */
-    private boolean busyClose() {
-        // Whether the window was actually closed or not
-        boolean windowClosed = false;
+	/**
+	 * Configures this window to have a perspecive bar. Does nothing if it
+	 * already has one.
+	 */
+	protected void addPerspectiveBar(int style) {
+		Assert.isTrue(perspectiveSwitcher == null);
+		perspectiveSwitcher = new PerspectiveSwitcher(this, topBar, style);
+	}
 
-        // Setup internal flags to indicate window is in
-        // progress of closing and no update should be done.
-        closing = true;
-        updateDisabled = true;
+	/**
+	 * Close the window.
+	 * 
+	 * Assumes that busy cursor is active.
+	 */
+	private boolean busyClose() {
+		// Whether the window was actually closed or not
+		boolean windowClosed = false;
 
-        try {
-            // Only do the check if it is OK to close if we are not closing
-            // via the workbench as the workbench will check this itself.
-            Workbench workbench = getWorkbenchImpl();
-            int count = workbench.getWorkbenchWindowCount();
-            //also check for starting - if the first window dies on startup then we'll need to open a default window.
-            if (!workbench.isStarting() && !workbench.isClosing() && count <= 1 && workbench.getWorkbenchConfigurer().getExitOnLastWindowClose()) {
-                windowClosed = workbench.close();
-            } else {
-                if (okToClose()) {
-                    windowClosed = hardClose();
-                }
-            }
-        } finally {
-            if (!windowClosed) {
-                // Reset the internal flags if window was not closed.
-                closing = false;
-                updateDisabled = false;
-            }
-        }
+		// Setup internal flags to indicate window is in
+		// progress of closing and no update should be done.
+		closing = true;
+		updateDisabled = true;
 
-        if (windowClosed && tracker != null)
-        	tracker.close();
-        
-        return windowClosed;
-    }
+		try {
+			// Only do the check if it is OK to close if we are not closing
+			// via the workbench as the workbench will check this itself.
+			Workbench workbench = getWorkbenchImpl();
+			int count = workbench.getWorkbenchWindowCount();
+			// also check for starting - if the first window dies on startup
+			// then we'll need to open a default window.
+			if (!workbench.isStarting()
+					&& !workbench.isClosing()
+					&& count <= 1
+					&& workbench.getWorkbenchConfigurer()
+							.getExitOnLastWindowClose()) {
+				windowClosed = workbench.close();
+			} else {
+				if (okToClose()) {
+					windowClosed = hardClose();
+				}
+			}
+		} finally {
+			if (!windowClosed) {
+				// Reset the internal flags if window was not closed.
+				closing = false;
+				updateDisabled = false;
+			}
+		}
 
-    /**
-     * Opens a new page. Assumes that busy cursor is active.
-     * <p>
-     * <b>Note:</b> Since release 2.0, a window is limited to contain at most
-     * one page. If a page exist in the window when this method is used, then
-     * another window is created for the new page.  Callers are strongly
-     * recommended to use the <code>IWorkbench.openPerspective</code> APIs to
-     * programmatically show a perspective.
-     * </p>
-     */
-    protected IWorkbenchPage busyOpenPage(String perspID, IAdaptable input)
-            throws WorkbenchException {
-        IWorkbenchPage newPage = null;
+		if (windowClosed && tracker != null)
+			tracker.close();
 
-        if (pageList.isEmpty()) {
-            newPage = new WorkbenchPage(this, perspID, input);
-            pageList.add(newPage);
-            firePageOpened(newPage);
-            setActivePage(newPage);
-        } else {
-            IWorkbenchWindow window = getWorkbench().openWorkbenchWindow(
-                    perspID, input);
-            newPage = window.getActivePage();
-        }
+		return windowClosed;
+	}
 
-        return newPage;
-    }
+	/**
+	 * Opens a new page. Assumes that busy cursor is active.
+	 * <p>
+	 * <b>Note:</b> Since release 2.0, a window is limited to contain at most
+	 * one page. If a page exist in the window when this method is used, then
+	 * another window is created for the new page. Callers are strongly
+	 * recommended to use the <code>IWorkbench.openPerspective</code> APIs to
+	 * programmatically show a perspective.
+	 * </p>
+	 */
+	protected IWorkbenchPage busyOpenPage(String perspID, IAdaptable input)
+			throws WorkbenchException {
+		IWorkbenchPage newPage = null;
 
-    /**
-     * @see Window
-     */
-    public int open() {
-    	if (getPages().length == 0) {
-    		showEmptyWindowContents();
-    	}
-        fireWindowCreated();
-        getWindowAdvisor().openIntro();
-        int result = super.open();
-        fireWindowOpened();
-        if (perspectiveSwitcher != null) {
-            perspectiveSwitcher.updatePerspectiveBar();
-            perspectiveSwitcher.updateBarParent();
-        }
-        return result;
-    }
+		if (pageList.isEmpty()) {
+			newPage = new WorkbenchPage(this, perspID, input);
+			pageList.add(newPage);
+			firePageOpened(newPage);
+			setActivePage(newPage);
+		} else {
+			IWorkbenchWindow window = getWorkbench().openWorkbenchWindow(
+					perspID, input);
+			newPage = window.getActivePage();
+		}
 
-    /* (non-Javadoc)
-     * Method declared on Window.
-     */
-    protected boolean canHandleShellCloseEvent() {
-        if (!super.canHandleShellCloseEvent()) {
-            return false;
-        }
-        // let the advisor or other interested parties
-        // veto the user's explicit request to close the window
-        return fireWindowShellClosing();
-    }
+		return newPage;
+	}
 
-    /**
-     * @see IWorkbenchWindow
-     */
-    public boolean close() {
-        final boolean[] ret = new boolean[1];
-        BusyIndicator.showWhile(null, new Runnable() {
-            public void run() {
-                ret[0] = busyClose();
-            }
-        });
-        return ret[0];
-    }
+	/**
+	 * @see Window
+	 */
+	public int open() {
+		if (getPages().length == 0) {
+			showEmptyWindowContents();
+		}
+		fireWindowCreated();
+		getWindowAdvisor().openIntro();
+		int result = super.open();
+		fireWindowOpened();
+		if (perspectiveSwitcher != null) {
+			perspectiveSwitcher.updatePerspectiveBar();
+			perspectiveSwitcher.updateBarParent();
+		}
+		return result;
+	}
 
-    protected boolean isClosing() {
-        return closing || getWorkbenchImpl().isClosing();
-    }
+	/*
+	 * (non-Javadoc) Method declared on Window.
+	 */
+	protected boolean canHandleShellCloseEvent() {
+		if (!super.canHandleShellCloseEvent()) {
+			return false;
+		}
+		// let the advisor or other interested parties
+		// veto the user's explicit request to close the window
+		return fireWindowShellClosing();
+	}
 
-    /**
-     * Return whether or not the coolbar layout is locked.
-     */
-    protected boolean isCoolBarLocked() {
-        CoolBarManager cbm = getCoolBarManager(); 
-        return cbm != null && cbm.getLockLayout();
-    }
+	/**
+	 * @see IWorkbenchWindow
+	 */
+	public boolean close() {
+		final boolean[] ret = new boolean[1];
+		BusyIndicator.showWhile(null, new Runnable() {
+			public void run() {
+				ret[0] = busyClose();
+			}
+		});
+		return ret[0];
+	}
 
-    /**
-     * Close all of the pages.
-     */
-    private void closeAllPages() {
-        // Deactivate active page.
-        setActivePage(null);
+	protected boolean isClosing() {
+		return closing || getWorkbenchImpl().isClosing();
+	}
 
-        // Clone and deref all so that calls to getPages() returns
-        // empty list (if call by pageClosed event handlers)
-        PageList oldList = pageList;
-        pageList = new PageList();
+	/**
+	 * Return whether or not the coolbar layout is locked.
+	 */
+	protected boolean isCoolBarLocked() {
+		CoolBarManager cbm = getCoolBarManager();
+		return cbm != null && cbm.getLockLayout();
+	}
 
-        // Close all.
-        Iterator itr = oldList.iterator();
-        while (itr.hasNext()) {
-            WorkbenchPage page = (WorkbenchPage) itr.next();
-            firePageClosed(page);
-            page.dispose();
-        }
-        if (!closing)
-            showEmptyWindowContents();
-    }
+	/**
+	 * Close all of the pages.
+	 */
+	private void closeAllPages() {
+		// Deactivate active page.
+		setActivePage(null);
 
-    /**
-     * Save and close all of the pages.
-     */
-    public void closeAllPages(boolean save) {
-        if (save) {
-            boolean ret = saveAllPages(true);
-            if (!ret)
-                return;
-        }
-        closeAllPages();
-    }
+		// Clone and deref all so that calls to getPages() returns
+		// empty list (if call by pageClosed event handlers)
+		PageList oldList = pageList;
+		pageList = new PageList();
 
-    /**
-     * closePerspective method comment.
-     */
-    protected boolean closePage(IWorkbenchPage in, boolean save) {
-        // Validate the input.
-        if (!pageList.contains(in))
-            return false;
-        WorkbenchPage oldPage = (WorkbenchPage) in;
+		// Close all.
+		Iterator itr = oldList.iterator();
+		while (itr.hasNext()) {
+			WorkbenchPage page = (WorkbenchPage) itr.next();
+			firePageClosed(page);
+			page.dispose();
+		}
+		if (!closing)
+			showEmptyWindowContents();
+	}
 
-        // Save old perspective.
-        if (save && oldPage.isSaveNeeded()) {
-            if (!oldPage.saveAllEditors(true))
-                return false;
-        }
+	/**
+	 * Save and close all of the pages.
+	 */
+	public void closeAllPages(boolean save) {
+		if (save) {
+			boolean ret = saveAllPages(true);
+			if (!ret)
+				return;
+		}
+		closeAllPages();
+	}
 
-        // If old page is activate deactivate.
-        boolean oldIsActive = (oldPage == getActiveWorkbenchPage());
-        if (oldIsActive)
-            setActivePage(null);
+	/**
+	 * closePerspective method comment.
+	 */
+	protected boolean closePage(IWorkbenchPage in, boolean save) {
+		// Validate the input.
+		if (!pageList.contains(in))
+			return false;
+		WorkbenchPage oldPage = (WorkbenchPage) in;
 
-        // Close old page. 
-        pageList.remove(oldPage);
-        firePageClosed(oldPage);
-        oldPage.dispose();
+		// Save old perspective.
+		if (save && oldPage.isSaveNeeded()) {
+			if (!oldPage.saveAllEditors(true))
+				return false;
+		}
 
-        // Activate new page.
-        if (oldIsActive) {
-            IWorkbenchPage newPage = pageList.getNextActive();
-            if (newPage != null)
-                setActivePage(newPage);
-        }
-        if (!closing && pageList.isEmpty())
-            showEmptyWindowContents();
-        return true;
-    }
+		// If old page is activate deactivate.
+		boolean oldIsActive = (oldPage == getActiveWorkbenchPage());
+		if (oldIsActive)
+			setActivePage(null);
 
-    private void showEmptyWindowContents() {
-        if (!emptyWindowContentsCreated) {
-            Composite parent = getPageComposite();
-	        emptyWindowContents = getWindowAdvisor().createEmptyWindowContents(parent);
-	        emptyWindowContentsCreated = true;
-            // force the empty window composite to be layed out
-	        ((StackLayout) parent.getLayout()).topControl = emptyWindowContents;
-            parent.layout();
-        }
-    }
-    
-    private void hideEmptyWindowContents() {
-        if (emptyWindowContentsCreated) {
-            if (emptyWindowContents != null) {
-                emptyWindowContents.dispose();
-                emptyWindowContents = null;
-                getPageComposite().layout();
-            }
-            emptyWindowContentsCreated = false;
-        }
-    }
+		// Close old page.
+		pageList.remove(oldPage);
+		firePageClosed(oldPage);
+		oldPage.dispose();
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-     */
-    protected void configureShell(Shell shell) {
-        super.configureShell(shell);
+		// Activate new page.
+		if (oldIsActive) {
+			IWorkbenchPage newPage = pageList.getNextActive();
+			if (newPage != null)
+				setActivePage(newPage);
+		}
+		if (!closing && pageList.isEmpty())
+			showEmptyWindowContents();
+		return true;
+	}
 
-        detachedWindowShells = new ShellPool(shell, SWT.TOOL | SWT.TITLE | SWT.MAX | SWT.RESIZE | getDefaultOrientation());
-        
-        String title = getWindowConfigurer().basicGetTitle();
-        if (title != null) {
-            shell.setText(title);
-        }
+	private void showEmptyWindowContents() {
+		if (!emptyWindowContentsCreated) {
+			Composite parent = getPageComposite();
+			emptyWindowContents = getWindowAdvisor().createEmptyWindowContents(
+					parent);
+			emptyWindowContentsCreated = true;
+			// force the empty window composite to be layed out
+			((StackLayout) parent.getLayout()).topControl = emptyWindowContents;
+			parent.layout();
+		}
+	}
+
+	private void hideEmptyWindowContents() {
+		if (emptyWindowContentsCreated) {
+			if (emptyWindowContents != null) {
+				emptyWindowContents.dispose();
+				emptyWindowContents = null;
+				getPageComposite().layout();
+			}
+			emptyWindowContentsCreated = false;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+
+		detachedWindowShells = new ShellPool(shell, SWT.TOOL | SWT.TITLE
+				| SWT.MAX | SWT.RESIZE | getDefaultOrientation());
+
+		String title = getWindowConfigurer().basicGetTitle();
+		if (title != null) {
+			shell.setText(title);
+		}
 
 		final IWorkbench workbench = getWorkbench();
 		workbench.getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.WORKBENCH_WINDOW);
+
+		initializeDefaultServices();
 		final IContextService contextService = (IContextService) workbench
 				.getAdapter(IContextService.class);
 		contextService.registerShell(shell, IContextService.TYPE_WINDOW);
 
-        trackShellActivation(shell);
-        trackShellResize(shell);
-    }
-    
-    /* package */ ShellPool getDetachedWindowPool() {
-        return detachedWindowShells;
-    }
+		trackShellActivation(shell);
+		trackShellResize(shell);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.ApplicationWindow#createTrimWidgets(org.eclipse.swt.widgets.Shell)
-     */
-    protected void createTrimWidgets(Shell shell) {
-        // do nothing -- trim widgets are created in createDefaultContents
-    }
+	/* package */ShellPool getDetachedWindowPool() {
+		return detachedWindowShells;
+	}
 
-    /**
-     * Creates and remembers the client composite, under which workbench
-     * pages create their controls.
-     * 
-     * @since 3.0
-     */
-    protected Composite createPageComposite(Composite parent) {
-        pageComposite = new Composite(parent, SWT.NONE);
-        // use a StackLayout instead of a FillLayout (see bug 81460 [Workbench] (regression) Close all perspectives, open Java perspective, layout wrong)
-        pageComposite.setLayout(new StackLayout());        
-        return pageComposite;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.window.ApplicationWindow#createTrimWidgets(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void createTrimWidgets(Shell shell) {
+		// do nothing -- trim widgets are created in createDefaultContents
+	}
 
-    /**
-     * Creates the contents of the workbench window, including
-     * trim controls and the client composite.
-     * This MUST create the client composite via a call to
-     * <code>createClientComposite</code>.
-     * 
-     * @since 3.0
-     */
-    protected Control createContents(Composite parent) {
-        // we know from Window.create that the parent is a Shell.
-        getWindowAdvisor().createWindowContents((Shell) parent);
-        // the page composite must be set by createWindowContents
-        Assert
-                .isNotNull(pageComposite,
-                        "createWindowContents must call configurer.createPageComposite"); //$NON-NLS-1$
-        return pageComposite;
-    }
+	/**
+	 * Creates and remembers the client composite, under which workbench pages
+	 * create their controls.
+	 * 
+	 * @since 3.0
+	 */
+	protected Composite createPageComposite(Composite parent) {
+		pageComposite = new Composite(parent, SWT.NONE);
+		// use a StackLayout instead of a FillLayout (see bug 81460 [Workbench]
+		// (regression) Close all perspectives, open Java perspective, layout
+		// wrong)
+		pageComposite.setLayout(new StackLayout());
+		return pageComposite;
+	}
 
-    /**
-     * If the perspective bar is drawn on the top right corner of the window,
-     * then this method changes its appearance from curved to square. This
-     * should have its own preference, but for now it piggy-backs on the
-     * SHOW_TRADITIONAL_STYLE_TABS preference.
-     * 
-     * @param square
-     *            true for a square banner and false otherwise
-     */
-    public void setBannerCurve(boolean square) {
-        if (topBar != null)
-            topBar.setSimple(square);
-    }
+	/**
+	 * Creates the contents of the workbench window, including trim controls and
+	 * the client composite. This MUST create the client composite via a call to
+	 * <code>createClientComposite</code>.
+	 * 
+	 * @since 3.0
+	 */
+	protected Control createContents(Composite parent) {
+		// we know from Window.create that the parent is a Shell.
+		getWindowAdvisor().createWindowContents((Shell) parent);
+		// the page composite must be set by createWindowContents
+		Assert
+				.isNotNull(pageComposite,
+						"createWindowContents must call configurer.createPageComposite"); //$NON-NLS-1$
+		return pageComposite;
+	}
 
-    /**
-     * Creates the default contents and layout of the shell. 
-     * 
-     * @param shell the shell
-     */
-    protected void createDefaultContents(final Shell shell) {
-        defaultLayout = new TrimLayout();
-        defaultLayout.setSpacing(5, 5, 2, 2);
-        shell.setLayout(defaultLayout);
+	/**
+	 * If the perspective bar is drawn on the top right corner of the window,
+	 * then this method changes its appearance from curved to square. This
+	 * should have its own preference, but for now it piggy-backs on the
+	 * SHOW_TRADITIONAL_STYLE_TABS preference.
+	 * 
+	 * @param square
+	 *            true for a square banner and false otherwise
+	 */
+	public void setBannerCurve(boolean square) {
+		if (topBar != null)
+			topBar.setSimple(square);
+	}
 
-        Menu menuBar = getMenuBarManager().createMenuBar(shell);
-        if (getWindowConfigurer().getShowMenuBar()) {
-            shell.setMenuBar(menuBar);
-        }
+	/**
+	 * Creates the default contents and layout of the shell.
+	 * 
+	 * @param shell
+	 *            the shell
+	 */
+	protected void createDefaultContents(final Shell shell) {
+		defaultLayout = new TrimLayout();
+		defaultLayout.setSpacing(5, 5, 2, 2);
+		shell.setLayout(defaultLayout);
 
-        // Create the CBanner widget which parents both the Coolbar
-        // and the perspective switcher, and supports some configurations
-        // on the left right and bottom
-        topBar = new CBanner(shell, SWT.NONE);
-        topBarTrim = new WindowTrimProxy(topBar, 
-        		"org.eclipse.ui.internal.WorkbenchWindow.topBar",  //$NON-NLS-1$  
-        		WorkbenchMessages.TrimCommon_Main_TrimName, SWT.NONE, true);
+		Menu menuBar = getMenuBarManager().createMenuBar(shell);
+		if (getWindowConfigurer().getShowMenuBar()) {
+			shell.setMenuBar(menuBar);
+		}
 
-        // the banner gets a curve along with the new tab style
-        // TODO create a dedicated preference for this
-        setBannerCurve(PrefUtil.getAPIPreferenceStore().getBoolean(
-                IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+		// Create the CBanner widget which parents both the Coolbar
+		// and the perspective switcher, and supports some configurations
+		// on the left right and bottom
+		topBar = new CBanner(shell, SWT.NONE);
+		topBarTrim = new WindowTrimProxy(topBar,
+				"org.eclipse.ui.internal.WorkbenchWindow.topBar", //$NON-NLS-1$  
+				WorkbenchMessages.TrimCommon_Main_TrimName, SWT.NONE, true);
 
-        CacheWrapper coolbarCacheWrapper = new CacheWrapper(topBar);
+		// the banner gets a curve along with the new tab style
+		// TODO create a dedicated preference for this
+		setBannerCurve(PrefUtil.getAPIPreferenceStore().getBoolean(
+				IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 
-        final Control coolBar = createCoolBarControl(coolbarCacheWrapper
-                .getControl());
-        // need to resize the shell, not just the coolbar's immediate
-        // parent, if the coolbar wants to grow or shrink
+		CacheWrapper coolbarCacheWrapper = new CacheWrapper(topBar);
 
-        coolBar.addListener(SWT.Resize, new Listener() {
-            public void handleEvent(Event event) {
-                // If the user is dragging the sash then we will need to force
-                // a resize. However, if the coolbar was resized programatically
-                // then everything is already layed out correctly. There is no
-                // direct way to tell the difference between these cases, however
-                // we take advantage of the fact that dragging the sash does not
-                // change the size of the shell, and only force another layout
-                // if the shell size is unchanged.
-                Rectangle clientArea = shell.getClientArea();
+		final Control coolBar = createCoolBarControl(coolbarCacheWrapper
+				.getControl());
+		// need to resize the shell, not just the coolbar's immediate
+		// parent, if the coolbar wants to grow or shrink
 
-                if (lastShellSize.x == clientArea.width
-                        && lastShellSize.y == clientArea.height) {
-                    LayoutUtil.resize(coolBar);
-                }
+		coolBar.addListener(SWT.Resize, new Listener() {
+			public void handleEvent(Event event) {
+				// If the user is dragging the sash then we will need to force
+				// a resize. However, if the coolbar was resized programatically
+				// then everything is already layed out correctly. There is no
+				// direct way to tell the difference between these cases,
+				// however
+				// we take advantage of the fact that dragging the sash does not
+				// change the size of the shell, and only force another layout
+				// if the shell size is unchanged.
+				Rectangle clientArea = shell.getClientArea();
 
-                lastShellSize.x = clientArea.width;
-                lastShellSize.y = clientArea.height;
-            }
-        });
+				if (lastShellSize.x == clientArea.width
+						&& lastShellSize.y == clientArea.height) {
+					LayoutUtil.resize(coolBar);
+				}
 
-        if (getWindowConfigurer().getShowCoolBar()) {
-            topBar.setLeft(coolbarCacheWrapper.getControl());
-        }
+				lastShellSize.x = clientArea.width;
+				lastShellSize.y = clientArea.height;
+			}
+		});
 
-        createStatusLine(shell);
+		if (getWindowConfigurer().getShowCoolBar()) {
+			topBar.setLeft(coolbarCacheWrapper.getControl());
+		}
 
-        fastViewBar = new FastViewBar(this);
-        fastViewBar.createControl(shell);
+		createStatusLine(shell);
 
-        if (getWindowConfigurer().getShowPerspectiveBar()) {
-            addPerspectiveBar(perspectiveBarStyle());
-            perspectiveSwitcher.createControl(shell);
-        }
+		fastViewBar = new FastViewBar(this);
+		fastViewBar.createControl(shell);
 
-        createProgressIndicator(shell);
+		if (getWindowConfigurer().getShowPerspectiveBar()) {
+			addPerspectiveBar(perspectiveBarStyle());
+			perspectiveSwitcher.createControl(shell);
+		}
+
+		createProgressIndicator(shell);
 
 		if (getShowHeapStatus()) {
 			createHeapStatus(shell);
 		}
-        trimDropTarget = new TrimDropTarget(shell, this);
-        DragUtil.addDragTarget(shell, trimDropTarget);
+		trimDropTarget = new TrimDropTarget(shell, this);
+		DragUtil.addDragTarget(shell, trimDropTarget);
 
-        // Create the client composite area (where page content goes).
-        createPageComposite(shell);
+		// Create the client composite area (where page content goes).
+		createPageComposite(shell);
 
-        setLayoutDataForContents();
-//        System.err.println(defaultLayout.displayTrim());
-    }
+		setLayoutDataForContents();
+		// System.err.println(defaultLayout.displayTrim());
+	}
 
 	/**
 	 * Returns whether the heap status indicator should be shown.
 	 * 
-	 * @return <code>true</code> to show the heap status indicator, <code>false</code> otherwise
+	 * @return <code>true</code> to show the heap status indicator,
+	 *         <code>false</code> otherwise
 	 */
 	private boolean getShowHeapStatus() {
-		return //Show if the preference is set or debug option is on
-		PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR)
-			||
-				Boolean.valueOf(
+		return // Show if the preference is set or debug option is on
+		PrefUtil.getAPIPreferenceStore().getBoolean(
+				IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR)
+				|| Boolean.valueOf(
 						Platform.getDebugOption(PlatformUI.PLUGIN_ID
 								+ "/perf/showHeapStatus")).booleanValue(); //$NON-NLS-1$
 	}
@@ -937,15 +983,18 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	/**
 	 * Creates the controls for the heap status indicator.
 	 * 
-	 * @param parent the parent composite
+	 * @param parent
+	 *            the parent composite
 	 */
 	private void createHeapStatus(Composite parent) {
-		heapStatus = new HeapStatus(parent, PrefUtil.getInternalPreferenceStore());
+		heapStatus = new HeapStatus(parent, PrefUtil
+				.getInternalPreferenceStore());
 
 		// Subclass the trim to allow closing...
-		heapStatusTrim = new WindowTrimProxy(heapStatus, 
-				"org.eclipse.ui.internal.HeapStatus",  //$NON-NLS-1$
-				WorkbenchMessages.TrimCommon_HeapStatus_TrimName, SWT.BOTTOM | SWT.TOP) {
+		heapStatusTrim = new WindowTrimProxy(heapStatus,
+				"org.eclipse.ui.internal.HeapStatus", //$NON-NLS-1$
+				WorkbenchMessages.TrimCommon_HeapStatus_TrimName, SWT.BOTTOM
+						| SWT.TOP) {
 
 			public void handleClose() {
 				getControl().dispose();
@@ -956,347 +1005,360 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			}
 		};
 	}
-	
-    /**
-     * Set the perspective bar location
-     * 
-     * @param location the location to place the bar
-     */
-    public void setPerspectiveBarLocation(String location) {
-        if (perspectiveSwitcher != null)
-            perspectiveSwitcher.setPerspectiveBarLocation(location);
-    }
 
-    /**
-     * Notifies interested parties (namely the advisor)
-     * that the window is about to be opened.
-     * 
-     * @since 3.1
-     */
-    private void fireWindowOpening() {
-        // let the application do further configuration
-        getWindowAdvisor().preWindowOpen();
-    }
+	/**
+	 * Set the perspective bar location
+	 * 
+	 * @param location
+	 *            the location to place the bar
+	 */
+	public void setPerspectiveBarLocation(String location) {
+		if (perspectiveSwitcher != null)
+			perspectiveSwitcher.setPerspectiveBarLocation(location);
+	}
 
-    /**
-     * Notifies interested parties (namely the advisor) that the
-     * window has been restored from a previously saved state.
-     * 
-     * @throws WorkbenchException passed through from the advisor
-     * @since 3.1
-     */
-    void fireWindowRestored() throws WorkbenchException {
-        getWindowAdvisor().postWindowRestore();
-    }
+	/**
+	 * Notifies interested parties (namely the advisor) that the window is about
+	 * to be opened.
+	 * 
+	 * @since 3.1
+	 */
+	private void fireWindowOpening() {
+		// let the application do further configuration
+		getWindowAdvisor().preWindowOpen();
+	}
 
-    /**
-     * Notifies interested parties (namely the advisor)
-     * that the window has been created.
-     * 
-     * @since 3.1
-     */
-    private void fireWindowCreated() {
-        getWindowAdvisor().postWindowCreate();
-    }
+	/**
+	 * Notifies interested parties (namely the advisor) that the window has been
+	 * restored from a previously saved state.
+	 * 
+	 * @throws WorkbenchException
+	 *             passed through from the advisor
+	 * @since 3.1
+	 */
+	void fireWindowRestored() throws WorkbenchException {
+		getWindowAdvisor().postWindowRestore();
+	}
 
-    /**
-     * Notifies interested parties (namely the advisor and the
-     * window listeners) that the window has been opened.
-     * 
-     * @since 3.1
-     */
-    private void fireWindowOpened() {
-        getWorkbenchImpl().fireWindowOpened(this);
-        getWindowAdvisor().postWindowOpen();
-    }
+	/**
+	 * Notifies interested parties (namely the advisor) that the window has been
+	 * created.
+	 * 
+	 * @since 3.1
+	 */
+	private void fireWindowCreated() {
+		getWindowAdvisor().postWindowCreate();
+	}
 
-    /**
-     * Notifies interested parties (namely the advisor)
-     * that the window's shell is closing.  Allows
-     * the close to be vetoed.
-     * 
-     * @return <code>true</code> if the close should proceed,
-     *   <code>false</code> if it should be canceled
-     * @since 3.1
-     */
-    private boolean fireWindowShellClosing() {
-        return getWindowAdvisor().preWindowShellClose();
-    }
+	/**
+	 * Notifies interested parties (namely the advisor and the window listeners)
+	 * that the window has been opened.
+	 * 
+	 * @since 3.1
+	 */
+	private void fireWindowOpened() {
+		getWorkbenchImpl().fireWindowOpened(this);
+		getWindowAdvisor().postWindowOpen();
+	}
 
-    /**
-     * Notifies interested parties (namely the advisor and the
-     * window listeners) that the window has been closed.
-     * 
-     * @since 3.1
-     */
-    private void fireWindowClosed() {
-        // let the application do further deconfiguration
-        getWindowAdvisor().postWindowClose();
-        getWorkbenchImpl().fireWindowClosed(this);
-    }
+	/**
+	 * Notifies interested parties (namely the advisor) that the window's shell
+	 * is closing. Allows the close to be vetoed.
+	 * 
+	 * @return <code>true</code> if the close should proceed,
+	 *         <code>false</code> if it should be canceled
+	 * @since 3.1
+	 */
+	private boolean fireWindowShellClosing() {
+		return getWindowAdvisor().preWindowShellClose();
+	}
 
-    /**
-     * Fires page activated
-     */
-    private void firePageActivated(IWorkbenchPage page) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PAGE_LISTENERS)) {
-            label = "activated " + page.getLabel(); //$NON-NLS-1$
-        }
-        try {
-	        UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
-            UIListenerLogging.logPageEvent(this, page, UIListenerLogging.WPE_PAGE_ACTIVATED);
-	        pageListeners.firePageActivated(page);
-	        partService.pageActivated(page);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, page.getLabel(), label);
-        }
-    }
+	/**
+	 * Notifies interested parties (namely the advisor and the window listeners)
+	 * that the window has been closed.
+	 * 
+	 * @since 3.1
+	 */
+	private void fireWindowClosed() {
+		// let the application do further deconfiguration
+		getWindowAdvisor().postWindowClose();
+		getWorkbenchImpl().fireWindowClosed(this);
+	}
 
-    /**
-     * Fires page closed
-     */
-    private void firePageClosed(IWorkbenchPage page) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PAGE_LISTENERS)) {
-            label = "closed " + page.getLabel(); //$NON-NLS-1$
-        }
-        try {
-	        UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
-            UIListenerLogging.logPageEvent(this, page, UIListenerLogging.WPE_PAGE_CLOSED);
-	        pageListeners.firePageClosed(page);
-	        partService.pageClosed(page);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, page.getLabel(), label);
-        }
+	/**
+	 * Fires page activated
+	 */
+	private void firePageActivated(IWorkbenchPage page) {
+		String label = null; // debugging only
+		if (UIStats.isDebugging(UIStats.NOTIFY_PAGE_LISTENERS)) {
+			label = "activated " + page.getLabel(); //$NON-NLS-1$
+		}
+		try {
+			UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
+			UIListenerLogging.logPageEvent(this, page,
+					UIListenerLogging.WPE_PAGE_ACTIVATED);
+			pageListeners.firePageActivated(page);
+			partService.pageActivated(page);
+		} finally {
+			UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, page.getLabel(), label);
+		}
+	}
 
-    }
+	/**
+	 * Fires page closed
+	 */
+	private void firePageClosed(IWorkbenchPage page) {
+		String label = null; // debugging only
+		if (UIStats.isDebugging(UIStats.NOTIFY_PAGE_LISTENERS)) {
+			label = "closed " + page.getLabel(); //$NON-NLS-1$
+		}
+		try {
+			UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
+			UIListenerLogging.logPageEvent(this, page,
+					UIListenerLogging.WPE_PAGE_CLOSED);
+			pageListeners.firePageClosed(page);
+			partService.pageClosed(page);
+		} finally {
+			UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, page.getLabel(), label);
+		}
 
-    /**
-     * Fires page opened
-     */
-    private void firePageOpened(IWorkbenchPage page) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PAGE_LISTENERS)) {
-            label = "opened " + page.getLabel(); //$NON-NLS-1$
-        }
-        try {	        
-            UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
-            UIListenerLogging.logPageEvent(this, page, UIListenerLogging.WPE_PAGE_OPENED);
-            pageListeners.firePageOpened(page);
-            partService.pageOpened(page);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, page.getLabel(), label);
-        }
-    }
+	}
 
-    /**
-     * Fires perspective activated
-     */
-    void firePerspectiveActivated(IWorkbenchPage page,
-            IPerspectiveDescriptor perspective) {
-        UIListenerLogging.logPerspectiveEvent(this, page, perspective, UIListenerLogging.PLE_PERSP_ACTIVATED);
-        perspectiveListeners.firePerspectiveActivated(page, perspective);
-    }
+	/**
+	 * Fires page opened
+	 */
+	private void firePageOpened(IWorkbenchPage page) {
+		String label = null; // debugging only
+		if (UIStats.isDebugging(UIStats.NOTIFY_PAGE_LISTENERS)) {
+			label = "opened " + page.getLabel(); //$NON-NLS-1$
+		}
+		try {
+			UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
+			UIListenerLogging.logPageEvent(this, page,
+					UIListenerLogging.WPE_PAGE_OPENED);
+			pageListeners.firePageOpened(page);
+			partService.pageOpened(page);
+		} finally {
+			UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, page.getLabel(), label);
+		}
+	}
 
-    /**
-     * Fires perspective deactivated.
-     * 
-     * @since 3.1
-     */
-    void firePerspectiveDeactivated(IWorkbenchPage page,
-            IPerspectiveDescriptor perspective) {
-        UIListenerLogging.logPerspectiveEvent(this, page, perspective, UIListenerLogging.PLE_PERSP_DEACTIVATED);
-    	perspectiveListeners.firePerspectiveDeactivated(page, perspective);
-    }
-    
-    /**
-     * Fires perspective changed
-     */
-    void firePerspectiveChanged(IWorkbenchPage page,
-            IPerspectiveDescriptor perspective, String changeId) {
-        // Some callers call this even when there is no active perspective.
-        // Just ignore this case.
-        if (perspective != null) {
-            UIListenerLogging.logPerspectiveChangedEvent(this, page, perspective, null, changeId);
-            perspectiveListeners.firePerspectiveChanged(page, perspective,
-                    changeId);
-        }
-    }
+	/**
+	 * Fires perspective activated
+	 */
+	void firePerspectiveActivated(IWorkbenchPage page,
+			IPerspectiveDescriptor perspective) {
+		UIListenerLogging.logPerspectiveEvent(this, page, perspective,
+				UIListenerLogging.PLE_PERSP_ACTIVATED);
+		perspectiveListeners.firePerspectiveActivated(page, perspective);
+	}
 
-    /**
-     * Fires perspective changed for an affected part
-     */
-    void firePerspectiveChanged(IWorkbenchPage page,
-            IPerspectiveDescriptor perspective,
-            IWorkbenchPartReference partRef, String changeId) {
-        // Some callers call this even when there is no active perspective.
-        // Just ignore this case.
-        if (perspective != null) {
-            UIListenerLogging.logPerspectiveChangedEvent(this, page, perspective, partRef, changeId);
-            perspectiveListeners.firePerspectiveChanged(page, perspective,
-                    partRef, changeId);
-        }
-    }
+	/**
+	 * Fires perspective deactivated.
+	 * 
+	 * @since 3.1
+	 */
+	void firePerspectiveDeactivated(IWorkbenchPage page,
+			IPerspectiveDescriptor perspective) {
+		UIListenerLogging.logPerspectiveEvent(this, page, perspective,
+				UIListenerLogging.PLE_PERSP_DEACTIVATED);
+		perspectiveListeners.firePerspectiveDeactivated(page, perspective);
+	}
 
-    /**
-     * Fires perspective closed
-     */
-    void firePerspectiveClosed(IWorkbenchPage page,
-            IPerspectiveDescriptor perspective) {
-        UIListenerLogging.logPerspectiveEvent(this, page, perspective, UIListenerLogging.PLE_PERSP_CLOSED);
-    	perspectiveListeners.firePerspectiveClosed(page, perspective);
-    }
+	/**
+	 * Fires perspective changed
+	 */
+	void firePerspectiveChanged(IWorkbenchPage page,
+			IPerspectiveDescriptor perspective, String changeId) {
+		// Some callers call this even when there is no active perspective.
+		// Just ignore this case.
+		if (perspective != null) {
+			UIListenerLogging.logPerspectiveChangedEvent(this, page,
+					perspective, null, changeId);
+			perspectiveListeners.firePerspectiveChanged(page, perspective,
+					changeId);
+		}
+	}
 
-    /**
-     * Fires perspective opened
-     */
-    void firePerspectiveOpened(IWorkbenchPage page,
-            IPerspectiveDescriptor perspective) {
-        UIListenerLogging.logPerspectiveEvent(this, page, perspective, UIListenerLogging.PLE_PERSP_OPENED);
-    	perspectiveListeners.firePerspectiveOpened(page, perspective);
-    }
+	/**
+	 * Fires perspective changed for an affected part
+	 */
+	void firePerspectiveChanged(IWorkbenchPage page,
+			IPerspectiveDescriptor perspective,
+			IWorkbenchPartReference partRef, String changeId) {
+		// Some callers call this even when there is no active perspective.
+		// Just ignore this case.
+		if (perspective != null) {
+			UIListenerLogging.logPerspectiveChangedEvent(this, page,
+					perspective, partRef, changeId);
+			perspectiveListeners.firePerspectiveChanged(page, perspective,
+					partRef, changeId);
+		}
+	}
 
-    /**
-     * Fires perspective saved as.
-     * 
-     * @since 3.1
-     */
-    void firePerspectiveSavedAs(IWorkbenchPage page,
-            IPerspectiveDescriptor oldPerspective, IPerspectiveDescriptor newPerspective) {
-        UIListenerLogging.logPerspectiveSavedAs(this, page, oldPerspective, newPerspective);
-    	perspectiveListeners.firePerspectiveSavedAs(page, oldPerspective, newPerspective);
-    }
+	/**
+	 * Fires perspective closed
+	 */
+	void firePerspectiveClosed(IWorkbenchPage page,
+			IPerspectiveDescriptor perspective) {
+		UIListenerLogging.logPerspectiveEvent(this, page, perspective,
+				UIListenerLogging.PLE_PERSP_CLOSED);
+		perspectiveListeners.firePerspectiveClosed(page, perspective);
+	}
 
-    /**
-     * Returns the action bars for this window.
-     */
-    public WWinActionBars getActionBars() {
-        if (actionBars == null) {
-            actionBars = new WWinActionBars(this);
-        }
-        return actionBars;
-    }
+	/**
+	 * Fires perspective opened
+	 */
+	void firePerspectiveOpened(IWorkbenchPage page,
+			IPerspectiveDescriptor perspective) {
+		UIListenerLogging.logPerspectiveEvent(this, page, perspective,
+				UIListenerLogging.PLE_PERSP_OPENED);
+		perspectiveListeners.firePerspectiveOpened(page, perspective);
+	}
 
-    /**
-     * Returns the active page.
-     *
-     * @return the active page
-     */
-    public IWorkbenchPage getActivePage() {
-        return pageList.getActive();
-    }
+	/**
+	 * Fires perspective saved as.
+	 * 
+	 * @since 3.1
+	 */
+	void firePerspectiveSavedAs(IWorkbenchPage page,
+			IPerspectiveDescriptor oldPerspective,
+			IPerspectiveDescriptor newPerspective) {
+		UIListenerLogging.logPerspectiveSavedAs(this, page, oldPerspective,
+				newPerspective);
+		perspectiveListeners.firePerspectiveSavedAs(page, oldPerspective,
+				newPerspective);
+	}
 
-    /**
-     * Returns the active workbench page.
-     *
-     * @return the active workbench page
-     */
-    /* package */
-    WorkbenchPage getActiveWorkbenchPage() {
-        return pageList.getActive();
-    }
+	/**
+	 * Returns the action bars for this window.
+	 */
+	public WWinActionBars getActionBars() {
+		if (actionBars == null) {
+			actionBars = new WWinActionBars(this);
+		}
+		return actionBars;
+	}
 
-    /**
-     * Returns the page composite, under which the window's pages create
-     * their controls.
-     */
-    protected Composite getPageComposite() {
-        return pageComposite;
-    }
+	/**
+	 * Returns the active page.
+	 * 
+	 * @return the active page
+	 */
+	public IWorkbenchPage getActivePage() {
+		return pageList.getActive();
+	}
 
-    /**
-     * Answer the menu manager for this window.
-     */
-    public MenuManager getMenuManager() {
-        return getMenuBarManager();
-    }
+	/**
+	 * Returns the active workbench page.
+	 * 
+	 * @return the active workbench page
+	 */
+	/* package */
+	WorkbenchPage getActiveWorkbenchPage() {
+		return pageList.getActive();
+	}
 
-    /**
-     * Returns the number.  This corresponds to a page number in a window or a
-     * window number in the workbench.
-     */
-    public int getNumber() {
-        return number;
-    }
+	/**
+	 * Returns the page composite, under which the window's pages create their
+	 * controls.
+	 */
+	protected Composite getPageComposite() {
+		return pageComposite;
+	}
 
-    /**
-     * Returns an array of the pages in the workbench window.
-     *
-     * @return an array of pages
-     */
-    public IWorkbenchPage[] getPages() {
-        return pageList.getPages();
-    }
+	/**
+	 * Answer the menu manager for this window.
+	 */
+	public MenuManager getMenuManager() {
+		return getMenuBarManager();
+	}
 
-    /**
-     * @see IWorkbenchWindow
-     */
-    public IPartService getPartService() {
-        return partService;
-    }
+	/**
+	 * Returns the number. This corresponds to a page number in a window or a
+	 * window number in the workbench.
+	 */
+	public int getNumber() {
+		return number;
+	}
 
-    /**
-     * Returns the layout for the shell.
-     * 
-     * @return the layout for the shell
-     */
-    protected Layout getLayout() {
-        return null;
-    }
+	/**
+	 * Returns an array of the pages in the workbench window.
+	 * 
+	 * @return an array of pages
+	 */
+	public IWorkbenchPage[] getPages() {
+		return pageList.getPages();
+	}
 
-    /**
-     * @see IWorkbenchWindow
-     */
-    public ISelectionService getSelectionService() {
-        return partService.getSelectionService();
-    }
+	/**
+	 * @see IWorkbenchWindow
+	 */
+	public IPartService getPartService() {
+		return partService;
+	}
 
-    /**
-     * Returns <code>true</code> when the window's shell
-     * is activated, <code>false</code> when it's shell is
-     * deactivated
-     * 
-     * @return boolean <code>true</code> when shell activated,
-     * 		<code>false</code> when shell deactivated
-     */
-    public boolean getShellActivated() {
-        return shellActivated;
-    }
+	/**
+	 * Returns the layout for the shell.
+	 * 
+	 * @return the layout for the shell
+	 */
+	protected Layout getLayout() {
+		return null;
+	}
 
-    /**
-     * Returns the status line manager for this window (if it has one).
-     *
-     * @return the status line manager, or <code>null</code> if
-     *   this window does not have a status line
-     * @see ApplicationWindow#addStatusLine
-     */
-    public StatusLineManager getStatusLineManager() {
-        return super.getStatusLineManager();
-    }
-    
-    private IWindowTrim getStatusLineTrim() {
-		if (statusLineTrim==null) {
-    		statusLineTrim = new WindowTrimProxy(getStatusLineManager().getControl(),
-    				"org.eclipse.jface.action.StatusLineManager", //$NON-NLS-1$
-    				WorkbenchMessages.TrimCommon_StatusLine_TrimName, SWT.BOTTOM,
-    				true); 
-    	}
-    	return statusLineTrim;
-    }
+	/**
+	 * @see IWorkbenchWindow
+	 */
+	public ISelectionService getSelectionService() {
+		return partService.getSelectionService();
+	}
 
-    /**
-     * @see IWorkbenchWindow
-     */
-    public IWorkbench getWorkbench() {
-        return PlatformUI.getWorkbench();
-    }
+	/**
+	 * Returns <code>true</code> when the window's shell is activated,
+	 * <code>false</code> when it's shell is deactivated
+	 * 
+	 * @return boolean <code>true</code> when shell activated,
+	 *         <code>false</code> when shell deactivated
+	 */
+	public boolean getShellActivated() {
+		return shellActivated;
+	}
 
-    public String getToolbarLabel(String actionSetId) {
-        ActionSetRegistry registry = WorkbenchPlugin.getDefault()
-                .getActionSetRegistry();
-        IActionSetDescriptor actionSet = registry.findActionSet(actionSetId);
-        if (actionSet != null) {
+	/**
+	 * Returns the status line manager for this window (if it has one).
+	 * 
+	 * @return the status line manager, or <code>null</code> if this window
+	 *         does not have a status line
+	 * @see ApplicationWindow#addStatusLine
+	 */
+	public StatusLineManager getStatusLineManager() {
+		return super.getStatusLineManager();
+	}
+
+	private IWindowTrim getStatusLineTrim() {
+		if (statusLineTrim == null) {
+			statusLineTrim = new WindowTrimProxy(
+					getStatusLineManager().getControl(),
+					"org.eclipse.jface.action.StatusLineManager", //$NON-NLS-1$
+					WorkbenchMessages.TrimCommon_StatusLine_TrimName,
+					SWT.BOTTOM, true);
+		}
+		return statusLineTrim;
+	}
+
+	/**
+	 * @see IWorkbenchWindow
+	 */
+	public IWorkbench getWorkbench() {
+		return PlatformUI.getWorkbench();
+	}
+
+	public String getToolbarLabel(String actionSetId) {
+		ActionSetRegistry registry = WorkbenchPlugin.getDefault()
+				.getActionSetRegistry();
+		IActionSetDescriptor actionSet = registry.findActionSet(actionSetId);
+		if (actionSet != null) {
 			return actionSet.getLabel();
 		}
 
@@ -1307,22 +1369,22 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE
 				.equalsIgnoreCase(actionSetId))
 			return WorkbenchMessages.WorkbenchWindow_NavigateToolbar;
-		
-		return null;
-    }
 
-    /**
+		return null;
+	}
+
+	/**
 	 * Unconditionally close this window. Assumes the proper flags have been set
 	 * correctly (e.i. closing and updateDisabled)
 	 */
-    private boolean hardClose() {
-        boolean result;
-        try {
-            // Clear the action sets, fix for bug 27416.
-            actionPresentation.clearActionSets();
+	private boolean hardClose() {
+		boolean result;
+		try {
+			// Clear the action sets, fix for bug 27416.
+			actionPresentation.clearActionSets();
 
-            // Remove the handler submissions. Bug 64024.
-            final IWorkbench workbench = getWorkbench();
+			// Remove the handler submissions. Bug 64024.
+			final IWorkbench workbench = getWorkbench();
 			final IHandlerService handlerService = (IHandlerService) workbench
 					.getAdapter(IHandlerService.class);
 			handlerService.deactivateHandlers(handlerActivations);
@@ -1332,940 +1394,955 @@ public class WorkbenchWindow extends ApplicationWindow implements
 						.next();
 				activation.getHandler().dispose();
 			}
-            handlerActivations.clear();
-            globalActionHandlersByCommandId.clear();
+			handlerActivations.clear();
+			globalActionHandlersByCommandId.clear();
 
-            // Remove the enabled submissions. Bug 64024.
+			// Remove the enabled submissions. Bug 64024.
 			final IContextService contextService = (IContextService) workbench
 					.getAdapter(IContextService.class);
-            contextService.unregisterShell(getShell());
+			contextService.unregisterShell(getShell());
 
-            closeAllPages();
-            
-            fireWindowClosed();
+			closeAllPages();
 
-            getActionBarAdvisor().dispose();
-            getWindowAdvisor().dispose();
-            detachedWindowShells.dispose();
-            
-            // Null out the progress region.  Bug 64024.
-            progressRegion = null;
-        } finally {
-            result = super.close();
-        }
-        return result;
-    }
+			fireWindowClosed();
 
-    /**
-     * @see IWorkbenchWindow
-     */
-    public boolean isApplicationMenu(String menuID) {
-        // delegate this question to the action bar advisor
-        return getActionBarAdvisor().isApplicationMenu(menuID);
-    }
+			getActionBarAdvisor().dispose();
+			getWindowAdvisor().dispose();
+			detachedWindowShells.dispose();
 
-    /**
-     * Return whether or not the given id matches the id of the coolitems that
-     * the application creates.
-     */
-    /* package */
-    boolean isWorkbenchCoolItemId(String id) {
-        return windowConfigurer.containsCoolItem(id);
-    }
+			// Null out the progress region. Bug 64024.
+			progressRegion = null;
+		} finally {
+			result = super.close();
+		}
+		return result;
+	}
 
-    /**
-     * Locks/unlocks the CoolBar for the workbench.
-     * 
-     * @param lock whether the CoolBar should be locked or unlocked
-     */
-    /* package */
-    void lockCoolBar(boolean lock) {
-        getCoolBarManager().setLockLayout(lock);
-    }
+	/**
+	 * @see IWorkbenchWindow
+	 */
+	public boolean isApplicationMenu(String menuID) {
+		// delegate this question to the action bar advisor
+		return getActionBarAdvisor().isApplicationMenu(menuID);
+	}
 
-    /**
-     * Makes the window visible and frontmost.
-     */
-    void makeVisible() {
-    	Shell shell = getShell();
-    	if (shell != null && !shell.isDisposed()) {
-    		// see bug 96700 and bug 4414 for a discussion on the use of open() here
-    		shell.open();
-    	}
-    }
-    
-    /**
-     * Called when this window is about to be closed.
-     *
-     * Subclasses may overide to add code that returns <code>false</code> 
-     * to prevent closing under certain conditions.
-     */
-    public boolean okToClose() {
-        // Save all of the editors.
-        if (!getWorkbenchImpl().isClosing())
-            if (!saveAllPages(true))
-                return false;
-        return true;
-    }
+	/**
+	 * Return whether or not the given id matches the id of the coolitems that
+	 * the application creates.
+	 */
+	/* package */
+	boolean isWorkbenchCoolItemId(String id) {
+		return windowConfigurer.containsCoolItem(id);
+	}
 
-    /**
-     * Opens a new page.
-     * <p>
-     * <b>Note:</b> Since release 2.0, a window is limited to contain at most
-     * one page. If a page exist in the window when this method is used, then
-     * another window is created for the new page.  Callers are strongly
-     * recommended to use the <code>IWorkbench.openPerspective</code> APIs to
-     * programmatically show a perspective.
-     * </p>
-     */
-    public IWorkbenchPage openPage(final String perspId, final IAdaptable input)
-            throws WorkbenchException {
-        Assert.isNotNull(perspId);
+	/**
+	 * Locks/unlocks the CoolBar for the workbench.
+	 * 
+	 * @param lock
+	 *            whether the CoolBar should be locked or unlocked
+	 */
+	/* package */
+	void lockCoolBar(boolean lock) {
+		getCoolBarManager().setLockLayout(lock);
+	}
 
-        // Run op in busy cursor.
-        final Object[] result = new Object[1];
-        BusyIndicator.showWhile(null, new Runnable() {
-            public void run() {
-                try {
-                    result[0] = busyOpenPage(perspId, input);
-                } catch (WorkbenchException e) {
-                    result[0] = e;
-                }
-            }
-        });
+	/**
+	 * Makes the window visible and frontmost.
+	 */
+	void makeVisible() {
+		Shell shell = getShell();
+		if (shell != null && !shell.isDisposed()) {
+			// see bug 96700 and bug 4414 for a discussion on the use of open()
+			// here
+			shell.open();
+		}
+	}
 
-        if (result[0] instanceof IWorkbenchPage)
-            return (IWorkbenchPage) result[0];
-        else if (result[0] instanceof WorkbenchException)
-            throw (WorkbenchException) result[0];
-        else
-            throw new WorkbenchException(WorkbenchMessages.WorkbenchWindow_exceptionMessage);
-    }
+	/**
+	 * Called when this window is about to be closed.
+	 * 
+	 * Subclasses may overide to add code that returns <code>false</code> to
+	 * prevent closing under certain conditions.
+	 */
+	public boolean okToClose() {
+		// Save all of the editors.
+		if (!getWorkbenchImpl().isClosing())
+			if (!saveAllPages(true))
+				return false;
+		return true;
+	}
 
-    /**
-     * Opens a new page. 
-     * <p>
-     * <b>Note:</b> Since release 2.0, a window is limited to contain at most
-     * one page. If a page exist in the window when this method is used, then
-     * another window is created for the new page.  Callers are strongly
-     * recommended to use the <code>IWorkbench.openPerspective</code> APIs to
-     * programmatically show a perspective.
-     * </p>
-     */
-    public IWorkbenchPage openPage(IAdaptable input) throws WorkbenchException {
-        String perspId = getWorkbenchImpl().getPerspectiveRegistry()
-                .getDefaultPerspective();
-        return openPage(perspId, input);
-    }
+	/**
+	 * Opens a new page.
+	 * <p>
+	 * <b>Note:</b> Since release 2.0, a window is limited to contain at most
+	 * one page. If a page exist in the window when this method is used, then
+	 * another window is created for the new page. Callers are strongly
+	 * recommended to use the <code>IWorkbench.openPerspective</code> APIs to
+	 * programmatically show a perspective.
+	 * </p>
+	 */
+	public IWorkbenchPage openPage(final String perspId, final IAdaptable input)
+			throws WorkbenchException {
+		Assert.isNotNull(perspId);
 
-    /*
-     * Removes an listener from the part service.
-     */
-    public void removePageListener(IPageListener l) {
-        pageListeners.removePageListener(l);
-    }
+		// Run op in busy cursor.
+		final Object[] result = new Object[1];
+		BusyIndicator.showWhile(null, new Runnable() {
+			public void run() {
+				try {
+					result[0] = busyOpenPage(perspId, input);
+				} catch (WorkbenchException e) {
+					result[0] = e;
+				}
+			}
+		});
 
-    /**
-     * @see org.eclipse.ui.IPageService
-     */
-    public void removePerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
-        perspectiveListeners.removePerspectiveListener(l);
-    }
+		if (result[0] instanceof IWorkbenchPage)
+			return (IWorkbenchPage) result[0];
+		else if (result[0] instanceof WorkbenchException)
+			throw (WorkbenchException) result[0];
+		else
+			throw new WorkbenchException(
+					WorkbenchMessages.WorkbenchWindow_exceptionMessage);
+	}
 
-    private IStatus unableToRestorePage(IMemento pageMem) {
-        String pageName = pageMem.getString(IWorkbenchConstants.TAG_LABEL);
-        if (pageName == null)
-            pageName = ""; //$NON-NLS-1$
-        return new Status(
-                IStatus.ERROR,
-                PlatformUI.PLUGIN_ID,
-                0,
-                NLS.bind(WorkbenchMessages.WorkbenchWindow_unableToRestorePerspective, pageName),
-                null);
-    }
+	/**
+	 * Opens a new page.
+	 * <p>
+	 * <b>Note:</b> Since release 2.0, a window is limited to contain at most
+	 * one page. If a page exist in the window when this method is used, then
+	 * another window is created for the new page. Callers are strongly
+	 * recommended to use the <code>IWorkbench.openPerspective</code> APIs to
+	 * programmatically show a perspective.
+	 * </p>
+	 */
+	public IWorkbenchPage openPage(IAdaptable input) throws WorkbenchException {
+		String perspId = getWorkbenchImpl().getPerspectiveRegistry()
+				.getDefaultPerspective();
+		return openPage(perspId, input);
+	}
 
-    public IStatus restoreState(IMemento memento,
-            IPerspectiveDescriptor activeDescriptor) {
-        Assert.isNotNull(getShell());
-        
-        MultiStatus result = new MultiStatus(
-                PlatformUI.PLUGIN_ID,
-                IStatus.OK,
-                WorkbenchMessages.WorkbenchWindow_problemsRestoringWindow, null); 
-		
+	/*
+	 * Removes an listener from the part service.
+	 */
+	public void removePageListener(IPageListener l) {
+		pageListeners.removePageListener(l);
+	}
+
+	/**
+	 * @see org.eclipse.ui.IPageService
+	 */
+	public void removePerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
+		perspectiveListeners.removePerspectiveListener(l);
+	}
+
+	private IStatus unableToRestorePage(IMemento pageMem) {
+		String pageName = pageMem.getString(IWorkbenchConstants.TAG_LABEL);
+		if (pageName == null)
+			pageName = ""; //$NON-NLS-1$
+		return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, NLS.bind(
+				WorkbenchMessages.WorkbenchWindow_unableToRestorePerspective,
+				pageName), null);
+	}
+
+	public IStatus restoreState(IMemento memento,
+			IPerspectiveDescriptor activeDescriptor) {
+		Assert.isNotNull(getShell());
+
+		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
+				WorkbenchMessages.WorkbenchWindow_problemsRestoringWindow, null);
+
 		// Restore the window advisor state.
-		IMemento windowAdvisorState = memento.getChild(
-				IWorkbenchConstants.TAG_WORKBENCH_WINDOW_ADVISOR);
+		IMemento windowAdvisorState = memento
+				.getChild(IWorkbenchConstants.TAG_WORKBENCH_WINDOW_ADVISOR);
 		if (windowAdvisorState != null)
 			result.add(getWindowAdvisor().restoreState(windowAdvisorState));
-		
+
 		// Restore actionbar advisor state.
 		IMemento actionBarAdvisorState = memento
 				.getChild(IWorkbenchConstants.TAG_ACTION_BAR_ADVISOR);
 		if (actionBarAdvisorState != null)
-			result.add(getActionBarAdvisor().restoreState(actionBarAdvisorState));
+			result.add(getActionBarAdvisor()
+					.restoreState(actionBarAdvisorState));
 
-        // Read window's bounds and state.
-        Rectangle displayBounds = getShell().getDisplay().getBounds();
-        Rectangle shellBounds = new Rectangle(0, 0, 0, 0);
+		// Read window's bounds and state.
+		Rectangle displayBounds = getShell().getDisplay().getBounds();
+		Rectangle shellBounds = new Rectangle(0, 0, 0, 0);
 
-        IMemento fastViewMem = memento
-                .getChild(IWorkbenchConstants.TAG_FAST_VIEW_DATA);
-        if (fastViewMem != null) {
-            if (fastViewBar != null) {
-                fastViewBar.restoreState(fastViewMem);
-            }
-        }
-        Integer bigInt = memento.getInteger(IWorkbenchConstants.TAG_X);
-        shellBounds.x = bigInt == null ? 0 : bigInt.intValue();
-        bigInt = memento.getInteger(IWorkbenchConstants.TAG_Y);
-        shellBounds.y = bigInt == null ? 0 : bigInt.intValue();
-        bigInt = memento.getInteger(IWorkbenchConstants.TAG_WIDTH);
-        shellBounds.width = bigInt == null ? 0 : bigInt.intValue();
-        bigInt = memento.getInteger(IWorkbenchConstants.TAG_HEIGHT);
-        shellBounds.height = bigInt == null ? 0 : bigInt.intValue();
-        if (!shellBounds.isEmpty()) {
-            if (!shellBounds.intersects(displayBounds)) {
-                Rectangle clientArea = getShell().getDisplay().getClientArea();
-                shellBounds.x = clientArea.x;
-                shellBounds.y = clientArea.y;
-            }
-            getShell().setBounds(shellBounds);
-        }
-        if ("true".equals(memento.getString(IWorkbenchConstants.TAG_MAXIMIZED))) { //$NON-NLS-1$
-            getShell().setMaximized(true);
-        }
-        if ("true".equals(memento.getString(IWorkbenchConstants.TAG_MINIMIZED))) { //$NON-NLS-1$
-            //		getShell().setMinimized(true);
-        }
+		IMemento fastViewMem = memento
+				.getChild(IWorkbenchConstants.TAG_FAST_VIEW_DATA);
+		if (fastViewMem != null) {
+			if (fastViewBar != null) {
+				fastViewBar.restoreState(fastViewMem);
+			}
+		}
+		Integer bigInt = memento.getInteger(IWorkbenchConstants.TAG_X);
+		shellBounds.x = bigInt == null ? 0 : bigInt.intValue();
+		bigInt = memento.getInteger(IWorkbenchConstants.TAG_Y);
+		shellBounds.y = bigInt == null ? 0 : bigInt.intValue();
+		bigInt = memento.getInteger(IWorkbenchConstants.TAG_WIDTH);
+		shellBounds.width = bigInt == null ? 0 : bigInt.intValue();
+		bigInt = memento.getInteger(IWorkbenchConstants.TAG_HEIGHT);
+		shellBounds.height = bigInt == null ? 0 : bigInt.intValue();
+		if (!shellBounds.isEmpty()) {
+			if (!shellBounds.intersects(displayBounds)) {
+				Rectangle clientArea = getShell().getDisplay().getClientArea();
+				shellBounds.x = clientArea.x;
+				shellBounds.y = clientArea.y;
+			}
+			getShell().setBounds(shellBounds);
+		}
+		if ("true".equals(memento.getString(IWorkbenchConstants.TAG_MAXIMIZED))) { //$NON-NLS-1$
+			getShell().setMaximized(true);
+		}
+		if ("true".equals(memento.getString(IWorkbenchConstants.TAG_MINIMIZED))) { //$NON-NLS-1$
+			// getShell().setMinimized(true);
+		}
 
-        // restore the width of the perspective bar
-        if (perspectiveSwitcher != null)
-            perspectiveSwitcher.restoreState(memento);
+		// restore the width of the perspective bar
+		if (perspectiveSwitcher != null)
+			perspectiveSwitcher.restoreState(memento);
 
-        // Restore the cool bar order by creating all the tool bar contribution items
-        // This needs to be done before pages are created to ensure proper canonical creation
-        // of cool items
-        if (getCoolBarManager() != null) {
-            CoolBarManager coolBarMgr = getCoolBarManager();
-            IMemento coolBarMem = memento
-                    .getChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
-            if (coolBarMem != null) {
-                // Check if the layout is locked
-                Integer lockedInt = coolBarMem
-                        .getInteger(IWorkbenchConstants.TAG_LOCKED);
-                if ((lockedInt != null) && (lockedInt.intValue() == 1)) {
-                    coolBarMgr.setLockLayout(true);
-                } else {
-                    coolBarMgr.setLockLayout(false);
-                }
-                // The new layout of the cool bar manager
-                ArrayList coolBarLayout = new ArrayList();
-                // Traverse through all the cool item in the memento
-                IMemento contributionMems[] = coolBarMem
-                        .getChildren(IWorkbenchConstants.TAG_COOLITEM);
-                for (int i = 0; i < contributionMems.length; i++) {
-                    IMemento contributionMem = contributionMems[i];
-                    String type = contributionMem
-                            .getString(IWorkbenchConstants.TAG_ITEM_TYPE);
-                    if (type == null) {
-                        // Do not recognize that type
-                        continue;
-                    }
-                    String id = contributionMem
-                            .getString(IWorkbenchConstants.TAG_ID);
+		// Restore the cool bar order by creating all the tool bar contribution
+		// items
+		// This needs to be done before pages are created to ensure proper
+		// canonical creation
+		// of cool items
+		if (getCoolBarManager() != null) {
+			CoolBarManager coolBarMgr = getCoolBarManager();
+			IMemento coolBarMem = memento
+					.getChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
+			if (coolBarMem != null) {
+				// Check if the layout is locked
+				Integer lockedInt = coolBarMem
+						.getInteger(IWorkbenchConstants.TAG_LOCKED);
+				if ((lockedInt != null) && (lockedInt.intValue() == 1)) {
+					coolBarMgr.setLockLayout(true);
+				} else {
+					coolBarMgr.setLockLayout(false);
+				}
+				// The new layout of the cool bar manager
+				ArrayList coolBarLayout = new ArrayList();
+				// Traverse through all the cool item in the memento
+				IMemento contributionMems[] = coolBarMem
+						.getChildren(IWorkbenchConstants.TAG_COOLITEM);
+				for (int i = 0; i < contributionMems.length; i++) {
+					IMemento contributionMem = contributionMems[i];
+					String type = contributionMem
+							.getString(IWorkbenchConstants.TAG_ITEM_TYPE);
+					if (type == null) {
+						// Do not recognize that type
+						continue;
+					}
+					String id = contributionMem
+							.getString(IWorkbenchConstants.TAG_ID);
 
-                    // Prevent duplicate items from being read back in.
-                    IContributionItem existingItem = coolBarMgr.find(id);
-                    if ((id != null) && (existingItem != null)) {
-                        if (Policy.DEBUG_TOOLBAR_DISPOSAL) {
-                            System.out
-                                    .println("Not loading duplicate cool bar item: " + id); //$NON-NLS-1$
-                        }
-                        coolBarLayout.add(existingItem);
-                        continue;
-                    }
-                    IContributionItem newItem = null;
-                    if (type.equals(IWorkbenchConstants.TAG_TYPE_SEPARATOR)) {
-                        if (id != null) {
-                            newItem = new Separator(id);
-                        } else {
-                            newItem = new Separator();
-                        }
-                    } else if (id != null) {
-                        if (type
-                                .equals(IWorkbenchConstants.TAG_TYPE_GROUPMARKER)) {
-                            newItem = new GroupMarker(id);
+					// Prevent duplicate items from being read back in.
+					IContributionItem existingItem = coolBarMgr.find(id);
+					if ((id != null) && (existingItem != null)) {
+						if (Policy.DEBUG_TOOLBAR_DISPOSAL) {
+							System.out
+									.println("Not loading duplicate cool bar item: " + id); //$NON-NLS-1$
+						}
+						coolBarLayout.add(existingItem);
+						continue;
+					}
+					IContributionItem newItem = null;
+					if (type.equals(IWorkbenchConstants.TAG_TYPE_SEPARATOR)) {
+						if (id != null) {
+							newItem = new Separator(id);
+						} else {
+							newItem = new Separator();
+						}
+					} else if (id != null) {
+						if (type
+								.equals(IWorkbenchConstants.TAG_TYPE_GROUPMARKER)) {
+							newItem = new GroupMarker(id);
 
-                        } else if (type
-                                .equals(IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION)
-                                || type
-                                        .equals(IWorkbenchConstants.TAG_TYPE_PLACEHOLDER)) {
+						} else if (type
+								.equals(IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION)
+								|| type
+										.equals(IWorkbenchConstants.TAG_TYPE_PLACEHOLDER)) {
 
-                            // Get Width and height
-                            Integer width = contributionMem
-                                    .getInteger(IWorkbenchConstants.TAG_ITEM_X);
-                            Integer height = contributionMem
-                                    .getInteger(IWorkbenchConstants.TAG_ITEM_Y);
-                            // Look for the object in the current cool bar manager
-                            IContributionItem oldItem = coolBarMgr.find(id);
-                            // If a tool bar contribution item already exists for this id then use the old object
-                            if (oldItem != null) {
-                                newItem = oldItem;
-                            } else {
-                                newItem = new ToolBarContributionItem(
-                                        new ToolBarManager(coolBarMgr
-                                                .getStyle()), id);
-                                if (type
-                                        .equals(IWorkbenchConstants.TAG_TYPE_PLACEHOLDER)) {
-                                    ToolBarContributionItem newToolBarItem = (ToolBarContributionItem) newItem;
-                                    if (height != null) {
-                                        newToolBarItem.setCurrentHeight(height
-                                                .intValue());
-                                    }
-                                    if (width != null) {
-                                        newToolBarItem.setCurrentWidth(width
-                                                .intValue());
-                                    }
-                                    newItem = new PlaceholderContributionItem(
-                                            newToolBarItem);
-                                }
-                                // make it invisible by default
-                                newItem.setVisible(false);
-                                // Need to add the item to the cool bar manager so that its canonical order can be preserved
-                                IContributionItem refItem = findAlphabeticalOrder(
-                                        IWorkbenchActionConstants.MB_ADDITIONS,
-                                        id, coolBarMgr);
-                                if (refItem != null) {
-                                    coolBarMgr.insertAfter(refItem.getId(),
-                                            newItem);
-                                } else {
-                                    coolBarMgr.add(newItem);
-                                }
-                            }
-                            // Set the current height and width
-                            if ((width != null)
-                                    && (newItem instanceof ToolBarContributionItem)) {
-                                ((ToolBarContributionItem) newItem)
-                                        .setCurrentWidth(width.intValue());
-                            }
-                            if ((height != null)
-                                    && (newItem instanceof ToolBarContributionItem)) {
-                                ((ToolBarContributionItem) newItem)
-                                        .setCurrentHeight(height.intValue());
-                            }
-                        }
-                    }
-                    // Add new item into cool bar manager
-                    if (newItem != null) {
-                        coolBarLayout.add(newItem);
-                        newItem.setParent(coolBarMgr);
-                        coolBarMgr.markDirty();
-                    }
-                }
+							// Get Width and height
+							Integer width = contributionMem
+									.getInteger(IWorkbenchConstants.TAG_ITEM_X);
+							Integer height = contributionMem
+									.getInteger(IWorkbenchConstants.TAG_ITEM_Y);
+							// Look for the object in the current cool bar
+							// manager
+							IContributionItem oldItem = coolBarMgr.find(id);
+							// If a tool bar contribution item already exists
+							// for this id then use the old object
+							if (oldItem != null) {
+								newItem = oldItem;
+							} else {
+								newItem = new ToolBarContributionItem(
+										new ToolBarManager(coolBarMgr
+												.getStyle()), id);
+								if (type
+										.equals(IWorkbenchConstants.TAG_TYPE_PLACEHOLDER)) {
+									ToolBarContributionItem newToolBarItem = (ToolBarContributionItem) newItem;
+									if (height != null) {
+										newToolBarItem.setCurrentHeight(height
+												.intValue());
+									}
+									if (width != null) {
+										newToolBarItem.setCurrentWidth(width
+												.intValue());
+									}
+									newItem = new PlaceholderContributionItem(
+											newToolBarItem);
+								}
+								// make it invisible by default
+								newItem.setVisible(false);
+								// Need to add the item to the cool bar manager
+								// so that its canonical order can be preserved
+								IContributionItem refItem = findAlphabeticalOrder(
+										IWorkbenchActionConstants.MB_ADDITIONS,
+										id, coolBarMgr);
+								if (refItem != null) {
+									coolBarMgr.insertAfter(refItem.getId(),
+											newItem);
+								} else {
+									coolBarMgr.add(newItem);
+								}
+							}
+							// Set the current height and width
+							if ((width != null)
+									&& (newItem instanceof ToolBarContributionItem)) {
+								((ToolBarContributionItem) newItem)
+										.setCurrentWidth(width.intValue());
+							}
+							if ((height != null)
+									&& (newItem instanceof ToolBarContributionItem)) {
+								((ToolBarContributionItem) newItem)
+										.setCurrentHeight(height.intValue());
+							}
+						}
+					}
+					// Add new item into cool bar manager
+					if (newItem != null) {
+						coolBarLayout.add(newItem);
+						newItem.setParent(coolBarMgr);
+						coolBarMgr.markDirty();
+					}
+				}
 
-                // We need to check if we have everything we need in the layout.
-                final ArrayList finalLayout = new ArrayList();
-                IContributionItem[] existingItems = coolBarMgr.getItems();
-                for (int i = 0; i < existingItems.length; i++) {
-                    IContributionItem existingItem = existingItems[i];
+				// We need to check if we have everything we need in the layout.
+				final ArrayList finalLayout = new ArrayList();
+				IContributionItem[] existingItems = coolBarMgr.getItems();
+				for (int i = 0; i < existingItems.length; i++) {
+					IContributionItem existingItem = existingItems[i];
 
-                    /* This line shouldn't be necessary, but is here for
-                     * robustness.
-                     */
-                    if (existingItem == null) {
-                        continue;
-                    }
+					/*
+					 * This line shouldn't be necessary, but is here for
+					 * robustness.
+					 */
+					if (existingItem == null) {
+						continue;
+					}
 
-                    boolean found = false;
-                    Iterator layoutItemItr = coolBarLayout.iterator();
-                    while (layoutItemItr.hasNext()) {
-                        IContributionItem layoutItem = (IContributionItem) layoutItemItr
-                                .next();
-                        if ((layoutItem != null)
-                                && (layoutItem.equals(existingItem))) {
-                            found = true;
-                            break;
-                        }
-                    }
+					boolean found = false;
+					Iterator layoutItemItr = coolBarLayout.iterator();
+					while (layoutItemItr.hasNext()) {
+						IContributionItem layoutItem = (IContributionItem) layoutItemItr
+								.next();
+						if ((layoutItem != null)
+								&& (layoutItem.equals(existingItem))) {
+							found = true;
+							break;
+						}
+					}
 
-                    if (!found) {
-                        if (existingItem != null) {
-                            finalLayout.add(existingItem);
-                        }
-                    }
-                }
+					if (!found) {
+						if (existingItem != null) {
+							finalLayout.add(existingItem);
+						}
+					}
+				}
 
-                // Set the cool bar layout to the given layout.
-                finalLayout.addAll(coolBarLayout);
-                IContributionItem[] itemsToSet = new IContributionItem[finalLayout
-                        .size()];
-                finalLayout.toArray(itemsToSet);
-                coolBarMgr.setItems(itemsToSet);
-            } else {
-                // For older workbenchs
-                coolBarMem = memento
-                        .getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
-                if (coolBarMem != null) {
-                    // Restore an older layout
-                    restoreOldCoolBar(coolBarMem);
-                }
-            }
-        }
+				// Set the cool bar layout to the given layout.
+				finalLayout.addAll(coolBarLayout);
+				IContributionItem[] itemsToSet = new IContributionItem[finalLayout
+						.size()];
+				finalLayout.toArray(itemsToSet);
+				coolBarMgr.setItems(itemsToSet);
+			} else {
+				// For older workbenchs
+				coolBarMem = memento
+						.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+				if (coolBarMem != null) {
+					// Restore an older layout
+					restoreOldCoolBar(coolBarMem);
+				}
+			}
+		}
 
-        // Recreate each page in the window. 
-        IWorkbenchPage newActivePage = null;
-        IMemento[] pageArray = memento
-                .getChildren(IWorkbenchConstants.TAG_PAGE);
-        for (int i = 0; i < pageArray.length; i++) {
-            IMemento pageMem = pageArray[i];
-            String strFocus = pageMem.getString(IWorkbenchConstants.TAG_FOCUS);
-            if (strFocus == null || strFocus.length() == 0)
-                continue;
+		// Recreate each page in the window.
+		IWorkbenchPage newActivePage = null;
+		IMemento[] pageArray = memento
+				.getChildren(IWorkbenchConstants.TAG_PAGE);
+		for (int i = 0; i < pageArray.length; i++) {
+			IMemento pageMem = pageArray[i];
+			String strFocus = pageMem.getString(IWorkbenchConstants.TAG_FOCUS);
+			if (strFocus == null || strFocus.length() == 0)
+				continue;
 
-            // Get the input factory.
-            IAdaptable input = null;
-            IMemento inputMem = pageMem.getChild(IWorkbenchConstants.TAG_INPUT);
-            if (inputMem != null) {
-                String factoryID = inputMem
-                        .getString(IWorkbenchConstants.TAG_FACTORY_ID);
-                if (factoryID == null) {
-                    WorkbenchPlugin
-                            .log("Unable to restore page - no input factory ID."); //$NON-NLS-1$
-                    result.add(unableToRestorePage(pageMem));
-                    continue;
-                }
-                try {
-                    UIStats.start(UIStats.RESTORE_WORKBENCH,
-                            "WorkbenchPageFactory"); //$NON-NLS-1$
-                    IElementFactory factory = PlatformUI.getWorkbench()
-                            .getElementFactory(factoryID);
-                    if (factory == null) {
-                        WorkbenchPlugin
-                                .log("Unable to restore page - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
-                        result.add(unableToRestorePage(pageMem));
-                        continue;
-                    }
+			// Get the input factory.
+			IAdaptable input = null;
+			IMemento inputMem = pageMem.getChild(IWorkbenchConstants.TAG_INPUT);
+			if (inputMem != null) {
+				String factoryID = inputMem
+						.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+				if (factoryID == null) {
+					WorkbenchPlugin
+							.log("Unable to restore page - no input factory ID."); //$NON-NLS-1$
+					result.add(unableToRestorePage(pageMem));
+					continue;
+				}
+				try {
+					UIStats.start(UIStats.RESTORE_WORKBENCH,
+							"WorkbenchPageFactory"); //$NON-NLS-1$
+					IElementFactory factory = PlatformUI.getWorkbench()
+							.getElementFactory(factoryID);
+					if (factory == null) {
+						WorkbenchPlugin
+								.log("Unable to restore page - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
+						result.add(unableToRestorePage(pageMem));
+						continue;
+					}
 
-                    // Get the input element.
-                    input = factory.createElement(inputMem);
-                    if (input == null) {
-                        WorkbenchPlugin
-                                .log("Unable to restore page - cannot instantiate input element: " + factoryID); //$NON-NLS-1$
-                        result.add(unableToRestorePage(pageMem));
-                        continue;
-                    }
-                } finally {
-                    UIStats.end(UIStats.RESTORE_WORKBENCH, factoryID,
-                            "WorkbenchPageFactory"); //$NON-NLS-1$
-                }
-            }
-            // Open the perspective.
-            WorkbenchPage newPage = null;
-            try {
-                newPage = new WorkbenchPage(this, input);
-                result.add(newPage.restoreState(pageMem, activeDescriptor));
-                pageList.add(newPage);
-                firePageOpened(newPage);
-            } catch (WorkbenchException e) {
-                WorkbenchPlugin
-                        .log("Unable to restore perspective - constructor failed.", e); //$NON-NLS-1$
-                result.add(e.getStatus());
-                continue;
-            }
+					// Get the input element.
+					input = factory.createElement(inputMem);
+					if (input == null) {
+						WorkbenchPlugin
+								.log("Unable to restore page - cannot instantiate input element: " + factoryID); //$NON-NLS-1$
+						result.add(unableToRestorePage(pageMem));
+						continue;
+					}
+				} finally {
+					UIStats.end(UIStats.RESTORE_WORKBENCH, factoryID,
+							"WorkbenchPageFactory"); //$NON-NLS-1$
+				}
+			}
+			// Open the perspective.
+			WorkbenchPage newPage = null;
+			try {
+				newPage = new WorkbenchPage(this, input);
+				result.add(newPage.restoreState(pageMem, activeDescriptor));
+				pageList.add(newPage);
+				firePageOpened(newPage);
+			} catch (WorkbenchException e) {
+				WorkbenchPlugin
+						.log(
+								"Unable to restore perspective - constructor failed.", e); //$NON-NLS-1$
+				result.add(e.getStatus());
+				continue;
+			}
 
-            if (strFocus != null && strFocus.length() > 0)
-                newActivePage = newPage;
-        }
+			if (strFocus != null && strFocus.length() > 0)
+				newActivePage = newPage;
+		}
 
-        // If there are no pages create a default.
-        if (pageList.isEmpty()) {
-            try {
-                String defPerspID = getWorkbenchImpl().getPerspectiveRegistry()
-                        .getDefaultPerspective();
-                if (defPerspID != null) {
-	                WorkbenchPage newPage = new WorkbenchPage(this, defPerspID,
-	                        getDefaultPageInput());
-	                pageList.add(newPage);
-	                firePageOpened(newPage);
-                }
-            } catch (WorkbenchException e) {
-                WorkbenchPlugin
-                        .log("Unable to create default perspective - constructor failed.", e); //$NON-NLS-1$
-                result.add(e.getStatus());
-                String productName = WorkbenchPlugin.getDefault()
-                        .getProductName();
-                if (productName == null) {
-                    productName = ""; //$NON-NLS-1$
-                }
-                getShell().setText(productName);
-            }
-        }
+		// If there are no pages create a default.
+		if (pageList.isEmpty()) {
+			try {
+				String defPerspID = getWorkbenchImpl().getPerspectiveRegistry()
+						.getDefaultPerspective();
+				if (defPerspID != null) {
+					WorkbenchPage newPage = new WorkbenchPage(this, defPerspID,
+							getDefaultPageInput());
+					pageList.add(newPage);
+					firePageOpened(newPage);
+				}
+			} catch (WorkbenchException e) {
+				WorkbenchPlugin
+						.log(
+								"Unable to create default perspective - constructor failed.", e); //$NON-NLS-1$
+				result.add(e.getStatus());
+				String productName = WorkbenchPlugin.getDefault()
+						.getProductName();
+				if (productName == null) {
+					productName = ""; //$NON-NLS-1$
+				}
+				getShell().setText(productName);
+			}
+		}
 
-        // Set active page.
-        if (newActivePage == null)
-            newActivePage = pageList.getNextActive();
+		// Set active page.
+		if (newActivePage == null)
+			newActivePage = pageList.getNextActive();
 
-        setActivePage(newActivePage);
+		setActivePage(newActivePage);
 
-        IMemento introMem = memento.getChild(IWorkbenchConstants.TAG_INTRO);
-        if (introMem != null) {
-            getWorkbench()
-                    .getIntroManager()
-                    .showIntro(
-                            this,
-                            Boolean
-                                    .valueOf(
-                                            introMem
-                                                    .getString(IWorkbenchConstants.TAG_STANDBY))
-                                    .booleanValue());
-        }
-        result.add(restoreTrimState(memento.getChild(IWorkbenchConstants.TAG_TRIM)));
-        return result;
-    }
+		IMemento introMem = memento.getChild(IWorkbenchConstants.TAG_INTRO);
+		if (introMem != null) {
+			getWorkbench()
+					.getIntroManager()
+					.showIntro(
+							this,
+							Boolean
+									.valueOf(
+											introMem
+													.getString(IWorkbenchConstants.TAG_STANDBY))
+									.booleanValue());
+		}
+		result.add(restoreTrimState(memento
+				.getChild(IWorkbenchConstants.TAG_TRIM)));
+		return result;
+	}
 
-    /**
-     * Restores cool item order from an old workbench.
-     */
-    private boolean restoreOldCoolBar(IMemento coolbarMem) {
-        // Make sure the tag exist
-        if (coolbarMem == null) {
-            return false;
-        }
-        CoolBarManager coolBarMgr = getCoolBarManager();
-        // Check to see if layout is locked
-        Integer locked = coolbarMem.getInteger(IWorkbenchConstants.TAG_LOCKED);
-        boolean state = (locked != null) && (locked.intValue() == 1);
-        coolBarMgr.setLockLayout(state);
+	/**
+	 * Restores cool item order from an old workbench.
+	 */
+	private boolean restoreOldCoolBar(IMemento coolbarMem) {
+		// Make sure the tag exist
+		if (coolbarMem == null) {
+			return false;
+		}
+		CoolBarManager coolBarMgr = getCoolBarManager();
+		// Check to see if layout is locked
+		Integer locked = coolbarMem.getInteger(IWorkbenchConstants.TAG_LOCKED);
+		boolean state = (locked != null) && (locked.intValue() == 1);
+		coolBarMgr.setLockLayout(state);
 
-        // Get the visual layout
-        IMemento visibleLayout = coolbarMem
-                .getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
-        ArrayList visibleWrapIndicies = new ArrayList();
-        ArrayList visibleItems = new ArrayList();
-        if (visibleLayout != null) {
-            if (readLayout(visibleLayout, visibleItems, visibleWrapIndicies) == false) {
-                return false;
-            }
-        }
-        // Get the remembered layout
-        IMemento rememberedLayout = coolbarMem
-                .getChild(IWorkbenchConstants.TAG_LAYOUT);
-        ArrayList rememberedWrapIndicies = new ArrayList();
-        ArrayList rememberedItems = new ArrayList();
-        if (rememberedLayout != null) {
-            if (readLayout(rememberedLayout, rememberedItems,
-                    rememberedWrapIndicies) == false) {
-                return false;
-            }
-        }
+		// Get the visual layout
+		IMemento visibleLayout = coolbarMem
+				.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+		ArrayList visibleWrapIndicies = new ArrayList();
+		ArrayList visibleItems = new ArrayList();
+		if (visibleLayout != null) {
+			if (readLayout(visibleLayout, visibleItems, visibleWrapIndicies) == false) {
+				return false;
+			}
+		}
+		// Get the remembered layout
+		IMemento rememberedLayout = coolbarMem
+				.getChild(IWorkbenchConstants.TAG_LAYOUT);
+		ArrayList rememberedWrapIndicies = new ArrayList();
+		ArrayList rememberedItems = new ArrayList();
+		if (rememberedLayout != null) {
+			if (readLayout(rememberedLayout, rememberedItems,
+					rememberedWrapIndicies) == false) {
+				return false;
+			}
+		}
 
-        // Create the objects
-        if (visibleItems != null) {
-            // Merge remembered layout into visible layout
-            if (rememberedItems != null) {
-                // Traverse through all the remembered items
-                int currentIndex = 0;
-                for (Iterator i = rememberedItems.iterator(); i.hasNext(); currentIndex++) {
-                    String id = (String) i.next();
-                    int index = -1;
-                    for (Iterator iter = visibleItems.iterator(); iter
-                            .hasNext();) {
-                        String visibleId = (String) iter.next();
-                        if (visibleId.equals(id)) {
-                            index = visibleItems.indexOf(visibleId);
-                            break;
-                        }
-                    }
-                    // The item is not in the visible list
-                    if (index == -1) {
-                        int insertAt = Math.max(0, Math.min(currentIndex,
-                                visibleItems.size()));
-                        boolean separateLine = false;
-                        // Check whether this item is on a separate line
-                        for (Iterator iter = rememberedWrapIndicies.iterator(); iter
-                                .hasNext();) {
-                            Integer wrapIndex = (Integer) iter.next();
-                            if (wrapIndex.intValue() <= insertAt) {
-                                insertAt = visibleItems.size();
-                                // Add new wrap index for this Item
-                                visibleWrapIndicies.add(new Integer(insertAt));
-                                separateLine = true;
-                            }
-                        }
-                        // Add item to array list
-                        visibleItems.add(insertAt, id);
-                        // If the item was not on a separate line then adjust the visible wrap indicies
-                        if (!separateLine) {
-                            // Adjust visible wrap indicies
-                            for (int j = 0; j < visibleWrapIndicies.size(); j++) {
-                                Integer index2 = (Integer) visibleWrapIndicies
-                                        .get(j);
-                                if (index2.intValue() >= insertAt) {
-                                    visibleWrapIndicies.set(j, new Integer(
-                                            index2.intValue() + 1));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            // The new layout of the cool bar manager
-            ArrayList coolBarLayout = new ArrayList(visibleItems.size());
-            // Add all visible items to the layout object
-            for (Iterator i = visibleItems.iterator(); i.hasNext();) {
-                String id = (String) i.next();
-                // Look for the object in the current cool bar manager
-                IContributionItem oldItem = null;
-                IContributionItem newItem = null;
-                if (id != null) {
-                    oldItem = coolBarMgr.find(id);
-                }
-                // If a tool bar contribution item already exists for this id then use the old object
-                if (oldItem instanceof ToolBarContributionItem) {
-                    newItem = oldItem;
-                } else {
-                    newItem = new ToolBarContributionItem(new ToolBarManager(
-                            coolBarMgr.getStyle()), id);
-                    // make it invisible by default
-                    newItem.setVisible(false);
-                    // Need to add the item to the cool bar manager so that its canonical order can be preserved
-                    IContributionItem refItem = findAlphabeticalOrder(
-                            IWorkbenchActionConstants.MB_ADDITIONS, id,
-                            coolBarMgr);
-                    if (refItem != null) {
-                        coolBarMgr.insertAfter(refItem.getId(), newItem);
-                    } else {
-                        coolBarMgr.add(newItem);
-                    }
-                }
-                // Add new item into cool bar manager
-                if (newItem != null) {
-                    coolBarLayout.add(newItem);
-                    newItem.setParent(coolBarMgr);
-                    coolBarMgr.markDirty();
-                }
-            }
+		// Create the objects
+		if (visibleItems != null) {
+			// Merge remembered layout into visible layout
+			if (rememberedItems != null) {
+				// Traverse through all the remembered items
+				int currentIndex = 0;
+				for (Iterator i = rememberedItems.iterator(); i.hasNext(); currentIndex++) {
+					String id = (String) i.next();
+					int index = -1;
+					for (Iterator iter = visibleItems.iterator(); iter
+							.hasNext();) {
+						String visibleId = (String) iter.next();
+						if (visibleId.equals(id)) {
+							index = visibleItems.indexOf(visibleId);
+							break;
+						}
+					}
+					// The item is not in the visible list
+					if (index == -1) {
+						int insertAt = Math.max(0, Math.min(currentIndex,
+								visibleItems.size()));
+						boolean separateLine = false;
+						// Check whether this item is on a separate line
+						for (Iterator iter = rememberedWrapIndicies.iterator(); iter
+								.hasNext();) {
+							Integer wrapIndex = (Integer) iter.next();
+							if (wrapIndex.intValue() <= insertAt) {
+								insertAt = visibleItems.size();
+								// Add new wrap index for this Item
+								visibleWrapIndicies.add(new Integer(insertAt));
+								separateLine = true;
+							}
+						}
+						// Add item to array list
+						visibleItems.add(insertAt, id);
+						// If the item was not on a separate line then adjust
+						// the visible wrap indicies
+						if (!separateLine) {
+							// Adjust visible wrap indicies
+							for (int j = 0; j < visibleWrapIndicies.size(); j++) {
+								Integer index2 = (Integer) visibleWrapIndicies
+										.get(j);
+								if (index2.intValue() >= insertAt) {
+									visibleWrapIndicies.set(j, new Integer(
+											index2.intValue() + 1));
+								}
+							}
+						}
+					}
+				}
+			}
+			// The new layout of the cool bar manager
+			ArrayList coolBarLayout = new ArrayList(visibleItems.size());
+			// Add all visible items to the layout object
+			for (Iterator i = visibleItems.iterator(); i.hasNext();) {
+				String id = (String) i.next();
+				// Look for the object in the current cool bar manager
+				IContributionItem oldItem = null;
+				IContributionItem newItem = null;
+				if (id != null) {
+					oldItem = coolBarMgr.find(id);
+				}
+				// If a tool bar contribution item already exists for this id
+				// then use the old object
+				if (oldItem instanceof ToolBarContributionItem) {
+					newItem = oldItem;
+				} else {
+					newItem = new ToolBarContributionItem(new ToolBarManager(
+							coolBarMgr.getStyle()), id);
+					// make it invisible by default
+					newItem.setVisible(false);
+					// Need to add the item to the cool bar manager so that its
+					// canonical order can be preserved
+					IContributionItem refItem = findAlphabeticalOrder(
+							IWorkbenchActionConstants.MB_ADDITIONS, id,
+							coolBarMgr);
+					if (refItem != null) {
+						coolBarMgr.insertAfter(refItem.getId(), newItem);
+					} else {
+						coolBarMgr.add(newItem);
+					}
+				}
+				// Add new item into cool bar manager
+				if (newItem != null) {
+					coolBarLayout.add(newItem);
+					newItem.setParent(coolBarMgr);
+					coolBarMgr.markDirty();
+				}
+			}
 
-            // Add separators to the displayed Items data structure
-            int offset = 0;
-            for (int i = 1; i < visibleWrapIndicies.size(); i++) {
-                int insertAt = ((Integer) visibleWrapIndicies.get(i))
-                        .intValue()
-                        + offset;
-                coolBarLayout.add(insertAt, new Separator(
-                        CoolBarManager.USER_SEPARATOR));
-                offset++;
-            }
+			// Add separators to the displayed Items data structure
+			int offset = 0;
+			for (int i = 1; i < visibleWrapIndicies.size(); i++) {
+				int insertAt = ((Integer) visibleWrapIndicies.get(i))
+						.intValue()
+						+ offset;
+				coolBarLayout.add(insertAt, new Separator(
+						CoolBarManager.USER_SEPARATOR));
+				offset++;
+			}
 
-            // Add any group markers in their appropriate places
-            IContributionItem[] items = coolBarMgr.getItems();
-            for (int i = 0; i < items.length; i++) {
-                IContributionItem item = items[i];
-                if (item.isGroupMarker()) {
-                    coolBarLayout.add(Math.max(Math
-                            .min(i, coolBarLayout.size()), 0), item);
-                }
-            }
-            IContributionItem[] itemsToSet = new IContributionItem[coolBarLayout
-                    .size()];
-            coolBarLayout.toArray(itemsToSet);
-            coolBarMgr.setItems(itemsToSet);
-        }
-        return true;
-    }
+			// Add any group markers in their appropriate places
+			IContributionItem[] items = coolBarMgr.getItems();
+			for (int i = 0; i < items.length; i++) {
+				IContributionItem item = items[i];
+				if (item.isGroupMarker()) {
+					coolBarLayout.add(Math.max(Math
+							.min(i, coolBarLayout.size()), 0), item);
+				}
+			}
+			IContributionItem[] itemsToSet = new IContributionItem[coolBarLayout
+					.size()];
+			coolBarLayout.toArray(itemsToSet);
+			coolBarMgr.setItems(itemsToSet);
+		}
+		return true;
+	}
 
-    /**
-     * Helper method used for restoring an old cool bar layout. This method reads the memento
-     * and populatates the item id's and wrap indicies.
-     */
-    private boolean readLayout(IMemento memento, ArrayList itemIds,
-            ArrayList wrapIndicies) {
-        // Get the Wrap indicies
-        IMemento[] wraps = memento
-                .getChildren(IWorkbenchConstants.TAG_ITEM_WRAP_INDEX);
-        if (wraps == null)
-            return false;
-        for (int i = 0; i < wraps.length; i++) {
-            IMemento wrapMem = wraps[i];
-            Integer index = wrapMem.getInteger(IWorkbenchConstants.TAG_INDEX);
-            if (index == null)
-                return false;
-            wrapIndicies.add(index);
-        }
-        // Get the Item ids
-        IMemento[] savedItems = memento
-                .getChildren(IWorkbenchConstants.TAG_ITEM);
-        if (savedItems == null)
-            return false;
-        for (int i = 0; i < savedItems.length; i++) {
-            IMemento savedMem = savedItems[i];
-            String id = savedMem.getString(IWorkbenchConstants.TAG_ID);
-            if (id == null)
-                return false;
-            itemIds.add(id);
-        }
-        return true;
-    }
+	/**
+	 * Helper method used for restoring an old cool bar layout. This method
+	 * reads the memento and populatates the item id's and wrap indicies.
+	 */
+	private boolean readLayout(IMemento memento, ArrayList itemIds,
+			ArrayList wrapIndicies) {
+		// Get the Wrap indicies
+		IMemento[] wraps = memento
+				.getChildren(IWorkbenchConstants.TAG_ITEM_WRAP_INDEX);
+		if (wraps == null)
+			return false;
+		for (int i = 0; i < wraps.length; i++) {
+			IMemento wrapMem = wraps[i];
+			Integer index = wrapMem.getInteger(IWorkbenchConstants.TAG_INDEX);
+			if (index == null)
+				return false;
+			wrapIndicies.add(index);
+		}
+		// Get the Item ids
+		IMemento[] savedItems = memento
+				.getChildren(IWorkbenchConstants.TAG_ITEM);
+		if (savedItems == null)
+			return false;
+		for (int i = 0; i < savedItems.length; i++) {
+			IMemento savedMem = savedItems[i];
+			String id = savedMem.getString(IWorkbenchConstants.TAG_ID);
+			if (id == null)
+				return false;
+			itemIds.add(id);
+		}
+		return true;
+	}
 
-    /**
-     * Returns the contribution item that the given contribution item should be inserted after.
-     * 
-     * @param startId the location to start looking alphabetically.
-     * @param itemId the target item id.
-     * @param mgr the contribution manager.
-     * @return the contribution item that the given items should be returned after.
-     */
-    private IContributionItem findAlphabeticalOrder(String startId,
-            String itemId, IContributionManager mgr) {
-        IContributionItem[] items = mgr.getItems();
-        int insertIndex = 0;
+	/**
+	 * Returns the contribution item that the given contribution item should be
+	 * inserted after.
+	 * 
+	 * @param startId
+	 *            the location to start looking alphabetically.
+	 * @param itemId
+	 *            the target item id.
+	 * @param mgr
+	 *            the contribution manager.
+	 * @return the contribution item that the given items should be returned
+	 *         after.
+	 */
+	private IContributionItem findAlphabeticalOrder(String startId,
+			String itemId, IContributionManager mgr) {
+		IContributionItem[] items = mgr.getItems();
+		int insertIndex = 0;
 
-        // look for starting point
-        while (insertIndex < items.length) {
-            IContributionItem item = items[insertIndex];
-            if (item.getId() != null && item.getId().equals(startId))
-                break;
-            ++insertIndex;
-        }
+		// look for starting point
+		while (insertIndex < items.length) {
+			IContributionItem item = items[insertIndex];
+			if (item.getId() != null && item.getId().equals(startId))
+				break;
+			++insertIndex;
+		}
 
-        // Find the index that this item should be inserted in
-        for (int i = insertIndex + 1; i < items.length; i++) {
-            IContributionItem item = items[i];
-            String testId = item.getId();
+		// Find the index that this item should be inserted in
+		for (int i = insertIndex + 1; i < items.length; i++) {
+			IContributionItem item = items[i];
+			String testId = item.getId();
 
-            if (item.isGroupMarker())
-                break;
+			if (item.isGroupMarker())
+				break;
 
-            if (itemId != null && testId != null) {
-                if (itemId.compareTo(testId) < 1)
-                    break;
-            }
-            insertIndex = i;
-        }
-        if (insertIndex >= items.length) {
-            return null;
-        }
-        return items[insertIndex];
-    }
+			if (itemId != null && testId != null) {
+				if (itemId.compareTo(testId) < 1)
+					break;
+			}
+			insertIndex = i;
+		}
+		if (insertIndex >= items.length) {
+			return null;
+		}
+		return items[insertIndex];
+	}
 
-    /* (non-Javadoc)
-     * Method declared on IRunnableContext.
-     */
-    public void run(boolean fork, boolean cancelable,
-            IRunnableWithProgress runnable) throws InvocationTargetException,
-            InterruptedException {
-        IWorkbenchContextSupport contextSupport = getWorkbench()
-                .getContextSupport();
-        final boolean keyFilterEnabled = contextSupport.isKeyFilterEnabled();
+	/*
+	 * (non-Javadoc) Method declared on IRunnableContext.
+	 */
+	public void run(boolean fork, boolean cancelable,
+			IRunnableWithProgress runnable) throws InvocationTargetException,
+			InterruptedException {
+		IWorkbenchContextSupport contextSupport = getWorkbench()
+				.getContextSupport();
+		final boolean keyFilterEnabled = contextSupport.isKeyFilterEnabled();
 
-        Control fastViewBarControl = getFastViewBar() == null ? null
-                : getFastViewBar().getControl();
-        boolean fastViewBarWasEnabled = fastViewBarControl == null ? false
-                : fastViewBarControl.getEnabled();
+		Control fastViewBarControl = getFastViewBar() == null ? null
+				: getFastViewBar().getControl();
+		boolean fastViewBarWasEnabled = fastViewBarControl == null ? false
+				: fastViewBarControl.getEnabled();
 
-        Control perspectiveBarControl = getPerspectiveBar() == null ? null
-                : getPerspectiveBar().getControl();
-        boolean perspectiveBarWasEnabled = perspectiveBarControl == null ? false
-                : perspectiveBarControl.getEnabled();
+		Control perspectiveBarControl = getPerspectiveBar() == null ? null
+				: getPerspectiveBar().getControl();
+		boolean perspectiveBarWasEnabled = perspectiveBarControl == null ? false
+				: perspectiveBarControl.getEnabled();
 
-        try {
-            if (fastViewBarControl != null && !fastViewBarControl.isDisposed())
-                fastViewBarControl.setEnabled(false);
+		try {
+			if (fastViewBarControl != null && !fastViewBarControl.isDisposed())
+				fastViewBarControl.setEnabled(false);
 
-            if (perspectiveBarControl != null
-                    && !perspectiveBarControl.isDisposed())
-                perspectiveBarControl.setEnabled(false);
+			if (perspectiveBarControl != null
+					&& !perspectiveBarControl.isDisposed())
+				perspectiveBarControl.setEnabled(false);
 
-            if (keyFilterEnabled)
-                contextSupport.setKeyFilterEnabled(false);
+			if (keyFilterEnabled)
+				contextSupport.setKeyFilterEnabled(false);
 
-            super.run(fork, cancelable, runnable);
-        } finally {
-            if (fastViewBarControl != null && !fastViewBarControl.isDisposed())
-                fastViewBarControl.setEnabled(fastViewBarWasEnabled);
+			super.run(fork, cancelable, runnable);
+		} finally {
+			if (fastViewBarControl != null && !fastViewBarControl.isDisposed())
+				fastViewBarControl.setEnabled(fastViewBarWasEnabled);
 
-            if (perspectiveBarControl != null
-                    && !perspectiveBarControl.isDisposed())
-                perspectiveBarControl.setEnabled(perspectiveBarWasEnabled);
+			if (perspectiveBarControl != null
+					&& !perspectiveBarControl.isDisposed())
+				perspectiveBarControl.setEnabled(perspectiveBarWasEnabled);
 
-            if (keyFilterEnabled)
-                contextSupport.setKeyFilterEnabled(true);
-        }
-    }
+			if (keyFilterEnabled)
+				contextSupport.setKeyFilterEnabled(true);
+		}
+	}
 
-    /**
-     * Save all of the pages.  Returns true if the operation succeeded.
-     */
-    private boolean saveAllPages(boolean bConfirm) {
-        boolean bRet = true;
-        Iterator itr = pageList.iterator();
-        while (bRet && itr.hasNext()) {
-            WorkbenchPage page = (WorkbenchPage) itr.next();
-            bRet = page.saveAllEditors(bConfirm);
-        }
-        return bRet;
-    }
+	/**
+	 * Save all of the pages. Returns true if the operation succeeded.
+	 */
+	private boolean saveAllPages(boolean bConfirm) {
+		boolean bRet = true;
+		Iterator itr = pageList.iterator();
+		while (bRet && itr.hasNext()) {
+			WorkbenchPage page = (WorkbenchPage) itr.next();
+			bRet = page.saveAllEditors(bConfirm);
+		}
+		return bRet;
+	}
 
-    /**
-     * @see IPersistable
-     */
-    public IStatus saveState(IMemento memento) {
+	/**
+	 * @see IPersistable
+	 */
+	public IStatus saveState(IMemento memento) {
 
-        MultiStatus result = new MultiStatus(
-                PlatformUI.PLUGIN_ID,
-                IStatus.OK,
-                WorkbenchMessages.WorkbenchWindow_problemsSavingWindow, null); 
+		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
+				WorkbenchMessages.WorkbenchWindow_problemsSavingWindow, null);
 
-        // Save the window's state and bounds.
-        if (getShell().getMaximized() || asMaximizedState) {
-            memento.putString(IWorkbenchConstants.TAG_MAXIMIZED, "true"); //$NON-NLS-1$
-        }
-        if (getShell().getMinimized()) {
-            memento.putString(IWorkbenchConstants.TAG_MINIMIZED, "true"); //$NON-NLS-1$
-        }
-        if (normalBounds == null) {
-            normalBounds = getShell().getBounds();
-        }
-        IMemento fastViewBarMem = memento
-                .createChild(IWorkbenchConstants.TAG_FAST_VIEW_DATA);
-        if (fastViewBar != null) {
-            fastViewBar.saveState(fastViewBarMem);
-        }
+		// Save the window's state and bounds.
+		if (getShell().getMaximized() || asMaximizedState) {
+			memento.putString(IWorkbenchConstants.TAG_MAXIMIZED, "true"); //$NON-NLS-1$
+		}
+		if (getShell().getMinimized()) {
+			memento.putString(IWorkbenchConstants.TAG_MINIMIZED, "true"); //$NON-NLS-1$
+		}
+		if (normalBounds == null) {
+			normalBounds = getShell().getBounds();
+		}
+		IMemento fastViewBarMem = memento
+				.createChild(IWorkbenchConstants.TAG_FAST_VIEW_DATA);
+		if (fastViewBar != null) {
+			fastViewBar.saveState(fastViewBarMem);
+		}
 
-        memento.putInteger(IWorkbenchConstants.TAG_X, normalBounds.x);
-        memento.putInteger(IWorkbenchConstants.TAG_Y, normalBounds.y);
-        memento.putInteger(IWorkbenchConstants.TAG_WIDTH, normalBounds.width);
-        memento.putInteger(IWorkbenchConstants.TAG_HEIGHT, normalBounds.height);
+		memento.putInteger(IWorkbenchConstants.TAG_X, normalBounds.x);
+		memento.putInteger(IWorkbenchConstants.TAG_Y, normalBounds.y);
+		memento.putInteger(IWorkbenchConstants.TAG_WIDTH, normalBounds.width);
+		memento.putInteger(IWorkbenchConstants.TAG_HEIGHT, normalBounds.height);
 
-        IWorkbenchPage activePage = getActivePage();
-        if (activePage != null
-                && activePage.findView(IIntroConstants.INTRO_VIEW_ID) != null) {
-            IMemento introMem = memento
-                    .createChild(IWorkbenchConstants.TAG_INTRO);
-            boolean isStandby = getWorkbench()
+		IWorkbenchPage activePage = getActivePage();
+		if (activePage != null
+				&& activePage.findView(IIntroConstants.INTRO_VIEW_ID) != null) {
+			IMemento introMem = memento
+					.createChild(IWorkbenchConstants.TAG_INTRO);
+			boolean isStandby = getWorkbench()
 					.getIntroManager()
 					.isIntroStandby(getWorkbench().getIntroManager().getIntro());
-            introMem.putString(IWorkbenchConstants.TAG_STANDBY, String
+			introMem.putString(IWorkbenchConstants.TAG_STANDBY, String
 					.valueOf(isStandby));
-        }
+		}
 
-        // save the width of the perspective bar
-        IMemento persBarMem = memento
-                .createChild(IWorkbenchConstants.TAG_PERSPECTIVE_BAR);
-        if (perspectiveSwitcher != null) {
-            perspectiveSwitcher.saveState(persBarMem);
-        }
+		// save the width of the perspective bar
+		IMemento persBarMem = memento
+				.createChild(IWorkbenchConstants.TAG_PERSPECTIVE_BAR);
+		if (perspectiveSwitcher != null) {
+			perspectiveSwitcher.saveState(persBarMem);
+		}
 
-        /// Save the order of the cool bar contribution items
-        if (getCoolBarManager() != null) {
-            getCoolBarManager().refresh();
-            IMemento coolBarMem = memento
-                    .createChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
-            if (getCoolBarManager().getLockLayout() == true) {
-                coolBarMem.putInteger(IWorkbenchConstants.TAG_LOCKED, 1);
-            } else {
-                coolBarMem.putInteger(IWorkbenchConstants.TAG_LOCKED, 0);
-            }
-            IContributionItem[] items = getCoolBarManager().getItems();
-            for (int i = 0; i < items.length; i++) {
-                IMemento coolItemMem = coolBarMem
-                        .createChild(IWorkbenchConstants.TAG_COOLITEM);
-                IContributionItem item = items[i];
-                // The id of the contribution item
-                if (item.getId() != null) {
-                    coolItemMem.putString(IWorkbenchConstants.TAG_ID, item
-                            .getId());
-                }
-                // Write out type and size if applicable
-                if (item.isSeparator()) {
-                    coolItemMem.putString(IWorkbenchConstants.TAG_ITEM_TYPE,
-                            IWorkbenchConstants.TAG_TYPE_SEPARATOR);
-                } else if (item.isGroupMarker() && !item.isSeparator()) {
-                    coolItemMem.putString(IWorkbenchConstants.TAG_ITEM_TYPE,
-                            IWorkbenchConstants.TAG_TYPE_GROUPMARKER);
-                } else {
-                    if (item instanceof PlaceholderContributionItem) {
-                        coolItemMem.putString(
-                                IWorkbenchConstants.TAG_ITEM_TYPE,
-                                IWorkbenchConstants.TAG_TYPE_PLACEHOLDER);
-                    } else {
-                        // Store the identifier.
-                        coolItemMem
-                                .putString(
-                                        IWorkbenchConstants.TAG_ITEM_TYPE,
-                                        IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION);
-                    }
+		// / Save the order of the cool bar contribution items
+		if (getCoolBarManager() != null) {
+			getCoolBarManager().refresh();
+			IMemento coolBarMem = memento
+					.createChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
+			if (getCoolBarManager().getLockLayout() == true) {
+				coolBarMem.putInteger(IWorkbenchConstants.TAG_LOCKED, 1);
+			} else {
+				coolBarMem.putInteger(IWorkbenchConstants.TAG_LOCKED, 0);
+			}
+			IContributionItem[] items = getCoolBarManager().getItems();
+			for (int i = 0; i < items.length; i++) {
+				IMemento coolItemMem = coolBarMem
+						.createChild(IWorkbenchConstants.TAG_COOLITEM);
+				IContributionItem item = items[i];
+				// The id of the contribution item
+				if (item.getId() != null) {
+					coolItemMem.putString(IWorkbenchConstants.TAG_ID, item
+							.getId());
+				}
+				// Write out type and size if applicable
+				if (item.isSeparator()) {
+					coolItemMem.putString(IWorkbenchConstants.TAG_ITEM_TYPE,
+							IWorkbenchConstants.TAG_TYPE_SEPARATOR);
+				} else if (item.isGroupMarker() && !item.isSeparator()) {
+					coolItemMem.putString(IWorkbenchConstants.TAG_ITEM_TYPE,
+							IWorkbenchConstants.TAG_TYPE_GROUPMARKER);
+				} else {
+					if (item instanceof PlaceholderContributionItem) {
+						coolItemMem.putString(
+								IWorkbenchConstants.TAG_ITEM_TYPE,
+								IWorkbenchConstants.TAG_TYPE_PLACEHOLDER);
+					} else {
+						// Store the identifier.
+						coolItemMem
+								.putString(
+										IWorkbenchConstants.TAG_ITEM_TYPE,
+										IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION);
+					}
 
-                    /* Retrieve a reasonable approximation of the height and
-                     * width, if possible.
-                     */
-                    final int height;
-                    final int width;
-                    if (item instanceof ToolBarContributionItem) {
-                        ToolBarContributionItem toolBarItem = (ToolBarContributionItem) item;
-                        toolBarItem.saveWidgetState();
-                        height = toolBarItem.getCurrentHeight();
-                        width = toolBarItem.getCurrentWidth();
-                    } else if (item instanceof PlaceholderContributionItem) {
-                        PlaceholderContributionItem placeholder = (PlaceholderContributionItem) item;
-                        height = placeholder.getHeight();
-                        width = placeholder.getWidth();
-                    } else {
-                        height = -1;
-                        width = -1;
-                    }
+					/*
+					 * Retrieve a reasonable approximation of the height and
+					 * width, if possible.
+					 */
+					final int height;
+					final int width;
+					if (item instanceof ToolBarContributionItem) {
+						ToolBarContributionItem toolBarItem = (ToolBarContributionItem) item;
+						toolBarItem.saveWidgetState();
+						height = toolBarItem.getCurrentHeight();
+						width = toolBarItem.getCurrentWidth();
+					} else if (item instanceof PlaceholderContributionItem) {
+						PlaceholderContributionItem placeholder = (PlaceholderContributionItem) item;
+						height = placeholder.getHeight();
+						width = placeholder.getWidth();
+					} else {
+						height = -1;
+						width = -1;
+					}
 
-                    // Store the height and width.
-                    coolItemMem.putInteger(IWorkbenchConstants.TAG_ITEM_X,
-                            width);
-                    coolItemMem.putInteger(IWorkbenchConstants.TAG_ITEM_Y,
-                            height);
-                }
-            }
-        }
+					// Store the height and width.
+					coolItemMem.putInteger(IWorkbenchConstants.TAG_ITEM_X,
+							width);
+					coolItemMem.putInteger(IWorkbenchConstants.TAG_ITEM_Y,
+							height);
+				}
+			}
+		}
 
-        // Save each page.
-        Iterator itr = pageList.iterator();
-        while (itr.hasNext()) {
-            WorkbenchPage page = (WorkbenchPage) itr.next();
+		// Save each page.
+		Iterator itr = pageList.iterator();
+		while (itr.hasNext()) {
+			WorkbenchPage page = (WorkbenchPage) itr.next();
 
-            // Save perspective.
-            IMemento pageMem = memento
-                    .createChild(IWorkbenchConstants.TAG_PAGE);
-            pageMem.putString(IWorkbenchConstants.TAG_LABEL, page.getLabel());
-            result.add(page.saveState(pageMem));
+			// Save perspective.
+			IMemento pageMem = memento
+					.createChild(IWorkbenchConstants.TAG_PAGE);
+			pageMem.putString(IWorkbenchConstants.TAG_LABEL, page.getLabel());
+			result.add(page.saveState(pageMem));
 
-            if (page == getActiveWorkbenchPage()) {
-                pageMem.putString(IWorkbenchConstants.TAG_FOCUS, "true"); //$NON-NLS-1$
-            }
+			if (page == getActiveWorkbenchPage()) {
+				pageMem.putString(IWorkbenchConstants.TAG_FOCUS, "true"); //$NON-NLS-1$
+			}
 
-            // Get the input.
-            IAdaptable input = page.getInput();
-            if (input != null) {
-                IPersistableElement persistable = (IPersistableElement) input
-                        .getAdapter(IPersistableElement.class);
-                if (persistable == null) {
-                    WorkbenchPlugin
-                            .log("Unable to save page input: " //$NON-NLS-1$
-                                    + input
-                                    + ", because it does not adapt to IPersistableElement"); //$NON-NLS-1$
-                } else {
-                    // Save input.	
-                    IMemento inputMem = pageMem
-                            .createChild(IWorkbenchConstants.TAG_INPUT);
-                    inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID,
-                            persistable.getFactoryId());
-                    persistable.saveState(inputMem);
-                }
-            }
-        }
-		
+			// Get the input.
+			IAdaptable input = page.getInput();
+			if (input != null) {
+				IPersistableElement persistable = (IPersistableElement) input
+						.getAdapter(IPersistableElement.class);
+				if (persistable == null) {
+					WorkbenchPlugin
+							.log("Unable to save page input: " //$NON-NLS-1$
+									+ input
+									+ ", because it does not adapt to IPersistableElement"); //$NON-NLS-1$
+				} else {
+					// Save input.
+					IMemento inputMem = pageMem
+							.createChild(IWorkbenchConstants.TAG_INPUT);
+					inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID,
+							persistable.getFactoryId());
+					persistable.saveState(inputMem);
+				}
+			}
+		}
+
 		// Save window advisor state.
-		IMemento windowAdvisorState = memento.createChild(
-				IWorkbenchConstants.TAG_WORKBENCH_WINDOW_ADVISOR);
+		IMemento windowAdvisorState = memento
+				.createChild(IWorkbenchConstants.TAG_WORKBENCH_WINDOW_ADVISOR);
 		result.add(getWindowAdvisor().saveState(windowAdvisorState));
-		
+
 		// Save actionbar advisor state.
 		IMemento actionBarAdvisorState = memento
 				.createChild(IWorkbenchConstants.TAG_ACTION_BAR_ADVISOR);
@@ -2273,17 +2350,19 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 		IMemento trimState = memento.createChild(IWorkbenchConstants.TAG_TRIM);
 		result.add(saveTrimState(trimState));
-		
-        return result;
-    }
-    
-    /**
-     * Save the trim layout trim area and trim ordering.
-     * @param memento the memento to update
-     * @return the status, OK or not..
-     * @since 3.2
-     */
-    private IStatus saveTrimState(IMemento memento) {
+
+		return result;
+	}
+
+	/**
+	 * Save the trim layout trim area and trim ordering.
+	 * 
+	 * @param memento
+	 *            the memento to update
+	 * @return the status, OK or not..
+	 * @since 3.2
+	 */
+	private IStatus saveTrimState(IMemento memento) {
 		int[] ids = defaultLayout.getAreaIds();
 		for (int i = 0; i < ids.length; i++) {
 			int id = ids[i];
@@ -2302,14 +2381,16 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 		return Status.OK_STATUS;
 	}
-    
-    /**
-     * Restore the trim layout state from the memento.
-     * @param memento the memento to restore
-     * @return the status, OK or not
-     * @since 3.2
-     */
-    private IStatus restoreTrimState(IMemento memento) {
+
+	/**
+	 * Restore the trim layout state from the memento.
+	 * 
+	 * @param memento
+	 *            the memento to restore
+	 * @return the status, OK or not
+	 * @since 3.2
+	 */
+	private IStatus restoreTrimState(IMemento memento) {
 		if (memento == null) {
 			return Status.OK_STATUS;
 		}
@@ -2343,330 +2424,333 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		return Status.OK_STATUS;
 	}
 
-
-
-    /**
+	/**
 	 * Sets the active page within the window.
 	 * 
 	 * @param in
 	 *            identifies the new active page, or <code>null</code> for no
 	 *            active page
 	 */
-    public void setActivePage(final IWorkbenchPage in) {
-        if (getActiveWorkbenchPage() == in)
-            return;
+	public void setActivePage(final IWorkbenchPage in) {
+		if (getActiveWorkbenchPage() == in)
+			return;
 
-        // 1FVGTNR: ITPUI:WINNT - busy cursor for switching perspectives
-        BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-            public void run() {
-                // Deactivate old persp.
-                WorkbenchPage currentPage = getActiveWorkbenchPage();
-                if (currentPage != null) {
-                    currentPage.onDeactivate();
-                }
+		// 1FVGTNR: ITPUI:WINNT - busy cursor for switching perspectives
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			public void run() {
+				// Deactivate old persp.
+				WorkbenchPage currentPage = getActiveWorkbenchPage();
+				if (currentPage != null) {
+					currentPage.onDeactivate();
+				}
 
-                // Activate new persp.
-                if (in == null || pageList.contains(in))
-                    pageList.setActive(in);
-                WorkbenchPage newPage = pageList.getActive();
-            	Composite parent = getPageComposite();
-            	StackLayout layout = (StackLayout) parent.getLayout();
-                if (newPage != null) {
-                	layout.topControl = newPage.getClientComposite();
-                	parent.layout();
-                	hideEmptyWindowContents();
-                    newPage.onActivate();
-                    firePageActivated(newPage);
-                    if (newPage.getPerspective() != null)
-                        firePerspectiveActivated(newPage, newPage
-                                .getPerspective());
-                } 
-                else {
-                	layout.topControl = null;
-                	parent.layout();
-                }
+				// Activate new persp.
+				if (in == null || pageList.contains(in))
+					pageList.setActive(in);
+				WorkbenchPage newPage = pageList.getActive();
+				Composite parent = getPageComposite();
+				StackLayout layout = (StackLayout) parent.getLayout();
+				if (newPage != null) {
+					layout.topControl = newPage.getClientComposite();
+					parent.layout();
+					hideEmptyWindowContents();
+					newPage.onActivate();
+					firePageActivated(newPage);
+					if (newPage.getPerspective() != null)
+						firePerspectiveActivated(newPage, newPage
+								.getPerspective());
+				} else {
+					layout.topControl = null;
+					parent.layout();
+				}
 
-                updateFastViewBar();
-                
-                if (isClosing())
-                    return;
+				updateFastViewBar();
 
-                updateDisabled = false;
+				if (isClosing())
+					return;
 
-                // Update action bars ( implicitly calls updateActionBars() )
-                updateActionSets();
+				updateDisabled = false;
 
-                if (perspectiveSwitcher != null)
-                    perspectiveSwitcher.update(false);
+				// Update action bars ( implicitly calls updateActionBars() )
+				updateActionSets();
 
-                getMenuManager().update(IAction.TEXT);
-            }
-        });
-    }
+				if (perspectiveSwitcher != null)
+					perspectiveSwitcher.update(false);
 
-    /**
-     * Returns whether or not children exist for the Window's toolbar control.
-     * Overridden for coolbar support.
-     * <p>
-     * @return boolean true if children exist, false otherwise
-     */
-    protected boolean toolBarChildrenExist() {
-        CoolBar coolBarControl = (CoolBar) getCoolBarControl();
-        return coolBarControl.getItemCount() > 0;
-    }
+				getMenuManager().update(IAction.TEXT);
+			}
+		});
+	}
 
-    /**
-     * Hooks a listener to track the activation and
-     * deactivation of the window's shell. Notifies
-     * the active part and editor of the change
-     */
-    private void trackShellActivation(Shell shell) {
-        shell.addShellListener(new ShellAdapter() {
-            public void shellActivated(ShellEvent event) {
-                shellActivated = true;
-                getWorkbenchImpl().setActivatedWindow(WorkbenchWindow.this);
-                WorkbenchPage currentPage = getActiveWorkbenchPage();
-                if (currentPage != null) {
-                    IWorkbenchPart part = currentPage.getActivePart();
-                    if (part != null) {
-                        PartSite site = (PartSite) part.getSite();
-                        site.getPane().shellActivated();
-                    }
-                    IEditorPart editor = currentPage.getActiveEditor();
-                    if (editor != null) {
-                        PartSite site = (PartSite) editor.getSite();
-                        site.getPane().shellActivated();
-                    }
-                    getWorkbenchImpl()
-                            .fireWindowActivated(WorkbenchWindow.this);
-                }
-            }
+	/**
+	 * Returns whether or not children exist for the Window's toolbar control.
+	 * Overridden for coolbar support.
+	 * <p>
+	 * 
+	 * @return boolean true if children exist, false otherwise
+	 */
+	protected boolean toolBarChildrenExist() {
+		CoolBar coolBarControl = (CoolBar) getCoolBarControl();
+		return coolBarControl.getItemCount() > 0;
+	}
 
-            public void shellDeactivated(ShellEvent event) {
-                shellActivated = false;
-                WorkbenchPage currentPage = getActiveWorkbenchPage();
-                if (currentPage != null) {
-                    IWorkbenchPart part = currentPage.getActivePart();
-                    if (part != null) {
-                        PartSite site = (PartSite) part.getSite();
-                        site.getPane().shellDeactivated();
-                    }
-                    IEditorPart editor = currentPage.getActiveEditor();
-                    if (editor != null) {
-                        PartSite site = (PartSite) editor.getSite();
-                        site.getPane().shellDeactivated();
-                    }
-                    getWorkbenchImpl().fireWindowDeactivated(
-                            WorkbenchWindow.this);
-                }
-            }
-        });
-    }
+	/**
+	 * Hooks a listener to track the activation and deactivation of the window's
+	 * shell. Notifies the active part and editor of the change
+	 */
+	private void trackShellActivation(Shell shell) {
+		shell.addShellListener(new ShellAdapter() {
+			public void shellActivated(ShellEvent event) {
+				shellActivated = true;
+				activateNestedServices();
+				getWorkbenchImpl().setActivatedWindow(WorkbenchWindow.this);
+				WorkbenchPage currentPage = getActiveWorkbenchPage();
+				if (currentPage != null) {
+					IWorkbenchPart part = currentPage.getActivePart();
+					if (part != null) {
+						PartSite site = (PartSite) part.getSite();
+						site.getPane().shellActivated();
+					}
+					IEditorPart editor = currentPage.getActiveEditor();
+					if (editor != null) {
+						PartSite site = (PartSite) editor.getSite();
+						site.getPane().shellActivated();
+					}
+					getWorkbenchImpl()
+							.fireWindowActivated(WorkbenchWindow.this);
+				}
+			}
 
-    /**
-     * Hooks a listener to track the resize of the window's
-     * shell. Stores the new bounds if in normal state - that
-     * is, not in minimized or maximized state)
-     */
-    private void trackShellResize(Shell newShell) {
-        newShell.addControlListener(new ControlAdapter() {
-            public void controlMoved(ControlEvent e) {
-                saveBounds();
-            }
+			public void shellDeactivated(ShellEvent event) {
+				shellActivated = false;
+				deactivateNestedServices();
+				WorkbenchPage currentPage = getActiveWorkbenchPage();
+				if (currentPage != null) {
+					IWorkbenchPart part = currentPage.getActivePart();
+					if (part != null) {
+						PartSite site = (PartSite) part.getSite();
+						site.getPane().shellDeactivated();
+					}
+					IEditorPart editor = currentPage.getActiveEditor();
+					if (editor != null) {
+						PartSite site = (PartSite) editor.getSite();
+						site.getPane().shellDeactivated();
+					}
+					getWorkbenchImpl().fireWindowDeactivated(
+							WorkbenchWindow.this);
+				}
+			}
+		});
+	}
 
-            public void controlResized(ControlEvent e) {
-                saveBounds();
-            }
+	/**
+	 * Hooks a listener to track the resize of the window's shell. Stores the
+	 * new bounds if in normal state - that is, not in minimized or maximized
+	 * state)
+	 */
+	private void trackShellResize(Shell newShell) {
+		newShell.addControlListener(new ControlAdapter() {
+			public void controlMoved(ControlEvent e) {
+				saveBounds();
+			}
 
-            private void saveBounds() {
-                Shell shell = getShell();
-                if (shell == null)
-                    return;
-                if (shell.isDisposed())
-                    return;
-                if (shell.getMinimized())
-                    return;
-                if (shell.getMaximized()) {
-                    asMaximizedState = true;
-                    return;
-                }
-                asMaximizedState = false;
-                normalBounds = shell.getBounds();
-            }
-        });
-    }
+			public void controlResized(ControlEvent e) {
+				saveBounds();
+			}
 
-    /**
-     * update the action bars.
-     */
-    public void updateActionBars() {
-        if (updateDisabled || updatesDeferred()) {
-            return;
-        }
-        // updateAll required in order to enable accelerators on pull-down menus
-        getMenuBarManager().updateAll(false);
-        getCoolBarManager().update(false);
-        getStatusLineManager().update(false);
-    }
+			private void saveBounds() {
+				Shell shell = getShell();
+				if (shell == null)
+					return;
+				if (shell.isDisposed())
+					return;
+				if (shell.getMinimized())
+					return;
+				if (shell.getMaximized()) {
+					asMaximizedState = true;
+					return;
+				}
+				asMaximizedState = false;
+				normalBounds = shell.getBounds();
+			}
+		});
+	}
 
-    /**
-     * Returns true iff we are currently deferring UI processing due to a large update
-     * @return true iff we are deferring UI updates.
-     * @since 3.1
-     */
-    private boolean updatesDeferred() {
-        return largeUpdates > 0;
-    }
-    
-    /**
-     * <p>
-     * Indicates the start of a large update within this window. This is used to
-     * disable CPU-intensive, change-sensitive services that were temporarily
-     * disabled in the midst of large changes. This method should always be
-     * called in tandem with <code>largeUpdateEnd</code>, and the event loop
-     * should not be allowed to spin before that method is called.
-     * </p>
-     * <p>
-     * Important: always use with <code>largeUpdateEnd</code>!
-     * </p>
-     * 
-     * @since 3.1
-     */
-    public final void largeUpdateStart() {
-        largeUpdates++;
-    }
+	/**
+	 * update the action bars.
+	 */
+	public void updateActionBars() {
+		if (updateDisabled || updatesDeferred()) {
+			return;
+		}
+		// updateAll required in order to enable accelerators on pull-down menus
+		getMenuBarManager().updateAll(false);
+		getCoolBarManager().update(false);
+		getStatusLineManager().update(false);
+	}
 
-    /**
-     * <p>
-     * Indicates the end of a large update within this window. This is used to
-     * re-enable services that were temporarily disabled in the midst of large
-     * changes. This method should always be called in tandem with
-     * <code>largeUpdateStart</code>, and the event loop should not be
-     * allowed to spin before this method is called.
-     * </p>
-     * <p>
-     * Important: always protect this call by using <code>finally</code>!
-     * </p>
-     * 
-     * @since 3.1
-     */
-    public final void largeUpdateEnd() {
-        if (--largeUpdates == 0) {
-            updateActionBars();
-        }
-    }
+	/**
+	 * Returns true iff we are currently deferring UI processing due to a large
+	 * update
+	 * 
+	 * @return true iff we are deferring UI updates.
+	 * @since 3.1
+	 */
+	private boolean updatesDeferred() {
+		return largeUpdates > 0;
+	}
 
-    /**
-     * Update the visible action sets. This method is typically called
-     * from a page when the user changes the visible action sets
-     * within the prespective.  
-     */
-    public void updateActionSets() {
-        if (updateDisabled)
-            return;
+	/**
+	 * <p>
+	 * Indicates the start of a large update within this window. This is used to
+	 * disable CPU-intensive, change-sensitive services that were temporarily
+	 * disabled in the midst of large changes. This method should always be
+	 * called in tandem with <code>largeUpdateEnd</code>, and the event loop
+	 * should not be allowed to spin before that method is called.
+	 * </p>
+	 * <p>
+	 * Important: always use with <code>largeUpdateEnd</code>!
+	 * </p>
+	 * 
+	 * @since 3.1
+	 */
+	public final void largeUpdateStart() {
+		largeUpdates++;
+	}
 
-        WorkbenchPage currentPage = getActiveWorkbenchPage();
-        if (currentPage == null)
-            actionPresentation.clearActionSets();
-        else {
-            if (getCoolBarManager() != null) {
-                getCoolBarManager().refresh();
-            }
-            actionPresentation.setActionSets(currentPage.getActionSets());
-        }
-        updateActionBars();
+	/**
+	 * <p>
+	 * Indicates the end of a large update within this window. This is used to
+	 * re-enable services that were temporarily disabled in the midst of large
+	 * changes. This method should always be called in tandem with
+	 * <code>largeUpdateStart</code>, and the event loop should not be
+	 * allowed to spin before this method is called.
+	 * </p>
+	 * <p>
+	 * Important: always protect this call by using <code>finally</code>!
+	 * </p>
+	 * 
+	 * @since 3.1
+	 */
+	public final void largeUpdateEnd() {
+		if (--largeUpdates == 0) {
+			updateActionBars();
+		}
+	}
 
-        // hide the launch menu if it is empty
-        String path = IWorkbenchActionConstants.M_WINDOW
-                + IWorkbenchActionConstants.SEP
-                + IWorkbenchActionConstants.M_LAUNCH;
-        IMenuManager manager = getMenuBarManager().findMenuUsingPath(path);
-        IContributionItem item = getMenuBarManager().findUsingPath(path);
+	/**
+	 * Update the visible action sets. This method is typically called from a
+	 * page when the user changes the visible action sets within the
+	 * prespective.
+	 */
+	public void updateActionSets() {
+		if (updateDisabled)
+			return;
 
-        if (manager == null || item == null)
-            return;
-        item.setVisible(manager.getItems().length >= 2);
-        // there is a separator for the additions group thus >= 2
-    }
+		WorkbenchPage currentPage = getActiveWorkbenchPage();
+		if (currentPage == null)
+			actionPresentation.clearActionSets();
+		else {
+			if (getCoolBarManager() != null) {
+				getCoolBarManager().refresh();
+			}
+			actionPresentation.setActionSets(currentPage.getActionSets());
+		}
+		updateActionBars();
 
-    /**
-     * Create the progress indicator for the receiver.
-     * @param shell	the parent shell
-     */
-    private void createProgressIndicator(Shell shell) {
-        if (getWindowConfigurer().getShowProgressIndicator()) {
-            progressRegion = new ProgressRegion();
-            progressRegion.createContents(shell, this);
-        }
+		// hide the launch menu if it is empty
+		String path = IWorkbenchActionConstants.M_WINDOW
+				+ IWorkbenchActionConstants.SEP
+				+ IWorkbenchActionConstants.M_LAUNCH;
+		IMenuManager manager = getMenuBarManager().findMenuUsingPath(path);
+		IContributionItem item = getMenuBarManager().findUsingPath(path);
 
-    }
+		if (manager == null || item == null)
+			return;
+		item.setVisible(manager.getItems().length >= 2);
+		// there is a separator for the additions group thus >= 2
+	}
 
-    class PageList {
-        //List of pages in the order they were created;
-        private List pagesInCreationOrder;
+	/**
+	 * Create the progress indicator for the receiver.
+	 * 
+	 * @param shell
+	 *            the parent shell
+	 */
+	private void createProgressIndicator(Shell shell) {
+		if (getWindowConfigurer().getShowProgressIndicator()) {
+			progressRegion = new ProgressRegion();
+			progressRegion.createContents(shell, this);
+		}
 
-        //List of pages where the top is the last activated.
-        private List pageInActivationOrder;
+	}
 
-        // The page explicitly activated
-        private Object active;
+	class PageList {
+		// List of pages in the order they were created;
+		private List pagesInCreationOrder;
 
-        public PageList() {
-            pagesInCreationOrder = new ArrayList(4);
-            pageInActivationOrder = new ArrayList(4);
-        }
+		// List of pages where the top is the last activated.
+		private List pageInActivationOrder;
 
-        public boolean add(Object object) {
-            pagesInCreationOrder.add(object);
-            pageInActivationOrder.add(0, object);
-            //It will be moved to top only when activated.
-            return true;
-        }
+		// The page explicitly activated
+		private Object active;
 
-        public Iterator iterator() {
-            return pagesInCreationOrder.iterator();
-        }
+		public PageList() {
+			pagesInCreationOrder = new ArrayList(4);
+			pageInActivationOrder = new ArrayList(4);
+		}
 
-        public boolean contains(Object object) {
-            return pagesInCreationOrder.contains(object);
-        }
+		public boolean add(Object object) {
+			pagesInCreationOrder.add(object);
+			pageInActivationOrder.add(0, object);
+			// It will be moved to top only when activated.
+			return true;
+		}
 
-        public boolean remove(Object object) {
-            if (active == object)
-                active = null;
-            pageInActivationOrder.remove(object);
-            return pagesInCreationOrder.remove(object);
-        }
+		public Iterator iterator() {
+			return pagesInCreationOrder.iterator();
+		}
 
-        public boolean isEmpty() {
-            return pagesInCreationOrder.isEmpty();
-        }
+		public boolean contains(Object object) {
+			return pagesInCreationOrder.contains(object);
+		}
 
-        public IWorkbenchPage[] getPages() {
-            int nSize = pagesInCreationOrder.size();
-            IWorkbenchPage[] retArray = new IWorkbenchPage[nSize];
-            pagesInCreationOrder.toArray(retArray);
-            return retArray;
-        }
+		public boolean remove(Object object) {
+			if (active == object)
+				active = null;
+			pageInActivationOrder.remove(object);
+			return pagesInCreationOrder.remove(object);
+		}
 
-        public void setActive(Object page) {
-            if (active == page)
-                return;
+		public boolean isEmpty() {
+			return pagesInCreationOrder.isEmpty();
+		}
 
-            active = page;
+		public IWorkbenchPage[] getPages() {
+			int nSize = pagesInCreationOrder.size();
+			IWorkbenchPage[] retArray = new IWorkbenchPage[nSize];
+			pagesInCreationOrder.toArray(retArray);
+			return retArray;
+		}
 
-            if (page != null) {
-                pageInActivationOrder.remove(page);
-                pageInActivationOrder.add(page);
-            }
-        }
+		public void setActive(Object page) {
+			if (active == page)
+				return;
 
-        public WorkbenchPage getActive() {
-            return (WorkbenchPage) active;
-        }
+			active = page;
 
-        public WorkbenchPage getNextActive() {
-            if (active == null) {
+			if (page != null) {
+				pageInActivationOrder.remove(page);
+				pageInActivationOrder.add(page);
+			}
+		}
+
+		public WorkbenchPage getActive() {
+			return (WorkbenchPage) active;
+		}
+
+		public WorkbenchPage getNextActive() {
+			if (active == null) {
 				if (pageInActivationOrder.isEmpty())
 					return null;
 
@@ -2679,10 +2763,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 			return (WorkbenchPage) pageInActivationOrder
 					.get(pageInActivationOrder.size() - 2);
-        }
-    }
+		}
+	}
 
-    /**
+	/**
 	 * Returns the unique object that applications use to configure this window.
 	 * <p>
 	 * IMPORTANT This method is declared package-private to prevent regular
@@ -2692,450 +2776,464 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * only to the application.
 	 * </p>
 	 */
-    /* package - DO NOT CHANGE */
-    WorkbenchWindowConfigurer getWindowConfigurer() {
-        if (windowConfigurer == null) {
-            // lazy initialize
-            windowConfigurer = new WorkbenchWindowConfigurer(this);
-        }
-        return windowConfigurer;
-    }
+	/* package - DO NOT CHANGE */
+	WorkbenchWindowConfigurer getWindowConfigurer() {
+		if (windowConfigurer == null) {
+			// lazy initialize
+			windowConfigurer = new WorkbenchWindowConfigurer(this);
+		}
+		return windowConfigurer;
+	}
 
-    /**
-     * Returns the workbench advisor. Assumes the workbench
-     * has been created already.
-     * <p>
-     * IMPORTANT This method is declared private to prevent regular
-     * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
-     * hold of the workbench advisor that would allow them to tamper with the
-     * workbench. The workbench advisor is internal to the application.
-     * </p>
-     */
-    private/* private - DO NOT CHANGE */
-    WorkbenchAdvisor getAdvisor() {
-        return getWorkbenchImpl().getAdvisor();
-    }
+	/**
+	 * Returns the workbench advisor. Assumes the workbench has been created
+	 * already.
+	 * <p>
+	 * IMPORTANT This method is declared private to prevent regular plug-ins
+	 * from downcasting IWorkbenchWindow to WorkbenchWindow and getting hold of
+	 * the workbench advisor that would allow them to tamper with the workbench.
+	 * The workbench advisor is internal to the application.
+	 * </p>
+	 */
+	private/* private - DO NOT CHANGE */
+	WorkbenchAdvisor getAdvisor() {
+		return getWorkbenchImpl().getAdvisor();
+	}
 
-    /**
-     * Returns the window advisor, creating a new one for this
-     * window if needed.
-     * <p>
-     * IMPORTANT This method is declared private to prevent regular
-     * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
-     * hold of the window advisor that would allow them to tamper with the
-     * window. The window advisor is internal to the application.
-     * </p>
-     */
-    private/* private - DO NOT CHANGE */
-    WorkbenchWindowAdvisor getWindowAdvisor() {
-        if (windowAdvisor == null) {
-            windowAdvisor = getAdvisor().createWorkbenchWindowAdvisor(getWindowConfigurer());
-            Assert.isNotNull(windowAdvisor);
-        }
-        return windowAdvisor;
-    }
+	/**
+	 * Returns the window advisor, creating a new one for this window if needed.
+	 * <p>
+	 * IMPORTANT This method is declared private to prevent regular plug-ins
+	 * from downcasting IWorkbenchWindow to WorkbenchWindow and getting hold of
+	 * the window advisor that would allow them to tamper with the window. The
+	 * window advisor is internal to the application.
+	 * </p>
+	 */
+	private/* private - DO NOT CHANGE */
+	WorkbenchWindowAdvisor getWindowAdvisor() {
+		if (windowAdvisor == null) {
+			windowAdvisor = getAdvisor().createWorkbenchWindowAdvisor(
+					getWindowConfigurer());
+			Assert.isNotNull(windowAdvisor);
+		}
+		return windowAdvisor;
+	}
 
-    /**
-     * Returns the action bar advisor, creating a new one for this
-     * window if needed.
-     * <p>
-     * IMPORTANT This method is declared private to prevent regular
-     * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
-     * hold of the action bar advisor that would allow them to tamper with the
-     * window's action bars. The action bar advisor is internal to the application.
-     * </p>
-     */
-    private/* private - DO NOT CHANGE */
-    ActionBarAdvisor getActionBarAdvisor() {
-        if (actionBarAdvisor == null) {
-            actionBarAdvisor = getWindowAdvisor().createActionBarAdvisor(getWindowConfigurer().getActionBarConfigurer());
-            Assert.isNotNull(actionBarAdvisor);
-        }
-        return actionBarAdvisor;
-    }
+	/**
+	 * Returns the action bar advisor, creating a new one for this window if
+	 * needed.
+	 * <p>
+	 * IMPORTANT This method is declared private to prevent regular plug-ins
+	 * from downcasting IWorkbenchWindow to WorkbenchWindow and getting hold of
+	 * the action bar advisor that would allow them to tamper with the window's
+	 * action bars. The action bar advisor is internal to the application.
+	 * </p>
+	 */
+	private/* private - DO NOT CHANGE */
+	ActionBarAdvisor getActionBarAdvisor() {
+		if (actionBarAdvisor == null) {
+			actionBarAdvisor = getWindowAdvisor().createActionBarAdvisor(
+					getWindowConfigurer().getActionBarConfigurer());
+			Assert.isNotNull(actionBarAdvisor);
+		}
+		return actionBarAdvisor;
+	}
 
-    /*
-     * Returns the IWorkbench implementation.
-     */
-    private Workbench getWorkbenchImpl() {
-        return Workbench.getInstance();
-    }
+	/*
+	 * Returns the IWorkbench implementation.
+	 */
+	private Workbench getWorkbenchImpl() {
+		return Workbench.getInstance();
+	}
 
-    /**
-     * Fills the window's real action bars.
-     * 
-     * @param flags indicate which bars to fill
-     */
-    public void fillActionBars(int flags) {
-        Workbench workbench = getWorkbenchImpl();
-        workbench.largeUpdateStart();
-        try {
-            getActionBarAdvisor().fillActionBars(flags);
-        } finally {
-            workbench.largeUpdateEnd();
-        }
-    }
+	/**
+	 * Fills the window's real action bars.
+	 * 
+	 * @param flags
+	 *            indicate which bars to fill
+	 */
+	public void fillActionBars(int flags) {
+		Workbench workbench = getWorkbenchImpl();
+		workbench.largeUpdateStart();
+		try {
+			getActionBarAdvisor().fillActionBars(flags);
+		} finally {
+			workbench.largeUpdateEnd();
+		}
+	}
 
-    /**
-     * Fills the window's proxy action bars.
-     * 
-     * @param proxyBars the proxy configurer
-     * @param flags indicate which bars to fill
-     */
-    public void fillActionBars(IActionBarConfigurer proxyBars, int flags) {
-        Assert.isNotNull(proxyBars);
-        WorkbenchWindowConfigurer.WindowActionBarConfigurer wab = (WorkbenchWindowConfigurer.WindowActionBarConfigurer) getWindowConfigurer().getActionBarConfigurer();
-        wab.setProxy(proxyBars);
-        try {
-            getActionBarAdvisor().fillActionBars(flags | ActionBarAdvisor.FILL_PROXY);
-        } finally {
-            wab.setProxy(null);
-        }
-    }
+	/**
+	 * Fills the window's proxy action bars.
+	 * 
+	 * @param proxyBars
+	 *            the proxy configurer
+	 * @param flags
+	 *            indicate which bars to fill
+	 */
+	public void fillActionBars(IActionBarConfigurer proxyBars, int flags) {
+		Assert.isNotNull(proxyBars);
+		WorkbenchWindowConfigurer.WindowActionBarConfigurer wab = (WorkbenchWindowConfigurer.WindowActionBarConfigurer) getWindowConfigurer()
+				.getActionBarConfigurer();
+		wab.setProxy(proxyBars);
+		try {
+			getActionBarAdvisor().fillActionBars(
+					flags | ActionBarAdvisor.FILL_PROXY);
+		} finally {
+			wab.setProxy(null);
+		}
+	}
 
-    /**
-     * The <code>WorkbenchWindow</code> implementation of this method has the same
-     * logic as <code>Window</code>'s implementation, but without the resize check.
-     * We don't want to skip setting the bounds if the shell has been resized since a
-     * free resize event occurs on Windows when the menubar is set in configureShell. 
-     */
-    protected void initializeBounds() {
-        Point size = getInitialSize();
-        Point location = getInitialLocation(size);
-        getShell().setBounds(
-                getConstrainedShellBounds(new Rectangle(location.x, location.y,
-                        size.x, size.y)));
-    }
-    
-    /*
-     * Unlike dialogs, the position of the workbench window is set by the user
-     * and persisted across sessions. If the user wants to put the window
-     * offscreen or spanning multiple monitors, let them (bug 74762)
-     */
-    protected void constrainShellSize() {
-        // As long as the shell is visible on some monitor, don't change it.
-        Rectangle bounds = getShell().getBounds();
-        if (!SwtUtil.intersectsAnyMonitor(Display.getCurrent(), bounds)) {
-            super.constrainShellSize();
-        }
-    }
-    
-    /*
-     * Unlike dialogs, the position of the workbench window is set by the user
-     * and persisted across sessions. If the user wants to put the window
-     * offscreen or spanning multiple monitors, let them (bug 74762)
-     */
-    protected Point getInitialLocation(Point size) {
-        Shell shell = getShell();
-        if (shell != null) {
-            return shell.getLocation();
-        }
-        
-        return super.getInitialLocation(size);
-    }
-    
-    /**
-     * The <code>WorkbenchWindow</code> implementation of this method
-     * delegates to the window configurer.
-     *  
-     * @since 3.0
-     */
-    protected Point getInitialSize() {
-        return getWindowConfigurer().getInitialSize();
-    }
+	/**
+	 * The <code>WorkbenchWindow</code> implementation of this method has the
+	 * same logic as <code>Window</code>'s implementation, but without the
+	 * resize check. We don't want to skip setting the bounds if the shell has
+	 * been resized since a free resize event occurs on Windows when the menubar
+	 * is set in configureShell.
+	 */
+	protected void initializeBounds() {
+		Point size = getInitialSize();
+		Point location = getInitialLocation(size);
+		getShell().setBounds(
+				getConstrainedShellBounds(new Rectangle(location.x, location.y,
+						size.x, size.y)));
+	}
 
-    /**
-     * @param visible whether the cool bar should be shown.  This is only 
-     * applicable if the window configurer also wishes either the cool bar to be
-     * visible.
-     * @since 3.0 
-     */
-    public void setCoolBarVisible(boolean visible) {
-        boolean oldValue = coolBarVisible;
-        coolBarVisible = visible;
-        if (oldValue != coolBarVisible) {
-            updateLayoutDataForContents();
-        }
-    }
+	/*
+	 * Unlike dialogs, the position of the workbench window is set by the user
+	 * and persisted across sessions. If the user wants to put the window
+	 * offscreen or spanning multiple monitors, let them (bug 74762)
+	 */
+	protected void constrainShellSize() {
+		// As long as the shell is visible on some monitor, don't change it.
+		Rectangle bounds = getShell().getBounds();
+		if (!SwtUtil.intersectsAnyMonitor(Display.getCurrent(), bounds)) {
+			super.constrainShellSize();
+		}
+	}
 
-    /** 
-     * @return whether the cool bar should be shown.  This is only 
-     * applicable if the window configurer also wishes either the cool bar to be
-     * visible.
-     * @since 3.0
-     */
-    public boolean getCoolBarVisible() {
-        return coolBarVisible;
-    }
-
-    /**
-     * @param visible whether the perspective bar should be shown.  This is only 
-     * applicable if the window configurer also wishes either the perspective 
-     * bar to be visible.
-     * @since 3.0 
-     */
-    public void setPerspectiveBarVisible(boolean visible) {
-        boolean oldValue = perspectiveBarVisible;
-        perspectiveBarVisible = visible;
-        if (oldValue != perspectiveBarVisible) {
-            updateLayoutDataForContents();
-        }
-    }
-
-    /** 
-     * @return whether the perspective bar should be shown.  This is only 
-     * applicable if the window configurer also wishes either the perspective 
-     * bar to be visible.
-     * @since 3.0
-     */
-    public boolean getPerspectiveBarVisible() {
-        return perspectiveBarVisible;
-    }
-
-    /**
-     * @param visible whether the perspective bar should be shown.  This is only 
-     * applicable if the window configurer also wishes either the perspective 
-     * bar to be visible.
-     * @since 3.0 
-     */
-    public void setStatusLineVisible(boolean visible) {
-        boolean oldValue = statusLineVisible;
-        statusLineVisible = visible;
-        if (oldValue != statusLineVisible) {
-            updateLayoutDataForContents();
-        }
-    }
-
-    /** 
-     * @return whether the perspective bar should be shown.  This is only 
-     * applicable if the window configurer also wishes either the perspective 
-     * bar to be visible.
-     * @since 3.0
-     */
-    public boolean getStatusLineVisible() {
-        return statusLineVisible;
-    }
-
-    /** 
-     * Note that this will only have an effect if the default implementation of
-     * WorkbenchAdvisor.createWindowContents() has been invoked.
-     *  
-     * called  IWorkbench
-     * @since 3.0
-     */
-    private void updateLayoutDataForContents() {
-        if (defaultLayout == null)
-            return;
-
-        // @issue this is not ideal; coolbar and perspective shortcuts should be
-        //   separately configurable
-        if ((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar())
-                || (getPerspectiveBarVisible() && getWindowConfigurer()
-                        .getShowPerspectiveBar())) {
-        	if (defaultLayout.getTrim(topBarTrim.getId())==null) {
-        		defaultLayout.addTrim(SWT.TOP, topBarTrim);
-        	}
-            topBar.setVisible(true);
-        } else {
-            defaultLayout.removeTrim(topBarTrim);
-            topBar.setVisible(false);
-        }
-        
-        if (getWindowConfigurer().getShowFastViewBars() && fastViewBar != null) {
-			int side = fastViewBar.getSide();
-
-			if (defaultLayout.getTrim(fastViewBar.getId())==null) {
-				defaultLayout.addTrim(side, fastViewBar);
-			}
-//			LayoutUtil.resize(fastViewBar.getControl());
+	/*
+	 * Unlike dialogs, the position of the workbench window is set by the user
+	 * and persisted across sessions. If the user wants to put the window
+	 * offscreen or spanning multiple monitors, let them (bug 74762)
+	 */
+	protected Point getInitialLocation(Point size) {
+		Shell shell = getShell();
+		if (shell != null) {
+			return shell.getLocation();
 		}
 
+		return super.getInitialLocation(size);
+	}
 
-        if (getStatusLineVisible() && getWindowConfigurer().getShowStatusLine()) {
-        	if (defaultLayout.getTrim(getStatusLineTrim().getId())==null) {
-        		defaultLayout.addTrim(SWT.BOTTOM, getStatusLineTrim());
-        	}
-            getStatusLineManager().getControl().setVisible(true);
-        } else {
-            defaultLayout.removeTrim(getStatusLineTrim());
-            getStatusLineManager().getControl().setVisible(false);
-        }
+	/**
+	 * The <code>WorkbenchWindow</code> implementation of this method
+	 * delegates to the window configurer.
+	 * 
+	 * @since 3.0
+	 */
+	protected Point getInitialSize() {
+		return getWindowConfigurer().getInitialSize();
+	}
+
+	/**
+	 * @param visible
+	 *            whether the cool bar should be shown. This is only applicable
+	 *            if the window configurer also wishes either the cool bar to be
+	 *            visible.
+	 * @since 3.0
+	 */
+	public void setCoolBarVisible(boolean visible) {
+		boolean oldValue = coolBarVisible;
+		coolBarVisible = visible;
+		if (oldValue != coolBarVisible) {
+			updateLayoutDataForContents();
+		}
+	}
+
+	/**
+	 * @return whether the cool bar should be shown. This is only applicable if
+	 *         the window configurer also wishes either the cool bar to be
+	 *         visible.
+	 * @since 3.0
+	 */
+	public boolean getCoolBarVisible() {
+		return coolBarVisible;
+	}
+
+	/**
+	 * @param visible
+	 *            whether the perspective bar should be shown. This is only
+	 *            applicable if the window configurer also wishes either the
+	 *            perspective bar to be visible.
+	 * @since 3.0
+	 */
+	public void setPerspectiveBarVisible(boolean visible) {
+		boolean oldValue = perspectiveBarVisible;
+		perspectiveBarVisible = visible;
+		if (oldValue != perspectiveBarVisible) {
+			updateLayoutDataForContents();
+		}
+	}
+
+	/**
+	 * @return whether the perspective bar should be shown. This is only
+	 *         applicable if the window configurer also wishes either the
+	 *         perspective bar to be visible.
+	 * @since 3.0
+	 */
+	public boolean getPerspectiveBarVisible() {
+		return perspectiveBarVisible;
+	}
+
+	/**
+	 * @param visible
+	 *            whether the perspective bar should be shown. This is only
+	 *            applicable if the window configurer also wishes either the
+	 *            perspective bar to be visible.
+	 * @since 3.0
+	 */
+	public void setStatusLineVisible(boolean visible) {
+		boolean oldValue = statusLineVisible;
+		statusLineVisible = visible;
+		if (oldValue != statusLineVisible) {
+			updateLayoutDataForContents();
+		}
+	}
+
+	/**
+	 * @return whether the perspective bar should be shown. This is only
+	 *         applicable if the window configurer also wishes either the
+	 *         perspective bar to be visible.
+	 * @since 3.0
+	 */
+	public boolean getStatusLineVisible() {
+		return statusLineVisible;
+	}
+
+	/**
+	 * Note that this will only have an effect if the default implementation of
+	 * WorkbenchAdvisor.createWindowContents() has been invoked.
+	 * 
+	 * called IWorkbench
+	 * 
+	 * @since 3.0
+	 */
+	private void updateLayoutDataForContents() {
+		if (defaultLayout == null)
+			return;
+
+		// @issue this is not ideal; coolbar and perspective shortcuts should be
+		// separately configurable
+		if ((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar())
+				|| (getPerspectiveBarVisible() && getWindowConfigurer()
+						.getShowPerspectiveBar())) {
+			if (defaultLayout.getTrim(topBarTrim.getId()) == null) {
+				defaultLayout.addTrim(SWT.TOP, topBarTrim);
+			}
+			topBar.setVisible(true);
+		} else {
+			defaultLayout.removeTrim(topBarTrim);
+			topBar.setVisible(false);
+		}
+
+		if (getWindowConfigurer().getShowFastViewBars() && fastViewBar != null) {
+			int side = fastViewBar.getSide();
+
+			if (defaultLayout.getTrim(fastViewBar.getId()) == null) {
+				defaultLayout.addTrim(side, fastViewBar);
+			}
+			// LayoutUtil.resize(fastViewBar.getControl());
+		}
+
+		if (getStatusLineVisible() && getWindowConfigurer().getShowStatusLine()) {
+			if (defaultLayout.getTrim(getStatusLineTrim().getId()) == null) {
+				defaultLayout.addTrim(SWT.BOTTOM, getStatusLineTrim());
+			}
+			getStatusLineManager().getControl().setVisible(true);
+		} else {
+			defaultLayout.removeTrim(getStatusLineTrim());
+			getStatusLineManager().getControl().setVisible(false);
+		}
 
 		if (getShowHeapStatus()) {
 			if (heapStatus != null) {
-	            if (heapStatus.getLayoutData() == null) {
+				if (heapStatus.getLayoutData() == null) {
 					heapStatusTrim.setWidthHint(heapStatus.computeSize(
 							SWT.DEFAULT, SWT.DEFAULT).x);
 					heapStatusTrim
 							.setHeightHint(getStatusLineManager().getControl()
 									.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-	            }
+				}
 
-	            if (defaultLayout.getTrim(heapStatusTrim.getId())==null) {
-	            	defaultLayout.addTrim(SWT.BOTTOM, heapStatusTrim);
-	            }
+				if (defaultLayout.getTrim(heapStatusTrim.getId()) == null) {
+					defaultLayout.addTrim(SWT.BOTTOM, heapStatusTrim);
+				}
 				heapStatus.setVisible(true);
 			}
-		}
-		else {
+		} else {
 			if (heapStatus != null) {
-	            defaultLayout.removeTrim(heapStatusTrim);
+				defaultLayout.removeTrim(heapStatusTrim);
 				heapStatus.setVisible(false);
 			}
 		}
-		
-        if (getWindowConfigurer().getShowProgressIndicator()) {
-            if (progressRegion.getControl().getLayoutData() == null) {
-            	progressRegion.setWidthHint(progressRegion.getControl().computeSize(
-						SWT.DEFAULT, SWT.DEFAULT).x);
-            	progressRegion
-						.setHeightHint(getStatusLineManager().getControl()
-								.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-            }
-            if (defaultLayout.getTrim(progressRegion.getId()) == null) {
+
+		if (getWindowConfigurer().getShowProgressIndicator()) {
+			if (progressRegion.getControl().getLayoutData() == null) {
+				progressRegion.setWidthHint(progressRegion.getControl()
+						.computeSize(SWT.DEFAULT, SWT.DEFAULT).x);
+				progressRegion.setHeightHint(getStatusLineManager()
+						.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+			}
+			if (defaultLayout.getTrim(progressRegion.getId()) == null) {
 				defaultLayout.addTrim(SWT.BOTTOM, progressRegion);
-            }
-            progressRegion.getControl().setVisible(true);
-        } else {
-            if (progressRegion != null) {
-                defaultLayout.removeTrim(progressRegion);
-                progressRegion.getControl().setVisible(false);
-            }
-        }
-        defaultLayout.setCenterControl(getPageComposite());
-    }
+			}
+			progressRegion.getControl().setVisible(true);
+		} else {
+			if (progressRegion != null) {
+				defaultLayout.removeTrim(progressRegion);
+				progressRegion.getControl().setVisible(false);
+			}
+		}
+		defaultLayout.setCenterControl(getPageComposite());
+	}
 
-    public boolean getShowFastViewBars() {
-        return getWindowConfigurer().getShowFastViewBars();
-    }
+	public boolean getShowFastViewBars() {
+		return getWindowConfigurer().getShowFastViewBars();
+	}
 
-    /**
-     * Set the layout data for the contents of the window.
-     */
-    private void setLayoutDataForContents() {
-        updateLayoutDataForContents();
-    }
+	/**
+	 * Set the layout data for the contents of the window.
+	 */
+	private void setLayoutDataForContents() {
+		updateLayoutDataForContents();
+	}
 
-    /**
-     * Returns the fast view bar.
-     */
-    public FastViewBar getFastViewBar() {
-        return fastViewBar;
-    }
+	/**
+	 * Returns the fast view bar.
+	 */
+	public FastViewBar getFastViewBar() {
+		return fastViewBar;
+	}
 
-    /**
-     * Returns the perspective bar.
-     */
-    public PerspectiveBarManager getPerspectiveBar() {
-        return perspectiveSwitcher == null ? null : perspectiveSwitcher
-                .getPerspectiveBar();
-    }
+	/**
+	 * Returns the perspective bar.
+	 */
+	public PerspectiveBarManager getPerspectiveBar() {
+		return perspectiveSwitcher == null ? null : perspectiveSwitcher
+				.getPerspectiveBar();
+	}
 
-    //for dynamic UI
-    public ActionPresentation getActionPresentation() {
-        return actionPresentation;
-    }
+	// for dynamic UI
+	public ActionPresentation getActionPresentation() {
+		return actionPresentation;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.ApplicationWindow#showTopSeperator()
-     */
-    protected boolean showTopSeperator() {
-        return false;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.window.ApplicationWindow#showTopSeperator()
+	 */
+	protected boolean showTopSeperator() {
+		return false;
+	}
 
-    /**
-     * Delegate to the presentation factory.
-     * 
-     * @see org.eclipse.jface.window.ApplicationWindow#createStatusLineManager
-     * @since 3.0
-     */
-    protected StatusLineManager createStatusLineManager() {
-        // @issue ApplicationWindow and WorkbenchWindow should allow full IStatusLineManager
-        return (StatusLineManager) getWindowConfigurer()
-                .getPresentationFactory().createStatusLineManager();
-    }
+	/**
+	 * Delegate to the presentation factory.
+	 * 
+	 * @see org.eclipse.jface.window.ApplicationWindow#createStatusLineManager
+	 * @since 3.0
+	 */
+	protected StatusLineManager createStatusLineManager() {
+		// @issue ApplicationWindow and WorkbenchWindow should allow full
+		// IStatusLineManager
+		return (StatusLineManager) getWindowConfigurer()
+				.getPresentationFactory().createStatusLineManager();
+	}
 
-    /**
-     * Delegate to the presentation factory.
-     * 
-     * @see org.eclipse.jface.window.ApplicationWindow#createStatusLine
-     * @since 3.0
-     */
-    protected void createStatusLine(Shell shell) {
-        getWindowConfigurer().getPresentationFactory().createStatusLineControl(
-                getStatusLineManager(), shell);
-    }
+	/**
+	 * Delegate to the presentation factory.
+	 * 
+	 * @see org.eclipse.jface.window.ApplicationWindow#createStatusLine
+	 * @since 3.0
+	 */
+	protected void createStatusLine(Shell shell) {
+		getWindowConfigurer().getPresentationFactory().createStatusLineControl(
+				getStatusLineManager(), shell);
+	}
 
-    /**
-     * Updates the fast view bar, if present.
-     * TODO: The fast view bar should update itself as necessary.
-     * All calls to this should be cleaned up.
-     * 
-     * @since 3.0
-     */
-    public void updateFastViewBar() {
-        if (getFastViewBar() != null) {
-            getFastViewBar().update(true);
-        }
-    }
+	/**
+	 * Updates the fast view bar, if present. TODO: The fast view bar should
+	 * update itself as necessary. All calls to this should be cleaned up.
+	 * 
+	 * @since 3.0
+	 */
+	public void updateFastViewBar() {
+		if (getFastViewBar() != null) {
+			getFastViewBar().update(true);
+		}
+	}
 
-    /**
-     * @return Returns the progressRegion.
-     */
-    public ProgressRegion getProgressRegion() {
-        return progressRegion;
-    }
+	/**
+	 * @return Returns the progressRegion.
+	 */
+	public ProgressRegion getProgressRegion() {
+		return progressRegion;
+	}
 
-    /**
-     * Adds the given control to the specified side of this window's trim.
-     * 
-     * @param trim
-     *            the  bar's IWindowTrim
-     * @param side
-     *            one of <code>SWT.LEFT</code>,<code>SWT.BOTTOM</code>,
-     *            or <code>SWT.RIGHT</code> (only LEFT has been tested)
-     * @since 3.0
-     */
-    public void addToTrim(IWindowTrim trim, int side) {
-        IWindowTrim reference = null;
-        defaultLayout.addTrim(side, trim, reference);
-    }
+	/**
+	 * Adds the given control to the specified side of this window's trim.
+	 * 
+	 * @param trim
+	 *            the bar's IWindowTrim
+	 * @param side
+	 *            one of <code>SWT.LEFT</code>,<code>SWT.BOTTOM</code>,
+	 *            or <code>SWT.RIGHT</code> (only LEFT has been tested)
+	 * @since 3.0
+	 */
+	public void addToTrim(IWindowTrim trim, int side) {
+		IWindowTrim reference = null;
+		defaultLayout.addTrim(side, trim, reference);
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getExtensionTracker()
 	 */
 	public IExtensionTracker getExtensionTracker() {
 		if (tracker == null) {
 			tracker = new UIExtensionTracker(getWorkbench().getDisplay());
 		}
-		return tracker ;
+		return tracker;
 	}
 
-    /**
-     * Creates the perspective customization dialog.
-     * 
-     * @param persp perspective to customize 
-     * 
-     * @return a new perspective customization dialog
-     * @since 3.1
-     */
-    public CustomizePerspectiveDialog createCustomizePerspectiveDialog(Perspective persp) {
-        return new CustomizePerspectiveDialog(getWindowConfigurer(), persp);
-    }
+	/**
+	 * Creates the perspective customization dialog.
+	 * 
+	 * @param persp
+	 *            perspective to customize
+	 * 
+	 * @return a new perspective customization dialog
+	 * @since 3.1
+	 */
+	public CustomizePerspectiveDialog createCustomizePerspectiveDialog(
+			Perspective persp) {
+		return new CustomizePerspectiveDialog(getWindowConfigurer(), persp);
+	}
 
-    /**
-     * Returns the default page input for workbench pages
-     * opened in this window.
-     * 
-     * @return the default page input or <code>null</code> if none
-     * @since 3.1
-     */
-    IAdaptable getDefaultPageInput() {
-        return getWorkbenchImpl().getDefaultPageInput();
-    }
+	/**
+	 * Returns the default page input for workbench pages opened in this window.
+	 * 
+	 * @return the default page input or <code>null</code> if none
+	 * @since 3.1
+	 */
+	IAdaptable getDefaultPageInput() {
+		return getWorkbenchImpl().getDefaultPageInput();
+	}
 
 	/**
 	 * Add a listener for perspective reordering.
+	 * 
 	 * @param listener
 	 */
 	public void addPerspectiveReorderListener(IReorderListener listener) {
@@ -3145,29 +3243,96 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 	/**
 	 * Show the heap status
+	 * 
 	 * @param selection
 	 */
 	public void showHeapStatus(boolean selection) {
-		if(selection){
-				if(heapStatus == null){
-					createHeapStatus(getShell());
-					updateLayoutDataForContents();
-					getShell().layout();
+		if (selection) {
+			if (heapStatus == null) {
+				createHeapStatus(getShell());
+				updateLayoutDataForContents();
+				getShell().layout();
 			}
-		}
-		else{
-			if(heapStatus != null){
+		} else {
+			if (heapStatus != null) {
 				heapStatus.dispose();
 				heapStatus = null;
 			}
 		}
-		
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getTrimManager()
 	 */
 	public ITrimManager getTrimManager() {
 		return defaultLayout;
+	}
+
+	/**
+	 * Initializes all of the default command-based services for the workbench
+	 * window.
+	 */
+	private final void initializeDefaultServices() {
+		final IWorkbench workbench = getWorkbench();
+		final IHandlerService parentHandlerService = (IHandlerService) workbench
+				.getAdapter(IHandlerService.class);
+		final IHandlerService handlerService = new SlaveHandlerService(
+				parentHandlerService);
+		services.put(IHandlerService.class, handlerService);
+
+		final ISourceProviderService sourceProviderService = (ISourceProviderService) getService(ISourceProviderService.class);
+		final ISourceProvider[] sourceProviders = sourceProviderService
+				.getSourceProviders();
+		final ICommandService commandService = (ICommandService) getService(ICommandService.class);
+		final IBindingService bindingService = (IBindingService) getService(IBindingService.class);
+		final ICommandImageService commandImageService = (ICommandImageService) getService(ICommandImageService.class);
+		final LegacyActionHandlerPersistence deprecatedSupport = new LegacyActionHandlerPersistence(
+				commandService, handlerService, bindingService,
+				commandImageService, sourceProviders);
+		deprecatedSupport.read();
+	}
+
+	public final Object getService(final Object key) {
+		final Object service = services.get(key);
+		if (service == null) {
+			return getWorkbench().getService(key);
+		}
+
+		return service;
+	}
+
+	/**
+	 * Cycles through all of the registered services. If any of the services are
+	 * {@link INestable}, then they are notified that the component to which
+	 * they belong is becoming active.
+	 */
+	private final void activateNestedServices() {
+		final Iterator serviceItr = services.values().iterator();
+		while (serviceItr.hasNext()) {
+			final Object service = serviceItr.next();
+			if (service instanceof INestable) {
+				final INestable nestableService = (INestable) service;
+				nestableService.activate();
+			}
+		}
+	}
+
+	/**
+	 * Cycles through all of the registered services. If any of the services are
+	 * {@link INestable}, then they are notified that the component to which
+	 * they belong is becoming inactive.
+	 */
+	private final void deactivateNestedServices() {
+		final Iterator serviceItr = services.values().iterator();
+		while (serviceItr.hasNext()) {
+			final Object service = serviceItr.next();
+			if (service instanceof INestable) {
+				final INestable nestableService = (INestable) service;
+				nestableService.deactivate();
+			}
+		}
 	}
 }

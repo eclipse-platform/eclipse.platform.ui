@@ -62,8 +62,7 @@ public final class BindingService implements IBindingService {
 	 * binding manager.
 	 * 
 	 * @param bindingManager
-	 *            The bind
-	 * ing manager to use; must not be <code>null</code>.
+	 *            The bind ing manager to use; must not be <code>null</code>.
 	 * @param commandService
 	 *            The command service providing support for this service; must
 	 *            not be <code>null</code>;
@@ -97,6 +96,10 @@ public final class BindingService implements IBindingService {
 				.getKeyFormatterForPlatform());
 	}
 
+	public final void dispose() {
+		bindingPersistence.dispose();
+	}
+
 	public final TriggerSequence[] getActiveBindingsFor(
 			final ParameterizedCommand parameterizedCommand) {
 		return bindingManager.getActiveBindingsFor(parameterizedCommand);
@@ -110,8 +113,8 @@ public final class BindingService implements IBindingService {
 		return bindingManager.getActiveScheme();
 	}
 
-	public final void dispose() {
-		bindingPersistence.dispose();
+	public final TriggerSequence getBestActiveBindingFor(final String commandId) {
+		return bindingManager.getBestActiveBindingFor(commandId);
 	}
 
 	public final Binding[] getBindings() {

@@ -54,15 +54,10 @@ import org.eclipse.jface.menus.SLocation;
 import org.eclipse.jface.menus.SMenu;
 import org.eclipse.jface.menus.SReference;
 import org.eclipse.jface.menus.SWidget;
-import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.LegacyHandlerSubmissionExpression;
-import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.commands.ICommandImageService;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
-import org.eclipse.ui.internal.services.LegacySelectionEnablerWrapper;
 import org.eclipse.ui.internal.services.RegistryPersistence;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.menus.IMenuContribution;
@@ -88,13 +83,6 @@ import org.eclipse.ui.menus.IMenuService;
  * @since 3.2
  */
 public final class LegacyActionPersistence extends RegistryPersistence {
-
-	/**
-	 * The handler activations that have come from the registry. This is used to
-	 * flush the activations when the registry is re-read. This value is never
-	 * <code>null</code>
-	 */
-	private static final Collection handlerActivations = new ArrayList();
 
 	/**
 	 * The index of the action set elements in the indexed array.
@@ -137,20 +125,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * <code>null</code>
 	 */
 	private static final Collection menuContributions = new ArrayList();
-
-	/**
-	 * Deactivates all of the activations made by this class, and then clears
-	 * the collection. This should be called before every read.
-	 * 
-	 * @param handlerService
-	 *            The service handling the activations; must not be
-	 *            <code>null</code>.
-	 */
-	private static final void clearActivations(
-			final IHandlerService handlerService) {
-		handlerService.deactivateHandlers(handlerActivations);
-		handlerActivations.clear();
-	}
 
 	/**
 	 * Removes all of the contributions made by this class, and then clears the
@@ -298,103 +272,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		}
 
 		return new ParameterizedCommand(command, null);
-	}
-
-	/**
-	 * <p>
-	 * Extracts the handler information from the given action element. These are
-	 * registered with the handler service. They are always active.
-	 * </p>
-	 * <p>
-	 * TODO We need to hook up listeners for all the various things delegates
-	 * listen to.
-	 * </p>
-	 * 
-	 * @param element
-	 *            The action element from which the handler should be read; must
-	 *            not be <code>null</code>.
-	 * @param actionId
-	 *            The identifier of the action for which a handler is being
-	 *            created; must not be <code>null</code>.
-	 * @param command
-	 *            The command for which this handler applies; must not be
-	 *            <code>null</code>.
-	 * @param commandManager
-	 *            The manager providing the commands; must not be
-	 *            <code>null</code>.
-	 * @param handlerService
-	 *            The handler service with which the action should be
-	 *            registered; must not be <code>null</code>.
-	 * @param bindingManager
-	 *            The manager providing bindings for the command; must not be
-	 *            <code>null</code>.
-	 * @param commandImageManager
-	 *            The image manager providing icons for the command; must not be
-	 *            <code>null</code>.
-	 * @param style
-	 *            The style of images to use for this action; may be
-	 *            <code>null</code>.
-	 * @param activeWhenExpression
-	 *            The expression controlling when the handler is active; may be
-	 *            <code>null</code>.
-	 * @param sourceProviders
-	 *            The event providers required to support the legacy
-	 *            <code>IActionDelegate</code>; must not be <code>null</code>.
-	 * @param viewId
-	 *            The view to which this handler is associated. This value is
-	 *            required if this is a view action; otherwise it can be
-	 *            <code>null</code>.
-	 */
-	private static final void convertActionToHandler(
-			final IConfigurationElement element, final String actionId,
-			final ParameterizedCommand command,
-			final CommandManager commandManager,
-			final IHandlerService handlerService,
-			final BindingManager bindingManager,
-			final CommandImageManager commandImageManager, final String style,
-			final Expression activeWhenExpression,
-			final ISourceProvider[] sourceProviders, final String viewId) {
-		// Read the class attribute.
-		final String classString = readOptional(element, ATTRIBUTE_CLASS);
-		if (classString == null) {
-			return;
-		}
-
-		// Read the enablesFor attribute, and enablement and selection elements.
-		SelectionEnabler enabler = null;
-		if (element.getAttribute(ATTRIBUTE_ENABLES_FOR) != null) {
-			enabler = new SelectionEnabler(element);
-		} else {
-			IConfigurationElement[] kids = element
-					.getChildren(ELEMENT_ENABLEMENT);
-			if (kids.length > 0)
-				enabler = new SelectionEnabler(element);
-		}
-		final Expression enabledWhenExpression;
-		if (enabler == null) {
-			enabledWhenExpression = null;
-		} else {
-			enabledWhenExpression = new LegacySelectionEnablerWrapper(enabler);
-		}
-
-		// Create the handler.
-		final ActionDelegateHandlerProxy handler = new ActionDelegateHandlerProxy(
-				element, ATTRIBUTE_CLASS, actionId, command, commandManager,
-				handlerService, bindingManager, commandImageManager, style,
-				enabledWhenExpression, viewId);
-		for (int i = 0; i < sourceProviders.length; i++) {
-			final ISourceProvider provider = sourceProviders[i];
-			handler.addSourceProvider(provider);
-		}
-
-		// Activate the handler.
-		final String commandId = command.getId();
-		if (!handlerService.isConflict(commandId, activeWhenExpression)) {
-			handlerActivations.add(handlerService.activateHandler(command
-					.getId(), handler, activeWhenExpression));
-		} else {
-			handler.dispose();
-		}
 	}
 
 	/**
@@ -610,9 +487,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param commandManager
 	 *            The command manager for the workbench; must not be
 	 *            <code>null</code>.
-	 * @param handlerService
-	 *            The service to which the handler should be added; must not be
-	 *            <code>null</code>.
 	 * @param bindingManager
 	 *            The binding manager for the workbench; must not be
 	 *            <code>null</code>.
@@ -629,26 +503,17 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param visibleWhenExpression
 	 *            The expression controlling visibility of the corresponding
 	 *            menu elements; may be <code>null</code>.
-	 * @param sourceProviders
-	 *            The event providers required to support the legacy
-	 *            <code>IActionDelegate</code>; must not be <code>null</code>.
-	 * @param viewId
-	 *            The view to which this handler is associated. This value is
-	 *            required if this is a view action; otherwise it can be
-	 *            <code>null</code>.
 	 * @return References to the created menu elements; may be <code>null</code>,
 	 *         and may be empty.
 	 */
 	private static final SReference[] readActions(final String primaryId,
 			final IConfigurationElement[] elements, final List warningsToLog,
 			final CommandManager commandManager,
-			final IHandlerService handlerService,
 			final BindingManager bindingManager,
 			final CommandImageManager commandImageManager,
 			final IMenuService menuService,
 			final LegacyLocationInfo locationInfo,
-			final Expression visibleWhenExpression,
-			final ISourceProvider[] sourceProviders, final String viewId) {
+			final Expression visibleWhenExpression) {
 		final Collection references = new ArrayList(elements.length);
 		for (int i = 0; i < elements.length; i++) {
 			final IConfigurationElement element = elements[i];
@@ -676,9 +541,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			convertActionToBinding(element, command, bindingManager);
 			final String imageStyle = convertActionToImages(element, command,
 					commandImageManager);
-			convertActionToHandler(element, id, command, commandManager,
-					handlerService, bindingManager, commandImageManager,
-					imageStyle, visibleWhenExpression, sourceProviders, viewId);
 			convertActionToItem(element, warningsToLog, command, imageStyle,
 					menuService, locationInfo, visibleWhenExpression);
 
@@ -707,9 +569,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param commandManager
 	 *            The command manager to which the command should be added; must
 	 *            not be <code>null</code>.
-	 * @param handlerService
-	 *            The service to which the handler should be added; must not be
-	 *            <code>null</code>.
 	 * @param bindingManager
 	 *            The binding manager to which the bindings should be added;
 	 *            must not be <code>null</code>.
@@ -726,13 +585,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param visibleWhenExpression
 	 *            The expression controlling visibility of the corresponding
 	 *            menu elements; may be <code>null</code>.
-	 * @param sourceProviders
-	 *            The event providers required to support the legacy
-	 *            <code>IActionDelegate</code>; must not be <code>null</code>.
-	 * @param viewId
-	 *            The view to which this handler is associated. This value is
-	 *            required if this is a view action; otherwise it can be
-	 *            <code>null</code>.
 	 * @return An array of references to the created menu elements. This value
 	 *         may be <code>null</code> if there was a problem parsing the
 	 *         configuration element.
@@ -740,20 +592,18 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	private static final SReference[] readActionsAndMenus(
 			final IConfigurationElement element, final String id,
 			final List warningsToLog, final CommandManager commandManager,
-			final IHandlerService handlerService,
 			final BindingManager bindingManager,
 			final CommandImageManager commandImageManager,
 			final IMenuService menuService,
 			final LegacyLocationInfo locationInfo,
-			final Expression visibleWhenExpression,
-			final ISourceProvider[] sourceProviders, final String viewId) {
+			final Expression visibleWhenExpression) {
 		// Read its child elements.
 		final IConfigurationElement[] actionElements = element
 				.getChildren(ELEMENT_ACTION);
 		final SReference[] itemReferences = readActions(id, actionElements,
-				warningsToLog, commandManager, handlerService, bindingManager,
+				warningsToLog, commandManager, bindingManager,
 				commandImageManager, menuService, locationInfo,
-				visibleWhenExpression, sourceProviders, viewId);
+				visibleWhenExpression);
 
 		// Read out the menus and groups, if any.
 		final IConfigurationElement[] menuElements = element
@@ -793,9 +643,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param commandManager
 	 *            The command manager to which the command should be added; must
 	 *            not be <code>null</code>.
-	 * @param handlerService
-	 *            The service to which the handler should be added; must not be
-	 *            <code>null</code>.
 	 * @param bindingManager
 	 *            The binding manager to which the bindings should be added;
 	 *            must not be <code>null</code>.
@@ -805,19 +652,14 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param menuService
 	 *            The menu service to which the menu elements should be added;
 	 *            must not be <code>null</code>.
-	 * @param sourceProviders
-	 *            The event providers required to support the legacy
-	 *            <code>IActionDelegate</code>; must not be <code>null</code>.
 	 */
 	private static final void readActionSets(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final CommandManager commandManager,
-			final IHandlerService handlerService,
 			final BindingManager bindingManager,
 			final CommandImageManager commandImageManager,
-			final IMenuService menuService,
-			final ISourceProvider[] sourceProviders) {
+			final IMenuService menuService) {
 		final List warningsToLog = new ArrayList(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
@@ -846,9 +688,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			// Read all of the child elements.
 			final SReference[] references = readActionsAndMenus(element, id,
-					warningsToLog, commandManager, handlerService,
-					bindingManager, commandImageManager, menuService, null,
-					null, sourceProviders, null);
+					warningsToLog, commandManager, bindingManager,
+					commandImageManager, menuService, null, null);
 			if (references == null) {
 				continue;
 			}
@@ -876,9 +717,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param commandManager
 	 *            The command manager to which the command should be added; must
 	 *            not be <code>null</code>.
-	 * @param handlerService
-	 *            The service to which the handler should be added; must not be
-	 *            <code>null</code>.
 	 * @param bindingManager
 	 *            The binding manager to which the bindings should be added;
 	 *            must not be <code>null</code>.
@@ -888,19 +726,14 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param menuService
 	 *            The menu service to which the menu elements should be added;
 	 *            must not be <code>null</code>.
-	 * @param sourceProviders
-	 *            The event providers required to support the legacy
-	 *            <code>IActionDelegate</code>; must not be <code>null</code>.
 	 */
 	private static final void readEditorContributions(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final CommandManager commandManager,
-			final IHandlerService handlerService,
 			final BindingManager bindingManager,
 			final CommandImageManager commandImageManager,
-			final IMenuService menuService,
-			final ISourceProvider[] sourceProviders) {
+			final IMenuService menuService) {
 		final List warningsToLog = new ArrayList(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
@@ -925,9 +758,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			// Read all of the child elements from the registry.
 			readActionsAndMenus(element, id, warningsToLog, commandManager,
-					handlerService, bindingManager, commandImageManager,
-					menuService, null, visibleWhenExpression, sourceProviders,
-					null);
+					bindingManager, commandImageManager, menuService, null,
+					visibleWhenExpression);
 		}
 
 		logWarnings(
@@ -1134,9 +966,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param commandManager
 	 *            The command manager to which the command should be added; must
 	 *            not be <code>null</code>.
-	 * @param handlerService
-	 *            The service to which the handler should be added; must not be
-	 *            <code>null</code>.
 	 * @param bindingManager
 	 *            The binding manager to which the bindings should be added;
 	 *            must not be <code>null</code>.
@@ -1146,19 +975,14 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param menuService
 	 *            The menu service to which the menu elements should be added;
 	 *            must not be <code>null</code>.
-	 * @param sourceProviders
-	 *            The event providers required to support the legacy
-	 *            <code>IActionDelegate</code>; must not be <code>null</code>.
 	 */
 	private static final void readObjectContributions(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final CommandManager commandManager,
-			final IHandlerService handlerService,
 			final BindingManager bindingManager,
 			final CommandImageManager commandImageManager,
-			final IMenuService menuService,
-			final ISourceProvider[] sourceProviders) {
+			final IMenuService menuService) {
 		final List warningsToLog = new ArrayList(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
@@ -1198,9 +1022,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			// Read all of the child elements from the registry.
 			readActionsAndMenus(element, id, warningsToLog, commandManager,
-					handlerService, bindingManager, commandImageManager,
-					menuService, locationInfo, visibleWhenExpression,
-					sourceProviders, null);
+					bindingManager, commandImageManager, menuService,
+					locationInfo, visibleWhenExpression);
 		}
 
 		logWarnings(
@@ -1221,9 +1044,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param commandManager
 	 *            The command manager to which the command should be added; must
 	 *            not be <code>null</code>.
-	 * @param handlerService
-	 *            The service to which the handler should be added; must not be
-	 *            <code>null</code>.
 	 * @param bindingManager
 	 *            The binding manager to which the bindings should be added;
 	 *            must not be <code>null</code>.
@@ -1233,19 +1053,14 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param menuService
 	 *            The menu service to which the menu elements should be added;
 	 *            must not be <code>null</code>.
-	 * @param sourceProviders
-	 *            The event providers required to support the legacy
-	 *            <code>IActionDelegate</code>; must not be <code>null</code>.
 	 */
 	private static final void readViewContributions(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final CommandManager commandManager,
-			final IHandlerService handlerService,
 			final BindingManager bindingManager,
 			final CommandImageManager commandImageManager,
-			final IMenuService menuService,
-			final ISourceProvider[] sourceProviders) {
+			final IMenuService menuService) {
 		final List warningsToLog = new ArrayList(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
@@ -1272,9 +1087,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			// Read all of the child elements from the registry.
 			readActionsAndMenus(element, id, warningsToLog, commandManager,
-					handlerService, bindingManager, commandImageManager,
-					menuService, locationInfo, visibleWhenExpression,
-					sourceProviders, targetId);
+					bindingManager, commandImageManager, menuService,
+					locationInfo, visibleWhenExpression);
 		}
 
 		logWarnings(
@@ -1295,9 +1109,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param commandManager
 	 *            The command manager to which the command should be added; must
 	 *            not be <code>null</code>.
-	 * @param handlerService
-	 *            The service to which the handler should be added; must not be
-	 *            <code>null</code>.
 	 * @param bindingManager
 	 *            The binding manager to which the bindings should be added;
 	 *            must not be <code>null</code>.
@@ -1307,19 +1118,14 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param menuService
 	 *            The menu service to which the menu elements should be added;
 	 *            must not be <code>null</code>.
-	 * @param sourceProviders
-	 *            The event providers required to support the legacy
-	 *            <code>IActionDelegate</code>; must not be <code>null</code>.
 	 */
 	private static final void readViewerContributions(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final CommandManager commandManager,
-			final IHandlerService handlerService,
 			final BindingManager bindingManager,
 			final CommandImageManager commandImageManager,
-			final IMenuService menuService,
-			final ISourceProvider[] sourceProviders) {
+			final IMenuService menuService) {
 		final List warningsToLog = new ArrayList(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
@@ -1348,9 +1154,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			// Read all of the child elements from the registry.
 			readActionsAndMenus(element, id, warningsToLog, commandManager,
-					handlerService, bindingManager, commandImageManager,
-					menuService, locationInfo, visibleWhenExpression,
-					sourceProviders, null);
+					bindingManager, commandImageManager, menuService,
+					locationInfo, visibleWhenExpression);
 		}
 
 		logWarnings(
@@ -1416,22 +1221,10 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	private final CommandManager commandManager;
 
 	/**
-	 * The service to which the handler should be added; must not be
-	 * <code>null</code>.
-	 */
-	private final IHandlerService handlerService;
-
-	/**
 	 * The menu service which should be populated with the values from the
 	 * registry; must not be <code>null</code>.
 	 */
 	private final IMenuService menuService;
-
-	/**
-	 * The event providers required to support the <code>IActionDelegate</code>
-	 * interface; never <code>null</code>.
-	 */
-	private final ISourceProvider[] sourceProviders;
 
 	/**
 	 * Constructs a new instance of {@link LegacyActionPersistence}.
@@ -1439,9 +1232,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param commandManager
 	 *            The command manager which is providing the commands for the
 	 *            workbench; must not be <code>null</code>.
-	 * @param handlerService
-	 *            The service to which the handler should be added; must not be
-	 *            <code>null</code>.
 	 * @param bindingManager
 	 *            The binding manager which should be populated with bindings
 	 *            from actions; must not be <code>null</code>.
@@ -1451,27 +1241,20 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param menuService
 	 *            The menu service which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
-	 * @param sourceProviders
-	 *            The event providers required to support the legacy
-	 *            <code>IActionDelegate</code>; must not be <code>null</code>.
 	 */
 	public LegacyActionPersistence(final CommandManager commandManager,
-			final IHandlerService handlerService,
 			final BindingManager bindingManager,
 			final CommandImageManager commandImageManager,
-			final IMenuService menuService,
-			final ISourceProvider[] sourceProviders) {
+			final IMenuService menuService) {
 		this.commandManager = commandManager;
-		this.handlerService = handlerService;
 		this.bindingManager = bindingManager;
 		this.commandImageManager = commandImageManager;
 		this.menuService = menuService;
-		this.sourceProviders = sourceProviders;
 	}
 
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
-		// TODO Auto-generated method stub
-		return false;
+		// TODO Write something to narrow this down a bit.
+		return true;
 	}
 
 	/**
@@ -1548,30 +1331,25 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			}
 		}
 
-		clearActivations(handlerService);
 		clearContributions(menuService);
 		readActionSets(indexedConfigurationElements[INDEX_ACTION_SETS],
-				actionSetCount, commandManager, handlerService, bindingManager,
-				commandImageManager, menuService, sourceProviders);
+				actionSetCount, commandManager, bindingManager,
+				commandImageManager, menuService);
 		readEditorContributions(
 				indexedConfigurationElements[INDEX_EDITOR_CONTRIBUTIONS],
-				editorContributionCount, commandManager, handlerService,
-				bindingManager, commandImageManager, menuService,
-				sourceProviders);
+				editorContributionCount, commandManager, bindingManager,
+				commandImageManager, menuService);
 		readObjectContributions(
 				indexedConfigurationElements[INDEX_OBJECT_CONTRIBUTIONS],
-				objectContributionCount, commandManager, handlerService,
-				bindingManager, commandImageManager, menuService,
-				sourceProviders);
+				objectContributionCount, commandManager, bindingManager,
+				commandImageManager, menuService);
 		readViewContributions(
 				indexedConfigurationElements[INDEX_VIEW_CONTRIBUTIONS],
-				viewContributionCount, commandManager, handlerService,
-				bindingManager, commandImageManager, menuService,
-				sourceProviders);
+				viewContributionCount, commandManager, bindingManager,
+				commandImageManager, menuService);
 		readViewerContributions(
 				indexedConfigurationElements[INDEX_VIEWER_CONTRIBUTIONS],
-				viewerContributionCount, commandManager, handlerService,
-				bindingManager, commandImageManager, menuService,
-				sourceProviders);
+				viewerContributionCount, commandManager, bindingManager,
+				commandImageManager, menuService);
 	}
 }

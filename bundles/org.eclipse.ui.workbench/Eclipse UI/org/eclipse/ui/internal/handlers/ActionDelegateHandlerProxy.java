@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.handlers;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
@@ -31,10 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.CommandLegacyActionWrapper;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.bindings.BindingManager;
-import org.eclipse.jface.commands.CommandImageManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -57,9 +53,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.commands.ICommandImageService;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.CommandLegacyActionWrapper;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.services.IServiceWithSources;
 
 /**
@@ -97,11 +97,11 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	private final Map actionsByWindow = new HashMap(3);
 
 	/**
-	 * The binding manager that will be used to provide information about the
+	 * The binding service that will be used to provide information about the
 	 * key associated with this delegate's action. This value is never
 	 * <code>null</code>.
 	 */
-	private BindingManager bindingManager;
+	private IBindingService bindingService;
 
 	/**
 	 * The command that will back the dummy actions exposed to this delegate.
@@ -110,16 +110,16 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	private ParameterizedCommand command;
 
 	/**
-	 * The manager providing the images for the dummy actions. This value is
+	 * The service providing the images for the dummy actions. This value is
 	 * never <code>null</code>.
 	 */
-	private CommandImageManager commandImageManager;
+	private ICommandImageService commandImageService;
 
 	/**
-	 * The manager providing commands for the dummy actions. This value is never
+	 * The service providing commands for the dummy actions. This value is never
 	 * <code>null</code>.
 	 */
-	private CommandManager commandManager;
+	private ICommandService commandService;
 
 	/**
 	 * This is the current selection, as seen by this proxy.
@@ -197,19 +197,19 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	 * @param command
 	 *            The command with which the action delegate will be associated;
 	 *            must not be <code>null</code>.
-	 * @param commandManager
-	 *            The manager providing commands for this action delegate; must
+	 * @param commandService
+	 *            The service providing commands for this action delegate; must
 	 *            not be <code>null</code>.
 	 * @param handlerService
 	 *            The handler service from which to get the current context when
 	 *            trying to evaluate the <code>enabledWhenExpression</code>.
 	 *            This value may be <code>null</code> only if the
 	 *            <code>enabledWhenExpression</code> is <code>null</code>.
-	 * @param bindingManager
-	 *            The binding manager providing accelerators for this action
+	 * @param bindingService
+	 *            The binding service providing accelerators for this action
 	 *            delegate; must not be <code>null</code>.
-	 * @param commandImageManager
-	 *            The image manager providing icons for the action delegate;
+	 * @param commandImageService
+	 *            The image service providing icons for the action delegate;
 	 *            must not be <code>null</code>.
 	 * @param style
 	 *            The image style with which the icons are associated; may be
@@ -229,10 +229,10 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	public ActionDelegateHandlerProxy(final IConfigurationElement element,
 			final String delegateAttributeName, final String actionId,
 			final ParameterizedCommand command,
-			final CommandManager commandManager,
+			final ICommandService commandService,
 			final IHandlerService handlerService,
-			final BindingManager bindingManager,
-			final CommandImageManager commandImageManager, final String style,
+			final IBindingService bindingService,
+			final ICommandImageService commandImageService, final String style,
 			final Expression enabledWhenExpression, final String viewId) {
 		if (element == null) {
 			throw new NullPointerException(
@@ -249,10 +249,10 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 		this.delegateAttributeName = delegateAttributeName;
 		this.handlerService = handlerService;
 		this.command = command;
-		this.commandManager = commandManager;
-		this.bindingManager = bindingManager;
+		this.commandService = commandService;
+		this.bindingService = bindingService;
 		this.actionId = actionId;
-		this.commandImageManager = commandImageManager;
+		this.commandImageService = commandImageService;
 		this.style = style;
 		this.viewId = viewId;
 	}
@@ -322,8 +322,8 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 			}
 
 			final CommandLegacyActionWrapper newAction = new CommandLegacyActionWrapper(
-					actionId, command, commandManager, bindingManager,
-					commandImageManager, style);
+					actionId, command, commandService, bindingService,
+					commandImageService, style);
 			actionsByWindow.put(variable, newAction);
 			newAction.addPropertyChangeListener(new IPropertyChangeListener() {
 				public final void propertyChange(final PropertyChangeEvent event) {
