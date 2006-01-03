@@ -108,16 +108,23 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 						status.merge(filterStatus);
 					}
 				} catch (CoreException e) {
-					status.addError(Messages.format(
-						RefactoringCoreMessages.ParticipantExtensionPoint_participant_removed,  
-						descriptor.getName()));
-					RefactoringCorePlugin.logRemovedParticipant(descriptor, e);
+					logMalfunctioningParticipant(status, descriptor, e);
+					iter.remove();
+				} catch (RuntimeException e) {
+					logMalfunctioningParticipant(status, descriptor, e);
 					iter.remove();
 				}
 			}
 		}
 		
 		return (RefactoringParticipant[])result.toArray(new RefactoringParticipant[result.size()]);
+	}
+
+	private void logMalfunctioningParticipant(RefactoringStatus status, ParticipantDescriptor descriptor, Throwable e) {
+		status.addError(Messages.format(
+			RefactoringCoreMessages.ParticipantExtensionPoint_participant_removed,  
+			descriptor.getName()));
+		RefactoringCorePlugin.logRemovedParticipant(descriptor, e);
 	}
 	
 	private void init() {

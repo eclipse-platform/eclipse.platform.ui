@@ -11,7 +11,10 @@
 package org.eclipse.ltk.core.refactoring.participants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +33,8 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
+
+import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
@@ -48,12 +53,12 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	private static final String PERF_CHECK_CONDITIONS= "org.eclipse.ltk.core.refactoring/perf/participants/checkConditions"; //$NON-NLS-1$
 	private static final String PERF_CREATE_CHANGES= "org.eclipse.ltk.core.refactoring/perf/participants/createChanges"; //$NON-NLS-1$
 
-	private RefactoringParticipant[] fParticipants;
+	private List/*<RefactoringParticipant>*/ fParticipants;
 	private SharableParticipants fSharedParticipants= new SharableParticipants();
 	
 	private Map/*<Object, TextChange>*/ fTextChangeMap;
 	
-	private static final RefactoringParticipant[] EMPTY_PARTICIPANTS= new RefactoringParticipant[0];
+	private static final List/*<RefactoringParticipant>*/ EMPTY_PARTICIPANTS= Collections.EMPTY_LIST;
 
 	private static class ProcessorChange extends CompositeChange {
 		private Map fParticipantMap;
@@ -174,7 +179,7 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		if (pm.isCanceled())
 			throw new OperationCanceledException();
 		
-		fParticipants= getProcessor().loadParticipants(result, fSharedParticipants);
+		fParticipants= new ArrayList(Arrays.asList(getProcessor().loadParticipants(result, fSharedParticipants)));
 		if (fParticipants == null) 
 			fParticipants= EMPTY_PARTICIPANTS;
 		if (result.hasFatalError()) {
@@ -182,13 +187,25 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 			return result;
 		}
 		IProgressMonitor sm= new SubProgressMonitor(pm, 2);
-		sm.beginTask("", fParticipants.length); //$NON-NLS-1$
-		for (int i= 0; i < fParticipants.length && !result.hasFatalError(); i++) {
+		
+		sm.beginTask("", fParticipants.size()); //$NON-NLS-1$
+		for (Iterator iter= fParticipants.iterator(); iter.hasNext() && !result.hasFatalError(); ) {
+			
+			RefactoringParticipant participant= (RefactoringParticipant) iter.next();
 
-			final PerformanceStats stats= PerformanceStats.getStats(PERF_CHECK_CONDITIONS, getName() + ", " + fParticipants[i].getName()); //$NON-NLS-1$
+			final PerformanceStats stats= PerformanceStats.getStats(PERF_CHECK_CONDITIONS, getName() + ", " + participant.getName()); //$NON-NLS-1$
 			stats.startRun();
 
-			result.merge(fParticipants[i].checkConditions(new SubProgressMonitor(sm, 1), context));
+			try {
+				result.merge(participant.checkConditions(new SubProgressMonitor(sm, 1), context));
+			} catch (RuntimeException e) {
+				// remove the participant so that it will be ignored during change execution.
+				RefactoringCorePlugin.log(e);
+				result.merge(RefactoringStatus.createErrorStatus(Messages.format(
+					RefactoringCoreMessages.ProcessorBasedRefactoring_check_condition_participant_failed, 
+					participant.getName())));
+				iter.remove();
+			}
 
 			stats.endRun();
 
@@ -211,7 +228,7 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	public Change createChange(IProgressMonitor pm) throws CoreException {
 		if (pm == null)
 			pm= new NullProgressMonitor();
-		pm.beginTask("", fParticipants.length + 2); //$NON-NLS-1$
+		pm.beginTask("", fParticipants.size() + 2); //$NON-NLS-1$
 		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_create_change); 
 		Change processorChange= getProcessor().createChange(new SubProgressMonitor(pm, 1));
 		if (pm.isCanceled())
@@ -222,10 +239,10 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		
 		List changes= new ArrayList();
 		Map participantMap= new HashMap();
-		for (int i= 0; i < fParticipants.length; i++) {
-			final RefactoringParticipant participant= fParticipants[i];
+		for (Iterator iter= fParticipants.iterator(); iter.hasNext();) {
+			final RefactoringParticipant participant= (RefactoringParticipant) iter.next();
+			
 			try {
-
 				final PerformanceStats stats= PerformanceStats.getStats(PERF_CREATE_CHANGES, getName() + ", " + participant.getName()); //$NON-NLS-1$
 				stats.startRun();
 
@@ -319,11 +336,12 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	
 	private CheckConditionsContext createCheckConditionsContext() throws CoreException {
 		CheckConditionsContext result= new CheckConditionsContext();
-		IConditionChecker checker= new ValidateEditChecker(getValidationContext());
-		result.add(checker);
+		result.add(new ValidateEditChecker(getValidationContext()));
+		result.add(new ResourceOperationChecker());
 		return result;
 	}
-
+	
+	
 	private void disableParticipant(final RefactoringParticipant participant, Throwable e) {
 		ParticipantDescriptor descriptor= participant.getDescriptor();
 		descriptor.disable();

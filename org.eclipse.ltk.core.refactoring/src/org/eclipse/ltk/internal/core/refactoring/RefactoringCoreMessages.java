@@ -52,6 +52,7 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String ProcessorBasedRefactoring_initial_conditions;
 	public static String ProcessorBasedRefactoring_final_conditions;
 	public static String ProcessorBasedRefactoring_create_change;
+	public static String ProcessorBasedRefactoring_check_condition_participant_failed;
 	
 	public static String ParticipantDescriptor_correct;
 	public static String ParticipantDescriptor_error_id_missing;

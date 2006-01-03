@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -22,6 +25,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+
+import org.eclipse.core.resources.IFile;
 
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -98,7 +103,20 @@ public class CheckConditionsContext {
 		if (pm == null)
 			pm= new NullProgressMonitor();
 		RefactoringStatus result= new RefactoringStatus();
-		Collection values = fCheckers.values();
+		mergeResourceOperationAndValidateEdit();
+		List values= new ArrayList(fCheckers.values());
+		Collections.sort(values, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				// Note there can only be one ResourceOperationChecker. So it
+				// is save to not test the case that both objects are 
+				// ResourceOperationChecker
+				if (o1 instanceof ResourceOperationChecker)
+					return -1;
+				if (o2 instanceof ResourceOperationChecker)
+					return 1;
+				return 0;
+			}
+		});
 		pm.beginTask("", values.size()); //$NON-NLS-1$
 		for (Iterator iter= values.iterator(); iter.hasNext();) {
 			IConditionChecker checker= (IConditionChecker)iter.next();
@@ -107,5 +125,17 @@ public class CheckConditionsContext {
 				throw new OperationCanceledException();
 		}
 		return result;
+	}
+	
+	private void mergeResourceOperationAndValidateEdit() {
+		ValidateEditChecker validateEditChecker= (ValidateEditChecker) getChecker(ValidateEditChecker.class);
+		if (validateEditChecker == null)
+			return;
+		ResourceOperationChecker resourceOperationChecker= (ResourceOperationChecker) getChecker(ResourceOperationChecker.class);
+		if (resourceOperationChecker == null)
+			return;
+		
+		IFile[] changedFiles= resourceOperationChecker.getChangedFiles();
+		validateEditChecker.addFiles(changedFiles);
 	}
 }
