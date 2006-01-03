@@ -79,6 +79,6 @@ public class CVSFileRevision extends FileRevision {
 	}
 
 	public boolean exists() {
-		return entry.isDeletion();
+		return !entry.isDeletion();
 	}
 }
