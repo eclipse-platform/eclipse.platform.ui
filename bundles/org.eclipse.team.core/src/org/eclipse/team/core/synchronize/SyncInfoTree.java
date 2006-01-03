@@ -10,11 +10,21 @@
  *******************************************************************************/
 package org.eclipse.team.core.synchronize;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.core.Messages;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.subscribers.SyncInfoTreeChangeEvent;
@@ -29,7 +39,7 @@ import org.eclipse.team.internal.core.subscribers.SyncSetChangedEvent;
  * @see SyncInfoSet
  * @since 3.0
  */
-public class SyncInfoTree extends SyncInfoSet implements ISyncInfoTree {
+public class SyncInfoTree extends SyncInfoSet {
 
 	protected Map parents = Collections.synchronizedMap(new HashMap());
 	
@@ -54,8 +64,13 @@ public class SyncInfoTree extends SyncInfoSet implements ISyncInfoTree {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoTree#hasMembers(org.eclipse.core.resources.IResource)
+	/**
+	 * Return whether the given resource has any children in the sync set. The children
+	 * could be either out-of-sync resources that are contained by the set or containers
+	 * that are ancestors of out-of-sync resources contained by the set.
+	 * 
+	 * @param resource the resource to check for children.
+	 * @return <code>true</code> if the resource has children in the set.
 	 */
 	public synchronized boolean hasMembers(IResource resource) {
 		if (resource.getType() == IResource.FILE) return false;
@@ -66,8 +81,23 @@ public class SyncInfoTree extends SyncInfoSet implements ISyncInfoTree {
 		return (allDescendants != null && !allDescendants.isEmpty());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoTree#getSyncInfos(org.eclipse.core.resources.IResource, int)
+	/**
+	 * Return the <code>SyncInfo</code> for each out-of-sync resource in the subtree rooted at the given resource
+	 * to the depth specified. The depth is one of:
+	 * <ul>
+	 * <li><code>IResource.DEPTH_ZERO</code>: the resource only,
+	 * <li><code>IResource.DEPTH_ONE</code>: the resource or its direct children,
+	 * <li><code>IResource.DEPTH_INFINITE</code>: the resource and all of it's descendants.
+	 * <ul>
+	 * If the given resource is out of sync, it will be included in the result.
+	 * <p>
+	 * The default implementation makes use of <code>getSyncInfo(IResource)</code>,
+	 * <code>members(IResource)</code> and <code>getSyncInfos()</code>
+	 * to provide the varying depths. Subclasses may override to optimize.
+	 * </p>
+	 * @param resource the root of the resource subtree
+	 * @param depth the depth of the subtree
+	 * @return the <code>SyncInfo</code> for any out-of-sync resources
 	 */
 	public synchronized SyncInfo[] getSyncInfos(IResource resource, int depth) {
 		if (depth == IResource.DEPTH_ZERO || resource.getType() == IResource.FILE) {
@@ -298,8 +328,13 @@ public class SyncInfoTree extends SyncInfoSet implements ISyncInfoTree {
 		return (IResource[]) children.toArray(new IResource[children.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoTree#members(org.eclipse.core.resources.IResource)
+	/**
+	 * Return the immediate children of the given resource who are either out-of-sync 
+	 * or contain out-of-sync resources.
+	 * 
+	 * @param resource the parent resource 
+	 * @return the children of the resource that are either out-of-sync or are ancestors of
+	 * out-of-sync resources contained in the set
 	 */
 	public synchronized IResource[] members(IResource resource) {
 		if (resource.getType() == IResource.FILE) return new IResource[0];
@@ -329,26 +364,6 @@ public class SyncInfoTree extends SyncInfoSet implements ISyncInfoTree {
 			}
 		}
 		return (IResource[]) children.toArray(new IResource[children.size()]);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoTree#getSyncInfos(org.eclipse.core.resources.mapping.ResourceTraversal[])
-	 */
-	public SyncInfo[] getSyncInfos(ResourceTraversal[] traversals) {
-		SyncInfoSet set = new SyncInfoSet();
-		for (int i = 0; i < traversals.length; i++) {
-			ResourceTraversal traversal = traversals[i];
-			IResource[] resources = traversal.getResources();
-			for (int j = 0; j < resources.length; j++) {
-				IResource resource = resources[j];
-				SyncInfo[] infos = getSyncInfos(resource, traversal.getDepth());
-				for (int k = 0; k < infos.length; k++) {
-					SyncInfo info = infos[k];
-					set.add(info);
-				}
-			}
-		}
-		return set.getSyncInfos();
 	}
 
 }

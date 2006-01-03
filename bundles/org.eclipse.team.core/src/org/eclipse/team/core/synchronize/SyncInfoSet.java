@@ -10,11 +10,24 @@
  *******************************************************************************/
 package org.eclipse.team.core.synchronize;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamStatus;
@@ -34,7 +47,7 @@ import org.eclipse.team.internal.core.subscribers.SyncSetChangedEvent;
  * @see ISyncInfoSetChangeListener
  * @since 3.0
  */
-public class SyncInfoSet implements ISyncInfoSet {
+public class SyncInfoSet {
 	// fields used to hold resources of interest
 	// {IPath -> SyncInfo}
 	private Map resources = Collections.synchronizedMap(new HashMap());
@@ -67,15 +80,21 @@ public class SyncInfoSet implements ISyncInfoSet {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoSet#getSyncInfos()
+	/**
+	 * Return an array of <code>SyncInfo</code> for all out-of-sync resources that are contained by the set.
+	 * 
+	 * @return an array of <code>SyncInfo</code>
 	 */
 	public synchronized SyncInfo[] getSyncInfos() {
 		return (SyncInfo[]) resources.values().toArray(new SyncInfo[resources.size()]);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoSet#getResources()
+	/**
+	 * Return all out-of-sync resources contained in this set. The default implementation
+	 * uses <code>getSyncInfos()</code> to determine the resources contained in the set.
+	 * Subclasses may override to optimize.
+	 * 
+	 * @return all out-of-sync resources contained in the set
 	 */
 	public IResource[] getResources() {
 		SyncInfo[] infos = getSyncInfos();
@@ -87,15 +106,23 @@ public class SyncInfoSet implements ISyncInfoSet {
 		return (IResource[]) resources.toArray(new IResource[resources.size()]);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoSet#getSyncInfo(org.eclipse.core.resources.IResource)
+	/**
+	 * Return the <code>SyncInfo</code> for the given resource or <code>null</code>
+	 * if the resource is not contained in the set.
+	 * 
+	 * @param resource the resource
+	 * @return the <code>SyncInfo</code> for the resource or <code>null</code> if
+	 * the resource is in-sync or doesn't have synchronization information in this set.
 	 */
 	public synchronized SyncInfo getSyncInfo(IResource resource) {
 		return (SyncInfo)resources.get(resource.getFullPath());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoSet#size()
+	/**
+	 * Return the number of out-of-sync resources contained in this set.
+	 * 
+	 * @return the size of the set.
+	 * @see #countFor(int, int)
 	 */
 	public synchronized int size() {
 		return resources.size();		
@@ -129,8 +156,10 @@ public class SyncInfoSet implements ISyncInfoSet {
 		return countFor(SyncInfo.CONFLICTING, SyncInfo.DIRECTION_MASK) > 0;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoSet#isEmpty()
+	/**
+	 * Return whether the set is empty.
+	 * 
+	 * @return <code>true</code> if the set is empty
 	 */
 	public synchronized boolean isEmpty() {
 		return resources.isEmpty();
@@ -170,8 +199,11 @@ public class SyncInfoSet implements ISyncInfoSet {
 		return info;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoSet#addSyncSetChangedListener(org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener)
+	/**
+	 * Registers the given listener for sync info set notifications. Has
+	 * no effect if an identical listener is already registered.
+	 * 
+	 * @param listener listener to register
 	 */
 	public void addSyncSetChangedListener(ISyncInfoSetChangeListener listener) {
 		synchronized(listeners) {
@@ -179,8 +211,11 @@ public class SyncInfoSet implements ISyncInfoSet {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoSet#removeSyncSetChangedListener(org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener)
+	/**
+	 * Removes the given listener from participant notifications. Has
+	 * no effect if listener is not already registered.
+	 * 
+	 * @param listener listener to remove
 	 */
 	public void removeSyncSetChangedListener(ISyncInfoSetChangeListener listener) {
 		synchronized(listeners) {

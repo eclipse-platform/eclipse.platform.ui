@@ -10,16 +10,26 @@
  *******************************************************************************/
 package org.eclipse.team.ui.operations;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ModelProvider;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.core.synchronize.ISyncInfoTree;
-import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiffTree;
+import org.eclipse.team.core.diff.IDiffVisitor;
+import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.mapping.IMergeContext;
+import org.eclipse.team.core.mapping.IMergeStatus;
+import org.eclipse.team.core.mapping.IResourceMappingMerger;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.mapping.DefaultResourceMappingMerger;
@@ -155,23 +165,6 @@ public abstract class ModelProviderOperation extends TeamOperation {
 		}
 		return new DefaultResourceMappingMerger(provider);
 	}
-	
-	/**
-	 * Return whether the given set of sync info contains incoming changes.
-	 * @param syncInfoTree the set of sync info
-	 * @return whether the given set of sync info contains incoming changes
-	 */
-	protected boolean hasIncomingChanges(ISyncInfoTree syncInfoTree) {
-		for (Iterator iter = syncInfoTree.iterator(); iter.hasNext();) {
-			SyncInfo info = (SyncInfo) iter.next();
-			int direction = SyncInfo.getDirection(info.getKind());
-			if (direction == SyncInfo.INCOMING || direction == SyncInfo.CONFLICTING) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 
 	protected boolean hasIncomingChanges(IDiffTree syncDeltaTree) {
 		final CoreException found = new CoreException(Status.OK_STATUS);
