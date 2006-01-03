@@ -295,6 +295,11 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	public void setSizeConstraints(int maxWidth, int maxHeight) {
 		fMaxWidth= maxWidth;
 		fMaxHeight= maxHeight;
+		
+		// see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=117602
+		Object layoutData= fText.getLayoutData();
+		if (layoutData instanceof GridData)
+			((GridData)layoutData).widthHint= fMaxWidth;
 	}
 
 	/*
