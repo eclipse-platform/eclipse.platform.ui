@@ -318,9 +318,13 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 	
 		Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);		
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
-		textControl.setLayoutData(gd);
-		textControl.setTextLimit(textLimit);
+        if (textLimit > -1) {
+            gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
+            textControl.setTextLimit(textLimit);
+        } else {
+            gd.widthHint= convertWidthInCharsToPixels(50);
+        }
+        textControl.setLayoutData(gd);
 		textControl.setFont(composite.getFont());
 		fTextFields.put(textControl, key);
 		if (errorMessages != null) {

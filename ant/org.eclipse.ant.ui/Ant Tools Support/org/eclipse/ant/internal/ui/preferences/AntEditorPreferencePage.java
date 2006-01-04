@@ -609,7 +609,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		gd.horizontalSpan= nColumns;
 		fBuildFilesToIgnoreProblemsDescription.setLayoutData(gd);
 		
-		Control[] controls= addLabelledTextField(othersComposite, AntPreferencesMessages.AntEditorPreferencePage_30, AntEditorPreferenceConstants.BUILDFILE_NAMES_TO_IGNORE, 50, 0, null);
+		Control[] controls= addLabelledTextField(othersComposite, AntPreferencesMessages.AntEditorPreferencePage_30, AntEditorPreferenceConstants.BUILDFILE_NAMES_TO_IGNORE, -1, 0, null);
 		fBuildFilesToIgnoreProblems= getTextControl(controls); 
 		fBuildFilesToIgnoreProblemsLabel= getLabelControl(controls);
 		
