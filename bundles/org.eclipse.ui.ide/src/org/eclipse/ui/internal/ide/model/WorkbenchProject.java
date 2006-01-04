@@ -96,6 +96,9 @@ public class WorkbenchProject extends WorkbenchResource implements
      * @return <code>true</code> if the attribute matches; <code>false</code> otherwise
      */
     public boolean testAttribute(Object target, String name, String value) {
+        if (!(target instanceof IProject)) {
+            return false;
+        }
         IProject proj = (IProject) target;
         if (name.equals(NATURE)) {
             try {
