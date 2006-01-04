@@ -514,7 +514,7 @@ public class ExtensionsRegistry {
 	 * @return the sharable set of document setup participants
 	 */
 	public IDocumentSetupParticipant[] getDocumentSetupParticipants(IPath location) {
-		List participants= new ArrayList();
+		Set participants= new HashSet();
 
 		List p= getDocumentSetupParticipants(findContentTypes(location));
 		if (p != null)
