@@ -12,10 +12,8 @@
 package org.eclipse.ui.texteditor;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
-
-import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -26,13 +24,13 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.jface.text.contentassist.ICompletionProposalComputer;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension4;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
-import org.eclipse.jface.text.contentassist.TextContentAssistInvocationContext;
+import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -52,7 +50,10 @@ import org.eclipse.ui.internal.texteditor.HippieCompletionEngine;
  * 
  * @since 3.2
  */
-public final class HippieProposalComputer implements ICompletionProposalComputer {
+public final class HippieProposalProcessor implements IContentAssistProcessor {
+
+	private static final ICompletionProposal[] NO_PROPOSALS= new ICompletionProposal[0];
+	private static final IContextInformation[] NO_CONTEXTS= new IContextInformation[0];
 
 	private static final class Proposal implements ICompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension2, ICompletionProposalExtension3, ICompletionProposalExtension4 {
 
@@ -154,34 +155,45 @@ public final class HippieProposalComputer implements ICompletionProposalComputer
 	/**
 	 * Creates a new hippie completion proposal computer.
 	 */
-	public HippieProposalComputer() {
+	public HippieProposalProcessor() {
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalComputer#computeCompletionProposals(org.eclipse.jface.text.contentassist.TextContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
 	 */
-	public List computeCompletionProposals(TextContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		try {
-			String prefix= context.computeIdentifierPrefix().toString();
-			if (prefix.length() == 0)
-				return Collections.EMPTY_LIST;
+			String prefix= getPrefix(viewer, offset);
+			if (prefix == null || prefix.length() == 0)
+				return NO_PROPOSALS;
 			
-			String[] suggestions= getSuggestions(context.getViewer(), context.getInvocationOffset(), prefix);
+			List suggestions= getSuggestions(viewer, offset, prefix);
 			
 			List result= new ArrayList();
-			for (int i= 0; i < suggestions.length; i++) {
-				String string= suggestions[i];
+			for (Iterator it= suggestions.iterator(); it.hasNext();) {
+				String string= (String) it.next();
 				if (string.length() > 0)
-					result.add(createProposal(string, prefix, context.getInvocationOffset()));
+					result.add(createProposal(string, prefix, offset));
 			}
 			
-			return result;
+			return (ICompletionProposal[]) result.toArray(new ICompletionProposal[result.size()]);
 			
 		} catch (BadLocationException x) {
-			// TODO Auto-generated catch block
-			x.printStackTrace();
-			return Collections.EMPTY_LIST;
+			// ignore and return no proposals
+			return NO_PROPOSALS;
 		}
+	}
+
+	private String getPrefix(ITextViewer viewer, int offset) throws BadLocationException {
+		IDocument doc= viewer.getDocument();
+		if (doc == null || offset > doc.getLength())
+			return null;
+		
+		int length= 0;
+		while (--offset >= 0 && Character.isJavaIdentifierPart(doc.getChar(offset)))
+			length++;
+		
+		return doc.get(offset + 1, length);
 	}
 
 	private ICompletionProposal createProposal(String string, String prefix, int offset) {
@@ -189,13 +201,33 @@ public final class HippieProposalComputer implements ICompletionProposalComputer
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalComputer#computeContextInformation(org.eclipse.jface.text.contentassist.TextContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
 	 */
-	public List computeContextInformation(TextContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 		// no context informations for hippie completions
-		return Collections.EMPTY_LIST;
+		return NO_CONTEXTS;
 	}
 	
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
+	 */
+	public char[] getCompletionProposalAutoActivationCharacters() {
+		return null;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
+	 */
+	public char[] getContextInformationAutoActivationCharacters() {
+		return null;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
+	 */
+	public IContextInformationValidator getContextInformationValidator() {
+		return null;
+	}
 
 	/**
 	 * Return the list of suggestions from the current document. First the
@@ -228,7 +260,7 @@ public final class HippieProposalComputer implements ICompletionProposalComputer
 	 *         editors
 	 * @throws BadLocationException if accessing the current document fails
 	 */
-	private String[] getSuggestions(ITextViewer viewer, int offset, String prefix) throws BadLocationException {
+	private List getSuggestions(ITextViewer viewer, int offset, String prefix) throws BadLocationException {
 
 		ArrayList suggestions= createSuggestionsFromOpenDocument(viewer, offset, prefix);
 		IDocument currentDocument= viewer.getDocument();
@@ -251,7 +283,7 @@ public final class HippieProposalComputer implements ICompletionProposalComputer
 
 		List uniqueSuggestions= fEngine.makeUnique(suggestions);
 
-		return (String[]) uniqueSuggestions.toArray(new String[0]);
+		return uniqueSuggestions;
 	}
 
 	/*

@@ -19,6 +19,20 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 <br>
 <br>
+========== Eclipse Build Input January 10th 2006 ==========<br>
+<pre>
+Move of the content assist API additions from the various text plug-ins to jdt.ui:
+   - reason: 
+      - the collection-based API of ICompletionProposalComputer has no future in the RCP part of eclipse.
+      - it is only currently used in jdt to allow contributions to the Java editor's content assistant
+   - removed the unused ContentAssistInvocationContext 
+   - moved TextContentAssistInvocationContext to jdt.ui
+   - moved ICompletionProposalComputer to IJavaCompletionProposalComputer in the jdt.ui plug-in.
+   - changed HippieProposalComputer to HippieProposalProcessor, now implementing IContentAssistProcessor instead of ICompletionProposalComputer
+   
+- bug fixing
+</pre>
+<br>
 ========== Eclipse Build Input December 12th 2005 ==========<br>
 <pre>
 - bug fixing
