@@ -65,7 +65,8 @@ public class OpenInCompareAction extends Action {
 		Assert.isNotNull(participant);
 		if (object instanceof SyncInfoModelElement) {
 			SyncInfo info = ((SyncInfoModelElement) object).getSyncInfo();
-			return openCompareEditor(participant, info, keepFocus, site);
+			if (info != null)
+				return openCompareEditor(participant, info, keepFocus, site);
 		}
 		if (participant instanceof ModelSynchronizeParticipant) {
 			ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
@@ -79,12 +80,9 @@ public class OpenInCompareAction extends Action {
 	
 	public static CompareEditorInput openCompareEditor(ISynchronizeParticipant participant, SyncInfo info, boolean keepFocus, ISynchronizePageSite site) {		
 		Assert.isNotNull(info);
-		Assert.isNotNull(participant);
-			
+		Assert.isNotNull(participant);	
 		if(info.getLocal().getType() != IResource.FILE) return null;
-		
 		SyncInfoCompareInput input = new SyncInfoCompareInput(participant, info);
-	
 		return openCompareEditor(input, keepFocus, site);
 	}
 
@@ -97,11 +95,8 @@ public class OpenInCompareAction extends Action {
 		} else {
 			page = site.getWorkbenchSite().getPage();
 		}
-		
 		if(page != null) {
-			
 			openCompareEditor(input, page);
-			
 			if(site != null && keepFocus) {
 				site.setFocus();
 			}
