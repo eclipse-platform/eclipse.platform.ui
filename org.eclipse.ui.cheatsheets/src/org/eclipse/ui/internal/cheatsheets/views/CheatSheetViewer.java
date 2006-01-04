@@ -698,7 +698,10 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	}
 
 	private ViewItem getViewItemAtIndex(int index) {
-		return (ViewItem) viewItemList.get(index);
+		if (viewItemList != null && !viewItemList.isEmpty()) {
+			return (ViewItem) viewItemList.get(index);
+		}
+		return null;
 	}
 	
 	/**
@@ -811,7 +814,10 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	 */
 	private boolean isInDialogItem() {
 		ViewItem item = getViewItemAtIndex(currentItemNum);
-		return item.getItem().isDialog();
+		if (item != null) {
+			return item.getItem().isDialog();
+		}
+		return false;
 	}
 	
 	/**
