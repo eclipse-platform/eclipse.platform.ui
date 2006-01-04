@@ -197,7 +197,7 @@ public abstract class MarkerView extends TableView {
 			MarkerList currentList = getCurrentMarkers();
 			Iterator removes = existingMarkers.iterator();
 			while (removes.hasNext()) {
-				ConcreteMarker next = currentList.getMarker((IMarker) removes
+				Object next = currentList.getMarker((IMarker) removes
 						.next());
 				if (next != null)
 					toRemove.add(next);
