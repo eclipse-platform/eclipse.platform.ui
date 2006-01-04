@@ -180,7 +180,7 @@ public interface ISynchronizePageConfiguration {
 	 * by adding new unique group ids to the array. Added groups 
 	 * will appear in the order specified but after the default groups.
 	 */
-	public static final String[] DEFAULT_TOOLBAR_MENU = new String[] { SYNCHRONIZE_GROUP, NAVIGATE_GROUP, MODE_GROUP,  LAYOUT_GROUP };
+	public static final String[] DEFAULT_TOOLBAR_MENU = new String[] { SYNCHRONIZE_GROUP, NAVIGATE_GROUP, MODE_GROUP, LAYOUT_GROUP };
 	
 	/**
 	 * These are the default groups used for the dropdown view menu of a page.

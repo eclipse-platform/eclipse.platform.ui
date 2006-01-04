@@ -27,7 +27,6 @@ public class SyncViewerShowPreferencesAction extends Action {
 
 	public void run() {
 	    PreferencePage[] pages = configuration.getParticipant().getPreferencePages();
-		//PreferencePage page = new SyncViewerPreferencePage();
         PreferencePageContainerDialog dialog = new PreferencePageContainerDialog(configuration.getSite().getShell(), pages);
         dialog.setHelpContextId(IHelpContextIds.SYNC_VIEW_PREFERENCE_DIALOG);
 		dialog.setBlockOnOpen(true);

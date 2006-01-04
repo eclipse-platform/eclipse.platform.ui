@@ -26,7 +26,6 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 	
 	// the changes viewer are contributed via the viewer and not the page.
 	private Action configureSchedule;
-	private SyncViewerShowPreferencesAction showPreferences;
 	private Action refreshSelectionAction;
 	private RemoveFromViewAction removeFromViewAction;
 
@@ -66,7 +65,6 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 			Utils.initAction(configureSchedule, "action.configureSchedulel."); //$NON-NLS-1$
 		}
 		
-		showPreferences = new SyncViewerShowPreferencesAction(configuration);
 		removeFromViewAction = new RemoveFromViewAction(configuration);
 	}
 
@@ -76,7 +74,7 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 	public void fillContextMenu(IMenuManager manager) {
 		if (findGroup(manager, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP) != null
 			&& findGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP) != null) {
-			// Place synchronize with navigato to save space
+			// Place synchronize with navigate to save space
 			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, refreshSelectionAction);
 			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, removeFromViewAction);
 		} else {
@@ -90,7 +88,6 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 	 */
 	public void fillActionBars(IActionBars actionBars) {
 		if(actionBars != null) {
-
 			// view menu
 			IMenuManager menu = actionBars.getMenuManager();
 			if (findGroup(menu, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP) != null
@@ -99,7 +96,6 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 			} else {
 				appendToGroup(menu, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP, configureSchedule);
 			}
-			appendToGroup(menu, ISynchronizePageConfiguration.PREFERENCES_GROUP, showPreferences);
 		}		
 	}
 }

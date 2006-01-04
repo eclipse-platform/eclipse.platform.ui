@@ -200,7 +200,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 			if (traversals != null)
 				return traversals;
 			// We need to determine the traversals from the mapping
-			// TODO: this is right: see bug 120114
+			// TODO: this is not right: see bug 120114
 			try {
 				return mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, new NullProgressMonitor());
 			} catch (CoreException e) {

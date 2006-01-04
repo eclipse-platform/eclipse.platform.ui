@@ -35,9 +35,17 @@ import org.eclipse.ui.part.IPageBookViewPage;
 public class ModelSynchronizeParticipant extends
 		AbstractSynchronizeParticipant {
 
-	public static final String TOOLBAR_CONTRIBUTION_GROUP = "toolbar_group_1"; //$NON-NLS-1$
-	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_1 = "context_menu_group_1"; //$NON-NLS-1$
-	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_2 = "context_menu_group_2"; //$NON-NLS-1$
+	/**
+	 * The id of the merge action group that determines where the merge
+	 * actions (e.g. merge and overwrite) appear in the context menu or toolbar.
+	 */
+	public static final String MERGE_ACTION_GROUP = "merge_action_group"; //$NON-NLS-1$
+
+	/**
+	 * The id of the action group that determines where the other
+	 * actions (e.g. mark-as-mered) appear in the context menu.
+	 */
+	public static final String OTHER_ACTION_GROUP = "other_action_group"; //$NON-NLS-1$
 	
 	private ISynchronizationContext context;
 
@@ -55,19 +63,19 @@ public class ModelSynchronizeParticipant extends
 				updateToolbarAction = new MergeIncomingChangesAction(configuration);
 				appendToGroup(
 						ISynchronizePageConfiguration.P_TOOLBAR_MENU,
-						TOOLBAR_CONTRIBUTION_GROUP,
+						MERGE_ACTION_GROUP,
 						updateToolbarAction);
 				appendToGroup(
 						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-						CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+						MERGE_ACTION_GROUP,
 						new MergeAction(configuration, false));
 				appendToGroup(
 						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-						CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+						MERGE_ACTION_GROUP,
 						new MergeAction(configuration, true));
 				appendToGroup(
 						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-						CONTEXT_MENU_CONTRIBUTION_GROUP_2,
+						OTHER_ACTION_GROUP,
 						new MarkAsMergedAction(configuration));
 			}
 			
@@ -140,11 +148,12 @@ public class ModelSynchronizeParticipant extends
 	 */
 	protected void initializeConfiguration(
 			ISynchronizePageConfiguration configuration) {
-		configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {ISynchronizePageConfiguration.NAVIGATE_GROUP, ISynchronizePageConfiguration.MODE_GROUP, TOOLBAR_CONTRIBUTION_GROUP});
+		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, MERGE_ACTION_GROUP);
+		configuration.addMenuGroup(ISynchronizePageConfiguration.P_CONTEXT_MENU, MERGE_ACTION_GROUP);
+		configuration.addMenuGroup(ISynchronizePageConfiguration.P_CONTEXT_MENU, OTHER_ACTION_GROUP);
 		configuration.addActionContribution(new ModelActionContribution());
-		configuration.setProperty(ISynchronizePageConfiguration.P_CONTEXT_MENU, new String[] { ISynchronizePageConfiguration.NAVIGATE_GROUP, CONTEXT_MENU_CONTRIBUTION_GROUP_1, CONTEXT_MENU_CONTRIBUTION_GROUP_2});
-		configuration.setSupportedModes(ISynchronizePageConfiguration.INCOMING_MODE | ISynchronizePageConfiguration.CONFLICTING_MODE);
-		configuration.setMode(ISynchronizePageConfiguration.INCOMING_MODE);
+		configuration.setSupportedModes(ISynchronizePageConfiguration.ALL_MODES);
+		configuration.setMode(ISynchronizePageConfiguration.BOTH_MODE);
 	}
 
 	/* (non-Javadoc)

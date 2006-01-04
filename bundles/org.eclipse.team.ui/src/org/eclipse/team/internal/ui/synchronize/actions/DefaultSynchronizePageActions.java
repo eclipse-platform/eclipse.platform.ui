@@ -30,13 +30,14 @@ public class DefaultSynchronizePageActions extends SynchronizePageActionGroup {
 	// Actions
 	private OpenWithActionGroup openWithActions;
 	private RefactorActionGroup refactorActions;
+	private SyncViewerShowPreferencesAction showPreferences;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.IActionContribution#initialize(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
 	 */
 	public void initialize(ISynchronizePageConfiguration configuration) {
 		super.initialize(configuration);
-		ISynchronizePageSite site = configuration.getSite();
+		final ISynchronizePageSite site = configuration.getSite();
 		IWorkbenchSite ws = site.getWorkbenchSite();
 		if (ws instanceof IViewSite) {
 			openWithActions = new OpenWithActionGroup(site, configuration.getParticipant());
@@ -46,6 +47,7 @@ public class DefaultSynchronizePageActions extends SynchronizePageActionGroup {
 					openWithActions.openInCompareEditor();
 				}
 			});
+			showPreferences = new SyncViewerShowPreferencesAction(configuration);
 		} else {
 			// TODO: Add open menu action which opens in compare editor input
 		}
@@ -57,6 +59,10 @@ public class DefaultSynchronizePageActions extends SynchronizePageActionGroup {
     public void fillActionBars(IActionBars actionBars) {
         if (openWithActions != null) openWithActions.fillActionBars(actionBars);
         if (refactorActions != null) refactorActions.fillActionBars(actionBars);
+        if (actionBars != null && showPreferences != null) {
+        	IMenuManager menu = actionBars.getMenuManager();
+        	appendToGroup(menu, ISynchronizePageConfiguration.PREFERENCES_GROUP, showPreferences);
+        }
     }
 	
 	/* (non-Javadoc)
@@ -73,13 +79,11 @@ public class DefaultSynchronizePageActions extends SynchronizePageActionGroup {
 	public void fillContextMenu(IMenuManager manager) {
 	    
         final IContributionItem fileGroup = findGroup(manager, ISynchronizePageConfiguration.FILE_GROUP);
-        
 		if (openWithActions != null && fileGroup != null) {
 			openWithActions.fillContextMenu(manager, fileGroup.getId());
 		}
 		
 		final IContributionItem editGroup = findGroup(manager, ISynchronizePageConfiguration.EDIT_GROUP);
-		
 		if (refactorActions != null && editGroup != null) {
 			refactorActions.fillContextMenu(manager, editGroup.getId());
 		}

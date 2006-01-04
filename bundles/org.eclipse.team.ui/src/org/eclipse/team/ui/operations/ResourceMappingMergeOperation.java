@@ -23,9 +23,9 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.SaveablePartDialog;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ICompareAdapter;
+import org.eclipse.team.ui.synchronize.ParticipantPageDialog;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -177,7 +177,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 				ModelSynchronizeParticipant participant = new ModelSynchronizeParticipant(context, title);
 				CompareConfiguration cc = new CompareConfiguration();
 				ModelParticipantPageSavablePart input = new ModelParticipantPageSavablePart(getShell(), cc, participant.createPageConfiguration(), participant);
-				SaveablePartDialog dialog = new SaveablePartDialog(getShell(), input) {
+				ParticipantPageDialog dialog = new ParticipantPageDialog(getShell(), input, participant) {
 					private Button doneButton;
 
 					protected void createButtonsForButtonBar(Composite parent) {
