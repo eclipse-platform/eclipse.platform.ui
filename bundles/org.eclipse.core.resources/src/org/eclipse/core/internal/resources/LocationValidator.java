@@ -324,7 +324,7 @@ public class LocationValidator {
 		}
 		// test if the given location overlaps the default default location
 		IPath defaultDefaultLocation = Platform.getLocation();
-		if (FileUtil.isOverlapping(location, defaultDefaultLocation.toFile().toURI())) {
+		if (FileUtil.isOverlapping(location, URIUtil.toURI(defaultDefaultLocation))) {
 			message = NLS.bind(Messages.resources_overlapWorkspace, toString(location), defaultDefaultLocation.toOSString());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
