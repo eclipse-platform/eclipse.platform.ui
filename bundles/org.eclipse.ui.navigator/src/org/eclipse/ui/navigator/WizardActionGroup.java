@@ -47,9 +47,9 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * <li>Declare <b>org.eclipse.ui.navigator.navigatorContent/commonWizard</b>
  * elements to identify which wizards should be associated with what items in
  * your viewer or navigator.</li>
- * <li>If you are using an instance of the {@link CommonNavigator} in your
- * <b>org.eclipse.ui.views</b> definition, then you will not need to do
- * anything else.</li>
+ * <li>If you are using Resources in your viewer and have bound the resource
+ *  extension declared in <b>org.eclipse.ui.navigator.resources</b>, then you will
+ *  get most of this functionality for free.</li>
  * <li>Otherwise, you may choose to build your own custom menu. In which case,
  * you may instantiate this class, and hand it the menu or submenu that you want
  * to list out the available wizard shortcuts via
