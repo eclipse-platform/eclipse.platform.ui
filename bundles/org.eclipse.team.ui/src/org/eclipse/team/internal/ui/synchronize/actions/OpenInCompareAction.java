@@ -132,7 +132,9 @@ public class OpenInCompareAction extends Action {
 		IEditorReference[] editorRefs = page.getEditorReferences();	
 		for (int i = 0; i < editorRefs.length; i++) {
 			IEditorPart part = editorRefs[i].getEditor(false);
-			if(part != null && part.getEditorInput() instanceof SyncInfoCompareInput && part instanceof IReusableEditor) {
+			if(part != null 
+					&& (part.getEditorInput() instanceof SyncInfoCompareInput || part.getEditorInput() instanceof ModelCompareEditorInput) 
+					&& part instanceof IReusableEditor) {
 				if(! part.isDirty()) {	
 					return part;	
 				}
