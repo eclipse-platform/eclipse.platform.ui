@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
@@ -136,6 +137,7 @@ import org.eclipse.ui.internal.services.ActivePartSourceProvider;
 import org.eclipse.ui.internal.services.ActiveShellSourceProvider;
 import org.eclipse.ui.internal.services.CurrentSelectionSourceProvider;
 import org.eclipse.ui.internal.services.ISourceProviderService;
+import org.eclipse.ui.internal.services.MenuSourceProvider;
 import org.eclipse.ui.internal.services.SourceProviderService;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
@@ -1193,11 +1195,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 		contextService.addSourceProvider(actionSetSourceProvider);
 		menuService.addSourceProvider(actionSetSourceProvider);
 		sourceProviderService.registerProvider(actionSetSourceProvider);
-//		final MenuSourceProvider menuSourceProvider = new MenuSourceProvider();
-//		handlerService.addSourceProvider(menuSourceProvider);
-//		contextService.addSourceProvider(menuSourceProvider);
-//		menuService.addSourceProvider(menuSourceProvider);
-//		sourceProviderService.registerProvider(menuSourceProvider);
+		menuSourceProvider = new MenuSourceProvider();
+		handlerService.addSourceProvider(menuSourceProvider);
+		contextService.addSourceProvider(menuSourceProvider);
+		menuService.addSourceProvider(menuSourceProvider);
+		sourceProviderService.registerProvider(menuSourceProvider);
 
 		/*
 		 * Phase 4 of the initialization of commands. This handles the creation
@@ -2325,6 +2327,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 		}
 	};
 	
+	/**
+	 * The source provider that tracks the activation of action sets within the
+	 * workbench. This source provider is <code>null</code> until
+	 * {@link #initializeDefaultServices()} is called.
+	 */
 	private ActionSetSourceProvider actionSetSourceProvider;
 	
 	private WorkbenchWindow activeWorkbenchWindow = null;
@@ -2335,6 +2342,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					.removeActionSetsListener(actionSetSourceProvider);
 			activeWorkbenchWindow = null;
 		}
+		boolean actionSetsUpdated = false;
 
 		final IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 
@@ -2345,13 +2353,22 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 
 			// Update the action sets.
-			activeWorkbenchWindow
-					.addActionSetsListener(actionSetSourceProvider);
-			final WorkbenchPage page = activeWorkbenchWindow
-					.getActiveWorkbenchPage();
-			final IActionSetDescriptor[] newActionSets = page.getActionSets();
-			final ActionSetsEvent event = new ActionSetsEvent(newActionSets);
-			actionSetSourceProvider.actionSetsChanged(event);
+			final Shell windowShell = activeWorkbenchWindow.getShell();
+			final Shell activeShell = getDisplay().getActiveShell();
+			if (Util.equals(windowShell, activeShell)) {
+				activeWorkbenchWindow
+						.addActionSetsListener(actionSetSourceProvider);
+				final WorkbenchPage page = activeWorkbenchWindow
+						.getActiveWorkbenchPage();
+				final IActionSetDescriptor[] newActionSets;
+				if (page != null) {
+					newActionSets = page.getActionSets();
+					final ActionSetsEvent event = new ActionSetsEvent(
+							newActionSets);
+					actionSetSourceProvider.actionSetsChanged(event);
+					actionSetsUpdated = true;
+				}
+			}
 
 			final MenuManager menuManager = activeWorkbenchWindow
 					.getMenuManager();
@@ -2360,6 +2377,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 				menuManager.update(IAction.TEXT);
 			else
 				menuManager.updateAll(true);
+		}
+
+		if (!actionSetsUpdated) {
+			final ActionSetsEvent event = new ActionSetsEvent(null);
+			actionSetSourceProvider.actionSetsChanged(event);
 		}
 	}
 
@@ -2725,5 +2747,38 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	public final Object getService(final Object key) {
 		return services.get(key);
+	}
+	
+	/**
+	 * The source provider that tracks which context menus (i.e., menus with
+	 * target identifiers) are now showing. This value is <code>null</code>
+	 * until {@link #initializeDefaultServices()} is called.
+	 */
+	private MenuSourceProvider menuSourceProvider;
+	
+	/**
+	 * Adds the ids of a menu that is now showing to the menu source provider.
+	 * This is used for legacy action-based handlers which need to become active
+	 * only for the duration of a menu being visible.
+	 * 
+	 * @param menuIds
+	 *            The identifiers of the menu that is now showing; must not be
+	 *            <code>null</code>.
+	 */
+	public final void addShowingMenus(final Set menuIds) {
+		menuSourceProvider.addShowingMenus(menuIds);
+	}
+	
+	/**
+	 * Removes the ids of a menu that is now hidden from the menu source
+	 * provider. This is used for legacy action-based handlers which need to
+	 * become active only for the duration of a menu being visible.
+	 * 
+	 * @param menuIds
+	 *            The identifiers of the menu that is now hidden; must not be
+	 *            <code>null</code>.
+	 */
+	public final void removeShowingMenus(final Set menuIds) {
+		menuSourceProvider.removeShowingMenus(menuIds);
 	}
 }
