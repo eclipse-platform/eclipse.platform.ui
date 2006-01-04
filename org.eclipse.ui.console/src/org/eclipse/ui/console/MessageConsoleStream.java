@@ -71,8 +71,7 @@ public class MessageConsoleStream extends IOConsoleOutputStream {
 	 * @param message message to print
 	 */
 	public void println(String message) {
-		print(message);
-		println();
+		print(message + "\n"); //$NON-NLS-1$
 	}	
     
     /**
