@@ -194,7 +194,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			LinkDescription value2 = (LinkDescription) links2.get(key);
 			assertTrue(errorTag + ".4." + x, value.getProjectRelativePath().equals(value2.getProjectRelativePath()));
 			assertEquals(errorTag + ".5." + x, value.getType(), value2.getType());
-			assertEquals(errorTag + ".6." + x, value.getLocation(), value2.getLocation());
+			assertEquals(errorTag + ".6." + x, value.getLocationURI(), value2.getLocationURI());
 		}
 	}
 
@@ -252,7 +252,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		LinkDescription result = new LinkDescription();
 		result.setPath(path);
 		result.setType(type);
-		result.setLocation(location);
+		result.setLocationURI(location);
 		return result;
 	}
 
@@ -366,7 +366,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		assertEquals("3.6", new ICommand[0], projDesc.getBuildSpec());
 		LinkDescription link = (LinkDescription) projDesc.getLinks().values().iterator().next();
 		assertEquals("3.7", new Path("newLink"), link.getProjectRelativePath());
-		assertEquals("3.8", PATH_STRING, URIUtil.toPath(link.getLocation()).toString());
+		assertEquals("3.8", PATH_STRING, URIUtil.toPath(link.getLocationURI()).toString());
 	}
 
 	public void testInvalidWorkspaceDescription() {
@@ -425,7 +425,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			ensureDoesNotExistInFileSystem(location.toFile());
 			for (Iterator i = projDesc.getLinks().values().iterator(); i.hasNext();) {
 				LinkDescription link = (LinkDescription) i.next();
-				assertEquals("1.0." + link.getProjectRelativePath(), LONG_LOCATION_URI, link.getLocation());
+				assertEquals("1.0." + link.getProjectRelativePath(), LONG_LOCATION_URI, link.getLocationURI());
 			}
 		} finally {
 			Workspace.clear(location.toFile());
@@ -448,7 +448,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			ensureDoesNotExistInFileSystem(location.toFile());
 			for (Iterator i = projDesc.getLinks().values().iterator(); i.hasNext();) {
 				LinkDescription link = (LinkDescription) i.next();
-				assertEquals("1.0." + link.getProjectRelativePath(), LONG_LOCATION_URI, link.getLocation());
+				assertEquals("1.0." + link.getProjectRelativePath(), LONG_LOCATION_URI, link.getLocationURI());
 			}
 		} finally {
 			Workspace.clear(location.toFile());
