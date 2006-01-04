@@ -13,6 +13,7 @@ package org.eclipse.core.internal.filesystem;
 import java.io.File;
 import java.io.IOException;
 import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.internal.filesystem.local.LocalFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -50,6 +51,7 @@ public class FileCache {
 	}
 
 	/**
+	 * Implements {@link FileStore#toLocalFile(int, IProgressMonitor)}
 	 * @param source 
 	 * @param monitor
 	 * @return The cached file
