@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
+import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
@@ -19,7 +21,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 
@@ -43,18 +47,37 @@ public class OpenInCompareAction extends Action {
 	public void run() {
 		ISelection selection = site.getSelectionProvider().getSelection();
 		if(selection instanceof IStructuredSelection) {
-		Object obj = ((IStructuredSelection) selection).getFirstElement();
+			Object obj = ((IStructuredSelection) selection).getFirstElement();
 			if (obj instanceof SyncInfoModelElement) {
 				SyncInfo info = ((SyncInfoModelElement) obj).getSyncInfo();
 				if (info != null) {
 				    // Use the open strategy to decide if the editor or the sync view should have focus
 					openCompareEditor(participant, info, !OpenStrategy.activateOnOpen(), site);
 				}
+			} else {
+				openCompareEditor(participant, obj, !OpenStrategy.activateOnOpen(), site);
 			}
 		}
 	}
 	
-	public static SyncInfoCompareInput openCompareEditor(ISynchronizeParticipant participant, SyncInfo info, boolean keepFocus, ISynchronizePageSite site) {		
+	public static IEditorInput openCompareEditor(ISynchronizeParticipant participant, Object object, boolean keepFocus, ISynchronizePageSite site) {	
+		Assert.isNotNull(object);
+		Assert.isNotNull(participant);
+		if (object instanceof SyncInfoModelElement) {
+			SyncInfo info = ((SyncInfoModelElement) object).getSyncInfo();
+			return openCompareEditor(participant, info, keepFocus, site);
+		}
+		if (participant instanceof ModelSynchronizeParticipant) {
+			ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
+			ICompareInput input = msp.asCompareInput(object);
+			if (input != null) {
+				return openCompareEditor(new ModelCompareEditorInput(msp, input), keepFocus, site);
+			}
+		}
+		return null;
+	}
+	
+	public static CompareEditorInput openCompareEditor(ISynchronizeParticipant participant, SyncInfo info, boolean keepFocus, ISynchronizePageSite site) {		
 		Assert.isNotNull(info);
 		Assert.isNotNull(participant);
 			
@@ -62,6 +85,10 @@ public class OpenInCompareAction extends Action {
 		
 		SyncInfoCompareInput input = new SyncInfoCompareInput(participant, info);
 	
+		return openCompareEditor(input, keepFocus, site);
+	}
+
+	private static CompareEditorInput openCompareEditor(CompareEditorInput input, boolean keepFocus, ISynchronizePageSite site) {
 		IWorkbenchPage page = null;
 		if(site == null) {
 			IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -83,7 +110,7 @@ public class OpenInCompareAction extends Action {
 		return null;
 	}
 
-    public static void openCompareEditor(SyncInfoCompareInput input, IWorkbenchPage page) {
+    public static void openCompareEditor(CompareEditorInput input, IWorkbenchPage page) {
         if (page == null || input == null) 
             return;
         IEditorPart editor = findReusableCompareEditor(page);
@@ -137,6 +164,35 @@ public class OpenInCompareAction extends Action {
 				if(part != null && input instanceof SyncInfoCompareInput) {
 					SyncInfo inputInfo = ((SyncInfoCompareInput)input).getSyncInfo();
 					if(inputInfo.getLocal().equals(resource)) {
+						return part;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns an editor handle if a compare editor is opened on 
+	 * the given object.
+	 * @param site the view site in which to search for editors
+	 * @param object the object to use to find the compare editor
+	 * @return an editor handle if found and <code>null</code> otherwise
+	 */
+	public static IEditorPart findOpenCompareEditor(IWorkbenchPartSite site, Object object) {
+		if (object instanceof SyncInfoModelElement) {
+			SyncInfoModelElement element = (SyncInfoModelElement) object;
+			SyncInfo info = element.getSyncInfo();
+			return findOpenCompareEditor(site, info.getLocal());
+		}
+		IWorkbenchPage page = site.getPage();
+		IEditorReference[] editorRefs = page.getEditorReferences();						
+		for (int i = 0; i < editorRefs.length; i++) {
+			final IEditorPart part = editorRefs[i].getEditor(false /* don't restore editor */);
+			if(part != null) {
+				IEditorInput input = part.getEditorInput();
+				if(input instanceof ModelCompareEditorInput) {
+					if(((ModelCompareEditorInput)input).matches(object)) {
 						return part;
 					}
 				}

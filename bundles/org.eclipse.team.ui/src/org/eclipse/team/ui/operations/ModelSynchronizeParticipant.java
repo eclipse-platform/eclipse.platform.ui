@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eclipse.team.ui.operations;
 
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.*;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.ICompareAdapter;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPageBookViewPage;
@@ -193,5 +200,67 @@ public class ModelSynchronizeParticipant extends
 	 */
 	public ISynchronizationContext getContext() {
 		return context;
+	}
+	
+	/**
+	 * Return a compare input for the given model object or <code>null</code>
+	 * if the object is not eligible for comparison.
+	 * @param o the model object
+	 * @return a compare input for the model object or <code>null</code>
+	 */
+	public ICompareInput asCompareInput(Object o) {
+		if (o instanceof ICompareInput) {
+			return (ICompareInput) o;
+		}
+		// Get a compare input from the model provider's compare adapter
+		ICompareAdapter adapter = Utils.getCompareAdapter(o);
+		if (adapter != null)
+			return adapter.asCompareInput(getContext(), o);
+		return null;
+	}
+	
+	/**
+	 * Return a structure viewer for viewing the structure of the given compare input
+	 * @param parent the parent composite of the viewer
+	 * @param oldViewer the current viewer which can be returned if it is appropriate for use with the given input
+	 * @param input the compare input to be viewed
+	 * @param configuration the compare configuration information
+	 * @return a viewer for viewing the structure of the given compare input
+	 */ 
+	public Viewer findStructureViewer(Composite parent, Viewer oldViewer, ICompareInput input, CompareConfiguration configuration) {
+		// Get a structure viewer from the model provider's compare adapter
+		ICompareAdapter adapter = Utils.getCompareAdapter(input);
+		if (adapter != null)
+			return adapter.findStructureViewer(parent, oldViewer, input, configuration);
+		return null;
+	}
+
+	/**
+	 * Return a viewer for comparing the content of the given compare input.
+	 * @param parent the parent composite of the viewer
+	 * @param oldViewer the current viewer which can be returned if it is appropriate for use with the given input
+	 * @param input the compare input to be viewed
+	 * @param configuration the compare configuration information
+	 * @return a viewer for comparing the content of the given compare input
+	 */ 
+	public Viewer findContentViewer(Composite parent, Viewer oldViewer, ICompareInput input, CompareConfiguration configuration) {
+		// Get a content viewer from the model provider's compare adapter
+		ICompareAdapter adapter = Utils.getCompareAdapter(input);
+		if (adapter != null)
+			return adapter.findContentViewer(parent, oldViewer, input, configuration);
+		return null;
+	}
+
+	/**
+	 * Prepare the compare inout for display using the compare configuration. 
+	 * @param input the compare input to be displayed
+	 * @param configuration the compare configuration for the editor that will display the input
+	 * @param monitor a progress monitor
+	 */
+	public void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+		// Get a content viewer from the model provider's compare adapter
+		ICompareAdapter adapter = Utils.getCompareAdapter(input);
+		if (adapter != null)
+			adapter.prepareInput(input, configuration, monitor);
 	}
 }

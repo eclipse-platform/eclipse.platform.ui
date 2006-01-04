@@ -82,4 +82,12 @@ public interface ICompareAdapter {
 	 */ 
 	Viewer findContentViewer(Composite parent, Viewer oldViewer, ICompareInput input, CompareConfiguration configuration);
 
+	/**
+	 * Prepare the compare inout for display using the compare configuration. 
+	 * @param input the compare input to be displayed
+	 * @param configuration the compare configuration for the editor that will display the input
+	 * @param monitor a progress monitor
+	 */
+	void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor);
+
 }

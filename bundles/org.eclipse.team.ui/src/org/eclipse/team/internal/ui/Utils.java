@@ -16,8 +16,7 @@ import java.util.*;
 import java.util.List;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.structuremergeviewer.IDiffContainer;
-import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
@@ -39,8 +38,10 @@ import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.ICompareAdapter;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.ide.IContributorResourceAdapter2;
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
@@ -692,4 +693,43 @@ public class Utils {
         }
         return null;
     }
+
+	public static ICompareAdapter getCompareAdapter(Object element) {
+		ModelProvider provider = getModelProvider(element);
+		if (provider != null) {
+			Object o = provider.getAdapter(ICompareAdapter.class);
+			if (o instanceof ICompareAdapter) {
+				return (ICompareAdapter) o;
+			}
+		}
+		return null;
+	}
+
+	public static ModelProvider getModelProvider(Object o) {
+		ResourceMapping mapping = getResourceMapping(o);
+		if (mapping != null)
+			return mapping.getModelProvider();
+		return null;
+	}
+	
+	public static ResourceMapping getResourceMapping(Object o) {
+		if (o instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) o;
+			Object adapted = adaptable.getAdapter(ResourceMapping.class);
+			if (adapted instanceof ResourceMapping) {
+				return(ResourceMapping) adapted;
+			}
+			adapted = adaptable.getAdapter(IContributorResourceAdapter.class);
+			if (adapted instanceof IContributorResourceAdapter2) {
+				IContributorResourceAdapter2 cra = (IContributorResourceAdapter2) adapted;
+				return cra.getAdaptedResourceMapping(adaptable);
+			}
+		} else {
+			Object adapted = Platform.getAdapterManager().getAdapter(o, ResourceMapping.class);
+			if (adapted instanceof ResourceMapping) {
+				return(ResourceMapping) adapted;
+			}
+		}
+		return null;
+	}
 }

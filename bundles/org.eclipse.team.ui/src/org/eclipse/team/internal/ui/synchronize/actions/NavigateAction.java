@@ -21,8 +21,6 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 
@@ -64,53 +62,62 @@ public class NavigateAction extends Action {
 		IWorkbenchSite ws = site.getWorkbenchSite();
 		INavigatable nav = (INavigatable)configuration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
 		if (nav != null && ws != null && ws instanceof IViewSite) {
-			navigate(nav);
+			navigateInView(nav);
 		} else {
 			nav.gotoDifference(next);
 		}
 	}
 	
-	private void navigate(INavigatable nav) {
-		SyncInfo info = getSyncInfoFromSelection();
-		if(info == null) {
+	/*
+	 * Method that is invoked when the sync page is shown in a view.
+	 */
+	private void navigateInView(INavigatable nav) {
+		Object selectedObject = getSelectedObject();
+		if(selectedObject == null) {
 			if(nav.gotoDifference(next)) {
 				return;
 			} else {
-				info = getSyncInfoFromSelection();
-				if(info == null) return;
+				selectedObject = getSelectedObject();
+				if(selectedObject == null) return;
 			}
 		}
 		
-		if(info.getLocal().getType() != IResource.FILE) {
+		// Optimization that avoids looking for an open compare editor for the selected 
+		// sync info if the resource is a folder
+		SyncInfo syncInfo = getSyncInfoFromSelection();
+		if(syncInfo != null && syncInfo.getLocal().getType() != IResource.FILE) {
 			if(! nav.gotoDifference(next)) {
-				info = getSyncInfoFromSelection();
-				OpenInCompareAction.openCompareEditor(participant, info, true /* keep focus */, site);
+				selectedObject = getSelectedObject();
+				OpenInCompareAction.openCompareEditor(participant, syncInfo, true /* keep focus */, site);
 			}
 			return;
 		}
 		
 		IWorkbenchSite ws = site.getWorkbenchSite();
 		if (ws instanceof IWorkbenchPartSite) {
-			IEditorPart editor = OpenInCompareAction.findOpenCompareEditor((IWorkbenchPartSite)ws, info.getLocal());
-			CompareEditorInput input;
-			ICompareNavigator navigator;
-			
+			IEditorPart editor = OpenInCompareAction.findOpenCompareEditor((IWorkbenchPartSite)ws, selectedObject);
 			if(editor != null) {
 				// if an existing editor is open on the current selection, use it			 
-				input = (CompareEditorInput)editor.getEditorInput();
-				navigator = (ICompareNavigator)input.getAdapter(ICompareNavigator.class);
+				CompareEditorInput input = (CompareEditorInput)editor.getEditorInput();
+				ICompareNavigator navigator = (ICompareNavigator)input.getAdapter(ICompareNavigator.class);
 				if(navigator != null) {
 					if(navigator.selectChange(next)) {
 						if(! nav.gotoDifference(next)) {
-							info = getSyncInfoFromSelection();
-							OpenInCompareAction.openCompareEditor(participant, info, true /* keep focus */, site);
+							selectedObject = getSelectedObject();
+							OpenInCompareAction.openCompareEditor(participant, selectedObject, true /* keep focus */, site);
 						}
 					}				
 				}
 			} else {
-				// otherwise, select the next change and open a compare editor which will automatically
-				// show the first change.
-				OpenInCompareAction.openCompareEditor(participant, info, true /* keep focus */, site);
+				// otherwise,try to open a compare editor on the object
+				IEditorInput input = OpenInCompareAction.openCompareEditor(participant, selectedObject, true /* keep focus */, site);
+				if (input == null) {
+					// We couldn't open a compare editor on the object so try the next change
+					if(! nav.gotoDifference(next)) {
+						selectedObject = getSelectedObject();
+						OpenInCompareAction.openCompareEditor(participant, selectedObject, true /* keep focus */, site);
+					}
+				}
 			}
 		}
 	}
@@ -124,5 +131,11 @@ public class NavigateAction extends Action {
 		} else {
 			return null;
 		}
+	}
+	
+	private Object getSelectedObject() {
+		IStructuredSelection selection = (IStructuredSelection)site.getSelectionProvider().getSelection();
+		if(selection == null) return null;
+		return selection.getFirstElement();
 	}
 }

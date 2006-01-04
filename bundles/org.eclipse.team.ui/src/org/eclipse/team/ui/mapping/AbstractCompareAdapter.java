@@ -157,5 +157,10 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 			ICompareInput input, CompareConfiguration configuration) {
 		return null;
 	}
+	
+	public void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
