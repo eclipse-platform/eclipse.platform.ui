@@ -28,7 +28,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
@@ -145,7 +144,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	protected void okPressed() {
 		//single selection dialog, so take first item in array
 		//there will always be a selected item since we set it with viewer.setSelection
-		ISourceContainerType type = (ISourceContainerType) ((StructuredSelection) fViewer.getSelection()).getFirstElement();
+		ISourceContainerType type = (ISourceContainerType) ((IStructuredSelection) fViewer.getSelection()).getFirstElement();
 		ISourceContainerBrowser browser = DebugUITools.getSourceContainerBrowser(type.getId());
 		if (browser != null) {
 			ISourceContainer[] results = browser.addSourceContainers(getShell(), fDirector);
