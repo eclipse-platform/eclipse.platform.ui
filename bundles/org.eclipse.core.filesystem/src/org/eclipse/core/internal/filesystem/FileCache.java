@@ -22,6 +22,14 @@ import org.eclipse.osgi.util.NLS;
  * files can be stored. Files in the cache expire on VM exit.
  */
 public class FileCache {
+	private static final String CACHE_DIR_NAME = "filecache";//$NON-NLS-1$
+
+	/**
+	 * This flag is true at the beginning of the session, and is set to 
+	 * false after the very first cache instance is created.
+	 */
+	private static boolean startup = true;
+
 	private File cacheDir;
 
 	/**
@@ -31,10 +39,12 @@ public class FileCache {
 	 */
 	public FileCache() throws CoreException {
 		IPath location = Platform.getStateLocation(Platform.getBundle(Policy.PI_FILE_SYSTEM));
-		File cacheParent = new File(location.toFile(), "filecache"); //$NON-NLS-1$
-		//clear any old cache
-		new LocalFile(cacheParent).delete(EFS.NONE, null);
-		cacheParent.mkdirs();
+		File cacheParent = new File(location.toFile(), CACHE_DIR_NAME);
+		if (startup) {
+			startup = false;
+			cleanOldCache(cacheParent);
+			cacheParent.mkdirs();
+		}
 		//make sure we have a unique non-existing cache directory
 		cacheDir = getUniqueDirectory(cacheParent, true);
 	}
@@ -50,7 +60,7 @@ public class FileCache {
 			monitor.beginTask(NLS.bind(Messages.copying, toString()), 100);
 			IFileInfo myInfo = source.fetchInfo(EFS.NONE, Policy.subMonitorFor(monitor, 25));
 			if (!myInfo.exists())
-				return null;
+				return new File(cacheDir, "Non-Existent-" + System.currentTimeMillis()); //$NON-NLS-1$
 			File result;
 			if (myInfo.isDirectory()) {
 				result = getUniqueDirectory(cacheDir, false);
@@ -68,6 +78,15 @@ public class FileCache {
 		} finally {
 			monitor.done();
 		}
+	}
+
+	/**
+	 * Performs initial cleanup of any old cached state left over from previous
+	 * sessions.
+	 */
+	private void cleanOldCache(File cacheParent) throws CoreException {
+		//clear any old cache - this could be moved to a background thread
+		new LocalFile(cacheParent).delete(EFS.NONE, null);
 	}
 
 	/**
