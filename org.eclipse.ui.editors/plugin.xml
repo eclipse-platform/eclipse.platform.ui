@@ -60,19 +60,19 @@
       </command>
       <command
             name="%ActionDefinition.quickDiff.revert.name"
-            categoryId="org.eclipse.ui.category.edit"
+            categoryId="org.eclipse.ui.category.textEditor"
             description="%ActionDefinition.quickDiff.revert.description"
             id="org.eclipse.ui.editors.quickdiff.revert">
       </command>
       <command
             name="%ActionDefinition.quickDiff.revertLine.name"
-            categoryId="org.eclipse.ui.category.edit"
+            categoryId="org.eclipse.ui.category.textEditor"
             description="%ActionDefinition.quickDiff.revertLine.description"
             id="org.eclipse.ui.editors.quickdiff.revertLine">
       </command>
       <command
             name="%ActionDefinition.lineNumberToggle.name"
-            categoryId="org.eclipse.ui.category.edit"
+            categoryId="org.eclipse.ui.category.textEditor"
             description="%ActionDefinition.lineNumberToggle.description"
             id="org.eclipse.ui.editors.lineNumberToggle">
       </command>
