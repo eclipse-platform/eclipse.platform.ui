@@ -57,13 +57,15 @@ public class LaunchShortcutAction extends Action {
 		if (wb != null) {
 			IWorkbenchPage page = wb.getActivePage();
 			if (page != null) {
-				ISelection selection = page.getSelection();
-				if (selection instanceof IStructuredSelection) {
-					fShortcut.launch(selection, fMode);
-				} else {
+				if (page.getActivePart() == page.getActiveEditor()) {
 					IEditorPart editor = page.getActiveEditor();
 					if (editor != null) {
 						fShortcut.launch(editor, fMode);
+					}
+				} else {
+					ISelection selection = page.getSelection();
+					if (selection instanceof IStructuredSelection) {
+						fShortcut.launch(selection, fMode);
 					}
 				}
 			}
