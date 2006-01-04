@@ -6,11 +6,13 @@
          <meta.schema plugin="org.eclipse.ui.navigator" id="viewer" name="Common Viewer Configuration"/>
       </appInfo>
       <documentation>
-         &apos;viewer&apos; defines attributes for a common viewer. The extension
+         &lt;p&gt;
+The &apos;viewer&apos; element defines the configuration for a common viewer. The extension
 may provide a custom popup menu id, override whether the viewer provides link with
 editor support, provides a filter dialog, and/or provides an &apos;available extensions&apos; 
-dialog.
-
+dialog. In addition, nested configuration elements give full control over the structure
+and behavior of the popup context menu.
+&lt;p&gt;
 &apos;viewerContentBinding&apos; binds defined content extensions (through the navigatorContent 
 extension point) to viewers (defined through the 
 org.eclipse.ui.views extension point). Any content 
@@ -18,7 +20,7 @@ extension bound to a viewer is described as &apos;visible&apos;. A
 content service (org.eclipse.ui.navigator.INavigatorContentService)
 will not return any extensions which are not visible for
 its viewer id.
-
+&lt;p&gt;
 &lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This class or interface has been added as
 part of a work in progress. There is a guarantee neither that this API will
 work nor that it will remain the same. Please do not use this API without
@@ -72,6 +74,9 @@ extension to create the view part.
          </documentation>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="popupMenu" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="viewerId" type="string" use="required">
             <annotation>
                <documentation>
@@ -82,8 +87,8 @@ extension to create the view part.
          <attribute name="popupMenuId" type="string">
             <annotation>
                <documentation>
-                  The popupMenuId of the defined viewer. If not specified, the
-popupMenuId defaults to the id of the viewer.
+                  The popupMenuId of the defined viewer. If not specified, the popupMenuId defaults to the id of the viewer. Clients may specify 
+only the popupMenuId OR a popupMenu element, but not both. The default list of insertion points is declared in the documentation for the popupMenu element.
                </documentation>
             </annotation>
          </attribute>
@@ -94,9 +99,9 @@ popupMenuId defaults to the id of the viewer.
       <annotation>
          <documentation>
             Clients must define one or more &apos;viwerContentBinding&apos; elements to describe which content extensions are &apos;visible&apos; to the viewer. A content extension is &apos;visible&apos; if the id of the content extension matches an &apos;includes&apos; statement under a viewerContentBinding and is not excluded by an &apos;excludes&apos; statement. If a content extension is not &apos;visible&apos; to a viewer, then the extension will never be asked for content by a content service for that viewer. 
-  
+&lt;p&gt;
 Clients may define an &apos;includes&apos; element to select which extensions are visible to the viewer, and similarly an &apos;excludes&apos; element for extensions that should not be made visible to the viewer. Clients may further define the extensions that should be explicitly queried for root elements (through  ITreeContentProvider.getElements()) by the &apos;isRoot&apos; attribute. If one or more &apos;contentExtension&apos; elements have &apos;isRoot&apos; set to true within the &apos;includes&apos; statement, only those extensions will be queried for root elements. The &apos;isRoot&apos; attribute has no effect for exclusions.
-  
+&lt;p&gt;
 A viewer may have multiple viewerContentBindings defined, and their includes/excludes statements will be aggregated to produce the final behavior.
          </documentation>
       </annotation>
@@ -119,9 +124,9 @@ A viewer may have multiple viewerContentBindings defined, and their includes/exc
       <annotation>
          <documentation>
             Clients must define which action providers are visible to their viewer. Clients may define an &apos;includes&apos; element to select which extensions are visible to the viewer, and  similarly an &apos;excludes&apos; element for extensions that should not be made visible to the viewer. 
-  
+&lt;p&gt;
 A viewer may have multiple viewerActionBindings defined, and their includes/excludes statements will be aggregated to produce the final behavior.
-  
+&lt;p&gt;
 For &apos;actionProvider&apos; definitions which are not nested under a &apos;navigatorContent&apos; definition, clients may specify a custom id. If clients do not specify an id, the id defaults to &apos;org.eclipse.ui.navigator.actionProvider&apos;. For clients that wish to pick up actionProviders with no specific id, clients must define a &apos;viewerActionBinding&apos; for the default id. See the examples section for how this is done.
          </documentation>
       </annotation>
@@ -143,11 +148,7 @@ For &apos;actionProvider&apos; definitions which are not nested under a &apos;na
    <element name="includes">
       <annotation>
          <documentation>
-            Define a set of patterns that should be included when 
-            looking for content extensions for the viewer that 
-            matches the viewerId attribute. When the includes 
-            and excludes statements intersect, the includes 
-            statement will be given precedence.
+            Define a set of patterns that should be included when looking for content extensions for the viewer that matches the viewerId attribute. When the includes and excludes statements intersect, the includes statement will be given precedence.
          </documentation>
       </annotation>
       <complexType>
@@ -165,11 +166,7 @@ For &apos;actionProvider&apos; definitions which are not nested under a &apos;na
    <element name="excludes">
       <annotation>
          <documentation>
-            Define a set of patterns that should be excluded when 
-            looking for content extensions for the viewer that 
-            matches the viewerId attribute. When the includes 
-            and excludes statements intersect, the includes 
-            statement will be given precedence.
+            Define a set of patterns that should be excluded when looking for content extensions for the viewer that matches the viewerId attribute. When the includes and excludes statements intersect, the includes statement will be given precedence.
          </documentation>
       </annotation>
       <complexType>
@@ -189,11 +186,11 @@ For &apos;actionProvider&apos; definitions which are not nested under a &apos;na
          <documentation>
             Indicates that the content extension should be queried by getElements() or getChildren()
 for the root of the viewer. 
-
+&lt;p&gt;
 Clients may specify &apos;isRoot&apos; to select specific root extensions to override 
 the extensions which would otherwise be enabled for the viewer input element
 (based on the matching &apos;triggerPoints&apos; expression for the viewer input element). 
-              
+&lt;p&gt;   
 See the documentation for &apos;viewerContentBinding&apos; for more information.
          </documentation>
       </annotation>
@@ -201,21 +198,16 @@ See the documentation for &apos;viewerContentBinding&apos; for more information.
          <attribute name="pattern" type="string" use="required">
             <annotation>
                <documentation>
-                  Content extensions may be selected exactly by using 
-                  their content extension id. Clients may also use a 
-                  regular expression pattern to select any content 
-                  extensions that have ids that match the pattern. 
-                  Patterns are regular expressions which match 
-                  unique identifiers. Please see the Java 
-                  documentation for java.util.regex.Pattern
-                  for further details.
+                  Content extensions may be selected exactly by using their content extension id. Clients may also use a regular expression pattern to select any content extensions that have ids that match the pattern. 
+&lt;p&gt;
+Patterns are regular expressions which match unique identifiers. Please see the Java(tm) Platform documentation for java.util.regex.Pattern for further details.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="isRoot" type="boolean">
             <annotation>
                <documentation>
-                  
+                  A value of true indicates the content extension will provide root content, and override the default triggerPoints expressions defined in the bound content extensions for a given viewer.
                </documentation>
             </annotation>
          </attribute>
@@ -227,8 +219,7 @@ See the documentation for &apos;viewerContentBinding&apos; for more information.
          <documentation>
             Indicates that the action extension that should be given opportunities
 to contribute to the context menu and action bars. 
-
-              
+&lt;p&gt;              
 See the documentation for &apos;viewerActionBinding&apos; for more information.
          </documentation>
       </annotation>
@@ -236,14 +227,106 @@ See the documentation for &apos;viewerActionBinding&apos; for more information.
          <attribute name="pattern" type="string" use="required">
             <annotation>
                <documentation>
-                  Content extensions may be selected exactly by using 
-                  their content extension id. Clients may also use a 
-                  regular expression pattern to select any content 
-                  extensions that have ids that match the pattern. 
-                  Patterns are regular expressions which match 
-                  unique identifiers. Please see the Java 
-                  documentation for java.util.regex.Pattern
-                  for further details.
+                  Content extensions may be selected exactly by using their content extension id. Clients may also use a regular expression pattern to select any content extensions that have ids that match the pattern. 
+&lt;p&gt;
+Patterns are regular expressions which match unique identifiers. Please see the Java(tm) Platform documentation for java.util.regex.Pattern for further details.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="popupMenu">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="id"/>
+         </appInfo>
+         <documentation>
+            A popupMenu element may only be defined if the &apos;popupMenuId&apos; attribute of the 
+&apos;viewer&apos; element is not specified. 
+&lt;p&gt;
+The popupMenu element allows further customization of the context menu associated 
+with the viewer. For the options to be applied correctly, an instance of the viewer
+must delegate to a org.eclipse.ui.navigator.NavigatorActionService, which behaves
+like a normal org.eclipse.ui.ActionGroup. See the documentation for this API class
+for more information on exploiting this functionality. For clients that use an 
+instance of org.eclipse.ui.navigator.CommonNavigator do not need to do any extra work. 
+&lt;p&gt;
+A popupMenu declares one or more insertionPoints that will be used by contributors to 
+organize their contributions into a meaningful, more user-friendly, consistent list. 
+&lt;p&gt;
+If clients only specify the popupMenuId attribute of the &apos;viewer&apos; element, then the
+set of insertionPoints used by the context menu will default to the following list 
+in the given order:
+&lt;p&gt;
+&lt;pre&gt;
+&quot;group.new&quot;             separator=&quot;true&quot;
+&quot;group.goto&quot;            
+&quot;group.open&quot;            separator=&quot;true&quot;
+&quot;group.openWith&quot;
+&quot;group.show&quot;            separator=&quot;true&quot;
+&quot;group.edit&quot;            separator=&quot;true&quot;
+&quot;group.reorganize&quot;
+&quot;group.port&quot;
+&quot;group.generate&quot;        separator=&quot;true&quot;
+&quot;group.search&quot;          separator=&quot;true&quot;
+&quot;group.build&quot;           separator=&quot;true&quot;
+&quot;additions&quot;             separator=&quot;true&quot;
+&quot;group.viewerSetup&quot;     separator=&quot;true&quot;
+&quot;group.properties&quot;      separator=&quot;true&quot;
+&lt;/pre&gt;
+&lt;/p&gt;
+&lt;p&gt;
+Clients that wish to refer to these values programmatically may use the corresponding constants in org.eclipse.ui.navigator.ICommonMenuConstants. 
+&lt;p&gt;
+Clients that wish to customize their menus are encouraged to start with this list and add or remove insertion points as necessary. Clients are also
+encouraged to follow the pattern of beginning each group name with &quot;group.&quot;. 
+&lt;p&gt;
+If the popupMenu element is specified and contains NO insertionPoint children elements, then the context menu will have no published insertion points. Of course, programmatic clients are not restricted from adding their own insertion points as necessary. Clients defining viewers are encouraged to publish their insertion points for documentation purposes and clarity for downstream extensions to their viewers/navigators, or to explicitly document which insertion points are considered API and which are considered internal.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="insertionPoint" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  The id of the menu. Has the same function as the popupMenuId attribute of &apos;viewer&apos;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="allowsPlatformContributions" type="boolean">
+            <annotation>
+               <documentation>
+                  A value of &apos;true&apos; will register the declared popupMenu (by id) for object or viewer contributions as declared by the &lt;b&gt;org.eclipse.ui.popupMenus&lt;/b&gt; extension point. A value of &apos;false&apos; will restrict the popupMenu to programmatic contributions as declared by org.eclipse.ui.navigator.CommonActionProviders (see &lt;b&gt;org.eclipse.ui.navigator.navigatorContent/actionProvider&lt;/b&gt; and &lt;b&gt;org.eclipse.ui.navigator.navigatorContent/navigatorContent/actionProvider&lt;/b&gt;).
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="insertionPoint">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+         <documentation>
+            Defines an insertion point for the context menu. Indcludes the name of the point for clients to refer to, and whether the insertion point should be rendered as a separator or a group marker.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Indicates the name of the insertion point. Clients will use the name to refer to the insertion point as part of a menu path when providing either programmatic contributions via org.eclipse.ui.navigator.CommonActionProvider or declarative contributions via the &lt;b&gt;org.eclipse.ui.popupMenus&lt;/b&gt; extension point.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="separator" type="boolean">
+            <annotation>
+               <documentation>
+                  A value of true will cause the insertion point to be represented as a bar in the menu. This allows clients to visually group items in the context menu, based on their relevance to the user. By default, the value is false.
                </documentation>
             </annotation>
          </attribute>
@@ -264,8 +347,8 @@ See the documentation for &apos;viewerActionBinding&apos; for more information.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following example configures the popup menu id for a viewer. 
-      
+         &lt;p&gt;
+The following example configures the popup menu id for a viewer.      
 &lt;p&gt;
 &lt;pre&gt;
 
@@ -277,14 +360,79 @@ See the documentation for &apos;viewerActionBinding&apos; for more information.
    &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
+&lt;p&gt;
+Since the popupMenu child element of viewer is not used in the above example, the default set of
+insertionPoints will be used. This set is defined as follows. See the documentation for
+the popupMenu element for more information.
+&lt;p&gt;
+&lt;pre&gt;
+&quot;group.new&quot;             separator=&quot;true&quot;
+&quot;group.goto&quot;            
+&quot;group.open&quot;            separator=&quot;true&quot;
+&quot;group.openWith&quot;
+&quot;group.show&quot;            separator=&quot;true&quot;
+&quot;group.edit&quot;            separator=&quot;true&quot;
+&quot;group.reorganize&quot;
+&quot;group.port&quot;
+&quot;group.generate&quot;        separator=&quot;true&quot;
+&quot;group.search&quot;          separator=&quot;true&quot;
+&quot;group.build&quot;           separator=&quot;true&quot;
+&quot;additions&quot;             separator=&quot;true&quot;
+&quot;group.viewerSetup&quot;     separator=&quot;true&quot;
+&quot;group.properties&quot;      separator=&quot;true&quot;
+&lt;/pre&gt;
+&lt;/p&gt;
+&lt;p&gt;
+The following example demonstrates a viewer configuration which declares custom
+popupMenu insertion points, but restricts object and viewer contributions
+with the &apos;allowsPlatformContributions&apos; attribute. Clients may only contribute
+to the defined menu via org.eclipse.ui.navigator.CommonActionProviders declared
+for the viewer (either top-level or associated with content extensions). 
+&lt;p&gt;
+Note that the popupMenuId attribute is not concurrently specified with the 
+popupMenu element. Only one or the other, but not both, is a valid configuration.
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ui.navigator.viewer&quot;&gt;
+       &lt;viewer
+             viewerId=&quot;org.eclipse.ui.navigator.resourceContent&quot;&gt;
+          &lt;popupMenu
+                allowsPlatformContributions=&quot;false&quot;
+                id=&quot;org.eclipse.ui.navigator.resourceContent#PopupMenu&quot;&gt;  
+             &lt;insertionPoint name=&quot;group.new&quot;/&gt;
+             &lt;insertionPoint
+                   name=&quot;group.open&quot;
+                   separator=&quot;true&quot;/&gt;
+             &lt;insertionPoint name=&quot;group.openWith&quot;/&gt;             
+             &lt;insertionPoint
+                   name=&quot;group.port&quot;
+                   separator=&quot;true&quot;/&gt; 
+             &lt;insertionPoint
+                   name=&quot;additions&quot;
+                   separator=&quot;true&quot;/&gt;              
+             &lt;insertionPoint
+                   name=&quot;group.properties&quot;
+                   separator=&quot;true&quot;/&gt;
+          &lt;/popupMenu&gt;
+       &lt;/viewer&gt;
+       &lt;viewerContentBinding 
+             viewerId=&quot;org.eclipse.ui.navigator.resourceContent&quot;&gt;
+            &lt;includes&gt;
+                &lt;contentExtension pattern=&quot;org.eclipse.ui.navigator.resourceContent&quot; /&gt;
+            &lt;/includes&gt;
+       &lt;/viewerContentBinding&gt;
+   &lt;/extension&gt;
 
- 
+&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
 The following example declares that one content extension 
 (id: org.eclipse.ui.navigator.resourceContent) is bound
 to a viewer matching the id &apos;org.eclipse.ui.navigator.resourceContent&apos;. 
 Further, any id that begins with &apos;org.eclipse.ui.navigator.tests&apos;
 will be ignored. 
-
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension
@@ -301,7 +449,7 @@ will be ignored.
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
-
+&lt;p&gt;
 The following example declares a &apos;viewerActionBinding&apos; for all actionProviders (not 
 nested under a navigatorContent extension) that match the regular expression
 &quot;org.acme.actions.*&quot; but not &quot;org.acme.actions.tests.*&quot;. This expression 
@@ -326,7 +474,7 @@ are not nested under a &apos;navigatorContent&apos; element. The visibility of n
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
-
+&lt;p&gt;
 The following example makes any actionProvider with no &apos;id&apos; attribute visible
 to the viewer &apos;org.acme.viewer&apos;. The actionProviders with no &apos;id&apos; attribute
 have a default id of &quot;org.eclipse.ui.navigator.actionProvider&quot;. Of course,

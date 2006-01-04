@@ -5,24 +5,24 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.NewExampleAction;
 import org.eclipse.ui.actions.NewProjectAction;
-import org.eclipse.ui.navigator.ICommonActionProvider;
+import org.eclipse.ui.navigator.CommonActionProvider;
+import org.eclipse.ui.navigator.CommonActionProviderConfig;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
-import org.eclipse.ui.navigator.INavigatorContentService;
-import org.eclipse.ui.navigator.internal.actions.CommonActionProvider;
 import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardRegistry;
 
-public class NewActionProvider extends CommonActionProvider implements
-		ICommonActionProvider {
+/**
+ * Provides the new menu options for a context menu.
+ * @since 3.2
+ *
+ */
+public class NewActionProvider extends CommonActionProvider  {
 
 	private static final CommonWizardRegistry COMMON_WIZARD_REGISTRY = CommonWizardRegistry
 			.getInstance();
@@ -34,16 +34,13 @@ public class NewActionProvider extends CommonActionProvider implements
 	private IAction newProjectAction;
 
 	private IAction newExampleAction;
-
-	private ActionContext actionContext;
+ 
 
 	private WizardActionGroup newWizardActionGroup;
 
-	public void init(String anExtensionId, IViewPart aViewPart,
-			INavigatorContentService aContentService,
-			StructuredViewer aStructuredViewer) {
+	public void init(CommonActionProviderConfig aConfig) {
 
-		IWorkbenchWindow window = aViewPart.getViewSite().getWorkbenchWindow();
+		IWorkbenchWindow window = aConfig.getViewSite().getWorkbenchWindow();
 		showDlgAction = ActionFactory.NEW.create(window);
 		newProjectAction = new NewProjectAction(window);
 		newExampleAction = new NewExampleAction(window);
@@ -51,15 +48,10 @@ public class NewActionProvider extends CommonActionProvider implements
 		newWizardActionGroup = new WizardActionGroup(window,
 				WizardActionGroup.NEW_WIZARD);
 
-	}
-	
-	public void setActionContext(ActionContext aContext) {
-		actionContext = aContext;
-	}
+	} 
 
-	public boolean fillContextMenu(IMenuManager aMenu) {
-		addNewMenu(aMenu);
-		return true;
+	public void fillContextMenu(IMenuManager aMenu) {
+		addNewMenu(aMenu); 
 	}
 
 	/**
@@ -107,10 +99,10 @@ public class NewActionProvider extends CommonActionProvider implements
 	}
 
 	private void fillNewMenu(IMenuManager aSubmenu) {
-		if (actionContext != null && !actionContext.getSelection().isEmpty()
-				&& actionContext.getSelection() instanceof IStructuredSelection) {
+		if (getContext() != null && !getContext().getSelection().isEmpty()
+				&& getContext().getSelection() instanceof IStructuredSelection) {
 
-			IStructuredSelection structuredSelection = (IStructuredSelection) actionContext
+			IStructuredSelection structuredSelection = (IStructuredSelection) getContext()
 					.getSelection();
 			if (structuredSelection.size() == 1)
 				/* structuredSelection.size() = 1 */
@@ -127,7 +119,7 @@ public class NewActionProvider extends CommonActionProvider implements
 			return;
 
 		newWizardActionGroup.setWizardActionIds(wizardDescriptorIds);
-		newWizardActionGroup.setContext(actionContext);
+		newWizardActionGroup.setContext(getContext());
 		newWizardActionGroup.fillContextMenu(aSubmenu);
 
 	}

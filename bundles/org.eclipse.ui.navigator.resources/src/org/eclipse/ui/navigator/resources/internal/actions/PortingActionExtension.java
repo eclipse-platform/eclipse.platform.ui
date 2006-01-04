@@ -12,33 +12,29 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator.resources.internal.actions;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ExportResourcesAction;
 import org.eclipse.ui.actions.ImportResourcesAction;
-import org.eclipse.ui.navigator.ICommonActionProvider;
+import org.eclipse.ui.navigator.CommonActionProvider;
+import org.eclipse.ui.navigator.CommonActionProviderConfig;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.navigator.INavigatorContentService;
-import org.eclipse.ui.navigator.internal.actions.CommonActionProvider;
 import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMessages;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorPlugin;
 
 /**
- * The main action group for the navigator. This contains a few actions and several subgroups.
+ * The main action group for the navigator. This contains a few actions and
+ * several subgroups.
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -46,53 +42,55 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
+ * 
  * @since 3.2
  */
-public class PortingActionExtension extends CommonActionProvider implements ICommonActionProvider {
+public class PortingActionExtension extends CommonActionProvider {
+ 
+	private static final CommonWizardRegistry COMMON_WIZARD_REGISTRY = CommonWizardRegistry
+			.getInstance();
 
-	// private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY =
-	// NavigatorContentDescriptorRegistry.getInstance();
-	private static final CommonWizardRegistry COMMON_WIZARD_REGISTRY = CommonWizardRegistry.getInstance();
 	private static final String TYPE_IMPORT = "import"; //$NON-NLS-1$
-	private static final String TYPE_EXPORT = "export"; //$NON-NLS-1$
-	// private ImportActionGroup importActionGroup;
-	public static final String COMMON_NAVIGATOR_IMPORT_MENU = "common.import.menu"; //$NON-NLS-1$
-	public static final String COMMON_NAVIGATOR_EXPORT_MENU = "common.export.menu"; //$NON-NLS-1$	
 
-	private static final Separator GROUP_IMPORT_SEPARATOR = new Separator(ICommonMenuConstants.GROUP_PORT);
+	private static final String TYPE_EXPORT = "export"; //$NON-NLS-1$
+ 
+	private static final String COMMON_NAVIGATOR_IMPORT_MENU = "common.import.menu"; //$NON-NLS-1$
+
+	private static final String COMMON_NAVIGATOR_EXPORT_MENU = "common.export.menu"; //$NON-NLS-1$	
+ 
 
 	private ImportResourcesAction importAction;
+
 	private ExportResourcesAction exportAction;
-	private ActionContext actionContext;
+  
 	private INavigatorContentService contentService;
 
 	private WizardActionGroup importWizardActionGroup;
+
 	private WizardActionGroup exportWizardActionGroup;
 
 	/**
 	 * Returns the image descriptor with the given relative path.
 	 */
 	protected ImageDescriptor getImageDescriptor(String relativePath) {
-		String iconPath = "icons/full/"; //$NON-NLS-1$
-		try {
-			AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-			URL installURL = plugin.getDescriptor().getInstallURL();
-			URL url = new URL(installURL, iconPath + relativePath);
-			return ImageDescriptor.createFromURL(url);
-		} catch (MalformedURLException e) {
-			// should not happen
+		String iconPath = "icons/full/"; //$NON-NLS-1$ 
+		URL url = WorkbenchNavigatorPlugin.getDefault().find(
+				new Path(iconPath + relativePath));
+		if(url == null)
 			return ImageDescriptor.getMissingImageDescriptor();
-		}
+		return ImageDescriptor.createFromURL(url);
 	}
 
- 
-	public void init(String anExtensionId, IViewPart aViewPart, INavigatorContentService aContentService, StructuredViewer aStructuredViewer) {
-		contentService = aContentService;
-		IWorkbenchWindow window = (aViewPart.getViewSite() != null) ? aViewPart.getViewSite().getWorkbenchWindow() : null;
+	public void init(CommonActionProviderConfig aConfig) {
+		contentService = aConfig.getContentService();
+		IWorkbenchWindow window = (aConfig.getViewSite() != null) ? aConfig
+				.getViewSite().getWorkbenchWindow() : null;
 		importAction = new ImportResourcesAction(window);
 		exportAction = new ExportResourcesAction(window);
-		importWizardActionGroup = new WizardActionGroup(window, WizardActionGroup.IMPORT_WIZARD);
-		exportWizardActionGroup = new WizardActionGroup(window, WizardActionGroup.EXPORT_WIZARD);
+		importWizardActionGroup = new WizardActionGroup(window,
+				WizardActionGroup.IMPORT_WIZARD);
+		exportWizardActionGroup = new WizardActionGroup(window,
+				WizardActionGroup.EXPORT_WIZARD);
 
 	}
 
@@ -100,37 +98,34 @@ public class PortingActionExtension extends CommonActionProvider implements ICom
 	 * Extends the superclass implementation to dispose the subgroups.
 	 */
 	public void dispose() {
-		//dispose
+		// dispose
+	}
+ 
+
+	public void fillActionBars(IActionBars theActionBars) {
+		theActionBars.setGlobalActionHandler(ActionFactory.IMPORT.getId(),
+				importAction);
+		theActionBars.setGlobalActionHandler(ActionFactory.EXPORT.getId(),
+				exportAction);
+
 	}
 
- 
-	public void setActionContext(ActionContext aContext) {
-		actionContext = aContext;
-	}
+	public void fillContextMenu(IMenuManager aMenu) { 
 
- 
-	public boolean fillActionBars(IActionBars theActionBars) {
-		theActionBars.setGlobalActionHandler(ActionFactory.IMPORT.getId(), importAction);
-		theActionBars.setGlobalActionHandler(ActionFactory.EXPORT.getId(), exportAction);
-		return true;
-	}
-
- 
-	public boolean fillContextMenu(IMenuManager aMenu) {
-
-		aMenu.appendToGroup(ICommonMenuConstants.GROUP_REORGANIZE, GROUP_IMPORT_SEPARATOR);
-
-		if (actionContext == null || actionContext.getSelection().isEmpty() || !(actionContext.getSelection() instanceof IStructuredSelection)) {
+		if (getContext() == null
+				|| getContext().getSelection().isEmpty()
+				|| !(getContext().getSelection() instanceof IStructuredSelection)) {
 			addSimplePortingMenus(aMenu);
 		} else {
-			IStructuredSelection structuredSelection = (IStructuredSelection) actionContext.getSelection();
+			IStructuredSelection structuredSelection = (IStructuredSelection) getContext()
+					.getSelection();
 			if (structuredSelection.size() > 1)
 				addSimplePortingMenus(aMenu);
 			else
 				/* structuredSelection.size() = 1 */
-				addFocusedPortingMenus(aMenu, structuredSelection.getFirstElement());
+				addFocusedPortingMenus(aMenu, structuredSelection
+						.getFirstElement());
 		}
-		return true;
 	}
 
 	private void addSimplePortingMenus(IMenuManager aMenu) {
@@ -138,8 +133,7 @@ public class PortingActionExtension extends CommonActionProvider implements ICom
 		aMenu.appendToGroup(ICommonMenuConstants.GROUP_PORT, exportAction);
 	}
 
-	private void addFocusedPortingMenus(IMenuManager aMenu, Object anElement) {
-		// TODO MDE Add customizations
+	private void addFocusedPortingMenus(IMenuManager aMenu, Object anElement) { 
 		if (contentService != null) {
 			addImportMenu(aMenu, anElement);
 			addExportMenu(aMenu, anElement);
@@ -153,16 +147,19 @@ public class PortingActionExtension extends CommonActionProvider implements ICom
 	 */
 	private void addImportMenu(IMenuManager aMenu, Object anElement) {
 
-		String[] wizardDescriptorIds = COMMON_WIZARD_REGISTRY.getEnabledCommonWizardDescriptorIds(anElement, TYPE_IMPORT);
+		String[] wizardDescriptorIds = COMMON_WIZARD_REGISTRY
+				.getEnabledCommonWizardDescriptorIds(anElement, TYPE_IMPORT);
 
 		if (wizardDescriptorIds.length == 0) {
 			aMenu.appendToGroup(ICommonMenuConstants.GROUP_PORT, importAction);
 			return;
 		}
 
-		IMenuManager submenu = new MenuManager(WorkbenchNavigatorMessages.ImportResourcesAction_text, COMMON_NAVIGATOR_IMPORT_MENU);  
+		IMenuManager submenu = new MenuManager(
+				WorkbenchNavigatorMessages.ImportResourcesAction_text,
+				COMMON_NAVIGATOR_IMPORT_MENU);
 		importWizardActionGroup.setWizardActionIds(wizardDescriptorIds);
-		importWizardActionGroup.setContext(actionContext);
+		importWizardActionGroup.setContext(getContext());
 		importWizardActionGroup.fillContextMenu(submenu);
 
 		submenu.add(new Separator(ICommonMenuConstants.GROUP_ADDITIONS));
@@ -176,29 +173,22 @@ public class PortingActionExtension extends CommonActionProvider implements ICom
 	 * @param selection
 	 */
 	private void addExportMenu(IMenuManager aMenu, Object anElement) {
-		String[] wizardDescriptorIds = COMMON_WIZARD_REGISTRY.getEnabledCommonWizardDescriptorIds(anElement, TYPE_EXPORT);
+		String[] wizardDescriptorIds = COMMON_WIZARD_REGISTRY
+				.getEnabledCommonWizardDescriptorIds(anElement, TYPE_EXPORT);
 		if (wizardDescriptorIds.length == 0) {
 			aMenu.appendToGroup(ICommonMenuConstants.GROUP_PORT, exportAction);
 			return;
 		}
-		IMenuManager submenu = new MenuManager(WorkbenchNavigatorMessages.ExportResourcesAction_text, COMMON_NAVIGATOR_EXPORT_MENU);  
+		IMenuManager submenu = new MenuManager(
+				WorkbenchNavigatorMessages.ExportResourcesAction_text,
+				COMMON_NAVIGATOR_EXPORT_MENU);
 		exportWizardActionGroup.setWizardActionIds(wizardDescriptorIds);
-		exportWizardActionGroup.setContext(actionContext);
+		exportWizardActionGroup.setContext(getContext());
 		exportWizardActionGroup.fillContextMenu(submenu);
 		submenu.add(new Separator(ICommonMenuConstants.GROUP_ADDITIONS));
 		submenu.add(new Separator());
 		submenu.add(exportAction);
 		aMenu.appendToGroup(ICommonMenuConstants.GROUP_PORT, submenu);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		return Platform.getAdapterManager().getAdapter(this, adapter);
-	}
-
-
+ 
 }

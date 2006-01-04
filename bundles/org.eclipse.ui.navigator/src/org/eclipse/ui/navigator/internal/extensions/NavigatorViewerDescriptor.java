@@ -10,16 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator.internal.extensions;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
+import org.eclipse.ui.navigator.NavigatorActionService;
 import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 
@@ -36,154 +32,29 @@ import org.eclipse.ui.navigator.internal.NavigatorPlugin;
  */
 public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 
-	private static final String TAG_INCLUDES = "includes"; //$NON-NLS-1$
+	static final String TAG_INCLUDES = "includes"; //$NON-NLS-1$
 
-	private static final String TAG_EXCLUDES = "excludes"; //$NON-NLS-1$
+	static final String TAG_EXCLUDES = "excludes"; //$NON-NLS-1$
+
+	static final String ATT_IS_ROOT = "isRoot"; //$NON-NLS-1$
+
+	static final String ATT_PATTERN = "pattern"; //$NON-NLS-1$
 
 	private static final String TAG_CONTENT_EXTENSION = "contentExtension"; //$NON-NLS-1$
 
 	private static final String TAG_ACTION_EXTENSION = "actionExtension"; //$NON-NLS-1$
 
-	private static final String ATT_PATTERN = "pattern"; //$NON-NLS-1$
-
-	private static final String ATT_IS_ROOT = "isRoot"; //$NON-NLS-1$	
-
 	private final String viewerId;
 
 	private String popupMenuId = null;
 
-	private class Binding {
-
-		private final Set rootPatterns = new HashSet();
-
-		private final Set includePatterns = new HashSet();
-
-		private final Set excludePatterns = new HashSet();
-
-		private final String TAG_EXTENSION;
-
-		protected Binding(String tagExtension) {
-			TAG_EXTENSION = tagExtension;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorViewerDescriptor#isVisibleExtension(java.lang.String)
-		 */
-		public boolean isVisibleExtension(String anExtensionId) {
-			Pattern pattern = null;
-			for (Iterator itr = includePatterns.iterator(); itr.hasNext();) {
-				pattern = (Pattern) itr.next();
-				if (pattern.matcher(anExtensionId).matches())
-					return true;
-			}
-
-			for (Iterator itr = excludePatterns.iterator(); itr.hasNext();) {
-				pattern = (Pattern) itr.next();
-				if (pattern.matcher(anExtensionId).matches())
-					return false;
-			}
-			return false;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorViewerDescriptor#isRootExtension(java.lang.String)
-		 */
-		public boolean isRootExtension(String anExtensionId) {
-			if (rootPatterns.size() == 0)
-				return false;
-			Pattern pattern = null;
-			for (Iterator itr = rootPatterns.iterator(); itr.hasNext();) {
-				pattern = (Pattern) itr.next();
-				if (pattern.matcher(anExtensionId).matches())
-					return true;
-			}
-			return false;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorViewerDescriptor#hasOverriddenRootExtensions()
-		 */
-		public boolean hasOverriddenRootExtensions() {
-			return rootPatterns.size() > 0;
-		}
-
-		public void consumeIncludes(IConfigurationElement element,
-				boolean toRespectRoots) throws WorkbenchException {
-
-			Assert.isTrue(TAG_INCLUDES.equals(element.getName()));
-			IConfigurationElement[] contentExtensionPatterns = element
-					.getChildren(TAG_EXTENSION);
-			String isRootString = null;
-			boolean isRoot = false;
-			String patternString = null;
-			Pattern compiledPattern = null;
-			for (int i = 0; i < contentExtensionPatterns.length; i++) {
-				if (toRespectRoots) {
-					isRootString = contentExtensionPatterns[i]
-							.getAttribute(ATT_IS_ROOT);
-					isRoot = (isRootString != null) ? Boolean.valueOf(
-							isRootString.trim()).booleanValue() : false;
-				}
-
-				patternString = contentExtensionPatterns[i]
-						.getAttribute(ATT_PATTERN);
-				if (patternString == null)
-					NavigatorPlugin.logError(0, NLS.bind(
-							CommonNavigatorMessages.Attribute_Missing_Warning,
-							new Object[] {
-									ATT_PATTERN,
-									element.getDeclaringExtension()
-											.getUniqueIdentifier(),
-									element.getDeclaringExtension()
-											.getNamespace() }), null);
-				else {
-					compiledPattern = Pattern.compile(patternString);
-					includePatterns.add(compiledPattern);
-					if (toRespectRoots && isRoot)
-						rootPatterns.add(compiledPattern);
-				}
-			}
-
-		}
-
-		public void consumeExcludes(IConfigurationElement element)
-				throws WorkbenchException {
-			Assert.isTrue(TAG_EXCLUDES.equals(element.getName()));
-			IConfigurationElement[] contentExtensionPatterns = element
-					.getChildren(TAG_EXTENSION);
-			String patternString = null;
-			Pattern compiledPattern = null;
-			for (int i = 0; i < contentExtensionPatterns.length; i++) {
-
-				patternString = contentExtensionPatterns[i]
-						.getAttribute(ATT_PATTERN);
-				if (patternString == null)
-					NavigatorPlugin.logError(0, NLS.bind(
-							CommonNavigatorMessages.Attribute_Missing_Warning,
-							new Object[] {
-									ATT_PATTERN,
-									element.getDeclaringExtension()
-											.getUniqueIdentifier(),
-									element.getDeclaringExtension()
-											.getNamespace() }), null);
-				else {
-					compiledPattern = Pattern.compile(patternString);
-					excludePatterns.add(compiledPattern);
-				}
-			}
-
-		}
-	}
-
 	private Binding actionBinding = new Binding(TAG_ACTION_EXTENSION);
 
 	private Binding contentBinding = new Binding(TAG_CONTENT_EXTENSION);
+
+	private InsertionPoint[] customInsertionPoints = null;
+
+	private boolean allowsPlatformContributions = true;
 
 	/**
 	 * Creates a new content descriptor from a configuration element.
@@ -205,6 +76,13 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 		return viewerId;
 	}
 
+	/**
+	 * Update the popupMenuId. If a value is already set, then a warning message
+	 * will be logged.
+	 * 
+	 * @param newPopupMenuId
+	 *            The new popup menu id.
+	 */
 	public void setPopupMenuId(String newPopupMenuId) {
 
 		if (newPopupMenuId != null) {
@@ -228,14 +106,52 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 		return popupMenuId != null ? popupMenuId : viewerId;
 	}
 
+	/**
+	 * Consume an action binding for this viewer.
+	 * 
+	 * @param element
+	 *            The IConfigurationElement containing a viewerActionBinding
+	 *            element.
+	 * @throws WorkbenchException
+	 *             If something goes horribly wrong.
+	 */
+	public void consumeActionBinding(IConfigurationElement element)
+			throws WorkbenchException {
+		consumeBinding(element, false);
+	}
+
+	/**
+	 * Consume a content binding for this viewer.
+	 * 
+	 * @param element
+	 *            The IConfigurationElement containing a viewerContentBinding
+	 *            element.
+	 * @throws WorkbenchException
+	 *             If something goes horribly wrong.
+	 */
 	public void consumeContentBinding(IConfigurationElement element)
 			throws WorkbenchException {
 		consumeBinding(element, true);
 	}
 
-	public void consumeActionBinding(IConfigurationElement element)
-			throws WorkbenchException {
-		consumeBinding(element, false);
+	public boolean isRootExtension(String aContentExtensionId) {
+		return contentBinding.isRootExtension(aContentExtensionId);
+	}
+
+	public boolean allowsPlatformContributionsToContextMenu() {
+		return allowsPlatformContributions;
+	}
+
+	public boolean isVisibleContentExtension(String aContentExtensionId) {
+		return contentBinding.isVisibleExtension(aContentExtensionId);
+	}
+
+	public boolean isVisibleActionExtension(String anActionExtensionId) {
+		return actionBinding.isVisibleExtension(anActionExtensionId);
+	}
+
+	public boolean hasOverriddenRootExtensions() {
+		return contentBinding.hasOverriddenRootExtensions();
 	}
 
 	private void consumeBinding(IConfigurationElement element, boolean isContent)
@@ -280,22 +196,40 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 		}
 	}
 
-	public boolean isVisibleContentExtension(String aContentExtensionId) {
-		return contentBinding.isVisibleExtension(aContentExtensionId);
+	public InsertionPoint[] getCustomInsertionPoints() {
+		return customInsertionPoints;
 	}
 
-	public boolean isVisibleActionExtension(String anActionExtensionId) {
-		return actionBinding.isVisibleExtension(anActionExtensionId);
+	/**
+	 * 
+	 * @param newCustomInsertionPoints
+	 *            The set of custom insertion points, if any. A null list
+	 *            indicates the default set (as defined by
+	 *            {@link NavigatorActionService}) should be used. An empty list
+	 *            indicates there are no declarative insertion points.
+	 */
+	public void setCustomInsertionPoints(
+			InsertionPoint[] newCustomInsertionPoints) {
+		if (customInsertionPoints != null) {
+			NavigatorPlugin
+					.logError(
+							0,
+							"Attempt to override custom insertion points denied. Verify there are no colliding org.eclipse.ui.navigator.viewer extension points.", null); //$NON-NLS-1$
+			return; // do not let them override the insertion points.
+		}
+		customInsertionPoints = newCustomInsertionPoints;
 	}
 
-	public boolean isRootExtension(String aContentExtensionId) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasOverriddenRootExtensions() {
-		// TODO Auto-generated method stub
-		return false;
+	/**
+	 * 
+	 * @param toAllowPlatformContributions
+	 *            A value of 'true' enables object/viewer contributions. 'false'
+	 *            will only allow programmatic contributions from
+	 *            {@link CommonActionProvider}s.
+	 */
+	public void setAllowsPlatformContributions(
+			boolean toAllowPlatformContributions) {
+		allowsPlatformContributions = toAllowPlatformContributions;
 	}
 
 }

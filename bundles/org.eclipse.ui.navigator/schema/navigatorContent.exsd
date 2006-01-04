@@ -11,7 +11,7 @@ that can be used by a navigator content service. The
 &apos;navigatorContent&apos; extension defines the specific classes 
 for the content provider, label provider, and action provider
 in addition to the types of elements the extension knows about. 
-
+&lt;p&gt;
 The &apos;triggerPoints&apos; expression describes the elements that will
 cause this extension to be invoked for either children or for
 labels. The &apos;possibleChildren&apos; expression describes the elements 
@@ -19,8 +19,7 @@ that the extension may be able to provide a parent for. Clients
 should describe all elements that could be set as the selection
 to ensure that the link with editor support can properly 
 expand to the right node.
-
-
+&lt;p&gt;
 &lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This class or interface has been added as
 part of a work in progress. There is a guarantee neither that this API will
 work nor that it will remain the same. Please do not use this API without
@@ -68,7 +67,9 @@ consulting with the Platform/UI team.
             <meta.element labelAttribute="name"/>
          </appInfo>
          <documentation>
-            A navigator content extension defines a content provider and label provider that can be used to provide children whenever an element matches the triggerPoints expression and also to provide a parent whenever an element matches the possibleChildren expression. Optionally, clients may also provide an action provider which can provide menu contributions and action bar contributions when an element is selected that the extension contributed, or that matches the triggerPoints expression. Clients may also choose to contribute a sorter to sort elements that are contributed by the extension.
+            A navigator content extension defines a content provider and label provider that can be used to provide children whenever an element matches the triggerPoints expression and also to provide a parent whenever an element matches the possibleChildren expression. 
+&lt;p&gt;
+Optionally, clients may also provide an action provider which can provide menu contributions and action bar contributions when an element is selected that the extension contributed, or that matches the triggerPoints expression. Clients may also choose to contribute a sorter to sort elements that are contributed by the extension.
          </documentation>
       </annotation>
       <complexType>
@@ -86,7 +87,7 @@ consulting with the Platform/UI team.
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  A unique ID to identify this extension. Used for extension activation and by other extensions that would like to extend the defined extension (e.g. add another ICommonActionProvider)
+                  A unique ID to identify this extension. Used for extension activation and by other extensions that would like to extend the defined extension (e.g. add another org.eclipse.ui.navigator.CommonActionProvider)
                </documentation>
             </annotation>
          </attribute>
@@ -118,8 +119,8 @@ consulting with the Platform/UI team.
          <attribute name="contentProvider" type="string" use="required">
             <annotation>
                <documentation>
-                  Supplies the name of a class which implements org.eclipse.jface.viewers.ITreeContentProvider or org.eclipse.ui.navigator.INavigatorContentProvider.
-
+                  Supplies the name of a class which implements org.eclipse.jface.viewers.ITreeContentProvider or org.eclipse.ui.navigator.ICommonContentProvider.
+&lt;p&gt;
 The content provider will be consulted when addeding children to the tree. Use the &apos;enablement&apos; clause to indicate what kinds of content should trigger a request to your content provider or label provider.
                </documentation>
                <appInfo>
@@ -175,8 +176,8 @@ The content provider will be consulted when addeding children to the tree. Use t
       <annotation>
          <documentation>
             The enablement expression allows clients to specify the same expression for both triggerPoints and possibleChildren.
-
-In the case of &apos;actionProvider&apos;, clients must define an expression that will indicate to the framework when their ICommonActionProvider should be invoked. Because of contributions to the IActionBars, clients must be invoked whenever an object they are interested in is selected. Therefore, clients should use discretion in deciding when their extension should be enabled.
+&lt;p&gt;
+In the case of &apos;actionProvider&apos;, clients must define an expression that will indicate to the framework when their org.eclipse.ui.navigator.CommonActionProvider should be invoked. Because of contributions to the IActionBars, clients must be invoked whenever an object they are interested in is selected. Therefore, clients should use discretion in deciding when their extension should be enabled.
          </documentation>
       </annotation>
       <complexType>
@@ -271,13 +272,13 @@ In the case of &apos;actionProvider&apos;, clients must define an expression tha
             <meta.element labelAttribute="class"/>
          </appInfo>
          <documentation>
-            Supplies the name of a class that implements org.eclipse.ui.navigator.ICommonActionProvider. The action provider has an opportunity to contribute to the context menu and the retargetable actions defined in the IActionBars for the view that holds the navigator. Clients may also contribute directly to the view menu through the IActionBars view menu.
-
+            Supplies the name of a class that implements org.eclipse.ui.navigator.CommonActionProvider. The action provider has an opportunity to contribute to the context menu and the retargetable actions defined in the IActionBars for the view that holds the navigator. Clients may also contribute directly to the view menu through the IActionBars view menu.
+&lt;p&gt;
 For actionProviders that are nested under a navigatorContent element, the visibility will be controlled by the id of the navigatorContent extension id. Child action providers will automatically
 be picked up by matching viewerContentBindings. Peer actionProviders require their own viewerActionBinding (see org.eclipse.ui.navigator.viewer).
-
+&lt;p&gt;
 Clients may provider &apos;actionProvider&apos;(s) under the root &apos;extention&apos; element (peer to &apos;navigatorContent&apos;) in order to better control the binding (see &apos;veiwerActionBinding&apos;) and their enablement (the root level &apos;actionProvider&apos; element supports a nested &apos;enablement&apos; Eclipse core expression).
-
+&lt;p&gt;
 For root &apos;actionProviders&apos; with no id, the id defaults to &apos;org.eclipse.ui.navigator.actionProvider&apos;. For these actionProviders to be given the opportunity to contribute the menus or action bars of a viewer, a viewerActionBinding must be defined (as part of the org.eclipse.ui.navigator.viewer extension point) which declares a binding between the specific viewer and the default id (&quot;org.eclipse.ui.navigator.actionProvider&quot;). See the documentation for &apos;viewerActionBinding&apos; under the schema documentation of org.eclipse.ui.navigator.viewer for more information.
          </documentation>
       </annotation>
@@ -291,7 +292,7 @@ For root &apos;actionProviders&apos; with no id, the id defaults to &apos;org.ec
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.CommonActionProvider"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -319,15 +320,14 @@ For root &apos;actionProviders&apos; with no id, the id defaults to &apos;org.ec
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following example describes a content extension that 
+         &lt;p&gt;
+The following example describes a content extension that 
 provides resource content. The &apos;triggerPoints&apos; expression
 determines when this extension is initially invoked. If 
 a &apos;viewerContentBinding&apos; matches this extension with
 the &apos;isRoot&apos; attribute set to true, then the extension
 will be used, regardless of whether the root element
-matches the &apos;triggerPoints&apos; expression. 
-
-
+matches the &apos;triggerPoints&apos; expression.   
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension  

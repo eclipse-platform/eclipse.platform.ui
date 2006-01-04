@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -42,7 +43,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.navigator.INavigatorActionService;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorActivationService;
@@ -439,10 +439,8 @@ public class CommonFilterSelectionDialog extends Dialog {
 			filterRegistry.getActivationManager().persistFilterActivations();
 		if (updateExtensionActivation || updateFilterActivation) {
 			contentService.update();
-
-			INavigatorActionService actionService = commonNavigator
-					.getNavigatorActionService();
-			actionService.refresh();
+			// the action providers may no longer be enabled, so we reset the selection.
+			commonViewer.setSelection(StructuredSelection.EMPTY);
 		}
 
 		super.okPressed();

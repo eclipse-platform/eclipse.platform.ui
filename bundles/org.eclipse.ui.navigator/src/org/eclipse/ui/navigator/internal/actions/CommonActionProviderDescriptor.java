@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.navigator.ICommonActionProvider;
+import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.navigator.internal.extensions.SkeletonActionProvider;
 
@@ -90,6 +90,10 @@ public class CommonActionProviderDescriptor {
 	 * @param anOverrideId
 	 *            A unique identifier for this descriptor. Ids can be used as a
 	 *            filtering device for activities or viewer***Bindings.
+	 * @param nestedUnderNavigatorContent
+	 *            A value of <b>true</b> indicates that this CommonActionProvider
+	 *            was declared as a nested &lt;actionProvider /&gt; element under
+	 *            a &lt;navigatorContent /&gt; element. 
 	 */
 	public CommonActionProviderDescriptor(IConfigurationElement aConfigElement,
 			IConfigurationElement anEnablementExpression, String anOverrideId,
@@ -119,11 +123,12 @@ public class CommonActionProviderDescriptor {
 
 			IConfigurationElement[] children = configurationElement
 					.getChildren(TAG_ENABLEMENT);
-			// if no child enablement is specified, and we have an override, use it
+			// if no child enablement is specified, and we have an override, use
+			// it
 			if (children.length == 0 && enablementElement != null) {
 				enablement = ElementHandler.getDefault().create(
 						ExpressionConverter.getDefault(), enablementElement);
-			// otherwise the child enablement takes priority
+				// otherwise the child enablement takes priority
 			} else if (children.length == 1) {
 				enablement = ElementHandler.getDefault().create(
 						ExpressionConverter.getDefault(), children[0]);
@@ -140,24 +145,33 @@ public class CommonActionProviderDescriptor {
 		}
 	}
 
-	public ICommonActionProvider createActionProvider() {
+	/**
+	 * 
+	 * @return The instantiated CommonActionProvider for this descriptor as
+	 *         declared in the ATT_CLASS attribute or
+	 *         {@link SkeletonActionProvider} if a problem occurs while loading
+	 *         the instance.
+	 */
+	public CommonActionProvider createActionProvider() {
 		if (hasLoadingFailed)
 			return SkeletonActionProvider.INSTANCE;
-		ICommonActionProvider provider = null;
+		CommonActionProvider provider = null;
 		try {
-			provider = (ICommonActionProvider) configurationElement
+			provider = (CommonActionProvider) configurationElement
 					.createExecutableExtension(ATT_CLASS);
 		} catch (CoreException exception) {
 			NavigatorPlugin.log("Unable to create navigator extension: " + //$NON-NLS-1$
 					getClassName(), exception.getStatus());
 			hasLoadingFailed = true;
+			provider = SkeletonActionProvider.INSTANCE;
 		} catch (Exception e) {
 			NavigatorPlugin.log("Unable to create navigator extension: " + //$NON-NLS-1$
 					getClassName(), new Status(IStatus.ERROR,
 					NavigatorPlugin.PLUGIN_ID, 0, e.getMessage(), e));
-			e.printStackTrace();
 			hasLoadingFailed = true;
+			provider = SkeletonActionProvider.INSTANCE;
 		}
+
 		return provider;
 	}
 
@@ -185,7 +199,8 @@ public class CommonActionProviderDescriptor {
 		while (elements.hasNext()) {
 			context = new EvaluationContext(null, elements.next());
 			try {
-				if (enablement.evaluate(context) == EvaluationResult.FALSE || enablement.evaluate(context) == EvaluationResult.NOT_LOADED)
+				if (enablement.evaluate(context) == EvaluationResult.FALSE
+						|| enablement.evaluate(context) == EvaluationResult.NOT_LOADED)
 					return false;
 			} catch (CoreException e) {
 				NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
@@ -223,6 +238,10 @@ public class CommonActionProviderDescriptor {
 		return id;
 	}
 
+	/**
+	 * 
+	 * @return True if this is a nested &lt;actionProvider /&gt; element. 
+	 */
 	public boolean isNested() {
 		return isNested;
 	}

@@ -22,15 +22,14 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
-import org.eclipse.ui.navigator.internal.NavigatorActionService;
 import org.eclipse.ui.navigator.internal.NavigatorContentServiceDescriptionProvider;
 
 /**
@@ -48,6 +47,7 @@ import org.eclipse.ui.navigator.internal.NavigatorContentServiceDescriptionProvi
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
+ * 
  * @since 3.2
  */
 public final class CommonNavigatorManager implements ISelectionChangedListener {
@@ -56,7 +56,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 
 	private final INavigatorContentService contentService;
 
-	private INavigatorActionService actionService;
+	private NavigatorActionService actionService;
 
 	private final IDescriptionProvider commonDescriptionProvider;
 
@@ -95,15 +95,16 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		// commonNavigator.getCommonViewer().addOpenListener(commonOpenService);
 		initContextMenu();
 		initViewMenu();
-		
 
-		final RetargetAction openAction = new RetargetAction(ICommonActionConstants.OPEN, CommonNavigatorMessages.Open_action_label);
+		final RetargetAction openAction = new RetargetAction(
+				ICommonActionConstants.OPEN,
+				CommonNavigatorMessages.Open_action_label);
 		commonNavigator.getViewSite().getPage().addPartListener(openAction);
 		openAction.setActionDefinitionId(ICommonActionConstants.OPEN);
-		
+
 		commonNavigator.getCommonViewer().addOpenListener(new IOpenListener() {
-			public void open(OpenEvent event) { 
-				openAction.run();				
+			public void open(OpenEvent event) {
+				openAction.run();
 			}
 		});
 	}
@@ -115,9 +116,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 */
 	protected void dispose() {
 		commonNavigator.getCommonViewer().removeSelectionChangedListener(this);
-		// commonNavigator.getCommonViewer().removeOpenListener(commonOpenService);
-		// commonOpenService.dispose();
-		actionService.dispose();
+  actionService.dispose();
 	}
 
 	/**
@@ -133,8 +132,9 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		if (anEvent.getSelection() instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) anEvent
 					.getSelection();
+			actionService.setContext(new ActionContext(structuredSelection));
 			actionService.fillActionBars(commonNavigator.getViewSite()
-					.getActionBars(), structuredSelection);
+					.getActionBars());
 		}
 	}
 
@@ -170,12 +170,8 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 */
 	protected void fillContextMenu(IMenuManager aMenuManager) {
 		ISelection selection = commonNavigator.getCommonViewer().getSelection();
-		if (selection instanceof IStructuredSelection)
-			actionService.fillContextMenu(aMenuManager,
-					(IStructuredSelection) selection);
-		else
-			actionService.fillContextMenu(aMenuManager,
-					StructuredSelection.EMPTY);
+		actionService.setContext(new ActionContext(selection));
+		actionService.fillContextMenu(aMenuManager); 
 	}
 
 	/**
@@ -196,16 +192,10 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		TreeViewer commonViewer = commonNavigator.getCommonViewer();
 		Menu menu = menuMgr.createContextMenu(commonViewer.getTree());
 
-		commonViewer.getTree().setMenu(menu);
-		actionService.setUpdateMenu(menuMgr);
+		commonViewer.getTree().setMenu(menu);  
+		
+		actionService.prepareMenuForPlatformContributions(menuMgr, commonViewer, false);
 
-		/*
-		 * Hooks into the Eclipse framework for Object contributions, and View
-		 * contributions.
-		 */
-		commonNavigator.getSite().registerContextMenu(
-				contentService.getViewerDescriptor().getPopupMenuId(), menuMgr,
-				commonViewer);
 
 	}
 
@@ -237,7 +227,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 * 
 	 * @return The action service used by this manager
 	 */
-	public INavigatorActionService getNavigatorActionService() {
+	public NavigatorActionService getNavigatorActionService() {
 		return actionService;
 	}
 

@@ -8,19 +8,15 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenWithMenu;
+import org.eclipse.ui.navigator.CommonActionProvider;
+import org.eclipse.ui.navigator.CommonActionProviderConfig;
 import org.eclipse.ui.navigator.ICommonActionConstants;
-import org.eclipse.ui.navigator.ICommonActionProvider;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
-import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.internal.AdaptabilityUtility;
-import org.eclipse.ui.navigator.internal.actions.CommonActionProvider;
 import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMessages;
 
 /**
@@ -29,51 +25,39 @@ import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMess
  * @since 3.2
  * 
  */
-public class OpenActionProvider extends CommonActionProvider implements
-		ICommonActionProvider {
+public class OpenActionProvider extends CommonActionProvider   {
 
 	private OpenFileAction openFileAction;
-
-	private ActionContext context;
-
+ 
 	private IWorkbenchPartSite viewSite = null;
 
-	public void init(String anExtensionId, IViewPart aViewPart,
-			INavigatorContentService aContentService,
-			StructuredViewer aStructuredViewer) {
-		viewSite = aViewPart.getSite();
+	public void init(CommonActionProviderConfig aConfig) {
+		viewSite = aConfig.getViewSite();
 		openFileAction = new OpenFileAction(viewSite.getPage());
 	}
+ 
 
-	public void setActionContext(ActionContext aContext) {
-		context = aContext;
-	}
-
-	public boolean fillContextMenu(IMenuManager aMenu) {
-		openFileAction.selectionChanged((IStructuredSelection) context
+	public void fillContextMenu(IMenuManager aMenu) {
+		openFileAction.selectionChanged((IStructuredSelection) getContext()
 				.getSelection());
 		if (openFileAction.isEnabled()) {
 			aMenu.insertAfter(ICommonMenuConstants.GROUP_OPEN, openFileAction);
 			addOpenWithMenu(aMenu);
-			return true;
 		}
-		return false;
 	}
 
-	public boolean fillActionBars(IActionBars theActionBars) {
-		IStructuredSelection selection = (IStructuredSelection) context
+	public void fillActionBars(IActionBars theActionBars) {
+		IStructuredSelection selection = (IStructuredSelection) getContext()
 		.getSelection();
 		if(selection.size() == 1 && selection.getFirstElement() instanceof IFile) { 
 			openFileAction.selectionChanged(selection);
 			theActionBars.setGlobalActionHandler(ICommonActionConstants.OPEN, openFileAction);
-			return true;
-		}
-		return false;
+		} 
 	
 	}
 
 	private void addOpenWithMenu(IMenuManager aMenu) {
-		IStructuredSelection ss = (IStructuredSelection) context.getSelection();
+		IStructuredSelection ss = (IStructuredSelection) getContext().getSelection();
 
 		if (ss == null || ss.size() != 1)
 			return;

@@ -17,9 +17,26 @@
    <extension
          point="org.eclipse.ui.navigator.viewer">
        <viewer
-       	      viewerId="org.eclipse.ui.navigator.resourceContent"
-       	      popupMenuId="org.eclipse.ui.navigator.resourceContent#PopupMenu" 
-       	/>
+             viewerId="org.eclipse.ui.navigator.resourceContent">
+          <popupMenu
+                allowsPlatformContributions="false"
+                id="org.eclipse.ui.navigator.resourceContent#PopupMenu">  
+             <insertionPoint name="group.new"/>
+             <insertionPoint
+                   name="group.open"
+                   separator="true"/>
+             <insertionPoint name="group.openWith"/>             
+             <insertionPoint
+                   name="group.port"
+                   separator="true"/> 
+             <insertionPoint
+                   name="additions"
+                   separator="true"/>              
+             <insertionPoint
+                   name="group.properties"
+                   separator="true"/>
+          </popupMenu>
+       </viewer>
        <viewerContentBinding 
              viewerId="org.eclipse.ui.navigator.resourceContent">
 		          <includes>

@@ -42,12 +42,15 @@ public class CommonWizardRegistry {
 
 	private static final String[] NO_DESCRIPTORS = new String[0];
 
+	/**
+	 * Find wizards of type 'new'.
+	 */
 	public static final String WIZARD_TYPE_NEW = "new"; //$NON-NLS-1$
 
 	private Map commonWizardDescriptors = new HashMap();
 
 	/**
-	 *  @return the singleton instance of the registry
+	 * @return the singleton instance of the registry
 	 */
 	public static CommonWizardRegistry getInstance() {
 		if (isInitialized)
@@ -61,11 +64,10 @@ public class CommonWizardRegistry {
 		return INSTANCE;
 	}
 
-
 	private void init() {
 		new CommonWizardRegistryReader().readRegistry();
-	} 
-	
+	}
+
 	private void addCommonWizardDescriptor(CommonWizardDescriptor aDesc) {
 		if (aDesc == null)
 			return;
@@ -88,6 +90,9 @@ public class CommonWizardRegistry {
 	 * 
 	 * @param anElement
 	 *            the element to return the best content descriptor for
+	 * @param aType
+	 *            The type of wizards to locate (e.g. 'new', 'import', or
+	 *            'export' etc).
 	 * @return the best content descriptor for the given element.
 	 */
 	public String[] getEnabledCommonWizardDescriptorIds(Object anElement,
@@ -116,6 +121,9 @@ public class CommonWizardRegistry {
 	 * 
 	 * @param aStructuredSelection
 	 *            the element to return the best content descriptor for
+	 * @param aType
+	 *            The type of wizards to locate (e.g. 'new', 'import', or
+	 *            'export' etc).
 	 * @return the best content descriptor for the given element.
 	 */
 	public String[] getEnabledCommonWizardDescriptorIds(
@@ -145,7 +153,6 @@ public class CommonWizardRegistry {
 			super(WorkbenchNavigatorPlugin.PLUGIN_ID, COMMON_WIZARD);
 		}
 
- 
 		protected boolean readElement(IConfigurationElement anElement) {
 			if (COMMON_WIZARD.equals(anElement.getName())) {
 				try {

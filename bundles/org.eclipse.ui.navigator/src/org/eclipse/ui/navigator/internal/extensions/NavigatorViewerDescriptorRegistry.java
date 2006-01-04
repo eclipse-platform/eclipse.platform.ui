@@ -34,8 +34,20 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 	private static final String TAG_VIEWER = "viewer"; //$NON-NLS-1$
 
 	private static final String TAG_VIEWER_CONTENT_BINDING = "viewerContentBinding"; //$NON-NLS-1$
+
 	private static final String TAG_VIEWER_ACTION_BINDING = "viewerActionBinding"; //$NON-NLS-1$
-	
+
+	private static final String TAG_POPUP_MENU = "popupMenu"; //$NON-NLS-1$
+
+	private static final String ATT_ID = "id"; //$NON-NLS-1$
+
+	private static final String ATT_ALLOWS_PLATFORM_CONTRIBUTIONS = "allowsPlatformContributions"; //$NON-NLS-1$
+
+	private static final String TAG_INSERTION_POINT = "insertionPoint"; //$NON-NLS-1$
+
+	private static final String ATT_NAME = "name"; //$NON-NLS-1$
+
+	private static final String ATT_SEPARATOR = "separator"; //$NON-NLS-1$
 
 	private static final String ATT_VIEWER_ID = "viewerId"; //$NON-NLS-1$
 
@@ -46,7 +58,7 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 	private final Map viewerDescriptors = new HashMap();
 
 	/**
-	 * 
+	 * @return The intialized singleton instance of the viewer descriptor registry. 
 	 */
 	public static NavigatorViewerDescriptorRegistry getInstance() {
 		if (isInitialized)
@@ -68,19 +80,58 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 		super(NavigatorPlugin.PLUGIN_ID, TAG_VIEWER);
 	}
 
+	/**
+	 * 
+	 * @param viewerId The viewer id for the viewer configuration
+	 * @return The viewer descriptor for the given viewer id.
+	 */
 	public NavigatorViewerDescriptor getNavigatorViewerDescriptor(
 			String viewerId) {
 		return getViewerDescriptor(viewerId);
 	}
 
- 
 	protected boolean readElement(IConfigurationElement element) {
 		if (TAG_VIEWER.equals(element.getName())) {
 			String viewerId = element.getAttribute(ATT_VIEWER_ID);
 			NavigatorViewerDescriptor descriptor = getViewerDescriptor(viewerId);
-			String popupMenuId = element.getAttribute(ATT_POPUP_MENU_ID);
-			if (popupMenuId != null)
-				descriptor.setPopupMenuId(popupMenuId);
+			String attPopupMenuId = element.getAttribute(ATT_POPUP_MENU_ID);
+			IConfigurationElement[] tagPopupMenu = element
+					.getChildren(TAG_POPUP_MENU);
+			if (tagPopupMenu.length == 0 && attPopupMenuId != null)
+				descriptor.setPopupMenuId(attPopupMenuId);
+			else {
+				if (attPopupMenuId != null)
+					NavigatorPlugin
+							.logError(0, "A popupMenuId attribute and popupMenu element may NOT be concurrently specified. (see " + element.getNamespace() + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
+				else if (tagPopupMenu.length > 1) 
+					NavigatorPlugin
+					.logError(0, "Only one 'popupMenu' child of 'viewer' id may be specified. (see " + element.getNamespace() + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
+				else { // valid case
+					
+					String popupMenuId = tagPopupMenu[0].getAttribute(ATT_ID);
+					String allowsPlatformContributions = tagPopupMenu[0].getAttribute(ATT_ALLOWS_PLATFORM_CONTRIBUTIONS);
+					
+					if(popupMenuId != null)
+						descriptor.setPopupMenuId(popupMenuId);
+					
+					if(allowsPlatformContributions != null) 
+						descriptor.setAllowsPlatformContributions(Boolean.valueOf(allowsPlatformContributions).booleanValue());
+					
+					IConfigurationElement[] insertionPointElements = tagPopupMenu[0].getChildren(TAG_INSERTION_POINT);
+					InsertionPoint[] insertionPoints = new InsertionPoint[insertionPointElements.length];
+					String name;
+					String stringAttSeparator; 
+					
+					boolean isSeparator;
+					for(int indx=0; indx< insertionPointElements.length; indx++) {
+						name = insertionPointElements[indx].getAttribute(ATT_NAME);
+						stringAttSeparator = insertionPointElements[indx].getAttribute(ATT_SEPARATOR);
+						isSeparator = stringAttSeparator != null ? Boolean.valueOf(stringAttSeparator).booleanValue() : false;
+						insertionPoints[indx] = new InsertionPoint(name, isSeparator);
+					}
+					descriptor.setCustomInsertionPoints(insertionPoints);
+				}
+			}
 			return true;
 		}
 		if (TAG_VIEWER_CONTENT_BINDING.equals(element.getName())) {
@@ -92,7 +143,8 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 			} catch (WorkbenchException e) {
 				// log an error since its not safe to open a dialog here
 				NavigatorPlugin
-						.log("Unable to create navigator view descriptor.", e.getStatus());//$NON-NLS-1$
+						.log(
+								"Unable to create navigator view descriptor.", e.getStatus()); //$NON-NLS-1$
 			}
 		}
 		if (TAG_VIEWER_ACTION_BINDING.equals(element.getName())) {
@@ -104,15 +156,14 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 			} catch (WorkbenchException e) {
 				// log an error since its not safe to open a dialog here
 				NavigatorPlugin
-						.log("Unable to create navigator view descriptor.", e.getStatus());//$NON-NLS-1$
+						.log(
+								"Unable to create navigator view descriptor.", e.getStatus());//$NON-NLS-1$
 			}
 		}
 		return false;
 	}
 
- 
-	private NavigatorViewerDescriptor getViewerDescriptor(
-			String aViewerId) {
+	private NavigatorViewerDescriptor getViewerDescriptor(String aViewerId) {
 		NavigatorViewerDescriptor viewerDescriptor = null;
 		synchronized (viewerDescriptors) {
 			viewerDescriptor = (NavigatorViewerDescriptor) viewerDescriptors

@@ -30,7 +30,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.navigator.ICommonActionProvider;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
@@ -491,25 +490,7 @@ public final class NavigatorContentDescriptor implements
 		return (ILabelProvider) configElement
 				.createExecutableExtension(ATT_LABEL_PROVIDER);
 	}
-
-	/**
-	 * 
-	 * The action provider is an instance of {@link ICommonActionProvider}.
-	 * Extensions may or may not define an action provider.
-	 * 
-	 * @return An instance of the Action provider defined for this extension
-	 * @throws CoreException
-	 *             if an instance of the executable extension could not be
-	 *             created for any reason
-	 * @see ICommonActionProvider
-	 */
-	public ICommonActionProvider createActionProvider() throws CoreException {
-		if (configElement.getAttribute(ATT_ACTION_PROVIDER) != null)
-			return (ICommonActionProvider) configElement
-					.createExecutableExtension(ATT_ACTION_PROVIDER);
-		return null;
-	}
-
+  
 	/**
 	 * Extensions may or may not define a comparator. Without a comparator,
 	 * items are sorted in the same order they are returned from the content
