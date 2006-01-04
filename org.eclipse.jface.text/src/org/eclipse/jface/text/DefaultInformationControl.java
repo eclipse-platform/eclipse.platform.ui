@@ -298,8 +298,12 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		
 		// see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=117602
 		Object layoutData= fText.getLayoutData();
-		if (layoutData instanceof GridData)
-			((GridData)layoutData).widthHint= fMaxWidth;
+		if (layoutData instanceof GridData) {
+			if (fMaxWidth > -1)
+				((GridData)layoutData).widthHint= fMaxWidth;
+			else
+				((GridData)layoutData).widthHint= SWT.DEFAULT;
+		}
 	}
 
 	/*
