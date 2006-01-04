@@ -32,7 +32,10 @@ public class FileCacheTest extends LocalStoreTest {
 	public FileCacheTest(String name) {
 		super(name);
 	}
-	
+
+	/**
+	 * Overrides generic method from Assert to perform proper array equality test.
+	 */
 	public void assertEquals(String message, byte[] expected, byte[] actual) {
 		if (expected.length != actual.length)
 			fail(message + " arrays of different length");
@@ -40,6 +43,18 @@ public class FileCacheTest extends LocalStoreTest {
 		for (int i = 0; i < actual.length; i++)
 			if (expected[i] != actual[i])
 				fail(message + " arrays differ at position " + i + "; expected: " + expected[i] + " but was: " + actual[i]);
+	}
+
+	/**
+	 * Overrides generic method from Assert to perform proper array equality test.
+	 */
+	public void assertNotSame(String message, byte[] expected, byte[] actual) {
+		if (expected.length != actual.length)
+			return;
+		for (int i = 0; i < actual.length; i++)
+			if (expected[i] != actual[i])
+				return;
+		fail(message + " arrays should be different, but they are not: " + expected);
 	}
 
 	/**
@@ -60,12 +75,12 @@ public class FileCacheTest extends LocalStoreTest {
 		}
 		return new byte[0];
 	}
-	
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		MemoryTree.TREE.deleteAll();
 	}
-	
+
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		MemoryTree.TREE.deleteAll();
@@ -82,8 +97,36 @@ public class FileCacheTest extends LocalStoreTest {
 			assertTrue("1.0", cachedFile.exists());
 			assertTrue("1.1", !cachedFile.isDirectory());
 			assertEquals("1.2", contents, getBytes(cachedFile));
+
+			//write out new file contents
+			byte[] newContents = "newContents".getBytes();
+			out = store.openOutputStream(EFS.NONE, getMonitor());
+			out.write(newContents);
+			out.close();
+
+			//old cache will be out of date
+			assertNotSame("2.0", newContents, getBytes(cachedFile));
+			
+			//fetching the cache again should return up to date file
+			cachedFile = store.toLocalFile(EFS.CACHE, getMonitor());
+			assertTrue("3.0", cachedFile.exists());
+			assertTrue("3.1", !cachedFile.isDirectory());
+			assertEquals("3.2", newContents, getBytes(cachedFile));
+
 		} catch (IOException e) {
 			fail("1.99", e);
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+	}
+
+	public void testCacheFolder() {
+		try {
+			IFileStore store = new MemoryFileStore(new Path("testCacheFolder"));
+			store.mkdir(EFS.NONE, getMonitor());
+			File cachedFile = store.toLocalFile(EFS.CACHE, getMonitor());
+			assertTrue("1.0", cachedFile.exists());
+			assertTrue("1.1", cachedFile.isDirectory());
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
@@ -102,7 +145,7 @@ public class FileCacheTest extends LocalStoreTest {
 			fail("4.99", e);
 		}
 	}
-	
+
 	/**
 	 * Tests caching a non-existing file
 	 */
@@ -113,18 +156,6 @@ public class FileCacheTest extends LocalStoreTest {
 			assertTrue("1.0", !cachedFile.exists());
 		} catch (CoreException e) {
 			fail("4.99", e);
-		}
-	}
-
-	public void testCacheFolder() {
-		try {
-			IFileStore store = new MemoryFileStore(new Path("testCacheFolder"));
-			store.mkdir(EFS.NONE, getMonitor());
-			File cachedFile = store.toLocalFile(EFS.CACHE, getMonitor());
-			assertTrue("1.0", cachedFile.exists());
-			assertTrue("1.1", cachedFile.isDirectory());
-		} catch (CoreException e) {
-			fail("1.99", e);
 		}
 	}
 }
