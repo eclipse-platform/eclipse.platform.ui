@@ -46,7 +46,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 */
 	protected static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-	private FileCache fileCache;
+	private static FileCache fileCache;
 
 	/**
 	 * Closes a stream and ignores any resulting exception.
