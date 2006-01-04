@@ -116,6 +116,7 @@ public abstract class TextConsole extends AbstractConsole {
         fDocument.addPositionCategory(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
         fPatternMatcher = new ConsolePatternMatcher(this);
         fDocument.addDocumentListener(fPatternMatcher);
+        fTabWidth = IConsoleConstants.DEFAULT_TAB_SIZE;
     }
 
     /* (non-Javadoc)
