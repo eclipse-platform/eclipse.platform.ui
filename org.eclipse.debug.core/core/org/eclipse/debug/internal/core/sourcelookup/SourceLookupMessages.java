@@ -67,4 +67,6 @@ public class SourceLookupMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SourceLookupMessages.class);
 	}
+
+	public static String AbstractSourceLookupDirector_10;
 }

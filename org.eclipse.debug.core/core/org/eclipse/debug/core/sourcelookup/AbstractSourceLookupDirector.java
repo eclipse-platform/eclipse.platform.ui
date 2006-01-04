@@ -101,6 +101,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		
 		private List fSourceElements = new ArrayList();
 		private Object fElement = null;
+		private Throwable fException = null;
 		
 		SourceLookupQuery(Object element) {
 			fElement = element;
@@ -110,7 +111,16 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			DebugPlugin.log(exception);
+			fException = exception;
+		}
+		
+		/**
+		 * Returns any exception that occurred during source lookup.
+		 * 
+		 * @return
+		 */
+		public Throwable getException() {
+			return fException;
 		}
 
 		/* (non-Javadoc)
@@ -146,11 +156,11 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 				}
 			}	
 			if (fSourceElements.isEmpty()) {
-				// throw exception if there was one
+				// set exception if there was one
 				if (multiStatus != null) {
-					throw new CoreException(multiStatus);
+					fException = new CoreException(multiStatus);
 				} else if (single != null) {
-					throw single;
+					fException = single;
 				}
 			}
 		}
@@ -162,6 +172,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		public void dispose() {
 			fElement = null;
 			fSourceElements = null;
+			fException = null;
 		}
 		
 	}
@@ -701,7 +712,14 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		SourceLookupQuery query = new SourceLookupQuery(object);
 		Platform.run(query);
 		List sources = query.getSourceElements();
+		Throwable exception = query.getException();
 		query.dispose();
+		if (exception != null && sources.isEmpty()) {
+			if (exception instanceof CoreException) {
+				throw (CoreException)exception;
+			}
+			abort(SourceLookupMessages.AbstractSourceLookupDirector_10, exception);
+		}
 		return sources.toArray();
 	}
 	/* (non-Javadoc)
