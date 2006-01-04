@@ -909,7 +909,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		// right (actual) document
 		int rightStartLine= consistentBefore.rightStart() + shiftBefore;
 		int rightLine= consistentAfter.rightEnd();
-		if (modified == right)
+		if (!leftToRight)
 			rightLine += lineDelta;
 		int rightEndLine= rightLine - shiftAfter;
 		ILineRange rightRange= new LineRange(rightStartLine, rightEndLine - rightStartLine);
