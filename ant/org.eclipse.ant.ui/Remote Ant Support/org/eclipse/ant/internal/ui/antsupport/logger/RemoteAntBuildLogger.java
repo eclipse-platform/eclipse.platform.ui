@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -342,6 +342,8 @@ public class RemoteAntBuildLogger extends DefaultLogger {
             message.append(line);
             message.append(',');
             if (!fileName.equals(fLastFileName)) {
+            	message.append(fileName.length());
+            	message.append(',');
                 message.append(fileName);
             } 
             message.append(',');
@@ -365,7 +367,10 @@ public class RemoteAntBuildLogger extends DefaultLogger {
         if (location != null && location != Location.UNKNOWN_LOCATION) {
             //if a target has a valid location then we are on an Ant that is 
             //new enough to have the accessor methods on Location
-            message.append(location.getFileName());
+        	String fileName= location.getFileName();
+        	message.append(fileName.length());
+        	message.append(',');
+            message.append(fileName);
             message.append(',');
             message.append(location.getLineNumber());
         }

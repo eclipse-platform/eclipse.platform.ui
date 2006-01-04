@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -198,7 +198,12 @@ public class RemoteAntBuildListener implements ILaunchesListener {
         StringTokenizer tokenizer= new StringTokenizer(message, ","); //$NON-NLS-1$
         message= tokenizer.nextToken();
         if (tokenizer.hasMoreTokens()) {
-            String location= tokenizer.nextToken();
+        	int locationLength= Integer.parseInt(tokenizer.nextToken());
+        	String location= tokenizer.nextToken(); 
+        	while (location.length() < locationLength) { //path with a comma in it
+        		location+=","; //$NON-NLS-1$
+        		location+= tokenizer.nextToken();
+        	}
             int lineNumber= Integer.parseInt(tokenizer.nextToken());
             generateLink(message, location, lineNumber, 0, message.length() - 1);
         }
@@ -228,13 +233,21 @@ public class RemoteAntBuildListener implements ILaunchesListener {
         line= labelBuff.toString();
         
         fLastTaskName= taskName;
-        int finalIndex= message.indexOf(',', index4 + 1);
-        String fileName= message.substring(index4 + 1, finalIndex);
+        
+        int locationIndex= message.indexOf(',', index4 + 1);
+        int finalIndex= locationIndex + 1;
+        String fileName= message.substring(index4 + 1, locationIndex);
+        int locationLength= 0;
         if (fileName.length() == 0) {
             fileName= fLastFileName;
+        } else {
+        	finalIndex= message.indexOf(',', locationIndex) + 1;
+        	locationLength= Integer.parseInt(fileName);
+        	fileName= message.substring(finalIndex, finalIndex + locationLength);
+        	locationLength+=1; //set past delimiter
         }
         fLastFileName= fileName;
-        int lineNumber= Integer.parseInt(message.substring(finalIndex + 1));
+        int lineNumber= Integer.parseInt(message.substring(finalIndex + locationLength));
 
         int size = IAntUIConstants.LEFT_COLUMN_SIZE - (taskName.length() + 3);
         int offset = Math.max(size - 2, 1);
