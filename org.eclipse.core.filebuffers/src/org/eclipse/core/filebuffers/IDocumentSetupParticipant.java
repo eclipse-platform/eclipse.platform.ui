@@ -23,7 +23,7 @@ import org.eclipse.jface.text.IDocument;
  * Participants have to be aware of the existence of other participants. I.e.
  * they should always setup a document in a way that does not interfere with
  * others. E.g., when a participant wants to install partitioning on the
- * document, it should use the
+ * document, it must use the
  * {@link org.eclipse.jface.text.IDocumentExtension3} API and choose a unique
  * partitioning id.
  *
