@@ -206,6 +206,8 @@ public final class PresentablePartFolder implements IPresentablePartList {
         AbstractTabItem item = getTab(toRemove);
         if (item != null) {
             item.dispose();
+        }
+        if (partList.contains(toRemove)) {
             toRemove.removePropertyListener(childPropertyChangeListener);
             partList.remove(toRemove);
         }

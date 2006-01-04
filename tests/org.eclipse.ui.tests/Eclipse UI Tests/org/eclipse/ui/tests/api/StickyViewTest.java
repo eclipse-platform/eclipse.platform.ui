@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -226,6 +227,29 @@ public class StickyViewTest extends UITestCase {
         } catch (PartInitException e) {
             fail(e.getMessage());
         }
+    }
+    
+    /**
+     * Test that closing a stand-alone view remove the editor stack and
+     * doesn't throw an NPE.
+     * 
+     * @throws Throwable on error
+     * @since 3.2
+     */
+    public void testPerspectiveCloseStandaloneView() throws Throwable {
+		page.setPerspective(WorkbenchPlugin.getDefault()
+				.getPerspectiveRegistry().findPerspectiveWithId(
+						PerspectiveViewsBug120934.PERSP_ID));
+
+		try {
+			// find the stand-alone view
+			IViewReference standAloneRef = page
+					.findViewReference(IPageLayout.ID_OUTLINE);
+
+			page.hideView(standAloneRef);
+		} finally {
+			page.closePerspective(page.getPerspective(), false, false);
+		}
     }
     
 	/**
