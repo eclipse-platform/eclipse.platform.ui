@@ -12,12 +12,12 @@
 package org.eclipse.ui.navigator.resources.internal.actions;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.navigator.CommonNavigator;
-import org.eclipse.ui.navigator.ICommonOpenListener;
 import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
@@ -29,7 +29,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * </p>
  * @since 3.2
  */
-public class ResourceOpenListener implements ICommonOpenListener{
+public class ResourceOpenListener implements IOpenListener {
 	OpenFileAction openFileAction ;
 	private CommonNavigator commonNavigator;
 	private INavigatorContentService contentService;

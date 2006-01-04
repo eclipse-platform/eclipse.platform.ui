@@ -62,8 +62,8 @@ import org.eclipse.ui.part.ViewPart;
  * </li>
  * <li>
  * <p>
- * {@link org.eclipse.ui.navigator.INavigatorActionService}: 
- * Manages instances of {@link org.eclipse.ui.navigator.ICommonActionProvider}&nbsp;
+ * {@link org.eclipse.ui.navigator.NavigatorActionService}: 
+ * Manages instances of {@link org.eclipse.ui.navigator.CommonActionProvider}s
  * provided by individual extensions and content extensions.
  * </p>
  * </li>
@@ -107,7 +107,7 @@ import org.eclipse.ui.part.ViewPart;
  * interfaces when working with these components.
  * </p>
  * <p>
- * Clients that wish to extend the view menu provided via the org.eclipse.ui.popupMenus extension
+ * Clients that wish to extend the view menu provided via the <b>org.eclipse.ui.popupMenu</b>s extension
  * may specify the the popupMenuId specified by <b>org.eclipse.ui.navigator.viewer</b> of their
  * target viewer as their target menu id.
  * 

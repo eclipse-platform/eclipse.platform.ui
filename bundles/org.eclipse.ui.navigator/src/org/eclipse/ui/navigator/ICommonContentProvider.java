@@ -15,11 +15,10 @@ import org.eclipse.ui.IMemento;
 
 /**
  * 
- * The Common content provider allows extensions to vary their
- * behavior based on properties in the extension model and the
- * given memento. The state model should be initialized from values 
- * in the memento if necessary. 
- *  
+ * The Common content provider allows extensions to vary their behavior based on
+ * properties in the extension model and the given memento. The state model
+ * should be initialized from values in the memento if necessary.
+ * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
@@ -28,7 +27,8 @@ import org.eclipse.ui.IMemento;
  * </p>
  * 
  * <p>
- * Clients may implement this interface.
+ * Clients are not required to implement this interface if there is no cause to
+ * do so. {@link ITreeContentProvider} is respected by the Common Navigator.
  * </p>
  * 
  * @since 3.2

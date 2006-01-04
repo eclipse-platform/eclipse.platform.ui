@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.Priority;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
+import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorManager;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 
 // TODO Fix up Common Sorter
@@ -42,7 +42,7 @@ import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
  */
 public class CommonSorter extends ViewerSorter {
 
-	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry
+	private static final NavigatorContentDescriptorManager CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorManager
 			.getInstance();
 
 	private Comparator comparator = null;

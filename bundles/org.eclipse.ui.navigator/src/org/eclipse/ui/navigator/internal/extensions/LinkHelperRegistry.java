@@ -37,7 +37,7 @@ import org.eclipse.ui.navigator.internal.NavigatorPlugin;
  */
 public class LinkHelperRegistry extends RegistryReader {
 
-	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry
+	private static final NavigatorContentDescriptorManager CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorManager
 			.getInstance();
  
 

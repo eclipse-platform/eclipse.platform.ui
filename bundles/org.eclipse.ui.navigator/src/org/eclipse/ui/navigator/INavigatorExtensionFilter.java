@@ -17,9 +17,7 @@ package org.eclipse.ui.navigator;
  * Handles the filtering responsibilities for extensions of the
  * <b>org.eclipse.ui.navigator.commonFilter </b> extension point.
  * </p>
- * 
- *
- * 
+ *   
  *<p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
  * progress. There is a guarantee neither that this API will work nor that it will remain the same.

@@ -14,11 +14,9 @@ package org.eclipse.ui.navigator;
 
 /**
  * <p>
- * Used by clients who need to would like to listen for the load event of a
- * NavigatorContentExtension.
- * <p>
- * The following class is experimental until fully documented.
- * </p>
+ * Used by clients who would like to listen for the load event of am
+ * {@link INavigatorContentExtension }.
+ * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
  * progress. There is a guarantee neither that this API will work nor that it will remain the same.

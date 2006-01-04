@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
+import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorManager;
 /**
  * 
  * <p>
@@ -31,7 +31,7 @@ import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRe
  */
 public class CommonFilterLabelProvider implements ITableLabelProvider, ILabelProvider {
 
-	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry.getInstance();
+	private static final NavigatorContentDescriptorManager CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorManager.getInstance();
 
 	public CommonFilterLabelProvider() {
 	}

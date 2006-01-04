@@ -21,7 +21,7 @@ import org.eclipse.ui.navigator.INavigatorExtensionFilter;
 import org.eclipse.ui.navigator.internal.Utilities;
 import org.eclipse.ui.navigator.internal.NavigatorContentService;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
+import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorManager;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 
 /**
@@ -35,7 +35,7 @@ import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
  */
 public class CommonViewerFilter extends ViewerFilter {
 
-	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry.getInstance();
+	private static final NavigatorContentDescriptorManager CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorManager.getInstance();
 	private final CommonViewer commonViewer;
 	private final INavigatorContentService contentService;
 

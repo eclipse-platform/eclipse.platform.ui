@@ -5,7 +5,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.navigator.internal.extensions.InsertionPoint;
 
 /**
- * Provides a handle to metadata about the abstract viewer for a particular
+ * Provides a basic metadata about the abstract viewer for a particular
  * content service.
  * 
  * 

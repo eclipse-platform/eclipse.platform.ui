@@ -20,7 +20,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
+import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorManager;
 
 /**
  * 
@@ -28,7 +28,8 @@ import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRe
  * context of a given viewer. If an extension is 'active' then the extension
  * will contribute functionality to the viewer. If an extension is not 'active',
  * then the extension will not be given opportunities to contribute
- * functionality to the given viewer.
+ * functionality to the given viewer. See {@link INavigatorContentService} for
+ * more detail on what 'states' are associated with a content extension.
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -47,7 +48,7 @@ public final class NavigatorActivationService {
 
 	private static final NavigatorActivationService INSTANCE = new NavigatorActivationService();
 
-	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry
+	private static final NavigatorContentDescriptorManager CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorManager
 			.getInstance();
 
 	/*
@@ -66,7 +67,7 @@ public final class NavigatorActivationService {
 	 * Create an instance of the service.
 	 */
 	private NavigatorActivationService() {
-		super(); 
+		super();
 	}
 
 	/**

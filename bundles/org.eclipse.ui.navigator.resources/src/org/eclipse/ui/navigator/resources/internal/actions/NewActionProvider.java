@@ -4,7 +4,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
@@ -13,19 +12,32 @@ import org.eclipse.ui.actions.NewProjectAction;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.CommonActionProviderConfig;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
+import org.eclipse.ui.navigator.WizardActionGroup;
 import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardRegistry;
 
 /**
- * Provides the new menu options for a context menu.
+ * Provides the new (artifact creation) menu options for a context menu.
+ * 
+ * <p>
+ * The added submenu has the following structure
+ * </p>
+ * 
+ * <ul>
+ * <li>a new generic project wizard shortcut action, </li>
+ * <li>a separator, </li>
+ * <li>a set of context senstive wizard shortcuts (as defined by
+ * <b>org.eclipse.ui.navigator.commonWizard</b>), </li>
+ * <li>another separator, </li>
+ * <li>a generic examples wizard shortcut action, and finally </li>
+ * <li>a generic "Other" new wizard shortcut action</li>
+ * </ul>
+ * 
  * @since 3.2
- *
+ * 
  */
-public class NewActionProvider extends CommonActionProvider  {
-
-	private static final CommonWizardRegistry COMMON_WIZARD_REGISTRY = CommonWizardRegistry
-			.getInstance();
+public class NewActionProvider extends CommonActionProvider {
 
 	private static final String FULL_EXAMPLES_WIZARD_CATEGORY = "org.eclipse.ui.Examples"; //$NON-NLS-1$
 
@@ -34,7 +46,6 @@ public class NewActionProvider extends CommonActionProvider  {
 	private IAction newProjectAction;
 
 	private IAction newExampleAction;
- 
 
 	private WizardActionGroup newWizardActionGroup;
 
@@ -45,34 +56,44 @@ public class NewActionProvider extends CommonActionProvider  {
 		newProjectAction = new NewProjectAction(window);
 		newExampleAction = new NewExampleAction(window);
 
-		newWizardActionGroup = new WizardActionGroup(window,
-				WizardActionGroup.NEW_WIZARD);
+		newWizardActionGroup = new WizardActionGroup(window, PlatformUI
+				.getWorkbench().getNewWizardRegistry(), WizardActionGroup.TYPE_NEW);
 
-	} 
-
-	public void fillContextMenu(IMenuManager aMenu) {
-		addNewMenu(aMenu); 
 	}
 
 	/**
-	 * @param menuManager
-	 * @param selection
+	 * Adds a submenu to the given menu with the name
+	 * {@value ICommonMenuConstants#GROUP_NEW } (see
+	 * {@link ICommonMenuConstants#GROUP_NEW}). The submenu contains the
+	 * following structure:
+	 * 
+	 * <ul>
+	 * <li>a new generic project wizard shortcut action, </li>
+	 * <li>a separator, </li>
+	 * <li>a set of context senstive wizard shortcuts (as defined by
+	 * <b>org.eclipse.ui.navigator.commonWizard</b>), </li>
+	 * <li>another separator, </li>
+	 * <li>a generic examples wizard shortcut action, and finally </li>
+	 * <li>a generic "Other" new wizard shortcut action</li>
+	 * </ul>
 	 */
-	private void addNewMenu(IMenuManager menuManager) {
+	public void fillContextMenu(IMenuManager menu) {
 		IMenuManager submenu = new MenuManager(
 				WorkbenchNavigatorMessages.Workbench_new,
 				ICommonMenuConstants.GROUP_NEW);
 
-		// Add new project ..
+		// Add new project wizard shortcut
 		submenu.add(newProjectAction);
 		submenu.add(new Separator());
 
-		// fill the menu from the commonWizard contribution
-		fillNewMenu(submenu);
+		// fill the menu from the commonWizard contributions
+		newWizardActionGroup.setContext(getContext());
+		newWizardActionGroup.fillContextMenu(submenu);
+
 		submenu.add(new Separator(ICommonMenuConstants.GROUP_ADDITIONS));
 
+		// if there are examples, then add them to the end of the menu
 		if (hasExamples()) {
-			// Add examples ..
 			submenu.add(new Separator());
 			submenu.add(newExampleAction);
 		}
@@ -81,13 +102,14 @@ public class NewActionProvider extends CommonActionProvider  {
 		submenu.add(new Separator());
 		submenu.add(showDlgAction);
 
-		menuManager.insertAfter(ICommonMenuConstants.GROUP_NEW, submenu);
+		// append the submenu after the GROUP_NEW group.
+		menu.insertAfter(ICommonMenuConstants.GROUP_NEW, submenu);
 	}
 
 	/**
 	 * Return whether or not any examples are in the current install.
 	 * 
-	 * @return boolean
+	 * @return True if there exists a full examples wizard category.
 	 */
 	private boolean hasExamples() {
 		IWizardRegistry newRegistry = PlatformUI.getWorkbench()
@@ -95,32 +117,6 @@ public class NewActionProvider extends CommonActionProvider  {
 		IWizardCategory category = newRegistry
 				.findCategory(FULL_EXAMPLES_WIZARD_CATEGORY);
 		return category != null;
-
-	}
-
-	private void fillNewMenu(IMenuManager aSubmenu) {
-		if (getContext() != null && !getContext().getSelection().isEmpty()
-				&& getContext().getSelection() instanceof IStructuredSelection) {
-
-			IStructuredSelection structuredSelection = (IStructuredSelection) getContext()
-					.getSelection();
-			if (structuredSelection.size() == 1)
-				/* structuredSelection.size() = 1 */
-				addCommomWizardNewMenus(aSubmenu, structuredSelection
-						.getFirstElement());
-		}
-	}
-
-	private void addCommomWizardNewMenus(IMenuManager aSubmenu, Object anElement) {
-		String[] wizardDescriptorIds = COMMON_WIZARD_REGISTRY
-				.getEnabledCommonWizardDescriptorIds(anElement,
-						CommonWizardRegistry.WIZARD_TYPE_NEW);
-		if (wizardDescriptorIds.length == 0)
-			return;
-
-		newWizardActionGroup.setWizardActionIds(wizardDescriptorIds);
-		newWizardActionGroup.setContext(getContext());
-		newWizardActionGroup.fillContextMenu(aSubmenu);
 
 	}
 

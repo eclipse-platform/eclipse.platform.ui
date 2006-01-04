@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.navigator.resources.internal.actions;
+package org.eclipse.ui.navigator.internal.wizards;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,8 +21,8 @@ import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.navigator.internal.extensions.RegistryReader;
-import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorPlugin;
+import org.eclipse.ui.navigator.internal.NavigatorPlugin;
+import org.eclipse.ui.navigator.internal.extensions.NavigatorContentRegistryReader;
 
 /**
  * <p>
@@ -34,9 +34,9 @@ import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorPlug
  * 
  * @since 3.2
  */
-public class CommonWizardRegistry {
+public class CommonWizardDescriptorManager {
 
-	private static final CommonWizardRegistry INSTANCE = new CommonWizardRegistry();
+	private static final CommonWizardDescriptorManager INSTANCE = new CommonWizardDescriptorManager();
 
 	private static boolean isInitialized = false;
 
@@ -52,7 +52,7 @@ public class CommonWizardRegistry {
 	/**
 	 * @return the singleton instance of the registry
 	 */
-	public static CommonWizardRegistry getInstance() {
+	public static CommonWizardDescriptorManager getInstance() {
 		if (isInitialized)
 			return INSTANCE;
 		synchronized (INSTANCE) {
@@ -65,7 +65,7 @@ public class CommonWizardRegistry {
 	}
 
 	private void init() {
-		new CommonWizardRegistryReader().readRegistry();
+		new CommonWizardRegistry().readRegistry();
 	}
 
 	private void addCommonWizardDescriptor(CommonWizardDescriptor aDesc) {
@@ -145,28 +145,23 @@ public class CommonWizardRegistry {
 		return (String[]) descriptorIds.toArray(wizardIds); // Collections.unmodifiableList(descriptors);
 	}
 
-	class CommonWizardRegistryReader extends RegistryReader {
-
-		private static final String COMMON_WIZARD = "commonWizard"; //$NON-NLS-1$
-
-		CommonWizardRegistryReader() {
-			super(WorkbenchNavigatorPlugin.PLUGIN_ID, COMMON_WIZARD);
-		}
+	private class CommonWizardRegistry extends NavigatorContentRegistryReader {
+ 
 
 		protected boolean readElement(IConfigurationElement anElement) {
-			if (COMMON_WIZARD.equals(anElement.getName())) {
+			if (TAG_COMMON_WIZARD.equals(anElement.getName())) {
 				try {
 					addCommonWizardDescriptor(new CommonWizardDescriptor(
 							anElement));
 					return true;
 				} catch (WorkbenchException e) {
 					// log an error since its not safe to open a dialog here
-					WorkbenchNavigatorPlugin
+					NavigatorPlugin
 							.log(
 									"Unable to create common wizard descriptor.", e.getStatus());//$NON-NLS-1$
 				}
 			}
-			return false;
+			return super.readElement(anElement);
 		}
 	}
 }

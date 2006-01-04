@@ -8,7 +8,7 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.navigator.resources.internal.actions;
+package org.eclipse.ui.navigator.internal.wizards;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
@@ -22,7 +22,7 @@ import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMessages;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
@@ -32,49 +32,32 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
+ * 
  * @since 3.2
- *  
+ * 
  */
 public class WizardShortcutAction extends Action implements IPluginContribution {
 	private IWizardDescriptor descriptor;
+
 	private IWorkbenchWindow window;
 
 	/**
-	 *  
+	 * 
+	 * @param aWindow
+	 *            The window to use for the shell and selection service.
+	 * @param aDescriptor
+	 *            The descriptor with information for triggering the desired
+	 *            wizard.
 	 */
-	public WizardShortcutAction(IWorkbenchWindow window, IWizardDescriptor aDescriptor) {
+	public WizardShortcutAction(IWorkbenchWindow aWindow,
+			IWizardDescriptor aDescriptor) {
 		super(aDescriptor.getLabel());
 		descriptor = aDescriptor;
 		setToolTipText(descriptor.getDescription());
 		setImageDescriptor(descriptor.getImageDescriptor());
-		setId(ActionFactory.NEW.getId()); 
-		this.window = window;
+		setId(ActionFactory.NEW.getId());
+		this.window = aWindow;
 	}
-
-	//	/**
-	//	 * @param text
-	//	 */
-	//	public WizardShortcutAction(String text) {
-	//		super(text);
-	//	}
-	//
-	//	/**
-	//	 * @param text
-	//	 * @param image
-	//	 */
-	//	public WizardShortcutAction(String text, ImageDescriptor image) {
-	//		super(text, image);
-	//	}
-	//
-	//	/**
-	//	 * @param text
-	//	 * @param style
-	//	 */
-	//	public WizardShortcutAction(String text, int style) {
-	//		super(text, style);
-	//	}
-	//	
-	//	
 
 	/**
 	 * This action has been invoked by the user
@@ -89,32 +72,27 @@ public class WizardShortcutAction extends Action implements IPluginContribution 
 		try {
 			wizard = descriptor.createWizard();
 		} catch (CoreException e) {
-			ErrorDialog.openError(window.getShell(), WorkbenchNavigatorMessages.NewProjectWizard_errorTitle,  
-						WorkbenchNavigatorMessages.NewProjectAction_text,  
-						e.getStatus());
+			ErrorDialog.openError(window.getShell(),
+					CommonNavigatorMessages.NewProjectWizard_errorTitle,
+					CommonNavigatorMessages.NewProjectAction_text, e
+							.getStatus());
 			return;
 		}
 
 		ISelection selection = window.getSelectionService().getSelection();
-		/*
-		 * IStructuredSelection selectionToPass = StructuredSelection.EMPTY; if (selection
-		 * instanceof IStructuredSelection) { selectionToPass =
-		 * wizardElement.adaptedSelection((IStructuredSelection) selection); } else { // Build the
-		 * selection from the IFile of the editor IWorkbenchPart part =
-		 * window.getPartService().getActivePart(); if (part instanceof IEditorPart) { IEditorInput
-		 * input = ((IEditorPart) part).getEditorInput(); if (input instanceof IFileEditorInput) {
-		 * selectionToPass = new StructuredSelection(((IFileEditorInput) input).getFile()); } } }
-		 */
 
 		if (selection instanceof IStructuredSelection)
-			wizard.init(window.getWorkbench(), (IStructuredSelection) selection);
+			wizard
+					.init(window.getWorkbench(),
+							(IStructuredSelection) selection);
 		else
 			wizard.init(window.getWorkbench(), StructuredSelection.EMPTY);
 
 		Shell parent = window.getShell();
 		WizardDialog dialog = new WizardDialog(parent, wizard);
 		dialog.create();
-		//WorkbenchHelp.setHelp(dialog.getShell(), IWorkbenchHelpContextIds.NEW_WIZARD_SHORTCUT);
+		// WorkbenchHelp.setHelp(dialog.getShell(),
+		// IWorkbenchHelpContextIds.NEW_WIZARD_SHORTCUT);
 		dialog.open();
 	}
 
@@ -135,6 +113,5 @@ public class WizardShortcutAction extends Action implements IPluginContribution 
 	public String getPluginId() {
 		return descriptor.getId();
 	}
-
 
 }

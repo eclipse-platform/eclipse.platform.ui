@@ -7,6 +7,7 @@
    <extension-point id="commonFilter" name="%ExtPoint_commonFilter" schema="schema/commonFilter.exsd"/>
    <extension-point id="dropHandler" name="%ExtPoint_dropHandler" schema="schema/dropHandler.exsd"/>
    <extension-point id="linkHelper" name="%Link_Helper" schema="schema/linkHelper.exsd"/>
+   <extension-point id="commonWizard" name="%Common_Wizard" schema="schema/commonWizard.exsd"/>
  
    <extension
          point="org.eclipse.ui.dropActions">

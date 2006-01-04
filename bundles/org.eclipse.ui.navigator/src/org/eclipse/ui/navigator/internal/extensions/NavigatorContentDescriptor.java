@@ -52,42 +52,12 @@ import org.eclipse.ui.navigator.internal.NavigatorPlugin;
  * @since 3.2
  */
 public final class NavigatorContentDescriptor implements
-		INavigatorContentDescriptor {
+		INavigatorContentDescriptor, INavigatorContentExtPtConstants {
 
 	private static final INavigatorExtensionFilter[] NO_VIEWER_FILTERS = new INavigatorExtensionFilter[0];
 
 	private static final IConfigurationElement[] NO_DUPLICATE_CONTENT_FILTERS = new IConfigurationElement[0];
-
-	private static final String TAG_ENABLEMENT = "enablement"; //$NON-NLS-1$
-
-	private static final String TAG_TRIGGER_POINTS = "triggerPoints"; //$NON-NLS-1$  
-
-	private static final String TAG_POSSIBLE_CHILDREN = "possibleChildren"; //$NON-NLS-1$
-
-	private static final String TAG_DUPLICATE_CONTENT_FILTER = "duplicateContentFilter"; //$NON-NLS-1$
-
-	private static final String ATT_ID = "id"; //$NON-NLS-1$
-
-	private static final String ATT_NAME = "name"; //$NON-NLS-1$	 
-
-	private static final String ATT_ROOT_LABEL = "rootLabel"; //$NON-NLS-1$	 
-
-	private static final String ATT_PRIORITY = "priority"; //$NON-NLS-1$
-
-	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
-
-	private static final String ATT_ACTIVE_BY_DEFAULT = "activeByDefault"; //$NON-NLS-1$
-
-	private static final String ATT_CONTENT_PROVIDER = "contentProvider"; //$NON-NLS-1$
-
-	private static final String ATT_LABEL_PROVIDER = "labelProvider"; //$NON-NLS-1$
-
-	private static final String ATT_VIEWER_FILTER = "viewerFilter"; //$NON-NLS-1$
-
-	private static final String ATT_ACTION_PROVIDER = "actionProvider"; //$NON-NLS-1$ 
-
-	private static final String ATT_SORTER = "sorter"; //$NON-NLS-1$
-
+ 
 	private String id;
 
 	private String name;
@@ -445,7 +415,7 @@ public final class NavigatorContentDescriptor implements
 			try {
 
 				vFilter = (INavigatorExtensionFilter) dupeFilters[i]
-						.createExecutableExtension(NavigatorContentDescriptor.ATT_VIEWER_FILTER);
+						.createExecutableExtension(ATT_VIEWER_FILTER);
 				viewerFiltersList.add(vFilter);
 			} catch (CoreException e) {
 				e.printStackTrace();

@@ -35,6 +35,7 @@ consulting with the Platform/UI team.
             <choice>
                <element ref="navigatorContent" minOccurs="0" maxOccurs="1"/>
                <element ref="actionProvider" minOccurs="0" maxOccurs="1"/>
+               <element ref="commonWizard" minOccurs="0" maxOccurs="1"/>
             </choice>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -155,7 +156,9 @@ The content provider will be consulted when addeding children to the tree. Use t
          <attribute name="labelProvider" type="string" use="required">
             <annotation>
                <documentation>
-                  Supplies the name of a class which implements org.eclipse.jface.viewers.ILabelProvider or for more advanced functionality, the org.eclipse.ui.navigator.ICommonLabelProvider.
+                  Supplies the name of a class which implements &lt;code&gt;org.eclipse.jface.viewers.ILabelProvider&lt;/code&gt; or for more advanced functionality, the &lt;code&gt;org.eclipse.ui.navigator.ICommonLabelProvider&lt;/code&gt;.
+&lt;p&gt;
+Clients may also implement &lt;code&gt;org.eclipse.ui.navigator.IDescriptionProvider&lt;/code&gt; in order to add text to the status bar at the bottom of the Eclipse workbench based on the selection in the viewer.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ILabelProvider"/>
@@ -306,6 +309,43 @@ For root &apos;actionProviders&apos; with no id, the id defaults to &apos;org.ec
       </complexType>
    </element>
 
+   <element name="commonWizard">
+      <annotation>
+         <documentation>
+            The extension point provides the ability to contribute to the menu defined by type.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="enablement"/>
+         </sequence>
+         <attribute name="type" use="required">
+            <annotation>
+               <documentation>
+                  The type atttribute should be the value of the root category of the expected wizard. The possible values include &quot;import&quot; for &lt;b&gt;org.eclipse.ui.importWizards&lt;/b&gt;, &quot;export&quot; &lt;b&gt;org.eclipse.ui.exportWizards&lt;/b&gt;, and &quot;new&quot; for &lt;b&gt;org.eclipse.ui.newWizards&lt;/b&gt;
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="import">
+                  </enumeration>
+                  <enumeration value="export">
+                  </enumeration>
+                  <enumeration value="new">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="wizardId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the desired wizard shortcut as defined by &lt;b&gt;org.eclipse.ui.importWizards&lt;/b&gt;, &lt;b&gt;org.eclipse.ui.exportWizards&lt;/b&gt;, or &lt;b&gt;org.eclipse.ui.newWizards&lt;/b&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -369,6 +409,17 @@ matches the &apos;triggerPoints&apos; expression.
    &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
+
+&lt;p&gt;
+The following example demonstrates how to add wizard shortcut actions for 
+&quot;New Folder&quot; and &quot;New File&quot;, which are enabled on the specific subclasses 
+of org.eclipse.core.resources.IResource. Clients may use whatever parts of 
+the org.eclipse.core.expressions that are necessary to describe when the 
+menu options should be available. For clients building their own viewers or
+view parts, be sure to use &lt;code&gt;org.eclipse.ui.navigator.WizardActionGroup&lt;/code&gt;
+to correctly populate the menu. See that class for more documentation on
+using this feature.
+&lt;p&gt;
       </documentation>
    </annotation>
 

@@ -35,7 +35,7 @@ import org.eclipse.ui.IMemento;
  * <b>org.eclipse.ui.navigator.navigatorContent</b>. Each extension has three
  * states which determine whether the extension is used by the content service:
  * <ul>
- * <li><i>visible</i>: If a content extension id matches a<b>viewerContentBinding</b> 
+ * <li><i>visible</i>: If a content extension id matches a <b>viewerContentBinding</b> 
  *                     for the <i>viewerId</i> of this content service, then the 
  *                     extension is 'visible'. Visible extensions may only be
  *                     configured through <b>viewerContentBinding</b>s. 

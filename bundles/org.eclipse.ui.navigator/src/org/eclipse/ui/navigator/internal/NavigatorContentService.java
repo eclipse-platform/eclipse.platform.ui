@@ -41,7 +41,7 @@ import org.eclipse.ui.navigator.INavigatorContentServiceListener;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.NavigatorActivationService;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
+import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorManager;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorViewerDescriptorRegistry;
@@ -67,7 +67,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	private static final NavigatorActivationService NAVIGATOR_ACTIVATION_SERVICE = NavigatorActivationService
 			.getInstance();
 
-	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry
+	private static final NavigatorContentDescriptorManager CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorManager
 			.getInstance();
 
 	private static final NavigatorViewerDescriptorRegistry VIEWER_DESCRIPTOR_REGISTRY = NavigatorViewerDescriptorRegistry

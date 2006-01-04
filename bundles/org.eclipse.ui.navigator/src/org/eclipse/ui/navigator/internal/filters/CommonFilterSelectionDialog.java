@@ -49,7 +49,7 @@ import org.eclipse.ui.navigator.NavigatorActivationService;
 import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.Utilities;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
+import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorManager;
 
 /**
  * <p>
@@ -67,7 +67,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 	private static final NavigatorActivationService NAVIGATOR_ACTIVATION_SERVICE = NavigatorActivationService
 			.getInstance();
 
-	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry
+	private static final NavigatorContentDescriptorManager CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorManager
 			.getInstance();
 
 	private static final Object[] NO_CHILDREN = new Object[0];

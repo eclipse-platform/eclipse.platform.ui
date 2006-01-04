@@ -27,13 +27,11 @@ import org.eclipse.ui.actions.ActionGroup;
  * {@link CommonActionProvider}s are declared via the
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point. 
  * {@link CommonActionProvider}s may be declared as top-level elements in the extension point
- * (e.g. an &lt;actionProvider /&gt; element at the root of the extension point.
+ * (e.g. an &lt;actionProvider /&gt; element at the root of the extension point).
  * Alternatively, &lt;actionProvider /&gt; elements may be nested under a
  * &lt;navigatorContent /&gt; element, in which case they are considered to be
- * "associated" with that content extension. See the documentation of the
- * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point and
- * {@link CommonActionProvider} for more information on declaring Common Action
- * Providers.
+ * "associated" with that content extension. For more information, see the 
+ * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point.
  * </p> 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as

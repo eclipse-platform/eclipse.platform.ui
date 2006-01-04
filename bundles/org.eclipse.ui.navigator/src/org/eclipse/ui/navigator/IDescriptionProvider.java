@@ -11,6 +11,12 @@
 package org.eclipse.ui.navigator;
 
 /**
+ * 
+ * Label providers (as specified by the 'labelProvider' attribute of the
+ * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point) may 
+ * choose to also implement this interface in order to provide text for 
+ * the status bar at the bottom of the Eclipse window. 
+ * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
@@ -18,7 +24,7 @@ package org.eclipse.ui.navigator;
  * consulting with the Platform/UI team.
  * </p>
  * <p>
- * Clients may implement this interface.
+ * Clients may implement this interface, but are not required to do so.
  * </p>
  * 
  * @since 3.2

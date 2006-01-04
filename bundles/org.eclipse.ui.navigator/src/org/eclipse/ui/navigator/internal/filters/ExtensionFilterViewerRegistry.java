@@ -45,13 +45,7 @@ public class ExtensionFilterViewerRegistry extends RegistryReader {
 
 	private final ExtensionFilterActivationManager activationManager;
 
-	/*
-	 * Provides a coherent view of all filters provided by third party viewers. The registry allows
-	 * the Common Navigator instance to absorb the complete set of existing filters from other
-	 * viewers.
-	 */
-	private final ThirdPartyFilterProviderRegistry thirdPartyFilterProviderRegistry = new ThirdPartyFilterProviderRegistry();
-
+	 
 	public ExtensionFilterViewerRegistry(String viewerId) {
 		super(NavigatorPlugin.PLUGIN_ID, NAVIGATOR_FILTER);   
 		this.viewerId = viewerId;
@@ -111,7 +105,6 @@ public class ExtensionFilterViewerRegistry extends RegistryReader {
 			descriptors = (List) getNavigatorFilters().get(navigatorExtensionId);
 			if (descriptors == null) {
 				descriptors = new ArrayList();
-				initializeThirdPartyFilterProviders(navigatorExtensionId, descriptors);
 				getNavigatorFilters().put(navigatorExtensionId, descriptors);
 			}
 		}
@@ -140,13 +133,7 @@ public class ExtensionFilterViewerRegistry extends RegistryReader {
 		return navigatorFilters;
 	}
 
-
-	/**
-	 * @return Returns the thirdPartyFilterProviderRegistry.
-	 */
-	protected ThirdPartyFilterProviderRegistry getThirdPartyFilterProviderRegistry() {
-		return thirdPartyFilterProviderRegistry;
-	}
+ 
 
 	/**
 	 * @return Returns the activationManager.
@@ -154,26 +141,7 @@ public class ExtensionFilterViewerRegistry extends RegistryReader {
 	public ExtensionFilterActivationManager getActivationManager() {
 		return activationManager;
 	}
-
-	/**
-	 * @param navigatorExtensionId
-	 * @param descriptors
-	 */
-	private void initializeThirdPartyFilterProviders(String navigatorExtensionId, List descriptors) {
-
-		List thirdPartyExtensionFilterProviders = getThirdPartyFilterProviderRegistry().getThirdPartyFilterProviders(navigatorExtensionId);
-		ExtensionFilterProvider provider = null;
-		for (int i = 0; i < thirdPartyExtensionFilterProviders.size(); i++) {
-			try {
-				provider = ((ThirdPartyFilterProviderRegistry.ThirdPartyFilterProviderDescriptor) thirdPartyExtensionFilterProviders.get(i)).createProvider();
-				if (provider != null)
-					descriptors.addAll(provider.getExtensionFilterDescriptors(navigatorExtensionId, this.viewerId));
-			} catch (RuntimeException e) {  
-			} catch (NoClassDefFoundError ncdfe) { 
-			}
-		}
-
-	}
+ 
 
 	/**
 	 *  

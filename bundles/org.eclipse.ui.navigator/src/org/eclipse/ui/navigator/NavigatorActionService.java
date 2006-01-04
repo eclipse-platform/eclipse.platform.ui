@@ -10,16 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.GroupMarker;
@@ -28,7 +25,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IActionBars;
@@ -38,40 +34,34 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.navigator.internal.NavigatorContentService;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
-import org.eclipse.ui.navigator.internal.Utilities;
+import org.eclipse.ui.navigator.internal.actions.CommonActionDescriptorManager;
 import org.eclipse.ui.navigator.internal.actions.CommonActionProviderDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.InsertionPoint;
-import org.eclipse.ui.navigator.internal.extensions.RegistryReader;
 import org.eclipse.ui.navigator.internal.extensions.SkeletonActionProvider;
 
 /**
  * <p>
- * This service manages {@link CommonActionProvider}s.
- * </p>
+ * Provides context menu items and {@link IActionBars} contributions for a
+ * particular abstract viewer. The interface matches that of {@link ActionGroup}
+ * and may be used in the same manner. Clients must call
+ * {@link NavigatorActionService#prepareMenuForPlatformContributions(MenuManager, ISelectionProvider, boolean)}
+ * when using this class to allow object or viewer contributions. The
+ * <b>org.eclipse.ui.navigator.viewer/viewer/popupMenu</b> element may override
+ * whether platform contributions are allowed to the menu with its
+ * 'allowsPlatformContributions' attribute. "Platform Contributions" are menu
+ * items that are added through the <b>org.eclipse.ui.popupMenus</b> extension
+ * point.
+ * </p>  
  * <p>
- * See the documentation of the <b>org.eclipse.ui.navigator.navigatorContent</b>
- * extension point and {@link CommonActionProvider} for more information on
- * declaring {@link CommonActionProvider}s.
- * </p>
- * </p>
- * <p>
- * An {@link CommonActionProvider} has opportunities to contribute to the
+ * A {@link CommonActionProvider} has opportunities to contribute to the
  * context menu and {@link org.eclipse.ui.IActionBars} whenever the selection in
  * the viewer changes. Action Providers are selected based on the enablement
  * expressions of their associated content extension or their own enablement
- * expression if it is declared as a top-level actionProvider element (of the
- * <b>org.eclipse.ui.navigator</b> extension point). See the schema
+ * expression if it is declared as a top-level &lt;actionProvider /&gt; element (of the
+ * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point). See the schema
  * documentation of <b>org.eclipse.ui.navigator.navigatorContent</b> for more
  * information on how to specify an Action Provider.
- * </p>
- * <p>
- * Clients that wish to expose the menu to object or viewer contributions are
- * required to call
- * {@link #prepareMenuForPlatformContributions(MenuManager, ISelectionProvider, boolean)}.
- * The menu will only be prepared for platform contributions if the
- * <b>allowsPlatformContributions</b> attribute of popupMenu is not set to
- * false. By default, the attribute is true.
- * </p>
+ * </p> 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
@@ -85,8 +75,6 @@ import org.eclipse.ui.navigator.internal.extensions.SkeletonActionProvider;
 public final class NavigatorActionService extends ActionGroup implements
 		IMementoAware {
 
-	private static final CommonActionProviderDescriptor[] NO_DESCRIPTORS = new CommonActionProviderDescriptor[0];
-
 	private static final IContributionItem[] DEFAULT_GROUPS = new IContributionItem[] {
 			new Separator(ICommonMenuConstants.GROUP_NEW),
 			new GroupMarker(ICommonMenuConstants.GROUP_GOTO),
@@ -98,7 +86,7 @@ public final class NavigatorActionService extends ActionGroup implements
 			new Separator(ICommonMenuConstants.GROUP_GENERATE),
 			new Separator(ICommonMenuConstants.GROUP_SEARCH),
 			new Separator(ICommonMenuConstants.GROUP_BUILD),
-			new Separator(ICommonMenuConstants.GROUP_ADDITIONS), 
+			new Separator(ICommonMenuConstants.GROUP_ADDITIONS),
 			new Separator(ICommonMenuConstants.GROUP_PROPERTIES) };
 
 	private final IViewPart viewPart;
@@ -120,16 +108,7 @@ public final class NavigatorActionService extends ActionGroup implements
 
 	private IContributionItem[] menuGroups;
 
-	/*
-	 * Indicate a READY state. That is, init() has been called, but dispose()
-	 * has not.
-	 */
-	private static final int STATE_READY = 0;
-
-	/* Indicate a DISPOSED state. That is, dispose() has been called. */
-	private static final int STATE_DISPOSED = 1;
-
-	private int state = STATE_READY;
+	private boolean disposed = false;
 
 	/**
 	 * 
@@ -157,20 +136,6 @@ public final class NavigatorActionService extends ActionGroup implements
 		structuredViewer = aStructuredViewer;
 		viewerDescriptor = contentService.getViewerDescriptor();
 
-		init();
-	}
-
-	private void init() {
-		try {
-			new CommonActionRegistry().readRegistry();
-		} catch (RuntimeException re) {
-			NavigatorPlugin
-					.logError(
-							0,
-							"Could not initialize NavigatorActionService for " + contentService.getViewerId(), re); //$NON-NLS-1$
-		}
-
-		state = STATE_READY;
 	}
 
 	/**
@@ -194,6 +159,7 @@ public final class NavigatorActionService extends ActionGroup implements
 	 */
 	public void prepareMenuForPlatformContributions(MenuManager menu,
 			ISelectionProvider aSelectionProvider, boolean force) {
+		Assert.isTrue(!disposed);
 
 		/*
 		 * Hooks into the Eclipse framework for Object contributions, and View
@@ -225,7 +191,7 @@ public final class NavigatorActionService extends ActionGroup implements
 	 * @see ActionGroup#fillContextMenu(IMenuManager)
 	 */
 	public void fillContextMenu(IMenuManager aMenu) {
-		complainIfDisposed();
+		Assert.isTrue(!disposed);
 
 		if (menuGroups == null)
 			createMenuGroups();
@@ -259,7 +225,9 @@ public final class NavigatorActionService extends ActionGroup implements
 	 */
 	private void addCommonActionProviderMenu(IMenuManager aMenu) {
 
-		CommonActionProviderDescriptor[] providerDescriptors = findRelevantActionDescriptors(getContext());
+		CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager
+				.getInstance().findRelevantActionDescriptors(viewerDescriptor,
+						getContext());
 		if (providerDescriptors.length > 0) {
 			CommonActionProvider provider = null;
 			for (int i = 0; i < providerDescriptors.length; i++) {
@@ -274,15 +242,6 @@ public final class NavigatorActionService extends ActionGroup implements
 		}
 	}
 
-	private boolean isVisible(CommonActionProviderDescriptor descriptor) {
-		if (descriptor.isNested()) {
-			return Utilities.isActive(viewerDescriptor, descriptor.getId())
-					&& Utilities
-							.isVisible(viewerDescriptor, descriptor.getId());
-		}
-		return viewerDescriptor.isVisibleActionExtension(descriptor.getId());
-	}
-
 	/**
 	 * Request that the service invoke extensions to fill the given IActionBars
 	 * with retargetable actions or view menu contributions from Action
@@ -295,11 +254,13 @@ public final class NavigatorActionService extends ActionGroup implements
 	 * @see ActionGroup#fillActionBars(IActionBars)
 	 */
 	public void fillActionBars(IActionBars theActionBars) {
-		complainIfDisposed();
+		Assert.isTrue(!disposed);
 
 		theActionBars.clearGlobalActionHandlers();
 
-		CommonActionProviderDescriptor[] providerDescriptors = findRelevantActionDescriptors(getContext());
+		CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager
+				.getInstance().findRelevantActionDescriptors(viewerDescriptor,
+						getContext());
 		if (providerDescriptors.length > 0) {
 			CommonActionProvider provider = null;
 			for (int i = 0; i < providerDescriptors.length; i++) {
@@ -323,8 +284,6 @@ public final class NavigatorActionService extends ActionGroup implements
 	 * @see ActionGroup#dispose()
 	 */
 	public void dispose() {
-		if (state == STATE_DISPOSED)
-			return;
 		synchronized (actionProviderInstances) {
 			for (Iterator iter = actionProviderInstances.values().iterator(); iter
 					.hasNext();) {
@@ -335,7 +294,7 @@ public final class NavigatorActionService extends ActionGroup implements
 			actionProviderInstances.clear();
 		}
 		actionProviderDescriptors.clear();
-		state = STATE_DISPOSED;
+		disposed = false;
 	}
 
 	/**
@@ -346,6 +305,7 @@ public final class NavigatorActionService extends ActionGroup implements
 	 *            The memento retrieved from the dialog settings
 	 */
 	public void restoreState(IMemento aMemento) {
+		Assert.isTrue(!disposed);
 		memento = aMemento;
 
 		synchronized (actionProviderInstances) {
@@ -379,6 +339,8 @@ public final class NavigatorActionService extends ActionGroup implements
 	 *            The memento retrieved from the dialog settings
 	 */
 	public void saveState(IMemento aMemento) {
+		Assert.isTrue(!disposed);
+
 		memento = aMemento;
 		CommonActionProvider provider = null;
 		synchronized (actionProviderInstances) {
@@ -388,32 +350,6 @@ public final class NavigatorActionService extends ActionGroup implements
 				provider.saveState(memento);
 			}
 		}
-	}
-
-	private CommonActionProviderDescriptor[] findRelevantActionDescriptors(
-			ActionContext aContext) {
-		IStructuredSelection structuredSelection = null;
-		if (aContext.getSelection() instanceof IStructuredSelection)
-			structuredSelection = (IStructuredSelection) aContext
-					.getSelection();
-		else
-			structuredSelection = StructuredSelection.EMPTY;
-
-		CommonActionProviderDescriptor actionDescriptor = null;
-		List providers = new ArrayList();
-		for (Iterator providerItr = actionProviderDescriptors.iterator(); providerItr
-				.hasNext();) {
-			actionDescriptor = (CommonActionProviderDescriptor) providerItr
-					.next();
-			if (isVisible(actionDescriptor)
-					&& actionDescriptor.isEnabledFor(structuredSelection))
-				providers.add(actionDescriptor);
-		}
-		if (providers.size() > 0)
-			return (CommonActionProviderDescriptor[]) providers
-					.toArray(new CommonActionProviderDescriptor[providers
-							.size()]);
-		return NO_DESCRIPTORS;
 	}
 
 	private CommonActionProvider getActionProviderInstance(
@@ -436,59 +372,6 @@ public final class NavigatorActionService extends ActionGroup implements
 			}
 		}
 		return provider;
-	}
-
-	private void addActionDescriptor(CommonActionProviderDescriptor aDescriptor) {
-		actionProviderDescriptors.add(aDescriptor);
-	}
-
-	private void complainIfDisposed() {
-		if (state == STATE_DISPOSED)
-			throw new IllegalStateException(
-					"INavigatorActionService has already been disposed!"); //$NON-NLS-1$
-	}
-
-	private class CommonActionRegistry extends RegistryReader {
-
-		private static final String TAG_ACTION_PROVIDER = "actionProvider"; //$NON-NLS-1$
-
-		private static final String TAG_NAVIGATOR_CONTENT = "navigatorContent"; //$NON-NLS-1$
-
-		private static final String TAG_ENABLEMENT = "enablement"; //$NON-NLS-1$
-
-		private static final String TAG_TRIGGER_POINTS = "triggerPoints"; //$NON-NLS-1$
-
-		private static final String ATT_ID = "id"; //$NON-NLS-1$
-
-		protected CommonActionRegistry() {
-			super(NavigatorPlugin.PLUGIN_ID, TAG_NAVIGATOR_CONTENT);
-		}
-
-		protected boolean readElement(IConfigurationElement anElement) {
-			if (TAG_ACTION_PROVIDER.equals(anElement.getName())) {
-				addActionDescriptor(new CommonActionProviderDescriptor(
-						anElement));
-				return true;
-			} else if (TAG_NAVIGATOR_CONTENT.equals(anElement.getName())) {
-				IConfigurationElement[] actionProviders = anElement
-						.getChildren(TAG_ACTION_PROVIDER);
-				if (actionProviders.length == 0)
-					return true;
-				IConfigurationElement defaultEnablement = null;
-				IConfigurationElement[] enablement = anElement
-						.getChildren(TAG_ENABLEMENT);
-				if (enablement.length == 0)
-					enablement = anElement.getChildren(TAG_TRIGGER_POINTS);
-				if (enablement.length == 1)
-					defaultEnablement = enablement[0];
-				for (int i = 0; i < actionProviders.length; i++)
-					addActionDescriptor(new CommonActionProviderDescriptor(
-							actionProviders[i], defaultEnablement, anElement
-									.getAttribute(ATT_ID), true));
-				return true;
-			}
-			return false;
-		}
 	}
 
 	private void initialize(String id, CommonActionProvider anActionProvider) {

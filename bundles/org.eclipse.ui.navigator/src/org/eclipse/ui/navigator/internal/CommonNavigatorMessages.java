@@ -132,7 +132,13 @@ public class CommonNavigatorMessages extends NLS {
 
 	public static String Too_many_elements_Warning;
 
-	public static String Open_action_label;
+	public static String Open_action_label; 
+
+	public static String NewProjectWizard_errorTitle;
+	
+	public static String NewProjectAction_text;
+
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CommonNavigatorMessages.class);
 	}

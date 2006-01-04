@@ -21,7 +21,7 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.internal.Utilities;
 import org.eclipse.ui.navigator.internal.NavigatorContentService;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
+import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorManager;
 
 /**
  * 
@@ -36,7 +36,7 @@ import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRe
  */
 public class CommonFilterContentProvider implements IStructuredContentProvider {
 
-	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry.getInstance();
+	private static final NavigatorContentDescriptorManager CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorManager.getInstance();
 	private INavigatorContentService contentService;
 
 	public CommonFilterContentProvider() {

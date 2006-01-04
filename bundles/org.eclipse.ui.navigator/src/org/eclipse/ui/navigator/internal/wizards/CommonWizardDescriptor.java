@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.navigator.resources.internal.actions;
+package org.eclipse.ui.navigator.internal.wizards;
 
 import java.util.Iterator;
 
