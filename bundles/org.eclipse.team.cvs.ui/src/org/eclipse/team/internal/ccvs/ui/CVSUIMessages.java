@@ -25,6 +25,12 @@ public class CVSUIMessages extends NLS {
 	// Contributors:
 	//     IBM Corporation - initial API and implementation
 	//
+	
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, CVSUIMessages.class);
+	}
+	
 	public static String PasswordManagementPreferencePage_2;
 	public static String PasswordManagementPreferencePage_3;
 	public static String PasswordManagementPreferencePage_4;
@@ -150,7 +156,12 @@ public class CVSUIMessages extends NLS {
     public static String CVSDecoratorPreferencesPage_37;
     public static String CVSDecoratorPreferencesPage_38;  // repository label
     public static String CVSDecoratorPreferencesPage_39;
-
+	public static String CVSDecoratorConfiguration_0;
+	public static String CVSDecoratorConfiguration_1;
+	public static String CVSDecoratorConfiguration_2;
+	public static String CVSDecoratorConfiguration_3;
+	public static String CVSDecoratorConfiguration_4;
+	
 	public static String CVSFilePropertiesPage_ignored;
 	public static String CVSFilePropertiesPage_notManaged;
 	public static String CVSFilePropertiesPage_isAdded;
@@ -1025,10 +1036,5 @@ public class CVSUIMessages extends NLS {
 	public static String CVSMergeContext_0;
 	public static String CVSMergeContext_1;
 	public static String CVSMergeContext_2;
-	
-	static {
-		// load message values from bundle file
-		NLS.initializeMessages(BUNDLE_NAME, CVSUIMessages.class);
-	}
 
 }

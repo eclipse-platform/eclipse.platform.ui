@@ -32,13 +32,13 @@ public class CVSDecoratorConfiguration {
 	// bindings for resource states
 	public static final String DIRTY_FLAG = "dirty_flag"; //$NON-NLS-1$
 	public static final String ADDED_FLAG = "added_flag"; //$NON-NLS-1$
-	public static final String DEFAULT_DIRTY_FLAG = ">"; //$NON-NLS-1$
-	public static final String DEFAULT_ADDED_FLAG = "*"; //$NON-NLS-1$
+	public static final String DEFAULT_DIRTY_FLAG = CVSUIMessages.CVSDecoratorConfiguration_0;
+	public static final String DEFAULT_ADDED_FLAG = CVSUIMessages.CVSDecoratorConfiguration_1;
 	
 	// default text decoration formats
-	public static final String DEFAULT_FILETEXTFORMAT = "{dirty_flag}{name}  {revision} {tag} ({keyword})"; //$NON-NLS-1$
-	public static final String DEFAULT_FOLDERTEXTFORMAT = "{dirty_flag}{name}  {tag}"; //$NON-NLS-1$
-	public static final String DEFAULT_PROJECTTEXTFORMAT = "{dirty_flag}{name}  {tag} [{host}]"; //$NON-NLS-1$
+	public static final String DEFAULT_FILETEXTFORMAT = CVSUIMessages.CVSDecoratorConfiguration_2;
+	public static final String DEFAULT_FOLDERTEXTFORMAT = CVSUIMessages.CVSDecoratorConfiguration_3;
+	public static final String DEFAULT_PROJECTTEXTFORMAT = CVSUIMessages.CVSDecoratorConfiguration_4;
 
 	// prefix characters that can be removed if the following binding is not found
 	private static final char KEYWORD_SEPCOLON = ':';
