@@ -2327,33 +2327,33 @@ public final class Workbench extends EventManager implements IWorkbench {
 	
 	private ActionSetSourceProvider actionSetSourceProvider;
 	
-	private WorkbenchWindow currentActionSetWindow = null;
+	private WorkbenchWindow activeWorkbenchWindow = null;
 
 	private void updateActiveWorkbenchWindowMenuManager(boolean textOnly) {
-		if (currentActionSetWindow != null) {
-			currentActionSetWindow
+		if (activeWorkbenchWindow != null) {
+			activeWorkbenchWindow
 					.removeActionSetsListener(actionSetSourceProvider);
-			currentActionSetWindow = null;
+			activeWorkbenchWindow = null;
 		}
 
 		final IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 
 		if (workbenchWindow instanceof WorkbenchWindow) {
-			currentActionSetWindow = (WorkbenchWindow) workbenchWindow;
-			if (currentActionSetWindow.isClosing()) {
+			activeWorkbenchWindow = (WorkbenchWindow) workbenchWindow;
+			if (activeWorkbenchWindow.isClosing()) {
 				return;
 			}
 
 			// Update the action sets.
-			currentActionSetWindow
+			activeWorkbenchWindow
 					.addActionSetsListener(actionSetSourceProvider);
-			final WorkbenchPage page = currentActionSetWindow
+			final WorkbenchPage page = activeWorkbenchWindow
 					.getActiveWorkbenchPage();
 			final IActionSetDescriptor[] newActionSets = page.getActionSets();
 			final ActionSetsEvent event = new ActionSetsEvent(newActionSets);
 			actionSetSourceProvider.actionSetsChanged(event);
 
-			final MenuManager menuManager = currentActionSetWindow
+			final MenuManager menuManager = activeWorkbenchWindow
 					.getMenuManager();
 
 			if (textOnly)
