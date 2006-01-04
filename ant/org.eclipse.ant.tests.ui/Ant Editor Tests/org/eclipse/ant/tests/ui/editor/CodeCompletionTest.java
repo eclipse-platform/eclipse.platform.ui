@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2006 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -295,6 +295,23 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertTrue(proposals.length >= 1);
     	assertContains("prop1", proposals);
 
+    }
+    
+    /**
+     * Test the code completion for the target attribute of antcall.
+     */
+    public void testAntCallTargetProposals() throws BadLocationException {
+        TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("debugAntCall.xml"));
+        int lineNumber= 4;
+        int columnNumber= 25;
+        int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+        processor.setLineNumber(lineNumber);
+        processor.setColumnNumber(columnNumber);
+        processor.setCursorPosition(lineOffset + columnNumber);
+        ICompletionProposal[] proposals = processor.getAntCallAttributeValueProposals(getCurrentDocument(), "", "target");
+        assertTrue(proposals.length == 2);
+        assertContains("call", proposals);
+        assertContains("pre-call", proposals);
     }
     
  	/**

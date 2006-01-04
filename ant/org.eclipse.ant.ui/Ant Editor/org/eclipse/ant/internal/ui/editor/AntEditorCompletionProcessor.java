@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2006 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -369,6 +369,8 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
                 String attributeString = getAttributeStringFromDocumentStringToPrefix(textToSearch);
                 if ("target".equalsIgnoreCase(currentTaskString)) { //$NON-NLS-1$
                 	proposals= getTargetAttributeValueProposals(document, textToSearch, prefix, attributeString);
+                } else if ("antcall".equalsIgnoreCase(currentTaskString)) {  //$NON-NLS-1$
+                    proposals= getAntCallAttributeValueProposals(document, prefix, attributeString);
                 } else if ("project".equalsIgnoreCase(currentTaskString)) { //$NON-NLS-1$
                 	proposals= getProjectAttributeValueProposals(prefix, attributeString);
                 } else if ("refid".equalsIgnoreCase(attributeString) || "classpathref".equalsIgnoreCase(attributeString)   //$NON-NLS-1$//$NON-NLS-2$
@@ -472,6 +474,39 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		
 		return NO_PROPOSALS;
 	}
+    
+    protected ICompletionProposal[] getAntCallAttributeValueProposals(IDocument document, String prefix, String attributeName) {
+        if (attributeName.equalsIgnoreCase("target")) { //$NON-NLS-1$
+            return getTargetProposals(document, prefix);
+        }
+        
+        return NO_PROPOSALS;
+    }
+    
+    private ICompletionProposal[] getTargetProposals(IDocument document, String prefix) {
+        String currentTargetName= getEnclosingTargetName(document, lineNumber, columnNumber);
+        if(currentTargetName == null) {
+            return NO_PROPOSALS;
+        }
+            
+        Map targets= getTargets();
+        Set targetNames= targets.keySet();
+        List proposals= new ArrayList(targets.size() - 2); //current target and implicit target
+        int index= 0;
+        Iterator itr= targetNames.iterator();
+        while (itr.hasNext()) {
+            String targetName = (String) itr.next();
+            if (targetName.equals(currentTargetName)) {
+                continue;
+            }
+            if (targetName.toLowerCase().startsWith(prefix) && targetName.length() > 0){
+                ICompletionProposal proposal = new AntCompletionProposal(targetName, cursorPosition - prefix.length(), prefix.length(), targetName.length(), null, targetName, ((Target)targets.get(targetName)).getDescription(), AntCompletionProposal.TASK_PROPOSAL);
+                proposals.add(proposal);
+                index++;
+            }
+        }
+        return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);      
+    }
 
 	private ICompletionProposal[] getDependsValueProposals(IDocument document, String prefix) {
 		List possibleDependencies = new ArrayList();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,6 +137,13 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	public ICompletionProposal[] getTargetAttributeValueProposals(IDocument document, String textToSearch, String prefix, String attributeName) {
 		return super.getTargetAttributeValueProposals(document, textToSearch, prefix, attributeName);
 	}
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor#getAntCallAttributeValueProposals(org.eclipse.jface.text.IDocument, java.lang.String, java.lang.String)
+     */
+    public ICompletionProposal[] getAntCallAttributeValueProposals(IDocument document, String prefix, String attributeName) {
+        return super.getAntCallAttributeValueProposals(document, prefix, attributeName);
+    }
 	/**
 	 * Since the testing occurs without necessarily having an associated viewer, return
 	 * a dummy value.
