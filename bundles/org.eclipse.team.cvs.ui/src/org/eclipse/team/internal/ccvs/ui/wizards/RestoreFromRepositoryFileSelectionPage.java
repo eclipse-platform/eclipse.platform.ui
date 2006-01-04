@@ -366,8 +366,8 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 		if (selection == null || selection.isEmpty()) {
 			clearSelection();
 		} else {
-			if (selection instanceof StructuredSelection) {
-				StructuredSelection structuredSelection = (StructuredSelection) selection;
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 				IResource resource = (IResource)structuredSelection.getFirstElement();
 				if (resource instanceof IFile) {
 					handleFileSelection((IFile) resource);
