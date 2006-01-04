@@ -47,6 +47,16 @@ public interface ICompareAdapter {
 	void prepareContext(ISynchronizationContext context, IProgressMonitor monitor) throws CoreException;
 	
 	/**
+	 * Return whether their is a compare input associated with the given object.
+	 * In otherwords, return <code>true</code> if {@link #asCompareInput(Object) }
+	 * would return a value and <code>false</code> if it would return <code>null</code>.
+	 * @param context the synchronization context
+	 * @param object the object.
+	 * @return whether their is a compare input associated with the given object
+	 */
+	boolean hasCompareInput(ISynchronizationContext context, Object object);
+	
+	/**
 	 * Return a compare input for the given model object. Creation of the input
 	 * should be fast. Synchronization information calculations that ae longer
 	 * running should be performed up front in the
@@ -83,7 +93,7 @@ public interface ICompareAdapter {
 	Viewer findContentViewer(Composite parent, Viewer oldViewer, ICompareInput input, CompareConfiguration configuration);
 
 	/**
-	 * Prepare the compare inout for display using the compare configuration. 
+	 * Prepare the compare input for display using the compare configuration. 
 	 * @param input the compare input to be displayed
 	 * @param configuration the compare configuration for the editor that will display the input
 	 * @param monitor a progress monitor

@@ -263,4 +263,19 @@ public class ModelSynchronizeParticipant extends
 		if (adapter != null)
 			adapter.prepareInput(input, configuration, monitor);
 	}
+
+	/**
+	 * Return whether their is a compare input associated with the given object.
+	 * In otherwords, return <code>true</code> if {@link #asCompareInput(Object) }
+	 * would return a value and <code>false</code> if it would return <code>null</code>.
+	 * @param object the object.
+	 * @return whether their is a compare input associated with the given object
+	 */
+	public boolean hasCompareInputFor(Object object) {
+		// Get a content viewer from the model provider's compare adapter
+		ICompareAdapter adapter = Utils.getCompareAdapter(object);
+		if (adapter != null)
+			return adapter.hasCompareInput(getContext(), object);
+		return false;
+	}
 }

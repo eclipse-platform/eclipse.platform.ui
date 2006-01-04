@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchSite;
@@ -69,6 +70,16 @@ public class OpenWithActionGroup extends ActionGroup {
         Object[] elements = selection.toArray();
         IResource resources[] = Utils.getResources(elements);       
         if(resources.length == 0) {
+        	// We can still show the compare editor open if the element has a compare input
+        	if (elements.length == 1) {
+        		if (participant instanceof ModelSynchronizeParticipant) {
+					ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
+					// TODO: This is inefficient
+					if (msp.hasCompareInputFor(elements[0])) {
+						menu.appendToGroup(groupId, openInCompareAction);
+					}
+				}
+        	}
             return;
         }
         

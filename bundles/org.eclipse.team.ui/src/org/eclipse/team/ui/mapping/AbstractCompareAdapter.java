@@ -158,9 +158,19 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.ICompareAdapter#prepareInput(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.ICompareAdapter#hasCompareInput(org.eclipse.team.core.mapping.ISynchronizationContext, java.lang.Object)
+	 */
+	public boolean hasCompareInput(ISynchronizationContext context, Object object) {
+		return asCompareInput(context, object) != null;
 	}
 
 }
