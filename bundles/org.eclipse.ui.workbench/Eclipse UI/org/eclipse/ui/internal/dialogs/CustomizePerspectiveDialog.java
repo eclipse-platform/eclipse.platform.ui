@@ -978,7 +978,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
             lastSelectedMenuIndex = menusCombo.getSelectionIndex();
         }
         lastSelectedTab = tabFolder.getSelectionIndex();
-        StructuredSelection selection = (StructuredSelection) actionSetsViewer
+        IStructuredSelection selection = (IStructuredSelection) actionSetsViewer
                 .getSelection();
         if (selection.isEmpty())
             lastSelectedActionSetId = null;
