@@ -11,7 +11,6 @@
 package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -23,8 +22,15 @@ import java.util.List;
  * 
  * @since 3.2
  */
-public class TreeSelection implements ITreeSelection {
+public class TreeSelection extends StructuredSelection implements ITreeSelection {
 
+	/* Implementation note.  This class extends StructuredSelection because many pre-existing
+	 * JFace viewer clients assumed that the only implementation of IStructuredSelection 
+	 * was StructuredSelection.  By extending StructuredSelection rather than implementing
+	 * ITreeSelection directly, we avoid this problem.
+	 * For more details, see Bug 121939 [Viewers] TreeSelection should subclass StructuredSelection. 
+	 */
+	
 	private TreePath[] paths = null;
 
 	/**
@@ -34,6 +40,21 @@ public class TreeSelection implements ITreeSelection {
 	public static final TreeSelection EMPTY = new TreeSelection();
 
 	/**
+	 * Internal - Extracts the last segments of the given paths into a list.
+	 * 
+	 * @param paths the paths
+	 * @return the list of last segments
+	 */
+	private static List lastSegments(TreePath[] paths) {
+		int size = paths.length;
+		List selection = new ArrayList(size);
+		for (int i = 0; i < size; i++) {
+			selection.add(paths[i].getLastSegment());
+		}
+		return selection;
+	}
+	
+	/**
 	 * Constructs a selection based on the elements identified by the given tree
 	 * paths.
 	 * 
@@ -41,7 +62,9 @@ public class TreeSelection implements ITreeSelection {
 	 *            tree paths
 	 */
 	public TreeSelection(TreePath[] paths) {
-		this.paths = paths;
+		super(lastSegments(paths));
+        this.paths = new TreePath[paths.length];
+        System.arraycopy(paths, 0, this.paths, 0, paths.length);
 	}
 
 	/**
@@ -49,10 +72,10 @@ public class TreeSelection implements ITreeSelection {
 	 * path.
 	 * 
 	 * @param treePath
-	 *            tree path
+	 *            tree path, or <code>null</code> for an empty selection
 	 */
 	public TreeSelection(TreePath treePath) {
-		this(treePath != null ? new TreePath[] { treePath } : null);
+		this(treePath != null ? new TreePath[] { treePath } : new TreePath[0]);
 	}
 
 	/**
@@ -65,76 +88,7 @@ public class TreeSelection implements ITreeSelection {
 	 * @see #EMPTY
 	 */
 	public TreeSelection() {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IStructuredSelection#getFirstElement()
-	 */
-	public Object getFirstElement() {
-		if (paths != null && paths.length > 0) {
-			return paths[0].getLastSegment();
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IStructuredSelection#iterator()
-	 */
-	public Iterator iterator() {
-		return toList().iterator();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IStructuredSelection#size()
-	 */
-	public int size() {
-		if (paths != null) {
-			return paths.length;
-		}
-		return 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IStructuredSelection#toArray()
-	 */
-	public Object[] toArray() {
-		int size = size();
-		Object[] selection = new Object[size];
-		for (int i = 0; i < size; i++) {
-			selection[i] = paths[i].getLastSegment();
-		}
-		return selection;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IStructuredSelection#toList()
-	 */
-	public List toList() {
-		int size = size();
-		List selection = new ArrayList(size);
-		for (int i = 0; i < size; i++) {
-			selection.add(paths[i].getLastSegment());
-		}
-		return selection;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ISelection#isEmpty()
-	 */
-	public boolean isEmpty() {
-		return size() == 0;
+		super();
 	}
 
 	/*
@@ -169,7 +123,7 @@ public class TreeSelection implements ITreeSelection {
 		int code = getClass().hashCode();
 		if (paths != null) {
 			for (int i = 0; i < paths.length; i++) {
-				code += paths[i].hashCode();
+				code = code * 17 + paths[i].hashCode();
 			}
 		}
 		return code;
@@ -183,4 +137,5 @@ public class TreeSelection implements ITreeSelection {
 	public TreePath[] getPaths() {
 		return paths==null ? new TreePath[0] : (TreePath[]) paths.clone();
 	}
+	
 }
