@@ -10,35 +10,119 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.tests.internal.filesystem.ram.MemoryFileStore;
+import org.eclipse.core.tests.internal.filesystem.ram.MemoryTree;
 
 /**
- * 
+ * Tests the file caching provided by FileStore.toLocalFile.
  */
 public class FileCacheTest extends LocalStoreTest {
 
 	public static Test suite() {
 		return new TestSuite(FileCacheTest.class);
 	}
-	
+
 	public FileCacheTest(String name) {
 		super(name);
 	}
 	
-	public void testLocalCache() {
-		IFileStore store = getTempStore();
+	public void assertEquals(String message, byte[] expected, byte[] actual) {
+		if (expected.length != actual.length)
+			fail(message + " arrays of different length");
+		assertEquals(message + " different length", expected.length, actual.length);
+		for (int i = 0; i < actual.length; i++)
+			if (expected[i] != actual[i])
+				fail(message + " arrays differ at position " + i + "; expected: " + expected[i] + " but was: " + actual[i]);
+	}
+
+	/**
+	 * Returns the byte[] contents of the given file.
+	 */
+	private byte[] getBytes(File cachedFile) {
+		FileInputStream in = null;
+		ByteArrayOutputStream out = null;
 		try {
-			store.openOutputStream(EFS.NONE, getMonitor()).close();
+			in = new FileInputStream(cachedFile);
+			out = new ByteArrayOutputStream();
+			transferData(in, out);
+			in.close();
+			out.close();
+			return out.toByteArray();
+		} catch (IOException e) {
+			fail("Exception in FileCacheTest.getBytes", e);
+		}
+		return new byte[0];
+	}
+	
+	protected void setUp() throws Exception {
+		super.setUp();
+		MemoryTree.TREE.deleteAll();
+	}
+	
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		MemoryTree.TREE.deleteAll();
+	}
+
+	public void testCacheFile() {
+		try {
+			IFileStore store = new MemoryFileStore(new Path("testCacheFile"));
+			OutputStream out = store.openOutputStream(EFS.NONE, getMonitor());
+			byte[] contents = "test".getBytes();
+			out.write(contents);
+			out.close();
 			File cachedFile = store.toLocalFile(EFS.CACHE, getMonitor());
 			assertTrue("1.0", cachedFile.exists());
+			assertTrue("1.1", !cachedFile.isDirectory());
+			assertEquals("1.2", contents, getBytes(cachedFile));
 		} catch (IOException e) {
 			fail("1.99", e);
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+	}
+
+	/**
+	 * Tests invoking the toLocalFile method without the CACHE option flag.
+	 */
+	public void testNoCacheFlag() {
+		try {
+			IFileStore store = new MemoryFileStore(new Path("testNoCacheFlag"));
+			store.mkdir(EFS.NONE, getMonitor());
+			File cachedFile = store.toLocalFile(EFS.NONE, getMonitor());
+			assertNull("1.0", cachedFile);
+		} catch (CoreException e) {
+			fail("4.99", e);
+		}
+	}
+	
+	/**
+	 * Tests caching a non-existing file
+	 */
+	public void testNonExisting() {
+		try {
+			IFileStore store = new MemoryFileStore(new Path("testNonExisting"));
+			File cachedFile = store.toLocalFile(EFS.CACHE, getMonitor());
+			assertTrue("1.0", !cachedFile.exists());
+		} catch (CoreException e) {
+			fail("4.99", e);
+		}
+	}
+
+	public void testCacheFolder() {
+		try {
+			IFileStore store = new MemoryFileStore(new Path("testCacheFolder"));
+			store.mkdir(EFS.NONE, getMonitor());
+			File cachedFile = store.toLocalFile(EFS.CACHE, getMonitor());
+			assertTrue("1.0", cachedFile.exists());
+			assertTrue("1.1", cachedFile.isDirectory());
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
