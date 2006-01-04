@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -2473,6 +2474,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 				// Update action bars ( implicitly calls updateActionBars() )
 				updateActionSets();
+				submitGlobalActions();
 
 				if (perspectiveSwitcher != null)
 					perspectiveSwitcher.update(false);
@@ -2656,6 +2658,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			}
 			actionPresentation.setActionSets(currentPage.getActionSets());
 		}
+		fireActionSetsChanged();
 		updateActionBars();
 
 		// hide the launch menu if it is empty
@@ -2669,6 +2672,43 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			return;
 		item.setVisible(manager.getItems().length >= 2);
 		// there is a separator for the additions group thus >= 2
+	}
+	
+	private ListenerList actionSetListeners = null;
+	
+	private final void fireActionSetsChanged() {
+		if (actionSetListeners != null) {
+			final Object[] listeners = actionSetListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				final IActionSetsListener listener = (IActionSetsListener) listeners[i];
+				final WorkbenchPage currentPage = getActiveWorkbenchPage();
+				final IActionSetDescriptor[] newActionSets;
+				if (currentPage == null) {
+					newActionSets = null;
+				} else {
+					newActionSets = currentPage.getActionSets();
+				}
+				final ActionSetsEvent event = new ActionSetsEvent(newActionSets);
+				listener.actionSetsChanged(event);
+			}
+		}
+	}
+	
+	final void addActionSetsListener(final IActionSetsListener listener) {
+		if (actionSetListeners == null) {
+			actionSetListeners = new ListenerList();
+		}
+
+		actionSetListeners.add(listener);
+	}
+
+	final void removeActionSetsListener(final IActionSetsListener listener) {
+		if (actionSetListeners != null) {
+			actionSetListeners.remove(listener);
+			if (actionSetListeners.isEmpty()) {
+				actionSetListeners = null;
+			}
+		}
 	}
 
 	/**
@@ -3279,8 +3319,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		final IWorkbench workbench = getWorkbench();
 		final IHandlerService parentHandlerService = (IHandlerService) workbench
 				.getAdapter(IHandlerService.class);
+		final Expression defaultExpression = new WorkbenchWindowExpression(this);
 		final IHandlerService handlerService = new SlaveHandlerService(
-				parentHandlerService);
+				parentHandlerService, defaultExpression);
 		services.put(IHandlerService.class, handlerService);
 
 		final ISourceProviderService sourceProviderService = (ISourceProviderService) getService(ISourceProviderService.class);

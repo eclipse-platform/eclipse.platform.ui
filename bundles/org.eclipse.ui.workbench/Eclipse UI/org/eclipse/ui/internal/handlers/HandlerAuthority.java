@@ -22,14 +22,11 @@ import java.util.Set;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.util.Tracing;
-import org.eclipse.core.expressions.Expression;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
-import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -227,61 +224,6 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 */
 	final Shell getActiveShell() {
 		return (Shell) getVariable(ISources.ACTIVE_SHELL_NAME);
-	}
-
-	/**
-	 * Checks to see if there is a handler with the same expression controlling
-	 * activation as an existing command. This is used to avoid submitting a
-	 * handler for a command that already has a handler.
-	 * 
-	 * @param commandId
-	 *            The identifier of the command to check for potential
-	 *            conflicts; must not be <code>null</code>.
-	 * @param activeWhenExpression
-	 *            The expression for controlling activation for the handler that
-	 *            might be submitted; may be <code>null</code>.
-	 * @return <code>true</code> if there could be a conflict;
-	 *         <code>false</code> otherwise.
-	 */
-	final boolean isConflict(final String commandId,
-			final Expression activeWhenExpression) {
-		final int sourcePriorityToCheck = SourcePriorityNameMapping
-				.computeSourcePriority(activeWhenExpression);
-		final Object object = handlerActivationsByCommandId.get(commandId);
-		if (object instanceof Collection) {
-			final Collection handlerActivations = (Collection) object;
-			final Iterator handlerActivationItr = handlerActivations.iterator();
-			while (handlerActivationItr.hasNext()) {
-				final IHandlerActivation handlerActivation = (IHandlerActivation) handlerActivationItr
-						.next();
-				final Expression expression = handlerActivation.getExpression();
-				if (Util.equals(expression, activeWhenExpression)) {
-					return true;
-				}
-				
-				final int currentSourcePriority = SourcePriorityNameMapping
-				.computeSourcePriority(expression);
-				if (sourcePriorityToCheck == currentSourcePriority) {
-					return true;
-				}
-			}
-
-		} else if (object instanceof IHandlerActivation) {
-			final IHandlerActivation handlerActivation = (IHandlerActivation) object;
-			final Expression expression = handlerActivation.getExpression();
-			if (Util.equals(expression, activeWhenExpression)) {
-				return true;
-			}
-			
-			final int currentSourcePriority = SourcePriorityNameMapping
-			.computeSourcePriority(expression);
-			if (sourcePriorityToCheck == currentSourcePriority) {
-				return true;
-			}
-
-		}
-
-		return false;
 	}
 
 	/**

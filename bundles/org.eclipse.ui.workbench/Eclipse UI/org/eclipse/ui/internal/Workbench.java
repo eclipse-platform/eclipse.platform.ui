@@ -129,7 +129,9 @@ import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressManager;
+import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.services.ActionSetSourceProvider;
 import org.eclipse.ui.internal.services.ActivePartSourceProvider;
 import org.eclipse.ui.internal.services.ActiveShellSourceProvider;
 import org.eclipse.ui.internal.services.CurrentSelectionSourceProvider;
@@ -1186,6 +1188,16 @@ public final class Workbench extends EventManager implements IWorkbench {
 		contextService.addSourceProvider(currentSelectionSourceProvider);
 		menuService.addSourceProvider(currentSelectionSourceProvider);
 		sourceProviderService.registerProvider(currentSelectionSourceProvider);
+		actionSetSourceProvider = new ActionSetSourceProvider();
+		handlerService.addSourceProvider(actionSetSourceProvider);
+		contextService.addSourceProvider(actionSetSourceProvider);
+		menuService.addSourceProvider(actionSetSourceProvider);
+		sourceProviderService.registerProvider(actionSetSourceProvider);
+//		final MenuSourceProvider menuSourceProvider = new MenuSourceProvider();
+//		handlerService.addSourceProvider(menuSourceProvider);
+//		contextService.addSourceProvider(menuSourceProvider);
+//		menuService.addSourceProvider(menuSourceProvider);
+//		sourceProviderService.registerProvider(menuSourceProvider);
 
 		/*
 		 * Phase 4 of the initialization of commands. This handles the creation
@@ -2312,17 +2324,37 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 		}
 	};
+	
+	private ActionSetSourceProvider actionSetSourceProvider;
+	
+	private WorkbenchWindow currentActionSetWindow = null;
 
 	private void updateActiveWorkbenchWindowMenuManager(boolean textOnly) {
+		if (currentActionSetWindow != null) {
+			currentActionSetWindow
+					.removeActionSetsListener(actionSetSourceProvider);
+			currentActionSetWindow = null;
+		}
+
 		final IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 
 		if (workbenchWindow instanceof WorkbenchWindow) {
-			final WorkbenchWindow window = (WorkbenchWindow) workbenchWindow;
-			if (window.isClosing()) {
+			currentActionSetWindow = (WorkbenchWindow) workbenchWindow;
+			if (currentActionSetWindow.isClosing()) {
 				return;
 			}
 
-			final MenuManager menuManager = window.getMenuManager();
+			// Update the action sets.
+			currentActionSetWindow
+					.addActionSetsListener(actionSetSourceProvider);
+			final WorkbenchPage page = currentActionSetWindow
+					.getActiveWorkbenchPage();
+			final IActionSetDescriptor[] newActionSets = page.getActionSets();
+			final ActionSetsEvent event = new ActionSetsEvent(newActionSets);
+			actionSetSourceProvider.actionSetsChanged(event);
+
+			final MenuManager menuManager = currentActionSetWindow
+					.getMenuManager();
 
 			if (textOnly)
 				menuManager.update(IAction.TEXT);

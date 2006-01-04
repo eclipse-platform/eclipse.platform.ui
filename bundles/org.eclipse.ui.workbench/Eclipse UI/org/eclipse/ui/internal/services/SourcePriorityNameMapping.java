@@ -66,10 +66,12 @@ public final class SourcePriorityNameMapping implements ISources {
 	private static final Map sourceNamesByPriority = new HashMap();
 
 	static {
+		addMapping(ACTIVE_ACTION_SETS_NAME, ACTIVE_ACTION_SETS);
 		addMapping(ACTIVE_CONTEXT_NAME, ACTIVE_CONTEXT);
 		addMapping(ACTIVE_CURRENT_SELECTION_NAME, ACTIVE_CURRENT_SELECTION);
 		addMapping(ACTIVE_EDITOR_NAME, ACTIVE_EDITOR);
 		addMapping(ACTIVE_EDITOR_ID_NAME, ACTIVE_EDITOR_ID);
+		addMapping(ACTIVE_MENU_NAME, ACTIVE_MENU);
 		addMapping(ACTIVE_PART_NAME, ACTIVE_PART);
 		addMapping(ACTIVE_PART_ID_NAME, ACTIVE_PART_ID);
 		addMapping(ACTIVE_SHELL_NAME, ACTIVE_SHELL);

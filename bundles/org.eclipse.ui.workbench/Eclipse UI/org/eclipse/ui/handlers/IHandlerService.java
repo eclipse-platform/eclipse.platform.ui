@@ -164,23 +164,6 @@ public interface IHandlerService extends IServiceWithSources {
 	public IEvaluationContext getCurrentState();
 
 	/**
-	 * Checks to see if there would be a conflict if a handler is added with the
-	 * given expression. The expression is compared against the expressions for
-	 * other handlers.
-	 * 
-	 * @param commandId
-	 *            The identifier of the command which should be checked for
-	 *            potential conflicts; must not be <code>null</code>.
-	 * @param expression
-	 *            The expression to check against the existing handler
-	 *            activations; may be <code>null</code>.
-	 * @return <code>true</code> if there might be a conflict;
-	 *         <code>false</code> otherwise.
-	 * @since 3.2
-	 */
-	public boolean isConflict(String commandId, Expression expression);
-
-	/**
 	 * <p>
 	 * Reads the handler information from the registry. This will overwrite any
 	 * of the existing information in the handler service. This method is

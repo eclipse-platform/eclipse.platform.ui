@@ -11,6 +11,8 @@
 
 package org.eclipse.ui;
 
+import org.eclipse.core.expressions.IEvaluationContext;
+
 /**
  * <p>
  * A source is type of event change that can occur within the workbench. For
@@ -90,6 +92,17 @@ public interface ISources {
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
 	 */
 	public static final String ACTIVE_CONTEXT_NAME = "activeContexts"; //$NON-NLS-1$
+
+	/**
+	 * The priority given when the source includes a particular action set.
+	 */
+	public static final int ACTIVE_ACTION_SETS = 1 << 8;
+
+	/**
+	 * The variable name for the active action sets. This is for use with the
+	 * {@link ISourceProvider} and {@link IEvaluationContext}.
+	 */
+	public static final String ACTIVE_ACTION_SETS_NAME = "activeActionSets"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the currently active shell.
@@ -202,4 +215,15 @@ public interface ISources {
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
 	 */
 	public static final String ACTIVE_CURRENT_SELECTION_NAME = "selection"; //$NON-NLS-1$
+
+	/**
+	 * The priority given when the source includes the current menu.
+	 */
+	public static final int ACTIVE_MENU = 1 << 31;
+
+	/**
+	 * The variable name for the active menu. This is for use with the
+	 * {@link ISourceProvider} and {@link IEvaluationContext}.
+	 */
+	public static final String ACTIVE_MENU_NAME = "activeMenu"; //$NON-NLS-1$
 }
