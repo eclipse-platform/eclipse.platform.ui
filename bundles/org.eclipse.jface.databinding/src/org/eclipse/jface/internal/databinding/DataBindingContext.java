@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.jface.databinding.BindSpec;
 import org.eclipse.jface.databinding.BindingException;
@@ -26,6 +30,7 @@ import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IUpdatableTree;
 import org.eclipse.jface.databinding.IUpdatableValue;
+import org.eclipse.jface.databinding.NestedProperty;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.TreeModelDescription;
 import org.eclipse.jface.databinding.converter.IConverter;
@@ -77,11 +82,10 @@ public class DataBindingContext implements IDataBindingContext {
 		bindSupportFactories.add(factory);
 	}
 
-
 	/**
 	 * 
 	 */
-	public DataBindingContext() {		
+	public DataBindingContext() {
 		registerFactories();
 		registerDefaultBindSupportFactory();
 	}
@@ -131,15 +135,18 @@ public class DataBindingContext implements IDataBindingContext {
 
 			public IValidator createValidator(Class fromType, Class toType,
 					Object modelDescription) {
-		    	if (fromType == null || toType == null) {
-//		    		System.err.println("FIXME: Boris, is this a bug?  In registerDefaultBindSupportFactory.addBindSupportFactory.createValidator: fromType is null or toType is null!!!!!"); //$NON-NLS-1$
-//					try {
-//						throw new BindingException("Cannot create proper IValidator."); //$NON-NLS-1$
-//					} catch (BindingException e) {
-//						e.printStackTrace();
-//						System.err.println();
-//					}
-		    		return new IValidator() {
+				if (fromType == null || toType == null) {
+					// System.err.println("FIXME: Boris, is this a bug? In
+					// registerDefaultBindSupportFactory.addBindSupportFactory.createValidator:
+					// fromType is null or toType is null!!!!!"); //$NON-NLS-1$
+					// try {
+					// throw new BindingException("Cannot create proper
+					// IValidator."); //$NON-NLS-1$
+					// } catch (BindingException e) {
+					// e.printStackTrace();
+					// System.err.println();
+					// }
+					return new IValidator() {
 
 						public String isPartiallyValid(Object value) {
 							return null;
@@ -149,11 +156,13 @@ public class DataBindingContext implements IDataBindingContext {
 							return null;
 						}
 					};
-		    	}
+				}
 
-		    	IValidator dataTypeValidator = ValidatorRegistry.getDefault().get(fromType, toType);
+				IValidator dataTypeValidator = ValidatorRegistry.getDefault()
+						.get(fromType, toType);
 				if (dataTypeValidator == null) {
-					throw new BindingException("No IValidator is registered for conversions from " + fromType.getName() + " to " + toType.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+					throw new BindingException(
+							"No IValidator is registered for conversions from " + fromType.getName() + " to " + toType.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				return dataTypeValidator;
 			}
@@ -169,7 +178,8 @@ public class DataBindingContext implements IDataBindingContext {
 				if (ConversionFunctionRegistry.canConvertPair(fromType, toType)) {
 					return new FunctionalConverter(fromType, toType);
 				}
-				// FIXME: djo -- This doesn't always work in the case of object types?
+				// FIXME: djo -- This doesn't always work in the case of object
+				// types?
 				if (toType.isAssignableFrom(fromType)
 						|| fromType.isAssignableFrom(toType)) {
 					return new IdentityConverter(fromType, toType);
@@ -217,24 +227,32 @@ public class DataBindingContext implements IDataBindingContext {
 					}
 				} else if (description instanceof TreeModelDescription) {
 					TreeModelDescription treeModelDescription = (TreeModelDescription) description;
-					if (treeModelDescription.getRoot()!=null) {
-						if (treeModelDescription.getRoot() instanceof IUpdatable) { 						
+					if (treeModelDescription.getRoot() != null) {
+						if (treeModelDescription.getRoot() instanceof IUpdatable) {
 							if (treeModelDescription.getRoot() instanceof IUpdatableTree)
-								return (IUpdatableTree) treeModelDescription.getRoot();
-							//	Nest the TreeModelDescription's root
-							return new NestedUpdatableTree(DataBindingContext.this, treeModelDescription);
-						}
-						else if (treeModelDescription.getRoot() instanceof Property) {
-							// Create an Updatable for the TreeModelDescription's root first
-							TreeModelDescription newDescription = 
-								new TreeModelDescription(DataBindingContext.this.createUpdatable(treeModelDescription.getRoot()));
+								return (IUpdatableTree) treeModelDescription
+										.getRoot();
+							// Nest the TreeModelDescription's root
+							return new NestedUpdatableTree(
+									DataBindingContext.this,
+									treeModelDescription);
+						} else if (treeModelDescription.getRoot() instanceof Property) {
+							// Create an Updatable for the
+							// TreeModelDescription's root first
+							TreeModelDescription newDescription = new TreeModelDescription(
+									DataBindingContext.this
+											.createUpdatable(treeModelDescription
+													.getRoot()));
 							Class[] types = treeModelDescription.getTypes();
 							for (int i = 0; i < types.length; i++) {
-								String[] props = treeModelDescription.getChildrenProperties(types[i]);
-								for (int j = 0; j < props.length; j++) 
-									newDescription.addChildrenProperty(types[i], props[j]);
-							}	
-							return DataBindingContext.this.createUpdatable(newDescription);
+								String[] props = treeModelDescription
+										.getChildrenProperties(types[i]);
+								for (int j = 0; j < props.length; j++)
+									newDescription.addChildrenProperty(
+											types[i], props[j]);
+							}
+							return DataBindingContext.this
+									.createUpdatable(newDescription);
 						}
 					}
 					return null;
@@ -341,19 +359,21 @@ public class DataBindingContext implements IDataBindingContext {
 			if (modelUpdatable instanceof IUpdatableTree) {
 				IUpdatableTree target = (IUpdatableTree) targetUpdatable;
 				IUpdatableTree model = (IUpdatableTree) modelUpdatable;
-				// Tree bindings does not provide conversions between level elements (no bindSpec)
+				// Tree bindings does not provide conversions between level
+				// elements (no bindSpec)
 				binding = new TreeBinding(this, target, model);
 			} else {
 				throw new BindingException(
 						"incompatible updatables: target is collection, model is " + modelUpdatable.getClass().getName()); //$NON-NLS-1$
 			}
-			
+
 		} else {
 			throw new BindingException("not yet implemented"); //$NON-NLS-1$
 		}
-		// DJO: Each binder is now responsible for adding its own change listeners.
-//		targetUpdatable.addChangeListener(binding);
-//		modelUpdatable.addChangeListener(binding);
+		// DJO: Each binder is now responsible for adding its own change
+		// listeners.
+		// targetUpdatable.addChangeListener(binding);
+		// modelUpdatable.addChangeListener(binding);
 		binding.updateTargetFromModel();
 	}
 
@@ -376,7 +396,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 *      java.lang.Object, org.eclipse.jface.databinding.IBindSpec)
 	 */
 	public void bind(IUpdatable targetUpdatable, Object modelDescription,
-			IBindSpec bindSpec)  {
+			IBindSpec bindSpec) {
 		if (bindSpec == null) {
 			bindSpec = new BindSpec(null, null);
 		}
@@ -402,7 +422,7 @@ public class DataBindingContext implements IDataBindingContext {
 					toType, modelDescriptionOrNull));
 		}
 	}
-	
+
 	public IValidator createValidator(Class fromType, Class toType,
 			Object modelDescription) {
 		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
@@ -453,7 +473,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 * 
 	 * @see org.eclipse.jface.databinding.IDataBindingContext#createUpdatable(java.lang.Object)
 	 */
-	public final IUpdatable createUpdatable(Object description) {
+	public IUpdatable createUpdatable(Object description) {
 		IUpdatable updatable = doCreateUpdatable(description, this);
 		if (updatable != null) {
 			createdUpdatables.add(updatable);
@@ -461,11 +481,66 @@ public class DataBindingContext implements IDataBindingContext {
 		return updatable;
 	}
 
-	protected IUpdatable doCreateUpdatable(Object description, DataBindingContext thisDatabindingContext) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#createNestedUpdatable(org.eclipse.jface.databinding.NestedProperty)
+	 */
+	public IUpdatable createNestedUpdatable(NestedProperty nestedProperty) {
+		IUpdatable lastChildUpdatable = null;
+		Object targetObject = nestedProperty.getObject();
+		if (nestedProperty.getPrototypeClass() != null) {
+			Class targetClazz = nestedProperty.getPrototypeClass();
+			StringTokenizer tokenizer = new StringTokenizer((String) nestedProperty.getPropertyID(), "."); //$NON-NLS-1$
+			while (tokenizer.hasMoreElements()) {
+				String nextDesc = (String) tokenizer.nextElement();
+				try {
+					BeanInfo beanInfo = Introspector.getBeanInfo(targetClazz);
+					PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+					Class discoveredClazz = null;
+					for (int i = 0; i < propertyDescriptors.length; i++) {
+						PropertyDescriptor descriptor = propertyDescriptors[i];
+						if (descriptor.getName().equals(
+								nextDesc)) {
+							discoveredClazz = descriptor.getPropertyType();
+							break;
+						}
+					}
+					if (discoveredClazz != null) {
+						targetClazz = discoveredClazz;
+					} else {
+						throw new BindingException("Error using prototype class to determine binding types."); //$NON-NLS-1$
+					}
+				} catch (BindingException be) {
+					throw be;
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new BindingException("Exeception using prototype class to determine binding types.", e); //$NON-NLS-1$
+				}
+				lastChildUpdatable = createUpdatable(new Property(targetObject,
+						nextDesc, targetClazz, new Boolean(false)));
+				targetObject = lastChildUpdatable;
+			}
+
+		} else {
+			String[] properties = (String[]) nestedProperty.getPropertyID();
+			for (int i = 0; i < properties.length; i++) {
+				String nextDesc = properties[i];
+				Class clazz = nestedProperty.getTypes()[i];
+				lastChildUpdatable = createUpdatable(new Property(targetObject,
+						nextDesc, clazz, new Boolean(false)));
+				targetObject = lastChildUpdatable;
+			}
+		}
+		return lastChildUpdatable;
+	}
+
+	protected IUpdatable doCreateUpdatable(Object description,
+			DataBindingContext thisDatabindingContext) {
 		for (int i = factories.size() - 1; i >= 0; i--) {
 			IUpdatableFactory factory = (IUpdatableFactory) factories.get(i);
-			IUpdatable result = factory.createUpdatable(null,
-					description, thisDatabindingContext);
+			IUpdatable result = factory.createUpdatable(null, description,
+					thisDatabindingContext);
 			if (result != null) {
 				return result;
 			}
@@ -491,11 +566,9 @@ public class DataBindingContext implements IDataBindingContext {
 		factories.add(updatableFactory);
 	}
 
-
 	public void updateTargets() {
 		Assert.isTrue(false, "updateTargets is not yet implemented"); //$NON-NLS-1$
 	}
-
 
 	public void updateModels() {
 		Assert.isTrue(false, "updateModels is not yet implemented"); //$NON-NLS-1$

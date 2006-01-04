@@ -45,7 +45,7 @@ public class NestedUpdatableValue extends UpdatableValue {
 
 	private Class featureType;
 
-	protected final IUpdatableValue outerUpdatableValue;
+	private IUpdatableValue outerUpdatableValue;
 
 	/**
 	 * @param databindingContext
@@ -125,4 +125,11 @@ public class NestedUpdatableValue extends UpdatableValue {
 		innerChangeListener = null;
 	}
 
+	public IUpdatableValue getInnerUpdatableValue() {
+		return innerUpdatableValue;
+	}
+
+	public IUpdatableValue getOuterUpdatableValue() {
+		return outerUpdatableValue;
+	}
 }
