@@ -19,7 +19,7 @@
        <viewer
              viewerId="org.eclipse.ui.navigator.resourceContent">
           <popupMenu
-                allowsPlatformContributions="false"
+                allowsPlatformContributions="true"
                 id="org.eclipse.ui.navigator.resourceContent#PopupMenu">  
              <insertionPoint name="group.new"/>
              <insertionPoint
