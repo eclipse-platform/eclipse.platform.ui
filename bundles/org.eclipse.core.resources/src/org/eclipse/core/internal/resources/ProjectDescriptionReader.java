@@ -316,7 +316,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// Make sure that you have something reasonable
 			IPath path = link.getProjectRelativePath();
 			int type = link.getType();
-			URI location = link.getLocation();
+			URI location = link.getLocationURI();
 			if (location == null) {
 				parseProblem(NLS.bind(Messages.projRead_badLinkLocation, path, Integer.toString(type)));
 				return;
@@ -345,11 +345,11 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// A link location is an URI.  URIs cannot have leading/trailing whitespace
 			String newLocation = charBuffer.toString().trim();
 			// objectStack has a LinkDescription on it. Set the type on this LinkDescription.
-			URI oldLocation = ((LinkDescription) objectStack.peek()).getLocation();
+			URI oldLocation = ((LinkDescription) objectStack.peek()).getLocationURI();
 			if (oldLocation != null) {
 				parseProblem(NLS.bind(Messages.projRead_badLocation, oldLocation, newLocation));
 			} else {
-				((LinkDescription) objectStack.peek()).setLocation(URIUtil.toURI(Path.fromPortableString(newLocation)));
+				((LinkDescription) objectStack.peek()).setLocationURI(URIUtil.toURI(Path.fromPortableString(newLocation)));
 			}
 			state = S_LINK;
 		}
@@ -365,12 +365,12 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// A link location is an URI.  URIs cannot have leading/trailing whitespace
 			String newLocation = charBuffer.toString().trim();
 			// objectStack has a LinkDescription on it. Set the type on this LinkDescription.
-			URI oldLocation = ((LinkDescription) objectStack.peek()).getLocation();
+			URI oldLocation = ((LinkDescription) objectStack.peek()).getLocationURI();
 			if (oldLocation != null) {
 				parseProblem(NLS.bind(Messages.projRead_badLocation, oldLocation, newLocation));
 			} else {
 				try {
-					((LinkDescription) objectStack.peek()).setLocation(new URI(newLocation));
+					((LinkDescription) objectStack.peek()).setLocationURI(new URI(newLocation));
 				} catch (URISyntaxException e) {
 					String msg = Messages.projRead_failureReadingProjectDesc;
 					problems.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, msg, e));

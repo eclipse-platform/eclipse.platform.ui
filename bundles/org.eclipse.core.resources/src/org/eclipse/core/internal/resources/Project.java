@@ -882,28 +882,31 @@ public class Project extends Container implements IProject {
 	 */
 	public IStatus reconcileLinks(ProjectDescription newDescription) {
 		HashMap newLinks = newDescription.getLinks();
-		IResource[] children = null;
-		try {
-			children = members();
-		} catch (CoreException e) {
-			return e.getStatus();
-		}
 		String msg = Messages.links_errorLinkReconcile;
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.OPERATION_FAILED, msg, null);
 		//walk over old linked resources and remove those that are no longer defined
-		for (int i = 0; i < children.length; i++) {
-			Resource oldLink = (Resource) children[i];
-			if (!oldLink.isLinked())
-				continue;
-			LinkDescription newLink = null;
-			if (newLinks != null)
-				newLink = (LinkDescription) newLinks.get(oldLink.getName());
-			//if the new link is missing, or has different location or gender, then remove old link
-			if (newLink == null || !newLink.getLocation().equals(oldLink.getLocation()) || newLink.getType() != oldLink.getType()) {
-				try {
-					oldLink.delete(IResource.NONE, null);
-				} catch (CoreException e) {
-					status.merge(e.getStatus());
+		ProjectDescription oldDescription = internalGetDescription();
+		if (oldDescription != null) {
+			HashMap oldLinks = oldDescription.getLinks();
+			if (oldLinks != null) {
+				for (Iterator it = oldLinks.values().iterator(); it.hasNext();) {
+					LinkDescription oldLink = (LinkDescription) it.next();
+					Resource oldLinkResource = (Resource)findMember(oldLink.getProjectRelativePath());
+					if (oldLinkResource == null || !oldLinkResource.isLinked())
+						continue;
+					LinkDescription newLink = null;
+					if (newLinks != null)
+						newLink = (LinkDescription) newLinks.get(oldLink.getProjectRelativePath());
+					//if the new link is missing, or has different location or gender, then remove old link
+					if (newLink == null || !newLink.getLocationURI().equals(oldLinkResource.getLocationURI()) || newLink.getType() != oldLinkResource.getType()) {
+						try {
+							oldLinkResource.delete(IResource.NONE, null);
+							//refresh the resource, because removing a link can reveal a previously hidden resource in parent
+							oldLinkResource.refreshLocal(IResource.DEPTH_INFINITE, null);
+						} catch (CoreException e) {
+							status.merge(e.getStatus());
+						}
+					}
 				}
 			}
 		}
@@ -912,19 +915,11 @@ public class Project extends Container implements IProject {
 			return status;
 		for (Iterator it = newLinks.values().iterator(); it.hasNext();) {
 			LinkDescription newLink = (LinkDescription) it.next();
-			IResource existing = findMember(newLink.getProjectRelativePath());
-			if (existing != null) {
-				if (!existing.isLinked())
-					//cannot create a link if a normal resource is blocking it
-					status.add(new ResourceStatus(IResourceStatus.RESOURCE_EXISTS, existing.getFullPath(), msg));
-			} else {
-				//no conflicting old resource, just create the new link
-				try {
-					Resource toLink = workspace.newResource(getFullPath().append(newLink.getProjectRelativePath()), newLink.getType());
-					toLink.createLink(newLink.getLocation(), IResource.ALLOW_MISSING_LOCAL, null);
-				} catch (CoreException e) {
-					status.merge(e.getStatus());
-				}
+			try {
+				Resource toLink = workspace.newResource(getFullPath().append(newLink.getProjectRelativePath()), newLink.getType());
+				toLink.createLink(newLink.getLocationURI(), IResource.REPLACE | IResource.ALLOW_MISSING_LOCAL, null);
+			} catch (CoreException e) {
+				status.merge(e.getStatus());
 			}
 		}
 		return status;

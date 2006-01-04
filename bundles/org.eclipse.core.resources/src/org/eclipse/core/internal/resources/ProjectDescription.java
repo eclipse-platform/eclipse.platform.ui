@@ -160,7 +160,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		if (linkDescriptions == null)
 			return null;
 		LinkDescription desc = (LinkDescription) linkDescriptions.get(aPath);
-		return desc == null ? null : desc.getLocation();
+		return desc == null ? null : desc.getLocationURI();
 	}
 
 	/**

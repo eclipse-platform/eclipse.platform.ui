@@ -339,7 +339,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 			IResource link = project.findMember(linkDesc.getProjectRelativePath());
 			if (link != null) {
 				try {
-					addToLocationsMap(link, EFS.getStore(linkDesc.getLocation()));
+					addToLocationsMap(link, EFS.getStore(linkDesc.getLocationURI()));
 				} catch (CoreException e) {
 					//ignore links with invalid locations
 				}
@@ -556,7 +556,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 			else
 				link = project.getFolder(linkDesc.getProjectRelativePath());
 			try {
-				removeFromLocationsMap(link, EFS.getStore(linkDesc.getLocation()));
+				removeFromLocationsMap(link, EFS.getStore(linkDesc.getLocationURI()));
 			} catch (CoreException e) {
 				//ignore links with invalid locations
 			}

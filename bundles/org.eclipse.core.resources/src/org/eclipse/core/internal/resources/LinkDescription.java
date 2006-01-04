@@ -52,7 +52,7 @@ public class LinkDescription {
 		return localLocation.equals(other.localLocation) && type == other.type;
 	}
 
-	public URI getLocation() {
+	public URI getLocationURI() {
 		return localLocation;
 	}
 
@@ -72,7 +72,7 @@ public class LinkDescription {
 		return type + localLocation.hashCode();
 	}
 
-	public void setLocation(URI location) {
+	public void setLocationURI(URI location) {
 		this.localLocation = location;
 	}
 

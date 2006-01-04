@@ -86,7 +86,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			writer.printSimpleTag(NAME, description.getProjectRelativePath());
 			writer.printSimpleTag(TYPE, Integer.toString(description.getType()));
 			//use ASCII string of URI to ensure spaces are encoded
-			writeLocation(description.getLocation(), writer);
+			writeLocation(description.getLocationURI(), writer);
 		}
 		writer.endTag(LINK);
 	}
