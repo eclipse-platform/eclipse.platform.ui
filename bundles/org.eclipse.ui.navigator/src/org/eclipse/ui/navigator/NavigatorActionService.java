@@ -98,8 +98,7 @@ public final class NavigatorActionService extends ActionGroup implements
 			new Separator(ICommonMenuConstants.GROUP_GENERATE),
 			new Separator(ICommonMenuConstants.GROUP_SEARCH),
 			new Separator(ICommonMenuConstants.GROUP_BUILD),
-			new Separator(ICommonMenuConstants.GROUP_ADDITIONS),
-			new Separator(ICommonMenuConstants.GROUP_VIEWER_SETUP),
+			new Separator(ICommonMenuConstants.GROUP_ADDITIONS), 
 			new Separator(ICommonMenuConstants.GROUP_PROPERTIES) };
 
 	private final IViewPart viewPart;

@@ -271,8 +271,7 @@ in the given order:
 &quot;group.generate&quot;        separator=&quot;true&quot;
 &quot;group.search&quot;          separator=&quot;true&quot;
 &quot;group.build&quot;           separator=&quot;true&quot;
-&quot;additions&quot;             separator=&quot;true&quot;
-&quot;group.viewerSetup&quot;     separator=&quot;true&quot;
+&quot;additions&quot;             separator=&quot;true&quot; 
 &quot;group.properties&quot;      separator=&quot;true&quot;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -377,8 +376,7 @@ the popupMenu element for more information.
 &quot;group.generate&quot;        separator=&quot;true&quot;
 &quot;group.search&quot;          separator=&quot;true&quot;
 &quot;group.build&quot;           separator=&quot;true&quot;
-&quot;additions&quot;             separator=&quot;true&quot;
-&quot;group.viewerSetup&quot;     separator=&quot;true&quot;
+&quot;additions&quot;             separator=&quot;true&quot; 
 &quot;group.properties&quot;      separator=&quot;true&quot;
 &lt;/pre&gt;
 &lt;/p&gt;
