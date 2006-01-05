@@ -35,6 +35,7 @@ import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.core.text.TextSearchEngine;
 import org.eclipse.search.core.text.TextSearchMatchAccess;
 import org.eclipse.search.core.text.TextSearchRequestor;
+import org.eclipse.search.core.text.TextSearchScope;
 
 import org.eclipse.search.tests.ResourceHelper;
 
@@ -68,6 +69,10 @@ public class FileSearchTests extends TestCase {
 				
 		public TestResult[] getResults() {
 			return (TestResult[]) fResult.toArray(new TestResult[fResult.size()]);
+		}
+		
+		public int getNumberOfResults() {
+			return fResult.size();
 		}
 		
 	}
@@ -167,7 +172,7 @@ public class FileSearchTests extends TestCase {
 		TestResultCollector collector= new TestResultCollector();
 		Pattern searchPattern= PatternConstructor.createPattern("hello", false, true);
 
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("test-project", new IResource[] { fProject });
+		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("test-project", new IResource[] { fProject }, false);
 		TextSearchEngine.create().search(scope, collector, searchPattern, null);
 		
 		TestResult[] results= collector.getResults();
@@ -191,7 +196,7 @@ public class FileSearchTests extends TestCase {
 		TestResultCollector collector= new TestResultCollector();
 		Pattern searchPattern= PatternConstructor.createPattern("mor*", false, false);
 		
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("test-project", new IResource[] { fProject });
+		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("test-project", new IResource[] { fProject }, false);
 		TextSearchEngine.create().search(scope, collector, searchPattern, null);
 		
 		TestResult[] results= collector.getResults();
@@ -212,7 +217,7 @@ public class FileSearchTests extends TestCase {
 		TestResultCollector collector= new TestResultCollector();
 		Pattern searchPattern= PatternConstructor.createPattern("mo?e", false, false);
 		
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("test-project", new IResource[] { fProject });
+		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("test-project", new IResource[] { fProject }, false);
 		TextSearchEngine.create().search(scope, collector, searchPattern, null);
 		
 		TestResult[] results= collector.getResults();
@@ -241,7 +246,7 @@ public class FileSearchTests extends TestCase {
 
 			// search in Junit sources
 
-			FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("test-project", new IResource[] {project});
+			FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("test-project", new IResource[] {project}, false);
 			TextSearchEngine.create().search(scope, collector, searchPattern, null);
 
 			TestResult[] results= collector.getResults();
@@ -272,7 +277,7 @@ public class FileSearchTests extends TestCase {
 			TestResultCollector collector= new TestResultCollector();
 			Pattern searchPattern= PatternConstructor.createPattern("hello", false, true);
 
-			FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("test-project", new IResource[] {fProject});
+			FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("test-project", new IResource[] {fProject}, false);
 			TextSearchEngine.create().search(scope, collector, searchPattern, null);
 
 			TestResult[] results= collector.getResults();
@@ -284,6 +289,85 @@ public class FileSearchTests extends TestCase {
 			SearchPlugin.getActivePage().closeAllEditors(false);
 		}
 	}
+	
+	public void testDerivedFiles() throws Exception {
+		StringBuffer buf= new StringBuffer();
+		buf.append("hello\n");
+		IFolder folder1= ResourceHelper.createFolder(fProject.getFolder("folder1"));
+		ResourceHelper.createFile(folder1, "file1", buf.toString());
+		IFile file2= ResourceHelper.createFile(folder1, "file2", buf.toString());
+		file2.setDerived(true);
+		
+		IFolder folder2= ResourceHelper.createFolder(folder1.getFolder("folder2"));
+		folder2.setDerived(true);
+		ResourceHelper.createFile(folder2, "file3", buf.toString());
+
+		IFolder folder3= ResourceHelper.createFolder(folder2.getFolder("folder3"));
+		ResourceHelper.createFile(folder3, "file4", buf.toString());
+		
+		IFolder folder4= ResourceHelper.createFolder(folder1.getFolder("folder4"));
+		ResourceHelper.createFile(folder4, "file5", buf.toString());
+		
+		/**
+		 * folder1
+		 *     file1
+		 *     file2*
+		 *     folder2*
+		 *       file3
+		 *       folder3
+		 *         file4
+		 *     folder4
+		 *       file5
+		 */
+		
+		
+		Pattern searchPattern= PatternConstructor.createPattern("hello", false, true);
+		Pattern fileNamePattern= PatternConstructor.createPattern("*", false, false);
+		TextSearchEngine engine= TextSearchEngine.create();
+		{
+			// visit all
+			TestResultCollector collector= new TestResultCollector();
+			TextSearchScope scope= TextSearchScope.newSearchScope(new IResource[] { fProject }, fileNamePattern, true);
+			engine.search(scope, collector, searchPattern, null);
+			assertEquals(5, collector.getNumberOfResults());
+		}
+		{
+			// visit non-derived
+			TestResultCollector collector= new TestResultCollector();
+			TextSearchScope scope= TextSearchScope.newSearchScope(new IResource[] { fProject }, fileNamePattern, false);
+			engine.search(scope, collector, searchPattern, null);
+			assertEquals(2, collector.getNumberOfResults());
+		}
+		{
+			// visit all in folder2
+			TestResultCollector collector= new TestResultCollector();
+			TextSearchScope scope= TextSearchScope.newSearchScope(new IResource[] { folder2 }, fileNamePattern, true);
+			engine.search(scope, collector, searchPattern, null);
+			assertEquals(2, collector.getNumberOfResults());
+		}
+		{
+			// visit non-derived in folder2
+			TestResultCollector collector= new TestResultCollector();
+			TextSearchScope scope= TextSearchScope.newSearchScope(new IResource[] { folder2 }, fileNamePattern, false);
+			engine.search(scope, collector, searchPattern, null);
+			assertEquals(0, collector.getNumberOfResults());
+		}
+		{
+			// visit all in folder3
+			TestResultCollector collector= new TestResultCollector();
+			TextSearchScope scope= TextSearchScope.newSearchScope(new IResource[] { folder3 }, fileNamePattern, true);
+			engine.search(scope, collector, searchPattern, null);
+			assertEquals(1, collector.getNumberOfResults());
+		}
+		{
+			// visit non-derived in folder3
+			TestResultCollector collector= new TestResultCollector();
+			TextSearchScope scope= TextSearchScope.newSearchScope(new IResource[] { folder3 }, fileNamePattern, false);
+			engine.search(scope, collector, searchPattern, null);
+			assertEquals(0, collector.getNumberOfResults());
+		}
+	}
+
 
 
 	private void assertMatches(TestResult[] results, int expectedCount, IFile file, String fileContent, String string) {

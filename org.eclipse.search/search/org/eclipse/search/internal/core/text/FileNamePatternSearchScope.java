@@ -39,8 +39,8 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	 * Returns a workspace scope.
 	 * @return a workspace scope.
 	 */
-	public static FileNamePatternSearchScope newWorkspaceScope() {
-		return new FileNamePatternSearchScope(SearchMessages.WorkspaceScope, new IResource[] { ResourcesPlugin.getWorkspace().getRoot() }); 
+	public static FileNamePatternSearchScope newWorkspaceScope(boolean includeDerived) {
+		return new FileNamePatternSearchScope(SearchMessages.WorkspaceScope, new IResource[] { ResourcesPlugin.getWorkspace().getRoot() }, includeDerived); 
 	}
 	
 	/**
@@ -49,8 +49,8 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	 * @param resources the resources to be contained
 	 * @return a scope for the given resources.
 	 */
-	public static FileNamePatternSearchScope newSearchScope(String description, IResource[] resources) {
-		return new FileNamePatternSearchScope(description, removeRedundantEntries(resources));
+	public static FileNamePatternSearchScope newSearchScope(String description, IResource[] resources, boolean includeDerived) {
+		return new FileNamePatternSearchScope(description, removeRedundantEntries(resources, includeDerived), includeDerived);
 	}
 
 	/**
@@ -59,8 +59,8 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	 * @param workingSets the working sets to be contained
 	 * @return a scope for the given working sets
 	 */
-	public static FileNamePatternSearchScope newSearchScope(String description, IWorkingSet[] workingSets) {
-		return new FileNamePatternSearchScope(description, convertToResources(workingSets));
+	public static FileNamePatternSearchScope newSearchScope(String description, IWorkingSet[] workingSets, boolean includeDerived) {
+		return new FileNamePatternSearchScope(description, convertToResources(workingSets, includeDerived), includeDerived);
 	}
 	
 	private static final boolean IS_CASE_SENSITIVE_FILESYSTEM = !new File("Temp").equals(new File("temp")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -73,13 +73,13 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	
 	private boolean fVisitDerived;
 
-	private FileNamePatternSearchScope(String description, IResource[] resources) {
+	private FileNamePatternSearchScope(String description, IResource[] resources, boolean visitDerived) {
 		Assert.isNotNull(description);
 		fDescription= description;
 		fRootElements= resources;
 		fFileNamePatterns=  new HashSet(3);
 		fFileNameMatcher= null;
-		fVisitDerived= false;
+		fVisitDerived= visitDerived;
 	}
 	
 	/**
@@ -129,16 +129,7 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	public Pattern getFileNamePattern() {
 		return getFileNameMatcher().pattern();
 	}
-	
-	/**
-	 * Set to include also derived resources.
-	 * 
-	 * @param enable if set also derived resources are included.
-	 */
-	public void setIncludeDerived(boolean enable) {
-		fVisitDerived= enable;
-	}
-	
+		
 	/**
 	 * Returns if derived resources are included in the scope.
 	 * 
@@ -190,30 +181,33 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	}
 
 	
-	private static IResource[] removeRedundantEntries(IResource[] elements) {
+	private static IResource[] removeRedundantEntries(IResource[] elements, boolean includeDerived) {
 		ArrayList res= new ArrayList();
 		for (int i= 0; i < elements.length; i++) {
 			IResource curr= elements[i];
-			addToList(res, curr);
+			addToList(res, curr, includeDerived);
 		}
 		return (IResource[])res.toArray(new IResource[res.size()]);
 	}
 
-	private static IResource[] convertToResources(IWorkingSet[] workingSets) {
+	private static IResource[] convertToResources(IWorkingSet[] workingSets, boolean includeDerived) {
 		ArrayList res= new ArrayList();
 		for (int i= 0; i < workingSets.length; i++) {
 			IAdaptable[] elements= workingSets[i].getElements();
 			for (int k= 0; k < elements.length; k++) {
 				IResource curr= (IResource) elements[k].getAdapter(IResource.class);
 				if (curr != null) {
-					addToList(res, curr);
+					addToList(res, curr, includeDerived);
 				}
 			}
 		}
 		return (IResource[]) res.toArray(new IResource[res.size()]);
 	}
 	
-	private static void addToList(ArrayList res, IResource curr) {
+	private static void addToList(ArrayList res, IResource curr, boolean includeDerived) {
+		if (!includeDerived && isDerived(curr)) {
+			return;
+		}
 		IPath currPath= curr.getFullPath();
 		for (int k= res.size() - 1; k >= 0 ; k--) {
 			IResource other= (IResource) res.get(k);
@@ -226,6 +220,16 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 			}
 		}
 		res.add(curr);
+	}
+
+	private static boolean isDerived(IResource curr) {
+		do {
+			if (curr.isDerived()) {
+				return true;
+			}
+			curr= curr.getParent();
+		} while (curr != null);
+		return false;
 	}
 
 

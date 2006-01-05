@@ -68,7 +68,7 @@ public class LineAnnotationManagerTest extends TestCase {
 		super.setUp();
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
 		
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newWorkspaceScope();
+		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newWorkspaceScope(false);
 		scope.addFileNamePattern("*.java");
 	
 		fLineQuery= new LineBasedFileSearch(scope,  "", "Test");

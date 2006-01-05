@@ -59,9 +59,8 @@ public class PositionTrackerTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newWorkspaceScope();
+		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newWorkspaceScope(false);
 		scope.addFileNamePattern("*.java");
-		scope.setIncludeDerived(false);
 		fQuery1= new FileSearchQuery(scope,  "", "Test");
 	}
 	

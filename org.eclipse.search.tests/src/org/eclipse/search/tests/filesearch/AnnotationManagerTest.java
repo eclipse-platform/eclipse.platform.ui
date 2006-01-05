@@ -71,9 +71,8 @@ public class AnnotationManagerTest extends TestCase {
 		super.setUp();
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
 		
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newWorkspaceScope();
+		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newWorkspaceScope(false);
 		scope.addFileNamePattern("*.java"); //$NON-NLS-1$
-		scope.setIncludeDerived(false);
 		fQuery1= new FileSearchQuery(scope,  "", "Test");  //$NON-NLS-1$//$NON-NLS-2$
 		fQuery2= new FileSearchQuery(scope, "", "TestCase"); //$NON-NLS-1$//$NON-NLS-2$
 	} 

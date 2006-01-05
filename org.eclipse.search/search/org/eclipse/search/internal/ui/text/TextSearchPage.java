@@ -183,6 +183,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	
 	public boolean performAction() {
 		NewSearchUI.runQueryInBackground(getSearchQuery());
+		NewSearchUI.activateSearchResultView();
 		return true;
 	}
 	
@@ -190,6 +191,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	 * @see org.eclipse.search.ui.IReplacePage#performReplace()
 	 */
 	public boolean performReplace() {
+		
 		ISearchQuery searchQuery= getSearchQuery();
 		
 		IStatus status= NewSearchUI.runQueryInForeground(getContainer().getRunnableContext(), searchQuery);
@@ -228,7 +230,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		FileNamePatternSearchScope scope= null;
 		switch (getContainer().getSelectedScope()) {
 			case ISearchPageContainer.WORKSPACE_SCOPE:
-				scope= FileNamePatternSearchScope.newWorkspaceScope();
+				scope= FileNamePatternSearchScope.newWorkspaceScope(fSearchDerived);
 				break;
 			case ISearchPageContainer.SELECTION_SCOPE:
 				scope= getSelectedResourcesScope(false);
@@ -239,14 +241,12 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			case ISearchPageContainer.WORKING_SET_SCOPE:
 				IWorkingSet[] workingSets= getContainer().getSelectedWorkingSets();
 				String desc= Messages.format(SearchMessages.WorkingSetScope, ScopePart.toString(workingSets)); 
-				scope= FileNamePatternSearchScope.newSearchScope(desc, workingSets);
-		}		
-		NewSearchUI.activateSearchResultView();
+				scope= FileNamePatternSearchScope.newSearchScope(desc, workingSets, fSearchDerived);
+		}
 		String[] fileExtensions= patternData.fileNamePatterns;
 		for (int i= 0; i < fileExtensions.length; i++) {
 			scope.addFileNamePattern(fileExtensions[i]);
 		}
-		scope.setIncludeDerived(fSearchDerived);
 		return new FileSearchQuery(scope,  getSearchOptions(), patternData.textPattern);
 	}
 
@@ -662,7 +662,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		}
 		removeCloseProjects(resources);
 		IResource[] arr= (IResource[]) resources.toArray(new IResource[resources.size()]);
-		return FileNamePatternSearchScope.newSearchScope(name, arr);
+		return FileNamePatternSearchScope.newSearchScope(name, arr, fSearchDerived);
 	}
 
 	private void removeCloseProjects(Collection resources) {

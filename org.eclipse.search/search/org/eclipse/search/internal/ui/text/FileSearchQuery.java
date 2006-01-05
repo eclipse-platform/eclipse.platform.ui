@@ -122,7 +122,7 @@ public class FileSearchQuery implements ISearchQuery {
 	 * @return returns the status of the operation
 	 */
 	public IStatus searchInFile(final AbstractTextSearchResult result, final IProgressMonitor monitor, IFile file) {
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("", new IResource[] { file }); //$NON-NLS-1$
+		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("", new IResource[] { file }, true); //$NON-NLS-1$
 		
 		Pattern searchPattern= getSearchPattern();
 		boolean isFileSearchOnly= searchPattern.pattern().length() == 0;

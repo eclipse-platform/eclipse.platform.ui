@@ -52,9 +52,8 @@ public class ResultUpdaterTest extends TestCase {
 		// create a own project to make modifications
 		fProject= ResourceHelper.createJUnitSourceProject(PROJECT_TO_MODIFY);
 		
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("xx", new IResource[] { fProject });
+		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("xx", new IResource[] { fProject }, false);
 		scope.addFileNamePattern("*.java");
-		scope.setIncludeDerived(false);
 		fQuery1= new FileSearchQuery(scope,  "", "Test");
 	}
 	
