@@ -26,26 +26,41 @@ public class FileCache {
 	private static final String CACHE_DIR_NAME = "filecache";//$NON-NLS-1$
 
 	/**
-	 * This flag is true at the beginning of the session, and is set to 
-	 * false after the very first cache instance is created.
+	 * Thread safety for lazy instantiation of the cache
 	 */
-	private static boolean startup = true;
+	private static final Object creationLock = new Object();
+
+	/**
+	 * The singleton file cache instance.
+	 */
+	private static FileCache instance = null;
 
 	private File cacheDir;
+
+	/**
+	 * Public accessor to obtain the singleton file cache instance,
+	 * creating the cache lazily if necessary.
+	 * @return The file cache instance
+	 * @throws CoreException
+	 */
+	public static FileCache getCache() throws CoreException {
+		synchronized (creationLock) {
+			if (instance == null)
+				instance = new FileCache();
+			return instance;
+		}
+	}
 
 	/**
 	 * Creates a new file cache.
 	 * 
 	 * @throws CoreException If the file cache could not be created
 	 */
-	public FileCache() throws CoreException {
+	private FileCache() throws CoreException {
 		IPath location = Platform.getStateLocation(Platform.getBundle(Policy.PI_FILE_SYSTEM));
 		File cacheParent = new File(location.toFile(), CACHE_DIR_NAME);
-		if (startup) {
-			startup = false;
-			cleanOldCache(cacheParent);
-			cacheParent.mkdirs();
-		}
+		cleanOldCache(cacheParent);
+		cacheParent.mkdirs();
 		//make sure we have a unique non-existing cache directory
 		cacheDir = getUniqueDirectory(cacheParent, true);
 	}

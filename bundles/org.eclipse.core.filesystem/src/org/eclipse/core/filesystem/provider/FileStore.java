@@ -46,8 +46,6 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 */
 	protected static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-	private static FileCache fileCache;
-
 	/**
 	 * Closes a stream and ignores any resulting exception.
 	 */
@@ -303,12 +301,6 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 */
 	public abstract IFileStore getChild(String name);
 
-	private FileCache getFileCache() throws CoreException {
-		if (fileCache == null)
-			fileCache = new FileCache();
-		return fileCache;
-	}
-
 	/**
 	 * The default implementation of {@link IFileStore#getFileSystem()}.
 	 * Subclasses may override.
@@ -427,7 +419,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 		//caching is the only recognized option
 		if (options != EFS.CACHE)
 			return null;
-		return getFileCache().cache(this, monitor);
+		return FileCache.getCache().cache(this, monitor);
 	}
 
 	/**
