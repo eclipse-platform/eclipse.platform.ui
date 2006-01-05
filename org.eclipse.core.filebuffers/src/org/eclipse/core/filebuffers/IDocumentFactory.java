@@ -18,9 +18,11 @@ import org.eclipse.jface.text.IDocument;
  * <p>
  * This interface is the expected interface of extensions provided for the
  * <code>"org.eclipse.core.filebuffers.documentCreation"</code> extension
- * point.
+ * point.</p>
  *
  * @since 3.0
+ * @deprecated As of 3.2 the <code>"org.eclipse.core.filebuffers.documentCreation"</code>
+ *				has been deprecated. See the extension point documentation for more details.
  */
 public interface IDocumentFactory {
 

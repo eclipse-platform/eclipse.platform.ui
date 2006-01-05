@@ -6,14 +6,4 @@
    <extension-point id="documentSetup" name="%documentSetupPoint" schema="schema/documentSetup.exsd"/>
    <extension-point id="annotationModelCreation" name="%annotationModelCreationPoint" schema="schema/annotationModelCreation.exsd"/>
 
-   <extension
-         id="DefaultDocumentFactory"
-         name="%defaultDocumentFactory"
-         point="org.eclipse.core.filebuffers.documentCreation">
-      <factory
-            extensions="*"
-            class="org.eclipse.core.internal.filebuffers.DefaultDocumentFactory">
-      </factory>
-   </extension>
-
 </plugin>

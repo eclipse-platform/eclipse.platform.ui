@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -57,7 +59,6 @@ import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 
 import org.eclipse.jface.text.Assert;
-import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -290,7 +291,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		if (runnableResult[0] != null)
 			document= runnableResult[0];
 		else
-			document= new Document();
+			document= new SynchronizableDocument();
+		
+		if (location == null)
+			return document;
 		
 		// Set the initial line delimiter
 		if (document instanceof IDocumentExtension4) {
@@ -306,6 +310,11 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 				ISafeRunnable runnable= new ISafeRunnable() {
 					public void run() throws Exception {
 						participant.setup(document);
+						if (document.getDocumentPartitioner() != null) {
+							String message= NLS.bind(FileBuffersMessages.TextFileBufferManager_warning_documentSetupInstallsDefaultPartitioner, participant.getClass());
+							IStatus status= new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, null);
+							FileBuffersPlugin.getDefault().getLog().log(status);
+						}
 					}
 					public void handleException(Throwable t) {
 						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentSetupFailed, t);
