@@ -188,7 +188,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 				setEnabled(false);
 				setText(fAddLabel);
 			} else {
-				setEnabled(true);
+				setEnabled(getResource() != null);
 				fMarkers= getMarkers();
 				setText(fMarkers.isEmpty() ? fAddLabel : fRemoveLabel);
 			}
