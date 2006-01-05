@@ -505,7 +505,22 @@ public class BasicAliasTest extends ResourceTest {
 	}
 
 	public void testCreateOpenProject() {
-		// TODO
+		//test creating a project whose location is within an existing link
+		IProject newProject = getWorkspace().getRoot().getProject("createOpenProject");
+		IProjectDescription desc = getWorkspace().newProjectDescription(newProject.getName());
+		desc.setLocationURI(fLinkOverlap1.getLocationURI());
+		try {
+			newProject.create(desc, getMonitor());
+			newProject.open(getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		
+		//.project file should now exist in link
+		IFile linkChild = fLinkOverlap1.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+		assertTrue("1.0", linkChild.exists());
+		
+		// TODO more tests
 	}
 
 	public void testDeepCopyLink() {

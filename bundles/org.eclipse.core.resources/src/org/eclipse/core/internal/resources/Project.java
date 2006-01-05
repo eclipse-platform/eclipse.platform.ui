@@ -853,6 +853,8 @@ public class Project extends Container implements IProject {
 						refreshLocal(IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 80 / 100));
 					}
 				}
+				//creation of this project may affect overlapping resources
+				workspace.getAliasManager().updateAliases(this, getStore(), IResource.DEPTH_INFINITE, monitor);
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
