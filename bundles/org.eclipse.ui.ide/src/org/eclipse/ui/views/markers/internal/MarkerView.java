@@ -125,7 +125,6 @@ public abstract class MarkerView extends TableView {
 
 	// Section from a 3.1 or earlier workbench
 	private static final String OLD_FILTER_SECTION = "filter"; //$NON-NLS-1$
-	
 
 	private class MarkerProcessJob extends Job {
 
@@ -155,14 +154,14 @@ public abstract class MarkerView extends TableView {
 		protected IStatus run(IProgressMonitor monitor) {
 			synchronized (updateKey) {
 				MarkerList current = getCurrentMarkers();
-				//If we don't have any yet then refresh it all
+				// If we don't have any yet then refresh it all
 				if (current == null || adds.size() == 0 || removes.size() == 0)
 					updateJob.refreshAll();
-				else {					
+				else {
 					current.updateMarkers(getAddedMarkers(adds),
 							getExistingMarkers(removes));
 					updateJob.refresh(getExistingMarkers(refreshes));
-					
+
 				}
 
 				adds.clear();
@@ -179,7 +178,8 @@ public abstract class MarkerView extends TableView {
 		 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
 		 */
 		public boolean shouldRun() {
-			return getViewer() != null && buildDone;
+			//Don't run until the clipboard is created as it is the last widget
+			return clipboard != null && buildDone;
 		}
 
 		/**
@@ -197,8 +197,7 @@ public abstract class MarkerView extends TableView {
 			MarkerList currentList = getCurrentMarkers();
 			Iterator removes = existingMarkers.iterator();
 			while (removes.hasNext()) {
-				Object next = currentList.getMarker((IMarker) removes
-						.next());
+				Object next = currentList.getMarker((IMarker) removes.next());
 				if (next != null)
 					toRemove.add(next);
 			}
@@ -319,8 +318,8 @@ public abstract class MarkerView extends TableView {
 		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public IStatus runInUIThread(IProgressMonitor monitor) {
-			
-			if(getViewer().getControl().isDisposed())
+
+			if (getViewer().getControl().isDisposed())
 				return Status.CANCEL_STATUS;
 
 			if (refreshAll) {
@@ -495,11 +494,7 @@ public abstract class MarkerView extends TableView {
 	 * @return MarkerList
 	 */
 	public MarkerList getCurrentMarkers() {
-		final MarkerAdapter adapter = getMarkerAdapter();
-		if (adapter == null) {
-			return new MarkerList();
-		}
-		return adapter.getCurrentMarkers();
+		return getMarkerAdapter().getCurrentMarkers();
 	}
 
 	/**
@@ -666,8 +661,6 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		clipboard = new Clipboard(parent.getDisplay());
-
 		super.createPartControl(parent);
 
 		initDragAndDrop();
@@ -696,6 +689,12 @@ public abstract class MarkerView extends TableView {
 				PlatformUI.getWorkbench().getHelpSystem().displayHelp(context);
 			}
 		});
+
+		//This is created last as the updates are blocked until it is
+		//created. If this is deleted be sure there is still a mechanism
+		//to block the updates.
+		//@see MarkerProcessJob#shouldRun
+		clipboard = new Clipboard(parent.getDisplay());
 	}
 
 	/*
@@ -1001,7 +1000,6 @@ public abstract class MarkerView extends TableView {
 					.getId()));
 		}
 	}
-
 
 	protected abstract String[] getRootTypes();
 
@@ -1456,7 +1454,7 @@ public abstract class MarkerView extends TableView {
 	 */
 	void addDropDownContributions(IMenuManager menu) {
 		super.addDropDownContributions(menu);
-		
+
 		menu.add(new Separator(MENU_FILTERS_GROUP));
 		// Don't add in the filters until they are set
 		filtersMenu = new MenuManager(MarkerMessages.filtersSubMenu_title);
@@ -1595,5 +1593,5 @@ public abstract class MarkerView extends TableView {
 		updateJob.refreshAll();
 		getProgressService().schedule(markerProcessJob, 100);
 	}
-	
+
 }
