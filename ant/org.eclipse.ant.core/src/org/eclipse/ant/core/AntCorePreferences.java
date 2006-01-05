@@ -245,6 +245,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			if (toolsJarEntry == null) {
 				if (userLibs == null) {
 					additionalEntries= new IAntClasspathEntry[0];
+				} else {
+				    additionalEntries= (IAntClasspathEntry[]) userLibs.toArray(new IAntClasspathEntry[userLibs.size()]);
 				}
 			} else {
 				if (userLibs == null) {
