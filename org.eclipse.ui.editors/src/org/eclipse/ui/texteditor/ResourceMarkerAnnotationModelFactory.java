@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
+
+import org.eclipse.core.resources.IFile;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IAnnotationModelFactory;
+
+import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
@@ -30,6 +34,6 @@ public class ResourceMarkerAnnotationModelFactory implements IAnnotationModelFac
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
 		if (file != null)
 			return new ResourceMarkerAnnotationModel(file);
-		return null;
+		return new AnnotationModel();
 	}
 }
