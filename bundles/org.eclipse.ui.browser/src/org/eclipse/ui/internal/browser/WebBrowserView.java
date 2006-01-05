@@ -17,7 +17,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -116,9 +116,9 @@ public class WebBrowserView extends ViewPart implements
 	}
 	
 	private void onSelectionChange(ISelection selection) {
-		if (!(selection instanceof StructuredSelection))
+		if (!(selection instanceof IStructuredSelection))
 			return;
-		StructuredSelection sel = (StructuredSelection) selection;
+		IStructuredSelection sel = (IStructuredSelection) selection;
 		Object obj = sel.getFirstElement();
 		if (obj instanceof IAdaptable) {
 			IAdaptable adapt = (IAdaptable) obj;
