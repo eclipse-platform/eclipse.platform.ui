@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,36 +70,6 @@ public class Project extends Container implements IProject {
 	}
 
 	/* (non-Javadoc)
-	 * @see IProject#build(int, String, Map, IProgressMonitor)
-	 */
-	public void build(int trigger, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
-		final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
-		try {
-			monitor.beginTask(null, Policy.opWork);
-			try {
-				workspace.prepareOperation(rule, monitor);
-				ResourceInfo info = getResourceInfo(false, false);
-				int flags = getFlags(info);
-				if (!exists(flags, true) || !isOpen(flags))
-					return;
-
-				workspace.beginOperation(true);
-				workspace.aboutToBuild(this, trigger);
-				workspace.getBuildManager().build(this, trigger, builderName, args, Policy.subMonitorFor(monitor, Policy.opWork));
-				workspace.broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
-			} finally {
-				//building may close the tree, but we are still inside an operation so open it
-				if (workspace.getElementTree().isImmutable())
-					workspace.newWorkingTree();
-				workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
-			}
-		} finally {
-			monitor.done();
-		}
-	}
-
-	/* (non-Javadoc)
 	 * @see IProject#build(int, IProgressMonitor)
 	 */
 	public void build(int trigger, IProgressMonitor monitor) throws CoreException {
@@ -117,6 +87,36 @@ public class Project extends Container implements IProject {
 				workspace.beginOperation(true);
 				workspace.aboutToBuild(this, trigger);
 				workspace.getBuildManager().build(this, trigger, Policy.subMonitorFor(monitor, Policy.opWork));
+				workspace.broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
+			} finally {
+				//building may close the tree, but we are still inside an operation so open it
+				if (workspace.getElementTree().isImmutable())
+					workspace.newWorkingTree();
+				workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see IProject#build(int, String, Map, IProgressMonitor)
+	 */
+	public void build(int trigger, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
+		monitor = Policy.monitorFor(monitor);
+		final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
+		try {
+			monitor.beginTask(null, Policy.opWork);
+			try {
+				workspace.prepareOperation(rule, monitor);
+				ResourceInfo info = getResourceInfo(false, false);
+				int flags = getFlags(info);
+				if (!exists(flags, true) || !isOpen(flags))
+					return;
+
+				workspace.beginOperation(true);
+				workspace.aboutToBuild(this, trigger);
+				workspace.getBuildManager().build(this, trigger, builderName, args, Policy.subMonitorFor(monitor, Policy.opWork));
 				workspace.broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
 			} finally {
 				//building may close the tree, but we are still inside an operation so open it
@@ -213,17 +213,6 @@ public class Project extends Container implements IProject {
 	}
 
 	/* (non-Javadoc)
-	 * @see IResource#copy(IProjectDescription, int, IProgressMonitor)
-	 */
-	public void copy(IProjectDescription destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		// FIXME - the logic here for copying projects needs to be moved to Resource.copy
-		//   so that IResource.copy(IProjectDescription,int,IProgressMonitor) works properly for
-		//   projects and honours all update flags
-		Assert.isNotNull(destination);
-		internalCopy(destination, updateFlags, monitor);
-	}
-
-	/* (non-Javadoc)
 	 * @see IResource#copy(IPath, int, IProgressMonitor)
 	 */
 	public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
@@ -244,10 +233,28 @@ public class Project extends Container implements IProject {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see IResource#copy(IProjectDescription, int, IProgressMonitor)
+	 */
+	public void copy(IProjectDescription destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
+		// FIXME - the logic here for copying projects needs to be moved to Resource.copy
+		//   so that IResource.copy(IProjectDescription,int,IProgressMonitor) works properly for
+		//   projects and honours all update flags
+		Assert.isNotNull(destination);
+		internalCopy(destination, updateFlags, monitor);
+	}
+
 	protected void copyMetaArea(IProject source, IProject destination, IProgressMonitor monitor) throws CoreException {
 		IFileStore oldMetaArea = EFS.getFileSystem(EFS.SCHEME_FILE).getStore(workspace.getMetaArea().locationFor(source));
 		IFileStore newMetaArea = EFS.getFileSystem(EFS.SCHEME_FILE).getStore(workspace.getMetaArea().locationFor(destination));
 		oldMetaArea.copy(newMetaArea, EFS.NONE, monitor);
+	}
+
+	/* (non-Javadoc)
+	 * @see IProject#create(IProgressMonitor)
+	 */
+	public void create(IProgressMonitor monitor) throws CoreException {
+		create(null, monitor);
 	}
 
 	/* (non-Javadoc)
@@ -318,11 +325,25 @@ public class Project extends Container implements IProject {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#create(IProgressMonitor)
+	/**
+	 * Creates all parent folder of the given resource in this project.
+	 * This project must be accessible.
 	 */
-	public void create(IProgressMonitor monitor) throws CoreException {
-		create(null, monitor);
+	private void createParentFolders(IResource resource) throws CoreException {
+		IContainer parent = resource.getParent();
+		if (parent == null || parent.exists() || parent.getType() == PROJECT)
+			return;
+		createParentFolders(parent);
+		workspace.createResource(parent, false);
+	}
+
+	/* (non-Javadoc)
+	 * @see IProject#delete(boolean, boolean, IProgressMonitor)
+	 */
+	public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException {
+		int updateFlags = force ? IResource.FORCE : IResource.NONE;
+		updateFlags |= deleteContent ? IResource.ALWAYS_DELETE_PROJECT_CONTENT : IResource.NEVER_DELETE_PROJECT_CONTENT;
+		delete(updateFlags, monitor);
 	}
 
 	/* (non-Javadoc)
@@ -337,13 +358,12 @@ public class Project extends Container implements IProject {
 		workspace.deleteResource(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#delete(boolean, boolean, IProgressMonitor)
+	/*
+	 *  (non-Javadoc)
+	 * @see IProject#getContentTypeMatcher
 	 */
-	public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException {
-		int updateFlags = force ? IResource.FORCE : IResource.NONE;
-		updateFlags |= deleteContent ? IResource.ALWAYS_DELETE_PROJECT_CONTENT : IResource.NEVER_DELETE_PROJECT_CONTENT;
-		delete(updateFlags, monitor);
+	public IContentTypeMatcher getContentTypeMatcher() throws CoreException {
+		return workspace.getContentDescriptionManager().getContentTypeMatcher(this);
 	}
 
 	/* (non-Javadoc)
@@ -402,26 +422,6 @@ public class Project extends Container implements IProject {
 		if (plugin == null)
 			return null;
 		return getWorkingLocation(plugin.getUniqueIdentifier());
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see IProject#getContentTypeMatcher
-	 */
-	public IContentTypeMatcher getContentTypeMatcher() throws CoreException {
-		return workspace.getContentDescriptionManager().getContentTypeMatcher(this);
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see IProject#getWorkingLocation(String)
-	 */
-	public IPath getWorkingLocation(String id) {
-		if (id == null || !exists())
-			return null;
-		IPath result = workspace.getMetaArea().getWorkingLocation(this, id);
-		result.toFile().mkdirs();
-		return result;
 	}
 
 	/* (non-Javadoc)
@@ -495,6 +495,18 @@ public class Project extends Container implements IProject {
 	 */
 	public int getType() {
 		return PROJECT;
+	}
+
+	/*
+	 *  (non-Javadoc)
+	 * @see IProject#getWorkingLocation(String)
+	 */
+	public IPath getWorkingLocation(String id) {
+		if (id == null || !exists())
+			return null;
+		IPath result = workspace.getMetaArea().getWorkingLocation(this, id);
+		result.toFile().mkdirs();
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -838,7 +850,9 @@ public class Project extends Container implements IProject {
 				} else {
 					info.set(M_USED);
 					//reconcile any links in the project description
-					reconcileLinks(info.getDescription());
+					IStatus result = reconcileLinks(info.getDescription());
+					if (!result.isOK())
+						throw new CoreException(result);
 					workspace.updateModificationStamp(info);
 					monitor.worked(Policy.opWork * 20 / 100);
 				}
@@ -893,7 +907,7 @@ public class Project extends Container implements IProject {
 			if (oldLinks != null) {
 				for (Iterator it = oldLinks.values().iterator(); it.hasNext();) {
 					LinkDescription oldLink = (LinkDescription) it.next();
-					Resource oldLinkResource = (Resource)findMember(oldLink.getProjectRelativePath());
+					Resource oldLinkResource = (Resource) findMember(oldLink.getProjectRelativePath());
 					if (oldLinkResource == null || !oldLinkResource.isLinked())
 						continue;
 					LinkDescription newLink = null;
@@ -919,6 +933,7 @@ public class Project extends Container implements IProject {
 			LinkDescription newLink = (LinkDescription) it.next();
 			try {
 				Resource toLink = workspace.newResource(getFullPath().append(newLink.getProjectRelativePath()), newLink.getType());
+				createParentFolders(toLink);
 				toLink.createLink(newLink.getLocationURI(), IResource.REPLACE | IResource.ALLOW_MISSING_LOCAL, null);
 			} catch (CoreException e) {
 				status.merge(e.getStatus());
