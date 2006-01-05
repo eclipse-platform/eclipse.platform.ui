@@ -152,8 +152,13 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @since 3.0
 	 */
 	public DefaultInformationControl(Shell parentShell, int shellStyle, final int style, IInformationPresenter presenter, String statusFieldText) {
-
-		fPopupDialog= new PopupDialog(parentShell, shellStyle | PopupDialog.HOVER_SHELLSTYLE, false, false, false, false, null, statusFieldText) {
+		boolean takeFocus= false;
+		if ((shellStyle & SWT.RESIZE) != 0)
+			takeFocus= true;
+		else
+			shellStyle= shellStyle | PopupDialog.HOVER_SHELLSTYLE;
+		
+		fPopupDialog= new PopupDialog(parentShell, shellStyle, takeFocus, false, false, false, null, statusFieldText) {
 			protected Control createDialogArea(Composite parent) {
 				// Text field
 				fText= new StyledText(parent, SWT.MULTI | SWT.READ_ONLY | style);
