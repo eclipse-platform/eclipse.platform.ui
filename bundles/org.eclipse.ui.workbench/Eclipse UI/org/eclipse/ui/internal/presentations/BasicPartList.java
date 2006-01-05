@@ -99,7 +99,7 @@ public class BasicPartList extends AbstractTableInformationControl {
             AbstractTabItem item = folder.getTab(presentablePart);
             // if in single tab mode, do not use the bold font for non-visible tabs
             // if in multiple tab mode, use the bold for non-visible tabs only
-            if (item.isShowing() || !hiddenTabsBold)
+            if ((item!=null && item.isShowing()) || !hiddenTabsBold)
                 return folder.getTabFolder().getControl().getFont();
 
             if (boldFont == null) {
@@ -184,7 +184,7 @@ public class BasicPartList extends AbstractTableInformationControl {
             IPresentablePart part = (IPresentablePart)element;
             AbstractTabItem tabItem = folder.getTab(part);
             
-            if (tabItem.isShowing())
+            if (tabItem!=null && tabItem.isShowing())
                 return 1; // visible
             return 0; // not visible
         }
