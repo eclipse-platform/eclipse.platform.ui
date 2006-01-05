@@ -5,6 +5,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 
 /**
@@ -13,6 +14,7 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
  * The algorithm for determining when to perform a garbage collection
  * is as follows:
  * 
+ *  - Never gc if there is a test harness present
  *  - Don't gc if background jobs are running
  *  - Don't gc if the keyboard or mouse have been active within IDLE_INTERVAL
  *  - Don't gc if there has been a GC within the minimum gc interval (system property PROP_GC_INTERVAL)
@@ -94,6 +96,9 @@ class IDEIdleHelper {
 	 */
 	IDEIdleHelper(IWorkbenchConfigurer aConfigurer) {
 		this.configurer = aConfigurer;
+		//don't gc while running tests because performance tests are sensitive to timing (see bug 121562)
+		if (PlatformUI.getTestableObject().getTestHarness() != null)
+			return;
 		String enabled = System.getProperty(PROP_GC);
 		//gc is turned on by default if property is missing
 		if (enabled != null && enabled.equalsIgnoreCase(Boolean.FALSE.toString()))
