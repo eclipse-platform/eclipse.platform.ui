@@ -761,7 +761,10 @@
                toolbarPath="Normal/Presentation"
                tooltip="MultiEditorActionThing"/>
       </actionSet>
-      
+      <actionSet
+            label="Empty Action Set"
+            visible="false"
+            id="the deadly empty action set attack, against which there is no defense" />
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

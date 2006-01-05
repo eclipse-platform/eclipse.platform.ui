@@ -836,7 +836,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			// Read all of the child elements.
 			final SReference[] references = readActionsAndMenus(element, id,
 					warningsToLog, null, null);
-			if (references == null) {
+			if ((references == null) || (references.length == 0)) {
 				continue;
 			}
 
