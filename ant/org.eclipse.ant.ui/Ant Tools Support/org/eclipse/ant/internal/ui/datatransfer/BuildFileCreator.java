@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Richard Hoefter and others.
+ * Copyright (c) 2004, 2006 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  * 
  * Contributors:
  *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bugs 95297, 97051 
- *     IBM Corporation - nlsing and incorporating into Eclipse
+ *     IBM Corporation - nlsing and incorporating into Eclipse, bug 108276
+ *     Nikolay Metchev (N.Metchev@teamphone.com) - bug 108276
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.datatransfer;
@@ -34,7 +35,9 @@ import org.apache.tools.ant.types.Commandline;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
@@ -232,6 +235,7 @@ public class BuildFileCreator
         for (Iterator iterator = classpath.removeDuplicates(classpath.rawClassPathEntries).iterator(); iterator.hasNext();)
         {
             String entry = (String) iterator.next();
+            entry= getRelativePath(entry, projectRoot);
             Element pathElement = doc.createElement("pathelement"); //$NON-NLS-1$
             pathElement.setAttribute("location", entry); //$NON-NLS-1$
             element.appendChild(pathElement);
@@ -283,7 +287,9 @@ public class BuildFileCreator
             String location = subProject.getProject().getName() + ".location"; //$NON-NLS-1$
                            
             // add subproject properties to variable2valueMap
-            variable2valueMap.put(location, ExportUtil.getProjectRoot(subProject));
+            String subProjectRoot = ExportUtil.getProjectRoot(subProject);
+            String relativePath = getRelativePath(subProjectRoot, projectRoot);
+            variable2valueMap.put(location, relativePath);
             EclipseClasspath classpath = new EclipseClasspath(subProject, "${" + location + "}"); //$NON-NLS-1$ //$NON-NLS-2$
             // add subproject properties to variable2valueMap
             variable2valueMap.putAll(classpath.variable2valueMap);
@@ -292,6 +298,30 @@ public class BuildFileCreator
         }
     }
 
+    /**
+     * Returns a path which is equivalent to the given location relative to the
+     * specified base path.
+     */
+    public static String getRelativePath(String otherLocation, String basePath) {
+        IPath location= new Path(otherLocation);
+        IPath base= new Path(basePath);
+        if ((location.getDevice() != null && !location.getDevice().equalsIgnoreCase(base.getDevice())) || !location.isAbsolute()) {
+            return otherLocation;
+        }
+        int baseCount = base.segmentCount();
+        int count = base.matchingFirstSegments(location);
+        String temp = ""; //$NON-NLS-1$
+        for (int j = 0; j < baseCount - count; j++) {
+            temp += "../"; //$NON-NLS-1$
+        }
+        String relative= new Path(temp).append(location.removeFirstSegments(count)).toOSString();
+        if (relative.length() == 0) {
+            relative=  "."; //$NON-NLS-1$
+        }
+        
+        return relative;
+    }
+      
     /**
      * Create init target.
      * @param classDirs    classes directories to create
@@ -416,7 +446,7 @@ public class BuildFileCreator
      * @param variable2valueMap   property map to add variable/value
      * @param s                   String which may contain Eclipse variables, e.g. ${project_name}
      */
-    private static void addVariable(Map variable2valueMap, String s)
+    private void addVariable(Map variable2valueMap, String s)
     {
         if (s == null || s.equals("")) //$NON-NLS-1$
         {
@@ -436,6 +466,11 @@ public class BuildFileCreator
             {
                 // cannot resolve variable
                 value = variable;
+            }
+            File file = new File(value);
+            if (file.exists())
+            {
+               value = getRelativePath(file.getAbsolutePath(), projectRoot);
             }
             variable2valueMap.put(ExportUtil.removePrefixAndSuffix(variable, "${", "}"), value); //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -642,7 +677,7 @@ public class BuildFileCreator
      * @param variable2valueMap    adds Eclipse variables to this map,
      *                             if command line makes use of this feature
      */
-    private static void addElements(String cmdLineArgs, Document doc, Element element, String elementName,
+    private void addElements(String cmdLineArgs, Document xmlDoc, Element element, String elementName,
                                     String attributeName, Map variable2valueMap) throws CoreException
     {
         // need to add dummyexecutable to make use of class Commandline
@@ -653,7 +688,7 @@ public class BuildFileCreator
             {
                 String arg = args[i];
                 addVariable(variable2valueMap, arg);
-                Element itemElement = doc.createElement(elementName);
+                Element itemElement = xmlDoc.createElement(elementName);
                 itemElement.setAttribute(attributeName, arg);
                 element.appendChild(itemElement);            
             }

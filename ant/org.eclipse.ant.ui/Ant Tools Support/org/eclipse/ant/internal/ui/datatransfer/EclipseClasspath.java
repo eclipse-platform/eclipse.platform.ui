@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Richard Hoefter and others.
+ * Copyright (c) 2004, 2006 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95298
- *     IBM Corporation - nlsing and incorporating into Eclipse
+ *     IBM Corporation - nlsing and incorporating into Eclipse, bug 108276
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.datatransfer;
@@ -252,7 +252,12 @@ public class EclipseClasspath
                 String location = javaproject.getProject().getName() + ".location"; //$NON-NLS-1$
                 jarFileAbsolute.append(ExportUtil.replaceProjectRoot(file, javaproject.getProject(), ExportUtil.getProjectRoot(javaproject)));
                 jarFile.append(ExportUtil.replaceProjectRoot(file, javaproject.getProject(), "${" + location + "}")); //$NON-NLS-1$ //$NON-NLS-2$
-                variable2valueMap.put(location, ExportUtil.getProjectRoot(javaproject));
+                String projectRoot= ExportUtil.getProjectRoot(project);
+                if (newProjectRoot != null && !newProjectRoot.startsWith("${")) { //$NON-NLS-1$
+                    projectRoot= newProjectRoot;
+                }
+                String relativePath= BuildFileCreator.getRelativePath(ExportUtil.getProjectRoot(javaproject), projectRoot);
+                variable2valueMap.put(location, relativePath);
                 return true;
             }
         }
