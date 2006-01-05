@@ -47,6 +47,7 @@
 	                <xsd:element ref="description"/>
 		            <xsd:choice minOccurs="0" maxOccurs="1">
 		                <xsd:element ref="action"/>
+		                <xsd:element ref="command"/>
 		                <xsd:element ref="perform-when"/>
 		            </xsd:choice>
 	            </xsd:sequence>
@@ -68,6 +69,7 @@
         <xsd:complexType>
             <xsd:choice minOccurs="0" maxOccurs="1">
                 <xsd:element ref="action"/>
+                <xsd:element ref="command"/>
                 <xsd:element ref="perform-when"/>
             </xsd:choice>
             <xsd:attribute name="label" type="xsd:string" use="required"/>
@@ -80,7 +82,7 @@
         <xsd:complexType>
            <xsd:sequence>
                 <xsd:element ref="subitem" minOccurs="1" maxOccurs="unbounded"/>
-            </xsd:choice>
+            </xsd:sequence>
             <xsd:attribute name="condition" type="xsd:string" use="required"/>
         </xsd:complexType>
     </xsd:element>
@@ -89,7 +91,7 @@
         <xsd:complexType>
            <xsd:sequence>
                 <xsd:element ref="subitem" minOccurs="1" maxOccurs="1"/>
-            </xsd:choice>
+            </xsd:sequence>
             <xsd:attribute name="values" type="xsd:string" use="required"/>
         </xsd:complexType>
     </xsd:element>
@@ -112,11 +114,22 @@
         </xsd:complexType>
     </xsd:element>
     
+    <xsd:element name="command">
+        <xsd:complexType>
+            <xsd:attribute name="when" type="xsd:string" use="required"/>
+            <xsd:attribute name="confirm" type="xsd:boolean" use="optional" default="false"/>
+            <xsd:attribute name="serialization" type="xsd:string" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+    
     <xsd:element name="perform-when">
         <xsd:complexType>
            <xsd:sequence>
-                <xsd:element ref="action" minOccurs="1" maxOccurs="unbounded"/>
-            </xsd:choice>
+	           <xsd:choice minOccurs="1" maxOccurs="unbounded">
+	                <xsd:element ref="action" />
+	                <xsd:element ref="command"/>
+	            </xsd:choice>
+            </xsd:sequence>
             <xsd:attribute name="condition" type="xsd:string" use="required"/>
         </xsd:complexType>
     </xsd:element>

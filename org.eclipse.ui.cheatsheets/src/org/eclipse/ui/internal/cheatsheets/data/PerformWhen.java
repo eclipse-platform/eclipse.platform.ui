@@ -13,10 +13,10 @@ package org.eclipse.ui.internal.cheatsheets.data;
 import java.util.*;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 
-public class PerformWhen implements IActionItem {
+public class PerformWhen implements IExecutableItem  {
 	private String condition;
-	private ArrayList actions;
-	private Action selectedAction;
+	private ArrayList executables;
+	private AbstractExecutable selectedExecutable;
 
 	/**
 	 * Constructor for PerformWhen.
@@ -47,52 +47,53 @@ public class PerformWhen implements IActionItem {
 	}
 
 	/**
-	 * @return Returns the actions.
+	 * @return Returns the executables.
 	 */
-	public ArrayList getActions() {
-		return actions;
+	public ArrayList getExecutables() {
+		return executables;
 	}
 	
 	/**
-	 * @param action the Action to add.
+	 * @param executable the AbstractExecutable to add.
 	 */
-	public void addAction(Action action) {
-		if(actions == null) {
-			actions = new ArrayList();
+	public void addExecutable(AbstractExecutable executable) {
+		if(executables == null) {
+			executables = new ArrayList();
 		}
-		actions.add(action);
+		executables.add(executable);
 	}
 
 
 	/**
 	 * This method always returns <code>null</code>, it is only here aid in parsing.
-	 * @return Returns the actions.
+	 * @return Returns the executables.
 	 */
-	public Action getAction() {
+	public AbstractExecutable getExecutable() {
 		return null;
 	}
 
 	/**
-	 * Delegate to the addAction metod.
-	 * @param action the Action to add.
+	 * Delegate to the addAbstractExecutable metod.
+	 * @param executable the AbstractExecutable to add.
 	 */
-	public void setAction(Action action) {
-		addAction(action);
+	public void setExecutable(AbstractExecutable executable) {
+		addExecutable(executable);
 	}
 
-	public Action getSelectedAction() {
-		return selectedAction;
+	public AbstractExecutable getSelectedExecutable() {
+		return selectedExecutable;
 	}
 
-	public void setSelectedAction(CheatSheetManager csm) {
+	public void setSelectedExecutable(CheatSheetManager csm) {
 		String conditionValue = csm.getVariableData(condition);
 
-		for (Iterator iter = actions.iterator(); iter.hasNext();) {
-			Action action = (Action) iter.next();
-			if(action.getWhen() != null && action.getWhen().equals(conditionValue)) {
-				selectedAction = action;
+		for (Iterator iter = executables.iterator(); iter.hasNext();) {
+			AbstractExecutable executable = (AbstractExecutable) iter.next();
+			if(executable.getWhen() != null && executable.getWhen().equals(conditionValue)) {
+				selectedExecutable = executable;
 				break;
 			}
 		}
 	}
+
 }

@@ -10,25 +10,22 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.data;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.cheatsheets.ICheatSheetManager;
+import org.eclipse.ui.internal.cheatsheets.ActionRunner;
+import org.eclipse.ui.internal.cheatsheets.Messages;
+import org.w3c.dom.Node;
+
 /**
- * <p>Interface that represents a step with no sub steps in the cheat sheets view.
- * An IItem can be retrieved from the <code>ICheatSheetManager</code> by calling getItem with the 
- * id of the step in the cheat sheet.  You may use the methods from this interface 
- * to change and manipulate the buttons displayed for this step in the cheat sheet,
- * as well as change/set the action class and plugin id for the action that will be run by the
- * "click to perform" button.  You may also manipulate or add string parameters that will
- * be passed to the action for this step in the cheat sheet.  To convert this step to allow the addition of sub steps
- * to it in the cheat sheet, see <code>IItemWithSubItems</code> and <code>ICheatSheetManager</code>.</p>
- * 
- *<p> Note:  You may only use these methods to change the step if it has been marked as
- * "dynamic" in the cheat sheet content file.</p>
+ * Class that represents an <ACTION> element in a cheatsheet. This class stores all
+ * of the attributes associated with an Action and is capable of executing that Action.
  */
-public class Action {
+public class Action extends AbstractExecutable {
 	private String actionClass;
-	private String[] params;
 	private String pluginID;
-	private boolean confirm;
-	private String when;
+	private boolean hasClassAttr = false;
+	private boolean hasPluginId = false;
 
 	public Action() {
 		super();
@@ -44,36 +41,11 @@ public class Action {
 	}
 
 	/**
-	 * This method returns an array of parameters specified to be passed to the action class
-	 * when it is run in the cheat sheet.
-	 * @return an array of string parameters that are passed to the action class when it is run	 
-	 */
-	public String[] getParams() {
-		return params;
-	}
-
-	/**
 	 * This method returns the string id of the plugin that contains the action class to be run.
 	 * @return the id of the plugin that has the action class
 	 */
 	public String getPluginID() {
 		return pluginID;
-	}
-
-	/**
-	 * This method returns the expression to be used when determining if this action should used. 
-	 * @return the when expression to be used for this action
-	 */
-	public String getWhen() {
-		return when;
-	}
-
-	/**
-	 * Returns whether this action needs to be manually confirmed by the user.
-	 * @return <code>true</code> when the action needs to be confirmed and <code>false</code> otherwise.
-	 */
-	public boolean isConfirm() {
-		return confirm;
 	}
 
 	/**
@@ -86,15 +58,6 @@ public class Action {
 	}
 
 	/**
-	 * This method allows you to set the string parameters to be passed to the action class on running it 
-	 * in the cheat sheet.
-	 * @param params an array of strings that is passed to the action class on running the action
-	 */
-	public void setParams(String[] params) {
-		this.params = params;
-	}
-
-	/**
 	 * This method allows to set the plugin id of the action to be run by this item in the cheat sheet.
 	 * @param pluginId the id of the plugin containing the action class specified for this item
 	 */
@@ -102,21 +65,40 @@ public class Action {
 		this.pluginID = pluginId;
 	}
 
-	/**
-	 * Set whether this action needs to be manually confirmed by the user.
-	 * @param value The new value of the confirm state.
-	 */
-	public void setConfirm(boolean value) {
-		this.confirm = value;
+	public boolean handleAttribute(Node attribute) {
+		if (attribute.getNodeName().equals(IParserTags.PLUGINID)) {
+			hasPluginId = true;
+			setPluginID(attribute.getNodeValue());
+			return true;
+		} else if (attribute.getNodeName().equals(IParserTags.CLASS)) {
+			hasClassAttr = true;
+			setClass(attribute.getNodeValue());
+			return true;
+		}
+		return false;
 	}
 
-	/**
-	 * Indicates this action is to be used if and only if the value of the condition attribute
-	 * of the containing <perform-when> element matches this string value. This attribute is
-	 * ignored if the <action> element is not a child of  a <perform-when> element.
-	 * @param when The expression to use when determine if this action should be used.
-	 */
-	public void setWhen(String when) {
-		this.when = when;
+	public String checkAttributes(Node node) {
+		if(!hasClassAttr) {
+			return NLS.bind(Messages.ERROR_PARSING_NO_CLASS, (new Object[] {node.getNodeName()}));
+		}
+		if(!hasPluginId) {
+			return NLS.bind(Messages.ERROR_PARSING_NO_PLUGINID, (new Object[] {node.getNodeName()}));
+		}
+		return null;
 	}
+
+	public boolean isCheatSheetManagerUsed() {
+		return true;
+	}
+
+
+	public IStatus execute(ICheatSheetManager csm) {
+		return new ActionRunner().runAction(this, csm);
+	}
+
+	public boolean hasParams() {
+		return true;
+	}
+
 }

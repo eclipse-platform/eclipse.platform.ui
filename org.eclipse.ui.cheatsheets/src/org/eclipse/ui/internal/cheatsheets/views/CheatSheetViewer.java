@@ -863,34 +863,30 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		} catch (Exception e) {
 		}
 	}
-
-	/*package*/ void runPerformAction(ImageHyperlink link) {
-		CoreItem coreItem = null;
+	
+	/*package*/ void runPerformExecutable(ImageHyperlink link) {
 		link.setCursor(busyCursor);
 		currentItem = (ViewItem) link.getData();
-		coreItem = (CoreItem) currentItem;
+		CoreItem coreItem = (CoreItem) currentItem;
 
-		try {
-			if (coreItem != null) {
-				if (coreItem.runAction(getManager()) == ViewItem.VIEWITEM_ADVANCE && !coreItem.hasConfirm()) {
-					/* LP-item event */
-					// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_PERFORMED, currentItem);
-					coreItem.setRestartImage();
-					//set that item as complete.
-					advanceItem(link, true);
-					saveCurrentSheet();
-				}
+		if (coreItem != null) {
+			IStatus status = coreItem.runExecutable(getManager());
+			if ( status.isOK() && !coreItem.hasConfirm()) {					
+				coreItem.setRestartImage();
+				//set that item as complete.
+				advanceItem(link, true);
+				saveCurrentSheet();
 			}
-		} catch (RuntimeException e) {
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, Messages.ERROR_RUNNING_ACTION, e);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);
-		} finally {
-			link.setCursor(null);
+			if ( status.getSeverity() == IStatus.ERROR) {
+				CheatSheetPlugin.getPlugin().getLog().log(status);
+			    org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);								
+			}
 		}
+
+		link.setCursor(null);
 	}
 
-	/*package*/ void runSubItemPerformAction(ImageHyperlink link, int subItemIndex) {
+	/*package*/ void runSubItemPerformExecutable(ImageHyperlink link, int subItemIndex) {
 		CoreItem coreItem = null;
 		link.setCursor(busyCursor);
 		currentItem = (ViewItem) link.getData();
@@ -898,7 +894,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 		try {
 			if (coreItem != null) {
-				if (coreItem.runSubItemAction(getManager(), subItemIndex) == ViewItem.VIEWITEM_ADVANCE && !coreItem.hasConfirm(subItemIndex)) {
+				if (coreItem.runSubItemExecutable(getManager(), subItemIndex) == ViewItem.VIEWITEM_ADVANCE && !coreItem.hasConfirm(subItemIndex)) {
 					ArrayList l = coreItem.getListOfSubItemCompositeHolders();
 					SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(subItemIndex);
 					s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));

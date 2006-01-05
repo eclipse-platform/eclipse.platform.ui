@@ -31,8 +31,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
 import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
 import org.eclipse.ui.internal.cheatsheets.Messages;
+import org.eclipse.ui.internal.cheatsheets.data.AbstractExecutable;
 import org.eclipse.ui.internal.cheatsheets.data.Action;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;
+import org.eclipse.ui.internal.cheatsheets.data.CheatSheetCommand;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParser;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
 import org.eclipse.ui.internal.cheatsheets.data.PerformWhen;
@@ -243,7 +245,7 @@ public class URLTest extends TestCase {
 			Assert.assertEquals("Item dynamic flags didn't match", a.isDynamic(), b.isDynamic());
 			Assert.assertEquals("Item skip flags didn't match", a.isSkip(), b.isSkip());
 			
-			verifyEquals(msg, a.getAction(), b.getAction());
+			verifyEquals(msg, a.getExecutable(), b.getExecutable());
 			
 			List la = a.getItemExtensions();
 			List lb = b.getItemExtensions();
@@ -277,14 +279,38 @@ public class URLTest extends TestCase {
 		}
 	}
 	
-	/*
-	 * Verifies that two actions are identical.
-	 */
-	private static void verifyEquals(String msg, Action a, Action b) {
-		// to make it more readable
+	private static void verifyEquals(String msg, AbstractExecutable a, AbstractExecutable b) {
+        // to make it more readable
 		if (!msg.endsWith(": ")) {
 			msg = msg + ": ";
 		}
+		if (a == b) {
+			return;
+		}
+		if (a == null | b == null) {
+			Assert.fail(msg + "One of the executables was null while its peer in the other cheat sheet was not");
+		} else if (a instanceof Action && b instanceof Action) {
+		    verifyActionsEqual(msg, (Action)a, (Action)b);
+		} else if(a instanceof CheatSheetCommand && b instanceof CheatSheetCommand) {
+			verifyCommandsEqual(msg, (CheatSheetCommand)a, (CheatSheetCommand)b);
+		} else {
+			Assert.fail(msg + "executables are of different classes");
+		}
+	}
+	
+	/*
+	 * Verifies that two commands are equal
+	 */
+	private static void verifyCommandsEqual(String msg, CheatSheetCommand command, CheatSheetCommand command2) {
+		// TODO write compare routine
+		Assert.fail(msg + "cannot compare commands");
+	}
+
+	/*
+	 * Verifies that two actions are identical.
+	 */
+	private static void verifyActionsEqual(String msg, Action a, Action b) {
+		
 		
 		if (a == b) {
 			return;
@@ -354,11 +380,11 @@ public class URLTest extends TestCase {
 			// both non-null
 			Assert.assertEquals("PerformWhen conditions did not match", a.getCondition(), b.getCondition());
 			
-			verifyEquals(msg, a.getAction(), b.getAction());
-			verifyEquals(msg, a.getSelectedAction(), b.getSelectedAction());
+			verifyEquals(msg, a.getExecutable(), b.getExecutable());
+			verifyEquals(msg, a.getSelectedExecutable(), b.getSelectedExecutable());
 			
-			List la = a.getActions();
-			List lb = b.getActions();
+			List la = a.getExecutables();
+			List lb = b.getExecutables();
 			
 			// if one is null, make sure both are null
 			if (la == null || lb == null) {
@@ -369,7 +395,7 @@ public class URLTest extends TestCase {
 			Iterator ia = la.iterator();
 			Iterator ib = lb.iterator();
 			while (ia.hasNext()) {
-				verifyEquals(msg, (Action)ia.next(), (Action)ib.next());
+				verifyEquals(msg, (AbstractExecutable)ia.next(), (AbstractExecutable)ib.next());
 			}
 		}
 	}

@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.data;
 
-public class SubItem extends AbstractSubItem implements IActionItem, IPerformWhenItem {
+public class SubItem extends AbstractSubItem implements IExecutableItem, IPerformWhenItem {
 	
 	private String label;
 	private boolean skip;
 	private String when;
 
-	private Action action;
+	private AbstractExecutable executable;
 	private PerformWhen performWhen;
 
 	public SubItem() {
@@ -74,15 +74,15 @@ public class SubItem extends AbstractSubItem implements IActionItem, IPerformWhe
 	/**
 	 * @return Returns the action.
 	 */
-	public Action getAction() {
-		return action;
+	public AbstractExecutable getExecutable() {
+		return executable;
 	}
 	
 	/**
-	 * @param action The action to set.
+	 * @param Executable The Executable to set.
 	 */
-	public void setAction(Action action) {
-		this.action = action;
+	public void setExecutable(AbstractExecutable executable) {
+		this.executable = executable;
 	}
 	
 	/**

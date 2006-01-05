@@ -171,35 +171,24 @@ public class CheatSheetParser {
 		return null;
 	}
 
-	private void handleAction(IActionItem item, Node actionNode) throws CheatSheetParserException {
+	private void handleExecutable(IExecutableItem item, Node executableNode, AbstractExecutable executable) throws CheatSheetParserException {
 		Assert.isNotNull(item);
-		Assert.isNotNull(actionNode);
-		Assert.isTrue(actionNode.getNodeName().equals(IParserTags.ACTION));
+		Assert.isNotNull(executableNode);
 
-		Action action = new Action();
-	
 		String[] params = null;
 
-		boolean classAttr = false;
-		boolean pluginId = false;
-
-		NamedNodeMap attributes = actionNode.getAttributes();
+		NamedNodeMap attributes = executableNode.getAttributes();
 		if (attributes != null) {
 			for (int x = 0; x < attributes.getLength(); x++) {
 				Node attribute = attributes.item(x);
 				String attributeName = attribute.getNodeName();
 				if (attribute == null || attributeName == null)
-					continue;
-
-				if (attributeName.equals(IParserTags.PLUGINID)) {
-					pluginId = true;
-					action.setPluginID(attribute.getNodeValue());
-				} else if (attributeName.equals(IParserTags.CLASS)) {
-					classAttr = true;
-					action.setClass(attribute.getNodeValue());
-				} else if (attributeName.equals(IParserTags.CONFIRM)) {
-					action.setConfirm(attribute.getNodeValue().equals(TRUE_STRING));
-				} else if (attributeName.startsWith(IParserTags.PARAM)) {
+					continue;			
+				if (attributeName.equals(IParserTags.CONFIRM)) {
+					executable.setConfirm(attribute.getNodeValue().equals(TRUE_STRING));} 
+				else if (attributeName.equals(IParserTags.WHEN)) {
+					executable.setWhen(attribute.getNodeValue());
+				} else if (executable.hasParams() && attributeName.startsWith(IParserTags.PARAM)) {
 					try {
 						if(params == null) {
 							params = new String[9];
@@ -218,28 +207,18 @@ public class CheatSheetParser {
 						logMessage(IStatus.ERROR, false, message, null, e);
 						throw new CheatSheetParserException(message);
 					}
-				} else if (attributeName.equals(IParserTags.WHEN)) {
-					action.setWhen(attribute.getNodeValue());
-				} else {
-					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ATTRIBUTE, (new Object[] {attributeName, actionNode.getNodeName()}));
+				} else if (!executable.handleAttribute(attribute)) {
+					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ATTRIBUTE, (new Object[] {attributeName, executableNode.getNodeName()}));
 					logMessage(IStatus.WARNING, false, message, null, null);
 				}
 			}
+			String errorMessage = executable.checkAttributes(executableNode);
+			if (errorMessage != null) {
+				throw new CheatSheetParserException(errorMessage);
+			}
 		}
-
-		if(!classAttr) {
-			String message = NLS.bind(Messages.ERROR_PARSING_NO_CLASS, (new Object[] {actionNode.getNodeName()}));
-			throw new CheatSheetParserException(message);
-		}
-		if(!pluginId) {
-			String message = NLS.bind(Messages.ERROR_PARSING_NO_PLUGINID, (new Object[] {actionNode.getNodeName()}));
-			throw new CheatSheetParserException(message);
-		}
-
-		if(params != null) {
-			action.setParams(params);
-		}
-		item.setAction(action);
+		executable.setParams(params);
+		item.setExecutable(executable);
 	}
 
 	private void handleCheatSheet(CheatSheet cheatSheet, Node cheatSheetNode) throws CheatSheetParserException {
@@ -357,6 +336,9 @@ public class CheatSheetParser {
 						text.append(IParserTags.BOLD_END_TAG);
 					} else if(node.getNodeName().equals(IParserTags.BREAK)) {
 						containsMarkup = true;
+								
+										
+							
 						text.append(IParserTags.BREAK_TAG);
 					} else {
 						Node parentNode = startNode;
@@ -452,7 +434,9 @@ public class CheatSheetParser {
 			Node node = nodes.item(i);
 
 			if(node.getNodeName().equals(IParserTags.ACTION)) {
-				handleAction(item, node);
+				handleExecutable(item, node, new Action());
+			} else if(node.getNodeName().equals(IParserTags.COMMAND)) {
+				handleExecutable(item, node, new CheatSheetCommand());
 			} else if(node.getNodeName().equals(IParserTags.DESCRIPTION)) {
 				description = true;
 				handleDescription(item, node);
@@ -592,16 +576,18 @@ public class CheatSheetParser {
 			throw new CheatSheetParserException(message);
 		}
 
-		boolean action = false;
+		boolean exeutable = false;
 
 		// Handle nodes
 		NodeList nodes = performWhenNode.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
-
 			if(node.getNodeName().equals(IParserTags.ACTION)) {
-				action = true;
-				handleAction(performWhen, node);
+				exeutable = true;
+				handleExecutable(performWhen, node, new Action());
+			} else if(node.getNodeName().equals(IParserTags.COMMAND)) {
+				exeutable = true;
+				handleExecutable(performWhen, node, new CheatSheetCommand());
 			} else {
 				if(node.getNodeType() != Node.TEXT_NODE && node.getNodeType() != Node.COMMENT_NODE ) {
 					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ELEMENT, (new Object[] {node.getNodeName(), performWhenNode .getNodeName()}));
@@ -610,7 +596,7 @@ public class CheatSheetParser {
 			}
 		}
 
-		if(!action) {
+		if(!exeutable) {
 			String message = NLS.bind(Messages.ERROR_PARSING_NO_ACTION, (new Object[] {performWhenNode.getNodeName()}));
 			throw new CheatSheetParserException(message);
 		}
@@ -691,7 +677,9 @@ public class CheatSheetParser {
 			Node node = nodes.item(i);
 
 			if(node.getNodeName().equals(IParserTags.ACTION)) {
-				handleAction(subItem, node);
+				handleExecutable(subItem, node, new Action());
+			} else if(node.getNodeName().equals(IParserTags.COMMAND)) {
+				handleExecutable(subItem, node, new CheatSheetCommand());
 			} else if(node.getNodeName().equals(IParserTags.PERFORMWHEN)) {
 				handlePerformWhen(subItem, node);
 			} else {

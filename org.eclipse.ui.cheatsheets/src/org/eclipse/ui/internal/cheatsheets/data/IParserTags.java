@@ -120,6 +120,9 @@ public interface IParserTags {
 	 * >
 	 */
 	public static final String PERFORMWHEN = "perform-when"; //$NON-NLS-1$
+	
+	public static final String COMMAND = "command";
+	public static final String SERIALIZATION = "serialization";
 
 	// Constants for re-escaping XML characters
 	public static final String LESS_THAN = "&lt;"; //$NON-NLS-1$

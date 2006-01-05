@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
+import org.eclipse.ui.internal.cheatsheets.data.AbstractExecutable;
 import org.eclipse.ui.internal.cheatsheets.data.AbstractSubItem;
 import org.eclipse.ui.internal.cheatsheets.data.Action;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;
@@ -62,14 +63,14 @@ public class CheatSheetModelSerializer {
 			buf.append(indent + "      description=\"" + item.getDescription() + "\"\n");
 			buf.append(indent + "      Href=\"" + item.getHref() + "\"\n");
 			buf.append(indent + "      contextId=\"" + item.getContextId() + "\">\n");
-			buf.append(serialize(item.getAction(), indent + "   "));
+			buf.append(serialize((Action)item.getExecutable(), indent + "   "));
 			buf.append(serialize(item.getItemExtensions(), indent + "   "));
 			buf.append(serialize(item.getPerformWhen(), indent + "   "));
 			buf.append(serialize(item.getSubItems(), indent + "   "));
 			buf.append(indent + "</item>\n");
 		}
 		return buf.toString();
-	}
+	}	
 	
 	/*
 	 * Serializes the given Action with the specified indentation.
@@ -129,7 +130,7 @@ public class CheatSheetModelSerializer {
 		else {
 			buf.append(indent + "<performWhen\n");
 			buf.append(indent + "      condition=\"" + performWhen.getCondition() + "\">\n");
-			buf.append(serialize(performWhen.getActions(), indent + "   "));
+			buf.append(serialize(performWhen.getExecutables(), indent + "   "));
 			buf.append(indent + "</performWhen>\n");
 		}
 		return buf.toString();
@@ -164,7 +165,7 @@ public class CheatSheetModelSerializer {
 				buf.append(indent + "      label=\"" + s.getLabel() + "\"\n");
 				buf.append(indent + "      when=\"" + s.getWhen() + "\"\n");
 				buf.append(indent + "      isSkip=\"" + s.isSkip() + "\">\n");
-				buf.append(serialize(s.getAction(), indent + "   "));
+				buf.append(serialize((Action)s.getExecutable(), indent + "   "));
 				buf.append(serialize(s.getPerformWhen(), indent + "   "));
 				buf.append(indent + "</subItem>\n");
 			}

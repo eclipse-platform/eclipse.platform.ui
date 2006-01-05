@@ -83,6 +83,10 @@ public final class Messages extends NLS {
 	public static String ERROR_PARSING_NO_CONDITION;
 	public static String ERROR_PARSING_NO_VALUES;
 	public static String ERROR_PARSING_NO_LABEL;
+	public static String ERROR_PARSING_NO_SERIALIZATION;
+	public static String ERROR_COMMAND_ID_NOT_FOUND;
+	public static String ERROR_COMMAND_ERROR_STATUS;
+	public static String ERROR_COMMAND_SERVICE_UNAVAILABLE;
 	public static String WARNING_PARSING_UNKNOWN_ATTRIBUTE;
 	public static String WARNING_PARSING_UNKNOWN_ELEMENT;
 	public static String WARNING_PARSING_DESCRIPTION_UNKNOWN_ELEMENT;

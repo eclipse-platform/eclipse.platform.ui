@@ -10,23 +10,33 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.util.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.cheatsheets.ICheatSheetAction;
-import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.internal.cheatsheets.*;
-import org.eclipse.ui.internal.cheatsheets.data.*;
+import org.eclipse.ui.cheatsheets.ICheatSheetManager;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
+import org.eclipse.ui.internal.cheatsheets.Messages;
+import org.eclipse.ui.internal.cheatsheets.data.AbstractExecutable;
+import org.eclipse.ui.internal.cheatsheets.data.AbstractSubItem;
+import org.eclipse.ui.internal.cheatsheets.data.ConditionalSubItem;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
-import org.osgi.framework.Bundle;
+import org.eclipse.ui.internal.cheatsheets.data.RepeatedSubItem;
+import org.eclipse.ui.internal.cheatsheets.data.SubItem;
 
 public class CoreItem extends ViewItem {
 	protected boolean buttonsHandled = false;
@@ -62,20 +72,20 @@ public class CoreItem extends ViewItem {
 		spacer.setLayoutData(spacerData);
 	}
 
-	private void createButtons(Action action) {
+	private void createButtons(AbstractExecutable executable) {
 		/*
 		 * When the cheat sheet is displayed in a dialog's tray, hide
-		 * the action that was just invoked to open the dialog.
+		 * the executable that was just invoked to open the dialog.
 		 */
 		boolean inDialog = isInDialogMode();
 		boolean isDialogAction = getItem().isDialog();
 		boolean hideAction = isDialogAction && inDialog;
-		if (action != null && !hideAction) {
+		if (executable != null && !hideAction) {
 			final ImageHyperlink startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, Messages.PERFORM_TASK_TOOLTIP);
 			page.getToolkit().adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
-					viewer.runPerformAction(startButton);
+					viewer.runPerformExecutable(startButton);
 				}
 			});
 		}
@@ -88,7 +98,7 @@ public class CoreItem extends ViewItem {
 				}
 			});
 		}
-		if (action == null || action.isConfirm()) {
+		if (executable == null || executable.isConfirm()) {
 			final ImageHyperlink completeButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
 			page.getToolkit().adapt(completeButton, true, true);
 			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
@@ -135,24 +145,24 @@ public class CoreItem extends ViewItem {
 		label.setBackground(itemColor);
 		added++;
 
-		Action subAction = null;
+		AbstractExecutable subExecutable = null;
 		if(sub.getPerformWhen() != null) {
-			sub.getPerformWhen().setSelectedAction(viewer.getManager());
-			subAction = sub.getPerformWhen().getSelectedAction();
+			sub.getPerformWhen().setSelectedExecutable(viewer.getManager());
+			subExecutable = sub.getPerformWhen().getSelectedExecutable();
 		} else {
-			subAction = sub.getAction();
+			subExecutable = sub.getExecutable();
 		}
 		
 		final int fi = index;
 		ImageHyperlink startButton = null;
-		if (subAction != null) {
+		if (subExecutable != null) {
 			added++;
 			startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, Messages.PERFORM_TASK_TOOLTIP);
 			final ImageHyperlink finalStartButton = startButton;
 			page.getToolkit().adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
-					viewer.runSubItemPerformAction(finalStartButton, fi);
+					viewer.runSubItemPerformExecutable(finalStartButton, fi);
 				}
 			});
 		}
@@ -166,7 +176,7 @@ public class CoreItem extends ViewItem {
 				}
 			});
 		}
-		if (subAction == null || subAction.isConfirm()) {
+		if (subExecutable == null || subExecutable.isConfirm()) {
 			added++;
 			final ImageHyperlink completeButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
 			page.getToolkit().adapt(completeButton, true, true);
@@ -186,28 +196,28 @@ public class CoreItem extends ViewItem {
 		listOfSubItemCompositeHolders.add(new SubItemCompositeHolder(checkDoneLabel, startButton, thisValue, sub));
 	}
 
-	private Action getAction() {
-		Action action = item.getAction();
-		if(action == null) {
+	private AbstractExecutable getExecutable() {
+		AbstractExecutable executable = item.getExecutable();
+		if(executable == null) {
 			if(item.getPerformWhen() != null){
-				action = item.getPerformWhen().getSelectedAction();
+				executable = item.getPerformWhen().getSelectedExecutable();
 			}
 		}
-		return action;
+		return executable;
 	}
 
-	private Action getAction(int index) {
+	private AbstractExecutable getExecutable(int index) {
 		if (item.getSubItems() != null && item.getSubItems().size()>0 && listOfSubItemCompositeHolders != null) {
 			SubItemCompositeHolder s = (SubItemCompositeHolder) listOfSubItemCompositeHolders.get(index);
 			if(s != null) {
 				SubItem subItem = s.getSubItem();
-				Action action = subItem.getAction();
-				if(action == null) {
+				AbstractExecutable executable = subItem.getExecutable();
+				if(executable == null) {
 					if(subItem.getPerformWhen() != null){
-						action = subItem.getPerformWhen().getSelectedAction();
+						executable = subItem.getPerformWhen().getSelectedExecutable();
 					}
 				}
-				return action;
+				return executable;
 			}
 		}
 		return null;
@@ -257,7 +267,7 @@ public class CoreItem extends ViewItem {
 			return;
 
 		createButtonComposite();
-		createButtons(item.getAction());
+		createButtons(item.getExecutable());
 		buttonsHandled = true;
 	}
 
@@ -366,10 +376,10 @@ public class CoreItem extends ViewItem {
 			createButtonComposite();
 		}
 
-		item.getPerformWhen().setSelectedAction(viewer.getManager());
-		Action performAction = item.getPerformWhen().getSelectedAction();
+		item.getPerformWhen().setSelectedExecutable(viewer.getManager());
+		AbstractExecutable performExecutable = item.getPerformWhen().getSelectedExecutable();
 
-		createButtons(performAction);
+		createButtons(performExecutable);
 		
 		if(refreshRequired) {
 			buttonComposite.layout();
@@ -401,9 +411,9 @@ public class CoreItem extends ViewItem {
 	
 	/*package*/
 	boolean hasConfirm() {
-		Action action = getAction();
+		AbstractExecutable executable = getExecutable();
 
-		if (action == null || action.isConfirm()) {
+		if (executable == null || executable.isConfirm()) {
 			return true;
 		}
 		return false;
@@ -411,9 +421,9 @@ public class CoreItem extends ViewItem {
 
 	/*package*/
 	boolean hasConfirm(int index) {
-		Action action = getAction(index);
+		AbstractExecutable executable = getExecutable(index);
 
-		if (action == null || action.isConfirm()) {
+		if (executable == null || executable.isConfirm()) {
 			return true;
 		}
 		return false;
@@ -438,112 +448,40 @@ public class CoreItem extends ViewItem {
 
 		return buffer.toString();
 	}
+	
 	/*package*/
-	byte runAction(CheatSheetManager csm) {
-		Action action = getAction();
-
-		if(action != null) {
-			return runAction(action.getPluginID(), action.getActionClass(), action.getParams(), csm);
-		}
-
-		return VIEWITEM_ADVANCE;
+	IStatus runExecutable(ICheatSheetManager csm) {
+		return runExecutable(this.getItem().getExecutable(), csm);	
 	}
-
-	/**
-	 * Run an action
-	 */
-	/*package*/
-	byte runAction(String pluginId, String className, String[] params, CheatSheetManager csm) {
-		Bundle bundle = Platform.getBundle(pluginId);
-		if (bundle == null) {
-			String message = NLS.bind(Messages.ERROR_FINDING_PLUGIN_FOR_ACTION, (new Object[] {pluginId}));
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, null);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, Messages.ERROR_RUNNING_ACTION, status);
-			return VIEWITEM_DONOT_ADVANCE;
-		}
-		Class actionClass;
-		IAction action;
-		try {
-			actionClass = bundle.loadClass(className);
-		} catch (Exception e) {
-			String message = NLS.bind(Messages.ERROR_LOADING_CLASS_FOR_ACTION, (new Object[] {className}));
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, Messages.ERROR_RUNNING_ACTION, status);
-			return VIEWITEM_DONOT_ADVANCE;
-		}
-		try {
-			action = (IAction) actionClass.newInstance();
-		} catch (Exception e) {
-			String message = NLS.bind(Messages.ERROR_CREATING_CLASS_FOR_ACTION, (new Object[] {className}));
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, Messages.ERROR_RUNNING_ACTION, status);
-			return VIEWITEM_DONOT_ADVANCE;
-		}
-
-		final boolean[] listenerFired = { false };
-		final boolean[] listenerResult = { false };
-		IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if(event.getProperty().equals(IAction.RESULT) && event.getNewValue() instanceof Boolean) {
-					listenerFired[0] = true;
-					listenerResult[0] = ((Boolean)event.getNewValue()).booleanValue();
-				}
-			}
-		};
-
-		// Add PropertyChangeListener to the action, so we can detemine if a action was succesfull
-		action.addPropertyChangeListener(propertyChangeListener);
-
-		// Run the action for this ViewItem
-		if (action instanceof ICheatSheetAction) {
-			// Prepare parameters
-			String[] clonedParams = null;
-			if(params != null && params.length > 0) {
-				clonedParams = new String[params.length];
-				System.arraycopy(params, 0, clonedParams, 0, params.length);
-				for (int i = 0; i < clonedParams.length; i++) {
-					String param = clonedParams[i];
-					if(param != null && param.startsWith("${") && param.endsWith("}")) { //$NON-NLS-1$ //$NON-NLS-2$
-						param = param.substring(2,param.length()-1);
-						String value = csm.getData(param);
-						clonedParams[i] = value == null ? ICheatSheetResource.EMPTY_STRING : value;
-					}
-				}
-			}			
-			((ICheatSheetAction) action).run(clonedParams, csm);
-		} else
-			action.run();
-
-		// Remove the PropertyChangeListener
-		action.removePropertyChangeListener(propertyChangeListener);
-
-		if (listenerFired[0]) {
-			if (listenerResult[0]) {
-				return VIEWITEM_ADVANCE;
-			}
-			return VIEWITEM_DONOT_ADVANCE;
-		}
-
-		return VIEWITEM_ADVANCE;
+	
+	IStatus runExecutable(AbstractExecutable executable, ICheatSheetManager csm) {
+		if(executable != null) {
+			return executable.execute(csm);
+		} 
+		return Status.OK_STATUS;
 	}
 
 	/*package*/
-	byte runSubItemAction(CheatSheetManager csm, int index) {
+	byte runSubItemExecutable(CheatSheetManager csm, int index) {
 		if (item.getSubItems() != null && item.getSubItems().size()>0 && listOfSubItemCompositeHolders != null) {
 			SubItemCompositeHolder s = (SubItemCompositeHolder) listOfSubItemCompositeHolders.get(index);
 			if(s != null) {
-				Action action = getAction(index);
+				AbstractExecutable executable = getExecutable(index);
 
-				if(action != null) {
+				if(executable != null) {
 					try {
 						if(s.getThisValue() != null) {
 							csm.setData("this", s.getThisValue()); //$NON-NLS-1$
 						}
-						String[] params = action.getParams();
-						return runAction(action.getPluginID(), action.getActionClass(), params, csm);
+						IStatus status = runExecutable(executable, csm);
+						if ( status.isOK()) {					
+							return VIEWITEM_ADVANCE;
+						}
+						if ( status.getSeverity() == IStatus.ERROR) {
+							CheatSheetPlugin.getPlugin().getLog().log(status);
+						    org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);								
+						}
+						return VIEWITEM_DONOT_ADVANCE;
 					} finally {
 						if(s.getThisValue() != null) {
 							csm.setData("this", null); //$NON-NLS-1$

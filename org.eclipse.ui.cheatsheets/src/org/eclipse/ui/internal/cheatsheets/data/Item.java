@@ -12,13 +12,13 @@ package org.eclipse.ui.internal.cheatsheets.data;
 
 import java.util.*;
 
-public class Item extends Intro implements IActionItem, IPerformWhenItem, ISubItemItem {
+public class Item extends Intro implements IExecutableItem, IPerformWhenItem, ISubItemItem {
 	private String title;
 	private boolean skip;
 	private boolean dialog;
 	private ArrayList itemExtensions;
 	
-	private Action action;
+	private AbstractExecutable executable;
 	private PerformWhen performWhen;
 	
 	private ArrayList subItems;
@@ -114,20 +114,6 @@ public class Item extends Intro implements IActionItem, IPerformWhenItem, ISubIt
 	public ArrayList getItemExtensions(){
 		return itemExtensions;
 	}
-
-	/**
-	 * @return Returns the action.
-	 */
-	public Action getAction() {
-		return action;
-	}
-	
-	/**
-	 * @param action The action to set.
-	 */
-	public void setAction(Action action) {
-		this.action = action;
-	}
 	
 	/**
 	 * @return Returns the performWhen.
@@ -173,5 +159,13 @@ public class Item extends Intro implements IActionItem, IPerformWhenItem, ISubIt
 		}
 
 		return false;
+	}
+
+	public AbstractExecutable getExecutable() {
+		return executable;
+	}
+
+	public void setExecutable(AbstractExecutable executable) {
+		this.executable = executable;	
 	}
 }
