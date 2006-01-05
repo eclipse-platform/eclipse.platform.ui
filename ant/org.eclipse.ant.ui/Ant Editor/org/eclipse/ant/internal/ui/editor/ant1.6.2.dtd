@@ -3386,7 +3386,7 @@
           showduration CDATA #IMPLIED
           useproxy %boolean; #IMPLIED>
 
-<!ELEMENT antcall (reference | propertyset | param)*>
+<!ELEMENT antcall (reference | propertyset | param | target)*>
 <!ATTLIST antcall
           id ID #IMPLIED
           taskname CDATA #IMPLIED

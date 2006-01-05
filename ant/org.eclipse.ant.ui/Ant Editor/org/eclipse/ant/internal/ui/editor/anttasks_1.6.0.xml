@@ -115,13 +115,22 @@
       <elements>
         <element name="reference" required="NOTDEFINED">
           <description>
-          Reference element identifying a data type to carry
- over to the invoked target.
+          Reference element identifying a data type to carry over to the invoked target.
         </description>
         </element>
         <element name="param" required="NOTDEFINED">
           <description>
           Property to pass to the invoked target.
+        </description>
+        </element>
+		<element name="propertyset" required="NOTDEFINED">
+          <description>
+          You can specify a set of properties to be copied into the new project with propertysets.
+        </description>
+        </element>
+		<element name="target" required="NOTDEFINED">
+          <description>
+          You can specify multiple targets using nested &amp;lt;target&amp;gt; elements instead of using the target attribute. These will be executed as if Ant had been invoked with a single target whose dependencies are the targets so specified, in the order specified.
         </description>
         </element>
       </elements> 
