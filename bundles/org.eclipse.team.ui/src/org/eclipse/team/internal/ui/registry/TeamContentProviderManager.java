@@ -10,13 +10,18 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.registry;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.navigator.NavigatorActivationService;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 
 /**
  * Manages the team content provider extension point
@@ -28,16 +33,6 @@ public class TeamContentProviderManager {
 	private static TeamContentProviderManager instance;
 	
 	Map descriptors;
-
-	public static void enableTeamContentProvider(String viewerId) {
-		NavigatorContentDescriptor[] descriptors = NavigatorContentDescriptorRegistry.getInstance().getAllContentDescriptors();
-		for (int i = 0; i < descriptors.length; i++) {
-			NavigatorContentDescriptor descriptor = descriptors[i];
-			boolean enable = TeamContentProviderManager.getInstance().isTeamContentProvider(descriptor.getId());
-			NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, descriptor.getId(), enable);
-		}
-		NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, "org.eclipse.team.ui.navigatorContent", true); //$NON-NLS-1$
-	}
 	
 	public static TeamContentProviderManager getInstance() {
 		if (instance == null)
