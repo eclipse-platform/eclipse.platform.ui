@@ -543,9 +543,6 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 			// dragging the trim. The first call to the TrimDropTarget's 'drag' method
 			// will reset this the next time a drag starts.
 			draggedTrim = null;
-			
-			// Reset the 'global' drag listener to null
-			DragUtil.setGlobalDragListener(null);
 		}
     }
     
@@ -582,17 +579,17 @@ import org.eclipse.ui.internal.layout.TrimLayout;
     	if (!(draggedObject instanceof IWindowTrim))
     		return null;
     	
-    	// If this is the -first- drag then inform the drop target
+    	// OK, we're dragging trim. is it from -this- shell?
     	IWindowTrim trim = (IWindowTrim) draggedObject;
+    	if (trim.getControl().getShell() != windowComposite.getShell())
+    		return null;
+    	
+    	// If this is the -first- drag then inform the drop target
     	if (dropTarget.draggedTrim == null) {
     		dropTarget.setTrim(trim);
-    		
-    		// Make us the 'global' drag listener in order to prevent
-    		// other WorkbenchWindows from saying that they can accept
-    		// -our- trim.
-    		DragUtil.setGlobalDragListener(this);
     	}
-    	
+
+    	// Forward on to the 'actual' drop target for feedback
     	dropTarget.track(position);
     	
     	// Spin the paint loop after every track

@@ -41,15 +41,6 @@ public class DragUtil {
     private static TestDropLocation forcedDropTarget = null;
     
     /**
-     * A global listener. If this is non-null then -all- events
-     * are routed to it; bypassing the standard mechanism of locating
-     * a listener from the control under the cursor. This is useful
-     * to constrain a drag gesture (i.e. trim dragging) to a particular
-     * WorkbenchWindow.
-     */
-    private static IDragOverListener globalDragListener = null;
-    
-    /**
      * List of IDragOverListener
      */
     private static List defaultTargets = new ArrayList();
@@ -87,13 +78,6 @@ public class DragUtil {
      * @return
      */
     private static List getTargetList(Control control) {
-    	// If there's a 'global' listener then simply return it...
-    	if (globalDragListener != null) {
-    		List globalList = new ArrayList();
-    		globalList.add(globalDragListener);
-    		return globalList;
-    	}
-    	
         List result = (List) control.getData(DROP_TARGET_ID);;
         return result;
     }
@@ -199,19 +183,6 @@ public class DragUtil {
      */
     public static void forceDropLocation(TestDropLocation forcedLocation) {
         forcedDropTarget = forcedLocation;
-    }
-
-    /**
-     * Define the given listener as a 'global' listener. If this is non-null then -all- events
-     * are routed to it; bypassing the standard mechanism of locating
-     * a listener from the control under the cursor. This is useful
-     * to constrain a drag gesture (i.e. trim dragging) to a particular
-     * WorkbenchWindow. 
-     * 
-     * @param listener The new listener to act as the 'global' listener
-     */
-    public static void setGlobalDragListener(IDragOverListener listener) {
-    	globalDragListener = listener;
     }
     
     /**
