@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IDecoration;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 /**
  * The Decoration builder is the object that builds a decoration.
  */
-class DecorationBuilder implements IDecoration {
+public class DecorationBuilder implements IDecoration {
 
 	private static int DECORATOR_ARRAY_SIZE = 5;
 
@@ -43,11 +43,21 @@ class DecorationBuilder implements IDecoration {
 	//A flag set if a value has been added
 	private boolean valueSet = false;
 
+	private final IDecorationContext context;
+
 	/**
 	 * Default constructor.
 	 */
 	DecorationBuilder() {
-		//Nothing to initialize
+		this(DecorationContext.DEFAULT_CONTEXT);
+	}
+
+	/**
+	 * Create a decoration builder for the given context
+	 * @param context a decoration context
+	 */
+	public DecorationBuilder(IDecorationContext context) {
+		this.context = context;
 	}
 
 	/**
@@ -178,5 +188,12 @@ class DecorationBuilder implements IDecoration {
 	public void setForegroundColor(Color fgColor) {
 		this.foregroundColor = fgColor;
 		valueSet = true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IDecoration#getDecorationContext()
+	 */
+	public IDecorationContext getDecorationContext() {
+		return context;
 	}
 }

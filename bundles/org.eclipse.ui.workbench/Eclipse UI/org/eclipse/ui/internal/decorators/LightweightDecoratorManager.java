@@ -294,6 +294,7 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
      * decorators.
      * 
      * @param element The source element
+     * @param context The decoration context
      * @param decoration The DecorationResult we are working on.
      *  where adaptable is true.
      */

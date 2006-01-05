@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
+import org.eclipse.jface.viewers.IDecorationContext;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Assert;
@@ -27,13 +28,12 @@ class DecorationReference {
 
     boolean forceUpdate = false;
 
-    DecorationReference(Object object) {
-        Assert.isNotNull(object);
-        element = object;
-    }
+	IDecorationContext[] contexts;
 
-    DecorationReference(Object object, Object adaptedObject) {
-        this(object);
+    DecorationReference(Object object, Object adaptedObject, IDecorationContext context) {
+        this.contexts = new IDecorationContext[] { context} ;
+		Assert.isNotNull(object);
+        element = object;
         this.adaptedElement = adaptedObject;
     }
 
@@ -82,11 +82,27 @@ class DecorationReference {
 
     /**
      * Return the string for the subtask for this element.
-     * @return
+     * @return String
      */
     String getSubTask() {
         if (undecoratedText == null)
             return WorkbenchMessages.DecorationReference_EmptyReference;
 	return NLS.bind(WorkbenchMessages.DecorationScheduler_DecoratingSubtask, undecoratedText );
     }
+
+    /**
+     * Returns the decoration context associated with the element
+     * being decorated
+     * @return the decoration context
+     */
+	IDecorationContext[] getContexts() {
+		return contexts;
+	}
+
+	void addContext(IDecorationContext context) {
+		IDecorationContext[] newContexts = new IDecorationContext[contexts.length + 1];
+		System.arraycopy(contexts, 0, newContexts, 0, contexts.length);
+		newContexts[contexts.length] = context;
+		contexts = newContexts;
+	}
 }

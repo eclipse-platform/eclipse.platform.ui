@@ -29,16 +29,7 @@ import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.IColorDecorator;
-import org.eclipse.jface.viewers.IDelayedLabelDecorator;
-import org.eclipse.jface.viewers.IFontDecorator;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ILabelUpdateProcessor;
-import org.eclipse.jface.viewers.ILabelUpdateValidator;
-import org.eclipse.jface.viewers.ILightweightLabelDecorator;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -60,7 +51,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * 
  * @since 2.0
  */
-public class DecoratorManager implements IDelayedLabelDecorator,
+public class DecoratorManager extends LabelDecorator implements IDelayedLabelDecorator,
         ILabelProviderListener, IDecoratorManager, IFontDecorator, IColorDecorator, IExtensionChangeHandler {
 
 	private static String EXTENSIONPOINT_UNIQUE_ID = WorkbenchPlugin.PI_WORKBENCH + "." + IWorkbenchConstants.PL_DECORATORS; //$NON-NLS-1$
@@ -296,15 +287,13 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ILabelDecorator#decorateText(java.lang.String, java.lang.Object)
-     */
-    public String decorateText(String text, Object element) {
-
-        //Get any adaptions to IResource
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ILabelDecorator2#decorateText(java.lang.String, java.lang.Object, org.eclipse.jface.viewers.IDecorationContext)
+	 */
+	public String decorateText(String text, Object element, IDecorationContext context) {
+        //Get any adaptations to IResource
         Object adapted = getResourceAdapter(element);
-        String result = scheduler.decorateWithText(text, element, adapted);
+        String result = scheduler.decorateWithText(text, element, adapted, context);
         FullDecoratorDefinition[] decorators = getDecoratorsFor(element);
         for (int i = 0; i < decorators.length; i++) {
             if (decorators[i].isEnabledFor(element)) {
@@ -329,6 +318,14 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         }
 
         return result;
+	}
+	
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ILabelDecorator#decorateText(java.lang.String, java.lang.Object)
+     */
+    public String decorateText(String text, Object element) {
+        return decorateText(text, element, DecorationContext.DEFAULT_CONTEXT);
     }
 
     /**
@@ -336,6 +333,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      * @param element The element we are decorating
      * @param start The currently decorated String
      * @param decorator The decorator to run.
+     * @param context the decoration context
      * @return String
      */
     private String safeDecorateText(Object element, String start,
@@ -346,14 +344,12 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         return newResult;
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ILabelDecorator#decorateImage(org.eclipse.swt.graphics.Image, java.lang.Object)
-     */
-    public Image decorateImage(Image image, Object element) {
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ILabelDecorator2#decorateImage(org.eclipse.swt.graphics.Image, java.lang.Object, org.eclipse.jface.viewers.IDecorationContext)
+	 */
+	public Image decorateImage(Image image, Object element, IDecorationContext context) {
         Object adapted = getResourceAdapter(element);
-        Image result = scheduler.decorateWithOverlays(image, element, adapted);
+        Image result = scheduler.decorateWithOverlays(image, element, adapted, context);
         FullDecoratorDefinition[] decorators = getDecoratorsFor(element);
 
         for (int i = 0; i < decorators.length; i++) {
@@ -365,7 +361,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
             }
         }
 
-        //Get any adaptions to IResource
+        //Get any adaptations to IResource
 
         if (adapted != null) {
             decorators = getDecoratorsFor(adapted);
@@ -381,6 +377,14 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         }
 
         return result;
+	}
+
+	/*
+     *  (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ILabelDecorator#decorateImage(org.eclipse.swt.graphics.Image, java.lang.Object)
+     */
+    public Image decorateImage(Image image, Object element) {
+    	return decorateImage(image, element, DecorationContext.DEFAULT_CONTEXT);
     }
 
     /**
@@ -388,6 +392,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      * @param element The element we are decorating
      * @param start The currently decorated Image
      * @param decorator The decorator to run.
+     * @param context The decoration context
      * @return Image
      */
     private Image safeDecorateImage(Object element, Image start,
@@ -554,7 +559,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
             for (int i = 0; i < elements.length; i++) {
                 Object adapted = getResourceAdapter(elements[i]);
                 //Force an update in case full decorators are the only ones enabled
-                scheduler.queueForDecoration(elements[i], adapted, true, null);
+                scheduler.queueForDecoration(elements[i], adapted, true, null, DecorationContext.DEFAULT_CONTEXT);
             }
         }
     }
@@ -814,14 +819,10 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         }
 
     }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IDelayedLabelDecorator#prepareDecoration(java.lang.Object, java.lang.String)
-     */
-    public boolean prepareDecoration(Object element, String originalText) {
-
+    
+    public boolean prepareDecoration(Object element, String originalText, IDecorationContext context) {
         // Check if there is a decoration ready or if there is no lightweight decorators to be applied
-        if (scheduler.isDecorationReady(element)
+        if (scheduler.isDecorationReady(element, context)
                 || !getLightweightManager().hasEnabledDefinitions()) {
             return true;
         }
@@ -834,16 +835,21 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         
         // Queue the decoration.
         scheduler.queueForDecoration(element, getResourceAdapter(element),
-                force, originalText); 
+                force, originalText, context); 
 
         //If all that is there is deferred ones then defer decoration.
-        //For the sake of effeciency we do not test for enablement at this
+        //For the sake of efficiency we do not test for enablement at this
         //point and just abandon deferment if there are any to run right
         //away
         return getFullDefinitions().length > 0;
-
     }
-    
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IDelayedLabelDecorator#prepareDecoration(java.lang.Object, java.lang.String)
+     */
+    public boolean prepareDecoration(Object element, String originalText) {
+    	return prepareDecoration(element, originalText, DecorationContext.DEFAULT_CONTEXT);
+    }
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IFontDecorator#decorateFont(java.lang.Object)
@@ -925,29 +931,4 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 		
 	}
 
-
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IDecoratorManager#updateForValueChanged(java.lang.Object, org.eclipse.jface.viewers.ILabelUpdateValidator)
-	 */
-	public void updateForValueChanged(final Object element, final ILabelUpdateValidator validator){
-		
-		 Object[] array = listeners.getListeners();
-	        for (int i = 0; i < array.length; i++) {
-	            if(array[i] instanceof ILabelUpdateProcessor){
-	            	final ILabelUpdateProcessor processor = (ILabelUpdateProcessor) array[i];
-	            	Platform.run(new SafeRunnable() {
-	            		public void run() {
-	            			processor.processUpdates(element,validator);
-	            		}
-	            	});
-	            }
-	            else
-	            	 // Queue the decoration.
-	                scheduler.queueForDecoration(element, getResourceAdapter(element),
-	                        true, null); 
-	        }
-	        
-		
-	}
 }

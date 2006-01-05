@@ -23,8 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -85,12 +84,13 @@ public class DecorationScheduler {
 	 * @param element
 	 * @param adaptedElement
 	 *            The adapted value of element. May be null.
+	 * @param context the decoration context
 	 */
 
 	public String decorateWithText(String text, Object element,
-			Object adaptedElement) {
+			Object adaptedElement, IDecorationContext context) {
 
-		DecorationResult decoration = getResult(element, adaptedElement);
+		DecorationResult decoration = getResult(element, adaptedElement, context);
 
 		if (decoration == null)
 			return text;
@@ -107,23 +107,25 @@ public class DecorationScheduler {
 	 *            The adapted value of element. May be null.
 	 * @param forceUpdate
 	 *            If true then a labelProviderChanged is fired whether
-	 *            decoration occured or not.
+	 *            decoration occurred or not.
 	 * @param undecoratedText
 	 *            The original text for the element if it is known.
+	 * @param context The decoration context
 	 */
 
 	synchronized void queueForDecoration(Object element, Object adaptedElement,
-			boolean forceUpdate, String undecoratedText) {
+			boolean forceUpdate, String undecoratedText, IDecorationContext context) {
 
-		if (awaitingDecorationValues.containsKey(element)) {
+		DecorationReference reference = (DecorationReference) awaitingDecorationValues
+			.get(element);
+		if (reference != null) {
 			if (forceUpdate) {// Make sure we don't loose a force
-				DecorationReference reference = (DecorationReference) awaitingDecorationValues
-						.get(element);
 				reference.setForceUpdate(forceUpdate);
 			}
+			reference.addContext(context);
 		} else {
-			DecorationReference reference = new DecorationReference(element,
-					adaptedElement);
+			reference = new DecorationReference(element,
+					adaptedElement, context);
 			reference.setForceUpdate(forceUpdate);
 			reference.setUndecoratedText(undecoratedText);
 			awaitingDecorationValues.put(element, reference);
@@ -145,12 +147,13 @@ public class DecorationScheduler {
 	 * @param element
 	 * @param adaptedElement
 	 *            The adapted value of element. May be null.
+	 * @param context the decoration context
 	 * 
 	 */
 	public Image decorateWithOverlays(Image image, Object element,
-			Object adaptedElement) {
+			Object adaptedElement, IDecorationContext context) {
 
-		DecorationResult decoration = getResult(element, adaptedElement);
+		DecorationResult decoration = getResult(element, adaptedElement, context);
 
 		if (decoration == null)
 			return image;
@@ -167,25 +170,41 @@ public class DecorationScheduler {
 	 *            return <code>null</code>.
 	 * @param adaptedElement
 	 *            It's adapted value.
+	 * @param context The deocration context
 	 * @return DecorationResult or <code>null</code>
 	 */
-	private DecorationResult getResult(Object element, Object adaptedElement) {
+	private DecorationResult getResult(Object element, Object adaptedElement, IDecorationContext context) {
 
 		// We do not support decoration of null
 		if (element == null)
 			return null;
 
-		DecorationResult decoration = (DecorationResult) resultCache
-				.get(element);
+		DecorationResult decoration = internalGetResult(element, context);
 
 		if (decoration == null) {
-			queueForDecoration(element, adaptedElement, false, null);
+			queueForDecoration(element, adaptedElement, false, null, context);
 			return null;
 		}
 		return decoration;
 
 	}
-
+	
+	private DecorationResult internalGetResult(Object element, IDecorationContext context) {
+		Map results = (Map)resultCache.get(context);
+		if (results != null)
+			return (DecorationResult)results.get(element);
+		return null;
+	}
+	
+	protected void internalPutResult(Object element, IDecorationContext context, DecorationResult result) {
+		Map results = (Map)resultCache.get(context);
+		if (results == null) {
+			results = new HashMap();
+			resultCache.put(context, results);
+		}
+		results.put(element, result);
+	}
+	
 	/**
 	 * Execute a label update using the pending decorations.
 	 */
@@ -269,51 +288,13 @@ public class DecorationScheduler {
 						workCount++;
 					}
 
-					DecorationBuilder cacheResult = new DecorationBuilder();
-
 					monitor.subTask(reference.getSubTask());
-					// Don't decorate if there is already a pending result
 					Object element = reference.getElement();
-				
-					boolean elementIsCached = true;
-					
-					// Synchronize on the result lock as we want to
-					// be sure that we do not try and decorate during
-					// label update servicing.
-
-					elementIsCached = resultCache.containsKey(element);
-					if (elementIsCached) {
-						pendingUpdate.add(element);
-					}
-
-					if (!elementIsCached) {
-					    // Calculate the decoration
-						decoratorManager.getLightweightManager()
-								.getDecorations(element, cacheResult);
-
-						// If we should update regardless then put a result
-						// anyways
-						if (cacheResult.hasValue()
-								|| reference.shouldForceUpdate()) {
-
-							// Synchronize on the result lock as we want to
-							// be sure that we do not try and decorate during
-							// label update servicing.
-							// Note: resultCache and pendingUpdate modifications
-							// must be done atomically.
-
-							// Add the decoration even if it's empty in
-							// order to indicate that the decoration is
-							// ready
-							resultCache
-									.put(element, cacheResult.createResult());
-
-							// Add an update for only the original element
-							// to
-							// prevent multiple updates and clear the cache.
-							pendingUpdate.add(element);
-
-						}
+					boolean force = reference.shouldForceUpdate();
+					IDecorationContext[] contexts = reference.getContexts();
+					for (int i = 0; i < contexts.length; i++) {
+						IDecorationContext context = contexts[i];
+						ensureResultCached(element, force, context);
 					}
 
 					// Only notify listeners when we have exhausted the
@@ -325,6 +306,49 @@ public class DecorationScheduler {
 				monitor.worked(100 - workCount);
 				monitor.done();
 				return Status.OK_STATUS;
+			}
+
+			/**
+			 * Ensure that a result is cached for the given element and context
+			 * @param element the elements
+			 * @param force whether an update should be forced
+			 * @param context the decoration context
+			 */
+			private void ensureResultCached(Object element, boolean force, IDecorationContext context) {
+				boolean elementIsCached = internalGetResult(element, context) != null;
+				if (elementIsCached) {
+					pendingUpdate.add(element);
+				}
+
+				if (!elementIsCached) {
+					DecorationBuilder cacheResult = new DecorationBuilder(context);
+				    // Calculate the decoration
+					decoratorManager.getLightweightManager()
+							.getDecorations(element, cacheResult);
+
+					// If we should update regardless then put a result
+					// anyways
+					if (cacheResult.hasValue()
+							|| force) {
+
+						// Synchronize on the result lock as we want to
+						// be sure that we do not try and decorate during
+						// label update servicing.
+						// Note: resultCache and pendingUpdate modifications
+						// must be done atomically.
+
+						// Add the decoration even if it's empty in
+						// order to indicate that the decoration is
+						// ready
+						internalPutResult(element, context, cacheResult.createResult());
+
+						// Add an update for only the original element
+						// to
+						// prevent multiple updates and clear the cache.
+						pendingUpdate.add(element);
+
+					}
+				}
 			}
 
 			/*
@@ -508,10 +532,11 @@ public class DecorationScheduler {
 	 * Return whether or not there is a decoration for this element ready.
 	 * 
 	 * @param element
+	 * @param context The decoration context
 	 * @return boolean true if the element is ready.
 	 */
-	public boolean isDecorationReady(Object element) {
-		return resultCache.get(element) != null;
+	public boolean isDecorationReady(Object element, IDecorationContext context) {
+		return internalGetResult(element, context) != null;
 	}
 
 	/**
@@ -525,7 +550,7 @@ public class DecorationScheduler {
 	 *         not been decorated yet.
 	 */
 	public Color getBackgroundColor(Object element, Object adaptedElement) {
-		DecorationResult decoration = getResult(element, adaptedElement);
+		DecorationResult decoration = getResult(element, adaptedElement, DecorationContext.DEFAULT_CONTEXT);
 
 		if (decoration == null)
 			return null;
@@ -543,7 +568,7 @@ public class DecorationScheduler {
 	 *         not been decorated yet.
 	 */
 	public Font getFont(Object element, Object adaptedElement) {
-		DecorationResult decoration = getResult(element, adaptedElement);
+		DecorationResult decoration = getResult(element, adaptedElement, DecorationContext.DEFAULT_CONTEXT);
 
 		if (decoration == null)
 			return null;
@@ -561,7 +586,7 @@ public class DecorationScheduler {
 	 *         not been decorated yet.
 	 */
 	public Color getForegroundColor(Object element, Object adaptedElement) {
-		DecorationResult decoration = getResult(element, adaptedElement);
+		DecorationResult decoration = getResult(element, adaptedElement, DecorationContext.DEFAULT_CONTEXT);
 
 		if (decoration == null)
 			return null;
