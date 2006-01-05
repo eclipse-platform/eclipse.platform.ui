@@ -32,7 +32,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
-import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -47,8 +46,6 @@ import org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction;
 import org.eclipse.debug.internal.ui.sourcelookup.LookupSourceAction;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.PresentationContext;
-import org.eclipse.debug.internal.ui.viewers.TreePath;
-import org.eclipse.debug.internal.ui.viewers.TreeSelection;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
@@ -364,18 +361,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			protected IStatus run(IProgressMonitor monitor) {
 				ILaunchManager launchManager = (ILaunchManager) getViewer().getInput();
 				ILaunch[] launches = launchManager.getLaunches();
-				for (int i = 0; i < launches.length; i++) {
-					ILaunch launch = launches[i];
-					final IStackFrame frame = findFrame(launch);
-					if (frame != null) {
-						Runnable runnable = new Runnable() {
-							public void run() {
-								autoExpand(frame, true);
-							}
-						};
-						asyncExec(runnable);
-					}					
-				}
 				// forces the delegates to update enablement
 				// TODO: would it be better to contribute toolbar/context actions in code?
 				if (launches.length == 0) {
@@ -390,39 +375,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			}
 		};
 		initJob.schedule();
-	}
-	
-	/**
-	 * Returns the first stack frame in the first suspended
-	 * thread of the given launch, or <code>null</code> if
-	 * none. Prioritizes selection based on which thread is
-	 * suspended at a breakpoint.
-	 * 
-	 * @param launch a launch in this view
-	 * @return stack frame or <code>null</code>
-	 */
-	private IStackFrame findFrame(ILaunch launch) {
-		IDebugTarget target = launch.getDebugTarget();
-		if (target != null) {
-			try {
-				IThread[] threads = target.getThreads();
-				IThread suspended = null;
-				for (int i = 0; i < threads.length; i++) {
-					if (threads[i].isSuspended()) {
-						if (threads[i].getBreakpoints().length > 0) {
-							return threads[i].getTopStackFrame();
-						} else if (suspended == null) {
-							suspended = threads[i];
-						}
-					}
-				}
-				if (suspended != null) {
-					return suspended.getTopStackFrame();
-				}
-			} catch (DebugException e) {
-			}
-		}
-		return null;
 	}
 
 	private void commonInit(IViewSite site) {
@@ -635,40 +587,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			menu.add(action);
 		}		
 	}
-	
-	/**
-	 * Auto-expand and select the given element - must be called in UI thread.
-	 * This is used to implement auto-expansion-and-select on a SUSPEND event.
-	 * 
-	 * @param element the element to expand, cannot be <code>null</code>
-	 * @param selectNeeded whether the element should be selected
-	 */
-	public void autoExpand(Object element, boolean selectNeeded) {
-        AsynchronousTreeViewer viewer = (AsynchronousTreeViewer) getViewer();
-        if (viewer != null) {
-            TreePath[] treePaths = viewer.getTreePaths(element);
-            if (element instanceof IStackFrame) {
-                IStackFrame frame = (IStackFrame) element;
-                if (treePaths != null) {
-                    viewer.expand(new TreeSelection(treePaths));
-                    if (selectNeeded) {
-                        viewer.setSelection(new TreeSelection(treePaths));
-                    }
-                } else {
-                    ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-                    ILaunch launch = frame.getLaunch();
-                    IDebugTarget debugTarget = frame.getDebugTarget();
-                    IThread thread = frame.getThread();
-
-                    TreePath treePath = new TreePath(new Object[] { launchManager, launch, debugTarget, thread, frame });
-                    viewer.expand(new TreeSelection(new TreePath[] { treePath }));
-                    if (selectNeeded) {
-                        viewer.setSelection(new TreeSelection(new TreePath[] { treePath }));
-                    }
-                }
-            }
-        }
-    }
 		
 	/**
 	 * Sets whether this view is in the active page of a

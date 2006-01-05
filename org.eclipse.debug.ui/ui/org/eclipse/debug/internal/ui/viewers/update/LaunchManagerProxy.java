@@ -22,12 +22,29 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 
 	private ILaunchManager fLaunchManager;
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#init(org.eclipse.debug.internal.ui.viewers.IPresentationContext)
+	 */
 	public void init(IPresentationContext context) {
 		super.init(context);
 		fLaunchManager = DebugPlugin.getDefault().getLaunchManager();
 		fLaunchManager.addLaunchListener(this);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#installed()
+	 */
+	public void installed() {
+		// expand existing launches
+		ILaunch[] launches = fLaunchManager.getLaunches();
+		if (launches.length > 0) {
+			fireDelta(launches, IModelDelta.EXPAND);
+		}
+	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#dispose()
+	 */
 	public void dispose() {	
 		super.dispose();
 		fLaunchManager.removeLaunchListener(this);
