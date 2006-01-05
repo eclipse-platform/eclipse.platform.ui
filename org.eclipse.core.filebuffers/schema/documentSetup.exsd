@@ -9,6 +9,7 @@
          This extension point is used to customize the initialization process of a document for a text file buffer manager by this plug-in&apos;s default text file buffer manager. It allows to specify which document setup participant should be involved in the initialization process for a text file buffer created for a certain file content type, file extension, or file name.
 &lt;p&gt;
 &lt;strong&gt;Note:&lt;/strong&gt; Participants have to be aware of the existence of other participants i.e. they should always setup a document in a way that does not interfere with others. E.g., when a participant wants to install partitioning on the document, it must use the &lt;code&gt;org.eclipse.jface.text.IDocumentExtension3&lt;/code&gt; API and choose a unique partitioning id.
+As of 3.2, a warning is written to the log file if this isn't followed.
 &lt;/p&gt;
       </documentation>
    </annotation>
