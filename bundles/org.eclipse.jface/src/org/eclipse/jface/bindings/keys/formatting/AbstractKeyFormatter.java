@@ -11,7 +11,10 @@
 
 package org.eclipse.jface.bindings.keys.formatting;
 
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyLookupFactory;
@@ -23,8 +26,8 @@ import org.eclipse.jface.util.Util;
  * <p>
  * An abstract implementation of a key formatter that provides a lot of common
  * key formatting functionality. It is recommended that implementations of
- * <code>IKeyFormatter</code> subclass from here, rather than
- * implementing <code>IKeyFormatter</code> directly.
+ * <code>IKeyFormatter</code> subclass from here, rather than implementing
+ * <code>IKeyFormatter</code> directly.
  * </p>
  * 
  * @since 3.1
@@ -58,6 +61,20 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(AbstractKeyFormatter.class.getName());
 
+	/**
+	 * The keys in the resource bundle. This is used to avoid missing resource
+	 * exceptions when they aren't necessary.
+	 */
+	private static final Set resourceBundleKeys = new HashSet();
+
+	static {
+		final Enumeration keyEnumeration = RESOURCE_BUNDLE.getKeys();
+		while (keyEnumeration.hasMoreElements()) {
+			final Object element = keyEnumeration.nextElement();
+			resourceBundleKeys.add(element);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -66,13 +83,12 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	public String format(final int key) {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
 		final String name = lookup.formalNameLookup(key);
-        
-        // TODO NL issue. Possible problem with 4-byte characters.
-        if (name.length() == 1) {
-            return name;
-        }
-        
-		return Util.translateString(RESOURCE_BUNDLE, name, name);
+
+		if (resourceBundleKeys.contains(name)) {
+			return Util.translateString(RESOURCE_BUNDLE, name, name);
+		}
+		
+		return name;
 	}
 
 	/*
