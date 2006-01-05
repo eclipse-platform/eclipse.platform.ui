@@ -382,8 +382,8 @@ public final class ParameterizedCommand implements Comparable {
 	public final Object execute(final Object trigger,
 			final Object applicationContext) throws ExecutionException,
 			NotHandledException {
-		return command.execute(new ExecutionEvent(getParameterMap(), trigger,
-				applicationContext));
+		return command.execute(new ExecutionEvent(command, getParameterMap(),
+				trigger, applicationContext));
 	}
 
 	/**
@@ -412,8 +412,8 @@ public final class ParameterizedCommand implements Comparable {
 	public final Object executeWithChecks(final Object trigger,
 			final Object applicationContext) throws ExecutionException,
 			NotDefinedException, NotEnabledException, NotHandledException {
-		return command.executeWithChecks(new ExecutionEvent(getParameterMap(),
-				trigger, applicationContext));
+		return command.executeWithChecks(new ExecutionEvent(command,
+				getParameterMap(), trigger, applicationContext));
 	}
 
 	/**
@@ -496,9 +496,7 @@ public final class ParameterizedCommand implements Comparable {
 		return parameterMap;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public final int hashCode() {

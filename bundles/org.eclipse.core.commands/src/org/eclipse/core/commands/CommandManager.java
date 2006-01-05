@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.ListenerList;
  * @since 3.1
  */
 public final class CommandManager extends HandleObjectManager implements
-		ICategoryListener, ICommandListener {
+		ICategoryListener, ICommandListener, IParameterTypeListener {
 
 	/**
 	 * A listener that forwards incoming execution events to execution listeners
@@ -239,6 +239,14 @@ public final class CommandManager extends HandleObjectManager implements
 	private final Set definedCategoryIds = new HashSet();
 
 	/**
+	 * The set of identifiers for those command parameter types that are
+	 * defined. This value may be empty, but it is never <code>null</code>.
+	 * 
+	 * @since 3.2
+	 */
+	private final Set definedParameterTypeIds = new HashSet();
+
+	/**
 	 * The execution listener for this command manager. This just forwards
 	 * events from commands controlled by this manager to listeners on this
 	 * manager.
@@ -250,6 +258,15 @@ public final class CommandManager extends HandleObjectManager implements
 	 * <code>null</code> if there are no listeners.
 	 */
 	private ListenerList executionListeners = null;
+
+	/**
+	 * The map of parameter type identifiers (<code>String</code>) to
+	 * parameter types ( <code>ParameterType</code>). This collection may be
+	 * empty, but it is never <code>null</code>.
+	 * 
+	 * @since 3.2
+	 */
+	private final Map parameterTypesById = new HashMap();
 
 	/**
 	 * Adds a listener to this command manager. The listener will be notified
@@ -507,7 +524,7 @@ public final class CommandManager extends HandleObjectManager implements
 	}
 
 	/**
-	 * Returns the those categories that are defined.
+	 * Returns the categories that are defined.
 	 * 
 	 * @return The defined categories; this value may be empty, but it is never
 	 *         <code>null</code>.
@@ -545,7 +562,7 @@ public final class CommandManager extends HandleObjectManager implements
 	}
 
 	/**
-	 * Returns the those commands that are defined.
+	 * Returns the commands that are defined.
 	 * 
 	 * @return The defined commands; this value may be empty, but it is never
 	 *         <code>null</code>.
@@ -554,6 +571,37 @@ public final class CommandManager extends HandleObjectManager implements
 	public final Command[] getDefinedCommands() {
 		return (Command[]) definedHandleObjects
 				.toArray(new Command[definedHandleObjects.size()]);
+	}
+
+	/**
+	 * Returns the set of identifiers for those parameter types that are
+	 * defined.
+	 * 
+	 * @return The set of defined command parameter type identifiers; this value
+	 *         may be empty, but it is never <code>null</code>.
+	 * @since 3.2
+	 */
+	public final Set getDefinedParameterTypeIds() {
+		return Collections.unmodifiableSet(definedParameterTypeIds);
+	}
+
+	/**
+	 * Returns the command parameter types that are defined.
+	 * 
+	 * @return The defined command parameter types; this value may be empty, but
+	 *         it is never <code>null</code>.
+	 * @since 3.2
+	 */
+	public final ParameterType[] getDefinedParameterTypes() {
+		final ParameterType[] parameterTypes = new ParameterType[definedParameterTypeIds
+				.size()];
+		final Iterator iterator = definedParameterTypeIds.iterator();
+		int i = 0;
+		while (iterator.hasNext()) {
+			final String parameterTypeId = (String) iterator.next();
+			parameterTypes[i++] = getParameterType(parameterTypeId);
+		}
+		return parameterTypes;
 	}
 
 	/**
@@ -633,6 +681,55 @@ public final class CommandManager extends HandleObjectManager implements
 
 		return (Parameterization[]) paramList
 				.toArray(new Parameterization[paramList.size()]);
+	}
+
+	/**
+	 * Gets the command {@link ParameterType} with the given identifier. If no
+	 * such command parameter type currently exists, then the command parameter
+	 * type will be created (but will be undefined).
+	 * 
+	 * @param parameterTypeId
+	 *            The identifier to find; must not be <code>null</code> and
+	 *            must not be zero-length.
+	 * @return The {@link ParameterType} with the given identifier; this value
+	 *         will never be <code>null</code>, but it might be undefined.
+	 * @since 3.2
+	 */
+	public final ParameterType getParameterType(final String parameterTypeId) {
+		checkId(parameterTypeId);
+
+		ParameterType parameterType = (ParameterType) parameterTypesById
+				.get(parameterTypeId);
+		if (parameterType == null) {
+			parameterType = new ParameterType(parameterTypeId);
+			parameterTypesById.put(parameterTypeId, parameterType);
+			parameterType.addListener(this);
+		}
+
+		return parameterType;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.2
+	 */
+	public final void parameterTypeChanged(
+			final ParameterTypeEvent parameterTypeEvent) {
+		if (parameterTypeEvent.isDefinedChanged()) {
+			final ParameterType parameterType = parameterTypeEvent
+					.getParameterType();
+			final String parameterTypeId = parameterType.getId();
+			final boolean parameterTypeIdAdded = parameterType.isDefined();
+			if (parameterTypeIdAdded) {
+				definedParameterTypeIds.add(parameterTypeId);
+			} else {
+				definedParameterTypeIds.remove(parameterTypeId);
+			}
+
+			fireCommandManagerChanged(new CommandManagerEvent(this,
+					parameterTypeId, parameterTypeIdAdded, true));
+		}
 	}
 
 	/**

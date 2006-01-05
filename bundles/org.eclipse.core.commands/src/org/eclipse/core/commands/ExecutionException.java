@@ -30,6 +30,17 @@ public final class ExecutionException extends CommandException {
     private static final long serialVersionUID = 3258130262767448120L;
 
     /**
+	 * Creates a new instance of this class with the specified detail message.
+	 * 
+	 * @param message
+	 *            the detail message; may be <code>null</code>.
+	 * @since 3.2
+	 */
+	public ExecutionException(final String message) {
+		super(message);
+	}
+    
+    /**
      * Creates a new instance of this class with the specified detail message
      * and cause.
      * 

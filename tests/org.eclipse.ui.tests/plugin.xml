@@ -2153,6 +2153,30 @@
       </command>
    </extension>
 
+   <!--command parameter types -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.eclipse.ui.tests.commands.SubtractIntegerHandler"
+            id="org.eclipse.ui.tests.commands.subtractInteger"
+            name="Subtract 2 Integers">
+         <commandParameter
+               id="minuend"
+               name="Minuend"
+               optional="false"
+               typeId="org.eclipse.ui.tests.commands.Integer"/>
+         <commandParameter
+               id="subtrahend"
+               name="Subtrahend"
+               optional="false"
+               typeId="org.eclipse.ui.tests.commands.Integer"/>
+      </command>
+      <commandParameterType
+            converter="org.eclipse.ui.tests.commands.IntegerConverter"
+            id="org.eclipse.ui.tests.commands.Integer"
+            type="java.lang.Integer"/>
+   </extension>
+
    <!--parameterized command serialization -->
    <extension
          point="org.eclipse.ui.commands">

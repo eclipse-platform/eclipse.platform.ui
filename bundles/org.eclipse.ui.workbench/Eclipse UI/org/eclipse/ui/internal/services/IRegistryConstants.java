@@ -74,6 +74,12 @@ public interface IRegistryConstants {
 	 * The name of the attribute storing the context id for a binding.
 	 */
 	public static String ATTRIBUTE_CONTEXT_ID = "contextId"; //$NON-NLS-1$
+	
+	/**
+	 * The name of the attribute storing the AbstractParameterValueConverter for a
+	 * commandParameterType.
+	 */
+	public static String ATTRIBUTE_CONVERTER = "converter"; //$NON-NLS-1$
 
 	/**
 	 * The name of the default handler attribute, which appears on a command
@@ -289,9 +295,16 @@ public interface IRegistryConstants {
 	public static String ATTRIBUTE_TOOLTIP = "tooltip"; //$NON-NLS-1$
 
 	/**
-	 * The name of the type attribute, which appears on bar elements.
+	 * The name of the type attribute, which appears on bar elements and
+	 * commandParameterType elments.
 	 */
 	public static String ATTRIBUTE_TYPE = "type"; //$NON-NLS-1$
+	
+	/**
+	 * The name of the typeId attribute, which appears on commandParameter
+	 * elements.
+	 */
+	public static String ATTRIBUTE_TYPE_ID = "typeId"; //$NON-NLS-1$
 
 	/**
 	 * The name of the value attributed, used in several places.
@@ -386,6 +399,11 @@ public interface IRegistryConstants {
 	 * The name of the element storing a parameter.
 	 */
 	public static String ELEMENT_COMMAND_PARAMETER = "commandParameter"; //$NON-NLS-1$
+	
+	/**
+	 * The name of the element storing a parameter type.
+	 */
+	public static String ELEMENT_COMMAND_PARAMETER_TYPE = "commandParameterType"; //$NON-NLS-1$
 
 	/**
 	 * The name of the element storing a context.

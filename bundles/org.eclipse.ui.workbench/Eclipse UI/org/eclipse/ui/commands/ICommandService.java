@@ -16,6 +16,7 @@ import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IExecutionListener;
+import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -167,6 +168,39 @@ public interface ICommandService extends IDisposable {
 	 * @since 3.2
 	 */
 	public Command[] getDefinedCommands();
+
+	/**
+	 * Returns the collection of the identifiers for all of the defined command
+	 * parameter types in the workbench.
+	 * 
+	 * @return The collection of command parameter type identifiers (<code>String</code>)
+	 *         that are defined; never <code>null</code>, but may be empty.
+	 * @since 3.2
+	 */
+	public Collection getDefinedParameterTypeIds();
+
+	/**
+	 * Returns the collection of all of the defined command parameter types in
+	 * the workbench.
+	 * 
+	 * @return The collection of command parameter types (<code>ParameterType</code>)
+	 *         that are defined; never <code>null</code>, but may be empty.
+	 * @since 3.2
+	 */
+	public ParameterType[] getDefinedParameterTypes();
+
+	/**
+	 * Retrieves the command parameter type with the given identifier. If no
+	 * such parameter type exists, then an undefined parameter type with the
+	 * given id is created.
+	 * 
+	 * @param parameterTypeId
+	 *            The identifier to find; must not be <code>null</code>.
+	 * @return A command parameter type with the given identifier, either
+	 *         defined or undefined.
+	 * @since 3.2
+	 */
+	public ParameterType getParameterType(String parameterTypeId);
 
 	/**
 	 * <p>

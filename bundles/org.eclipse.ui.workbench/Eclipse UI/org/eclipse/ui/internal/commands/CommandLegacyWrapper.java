@@ -97,7 +97,7 @@ final class CommandLegacyWrapper implements ICommand {
 	public final Object execute(Map parameterValuesByName)
 			throws ExecutionException, NotHandledException {
 		try {
-			return command.execute(new ExecutionEvent(
+			return command.execute(new ExecutionEvent(command,
 					(parameterValuesByName == null) ? Collections.EMPTY_MAP
 							: parameterValuesByName, null, null));
 		} catch (final org.eclipse.core.commands.ExecutionException e) {

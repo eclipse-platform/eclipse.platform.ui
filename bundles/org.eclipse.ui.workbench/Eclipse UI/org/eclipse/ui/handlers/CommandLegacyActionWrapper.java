@@ -313,7 +313,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	public final void runWithEvent(final Event event) {
 		final Command baseCommand = command.getCommand();
 		final ExecutionEvent executionEvent = new ExecutionEvent(command
-				.getParameterMap(), event, null);
+				.getCommand(), command.getParameterMap(), event, null);
 		try {
 			baseCommand.execute(executionEvent);
 			firePropertyChange(IAction.RESULT, null, Boolean.TRUE);
