@@ -27,6 +27,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleListener;
+import org.eclipse.ui.console.IConsoleView;
 
 /**
  * ConsoleRemoveTerminatedAction
@@ -34,17 +35,23 @@ import org.eclipse.ui.console.IConsoleListener;
 public class ConsoleRemoveLaunchAction extends Action implements IViewActionDelegate, IConsoleListener, ILaunchesListener2 {
 
     private ILaunch fLaunch;
+    
+    // only used when a view action delegate
+    private IConsoleView fConsoleView;
 
-    public ConsoleRemoveLaunchAction(ILaunch launch) {
+    public ConsoleRemoveLaunchAction() {
         super(ConsoleMessages.ConsoleRemoveTerminatedAction_0);
         setToolTipText(ConsoleMessages.ConsoleRemoveTerminatedAction_1);
-
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CONSOLE_REMOVE_LAUNCH);
         setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE));
         setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE));
         setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE));
         DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
         ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(this);
+    }
+    
+    public ConsoleRemoveLaunchAction(ILaunch launch) {
+    	this();
         fLaunch = launch;
         update();
     }
@@ -55,15 +62,27 @@ public class ConsoleRemoveLaunchAction extends Action implements IViewActionDele
     }
 
     public synchronized void update() {
-    	setEnabled(fLaunch.isTerminated());
+    	ILaunch launch = getLaunch();
+    	if (launch != null) {
+    		setEnabled(launch.isTerminated());
+    	} else {
+    		setEnabled(false);
+    	}
     }
 
     public synchronized void run() {
-        ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-        launchManager.removeLaunch(fLaunch);
+    	ILaunch launch = getLaunch();
+    	if (launch != null) {
+	        ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+	        launchManager.removeLaunch(launch);
+    	}
     }
 
     public void init(IViewPart view) {
+    	if (view instanceof IConsoleView) {
+			fConsoleView = (IConsoleView) view;			
+		}
+    	update();
     }
 
     public void run(IAction action) {
@@ -103,5 +122,18 @@ public class ConsoleRemoveLaunchAction extends Action implements IViewActionDele
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
 	 */
 	public void launchesChanged(ILaunch[] launches) {
+	}
+	
+	protected ILaunch getLaunch() {
+		if (fConsoleView == null) {
+			return fLaunch;
+		}
+		// else get dynmically, as this action was created via plug-in XML view contribution
+		IConsole console = fConsoleView.getConsole();
+		if (console instanceof ProcessConsole) {
+			ProcessConsole pconsole = (ProcessConsole) console;
+			return pconsole.getProcess().getLaunch();
+		}
+		return null;
 	}
 }

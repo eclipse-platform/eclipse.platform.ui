@@ -2391,7 +2391,6 @@ M4 = Platform-specific fourth key
                 menubarPath="additions"
                 id="org.eclipse.debug.ui.consoleRemoveAllTerminatedAction"
 				helpContextId="console_remove_all_terminated_context"/>
-<!--   
           <action
                 label="%RemoveLaunch.label"
                 tooltip="%RemoveLaunch.tooltip"
@@ -2400,7 +2399,6 @@ M4 = Platform-specific fourth key
                 menubarPath="additions"
                 id="org.eclipse.debug.ui.consoleRemoveTerminatedAction"
 				helpContextId="console_remove_terminated_context"/>
--->				
           <action
                 label="%TerminateAction.label"
                 tooltip="%TerminateAction.tooltip"
