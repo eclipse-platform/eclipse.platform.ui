@@ -22,6 +22,37 @@
             <instanceof value="org.eclipse.core.resources.IProject"/>
          </triggerPoints>
       </navigatorContent>
+      <actionProvider
+            class="org.eclipse.ui.tests.navigator.extension.TestActionProvider"
+            id="org.eclipse.ui.tests.navigator.extension.TestActionProvider">
+         <enablement>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
+         </enablement>
+      </actionProvider>
+      <actionProvider
+            class="org.eclipse.ui.tests.navigator.extension.DependentActionProvider"
+            dependsOn="org.eclipse.ui.tests.navigator.extension.TestActionProvider"
+            id="org.eclipse.ui.tests.navigator.extension.DependentActionProvider">
+         <enablement>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
+         </enablement>
+      </actionProvider>
+      <actionProvider
+            class="org.eclipse.ui.tests.navigator.extension.DependentActionProvider"
+            dependsOn="Invalid Id"
+            id="org.eclipse.ui.tests.navigator.extension.[If this menu option shows, it is an ERROR from org.eclipse.ui.tests.navigator!]">
+         <enablement>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
+         </enablement>
+      </actionProvider>
+      <actionProvider
+            class="org.eclipse.ui.tests.navigator.extension.DependentActionProvider"
+            dependsOn="org.eclipse.ui.tests.navigator.extension.DependentActionProvider"
+            id="org.eclipse.ui.tests.navigator.extension.[Second Dependent Action]">
+         <enablement>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
+         </enablement>
+      </actionProvider>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.viewer">
@@ -34,6 +65,11 @@
             <contentExtension pattern="org.eclipse.ui.navigator.resourceContent"/>
          </includes>
       </viewerContentBinding>
+      <viewerActionBinding viewerId="org.eclipse.ui.tests.navigator.TestView">
+         <includes>
+            <actionExtension pattern="org.eclipse.ui.tests.navigator.extension.*"/>
+         </includes>
+      </viewerActionBinding>
    </extension>
  
 </plugin>

@@ -20,6 +20,8 @@ public interface INavigatorContentExtPtConstants {
 
 	String ATT_NAME = "name"; //$NON-NLS-1$	 
 
+	String ATT_CLASS = "class"; //$NON-NLS-1$
+
 	String ATT_ROOT_LABEL = "rootLabel"; //$NON-NLS-1$	 
 
 	String ATT_PRIORITY = "priority"; //$NON-NLS-1$
@@ -37,4 +39,7 @@ public interface INavigatorContentExtPtConstants {
 	String ATT_ACTION_PROVIDER = "actionProvider"; //$NON-NLS-1$ 
 
 	String ATT_SORTER = "sorter"; //$NON-NLS-1$
+
+	String ATT_DEPENDS_ON = "dependsOn"; //$NON-NLS-1$ 
+	
 }

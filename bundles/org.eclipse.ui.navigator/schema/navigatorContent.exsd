@@ -306,6 +306,19 @@ For root &apos;actionProviders&apos; with no id, the id defaults to &apos;org.ec
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="dependsOn" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the ID of an action provider that configures some menu or submenu that must be prepared before this action provider is applied. 
+&lt;p&gt;
+Specifying a dependency on another action provider does not guarantee that this action provider will be invoked whereever the required action provider is invoked. The downstream action provider must be bound to the particular viewer to be invoked. 
+&lt;/p&gt;
+&lt;p&gt;
+If the required action provider is disabled or unbound to the current viewer, then this action provider will not be applied. If a cycle exists, the framework will try to continue, but there are no guarantees as to what menu items or action bar contributions will be available.
+&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator.internal.actions;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.expressions.ElementHandler;
 import org.eclipse.core.expressions.EvaluationContext;
@@ -26,6 +28,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
+import org.eclipse.ui.navigator.internal.extensions.INavigatorContentExtPtConstants;
 import org.eclipse.ui.navigator.internal.extensions.SkeletonActionProvider;
 
 /**
@@ -39,21 +42,15 @@ import org.eclipse.ui.navigator.internal.extensions.SkeletonActionProvider;
  * 
  * @since 3.2
  */
-public class CommonActionProviderDescriptor {
-
-	private static final String TAG_ACTION_PROVIDER = "actionProvider"; //$NON-NLS-1$
-
-	private static final String TAG_ENABLEMENT = "enablement"; //$NON-NLS-1$
-
-	private static final String TAG_TRIGGER_POINTS = "triggerPoints"; //$NON-NLS-1$
-
-	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
+public class CommonActionProviderDescriptor implements INavigatorContentExtPtConstants { 
 
 	private static final String DEFAULT_ID = "org.eclipse.ui.navigator.actionProvider"; //$NON-NLS-1$
-
-	private static final String ATT_ID = "id"; //$NON-NLS-1$
-
+  
 	private final IConfigurationElement configurationElement;
+
+	private final boolean isNested; 
+
+	private Set dependentDescriptors;
 
 	private IConfigurationElement enablementElement;
 
@@ -63,7 +60,10 @@ public class CommonActionProviderDescriptor {
 
 	private String id;
 
-	private final boolean isNested;
+	
+	private String dependsOnId;
+
+	private String toString;
 
 	/**
 	 * @param aConfigElement
@@ -120,6 +120,8 @@ public class CommonActionProviderDescriptor {
 			// if there was no id attribute, use the default id.
 			if (id == null)
 				id = DEFAULT_ID;
+			
+			dependsOnId = configurationElement.getAttribute(ATT_DEPENDS_ON);
 
 			IConfigurationElement[] children = configurationElement
 					.getChildren(TAG_ENABLEMENT);
@@ -244,6 +246,48 @@ public class CommonActionProviderDescriptor {
 	 */
 	public boolean isNested() {
 		return isNested;
+	}
+
+	/**
+	 * 
+	 * @return The value specified by the 'dependsOn' attribute of the &lt;actionProvider /&gt; element.
+	 */
+	public String getDependsOnId() {
+		return dependsOnId;
+	}
+	
+	public boolean equals(Object obj) {
+		
+		if(obj != null && obj instanceof CommonActionProviderDescriptor) {
+			CommonActionProviderDescriptor other = (CommonActionProviderDescriptor) obj;
+			return getId().equals(other.getId());
+		}
+		return false;
+	}
+	
+	public int hashCode() {
+		return getId().hashCode();
+	}
+
+	protected void addDependentDescriptor(CommonActionProviderDescriptor dependentDescriptor) {
+		Assert.isTrue(this != dependentDescriptor);
+		if(dependentDescriptors == null)
+			dependentDescriptors = new HashSet();
+		dependentDescriptors.add(dependentDescriptor);		
+	}
+
+	protected boolean hasDependentDescriptors() { 
+		return dependentDescriptors != null && !dependentDescriptors.isEmpty();
+	}
+
+	protected Iterator dependentDescriptors() { 
+		return dependentDescriptors.iterator();
+	}
+	
+	public String toString() {
+		if(toString == null)
+			toString = "CommonActionProviderDescriptor["+getId()+", dependsOn="+getDependsOnId()+"]";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		return toString;
 	}
 
 }
