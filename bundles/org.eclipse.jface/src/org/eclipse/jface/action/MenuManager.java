@@ -287,12 +287,30 @@ public class MenuManager extends ContributionManager implements IMenuManager {
     }
 
     /**
-     * Returns the menu id.
-     * The menu id is used when creating a contribution item 
-     * for adding this menu as a sub menu of another.
+     * Notifies any menu listeners that a menu is about to hide.
+     * Only listeners registered at the time this method is called are notified.
      *
-     * @return the menu id
+     * @param manager the menu manager
+     *
+     * @see IMenuListener#menuAboutToHide
      */
+    private void fireAboutToHide(IMenuManager manager) {
+        final Object[] listeners = this.listeners.getListeners();
+        for (int i = 0; i < listeners.length; ++i) {
+        	final Object listener = listeners[i];
+			if (listener instanceof IMenuListener2) {
+				final IMenuListener2 listener2 = (IMenuListener2) listener;
+				listener2.menuAboutToHide(manager);
+			}
+        }
+    }
+
+    /**
+	 * Returns the menu id. The menu id is used when creating a contribution
+	 * item for adding this menu as a sub menu of another.
+	 * 
+	 * @return the menu id
+	 */
     public String getId() {
         return id;
     }
@@ -374,12 +392,20 @@ public class MenuManager extends ContributionManager implements IMenuManager {
     }
 
     /**
+     * Notifies all listeners that this menu is about to disappear.
+     */
+    private void handleAboutToHide() {
+        fireAboutToHide(this);
+    }
+
+    /**
      * Initializes the menu control.
      */
     private void initializeMenu() {
         menu.addMenuListener(new MenuAdapter() {
             public void menuHidden(MenuEvent e) {
                 //			ApplicationWindow.resetDescription(e.widget);
+            	handleAboutToHide();
             }
 
             public void menuShown(MenuEvent e) {

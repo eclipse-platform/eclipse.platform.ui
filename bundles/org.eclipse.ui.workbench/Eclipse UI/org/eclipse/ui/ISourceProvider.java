@@ -60,6 +60,16 @@ public interface ISourceProvider {
 	public Map getCurrentState();
 
 	/**
+	 * Returns the names of those sources provided by this class. This is used
+	 * by clients of source providers to determine which source providers they
+	 * actually need.
+	 * 
+	 * @return An array of source names. This value should never be
+	 *         <code>null</code> or empty.
+	 */
+	public String[] getProvidedSourceNames();
+
+	/**
 	 * Removes a listener from this source provider. This listener will be
 	 * notified whenever the corresponding source changes.
 	 * 

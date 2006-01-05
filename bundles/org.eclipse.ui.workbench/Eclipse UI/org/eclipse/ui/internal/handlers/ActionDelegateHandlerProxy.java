@@ -11,10 +11,6 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
@@ -23,7 +19,6 @@ import org.eclipse.core.commands.IState;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -31,10 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.CommandLegacyActionWrapper;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.bindings.BindingManager;
-import org.eclipse.jface.commands.CommandImageManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -50,17 +42,15 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.handlers.CommandLegacyActionWrapper;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.services.ExpressionAuthority;
-import org.eclipse.ui.services.IServiceWithSources;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * <p>
@@ -79,9 +69,9 @@ import org.eclipse.ui.services.IServiceWithSources;
  * 
  * @since 3.2
  */
-public final class ActionDelegateHandlerProxy extends ExpressionAuthority
-		implements ISelectionListener, ISelectionChangedListener,
-		INullSelectionListener, IServiceWithSources, IHandler, IObjectWithState {
+public final class ActionDelegateHandlerProxy implements ISelectionListener,
+		ISelectionChangedListener, INullSelectionListener, IHandler,
+		IObjectWithState {
 
 	/**
 	 * The identifier of the actions to create as a wrapper to the command
@@ -90,36 +80,16 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	private String actionId;
 
 	/**
-	 * A map of the fake action that proxies all of the command-based services.
-	 * This value is never <code>null</code>. It is keyed by workbench
-	 * window.
+	 * The fake action that proxies all of the command-based services. This
+	 * value is never <code>null</code>.
 	 */
-	private final Map actionsByWindow = new HashMap(3);
-
-	/**
-	 * The binding manager that will be used to provide information about the
-	 * key associated with this delegate's action. This value is never
-	 * <code>null</code>.
-	 */
-	private BindingManager bindingManager;
+	private CommandLegacyActionWrapper action;
 
 	/**
 	 * The command that will back the dummy actions exposed to this delegate.
 	 * This value is never <code>null</code>.
 	 */
 	private ParameterizedCommand command;
-
-	/**
-	 * The manager providing the images for the dummy actions. This value is
-	 * never <code>null</code>.
-	 */
-	private CommandImageManager commandImageManager;
-
-	/**
-	 * The manager providing commands for the dummy actions. This value is never
-	 * <code>null</code>.
-	 */
-	private CommandManager commandManager;
 
 	/**
 	 * This is the current selection, as seen by this proxy.
@@ -130,13 +100,12 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	 * The name of the configuration element attribute which contains the
 	 * information necessary to instantiate the real handler.
 	 */
-	private final String delegateAttributeName;
+	private String delegateAttributeName;
 
 	/**
-	 * The delegates grouped by workbench window. Each workbench window requires
-	 * the creation of a new delegate.
+	 * The delegate, if it has been created yet.
 	 */
-	private final Map delegatesByWindow = new HashMap(3);
+	private IActionDelegate delegate;
 
 	/**
 	 * The configuration element from which the handler can be created. This
@@ -153,14 +122,6 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	private final Expression enabledWhenExpression;
 
 	/**
-	 * The handler service to use when evaluating
-	 * <code>enabledWhenExpression</code>. This value may be
-	 * <code>null</code> only if the <code>enabledWhenExpression</code> is
-	 * <code>null</code>.
-	 */
-	private final IHandlerService handlerService;
-
-	/**
 	 * A collection of objects listening to changes to this manager. This
 	 * collection is <code>null</code> if there are no listeners.
 	 */
@@ -171,14 +132,20 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	 * delegate. This value may be <code>null</code>, if the default style
 	 * should be used.
 	 */
-	private String style;
+	private final String style;
 
 	/**
 	 * The identifier of the view with which this delegate must be associated.
 	 * This value is not <code>null</code> iff the delegate is an
 	 * {@link IViewActionDelegate}.
 	 */
-	private String viewId;
+	private final String viewId;
+
+	/**
+	 * The workbench window in which this delegate is active. This value is
+	 * never <code>null</code>.
+	 */
+	private final WorkbenchWindow window;
 
 	/**
 	 * Constructs a new instance of <code>ActionDelegateHandlerProxy</code>
@@ -197,19 +164,8 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	 * @param command
 	 *            The command with which the action delegate will be associated;
 	 *            must not be <code>null</code>.
-	 * @param commandManager
-	 *            The manager providing commands for this action delegate; must
-	 *            not be <code>null</code>.
-	 * @param handlerService
-	 *            The handler service from which to get the current context when
-	 *            trying to evaluate the <code>enabledWhenExpression</code>.
-	 *            This value may be <code>null</code> only if the
-	 *            <code>enabledWhenExpression</code> is <code>null</code>.
-	 * @param bindingManager
-	 *            The binding manager providing accelerators for this action
-	 *            delegate; must not be <code>null</code>.
-	 * @param commandImageManager
-	 *            The image manager providing icons for the action delegate;
+	 * @param window
+	 *            The workbench window in which this delegate will be active;
 	 *            must not be <code>null</code>.
 	 * @param style
 	 *            The image style with which the icons are associated; may be
@@ -228,12 +184,9 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	 */
 	public ActionDelegateHandlerProxy(final IConfigurationElement element,
 			final String delegateAttributeName, final String actionId,
-			final ParameterizedCommand command,
-			final CommandManager commandManager,
-			final IHandlerService handlerService,
-			final BindingManager bindingManager,
-			final CommandImageManager commandImageManager, final String style,
-			final Expression enabledWhenExpression, final String viewId) {
+			final ParameterizedCommand command, final WorkbenchWindow window,
+			final String style, final Expression enabledWhenExpression,
+			final String viewId) {
 		if (element == null) {
 			throw new NullPointerException(
 					"The configuration element backing a handler proxy cannot be null"); //$NON-NLS-1$
@@ -244,15 +197,17 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 					"The attribute containing the action delegate must be known"); //$NON-NLS-1$
 		}
 
+		if (window == null) {
+			throw new NullPointerException(
+					"The workbench window for a delegate must not be null"); //$NON-NLS-1$
+		}
+
 		this.element = element;
 		this.enabledWhenExpression = enabledWhenExpression;
 		this.delegateAttributeName = delegateAttributeName;
-		this.handlerService = handlerService;
+		this.window = window;
 		this.command = command;
-		this.commandManager = commandManager;
-		this.bindingManager = bindingManager;
 		this.actionId = actionId;
-		this.commandImageManager = commandImageManager;
 		this.style = style;
 		this.viewId = viewId;
 	}
@@ -314,26 +269,16 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	 *         active workbench window.
 	 */
 	private final CommandLegacyActionWrapper getAction() {
-		final Object variable = getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-		if (variable instanceof IWorkbenchWindow) {
-			final Object action = actionsByWindow.get(variable);
-			if (action instanceof CommandLegacyActionWrapper) {
-				return (CommandLegacyActionWrapper) action;
-			}
-
-			final CommandLegacyActionWrapper newAction = new CommandLegacyActionWrapper(
-					actionId, command, commandManager, bindingManager,
-					commandImageManager, style);
-			actionsByWindow.put(variable, newAction);
-			newAction.addPropertyChangeListener(new IPropertyChangeListener() {
+		if (action == null) {
+			action = new CommandLegacyActionWrapper(actionId, command, style,
+					window);
+			action.addPropertyChangeListener(new IPropertyChangeListener() {
 				public final void propertyChange(final PropertyChangeEvent event) {
 					// TODO Update the state somehow.
 				}
 			});
-			return newAction;
 		}
-
-		return null;
+		return action;
 	}
 
 	/**
@@ -343,15 +288,7 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	 * @return The current delegate; or <code>null</code> if none.
 	 */
 	private final IActionDelegate getDelegate() {
-		final Object variable = getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-		if (variable instanceof IWorkbenchWindow) {
-			final Object delegate = delegatesByWindow.get(variable);
-			if (delegate instanceof IActionDelegate) {
-				return (IActionDelegate) delegate;
-			}
-		}
-
-		return null;
+		return delegate;
 	}
 
 	public IState getState(String stateId) {
@@ -371,17 +308,18 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 
 	/**
 	 * Initialize the action delegate by calling its lifecycle method.
-	 * 
-	 * @param activeWindow
-	 *            The workbench window with which this delegate is associated;
-	 *            must not be <code>null</code>.
 	 */
-	private void initDelegate(final IWorkbenchWindow activeWindow) {
-		final IEvaluationContext state = handlerService.getCurrentState();
-		final IWorkbenchPart activePart = (IWorkbenchPart) state
-				.getVariable(ISources.ACTIVE_PART_NAME);
-		final IEditorPart activeEditor = (IEditorPart) state
-				.getVariable(ISources.ACTIVE_EDITOR_NAME);
+	private void initDelegate() {
+		final IWorkbenchPage page = window.getActivePage();
+		final IWorkbenchPart activePart;
+		final IEditorPart activeEditor;
+		if (page == null) {
+			activePart = null;
+			activeEditor = null;
+		} else {
+			activePart = page.getActivePart();
+			activeEditor = page.getActiveEditor();
+		}
 		final IActionDelegate delegate = getDelegate();
 		final IAction action = getAction();
 
@@ -412,10 +350,8 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 
 				// Handle IViewActionDelegates
 				if (viewId != null) {
-					final IWorkbenchPage activePage = activeWindow
-							.getActivePage();
-					if (activePage != null) {
-						final IViewPart viewPart = activePage.findView(viewId);
+					if (page != null) {
+						final IViewPart viewPart = page.findView(viewId);
 						if (delegate instanceof IViewActionDelegate) {
 							final IViewActionDelegate viewActionDelegate = (IViewActionDelegate) delegate;
 							viewActionDelegate.init(viewPart);
@@ -426,7 +362,7 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 				// Handle IWorkbenchWindowActionDelegate
 				if (delegate instanceof IWorkbenchWindowActionDelegate) {
 					final IWorkbenchWindowActionDelegate workbenchWindowActionDelegate = (IWorkbenchWindowActionDelegate) delegate;
-					workbenchWindowActionDelegate.init(activeWindow);
+					workbenchWindowActionDelegate.init(window);
 				}
 			}
 		};
@@ -437,20 +373,27 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 		final CommandLegacyActionWrapper action = getAction();
 		if (enabledWhenExpression != null) {
 			try {
+				final IHandlerService service = (IHandlerService) window
+						.getService(IHandlerService.class);
 				final EvaluationResult result = enabledWhenExpression
-						.evaluate(handlerService.getCurrentState());
+						.evaluate(service.getCurrentState());
 				if (result == EvaluationResult.TRUE) {
 					return (action == null)
 							|| action.isEnabledDisregardingCommand();
 				}
 			} catch (final CoreException e) {
 				// We will just fall through an let it return false.
-				final String message = "An exception occurred while evaluating the enabledWhen expression for " //$NON-NLS-1$
-						+ element.getAttribute(delegateAttributeName)
-						+ "' could not be loaded"; //$NON-NLS-1$
+				final StringBuffer message = new StringBuffer(
+						"An exception occurred while evaluating the enabledWhen expression for "); //$NON-NLS-1$
+				if (element == null) {
+					message.append(delegate);
+				} else {
+					message.append(element.getAttribute(delegateAttributeName));
+				}
+				message.append("' could not be loaded"); //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.WARNING,
 						WorkbenchPlugin.PI_WORKBENCH, 0, e.getMessage(), e);
-				WorkbenchPlugin.log(message, status);
+				WorkbenchPlugin.log(message.toString(), status);
 			}
 
 			return false;
@@ -486,18 +429,6 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 	 *         <code>false</code> otherwise.
 	 */
 	private final boolean loadDelegate() {
-		IActionDelegate delegate = getDelegate();
-
-		/*
-		 * Get the currently active workbench window. A delegate needs to be
-		 * associated with a workbench window.
-		 */
-		final Object variable = getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-		if (!(variable instanceof IWorkbenchWindow)) {
-			return false;
-		}
-		final IWorkbenchWindow activeWindow = (IWorkbenchWindow) variable;
-
 		// Try to load the delegate, if it hasn't been loaded already.
 		if (delegate == null) {
 			/*
@@ -505,7 +436,7 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 			 * view ready yet. If not, then we'll have to wait.
 			 */
 			if (viewId != null) {
-				final IWorkbenchPage activePage = activeWindow.getActivePage();
+				final IWorkbenchPage activePage = window.getActivePage();
 				if (activePage != null) {
 					final IViewPart part = activePage.findView(viewId);
 					if (part == null) {
@@ -520,8 +451,9 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 			try {
 				delegate = (IActionDelegate) element
 						.createExecutableExtension(delegateAttributeName);
-				delegatesByWindow.put(activeWindow, delegate);
-				initDelegate(activeWindow);
+				initDelegate();
+				element = null;
+				delegateAttributeName = null;
 				return true;
 
 			} catch (final ClassCastException e) {
@@ -601,17 +533,16 @@ public final class ActionDelegateHandlerProxy extends ExpressionAuthority
 		selectionChanged(selection);
 	}
 
-	protected final void sourceChanged(final int sourcePriority) {
-		// TODO Do I need to do something if the sources change?
-	}
-
 	public final String toString() {
 		final StringBuffer buffer = new StringBuffer();
 		buffer.append("ActionDelegateHandlerProxy("); //$NON-NLS-1$
 		buffer.append(getDelegate());
-		buffer.append(',');
-		final String className = element.getAttribute(delegateAttributeName);
-		buffer.append(className);
+		if (element != null) {
+			buffer.append(',');
+			final String className = element
+					.getAttribute(delegateAttributeName);
+			buffer.append(className);
+		}
 		buffer.append(')');
 		return buffer.toString();
 	}

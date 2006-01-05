@@ -230,6 +230,11 @@ final class HandlerPersistence extends RegistryPersistence {
 		this.handlerService = handlerService;
 	}
 
+	public final void dispose() {
+		super.dispose();
+		clearActivations(handlerService);
+	}
+
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
 		/*
 		 * Handlers will need to be re-read (i.e., re-verified) if any of the

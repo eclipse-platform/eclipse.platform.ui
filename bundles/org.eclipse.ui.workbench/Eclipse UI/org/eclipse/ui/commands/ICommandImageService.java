@@ -66,6 +66,24 @@ public interface ICommandImageService extends IDisposable {
 	public static final int TYPE_HOVER = ICommandImageService.TYPE_HOVER;
 
 	/**
+	 * Binds a particular image descriptor to a command id, type and style
+	 * triple
+	 * 
+	 * @param commandId
+	 *            The identifier of the command to which the image should be
+	 *            bound; must not be <code>null</code>.
+	 * @param type
+	 *            The type of image to retrieve. This value must be one of the
+	 *            <code>TYPE</code> constants defined in this class.
+	 * @param style
+	 *            The style of the image; may be <code>null</code>.
+	 * @param descriptor
+	 *            The image descriptor. Should not be <code>null</code>.
+	 */
+	public void bind(String commandId, int type, String style,
+			ImageDescriptor descriptor);
+
+	/**
 	 * Binds a particular image path to a command id, type and style triple
 	 * 
 	 * @param commandId

@@ -23,6 +23,7 @@ import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
@@ -59,7 +60,7 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * 
  * @see org.eclipse.ui.PlatformUI#getWorkbench
  */
-public interface IWorkbench extends IAdaptable {
+public interface IWorkbench extends IAdaptable, IServiceLocator {
 	/**
 	 * Returns the display for this workbench.
 	 * <p>

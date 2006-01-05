@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuListener2;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -35,14 +35,17 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * This class extends a single popup menu
  */
-public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener {
+public class PopupMenuExtender implements IMenuListener2,
+		IRegistryChangeListener {
     
     /**
      * The bit in <code>bitSet</code> that stores whether the static actions
@@ -290,6 +293,16 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
      * Notifies the listener that the menu is about to be shown.
      */
     public void menuAboutToShow(IMenuManager mgr) {
+    	// Add this menu as a visible menu.
+    	final IWorkbenchPartSite site = part.getSite();
+    	if (site != null) {
+    		final IWorkbench workbench = site.getWorkbenchWindow().getWorkbench();
+    		if (workbench instanceof Workbench) {
+    			final Workbench realWorkbench = (Workbench) workbench;
+    			realWorkbench.addShowingMenus(getMenuIds());
+    		}
+    	}
+    	
     	readStaticActions();
         testForAdditions();
         if (menuWrapper != null) {
@@ -301,6 +314,21 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
         }
         addObjectActions(mgr);
         addStaticActions(mgr);
+    }
+
+    /**
+     * Notifies the listener that the menu is about to be hidden.
+     */
+    public final void menuAboutToHide(final IMenuManager mgr) {
+    	// Remove this menu as a visible menu.
+    	final IWorkbenchPartSite site = part.getSite();
+    	if (site != null) {
+    		final IWorkbench workbench = site.getWorkbenchWindow().getWorkbench();
+    		if (workbench instanceof Workbench) {
+    			final Workbench realWorkbench = (Workbench) workbench;
+    			realWorkbench.removeShowingMenus(getMenuIds());
+    		}
+    	}
     }
 
     /**

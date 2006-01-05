@@ -9,11 +9,10 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.action;
+package org.eclipse.ui.handlers;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandEvent;
-import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.ICommandListener;
@@ -22,7 +21,9 @@ import org.eclipse.core.commands.IState;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.jface.bindings.BindingManager;
+import org.eclipse.jface.action.AbstractAction;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
@@ -35,6 +36,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.commands.ICommandImageService;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * <p>
@@ -105,12 +110,6 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	/**
-	 * The binding manager providing bindings for this action; never
-	 * <code>null</code>.
-	 */
-	private final BindingManager bindingManager;
-
-	/**
 	 * The command with which this action is associated; never <code>null</code>.
 	 */
 	private ParameterizedCommand command;
@@ -122,19 +121,6 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	private final ICommandListener commandListener = new CommandListener();
 
 	/**
-	 * The manager providing all of the possible commands for this action; never
-	 * <code>null</code>. This is required for
-	 * {@link #setActionDefinitionId(String)}.
-	 */
-	private final CommandManager commandManager;
-
-	/**
-	 * The command image manager providing images for this action; never
-	 * <code>null</code>.
-	 */
-	private final CommandImageManager commandImageManager;
-
-	/**
 	 * Whether this action has been marked as enabled.
 	 */
 	private boolean enabled = true;
@@ -143,6 +129,12 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	 * The identifier for the action. This may be <code>null</code>.
 	 */
 	private String id;
+
+	/**
+	 * A service locator that can be used for retrieving command-based services.
+	 * This value is never <code>null</code>.
+	 */
+	private final IServiceLocator serviceLocator;
 
 	/**
 	 * The image style to use for this action. This value may be
@@ -158,50 +150,30 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	 * @param command
 	 *            The command with which this action is associated; must not be
 	 *            <code>null</code>.
-	 * @param commandManager
-	 *            The manager providing all of the possible commands for this
-	 *            action; must not be <code>null</code>.
-	 * @param bindingManager
-	 *            The binding manager providing binding support for this action;
-	 *            must not be <code>null</code>.
-	 * @param commandImageManager
-	 *            The manager providing the images for this action; must not be
-	 *            <code>null</code>.
 	 * @param style
 	 *            The image style to use for this action, may be
 	 *            <code>null</code>.
+	 * @param serviceLocator
+	 *            A service locator that can be used to find various
+	 *            command-based services; must not be <code>null</code>.
 	 */
 	public CommandLegacyActionWrapper(final String id,
-			final ParameterizedCommand command,
-			final CommandManager commandManager,
-			final BindingManager bindingManager,
-			final CommandImageManager commandImageManager, final String style) {
-		if (bindingManager == null) {
-			throw new NullPointerException(
-					"An action proxy can't be created without a binding manager"); //$NON-NLS-1$
-		}
-
-		if (commandManager == null) {
-			throw new NullPointerException(
-					"An action proxy can't be created without a command manager"); //$NON-NLS-1$
-		}
-
+			final ParameterizedCommand command, final String style,
+			final IServiceLocator serviceLocator) {
 		if (command == null) {
 			throw new NullPointerException(
 					"An action proxy can't be created without a command"); //$NON-NLS-1$
 		}
 
-		if (commandImageManager == null) {
+		if (serviceLocator == null) {
 			throw new NullPointerException(
-					"An action proxy can't be created without an image manager"); //$NON-NLS-1$
+					"An action proxy can't be created without a service locator"); //$NON-NLS-1$
 		}
 
-		this.bindingManager = bindingManager;
 		this.command = command;
-		this.commandManager = commandManager;
-		this.commandImageManager = commandImageManager;
 		this.id = id;
 		this.style = style;
+		this.serviceLocator = serviceLocator;
 
 		// TODO Needs to listen to command, state, binding and image changes.
 		command.getCommand().addCommandListener(commandListener);
@@ -209,7 +181,9 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 
 	public final int getAccelerator() {
 		final String commandId = getActionDefinitionId();
-		final TriggerSequence triggerSequence = bindingManager
+		final IBindingService bindingService = (IBindingService) serviceLocator
+				.getService(IBindingService.class);
+		final TriggerSequence triggerSequence = bindingService
 				.getBestActiveBindingFor(commandId);
 		if (triggerSequence instanceof KeySequence) {
 			final KeySequence keySequence = (KeySequence) triggerSequence;
@@ -237,7 +211,9 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 
 	public final ImageDescriptor getDisabledImageDescriptor() {
 		final String commandId = getActionDefinitionId();
-		return commandImageManager.getImageDescriptor(commandId,
+		final ICommandImageService commandImageService = (ICommandImageService) serviceLocator
+				.getService(ICommandImageService.class);
+		return commandImageService.getImageDescriptor(commandId,
 				CommandImageManager.TYPE_DISABLED, style);
 	}
 
@@ -248,7 +224,9 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 
 	public final ImageDescriptor getHoverImageDescriptor() {
 		final String commandId = getActionDefinitionId();
-		return commandImageManager.getImageDescriptor(commandId,
+		final ICommandImageService commandImageService = (ICommandImageService) serviceLocator
+				.getService(ICommandImageService.class);
+		return commandImageService.getImageDescriptor(commandId,
 				CommandImageManager.TYPE_HOVER, style);
 	}
 
@@ -258,7 +236,9 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 
 	public final ImageDescriptor getImageDescriptor() {
 		final String commandId = getActionDefinitionId();
-		return commandImageManager.getImageDescriptor(commandId, style);
+		final ICommandImageService commandImageService = (ICommandImageService) serviceLocator
+				.getService(ICommandImageService.class);
+		return commandImageService.getImageDescriptor(commandId, style);
 	}
 
 	public final IMenuCreator getMenuCreator() {
@@ -366,7 +346,9 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 		// Update the command.
 		final Command oldBaseCommand = command.getCommand();
 		oldBaseCommand.removeCommandListener(commandListener);
-		final Command newBaseCommand = commandManager.getCommand(id);
+		final ICommandService commandService = (ICommandService) serviceLocator
+				.getService(ICommandService.class);
+		final Command newBaseCommand = commandService.getCommand(id);
 		command = new ParameterizedCommand(newBaseCommand, null);
 		newBaseCommand.addCommandListener(commandListener);
 
@@ -458,7 +440,9 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	public final void setDisabledImageDescriptor(final ImageDescriptor newImage) {
 		final String commandId = getActionDefinitionId();
 		final int type = CommandImageManager.TYPE_DISABLED;
-		commandImageManager.bind(commandId, type, style, newImage);
+		final ICommandImageService commandImageService = (ICommandImageService) serviceLocator
+				.getService(ICommandImageService.class);
+		commandImageService.bind(commandId, type, style, newImage);
 	}
 
 	public final void setEnabled(final boolean enabled) {
@@ -479,7 +463,9 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	public final void setHoverImageDescriptor(final ImageDescriptor newImage) {
 		final String commandId = getActionDefinitionId();
 		final int type = CommandImageManager.TYPE_HOVER;
-		commandImageManager.bind(commandId, type, style, newImage);
+		final ICommandImageService commandImageService = (ICommandImageService) serviceLocator
+				.getService(ICommandImageService.class);
+		commandImageService.bind(commandId, type, style, newImage);
 	}
 
 	public final void setId(final String id) {
@@ -489,7 +475,9 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	public final void setImageDescriptor(final ImageDescriptor newImage) {
 		final String commandId = getActionDefinitionId();
 		final int type = CommandImageManager.TYPE_DEFAULT;
-		commandImageManager.bind(commandId, type, style, newImage);
+		final ICommandImageService commandImageService = (ICommandImageService) serviceLocator
+				.getService(ICommandImageService.class);
+		commandImageService.bind(commandId, type, style, newImage);
 	}
 
 	public final void setMenuCreator(final IMenuCreator creator) {

@@ -930,6 +930,11 @@ final class MenuPersistence extends RegistryPersistence {
 		this.menuService = menuService;
 	}
 
+	public final void dispose() {
+		super.dispose();
+		clearContributions(menuService);
+	}
+
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
 		/*
 		 * TODO Menus will need to be re-read (i.e., re-verified) if any of the

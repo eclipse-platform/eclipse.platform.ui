@@ -33,6 +33,13 @@ import org.eclipse.ui.contexts.IContextService;
 public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 
 	/**
+	 * The names of the sources supported by this source provider.
+	 */
+	private static final String[] PROVIDED_SOURCE_NAMES = new String[] {
+			ISources.ACTIVE_SHELL_NAME, ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
+			ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME };
+
+	/**
 	 * The display on which this provider is working.
 	 */
 	private final Display display;
@@ -186,5 +193,9 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 		}
 
 		return currentState;
+	}
+
+	public final String[] getProvidedSourceNames() {
+		return PROVIDED_SOURCE_NAMES;
 	}
 }

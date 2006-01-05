@@ -66,6 +66,11 @@ public final class CommandImageService implements ICommandImageService {
 	}
 
 	public final void bind(final String commandId, final int type,
+			final String style, final ImageDescriptor descriptor) {
+		commandImageManager.bind(commandId, type, style, descriptor);
+	}
+
+	public final void bind(final String commandId, final int type,
 			final String style, final URL url) {
 		commandImageManager.bind(commandId, type, style, url);
 	}

@@ -33,7 +33,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * 
  * @since 3.2
  */
-abstract class AbstractAction extends EventManager implements IAction {
+public abstract class AbstractAction extends EventManager implements IAction {
 
 	public void addPropertyChangeListener(final IPropertyChangeListener listener) {
 		addListenerObject(listener);

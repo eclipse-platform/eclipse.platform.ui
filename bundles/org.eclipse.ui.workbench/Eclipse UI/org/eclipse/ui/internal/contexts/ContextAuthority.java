@@ -317,7 +317,6 @@ final class ContextAuthority extends ExpressionAuthority {
 				contextActivations.remove(activation);
 				if (contextActivations.isEmpty()) {
 					contextActivationsByContextId.remove(contextId);
-					updateCurrentState();
 					updateContext(contextId, false);
 
 				} else if (contextActivations.size() == 1) {
@@ -325,11 +324,9 @@ final class ContextAuthority extends ExpressionAuthority {
 							.iterator().next();
 					contextActivationsByContextId.put(contextId,
 							remainingActivation);
-					updateCurrentState();
 					updateContext(contextId, evaluate(remainingActivation));
 
 				} else {
-					updateCurrentState();
 					updateContext(contextId, containsActive(contextActivations));
 				}
 			}

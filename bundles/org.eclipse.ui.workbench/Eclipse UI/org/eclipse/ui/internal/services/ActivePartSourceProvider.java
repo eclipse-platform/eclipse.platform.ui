@@ -35,6 +35,14 @@ import org.eclipse.ui.internal.util.Util;
 public class ActivePartSourceProvider extends AbstractSourceProvider {
 
 	/**
+	 * The names of the sources supported by this source provider.
+	 */
+	private static final String[] PROVIDED_SOURCE_NAMES = new String[] {
+			ISources.ACTIVE_EDITOR_ID_NAME, ISources.ACTIVE_EDITOR_NAME,
+			ISources.ACTIVE_PART_ID_NAME, ISources.ACTIVE_PART_NAME,
+			ISources.ACTIVE_SITE_NAME };
+
+	/**
 	 * The last active editor part seen as active by this provider. This value
 	 * may be <code>null</code> if there is no currently active editor.
 	 */
@@ -248,6 +256,10 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 		}
 
 		return currentState;
+	}
+
+	public final String[] getProvidedSourceNames() {
+		return PROVIDED_SOURCE_NAMES;
 	}
 
 }
