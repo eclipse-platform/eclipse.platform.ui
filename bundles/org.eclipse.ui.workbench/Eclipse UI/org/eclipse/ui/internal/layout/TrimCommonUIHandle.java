@@ -59,15 +59,10 @@ import org.eclipse.ui.presentations.PresentationUtil;
  * </p>
  */
 public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
-
-	/*
-	 * Constants
-	 */
-	private static final int handleSize = 5;
-	
 	/*
 	 * Fields
 	 */
+	private int handleSize;
 	private TrimLayout  layout;
     private IWindowTrim trim;
 	private Control     toDrag;
@@ -77,7 +72,6 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
 	// CoolBar handling
 	private CoolBar cb;
 	private CoolItem ci;
-	private Composite dummy;
 	
     /*
      * Context Menu
@@ -120,7 +114,7 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
 
     /**
      * Listen to size changes in the control so we can adjust the
-     * Coolbar, CoolItem and dummy composite to match.
+     * Coolbar and CoolItem to match.
      */
     private ControlListener controlListener = new ControlListener() {
 		public void controlMoved(ControlEvent e) {
@@ -130,10 +124,12 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
 			if (e.widget instanceof TrimCommonUIHandle) {
 				TrimCommonUIHandle ctrl = (TrimCommonUIHandle) e.widget;
 		        Point size = ctrl.getSize();
-		        
+
+		        // Set the CoolBar and item to match the handle's size
 		        cb.setSize(size);
 		        ci.setSize(size);
-		        dummy.setSize(size);
+		        ci.setPreferredSize(size);
+		        cb.pack();
 			}
 		}
     };
@@ -178,7 +174,18 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
 	 * Set up the trim with its cursor, drag listener, context menu and menu listener
 	 */
 	private void setup() {    	
-//        TrimLayoutData td = new TrimLayoutData(false, handleSize, handleSize);
+		// Determine the handle size based on the CoolBar's computed 
+		// 'preferred' size so that it will be large enough to show the
+		// drag affordance (which is OS dependent)
+		CoolBar dummyCB = new CoolBar(this, orientation);
+		new CoolItem(dummyCB, SWT.NONE);
+		Point p = dummyCB.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		if (orientation == SWT.HORIZONTAL) {
+			handleSize = p.x;
+		}
+		else {
+			handleSize = p.y;
+		}
 		
 		// is this another potential place to leak trim handles?
 		WindowTrimProxy proxy = new WindowTrimProxy(this, "NONE", "NONE", //$NON-NLS-1$ //$NON-NLS-2$
@@ -219,30 +226,8 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
 	public void insertCoolBar(int orientation) {
 		// Create the necessary parts...
 		cb = new CoolBar(this, orientation | SWT.FLAT);
+		cb.setLocation(0,0);
 		ci = new CoolItem(cb, SWT.FLAT);
-		dummy = new Composite(cb, SWT.NONE);
-
-		// Compute an initial value for the 'length' of the affordance
-		int length;
-        Point ctrlSize = toDrag.getSize();
-        if (orientation == SWT.HORIZONTAL)
-        	length = ctrlSize.y;
-        else
-        	length = ctrlSize.x;
-		
-        // Set the initial sizes to match the given 'length'
-		if (orientation == SWT.HORIZONTAL)
-			dummy.setSize(1, length);
-		else
-			dummy.setSize(length, 1);
-		
-		// Set the CoolItem
-		Point size = dummy.getSize();
-		ci.setControl(dummy);
-		ci.setSize(ci.computeSize(size.x, size.y));
-		
-		// Finally, set the handle's size
-		setSize(ci.getSize());
 	}
 	
 	/**
