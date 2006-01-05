@@ -450,7 +450,8 @@ public interface IFileStore extends IAdaptable {
 	 * only {@link EFS#CACHE} applies).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
-	 * @return A local file with the same state as this file.
+	 * @return A local file with the same state as this file or <code>null</code>
+	 * if {@link EFS#CACHE} is not specified and this is not a local file.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li>A corresponding file could not be created in the local file system.</li>
