@@ -512,10 +512,14 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					return Status.CANCEL_STATUS;
 				
 				// create the actual copy
-				if (right instanceof ISynchronizable) {
+				
+				Object lock= null;
+				if (right instanceof ISynchronizable)
+					lock= ((ISynchronizable) right).getLockObject();
+					
+				if (lock != null) {
 					// a) if we can, acquire locks in proper order and copy 
 					// the document
-					Object lock= ((ISynchronizable) right).getLockObject();
 					synchronized (lock) {
 						synchronized (DocumentLineDiffer.this) {
 							if (isCanceled(monitor))
