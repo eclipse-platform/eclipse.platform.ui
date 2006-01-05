@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cheatsheet
+      title="Test 1">
+   <item
+         title="Introduction"
+         description="This is a cheat sheet with actions preprogrammed to set certain values on certain static fields,
+		so that the test can verify that the action was run."
+         Href="null"
+         contextId="null">
+      <nullAction/>
+      <nullList/>
+      <nullPerformWhen/>
+      <nullList/>
+   </item>
+   <list>
+      <item
+            title="Step 1"
+            description="No actions for this one."
+            Href="null"
+            contextId="null">
+         <nullAction/>
+         <list/>
+         <nullPerformWhen/>
+         <nullList/>
+      </item>
+      <item
+            title="Step 2"
+            description="Action increments a static variable."
+            Href="null"
+            contextId="null">
+         <action
+               class="org.eclipse.ua.tests.cheatsheet.util.IncrementVariableAction"
+               pluginId="org.eclipse.ua.tests"
+               when="null"
+               isConfirm="false">
+            <nullArray/>
+         </action>
+         <list/>
+         <nullPerformWhen/>
+         <nullList/>
+      </item>
+      <item
+            title="Step 3"
+            description="Action does nothing."
+            Href="null"
+            contextId="null">
+         <action
+               class="org.eclipse.ua.tests.cheatsheet.util.NoopAction"
+               pluginId="org.eclipse.ua.tests"
+               when="null"
+               isConfirm="false">
+            <nullArray/>
+         </action>
+         <list/>
+         <nullPerformWhen/>
+         <nullList/>
+      </item>
+      <item
+            title="Step 4"
+            description="Action increments a static variable."
+            Href="null"
+            contextId="null">
+         <action
+               class="org.eclipse.ua.tests.cheatsheet.util.IncrementVariableAction"
+               pluginId="org.eclipse.ua.tests"
+               when="null"
+               isConfirm="false">
+            <nullArray/>
+         </action>
+         <list/>
+         <nullPerformWhen/>
+         <nullList/>
+      </item>
+   </list>
+</cheatsheet>

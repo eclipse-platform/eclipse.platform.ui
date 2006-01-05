@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<cheatsheet title="Test cheatsheet without cheatsheet element">
+
+	<intro>
+		<description extra="testing">
+Simple test
+		</description>
+</intro>
+
+	<item
+		title="Just a simple test">
+		<description>
+Did it work? Of course <b>not</b>, it is suppose to cause a parsing <extra>error</extra>.
+		</description>
+</item>
+
+</cheatsheet>

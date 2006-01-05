@@ -1,62 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.ui.tests.cheatsheets"
-   name="Cheat Sheets Test"
-   version="3.0"
-   provider-name="Eclipse.org"
-   class="org.eclipse.ui.tests.cheatsheets.CheatSheetTestPlugin">
+<plugin>
 
-   <runtime>
-      <library name="cheatsheetTests.jar"/>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.jdt.ui"/>
-      <import plugin="org.eclipse.jdt.core"/>
-      <import plugin="org.eclipse.help.appserver"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.cheatsheets"/>
-      <import plugin="org.eclipse.ui.forms"/>
-      <import plugin="org.eclipse.ui.ide"/>
-   </requires>
-
-
-   <extension
-         point="org.eclipse.ui.cheatsheets.cheatSheetItemExtension">
-      <itemExtension
-            class="org.eclipse.ui.examples.cheatsheets.pattern.actions.ExtensionActionI"
-            itemAttribute="actionI">
-      </itemExtension>
-   </extension>
-   <extension
-         point="org.eclipse.ui.cheatsheets.cheatSheetItemExtension">
-      <itemExtension
-            class="org.eclipse.ui.examples.cheatsheets.pattern.actions.ExtensionActionII"
-            itemAttribute="actionII">
-      </itemExtension>
-   </extension>
-<!-- Cheat Sheet content extension point!!! -->
+   <!-- 
+      Cheat sheet test content
+   -->
    <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <category
             name="Cheat sheet examples - part 1"
-            id="org.eclipse.ui.examples.cheatsheets.cheatSheetsCat">
+            id="org.eclipse.ua.tests.cheatsheet.cheatSheetsCat">
       </category>
       <category
             name="Cheat sheet examples - part 2"
-            id="org.eclipse.ui.examples.cheatsheets.cheatSheetsCat2">
+            id="org.eclipse.ua.tests.cheatsheet.cheatSheetsCat2">
       </category>
       <category
             name="Tests"
-            id="org.eclipse.ui.tests.cheatsheets.cheatSheetsTestCat">
+            id="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat">
       </category>
       <cheatsheet
+            name="ActionsTest"
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
+            contentFile="data/cheatsheet/valid/TestActionsWithSkip.xml"
+            id="org.eclipse.ua.tests.cheatsheet.actions.TestActionsWithSkip">
+         <description>
+            This is a test cheat sheet used to verify actions.
+         </description>
+      </cheatsheet>
+      <cheatsheet
             name="Hello World"
-            category="org.eclipse.ui.examples.cheatsheets.cheatSheetsCat"
-            contentFile="cheatsheets/examples/part1/HelloWorld.xml"
-            id="org.eclipse.ui.examples.cheatsheets.HelloWorld">
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsCat"
+            contentFile="data/cheatsheet/valid/HelloWorld.xml"
+            id="org.eclipse.ua.tests.cheatsheet.HelloWorld">
          <description>
             This cheat sheet will guide you through building a hello world Java application and testing it.
             Uses only the basic cheat sheet features.
@@ -64,206 +40,98 @@
       </cheatsheet>
       <cheatsheet
             name="Hello World With Extensions Icons"
-            category="org.eclipse.ui.examples.cheatsheets.cheatSheetsCat"
-            contentFile="cheatsheets/examples/part1/HelloWorldWithExtensions.xml"
-            id="org.eclipse.ui.examples.cheatsheets.HelloWorldWithExtensions">
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsCat"
+            contentFile="data/cheatsheet/valid/HelloWorldWithExtensions.xml"
+            id="org.eclipse.ua.tests.cheatsheet.HelloWorldWithExtensions">
          <description>
             This cheat sheet has extra icons next to the help icon using the cheatSheetItemExtension extension point.
          </description>
       </cheatsheet>
       <cheatsheet
             name="Hello World With Subitems"
-            category="org.eclipse.ui.examples.cheatsheets.cheatSheetsCat"
-            contentFile="cheatsheets/examples/part1/HelloWorldWithSubitems.xml"
-            id="org.eclipse.ui.examples.cheatsheets.HelloWorldWithSubitem">
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsCat"
+            contentFile="data/cheatsheet/valid/HelloWorldWithSubitems.xml"
+            id="org.eclipse.ua.tests.cheatsheet.HelloWorldWithSubitem">
          <description>
             This cheat sheet uses subitems.
          </description>
       </cheatsheet>
       <cheatsheet
-            name="Java Patterns"
-            category="org.eclipse.ui.examples.cheatsheets.cheatSheetsCat2"
-            contentFile="cheatsheets/examples/part2/PatternSheet.xml"
-            id="org.eclipse.ui.examples.cheatsheets.PatternSheet"
-            listener="org.eclipse.ui.examples.cheatsheets.pattern.listeners.PatternItemListener">
-         <description>
-            This cheatsheet to demonstrates some of the advanced cheat sheet features,
-            including: conditional actions for an item, dynamic sub items,
-            		   using the cheatsheet manager to persist data
-         </description>
-      </cheatsheet>
-      <cheatsheet
-            name="Java Patterns using Conditional SubItem"
-            category="org.eclipse.ui.examples.cheatsheets.cheatSheetsCat2"
-            contentFile="cheatsheets/examples/part2/PatternSheetUsingConditionalSubItem.xml"
-            id="org.eclipse.ui.examples.cheatsheets.PatternSheetUsingConditionalSubItem"
-            listener="org.eclipse.ui.examples.cheatsheets.pattern.listeners.PatternItemListener">
-         <description>
-            This cheatsheet to demonstrates some of the advanced cheat sheet features,
-            including: conditional actions for an item, dynamic sub items,
-            		   using the cheatsheet manager to persist data
-         </description>
-      </cheatsheet>
-      <cheatsheet
             name="Testing Cheat Sheets actions"
-            category="org.eclipse.ui.tests.cheatsheets.cheatSheetsTestCat"
-            contentFile="cheatsheets/tests/TestCSActions.xml"
-            id="org.eclipse.ui.tests.cheatsheets.cheatsheetsActions">
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
+            contentFile="data/cheatsheet/valid/TestCSActions.xml"
+            id="org.eclipse.ua.tests.cheatsheet.cheatsheetsActions">
          <description>
             This cheat sheet has items to test the framework
          </description>
       </cheatsheet>
       <cheatsheet
             name="Testing Parameters"
-            category="org.eclipse.ui.tests.cheatsheets.cheatSheetsTestCat"
-            contentFile="cheatsheets/tests/TestParameters.xml"
-            id="org.eclipse.ui.tests.cheatsheets.parameters">
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
+            contentFile="data/cheatsheet/valid/TestParameters.xml"
+            id="org.eclipse.ua.tests.cheatsheet.parameters">
          <description>
             This cheat sheet has items to test the framework
          </description>
       </cheatsheet>
       <cheatsheet
-            name="Testing Infopop and Help Links"
-            category="org.eclipse.ui.tests.cheatsheets.cheatSheetsTestCat"
-            contentFile="cheatsheets/tests/TestInfopop_Help.xml"
-            id="org.eclipse.ui.tests.cheatsheets.infopop.help">
+            name="Testing Context Help and Help Links"
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
+            contentFile="data/cheatsheet/valid/TestContext_Help.xml"
+            id="org.eclipse.ua.tests.cheatsheet.infopop.help">
          <description>
             This cheat sheet has items to test the framework
          </description>
       </cheatsheet>
       <cheatsheet
             name="Testing SubItems"
-            category="org.eclipse.ui.tests.cheatsheets.cheatSheetsTestCat"
-            contentFile="cheatsheets/tests/TestSubItems.xml"
-            id="org.eclipse.ui.tests.cheatsheets.subitems">
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
+            contentFile="data/cheatsheet/valid/TestSubItems.xml"
+            id="org.eclipse.ua.tests.cheatsheet.subitems">
          <description>
             This cheat sheet has items to test the framework
          </description>
       </cheatsheet>
       <cheatsheet
             name="Testing Dynamic SubItems"
-            category="org.eclipse.ui.tests.cheatsheets.cheatSheetsTestCat"
-            contentFile="cheatsheets/tests/TestDynamicSubItems.xml"
-            id="org.eclipse.ui.tests.cheatsheets.dynamic.subitems">
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
+            contentFile="data/cheatsheet/valid/TestDynamicSubItems.xml"
+            id="org.eclipse.ua.tests.cheatsheet.dynamic.subitems">
          <description>
             This cheat sheet has items to test the framework
          </description>
       </cheatsheet>
       <cheatsheet
             name="Testing Item Description Formatting"
-            category="org.eclipse.ui.tests.cheatsheets.cheatSheetsTestCat"
-            contentFile="cheatsheets/tests/TestDescriptionFormatting.xml"
-            id="org.eclipse.ui.tests.cheatsheets.description">
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
+            contentFile="data/cheatsheet/valid/TestDescriptionFormatting.xml"
+            id="org.eclipse.ua.tests.cheatsheet.description">
          <description>
             This cheat sheet has items to test the framework
          </description>
-      </cheatsheet>
-      <cheatsheet
-            name="Rational Test1"
-            category="org.eclipse.ui.tests.cheatsheets.cheatSheetsTestCat"
-            contentFile="cheatsheets/tests/rational/Test1.xml"
-            listener="org.eclipse.ui.examples.cheatsheets.pattern.listeners.PatternItemListener"
-            id="rational.Test1">
-      </cheatsheet>
-      <cheatsheet
-            name="Rational Test2"
-            category="org.eclipse.ui.tests.cheatsheets.cheatSheetsTestCat"
-            contentFile="cheatsheets/tests/rational/Test2.xml"
-            listener="org.eclipse.ui.examples.cheatsheets.pattern.listeners.PatternItemListener"
-            id="rational.Test2">
       </cheatsheet>
       <cheatsheet
             name="Testing Actions"
-            category="org.eclipse.ui.tests.cheatsheets.cheatSheetsTestCat"
-            contentFile="cheatsheets/tests/TestActions.xml"
-            id="org.eclipse.ui.tests.cheatsheets.actions">
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
+            contentFile="data/cheatsheet/valid/TestActions.xml"
+            id="org.eclipse.ua.tests.cheatsheet.actions">
          <description>
             This cheat sheet has items to test the framework
          </description>
       </cheatsheet>
       <cheatsheet
-            name="Testing Non-exsting File"
-            category="org.eclipse.ui.tests.cheatsheets.cheatSheetsTestCat"
-            contentFile="cheatsheets/tests/TestNonExistingFile.xml"
-            id="org.eclipse.ui.tests.cheatsheets.nonExistingFile">
+            name="Testing Non-existent File"
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
+            contentFile="data/cheatsheet/invalid/TestNonExistentFile.xml"
+            id="org.eclipse.ua.tests.cheatsheet.nonExistingFile">
       </cheatsheet>
    </extension>
 
+   <!-- 
+      Cheat sheet context help test
+   -->
    <extension point="org.eclipse.help.contexts"> 
-       <contexts file="contexts.xml"/>
-   </extension>
-
-   <extension
-         point="org.eclipse.ui.views">
-      <category
-            name="Cheat Sheets Tests"
-            id="org.eclipse.ui.tests.cheatsheets">
-      </category>
-      <view
-            name="CheatSheetViewer Test"
-            icon="icons/sample.gif"
-            category="org.eclipse.ui.tests.cheatsheets"
-            class="org.eclipse.ui.tests.cheatsheets.views.CheatSheetViewerTestView"
-            id="org.eclipse.ui.tests.cheatsheets.views.CheatSheetViewerTestView">
-      </view>
-   </extension>
-
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="*.xml"
-            id="tests.cheatsheets.contribution1">
-         <menu
-               label="Test CheatSheet Parsing"
-               path="additions"
-               id="org.eclipse.ui.tests.cheatsheets.menu">
-            <separator
-                  name="group1">
-            </separator>
-         </menu>
-         <action
-               label="Test Parsing"
-               class="org.eclipse.ui.tests.cheatsheets.actions.TestCheatSheetParserAction"
-               menubarPath="org.eclipse.ui.tests.cheatsheets.menu/group1"
-               enablesFor="+"
-               id="org.eclipse.ui.tests.cheatsheets.actions.TestCheatSheetParserAction">
-         </action>
-      </objectContribution>
-   </extension>
-
-   <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            label="Cheat Sheet Tests Action Set"
-            visible="true"
-            id="org.eclipse.ui.tests.cheatsheets.actionSet">
-         <menu
-               label="Cheat Sheet Tests"
-               id="cheatSheetTests">
-            <separator
-                  name="group1">
-            </separator>
-         </menu>
-         <action
-               label="Test opening with an invalid id"
-               class="org.eclipse.ui.tests.cheatsheets.actions.TestCheatSheetViewerSetInputAction"
-               menubarPath="cheatSheetTests/group1"
-               id="org.eclipse.ui.tests.cheatsheets.actions.TestCheatSheetViewerSetInputAction">
-         </action>
-         <action
-               label="Start WebApp"
-               class="org.eclipse.ui.tests.cheatsheets.actions.TestStartWebApp"
-               menubarPath="cheatSheetTests/group1"
-               id="org.eclipse.ui.tests.cheatsheets.actions.TestStartWebApp">
-         </action>
-         <action
-               label="Test opening from a URL"
-               class="org.eclipse.ui.tests.cheatsheets.actions.TestOpeningURL"
-               menubarPath="cheatSheetTests/group1"
-               id="org.eclipse.ui.tests.cheatsheets.actions.TestOpeningURL">
-         </action>
-      </actionSet>
+       <contexts file="data/cheatsheet/contexts.xml"/>
    </extension>
 
 </plugin>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<cheatsheet title="Test cheatsheet without cheatsheet element">
+
+	<intro>
+		<description>
+Simple test
+		</description>
+</intro>
+
+	<item
+		title="Just a simple test">
+		<description>
+Did it work? Of course not, it is suppose to cause a parsing error.
+		</description>
+	<perform-when condition="${pattern}" extra="testing">
+		<action
+			when="Factory"
+			pluginId="org.eclipse.ua.tests"
+			class="org.eclipse.ui.examples.cheatsheets.pattern.actions.FactoryCustomizeAction"/>
+		<action
+			when="Singleton"
+			pluginId="org.eclipse.ua.tests"
+			class="org.eclipse.ui.examples.cheatsheets.pattern.actions.SingletonCustomizeAction"/>
+		<action
+			when="Visitor"
+			pluginId="org.eclipse.ua.tests"
+			class="org.eclipse.ui.examples.cheatsheets.pattern.actions.VisitorCustomizeAction"/>
+	</perform-when>
+</item>
+
+</cheatsheet>

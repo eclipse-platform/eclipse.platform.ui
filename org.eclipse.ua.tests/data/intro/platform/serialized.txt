@@ -1,0 +1,534 @@
+
+Intro Model Content:
+======================
+
+Model has valid config = true
+Presentation type = 2
+Home page id = root
+Number of pages (not including Root Page) = 4
+Number of shared groups = 0
+Number of unresolved extensions = 0
+
+HOME PAGE: 
+--------------
+	is dynamic= true
+	id = root
+	title = Welcome to Eclipse 3.2
+	style = file:/<filtered>/root.css
+	alt-style = file:/<filtered>/root_swt.properties
+	url = null
+	style-id = page
+	page styles are = 
+	page alt-styles are = 
+	page children = 3
+
+		TITLE: id = null
+				title = Welcome to Eclipse 3.2
+				style-id = intro-header
+		GROUP: id = links-background
+				label = null
+				children = 1
+				style-id = null
+						GROUP: id = page-links
+								label = null
+								children = 6
+								style-id = null
+										ANCHOR: id = beginAnchor
+										LINK: id = overview
+												label = Overview
+												text = Find out what Eclipse is all about
+												url = http://org.eclipse.ui.intro/showPage?id=overview
+												style-id = left
+										LINK: id = tutorials
+												label = Tutorials
+												text = Let us guide you through Eclipse end-to-end tutorials
+												url = http://org.eclipse.ui.intro/showPage?id=tutorials
+												style-id = left
+										LINK: id = samples
+												label = Samples
+												text = Explore Eclipse development through code samples
+												url = http://org.eclipse.ui.intro/showPage?id=samples
+												style-id = right
+										LINK: id = news
+												label = What's New
+												text = Find out what is new in this release
+												url = http://org.eclipse.ui.intro/showPage?id=news
+												style-id = right
+										ANCHOR: id = endAnchor
+		GROUP: id = action-links
+				label = null
+				children = 1
+				style-id = null
+						LINK: id = workbench
+								label = Workbench
+								text = Go to the workbench
+								url = http://org.eclipse.ui.intro/switchToLaunchBar
+								style-id = null
+
+PAGE id = overview
+----------
+	title = Welcome to Eclipse 3.2
+	style = file:/<filtered>/overview.css
+	alt-style = file:/<filtered>/swt.properties
+	style-id = page
+	page styles are = file:/<filtered>/overview.css
+			file:/<filtered>/overview.css
+			
+	page alt-styles are = file:/<filtered>/swt.properties from org.eclipse.jdt
+		file:/<filtered>/swt.properties from org.eclipse.pde
+		
+	page children = 4
+
+		TITLE: id = null
+				title = Welcome to Eclipse 3.2
+				style-id = intro-header
+		GROUP: id = curve-image
+				label = null
+				children = 0
+				style-id = null
+		GROUP: id = navigation-links
+				label = null
+				children = 2
+				style-id = null
+						GROUP: id = page-links
+								label = null
+								children = 6
+								style-id = null
+										ANCHOR: id = navigationBegin
+										LINK: id = overview
+												label = Overview
+												text = Find out what Eclipse is all about
+												url = http://org.eclipse.ui.intro/showPage?id=overview
+												style-id = left
+										LINK: id = tutorials
+												label = Tutorials
+												text = Let us guide you through Eclipse end-to-end tutorials
+												url = http://org.eclipse.ui.intro/showPage?id=tutorials
+												style-id = left
+										LINK: id = samples
+												label = Samples
+												text = Explore Eclipse development through code samples
+												url = http://org.eclipse.ui.intro/showPage?id=samples
+												style-id = right
+										LINK: id = news
+												label = What's New
+												text = Find out what is new in this release
+												url = http://org.eclipse.ui.intro/showPage?id=news
+												style-id = right
+										ANCHOR: id = navigationEnd
+						GROUP: id = action-links
+								label = null
+								children = 1
+								style-id = null
+										LINK: id = workbench
+												label = Workbench
+												text = Go to the workbench
+												url = http://org.eclipse.ui.intro/switchToLaunchBar
+												style-id = null
+		GROUP: id = page-content
+				label = null
+				children = 4
+				style-id = null
+						GROUP: id = content-header
+								label = OVERVIEW
+								children = 0
+								style-id = null
+						TEXT: id = page-title
+								text = OVERVIEW
+								style-id = page-title
+						TEXT: id = page-description
+								text = Eclipse is a kind of universal tool platform - an open extensible IDE for anything and nothing in particular. It provides a feature-rich development environment that allows the developer to efficiently create tools that integrate seamlessly into the Eclipse Platform.
+								style-id = page-description
+						GROUP: id = overview-links
+								label = null
+								children = 8
+								style-id = null
+										ANCHOR: id = beginAnchor
+										LINK: id = basics
+												label = Workbench basics
+												text = Learn about basic Eclipse workbench concepts
+												url = http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.user/gettingStarted/intro/overview.htm&embedTarget=page-content
+												style-id = null
+										LINK: id = team
+												label = Team support
+												text = Find out how to collaborate with other developers
+												url = http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.user/concepts/concepts-26.htm&embedTarget=page-content
+												style-id = null
+										LINK: id = java
+												label = Java development
+												text = Get familiar with developing Java programs using Eclipse
+												url = http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.jdt.doc.user/gettingStarted/intro/overview.htm&embedTarget=page-content
+												style-id = null
+										ANCHOR: id = jdtAnchor
+										LINK: id = pde
+												label = Eclipse plug-in development
+												text = Learn how to extend Eclipse by building new plug-ins
+												url = http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.pde.doc.user/guide/intro/pde_overview.htm&embedTarget=page-content
+												style-id = null
+										ANCHOR: id = pdeAnchor
+										ANCHOR: id = endAnchor
+
+PAGE id = tutorials
+----------
+	title = Welcome to Eclipse 3.2
+	style = file:/<filtered>/tutorials.css
+	alt-style = file:/<filtered>/swt.properties
+	style-id = page
+	page styles are = file:/<filtered>/tutorials.css
+			file:/<filtered>/tutorials.css
+			
+	page alt-styles are = file:/<filtered>/swt.properties from org.eclipse.jdt
+		file:/<filtered>/swt.properties from org.eclipse.pde
+		
+	page children = 4
+
+		TITLE: id = null
+				title = Welcome to Eclipse 3.2
+				style-id = intro-header
+		GROUP: id = curve-image
+				label = null
+				children = 0
+				style-id = null
+		GROUP: id = navigation-links
+				label = null
+				children = 2
+				style-id = null
+						GROUP: id = page-links
+								label = null
+								children = 6
+								style-id = null
+										ANCHOR: id = navigationBegin
+										LINK: id = overview
+												label = Overview
+												text = Find out what Eclipse is all about
+												url = http://org.eclipse.ui.intro/showPage?id=overview
+												style-id = left
+										LINK: id = tutorials
+												label = Tutorials
+												text = Let us guide you through Eclipse end-to-end tutorials
+												url = http://org.eclipse.ui.intro/showPage?id=tutorials
+												style-id = left
+										LINK: id = samples
+												label = Samples
+												text = Explore Eclipse development through code samples
+												url = http://org.eclipse.ui.intro/showPage?id=samples
+												style-id = right
+										LINK: id = news
+												label = What's New
+												text = Find out what is new in this release
+												url = http://org.eclipse.ui.intro/showPage?id=news
+												style-id = right
+										ANCHOR: id = navigationEnd
+						GROUP: id = action-links
+								label = null
+								children = 1
+								style-id = null
+										LINK: id = workbench
+												label = Workbench
+												text = Go to the workbench
+												url = http://org.eclipse.ui.intro/switchToLaunchBar
+												style-id = null
+		GROUP: id = page-content
+				label = null
+				children = 9
+				style-id = null
+						GROUP: id = content-header
+								label = TUTORIALS
+								children = 0
+								style-id = null
+						TEXT: id = page-title
+								text = TUTORIALS
+								style-id = page-title
+						TEXT: id = page-description
+								text = Learn how to be productive using Eclipse by completing end-to-end tutorials that will guide you along the way.
+								style-id = page-description
+						ANCHOR: id = beginAnchor
+						GROUP: id = java
+								label = Java Development
+								children = 2
+								style-id = tutorials-group
+										LINK: id = hello-world
+												label = Build a simple Java application
+												text = Create a small Java program that will print "Hello, World" on the console
+												url = http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&input=org.eclipse.jdt.helloworld
+												style-id = tutorials-link
+										LINK: id = swt
+												label = Build a standalone SWT application
+												text = Create a SWT application that runs without the workbench
+												url = http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&input=org.eclipse.jdt.helloworld.swt
+												style-id = tutorials-link
+						ANCHOR: id = jdtAnchor
+						GROUP: id = pde
+								label = Eclipse Plug-in Development
+								children = 3
+								style-id = tutorials-group
+										LINK: id = pde-hello-world
+												label = Create a "Hello, World" plug-in
+												text = Create an Eclipse plug-in that will open a message box from the menu
+												url = http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&input=org.eclipse.pde.helloworld
+												style-id = tutorials-link
+										LINK: id = features
+												label = Deploy a feature on an update site
+												text = End-to-end tutorial in building and deploying features
+												url = http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&input=org.eclipse.pde.updates
+												style-id = tutorials-link
+										LINK: id = rcp
+												label = Build a Rich Client Platform application
+												text = Create a full RCP application step by step
+												url = http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&input=org.eclipse.pde.rcpapp
+												style-id = tutorials-link
+						ANCHOR: id = pdeAnchor
+						ANCHOR: id = endAnchor
+
+PAGE id = samples
+----------
+	title = Welcome to Eclipse 3.2
+	style = file:/<filtered>/samples.css
+	alt-style = file:/<filtered>/swt.properties
+	style-id = page
+	page styles are = file:/<filtered>/samples.css
+			
+	page alt-styles are = file:/<filtered>/swt.properties from org.eclipse.pde
+		
+	page children = 4
+
+		TITLE: id = null
+				title = Welcome to Eclipse 3.2
+				style-id = intro-header
+		GROUP: id = curve-image
+				label = null
+				children = 0
+				style-id = null
+		GROUP: id = navigation-links
+				label = null
+				children = 2
+				style-id = null
+						GROUP: id = page-links
+								label = null
+								children = 6
+								style-id = null
+										ANCHOR: id = navigationBegin
+										LINK: id = overview
+												label = Overview
+												text = Find out what Eclipse is all about
+												url = http://org.eclipse.ui.intro/showPage?id=overview
+												style-id = left
+										LINK: id = tutorials
+												label = Tutorials
+												text = Let us guide you through Eclipse end-to-end tutorials
+												url = http://org.eclipse.ui.intro/showPage?id=tutorials
+												style-id = left
+										LINK: id = samples
+												label = Samples
+												text = Explore Eclipse development through code samples
+												url = http://org.eclipse.ui.intro/showPage?id=samples
+												style-id = right
+										LINK: id = news
+												label = What's New
+												text = Find out what is new in this release
+												url = http://org.eclipse.ui.intro/showPage?id=news
+												style-id = right
+										ANCHOR: id = navigationEnd
+						GROUP: id = action-links
+								label = null
+								children = 1
+								style-id = null
+										LINK: id = workbench
+												label = Workbench
+												text = Go to the workbench
+												url = http://org.eclipse.ui.intro/switchToLaunchBar
+												style-id = null
+		GROUP: id = page-content
+				label = null
+				children = 9
+				style-id = null
+						GROUP: id = content-header
+								label = SAMPLES
+								children = 0
+								style-id = null
+						TEXT: id = page-title
+								text = SAMPLES
+								style-id = page-title
+						TEXT: id = page-description
+								text = Explore Eclipse by installing prefabricated samples (may require Internet connection).
+								style-id = page-description
+						ANCHOR: id = beginAnchor
+						ANCHOR: id = jdtAnchor
+						GROUP: id = swt
+								label = SWT
+								children = 3
+								style-id = samples-group
+										TEXT: id = null
+												text = Run SWT samples using either the standalone SWT launcher or as an integrated workbench view.
+												style-id = group-description
+										LINK: id = swt-examples
+												label = Workbench views and standalone applications
+												text = The SWT Example launcher will allow you to launch a collection of SWT examples.  Some of the examples can be run independent of the eclipse platform and others will be available as views inside the workbench.
+												url = http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&class=org.eclipse.pde.internal.ui.samples.ShowSampleAction&id=org.eclipse.sdk.samples.swt.examples
+												style-id = sample-link
+										ANCHOR: id = swtGroupAnchor
+						GROUP: id = workbench
+								label = Workbench
+								children = 7
+								style-id = samples-group
+										TEXT: id = null
+												text = The following samples demonstrate how to tightly integrate into the Eclipse workbench.
+												style-id = group-description
+										LINK: id = multi-page-editor
+												label = Multi-page editor
+												text = Shows how to create an editor with multiple pages
+												url = http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&class=org.eclipse.pde.internal.ui.samples.ShowSampleAction&id=org.eclipse.sdk.samples.multipageeditor
+												style-id = sample-link
+										LINK: id = property-sheet
+												label = Property sheet and outline
+												text = Demonstrates how to use property sheet and outline views
+												url = http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&class=org.eclipse.pde.internal.ui.samples.ShowSampleAction&id=org.eclipse.sdk.samples.propertysheet
+												style-id = sample-link
+										LINK: id = readmetool
+												label = Readme tool
+												text = Shows how to create your own extension points
+												url = http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&class=org.eclipse.pde.internal.ui.samples.ShowSampleAction&id=org.eclipse.sdk.samples.readmetool
+												style-id = sample-link
+										LINK: id = java-editor
+												label = Java editor
+												text = Demonstrates standard features available to custom text editors
+												url = http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&class=org.eclipse.pde.internal.ui.samples.ShowSampleAction&id=org.eclipse.sdk.samples.javaeditor
+												style-id = sample-link
+										ANCHOR: id = jdtAnchor
+										ANCHOR: id = workbenchGroupAnchor
+						ANCHOR: id = pdeAnchor
+						ANCHOR: id = endAnchor
+
+PAGE id = news
+----------
+	title = Welcome to Eclipse 3.2
+	style = file:/<filtered>/whatsnew.css
+	alt-style = file:/<filtered>/swt.properties
+	style-id = page
+	page styles are = file:/<filtered>/news.css
+			
+	page alt-styles are = file:/<filtered>/swt.properties from org.eclipse.pde
+		
+	page children = 4
+
+		TITLE: id = null
+				title = Welcome to Eclipse 3.2
+				style-id = intro-header
+		GROUP: id = curve-image
+				label = null
+				children = 0
+				style-id = null
+		GROUP: id = navigation-links
+				label = null
+				children = 2
+				style-id = null
+						GROUP: id = page-links
+								label = null
+								children = 6
+								style-id = null
+										ANCHOR: id = navigationBegin
+										LINK: id = overview
+												label = Overview
+												text = Find out what Eclipse is all about
+												url = http://org.eclipse.ui.intro/showPage?id=overview
+												style-id = left
+										LINK: id = tutorials
+												label = Tutorials
+												text = Let us guide you through Eclipse end-to-end tutorials
+												url = http://org.eclipse.ui.intro/showPage?id=tutorials
+												style-id = left
+										LINK: id = samples
+												label = Samples
+												text = Explore Eclipse development through code samples
+												url = http://org.eclipse.ui.intro/showPage?id=samples
+												style-id = right
+										LINK: id = news
+												label = What's New
+												text = Find out what is new in this release
+												url = http://org.eclipse.ui.intro/showPage?id=news
+												style-id = right
+										ANCHOR: id = navigationEnd
+						GROUP: id = action-links
+								label = null
+								children = 1
+								style-id = null
+										LINK: id = workbench
+												label = Workbench
+												text = Go to the workbench
+												url = http://org.eclipse.ui.intro/switchToLaunchBar
+												style-id = null
+		GROUP: id = page-content
+				label = null
+				children = 6
+				style-id = null
+						GROUP: id = content-header
+								label = WHAT'S NEW
+								children = 0
+								style-id = null
+						TEXT: id = page-title
+								text = WHAT'S NEW
+								style-id = page-title
+						ANCHOR: id = beginAnchor
+						GROUP: id = noteworthy-links
+								label = New and Noteworthy
+								children = 6
+								style-id = null
+										LINK: id = platform-noteworthy
+												label = Eclipse Platform
+												text = Find out about the major new features in this release
+												url = http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.user/whatsNew/platform_whatsnew.html
+												style-id = noteworthy-link
+										LINK: id = jdt-noteworthy
+												label = Java development tools
+												text = Find out about significant changes made to the Java development tools
+												url = http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.jdt.doc.user/whatsNew/jdt_whatsnew.html
+												style-id = noteworthy-link
+										ANCHOR: id = jdtAnchor
+										LINK: id = pde-noteworthy
+												label = Plug-in Development Environment
+												text = Learn about significant changes made to PDE for this release
+												url = http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.pde.doc.user/whatsNew/pde_whatsnew.htm
+												style-id = noteworthy-link
+										ANCHOR: id = pdeAnchor
+										ANCHOR: id = generalAnchor
+						GROUP: id = news-links
+								label = General
+								children = 5
+								style-id = null
+										LINK: id = migration
+												label = Migration from the previous release
+												text = Learn what you need to do to make your old code work in Eclipse 3.1
+												url = http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.isv/porting/eclipse_3_1_porting_guide.html
+												style-id = null
+										ANCHOR: id = linksBeginAnchor
+										LINK: id = updates
+												label = New Updates
+												text = Get the latest updates from Eclipse.org
+												url = http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.platform&class=org.eclipse.platform.internal.LaunchUpdateIntroAction
+												style-id = null
+										LINK: id = eclipse
+												label = Eclipse community
+												text = Join the community, read articles and news on Eclipse.org
+												url = http://www.eclipse.org
+												style-id = null
+										ANCHOR: id = linksAnchor
+						ANCHOR: id = endAnchor
+
+Model Flag Tests: 
+----------------
+		First page children are: 
+			Groups: 3
+			Links: 0
+			Texts: 0
+			HTMLs: 0
+			Images: 0
+			Includes: 0
+			Page Titles: 1
+			Page Heads: 0
+			Model Elements: 4
+			Containers: 3
+			All Pages: 0
+			Anchors: 0
+			Content providers: 0
+			Elements with Text child(AbstractTextElemets): 0
+			Groups and Links: 3

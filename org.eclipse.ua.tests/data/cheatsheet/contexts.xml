@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.contexts"?>
+<contexts>
+    <!-- Actions -->
+    <context id="test_cheatsheets">
+        <description>Infopop test <b>successful</b>! The &quot;contextId&quot; was specified correctly in the cheat sheets content file.</description>
+        <topic label="abcdefg" href="/org.eclipse.platform.doc.user/concepts/concepts-2.htm"/>
+    </context>
+</contexts>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+
+<cheatsheet title="Test 1">
+
+<intro>
+	<description>
+		This is a cheat sheet with actions preprogrammed to set certain values on certain static fields,
+		so that the test can verify that the action was run.
+	</description>
+</intro>
+
+<item
+	title="Step 1">
+	<description>
+		No actions for this one.
+	</description>
+</item>
+
+<item
+	title="Step 2"
+	skip="true">
+	<action
+		pluginId="org.eclipse.ua.tests"
+		class="org.eclipse.ua.tests.cheatsheet.util.IncrementVariableAction"/>
+	<description>
+		Action increments a static variable.
+	</description>
+</item>
+
+<item
+	title="Step 3"
+	skip="true">
+	<action
+		pluginId="org.eclipse.ua.tests"
+		class="org.eclipse.ua.tests.cheatsheet.util.NoopAction"/>
+	<description>
+		Action does nothing.
+	</description>
+</item>
+
+<item
+	title="Step 4"
+	skip="true">
+	<action
+		pluginId="org.eclipse.ua.tests"
+		class="org.eclipse.ua.tests.cheatsheet.util.IncrementVariableAction"/>
+	<description>
+		Action increments a static variable.
+	</description>
+</item>
+
+</cheatsheet>

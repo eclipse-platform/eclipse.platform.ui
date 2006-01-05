@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<cheatsheet title="Test cheatsheet without cheatsheet element">
+
+	<intro>
+		<description>
+Simple test
+		</description>
+</intro>
+
+</cheatsheet>
