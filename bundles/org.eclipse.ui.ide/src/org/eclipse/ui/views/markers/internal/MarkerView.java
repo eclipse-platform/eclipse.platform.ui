@@ -495,7 +495,11 @@ public abstract class MarkerView extends TableView {
 	 * @return MarkerList
 	 */
 	public MarkerList getCurrentMarkers() {
-		return getMarkerAdapter().getCurrentMarkers();
+		final MarkerAdapter adapter = getMarkerAdapter();
+		if (adapter == null) {
+			return null;
+		}
+		return adapter.getCurrentMarkers();
 	}
 
 	/**
