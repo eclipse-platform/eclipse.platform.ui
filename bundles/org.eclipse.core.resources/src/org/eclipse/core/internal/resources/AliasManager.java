@@ -504,7 +504,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 		//check if we're in an aliased project or workspace before updating structure changes.  In the 
 		//deletion case, we need to know if the resource was in an aliased project *before* deletion.
 		IProject project = resource.getProject();
-		boolean noAliases = nonDefaultResourceCount <= 0 || !aliasedProjects.contains(project);
+		boolean noAliases = !aliasedProjects.contains(project);
 
 		//now update any structure changes and check again if an update is needed
 		if (!structureChanges.isEmpty()) {
