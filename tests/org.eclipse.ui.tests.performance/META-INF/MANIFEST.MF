@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Performance Plug-in
+Bundle-ClassPath: uiperformance.jar
 Bundle-SymbolicName: org.eclipse.ui.tests.performance;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: org.eclipse.ui.tests.performance.UIPerformancePlugin
