@@ -31,6 +31,7 @@ class AnnotationMap implements IAnnotationMap {
      * <code>IAnnotationMap</code>
      */
     private Object fLockObject;
+    private final Object fInternalLockObject= new Object();
 
     /** The map holding the annotations */
     private Map fInternalMap;
@@ -47,15 +48,16 @@ class AnnotationMap implements IAnnotationMap {
     /*
      * @see org.eclipse.jface.text.source.ISynchronizable#setLockObject(java.lang.Object)
      */
-    public void setLockObject(Object lockObject) {
-        fLockObject = lockObject;
+    public synchronized void setLockObject(Object lockObject) {
+        fLockObject= lockObject;
     }
 
     /*
      * @see org.eclipse.jface.text.source.ISynchronizable#getLockObject()
      */
-    public Object getLockObject() {
-        if (fLockObject == null) return this;
+    public synchronized Object getLockObject() {
+        if (fLockObject == null)
+        	return fInternalLockObject;
         return fLockObject;
     }
 
