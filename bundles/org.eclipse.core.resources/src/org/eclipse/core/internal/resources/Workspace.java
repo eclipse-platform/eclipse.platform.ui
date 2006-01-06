@@ -1387,7 +1387,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				// check to see if we are using in the default area or not. use java.io.File for
 				// testing equality because it knows better w.r.t. drives and case sensitivity
 				IPath user = path.removeLastSegments(1);
-				IPath platform = Platform.getLocation().append(result.getName());
+				IPath platform = getRoot().getLocation().append(result.getName());
 				if (!user.toFile().equals(platform.toFile()))
 					result.setLocation(user);
 			}

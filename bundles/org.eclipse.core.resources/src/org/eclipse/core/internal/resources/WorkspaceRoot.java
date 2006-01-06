@@ -13,6 +13,7 @@ package org.eclipse.core.internal.resources;
 import java.net.URI;
 import java.util.HashMap;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -23,10 +24,17 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * name strings to project handles.
 	 */
 	private HashMap projectTable = new HashMap(10);
+	
+	/**
+	 * Cache of the canonicalized platform location.
+	 */
+	private final IPath location;
 
 	protected WorkspaceRoot(IPath path, Workspace container) {
 		super(path, container);
 		Assert.isTrue(path.equals(Path.ROOT));
+		location = FileUtil.canonicalPath(Platform.getLocation());
+		Assert.isNotNull(location);
 	}
 
 	/**
@@ -120,7 +128,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * @see IResource#getLocation()
 	 */
 	public IPath getLocation() {
-		return Platform.getLocation();
+		return location;
 	}
 
 	/**

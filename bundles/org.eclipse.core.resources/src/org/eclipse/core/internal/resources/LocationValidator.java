@@ -326,7 +326,7 @@ public class LocationValidator {
 		if (location.getScheme().equals(EFS.SCHEME_FILE)) {
 			IPath locationPath = URIUtil.toPath(location);
 			// test if the given location overlaps the default default location
-			IPath defaultDefaultLocation = Platform.getLocation();
+			IPath defaultDefaultLocation = workspace.getRoot().getLocation();
 			if (FileUtil.isPrefixOf(locationPath, defaultDefaultLocation)) {
 				message = NLS.bind(Messages.resources_overlapWorkspace, toString(location), defaultDefaultLocation.toOSString());
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);

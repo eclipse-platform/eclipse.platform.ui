@@ -46,16 +46,26 @@ public class FileUtil {
 	}
 
 	/**
+	 * Converts an IPath into its canonical form for the local file system.
+	 */
+	public static IPath canonicalPath(IPath path) {
+		if (path == null)
+			return null;
+		try {
+			return new Path(path.toFile().getCanonicalPath());
+		} catch (IOException e) {
+			return path;
+		}
+	}
+
+	/**
 	 * Converts a URI into its canonical form.
 	 */
 	public static URI canonicalURI(URI uri) {
-		if (uri != null && uri.getScheme().equals(EFS.SCHEME_FILE)) {
-			try {
-				uri = URIUtil.toURI(new Path(URIUtil.toPath(uri).toFile().getCanonicalPath()));
-			} catch (IOException e) {
-				//fall through
-			}
-		}
+		if (uri == null)
+			return null;
+		if (EFS.SCHEME_FILE.equals(uri.getScheme()))
+			return URIUtil.toURI(canonicalPath(URIUtil.toPath(uri)));
 		return uri;
 	}
 

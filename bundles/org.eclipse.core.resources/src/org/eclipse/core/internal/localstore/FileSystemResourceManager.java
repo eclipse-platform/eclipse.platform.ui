@@ -311,7 +311,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	}
 
 	protected IPath getProjectDefaultLocation(IProject project) {
-		return Platform.getLocation().append(project.getFullPath());
+		return workspace.getRoot().getLocation().append(project.getFullPath());
 	}
 
 	/**
@@ -346,7 +346,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			//this is the root, so we know where this must be located
 			//initialize root location
 			info = workspace.getResourceInfo(Path.ROOT, false, true);
-			setLocation(workspace.getRoot(), info, URIUtil.toURI(Platform.getLocation()));
+			final IWorkspaceRoot rootResource = workspace.getRoot();
+			setLocation(rootResource, info, URIUtil.toURI(rootResource.getLocation()));
 			return info.getFileStoreRoot();
 		}
 		root = getStoreRoot(parent);
@@ -543,7 +544,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * it is not under a project's location.
 	 */
 	protected IPath pathForLocation(IPath location) {
-		if (Platform.getLocation().equals(location))
+		if (workspace.getRoot().getLocation().equals(location))
 			return Path.ROOT;
 		IProject[] projects = getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {

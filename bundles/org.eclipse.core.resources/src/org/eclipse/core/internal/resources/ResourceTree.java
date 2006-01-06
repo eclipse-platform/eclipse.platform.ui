@@ -711,8 +711,10 @@ class ResourceTree implements IResourceTree {
 
 			// Use the default area if necessary for the destination. The source project
 			// should already have a location assigned to it.
-			if (destLocation == null)
-				destLocation = Platform.getLocation().append(destDescription.getName()).toFile().toURI();
+			if (destLocation == null) {
+				IPath rootLocation = source.getWorkspace().getRoot().getLocation();
+				destLocation = rootLocation.append(destDescription.getName()).toFile().toURI();
+			}
 			IFileStore destStore = EFS.getStore(destLocation);
 
 			// Move the contents on disk.
