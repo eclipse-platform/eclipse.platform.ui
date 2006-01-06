@@ -182,7 +182,7 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 		/* test project */
 		IPath location = projects[0].getLocation();
 		assertTrue("2.1", location.equals(getLocalManager().locationFor(projects[0])));
-		assertTrue("2.2", location.equals(Platform.getLocation().append(projects[0].getName())));
+		assertTrue("2.2", location.equals(getWorkspace().getRoot().getLocation().append(projects[0].getName())));
 	}
 
 	/**

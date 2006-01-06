@@ -16,6 +16,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.CancelingProgressMonitor;
@@ -178,6 +179,7 @@ public class LinkedResourceTest extends ResourceTest {
 			location = new Path("b:\\does\\not\\exist");
 		else
 			location = new Path("/dev/null/does/not/exist");
+		location = FileUtil.canonicalPath(location);
 		try {
 			folder.createLink(location, IResource.NONE, getMonitor());
 			fail("2.1");

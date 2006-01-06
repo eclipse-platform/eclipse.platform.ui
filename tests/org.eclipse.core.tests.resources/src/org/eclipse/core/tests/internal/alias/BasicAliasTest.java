@@ -454,7 +454,7 @@ public class BasicAliasTest extends ResourceTest {
 			assertTrue("1.1", !linkChild.exists());
 			ensureExistsInWorkspace(folderChild, true);
 			assertTrue("1.2", linkChild.exists());
-			
+
 			link.delete(IResource.NONE, getMonitor());
 			assertTrue("1.3", !linkChild.exists());
 		} catch (CoreException e) {
@@ -472,17 +472,17 @@ public class BasicAliasTest extends ResourceTest {
 		try {
 			link.createLink(folder.getLocationURI(), IResource.NONE, getMonitor());
 			assertTrue("1.0", linkChild.exists());
-			
+
 			//manipulate file below overlapping folder and make sure alias under link is updated
 			folderChild.delete(IResource.NONE, getMonitor());
 			assertTrue("1.1", !linkChild.exists());
 			ensureExistsInWorkspace(folderChild, true);
 			assertTrue("1.2", linkChild.exists());
-			
+
 			link.delete(IResource.NONE, getMonitor());
 			assertTrue("1.3", !linkChild.exists());
 			link.createLink(folder.getLocationURI(), IResource.NONE, getMonitor());
-			
+
 			//close and reopen the project and ensure the alias is still updated
 			link.getProject().close(getMonitor());
 			link.getProject().open(getMonitor());
@@ -491,9 +491,9 @@ public class BasicAliasTest extends ResourceTest {
 			assertTrue("2.1", !linkChild.exists());
 			ensureExistsInWorkspace(folderChild, true);
 			assertTrue("2.2", linkChild.exists());
-			
+
 			//force AliasManager to restart (simulates a shutdown/startup)
-			((Workspace)getWorkspace()).getAliasManager().startup(null);
+			((Workspace) getWorkspace()).getAliasManager().startup(null);
 
 			folderChild.delete(IResource.NONE, getMonitor());
 			assertTrue("3.1", !linkChild.exists());
@@ -515,11 +515,11 @@ public class BasicAliasTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
-		
+
 		//.project file should now exist in link
 		IFile linkChild = fLinkOverlap1.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 		assertTrue("1.0", linkChild.exists());
-		
+
 		// TODO more tests
 	}
 
@@ -554,6 +554,41 @@ public class BasicAliasTest extends ResourceTest {
 
 	public void testDeleteProject() {
 		// TODO
+	}
+
+	/**
+	 * Tests deletion of a project whose location on disk contains
+	 * the location of another project.  The nested project should
+	 * be deleted automatically in this case.
+	 */
+	public void testDeleteProjectUnderProject() {
+		IProject parent = getWorkspace().getRoot().getProject("parent");
+		IProject child = getWorkspace().getRoot().getProject("child");
+		ensureExistsInWorkspace(parent, true);
+
+		IProjectDescription childDesc = getWorkspace().newProjectDescription(child.getName());
+		childDesc.setLocation(parent.getLocation().append(child.getName()));
+		try {
+			child.create(childDesc, getMonitor());
+			child.open(getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+
+		IFolder childDirInParent = parent.getFolder(child.getName());
+		IFile childProjectFileInParent = childDirInParent.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+		assertTrue("1.0", childDirInParent.exists());
+		assertTrue("1.1", childProjectFileInParent.exists());
+		
+		//now delete the child and ensure the resources in the parent are gone
+		try {
+			child.delete(IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+		assertTrue("2.0", !childDirInParent.exists());
+		assertTrue("2.1", !childProjectFileInParent.exists());
+
 	}
 
 	public void testDeleteProjectContents() {
