@@ -12,8 +12,7 @@ package org.eclipse.team.internal.ui.mapping;
 
 import java.util.*;
 
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -21,6 +20,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.internal.ui.synchronize.AbstractTreeViewerAdvisor;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.navigator.*;
@@ -86,8 +86,13 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 		GridData data = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(data);
         viewer.getNavigatorContentService().addListener(this);
-        viewer.setInput(getInitialInput());
         initializeViewer(viewer);
+		IBaseLabelProvider provider = viewer.getLabelProvider();
+		if (provider instanceof DecoratingLabelProvider) {
+			DecoratingLabelProvider dlp = (DecoratingLabelProvider) provider;
+			dlp.setDecorationContext(new DecorationContext(new String[] {SynchronizationContentProvider.DECORATION_CONTEXT}));
+		}
+        viewer.setInput(getInitialInput());
 	}
 
 	private Object getInitialInput() {

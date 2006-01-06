@@ -48,6 +48,12 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	private ISynchronizationContext context;
 	private Viewer viewer;
 	private IExtensionStateModel stateModel;
+	
+	/**
+	 * Context identifier used to indicate to label decorators that this content provider
+	 * is synchronization state aware and will handle the application of any dirty state indication.
+	 */
+	public static final String DECORATION_CONTEXT = "org.eclipse.team.ui.syncAwareContentProvider"; //$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)

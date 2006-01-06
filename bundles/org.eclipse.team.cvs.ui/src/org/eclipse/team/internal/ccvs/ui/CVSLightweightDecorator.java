@@ -31,6 +31,7 @@ import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 import org.eclipse.team.internal.core.ExceptionCollector;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.ITheme;
 import org.osgi.framework.Bundle;
@@ -163,7 +164,17 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 			return;	
 		
 		try {
-			CVSDecoration cvsDecoration = decorate(resource, true /* include dirty check */);
+			boolean includeDirtyCheck = true;
+			IDecorationContext context = decoration.getDecorationContext();
+			String[] ids = context.getContextIds();
+			for (int i = 0; i < ids.length; i++) {
+				String id = ids[i];
+				if (id.equals(SynchronizationContentProvider.DECORATION_CONTEXT)) {
+					includeDirtyCheck = false;
+					break;
+				}
+			}
+			CVSDecoration cvsDecoration = decorate(resource, includeDirtyCheck);
 			cvsDecoration.setWatchEditEnabled(cvsProvider.isWatchEditEnabled());	
 			cvsDecoration.apply(decoration);
 		} catch(CVSException e) {
