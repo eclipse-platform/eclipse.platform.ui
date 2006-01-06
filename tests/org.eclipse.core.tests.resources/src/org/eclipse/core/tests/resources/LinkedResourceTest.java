@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -663,6 +663,26 @@ public class LinkedResourceTest extends ResourceTest {
 			}, getWorkspace().getRuleFactory().modifyRule(dotProject), IResource.NONE, getMonitor());
 		} catch (CoreException e1) {
 			fail("2.99", e1);
+		}
+	}
+	
+	/**
+	 * Tests creating a project whose .project file already defines links at
+	 * depth greater than one. See bug 121322.
+	 */
+	public void testCreateProjectWithDeepLinks() {
+		IProject project = existingProject;
+		IFolder folder = nonExistingFolderInExistingFolder;
+		try {
+			folder.createLink(localFolder, IResource.NONE, getMonitor());
+			//delete and recreate the project
+			project.delete(IResource.NEVER_DELETE_PROJECT_CONTENT, getMonitor());
+			project.create(getMonitor());
+			project.open(getMonitor());
+
+			assertTrue("1.0", folder.exists());
+		} catch (CoreException e) {
+			fail("1.99", e);
 		}
 	}
 
