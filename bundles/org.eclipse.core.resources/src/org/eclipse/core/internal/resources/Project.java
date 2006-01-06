@@ -281,9 +281,9 @@ public class Project extends Container implements IProject {
 					desc = new ProjectDescription();
 				} else {
 					desc = (ProjectDescription) ((ProjectDescription) description).clone();
+					desc.setLocationURI(FileUtil.canonicalURI(description.getLocationURI()));
 				}
 				desc.setName(getName());
-				desc.setLocationURI(FileUtil.canonicalURI(description.getLocationURI()));
 				internalSetDescription(desc, false);
 				// see if there potentially are already contents on disk
 				final boolean hasSavedDescription = getLocalManager().hasSavedDescription(this);
