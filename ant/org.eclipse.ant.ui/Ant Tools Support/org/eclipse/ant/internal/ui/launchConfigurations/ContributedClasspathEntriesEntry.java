@@ -97,7 +97,8 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		for (int i = 0; i < userEntries.length; i++) {
 			entry = userEntries[i];
 			path= entry.getLabel();
-			if (path.endsWith("tools.jar")) { //$NON-NLS-1$
+            IPath toolsPath= new Path(path);
+			if (toolsPath.lastSegment().equals("tools.jar")) { //$NON-NLS-1$
 				haveToolsEntry= true;
 				// replace with dynamically resolved tools.jar based on
 				// the JRE being used
