@@ -58,11 +58,10 @@ import org.eclipse.ui.presentations.PresentationUtil;
  * @since 3.2
  * </p>
  */
-public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
+public class TrimCommonUIHandle extends Composite {
 	/*
 	 * Fields
 	 */
-	private int handleSize;
 	private TrimLayout  layout;
     private IWindowTrim trim;
 	private Control     toDrag;
@@ -144,6 +143,16 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
     public TrimCommonUIHandle(TrimLayout layout, IWindowTrim trim, int curSide) {
     	super(trim.getControl().getParent(), SWT.NONE);
     	
+    	// Set the control up with all its various hooks, cursor...
+    	setup(layout, trim, curSide);
+    }
+
+	/**
+	 * Set up the trim with its cursor, drag listener, context menu and menu listener.
+	 * This method can also be used to 'recycle' a trim handle as long as the new handle
+	 * is for trim under the same parent as it was originally used for.
+	 */
+	private void setup(TrimLayout layout, IWindowTrim trim, int curSide) {    	
     	this.layout = layout;
     	this.trim = trim;
     	this.toDrag = trim.getControl();
@@ -153,8 +162,27 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
     	// remember the orientation to use
     	orientation = (curSide == SWT.LEFT || curSide == SWT.RIGHT) ? SWT.VERTICAL  : SWT.HORIZONTAL;
     	
-    	// Set the control up with all its various hooks, cursor...
-    	setup();
+        // Insert a CoolBar and extras in order to provide the drag affordance
+        insertCoolBar(orientation);
+        
+		// Create a window trim proxy for the handle
+		createWindowTrimProxy();
+		
+        // Listen to size changes to keep the CoolBar synched
+        addControlListener(controlListener);
+       	
+    	// Set the cursor affordance
+    	setDragCursor();
+    	
+        // Set up the dragging behaviour
+        PresentationUtil.addDragListener(cb, dragListener);
+    	
+    	// Create the docking context menu
+    	dockMenuManager = new MenuManager();
+    	dockContributionItem = getDockingContribution();
+        dockMenuManager.add(dockContributionItem);
+
+        cb.addListener(SWT.MenuDetect, menuListener);
     }
 
     /**
@@ -171,50 +199,46 @@ public class TrimCommonUIHandle extends Composite /*implements PaintListener*/ {
 	}
 
 	/**
-	 * Set up the trim with its cursor, drag listener, context menu and menu listener
+	 * Create and format the IWindowTrim for the handle, ensuring that the
+	 * handle will be 'wide' enough to display the drag affordance.
 	 */
-	private void setup() {    	
-		// Determine the handle size based on the CoolBar's computed 
-		// 'preferred' size so that it will be large enough to show the
-		// drag affordance (which is OS dependent)
-		CoolBar dummyCB = new CoolBar(this, orientation);
-		new CoolItem(dummyCB, SWT.NONE);
-		Point p = dummyCB.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		if (orientation == SWT.HORIZONTAL) {
-			handleSize = p.x;
-		}
-		else {
-			handleSize = p.y;
-		}
-		
-		// is this another potential place to leak trim handles?
+	private void createWindowTrimProxy() {
+		// Create a window trim proxy for the handle
 		WindowTrimProxy proxy = new WindowTrimProxy(this, "NONE", "NONE", //$NON-NLS-1$ //$NON-NLS-2$
 				SWT.TOP | SWT.BOTTOM | SWT.LEFT | SWT.RIGHT, false);
-		proxy.setWidthHint(handleSize);
-		proxy.setHeightHint(handleSize);
 
+		// Set up the handle's hints based on the computed size that
+		// the handle has to be (i.e. if it's HORIZONTAL then the
+		// 'width' is determined by the space required to show the
+		// CB's drag affordance while the 'height' is inherited from
+		// the trim that the handle is for).
+		if (orientation == SWT.HORIZONTAL) {
+			proxy.setWidthHint(getHandleSize());
+			proxy.setHeightHint(trim.getHeightHint());
+		}
+		else {
+			proxy.setWidthHint(trim.getWidthHint());
+			proxy.setHeightHint(getHandleSize());
+		}
+		
 		setLayoutData(proxy);
-    	
-        // Listen to size changes to keep the CoolBar synched
-        addControlListener(controlListener);
-       	
-        // Insert a CoolBar and extras in order to provide the
-        insertCoolBar(orientation);
-        
-    	// Set the cursor affordance
-    	setDragCursor();
-    	
-        // Set up the dragging behaviour
-        PresentationUtil.addDragListener(cb, dragListener);
-    	
-    	// Create the docking context menu
-    	dockMenuManager = new MenuManager();
-    	dockContributionItem = getDockingContribution();
-        dockMenuManager.add(dockContributionItem);
-
-        cb.addListener(SWT.MenuDetect, menuListener);
-    }
-
+	}
+	
+	/**
+	 * Calculate a size for the handle that will be large enough to show
+	 * the CoolBar's drag affordance.
+	 * 
+	 * @return The size that the handle has to be, based on the orientation
+	 */
+	private int getHandleSize() {
+		Point p = cb.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		
+		if (orientation == SWT.HORIZONTAL)
+			return p.x;
+		
+		return p.y;
+	}
+	
 	/**
 	 * Place a CoolBar / CoolItem / Control inside the current
 	 * UI handle. These elements will maintain thier size based on
