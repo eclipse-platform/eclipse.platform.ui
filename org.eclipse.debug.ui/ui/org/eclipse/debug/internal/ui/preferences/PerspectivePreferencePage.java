@@ -27,6 +27,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupFilter;
@@ -71,8 +72,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @since 3.2
  */
-public class PerspectivePreferencePage extends PreferencePage implements
-		IWorkbenchPreferencePage, IDebugPreferenceConstants {
+public class PerspectivePreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IDebugPreferenceConstants {
 
 	// constants
 	private static final String DEBUG_LAUNCH_GROUP = "org.eclipse.debug.ui.launchGroup.debug"; //$NON-NLS-1$
@@ -418,6 +418,14 @@ public class PerspectivePreferencePage extends PreferencePage implements
 		buildComboBoxes(fCurrentType);
 		super.performDefaults();
 	}// end performdefaults
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.PERSPECTIVE_PREFERENCE_PAGE);
+	}
 
 	/*
 	 * (non-Javadoc)
