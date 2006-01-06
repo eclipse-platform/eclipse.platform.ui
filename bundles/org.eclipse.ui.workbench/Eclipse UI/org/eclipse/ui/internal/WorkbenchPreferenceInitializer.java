@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
@@ -37,7 +38,8 @@ public class WorkbenchPreferenceInitializer extends
 	
 
 	public void initializeDefaultPreferences() {
-		IEclipsePreferences node = new DefaultScope().getNode(WorkbenchPlugin
+		IScopeContext context = new DefaultScope();
+		IEclipsePreferences node = context.getNode(WorkbenchPlugin
 				.getDefault().getBundle().getSymbolicName());
 
 		node
