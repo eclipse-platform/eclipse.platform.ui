@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,27 @@ import org.eclipse.core.runtime.*;
  * @since org.eclipse.core.filesystem 1.0
  */
 public class URIUtil {
+
+	/**
+	 * Tests two URIs for equality.  This method delegates equality testing
+	 * to the registered file system for the URIs.  If either URI does not 
+	 * have a registered file system, the default {@link URI#equals(Object)}
+	 * method is used.
+	 * 
+	 * @param one The first URI to test for equality
+	 * @param two The second URI to test for equality
+	 * @return <code>true</code> if the first URI is equal to the second,
+	 * as defined by the file systems for those URIs, and <code>false</code> otherwise.
+	 */
+	public static boolean equals(URI one, URI two) {
+		try {
+			return EFS.getStore(one).equals(EFS.getStore(two));
+		} catch (CoreException e) {
+			// fall back to default equality test
+			return one.equals(two);
+		}
+	}
+
 	/**
 	 * Replaces any colon characters in the provided string with their equivalent
 	 * URI escape sequence.
