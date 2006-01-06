@@ -210,14 +210,13 @@ public class TrimCommonUIHandle extends Composite {
 		// Set up the handle's hints based on the computed size that
 		// the handle has to be (i.e. if it's HORIZONTAL then the
 		// 'width' is determined by the space required to show the
-		// CB's drag affordance while the 'height' is inherited from
-		// the trim that the handle is for).
+		// CB's drag affordance).
 		if (orientation == SWT.HORIZONTAL) {
 			proxy.setWidthHint(getHandleSize());
-			proxy.setHeightHint(trim.getHeightHint());
+			proxy.setHeightHint(0);
 		}
 		else {
-			proxy.setWidthHint(trim.getWidthHint());
+			proxy.setWidthHint(0);
 			proxy.setHeightHint(getHandleSize());
 		}
 		
@@ -231,12 +230,15 @@ public class TrimCommonUIHandle extends Composite {
 	 * @return The size that the handle has to be, based on the orientation
 	 */
 	private int getHandleSize() {
-		Point p = cb.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+//		Point p = cb.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+//		
+//		if (orientation == SWT.HORIZONTAL)
+//			return p.x;
+//		
+//		return p.y;
 		
-		if (orientation == SWT.HORIZONTAL)
-			return p.x;
-		
-		return p.y;
+		// KLUDGE!! return a constant for now
+		return 16;
 	}
 	
 	/**
