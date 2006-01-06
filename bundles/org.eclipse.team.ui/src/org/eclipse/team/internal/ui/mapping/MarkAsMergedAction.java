@@ -12,12 +12,14 @@ package org.eclipse.team.internal.ui.mapping;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.operations.*;
@@ -89,6 +91,23 @@ public class MarkAsMergedAction extends ModelProviderAction {
 	 */
 	protected boolean isEnabledForSelection(IStructuredSelection selection) {
 		return getFileDeltas(selection).length > 0;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.operations.ModelProviderAction#getDiffFilter()
+	 */
+	protected FastDiffNodeFilter getDiffFilter() {
+		return new FastDiffNodeFilter() {
+			public boolean select(IDiffNode node) {
+				if (node instanceof IThreeWayDiff) {
+					IThreeWayDiff twd = (IThreeWayDiff) node;
+					if (twd.getDirection() == IThreeWayDiff.CONFLICTING || twd.getDirection() == IThreeWayDiff.INCOMING) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
 	}
 
 }

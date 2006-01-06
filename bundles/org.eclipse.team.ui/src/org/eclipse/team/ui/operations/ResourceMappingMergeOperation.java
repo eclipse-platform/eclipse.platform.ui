@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.*;
@@ -113,7 +114,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 		try {
 			monitor.beginTask(null, 100);
 			context = buildMergeContext(Policy.subMonitorFor(monitor, 75));
-			if (context.getDiffTree().isEmpty() || !hasIncomingChanges(context.getDiffTree())) {
+			if (!hasChangesOfInterest()) {
 				promptForNoChanges();
 				context.dispose();
 				return;
@@ -121,11 +122,13 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 			if (isAttemptHeadlessMerge()) {
 				IStatus status = validateMerge(context, Policy.subMonitorFor(monitor, 5));
 				if (status.isOK()) {
-					// The execute will prompt if there are conflicts
-					execute(context, Policy.subMonitorFor(monitor, 20));
-					return;
+					if (performMerge(Policy.subMonitorFor(monitor, 20)))
+						// The merge was sucessful so we can just return
+						return;
 				}
 			}
+			// Either auto-merging was not attemped or it was not 100% sucessful
+			// TODO If there is a problem between here and when the preview is shown, the context may be leaked
 			showPreview(getJobName(), Policy.subMonitorFor(monitor, 25));
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
@@ -134,6 +137,34 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 		}
 	}
 
+	/**
+	 * Return whether the context of this operation has changes that are
+	 * of interest to the operation. Sublcasses may override.
+	 * @return whether the context of this operation has changes that are
+	 * of interest to the operation
+	 */
+	protected boolean hasChangesOfInterest() {
+		return !context.getDiffTree().isEmpty() && hasIncomingChanges(context.getDiffTree());
+	}
+
+	private boolean hasIncomingChanges(IDiffTree tree) {
+		return hasChangesMatching(tree, new FastDiffNodeFilter() {
+			public boolean select(IDiffNode node) {
+				if (node instanceof IThreeWayDiff) {
+					IThreeWayDiff twd = (IThreeWayDiff) node;
+					int direction = twd.getDirection();
+					if (direction == IThreeWayDiff.INCOMING || direction == IThreeWayDiff.CONFLICTING) {
+						return true;
+					}
+				} else {
+					// Return true for any two-way change
+					return true;
+				}
+				return false;
+			}
+		});
+	}
+	
 	private IStatus validateMerge(IMergeContext context, IProgressMonitor monitor) {
 		ModelProvider[] providers = getScope().getModelProviders();
 		monitor.beginTask(null, 100 * providers.length);
@@ -223,52 +254,21 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 		monitor.done();
 	}
 
-	private void execute(IMergeContext context, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
-		ModelProvider[] providers = getScope().getModelProviders();
-		providers = sortByExtension(providers);
-		List failedMerges = new ArrayList();
-		for (int i = 0; i < providers.length; i++) {
-			ModelProvider provider = providers[i];
-			if (!performMerge(provider, context, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN))) {
-				failedMerges.add(provider);
-			}
-		}
-		if (failedMerges.isEmpty()) {
+	/**
+	 * Perform the merge for the context of the operation. If the merge was not
+	 * succesful in it's entirety, there are still changes left to be merged.
+	 * Clients can decide how to handle this.
+	 * 
+	 * @param monitor a prohress monitor
+	 * @return whether the merge was successful in it's entirety
+	 * @throws CoreException
+	 */
+	protected boolean performMerge(IProgressMonitor monitor) throws CoreException {
+		boolean merged = performMerge(context, monitor);
+		if (merged) {
 			context.dispose();
-		} else {
-			showPreview(getJobName(), monitor);
 		}
-		monitor.done();
-	}
-
-	private ModelProvider[] sortByExtension(ModelProvider[] providers) {
-		List result = new ArrayList();
-		for (int i = 0; i < providers.length; i++) {
-			ModelProvider providerToInsert = providers[i];
-			int index = result.size();
-			for (int j = 0; j < result.size(); j++) {
-				ModelProvider provider = (ModelProvider) result.get(j);
-				if (extendsProvider(providerToInsert, provider)) {
-					index = j;
-					break;
-				}
-			}
-			result.add(index, providerToInsert);
-		}
-		return (ModelProvider[]) result.toArray(new ModelProvider[result.size()]);
-	}
-
-	private boolean extendsProvider(ModelProvider providerToInsert, ModelProvider provider) {
-		String[] extended = providerToInsert.getDescriptor().getExtendedModels();
-		// First search immediate dependents
-		for (int i = 0; i < extended.length; i++) {
-			String id = extended[i];
-			if (id.equals(provider.getDescriptor().getId())) {
-				return true;
-			}
-		}
-		return false;
+		return merged;
 	}
 
 	/**

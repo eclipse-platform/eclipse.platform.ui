@@ -177,18 +177,31 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * The local resource must be a file.
      */
     private void performReplace(final IDiffNode delta, IProgressMonitor monitor) throws CoreException {
-    	final IResourceDiff d;
+    	IResourceDiff d;
+    	IFile file = getLocalFile(delta);
+    	IFileState remote = null;
     	if (delta instanceof IResourceDiff) {
     		d = (IResourceDiff) delta;
     	} else {
     		d = (IResourceDiff)((IThreeWayDiff)delta).getRemoteChange();
+    		if (d != null)
+    			remote = d.getAfterState();
     	}
-    	if (d == null)
-    		return;
-    	run(new IWorkspaceRunnable() {
+    	if (d == null) {
+    		d = (IResourceDiff)((IThreeWayDiff)delta).getLocalChange();
+    		if (d != null)
+    			remote = d.getBeforeState();
+    	}
+    	
+    	// Only perform the replace if a local or remote change was found
+    	if (d != null) {
+	    	performReplace(delta, file, remote, monitor);
+    	}
+	}
+
+	private void performReplace(final IDiffNode delta, final IFile file, final IFileState remote, IProgressMonitor monitor) throws CoreException {
+		run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IFile file = getLocalFile(d);
-				IFileState remote = d.getAfterState();
 				if ((remote == null || !remote.exists()) && file.exists()) {
 					file.delete(false, true, monitor);
 				} else if (remote != null) {

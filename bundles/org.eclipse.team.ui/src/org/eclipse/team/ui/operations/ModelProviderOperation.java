@@ -13,23 +13,12 @@ package org.eclipse.team.ui.operations;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ModelProvider;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.diff.IDiffNode;
-import org.eclipse.team.core.diff.IDiffTree;
-import org.eclipse.team.core.diff.IDiffVisitor;
-import org.eclipse.team.core.diff.IThreeWayDiff;
-import org.eclipse.team.core.mapping.IMergeContext;
-import org.eclipse.team.core.mapping.IMergeStatus;
-import org.eclipse.team.core.mapping.IResourceMappingMerger;
+import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.mapping.DefaultResourceMappingMerger;
@@ -94,7 +83,7 @@ public abstract class ModelProviderOperation extends TeamOperation {
 	 * @throws CoreException
 	 */
 	protected boolean performMerge(final IMergeContext context, IProgressMonitor monitor) throws CoreException {
-		final ModelProvider[] providers = context.getScope().getModelProviders();
+		final ModelProvider[] providers = sortByExtension(context.getScope().getModelProviders());
 		final List failedMerges = new ArrayList();
 		context.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {	
@@ -110,7 +99,35 @@ public abstract class ModelProviderOperation extends TeamOperation {
 		}, null /* scheduling rule */, IResource.NONE, monitor);
 		return failedMerges.isEmpty();
 	}
+	
+	private ModelProvider[] sortByExtension(ModelProvider[] providers) {
+		List result = new ArrayList();
+		for (int i = 0; i < providers.length; i++) {
+			ModelProvider providerToInsert = providers[i];
+			int index = result.size();
+			for (int j = 0; j < result.size(); j++) {
+				ModelProvider provider = (ModelProvider) result.get(j);
+				if (extendsProvider(providerToInsert, provider)) {
+					index = j;
+					break;
+				}
+			}
+			result.add(index, providerToInsert);
+		}
+		return (ModelProvider[]) result.toArray(new ModelProvider[result.size()]);
+	}
 
+	private boolean extendsProvider(ModelProvider providerToInsert, ModelProvider provider) {
+		String[] extended = providerToInsert.getDescriptor().getExtendedModels();
+		// First search immediate dependents
+		for (int i = 0; i < extended.length; i++) {
+			String id = extended[i];
+			if (id.equals(provider.getDescriptor().getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
 	/**
 	 * Merge all the mappings that come from the given provider. By default,
 	 * an automatic merge is attempted. After this, a manual merge (i.e. with user
@@ -165,19 +182,20 @@ public abstract class ModelProviderOperation extends TeamOperation {
 		}
 		return new DefaultResourceMappingMerger(provider);
 	}
-
-	protected boolean hasIncomingChanges(IDiffTree syncDeltaTree) {
+	
+	/**
+	 * Return whether the given diff tree contains any deltas that match the given filter.
+	 * @param tree the diff tree
+	 * @param filter the diff node filter
+	 * @param monitor a progress monitor
+	 * @return whether the given diff tree contains any deltas that match the given filter
+	 */
+	protected boolean hasChangesMatching(IDiffTree tree, final FastDiffNodeFilter filter) {
 		final CoreException found = new CoreException(Status.OK_STATUS);
 		try {
-			syncDeltaTree.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
+			tree.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
 				public boolean visit(IDiffNode delta) throws CoreException {
-					if (delta instanceof IThreeWayDiff) {
-						IThreeWayDiff twd = (IThreeWayDiff) delta;
-						int direction = twd.getDirection();
-						if (direction == IThreeWayDiff.INCOMING || direction == IThreeWayDiff.CONFLICTING) {
-							throw found;
-						}
-					} else {
+					if (filter.select(delta)) {
 						throw found;
 					}
 					return false;

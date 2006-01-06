@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
@@ -84,5 +86,21 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 		return true;
 	}
 	
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.operations.ModelProviderAction#getDiffFilter()
+	 */
+	protected FastDiffNodeFilter getDiffFilter() {
+		return new FastDiffNodeFilter() {
+			public boolean select(IDiffNode node) {
+				if (node instanceof IThreeWayDiff) {
+					IThreeWayDiff twd = (IThreeWayDiff) node;
+					if (twd.getDirection() == IThreeWayDiff.CONFLICTING || twd.getDirection() == IThreeWayDiff.INCOMING) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+	}
+	
 }

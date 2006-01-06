@@ -134,12 +134,8 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 			final IResourceDiffTree diffTree = context.getDiffTree();
 			if (resource.getType() == IResource.FILE) {
 				IDiffNode delta = diffTree.getDiff(resource);
-				if (delta instanceof IThreeWayDiff) {
-					IThreeWayDiff twd = (IThreeWayDiff) delta;
-					if (twd.getDirection() == IThreeWayDiff.CONFLICTING || twd.getDirection() == IThreeWayDiff.INCOMING) {
-						return new IDiffNode[] { delta };
-					}
-				}
+				if (getDiffFilter().select(delta))
+					return new IDiffNode[] { delta };
 			} else {
 				// Find all the deltas for the folder
 				ResourceTraversal[] traversals = getTraversals(o);
@@ -148,7 +144,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 				List result = new ArrayList();
 				for (int i = 0; i < diffs.length; i++) {
 					IDiffNode node = diffs[i];
-					if (isVisible(node))
+					if (isVisible(node) && getDiffFilter().select(node))
 						result.add(node);
 				}
 				return (IDiffNode[]) result.toArray(new IDiffNode[result.size()]);
@@ -250,5 +246,11 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 		}
 		return mapping;
 	}
+	
+	/**
+	 * Return the filter used to match diffs to which this action applies.
+	 * @return the filter used to match diffs to which this action applies
+	 */
+	protected abstract FastDiffNodeFilter getDiffFilter();
 	
 }

@@ -16,37 +16,46 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.mappings.ReplaceWithRemoteOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
 import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
 
 public class ReplaceWithRemoteAction extends WorkspaceTraversalAction {
     
 	public void execute(IAction action)  throws InvocationTargetException, InterruptedException {
-        final ResourceMapping[][] resourceMappings = new ResourceMapping[][] {null};
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				try {
-					monitor = Policy.monitorFor(monitor);
-					monitor.beginTask(null, 100);
-                    resourceMappings[0] = ReplaceWithTagAction.checkOverwriteOfDirtyResources(getShell(), getCVSResourceMappings(), new InfiniteSubProgressMonitor(monitor, 100));
-                } finally {
-					monitor.done();
+        IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+	    if (store.getBoolean(ICVSUIConstants.PREF_ENABLEMODELUPDATE)){
+	    	new ReplaceWithRemoteOperation(getTargetPart(), getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext()).run();
+	    } else {
+	        final ResourceMapping[][] resourceMappings = new ResourceMapping[][] {null};
+			run(new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+					try {
+						monitor = Policy.monitorFor(monitor);
+						monitor.beginTask(null, 100);
+	                    resourceMappings[0] = ReplaceWithTagAction.checkOverwriteOfDirtyResources(getShell(), getCVSResourceMappings(), new InfiniteSubProgressMonitor(monitor, 100));
+	                } finally {
+						monitor.done();
+					}
 				}
-			}
-		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
-		
-        if(resourceMappings[0] == null || resourceMappings[0].length == 0) {
-            // nothing to do
-            return;
-        }
-		
-		// Peform the replace in the background
-		new ReplaceOperation(getTargetPart(), resourceMappings[0], null).run();
+			}, false /* cancelable */, PROGRESS_BUSYCURSOR);
+			
+	        if(resourceMappings[0] == null || resourceMappings[0].length == 0) {
+	            // nothing to do
+	            return;
+	        }
+	        // Peform the replace in the background
+	    	new ReplaceOperation(getTargetPart(), resourceMappings[0], null).run();
+	    }
 	}
 	
 	/**

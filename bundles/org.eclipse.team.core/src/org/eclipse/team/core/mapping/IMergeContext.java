@@ -214,14 +214,14 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * @see org.eclipse.core.resources.IWorkspace#addResourceChangeListener(IResourceChangeListener)
 	 * 
 	 * @param diff the difference to be merged
-	 * @param force ignore any local changes when performing the merge.
+	 * @param ignoreLocalChanges ignore any local changes when performing the merge.
 	 * @param monitor a progress monitor
 	 * @return a status indicating success or failure. A code of
 	 *         <code>MergeStatus.CONFLICTS</code> indicates that the file
 	 *         contain non-mergable conflicts and must be merged manually.
 	 * @throws CoreException if an error occurs
 	 */
-	public IStatus merge(IDiffNode diff, boolean force, IProgressMonitor monitor)
+	public IStatus merge(IDiffNode diff, boolean ignoreLocalChanges, IProgressMonitor monitor)
 			throws CoreException;
 
 	/**
@@ -241,14 +241,14 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * flag.
 	 * 
 	 * @param diffs the differences to be merged
-	 * @param force ignore any local changes when performing the merge.
+	 * @param ignoreLocalChanges ignore any local changes when performing the merge.
 	 * @param monitor a progress monitor
 	 * @return a status indicating success or failure. A code of
 	 *         <code>MergeStatus.CONFLICTS</code> indicates that the file
 	 *         contain non-mergable conflicts and must be merged manually.
 	 * @throws CoreException if an error occurs
 	 */
-	public IStatus merge(IDiffNode[] diffs, boolean force,
+	public IStatus merge(IDiffNode[] diffs, boolean ignoreLocalChanges,
 			IProgressMonitor monitor) throws CoreException;
 
 	/**

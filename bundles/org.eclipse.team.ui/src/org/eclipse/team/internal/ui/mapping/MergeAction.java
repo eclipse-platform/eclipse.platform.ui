@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.internal.ui.Utils;
@@ -68,5 +69,22 @@ public class MergeAction extends ModelProviderAction {
 	 */
 	protected boolean isEnabledForSelection(IStructuredSelection selection) {
 		return getFileDeltas(selection).length > 0;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.operations.ModelProviderAction#getDiffFilter()
+	 */
+	protected FastDiffNodeFilter getDiffFilter() {
+		return new FastDiffNodeFilter() {
+			public boolean select(IDiffNode node) {
+				if (node instanceof IThreeWayDiff) {
+					IThreeWayDiff twd = (IThreeWayDiff) node;
+					if ((twd.getDirection() == IThreeWayDiff.OUTGOING && overwrite) || twd.getDirection() == IThreeWayDiff.CONFLICTING || twd.getDirection() == IThreeWayDiff.INCOMING) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
 	}
 }
