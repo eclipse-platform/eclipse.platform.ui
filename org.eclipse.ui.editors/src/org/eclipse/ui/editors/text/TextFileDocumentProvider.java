@@ -67,6 +67,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 import org.eclipse.ui.IEditorInput;
@@ -562,6 +563,31 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			return info;
 		}
 		return null;
+	}
+	
+	/**
+	 * Sets up the synchronization for the document
+	 * and the annotation mode. 
+	 * 
+	 * @param info the file info
+	 * @since 3.2
+	 */
+	protected void setUpSynchronization(FileInfo info) {
+		if (info == null || info.fTextFileBuffer == null)
+			return;
+		
+		IDocument document= info.fTextFileBuffer.getDocument();
+		IAnnotationModel model= info.fModel;
+
+		if (document instanceof ISynchronizable) {
+			Object lock= ((ISynchronizable)document).getLockObject();
+			if (lock == null) {
+				lock= new Object();
+				((ISynchronizable)document).setLockObject(lock);
+			}
+			if (model instanceof ISynchronizable)
+				((ISynchronizable) model).setLockObject(lock);
+		}
 	}
 
 	/**
