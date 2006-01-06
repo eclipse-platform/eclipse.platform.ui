@@ -316,6 +316,12 @@ public class MarkerAdapter {
 	 * @return MarkerList
 	 */
 	public MarkerList getCurrentMarkers() {
+		if (lastMarkers == null) {// First time?
+			view.scheduleMarkerUpdate();
+			building = true;
+		}	
+		if (building)
+			return new MarkerList();
 		return lastMarkers;
 	}
 
@@ -330,7 +336,7 @@ public class MarkerAdapter {
 		if (lastMarkers == null) {// First time?
 			view.scheduleMarkerUpdate();
 			building = true;
-		}
+		}	
 		if (building)
 			return Util.EMPTY_MARKER_ARRAY;
 		if (isShowingHierarchy() && categories != null)

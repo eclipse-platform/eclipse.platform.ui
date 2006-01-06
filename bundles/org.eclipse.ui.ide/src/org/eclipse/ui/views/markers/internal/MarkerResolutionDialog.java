@@ -12,12 +12,12 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -46,7 +46,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMarkerResolution;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
 /**
@@ -57,7 +56,7 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
  */
 public class MarkerResolutionDialog extends TitleAreaDialog {
 
-	private ArrayList markers = new ArrayList();
+	private IMarker originalMarker;
 
 	private IMarkerResolution[] resolutions;
 
@@ -71,13 +70,13 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	private ViewerSorter resolutionsSorter;
 
-	private Hashtable resolutionMap = new Hashtable(0);
-
 	private boolean calculatingResolutions;
 
 	private boolean progressCancelled = false;
 
 	private Button addMatching;
+
+	private Hashtable markerMap = new Hashtable(0);
 
 	/**
 	 * Create a new instance of the receiver with the given resolutions.
@@ -92,13 +91,11 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	public MarkerResolutionDialog(Shell shell, IMarker marker,
 			IMarkerResolution[] newResolutions, MarkerView view) {
 		super(shell);
-		markers.add(marker);
 		initializeResolutionsSorter();
 		resolutionsSorter.sort(view.getViewer(), newResolutions);
 		resolutions = newResolutions;
+		originalMarker = marker;
 		markerView = view;
-		resolutionMap.put(marker,newResolutions);
-
 	}
 
 	/*
@@ -134,36 +131,12 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 		initializeDialogUnits(control);
 
-		Label title = new Label(control, SWT.NONE);
-		title.setText(MarkerMessages.MarkerResolutionDialog_Problems_List_Title);
-		FormData labelData = new FormData();
-		labelData.top = new FormAttachment(0);
-		labelData.left = new FormAttachment(0);
-		title.setLayoutData(labelData);
-
-		Composite buttons = createTableButtons(control);
-		FormData buttonData = new FormData();
-		buttonData.top = new FormAttachment(title, 0);
-		buttonData.right = new FormAttachment(100);
-		buttonData.height = convertHeightInCharsToPixels(10);
-		buttons.setLayoutData(buttonData);
-
-		createMarkerTable(control);
-
-		FormData tableData = new FormData();
-		tableData.top = new FormAttachment(buttons, 0, SWT.TOP);
-		tableData.left = new FormAttachment(0);
-		tableData.right = new FormAttachment(buttons, 0);
-		tableData.height = convertHeightInCharsToPixels(10);
-		markersTable.getControl().setLayoutData(tableData);
-
 		Label resolutionsLabel = new Label(control, SWT.NONE);
 		resolutionsLabel
 				.setText(MarkerMessages.MarkerResolutionDialog_Resolutions_List_Title);
 
 		FormData resolutionsLabelData = new FormData();
-		resolutionsLabelData.top = new FormAttachment(
-				markersTable.getControl(), 0);
+		resolutionsLabelData.top = new FormAttachment(0);
 		resolutionsLabelData.left = new FormAttachment(0);
 		resolutionsLabel.setLayoutData(resolutionsLabelData);
 
@@ -209,7 +182,8 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 					 */
 					public void selectionChanged(SelectionChangedEvent event) {
 						setComplete(!event.getSelection().isEmpty());
-
+						addMatching.setEnabled(getSelectedWorkbenchResolution() != null);
+						markersTable.refresh();
 					}
 				});
 
@@ -224,10 +198,34 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		listData.height = convertHeightInCharsToPixels(10);
 		resolutionsList.getControl().setLayoutData(listData);
 
+		Label title = new Label(control, SWT.NONE);
+		title
+				.setText(MarkerMessages.MarkerResolutionDialog_Problems_List_Title);
+		FormData labelData = new FormData();
+		labelData.top = new FormAttachment(resolutionsList.getControl(), 0);
+		labelData.left = new FormAttachment(0);
+		title.setLayoutData(labelData);
+
+		Composite buttons = createTableButtons(control);
+		FormData buttonData = new FormData();
+		buttonData.top = new FormAttachment(title, 0);
+		buttonData.right = new FormAttachment(100);
+		buttonData.height = convertHeightInCharsToPixels(10);
+		buttons.setLayoutData(buttonData);
+
+		createMarkerTable(control);
+
+		FormData tableData = new FormData();
+		tableData.top = new FormAttachment(buttons, 0, SWT.TOP);
+		tableData.left = new FormAttachment(0);
+		tableData.right = new FormAttachment(buttons, 0);
+		tableData.height = convertHeightInCharsToPixels(10);
+		markersTable.getControl().setLayoutData(tableData);
+
 		progressPart = new ProgressMonitorPart(control, new GridLayout());
 
 		FormData progressData = new FormData();
-		progressData.top = new FormAttachment(resolutionsList.getControl(), 0);
+		progressData.top = new FormAttachment(markersTable.getControl(), 0);
 		progressData.left = new FormAttachment(0);
 		progressData.right = new FormAttachment(100, 0);
 		progressPart.setLayoutData(progressData);
@@ -235,7 +233,8 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		Dialog.applyDialogFont(control);
 		markerView.getTree();
 
-		setMessage(MarkerMessages.MarkerResolutionDialog_Description);
+		setMessage(NLS.bind(MarkerMessages.MarkerResolutionDialog_Description,
+				Util.getProperty(IMarker.MESSAGE, originalMarker)));
 		return mainArea;
 
 	}
@@ -314,7 +313,12 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent arg0) {
-				if(addMatchingMarkers())
+
+				WorkbenchMarkerResolution selected = getSelectedWorkbenchResolution();
+				if (selected == null)
+					return;
+
+				if (addMatchingMarkers(selected))
 					addMatching.setEnabled(false);
 			}
 		});
@@ -323,57 +327,88 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	}
 
 	/**
+	 * Return the single selected WorkbenchMarkerResolution if there is one.
+	 * 
+	 * @return WorkbenchMarkerResolution or <code>null</code> if there is no
+	 *         selection or the selection is not a WorkbenchMarkerResolution.
+	 */
+	private WorkbenchMarkerResolution getSelectedWorkbenchResolution() {
+		Object selection = getSelectedResolution();
+		if (selection == null
+				|| !(selection instanceof WorkbenchMarkerResolution))
+			return null;
+		return (WorkbenchMarkerResolution) selection;
+
+	}
+
+	/**
+	 * Return the marker resolution that is currenly selected/
+	 * 
+	 * @return IMarkerResolution or <code>null</code> if there is no
+	 *         selection.
+	 */
+	private IMarkerResolution getSelectedResolution() {
+		ISelection selection = resolutionsList.getSelection();
+		if (!(selection instanceof IStructuredSelection))
+			return null;
+
+		Object first = ((IStructuredSelection) selection).getFirstElement();
+
+		return (IMarkerResolution) first;
+
+	}
+
+	/**
 	 * Add all of the markers that have resolutions compatible with the
 	 * receiver.
+	 * 
 	 * @return boolean <code>true</code> if the operation completed.
 	 */
-	protected boolean addMatchingMarkers() {
+	protected boolean addMatchingMarkers(WorkbenchMarkerResolution resolution) {
 
 		calculatingResolutions = true;
-		Object[] all = markerView.getCurrentMarkers().getArray();
 		progressPart.beginTask(
-				MarkerMessages.MarkerResolutionDialog_CalculatingTask,
-				all.length);
+				MarkerMessages.MarkerResolutionDialog_CalculatingTask, 100);
 
-		WorkbenchMarkerResolution[] existing = new WorkbenchMarkerResolution[resolutions.length];
-		System.arraycopy(resolutions, 0, existing, 0, existing.length);
-
-		for (int i = 0; i < all.length; i++) {
-			if(progressCancelled())
-				return false;
-			
-			ConcreteMarker marker = (ConcreteMarker) all[i];
-			progressPart.subTask(NLS.bind(
-					MarkerMessages.MarkerResolutionDialog_WorkingSubTask,
-					marker.getDescription()));
-			if(resolutionMap.containsKey(marker.getMarker()))
-				continue;//Don't recalculate
-			
-			IMarkerResolution[] resolutions = IDE.getMarkerHelpRegistry()
-					.getResolutions(marker.getMarker());
-			if(progressCancelled())
-				return false;
-			if (isCompatible(resolutions, existing)){
-				markersTable.add(marker.getMarker());
-				resolutionMap.put(marker.getMarker(),resolutions);
-			}
-			progressPart.worked(1);
+		progressPart.worked(10);
+		if (progressCancelled()) {
+			calculatingResolutions = false;
+			return false;
 		}
+
+		progressPart.subTask(NLS.bind(
+				MarkerMessages.MarkerResolutionDialog_WorkingSubTask,
+				resolution.getLabel()));
+
+		IMarker[] others = resolution.findOtherMarkers(markerView
+				.getCurrentMarkers().getIMarkers());
+
+		Collection currentMarkers = new ArrayList();
+		currentMarkers.add(originalMarker);
+
+		for (int i = 0; i < others.length; i++) {
+			currentMarkers.add(others[i]);
+		}
+
+		markerMap.put(resolution, currentMarkers);
+
+		progressPart.worked(90);
 		progressPart.done();
 		progressCancelled = false;
 		calculatingResolutions = false;
+		markersTable.refresh();
 		return true;
 	}
 
 	/**
-	 * Spin the event loop and see if the cancel button
-	 * was pressed. If it was then clear the flags and return
-	 * <code>true</code>.
+	 * Spin the event loop and see if the cancel button was pressed. If it was
+	 * then clear the flags and return <code>true</code>.
+	 * 
 	 * @return boolean
 	 */
 	private boolean progressCancelled() {
 		getShell().getDisplay().readAndDispatch();
-		if(progressCancelled){
+		if (progressCancelled) {
 			progressCancelled = false;
 			calculatingResolutions = false;
 			progressPart.done();
@@ -383,45 +418,13 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	}
 
 	/**
-	 * Return whether or not the list of resolutions in newResolutions can be
-	 * grouped with the current set of resolutions.
-	 * 
-	 * @param newResolutions
-	 * @param existingResolutions
-	 * @return boolean <code>true</code> if the newResolutions all can be
-	 *         grouped with the existing ones.
-	 * @see WorkbenchMarkerResolution#canBeGroupedWith(WorkbenchMarkerResolution)
-	 */
-	private boolean isCompatible(IMarkerResolution[] newResolutions,
-			WorkbenchMarkerResolution[] existingResolutions) {
-
-		if (newResolutions.length != existingResolutions.length)
-			return false;
-
-		for (int i = 0; i < newResolutions.length; i++) {
-			if (newResolutions[i] instanceof WorkbenchMarkerResolution) {
-				if (!(existingResolutions[i]
-						.canBeGroupedWith((WorkbenchMarkerResolution) newResolutions[i])))
-					return false;
-			}
-			else
-				return false;
-		}
-		return true;
-	}
-
-	/**
 	 * Return whether or not the add button should be enabled.
 	 * 
 	 * @return boolean
 	 */
 	private boolean getMatchingButtonEnablement() {
 
-		if (markers.size() != 1)
-			return false;
-
-		return resolutions[0] instanceof WorkbenchMarkerResolution;
-
+		return getSelectedResolution() != null;
 	}
 
 	/**
@@ -449,7 +452,13 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
 			public Object[] getElements(Object inputElement) {
-				return markers.toArray();
+				IMarkerResolution selected = getSelectedResolution();
+				if(selected == null)
+					return new Object[0];
+				
+				if (markerMap.containsKey(selected))
+					return ((Collection) markerMap.get(selected)).toArray();
+				return new IMarker[] { originalMarker };
 			}
 
 			/*
@@ -471,7 +480,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 			 */
 			public String getText(Object element) {
-				return getDescription((IMarker) element);
+				return Util.getResourceName((IMarker) element);
 			}
 
 			public Image getImage(Object element) {
@@ -503,16 +512,6 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		return resolutions;
 	}
 
-	/**
-	 * Return the description of the element.
-	 * 
-	 * @param element
-	 * @return String
-	 */
-	String getDescription(IMarker element) {
-		return Util.getProperty(IMarker.MESSAGE, element);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -535,65 +534,43 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
-		ISelection selected = resolutionsList.getSelection();
-		if (!(selected instanceof IStructuredSelection))
+		IMarkerResolution resolution = getSelectedResolution();
+		if (resolution == null)
 			return;
 
 		Object[] checked = markersTable.getCheckedElements();
-		int index = resolutionsList.getList().getSelectionIndex();
-		
-		progressPart.beginTask(
-				MarkerMessages.MarkerResolutionDialog_Fixing, checked.length + 1);
+
+		progressPart.beginTask(MarkerMessages.MarkerResolutionDialog_Fixing,
+				checked.length + 1);
 		progressPart.worked(1);
-		
-		boolean someNotApplied = false;
 
 		for (int i = 0; i < checked.length; i++) {
-			//Allow paint events and wake up the button
+			// Allow paint events and wake up the button
 			getShell().getDisplay().readAndDispatch();
-			if(progressCancelled())
-				return;		
-			
-			IMarker marker = (IMarker) checked[i];
-			if(!marker.exists()){
-				someNotApplied = true;
-				continue;
+			if (progressCancelled()) {
+				break;
 			}
-				
-			progressPart.subTask(Util.getProperty(IMarker.MESSAGE, marker));
-			
-			IMarkerResolution[] resolutions = (IMarkerResolution[]) resolutionMap.get(marker);
-			IMarkerResolution matching;
-			if(i == 0)//Always allow the first one
-				matching = resolutions[index];
-			else
-				matching = ((WorkbenchMarkerResolution) resolutions[index]).getUpdatedResolution();
+			IMarker marker = (IMarker) checked[i];
 
-			if (matching == null) 
-				someNotApplied = true;
-			else
-				matching.run(marker);
+			progressPart.subTask(Util.getProperty(IMarker.MESSAGE, marker));
+
+			resolution.run(marker);
+
 			progressPart.worked(1);
 
 		}
 		progressPart.done();
-		
-		if(someNotApplied)
-			MessageDialog
-			.openInformation(
-					getShell(),
-					MarkerMessages.MarkerResolutionDialog_CannotFixTitle,
-					MarkerMessages.MarkerResolutionDialog_NoMatchMessage);
-		
 		progressCancelled = false;
 		super.okPressed();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
 	 */
 	protected void cancelPressed() {
-		if(calculatingResolutions){
+		if (calculatingResolutions) {
 			progressCancelled = true;
 			return;
 		}

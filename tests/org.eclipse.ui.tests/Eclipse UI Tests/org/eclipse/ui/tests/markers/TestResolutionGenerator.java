@@ -12,9 +12,11 @@
 package org.eclipse.ui.tests.markers;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
+import org.eclipse.ui.views.markers.MarkerViewUtil;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
 /**
@@ -29,22 +31,12 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 
 		String name;
 		
+		public IMarker[] findOtherMarkers(IMarker[] markers) {
+			return markers;
+		}
+		
 		public TestMarkerResolution(String string) {
 			name = string;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.views.markers.WorkbenchMarkerResolution#canBeGroupedWith(org.eclipse.ui.views.markers.WorkbenchMarkerResolution)
-		 */
-		public boolean canBeGroupedWith(WorkbenchMarkerResolution resolution) {
-			return resolution instanceof TestMarkerResolution;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.views.markers.WorkbenchMarkerResolution#getUpdatedResolution()
-		 */
-		public WorkbenchMarkerResolution getUpdatedResolution() {
-			return this;
 		}
 
 		/* (non-Javadoc)
@@ -72,7 +64,12 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 		 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 		 */
 		public void run(IMarker marker) {
-			System.out.println(name);			
+			try {
+				System.out.println(marker
+						.getAttribute(MarkerViewUtil.NAME_ATTRIBUTE));
+			} catch (CoreException e) {
+				e.printStackTrace();
+			};			
 		}
 		
 	}

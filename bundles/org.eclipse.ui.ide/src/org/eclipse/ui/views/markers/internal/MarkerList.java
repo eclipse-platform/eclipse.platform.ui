@@ -105,6 +105,18 @@ public class MarkerList {
 	public ConcreteMarker getMarker(IMarker toFind) {
 		return (ConcreteMarker) getMarkerMap().get(toFind);
 	}
+	
+	/**
+	 * Return the list of IMarkers contained in the receiver.
+	 * @return IMarker[]
+	 */
+	public IMarker[] getIMarkers(){
+		IMarker[] iMarkers = new IMarker[markers.length];
+		for (int i = 0; i < markers.length; i++) {
+			iMarkers[i] = markers[i].getMarker();			
+		}
+		return iMarkers;
+	}
 
 	public static ConcreteMarker createMarker(IMarker marker)
 			throws CoreException {
