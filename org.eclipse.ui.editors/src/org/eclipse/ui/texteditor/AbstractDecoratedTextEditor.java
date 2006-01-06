@@ -35,6 +35,7 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -81,6 +82,7 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
@@ -1608,6 +1610,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		IAction preferencesAction= getAction(ITextEditorActionConstants.CONTEXT_PREFERENCES);
 		menu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(ITextEditorActionConstants.GROUP_SETTINGS));
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_SETTINGS, preferencesAction);
+		
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_SAVE, new Separator(ITextEditorActionConstants.GROUP_OPEN));
+		MenuManager showInSubMenu= new MenuManager(TextEditorMessages.AbstractDecoratedTextEditor_showIn_menu);
+		showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getEditorSite().getWorkbenchWindow()));
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_OPEN, showInSubMenu); 
 	}
 
 	/**

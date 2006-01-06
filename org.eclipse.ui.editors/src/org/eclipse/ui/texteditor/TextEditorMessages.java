@@ -49,11 +49,15 @@ final class TextEditorMessages extends NLS {
 	public static String ChangeEncodingAction_message_noEncodingSupport;
 	public static String ChangeEncodingAction_button_apply_label;
 
+	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_title;
+	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_message;
+	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_rememberquestion;
+	
+	public static String AbstractDecoratedTextEditor_showIn_menu;
+	
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, TextEditorMessages.class);
 	}
 
-	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_title;
-	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_message;
-	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_rememberquestion;
 }
