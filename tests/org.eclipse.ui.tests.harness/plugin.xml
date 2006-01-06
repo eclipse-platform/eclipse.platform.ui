@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+ <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="Performance Empty Perspective"
+            class="org.eclipse.ui.tests.harness.util.EmptyPerspective"
+            id="org.eclipse.ui.tests.harness.util.EmptyPerspective">
+      </perspective>
+      <perspective
+            name="Performance Empty Perspective 2"
+            class="org.eclipse.ui.tests.harness.util.EmptyPerspective"
+            id="org.eclipse.ui.tests.harness.util.EmptyPerspective2">
+      </perspective>
+	</extension>
+</plugin>
