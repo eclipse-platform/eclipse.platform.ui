@@ -596,6 +596,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				}
 				ResourceInfo info = workspace.createResource(this, false);
 				info.set(M_LINK);
+				localLocation = FileUtil.canonicalURI(localLocation);
 				getLocalManager().link(this, localLocation);
 				monitor.worked(Policy.opWork * 5 / 100);
 				//save the location in the project description

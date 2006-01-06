@@ -12,11 +12,9 @@ package org.eclipse.core.internal.resources;
 
 import java.net.URI;
 import java.util.*;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.events.LifecycleEvent;
-import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
@@ -285,6 +283,7 @@ public class Project extends Container implements IProject {
 					desc = (ProjectDescription) ((ProjectDescription) description).clone();
 				}
 				desc.setName(getName());
+				desc.setLocationURI(FileUtil.canonicalURI(description.getLocationURI()));
 				internalSetDescription(desc, false);
 				// see if there potentially are already contents on disk
 				final boolean hasSavedDescription = getLocalManager().hasSavedDescription(this);

@@ -46,6 +46,20 @@ public class FileUtil {
 	}
 
 	/**
+	 * Converts a URI into its canonical form.
+	 */
+	public static URI canonicalURI(URI uri) {
+		if (uri != null && uri.getScheme().equals(EFS.SCHEME_FILE)) {
+			try {
+				uri = URIUtil.toURI(new Path(URIUtil.toPath(uri).toFile().getCanonicalPath()));
+			} catch (IOException e) {
+				//fall through
+			}
+		}
+		return uri;
+	}
+
+	/**
 	 * Returns true if the given file system locations overlap. If "bothDirections" is true,
 	 * this means they are the same, or one is a proper prefix of the other.  If "bothDirections"
 	 * is false, this method only returns true if the locations are the same, or the first location
