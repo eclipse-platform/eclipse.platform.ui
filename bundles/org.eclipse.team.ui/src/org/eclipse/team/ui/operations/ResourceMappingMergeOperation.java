@@ -119,7 +119,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 				return;
 			}
 			if (isAttemptHeadlessMerge()) {
-				IStatus status = validateMerge(context,Policy.subMonitorFor(monitor, 5));
+				IStatus status = validateMerge(context, Policy.subMonitorFor(monitor, 5));
 				if (status.isOK()) {
 					// The execute will prompt if there are conflicts
 					execute(context, Policy.subMonitorFor(monitor, 20));
@@ -148,7 +148,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 			return Status.OK_STATUS;
 		if (notOK.size() == 1)
 			return (IStatus)notOK.get(0);
-		return new MultiStatus(TeamUIPlugin.ID, 0, (IStatus[]) notOK.toArray(new IStatus[notOK.size()]), "", null);
+		return new MultiStatus(TeamUIPlugin.ID, 0, (IStatus[]) notOK.toArray(new IStatus[notOK.size()]), "Multiple potential side effects of this operation have been detected.", null);
 	}
 
 	/**

@@ -10,18 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.registry;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.ui.navigator.NavigatorActivationService;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 
 /**
  * Manages the team content provider extension point
