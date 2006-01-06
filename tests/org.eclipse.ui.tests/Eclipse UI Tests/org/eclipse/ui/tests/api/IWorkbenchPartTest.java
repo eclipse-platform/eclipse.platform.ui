@@ -12,8 +12,8 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.tests.util.CallHistory;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CallHistory;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * This is a test for IWorkbenchPart.  Since IWorkbenchPart is an

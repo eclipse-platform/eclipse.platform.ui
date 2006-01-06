@@ -15,9 +15,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.util.CallHistory;
-import org.eclipse.ui.tests.util.FileUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CallHistory;
+import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * This is a test for IEditorPart.  Since IEditorPart is an

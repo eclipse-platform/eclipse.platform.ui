@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.wizards.datatransfer.FileSystemExportOperation;
-import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.FileUtil;
 
 public class ExportFileSystemOperationTest extends DataTransferTestCase implements
 		IOverwriteQuery {

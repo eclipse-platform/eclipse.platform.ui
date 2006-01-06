@@ -26,9 +26,9 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.util.ArrayUtil;
-import org.eclipse.ui.tests.util.CallHistory;
-import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.ArrayUtil;
+import org.eclipse.ui.tests.harness.util.CallHistory;
+import org.eclipse.ui.tests.harness.util.FileUtil;
 
 public class IEditorRegistryTest extends TestCase {
     private IEditorRegistry fReg;

@@ -20,7 +20,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
 
 /**

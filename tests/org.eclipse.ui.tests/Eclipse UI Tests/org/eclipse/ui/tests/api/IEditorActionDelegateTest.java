@@ -15,8 +15,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.util.ActionUtil;
-import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.ActionUtil;
+import org.eclipse.ui.tests.harness.util.FileUtil;
 
 /**
  * Tests the lifecycle for an editor action delegate.

@@ -18,31 +18,12 @@
 <!-- Utils -->
    <extension
          point="org.eclipse.ui.perspectives">
-      <perspective
-            name="UI Test Empty Perspective"
-            class="org.eclipse.ui.tests.util.EmptyPerspective"
-            id="org.eclipse.ui.tests.util.EmptyPerspective">
-      </perspective>
-      <perspective
-            name="UI Test Empty Perspective 2"
-            class="org.eclipse.ui.tests.util.EmptyPerspective"
-            id="org.eclipse.ui.tests.util.EmptyPerspective2">
-      </perspective>
+ 
       <perspective
             name="UI Test Drag Test Perspective"
             icon="icons/anything.gif"
             class="org.eclipse.ui.tests.dnd.DragDropPerspectiveFactory"
             id="org.eclipse.ui.tests.dnd.dragdrop">
-      </perspective>
-      <perspective
-            name="UI Test Standalone View Perspective"
-            class="org.eclipse.ui.tests.presentations.StandaloneViewPerspective"
-            id="org.eclipse.ui.tests.presentations.StandaloneViewPerspective">
-      </perspective>
-      <perspective
-            name="UI Test Standalone View Perspective  2 "
-            class="org.eclipse.ui.tests.presentations.StandaloneViewPerspective2"
-            id="org.eclipse.ui.tests.presentations.StandaloneViewPerspective2">
       </perspective>
       <perspective
             name="UI Test Zoom Test Perspective"
@@ -88,11 +69,11 @@
       <perspective
             class="org.eclipse.ui.tests.api.PerspectiveViewsBug88345"
             id="org.eclipse.ui.tests.api.PerspectiveViewsBug88345"
-            name="UI Test Perspective for closable view"/>
-      <perspective
+            name="UI Test Perspective for closable view"/>  
+       <perspective
             class="org.eclipse.ui.tests.api.PerspectiveViewsBug120934"
             id="org.eclipse.ui.tests.api.PerspectiveViewsBug120934"
-            name="UI Test Perspective for presentation NPE"/>
+            name="UI Test Perspective for presentation NPE"/> 
       <perspective
             class="org.eclipse.ui.tests.dnd.StandaloneViewPerspective"
             id="org.eclipse.ui.tests.dnd.StandaloneViewPerspective"
@@ -761,10 +742,7 @@
                toolbarPath="Normal/Presentation"
                tooltip="MultiEditorActionThing"/>
       </actionSet>
-      <actionSet
-            label="Empty Action Set"
-            visible="false"
-            id="the deadly empty action set attack, against which there is no defense" />
+      
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
@@ -2260,37 +2238,7 @@
       		categoryId="org.eclipse.ui.PT.C2" />
       		           
    </extension>
-   
-   <!-- Performance related components -->
-   <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            icon="icons/anything.gif"
-            class="org.eclipse.ui.tests.performance.parts.PerformanceEditorPart"
-            default="true"
-            name="Basic Performance Editor"
-            id="org.eclipse.ui.tests.perf_basic"
-            extensions="perf_basic"/>
-            
-      <editor
-            icon="icons/anything.gif"
-            class="org.eclipse.ui.tests.performance.parts.PerformanceEditorPart:outline"
-            default="true"
-            name="Editor w/Outline"
-            id="org.eclipse.ui.tests.perf_outline"
-            extensions="perf_outline"/>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            class="org.eclipse.ui.tests.performance.PerformancePerspective1"
-            name="Performance Test Perspective1"
-            id="org.eclipse.ui.tests.performancePerspective1"/>
-      <perspective
-            class="org.eclipse.ui.tests.performance.PerformancePerspective2"
-            name="Performance Test Perspective"
-            id="org.eclipse.ui.tests.performancePerspective2"/>            
-   </extension>
+  
    <!-- part of test for bug 75118 -->
    <extension
          point="org.eclipse.ui.newWizards">

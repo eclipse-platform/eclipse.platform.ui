@@ -19,7 +19,7 @@ import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class CommandParameterTypeTest extends UITestCase {
 

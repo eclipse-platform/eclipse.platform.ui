@@ -30,7 +30,7 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.ParseException;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * <p>

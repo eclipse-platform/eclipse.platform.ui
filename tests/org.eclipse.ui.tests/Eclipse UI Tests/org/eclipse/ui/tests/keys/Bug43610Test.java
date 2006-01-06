@@ -15,8 +15,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.ui.tests.util.AutomationUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.AutomationUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test for Bug 43610.

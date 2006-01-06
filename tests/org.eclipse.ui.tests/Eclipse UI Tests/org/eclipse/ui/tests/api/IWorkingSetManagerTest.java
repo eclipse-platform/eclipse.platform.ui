@@ -21,8 +21,8 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.tests.util.ArrayUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.ArrayUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class IWorkingSetManagerTest extends UITestCase {
     final static String WORKING_SET_NAME_1 = "ws1";

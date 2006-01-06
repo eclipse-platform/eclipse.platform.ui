@@ -23,8 +23,8 @@ import org.eclipse.ui.internal.ClosePerspectiveAction;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.util.FileUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test opening and closing of items.

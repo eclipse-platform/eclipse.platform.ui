@@ -11,9 +11,7 @@
 
 package org.eclipse.ui.tests.keys;
 
-//import org.eclipse.core.runtime.CoreException;
-//import org.eclipse.jface.action.Action;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests Bug 42627

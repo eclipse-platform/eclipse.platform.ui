@@ -17,8 +17,8 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.tests.util.EmptyPerspective;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.EmptyPerspective;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests the IPageService class.

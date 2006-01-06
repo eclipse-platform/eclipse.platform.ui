@@ -23,7 +23,7 @@ import org.eclipse.core.tests.session.Setup;
 import org.eclipse.core.tests.session.SetupManager;
 import org.eclipse.core.tests.session.SetupManager.SetupException;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.performance.FileTool;
+import org.eclipse.ui.tests.harness.util.FileTool;
 
 /**
  * Wrapper for workbench session tests.

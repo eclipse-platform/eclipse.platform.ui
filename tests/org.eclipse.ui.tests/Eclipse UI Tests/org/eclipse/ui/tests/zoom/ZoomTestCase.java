@@ -37,8 +37,8 @@ import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.dnd.DragOperations;
 import org.eclipse.ui.tests.dnd.EditorAreaDropTarget;
 import org.eclipse.ui.tests.dnd.ExistingWindowProvider;
-import org.eclipse.ui.tests.util.FileUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class ZoomTestCase extends UITestCase {
 //    protected static final String view1Id = IPageLayout.ID_RES_NAV;

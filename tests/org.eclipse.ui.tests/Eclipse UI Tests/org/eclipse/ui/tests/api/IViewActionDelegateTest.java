@@ -11,7 +11,7 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.ui.tests.util.ActionUtil;
+import org.eclipse.ui.tests.harness.util.ActionUtil;
 
 /**
  * Tests the lifecycle for a view action delegate.

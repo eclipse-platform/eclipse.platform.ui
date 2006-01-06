@@ -14,8 +14,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.tests.util.ArrayUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.ArrayUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class IWorkbenchWindowTest extends UITestCase {
 

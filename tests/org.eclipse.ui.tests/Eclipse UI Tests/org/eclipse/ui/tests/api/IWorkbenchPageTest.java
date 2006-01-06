@@ -48,10 +48,10 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.PerspectiveState;
-import org.eclipse.ui.tests.util.CallHistory;
-import org.eclipse.ui.tests.util.EmptyPerspective;
-import org.eclipse.ui.tests.util.FileUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CallHistory;
+import org.eclipse.ui.tests.harness.util.EmptyPerspective;
+import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class IWorkbenchPageTest extends UITestCase {
 

@@ -22,7 +22,7 @@ import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.NotHandledException;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * A test for whether the select all handler will send a selection event.

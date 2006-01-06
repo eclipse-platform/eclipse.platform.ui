@@ -19,7 +19,7 @@ import org.eclipse.ui.tests.api.SessionEditorPart;
 import org.eclipse.ui.tests.dnd.DragOperations;
 import org.eclipse.ui.tests.dnd.EditorDropTarget;
 import org.eclipse.ui.tests.dnd.ExistingWindowProvider;
-import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.FileUtil;
 
 /**
  * Bug 95357 Need a test to ensure editor activation is not broken on startup.

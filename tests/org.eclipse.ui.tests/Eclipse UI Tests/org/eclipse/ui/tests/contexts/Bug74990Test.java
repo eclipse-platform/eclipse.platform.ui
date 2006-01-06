@@ -16,7 +16,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.contexts.EnabledSubmission;
 import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * A test for whether part identifiers work properly for EnabledSubmissions.

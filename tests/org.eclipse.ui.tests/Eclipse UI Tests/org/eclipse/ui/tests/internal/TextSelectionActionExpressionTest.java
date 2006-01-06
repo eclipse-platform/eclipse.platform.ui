@@ -20,9 +20,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.tests.util.ActionUtil;
-import org.eclipse.ui.tests.util.FileUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.ActionUtil;
+import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * This class contains tests for text selection action enablement

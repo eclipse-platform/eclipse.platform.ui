@@ -14,7 +14,7 @@ package org.eclipse.ui.tests.keys;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.keys.SWTKeySupport;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test for Bug 43800.

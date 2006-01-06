@@ -17,7 +17,7 @@ import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.NotDefinedException;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests that the Persistance class is catching malformed registry entries.

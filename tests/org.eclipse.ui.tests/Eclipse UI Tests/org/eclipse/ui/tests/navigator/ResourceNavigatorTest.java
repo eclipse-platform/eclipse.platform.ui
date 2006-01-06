@@ -26,9 +26,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.part.ISetSelectionTarget;
-import org.eclipse.ui.tests.util.ActionUtil;
-import org.eclipse.ui.tests.util.FileUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.ActionUtil;
+import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
 
 public class ResourceNavigatorTest extends UITestCase {

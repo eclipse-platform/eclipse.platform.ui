@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.menus;
 
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 

@@ -21,9 +21,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.tests.util.ArrayUtil;
-import org.eclipse.ui.tests.util.EmptyPerspective;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.ArrayUtil;
+import org.eclipse.ui.tests.harness.util.EmptyPerspective;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests the IWorkbench interface.

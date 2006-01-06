@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.benchmarks;
 
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * @version 	1.0

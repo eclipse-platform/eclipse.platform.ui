@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.leaks.LeakTests;
-import org.eclipse.ui.tests.util.UITestCase;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 

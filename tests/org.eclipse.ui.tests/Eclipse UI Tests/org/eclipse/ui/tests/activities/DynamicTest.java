@@ -26,7 +26,7 @@ import org.eclipse.ui.activities.IIdentifierListener;
 import org.eclipse.ui.activities.IdentifierEvent;
 import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.internal.activities.MutableActivityManager;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * 

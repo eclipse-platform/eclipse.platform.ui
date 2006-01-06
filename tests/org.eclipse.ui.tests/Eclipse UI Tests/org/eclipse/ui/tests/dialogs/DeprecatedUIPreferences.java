@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.dialogs.PropertyDialog;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.PropertyPageManager;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.tests.util.DialogCheck;
+import org.eclipse.ui.tests.harness.util.DialogCheck;
 
 public class DeprecatedUIPreferences extends TestCase {
     private IProject _project;

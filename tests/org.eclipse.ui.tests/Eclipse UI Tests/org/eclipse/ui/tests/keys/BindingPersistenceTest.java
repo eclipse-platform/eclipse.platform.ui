@@ -18,7 +18,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test cases covering the various interaction between bindings. Bindings that

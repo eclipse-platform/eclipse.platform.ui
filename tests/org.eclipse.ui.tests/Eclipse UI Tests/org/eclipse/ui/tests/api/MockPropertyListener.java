@@ -11,7 +11,7 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.tests.util.CallHistory;
+import org.eclipse.ui.tests.harness.util.CallHistory;
 
 public class MockPropertyListener implements IPropertyListener {
     private CallHistory callTrace;

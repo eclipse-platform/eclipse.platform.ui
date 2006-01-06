@@ -12,7 +12,7 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test to ensure that <code>WorkbenchPlugin.createExtension()</code> will only 

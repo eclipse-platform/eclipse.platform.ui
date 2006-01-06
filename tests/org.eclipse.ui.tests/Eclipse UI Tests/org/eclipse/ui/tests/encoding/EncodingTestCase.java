@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * The EncodingTestCase is the suite that tests the 3.1 

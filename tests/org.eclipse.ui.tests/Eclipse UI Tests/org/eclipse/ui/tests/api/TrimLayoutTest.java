@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WindowTrimProxy;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test to exercise the trim layout save/restore/modify support.

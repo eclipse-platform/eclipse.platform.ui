@@ -17,7 +17,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.FileUtil;
 
 public class IEditorSiteTest extends IWorkbenchPartSiteTest {
 

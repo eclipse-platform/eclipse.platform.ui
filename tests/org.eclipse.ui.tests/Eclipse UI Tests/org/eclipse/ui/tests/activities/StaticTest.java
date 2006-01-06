@@ -23,7 +23,7 @@ import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.activities.ActivityRequirementBinding;
 import org.eclipse.ui.internal.activities.CategoryActivityBinding;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * 

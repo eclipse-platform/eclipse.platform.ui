@@ -24,7 +24,7 @@ import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.commands.Priority;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests that dialogs will inherit the handlers from the workbench window, if

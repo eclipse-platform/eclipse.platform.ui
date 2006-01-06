@@ -21,9 +21,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecorationResult;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.decorators.LightweightDecoratorManager;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses.ICommon;
-import org.eclipse.ui.tests.util.UITestCase;
 
 public class DecoratorAdaptableTests extends UITestCase {
 

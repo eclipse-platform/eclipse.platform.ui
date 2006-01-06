@@ -14,7 +14,7 @@ import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.contexts.NotDefinedException;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * The test case for reading in elements from the extension point. This verifies

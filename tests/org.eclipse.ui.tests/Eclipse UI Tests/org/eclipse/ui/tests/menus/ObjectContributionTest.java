@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -39,8 +40,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.PluginActionContributionItem;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses.ICommon;
-import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * Tests that object contributions are enabled and shown correctly in pop-up

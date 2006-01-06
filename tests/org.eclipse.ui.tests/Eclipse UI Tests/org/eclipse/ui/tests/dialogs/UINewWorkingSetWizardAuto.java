@@ -27,8 +27,8 @@ import org.eclipse.ui.internal.dialogs.WorkingSetNewWizard;
 import org.eclipse.ui.internal.dialogs.WorkingSetTypePage;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
-import org.eclipse.ui.tests.util.ArrayUtil;
-import org.eclipse.ui.tests.util.DialogCheck;
+import org.eclipse.ui.tests.harness.util.ArrayUtil;
+import org.eclipse.ui.tests.harness.util.DialogCheck;
 
 /**
  * Tests the WorkingSetNewWizard.

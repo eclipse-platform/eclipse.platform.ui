@@ -18,8 +18,8 @@ import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.tests.util.ImageTests;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.ImageTests;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * @since 3.1

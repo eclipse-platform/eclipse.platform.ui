@@ -29,8 +29,8 @@ import org.eclipse.ui.tests.api.MockAction;
 import org.eclipse.ui.tests.api.MockEditorActionBarContributor;
 import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.api.MockViewPart;
-import org.eclipse.ui.tests.util.FileUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * This class contains tests for the editor action bars

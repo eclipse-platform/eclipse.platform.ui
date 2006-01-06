@@ -11,7 +11,7 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class StartupTest extends UITestCase {
 

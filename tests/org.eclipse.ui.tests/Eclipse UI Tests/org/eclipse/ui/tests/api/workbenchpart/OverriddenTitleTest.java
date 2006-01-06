@@ -17,7 +17,7 @@ import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * @since 3.0

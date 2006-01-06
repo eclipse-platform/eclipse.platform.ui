@@ -27,8 +27,8 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.wizards.datatransfer.ArchiveFileExportOperation;
 import org.eclipse.ui.internal.wizards.datatransfer.TarEntry;
 import org.eclipse.ui.internal.wizards.datatransfer.TarFile;
-import org.eclipse.ui.tests.util.FileUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class ExportArchiveFileOperationTest extends UITestCase implements
 		IOverwriteQuery {

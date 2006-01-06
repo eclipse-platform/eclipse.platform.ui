@@ -18,7 +18,7 @@ import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests bug 56822 -- NPE thrown when setTitle(null) is called.

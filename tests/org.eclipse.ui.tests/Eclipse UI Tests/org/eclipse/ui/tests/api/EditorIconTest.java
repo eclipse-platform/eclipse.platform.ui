@@ -13,8 +13,8 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.tests.util.ImageTests;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.ImageTests;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests to ensure that various icon scenarios work.  These are tested on 

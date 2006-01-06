@@ -3,7 +3,7 @@ package org.eclipse.ui.tests.datatransfer;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 

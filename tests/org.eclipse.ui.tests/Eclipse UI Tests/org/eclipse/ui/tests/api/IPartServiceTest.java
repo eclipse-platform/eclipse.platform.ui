@@ -24,10 +24,10 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.util.CallHistory;
-import org.eclipse.ui.tests.util.EmptyPerspective;
-import org.eclipse.ui.tests.util.FileUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CallHistory;
+import org.eclipse.ui.tests.harness.util.EmptyPerspective;
+import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests the IPartService, IPartListener and IPartListener2 interfaces.

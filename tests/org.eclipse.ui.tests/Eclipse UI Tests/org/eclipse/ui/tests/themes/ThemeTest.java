@@ -12,7 +12,7 @@ package org.eclipse.ui.tests.themes;
 
 import java.util.Arrays;
 
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 

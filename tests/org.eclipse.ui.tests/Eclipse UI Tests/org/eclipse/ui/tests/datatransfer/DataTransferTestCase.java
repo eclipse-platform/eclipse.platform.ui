@@ -2,7 +2,7 @@ package org.eclipse.ui.tests.datatransfer;
 
 import java.io.File;
 
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public abstract class DataTransferTestCase extends UITestCase {
 

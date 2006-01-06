@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests Bug 40023

@@ -17,7 +17,7 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests the Operations Framework API.

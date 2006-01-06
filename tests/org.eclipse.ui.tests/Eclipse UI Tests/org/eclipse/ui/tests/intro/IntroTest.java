@@ -23,8 +23,8 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.api.PerspectiveWithFastView;
-import org.eclipse.ui.tests.util.EmptyPerspective;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.EmptyPerspective;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * @since 3.0

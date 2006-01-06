@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="Eclipse JFace Tests/"/>
-	<classpathentry kind="src" path="Eclipse UI Tests/"/>
-	<classpathentry kind="src" path="Eclipse Part References Test/"/>
-	<classpathentry kind="src" path="UI Test Utils/"/>
+	<classpathentry kind="src" path="Eclipse JFace Tests"/>
+	<classpathentry kind="src" path="Eclipse UI Tests"/>
+	<classpathentry kind="src" path="Eclipse Part References Test"/>
 	<classpathentry kind="src" path="Benchmark Tests"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>

@@ -26,7 +26,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.autotests.AbstractTestLogger;
 import org.eclipse.ui.tests.autotests.UITestCaseWithResult;
-import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.FileUtil;
 
 /**
  * Tests a single drag-drop scenario, given a dragSource capable of initiating the drag and

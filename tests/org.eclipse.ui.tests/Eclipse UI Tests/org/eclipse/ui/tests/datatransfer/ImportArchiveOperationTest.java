@@ -34,8 +34,8 @@ import org.eclipse.ui.internal.wizards.datatransfer.TarFile;
 import org.eclipse.ui.internal.wizards.datatransfer.TarLeveledStructureProvider;
 import org.eclipse.ui.internal.wizards.datatransfer.ZipLeveledStructureProvider;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.util.FileUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 public class ImportArchiveOperationTest extends UITestCase implements IOverwriteQuery {

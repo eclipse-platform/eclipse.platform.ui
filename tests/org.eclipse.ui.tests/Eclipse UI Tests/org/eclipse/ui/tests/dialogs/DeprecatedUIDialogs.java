@@ -18,7 +18,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
-import org.eclipse.ui.tests.util.DialogCheck;
+import org.eclipse.ui.tests.harness.util.DialogCheck;
 
 public class DeprecatedUIDialogs extends TestCase {
 

@@ -94,32 +94,6 @@
     </ant>
   </target>
 
-  <!-- This target runs the performance test suites. -->
-  <target name="performance" depends="init,performance-suite,jface-performance-suite,cleanup">
-    <ant target="collect" antfile="${library-file}" dir="${eclipse-home}">
-      <property name="includes" value="org*.xml"/>
-      <property name="output-file" value="${plugin-name}.xml"/>
-    </ant>
-  </target>
-  
-  <target name="performance-suite">
-  	<property name="performance-workspace" value="${eclipse-home}/performance-workspace-platform-ui"/>
-    <delete dir="${performance-workspace}" quiet="true"/>
-  	<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
-      <property name="data-dir" value="${performance-workspace}"/>
-      <property name="plugin-name" value="${plugin-name}"/>
-      <property name="classname" value="org.eclipse.ui.tests.performance.UIPerformanceTestSuite"/>
-    </ant>
-  </target>
 
-	<target name="jface-performance-suite">
-	  	<property name="performance-workspace-jface" value="${eclipse-home}/performance-workspace-platform-jface"/>
-	    <delete dir="${performance-workspace-jface}" quiet="true"/>
-	  	<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
-	      <property name="data-dir" value="${performance-workspace-jface}"/>
-	      <property name="plugin-name" value="${plugin-name}"/>
-	      <property name="classname" value="org.eclipse.jface.tests.performance.JFacePerformanceSuite"/>
-	    </ant>
-	  </target>
 	
 </project>

@@ -36,7 +36,7 @@ import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
 import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test for Bug 44460.

@@ -12,7 +12,7 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.tests.util.CallHistory;
+import org.eclipse.ui.tests.harness.util.CallHistory;
 
 /**
  * This is a test for IViewPart.  Since IViewPart is an

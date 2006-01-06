@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.tests.util.DialogCheck;
+import org.eclipse.ui.tests.harness.util.DialogCheck;
 
 public class UIErrorDialogs extends TestCase {
 

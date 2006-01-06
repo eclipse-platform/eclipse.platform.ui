@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.preferences;
 import java.io.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class ScopedPreferenceStoreTestCase extends UITestCase {
 

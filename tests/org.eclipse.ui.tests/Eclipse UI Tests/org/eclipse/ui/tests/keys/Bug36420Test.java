@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests Bug 36420

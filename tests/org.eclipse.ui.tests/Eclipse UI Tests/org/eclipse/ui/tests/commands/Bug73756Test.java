@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * A tests whether is active will log an exception if the command is not

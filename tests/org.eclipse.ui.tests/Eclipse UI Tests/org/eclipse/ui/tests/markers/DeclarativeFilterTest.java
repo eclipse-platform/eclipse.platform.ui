@@ -2,7 +2,7 @@ package org.eclipse.ui.tests.markers;
 
 import java.util.Iterator;
 
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 

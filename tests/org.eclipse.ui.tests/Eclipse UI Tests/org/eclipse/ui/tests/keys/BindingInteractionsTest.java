@@ -23,7 +23,7 @@ import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test cases covering the various interaction between bindings. Bindings that

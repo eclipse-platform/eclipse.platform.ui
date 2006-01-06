@@ -15,7 +15,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.tests.util.ImageTests;
+import org.eclipse.ui.tests.harness.util.ImageTests;
 
 public class ActivitySupportTests extends DynamicTestCase {
 

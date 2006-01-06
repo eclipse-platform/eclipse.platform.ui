@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.commands;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.commands.ActionHandler;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * This test whether an ActionHandler will update its internal cache of

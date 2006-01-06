@@ -23,7 +23,7 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.internal.ide.model.ProjectPersistentPropertyTester;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test that Working Sets adapt to resource mappings

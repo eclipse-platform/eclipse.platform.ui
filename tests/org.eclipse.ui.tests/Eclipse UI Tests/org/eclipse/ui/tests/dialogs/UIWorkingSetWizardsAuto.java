@@ -35,9 +35,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.util.DialogCheck;
-import org.eclipse.ui.tests.util.FileUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Abstract test class for the working set wizard tests.

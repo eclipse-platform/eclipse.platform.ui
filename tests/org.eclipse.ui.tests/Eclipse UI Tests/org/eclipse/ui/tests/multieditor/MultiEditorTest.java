@@ -46,8 +46,8 @@ import org.eclipse.ui.part.IContributedContentsView;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.util.CallHistory;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CallHistory;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test MultiEditor behaviour to highlight some of the broken functionality.

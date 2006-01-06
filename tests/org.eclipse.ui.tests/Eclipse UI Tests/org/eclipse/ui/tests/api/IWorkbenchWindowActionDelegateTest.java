@@ -12,7 +12,7 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.tests.util.ActionUtil;
+import org.eclipse.ui.tests.harness.util.ActionUtil;
 
 /**
  * Tests the lifecycle for a window action delegate.

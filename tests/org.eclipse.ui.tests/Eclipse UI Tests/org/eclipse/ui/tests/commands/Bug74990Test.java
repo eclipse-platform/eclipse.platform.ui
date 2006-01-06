@@ -22,7 +22,7 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * A test for whether part identifiers work properly for HandlerSubmissions.

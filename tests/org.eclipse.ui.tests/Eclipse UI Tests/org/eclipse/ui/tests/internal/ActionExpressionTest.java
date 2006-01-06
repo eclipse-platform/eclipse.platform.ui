@@ -15,8 +15,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.api.ListElement;
 import org.eclipse.ui.tests.api.ListView;
-import org.eclipse.ui.tests.util.ActionUtil;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.ActionUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * This class contains tests for popup menu enablement

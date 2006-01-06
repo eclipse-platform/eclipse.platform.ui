@@ -16,7 +16,7 @@ import java.util.Collections;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * @since 3.1

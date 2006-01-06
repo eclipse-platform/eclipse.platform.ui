@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.autotests;
 
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * @since 3.1

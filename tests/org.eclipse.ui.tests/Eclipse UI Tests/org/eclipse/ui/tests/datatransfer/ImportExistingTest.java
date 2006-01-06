@@ -44,9 +44,9 @@ import org.eclipse.ui.internal.dialogs.ImportExportWizard;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage.ProjectRecord;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.performance.FileTool;
-import org.eclipse.ui.tests.util.DialogCheck;
-import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.eclipse.ui.tests.harness.util.FileTool;
+import org.eclipse.ui.tests.harness.util.FileUtil;
 
 public class ImportExistingTest extends DataTransferTestCase {
 	private static final String PLUGIN_ID = "org.eclipse.ui.tests";

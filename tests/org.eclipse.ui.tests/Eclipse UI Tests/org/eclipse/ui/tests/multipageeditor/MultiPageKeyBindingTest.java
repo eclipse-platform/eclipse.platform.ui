@@ -27,7 +27,7 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests that key bindings are treated correctly in a multi-page editor. This

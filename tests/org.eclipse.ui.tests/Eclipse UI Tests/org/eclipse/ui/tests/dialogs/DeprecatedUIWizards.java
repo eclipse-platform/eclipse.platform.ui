@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.dialogs.ImportWizard;
 import org.eclipse.ui.internal.dialogs.NewWizard;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
-import org.eclipse.ui.tests.util.DialogCheck;
+import org.eclipse.ui.tests.harness.util.DialogCheck;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;

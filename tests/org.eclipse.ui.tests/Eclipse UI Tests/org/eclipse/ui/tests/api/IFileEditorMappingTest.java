@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.tests.util.ArrayUtil;
+import org.eclipse.ui.tests.harness.util.ArrayUtil;
 
 public class IFileEditorMappingTest extends TestCase {
     private IFileEditorMapping[] fMappings;

@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.keys.SWTKeySupport;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test for Bug 42035.

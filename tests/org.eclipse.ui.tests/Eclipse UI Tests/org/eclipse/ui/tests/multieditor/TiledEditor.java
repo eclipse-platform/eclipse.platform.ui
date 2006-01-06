@@ -27,7 +27,7 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.MultiEditor;
-import org.eclipse.ui.tests.util.CallHistory;
+import org.eclipse.ui.tests.harness.util.CallHistory;
 
 /**
  * Implementation of a TiledEditor. This is the testable version copied from bug

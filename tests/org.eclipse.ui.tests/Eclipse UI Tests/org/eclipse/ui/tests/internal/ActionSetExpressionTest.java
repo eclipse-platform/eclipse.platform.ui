@@ -15,7 +15,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.api.ListView;
-import org.eclipse.ui.tests.util.ActionUtil;
+import org.eclipse.ui.tests.harness.util.ActionUtil;
 
 /**
  * This class contains tests for action set enablement

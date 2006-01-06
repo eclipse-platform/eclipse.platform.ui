@@ -36,7 +36,7 @@ import org.eclipse.ui.internal.dialogs.ShowViewDialog;
 import org.eclipse.ui.internal.ide.dialogs.SimpleListContentProvider;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
-import org.eclipse.ui.tests.util.DialogCheck;
+import org.eclipse.ui.tests.harness.util.DialogCheck;
 
 public class UIDialogsAuto extends TestCase {
     private static final String PROJECT_SELECTION_MESSAGE ="Select Other Projects";

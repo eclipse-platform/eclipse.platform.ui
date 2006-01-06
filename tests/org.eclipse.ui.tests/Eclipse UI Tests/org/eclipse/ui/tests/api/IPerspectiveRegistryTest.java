@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.tests.util.ArrayUtil;
+import org.eclipse.ui.tests.harness.util.ArrayUtil;
 
 public class IPerspectiveRegistryTest extends TestCase {
 

@@ -22,7 +22,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests [I]FileEditorInput API.

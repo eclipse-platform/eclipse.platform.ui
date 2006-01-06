@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.api.IWorkbenchPartTest;
 import org.eclipse.ui.tests.api.MockPart;
-import org.eclipse.ui.tests.util.CallHistory;
+import org.eclipse.ui.tests.harness.util.CallHistory;
 
 /**
  * @since 3.0

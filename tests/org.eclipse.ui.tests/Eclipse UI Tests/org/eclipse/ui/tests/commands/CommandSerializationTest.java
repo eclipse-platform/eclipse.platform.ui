@@ -17,7 +17,7 @@ import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test serialization and deserialization of ParameterizedCommands. See <a

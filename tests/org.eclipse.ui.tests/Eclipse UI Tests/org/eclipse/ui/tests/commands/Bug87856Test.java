@@ -21,7 +21,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * This tests whether we are leaking handlers after their submission has been

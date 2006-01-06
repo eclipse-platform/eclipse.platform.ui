@@ -18,7 +18,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.IThreadListener;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests IJobManger#transferRule in conjunction with ModalContext.run.

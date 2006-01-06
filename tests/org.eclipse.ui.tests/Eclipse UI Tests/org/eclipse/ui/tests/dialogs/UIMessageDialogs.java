@@ -22,7 +22,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
-import org.eclipse.ui.tests.util.DialogCheck;
+import org.eclipse.ui.tests.harness.util.DialogCheck;
 
 public class UIMessageDialogs extends TestCase {
     private static final String DUMMY_RESOURCE = "Dummy.resource";

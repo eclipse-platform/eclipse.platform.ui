@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests the IPageListener class.
