@@ -1,0 +1,42 @@
+- Startup time/memory use
+- About
+    - open about then open configuration details then close
+- Workbench [resize Workbench Shell] [switch active part leak check] [stress test switch active part perf.][popup menu open]
+    - with a set of empty views and editors in standard layout
+    - with an editor with a menu entry/a toolbar entry and a view with a simple menu and toolbar
+- Editor [open/close] [zoom/unzoom] [split/unsplit] [stress test open 100 w/o close] [close 100 editors] [minimize/mazimize]
+	- empty
+	- editor with key/context support
+	- multi-page editor
+	- editor that provides a content outline
+	- editor that provides a property sheet
+	- editor that contributes heavily to menus
+	- editor that contributes heavily to toolbars
+	- change icon/title frequently
+	- with lots of popup menu contributions
+- View [open/close] [zoom/unzoom] [detached/re-attach] [make fastview/restore] [minimize/mazimize] [popup menu open]
+	- empty
+	- view with local toolbar
+	- with with view menu
+	- table viewer (TableView)
+	- view that indicates progress when in forground and background
+	- view with content message (see Problems view)
+	- change icon/title frequently
+    - with lots of popup menu contributions
+- Intro [close/open] [standby/non-standby]
+    - basic intro		
+- Perspective [open/close] [stress test open 10 w/o close] [open in new window] [switch pespective]
+	- empty
+	- complex layout
+- Themes [switching theme]
+	- two themes that support the default workbench presentation items
+
+-	Shutdown
+-	Action Factory (brings in all classes)
+-	Leak tests
+-	Selection listeners
+-	Decorators
+-	GDI resources
+-	Thread count
+-	Overhead of progress support/progress monitor/view
+-	Layout

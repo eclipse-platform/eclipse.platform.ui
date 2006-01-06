@@ -1,0 +1,12 @@
+window resizing
+perf1/perf2 perspective switching
+
+ V basic view open/close
+ V empty perspective open/close
+ V perf_basic editor open/close
+ V perf_basic closeAll
+ V perf1 open/close window
+
+* ask Stefan for one interesting test
+
+view to editor switching
