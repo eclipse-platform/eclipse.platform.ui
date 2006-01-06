@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -322,12 +322,23 @@ public class LocationValidator {
 		} catch (CoreException e) {
 			return e.getStatus();
 		}
-		// test if the given location overlaps the default default location
-		IPath defaultDefaultLocation = Platform.getLocation();
-		if (FileUtil.isOverlapping(location, URIUtil.toURI(defaultDefaultLocation))) {
-			message = NLS.bind(Messages.resources_overlapWorkspace, toString(location), defaultDefaultLocation.toOSString());
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+		//overlaps with default default location can only occur with file URIs
+		if (location.getScheme().equals(EFS.SCHEME_FILE)) {
+			IPath locationPath = URIUtil.toPath(location);
+			// test if the given location overlaps the default default location
+			IPath defaultDefaultLocation = Platform.getLocation();
+			if (FileUtil.isPrefixOf(locationPath, defaultDefaultLocation)) {
+				message = NLS.bind(Messages.resources_overlapWorkspace, toString(location), defaultDefaultLocation.toOSString());
+				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+			}
+			// test if the given location is the default location for any potential project
+			IPath parentPath = locationPath.removeLastSegments(1);
+			if (FileUtil.isPrefixOf(parentPath, defaultDefaultLocation) && FileUtil.isPrefixOf(defaultDefaultLocation, parentPath)) {
+				message = NLS.bind(Messages.resources_overlapProject, toString(location), locationPath.lastSegment());
+				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+			}
 		}
+
 		// Iterate over each known project and ensure that the location does not
 		// conflict with any of their already defined locations.
 		IProject[] projects = workspace.getRoot().getProjects();
@@ -336,17 +347,24 @@ public class LocationValidator {
 			// since we are iterating over the project in the workspace, we
 			// know that they have been created before and must have a description
 			IProjectDescription desc = ((Project) project).internalGetDescription();
-			URI definedLocalLocation = desc.getLocationURI();
+			URI testLocation = desc.getLocationURI();
 			// if the project uses the default location then continue
-			if (definedLocalLocation == null)
+			if (testLocation == null)
 				continue;
-			//tolerate locations being the same if this is the project being tested
-			if (project.equals(context) && definedLocalLocation.equals(location))
+			if (project.equals(context)) {
+				//tolerate locations being the same if this is the project being tested
+				if (URIUtil.equals(testLocation, location))
+					continue;
+				//a project cannot be moved inside of its current location
+				if (!FileUtil.isPrefixOf(testLocation, location))
+					continue;
+			} else if (!URIUtil.equals(testLocation, location)) {
+				// a project cannot have the same location as another existing project
 				continue;
-			if (FileUtil.isOverlapping(location, definedLocalLocation)) {
-				message = NLS.bind(Messages.resources_overlapProject, toString(location), project.getName());
-				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
+			//in all other cases there is illegal overlap
+			message = NLS.bind(Messages.resources_overlapProject, toString(location), project.getName());
+			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 		//if this project exists and has linked resources, the project location cannot overlap
 		//the locations of any linked resources in that project

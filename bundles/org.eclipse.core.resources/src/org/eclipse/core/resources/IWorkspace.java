@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1506,7 +1506,7 @@ public interface IWorkspace extends IAdaptable {
 	 * isValidPath</code>),
 	 * a location path should also obey the following rules:
 	 * <ul>
-	 * <li>must not overlap with another open or closed project</li>
+	 * <li>must not be the same as another open or closed project</li>
 	 * <li>must not overlap with the platform's working directory</li>
 	 * <li>must not be the same as or a child of the location of any existing
 	 * linked resource in the given project</li>
@@ -1533,8 +1533,9 @@ public interface IWorkspace extends IAdaptable {
 	 * whose first segment is the name of a defined workspace path variable.
 	 * A project location must obey the following rules:
 	 * <ul>
-	 * <li>must not overlap with another open or closed project</li>
-	 * <li>must not overlap with the platform's working directory</li>
+	 * <li>must not be the same as another open or closed project</li>
+	 * <li>must not occupy the default location for any project, whether existing or not</li>
+	 * <li>must not be the same as or a parent of the platform's working directory</li>
 	 * <li>must not be the same as or a child of the location of any existing
 	 * linked resource in the given project</li>
 	 * </ul>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -284,11 +284,14 @@ public class AliasManager implements IManager, ILifecycleListener {
 	private final FindAliasesDoit findAliases = new FindAliasesDoit();
 
 	/**
-	 * The total number of linked resources that exist in the workspace.  This
-	 * count includes linked resources that don't currently have valid locations
-	 * (due to an undefined path variable).
+	 * The total number of resources in the workspace that are not in the default
+	 * location. This includes all linked resources, including linked resources
+	 * that don't currently have valid locations due to an undefined path variable.
+	 * This also includes projects that are not in their default location.
+	 * This value is used as a quick optimization, because a workspace with
+	 * all resources in their default locations cannot have any aliases.
 	 */
-	private int linkedResourceCount = 0;
+	private int nonDefaultResourceCount = 0;
 
 	/**
 	 * This maps IPath->IResource, where the path is an absolute file system
@@ -321,7 +324,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 	private void addToLocationsMap(IResource link, IFileStore location) {
 		if (location != null)
 			if (locationsMap.add(location, link))
-				linkedResourceCount++;
+				nonDefaultResourceCount++;
 	}
 
 	private void addToLocationsMap(IProject project) {
@@ -331,6 +334,8 @@ public class AliasManager implements IManager, ILifecycleListener {
 		ProjectDescription description = ((Project) project).internalGetDescription();
 		if (description == null)
 			return;
+		if (description.getLocationURI() != null)
+			nonDefaultResourceCount++;
 		HashMap links = description.getLinks();
 		if (links == null)
 			return;
@@ -352,8 +357,8 @@ public class AliasManager implements IManager, ILifecycleListener {
 	 */
 	private void buildAliasedProjectsSet() {
 		aliasedProjects.clear();
-		//if there are no linked resources then there can't be any aliased projects
-		if (linkedResourceCount <= 0)
+		//if there are no resources in non-default locations then there can't be any aliased projects
+		if (nonDefaultResourceCount <= 0)
 			return;
 		//for every resource that overlaps another, marked its project as aliased
 		addToCollection.setCollection(aliasedProjects);
@@ -366,7 +371,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 	 */
 	private void buildLocationsMap() {
 		locationsMap.clear();
-		linkedResourceCount = 0;
+		nonDefaultResourceCount = 0;
 		//build table of IPath (file system location) -> IResource (project or linked resource)
 		IProject[] projects = workspace.getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
@@ -499,12 +504,12 @@ public class AliasManager implements IManager, ILifecycleListener {
 		//check if we're in an aliased project or workspace before updating structure changes.  In the 
 		//deletion case, we need to know if the resource was in an aliased project *before* deletion.
 		IProject project = resource.getProject();
-		boolean noAliases = linkedResourceCount <= 0 || !aliasedProjects.contains(project);
+		boolean noAliases = nonDefaultResourceCount <= 0 || !aliasedProjects.contains(project);
 
 		//now update any structure changes and check again if an update is needed
 		if (!structureChanges.isEmpty()) {
 			updateStructureChanges();
-			noAliases &= linkedResourceCount <= 0 || !aliasedProjects.contains(project);
+			noAliases &= nonDefaultResourceCount <= 0 || !aliasedProjects.contains(project);
 		}
 		return noAliases;
 	}
@@ -545,6 +550,8 @@ public class AliasManager implements IManager, ILifecycleListener {
 		ProjectDescription description = ((Project) project).internalGetDescription();
 		if (description == null)
 			return;
+		if (description.getLocationURI() != null)
+			nonDefaultResourceCount--;
 		HashMap links = description.getLinks();
 		if (links == null)
 			return;
@@ -566,7 +573,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 	private void removeFromLocationsMap(IResource link, IFileStore location) {
 		if (location != null)
 			if (locationsMap.remove(location, link))
-				linkedResourceCount--;
+				nonDefaultResourceCount--;
 	}
 
 	/* (non-Javadoc)

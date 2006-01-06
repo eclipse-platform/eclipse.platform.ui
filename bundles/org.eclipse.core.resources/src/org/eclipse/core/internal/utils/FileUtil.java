@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,7 @@ package org.eclipse.core.internal.utils;
 
 import java.io.*;
 import java.net.URI;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.IResourceStatus;
@@ -51,6 +50,24 @@ public class FileUtil {
 	 * this means they are the same, or one is a proper prefix of the other.  If "bothDirections"
 	 * is false, this method only returns true if the locations are the same, or the first location
 	 * is a prefix of the second.  Returns false if the locations do not overlap
+	 * Does the right thing with respect to case insensitive platforms.
+	 */
+	private static boolean computeOverlap(IPath location1, IPath location2, boolean bothDirections) {
+		IPath one = location1;
+		IPath two = location2;
+		// If we are on a case-insensitive file system then convert to all lower case.
+		if (!Workspace.caseSensitive) {
+			one = new Path(location1.toOSString().toLowerCase());
+			two = new Path(location2.toOSString().toLowerCase());
+		}
+		return one.isPrefixOf(two) || (bothDirections && two.isPrefixOf(one));
+	}
+
+	/**
+	 * Returns true if the given file system locations overlap. If "bothDirections" is true,
+	 * this means they are the same, or one is a proper prefix of the other.  If "bothDirections"
+	 * is false, this method only returns true if the locations are the same, or the first location
+	 * is a prefix of the second.  Returns false if the locations do not overlap
 	 */
 	private static boolean computeOverlap(URI location1, URI location2, boolean bothDirections) {
 		if (location1.equals(location2))
@@ -60,26 +77,10 @@ public class FileUtil {
 		if (scheme1 == null ? scheme2 != null : !scheme1.equals(scheme2))
 			return false;
 		if (EFS.SCHEME_FILE.equals(scheme1) && EFS.SCHEME_FILE.equals(scheme2))
-			return isOverlapping(new Path(location1.getSchemeSpecificPart()), new Path(location2.getSchemeSpecificPart()), bothDirections);
+			return computeOverlap(URIUtil.toPath(location1), URIUtil.toPath(location2), bothDirections);
 		String string1 = location1.toString();
 		String string2 = location2.toString();
 		return string1.startsWith(string2) || (bothDirections && string2.startsWith(string1));
-	}
-
-	private static String escapeColons(String string) {
-		final String COLON_STRING = "%3A"; //$NON-NLS-1$
-		if (string.indexOf(':') == -1)
-			return string;
-		int length = string.length();
-		StringBuffer result = new StringBuffer(length);
-		for (int i = 0; i < length; i++) {
-			char c = string.charAt(i);
-			if (c == ':')
-				result.append(COLON_STRING);
-			else
-				result.append(c);
-		}
-		return result.toString();
 	}
 
 	/**
@@ -101,27 +102,17 @@ public class FileUtil {
 	 * this means they are the same, or one is a proper prefix of the other.  If "bothDirections"
 	 * is false, this method only returns true if the locations are the same, or the first location
 	 * is a prefix of the second.  Returns false if the locations do not overlap
-	 * Does the right thing with respect to case insensitive platforms.
-	 */
-	private static boolean isOverlapping(IPath location1, IPath location2, boolean bothDirections) {
-		IPath one = location1;
-		IPath two = location2;
-		// If we are on a case-insensitive file system then convert to all lower case.
-		if (!Workspace.caseSensitive) {
-			one = new Path(location1.toOSString().toLowerCase());
-			two = new Path(location2.toOSString().toLowerCase());
-		}
-		return one.isPrefixOf(two) || (bothDirections && two.isPrefixOf(one));
-	}
-
-	/**
-	 * Returns true if the given file system locations overlap. If "bothDirections" is true,
-	 * this means they are the same, or one is a proper prefix of the other.  If "bothDirections"
-	 * is false, this method only returns true if the locations are the same, or the first location
-	 * is a prefix of the second.  Returns false if the locations do not overlap
 	 */
 	public static boolean isOverlapping(URI location1, URI location2) {
 		return computeOverlap(location1, location2, true);
+	}
+
+	/**
+	 * Returns true if location1 is the same as, or a proper prefix of, location2.
+	 * Returns false otherwise.
+	 */
+	public static boolean isPrefixOf(IPath location1, IPath location2) {
+		return computeOverlap(location1, location2, false);
 	}
 
 	/**
@@ -176,7 +167,7 @@ public class FileUtil {
 			return new Path(uri.getSchemeSpecificPart());
 		return null;
 	}
-	
+
 	public static final void transferStreams(InputStream source, OutputStream destination, String path, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {

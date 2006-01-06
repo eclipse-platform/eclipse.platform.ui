@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,9 @@ public class PR_1GH2B0N_Test extends ResourceTest {
 
 			IProject project2 = getWorkspace().getRoot().getProject("MyProject2");
 			IStatus status = getWorkspace().validateProjectLocation(project2, project.getLocation().append(project2.getName()));
-			assertTrue("2.0", !status.isOK());
+			//Note this is not the original error case - 
+			//since Eclipse 3.2 a project is allowed to be nested in another project
+			assertTrue("2.0", status.isOK());
 		} finally {
 			ensureDoesNotExistInWorkspace(project);
 			ensureDoesNotExistInFileSystem(projectLocation.toFile());
