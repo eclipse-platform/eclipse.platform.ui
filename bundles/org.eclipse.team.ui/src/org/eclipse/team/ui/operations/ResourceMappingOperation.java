@@ -105,18 +105,22 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 			scope = getScopeGenerator().prepareScope(selectedMappings, context, monitor);
 			IResourceMappingScope inputScope = getScopeGenerator().asInputScope(scope);
 			if (scope.hasAdditionalMappings()) {
+				boolean prompt = false;
 				// There are additional mappings so we may need to prompt
 				ModelProvider[] inputModelProviders = inputScope.getModelProviders();
-				if (scope.hasAdditonalResources()) {
+				if (hasAdditionalMappingsFromIndependantModel(inputModelProviders, scope.getModelProviders())) {
+					// Prompt if the is a new model provider in the scope that is independant
+					// of any of the input mappings
+					prompt = true;
+				} else if (scope.hasAdditonalResources()) {
 					// We definitely need to prompt to indicate that additional resources
-					promptForInputChange(monitor);
+					prompt = true;
 				} else if (inputModelProviders.length == 1) {
 					// We may need to prompt depending on the nature of the additional mappings
 					// We need to prompt if the additional mappings are from the same model as
 					// the input or if they are from a model that has no relationship to the input model
 					String modelProviderId = inputModelProviders[0].getDescriptor().getId();
 					ResourceMapping[] mappings = scope.getMappings();
-					boolean prompt = false;
 					for (int i = 0; i < mappings.length; i++) {
 						ResourceMapping mapping = mappings[i];
 						if (inputScope.getTraversals(mapping) == null) {
@@ -131,12 +135,9 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 							}
 						}
 					}
-					if (prompt)
-						promptForInputChange(monitor);
 				} else {
 					// We need to prompt if there are additional mappings from an input
 					// provider whose traversals overlap those of the input mappings.
-					boolean prompt = false;
 					for (int i = 0; i < inputModelProviders.length; i++) {
 						ModelProvider provider = inputModelProviders[i];
 						String id = provider.getDescriptor().getId();
@@ -163,14 +164,43 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 							}
 						}
 					}
-					
-					if (prompt)
-						promptForInputChange(monitor);
 				}
+				if (prompt)
+					promptForInputChange(monitor);
 			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		}
+	}
+
+	private boolean hasAdditionalMappingsFromIndependantModel(ModelProvider[] inputModelProviders, ModelProvider[] modelProviders) {
+		ModelProvider[] additionalProviders = getAdditionalProviders(inputModelProviders, modelProviders);
+		for (int i = 0; i < additionalProviders.length; i++) {
+			ModelProvider additionalProvider = additionalProviders[i];
+			boolean independant = true;
+			// Return true if the new provider is independant of all input providers
+			for (int j = 0; j < inputModelProviders.length; j++) {
+				ModelProvider inputProvider = inputModelProviders[j];
+				if (!isIndependantModel(additionalProvider.getDescriptor().getId(), inputProvider.getDescriptor().getId())) {
+					independant = false;
+				}
+			}
+			if (independant)
+				return true;
+		}
+		return false;
+	}
+
+	private ModelProvider[] getAdditionalProviders(ModelProvider[] inputModelProviders, ModelProvider[] modelProviders) {
+		Set input = new HashSet();
+		List result = new ArrayList();
+		input.addAll(Arrays.asList(inputModelProviders));
+		for (int i = 0; i < modelProviders.length; i++) {
+			ModelProvider provider = modelProviders[i];
+			if (!input.contains(provider))
+				result.add(provider);
+		}
+		return (ModelProvider[]) result.toArray(new ModelProvider[result.size()]);
 	}
 
 	private boolean overlaps(ResourceTraversal[] scopeTraversals, ResourceTraversal[] inputModelTraversals) {

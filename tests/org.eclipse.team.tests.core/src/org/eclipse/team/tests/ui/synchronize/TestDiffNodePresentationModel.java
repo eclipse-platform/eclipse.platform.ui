@@ -83,23 +83,6 @@ public class TestDiffNodePresentationModel extends TeamTest {
 		//return new HierarchicalModelProvider(set);
 		return null;
 	}
-	
-	/*
-	 * This method creates a project with the given resources, imports
-	 * it to CVS and checks it out
-	 */
-	protected IProject createProject(String prefix, String[] resources) throws CoreException {
-		IProject project = getUniqueTestProject(prefix);
-		buildResources(project, resources, true);
-		return project;
-	}
-	
-	/*
-	 * Create a test project using the currently running test case as the project name prefix
-	 */
-	protected IProject createProject(String[] resources) throws CoreException {
-		return createProject(getName(), resources);
-	}
 		
 	private void adjustSet(SyncInfoSet set, IProject project, String[] resourceStrings, int[] syncKind) throws TeamException {
 		IResource[] resources = buildResources(project, resourceStrings);

@@ -10,14 +10,26 @@
  *******************************************************************************/
 package org.eclipse.team.tests.core;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class TeamTest extends ResourceTest {
@@ -60,6 +72,22 @@ public class TeamTest extends ResourceTest {
 	protected IProject getUniqueTestProject(String prefix) throws CoreException {
 		// manage and share with the default stream create by this class
 		return getNamedTestProject(prefix + "-" + Long.toString(System.currentTimeMillis()));
+	}
+	
+	/*
+	 * This method creates a project with the given resources
+	 */
+	protected IProject createProject(String prefix, String[] resources) throws CoreException {
+		IProject project = getUniqueTestProject(prefix);
+		buildResources(project, resources, true);
+		return project;
+	}
+	
+	/*
+	 * Create a test project using the currently running test case as the project name prefix
+	 */
+	protected IProject createProject(String[] resources) throws CoreException {
+		return createProject(getName(), resources);
 	}
 	
 	protected IStatus getTeamTestStatus(int severity) {
