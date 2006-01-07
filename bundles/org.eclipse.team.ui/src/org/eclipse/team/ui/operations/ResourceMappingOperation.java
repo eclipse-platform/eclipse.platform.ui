@@ -11,12 +11,16 @@
 package org.eclipse.team.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.window.Window;
-import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ScopeGenerator;
+import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.dialogs.AdditionalMappingsDialog;
 import org.eclipse.ui.IWorkbenchPart;
@@ -87,7 +91,13 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 
 	/**
 	 * Adjust the input of the operation according to the selected
-	 * resource mappings and the set of interested participants
+	 * resource mappings and the set of interested participants. This method
+	 * will prompt the user in the following cases:
+	 * <ol>
+	 * <li>The scope contains additional resources than those in the input.
+	 * <li>The scope has additional mappings from a model in the input
+	 * <li>The input contains elements from multiple models
+	 * </ol>
 	 * @param monitor a progress monitor
 	 */
 	protected void buildScope(IProgressMonitor monitor) throws InvocationTargetException {
@@ -124,14 +134,97 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 					if (prompt)
 						promptForInputChange(monitor);
 				} else {
-					// The input had mixed mappings so just prompt with the additional mappings
-					// TODO: Perhaps we could do better (bug 119921)
-					promptForInputChange(monitor);
+					// We need to prompt if there are additional mappings from an input
+					// provider whose traversals overlap those of the input mappings.
+					boolean prompt = false;
+					for (int i = 0; i < inputModelProviders.length; i++) {
+						ModelProvider provider = inputModelProviders[i];
+						String id = provider.getDescriptor().getId();
+						ResourceMapping[] inputMappings = inputScope.getMappings(id);
+						ResourceMapping[] scopeMappings = scope.getMappings(id);
+						if (inputMappings.length != scopeMappings.length) {
+							// There are more mappings for this provider.
+							// We need to see if any of the new ones overlap the old ones.
+							for (int j = 0; j < scopeMappings.length; j++) {
+								ResourceMapping mapping = scopeMappings[j];
+								ResourceTraversal[] inputTraversals = inputScope.getTraversals(mapping);
+								if (inputTraversals == null) {
+									// This mapping was not in the input.
+									// We need to prompt if the traversal for this mapping overlaps with
+									// the input mappings for the model provider
+									// TODO could check for project overlap first
+									ResourceTraversal[] scopeTraversals = scope.getTraversals(mapping);
+									ResourceTraversal[] inputModelTraversals = getTraversals(inputScope, inputMappings);
+									if (overlaps(scopeTraversals, inputModelTraversals)) {
+										prompt = true;
+										break;
+									}
+								}
+							}
+						}
+					}
+					
+					if (prompt)
+						promptForInputChange(monitor);
 				}
 			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		}
+	}
+
+	private boolean overlaps(ResourceTraversal[] scopeTraversals, ResourceTraversal[] inputModelTraversals) {
+		for (int i = 0; i < inputModelTraversals.length; i++) {
+			ResourceTraversal inputTraversal = inputModelTraversals[i];
+			for (int j = 0; j < scopeTraversals.length; j++) {
+				ResourceTraversal scopeTraversal = scopeTraversals[j];
+				if (overlaps(inputTraversal, scopeTraversal)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean overlaps(ResourceTraversal inputTraversal, ResourceTraversal scopeTraversal) {
+		IResource[] inputRoots = inputTraversal.getResources();
+		IResource[] scopeRoots = scopeTraversal.getResources();
+		for (int i = 0; i < scopeRoots.length; i++) {
+			IResource scopeResource = scopeRoots[i];
+			for (int j = 0; j < inputRoots.length; j++) {
+				IResource inputResource = inputRoots[j];
+				if (overlaps(scopeResource, scopeTraversal.getDepth(), inputResource, inputTraversal.getDepth()))
+					return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean overlaps(IResource scopeResource, int scopeDepth, IResource inputResource, int inputDepth) {
+		if (scopeResource.equals(inputResource))
+			return true;
+		if (scopeDepth == IResource.DEPTH_INFINITE && scopeResource.getFullPath().isPrefixOf(inputResource.getFullPath())) {
+			return true;
+		}
+		if (scopeDepth == IResource.DEPTH_ONE && scopeResource.equals(inputResource.getParent())) {
+			return true;
+		}
+		if (inputDepth == IResource.DEPTH_INFINITE && inputResource.getFullPath().isPrefixOf(scopeResource.getFullPath())) {
+			return true;
+		}
+		if (inputDepth == IResource.DEPTH_ONE && inputResource.equals(scopeResource.getParent())) {
+			return true;
+		}
+		return false;
+	}
+
+	private ResourceTraversal[] getTraversals(IResourceMappingScope inputScope, ResourceMapping[] inputMappings) {
+		List result = new ArrayList();
+		for (int i = 0; i < inputMappings.length; i++) {
+			ResourceMapping mapping = inputMappings[i];
+			result.addAll(Arrays.asList(inputScope.getTraversals(mapping)));
+		}
+		return ResourceMappingScope.combineTraversals((ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]));
 	}
 
 	private boolean isIndependantModel(String modelProviderId, String id) {
