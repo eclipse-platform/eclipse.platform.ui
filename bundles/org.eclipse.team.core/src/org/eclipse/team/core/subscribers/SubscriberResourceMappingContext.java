@@ -8,31 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.subscribers;
+package org.eclipse.team.core.subscribers;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.RemoteResourceMappingContext;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoFilter;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.internal.core.Messages;
-import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.core.*;
 
 /**
  * A resource mapping context that provides the client access to the remote state 
@@ -40,9 +28,13 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * to determine whether the local contents differ from the remote contents.
  * This allows the context to be used for different operations (check-in,
  * update and replace).
- * 
- * TODO: Do we want explicit support for differentiating a commit from an update?
- * @since 3.1
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ * @since 3.2
  */
 public class SubscriberResourceMappingContext extends RemoteResourceMappingContext {
     
@@ -54,84 +46,21 @@ public class SubscriberResourceMappingContext extends RemoteResourceMappingConte
     private boolean autoRefresh;
     
     /**
-     * Return a resource mapping context suitable for a replace operations.
-     * @return a resource mapping context suitable for a replace operations
-     */
-    public static RemoteResourceMappingContext getReplaceContext(Subscriber subscriber) {
-        return new SubscriberResourceMappingContext(subscriber, new SyncInfoFilter() {
-            public boolean select(SyncInfo info, IProgressMonitor monitor) {
-                if (info != null) {
-                    int direction = info.getKind() & SyncInfo.DIRECTION_MASK;
-                    // When replacing, both incoming and outgoing changes are needed
-                    return direction != 0;
-                }
-                return false;
-            }
-        }, true);
-    }
-    
-    /**
-     * Return a resource mapping context suitable for a update operations.
-     * That is, operations that fetch the latest remote changes from the 
-     * server to update the local workspace resources.
-     * @return a resource mapping context suitable for a update operations
-     */
-    public static RemoteResourceMappingContext getUpdateContext(Subscriber subscriber) {
-        return new SubscriberResourceMappingContext(subscriber, new SyncInfoFilter() {
-            public boolean select(SyncInfo info, IProgressMonitor monitor) {
-                if (info != null) {
-                    int direction = info.getKind() & SyncInfo.DIRECTION_MASK;
-                    // When updating, only incoming and conflicting changes are needed
-                    return direction == SyncInfo.INCOMING || direction == SyncInfo.CONFLICTING ;
-                }
-                return false;
-            }
-        }, true);
-    }
-    
-    /**
-     * Return a resource mapping context suitable for a check-in (or commit) operations.
-     * That is, operations that uploads the latest local changes to the 
-     * server from the local workspace resources, typically creating a new version of the resource.
-     * @return a resource mapping context suitable for a check-in operations
-     */
-    public static RemoteResourceMappingContext getCheckInContext(Subscriber subscriber) {
-        return new SubscriberResourceMappingContext(subscriber, new SyncInfoFilter() {
-            public boolean select(SyncInfo info, IProgressMonitor monitor) {
-                if (info != null) {
-                    int direction = info.getKind() & SyncInfo.DIRECTION_MASK;
-                    // When committing, only outgoing and conflicting changes are needed
-                    return direction == SyncInfo.OUTGOING || direction == SyncInfo.CONFLICTING ;
-                }
-                return false;
-            }
-        }, true);
-    }
-
-    /**
      * Return a resource mapping context suitable for comparison operations.
      * Comparisons require that any out-of-sync resources have contents
      * that differ.
      * @return a resource mapping context suitable for compare operations
      */
-    public static RemoteResourceMappingContext getCompareContext(Subscriber subscriber) {
-        return new SubscriberResourceMappingContext(subscriber, new SyncInfoFilter() {
-            public boolean select(SyncInfo info, IProgressMonitor monitor) {
-                if (info != null) {
-                    return info.getKind() != SyncInfo.IN_SYNC;
-                }
-                return false;
-            }
-        }, true);
+    public static RemoteResourceMappingContext createContext(Subscriber subscriber) {
+        return new SubscriberResourceMappingContext(subscriber, true);
     }
     
     /**
      * Create a resource mapping context for the given subscriber
      * @param subscriber the subscriber
-     * @param contentDiffFilter filter that is used to determine if the remote contents differ 
      * from the local contents
      */
-    public SubscriberResourceMappingContext(Subscriber subscriber, SyncInfoFilter contentDiffFilter, boolean autoRefresh) {
+    public SubscriberResourceMappingContext(Subscriber subscriber, boolean autoRefresh) {
         this.subscriber = subscriber;
         this.autoRefresh = autoRefresh;
     }
@@ -221,29 +150,11 @@ public class SubscriberResourceMappingContext extends RemoteResourceMappingConte
      * @see org.eclipse.core.resources.mapping.ResourceMappingContext#refresh(org.eclipse.core.resources.mapping.ResourceTraversal[], int, org.eclipse.core.runtime.IProgressMonitor)
      */
     public final void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException {
-        Set zero = new HashSet();
-        Set one = new HashSet();
-        Set infinite = new HashSet();
+    	subscriber.refresh(traversals, monitor);
         for (int i = 0; i < traversals.length; i++) {
-            ResourceTraversal traversal = traversals[i];
-            switch (traversal.getDepth()) {
-			case IResource.DEPTH_INFINITE:
-				infinite.addAll(Arrays.asList(traversal.getResources()));
-				break;
-			case IResource.DEPTH_ONE:
-				one.addAll(Arrays.asList(traversal.getResources()));
-				break;
-			case IResource.DEPTH_ZERO:
-				zero.addAll(Arrays.asList(traversal.getResources()));
-				break;
-			}
-        }
-        if (!zero.isEmpty())
-            refresh((IResource[]) zero.toArray(new IResource[zero.size()]), IResource.DEPTH_ZERO, flags, monitor);
-        if (!one.isEmpty())
-            refresh((IResource[]) one.toArray(new IResource[one.size()]), IResource.DEPTH_ONE, flags, monitor);
-        if (!infinite.isEmpty())
-            refresh((IResource[]) infinite.toArray(new IResource[infinite.size()]), IResource.DEPTH_INFINITE, flags, monitor);
+			ResourceTraversal traversal = traversals[i];
+			refreshed(traversal.getResources(), traversal.getDepth());
+		}
     }
 
     /**
@@ -360,14 +271,28 @@ public class SubscriberResourceMappingContext extends RemoteResourceMappingConte
         return validateRemote(resource, base);
     }
 
+    /**
+     * Set whether the context should refresh the state of resources
+     * when their state is requested. The context keeps track of what
+     * resources were refreshed and only auto-refreshes a resource
+     * once.
+     * @param autoRefresh whether the context should refresh the state of resources
+     * when their state is requested
+     */
     public void setAutoRefresh(boolean autoRefresh) {
         this.autoRefresh = autoRefresh;
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.mapping.RemoteResourceMappingContext#isThreeWay()
+	 */
 	public boolean isThreeWay() {
 		return subscriber.getResourceComparator().isThreeWay();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.mapping.RemoteResourceMappingContext#contentDiffers(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public boolean contentDiffers(IFile file, IProgressMonitor monitor) throws CoreException {
 		return hasRemoteChange(file, monitor) || hasLocalChange(file, monitor);
 	}

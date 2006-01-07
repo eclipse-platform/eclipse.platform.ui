@@ -19,11 +19,11 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
-import org.eclipse.team.internal.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -64,7 +64,7 @@ public class GenerateDiffFileAction extends WorkspaceTraversalAction{
 	        for (int i = 0; i < mappings.length; i++) {
 	            ResourceMapping mapping = mappings[i];
 	            ResourceTraversal[] traversals = mapping.getTraversals(
-	            		SubscriberResourceMappingContext.getCheckInContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber()), 
+	            		SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber()), 
 	            		monitor);
 	            for (int j = 0; j < traversals.length; j++) {
 	                ResourceTraversal traversal = traversals[j];

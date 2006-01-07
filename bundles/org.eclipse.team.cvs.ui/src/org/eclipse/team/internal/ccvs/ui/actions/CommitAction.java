@@ -20,11 +20,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.wizards.CommitWizard;
-import org.eclipse.team.internal.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -70,7 +70,7 @@ public class CommitAction extends WorkspaceTraversalAction {
         for (int i = 0; i < mappings.length; i++) {
             ResourceMapping mapping = mappings[i];
             ResourceTraversal[] traversals = mapping.getTraversals(
-            		SubscriberResourceMappingContext.getCheckInContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber()), 
+            		SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber()), 
             		monitor);
             for (int j = 0; j < traversals.length; j++) {
                 ResourceTraversal traversal = traversals[j];

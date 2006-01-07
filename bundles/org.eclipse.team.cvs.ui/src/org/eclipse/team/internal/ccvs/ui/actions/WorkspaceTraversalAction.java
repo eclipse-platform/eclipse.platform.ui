@@ -22,8 +22,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -98,7 +98,7 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
     }
     
     protected ResourceMappingContext getResourceMappingContext() {
-		return SubscriberResourceMappingContext.getCompareContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
+		return SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
 	}
 
 	public static IResource[] getResourcesToCompare(final ResourceMapping[] mappings, final Subscriber subscriber) throws InvocationTargetException {
@@ -111,7 +111,7 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
                     try {
                         resources[0] = getRootTraversalResources(
                                 mappings, 
-                                SubscriberResourceMappingContext.getCompareContext(subscriber), 
+                                SubscriberResourceMappingContext.createContext(subscriber), 
                                 monitor);
                     } catch (CoreException e) {
                         throw new InvocationTargetException(e);

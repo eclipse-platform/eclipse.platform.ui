@@ -15,9 +15,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class ModelMergeOperation extends AbstractModelMergeOperation {
@@ -25,7 +25,7 @@ public class ModelMergeOperation extends AbstractModelMergeOperation {
 	private final Subscriber subscriber;
 
 	public ModelMergeOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, Subscriber subscriber) {
-		super(part, selectedMappings, SubscriberResourceMappingContext.getCompareContext(subscriber));
+		super(part, selectedMappings, SubscriberResourceMappingContext.createContext(subscriber));
 		this.subscriber = subscriber;
 	}
 
