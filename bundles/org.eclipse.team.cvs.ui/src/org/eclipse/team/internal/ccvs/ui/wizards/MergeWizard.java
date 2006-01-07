@@ -12,12 +12,12 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
@@ -26,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.actions.WorkspaceTraversalAction;
+import org.eclipse.team.internal.ccvs.ui.mappings.ModelMergeOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
 import org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
@@ -73,25 +74,47 @@ public class MergeWizard extends Wizard {
                 // Ignore
             }
 		} else {
-			// First check if there is an existing matching participant, if so then re-use it
-            try {
-                resources = getAllResources(startTag, endTag);
-            } catch (InvocationTargetException e) {
-                // Log and continue with the original resources
-                CVSUIPlugin.log(IStatus.ERROR, "An error occurred while detemrining if extra resources should be included in the merge", e.getTargetException()); //$NON-NLS-1$
-            }
-			MergeSynchronizeParticipant participant = MergeSynchronizeParticipant.getMatchingParticipant(resources, startTag, endTag);
-			if(participant == null) {
-				CVSMergeSubscriber s = new CVSMergeSubscriber(resources, startTag, endTag);
-				participant = new MergeSynchronizeParticipant(s);
-				TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
-			}
-			participant.refresh(resources, null, null, null);
+			IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		    if (store.getBoolean(ICVSUIConstants.PREF_ENABLEMODELUPDATE)){
+		    	CVSMergeSubscriber s = new CVSMergeSubscriber(getProjects(resources), startTag, endTag);
+		    	try {
+					new ModelMergeOperation(getPart(), mappings, s).run();
+				} catch (InvocationTargetException e) {
+					CVSUIPlugin.log(IStatus.ERROR, "Internal error", e.getTargetException()); //$NON-NLS-1$
+				} catch (InterruptedException e) {
+					// Ignore
+				}
+		    } else {
+				// First check if there is an existing matching participant, if so then re-use it
+	            try {
+	                resources = getAllResources(startTag, endTag);
+	            } catch (InvocationTargetException e) {
+	                // Log and continue with the original resources
+	                CVSUIPlugin.log(IStatus.ERROR, "An error occurred while detemrining if extra resources should be included in the merge", e.getTargetException()); //$NON-NLS-1$
+	            }
+				MergeSynchronizeParticipant participant = MergeSynchronizeParticipant.getMatchingParticipant(resources, startTag, endTag);
+				if(participant == null) {
+					CVSMergeSubscriber s = new CVSMergeSubscriber(resources, startTag, endTag);
+					participant = new MergeSynchronizeParticipant(s);
+					TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
+				}
+				participant.refresh(resources, null, null, null);
+		    }
+
 		}
 		return true;
 	}
-	
-    private IResource[] getAllResources(CVSTag startTag, CVSTag endTag) throws InvocationTargetException {
+
+	private IResource[] getProjects(IResource[] resources) {
+		Set projects = new HashSet();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			projects.add(resource.getProject());
+		}
+		return (IResource[]) projects.toArray(new IResource[projects.size()]);
+	}
+
+	private IResource[] getAllResources(CVSTag startTag, CVSTag endTag) throws InvocationTargetException {
         // Only do the extra work if the model is a logical model (i.e. not IResource)
         if (!WorkspaceTraversalAction.isLogicalModel(mappings))
             return resources;

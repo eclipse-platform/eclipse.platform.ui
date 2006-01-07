@@ -18,7 +18,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.mappings.MappingUpdateOperation;
+import org.eclipse.team.internal.ccvs.ui.mappings.ModelUpdateOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
 
 /**
@@ -47,7 +47,7 @@ public class UpdateSilentAction extends WorkspaceTraversalAction {
 		//regular update action
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 	    if (store.getBoolean(ICVSUIConstants.PREF_ENABLEMODELUPDATE)){
-	    	new MappingUpdateOperation(getTargetPart(), getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext()).run();
+	    	new ModelUpdateOperation(getTargetPart(), getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext()).run();
 	    } else {
 	    	new UpdateOperation(getTargetPart(), getCVSResourceMappings(), Command.NO_LOCAL_OPTIONS, null /* no tag */).run();
 	    }

@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IThreeWayDiff;
@@ -20,7 +19,6 @@ import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.IFileState;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.subscribers.SubscriberMergeContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfoFilter.ContentComparisonSyncInfoFilter;
@@ -28,22 +26,19 @@ import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.ui.operations.FileMerger;
 
-public class CVSMergeContext extends SubscriberMergeContext {
+public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 
 	public static IMergeContext createContext(IResourceMappingScope scope, IProgressMonitor monitor) throws CoreException {
 		Subscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
-		CVSMergeContext mergeContext = new CVSMergeContext(subscriber, scope);
+		WorkspaceSubscriberContext mergeContext = new WorkspaceSubscriberContext(subscriber, scope);
 		mergeContext.initialize(monitor, true);
 		return mergeContext;
 	}
 	
-	protected CVSMergeContext(Subscriber subscriber, IResourceMappingScope scope) {
+	protected WorkspaceSubscriberContext(Subscriber subscriber, IResourceMappingScope scope) {
 		super(subscriber, scope);
-		setMerger(new FileMerger());
 	}
 
 	public void markAsMerged(final IDiffNode node, final boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
@@ -128,16 +123,6 @@ public class CVSMergeContext extends SubscriberMergeContext {
 		}
 		return status;
 	}
-	
-	private boolean equals(IDiffNode currentState, IDiffNode delta) {
-		if (currentState.getKind() != delta.getKind())
-			return false;
-		if (!currentState.getPath().equals(delta.getPath()))
-			return false;
-		if (((IThreeWayDiff)currentState).getDirection() != ((IThreeWayDiff)delta).getDirection())
-			return false;
-		return true;
-	}
 
 	private void pruneEmptyParents(IDiffNode[] deltas) throws CVSException {
 		// TODO: A more explicit tie in to the pruning mechanism would be preferable.
@@ -150,34 +135,6 @@ public class CVSMergeContext extends SubscriberMergeContext {
 		new PruneFolderVisitor().visit(
 			CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()),
 			cvsResources);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.mapping.MergeContext#run(org.eclipse.core.resources.IWorkspaceRunnable, org.eclipse.core.runtime.jobs.ISchedulingRule, int, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void run(final IWorkspaceRunnable runnable, final ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException {
-		super.run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				EclipseSynchronizer.getInstance().run(rule, new ICVSRunnable(){
-					public void run(IProgressMonitor monitor) throws CVSException {
-						try {
-							runnable.run(monitor);
-						} catch (CoreException e) {
-							throw CVSException.wrapException(e);
-						}
-					}
-				}, monitor);
-			}
-		
-		}, rule, flags, monitor);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.mapping.MergeContext#getMergeRule(org.eclipse.core.resources.IResource)
-	 */
-	public ISchedulingRule getMergeRule(IDiffNode node) {
-		// Return the project since that is what the EclipseSynchronize needs
-		return getDiffTree().getResource(node).getProject();
 	}
 
 }

@@ -127,7 +127,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	}
 	
 	public CVSMergeSubscriber(QualifiedName id, IResource[] roots, CVSTag start, CVSTag end) {		
-		super(id, NLS.bind(CVSMessages.CVSMergeSubscriber_2, new String[] { start.getName(), end.getName() })); // 
+		super(id, NLS.bind(CVSMessages.CVSMergeSubscriber_2, new String[] { start.getName(), end.getName() }));
 		this.start = start;
 		this.end = end;
 		this.roots = new ArrayList(Arrays.asList(roots));

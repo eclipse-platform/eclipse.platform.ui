@@ -102,4 +102,12 @@ public abstract class SubscriberMergeContext extends MergeContext {
 		handler.waitUntilIdle(monitor);
 	}
 
+	/**
+	 * Return the subscriber associated with this context.
+	 * @return the subscriber associated with this context
+	 */
+	public Subscriber getSubscriber() {
+		return subscriber;
+	}
+
 }

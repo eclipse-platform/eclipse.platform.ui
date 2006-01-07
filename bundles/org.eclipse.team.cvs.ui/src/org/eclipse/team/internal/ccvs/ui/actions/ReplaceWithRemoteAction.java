@@ -25,7 +25,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.mappings.ReplaceWithRemoteOperation;
+import org.eclipse.team.internal.ccvs.ui.mappings.ModelReplaceOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
 import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
 
@@ -34,7 +34,7 @@ public class ReplaceWithRemoteAction extends WorkspaceTraversalAction {
 	public void execute(IAction action)  throws InvocationTargetException, InterruptedException {
         IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 	    if (store.getBoolean(ICVSUIConstants.PREF_ENABLEMODELUPDATE)){
-	    	new ReplaceWithRemoteOperation(getTargetPart(), getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext()).run();
+	    	new ModelReplaceOperation(getTargetPart(), getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext()).run();
 	    } else {
 	        final ResourceMapping[][] resourceMappings = new ResourceMapping[][] {null};
 			run(new IRunnableWithProgress() {

@@ -22,9 +22,9 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.ui.IWorkbenchPart;
 
-public class ReplaceWithRemoteOperation extends MappingMergeOperation {
+public class ModelReplaceOperation extends ModelUpdateOperation {
 
-	public ReplaceWithRemoteOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext context) {
+	public ModelReplaceOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext context) {
 		super(part, selectedMappings, context);
 	}
 	
