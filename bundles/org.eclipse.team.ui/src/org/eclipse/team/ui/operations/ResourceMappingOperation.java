@@ -70,6 +70,7 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 	private final ResourceMapping[] selectedMappings;
 	private final ResourceMappingContext context;
 	private IResourceMappingScope scope;
+	private boolean previewRequested;
     
     /**
      * Create a resource mapping based operation
@@ -165,12 +166,25 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 						}
 					}
 				}
-				if (prompt)
-					promptForInputChange(monitor);
+				if (prompt) {
+					String previewMessage = getPreviewRequestMessage();
+					previewRequested = promptForInputChange(previewMessage, monitor);
+				}
 			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		}
+	}
+
+	/**
+	 * Return a string to be used in the preview request on the scope prompt
+	 * or <code>null</code> if a preview of the operation results is not possible.
+	 * By default, <code>null</code> is returned but subclasses may override.
+	 * @return a string to be used in the preview request on the scope prompt
+	 * or <code>null</code> if a preview of the operation results is not possible
+	 */
+	protected String getPreviewRequestMessage() {
+		return null;
 	}
 
 	private boolean hasAdditionalMappingsFromIndependantModel(ModelProvider[] inputModelProviders, ModelProvider[] modelProviders) {
@@ -301,27 +315,35 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 	/**
 	 * Prompt the user to inform them that additional resource mappings
 	 * have been included in the operations.
+	 * @param requestPreviewMessage message to be displayed for the option to force a preview
+	 * (or <code>null</code> if the preview option shoudl not be presented
 	 * @param monitor a progress monitor
+	 * @returns whether a preview of the operation results was requested
 	 * @throws OperationCanceledException if the user choose to cancel
 	 */
-	protected void promptForInputChange(IProgressMonitor monitor) {
-		showAllMappings();
+	protected boolean promptForInputChange(String requestPreviewMessage, IProgressMonitor monitor) {
+		return showAllMappings(requestPreviewMessage);
 	}
 
-    private void showAllMappings() {
+    private boolean showAllMappings(final String requestPreviewMessage) {
         final boolean[] canceled = new boolean[] { false };
+        final boolean[] forcePreview = new boolean[] { false };
         getShell().getDisplay().syncExec(new Runnable() {
             public void run() {
                 AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), TeamUIMessages.ResourceMappingOperation_0, getScope(), getContext());
+                dialog.setPreviewMessage(requestPreviewMessage);
                 int result = dialog.open();
                 canceled[0] = result != Window.OK;
-            }
-        
+                if (requestPreviewMessage != null) {
+                	forcePreview[0] = dialog.isForcePreview();
+                }
+            }    
         });
         
         if (canceled[0]) {
             throw new OperationCanceledException();
         }
+        return forcePreview[0];
     }
     
 	/**
@@ -339,6 +361,16 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 
 	public IResourceMappingScope getScope() {
 		return scope;
+	}
+
+	/**
+	 * Return whether a preview of the operation before it is performed is
+	 * desired.
+	 * @return whether a preview of the operation before it is performed is
+	 * desired
+	 */
+	public boolean isPreviewRequested() {
+		return previewRequested;
 	}
 	
 }

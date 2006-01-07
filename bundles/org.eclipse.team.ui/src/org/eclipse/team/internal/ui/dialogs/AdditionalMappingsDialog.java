@@ -11,10 +11,13 @@
 package org.eclipse.team.internal.ui.dialogs;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.ScopeGenerator;
+import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 
 public class AdditionalMappingsDialog extends DetailsDialog {
@@ -23,6 +26,8 @@ public class AdditionalMappingsDialog extends DetailsDialog {
     private ResourceMappingHierarchyArea allMappingsArea;
 	private final IResourceMappingScope scope;
 	private final ISynchronizationContext context;
+	private String previewMessage;
+	protected boolean forcePreview = true;
 
     public AdditionalMappingsDialog(Shell parentShell, String dialogTitle, IResourceMappingScope scope, ISynchronizationContext context) {
         super(parentShell, dialogTitle);
@@ -34,9 +39,10 @@ public class AdditionalMappingsDialog extends DetailsDialog {
         createWrappingLabel(parent, TeamUIMessages.AdditionalMappingsDialog_0);
         createSelectedMappingsArea(parent);
         createAllMappingsArea(parent);
+        createPreviewOptionArea(parent);
     }
-    
-    /*
+
+	/*
      * Create a list that allows the selection of mappings via checkbox
      */
     private void createSelectedMappingsArea(Composite parent) {
@@ -60,6 +66,21 @@ public class AdditionalMappingsDialog extends DetailsDialog {
         allMappingsArea.createArea(composite);
     }
 
+    private void createPreviewOptionArea(Composite parent) {
+    	if (previewMessage != null) {
+    		final Button forcePreviewButton = SWTUtils.createCheckBox(parent, previewMessage);
+    		forcePreviewButton.setSelection(forcePreview);
+    		forcePreviewButton.addSelectionListener(new SelectionListener() {
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// Ignore
+				}
+				public void widgetSelected(SelectionEvent e) {
+					forcePreview  = forcePreviewButton.getSelection();
+				}
+			});
+    	}
+	}
+    
     protected Composite createDropDownDialogArea(Composite parent) {
         // TODO Auto-generated method stub
         return null;
@@ -73,5 +94,17 @@ public class AdditionalMappingsDialog extends DetailsDialog {
     protected boolean includeDetailsButton() {
         return false;
     }
+
+	public String getPreviewMessage() {
+		return previewMessage;
+	}
+
+	public void setPreviewMessage(String previewMessage) {
+		this.previewMessage = previewMessage;
+	}
+
+	public boolean isForcePreview() {
+		return forcePreview;
+	}
 
 }

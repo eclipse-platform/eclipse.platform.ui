@@ -32,8 +32,12 @@ public class ModelUpdateOperation extends AbstractModelMergeOperation {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.operations.ResourceMappingMergeOperation#isAttemptHeadlessMerge()
+	 * @see org.eclipse.team.ui.operations.ResourceMappingOperation#isPreviewRequested()
 	 */
+	public boolean isPreviewRequested() {
+		return super.isPreviewRequested() || !isAttemptHeadlessMerge();
+	}
+
 	protected boolean isAttemptHeadlessMerge() {
 		return CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_UPDATE_HANDLING).equals(ICVSUIConstants.PREF_UPDATE_HANDLING_PERFORM);
 	}

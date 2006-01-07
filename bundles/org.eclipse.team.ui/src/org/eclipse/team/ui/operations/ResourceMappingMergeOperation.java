@@ -119,7 +119,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 				context.dispose();
 				return;
 			}
-			if (isAttemptHeadlessMerge()) {
+			if (!isPreviewRequested()) {
 				IStatus status = validateMerge(context, Policy.subMonitorFor(monitor, 5));
 				if (status.isOK()) {
 					if (performMerge(Policy.subMonitorFor(monitor, 20)))
@@ -180,17 +180,6 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 		if (notOK.size() == 1)
 			return (IStatus)notOK.get(0);
 		return new MultiStatus(TeamUIPlugin.ID, 0, (IStatus[]) notOK.toArray(new IStatus[notOK.size()]), "Multiple potential side effects of this operation have been detected.", null);
-	}
-
-	/**
-	 * Return whether a headless merge should be attempted without showing a preview to
-	 * the user. If the merge succeeds, the operations finishes. However, if conflicts 
-	 * exist, the user will be prompted to handle these conflicts. By default, <code>false</code>
-	 * is returned.
-	 * @return whether a headless merge should be attempted
-	 */
-	protected boolean isAttemptHeadlessMerge() {
-		return false;
 	}
 
 	private void promptForNoChanges() {
@@ -283,6 +272,16 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	 */
 	protected ISynchronizationContext getContext() {
 		return context;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.operations.ResourceMappingOperation#getPreviewRequestMessage()
+	 */
+	protected String getPreviewRequestMessage() {
+		if (!isPreviewRequested()) {
+			return "Preview the merge before it is performed"; 
+		}
+		return super.getPreviewRequestMessage();
 	}
 
 }
