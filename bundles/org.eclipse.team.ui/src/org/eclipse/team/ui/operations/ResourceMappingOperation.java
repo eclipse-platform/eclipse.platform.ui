@@ -102,8 +102,8 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 	 */
 	protected void buildScope(IProgressMonitor monitor) throws InvocationTargetException {
 		try {
-			scope = getScopeBuilder().prepareScope(selectedMappings, context, monitor);
-			IResourceMappingScope inputScope = new ScopeGenerator().asInputScope(scope);
+			scope = getScopeGenerator().prepareScope(selectedMappings, context, monitor);
+			IResourceMappingScope inputScope = getScopeGenerator().asInputScope(scope);
 			if (scope.hasAdditionalMappings()) {
 				// There are additional mappings so we may need to prompt
 				ModelProvider[] inputModelProviders = inputScope.getModelProviders();
@@ -264,7 +264,7 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 	 * @return the scope builder used to build the scope of this
 	 * operation from the input mappings.
 	 */
-	protected ScopeGenerator getScopeBuilder() {
+	protected ScopeGenerator getScopeGenerator() {
 		return DEFAULT_SCOPE_BUILDER;
 	}
 
