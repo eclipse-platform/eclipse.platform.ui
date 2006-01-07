@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="testsuite" default="performance" basedir=".">
+<project name="testsuite" default="runtests" basedir=".">
   <!-- The property ${eclipse-home} should be passed into this script -->
   <!-- Set a meaningful default value for when it is not. -->
   <property name="eclipse-home" value="${basedir}\..\.."/>
@@ -20,6 +20,9 @@
     </delete>
   </target>
 
+	<!--default target that does nothing.  The performance target is called explicitly
+	by build team.-->
+  <target name="runtests"/>
 
   <!-- This target holds code to cleanup the testing environment after -->
   <!-- after all of the tests have been run. You can use this target to -->
