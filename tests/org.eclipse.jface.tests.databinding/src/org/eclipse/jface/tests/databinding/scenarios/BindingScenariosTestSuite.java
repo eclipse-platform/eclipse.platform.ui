@@ -15,7 +15,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -26,6 +25,7 @@ import org.eclipse.swt.widgets.Shell;
  * Mode" as the application to run. You can also run this class as an SWT
  * application.
  */
+
 public class BindingScenariosTestSuite extends TestSuite {
 
 	public static void main(String[] args) {
@@ -45,7 +45,6 @@ public class BindingScenariosTestSuite extends TestSuite {
 					d = display;
 				}
 				shell = new Shell(d, SWT.SHELL_TRIM);
-				shell.setLayout(new FillLayout());
 			}
 
 			protected void tearDown() throws Exception {
@@ -67,13 +66,6 @@ public class BindingScenariosTestSuite extends TestSuite {
 		addTestSuite(ReadOnlyComboScenarios.class);
 		addTestSuite(TableScenarios.class);
 		addTestSuite(TreeScenarios.class);
-		// Test each of the basic SWT controls
-		addTestSuite(TextControlScenario.class);
-		addTestSuite(SpinnerControlScenario.class);	
-		addTestSuite(ButtonControlScenario.class);		
-		// Test each of the basic JFace controls
-		addTestSuite(ComboViewerScenario.class);		
-		addTestSuite(ListViewerScenario.class);		
 	}
 
 	public static Shell getShell() {

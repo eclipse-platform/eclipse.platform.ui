@@ -15,10 +15,10 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
-import org.eclipse.jface.examples.databinding.model.SampleData;
+import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -43,18 +43,12 @@ abstract public class ScenariosTestCase extends TestCase {
 
 	protected Text dummyText;
 
-	private SWTUpdatableFactory swtUpdatableFactory;
-
 	protected Composite getComposite() {
 		return composite;
 	}
 
 	protected IDataBindingContext getDbc() {
 		return dbc;
-	}
-	
-	protected SWTUpdatableFactory getSWTUpdatableFactory() {
-		return swtUpdatableFactory;
 	}
 
 	public Shell getShell() {
@@ -90,17 +84,6 @@ abstract public class ScenariosTestCase extends TestCase {
 			Thread.currentThread().interrupt();
 		}
 	}
-	
-	protected void interact() {
-		if (!getShell().isVisible()) {
-			getShell().open();
-		}
-		while (!getShell().isDisposed()) {
-			if (!getShell().getDisplay().readAndDispatch()) {
-				getShell().getDisplay().sleep();
-			}
-		}
-	}
 
 	protected void setButtonSelectionWithEvents(Button button, boolean value) {
 		if (button.getSelection() == value) {
@@ -116,11 +99,10 @@ abstract public class ScenariosTestCase extends TestCase {
 
 	protected void setUp() throws Exception {
 		composite = new Composite(getShell(), SWT.NONE);
-		composite.setLayout(new FillLayout());
+		composite.setLayout(new GridLayout());
 		SampleData.initializeData(); // test may manipulate the data... let
 		// all start from fresh
 		dbc = SampleData.getDatabindingContext(composite);
-		swtUpdatableFactory = SampleData.getSWTUpdatableFactory();
 		dummyText = new Text(getComposite(), SWT.NONE);
 		dummyText.setText("dummy");
 	}
@@ -148,33 +130,5 @@ abstract public class ScenariosTestCase extends TestCase {
 	protected void assertArrayEquals(Object[] expected, Object[] actual) {
 		assertEquals(Arrays.asList(expected), Arrays.asList(actual));
 	}
-		
-	public static void invokeNonUI(final Runnable aRunnable){
-		
-		final RuntimeException[] nonUIException = new RuntimeException[1];
-		Thread t = new Thread(aRunnable){
-			public void run(){
-				try{
-					super.run();
-				} catch (Exception exc){
-					RuntimeException runtimeException = new RuntimeException(exc);
-					runtimeException.fillInStackTrace();
-					nonUIException[0] = runtimeException; 
-					exc.printStackTrace();
-				}
-			}
-		};
-		t.start();
-		while(t.isAlive()) {
-			while(Display.getCurrent().readAndDispatch());
-			try {
-				t.join(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		if(nonUIException[0] != null){
-			throw nonUIException[0];
-		}
-	}
+
 }

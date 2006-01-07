@@ -14,11 +14,6 @@ package org.eclipse.jface.databinding;
  * An updatable supports listening to its changes.
  * 
  * <p>
- * This interface is not intended to be implemented by clients. Instead,
- * create a subclass of the abstract base class {@link Updatable}.
- * </p>
- * 
- * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will remain
  * unchanged during the 3.2 release cycle. Please do not use this API without
@@ -50,8 +45,7 @@ public interface IUpdatable {
 
 	/**
 	 * Disposes of this updatable. This removes all remaining change listeners
-	 * from this updatable, and deregisters any listeners this updatable object
-	 * has registered on other (UI or model) objects.
+	 * from this updatable.
 	 */
 	public void dispose();
 }

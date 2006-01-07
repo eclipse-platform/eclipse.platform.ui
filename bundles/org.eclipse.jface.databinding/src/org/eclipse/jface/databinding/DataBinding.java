@@ -1,24 +1,24 @@
 /*******************************************************************************
  * Copyright (c) 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.databinding;
 
-import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
-import org.eclipse.jface.databinding.viewers.ViewersUpdatableFactory;
-import org.eclipse.jface.internal.databinding.DataBindingContext;
+import org.eclipse.jface.databinding.internal.DataBindingContext;
+import org.eclipse.jface.databinding.internal.beans.BeanUpdatableFactory;
+import org.eclipse.jface.databinding.internal.swt.SWTUpdatableFactory;
+import org.eclipse.jface.databinding.internal.viewers.JFaceUpdatableFactory;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * Provides static methods to create data binding contexts.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will remain
@@ -32,62 +32,112 @@ import org.eclipse.swt.widgets.Control;
 public class DataBinding {
 
 	/**
-	 * Returns a new data binding context on which the given factories have been
-	 * registered using
-	 * {@link IDataBindingContext#addUpdatableFactory(IUpdatableFactory)}. The
-	 * factories will be added in the order given.
-	 * 
+	 * Applies to Viewers
+	 */
+	public static final String CONTENT = "content"; //$NON-NLS-1$
+
+	/**
+	 * Applies to Control
+	 */
+	public static final String ENABLED = "enabled"; //$NON-NLS-1$
+	
+	/**
+	 * Updatable factory supporting JFace Components
+	 */
+	public static final IUpdatableFactory jFaceFactory = new JFaceUpdatableFactory();
+	
+	/**
+	 * Updatable factory supporting SWT widgets
+	 */
+	public static final IUpdatableFactory swtFactory = new SWTUpdatableFactory();
+	
+	/**
+	 * Updatable factory supporting POJO
+	 */
+	public static final IUpdatableFactory javaBeanFactory = new BeanUpdatableFactory();
+	
+
+	/**
+	 * Constant denoting the factory that supports binding to SWT controls. This
+	 * factory supports the following description objects:
+	 * <ul>
+	 * <li>org.eclipse.swt.widgets.Text - denotes the text's text property</li>
+	 * <li>org.eclipse.swt.widgets.Button - denotes the button's selection
+	 * property</li>
+	 * <li>org.eclipse.swt.widgets.Combo - denotes the combo's items collection</li>
+	 * <li>org.eclipse.swt.widgets.CCombo - denotes the ccombo's items
+	 * collection</li>
+	 * <li>org.eclipse.swt.widgets.List - denotes the list's items collection</li>
+	 * <li>org.eclipse.jface.databinding.PropertyDescription - depending on the
+	 * property description's object and property ID:
+	 * <ul>
+	 * <li>object instanceof Widget, property ID is SWT_ENABLED - denoting the
+	 * widget's enabled property</li>
+	 * <li>object instanceof Spinner, property ID is SWT_SELECTION - denoting
+	 * the spinner's selection property</li>
+	 * <li>object instanceof Spinner, property ID is SWT_MINIMUM - denoting the
+	 * spinner's minimum property</li>
+	 * <li>object instanceof Spinner, property ID is SWT_MAXIMUM - denoting the
+	 * spinner's maximum property</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 * TODO complete the list
+	 */
+
+	/**
+	 * Applies to
+	 */
+	public static final String ITEMS = "items"; //$NON-NLS-1$
+
+	/**
+	 * Applies to Spinner
+	 */
+	public static final String MAX = "max"; //$NON-NLS-1$
+
+	/**
+	 * Applies to Spinner
+	 */
+	public static final String MIN = "min"; //$NON-NLS-1$
+
+	/**
+	 * Applies to Spinner, Button
+	 */
+	public static final String SELECTION = "selection"; //$NON-NLS-1$
+
+	/**
+	 * Applies to Text, Label, Combo
+	 */
+	public static final String TEXT = "text"; //$NON-NLS-1$
+
+	/**
 	 * @param factories
 	 * @return a data binding context
 	 */
-	public static IDataBindingContext createContext(
-			IUpdatableFactory[] factories) {
+	public static IDataBindingContext createContext(IUpdatableFactory[] factories) {
 		DataBindingContext result = new DataBindingContext();
-		if (factories != null)
-			for (int i = 0; i < factories.length; i++) {
+		for (int i = 0; i < factories.length; i++) {			
 				result.addUpdatableFactory(factories[i]);
-			}
+		}
 		return result;
 	}
 
 	/**
-	 * Creates a data binding context whose lifecycle is bound to an SWT
-	 * control, and which supports binding to SWT controls, JFace viewers, and
-	 * POJO model objects with JavaBeans-style notification.
-	 * <p>
-	 * This method is a convenience method; its implementation is equivalent to
-	 * calling {@link #createContext(Control, IUpdatableFactory[]) } where the
-	 * array of factories consists of a {@link BeanUpdatableFactory} instance, a
-	 * {@link SWTUpdatableFactory}, and a {@link ViewersUpdatableFactory}.
-	 * </p>
+	 * Creates and returns a data binding context
 	 * 
 	 * @param control
-	 * @return a data binding context
+	 * @return
 	 */
 	public static IDataBindingContext createContext(Control control) {
-		return createContext(control, new IUpdatableFactory[] {
-				new BeanUpdatableFactory(), new SWTUpdatableFactory(),
-				new ViewersUpdatableFactory() });
+		return createContext(control, new IUpdatableFactory[] {javaBeanFactory, swtFactory, jFaceFactory});
 	}
 
-	/**
-	 * Creates a data binding context whose lifecycle is bound to an SWT
-	 * control, using the given factories to create updatable objects from
-	 * description objects.
-	 * <p>
-	 * This method is a convenience method; its implementation creates a new
-	 * data binding context by calling
-	 * {@link #createContext(IUpdatableFactory[])} and registers a dispose
-	 * listener on the given control and calls
-	 * {@link IDataBindingContext#dispose()} when the control is disposed of.
-	 * </p>
-	 * 
+	/**	
 	 * @param control
 	 * @param factories
-	 * @return a data binding context
+	 * @return
 	 */
-	public static IDataBindingContext createContext(Control control,
-			IUpdatableFactory[] factories) {
+	public static IDataBindingContext createContext(Control control, IUpdatableFactory[] factories) {
 		final IDataBindingContext result = createContext(factories);
 		control.addDisposeListener(new DisposeListener() {
 

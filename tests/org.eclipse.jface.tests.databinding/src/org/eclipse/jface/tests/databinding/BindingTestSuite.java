@@ -27,7 +27,6 @@ public class BindingTestSuite extends TestSuite {
 
 	public BindingTestSuite() {
 		addTestSuite(UpdatableTest.class);
-		addTestSuite(JavaBeansScalarUpdatableValueFactoryTest.class);
 		addTestSuite(DatabindingContextTest.class);
 		addTest(BindingScenariosTestSuite.suite());
 	}

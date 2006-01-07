@@ -10,24 +10,18 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
-import java.util.Map;
-
 import junit.framework.TestCase;
 
 import org.eclipse.jface.databinding.BindSpec;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.DataBinding;
+import org.eclipse.jface.databinding.IConverter;
 import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.NestedProperty;
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.UpdatableValue;
-import org.eclipse.jface.databinding.converter.IConverter;
-import org.eclipse.jface.databinding.converters.IdentityConverter;
-import org.eclipse.jface.databinding.updatables.SettableValue;
-import org.eclipse.jface.databinding.validator.IValidator;
+import org.eclipse.jface.databinding.IValidator;
+import org.eclipse.jface.databinding.IdentityConverter;
+import org.eclipse.jface.databinding.SettableValue;
 import org.eclipse.jface.tests.databinding.util.Mocks;
 
 public class DatabindingContextTest extends TestCase {
@@ -77,7 +71,7 @@ public class DatabindingContextTest extends TestCase {
 		}
 	}
 
-	public void testBindValueModel() {
+	public void testBindValueModel() throws BindingException {
 		Mocks.reset(updatableValueRMock);
 		updatableValueRMock.addChangeListener(null);
 		updatableValueRMock.getValue();
@@ -91,7 +85,7 @@ public class DatabindingContextTest extends TestCase {
 		Mocks.verify(updatableValueRMock);
 	}
 
-	public void testBindValueTarget() {
+	public void testBindValueTarget() throws BindingException {
 		updatableValueRMock.addChangeListener(null);
 		updatableValueRMock.setValue(null);
 		updatableValueRMock.getValue();
@@ -104,7 +98,7 @@ public class DatabindingContextTest extends TestCase {
 				identityConverter, validatorMock));
 	}
 
-	public void testBindValuePropagation() {
+	public void testBindValuePropagation() throws BindingException {
 		settableValue1.setValue(o1);
 		settableValue2.setValue(o2);
 		dbc.bind(settableValue1, settableValue2, null);
@@ -114,118 +108,4 @@ public class DatabindingContextTest extends TestCase {
 		settableValue2.setValue(o2);
 		assertEquals(o2, settableValue1.getValue());
 	}
-	
-	public void testCreateNestedUpdatableWithArrays() {
-		String parentObject = "";
-		NestedProperty nestedProperty = new NestedProperty(parentObject, new String[] {"nestedChild1", "nestedChild2", "foo"}, new Class[] {Integer.class, String.class, Float.class});
-		IDataBindingContext ctx = DataBinding.createContext(new IUpdatableFactory[] {new MockUpdatableFactory()});
-		MockUpdatableValue updatableValue = (MockUpdatableValue) ctx.createNestedUpdatable(nestedProperty);
-		assertEquals("The child IUpdatable does not have the right getter.", "foo", updatableValue.getDescription());
-		assertEquals("The child IUpdatable does not have the right type.", Float.class, updatableValue.getType());
-
-		updatableValue = ((MockUpdatableValue) updatableValue.getTargetObject());
-		assertEquals("The child IUpdatable does not have the right getter.", "nestedChild2", updatableValue.getDescription());
-		assertEquals("The child IUpdatable does not have the right type.", String.class, updatableValue.getType());
-	
-		updatableValue = ((MockUpdatableValue) updatableValue.getTargetObject());
-		assertEquals("The child IUpdatable does not have the right getter.", "nestedChild1", updatableValue.getDescription());
-		assertSame("The child IUpdatable does not have a correct parent target object.", parentObject, updatableValue.getTargetObject());
-		assertEquals("The child IUpdatable does not have the right type.", Integer.class, updatableValue.getType());
-	}
-	
-	public void testCreateNestedUpdatableWithPrototypeClass() {
-		String parentObject = "";
-		NestedProperty nestedProperty = new NestedProperty(parentObject, "nestedChild1.nestedChild2.foo", NestedParent.class);
-		IDataBindingContext ctx = DataBinding.createContext(new IUpdatableFactory[] {new MockUpdatableFactory()});
-		MockUpdatableValue updatableValue = (MockUpdatableValue) ctx.createNestedUpdatable(nestedProperty);
-		assertEquals("The child IUpdatable does not have the right getter.", "foo", updatableValue.getDescription());
-		assertEquals("The child IUpdatable does not have the right type.", String.class, updatableValue.getType());
-
-		updatableValue = ((MockUpdatableValue) updatableValue.getTargetObject());
-		assertEquals("The child IUpdatable does not have the right getter.", "nestedChild2", updatableValue.getDescription());
-		assertEquals("The child IUpdatable does not have the right type.", NestedChild2.class, updatableValue.getType());
-	
-		updatableValue = ((MockUpdatableValue) updatableValue.getTargetObject());
-		assertEquals("The child IUpdatable does not have the right getter.", "nestedChild1", updatableValue.getDescription());
-		assertSame("The child IUpdatable does not have a correct parent target object.", parentObject, updatableValue.getTargetObject());
-		assertEquals("The child IUpdatable does not have the right type.", NestedChild1.class, updatableValue.getType());
-	}
-	
-	public void testCreateNestedUpdatableWithPrototypeClassAndInvalidPath() {
-		String parentObject = "";
-		NestedProperty nestedProperty = new NestedProperty(parentObject, "nestedChild1.nestedChild3.foo", NestedParent.class);
-		try {
-			IDataBindingContext ctx = DataBinding.createContext(new IUpdatableFactory[] {new MockUpdatableFactory()});
-			MockUpdatableValue updatableValue = (MockUpdatableValue) ctx.createNestedUpdatable(nestedProperty);
-			fail("Expected binding exception.");
-		} catch (BindingException be) {			
-		}
-	}
-
-	public class MockUpdatableFactory implements IUpdatableFactory {
-
-		public IUpdatable createUpdatable(Map properties, Object description, IDataBindingContext bindingContext) {
-			Property property = (Property) description;
-			return new MockUpdatableValue(property.getObject(), property.getPropertyID(), property.getPropertyType());
-		}
-	}
-	
-	public class MockUpdatableValue extends UpdatableValue {
-		public Object targetObject;
-		public Object description;
-		private Class type;
-		
-		public MockUpdatableValue(Object targetObject, Object description, Class type) {
-			super();
-			// TODO Auto-generated constructor stub
-			this.targetObject = targetObject;
-			this.description = description;
-			this.type = type;
-		}
-		
-		public Object getDescription() {
-			return description;
-		}
-
-		public Class getType() {
-			return type;
-		}
-
-		public Object getTargetObject() {
-			return targetObject;
-		}
-
-
-
-		public Object getValue() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public Class getValueType() {
-			return null;
-		}
-
-		public void setValue(Object value) {
-		}
-		
-	}
-	
-	private class NestedParent {
-		public NestedChild1 getNestedChild1() {
-			return new NestedChild1();
-		}
-	}
-
-	private class NestedChild1 {
-		public NestedChild2 getNestedChild2() {
-			return new NestedChild2();
-		}
-	}
-
-	private class NestedChild2 {
-		public String getFoo() {
-			return "foo";
-		}
-	}	
 }

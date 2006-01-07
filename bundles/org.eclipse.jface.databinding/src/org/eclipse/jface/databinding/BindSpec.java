@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.databinding;
-
-import org.eclipse.jface.databinding.converter.IConverter;
-import org.eclipse.jface.databinding.validator.IValidator;
 
 /**
  * A concrete implementation of IBindSpec, suitable either for instantiating or
@@ -32,11 +29,11 @@ public class BindSpec implements IBindSpec {
 
 	private IValidator validator;
 
-	private final Integer modelUpdatePolicy;
+	private final int modelUpdatePolicy;
 
-	private final Integer validatePolicy;
+	private final int validatePolicy;
 
-	private final Integer targetUpdatePolicy;
+	private final int targetUpdatePolicy;
 
 	/**
 	 * Creates a bind spec with the given converter, validator, and update
@@ -49,8 +46,7 @@ public class BindSpec implements IBindSpec {
 	 * @param targetUpdatePolicy
 	 */
 	public BindSpec(IConverter converter, IValidator validator,
-			Integer modelUpdatePolicy, Integer validatePolicy,
-			Integer targetUpdatePolicy) {
+			int modelUpdatePolicy, int validatePolicy, int targetUpdatePolicy) {
 		this.converter = converter;
 		this.validator = validator;
 		this.modelUpdatePolicy = modelUpdatePolicy;
@@ -66,22 +62,23 @@ public class BindSpec implements IBindSpec {
 	 * @param validator
 	 */
 	public BindSpec(IConverter converter, IValidator validator) {
-		this(converter, validator, null, null, null);
+		this(converter, validator, IBindSpec.POLICY_CONTEXT,
+				IBindSpec.POLICY_CONTEXT, IBindSpec.POLICY_CONTEXT);
 	}
 
 	public IConverter getConverter() {
 		return converter;
 	}
 
-	public Integer getModelUpdatePolicy() {
+	public int getModelUpdatePolicy() {
 		return modelUpdatePolicy;
 	}
 
-	public Integer getTargetUpdatePolicy() {
+	public int getTargetUpdatePolicy() {
 		return targetUpdatePolicy;
 	}
 
-	public Integer getValidatePolicy() {
+	public int getValidatePolicy() {
 		return validatePolicy;
 	}
 

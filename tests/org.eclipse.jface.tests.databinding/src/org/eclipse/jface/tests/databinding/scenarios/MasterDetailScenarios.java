@@ -13,16 +13,16 @@ package org.eclipse.jface.tests.databinding.scenarios;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.jface.databinding.BindingException;
+import org.eclipse.jface.databinding.ConditionalUpdatableValue;
+import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.swt.SWTProperties;
-import org.eclipse.jface.databinding.updatables.ConditionalUpdatableValue;
-import org.eclipse.jface.databinding.viewers.ViewersProperties;
-import org.eclipse.jface.examples.databinding.model.Adventure;
-import org.eclipse.jface.examples.databinding.model.Catalog;
-import org.eclipse.jface.examples.databinding.model.Category;
-import org.eclipse.jface.examples.databinding.model.Lodging;
-import org.eclipse.jface.examples.databinding.model.SampleData;
+import org.eclipse.jface.databinding.PropertyDescription;
+import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
+import org.eclipse.jface.tests.databinding.scenarios.model.Catalog;
+import org.eclipse.jface.tests.databinding.scenarios.model.Category;
+import org.eclipse.jface.tests.databinding.scenarios.model.Lodging;
+import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -71,7 +71,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		return null;
 	}
 
-	public void testScenario01() {
+	public void testScenario01() throws BindingException {
 		// Displaying the catalog's list of Lodging objects in a list viewer,
 		// using their names. The name of the currently selected Lodging can
 		// be edited in a text widget. There is always a selected Lodging
@@ -87,14 +87,14 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 			}
 		});
 		getDbc().bind(listViewer,
-				new Property(catalog, "lodgings"), null);
+				new PropertyDescription(catalog, "lodgings"), null);
 
 		assertArrayEquals(catalog.getLodgings(), getViewerContent(listViewer).toArray());
 
 		IUpdatableValue selectedLodging = (IUpdatableValue) getDbc()
 				.createUpdatable(
-						new Property(listViewer,
-								ViewersProperties.SINGLE_SELECTION));
+						new PropertyDescription(listViewer,
+								DataBinding.SELECTION));
 
 		selectedLodging.setValue(SampleData.CAMP_GROUND);
 
@@ -103,7 +103,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		getDbc().bind(
 				txtName,
-				new Property(selectedLodging, "name", String.class,
+				new PropertyDescription(selectedLodging, "name", String.class,
 						Boolean.FALSE), null);
 
 		assertEquals(txtName.getText(), SampleData.CAMP_GROUND.getName());
@@ -115,25 +115,9 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		assertEquals(SampleData.FIVE_STAR_HOTEL.getName(), txtName.getText());
 		SampleData.FIVE_STAR_HOTEL.setName("barfoo");
 		assertEquals("barfoo", txtName.getText());
-		
-		// Now make sure that the event listeners get removed on dispose()
-		// Values should no longer be updated
-//		selectedLodging.dispose();
-//		
-//		selectedLodging.setValue(SampleData.CAMP_GROUND);
-//		assertNotSame(SampleData.CAMP_GROUND, getViewerSelection(listViewer));
-//		assertNotSame(txtName.getText(), SampleData.CAMP_GROUND.getName());
-//		enterText(txtName, "foobar");
-//		assertNotSame("foobar", SampleData.CAMP_GROUND.getName());
-//		listViewer.setSelection(new StructuredSelection(
-//				SampleData.FIVE_STAR_HOTEL));
-//		assertNotSame(SampleData.FIVE_STAR_HOTEL, selectedLodging.getValue());
-//		assertNotSame(SampleData.FIVE_STAR_HOTEL.getName(), txtName.getText());
-//		SampleData.FIVE_STAR_HOTEL.setName("barfoo");
-//		assertNotSame("barfoo", txtName.getText());
 	}
 
-	public void testScenario02() {
+	public void testScenario02() throws BindingException {
 		// Selecting from the list of lodgings for an adventure and editing the
 		// properties of the selected lodging in text widgets. If no lodging is
 		// selected the input controls for name and adventure are disabled.
@@ -151,14 +135,14 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 			}
 		});
 		getDbc().bind(listViewer,
-				new Property(catalog, "lodgings"), null);
+				new PropertyDescription(catalog, "lodgings"), null);
 
 		assertArrayEquals(catalog.getLodgings(), getViewerContent(listViewer).toArray());
 
 		final IUpdatableValue selectedLodgingUpdatable = (IUpdatableValue) getDbc()
 				.createUpdatable(
-						new Property(listViewer,
-								ViewersProperties.SINGLE_SELECTION));
+						new PropertyDescription(listViewer,
+								DataBinding.SELECTION));
 
 		selectedLodgingUpdatable.setValue(null);
 		assertTrue(listViewer.getSelection().isEmpty());
@@ -176,11 +160,11 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		final Text txtName = new Text(getComposite(), SWT.BORDER);
 
 		getDbc().bind(
-				new Property(txtName, SWTProperties.ENABLED),
+				new PropertyDescription(txtName, DataBinding.ENABLED),
 				selectionExistsUpdatable, null);
 		getDbc().bind(
-				new Property(txtName, SWTProperties.TEXT),
-				new Property(selectedLodgingUpdatable, "name",
+				new PropertyDescription(txtName, DataBinding.TEXT),
+				new PropertyDescription(selectedLodgingUpdatable, "name",
 						String.class, Boolean.FALSE), null);
 
 		assertEquals(txtName.getText(), "");
@@ -189,13 +173,13 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		final Text txtDescription = new Text(getComposite(), SWT.BORDER);
 
 		getDbc().bind(
-				new Property(txtDescription,
-						SWTProperties.ENABLED), selectionExistsUpdatable,
+				new PropertyDescription(txtDescription,
+						DataBinding.ENABLED), selectionExistsUpdatable,
 				null);
 		getDbc().bind(
-				new Property(txtDescription,
-						SWTProperties.TEXT),
-				new Property(selectedLodgingUpdatable,
+				new PropertyDescription(txtDescription,
+						DataBinding.TEXT),
+				new PropertyDescription(selectedLodgingUpdatable,
 						"description", String.class, Boolean.FALSE), null);
 
 		assertEquals(txtDescription.getText(), "");
@@ -260,9 +244,9 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		pushButtonWithEvents(removeButton);
 	}
 
-	public void testScenario03() {
+	public void testScenario03() throws BindingException {
 		// List adventures and for the selected adventure allow its default
-		// lodgingï¿½s name and description to be changed in text controls. If
+		// lodging’s name and description to be changed in text controls. If
 		// there is no selected adventure or the default lodging is null the
 		// text controls are disabled. This is a nested property. The default
 		// lodging can be changed elsewhere, and the list
@@ -278,15 +262,15 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 			}
 		});
 		getDbc().bind(categoryListViewer,
-				new Property(catalog, "categories"), null);
+				new PropertyDescription(catalog, "categories"), null);
 
 		assertArrayEquals(catalog.getCategories(),
 				getViewerContent(categoryListViewer).toArray());
 
 		final IUpdatableValue selectedCategoryUpdatable = (IUpdatableValue) getDbc()
 				.createUpdatable(
-						new Property(categoryListViewer,
-								ViewersProperties.SINGLE_SELECTION));
+						new PropertyDescription(categoryListViewer,
+								DataBinding.SELECTION));
 
 		final ListViewer adventureListViewer = new ListViewer(getComposite(),
 				SWT.BORDER);
@@ -300,7 +284,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		getDbc().bind(
 				adventureListViewer,
-				new Property(selectedCategoryUpdatable,
+				new PropertyDescription(selectedCategoryUpdatable,
 						"adventures", Adventure.class, Boolean.TRUE), null);
 
 		ConditionalUpdatableValue categorySelectionExistsUpdatable = new ConditionalUpdatableValue(
@@ -311,14 +295,14 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		};
 
 		getDbc().bind(
-				new Property(adventureListViewer.getList(),
-						SWTProperties.ENABLED),
+				new PropertyDescription(adventureListViewer.getList(),
+						DataBinding.ENABLED),
 				categorySelectionExistsUpdatable, null);
 
 		final IUpdatableValue selectedAdventureUpdatable = (IUpdatableValue) getDbc()
 				.createUpdatable(
-						new Property(adventureListViewer,
-								ViewersProperties.SINGLE_SELECTION));
+						new PropertyDescription(adventureListViewer,
+								DataBinding.SELECTION));
 
 		ConditionalUpdatableValue adventureSelectionExistsUpdatable = new ConditionalUpdatableValue(
 				selectedAdventureUpdatable) {
@@ -330,11 +314,11 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		final Text txtName = new Text(getComposite(), SWT.BORDER);
 
 		getDbc().bind(
-				new Property(txtName, SWTProperties.ENABLED),
+				new PropertyDescription(txtName, DataBinding.ENABLED),
 				adventureSelectionExistsUpdatable, null);
 		getDbc().bind(
-				new Property(txtName, SWTProperties.TEXT),
-				new Property(selectedAdventureUpdatable, "name",
+				new PropertyDescription(txtName, DataBinding.TEXT),
+				new PropertyDescription(selectedAdventureUpdatable, "name",
 						String.class, Boolean.FALSE), null);
 
 		assertEquals(txtName.getText(), "");
@@ -343,13 +327,13 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		final Text txtDescription = new Text(getComposite(), SWT.BORDER);
 
 		getDbc().bind(
-				new Property(txtDescription,
-						SWTProperties.ENABLED),
+				new PropertyDescription(txtDescription,
+						DataBinding.ENABLED),
 				adventureSelectionExistsUpdatable, null);
 		getDbc().bind(
-				new Property(txtDescription,
-						SWTProperties.TEXT),
-				new Property(selectedAdventureUpdatable,
+				new PropertyDescription(txtDescription,
+						DataBinding.TEXT),
+				new PropertyDescription(selectedAdventureUpdatable,
 						"description", String.class, Boolean.FALSE), null);
 
 		assertFalse(adventureListViewer.getList().isEnabled());

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Abstract base class for updatable objects.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will remain
@@ -36,28 +35,17 @@ abstract public class Updatable implements IUpdatable {
 	}
 
 	public void removeChangeListener(IChangeListener changeListener) {
-		if (changeListeners == null) {
-			return;
-		}
 		changeListeners.remove(changeListener);
 	}
 
-	protected ChangeEvent fireChangeEvent(int changeType, Object oldValue,
+	protected IChangeEvent fireChangeEvent(int changeType, Object oldValue,
 			Object newValue) {
-		return fireChangeEvent(changeType, oldValue, newValue, ChangeEvent.POSITION_UNKNOWN);
-	}
-	
-	protected ChangeEvent fireChangeEvent(int changeType, Object oldValue, Object newValue,  int position) {
-		return fireChangeEvent(changeType, oldValue, newValue, null, position);
+		return fireChangeEvent(changeType, oldValue, newValue, 0);
 	}
 
-	protected ChangeEvent fireChangeEvent(int changeType, Object oldValue, Object newValue, Object parent, int position) {
+	protected IChangeEvent fireChangeEvent(int changeType, Object oldValue, Object newValue, int position) {
 		ChangeEvent changeEvent = new ChangeEvent(this, changeType, oldValue,
-				newValue, parent, position);
-		if(changeListeners==null) {
-			// disposed 
-			return changeEvent;
-		}
+				newValue, position);
 		IChangeListener[] listeners = (IChangeListener[]) changeListeners
 				.toArray(new IChangeListener[changeListeners.size()]);
 		for (int i = 0; i < listeners.length; i++) {			

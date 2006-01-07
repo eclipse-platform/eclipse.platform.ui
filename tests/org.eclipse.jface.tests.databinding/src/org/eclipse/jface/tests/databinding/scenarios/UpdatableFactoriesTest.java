@@ -12,15 +12,17 @@
  *  Created Oct 21, 2005 by Gili Mendel
  * 
  *  $RCSfile: UpdatableFactoriesTest.java,v $
- *  $Revision: 1.4 $  $Date: 2005/11/15 19:11:42 $ 
+ *  $Revision: 1.1 $  $Date: 2005/11/10 06:41:38 $ 
  */
 package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.util.Map;
+
+import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableFactory;
+import org.eclipse.jface.databinding.IValidationContext;
 
 public class UpdatableFactoriesTest extends ScenariosTestCase {
 
@@ -63,7 +65,7 @@ public class UpdatableFactoriesTest extends ScenariosTestCase {
 		}
 
 		public IUpdatable createUpdatable(Map properties, Object description,
-				IDataBindingContext bindingContext) {
+				IValidationContext validationContext) {
 			if (c.isInstance(description)) {
 				return new TestIUpdatable() {
 					public void dispose() {
@@ -93,12 +95,12 @@ public class UpdatableFactoriesTest extends ScenariosTestCase {
 
 	IUpdatableFactory factory = new Factory(Object.class);
 
-	protected Class getFactoryType(Object src) {
+	protected Class getFactoryType(Object src) throws BindingException {
 		TestIUpdatable u = (TestIUpdatable) getDbc().createUpdatable(src);
 		return u.getType();
 	}
 
-	public void test_factoryRegistration() {
+	public void test_factoryRegistration() throws BindingException {
 
 		getDbc().addUpdatableFactory(root);
 		getDbc().addUpdatableFactory(middle);

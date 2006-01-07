@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.examples.databinding.model.Adventure;
-import org.eclipse.jface.examples.databinding.model.AggregateUpdatableValue;
-import org.eclipse.jface.examples.databinding.model.SampleData;
+import org.eclipse.jface.databinding.PropertyDescription;
+import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
+import org.eclipse.jface.tests.databinding.scenarios.model.AggregateUpdatableValue;
+import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
 
@@ -37,7 +38,7 @@ public class CustomScenarios extends ScenariosTestCase {
 		super.tearDown();
 	}
 
-	public void testScenario01() {
+	public void testScenario01() throws BindingException {
 		// Binding the name property of an Adventure object to the contents of
 		// Text controls, no conversion, no validation.
 
@@ -45,15 +46,15 @@ public class CustomScenarios extends ScenariosTestCase {
 		Text text = new Text(getComposite(), SWT.BORDER);
 
 		IUpdatableValue descriptionUpdatable = (IUpdatableValue) getDbc()
-				.createUpdatable(new Property(adventure, "description"));
+				.createUpdatable(new PropertyDescription(adventure, "description"));
 		IUpdatableValue nameUpdatable = (IUpdatableValue) getDbc()
-				.createUpdatable(new Property(adventure, "name"));
+				.createUpdatable(new PropertyDescription(adventure, "name"));
 
 		AggregateUpdatableValue customUpdatable_comma = new AggregateUpdatableValue(
 				new IUpdatableValue[] { descriptionUpdatable, nameUpdatable },
 				",");
 
-		getDbc().bind(getDbc().createUpdatable(new Property(text, "text")),
+		getDbc().bind(getDbc().createUpdatable(new PropertyDescription(text, "text")),
 								customUpdatable_comma, null);
 		// spinEventLoop(1);
 		// Make sure that the description on the model match the widget

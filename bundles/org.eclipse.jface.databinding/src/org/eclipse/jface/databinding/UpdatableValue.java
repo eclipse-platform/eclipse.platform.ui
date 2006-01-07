@@ -11,7 +11,6 @@
 package org.eclipse.jface.databinding;
 
 /**
- * Abstract base class for updatable values.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will remain
