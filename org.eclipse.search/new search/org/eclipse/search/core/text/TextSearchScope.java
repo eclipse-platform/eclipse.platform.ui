@@ -34,7 +34,7 @@ public abstract class TextSearchScope {
 	 * Creates a scope that consists of all files that match the <code>fileNamePattern</code> and that
 	 * either are one of the roots, or have one of the roots in their parent chain.
 	 * If <code>visitDerivedResources</code> is not enabled, all files that are marked derived or
-	 * who are in a derived folder are not part of the scope.
+	 * have a derived container in their parent chain are not part of the scope.
 	 * 
 	 * @param rootResources the resources that are the roots of the scope
 	 * @param fileNamePattern file name pattern for this scope.
@@ -63,7 +63,8 @@ public abstract class TextSearchScope {
 	 * are not part of the scope.
 	 * 
 	 * @param proxy the resource proxy to test. 
-	 * @return returns <code>true</code> if a resource (and its members) are part of the scope.
+	 * @return returns <code>true</code> if a resource is part of the scope. if <code>false</code> is returned the resource
+	 * and all its children are not part of the scope.
 	 */
 	public abstract boolean contains(IResourceProxy proxy);
 
