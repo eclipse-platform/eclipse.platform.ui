@@ -14,7 +14,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -25,8 +24,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -53,11 +53,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.ITextSelection;
 
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -95,7 +93,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 	private List fPreviousSearchPatterns= new ArrayList(20);
 
-	private IDialogSettings fDialogSettings;
 	private boolean fFirstTime= true;
 	private boolean fIsCaseSensitive;
 	private boolean fIsRegExSearch;
@@ -233,10 +230,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				scope= FileNamePatternSearchScope.newWorkspaceScope(fSearchDerived);
 				break;
 			case ISearchPageContainer.SELECTION_SCOPE:
-				scope= getSelectedResourcesScope(false);
+				scope= getSelectedResourcesScope();
 				break;
 			case ISearchPageContainer.SELECTED_PROJECTS_SCOPE:
-				scope= getSelectedResourcesScope(true);
+				scope= getEnclosingProjectScope();
 				break;
 			case ISearchPageContainer.WORKING_SET_SCOPE:
 				IWorkingSet[] workingSets= getContainer().getSelectedWorkingSets();
@@ -336,6 +333,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				fExtensions.setItems(getPreviousExtensions());
 				if (!initializePatternControl()) {
 					fPattern.select(0);
+					fExtensions.setText("*"); //$NON-NLS-1$
 					handleWidgetSelected();
 				}
 			}
@@ -493,6 +491,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				String extension= getExtensionFromEditor();
 				if (extension != null)
 					fExtensions.setText(extension);
+				else 
+					fExtensions.setText("*"); //$NON-NLS-1$
 			}
 			return true;
 		}
@@ -601,89 +601,62 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private ISelection getSelection() {
 		return fContainer.getSelection();
 	}
+	
+	private FileNamePatternSearchScope getEnclosingProjectScope() {
+		String[] enclosingProjectName= getContainer().getEnclosingProjectNames();
+		if (enclosingProjectName == null) {
+			return FileNamePatternSearchScope.newWorkspaceScope(fSearchDerived);
+		}
+		
+		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
+		IResource[] res= new IResource[enclosingProjectName.length];
+		for (int i= 0; i < res.length; i++) {
+			res[i]= root.getProject(enclosingProjectName[i]);
+		}
+		String name;
+		int elementCount= res.length;
+		if (elementCount > 1)
+			name= Messages.format(SearchMessages.EnclosingProjectsScope, enclosingProjectName[0]); 
+		else if (elementCount == 1)
+			name= Messages.format(SearchMessages.EnclosingProjectScope, enclosingProjectName[0]); 
+		else 
+			name= Messages.format(SearchMessages.EnclosingProjectScope, "");  //$NON-NLS-1$
+		
+		return FileNamePatternSearchScope.newSearchScope(name, res, fSearchDerived);
+	}
+	
 
-	private FileNamePatternSearchScope getSelectedResourcesScope(boolean isProjectScope) {
+	private FileNamePatternSearchScope getSelectedResourcesScope() {
 		HashSet resources= new HashSet();
-		String firstProjectName= null;
 		ISelection selection= getSelection();
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			Iterator iter= ((IStructuredSelection) selection).iterator();
 			while (iter.hasNext()) {
 				Object curr= iter.next();
-				
-				if (curr instanceof IWorkingSet && !isProjectScope) {
-					IWorkingSet ws= (IWorkingSet)curr;
-					IAdaptable[] elements= ws.getElements();
+				if (curr instanceof IWorkingSet) {
+					IWorkingSet workingSet= (IWorkingSet) curr;
+					if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
+						return FileNamePatternSearchScope.newWorkspaceScope(fSearchDerived);
+					}
+					IAdaptable[] elements= workingSet.getElements();
 					for (int i= 0; i < elements.length; i++) {
 						IResource resource= (IResource)elements[i].getAdapter(IResource.class);
-						if (resource != null) {
+						if (resource != null && resource.isAccessible()) {
 							resources.add(resource);
 						}
 					}
-				} else {
-					IResource resource= null;			
-					if (curr instanceof IResource) {
-						resource= (IResource) curr;
-					} else if (curr instanceof IAdaptable) {
-						resource= (IResource) ((IAdaptable)curr).getAdapter(IResource.class);
-						if (resource == null && isProjectScope)
-							resource= (IProject) ((IAdaptable)curr).getAdapter(IProject.class);
-					}
-					if (resource != null) {
-						if (isProjectScope) {
-							resource= resource.getProject();
-							if (firstProjectName == null) {
-								firstProjectName= resource.getName();
-							}
-						}
+				} else if (curr instanceof IAdaptable) {
+					IResource resource= (IResource) ((IAdaptable)curr).getAdapter(IResource.class);
+					if (resource != null && resource.isAccessible()) {
 						resources.add(resource);
 					}
 				}
 			}
-		} else if (isProjectScope) {
-			IProject editorProject= getEditorProject();
-			if (editorProject != null) {
-				resources.add(editorProject);
-				firstProjectName= editorProject.getName();
-			}
 		}
-
-		String name;
-		if (isProjectScope) {
-			int elementCount= resources.size();
-			if (elementCount > 1)
-				name= Messages.format(SearchMessages.EnclosingProjectsScope, firstProjectName); 
-			else if (elementCount == 1)
-				name= Messages.format(SearchMessages.EnclosingProjectScope, firstProjectName); 
-			else 
-				name= Messages.format(SearchMessages.EnclosingProjectScope, "");  //$NON-NLS-1$
-		} else {
-			name= SearchMessages.SelectionScope; 
-		}
-		removeCloseProjects(resources);
 		IResource[] arr= (IResource[]) resources.toArray(new IResource[resources.size()]);
-		return FileNamePatternSearchScope.newSearchScope(name, arr, fSearchDerived);
+		return FileNamePatternSearchScope.newSearchScope(SearchMessages.SelectionScope, arr, fSearchDerived);
 	}
 
-	private void removeCloseProjects(Collection resources) {
-		for (Iterator iter= resources.iterator(); iter.hasNext();) {
-			IResource resource= (IResource)iter.next();
-			if (resource.getType() == IResource.PROJECT && !((IProject)resource).isOpen())
-				iter.remove();
-		}
-	}
-	
-	private IProject getEditorProject() {
-		IWorkbenchPart activePart= SearchPlugin.getActivePage().getActivePart();
-		if (activePart instanceof IEditorPart) {
-			IEditorPart editor= (IEditorPart) activePart;
-			IEditorInput input= editor.getEditorInput();
-			if (input instanceof IFileEditorInput) {
-				return ((IFileEditorInput)input).getFile().getProject();
-			}
-		}
-		return null;
-	}
 	//--------------- Configuration handling --------------
 	
 	/* (non-Javadoc)
@@ -700,11 +673,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	 * @return the page settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {
-		IDialogSettings settings= SearchPlugin.getDefault().getDialogSettings();
-		fDialogSettings= settings.getSection(PAGE_NAME);
-		if (fDialogSettings == null)
-			fDialogSettings= settings.addNewSection(PAGE_NAME);
-		return fDialogSettings;
+		return SearchPlugin.getDefault().getDialogSettingsSection(PAGE_NAME);
 	}
 		
 	

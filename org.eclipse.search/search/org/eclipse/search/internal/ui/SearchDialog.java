@@ -14,12 +14,19 @@
 package org.eclipse.search.internal.ui;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -50,7 +57,6 @@ import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -62,7 +68,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -121,8 +128,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	private ISearchPage fCurrentPage;
 	private String fInitialPageId;
 	private int fCurrentIndex;
-	private ISelection fSelection;
-	private IEditorPart fEditorPart;
+
 	private List fDescriptors;
 	private Point fMinSize;
 	private ScopePart[] fScopeParts;
@@ -130,16 +136,81 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	private Button fCustomizeButton;
 	private Button fReplaceButton;
 	private ListenerList fPageChangeListeners;
+	
+	private final IWorkbenchWindow fWorkbenchWindow;
+	private final ISelection fCurrentSelection;
+	private final String[] fCurrentEnclosingProject;
 
 
-	public SearchDialog(Shell shell, ISelection selection, IEditorPart editor, String pageId) {
-		super(shell);
-		fSelection= selection;
-		fEditorPart= editor;
+	public SearchDialog(IWorkbenchWindow window, String pageId) {
+		super(window.getShell());
+		fWorkbenchWindow= window;
+		fCurrentSelection= window.getSelectionService().getSelection();
+		fCurrentEnclosingProject= evaluateEnclosingProject(fCurrentSelection, getActiveEditor());
+
 		fDescriptors= filterByActivities(SearchPlugin.getDefault().getEnabledSearchPageDescriptors(pageId));
 		fInitialPageId= pageId;
 		fPageChangeListeners= null;
 		setUseEmbeddedProgressMonitorPart(false);
+	}
+
+	public static String evaluateEnclosingProject(IAdaptable adaptable) {		
+		IProject project= (IProject) adaptable.getAdapter(IProject.class);
+		if (project == null) {
+			IResource resource= (IResource) adaptable.getAdapter(IResource.class);
+			if (resource != null) {
+				project= resource.getProject();
+			}
+		}
+		if (project != null && project.isAccessible()) {
+			return project.getName();
+		}
+		return null;
+	}
+	
+	public static String[] evaluateEnclosingProject(ISelection selection, IEditorPart activeEditor) {		
+		if (selection instanceof IStructuredSelection) {
+			HashSet res= new HashSet();
+			for (Iterator iter= ((IStructuredSelection) selection).iterator(); iter.hasNext();) {
+				Object curr= iter.next();
+				if (curr instanceof IWorkingSet) {
+					IWorkingSet workingSet= (IWorkingSet) curr;
+					if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
+						IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
+						for (int i= 0; i < projects.length; i++) {
+							IProject proj= projects[i];
+							if (proj.isOpen()) {
+								res.add(proj.getName());
+							}
+						}
+					} else {
+						IAdaptable[] elements= workingSet.getElements();
+						for (int i= 0; i < elements.length; i++) {
+							String name= evaluateEnclosingProject(elements[i]);
+							if (name != null) {
+								res.add(name);
+							}
+						}
+					}
+				} else if (curr instanceof IAdaptable) {
+					String name= evaluateEnclosingProject((IAdaptable) curr);
+					if (name != null) {
+						res.add(name);
+					}
+				}
+			}
+			if (res.isEmpty()) {
+				return null;
+			}
+			return (String[]) res.toArray(new String[res.size()]);
+		}
+		if (activeEditor != null) {
+			String name= evaluateEnclosingProject(activeEditor.getEditorInput());
+			if (name != null) {
+				return new String[] { name };
+			}
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -158,13 +229,20 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, ISearchHelpContextIds.SEARCH_DIALOG);
 	}
 
-	
-	public ISelection getSelection() {
-		return fSelection;
+	public IWorkbenchWindow getWorkbenchWindow() {
+		return fWorkbenchWindow;
 	}
 	
-	public IEditorPart getEditorPart() {
-		return fEditorPart;
+	public ISelection getSelection() {
+		return fCurrentSelection;
+	}
+	
+	private IEditorPart getActiveEditor() {
+		IWorkbenchPage activePage= fWorkbenchWindow.getActivePage();
+		if (activePage != null) {
+			return activePage.getActiveEditor();
+		}
+		return null;
 	}
 	
 	//---- Page Handling -------------------------------------------------------
@@ -448,18 +526,21 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	
 	private int getPreferredPageIndex() {
 		Object element= null;
-		if (fSelection instanceof IStructuredSelection)
-			element= ((IStructuredSelection)fSelection).getFirstElement();
-		if (element == null && fEditorPart != null) {
-			element= fEditorPart.getEditorInput();
-			if (element instanceof IFileEditorInput)
-				element= ((IFileEditorInput)element).getFile();
+		ISelection selection= getSelection();
+		if (selection instanceof IStructuredSelection)
+			element= ((IStructuredSelection) selection).getFirstElement();
+		
+		if (element == null) {
+			IEditorPart editorPart= getActiveEditor();
+			if (editorPart != null) {
+				element= editorPart.getEditorInput();
+			}
 		}
 		int result= 0;
 		int level= ISearchPageScoreComputer.LOWEST;
 		int size= fDescriptors.size();
 		for (int i= 0; i < size; i++) {
-			SearchPageDescriptor descriptor= (SearchPageDescriptor)fDescriptors.get(i);
+			SearchPageDescriptor descriptor= (SearchPageDescriptor) fDescriptors.get(i);
 			if (fInitialPageId != null && fInitialPageId.equals(descriptor.getId()))
 				return i;
 			
@@ -499,6 +580,10 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			return null;
 		
 		return fScopeParts[fCurrentIndex].getSelectedWorkingSets();
+	}
+	
+	public String[] getEnclosingProjectNames() {
+		return fCurrentEnclosingProject;
 	}
 
 	/*
@@ -646,7 +731,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	 */
 	public void addPageChangedListener(IPageChangedListener listener) {
 		if (fPageChangeListeners == null) {
-			fPageChangeListeners= new ListenerList(3);
+			fPageChangeListeners= new ListenerList();
 		}
 		fPageChangeListeners.add(listener);
 	}

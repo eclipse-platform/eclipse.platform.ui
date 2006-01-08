@@ -14,7 +14,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
@@ -47,15 +46,11 @@ public class OpenSearchDialogAction extends Action implements IWorkbenchWindowAc
 	}
 
 	public void run() {
-		if (getWindow().getActivePage() == null) {
+		if (getWorkbenchWindow().getActivePage() == null) {
 			SearchPlugin.beep();
 			return;
 		}
-		SearchDialog dialog= new SearchDialog(
-			getWindow().getShell(),
-			getSelection(),
-			getEditorPart(),
-			fPageId);
+		SearchDialog dialog= new SearchDialog(getWorkbenchWindow(), fPageId);
 		dialog.open();
 	}
 
@@ -63,15 +58,7 @@ public class OpenSearchDialogAction extends Action implements IWorkbenchWindowAc
 		// do nothing since the action isn't selection dependent.
 	}
 
-	private ISelection getSelection() {
-		return getWindow().getSelectionService().getSelection();
-	}
-	
-	private IEditorPart getEditorPart() {
-		return getWindow().getActivePage().getActiveEditor();
-	}
-
-	private IWorkbenchWindow getWindow() {
+	private IWorkbenchWindow getWorkbenchWindow() {
 		if (fWindow == null)
 			fWindow= SearchPlugin.getActiveWorkbenchWindow();
 		return fWindow;

@@ -106,7 +106,7 @@ public interface ISearchPageContainer {
 	/**
 	 * Returns the selected working sets of this container.
 	 * 
-	 * @return an array with the selected working sets or <code>null</code> if the scope is not WORKING_SET_SCOPE
+	 * @return an array with the selected working sets or <code>null</code> if the scope is not {@link #WORKING_SET_SCOPE}
 	 * @since 2.0
 	 */
 	public IWorkingSet[] getSelectedWorkingSets();
@@ -118,4 +118,15 @@ public interface ISearchPageContainer {
 	 * @since 2.0
 	 */
 	public void setSelectedWorkingSets(IWorkingSet[] workingSets);
+	
+	/**
+	 * Returns the names of the enclosing projects if selected by the container. The enclosing projects should only be used if 
+	 * the selected scope is equal to {@link #SELECTED_PROJECTS_SCOPE}.
+	 * 
+	 * @return the names of the enclosing project or <code>null</code> if no enclosing projects could be evaluated from the current
+	 * selection or editor input
+	 * @since 3.2
+	 */
+	public String[] getEnclosingProjectNames();
+	
 }

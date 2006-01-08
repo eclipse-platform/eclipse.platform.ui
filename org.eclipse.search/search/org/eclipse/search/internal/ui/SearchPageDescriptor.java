@@ -312,7 +312,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 				if (tester != null)
 					return tester.computeScore(getId(), element);	
 			}
-		} /* can be removed as ISearchResultViewEntry adaptes to IResource
+		} /* can be removed as ISearchResultViewEntry adapts to IResource
 			else if (element instanceof ISearchResultViewEntry) {
 			ISearchResultViewEntry entry= (ISearchResultViewEntry)element;
 			return computeScore(entry.getSelectedMarker());

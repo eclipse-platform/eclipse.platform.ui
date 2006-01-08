@@ -193,7 +193,11 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	private static IResource[] convertToResources(IWorkingSet[] workingSets, boolean includeDerived) {
 		ArrayList res= new ArrayList();
 		for (int i= 0; i < workingSets.length; i++) {
-			IAdaptable[] elements= workingSets[i].getElements();
+			IWorkingSet workingSet= workingSets[i];
+			if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
+				return new IResource[] { ResourcesPlugin.getWorkspace().getRoot() };
+			}
+			IAdaptable[] elements= workingSet.getElements();
 			for (int k= 0; k < elements.length; k++) {
 				IResource curr= (IResource) elements[k].getAdapter(IResource.class);
 				if (curr != null) {
