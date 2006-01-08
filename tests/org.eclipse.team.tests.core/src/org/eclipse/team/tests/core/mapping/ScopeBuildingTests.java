@@ -54,10 +54,10 @@ public class ScopeBuildingTests extends TeamTest {
 		protected ScopeGenerator getScopeGenerator() {
 			return new ScopeGenerator() {	
 				public IResourceMappingScope prepareScope(
-						ResourceMapping[] selectedMappings, ResourceMappingContext context,
+						ResourceMapping[] selectedMappings, ResourceMappingContext context, boolean consultModel,
 						IProgressMonitor monitor) throws CoreException {
 					
-					IResourceMappingScope resourceMappingScope = super.prepareScope(selectedMappings, context, monitor);
+					IResourceMappingScope resourceMappingScope = super.prepareScope(selectedMappings, context, false, monitor);
 					// Add the additional test mappings to the scope
 					for (int i = 0; i < additionalMappings.length; i++) {
 						ResourceMapping mapping = additionalMappings[i];

@@ -103,7 +103,7 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 	 */
 	protected void buildScope(IProgressMonitor monitor) throws InvocationTargetException {
 		try {
-			scope = getScopeGenerator().prepareScope(selectedMappings, context, monitor);
+			scope = getScopeGenerator().prepareScope(selectedMappings, context, consultModelsWhenGeneratingScope(), monitor);
 			IResourceMappingScope inputScope = getScopeGenerator().asInputScope(scope);
 			if (scope.hasAdditionalMappings()) {
 				boolean prompt = false;
@@ -356,9 +356,20 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 		return null;
 	}
 
+	/**
+	 * Execute the operation. This method is invoked after the 
+	 * scope has been generated.
+	 * @param monitor a progress monitor
+	 * @throws InvocationTargetException
+	 * @throws InterruptedException
+	 */
 	protected abstract void execute(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException;
 
+	/**
+	 * Return the scope of this operation.
+	 * @return the scope of this operation
+	 */
 	public IResourceMappingScope getScope() {
 		return scope;
 	}
@@ -371,6 +382,21 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 	 */
 	public boolean isPreviewRequested() {
 		return previewRequested;
+	}
+	
+	/**
+	 * Return whether the model providers should be consulted
+	 * when generating the scope. When <code>true</code>, the scope
+	 * generation process will consult any model providers to determine
+	 * if additional mappings, and hence additional resources, need to
+	 * be included in the operation. If <code>false</code>, the models
+	 * are not consulted and only the input mappings are included in the 
+	 * scope. a value of <code>true</code> is returned by default.
+	 * @return whether the model providers should be consulted
+	 * when generating the scope
+	 */
+	protected boolean consultModelsWhenGeneratingScope() {
+		return true;
 	}
 	
 }

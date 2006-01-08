@@ -48,6 +48,7 @@ public class ScopeGenerator {
 	 * @param selectedMappings the selected set of resource mappings
 	 * @param context the resource mapping context used to determine the
 	 *            resources to be oeprated on
+	 * @param consultModels whether models should be consulted during scope generation
 	 * @param monitor a progress monitor
 	 * @return a scope that defines the complete set of resources to be operated
 	 *         on
@@ -55,7 +56,7 @@ public class ScopeGenerator {
 	 */
 	public IResourceMappingScope prepareScope(
 			ResourceMapping[] selectedMappings, ResourceMappingContext context,
-			IProgressMonitor monitor) throws CoreException {
+			boolean consultModels, IProgressMonitor monitor) throws CoreException {
 
 		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 
@@ -75,31 +76,33 @@ public class ScopeGenerator {
 		do {
 			newResources = addMappingsToScope(scope, targetMappings, context,
 					Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
-			IResource[] adjusted = adjustNewResources(newResources);
-			targetMappings = internalGetMappingsFromProviders(adjusted,
-					context, Policy
-							.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
-
-			// TODO: The new resources aren't really just the new ones so reduce
-			// the set if needed
-			if (!handledResources.isEmpty()) {
-				for (Iterator iter = newResources.iterator(); iter.hasNext();) {
-					IResource resource = (IResource) iter.next();
-					if (handledResources.contains(resource)) {
-						iter.remove();
+			if (consultModels) {
+				IResource[] adjusted = adjustNewResources(newResources);
+				targetMappings = internalGetMappingsFromProviders(adjusted,
+						context, Policy
+								.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
+	
+				// TODO: The new resources aren't really just the new ones so reduce
+				// the set if needed
+				if (!handledResources.isEmpty()) {
+					for (Iterator iter = newResources.iterator(); iter.hasNext();) {
+						IResource resource = (IResource) iter.next();
+						if (handledResources.contains(resource)) {
+							iter.remove();
+						}
 					}
 				}
+	
+				handledResources.addAll(newResources);
+				if (firstTime) {
+					firstTime = false;
+				} else if (!hasAdditionalResources) {
+					hasAdditionalResources = !newResources.isEmpty();
+				}
 			}
-
-			handledResources.addAll(newResources);
-			if (firstTime) {
-				firstTime = false;
-			} else if (!hasAdditionalResources) {
-				hasAdditionalResources = !newResources.isEmpty();
-			}
-		} while (!newResources.isEmpty());
-		setHasAdditionalMappings(scope, hasAdditionalMappings(scope));
-		scope.setHasAdditionalResources(hasAdditionalResources);
+		} while (consultModels & !newResources.isEmpty());
+		setHasAdditionalMappings(scope, consultModels && hasAdditionalMappings(scope));
+		scope.setHasAdditionalResources(consultModels && hasAdditionalResources);
 		return scope;
 	}
 
