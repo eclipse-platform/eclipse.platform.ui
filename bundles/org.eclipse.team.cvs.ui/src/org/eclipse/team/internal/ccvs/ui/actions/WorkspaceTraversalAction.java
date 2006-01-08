@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -37,37 +36,9 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
      * within a CVS managed project.
      * @return the selected mappings that contain resources 
      * within a CVS managed project
-     * 
-     * @deprecated should use getOperationInput() instead
      */
     protected ResourceMapping[] getCVSResourceMappings() {
-        ResourceMapping[] selectedMappings = getSelectedResourceMappings(CVSProviderPlugin.getTypeId());
-//        try {
-//			IResourceMappingScope scope = new ScopeGenerator().prepareScope("CVS Operation", selectedMappings, getResourceMappingContext(), new NullProgressMonitor());
-//			if (scope.hasAdditionalMappings()) {
-//				return showAllMappings(scope);
-//			}
-//		} catch (CoreException e) {
-//			CVSUIPlugin.log(e);
-//		}
-		return selectedMappings;
-    }
-    
-    private ResourceMapping[] showAllMappings(final IResourceMappingScope scope) {
-//        final boolean[] canceled = new boolean[] { false };
-//        getShell().getDisplay().syncExec(new Runnable() {
-//            public void run() {
-//                AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Participating Elements", scope);
-//                int result = dialog.open();
-//                canceled[0] = result != Window.OK;
-//            }
-//        
-//        });
-//        
-//        if (canceled[0]) {
-//            return new ResourceMapping[0];
-//        }
-        return scope.getMappings();
+        return getSelectedResourceMappings(CVSProviderPlugin.getTypeId());
     }
 
     protected static IResource[] getRootTraversalResources(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
@@ -135,6 +106,13 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
         return (IResource[]) projects.toArray(new IResource[projects.size()]);
     }
     
+    /**
+     * 
+     * @param mappings
+     * @return
+     * 
+     * @deprecated need to find a better way to do this
+     */
     public static boolean isLogicalModel(ResourceMapping[] mappings) {
         for (int i = 0; i < mappings.length; i++) {
             ResourceMapping mapping = mappings[i];

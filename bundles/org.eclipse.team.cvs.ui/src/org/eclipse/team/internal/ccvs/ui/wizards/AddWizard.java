@@ -15,12 +15,12 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IFileContentManager;
 import org.eclipse.team.core.Team;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
@@ -33,18 +33,25 @@ public class AddWizard extends ResizableWizard {
     private final IFile[] unknowns;
     private CommitWizardFileTypePage fFileTypePage;
 
-    public static void run(Shell shell, AddOperation op) throws InvocationTargetException, InterruptedException {
-        try {
-            // Prompt if there are files of unknown type being added
-            IFile[] unknowns = getUnaddedWithUnknownFileType(op.getTraversals());
-            if (unknowns.length == 0) {
-                op.run();
-            } else {
-                AddWizard wizard = new AddWizard(op, unknowns);
-                ResizableWizard.open(shell, wizard);
-            }
-        } catch (CoreException e) {
-            throw new InvocationTargetException(e);
+    public static void run(Shell shell, final AddOperation op) throws InvocationTargetException, InterruptedException {
+        // Prompt if there are files of unknown type being added
+    	PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException,
+					InterruptedException {
+				try {
+					op.buildScope(monitor);
+				} catch (CVSException e) {
+					throw new InvocationTargetException(e);
+				}
+			}
+		});
+    	
+        IFile[] unknowns = getUnaddedWithUnknownFileType(op.getTraversals());
+        if (unknowns.length == 0) {
+            op.run();
+        } else {
+            AddWizard wizard = new AddWizard(op, unknowns);
+            ResizableWizard.open(shell, wizard);
         }
     }
     

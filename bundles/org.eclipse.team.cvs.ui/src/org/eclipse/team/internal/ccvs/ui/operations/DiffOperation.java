@@ -318,5 +318,12 @@ public abstract class DiffOperation extends SingleCommandOperation {
 		
 		return super.getLocalRoot(provider);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#consultModelsForMappings()
+	 */
+	public boolean consultModelsForMappings() {
+		return false;
+	}
 
 }

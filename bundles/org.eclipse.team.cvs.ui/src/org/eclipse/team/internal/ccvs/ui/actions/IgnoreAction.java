@@ -78,6 +78,13 @@ public class IgnoreAction extends WorkspaceTraversalAction {
             return CVSUIMessages.IgnoreAction_1; 
         }
         
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#consultModelsForMappings()
+    	 */
+    	public boolean consultModelsForMappings() {
+    		return false;
+    	}
+        
     }
 	
 	protected void execute(final IAction action) throws InvocationTargetException, InterruptedException {

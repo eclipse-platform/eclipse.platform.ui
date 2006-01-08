@@ -80,5 +80,12 @@ public class DisconnectOperation extends RepositoryProviderOperation {
 		// Do not run in the background
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#consultModelsForMappings()
+	 */
+	public boolean consultModelsForMappings() {
+		return false;
+	}
 
 }

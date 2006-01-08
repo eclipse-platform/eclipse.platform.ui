@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
@@ -29,6 +32,7 @@ import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.tags.BranchPromptDialog;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Perform a CVS branch operaiton
@@ -53,45 +57,57 @@ public class BranchOperation extends RepositoryProviderOperation {
 	 * @see org.eclipse.team.ui.TeamOperation#shouldRun()
 	 */
 	protected boolean shouldRun() {
-        try {
-            IResource[] resources = getTraversalRoots();
-    		boolean allSticky = areAllResourcesSticky(resources);
-    		String initialVersionName = calculateInitialVersionName(resources,allSticky);
-    		final BranchPromptDialog dialog = new BranchPromptDialog(getShell(),
-    											CVSUIMessages.BranchWizard_title, 
-    											resources, 
-    											allSticky, 
-    											initialVersionName);
-    		if (dialog.open() != Window.OK) return false;		
-    		
-    		// Capture the dialog info in local variables
-    		final String tagString = dialog.getBranchTagName();
-    		update = dialog.getUpdate();
-    		branchTag = new CVSTag(tagString, CVSTag.BRANCH);
-    		
-    		// Only set the root version tag if the name from the dialog differs from the initial name
-    		String versionString = dialog.getVersionTagName();
-    		if (versionString != null 
-    				&& (initialVersionName == null || !versionString.equals(initialVersionName))) {
-    			rootVersionTag = new CVSTag(versionString, CVSTag.VERSION);
-    		}
-    								
-    		// For non-projects determine if the tag being loaded is the same as the resource's parent
-    		// If it's not, warn the user that they will be mixing tags
-    		if (update) {
-    			try {
-    				if(!CVSAction.checkForMixingTags(getShell(), resources, branchTag)) {
-    					return false;
-    				}
-    			} catch (CVSException e) {
-    				CVSUIPlugin.log(e);
-    			}
-    		}
-    		return super.shouldRun();
-        } catch (CoreException e) {
-            CVSUIPlugin.openError(getShell(), null, null, e, CVSUIPlugin.PERFORM_SYNC_EXEC);
-            return false;
-        }
+		try {
+			PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException,
+						InterruptedException {
+					try {
+						buildScope(monitor);
+					} catch (CVSException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			});
+		} catch (InvocationTargetException e1) {
+			CVSUIPlugin.openError(getShell(), null, null, e1);
+		} catch (InterruptedException e1) {
+			throw new OperationCanceledException();
+		}
+    	
+        IResource[] resources = getTraversalRoots();
+		boolean allSticky = areAllResourcesSticky(resources);
+		String initialVersionName = calculateInitialVersionName(resources,allSticky);
+		final BranchPromptDialog dialog = new BranchPromptDialog(getShell(),
+											CVSUIMessages.BranchWizard_title, 
+											resources, 
+											allSticky, 
+											initialVersionName);
+		if (dialog.open() != Window.OK) return false;		
+		
+		// Capture the dialog info in local variables
+		final String tagString = dialog.getBranchTagName();
+		update = dialog.getUpdate();
+		branchTag = new CVSTag(tagString, CVSTag.BRANCH);
+		
+		// Only set the root version tag if the name from the dialog differs from the initial name
+		String versionString = dialog.getVersionTagName();
+		if (versionString != null 
+				&& (initialVersionName == null || !versionString.equals(initialVersionName))) {
+			rootVersionTag = new CVSTag(versionString, CVSTag.VERSION);
+		}
+								
+		// For non-projects determine if the tag being loaded is the same as the resource's parent
+		// If it's not, warn the user that they will be mixing tags
+		if (update) {
+			try {
+				if(!CVSAction.checkForMixingTags(getShell(), resources, branchTag)) {
+					return false;
+				}
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e);
+			}
+		}
+		return super.shouldRun();
 	}
 
     /* (non-Javadoc)

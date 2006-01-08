@@ -11,9 +11,9 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
@@ -153,32 +153,32 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 	}
 
     private ICVSResource[] getCVSResources() {
-        try {
-            IResource[] resources = getTraversalRoots();
-            ICVSResource[] cvsResources = new ICVSResource[resources.length];
-            for (int i = 0; i < resources.length; i++) {
-                cvsResources[i] = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
-            }
-            return cvsResources;
-        } catch (CoreException e) {
-            CVSUIPlugin.log(e);
-            return new ICVSResource[0];
+        IResource[] resources = getTraversalRoots();
+        ICVSResource[] cvsResources = new ICVSResource[resources.length];
+        for (int i = 0; i < resources.length; i++) {
+            cvsResources[i] = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
         }
+        return cvsResources;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.team.internal.ccvs.ui.operations.ITagOperation#getTagSource()
      */
     public TagSource getTagSource() {
-        try {
-            return TagSource.create(getTraversalRoots());
-        } catch (CoreException e) {
-            CVSUIPlugin.log(e);
-            return null;
-        }
+       return TagSource.create(getProjects());
     }
 
-    protected boolean isReportableError(IStatus status) {
+    private IProject[] getProjects() {
+		ResourceMapping[] mappings = getSelectedMappings();
+		Set projects = new HashSet();
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping mapping = mappings[i];
+			projects.addAll(Arrays.asList(mapping.getProjects()));
+		}
+		return (IProject[]) projects.toArray(new IProject[projects.size()]);
+	}
+
+	protected boolean isReportableError(IStatus status) {
         return super.isReportableError(status)
         	|| status.getCode() == CVSStatus.TAG_ALREADY_EXISTS;
     }
@@ -187,11 +187,6 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
      * @see org.eclipse.team.internal.ccvs.ui.operations.ITagOperation#isEmpty()
      */
     public boolean isEmpty() {
-        try {
-            return getTraversals().length == 0;
-        } catch (CoreException e) {
-            CVSUIPlugin.log(e);
-            return true;
-        }
+        return getSelectedMappings().length == 0;
     }
 }
