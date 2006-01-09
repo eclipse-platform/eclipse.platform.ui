@@ -13,8 +13,14 @@ package org.eclipse.ltk.ui.refactoring.history;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
+import org.eclipse.swt.widgets.Control;
+
 /**
  * Control which is capable of displaying parts of a refactoring history.
+ * <p>
+ * Clients of this interface should call <code>createControl</code> before
+ * calling <code>setInput</code>.
+ * </p>
  * <p>
  * Note: this interface is not intended to be implemented by clients.
  * </p>
@@ -31,7 +37,14 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 public interface IRefactoringHistoryControl {
 
 	/**
-	 * Creates the control.
+	 * Creates the refactoring history control.
+	 * <p>
+	 * This method creates the necessary widgets and initializes the refactoring
+	 * history control. It is called only once. Method <code>getControl()</code>
+	 * should be used to retrieve the widget hierarchy.
+	 * </p>
+	 * 
+	 * @see #getControl()
 	 */
 	public void createControl();
 
@@ -43,15 +56,25 @@ public interface IRefactoringHistoryControl {
 	 * {@link #getSelectedDescriptors()}.
 	 * </p>
 	 * 
-	 * @return the selected refactoring descriptors
+	 * @return the selected refactoring descriptors, or an empty array.
+	 * 
+	 * @see IRefactoringHistoryControl#getSelectedDescriptors()
 	 * @see RefactoringHistoryControlConfiguration#isCheckableViewer()
 	 */
 	public RefactoringDescriptorProxy[] getCheckedDescriptors();
 
 	/**
+	 * Returns the SWT control of this refactoring history control.
+	 * 
+	 * @return the SWT control, or <code>null</code> if the control's widget
+	 *         hierarchy has not yet been created
+	 */
+	public Control getControl();
+
+	/**
 	 * Returns the selected refactoring descriptors.
 	 * 
-	 * @return the selected refactoring descriptors
+	 * @return the selected refactoring descriptors, or an empty array.
 	 */
 	public RefactoringDescriptorProxy[] getSelectedDescriptors();
 
