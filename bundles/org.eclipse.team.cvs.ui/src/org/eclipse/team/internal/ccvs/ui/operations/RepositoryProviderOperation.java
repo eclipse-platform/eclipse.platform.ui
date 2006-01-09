@@ -37,6 +37,13 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public abstract class RepositoryProviderOperation extends CVSOperation {
 
+	/**
+	 * Flag to indicate whether models are to be consulted when building 
+	 * the scope. This is provided for testing purposes and is not expected 
+	 * to be used otherwise.
+	 */
+	public static boolean consultModelsWhenBuildingScope = true;
+	
 	private IResourceMappingScope scope;
 	private final ResourceMapping[] selectedMappings;
 	
@@ -213,6 +220,8 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 				 * @see org.eclipse.team.ui.operations.ResourceMappingOperation#consultModelsWhenGeneratingScope()
 				 */
 				protected boolean consultModelsWhenGeneratingScope() {
+					if (!consultModelsWhenBuildingScope)
+						return false;
 					return RepositoryProviderOperation.this.consultModelsForMappings();
 				}
 			};

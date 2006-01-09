@@ -23,6 +23,7 @@ import org.eclipse.core.tests.resources.ResourceTest;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
@@ -31,8 +32,11 @@ import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
+import org.eclipse.team.internal.ccvs.ui.mappings.ModelReplaceOperation;
+import org.eclipse.team.internal.ccvs.ui.mappings.ModelUpdateOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
+import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 
@@ -240,10 +244,28 @@ public class EclipseTest extends ResourceTest {
     /**
      * Update the resources contained in the given mappers.
      */
-    protected void update(ResourceMapping[] mappers, LocalOption[] options) throws CVSException {
+    protected void update(ResourceMapping[] mappings, LocalOption[] options) throws CVSException {
         if (options == null)
             options = Command.NO_LOCAL_OPTIONS;
-        executeHeadless(new UpdateOperation(null, mappers, options, null));
+        if (options == Command.NO_LOCAL_OPTIONS) {
+	        executeHeadless(new ModelUpdateOperation(null, mappings, SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber())) {
+	        	protected boolean isAttemptHeadlessMerge() {
+	        		return true;
+	        	}
+	        	protected void showPreview(String title, IProgressMonitor monitor) {
+	        		// Don't preview anything
+	        		getContext().dispose();
+	        	}
+	        	protected void promptForNoChanges() {
+	        		// Do nothing
+	        	}
+	        	protected boolean consultModelsWhenGeneratingScope() {
+	        		return false;
+	        	}
+	        });
+        } else {
+        	executeHeadless(new UpdateOperation(null, mappings, options, null));
+        }
     }
 
     protected void replace(IContainer container, String[] hierarchy, CVSTag tag, boolean recurse) throws CoreException {
@@ -256,11 +278,32 @@ public class EclipseTest extends ResourceTest {
 		executeHeadless(op);
 	}
 	
-    protected void replace(ResourceMapping[] mappers) throws CVSException {
-        executeHeadless(new ReplaceOperation(null, mappers, null));
+    protected void replace(ResourceMapping[] mappings) throws CVSException {
+        executeHeadless(new ModelReplaceOperation(null, mappings, SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber())) {
+        	protected boolean promptForOverwrite() {
+        		return true;
+        	}
+        	protected void showPreview(String title, IProgressMonitor monitor) {
+        		// Don't show a preview. If the repalce failed, the sync tests will detect the failure
+        		getContext().dispose();
+        	}
+        	protected void promptForNoChanges() {
+        		// Do nothing
+        	}
+        	protected boolean consultModelsWhenGeneratingScope() {
+        		return false;
+        	}
+        });
     }
     
 	public void updateProject(IProject project, CVSTag tag, boolean ignoreLocalChanges) throws TeamException {
+		if (tag == null) {
+			ResourceMapping[] mappings = asResourceMappers(new IResource[] { project }, IResource.DEPTH_INFINITE);
+			if (ignoreLocalChanges)
+				replace(mappings);
+			else
+				update(mappings, Command.NO_LOCAL_OPTIONS);
+		}
 		LocalOption[] options = Command.NO_LOCAL_OPTIONS;
 		if(ignoreLocalChanges) {
 			options = new LocalOption[] {Update.IGNORE_LOCAL_CHANGES};
@@ -921,7 +964,7 @@ public class EclipseTest extends ResourceTest {
 		});
 	}
 
-	protected static void executeHeadless(CVSOperation op) throws CVSException {
+	protected static void executeHeadless(TeamOperation op) throws CVSException {
 		try {
 			try {
 				// Bypass contxt by executing run(IProgressMonitor) directly

@@ -73,4 +73,11 @@
             id="org.eclipse.team.tests.cvs.ui.perspective1"
             name="CVS Test Perspective"/>
    </extension>
+   <extension
+         id="modelProvider"
+         point="org.eclipse.core.resources.modelProviders">
+      <modelProvider
+            class="org.eclipse.team.tests.ccvs.core.mappings.TestModelProvider"
+            name="CVS Test Model"/>
+   </extension>
 </plugin>

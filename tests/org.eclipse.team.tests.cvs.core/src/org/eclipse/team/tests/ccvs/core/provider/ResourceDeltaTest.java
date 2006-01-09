@@ -10,32 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core.provider;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.resources.IResourceProxyVisitor;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -194,11 +177,34 @@ public class ResourceDeltaTest extends EclipseTest {
 			updateProject(project, null, false);
 		} catch (CVSException e) {
 			// We expect to get an out-of-sync exception
-			if (e.getStatus().getCode() != IResourceStatus.OUT_OF_SYNC_LOCAL)
+			if (!containsCode(e, IResourceStatus.OUT_OF_SYNC_LOCAL))
 				throw e;
 		}
 	}
 	
+	private boolean containsCode(CoreException e, int code) {
+		return containsCode(e.getStatus(), code);
+	}
+	
+	private boolean containsCode(IStatus status, int code) {
+		if (status.getCode() == code)
+			return true;
+		if (status.isMultiStatus()) {
+			IStatus[] children = status.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				IStatus child = children[i];
+				if (containsCode(child,code))
+					return true;
+			}
+		}
+		Throwable t = status.getException();
+		if (t instanceof CoreException) {
+			CoreException e = (CoreException) t;
+			return containsCode(e, code);
+		}
+		return false;
+	}
+
 	public void testAllCVSFolderRemoval() throws CoreException, TeamException {
 		IProject project = createProject("testAllCVSFolderRemoval", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/folder2/b.txt"});
 		// ensure that all th sync info is loaded

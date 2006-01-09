@@ -34,8 +34,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTreeBuilder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.CacheRemoteContentsOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.core.ResourceVariantCache;
 import org.eclipse.team.internal.core.ResourceVariantCacheEntry;
 import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
@@ -56,6 +55,22 @@ public class ResourceMapperTests extends EclipseTest {
 
     public static Test suite() {
         return suite(ResourceMapperTests.class);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.tests.ccvs.core.EclipseTest#setUp()
+     */
+    protected void setUp() throws Exception {
+    	super.setUp();
+    	RepositoryProviderOperation.consultModelsWhenBuildingScope = false;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.tests.ccvs.core.EclipseTest#tearDown()
+     */
+    protected void tearDown() throws Exception {
+    	super.tearDown();
+    	RepositoryProviderOperation.consultModelsWhenBuildingScope = true;
     }
     
     /**
@@ -270,8 +285,9 @@ public class ResourceMapperTests extends EclipseTest {
     
     private ResourceMapping asResourceMapping(final IResource[] resources, final int depth) {
         return new ResourceMapping() {
+        	private Object object = new Object();
             public Object getModelObject() {
-                return ResourcesPlugin.getWorkspace();
+                return object;
             }
             public IProject[] getProjects() {
                 return getProjects(resources);
@@ -290,7 +306,7 @@ public class ResourceMapperTests extends EclipseTest {
                     };
             }
 			public String getModelProviderId() {
-				return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
+				return "org.eclipse.team.tests.cvs.core.modelProvider";
 			}
         };
     }

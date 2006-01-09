@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.*;
@@ -47,7 +45,7 @@ public class ModelReplaceOperation extends ModelUpdateOperation {
 		// TODO: cancel must free context to avoid leaking
 		if (!hasLocalChanges() || promptForOverwrite()) {
 			// Merge all changes ignoring any locla changes
-			IDiffNode[] diffs = getContext().getDiffTree().getDiffs(ResourcesPlugin.getWorkspace().getRoot(), IResource.DEPTH_INFINITE);
+			IDiffNode[] diffs = getContext().getDiffTree().getDiffs(getScope().getTraversals());
 			((IMergeContext)getContext()).merge(diffs, true /* overwrite */, monitor);
 			getContext().dispose();
 			return true;
@@ -55,7 +53,10 @@ public class ModelReplaceOperation extends ModelUpdateOperation {
 		return false;
 	}
 
-	private boolean promptForOverwrite() {
+	/*
+	 * Mde porotected to be overriden by test cases.
+	 */
+	protected boolean promptForOverwrite() {
 		final int[] result = new int[] { 1 };
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {

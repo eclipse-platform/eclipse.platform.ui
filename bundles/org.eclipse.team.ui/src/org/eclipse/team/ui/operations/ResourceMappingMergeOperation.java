@@ -182,7 +182,11 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 		return new MultiStatus(TeamUIPlugin.ID, 0, (IStatus[]) notOK.toArray(new IStatus[notOK.size()]), "Multiple potential side effects of this operation have been detected.", null);
 	}
 
-	private void promptForNoChanges() {
+	/**
+	 * Method invoked when the context contains no changes so that the user
+	 * can be informed.
+	 */
+	protected void promptForNoChanges() {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
 				MessageDialog.openInformation(getShell(), TeamUIMessages.ResourceMappingMergeOperation_0, TeamUIMessages.ResourceMappingMergeOperation_1);
