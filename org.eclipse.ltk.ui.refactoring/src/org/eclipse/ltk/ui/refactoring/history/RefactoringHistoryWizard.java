@@ -388,8 +388,10 @@ public class RefactoringHistoryWizard extends Wizard {
 			public final void run() throws Exception {
 				if (fAboutToPerformFired) {
 					final RefactoringStatusEntry entry= historyPerformed(new NullProgressMonitor()).getEntryWithHighestSeverity();
-					if (entry != null)
-						RefactoringUIPlugin.log(new Status(entry.getSeverity(), entry.getPluginId(), entry.getCode(), entry.getMessage(), null));
+					if (entry != null) {
+						final int severity= entry.getSeverity();
+						RefactoringUIPlugin.log(new Status(severity == RefactoringStatus.FATAL ? IStatus.ERROR : severity, entry.getPluginId(), entry.getCode(), entry.getMessage(), null));
+					}
 				}
 			}
 		});
