@@ -21,6 +21,7 @@ import java.util.Comparator;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 
@@ -201,7 +202,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 						return (int) (predecessor.getTimeStamp() - successor.getTimeStamp());
 					}
 				});
-				RefactoringCore.getRefactoringHistoryService().writeRefactoringDescriptors(proxies, stream, RefactoringDescriptor.NONE);
+				RefactoringCore.getRefactoringHistoryService().writeRefactoringDescriptors(proxies, stream, RefactoringDescriptor.NONE, new NullProgressMonitor());
 			} catch (CoreException exception) {
 				final Throwable throwable= exception.getStatus().getException();
 				if (throwable instanceof IOException)
@@ -258,7 +259,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 				final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
 				final boolean history= service.hasProjectHistory(project);
 				if (history != fHasProjectHistory && project != null)
-					service.setProjectHistory(project, history);
+					service.setProjectHistory(project, history, null);
 			} catch (BackingStoreException exception) {
 				RefactoringUIPlugin.log(exception);
 			} catch (CoreException exception) {

@@ -21,6 +21,7 @@ import java.util.Comparator;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
@@ -141,7 +142,7 @@ public final class ExportRefactoringHistoryDialog extends RefactoringHistoryDial
 						return (int) (predecessor.getTimeStamp() - successor.getTimeStamp());
 					}
 				});
-				RefactoringCore.getRefactoringHistoryService().writeRefactoringDescriptors(proxies, stream, RefactoringDescriptor.NONE);
+				RefactoringCore.getRefactoringHistoryService().writeRefactoringDescriptors(proxies, stream, RefactoringDescriptor.NONE, new NullProgressMonitor());
 			} catch (CoreException exception) {
 				final Throwable throwable= exception.getStatus().getException();
 				if (throwable instanceof IOException)
