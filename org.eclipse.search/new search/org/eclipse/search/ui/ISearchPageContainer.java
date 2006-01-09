@@ -120,13 +120,12 @@ public interface ISearchPageContainer {
 	public void setSelectedWorkingSets(IWorkingSet[] workingSets);
 	
 	/**
-	 * Returns the names of the enclosing projects if selected by the container. The enclosing projects should only be used if 
-	 * the selected scope is equal to {@link #SELECTED_PROJECTS_SCOPE}.
+	 * Returns the names of the enclosing projects if selected by the container or <code>null</code>
+	 * if the scope is not {@link #SELECTED_PROJECTS_SCOPE}
 	 * 
-	 * @return the names of the enclosing project or <code>null</code> if no enclosing projects could be evaluated from the current
-	 * selection or editor input
+	 * @return the names of the enclosing project or <code>null</code> if the scope is not {@link #SELECTED_PROJECTS_SCOPE}.
 	 * @since 3.2
 	 */
-	public String[] getEnclosingProjectNames();
+	public String[] getSelectedProjectNames();
 	
 }

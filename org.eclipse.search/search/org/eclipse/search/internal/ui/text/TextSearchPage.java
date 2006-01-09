@@ -603,7 +603,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	}
 	
 	private FileNamePatternSearchScope getEnclosingProjectScope() {
-		String[] enclosingProjectName= getContainer().getEnclosingProjectNames();
+		String[] enclosingProjectName= getContainer().getSelectedProjectNames();
 		if (enclosingProjectName == null) {
 			return FileNamePatternSearchScope.newWorkspaceScope(fSearchDerived);
 		}

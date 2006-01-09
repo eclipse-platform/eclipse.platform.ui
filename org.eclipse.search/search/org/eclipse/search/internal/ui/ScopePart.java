@@ -286,7 +286,7 @@ public class ScopePart {
 		fUseProject= new Button(fPart, SWT.RADIO);
 		fUseProject.setData(new Integer(ISearchPageContainer.SELECTED_PROJECTS_SCOPE));
 		fUseProject.setText(SearchMessages.ScopePart_enclosingProjectsScope_text); 
-		fUseProject.setEnabled(fSearchDialog.getEnclosingProjectNames() != null);
+		fUseProject.setEnabled(fSearchDialog.getEnclosingProjectNames().length > 0);
 
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan= 2;

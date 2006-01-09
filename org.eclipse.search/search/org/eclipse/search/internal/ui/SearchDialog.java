@@ -175,9 +175,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			if (name != null) {
 				return new String[] { name };
 			}
-			return null;
-		}
-		if (selection instanceof IStructuredSelection) {
+		} else if (selection instanceof IStructuredSelection) {
 			HashSet res= new HashSet();
 			for (Iterator iter= ((IStructuredSelection) selection).iterator(); iter.hasNext();) {
 				Object curr= iter.next();
@@ -207,12 +205,11 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 					}
 				}
 			}
-			if (res.isEmpty()) {
-				return null;
+			if (!res.isEmpty()) {
+				return (String[]) res.toArray(new String[res.size()]);
 			}
-			return (String[]) res.toArray(new String[res.size()]);
 		}
-		return null;
+		return new String[0];
 	}
 
 	/* (non-Javadoc)
@@ -586,6 +583,14 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	
 	public String[] getEnclosingProjectNames() {
 		return fCurrentEnclosingProject;
+	}
+	
+	
+	public String[] getSelectedProjectNames() {
+		if (getSelectedScope() != SELECTED_PROJECTS_SCOPE) {
+			return getEnclosingProjectNames();
+		}
+		return null;
 	}
 
 	/*
