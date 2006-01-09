@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.tests.harness;
 
+import java.io.IOException;
 import org.eclipse.core.runtime.*;
 
 /**
  * Home for file system-related utility methods. 
  */
 public class FileSystemHelper {
-	/** counter for generating unique random filesystem locations */
+	/** counter for generating unique random file system locations */
 	protected static int nextLocationCounter = 0;
 	private static final long MASK = 0x00000000FFFFFFFFL;
 
@@ -24,7 +25,13 @@ public class FileSystemHelper {
 	 * Return the root directory for the temp dir.
 	 */
 	public static IPath getTempDir() {
-		return new Path(System.getProperty("java.io.tmpdir"));
+		String tempPath = System.getProperty("java.io.tmpdir");
+		try {
+			tempPath = new java.io.File(tempPath).getCanonicalPath();
+		} catch (IOException e) {
+			//ignore and use non-canonical path
+		}
+		return new Path(tempPath);
 	}
 
 	/**
