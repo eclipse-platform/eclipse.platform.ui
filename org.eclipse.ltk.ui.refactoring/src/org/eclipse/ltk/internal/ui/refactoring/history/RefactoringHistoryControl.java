@@ -32,15 +32,13 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
@@ -89,92 +87,135 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		 */
 		public RefactoringHistoryTreeViewer(final Composite parent, final int style) {
 			super(parent, style);
-		}
+			addCheckStateListener(new ICheckStateListener() {
 
-		/**
-		 * Finds the widget corresponding to the specified element.
-		 * 
-		 * @param element
-		 *            the element
-		 * @return the corresponding widget
-		 */
-		public Widget findWidget(final Object element) {
-			return findItem(element);
-		}
+				/**
+				 * {@inheritDoc}
+				 */
+				public final void checkStateChanged(final CheckStateChangedEvent event) {
+					updateCheckState(event.getElement(), event.getChecked());
+					handleCheckStateChanged(event);
+				}
 
-		/**
-		 * Returns the child items of the specified widget.
-		 * 
-		 * @param widget
-		 *            the widget
-		 * @return the child items
-		 */
-		protected Item[] getChildItems(final Widget widget) {
-			if (widget instanceof TreeItem)
-				return ((TreeItem) widget).getItems();
-			if (widget instanceof Tree)
-				return ((Tree) widget).getItems();
-			return null;
-		}
+				/**
+				 * Returns the children of the specified element.
+				 * 
+				 * @param element
+				 *            the element
+				 * @return the children of the element
+				 */
+				private Object[] getChildren(final Object element) {
+					return ((RefactoringHistoryContentProvider) getContentProvider()).getChildren(element);
+				}
 
-		/**
-		 * Is the specified element to be displayed as grayed out?
-		 * 
-		 * @param parent
-		 *            the parent element to test
-		 * @param children
-		 *            the child elements
-		 * @return <code>true</code> if the element needs to be grayed out,
-		 *         <code>false</code> otherwise
-		 */
-		protected boolean isGrayedElement(final Object parent, final Object[] children) {
-			int elements= 0;
-			for (int index= 0; index < children.length; index++) {
-				if (getGrayed(children[index]) || getChecked(children[index]))
-					elements++;
-			}
-			return !(elements == 0 || elements == children.length);
-		}
+				/**
+				 * Returns the parent of the specified element.
+				 * 
+				 * @param element
+				 *            the element
+				 * @return the parent of the element
+				 */
+				private Object getParent(final Object element) {
+					return ((RefactoringHistoryContentProvider) getContentProvider()).getParent(element);
+				}
 
-		/**
-		 * Sets the children to gray.
-		 * 
-		 * @param items
-		 *            the tree items
-		 * @param grayed
-		 *            <code>true</code> to set to gray, <code>false</code>
-		 *            otherwise
-		 */
-		protected void setChildrenGrayed(final Item[] items, final boolean grayed) {
-			for (int index= 0; index < items.length; index++) {
-				if (items[index] instanceof TreeItem) {
-					final TreeItem item= (TreeItem) items[index];
-					if (item.getGrayed() != grayed) {
-						item.setGrayed(grayed);
-						setChildrenGrayed(getChildItems(item), grayed);
+				/**
+				 * Determines whether the specified element is checked.
+				 * 
+				 * @param element
+				 *            the element
+				 * @param checked
+				 *            <code>true</code> to render it checked,
+				 *            <code>false</code> otherwise
+				 */
+				private void setElementChecked(final Object element, final boolean checked) {
+					final Widget widget= RefactoringHistoryTreeViewer.this.findItem(element);
+					if (widget instanceof TreeItem) {
+						final TreeItem item= (TreeItem) widget;
+						item.setChecked(checked);
 					}
 				}
-			}
-		}
 
-		/**
-		 * Sets the subtree of the specified element to gray.
-		 * 
-		 * @param element
-		 *            the element
-		 * @param grayed
-		 *            <code>true</code> to set to gray, <code>false</code>
-		 *            otherwise
-		 */
-		protected void setSubtreeGrayed(final Object element, final boolean grayed) {
-			final Widget widget= findWidget(element);
-			if (widget instanceof TreeItem) {
-				final TreeItem item= (TreeItem) widget;
-				if (item.getGrayed() != grayed) {
-					item.setGrayed(grayed);
-					setChildrenGrayed(getChildItems(item), grayed);
+				/**
+				 * Determines whether the specified element is grayed.
+				 * 
+				 * @param element
+				 *            the element
+				 * @param grayed
+				 *            <code>true</code> to render it grayed,
+				 *            <code>false</code> otherwise
+				 */
+				private void setElementGrayed(final Object element, final boolean grayed) {
+					final Widget widget= RefactoringHistoryTreeViewer.this.findItem(element);
+					if (widget instanceof TreeItem) {
+						final TreeItem item= (TreeItem) widget;
+						item.setGrayed(grayed);
+					}
 				}
-			}
+
+				/**
+				 * Determines whether the subtree of the specified element is
+				 * rendered checked.
+				 * 
+				 * @param element
+				 *            the element specifying the subtree
+				 * @param checked
+				 *            <code>true</code> to render the subtree checked,
+				 *            <code>false</code> otherwise
+				 */
+				private void setSubTreeChecked(final Object element, final boolean checked) {
+					setElementChecked(element, checked);
+					final Object[] children= getChildren(element);
+					for (int index= 0; index < children.length; index++) {
+						setSubTreeChecked(children[index], checked);
+					}
+				}
+
+				/**
+				 * Determines whether the subtree of the specified element is
+				 * rendered grayed.
+				 * 
+				 * @param element
+				 *            the element specifying the subtree
+				 * @param grayed
+				 *            <code>true</code> to render the subtree grayed,
+				 *            <code>false</code> otherwise
+				 */
+				private void setSubTreeGrayed(final Object element, final boolean grayed) {
+					setElementGrayed(element, grayed);
+					final Object[] children= getChildren(element);
+					for (int index= 0; index < children.length; index++) {
+						setSubTreeGrayed(children[index], grayed);
+					}
+				}
+
+				/**
+				 * Updates the checkstate of the specified element and
+				 * dependencies.
+				 * 
+				 * @param element
+				 *            the changed element
+				 * @param checked
+				 *            <code>true</code> if the element is checked,
+				 *            <code>false</code> otherwise
+				 */
+				private void updateCheckState(final Object element, final boolean checked) {
+					setSubTreeChecked(element, checked);
+					setSubTreeGrayed(element, false);
+					Object current= getParent(element);
+					while (current != null) {
+						final Object[] children= getChildren(current);
+						int checkCount= 0;
+						for (int index= 0; index < children.length; index++) {
+							if (getChecked(children[index]))
+								checkCount++;
+						}
+						setElementChecked(current, checkCount > 0);
+						setElementGrayed(current, checkCount != 0 && checkCount != children.length);
+						current= getParent(current);
+					}
+				}
+			});
 		}
 	}
 
@@ -225,7 +266,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	public final void createControl() {
 		RefactoringCore.getRefactoringHistoryService().connect();
-		fCaptionImage= RefactoringPluginImages.DESC_OBJS_COMPOSITE_CHANGE.createImage();
+		fCaptionImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_COLL.createImage();
 		GridLayout layout= new GridLayout(2, false);
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
@@ -272,15 +313,6 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 					handleSelectionChanged((IStructuredSelection) selection);
 			}
 		});
-		if (fHistoryViewer instanceof RefactoringHistoryTreeViewer) {
-			final RefactoringHistoryTreeViewer viewer= (RefactoringHistoryTreeViewer) fHistoryViewer;
-			viewer.addCheckStateListener(new ICheckStateListener() {
-
-				public final void checkStateChanged(final CheckStateChangedEvent event) {
-					handleCheckStateChanged(event);
-				}
-			});
-		}
 		fHistoryPane.setContent(fHistoryViewer.getControl());
 		fCommentPane= new CompareViewerSwitchingPane(fSplitterControl, SWT.BORDER | SWT.FLAT) {
 
@@ -297,7 +329,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		};
 		fCommentPane.setText(fControlConfiguration.getCommentCaption());
 		fCommentPane.setEnabled(false);
-		fSplitterControl.setWeights(new int[] { 80, 20});
+		fSplitterControl.setWeights(new int[] { 80, 20 });
 	}
 
 	/**
@@ -336,6 +368,13 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			return (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]);
 		}
 		return getSelectedDescriptors();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final Control getControl() {
+		return this;
 	}
 
 	/**
@@ -413,30 +452,12 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 * Handles the check state changed event.
 	 * 
 	 * @param event
-	 *            the check state changed event
+	 *            the check state event
 	 */
 	protected void handleCheckStateChanged(final CheckStateChangedEvent event) {
-		final RefactoringHistoryTreeViewer viewer= (RefactoringHistoryTreeViewer) fHistoryViewer;
-		BusyIndicator.showWhile(getDisplay(), new Runnable() {
-
-			public final void run() {
-				final RefactoringHistoryContentProvider provider= (RefactoringHistoryContentProvider) viewer.getContentProvider();
-				final Object element= event.getElement();
-				final boolean checked= event.getChecked();
-				viewer.setSubtreeChecked(element, checked);
-				viewer.setSubtreeGrayed(element, false);
-				Object parent= provider.getParent(element);
-				while (parent != null) {
-					final boolean grayed= viewer.isGrayedElement(parent, provider.getChildren(parent));
-					viewer.setChecked(parent, checked || grayed);
-					viewer.setGrayed(parent, grayed);
-					parent= provider.getParent(parent);
-				}
-				final RefactoringDescriptorProxy[] proxies= getCheckedDescriptors();
-				final RefactoringDescriptorProxy[] total= getInput().getDescriptors();
-				fHistoryPane.setText(NLS.bind(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { getHistoryPaneText(), String.valueOf(proxies.length), String.valueOf(total.length)}));
-			}
-		});
+		final RefactoringDescriptorProxy[] proxies= getCheckedDescriptors();
+		final RefactoringDescriptorProxy[] total= RefactoringHistoryControl.this.getInput().getDescriptors();
+		fHistoryPane.setText(NLS.bind(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { getHistoryPaneText(), String.valueOf(proxies.length), String.valueOf(total.length) }));
 	}
 
 	/**
