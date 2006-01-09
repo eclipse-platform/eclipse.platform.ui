@@ -14,7 +14,8 @@ package org.eclipse.jface.text;
 
 /**
  * Default document implementation. Uses a
- * {@link org.eclipse.jface.text.GapTextStore} as default text store and a
+ * {@link org.eclipse.jface.text.GapTextStore} wrapped inside a 
+ * {@link org.eclipse.jface.text.CopyOnWriteTextStore} as default text store and a
  * {@link org.eclipse.jface.text.SequentialRewriteTextStore} when in sequential
  * rewrite mode.
  * <p>
@@ -26,6 +27,7 @@ package org.eclipse.jface.text;
  *
  * @see org.eclipse.jface.text.GapTextStore
  * @see org.eclipse.jface.text.SequentialRewriteTextStore
+ * @see org.eclipse.jface.text.CopyOnWriteTextStore
  */
 public class Document extends AbstractDocument {
 
@@ -35,7 +37,7 @@ public class Document extends AbstractDocument {
 	 */
 	public Document() {
 		super();
-		setTextStore(new GapTextStore(50, 300));
+		setTextStore(new CopyOnWriteTextStore(new GapTextStore(50, 300)));
 		setLineTracker(new DefaultLineTracker());
 		completeInitialization();
 	}
@@ -47,7 +49,7 @@ public class Document extends AbstractDocument {
 	 */
 	public Document(String initialContent) {
 		super();
-		setTextStore(new GapTextStore(50, 300));
+		setTextStore(new CopyOnWriteTextStore(new GapTextStore(50, 300)));
 		setLineTracker(new DefaultLineTracker());
 		getStore().set(initialContent);
 		getTracker().set(initialContent);

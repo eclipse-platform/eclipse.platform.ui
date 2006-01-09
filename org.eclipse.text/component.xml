@@ -9,6 +9,7 @@
  <package name="org.eclipse.jface.text">
    <type name="Assert" instantiate="false"/>
    <type name="ConfigurableLineTracker" subclass="false"/>
+   <type name="CopyOnWriteTextStore" subclass="false"/>
    <type name="DefaultLineTracker" subclass="false"/>
    <type name="GapTextStore" subclass="false"/>
    <type name="TextUtilities" subclass="false" instantiate="false"/>

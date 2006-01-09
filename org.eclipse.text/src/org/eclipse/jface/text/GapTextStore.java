@@ -20,6 +20,7 @@ package org.eclipse.jface.text;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
+ * @see CopyOnWriteTextStore for a copy-on-write text store wrapper
  */
 public class GapTextStore implements ITextStore {
 

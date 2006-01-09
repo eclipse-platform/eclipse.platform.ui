@@ -36,10 +36,10 @@ public class EclipseTextTestSuite {
 		suite.addTest(TextEditTests.suite());
 		suite.addTest(GapTextTest.suite());
 		suite.addTest(ChildDocumentTest.suite());
-		//$JUnit-END$
-		
 		suite.addTest(ProjectionTestSuite.suite());
 		suite.addTest(LinkTestSuite.suite());
+		suite.addTest(CopyOnWriteTextStoreTest.suite());
+		//$JUnit-END$
 		
 		return suite;
 	}
