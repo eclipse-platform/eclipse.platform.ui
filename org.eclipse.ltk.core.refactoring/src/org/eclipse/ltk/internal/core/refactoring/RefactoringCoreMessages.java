@@ -80,6 +80,9 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String PerformRefactoringsOperation_init_error;
 	public static String PerformRefactoringsOperation_perform_refactorings;
 
+	public static String RefactoringSessionReader_missing_version_information;
+	public static String RefactoringSessionReader_unsupported_version_information;
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringCoreMessages.class);
 	}
