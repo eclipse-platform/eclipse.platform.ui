@@ -300,22 +300,18 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	public void setSizeConstraints(int maxWidth, int maxHeight) {
 		fMaxWidth= maxWidth;
 		fMaxHeight= maxHeight;
-		
-		// see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=117602
-		Object layoutData= fText.getLayoutData();
-		if (layoutData instanceof GridData) {
-			if (fMaxWidth > -1)
-				((GridData)layoutData).widthHint= fMaxWidth;
-			else
-				((GridData)layoutData).widthHint= SWT.DEFAULT;
-		}
 	}
 
 	/*
 	 * @see IInformationControl#computeSizeHint()
 	 */
 	public Point computeSizeHint() {
-		return fPopupDialog.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		// see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=117602
+		int widthHint= SWT.DEFAULT;
+		if (fMaxWidth > -1 && fText.getWordWrap())
+			widthHint= fMaxWidth;
+		
+		return fPopupDialog.getShell().computeSize(widthHint, SWT.DEFAULT);
 	}
 
 	/*
