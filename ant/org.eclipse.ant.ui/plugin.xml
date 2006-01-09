@@ -569,16 +569,6 @@ M4 = Platform-specific fourth key -->
          </description>
       </wizard>
     </extension>
-   <extension
-         id="org.eclipse.ant.ui.AntDocumentFactory"
-         name="%antDocumentFactory.name"
-         point="org.eclipse.core.filebuffers.documentCreation">
-      <factory
-            extensions="ant, macrodef"
-            contentTypeId="org.eclipse.ant.core.antBuildFile"
-            class="org.eclipse.ant.internal.ui.editor.text.AntDocumentFactory">
-      </factory>
-   </extension>
    
    <extension
          id="org.eclipse.ant.ui.AntDocumentSetupParticipant"
