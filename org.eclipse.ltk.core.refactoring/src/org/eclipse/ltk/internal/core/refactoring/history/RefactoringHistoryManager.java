@@ -21,10 +21,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.Map.Entry;
 
@@ -54,6 +57,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
+import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
@@ -171,7 +175,7 @@ public final class RefactoringHistoryManager {
 	 * 
 	 * @param store
 	 *            the file store where to read
-	 * @param descriptors
+	 * @param collection
 	 *            the list of descriptors read from the history
 	 * @param count
 	 *            the total number of descriptors to be read
@@ -180,13 +184,13 @@ public final class RefactoringHistoryManager {
 	 * @throws CoreException
 	 *             if an error occurs while reading the descriptors
 	 */
-	private static void readRefactoringDescriptors(final IFileStore store, final List descriptors, final int count, final IProgressMonitor monitor) throws CoreException {
+	private static void readRefactoringDescriptors(final IFileStore store, final Collection collection, final int count, final IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 18);
 			if (count > 0) {
 				final IFileInfo info= store.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 				if (store.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_HISTORY_FILE) && !info.isDirectory()) {
-					readRefactoringDescriptors(store.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)), descriptors, count, monitor);
+					readRefactoringDescriptors(store.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)), collection, count, monitor);
 					monitor.worked(1);
 				} else
 					monitor.worked(3);
@@ -204,7 +208,7 @@ public final class RefactoringHistoryManager {
 				try {
 					subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, stores.length);
 					for (int index= 0; index < stores.length; index++)
-						readRefactoringDescriptors(stores[index], descriptors, count - descriptors.size(), new SubProgressMonitor(subMonitor, 1));
+						readRefactoringDescriptors(stores[index], collection, count - collection.size(), new SubProgressMonitor(subMonitor, 1));
 				} finally {
 					subMonitor.done();
 				}
@@ -221,8 +225,8 @@ public final class RefactoringHistoryManager {
 	 *            the file store to read
 	 * @param project
 	 *            the name of the project, or <code>null</code>
-	 * @param list
-	 *            the list of proxies to fill in
+	 * @param collection
+	 *            the collection of proxies to fill in
 	 * @param start
 	 *            the start time stamp, inclusive
 	 * @param end
@@ -232,7 +236,7 @@ public final class RefactoringHistoryManager {
 	 * @throws CoreException
 	 *             if an error occurs
 	 */
-	private static void readRefactoringDescriptors(final IFileStore store, final String project, final List list, final long start, final long end, final IProgressMonitor monitor) throws CoreException {
+	private static void readRefactoringDescriptors(final IFileStore store, final String project, final Collection collection, final long start, final long end, final IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 22);
 			final IFileInfo info= store.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
@@ -242,7 +246,7 @@ public final class RefactoringHistoryManager {
 					stream= store.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 					final RefactoringDescriptorProxy[] proxies= readRefactoringDescriptorProxies(stream, project, start, end);
 					for (int index= 0; index < proxies.length; index++)
-						list.add(proxies[index]);
+						collection.add(proxies[index]);
 					monitor.worked(1);
 				} catch (IOException exception) {
 					throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
@@ -266,7 +270,7 @@ public final class RefactoringHistoryManager {
 			try {
 				subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, stores.length);
 				for (int index= 0; index < stores.length; index++)
-					readRefactoringDescriptors(stores[index], project, list, start, end, new SubProgressMonitor(subMonitor, 1));
+					readRefactoringDescriptors(stores[index], project, collection, start, end, new SubProgressMonitor(subMonitor, 1));
 			} finally {
 				subMonitor.done();
 			}
@@ -281,7 +285,7 @@ public final class RefactoringHistoryManager {
 	 * 
 	 * @param stream
 	 *            the input stream where to read
-	 * @param descriptors
+	 * @param collection
 	 *            the list of descriptors read from the history
 	 * @param count
 	 *            the total number of descriptors to be read
@@ -290,7 +294,7 @@ public final class RefactoringHistoryManager {
 	 * @throws CoreException
 	 *             if an error occurs while reading the descriptors
 	 */
-	private static void readRefactoringDescriptors(final InputStream stream, final List descriptors, final int count, final IProgressMonitor monitor) throws CoreException {
+	private static void readRefactoringDescriptors(final InputStream stream, final Collection collection, final int count, final IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 1);
 			final RefactoringDescriptor[] results= new RefactoringSessionReader().readSession(new InputSource(new BufferedInputStream(stream))).getRefactorings();
@@ -301,9 +305,9 @@ public final class RefactoringHistoryManager {
 				}
 			});
 			monitor.worked(1);
-			final int size= count - descriptors.size();
+			final int size= count - collection.size();
 			for (int index= 0; index < results.length && index < size; index++)
-				descriptors.add(results[index]);
+				collection.add(results[index]);
 		} finally {
 			monitor.done();
 		}
@@ -529,9 +533,8 @@ public final class RefactoringHistoryManager {
 	 *            the refactoring descriptors to write
 	 * @throws CoreException
 	 *             if an error occurs while writing the descriptors
-	 * @throws IllegalArgumentException
 	 */
-	public static void writeRefactoringDescriptors(final OutputStream stream, final RefactoringDescriptor[] descriptors) throws CoreException, IllegalArgumentException {
+	public static void writeRefactoringDescriptors(final OutputStream stream, final RefactoringDescriptor[] descriptors) throws CoreException {
 		Assert.isNotNull(stream);
 		Assert.isNotNull(descriptors);
 		final RefactoringSessionTransformer transformer= new RefactoringSessionTransformer();
@@ -562,19 +565,19 @@ public final class RefactoringHistoryManager {
 				transform.setOutputProperty(OutputKeys.ENCODING, IRefactoringSerializationConstants.OUTPUT_ENCODING);
 				transform.transform(new DOMSource((Node) result), new StreamResult(stream));
 			} catch (TransformerConfigurationException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, 0, exception.getLocalizedMessage(), exception));
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getLocalizedMessage(), exception));
 			} catch (TransformerFactoryConfigurationError exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, 0, exception.getLocalizedMessage(), exception));
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getLocalizedMessage(), exception));
 			} catch (TransformerException exception) {
 				final Throwable throwable= exception.getException();
 				if (throwable instanceof IOException)
-					throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, 0, throwable.getLocalizedMessage(), throwable));
+					throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, throwable.getLocalizedMessage(), throwable));
 				RefactoringCorePlugin.log(exception);
 			}
 		}
 	}
 
-	/** The cached descriptor, or <code>null</code> */
+	/** The cached session descriptor, or <code>null</code> */
 	private RefactoringSessionDescriptor fCachedDescriptor= null;
 
 	/** The cached document, or <code>null</code> */
@@ -702,16 +705,19 @@ public final class RefactoringHistoryManager {
 		Assert.isTrue(end >= start);
 		Assert.isNotNull(monitor);
 		try {
-			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 12);
-			final List list= new ArrayList();
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 200);
+			final Set set= new HashSet();
 			try {
-				if (fHistoryStore.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).exists())
-					readRefactoringDescriptors(fHistoryStore, fProjectName, list, start, end, new SubProgressMonitor(monitor, 10));
+				if (fHistoryStore.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).exists())
+					readRefactoringDescriptors(fHistoryStore, fProjectName, set, start, end, new SubProgressMonitor(monitor, 80));
+				final IFileStore store= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER).getChild(RefactoringHistoryService.NAME_WORKSPACE_PROJECT);
+				if (store.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).exists())
+					readRefactoringDescriptors(store, null, set, start, end, new SubProgressMonitor(monitor, 80));
 			} catch (CoreException exception) {
 				RefactoringCorePlugin.log(exception);
 			}
-			final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[list.size()];
-			list.toArray(proxies);
+			final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[set.size()];
+			set.toArray(proxies);
 			return new RefactoringHistoryImplementation(proxies);
 		} finally {
 			monitor.done();

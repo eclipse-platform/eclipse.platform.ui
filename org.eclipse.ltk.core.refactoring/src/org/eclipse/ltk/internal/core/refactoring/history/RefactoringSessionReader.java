@@ -24,9 +24,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 import org.xml.sax.Attributes;
@@ -38,10 +40,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Reader for XML-based refactoring sessions.
- * <p>
- * The input object is exspected to be of type {@link org.xml.sax.InputSource}.
- * </p>
+ * Refactoring session reader for XML-based refactoring sessions.
  * 
  * @since 3.2
  */
@@ -91,34 +90,34 @@ final class RefactoringSessionReader extends DefaultHandler {
 	/**
 	 * Reads a refactoring history descriptor from the specified input object.
 	 * 
-	 * @param input
-	 *            the input object
+	 * @param source
+	 *            the input source
 	 * @return a corresponding refactoring history descriptor, or
 	 *         <code>null</code>
 	 * @throws CoreException
-	 *             if an error occurs while reading form the input
+	 *             if an error occurs while reading form the input source
 	 */
-	public RefactoringSessionDescriptor readSession(final Object input) throws CoreException {
-		if (input instanceof InputSource) {
-			try {
-				final InputSource source= (InputSource) input;
-				source.setSystemId("/"); //$NON-NLS-1$
-				createParser(SAXParserFactory.newInstance()).parse(source, this);
-				if (fRefactoringDescriptors != null && fVersion != null) {
-					final RefactoringSessionDescriptor descriptor= new RefactoringSessionDescriptor((RefactoringDescriptor[]) fRefactoringDescriptors.toArray(new RefactoringDescriptor[fRefactoringDescriptors.size()]), fVersion != null ? fVersion : "1.0", fComment); //$NON-NLS-1$
-					return descriptor;
-				}
-			} catch (IOException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
-			} catch (ParserConfigurationException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
-			} catch (SAXException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
-			} finally {
-				fRefactoringDescriptors= null;
-				fVersion= null;
-				fComment= null;
+	public RefactoringSessionDescriptor readSession(final InputSource source) throws CoreException {
+		try {
+			source.setSystemId("/"); //$NON-NLS-1$
+			createParser(SAXParserFactory.newInstance()).parse(source, this);
+			if (fRefactoringDescriptors != null) {
+				if (fVersion == null || "".equals(fVersion)) //$NON-NLS-1$
+					throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.MISSING_REFACTORING_HISTORY_VERSION, RefactoringCoreMessages.RefactoringSessionReader_missing_version_information, null));
+				if (!IRefactoringSerializationConstants.CURRENT_VERSION.equals(fVersion))
+					throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.UNSUPPORTED_REFACTORING_HISTORY_VERSION, RefactoringCoreMessages.RefactoringSessionReader_unsupported_version_information, null));
+				return new RefactoringSessionDescriptor((RefactoringDescriptor[]) fRefactoringDescriptors.toArray(new RefactoringDescriptor[fRefactoringDescriptors.size()]), fVersion, fComment);
 			}
+		} catch (IOException exception) {
+			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getLocalizedMessage(), null));
+		} catch (ParserConfigurationException exception) {
+			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getLocalizedMessage(), null));
+		} catch (SAXException exception) {
+			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getLocalizedMessage(), null));
+		} finally {
+			fRefactoringDescriptors= null;
+			fVersion= null;
+			fComment= null;
 		}
 		return null;
 	}

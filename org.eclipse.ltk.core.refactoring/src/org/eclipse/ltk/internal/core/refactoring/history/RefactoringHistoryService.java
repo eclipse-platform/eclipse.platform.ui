@@ -18,11 +18,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EmptyStackException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -710,17 +712,17 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			monitor= new NullProgressMonitor();
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, projects.length);
-			final List list= new ArrayList();
+			final Set set= new HashSet();
 			for (int index= 0; index < projects.length; index++) {
 				final IProject project= projects[index];
 				if (project.isAccessible()) {
 					final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, new SubProgressMonitor(monitor, 1)).getDescriptors();
 					for (int offset= 0; offset < proxies.length; offset++)
-						list.add(proxies[offset]);
+						set.add(proxies[offset]);
 				}
 			}
-			final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[list.size()];
-			list.toArray(proxies);
+			final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[set.size()];
+			set.toArray(proxies);
 			return new RefactoringHistoryImplementation(proxies);
 		} finally {
 			monitor.done();
@@ -867,58 +869,68 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setProjectHistory(final IProject project, final boolean enable) throws CoreException {
+	public void setProjectHistory(final IProject project, final boolean enable, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(project);
 		Assert.isTrue(project.isAccessible());
-		final String name= project.getName();
-		final URI uri= project.getLocationURI();
-		if (uri != null) {
-			try {
-				if (enable) {
-					final IFileStore source= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(name);
-					if (source.fetchInfo().exists()) {
-						IFileStore destination= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
-						if (destination.fetchInfo().exists())
-							destination.delete(EFS.NONE, null);
-						destination.mkdir(EFS.NONE, null);
-						source.copy(destination, EFS.OVERWRITE, null);
-						source.delete(EFS.NONE, null);
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
+		try {
+			monitor.beginTask("", 300); //$NON-NLS-1$
+			final String name= project.getName();
+			final URI uri= project.getLocationURI();
+			if (uri != null) {
+				try {
+					if (enable) {
+						final IFileStore source= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(name);
+						if (source.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists()) {
+							IFileStore destination= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
+							if (destination.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists())
+								destination.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+							destination.mkdir(EFS.NONE, new SubProgressMonitor(monitor, 20));
+							source.copy(destination, EFS.OVERWRITE, new SubProgressMonitor(monitor, 20));
+							source.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+						}
+					} else {
+						final IFileStore source= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
+						if (source.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists()) {
+							IFileStore destination= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(name);
+							if (destination.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists())
+								destination.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+							destination.mkdir(EFS.NONE, new SubProgressMonitor(monitor, 20));
+							source.copy(destination, EFS.OVERWRITE, new SubProgressMonitor(monitor, 20));
+							source.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+						}
 					}
-				} else {
-					final IFileStore source= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
-					if (source.fetchInfo().exists()) {
-						IFileStore destination= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(name);
-						if (destination.fetchInfo().exists())
-							destination.delete(EFS.NONE, null);
-						destination.mkdir(EFS.NONE, null);
-						source.copy(destination, EFS.OVERWRITE, null);
-						source.delete(EFS.NONE, null);
+				} finally {
+					if (enable)
+						project.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 30));
+					else {
+						final IFolder folder= project.getFolder(NAME_HISTORY_FOLDER);
+						if (folder.exists())
+							folder.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 30));
 					}
-				}
-			} finally {
-				if (enable)
-					project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-				else {
-					final IFolder folder= project.getFolder(NAME_HISTORY_FOLDER);
-					if (folder.exists())
-						folder.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 				}
 			}
+		} finally {
+			monitor.done();
 		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public void writeRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final OutputStream stream, final int filter) throws CoreException {
+	public void writeRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final OutputStream stream, final int filter, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(proxies);
 		Assert.isNotNull(stream);
 		Assert.isTrue(filter >= RefactoringDescriptor.NONE);
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
 		try {
+			monitor.beginTask("", 100 * proxies.length); //$NON-NLS-1$
 			connect();
 			final List list= new ArrayList(proxies.length);
 			for (int index= 0; index < proxies.length; index++) {
-				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new NullProgressMonitor());
+				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 100));
 				if (descriptor != null) {
 					final int flags= descriptor.getFlags();
 					if ((flags | filter) == flags)

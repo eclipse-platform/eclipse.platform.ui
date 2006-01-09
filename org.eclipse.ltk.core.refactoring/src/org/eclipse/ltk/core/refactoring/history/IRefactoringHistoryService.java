@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.core.resources.IProject;
 
+import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
@@ -46,6 +47,8 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
  * @see RefactoringCore
  * @see IRefactoringHistoryListener
  * @see IRefactoringExecutionListener
+ * 
+ * @see RefactoringHistory
  * @see RefactoringDescriptorProxy
  * 
  * @since 3.2
@@ -146,7 +149,7 @@ public interface IRefactoringHistoryService {
 	 * @param projects
 	 *            the projects, which must exist
 	 * @param monitor
-	 *            the progress monitor to use
+	 *            the progress monitor to use, or <code>null</code>
 	 * @return the combined refactoring history
 	 */
 	public RefactoringHistory getRefactoringHistory(IProject[] projects, IProgressMonitor monitor);
@@ -165,7 +168,7 @@ public interface IRefactoringHistoryService {
 	 * @param end
 	 *            the end time stamp, inclusive
 	 * @param monitor
-	 *            the progress monitor to use
+	 *            the progress monitor to use, or <code>null</code>
 	 * @return the combined refactoring history
 	 */
 	public RefactoringHistory getRefactoringHistory(IProject[] projects, long start, long end, IProgressMonitor monitor);
@@ -216,12 +219,29 @@ public interface IRefactoringHistoryService {
 	 * @param stream
 	 *            the input stream
 	 * @param filter
-	 *            the flags which must be present in order to be read from the
-	 *            input stream
-	 * @return a refactoring history
+	 *            the refactoring descriptor flags to filter the refactoring
+	 *            descriptors
+	 * @return a refactoring history containing the filtered refactoring
+	 *         descriptors
 	 * @throws CoreException
-	 *             if an error occurs
+	 *             if an error occurs while reading form the input stream.
+	 *             Reasons include:
+	 *             <ul>
+	 *             <li>The input stream contains no version information for the
+	 *             refactoring history.</li>
+	 *             <li>The input stream contains an unsupported version of a
+	 *             refactoring history.</li>
+	 *             <li>An I/O error occurs while reading the refactoring
+	 *             history from the input stream.</li>
+	 *             </ul>
+	 * 
 	 * @see RefactoringDescriptor#NONE
+	 * @see RefactoringDescriptor#STRUCTURAL_CHANGE
+	 * @see RefactoringDescriptor#BREAKING_CHANGE
+	 * 
+	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
+	 * @see IRefactoringCoreStatusCodes#UNSUPPORTED_REFACTORING_HISTORY_VERSION
+	 * @see IRefactoringCoreStatusCodes#MISSING_REFACTORING_HISTORY_VERSION
 	 */
 	public RefactoringHistory readRefactoringHistory(InputStream stream, int filter) throws CoreException;
 
@@ -253,8 +273,8 @@ public interface IRefactoringHistoryService {
 	 * If an explicit refactoring history is enabled, refactorings executed on
 	 * that particular project are stored in a <code>.refactorings</code>
 	 * folder of the project folder. If no explicit refactoring history is
-	 * enabled, all refactoring information is tracked as well, but persisted
-	 * internally in a plugin-specific way without altering the project.
+	 * enabled, all refactorings are tracked as well, but persisted internally
+	 * in a plugin-specific way without altering the project.
 	 * </p>
 	 * <p>
 	 * Note: This API must not be called from outside the refactoring framework.
@@ -265,10 +285,17 @@ public interface IRefactoringHistoryService {
 	 * @param enable
 	 *            <code>true</code> to enable an explicit project history,
 	 *            <code>false</code> otherwise
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
 	 * @throws CoreException
-	 *             if an error occurs
+	 *             if an error occurs while changing the explicit refactoring
+	 *             history property. Reasons include:
+	 *             <ul>
+	 *             <li>An I/O error occurs while changing the explicit
+	 *             refactoring history property.</li>
+	 *             </ul>
 	 */
-	public void setProjectHistory(IProject project, boolean enable) throws CoreException;
+	public void setProjectHistory(IProject project, boolean enable, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Writes the specified refactoring descriptor proxies to the output stream.
@@ -280,9 +307,24 @@ public interface IRefactoringHistoryService {
 	 * @param filter
 	 *            the flags which must be present in order to be written to the
 	 *            output stream
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
 	 * @throws CoreException
-	 *             if an error occurs
+	 *             if an error occurs while writing to the output stream.
+	 *             Reasons include:
+	 *             <ul>
+	 *             <li>The refactoring descriptors have an illegal format,
+	 *             contain illegal arguments or otherwise illegal information.</li>
+	 *             <li>An I/O error occurs while writing the refactoring
+	 *             descriptors to the output stream.</li>
+	 *             </ul>
+	 * 
 	 * @see RefactoringDescriptor#NONE
+	 * @see RefactoringDescriptor#STRUCTURAL_CHANGE
+	 * @see RefactoringDescriptor#BREAKING_CHANGE
+	 * 
+	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
+	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
 	 */
-	public void writeRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, OutputStream stream, int filter) throws CoreException;
+	public void writeRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, OutputStream stream, int filter, IProgressMonitor monitor) throws CoreException;
 }
