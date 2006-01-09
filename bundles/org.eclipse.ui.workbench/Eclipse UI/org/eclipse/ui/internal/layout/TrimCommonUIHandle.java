@@ -72,6 +72,8 @@ public class TrimCommonUIHandle extends Composite {
 	// CoolBar handling
 	private CoolBar cb = null;
 	private CoolItem ci = null;
+	private static int horizontalHandleSize = -1;
+	private static int verticalHandleSize = -1;
 	
     /*
      * Context Menu
@@ -233,6 +235,14 @@ public class TrimCommonUIHandle extends Composite {
 	 * @return The size that the handle has to be, based on the orientation
 	 */
 	private int getHandleSize() {
+		// Do we already have a 'cached' value?
+		if (orientation == SWT.HORIZONTAL && horizontalHandleSize != -1)
+			return horizontalHandleSize;
+				
+		if (orientation == SWT.VERTICAL && verticalHandleSize != -1)
+			return verticalHandleSize;
+				
+		// Must be the first time, calculate the value
 		CoolBar bar = new CoolBar (trim.getControl().getParent(), orientation);
 		
 		CoolItem item = new CoolItem (bar, SWT.NONE);
@@ -257,7 +267,9 @@ public class TrimCommonUIHandle extends Composite {
 		item.dispose();
 		bar.dispose();
 	
-		int length = 13;
+		// The 'size' is the difference between the start of teh CoolBar and
+		// start of its first control
+		int length;
 		if (orientation == SWT.HORIZONTAL)
 			length = bl.x - cl.x;
 		else
