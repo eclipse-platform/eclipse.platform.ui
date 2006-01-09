@@ -67,7 +67,13 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * mapping in order to determine equality.
 	 */
 	public boolean equals(Object obj) {
-		return obj.equals(getModelObject());
+		if (obj == this)
+			return true;
+		if (obj instanceof ResourceMapping) {
+			ResourceMapping other = (ResourceMapping) obj;
+			return other.getModelObject().equals(getModelObject());
+		}
+		return false;
 	}
 
 	/**
