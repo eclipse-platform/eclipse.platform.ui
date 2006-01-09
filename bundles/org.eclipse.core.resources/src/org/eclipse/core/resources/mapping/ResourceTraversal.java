@@ -86,12 +86,12 @@ public class ResourceTraversal {
 	private boolean contains(IResource resource, IResource child) {
 		if (resource.equals(child))
 			return true;
-		if (child.getParent().equals(resource)) {
+		if (depth == IResource.DEPTH_ZERO)
+			return false;
+		if (child.getParent().equals(resource))
 			return true;
-		}
-		if (getDepth() == IResource.DEPTH_INFINITE) {
+		if (depth == IResource.DEPTH_INFINITE)
 			return resource.getFullPath().isPrefixOf(child.getFullPath());
-		}
 		return false;
 	}
 
