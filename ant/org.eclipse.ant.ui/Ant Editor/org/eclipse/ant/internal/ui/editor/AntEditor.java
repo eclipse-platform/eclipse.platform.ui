@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2006 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -417,22 +417,30 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
             }
 			
             Object lock= getLockObject(document);
-			synchronized (lock) {
-				if (annotationModel instanceof IAnnotationModelExtension) {
-					((IAnnotationModelExtension)annotationModel).replaceAnnotations(fOccurrenceAnnotations, annotationMap);
-				} else {
-					removeOccurrenceAnnotations();
-					Iterator iter= annotationMap.entrySet().iterator();
-					while (iter.hasNext()) {
-						Map.Entry mapEntry= (Map.Entry)iter.next(); 
-						annotationModel.addAnnotation((Annotation)mapEntry.getKey(), (Position)mapEntry.getValue());
-					}
-				}
-				fOccurrenceAnnotations= (Annotation[])annotationMap.keySet().toArray(new Annotation[annotationMap.keySet().size()]);
-			}
+            if (lock == null) {
+                updateAnnotations(annotationModel, annotationMap);
+            } else {
+                synchronized (lock) {
+                    updateAnnotations(annotationModel, annotationMap);
+                }
+            }
 
 			return Status.OK_STATUS;
 		}
+
+        private void updateAnnotations(IAnnotationModel annotationModel, Map annotationMap) {
+            if (annotationModel instanceof IAnnotationModelExtension) {
+            	((IAnnotationModelExtension)annotationModel).replaceAnnotations(fOccurrenceAnnotations, annotationMap);
+            } else {
+            	removeOccurrenceAnnotations();
+            	Iterator iter= annotationMap.entrySet().iterator();
+            	while (iter.hasNext()) {
+            		Map.Entry mapEntry= (Map.Entry)iter.next(); 
+            		annotationModel.addAnnotation((Annotation)mapEntry.getKey(), (Position)mapEntry.getValue());
+            	}
+            }
+            fOccurrenceAnnotations= (Annotation[])annotationMap.keySet().toArray(new Annotation[annotationMap.keySet().size()]);
+        }
 	}	
 	
 	/**
@@ -1198,17 +1206,25 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
         Object lock= getLockObject(doc);
 		//ensure to synchronize so that the AntModel is not nulled out underneath in the AntEditorDocumentProvider
 		//when the editor/doc provider are disposed
-	    synchronized (lock) {
-	    	AntModel model= getAntModel();
-	    	if (model == null) {
-	    		return;
-	    	}
-
-	    	fInitialReconcile= false;
-	    	updateEditorImage(model);
-	    	model.updateForInitialReconcile();
-	    }
+        if (lock == null) {
+            updateModelForInitialReconcile();
+        } else {
+            synchronized (lock) {
+                updateModelForInitialReconcile();
+            }
+        }
 	}
+    
+    private void updateModelForInitialReconcile() {
+        AntModel model= getAntModel();
+        if (model == null) {
+            return;
+        }
+
+        fInitialReconcile= false;
+        updateEditorImage(model);
+        model.updateForInitialReconcile();
+    }
     
     private Object getLockObject(IDocument doc) {
         Object lock= null;
@@ -1445,17 +1461,26 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 
 		IDocument document= documentProvider.getDocument(getEditorInput());
         Object lock= getLockObject(document);
-		synchronized (lock) {
-			if (annotationModel instanceof IAnnotationModelExtension) {
-				((IAnnotationModelExtension)annotationModel).replaceAnnotations(fOccurrenceAnnotations, null);
-			} else {
-				for (int i= 0, length= fOccurrenceAnnotations.length; i < length; i++) {
-					annotationModel.removeAnnotation(fOccurrenceAnnotations[i]);
-				}
-			}
-			fOccurrenceAnnotations= null;
-		}
+        if (lock == null) {
+            updateAnnotationModelForRemoves(annotationModel);
+        } else {
+            synchronized (lock) {
+                updateAnnotationModelForRemoves(annotationModel);
+            }
+        }
 	}
+
+
+    private void updateAnnotationModelForRemoves(IAnnotationModel annotationModel) {
+        if (annotationModel instanceof IAnnotationModelExtension) {
+        	((IAnnotationModelExtension)annotationModel).replaceAnnotations(fOccurrenceAnnotations, null);
+        } else {
+        	for (int i= 0, length= fOccurrenceAnnotations.length; i < length; i++) {
+        		annotationModel.removeAnnotation(fOccurrenceAnnotations[i]);
+        	}
+        }
+        fOccurrenceAnnotations= null;
+    }
 
 	protected void installOccurrencesFinder() {
 		fMarkOccurrenceAnnotations= true;
