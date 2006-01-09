@@ -9,7 +9,7 @@
          This extension point is used to customize the document creation behavior of this plug-in&apos;s default text file buffer manager. It allows to specify which document factory should be used in order to create the document instance of a text file buffer created for a certain file content type, file extension, or file name.
 &lt;br&gt;
 &lt;br&gt;
-&lt;h6 class=CaptionFigColumn id=header&gt;Deprecated since 3.2:&lt;/h6&gt; This extension must no longer be used. We urge existing clients to remove their contribution:
+&lt;h6 class=CaptionFigColumn id=header&gt;Deprecated since 3.2: &lt;/h6&gt; This extension must no longer be used. We urge existing clients to remove their contribution:
 &lt;ul&gt;
 &lt;li&gt;the file buffer manager now provides an &lt;code&gt;ISynchronizable&lt;/code&gt; document. Clients which need a synchronized document can set a lock object. &lt;em&gt;To overwrite an existing lock object is considered bad practice and can break other clients: if the document already has a lock object set then this one should be used by the client&lt;/em&gt;.&lt;/li&gt;
 &lt;li&gt;clients which need a different &lt;code&gt;org.eclipse.jface.text.IDocument&lt;/code&gt; implementation create the corresponding document in their document provider. The custom document will wrap the document provided by the file buffer.&lt;/li&gt;
