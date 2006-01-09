@@ -270,10 +270,14 @@ public class TrimCommonUIHandle extends Composite {
 		// The 'size' is the difference between the start of teh CoolBar and
 		// start of its first control
 		int length;
-		if (orientation == SWT.HORIZONTAL)
+		if (orientation == SWT.HORIZONTAL) {
 			length = bl.x - cl.x;
-		else
+			horizontalHandleSize = length;
+		}
+		else {
 			length = bl.y - cl.y;
+			verticalHandleSize = length;
+		}
 		
 		return length;
 	}
