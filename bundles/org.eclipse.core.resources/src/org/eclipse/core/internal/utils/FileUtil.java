@@ -52,7 +52,12 @@ public class FileUtil {
 		if (path == null)
 			return null;
 		try {
-			return new Path(path.toFile().getCanonicalPath());
+			final String pathString = path.toOSString();
+			final String canonicalPath = new java.io.File(pathString).getCanonicalPath();
+			//only create a new path if necessary
+			if (canonicalPath.equals(pathString))
+				return path;
+			return new Path(canonicalPath);
 		} catch (IOException e) {
 			return path;
 		}
@@ -64,8 +69,14 @@ public class FileUtil {
 	public static URI canonicalURI(URI uri) {
 		if (uri == null)
 			return null;
-		if (EFS.SCHEME_FILE.equals(uri.getScheme()))
-			return URIUtil.toURI(canonicalPath(URIUtil.toPath(uri)));
+		if (EFS.SCHEME_FILE.equals(uri.getScheme())) {
+			//only create a new URI if it is different
+			final IPath inputPath = URIUtil.toPath(uri);
+			final IPath canonicalPath = canonicalPath(inputPath);
+			if (inputPath == canonicalPath)
+				return uri;
+			return URIUtil.toURI(canonicalPath);
+		}
 		return uri;
 	}
 
