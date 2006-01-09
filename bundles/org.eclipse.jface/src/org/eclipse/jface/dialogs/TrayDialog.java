@@ -16,8 +16,11 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -51,9 +54,19 @@ public abstract class TrayDialog extends Dialog {
 	private Control trayControl;
 	
 	/*
-	 * The vertical separator that separates the dialog's content from the tray.
+	 * The separator to the left of the sash.
 	 */
-	private Label separator;
+	private Label leftSeparator;
+	
+	/*
+	 * The separator to the right of the sash.
+	 */
+	private Label rightSeparator;
+	
+	/*
+	 * The sash that allows the user to resize the tray.
+	 */
+	private Sash sash;
 
 	/**
 	 * Creates a tray dialog instance. Note that the window will have no visual
@@ -83,12 +96,16 @@ public abstract class TrayDialog extends Dialog {
 		if (getTray() == null) {
 			throw new IllegalStateException("Tray was not open"); //$NON-NLS-1$
 		}
-		int trayWidth = trayControl.getSize().x + separator.getSize().x;
+		int trayWidth = trayControl.getSize().x + leftSeparator.getSize().x + sash.getSize().x + rightSeparator.getSize().x;
 		trayControl.dispose();
 		trayControl = null;
 		tray = null;
-		separator.dispose();
-		separator = null;
+		leftSeparator.dispose();
+		leftSeparator = null;
+		rightSeparator.dispose();
+		rightSeparator = null;
+		sash.dispose();
+		sash = null;
 		Shell shell = getShell();
 		Rectangle bounds = shell.getBounds();
 		shell.setBounds(bounds.x + ((getDefaultOrientation() == SWT.RIGHT_TO_LEFT) ? trayWidth : 0), bounds.y, bounds.width - trayWidth, bounds.height);
@@ -109,7 +126,7 @@ public abstract class TrayDialog extends Dialog {
 	 */
 	protected Layout getLayout() {
 		GridLayout layout = (GridLayout)super.getLayout();
-		layout.numColumns = 3;
+		layout.numColumns = 5;
 		layout.horizontalSpacing = 0;
 		return layout;
 	}
@@ -144,17 +161,33 @@ public abstract class TrayDialog extends Dialog {
 			throw new UnsupportedOperationException("Trays not supported with custom layouts"); //$NON-NLS-1$
 		}
 		this.tray = tray;
-		Shell shell = getShell();
-		separator = new Label(shell, SWT.SEPARATOR | SWT.VERTICAL);
-		separator.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		final Shell shell = getShell();
+		leftSeparator = new Label(shell, SWT.SEPARATOR | SWT.VERTICAL);
+		leftSeparator.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		sash = new Sash(shell, SWT.VERTICAL);
+		sash.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		rightSeparator = new Label(shell, SWT.SEPARATOR | SWT.VERTICAL);
+		rightSeparator.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		trayControl = tray.createContents(shell);
 		Rectangle clientArea = shell.getClientArea();
-		GridData data = new GridData(GridData.FILL_VERTICAL);
+		final GridData data = new GridData(GridData.FILL_VERTICAL);
 		data.widthHint = trayControl.computeSize(SWT.DEFAULT, clientArea.height).x;
 		trayControl.setLayoutData(data);
-		int trayWidth = separator.computeSize(SWT.DEFAULT, clientArea.height).x + data.widthHint;
+		int trayWidth = leftSeparator.computeSize(SWT.DEFAULT, clientArea.height).x + sash.computeSize(SWT.DEFAULT, clientArea.height).x + rightSeparator.computeSize(SWT.DEFAULT, clientArea.height).x + data.widthHint;
 		Rectangle bounds = shell.getBounds();
 		shell.setBounds(bounds.x - ((getDefaultOrientation() == SWT.RIGHT_TO_LEFT) ? trayWidth : 0), bounds.y, bounds.width + trayWidth, bounds.height);
+		sash.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				if (event.detail != SWT.DRAG) {
+					Rectangle clientArea = shell.getClientArea();
+					int newWidth = clientArea.width - event.x - (sash.getSize().x + rightSeparator.getSize().x);
+					if (newWidth != data.widthHint) {
+						data.widthHint = newWidth;
+						shell.layout();
+					}
+				}
+			}
+		});
 	}
 	
 	/*
@@ -165,7 +198,7 @@ public abstract class TrayDialog extends Dialog {
 			GridLayout grid = (GridLayout)layout;
 			return !grid.makeColumnsEqualWidth && (grid.horizontalSpacing == 0) &&
 					(grid.marginWidth == 0) && (grid.marginHeight == 0) &&
-					(grid.horizontalSpacing == 0) && (grid.numColumns == 3);
+					(grid.horizontalSpacing == 0) && (grid.numColumns == 5);
 		}
 		return false;
 	}
