@@ -84,9 +84,9 @@ public class ResourceURLTest extends ResourceTest {
 
 	private void checkURL(IResource resource) throws Throwable {
 		URL url = getURL(resource);
-		String file = new Path(Platform.resolve(url).getFile()).toString();
-		String metric = resource.getLocation().toString();
-		assertEquals(file, metric);
+		IPath file = new Path(Platform.resolve(url).getFile());
+		IPath metric = resource.getLocation();
+		assertEquals(metric, file);
 	}
 
 	public void testBasicURLs() throws Throwable {

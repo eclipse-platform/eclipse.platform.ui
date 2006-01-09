@@ -1337,9 +1337,10 @@ public class IResourceTest extends ResourceTest {
 		//open project
 		assertNull("2.0", project.getRawLocation());
 		//resources in open project
-		assertEquals("2.1", Platform.getLocation().append(topFolder.getFullPath()), topFolder.getRawLocation());
-		assertEquals("2.2", Platform.getLocation().append(topFile.getFullPath()), topFile.getRawLocation());
-		assertEquals("2.3", Platform.getLocation().append(deepFile.getFullPath()), deepFile.getRawLocation());
+		final IPath workspaceLocation = getWorkspace().getRoot().getLocation();
+		assertEquals("2.1", workspaceLocation.append(topFolder.getFullPath()), topFolder.getRawLocation());
+		assertEquals("2.2", workspaceLocation.append(topFile.getFullPath()), topFile.getRawLocation());
+		assertEquals("2.3", workspaceLocation.append(deepFile.getFullPath()), deepFile.getRawLocation());
 
 		try {
 			project.close(getMonitor());
@@ -1349,9 +1350,9 @@ public class IResourceTest extends ResourceTest {
 		//closed project
 		assertNull("3.0", project.getRawLocation());
 		//resource in closed project
-		assertEquals("3.1", Platform.getLocation().append(topFolder.getFullPath()), topFolder.getRawLocation());
-		assertEquals("3.2", Platform.getLocation().append(topFile.getFullPath()), topFile.getRawLocation());
-		assertEquals("3.3", Platform.getLocation().append(deepFile.getFullPath()), deepFile.getRawLocation());
+		assertEquals("3.1", workspaceLocation.append(topFolder.getFullPath()), topFolder.getRawLocation());
+		assertEquals("3.2", workspaceLocation.append(topFile.getFullPath()), topFile.getRawLocation());
+		assertEquals("3.3", workspaceLocation.append(deepFile.getFullPath()), deepFile.getRawLocation());
 
 		IPath projectLocation = getRandomLocation();
 		IPath folderLocation = getRandomLocation();

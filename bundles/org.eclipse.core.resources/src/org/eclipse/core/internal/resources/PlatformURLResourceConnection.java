@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -74,8 +75,14 @@ public class PlatformURLResourceConnection extends PlatformURLConnection {
 		// register connection type for platform:/resource/ handling
 		if (rootURL != null)
 			return;
+		File rootFile= root.toFile();
 		try {
-			rootURL = new URL("file:" + root.toString()); //$NON-NLS-1$
+			rootFile = rootFile.getCanonicalFile();
+		} catch (IOException e) {
+			//don't use canonical form
+		}
+		try {
+			rootURL = rootFile.toURL();
 		} catch (MalformedURLException e) {
 			// should never happen but if it does, the resource URL cannot be supported.
 			return;
