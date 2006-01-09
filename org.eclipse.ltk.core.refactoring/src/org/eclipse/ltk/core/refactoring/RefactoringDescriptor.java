@@ -21,9 +21,9 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 /**
  * Descriptor object of a refactoring.
  * <p>
- * A refactoring descriptor contains refactoring-specific data which allows to
+ * A refactoring descriptor contains refactoring-specific data which allows the
  * framework to completely reconstruct a particular refactoring instance and
- * execute it on the workspace. Refactoring descriptors are identified by their
+ * execute it on an arbitrary workspace. Refactoring descriptors are identified by their
  * refactoring id {@link #getID()} and their time stamps {@link #getTimeStamp()}.
  * </p>
  * <p>
@@ -322,7 +322,7 @@ public class RefactoringDescriptor implements Comparable {
 	}
 
 	/**
-	 * Sets the time stamp of this refactoring.
+	 * Sets the time stamp of this refactoring. This method can be called only once.
 	 * <p>
 	 * Note: This API must not be called from outside the refactoring framework.
 	 * </p>

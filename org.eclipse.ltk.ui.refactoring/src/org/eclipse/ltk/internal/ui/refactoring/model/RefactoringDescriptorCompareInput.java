@@ -73,7 +73,7 @@ public final class RefactoringDescriptorCompareInput extends PlatformObject impl
 	 * 
 	 * @param descriptor
 	 *            the refactoring descriptor
-	 * @param kind
+	 * @param kind the differencer kind
 	 */
 	public RefactoringDescriptorCompareInput(final RefactoringDescriptorProxy descriptor, final int kind) {
 		Assert.isNotNull(descriptor);

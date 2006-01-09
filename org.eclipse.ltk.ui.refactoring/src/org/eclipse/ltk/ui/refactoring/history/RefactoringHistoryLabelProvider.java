@@ -45,6 +45,7 @@ import org.eclipse.osgi.util.NLS;
  * </p>
  * 
  * @see IRefactoringHistoryControl
+ * @see RefactoringHistoryControlConfiguration
  * 
  * @since 3.2
  */

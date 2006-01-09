@@ -12,6 +12,8 @@ package org.eclipse.ltk.ui.refactoring.history;
 
 import org.eclipse.core.resources.IProject;
 
+import org.eclipse.ltk.ui.refactoring.RefactoringUI;
+
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 /**
@@ -23,6 +25,9 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
  * <p>
  * Note: This API is considered experimental and may change in the near future.
  * </p>
+ * 
+ * @see RefactoringUI#createRefactoringHistoryControl(org.eclipse.swt.widgets.Composite,
+ *      RefactoringHistoryControlConfiguration)
  * 
  * @see IRefactoringHistoryControl
  * @see RefactoringHistoryLabelProvider

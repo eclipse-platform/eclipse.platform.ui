@@ -31,7 +31,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
  * Refactoring history listener which continuosly persists the global
- * refactoring history.
+ * refactoring history in the different history locations.
  * 
  * @since 3.2
  */

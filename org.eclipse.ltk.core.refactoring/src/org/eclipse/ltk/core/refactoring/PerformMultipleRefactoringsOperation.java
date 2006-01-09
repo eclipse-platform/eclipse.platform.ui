@@ -37,7 +37,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringInstanceFact
  * <code>IWorkspace</code> to achieve proper delta batching.
  * </p>
  * <p>
- * Note: this class is not intended to be extended outside of the refactoring
+ * Note: this class is not intended to be instantiated or extended outside of the refactoring
  * framework.
  * </p>
  * <p>

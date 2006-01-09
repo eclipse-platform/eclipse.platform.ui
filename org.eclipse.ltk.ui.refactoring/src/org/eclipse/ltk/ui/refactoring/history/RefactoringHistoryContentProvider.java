@@ -459,7 +459,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * Returns the refactoring history root elements.
 	 * <p>
 	 * This class is NOT official API. It is used within the refactoring UI
-	 * plug-in to optimize rendering.
+	 * plug-in to optimize rendering of refactoring history elements.
 	 * </p>
 	 * 
 	 * @return the refactoring history root elements

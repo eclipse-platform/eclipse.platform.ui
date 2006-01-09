@@ -19,7 +19,7 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
 /**
- * Proxy to a refactoring descriptor.
+ * Proxy of a refactoring descriptor.
  * <p>
  * Refactoring descriptors are exposed by the refactoring history service as
  * lightweight proxy objects. The refactoring history service may hand out any
@@ -27,13 +27,14 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
  * the time stamp {@link #getTimeStamp()}, the related project
  * {@link #getProject()} and description {@link #getDescription()}. In order to
  * access other information such as arguments and comments, clients have to call
- * {@link #requestDescriptor(IProgressMonitor)} in order to obtain the
+ * {@link #requestDescriptor(IProgressMonitor)} in order to obtain the actual
  * refactoring descriptor.
  * </p>
  * <p>
  * Refactoring descriptors are potentially heavyweight objects which should not
- * be held on to. Proxies which are retrieved from external sources may
- * encapsulate refactoring descriptors and should not be held in memory as well.
+ * be held on to. Proxies which are retrieved from external sources (e.g. not
+ * from the local refactoring history service) may encapsulate refactoring
+ * descriptors and should not be held in memory as well.
  * </p>
  * <p>
  * All time stamps are measured in UTC milliseconds from the epoch (see
