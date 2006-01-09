@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -69,8 +70,8 @@ public class TrimCommonUIHandle extends Composite {
 	private int orientation;
 
 	// CoolBar handling
-	private CoolBar cb;
-	private CoolItem ci;
+	private CoolBar cb = null;
+	private CoolItem ci = null;
 	
     /*
      * Context Menu
@@ -145,6 +146,9 @@ public class TrimCommonUIHandle extends Composite {
     	
     	// Set the control up with all its various hooks, cursor...
     	setup(layout, trim, curSide);
+		
+        // Listen to size changes to keep the CoolBar synched
+        addControlListener(controlListener);
     }
 
 	/**
@@ -152,7 +156,7 @@ public class TrimCommonUIHandle extends Composite {
 	 * This method can also be used to 'recycle' a trim handle as long as the new handle
 	 * is for trim under the same parent as it was originally used for.
 	 */
-	private void setup(TrimLayout layout, IWindowTrim trim, int curSide) {    	
+	public void setup(TrimLayout layout, IWindowTrim trim, int curSide) {    	
     	this.layout = layout;
     	this.trim = trim;
     	this.toDrag = trim.getControl();
@@ -167,9 +171,6 @@ public class TrimCommonUIHandle extends Composite {
         
 		// Create a window trim proxy for the handle
 		createWindowTrimProxy();
-		
-        // Listen to size changes to keep the CoolBar synched
-        addControlListener(controlListener);
        	
     	// Set the cursor affordance
     	setDragCursor();
@@ -183,6 +184,8 @@ public class TrimCommonUIHandle extends Composite {
         dockMenuManager.add(dockContributionItem);
 
         cb.addListener(SWT.MenuDetect, menuListener);
+        
+        setVisible(true);
     }
 
     /**
@@ -230,15 +233,37 @@ public class TrimCommonUIHandle extends Composite {
 	 * @return The size that the handle has to be, based on the orientation
 	 */
 	private int getHandleSize() {
-//		Point p = cb.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-//		
-//		if (orientation == SWT.HORIZONTAL)
-//			return p.x;
-//		
-//		return p.y;
+		CoolBar bar = new CoolBar (trim.getControl().getParent(), orientation);
 		
-		// KLUDGE!! return a constant for now
-		return 16;
+		CoolItem item = new CoolItem (bar, SWT.NONE);
+		
+		Label ctrl = new Label (bar, SWT.PUSH);
+		ctrl.setText ("Button 1"); //$NON-NLS-1$
+	    Point size = ctrl.computeSize (SWT.DEFAULT, SWT.DEFAULT);
+		
+	    Point ps = item.computeSize (size.x, size.y);
+		item.setPreferredSize (ps);
+		item.setControl (ctrl);
+
+		bar.pack ();
+
+		// OK, now the difference between the location of the CB and the
+		// location of the 
+		Point bl = ctrl.getLocation();
+		Point cl = bar.getLocation();
+
+		// Toss them now...
+		ctrl.dispose();
+		item.dispose();
+		bar.dispose();
+	
+		int length = 13;
+		if (orientation == SWT.HORIZONTAL)
+			length = bl.x - cl.x;
+		else
+			length = bl.y - cl.y;
+		
+		return length;
 	}
 	
 	/**
@@ -250,6 +275,13 @@ public class TrimCommonUIHandle extends Composite {
 	 * @param orientation
 	 */
 	public void insertCoolBar(int orientation) {
+		// Clean up the previous info in case we've changed orientation
+		if (cb != null) {
+			ci.dispose();
+	        PresentationUtil.removeDragListener(cb, dragListener);
+			cb.dispose();
+		}
+		
 		// Create the necessary parts...
 		cb = new CoolBar(this, orientation | SWT.FLAT);
 		cb.setLocation(0,0);
