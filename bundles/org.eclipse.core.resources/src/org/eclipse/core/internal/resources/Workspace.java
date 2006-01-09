@@ -62,7 +62,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected long nextMarkerId = 0;
 	protected Synchronizer synchronizer;
 	protected IProject[] buildOrder = null;
-	protected IWorkspaceRoot defaultRoot = new WorkspaceRoot(Path.ROOT, this);
+	protected final IWorkspaceRoot defaultRoot = new WorkspaceRoot(Path.ROOT, this);
 
 	protected final HashSet lifecycleListeners = new HashSet(10);
 
