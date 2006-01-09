@@ -46,10 +46,10 @@ public class UpdateSilentAction extends WorkspaceTraversalAction {
 		//For 3.2 M3 release: check to see if the user wants to perform a model update or just a 
 		//regular update action
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-	    if (store.getBoolean(ICVSUIConstants.PREF_ENABLEMODELUPDATE)){
+		if (!store.getBoolean(ICVSUIConstants.PREF_ENABLEMODELUPDATE) || CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_UPDATE_HANDLING).equals(ICVSUIConstants.PREF_UPDATE_HANDLING_TRADITIONAL)) {
+			new UpdateOperation(getTargetPart(), getCVSResourceMappings(), Command.NO_LOCAL_OPTIONS, null /* no tag */).run();
+		} else {
 	    	new ModelUpdateOperation(getTargetPart(), getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext()).run();
-	    } else {
-	    	new UpdateOperation(getTargetPart(), getCVSResourceMappings(), Command.NO_LOCAL_OPTIONS, null /* no tag */).run();
 	    }
 	}
 	

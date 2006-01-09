@@ -1036,5 +1036,9 @@ public class CVSUIMessages extends NLS {
 	public static String CVSMergeContext_0;
 	public static String CVSMergeContext_1;
 	public static String CVSMergeContext_2;
+	public static String UpdateMergePreferencePage_0;
+	public static String UpdateMergePreferencePage_1;
+	public static String UpdateMergePreferencePage_2;
+	public static String UpdateMergePreferencePage_3;
 
 }

@@ -26,7 +26,7 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ICompareAdapter;
-import org.eclipse.team.ui.synchronize.ParticipantPageDialog;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -190,34 +190,54 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 		});
 	}
 
-	private void showPreview(final String title, IProgressMonitor monitor) {
+	/**
+	 * Preview the merge so the user can perform the merge manually.
+	 * @param title the title of the merge.
+	 * @param monitor a progress monitor
+	 */
+	protected void showPreview(final String title, IProgressMonitor monitor) {
 		calculateStates(context, Policy.subMonitorFor(monitor, 5));
-		Display.getDefault().asyncExec(new Runnable() {
+			Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				ModelSynchronizeParticipant participant = new ModelSynchronizeParticipant(context, title);
-				CompareConfiguration cc = new CompareConfiguration();
-				ModelParticipantPageSavablePart input = new ModelParticipantPageSavablePart(getShell(), cc, participant.createPageConfiguration(), participant);
-				ParticipantPageDialog dialog = new ParticipantPageDialog(getShell(), input, participant) {
-					private Button doneButton;
-
-					protected void createButtonsForButtonBar(Composite parent) {
-						doneButton = createButton(parent, 10, TeamUIMessages.ResourceMappingMergeOperation_2, true); 
-						doneButton.setEnabled(true); 
-						// Don't call super because we don't want the OK button to appear
-					}
-					protected void buttonPressed(int buttonId) {
-						if (buttonId == 10)
-							super.buttonPressed(IDialogConstants.OK_ID);
-						else 
-							super.buttonPressed(buttonId);
-					}
-				};
-				int result = dialog.open();
-				input.dispose();
-				if (TeamUI.getSynchronizeManager().get(participant.getId(), participant.getSecondaryId()) == null)
-					participant.dispose();
+				if (isPreviewInDialog()) {
+					CompareConfiguration cc = new CompareConfiguration();
+					ModelParticipantPageSavablePart input = new ModelParticipantPageSavablePart(getShell(), cc, participant.createPageConfiguration(), participant);
+					ParticipantPageDialog dialog = new ParticipantPageDialog(getShell(), input, participant) {
+						private Button doneButton;
+	
+						protected void createButtonsForButtonBar(Composite parent) {
+							doneButton = createButton(parent, 10, TeamUIMessages.ResourceMappingMergeOperation_2, true); 
+							doneButton.setEnabled(true); 
+							// Don't call super because we don't want the OK button to appear
+						}
+						protected void buttonPressed(int buttonId) {
+							if (buttonId == 10)
+								super.buttonPressed(IDialogConstants.OK_ID);
+							else 
+								super.buttonPressed(buttonId);
+						}
+					};
+					int result = dialog.open();
+					input.dispose();
+					if (TeamUI.getSynchronizeManager().get(participant.getId(), participant.getSecondaryId()) == null)
+						participant.dispose();
+				} else {				
+					ISynchronizeManager mgr = TeamUI.getSynchronizeManager();
+					ISynchronizeView view = mgr.showSynchronizeViewInActivePage();
+					mgr.addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
+					view.display(participant);
+				}
 			}
 		});
+	}
+
+	/**
+	 * Return whether previews should occur in a dialog or in the synchronize view.
+	 * @return whether previews should occur in a dialog or in the synchronize view
+	 */
+	protected boolean isPreviewInDialog() {
+		return true;
 	}
 
 	private void calculateStates(ISynchronizationContext context, IProgressMonitor monitor) {

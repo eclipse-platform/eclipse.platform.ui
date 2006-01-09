@@ -137,7 +137,7 @@ public interface ICVSUIConstants {
 	public final String PREF_EDIT_PROMPT_IF_EDITORS = "only";	 //$NON-NLS-1$
     
     // update preferences
-    public final String PREF_UPDATE_PROMPT = "pref_upate_prompt"; //$NON-NLS-1$
+    public final String PREF_UPDATE_PROMPT = "pref_update_prompt"; //$NON-NLS-1$
     public final String PREF_UPDATE_PROMPT_NEVER = "never";    //$NON-NLS-1$
     public final String PREF_UPDATE_PROMPT_AUTO = "auto"; //$NON-NLS-1$
     public final String PREF_UPDATE_PROMPT_IF_OUTDATED = "only";  //$NON-NLS-1$
@@ -155,6 +155,10 @@ public interface ICVSUIConstants {
 	public final String PREF_UPDATE_HANDLING = "pref_team_update_handling"; //$NON-NLS-1$
 	public final String PREF_UPDATE_HANDLING_PREVIEW = "previewUpdate"; //$NON-NLS-1$
 	public final String PREF_UPDATE_HANDLING_PERFORM = "performUpdate"; //$NON-NLS-1$
+	public final String PREF_UPDATE_HANDLING_TRADITIONAL = "traditionalUpdate"; //$NON-NLS-1$
+	public final String PREF_UPDATE_PREVIEW = "pref_update_preview"; //$NON-NLS-1$
+	public final String PREF_UPDATE_PREVIEW_IN_DIALOG = "dialog"; //$NON-NLS-1$
+	public final String PREF_UPDATE_PREVIEW_IN_SYNCVIEW = "syncView"; //$NON-NLS-1$
 	
 	// Wizard banners
 	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.gif";	 //$NON-NLS-1$
@@ -202,5 +206,6 @@ public interface ICVSUIConstants {
 	public final String CMD_HISTORY = "org.eclipse.team.cvs.ui.showHistory"; //$NON-NLS-1$
 	public final String CMD_ADD = "org.eclipse.team.cvs.ui.add"; //$NON-NLS-1$
 	public final String CMD_IGNORE = "org.eclipse.team.cvs.ui.ignore"; //$NON-NLS-1$
+
 }
 
