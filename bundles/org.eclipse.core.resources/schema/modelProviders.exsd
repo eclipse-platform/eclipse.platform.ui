@@ -64,7 +64,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.core.resources.mappings.ModelProvider"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.resources.mapping.ModelProvider"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -115,7 +115,7 @@
              &lt;/iterate&gt;
            &lt;/with&gt;
            &lt;with variable=&quot;element&quot;&gt;
-   	         &lt;instanceof value=&quot;org.eclipse.core.resources.IFile&quot;/&gt;
+             &lt;instanceof value=&quot;org.eclipse.core.resources.IFile&quot;/&gt;
            &lt;/with&gt;
        &lt;/enablement&gt;
    &lt;/extension&gt;
