@@ -150,12 +150,7 @@ public final class KeyStroke extends Trigger implements Comparable {
 			i++;
 		}
 
-		try {
-			return new KeyStroke(modifierKeys, naturalKey);
-		} catch (final Throwable t) {
-			throw new ParseException("Cannot create key stroke with " //$NON-NLS-1$
-					+ modifierKeys + " and " + naturalKey); //$NON-NLS-1$
-		}
+		return new KeyStroke(modifierKeys, naturalKey);
 	}
 
 	/**

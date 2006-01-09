@@ -263,6 +263,11 @@ public final class SWTKeyLookup implements IKeyLookup {
 		if (value instanceof Integer) {
 			return ((Integer) value).intValue();
 		}
+		
+		if (name.length() > 0) {
+			throw new IllegalArgumentException("Unrecognized formal key name: " //$NON-NLS-1$
+					+ name);
+		}
 
 		return name.charAt(0);
 	}

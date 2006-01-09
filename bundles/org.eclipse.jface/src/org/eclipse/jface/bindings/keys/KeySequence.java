@@ -165,12 +165,13 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 		final StringTokenizer stringTokenizer = new StringTokenizer(string,
 				KEY_STROKE_DELIMITERS);
 
-		while (stringTokenizer.hasMoreTokens())
-			keyStrokes.add(KeyStroke.getInstance(stringTokenizer.nextToken()));
-
-		final KeyStroke[] keyStrokeArray = (KeyStroke[]) keyStrokes
-				.toArray(new KeyStroke[keyStrokes.size()]);
 		try {
+			while (stringTokenizer.hasMoreTokens())
+				keyStrokes.add(KeyStroke.getInstance(stringTokenizer
+						.nextToken()));
+
+			final KeyStroke[] keyStrokeArray = (KeyStroke[]) keyStrokes
+					.toArray(new KeyStroke[keyStrokes.size()]);
 			return new KeySequence(keyStrokeArray);
 		} catch (final IllegalArgumentException e) {
 			throw new ParseException(
