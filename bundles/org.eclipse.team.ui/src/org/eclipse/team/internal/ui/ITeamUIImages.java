@@ -166,6 +166,15 @@ public interface ITeamUIImages {
 	 * Icon for authentication dialogs.
 	 */
 	public final String IMG_KEY_LOCK = "wizban/keylock.gif"; //$NON-NLS-1$
+	/**
+	 * Pinned icon
+	 */
+	public final String IMG_PINNED = "elcl16/pin.gif";  //$NON-NLS-1$
+	/**
+	 * Previous history 
+	 */
+	public final String IMG_PREVIOUS = "elcl16/prev_nav.gif"; //$NON-NLS-1$
+	
 	//objects
 	public final String IMG_SITE_ELEMENT = "elcl16/site_element.gif"; //$NON-NLS-1$
 	public final String IMG_CHANGE_FILTER = "elcl16/change_filter.gif"; //$NON-NLS-1$	 

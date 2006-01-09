@@ -1,4 +1,15 @@
-package org.eclipse.team.internal.ui.history.actions;
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -24,30 +35,30 @@ public class CompareRevisionAction extends TeamAction {
 					IStructuredSelection structSel = getSelection();
 					if (structSel.size() != 2)
 						return;
-					
+
 					Object[] objArray = structSel.toArray();
-					
+
 					IFileRevision file1 = (IFileRevision) objArray[0];
 					IFileRevision file2 = (IFileRevision) objArray[1];
-					
+
 					RevisionEditionNode left = new RevisionEditionNode(file1);
 					RevisionEditionNode right = new RevisionEditionNode(file2);
-					CompareUI.openCompareEditorOnPage(new CompareFileRevisionEditorInput(left, right), getTargetPage());				
-				
+					CompareUI.openCompareEditorOnPage(new CompareFileRevisionEditorInput(left, right), getTargetPage());
+
 				} catch (Exception e) {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, TeamUIMessages.ConfigureProjectAction_configureProject, PROGRESS_BUSYCURSOR); 
+		}, TeamUIMessages.ConfigureProjectAction_configureProject, PROGRESS_BUSYCURSOR);
 	}
-	
+
 	protected boolean isEnabled() throws TeamException {
 		IResource[] res = getSelectedResources();
 		int sizeofSelection = getSelection().size();
-		
+
 		if (sizeofSelection == 2)
 			return true;
-		
+
 		return false;
 	}
 

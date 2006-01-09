@@ -12,10 +12,10 @@ package org.eclipse.team.internal.ccvs.ui.model;
 
  
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.CVSFileHistoryProviderParticipant;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
+import org.eclipse.team.ui.history.IFileHistoryProviderParticipant;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -25,6 +25,8 @@ public class CVSAdapterFactory implements IAdapterFactory {
 	private Object folderAdapter = new RemoteFolderElement();
 	private Object rootAdapter = new CVSRepositoryRootElement();
 
+	private Object historyParticipant = new CVSFileHistoryProviderParticipant();
+	
 	// Property cache
 	private Object cachedPropertyObject = null;
 	private Object cachedPropertyValue = null;
@@ -48,6 +50,11 @@ public class CVSAdapterFactory implements IAdapterFactory {
 		if (IPropertySource.class == adapterType) {
 			return getPropertySource(adaptableObject);
 		}
+		
+		if (IFileHistoryProviderParticipant.class == adapterType){
+			return historyParticipant;
+		}
+		
 		return null;
 	}
 	

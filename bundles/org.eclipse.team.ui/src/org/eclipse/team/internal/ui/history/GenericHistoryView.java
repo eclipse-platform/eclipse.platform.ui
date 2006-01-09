@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,488 +11,258 @@
 
 package org.eclipse.team.internal.ui.history;
 
+import java.util.*;
+
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.TextViewer;
-import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.history.*;
-import org.eclipse.team.internal.ui.ITeamUIImages;
-import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.history.actions.OpenRevisionAction;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.team.core.history.IFileHistoryProvider;
+import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.ui.history.IFileHistoryProviderParticipant;
+import org.eclipse.team.ui.history.IHistoryPage;
+import org.eclipse.ui.*;
 import org.eclipse.ui.ide.ResourceUtil;
-import org.eclipse.ui.part.ResourceTransfer;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.part.*;
 
 public class GenericHistoryView extends ViewPart {
 
-	private IFile file;
+	class PageContainer {
+		private Page page;
+		private SubActionBars subBars;
 
-	// cached for efficiency
-	private IFileRevision[] entries;
+		public PageContainer(Page page) {
+			this.page = page;
+		}
 
-	protected GenericHistoryTableProvider historyTableProvider;
+		public Page getPage() {
+			return page;
+		}
 
-	private TableViewer tableViewer;
-	protected TextViewer textViewer;
-	protected TableViewer tagViewer;
+		public void setPage(Page page) {
+			this.page = page;
+		}
 
-	
-	protected OpenRevisionAction openAction;
-	private IAction toggleTextAction;
-	private IAction toggleTextWrapAction;
-	private IAction toggleListAction;
+		public SubActionBars getSubBars() {
+			return subBars;
+		}
+
+		public void setSubBars(SubActionBars subBars) {
+			this.subBars = subBars;
+		}
+	}
+
+	/**
+	 * The pagebook control, or <code>null</code> if not initialized.
+	 */
+	private PageBook book;
+
+	/**
+	 * View actions
+	 */
 	private Action refreshAction;
 	private Action linkWithEditorAction;
-	
-	private SashForm sashForm;
-	private SashForm innerSashForm;
+	private Action pinAction;
 
-	protected IFileRevision currentSelection;
+	/**
+	 * The page container for the default page.
+	 */
+	private PageContainer defaultPageContainer;
 
-	protected FetchLogEntriesJob fetchLogEntriesJob;
-
-	private boolean shutdown = false;
-
-	private boolean linkingEnabled;
-	
-	public static final String VIEW_ID = "org.eclipse.team.ui.GenericHistoryView"; //$NON-NLS-1$
+	/**
+	 * The current page container
+	 */
+	PageContainer currentPageContainer;
 
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart part) {
 			if (part instanceof IEditorPart)
 				editorActivated((IEditorPart) part);
 		}
+
 		public void partBroughtToTop(IWorkbenchPart part) {
-			if(part == GenericHistoryView.this)
+			if (part == GenericHistoryView.this)
 				editorActivated(getViewSite().getPage().getActiveEditor());
 		}
+
 		public void partOpened(IWorkbenchPart part) {
-			if(part == GenericHistoryView.this)
+			if (part == GenericHistoryView.this)
 				editorActivated(getViewSite().getPage().getActiveEditor());
 		}
+
 		public void partClosed(IWorkbenchPart part) {
 		}
+
 		public void partDeactivated(IWorkbenchPart part) {
 		}
 	};
-	
+
 	private IPartListener2 partListener2 = new IPartListener2() {
 		public void partActivated(IWorkbenchPartReference ref) {
 		}
+
 		public void partBroughtToTop(IWorkbenchPartReference ref) {
 		}
+
 		public void partClosed(IWorkbenchPartReference ref) {
 		}
+
 		public void partDeactivated(IWorkbenchPartReference ref) {
 		}
+
 		public void partOpened(IWorkbenchPartReference ref) {
 		}
+
 		public void partHidden(IWorkbenchPartReference ref) {
 		}
+
 		public void partVisible(IWorkbenchPartReference ref) {
-			if(ref.getPart(true) == GenericHistoryView.this)
+			if (ref.getPart(true) == GenericHistoryView.this)
 				editorActivated(getViewSite().getPage().getActiveEditor());
 		}
+
 		public void partInputChanged(IWorkbenchPartReference ref) {
 		}
 	};
 
-	public void createPartControl(Composite parent) {
-		sashForm = new SashForm(parent, SWT.VERTICAL);
-		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+	private ISelectionListener selectionListener = new ISelectionListener() {
 
-		tableViewer = createTable(sashForm);
-		innerSashForm = new SashForm(sashForm, SWT.HORIZONTAL);
-		tagViewer = createTagTable(innerSashForm);
-		textViewer = createText(innerSashForm);
-		sashForm.setWeights(new int[] { 70, 30 });
-		innerSashForm.setWeights(new int[] { 50, 50 });
+		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+			if (!isLinkingEnabled()) {
+				return;
+			}
+
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection structSelection = (IStructuredSelection) selection;
+				//Always take the first element - this is not intended to work with multiple selection
+				Object firstElement = structSelection.getFirstElement();
+				itemDropped(firstElement);
+			}
+		}
+
+	};
+
+	/**
+	 * The action bar property listener. 
+	 */
+	private IPropertyChangeListener actionBarPropListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if (event.getProperty().equals(SubActionBars.P_ACTION_HANDLERS) && currentPageContainer.getPage() != null && event.getSource() == currentPageContainer.getSubBars()) {
+				refreshGlobalActionHandlers();
+			}
+		}
+	};
+
+	private boolean linkingEnabled;
+
+	private boolean viewPinned;
+
+	private static String viewId = "org.eclipse.team.ui.GenericHistoryView"; //$NON-NLS-1$
+
+	/**
+	 * Refreshes the global actions for the active page.
+	 */
+	void refreshGlobalActionHandlers() {
+		// Clear old actions.
+		IActionBars bars = getViewSite().getActionBars();
+		bars.clearGlobalActionHandlers();
+
+		// Set new actions.
+		Map newActionHandlers = currentPageContainer.getSubBars().getGlobalActionHandlers();
+		if (newActionHandlers != null) {
+			Set keys = newActionHandlers.entrySet();
+			Iterator iter = keys.iterator();
+			while (iter.hasNext()) {
+				Map.Entry entry = (Map.Entry) iter.next();
+				bars.setGlobalActionHandler((String) entry.getKey(), (IAction) entry.getValue());
+			}
+		}
+	}
+
+	public void createPartControl(Composite parent) {
+		// Create the page book.
+		book = new PageBook(parent, SWT.NONE);
 
 		this.linkingEnabled = TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_EDITOR_LINKING);
+
+		// Create the default page rec.
+		defaultPageContainer = createDefaultPage(book);
 		
-		contributeActions();
+		//Contribute toolbars
+		configureToolbars(getViewSite().getActionBars());
 
-		setViewerVisibility();
-
-		// set F1 help
-		// PlatformUI.getWorkbench().getHelpSystem().setHelp(sashForm,
-		// IHelpContextIds.RESOURCE_HISTORY_VIEW);
+		//initialize the drag and drop
 		initDragAndDrop();
+
+		// Show the default page	
+		showPageRec(defaultPageContainer);
 
 		// add listener for editor page activation - this is to support editor
 		// linking
 		getSite().getPage().addPartListener(partListener);
 		getSite().getPage().addPartListener(partListener2);
+
+		// add listener for selections
+		getSite().getPage().addSelectionListener(selectionListener);
 	}
 
-	private TextViewer createText(SashForm parent) {
-		TextViewer result = new TextViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.READ_ONLY);
-		result.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				//copyAction.update();
-			}
-		});
-		return result;
-	}
+	private void configureToolbars(IActionBars actionBars) {
 
-	private TableViewer createTagTable(SashForm parent) {
-		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		TableViewer result = new TableViewer(table);
-		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnWeightData(100));
-		table.setLayout(layout);
-		result.setContentProvider(new SimpleContentProvider() {
-			public Object[] getElements(Object inputElement) {
-				if (inputElement == null) return new Object[0];
-				ITag[] tags = (ITag[])inputElement;
-				return tags;
-			}
-		});
-		result.setLabelProvider(new LabelProvider() {
-			public Image getImage(Object element) {
-				if (element == null) return null;
-				ITag tag = (ITag)element;
-				//Need an image
-				return null;
-			}
-			public String getText(Object element) {
-				return ((ITag)element).getName();
-			}
-		});
-		result.setSorter(new ViewerSorter() {
-			public int compare(Viewer viewer, Object e1, Object e2) {
-				if (!(e1 instanceof ITag) || !(e2 instanceof ITag)) return super.compare(viewer, e1, e2);
-				ITag tag1 = (ITag)e1;
-				ITag tag2 = (ITag)e2;
-				/*int type1 = tag1.getType();
-				int type2 = tag2.getType();
-				if (type1 != type2) {
-					return type2 - type1;
-				}*/
-				return super.compare(viewer, tag1, tag2);
-			}
-		});
-		return result;
-	}
-
-	public void setFocus() {
-	}
-
-	/**
-	 * Adds drag and drop support to the history view.
-	 */
-	void initDragAndDrop() {
-		int ops = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
-		Transfer[] transfers = new Transfer[] { ResourceTransfer.getInstance(),
-				ResourceTransfer.getInstance() };
-		tableViewer.addDropSupport(ops, transfers,
-				new GenericHistoryDropAdapter(tableViewer, this));
-	}
-
-	protected void contributeActions() {
-		TeamUIPlugin plugin = TeamUIPlugin.getPlugin();
-		
-		// Double click open action
-		openAction = new OpenRevisionAction();
-		tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
-			public void handleEvent(Event e) {
-				openAction.selectionChanged(null, tableViewer.getSelection());
-				openAction.run(null);
-			}
-		});
-		
-		refreshAction = new Action(TeamUIMessages.GenericHistoryView_Refresh,  plugin.getImageDescriptor(ITeamUIImages.IMG_REFRESH)) {
+		pinAction = new Action(TeamUIMessages.GenericHistoryView_PinCurrentHistory, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_PINNED)) {
 			public void run() {
-				refresh();
+				if (isChecked()) {
+					//uncheck editor linking and disable
+					linkWithEditorAction.setChecked(false);
+					linkWithEditorAction.setEnabled(false);
+					setLinkingEnabled(false);
+				} else {
+					//renable the linking button
+					linkWithEditorAction.setEnabled(true);
+				}
+				setViewPinned(isChecked());
 			}
 		};
-		
-		linkWithEditorAction = new Action(TeamUIMessages.GenericHistoryView_LinkWithEditor, plugin.getImageDescriptor(ITeamUIImages.IMG_LINK_WITH)) { 
-			 public void run() {
-				 setLinkingEnabled(isChecked());
-			 }
-		 };
-		 linkWithEditorAction.setChecked(isLinkingEnabled());
-		 		
-		// Toggle text visible action
-		final IPreferenceStore store = TeamUIPlugin.getPlugin().getPreferenceStore();
-		toggleTextAction = new Action(TeamUIMessages.GenericHistoryView_ShowCommentViewer) { 
-			public void run() {
-				setViewerVisibility();
-				store.setValue(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_SHOW_COMMENTS, toggleTextAction.isChecked());
-			}
-		};
-		toggleTextAction.setChecked(store.getBoolean(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_SHOW_COMMENTS));
-        //PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleTextAction, IHelpContextIds.SHOW_COMMENT_IN_HISTORY_ACTION);	
+		pinAction.setChecked(isViewPinned());
+		pinAction.setToolTipText("Pins this history view");
 
-        // Toggle wrap comments action
-        toggleTextWrapAction = new Action(TeamUIMessages.GenericHistoryView_WrapComments) { 
-          public void run() {
-            setViewerVisibility();
-            store.setValue(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_WRAP_COMMENTS, toggleTextWrapAction.isChecked());
-          }
-        };
-        toggleTextWrapAction.setChecked(store.getBoolean(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_WRAP_COMMENTS));
-        //PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleTextWrapAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);   
-		
-        // Toggle list visible action
-		toggleListAction = new Action(TeamUIMessages.GenericHistoryView_ShowTagViewer) { 
+		refreshAction = new Action(TeamUIMessages.GenericHistoryView_Refresh, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_REFRESH)) {
 			public void run() {
-				setViewerVisibility();
-				store.setValue(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_SHOW_TAGS, toggleListAction.isChecked());
+				((IHistoryPage) currentPageContainer.getPage()).refresh();
 			}
 		};
-		toggleListAction.setChecked(store.getBoolean(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_SHOW_TAGS));
-        //PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleListAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);	
-		
-		
+
+		linkWithEditorAction = new Action(TeamUIMessages.GenericHistoryView_LinkWithEditor, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_LINK_WITH)) {
+			public void run() {
+				setLinkingEnabled(isViewPinned() ? false : isChecked());
+			}
+		};
+		linkWithEditorAction.setChecked(isLinkingEnabled());
+
+		//previousHistory = new GenericHistoryDropDownAction();
+
 		//Create the local tool bar
-		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+		IToolBarManager tbm = actionBars.getToolBarManager();
+		//Take out history support for now
+		//tbm.add(previousHistory);
 		tbm.add(refreshAction);
 		tbm.add(linkWithEditorAction);
+		tbm.add(pinAction);
 		tbm.update(false);
-        
-		//Contribute actions to popup menu
-		MenuManager menuMgr = new MenuManager();
-		Menu menu = menuMgr.createContextMenu(tableViewer.getTable());
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager menuMgr) {
-				fillTableMenu(menuMgr);
-			}
-		});
-		menuMgr.setRemoveAllWhenShown(true);
-		tableViewer.getTable().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, tableViewer);
-		
-		// Contribute toggle text visible to the toolbar drop-down
-		IActionBars actionBars = getViewSite().getActionBars();
-		IMenuManager actionBarsMenu = actionBars.getMenuManager();
-		actionBarsMenu.add(toggleTextWrapAction);
-		actionBarsMenu.add(new Separator());
-		actionBarsMenu.add(toggleTextAction);
-		actionBarsMenu.add(toggleListAction);
-
 	}
 
-	private void fillTableMenu(IMenuManager manager) {
-		// file actions go first (view file)
-		manager.add(new Separator("additions")); //$NON-NLS-1$
-		manager.add(refreshAction);
-		manager.add(new Separator("additions-end")); //$NON-NLS-1$
-	}
-	
-	/**
-	 * Creates the group that displays lists of the available repositories and
-	 * team streams.
-	 * 
-	 * @param the
-	 *            parent composite to contain the group
-	 * @return the group control
-	 */
-	protected TableViewer createTable(Composite parent) {
-
-		historyTableProvider = new GenericHistoryTableProvider();
-		TableViewer viewer = historyTableProvider.createTable(parent);
-
-		viewer.setContentProvider(new IStructuredContentProvider() {
-			public Object[] getElements(Object inputElement) {
-
-				// The entries of already been fetch so return them
-				if (entries != null)
-					return entries;
-
-				// The entries need to be fetch (or are being fetched)
-				if (!(inputElement instanceof IFileHistory))
-					return null;
-
-				final IFileHistory remoteFile = (IFileHistory) inputElement;
-				if (fetchLogEntriesJob == null) {
-					fetchLogEntriesJob = new FetchLogEntriesJob();
-				}
-
-				IFileHistory file = fetchLogEntriesJob.getRemoteFile();
-
-				if (file == null || !file.equals(remoteFile)) { // The resource
-																// has changed
-																// so stop the
-																// currently
-																// running job
-					if (fetchLogEntriesJob.getState() != Job.NONE) {
-						fetchLogEntriesJob.cancel();
-						try {
-							fetchLogEntriesJob.join();
-						} catch (InterruptedException e) {
-							TeamUIPlugin.log(new TeamException(NLS.bind(TeamUIMessages.GenericHistoryView_ErrorFetchingEntries, new String[] { "" }), e));   //$NON-NLS-1$
-						}
-					}
-					fetchLogEntriesJob.setRemoteFile(remoteFile);
-				} // Schedule the job even if it is already running
-				Utils.schedule(fetchLogEntriesJob, getViewSite());
-
-				return new Object[0];
-			}
-
-			public void dispose() {
-			}
-
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
-				entries = null;
-			}
-		});
-
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				ISelection selection = event.getSelection();
-				
-				if (selection != null &&
-					selection instanceof IStructuredSelection){
-						IStructuredSelection ss = (IStructuredSelection) selection;
-						currentSelection = (IFileRevision) ss.getFirstElement();
-				}
-				
-				 if (selection == null || !(selection instanceof IStructuredSelection)) { 
-					 textViewer.setDocument(new Document("")); //$NON-NLS-1$ 
-					 tagViewer.setInput(null);
-				  return; } 
-				 
-				 IStructuredSelection ss =(IStructuredSelection)selection;
-				  if (ss.size() != 1) {
-				     textViewer.setDocument(new Document("")); //$NON-NLS-1$
-				     tagViewer.setInput(null); 
-				     return; 
-				 } 
-				  
-				  IFileRevision entry =(IFileRevision)ss.getFirstElement(); 
-				  textViewer.setDocument(new Document(entry.getComment()));
-				  tagViewer.setInput(entry.getTags());
-				 
-			}
-		});
-
-		return viewer;
-	}
-	
-	/*
-	 * Refresh the view by refetching the log entries for the remote file
-	 */
-	private void refresh() {
-		entries = null;
-		BusyIndicator.showWhile(tableViewer.getTable().getDisplay(),
-				new Runnable() {
-					public void run() {
-						// if a local file was fed to the history view then we
-						// will have to refetch the handle
-						// to properly display the current revision marker.
-						tableViewer.refresh();
-					}
-				});
+	boolean isLinkingEnabled() {
+		return linkingEnabled;
 	}
 
-	/**
-	 * Shows the history for the given IResource in the view.
-	 * 
-	 * Only files are supported for now.
-	 */
-	public void showHistory(IResource resource, boolean refetch) {
-		if (resource instanceof IFile) {
-			IFile newfile = (IFile) resource;
-			if (!refetch && this.file != null && newfile.equals(this.file)) {
-				return;
-			}
-			this.file = newfile;
-			RepositoryProvider teamProvider = RepositoryProvider
-					.getProvider(file.getProject());
-			IFileHistory fileHistory = teamProvider.getFileHistoryProvider()
-					.getFileHistoryFor(resource, new NullProgressMonitor());
-
-			try {
-				IFileRevision[] revisions = fileHistory
-						.getFileRevisions();
-
-			} catch (TeamException e) {
-
-			}
-			historyTableProvider.setFile(fileHistory, file);
-			tableViewer.setInput(fileHistory);
-			setContentDescription(newfile.getName());
-		} else {
-			this.file = null;
-			tableViewer.setInput(null);
-			setContentDescription(""); //$NON-NLS-1$
-			setTitleToolTip(""); //$NON-NLS-1$
-		}
-	}
-	
-	private void setViewerVisibility() {
-		boolean showText = toggleTextAction.isChecked();
-		boolean showList = toggleListAction.isChecked();
-		if (showText && showList) {
-			sashForm.setMaximizedControl(null);
-			innerSashForm.setMaximizedControl(null);
-		} else if (showText) {
-			sashForm.setMaximizedControl(null);
-			innerSashForm.setMaximizedControl(textViewer.getTextWidget());
-		} else if (showList) {
-			sashForm.setMaximizedControl(null);
-			innerSashForm.setMaximizedControl(tagViewer.getTable());
-		} else {
-			sashForm.setMaximizedControl(tableViewer.getControl());
-		}
-        
-		boolean wrapText = toggleTextWrapAction.isChecked();
-        textViewer.getTextWidget().setWordWrap(wrapText);
-	}
-	
 	/**
 	 * Enabled linking to the active editor
 	 */
@@ -501,13 +271,188 @@ public class GenericHistoryView extends ViewPart {
 
 		// remember the last setting in the dialog settings		
 		TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_EDITOR_LINKING, enabled);
-	
+
 		// if turning linking on, update the selection to correspond to the active editor
 		if (enabled) {
 			editorActivated(getSite().getPage().getActiveEditor());
 		}
 	}
-	
+
+	/**
+	 * Sets the current view pinned
+	 * @param b
+	 */
+	void setViewPinned(boolean pinned) {
+		this.viewPinned = pinned;
+	}
+
+	/**
+	 * Adds drag and drop support to the history view.
+	 */
+	void initDragAndDrop() {
+		int ops = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
+		Transfer[] transfers = new Transfer[] {ResourceTransfer.getInstance(), ResourceTransfer.getInstance()};
+
+		DropTarget dropTarget = new DropTarget(book, ops);
+		dropTarget.setTransfer(transfers);
+		dropTarget.addDropListener(new GenericHistoryDropAdapter(this));
+	}
+
+	public void setFocus() {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * Prepares the page in the given page rec for use
+	 * in this view.
+	 * @param rec
+	 */
+	private void preparePage(PageContainer pageContainer) {
+		pageContainer.getSubBars().addPropertyChangeListener(actionBarPropListener);
+		//for backward compability with IPage
+		pageContainer.getPage().setActionBars(pageContainer.getSubBars());
+	}
+
+	/**
+	 * Shows page contained in the given page record in this view. The page record must 
+	 * be one from this pagebook view.
+	 * <p>
+	 * The <code>PageBookView</code> implementation of this method asks the
+	 * pagebook control to show the given page's control, and records that the
+	 * given page is now current. Subclasses may extend.
+	 * </p>
+	 *
+	 * @param pageRec the page record containing the page to show
+	 */
+	protected void showPageRec(PageContainer pageContainer) {
+		// If already showing do nothing
+		if (currentPageContainer == pageContainer)
+			return;
+		// If the page is the same, just set activeRec to pageRec
+		if (currentPageContainer != null && pageContainer != null && currentPageContainer == pageContainer) {
+			currentPageContainer = pageContainer;
+			return;
+		}
+
+		// Hide old page.
+		if (currentPageContainer != null) {
+			currentPageContainer.getSubBars().deactivate();
+			// remove our selection listener
+			/*            ISelectionProvider provider = ((PageSite) mapPageToSite.get(activeRec.page)).getSelectionProvider();
+			 if (provider != null)
+			 provider
+			 .removeSelectionChangedListener(selectionChangedListener);*/
+		}
+		// Show new page.
+		currentPageContainer = pageContainer;
+		//setContentDescription(((IHistoryPage)currentPageContainer.getPage()).getName());
+		Control pageControl = currentPageContainer.getPage().getControl();
+		if (pageControl != null && !pageControl.isDisposed()) {
+			// Verify that the page control is not disposed
+			// If we are closing, it may have already been disposed
+			book.showPage(pageControl);
+			currentPageContainer.getSubBars().activate();
+			//refreshGlobalActionHandlers();
+			// add our selection listener
+			/*ISelectionProvider provider = ((PageSite) mapPageToSite
+			 .get(activeRec.page)).getSelectionProvider();
+			 if (provider != null)
+			 provider.addSelectionChangedListener(selectionChangedListener);*/
+			// Update action bars.
+			getViewSite().getActionBars().updateActionBars();
+		}
+	}
+
+	/**
+	 * Initializes the given page with a page site.
+	 * <p>
+	 * Subclasses should call this method after
+	 * the page is created but before creating its
+	 * controls.
+	 * </p>
+	 * <p>
+	 * Subclasses may override
+	 * </p>
+	 * @param page The page to initialize
+	 */
+	protected PageSite initPage(IPageBookViewPage page) {
+		try {
+			PageSite site = new PageSite(getViewSite());
+			page.init(site);
+			return site;
+		} catch (PartInitException e) {
+			TeamUIPlugin.log(e);
+		}
+		return null;
+	}
+
+	public void itemDropped(Object object) {
+
+		if (object instanceof IFile) {
+			IFile newFile = (IFile) object;
+			//check first to see if this view is pinned
+			if (isViewPinned()) {
+				try {
+					//get the file name
+					IViewPart view = getSite().getPage().showView(viewId, viewId + newFile.getName() + System.currentTimeMillis(), IWorkbenchPage.VIEW_CREATE);
+					if (view instanceof GenericHistoryView) {
+						GenericHistoryView view2 = (GenericHistoryView) view;
+						view2.itemDropped(object);
+					}
+					return;
+				} catch (PartInitException e) {
+				}
+			}
+
+			RepositoryProvider teamProvider = RepositoryProvider.getProvider(newFile.getProject());
+			IFileHistoryProvider fileHistory = teamProvider.getFileHistoryProvider();
+			Object tempParticipant = Platform.getAdapterManager().getAdapter(fileHistory, IFileHistoryProviderParticipant.class);
+			if (tempParticipant instanceof IFileHistoryProviderParticipant) {
+				IFileHistoryProviderParticipant participant = (IFileHistoryProviderParticipant) tempParticipant;
+
+				//If a current page exists, see if it can handle the dropped item
+				if (currentPageContainer.getPage() instanceof IHistoryPage) {
+					PageContainer tempPageContainer = currentPageContainer;
+					if (!((IHistoryPage) tempPageContainer.getPage()).canShowHistoryFor(newFile)) {
+						tempPageContainer = createPage(participant);
+					}
+					if (tempPageContainer != null) {
+						((IHistoryPage) tempPageContainer.getPage()).showHistory(newFile, true);
+						setContentDescription(newFile.getName());
+						showPageRec(tempPageContainer);
+					} else {
+						showPageRec(defaultPageContainer);
+					}
+				}
+			}
+		}
+
+	}
+
+	boolean isViewPinned() {
+		return viewPinned;
+	}
+
+	private PageContainer createPage(IFileHistoryProviderParticipant participant) {
+		Page page = participant.createPage();
+		PageSite site = initPage(page);
+		((IHistoryPage) page).setSite(getViewSite());
+		page.createControl(book);
+		PageContainer container = new PageContainer(page);
+		container.setSubBars((SubActionBars) site.getActionBars());
+		return container;
+	}
+
+	protected PageContainer createDefaultPage(PageBook book) {
+		GenericHistoryViewDefaultPage page = new GenericHistoryViewDefaultPage();
+		PageSite site = initPage(page);
+		page.createControl(book);
+		PageContainer container = new PageContainer(page);
+		container.setSubBars((SubActionBars) site.getActionBars());
+		return container;
+	}
+
 	/**
 	 * An editor has been activated.  Fetch the history if the file is shared and the history view
 	 * is visible in the current page.
@@ -516,124 +461,42 @@ public class GenericHistoryView extends ViewPart {
 	 */
 	protected void editorActivated(IEditorPart editor) {
 		// Only fetch contents if the view is shown in the current page.
-		if (editor == null || !isLinkingEnabled() || !checkIfPageIsVisible()) {
+		if (editor == null || !isLinkingEnabled() || !checkIfPageIsVisible() || isViewPinned()) {
 			return;
-		}		
+		}
 		IEditorInput input = editor.getEditorInput();
-		
-		if (input instanceof FileRevisionEditorInput){
+
+		if (input instanceof FileRevisionEditorInput) {
 			IFile file;
 			try {
 				file = ResourceUtil.getFile(((FileRevisionEditorInput) input).getStorage().getFullPath());
-				if(file != null) {
-	                showHistory(file, false);
-	            }
-			} catch (CoreException e) {}
+				if (file != null) {
+					itemDropped(file);
+				}
+			} catch (CoreException e) {
+			}
 		} // Handle regular file editors
 		else {
-	        IFile file = ResourceUtil.getFile(input);
-	        if(file != null) {
-	            showHistory(file, false /* don't fetch if already cached */);
-	        }
+			IFile file = ResourceUtil.getFile(input);
+			if (file != null) {
+				itemDropped(file);//, false /* don't fetch if already cached */);
+			}
 		}
 	}
-	
+
 	private boolean checkIfPageIsVisible() {
 		return getViewSite().getPage().isPartVisible(this);
 	}
-	
-	/**
-	 * Returns if linking to the ative editor is enabled or disabled.
-	 * @return boolean indicating state of editor linking.
-	 */
-	private boolean isLinkingEnabled() {
-		return linkingEnabled;
-	}
 
 	public void dispose() {
-		shutdown = true;
-
-		if(fetchLogEntriesJob != null) {
-			if(fetchLogEntriesJob.getState() != Job.NONE) {
-				fetchLogEntriesJob.cancel();
-				try {
-					fetchLogEntriesJob.join();
-				} catch (InterruptedException e) {
-					TeamUIPlugin.log(new TeamException(NLS.bind(TeamUIMessages.GenericHistoryView_ErrorFetchingEntries, new String[] { "" }), e));   //$NON-NLS-1$
-				}
-			}
-		}
+		super.dispose();
+		//Call dispose on current and default pages
+		currentPageContainer.getPage().dispose();
+		defaultPageContainer.getPage().dispose();
+		//Remove the part listeners
 		getSite().getPage().removePartListener(partListener);
 		getSite().getPage().removePartListener(partListener2);
-	}	
-	
-	private class FetchLogEntriesJob extends Job {
-		public IFileHistory fileHistory;
-
-		public FetchLogEntriesJob() {
-			super(TeamUIMessages.GenericHistoryView_GenericFileHistoryFetcher);
-		}
-
-		public void setRemoteFile(IFileHistory file) {
-			this.fileHistory = file;
-		}
-
-		public IStatus run(IProgressMonitor monitor) {
-			try {
-				if (fileHistory != null && !shutdown) {
-					entries = fileHistory.getFileRevisions();
-					// final String revisionId = fileHistory.;
-					getSite().getShell().getDisplay().asyncExec(new Runnable() {
-						public void run() {
-							if (entries != null && tableViewer != null
-								&& !tableViewer.getTable().isDisposed()) {
-								tableViewer.refresh();
-								// selectRevision(revisionId);
-							}
-						}
-					});
-				}
-				return Status.OK_STATUS;
-			} catch (TeamException e) {
-				return e.getStatus();
-			}
-		}
-
-		public IFileHistory getRemoteFile() {
-			return this.fileHistory;
-		}
-	}
-    
-	/**
-	 * A default content provider to prevent subclasses from
-	 * having to implement methods they don't need.
-	 */
-	private class SimpleContentProvider implements IStructuredContentProvider {
-
-		/**
-		 * SimpleContentProvider constructor.
-		 */
-		public SimpleContentProvider() {
-			super();
-		}
-		
-		/*
-		 * @see SimpleContentProvider#dispose()
-		 */
-		public void dispose() {
-		}
-		
-		/*
-		 * @see SimpleContentProvider#getElements()
-		 */
-		public Object[] getElements(Object element) {
-			return new Object[0];
-		}
-		
-		/*
-		 * @see SimpleContentProvider#inputChanged()
-		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
+		//Remove the selection listener
+		getSite().getPage().addSelectionListener(selectionListener);
 	}
 }
