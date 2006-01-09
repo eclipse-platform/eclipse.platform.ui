@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.core.internal.resources;
 import java.net.URI;
 import java.util.HashMap;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -23,10 +24,17 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * name strings to project handles.
 	 */
 	private HashMap projectTable = new HashMap(10);
+	
+	/**
+	 * Cache of the canonicalized platform location.
+	 */
+	private final IPath location;
 
 	protected WorkspaceRoot(IPath path, Workspace container) {
 		super(path, container);
 		Assert.isTrue(path.equals(Path.ROOT));
+		location = FileUtil.canonicalPath(Platform.getLocation());
+		Assert.isNotNull(location);
 	}
 
 	/**
@@ -120,7 +128,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * @see IResource#getLocation()
 	 */
 	public IPath getLocation() {
-		return Platform.getLocation();
+		return location;
 	}
 
 	/**
@@ -206,7 +214,6 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	
 	/**
 	 * @see IResource#isLocal(int)
-	 * @deprecated
 	 */
 	public boolean isLocal(int depth) {
 		// the flags parameter is ignored for the workspace root so pass anything
@@ -215,7 +222,6 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 
 	/**
 	 * @see IResource#isLocal(int, int)
-	 * @deprecated
 	 */
 	public boolean isLocal(int flags, int depth) {
 		// don't check the flags....workspace root is always local
