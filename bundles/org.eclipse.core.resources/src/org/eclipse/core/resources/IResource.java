@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1479,6 +1479,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *   <code>false</code> otherwise
 	 *
 	 * @see #setLocal(boolean, int, IProgressMonitor)
+	 * @deprecated This API is no longer in use.  Note that this API is unrelated 
+	 * to whether the resource is in the local file system versus some other file system.
 	 */
 	public boolean isLocal(int depth);
 
@@ -2095,6 +2097,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @exception OperationCanceledException if the operation is canceled. 
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #isLocal(int)
+	 * @deprecated This API is no longer in use.  Note that this API is unrelated 
+	 * to whether the resource is in the local file system versus some other file system.
 	 */
 	public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException;
 

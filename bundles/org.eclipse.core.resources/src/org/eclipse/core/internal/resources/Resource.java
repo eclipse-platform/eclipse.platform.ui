@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1097,8 +1097,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return path.isPrefixOf(otherPath) || otherPath.isPrefixOf(path);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see IResource#isLocal(int)
+	 * @deprecated
 	 */
 	public boolean isLocal(int depth) {
 		ResourceInfo info = getResourceInfo(false, false);
@@ -1108,10 +1109,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	/**
 	 * Note the depth parameter is intentionally ignored because 
 	 * this method is over-ridden by Container.isLocal().
+	 * @deprecated
 	 */
 	public boolean isLocal(int flags, int depth) {
-		if (getType() == PROJECT)
-			return flags != NULL_FLAG; // exists
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_LOCAL_EXISTS);
 	}
 
@@ -1302,8 +1302,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		info.setModificationStamp(value);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see IResource#setLocal(boolean, int, IProgressMonitor)
+	 * @deprecated
 	 */
 	public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);

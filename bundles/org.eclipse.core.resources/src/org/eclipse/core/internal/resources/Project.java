@@ -699,16 +699,18 @@ public class Project extends Container implements IProject {
 		return false;//projects are never linked
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see IResource#isLocal(int)
+	 * @deprecated
 	 */
 	public boolean isLocal(int depth) {
 		// the flags parameter is ignored for projects so pass anything
 		return isLocal(-1, depth);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see IResource#isLocal(int)
+	 * @deprecated
 	 */
 	public boolean isLocal(int flags, int depth) {
 		// don't check the flags....projects are always local
@@ -892,7 +894,7 @@ public class Project extends Container implements IProject {
 	 * links to bring the links in sync with those described in the project description.
 	 * @param newDescription the new project description that may have
 	 * 	changed link descriptions.
-	 * @return status ok if everything went well, otherwise an ERROR multistatus 
+	 * @return status ok if everything went well, otherwise an ERROR multi-status 
 	 * 	describing the problems encountered.
 	 */
 	public IStatus reconcileLinks(ProjectDescription newDescription) {
