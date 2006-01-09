@@ -11,6 +11,9 @@
 package org.eclipse.ui.texteditor;
 
 import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -82,7 +85,11 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ContributionItemFactory;
+import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
@@ -1612,9 +1619,30 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_SETTINGS, preferencesAction);
 		
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_SAVE, new Separator(ITextEditorActionConstants.GROUP_OPEN));
-		MenuManager showInSubMenu= new MenuManager(TextEditorMessages.AbstractDecoratedTextEditor_showIn_menu);
+		MenuManager showInSubMenu= new MenuManager(getShowInMenuLabel());
 		showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getEditorSite().getWorkbenchWindow()));
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_OPEN, showInSubMenu); 
+	}
+
+	/**
+	 * Returns the menu label for 'Show In' together
+	 * with its key binding string.
+	 * 
+	 * @return the 'Show In' menu label
+	 * @since 3.2
+	 */
+	private String getShowInMenuLabel() {
+		String keyBinding= ""; //$NON-NLS-1$
+		final ICommandManager commandManager= PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
+		final ICommand command= commandManager.getCommand("org.eclipse.ui.navigate.showInQuickMenu"); //$NON-NLS-1$
+		if (command.isDefined()) {
+			List l= command.getKeySequenceBindings();
+			if (!l.isEmpty()) {
+				IKeySequenceBinding binding= (IKeySequenceBinding)l.get(0);
+				keyBinding= binding.getKeySequence().format();
+			}
+		}
+		return NLS.bind(TextEditorMessages.AbstractDecoratedTextEditor_showIn_menu, keyBinding);
 	}
 
 	/**
