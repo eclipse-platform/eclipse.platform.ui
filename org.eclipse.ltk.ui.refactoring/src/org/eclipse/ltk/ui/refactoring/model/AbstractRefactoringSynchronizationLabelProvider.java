@@ -48,7 +48,41 @@ public abstract class AbstractRefactoringSynchronizationLabelProvider extends Sy
 	 */
 	protected IDiffNode getDiff(final Object element) {
 		if (element instanceof RefactoringDescriptorProxy)
-			return new RefactoringDescriptorDiffNode((RefactoringDescriptorProxy) element, IDiffNode.CHANGE, IThreeWayDiff.INCOMING);
+			return new RefactoringDescriptorDiffNode((RefactoringDescriptorProxy) element, getKind((RefactoringDescriptorProxy) element), getDirection((RefactoringDescriptorProxy) element));
 		return super.getDiff(element);
 	}
+
+	/**
+	 * Returns the direction of the difference of the specified refactoring
+	 * descriptor proxy.
+	 * <p>
+	 * The result of this method is used to compose an icon which reflects the
+	 * direction of the difference between the two or three versions of the
+	 * refactoring descriptor.
+	 * </p>
+	 * 
+	 * @param proxy
+	 *            the refactoring descriptor proxy
+	 * @return the direction of the difference
+	 * 
+	 * @see IThreeWayDiff#getDirection()
+	 */
+	protected abstract int getDirection(RefactoringDescriptorProxy proxy);
+
+	/**
+	 * Returns the kind of difference between the three sides ancestor, left and
+	 * right of the specified refactoring descriptor proxy.
+	 * <p>
+	 * The result of this method is used to compose an icon which reflects the
+	 * kind of difference between the two or three versions of the refactoring
+	 * descriptor.
+	 * </p>
+	 * 
+	 * @param proxy
+	 *            the refactoring descriptor proxy
+	 * @return the kind of difference
+	 * 
+	 * @see IDiffNode#getKind()
+	 */
+	protected abstract int getKind(RefactoringDescriptorProxy proxy);
 }

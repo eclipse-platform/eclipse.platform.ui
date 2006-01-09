@@ -82,15 +82,15 @@ public abstract class AbstractRefactoringSynchronizationContentProvider extends 
 	 * location and have not already been performed on the local workspace.
 	 * </p>
 	 * 
-	 * @param tree
-	 *            the resource diff tree
+	 * @param context
+	 *            the synchronization context
 	 * @param project
 	 *            the project to get its incoming refactorings
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
 	 * @return the refactoring history representing the incoming refactorings
 	 */
-	protected RefactoringHistory getIncomingRefactorings(final IResourceDiffTree tree, final IProject project, IProgressMonitor monitor) {
+	protected RefactoringHistory getIncomingRefactorings(final ISynchronizationContext context, final IProject project, IProgressMonitor monitor) {
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		try {
@@ -98,6 +98,7 @@ public abstract class AbstractRefactoringSynchronizationContentProvider extends 
 			final IProgressMonitor finalMonitor= monitor;
 			final Set incoming= new HashSet();
 			try {
+				final IResourceDiffTree tree= context.getDiffTree();
 				tree.accept(project.getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER).getFullPath(), new IDiffVisitor() {
 
 					public final boolean visit(final IDiffNode node) throws CoreException {

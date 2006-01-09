@@ -24,11 +24,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 
 /**
  * Partial implementation of a refactoring-aware compare adapter.
+ * <p>
+ * This class provides a special compare viewer to display an overview about a
+ * refactoring descriptor during team synchronization.
+ * </p>
  * <p>
  * Note: this class is intended to be extended by clients who need refactoring
  * support in a synchronization viewer.
@@ -48,7 +51,7 @@ public abstract class AbstractRefactoringCompareAdapter extends AbstractCompareA
 	 */
 	public ICompareInput asCompareInput(final ISynchronizationContext context, final Object element) {
 		if (element instanceof RefactoringDescriptorProxy)
-			return new RefactoringDescriptorCompareInput((RefactoringDescriptorProxy) element, Differencer.ADDITION | Differencer.LEFT);
+			return new RefactoringDescriptorCompareInput((RefactoringDescriptorProxy) element, getKind(context, (RefactoringDescriptorProxy) element));
 		return super.asCompareInput(context, element);
 	}
 
@@ -60,4 +63,23 @@ public abstract class AbstractRefactoringCompareAdapter extends AbstractCompareA
 			return new RefactoringDescriptorCompareViewer(parent, SWT.NONE);
 		return super.findContentViewer(parent, viewer, input, configuration);
 	}
+
+	/**
+	 * Returns the kind of difference between the three sides ancestor, left and
+	 * right of the specified refactoring descriptor proxy.
+	 * <p>
+	 * The result of this method is used to compose an icon which reflects the
+	 * kind of difference between the two or three versions of the refactoring
+	 * descriptor.
+	 * </p>
+	 * 
+	 * @param context
+	 *            the synchronization context
+	 * @param proxy
+	 *            the refactoring descriptor proxy
+	 * @return the kind of difference
+	 * 
+	 * @see ICompareInput#getKind()
+	 */
+	protected abstract int getKind(ISynchronizationContext context, RefactoringDescriptorProxy proxy);
 }
