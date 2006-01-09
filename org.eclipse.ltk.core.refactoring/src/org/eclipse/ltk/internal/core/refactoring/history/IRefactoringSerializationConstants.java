@@ -38,6 +38,9 @@ public interface IRefactoringSerializationConstants {
 	/** The version attribute */
 	public static final String ATTRIBUTE_VERSION= "version"; //$NON-NLS-1$
 
+	/** The current version tag */
+	public static final String CURRENT_VERSION= "1.0"; //$NON-NLS-1$
+
 	/** The refactoring element */
 	public static final String ELEMENT_REFACTORING= "refactoring"; //$NON-NLS-1$
 
