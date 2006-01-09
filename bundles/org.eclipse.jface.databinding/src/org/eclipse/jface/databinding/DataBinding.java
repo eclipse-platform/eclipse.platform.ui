@@ -10,15 +10,19 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding;
 
-import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
-import org.eclipse.jface.databinding.viewers.ViewersUpdatableFactory;
 import org.eclipse.jface.internal.databinding.DataBindingContext;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * Provides static methods to create data binding contexts.
+ * Provides static methods to create data binding contexts.  Its sole purpose
+ * is to provide an API for creating IDataBindingContext implementations.
+ * <p>
+ * In order to use this class, it is recommended that each project create its
+ * own static &lt;projectName&gt;Binding similar to the one in the 
+ * org.eclipse.jface.examples.databinding  package in the 
+ * org.eclipse.jface.examples.databinding plugin.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will remain
@@ -48,26 +52,6 @@ public class DataBinding {
 				result.addUpdatableFactory(factories[i]);
 			}
 		return result;
-	}
-
-	/**
-	 * Creates a data binding context whose lifecycle is bound to an SWT
-	 * control, and which supports binding to SWT controls, JFace viewers, and
-	 * POJO model objects with JavaBeans-style notification.
-	 * <p>
-	 * This method is a convenience method; its implementation is equivalent to
-	 * calling {@link #createContext(Control, IUpdatableFactory[]) } where the
-	 * array of factories consists of a {@link BeanUpdatableFactory} instance, a
-	 * {@link SWTUpdatableFactory}, and a {@link ViewersUpdatableFactory}.
-	 * </p>
-	 * 
-	 * @param control
-	 * @return a data binding context
-	 */
-	public static IDataBindingContext createContext(Control control) {
-		return createContext(control, new IUpdatableFactory[] {
-				new BeanUpdatableFactory(), new SWTUpdatableFactory(),
-				new ViewersUpdatableFactory() });
 	}
 
 	/**
