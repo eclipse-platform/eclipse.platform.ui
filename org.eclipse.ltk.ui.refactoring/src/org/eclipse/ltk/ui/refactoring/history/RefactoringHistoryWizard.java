@@ -304,7 +304,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	/**
 	 * Adds user defined wizard pages in front of the wizard.
 	 * <p>
-	 * Clients may reimplement this method to add custom wizard pages in front
+	 * Clients may extend this method to add custom wizard pages in front
 	 * of the wizard.
 	 * </p>
 	 */
@@ -767,7 +767,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 		} else {
 			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
-			if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_FINISH)) {
+			if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_FINISH) && proxies.length > 0) {
 				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openWarning(getShell(), wizard.getShell().getText(), RefactoringUIMessages.RefactoringHistoryWizard_warning_finish, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
 				store.setValue(PREFERENCE_DO_NOT_WARN_FINISH, dialog.getToggleState());
 			}
@@ -845,7 +845,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * Performs the change previously displayed in the preview.
 	 * <p>
 	 * This method is NOT official API. It is used by the refactoring UI plug-in
-	 * to apply changes to the workspace.
+	 * to perform changes displayed in the preview page to the workspace.
 	 * </p>
 	 * 
 	 * @param change
@@ -988,14 +988,14 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Hook method which is called for each change before it is displayed in a
-	 * preview page.
+	 * preview page. The default implementation returns <code>true</code>.
 	 * <p>
 	 * Note: This API must not be used from outside the refactoring framework.
 	 * </p>
 	 * 
 	 * @param change
-	 *            the change to accept
-	 * @return <code>true</code> if the change is accepted by the filter,
+	 *            the change to select
+	 * @return <code>true</code> if the change passes the filter,
 	 *         <code>false</code> otherwise
 	 */
 	protected boolean selectPreviewChange(final Change change) {
@@ -1004,14 +1004,14 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Hook method which is called for each status entry before it is displayed
-	 * in a wizard page.
+	 * in a wizard page. The default implementation returns <code>true</code>.
 	 * <p>
 	 * Note: This API must not be used from outside the refactoring framework.
 	 * </p>
 	 * 
 	 * @param entry
-	 *            the status entry to accept
-	 * @return <code>true</code> if the status entry is accepted by the
+	 *            the status entry to select
+	 * @return <code>true</code> if the status entry passes the
 	 *         filter, <code>false</code> otherwise
 	 */
 	protected boolean selectStatusEntry(final RefactoringStatusEntry entry) {
