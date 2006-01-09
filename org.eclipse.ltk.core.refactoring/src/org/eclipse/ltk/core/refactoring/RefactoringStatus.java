@@ -260,7 +260,7 @@ public class RefactoringStatus {
 	}
 
 	/**
-	 * Creates a new <code>RefactorngStatus</code> with one <code>INFO</code> entry
+	 * Creates a new <code>RefactoringStatus</code> with one <code>INFO</code> entry
 	 * filled with the given message. 
 	 * 
 	 * @param msg the message of the info entry
@@ -273,7 +273,7 @@ public class RefactoringStatus {
 	}
 
 	/**
-	 * Creates a new <code>RefactorngStatus</code> with one <code>INFO</code> entry
+	 * Creates a new <code>RefactoringStatus</code> with one <code>INFO</code> entry
 	 * filled with the given message and context.
 	 * 
 	 * @param msg the message of the info entry
@@ -287,7 +287,7 @@ public class RefactoringStatus {
 	}
 
 	/**
-	 * Creates a new <code>RefactorngStatus</code> with one <code>WARNING</code> entry
+	 * Creates a new <code>RefactoringStatus</code> with one <code>WARNING</code> entry
 	 * filled with the given message.
 	 * 
 	 * @param msg the message of the warning entry
@@ -300,7 +300,7 @@ public class RefactoringStatus {
 	}
 
 	/**
-	 * Creates a <code>RefactorngStatus</code> with one <code>WARNING</code> entry
+	 * Creates a <code>RefactoringStatus</code> with one <code>WARNING</code> entry
 	 * fill with the given message and context.
 	 * 
 	 * @param msg the message of the warning entry
@@ -314,7 +314,7 @@ public class RefactoringStatus {
 	}
 
 	/**
-	 * Creates a new <code>RefactorngStatus</code> with one <code>ERROR</code> entry
+	 * Creates a new <code>RefactoringStatus</code> with one <code>ERROR</code> entry
 	 * filled with the given message.
 	 * 
 	 * @param msg the message of the error entry
@@ -327,7 +327,7 @@ public class RefactoringStatus {
 	}
 
 	/**
-	 * Creates a <code>RefactorngStatus</code> with one <code>ERROR</code> entry
+	 * Creates a <code>RefactoringStatus</code> with one <code>ERROR</code> entry
 	 * fill with the given message and context.
 	 * 
 	 * @param msg the message of the error entry
@@ -341,7 +341,7 @@ public class RefactoringStatus {
 	}
 
 	/**
-	 * Creates a new <code>RefactorngStatus</code> with one <code>FATAL</code> entry
+	 * Creates a new <code>RefactoringStatus</code> with one <code>FATAL</code> entry
 	 * filled with the given message.
 	 * 
 	 * @param msg the message of the fatal entry
@@ -354,7 +354,7 @@ public class RefactoringStatus {
 	}
 
 	/**
-	 * Creates a <code>RefactorngStatus</code> with one <code>FATAL</code> entry
+	 * Creates a <code>RefactoringStatus</code> with one <code>FATAL</code> entry
 	 * fill with the given message and context.
 	 * 
 	 * @param msg the message of the fatal entry
@@ -368,7 +368,7 @@ public class RefactoringStatus {
 	}
 
 	/**
-	 * Creates a new <code>RefactorngStatus</code> from the given <code>IStatus</code>. An
+	 * Creates a new <code>RefactoringStatus</code> from the given <code>IStatus</code>. An
 	 * OK status is mapped to an OK refactoring status, an information status is mapped 
 	 * to a warning refactoring status, a warning status is mapped to an error refactoring 
 	 * status and an error or cancel status is mapped to a fatal refactoring status. An unknown
