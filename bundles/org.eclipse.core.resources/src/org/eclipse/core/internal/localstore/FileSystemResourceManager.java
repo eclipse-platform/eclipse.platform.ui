@@ -43,7 +43,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * such paths.  This method does not consider whether resources actually 
 	 * exist at the given locations.
 	 */
-	protected ArrayList allPathsForLocation(URI location) {
+	protected ArrayList allPathsForLocation(URI inputLocation) {
+		URI location = FileUtil.canonicalURI(inputLocation);
 		final IWorkspaceRoot root = getWorkspace().getRoot();
 		final ArrayList results = new ArrayList();
 		if (location.equals(root.getLocationURI())) {

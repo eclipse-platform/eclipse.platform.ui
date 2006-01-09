@@ -14,6 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -105,7 +106,8 @@ public class IWorkspaceRootTest extends ResourceTest {
 		ensureExistsInWorkspace(existing, true);
 		
 		//existing file
-		result = root.findFilesForLocation(existing.getLocation());
+		final IPath existingFileLocation = existing.getLocation();
+		result = root.findFilesForLocation(existingFileLocation);
 		assertResources("2.0", existing, result);
 		result = root.findFilesForLocationURI(existing.getLocationURI());
 		assertResources("2.1", existing, result);
@@ -118,12 +120,31 @@ public class IWorkspaceRootTest extends ResourceTest {
 		assertResources("2.2", nonExisting, result);
 		
 		//relative path
-		result = root.findFilesForLocation(existing.getLocation().makeRelative());
+		result = root.findFilesForLocation(existingFileLocation.makeRelative());
 		assertResources("3.0", existing, result);
 		result = root.findFilesForLocation(nonExisting.getLocation().makeRelative());
 		assertResources("2.1", nonExisting, result);
 		
+		//existing file with different case
+		if (!isCaseSensitive(existing)) {
+			IPath differentCase = new Path(existingFileLocation.toOSString().toUpperCase());
+			result = root.findFilesForLocation(differentCase);
+			assertResources("2.0", existing, result);
+			result = root.findFilesForLocationURI(existing.getLocationURI());
+			assertResources("2.1", existing, result);
+		}
+
+		
 		// TODO add more tests
+	}
+
+	/**
+	 * Returns whether a given resource is in a case-sensitive file system.
+	 * @param resource
+	 * @return
+	 */
+	private boolean isCaseSensitive(IResource resource) {
+		return ((Resource)resource).getStore().getFileSystem().isCaseSensitive();
 	}
 
 	/**
