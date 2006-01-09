@@ -27,23 +27,47 @@ public interface IRefactoringCoreStatusCodes {
 	 */
 	public static final int INTERNAL_ERROR= 10000;
 
-	/** 
-	 * Status code (value 10001) indicating that a bad location exception has 
+	/**
+	 * Status code (value 10001) indicating that a bad location exception has
 	 * occurred during change execution.
 	 * 
 	 * @see org.eclipse.jface.text.BadLocationException
-	 */ 
+	 */
 	public static final int BAD_LOCATION= 10001;
-	
+
 	/**
-	 * Status code (value 10002) indicating that an validateEdit call has changed the
-	 * content of a file on disk.
+	 * Status code (value 10002) indicating that an validateEdit call has
+	 * changed the content of a file on disk.
 	 */
 	public static final int VALIDATE_EDIT_CHANGED_CONTENT= 10002;
-	
+
 	/**
-	 * Status code (value 10003) indicating that a condition checker already exists
-	 * in a shared condition checking context.
+	 * Status code (value 10003) indicating that a condition checker already
+	 * exists in a shared condition checking context.
 	 */
-	public static final int CHECKER_ALREADY_EXISTS_IN_CONTEXT= 10003;	
+	public static final int CHECKER_ALREADY_EXISTS_IN_CONTEXT= 10003;
+
+	/**
+	 * Status code (value 10004) indicating that a refactoring history has been
+	 * read which does not contain version information.
+	 */
+	public static final int MISSING_REFACTORING_HISTORY_VERSION= 10004;
+
+	/**
+	 * Status code (value 10005) indicating that a refactoring history with an
+	 * unsupported version has been read.
+	 */
+	public static final int UNSUPPORTED_REFACTORING_HISTORY_VERSION= 10005;
+
+	/**
+	 * Status code (value 10006) indicating that a general error has occured
+	 * during I/O of a refactoring history.
+	 */
+	public static final int REFACTORING_HISTORY_IO_ERROR= 10006;
+
+	/**
+	 * Status code (value 10007) indicating that the format of a refactoring
+	 * history contains errors.
+	 */
+	public static final int REFACTORING_HISTORY_FORMAT_ERROR= 10007;
 }
