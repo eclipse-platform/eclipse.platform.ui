@@ -201,7 +201,7 @@ public class FilteredTree extends Composite {
 						// if the initial filter text hasn't changed, do not try to match
 						boolean hasFocus = getViewer().getTree().setFocus();
 						boolean textChanged = !getInitialText().equals(filterText.getText().trim());
-						if (hasFocus && textChanged){
+						if (hasFocus && textChanged && filterText.getText().trim().length() > 0){
 							TreeItem item = getFirstHighlightedItem(getViewer().getTree().getItems());
 							if (item != null){
 								getViewer().getTree().setSelection(new TreeItem[] {item});
