@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -42,17 +41,20 @@ public class UpdateSilentAction extends WorkspaceTraversalAction {
         return true;
     }
     
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#execute(org.eclipse.jface.action.IAction)
+	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
-		//For 3.2 M3 release: check to see if the user wants to perform a model update or just a 
-		//regular update action
-		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-		if (!store.getBoolean(ICVSUIConstants.PREF_ENABLEMODELUPDATE) || CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_UPDATE_HANDLING).equals(ICVSUIConstants.PREF_UPDATE_HANDLING_TRADITIONAL)) {
+		if (CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_UPDATE_HANDLING).equals(ICVSUIConstants.PREF_UPDATE_HANDLING_TRADITIONAL)) {
 			new UpdateOperation(getTargetPart(), getCVSResourceMappings(), Command.NO_LOCAL_OPTIONS, null /* no tag */).run();
 		} else {
 	    	new ModelUpdateOperation(getTargetPart(), getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext()).run();
 	    }
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getId()
+	 */
 	public String getId() {
 		return ICVSUIConstants.CMD_UPDATE;
 	}

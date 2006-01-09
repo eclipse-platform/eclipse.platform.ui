@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class ModelReplaceOperation extends ModelUpdateOperation {
@@ -60,13 +61,13 @@ public class ModelReplaceOperation extends ModelUpdateOperation {
 		final int[] result = new int[] { 1 };
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-		        MessageDialog dialog = new MessageDialog(getShell(), "Overwrite Local Changes?", null, // accept
+		        MessageDialog dialog = new MessageDialog(getShell(), CVSUIMessages.ModelReplaceOperation_0, null, // accept
 		                // the
 		                // default
 		                // window
 		                // icon
-		        		"The selected elements contain local changes. You may choose to overwrite the changes or preview them.", 
-		        		MessageDialog.QUESTION, new String[] { "&Overwrite", "&Preview",
+		        		CVSUIMessages.ModelReplaceOperation_1, 
+		        		MessageDialog.QUESTION, new String[] { CVSUIMessages.ModelReplaceOperation_2, CVSUIMessages.ModelReplaceOperation_3,
 		                        IDialogConstants.CANCEL_LABEL }, result[0]); // preview is the default
 		        
 		        result[0] = dialog.open();

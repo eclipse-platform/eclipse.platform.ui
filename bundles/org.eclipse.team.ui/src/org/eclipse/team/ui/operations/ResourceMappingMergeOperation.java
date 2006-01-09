@@ -179,7 +179,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 			return Status.OK_STATUS;
 		if (notOK.size() == 1)
 			return (IStatus)notOK.get(0);
-		return new MultiStatus(TeamUIPlugin.ID, 0, (IStatus[]) notOK.toArray(new IStatus[notOK.size()]), "Multiple potential side effects of this operation have been detected.", null);
+		return new MultiStatus(TeamUIPlugin.ID, 0, (IStatus[]) notOK.toArray(new IStatus[notOK.size()]), TeamUIMessages.ResourceMappingMergeOperation_3, null);
 	}
 
 	/**
@@ -303,7 +303,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	 */
 	protected String getPreviewRequestMessage() {
 		if (!isPreviewRequested()) {
-			return "Preview the merge before it is performed"; 
+			return TeamUIMessages.ResourceMappingMergeOperation_4; 
 		}
 		return super.getPreviewRequestMessage();
 	}

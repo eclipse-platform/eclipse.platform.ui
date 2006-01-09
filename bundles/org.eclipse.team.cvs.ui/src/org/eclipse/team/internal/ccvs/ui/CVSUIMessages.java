@@ -1040,5 +1040,11 @@ public class CVSUIMessages extends NLS {
 	public static String UpdateMergePreferencePage_1;
 	public static String UpdateMergePreferencePage_2;
 	public static String UpdateMergePreferencePage_3;
+	public static String WorkspaceSubscriberContext_0;
+	public static String ModelReplaceOperation_0;
+	public static String ModelReplaceOperation_1;
+	public static String ModelReplaceOperation_2;
+	public static String ModelReplaceOperation_3;
+	public static String MergeWizardPage_14;
 
 }

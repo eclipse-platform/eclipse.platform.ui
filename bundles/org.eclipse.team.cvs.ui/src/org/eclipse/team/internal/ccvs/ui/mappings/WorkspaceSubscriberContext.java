@@ -26,6 +26,7 @@ import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
@@ -78,7 +79,7 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 			String ci1 = variant.getContentIdentifier();
 			String ci2 = ((IFileRevision)remote).getContentIdentifier();
 			if (!ci1.equals(ci2)) {
-				throw new CVSException(NLS.bind("Could not update the meta-data for file {0} due to inconsistent internal state.", resource.getFullPath().toString()));
+				throw new CVSException(NLS.bind(CVSUIMessages.WorkspaceSubscriberContext_0, resource.getFullPath().toString()));
 			}
 		}
 	}

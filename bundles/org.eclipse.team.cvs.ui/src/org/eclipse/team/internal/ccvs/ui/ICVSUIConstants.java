@@ -151,7 +151,6 @@ public interface ICVSUIConstants {
 	
 	public final String PREF_ALLOW_EMPTY_COMMIT_COMMENTS= "pref_allow_empty_commit_comment"; //$NON-NLS-1$
 	
-	public final String PREF_ENABLEMODELUPDATE = "pref_workinprogress_enablemodelupdate"; //$NON-NLS-1$
 	public final String PREF_UPDATE_HANDLING = "pref_team_update_handling"; //$NON-NLS-1$
 	public final String PREF_UPDATE_HANDLING_PREVIEW = "previewUpdate"; //$NON-NLS-1$
 	public final String PREF_UPDATE_HANDLING_PERFORM = "performUpdate"; //$NON-NLS-1$

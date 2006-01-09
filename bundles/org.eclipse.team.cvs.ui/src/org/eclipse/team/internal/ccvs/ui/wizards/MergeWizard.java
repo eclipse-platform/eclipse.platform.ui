@@ -17,7 +17,6 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
@@ -74,8 +73,7 @@ public class MergeWizard extends Wizard {
                 // Ignore
             }
 		} else {
-			IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-		    if (store.getBoolean(ICVSUIConstants.PREF_ENABLEMODELUPDATE)){
+		    if (page.isModelSync()){
 		    	CVSMergeSubscriber s = new CVSMergeSubscriber(getProjects(resources), startTag, endTag);
 		    	try {
 					new ModelMergeOperation(getPart(), mappings, s).run();

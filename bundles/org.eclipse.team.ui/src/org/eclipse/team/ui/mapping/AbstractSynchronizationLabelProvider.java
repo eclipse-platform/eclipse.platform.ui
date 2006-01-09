@@ -235,18 +235,11 @@ public abstract class AbstractSynchronizationLabelProvider implements ILabelProv
 	 * Return the sync kind of the given element. This is used
 	 * to determine how to decorate the image and label of the
 	 * element. The sync kind is described in the {@link SyncInfo}
-	 * class.
+	 * class. A <code>null</code> is returned by default.
 	 * @param element the element being tested
 	 * @return the sync kind of the given element
 	 */
 	protected IDiffNode getDiff(Object element) {
-		return getSyncDelta(element);
-	}
-	
-	/**
-	 * @deprecated use {@link #getDiff(Object) }
-	 */
-	protected IDiffNode getSyncDelta(Object element) {
 		return null;
 	}
 	

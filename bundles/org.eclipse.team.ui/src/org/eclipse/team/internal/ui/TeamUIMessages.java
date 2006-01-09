@@ -359,4 +359,8 @@ public class TeamUIMessages extends NLS {
 	public static String ResourceMappingOperation_0;
 	public static String AbstractSynchronizationLabelProvider_0;
 
+	public static String ResourceMappingMergeOperation_3;
+
+	public static String ResourceMappingMergeOperation_4;
+
 }
