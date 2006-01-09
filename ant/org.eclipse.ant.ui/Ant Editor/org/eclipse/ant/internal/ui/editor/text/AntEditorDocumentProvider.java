@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2006 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -133,10 +133,15 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 			    } else {
 			    	lock= xmlInfo.fAntModel;
 			    }
-			    synchronized (lock) {	    	
-		    		xmlInfo.fAntModel.dispose();
-			    	xmlInfo.fAntModel= null;
-		    	}
+                if (lock == null) {
+                    xmlInfo.fAntModel.dispose();
+                    xmlInfo.fAntModel= null;
+                } else {
+                    synchronized (lock) {           
+                        xmlInfo.fAntModel.dispose();
+                        xmlInfo.fAntModel= null;
+                    }
+                }
 		    }
 	    }
 	    super.disposeFileInfo(element, info);	
@@ -148,14 +153,4 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 	protected FileInfo createEmptyFileInfo() {
 		return new AntFileInfo();
 	}
-	
-	 private void setUpSynchronization(AntFileInfo antInfo) {
-        IDocument document= antInfo.fTextFileBuffer.getDocument();
-        IAnnotationModel model= antInfo.fModel;
-        
-        if (document instanceof ISynchronizable && model instanceof ISynchronizable) {
-            Object lock= ((ISynchronizable) document).getLockObject();
-            ((ISynchronizable) model).setLockObject(lock);
-        }
-    }
 }
