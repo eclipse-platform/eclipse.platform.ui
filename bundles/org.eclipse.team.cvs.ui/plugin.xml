@@ -743,6 +743,16 @@
             <keywordReference id="org.eclipse.team.cvs.ui.cvs.ext"/>
       </page>
    </extension>
+      <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.team.cvs.ui.CVSPreferences"
+            class="org.eclipse.team.internal.ccvs.ui.UpdateMergePreferencePage"
+            id="org.eclipse.team.cvs.ui.UpdateMergePreferences"
+            name="%UpdateMergePreferencePage.name">
+         <keywordReference id="org.eclipse.team.cvs.ui.cvs"/>
+      </page>
+   </extension>
 <!-- **************** Decorator ******************* -->
    <extension
          point="org.eclipse.ui.decorators">
@@ -1364,16 +1374,6 @@
             	%RepoPreference.Description
 		    </description>
 	   </transfer>
-   </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            category="org.eclipse.team.cvs.ui.CVSPreferences"
-            class="org.eclipse.team.internal.ccvs.ui.WorkInProgressPage"
-            id="org.eclipse.team.cvs.ui.WorkInProgressPreferences"
-            name="%WorkInProgressPreferencePage.name">
-         <keywordReference id="org.eclipse.team.cvs.ui.cvs"/>
-      </page>
    </extension>
    
 </plugin>
