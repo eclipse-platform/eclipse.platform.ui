@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
@@ -30,14 +31,11 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
- * Transformer to XML-based refactoring histories.
+ * Transformer for XML-based refactoring histories.
  * 
  * @since 3.2
  */
 final class RefactoringSessionTransformer {
-
-	/** The version value */
-	private static final String VALUE_VERSION= "1.0"; //$NON-NLS-1$
 
 	/** The current document, or <code>null</code> */
 	private Document fDocument= null;
@@ -84,9 +82,9 @@ final class RefactoringSessionTransformer {
 			if (fDocument == null)
 				fDocument= DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		} catch (ParserConfigurationException exception) {
-			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getLocalizedMessage(), null));
 		} catch (FactoryConfigurationError exception) {
-			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getLocalizedMessage(), null));
 		}
 		if (fRefactoring == null) {
 			try {
@@ -123,7 +121,7 @@ final class RefactoringSessionTransformer {
 				else
 					fSession.appendChild(fRefactoring);
 			} catch (DOMException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, exception.getLocalizedMessage(), null));
 			}
 		}
 	}
@@ -149,7 +147,7 @@ final class RefactoringSessionTransformer {
 				fDocument= DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 				fSession= fDocument.createElement(IRefactoringSerializationConstants.ELEMENT_SESSION);
 				Attr attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_VERSION);
-				attribute.setValue(VALUE_VERSION);
+				attribute.setValue(IRefactoringSerializationConstants.CURRENT_VERSION);
 				fSession.getAttributes().setNamedItem(attribute);
 				if (comment != null) {
 					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_COMMENT);
@@ -158,9 +156,9 @@ final class RefactoringSessionTransformer {
 				}
 				fDocument.appendChild(fSession);
 			} catch (DOMException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, exception.getLocalizedMessage(), null));
 			} catch (ParserConfigurationException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getLocalizedMessage(), null));
 			}
 		}
 	}
@@ -190,7 +188,7 @@ final class RefactoringSessionTransformer {
 				attribute.setValue(value);
 				fRefactoring.getAttributes().setNamedItem(attribute);
 			} catch (DOMException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, exception.getLocalizedMessage(), null));
 			}
 		}
 	}
