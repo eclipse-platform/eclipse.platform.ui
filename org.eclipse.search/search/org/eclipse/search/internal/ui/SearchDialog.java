@@ -168,7 +168,15 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		return null;
 	}
 	
-	public static String[] evaluateEnclosingProject(ISelection selection, IEditorPart activeEditor) {		
+	public static String[] evaluateEnclosingProject(ISelection selection, IEditorPart activeEditor) {
+		// always use the editor if active 
+		if (activeEditor != null) {
+			String name= evaluateEnclosingProject(activeEditor.getEditorInput());
+			if (name != null) {
+				return new String[] { name };
+			}
+			return null;
+		}
 		if (selection instanceof IStructuredSelection) {
 			HashSet res= new HashSet();
 			for (Iterator iter= ((IStructuredSelection) selection).iterator(); iter.hasNext();) {
@@ -203,12 +211,6 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 				return null;
 			}
 			return (String[]) res.toArray(new String[res.size()]);
-		}
-		if (activeEditor != null) {
-			String name= evaluateEnclosingProject(activeEditor.getEditorInput());
-			if (name != null) {
-				return new String[] { name };
-			}
 		}
 		return null;
 	}
