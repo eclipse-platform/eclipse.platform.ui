@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
@@ -85,20 +89,23 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 	 * {@inheritDoc}
 	 */
 	public final IProject[] getProjects() {
-		IProject[] projects= {};
+		final Set set= new HashSet();
+		final IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
 		for (int index= 0; index < proxies.length; index++) {
 			final String name= proxies[index].getProject();
-			if (name != null && !"".equals(name)) { //$NON-NLS-1$
-				projects= new IProject[] { ResourcesPlugin.getWorkspace().getRoot().getProject(name)};
-				break;
-			}
+			if (name != null && !"".equals(name)) //$NON-NLS-1$
+				set.add(root.getProject(name));
 		}
-		return projects;
+		return (IProject[]) set.toArray(new IProject[set.size()]);
 	}
 
 	/**
 	 * Returns the associated resource.
+	 * <p>
+	 * This method only returns a meaningful result if the history contains
+	 * refactorings of a single project.
+	 * </p>
 	 * 
 	 * @return the associated resource, or <code>null</code>
 	 */
