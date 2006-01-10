@@ -37,10 +37,6 @@ public class PlatformLogWriter implements ILogListener {
 	}
 
 	protected FrameworkLogEntry getLog(IStatus status) {
-		StringBuffer entry = new StringBuffer();
-		entry.append(status.getPlugin()).append(" "); //$NON-NLS-1$
-		entry.append(Integer.toString(status.getSeverity())).append(" "); //$NON-NLS-1$
-		entry.append(Integer.toString(status.getCode()));
 		Throwable t = status.getException();
 		ArrayList childlist = new ArrayList();
 
@@ -62,6 +58,6 @@ public class PlatformLogWriter implements ILogListener {
 
 		FrameworkLogEntry[] children = (FrameworkLogEntry[]) (childlist.size() == 0 ? null : childlist.toArray(new FrameworkLogEntry[childlist.size()]));
 
-		return new FrameworkLogEntry(entry.toString(), status.getMessage(), stackCode, t, children);
+		return new FrameworkLogEntry(status.getPlugin(), status.getSeverity(), status.getCode(), status.getMessage(), stackCode, t, children);
 	}
 }
