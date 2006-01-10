@@ -48,5 +48,6 @@ Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.2.0,4.0.0)";resolution:=op
  org.eclipse.jdt.launching;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)",
  org.eclipse.jdt.core;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.core.expressions;bundle-version="[3.2.0,4.0.0)"
+ org.eclipse.core.expressions;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.team.core
 Eclipse-LazyStart: true

@@ -14,115 +14,168 @@ package org.eclipse.ant.internal.ui.datatransfer;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
- * Class to store classpath settings of an Eclipse project.
- * 
- * <p>NOTE: The constructed classpath does not contain items of the subprojects.
- * Instead create an object of this class for each project returned by
- * {@link eclipse2ant.util.EclipseUtil#getClasspathProjectsRecursive(IJavaProject)}.
+ * Class to inspect classpath of an Eclipse project.
  */
 public class EclipseClasspath
 {
-    public List srcDirs = new ArrayList();
-    public List classDirs = new ArrayList();
-    public List inclusionLists = new ArrayList();
-    public List exclusionLists = new ArrayList();
-    
-    public Map class2sourcesMap = new TreeMap();
-    public Map class2includesMap = new TreeMap();
-    public Map class2excludesMap = new TreeMap();
-    
-    public Map variable2valueMap = new TreeMap();
-    public List rawClassPathEntries = new ArrayList();
-    public List rawClassPathEntriesAbsolute = new ArrayList();
+    protected List srcDirs = new ArrayList();
+    protected List classDirs = new ArrayList();
+    protected List inclusionLists = new ArrayList();
+    protected List exclusionLists = new ArrayList();
+  
+    protected Map variable2valueMap = new LinkedHashMap();
+    protected List rawClassPathEntries = new ArrayList();
+    protected List rawClassPathEntriesAbsolute = new ArrayList();
  
     private IJavaProject project;
-    private String newProjectRoot;
     private String jreLocation;
-        
-    public EclipseClasspath(IJavaProject project) throws JavaModelException
-    {
-        this(project, null);
-    }
+    
+    private static Map userLibraryCache = new HashMap();
 
     /**
-     * @param newProjectRoot replace project root, e.g. with a variable ${project.location}
+     * Initialize object with classpath of given project.
      */
-    public EclipseClasspath(IJavaProject project, String newProjectRoot) throws JavaModelException
+    public EclipseClasspath(IJavaProject project) throws JavaModelException
     {
-        this.project = project;
-        jreLocation = getJRELocation();
-        this.newProjectRoot = newProjectRoot;
-        IClasspathEntry entries[] = project.getRawClasspath();
+        init(project, project.getRawClasspath()); 
+    }
+  
+    /**
+     * Initialize object with runtime classpath of given launch configuration.
+     * @param project    project that contains given launch configuration conf
+     * @param conf       launch configuration
+     * @param bootstrap  if true only bootstrap entries are added, if false only
+     *                   non-bootstrap entries are added  
+     */
+    public EclipseClasspath(IJavaProject project, ILaunchConfiguration conf, boolean bootstrap)
+        throws JavaModelException
+    {       
+        // convert IRuntimeClasspathEntry to IClasspathEntry
+        IRuntimeClasspathEntry[] runtimeEntries;
+        try
+        {
+            // see AbstractJavaLaunchConfigurationDelegate
+            runtimeEntries = JavaRuntime.computeUnresolvedRuntimeClasspath(conf);
+        }
+        catch (CoreException e)
+        {
+            throw new JavaModelException(e);
+        }
+        List classpathEntries = new ArrayList(runtimeEntries.length);
+        for (int i = 0; i < runtimeEntries.length; i++)
+        {
+            IRuntimeClasspathEntry entry = runtimeEntries[i];
+            if (  bootstrap && (entry.getClasspathProperty()  == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES) ||
+                ! bootstrap && (entry.getClasspathProperty()  != IRuntimeClasspathEntry.BOOTSTRAP_CLASSES))
+            {
+                // NOTE: See AbstractJavaLaunchConfigurationDelegate.getBootpathExt()
+                //       for an alternate bootclasspath detection
+                // TODO check for NPE
+                if (entry.getClass().getName().equals("org.eclipse.jdt.internal.launching.VariableClasspathEntry")) //$NON-NLS-1$
+                {
+                    IClasspathEntry e = convertVariableClasspathEntry(entry);
+                    if (e != null)
+                    {
+                        classpathEntries.add(e);
+                    }
+                }
+                else if (entry.getClass().getName().equals("org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry")) //$NON-NLS-1$
+                {
+                    IClasspathEntry e = JavaCore.newProjectEntry(entry.getPath());
+                    classpathEntries.add(e);
+                }
+                else if (entry.getClasspathEntry() != null)
+                {
+                    classpathEntries.add(entry.getClasspathEntry());
+                }
+            }
+        }
+        IClasspathEntry[] entries =
+            (IClasspathEntry[]) classpathEntries.toArray(new IClasspathEntry[classpathEntries.size()]);
+
+        init(project, entries); 
+    }
+
+    private void init(IJavaProject javaProject, IClasspathEntry entries[]) throws JavaModelException
+    {
+        this.project = javaProject;
+        this.jreLocation = getJRELocation();
+        handle(entries);
+    }
+ 
+    private String getJRELocation() {
+        try {
+            IVMInstall install = JavaRuntime.getVMInstall(project);
+            if (install != null) {
+                File installLocation = install.getInstallLocation();
+                if (installLocation != null) {
+                    return new Path(installLocation.toString()).toString();
+                }
+            }
+        } catch (CoreException e) {
+            AntUIPlugin.log(e);
+        }
+        return ""; //$NON-NLS-1$
+    }
+    
+    private void handle(IClasspathEntry[] entries) throws JavaModelException
+    {
         for (int i = 0; i < entries.length; i++)
         {
             handleSources(entries[i]);
             handleVariables(entries[i]);
             handleJars(entries[i]);
-            handleUserLibraries(entries[i]);
+            handleLibraries(entries[i]);
+            handleProjects(entries[i]);
         }
-        addClasses();
-        initClassMaps();
     }
-    
-    private String getJRELocation() {
-    	try {
-    		IVMInstall install= JavaRuntime.getVMInstall(project);
-    		if (install != null) {
-	    		File installLocation= install.getInstallLocation();
-	    		if (installLocation != null) {
-	    			return new Path(installLocation.toString()).toString();
-	    		}
-    		}
-		} catch (CoreException e) {
-			AntUIPlugin.log(e);
-		}
-		return ""; //$NON-NLS-1$
-	}
 
-    /**
-     * Get class directories without duplicates.
-     */
-    public List getClassDirsUnique()
-    {
-        return removeDuplicates(classDirs);
-    }
-    
     private void handleSources(IClasspathEntry entry) throws JavaModelException
     {
         String projectRoot = ExportUtil.getProjectRoot(project);
         String defaultClassDir = project.getOutputLocation().toString();
+        String defaultClassDirAbsolute = ExportUtil.resolve(project.getOutputLocation());
+
         if (entry.getContentKind() == IPackageFragmentRoot.K_SOURCE &&
             entry.getEntryKind() == IClasspathEntry.CPE_SOURCE)
         {
             // found source path
             IPath srcDirPath = entry.getPath();
             IPath classDirPath = entry.getOutputLocation();
-            String srcDir = ExportUtil.removeProjectRoot((srcDirPath != null) ? srcDirPath.toString() : projectRoot, project.getProject());
+            String srcDir = handleLinkedResource(srcDirPath);
+            ExportUtil.removeProjectRoot((srcDirPath != null) ? srcDirPath.toString() : projectRoot, project.getProject());
             String classDir = ExportUtil.removeProjectRoot((classDirPath != null) ? classDirPath.toString() : defaultClassDir, project.getProject());
             srcDirs.add(srcDir);
             classDirs.add(classDir);
+            String classDirAbsolute = (classDirPath != null) ? ExportUtil.resolve(classDirPath) : defaultClassDirAbsolute;
+            rawClassPathEntries.add(classDir);
+            rawClassPathEntriesAbsolute.add(classDirAbsolute);
             IPath[] inclusions = entry.getInclusionPatterns();                   
             List inclusionList = new ArrayList();
             for (int j = 0; j < inclusions.length; j++)
@@ -147,42 +200,50 @@ public class EclipseClasspath
     }
     
     /**
-     * Convert sources/classes directories and inclusion/exclusion filters to map representation.
-     * As several source directories may compile to same class directory this is a useful conversion
-     * of the result of {@link #handleSources}.
+     * Check if given source path is a linked resource. Add values to
+     * {@link #variable2valueMap} accordingly.
+     * @param srcDirPath    source dir as IPath
+     * @return source directory with reference, e.g. ${MYPATH}/src, if it is no
+     *         link, orginal source dir is returned 
      */
-    private void initClassMaps()
+    private String handleLinkedResource(IPath srcDirPath)
     {
-        for (int i = 0; i < srcDirs.size(); i++)
+        String projectRoot = ExportUtil.getProjectRoot(project);
+        String srcDir = ExportUtil.removeProjectRoot((srcDirPath != null) ? srcDirPath.toString() : projectRoot, project.getProject());
+        if (srcDirPath == null)
         {
-            String srcDir = (String) srcDirs.get(i);
-            String classDir = (String) classDirs.get(i);
-            List includeList = (List) inclusionLists.get(i);
-            List excludeList = (List) exclusionLists.get(i);
-            Set sources = (Set) class2sourcesMap.get(classDir);
-            if (sources == null)
-            {
-                sources = new TreeSet();
-            }
-            sources.add(srcDir);
-            class2sourcesMap.put(classDir, sources);
-            Set includes = (Set) class2includesMap.get(classDir);
-            if (includes == null)
-            {
-                includes = new TreeSet();
-            }
-            includes.addAll(includeList);
-            class2includesMap.put(classDir, includes);
-            Set excludes = (Set) class2excludesMap.get(classDir);
-            if (excludes == null)
-            {
-                excludes = new TreeSet();
-            }
-            excludes.addAll(excludeList);
-            class2excludesMap.put(classDir, excludes);
+            return srcDir;
         }
+        IFile file;
+        try
+        {
+            file = ResourcesPlugin.getWorkspace().getRoot().getFile(srcDirPath);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return srcDir;
+        }
+        if (file.isLinked())
+        {
+            String pathVariable = file.getRawLocation().segment(0).toString();
+            IPath pathVariableValue = file.getWorkspace().getPathVariableManager().getValue(pathVariable);
+            if (pathVariableValue != null)
+            {
+                // path variable was used
+                String pathVariableExtension = file.getRawLocation().segment(1).toString();
+                variable2valueMap.put(pathVariable + ".pathvariable", pathVariableValue.toString()); //$NON-NLS-1$
+                variable2valueMap.put(srcDir + ".link", //$NON-NLS-1$
+                        "${" + pathVariable + ".pathvariable}/" + pathVariableExtension); //$NON-NLS-1$  //$NON-NLS-2$
+            }
+            else
+            {
+                variable2valueMap.put(srcDir + ".link", file.getLocation() + ""); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            srcDir = "${" + srcDir + ".link}"; //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        return srcDir;
     }
-    
+
     private void handleJars(IClasspathEntry entry)
     {
         if (entry.getContentKind() == IPackageFragmentRoot.K_BINARY &&
@@ -207,14 +268,7 @@ public class EclipseClasspath
                 }
             }
             String jarFileOld = jarFile;
-            if (newProjectRoot == null)
-            {
-                jarFile = ExportUtil.removeProjectRoot(jarFile, project.getProject());
-            }
-            else
-            {
-                jarFile = ExportUtil.replaceProjectRoot(jarFile, project.getProject(), newProjectRoot);
-            }
+            jarFile = ExportUtil.removeProjectRoot(jarFile, project.getProject());
             if (jarFile.equals(jarFileOld))
             {
                 if (handleSubProjectClassesDirectory(jarFile, jarFileBuffer, jarFileAbsoluteBuffer))
@@ -231,7 +285,7 @@ public class EclipseClasspath
     /**
      * Checks if file is a class directory of a subproject and fills string buffers with resolved values.
      * @param file               file to check
-     * @param jarFile            filled with file location with varibale reference ${project.location},
+     * @param jarFile            filled with file location with variable reference ${project.location},
      *                           which is also added to variable2valueMap
      * @param jarFileAbsolute    filled with absolute file location
      * @return                   true if file is a classes directory 
@@ -241,7 +295,7 @@ public class EclipseClasspath
         // class directory of a subproject?
         if (file != null && file.indexOf('/') == 0)
         {
-            int i = file.indexOf("/", 1); //$NON-NLS-1$
+            int i = file.indexOf('/', 1);
             i = (i != -1) ? i : file.length(); 
             String subproject = file.substring(1, i);
             IJavaProject javaproject = ExportUtil.getJavaProjectByName(subproject);
@@ -252,12 +306,7 @@ public class EclipseClasspath
                 String location = javaproject.getProject().getName() + ".location"; //$NON-NLS-1$
                 jarFileAbsolute.append(ExportUtil.replaceProjectRoot(file, javaproject.getProject(), ExportUtil.getProjectRoot(javaproject)));
                 jarFile.append(ExportUtil.replaceProjectRoot(file, javaproject.getProject(), "${" + location + "}")); //$NON-NLS-1$ //$NON-NLS-2$
-                String projectRoot= ExportUtil.getProjectRoot(project);
-                if (newProjectRoot != null && !newProjectRoot.startsWith("${")) { //$NON-NLS-1$
-                    projectRoot= newProjectRoot;
-                }
-                String relativePath= BuildFileCreator.getRelativePath(ExportUtil.getProjectRoot(javaproject), projectRoot);
-                variable2valueMap.put(location, relativePath);
+                variable2valueMap.put(location, ExportUtil.getProjectRoot(javaproject));
                 return true;
             }
         }
@@ -283,125 +332,351 @@ public class EclipseClasspath
                 variable = e.substring(0, index);
                 path = e.substring(index);
             }
-            String value = JavaCore.getClasspathVariable(variable).toString();
-            variable2valueMap.put(variable, value);
-            rawClassPathEntriesAbsolute.add(value + path);                  
+            IPath value = JavaCore.getClasspathVariable(variable);
+            if (value != null)
+            {
+                variable2valueMap.put(variable, value.toString());
+            }
+            else if (variable2valueMap.get(variable) == null)
+            {
+                // only add empty value, if variable is new 
+                variable2valueMap.put(variable, ""); //$NON-NLS-1$
+            }
+            rawClassPathEntriesAbsolute.add(value + path);
             rawClassPathEntries.add("${" + variable + "}" + path); //$NON-NLS-1$ //$NON-NLS-2$
-        }  
+        }
     }
     
-    private void handleUserLibraries(IClasspathEntry entry) throws JavaModelException
+    private void handleLibraries(IClasspathEntry entry) throws JavaModelException
     {
         if (entry.getContentKind() == IPackageFragmentRoot.K_SOURCE &&
             entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER)
         {
-            // found (user) library
-            // String e = entry.getPath().toString(); // org.eclipse.jdt.USER_LIBRARY/MyLib
-            //JavaCore.USER_LIBRARY_CONTAINER_ID
+            // found library
             IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
-            IClasspathEntry entries[] = container.getClasspathEntries();
-            for (int i = 0; i < entries.length; i++)
+            if (container == null) {
+                // jar missing (project not compile clean)
+                return;
+            }
+            String jar = entry.getPath().toString();
+            /*
+            if (jar.startsWith(JavaRuntime.JRE_CONTAINER))
             {
-                handleJars(entries[i]);
+                // JRE System Library
+            }
+            else
+            */
+            if (jar.startsWith("org.eclipse.pde.core.requiredPlugins")) //$NON-NLS-1$
+            {
+                // Plug-in Dependencies
+                String libraryName = container.getDescription();
+                String pluginRef = "${" + libraryName + ".pluginclasspath}"; //$NON-NLS-1$ //$NON-NLS-2$
+                userLibraryCache.put(pluginRef, container);
+                srcDirs.add(pluginRef);
+                classDirs.add(pluginRef);
+                rawClassPathEntries.add(pluginRef);
+                rawClassPathEntriesAbsolute.add(pluginRef);
+                inclusionLists.add(new ArrayList());
+                exclusionLists.add(new ArrayList());                
+            }
+            else if (jar.startsWith(JavaCore.USER_LIBRARY_CONTAINER_ID))
+            {
+                // User Library
+                String libraryName = container.getDescription();
+                String userlibraryRef = "${" + libraryName + ".userclasspath}"; //$NON-NLS-1$ //$NON-NLS-2$
+                if (container.getKind() == IClasspathContainer.K_SYSTEM)
+                {
+                    userlibraryRef = "${" + libraryName + ".bootclasspath}"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                userLibraryCache.put(userlibraryRef, container); 
+                srcDirs.add(userlibraryRef);
+                classDirs.add(userlibraryRef);
+                rawClassPathEntries.add(userlibraryRef);
+                rawClassPathEntriesAbsolute.add(userlibraryRef);
+                inclusionLists.add(new ArrayList());
+                exclusionLists.add(new ArrayList());
+            }
+            else
+            {
+                IClasspathEntry entries[] = container.getClasspathEntries();
+                for (int i = 0; i < entries.length; i++)
+                {
+                    handleJars(entries[i]);
+                }
             }
         }
     }
     
-    /**
-     *  Add classDirs in front of classpath.
-     */
-    private void addClasses()
+    private void handleProjects(IClasspathEntry entry)
     {
-        for (Iterator iter = classDirs.iterator(); iter.hasNext();)
+        if (entry.getContentKind() == IPackageFragmentRoot.K_SOURCE &&
+            entry.getEntryKind() == IClasspathEntry.CPE_PROJECT)
         {
-            String classDir = (String) iter.next();
-            if (newProjectRoot != null)
+            // found required project on build path
+            String subProjectRoot = entry.getPath().toString();
+            IJavaProject subProject = ExportUtil.getJavaProject(subProjectRoot);
+            if (subProject == null)
             {
-                classDir = newProjectRoot + '/' + classDir;
+                // project was not loaded in workspace
+                AntUIPlugin.log("project is not loaded in workspace: " + subProjectRoot, null); //$NON-NLS-1$
+                return;
             }
-            rawClassPathEntries.add(0, classDir);
-            rawClassPathEntriesAbsolute.add(0, classDir);
+            // only add an indicator that this is a project reference
+            String classpathRef = "${" + subProject.getProject().getName() + ".classpath}"; //$NON-NLS-1$ //$NON-NLS-2$
+            srcDirs.add(classpathRef);
+            classDirs.add(classpathRef);
+            rawClassPathEntries.add(classpathRef);
+            rawClassPathEntriesAbsolute.add(classpathRef);
+            inclusionLists.add(new ArrayList());
+            exclusionLists.add(new ArrayList());
         }
     }
 
     /**
-     * Get classpath for given project.
+     * Get runtime classpath items for given project separated with path separator.
      */
-    public static String getClasspath(IJavaProject project) throws JavaModelException
+    public static String getClasspath(IJavaProject project) throws CoreException
     {
-        List items = EclipseClasspath.getClasspathList(project);
-        return toString(items, File.pathSeparator);
+        List items = getClasspathList(project);
+        return ExportUtil.toString(items, File.pathSeparator);
     }
 
     /**
-     * Get classpath for given project.
+     * Get runtime classpath items for given project.
      */
-    public static String getClasspath(IJavaProject project, boolean includeSubProjects) throws JavaModelException
+    public static List getClasspathList(IJavaProject project) throws CoreException
     {
-        List items = EclipseClasspath.getClasspathList(project, includeSubProjects);
-        return toString(items, File.pathSeparator);
+        String[] classpath = JavaRuntime.computeDefaultRuntimeClassPath(project);
+        return Arrays.asList(classpath);
     }
 
     /**
-     * Get classpath for given project.
+     * Fill given lists with source / class directories and inclusion /
+     * exclusion lists. Source directory srcDirs.get(i) compiles to class
+     * directory.get(i), and has inclusion / exclusion lists
+     * inclusionLists.get(i) / exclusionLists.get(i).
+     * 
+     * <p>NOTE: All lists do not contain resolved items of the subprojects,
+     * user/plugin libaries or linked resources. Instead indicators are used:
+     * <code>${projectname.classpath}</code>,
+     * <code>${projectname.userclasspath}</code>,
+     * <code>${projectname.bootclasspath}</code>,
+     * <code>${projectname.pluginclasspath}</code>,
+     * <code>${projectname.link}</code>.
+     * It's up to the caller to replace these indicators with the concrete
+     * classpaths. You can use these methods to determine this:
+     * {@link #isProjectReference(String)},
+     * {@link #resolveProjectReference(String)},
+     * {@link #isUserLibraryReference(String)},
+     * {@link #isUserSystemLibraryReference(String)},
+     * {@link #isPluginReference(String)},
+     * {@link #resolveUserLibraryReference(String)},
+     * {@link #isLinkedResource(String)},
+     * {@link #resolveLinkedResource(String)}.
      */
-    public static List getClasspathList(IJavaProject project) throws JavaModelException
+//    public void fillWithDirs(List srcDirs, List classDirs, List inclusionLists, List exclusionLists)
+//    {
+//        if (srcDirs != null)
+//        {
+//            srcDirs.clear();
+//            srcDirs.addAll(this.srcDirs);
+//        }
+//        if (classDirs != null)
+//        {    
+//            classDirs.clear();
+//            classDirs.addAll(this.classDirs);
+//        }
+//        if (inclusionLists != null)
+//        {
+//            inclusionLists.clear();
+//            inclusionLists.addAll(this.inclusionLists);
+//        }
+//        if (exclusionLists != null)
+//        {  
+//            exclusionLists.clear();
+//            exclusionLists.addAll(this.exclusionLists);
+//        }
+//    }
+
+//    /**
+//     * Fill given lists with rawClassPathEntries/rawClassPathEntriesAbsolute
+//     * directories.
+//     *
+//     * @see #fillWithDirs(List, List, List, List)
+//     */
+//    public void fillWithRawClassPathEntries(List rawClassPathEntries, List rawClassPathEntriesAbsolute)
+//    {
+//        if (rawClassPathEntries != null)
+//        {
+//            rawClassPathEntries.clear();
+//            rawClassPathEntries.addAll(this.rawClassPathEntries);
+//        }
+//        if (rawClassPathEntriesAbsolute != null)
+//        {    
+//            rawClassPathEntriesAbsolute.clear();
+//            rawClassPathEntriesAbsolute.addAll(this.rawClassPathEntriesAbsolute);
+//        }
+//    }
+//    
+    /**
+     * Get classpath variable map. 
+     */
+//    public Map getVariableMap()
+//    {
+//        return variable2valueMap;
+//    }
+    
+    /**
+     * Check if given string is a reference.
+     * 
+     * @see #fillWithDirs(List, List, List, List)
+     */
+    public static boolean isReference(String s)
     {
-        EclipseClasspath instance = new EclipseClasspath(project, ExportUtil.getProjectRoot(project));
-        return instance.removeDuplicates(instance.rawClassPathEntriesAbsolute);
+        return isProjectReference(s) || isUserLibraryReference(s) ||
+            isUserSystemLibraryReference(s) || isPluginReference(s);
+        // NOTE: A linked resource is no reference
     }
 
     /**
-     * Get classpath for given project.
+     * Check if given string is a project reference.
+     * 
+     * @see #fillWithDirs(List, List, List, List)
      */
-    public static List getClasspathList(IJavaProject project, boolean includeSubProjects) throws JavaModelException
+    public static boolean isProjectReference(String s)
     {
-        EclipseClasspath instance = new EclipseClasspath(project, ExportUtil.getProjectRoot(project));
-        List classpath = instance.rawClassPathEntriesAbsolute;
-        if (!includeSubProjects)
-        {
-            return instance.removeDuplicates(classpath);            
-        }
-        Set subprojects = ExportUtil.getClasspathProjectsRecursive(project);
-        for (Iterator iter = subprojects.iterator(); iter.hasNext();)
-        {
-            IJavaProject subproject = (IJavaProject) iter.next();
-            instance = new EclipseClasspath(subproject, ExportUtil.getProjectRoot(subproject));
-            classpath.addAll(instance.rawClassPathEntriesAbsolute);
-        }
-        return instance.removeDuplicates(classpath);
+        return s.startsWith("${") && s.endsWith(".classpath}"); //$NON-NLS-1$ //$NON-NLS-2$ 
+    }
+
+    /**
+     * Resolves given project reference to a project.
+     * 
+     * @see #fillWithDirs(List, List, List, List)
+     * @return null if project is not resolvable
+     */
+    public static IJavaProject resolveProjectReference(String s)
+    {
+        String name = ExportUtil.removePrefixAndSuffix(s, "${", ".classpath}"); //$NON-NLS-1$ //$NON-NLS-2$
+        return ExportUtil.getJavaProjectByName(name);  
+    }
+
+    /**
+     * Check if given string is a user library reference.
+     * 
+     * @see #fillWithDirs(List, List, List, List)
+     */
+    public static boolean isUserLibraryReference(String s)
+    {
+        return s.startsWith("${") && s.endsWith(".userclasspath}"); //$NON-NLS-1$ //$NON-NLS-2$ 
+    }
+
+    /**
+     * Check if given string is a user system library reference.
+     * This library is added to the compiler boot classpath.
+     * 
+     * @see #fillWithDirs(List, List, List, List)
+     */
+    public static boolean isUserSystemLibraryReference(String s)
+    {
+        return s.startsWith("${") && s.endsWith(".bootclasspath}"); //$NON-NLS-1$ //$NON-NLS-2$ 
+    }
+
+    /**
+     * Check if given string is a plugin reference.
+     * 
+     * @see #fillWithDirs(List, List, List, List)
+     */
+    public static boolean isPluginReference(String s)
+    {
+        return s.startsWith("${") && s.endsWith(".pluginclasspath}"); //$NON-NLS-1$ //$NON-NLS-2$ 
+    }
+
+    /**
+     * Resolves given user (system) library or plugin reference to its container.
+     * 
+     * <p>NOTE: The library can only be resolved if an EclipseClasspath object
+     * was created which had a reference to this library. The class holds an
+     * internal cache to circumvent that UserLibraryManager is an internal
+     * class. 
+     * 
+     * @see #fillWithDirs(List, List, List, List)
+     * @return null if library is not resolvable
+     */
+    public static IClasspathContainer resolveUserLibraryReference(String s)
+    {
+        return (IClasspathContainer) userLibraryCache.get(s);
     }
     
-    public static String toString(Collection c, String separator)
+    /**
+     * Check if given string is a linked resource.
+     * 
+     * @see #fillWithDirs(List, List, List, List)
+     */
+    public static boolean isLinkedResource(String s)
     {
-        StringBuffer b = new StringBuffer();
-        for (Iterator iter = c.iterator(); iter.hasNext();)
-        {
-            b.append((String) iter.next());
-            b.append(separator);
-        }
-        if (c.size() > 0) {
-            b.delete(b.length() - separator.length(), b.length());
-        }
-        return b.toString();
+        return s.startsWith("${") && s.endsWith(".link}"); //$NON-NLS-1$ //$NON-NLS-2$ 
+    }
+
+    /**
+     * Get source folder name of a linked resource.
+     * 
+     * @see #isLinkedResource(String)
+     */
+    public static String getLinkedResourceName(String s)
+    {
+        return ExportUtil.removePrefixAndSuffix(s, "${", ".link}"); //$NON-NLS-1$ //$NON-NLS-2$ 
     }
     
     /**
-     * Remove duplicates preserving original order.
-     * @param l list to remove duplicates from
-     * @return new list without duplicates 
+     * Resolves given linked resource to an absolute file location.
+     * 
+     * @see #fillWithDirs(List, List, List, List)
      */
-    protected List removeDuplicates(List l)
+    public String resolveLinkedResource(String s)
     {
-        List res = new ArrayList();
-        for (Iterator iter = l.iterator(); iter.hasNext();)
+        String name = ExportUtil.removePrefixAndSuffix(s, "${", "}"); //$NON-NLS-1$ //$NON-NLS-2$
+        String value = (String) variable2valueMap.get(name);
+        String suffix = ".pathvariable}"; //$NON-NLS-1$
+        int i = value.indexOf(suffix);
+        if (i != -1)
         {
-            Object element = iter.next();
-            if (!res.contains(element))
-            {
-                res.add(element);
-            }
+            // path variable
+            String pathVariable = value.substring(0, i + suffix.length() - 1);
+            pathVariable = ExportUtil.removePrefix(pathVariable, "${"); //$NON-NLS-1$
+            return (String) variable2valueMap.get(pathVariable) + value.substring(i + suffix.length());
         }
-        return res;
+        return value;
+    }
+
+    /**
+     * Convert a VariableClasspathEntry to a IClasspathEntry.
+     *
+     * <p>This is a workaround as entry.getClasspathEntry() returns null.
+     */
+    private IClasspathEntry convertVariableClasspathEntry(IRuntimeClasspathEntry entry)
+    {
+        try
+        {
+            Document doc = ExportUtil.parseXmlString(entry.getMemento());
+            Element element = (Element) doc.getElementsByTagName("memento").item(0); //$NON-NLS-1$
+            String variableString = element.getAttribute("variableString"); //$NON-NLS-1$
+            ExportUtil.addVariable(variable2valueMap, variableString);
+            // remove ${...} from string to be conform for handleVariables()
+            variableString = ExportUtil.removePrefix(variableString, "${");//$NON-NLS-1$
+            int i = variableString.indexOf('}');
+            if (i != -1)
+            {
+                variableString = variableString.substring(0, i)
+                    + variableString.substring(i + 1);                
+            }
+            IPath path = new Path(variableString);
+            return JavaCore.newVariableEntry(path, null, null);
+        }
+        catch (Exception e)
+        {
+            AntUIPlugin.log(e);
+            return null;
+        }
+
     }
 }

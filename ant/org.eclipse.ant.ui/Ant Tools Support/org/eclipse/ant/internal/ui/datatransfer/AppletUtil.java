@@ -12,9 +12,6 @@
 
 package org.eclipse.ant.internal.ui.datatransfer;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,7 +25,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 /**
  * Helper class to access private method
- * {@link org.eclipse.jdt.internal.launching.JavaAppletLaunchConfigurationDelegate}<code>.buildHTMLFile()</code>.
+ * <code>org.eclipse.jdt.internal.launching.JavaAppletLaunchConfigurationDelegate}.buildHTMLFile()</code>.
  * 
  * <p>
  * Source was copied and slighlty modified.
@@ -50,83 +47,50 @@ public class AppletUtil
      * Using the specified launch configuration, build an HTML file that
      * specifies the applet to launch.
      * 
-     * @param filename
-     *            the HTML file to create
      * @return the created HTML file
      */
-    public static File buildHTMLFile(ILaunchConfiguration configuration,
-            String filename)
+    public static String buildHTMLFile(ILaunchConfiguration configuration) throws CoreException
     {
-        FileWriter writer = null;
-        File tempFile = null;
-        try
+        String name = getMainTypeName(configuration);
+        StringBuffer b = new StringBuffer();
+        b.append("<!--" + BuildFileCreator.WARNING + " -->" + ExportUtil.NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
+        b.append("<html>" + ExportUtil.NEWLINE); //$NON-NLS-1$
+        b.append("    <body>" + ExportUtil.NEWLINE); //$NON-NLS-1$
+        b.append("        <applet code="); //$NON-NLS-1$
+        b.append(getQuotedString(name + ".class")); //$NON-NLS-1$
+        String appletName = configuration.getAttribute(
+                IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, ""); //$NON-NLS-1$
+        if (appletName.length() != 0)
         {
-            String name = getMainTypeName(configuration);
-            tempFile = new File(filename);
-            writer = new FileWriter(tempFile);
-            writer.write("<html>\n"); //$NON-NLS-1$
-            writer.write("<body>\n"); //$NON-NLS-1$
-            writer.write("<applet code="); //$NON-NLS-1$
-            writer.write(name);
-            writer.write(".class "); //$NON-NLS-1$
-            String appletName = configuration.getAttribute(
-                    IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, ""); //$NON-NLS-1$
-            if (appletName.length() != 0)
-            {
-                writer.write("NAME=\"" + appletName + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-            writer.write("width=\""); //$NON-NLS-1$
-            writer.write(Integer.toString(configuration.getAttribute(
-                    IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, 200)));
-            writer.write("\" height=\""); //$NON-NLS-1$
-            writer
-                    .write(Integer
-                            .toString(configuration
-                                    .getAttribute(
-                                            IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT,
-                                            200)));
-            writer.write("\">\n"); //$NON-NLS-1$
-            Map parameters = configuration.getAttribute(
-                    IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS,
-                    new HashMap());
-            if (parameters.size() != 0)
-            {
-                Iterator iterator = parameters.entrySet().iterator();
-                while (iterator.hasNext())
-                {
-                    Map.Entry next = (Map.Entry) iterator.next();
-                    writer.write("<param name="); //$NON-NLS-1$
-                    writer.write(getQuotedString((String) next.getKey()));
-                    writer.write(" value="); //$NON-NLS-1$
-                    writer.write(getQuotedString((String) next.getValue()));
-                    writer.write(">\n"); //$NON-NLS-1$
-                }
-            }
-            writer.write("</applet>\n"); //$NON-NLS-1$
-            writer.write("</body>\n"); //$NON-NLS-1$
-            writer.write("</html>\n"); //$NON-NLS-1$
+            b.append(" name=\"" + appletName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        catch (IOException e)
+        b.append(" width=\""); //$NON-NLS-1$
+        b.append(Integer.toString(configuration.getAttribute(
+                IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, 200)));
+        b.append("\" height=\""); //$NON-NLS-1$
+        b.append(Integer.toString(configuration.getAttribute(
+                IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, 200)));
+        b.append("\">" + ExportUtil.NEWLINE); //$NON-NLS-1$
+        Map parameters = configuration.getAttribute(
+                IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS,
+                new HashMap());
+        if (parameters.size() != 0)
         {
-        }
-        catch (CoreException e)
-        {
-        }
-        finally
-        {
-            if (writer != null)
+            Iterator iterator = parameters.entrySet().iterator();
+            while (iterator.hasNext())
             {
-                try
-                {
-                    writer.close();
-                }
-                catch (IOException e)
-                {
-                }
+                Map.Entry next = (Map.Entry) iterator.next();
+                b.append("            <param name="); //$NON-NLS-1$
+                b.append(getQuotedString((String) next.getKey()));
+                b.append(" value="); //$NON-NLS-1$
+                b.append(getQuotedString((String) next.getValue()));
+                b.append(">" + ExportUtil.NEWLINE); //$NON-NLS-1$
             }
         }
-       
-        return tempFile;
+        b.append("        </applet>" + ExportUtil.NEWLINE); //$NON-NLS-1$
+        b.append("    </body>" + ExportUtil.NEWLINE); //$NON-NLS-1$
+        b.append("</html>" + ExportUtil.NEWLINE); //$NON-NLS-1$
+        return b.toString();
     }
 
     private static String getQuotedString(String string)
