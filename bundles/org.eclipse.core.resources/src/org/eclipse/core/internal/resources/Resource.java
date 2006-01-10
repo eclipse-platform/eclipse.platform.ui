@@ -667,7 +667,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				final IFileStore originalStore = getStore();
 				boolean wasLinked = isLinked();
 				message = Messages.resources_deleteProblem;
-				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
+				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, null);
 				WorkManager workManager = workspace.getWorkManager();
 				ResourceTree tree = new ResourceTree(workspace.getFileSystemManager(), workManager.getLock(), status, updateFlags);
 				int depth = 0;
