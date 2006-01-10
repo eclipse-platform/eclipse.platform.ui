@@ -192,7 +192,7 @@ public class DebugPlugin extends Plugin {
 	 * <p>
 	 * A status handler may be registered for this error condition,
 	 * and should return a <code>Boolean</code> indicating whether the program
-	 * should be relaunched with the default working directory.
+	 * should be re-launched with the default working directory.
 	 * </p>
 	 */
 	public static final int ERR_WORKING_DIRECTORY_NOT_SUPPORTED = 115;
@@ -208,7 +208,7 @@ public class DebugPlugin extends Plugin {
 	/**
 	 * The launch attribute that designates whether or not it's associated
 	 * launch should capture output. Value is a string representing a boolean -
-	 * <code>true</code> or <code>false</code>. When unspecififed, the default
+	 * <code>true</code> or <code>false</code>. When unspecified, the default
 	 * value is considered <code>true</code>.
 	 * 
 	 * @since 3.1
@@ -252,7 +252,7 @@ public class DebugPlugin extends Plugin {
 	private ListenerList fEventFilters = null;
 
 	/**
-	 * Whether this plugin is in the process of shutting
+	 * Whether this plug-in is in the process of shutting
 	 * down.
 	 */
 	private boolean fShuttingDown= false;
@@ -379,7 +379,7 @@ public class DebugPlugin extends Plugin {
 	}
 	
 	/**
-	 * Convenience method which returns the unique identifier of this plugin.
+	 * Convenience method which returns the unique identifier of this plug-in.
 	 */
 	public static String getUniqueIdentifier() {
 		return PI_DEBUG_CORE;
@@ -433,10 +433,10 @@ public class DebugPlugin extends Plugin {
 	}
 	
 	/**
-	 * Asynchronously executes the given runnable in a seperate
+	 * Asynchronously executes the given runnable in a separate
 	 * thread, after debug event dispatch has completed. If debug
 	 * events are not currently being dispatched, the runnable is
-	 * scheduled to run in a seperate thread immediately.
+	 * scheduled to run in a separate thread immediately.
 	 * 
 	 * @param r runnable to execute asynchronously
 	 * @since 2.1
@@ -691,7 +691,7 @@ public class DebugPlugin extends Plugin {
     /**
      * Sets the default logical structure type among the given combination of logical structure
      * types. The logical structure types provided should all be applicable to a single
-     * value. Specifying <code>null</code> indicates there is no default logical stucture
+     * value. Specifying <code>null</code> indicates there is no default logical structure
      * for the given combination of types.
      * 
      * @param types a combination of logical structure types applicable to a value
@@ -807,7 +807,7 @@ public class DebugPlugin extends Plugin {
 	/**
 	 * Adds the given debug event filter to the registered
 	 * event filters. Has no effect if an identical filter
-	 * is already registerd.
+	 * is already registered.
 	 * 
 	 * @param filter debug event filter
 	 * @since 2.0
@@ -1327,7 +1327,7 @@ public class DebugPlugin extends Plugin {
 	}
 	
 	/**
-	 * Prarses the given command line into seperate arguments that can be passed to
+	 * Parses the given command line into seperate arguments that can be passed to
 	 * <code>DebugPlugin.exec(String[], File)</code>. Embedded quotes and slashes
 	 * are escaped.
 	 * 
