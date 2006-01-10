@@ -160,7 +160,7 @@ public abstract class MarkerView extends TableView {
 				else {
 					current.updateMarkers(getAddedMarkers(adds),
 							getExistingMarkers(removes));
-					updateJob.refresh(getExistingMarkers(refreshes));
+					updateJob.refresh(refreshes);
 
 				}
 
