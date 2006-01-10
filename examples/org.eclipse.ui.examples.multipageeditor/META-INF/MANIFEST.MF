@@ -16,4 +16,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.jface.text,
  org.eclipse.text
-Eclipse-LazyStart: true
+Eclipse-AutoStart: true
+Eclipse-AutoStart-comment: Use Eclipse-AutoStart instead of Eclipse-LazyStart because the multi page editor example should run against 3.1 as well as 3.2.
