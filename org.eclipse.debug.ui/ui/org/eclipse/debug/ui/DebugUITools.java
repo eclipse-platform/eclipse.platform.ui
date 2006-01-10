@@ -60,7 +60,7 @@ import org.eclipse.ui.console.IConsole;
  * This class provides utilities for clients of the debug UI.
  * <p>
  * Images retrieved from this facility should not be disposed.
- * The images will be disposed when this plugin is shutdown.
+ * The images will be disposed when this plug-in is shutdown.
  * </p>
  * <p>
  * This class is not intended to be subclassed or instantiated.
@@ -118,7 +118,7 @@ public class DebugUITools {
 	}
 	
 	/**
-	 * Returns the preference store for the debug UI plugin.
+	 * Returns the preference store for the debug UI plug-in.
 	 *
 	 * @return preference store
 	 */
@@ -191,8 +191,8 @@ public class DebugUITools {
 
 	/**
 	 * Returns the currently selected resource in the active workbench window,
-	 * or <code>null</code> if none. If an editor is active, the resource adapater
-	 * assocaited with the editor is returned, if any.
+	 * or <code>null</code> if none. If an editor is active, the resource adapter
+	 * associated with the editor is returned, if any.
 	 * 
 	 * @return selected resource or <code>null</code>
 	 * @since 3.0
@@ -440,7 +440,7 @@ public class DebugUITools {
 	 * preference settings, and returns whether a launch should proceed.
 	 * <p>
 	 * The following preferences effect whether dirty editors are saved,
-	 * and/or if the user is prompted to save dirty edtiors:<ul>
+	 * and/or if the user is prompted to save dirty editors:<ul>
 	 * <li>PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
 	 * <li>PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
 	 * <li>PREF_AUTOSAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
@@ -465,7 +465,7 @@ public class DebugUITools {
 	 * preference settings, and returns whether a launch should proceed.
 	 * <p>
 	 * The following preferences effect whether dirty editors are saved,
-	 * and/or if the user is prompted to save dirty edtiors:<ul>
+	 * and/or if the user is prompted to save dirty editors:<ul>
 	 * <li>PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
 	 * <li>PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
 	 * <li>PREF_AUTOSAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
@@ -559,7 +559,7 @@ public class DebugUITools {
 	}	
 		
 	/**
-	 * Returns whether the given launch configuraiton is private. Generally,
+	 * Returns whether the given launch configuration is private. Generally,
 	 * private launch configurations should not be displayed to the user. The
 	 * private status of a launch configuration is determined by the
 	 * <code>IDebugUIConstants.ATTR_PRIVATE</code> attribute.
@@ -695,7 +695,7 @@ public class DebugUITools {
 	 * or <code>null</code> if none.
 	 * 
 	 * @param id unique identifier for a source container type
-	 * @return image associated with the specified type of soure container
+	 * @return image associated with the specified type of source container
 	 *    or <code>null</code> if none
 	 * @since 3.2
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainerType
