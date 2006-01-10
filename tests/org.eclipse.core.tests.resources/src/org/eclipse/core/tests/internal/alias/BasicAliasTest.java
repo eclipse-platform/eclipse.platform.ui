@@ -588,7 +588,28 @@ public class BasicAliasTest extends ResourceTest {
 		}
 		assertTrue("2.0", !childDirInParent.exists());
 		assertTrue("2.1", !childProjectFileInParent.exists());
-
+		
+		//recreate the child and ensure resources in parent are there
+		try {
+			child.create(childDesc, getMonitor());
+			child.open(getMonitor());
+		} catch (CoreException e) {
+			fail("3.99", e);
+		}
+		assertTrue("3.0", childDirInParent.exists());
+		assertTrue("3.1", childProjectFileInParent.exists());
+		
+		//delete the parent and ensure child is also deleted
+		try {
+			parent.delete(IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("4.99", e);
+		}
+		
+		assertTrue("4.0", !parent.exists());
+		assertTrue("4.1", !child.exists());
+		assertTrue("4.2", !childDirInParent.exists());
+		assertTrue("4.3", !childProjectFileInParent.exists());
 	}
 
 	public void testDeleteProjectContents() {

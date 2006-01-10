@@ -17,8 +17,7 @@ import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
@@ -466,7 +465,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 			case LifecycleEvent.PRE_PROJECT_CLOSE :
 			case LifecycleEvent.PRE_PROJECT_DELETE :
 				removeFromLocationsMap((IProject) event.resource);
-			//fall through
+				//fall through
 			case LifecycleEvent.PRE_PROJECT_CREATE :
 			case LifecycleEvent.PRE_PROJECT_OPEN :
 				structureChanges.add(event.resource);
@@ -475,7 +474,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 				Resource link = (Resource) event.resource;
 				if (link.isLinked())
 					removeFromLocationsMap(link, link.getStore());
-			//fall through
+				//fall through
 			case LifecycleEvent.PRE_LINK_CREATE :
 				structureChanges.add(event.resource);
 				break;
@@ -618,8 +617,40 @@ public class AliasManager implements IManager, ILifecycleListener {
 		for (Iterator it = aliases.iterator(); it.hasNext();) {
 			IResource alias = (IResource) it.next();
 			monitor.subTask(NLS.bind(Messages.links_updatingDuplicate, alias.getFullPath()));
+			if (alias.getType() == IResource.PROJECT) {
+				if (checkDeletion((IProject) alias, location))
+					continue;
+				//project did not require deletion, so fall through below and refresh it
+			}
 			localManager.refresh(alias, IResource.DEPTH_INFINITE, false, null);
 		}
+	}
+
+	/**
+	 * A project alias needs updating.  If the project location has been deleted,
+	 * then the project should be deleted from the workspace.  This differs
+	 * from the refresh local strategy, but operations performed from within
+	 * the workspace must never leave a resource out of sync.
+	 * @param project The project to check for deletion
+	 * @param location The project location
+	 * @return <code>true</code> if the project has been deleted, and <code>false</code> otherwise
+	 * @throws CoreException
+	 */
+	private boolean checkDeletion(IProject project, IFileStore location) throws CoreException {
+		if (project.exists() && !location.fetchInfo().exists()) {
+			//perform internal deletion of project from workspace tree because
+			// it is already deleted from disk and we can't acquire a different
+			//scheduling rule in this context (none is needed because we are
+			//within scope of the workspace lock)
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.resources_deleteProblem, null);
+			WorkManager workManager = workspace.getWorkManager();
+			ResourceTree tree = new ResourceTree(workspace.getFileSystemManager(), workManager.getLock(), status, IResource.FORCE);
+			tree.deletedProject(project);
+			if (!status.isOK())
+				throw new CoreException(status);
+			return true;
+		}
+		return false;
 	}
 
 	/**
