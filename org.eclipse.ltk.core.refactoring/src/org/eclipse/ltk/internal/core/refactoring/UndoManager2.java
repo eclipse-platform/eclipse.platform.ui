@@ -258,7 +258,7 @@ public class UndoManager2 implements IUndoManager {
 		}
 	}
 
-	//---- event fireing methods -------------------------------------------------
+	//---- event firing methods -------------------------------------------------
 	
 	private void fireAboutToPerformChange(final Change change) {
 		if (fListeners == null)
