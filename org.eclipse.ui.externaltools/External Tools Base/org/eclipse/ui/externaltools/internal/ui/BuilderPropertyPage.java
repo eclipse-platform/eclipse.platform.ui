@@ -746,18 +746,22 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	 * Handles unexpected internal exceptions
 	 */
 	private void handleException(Exception e) {
-		IStatus status;
+		final IStatus[] status= new IStatus[1];
 		if (e instanceof CoreException) {
-			status = ((CoreException) e).getStatus();
+			status[0] = ((CoreException) e).getStatus();
 		} else {
-			status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsUIMessages.BuilderPropertyPage_statusMessage, e);
+			status[0] = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsUIMessages.BuilderPropertyPage_statusMessage, e);
 		}
-        Shell shell= getShell();
-        if (shell != null) {
-            ErrorDialog.openError(shell, ExternalToolsUIMessages.BuilderPropertyPage_errorTitle,
-                    ExternalToolsUIMessages.BuilderPropertyPage_errorMessage,
-                    status);
-        }
+		Display.getDefault().asyncExec(new Runnable() {
+		    public void run() {
+		        Shell shell= getShell();
+		        if (shell != null) {
+		            ErrorDialog.openError(shell, ExternalToolsUIMessages.BuilderPropertyPage_errorTitle,
+		                    ExternalToolsUIMessages.BuilderPropertyPage_errorMessage,
+		                    status[0]);
+		        }
+		    }
+		});
 	}
 
 	/**
@@ -998,6 +1002,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				project.setDescription(desc, IResource.FORCE, monitor);
 			} catch (CoreException e) {
 				handleException(e);
+                performCancel();
 			}
 		}
 		
