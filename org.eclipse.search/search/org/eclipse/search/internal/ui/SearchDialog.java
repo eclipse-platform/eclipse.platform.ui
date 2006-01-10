@@ -587,7 +587,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	
 	
 	public String[] getSelectedProjectNames() {
-		if (getSelectedScope() != SELECTED_PROJECTS_SCOPE) {
+		if (getSelectedScope() == SELECTED_PROJECTS_SCOPE) {
 			return getEnclosingProjectNames();
 		}
 		return null;
