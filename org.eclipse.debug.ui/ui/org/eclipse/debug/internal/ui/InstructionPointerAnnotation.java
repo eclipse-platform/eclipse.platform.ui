@@ -25,10 +25,12 @@ public class InstructionPointerAnnotation extends DynamicInstructionPointerAnnot
 	private Image fImage;
 	
 	/**
+	 * Constructs an instruction pointer image.
 	 * 
-	 * @param frame
-	 * @param markerAnnotationSpecificationId
-	 * @param text
+	 * @param frame stack frame the instruction pointer is associated with
+	 * @param annotationType the type of annotation to display (annotation identifier)
+	 * @param text the message to display with the annotation as hover help
+	 * @param image the image used to display the annotation
 	 */
 	public InstructionPointerAnnotation(IStackFrame frame, String annotationType, String text, Image image) {
 		super(frame, annotationType, text);
