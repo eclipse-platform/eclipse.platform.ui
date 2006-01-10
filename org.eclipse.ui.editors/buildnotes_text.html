@@ -21,7 +21,7 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 ========== Eclipse Build Input January 10th 2006 ==========<br>
 <pre>
-Move of the content assist API additions from the various text plug-ins to jdt.ui:
+- Move of the content assist API additions from the various text plug-ins to jdt.ui:
    - reason: 
       - the collection-based API of ICompletionProposalComputer has no future in the RCP part of eclipse.
       - it is only currently used in jdt to allow contributions to the Java editor's content assistant
@@ -29,7 +29,21 @@ Move of the content assist API additions from the various text plug-ins to jdt.u
    - moved TextContentAssistInvocationContext to jdt.ui
    - moved ICompletionProposalComputer to IJavaCompletionProposalComputer in the jdt.ui plug-in.
    - changed HippieProposalComputer to HippieProposalProcessor, now implementing IContentAssistProcessor instead of ICompletionProposalComputer
-   
+
+- Changes in document setup and creation:
+  1) the extension point 'org.eclipse.core.filebuffers.documentCreation' is now
+     deprecated and urges clients to get rid of it along with hints how to do this
+  2) along with 1) 'org.eclipse.core.filebuffers.IDocumentFactory' is deprecated
+  3) the file buffer manager now provides an 'org.eclipse.jface.text.ISynchronizable'
+     document. Clients which need a synchronized document can set a lock object.
+     Note: To overwrite an existing lock object is considered bad practice and can
+           break other clients: if the document already has a lock object set then
+           this one should be used by the client.
+  4) a warning is now written to the .log file if a document setup participant
+     sets the default partitioner and the extension point documentation has been
+     clarified.
+  5) all PartiallySynchronizedDocument implementations can be removed
+
 - bug fixing
 </pre>
 <br>
