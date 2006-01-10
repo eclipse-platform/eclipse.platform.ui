@@ -26,6 +26,11 @@ import org.eclipse.osgi.util.NLS;
  */
 public class LocalFile extends FileStore {
 	/**
+	 * Cached constant indicating if the current OS is Mac OSX
+	 */
+	private static final boolean MACOSX = Platform.getOS().equals(Platform.OS_MACOSX);
+	
+	/**
 	 * The java.io.File that this store represents.
 	 */
 	protected final File file;
@@ -104,9 +109,14 @@ public class LocalFile extends FileStore {
 	}
 
 	public boolean equals(Object obj) {
-		if (obj instanceof LocalFile)
-			return file.equals(((LocalFile) obj).file);
-		return false;
+		if (!(obj instanceof LocalFile))
+			return false;
+		//Mac oddity: file.equals returns false when case is different even when
+		//file system is not case sensitive (Radar bug 3190672)
+		LocalFile otherFile = (LocalFile)obj;
+		if (MACOSX)
+			return filePath.toLowerCase().equals(otherFile.filePath.toLowerCase());
+		return file.equals(otherFile.file);
 	}
 
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) {
