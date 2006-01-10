@@ -1901,36 +1901,36 @@ M4 = Platform-specific fourth key
             annotationImageProvider="org.eclipse.debug.internal.ui.BreakpointImageProvider">
       </specification>
       <specification
-            colorPreferenceValue="198,219,174"
+            annotationImageProvider="org.eclipse.debug.internal.ui.InstructionPointerImageProvider"
             annotationType="org.eclipse.debug.ui.currentIP"
-            icon="$nl$/icons/full/obj16/inst_ptr_top.gif"
-            verticalRulerPreferenceValue="true"
             colorPreferenceKey="currentIPColor"
-            overviewRulerPreferenceValue="true"
+            colorPreferenceValue="198,219,174"
             highlightPreferenceKey="currentIPHighlight"
-            presentationLayer="6"
             highlightPreferenceValue="true"
             label="%debugCurrentInstructionPointer"
-            textPreferenceValue="false"
+            overviewRulerPreferenceKey="currentIPOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            presentationLayer="6"
             textPreferenceKey="currentIPIndication"
+            textPreferenceValue="false"
             verticalRulerPreferenceKey="currentIPVerticalRuler"
-            overviewRulerPreferenceKey="currentIPOverviewRuler">
+            verticalRulerPreferenceValue="true">
       </specification>
       <specification
-            colorPreferenceValue="219,235,204"
+            annotationImageProvider="org.eclipse.debug.internal.ui.InstructionPointerImageProvider"
             annotationType="org.eclipse.debug.ui.secondaryIP"
-            icon="$nl$/icons/full/obj16/inst_ptr.gif"
-            verticalRulerPreferenceValue="true"
             colorPreferenceKey="secondaryIPColor"
-            overviewRulerPreferenceValue="true"
+            colorPreferenceValue="219,235,204"
             highlightPreferenceKey="secondaryIPHighlight"
-            presentationLayer="6"
             highlightPreferenceValue="true"
             label="%debugCallStack"
-            textPreferenceValue="false"
+            overviewRulerPreferenceKey="secondaryIPOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            presentationLayer="6"
             textPreferenceKey="secondaryIPIndication"
+            textPreferenceValue="false"
             verticalRulerPreferenceKey="secondaryIPVerticalRuler"
-            overviewRulerPreferenceKey="secondaryIPOverviewRuler">
+            verticalRulerPreferenceValue="true">
       </specification>
    </extension>
 <!-- Dynamic (String Substitution) Variables -->

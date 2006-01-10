@@ -391,4 +391,40 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		}
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getMarkerAnnotationSpecificationId(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
+	 */
+	public String getInstructionPointerAnnotationType(IEditorPart editorPart, IStackFrame frame) {
+		IDebugModelPresentation presentation = getPresentation();
+		if (presentation instanceof IInstructionPointerPresentation) {
+			IInstructionPointerPresentation pointerPresentation = (IInstructionPointerPresentation) presentation;
+			return pointerPresentation.getInstructionPointerAnnotationType(editorPart, frame);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerImage(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
+	 */
+	public Image getInstructionPointerImage(IEditorPart editorPart, IStackFrame frame) {
+		IDebugModelPresentation presentation = getPresentation();
+		if (presentation instanceof IInstructionPointerPresentation) {
+			IInstructionPointerPresentation pointerPresentation = (IInstructionPointerPresentation) presentation;
+			return pointerPresentation.getInstructionPointerImage(editorPart, frame);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerText(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
+	 */
+	public String getInstructionPointerText(IEditorPart editorPart, IStackFrame frame) {
+		IDebugModelPresentation presentation = getPresentation();
+		if (presentation instanceof IInstructionPointerPresentation) {
+			IInstructionPointerPresentation pointerPresentation = (IInstructionPointerPresentation) presentation;
+			return pointerPresentation.getInstructionPointerText(editorPart, frame);
+		}
+		return null;
+	}
 }

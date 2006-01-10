@@ -27,6 +27,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -352,20 +353,95 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	public Annotation getInstructionPointerAnnotation(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
 		Annotation annotation = null;
+		String id = null;
+		Image image = null;
+		String text = null;
 		if (presentation instanceof IInstructionPointerPresentation) {
+			// first check if an annotaion object is provided
 			IInstructionPointerPresentation pointerPresentation = (IInstructionPointerPresentation) presentation;
 			annotation = pointerPresentation.getInstructionPointerAnnotation(editorPart, frame);
+			if (annotation == null) {
+				// next check for a marker annotation specification extension
+				id = pointerPresentation.getInstructionPointerAnnotationType(editorPart, frame);
+				if (id == null) {
+					// check for an image
+					image = pointerPresentation.getInstructionPointerImage(editorPart, frame);
+				}
+				text = pointerPresentation.getInstructionPointerText(editorPart, frame);
+			}
 		}
 		if (annotation == null) {
-			// use default annotation
-			IThread thread = frame.getThread();
-			IStackFrame tos = null;
-			try {
-				tos = thread.getTopStackFrame();
-			} catch (DebugException de) {
+            boolean defaultAnnotation = id == null;
+			if (id == null || text == null || (defaultAnnotation && image == null)) {
+				IThread thread = frame.getThread();
+				IStackFrame tos = null;
+				boolean top = false;
+				try {
+					tos = thread.getTopStackFrame();
+					top = frame.equals(tos);
+				} catch (DebugException de) {
+				}
+				if (id == null) {
+					if (top) {
+						id = IDebugUIConstants.ANNOTATION_TYPE_INSTRUCTION_POINTER_CURRENT;
+					} else {
+						id = IDebugUIConstants.ANNOTATION_TYPE_INSTRUCTION_POINTER_SECONDARY;
+					}
+				}
+				if (text == null) {
+					if (top) {
+						text = DebugUIMessages.InstructionPointerAnnotation_0;
+					} else {
+						text = DebugUIMessages.InstructionPointerAnnotation_1;
+					}
+				}
+				if (defaultAnnotation && image == null) {
+					if (top) {
+						image = DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER_TOP);
+					} else {
+						image = DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER);
+					}
+				}
 			}
-			annotation = new InstructionPointerAnnotation(frame, frame.equals(tos));
+			if (defaultAnnotation) {
+				annotation = new InstructionPointerAnnotation(frame, id, text, image);
+			} else {
+				annotation = new DynamicInstructionPointerAnnotation(frame, id, text);
+			}
 		}
 		return annotation;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getMarkerAnnotationSpecificationId(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
+	 */
+	public String getInstructionPointerAnnotationType(IEditorPart editorPart, IStackFrame frame) {
+		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
+		if (presentation instanceof IInstructionPointerPresentation) {
+			return ((IInstructionPointerPresentation)presentation).getInstructionPointerAnnotationType(editorPart, frame);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerImage(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
+	 */
+	public Image getInstructionPointerImage(IEditorPart editorPart, IStackFrame frame) {
+		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
+		if (presentation instanceof IInstructionPointerPresentation) {
+			return ((IInstructionPointerPresentation)presentation).getInstructionPointerImage(editorPart, frame);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerText(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
+	 */
+	public String getInstructionPointerText(IEditorPart editorPart, IStackFrame frame) {
+		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
+		if (presentation instanceof IInstructionPointerPresentation) {
+			return ((IInstructionPointerPresentation)presentation).getInstructionPointerText(editorPart, frame);
+		}
+		return null;
 	}
 }

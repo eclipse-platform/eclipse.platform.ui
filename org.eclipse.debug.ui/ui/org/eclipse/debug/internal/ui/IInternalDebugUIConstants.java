@@ -278,4 +278,14 @@ public interface IInternalDebugUIConstants {
      * @since 3.2
      */
     public static final String WORKING_SET_ID = "workingset_id";  //$NON-NLS-1$
+    
+    /**
+     * Annotation type identifier for annotation of the an instruction
+     * pointer with a dynamic image. Value is <code>org.eclipse.debug.ui.dynamicIP</code>,
+     * identifying a <code>org.eclipse.ui.editors.markerAnnotationSpecification</code>
+     * extension.
+     * 
+     * @since 3.2
+     */
+    public static final String ANNOTATION_TYPE_DYNAMIC_INSTRUCTION_POINTER = "org.eclipse.debug.ui.dynamicIP"; //$NON-NLS-1$    
 }

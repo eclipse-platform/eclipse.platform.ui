@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,59 +12,36 @@ package org.eclipse.debug.internal.ui;
 
  
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.swt.graphics.Image;
 
 /**
- * An annotation for the vertical ruler in text editors that shows one of two
- * images for the current instruction pointer when debugging (one for the top
- * stack frame, one for all others).
+ * Default instruction pointer annotation.
  */
-public class InstructionPointerAnnotation extends Annotation {
-
-	/**
-	 * The frame for this instruction pointer annotation.  This is necessary only so that
-	 * instances of this class can be distinguished by equals().
-	 */
-	private IStackFrame fStackFrame;
+public class InstructionPointerAnnotation extends DynamicInstructionPointerAnnotation {
 	
 	/**
-	 * Construct an instruction pointer annotation for the given stack frame.
+	 * The image for this annotation.
+	 */
+	private Image fImage;
+	
+	/**
 	 * 
-	 * @param stackFrame frame to create an instruction pointer annotation for
-	 * @param isTopFrame whether the given frame is the top stack frame in its thread 
+	 * @param frame
+	 * @param markerAnnotationSpecificationId
+	 * @param text
 	 */
-	public InstructionPointerAnnotation(IStackFrame stackFrame, boolean isTopFrame) {
-		super(isTopFrame ? IDebugUIConstants.ANNOTATION_TYPE_INSTRUCTION_POINTER_CURRENT: IDebugUIConstants.ANNOTATION_TYPE_INSTRUCTION_POINTER_SECONDARY,
-						 false,
-						 isTopFrame ? DebugUIMessages.InstructionPointerAnnotation_0 : DebugUIMessages.InstructionPointerAnnotation_1); // 
-		fStackFrame = stackFrame;
+	public InstructionPointerAnnotation(IStackFrame frame, String annotationType, String text, Image image) {
+		super(frame, annotationType, text);
+		fImage = image;
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object other) {
-		if (other instanceof InstructionPointerAnnotation) {
-			return getStackFrame().equals(((InstructionPointerAnnotation)other).getStackFrame());			
-		}
-		return false;
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode() {
-		return getStackFrame().hashCode();
-	}
-
+		
 	/**
-	 * Returns the stack frame associated with this annotation
+	 * Returns this annotation's image.
 	 * 
-	 * @return the stack frame associated with this annotation
+	 * @return image
 	 */
-	private IStackFrame getStackFrame() {
-		return fStackFrame;
+	protected Image getImage() {
+		return fImage;
 	}
 
 }
