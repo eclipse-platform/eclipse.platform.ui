@@ -21,7 +21,12 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * A strategy to read view extensions from the registry.
  */
 public class ViewRegistryReader extends RegistryReader {
-    private ViewRegistry viewRegistry;
+	/**
+	 * General view category id 
+	 */
+	public static String GENERAL_VIEW_ID = "org.eclipse.ui";	//$NON-NLS-1$
+	
+	private ViewRegistry viewRegistry;
 
     /**
      * RegistryViewReader constructor comment.

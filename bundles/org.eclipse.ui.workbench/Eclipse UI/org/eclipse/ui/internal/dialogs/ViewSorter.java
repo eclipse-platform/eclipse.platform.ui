@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.ViewRegistry;
+import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 
@@ -25,6 +26,8 @@ public class ViewSorter extends ViewerSorter {
 
     /**
      * ViewSorter constructor comment.
+     * 
+     * @param reg an IViewRegistry
      */
     public ViewSorter(ViewRegistry reg) {
         super();
@@ -44,6 +47,13 @@ public class ViewSorter extends ViewerSorter {
                     .getLabel());
             return collator.compare(str1, str2);
         } else if (e1 instanceof IViewCategory) {
+        	IViewCategory generalCategory = viewReg.findCategory(ViewRegistryReader.GENERAL_VIEW_ID);
+        	if (generalCategory != null){
+        		if (((IViewCategory)e1).getId().equals(generalCategory.getId()))
+        			return -1;
+        		if (((IViewCategory)e2).getId().equals(generalCategory.getId()))
+        			return 1;
+        	}
 			Category miscCategory = viewReg.getMiscCategory();
 			if(miscCategory != null){
 				if (((IViewCategory)e1).getId().equals(miscCategory.getId()))
