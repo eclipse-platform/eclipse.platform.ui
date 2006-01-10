@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public class AntBuildfileExportWizard extends Wizard implements IExportWizard
     public void init(IWorkbench workbench, IStructuredSelection selection)
     {
         setWindowTitle(DataTransferMessages.AntBuildfileExportWizard_0);
-    	setDefaultPageImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_WIZARD_BANNER));
+    	setDefaultPageImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_EXPORT_WIZARD_BANNER));
         fSelection= selection;
     }
 }
