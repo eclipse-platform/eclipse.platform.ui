@@ -313,8 +313,6 @@ public interface IWorkbenchHelpContextIds {
 
     public static final String IMPORT_WIZARD = PREFIX + "import_wizard_context"; //$NON-NLS-1$
 
-    public static final String IMPORT_EXPORT_WIZARD = PREFIX + "import_export_wizard_context"; //$NON-NLS-1$
-
     public static final String EXPORT_WIZARD = PREFIX + "export_wizard_context"; //$NON-NLS-1$
 
     public static final String WORKING_SET_NEW_WIZARD = PREFIX

@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.activities.ITriggerPoint;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.activities.ws.WorkbenchTriggerPoints;
@@ -47,6 +48,12 @@ public class ImportPage extends ImportExportPage {
 	public ImportPage(IWorkbench aWorkbench,
 			IStructuredSelection currentSelection) {
 		super(aWorkbench, currentSelection);
+	}
+
+	protected void initialize() {
+        workbench.getHelpSystem().setHelp(
+				getControl(),
+				IWorkbenchHelpContextIds.IMPORT_WIZARD_SELECTION_WIZARD_PAGE); 		
 	}
 
 	protected Composite createTreeViewer(Composite parent) {

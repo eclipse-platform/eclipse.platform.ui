@@ -32,10 +32,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ITriggerPoint;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -206,8 +204,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 	
 	    setControl(outerContainer);	
 	    
-	    PlatformUI.getWorkbench().getHelpSystem().setHelp(
-	    		outerContainer, IWorkbenchHelpContextIds.IMPORT_EXPORT_WIZARD);
+	   initialize();
 	}
 
 	/**
@@ -448,5 +445,13 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
      */
     protected TreeViewer getTreeViewer(){
     	return treeViewer;
+    }
+    
+    /**
+     * Perform any initialization of the wizard page that needs to be done 
+     * after widgets are created and main control is set.
+     */
+    protected void initialize(){
+    	// do nothing by default
     }
 }
