@@ -43,7 +43,9 @@ public class SourceAnalyzer {
     /**
      * Utility class.
      */
-    private SourceAnalyzer() {}
+    private SourceAnalyzer() {
+
+    }
 
     /**
      * Check if source directories of project has cycles or if there are
@@ -151,7 +153,8 @@ public class SourceAnalyzer {
         return srcdir2sourcedirs;
     }
 
-    private static void showCycleWarning(String projectName, Shell shell, List cycle, StringBuffer message) {
+    private static void showCycleWarning(String projectName, Shell shell,
+            List cycle, StringBuffer message) {
 
         String m = MessageFormat.format(DataTransferMessages.SourceAnalyzer_0,
                 new String[] { projectName });

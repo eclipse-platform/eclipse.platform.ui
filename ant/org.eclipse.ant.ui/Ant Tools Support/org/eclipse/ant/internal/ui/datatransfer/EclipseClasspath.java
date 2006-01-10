@@ -34,7 +34,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -54,7 +53,6 @@ public class EclipseClasspath
     protected List rawClassPathEntriesAbsolute = new ArrayList();
  
     private IJavaProject project;
-    private String jreLocation;
     
     private static Map userLibraryCache = new HashMap();
 
@@ -96,7 +94,6 @@ public class EclipseClasspath
             {
                 // NOTE: See AbstractJavaLaunchConfigurationDelegate.getBootpathExt()
                 //       for an alternate bootclasspath detection
-                // TODO check for NPE
                 if (entry.getClass().getName().equals("org.eclipse.jdt.internal.launching.VariableClasspathEntry")) //$NON-NLS-1$
                 {
                     IClasspathEntry e = convertVariableClasspathEntry(entry);
@@ -125,25 +122,9 @@ public class EclipseClasspath
     private void init(IJavaProject javaProject, IClasspathEntry entries[]) throws JavaModelException
     {
         this.project = javaProject;
-        this.jreLocation = getJRELocation();
         handle(entries);
     }
- 
-    private String getJRELocation() {
-        try {
-            IVMInstall install = JavaRuntime.getVMInstall(project);
-            if (install != null) {
-                File installLocation = install.getInstallLocation();
-                if (installLocation != null) {
-                    return new Path(installLocation.toString()).toString();
-                }
-            }
-        } catch (CoreException e) {
-            AntUIPlugin.log(e);
-        }
-        return ""; //$NON-NLS-1$
-    }
-    
+     
     private void handle(IClasspathEntry[] entries) throws JavaModelException
     {
         for (int i = 0; i < entries.length; i++)
@@ -231,13 +212,17 @@ public class EclipseClasspath
             {
                 // path variable was used
                 String pathVariableExtension = file.getRawLocation().segment(1).toString();
-                variable2valueMap.put(pathVariable + ".pathvariable", pathVariableValue.toString()); //$NON-NLS-1$
+                String relativePath = ExportUtil.getRelativePath(pathVariableValue.toString(),
+                        projectRoot);
+                variable2valueMap.put(pathVariable + ".pathvariable", relativePath); //$NON-NLS-1$
                 variable2valueMap.put(srcDir + ".link", //$NON-NLS-1$
                         "${" + pathVariable + ".pathvariable}/" + pathVariableExtension); //$NON-NLS-1$  //$NON-NLS-2$
             }
             else
             {
-                variable2valueMap.put(srcDir + ".link", file.getLocation() + ""); //$NON-NLS-1$ //$NON-NLS-2$
+                String relativePath = ExportUtil.getRelativePath(file.getLocation() + "", //$NON-NLS-1$
+                        projectRoot);
+                variable2valueMap.put(srcDir + ".link", relativePath); //$NON-NLS-1$
             }
             srcDir = "${" + srcDir + ".link}"; //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -250,11 +235,6 @@ public class EclipseClasspath
             entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY)
         {
             String jarFile = entry.getPath().toString();
-            // ignore JRE libraries
-            if (jarFile.startsWith(jreLocation))
-            {
-                return;
-            }
             StringBuffer jarFileBuffer = new StringBuffer();
             StringBuffer jarFileAbsoluteBuffer = new StringBuffer();
             String jarFileAbsolute = ExportUtil.resolve(entry.getPath());
@@ -306,7 +286,10 @@ public class EclipseClasspath
                 String location = javaproject.getProject().getName() + ".location"; //$NON-NLS-1$
                 jarFileAbsolute.append(ExportUtil.replaceProjectRoot(file, javaproject.getProject(), ExportUtil.getProjectRoot(javaproject)));
                 jarFile.append(ExportUtil.replaceProjectRoot(file, javaproject.getProject(), "${" + location + "}")); //$NON-NLS-1$ //$NON-NLS-2$
-                variable2valueMap.put(location, ExportUtil.getProjectRoot(javaproject));
+                String projectRoot= ExportUtil.getProjectRoot(project);
+                String relativePath = ExportUtil.getRelativePath(ExportUtil.getProjectRoot(javaproject),
+                        projectRoot);
+                variable2valueMap.put(location, relativePath);
                 return true;
             }
         }
@@ -335,7 +318,10 @@ public class EclipseClasspath
             IPath value = JavaCore.getClasspathVariable(variable);
             if (value != null)
             {
-                variable2valueMap.put(variable, value.toString());
+                String projectRoot = ExportUtil.getProjectRoot(project);
+                String relativePath = ExportUtil.getRelativePath(value.toString(),
+                        projectRoot);
+                variable2valueMap.put(variable, relativePath);
             }
             else if (variable2valueMap.get(variable) == null)
             {
@@ -359,25 +345,15 @@ public class EclipseClasspath
                 return;
             }
             String jar = entry.getPath().toString();
-            /*
             if (jar.startsWith(JavaRuntime.JRE_CONTAINER))
             {
                 // JRE System Library
-            }
-            else
-            */
-            if (jar.startsWith("org.eclipse.pde.core.requiredPlugins")) //$NON-NLS-1$
-            {
-                // Plug-in Dependencies
-                String libraryName = container.getDescription();
-                String pluginRef = "${" + libraryName + ".pluginclasspath}"; //$NON-NLS-1$ //$NON-NLS-2$
-                userLibraryCache.put(pluginRef, container);
-                srcDirs.add(pluginRef);
-                classDirs.add(pluginRef);
-                rawClassPathEntries.add(pluginRef);
-                rawClassPathEntriesAbsolute.add(pluginRef);
-                inclusionLists.add(new ArrayList());
-                exclusionLists.add(new ArrayList());                
+                // ignore JRE libraries
+                //IClasspathEntry entries[] = container.getClasspathEntries();
+                //for (int i = 0; i < entries.length; i++)
+                //{
+                //    handleJars(entries[i]);
+                //}
             }
             else if (jar.startsWith(JavaCore.USER_LIBRARY_CONTAINER_ID))
             {
@@ -398,11 +374,16 @@ public class EclipseClasspath
             }
             else
             {
-                IClasspathEntry entries[] = container.getClasspathEntries();
-                for (int i = 0; i < entries.length; i++)
-                {
-                    handleJars(entries[i]);
-                }
+                // Library dependencies: e.g. Plug-in Dependencies
+                String libraryName = container.getDescription();
+                String pluginRef = "${" + libraryName + ".libraryclasspath}"; //$NON-NLS-1$ //$NON-NLS-2$
+                userLibraryCache.put(pluginRef, container);
+                srcDirs.add(pluginRef);
+                classDirs.add(pluginRef);
+                rawClassPathEntries.add(pluginRef);
+                rawClassPathEntriesAbsolute.add(pluginRef);
+                inclusionLists.add(new ArrayList());
+                exclusionLists.add(new ArrayList());                
             }
         }
     }
@@ -449,82 +430,6 @@ public class EclipseClasspath
         String[] classpath = JavaRuntime.computeDefaultRuntimeClassPath(project);
         return Arrays.asList(classpath);
     }
-
-    /**
-     * Fill given lists with source / class directories and inclusion /
-     * exclusion lists. Source directory srcDirs.get(i) compiles to class
-     * directory.get(i), and has inclusion / exclusion lists
-     * inclusionLists.get(i) / exclusionLists.get(i).
-     * 
-     * <p>NOTE: All lists do not contain resolved items of the subprojects,
-     * user/plugin libaries or linked resources. Instead indicators are used:
-     * <code>${projectname.classpath}</code>,
-     * <code>${projectname.userclasspath}</code>,
-     * <code>${projectname.bootclasspath}</code>,
-     * <code>${projectname.pluginclasspath}</code>,
-     * <code>${projectname.link}</code>.
-     * It's up to the caller to replace these indicators with the concrete
-     * classpaths. You can use these methods to determine this:
-     * {@link #isProjectReference(String)},
-     * {@link #resolveProjectReference(String)},
-     * {@link #isUserLibraryReference(String)},
-     * {@link #isUserSystemLibraryReference(String)},
-     * {@link #isPluginReference(String)},
-     * {@link #resolveUserLibraryReference(String)},
-     * {@link #isLinkedResource(String)},
-     * {@link #resolveLinkedResource(String)}.
-     */
-//    public void fillWithDirs(List srcDirs, List classDirs, List inclusionLists, List exclusionLists)
-//    {
-//        if (srcDirs != null)
-//        {
-//            srcDirs.clear();
-//            srcDirs.addAll(this.srcDirs);
-//        }
-//        if (classDirs != null)
-//        {    
-//            classDirs.clear();
-//            classDirs.addAll(this.classDirs);
-//        }
-//        if (inclusionLists != null)
-//        {
-//            inclusionLists.clear();
-//            inclusionLists.addAll(this.inclusionLists);
-//        }
-//        if (exclusionLists != null)
-//        {  
-//            exclusionLists.clear();
-//            exclusionLists.addAll(this.exclusionLists);
-//        }
-//    }
-
-//    /**
-//     * Fill given lists with rawClassPathEntries/rawClassPathEntriesAbsolute
-//     * directories.
-//     *
-//     * @see #fillWithDirs(List, List, List, List)
-//     */
-//    public void fillWithRawClassPathEntries(List rawClassPathEntries, List rawClassPathEntriesAbsolute)
-//    {
-//        if (rawClassPathEntries != null)
-//        {
-//            rawClassPathEntries.clear();
-//            rawClassPathEntries.addAll(this.rawClassPathEntries);
-//        }
-//        if (rawClassPathEntriesAbsolute != null)
-//        {    
-//            rawClassPathEntriesAbsolute.clear();
-//            rawClassPathEntriesAbsolute.addAll(this.rawClassPathEntriesAbsolute);
-//        }
-//    }
-//    
-    /**
-     * Get classpath variable map. 
-     */
-//    public Map getVariableMap()
-//    {
-//        return variable2valueMap;
-//    }
     
     /**
      * Check if given string is a reference.
@@ -534,7 +439,7 @@ public class EclipseClasspath
     public static boolean isReference(String s)
     {
         return isProjectReference(s) || isUserLibraryReference(s) ||
-            isUserSystemLibraryReference(s) || isPluginReference(s);
+            isUserSystemLibraryReference(s) || isLibraryReference(s);
         // NOTE: A linked resource is no reference
     }
 
@@ -582,13 +487,14 @@ public class EclipseClasspath
     }
 
     /**
-     * Check if given string is a plugin reference.
+     * Check if given string is a library reference. e.g. Plug-in dependencies
+     * are library references.
      * 
      * @see #fillWithDirs(List, List, List, List)
      */
-    public static boolean isPluginReference(String s)
+    public static boolean isLibraryReference(String s)
     {
-        return s.startsWith("${") && s.endsWith(".pluginclasspath}"); //$NON-NLS-1$ //$NON-NLS-2$ 
+        return s.startsWith("${") && s.endsWith(".libraryclasspath}"); //$NON-NLS-1$ //$NON-NLS-2$ 
     }
 
     /**
@@ -599,7 +505,6 @@ public class EclipseClasspath
      * internal cache to circumvent that UserLibraryManager is an internal
      * class. 
      * 
-     * @see #fillWithDirs(List, List, List, List)
      * @return null if library is not resolvable
      */
     public static IClasspathContainer resolveUserLibraryReference(String s)
@@ -609,8 +514,7 @@ public class EclipseClasspath
     
     /**
      * Check if given string is a linked resource.
-     * 
-     * @see #fillWithDirs(List, List, List, List)
+     *
      */
     public static boolean isLinkedResource(String s)
     {
@@ -660,7 +564,7 @@ public class EclipseClasspath
             Document doc = ExportUtil.parseXmlString(entry.getMemento());
             Element element = (Element) doc.getElementsByTagName("memento").item(0); //$NON-NLS-1$
             String variableString = element.getAttribute("variableString"); //$NON-NLS-1$
-            ExportUtil.addVariable(variable2valueMap, variableString);
+            ExportUtil.addVariable(variable2valueMap, variableString, ExportUtil.getProjectRoot(project));
             // remove ${...} from string to be conform for handleVariables()
             variableString = ExportUtil.removePrefix(variableString, "${");//$NON-NLS-1$
             int i = variableString.indexOf('}');

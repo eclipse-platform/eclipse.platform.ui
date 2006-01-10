@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Richard Hoefter and others.
+ * Copyright (c) 2004, 2006 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -246,15 +246,15 @@ public class AntBuildfileExportPage extends WizardPage {
     private void updateEnablement() {
         boolean complete= true;
         if (fSelectedJavaProjects.size() == 0) {
-        	setErrorMessage("Select one or more projects to export.");
+        	setErrorMessage(DataTransferMessages.AntBuildfileExportPage_18);
             complete = false;
         }
         if (buildfilenameText.getText().length() == 0) {
-            setErrorMessage("Build file name is required.");
+            setErrorMessage(DataTransferMessages.AntBuildfileExportPage_19);
             complete = false;            
         }
         if (junitdirText.getText().length() == 0) {
-        	setErrorMessage("JUnit output directory name is required.");
+        	setErrorMessage(DataTransferMessages.AntBuildfileExportPage_20);
         	complete = false;
         }
         if (complete) {

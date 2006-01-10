@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Richard Hoefter and others.
+ * Copyright (c) 2004, 2006 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -64,6 +62,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -162,7 +161,8 @@ public class ExportUtil
 
     /**
      * Convert Eclipse path to absolute filename. 
-     * @param file      project root optionally followed by resource name
+     * @param file      Project root optionally followed by resource name.
+     *                  An absolute path is simply converted to a string.
      * @return full qualified path
      */
     public static String resolve(IPath file)
@@ -173,7 +173,9 @@ public class ExportUtil
         }
         try
         {
-            return ResourcesPlugin.getWorkspace().getRoot().getFile(file).toString();
+            IFile f = ResourcesPlugin.getWorkspace().getRoot().getFile(file);
+            IPath p = f.getLocation();
+            return (p != null) ? p.toString() : f.toString();
         }
         catch (IllegalArgumentException e)
         {
@@ -447,6 +449,9 @@ public class ExportUtil
     private static List findTestCases(IJavaElement element) throws JavaModelException {
         List found = new ArrayList();
         IJavaProject javaProject= element.getJavaProject();
+
+        if (javaProject == null) // bug 120804
+            return found; 
 
         IType testCaseType = testCaseType(javaProject); 
         if (testCaseType == null)
@@ -1085,7 +1090,7 @@ public class ExportUtil
      * @param variable2valueMap   property map to add variable/value
      * @param s                   String which may contain Eclipse variables, e.g. ${project_name}
      */
-    public static void addVariable(Map variable2valueMap, String s)
+    public static void addVariable(Map variable2valueMap, String s, String projectRoot)
     {
         if (s == null || s.equals("")) //$NON-NLS-1$
         {
@@ -1112,75 +1117,37 @@ public class ExportUtil
             {
                 value = "env." + variable.substring("env_var:".length()); //$NON-NLS-1$ //$NON-NLS-2$
             }
+            File file = new File(value);
+            if (file.exists()) {
+                value = ExportUtil.getRelativePath(file.getAbsolutePath(), projectRoot);
+            }
             variable2valueMap.put(variable, value);
         }
     }
 
     /**
-     * Calculate relative path from one directory to another directory or file.
-     * 
-     * @param from
-     *            directory to start from
-     * @param to
-     *            directory or file to reach relatively
+     * Returns a path which is equivalent to the given location relative to the
+     * specified base path.
      */
-    public static String getRelativeLocation(String from, String to) {
+    public static String getRelativePath(String otherLocation, String basePath) {
 
-        StringBuffer b = new StringBuffer();
-        File fromFile = new File(from);
-        File toFile = new File(to);
-        if (!fromFile.isAbsolute() || !toFile.isAbsolute()) {
-            return to;
+        IPath location= new Path(otherLocation);
+        IPath base= new Path(basePath);
+        if ((location.getDevice() != null && !location.getDevice().equalsIgnoreCase(base.getDevice())) || !location.isAbsolute()) {
+            return otherLocation;
+        }
+        int baseCount = base.segmentCount();
+        int count = base.matchingFirstSegments(location);
+        String temp = ""; //$NON-NLS-1$
+        for (int j = 0; j < baseCount - count; j++) {
+            temp += "../"; //$NON-NLS-1$
+        }
+        String relative= new Path(temp).append(location.removeFirstSegments(count)).toString();
+        if (relative.length() == 0) {
+            relative=  "."; //$NON-NLS-1$
         }
         
-        if (fromFile.equals(toFile)) {
-            return "."; //$NON-NLS-1$
-        }
-
-        StringTokenizer fromSt = new StringTokenizer(
-                fromFile.getAbsolutePath(), File.separator);
-        StringTokenizer toSt = new StringTokenizer(toFile.getAbsolutePath(),
-                File.separator);
-        List fromSegments = Collections.list(fromSt);
-        List toSegments = Collections.list(toSt);
-
-        // calculate length of common prefix
-        int min = Math.min(fromSegments.size(), toSegments.size());
-        int length;
-        for (length = 0; length < min; length++) {
-            String s1 = (String) fromSegments.get(length);
-            String s2 = (String) toSegments.get(length);
-            if (!s1.equals(s2)) {
-                if (length == 0) {
-                    // no common prefix
-                    return to;
-                }
-                break;
-            }
-        }
-        
-        // add dots for each segment 'from' is longer than the prefix
-        for (int i = length; i < fromSegments.size(); i++) {
-            b.append("../"); //$NON-NLS-1$
-        }
-        
-        // add segments of 'to' that are longer than the prefix
-        for (int i = length; i < toSegments.size(); i++) {
-            String s = (String) toSegments.get(i);
-            b.append(s);
-            if (length < toSegments.size() - 1) {
-                b.append("/"); //$NON-NLS-1$
-            }
-        }
- 
-        /*
-        File f = new File(from + "/" + b.toString());
-        System.out.println("from=" + from);
-        System.out.println("  to=" + to);
-        System.out.println(" rel=" + b + ": " +f.exists());
-        */
-        
-        return b.toString();
+        return relative;
     }
 
 }

@@ -37,15 +37,11 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.types.Commandline;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -188,6 +184,7 @@ public class BuildFileCreator
             instance.createCleanAll();
             instance.createBuild(classpath.srcDirs, classpath.classDirs,
                                  classpath.inclusionLists, classpath.exclusionLists);
+            instance.createBuildRef();
             if (CREATE_ECLIPSE_COMPILE_TARGET) {
                 instance.addInitEclipseCompiler();
                 instance.addBuildEclipse();
@@ -335,10 +332,11 @@ public class BuildFileCreator
                         !IMPORT_BUILDFILE_COMMENT.equals(((Comment) node).getData().trim())) {
                     // do not import file 
                     continue;
-                } 
-                Element element = doc.createElement("import"); //$NON-NLS-1$
-                element.setAttribute("file", file.getName()); //$NON-NLS-1$
-                root.appendChild(element);
+                } else {
+                    Element element = doc.createElement("import"); //$NON-NLS-1$
+                    element.setAttribute("file", file.getName()); //$NON-NLS-1$
+                    root.appendChild(element);
+                }
             }
             catch (Exception e)
             {
@@ -402,7 +400,7 @@ public class BuildFileCreator
             }
             else if (EclipseClasspath.isUserLibraryReference(entry) ||
                      EclipseClasspath.isUserSystemLibraryReference(entry) ||
-                     EclipseClasspath.isPluginReference(entry))
+                     EclipseClasspath.isLibraryReference(entry))
             {
                 addUserLibrary(element, entry);
             }
@@ -416,7 +414,7 @@ public class BuildFileCreator
                     prefix = "${" + currentProject.getProject().getName() + ".location}/"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 Element pathElement = doc.createElement("pathelement"); //$NON-NLS-1$
-                String path = ExportUtil.getRelativeLocation(projectRoot, prefix + entry);
+                String path = ExportUtil.getRelativePath(prefix + entry, projectRoot);
                 pathElement.setAttribute("location", path); //$NON-NLS-1$
                 element.appendChild(pathElement);
             }
@@ -445,8 +443,8 @@ public class BuildFileCreator
             for (int i = 0; i < entries.length; i++)
             {   
                 String jarFile = entries[i].getPath().toString();
-                // use ECLIPSE_HOME variable for plugin jars
-                if (EclipseClasspath.isPluginReference(entry))
+                // use ECLIPSE_HOME variable for library jars
+                if (EclipseClasspath.isLibraryReference(entry))
                 {
                     IPath home = JavaCore.getClasspathVariable("ECLIPSE_HOME"); //$NON-NLS-1$
                     if (home.isPrefixOf(entries[i].getPath()))
@@ -464,10 +462,8 @@ public class BuildFileCreator
                         // build.properties (jars.extra.classpath)
                         jarFile = jarFile.substring(('/' + projectName).length() + 1);
                     }
-                } else {
-                    jarFile = ExportUtil.getRelativeLocation(projectRoot,
-                            jarFile);
                 }
+                jarFile = ExportUtil.getRelativePath(jarFile, projectRoot);
                 Element userPathElement = doc.createElement("pathelement"); //$NON-NLS-1$
                 userPathElement.setAttribute("location", jarFile); //$NON-NLS-1$
                 userElement.appendChild(userPathElement);
@@ -500,9 +496,10 @@ public class BuildFileCreator
             IJavaProject subProject = (IJavaProject) iterator.next(); 
             String location = subProject.getProject().getName() + ".location"; //$NON-NLS-1$
             // add subproject properties to variable2valueMap
-            variable2valueMap.put(location, ExportUtil.getRelativeLocation(
-                    projectRoot, subProject.getResource().getLocation()
-                            .toString()));
+            String subProjectRoot = ExportUtil.getProjectRoot(subProject);
+            String relativePath = ExportUtil.getRelativePath(subProjectRoot,
+                    projectRoot);
+            variable2valueMap.put(location, relativePath);
             variable2valueMap.putAll(classpath.variable2valueMap);    
         }
     }
@@ -741,6 +738,62 @@ public class BuildFileCreator
     }
     
     /**
+     * Create target build-refprojects which compiles projects which reference
+     * current project.
+     */
+    private void createBuildRef() throws JavaModelException {
+        
+        Set refProjects = new TreeSet(ExportUtil.getJavaProjectComparator());
+        IJavaProject[] projects = project.getJavaModel().getJavaProjects();
+        for (int i = 0; i < projects.length; i++) {
+            List subProjects = ExportUtil.getClasspathProjects(projects[i]);
+            for (Iterator iter = subProjects.iterator(); iter.hasNext();) {
+                IJavaProject p = (IJavaProject) iter.next();
+                if (projectName.equals(p.getProject().getName())) {
+                    refProjects.add(projects[i]);
+                }
+            }
+        }
+        
+        // <target name="build-refprojects">
+        //     <ant antfile="${hello.location}/build.xml" target="clean" inheritAll="false"/> 
+        //     <ant antfile="${hello.location}/build.xml" target="build" inheritAll="false"/> 
+        // </target>
+        Element element = doc.createElement("target"); //$NON-NLS-1$
+        element.setAttribute("name", "build-refprojects"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute("description", "Build all projects which " + //$NON-NLS-1$ //$NON-NLS-2$
+                "reference this project. Useful to propagate changes."); //$NON-NLS-1$
+        for (Iterator iter = refProjects.iterator(); iter.hasNext();) {
+            IJavaProject p = (IJavaProject) iter.next();
+            String location = p.getProject().getName() + ".location"; //$NON-NLS-1$
+            String refProjectRoot = ExportUtil.getProjectRoot(p);
+            String relativePath = ExportUtil.getRelativePath(refProjectRoot,
+                    projectRoot);
+            variable2valueMap.put(location, relativePath);
+
+            Element antElement = doc.createElement("ant"); //$NON-NLS-1$
+            antElement.setAttribute("antfile", "${" + p.getProject().getName() + ".location}/" + BUILD_XML); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            antElement.setAttribute("target", "clean"); //$NON-NLS-1$ //$NON-NLS-2$
+            antElement.setAttribute("inheritAll", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+            element.appendChild(antElement);
+            
+            antElement = doc.createElement("ant"); //$NON-NLS-1$
+            antElement.setAttribute("antfile", "${" + p.getProject().getName() + ".location}/" + BUILD_XML); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            antElement.setAttribute("target", "build"); //$NON-NLS-1$ //$NON-NLS-2$
+            antElement.setAttribute("inheritAll", "false");  //$NON-NLS-1$ //$NON-NLS-2$
+            if (CREATE_ECLIPSE_COMPILE_TARGET) {
+                Element propertysetElement = doc.createElement("propertyset"); //$NON-NLS-1$
+                Element propertyrefElement = doc.createElement("propertyref"); //$NON-NLS-1$
+                propertyrefElement.setAttribute("name", "build.compiler");  //$NON-NLS-1$ //$NON-NLS-2$
+                propertysetElement.appendChild(propertyrefElement);
+                antElement.appendChild(propertysetElement);
+            }
+            element.appendChild(antElement);
+        }
+        root.appendChild(element);
+    }
+    
+    /**
      * Add target to initialize Eclipse compiler. It copies required jars to ant
      * lib directory.
      */
@@ -748,7 +801,8 @@ public class BuildFileCreator
     {
         // use ECLIPSE_HOME classpath variable
         IPath value = JavaCore.getClasspathVariable("ECLIPSE_HOME"); //$NON-NLS-1$
-        variable2valueMap.put("ECLIPSE_HOME", value + ""); //$NON-NLS-1$ //$NON-NLS-2$
+        variable2valueMap.put("ECLIPSE_HOME", ExportUtil.getRelativePath( //$NON-NLS-1$
+                value + "", projectRoot)); //$NON-NLS-1$
         
         // <target name="init-eclipse-compiler" description="copy Eclipse compiler jars to ant lib directory">
         //     <property name="ECLIPSE_HOME" value="C:/Programme/eclipse-3.1" />
@@ -859,15 +913,15 @@ public class BuildFileCreator
                     
             if (conf.getType().getIdentifier().equals(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION))
             {
-                addJavaApplication(conf);
+                addJavaApplication(variable2valueMap, conf);
             }
             else if (conf.getType().getIdentifier().equals(IJavaLaunchConfigurationConstants.ID_JAVA_APPLET))
             {
-                addApplet(conf);
+                addApplet(variable2valueMap, conf);
             }
             else if (conf.getType().getIdentifier().equals("org.eclipse.jdt.junit.launchconfig" /*JUnitLaunchConfiguration.ID_JUNIT_APPLICATION*/)) //$NON-NLS-1$
             {                    
-                addJUnit(conf);
+                addJUnit(variable2valueMap, conf);
                 junitUsed = true;
             }           
         }
@@ -879,10 +933,12 @@ public class BuildFileCreator
     }
 
     /**
-     * Convert java application launch configuration to ant target and add it to a document.
+     * Convert Java application launch configuration to ant target and add it to a document.
+     * @param variable2valueMap    adds Eclipse variables to this map,
+     *                             if run configuration makes use of this feature
      * @param conf                 Java application launch configuration
      */
-    public void addJavaApplication(ILaunchConfiguration conf) throws CoreException
+    public void addJavaApplication(Map variable2valueMap, ILaunchConfiguration conf) throws CoreException
     {
         Element element = doc.createElement("target"); //$NON-NLS-1$
         element.setAttribute("name", conf.getName()); //$NON-NLS-1$
@@ -891,10 +947,10 @@ public class BuildFileCreator
         javaElement.setAttribute("classname", conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "")); //$NON-NLS-1$ //$NON-NLS-2$
         javaElement.setAttribute("failonerror", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         String dir = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, ""); //$NON-NLS-1$
-        ExportUtil.addVariable(variable2valueMap, dir);                
+        ExportUtil.addVariable(variable2valueMap, dir, projectRoot);                
         if (!dir.equals("")) //$NON-NLS-1$
         {
-            javaElement.setAttribute("dir", ExportUtil.getRelativeLocation(projectRoot, dir)); //$NON-NLS-1$
+            javaElement.setAttribute("dir", ExportUtil.getRelativePath(dir, projectRoot)); //$NON-NLS-1$
         }
         if (!conf.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true))
         {
@@ -902,8 +958,8 @@ public class BuildFileCreator
         }
         Map props = conf.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new TreeMap());
         addElements(props, doc, javaElement, "env", "key", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        addElements(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""), doc, javaElement, "jvmarg", "value", variable2valueMap); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        addElements(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""), doc, javaElement, "arg", "value", variable2valueMap); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""), doc, javaElement, "jvmarg", "line", variable2valueMap, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""), doc, javaElement, "arg", "line", variable2valueMap, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         element.appendChild(javaElement);
         
         addRuntimeClasspath(conf, javaElement);
@@ -913,6 +969,8 @@ public class BuildFileCreator
 
     /**
      * Convert applet launch configuration to Ant target and add it to a document. 
+     * @param variable2valueMap    adds Eclipse variables to this map,
+     *                             if run configuration makes use of this feature
      * @param conf                 applet configuration
      * @throws ParserConfigurationException thrown if applet file could not get created 
      * @throws TransformerException thrown if applet file could not get created
@@ -920,14 +978,14 @@ public class BuildFileCreator
      * @throws TransformerConfigurationException thrown if applet file could not get created
      * @throws UnsupportedEncodingException thrown if applet file could not get created
      */
-    public void addApplet(ILaunchConfiguration conf) throws CoreException, TransformerFactoryConfigurationError, UnsupportedEncodingException
+    public void addApplet(Map variable2valueMap, ILaunchConfiguration conf) throws CoreException, TransformerFactoryConfigurationError, UnsupportedEncodingException
     {
         String dir = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, ""); //$NON-NLS-1$
         if (dir.equals("")) //$NON-NLS-1$
         {
             dir = projectRoot;
         }
-        ExportUtil.addVariable(variable2valueMap, dir);
+        ExportUtil.addVariable(variable2valueMap, dir, projectRoot);
         String value;
         try
         {
@@ -970,11 +1028,11 @@ public class BuildFileCreator
         javaElement.setAttribute("failonerror", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         if (value != null)
         {
-            javaElement.setAttribute("dir", ExportUtil.getRelativeLocation(projectRoot, dir)); //$NON-NLS-1$
+            javaElement.setAttribute("dir", ExportUtil.getRelativePath(dir, projectRoot)); //$NON-NLS-1$
         }
-        addElements(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""), doc, javaElement, "jvmarg", "value", variable2valueMap);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-        addElements(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""), doc, javaElement, "arg", "value", variable2valueMap);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-        addElements(conf.getName() + ".html", doc, javaElement, "arg", "value", variable2valueMap); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""), doc, javaElement, "jvmarg", "line", variable2valueMap, projectRoot);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""), doc, javaElement, "arg", "line", variable2valueMap, projectRoot);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+        addElement(conf.getName() + ".html", doc, javaElement, "arg", "line", variable2valueMap, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         element.appendChild(javaElement);
         addRuntimeClasspath(conf, javaElement);
         addRuntimeBootClasspath(conf, javaElement);
@@ -983,9 +1041,11 @@ public class BuildFileCreator
     
     /**
      * Convert JUnit launch configuration to JUnit task and add it to a document. 
+     * @param variable2valueMap    adds Eclipse variables to this map,
+     *                             if run configuration makes use of this feature
      * @param conf                 applet configuration
      */
-    public void addJUnit(ILaunchConfiguration conf) throws CoreException
+    public void addJUnit(Map variable2valueMap, ILaunchConfiguration conf) throws CoreException
     {
         // <target name="runtest">
         //     <mkdir dir="junit"/>
@@ -1009,10 +1069,10 @@ public class BuildFileCreator
         junitElement.setAttribute("fork", "yes"); //$NON-NLS-1$ //$NON-NLS-2$
         junitElement.setAttribute("printsummary", "withOutAndErr"); //$NON-NLS-1$ //$NON-NLS-2$
         String dir = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, ""); //$NON-NLS-1$
-        ExportUtil.addVariable(variable2valueMap, dir);                
+        ExportUtil.addVariable(variable2valueMap, dir, projectRoot);                
         if (!dir.equals("")) //$NON-NLS-1$
         {
-            junitElement.setAttribute("dir", ExportUtil.getRelativeLocation(projectRoot, dir)); //$NON-NLS-1$
+            junitElement.setAttribute("dir", ExportUtil.getRelativePath(dir, projectRoot)); //$NON-NLS-1$
         }
         if (!conf.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true))
         {
@@ -1046,7 +1106,7 @@ public class BuildFileCreator
         }
         Map props = conf.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new TreeMap());
         addElements(props, doc, junitElement, "env", "key", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        addElements(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""), doc, junitElement, "jvmarg", "value", variable2valueMap); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""), doc, junitElement, "jvmarg", "line", variable2valueMap, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         element.appendChild(junitElement);
         addRuntimeClasspath(conf, junitElement);
         addRuntimeBootClasspath(conf, junitElement);
@@ -1134,35 +1194,28 @@ public class BuildFileCreator
     }
 
     /**
-     * Create child nodes from <code>cmdLine</code> and add them to <code>element</code> which is part of
+     * Create child node from <code>cmdLine</code> and add it to <code>element</code> which is part of
      * <code>doc</code>.
      * 
      * @param cmdLineArgs          command line arguments, separated with spaces or within double quotes, may also contain Eclipse variables 
      * @param doc                  XML document
-     * @param element              node to add children to
+     * @param element              node to add child to
      * @param elementName          name of new child node
-     * @param attributeName        name of attribute for <code>values</code>
+     * @param attributeName        name of attribute for child node
      * @param variable2valueMap    adds Eclipse variables to this map,
      *                             if command line makes use of this feature
      */
-    private static void addElements(String cmdLineArgs, Document doc, Element element, String elementName,
-                                    String attributeName, Map variable2valueMap) throws CoreException
-    {
-        // need to add dummyexecutable to make use of class Commandline
-        try {
-            Commandline commandline = new Commandline("dummyexecutable " + cmdLineArgs); //$NON-NLS-1$
-            String[] args = commandline.getArguments();
-            for (int i = 0; i < args.length; i++)
-            {
-                String arg = args[i];
-                ExportUtil.addVariable(variable2valueMap, arg);
-                Element itemElement = doc.createElement(elementName);
-                itemElement.setAttribute(attributeName, arg);
-                element.appendChild(itemElement);            
-            }
-        } catch (BuildException be) {
-            throw new CoreException(new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, 0, DataTransferMessages.BuildFileCreator_0, be));
+    private static void addElement(String cmdLineArgs, Document doc,
+            Element element, String elementName, String attributeName,
+            Map variable2valueMap, String projectRoot) {
+
+        if (cmdLineArgs == null || cmdLineArgs.length() == 0) {
+            return;
         }
+        ExportUtil.addVariable(variable2valueMap, cmdLineArgs, projectRoot);
+        Element itemElement = doc.createElement(elementName);
+        itemElement.setAttribute(attributeName, cmdLineArgs);
+        element.appendChild(itemElement);            
     }
     
     /**
@@ -1209,4 +1262,5 @@ public class BuildFileCreator
         CHECK_SOURCE_CYCLES = checkcycles;
         CREATE_ECLIPSE_COMPILE_TARGET = eclipsecompiler;
     }
+
 }

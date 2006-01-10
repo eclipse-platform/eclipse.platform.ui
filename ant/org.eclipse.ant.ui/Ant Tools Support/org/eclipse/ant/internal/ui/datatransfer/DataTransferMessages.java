@@ -64,4 +64,10 @@ public class DataTransferMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DataTransferMessages.class);
 	}
+
+	public static String AntBuildfileExportPage_18;
+
+	public static String AntBuildfileExportPage_19;
+
+	public static String AntBuildfileExportPage_20;
 }
