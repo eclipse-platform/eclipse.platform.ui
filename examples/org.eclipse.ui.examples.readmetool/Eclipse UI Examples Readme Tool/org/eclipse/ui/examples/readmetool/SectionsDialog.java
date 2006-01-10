@@ -25,7 +25,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * This dialog is an example of a detached window launched
- * from an action in the desktop.
+ * from an action in the workbench.
  */
 public class SectionsDialog extends Dialog {
     protected IAdaptable input;

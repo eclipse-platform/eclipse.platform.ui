@@ -16,7 +16,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
 /**
- * This class implements the interface required by the desktop
+ * This class implements the interface required by the workbench
  * for all 'New' wizards.  This wizard creates readme files.
  */
 public class ReadmeCreationWizard extends Wizard implements INewWizard {

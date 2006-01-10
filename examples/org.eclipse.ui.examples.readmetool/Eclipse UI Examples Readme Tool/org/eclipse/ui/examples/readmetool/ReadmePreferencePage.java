@@ -215,7 +215,7 @@ public class ReadmePreferencePage extends PreferencePage implements
      * <code>PreferencePage</code> method 
      * returns preference store that belongs to the our plugin.
      * This is important because we want to store
-     * our preferences separately from the desktop.
+     * our preferences separately from the workbench.
      */
     protected IPreferenceStore doGetPreferenceStore() {
         return ReadmePlugin.getDefault().getPreferenceStore();

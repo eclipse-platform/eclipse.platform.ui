@@ -43,7 +43,7 @@ public class EditorActionDelegate implements IEditorActionDelegate {
      * The <code>EditorActionDelegate</code> implementation of this
      * <code>IActionDelegate</code> method does nothing.
      *
-     * Selection in the desktop has changed. Plugin provider
+     * Selection in the workbench has changed. Plugin provider
      * can use it to change the availability of the action
      * or to modify other presentation properties.
      *
@@ -66,7 +66,7 @@ public class EditorActionDelegate implements IEditorActionDelegate {
      * guarantees that only editors that match the type for which 
      * this action has been registered will be tracked.
      *
-     * @param action action proxy that represents this delegate in the desktop
+     * @param action action proxy that represents this delegate in the workbench
      * @param editor the matching editor that has been activated
      */
     public void setActiveEditor(IAction action, IEditorPart editor) {

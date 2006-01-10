@@ -42,7 +42,7 @@ public class ReadmeSectionsView extends ViewPart implements ISelectionListener {
         PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(),
 				IReadmeConstants.SECTIONS_VIEW_CONTEXT);
 
-        // if the objects in the viewer implement the IDesktopElement adapter,
+        // if the objects in the viewer implement IWorkbenchAdapter,
         // these generic content and label providers can be used.
         viewer.setContentProvider(new WorkbenchContentProvider());
         viewer.setLabelProvider(new WorkbenchLabelProvider());
