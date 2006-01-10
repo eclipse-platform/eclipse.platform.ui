@@ -266,6 +266,11 @@ public final class ParameterizedCommand implements Comparable {
 			}
 		}
 
+		if (combinations.isEmpty()) {
+			return Collections
+					.singleton(new ParameterizedCommand(command, null));
+		}
+		
 		return combinations;
 	}
 

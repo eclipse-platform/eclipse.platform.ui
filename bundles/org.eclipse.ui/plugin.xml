@@ -723,6 +723,17 @@
       			name="%command.showView.viewIdParameter"
       			values="org.eclipse.ui.internal.registry.ViewParameterValues" />
       </command>
+      <command
+            defaultHandler="org.eclipse.ui.internal.handlers.DisplayHelpHandler"
+            description="%command.displayHelp.description"
+            id="org.eclipse.ui.help.displayHelp"
+            name="%command.displayHelp.name"
+            categoryId="org.eclipse.ui.category.help">
+         <commandParameter
+               id="href"
+               name="%command.displayHelp.hrefParameter"
+               optional="true"/>
+      </command>
    </extension>
    
    <extension
