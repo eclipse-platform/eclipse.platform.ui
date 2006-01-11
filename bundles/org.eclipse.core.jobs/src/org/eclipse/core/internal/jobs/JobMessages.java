@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2005, 2006 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,13 +12,10 @@ package org.eclipse.core.internal.jobs;
 import java.util.Date;
 import org.eclipse.osgi.util.NLS;
 
-// Runtime plugin message catalog
-public class JobsMessages extends NLS {
-	/**
-	 * The unique identifier constant of this plug-in.
-	 */
-	public static final String OWNER_NAME = "org.eclipse.core.jobs"; //$NON-NLS-1$
-
+/**
+ * Job plugin message catalog
+ */
+public class JobMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.core.internal.jobs.messages"; //$NON-NLS-1$
 
 	// Job Manager and Locks
@@ -36,7 +33,7 @@ public class JobsMessages extends NLS {
 	}
 
 	public static void reloadMessages() {
-		NLS.initializeMessages(BUNDLE_NAME, JobsMessages.class);
+		NLS.initializeMessages(BUNDLE_NAME, JobMessages.class);
 	}
 
 	/**

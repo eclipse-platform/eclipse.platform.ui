@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,7 +129,7 @@ class ImplicitJobs {
 			if (threadJob == null)
 				return;
 			String msg = "Worker thread ended job: " + lastJob + ", but still holds rule: " + threadJob; //$NON-NLS-1$ //$NON-NLS-2$
-			error = new Status(IStatus.ERROR, JobsMessages.OWNER_NAME, 1, msg, null);
+			error = new Status(IStatus.ERROR, JobManager.PI_JOBS, 1, msg, null);
 			//end the thread job
 			endThreadJob(threadJob, false);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class JobStatus extends Status implements IJobStatus {
 	 * @param message
 	 */
 	public JobStatus(int severity, Job job, String message) {
-		super(severity, JobsMessages.OWNER_NAME, 1, message, null);
+		super(severity, JobManager.PI_JOBS, 1, message, null);
 		this.job = job;
 	}
 

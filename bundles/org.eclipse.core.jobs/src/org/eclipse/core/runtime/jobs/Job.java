@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.core.runtime.jobs;
 
 import org.eclipse.core.internal.jobs.InternalJob;
-import org.eclipse.core.internal.jobs.JobsMessages;
+import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -48,7 +48,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @see Job#run(IProgressMonitor)
 	 * @see Job#done(IStatus)
 	 */
-	public static final IStatus ASYNC_FINISH = new Status(IStatus.OK, JobsMessages.OWNER_NAME, 1, "", null);//$NON-NLS-1$
+	public static final IStatus ASYNC_FINISH = new Status(IStatus.OK, JobManager.PI_JOBS, 1, "", null);//$NON-NLS-1$
 
 	/* Job priorities */
 	/** 

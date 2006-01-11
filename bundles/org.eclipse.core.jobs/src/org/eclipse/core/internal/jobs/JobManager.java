@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,6 +121,11 @@ public class JobManager implements IJobManager {
 	 * jobs that are waiting to be run. Should only be modified from changeState
 	 */
 	private final JobQueue waiting;
+
+	/**
+	 * The unique identifier constant of this plug-in.
+	 */
+	public static final String PI_JOBS = "org.eclipse.core.jobs"; //$NON-NLS-1$
 
 	public static void debug(String msg) {
 		StringBuffer msgBuf = new StringBuffer(msg.length() + 40);
@@ -477,7 +482,7 @@ public class JobManager implements IJobManager {
 				String jobName = printJobName(toCancel[i]);
 				//this doesn't need to be translated because it's just being logged
 				String msg = "Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: " + jobName; //$NON-NLS-1$
-				RuntimeLog.log(new Status(IStatus.WARNING, JobsMessages.OWNER_NAME, JobManager.PLUGIN_ERROR, msg, null));
+				RuntimeLog.log(new Status(IStatus.WARNING, JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, msg, null));
 				
 				// TODO the RuntimeLog.log in its current implmentation won't produce a log 
 				// during this stage of shutdown. For now add a standard error output.
@@ -595,15 +600,15 @@ public class JobManager implements IJobManager {
 
 	private void initDebugOptions() {
 		try {
-			DEBUG = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_JOBS, false);
-			DEBUG_BEGIN_END = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_BEGIN_END, false);
-			DEBUG_DEADLOCK = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEADLOCK_ERROR, false);
-			DEBUG_LOCKS = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_LOCKS, false);
-			DEBUG_TIMING = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_JOBS_TIMING, false);
-			DEBUG_SHUTDOWN = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_SHUTDOWN, false);
+			DEBUG = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_JOBS, false);
+			DEBUG_BEGIN_END = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_BEGIN_END, false);
+			DEBUG_DEADLOCK = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEADLOCK_ERROR, false);
+			DEBUG_LOCKS = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_LOCKS, false);
+			DEBUG_TIMING = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_JOBS_TIMING, false);
+			DEBUG_SHUTDOWN = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_SHUTDOWN, false);
 		} catch (ClassNotFoundException e) {
 			// Debug only message - don't translate
-			JobsMessages.message("Unable to obtain debug options in the Jobs plugin. Check if OSGi plugin is installed."); //$NON-NLS-1$
+			JobMessages.message("Unable to obtain debug options in the Jobs plugin. Check if OSGi plugin is installed."); //$NON-NLS-1$
 		}
 	}
 
@@ -729,8 +734,8 @@ public class JobManager implements IJobManager {
 		}
 		//spin until all jobs are completed
 		try {
-			monitor.beginTask(JobsMessages.jobs_blocked0, jobCount);
-			monitor.subTask(NLS.bind(JobsMessages.jobs_waitFamSub, Integer.toString(jobCount)));
+			monitor.beginTask(JobMessages.jobs_blocked0, jobCount);
+			monitor.subTask(NLS.bind(JobMessages.jobs_waitFamSub, Integer.toString(jobCount)));
 			reportBlocked(monitor, blocking);
 			int jobsLeft;
 			int reportedWorkDone = 0;
@@ -741,7 +746,7 @@ public class JobManager implements IJobManager {
 				if (reportedWorkDone < actualWorkDone) {
 					monitor.worked(actualWorkDone - reportedWorkDone);
 					reportedWorkDone = actualWorkDone;
-					monitor.subTask(NLS.bind(JobsMessages.jobs_waitFamSub, Integer.toString(jobsLeft)));
+					monitor.subTask(NLS.bind(JobMessages.jobs_waitFamSub, Integer.toString(jobsLeft)));
 				}
 				if (Thread.interrupted())
 					throw new InterruptedException();
@@ -769,8 +774,8 @@ public class JobManager implements IJobManager {
 				try {
 					monitor = progressProvider.getDefaultMonitor();
 				} catch (Exception e) {
-					String msg = NLS.bind(JobsMessages.meta_pluginProblems, JobsMessages.OWNER_NAME);
-					RuntimeLog.log(new Status(IStatus.ERROR, JobsMessages.OWNER_NAME, JobManager.PLUGIN_ERROR, msg, e));
+					String msg = NLS.bind(JobMessages.meta_pluginProblems, JobManager.PI_JOBS);
+					RuntimeLog.log(new Status(IStatus.ERROR, JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, msg, e));
 				}
 			}
 		}
@@ -849,9 +854,9 @@ public class JobManager implements IJobManager {
 			return;
 		IStatus reason;
 		if (blockingJob == null || blockingJob instanceof ThreadJob || blockingJob.isSystem()) {
-			reason = new Status(IStatus.INFO, JobsMessages.OWNER_NAME, 1, JobsMessages.jobs_blocked0, null);
+			reason = new Status(IStatus.INFO, JobManager.PI_JOBS, 1, JobMessages.jobs_blocked0, null);
 		} else {
-			String msg = NLS.bind(JobsMessages.jobs_blocked1, blockingJob.getName());
+			String msg = NLS.bind(JobMessages.jobs_blocked1, blockingJob.getName());
 			reason = new JobStatus(IStatus.INFO, (Job) blockingJob, msg);
 		}
 		((IProgressMonitorWithBlocking) monitor).setBlocked(reason);

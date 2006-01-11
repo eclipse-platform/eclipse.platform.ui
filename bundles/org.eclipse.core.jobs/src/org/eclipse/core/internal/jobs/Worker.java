@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,8 +41,8 @@ public class Worker extends Thread {
 	}
 
 	private IStatus handleException(InternalJob job, Throwable t) {
-		String message = NLS.bind(JobsMessages.jobs_internalError, job.getName());
-		return new Status(IStatus.ERROR, JobsMessages.OWNER_NAME, JobManager.PLUGIN_ERROR, message, t);
+		String message = NLS.bind(JobMessages.jobs_internalError, job.getName());
+		return new Status(IStatus.ERROR, JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, message, t);
 	}
 
 	public void run() {

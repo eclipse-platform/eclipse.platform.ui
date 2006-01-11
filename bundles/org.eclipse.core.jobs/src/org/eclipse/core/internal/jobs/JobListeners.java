@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,14 +125,14 @@ class JobListeners {
 			return;
 		String pluginId = null;
 		try {
-			pluginId = JobsOSGiUtils.getDefault().getBundleId(listener);
+			pluginId = JobOSGiUtils.getDefault().getBundleId(listener);
 		} catch (ClassNotFoundException e1) {
 			// Debug only message - don't translate
-			JobsMessages.message("Unable to obtain Bundle Id in the Jobs plugin. Check if OSGi plugin is installed."); //$NON-NLS-1$
+			JobMessages.message("Unable to obtain Bundle Id in the Jobs plugin. Check if OSGi plugin is installed."); //$NON-NLS-1$
 		}
 		if (pluginId == null)
-			pluginId = JobsMessages.OWNER_NAME;
-		String message = NLS.bind(JobsMessages.meta_pluginProblems, pluginId);
+			pluginId = JobManager.PI_JOBS;
+		String message = NLS.bind(JobMessages.meta_pluginProblems, pluginId);
 		RuntimeLog.log(new Status(IStatus.ERROR, pluginId, JobManager.PLUGIN_ERROR, message, e));
 	}
 

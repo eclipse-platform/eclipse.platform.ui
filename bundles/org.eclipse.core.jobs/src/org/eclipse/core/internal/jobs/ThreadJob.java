@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,7 +92,7 @@ class ThreadJob extends Job {
 		if (JobManager.DEBUG || JobManager.DEBUG_BEGIN_END) {
 			System.out.println(msg);
 			Throwable t = lastPush == null ? new IllegalArgumentException() : lastPush;
-			IStatus error = new Status(IStatus.ERROR, JobsMessages.OWNER_NAME, 1, msg, t);
+			IStatus error = new Status(IStatus.ERROR, JobManager.PI_JOBS, 1, msg, t);
 			RuntimeLog.log(error);
 		}
 		Assert.isLegal(false, msg);
@@ -110,7 +110,7 @@ class ThreadJob extends Job {
 		String msg = buf.toString();
 		if (JobManager.DEBUG) {
 			System.out.println(msg);
-			IStatus error = new Status(IStatus.ERROR, JobsMessages.OWNER_NAME, 1, msg, new IllegalArgumentException());
+			IStatus error = new Status(IStatus.ERROR, JobManager.PI_JOBS, 1, msg, new IllegalArgumentException());
 			RuntimeLog.log(error);
 		}
 		Assert.isLegal(false, msg);
@@ -126,7 +126,7 @@ class ThreadJob extends Job {
 			return monitor.isCanceled();
 		} catch (RuntimeException e) {
 			//logged message should not be translated
-			IStatus status = new Status(IStatus.ERROR, JobsMessages.OWNER_NAME, JobManager.PLUGIN_ERROR, "ThreadJob.isCanceled", e); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, "ThreadJob.isCanceled", e); //$NON-NLS-1$
 			RuntimeLog.log(status);
 		}
 		return false;

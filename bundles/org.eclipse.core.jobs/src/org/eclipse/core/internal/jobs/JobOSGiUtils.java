@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,20 +26,20 @@ import org.osgi.util.tracker.ServiceTracker;
  * 
  * @since org.eclipse.core.jobs 3.2
  */
-public class JobsOSGiUtils {
+public class JobOSGiUtils {
 	private ServiceTracker debugTracker = null;
 	private ServiceTracker bundleTracker = null;
 
-	private static final JobsOSGiUtils singleton = new JobsOSGiUtils();
+	private static final JobOSGiUtils singleton = new JobOSGiUtils();
 
-	public static JobsOSGiUtils getDefault() {
+	public static JobOSGiUtils getDefault() {
 		return singleton;
 	}
 
 	/**
 	 * Private constructor to block instance creation.
 	 */
-	private JobsOSGiUtils() {
+	private JobOSGiUtils() {
 		super();
 
 		try {
@@ -52,7 +52,7 @@ public class JobsOSGiUtils {
 	private void initServices() throws ClassNotFoundException {
 		BundleContext context = Activator.getContext();
 		if (context == null) {
-			JobsMessages.message("JobsOSGiUtils called before plugin started"); //$NON-NLS-1$
+			JobMessages.message("JobsOSGiUtils called before plugin started"); //$NON-NLS-1$
 			return;
 		}
 
@@ -76,7 +76,7 @@ public class JobsOSGiUtils {
 
 	public boolean getBooleanDebugOption(String option, boolean defaultValue) throws ClassNotFoundException {
 		if (debugTracker == null) {
-			JobsMessages.message("Debug tracker is not set"); //$NON-NLS-1$
+			JobMessages.message("Debug tracker is not set"); //$NON-NLS-1$
 			return defaultValue;
 		}
 		DebugOptions options = (DebugOptions) debugTracker.getService();
@@ -94,7 +94,7 @@ public class JobsOSGiUtils {
 	 */
 	public String getBundleId(Object object) throws ClassNotFoundException {
 		if (bundleTracker == null) {
-			JobsMessages.message("Bundle tracker is not set"); //$NON-NLS-1$
+			JobMessages.message("Bundle tracker is not set"); //$NON-NLS-1$
 			return null;
 		}
 		PackageAdmin packageAdmin = (PackageAdmin) bundleTracker.getService();

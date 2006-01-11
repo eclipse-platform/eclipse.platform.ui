@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -590,7 +590,7 @@ class DeadlockDetector {
 	 */
 	private void reportDeadlock(Deadlock deadlock) {
 		String msg = "Deadlock detected. All locks owned by thread " + deadlock.getCandidate().getName() + " will be suspended."; //$NON-NLS-1$ //$NON-NLS-2$
-		MultiStatus main = new MultiStatus(JobsMessages.OWNER_NAME, JobManager.PLUGIN_ERROR, msg, new IllegalStateException());
+		MultiStatus main = new MultiStatus(JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, msg, new IllegalStateException());
 		Thread[] threads = deadlock.getThreads();
 		for (int i = 0; i < threads.length; i++) {
 			Object[] ownedLocks = getOwnedLocks(threads[i]);
@@ -604,7 +604,7 @@ class DeadlockDetector {
 			}
 			buf.append("and is waiting for lock "); //$NON-NLS-1$
 			buf.append(waitLock);
-			Status child = new Status(IStatus.ERROR, JobsMessages.OWNER_NAME, JobManager.PLUGIN_ERROR, buf.toString(), null);
+			Status child = new Status(IStatus.ERROR, JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, buf.toString(), null);
 			main.add(child);
 		}
 		RuntimeLog.log(main);
