@@ -414,7 +414,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 				projectsList.setCheckedElements(selectedProjects);
 			}
 		});
-
+		Dialog.applyDialogFont(selectAll);
 		setButtonLayoutData(selectAll);
 
 		Button deselectAll = new Button(buttonsComposite, SWT.PUSH);
@@ -431,6 +431,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 			}
 		});
+		Dialog.applyDialogFont(deselectAll);
 		setButtonLayoutData(deselectAll);
 
 		Button refresh = new Button(buttonsComposite, SWT.PUSH);
@@ -448,6 +449,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 					updateProjectsList(archivePathField.getText().trim());
 			}
 		});
+		Dialog.applyDialogFont(refresh);
 		setButtonLayoutData(refresh);
 	}
 
