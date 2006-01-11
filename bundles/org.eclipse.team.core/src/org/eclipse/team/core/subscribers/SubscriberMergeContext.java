@@ -94,7 +94,7 @@ public abstract class SubscriberMergeContext extends MergeContext {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.mapping.MergeContext#run(org.eclipse.core.resources.IWorkspaceRunnable, org.eclipse.core.runtime.jobs.ISchedulingRule, int, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.core.mapping.provider.MergeContext#run(org.eclipse.core.resources.IWorkspaceRunnable, org.eclipse.core.runtime.jobs.ISchedulingRule, int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(final IWorkspaceRunnable runnable, final ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException {
 		super.run(runnable, rule, flags, monitor);
