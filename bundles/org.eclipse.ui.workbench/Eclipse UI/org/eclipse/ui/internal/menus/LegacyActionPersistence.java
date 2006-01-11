@@ -54,12 +54,14 @@ import org.eclipse.jface.menus.SLocation;
 import org.eclipse.jface.menus.SMenu;
 import org.eclipse.jface.menus.SReference;
 import org.eclipse.jface.menus.SWidget;
-import org.eclipse.ui.LegacyHandlerSubmissionExpression;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.expressions.LegacyActionExpressionWrapper;
+import org.eclipse.ui.internal.expressions.LegacyEditorContributionExpression;
+import org.eclipse.ui.internal.expressions.LegacyViewContributionExpression;
 import org.eclipse.ui.internal.services.RegistryPersistence;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.menus.IMenuContribution;
@@ -189,7 +191,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		final ActionExpression visibilityActionExpression = new ActionExpression(
 				visibilityElement);
 		final LegacyActionExpressionWrapper wrapper = new LegacyActionExpressionWrapper(
-				visibilityActionExpression);
+				visibilityActionExpression, null);
 		return wrapper;
 	}
 
@@ -884,7 +886,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			if (targetId == null)
 				continue;
 			final Expression visibleWhenExpression = new LegacyEditorContributionExpression(
-					targetId);
+					targetId, null);
 
 			// Read all of the child elements from the registry.
 			readActionsAndMenus(element, id, warningsToLog, null,
@@ -1168,8 +1170,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 					warningsToLog, "View contributions need a target id", id); //$NON-NLS-1$
 			if (targetId == null)
 				continue;
-			final Expression visibleWhenExpression = new LegacyHandlerSubmissionExpression(
-					targetId, null, null);
+			final Expression visibleWhenExpression = new LegacyViewContributionExpression(
+					targetId, null);
 			final LegacyLocationInfo locationInfo = new LegacyLocationInfo(
 					targetId);
 

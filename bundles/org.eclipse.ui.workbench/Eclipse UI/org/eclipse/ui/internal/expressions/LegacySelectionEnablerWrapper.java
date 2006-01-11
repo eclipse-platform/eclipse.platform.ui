@@ -9,13 +9,15 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.services;
+package org.eclipse.ui.internal.expressions;
 
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SelectionEnabler;
 
 /**
@@ -32,7 +34,8 @@ import org.eclipse.ui.SelectionEnabler;
  * 
  * @since 3.2
  */
-public final class LegacySelectionEnablerWrapper extends Expression {
+public final class LegacySelectionEnablerWrapper extends
+		WorkbenchWindowExpression {
 
 	/**
 	 * The enabler for this expression; never <code>null</code>.
@@ -44,8 +47,15 @@ public final class LegacySelectionEnablerWrapper extends Expression {
 	 * 
 	 * @param enabler
 	 *            The enabler; must not be <code>null</code>.
+	 * @param window
+	 *            The workbench window which must be active for this expression
+	 *            to evaluate to <code>true</code>; may be <code>null</code>
+	 *            if the window should be disregarded.
 	 */
-	public LegacySelectionEnablerWrapper(final SelectionEnabler enabler) {
+	public LegacySelectionEnablerWrapper(final SelectionEnabler enabler,
+			final IWorkbenchWindow window) {
+		super(window);
+
 		if (enabler == null) {
 			throw new NullPointerException("There is no enabler"); //$NON-NLS-1$
 		}
@@ -53,10 +63,17 @@ public final class LegacySelectionEnablerWrapper extends Expression {
 	}
 
 	public final void collectExpressionInfo(final ExpressionInfo info) {
+		super.collectExpressionInfo(info);
 		info.markDefaultVariableAccessed();
 	}
 
-	public final EvaluationResult evaluate(final IEvaluationContext context) {
+	public final EvaluationResult evaluate(final IEvaluationContext context)
+			throws CoreException {
+		final EvaluationResult result = super.evaluate(context);
+		if (result == EvaluationResult.FALSE) {
+			return result;
+		}
+
 		final Object defaultVariable = context.getDefaultVariable();
 		if (defaultVariable instanceof ISelection) {
 			final ISelection selection = (ISelection) defaultVariable;
@@ -66,5 +83,15 @@ public final class LegacySelectionEnablerWrapper extends Expression {
 		}
 
 		return EvaluationResult.FALSE;
+	}
+
+	public final String toString() {
+		final StringBuffer buffer = new StringBuffer();
+		buffer.append("LegacySelectionEnablerWrapper("); //$NON-NLS-1$
+		buffer.append(enabler);
+		buffer.append(',');
+		buffer.append(getWindow());
+		buffer.append(')');
+		return buffer.toString();
 	}
 }
