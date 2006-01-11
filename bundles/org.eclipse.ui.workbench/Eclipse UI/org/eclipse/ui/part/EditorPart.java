@@ -54,7 +54,6 @@ import org.eclipse.ui.internal.misc.Assert;
  *   <li><code>IEditorPart.doSave</code> - to save contents of editor</li>
  *   <li><code>IEditorPart.doSaveAs</code> - to save contents of editor</li>
  *   <li><code>IEditorPart.isSaveAsAllowed</code> - to control Save As</li>
- *   <li><code>IEditorPart.gotoMarker</code> - to make selections based on markers</li>
  * </ul>
  * </p>
  * <p>
