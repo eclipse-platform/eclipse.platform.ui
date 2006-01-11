@@ -823,7 +823,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 *        are removed from the displayed set
 	 */
 	private void setProposals(ICompletionProposal[] proposals, boolean isFilteredSubset) {
-		ICompletionProposal oldProposal= getSelectedProposal();
+		ICompletionProposal[] oldProposals= fFilteredProposals;
+		ICompletionProposal oldProposal= getSelectedProposal(); // may trigger filtering and a reentrant call to setProposals()
+		if (oldProposals != fFilteredProposals) // reentrant call was first - abort
+			return;
 
 		if (Helper.okToUse(fProposalTable)) {
 			if (oldProposal instanceof ICompletionProposalExtension2 && fViewer != null)
