@@ -21,13 +21,11 @@ import org.eclipse.team.core.subscribers.SubscriberMergeContext;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
-import org.eclipse.team.ui.operations.FileMerger;
 
 public abstract class CVSSubscriberMergeContext extends SubscriberMergeContext {
 
 	protected CVSSubscriberMergeContext(Subscriber subscriber, IResourceMappingScope scope) {
 		super(subscriber, scope);
-		setMerger(new FileMerger());
 	}
 	
 	/* (non-Javadoc)

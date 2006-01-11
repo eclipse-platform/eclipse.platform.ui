@@ -88,9 +88,15 @@ public class Messages extends NLS {
 	public static String MergeContext_0;
 	public static String MergeContext_1;
 	public static String MergeContext_2;
+	public static String MergeContext_3;
+	public static String MergeContext_4;
 
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
+
+	public static String DelegatingStorageMerger_0;
+
+	public static String DelegatingStorageMerger_1;
 }

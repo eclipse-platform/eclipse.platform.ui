@@ -379,5 +379,15 @@
             contentExtensionId="org.eclipse.team.ui.resourceContent"
             modelProviderId="org.eclipse.core.resources.modelProvider"/>
    </extension>
+   <extension
+         point="org.eclipse.team.core.storageMergers">
+      <storageMerger
+            class="org.eclipse.team.internal.ui.mapping.TextStorageMerger"
+            extensions="txt"
+            id="org.eclipse.team.ui.textStorageMerger"/>
+      <contentTypeBinding
+            contentTypeId="org.eclipse.core.runtime.text"
+            storageMergerId="org.eclipse.team.ui.textStorageMerger"/>
+   </extension>
 
 </plugin>

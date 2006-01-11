@@ -232,7 +232,7 @@ public class GenericHistoryView extends ViewPart {
 			}
 		};
 		pinAction.setChecked(isViewPinned());
-		pinAction.setToolTipText("Pins this history view");
+		pinAction.setToolTipText(TeamUIMessages.GenericHistoryView_0);
 
 		refreshAction = new Action(TeamUIMessages.GenericHistoryView_Refresh, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_REFRESH)) {
 			public void run() {

@@ -341,8 +341,6 @@ public class TeamUIMessages extends NLS {
 	public static String OpenRevisionAction_DeletedRevisionTitle;
 	public static String OpenRevisionAction_DeletedRevisionMessage;
 	public static String GenericHistoryView_ErrorFetchingEntries;
-	public static String MergeContext_0;
-	public static String MergeContext_1;
 	public static String TeamContentProviderDescriptor_0;
 	public static String TeamContentProviderDescriptor_1;
 	public static String TeamContentProviderDescriptor_2;
@@ -365,5 +363,12 @@ public class TeamUIMessages extends NLS {
 	
 	
 	public static String GenericHistoryView_PinCurrentHistory;
+
+	public static String TextAutoMerge_inputEncodingError;
+	public static String TextAutoMerge_conflict;
+	public static String TextAutoMerge_outputEncodingError;
+	public static String TextAutoMerge_outputIOError;
+
+	public static String GenericHistoryView_0;
 
 }

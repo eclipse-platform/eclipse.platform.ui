@@ -7,6 +7,7 @@
    <extension-point id="projectSets" name="%TeamProjectSets" schema="schema/projectSets.exsd"/>
    <extension-point id="repository" name="%Repository" schema="schema/repository.exsd"/>
    <extension-point id="defaultFileModificationValidator" name="%DefaultValidator" schema="schema/defaultFileModificationValidator.exsd"/>
+   <extension-point id="storageMergers" name="Storage Mergers" schema="schema/storageMergers.exsd"/>
 
 <!-- Define common known file types -->
    <extension

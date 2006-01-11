@@ -22,8 +22,8 @@ import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileState;
 import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.internal.core.Messages;
-import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.core.*;
+import org.eclipse.team.internal.core.mapping.DelegatingStorageMerger;
 
 /**
  * Provides the context for an <code>IResourceMappingMerger</code>.
@@ -43,19 +43,6 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * @since 3.2
  */
 public abstract class MergeContext extends SynchronizationContext implements IMergeContext {
-	
-	private IFileMerger merger;
-	
-	/**
-	 * Interface that allows a 3-way file merger to be plugged into
-	 * a merge context. The purpose of this interface is to 
-	 * work-around the fact that the org.eclipse.compare plugin
-	 * defines the IStreamMerger interface but has dependencies on
-	 * UI.
-	 */
-	public interface IFileMerger {
-		IStatus merge(MergeContext context, IThreeWayDiff diff, IProgressMonitor monitor) throws CoreException;
-	}
 
 	/**
      * Create a merge context.
@@ -156,18 +143,95 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 
 	/**
 	 * Perform a three-way merge on the given thee-way diff that contains a content conflict.
-	 * By default, the {@link IFileMerger} supplied the subclass is used
-	 * to perform the merge. If a merger is not provided, subclasses must
-	 * override this method.
-	 * @see #setMerger(org.eclipse.team.core.mapping.provider.MergeContext.IFileMerger)
+	 * By default, ths method makes use of {@link IStorageMerger} instances registered
+	 * with the <code>storageMergers</code> extension point.
 	 * @param diff the diff
 	 * @param monitor a progress monitor
 	 * @return a status indicating the results of the merge
 	 */
 	protected IStatus performThreeWayMerge(IThreeWayDiff diff, IProgressMonitor monitor) throws CoreException {
-		return merger.merge(this, diff, monitor);
+		IResourceDiff localDiff = (IResourceDiff)diff.getLocalChange();
+		IResourceDiff remoteDiff = (IResourceDiff)diff.getRemoteChange();
+		IStorageMerger merger = DelegatingStorageMerger.getInstance();
+		IFile file = (IFile)localDiff.getResource();
+		String osEncoding = file.getCharset();
+		IFileState ancestorState = localDiff.getBeforeState();
+		IFileState remoteState = remoteDiff.getAfterState();
+		IStorage ancestorStorage = ancestorState.getStorage(Policy.subMonitorFor(monitor, 30));
+		IStorage remoteStorage = remoteState.getStorage(Policy.subMonitorFor(monitor, 30));
+		OutputStream os = getTempOutputStream(file);
+		try {
+			IStatus status = merger.merge(os, osEncoding, ancestorStorage, file, remoteStorage, Policy.subMonitorFor(monitor, 30));
+			if (status.isOK()) {
+				file.setContents(getTempInputStream(file, os), false, true, Policy.subMonitorFor(monitor, 5));
+				markAsMerged(diff, false, Policy.subMonitorFor(monitor, 5));
+			} else {
+				// TODO: May be wrapping improperly
+				status = new MergeStatus(status.getPlugin(), status.getMessage(), new IFile[]{file});
+			}
+			return status;
+        } finally {
+            disposeTempOutputStream(file, os);
+        }
 	}
 
+    private void disposeTempOutputStream(IFile file, OutputStream output) {
+        if (output instanceof ByteArrayOutputStream)
+            return;
+        // We created a temporary file so we need to clean it up
+        try {
+            // First make sure the output stream is closed
+            // so that file deletion will not fail because of that.
+            if (output != null)
+                output.close();
+        } catch (IOException e) {
+            // Ignore
+        }
+        File tmpFile = getTempFile(file);
+        if (tmpFile.exists())
+            tmpFile.delete();
+    }
+    
+    private OutputStream getTempOutputStream(IFile file) throws CoreException {
+        File tmpFile = getTempFile(file);
+        if (tmpFile.exists())
+            tmpFile.delete();
+        File parent = tmpFile.getParentFile();
+        if (!parent.exists())
+        	parent.mkdirs();
+        try {
+            return new BufferedOutputStream(new FileOutputStream(tmpFile));
+        } catch (FileNotFoundException e) {
+            TeamPlugin.log(IStatus.ERROR, NLS.bind("Could not open temporary file {0} for writing: {1}", new String[] { tmpFile.getAbsolutePath(), e.getMessage() }), e); //$NON-NLS-1$
+            return new ByteArrayOutputStream();
+        }
+    }
+    
+    private InputStream getTempInputStream(IFile file, OutputStream output) throws CoreException {
+        if (output instanceof ByteArrayOutputStream) {
+            ByteArrayOutputStream baos = (ByteArrayOutputStream) output;
+            return new ByteArrayInputStream(baos.toByteArray());
+        }
+        // We created a temporary file so we need to open an input stream on it
+        try {
+            // First make sure the output stream is closed
+            if (output != null)
+                output.close();
+        } catch (IOException e) {
+            // Ignore
+        }
+        File tmpFile = getTempFile(file);
+        try {
+            return new BufferedInputStream(new FileInputStream(tmpFile));
+        } catch (FileNotFoundException e) {
+            throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind(Messages.MergeContext_4, new String[] { tmpFile.getAbsolutePath(), e.getMessage() }), e));
+        }
+    }
+    
+    private File getTempFile(IFile file) {
+        return TeamPlugin.getPlugin().getStateLocation().append(".tmp").append(file.getName() + ".tmp").toFile(); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
 	private IFile getLocalFile(IDiffNode delta) {
 		return ResourcesPlugin.getWorkspace().getRoot().getFile(delta.getPath());
 	}
@@ -275,15 +339,5 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 			}
 		}
 		return result;
-	}
-
-	/**
-	 * Set the file merger that is used by the {@link #performThreeWayMerge(IThreeWayDiff, IProgressMonitor) }
-	 * method. It is the responsibility of subclasses to provide a merger.
-	 * If a merger is not provided, subclasses must override <code>performThreeWayMerge</code>.
-	 * @param merger the merger used to merge files
-	 */
-	protected void setMerger(IFileMerger merger) {
-		this.merger = merger;
 	}
 }

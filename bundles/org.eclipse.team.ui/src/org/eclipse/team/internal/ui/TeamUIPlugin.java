@@ -26,6 +26,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.internal.ui.mapping.StreamMergerDelegate;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.internal.ui.synchronize.TeamSynchronizingPerspective;
 import org.eclipse.team.internal.ui.synchronize.actions.GlobalRefreshAction;
@@ -201,6 +202,8 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 			capabilityInitializer.setPriority(Job.DECORATE);
 			capabilityInitializer.schedule(1000);		
 		}
+		
+		StreamMergerDelegate.start();
 	}
 	
 	/* (non-Javadoc)
