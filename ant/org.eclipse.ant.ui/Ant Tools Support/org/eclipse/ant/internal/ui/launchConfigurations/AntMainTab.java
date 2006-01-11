@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,18 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -38,6 +41,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 
 	private String fCurrentLocation= null;
 	private Button fSetInputHandlerButton;
+    private IFile fNewFile;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
@@ -61,19 +65,49 @@ public class AntMainTab extends ExternalToolsMainTab {
 			String newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
 			if (newLocation != null) {
 				if (!newLocation.equals(fCurrentLocation)) {
-					updateTargetsTab();
-					fCurrentLocation= newLocation;
+				    updateTargetsTab();
+				    fCurrentLocation= newLocation;
+                    updateProjectName(configuration);
 				}
 			} else if (fCurrentLocation != null){
 				updateTargetsTab();
 				fCurrentLocation= newLocation;
+                updateProjectName(configuration);
 			}
 		} catch (CoreException e) {
 		}
+       
 		setAttribute(IAntUIConstants.SET_INPUTHANDLER, configuration, fSetInputHandlerButton.getSelection(), true);
 	}
 
-	/* (non-Javadoc)
+	private void updateProjectName(ILaunchConfigurationWorkingCopy configuration) {
+        IFile file= null;
+        if (fNewFile != null) {
+            file= fNewFile;
+            fNewFile= null;
+        } else {
+            String expandedLocation= null;
+            String location= null;
+            IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+            try {
+                location= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
+                if (location != null) {
+                    expandedLocation= manager.performStringSubstitution(location);
+                    if (expandedLocation != null) {
+                        file= AntUtil.getFileForLocation(expandedLocation, null);
+                    }
+                }
+            } catch (CoreException e) {
+            }
+        }
+        String projectName= ""; //$NON-NLS-1$
+        if (file != null) {
+            projectName= file.getProject().getName();
+        }
+        configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
@@ -136,7 +170,8 @@ public class AntMainTab extends ExternalToolsMainTab {
 		}
 		Object file= result.getFirstElement();
 		if (file instanceof IFile) {
-			locationField.setText(VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", ((IFile)file).getFullPath().toString())); //$NON-NLS-1$
+            fNewFile= (IFile)file;
+			locationField.setText(VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", fNewFile.getFullPath().toString())); //$NON-NLS-1$
 		}
 	}
 
