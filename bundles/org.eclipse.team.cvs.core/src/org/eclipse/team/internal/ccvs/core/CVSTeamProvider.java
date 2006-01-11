@@ -24,6 +24,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.history.IFileHistoryProvider;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
@@ -836,10 +837,20 @@ public class CVSTeamProvider extends RepositoryProvider {
 		return RESOURCE_RULE_FACTORY;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.RepositoryProvider#getFileHistoryProvider()
+	 */
 	public IFileHistoryProvider getFileHistoryProvider() {
 		   if (CVSTeamProvider.fileHistoryProvider == null) {
 	            CVSTeamProvider.fileHistoryProvider = new CVSFileHistoryProvider();
 	        }
 	        return CVSTeamProvider.fileHistoryProvider;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.RepositoryProvider#getSubscriber()
+	 */
+	public Subscriber getSubscriber() {
+		return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
 	}
 }

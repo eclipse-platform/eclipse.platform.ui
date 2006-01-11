@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.history.IFileHistoryProvider;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.core.*;
 
 /**
@@ -794,5 +795,16 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 */
 	public IResourceRuleFactory getRuleFactory() {
 		return new PessimisticResourceRuleFactory();
+	}
+	
+	/**
+	 * Return a {@link Subscriber} that describes the synchronization state
+	 * of the resources contained in the project associated with this 
+	 * provider. By default, <code>null</code> is returned. Subclasses
+	 * may override.
+	 * @return a subscriber that provides resource synchronization state or <code>null</code>
+	 */
+	public Subscriber getSubscriber() {
+		return null;
 	}
 }	

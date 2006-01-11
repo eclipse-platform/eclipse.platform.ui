@@ -18,8 +18,7 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.*;
-import org.eclipse.team.core.diff.IDiffNode;
-import org.eclipse.team.core.diff.IDiffVisitor;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
@@ -434,5 +433,45 @@ abstract public class Subscriber {
 			refresh(traversal.getResources(), traversal.getDepth(), Policy.subMonitorFor(monitor, 100));
 		}
 		monitor.done();
+	}
+	
+	/**
+	 * Convenience method that returns whether there are any local changes covered
+	 * by the given traversals. Clients could also get this information by visiting
+	 * the diffs returned from the subscriber but this method is provided so that sublcasses
+	 * have any opportunity to optimize this check for clients who are only looking for 
+	 * local changes. Locla changes can only exist if the subscriber is three-way
+	 * <p>
+	 * The default implementation uses the {@link #accept(ResourceTraversal[], IDiffVisitor)}
+	 * method to look for local changes. Subclasses may override.
+	 * </p>
+	 * @since 3.2
+	 * @param traversals the resource traversals
+	 * @param monitor a progress monitor
+	 * @return whether there are any local changes covered
+	 * by the given traversals
+	 * @throws CoreException if errors occur
+	 */
+	public boolean hasLocalChanges(ResourceTraversal[] traversals, IProgressMonitor monitor) throws CoreException {
+		if (getResourceComparator().isThreeWay()) {
+			final CoreException found = new CoreException(Status.OK_STATUS);
+			try {
+				accept(traversals, new IDiffVisitor() {
+					public boolean visit(IDiffNode delta) throws CoreException {
+						if (delta instanceof IThreeWayDiff) {
+							IThreeWayDiff twd = (IThreeWayDiff) delta;
+							if (twd.getLocalChange() != null && twd.getLocalChange().getKind() != IDiffNode.NO_CHANGE) {
+								throw found;
+							}
+						}
+						return true;
+					}
+				});
+			} catch (CoreException e) {
+				if (e == found)
+					return true;
+			}
+		}
+		return false;
 	}
 }
