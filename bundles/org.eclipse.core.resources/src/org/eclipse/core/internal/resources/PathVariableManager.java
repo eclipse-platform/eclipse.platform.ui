@@ -243,6 +243,8 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 
 		for (int i = 1; i < name.length(); i++) {
 			char following = name.charAt(i);
+			if (Character.isWhitespace(following))
+				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Messages.pathvar_whitespace);
 			if (!Character.isLetter(following) && !Character.isDigit(following) && following != '_') {
 				message = NLS.bind(Messages.pathvar_invalidChar, String.valueOf(following));
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);

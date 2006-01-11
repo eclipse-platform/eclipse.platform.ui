@@ -99,6 +99,7 @@ public class Messages extends NLS {
 	public static String pathvar_invalidValue;
 	public static String pathvar_length;
 	public static String pathvar_undefined;
+	public static String pathvar_whitespace;
 
 	public static String preferences_deleteException;
 	public static String preferences_loadException;
