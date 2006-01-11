@@ -145,6 +145,22 @@ public class CVSProviderTest extends EclipseTest {
 		assertEquals(project, copy);
 	}
 	
+	public void testUpdate123280() throws CoreException {
+		IProject project = createProject(new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
+		
+		// Make a remote change
+		IProject copy = checkoutCopy(project, "-copy");
+		setContentsAndEnsureModified(copy.getFile("folder1/a.txt"));
+		commitProject(copy);
+		
+		// Delete locally and then update
+		project.getFile("deleted.txt").delete(false, null);
+		updateProject(project, null, false);
+		// Ensure that the file is still an outgoing deletion
+		ICVSFile file = CVSWorkspaceRoot.getCVSFileFor(project.getFile("deleted.txt"));
+		assertTrue(!file.exists() && file.isManaged());
+	}
+	
 	public void testVersionTag() throws TeamException, CoreException, IOException {
 		
 		// Create a test project, import it into cvs and check it out

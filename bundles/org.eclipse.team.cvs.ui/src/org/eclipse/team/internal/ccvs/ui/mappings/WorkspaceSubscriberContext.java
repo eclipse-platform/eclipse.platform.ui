@@ -104,7 +104,7 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		// First, verify that the provided delta matches the current state
 		// i.e. it is possible that a concurrent change has occurred
 		SyncInfo info = getSyncInfo(getDiffTree().getResource(delta));
-		if (info == null || info.getKind() == SyncInfo.IN_SYNC || SyncInfo.getDirection(info.getKind()) == SyncInfo.OUTGOING) {
+		if (info == null || info.getKind() == SyncInfo.IN_SYNC || (SyncInfo.getDirection(info.getKind()) == SyncInfo.OUTGOING && !force)) {
 			// Seems like this one was already merged so return OK
 			return Status.OK_STATUS;
 		}
