@@ -94,7 +94,7 @@ public class RefactoringDescriptorViewer extends Viewer {
 					HTMLPrinter.addBullet(buffer, ModelMessages.RefactoringDescriptorViewer_breaking_change_message);
 				if ((flags & RefactoringDescriptor.STRUCTURAL_CHANGE) > 0)
 					HTMLPrinter.addBullet(buffer, ModelMessages.RefactoringDescriptorViewer_structural_change_message);
-				if ((flags & RefactoringDescriptor.CLOSURE_CHANGE) > 0)
+				if ((flags & RefactoringDescriptor.MULTI_CHANGE) > 0)
 					HTMLPrinter.addBullet(buffer, ModelMessages.RefactoringDescriptorViewer_closure_change_message);
 				HTMLPrinter.endBulletList(buffer);
 			}

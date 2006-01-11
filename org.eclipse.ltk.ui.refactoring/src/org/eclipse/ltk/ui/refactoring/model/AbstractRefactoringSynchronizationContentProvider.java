@@ -123,7 +123,7 @@ public abstract class AbstractRefactoringSynchronizationContentProvider extends 
 											try {
 												service.connect();
 												stream= storage.getContents();
-												final RefactoringHistory history= service.readRefactoringHistory(stream, RefactoringDescriptor.CLOSURE_CHANGE);
+												final RefactoringHistory history= service.readRefactoringHistory(stream, RefactoringDescriptor.MULTI_CHANGE);
 												if (history != null && !history.isEmpty()) {
 													final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
 													for (int offset= 0; offset < proxies.length; offset++)

@@ -23,13 +23,28 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * <p>
  * A refactoring descriptor contains refactoring-specific data which allows the
  * framework to completely reconstruct a particular refactoring instance and
- * execute it on an arbitrary workspace. Refactoring descriptors are identified by their
- * refactoring id {@link #getID()} and their time stamps {@link #getTimeStamp()}.
+ * execute it on an arbitrary workspace. Refactoring descriptors are identified
+ * by their refactoring id {@link #getID()} and their time stamps
+ * {@link #getTimeStamp()}.
  * </p>
  * <p>
  * Refactoring descriptors are potentially heavyweight objects which should not
  * be held on to. Use refactoring descriptor handles
  * {@link RefactoringDescriptorProxy} to store refactoring information.
+ * </p>
+ * <p>
+ * Clients which create specific refactoring descriptors during change
+ * generation should choose an informative description of the particular
+ * refactoring instance and pass appropriate descriptor flags to the
+ * constructor. In particular, if a refactoring descriptor represents a
+ * refactoring which renames a project resource, the descriptor should have the
+ * flag {@link #PROJECT_CHANGE} set and a valid argument {@link #NAME}. The
+ * arguments {@link #INPUT} or {@link #ELEMENT} are reserved to specify the
+ * input arguments of a particular refactoring. The format of the values of
+ * these arguments is langugage-dependent, but should be standardized for a
+ * particular programming language. These arguments may be preprocessed by
+ * language-specific tools such as wizards to import refactoring information
+ * into the local workspace.
  * </p>
  * <p>
  * All time stamps are measured in UTC milliseconds from the epoch (see
@@ -62,17 +77,6 @@ public class RefactoringDescriptor implements Comparable {
 	public static final int BREAKING_CHANGE= 1 << 0;
 
 	/**
-	 * Constant describing the closure change flag (value: 4)
-	 * <p>
-	 * Clients should set this flag to indicate that the change created by the
-	 * represented refactoring might causes changes in other files than the
-	 * files of the input elements according to the semantics of the associated
-	 * programming language.
-	 * </p>
-	 */
-	public static final int CLOSURE_CHANGE= 1 << 2;
-
-	/**
 	 * Predefined argument called <code>element&lt;Number&gt;</code>.
 	 * <p>
 	 * This argument should be used to describe the elements being refactored.
@@ -83,7 +87,8 @@ public class RefactoringDescriptor implements Comparable {
 	 * </p>
 	 * <p>
 	 * The element arguments are simply distinguished by appending a number to
-	 * the argument name, eg. element1.
+	 * the argument name, eg. element1. The indices of this argument are non
+	 * zero-based.
 	 * </p>
 	 */
 	public static final String ELEMENT= "element"; //$NON-NLS-1$
@@ -101,6 +106,17 @@ public class RefactoringDescriptor implements Comparable {
 	public static final String INPUT= "input"; //$NON-NLS-1$
 
 	/**
+	 * Constant describing the multi change flag (value: 4)
+	 * <p>
+	 * Clients should set this flag to indicate that the change created by the
+	 * represented refactoring might causes changes in other files than the
+	 * files of the input elements according to the semantics of the associated
+	 * programming language.
+	 * </p>
+	 */
+	public static final int MULTI_CHANGE= 1 << 2;
+
+	/**
 	 * Predefined argument called <code>name</code>.
 	 * <p>
 	 * This argument should be used to describe the name of the element being
@@ -114,6 +130,18 @@ public class RefactoringDescriptor implements Comparable {
 	public static final int NONE= 0;
 
 	/**
+	 * Constant describing the project rename change flag (value: 8)
+	 * <p>
+	 * Clients should set this flag to indicate that the represented refactoring
+	 * renames a project resource in the workspace. If this flag is set for a
+	 * particular descriptor, the refactoring history service assumes that the
+	 * argument {@link #NAME} of the refactoring descriptor denotes the new name
+	 * of the project being renamed.
+	 * </p>
+	 */
+	public static final int PROJECT_CHANGE= 1 << 3;
+
+	/**
 	 * Constant describing the structural change flag (value: 2)
 	 * <p>
 	 * Clients should set this flag to indicate that the change created by the
@@ -122,6 +150,16 @@ public class RefactoringDescriptor implements Comparable {
 	 * </p>
 	 */
 	public static final int STRUCTURAL_CHANGE= 1 << 1;
+
+	/**
+	 * Constant describing the user flag (value: 256)
+	 * <p>
+	 * This constant is not intended to be used in refactoring descriptors.
+	 * Clients should use the value of this constant to define user-defined
+	 * flags with values greater than this constant.
+	 * </p>
+	 */
+	public static final int USER_CHANGE= 1 << 8;
 
 	/** The map of arguments (element type: &lt;String, String&gt;) */
 	private final Map fArguments;
@@ -146,33 +184,6 @@ public class RefactoringDescriptor implements Comparable {
 
 	/** The time stamp, or <code>-1</code> */
 	private long fTimeStamp= -1;
-
-	/**
-	 * Creates a new refactoring descriptor.
-	 * <p>
-	 * The flags are initialized to {@link #NONE}.
-	 * </p>
-	 * 
-	 * @param id
-	 *            the unique id of the refactoring
-	 * @param project
-	 *            the non-empty name of the project associated with this
-	 *            refactoring, or <code>null</code>
-	 * @param description
-	 *            a non-empty human-readable description of the particular
-	 *            refactoring instance
-	 * @param comment
-	 *            the comment associated with the refactoring, or
-	 *            <code>null</code> for no commment
-	 * @param arguments
-	 *            the argument map (element type: &lt;String, String&gt;). The
-	 *            keys of the arguments are required to be non-empty strings
-	 *            which must not contain spaces. The values must be non-empty
-	 *            strings
-	 */
-	public RefactoringDescriptor(final String id, final String project, final String description, final String comment, final Map arguments) {
-		this(id, project, description, comment, arguments, NONE);
-	}
 
 	/**
 	 * Creates a new refactoring descriptor.
@@ -322,7 +333,8 @@ public class RefactoringDescriptor implements Comparable {
 	}
 
 	/**
-	 * Sets the time stamp of this refactoring. This method can be called only once.
+	 * Sets the time stamp of this refactoring. This method can be called only
+	 * once.
 	 * <p>
 	 * Note: This API must not be called from outside the refactoring framework.
 	 * </p>
