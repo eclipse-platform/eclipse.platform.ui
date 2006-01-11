@@ -599,18 +599,6 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
         return getPluginID();
     }
 
-    /**
-     * Return the part descriptor.
-     * 
-     * @return the part descriptor
-     * @since 3.1 
-     */
-    public IPartDescriptor getPartDescriptor() {
-        return partInfo;
-    }
-
-
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorDescriptor#getEditorManagementPolicy()
      */

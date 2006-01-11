@@ -67,12 +67,6 @@ public class SubActionBars extends EventManager implements IActionBars {
 	public static final String P_ACTION_HANDLERS = "org.eclipse.ui.internal.actionHandlers"; //$NON-NLS-1$
 
 	/**
-	 * Construct a new SubActionBars object.
-	 */
-	// public SubActionBars(IActionBars parent) {
-	// this.parent = parent;
-	// }
-	/**
 	 * Constructs a new instance of <code>SubActionBars</code>.
 	 * 
 	 * @param parent

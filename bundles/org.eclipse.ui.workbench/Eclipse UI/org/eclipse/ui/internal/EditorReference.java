@@ -21,6 +21,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -38,6 +39,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.internal.part.NullEditorInput;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.IWorkbenchPartOrientation;
@@ -405,8 +407,8 @@ public class EditorReference extends WorkbenchPartReference implements
             
             EditorSite site = new EditorSite(this, part, manager.page, descr);
             
-            site.setActionBars(new EditorActionBars(new NullActionBars(), site,
-					getId()));
+            site.setActionBars(new EditorActionBars((IActionBars2) manager.page
+					.getActionBars(), site, getId()));
             try {
                 part.init(site, input);
             } catch (PartInitException e) {

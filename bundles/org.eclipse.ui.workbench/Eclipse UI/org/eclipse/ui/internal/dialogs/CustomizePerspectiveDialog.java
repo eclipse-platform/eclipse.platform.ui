@@ -937,7 +937,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
     private void buildMenusAndToolbarsFor(CustomizeActionBars customizeActionBars, ActionSetDescriptor actionSetDesc) {
         String id = actionSetDesc.getId();
         ActionSetActionBars bars = new ActionSetActionBars(
-        		customizeActionBars, id);
+        		customizeActionBars, window, id);
         PluginActionSetBuilder builder = new PluginActionSetBuilder();
         PluginActionSet actionSet = null;
         try {
