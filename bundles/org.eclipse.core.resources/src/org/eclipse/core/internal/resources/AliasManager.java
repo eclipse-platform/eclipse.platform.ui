@@ -618,7 +618,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 			IResource alias = (IResource) it.next();
 			monitor.subTask(NLS.bind(Messages.links_updatingDuplicate, alias.getFullPath()));
 			if (alias.getType() == IResource.PROJECT) {
-				if (checkDeletion((IProject) alias, location))
+				if (checkDeletion((Project) alias, location))
 					continue;
 				//project did not require deletion, so fall through below and refresh it
 			}
@@ -636,18 +636,21 @@ public class AliasManager implements IManager, ILifecycleListener {
 	 * @return <code>true</code> if the project has been deleted, and <code>false</code> otherwise
 	 * @throws CoreException
 	 */
-	private boolean checkDeletion(IProject project, IFileStore location) throws CoreException {
+	private boolean checkDeletion(Project project, IFileStore location) throws CoreException {
 		if (project.exists() && !location.fetchInfo().exists()) {
 			//perform internal deletion of project from workspace tree because
 			// it is already deleted from disk and we can't acquire a different
 			//scheduling rule in this context (none is needed because we are
 			//within scope of the workspace lock)
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.resources_deleteProblem, null);
-			WorkManager workManager = workspace.getWorkManager();
-			ResourceTree tree = new ResourceTree(workspace.getFileSystemManager(), workManager.getLock(), status, IResource.FORCE);
-			tree.deletedProject(project);
-			if (!status.isOK())
-				throw new CoreException(status);
+			
+			Assert.isTrue(workspace.getWorkManager().getLock().getDepth() > 0);
+
+			// Delete properties, generate marker deltas, and remove the node from the workspace tree.
+			project.deleteResource(false, null);
+			// Delete the project metadata.
+			workspace.getMetaArea().delete(project);
+			// Clear the history store.
+			project.clearHistory(null);
 			return true;
 		}
 		return false;
