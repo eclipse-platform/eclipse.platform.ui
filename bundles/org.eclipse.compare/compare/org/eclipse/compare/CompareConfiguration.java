@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.PropertyChangeEvent;

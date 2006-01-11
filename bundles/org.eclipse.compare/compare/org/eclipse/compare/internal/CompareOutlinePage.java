@@ -16,7 +16,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.viewers.*;
 
 import org.eclipse.compare.CompareEditorInput;
