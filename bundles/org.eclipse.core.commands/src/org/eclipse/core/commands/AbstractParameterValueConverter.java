@@ -34,7 +34,7 @@ package org.eclipse.core.commands;
  * clients.
  * </p>
  * 
- * @see ParameterType#define(Class, AbstractParameterValueConverter)
+ * @see ParameterType#define(String, AbstractParameterValueConverter)
  * @see ParameterizedCommand#serialize()
  * @since 3.2
  */
