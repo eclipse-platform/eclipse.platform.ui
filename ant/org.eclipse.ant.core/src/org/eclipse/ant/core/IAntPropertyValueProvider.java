@@ -11,7 +11,7 @@
 package org.eclipse.ant.core;
 
 /**
- * An interface that must be implemented by plugins that wish to contribute
+ * An interface that must be implemented by plug-ins that wish to contribute
  * predefined variables to an Ant project when run from within Eclipse.
  * Clients may implement this interface.
  * @since 3.0

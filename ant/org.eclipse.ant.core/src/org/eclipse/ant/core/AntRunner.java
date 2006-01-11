@@ -287,7 +287,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * 
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
-	 * @throws CoreException Thrown if a build is already occuring or if an exception occurs during the build
+	 * @throws CoreException Thrown if a build is already occurring or if an exception occurs during the build
 	 */
 	public void run(IProgressMonitor monitor) throws CoreException {
 		if (buildRunning) {
@@ -447,7 +447,7 @@ public class AntRunner implements IPlatformRunnable {
 
 	/**
 	 * Runs the build file.
-	 * @throws CoreException Thrown if a build is already occuring or if an exception occurs during the build
+	 * @throws CoreException Thrown if a build is already occurring or if an exception occurs during the build
 	 */
 	public void run() throws CoreException {
 		run(/*IProgressMonitor*/null);

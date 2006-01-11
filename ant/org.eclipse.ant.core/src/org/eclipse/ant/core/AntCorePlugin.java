@@ -43,7 +43,7 @@ public class AntCorePlugin extends Plugin {
 	private static AntCorePlugin plugin;
 
 	/**
-	 * The preferences class for this plugin.
+	 * The preferences class for this plug-in.
 	 */
 	private AntCorePreferences preferences;
 	
@@ -246,7 +246,7 @@ public class AntCorePlugin extends Plugin {
 	
 	/**
 	 * Returns a new class loader to use when executing Ant builds.
-	 * @param urls the urls that define the classpath of the new classloader
+	 * @param urls the URLs that define the classpath of the new classloader
 	 * @return the new class loader
 	 * @since 3.1
 	 */
@@ -257,7 +257,7 @@ public class AntCorePlugin extends Plugin {
 	/**
 	 * Returns a new class loader to use when executing Ant builds or 
 	 * other applications such as parsing or code proposal determination 
-	 * @param allowLoading whether to allow plugin classloaders associated 
+	 * @param allowLoading whether to allow plug-in classloaders associated 
 	 * with the new classloader to load Apache Ant classes.
 	 * @return the new class loader
 	 */
@@ -270,9 +270,9 @@ public class AntCorePlugin extends Plugin {
 	/**
 	 * Returns a new class loader to use when executing Ant builds or 
 	 * other applications such as parsing or code proposal determination 
-	 * @param allowLoading whether to allow plugin classloaders associated 
+	 * @param allowLoading whether to allow plug-in classloaders associated 
 	 * with the new classloader to load Apache Ant classes.
-	 * @param urls the urls that define the classpath of the new classloader
+	 * @param urls the URLs that define the classpath of the new classloader
 	 * @return the new class loader
 	 * @since 3.1
 	 */

@@ -143,10 +143,10 @@ public class Property {
 	}
 
 	/**
-	 * Sets the label of the plugin that contributed this Ant property via an extension
+	 * Sets the label of the plug-in that contributed this Ant property via an extension
 	 * point.
 	 * 
-	 * @param pluginLabel The label of the plugin
+	 * @param pluginLabel The label of the plug-in
 	 * @since 3.0
 	 */
 	public void setPluginLabel(String pluginLabel) {
@@ -154,10 +154,10 @@ public class Property {
 	}
 	
 	/**
-	 * Returns the label of the plugin that contributed this Ant property via an extension
+	 * Returns the label of the plug-in that contributed this Ant property via an extension
 	 * point.
 	 * 
-	 * @return pluginLabel The label of the plugin
+	 * @return pluginLabel The label of the plug-in
 	 * @since 3.0
 	 */
 	public String getPluginLabel() {

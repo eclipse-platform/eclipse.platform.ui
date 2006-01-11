@@ -287,7 +287,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	
 	/**
 	 * Returns the absolute path of the default ant.home to use for the build.
-	 * The default is the org.apache.ant plugin folder provided with Eclipse.
+	 * The default is the org.apache.ant plug-in folder provided with Eclipse.
 	 * 
 	 * @return String absolute path of the default ant.home
 	 * @since 3.0
@@ -395,7 +395,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * the Ant classpath.
 	 * 
 	 * Ant running through the command line tries to find tools.jar to help the
-	 * user. Try emulating the same behaviour here.
+	 * user. Try emulating the same behavior here.
 	 *
 	 * @return the default set of URLs defining the Ant classpath
 	 * @deprecated
@@ -554,7 +554,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	/*
-	 * Computes the extra classpath entries defined plugins and fragments.
+	 * Computes the extra classpath entries defined plug-ins and fragments.
 	 */
 	protected void computeDefaultExtraClasspathEntries(List entries) {
 		for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
@@ -823,7 +823,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	/**
-	 * Returns the list of urls added to the classpath by the extra classpath
+	 * Returns the list of URLs added to the classpath by the extra classpath
 	 * entries extension point.
 	 * 
 	 * @return the list of extra classpath URLs
@@ -839,8 +839,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	/**
-	 * Returns the list of urls added to the classpath by the extra classpath
-	 * entries extension point for an Ant build that is occuring without the Eclipse runtime.
+	 * Returns the list of URLs added to the classpath by the extra classpath
+	 * entries extension point for an Ant build that is occurring without the Eclipse runtime.
 	 * 
 	 * @return the list of extra classpath URLs
 	 * @since 3.0
@@ -1106,7 +1106,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	/**
-	 * Returns the default and custom tasks that are relavent when there is no
+	 * Returns the default and custom tasks that are relevant when there is no
 	 * Eclipse runtime context (an Ant build in a separate VM).
 	 * 
 	 * @return the list of default and custom tasks.
@@ -1171,7 +1171,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	/**
-	 * Returns the default and custom properties that are relavent when there is no
+	 * Returns the default and custom properties that are relevant when there is no
 	 * Eclipse runtime context (Ant build in a separate VM).
 	 * 
 	 * @return the list of default and custom properties.
@@ -1196,9 +1196,9 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	
 	/**
 	 * Returns the custom property files specified for Ant builds performing any required 
-	 * string substition if indicated.
+	 * string substitution if indicated.
 	 * 
-	 * @param performStringSubstition whether or not to perform the string subsitution on the property file strings
+	 * @param performStringSubstition whether or not to perform the string substitution on the property file strings
 	 * @return the property files defined for Ant builds.
 	 * @since 3.0
 	 */
@@ -1232,7 +1232,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	/**
 	 * Returns the custom URLs specified for the Ant classpath
 	 * 
-	 * @return the urls defining the Ant classpath
+	 * @return the URLs defining the Ant classpath
 	 * @deprecated
 	 */
 	public URL[] getCustomURLs() {
@@ -1275,7 +1275,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * To commit the changes, updatePluginPreferences must be
 	 * called.
 	 * 
-	 * @param urls the urls defining the Ant classpath
+	 * @param urls the URLs defining the Ant classpath
 	 * @deprecated use setAdditionalEntries(IAntClasspathEntry)[]
 	 */
 	public void setCustomURLs(URL[] urls) {
@@ -1291,7 +1291,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * Sets the Ant URLs specified for the Ant classpath. To commit the changes,
 	 * updatePluginPreferences must be called.
 	 * 
-	 * @param urls the urls defining the Ant classpath
+	 * @param urls the URLs defining the Ant classpath
 	 * @deprecated use setAntHomeEntires(IAntClasspathEntry[])
 	 */
 	public void setAntURLs(URL[] urls) {
@@ -1341,7 +1341,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	/**
-	 * Returns the default and custom types that are relavent when there is no
+	 * Returns the default and custom types that are relevant when there is no
 	 * Eclipse runtime context (an Ant build in a separate VM).
 	 * 
 	 * @return the list of default and custom types.
@@ -1422,7 +1422,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	/**
-	 * Updates the underlying plugin preferences to the current state.
+	 * Updates the underlying plug-in preferences to the current state.
 	 */
 	public void updatePluginPreferences() {
 		Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
@@ -1599,7 +1599,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	
 	/**
 	 * Returns the string that defines the Ant home set by the user or the location 
-	 * of the Eclipse Ant plugin if Ant home has not been specifically set by the user.
+	 * of the Eclipse Ant plug-in if Ant home has not been specifically set by the user.
 	 * Can return <code>null</code>
 	 * 
 	 * @return the fully qualified path to Ant home
@@ -1654,7 +1654,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 
 	/**
 	 * Returns the list of URLs to added to the classpath for an Ant build that is 
-	 * occuring without the Eclipse runtime.
+	 * occurring without the Eclipse runtime.
 	 * 
 	 * @return the list of classpath entries
 	 * @since 3.0
