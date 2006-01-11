@@ -95,8 +95,7 @@ public class EFS {
 
 	/**
 	 * Option flag constant (value 1 &lt;&lt;12) indicating that
-	 * a cached representation of a file should be created if
-	 * necessary.
+	 * a cached representation of a file should be returned.
 	 * 
 	 * @see IFileStore#toLocalFile(int, IProgressMonitor)
 	 */
