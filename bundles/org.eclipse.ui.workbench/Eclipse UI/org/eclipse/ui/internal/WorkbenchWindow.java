@@ -2504,7 +2504,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		shell.addShellListener(new ShellAdapter() {
 			public void shellActivated(ShellEvent event) {
 				shellActivated = true;
-				serviceLocator.activateNestedServices();
+				serviceLocator.activate();
 				getWorkbenchImpl().setActivatedWindow(WorkbenchWindow.this);
 				WorkbenchPage currentPage = getActiveWorkbenchPage();
 				if (currentPage != null) {
@@ -2525,7 +2525,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 			public void shellDeactivated(ShellEvent event) {
 				shellActivated = false;
-				serviceLocator.deactivateNestedServices();
+				serviceLocator.deactivate();
 				WorkbenchPage currentPage = getActiveWorkbenchPage();
 				if (currentPage != null) {
 					IWorkbenchPart part = currentPage.getActivePart();

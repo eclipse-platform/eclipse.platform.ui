@@ -38,6 +38,8 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.services.INestable;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * A multi-page editor is an editor with multiple pages, each of which may
@@ -65,6 +67,13 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * @see org.eclipse.ui.part.MultiPageEditorActionBarContributor
  */
 public abstract class MultiPageEditorPart extends EditorPart {
+	
+	/**
+	 * The active service locator. This value may be <code>null</code> if
+	 * there is no selected page, or if the selected page is a control.
+	 */
+	private INestable activeServiceLocator;
+	
     /**
      * The container widget.
      */
@@ -636,6 +645,12 @@ public abstract class MultiPageEditorPart extends EditorPart {
      *            the index of the page
      */
     private void setFocus(int pageIndex) {
+    		// Deactivate the nested services from the last active service locator.
+		if (activeServiceLocator != null) {
+			activeServiceLocator.deactivate();
+			activeServiceLocator = null;
+		}
+    		
         final IKeyBindingService service = getSite().getKeyBindingService();
         if (pageIndex < 0 || pageIndex >= getPageCount()) {
             // There is no selected page, so deactivate the active service.
@@ -665,6 +680,14 @@ public abstract class MultiPageEditorPart extends EditorPart {
                 WorkbenchPlugin
                         .log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
             }
+            
+            // Activate the services for the new service locator.
+            final IServiceLocator serviceLocator = editor.getEditorSite();
+            if (serviceLocator instanceof INestable) {
+            		activeServiceLocator = (INestable) serviceLocator;
+                    activeServiceLocator.activate();
+            }
+            
         } else {
             // There is no selected editor, so deactivate the active service.
             if (service instanceof INestableKeyBindingService) {
