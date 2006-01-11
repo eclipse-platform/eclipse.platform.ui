@@ -173,14 +173,18 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
         if (progressService != null)
             progressService.dispose();
+
+		if (serviceLocator != null) {
+			serviceLocator.dispose();
+		}
     }
 
     /**
-     * Returns the action bars for the part.
-     * If this part is a view then it has exclusive use of the action bars.
-     * If this part is an editor then the action bars are shared among this editor and other editors of
-     * the same type.
-     */
+	 * Returns the action bars for the part. If this part is a view then it has
+	 * exclusive use of the action bars. If this part is an editor then the
+	 * action bars are shared among this editor and other editors of the same
+	 * type.
+	 */
     public IActionBars getActionBars() {
         return actionBars;
     }
