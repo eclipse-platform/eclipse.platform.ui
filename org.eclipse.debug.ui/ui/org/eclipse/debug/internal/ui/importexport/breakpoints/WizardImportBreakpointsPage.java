@@ -19,6 +19,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.actions.ImportBreakpointsOperation;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -50,7 +51,6 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	private Button fAutoCreateWorkingSets = null;
 	private Text fFileNameField = null;
 	private Button fBrowseForFileButton = null;
-	private File fImportFile = null;
 	
 //	state constants
 	private static final String REMOVE_DUPS = "overwrite"; //$NON-NLS-1$
@@ -74,10 +74,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		Widget source = event.widget;
 		if(source == fBrowseForFileButton) {
 			handleBrowseForFileButtonPressed();
-		} else if (source == fFileNameField) {
-			String fileName = fFileNameField.getText();
-			fImportFile = new File(fileName);			
-		}//end if
+		}
 		setPageComplete(detectPageComplete());
 	}// end handleEvent
 
@@ -128,8 +125,8 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 			setMessage(ImportExportMessages.WizardImportBreakpointsPage_6);
 			return false;
 		}
-		fImportFile = new File(fileName);
-		if (!fImportFile.exists()) {
+		File file = new File(fileName);
+		if (!file.exists() || file.isDirectory()) {
 			setMessage(MessageFormat.format(ImportExportMessages.WizardImportBreakpointsPage_1, new String[]{fileName}), ERROR);
 			return false;
 		}//end if
@@ -227,7 +224,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	public boolean finish() {	
 		try {
 			saveWidgetState();
-			getContainer().run(true, true, new ImportOperation(fImportFile, fAutoRemoveDuplicates.getSelection(), fAutoCreateWorkingSets.getSelection()));
+			getContainer().run(true, true, new ImportBreakpointsOperation(fFileNameField.getText().trim(), fAutoRemoveDuplicates.getSelection(), fAutoCreateWorkingSets.getSelection()));
 		}// end try
 		catch (InterruptedException e) {
 			DebugPlugin.log(e);

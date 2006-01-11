@@ -37,7 +37,9 @@
 	<type name="AbstractLaunchToolbarAction" />
 	<type name="ContextualLaunchAction" />
 	<type name="DebugAction" subclass="false" />
+	<type name="ExportBreakpointsOperation" subclass="false" />
 	<type name="ILaunchable" implement="false" />
+	<type name="ImportBreakpointsOperation" subclass="false" />
 	<type name="IRunToLineTarget" />
 	<type name="IToggleBreakpointsTarget" />
 	<type name="IToggleBreakpointsTargetExtension" />

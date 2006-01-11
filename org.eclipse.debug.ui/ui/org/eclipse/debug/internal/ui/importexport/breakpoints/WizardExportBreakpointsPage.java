@@ -13,14 +13,18 @@ package org.eclipse.debug.internal.ui.importexport.breakpoints;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsViewer;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.actions.ExportBreakpointsOperation;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -330,19 +334,21 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 				}//end elseif
 			}//end if
 			saveWidgetState();
-			if(fPath.toFile().exists()) {
-				if(fOverwriteExistingFilesCheckbox.getSelection()) {
-					getContainer().run(true, true, new ExportOperation(fTView.getCheckedElements().toArray(), fPath, true));
-				}//end if
-				else {
-					if(MessageDialog.openQuestion(null, ImportExportMessages.WizardBreakpointsPage_12, MessageFormat.format(ImportExportMessages.ImportExportOperations_0, new String[] {fPath.toPortableString()}))) {
-						getContainer().run(true, true, new ExportOperation(fTView.getCheckedElements().toArray(), fPath, true));
-					}//end if
-				}//end else
-			}//end if
-			else {
-				getContainer().run(true, true, new ExportOperation(fTView.getCheckedElements().toArray(), fPath, false));
-			}//end else
+			if(fPath.toFile().exists() && !fOverwriteExistingFilesCheckbox.getSelection()) {
+				if (!MessageDialog.openQuestion(null, ImportExportMessages.WizardBreakpointsPage_12, MessageFormat.format(ImportExportMessages.ImportExportOperations_0, new String[] {fPath.toPortableString()}))) {
+					return false;
+				}
+			}
+			// collect breakpoints
+			Object[] elements = fTView.getCheckedElements().toArray();
+			List breakpoints = new ArrayList();
+			for (int i = 0; i < elements.length; i++) {
+				Object object = elements[i];
+				if (object instanceof IBreakpoint) {
+					breakpoints.add(object);
+				}
+			}
+			getContainer().run(true, true, new ExportBreakpointsOperation((IBreakpoint[]) breakpoints.toArray(new IBreakpoint[breakpoints.size()]), fPath.toOSString()));
 		}// end try
 		catch (InterruptedException e) {
 			DebugPlugin.log(e);

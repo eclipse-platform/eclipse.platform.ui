@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.debug.internal.ui.importexport.breakpoints;
+package org.eclipse.debug.ui.actions;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IMarker;
@@ -25,10 +25,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.importexport.breakpoints.IImportExportConstants;
+import org.eclipse.debug.internal.ui.importexport.breakpoints.ImportExportMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.IMemento;
@@ -38,51 +42,45 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 
 /**
- * Performs the import for the breakpoint import wizard
- * 
- * @see WizardImportBreakpointsPage
+ * Imports breakpoints from a file into the workspace.
+ * <p>
+ * This class may be instantiated; not intended to be subclassed.
+ * <p>
  * @since 3.2
  */
-public class ImportOperation implements IRunnableWithProgress {
+public class ImportBreakpointsOperation implements IRunnableWithProgress {
 
 	private boolean fOverwriteAll = false;
-	private File fInputfile = null;
+	private String fFileName = null;
 	private boolean fCreateWorkingSets = false;
-	private ArrayList added = new ArrayList();
-	private final BreakpointManager manager = (BreakpointManager)DebugPlugin.getDefault().getBreakpointManager();
+	private ArrayList fAdded = new ArrayList();
+	private BreakpointManager fManager = (BreakpointManager)DebugPlugin.getDefault().getBreakpointManager();
 	
 	/**
-	 * The default constructor
-	 * @param inputfile the file to read breakpoints from
-	 * @param autoOverwrite if we should automatically overwrite breakpoints without prompt
+	 * Constructs an operation to import breakpoints.
+	 * 
+	 * @param inputfile the file to read breakpoints from - the file should have been
+	 *  created from an export operation
+	 * @param overwrite whether imported breakpoints will overwrite existing equivalent breakpoints
+	 * @param createWorkingSets whether breakpoint working sets should be created. Breakpoints
+	 * 	are exported with information about the breakpoint working sets they belong to. Those
+	 * 	working sets can be optioanlly re-created on import if they do not already exist in the
+	 * 	workspace. 
 	 */
-	public ImportOperation(File inputfile, boolean autoOverwrite, boolean createWorkingSets) {
-		fInputfile = inputfile;
-		fOverwriteAll = autoOverwrite;
+	public ImportBreakpointsOperation(String fileName, boolean overwrite, boolean createWorkingSets) {
+		fFileName = fileName;
+		fOverwriteAll = overwrite;
 		fCreateWorkingSets = createWorkingSets;
-	}//end constructor
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void run(IProgressMonitor monitor) throws InvocationTargetException {
-		doImport(monitor);
-	}//end run
-
-	/**
-	 * The method thta actually perfoms the import operation.
-	 * <p>
-	 * The operation is abstracted so that JUnit testing can be applied, also so that
-	 * it can be run in a workspace runnable with progress.
-	 * </p>
-	 * 
-	 * @param monitor the progress monitor to use
-	 */
-	private void doImport(final IProgressMonitor monitor) {
+	public void run(final IProgressMonitor monitor) throws InvocationTargetException {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor wmonitor) throws CoreException {
 				try { 
-					XMLMemento memento = XMLMemento.createReadRoot(new FileReader(fInputfile));
+					XMLMemento memento = XMLMemento.createReadRoot(new FileReader(fFileName));
 					IMemento[] nodes = memento.getChildren(IImportExportConstants.IE_NODE_BREAKPOINT);
 					IWorkspaceRoot workspace = ResourcesPlugin.getWorkspace().getRoot();
 					IMemento node = null;
@@ -103,33 +101,34 @@ public class ImportOperation implements IRunnableWithProgress {
 								if(marker == null) {
 									marker = resource.createMarker(node.getString(IImportExportConstants.IE_NODE_TYPE));
 									restoreBreakpoint(marker, nodes[i]);
-								}//end if
+								}
 								else {
 									//we found it, do the overwrite if allowed or drop out
 									if(fOverwriteAll) {
 										marker.setAttributes(null);
 										restoreBreakpoint(marker, nodes[i]);
-									}//end if
-								}//end else
-							}//end if
+									}
+								}
+							}
 							monitor.worked(i+1);
-						}//end if not canceled
-						else {
+						} else {
 							return;
-						}//end else
-					}//end for
-					manager.addBreakpoints((IBreakpoint[])added.toArray(new IBreakpoint[added.size()]));
-				}//end try
-				catch(FileNotFoundException e) {DebugPlugin.log(e);}
-				catch(CoreException e){DebugPlugin.log(e);}
-			}//end run
+						}
+					}
+					fManager.addBreakpoints((IBreakpoint[])fAdded.toArray(new IBreakpoint[fAdded.size()]));
+				} catch(FileNotFoundException e) {
+					throw new CoreException(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, 
+							MessageFormat.format(ImportExportMessages.ImportBreakpointsOperation_0, new String[]{fFileName}), e));
+				}
+			}
 		};
 		try {
 			ResourcesPlugin.getWorkspace().run(wr, monitor);
-		}//end try
-		catch(CoreException e) {DebugPlugin.log(e);}
-	}//end doImport
-	
+		} catch(CoreException e) {
+			throw new InvocationTargetException(e);
+		}
+	}
+
 	/**
 	 * Restores a breakpoint on the given marker with information from the passed memento
 	 * @param marker the marker to restore to
@@ -153,34 +152,33 @@ public class ImportOperation implements IRunnableWithProgress {
 				if(value != null & name != null) {
 					if(name.equals(IInternalDebugUIConstants.WORKING_SET_NAME)) {
 						workingsets = value;
-					}//end if
+					}
 					try {
 						marker.setAttribute(name, Integer.valueOf(value));
-					}//end try
-					catch(NumberFormatException e) {
+					} catch(NumberFormatException e) {
 						if(value.equalsIgnoreCase("false") || value.equalsIgnoreCase("true")) { //$NON-NLS-1$ //$NON-NLS-2$
 							marker.setAttribute(name, Boolean.valueOf(value));
-						}//end if
+						}
 						else {
 							marker.setAttribute(name, value);
-						}//end else
-					}//end catch
-				}//end if
-			}//end for
+						}
+					}
+				}
+			}
 			//create the breakpoint
-			IBreakpoint breakpoint = manager.createBreakpoint(marker);
+			IBreakpoint breakpoint = fManager.createBreakpoint(marker);
 			breakpoint.setEnabled(Boolean.valueOf(node.getString(IImportExportConstants.IE_BP_ENABLED)).booleanValue());
 			breakpoint.setPersisted(Boolean.valueOf(node.getString(IImportExportConstants.IE_BP_PERSISTANT)).booleanValue());
 			breakpoint.setRegistered(Boolean.valueOf(node.getString(IImportExportConstants.IE_BP_REGISTERED)).booleanValue());
 			//bug fix 110080
-			added.add(breakpoint);
+			fAdded.add(breakpoint);
 			if(fCreateWorkingSets) {
 				String[] names = workingsets.split("\\"+IImportExportConstants.DELIMITER); //$NON-NLS-1$
 				for(int m = 1; m < names.length; m++) {
 					createWorkingSet(names[m], breakpoint);
-				}//end for
-			}//end if
-		}//end try
+				}
+			}
+		}
 		catch(CoreException e){DebugPlugin.log(e);}
 	}
 	
@@ -195,14 +193,14 @@ public class ImportOperation implements IRunnableWithProgress {
 			set = wsmanager.createWorkingSet(setname, new IAdaptable[] {});
 			set.setId(IDebugUIConstants.BREAKPOINT_WORKINGSET_ID);
 			wsmanager.addWorkingSet(set);
-		}//end if
+		}
 		if(!setContainsBreakpoint(set, (IBreakpoint)element)) {
 			IAdaptable[] elements = set.getElements();
 			IAdaptable[] newElements = new IAdaptable[elements.length + 1];
 			newElements[newElements.length-1] = element;
 			System.arraycopy(elements, 0, newElements, 0, elements.length);
 			set.setElements(newElements);
-		}//end if
+		}
 	}
 	
 	/**
@@ -216,10 +214,10 @@ public class ImportOperation implements IRunnableWithProgress {
 		for(int i = 0; i < elements.length; i++) {
 			if(elements[i].equals(breakpoint)) {
 				return true;
-			}//end if
-		}//end for
+			}
+		}
 		return false;
-	}//end setContainsBreakpoint
+	}
 	
 	/**
 	 * This method is used internally to find a non-specific marker on a given resource.
@@ -244,17 +242,17 @@ public class ImportOperation implements IRunnableWithProgress {
 								//compare their charstarts
 								if(charstart.toString().equals(markers[i].getAttribute(IImportExportConstants.CHARSTART).toString())) {
 									return markers[i];
-								}//end if
-							}//end if
-						}//end if
+								}
+							}
+						}
 						else {
 							return markers[i];
-						}//end else
-					}//end if
-				}//end for
-			}//end if
-		}//end try
+						}
+					}
+				}
+			}
+		}
 		catch(Exception e) {e.printStackTrace();}
 		return null;
-	}//end findGeneralMarker
-}//end class
+	}
+}
