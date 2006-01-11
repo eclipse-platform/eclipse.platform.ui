@@ -20,6 +20,8 @@ import java.net.URI;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.core.filesystem.URIUtil;
+
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
@@ -190,7 +192,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 			InputStream stream= null;
 			try {
 				stream= new BufferedInputStream(new FileInputStream(file));
-				fWizard.setRefactoringScript(file.toURI());
+				fWizard.setRefactoringScript(URIUtil.toURI(path));
 				fWizard.setRefactoringHistory(RefactoringCore.getRefactoringHistoryService().readRefactoringHistory(stream, RefactoringDescriptor.NONE));
 			} catch (IOException exception) {
 				setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_error_cannot_read);
