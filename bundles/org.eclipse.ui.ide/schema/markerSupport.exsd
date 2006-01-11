@@ -190,8 +190,8 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
       </annotation>
       <complexType>
          <sequence>
-            <element ref="markerTypeReference" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="markerAttributeMapping" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerTypeReference" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="markerAttributeMapping" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="attribute" type="string" use="required">
             <annotation>
