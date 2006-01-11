@@ -81,6 +81,7 @@ public class Messages extends NLS {
 	public static String mapping_invalidDef;
 	public static String mapping_wrongType;
 	public static String mapping_noIdentifier;
+	public static String ResourceChangeValidator_0;
 
 	// internal.resources
 	public static String natures_duplicateNature;
@@ -297,5 +298,4 @@ public class Messages extends NLS {
 		// initialize resource bundles
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
-
 }

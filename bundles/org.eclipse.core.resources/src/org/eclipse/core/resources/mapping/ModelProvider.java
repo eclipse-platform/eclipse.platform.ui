@@ -13,7 +13,7 @@ package org.eclipse.core.resources.mapping;
 import java.util.*;
 import org.eclipse.core.internal.resources.mapping.ModelProviderManager;
 import org.eclipse.core.internal.resources.mapping.SimpleResourceMapping;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.*;
  * @since 3.2
  */
 public abstract class ModelProvider extends PlatformObject {
-	
+
 	/**
 	 * The model provider id of the Resources model.
 	 */
@@ -118,7 +118,8 @@ public abstract class ModelProvider extends PlatformObject {
 		Set mappings = new HashSet();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			mappings.addAll(Arrays.asList(getMappings(resource, context, monitor)));
+			ResourceMapping[] resourceMappings = getMappings(resource, context, monitor);
+			mappings.addAll(Arrays.asList(resourceMappings));
 		}
 		return (ResourceMapping[]) mappings.toArray(new ResourceMapping[mappings.size()]);
 	}
@@ -167,9 +168,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * <code>initialize</code> method once the descriptor is set so subclasses
 	 * can override that method if they need to do additional initialization.
 	 * 
-	 * @param desc
-	 *            the description of the provider as it appears in the plugin
-	 *            manifest
+	 * @param desc the description of the provider as it appears in the plugin manifest
 	 */
 	public final void init(IModelProviderDescriptor desc) {
 		if (descriptor != null)
@@ -185,5 +184,27 @@ public abstract class ModelProvider extends PlatformObject {
 	 */
 	protected void initialize() {
 		// Do nothing	
+	}
+
+	/**
+	 * Validate the proposed changes contained in the given delta. 
+	 * <p>
+	 * The severity of the returned status indicates the severity of the possible 
+	 * side-effects of the operation.  Any severity other than <code>OK</code> will be
+	 * shown to the user. The message should be a human readable message that
+	 * will allow the user to make a decision on whether to continue with the 
+	 * operation. The model provider id should indicate which model is flagging the
+	 * the possible side effects.
+	 * <p>
+	 * This default implementation accepts all changes and returns a status with
+	 * severity <code>OK</code>. Subclasses should override to perform
+	 * validation specific to their model.
+	 * </p>
+	 * @param delta a delta tree containing the proposed changes
+	 * @return a status indicating any potential side effects
+	 * on the model that provided this validator.
+	 */
+	public ModelStatus validateChange(IResourceDelta delta) {
+		return new ModelStatus(IStatus.OK, ResourcesPlugin.PI_RESOURCES, descriptor.getId(), Status.OK_STATUS.getMessage());
 	}
 }

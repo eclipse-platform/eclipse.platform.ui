@@ -11,6 +11,7 @@
 package org.eclipse.core.resources;
 
 import org.eclipse.core.internal.watson.IElementComparator;
+import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -117,6 +118,14 @@ public interface IResourceDelta extends IAdaptable {
 	 */
 	public static final int MOVED_TO = 0x2000;
 
+	/**
+	 * Change constant (bit mask) indicating that the resource was copied from another location.
+	 * The location in the "before" state can be retrieved using <code>getMovedFromPath()</code>.
+	 * This flag is only used when describing potential changes using an {@link IResourceChangeDescriptionFactory}.
+	 * 
+	 * @see IResourceDelta#getFlags()
+	 */
+	public static final int COPIED_FROM = 0x800;
 	/**
 	 * Change constant (bit mask) indicating that the resource was opened or closed.
 	 * For example, if the current state of the resource is open then 

@@ -44,7 +44,7 @@ public interface IModelProviderDescriptor {
 	 * The model providers identifier is composed of the model provider's
 	 * plug-in id and the simple id of the provider extension. For example, if
 	 * plug-in <code>"com.xyz"</code> defines a provider extension with id
-	 * <code>"myModelProvider"</code>, the unique nature identifier will be
+	 * <code>"myModelProvider"</code>, the unique model provider identifier will be
 	 * <code>"com.xyz.myModelProvider"</code>.
 	 * </p>
 	 * 
