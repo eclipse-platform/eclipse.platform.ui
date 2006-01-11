@@ -189,12 +189,13 @@ public abstract class ModelProvider extends PlatformObject {
 	/**
 	 * Validate the proposed changes contained in the given delta. 
 	 * <p>
-	 * The severity of the returned status indicates the severity of the possible 
-	 * side-effects of the operation.  Any severity other than <code>OK</code> will be
-	 * shown to the user. The message should be a human readable message that
-	 * will allow the user to make a decision on whether to continue with the 
-	 * operation. The model provider id should indicate which model is flagging the
-	 * the possible side effects.
+	 * This method must return either a {@link ModelStatus}, or a {@link MultiStatus}
+	 * whose children are {@link ModelStatus}. The severity of the returned status 
+	 * indicates the severity of the possible side-effects of the operation.  Any 
+	 * severity other than <code>OK</code> will be shown to the user. The 
+	 * message should be a human readable message that will allow the user to 
+	 * make a decision on whether to continue with the operation. The model 
+	 * provider id should indicate which model is flagging the possible side effects.
 	 * <p>
 	 * This default implementation accepts all changes and returns a status with
 	 * severity <code>OK</code>. Subclasses should override to perform
