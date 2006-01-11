@@ -216,5 +216,16 @@
    <filesystem scheme="mem">
       <run class="org.eclipse.core.tests.internal.filesystem.ram.MemoryFileSystem"/>
    </filesystem>
+</extension>
+<extension
+      id="modelProvider"
+      point="org.eclipse.core.resources.modelProviders">
+   <modelProvider
+         class="org.eclipse.core.tests.internal.mapping.TestModelProvider"
+         name="Resources Tests Model"/>
+   <extends-model id="org.eclipse.core.resources.modelProvider"/>
+   <enablement>
+      <instanceof value="org.eclipse.core.resources.IResource"/>
+   </enablement>
 </extension>            
 </plugin>

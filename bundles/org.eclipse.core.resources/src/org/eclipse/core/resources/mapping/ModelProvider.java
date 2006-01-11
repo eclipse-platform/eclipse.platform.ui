@@ -204,7 +204,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * @return a status indicating any potential side effects
 	 * on the model that provided this validator.
 	 */
-	public ModelStatus validateChange(IResourceDelta delta) {
+	public IStatus validateChange(IResourceDelta delta) {
 		return new ModelStatus(IStatus.OK, ResourcesPlugin.PI_RESOURCES, descriptor.getId(), Status.OK_STATUS.getMessage());
 	}
 }
