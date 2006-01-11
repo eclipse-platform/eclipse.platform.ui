@@ -115,13 +115,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 */
 	final void activateHandler(final IHandlerActivation activation) {
 		// First we update the handlerActivationsByCommandId map.
-		final String commandId = activation.getCommandId();
-		
-		// TODO Debugging line.  Please remove.
-		if ("org.eclipse.jdt.ui.edit.text.java.rename.element".equals(commandId)) { //$NON-NLS-1$
-			System.out.println();
-		}
-		
+		final String commandId = activation.getCommandId();		
 		final Object value = handlerActivationsByCommandId.get(commandId);
 		if (value instanceof Collection) {
 			final Collection handlerActivations = (Collection) value;
