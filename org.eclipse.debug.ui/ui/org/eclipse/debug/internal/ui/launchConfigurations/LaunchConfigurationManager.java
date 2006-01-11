@@ -195,16 +195,16 @@ public class LaunchConfigurationManager implements ILaunchListener {
 
 		List filteredConfigs= new ArrayList();
 		for (int i = 0; i < configurations.length; i++) {
-			ILaunchConfiguration configuration= configurations[i];
+			ILaunchConfiguration configuration = configurations[i];
 			ILaunchConfigurationType type= null;
 			try {
-				type= configuration.getType();
-				LaunchConfigurationTypeContribution contribution = new LaunchConfigurationTypeContribution(type);				
-				if (!WorkbenchActivityHelper.filterItem(contribution))
+				type = configuration.getType();
+				LaunchConfigurationTypeContribution contribution = new LaunchConfigurationTypeContribution(type);
+				if (doExtraFiltering(configuration) & !WorkbenchActivityHelper.filterItem(contribution)) {
 					filteredConfigs.add(configuration);
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e.getStatus());
-			}
+				}
+			} 
+			catch (CoreException e) {DebugUIPlugin.log(e.getStatus());}
 		}
 		return (ILaunchConfiguration[]) filteredConfigs.toArray(new ILaunchConfiguration[filteredConfigs.size()]);
 	}
@@ -219,6 +219,30 @@ public class LaunchConfigurationManager implements ILaunchListener {
 				history.dispose();
 			}
 		}
+	}
+	
+	/**
+	 * performs extra filtering for launch configuraitons based on the prefs set on the 
+	 * Launch Configuraitons page
+	 * @param config the config to filter
+	 * @return true if it should pass the filter, false otherwise
+	 * @since 3.2
+	 */
+	private static boolean doExtraFiltering(ILaunchConfiguration config) {
+		boolean ret = true;
+		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
+			ret &= new ClosedProjectFilter().select(null, null, config);
+		}
+		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED)) {
+			ret &= new DeletedProjectFilter().select(null, null, config);
+		}
+		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES)) {
+			try {
+				ret &= new LaunchConfigurationTypeFilter().select(null, null, config.getType());
+			}
+			catch(CoreException e) {e.printStackTrace();}
+		}
+		return ret;
 	}
 	
 	/**

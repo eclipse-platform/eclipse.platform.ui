@@ -25,6 +25,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.preferences.LaunchConfigurationsPreferencePage;
 import org.eclipse.debug.internal.ui.preferences.PerspectivePreferencePage;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
@@ -356,6 +357,20 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
+		
+		createSpacer(parent, 2);
+		link = new Link(parent, SWT.LEFT | SWT.WRAP);
+		link.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_7);
+		link.setFont(font);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = parent.getBounds().width - 30;
+		link.setLayoutData(gd);
+		link.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				showPreferencePage("org.eclipse.debug.ui.LaunchConfigurationsPreferenecPage", new LaunchConfigurationsPreferencePage()); //$NON-NLS-1$
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {}
+		});
 	}
 
     /**
@@ -380,7 +395,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	private void showPreferencePage(String id, IPreferencePage page) {
 		final IPreferenceNode targetNode = new PreferenceNode(id, page);
-		
 		PreferenceManager manager = new PreferenceManager();
 		manager.addToRoot(targetNode);
 		final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);

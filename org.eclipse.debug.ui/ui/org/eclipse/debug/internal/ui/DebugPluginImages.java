@@ -105,7 +105,10 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_REMOVE_MEMORY, DLCL + "removememory_tsk.gif");  //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_RESET_MEMORY, DLCL + "memoryreset_tsk.gif");  //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_COPY_VIEW_TO_CLIPBOARD, DLCL + "copyviewtoclipboard_tsk.gif");  //$NON-NLS-1$
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_PRINT_TOP_VIEW_TAB, DLCL + "printview_tsk.gif");  //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_PRINT_TOP_VIEW_TAB, DLCL + "printview_tsk.gif");  //$NON-NLS-1$		
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_DUPLICATE_CONFIG, DLCL + "copy_edit_co.gif");   //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_NEW_CONFIG, DLCL + "prop_ps.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_FILTER_CONFIGS, DLCL + "filter_ps.gif"); //$NON-NLS-1$
 		
 		// enabled local toolbars
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE, ELCL + "toggledetailpane_co.gif"); //$NON-NLS-1$
@@ -125,6 +128,9 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL, ELCL + "rem_all_co.gif"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_REMOVE, ELCL + "rem_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_HIERARCHICAL, ELCL + "hierarchicalLayout.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS, ELCL + "filter_ps.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_DUPLICATE_CONFIG, ELCL + "copy_edit_co.gif");  //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_NEW_CONFIG, ELCL + "prop_ps.gif"); //$NON-NLS-1$
 		
 		//Object
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_LAUNCH_DEBUG, OBJECT + "ldebug_obj.gif"); //$NON-NLS-1$

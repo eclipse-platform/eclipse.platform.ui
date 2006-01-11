@@ -161,4 +161,20 @@ public class LaunchConfigurationsMessages extends NLS {
 
 	public static String FavoritesDialog_8;
 
+	public static String LaunchConfigurationTabGroupViewer_7;
+
+	public static String LaunchConfigurationsDialog_0;
+
+	public static String LaunchConfigurationsDialog_1;
+
+	public static String LaunchConfigurationsDialog_2;
+
+	public static String LaunchConfigurationsDialog_3;
+
+	public static String LaunchConfigurationsDialog_4;
+
+	public static String LaunchConfigurationsDialog_5;
+
+	public static String LaunchConfigurationsDialog_6;
+
 }

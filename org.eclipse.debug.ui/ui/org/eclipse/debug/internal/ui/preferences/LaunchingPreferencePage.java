@@ -11,109 +11,131 @@
 package org.eclipse.debug.internal.ui.preferences;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.SWTUtil;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.model.AdaptableList;
-import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A preference page for configuring launching preferences.
  */
-public class LaunchingPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class LaunchingPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+	
 	/**
-	 * to monitor the proress of the migration process
+	 * a list of the field editors
+	 * @since 3.2
 	 */
-	private ProgressMonitorPart fMonitor;
+	private List fFieldEditors;
 	
 	/**
 	 * The default contsructor
 	 */
 	public LaunchingPreferencePage() {
-		super(GRID);
-		IPreferenceStore store= DebugUIPlugin.getDefault().getPreferenceStore();
-		setPreferenceStore(store);
-		setDescription(DebugPreferencesMessages.LaunchingPreferencePage_20); 
+		super();
+		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
+	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
-	protected void createFieldEditors() {
-		Composite parent = getFieldEditorParent();
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, DebugPreferencesMessages.LaunchingPreferencePage_1, SWT.NONE, parent)); 
-		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, DebugPreferencesMessages.LaunchingPreferencePage_2, 3,  
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.LAUNCHING_PREFERENCE_PAGE);
+	}
+
+	/**
+	 * creates a composite to place tab controls on
+	 * @param parent the parent to create to composite for
+	 * @return a composite for settgin as a tabitem control
+	 * @since 3.2
+	 */
+	private Composite createComposite(Composite parent) {
+		Composite comp = new Composite(parent, SWT.NONE);
+		comp.setLayout(new GridLayout());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		comp.setLayoutData(gd);
+		return comp;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createContents(Composite parent) {
+		fFieldEditors = new ArrayList();
+		Composite comp = createComposite(parent);
+		//save dirty editors
+		FieldEditor edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, DebugPreferencesMessages.LaunchingPreferencePage_2, 3,  
 				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_3, MessageDialogWithToggle.ALWAYS}, 
 				 {DebugPreferencesMessages.LaunchingPreferencePage_4, MessageDialogWithToggle.NEVER},
 				 {DebugPreferencesMessages.LaunchingPreferencePage_5, MessageDialogWithToggle.PROMPT}}, 
-				 parent,
-				 true));	
-		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, 
+				 comp,
+				 true);	
+		fFieldEditors.add(edit);
+		
+		//wait for build
+		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, 
 				 DebugPreferencesMessages.LaunchingPreferencePage_6, 3,
 				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_7, MessageDialogWithToggle.ALWAYS}, 
 				 {DebugPreferencesMessages.LaunchingPreferencePage_8, MessageDialogWithToggle.NEVER}, 
 				 {DebugPreferencesMessages.LaunchingPreferencePage_9, MessageDialogWithToggle.PROMPT}}, 
-				 parent,
-				 true));
-		createSpacer(parent, 2);
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, DebugPreferencesMessages.LaunchingPreferencePage_10, SWT.NONE, parent)); 
-		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE,
+				 comp,
+				 true);
+		fFieldEditors.add(edit);
+		
+		//relaunch in debug mode
+		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE,
 				 DebugPreferencesMessages.LaunchingPreferencePage_15, 3, 
 				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_16, MessageDialogWithToggle.ALWAYS}, 
 				 {DebugPreferencesMessages.LaunchingPreferencePage_17, MessageDialogWithToggle.NEVER}, 
 				 {DebugPreferencesMessages.LaunchingPreferencePage_18, MessageDialogWithToggle.PROMPT}}, 
-				 parent,
-				 true));
-		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR,
+				 comp,
+				 true);
+		fFieldEditors.add(edit);
+		
+		//continue with compile errors
+		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR,
 				 DebugPreferencesMessages.LaunchingPreferencePage_21, 2, 
 				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_22, MessageDialogWithToggle.ALWAYS},  
 				 {DebugPreferencesMessages.LaunchingPreferencePage_23, MessageDialogWithToggle.PROMPT}},  
-				 parent,
-				 true));
-		createLaunchHistoryEditor(parent);
-		createSpacer(parent, 2);
-		createMigrationEditor(parent);
-		createSpacer(parent, 1);
-		fMonitor = new ProgressMonitorPart(parent, new GridLayout());
-	}
-
-	/**
-	 * Creates the launch history section of the page
-	 */
-	private void createLaunchHistoryEditor(Composite parent) {
-		final IntegerFieldEditor editor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, DebugPreferencesMessages.DebugPreferencePage_10, parent); 
+				 comp,
+				 true);
+		fFieldEditors.add(edit);
+		
+		//filtering options
+		Group group = createGroupComposite(comp, DebugPreferencesMessages.LaunchingPreferencePage_36);
+		Composite spacer = createComposite(group);
+		edit = new BooleanFieldEditor(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, DebugPreferencesMessages.LaunchingPreferencePage_1, SWT.NONE, spacer);
+		edit.fillIntoGrid(spacer, 2);
+		fFieldEditors.add(edit);
+		edit = new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, DebugPreferencesMessages.LaunchingPreferencePage_10, SWT.NONE, spacer);
+		edit.fillIntoGrid(spacer, 2);
+		fFieldEditors.add(edit);
+		
+		//history list size pref
+		final IntegerFieldEditor editor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, DebugPreferencesMessages.DebugPreferencePage_10, spacer);
+		editor.fillIntoGrid(spacer, 2);
+		fFieldEditors.add(editor);
 		int historyMax = IDebugPreferenceConstants.MAX_LAUNCH_HISTORY_SIZE;
 		editor.setTextLimit(Integer.toString(historyMax).length());
 		editor.setErrorMessage(MessageFormat.format(DebugPreferencesMessages.DebugPreferencePage_11, new Object[] { new Integer(1), new Integer(historyMax)})); 
@@ -125,88 +147,62 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 					setValid(editor.isValid());
 			}
 		});
-		addField(editor);
-	}
-	
-	/**
-	 * Create the section that handles migration
-	 * 
-	 * @since 3.2
-	 */
-	private void createMigrationEditor(Composite parent) {
-		Group group = new Group(parent, SWT.NONE);
-		group.setLayout(new GridLayout(1, true));
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		group.setLayoutData(gd);
-		group.setText(DebugPreferencesMessages.LaunchingPreferencePage_35);
-		Label label = new Label(group, SWT.LEFT | SWT.WRAP);
-		gd.widthHint = 450;
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.verticalIndent = 4;
-		label.setLayoutData(gd);
-		label.setText(DebugPreferencesMessages.LaunchingPreferencePage_26);
-		Button migratenow = SWTUtil.createPushButton(group, DebugPreferencesMessages.LaunchingPreferencePage_27, null);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.widthHint = 100;
-		gd.verticalIndent = 4;
-		migratenow.setLayoutData(gd);
-		migratenow.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {}
-			public void widgetSelected(SelectionEvent e) {
-				handleMigrateNowSelected();
-			}			
-		});
-	}
-	
-	/**
-	 * Creates a horozontal spacer in a composite which is as wide as the specified column span 
-	 * @param composite the parent to add the spacer to
-	 * @param columnSpan the number of columns to add the spacer to.
-	 */
-	protected void createSpacer(Composite composite, int columnSpan) {
-		Label label = new Label(composite, SWT.NONE);
-		GridData gd = new GridData();
-		gd.horizontalSpan = columnSpan;
-		label.setLayoutData(gd);
-	}
-	
-	
-	/**
-	 * handles the Migrate button being clicked
-	 *
-	 * @since 3.2
-	 */
-	private void handleMigrateNowSelected() {
-		try {
-			ILaunchManager lmanager = DebugPlugin.getDefault().getLaunchManager();
-			ILaunchConfiguration[] configurations = lmanager.getMigrationCandidates();
-			if(configurations.length == 0) {
-				MessageDialog.openInformation(getShell(), DebugPreferencesMessages.LaunchingPreferencePage_29, DebugPreferencesMessages.LaunchingPreferencePage_30);
-				return;
-			}
-			ListSelectionDialog listd = new ListSelectionDialog(getShell(), new AdaptableList(configurations), 
-											new WorkbenchContentProvider(),	DebugUITools.newDebugModelPresentation(), 
-											DebugPreferencesMessages.LaunchingPreferencePage_0);
-			listd.setTitle(DebugPreferencesMessages.LaunchingPreferencePage_28);
-			listd.setInitialSelections(configurations);
-			if(listd.open() == IDialogConstants.OK_ID) {
-				Object[] objs = listd.getResult();
-				fMonitor.beginTask(DebugPreferencesMessages.LaunchingPreferencePage_31, objs.length);
-				for(int i = 0; i < objs.length; i++) {
-					if(objs[i] instanceof ILaunchConfiguration) {
-						((ILaunchConfiguration)objs[i]).migrate();
-					}
-					fMonitor.worked(i);
-				}
-				fMonitor.done();
-			}
-		}
-		catch (CoreException e) {DebugUIPlugin.log(e);}
+		
+		//init the field editors
+		initFieldEditors();
+		return comp;
 	}
 
+	/**
+	 * Creates a standard grouping for this pref page
+	 * @param parent the parent to add the group to
+	 * @param title text the test for the group
+	 * @return the new group
+	 * @since 3.2
+	 */
+	private Group createGroupComposite(Composite parent, String text) {
+		Group group = new Group(parent, SWT.NONE);
+		group.setLayout(new GridLayout());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		group.setLayoutData(gd);
+		group.setText(text);
+		return group;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {}
+	
+	/**
+	 * Initializes the field editors to their values
+	 * @since 3.2
+	 */
+	private void initFieldEditors() {
+		FieldEditor editor;
+		for(int i = 0; i < fFieldEditors.size(); i++) {
+			editor = (FieldEditor)fFieldEditors.get(i);
+			editor.setPreferenceStore(getPreferenceStore());
+			editor.load();
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	 */
+	protected void performDefaults() {
+		for(int i = 0; i < fFieldEditors.size(); i++) {
+			((FieldEditor)fFieldEditors.get(i)).loadDefault();
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		for(int i = 0; i < fFieldEditors.size(); i++) {
+			((FieldEditor)fFieldEditors.get(i)).store();
+		}
+		return super.performOk();
+	}
 }

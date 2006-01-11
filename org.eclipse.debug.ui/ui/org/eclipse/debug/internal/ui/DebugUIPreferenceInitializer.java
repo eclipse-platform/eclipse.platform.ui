@@ -115,5 +115,7 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		
 		prefs.setDefault(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE, IDebugPreferenceConstants.DEFAULT_PAGE_SIZE);
 		prefs.setDefault(IDebugPreferenceConstants.PREF_RESET_MEMORY_BLOCK, IDebugPreferenceConstants.RESET_VISIBLE);
+		prefs.setDefault(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED, true);
+		prefs.setDefault(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED, true);
 	}
 }

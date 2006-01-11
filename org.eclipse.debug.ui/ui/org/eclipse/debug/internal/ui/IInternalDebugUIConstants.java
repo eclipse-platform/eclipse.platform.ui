@@ -58,6 +58,9 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_DLCL_RESET_MEMORY= "IMG_DLCL_RESET_MEMORY"; //$NON-NLS-1$
     public static final String IMG_DLCL_COPY_VIEW_TO_CLIPBOARD= "IMG_DLCL_COPY_VIEW_TO_CLIPBOARD"; //$NON-NLS-1$
     public static final String IMG_DLCL_PRINT_TOP_VIEW_TAB= "IMG_DLCL_PRINT_TOP_VIEW_TAB"; //$NON-NLS-1$
+    public static final String IMG_DLCL_NEW_CONFIG = "IMG_DLCL_NEW_CONFIG"; //$NON-NLS-1$
+    public static final String IMG_DLCL_DUPLICATE_CONFIG = "IMG_DLCL_DUPLICATE_CONFIG"; //$NON-NLS-1$
+    public static final String IMG_DLCL_FILTER_CONFIGS = "IMG_DLCL_FILTER_CONFIGS"; //$NON-NLS-1$
     
     // enabled local tool images    
     public static final String IMG_ELCL_LOCK= "IMG_ELCL_LOCK"; //$NON-NLS-1$
@@ -80,6 +83,9 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_ELCL_REMOVE = "IMG_ELCL_REMOVE"; //$NON-NLS-1$
     public static final String IMG_ELCL_HIERARCHICAL = "IMG_ELCL_HIERARCHICAL"; //$NON-NLS-1$
     public static final String IMG_ELCL_HELP = "IMG_ELCL_HELP"; //$NON-NLS-1$
+    public static final String IMG_ELCL_NEW_CONFIG = "IMG_ELCL_NEW_CONFIG"; //$NON-NLS-1$
+    public static final String IMG_ELCL_FILTER_CONFIGS = "IMG_ELCL_FILTER_CONFIGS"; //$NON-NLS-1$
+    public static final String IMG_ELCL_DUPLICATE_CONFIG = "IMG_ELCL_DUPLICATE_CONFIG"; //$NON-NLS-1$
     
     // object images
     public static final String IMG_OBJS_INSTRUCTION_POINTER_TOP = "IMG_OBJS_INSTRUCTION_POINTER_TOP"; //$NON-NLS-1$
@@ -109,13 +115,41 @@ public interface IInternalDebugUIConstants {
     public static final String PREF_LAUNCH_PERSPECTIVES = IDebugUIConstants.PLUGIN_ID + ".PREF_LAUNCH_PERSPECTIVES"; //$NON-NLS-1$
     
     /**
+     * Preference for enabling/disabling launch configuration filtering based on project accessibilty status
+     * 
+     * @since 3.2
+     */
+    public static final String PREF_FILTER_LAUNCH_CLOSED = IDebugUIConstants.PLUGIN_ID + ".PREF_FILTER_LAUNCH_CLOSED"; //$NON-NLS-1$
+    
+    /**
+     * Preference for enabling/disabling launch configuraiton filtering based on project context
+     * 
+     * @since 3.2
+     */
+    public static final String PREF_FILTER_LAUNCH_DELETED = IDebugUIConstants.PLUGIN_ID + ".PREF_FILTER_LAUNCH_DELETED"; //$NON-NLS-1$
+    
+    /**
+     * Preference for enabling/disabling filtering based on selected items from the launch configuration type table
+     * @since 3.2
+     */
+    public static final String PREF_FILTER_LAUNCH_TYPES = IDebugUIConstants.PLUGIN_ID + ".PREF_FILTER_LAUNCH_TYPES"; //$NON-NLS-1$
+    
+    /**
+     * Preference that saves which launch configuration types have been checked on the Launch Configuraitons pref page
+     * @since 3.2
+     */
+    public static final String PREF_FILTER_TYPE_LIST = IDebugUIConstants.PLUGIN_ID + ".PREF_FILTER_TYPE_LIST"; //$NON-NLS-1$
+    
+    /**
      * Preference for using step filters.
      * 
      * @since 3.0
      */
     public static final String PREF_USE_STEP_FILTERS = IDebugUIConstants.PLUGIN_ID + ".USE_STEP_FILTERS"; //$NON-NLS-1$ 
      
-    /** Transparent overlay image identifier. */
+    /** 
+     * Transparent overlay image identifier. 
+     */
     public static final String IMG_OVR_TRANSPARENT = "IMG_OVR_TRANSPARENT";  //$NON-NLS-1$
     
     /**
@@ -139,8 +173,8 @@ public interface IInternalDebugUIConstants {
      * 
      * @since 3.0
      */
-    public static final String PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH= IDebugUIConstants.PLUGIN_ID + ".save_dirty_editors_before_launch"; //$NON-NLS-1$
-
+    public static final String PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH = IDebugUIConstants.PLUGIN_ID + ".save_dirty_editors_before_launch"; //$NON-NLS-1$
+    
     /**
      * Preference specifiying that all launches should be DEBUG_MODE if breakpoints exist in the workspace
      * @since 3.0

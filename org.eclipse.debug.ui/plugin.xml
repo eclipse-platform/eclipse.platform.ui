@@ -134,6 +134,13 @@
             name="%PerspectivePreferencePage.name">
          <keywordReference id="org.eclipse.debug.ui.perspectivesPref"/>
       </page>
+      <page
+            category="org.eclipse.debug.ui.LaunchingPreferencePage"
+            class="org.eclipse.debug.internal.ui.preferences.LaunchConfigurationsPreferencePage"
+            id="org.eclipse.debug.ui.LaunchConfigurations"
+            name="%LaunchConfigurationsPage.name">
+         <keywordReference id="org.eclipse.debug.ui.launchconfigurations"/>
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">

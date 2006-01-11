@@ -62,11 +62,33 @@ public class DebugPreferencesMessages extends NLS {
 	public static String LaunchingPreferencePage_16;
 	public static String LaunchingPreferencePage_17;
 	public static String LaunchingPreferencePage_18;
-	public static String LaunchingPreferencePage_20;
 	public static String LaunchingPreferencePage_21;
 	public static String LaunchingPreferencePage_22;
 	public static String LaunchingPreferencePage_23;
-
+	public static String LaunchingPreferencePage_26;
+	public static String LaunchingPreferencePage_27;
+	public static String LaunchingPreferencePage_0;
+	public static String LaunchingPreferencePage_28;
+	public static String LaunchingPreferencePage_29;
+	public static String LaunchingPreferencePage_30;
+	public static String LaunchingPreferencePage_31;
+	public static String LaunchingPreferencePage_32;
+	public static String LaunchingPreferencePage_33;
+	public static String LaunchingPreferencePage_34;
+	public static String LaunchingPreferencePage_35;
+	public static String LaunchingPreferencePage_36;
+	
+	public static String PerspectivePreferencePage_0;
+	public static String PerspectivePreferencePage_1;
+	public static String PerspectivePreferencePage_2;
+	public static String PerspectivePreferencePage_3;
+	public static String PerspectivePreferencePage_4;
+	public static String PerspectivePreferencePage_5;
+	public static String PerspectivePreferencePage_6;
+	
+	public static String LaunchConfigurationsPreferencePage_1;
+	public static String LaunchConfigurationsPreferencePage_0;
+	
 	public static String ProcessPropertyPage_Command_Line__1;
 
 	public static String SimpleVariablePreferencePage_3;
@@ -100,41 +122,12 @@ public class DebugPreferencesMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugPreferencesMessages.class);
 	}
+	
+	
 
-	public static String PerspectivePreferencePage_0;
+	
 
-	public static String PerspectivePreferencePage_1;
 
-	public static String PerspectivePreferencePage_2;
 
-	public static String PerspectivePreferencePage_3;
-
-	public static String PerspectivePreferencePage_4;
-
-	public static String PerspectivePreferencePage_5;
-
-	public static String PerspectivePreferencePage_6;
-
-	public static String LaunchingPreferencePage_26;
-
-	public static String LaunchingPreferencePage_27;
-
-	public static String LaunchingPreferencePage_0;
-
-	public static String LaunchingPreferencePage_28;
-
-	public static String LaunchingPreferencePage_29;
-
-	public static String LaunchingPreferencePage_30;
-
-	public static String LaunchingPreferencePage_31;
-
-	public static String LaunchingPreferencePage_32;
-
-	public static String LaunchingPreferencePage_33;
-
-	public static String LaunchingPreferencePage_34;
-
-	public static String LaunchingPreferencePage_35;
 
 }

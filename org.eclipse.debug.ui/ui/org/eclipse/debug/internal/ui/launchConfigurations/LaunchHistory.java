@@ -77,7 +77,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	}
 	
 	/**
-	 * Adds the givev configuration to this hisotry
+	 * Adds the given configuration to this hisotry
 	 * 
 	 * @param configuration
 	 * @param prepend whether the configuration should be added to the beginning of
