@@ -62,7 +62,7 @@ public class PageSite implements IPageSite {
     public PageSite(IViewSite parentViewSite) {
         Assert.isNotNull(parentViewSite);
         parentSite = parentViewSite;
-        subActionBars = new SubActionBars(parentViewSite.getActionBars());
+        subActionBars = new SubActionBars(parentViewSite.getActionBars(), this);
     }
 
     /**

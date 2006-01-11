@@ -91,8 +91,6 @@ import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.internal.part.components.services.IWorkbenchPartFactory;
-import org.eclipse.ui.internal.part.services.WorkbenchPartFactory;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -151,8 +149,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
     //for dynamic UI - saving state for editors, views and perspectives
     private HashMap stateMap = new HashMap();
-
-    private WorkbenchPartFactory partFactory = new WorkbenchPartFactory(this);
     
     /**
      * If we're in the process of activating a part, this points to the new part.
@@ -3163,10 +3159,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             if (part != null)
                 part.setFocus();
         }
-    }
-    
-    public IWorkbenchPartFactory getPartFactory() {
-    	return partFactory;
     }
     
     /**

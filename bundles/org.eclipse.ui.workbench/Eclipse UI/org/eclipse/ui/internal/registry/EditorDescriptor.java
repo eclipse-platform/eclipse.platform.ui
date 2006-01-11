@@ -30,8 +30,6 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
-import org.eclipse.ui.internal.part.NewEditorToOldWrapper;
-import org.eclipse.ui.internal.part.components.services.IPartDescriptor;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -90,27 +88,6 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
     private int openMode = 0;
 
     private transient IConfigurationElement configurationElement;
-
-    private IPartDescriptor partInfo = new IPartDescriptor() {
-		public String getId() {
-			return EditorDescriptor.this.getId();
-		}
-
-		public String getLabel() {
-			return EditorDescriptor.this.getLabel();
-		}
-        
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.workbench.services.IPartDescriptor#getImage()
-         */
-        public ImageDescriptor getImage() {
-            if (imageDesc != null) {
-                return imageDesc;
-            }
-            
-            return ImageDescriptor.getMissingImageDescriptor();
-        }
-    };
 
 	/**
      * Create a new instance of an editor descriptor. Limited
@@ -250,12 +227,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      */
     public IEditorPart createEditor() throws CoreException {        
         Object extension = WorkbenchPlugin.createExtension(getConfigurationElement(), IWorkbenchRegistryConstants.ATT_CLASS);
-        
-        if (extension instanceof IEditorPart) {
-            return (IEditorPart)extension;
-        }
-        
-        return new NewEditorToOldWrapper(getPartDescriptor());            
+        return (IEditorPart)extension;            
     }
 
     /**

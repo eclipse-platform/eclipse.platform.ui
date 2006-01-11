@@ -22,8 +22,6 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.SubActionBars2;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.internal.part.components.services.IPartActionBars;
-import org.eclipse.ui.internal.part.services.EditorToPartActionBarsAdapter;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 /**
@@ -60,9 +58,9 @@ public class EditorSite extends PartSite implements IEditorSite {
         super.setActionBars(bars);
         
         if (bars instanceof IActionBars2) {
-            ab = new SubActionBars2((IActionBars2)bars);
+            ab = new SubActionBars2((IActionBars2)bars, this);
         } else {
-            ab = new SubActionBars(bars);
+            ab = new SubActionBars(bars, this);
         }
     }
     
@@ -131,13 +129,6 @@ public class EditorSite extends PartSite implements IEditorSite {
         if (ab != null) {
             ab.dispose();
         }
-    }
-    
-    protected IPartActionBars createPartActionBars() {
-        if (ab == null) {
-            return null;
-        }
-        return new EditorToPartActionBarsAdapter(ab);
     }
     
     public final void registerContextMenu(final MenuManager menuManager,

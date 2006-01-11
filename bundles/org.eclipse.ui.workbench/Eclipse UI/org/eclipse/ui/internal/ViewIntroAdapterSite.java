@@ -84,6 +84,10 @@ final class ViewIntroAdapterSite implements IIntroSite {
     public ISelectionProvider getSelectionProvider() {
         return viewSite.getSelectionProvider();
     }
+    
+    public final Object getService(final Object key) {
+    		return viewSite.getService(key);
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchSite#getShell()

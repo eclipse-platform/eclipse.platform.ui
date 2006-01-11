@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.part;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IPersistable;
-import org.eclipse.ui.internal.components.framework.IServiceProvider;
 
 /**
  * A part is a high-level object that manages an SWT control. The lifecycle
@@ -26,7 +25,7 @@ import org.eclipse.ui.internal.components.framework.IServiceProvider;
  * 
  * @since 3.1
  */
-public abstract class Part implements IPersistable, IServiceProvider 
+public abstract class Part implements IPersistable
 {
     
     /**

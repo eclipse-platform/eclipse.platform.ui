@@ -38,8 +38,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.internal.part.services.NullActionBars;
-import org.eclipse.ui.internal.part.services.NullEditorInput;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.IWorkbenchPartOrientation;
@@ -407,7 +405,8 @@ public class EditorReference extends WorkbenchPartReference implements
             
             EditorSite site = new EditorSite(this, part, manager.page, descr);
             
-            site.setActionBars(new EditorActionBars(new NullActionBars(), getId()));
+            site.setActionBars(new EditorActionBars(new NullActionBars(), site,
+					getId()));
             try {
                 part.init(site, input);
             } catch (PartInitException e) {

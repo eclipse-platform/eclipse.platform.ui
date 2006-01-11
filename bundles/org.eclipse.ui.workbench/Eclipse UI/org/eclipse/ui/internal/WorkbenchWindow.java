@@ -113,9 +113,8 @@ import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
-import org.eclipse.ui.internal.services.INestable;
+import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.services.IDisposable;
 
 /**
  * A window within the workbench.
@@ -160,7 +159,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * are initialized during workbench window during the
 	 * {@link #configureShell(Shell)}.
 	 */
-	private final Map services = new HashMap();
+	private final ServiceLocator serviceLocator;
 
 	private HeapStatus heapStatus;
 
@@ -301,7 +300,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 		// Make sure there is a workbench. This call will throw
 		// an exception if workbench not created yet.
-		PlatformUI.getWorkbench();
+		final IWorkbench workbench = PlatformUI.getWorkbench();
+		this.serviceLocator = new ServiceLocator(workbench);
 
 		// Add contribution managers that are exposed to other plugins.
 		addMenuBar();
@@ -1401,14 +1401,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			contextService.unregisterShell(getShell());
 			
 			// Bring down all of the services.
-			final Iterator serviceItr = services.values().iterator();
-			while (serviceItr.hasNext()) {
-				final Object object = serviceItr.next();
-				if (object instanceof IDisposable) {
-					final IDisposable service = (IDisposable) object;
-					service.dispose();
-				}
-			}
+			serviceLocator.dispose();
 
 			closeAllPages();
 
@@ -2511,7 +2504,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		shell.addShellListener(new ShellAdapter() {
 			public void shellActivated(ShellEvent event) {
 				shellActivated = true;
-				activateNestedServices();
+				serviceLocator.activateNestedServices();
 				getWorkbenchImpl().setActivatedWindow(WorkbenchWindow.this);
 				WorkbenchPage currentPage = getActiveWorkbenchPage();
 				if (currentPage != null) {
@@ -2532,7 +2525,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 			public void shellDeactivated(ShellEvent event) {
 				shellActivated = false;
-				deactivateNestedServices();
+				serviceLocator.deactivateNestedServices();
 				WorkbenchPage currentPage = getActiveWorkbenchPage();
 				if (currentPage != null) {
 					IWorkbenchPart part = currentPage.getActivePart();
@@ -3335,51 +3328,19 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		final Expression defaultExpression = new WorkbenchWindowExpression(this);
 		final IHandlerService handlerService = new SlaveHandlerService(
 				parentHandlerService, defaultExpression);
-		services.put(IHandlerService.class, handlerService);
+		serviceLocator.registerService(IHandlerService.class, handlerService);
 
 		deprecatedSupport = new LegacyActionHandlerPersistence(this);
-		services.put(LegacyActionHandlerPersistence.class, deprecatedSupport);
+		serviceLocator.registerService(LegacyActionHandlerPersistence.class,
+				deprecatedSupport);
 		deprecatedSupport.read();
 	}
 
 	public final Object getService(final Object key) {
-		final Object service = services.get(key);
-		if (service == null) {
-			return getWorkbench().getService(key);
-		}
-
-		return service;
+		return serviceLocator.getService(key);
 	}
-
-	/**
-	 * Cycles through all of the registered services. If any of the services are
-	 * {@link INestable}, then they are notified that the component to which
-	 * they belong is becoming active.
-	 */
-	private final void activateNestedServices() {
-		final Iterator serviceItr = services.values().iterator();
-		while (serviceItr.hasNext()) {
-			final Object service = serviceItr.next();
-			if (service instanceof INestable) {
-				final INestable nestableService = (INestable) service;
-				nestableService.activate();
-			}
-		}
-	}
-
-	/**
-	 * Cycles through all of the registered services. If any of the services are
-	 * {@link INestable}, then they are notified that the component to which
-	 * they belong is becoming inactive.
-	 */
-	private final void deactivateNestedServices() {
-		final Iterator serviceItr = services.values().iterator();
-		while (serviceItr.hasNext()) {
-			final Object service = serviceItr.next();
-			if (service instanceof INestable) {
-				final INestable nestableService = (INestable) service;
-				nestableService.deactivate();
-			}
-		}
+	
+	public final boolean hasService(final Object key) {
+		return serviceLocator.hasService(key);
 	}
 }

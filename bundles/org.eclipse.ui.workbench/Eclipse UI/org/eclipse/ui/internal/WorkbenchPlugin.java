@@ -42,8 +42,6 @@ import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroRegistry;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.operations.WorkbenchOperationSupport;
-import org.eclipse.ui.internal.part.components.services.IStatusFactory;
-import org.eclipse.ui.internal.part.services.StatusFactory;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.EditorRegistry;
@@ -99,7 +97,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     
     // Default instance of the receiver
     private static WorkbenchPlugin inst;
-    private static StatusFactory statusFactory;
 
     // Manager that maps resources to descriptors of editors to use
     private EditorRegistry editorRegistry;
@@ -589,36 +586,46 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         getDefault().getLog().log(
                 StatusUtil.newStatus(IStatus.ERROR, message, null));    
     }
-
-    public static IStatusFactory getStatusFactory() {
-        return getDefault().statusFactory();
-    }
-    
-    public static IStatus getStatus(Throwable t) {
-        return getStatusFactory().newError(t);
-    }
     
     public static void log(Throwable t) {
-        getDefault().getLog().log(getStatus(t));
-    }
-    
-    public static IStatus getStatus(String message, Throwable t) {
-        return getStatusFactory().newError(message, t);
-    }
+		getDefault().getLog().log(getStatus(t));
+	}
+
+	public static IStatus getStatus(Throwable t) {
+		String message = StatusUtil.getLocalizedMessage(t);
+
+		return newError(message, t);
+	}
+
+	public static IStatus newError(String message, Throwable t) {
+		String pluginId = "org.eclipse.ui.workbench"; //$NON-NLS-1$
+		int errorCode = IStatus.OK;
+
+		// If this was a CoreException, keep the original plugin ID and error
+		// code
+		if (t instanceof CoreException) {
+			CoreException ce = (CoreException) t;
+			pluginId = ce.getStatus().getPlugin();
+			errorCode = ce.getStatus().getCode();
+		}
+
+		return new Status(IStatus.ERROR, pluginId, errorCode, message,
+				StatusUtil.getCause(t));
+	}
     
     /**
-     * Logs the given message and throwable to the platform log.
-     * 
-     * If you have a status object in hand call log(String, IStatus) instead.
-     * 
-     * This convenience method is for internal use by the Workbench only and
-     * must not be called outside the Workbench.
-     * 
-     * @param message
-     *            A high level UI message describing when the problem happened.
-     * @param t
-     *            The throwable from where the problem actually occurred.
-     */
+	 * Logs the given message and throwable to the platform log.
+	 * 
+	 * If you have a status object in hand call log(String, IStatus) instead.
+	 * 
+	 * This convenience method is for internal use by the Workbench only and
+	 * must not be called outside the Workbench.
+	 * 
+	 * @param message
+	 *            A high level UI message describing when the problem happened.
+	 * @param t
+	 *            The throwable from where the problem actually occurred.
+	 */
     public static void log(String message, Throwable t) {
         IStatus status = StatusUtil.newStatus(IStatus.ERROR, message, t);
         log(message, status);
@@ -924,14 +931,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      */
     public IWizardRegistry getExportWizardRegistry() {
     	return ExportWizardRegistry.getInstance();
-    }
-
-    IStatusFactory statusFactory() {
-        if (statusFactory == null) {
-            statusFactory = new StatusFactory(getBundle());
-        }
-        
-        return statusFactory;
     }
     
     /**

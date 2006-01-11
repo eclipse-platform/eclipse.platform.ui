@@ -35,370 +35,399 @@ import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
-class ViewReference extends WorkbenchPartReference implements
-        IViewReference {
+class ViewReference extends WorkbenchPartReference implements IViewReference {
 
-    /**
-     * 
-     */
-    private final ViewFactory factory;
+	/**
+	 * 
+	 */
+	private final ViewFactory factory;
 
-    String secondaryId;
+	String secondaryId;
 
-    private IMemento memento;
+	private IMemento memento;
 
-    public ViewReference(ViewFactory factory, String id, String secondaryId, IMemento memento) {
-        super();
-        this.memento = memento;
-        this.factory = factory;
-        ViewDescriptor desc = (ViewDescriptor) this.factory.viewReg.find(id);
-        ImageDescriptor iDesc = null;
-        String title = null;
-        if (desc != null) {
-            iDesc = desc.getImageDescriptor();
-            title = desc.getLabel();
-        }
+	public ViewReference(ViewFactory factory, String id, String secondaryId,
+			IMemento memento) {
+		super();
+		this.memento = memento;
+		this.factory = factory;
+		ViewDescriptor desc = (ViewDescriptor) this.factory.viewReg.find(id);
+		ImageDescriptor iDesc = null;
+		String title = null;
+		if (desc != null) {
+			iDesc = desc.getImageDescriptor();
+			title = desc.getLabel();
+		}
 
-        String name = null;
+		String name = null;
 
-        if (memento != null) {
-            name = memento.getString(IWorkbenchConstants.TAG_PART_NAME);
-        }
-        if (name == null) {
-            name = title;
-        }
+		if (memento != null) {
+			name = memento.getString(IWorkbenchConstants.TAG_PART_NAME);
+		}
+		if (name == null) {
+			name = title;
+		}
 
-        init(id, title, "", iDesc, name, "");  //$NON-NLS-1$//$NON-NLS-2$
-        this.secondaryId = secondaryId;
-    }
-    
-    protected PartPane createPane() {
-        return new ViewPane(this, this.factory.page);
-    }
+		init(id, title, "", iDesc, name, ""); //$NON-NLS-1$//$NON-NLS-2$
+		this.secondaryId = secondaryId;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.WorkbenchPartReference#dispose()
-     */
-    protected void doDisposePart() {
-        IViewPart view = (IViewPart)part;
-        if (view != null) {
-            // Free action bars, pane, etc.
-            PartSite site = (PartSite) view.getSite();
-            ViewActionBars actionBars = (ViewActionBars) site.getActionBars();
-            actionBars.dispose();
+	protected PartPane createPane() {
+		return new ViewPane(this, this.factory.page);
+	}
 
-            // Free the site.
-            site.dispose();
-        }
-        
-        super.doDisposePart();
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPartReference#getPage()
-     */
-    public IWorkbenchPage getPage() {
-        return this.factory.page;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.WorkbenchPartReference#dispose()
+	 */
+	protected void doDisposePart() {
+		IViewPart view = (IViewPart) part;
+		if (view != null) {
+			// Free action bars, pane, etc.
+			PartSite site = (PartSite) view.getSite();
+			ViewActionBars actionBars = (ViewActionBars) site.getActionBars();
+			actionBars.dispose();
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.WorkbenchPartReference#getRegisteredName()
-     */
-    public String getRegisteredName() {
-        if (part != null && part.getSite() != null) {
-            return part.getSite().getRegisteredName();
-        }
+			// Free the site.
+			site.dispose();
+		}
 
-        IViewRegistry reg = this.factory.viewReg;
-        IViewDescriptor desc = reg.find(getId());
-        if (desc != null)
-            return desc.getLabel();
-        return getTitle();
-    }
+		super.doDisposePart();
+	}
 
-    protected String computePartName() {
-        if (part instanceof IWorkbenchPart2) {
-            return super.computePartName();
-        } else {
-            return getRegisteredName();
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPartReference#getPage()
+	 */
+	public IWorkbenchPage getPage() {
+		return this.factory.page;
+	}
 
-    protected String computeContentDescription() {
-        if (part instanceof IWorkbenchPart2) {
-            return super.computeContentDescription();
-        } else {
-            String rawTitle = getRawTitle();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.WorkbenchPartReference#getRegisteredName()
+	 */
+	public String getRegisteredName() {
+		if (part != null && part.getSite() != null) {
+			return part.getSite().getRegisteredName();
+		}
 
-            if (!Util.equals(rawTitle, getRegisteredName())) {
-                return rawTitle;
-            }
+		IViewRegistry reg = this.factory.viewReg;
+		IViewDescriptor desc = reg.find(getId());
+		if (desc != null)
+			return desc.getLabel();
+		return getTitle();
+	}
 
-            return ""; //$NON-NLS-1$
-        }
-    }
+	protected String computePartName() {
+		if (part instanceof IWorkbenchPart2) {
+			return super.computePartName();
+		} else {
+			return getRegisteredName();
+		}
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IViewReference
-     */
-    public String getSecondaryId() {
-        return secondaryId;
-    }
+	protected String computeContentDescription() {
+		if (part instanceof IWorkbenchPart2) {
+			return super.computeContentDescription();
+		} else {
+			String rawTitle = getRawTitle();
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IViewReference#getView(boolean)
-     */
-    public IViewPart getView(boolean restore) {
-        return (IViewPart) getPart(restore);
-    }
+			if (!Util.equals(rawTitle, getRegisteredName())) {
+				return rawTitle;
+			}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IViewReference#isFastView()
-     */
-    public boolean isFastView() {
-        return this.factory.page.isFastView(this);
-    }
+			return ""; //$NON-NLS-1$
+		}
+	}
 
-    /**
-     * Wrapper for restoring the view. First, this delegates to busyRestoreViewHelper
-     * to do the real work of restoring the view. If unable to restore the view, this
-     * method tries to substitute an error part and return success.
-     *
-     * @param factory TODO
-     * @return
-     */
-    protected IWorkbenchPart createPart() {
-        
-        // Check the status of this part
-        
-        IWorkbenchPart result = null;
-        PartInitException exception = null;
-        
-        // Try to restore the view -- this does the real work of restoring the view
-        //
-        try {
-            result = createPartHelper();
-        } catch (PartInitException e) {
-            exception = e;
-        }
-        
-        // If unable to create the part, create an error part instead
-        if (exception != null) {
-            IStatus partStatus = exception.getStatus();
-            IStatus displayStatus = StatusUtil.newStatus(partStatus,
-                    NLS.bind(WorkbenchMessages.ViewFactory_initException, partStatus.getMessage()));
-            
-            IStatus logStatus = StatusUtil.newStatus(partStatus,
-                    NLS.bind("Unable to create view ID {0}: {1}", getId(), partStatus.getMessage()));  //$NON-NLS-1$
-            WorkbenchPlugin.log(logStatus);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IViewReference
+	 */
+	public String getSecondaryId() {
+		return secondaryId;
+	}
 
-            IViewDescriptor desc = factory.viewReg.find(getId());
-            String label = getId();
-            if (desc != null) {
-                label = desc.getLabel();
-            }
-            
-            ErrorViewPart part = new ErrorViewPart(displayStatus);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IViewReference#getView(boolean)
+	 */
+	public IViewPart getView(boolean restore) {
+		return (IViewPart) getPart(restore);
+	}
 
-            PartPane pane = getPane();
-            ViewSite site = new ViewSite(this, part, factory.page, getId(), PlatformUI.PLUGIN_ID, label);
-            site.setActionBars(new ViewActionBars(factory.page.getActionBars(),
-                    (ViewPane) pane));
-            try {
-                part.init(site);
-            } catch (PartInitException e) {
-                WorkbenchPlugin.log(e);
-                return null;
-            }
-            part.setPartName(label);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IViewReference#isFastView()
+	 */
+	public boolean isFastView() {
+		return this.factory.page.isFastView(this);
+	}
 
-            Composite parent = (Composite)pane.getControl();
-            Composite content = new Composite(parent, SWT.NONE);
-            content.setLayout(new FillLayout());
-            
-            try {
-                part.createPartControl(content);
-            } catch (Exception e) {
-                content.dispose();
-                WorkbenchPlugin.log(e);
-                return null;
-            }
-            
-            result = part;
-        }
-            
-        return result;
-    }
+	/**
+	 * Wrapper for restoring the view. First, this delegates to
+	 * busyRestoreViewHelper to do the real work of restoring the view. If
+	 * unable to restore the view, this method tries to substitute an error part
+	 * and return success.
+	 * 
+	 * @param factory
+	 *            TODO
+	 * @return
+	 */
+	protected IWorkbenchPart createPart() {
 
-    private IWorkbenchPart createPartHelper() throws PartInitException {
+		// Check the status of this part
 
-        IWorkbenchPart result = null;
-        
-        IMemento stateMem = null;
-        if (memento != null) {
-            stateMem = memento.getChild(IWorkbenchConstants.TAG_VIEW_STATE);
-        }
-        
-        IViewDescriptor desc = factory.viewReg.find(getId());
-        if (desc == null) {
-            throw new PartInitException(WorkbenchMessages.ViewFactory_couldNotCreate);
-        }
-        
-        // Create the part pane
-        PartPane pane = getPane();
-        
-        // Create the pane's top-level control
-        pane.createControl(factory.page.getClientComposite());
-        
-        String label = desc.getLabel(); // debugging only
-    
-        // Things that will need to be disposed if an exception occurs (they are listed here
-        // in the order they should be disposed)
-        Composite content = null;
-        IViewPart initializedView = null;
-        ViewSite site = null;
-        ViewActionBars actionBars = null;
-        // End of things that need to be explicitly disposed from the try block
-        
-        try {
-            IViewPart view = null;
-            try { 
-                UIStats.start(UIStats.CREATE_PART, label);
-                view = desc.createView();
-            } finally {
-                UIStats.end(UIStats.CREATE_PART, view, label);    
-            }
-    
-            // Create site
-            site = new ViewSite(this, view, factory.page, desc);
-            actionBars = new ViewActionBars(factory.page.getActionBars(),
-                    (ViewPane) pane);
-            site.setActionBars(actionBars);
-    
-            try {
-                UIStats.start(UIStats.INIT_PART, label);
-                view.init(site, stateMem);
-                // Once we've called init, we MUST dispose the view. Remember the fact that
-                // we've initialized the view in case an exception is thrown.
-                initializedView = view;
-                
-            } finally {
-                UIStats.end(UIStats.INIT_PART, view, label);
-            }
-    
-            if (view.getSite() != site) {
-                throw new PartInitException(WorkbenchMessages.ViewFactory_siteException, null);
-            }
-            int style = SWT.NONE;
-            if(view instanceof IWorkbenchPartOrientation) {
-                style = ((IWorkbenchPartOrientation) view).getOrientation();
-            }
-   
-            // Create the top-level composite
-            {
-                Composite parent = (Composite)pane.getControl();
-                content = new Composite(parent, style);
-                content.setLayout(new FillLayout());
-   
-                try {
-                    UIStats.start(UIStats.CREATE_PART_CONTROL, label);
-                    view.createPartControl(content);
-   
-                    parent.layout(true);
-                } finally {
-                    UIStats.end(UIStats.CREATE_PART_CONTROL, view, label);
-                }
-            }
-            
-            // Install the part's tools and menu
-            {
-                ViewActionBuilder builder = new ViewActionBuilder();
-                builder.readActionExtensions(view);
-                ActionDescriptor[] actionDescriptors = builder
-                        .getExtendedActions();
-                KeyBindingService keyBindingService = (KeyBindingService) view
-                        .getSite().getKeyBindingService();
-   
-                if (actionDescriptors != null) {
-                    for (int i = 0; i < actionDescriptors.length; i++) {
-                        ActionDescriptor actionDescriptor = actionDescriptors[i];
-   
-                        if (actionDescriptor != null) {
-                            IAction action = actionDescriptors[i]
-                                    .getAction();
-   
-                            if (action != null
-                                    && action.getActionDefinitionId() != null)
-                                keyBindingService.registerAction(action);
-                        }
-                    }
-                }
-                site.getActionBars().updateActionBars();
-            }
-            
-            // The editor should now be fully created. Exercise its public interface, and sanity-check
-            // it wherever possible. If it's going to throw exceptions or behave badly, it's much better
-            // that it does so now while we can still cancel creation of the part.
-            PartTester.testView(view);
-            
-            result = view;
-            
-            IConfigurationElement element = (IConfigurationElement) desc
-                    .getAdapter(IConfigurationElement.class);
-            if (element != null) {
-                factory.page.getExtensionTracker().registerObject(
-                        element.getDeclaringExtension(), view,
-                        IExtensionTracker.REF_WEAK);
-            }
-        } catch (Exception e) {
-            // An exception occurred. First deallocate anything we've allocated in the try block (see the top
-            // of the try block for a list of objects that need to be explicitly disposed)
-            if (content != null) {
-                try {
-                    content.dispose();
-                } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
-            }
-            
-            if (initializedView != null) {
-                try {
-                    initializedView.dispose();
-                } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
-            }
-    
-            if (site != null) {
-                try {
-                    site.dispose();
-                } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
-            }
-            
-            if (actionBars != null) {
-                try {
-                    actionBars.dispose();
-                } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
-            }
-            
-            throw new PartInitException(WorkbenchPlugin.getStatus(e));
-        }
-        
-        return result;
-    }
-    
-    /**
-     * The memento is that last view state saved by the workbench.
-     * 
-     * @return the last state that was saved by the workbench.  It can
-     * return <code>null</code>.
-     * @since 3.1.1
-     */
-    public IMemento getMemento() {
-    	return memento;
-    }
+		IWorkbenchPart result = null;
+		PartInitException exception = null;
+
+		// Try to restore the view -- this does the real work of restoring the
+		// view
+		//
+		try {
+			result = createPartHelper();
+		} catch (PartInitException e) {
+			exception = e;
+		}
+
+		// If unable to create the part, create an error part instead
+		if (exception != null) {
+			IStatus partStatus = exception.getStatus();
+			IStatus displayStatus = StatusUtil.newStatus(partStatus, NLS.bind(
+					WorkbenchMessages.ViewFactory_initException, partStatus
+							.getMessage()));
+
+			IStatus logStatus = StatusUtil
+					.newStatus(
+							partStatus,
+							NLS
+									.bind(
+											"Unable to create view ID {0}: {1}", getId(), partStatus.getMessage())); //$NON-NLS-1$
+			WorkbenchPlugin.log(logStatus);
+
+			IViewDescriptor desc = factory.viewReg.find(getId());
+			String label = getId();
+			if (desc != null) {
+				label = desc.getLabel();
+			}
+
+			ErrorViewPart part = new ErrorViewPart(displayStatus);
+
+			PartPane pane = getPane();
+			ViewSite site = new ViewSite(this, part, factory.page, getId(),
+					PlatformUI.PLUGIN_ID, label);
+			site.setActionBars(new ViewActionBars(factory.page.getActionBars(),
+					site, (ViewPane) pane));
+			try {
+				part.init(site);
+			} catch (PartInitException e) {
+				WorkbenchPlugin.log(e);
+				return null;
+			}
+			part.setPartName(label);
+
+			Composite parent = (Composite) pane.getControl();
+			Composite content = new Composite(parent, SWT.NONE);
+			content.setLayout(new FillLayout());
+
+			try {
+				part.createPartControl(content);
+			} catch (Exception e) {
+				content.dispose();
+				WorkbenchPlugin.log(e);
+				return null;
+			}
+
+			result = part;
+		}
+
+		return result;
+	}
+
+	private IWorkbenchPart createPartHelper() throws PartInitException {
+
+		IWorkbenchPart result = null;
+
+		IMemento stateMem = null;
+		if (memento != null) {
+			stateMem = memento.getChild(IWorkbenchConstants.TAG_VIEW_STATE);
+		}
+
+		IViewDescriptor desc = factory.viewReg.find(getId());
+		if (desc == null) {
+			throw new PartInitException(
+					WorkbenchMessages.ViewFactory_couldNotCreate);
+		}
+
+		// Create the part pane
+		PartPane pane = getPane();
+
+		// Create the pane's top-level control
+		pane.createControl(factory.page.getClientComposite());
+
+		String label = desc.getLabel(); // debugging only
+
+		// Things that will need to be disposed if an exception occurs (they are
+		// listed here
+		// in the order they should be disposed)
+		Composite content = null;
+		IViewPart initializedView = null;
+		ViewSite site = null;
+		ViewActionBars actionBars = null;
+		// End of things that need to be explicitly disposed from the try block
+
+		try {
+			IViewPart view = null;
+			try {
+				UIStats.start(UIStats.CREATE_PART, label);
+				view = desc.createView();
+			} finally {
+				UIStats.end(UIStats.CREATE_PART, view, label);
+			}
+
+			// Create site
+			site = new ViewSite(this, view, factory.page, desc);
+			actionBars = new ViewActionBars(factory.page.getActionBars(), site,
+					(ViewPane) pane);
+			site.setActionBars(actionBars);
+
+			try {
+				UIStats.start(UIStats.INIT_PART, label);
+				view.init(site, stateMem);
+				// Once we've called init, we MUST dispose the view. Remember
+				// the fact that
+				// we've initialized the view in case an exception is thrown.
+				initializedView = view;
+
+			} finally {
+				UIStats.end(UIStats.INIT_PART, view, label);
+			}
+
+			if (view.getSite() != site) {
+				throw new PartInitException(
+						WorkbenchMessages.ViewFactory_siteException, null);
+			}
+			int style = SWT.NONE;
+			if (view instanceof IWorkbenchPartOrientation) {
+				style = ((IWorkbenchPartOrientation) view).getOrientation();
+			}
+
+			// Create the top-level composite
+			{
+				Composite parent = (Composite) pane.getControl();
+				content = new Composite(parent, style);
+				content.setLayout(new FillLayout());
+
+				try {
+					UIStats.start(UIStats.CREATE_PART_CONTROL, label);
+					view.createPartControl(content);
+
+					parent.layout(true);
+				} finally {
+					UIStats.end(UIStats.CREATE_PART_CONTROL, view, label);
+				}
+			}
+
+			// Install the part's tools and menu
+			{
+				ViewActionBuilder builder = new ViewActionBuilder();
+				builder.readActionExtensions(view);
+				ActionDescriptor[] actionDescriptors = builder
+						.getExtendedActions();
+				KeyBindingService keyBindingService = (KeyBindingService) view
+						.getSite().getKeyBindingService();
+
+				if (actionDescriptors != null) {
+					for (int i = 0; i < actionDescriptors.length; i++) {
+						ActionDescriptor actionDescriptor = actionDescriptors[i];
+
+						if (actionDescriptor != null) {
+							IAction action = actionDescriptors[i].getAction();
+
+							if (action != null
+									&& action.getActionDefinitionId() != null)
+								keyBindingService.registerAction(action);
+						}
+					}
+				}
+				site.getActionBars().updateActionBars();
+			}
+
+			// The editor should now be fully created. Exercise its public
+			// interface, and sanity-check
+			// it wherever possible. If it's going to throw exceptions or behave
+			// badly, it's much better
+			// that it does so now while we can still cancel creation of the
+			// part.
+			PartTester.testView(view);
+
+			result = view;
+
+			IConfigurationElement element = (IConfigurationElement) desc
+					.getAdapter(IConfigurationElement.class);
+			if (element != null) {
+				factory.page.getExtensionTracker().registerObject(
+						element.getDeclaringExtension(), view,
+						IExtensionTracker.REF_WEAK);
+			}
+		} catch (Exception e) {
+			// An exception occurred. First deallocate anything we've allocated
+			// in the try block (see the top
+			// of the try block for a list of objects that need to be explicitly
+			// disposed)
+			if (content != null) {
+				try {
+					content.dispose();
+				} catch (RuntimeException re) {
+					WorkbenchPlugin.log(re);
+				}
+			}
+
+			if (initializedView != null) {
+				try {
+					initializedView.dispose();
+				} catch (RuntimeException re) {
+					WorkbenchPlugin.log(re);
+				}
+			}
+
+			if (site != null) {
+				try {
+					site.dispose();
+				} catch (RuntimeException re) {
+					WorkbenchPlugin.log(re);
+				}
+			}
+
+			if (actionBars != null) {
+				try {
+					actionBars.dispose();
+				} catch (RuntimeException re) {
+					WorkbenchPlugin.log(re);
+				}
+			}
+
+			throw new PartInitException(WorkbenchPlugin.getStatus(e));
+		}
+
+		return result;
+	}
+
+	/**
+	 * The memento is that last view state saved by the workbench.
+	 * 
+	 * @return the last state that was saved by the workbench. It can return
+	 *         <code>null</code>.
+	 * @since 3.1.1
+	 */
+	public IMemento getMemento() {
+		return memento;
+	}
 }

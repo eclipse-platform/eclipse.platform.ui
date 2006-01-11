@@ -27,8 +27,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.part.NewViewToOldWrapper;
-import org.eclipse.ui.internal.part.components.services.IPartDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.IViewDescriptor;
 
@@ -46,23 +44,6 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 
     private float fastViewWidthRatio;
 
-    private IPartDescriptor viewInfo = new IPartDescriptor() {
-		public String getId() {
-			return id;
-		}
-
-		public String getLabel() {
-			return ViewDescriptor.this.getLabel();
-		}
-        
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.workbench.services.IPartDescriptor#getImage()
-         */
-        public ImageDescriptor getImage() {
-            return getImageDescriptor();
-        }
-    };
-
 	/**
 	 * The activation token returned when activating the show view handler with
 	 * the workbench.
@@ -79,18 +60,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
             throws CoreException {
         configElement = e;
         loadFromExtension();
-    }
-
-    /**
-     * Return the part descriptor.
-     * 
-     * @return the part descriptor.
-     * @since 3.1
-     */
-    public IPartDescriptor getPartDescriptor() {
-    	return viewInfo;
-    }
-    
+    }    
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#createView()
@@ -99,12 +69,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
         Object extension = WorkbenchPlugin.createExtension(
                 getConfigurationElement(),
                 IWorkbenchRegistryConstants.ATT_CLASS);
-        
-        if (extension instanceof IViewPart) {
-            return (IViewPart) extension;
-        }
-
-        return new NewViewToOldWrapper(getPartDescriptor());
+        return (IViewPart) extension;
     }
 
     /* (non-Javadoc)
