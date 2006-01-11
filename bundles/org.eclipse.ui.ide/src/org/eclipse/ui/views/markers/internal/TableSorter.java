@@ -304,7 +304,13 @@ public class TableSorter extends ViewerSorter implements Comparator {
 					resetState();
 					return;
 				}
-				priorities[i] = Integer.parseInt(priority);
+				
+				int fieldIndex = Integer.parseInt(priority);
+				
+				//Make sure it is not old data from a different sized array
+				if(fieldIndex < fields.length)
+					priorities[i] = fieldIndex;
+				
 				String direction = settings.get(TAG_DIRECTION + i);
 				if (direction == null) {
 					resetState();
