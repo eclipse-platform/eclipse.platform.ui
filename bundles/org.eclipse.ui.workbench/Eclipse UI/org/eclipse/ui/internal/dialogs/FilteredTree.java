@@ -29,10 +29,13 @@ import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
@@ -169,50 +172,8 @@ public class FilteredTree extends Composite {
         filterParent.setLayout(filterLayout);
         filterParent.setFont(parent.getFont());
         filterParent.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));    	
-        createFilterText(filterParent);
-        filterText.addKeyListener(new KeyAdapter() {
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
-             */
-            public void keyPressed(KeyEvent e) {
-            	// on a CR we want to transfer focus to the list
-            	boolean hasItems = getViewer().getTree().getItemCount() > 0;
-            	if(hasItems && e.keyCode == SWT.ARROW_DOWN){
-                    	treeViewer.getTree().setFocus();
-            	} else if (e.character == SWT.CR){
-					return;
-            	}
-            	else{
-            		textChanged();
-            	}
-            }
-        });
         
-        // enter key set focus to tree
-        filterText.addTraverseListener( new TraverseListener () {
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_RETURN) {
-					e.doit = false;
-					if (getViewer().getTree().getItemCount() == 0) {
-						Display.getCurrent().beep();
-					} else {
-						// if the initial filter text hasn't changed, do not try to match
-						boolean hasFocus = getViewer().getTree().setFocus();
-						boolean textChanged = !getInitialText().equals(filterText.getText().trim());
-						if (hasFocus && textChanged && filterText.getText().trim().length() > 0){
-							TreeItem item = getFirstHighlightedItem(getViewer().getTree().getItems());
-							if (item != null){
-								getViewer().getTree().setSelection(new TreeItem[] {item});
-								ISelection sel = getViewer().getSelection();
-								getViewer().setSelection(sel, true);
-							}
-						}						
-					} 
-				}
-			}
-		});
+        createFilterText(filterParent);
 
         GridData data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
         filterText.setLayoutData(data);
@@ -311,6 +272,74 @@ public class FilteredTree extends Composite {
 							e.result = filterTextString;
 					}
 				});
+
+		filterText.addFocusListener(
+				new FocusAdapter(){
+					/* (non-Javadoc)
+					 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
+					 */
+					public void focusGained(FocusEvent e) {
+						if (getInitialText().equals(filterText.getText().trim()))
+							filterText.selectAll();
+					}
+				});
+		
+		filterText.addMouseListener(
+				new MouseAdapter(){
+					/* (non-Javadoc)
+					 * @see org.eclipse.swt.events.MouseAdapter#mouseUp(org.eclipse.swt.events.MouseEvent)
+					 */
+					public void mouseUp(MouseEvent e) {
+						super.mouseUp(e);
+						if (getInitialText().equals(filterText.getText().trim()))
+							filterText.selectAll();
+					}
+				});
+		
+        filterText.addKeyListener(new KeyAdapter() {
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
+             */
+            public void keyPressed(KeyEvent e) {
+            	// on a CR we want to transfer focus to the list
+            	boolean hasItems = getViewer().getTree().getItemCount() > 0;
+            	if(hasItems && e.keyCode == SWT.ARROW_DOWN){
+                    	treeViewer.getTree().setFocus();
+            	} else if (e.character == SWT.CR){
+					return;
+            	}
+            	else{
+            		textChanged();
+            	}
+            }
+        });
+        
+        // enter key set focus to tree
+        filterText.addTraverseListener( new TraverseListener () {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_RETURN) {
+					e.doit = false;
+					if (getViewer().getTree().getItemCount() == 0) {
+						Display.getCurrent().beep();
+					} else {
+						// if the initial filter text hasn't changed, do not try to match
+						boolean hasFocus = getViewer().getTree().setFocus();
+						boolean textChanged = !getInitialText().equals(filterText.getText().trim());
+						if (hasFocus && textChanged && filterText.getText().trim().length() > 0){
+							TreeItem item = getFirstHighlightedItem(getViewer().getTree().getItems());
+							if (item != null){
+								getViewer().getTree().setSelection(new TreeItem[] {item});
+								ISelection sel = getViewer().getSelection();
+								getViewer().setSelection(sel, true);
+							}
+						}						
+					} 
+				}
+			}
+		});
+
 	}
 
 	/**
