@@ -40,7 +40,7 @@
  </package>
 
  <package name="org.eclipse.search.core.text">
-   <type name= "TextSearchEngine" subclass="false" instantiate="false"/>
+   <type name= "TextSearchEngine" subclass="true" instantiate="false"/>
    <type name= "TextSearchMatchAccess" subclass="false" instantiate="false"/>
  </package>
 
