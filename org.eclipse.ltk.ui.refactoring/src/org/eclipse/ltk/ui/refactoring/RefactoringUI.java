@@ -97,6 +97,28 @@ public class RefactoringUI {
 	public static Dialog createRefactoringStatusDialog(RefactoringStatus status, Shell parent, String windowTitle, boolean backButton) {
 		return new RefactoringStatusDialog(status, parent, windowTitle, backButton);
 	}
+
+	/**
+	 * Creates a light-weight dialog to present a {@link RefactoringStatus} to the user. The following values are 
+	 * returned from the dialogs open method: 
+	 * <ul>
+	 *   <li>{@link org.eclipse.jface.dialogs.IDialogConstants#OK_ID IDialogConstants#OK_ID}:
+	 *       if the user has pressed the continue button.</li> 
+	 *   <li>{@link org.eclipse.jface.dialogs.IDialogConstants#CANCEL_ID IDialogConstants#CANCEL_ID}:
+	 *       if the user has pressed the cancel button.</li>
+	 *   <li>{@link org.eclipse.jface.dialogs.IDialogConstants#BACK_ID IDialogConstants#BACK_ID}: 
+	 *       if the user has pressed the back button.</li>
+	 * </ul>
+	 * 
+	 * @param status the status to present
+	 * @param parent the parent shell of the dialog. May be <code>null</code>
+	 *  if the dialog is a top-level dialog
+	 * @param windowTitle the dialog's window title
+	 * @return a dialog to present a refactoring status.
+	 */
+	public static Dialog createLightWeightStatusDialog(RefactoringStatus status, Shell parent, String windowTitle) {
+		return new RefactoringStatusDialog(status, parent, windowTitle, false, true);
+	}
 	
 	/**
 	 * Creates a dialog capable to present the given refactoring wizard. Clients of

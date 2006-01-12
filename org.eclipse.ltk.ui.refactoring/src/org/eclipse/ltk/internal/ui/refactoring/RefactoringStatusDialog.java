@@ -31,6 +31,7 @@ public class RefactoringStatusDialog extends Dialog {
 	private RefactoringStatus fStatus;
 	private String fWindowTitle;
 	private boolean fBackButton;
+	private boolean fLightWeight;
 	
 	public RefactoringStatusDialog(RefactoringStatus status, Shell parent, String windowTitle, boolean backButton) {
 		super(parent);
@@ -39,7 +40,12 @@ public class RefactoringStatusDialog extends Dialog {
 		fBackButton= backButton;
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
-	
+
+	public RefactoringStatusDialog(RefactoringStatus status, Shell parent, String windowTitle, boolean backButton, boolean light) {
+		this(status, parent, windowTitle, backButton);
+		fLightWeight= light;
+	}
+
 	public RefactoringStatusDialog(Shell parent, ErrorWizardPage page, boolean backButton) {
 		this(page.getStatus(), parent, parent.getText(), backButton);
 	}
@@ -48,6 +54,7 @@ public class RefactoringStatusDialog extends Dialog {
 		super.configureShell(newShell);
 		newShell.setText(fWindowTitle);
 	}
+
 	protected Control createDialogArea(Composite parent) {
 		Composite result= new Composite(parent, SWT.NONE);
 		initializeDialogUnits(result);
@@ -57,29 +64,32 @@ public class RefactoringStatusDialog extends Dialog {
 		gd.widthHint= 600;
 		gd.heightHint= 400;
 		result.setLayoutData(gd);
-		Color background= parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-		ViewForm messagePane= new ViewForm(result, SWT.BORDER | SWT.FLAT);
-		messagePane.marginWidth= layout.marginWidth;
-		messagePane.marginHeight= layout.marginHeight;
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		// XXX http://bugs.eclipse.org/bugs/show_bug.cgi?id=27572
-		Rectangle rect= messagePane.computeTrim(0, 0, 0, convertHeightInCharsToPixels(2) + messagePane.marginHeight * 2);
-		gd.heightHint= rect.height;
-		messagePane.setLayoutData(gd);
-		messagePane.setBackground(background);
-		Label label= new Label(messagePane, SWT.LEFT | SWT.WRAP);
-		if (fStatus.hasFatalError())
-			label.setText(RefactoringUIMessages.RefactoringStatusDialog_Cannot_proceed); 
-		else 
-			label.setText(RefactoringUIMessages.RefactoringStatusDialog_Please_look); 
-		label.setBackground(background);
-		messagePane.setContent(label);
+		if (!fLightWeight) {
+			Color background= parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+			ViewForm messagePane= new ViewForm(result, SWT.BORDER | SWT.FLAT);
+			messagePane.marginWidth= layout.marginWidth;
+			messagePane.marginHeight= layout.marginHeight;
+			gd= new GridData(GridData.FILL_HORIZONTAL);
+			// XXX http://bugs.eclipse.org/bugs/show_bug.cgi?id=27572
+			Rectangle rect= messagePane.computeTrim(0, 0, 0, convertHeightInCharsToPixels(2) + messagePane.marginHeight * 2);
+			gd.heightHint= rect.height;
+			messagePane.setLayoutData(gd);
+			messagePane.setBackground(background);
+			Label label= new Label(messagePane, SWT.LEFT | SWT.WRAP);
+			if (fStatus.hasFatalError())
+				label.setText(RefactoringUIMessages.RefactoringStatusDialog_Cannot_proceed);
+			else
+				label.setText(RefactoringUIMessages.RefactoringStatusDialog_Please_look);
+			label.setBackground(background);
+			messagePane.setContent(label);
+		}
 		RefactoringStatusViewer viewer= new RefactoringStatusViewer(result, SWT.NONE);
 		viewer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		viewer.setStatus(fStatus);
 		applyDialogFont(result);
 		return result;
 	}
+
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.BACK_ID) {
 			setReturnCode(IDialogConstants.BACK_ID);
