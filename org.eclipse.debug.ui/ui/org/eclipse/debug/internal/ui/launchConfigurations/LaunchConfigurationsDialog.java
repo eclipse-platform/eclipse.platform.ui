@@ -82,6 +82,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
@@ -356,7 +357,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		topComp.setLayoutData(gd);
 		GridLayout topLayout = new GridLayout(2, false);
 		topLayout.marginHeight = 5;
-		topLayout.marginWidth = 0;
+		topLayout.marginWidth = 5;
 		topComp.setLayout(topLayout);
 		
 		// Set the things that TitleAreaDialog takes care of 
@@ -662,22 +663,25 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */ 
 	protected Control createLaunchConfigurationSelectionArea(Composite parent) {
 		Font font = parent.getFont();
-		Composite comp = new Composite(parent, SWT.NONE);
+		Group comp = new Group(parent, SWT.NONE);
+		comp.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Con_figurations__1);
 		setSelectionArea(comp);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
-		layout.marginHeight = 0;
-		layout.marginWidth = 5;
+//		layout.marginHeight = 0;
+//		layout.marginWidth = 5;
 		comp.setLayout(layout);
 		comp.setFont(font);
 		
+		
+//		//create the tree view
+//		Label treelabel = new Label(comp, SWT.NONE);
+//		treelabel.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Con_figurations__1);
+//		treelabel.setFont(font);
+
 		//create the toolbar area
 		createToolbarArea(comp);
-		
-		//create the tree view
-		Label treelabel = new Label(comp, SWT.NONE);
-		treelabel.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Con_figurations__1);
-		treelabel.setFont(font);
+
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup());
 		fLaunchConfigurationView.createLaunchDialogControl(comp);
 		fDoubleClickAction = new Action() {
