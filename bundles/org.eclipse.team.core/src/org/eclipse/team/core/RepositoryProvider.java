@@ -135,6 +135,9 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				// Set the rule factory for the provider after the touch
 				// so the touch does not fail due to incompatible modify rules
 				TeamHookDispatcher.setProviderRuleFactory(project, provider.getRuleFactory());
+				
+				// Notify any listeners
+				RepositoryProviderManager.getInstance().providerMapped(provider);
 			} finally {
 				mappingLock.release();
 			}
@@ -277,6 +280,9 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				// Change the rule factory after the touch in order to
 				// avoid rule incompatibility
 				TeamHookDispatcher.setProviderRuleFactory(project, null);
+				
+				// Notify any listeners
+				RepositoryProviderManager.getInstance().providerUnmapped(project);
 			} finally {
 				mappingLock.release();
 			}

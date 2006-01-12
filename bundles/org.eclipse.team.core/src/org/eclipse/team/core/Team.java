@@ -16,7 +16,9 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.core.*;
+import org.eclipse.team.internal.core.mapping.WorkspaceSubscriber;
 
 /**
  * The Team class provides a global point of reference for the global ignore set
@@ -453,5 +455,16 @@ public final class Team {
         return fFileContentManager;
     }
     
-
+    /**
+     * Returns a subscriber that provides access to the synchronization state
+     * of the workspace for those projects that provide it.
+     * 
+     * @return a subscriber that provides access to the synchronization state
+     * of the workspace.
+     * 
+     * @since 3.2
+     */
+    public static Subscriber getWorksaceSubscriber() {
+    	return WorkspaceSubscriber.getInstance();
+    }
 }

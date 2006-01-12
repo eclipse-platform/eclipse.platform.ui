@@ -368,7 +368,15 @@ abstract public class Subscriber {
 	}
 	
 	/**
-	 * Visit any out-of-sync resources covered by the given traversals.
+	 * Visit any out-of-sync resources covered by the given traversals. Any resources
+	 * covered by the traversals are ignored in the following cases:
+	 * <ul>
+	 * <li>if they do not exist either in the workspace or in the corresponding
+	 * remote location</li>
+	 * <li>if the given resource is not supervised by this subscriber</li>
+	 * <li>if the given resource is a closed project (they are ineligible for
+	 * synchronization)</li>
+	 * </ul>
 	 * @param traversals the traversals to be visited
 	 * @param visitor the visitor
 	 * @throws TeamException if errors occur
@@ -383,7 +391,14 @@ abstract public class Subscriber {
 	
 	/**
 	 * Visit any out-of-sync resources in the given resources visited to the
-	 * given depth.
+	 * given depth. Resources are ignored in the following cases:
+	 * <ul>
+	 * <li>if they do not exist either in the workspace or in the corresponding
+	 * remote location</li>
+	 * <li>if the given resource is not supervised by this subscriber</li>
+	 * <li>if the given resource is a closed project (they are ineligible for
+	 * synchronization)</li>
+	 * </ul>
 	 * 
 	 * @param resources the root of the resource subtrees from which out-of-sync
 	 *            sync info should be visited
@@ -420,8 +435,17 @@ abstract public class Subscriber {
 
 	/**
 	 * Refresh the subscriber for the given traversals. By default this method calls
-	 * {@link #refresh(IResource[], int, IProgressMonitor) } for each traversal. Subclasses
-	 * may override.
+	 * {@link #refresh(IResource[], int, IProgressMonitor) } for each traversal. Any resources
+	 * covered by the traversals are ignored in the following cases:
+	 * <ul>
+	 * <li>if they do not exist either in the workspace or in the corresponding
+	 * remote location</li>
+	 * <li>if the given resource is not supervised by this subscriber</li>
+	 * <li>if the given resource is a closed project (they are ineligible for
+	 * synchronization)</li>
+	 * </ul>
+	 * <p>
+	 * Subclasses may override.
 	 * @param traversals the traversals to be refreshed
 	 * @param monitor a progress monitor
 	 * @throws TeamException if errors occur
@@ -440,7 +464,15 @@ abstract public class Subscriber {
 	 * by the given traversals. Clients could also get this information by visiting
 	 * the diffs returned from the subscriber but this method is provided so that sublcasses
 	 * have any opportunity to optimize this check for clients who are only looking for 
-	 * local changes. Locla changes can only exist if the subscriber is three-way
+	 * local changes. Locla changes can only exist if the subscriber is three-way.
+	 * Resources covered by the traversals are ignored in the following cases:
+	 * <ul>
+	 * <li>if they do not exist either in the workspace or in the corresponding
+	 * remote location</li>
+	 * <li>if the given resource is not supervised by this subscriber</li>
+	 * <li>if the given resource is a closed project (they are ineligible for
+	 * synchronization)</li>
+	 * </ul>
 	 * <p>
 	 * The default implementation uses the {@link #accept(ResourceTraversal[], IDiffVisitor)}
 	 * method to look for local changes. Subclasses may override.
