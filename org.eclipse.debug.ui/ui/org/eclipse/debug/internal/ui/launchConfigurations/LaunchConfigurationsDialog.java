@@ -603,6 +603,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		fNewAction = new Action(LaunchConfigurationsMessages.LaunchConfigurationDialog_Ne_w_13, DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_NEW_CONFIG)) {
 			public void run() {
 				getNewAction().run();
+				refreshFilteringLabel();
 			}
 		};
 		fNewAction.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_NEW_CONFIG));
@@ -611,6 +612,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		fDeleteAction = new Action(LaunchConfigurationsMessages.LaunchConfigurationDialog_Dele_te_14, DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE)) {
 			public void run() {
 				getDeleteAction().run();
+				refreshFilteringLabel();
 			}
 		};
 		fDeleteAction.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE));
@@ -639,6 +641,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		fDuplicateAction = new Action(LaunchConfigurationsMessages.DuplicateLaunchConfigurationAction__Duplicate_1, DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DUPLICATE_CONFIG)) {
 			public void run() {
 				getDuplicateAction().run();
+				refreshFilteringLabel();
 			}
 		};
 		fDuplicateAction.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DUPLICATE_CONFIG));
@@ -695,6 +698,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 					}
 				} else {
 					getNewAction().run();
+					refreshFilteringLabel();
 				}
 			}
 		};
@@ -754,7 +758,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			int total = 0;
 			ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
 			for(int i = 0; i < configs.length; i++) {
-				if(configs[i].supportsMode(getMode()) & !configs[i].getAttribute(IDebugUIConstants.ATTR_PRIVATE, false)) {
+				if(configs[i].supportsMode(getMode()) & !configs[i].getAttribute(IDebugUIConstants.ATTR_PRIVATE, false) & (configs[i].getCategory() == getLaunchGroup().getCategory())) {
 					total++;
 				}
 			}
