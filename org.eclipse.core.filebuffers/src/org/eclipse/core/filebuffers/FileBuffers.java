@@ -154,8 +154,13 @@ public final class FileBuffers {
 	 */
 	public static File getSystemFileAtLocation(IPath location) {
 		IFileStore store= getFileStoreAtLocation(location);
-		if (store != null && EFS.SCHEME_FILE.equals(store.getFileSystem().getScheme()))
-			return new File(store.toURI());
+		if (store != null) {
+			try {
+				return store.toLocalFile(EFS.NONE, null);
+			} catch (CoreException e) {
+				return null;
+			}
+		}
 		return null;
 	}	
 }
