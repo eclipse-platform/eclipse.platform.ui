@@ -45,7 +45,7 @@ class LineComparator implements IRangeComparator {
     }
 
     public LineComparator(IStorage storage, String outputEncoding) throws UnsupportedEncodingException, CoreException {
-		this(storage.getContents(), getEncoding(storage, outputEncoding));
+		this(new BufferedInputStream(storage.getContents()), getEncoding(storage, outputEncoding));
 	}
 
 	private static String getEncoding(IStorage storage, String outputEncoding) throws CoreException {

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import java.io.OutputStream;
+import java.io.*;
 
 import org.eclipse.compare.IStreamMerger;
 import org.eclipse.core.resources.IEncodedStorage;
@@ -41,16 +41,43 @@ public class StorageStreamMerger implements IStorageMerger {
 	}
 	
 	public IStatus merge(OutputStream output, String outputEncoding, IStorage ancestorStorage, IStorage targetStorage, IStorage otherStorage, IProgressMonitor monitor) throws CoreException {
-		IStatus status = merger.merge(output, outputEncoding, 
-				ancestorStorage.getContents(), getEncoding(ancestorStorage, outputEncoding), 
-				targetStorage.getContents(), getEncoding(targetStorage, outputEncoding), 
-				otherStorage.getContents(), getEncoding(otherStorage, outputEncoding), 
-				monitor);
-		if (status.isOK())
+		InputStream ancestorStream = null;
+		InputStream remoteStream = null;
+		InputStream targetStream = null;
+		try {
+			ancestorStream = new BufferedInputStream(ancestorStorage.getContents());
+			remoteStream = new BufferedInputStream(otherStorage.getContents());
+			targetStream = new BufferedInputStream(targetStorage.getContents());
+			IStatus status = merger.merge(output, outputEncoding, 
+					ancestorStream, getEncoding(ancestorStorage, outputEncoding), 
+					targetStream, getEncoding(targetStorage, outputEncoding), 
+					remoteStream, getEncoding(otherStorage, outputEncoding), 
+					monitor);
+			if (status.isOK())
+				return status;
+			if (status.getCode() == IStreamMerger.CONFLICT)
+				return new Status(status.getSeverity(), status.getPlugin(), CONFLICT, status.getMessage(), status.getException());
 			return status;
-		if (status.getCode() == IStreamMerger.CONFLICT)
-			return new Status(status.getSeverity(), status.getPlugin(), CONFLICT, status.getMessage(), status.getException());
-		return status;
+        } finally {
+            try {
+                if (ancestorStream != null)
+                    ancestorStream.close();
+            } catch (IOException e) {
+                // Ignore
+            }
+            try {
+                if (remoteStream != null)
+                    remoteStream.close();
+            } catch (IOException e) {
+                // Ignore
+            }
+            try {
+                if (targetStream != null)
+                    targetStream.close();
+            } catch (IOException e) {
+                // Ignore
+            }
+        }
 	}
 
 	private String getEncoding(IStorage ancestorStorage, String outputEncoding) {
