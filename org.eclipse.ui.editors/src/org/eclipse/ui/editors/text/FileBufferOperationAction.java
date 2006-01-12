@@ -103,7 +103,9 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 						fResources.add(adapter);
 				}
 			}
-		} else if (selection instanceof ITextSelection) {
+		}
+		
+		if (selection instanceof ITextSelection) {
 			IWorkbenchWindow window= getWorkbenchWindow();
 			if (window != null) {
 				IWorkbenchPart workbenchPart= window.getPartService().getActivePart();
