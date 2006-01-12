@@ -34,6 +34,8 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.TraverseEvent;
@@ -310,14 +312,11 @@ public class FilteredTree extends Composite {
             	} else if (e.character == SWT.CR){
 					return;
             	}
-            	else{
-            		textChanged();
-            	}
             }
         });
         
         // enter key set focus to tree
-        filterText.addTraverseListener( new TraverseListener () {
+        filterText.addTraverseListener(new TraverseListener () {
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_RETURN) {
 					e.doit = false;
@@ -339,6 +338,15 @@ public class FilteredTree extends Composite {
 				}
 			}
 		});
+        
+        filterText.addModifyListener(new ModifyListener(){
+        	/* (non-Javadoc)
+        	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
+        	 */
+        	public void modifyText(ModifyEvent e) {
+        		textChanged();
+        	}
+        });
 
 	}
 
@@ -489,7 +497,10 @@ public class FilteredTree extends Composite {
 	}
 
 	/**
-	 * Add an optional filter to the viewer.
+	 * Add an additional, optional filter to the viewer.
+	 * If the filter text is cleared, this filter will be 
+	 * removed from the TreeViewer. 
+	 * 
 	 * @param filter
 	 */
 	public void addFilter(ViewerFilter filter) {
