@@ -375,9 +375,6 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 *            may be passed to deregister a handler.
 	 */
 	public void setGlobalActionHandler(String actionID, IAction handler) {
-		if ("org.eclipse.jdt.ui.actions.Rename".equals(actionID)) { //$NON-NLS-1$
-			System.out.println(handler.getActionDefinitionId());
-		}
 		if (handler != null) {
 			// Update the action handlers.
 			if (actionHandlers == null)
