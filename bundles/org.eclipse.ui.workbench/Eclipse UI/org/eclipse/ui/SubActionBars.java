@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -22,10 +23,12 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.SubMenuManager;
 import org.eclipse.jface.action.SubStatusLineManager;
 import org.eclipse.jface.action.SubToolBarManager;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -117,11 +120,12 @@ public class SubActionBars extends EventManager implements IActionBars {
 		if (actionHandlers != null) {
 			actionHandlers.clear();
 			actionHandlersChanged = true;
-			
+
 			// Clean up the activations.
 			final IHandlerService service = (IHandlerService) serviceLocator
 					.getService(IHandlerService.class);
-			final Iterator activationItr = activationsByActionId.values().iterator();
+			final Iterator activationItr = activationsByActionId.values()
+					.iterator();
 			while (activationItr.hasNext()) {
 				final Object value = activationItr.next();
 				if (value instanceof IHandlerActivation) {
@@ -180,8 +184,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 * Dispose the contributions.
 	 */
 	public void dispose() {
-		if (actionHandlers != null)
-			actionHandlers.clear();
+		clearGlobalActionHandlers();
 		if (menuMgr != null) {
 			menuMgr.dispose();
 			menuMgr.disposeManager();
@@ -396,16 +399,37 @@ public class SubActionBars extends EventManager implements IActionBars {
 					}
 				}
 			}
-			// TODO Debugging.  Something like this needs to be here.
-//			final String commandId = handler.getActionDefinitionId();
-//			final IHandler actionHandler = new ActionHandler(handler);
-//			final IHandlerActivation activation = service.activateHandler(
-//					commandId, actionHandler);
-//			activationsByActionId.put(actionID, activation);
+
+			// Add a mapping from this action id to the command id.
+			final IActionCommandMappingService mappingService = (IActionCommandMappingService) serviceLocator
+					.getService(IActionCommandMappingService.class);
+			final String commandId = mappingService.getCommandId(actionID);
+			
+			if (commandId != null) {
+				// Register this as a handler with the given definition id.
+				final IHandler actionHandler = new ActionHandler(handler);
+				final IHandlerActivation activation = service.activateHandler(
+						commandId, actionHandler);
+				activationsByActionId.put(actionID, activation);
+			}
 
 		} else {
 			if (actionHandlers != null)
 				actionHandlers.remove(actionID);
+
+			// Remove the handler activation.
+			final IHandlerService service = (IHandlerService) serviceLocator
+					.getService(IHandlerService.class);
+			if (activationsByActionId != null) {
+				if (activationsByActionId.containsKey(actionID)) {
+					final Object value = activationsByActionId.remove(actionID);
+					if (value instanceof IHandlerActivation) {
+						final IHandlerActivation activation = (IHandlerActivation) value;
+						service.deactivateHandler(activation);
+						activation.getHandler().dispose();
+					}
+				}
+			}
 		}
 		actionHandlersChanged = true;
 	}

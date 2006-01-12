@@ -99,6 +99,8 @@ import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
+import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
+import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.LegacyActionHandlerPersistence;
 import org.eclipse.ui.internal.handlers.SlaveHandlerService;
 import org.eclipse.ui.internal.intro.IIntroConstants;
@@ -3329,6 +3331,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		final IHandlerService handlerService = new SlaveHandlerService(
 				parentHandlerService, defaultExpression);
 		serviceLocator.registerService(IHandlerService.class, handlerService);
+		
+		final ActionCommandMappingService mappingService = new ActionCommandMappingService();
+		serviceLocator.registerService(IActionCommandMappingService.class,
+				mappingService);
 
 		deprecatedSupport = new LegacyActionHandlerPersistence(this);
 		serviceLocator.registerService(LegacyActionHandlerPersistence.class,
