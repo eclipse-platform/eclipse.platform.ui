@@ -130,7 +130,7 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_HIERARCHICAL, ELCL + "hierarchicalLayout.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS, ELCL + "filter_ps.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_DUPLICATE_CONFIG, ELCL + "copy_edit_co.gif");  //$NON-NLS-1$
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_NEW_CONFIG, ELCL + "prop_ps.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_NEW_CONFIG, ELCL + "new_con.gif"); //$NON-NLS-1$
 		
 		//Object
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_LAUNCH_DEBUG, OBJECT + "ldebug_obj.gif"); //$NON-NLS-1$

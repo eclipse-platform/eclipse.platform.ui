@@ -616,7 +616,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		
 		fFilterAction = new Action(LaunchConfigurationsMessages.LaunchConfigurationsDialog_2, DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS)) {
 			public void run() {
-				final IPreferenceNode targetNode = new PreferenceNode(LaunchConfigurationsMessages.LaunchConfigurationsDialog_3, 
+				final IPreferenceNode targetNode = new PreferenceNode("org.eclipse.debug.ui.LaunchConfigurationsPreferenecPage",  //$NON-NLS-1$
 						new LaunchConfigurationsPreferencePage());
 				PreferenceManager manager = new PreferenceManager();
 				manager.addToRoot(targetNode);
