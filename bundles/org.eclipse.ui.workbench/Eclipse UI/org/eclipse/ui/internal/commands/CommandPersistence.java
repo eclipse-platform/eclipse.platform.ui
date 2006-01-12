@@ -171,11 +171,6 @@ final class CommandPersistence extends RegistryPersistence {
 			if (commandId == null) {
 				continue;
 			}
-			
-			// TODO Debugging line.  Please remove.
-			if ("org.eclipse.jdt.ui.edit.text.java.rename.element".equals(commandId)) { //$NON-NLS-1$
-				System.out.println(configurationElement.getNamespace());
-			}
 
 			// Read out the name.
 			final String name = readRequired(configurationElement,
