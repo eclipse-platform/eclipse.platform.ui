@@ -14,9 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.*;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
 import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -289,6 +292,89 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 		} finally {
 			monitor.done();
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.Subscriber#hasLocalChanges(org.eclipse.core.resources.mapping.ResourceTraversal[], org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public boolean hasLocalChanges(ResourceTraversal[] traversals, IProgressMonitor monitor) throws CoreException {
+		monitor = Policy.monitorFor(monitor);
+		for (int i = 0; i < traversals.length; i++) {
+			ResourceTraversal traversal = traversals[i];
+			IResource[] resources = traversal.getResources();
+			switch (traversal.getDepth()) {
+			case IResource.DEPTH_ZERO:
+				for (int j = 0; j < resources.length; j++) {
+					IResource resource = resources[j];
+					if (isDirectlyDirty(resource, monitor)) {
+						return true;
+					}
+				}
+				break;
+			case IResource.DEPTH_INFINITE:
+				for (int j = 0; j < resources.length; j++) {
+					IResource resource = resources[j];
+					if (isDirty(resource, monitor)) {
+						return true;
+					}
+				}
+				break;
+			case IResource.DEPTH_ONE:
+				for (int j = 0; j < resources.length; j++) {
+					IResource resource = resources[j];
+					if (isDirectlyDirty(resource, monitor)) {
+						return true;
+					}
+					IResource[] children = members(resource);
+					for (int k = 0; k < children.length; k++) {
+						IResource child = children[k];				
+						if (isDirectlyDirty(child, monitor)) {
+							return true;
+						}
+					}
+				}
+				break;
+			}
+		}
+		return false;
+	}
+	
+	private boolean isDirectlyDirty(IResource resource, IProgressMonitor monitor) throws CoreException {
+		if (resource.getType() == IResource.FILE) {
+			if (isDirty(resource, monitor))
+				return true;
+		} else {
+			IDiffNode node = getDiff(resource);
+			if (node != null 
+					&& node instanceof IThreeWayDiff 
+					&& ((IThreeWayDiff)node).getLocalChange() != null
+					&& ((IThreeWayDiff)node).getLocalChange().getKind() != IDiffNode.NO_CHANGE)
+				return true;
+		}
+		return false;
+	}
+	
+	public boolean isDirty(final ICVSResource cvsResource, IProgressMonitor monitor) throws CVSException {
+		return !cvsResource.isIgnored() && cvsResource.isModified(monitor);
+	}
+	
+	public boolean isDirty(IResource resource, IProgressMonitor monitor) throws CVSException {
+
+		// No need to decorate non-existant resources
+		if (!resource.exists()) return false;
+
+		try {
+			return isDirty(CVSWorkspaceRoot.getCVSResourceFor(resource), monitor);
+		} catch (CVSException e) {
+			//if we get an error report it to the log but assume dirty.
+			boolean accessible = resource.getProject().isAccessible();
+			if (accessible) {
+				throw e;
+			}
+			// Return dirty if the project is open and clean otherwise
+			return accessible;
+		}
+
 	}
 
 }

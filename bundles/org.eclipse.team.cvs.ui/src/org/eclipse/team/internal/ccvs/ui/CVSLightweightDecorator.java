@@ -31,7 +31,7 @@ import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 import org.eclipse.team.internal.core.ExceptionCollector;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
+import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.ITheme;
 import org.osgi.framework.Bundle;
@@ -92,28 +92,17 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 		});
 	}
 
-	public static boolean isDirty(final ICVSResource cvsResource) throws CVSException {
-		return !cvsResource.isIgnored() && cvsResource.isModified(null);
+	public static boolean isDirty(final ICVSResource resource) throws CVSException {
+		return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().isDirty(resource, null);
 	}
 
 	public static boolean isDirty(IResource resource) {
-
-		// No need to decorate non-existant resources
-		if (!resource.exists()) return false;
-
 		try {
-			return isDirty(CVSWorkspaceRoot.getCVSResourceFor(resource));
+			return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().isDirty(resource, null);
 		} catch (CVSException e) {
-			//if we get an error report it to the log but assume dirty.
-			boolean accessible = resource.getProject().isAccessible();
-			if (accessible) {
-				// We only care about the failure if the project is open
-				handleException(resource, e);
-			}
-			// Return dirty if the project is open and clean otherwise
-			return accessible;
+			handleException(resource, e);
+			return true;
 		}
-
 	}
 	
 	/*
@@ -169,7 +158,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 			String[] ids = context.getContextIds();
 			for (int i = 0; i < ids.length; i++) {
 				String id = ids[i];
-				if (id.equals(SynchronizationContentProvider.DECORATION_CONTEXT)) {
+				if (id.equals(SynchronizationLabelProvider.SYNCHRONIZATION_AWARE_PROVIDER)) {
 					includeDirtyCheck = false;
 					break;
 				}

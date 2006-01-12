@@ -14,7 +14,8 @@ import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -22,10 +23,9 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.ui.IContributorResourceAdapter;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
-import org.eclipse.ui.ide.IContributorResourceAdapter2;
 
 /**
  * Model provider actions for use with a {@link ModelSynchronizeParticipant}.
@@ -128,7 +128,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	}
 
 	private IDiffNode[] getFileDeltas(Object o) {
-		IResource resource = getResource(o);
+		IResource resource = Utils.getResource(o);
 		if (resource != null) {
 			ISynchronizationContext context = getContext();
 			final IResourceDiffTree diffTree = context.getDiffTree();
@@ -189,7 +189,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	}
 
 	private ResourceTraversal[] getTraversals(Object o) {
-		ResourceMapping mapping = getResourceMapping(o);
+		ResourceMapping mapping = Utils.getResourceMapping(o);
 		if (mapping != null) {
 			// First, check if we have already calculated the traversal
 			ResourceTraversal[] traversals = getContext().getScope().getTraversals(mapping);
@@ -204,47 +204,6 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 			}
 		}
 		return new ResourceTraversal[0];
-	}
-
-	/*
-	 * TODO this method should be centralized
-	 */
-	private IResource getResource(Object o) {
-		IResource resource = null;
-		if (o instanceof IResource) {
-			resource = (IResource) o;
-		} else if (o instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) o;
-			resource = (IResource)adaptable.getAdapter(IResource.class);
-			if (resource == null) {
-				IContributorResourceAdapter adapter = (IContributorResourceAdapter)adaptable.getAdapter(IContributorResourceAdapter.class);
-				if (adapter != null)
-					resource = adapter.getAdaptedResource(adaptable);
-			}
-		}
-		return resource;
-	}
-	
-	/*
-	 * TODO this method should be centralized
-	 */
-	private ResourceMapping getResourceMapping(Object o) {
-		ResourceMapping mapping = null;
-		if (o instanceof ResourceMapping) {
-			mapping = (ResourceMapping) o;
-		} else if (o instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) o;
-			mapping = (ResourceMapping)adaptable.getAdapter(ResourceMapping.class);
-			if (mapping == null) {
-				Object adapter = adaptable.getAdapter(IContributorResourceAdapter.class);
-				if (adapter instanceof IContributorResourceAdapter2) {
-					IContributorResourceAdapter2 cra = (IContributorResourceAdapter2) adapter;
-					if (cra != null)
-						mapping = cra.getAdaptedResourceMapping(adaptable);
-				}
-			}
-		}
-		return mapping;
 	}
 	
 	/**

@@ -712,6 +712,23 @@ public class Utils {
 		return null;
 	}
 	
+	public static IResource getResource(Object o) {
+		IResource resource = null;
+		if (o instanceof IResource) {
+			resource = (IResource) o;
+		} else if (o instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) o;
+			resource = (IResource)adaptable.getAdapter(IResource.class);
+			if (resource == null) {
+				IContributorResourceAdapter adapter = (IContributorResourceAdapter)adaptable.getAdapter(IContributorResourceAdapter.class);
+				if (adapter != null)
+					resource = adapter.getAdaptedResource(adaptable);
+			}
+		}
+		return resource;
+	}
+	
+	
 	public static ResourceMapping getResourceMapping(Object o) {
 		if (o instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) o;

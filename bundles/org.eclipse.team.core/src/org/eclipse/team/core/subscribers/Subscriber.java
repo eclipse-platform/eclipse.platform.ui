@@ -447,13 +447,14 @@ abstract public class Subscriber {
 	 * </p>
 	 * @since 3.2
 	 * @param traversals the resource traversals
-	 * @param monitor a progress monitor
+	 * @param monitor a progress monitor or <code>null</code> if progress reporting is not required
 	 * @return whether there are any local changes covered
 	 * by the given traversals
 	 * @throws CoreException if errors occur
 	 */
 	public boolean hasLocalChanges(ResourceTraversal[] traversals, IProgressMonitor monitor) throws CoreException {
 		if (getResourceComparator().isThreeWay()) {
+			monitor = Policy.monitorFor(monitor);
 			final CoreException found = new CoreException(Status.OK_STATUS);
 			try {
 				accept(traversals, new IDiffVisitor() {

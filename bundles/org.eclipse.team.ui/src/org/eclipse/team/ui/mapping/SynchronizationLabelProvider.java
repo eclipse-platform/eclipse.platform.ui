@@ -37,6 +37,13 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizati
 
 	private IResourceMappingScope scope;
 	private ISynchronizationContext context;
+	/**
+	 * Context identifier used to indicate to label decorators that this label decorator
+	 * is synchronization state aware and will handle the application of any dirty state decoration.
+	 * Any label providers that use this decorator will need to include this context id in the 
+	 * {@link IDecorationContext}.
+	 */
+	public static final String SYNCHRONIZATION_AWARE_PROVIDER = "org.eclipse.team.ui.syncAwareLabelProvider"; //$NON-NLS-1$
 	
 	private void init(IResourceMappingScope input, ISynchronizationContext context) {
 		this.scope = input;

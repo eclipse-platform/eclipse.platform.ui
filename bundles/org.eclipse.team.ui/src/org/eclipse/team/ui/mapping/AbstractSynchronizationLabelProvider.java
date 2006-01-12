@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.ui.mapping;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.resources.mapping.ModelProvider;
@@ -38,12 +35,9 @@ import org.eclipse.team.internal.ui.*;
  * @since 3.2
  */
 public abstract class AbstractSynchronizationLabelProvider implements ILabelProvider {
-
-	// Cache for folder images that have been overlayed with conflict icon
-	private Map fgImageCache;
 	
 	// Contains direction images
-	CompareConfiguration compareConfig = new CompareConfiguration();
+	private CompareConfiguration compareConfig = new CompareConfiguration();
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
@@ -182,13 +176,6 @@ public abstract class AbstractSynchronizationLabelProvider implements ILabelProv
 	 */
 	public void dispose() {
 		compareConfig.dispose();
-		if (fgImageCache != null) {
-			Iterator it = fgImageCache.values().iterator();
-			while (it.hasNext()) {
-				Image element = (Image) it.next();
-				element.dispose();
-			}
-		}
 	}
 
 	/* (non-Javadoc)
