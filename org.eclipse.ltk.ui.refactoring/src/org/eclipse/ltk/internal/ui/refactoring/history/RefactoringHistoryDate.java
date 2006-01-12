@@ -19,6 +19,12 @@ import org.eclipse.core.runtime.Assert;
  */
 public final class RefactoringHistoryDate extends RefactoringHistoryNode {
 
+	/** The refactoring history node kind */
+	private final int fKind;
+
+	/** The parent node, or <code>null</code> */
+	private final RefactoringHistoryNode fParent;
+
 	/** The time stamp */
 	private final long fStamp;
 
@@ -33,9 +39,10 @@ public final class RefactoringHistoryDate extends RefactoringHistoryNode {
 	 *            the node kind
 	 */
 	public RefactoringHistoryDate(final RefactoringHistoryNode parent, final long stamp, final int kind) {
-		super(parent, kind);
 		Assert.isTrue(stamp >= 0);
+		fParent= parent;
 		fStamp= stamp;
+		fKind= kind;
 	}
 
 	/**
@@ -47,6 +54,20 @@ public final class RefactoringHistoryDate extends RefactoringHistoryNode {
 			return fStamp == date.fStamp;
 		}
 		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getKind() {
+		return fKind;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public RefactoringHistoryNode getParent() {
+		return fParent;
 	}
 
 	/**

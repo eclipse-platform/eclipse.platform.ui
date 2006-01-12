@@ -53,32 +53,13 @@ public abstract class RefactoringHistoryNode {
 	/** The yesterday kind */
 	public static final int YESTERDAY= 1;
 
-	/** The node kind */
-	private final int fKind;
-
-	/** The parent node, or <code>null</code> */
-	private final RefactoringHistoryNode fParent;
-
-	/**
-	 * Creates a new refactoring history node.
-	 * 
-	 * @param parent
-	 *            the parent node, or <code>null</code>
-	 * @param kind
-	 *            the node kind
-	 */
-	public RefactoringHistoryNode(final RefactoringHistoryNode parent, final int kind) {
-		fParent= parent;
-		fKind= kind;
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean equals(final Object object) {
 		if (object instanceof RefactoringHistoryNode) {
 			final RefactoringHistoryNode node= (RefactoringHistoryNode) object;
-			return fParent == node.fParent && fKind == node.fKind;
+			return getParent() == node.getParent() && getKind() == node.getKind();
 		}
 		return false;
 	}
@@ -88,23 +69,19 @@ public abstract class RefactoringHistoryNode {
 	 * 
 	 * @return the node kind
 	 */
-	public int getKind() {
-		return fKind;
-	}
+	public abstract int getKind();
 
 	/**
 	 * Returns the parent node.
 	 * 
 	 * @return the parent node, or <code>null</code>
 	 */
-	public RefactoringHistoryNode getParent() {
-		return fParent;
-	}
+	public abstract RefactoringHistoryNode getParent();
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public int hashCode() {
-		return fKind + 31 * (fParent != null ? fParent.hashCode() : 1);
+		return getKind() + 31 * (getParent() != null ? getParent().hashCode() : 1);
 	}
 }

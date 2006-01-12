@@ -11,16 +11,23 @@
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
 /**
- * Container node of a refactoring history.
+ * Collection node of a refactoring history.
  * 
  * @since 3.2
  */
-public final class RefactoringHistoryContainer extends RefactoringHistoryNode {
+public final class RefactoringHistoryCollection extends RefactoringHistoryNode {
 
 	/**
-	 * Creates a new refactoring history container.
+	 * {@inheritDoc}
 	 */
-	public RefactoringHistoryContainer() {
-		super(null, RefactoringHistoryNode.COLLECTION);
+	public int getKind() {
+		return RefactoringHistoryNode.COLLECTION;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public RefactoringHistoryNode getParent() {
+		return null;
 	}
 }

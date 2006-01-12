@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
-import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryContainer;
+import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryCollection;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryDate;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEntry;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryNode;
@@ -155,7 +155,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 			if (fControlConfiguration.isTimeDisplayed())
 				return getRootElements();
 			else if (fRefactoringHistory != null && !fRefactoringHistory.isEmpty())
-				return new Object[] { new RefactoringHistoryContainer() };
+				return new Object[] { new RefactoringHistoryCollection() };
 		}
 		return NO_ELEMENTS;
 	}

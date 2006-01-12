@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
@@ -22,16 +24,20 @@ public final class RefactoringHistoryEntry extends RefactoringHistoryNode {
 	/** The refactoring descriptor proxy */
 	private final RefactoringDescriptorProxy fDescriptorProxy;
 
+	/** The parent node, or <code>null</code> */
+	private final RefactoringHistoryNode fParent;
+
 	/**
 	 * Creates a new refactoring history entry.
 	 * 
 	 * @param parent
-	 *            the parent node
+	 *            the parent node, or <code>null</code>
 	 * @param proxy
 	 *            the refactoring descriptor proxy
 	 */
 	public RefactoringHistoryEntry(final RefactoringHistoryNode parent, final RefactoringDescriptorProxy proxy) {
-		super(parent, RefactoringHistoryNode.ENTRY);
+		Assert.isNotNull(proxy);
+		fParent= parent;
 		fDescriptorProxy= proxy;
 	}
 
@@ -53,6 +59,20 @@ public final class RefactoringHistoryEntry extends RefactoringHistoryNode {
 	 */
 	public RefactoringDescriptorProxy getDescriptor() {
 		return fDescriptorProxy;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getKind() {
+		return RefactoringHistoryNode.ENTRY;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public RefactoringHistoryNode getParent() {
+		return fParent;
 	}
 
 	/**
