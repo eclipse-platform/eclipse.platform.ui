@@ -63,7 +63,10 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.contexts.SuspendTriggerAdapterFactory;
+import org.eclipse.debug.internal.ui.launchConfigurations.ClosedProjectFilter;
+import org.eclipse.debug.internal.ui.launchConfigurations.DeletedProjectFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTypeFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupManager;
@@ -1028,5 +1031,29 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		}    	
 		return null;
     }
+    
+    /**
+	 * performs extra filtering for launch configuraitons based on the prefs set on the 
+	 * Launch Configuraitons page
+	 * @param config the config to filter
+	 * @return true if it should pass the filter, false otherwise
+	 * @since 3.2
+	 */
+	public static boolean doLaunchConfigurationFiltering(ILaunchConfiguration config) {
+		boolean ret = true;
+		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
+			ret &= new ClosedProjectFilter().select(null, null, config);
+		}
+		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED)) {
+			ret &= new DeletedProjectFilter().select(null, null, config);
+		}
+		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES)) {
+			try {
+				ret &= new LaunchConfigurationTypeFilter().select(null, null, config.getType());
+			}
+			catch(CoreException e) {e.printStackTrace();}
+		}
+		return ret;
+	}
 }
 

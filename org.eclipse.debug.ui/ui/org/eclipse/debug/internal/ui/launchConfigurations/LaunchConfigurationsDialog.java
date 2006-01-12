@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -681,7 +682,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 
 		//create the toolbar area
 		createToolbarArea(comp);
-
+		
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup());
 		fLaunchConfigurationView.createLaunchDialogControl(comp);
 		fDoubleClickAction = new Action() {
@@ -750,7 +751,19 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private void refreshFilteringLabel() {
 		try {
-			int total = getLaunchManager().getLaunchConfigurations().length + getLaunchManager().getLaunchConfigurationTypes().length;
+			int total = 0;
+			ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
+			for(int i = 0; i < configs.length; i++) {
+				if(configs[i].supportsMode(getMode()) & !configs[i].getAttribute(IDebugUIConstants.ATTR_PRIVATE, false)) {
+					total++;
+				}
+			}
+			ILaunchConfigurationType[] types = getLaunchManager().getLaunchConfigurationTypes();
+			for(int i = 0; i < types.length; i++) {
+				if(types[i].supportsMode(getMode()) & types[i].isPublic() & (types[i].getCategory() ==  getLaunchGroup().getCategory())) {
+					total++;
+				}
+			}
 			TreeViewer viewer = ((TreeViewer)fLaunchConfigurationView.getViewer());
 			viewer.getTree().selectAll();
 			int filtered = ((IStructuredSelection)viewer.getSelection()).size();
@@ -1789,8 +1802,15 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		StructuredViewer viewer = (StructuredViewer)fLaunchConfigurationView.getViewer();
+		boolean newvalue = false;
+		if(event.getNewValue() instanceof Boolean) {
+			newvalue = ((Boolean)event.getNewValue()).booleanValue();
+		}
+		else {
+			newvalue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
+		}
 		if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
-			if(((Boolean)event.getNewValue()).booleanValue()) {
+			if(newvalue) {
 				viewer.addFilter(fClosedProjectFilter);
 			}
 			else {
@@ -1798,7 +1818,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			}
 		}
 		else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED)) {
-			if(((Boolean)event.getNewValue()).booleanValue()) {
+			if(newvalue) {
 				viewer.addFilter(fDeletedProjectFilter);
 			}
 			else {
@@ -1806,7 +1826,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			}
 		}
 		else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES)) {
-			if(((Boolean)event.getNewValue()).booleanValue()) {
+			if(newvalue) {
 				viewer.addFilter(fLCTFilter);
 			}
 			else {
@@ -1817,6 +1837,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			viewer.removeFilter(fLCTFilter);
 			viewer.addFilter(fLCTFilter);
 		}
+		((TreeViewer)viewer).expandAll();
 		refreshFilteringLabel();
 		updateButtons();
 		updateMessage();

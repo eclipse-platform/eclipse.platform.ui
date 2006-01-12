@@ -29,6 +29,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchGroup;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
  * A history of launches and favorites for a launch group
@@ -70,7 +71,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 */
 	public void launchAdded(ILaunch launch) {
 		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
-		if (configuration != null && !configuration.isWorkingCopy() && accepts(configuration)) {
+		if (configuration != null && !configuration.isWorkingCopy() && DebugUIPlugin.doLaunchConfigurationFiltering(configuration) && accepts(configuration)) {
 			addHistory(configuration, true);
 			setRecentLaunch(configuration);
 		}
@@ -172,7 +173,14 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * <code>null</code> if none 
 	 */
 	public ILaunchConfiguration getRecentLaunch() {
-		return fRecentLaunch;
+		try {
+			if(fRecentLaunch != null &&  DebugUIPlugin.doLaunchConfigurationFiltering(fRecentLaunch) && 
+			   !WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(fRecentLaunch.getType()))) {
+				return fRecentLaunch;
+			}
+		}
+		catch(CoreException e) {e.printStackTrace();}
+		return null;
 	}
 	
 	/**

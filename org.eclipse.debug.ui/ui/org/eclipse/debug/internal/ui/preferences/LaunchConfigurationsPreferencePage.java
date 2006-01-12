@@ -183,7 +183,14 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		BooleanFieldEditor2 editor = new BooleanFieldEditor2(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES, DebugPreferencesMessages.LaunchConfigurationsPreferencePage_0, SWT.NONE, comp);
 		editor.setPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				if(((Boolean)event.getNewValue()).booleanValue()) {
+				boolean newvalue = false;
+				if(event.getNewValue() instanceof Boolean) {
+					newvalue = ((Boolean)event.getNewValue()).booleanValue();
+				}
+				else {
+					newvalue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
+				}
+				if(newvalue) {
 					fTable.setEnabled(true);
 				}
 				else {
@@ -298,9 +305,15 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
+		FieldEditor editor = null;
 		for(int i = 0; i < fFieldEditors.size(); i++) {
-			((FieldEditor)fFieldEditors.get(i)).loadDefault();
+			editor = (FieldEditor)fFieldEditors.get(i);
+			editor.loadDefault();
+			if(editor instanceof BooleanFieldEditor2) {
+				fTable.setEnabled(((BooleanFieldEditor2)editor).getBooleanValue());
+			}
 		}
+		
 	}
 	
 	/* (non-Javadoc)

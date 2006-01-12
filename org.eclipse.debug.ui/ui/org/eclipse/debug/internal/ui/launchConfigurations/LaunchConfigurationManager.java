@@ -200,7 +200,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			try {
 				type = configuration.getType();
 				LaunchConfigurationTypeContribution contribution = new LaunchConfigurationTypeContribution(type);
-				if (doExtraFiltering(configuration) & !WorkbenchActivityHelper.filterItem(contribution)) {
+				if (DebugUIPlugin.doLaunchConfigurationFiltering(configuration) & !WorkbenchActivityHelper.filterItem(contribution)) {
 					filteredConfigs.add(configuration);
 				}
 			} 
@@ -219,30 +219,6 @@ public class LaunchConfigurationManager implements ILaunchListener {
 				history.dispose();
 			}
 		}
-	}
-	
-	/**
-	 * performs extra filtering for launch configuraitons based on the prefs set on the 
-	 * Launch Configuraitons page
-	 * @param config the config to filter
-	 * @return true if it should pass the filter, false otherwise
-	 * @since 3.2
-	 */
-	private static boolean doExtraFiltering(ILaunchConfiguration config) {
-		boolean ret = true;
-		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
-			ret &= new ClosedProjectFilter().select(null, null, config);
-		}
-		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED)) {
-			ret &= new DeletedProjectFilter().select(null, null, config);
-		}
-		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES)) {
-			try {
-				ret &= new LaunchConfigurationTypeFilter().select(null, null, config.getType());
-			}
-			catch(CoreException e) {e.printStackTrace();}
-		}
-		return ret;
 	}
 	
 	/**
