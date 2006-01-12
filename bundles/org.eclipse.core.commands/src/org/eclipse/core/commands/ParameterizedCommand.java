@@ -150,18 +150,22 @@ public final class ParameterizedCommand implements Comparable {
 		final boolean noMoreParameters = (startIndex + 1 >= parameters.length);
 
 		final IParameter parameter = parameters[startIndex];
+		final List parameterizations = new ArrayList();
+		if (parameter.isOptional()) {
+			parameterizations.add(null);
+		}
+		
 		IParameterValues values = null;
 		try {
 			values = parameter.getValues();
 		} catch (final ParameterValuesException e) {
 			if (noMoreParameters) {
-				return Collections.EMPTY_LIST;
+				return parameterizations;
 			}
 
 			return expandParameters(startIndex, parameters);
 		}
 		final Map parameterValues = values.getParameterValues();
-		final List parameterizations = new ArrayList(parameterValues.size());
 		final Iterator parameterValueItr = parameterValues.entrySet()
 				.iterator();
 		while (parameterValueItr.hasNext()) {
@@ -169,9 +173,6 @@ public final class ParameterizedCommand implements Comparable {
 			final Parameterization parameterization = new Parameterization(
 					parameter, (String) entry.getValue());
 			parameterizations.add(parameterization);
-		}
-		if (parameter.isOptional()) {
-			parameterizations.add(null);
 		}
 
 		// Check if another iteration will produce any more names.
@@ -253,22 +254,21 @@ public final class ParameterizedCommand implements Comparable {
 		final Iterator expansionItr = expansion.iterator();
 		while (expansionItr.hasNext()) {
 			final List combination = (List) expansionItr.next();
-			while (combination.remove(null)) {
-				// Just keep removing while there are null entries left.
-			}
-			if (combination.isEmpty()) {
+			if (combination == null) {
 				combinations.add(new ParameterizedCommand(command, null));
 			} else {
-				final Parameterization[] parameterizations = (Parameterization[]) combination
-						.toArray(new Parameterization[combination.size()]);
-				combinations.add(new ParameterizedCommand(command,
-						parameterizations));
+				while (combination.remove(null)) {
+					// Just keep removing while there are null entries left.
+				}
+				if (combination.isEmpty()) {
+					combinations.add(new ParameterizedCommand(command, null));
+				} else {
+					final Parameterization[] parameterizations = (Parameterization[]) combination
+							.toArray(new Parameterization[combination.size()]);
+					combinations.add(new ParameterizedCommand(command,
+							parameterizations));
+				}
 			}
-		}
-
-		if (combinations.isEmpty()) {
-			return Collections
-					.singleton(new ParameterizedCommand(command, null));
 		}
 		
 		return combinations;
