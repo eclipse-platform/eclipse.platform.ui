@@ -30,4 +30,11 @@ public class UserAssistanceTestPlugin extends AbstractUIPlugin {
 	public static UserAssistanceTestPlugin getDefault() {
 		return plugin;
 	}
+	
+	/**
+	 * @return the id of this plugin
+	 */
+	public static String getPluginId() {
+		return "org.eclipse.ua.tests";
+	}
 }

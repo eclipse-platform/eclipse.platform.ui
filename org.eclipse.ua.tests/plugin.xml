@@ -134,4 +134,30 @@
        <contexts file="data/cheatsheet/contexts.xml"/>
    </extension>
 
+   <!-- 
+      Command used in tests
+   -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.eclipse.ui.cheatsheets.tests.category1"
+            name="org.eclipse.ui.cheatsheets.tests.category1"/>
+      <command
+            categoryId="org.eclipse.ui.category.file"
+            defaultHandler="org.eclipse.ua.tests.cheatsheet.execution.CommandHandler"
+            id="org.eclipse.ui.cheatsheets.tests.command1"
+            name="Cheatsheet test command">
+         <commandParameter
+               id="param1_id"
+               name="Parameter1"
+               optional="true"
+               />
+         <commandParameter
+               id="param2_id"
+               name="Parameter2"
+               optional="true"
+               />
+      </command>
+   </extension>
+
 </plugin>
