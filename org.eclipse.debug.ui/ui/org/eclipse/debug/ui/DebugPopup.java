@@ -39,24 +39,62 @@ public abstract class DebugPopup extends PopupDialog {
 
     private IHandlerService fHandlerService;
 
+    /**
+     * Constructs a new popup dialog of type <code>PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE</code>
+     * @param parent The parent shell
+     * @param viewer The text viewer on which the popup is to be installed
+     */
     public DebugPopup(Shell parent, ITextViewer viewer) {
         super(parent, PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE, true, true, false, true, null, null);
         fViewer = viewer;
     }
 
+    /**
+     * Returns the text to be shown in the popups's info area. 
+     * May return <code>null</code>
+     * 
+     * @return The text to be shown in the popup's info area or <code>null</code>
+     */
     protected String getInfoText() {
         return null;
     }
 
+    /**
+     * Returns the command id to be used for persisting the contents of the
+     * dialog. If the contents should not be persisted, this method should 
+     * return null.
+     * 
+     * @return The command id to be used for persisting the contents of the
+     * dialog or <code>null</code>
+     */
     protected String getCommandId() {
         return null;
     }
 
+    /**
+     * Persists the contents of the dialog.
+     */
     protected void persist() {
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.PopupDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+     */
     protected abstract Control createDialogArea(Composite parent);
 
+
+    /**
+     * Returns the initial location to use for the shell based upon the 
+     * current selection in the viewer. Bottom is preferred to top, and 
+     * right is preferred to left, therefore if possible the popup will
+     * be located below and to the right of the selection.
+     * 
+     * @param initialSize
+     *            the initial size of the shell, as returned by
+     *            <code>getInitialSize</code>.
+     * @return the initial location of the shell
+     */
     protected Point getInitialLocation(Point initialSize) {
         StyledText textWidget = fViewer.getTextWidget();
         Point docRange = textWidget.getSelectionRange();
@@ -81,12 +119,19 @@ public abstract class DebugPopup extends PopupDialog {
         return point;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.PopupDialog#getDialogSettings()
+     */
     protected IDialogSettings getDialogSettings() {
         IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
         return settings;
     }
 
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.PopupDialog#open()
+     */
     public int open() {
         IWorkbench workbench = PlatformUI.getWorkbench();
         String commandId = getCommandId();
@@ -110,6 +155,9 @@ public abstract class DebugPopup extends PopupDialog {
         return super.open();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.PopupDialog#close()
+     */
     public boolean close() {
         if (fActivation != null)
             fHandlerService.deactivateHandler(fActivation);

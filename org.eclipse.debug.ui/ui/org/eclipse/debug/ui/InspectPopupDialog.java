@@ -58,6 +58,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.keys.IBindingService;
 
+/**
+ *
+ */
 public class InspectPopupDialog extends DebugPopup {
     private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 90, 10 };
 
@@ -79,12 +82,24 @@ public class InspectPopupDialog extends DebugPopup {
 
     private String fCommandId;
 
+    /**
+     * Creates a new inspect popup.
+     * 
+     * @param shell The parent shell
+     * @param viewer The viewer on which the popup will be installed
+     * @param commandId The command id to be used for persistance of 
+     * the dialog (possibly <code>null</code>)
+     * @param expression The expression being inspected
+     */
     public InspectPopupDialog(Shell shell, ITextViewer viewer, String commandId, IExpression expression) {
         super(shell, viewer);
         fCommandId = commandId;
         fExpression = expression;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.DebugPopup#createDialogArea(org.eclipse.swt.widgets.Composite)
+     */
     protected Control createDialogArea(Composite parent) {
         Composite composite = new Composite(parent, parent.getStyle());
         GridLayout layout = new GridLayout();
@@ -225,10 +240,17 @@ public class InspectPopupDialog extends DebugPopup {
         return variablesView;
     }
 
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.DebugPopup#getCommandId()
+     */
     protected String getCommandId() {
         return fCommandId;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.DebugPopup#getInfoText()
+     */
     protected String getInfoText() {
         IWorkbench workbench = PlatformUI.getWorkbench();
         IBindingService bindingService = (IBindingService) workbench.getAdapter(IBindingService.class);
@@ -240,6 +262,9 @@ public class InspectPopupDialog extends DebugPopup {
         return infoText;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.DebugPopup#persist()
+     */
     protected void persist() {
         DebugPlugin.getDefault().getExpressionManager().addExpression(fExpression);
 
@@ -256,13 +281,13 @@ public class InspectPopupDialog extends DebugPopup {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.PopupDialog#getInitialSize()
+     */
     protected Point getInitialSize() {
         Point initialSize = super.getInitialSize();
         initialSize.x = Math.max(initialSize.x, MIN_WIDTH);
         initialSize.y = Math.max(initialSize.y, MIN_HEIGHT);
         return initialSize;
     }
-    
-    
-
 }
