@@ -227,7 +227,15 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		// Add double-click listener
 		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
+				IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+				Object obj = selection.getFirstElement();
+				if (obj instanceof CheatSheetCollectionElement) {
+					boolean state = treeViewer.getExpandedState(obj);
+					treeViewer.setExpandedState(obj, !state);
+				}
+				else {
+					okPressed();
+				}
 			}
 		});
 
