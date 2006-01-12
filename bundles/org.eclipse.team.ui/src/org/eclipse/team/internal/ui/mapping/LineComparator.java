@@ -26,6 +26,30 @@ class LineComparator implements IRangeComparator {
 
     private String[] fLines;
 
+    public static LineComparator create(IStorage storage, String outputEncoding) throws CoreException, UnsupportedEncodingException {
+    	InputStream is = new BufferedInputStream(storage.getContents());
+    	try {
+			String encoding = getEncoding(storage, outputEncoding);
+			return new LineComparator(is, encoding);
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				// Ignore
+			}
+		}
+    }
+    
+	private static String getEncoding(IStorage storage, String outputEncoding) throws CoreException {
+		if (storage instanceof IEncodedStorage) {
+			IEncodedStorage es = (IEncodedStorage) storage;
+			String charset = es.getCharset();
+			if (charset != null)
+				return charset;
+		}
+		return outputEncoding;
+	}
+	
     public LineComparator(InputStream is, String encoding) throws UnsupportedEncodingException {
         
         BufferedReader br = new BufferedReader(new InputStreamReader(is, encoding));
@@ -43,20 +67,6 @@ class LineComparator implements IRangeComparator {
         }
         fLines = (String[]) ar.toArray(new String[ar.size()]);
     }
-
-    public LineComparator(IStorage storage, String outputEncoding) throws UnsupportedEncodingException, CoreException {
-		this(new BufferedInputStream(storage.getContents()), getEncoding(storage, outputEncoding));
-	}
-
-	private static String getEncoding(IStorage storage, String outputEncoding) throws CoreException {
-		if (storage instanceof IEncodedStorage) {
-			IEncodedStorage es = (IEncodedStorage) storage;
-			String charset = es.getCharset();
-			if (charset != null)
-				return charset;
-		}
-		return outputEncoding;
-	}
 
 	String getLine(int ix) {
         return fLines[ix];
