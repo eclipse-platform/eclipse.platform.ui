@@ -41,7 +41,6 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         public IWindowTrim draggedTrim;
         
         // tracking parameters
-    	private int threshold = 100;  // How close to a caret the cursor has to be to be 'valid'
     	private List insertCarets = new ArrayList();
     	private InsertCaret curCaret;
     	private DragBorder border = null;
@@ -53,6 +52,9 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         private IWindowTrim initialInsertBefore;        
 		private Rectangle initialLocation;
 
+        /**
+         * Constructor
+         */
         private ActualTrimDropTarget() {
             super();
 
@@ -63,6 +65,14 @@ import org.eclipse.ui.internal.layout.TrimLayout;
             initialInsertBefore = null;
         }
         
+        /**
+         * This method is used to delineate separate trims dragging events. The -first- drag
+         * event will set this and then it will remain constant until the drag gesture is done;
+         * either by dropping or escaping. Once the gesture is finished the trim value is set
+         * back to 'null'.
+         * 
+         * @param trim The trim item currently being dragged.
+         */
         public void setTrim(IWindowTrim trim) {
         	// Are we starting a new drag?
         	if (draggedTrim != trim) {
@@ -93,6 +103,12 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         	}
         }
         
+        /**
+         * Determine the trim area from the point.
+         * 
+         * @param pos The current cursor pos
+         * @return the Trim area that the cursor is in or SWT.NONE if the point is not in an area
+         */
         private int getTrimArea(Point pos) {
         	int[] areaIds = layout.getAreaIds();
         	for (int i = 0; i < areaIds.length; i++) {
@@ -135,6 +151,17 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         	return SWT.NONE;
         }
         
+        /**
+         * Returns a point based on the supplied rectangle that would be an appropriate
+         * insertion point. This point is adjusted based on the 'side' that the point is
+         * being calculated for.
+         * 
+         * @param rect The rectangle to generate the insertion point for
+         * @param side The side that this rectangle is on
+         * @param atTheEnd 'true' iff you want a point at the 'end' of the rect...
+         * 
+         * @return The adjusted insertion point
+         */
         private Point getInsertPoint(Rectangle rect, int side, boolean atTheEnd) {
         	if (atTheEnd) {
 	        	switch (side) {
@@ -163,6 +190,12 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 			return null;
         }
         
+        /**
+         * Calculate the set of insertion points appropriate for the given trim area.
+         * 
+         * @param areaId The area to compute the points for
+         * @return The array of insertion points for the given area
+         */
         private Point[] calculateInsertionPoints(int areaId) {
 			TrimArea area = layout.getTrimArea(areaId);
 			List trim = area.getDescriptors();
@@ -176,7 +209,11 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 				trimRect = Geometry.toControl(windowComposite, trimRect);
 				
 				// Place the insertion point at the 'start' of the trim rect
-				insertionPoints[0] = Geometry.centerPoint(trimRect);//getInsertPoint(trimRect, areaId, false);
+				if (TrimDragPreferences.useMiddleIfEmpty())
+					insertionPoints[0] = Geometry.centerPoint(trimRect);
+				else
+					insertionPoints[0] = getInsertPoint(trimRect, areaId, false);
+					
 				return insertionPoints;
 			}
 			
@@ -208,38 +245,12 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         }
         
         /**
-         * Recalculates the drop information based on the current cursor pos.
-         * 
-         * @param pos The cursor position
+         * Determine the window trim that the currently dragged trim should be inserted
+         * before.
+         * @param areaId The area id that is being checked
+         * @param pos The position used to determine the correct insertion trim
+         * @return The trim to 'dock' the draggedTrim before
          */
-        public void track(Point pos) {
-        	// Convert the mouse positon into 'local' coords
-        	Rectangle r = new Rectangle(pos.x, pos.y, 1,1);
-        	r = Geometry.toControl(windowComposite, r);
-        	pos.x = r.x;
-        	pos.y = r.y;
-        	        	
-        	// Are we 'inside' a trim area ?
-        	cursorAreaId = getTrimArea(pos);
-        	
-        	// Do we have to 'undock' ?
-        	if (cursorAreaId == SWT.NONE && docked) {
-        		undock();
-        	}
-        	
-        	// Do we have to 'dock'?
-        	if (cursorAreaId != SWT.NONE && !docked) {
-        		IWindowTrim insertBefore = getInsertBefore(cursorAreaId, pos);
-        		dock(cursorAreaId, insertBefore);
-        	}
-
-        	// Provide tracking for the appropriate 'mode'
-        	if (docked)
-        		trackDocked(pos);
-        	else
-        		trackUndocked(pos);
-        }
-        
         private IWindowTrim getInsertBefore(int areaId, Point pos) {
         	boolean isHorizontal = (areaId == SWT.TOP) || (areaId == SWT.BOTTOM);
         	
@@ -293,68 +304,76 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         	return null;
         }
         
-        private void trackDocked(Point pos) {
-        	// Where are we now?
-        	int curArea = layout.getTrimAreaId(draggedTrim.getControl());
-        	IWindowTrim curInsertBefore = getInsertBefore(curArea, draggedTrim);
-        	
+        /**
+         * Recalculates the drop information based on the current cursor pos.
+         * 
+         * @param pos The cursor position
+         */
+        public void track(Point pos) {
+        	// Convert the mouse positon into 'local' coords
+        	Rectangle r = new Rectangle(pos.x, pos.y, 1,1);
+        	r = Geometry.toControl(windowComposite, r);
+        	pos.x = r.x;
+        	pos.y = r.y;
+        	        	
+        	// Are we 'inside' a trim area ?
+        	cursorAreaId = getTrimArea(pos);
+
+        	// Provide tracking for the appropriate 'mode'
+        	if (cursorAreaId != SWT.NONE)
+        		trackInsideTrimArea(pos);
+        	else
+        		trackOutsideTrimArea(pos);
+        }
+       
+        /**
+         * Perform the feedback used when the cursor is 'inside' a particular trim area.
+         * The current implementation will place the dragged trim into the trim area at
+         * the location determined by the supplied point.
+         * 
+         * @param pos The point to use to determine where in the trim area the dragged trim
+         * should be located.
+         */
+        private void trackInsideTrimArea(Point pos) {
         	// Where should we be?
         	int posArea = getTrimArea(pos);
         	IWindowTrim posInsertBefore = getInsertBefore(posArea, pos);
+
+        	// if we're currently undocked then we should dock
+        	boolean shouldDock = !docked;
+        	
+        	if (docked) {
+	        	// Where are we now?
+	        	int curArea = layout.getTrimAreaId(draggedTrim.getControl());
+	        	IWindowTrim curInsertBefore = getInsertBefore(curArea, draggedTrim);
+	        	
+	        	// If we're already docked we should only update if there's a change
+	        	shouldDock = curArea != posArea || curInsertBefore != posInsertBefore;
+        	}
         	
         	// Do we have to do anything?
-        	if (curArea != posArea || curInsertBefore != posInsertBefore) {
+        	if (shouldDock) {
         		// (Re)dock the trim in the new location
-        		dock(posArea, posInsertBefore);
+        		dock(posArea, posInsertBefore, true);
         	}
         }
         
-        private void trackUndocked(Point pos) {
-        	// Find the closest insertion caret
-        	int minDist = Integer.MAX_VALUE;
-        	InsertCaret closestCaret = null;
-        	
-        	for (Iterator iter = insertCarets.iterator(); iter.hasNext();) {
-				InsertCaret caret = (InsertCaret) iter.next();
-				Point caretPos = Geometry.centerPoint(caret.getBounds());
-				int dist = Geometry.distanceSquared(pos, caretPos);
-				if (dist < minDist) {
-					minDist = dist;
-					
-					// If this is 'acceptable' then set the caret
-					if (minDist <= (threshold*threshold))
-							closestCaret = caret;
-				}
-			}
+        /**
+         * Provide the dragging feedback when the cursor is -not- explicitly inside
+         * a particular trim area.
+         * 
+         */
+        private void trackOutsideTrimArea(Point pos) {
+        	// Determine if we're within the 'threshold' distance from an Insert Caret
+        	InsertCaret closestCaret = getClosestCaret(pos);
         	
         	// Update the various controls...
-        	updateUndockedFeedback(pos, closestCaret);
-        }
-        
-        private int getValidSides() {
-        	int result = draggedTrim.getValidSides();
-        	
-        	// Automatically allow dropping onto sides that won't change the orientation
-        	if ((result & SWT.LEFT) != 0) result |= SWT.RIGHT;
-        	if ((result & SWT.RIGHT) != 0) result |= SWT.LEFT;
-        	if ((result & SWT.TOP) != 0) result |= SWT.BOTTOM;
-        	if ((result & SWT.BOTTOM) != 0) result |= SWT.TOP;
-        	
-        	return result;
-        }
-        
-        /**
-         * Provide the dragging feedback beased on the newly calculated drop info
-         * 
-         * @param pos The current cursor pos (in the LOCAL coordinate system)
-         * @param newSide The new side that the trim will be dropped onto (<code>SWT.NONE</code>
-         * indicates that the trim is not near -any- insertion point
-         * @param newInsertBefore the trim that the dragged trim should be inserted before
-         * (this may be <code>null</code>, indicating that it should be placed at the 'end')
-         */
-        private void updateUndockedFeedback(Point pos, InsertCaret closestCaret) {
         	// Handle 'undocked' tracking and transitions from the 'docked' to 'undocked' state 
         	if (closestCaret == null) {
+        		// In 'auto-dock' mode the trim may be docked during drag ahndling outside a trim area
+        		if (docked)
+        			undock();
+        		
         		border.setLocation(pos, true);
         		
         		// update the state vars
@@ -369,7 +388,12 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         	// We're over a -new- insertion point; update the feedback
         	// remember the new 'drop' location
         	setCurCaret(closestCaret);
-			
+        	
+        	if (TrimDragPreferences.autoDock()) {
+        		dock(curCaret.getAreaId(), curCaret.getInsertTrim(), false);
+        		return;
+        	}
+        	
 			// 'snap' the control to the insertion point
 			Rectangle ctrlRect = draggedTrim.getControl().getBounds();
 			Rectangle caretRect = curCaret.getBounds();
@@ -389,7 +413,61 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 					break;
         	};
         }
-		
+        
+        /**
+         * Deterime the caret closest to the given point. The distance must be less than the
+         * threshold value in order to count as a 'hit'.
+         * 
+         * @param pos The position to check against
+         * @return The closest caret whose distance is less than the threshold
+         */
+        private InsertCaret getClosestCaret(Point pos) {
+        	// Find the closest insertion caret
+        	int threshold = TrimDragPreferences.getThreshold();
+        	int thresholdSquared = threshold*threshold;
+        	int minDist = Integer.MAX_VALUE;
+        	InsertCaret closestCaret = null;
+        	
+        	for (Iterator iter = insertCarets.iterator(); iter.hasNext();) {
+        		InsertCaret caret = (InsertCaret) iter.next();
+				Point caretPos = Geometry.centerPoint(caret.getBounds());
+				int dist = Geometry.distanceSquared(pos, caretPos);
+				if (dist < minDist) {
+					minDist = dist;
+					
+					// If this is 'acceptable' then set the caret
+					if (minDist <= thresholdSquared)
+							closestCaret = caret;
+				}
+			}
+        	
+        	return closestCaret;
+        }
+        
+        /**
+         * Return the set of valid sides that a piece of trim can be docked on. We
+         * arbitrarily extend this to include any areas that won't cause a change in orientation
+         * 
+         * @return The extended drop 'side' set
+         */
+        private int getValidSides() {
+        	int result = draggedTrim.getValidSides();
+        	
+        	// Automatically allow dropping onto sides that won't change the orientation
+        	if ((result & SWT.LEFT) != 0) result |= SWT.RIGHT;
+        	if ((result & SWT.RIGHT) != 0) result |= SWT.LEFT;
+        	if ((result & SWT.TOP) != 0) result |= SWT.BOTTOM;
+        	if ((result & SWT.BOTTOM) != 0) result |= SWT.TOP;
+        	
+        	return result;
+        }
+        		
+        /**
+         * Set the current caret. This is determined by choosing the caret
+         * closest to the cursor (as long as it's within the 'threshold' value.
+         * 
+         * @param newCaret The caret to set as the new 'current' caret
+         */
         private void setCurCaret(InsertCaret newCaret) {
         	// un-highlight the 'old' caret (if any)
         	if (curCaret != null) {
@@ -406,6 +484,13 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         	}
         }
         
+		/**
+		 * Return the IWindowTrim to use as the insertion parameter given the trim's index.
+		 * 
+		 * @param areaId The trim area to check
+		 * @param index The index of the insert trim within this area
+		 * @return The IWindowTrim associated with the index.
+		 */
 		private IWindowTrim getInsertTrim(int areaId, int index) {
 			TrimArea area = layout.getTrimArea(areaId);
 			List descs = area.getDescriptors();
@@ -419,6 +504,10 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 			return desc.getTrim();
 		}
         
+        /**
+         * Create the set of insertion point indicators. This is based on the set
+         * of 'valid' sides as defined by the dragged trim.
+         */
         private void createInsertPoints() {
         	// Find the closest insertion point. Only 'valid' areas are checked
         	int[] areaIds = layout.getAreaIds();
@@ -427,7 +516,8 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 				if ((getValidSides() & areaIds[i]) != 0) {
 					Point[] pnts = calculateInsertionPoints(areaIds[i]);
 					for (int j = 0; j < pnts.length; j++) {
-						insertCarets.add(new InsertCaret(windowComposite, pnts[j], areaIds[i], getInsertTrim(areaIds[i], j)));
+						insertCarets.add(new InsertCaret(windowComposite, pnts[j], areaIds[i], getInsertTrim(areaIds[i], j),
+									layout, TrimDragPreferences.useBars()));
 					}
 				}
 			}
@@ -444,7 +534,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
                     windowComposite.getShell(), startRect, initialLocation, 300);
             animation.schedule();
 
-            dock(initialAreaId, initialInsertBefore);
+            dock(initialAreaId, initialInsertBefore, true);
         }
         
 		/* (non-Javadoc)
@@ -462,7 +552,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         	}
         	
         	// Dock into the location specified by the 'curCaret'
-        	dock(curCaret.getAreaId(), curCaret.getInsertTrim());
+        	dock(curCaret.getAreaId(), curCaret.getInsertTrim(), true);
         }
 
         /**
@@ -487,14 +577,17 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         /**
          * Return the 'undocked' trim to its previous location in the layout
          */
-        private void dock(int areaId, IWindowTrim insertBefore) {
-			// dispose all the carets and the dragging border
-			for (Iterator iter = insertCarets.iterator(); iter.hasNext();) {
-				InsertCaret caret = (InsertCaret) iter.next();
-				caret.dispose();
+        private void dock(int areaId, IWindowTrim insertBefore, boolean removeCarets) {
+			if (removeCarets) {
+	        	// dispose all the carets and the dragging border
+				for (Iterator iter = insertCarets.iterator(); iter.hasNext();) {
+					InsertCaret caret = (InsertCaret) iter.next();
+					caret.dispose();
+				}
+				insertCarets.clear();
+				curCaret = null;
 			}
-			insertCarets.clear();
-			curCaret = null;
+			
 			if (border != null)
 				border.dispose();
 			border = null;
@@ -513,11 +606,23 @@ import org.eclipse.ui.internal.layout.TrimLayout;
          * @see org.eclipse.ui.internal.dnd.IDropTarget#getCursor()
          */
         public Cursor getCursor() {
-        	if (!docked)
-	            return DragCursors.getCursor(DragCursors
-	                    .positionToDragCursor(curCaret == null ? SWT.NONE : curCaret.getAreaId()));
-        	else
-        		return DragCursors.getCursor(DragCursors.positionToDragCursor(cursorAreaId));
+        	if (TrimDragPreferences.inhibitCustomCursors()) {
+	        	// Show the four-way arrow by default
+				Cursor dragCursor = windowComposite.getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL);
+	
+				// If we're 'floating' (i.e. in a non-droppable area) then show the 'no smoking' cursor
+	        	if (!docked && curCaret == null)
+	        		dragCursor = windowComposite.getDisplay().getSystemCursor(SWT.CURSOR_NO);
+	        		
+	        	return dragCursor;
+        	}
+        	else {
+            	if (!docked)
+    	            return DragCursors.getCursor(DragCursors
+    	                    .positionToDragCursor(curCaret == null ? SWT.NONE : curCaret.getAreaId()));
+            	else
+            		return DragCursors.getCursor(DragCursors.positionToDragCursor(cursorAreaId));
+        	}
         }
 
         /* (non-Javadoc)

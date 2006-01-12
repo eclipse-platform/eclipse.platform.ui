@@ -335,6 +335,21 @@ public class TrimCommonUIHandle extends Composite {
     	setCursor(dragCursor);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#computeSize(int, int)
+	 */
+	public Point computeSize(int wHint, int hHint) {
+		if (wHint != SWT.DEFAULT || hHint != SWT.DEFAULT)
+			return super.computeSize(wHint, hHint);
+
+		Point ctrlPrefSize = trim.getControl().computeSize(wHint, hHint);
+		if (orientation == SWT.HORIZONTAL)
+			return new Point(getHandleSize(), ctrlPrefSize.y);
+		
+		// Must be vertical....
+		return new Point(ctrlPrefSize.x, getHandleSize());
+	}
+
 	/**
 	 * Construct (if necessary) a context menu contribution item and return it. This
 	 * is explicitly <code>public</code> so that trim elements can retrieve the item
@@ -365,6 +380,22 @@ public class TrimCommonUIHandle extends Composite {
 
 	    				new MenuItem(menu, SWT.SEPARATOR, index++);
     				}
+    				
+    				// Test Hook: add a menu entry that brings up a dialog to allow
+    				// testing with various GUI prefs.
+    				MenuItem closeItem = new MenuItem(menu, SWT.PUSH, index++);
+    				closeItem.setText("Change Preferences"); //$NON-NLS-1$
+    				
+    				closeItem.addSelectionListener(new SelectionListener() {
+						public void widgetSelected(SelectionEvent e) {
+							handleChangePreferences();
+						}
+
+						public void widgetDefaultSelected(SelectionEvent e) {
+						}
+    				});
+
+    				new MenuItem(menu, SWT.SEPARATOR, index++);
     				
     				// Create a cascading menu to allow the user to dock the trim
     				dockCascade = new MenuItem(menu, SWT.CASCADE, index++);
@@ -435,7 +466,16 @@ public class TrimCommonUIHandle extends Composite {
     	}
     	return dockContributionItem;
     }
-    
+
+	/**
+	 * Test Hook: Bring up a dialog that allows the user to
+	 * modify the trimdragging GUI preferences.
+	 */
+	private void handleChangePreferences() {
+		TrimDragPreferenceDialog dlg = new TrimDragPreferenceDialog(getShell());
+		dlg.open();
+	}
+   
 	/**
 	 * Handle the event generated when the "Close" item is
 	 * selected on the context menu. This removes the associated

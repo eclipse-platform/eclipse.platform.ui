@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.ui.ITrimManager;
 import org.eclipse.ui.IWindowTrim;
+import org.eclipse.ui.internal.TrimDragPreferences;
 
 /**
  * Lays out the children of a Composite. One control occupies the center of the
@@ -540,14 +541,28 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 					idx++;
 				}
 
-				if (horizontally) {
-					next.getControl().setBounds(currentPosition.x,
-							currentPosition.y, thisSize, hint);
-					currentPosition.x += thisSize + spacing;
-				} else {
-					next.getControl().setBounds(currentPosition.x,
-							currentPosition.y, hint, thisSize);
-					currentPosition.y += thisSize + spacing;
+				if (TrimDragPreferences.showRaggedTrim()) {
+					Point prefSize = next.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					if (horizontally) {
+						next.getControl().setBounds(currentPosition.x,
+								currentPosition.y, thisSize, prefSize.y);
+						currentPosition.x += thisSize + spacing;
+					} else {
+						next.getControl().setBounds(currentPosition.x,
+								currentPosition.y, prefSize.x, thisSize);
+						currentPosition.y += thisSize + spacing;
+					}
+				}
+				else {
+					if (horizontally) {
+						next.getControl().setBounds(currentPosition.x,
+								currentPosition.y, thisSize, hint);
+						currentPosition.x += thisSize + spacing;
+					} else {
+						next.getControl().setBounds(currentPosition.x,
+								currentPosition.y, hint, thisSize);
+						currentPosition.y += thisSize + spacing;
+					}
 				}
 			}
 		}

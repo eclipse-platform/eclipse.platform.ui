@@ -11,6 +11,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWindowTrim;
+import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.themes.ColorUtil;
 
 /**
@@ -24,7 +25,8 @@ public class InsertCaret {
 	// Control info
 	private Composite clientControl;
 	private Canvas caretControl;
-	private static final int size = 10;
+	private static final int arrowSize = 10;
+	private static final int barSize = 5;
 
 	// Colors
 	private Color baseColor;
@@ -34,6 +36,8 @@ public class InsertCaret {
 	// 'Model' info
 	private int areaId;
 	private IWindowTrim insertBefore;
+	private TrimLayout layout;
+	private boolean asBar;
 	
 	/**
 	 * Creates the insert caret, remembering the parameters necessary to insert a piece
@@ -44,18 +48,17 @@ public class InsertCaret {
 	 * @param areaId
 	 * @param insertBefore
 	 */
-	public InsertCaret(Composite parent, Point pos, int areaId, IWindowTrim insertBefore) {
+	public InsertCaret(Composite parent, Point pos, int areaId, IWindowTrim insertBefore, TrimLayout layout, boolean asBar) {
 		this.clientControl = parent;
 		caretControl = new Canvas (parent, SWT.NONE);
-		caretControl.setSize(size, size);
+		caretControl.setSize(arrowSize, arrowSize);
 		caretControl.setVisible(false);
 
 		// Remember the trim item that this insert is associated with
 		this.areaId = areaId;
 		this.insertBefore = insertBefore;
-
-		// set up the painting vars
-		isHighlight = false;
+		this.layout = layout;
+		this.asBar = asBar;
 		
 		// Use the SWT 'title' colors since they should always have a proper contrast
 		// and are 'related' (i.e. should look good together)
@@ -63,46 +66,59 @@ public class InsertCaret {
 		RGB background  = caretControl.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();
 		RGB blended = ColorUtil.blend(baseColor.getRGB(), background);
 		hilightColor = new Color(caretControl.getDisplay(), blended);
-		
-		caretControl.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				if (isHighlight) {
-					e.gc.setBackground(hilightColor);
-				}
-				else {
-					e.gc.setBackground(baseColor);
-				}
 
-				switch (getAreaId()) {
-				case SWT.LEFT:
-					{
-						int[] points = { 0, size/2, size, 0, size, size };
-						e.gc.fillPolygon(points);
-					}
-					break;
-				case SWT.RIGHT:
-					{
-						int[] points = { size, size/2, 0, size, 0, 0 };
-						e.gc.fillPolygon(points);
-					}
-					break;
-				case SWT.TOP:
-					{
-						int[] points = { size/2, 0, 0, size-1, size, size-1 };
-						e.gc.fillPolygon(points);
-					}
-					break;
-				case SWT.BOTTOM:
-					{
-						int[] points = { size/2, size, 0, 0, size, 0 };
-						e.gc.fillPolygon(points);
-					}
-					break;
-				}
-			}
-		});
+		// set up the painting vars
+		setHighlight(false);
 		
+		// if we are -not- displaying as a 'bar' then we'll need to paint the control
+		if (!asBar) {
+			caretControl.addPaintListener(new PaintListener() {
+				public void paintControl(PaintEvent e) {
+					paintArrowCaret(e);
+				}
+			});
+		}
+
 		showCaret(pos, areaId);
+	}
+
+	/**
+	 * @param e
+	 */
+	protected void paintArrowCaret(PaintEvent e) {
+		if (isHighlight) {
+			e.gc.setBackground(hilightColor);
+		}
+		else {
+			e.gc.setBackground(baseColor);
+		}
+
+		switch (getAreaId()) {
+		case SWT.LEFT:
+			{
+				int[] points = { 0, arrowSize/2, arrowSize, 0, arrowSize, arrowSize };
+				e.gc.fillPolygon(points);
+			}
+			break;
+		case SWT.RIGHT:
+			{
+				int[] points = { arrowSize, arrowSize/2, 0, arrowSize, 0, 0 };
+				e.gc.fillPolygon(points);
+			}
+			break;
+		case SWT.TOP:
+			{
+				int[] points = { arrowSize/2, 0, 0, arrowSize-1, arrowSize, arrowSize-1 };
+				e.gc.fillPolygon(points);
+			}
+			break;
+		case SWT.BOTTOM:
+			{
+				int[] points = { arrowSize/2, arrowSize, 0, 0, arrowSize, 0 };
+				e.gc.fillPolygon(points);
+			}
+			break;
+		}
 	}
 
 	/**
@@ -111,6 +127,16 @@ public class InsertCaret {
 	 */
 	public void setHighlight(boolean highlight) {
 		isHighlight = highlight;
+
+		// if we're displaying as a 'bar' then set the control's background to the
+		// appropriate value
+		if (asBar) {
+			if (isHighlight)
+				caretControl.setBackground(hilightColor);
+			else
+				caretControl.setBackground(baseColor);
+		}
+		
 		caretControl.redraw();
 	}
 	
@@ -129,23 +155,12 @@ public class InsertCaret {
 	}
 	
 	public void showCaret(Point pos, int side) {
-		areaId = side;
-		
-		switch (side) {
-		case SWT.LEFT:
-			caretControl.setLocation(pos.x, pos.y - (size/2));
-			break;
-		case SWT.RIGHT:
-			caretControl.setLocation(pos.x-size, pos.y - (size/2));
-			break;
-		case SWT.TOP:
-			caretControl.setLocation(pos.x-(size/2), pos.y);
-			break;
-		case SWT.BOTTOM:
-			caretControl.setLocation(pos.x-(size/2), pos.y - size);
-			break;
-		}
-		
+		// Set the appropriate size / location based on the format of the caret
+		if (asBar)
+			formatBarCaret(pos, side);
+		else 
+			formatArrowCaret(pos, side);
+
 		// Force the control into the client rect
 		Rectangle bb = caretControl.getBounds();
 		Rectangle cr = clientControl.getClientArea();
@@ -157,6 +172,68 @@ public class InsertCaret {
 		caretControl.redraw();
 	}
 	
+	/**
+	 * @param pos
+	 * @param side
+	 */
+	private void formatBarCaret(Point pos, int side) {
+		Rectangle trimRect = layout.getTrimRect(caretControl.getParent(), side);
+		
+		// KLUDGE!! the current trimRect calcs return a zero width/height if the area is 'empty'
+		// for just hack it
+		if (trimRect.width == 0) {
+			trimRect.width = 5;
+		
+			// If it's on the right then we have to offset the rect's position as well
+			if (areaId == SWT.RIGHT)
+				trimRect.x -= trimRect.width;
+		}
+		
+		if (trimRect.height == 0)
+			trimRect.height = 5;
+		
+		trimRect = Geometry.toControl(caretControl.getParent(), trimRect);
+		System.out.println("showBar: id = " + areaId + " trimRect = " + trimRect);  //$NON-NLS-1$//$NON-NLS-2$
+		
+		switch (side) {
+		case SWT.LEFT:
+		case SWT.RIGHT:
+			caretControl.setSize(trimRect.width, barSize);
+			caretControl.setLocation(trimRect.x, pos.y - (barSize/2));
+			break;
+		case SWT.TOP:
+		case SWT.BOTTOM:
+			caretControl.setSize(barSize, trimRect.height);
+			caretControl.setLocation(pos.x - (barSize/2), trimRect.y);
+			break;
+		}
+	}
+
+	/**
+	 * Formats the control to display the caret as an 'arrow'.
+	 * 
+	 * @param pos The position of the 'head' of the arrow
+	 * @param side The SWT 'side' that the caret is pointing towards
+	 */
+	private void formatArrowCaret(Point pos, int side) {
+		caretControl.setSize(arrowSize, arrowSize);
+		
+		switch (side) {
+		case SWT.LEFT:
+			caretControl.setLocation(pos.x, pos.y - (arrowSize/2));
+			break;
+		case SWT.RIGHT:
+			caretControl.setLocation(pos.x-arrowSize, pos.y - (arrowSize/2));
+			break;
+		case SWT.TOP:
+			caretControl.setLocation(pos.x-(arrowSize/2), pos.y);
+			break;
+		case SWT.BOTTOM:
+			caretControl.setLocation(pos.x-(arrowSize/2), pos.y - arrowSize);
+			break;
+		}
+	}
+
 	public void hideCaret() {
 		caretControl.setVisible(false);
 	}
