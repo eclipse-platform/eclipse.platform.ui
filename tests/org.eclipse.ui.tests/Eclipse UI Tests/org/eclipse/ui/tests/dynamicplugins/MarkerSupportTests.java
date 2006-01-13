@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.dynamicplugins;
 import java.util.Iterator;
 
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.views.markers.internal.FieldMarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 
@@ -56,12 +57,12 @@ public class MarkerSupportTests extends DynamicTestCase {
 		assertFalse(hasFilter(FILTER3));
 	}
 
-	public void testSubCategories() {
-		assertFalse(hasSubCategory());
+	public void testMarkerGroup() {
+		assertFalse(hasMarkerGroup());
 		getBundle();
-		assertTrue(hasSubCategory());
+		assertTrue(hasMarkerGroup());
 		removeBundle();
-		assertFalse(hasSubCategory());
+		assertFalse(hasMarkerGroup());
 	}
 
 	public void testCategories() {
@@ -101,14 +102,24 @@ public class MarkerSupportTests extends DynamicTestCase {
 				.getSorterFor(PROBLEM_MARKER);
 	}
 
-private boolean hasSubCategory() {
-		return MarkerSupportRegistry.getInstance().getAttributeCategoryProviders(
-				DYNAMIC_PROBLEM_MARKER) != null;
-	}	/**
-		 * Return whether or not there is a filter for the dynamic category
-		 * 
-		 * @return
-		 */
+	private boolean hasMarkerGroup() {
+		Iterator groups = MarkerSupportRegistry.getInstance()
+		.getMarkerGroups().iterator();
+		
+		while (groups.hasNext()) {
+			FieldMarkerGroup element = (FieldMarkerGroup) groups.next();
+			if(element.getDescription().equals("Dynamic Test Grouping"))
+				return true;
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Return whether or not there is a filter for the dynamic category
+	 * 
+	 * @return
+	 */
 	private boolean hasCategory() {
 		return MarkerSupportRegistry.getInstance().getCategory(
 				DYNAMIC_PROBLEM_MARKER) != null;

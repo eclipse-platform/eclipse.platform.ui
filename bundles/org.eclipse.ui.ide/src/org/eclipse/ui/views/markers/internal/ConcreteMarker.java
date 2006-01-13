@@ -54,10 +54,10 @@ public class ConcreteMarker extends MarkerNode{
 	private MarkerNode markerCategory;
 
 	private String shortFolder;
+	
+	private String group;
 
-	private String category;
-
-    public ConcreteMarker(IMarker toCopy) {
+	public ConcreteMarker(IMarker toCopy) {
         marker = toCopy;
         refresh();
     }
@@ -100,34 +100,7 @@ public class ConcreteMarker extends MarkerNode{
         
         // store the marker ID locally
         id = marker.getId();
-        
-        processCategory();
-        	
     }
-
-	/**
-	 * Process the category. Use the subcategory if there is one and 
-	 * use the type category if not. If neither exist then just use the 
-	 * type name of the receiver.
-	 */
-	private void processCategory() {
-		AttributeCategoryProvider[] providers =  MarkerSupportRegistry.getInstance().getAttributeCategoryProviders(marker);
-        if(providers != null){
-        	for (int i = 0; i < providers.length; i++) {
-				String registeredCategory = providers[i].categoryFor(marker);
-				if(registeredCategory != null){
-					category = registeredCategory;
-					return;
-				}
-				
-			}
-        }
-        
-        category = MarkerSupportRegistry.getInstance().getCategory(
-				getMarker());
-        if(category == null)
-        	category = Util.getMarkerTypeName(this);
-	}
 
     public IResource getResource() {
         return marker.getResource();
@@ -253,11 +226,20 @@ public class ConcreteMarker extends MarkerNode{
 		return locationString;
 	}
 
+
 	/**
-	 * Return the category for the receiver
-	 * @return
+	 * Get the group for the reciever.
+	 * @return Returns the group.
 	 */
-	public String getCategory() {
-		return category;
+	public String getGroup() {
+		return group;
+	}
+
+	/**
+	 * Set the group name.
+	 * @param group the group name
+	 */
+	public void setGroup(String group) {
+		this.group = group;
 	}
 }

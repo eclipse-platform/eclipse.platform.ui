@@ -14,8 +14,8 @@
       <complexType>
          <sequence>
             <element ref="problemFilter" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="markerAttributeCategory" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerTypeCategory" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerGrouping" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -182,10 +182,13 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
       </complexType>
    </element>
 
-   <element name="markerAttributeCategory">
+   <element name="markerGrouping">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="label"/>
+         </appInfo>
          <documentation>
-            A markerAttributeCategory is a category definition that checks an attribute to determine the category declaratively.
+            A markerGrouping is a definition of a grouping criterea for the marker views that support it (currently only the problems view).
          </documentation>
       </annotation>
       <complexType>
@@ -197,6 +200,13 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
             <annotation>
                <documentation>
                   The attribute is the name of the marker attribute to test for this category.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The label is the human readable String that will be used to create the entry in the Group By-&gt; menu for this marker grouping.
                </documentation>
             </annotation>
          </attribute>

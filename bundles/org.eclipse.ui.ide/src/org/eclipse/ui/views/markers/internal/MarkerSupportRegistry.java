@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -66,8 +67,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final String SEVERITY = "severity";//$NON-NLS-1$
 
-	private static final Object ATTRIBUTE_CATEGORY_REFERENCE = "markerAttributeReference"; //$NON-NLS-1$
-
 	private static final String MARKER_TYPE_REFERENCE = "markerTypeReference"; //$NON-NLS-1$
 
 	private static final Object MARKER_CATEGORY = "markerCategory";//$NON-NLS-1$
@@ -91,6 +90,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private static final String ASCENDING = "ASCENDING"; //$NON-NLS-1$
 
 	private static final String ATTRIBUTE_MAPPING = "markerAttributeMapping"; //$NON-NLS-1$
+
+	private static final Object MARKER_GROUPING = "markerGrouping"; //$NON-NLS-1$
 
 	private static final String ATTRIBUTE = "attribute"; //$NON-NLS-1$
 
@@ -119,7 +120,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private Collection registeredFilters = new ArrayList();
 
-	private HashMap attributeCategoryProviders = new HashMap();
+	private Collection markerGroups = new ArrayList();
 
 	private HashMap categories = new HashMap();
 
@@ -168,27 +169,20 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 				continue;
 			}
-			if (element.getName().equals(ATTRIBUTE_CATEGORY_REFERENCE)) {
+			if (element.getName().equals(MARKER_GROUPING)) {
 
 				String[] markerTypes = getMarkerTypes(element);
-				AttributeCategoryProvider provider = getProvider(element);
+				Map providers = getProviders(element);
 
-				if (provider != null) {
-					for (int i = 0; i < markerTypes.length; i++) {
-						String markerType = markerTypes[i];
-						Collection providers;
-						if (attributeCategoryProviders.containsKey(markerType))
-							providers = (Collection) attributeCategoryProviders
-									.get(markerType);
-						else
-							providers = new ArrayList();
-						providers.add(provider);
-						attributeCategoryProviders.put(markerType, providers);
-						tracker.registerObject(extension, provider,
-								IExtensionTracker.REF_STRONG);
-					}
+				String name = element.getAttribute(NAME);
+				String attribute = element.getAttribute(ATTRIBUTE);
 
-				}
+				FieldMarkerGroup group = new FieldMarkerGroup(name, attribute, providers,
+						markerTypes);
+
+				markerGroups.add(group);
+				tracker.registerObject(extension, group,
+						IExtensionTracker.REF_STRONG);
 			}
 
 			if (element.getName().equals(MARKER_CATEGORY)) {
@@ -273,26 +267,23 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Create an ICategoryProvider from element.
+	 * Find the attributeMappings from element.
 	 * 
 	 * @param element
-	 * @return ICategoryProvider
+	 * @return Map
 	 */
-	private AttributeCategoryProvider getProvider(
-			final IConfigurationElement element) {
+	private Map getProviders(final IConfigurationElement element) {
 
 		IConfigurationElement[] mappings = element
 				.getChildren(ATTRIBUTE_MAPPING);
 
-		AttributeCategoryProvider provider = new AttributeCategoryProvider(
-				element.getAttribute(ATTRIBUTE));
+		HashMap valuesToStrings = new HashMap();
 		for (int i = 0; i < mappings.length; i++) {
-			IConfigurationElement mappingElement = mappings[i];
-			provider.put(mappingElement.getAttribute(VALUE), mappingElement
+			valuesToStrings.put(mappings[i].getAttribute(VALUE), mappings[i]
 					.getAttribute(NAME));
 		}
 
-		return provider;
+		return valuesToStrings;
 	}
 
 	/*
@@ -443,8 +434,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			if (objects[i] instanceof ProblemFilter)
 				registeredFilters.remove(objects[i]);
 
-			if (objects[i] instanceof AttributeCategoryProvider) {
-				removeValues(objects[i], attributeCategoryProviders);
+			if (objects[i] instanceof FieldMarkerGroup) {
+				markerGroups.remove(objects[i]);
 			}
 
 			if (objects[i] instanceof String) {
@@ -489,43 +480,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		while (keysToRemoveIterator.hasNext()) {
 			cache.remove(keysToRemoveIterator.next());
 		}
-	}
-
-	/**
-	 * Get the AttributeCategoryProvider associated with marker. Return
-	 * <code>null</code> if there are none.
-	 * 
-	 * @param marker
-	 * @return ICategoryProvider[] or <code>null</code>
-	 */
-	public AttributeCategoryProvider[] getAttributeCategoryProviders(
-			IMarker marker) {
-		try {
-			return getAttributeCategoryProviders(marker.getType());
-		} catch (CoreException e) {
-			Util.log(e);
-			return null;
-		}
-
-	}
-
-	/**
-	 * Return the AttributeCategoryProvider for markers of type marker type.
-	 * 
-	 * @param markerType
-	 * @return ISubCategoryProvider[] or <code>null</code>
-	 */
-	public AttributeCategoryProvider[] getAttributeCategoryProviders(String markerType) {
-		Object providers;
-		providers = attributeCategoryProviders.get(markerType);
-
-		if (providers == null)
-			return null;
-		Collection providerCollection = (Collection) providers;
-		AttributeCategoryProvider[] providerArray = new AttributeCategoryProvider[providerCollection
-				.size()];
-		providerCollection.toArray(providerArray);
-		return providerArray;
 	}
 
 	/**
@@ -611,6 +565,14 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		}
 		return defaultSorter;
 
+	}
+
+	/**
+	 * Return the FieldMarkerGroups in the receiver.
+	 * @return Collection of FieldMarkerGroup
+	 */
+	public Collection getMarkerGroups() {
+		return markerGroups;
 	}
 
 }

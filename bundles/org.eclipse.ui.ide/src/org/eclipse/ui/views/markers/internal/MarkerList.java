@@ -342,4 +342,14 @@ public class MarkerList {
 			markers[i].refresh();
 		}		
 	}
+
+	/**
+	 * Clear all of the group settings in the receiver.
+	 */
+	public void clearGroups() {
+		for (int i = 0; i < markers.length; i++) {
+			markers[i].setGroup(null);
+		}
+		
+	}
 }

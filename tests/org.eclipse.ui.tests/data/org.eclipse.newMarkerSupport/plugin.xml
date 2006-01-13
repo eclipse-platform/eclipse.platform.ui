@@ -36,9 +36,6 @@
             name="Filter 3">
          <selectedType markerId="org.eclipse.ui.tests.dynamicTestMarker"/>
       </problemFilter>
-      <subCategoryProvider class="org.eclipse.ui.dynamic.markerSupport.DynamicTestsSubCategoryProvider">
-         <markerTypeReference id="org.eclipse.ui.tests.dynamicTestMarker"/>
-      </subCategoryProvider>
       <markerCategory name="dynamicCategory">
          <markerTypeReference id="org.eclipse.ui.tests.dynamicTestMarker"/>
       </markerCategory>
@@ -48,6 +45,11 @@
                type="PROJECT"/>
          <markerTypeReference id="org.eclipse.ui.tests.dynamicTestMarker"/>
       </hierarchy>
+      <markerGrouping
+            attribute="testAtttribute"
+            name="Dynamic Test Grouping">
+         <markerTypeReference id="org.eclipse.ui.tests.dynamicTestMarker"/>
+      </markerGrouping>
   
    </extension>
 </plugin>

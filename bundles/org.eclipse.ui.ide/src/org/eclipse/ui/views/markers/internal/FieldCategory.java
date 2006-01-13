@@ -52,7 +52,18 @@ public class FieldCategory extends AbstractField {
 	public String getValue(Object obj) {
 
 		if (obj instanceof ConcreteMarker) {
-			return ((ConcreteMarker) obj).getCategory();
+			ConcreteMarker marker = (ConcreteMarker) obj;
+			if (marker.getGroup() == null) {
+
+				String groupName = MarkerSupportRegistry.getInstance()
+						.getCategory(marker.getMarker());
+				if (groupName == null)
+					groupName = Util.getMarkerTypeName(marker);
+				marker.setGroup(groupName);
+			}
+
+			return marker.getGroup();
+
 		}
 		return Util.EMPTY_STRING;
 	}
@@ -76,19 +87,22 @@ public class FieldCategory extends AbstractField {
 		return getValue(obj1).compareTo(getValue(obj2));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
 	 */
 	public int getDefaultDirection() {
 		return TableSorter.ASCENDING;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
 	 */
 	public int getPreferredWidth() {
 		return 200;
 	}
-
 
 }

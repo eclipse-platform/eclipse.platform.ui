@@ -301,9 +301,9 @@ public class MarkerAdapter {
 		}
 
 		// Flatten single categories
-		if (categories.size() == 1) {
-			return buildHierarchy(markers, start, end, sortIndex + 1, parent);
-		}
+//		if (categories.size() == 1) {
+//			return buildHierarchy(markers, start, end, sortIndex + 1, parent);
+//		}
 		MarkerCategory[] nodes = new MarkerCategory[categories.size()];
 		categories.toArray(nodes);
 		return nodes;

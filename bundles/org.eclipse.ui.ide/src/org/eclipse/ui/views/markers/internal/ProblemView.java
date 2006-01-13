@@ -95,6 +95,7 @@ public class ProblemView extends MarkerView {
 				setChecked(categoryField.equals(groupingField));
 		}
 
+
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -106,6 +107,7 @@ public class ProblemView extends MarkerView {
 				description = groupingField.getDescription();
 			IDEWorkbenchPlugin.getDefault().getPluginPreferences().setValue(
 					IDEInternalPreferences.PROBLEMS_GROUPING, description);
+			problemView.getMarkerAdapter().getCurrentMarkers().clearGroups();
 			problemView.getMarkerAdapter().getCategorySorter()
 					.setCategoryField(groupingField);
 			problemView.refreshViewer();
@@ -363,6 +365,14 @@ public class ProblemView extends MarkerView {
 		MenuManager groupByMenu = new MenuManager(MarkerMessages.ProblemView_GroupByMenu);
 		groupByMenu.add(new GroupingAction(MarkerMessages.ProblemView_Severity, severity, this));
 		groupByMenu.add(new GroupingAction(MarkerMessages.ProblemView_Category, category, this));
+		
+		Iterator definedGroups = MarkerSupportRegistry.getInstance().getMarkerGroups().iterator();
+		
+		while(definedGroups.hasNext()){
+			FieldMarkerGroup group = (FieldMarkerGroup) definedGroups.next();
+			groupByMenu.add(new GroupingAction(group.getDescription(),group,this));
+		}
+		
 		groupByMenu.add(new GroupingAction(MarkerMessages.ProblemView_None, null, this));
 		menu.add(groupByMenu);
 
