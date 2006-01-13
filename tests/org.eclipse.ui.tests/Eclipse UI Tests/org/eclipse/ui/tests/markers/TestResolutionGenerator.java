@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.markers;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
@@ -20,47 +21,50 @@ import org.eclipse.ui.views.markers.MarkerViewUtil;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
 /**
- * TestResolutionGenerator is a marker resolution generator for 
- * testing {@link org.eclipse.ui.views.markers.WorkbenchMarkerResolution}
+ * TestResolutionGenerator is a marker resolution generator for testing
+ * {@link org.eclipse.ui.views.markers.WorkbenchMarkerResolution}
+ * 
  * @since 3.2
- *
+ * 
  */
 public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 
-	private class TestMarkerResolution extends WorkbenchMarkerResolution{
+	private class TestMarkerResolution extends WorkbenchMarkerResolution {
 
-		String name;
-		
 		public IMarker[] findOtherMarkers(IMarker[] markers) {
 			return markers;
 		}
-		
-		public TestMarkerResolution(String string) {
-			name = string;
-		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
 		 */
 		public String getDescription() {
-			return name;
+			return "A test of the new style resolution";
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.ui.IMarkerResolution2#getImage()
 		 */
 		public Image getImage() {
 			return null;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 		 */
 		public String getLabel() {
-			return name;
+			return "3.2 Multi resolution";
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 		 */
 		public void run(IMarker marker) {
@@ -69,26 +73,80 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 						.getAttribute(MarkerViewUtil.NAME_ATTRIBUTE));
 			} catch (CoreException e) {
 				e.printStackTrace();
-			};			
+			}
+			;
 		}
-		
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.views.markers.WorkbenchMarkerResolution#run(org.eclipse.core.resources.IMarker[],
+		 *      org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		public void run(IMarker[] markers, IProgressMonitor monitor) {
+			for (int i = 0; i < markers.length; i++) {
+				IMarker marker = markers[i];
+
+				try {
+					System.out.println(marker
+							.getAttribute(MarkerViewUtil.NAME_ATTRIBUTE));
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
 	}
-	/* (non-Javadoc)
+
+	private class CompatibilityTestMarkerResolution implements
+			IMarkerResolution {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.IMarkerResolution#getLabel()
+		 */
+		public String getLabel() {
+			return "3.1 Compatibility Resolution";
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
+		 */
+		public void run(IMarker marker) {
+			try {
+				System.out.println(marker
+						.getAttribute(MarkerViewUtil.NAME_ATTRIBUTE));
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IMarkerResolutionGenerator2#hasResolutions(org.eclipse.core.resources.IMarker)
 	 */
 	public boolean hasResolutions(IMarker marker) {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IMarkerResolutionGenerator#getResolutions(org.eclipse.core.resources.IMarker)
 	 */
 	public IMarkerResolution[] getResolutions(IMarker marker) {
-		WorkbenchMarkerResolution[] resolutions = new WorkbenchMarkerResolution[2];
-		
-		resolutions[0] = new TestMarkerResolution("Resolution 1");
-		resolutions[1] = new TestMarkerResolution("Resolution 2");
-		
+		IMarkerResolution[] resolutions = new IMarkerResolution[2];
+
+		resolutions[0] = new TestMarkerResolution();
+		resolutions[1] = new CompatibilityTestMarkerResolution();
+
 		return resolutions;
 	}
 

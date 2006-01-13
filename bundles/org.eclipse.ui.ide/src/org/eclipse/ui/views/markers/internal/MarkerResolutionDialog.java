@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -32,6 +33,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -182,7 +184,8 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 					 */
 					public void selectionChanged(SelectionChangedEvent event) {
 						setComplete(!event.getSelection().isEmpty());
-						addMatching.setEnabled(getSelectedWorkbenchResolution() != null);
+						addMatching
+								.setEnabled(getSelectedWorkbenchResolution() != null);
 						markersTable.refresh();
 					}
 				});
@@ -364,7 +367,8 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 * 
 	 * @return boolean <code>true</code> if the operation completed.
 	 */
-	protected boolean addMatchingMarkers(WorkbenchMarkerResolution resolution) {
+	protected boolean addMatchingMarkers(
+			final WorkbenchMarkerResolution resolution) {
 
 		calculatingResolutions = true;
 		progressPart.beginTask(
@@ -380,23 +384,34 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 				MarkerMessages.MarkerResolutionDialog_WorkingSubTask,
 				resolution.getLabel()));
 
-		IMarker[] others = resolution.findOtherMarkers(markerView
-				.getCurrentMarkers().getIMarkers());
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				IMarker[] others = resolution.findOtherMarkers(markerView
+						.getCurrentMarkers().getIMarkers());
 
-		Collection currentMarkers = new ArrayList();
-		currentMarkers.add(originalMarker);
+				Collection currentMarkers = new ArrayList();
+				currentMarkers.add(originalMarker);
 
-		for (int i = 0; i < others.length; i++) {
-			currentMarkers.add(others[i]);
-		}
+				for (int i = 0; i < others.length; i++) {
+					currentMarkers.add(others[i]);
+				}
 
-		markerMap.put(resolution, currentMarkers);
+				markerMap.put(resolution, currentMarkers);
 
-		progressPart.worked(90);
-		progressPart.done();
-		progressCancelled = false;
-		calculatingResolutions = false;
-		markersTable.refresh();
+				progressPart.worked(90);
+				progressPart.done();
+				progressCancelled = false;
+				calculatingResolutions = false;
+				markersTable.refresh();
+
+			}
+		});
+
 		return true;
 	}
 
@@ -453,9 +468,9 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 */
 			public Object[] getElements(Object inputElement) {
 				IMarkerResolution selected = getSelectedResolution();
-				if(selected == null)
+				if (selected == null)
 					return new Object[0];
-				
+
 				if (markerMap.containsKey(selected))
 					return ((Collection) markerMap.get(selected)).toArray();
 				return new IMarker[] { originalMarker };
@@ -544,21 +559,31 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 				checked.length + 1);
 		progressPart.worked(1);
 
-		for (int i = 0; i < checked.length; i++) {
+		calculatingResolutions = true;
+
+		if (resolution instanceof WorkbenchMarkerResolution) {
+
+			IMarker[] markers = new IMarker[checked.length];
+			System.arraycopy(checked, 0, markers, 0, checked.length);
+			((WorkbenchMarkerResolution) resolution).run(markers,
+					new SubProgressMonitor(progressPart, checked.length));
+		} else {
+
 			// Allow paint events and wake up the button
 			getShell().getDisplay().readAndDispatch();
-			if (progressCancelled()) {
-				break;
+			if (!progressCancelled()) {
+
+				// There will only be one
+				IMarker marker = (IMarker) checked[0];
+
+				progressPart.subTask(Util.getProperty(IMarker.MESSAGE, marker));
+				resolution.run(marker);
+				progressPart.worked(1);
 			}
-			IMarker marker = (IMarker) checked[i];
-
-			progressPart.subTask(Util.getProperty(IMarker.MESSAGE, marker));
-
-			resolution.run(marker);
-
-			progressPart.worked(1);
 
 		}
+
+		calculatingResolutions = false;
 		progressPart.done();
 		progressCancelled = false;
 		super.okPressed();
@@ -572,6 +597,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	protected void cancelPressed() {
 		if (calculatingResolutions) {
 			progressCancelled = true;
+			progressPart.setCanceled(true);
 			return;
 		}
 		super.cancelPressed();

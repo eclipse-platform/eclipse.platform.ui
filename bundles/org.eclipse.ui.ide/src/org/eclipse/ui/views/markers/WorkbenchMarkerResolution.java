@@ -12,7 +12,9 @@
 package org.eclipse.ui.views.markers;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.IMarkerResolution2;
+import org.eclipse.ui.views.markers.internal.Util;
 
 /**
  * WorkbenchMarkerResolution is the resolution that can be grouped
@@ -62,5 +64,21 @@ public abstract class WorkbenchMarkerResolution implements IMarkerResolution2 {
 	 * */
 	public IMarker[] findOtherMarkers(IMarker[] markers){
 		return new IMarker[0];
+	}
+
+    /**
+     * Runs this resolution. Resolve all <code>markers</code>.
+     * <code>markers</code> must be a subset of the markers returned
+     * by <code>findOtherMarkers(IMarker[])</code>.
+	 * 
+	 * @param markers The markers to resolve, not null
+	 * @param monitor The monitor to report progress
+	 */
+	public void run(IMarker[] markers, IProgressMonitor monitor) {
+		
+		for (int i = 0; i < markers.length; i++) {
+			monitor.subTask(Util.getProperty(IMarker.MESSAGE, markers[i]));
+			run(markers[i]);
+		}
 	}
 }
