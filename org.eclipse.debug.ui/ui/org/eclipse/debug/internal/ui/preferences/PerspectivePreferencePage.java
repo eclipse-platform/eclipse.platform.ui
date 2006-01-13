@@ -337,7 +337,12 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 			gd = new GridData(GridData.BEGINNING);
 			label.setLayoutData(gd);
 			ILaunchMode mode = fLManager.getLaunchMode(modekey);
-			label.setText(MessageFormat.format(DebugPreferencesMessages.PerspectivePreferencePage_3, new String[] { mode.getLabel() }));
+			String clabel = mode.getLabel();
+			//resolve conflict with Default and Debug mneumonics bug 122882
+			if(clabel.equals(DebugPreferencesMessages.PerspectivePreferencePage_7)) {
+				clabel = DebugPreferencesMessages.PerspectivePreferencePage_8;
+			}
+			label.setText(MessageFormat.format(DebugPreferencesMessages.PerspectivePreferencePage_3, new String[] { clabel }));
 		// build combobox
 			Combo combo = new Combo(fComboPlaceHolder, SWT.READ_ONLY);
 			combo.setFont(font);
