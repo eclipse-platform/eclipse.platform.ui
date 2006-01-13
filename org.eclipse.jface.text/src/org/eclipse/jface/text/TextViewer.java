@@ -2706,12 +2706,21 @@ public class TextViewer extends Viewer implements
 	}
 
 	/**
-	 * Returns the visible lines in the view port.
-	 *
+	 * Returns the number of lines that can fully fit into the viewport. This is computed by
+	 * dividing the widget's client area height by the widget's line height. The result is only
+	 * accurate if the widget does not use variable line heights - for that reason, clients should not use this
+	 * method any longer and either use XXX add replacements
+	 * 
 	 * @return the view port height in lines
+	 * @deprecated as of 3.2 XXX add replacements
 	 */
 	protected int getVisibleLinesInViewport() {
-		return MigrationHelper.getVisibleLinesInViewport(fTextWidget);
+		if (fTextWidget != null) {
+			Rectangle clArea= fTextWidget.getClientArea();
+			if (!clArea.isEmpty())
+				return clArea.height / fTextWidget.getLineHeight();
+		}
+		return -1;
 	}
 
 	/*
@@ -2721,39 +2730,9 @@ public class TextViewer extends Viewer implements
 
 		if (fTextWidget == null)
 			return -1;
-
-		IRegion coverage= getModelCoverage();
-		if (coverage == null)
-			return -1;
-
-		try {
-
-			IDocument d= getDocument();
-
-			if (d == null)
-				return -1;
-
-			int startLine= d.getLineOfOffset(coverage.getOffset());
-			int endLine= d.getLineOfOffset(coverage.getOffset()  + coverage.getLength() - 1);
-			int lines= getVisibleLinesInViewport();
-
-			if (startLine + lines < endLine) {
-				int widgetTopIndex= fTextWidget.getTopIndex();
-				int widgetBottomIndex= widgetTopIndex + lines -1;
-				int modelLine= widgetLine2ModelLine(widgetBottomIndex);
-				if (modelLine == -1)
-					return endLine;
-				return modelLine;
-			}
-
-			return endLine;
-
-		} catch (BadLocationException x) {
-			if (TRACE_ERRORS)
-				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.getBottomIndex")); //$NON-NLS-1$
-		}
-
-		return -1;
+		
+		int widgetBottom= MigrationHelper.getBottomIndex(fTextWidget);
+		return widgetLine2ModelLine(widgetBottom);
 	}
 
 	/*
@@ -2842,9 +2821,11 @@ public class TextViewer extends Viewer implements
 			if (top > -1) {
 
 				// scroll vertically
-
-				int lines= getVisibleLinesInViewport();
-				int bottom= top + lines;
+				int bottom= MigrationHelper.getBottomIndex(fTextWidget);
+				int lines= bottom - top;
+				
+				// if the widget is not scrollable as it is displaying the entire content
+				// setTopIndex won't have any effect.
 
 				// two lines at the top and the bottom should always be left
 				// if window is smaller than 5 lines, always center position is chosen

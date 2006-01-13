@@ -253,7 +253,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 
 		StyledText textWidget= fTextViewer.getTextWidget();
 		if (textWidget != null && !textWidget.isDisposed()) {
-			int top= MigrationHelper.getPartialTopIndex(fTextViewer, textWidget);
+			int top= MigrationHelper.getPartialTopIndex(fTextViewer);
 			try {
 				IDocument document= fTextViewer.getDocument();
 				return document.getLineOffset(top);

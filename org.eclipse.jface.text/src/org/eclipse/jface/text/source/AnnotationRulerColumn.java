@@ -526,7 +526,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 */
 	protected int getInclusiveTopIndexStartOffset() {
 		if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {
-			int top= MigrationHelper.getPartialTopIndex(fCachedTextViewer, fCachedTextWidget);
+			int top= MigrationHelper.getPartialTopIndex(fCachedTextViewer);
 			try {
 				IDocument document= fCachedTextViewer.getDocument();
 				return document.getLineOffset(top);
@@ -545,7 +545,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	private int getExclusiveBottomIndexEndOffset() {
 
 		if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {
-			int bottom= MigrationHelper.getBottomIndex(fCachedTextViewer);
+			int bottom= MigrationHelper.getPartialBottomIndex(fCachedTextViewer);
 			try {
 				IDocument document= fCachedTextViewer.getDocument();
 

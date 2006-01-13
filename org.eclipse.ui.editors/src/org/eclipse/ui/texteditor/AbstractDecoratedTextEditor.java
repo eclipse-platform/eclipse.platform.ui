@@ -54,7 +54,6 @@ import org.eclipse.jface.text.ITextViewerExtension6;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
 import org.eclipse.jface.text.revisions.RevisionInformation;
-import org.eclipse.jface.text.revisions.RevisionRulerColumn;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.ChangeRulerColumn;
@@ -229,11 +228,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.2
 	 */
 	protected boolean fIsUpdatingMarkerViews= false;
-	/**
-	 * The revision ruler column if any, <code>null</code> otherwise.
-	 * @since 3.2
-	 */
-	private IRevisionRulerColumn fRevisionRulerColumn;
 	/**
 	 * Whether quick diff information is displayed, either on a change ruler or the line number
 	 * ruler.
@@ -459,11 +453,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.2
 	 */
 	public void showRevisionInformation(RevisionInformation info, String quickDiffProviderId) {
-		IRevisionRulerColumn revisionColumn= getRevisionColumn();
-		if (revisionColumn == null)
+		if (!ensureQuickDiffProvider(quickDiffProviderId))
 			return;
 		
-		if (!ensureQuickDiffProvider(quickDiffProviderId))
+		IRevisionRulerColumn revisionColumn= getRevisionColumn();
+		if (revisionColumn == null)
 			return;
 		
 		revisionColumn.setRevisionInformation(info);
@@ -479,13 +473,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.2
 	 */
 	private void hideRevisionInformation() {
-		if (fRevisionRulerColumn != null) {
-			fRevisionRulerColumn.setRevisionInformation(null);
-			fRevisionRulerColumn.setModel(null);
-			((CompositeRuler) getVerticalRuler()).removeDecorator(2);
-		}
 		if (fChangeRulerColumn instanceof IRevisionRulerColumn)
 			((IRevisionRulerColumn) fChangeRulerColumn).setRevisionInformation(null);
+		if (fLineNumberRulerColumn instanceof IRevisionRulerColumn)
+			((IRevisionRulerColumn) fLineNumberRulerColumn).setRevisionInformation(null);
 		
 		fIsRevisionInformationShown= false;
 	}
@@ -494,17 +485,16 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * Returns the revision ruler column of this editor, creating one if needed.
 	 * 
 	 * @return the revision ruler column of this editor
+	 * @since 3.2
 	 */
 	private IRevisionRulerColumn getRevisionColumn() {
 		if (fChangeRulerColumn instanceof IRevisionRulerColumn)
 			return (IRevisionRulerColumn) fChangeRulerColumn;
 		
-		if (fRevisionRulerColumn == null) {
-			fRevisionRulerColumn= createRevisionRulerColumn();
-			fRevisionRulerColumn.setModel(getSourceViewer().getAnnotationModel());
-			((CompositeRuler) getVerticalRuler()).addDecorator(2, fRevisionRulerColumn);
-		}
-		return fRevisionRulerColumn;
+		if (fLineNumberRulerColumn instanceof IRevisionRulerColumn)
+			return (IRevisionRulerColumn) fLineNumberRulerColumn;
+		
+		return null;
 	}
 
 	private boolean ensureQuickDiffProvider(String diffProviderId) {
@@ -515,7 +505,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (!fIsChangeInformationShown) {
 			ensureChangeInfoCanBeDisplayed();
 			installChangeRulerModel();
-			return true;
 		}
 		
 		IAnnotationModel oldDiffer= getDiffer();
@@ -557,8 +546,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		IChangeRulerColumn changeColumn= getChangeColumn();
 		if (changeColumn != null)
 			changeColumn.setModel(m);
-		if (fRevisionRulerColumn != null)
-			fRevisionRulerColumn.setModel(m);
 		
 		return true;
 	}
@@ -1003,22 +990,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			ruler.addDecorator(1, createChangeRulerColumn());
 
 		return ruler;
-	}
-
-	/**
-	 * Creates the revision ruler column.
-	 * <p>
-	 * Subclasses may extend or re-implement.
-	 * </p>
-	 * <p>
-	 * XXX This API is provisional and may change any time during the development of eclipse 3.2.
-	 * </p>
-	 * 
-	 * @return the annotate ruler column
-	 * @since 3.2
-	 */
-	protected RevisionRulerColumn createRevisionRulerColumn() {
-		return new RevisionRulerColumn(getSharedColors());
 	}
 
 	/**
@@ -1490,12 +1461,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				showChangeInformation(false);
 		}
 		
-		if (fRevisionRulerColumn != null) {
-			fRevisionRulerColumn.setRevisionInformation(null);
-			((CompositeRuler) getVerticalRuler()).removeDecorator(2);
-			fRevisionRulerColumn= null;
-		}
-
 		super.doSetInput(input);
 
 		if (isPrefQuickDiffAlwaysOn())

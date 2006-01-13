@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.text;
 
-import org.eclipse.jface.text.Assert;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Rectangle;
+
+import org.eclipse.jface.text.Assert;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.source.ILineRange;
+import org.eclipse.jface.text.source.LineRange;
 
 
 /**
@@ -44,21 +50,8 @@ public final class MigrationHelper {
 	 */
 	private static final  boolean DISABLE_CHECKING= true && !USE_OLD_API; // !!! Do not remove '&& !USE_OLD_API' !!!
 	
-	public static int checkLineHeightValue(int newAPIValue, StyledText textWidget, int lineCount) {
-		int oldAPIValue= textWidget.getLineHeight() * lineCount;
-		if (USE_OLD_API)
-			return oldAPIValue;
-		
-		Assert.isTrue(oldAPIValue == newAPIValue);
-		return newAPIValue;	
-	}
-	
-	public static int checkValue(int newAPIValue, int oldAPIValue) {
-		if (USE_OLD_API)
-			return oldAPIValue;
-		
-		Assert.isTrue(DISABLE_CHECKING || oldAPIValue == newAPIValue);
-		return newAPIValue;	
+	private static int checkValue(int newAPIValue, int oldAPIValue, String domain) {
+		return checkValue(newAPIValue, oldAPIValue, 0, domain);	
 	}
 	
 	public static int getValue(int newAPIValue, int oldAPIValue) {
@@ -68,11 +61,15 @@ public final class MigrationHelper {
 		return newAPIValue;	
 	}
 	
-	public static int checkValue(int newAPIValue, int oldAPIValue, int tollerance) {
+	private static int checkValue(int newAPIValue, int oldAPIValue, int tolerance, String domain) {
 		if (USE_OLD_API)
 			return oldAPIValue;
 		
-		Assert.isTrue(Math.abs(oldAPIValue - newAPIValue) <= tollerance);
+//		if (!DISABLE_CHECKING && Math.abs(oldAPIValue - newAPIValue) > tolerance)
+//			System.out.println(domain + " old: " + oldAPIValue + " new: " + newAPIValue);  //$NON-NLS-1$//$NON-NLS-2$
+//		
+		Assert.isTrue(DISABLE_CHECKING || Math.abs(oldAPIValue - newAPIValue) <= tolerance);
+		
 		return newAPIValue;	
 	}
 	
@@ -101,46 +98,220 @@ public final class MigrationHelper {
 			height= height + textWidget.getLineHeight(offset);
 		}
 
-		height= checkValue(fasterHeight, height);
+		height= checkValue(fasterHeight, height, "computeLineHeight"); //$NON-NLS-1$
 		
-		return checkValue(height, lineCount * textWidget.getLineHeight());
+		return checkValue(height, lineCount * textWidget.getLineHeight(), "computeLineHeight2"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Returns the last fully visible line of the widget. The exact semantics of "last fully visible
+	 * line" are:
+	 * <ul>
+	 * <li>the last line of which the last pixel is visible, if any
+	 * <li>otherwise, the only line that is partially visible
+	 * </ul>
+	 * 
+	 * @param widget the widget
+	 * @return the last fully visible line
+	 */
+	public static int getBottomIndex(StyledText widget) {
+		int lastPixel= computeLastVisiblePixel(widget);
+		
+		// bottom is in [0 .. lineCount - 1]
+		int bottom= widget.getLineIndex(lastPixel);
+
+		// bottom is the first line - no more checking
+		if (bottom == 0)
+			return bottom;
+		
+		int pixel= widget.getLinePixel(bottom);
+		// bottom starts on or before the client area start - bottom is the only visible line
+		if (pixel <= 0)
+			return bottom;
+		
+		int offset= widget.getOffsetAtLine(bottom);
+		int height= widget.getLineHeight(offset);
+		
+		// bottom is not showing entirely - use the previous line
+		if (pixel + height - 1 > lastPixel)
+			return bottom - 1;
+		
+		// bottom is fully visible and its last line is exactly the last pixel
+		return bottom;
 	}
 
-	public static int getPartialTopIndex(ITextViewer textViewer, StyledText textWidget) {
+	/**
+	 * Returns the index of the first (possibly only partially) visible line of the widget
+	 * 
+	 * @param widget the widget
+	 * @return the index of the first line of which a pixel is visible
+	 */
+	public static int getPartialTopIndex(StyledText widget) {
+		// see StyledText#getPartialTopIndex()
+		int top= widget.getTopIndex();
+		int pixels= widget.getLinePixel(top);
 		
-		if (textViewer instanceof ITextViewerExtension5) {
-			int top= getPartialTopIndex(textWidget);
-			
-			int oldTop= textWidget.getTopIndex();
-			if ((textWidget.getTopPixel() % textWidget.getLineHeight()) != 0)
-				oldTop--;
-			top= MigrationHelper.checkValue(top, oldTop);
-			
-			ITextViewerExtension5 extension= (ITextViewerExtension5)textViewer;
-			return extension.widgetLine2ModelLine(top);
-			
+		// FIXME remove when https://bugs.eclipse.org/bugs/show_bug.cgi?id=123770 is fixed
+		if (pixels == -widget.getLineHeight(widget.getOffsetAtLine(top))) {
+			top++;
+			pixels= 0;
 		}
-		
-		int top= textViewer.getTopIndex();
-		if (!isTopIndexTop(textWidget))
+
+		if (pixels > 0)
 			top--;
 		
+		return top;
+	}
+
+	/**
+	 * Returns the index of the last (possibly only partially) visible line of the widget
+	 * 
+	 * @param widget the text widget
+	 * @return the index of the last line of which a pixel is visible
+	 */
+	public static int getPartialBottomIndex(StyledText widget) {
+		// @see StyledText#getPartialBottomIndex()
+		int lastPixel= computeLastVisiblePixel(widget);
+		int bottom= widget.getLineIndex(lastPixel);
+		return bottom;
+	}
+
+	/**
+	 * Returns the last visible pixel in the widget's client area.
+	 * 
+	 * @param widget the widget
+	 * @return the last visible pixel in the widget's client area
+	 */
+	private static int computeLastVisiblePixel(StyledText widget) {
+		int caHeight= widget.getClientArea().height;
+		int lastPixel= caHeight - 1;
+		// XXX what if there is a margin? can't take trim as this includes the scrollbars which are not part of the client area
+//		if ((textWidget.getStyle() & SWT.BORDER) != 0)
+//			lastPixel -= 4;
+		return lastPixel;
+	}
+	
+	/**
+	 * Returns the line index of the first visible model line in the viewer. The line may be only
+	 * partially visible.
+	 * 
+	 * @param viewer the text viewer
+	 * @return the first line of which a pixel is visible, or -1 for no line
+	 */
+	public static int getPartialTopIndex(ITextViewer viewer) {
+		StyledText widget= viewer.getTextWidget();
+		
+		int widgetTop= getPartialTopIndex(widget);
+		int modelTop= widgetLine2ModelLine(viewer, widgetTop);
+		
 		if (DISABLE_CHECKING)
-			return top;
+			return modelTop;
 		
-		int oldTop= textViewer.getTopIndex();
-		if ((textWidget.getTopPixel() % textWidget.getLineHeight()) != 0)
+		int oldTop= viewer.getTopIndex();
+		if ((widget.getTopPixel() % widget.getLineHeight()) != 0)
 			oldTop--;
-		
-		return MigrationHelper.checkValue(top, oldTop);
+		return checkValue(modelTop, oldTop, "getPartialTopIndex"); //$NON-NLS-1$
 	}
 	
-	public static boolean isTopIndexTop(StyledText styledText) {
-		// in the end use
-		//return styledText.getLinePixel(topIndex) <= 0;
-		return getPartialLineHidden(styledText) <= 0;
+	/**
+	 * Returns the the last, possibly partially, visible line in the view port.
+	 *
+	 * @param viewer the text viewer
+	 * @return the last, possibly partially, visible line in the view port
+	 */
+	public static int getPartialBottomIndex(ITextViewer viewer) {
+		StyledText textWidget= viewer.getTextWidget();
+		int widgetBottom= getPartialBottomIndex(textWidget);
+		int bottom= widgetLine2ModelLine(viewer, widgetBottom);
+
+		if (DISABLE_CHECKING)
+			return bottom;
+
+		int oldBottom= viewer.getBottomIndex();
+		if (((textWidget.getTopPixel() + textWidget.getClientArea().height) % textWidget.getLineHeight()) != 0)
+			oldBottom++;
+
+		return checkValue(bottom, oldBottom, 1, "getPartialBottomIndex"); //$NON-NLS-1$
+	
+	}
+
+	/**
+	 * Returns the range of lines that is visible in the viewer, including any partially visible
+	 * lines.
+	 * 
+	 * @param viewer the viewer
+	 * @return the range of lines that is visible in the viewer, <code>null</code> if no lines are
+	 *         visible
+	 */
+	public static ILineRange getVisibleModelLines(ITextViewer viewer) {
+		int top= MigrationHelper.getPartialTopIndex(viewer);
+		int bottom= MigrationHelper.getPartialBottomIndex(viewer);
+		if (top == -1 || bottom == -1)
+			return null;
+		return new LineRange(top, bottom - top + 1);
+	}
+
+	/**
+	 * Converts a widget line into a model (i.e. {@link IDocument}) line using the
+	 * {@link ITextViewerExtension5} if available, otherwise by adapting the widget line to the
+	 * viewer's {@link ITextViewer#getVisibleRegion() visible region}.
+	 * 
+	 * @param viewer the viewer
+	 * @param widgetLine the widget line to convert.
+	 * @return the model line corresponding to <code>widgetLine</code> or -1 to signal that there
+	 *         is no corresponding model line
+	 */
+	public static int widgetLine2ModelLine(ITextViewer viewer, int widgetLine) {
+		int modelLine;
+		if (viewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
+			modelLine= extension.widgetLine2ModelLine(widgetLine);
+		} else {
+			try {
+				IRegion r= viewer.getVisibleRegion();
+				IDocument d= viewer.getDocument();
+				modelLine= widgetLine + d.getLineOfOffset(r.getOffset());
+			} catch (BadLocationException x) {
+				modelLine= widgetLine;
+			}
+		}
+		return modelLine;
 	}
 	
+	/**
+	 * Converts a model (i.e. {@link IDocument}) line into a widget line using the
+	 * {@link ITextViewerExtension5} if available, otherwise by adapting the model line to the
+	 * viewer's {@link ITextViewer#getVisibleRegion() visible region}.
+	 * 
+	 * @param viewer the viewer
+	 * @param modelLine the model line to convert.
+	 * @return the widget line corresponding to <code>modelLine</code> or -1 to signal that there
+	 *         is no corresponding widget line
+	 */
+	public static int modelLineToWidgetLine(ITextViewer viewer, final int modelLine) {
+		int widgetLine;
+		if (viewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
+			widgetLine= extension.modelLine2WidgetLine(modelLine);
+		} else {
+			IRegion region= viewer.getVisibleRegion();
+			IDocument document= viewer.getDocument();
+			try {
+				int visibleStartLine= document.getLineOfOffset(region.getOffset());
+				int visibleEndLine= document.getLineOfOffset(region.getOffset() + region.getLength());
+				if (modelLine < visibleStartLine || modelLine > visibleEndLine)
+					widgetLine= -1;
+				else
+				widgetLine= modelLine - visibleStartLine;
+			} catch (BadLocationException x) {
+				// ignore and return -1
+				widgetLine= -1;
+			}
+		}
+		return widgetLine;
+	}
+
+
 	/**
 	 * Returns the number of hidden pixels of the first partially visible line. If there is no
 	 * partially visible line, zero is returned.
@@ -148,20 +319,14 @@ public final class MigrationHelper {
 	 * @param textWidget the widget
 	 * @return the number of hidden pixels of the first partial line, always &gt;= 0
 	 */
-	public static int getPartialLineHidden(StyledText textWidget) {
-		int topIndex= textWidget.getTopIndex();
-		
-		int res= getLinePixel(textWidget, topIndex);
-		if (res > 0)
-			res= textWidget.getLineHeight(topIndex - 1) - res;
-		else if (res < 0)
-			res= -res;
+	public static int getHiddenTopLinePixels(StyledText textWidget) {
+		int top= getPartialTopIndex(textWidget);
+		int pixels= -textWidget.getLinePixel(top);
 		
 		if (DISABLE_CHECKING)
-			return res;
+			return pixels;
 		
-		checkValue(res, (textWidget.getLineHeight() - textWidget.getTopPixel()) % textWidget.getLineHeight());
-		return checkValue(res, textWidget.getTopIndex() % textWidget.getLineHeight());
+		return checkValue(pixels, textWidget.getTopPixel() % textWidget.getLineHeight(), "getHiddenTopLinePixels"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -169,58 +334,26 @@ public final class MigrationHelper {
 	 * 
 	 * @param textWidget 
 	 * @return the number of lines visible in the view port <code>-1</code> if there's no client area
+	 * @deprecated this method should not be used - it relies on the widget using a uniform line height
 	 */
 	public static int getVisibleLinesInViewport(StyledText textWidget) {
 		if (textWidget != null) {
 			Rectangle clArea= textWidget.getClientArea();
 			if (!clArea.isEmpty()) {
 				
-				Rectangle trim= textWidget.computeTrim(0, 0, 0, 0);
-				int height= clArea.height - trim.height - 1;
+				int firstPixel= 0;
+				int lastPixel= clArea.height - 1; // XXX what about margins? don't take trims as they include scrollbars
 				
-				int first= getLineIndex(textWidget, 0);
-				int last= getLineIndex(textWidget, height);
+				int first= getLineIndex(textWidget, firstPixel);
+				int last= getLineIndex(textWidget, lastPixel);
 
 				if (DISABLE_CHECKING)
 					return last - first;
 
-				return getValue(last - first, clArea.height / textWidget.getLineHeight());
+				return checkValue(last - first, clArea.height / textWidget.getLineHeight(), "getVisibleLinesInViewport"); //$NON-NLS-1$
 			}
 		}
 		return -1;
-	}
-
-	/**
-	 * Returns the the last, possibly partially, visible line in the view port.
-	 *
-	 * @param textViewer the text viewer
-	 * @return the last, possibly partially, visible line in the view port
-	 */
-	public static int getBottomIndex(ITextViewer textViewer) {
-		StyledText textWidget= textViewer.getTextWidget();
-
-		if (textWidget.getClientArea().isEmpty())
-			return -1;
-		
-		Rectangle trim= textWidget.computeTrim(0, 0, 0, 0);
-		int height= textWidget.getClientArea().height - trim.height;
-		int last= getLineIndex(textWidget, height);
-		int offset= textWidget.getOffsetAtLine(last);
-		int bottom= textViewer.getBottomIndex();
-		
-		int y= getLinePixel(textWidget, last);
-		if (last == textWidget.getLineCount() && y > height || last < textWidget.getLineCount() && y + textWidget.getLineHeight(offset) > height)
-			bottom++;
-		
-		if (DISABLE_CHECKING)
-			return bottom;
-
-		int oldBottom= textViewer.getBottomIndex();
-		if (((textWidget.getTopPixel() + textWidget.getClientArea().height) % textWidget.getLineHeight()) != 0)
-			oldBottom++;
-
-		return checkValue(bottom, oldBottom, 1);
-	
 	}
 
 	/*
@@ -231,30 +364,11 @@ public final class MigrationHelper {
 	}
 	
 	/*
-	 * @see StyledText#getLineIndent(int)
+	 * @see StyledText#getLineIndex(int)
 	 */
 	public static int getLineIndex(StyledText textWidget, int y) {
 		int lineIndex= textWidget.getLineIndex(y);
-		
-		/*
-		 * XXX: Make sure that the line index >= 0
-		 *      see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=120573
-		 */
-		lineIndex= Math.max(0, lineIndex);
-		
 		return lineIndex;
-	}
-
-	/*
-	 * @see StyledText#getPartialTopIndex()
-	 */
-	public static int getPartialTopIndex(StyledText textWidget) {
-		int top= textWidget.getTopIndex();
-		if (!isTopIndexTop(textWidget))
-			top--;
-		
-//		return checkValue(top, textWidget.getPartialTopIndex());
-		return top;
 	}
 
 	/**
@@ -264,6 +378,23 @@ public final class MigrationHelper {
 	 */
 	public static int getLineHeight(StyledText textWidget) {
 		return textWidget.getLineHeight();
+	}
+
+	/**
+	 * Returns <code>true</code> if the widget displays the entire contents, i.e. is not
+	 * vertically scrollable.
+	 * 
+	 * @param widget the widget 
+	 * @return <code>true</code> if the widget displays the entire contents, i.e. is not
+	 *         vertically scrollable, <code>false</code> otherwise
+	 */
+	public static boolean isShowingEntireContents(StyledText widget) {
+		if (widget.getTopPixel() != 0) // more efficient shortcut
+			return true;
+		
+		int lastVisiblePixel= computeLastVisiblePixel(widget);
+		int lastPossiblePixel= widget.getLinePixel(widget.getLineCount());
+		return lastPossiblePixel > lastVisiblePixel;
 	}
 
 }

@@ -1101,7 +1101,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private int getInclusiveTopIndexStartOffset() {
 
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {
-			int top= MigrationHelper.getPartialTopIndex(fSourceViewer, fTextWidget);
+			int top= MigrationHelper.getPartialTopIndex(fSourceViewer);
 			try {
 				IDocument document= fSourceViewer.getDocument();
 				return document.getLineOffset(top);
@@ -1121,7 +1121,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private int getExclusiveBottomIndexEndOffset() {
 
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {
-			int bottom= MigrationHelper.getBottomIndex(fSourceViewer);
+			int bottom= MigrationHelper.getPartialBottomIndex(fSourceViewer);
 			try {
 				IDocument document= fSourceViewer.getDocument();
 

@@ -12,10 +12,14 @@ package org.eclipse.jface.text.source;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.text.Assert;
+import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
+import org.eclipse.jface.text.revisions.RevisionInformation;
+
+import org.eclipse.jface.internal.text.revisions.RevisionPainter;
 
 /**
  * A vertical ruler column displaying line numbers and serving as a UI for quick diff.
@@ -23,75 +27,13 @@ import org.eclipse.jface.text.Assert;
  *
  * @since 3.0
  */
-public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension, IChangeRulerColumn {
-
-	/**
-	 * Internal listener class that will update the ruler when the underlying model changes.
-	 */
-	class AnnotationListener implements IAnnotationModelListener {
-		/*
-		 * @see org.eclipse.jface.text.source.IAnnotationModelListener#modelChanged(org.eclipse.jface.text.source.IAnnotationModel)
-		 */
-		public void modelChanged(IAnnotationModel model) {
-			postRedraw();
-		}
-	}
-
-	/**
-	 * Returns a specification of a color that lies between the given
-	 * foreground and background color using the given scale factor.
-	 *
-	 * @param fg the foreground color
-	 * @param bg the background color
-	 * @param scale the scale factor
-	 * @return the interpolated color
-	 */
-	private static RGB interpolate(RGB fg, RGB bg, double scale) {
-		return new RGB(
-			(int) ((1.0-scale) * fg.red + scale * bg.red),
-			(int) ((1.0-scale) * fg.green + scale * bg.green),
-			(int) ((1.0-scale) * fg.blue + scale * bg.blue)
-		);
-	}
-
-	/**
-	 * Returns the grey value in which the given color would be drawn in grey-scale.
-	 *
-	 * @param rgb the color
-	 * @return the grey-scale value
-	 */
-	private static double greyLevel(RGB rgb) {
-		if (rgb.red == rgb.green && rgb.green == rgb.blue)
-			return rgb.red;
-		return  (0.299 * rgb.red + 0.587 * rgb.green + 0.114 * rgb.blue + 0.5);
-	}
-
-	/**
-	 * Returns whether the given color is dark or light depending on the colors grey-scale level.
-	 *
-	 * @param rgb the color
-	 * @return <code>true</code> if the color is dark, <code>false</code> if it is light
-	 */
-	private static boolean isDark(RGB rgb) {
-		return greyLevel(rgb) > 128;
-	}
-
-	/** Color for changed lines. */
-	private Color fAddedColor;
-	/** Color for added lines. */
-	private Color fChangedColor;
-	/** Color for the deleted line indicator. */
-	private Color fDeletedColor;
+public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension, IChangeRulerColumn, IRevisionRulerColumn {
 	/** The ruler's annotation model. */
-	IAnnotationModel fAnnotationModel;
-	/** The ruler's hover. */
-	private IAnnotationHover fHover;
-	/** The internal listener. */
-	private AnnotationListener fAnnotationListener= new AnnotationListener();
+	private IAnnotationModel fAnnotationModel;
 	/** <code>true</code> if changes should be displayed using character indications instead of background colors. */
 	private boolean fCharacterDisplay;
-	/** The shared text colors. */
-	private ISharedTextColors fSharedColors;
+	private final RevisionPainter fRevisionPainter;
+	private final DiffPainter fDiffPainter;
 
 	/**
 	 * Creates a new instance.
@@ -100,133 +42,20 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 */
 	public LineNumberChangeRulerColumn(ISharedTextColors sharedColors) {
 		Assert.isNotNull(sharedColors);
-		fSharedColors= sharedColors;
+		fRevisionPainter= new RevisionPainter(this, sharedColors);
+		fDiffPainter= new DiffPainter(this, sharedColors);
 	}
-
+	
 	/*
-	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#handleDispose()
+	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#createControl(org.eclipse.jface.text.source.CompositeRuler, org.eclipse.swt.widgets.Composite)
 	 */
-	protected void handleDispose() {
-		if (fAnnotationModel != null) {
-			fAnnotationModel.removeAnnotationModelListener(fAnnotationListener);
-			fAnnotationModel= null;
-		}
-		super.handleDispose();
+	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
+		Control control= super.createControl(parentRuler, parentControl);
+		fRevisionPainter.setParentRuler(parentRuler);
+		fDiffPainter.setParentRuler(parentRuler);
+		return control;
 	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#paintLine(int, int, int, org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Display)
-	 */
-	protected void paintLine(int line, int y, int lineheight, GC gc, Display display) {
-		ILineDiffInfo info= getDiffInfo(line);
-
-		if (info != null) {
-			// width of the column
-			int width= getWidth();
-
-			// draw background color if special
-			if (hasSpecialColor(info)) {
-				gc.setBackground(getColor(info, display));
-				gc.fillRectangle(0, y, width, lineheight);
-			}
-
-			int delBefore= info.getRemovedLinesAbove();
-			int delBelow= info.getRemovedLinesBelow();
-			if (delBefore > 0 || delBelow > 0) {
-				Color deletionColor= getDeletionColor(display);
-				gc.setForeground(deletionColor);
-
-				if (delBefore > 0) {
-					gc.drawLine(0, y, width, y);
-				}
-
-				if (delBelow > 0) {
-					gc.drawLine(0, y + lineheight - 1, width, y + lineheight - 1);
-				}
-				gc.setForeground(getForeground());
-			}
-		}
-	}
-
-	/**
-	 * Returns whether the line background differs from the default.
-	 *
-	 * @param info the info being queried
-	 * @return <code>true</code> if <code>info</code> describes either a changed or an added line.
-	 */
-	private boolean hasSpecialColor(ILineDiffInfo info) {
-		return info.getChangeType() == ILineDiffInfo.ADDED || info.getChangeType() == ILineDiffInfo.CHANGED;
-	}
-
-	/**
-	 * Retrieves the <code>ILineDiffInfo</code> for <code>line</code> from the model.
-	 * There are optimizations for direct access and sequential access patterns.
-	 *
-	 * @param line the line we want the info for.
-	 * @return the <code>ILineDiffInfo</code> for <code>line</code>, or <code>null</code>.
-	 */
-	private ILineDiffInfo getDiffInfo(int line) {
-		if (fAnnotationModel == null)
-			return null;
-
-		// assume direct access
-		if (fAnnotationModel instanceof ILineDiffer) {
-			ILineDiffer differ= (ILineDiffer)fAnnotationModel;
-			return differ.getLineInfo(line);
-		}
-
-		return null;
-	}
-
-	/**
-	 * Returns the color for deleted lines.
-	 *
-	 * @param display the display that the drawing occurs on
-	 * @return the color to be used for the deletion indicator
-	 */
-	private Color getDeletionColor(Display display) {
-		return fDeletedColor == null ? getBackground(display) : fDeletedColor;
-	}
-
-	/**
-	 * Returns the color for the given line diff info.
-	 *
-	 * @param info the <code>ILineDiffInfo</code> being queried
-	 * @param display the display that the drawing occurs on
-	 * @return the correct background color for the line type being described by <code>info</code>
-	 */
-	private Color getColor(ILineDiffInfo info, Display display) {
-		Assert.isTrue(info != null && info.getChangeType() != ILineDiffInfo.UNCHANGED);
-		Color ret= null;
-		switch (info.getChangeType()) {
-			case ILineDiffInfo.CHANGED :
-				ret= getShadedColor(fChangedColor, display);
-				break;
-			case ILineDiffInfo.ADDED :
-				ret= getShadedColor(fAddedColor, display);
-				break;
-		}
-		return ret == null ? getBackground(display) : ret;
-	}
-
-	/**
-	 * Returns the character to display in character display mode for the given <code>ILineDiffInfo</code>
-	 *
-	 * @param info the <code>ILineDiffInfo</code> being queried
-	 * @return the character indication for <code>info</code>
-	 */
-	private String getDisplayCharacter(ILineDiffInfo info) {
-		if (info == null)
-			return ""; //$NON-NLS-1$
-		switch (info.getChangeType()) {
-			case ILineDiffInfo.CHANGED :
-				return "~"; //$NON-NLS-1$
-			case ILineDiffInfo.ADDED :
-				return "+"; //$NON-NLS-1$
-		}
-		return " "; //$NON-NLS-1$
-	}
-
+	
 	/*
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
 	 */
@@ -242,99 +71,23 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getHover()
-	 */
-	public IAnnotationHover getHover() {
-		return fHover;
-	}
-
-	/**
-	 * Sets the hover of this ruler column.
-	 * @param hover the hover that will produce hover information text for this ruler column
-	 */
-	public void setHover(IAnnotationHover hover) {
-		fHover= hover;
-	}
-
-	/*
 	 * @see IVerticalRulerColumn#setModel(IAnnotationModel)
 	 */
 	public void setModel(IAnnotationModel model) {
-		IAnnotationModel newModel;
-		if (model instanceof IAnnotationModelExtension) {
-			newModel= ((IAnnotationModelExtension)model).getAnnotationModel(QUICK_DIFF_MODEL_ID);
-		} else {
-			newModel= model;
-		}
-		if (fAnnotationModel != newModel) {
-			if (fAnnotationModel != null) {
-				fAnnotationModel.removeAnnotationModelListener(fAnnotationListener);
-			}
-			fAnnotationModel= newModel;
-			if (fAnnotationModel != null) {
-				fAnnotationModel.addAnnotationModelListener(fAnnotationListener);
-			}
-			updateNumberOfDigits();
-			computeIndentations();
-			layout(true);
-			postRedraw();
-		}
+		setAnnotationModel(model);
+		fRevisionPainter.setModel(model);
+		fDiffPainter.setModel(model);
+		updateNumberOfDigits();
+		computeIndentations();
+		layout(true);
+		postRedraw();
+	}
+	
+	private void setAnnotationModel(IAnnotationModel model) {
+		if (fAnnotationModel != model)
+			fAnnotationModel= model;
 	}
 
-	/**
-	 * Sets the background color for added lines. The color has to be disposed of by the caller when
-	 * the receiver is no longer used.
-	 *
-	 * @param addedColor the new color to be used for the added lines background
-	 */
-	public void setAddedColor(Color addedColor) {
-		fAddedColor= addedColor;
-	}
-
-	/**
-	 * Sets the background color for changed lines. The color has to be disposed of by the caller when
-	 * the receiver is no longer used.
-	 *
-	 * @param changedColor the new color to be used for the changed lines background
-	 */
-	public void setChangedColor(Color changedColor) {
-		fChangedColor= changedColor;
-	}
-
-	/**
-	 * Sets the background color for changed lines. The color has to be disposed of by the caller when
-	 * the receiver is no longer used.
-	 *
-	 * @param color the new color to be used for the changed lines background
-	 * @param display the display
-	 * @return the shaded color
-	 */
-	private Color getShadedColor(Color color, Display display) {
-		if (color == null)
-			return null;
-
-		RGB baseRGB= color.getRGB();
-		RGB background= getBackground(display).getRGB();
-
-		boolean darkBase= isDark(baseRGB);
-		boolean darkBackground= isDark(background);
-		if (darkBase && darkBackground)
-			background= new RGB(255, 255, 255);
-		else if (!darkBase && !darkBackground)
-			background= new RGB(0, 0, 0);
-
-		return fSharedColors.getColor(interpolate(baseRGB, background, 0.6));
-	}
-
-	/**
-	 * Sets the color for the deleted lines indicator. The color has to be disposed of by the caller when
-	 * the receiver is no longer used.
-	 *
-	 * @param deletedColor the new color to be used for the deleted lines indicator.
-	 */
-	public void setDeletedColor(Color deletedColor) {
-		fDeletedColor= deletedColor;
-	}
 
 	/**
 	 * Sets the the display mode of the ruler. If character mode is set to <code>true</code>, diff
@@ -363,7 +116,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 */
 	protected String createDisplayString(int line) {
 		if (fCharacterDisplay && getModel() != null)
-			return super.createDisplayString(line) + getDisplayCharacter(getDiffInfo(line));
+			return super.createDisplayString(line) + fDiffPainter.getDisplayCharacter(line);
 		return super.createDisplayString(line);
 	}
 
@@ -388,5 +141,75 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 */
 	public void removeVerticalRulerListener(IVerticalRulerListener listener) {
 		throw new UnsupportedOperationException();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#doPaint(org.eclipse.swt.graphics.GC)
+	 */
+	void doPaint(GC gc, ILineRange visibleLines) {
+		Color foreground= gc.getForeground();
+		if (visibleLines != null) {
+			fRevisionPainter.paint(gc, visibleLines);
+			fDiffPainter.paint(gc, visibleLines);
+		}
+		gc.setForeground(foreground);
+		super.doPaint(gc, visibleLines);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getHover()
+	 */
+	public IAnnotationHover getHover() {
+		int activeLine= getParentRuler().getLineOfLastMouseButtonActivity();
+		if (fRevisionPainter.hasHover(activeLine))
+			return fRevisionPainter.getHover();
+		if (fDiffPainter.hasHover(activeLine))
+			return fDiffPainter.getHover();
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setHover(org.eclipse.jface.text.source.IAnnotationHover)
+	 */
+	public void setHover(IAnnotationHover hover) {
+		fRevisionPainter.setHover(hover);
+		fDiffPainter.setHover(hover);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setBackground(org.eclipse.swt.graphics.Color)
+	 */
+	public void setBackground(Color background) {
+		super.setBackground(background);
+		fRevisionPainter.setBackground(background);
+		fDiffPainter.setBackground(background);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setAddedColor(org.eclipse.swt.graphics.Color)
+	 */
+	public void setAddedColor(Color addedColor) {
+		fDiffPainter.setAddedColor(addedColor);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setChangedColor(org.eclipse.swt.graphics.Color)
+	 */
+	public void setChangedColor(Color changedColor) {
+		fDiffPainter.setChangedColor(changedColor);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setDeletedColor(org.eclipse.swt.graphics.Color)
+	 */
+	public void setDeletedColor(Color deletedColor) {
+		fDiffPainter.setDeletedColor(deletedColor);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.revisions.IRevisionRulerColumn#setRevisionInformation(org.eclipse.jface.text.revisions.RevisionInformation)
+	 */
+	public void setRevisionInformation(RevisionInformation info) {
+		fRevisionPainter.setRevisionInformation(info);
 	}
 }

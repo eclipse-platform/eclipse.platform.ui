@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.text.revisions;
+package org.eclipse.jface.internal.text.revisions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,20 +27,13 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -51,13 +44,12 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
-import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.revisions.Revision;
+import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationHover;
@@ -71,24 +63,16 @@ import org.eclipse.jface.text.source.ILineDiffer;
 import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRulerInfo;
-import org.eclipse.jface.text.source.IVerticalRulerListener;
+import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.LineRange;
 
 import org.eclipse.jface.internal.text.MigrationHelper;
-import org.eclipse.jface.internal.text.revisions.ChangeRegion;
-import org.eclipse.jface.internal.text.revisions.DiffApplier;
 
 /**
- * A vertical ruler column capable of displaying revision (aka. annotate) information..
- * Clients instantiate and configure object of this class.
- * <p>
- * XXX This API is provisional and may change any time during the development of eclipse 3.2.
- * </p>
- *
+ * 
  * @since 3.2
  */
-public final class RevisionRulerColumn implements IRevisionRulerColumn {
+public final class RevisionPainter {
 	/** Tells whether this class is in debug mode. */
 	private static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text.source/debug/RevisionRulerColumn"));  //$NON-NLS-1$//$NON-NLS-2$
 	
@@ -96,6 +80,144 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		public RevisionAnnotation(String text) {
 			super("org.eclipse.ui.workbench.texteditor.revisionAnnotation", false, text); //$NON-NLS-1$
 		}
+	}
+	
+	private final class ColorTool {
+		private static final double MAX_SHADING= 0.8;
+		private static final double MIN_SHADING= 0.3;
+		private static final double FOCUS_COLOR_SHADING= 0.9;
+		
+		private List fRevisions= new ArrayList();
+		
+		public void setInfo(RevisionInformation info) {
+			if (info == null)
+				return;
+			List revisions= new ArrayList();
+			for (Iterator it= info.getRevisions().iterator(); it.hasNext();) {
+				Revision revision= (Revision) it.next();
+				revisions.add(new Long(computeAge(revision)));
+			}
+			Collections.sort(revisions);
+			fRevisions= revisions;
+		}
+		
+		private RGB adaptColorToAge(Revision revision, RGB rgb, boolean focus) {
+			long age= computeAge(revision);
+			// relative age: newest is 0, oldest is 1
+			double relativeAge= (double) fRevisions.indexOf(new Long(age)) / (fRevisions.size() - 1);
+			
+			return getShadedColor(rgb, 1 - relativeAge, focus);
+		}
+		
+		private RGB getShadedColor(RGB color, double scale, boolean focus) {
+			Assert.isLegal(scale >= 0.0);
+			Assert.isLegal(scale <= 1.0);
+			RGB background= getBackground().getRGB();
+			
+			if (focus) {
+				scale -= FOCUS_COLOR_SHADING;
+				if (scale < 0) {
+					background= new RGB(255 - background.red, 255 - background.green, 255 - background.blue);
+					scale= -scale;
+				}
+			}
+			
+			scale= (MAX_SHADING - MIN_SHADING) * scale + MIN_SHADING;
+
+			return interpolate(color, background, scale);
+		}
+
+		/**
+		 * Returns a specification of a color that lies between the given
+		 * foreground and background color using the given scale factor.
+		 *
+		 * @param fg the foreground color
+		 * @param bg the background color
+		 * @param scale the scale factor
+		 * @return the interpolated color
+		 */
+		private RGB interpolate(RGB fg, RGB bg, double scale) {
+			return new RGB(
+				(int) ((1.0-scale) * fg.red + scale * bg.red),
+				(int) ((1.0-scale) * fg.green + scale * bg.green),
+				(int) ((1.0-scale) * fg.blue + scale * bg.blue)
+			);
+		}
+		
+		private long computeAge(Revision revision) {
+			return revision.getDate().getTime();
+		}
+		
+		public RGB getColor(Revision revision, boolean focus) {
+			RGB rgb= revision.getColor();
+			rgb= adaptColorToAge(revision, rgb, focus);
+			return rgb;
+		}
+	}
+	
+	/**
+	 * Handles all the mouse interaction in this line number ruler column.
+	 */
+	private class MouseHandler implements MouseMoveListener, MouseTrackListener, Listener {
+
+		/*
+		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseUp(MouseEvent event) {
+		}
+
+		/*
+		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+		 */
+		public void handleEvent(Event event) {
+			Assert.isTrue(event.type == SWT.MouseWheel);
+			handleMouseWheel(event);
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseEnter(MouseEvent e) {
+			onEnter();
+			updateFocusLine(toDocumentLineNumber(e.y));
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseExit(MouseEvent e) {
+			updateFocusLine( -1);
+			onExit();
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseHover(MouseEvent e) {
+			onHover();
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseMove(MouseEvent e) {
+			updateFocusLine(toDocumentLineNumber(e.y));
+		}
+	}
+
+	/**
+	 * Internal listener class that will update the ruler when the underlying model changes.
+	 */
+	private class AnnotationListener implements IAnnotationModelListener {
+		/*
+		 * @see org.eclipse.jface.text.source.IAnnotationModelListener#modelChanged(org.eclipse.jface.text.source.IAnnotationModel)
+		 */
+		public void modelChanged(IAnnotationModel model) {
+			// TODO incremental
+			fChangeRegions= null;
+			postRedraw();
+		}
+
 	}
 	
 	private final class RevisionHover implements IAnnotationHover, IAnnotationHoverExtension, IAnnotationHoverExtension2 {
@@ -144,383 +266,129 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 			return region == null ? null : new LineRange(lineNumber, 1);
 		}
 	}
-
-	private final class ColorTool {
-		private static final double MAX_SHADING= 0.8;
-		private static final double MIN_SHADING= 0.3;
-		private static final double FOCUS_COLOR_SHADING= 0.9;
-		
-		private List fRevisions= new ArrayList();
-		
-		public void setInfo(RevisionInformation info) {
-			if (info == null)
-				return;
-			List revisions= new ArrayList();
-			for (Iterator it= info.getRevisions().iterator(); it.hasNext();) {
-				Revision revision= (Revision) it.next();
-				revisions.add(new Long(computeAge(revision)));
-			}
-			Collections.sort(revisions);
-			fRevisions= revisions;
-		}
-		
-		private RGB adaptColorToAge(Revision revision, RGB rgb, boolean focus) {
-			long age= computeAge(revision);
-			// relative age: newest is 0, oldest is 1
-			double relativeAge= (double) fRevisions.indexOf(new Long(age)) / (fRevisions.size() - 1);
-			
-			return getShadedColor(rgb, 1 - relativeAge, focus);
-		}
-		
-		private RGB getShadedColor(RGB color, double scale, boolean focus) {
-			Assert.isLegal(scale >= 0.0);
-			Assert.isLegal(scale <= 1.0);
-			RGB background= fBackground == null ? new RGB(255, 255, 255) : fBackground.getRGB();
-			
-			if (focus) {
-				scale -= FOCUS_COLOR_SHADING;
-				if (scale < 0) {
-					background= new RGB(255 - background.red, 255 - background.green, 255 - background.blue);
-					scale= -scale;
-				}
-			}
-			
-			scale= (MAX_SHADING - MIN_SHADING) * scale + MIN_SHADING;
-
-			return interpolate(color, background, scale);
-		}
-
-		/**
-		 * Returns a specification of a color that lies between the given
-		 * foreground and background color using the given scale factor.
-		 *
-		 * @param fg the foreground color
-		 * @param bg the background color
-		 * @param scale the scale factor
-		 * @return the interpolated color
-		 */
-		private RGB interpolate(RGB fg, RGB bg, double scale) {
-			return new RGB(
-				(int) ((1.0-scale) * fg.red + scale * bg.red),
-				(int) ((1.0-scale) * fg.green + scale * bg.green),
-				(int) ((1.0-scale) * fg.blue + scale * bg.blue)
-			);
-		}
-		
-		private long computeAge(Revision revision) {
-			return revision.getDate().getTime();
-		}
-		
-		public RGB getColor(Revision revision, boolean focus) {
-			RGB rgb= revision.getColor();
-			rgb= adaptColorToAge(revision, rgb, focus);
-			return rgb;
-		}
-	}
 	
-	/**
-	 * Handles all the mouse interaction in this line number ruler column.
-	 */
-	class MouseHandler implements MouseListener, MouseMoveListener, MouseTrackListener, Listener {
-
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-		 */
-		public void mouseUp(MouseEvent event) {
-		}
-
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-		 */
-		public void mouseDown(MouseEvent event) {
-			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
-		}
-
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-		 */
-		public void mouseDoubleClick(MouseEvent event) {
-			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
-		}
-
-		/*
-		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-		 */
-		public void handleEvent(Event event) {
-			Assert.isTrue(event.type == SWT.MouseWheel);
-			handleMouseWheel(event);
-		}
-
-		/*
-		 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
-		 */
-		public void mouseEnter(MouseEvent e) {
-			onEnter();
-			updateFocusLine(toDocumentLineNumber(e.y));
-		}
-
-		/*
-		 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
-		 */
-		public void mouseExit(MouseEvent e) {
-			updateFocusLine( -1);
-			onExit();
-		}
-
-		/*
-		 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
-		 */
-		public void mouseHover(MouseEvent e) {
-			onHover();
-		}
-
-		/*
-		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
-		 */
-		public void mouseMove(MouseEvent e) {
-			updateFocusLine(toDocumentLineNumber(e.y));
-		}
-	}
-
-	/**
-	 * Internal listener class.
-	 */
-	class InternalListener implements IViewportListener, ITextListener {
-
-		/*
-		 * @see IViewportListener#viewportChanged(int)
-		 */
-		public void viewportChanged(int verticalPosition) {
-			if (verticalPosition != fScrollPos)
-				redraw();
-		}
-
-		/*
-		 * @see ITextListener#textChanged(TextEvent)
-		 */
-		public void textChanged(TextEvent event) {
-
-			if (!event.getViewerRedrawState())
-				return;
-
-			if (fSensitiveToTextChanges || event.getDocumentEvent() == null)
-				postRedraw();
-
-		}
-	}
-
-	/**
-	 * Internal listener class that will update the ruler when the underlying model changes.
-	 */
-	class AnnotationListener implements IAnnotationModelListener {
-		/*
-		 * @see org.eclipse.jface.text.source.IAnnotationModelListener#modelChanged(org.eclipse.jface.text.source.IAnnotationModel)
-		 */
-		public void modelChanged(IAnnotationModel model) {
-			// TODO incremental
-			fChangeRegions= null;
-			postRedraw();
-		}
-	}
-	
-	/** This column's parent ruler */
+	private final IVerticalRulerColumn fColumn;
 	private CompositeRuler fParentRuler;
-	/** Cached text viewer */
-	private ITextViewer fCachedTextViewer;
-	/** Cached text widget */
-	private StyledText fCachedTextWidget;
-	/** The columns canvas */
-	private Canvas fCanvas;
-	/** Cache for the actual scroll position in pixels */
-	private int fScrollPos;
-	/** The buffer for double buffering */
-	private Image fBuffer;
-	/** The internal listener */
-	private InternalListener fInternalListener= new InternalListener();
-	/** Indicates whether this column reacts on text change events */
-	private boolean fSensitiveToTextChanges= false;
-	/** The background color */
-	private Color fBackground;
-	/** The ruler's annotation model. */
-	private IAnnotationModel fAnnotationModel;
-	/** The ruler's hover */
-	private IAnnotationHover fHover= new RevisionHover();
-	/** The internal listener */
-	private AnnotationListener fAnnotationListener= new AnnotationListener();
-	/** The width of the change ruler column. */
-	private int fWidth= 8;
-	private RevisionInformation fRevisionInfo;
-	private ArrayList fChangeRegions= null;
+	private Control fControl;
+	private ITextViewer fViewer;
+	private StyledText fWidget;
 	private final ISharedTextColors fSharedColors;
 	private final ColorTool fColorTool= new ColorTool();
+	private final MouseHandler fMouseHandler= new MouseHandler();
+	private final RevisionHover fHover= new RevisionHover();
+	private final AnnotationListener fAnnotationListener= new AnnotationListener();
+
+	private RevisionInformation fRevisionInfo;
+	private ILineDiffer fLineDiffer= null;
+	private IAnnotationModel fAnnotationModel= null;
+	private Color fBackground;
+	
+	private ArrayList fChangeRegions= null;
 	private List fAnnotations= new ArrayList();
-	private MouseHandler fMouseHandler;
+	
 	private int fFocusLine= -1;
 	private ChangeRegion fFocusRegion= null;
 	private Revision fFocusRevision= null;
+	
 	private boolean fIsOverviewShowing= false;
 	private boolean fWheelHandlerInstalled= false;
-	private ILineDiffer fLineDiffer= null;
 
-	/**
-	 * Creates a new revision ruler column.
-	 * 
-	 * @param sharedColors the colors to look up RGBs
-	 */
-	public RevisionRulerColumn(ISharedTextColors sharedColors) {
-		Assert.isNotNull(sharedColors);
+	public RevisionPainter(IVerticalRulerColumn column, ISharedTextColors sharedColors) {
+		fColumn= column;
 		fSharedColors= sharedColors;
 	}
 
-	/**
-	 * Returns the System background color for list widgets.
-	 *
-	 * @param display the display the drawing occurs on
-	 * @return the System background color for list widgets
-	 */
-	private final Color getBackground(Display display) {
-		if (fBackground == null)
-			return display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		return fBackground;
+	public void setRevisionInformation(RevisionInformation info) {
+		fRevisionInfo= info;
+		fChangeRegions= null;
+		updateFocusRegion(null);
+		fColorTool.setInfo(info);
+		postRedraw();
+	}
+	
+	public void setBackground(Color background) {
+		fBackground= background;
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#createControl(CompositeRuler, Composite)
-	 */
-	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
-
+	public void setParentRuler(CompositeRuler parentRuler) {
 		fParentRuler= parentRuler;
-		fCachedTextViewer= parentRuler.getTextViewer();
-		fCachedTextWidget= fCachedTextViewer.getTextWidget();
-
-		fCanvas= new Canvas(parentControl, SWT.NO_BACKGROUND);
-		fCanvas.setBackground(getBackground(fCanvas.getDisplay()));
-
-		fCanvas.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent event) {
-				doubleBufferPaint(event.gc);
-			}
-		});
-
-		fCanvas.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				handleDispose();
-				fCachedTextViewer= null;
-				fCachedTextWidget= null;
-			}
-		});
-
-		fMouseHandler= new MouseHandler();
-		fCanvas.addMouseListener(fMouseHandler);
-		fCanvas.addMouseTrackListener(fMouseHandler);
-		fCanvas.addMouseMoveListener(fMouseHandler);
-
-		if (fCachedTextViewer != null) {
-
-			fCachedTextViewer.addViewportListener(fInternalListener);
-			fCachedTextViewer.addTextListener(fInternalListener);
+	}
+	
+	public void paint(GC gc, ILineRange visibleLines) {
+		getWidgets();
+		if (fWidget == null)
+			return;
+		
+		// draw change regions
+		List/*<ChangeRegion>*/ changes= getChangeRegions(visibleLines);
+		for (Iterator it= changes.iterator(); it.hasNext();) {
+			ChangeRegion region= (ChangeRegion) it.next();
+			paintChangeRegion(region, gc);
 		}
+	}
 
-		return fCanvas;
+	private void getWidgets() {
+		if (fWidget == null && fParentRuler != null) {
+			fViewer= fParentRuler.getTextViewer();
+			fWidget= fViewer.getTextWidget();
+
+			fControl= fColumn.getControl();
+			fControl.addMouseTrackListener(fMouseHandler);
+			fControl.addMouseMoveListener(fMouseHandler);
+			fControl.addDisposeListener(new DisposeListener() {
+				/*
+				 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+				 */
+				public void widgetDisposed(DisposeEvent e) {
+					handleDispose();
+				}
+			});
+		}
+		
+	}
+
+	public void setModel(IAnnotationModel model) {
+		IAnnotationModel diffModel;
+		if (model instanceof IAnnotationModelExtension)
+			diffModel= ((IAnnotationModelExtension)model).getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
+		else
+			diffModel= model;
+		
+		setDiffer(diffModel);
+		setAnnotationModel(model);
+	}
+
+	private void setAnnotationModel(IAnnotationModel model) {
+		if (fAnnotationModel != model)
+			fAnnotationModel= model;
+	}
+
+	private void setDiffer(IAnnotationModel differ) {
+		if (differ instanceof ILineDiffer) {
+			if (fLineDiffer != differ) {
+				if (fLineDiffer != null)
+					((IAnnotationModel) fLineDiffer).removeAnnotationModelListener(fAnnotationListener);
+				fLineDiffer= (ILineDiffer) differ;
+				if (fLineDiffer != null)
+					((IAnnotationModel) fLineDiffer).addAnnotationModelListener(fAnnotationListener);
+				redraw();
+			}
+		}
 	}
 
 	/**
 	 * Disposes the column's resources.
 	 */
 	private void handleDispose() {
+		updateFocusLine(-1);
 
 		if (fLineDiffer != null) {
 			((IAnnotationModel) fLineDiffer).removeAnnotationModelListener(fAnnotationListener);
 			fLineDiffer= null;
 		}
-
-		if (fCachedTextViewer != null) {
-			fCachedTextViewer.removeViewportListener(fInternalListener);
-			fCachedTextViewer.removeTextListener(fInternalListener);
-		}
-
-		if (fBuffer != null) {
-			fBuffer.dispose();
-			fBuffer= null;
-		}
 	}
-
-	/**
-	 * Double buffer drawing.
-	 *
-	 * @param dest the GC to draw into
-	 */
-	private void doubleBufferPaint(GC dest) {
-
-		Point size= fCanvas.getSize();
-
-		if (size.x <= 0 || size.y <= 0)
-			return;
-
-		if (fBuffer != null) {
-			Rectangle r= fBuffer.getBounds();
-			if (r.width != size.x || r.height != size.y) {
-				fBuffer.dispose();
-				fBuffer= null;
-			}
-		}
-		if (fBuffer == null)
-			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
-
-		GC gc= new GC(fBuffer);
-		gc.setFont(fCanvas.getFont());
-
-		try {
-			gc.setBackground(getBackground(fCanvas.getDisplay()));
-			gc.fillRectangle(0, 0, size.x, size.y);
-
-			doPaint(gc);
-
-		} finally {
-			gc.dispose();
-		}
-
-		dest.drawImage(fBuffer, 0, 0);
-	}
-
-	/**
-	 * Returns the view port height in lines.
-	 *
-	 * @return the view port height in lines
-	 */
-	private final int getVisibleLinesInViewport() {
-		return MigrationHelper.getVisibleLinesInViewport(fCachedTextWidget);
-	}
-
-	/**
-	 * Draws the ruler column. Uses <code>ITextViewerExtension5</code> for the
-	 * implementation. Will replace <code>doPaint(GC)</code>.
-	 *
-	 * @param gc the GC to draw into
-	 */
-	private void doPaint(GC gc) {
-
-		if (fCachedTextViewer == null)
-			return;
-
-		ILineRange visibleModelLines= computeVisibleModelLines();
-		if (visibleModelLines == null)
-			return;
-
-		fSensitiveToTextChanges= visibleModelLines.getNumberOfLines() <= getVisibleLinesInViewport();
-
-		fScrollPos= fCachedTextWidget.getTopPixel();
-
-		int y_shift= -fScrollPos;
-		List/*<ChangeRegion>*/ changes= getChangeRegions(visibleModelLines);
-		for (Iterator it= changes.iterator(); it.hasNext();) {
-			ChangeRegion region= (ChangeRegion) it.next();
-			paintChangeRegion(region, gc, y_shift);
-		}
-		
-	}
-
-	private void paintChangeRegion(ChangeRegion region, GC gc, int y_shift) {
+	
+	private void paintChangeRegion(ChangeRegion region, GC gc) {
 		Revision revision= region.getRevision();
 		gc.setBackground(lookupColor(revision, false));
 		if (revision == fFocusRevision)
@@ -529,7 +397,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		List ranges= region.getAdjustedRanges();
 		for (Iterator it= ranges.iterator(); it.hasNext();) {
 			ILineRange range= (ILineRange) it.next();
-			Rectangle box= computeBoxBounds(range, y_shift);
+			Rectangle box= computeBoxBounds(range);
 			if (box == null)
 				return;
 			
@@ -661,7 +529,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 			});
 			
 			if (fLineDiffer != null)
-				new DiffApplier().applyDiff(regions, fLineDiffer, fCachedTextViewer.getDocument().getNumberOfLines());
+				new DiffApplier().applyDiff(regions, fLineDiffer, fViewer.getDocument().getNumberOfLines());
 			
 			fChangeRegions= regions;
 		}
@@ -689,61 +557,11 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		return one.getStartLine() + one.getNumberOfLines();
 	}
 	
-	/**
-	 * Computes the document based line range visible in the text widget.
-	 * 
-	 * @return the document based line range visible in the text widget
-	 */
-	private final ILineRange computeVisibleModelLines() {
-		IDocument doc= fCachedTextViewer.getDocument();
-		if (doc == null)
-			return null;
-		
-		int topLine;
-		IRegion coverage;
-		
-		if (fCachedTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
-			
-			// ITextViewer.getTopIndex returns the fully visible line, but we want the partially
-			// visible one
-			int widgetTopLine= MigrationHelper.getPartialTopIndex(fCachedTextWidget);
-			topLine= extension.widgetLine2ModelLine(widgetTopLine);
-			
-			coverage= extension.getModelCoverage();
-			
-		} else {
-			topLine= MigrationHelper.getPartialTopIndex(fCachedTextViewer, fCachedTextWidget);
-			coverage= fCachedTextViewer.getVisibleRegion();
-		}
-		
-		int bottomLine= fCachedTextViewer.getBottomIndex();
-		if (bottomLine != -1)
-			++ bottomLine;
-		
-		// clip by coverage window
-		try {
-			int firstLine= doc.getLineOfOffset(coverage.getOffset());
-			if (firstLine > topLine)
-				topLine= firstLine;
-			
-			int lastLine= doc.getLineOfOffset(coverage.getOffset() + coverage.getLength());
-			if (lastLine < bottomLine || bottomLine == -1)
-				bottomLine= lastLine;
-		} catch (BadLocationException x) {
-			x.printStackTrace();
-			return null;
-		}
-		
-		ILineRange visibleModelLines= new LineRange(topLine, bottomLine - topLine + 1);
-		return visibleModelLines;
-	}
-	
 	private final ILineRange modelLinesToWidgetLines(ILineRange range) {
 		int widgetStartLine= -1;
 		int widgetEndLine= -1;
-		if (fCachedTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
+		if (fViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fViewer;
 			int modelEndLine= end(range);
 			for (int modelLine= range.getStartLine(); modelLine < modelEndLine; modelLine++) {
 				int widgetLine= extension.modelLine2WidgetLine(modelLine);
@@ -754,8 +572,8 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 				}
 			}
 		} else {
-			IRegion region= fCachedTextViewer.getVisibleRegion();
-			IDocument document= fCachedTextViewer.getDocument();
+			IRegion region= fViewer.getVisibleRegion();
+			IDocument document= fViewer.getDocument();
 			try {
 				int visibleStartLine= document.getLineOfOffset(region.getOffset());
 				int visibleEndLine= document.getLineOfOffset(region.getOffset() + region.getLength());
@@ -771,157 +589,19 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		return new LineRange(widgetStartLine, widgetEndLine - widgetStartLine + 1);
 	}
 	
-	/*
-	 * @see IVerticalRulerColumn#redraw()
-	 */
-	public void redraw() {
-		if (fCanvas != null && !fCanvas.isDisposed()) {
-			GC gc= new GC(fCanvas);
-			doubleBufferPaint(gc);
-			gc.dispose();
-		}
-	}
-
-	/*
-	 * @see IVerticalRulerColumn#setFont(Font)
-	 */
-	public void setFont(Font font) {
-		// font not needed
-	}
-
-	/**
-	 * Returns the parent (composite) ruler of this ruler column.
-	 *
-	 * @return the parent ruler
-	 * @since 3.0
-	 */
-	private IVerticalRulerInfo getParentRuler() {
-		return fParentRuler;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
-	 */
-	public int getLineOfLastMouseButtonActivity() {
-		return getParentRuler().getLineOfLastMouseButtonActivity();
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#toDocumentLineNumber(int)
-	 */
-	public int toDocumentLineNumber(int y_coordinate) {
-		return getParentRuler().toDocumentLineNumber(y_coordinate);
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getHover()
-	 */
 	public IAnnotationHover getHover() {
 		return fHover;
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#setModel(IAnnotationModel)
-	 */
-	public void setModel(IAnnotationModel model) {
-		IAnnotationModel diffModel;
-		if (model instanceof IAnnotationModelExtension)
-			diffModel= ((IAnnotationModelExtension)model).getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
-		else
-			diffModel= model;
-		
-		setDiffer(diffModel);
-		setAnnotationModel(model);
-	}
-
-	private void setAnnotationModel(IAnnotationModel model) {
-		if (fAnnotationModel != model)
-			fAnnotationModel= model;
-	}
-
-	private void setDiffer(IAnnotationModel differ) {
-		if (differ instanceof ILineDiffer) {
-			if (fLineDiffer != differ) {
-				if (fLineDiffer != null)
-					((IAnnotationModel) fLineDiffer).removeAnnotationModelListener(fAnnotationListener);
-				fLineDiffer= (ILineDiffer) differ;
-				if (fLineDiffer != null)
-					((IAnnotationModel) fLineDiffer).addAnnotationModelListener(fAnnotationListener);
-				redraw();
-			}
-		}
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getModel()
-	 */
-	public IAnnotationModel getModel() {
-		return fAnnotationModel;
-	}
-
-	/*
-	 * @see IVerticalRulerColumn#getControl()
-	 */
-	public Control getControl() {
-		return fCanvas;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getWidth()
-	 */
-	public int getWidth() {
-		return fWidth;
-	}
-
-	/**
-	 * Triggers a redraw in the display thread.
-	 */
-	private final void postRedraw() {
-		if (fCanvas != null && !fCanvas.isDisposed()) {
-			Display d= fCanvas.getDisplay();
-			if (d != null) {
-				d.asyncExec(new Runnable() {
-					public void run() {
-						redraw();
-					}
-				});
-			}
-		}
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#addVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
-	 */
-	public void addVerticalRulerListener(IVerticalRulerListener listener) {
-		throw new UnsupportedOperationException();
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
-	 */
-	public void removeVerticalRulerListener(IVerticalRulerListener listener) {
-		throw new UnsupportedOperationException();
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.revisions.IRevisionRulerColumn#setRevisionInformation(org.eclipse.jface.text.revisions.RevisionInformation)
-	 */
-	public void setRevisionInformation(RevisionInformation info) {
-		fRevisionInfo= info;
-		fChangeRegions= null;
-		updateFocusRegion(null);
-		fColorTool.setInfo(info);
-		postRedraw();
-	}
-	
-	private Rectangle computeBoxBounds(ILineRange range, int y_shift) {
+	private Rectangle computeBoxBounds(ILineRange range) {
 		ILineRange widgetRange= modelLinesToWidgetLines(range);
 		if (widgetRange == null)
 			return null;
-		int y= MigrationHelper.computeLineHeight(fCachedTextWidget, 0, widgetRange.getStartLine(), widgetRange.getStartLine()) + y_shift;
-		int height= MigrationHelper.computeLineHeight(fCachedTextWidget, widgetRange.getStartLine(), widgetRange.getStartLine() + widgetRange.getNumberOfLines(), widgetRange.getNumberOfLines()) - 1;
 		
-		return new Rectangle(0, y, getWidth(), height);
+		int y1= fWidget.getLinePixel(widgetRange.getStartLine());
+		int y2= fWidget.getLinePixel(widgetRange.getStartLine() + widgetRange.getNumberOfLines());
+		
+		return new Rectangle(0, y1, getWidth(), y2 - y1 - 1);
 	}
 	
 	private void showOverviewAnnotations(Revision revision) {
@@ -969,7 +649,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 	}
 
 	private IRegion toCharRegion(ILineRange lines) throws BadLocationException {
-		IDocument document= fCachedTextViewer.getDocument();
+		IDocument document= fViewer.getDocument();
 		int offset= document.getLineOffset(lines.getStartLine());
 		int nextLine= end(lines);
 		int endOffset;
@@ -1014,13 +694,13 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 	}
 
 	private void uninstallWheelHandler() {
-		fCanvas.removeListener(SWT.MouseWheel, fMouseHandler);
+		fControl.removeListener(SWT.MouseWheel, fMouseHandler);
 		fWheelHandlerInstalled= false;
 	}
 
 	private void installWheelHandler() {
 		if (fFocusRevision != null && !fWheelHandlerInstalled) {
-			fCanvas.addListener(SWT.MouseWheel, fMouseHandler);
+			fControl.addListener(SWT.MouseWheel, fMouseHandler);
 			fWheelHandlerInstalled= true;
 		}
 	}
@@ -1080,21 +760,73 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		
 		int widgetCurrentFocusLine= modelLinesToWidgetLines(new LineRange(documentHoverLine, 1)).getStartLine();
 		int widgetNextFocusLine= nextWidgetRange.getStartLine();
-		int newTopPixel= fCachedTextWidget.getTopPixel() + MigrationHelper.computeLineHeight(fCachedTextWidget, widgetCurrentFocusLine, widgetNextFocusLine, widgetNextFocusLine - widgetCurrentFocusLine);
-		fCachedTextWidget.setTopPixel(newTopPixel);
+		int newTopPixel= fWidget.getTopPixel() + MigrationHelper.computeLineHeight(fWidget, widgetCurrentFocusLine, widgetNextFocusLine, widgetNextFocusLine - widgetCurrentFocusLine);
+		fWidget.setTopPixel(newTopPixel);
 		if (newTopPixel < 0) {
-			Point cursorLocation= fCachedTextWidget.getDisplay().getCursorLocation();
+			Point cursorLocation= fWidget.getDisplay().getCursorLocation();
 			cursorLocation.y += newTopPixel;
-			fCachedTextWidget.getDisplay().setCursorLocation(cursorLocation);
+			fWidget.getDisplay().setCursorLocation(cursorLocation);
 		} else {
-			int topPixel= fCachedTextWidget.getTopPixel();
+			int topPixel= fWidget.getTopPixel();
 			if (topPixel < newTopPixel) {
-				Point cursorLocation= fCachedTextWidget.getDisplay().getCursorLocation();
+				Point cursorLocation= fWidget.getDisplay().getCursorLocation();
 				cursorLocation.y += newTopPixel - topPixel;
-				fCachedTextWidget.getDisplay().setCursorLocation(cursorLocation);
+				fWidget.getDisplay().setCursorLocation(cursorLocation);
 			}
 		}
-		updateFocusLine(toDocumentLineNumber(fCachedTextWidget.toControl(fCachedTextWidget.getDisplay().getCursorLocation()).y));
+		updateFocusLine(toDocumentLineNumber(fWidget.toControl(fWidget.getDisplay().getCursorLocation()).y));
+		immediateUpdate();
+	}
+
+	/**
+	 * Triggers a redraw in the display thread.
+	 */
+	private final void postRedraw() {
+		if (fControl != null && !fControl.isDisposed()) {
+			Display d= fControl.getDisplay();
+			if (d != null) {
+				d.asyncExec(new Runnable() {
+					public void run() {
+						redraw();
+					}
+				});
+			}
+		}
+	}
+	
+	private int toDocumentLineNumber(int y) {
+		return fParentRuler.toDocumentLineNumber(y);
+	}
+	
+	private void redraw() {
+		fColumn.redraw();
+	}
+	
+	private void immediateUpdate() {
 		fParentRuler.immediateUpdate();
 	}
+	
+	private int getWidth() {
+		return fColumn.getWidth();
+	}
+	
+	/**
+	 * Returns the System background color for list widgets.
+	 *
+	 * @return the System background color for list widgets
+	 */
+	private Color getBackground() {
+		if (fBackground == null)
+			return fWidget.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		return fBackground;
+	}
+
+	public void setHover(IAnnotationHover hover) {
+		// TODO ignore for now - must make revision hover settable from outside
+	}
+
+	public boolean hasHover(int activeLine) {
+		return fViewer instanceof ISourceViewer && fHover.getHoverLineRange((ISourceViewer) fViewer, activeLine) != null;
+	}
+
 }
