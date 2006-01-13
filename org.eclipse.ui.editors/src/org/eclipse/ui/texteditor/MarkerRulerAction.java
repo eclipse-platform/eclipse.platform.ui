@@ -13,6 +13,7 @@ package org.eclipse.ui.texteditor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -188,11 +189,38 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 				setEnabled(false);
 				setText(fAddLabel);
 			} else {
-				setEnabled(getResource() != null);
 				fMarkers= getMarkers();
+				setEnabled(getResource() != null && (fMarkers.isEmpty() || markersUserEditable(fMarkers)));
 				setText(fMarkers.isEmpty() ? fAddLabel : fRemoveLabel);
 			}
 		}
+	}
+
+	/**
+	 * Returns whether the given markers are all editable by the user.
+	 * 
+	 * @param markers the list of markers to test
+	 * @return boolean <code>true</code> if they are all editable
+	 * @since 3.2
+	 */
+	private boolean markersUserEditable(List markers) {
+		Iterator iter= markers.iterator();
+		while (iter.hasNext()) {
+			if (!isUserEditable((IMarker)iter.next()))
+				return false; 
+		}
+		return true;
+	}
+
+	/**
+	 * Returns whether the given marker is editable by the user.
+	 * 
+	 * @param marker the marker to test
+	 * @return boolean <code>true</code> if it is editable
+	 * @since 3.2
+	 */
+	private boolean isUserEditable(IMarker marker) {
+		return marker != null && marker.exists() && marker.getAttribute(IMarker.USER_EDITABLE, true);
 	}
 
 	/*
