@@ -36,8 +36,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
@@ -281,20 +279,17 @@ public class FilteredTree extends Composite {
 					 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
 					 */
 					public void focusGained(FocusEvent e) {
-						if (getInitialText().equals(filterText.getText().trim()))
-							filterText.selectAll();
-					}
-				});
-		
-		filterText.addMouseListener(
-				new MouseAdapter(){
-					/* (non-Javadoc)
-					 * @see org.eclipse.swt.events.MouseAdapter#mouseUp(org.eclipse.swt.events.MouseEvent)
-					 */
-					public void mouseUp(MouseEvent e) {
-						super.mouseUp(e);
-						if (getInitialText().equals(filterText.getText().trim()))
-							filterText.selectAll();
+						/* Running in an asyncExec because the selectAll() does not   
+						 * appear to work when using mouse to give focus to text.
+						 */
+						Display display = filterText.getDisplay();
+						display.asyncExec(new Runnable() {
+		                    public void run() {
+								if (getInitialText().equals(filterText.getText().trim())){
+									filterText.selectAll();
+								}
+		                    }
+						});
 					}
 				});
 		
