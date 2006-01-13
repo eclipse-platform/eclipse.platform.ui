@@ -177,15 +177,17 @@ public class SynchronizationStateTester {
 	 * label provider).
 	 * 
 	 * @param element the element being tested
+	 * @param deep indicates whether the team deocrator is configured to show deep or shallow decoration
+	 * @param monitor a progress monitor
 	 * @return whether the given element has an outgoing change
 	 * @throws CoreException if an error occurs
 	 */
-	public boolean hasOutgoingChange(Object element, boolean deep) throws CoreException {
+	public boolean hasOutgoingChange(Object element, boolean deep, IProgressMonitor monitor) throws CoreException {
 		if (deep) {
 			ResourceMapping mapping = Utils.getResourceMapping(element);
 			if (mapping != null) {
 				ResourceTraversal[] traversals = mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
-				return subscriber.hasLocalChanges(traversals, null);
+				return subscriber.hasLocalChanges(traversals, monitor);
 			}
 		} else {
 			IResource resource = Utils.getResource(element);

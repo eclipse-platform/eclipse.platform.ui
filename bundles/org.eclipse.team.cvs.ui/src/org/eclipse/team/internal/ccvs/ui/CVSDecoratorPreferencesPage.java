@@ -636,7 +636,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		fTextTab.setPreferences(prefs);
 		fGeneralTab.setPreferences(prefs);
 		
-		final CVSDecoration decoration= new CVSDecoration(file.name, prefs, fTextTab.getFileTextFormat(), fTextTab.getFolderTextFormat(), fTextTab.getProjectTextFormat());
+		final CVSDecoration decoration= new CVSDecoration(prefs, fTextTab.getFileTextFormat(), fTextTab.getFolderTextFormat(), fTextTab.getProjectTextFormat());
 		
 		decoration.setKeywordSubstitution(Command.KSUBST_TEXT.getShortDisplayText());
 		decoration.setRevision("1.45");  //$NON-NLS-1$

@@ -730,6 +730,9 @@ public class Utils {
 	
 	
 	public static ResourceMapping getResourceMapping(Object o) {
+		if (o instanceof ResourceMapping) {
+			return (ResourceMapping) o;
+		}
 		if (o instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) o;
 			Object adapted = adaptable.getAdapter(ResourceMapping.class);

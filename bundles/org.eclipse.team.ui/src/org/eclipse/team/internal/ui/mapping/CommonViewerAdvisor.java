@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.internal.ui.synchronize.AbstractTreeViewerAdvisor;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
+import org.eclipse.team.ui.mapping.SynchronizationStateTester;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.navigator.*;
@@ -90,7 +90,13 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 		IBaseLabelProvider provider = viewer.getLabelProvider();
 		if (provider instanceof DecoratingLabelProvider) {
 			DecoratingLabelProvider dlp = (DecoratingLabelProvider) provider;
-			dlp.setDecorationContext(new DecorationContext(new String[] {SynchronizationLabelProvider.SYNCHRONIZATION_AWARE_PROVIDER}));
+			DecorationContext decorationContext = new DecorationContext();
+			decorationContext.putProperty(SynchronizationStateTester.PROP_TESTER, new SynchronizationStateTester() {
+				public boolean isStateDecorationEnabled() {
+					return false;
+				}
+			});
+			dlp.setDecorationContext(decorationContext);
 		}
         viewer.setInput(getInitialInput());
 	}

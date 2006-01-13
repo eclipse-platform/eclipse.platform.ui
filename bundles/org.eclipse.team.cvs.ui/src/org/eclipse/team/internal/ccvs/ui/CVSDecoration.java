@@ -49,6 +49,8 @@ import org.eclipse.ui.themes.ITheme;
  */
 public class CVSDecoration {
 
+	public static final int MODEL = 1000;
+	
 	// Decorations
 	private String prefix;
 	private String suffix;
@@ -78,7 +80,6 @@ public class CVSDecoration {
 	private String fileFormatter;
 	private String folderFormatter;
 	private String projectFormatter;
-	private String resourceName;
 	
 	//	Images cached for better performance
 	private static ImageDescriptor dirty;
@@ -128,7 +129,7 @@ public class CVSDecoration {
 	 * Default constructor uses the plug-in's preferences to determine text decoration
 	 * formatters and preferences.
 	 */
-	public CVSDecoration(String resourceName) {
+	public CVSDecoration() {
 		// 	TODO: for efficiency don't look up a pref until its needed
 		IPreferenceStore store = getStore();
 		Preferences prefs = new Preferences();
@@ -142,19 +143,18 @@ public class CVSDecoration {
 		prefs.setValue(ICVSUIConstants.PREF_ADDED_FLAG, store.getString(ICVSUIConstants.PREF_ADDED_FLAG));
 		prefs.setValue(ICVSUIConstants.PREF_USE_FONT_DECORATORS, store.getString(ICVSUIConstants.PREF_USE_FONT_DECORATORS));
 		
-		initialize(resourceName, prefs, store.getString(ICVSUIConstants.PREF_FILETEXT_DECORATION), store.getString(ICVSUIConstants.PREF_FOLDERTEXT_DECORATION), store.getString(ICVSUIConstants.PREF_PROJECTTEXT_DECORATION));
+		initialize(prefs, store.getString(ICVSUIConstants.PREF_FILETEXT_DECORATION), store.getString(ICVSUIConstants.PREF_FOLDERTEXT_DECORATION), store.getString(ICVSUIConstants.PREF_PROJECTTEXT_DECORATION));
 	}
 
-	public CVSDecoration(String resourceName, Preferences preferences, String fileFormater, String folderFormatter, String projectFormatter) {
-		initialize(resourceName, preferences, fileFormater, folderFormatter, projectFormatter);
+	public CVSDecoration(Preferences preferences, String fileFormater, String folderFormatter, String projectFormatter) {
+		initialize(preferences, fileFormater, folderFormatter, projectFormatter);
 	}
 
 	private IPreferenceStore getStore() {
 		return CVSUIPlugin.getPlugin().getPreferenceStore();
 	}
 
-	private void initialize(String resourceName, Preferences preferences, String fileFormater, String folderFormatter, String projectFormatter) {
-		this.resourceName = resourceName;
+	private void initialize(Preferences preferences, String fileFormater, String folderFormatter, String projectFormatter) {
 		this.preferences = preferences;
 		this.fileFormatter = fileFormater;
 		this.folderFormatter = folderFormatter;
@@ -248,10 +248,9 @@ public class CVSDecoration {
 		} else if(isHasRemote()){
 			bindings.put(CVSDecoratorConfiguration.FILE_REVISION, getRevision());
 			bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, getTag());
-		}	
-		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, getResourceName());
+		}
 		bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, getKeywordSubstitution());
-		if (resourceType != IResource.FILE && location != null) {
+		if ((resourceType == IResource.FOLDER || resourceType == IResource.PROJECT) && location != null) {
 			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_HOST, location.getHost());
 			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_METHOD, location.getMethod().getName());
 			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, location.getUsername());
@@ -289,7 +288,7 @@ public class CVSDecoration {
 		}
 		// show checked in
 		if (preferences.getBoolean(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION) && isHasRemote()) {
-			if (resourceType != IResource.FILE && isVirtualFolder()) {
+			if ((resourceType == IResource.FOLDER || resourceType == IResource.PROJECT) && isVirtualFolder()) {
 				return noRemoteDir;
 			}
 			return checkedIn;
@@ -314,10 +313,6 @@ public class CVSDecoration {
 		}
 	}
 
-	private String getResourceName() {
-		return resourceName;
-	}
-
 	private String getTextFormatter() {
 		switch (resourceType) {
 			case IResource.FILE :
@@ -326,6 +321,8 @@ public class CVSDecoration {
 				return folderFormatter;
 			case IResource.PROJECT :
 				return projectFormatter;
+			case MODEL :
+				return folderFormatter;
 		}
 		return "no format specified"; //$NON-NLS-1$
 	}
