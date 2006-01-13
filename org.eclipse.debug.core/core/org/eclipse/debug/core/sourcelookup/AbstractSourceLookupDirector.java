@@ -639,7 +639,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	
 	/**
 	 * Clears any cached source element associated with the given duplicate
-	 * is source elemnet.
+	 * is source element.
 	 * 
 	 * @param duplicate duplicate source element to cache resolved results
 	 *  for
