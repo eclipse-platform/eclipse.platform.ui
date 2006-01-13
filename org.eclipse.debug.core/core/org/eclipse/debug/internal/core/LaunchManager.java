@@ -83,6 +83,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.ILaunchesListener2;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
@@ -110,6 +111,44 @@ import org.xml.sax.helpers.DefaultHandler;
  * LaunchManager
  */
 public class LaunchManager extends PlatformObject implements ILaunchManager, IResourceChangeListener {
+	
+	/**
+	 * Constant to define debug.core for the status codes
+	 * 
+	 * @since 3.2
+	 */
+	private static final String DEBUG_CORE = "org.eclipse.debug.core"; //$NON-NLS-1$
+	
+	/**
+	 * Constant to define debug.ui for the status codes
+	 * 
+	 * @since 3.2
+	 */
+	private static final String DEBUG_UI = "org.eclipse.debug.ui"; //$NON-NLS-1$
+	
+	/**
+	 * Constant to represent the empty string
+	 * 
+	 * @since 3.2
+	 */
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+    
+	/**
+	 * Status code for which a UI prompter is registered.
+	 * 
+	 * @since 3.2
+	 */
+	protected static final IStatus promptStatus = new Status(IStatus.INFO, DEBUG_UI, 200, EMPTY_STRING, null);
+	
+    /**
+	 * Status code for which a prompter will ask the user to delete any/all of the launch configurations 
+	 * that are associated with this project being deleted
+	 * 
+	 * @since 3.2
+	 */
+	protected static final IStatus deleteAssociatedLaunchConfigs = new Status(IStatus.INFO, DEBUG_CORE, 225, EMPTY_STRING, null);
+    
+	
 	
 	/**
 	 * Notifies a launch config listener in a safe runnable to handle
@@ -265,6 +304,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	     */
 	    private Map fFileToConfig = new HashMap();
 	    
+	    
 		/**
          * Builds a cache of configs that will be deleted in the given project
          */
@@ -278,6 +318,12 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
                     fFileToConfig.put(file, configuration);
                 }
             }
+            //bug 113772
+            try {
+	            IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+		        handler.handleStatus(deleteAssociatedLaunchConfigs, project);
+            }
+            catch (CoreException e){e.printStackTrace();}
         }	
 		
 		/**

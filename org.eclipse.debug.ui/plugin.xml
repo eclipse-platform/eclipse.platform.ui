@@ -1528,6 +1528,11 @@
             class="org.eclipse.debug.internal.ui.launchConfigurations.SaveScopeResourcesHandler"
             code="222"
             id="org.eclipse.debug.ui.statusHandler.saveScopedResources"
+            plugin="org.eclipse.debug.core"/>
+      <statusHandler
+            class="org.eclipse.debug.internal.ui.launchConfigurations.DeleteLaunchConfigurations"
+            code="225"
+            id="org.eclipse.debug.ui.deleteAssociatedLaunchConfigs"
             plugin="org.eclipse.debug.core"/> 
    </extension>
    <extension

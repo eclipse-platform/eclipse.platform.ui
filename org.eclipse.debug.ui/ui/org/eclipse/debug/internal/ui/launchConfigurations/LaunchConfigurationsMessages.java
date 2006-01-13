@@ -175,4 +175,8 @@ public class LaunchConfigurationsMessages extends NLS {
 
 	public static String LaunchConfigurationsDialog_6;
 
+	public static String DeleteLaunchConfigurations_0;
+
+	public static String DeleteLaunchConfigurations_1;
+
 }
