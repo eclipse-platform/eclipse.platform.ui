@@ -51,7 +51,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringInstanceFact
  * 
  * @since 3.2
  */
-public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable {
+public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 
 	/** The status of the execution */
 	private RefactoringStatus fExecutionStatus= new RefactoringStatus();
@@ -60,12 +60,12 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 	private final RefactoringHistory fRefactoringHistory;
 
 	/**
-	 * Creates a new perform multiple refactorings operation.
+	 * Creates a new perform refactoring history operation.
 	 * 
 	 * @param history
 	 *            the refactoring history
 	 */
-	public PerformMultipleRefactoringsOperation(final RefactoringHistory history) {
+	public PerformRefactoringHistoryOperation(final RefactoringHistory history) {
 		Assert.isNotNull(history);
 		fRefactoringHistory= history;
 	}
@@ -92,9 +92,9 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 			if (arguments != null)
 				status.merge(component.initialize(arguments));
 			else
-				status.addFatalError(MessageFormat.format(RefactoringCoreMessages.PerformRefactoringsOperation_init_error, new String[] { descriptor.getDescription()}));
+				status.addFatalError(MessageFormat.format(RefactoringCoreMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
 		} else
-			status.addFatalError(MessageFormat.format(RefactoringCoreMessages.PerformRefactoringsOperation_init_error, new String[] { descriptor.getDescription()}));
+			status.addFatalError(MessageFormat.format(RefactoringCoreMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
 		return status;
 	}
 
@@ -126,7 +126,7 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 	public void run(final IProgressMonitor monitor) throws CoreException {
 		fExecutionStatus= new RefactoringStatus();
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
-		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringsOperation_perform_refactorings, 160 * proxies.length);
+		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringHistoryOperation_perform_refactorings, 160 * proxies.length);
 		final RefactoringInstanceFactory factory= RefactoringInstanceFactory.getInstance();
 		final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
 		try {

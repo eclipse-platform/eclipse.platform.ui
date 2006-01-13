@@ -36,7 +36,7 @@ import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.IInitializableRefactoringComponent;
 import org.eclipse.ltk.core.refactoring.IRefactoringInstanceCreator;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
-import org.eclipse.ltk.core.refactoring.PerformMultipleRefactoringsOperation;
+import org.eclipse.ltk.core.refactoring.PerformRefactoringHistoryOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
@@ -266,9 +266,9 @@ public class RefactoringHistoryWizard extends Wizard {
 			if (arguments != null)
 				status.merge(component.initialize(arguments));
 			else
-				status.addFatalError(MessageFormat.format(RefactoringUIMessages.PerformRefactoringsOperation_init_error, new String[] { descriptor.getDescription()}));
+				status.addFatalError(MessageFormat.format(RefactoringUIMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
 		} else
-			status.addFatalError(MessageFormat.format(RefactoringUIMessages.PerformRefactoringsOperation_init_error, new String[] { descriptor.getDescription()}));
+			status.addFatalError(MessageFormat.format(RefactoringUIMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
 		return status;
 	}
 
@@ -773,7 +773,7 @@ public class RefactoringHistoryWizard extends Wizard {
 				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openWarning(getShell(), wizard.getShell().getText(), RefactoringUIMessages.RefactoringHistoryWizard_warning_finish, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
 				store.setValue(PREFERENCE_DO_NOT_WARN_FINISH, dialog.getToggleState());
 			}
-			final PerformMultipleRefactoringsOperation operation= new PerformMultipleRefactoringsOperation(new RefactoringHistoryImplementation(descriptors)) {
+			final PerformRefactoringHistoryOperation operation= new PerformRefactoringHistoryOperation(new RefactoringHistoryImplementation(descriptors)) {
 
 				protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
 					final RefactoringStatus[] result= { new RefactoringStatus()};
