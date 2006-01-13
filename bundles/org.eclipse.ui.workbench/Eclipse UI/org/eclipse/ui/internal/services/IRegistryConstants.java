@@ -20,6 +20,16 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
  * Common constants for the parsing the registry as it relates to the commands
  * architecture.
  * </p>
+ * <p>
+ * This class is not intended for use outside of the
+ * <code>org.eclipse.ui.workbench</code> plug-in.
+ * </p>
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
+ * </p>
  * 
  * @since 3.2
  */
@@ -74,10 +84,10 @@ public interface IRegistryConstants {
 	 * The name of the attribute storing the context id for a binding.
 	 */
 	public static String ATTRIBUTE_CONTEXT_ID = "contextId"; //$NON-NLS-1$
-	
+
 	/**
-	 * The name of the attribute storing the AbstractParameterValueConverter for a
-	 * commandParameterType.
+	 * The name of the attribute storing the AbstractParameterValueConverter for
+	 * a commandParameterType.
 	 */
 	public static String ATTRIBUTE_CONVERTER = "converter"; //$NON-NLS-1$
 
@@ -238,6 +248,13 @@ public interface IRegistryConstants {
 	public static String ATTRIBUTE_RELATIVE_TO = "relativeTo"; //$NON-NLS-1$
 
 	/**
+	 * The name of the optional boolean attribute specifying whether a legacy
+	 * action is retargettable. A retargettable action is one whose behaviour
+	 * can be overridden within particular parts.
+	 */
+	public static String ATTRIBUTE_RETARGET = "retarget"; //$NON-NLS-1$
+
+	/**
 	 * The name of the attribute storing the identifier for the active scheme.
 	 * This is called a 'keyConfigurationId' for legacy reasons.
 	 */
@@ -299,7 +316,7 @@ public interface IRegistryConstants {
 	 * commandParameterType elments.
 	 */
 	public static String ATTRIBUTE_TYPE = "type"; //$NON-NLS-1$
-	
+
 	/**
 	 * The name of the typeId attribute, which appears on commandParameter
 	 * elements.
@@ -399,7 +416,7 @@ public interface IRegistryConstants {
 	 * The name of the element storing a parameter.
 	 */
 	public static String ELEMENT_COMMAND_PARAMETER = "commandParameter"; //$NON-NLS-1$
-	
+
 	/**
 	 * The name of the element storing a parameter type.
 	 */

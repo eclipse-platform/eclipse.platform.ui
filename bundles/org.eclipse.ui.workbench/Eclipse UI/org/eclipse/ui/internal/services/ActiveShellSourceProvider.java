@@ -174,7 +174,7 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 		 * open.
 		 */
 		final IContextService contextService = (IContextService) workbench
-				.getAdapter(IContextService.class);
+				.getService(IContextService.class);		
 		final int shellType = contextService.getShellType(newActiveShell);
 		if (shellType != IContextService.TYPE_DIALOG) {
 			final IWorkbenchWindow newActiveWorkbenchWindow = workbench

@@ -84,6 +84,10 @@ final class ViewIntroAdapterSite implements IIntroSite {
     public ISelectionProvider getSelectionProvider() {
         return viewSite.getSelectionProvider();
     }
+    
+    public final Object getService(final Object key) {
+    		return viewSite.getService(key);
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchSite#getShell()
@@ -99,6 +103,10 @@ final class ViewIntroAdapterSite implements IIntroSite {
         return viewSite.getWorkbenchWindow();
     }
 
+	public final boolean hasService(final Object key) {
+		return viewSite.hasService(key);
+	}
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchSite#setSelectionProvider(org.eclipse.jface.viewers.ISelectionProvider)
      */
@@ -106,7 +114,7 @@ final class ViewIntroAdapterSite implements IIntroSite {
         viewSite.setSelectionProvider(provider);
     }
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     public String toString() {

@@ -20,11 +20,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.commands.Command;
@@ -138,6 +135,7 @@ import org.eclipse.ui.internal.services.ActiveShellSourceProvider;
 import org.eclipse.ui.internal.services.CurrentSelectionSourceProvider;
 import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.internal.services.MenuSourceProvider;
+import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.SourceProviderService;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
@@ -151,7 +149,6 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
@@ -300,10 +297,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private int largeUpdates = 0;
 
 	/**
-	 * The map of services maintained by the workbench. These services are
+	 * The service locator maintained by the workbench. These services are
 	 * initialized during workbench during the <code>init</code> method.
 	 */
-	private final Map services = new HashMap();
+	private final ServiceLocator serviceLocator = new ServiceLocator();
 	
 	/**
 	 * A count of how many plug-ins were loaded while restoring the
@@ -1125,28 +1122,29 @@ public final class Workbench extends EventManager implements IWorkbench {
 		Command.DEBUG_COMMAND_EXECUTION = Policy.DEBUG_COMMANDS;
 		commandManager = new CommandManager();
 		final CommandService commandService = new CommandService(commandManager);
-		services.put(ICommandService.class, commandService);
+		serviceLocator.registerService(ICommandService.class, commandService);
 		ContextManager.DEBUG = Policy.DEBUG_CONTEXTS;
 		contextManager = new ContextManager();
 		final IContextService contextService = new ContextService(
 				contextManager);
-		services.put(IContextService.class, contextService);
+		serviceLocator.registerService(IContextService.class, contextService);
 		final IHandlerService handlerService = new HandlerService(
 				commandManager);
-		services.put(IHandlerService.class, handlerService);
+		serviceLocator.registerService(IHandlerService.class, handlerService);
 		BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
 		bindingManager = new BindingManager(contextManager, commandManager);
 		final IBindingService bindingService = new BindingService(
 				bindingManager, commandService, this);
-		services.put(IBindingService.class, bindingService);
+		serviceLocator.registerService(IBindingService.class, bindingService);
 		final CommandImageManager commandImageManager = new CommandImageManager();
 		final CommandImageService commandImageService = new CommandImageService(
 				commandImageManager, commandService);
-		services.put(ICommandImageService.class, commandImageService);
+		serviceLocator.registerService(ICommandImageService.class,
+				commandImageService);
 		final SMenuManager menuManager = new SMenuManager();
 		final IMenuService menuService = new MenuService(menuManager,
 				commandService);
-		services.put(IMenuService.class, menuService);
+		serviceLocator.registerService(IMenuService.class, menuService);
 
 		/*
 		 * Phase 2 of the initialization of commands. The registry and
@@ -1167,7 +1165,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		 * pieces of workbench state change.
 		 */
 		final ISourceProviderService sourceProviderService = new SourceProviderService();
-		services.put(ISourceProviderService.class, sourceProviderService);
+		serviceLocator.registerService(ISourceProviderService.class,
+				sourceProviderService);
 		final ActiveShellSourceProvider activeShellSourceProvider = new ActiveShellSourceProvider(
 				this);
 		handlerService.addSourceProvider(activeShellSourceProvider);
@@ -1209,7 +1208,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		final LegacyActionPersistence deprecatedSupport = new LegacyActionPersistence(
 				commandManager, bindingManager, commandImageManager,
 				menuService);
-		services.put(LegacyActionPersistence.class, deprecatedSupport);
+		serviceLocator.registerService(LegacyActionPersistence.class,
+				deprecatedSupport);
 		deprecatedSupport.read();
 		workbenchContextSupport = new WorkbenchContextSupport(this,
 				contextManager);
@@ -2096,14 +2096,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				startupRegistryListener);
 		
 		// Bring down all of the services.
-		final Iterator serviceItr = services.values().iterator();
-		while (serviceItr.hasNext()) {
-			final Object object = serviceItr.next();
-			if (object instanceof IDisposable) {
-				final IDisposable service = (IDisposable) object;
-				service.dispose();
-			}
-		}
+		serviceLocator.dispose();
 		
 		workbenchActivitySupport.dispose();
 		WorkbenchHelpSystem.disposeIfNecessary();
@@ -2654,7 +2647,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	}
 
 	public final Object getAdapter(final Class key) {
-		return services.get(key);
+		return serviceLocator.getService(key);
 	}
 
 	private void doRestoreState(final IMemento memento, final MultiStatus status) {
@@ -2747,7 +2740,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 	}
 
 	public final Object getService(final Object key) {
-		return services.get(key);
+		return serviceLocator.getService(key);
+	}
+	
+	public final boolean hasService(final Object key) {
+		return serviceLocator.hasService(key);
 	}
 	
 	/**

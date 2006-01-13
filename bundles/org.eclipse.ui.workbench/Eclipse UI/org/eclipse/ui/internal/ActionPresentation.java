@@ -146,7 +146,7 @@ public class ActionPresentation {
                     } else {
                         IActionSet set = desc.createActionSet();
                         SubActionBars bars = new ActionSetActionBars(window
-                                .getActionBars(), desc.getId());
+                                .getActionBars(), window, desc.getId());
                         rec = new SetRec(desc, set, bars);
                         set.init(window, bars);
                         sets.add(set);

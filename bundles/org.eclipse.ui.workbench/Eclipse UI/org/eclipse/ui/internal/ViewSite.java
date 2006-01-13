@@ -14,8 +14,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.internal.part.components.services.IPartActionBars;
-import org.eclipse.ui.internal.part.services.ViewToPartActionBarsAdapter;
 import org.eclipse.ui.views.IViewDescriptor;
 
 /**
@@ -55,9 +53,5 @@ public class ViewSite extends PartSite implements IViewSite {
      */
     public IViewPart getViewPart() {
         return (IViewPart) getPart();
-    }
-    
-    protected IPartActionBars createPartActionBars() {
-        return new ViewToPartActionBarsAdapter(getActionBars());
     }
 }

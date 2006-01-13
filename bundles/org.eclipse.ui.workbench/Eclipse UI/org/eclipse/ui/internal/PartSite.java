@@ -15,13 +15,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
@@ -32,18 +31,13 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.internal.components.framework.ComponentException;
-import org.eclipse.ui.internal.components.framework.ComponentFactory;
-import org.eclipse.ui.internal.components.framework.ComponentHandle;
-import org.eclipse.ui.internal.components.framework.FactoryMap;
-import org.eclipse.ui.internal.components.framework.IServiceProvider;
-import org.eclipse.ui.internal.components.framework.NonDisposingHandle;
-import org.eclipse.ui.internal.components.framework.ServiceFactory;
-import org.eclipse.ui.internal.part.components.services.IPartActionBars;
-import org.eclipse.ui.internal.part.multiplexer.SiteServices;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.expressions.ActivePartExpression;
+import org.eclipse.ui.internal.handlers.SlaveHandlerService;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
+import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-import org.osgi.framework.Bundle;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -120,8 +114,6 @@ public abstract class PartSite implements IWorkbenchPartSite {
     private IWorkbenchPartReference partReference;
 
     private IWorkbenchPart part;
-
-    private IPartActionBars partActionBars = null;
     
     private IWorkbenchPage page;
 
@@ -140,16 +132,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
     protected ArrayList menuExtenders;
 
     private WorkbenchSiteProgressService progressService;
-
-    private SiteServices serviceContainer; 
     
-    private IAdaptable hardcodedServices = new IAdaptable() {
-
-        public Object getAdapter(Class adapter) {
-            return protectedGetAdapter(adapter);
-        }
-        
-    };
+    private final ServiceLocator serviceLocator; 
     
     /**
      * EditorContainer constructor comment.
@@ -158,14 +142,24 @@ public abstract class PartSite implements IWorkbenchPartSite {
             IWorkbenchPage page) {
         this.partReference = ref;
         this.part = part;
-        this.page = page;
+        this.page = page; 
         extensionID = "org.eclipse.ui.UnknownID"; //$NON-NLS-1$
         extensionName = "Unknown Name"; //$NON-NLS-1$
+
+        // Initialize the service locator.
+        final IServiceLocator parentServiceLocator = page.getWorkbenchWindow();
+		this.serviceLocator = new ServiceLocator(parentServiceLocator);
+		final IHandlerService parentService = (IHandlerService) parentServiceLocator
+				.getService(IHandlerService.class);
+		final Expression defaultExpression = new ActivePartExpression(part);
+		final IHandlerService slave = new SlaveHandlerService(parentService,
+				defaultExpression);
+		this.serviceLocator.registerService(IHandlerService.class, slave);
     }
 
     /**
-     * Dispose the contributions.
-     */
+	 * Dispose the contributions.
+	 */
     public void dispose() {
         if (menuExtenders != null) {
             for (int i = 0; i < menuExtenders.size(); i++) {
@@ -180,17 +174,17 @@ public abstract class PartSite implements IWorkbenchPartSite {
         if (progressService != null)
             progressService.dispose();
 
-        if (serviceContainer != null) {
-            serviceContainer.dispose();
-        }
+		if (serviceLocator != null) {
+			serviceLocator.dispose();
+		}
     }
 
     /**
-     * Returns the action bars for the part.
-     * If this part is a view then it has exclusive use of the action bars.
-     * If this part is an editor then the action bars are shared among this editor and other editors of
-     * the same type.
-     */
+	 * Returns the action bars for the part. If this part is a view then it has
+	 * exclusive use of the action bars. If this part is an editor then the
+	 * action bars are shared among this editor and other editors of the same
+	 * type.
+	 */
     public IActionBars getActionBars() {
         return actionBars;
     }
@@ -445,73 +439,9 @@ public abstract class PartSite implements IWorkbenchPartSite {
         if (IWorkbenchSiteProgressService.class == adapter) {
             return getSiteProgressService();
         }
-        try {
-	        	IServiceProvider container = getServiceContainer();
-	
-	        	Object adapted = container.getService(adapter);
-	        	if (adapted != null)
-	        		return adapted;
-        } catch (ComponentException e) {
-            WorkbenchPlugin.getDefault().getLog().log(e.getStatus());
-        }
         
         return Platform.getAdapterManager().getAdapter(this, adapter);
     }
-    
-    /**
-     * @since 3.1 
-     *
-     * @return
-     */
-    private SiteServices getServiceContainer() {
-        if (serviceContainer != null) {
-            return serviceContainer;
-        }
-                
-        ServiceFactory context = new FactoryMap()
-            .addInstance(hardcodedServices)
-            .map(Composite.class, new ComponentFactory() {
-                /* (non-Javadoc)
-                 * @see org.eclipse.core.components.ComponentFactory#getHandle(org.eclipse.core.components.IComponentProvider)
-                 */
-                public ComponentHandle createHandle(
-                        IServiceProvider availableServices)
-                        throws ComponentException {
-                    
-                    Composite control = (Composite)getPane().getControl();
-                    if (control != null) {
-                        return new NonDisposingHandle(control);
-                    }
-                    
-                    throw new ComponentException(Composite.class, 
-                            WorkbenchMessages.PartSite_needsWidgetsError, null);
-                } 
-            });
-        serviceContainer = new SiteServices(context);
-        return serviceContainer;
-    }
-
-    protected Object protectedGetAdapter(Class adapter) {
-        if (adapter.isInstance(this)) {
-            return this;
-        }
-        if (adapter == IWorkbenchPage.class) {
-            return getPage();
-        }
-        if (adapter == Bundle.class) {
-            return Platform.getBundle(getPluginId());
-        }
-        if (adapter == IPartActionBars.class) {
-            if (partActionBars == null) {
-                partActionBars = createPartActionBars();
-            }
-            return partActionBars;
-        }
-
-        return null;
-    }
-
-    protected abstract IPartActionBars createPartActionBars();
     
     public void activateActionBars(boolean forceVisibility) {
         if (actionBars != null) {
@@ -533,6 +463,14 @@ public abstract class PartSite implements IWorkbenchPartSite {
         if (progressService == null)
             progressService = new WorkbenchSiteProgressService(this);
         return progressService;
+    }
+    
+    public final Object getService(final Object key) {
+    		return serviceLocator.getService(key);
+    }
+    
+    public final boolean hasService(final Object key) {
+    		return serviceLocator.hasService(key);
     }
 
     /**
