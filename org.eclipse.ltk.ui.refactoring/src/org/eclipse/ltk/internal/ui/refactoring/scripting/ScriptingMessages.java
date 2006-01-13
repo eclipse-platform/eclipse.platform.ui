@@ -24,8 +24,6 @@ public class ScriptingMessages extends NLS {
 
 	public static String ApplyRefactoringScriptWizard_workspace_caption;
 
-	public static String ApplyRefactoringScriptWizardPage_invalid_format;
-
 	public static String ApplyRefactoringScriptWizardPage_browse_caption;
 
 	public static String ApplyRefactoringScriptWizardPage_browse_label;
@@ -40,6 +38,8 @@ public class ScriptingMessages extends NLS {
 
 	public static String ApplyRefactoringScriptWizardPage_filter_name_wildcard;
 
+	public static String ApplyRefactoringScriptWizardPage_invalid_format;
+
 	public static String ApplyRefactoringScriptWizardPage_invalid_location;
 
 	public static String ApplyRefactoringScriptWizardPage_invalid_script_file;
@@ -49,6 +49,8 @@ public class ScriptingMessages extends NLS {
 	public static String ApplyRefactoringScriptWizardPage_location_label;
 
 	private static final String BUNDLE_NAME= "org.eclipse.ltk.internal.ui.refactoring.scripting.ScriptingMessages"; //$NON-NLS-1$
+
+	public static String CreateRefactoringScriptAction_dialog_title;
 
 	static {
 		// initialize resource bundle

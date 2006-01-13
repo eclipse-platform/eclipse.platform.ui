@@ -64,6 +64,12 @@
                id="org.eclipse.ltk.ui.actions.ApplyRefactoringStript"
                label="%Refactoring.applyScript.label"
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/scriptGroup"/>
+        <action
+              class="org.eclipse.ltk.internal.ui.refactoring.actions.CreateRefactoringScriptAction"
+              definitionId="org.eclipse.ltk.ui.refactor.create.refactoring.script"
+              id="org.eclipse.ltk.ui.actions.CreateRefactoringScript"
+              label="%Refactoring.createScript.label"
+              menubarPath="org.eclipse.jdt.ui.refactoring.menu/scriptGroup"/>
        </actionSet>
    </extension>
    <extension
@@ -79,6 +85,11 @@
             id="org.eclipse.ltk.ui.refactor.apply.refactoring.script"
             name="%ActionDefinition.apply.name">
       </command>
+      <command
+            categoryId="org.eclipse.ltk.ui.category.refactoring"
+            description="%ActionDefinition.create.description"
+            id="org.eclipse.ltk.ui.refactor.create.refactoring.script"
+            name="%ActionDefinition.create.name"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
