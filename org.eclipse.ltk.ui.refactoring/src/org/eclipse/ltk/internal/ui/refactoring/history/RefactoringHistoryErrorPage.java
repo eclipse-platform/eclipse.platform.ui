@@ -17,11 +17,13 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringStatusEntryFilter;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 
@@ -51,7 +53,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	public RefactoringHistoryErrorPage() {
 		super(true);
 		setTitle(RefactoringUIMessages.RefactoringHistoryOverviewPage_title);
-		setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_description);
+		setDescription(Messages.format(RefactoringUIMessages.RefactoringHistoryErrorPage_description, new String[] {IDialogConstants.NEXT_LABEL, IDialogConstants.FINISH_LABEL}));
 	}
 
 	/**
@@ -168,7 +170,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 			if (severity >= RefactoringStatus.FATAL)
 				setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_fatal_error);
 			else if (severity >= RefactoringStatus.INFO)
-				setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_info_error);
+				setDescription(Messages.format(RefactoringUIMessages.RefactoringHistoryErrorPage_info_error, new String[] {IDialogConstants.NEXT_LABEL, IDialogConstants.FINISH_LABEL}));
 		}
 		if (fViewer != null)
 			fViewer.setStatus(status);

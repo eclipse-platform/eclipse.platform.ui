@@ -40,6 +40,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringPreferenceConstants;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
@@ -194,7 +195,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		if (path != null) {
 			final File file= new File(path);
 			if (file.exists()) {
-				final MessageDialog message= new MessageDialog(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, null, RefactoringUIMessages.ExportRefactoringHistoryControl_file_overwrite_query, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
+				final MessageDialog message= new MessageDialog(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, null, Messages.format(RefactoringUIMessages.ExportRefactoringHistoryControl_file_overwrite_query, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}), MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
 				final int result= message.open();
 				if (result == 0) {
 					InputStream stream= null;

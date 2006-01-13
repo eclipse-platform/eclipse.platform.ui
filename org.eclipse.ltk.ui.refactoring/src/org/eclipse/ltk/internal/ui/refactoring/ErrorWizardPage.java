@@ -15,6 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 
@@ -64,7 +65,7 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 			if (severity >= RefactoringStatus.FATAL) {
 				setDescription(RefactoringUIMessages.ErrorWizardPage_cannot_proceed); 
 			} else if (severity >= RefactoringStatus.INFO) {
-				setDescription(RefactoringUIMessages.ErrorWizardPage_confirm); 
+				setDescription(Messages.format(RefactoringUIMessages.ErrorWizardPage_confirm, new String[] {IDialogConstants.NEXT_LABEL, IDialogConstants.FINISH_LABEL})); 
 			} else {
 				setDescription(""); //$NON-NLS-1$
 			}

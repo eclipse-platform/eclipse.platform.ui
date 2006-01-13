@@ -29,6 +29,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
@@ -39,6 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 import org.eclipse.ui.PlatformUI;
@@ -128,7 +130,7 @@ public final class ExportRefactoringHistoryDialog extends RefactoringHistoryDial
 		if (path != null) {
 			final File file= new File(path);
 			if (file.exists()) {
-				if (!MessageDialog.openQuestion(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, RefactoringUIMessages.ExportRefactoringHistoryControl_file_overwrite_query))
+				if (!MessageDialog.openQuestion(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, Messages.format(RefactoringUIMessages.ExportRefactoringHistoryControl_file_overwrite_query, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL})))
 					return;
 			}
 			OutputStream stream= null;
