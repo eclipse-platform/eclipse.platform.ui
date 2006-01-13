@@ -25,8 +25,7 @@ public class TeamContentProviderDescriptor {
 	
 	private static final String ATT_MODEL_PROVIDER_ID = "modelProviderId"; //$NON-NLS-1$
 	private static final String ATT_CONTENT_EXTENSION_ID = "contentExtensionId"; //$NON-NLS-1$
-	private IConfigurationElement configElement;
-	private String id;
+
 	private String modelProviderId;
 	private String contentExtensionId;
 
@@ -39,9 +38,7 @@ public class TeamContentProviderDescriptor {
 	 */
 	protected void readExtension(IExtension extension) throws CoreException {
 		//read the extension
-		id = extension.getUniqueIdentifier();
-		if (id == null)
-			fail(NLS.bind(TeamUIMessages.TeamContentProviderDescriptor_0, new String[] {TeamContentProviderManager.PT_TEAM_CONTENT_PROVIDERS}));
+		String id = extension.getUniqueIdentifier(); // id not required
 		IConfigurationElement[] elements = extension.getConfigurationElements();
 		int count = elements.length;
 		for (int i = 0; i < count; i++) {
@@ -53,17 +50,13 @@ public class TeamContentProviderDescriptor {
 			}
 		}
 		if (modelProviderId == null)
-			fail(NLS.bind(TeamUIMessages.TeamContentProviderDescriptor_1, new String[] { ATT_MODEL_PROVIDER_ID, TAG_TEAM_CONTENT_PROVIDER, id}));
+			fail(NLS.bind(TeamUIMessages.TeamContentProviderDescriptor_1, new String[] { ATT_MODEL_PROVIDER_ID, TAG_TEAM_CONTENT_PROVIDER, id == null ? "" : id})); //$NON-NLS-1$
 		if (contentExtensionId == null)
-			fail(NLS.bind(TeamUIMessages.TeamContentProviderDescriptor_2, new String[] { ATT_CONTENT_EXTENSION_ID, TAG_TEAM_CONTENT_PROVIDER, id}));
+			fail(NLS.bind(TeamUIMessages.TeamContentProviderDescriptor_1, new String[] { ATT_CONTENT_EXTENSION_ID, TAG_TEAM_CONTENT_PROVIDER, id == null ? "" : id})); //$NON-NLS-1$
 	}
 	
 	protected void fail(String reason) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, reason, null));
-	}
-
-	public Object getId() {
-		return id;
 	}
 
 	public String getContentExtensionId() {

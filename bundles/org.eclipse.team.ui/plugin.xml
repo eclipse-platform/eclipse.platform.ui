@@ -6,6 +6,7 @@
    <extension-point id="synchronizeParticipants" name="%synchronizeParticipants" schema="schema/synchronizeParticipants.exsd"/>
    <extension-point id="synchronizeWizards" name="%synchronizeWizards" schema="schema/synchronizeWizards.exsd"/>
    <extension-point id="teamContentProviders" name="Team Content Providers" schema="schema/teamContentProviders.exsd"/>
+   <extension-point id="teamDecorators" name="Team Decorators" schema="schema/teamDecorators.exsd"/>
 
 <!-- **************** PREFERENCES ******************* -->
    <extension

@@ -24,7 +24,7 @@ public class TeamContentProviderManager {
 
 	private static TeamContentProviderManager instance;
 	
-	Map descriptors;
+	List descriptors;
 	
 	public static TeamContentProviderManager getInstance() {
 		if (instance == null)
@@ -45,7 +45,7 @@ public class TeamContentProviderManager {
 	
 	public TeamContentProviderDescriptor[] getDescriptors() {
 		lazyInitialize();
-		return (TeamContentProviderDescriptor[]) descriptors.values().toArray(new TeamContentProviderDescriptor[descriptors.size()]);
+		return (TeamContentProviderDescriptor[]) descriptors.toArray(new TeamContentProviderDescriptor[descriptors.size()]);
 	}
 	
 	public String[] getContentProviderIds() {
@@ -55,6 +55,7 @@ public class TeamContentProviderManager {
 			TeamContentProviderDescriptor descriptor = descriptors[i];
 			result.add(descriptor.getContentExtensionId());
 		}
+		// TODO: Is this still required?
 		result.add("org.eclipse.team.ui.navigatorContent"); //$NON-NLS-1$
 		return (String[]) result.toArray(new String[result.size()]);
 	}
@@ -64,7 +65,7 @@ public class TeamContentProviderManager {
 			return;
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(TeamUIPlugin.ID, PT_TEAM_CONTENT_PROVIDERS);
 		IExtension[] extensions = point.getExtensions();
-		descriptors = new HashMap(extensions.length * 2 + 1);
+		descriptors = new ArrayList(extensions.length);
 		for (int i = 0, imax = extensions.length; i < imax; i++) {
 			TeamContentProviderDescriptor desc = null;
 			try {
@@ -73,7 +74,7 @@ public class TeamContentProviderManager {
 				TeamUIPlugin.log(e);
 			}
 			if (desc != null)
-				descriptors.put(desc.getId(), desc);
+				descriptors.add(desc);
 		}
 	}
 }
