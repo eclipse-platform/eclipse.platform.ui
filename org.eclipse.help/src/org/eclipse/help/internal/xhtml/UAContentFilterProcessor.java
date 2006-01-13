@@ -9,7 +9,9 @@
 
 package org.eclipse.help.internal.xhtml;
 
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -35,9 +37,14 @@ public class UAContentFilterProcessor {
 	}
 
 	public void applyFilters(Element element) {
+		boolean filteredIn = false;
 		if (hasFilterAttribute(element)) {
-			boolean filteredIn = false;
 			filteredIn = processFilterAttribute(element);
+			if (!filteredIn)
+				return;
+		} else if (hasFiltersAsChildren(element)) {
+			Element[] filters = DOMUtil.getElementsByTagName(element, "filter");
+			filteredIn = processFilterChildren(element, filters);
 			if (!filteredIn)
 				return;
 		}
@@ -58,6 +65,14 @@ public class UAContentFilterProcessor {
 		return true;
 	}
 
+	private static boolean hasFiltersAsChildren(Element element) {
+		Element[] filters = DOMUtil.getElementsByTagName(element, "filter");
+		if (filters != null && filters.length > 0)
+			return true;
+		return false;
+	}
+
+
 	/**
 	 * Returns true is filter passes and Element is to be included.
 	 * 
@@ -74,8 +89,24 @@ public class UAContentFilterProcessor {
 
 		if (!filtered_in)
 			element.getParentNode().removeChild(element);
-		return false;
+		return filtered_in;
 	}
+
+
+	private boolean processFilterChildren(Element parent, Element[] filters) {
+		boolean filtered_in = false;
+		for (int i = 0; i < filters.length; i++) {
+			String filter = filters[i].getAttribute("name");
+			String value = filters[i].getAttribute("value");
+			filtered_in = isFilteredIn(filter, value);
+			if (!filtered_in) {
+				parent.getParentNode().removeChild(parent);
+				break;
+			}
+		}
+		return filtered_in;
+	}
+
 
 	/**
 	 * FIltering capabilities. Can be overiden by subclasses to add more filtering capabilities.
@@ -90,6 +121,12 @@ public class UAContentFilterProcessor {
 			filtered_in = filterByWS(value);
 		} else if (filter.equals("os")) { //$NON-NLS-1$
 			filtered_in = filterByOS(value);
+		} else if (filter.equals("arch")) { //$NON-NLS-1$
+			filtered_in = filterByARCH(value);
+		} else if (filter.equals("product")) { //$NON-NLS-1$ 
+			filtered_in = filterByProduct(value);
+		} else if (filter.equals("plugin")) { //$NON-NLS-1$
+			filtered_in = filterByPlugin(value);
 		} else
 			filtered_in = filterBySystemProperty(filter, value);
 
@@ -114,6 +151,51 @@ public class UAContentFilterProcessor {
 		if (currentOS.equals(os))
 			return true;
 		return false;
+	}
+
+	/**
+	 * evaluates ARCH filter.
+	 */
+	private static boolean filterByARCH(String arch) {
+		String currentArch = Platform.getOSArch();
+		if (currentArch.equals(arch))
+			return true;
+		return false;
+	}
+
+	/**
+	 * evaluates product filter.
+	 */
+	private static boolean filterByProduct(String productId) {
+		IProduct product = Platform.getProduct();
+		if (product == null)
+			return false;
+
+		String currentProductId = product.getId();
+		if (currentProductId.equals(productId))
+			return true;
+		return false;
+	}
+
+	/**
+	 * evaluates plugin filter.
+	 */
+	private static boolean filterByPlugin(String bundleId) {
+		Bundle bundle = Platform.getBundle(bundleId);
+		boolean bundleIsOK = checkBundleState(bundle);
+		if (bundleIsOK)
+			return true;
+
+		return false;
+	}
+
+
+	public static boolean checkBundleState(Bundle bundle) {
+		if (bundle == null || bundle.getState() == Bundle.UNINSTALLED
+				|| bundle.getState() == Bundle.INSTALLED)
+			return false;
+
+		return true;
 	}
 
 

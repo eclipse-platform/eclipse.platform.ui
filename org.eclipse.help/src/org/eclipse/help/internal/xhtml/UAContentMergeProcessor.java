@@ -146,10 +146,16 @@ public class UAContentMergeProcessor {
 	private void resolveContentExtension(Document contentExtensionDom, IConfigurationElement contentExtElement) {
 		Bundle bundle = BundleUtil.getBundleFromConfigurationElement(contentExtElement);
 		Element[] topicExtensions = DOMUtil.getElementsByTagName(contentExtensionDom, "topicExtension"); //$NON-NLS-1$
-		if (topicExtensions == null)
-			return;
-		for (int i = 0; i < topicExtensions.length; i++)
-			doResolveContentExtension(topicExtensions[i], bundle);
+		if (topicExtensions != null) {
+			for (int i = 0; i < topicExtensions.length; i++)
+				doResolveContentExtension(topicExtensions[i], bundle);
+		}
+
+		Element[] topicReplaces = DOMUtil.getElementsByTagName(contentExtensionDom, "topicReplace"); //$NON-NLS-1$
+		if (topicReplaces != null) {
+			for (int i = 0; i < topicReplaces.length; i++)
+				doResolveContentReplace(topicReplaces[i], bundle);
+		}
 	}
 
 	private void doResolveContentExtension(Element topicExtension, Bundle bundle) {
@@ -177,8 +183,6 @@ public class UAContentMergeProcessor {
 	}
 
 
-
-
 	/**
 	 * Insert the topic extension content into the target page if the target page happens to be this
 	 * page.
@@ -195,23 +199,17 @@ public class UAContentMergeProcessor {
 			else
 				return false;
 		}
-
 		Document topicExtensionDom = topicExtension.getDocument();
 		if (topicExtensionDom == null)
 			return false;
-
 		Element extensionBody = DOMUtil.getBodyElement(topicExtensionDom);
 		Element[] children = DOMUtil.getElementsByTagName(extensionBody, "*"); //$NON-NLS-1$
 		for (int i = 0; i < children.length; i++) {
 			Node targetNode = document.importNode(children[i], true);
 			anchorElement.getParentNode().insertBefore(targetNode, anchorElement);
 		}
-
-
 		return true;
-
 	}
-
 
 
 	private Element findAnchor(UATopicExtension topicExtension, String locale) {
@@ -234,13 +232,68 @@ public class UAContentMergeProcessor {
 	}
 
 
-
-
 	protected Document loadContentExtension(IConfigurationElement cfgElement) {
 		String content = cfgElement.getAttribute("file"); //$NON-NLS-1$
 		content = BundleUtil.getResourceLocation(content, cfgElement);
 		Document document = new UAContentParser(content).getDocument();
 		return document;
+	}
+
+
+	private void doResolveContentReplace(Element topicReplace, Bundle bundle) {
+		UATopicExtension topicReplaceModel = new UATopicExtension(topicReplace, bundle);
+		boolean isExtensionToCurrentPage = resolveTopicReplace(topicReplaceModel);
+		if (isExtensionToCurrentPage) {
+			if (topicReplace.hasAttribute("failed")) { //$NON-NLS-1$
+				if (!unresolvedConfigExt.containsKey(topicReplace))
+					unresolvedConfigExt.put(topicReplace, bundle);
+			} else {
+				unresolvedConfigExt.remove(topicReplace);
+				// tryResolvingExtensions();
+			}
+		}
+	}
+
+
+
+	private boolean resolveTopicReplace(UATopicExtension topicReplace) {
+
+		Element replaceElement = findReplaceElementById(topicReplace, locale);
+		if (replaceElement == null) {
+			if (topicReplace.getElement().hasAttribute("failed")) //$NON-NLS-1$
+				return true;
+			else
+				return false;
+		}
+		Document topicExtensionDom = topicReplace.getDocument();
+		if (topicExtensionDom == null)
+			return false;
+		Element extensionBody = DOMUtil.getBodyElement(topicExtensionDom);
+		Element[] children = DOMUtil.getElementsByTagName(extensionBody, "*"); //$NON-NLS-1$
+		for (int i = 0; i < children.length; i++) {
+			Node targetNode = document.importNode(children[i], true);
+			replaceElement.getParentNode().insertBefore(targetNode, replaceElement);
+		}
+		return true;
+	}
+
+	private Element findReplaceElementById(UATopicExtension topicReplace, String locale) {
+		String path = topicReplace.getPath();
+		int index = path.indexOf("/"); //$NON-NLS-1$
+		if (index < 0)
+			return null;
+		String pluginID = path.substring(0, index);
+		int lastIndex = path.lastIndexOf("/"); //$NON-NLS-1$
+		String pluginRelativePath = path.substring(index + 1, lastIndex);
+		String element_id = path.substring(lastIndex + 1, path.length());
+
+		if (this.pluginID.equals(pluginID) && this.file.equals(pluginRelativePath)) {
+			Element elementToReplace = DOMUtil.getElementById(document, element_id, "*"); //$NON-NLS-1$ 
+			if (elementToReplace == null)
+				topicReplace.getElement().setAttribute("failed", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+			return elementToReplace;
+		}
+		return null;
 	}
 
 

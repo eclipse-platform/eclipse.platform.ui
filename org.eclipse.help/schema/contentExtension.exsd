@@ -53,6 +53,19 @@
             <annotation>
                <documentation>
                   a plugin-relative path to the location of an extension content file. An extension content file is an XML file that specifies the location of content contributions (as XHTML pages/snippets) and the target page where they should be merged into. The content file is parsed at run time by the Help system framework and each content extension is loaded and inserted into the target location specified by the anchor.
+
+This content file should have the following syntax:&lt;br&gt;
+&lt;code&gt;
+&lt;pre&gt;
+ &lt;contentExtension&gt;
+  &lt;topicExtension content=&quot;plugin/relative/path/topicExtensionFile.xhml&quot; 
+  path=&quot;plugin_id/path_to_xhtml_file/anchor_id&quot;/&gt;
+  &lt;topicReplace content=&quot;topicReplaceFile.xhml&quot; path=&quot;plugin_id/path_to_xhtml_file/element_id&quot; /&gt;
+ &lt;/contentExtension&gt;
+&lt;/pre&gt;
+&lt;/code&gt;
+ &lt;br&gt;
+&lt;code&gt;topicExtension&lt;/code&gt; is the markup used to insert content at the target anchor location. &lt;code&gt;topicReplace&lt;/code&gt; is the markup used to replace the content of the target element by the specified content. In other words, content can be contributed that either adds to the target location or replaces the content of the target location.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -87,8 +100,6 @@
 &lt;/p&gt;
 
 &lt;p&gt;The above contribution inserts the content of the XHTML file, &lt;samp&gt;topicA.xhtml&lt;/samp&gt;, into the target Help system page specified by the &lt;samp&gt;path&lt;/samp&gt; attribute. In this case, the content extension will be inserted in the location of an anchor called &lt;samp&gt;topicAnchor&lt;/samp&gt; in page &lt;samp&gt;someHelpPage.xhtml&lt;/samp&gt; in plugin &lt;samp&gt;org.xxx.yyy.somePluginId&lt;/samp&gt;.&lt;/p&gt;
-&lt;/p&gt;
-&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -98,7 +109,7 @@
       </appInfo>
       <documentation>
          No code is required to use this extension point.  All that is needed is to supply the appropriate content files mentioned in the plugin.xml file.
-&lt;/p&gt;
+
       </documentation>
    </annotation>
 
@@ -108,7 +119,7 @@
       </appInfo>
       <documentation>
          The default implementation of the base help system supplied with the Eclipse platform fully supports this &lt;samp&gt;contentExtension&lt;/samp&gt; extension point.
-&lt;/p&gt;
+
       </documentation>
    </annotation>
 
