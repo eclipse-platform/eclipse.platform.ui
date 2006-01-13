@@ -59,20 +59,14 @@ final class ContextActivation extends EvaluationResultCache implements
 	 *            The expression that must evaluate to <code>true</code>
 	 *            before this handler is active. This value may be
 	 *            <code>null</code> if it is always active.
-	 * @param depth
-	 *            The depth at which this activation was created within the
-	 *            services hierarchy. This is used as the final tie-breaker if
-	 *            all other conditions are equal. This should be a positive
-	 *            integer.
 	 * @param contextService
 	 *            The context service from which the handler activation was
 	 *            requested; must not be <code>null</code>.
 	 * @see ISources
 	 */
 	public ContextActivation(final String contextId,
-			final Expression expression, final int depth,
-			final IContextService contextService) {
-		super(expression, depth);
+			final Expression expression, final IContextService contextService) {
+		super(expression);
 
 		if (contextId == null) {
 			throw new NullPointerException(

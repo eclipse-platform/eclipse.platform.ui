@@ -28,12 +28,7 @@ import org.eclipse.ui.ISources;
  * @see org.eclipse.ui.ISources
  * @see org.eclipse.ui.ISourceProvider
  */
-public interface IEvaluationResultCache extends Comparable {
-	
-	/**
-	 * The depth at which the root exists.
-	 */
-	public static final int ROOT_DEPTH = 1;
+public interface IEvaluationResultCache {
 
 	/**
 	 * Clears the cached computation of the <code>evaluate</code> method, if
@@ -42,17 +37,6 @@ public interface IEvaluationResultCache extends Comparable {
 	 * state on a <code>IEvaluationResultCache</code> instance.
 	 */
 	public void clearResult();
-
-	/**
-	 * Returns the depth at which this activation was created within the
-	 * services hierarchy. The root of the hierarchy is at a depth of
-	 * <code>1</code>. This is used as the final tie-breaker in the event
-	 * that no other method can be used to determine a winner.
-	 * 
-	 * @return The depth at which the handler was inserted into the services
-	 *         hierarchy; should be a positive integer.
-	 */
-	public int getDepth();
 
 	/**
 	 * Returns the expression controlling the activation or visibility of this

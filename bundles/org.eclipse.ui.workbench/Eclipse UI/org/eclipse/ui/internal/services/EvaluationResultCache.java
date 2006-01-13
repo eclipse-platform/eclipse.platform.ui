@@ -29,12 +29,6 @@ import org.eclipse.ui.ISources;
 public abstract class EvaluationResultCache implements IEvaluationResultCache {
 
 	/**
-	 * The depth of services at which this token was created. This is used as a
-	 * final tie-breaker if all other things are equivalent.
-	 */
-	private final int depth;
-
-	/**
 	 * The previous computed evaluation result. If no evaluation result is
 	 * available, then this value is <code>null</code>.
 	 */
@@ -54,19 +48,13 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 	/**
 	 * Constructs a new instance of <code>EvaluationResultCache</code>.
 	 * 
-	 * @param depth
-	 *            The depth at which this activation was created within the
-	 *            services hierarchy. This is used as the final tie-breaker if
-	 *            all other conditions are equal. This should be a positive
-	 *            integer.
 	 * @param expression
 	 *            The expression that must evaluate to <code>true</code>
 	 *            before this handler is active. This value may be
 	 *            <code>null</code> if it is always active.
 	 * @see ISources
 	 */
-	protected EvaluationResultCache(final Expression expression, final int depth) {
-		this.depth = depth;
+	protected EvaluationResultCache(final Expression expression) {
 		this.expression = expression;
 		this.sourcePriority = SourcePriorityNameMapping
 				.computeSourcePriority(expression);
@@ -74,21 +62,6 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 
 	public final void clearResult() {
 		evaluationResult = null;
-	}
-
-	public final int compareTo(final Object object) {
-		final IEvaluationResultCache activation = (IEvaluationResultCache) object;
-
-		// Check the priorities
-		final int thisPriority = this.getSourcePriority();
-		final int thatPriority = activation.getSourcePriority();
-		final int difference = thatPriority - thisPriority;
-		if (difference != 0) {
-			return difference;
-		}
-
-		// Check depth
-		return this.getDepth() - activation.getDepth();
 	}
 
 	public final boolean evaluate(final IEvaluationContext context) {
@@ -111,10 +84,6 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 		}
 
 		return evaluationResult == EvaluationResult.TRUE;
-	}
-
-	public final int getDepth() {
-		return depth;
 	}
 
 	public final Expression getExpression() {

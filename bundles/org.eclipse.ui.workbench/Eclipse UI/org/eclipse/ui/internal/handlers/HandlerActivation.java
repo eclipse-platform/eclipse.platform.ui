@@ -43,6 +43,12 @@ final class HandlerActivation extends EvaluationResultCache implements
 	private final String commandId;
 
 	/**
+	 * The depth of services at which this token was created. This is used as a
+	 * final tie-breaker if all other things are equivalent.
+	 */
+	private final int depth;
+
+	/**
 	 * The handler that has been activated. This value may be <code>null</code>.
 	 */
 	private final IHandler handler;
@@ -79,7 +85,7 @@ final class HandlerActivation extends EvaluationResultCache implements
 	HandlerActivation(final String commandId, final IHandler handler,
 			final Expression expression, final int depth,
 			final IHandlerService handlerService) {
-		super(expression, depth);
+		super(expression);
 
 		if (commandId == null) {
 			throw new NullPointerException(
@@ -92,6 +98,7 @@ final class HandlerActivation extends EvaluationResultCache implements
 		}
 
 		this.commandId = commandId;
+		this.depth = depth;
 		this.handler = handler;
 		this.handlerService = handlerService;
 	}
@@ -100,8 +107,27 @@ final class HandlerActivation extends EvaluationResultCache implements
 		clearResult();
 	}
 
+	public final int compareTo(final Object object) {
+		final IHandlerActivation activation = (IHandlerActivation) object;
+
+		// Check the priorities
+		final int thisPriority = this.getSourcePriority();
+		final int thatPriority = activation.getSourcePriority();
+		final int difference = thatPriority - thisPriority;
+		if (difference != 0) {
+			return difference;
+		}
+
+		// Check depth
+		return this.getDepth() - activation.getDepth();
+	}
+
 	public final String getCommandId() {
 		return commandId;
+	}
+
+	public final int getDepth() {
+		return depth;
 	}
 
 	public final IHandler getHandler() {

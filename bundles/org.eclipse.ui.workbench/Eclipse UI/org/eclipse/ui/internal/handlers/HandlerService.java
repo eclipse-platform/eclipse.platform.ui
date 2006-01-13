@@ -25,7 +25,6 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.misc.Policy;
-import org.eclipse.ui.internal.services.IEvaluationResultCache;
 
 /**
  * <p>
@@ -84,7 +83,7 @@ public final class HandlerService implements IHandlerService {
 	public final IHandlerActivation activateHandler(final String commandId,
 			final IHandler handler, final Expression expression) {
 		final IHandlerActivation activation = new HandlerActivation(commandId,
-				handler, expression, IEvaluationResultCache.ROOT_DEPTH, this);
+				handler, expression, IHandlerActivation.ROOT_DEPTH, this);
 		handlerAuthority.activateHandler(activation);
 		return activation;
 	}

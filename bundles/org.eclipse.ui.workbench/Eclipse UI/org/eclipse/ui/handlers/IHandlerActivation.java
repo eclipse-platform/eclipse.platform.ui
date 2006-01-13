@@ -30,7 +30,12 @@ import org.eclipse.ui.internal.services.IEvaluationResultCache;
  * @see org.eclipse.ui.ISources
  * @see org.eclipse.ui.ISourceProvider
  */
-public interface IHandlerActivation extends IEvaluationResultCache {
+public interface IHandlerActivation extends IEvaluationResultCache, Comparable {
+
+	/**
+	 * The depth at which the root exists.
+	 */
+	public static final int ROOT_DEPTH = 1;
 
 	/**
 	 * Clears the cached computation of the <code>isActive</code> method, if
@@ -48,6 +53,18 @@ public interface IHandlerActivation extends IEvaluationResultCache {
 	 * @return The command identifier; never <code>null</code>.
 	 */
 	public String getCommandId();
+
+	/**
+	 * Returns the depth at which this activation was created within the
+	 * services hierarchy. The root of the hierarchy is at a depth of
+	 * <code>1</code>. This is used as the final tie-breaker in the event
+	 * that no other method can be used to determine a winner.
+	 * 
+	 * @return The depth at which the handler was inserted into the services
+	 *         hierarchy; should be a positive integer.
+	 * @since 3.2
+	 */
+	public int getDepth();
 
 	/**
 	 * Returns the handler that should be activated.

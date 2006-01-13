@@ -34,7 +34,6 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
-import org.eclipse.ui.internal.services.IEvaluationResultCache;
 
 /**
  * <p>
@@ -227,13 +226,12 @@ final class ContextAuthority extends ExpressionAuthority {
 						newShell);
 				final IContextActivation dialogWindowActivation = new ContextActivation(
 						IContextService.CONTEXT_ID_DIALOG_AND_WINDOW,
-						expression, IEvaluationResultCache.ROOT_DEPTH,
-						contextService);
+						expression, contextService);
 				activateContext(dialogWindowActivation);
 				newActivations.add(dialogWindowActivation);
 				final IContextActivation dialogActivation = new ContextActivation(
 						IContextService.CONTEXT_ID_DIALOG, expression,
-						IEvaluationResultCache.ROOT_DEPTH, contextService);
+						contextService);
 				activateContext(dialogActivation);
 				newActivations.add(dialogActivation);
 				registeredWindows.put(null, newActivations);
@@ -496,12 +494,12 @@ final class ContextAuthority extends ExpressionAuthority {
 			expression = new ActiveShellExpression(shell);
 			dialogWindowActivation = new ContextActivation(
 					IContextService.CONTEXT_ID_DIALOG_AND_WINDOW, expression,
-					IEvaluationResultCache.ROOT_DEPTH, contextService);
+					contextService);
 			activateContext(dialogWindowActivation);
 			activations.add(dialogWindowActivation);
 			final IContextActivation dialogActivation = new ContextActivation(
 					IContextService.CONTEXT_ID_DIALOG, expression,
-					IEvaluationResultCache.ROOT_DEPTH, contextService);
+					contextService);
 			activateContext(dialogActivation);
 			activations.add(dialogActivation);
 			break;
@@ -512,12 +510,12 @@ final class ContextAuthority extends ExpressionAuthority {
 			expression = new ActiveShellExpression(shell);
 			dialogWindowActivation = new ContextActivation(
 					IContextService.CONTEXT_ID_DIALOG_AND_WINDOW, expression,
-					IEvaluationResultCache.ROOT_DEPTH, contextService);
+					contextService);
 			activateContext(dialogWindowActivation);
 			activations.add(dialogWindowActivation);
 			final IContextActivation windowActivation = new ContextActivation(
 					IContextService.CONTEXT_ID_WINDOW, expression,
-					IEvaluationResultCache.ROOT_DEPTH, contextService);
+					contextService);
 			activateContext(windowActivation);
 			activations.add(windowActivation);
 			break;

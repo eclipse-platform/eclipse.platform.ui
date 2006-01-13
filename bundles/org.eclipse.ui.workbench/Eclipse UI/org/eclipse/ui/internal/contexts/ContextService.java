@@ -22,7 +22,6 @@ import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.services.IEvaluationResultCache;
 
 /**
  * <p>
@@ -74,7 +73,7 @@ public final class ContextService implements IContextService {
 	public final IContextActivation activateContext(final String contextId,
 			final Expression expression) {
 		final IContextActivation activation = new ContextActivation(contextId,
-				expression, IEvaluationResultCache.ROOT_DEPTH, this);
+				expression, this);
 		contextAuthority.activateContext(activation);
 		return activation;
 	}
