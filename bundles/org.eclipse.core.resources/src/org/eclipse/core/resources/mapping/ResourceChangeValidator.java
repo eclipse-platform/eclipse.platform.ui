@@ -12,6 +12,7 @@ package org.eclipse.core.resources.mapping;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.core.internal.resources.mapping.ChangeDescription;
 import org.eclipse.core.internal.resources.mapping.ResourceChangeDescriptionFactory;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
@@ -98,26 +99,21 @@ public final class ResourceChangeValidator {
 
 	/*
 	 * Get the roots of any changes.
-	 * TODO we should actually get the list of resources that were
-	 * used as arguments to the operation calls on the delta factory
 	 */
-	private IResource[] getRootResources(IResourceDelta delta) {
-		final List result = new ArrayList();
+	private IResource[] getRootResources(IResourceDelta root) {
+		final ChangeDescription changeDescription = new ChangeDescription();
 		try {
-			delta.accept(new IResourceDeltaVisitor() {
-				public boolean visit(IResourceDelta child) {
-					if (child.getKind() != 0) {
-						result.add(child.getResource());
-						return false;
-					}
-					return true;
+			root.accept(new IResourceDeltaVisitor() {
+				public boolean visit(IResourceDelta delta) {
+					return changeDescription.recordChange(delta);
 				}
 			});
 		} catch (CoreException e) {
-			// shouldn't happen so just log it
-			ResourcesPlugin.getPlugin().getLog().log(new Status(e.getStatus().getSeverity(), ResourcesPlugin.PI_RESOURCES, 0, "Internal error", e)); //$NON-NLS-1$
+			// Shouldn't happen since the ProposedResourceDelta accept doesn't thow an
+			// exception and our visitor doesn't either
+			ResourcesPlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 0, "Internal error", e)); //$NON-NLS-1$
 		}
-		return (IResource[]) result.toArray(new IResource[result.size()]);
+		return changeDescription.getRootResources();
 	}
 
 	/**
