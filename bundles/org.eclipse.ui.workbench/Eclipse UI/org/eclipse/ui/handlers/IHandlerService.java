@@ -33,6 +33,27 @@ public interface IHandlerService extends IServiceWithSources {
 
 	/**
 	 * <p>
+	 * Activates the given handler from a child service. This is used by slave
+	 * and nested services to promote handler activations up to the root. By
+	 * using this method, it is possible for handlers coming from a more nested
+	 * component to override the nested component.
+	 * </p>
+	 * 
+	 * @param activation
+	 *            The activation that is local to the child service; must not be
+	 *            <code>null</code>.
+	 * @return A token which can be used to later cancel the activation. Only
+	 *         someone with access to this token can cancel the activation. The
+	 *         activation will automatically be cancelled if the context from
+	 *         which this service was retrieved is destroyed. This activation is
+	 *         local to this service (i.e., it is not the activation that is
+	 *         passed as a parameter).
+	 * @since 3.2
+	 */
+	public IHandlerActivation activateHandler(IHandlerActivation activation);
+
+	/**
+	 * <p>
 	 * Activates the given handler within the context of this service. If this
 	 * service was retrieved from the workbench, then this handler will be
 	 * active globally. If the service was retrieved from a nested component,

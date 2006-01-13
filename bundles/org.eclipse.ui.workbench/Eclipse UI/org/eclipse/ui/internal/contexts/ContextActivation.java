@@ -28,6 +28,9 @@ import org.eclipse.ui.internal.services.EvaluationResultCache;
  * <p>
  * This caches the context id, so that they can later be identified.
  * </p>
+ * <p>
+ * Note: this class has a natural ordering that is inconsistent with equals.
+ * </p>
  * 
  * @since 3.1
  */
@@ -56,14 +59,20 @@ final class ContextActivation extends EvaluationResultCache implements
 	 *            The expression that must evaluate to <code>true</code>
 	 *            before this handler is active. This value may be
 	 *            <code>null</code> if it is always active.
+	 * @param depth
+	 *            The depth at which this activation was created within the
+	 *            services hierarchy. This is used as the final tie-breaker if
+	 *            all other conditions are equal. This should be a positive
+	 *            integer.
 	 * @param contextService
 	 *            The context service from which the handler activation was
 	 *            requested; must not be <code>null</code>.
 	 * @see ISources
 	 */
 	public ContextActivation(final String contextId,
-			final Expression expression, final IContextService contextService) {
-		super(expression);
+			final Expression expression, final int depth,
+			final IContextService contextService) {
+		super(expression, depth);
 
 		if (contextId == null) {
 			throw new NullPointerException(

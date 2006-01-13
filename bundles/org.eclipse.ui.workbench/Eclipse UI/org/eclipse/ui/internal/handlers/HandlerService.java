@@ -25,6 +25,7 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.internal.services.IEvaluationResultCache;
 
 /**
  * <p>
@@ -63,6 +64,18 @@ public final class HandlerService implements IHandlerService {
 		this.handlerPersistence = new HandlerPersistence(this);
 	}
 
+	public final IHandlerActivation activateHandler(
+			final IHandlerActivation childActivation) {
+		final String commandId = childActivation.getCommandId();
+		final IHandler handler = childActivation.getHandler();
+		final Expression expression = childActivation.getExpression();
+		final int depth = childActivation.getDepth() + 1;
+		final IHandlerActivation localActivation = new HandlerActivation(
+				commandId, handler, expression, depth, this);
+		handlerAuthority.activateHandler(localActivation);
+		return localActivation;
+	}
+
 	public final IHandlerActivation activateHandler(final String commandId,
 			final IHandler handler) {
 		return activateHandler(commandId, handler, null);
@@ -71,7 +84,7 @@ public final class HandlerService implements IHandlerService {
 	public final IHandlerActivation activateHandler(final String commandId,
 			final IHandler handler, final Expression expression) {
 		final IHandlerActivation activation = new HandlerActivation(commandId,
-				handler, expression, this);
+				handler, expression, IEvaluationResultCache.ROOT_DEPTH, this);
 		handlerAuthority.activateHandler(activation);
 		return activation;
 	}

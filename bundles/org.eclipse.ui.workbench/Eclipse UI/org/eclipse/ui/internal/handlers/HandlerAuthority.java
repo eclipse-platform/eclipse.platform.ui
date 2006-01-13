@@ -257,19 +257,18 @@ final class HandlerAuthority extends ExpressionAuthority {
 		final Iterator activationItr = activations.iterator();
 		IHandlerActivation bestActivation = (IHandlerActivation) activationItr
 				.next();
-		int bestSourcePriority = bestActivation.getSourcePriority();
 		boolean conflict = false;
 
 		// Cycle over the activations, remembered the current best.
 		while (activationItr.hasNext()) {
 			final IHandlerActivation currentActivation = (IHandlerActivation) activationItr
 					.next();
-			if (currentActivation.getSourcePriority() > bestSourcePriority) {
+			final int comparison = bestActivation.compareTo(currentActivation);
+			if (comparison < 0) {
 				bestActivation = currentActivation;
-				bestSourcePriority = bestActivation.getSourcePriority();
 				conflict = false;
 
-			} else if (currentActivation.getSourcePriority() == bestSourcePriority) {
+			} else if (comparison == 0) {
 				if (currentActivation.getHandler() != bestActivation
 						.getHandler()) {
 					conflict = true;

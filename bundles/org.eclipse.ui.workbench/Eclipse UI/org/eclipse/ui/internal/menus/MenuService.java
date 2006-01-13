@@ -24,6 +24,7 @@ import org.eclipse.jface.menus.SMenuManager;
 import org.eclipse.jface.menus.SWidget;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.services.IEvaluationResultCache;
 import org.eclipse.ui.menus.IMenuContribution;
 import org.eclipse.ui.menus.IMenuService;
 
@@ -89,7 +90,8 @@ public final class MenuService implements IMenuService {
 	public final IMenuContribution contributeMenu(
 			final MenuElement menuElement, final Expression expression) {
 		final IMenuContribution contribution = new MenuContribution(
-				menuElement, expression, this);
+				menuElement, expression, IEvaluationResultCache.ROOT_DEPTH,
+				this);
 		menuAuthority.contributeMenu(contribution);
 		return contribution;
 	}

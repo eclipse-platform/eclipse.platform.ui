@@ -65,15 +65,21 @@ final class HandlerActivation extends EvaluationResultCache implements
 	 * @param expression
 	 *            The expression that must evaluate to <code>true</code>
 	 *            before this handler is active. This value may be
-	 *            <code>null</code> if it is always active.
+	 *            <code>null</code> if it is always active.</code>.
+	 * @param depth
+	 *            The depth at which this activation was created within the
+	 *            services hierarchy. This is used as the final tie-breaker if
+	 *            all other conditions are equal. This should be a positive
+	 *            integer.
 	 * @param handlerService
 	 *            The handler service from which the handler activation was
 	 *            requested; must not be <code>null</code>.
 	 * @see ISources
 	 */
 	HandlerActivation(final String commandId, final IHandler handler,
-			final Expression expression, final IHandlerService handlerService) {
-		super(expression);
+			final Expression expression, final int depth,
+			final IHandlerService handlerService) {
+		super(expression, depth);
 
 		if (commandId == null) {
 			throw new NullPointerException(

@@ -56,14 +56,20 @@ final class MenuContribution extends EvaluationResultCache implements
 	 *            The expression that must evaluate to <code>true</code>
 	 *            before this menu contribution is visible. This value may be
 	 *            <code>null</code> if it is always active.
+	 * @param depth
+	 *            The depth at which this activation was created within the
+	 *            services hierarchy. This is used as the final tie-breaker if
+	 *            all other conditions are equal. This should be a positive
+	 *            integer.
 	 * @param menuService
 	 *            The menu service from which the contribution was requested;
 	 *            must not be <code>null</code>.
 	 * @see ISources
 	 */
 	public MenuContribution(final MenuElement menuElement,
-			final Expression expression, final IMenuService menuService) {
-		super(expression);
+			final Expression expression, final int depth,
+			final IMenuService menuService) {
+		super(expression, depth);
 
 		if (menuElement == null) {
 			throw new NullPointerException(
