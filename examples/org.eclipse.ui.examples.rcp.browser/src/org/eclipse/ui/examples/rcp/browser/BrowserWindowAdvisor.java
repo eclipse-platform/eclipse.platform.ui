@@ -10,14 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.rcp.browser;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -62,7 +55,8 @@ public class BrowserWindowAdvisor extends WorkbenchWindowAdvisor {
         return new BrowserActionBarAdvisor(actionBarConfigurer);
     }
     
-//  Uncomment the code below for a custom window layout
+//  Uncomment the code below for a custom window layout (add back the missing imports using Ctrl+Shift+O) 
+/*    
       public void createWindowContents(Shell shell) {
           IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
           Menu menuBar = configurer.createMenuBar();
@@ -93,5 +87,5 @@ public class BrowserWindowAdvisor extends WorkbenchWindowAdvisor {
           statusLine.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
           shell.layout(true);
       }
-            
+*/
 }
