@@ -114,6 +114,22 @@ public class SynchronizationStateTester {
 		return false;
 	}
 	
+	/**
+	 * Return whether state decoration is enabled. If <code>true</code>
+	 * is returned, team decorators will use the state methods provided
+	 * on this class to calculate the synchronization state of model
+	 * elements for the purpose of decoration. If <code>false</code>
+	 * is returned, team decorators will not decorate the elements with any
+	 * synchronization elated decorations. Subclasses will want to disable
+	 * state decoration if state decoration is being provided another way
+	 * (e.g. by a {@link SynchronizationLabelProvider}). By default, 
+	 * <code>true</code>is returned. Subclasses may override.
+	 * @return whether state decoration is enabled
+	 */
+	public boolean isStateDecorationEnabled() {
+		return true;
+	}
+	
 	private boolean internalIsDecorationEnabled(IProject[] projects) {
 		Set providerIds = new HashSet();
 		for (int i = 0; i < projects.length; i++) {
