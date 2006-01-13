@@ -67,6 +67,8 @@ public class TestSaveSnap extends WorkspaceSerializationTest {
 		IProject project = getWorkspace().getRoot().getProject(PROJECT);
 		IFolder folder = project.getFolder(FOLDER);
 		IFile file = folder.getFile(FILE);
+		// wait for background crash recovery to complete
+		waitForRefresh();
 
 		/* see if the workspace contains the resources created earlier*/
 		IResource[] children = getWorkspace().getRoot().members();
