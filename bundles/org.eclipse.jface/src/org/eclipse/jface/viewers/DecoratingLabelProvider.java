@@ -29,6 +29,7 @@ public class DecoratingLabelProvider extends LabelProvider implements
 	 * The UPDATE_LABEL flag indicates that the label should 
 	 * be updated for the element passed to the validator.
 	 * @see ILabelUpdateValidator
+	 * @deprecated should be removed by 3.2 M5
 	 */
 	public static final String UPDATE_LABEL = "UPDATE_LABEL";//$NON-NLS-1$
 	
@@ -294,6 +295,8 @@ public class DecoratingLabelProvider extends LabelProvider implements
      * It will be passed to the decorator if the decorator is an 
      * instance of {@link LabelDecorator}.
      * @return the decoration context associated with this label provider
+     * 
+     * @since 3.2
      */
     public IDecorationContext getDecorationContext() {
 		return decorationContext;
@@ -303,6 +306,8 @@ public class DecoratingLabelProvider extends LabelProvider implements
      * Set the decoration context that will be based to the decorator 
      * for this label provider if that decorator implements {@link LabelDecorator}.
      * @param decorationContext the decoration context.
+     * 
+     * @since 3.2
      */
 	public void setDecorationContext(IDecorationContext decorationContext) {
 		Assert.isNotNull(decorationContext);

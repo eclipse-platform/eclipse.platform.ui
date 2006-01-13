@@ -31,7 +31,24 @@ public interface IDecorationContext {
 	 * @return the ids of the contexts that are active for
 	 * the element that is being decorated
 	 * @see org.eclipse.core.commands.contexts.Context
+	 * @deprecated to be removed before M5
 	 */
 	String[] getContextIds();
+	
+	/**
+	 * Get the value of the given property or <code>null</code>
+	 * if the property does not exist in this context.
+	 * @param property the property
+	 * @return the value of the given property or <code>null</code>
+	 */
+	Object getProperty(String property);
+	
+	/**
+	 * Return the properties that exist in this context
+	 * (i.e. the set of properties that have values associated
+	 * with them.
+	 * @return the properties that exist in this context
+	 */
+	String[] getProperties();
 
 }

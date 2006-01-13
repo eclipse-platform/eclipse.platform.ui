@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A concrete implementation of the {@link IDecorationContext} interface,
  * suitable for instantiating.
@@ -24,13 +27,22 @@ public class DecorationContext implements IDecorationContext {
 	 * Constant that defines a default decoration context that has
 	 * no context ids associated with it.
 	 */
-	public static final IDecorationContext DEFAULT_CONTEXT = new DecorationContext(new String[0]);
+	public static final IDecorationContext DEFAULT_CONTEXT = new DecorationContext();
 	
 	private String[] contextIds;
+	private Map properties = new HashMap();
 
+	/**
+	 * Create a decoration context.
+	 */
+	public DecorationContext() {
+		this.contextIds = new String[0];
+	}
+	
 	/**
 	 * Create a decoration context with the given context ids
 	 * @param contextIds the context ids for this decoration context
+	 * @deprecated to be removed by M5
 	 */
 	public DecorationContext(String[] contextIds) {
 		this.contextIds = contextIds;
@@ -43,4 +55,33 @@ public class DecorationContext implements IDecorationContext {
 		return contextIds;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IDecorationContext#getProperty(java.lang.String)
+	 */
+	public Object getProperty(String property) {
+		return properties.get(property);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IDecorationContext#getProperties()
+	 */
+	public String[] getProperties() {
+		return (String[]) properties.keySet().toArray(new String[properties.size()]);
+	}
+
+	/**
+	 * Set the pgiven roperty to the given value. Setting the value of
+	 * a propert to <code>null</code> removes the property from
+	 * the context.
+	 * @param property the property
+	 * @param value the value of the property or <code>null</code>
+	 * if the property is to be removed.
+	 */
+	public void putProperty(String property, Object value) {
+		if (value == null) {
+			properties.remove(property);
+		} else {
+			properties.put(property, value);
+		}
+	}
 }
