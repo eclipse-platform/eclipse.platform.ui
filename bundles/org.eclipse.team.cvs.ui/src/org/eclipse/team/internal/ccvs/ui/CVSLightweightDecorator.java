@@ -93,12 +93,12 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 	}
 
 	public static boolean isDirty(final ICVSResource resource) throws CVSException {
-		return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().isDirty(resource, null);
+		return getSubscriber().isDirty(resource, null);
 	}
 
 	public static boolean isDirty(IResource resource) {
 		try {
-			return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().isDirty(resource, null);
+			return getSubscriber().isDirty(resource, null);
 		} catch (CVSException e) {
 			handleException(resource, e);
 			return true;
@@ -453,4 +453,8 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 			|| prop.equals(CVSDecoratorConfiguration.IGNORED_BACKGROUND_COLOR)
 			|| prop.equals(CVSDecoratorConfiguration.IGNORED_FONT);
     }
+	
+	private static CVSWorkspaceSubscriber getSubscriber() {
+		return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
+	}
 }
