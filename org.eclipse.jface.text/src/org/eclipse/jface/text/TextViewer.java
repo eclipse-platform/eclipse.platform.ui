@@ -2708,11 +2708,12 @@ public class TextViewer extends Viewer implements
 	/**
 	 * Returns the number of lines that can fully fit into the viewport. This is computed by
 	 * dividing the widget's client area height by the widget's line height. The result is only
-	 * accurate if the widget does not use variable line heights - for that reason, clients should not use this
-	 * method any longer and either use XXX add replacements
+	 * accurate if the widget does not use variable line heights - for that reason, clients should
+	 * not use this method any longer and use the client area height of the text widget to find out
+	 * how much content fits into it.
 	 * 
 	 * @return the view port height in lines
-	 * @deprecated as of 3.2 XXX add replacements
+	 * @deprecated as of 3.2
 	 */
 	protected int getVisibleLinesInViewport() {
 		if (fTextWidget != null) {
