@@ -103,7 +103,7 @@ public class RefactoringStatusDialog extends Dialog {
 		if (!fStatus.hasFatalError()) {
 			if (fBackButton)
 				createButton(parent, IDialogConstants.BACK_ID, IDialogConstants.BACK_LABEL, false); 
-			createButton(parent, IDialogConstants.OK_ID, RefactoringUIMessages.RefactoringStatusDialog_Continue, true); 
+			createButton(parent, IDialogConstants.OK_ID, fLightWeight ? IDialogConstants.OK_LABEL : RefactoringUIMessages.RefactoringStatusDialog_Continue, true); 
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		} else {
 			if (fBackButton)
