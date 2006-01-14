@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
-import org.eclipse.ant.internal.ui.preferences.DialogSettingsHelper;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -110,29 +110,16 @@ public class VariableInputDialog extends Dialog {
 	public String getVariableString() {
 		return fVariableString;
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#close()
-	 */
-	public boolean close() {
-		DialogSettingsHelper.persistShellGeometry(getShell(), DIALOG_SETTINGS_SECTION);
-		return super.close();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
-	 */
-	protected Point getInitialLocation(Point initialSize) {
-		Point p = DialogSettingsHelper.getInitialLocation(DIALOG_SETTINGS_SECTION);
-		return p != null ? p : super.getInitialLocation(initialSize);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#getInitialSize()
-	 */
-	protected Point getInitialSize() {
-		Point p = super.getInitialSize();
-		return DialogSettingsHelper.getInitialSize(DIALOG_SETTINGS_SECTION, p);
-	}
+
+	 /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+     */
+    protected IDialogSettings getDialogBoundsSettings() {
+    	 IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();
+         IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
+         if (section == null) {
+             section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
+         } 
+         return section;
+    }
 }

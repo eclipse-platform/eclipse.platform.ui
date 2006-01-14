@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
-import org.eclipse.ant.internal.ui.preferences.DialogSettingsHelper;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -70,27 +70,15 @@ public class SetTargetsDialog extends Dialog {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#close()
+     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
-    public boolean close() {
-        DialogSettingsHelper.persistShellGeometry(getShell(), DIALOG_SETTINGS_SECTION);
-        return super.close();
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
-     */
-    protected Point getInitialLocation(Point initialSize) {
-        Point p = DialogSettingsHelper.getInitialLocation(DIALOG_SETTINGS_SECTION);
-        return p != null ? p : super.getInitialLocation(initialSize);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#getInitialSize()
-     */
-    protected Point getInitialSize() {
-        Point p = super.getInitialSize();
-        return DialogSettingsHelper.getInitialSize(DIALOG_SETTINGS_SECTION, p);
+    protected IDialogSettings getDialogBoundsSettings() {
+    	 IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();
+         IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
+         if (section == null) {
+             section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
+         } 
+         return section;
     }
 }
     
