@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,16 +16,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -316,39 +317,23 @@ public class MultipleInputDialog extends Dialog {
 		}
 		getButton(IDialogConstants.OK_ID).setEnabled(true);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
-	 */
-	protected Point getInitialLocation(Point initialSize) {
-		Point initialLocation= DialogSettingsHelper.getInitialLocation(getDialogSettingsSectionName());
-		if (initialLocation != null) {
-			return initialLocation;
-		}
-		return super.getInitialLocation(initialSize);
-	}
-
 	
-	protected String getDialogSettingsSectionName() {
+	private String getDialogSettingsSectionName() {
 		return IDebugUIConstants.PLUGIN_ID + ".MULTIPLE_INPUT_DIALOG_2"; //$NON-NLS-1$
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#getInitialSize()
-	 */
-	protected Point getInitialSize() {
-		Point size = super.getInitialSize();
-		return DialogSettingsHelper.getInitialSize(getDialogSettingsSectionName(), size);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#close()
-	 */
-	public boolean close() {
-		DialogSettingsHelper.persistShellGeometry(getShell(), getDialogSettingsSectionName());
-		return super.close();
-	}
-
+	 /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+     */
+    protected IDialogSettings getDialogBoundsSettings() {
+    	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+         IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
+         if (section == null) {
+             section = settings.addNewSection(getDialogSettingsSectionName());
+         } 
+         return section;
+    }
+    
 	protected class FieldSummary {
 		int type;
 		String name;
@@ -368,5 +353,4 @@ public class MultipleInputDialog extends Dialog {
 			return true;
 		}
 	}
-
 }
