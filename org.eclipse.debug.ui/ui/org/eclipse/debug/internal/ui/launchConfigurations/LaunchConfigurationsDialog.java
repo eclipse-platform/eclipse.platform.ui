@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,11 +25,9 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.DialogSettingsHelper;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.PixelConverter;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.preferences.LaunchConfigurationsPreferencePage;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -292,6 +290,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * 'LAUNCH_CONFIGURATION_DIALOG' constants defined in this class.
 	 */
 	private int fOpenMode = LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED;
+
+	/**
+	 * dialog settings
+	 */
+	private static final String DIALOG_SASH_WEIGHTS_1 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_1"; //$NON-NLS-1$
+	private static final String DIALOG_SASH_WEIGHTS_2 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_2"; //$NON-NLS-1$
+	private static final String DIALOG_WIDTH = IDebugUIConstants.PLUGIN_ID + ".DIALOG_WIDTH"; //$NON-NLS-1$
 	
 	/**
 	 * Constructs a new launch configuration dialog on the given
@@ -457,7 +462,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	    if (!isSafeToClose()) {
 	        return false;
 	    }
-		persistShellGeometry();
 		persistSashWeights();
 		setCurrentlyVisibleLaunchConfigurationDialog(null);
 		getBannerImage().dispose();
@@ -845,9 +849,17 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return (AbstractLaunchConfigurationAction)fLaunchConfigurationView.getAction(DeleteLaunchConfigurationAction.ID_DELETE_ACTION);
 	}
 
+	 /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+     * @since 3.2
+     */
+    protected IDialogSettings getDialogBoundsSettings() {
+    	return getDialogSettings();
+    }
+    
 	/**
 	 * Returns the dialog settings for this dialog. Subclasses should override
-	 * <code>getDialogSettingsKey()</code>.
+	 * <code>getDialogSettingsSectionName()</code>.
 	 * 
 	 * @return IDialogSettings
 	 */
@@ -908,21 +920,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG;
 	}
-	 	 	
- 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
-	 */
-	protected Point getInitialLocation(Point initialSize) {
-		IDialogSettings settings = getDialogSettings();
-		try {
-			int x, y;
-			x = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_X);
-			y = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_Y);
-			return new Point(x,y);
-		} catch (NumberFormatException e) {
-		}
-		return super.getInitialLocation(initialSize);
-	}
  	
  	/**
 	 * Returns the initial selection shown in this dialog when opened in
@@ -940,10 +937,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected Point getInitialSize() {		
 		IDialogSettings settings = getDialogSettings();
 		try {
-			int x, y;
-			x = settings.getInt(IDebugPreferenceConstants.DIALOG_WIDTH);
-			y = settings.getInt(IDebugPreferenceConstants.DIALOG_HEIGHT);
-			return new Point(x, y);
+			settings.getInt(DIALOG_WIDTH); //we have a persisted setting
+			return super.getInitialSize();
 		} catch (NumberFormatException e) {
 		}
 		return DEFAULT_INITIAL_DIALOG_SIZE;
@@ -1269,8 +1264,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			int[] sashWeights;
 			try {
 				int w1, w2;
-				w1 = settings.getInt(IDebugPreferenceConstants.DIALOG_SASH_WEIGHTS_1);
-				w2 = settings.getInt(IDebugPreferenceConstants.DIALOG_SASH_WEIGHTS_2);
+				w1 = settings.getInt(DIALOG_SASH_WEIGHTS_1);
+				w2 = settings.getInt(DIALOG_SASH_WEIGHTS_2);
 				sashWeights = new int[] {w1, w2};
 			} catch (NumberFormatException e) {
 				sashWeights = DEFAULT_SASH_WEIGHTS;
@@ -1342,16 +1337,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		SashForm sashForm = getSashForm();
 		if (sashForm != null) {
 			int[] sashWeights = getSashForm().getWeights();
-			settings.put(IDebugPreferenceConstants.DIALOG_SASH_WEIGHTS_1, sashWeights[0]);
-			settings.put(IDebugPreferenceConstants.DIALOG_SASH_WEIGHTS_2, sashWeights[1]);
+			settings.put(DIALOG_SASH_WEIGHTS_1, sashWeights[0]);
+			settings.put(DIALOG_SASH_WEIGHTS_2, sashWeights[1]);
 		}
-	}
-	
-	/**
-	 * Write out this dialog's Shell size, location to the preference store.
-	 */
-	protected void persistShellGeometry() {
-		DialogSettingsHelper.persistShellGeometry(getShell(), getDialogSettingsSectionName());
 	}
 	
 	/**

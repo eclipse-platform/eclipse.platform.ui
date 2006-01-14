@@ -109,17 +109,6 @@ public interface IDebugPreferenceConstants {
 	 * The maximum size of the launch history list
 	 */
 	public static int MAX_LAUNCH_HISTORY_SIZE= 20;
-	
-	/**
-	 * Common dialog settings
-	 */
-	public static final String DIALOG_ORIGIN_X = IDebugUIConstants.PLUGIN_ID + ".DIALOG_ORIGIN_X"; //$NON-NLS-1$
-	public static final String DIALOG_ORIGIN_Y = IDebugUIConstants.PLUGIN_ID + ".DIALOG_ORIGIN_Y"; //$NON-NLS-1$
-	public static final String DIALOG_WIDTH = IDebugUIConstants.PLUGIN_ID + ".DIALOG_WIDTH"; //$NON-NLS-1$
-	public static final String DIALOG_HEIGHT = IDebugUIConstants.PLUGIN_ID + ".DIALOG_HEIGHT"; //$NON-NLS-1$
-	public static final String DIALOG_SASH_WEIGHTS_1 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_1"; //$NON-NLS-1$
-	public static final String DIALOG_SASH_WEIGHTS_2 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_2"; //$NON-NLS-1$
-
 
 	/**
 	 * Boolean preference controlling whether the text in the detail panes is

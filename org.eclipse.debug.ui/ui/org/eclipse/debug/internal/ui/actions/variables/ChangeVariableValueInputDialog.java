@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.variables;
 
-import org.eclipse.debug.internal.ui.DialogSettingsHelper;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -265,33 +265,17 @@ public class ChangeVariableValueInputDialog extends Dialog {
 		return IDebugUIConstants.PLUGIN_ID + ".CHANGE_VARIABLE_VALUE_DIALOG_SECTION"; //$NON-NLS-1$
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#close()
-	 */
-	public boolean close() {
-		DialogSettingsHelper.persistShellGeometry(getShell(), getDialogSettingsSectionName());
-		return super.close();
-	}	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
-	 */
-	protected Point getInitialLocation(Point initialSize) {
-		Point initialLocation= DialogSettingsHelper.getInitialLocation(getDialogSettingsSectionName());
-		if (initialLocation != null) {
-			return initialLocation;
-		}
-		return super.getInitialLocation(initialSize);
-	}
-	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#getInitialSize()
-	 */
-	protected Point getInitialSize() {
-		Point size = super.getInitialSize();
-		return DialogSettingsHelper.getInitialSize(getDialogSettingsSectionName(), size);
-	}
+	 /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+     */
+    protected IDialogSettings getDialogBoundsSettings() {
+    	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+         IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
+         if (section == null) {
+             section = settings.addNewSection(getDialogSettingsSectionName());
+         } 
+         return section;
+    }
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#handleShellCloseEvent()

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,16 +12,16 @@ package org.eclipse.debug.ui.sourcelookup;
 
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.internal.ui.DialogSettingsHelper;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupPanel;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -96,7 +96,6 @@ public class SourceLookupDialog extends TitleAreaDialog {
 	 */
 	protected void okPressed() {
 		fPanel.performApply(null);
-        DialogSettingsHelper.persistShellGeometry(getShell(), getClass().getName());
 		super.okPressed();
 	}
 	
@@ -117,23 +116,15 @@ public class SourceLookupDialog extends TitleAreaDialog {
 	}
     
     /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
-     * @since 3.1
+     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+     * @since 3.2
      */
-    protected Point getInitialLocation(Point initialSize) {
-        Point initialLocation= DialogSettingsHelper.getInitialLocation(getClass().getName());
-        if (initialLocation != null) {
-            return initialLocation;
-        }
-        return super.getInitialLocation(initialSize);
-    }  
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#getInitialSize()
-     * @since 3.1
-     */
-    protected Point getInitialSize() {
-        Point size = super.getInitialSize();
-        return DialogSettingsHelper.getInitialSize(getClass().getName(), size);
-    }    
+    protected IDialogSettings getDialogBoundsSettings() {
+    	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+         IDialogSettings section = settings.getSection(getClass().getName());
+         if (section == null) {
+             section = settings.addNewSection(getClass().getName());
+         } 
+         return section;
+    }
 }
