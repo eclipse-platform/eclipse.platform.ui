@@ -16,10 +16,12 @@ import java.lang.ref.ReferenceQueue;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.api.MockViewPart;
 import org.eclipse.ui.tests.harness.util.FileUtil;
@@ -149,4 +151,32 @@ public class LeakTests extends UITestCase {
 //            manageWindows(true);
 //        }
 //    }
+    
+    /**
+     * Test for leaks if dialog is disposed before it is closed.
+     * This is really testing the framework rather than individual
+     * dialogs, since many dialogs or windows will fail if the shell
+     * is destroyed prior to closing them.
+     * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=123296
+     */
+  public void testDestroyedDialogLeaks() throws Exception {
+	  ReferenceQueue queue = new ReferenceQueue();
+	  // Use SaveAs dialog because it's simple to invoke and utilizes
+	  // framework function such as storing dialog bounds.  
+	  // We are really testing the framework itself here.
+	  Dialog newDialog = new SaveAsDialog(fWin.getShell());
+      newDialog.setBlockOnOpen(false);
+      newDialog.open();
+      assertNotNull(newDialog);
+      Reference ref = createReference(queue, newDialog);
+      try {
+      	  // Dispose the window before closing it.  
+       	  newDialog.getShell().dispose();
+       	  newDialog.close();
+       	  newDialog = null;
+          checkRef(queue, ref);
+      } finally {
+    	  ref.clear();
+      }
+  }
 }
