@@ -110,7 +110,9 @@ public abstract class AbstractRefactoringDescriptorResourceMapping extends Resou
 				}
 			}
 		}
-		return fResourceTraversals;
+		final ResourceTraversal[] traversals= new ResourceTraversal[fResourceTraversals.length];
+		System.arraycopy(fResourceTraversals, 0, traversals, 0, fResourceTraversals.length);
+		return traversals;
 	}
 
 	/**

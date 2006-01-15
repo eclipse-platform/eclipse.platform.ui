@@ -330,7 +330,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/** Refactoring descriptor for changes which do not return a descriptor */
-	private final class UnknownRefactoringDescriptor extends RefactoringDescriptor {
+	private static final class UnknownRefactoringDescriptor extends RefactoringDescriptor {
 
 		/**
 		 * Creates a new unknown refactoring descriptor.

@@ -33,9 +33,6 @@ public class RefactoringResourceMapping extends ResourceMapping {
 	/** The resource to map */
 	private final IResource fResource;
 
-	/** The resource traversals */
-	private ResourceTraversal[] fResourceTraversals= null;
-
 	/**
 	 * Creates a new refactoring resource mapping.
 	 * 
@@ -69,15 +66,13 @@ public class RefactoringResourceMapping extends ResourceMapping {
 	 * {@inheritDoc}
 	 */
 	public IProject[] getProjects() {
-		return new IProject[] { fResource.getProject()};
+		return new IProject[] { fResource.getProject() };
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public ResourceTraversal[] getTraversals(final ResourceMappingContext context, final IProgressMonitor monitor) {
-		if (fResourceTraversals == null)
-			fResourceTraversals= new ResourceTraversal[] { new ResourceTraversal(new IResource[] { fResource}, IResource.DEPTH_INFINITE, IResource.NONE)};
-		return fResourceTraversals;
+		return new ResourceTraversal[] { new ResourceTraversal(new IResource[] { fResource }, IResource.DEPTH_INFINITE, IResource.NONE) };
 	}
 }

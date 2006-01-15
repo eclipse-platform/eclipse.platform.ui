@@ -134,7 +134,9 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 				traversals[index]= new ResourceTraversal(new IResource[] { projects[index].getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER)}, IResource.DEPTH_INFINITE, IResource.NONE);
 			fResourceTraversals= traversals;
 		}
-		return fResourceTraversals;
+		final ResourceTraversal[] traversals= new ResourceTraversal[fResourceTraversals.length];
+		System.arraycopy(fResourceTraversals, 0, traversals, 0, fResourceTraversals.length);
+		return traversals;
 	}
 
 	/**

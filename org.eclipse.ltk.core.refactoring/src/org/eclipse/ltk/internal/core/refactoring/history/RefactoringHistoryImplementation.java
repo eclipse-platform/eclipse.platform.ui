@@ -42,7 +42,8 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 	 */
 	public RefactoringHistoryImplementation(final RefactoringDescriptorProxy[] proxies) {
 		Assert.isNotNull(proxies);
-		fDescriptorProxies= proxies;
+		fDescriptorProxies= new RefactoringDescriptorProxy[proxies.length];
+		System.arraycopy(proxies, 0, fDescriptorProxies, 0, proxies.length);
 	}
 
 	/**
@@ -69,7 +70,9 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 			});
 			fSorted= true;
 		}
-		return fDescriptorProxies;
+		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[fDescriptorProxies.length];
+		System.arraycopy(fDescriptorProxies, 0, proxies, 0, fDescriptorProxies.length);
+		return proxies;
 	}
 
 	/**

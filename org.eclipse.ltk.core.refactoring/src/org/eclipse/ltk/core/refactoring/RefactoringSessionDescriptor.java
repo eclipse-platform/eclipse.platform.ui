@@ -59,7 +59,8 @@ public class RefactoringSessionDescriptor {
 	public RefactoringSessionDescriptor(final RefactoringDescriptor[] descriptors, final String version, final String comment) {
 		Assert.isNotNull(descriptors);
 		Assert.isTrue(version != null && !"".equals(version)); //$NON-NLS-1$
-		fDescriptors= descriptors;
+		fDescriptors= new RefactoringDescriptor[descriptors.length];
+		System.arraycopy(descriptors, 0, fDescriptors, 0, descriptors.length);
 		fVersion= version;
 		fComment= comment;
 	}

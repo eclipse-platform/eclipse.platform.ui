@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -113,10 +114,10 @@ public class Resources {
 			
 		IStatus modified= null;
 		Map newTimeStamps= createModificationStampMap(readOnlyFiles);
-		for (Iterator iter= oldTimeStamps.keySet().iterator(); iter.hasNext();) {
-			IFile file= (IFile) iter.next();
-			if (!oldTimeStamps.get(file).equals(newTimeStamps.get(file)))
-				modified= addModified(modified, file);
+		for (Iterator iter= oldTimeStamps.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry entry= (Entry) iter.next();
+			if (!entry.getValue().equals(newTimeStamps.get(entry.getKey())))
+				modified= addModified(modified, (IFile) entry.getKey());
 		}
 		if (modified != null)	
 			return modified;
