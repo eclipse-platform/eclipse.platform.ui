@@ -980,7 +980,9 @@ public abstract class Dialog extends Window {
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
-		saveDialogBounds(getShell());
+		if (getShell() != null && !getShell().isDisposed())
+			saveDialogBounds(getShell());
+		
 		removeRestoreSizeMouseListeners();
 
 		boolean returnValue = super.close();
@@ -1161,7 +1163,7 @@ public abstract class Dialog extends Window {
 	 * 
 	 * @since 3.2
 	 */
-	private void saveDialogBounds(Shell shell) {
+	private void saveDialogBounds(Shell shell) {		
 		IDialogSettings settings = getDialogBoundsSettings();
 		if (settings != null) {
 			Point shellLocation = shell.getLocation();
@@ -1281,15 +1283,15 @@ public abstract class Dialog extends Window {
 	 */
 	private void removeRestoreSizeMouseListeners() {
 		Control dialogContents = getContents();
-		if (buttonBar != null) {
+		if (buttonBar != null && !buttonBar.isDisposed()) {
 			buttonBar.removeMouseListener(restoreSizeMouseListener);
 			Control control = buttonBar.getParent();
-			while (control != dialogContents && control != null) {
+			while (control != dialogContents && control != null && !control.isDisposed()) {
 				control.removeMouseListener(restoreSizeMouseListener);
 				control = control.getParent();
 			}
 		}
-		if (dialogContents != null)
+		if (dialogContents != null && !dialogContents.isDisposed())
 			dialogContents.removeMouseListener(restoreSizeMouseListener);
 	}
 	
