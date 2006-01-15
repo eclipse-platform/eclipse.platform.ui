@@ -305,14 +305,21 @@ public abstract class Window implements IShellProvider {
 	 *         <code>false</code> if it is still open
 	 */
 	public boolean close() {
-		if (shell == null || shell.isDisposed())
-			return true;
-
+		
 		// stop listening for font changes
 		if (fontChangeListener != null) {
 			JFaceResources.getFontRegistry().removeListener(fontChangeListener);
 			fontChangeListener = null;
 		}
+		
+		// remove this window from a window manager if it has one
+		if (windowManager != null) {
+			windowManager.remove(this);
+			windowManager = null;
+		}
+
+		if (shell == null || shell.isDisposed())
+			return true;
 
 		// If we "close" the shell recursion will occur.
 		// Instead, we need to "dispose" the shell to remove it from the
@@ -321,10 +328,6 @@ public abstract class Window implements IShellProvider {
 		shell = null;
 		contents = null;
 
-		if (windowManager != null) {
-			windowManager.remove(this);
-			windowManager = null;
-		}
 		return true;
 	}
 
