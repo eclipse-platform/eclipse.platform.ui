@@ -24,6 +24,9 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -32,6 +35,7 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -148,6 +152,14 @@ public abstract class Dialog extends Window {
 	 * @since 3.2
 	 */
 	private static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
+	
+	/**
+	 * A value that can be used for stored dialog width or height that
+	 * indicates that the default bounds should be used.
+	 * 
+	 * @since 3.2
+	 */
+	public static final int DIALOG_DEFAULT_BOUNDS = -1;
 
 	/**
 	 * Constants that can be used for specifying the strategy for persisting
@@ -198,6 +210,18 @@ public abstract class Dialog extends Window {
 	 * The button bar; <code>null</code> until dialog is layed out.
 	 */
 	public Control buttonBar;
+	
+	/**
+	 * A mouse listener that can be used to restore the default size
+	 * of a dialog.  
+	 * 
+	 * @since 3.2
+	 */
+	private MouseListener restoreSizeMouseListener = new MouseAdapter() {
+		public void mouseDoubleClick(MouseEvent event) {
+			restoreDialogToComputedSize();
+		}
+	};
 
 	/**
 	 * Collection of buttons created by the <code>createButton</code> method.
@@ -208,6 +232,12 @@ public abstract class Dialog extends Window {
 	 * Font metrics to use for determining pixel sizes.
 	 */
 	private FontMetrics fontMetrics;
+	
+	/**
+	 * Point used for storing initial computed size of the dialog so
+	 * that it may be restored.
+	 */
+	private Point computedSize;
 
 	/**
 	 * Number of horizontal dialog units per character, value <code>4</code>.
@@ -650,6 +680,7 @@ public abstract class Dialog extends Window {
 				| GridData.VERTICAL_ALIGN_CENTER);
 		composite.setLayoutData(data);
 		composite.setFont(parent.getFont());
+		
 		// Add the buttons to the button bar.
 		createButtonsForButtonBar(composite);
 		return composite;
@@ -691,6 +722,13 @@ public abstract class Dialog extends Window {
 					defaultButton.moveBelow(null);
 			}
 		}
+		
+		// Store the computed size for the dialog.  Must be done here before
+		// any dialog settings are applied.  We don't do this in the create methods
+		// because the dialog font is applied after creation and before the bounds
+		// are initialized.
+		computedSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);	
+		
 		super.initializeBounds();
 	}
 
@@ -738,6 +776,7 @@ public abstract class Dialog extends Window {
 		// create the dialog area and button bar
 		dialogArea = createDialogArea(composite);
 		buttonBar = createButtonBar(composite);
+				
 		return composite;
 	}
 
@@ -942,6 +981,7 @@ public abstract class Dialog extends Window {
 	 */
 	public boolean close() {
 		saveDialogBounds(getShell());
+		removeRestoreSizeMouseListeners();
 
 		boolean returnValue = super.close();
 		if (returnValue) {
@@ -1050,6 +1090,11 @@ public abstract class Dialog extends Window {
 	public void create() {
 		super.create();
 		applyDialogFont(buttonBar);
+		
+		// Register a mouse listener so that the user can restore this 
+		// size with a double-click.
+		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=116906
+		addRestoreSizeMouseListeners();
 	}
 
 	/**
@@ -1148,13 +1193,19 @@ public abstract class Dialog extends Window {
 	 */
 	protected Point getInitialSize() {
 		Point result = super.getInitialSize();
+		
+		// Check the dialog settings for a stored size.
 		if ((getDialogBoundsStrategy() & DIALOG_PERSISTSIZE)!= 0) {
 			IDialogSettings settings = getDialogBoundsSettings();
 			if (settings != null) {
 				try {
+					// Get the stored width and height.
 					int width = settings.getInt(DIALOG_WIDTH);
+					if (width != DIALOG_DEFAULT_BOUNDS)
+						result.x = width;
 					int height = settings.getInt(DIALOG_HEIGHT);
-					result = new Point(width, height);
+					if (height != DIALOG_DEFAULT_BOUNDS)
+						result.y = height;
 	
 				} catch (NumberFormatException e) {
 				}
@@ -1197,5 +1248,87 @@ public abstract class Dialog extends Window {
 		// constraining behavior in Window will be used.
 		return result;
 	}
+	
+	/**
+	 * Add mouse listeners as needed to provide dialog size restore 
+	 * behavior.  Double-clicking in unused areas will restore
+	 * the dialog size.
+	 * 
+	 *  @since 3.2
+	 */
+	private void addRestoreSizeMouseListeners() {
+		// Hook a double click event for restoring the dialog's computed
+		// size.  We hook onto the button bar and the contents, and any
+		// nested composites in between, in order to accomodate different
+		// layout and construction styles.
+		Control dialogContents = getContents();
+		if (buttonBar != null) {
+			buttonBar.addMouseListener(restoreSizeMouseListener);
+			Control control = buttonBar.getParent();
+			while (control != dialogContents && control != null) {
+				control.addMouseListener(restoreSizeMouseListener);
+				control = control.getParent();
+			}
+		}
+		if (dialogContents != null)
+			dialogContents.addMouseListener(restoreSizeMouseListener);
+	}
+	
+	/**
+	 * Remove any mouse listeners that were registered.
+	 * 
+	 *  @since 3.2
+	 */
+	private void removeRestoreSizeMouseListeners() {
+		Control dialogContents = getContents();
+		if (buttonBar != null) {
+			buttonBar.removeMouseListener(restoreSizeMouseListener);
+			Control control = buttonBar.getParent();
+			while (control != dialogContents && control != null) {
+				control.removeMouseListener(restoreSizeMouseListener);
+				control = control.getParent();
+			}
+		}
+		if (dialogContents != null)
+			dialogContents.removeMouseListener(restoreSizeMouseListener);
+	}
+	
+	/**
+	 * Restore the dialog to its initially computed size, resetting
+	 * any bounds that may have been stored in dialog settings.
+	 * 
+	 * @since 3.2
+	 */
+	private void restoreDialogToComputedSize() {
+		// The computed size was never stored.  This should not typically
+		// happen, but could if a client completely override the bounds initialization.
+		if (computedSize == null)
+			return;
+		
+		Shell shell = getShell();
+		Point shellSize = shell.getSize();
+		Point shellLocation = shell.getLocation();
 
+		// If the size has not changed, do nothing
+		if (shellSize.equals(computedSize))
+			return;
+			
+		// Now reset the bounds
+		shell.setBounds(getConstrainedShellBounds(new Rectangle(shellLocation.x,
+				shellLocation.y, computedSize.x, computedSize.y)));
+		
+		// If we do store the bounds, update the value so default bounds
+		// will be used.
+		IDialogSettings settings = getDialogBoundsSettings();
+		if (settings != null) {
+			int strategy = getDialogBoundsStrategy();
+			if ((strategy & DIALOG_PERSISTSIZE) != 0) {
+				settings.put(DIALOG_WIDTH, DIALOG_DEFAULT_BOUNDS);
+				settings.put(DIALOG_HEIGHT, DIALOG_DEFAULT_BOUNDS);
+			}
+		}
+
+		
+	
+	}
 }
