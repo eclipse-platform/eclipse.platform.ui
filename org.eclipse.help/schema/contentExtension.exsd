@@ -99,6 +99,8 @@ This content file should have the following syntax:&lt;br&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
+&lt;p&gt;The above contribution inserts the content of the XHTML file, &lt;samp&gt;topicA.xhtml&lt;/samp&gt;, into the target Help system page specified by the &lt;samp&gt;path&lt;/samp&gt; attribute. In this case, the content extension will be inserted in the location of an anchor called &lt;samp&gt;topicAnchor&lt;/samp&gt; in page &lt;samp&gt;someHelpPage.xhtml&lt;/samp&gt; in plugin &lt;samp&gt;org.xxx.yyy.somePluginId&lt;/samp&gt;.
+&lt;/p&gt;
 &lt;p&gt;The above contribution inserts the content of the XHTML file, &lt;samp&gt;topicA.xhtml&lt;/samp&gt;, into the target Help system page specified by the &lt;samp&gt;path&lt;/samp&gt; attribute. In this case, the content extension will be inserted in the location of an anchor called &lt;samp&gt;topicAnchor&lt;/samp&gt; in page &lt;samp&gt;someHelpPage.xhtml&lt;/samp&gt; in plugin &lt;samp&gt;org.xxx.yyy.somePluginId&lt;/samp&gt;.&lt;/p&gt;
       </documentation>
    </annotation>
@@ -109,7 +111,6 @@ This content file should have the following syntax:&lt;br&gt;
       </appInfo>
       <documentation>
          No code is required to use this extension point.  All that is needed is to supply the appropriate content files mentioned in the plugin.xml file.
-
       </documentation>
    </annotation>
 
@@ -119,7 +120,6 @@ This content file should have the following syntax:&lt;br&gt;
       </appInfo>
       <documentation>
          The default implementation of the base help system supplied with the Eclipse platform fully supports this &lt;samp&gt;contentExtension&lt;/samp&gt; extension point.
-
       </documentation>
    </annotation>
 
