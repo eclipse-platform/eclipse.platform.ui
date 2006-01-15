@@ -390,41 +390,38 @@ public final class RefactoringHistoryManager {
 	 *             if an input/output error occurs
 	 */
 	private static void removeIndexEntry(final IFileStore file, final long stamp, final IProgressMonitor monitor) throws CoreException, IOException {
-		InputStream input= null;
+		BufferedReader reader= null;
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 4);
 			if (file.fetchInfo().exists()) {
-				input= new DataInputStream(new BufferedInputStream(file.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL))));
-				if (input != null) {
-					final String value= new Long(stamp).toString();
-					final BufferedReader reader= new BufferedReader(new InputStreamReader(input, IRefactoringSerializationConstants.OUTPUT_ENCODING));
-					final StringBuffer buffer= new StringBuffer();
-					while (reader.ready()) {
-						final String line= reader.readLine();
-						if (!line.startsWith(value)) {
-							buffer.append(line);
-							buffer.append('\n');
-						}
+				final String value= new Long(stamp).toString();
+				reader= new BufferedReader(new InputStreamReader(new DataInputStream(new BufferedInputStream(file.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)))), IRefactoringSerializationConstants.OUTPUT_ENCODING));
+				final StringBuffer buffer= new StringBuffer();
+				while (reader.ready()) {
+					final String line= reader.readLine();
+					if (line != null && !line.startsWith(value)) {
+						buffer.append(line);
+						buffer.append('\n');
 					}
-					monitor.worked(1);
-					try {
-						input.close();
-						input= null;
-					} catch (IOException exception) {
-						// Do nothing
-					}
-					OutputStream output= null;
-					try {
-						file.getParent().mkdir(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-						output= new BufferedOutputStream(file.openOutputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
-						output.write(buffer.toString().getBytes(IRefactoringSerializationConstants.OUTPUT_ENCODING));
-					} finally {
-						if (output != null) {
-							try {
-								output.close();
-							} catch (IOException exception) {
-								// Do nothing
-							}
+				}
+				monitor.worked(1);
+				try {
+					reader.close();
+					reader= null;
+				} catch (IOException exception) {
+					// Do nothing
+				}
+				OutputStream stream= null;
+				try {
+					file.getParent().mkdir(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+					stream= new BufferedOutputStream(file.openOutputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
+					stream.write(buffer.toString().getBytes(IRefactoringSerializationConstants.OUTPUT_ENCODING));
+				} finally {
+					if (stream != null) {
+						try {
+							stream.close();
+						} catch (IOException exception) {
+							// Do nothing
 						}
 					}
 				}
@@ -432,8 +429,8 @@ public final class RefactoringHistoryManager {
 		} finally {
 			monitor.done();
 			try {
-				if (input != null)
-					input.close();
+				if (reader != null)
+					reader.close();
 			} catch (IOException exception) {
 				// Do nothing
 			}
