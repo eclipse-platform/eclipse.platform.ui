@@ -57,9 +57,6 @@
             	location="fastview" 
             	bg="#c6c3e8" 
             	>
-               <handle
-                     close="true"
-                     image="intro/css/graphics/contentpage/handle.gif"/>
                <shortcut
                      icon="intro/css/graphics/icons/etool/overview.gif"
                      tooltip="%shortcut.overview.tooltip"
