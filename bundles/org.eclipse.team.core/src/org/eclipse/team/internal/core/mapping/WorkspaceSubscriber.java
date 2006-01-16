@@ -203,6 +203,9 @@ public class WorkspaceSubscriber extends Subscriber implements ISubscriberChange
 		accept(new ResourceTraversal[] { new ResourceTraversal(resources, depth, IResource.NONE)}, visitor);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.Subscriber#getState(org.eclipse.core.resources.mapping.ResourceMapping, int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public int getState(ResourceMapping mapping, int stateMask, IProgressMonitor monitor) throws CoreException {
 		int state = 0;
 		try {
