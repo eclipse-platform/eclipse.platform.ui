@@ -1175,9 +1175,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				}
 		
 			} else {
-				fLaunchConfigurations.remove(config);
-				/*throw createDebugException(
-					MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist, new String[]{config.getName(), config.getLocation().toOSString()}), null);*/ 
+				throw createDebugException(
+					MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist, new String[]{config.getName(), config.getLocation().toOSString()}), null); 
 			}
 		}
 		return info;

@@ -174,9 +174,10 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 */
 	public ILaunchConfiguration getRecentLaunch() {
 		try {
-			if(fRecentLaunch != null &&  DebugUIPlugin.doLaunchConfigurationFiltering(fRecentLaunch) && 
-			   !WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(fRecentLaunch.getType()))) {
-				return fRecentLaunch;
+			if(fRecentLaunch != null && fRecentLaunch.exists()) {
+				if(DebugUIPlugin.doLaunchConfigurationFiltering(fRecentLaunch) && !WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(fRecentLaunch.getType()))) {
+					return fRecentLaunch;
+				}
 			}
 		}
 		catch(CoreException e) {e.printStackTrace();}
@@ -406,8 +407,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 		ILaunchConfiguration newConfig = DebugPlugin.getDefault().getLaunchManager().getMovedTo(configuration);
 		if (newConfig == null) {
 			// deleted
-			changed = fHistory.remove(configuration);
-			changed = fFavorites.remove(configuration) || changed;
+			changed = fHistory.remove(configuration) || fFavorites.remove(configuration);
 		} else {
 			// moved/renamed
 			int index = fHistory.indexOf(configuration);
