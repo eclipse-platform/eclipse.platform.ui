@@ -601,4 +601,16 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(ILaunch.class)) {
+			return this;
+		}
+		return super.getAdapter(adapter);
+	}
+	
+	
+
 }

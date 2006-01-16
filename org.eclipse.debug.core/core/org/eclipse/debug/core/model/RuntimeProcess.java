@@ -340,6 +340,9 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			}
 			return null;
 		}
+		if (adapter.equals(ILaunch.class)) {
+			return getLaunch();
+		}
 		return super.getAdapter(adapter);
 	}
 	/**
