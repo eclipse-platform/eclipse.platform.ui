@@ -18,7 +18,6 @@ The intros are organized into pages which usually reflect a particular category 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="handle" minOccurs="0" maxOccurs="1"/>
             <element ref="config" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -250,6 +249,9 @@ The content file is parsed at run time by the intro framework. Based on the sett
 
    <element name="handle">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             an optional element that controls how launch bar handle is rendered. since 3.1
          </documentation>
