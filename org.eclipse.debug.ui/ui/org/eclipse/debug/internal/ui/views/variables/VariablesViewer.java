@@ -53,7 +53,7 @@ public class VariablesViewer extends AsynchronousTreeViewer{
 	 */
 	protected void internalRefresh(Object element, Widget item) {
 		super.internalRefresh(element, item);
-		if (fView != null && element.equals(((IStructuredSelection)getSelection()).getFirstElement())) {
+		if (element.equals(((IStructuredSelection)getSelection()).getFirstElement())) {
 			fView.populateDetailPane();
 		}
 	}

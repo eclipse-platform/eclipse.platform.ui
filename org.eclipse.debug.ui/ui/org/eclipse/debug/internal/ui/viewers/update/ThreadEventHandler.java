@@ -61,7 +61,7 @@ public class ThreadEventHandler extends DebugEventHandler {
         IThread thread = (IThread) event.getSource();
 		if (event.isEvaluation()) {
         	ModelDelta delta = buildRootDelta();
-    		ModelDelta node = addPathToThread(delta, thread);
+    		ModelDelta node = addPathToThraed(delta, thread);
 			try {
 				IStackFrame frame = thread.getTopStackFrame();
                 if (frame != null) { 
@@ -121,14 +121,14 @@ public class ThreadEventHandler extends DebugEventHandler {
 		return new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
 	}
 	
-	private ModelDelta addPathToThread(ModelDelta delta, IThread thread) {
+	private ModelDelta addPathToThraed(ModelDelta delta, IThread thread) {
 		delta = delta.addNode(thread.getLaunch(), IModelDelta.NOCHANGE);
-		return delta.addNode(thread.getDebugTarget(), IModelDelta.EXPAND);
+		return delta.addNode(thread.getDebugTarget(), IModelDelta.NOCHANGE);
 	}
 
 	private void fireDeltaAndClearTopFrame(IThread thread, int flags) {
 		ModelDelta delta = buildRootDelta();
-		ModelDelta node = addPathToThread(delta, thread);
+		ModelDelta node = addPathToThraed(delta, thread);
 		node.addNode(thread, flags);
 		synchronized (this) {
 			fLastTopFrame.remove(thread);
@@ -138,7 +138,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 	
 	private void fireDeltaUpdatingTopFrame(IThread thread, int flags) {
 		ModelDelta delta = buildRootDelta();
-		ModelDelta node = addPathToThread(delta, thread);
+		ModelDelta node = addPathToThraed(delta, thread);
     	IStackFrame prev = null;
     	synchronized (this) {
     		 prev = (IStackFrame) fLastTopFrame.get(thread);

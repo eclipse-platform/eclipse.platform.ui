@@ -63,8 +63,6 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public abstract class AsynchronousViewer extends StructuredViewer {
 
-	public static boolean DEBUG_CACHE;
-
 	/**
 	 * A map of elements to associated tree items or tree
 	 */
@@ -346,11 +344,6 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 		fElementsToWidgets.clear();
 		fWidgetsToElements.clear();
 		disposeAllModelProxies();
-        if (DEBUG_CACHE) {
-			System.out.println("unmapped all elements"); //$NON-NLS-1$
-			System.out.println("\tfWidgetsToElements.size() " + fWidgetsToElements.size()); //$NON-NLS-1$
-			System.out.println("\tfElementsToWidgets.size() " + fElementsToWidgets.size()); //$NON-NLS-1$
-		}
 	}
 
 	/**
@@ -397,13 +390,7 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 			fElementsToWidgets.put(element, items);
 		}
 		installModelProxy(element);
-
-		if (DEBUG_CACHE) {
-			System.out.println("mapped " + element + " to " + item + "(hashcode: " + item.hashCode()+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			System.out.println("\tfWidgetsToElements.size() " + fWidgetsToElements.size()); //$NON-NLS-1$
-			System.out.println("\tfElementsToWidgets.size() " + fElementsToWidgets.size()); //$NON-NLS-1$
-		}
-	} 
+	}
 	
 	/**
 	 * Updates the cached information that maps the given element to the
@@ -415,23 +402,9 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 	 */
 	protected void remap(Object element, Widget item) {
 		item.setData(element);
-        installModelProxy(element);
 		fWidgetsToElements.put(item, element);
-		Widget[] widgets = (Widget[]) fElementsToWidgets.remove(element);
-        if (widgets == null) {
-            fElementsToWidgets.put(element, new Widget[] {item});
-        } else {
-            Widget[] newArray = new Widget[widgets.length + 1];
-            System.arraycopy(widgets, 0, newArray, 0, widgets.length);
-            newArray[widgets.length] = item;
-            fElementsToWidgets.put(element, newArray);
-        }
-        
-        if (DEBUG_CACHE) {
-			System.out.println("remapped " + element + " to " + item + "(hashcode: " + item.hashCode()+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			System.out.println("\tfWidgetsToElements.size() " + fWidgetsToElements.size()); //$NON-NLS-1$
-			System.out.println("\tfElementsToWidgets.size() " + fElementsToWidgets.size()); //$NON-NLS-1$
-		}
+		Object widgets = fElementsToWidgets.remove(element);
+		fElementsToWidgets.put(element, widgets);
 	}
 
 	public IUpdatePolicy createUpdatePolicy() {
@@ -505,8 +478,9 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 		if (kid == null) {
 			// when unmapping a dummy item
 			return;
-		}		
+		}
 		Widget[] widgets = getWidgets(kid);
+		fWidgetsToElements.remove(widget);
 		if (widgets != null) {
 			for (int i = 0; i < widgets.length; i++) {
 				Widget item = widgets[i];
@@ -525,14 +499,6 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 					}
 				}
 			}
-		}
-		
-		fWidgetsToElements.remove(widget);
-		
-		if (DEBUG_CACHE) {
-			System.out.println("unmapped " + kid + " to " + widget + "(hashcode: " + widget.hashCode()+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			System.out.println("\tfWidgetsToElements.size() " + fWidgetsToElements.size()); //$NON-NLS-1$
-			System.out.println("\tfElementsToWidgets.size() " + fElementsToWidgets.size()); //$NON-NLS-1$
 		}
 	}
 
@@ -703,9 +669,7 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 		if (!force && !overrideSelection(fCurrentSelection, selection)) {
 			return;
 		}
-		
 		fPendingSelection = selection;
-		
 		if (getControl().getDisplay().getThread() == Thread.currentThread()) {
 			attemptSelection(reveal);
 		} else {
@@ -819,25 +783,21 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 	 * 
 	 * @param reveal whether to reveal the selection
 	 */
-	protected void attemptSelection(boolean reveal) {
-		if (fPendingSelection != null && !fPendingSelection.isEmpty()) {
-			ISelection currentSelection = null;
-
-			synchronized (this) {
-				ISelection remaining = doAttemptSelectionToWidget(fPendingSelection, reveal);
-
-				if (!fPendingSelection.equals(remaining) || (fPendingSelection.isEmpty() && fPendingSelection.equals(remaining))) {
-					fPendingSelection = remaining;
-					currentSelection = newSelectionFromWidget();
-					if (isSuppressEqualSelections() && currentSelection.equals(fCurrentSelection)) {
-						return;
-					}
-				}
-			}
-
-			if (currentSelection != null) {
-				updateSelection(currentSelection);
-			}
+	protected synchronized void attemptSelection(boolean reveal) {
+		if (fPendingSelection != null) {
+            ISelection remaining = doAttemptSelectionToWidget(fPendingSelection, reveal);
+            if (!fPendingSelection.equals(remaining) || 
+            		(fPendingSelection.isEmpty() && fPendingSelection.equals(remaining))) {
+                fPendingSelection = remaining;
+                if (fPendingSelection.isEmpty()) {
+                    fPendingSelection = null;
+                }
+                ISelection currentSelection = newSelectionFromWidget();
+                if (isSuppressEqualSelections() && currentSelection.equals(fCurrentSelection)) {
+                    return;
+                }
+                updateSelection(currentSelection);
+            }
 		}
 	}
 	
@@ -845,11 +805,11 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 	 * Controls whether selection change notification is sent even when
 	 * successive selections are equal.
 	 * 
-	 * TODO: what we really want is to fire selection change on ACTIVATE model
-	 * change, even when selection is the same.
+	 * TODO: what we really want is to fire selection change on ACTIVATE
+	 * model change, even when selection is the same.
 	 * 
 	 * @return whether to suppress change notification for equal successive
-	 *         selections
+	 *  selections
 	 */
 	protected boolean isSuppressEqualSelections() {
 		return true;
@@ -911,7 +871,7 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#preservingSelection(java.lang.Runnable)
 	 */
 	protected synchronized void preservingSelection(Runnable updateCode) {
-		if (fPendingSelection == null || fPendingSelection.isEmpty()) {
+		if (fPendingSelection == null) {
 			ISelection oldSelection = null;
 			try {
 				// preserve selection

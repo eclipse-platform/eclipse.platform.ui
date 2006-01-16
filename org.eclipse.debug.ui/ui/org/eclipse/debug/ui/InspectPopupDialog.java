@@ -122,7 +122,7 @@ public class InspectPopupDialog extends DebugPopup {
 
         VariablesView view = getViewToEmulate();
 
-        fVariablesViewer = new VariablesViewer(fSashForm, SWT.NO_TRIM | SWT.VIRTUAL, null);
+        fVariablesViewer = new VariablesViewer(fSashForm, SWT.NO_TRIM, null);
         
         fVariablesViewer.setContext(new PresentationContext(view));
         fModelPresentation = new VariablesViewModelPresentation();
