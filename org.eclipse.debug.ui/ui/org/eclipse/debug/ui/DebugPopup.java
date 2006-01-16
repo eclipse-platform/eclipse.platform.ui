@@ -31,6 +31,22 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 
+/**
+ * A <code>PopupDialog</code> that is automatically positioned relative
+ * to the current selection on viewer on which it is installed. The 
+ * popup can be dismissed in the same manor as all popup dialogs, but 
+ * additionally allows users the option of specifying a command id that 
+ * can be used to persist the contents of the dialog.
+ * 
+ * Client are expected to subclass this.
+ * 
+ * Note: This class subclasses PopupDialog which is currently
+ * marked as experimental API. Users should therefore consider
+ * this class to be experimental as well.
+ * @see org.eclipse.jface.dialogs.PopupDialog
+ * 
+ * @since 3.2
+ */
 public abstract class DebugPopup extends PopupDialog {
 
     private ITextViewer fViewer;
@@ -62,7 +78,7 @@ public abstract class DebugPopup extends PopupDialog {
     /**
      * Returns the command id to be used for persisting the contents of the
      * dialog. If the contents should not be persisted, this method should 
-     * return null.
+     * return null. 
      * 
      * @return The command id to be used for persisting the contents of the
      * dialog or <code>null</code>

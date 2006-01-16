@@ -31,6 +31,8 @@
  	<type name="IValueDetailListener" />
  	<type name="RefreshTab" subclass="false" />
  	<type name="StringVariableSelectionDialog" subclass="false" />
+	<type name="DebugPopup"/>
+	<type name="InspectPopupDialog" subclass="false"/>
  </package>
  <package name="org.eclipse.debug.ui.actions">
 	<type name="AbstractLaunchHistoryAction" />

@@ -59,7 +59,17 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
- *
+ * A <code>DebugPopup</code> that can be used to inspect an 
+ * <code>IExpression</code> object.
+ * 
+ * Note: This class is not intended to be subclassed.
+ * 
+ * Note: This class subclasses PopupDialog which is currently
+ * marked as experimental API. Users should therefore consider
+ * this class to be experimental as well.
+ * @see org.eclipse.jface.dialogs.PopupDialog
+ * 
+ * @since 3.2
  */
 public class InspectPopupDialog extends DebugPopup {
     private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 90, 10 };
