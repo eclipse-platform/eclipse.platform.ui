@@ -55,6 +55,8 @@ public class ModelSynchronizeParticipant extends
 	public static final String OTHER_ACTION_GROUP = "other_action_group"; //$NON-NLS-1$
 	
 	private ISynchronizationContext context;
+	
+	private boolean mergingEnabled = true;
 
 	/**
 	 * Actions for a model participant
@@ -155,10 +157,12 @@ public class ModelSynchronizeParticipant extends
 	 */
 	protected void initializeConfiguration(
 			ISynchronizePageConfiguration configuration) {
-		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, MERGE_ACTION_GROUP);
-		configuration.addMenuGroup(ISynchronizePageConfiguration.P_CONTEXT_MENU, MERGE_ACTION_GROUP);
-		configuration.addMenuGroup(ISynchronizePageConfiguration.P_CONTEXT_MENU, OTHER_ACTION_GROUP);
-		configuration.addActionContribution(new ModelActionContribution());
+		if (isMergingEnabled()) {
+			configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, MERGE_ACTION_GROUP);
+			configuration.addMenuGroup(ISynchronizePageConfiguration.P_CONTEXT_MENU, MERGE_ACTION_GROUP);
+			configuration.addMenuGroup(ISynchronizePageConfiguration.P_CONTEXT_MENU, OTHER_ACTION_GROUP);
+			configuration.addActionContribution(new ModelActionContribution());
+		}
 		configuration.setSupportedModes(ISynchronizePageConfiguration.ALL_MODES);
 		configuration.setMode(ISynchronizePageConfiguration.BOTH_MODE);
 	}
@@ -277,5 +281,13 @@ public class ModelSynchronizeParticipant extends
 		if (adapter != null)
 			return adapter.hasCompareInput(getContext(), object);
 		return false;
+	}
+
+	public boolean isMergingEnabled() {
+		return mergingEnabled;
+	}
+
+	public void setMergingEnabled(boolean mergingEnabled) {
+		this.mergingEnabled = mergingEnabled;
 	}
 }

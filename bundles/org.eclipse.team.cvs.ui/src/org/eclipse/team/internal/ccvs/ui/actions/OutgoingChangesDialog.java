@@ -29,6 +29,7 @@ import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceSubscriberContext;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ParticipantPagePane;
 import org.eclipse.ui.PlatformUI;
 
@@ -90,7 +91,11 @@ public class OutgoingChangesDialog extends DetailsDialog {
 		
 		try {
 			participant = createParticipant();
-			pane = new ParticipantPagePane(getShell(), true, participant.createPageConfiguration(), participant);
+			ISynchronizePageConfiguration configuration = participant.createPageConfiguration();
+			configuration.setSupportedModes(ISynchronizePageConfiguration.OUTGOING_MODE);
+			configuration.setMode(ISynchronizePageConfiguration.OUTGOING_MODE);
+			configuration.setMenuGroups(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] { ISynchronizePageConfiguration.NAVIGATE_GROUP, ISynchronizePageConfiguration.LAYOUT_GROUP });
+			pane = new ParticipantPagePane(getShell(), true, configuration, participant);
 			Control control = pane.createPartControl(composite);
 			control.setLayoutData(SWTUtils.createHVFillGridData());
 		} catch (InvocationTargetException e) {
@@ -106,6 +111,7 @@ public class OutgoingChangesDialog extends DetailsDialog {
 	private ModelSynchronizeParticipant createParticipant() throws InvocationTargetException, InterruptedException {
 		ISynchronizationContext context = createSynchronizationContext(scope);
 		ModelSynchronizeParticipant participant = new ModelSynchronizeParticipant(context, title);
+		participant.setMergingEnabled(false);
 		return participant;
 	}
 
