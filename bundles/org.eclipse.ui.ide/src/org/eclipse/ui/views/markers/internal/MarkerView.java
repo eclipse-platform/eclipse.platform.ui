@@ -153,11 +153,12 @@ public abstract class MarkerView extends TableView {
 		 */
 		protected IStatus run(IProgressMonitor monitor) {
 			synchronized (updateKey) {
-				MarkerList current = getCurrentMarkers();
+				
 				// If we don't have any yet then refresh it all
-				if (current == null || adds.size() == 0 || removes.size() == 0)
+				if (getMarkerAdapter().hasNoMarkers() || adds.size() == 0 || removes.size() == 0)
 					updateJob.refreshAll();
 				else {
+					MarkerList current = getCurrentMarkers();
 					current.updateMarkers(getAddedMarkers(adds),
 							getExistingMarkers(removes));
 					updateJob.refresh(refreshes);

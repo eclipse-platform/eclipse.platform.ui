@@ -344,4 +344,14 @@ public class MarkerAdapter {
 		return lastMarkers.toArray();
 	}
 
+	/**
+	 * Return whether or not the receiver has markers without scheduling
+	 * anything if it doesn't.
+	 * @return boolean <code>true</code> if the markers have not been 
+	 * calculated.
+	 */
+	public boolean hasNoMarkers() {
+		return lastMarkers == null;
+	}
+
 }
