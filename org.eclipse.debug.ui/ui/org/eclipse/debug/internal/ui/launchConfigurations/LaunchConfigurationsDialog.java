@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -28,7 +29,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.PixelConverter;
-import org.eclipse.debug.internal.ui.preferences.LaunchConfigurationsPreferencePage;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
@@ -49,10 +49,6 @@ import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -65,10 +61,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -591,17 +585,18 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @since 3.2
 	 */
 	protected Composite createToolbarArea(Composite parent) {
+		Font font = parent.getFont();
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END);
 		Composite toolbarcomp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
 		toolbarcomp.setLayout(layout);
 		toolbarcomp.setLayoutData(gd);
+		toolbarcomp.setFont(font);
 		
 		ToolBar toolbar = new ToolBar(toolbarcomp, SWT.FLAT);
 		toolbar.setLayout(new GridLayout());
 		toolbar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		toolbar.setFont(font);
 		ToolBarManager tmanager = new ToolBarManager(toolbar);
 		
 		fNewAction = new Action(LaunchConfigurationsMessages.LaunchConfigurationDialog_Ne_w_13, DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_NEW_CONFIG)) {
@@ -624,19 +619,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		
 		fFilterAction = new Action(LaunchConfigurationsMessages.LaunchConfigurationsDialog_2, DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS)) {
 			public void run() {
-				final IPreferenceNode targetNode = new PreferenceNode("org.eclipse.debug.ui.LaunchConfigurationsPreferenecPage",  //$NON-NLS-1$
-						new LaunchConfigurationsPreferencePage());
-				PreferenceManager manager = new PreferenceManager();
-				manager.addToRoot(targetNode);
-				final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
-				final boolean [] result = new boolean[] { false };
-				BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
-					public void run() {
-						dialog.create();
-						dialog.setMessage(targetNode.getLabelText());
-						result[0]= (dialog.open() == Window.OK);
-					}
-				});	
+				getFilterAction().run();
 			}
 		};
 		fFilterAction.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS));
@@ -731,6 +714,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		fFilteringLabel = new Label(comp, SWT.NONE);
 		fFilteringLabel.setFont(font);
 		refreshFilteringLabel();
+		if(fInitialSelection.isEmpty()) {
+			setInitialSelection(getNewSelection());
+		}
 		
 		// confirmation requestors
 		AbstractLaunchConfigurationAction.IConfirmationRequestor requestor = new AbstractLaunchConfigurationAction.IConfirmationRequestor() {
@@ -849,6 +835,15 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return (AbstractLaunchConfigurationAction)fLaunchConfigurationView.getAction(DeleteLaunchConfigurationAction.ID_DELETE_ACTION);
 	}
 
+	/**
+	 * Gets the filter action
+	 * @return the filter menu action
+	 * @since 3.2
+	 */
+	protected AbstractLaunchConfigurationAction getFilterAction() {
+		return (AbstractLaunchConfigurationAction)fLaunchConfigurationView.getAction(FilterLaunchConfigurationAction.ID_FILTER_ACTION);
+	}
+	
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      * @since 3.2
@@ -1325,7 +1320,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			if (lastLaunchedConfig != null) {
 				setInitialSelection(new StructuredSelection(lastLaunchedConfig));
 			}			
-		}	
+		}
 		return super.open();
 	}
 	
@@ -1793,7 +1788,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		StructuredViewer viewer = (StructuredViewer)fLaunchConfigurationView.getViewer();
+		TreeViewer viewer = fLaunchConfigurationView.getTreeViewer();
 		boolean newvalue = false;
 		if(event.getNewValue() instanceof Boolean) {
 			newvalue = ((Boolean)event.getNewValue()).booleanValue();
@@ -1829,10 +1824,64 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			viewer.removeFilter(fLCTFilter);
 			viewer.addFilter(fLCTFilter);
 		}
-		((TreeViewer)viewer).expandAll();
+		viewer.expandAll();
 		refreshFilteringLabel();
 		updateButtons();
-		updateMessage();
+		if(!initialSelectionExists()) {
+			fInitialSelection = getNewSelection();
+		}
+		doInitialTreeSelection();
 	}
-
+	
+	/**
+	 * Checks to see if the initial selection is still part of the viewer. i.e not filtered
+	 * @return true if the initial selection has not been filtered out, false otherwise
+	 * @since 3.2
+	 */
+	private boolean initialSelectionExists() {
+		TreeViewer viewer = fLaunchConfigurationView.getTreeViewer();
+		viewer.getTree().selectAll();
+		IStructuredSelection ss = (IStructuredSelection)viewer.getSelection();
+		viewer.getTree().deselectAll();
+		for(Iterator iter = ss.iterator(); iter.hasNext();) {
+			Object obj = iter.next();
+			for(Iterator iter2 = fInitialSelection.iterator(); iter2.hasNext();) {	
+				if(obj instanceof ILaunchConfiguration & iter2.next().equals(obj)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * refreshs the selection of the tree view after a filtering has been done.
+	 * This method will take the first ILaunchConfiguration found in the tree, if there was no last launched entry in the workbench.
+	 * Failing that an empty selection will be returned when filtering has filtered everything from the viewer. 
+	 * In the event that there is nothing left in the viewer but ILaunchConfigurationTypes we simple take the first one of those.  
+	 * @param viewer the viewer that the selection should be updated on.
+	 * @since 3.2
+	 */
+	private IStructuredSelection getNewSelection() {
+		TreeViewer viewer = fLaunchConfigurationView.getTreeViewer();
+		if(getLastLaunchedWorkbenchConfiguration() != null) {
+			return new StructuredSelection(getLastLaunchedWorkbenchConfiguration());
+		}
+		if(viewer.getTree().getItemCount() == 0) {
+			setMessage(LaunchConfigurationsMessages.LaunchConfigurationsDialog_7);
+			return new StructuredSelection(new Object[0]);
+		}
+		viewer.getTree().selectAll();
+		IStructuredSelection ss = (IStructuredSelection)viewer.getSelection();
+		viewer.getTree().deselectAll();
+		for(Iterator iter = ss.iterator(); iter.hasNext();) {
+			Object obj = iter.next();
+			if(obj instanceof ILaunchConfiguration) {
+				return new StructuredSelection(obj);
+			}
+		}
+		return new StructuredSelection(ss.getFirstElement());
+		
+	}
+	
 }
