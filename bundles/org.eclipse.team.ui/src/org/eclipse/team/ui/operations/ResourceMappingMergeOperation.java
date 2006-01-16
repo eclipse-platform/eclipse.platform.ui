@@ -201,7 +201,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	 */
 	protected void showPreview(final String title, IProgressMonitor monitor) {
 		calculateStates(context, Policy.subMonitorFor(monitor, 5));
-			Display.getDefault().asyncExec(new Runnable() {
+		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				ModelSynchronizeParticipant participant = new ModelSynchronizeParticipant(context, title);
 				if (isPreviewInDialog()) {
