@@ -18,6 +18,7 @@ import org.eclipse.jface.menus.SActionSet;
 import org.eclipse.jface.menus.SGroup;
 import org.eclipse.jface.menus.SItem;
 import org.eclipse.jface.menus.SMenu;
+import org.eclipse.jface.menus.SMenuLayout;
 import org.eclipse.jface.menus.SWidget;
 import org.eclipse.ui.services.IServiceWithSources;
 
@@ -170,6 +171,26 @@ public interface IMenuService extends IServiceWithSources {
 	 * @return An item with the given identifier, either defined or undefined.
 	 */
 	public SItem getItem(String itemId);
+
+	/**
+	 * <p>
+	 * Retrieves the layout for the menu elements held by this menu manager.
+	 * This layout does not consider visibility or whether the elements are
+	 * currently shown. It is simply the layout if everything was visible and
+	 * showing. It also does not consider dynamic menu elements, which will be
+	 * asked to make changes to the layout before the menu element is shown.
+	 * </p>
+	 * <p>
+	 * The result of this computation is cached between subsequent calls. So, if
+	 * no changes are made to the menu elements, the layout can be retrieved in
+	 * constant time. Otherwise, it will take <code>O(n)</code> time to
+	 * compute, where <code>n</code> is the number of menu elements held by
+	 * this manager.
+	 * </p>
+	 * 
+	 * @return The menu layout; never <code>null</code>.
+	 */
+	public SMenuLayout getLayout();
 
 	/**
 	 * Retrieves the menu with the given identifier. If no such menu exists,
