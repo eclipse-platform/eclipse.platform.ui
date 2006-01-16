@@ -457,7 +457,7 @@ public class TitleAreaDialog extends TrayDialog {
         //Do not layout before the dialog area has been created
         //to avoid incomplete calculations.
         if (dialogArea != null)
-            getShell().layout(true);
+            workArea.getParent().layout(true);
     }
 
     /**
