@@ -134,6 +134,11 @@ public class ContentProposalAdapter {
 	 */
 	private boolean isEnabled = true;
 
+	/*
+	 * The delay in milliseconds used when autoactivating the popup.
+	 */
+	private int autoActivationDelay = 0;
+
 	/**
 	 * Construct a content proposal adapter that can assist the user with
 	 * choosing content for the field.
@@ -264,6 +269,30 @@ public class ContentProposalAdapter {
 	}
 
 	/**
+	 * Set the delay, in milliseconds, used before any autoactivation is
+	 * triggered.
+	 * 
+	 * @return the time in milliseconds that will pass before a popup is
+	 *         automatically opened
+	 */
+	public int getAutoActivationDelay() {
+		return autoActivationDelay;
+
+	}
+
+	/**
+	 * Set the delay, in milliseconds, used before autoactivation is triggered.
+	 * 
+	 * @param delay
+	 *            the time in milliseconds that will pass before a popup is
+	 *            automatically opened
+	 */
+	public void setAutoActivationDelay(int delay) {
+		autoActivationDelay = delay;
+
+	}
+
+	/**
 	 * Return the content adapter that can get or retrieve the text contents
 	 * from the adapter's control. This method is used when a client, such as a
 	 * content proposal listener, needs to update the control's contents
@@ -382,14 +411,36 @@ public class ContentProposalAdapter {
 							autoActivated = true;
 						}
 						/*
-						 * When autoactivating, we do not open the proposal
-						 * popup in an async, because we want the target popup
-						 * to process the key stroke.
+						 * When autoactivating, we check the autoactivation
+						 * delay.
 						 */
 						if (autoActivated) {
 							e.doit = propagateKeys;
-							if (popup == null)
-								openProposalPopup();
+							if (popup == null) {
+								if (autoActivationDelay > 0) {
+									Runnable runnable = new Runnable() {
+										public void run() {
+											try {
+												Thread
+														.sleep(autoActivationDelay);
+											} catch (InterruptedException e) {
+											}
+											if (!isValid())
+												return;
+											getControl().getDisplay().syncExec(
+													new Runnable() {
+														public void run() {
+															openProposalPopup();
+														}
+													});
+										}
+									};
+									Thread t = new Thread(runnable);
+									t.start();
+								} else {
+									openProposalPopup();
+								}
+							}
 						}
 					}
 
