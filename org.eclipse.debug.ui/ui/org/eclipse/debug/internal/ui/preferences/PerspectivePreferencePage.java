@@ -34,6 +34,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -439,11 +440,10 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		Font font = parent.getFont();
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setFont(font);
+        
 	// create the global radio buttons
 		createSpacer(composite, 1);
 		perspec = new RadioGroupFieldEditor(
@@ -470,7 +470,6 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		createSpacer(composite, 1);
 		
 		Label lbl = new Label(composite, SWT.LEFT + SWT.WRAP);
-		lbl.setFont(font);
 		lbl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		((GridData)lbl.getLayoutData()).widthHint = LABEL_WIDTH_HINT;
 		lbl.setText(MessageFormat.format(DebugPreferencesMessages.PerspectivePreferencePage_5, null));
@@ -478,18 +477,15 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		Composite comp = new Composite(composite, SWT.FILL);
 		comp.setLayout(new GridLayout(2, false));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		comp.setFont(font);
 		
 		Composite treeComp = new Composite(comp, SWT.NONE);
 		treeComp.setLayout(new GridLayout(1, true));
 		treeComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		Label label = new Label(treeComp, SWT.NONE);
 		label.setText(DebugPreferencesMessages.PerspectivePreferencePage_1);
-		label.setFont(font);
 		
 		fTree = new Tree(treeComp, SWT.H_SCROLL + SWT.V_SCROLL + SWT.SINGLE + SWT.BORDER);
 		fTree.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fTree.setFont(font);
 		fViewer = new TreeViewer(fTree);
 		fViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		fViewer.setSorter(new WorkbenchViewerSorter());
@@ -505,12 +501,13 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		fPerspectiveComp = new Composite(comp, SWT.NONE);
 		fPerspectiveComp.setLayout(new GridLayout(1, true));
 		fPerspectiveComp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fPerspectiveComp.setFont(font);
 		fTypeInformationMapping = new HashMap();
 		// get the available labels
 		getPerspectiveLabels();
 		// restore from preference store
 		restoreState();
+        
+		Dialog.applyDialogFont(composite);
 		return composite;
 	}// end createControl
 
