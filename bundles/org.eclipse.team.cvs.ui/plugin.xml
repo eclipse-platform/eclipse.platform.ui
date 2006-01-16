@@ -415,7 +415,7 @@
          </action>
          <action
                label="%ConfigureTags.label"
-               icon="$nl$/icons/full/clcl16/newstream_wiz.gif"
+               icon="$nl$/icons/full/elcl16/newstream_wiz.gif"
                helpContextId="org.eclipse.team.cvs.ui.tag_configuration_overview"
                tooltip="%ConfigureTags.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoViewOnFolder"
@@ -424,7 +424,7 @@
          </action>
          <action
                label="%AddToBranch.label"
-               icon="$nl$/icons/full/clcl16/newstream_wiz.gif"
+               icon="$nl$/icons/full/elcl16/newstream_wiz.gif"
                helpContextId="org.eclipse.team.cvs.ui.add_to_branch_context"
                tooltip="%AddToBranch.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.repo.AddToBranchAction"
@@ -450,7 +450,7 @@
          </action>
          <action
                label="%ShowHistoryAction.label"
-               icon="$nl$/icons/full/ctool16/history.gif"
+               icon="$nl$/icons/full/etool16/history.gif"
                helpContextId="org.eclipse.team.cvs.ui.show_in_history_action_context"
                tooltip="%ShowHistoryAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowHistoryAction"
@@ -458,7 +458,7 @@
          </action>
          <action
                label="%ShowAnnotationAction.label"
-               icon="$nl$/icons/full/ctool16/annotate.gif"
+               icon="$nl$/icons/full/etool16/annotate.gif"
                helpContextId="org.eclipse.team.cvs.ui.get_annotate_action_context"
                tooltip="%ShowAnnotationAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
@@ -485,7 +485,7 @@
          </action>
          <action
                label="%ShowAnnotationAction.label"
-               icon="$nl$/icons/full/ctool16/annotate.gif"
+               icon="$nl$/icons/full/etool16/annotate.gif"
                helpContextId="org.eclipse.team.cvs.ui.get_annotate_action_context"
                tooltip="%ShowAnnotationAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
@@ -497,23 +497,11 @@
             id="org.eclipse.team.ccvs.ui.VersionCategoryContributions">
          <action
                label="%ConfigureTags.label"
-               icon="$nl$/icons/full/clcl16/newstream_wiz.gif"
+               icon="$nl$/icons/full/elcl16/newstream_wiz.gif"
                helpContextId="org.eclipse.team.cvs.ui.tag_configuration_overview"
                tooltip="%ConfigureTags.label"
                class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoViewOnFolder"
                id="org.eclipse.team.ccvs.ui.configureTagsOnRemoteModule">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.team.internal.ccvs.ui.model.ProjectVersion"
-            id="org.eclipse.team.ccvs.ui.ProjectVersionContributions">
-         <action
-               label="%ConfigureTags.label"
-               icon="$nl$/icons/full/clcl16/newstream_wiz.gif"
-               helpContextId="org.eclipse.team.cvs.ui.tag_configuration_overview"
-               tooltip="%ConfigureTags.label"
-               class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoView"
-               id="org.eclipse.team.ccvs.ui.configureTagsOnProjectVersion">
          </action>
       </objectContribution>
       <objectContribution
@@ -529,7 +517,7 @@
          </action>
          <action
                label="%RefreshTagsAction.label"
-               icon="$nl$/icons/full/clcl16/newstream_wiz.gif"
+               icon="$nl$/icons/full/elcl16/newstream_wiz.gif"
                helpContextId="org.eclipse.team.cvs.ui.refresh_tags_action_context"
                tooltip="%RefreshTagsAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.repo.RefreshTagsAction"
@@ -564,7 +552,7 @@
             id="org.eclipse.team.ccvs.ui.model.BranchCategoryContributions">
          <action
                label="%RefreshTagsAction.label"
-               icon="$nl$/icons/full/clcl16/newstream_wiz.gif"
+               icon="$nl$/icons/full/elcl16/newstream_wiz.gif"
                helpContextId="org.eclipse.team.cvs.ui.refresh_tags_action_context"
                tooltip="%RefreshTagsAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.repo.RefreshTagsAction"
@@ -794,7 +782,7 @@
             id="org.eclipse.team.cvs.ui.history">
          <action
                label="%HistoryFilter.label"
-               hoverIcon="$nl$/icons/full/clcl16/filter_history.gif"
+               hoverIcon="$nl$/icons/full/elcl16/filter_history.gif"
                icon="$nl$/icons/full/elcl16/filter_history.gif"
                tooltip="%HistoryFilter.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.HistoryFilterAction"

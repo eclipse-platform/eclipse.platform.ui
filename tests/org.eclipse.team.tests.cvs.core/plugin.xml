@@ -51,15 +51,6 @@
    </extension>
 <!-- **************** TESTS ******************* -->
    <extension
-         id="harness"
-         point="org.eclipse.core.runtime.applications">
-      <application>
-         <run
-               class="org.eclipse.team.tests.ccvs.ui.EclipseUITestHarnessApplication">
-         </run>
-      </application>
-   </extension>
-   <extension
          point="org.eclipse.help.toc">
       <toc
             file="toc.xml"

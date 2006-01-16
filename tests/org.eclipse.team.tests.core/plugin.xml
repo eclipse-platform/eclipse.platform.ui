@@ -4,8 +4,7 @@
    id="org.eclipse.team.tests.core"
    name="Eclipse Team Core Tests"
    version="3.1.0"
-   provider-name="Eclipse.org"
-   class="">
+   provider-name="Eclipse.org">
 
    <runtime>
       <library name="teamtests.jar">
