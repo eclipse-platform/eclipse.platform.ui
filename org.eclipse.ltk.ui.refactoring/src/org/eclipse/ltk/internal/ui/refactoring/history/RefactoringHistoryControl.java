@@ -52,6 +52,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -97,125 +98,159 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 					handleCheckStateChanged(event);
 				}
 
-				/**
-				 * Returns the children of the specified element.
-				 * 
-				 * @param element
-				 *            the element
-				 * @return the children of the element
-				 */
-				private Object[] getChildren(final Object element) {
-					return ((RefactoringHistoryContentProvider) getContentProvider()).getChildren(element);
-				}
-
-				/**
-				 * Returns the parent of the specified element.
-				 * 
-				 * @param element
-				 *            the element
-				 * @return the parent of the element
-				 */
-				private Object getParent(final Object element) {
-					return ((RefactoringHistoryContentProvider) getContentProvider()).getParent(element);
-				}
-
-				/**
-				 * Determines whether the specified element is checked.
-				 * 
-				 * @param element
-				 *            the element
-				 * @param checked
-				 *            <code>true</code> to render it checked,
-				 *            <code>false</code> otherwise
-				 */
-				private void setElementChecked(final Object element, final boolean checked) {
-					final Widget widget= RefactoringHistoryTreeViewer.this.findItem(element);
-					if (widget instanceof TreeItem) {
-						final TreeItem item= (TreeItem) widget;
-						item.setChecked(checked);
-					}
-				}
-
-				/**
-				 * Determines whether the specified element is grayed.
-				 * 
-				 * @param element
-				 *            the element
-				 * @param grayed
-				 *            <code>true</code> to render it grayed,
-				 *            <code>false</code> otherwise
-				 */
-				private void setElementGrayed(final Object element, final boolean grayed) {
-					final Widget widget= RefactoringHistoryTreeViewer.this.findItem(element);
-					if (widget instanceof TreeItem) {
-						final TreeItem item= (TreeItem) widget;
-						item.setGrayed(grayed);
-					}
-				}
-
-				/**
-				 * Determines whether the subtree of the specified element is
-				 * rendered checked.
-				 * 
-				 * @param element
-				 *            the element specifying the subtree
-				 * @param checked
-				 *            <code>true</code> to render the subtree checked,
-				 *            <code>false</code> otherwise
-				 */
-				private void setSubTreeChecked(final Object element, final boolean checked) {
-					setElementChecked(element, checked);
-					final Object[] children= getChildren(element);
-					for (int index= 0; index < children.length; index++) {
-						setSubTreeChecked(children[index], checked);
-					}
-				}
-
-				/**
-				 * Determines whether the subtree of the specified element is
-				 * rendered grayed.
-				 * 
-				 * @param element
-				 *            the element specifying the subtree
-				 * @param grayed
-				 *            <code>true</code> to render the subtree grayed,
-				 *            <code>false</code> otherwise
-				 */
-				private void setSubTreeGrayed(final Object element, final boolean grayed) {
-					setElementGrayed(element, grayed);
-					final Object[] children= getChildren(element);
-					for (int index= 0; index < children.length; index++) {
-						setSubTreeGrayed(children[index], grayed);
-					}
-				}
-
-				/**
-				 * Updates the checkstate of the specified element and
-				 * dependencies.
-				 * 
-				 * @param element
-				 *            the changed element
-				 * @param checked
-				 *            <code>true</code> if the element is checked,
-				 *            <code>false</code> otherwise
-				 */
-				private void updateCheckState(final Object element, final boolean checked) {
-					setSubTreeChecked(element, checked);
-					setSubTreeGrayed(element, false);
-					Object current= getParent(element);
-					while (current != null) {
-						final Object[] children= getChildren(current);
-						int checkCount= 0;
-						for (int index= 0; index < children.length; index++) {
-							if (getChecked(children[index]))
-								checkCount++;
-						}
-						setElementChecked(current, checkCount > 0);
-						setElementGrayed(current, checkCount != 0 && checkCount != children.length);
-						current= getParent(current);
-					}
-				}
 			});
+		}
+
+		/**
+		 * Returns the children of the specified element.
+		 * 
+		 * @param element
+		 *            the element
+		 * @return the children of the element
+		 */
+		private Object[] getChildren(final Object element) {
+			return ((RefactoringHistoryContentProvider) getContentProvider()).getChildren(element);
+		}
+
+		/**
+		 * Returns the parent of the specified element.
+		 * 
+		 * @param element
+		 *            the element
+		 * @return the parent of the element
+		 */
+		private Object getParent(final Object element) {
+			return ((RefactoringHistoryContentProvider) getContentProvider()).getParent(element);
+		}
+
+		/**
+		 * Propagates the checkstate of the specified element and its children.
+		 * 
+		 * @param element
+		 *            the element
+		 * @param children
+		 *            the children
+		 */
+		private void propagateCheckState(final Object element, final Object[] children) {
+			int checkCount= 0;
+			for (int index= 0; index < children.length; index++) {
+				if (getChecked(children[index]))
+					checkCount++;
+			}
+			setElementChecked(element, checkCount > 0);
+			setElementGrayed(element, checkCount != 0 && checkCount != children.length);
+		}
+
+		/**
+		 * Determines whether the specified element is checked.
+		 * 
+		 * @param element
+		 *            the element
+		 * @param checked
+		 *            <code>true</code> to render it checked,
+		 *            <code>false</code> otherwise
+		 */
+		private void setElementChecked(final Object element, final boolean checked) {
+			final Widget widget= RefactoringHistoryTreeViewer.this.findItem(element);
+			if (widget instanceof TreeItem) {
+				final TreeItem item= (TreeItem) widget;
+				item.setChecked(checked);
+			}
+		}
+
+		/**
+		 * Determines whether the specified element is grayed.
+		 * 
+		 * @param element
+		 *            the element
+		 * @param grayed
+		 *            <code>true</code> to render it grayed,
+		 *            <code>false</code> otherwise
+		 */
+		private void setElementGrayed(final Object element, final boolean grayed) {
+			final Widget widget= RefactoringHistoryTreeViewer.this.findItem(element);
+			if (widget instanceof TreeItem) {
+				final TreeItem item= (TreeItem) widget;
+				item.setGrayed(grayed);
+			}
+		}
+
+		/**
+		 * Determines whether the subtree of the specified element is rendered
+		 * checked.
+		 * 
+		 * @param element
+		 *            the element specifying the subtree
+		 * @param checked
+		 *            <code>true</code> to render the subtree checked,
+		 *            <code>false</code> otherwise
+		 */
+		private void setSubTreeChecked(final Object element, final boolean checked) {
+			setElementChecked(element, checked);
+			final Object[] children= getChildren(element);
+			for (int index= 0; index < children.length; index++) {
+				setSubTreeChecked(children[index], checked);
+			}
+		}
+
+		/**
+		 * Determines whether the subtree of the specified element is rendered
+		 * grayed.
+		 * 
+		 * @param element
+		 *            the element specifying the subtree
+		 * @param grayed
+		 *            <code>true</code> to render the subtree grayed,
+		 *            <code>false</code> otherwise
+		 */
+		private void setSubTreeGrayed(final Object element, final boolean grayed) {
+			setElementGrayed(element, grayed);
+			final Object[] children= getChildren(element);
+			for (int index= 0; index < children.length; index++) {
+				setSubTreeGrayed(children[index], grayed);
+			}
+		}
+
+		/**
+		 * Updates the check state after some refactoring descriptors have been
+		 * checked.
+		 */
+		public void updateCheckState() {
+			updateCheckState(getInput());
+		}
+
+		/**
+		 * Updates the checkstate of the specified element and dependencies.
+		 * 
+		 * @param element
+		 *            the changed element
+		 */
+		private void updateCheckState(final Object element) {
+			final Object[] children= getChildren(element);
+			for (int index= 0; index < children.length; index++) {
+				updateCheckState(children[index]);
+			}
+			propagateCheckState(element, children);
+		}
+
+		/**
+		 * Updates the checkstate of the specified element and dependencies.
+		 * 
+		 * @param element
+		 *            the changed element
+		 * @param checked
+		 *            <code>true</code> if the element is checked,
+		 *            <code>false</code> otherwise
+		 */
+		private void updateCheckState(final Object element, final boolean checked) {
+			setSubTreeChecked(element, checked);
+			setSubTreeGrayed(element, false);
+			Object current= getParent(element);
+			while (current != null) {
+				final Object[] children= getChildren(current);
+				propagateCheckState(current, children);
+				current= getParent(current);
+			}
 		}
 	}
 
@@ -303,6 +338,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		fHistoryViewer= createHistoryViewer(fHistoryPane);
 		if (!fControlConfiguration.isTimeDisplayed())
 			fHistoryViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+		fHistoryViewer.setUseHashlookup(true);
 		fHistoryViewer.setContentProvider(fControlConfiguration.getContentProvider());
 		fHistoryViewer.setLabelProvider(fControlConfiguration.getLabelProvider());
 		fHistoryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -329,7 +365,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		};
 		fCommentPane.setText(fControlConfiguration.getCommentCaption());
 		fCommentPane.setEnabled(false);
-		fSplitterControl.setWeights(new int[] { 80, 20 });
+		fSplitterControl.setWeights(new int[] { 80, 20});
 	}
 
 	/**
@@ -457,7 +493,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	protected void handleCheckStateChanged(final CheckStateChangedEvent event) {
 		final RefactoringDescriptorProxy[] proxies= getCheckedDescriptors();
 		final RefactoringDescriptorProxy[] total= RefactoringHistoryControl.this.getInput().getDescriptors();
-		fHistoryPane.setText(NLS.bind(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { getHistoryPaneText(), String.valueOf(proxies.length), String.valueOf(total.length) }));
+		fHistoryPane.setText(NLS.bind(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { getHistoryPaneText(), String.valueOf(proxies.length), String.valueOf(total.length)}));
 	}
 
 	/**
@@ -493,6 +529,17 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	/**
 	 * {@inheritDoc}
 	 */
+	public final void setCheckedDescriptors(final RefactoringDescriptorProxy[] descriptors) {
+		Assert.isNotNull(descriptors);
+		if (fHistoryViewer instanceof RefactoringHistoryTreeViewer) {
+			final RefactoringHistoryTreeViewer viewer= (RefactoringHistoryTreeViewer) fHistoryViewer;
+			viewer.setCheckedElements(descriptors);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void setInput(final RefactoringHistory history) {
 		fHistoryViewer.setInput(history);
 		if (history != null) {
@@ -507,5 +554,14 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 				}
 			}
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final void setSelectedDescriptors(final RefactoringDescriptorProxy[] descriptors) {
+		Assert.isNotNull(descriptors);
+		if (fHistoryViewer != null)
+			fHistoryViewer.setSelection(new StructuredSelection(descriptors));
 	}
 }

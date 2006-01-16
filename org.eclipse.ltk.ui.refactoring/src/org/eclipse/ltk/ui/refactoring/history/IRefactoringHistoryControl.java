@@ -79,10 +79,26 @@ public interface IRefactoringHistoryControl {
 	public RefactoringDescriptorProxy[] getSelectedDescriptors();
 
 	/**
+	 * Sets the checked refactoring descriptors.
+	 * 
+	 * @param descriptors
+	 *            the refactoring descriptors to check, or an empty array
+	 */
+	public void setCheckedDescriptors(RefactoringDescriptorProxy[] descriptors);
+
+	/**
 	 * Sets the refactoring history of this control.
 	 * 
 	 * @param history
 	 *            the refactoring history, or <code>null</code>
 	 */
 	public void setInput(RefactoringHistory history);
+
+	/**
+	 * Sets the selected refactoring descriptors.
+	 * 
+	 * @param descriptors
+	 *            the refactoring descriptors to select, or an empty array
+	 */
+	public void setSelectedDescriptors(RefactoringDescriptorProxy[] descriptors);
 }
