@@ -31,10 +31,10 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 
-	public static IMergeContext createContext(IResourceMappingScope scope, IProgressMonitor monitor) throws CoreException {
+	public static IMergeContext createContext(IResourceMappingScope scope, boolean refresh, IProgressMonitor monitor) throws CoreException {
 		Subscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
 		WorkspaceSubscriberContext mergeContext = new WorkspaceSubscriberContext(subscriber, scope);
-		mergeContext.initialize(monitor, true);
+		mergeContext.initialize(monitor, refresh);
 		return mergeContext;
 	}
 	

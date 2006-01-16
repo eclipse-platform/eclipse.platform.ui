@@ -479,4 +479,8 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 	public ResourceMapping[] getSelectedMappings() {
 		return selectedMappings;
 	}
+
+	public IResourceMappingScope getScope() {
+		return scope;
+	}
 }

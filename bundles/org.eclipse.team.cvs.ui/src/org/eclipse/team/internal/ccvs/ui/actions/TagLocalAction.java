@@ -12,66 +12,77 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.TagOperation;
-import org.eclipse.team.internal.ui.dialogs.ResourceMappingResourceDisplayArea;
+import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.ui.PlatformUI;
 
-
+/**
+ * Action that tags the local workspace with a version tag.
+ */
 public class TagLocalAction extends TagAction {
     
-    ResourceMapping[] mappings;
-	
-	protected boolean performPrompting()  {
-		// Prompt for any uncommitted changes
-        mappings = getCVSResourceMappings();
-        final UncommittedChangesDialog[] dialog = new UncommittedChangesDialog[] { null };
-        try {
-            PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
-                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                    dialog[0] = new UncommittedChangesDialog(getShell(), CVSUIMessages.TagLocalAction_4, mappings, monitor) { 
-                        protected String getSingleMappingMessage(ResourceMapping mapping) {
-                            String label = ResourceMappingResourceDisplayArea.getLabel(mapping);
-                            if (getAllMappings().length == 1) {
-                                return NLS.bind(CVSUIMessages.TagLocalAction_2, new String[] { label }); 
-                            }
-                            return NLS.bind(CVSUIMessages.TagLocalAction_0, new String[] { label }); 
-                        }
-            
-                        protected String getMultipleMappingsMessage() {
-                            return CVSUIMessages.TagLocalAction_1; 
-                        }
-                        protected String getHelpContextId() {
-                            return IHelpContextIds.TAG_UNCOMMITED_PROMPT;
-                        }
-                    };
-                }
-            });
-        } catch (InvocationTargetException e) {
-            handle(e);
-            return false;
-        } catch (InterruptedException e) {
-            return false;
-        }
-        if (dialog[0] == null) return false;
-        mappings = dialog[0].promptToSelectMappings();
-		if(mappings.length == 0) {
-			// nothing to do
-			return false;						
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.TagAction#performPrompting(org.eclipse.team.internal.ccvs.ui.operations.ITagOperation)
+	 */
+	protected boolean performPrompting(ITagOperation operation)  {
+		if (operation instanceof TagOperation) {
+			final TagOperation tagOperation = (TagOperation) operation;
+			try {
+				if (hasOutgoingChanges(tagOperation)) {
+					final boolean[] keepGoing = new boolean[] { true };
+					Display.getDefault().syncExec(new Runnable() {
+						public void run() {
+							OutgoingChangesDialog dialog = new OutgoingChangesDialog(getShell(), tagOperation.getScope(), 
+									CVSUIMessages.TagLocalAction_2, 
+									CVSUIMessages.TagLocalAction_0, 
+									CVSUIMessages.TagLocalAction_1);
+							int result = dialog.open();
+							keepGoing[0] = result == Window.OK;
+						}
+					});
+					return keepGoing[0];
+				}
+				return true;
+			} catch (InterruptedException e) {
+				// Ignore
+			} catch (InvocationTargetException e) {
+				handle(e);
+			}
 		}
-		
-		return true;
+		return false;
+	}
+	
+	private boolean hasOutgoingChanges(final RepositoryProviderOperation operation) throws InvocationTargetException, InterruptedException {
+		final boolean[] hasChange = new boolean[] { false };
+		PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException,
+					InterruptedException {
+				try {
+					monitor.beginTask("Looking for uncommitted changes", 100);
+					operation.buildScope(Policy.subMonitorFor(monitor, 50));
+					hasChange[0] = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().hasLocalChanges(
+							operation.getScope().getTraversals(), 
+							Policy.subMonitorFor(monitor, 50));
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
+				}
+			}
+		});
+		return hasChange[0];
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ccvs.ui.actions.TagAction#createTagOperation()
+     */
     protected ITagOperation createTagOperation() {
-        if (mappings == null)
-            mappings = getCVSResourceMappings();
-		return new TagOperation(getTargetPart(), mappings);
+		return new TagOperation(getTargetPart(), getCVSResourceMappings());
 	}
 	
 		/* (non-Javadoc)

@@ -45,10 +45,6 @@ public abstract class TagAction extends WorkspaceTraversalAction {
 	 */
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		setWasCancelled(false);
-		if (!performPrompting()) {
-			setWasCancelled(true);
-			return;
-		}
 		
 		// Prompt for the tag name
 		final ITagOperation[] result = new ITagOperation[1];
@@ -68,7 +64,7 @@ public abstract class TagAction extends WorkspaceTraversalAction {
 		result[0].run();
 	}
 	
-	protected boolean performPrompting()  {
+	protected boolean performPrompting(ITagOperation operation)  {
 		return true;
 	}
 	
@@ -82,6 +78,9 @@ public abstract class TagAction extends WorkspaceTraversalAction {
 		ITagOperation operation = createTagOperation();
 		if (operation.isEmpty()) {
 		    return null;
+		}
+		if (!performPrompting(operation)) {
+			return null;
 		}
 		TagAsVersionDialog dialog = new TagAsVersionDialog(getShell(),
 											CVSUIMessages.TagAction_tagResources, 

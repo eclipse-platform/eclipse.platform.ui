@@ -640,6 +640,12 @@ public class GenerateDiffFileWizard extends Wizard {
             Control control = fPagePane.createPartControl(composite);
             return control;
         }
+        
+        public void dispose() {
+        	if (fPagePane != null)
+        		fPagePane.dispose();
+        	super.dispose();
+        }
 
     	private int getFileDisplayThreshold() {
             return CVSUIPlugin.getPlugin().getPreferenceStore().getInt(ICVSUIConstants.PREF_COMMIT_FILES_DISPLAY_THRESHOLD);
