@@ -24,6 +24,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupFilter;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -122,9 +123,9 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	private Composite createComposite(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout());
-		comp.setFont(parent.getFont());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		comp.setLayoutData(gd);
+		Dialog.applyDialogFont(comp);
 		return comp;
 	}
 
