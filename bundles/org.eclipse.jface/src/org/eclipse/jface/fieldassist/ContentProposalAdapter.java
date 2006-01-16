@@ -169,7 +169,7 @@ public class ContentProposalAdapter {
 	 *            proposal. If specified, these characters will trigger
 	 *            auto-activation of the proposal popup, regardless of whether
 	 *            an explicit invocation keyStroke was specified. If this
-	 *            paramter is <code>null</code>, then only a specified
+	 *            parameter is <code>null</code>, then only a specified
 	 *            keyStroke will invoke content proposal. If this parameter is
 	 *            <code>null</code> and the keyStroke parameter is
 	 *            <code>null</code>, then all alphanumeric characters will
@@ -266,6 +266,44 @@ public class ContentProposalAdapter {
 	public void setContentProposalProvider(
 			IContentProposalProvider proposalProvider) {
 		this.proposalProvider = proposalProvider;
+	}
+
+	/**
+	 * Return the array of characters on which the popup is autoactivated.
+	 * 
+	 * @return An array of characters that trigger auto-activation of content
+	 *         proposal. If specified, these characters will trigger
+	 *         auto-activation of the proposal popup, regardless of whether an
+	 *         explicit invocation keyStroke was specified. If this parameter is
+	 *         <code>null</code>, then only a specified keyStroke will invoke
+	 *         content proposal. If this value is <code>null</code> and the
+	 *         keyStroke value is <code>null</code>, then all alphanumeric
+	 *         characters will auto-activate content proposal.
+	 */
+	public char[] getAutoActivationCharacters() {
+		if (autoActivateString == null)
+			return null;
+		return autoActivateString.toCharArray();
+	}
+
+	/**
+	 * Set the array of characters that will trigger autoactivation of the
+	 * popup.
+	 * 
+	 * @param autoActivationCharacters
+	 *            An array of characters that trigger auto-activation of content
+	 *            proposal. If specified, these characters will trigger
+	 *            auto-activation of the proposal popup, regardless of whether
+	 *            an explicit invocation keyStroke was specified. If this
+	 *            parameter is <code>null</code>, then only a specified
+	 *            keyStroke will invoke content proposal. If this parameter is
+	 *            <code>null</code> and the keyStroke value is
+	 *            <code>null</code>, then all alphanumeric characters will
+	 *            auto-activate content proposal.
+	 * 
+	 */
+	public void setAutoActivationCharacters(char[] autoActivationCharacters) {
+		this.autoActivateString = new String(autoActivationCharacters);
 	}
 
 	/**
