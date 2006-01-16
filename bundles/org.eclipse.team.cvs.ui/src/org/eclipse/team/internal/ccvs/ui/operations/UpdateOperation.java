@@ -36,7 +36,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class UpdateOperation extends SingleCommandOperation {
 
-	CVSTag tag;
+	private CVSTag tag;
 	
 	/**
 	 * Create an UpdateOperation that will perform on update on the given resources
@@ -147,4 +147,12 @@ public class UpdateOperation extends SingleCommandOperation {
     protected ResourceMappingContext getResourceMappingContext() {
         return SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
     }
+
+	public CVSTag getTag() {
+		return tag;
+	}
+
+	public void setTag(CVSTag tag) {
+		this.tag = tag;
+	}
 }

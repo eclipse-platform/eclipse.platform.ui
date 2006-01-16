@@ -1013,7 +1013,6 @@ public class CVSUIMessages extends NLS {
 	public static String ReplaceWithTagAction_0;
 	public static String ReplaceWithTagAction_1;
 	public static String ReplaceWithTagAction_2;
-	public static String ReplaceWithTagAction_4;
 	public static String UncommittedChangesDialog_2;
 	public static String UncommittedChangesDialog_3;
 	public static String UncommittedChangesDialog_4;

@@ -23,6 +23,8 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -122,4 +124,25 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
         }
         return false;
     }
+    
+	protected boolean hasOutgoingChanges(final RepositoryProviderOperation operation) throws InvocationTargetException, InterruptedException {
+		final boolean[] hasChange = new boolean[] { false };
+		PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException,
+					InterruptedException {
+				try {
+					monitor.beginTask("Looking for uncommitted changes", 100);
+					operation.buildScope(Policy.subMonitorFor(monitor, 50));
+					hasChange[0] = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().hasLocalChanges(
+							operation.getScope().getTraversals(), 
+							Policy.subMonitorFor(monitor, 50));
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
+				}
+			}
+		});
+		return hasChange[0];
+	}
 }

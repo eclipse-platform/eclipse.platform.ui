@@ -12,14 +12,12 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.operations.*;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.TagOperation;
 
 /**
  * Action that tags the local workspace with a version tag.
@@ -55,27 +53,6 @@ public class TagLocalAction extends TagAction {
 			}
 		}
 		return false;
-	}
-	
-	private boolean hasOutgoingChanges(final RepositoryProviderOperation operation) throws InvocationTargetException, InterruptedException {
-		final boolean[] hasChange = new boolean[] { false };
-		PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException,
-					InterruptedException {
-				try {
-					monitor.beginTask("Looking for uncommitted changes", 100);
-					operation.buildScope(Policy.subMonitorFor(monitor, 50));
-					hasChange[0] = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().hasLocalChanges(
-							operation.getScope().getTraversals(), 
-							Policy.subMonitorFor(monitor, 50));
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		});
-		return hasChange[0];
 	}
 
     /* (non-Javadoc)
