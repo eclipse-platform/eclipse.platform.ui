@@ -13,6 +13,7 @@
  	<type name="BreakpointTypeCategory" />
  	<type name="CommonTab" subclass="false" />
  	<type name="DebugElementWorkbenchAdapter" />
+ 	<type name="DebugPopup" instantiate="false"/>
  	<type name="DebugUITools" instantiate="false" subclass="false" />
  	<type name="DeferredDebugElementWorkbenchAdapter" />
  	<type name="EnvironmentTab" subclass="false" />
@@ -27,12 +28,11 @@
  	<type name="ILaunchConfigurationTabGroup" />
  	<type name="ILaunchGroup" implement="false" />
  	<type name="ILaunchShortcut" />
+ 	<type name="InspectPopupDialog" subclass="false"/>
  	<type name="ISourcePresentation" />
  	<type name="IValueDetailListener" />
  	<type name="RefreshTab" subclass="false" />
  	<type name="StringVariableSelectionDialog" subclass="false" />
-	<type name="DebugPopup"/>
-	<type name="InspectPopupDialog" subclass="false"/>
  </package>
  <package name="org.eclipse.debug.ui.actions">
 	<type name="AbstractLaunchHistoryAction" />
