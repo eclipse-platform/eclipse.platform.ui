@@ -1401,17 +1401,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			final IContextService contextService = (IContextService) workbench
 					.getAdapter(IContextService.class);
 			contextService.unregisterShell(getShell());
-			
-			// Bring down all of the services.
-			serviceLocator.dispose();
 
 			closeAllPages();
-
+			
 			fireWindowClosed();
 
 			getActionBarAdvisor().dispose();
 			getWindowAdvisor().dispose();
 			detachedWindowShells.dispose();
+			
+			// Bring down all of the services.
+			serviceLocator.dispose();
 
 			// Null out the progress region. Bug 64024.
 			progressRegion = null;
