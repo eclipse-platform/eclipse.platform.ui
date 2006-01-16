@@ -706,19 +706,9 @@ public interface IRegistryConstants {
 	public static String TYPE_ITEM = "item"; //$NON-NLS-1$
 
 	/**
-	 * The type of bar or reference which refers to the menu.
+	 * The type of reference which refers to an menu.
 	 */
 	public static String TYPE_MENU = "menu"; //$NON-NLS-1$
-
-	/**
-	 * The type of bar which references the status line.
-	 */
-	public static String TYPE_STATUS = "status"; //$NON-NLS-1$
-
-	/**
-	 * The type of bar which reference the tool bar.
-	 */
-	public static String TYPE_TOOL = "tool"; //$NON-NLS-1$
 
 	/**
 	 * The type of reference which refers to the widget.
