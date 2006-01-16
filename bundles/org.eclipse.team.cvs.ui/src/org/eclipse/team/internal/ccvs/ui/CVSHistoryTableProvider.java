@@ -17,33 +17,15 @@ import java.util.Date;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.IFontProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.history.IFileHistory;
-import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.history.*;
+import org.eclipse.team.internal.core.LocalFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 
 public class CVSHistoryTableProvider {
@@ -53,12 +35,14 @@ public class CVSHistoryTableProvider {
 	private String currentRevision;
 	/* private */TableViewer viewer;
 	/* private */Font currentRevisionFont;
+	private boolean baseModified;
 
 	//column constants
 	private static final int COL_REVISIONID = 0;
-	private static final int COL_DATE = 1;
-	private static final int COL_AUTHOR = 2;
-	private static final int COL_COMMENT = 3;
+	private static final int COL_TAGS = 1;
+	private static final int COL_DATE = 2;
+	private static final int COL_AUTHOR = 3;
+	private static final int COL_COMMENT = 4;
 
 	/**
 	 * The history label provider.
@@ -75,7 +59,24 @@ public class CVSHistoryTableProvider {
 			switch (columnIndex) {
 				case COL_REVISIONID :
 					String revision = entry.getContentIdentifier();
+					String currentRevision = getCurrentRevision();
+					if (currentRevision != null && currentRevision.equals(revision)) {
+						if (baseModified)
+							revision = NLS.bind(CVSUIMessages.nameAndRevision, new String[] { revision, "<base>"}); //NLS.bind(CVSUIMessages.currentRevision, new String[] { revision }); 
+						else
+							revision = NLS.bind(CVSUIMessages.currentRevision, new String[] {revision}); //NLS.bind(CVSUIMessages.currentRevision, new String[] { revision });
+					}
 					return revision;
+				case COL_TAGS:
+					ITag[] tags = entry.getTags();
+					StringBuffer result = new StringBuffer();
+					for (int i = 0; i < tags.length; i++) {
+						result.append(tags[i].getName());
+						if (i < tags.length - 1) {
+							result.append(", "); //$NON-NLS-1$
+						}
+					}
+					return result.toString();
 				case COL_DATE :
 					long date = entry.getTimestamp();
 					Date dateFromLong = new Date(date);
@@ -84,7 +85,15 @@ public class CVSHistoryTableProvider {
 					return entry.getAuthor();
 				case COL_COMMENT :
 					String comment = entry.getComment();
-					return comment;
+					int index = comment.indexOf("\n"); //$NON-NLS-1$
+					switch (index) {
+						case -1:
+							return comment;
+						case 0:
+							return CVSUIMessages.HistoryView_______4; 
+						default:
+							return NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_truncate, new String[] { comment.substring(0, index) });
+					}
 			}
 			return ""; //$NON-NLS-1$
 		}
@@ -117,8 +126,10 @@ public class CVSHistoryTableProvider {
 			if (entry == null)
 				return null;
 			String revision = entry.getContentIdentifier();
+			String comment = entry.getComment();
 			String tempCurrentRevision = getCurrentRevision();
-			if (tempCurrentRevision != null && tempCurrentRevision.equals(revision)) {
+			if (tempCurrentRevision != null && tempCurrentRevision.equals(revision) ||
+				comment.equals("<current version>")) {
 				if (currentRevisionFont == null) {
 					Font defaultFont = JFaceResources.getDefaultFont();
 					FontData[] data = defaultFont.getFontData();
@@ -143,11 +154,11 @@ public class CVSHistoryTableProvider {
 		private VersionCollator versionCollator = new VersionCollator();
 		
 		// column headings:	"Revision" "Tags" "Date" "Author" "Comment"
-		private int[][] SORT_ORDERS_BY_COLUMN = { {COL_REVISIONID, COL_DATE, COL_AUTHOR, COL_COMMENT}, /* revision */
-		{COL_REVISIONID, COL_DATE, COL_AUTHOR, COL_COMMENT}, /* tags */
-		{COL_DATE, COL_REVISIONID, COL_AUTHOR, COL_COMMENT}, /* date */
-		{COL_AUTHOR, COL_REVISIONID, COL_DATE, COL_COMMENT}, /* author */
-		{COL_COMMENT, COL_REVISIONID, COL_DATE, COL_AUTHOR} /* comment */
+		private int[][] SORT_ORDERS_BY_COLUMN = { {COL_REVISIONID, COL_DATE, COL_AUTHOR, COL_COMMENT, COL_TAGS}, /* revision */
+		{COL_TAGS, COL_DATE, COL_REVISIONID, COL_AUTHOR, COL_COMMENT}, /* tags */
+		{COL_DATE, COL_REVISIONID, COL_AUTHOR, COL_COMMENT, COL_TAGS}, /* date */
+		{COL_AUTHOR, COL_REVISIONID, COL_DATE, COL_COMMENT, COL_TAGS}, /* author */
+		{COL_COMMENT, COL_REVISIONID, COL_DATE, COL_AUTHOR, COL_TAGS} /* comment */
 		};
 
 		/**
@@ -186,8 +197,28 @@ public class CVSHistoryTableProvider {
 		int compareColumnValue(int columnNumber, IFileRevision e1, IFileRevision e2) {
 			switch (columnNumber) {
 				case 0 : /* revision */
+					if (e1 instanceof LocalFileRevision ||
+						e2 instanceof LocalFileRevision) {
+						//compare based on dates
+						long date1 = e1.getTimestamp();
+						long date2 = e2.getTimestamp();
+						if (date1 == date2)
+							return 0;
+
+						return date1 > date2 ? -1 : 1;
+					}
 					return versionCollator.compare(e1.getContentIdentifier(), e2.getContentIdentifier());
-				case 1 : /* date */
+				case 1: /* tags */
+					ITag[] tags1 = e1.getTags();
+					ITag[] tags2 = e2.getTags();
+					if (tags2.length == 0) {
+						return -1;
+					}
+					if (tags1.length == 0) {
+						return 1;
+					}
+					return getCollator().compare(tags1[0].getName(), tags2[0].getName());
+				case 2 : /* date */
 					long date1 = e1.getTimestamp();
 					long date2 = e2.getTimestamp();
 					if (date1 == date2)
@@ -195,9 +226,9 @@ public class CVSHistoryTableProvider {
 
 					return date1 > date2 ? -1 : 1;
 
-				case 2 : /* author */
+				case 3 : /* author */
 					return getCollator().compare(e1.getAuthor(), e2.getAuthor());
-				case 3 : /* comment */
+				case 4 : /* comment */
 					return getCollator().compare(e1.getComment(), e2.getComment());
 				default :
 					return 0;
@@ -261,9 +292,11 @@ public class CVSHistoryTableProvider {
 
 		viewer.setLabelProvider(new HistoryLabelProvider());
 
-		// By default, reverse sort by revision.
-		HistorySorter sorter = new HistorySorter(COL_REVISIONID);
-		sorter.setReversed(true);
+		// By default, reverse sort by revision. 
+		// If local filter is on sort by date
+		HistorySorter sorter = new HistorySorter(COL_DATE);
+		/*HistorySorter sorter = new HistorySorter(COL_REVISIONID);
+		sorter.setReversed(true);*/
 		viewer.setSorter(sorter);
 
 		table.addDisposeListener(new DisposeListener() {
@@ -290,6 +323,12 @@ public class CVSHistoryTableProvider {
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 
+		// tags
+		col = new TableColumn(table, SWT.NONE);
+		col.setResizable(true);
+		col.setText(CVSUIMessages.HistoryView_tags); 
+		col.addSelectionListener(headerListener);
+		layout.addColumnData(new ColumnWeightData(20, true));
 		// creation date
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
@@ -347,22 +386,12 @@ public class CVSHistoryTableProvider {
 		};
 	}
 
-	public void setFile(IFileHistory fileHistory, IFile file) {
+	public void setFile(IFileHistory fileHistory, IFile file, String currentRevision) {
 		this.currentFileHistory = fileHistory;
 		this.currentFile = file;
-		this.currentRevision = findCurrentRevision();
+		this.currentRevision = currentRevision;
 	}
 
-	private String findCurrentRevision() {
-
-		RepositoryProvider teamProvider = RepositoryProvider.getProvider(currentFile.getProject());
-		IFileRevision fileRevision = teamProvider.getFileHistoryProvider().getWorkspaceFileRevision(currentFile);
-
-		if (fileRevision != null)
-			return fileRevision.getContentIdentifier();
-
-		return null;
-	}
 
 	public IFileHistory getIFileHistory() {
 		return this.currentFileHistory;
@@ -370,5 +399,34 @@ public class CVSHistoryTableProvider {
 
 	public String getCurrentRevision() {
 		return currentRevision;
+	}
+	
+	/*
+	 * Used to reset the sorting for the table provider; if local files
+	 * are included in the table, then we sort by date. Otherwise we default
+	 * to sorting by revision 
+	 */
+	public void setLocalRevisionsDisplayed(boolean displayed){
+		//init sort to sort by revision
+		int column = COL_REVISIONID;
+		if (displayed){
+			//locals displayed, if the base has been modified then sort by DATE
+			column = COL_DATE;	
+		}
+		
+		HistorySorter oldSorter = (HistorySorter) viewer.getSorter();
+		if (oldSorter != null && column == oldSorter.getColumnNumber()) {
+			oldSorter.setReversed(column == COL_REVISIONID);
+			viewer.refresh();
+		} else {
+			HistorySorter newSorter = new HistorySorter(column);
+			newSorter.setReversed(column == COL_REVISIONID);
+			viewer.setSorter(newSorter);
+			
+		}
+	}
+
+	public void setBaseModified(boolean modified) {
+		this.baseModified=modified;
 	}
 }

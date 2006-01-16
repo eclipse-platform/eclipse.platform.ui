@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
@@ -460,6 +461,10 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 				Object next = elements.next();
 				if (next instanceof ICVSRemoteResource) {
 					resources.add(next);
+					continue;
+				}
+				if (next instanceof CVSFileRevision) {
+					resources.add(((CVSFileRevision)next).getCVSRemoteFile());
 					continue;
 				}
 				if (next instanceof ILogEntry) {

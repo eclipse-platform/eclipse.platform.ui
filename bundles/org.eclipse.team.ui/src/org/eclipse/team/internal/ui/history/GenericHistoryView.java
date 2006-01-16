@@ -11,28 +11,53 @@
 
 package org.eclipse.team.internal.ui.history;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.history.IFileHistoryProvider;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.ITeamUIImages;
+import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.history.IFileHistoryProviderParticipant;
 import org.eclipse.team.ui.history.IHistoryPage;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.ide.ResourceUtil;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.part.Page;
+import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.part.PageSite;
+import org.eclipse.ui.part.ResourceTransfer;
+import org.eclipse.ui.part.ViewPart;
 
 public class GenericHistoryView extends ViewPart {
 
@@ -389,13 +414,13 @@ public class GenericHistoryView extends ViewPart {
 
 	public void itemDropped(Object object) {
 
-		if (object instanceof IFile) {
-			IFile newFile = (IFile) object;
+		if (object instanceof IResource) {
+			IResource newResource = (IResource) object;
 			//check first to see if this view is pinned
 			if (isViewPinned()) {
 				try {
 					//get the file name
-					IViewPart view = getSite().getPage().showView(viewId, viewId + newFile.getName() + System.currentTimeMillis(), IWorkbenchPage.VIEW_CREATE);
+					IViewPart view = getSite().getPage().showView(viewId, viewId + newResource.getName() + System.currentTimeMillis(), IWorkbenchPage.VIEW_CREATE);
 					if (view instanceof GenericHistoryView) {
 						GenericHistoryView view2 = (GenericHistoryView) view;
 						view2.itemDropped(object);
@@ -405,7 +430,7 @@ public class GenericHistoryView extends ViewPart {
 				}
 			}
 
-			RepositoryProvider teamProvider = RepositoryProvider.getProvider(newFile.getProject());
+			RepositoryProvider teamProvider = RepositoryProvider.getProvider(newResource.getProject());
 			IFileHistoryProvider fileHistory = teamProvider.getFileHistoryProvider();
 			Object tempParticipant = Platform.getAdapterManager().getAdapter(fileHistory, IFileHistoryProviderParticipant.class);
 			if (tempParticipant instanceof IFileHistoryProviderParticipant) {
@@ -414,12 +439,12 @@ public class GenericHistoryView extends ViewPart {
 				//If a current page exists, see if it can handle the dropped item
 				if (currentPageContainer.getPage() instanceof IHistoryPage) {
 					PageContainer tempPageContainer = currentPageContainer;
-					if (!((IHistoryPage) tempPageContainer.getPage()).canShowHistoryFor(newFile)) {
+					if (!((IHistoryPage) tempPageContainer.getPage()).canShowHistoryFor(newResource)) {
 						tempPageContainer = createPage(participant);
 					}
 					if (tempPageContainer != null) {
-						((IHistoryPage) tempPageContainer.getPage()).showHistory(newFile, true);
-						setContentDescription(newFile.getName());
+						((IHistoryPage) tempPageContainer.getPage()).showHistory(newResource, true);
+						setContentDescription(newResource.getName());
 						showPageRec(tempPageContainer);
 					} else {
 						showPageRec(defaultPageContainer);
@@ -447,6 +472,16 @@ public class GenericHistoryView extends ViewPart {
 	protected PageContainer createDefaultPage(PageBook book) {
 		GenericHistoryViewDefaultPage page = new GenericHistoryViewDefaultPage();
 		PageSite site = initPage(page);
+		page.createControl(book);
+		PageContainer container = new PageContainer(page);
+		container.setSubBars((SubActionBars) site.getActionBars());
+		return container;
+	}
+	
+	protected PageContainer createLocalPage(PageBook book){
+		LocalHistoryPage page = new LocalHistoryPage();
+		PageSite site = initPage(page);
+		((IHistoryPage) page).setSite(getViewSite());
 		page.createControl(book);
 		PageContainer container = new PageContainer(page);
 		container.setSubBars((SubActionBars) site.getActionBars());
@@ -498,5 +533,12 @@ public class GenericHistoryView extends ViewPart {
 		getSite().getPage().removePartListener(partListener2);
 		//Remove the selection listener
 		getSite().getPage().addSelectionListener(selectionListener);
+	}
+
+	public void localItemDropped(IResource resource) {
+		PageContainer container = createLocalPage(this.book);
+		((IHistoryPage) container.getPage()).showHistory(resource, true);
+		setContentDescription(resource.getName());
+		showPageRec(container);
 	}
 }

@@ -59,6 +59,9 @@ public interface ICVSUIConstants {
 	public final String IMG_COLLAPSE_ALL_ENABLED = "elcl16/collapseall.gif"; //$NON-NLS-1$
 	public final String IMG_LINK_WITH_EDITOR_ENABLED = "elcl16/synced.gif"; //$NON-NLS-1$
 	
+	//history page toolbar
+	public final String IMG_FILTER_HISTORY = "elcl16/filter_history.gif";  //$NON-NLS-1$
+	
 	// wizards
 	public final String IMG_NEWLOCATION = "etool16/newlocation_wiz.gif"; //$NON-NLS-1$
 	public final String IMG_CVSLOGO = "etool16/newconnect_wiz.gif"; //$NON-NLS-1$

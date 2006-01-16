@@ -91,6 +91,9 @@ public class Messages extends NLS {
 	public static String MergeContext_3;
 	public static String MergeContext_4;
 
+    public static String LocalFileRevision_currentVersion;
+	public static String LocalFileRevision_currentVersionTag;
+	public static String LocalFileRevision_localRevisionTag;
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

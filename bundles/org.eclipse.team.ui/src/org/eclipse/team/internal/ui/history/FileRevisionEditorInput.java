@@ -1,5 +1,9 @@
 package org.eclipse.team.internal.ui.history;
 
+import java.text.DateFormat;
+import java.util.Date;
+
+import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -31,6 +35,11 @@ public class FileRevisionEditorInput implements IWorkbenchAdapter,IStorageEditor
 		}
 	}
 	
+	public FileRevisionEditorInput(IFileState state) {
+		this.storage = state;
+		this.file = null;
+	}
+
 	public IStorage getStorage() throws CoreException {
 		return storage;
 	}
@@ -45,7 +54,14 @@ public class FileRevisionEditorInput implements IWorkbenchAdapter,IStorageEditor
 	}
 
 	public String getName() {
-		return NLS.bind(TeamUIMessages.nameAndRevision, new String[] { file.getName(), file.getContentIdentifier()}); 
+		if (file != null)
+			return NLS.bind(TeamUIMessages.nameAndRevision, new String[] { file.getName(), file.getContentIdentifier()});
+		
+		if (storage != null){
+			return storage.getName() +  " " + DateFormat.getInstance().format(new Date(((IFileState) storage).getModificationTime())) ;
+		}
+		return "";
+		
 	}
 
 	public IPersistableElement getPersistable() {
@@ -54,8 +70,10 @@ public class FileRevisionEditorInput implements IWorkbenchAdapter,IStorageEditor
 	}
 
 	public String getToolTipText() {
-		// TODO Auto-generated method stub
-		return file.getContentIdentifier();
+		if (file != null)
+			return file.getContentIdentifier();
+		
+		return "";
 	}
 
 	public Object getAdapter(Class adapter) {
@@ -75,7 +93,13 @@ public class FileRevisionEditorInput implements IWorkbenchAdapter,IStorageEditor
 	}
 
 	public String getLabel(Object o) {
-		return file.getName();
+		if (file != null)
+			return file.getName();
+		
+		if (storage != null){
+			return storage.getName();
+		}
+		return "";
 	}
 
 	public Object getParent(Object o) {
