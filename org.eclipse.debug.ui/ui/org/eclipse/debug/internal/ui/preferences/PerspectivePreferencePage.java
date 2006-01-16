@@ -317,10 +317,11 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		if (fComboPlaceHolder != null) {
 			fComboPlaceHolder.dispose();
 		}// end if
+		Font font = fPerspectiveComp.getFont();
 		fComboPlaceHolder = new Composite(fPerspectiveComp, SWT.NONE);
 		fComboPlaceHolder.setLayout(new GridLayout(2, false));
 		fComboPlaceHolder.setLayoutData(new GridData(GridData.FILL_BOTH));
-		Font font = fComboPlaceHolder.getFont();
+		fComboPlaceHolder.setFont(font);
 		Label label = new Label(fComboPlaceHolder, SWT.NONE);
 		label.setText(DebugPreferencesMessages.PerspectivePreferencePage_2);
 		label.setFont(font);
@@ -438,10 +439,11 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
+		Font font = parent.getFont();
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		Font font = parent.getFont();
+		composite.setFont(font);
 	// create the global radio buttons
 		createSpacer(composite, 1);
 		perspec = new RadioGroupFieldEditor(
@@ -487,6 +489,7 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		
 		fTree = new Tree(treeComp, SWT.H_SCROLL + SWT.V_SCROLL + SWT.SINGLE + SWT.BORDER);
 		fTree.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fTree.setFont(font);
 		fViewer = new TreeViewer(fTree);
 		fViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		fViewer.setSorter(new WorkbenchViewerSorter());
@@ -502,6 +505,7 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		fPerspectiveComp = new Composite(comp, SWT.NONE);
 		fPerspectiveComp.setLayout(new GridLayout(1, true));
 		fPerspectiveComp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fPerspectiveComp.setFont(font);
 		fTypeInformationMapping = new HashMap();
 		// get the available labels
 		getPerspectiveLabels();
