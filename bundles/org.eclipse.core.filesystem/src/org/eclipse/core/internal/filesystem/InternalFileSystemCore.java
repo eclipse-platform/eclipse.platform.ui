@@ -14,7 +14,9 @@ import java.net.URI;
 import java.util.HashMap;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.provider.FileSystem;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.equinox.registry.*;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -46,9 +48,8 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	 */
 	private InternalFileSystemCore() {
 		super();
-		Platform.getExtensionRegistry().addRegistryChangeListener(this);
+		RegistryFactory.getRegistry().addRegistryChangeListener(this);
 	}
-
 	
 	/**
 	 * Implements the method EFS#getFileSystem(String)
@@ -115,7 +116,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	private synchronized HashMap getFileSystemRegistry() {
 		if (fileSystems == null) {
 			fileSystems = new HashMap();
-			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(EFS.PI_FILE_SYSTEM, EFS.PT_FILE_SYSTEMS);
+			IExtensionPoint point = RegistryFactory.getRegistry().getExtensionPoint(EFS.PI_FILE_SYSTEM, EFS.PT_FILE_SYSTEMS);
 			IExtension[] extensions = point.getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
 				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
