@@ -2482,6 +2482,12 @@ M4 = Platform-specific fourth key
        <keyword
              id="org.eclipse.debug.ui.viewManagement"
              label="%preferenceKeywords.viewManagement"/>
+       <keyword
+             id="org.eclipse.debug.ui.perspectivesPref"
+             label="%preferenceKeywords.perspective"/>
+       <keyword
+             id="org.eclipse.debug.ui.launchconfigurations"
+             label="%preferenceKeywords.launchConfigurations"/>
     </extension>
     <extension
           point="org.eclipse.ui.importWizards">
