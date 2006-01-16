@@ -24,9 +24,11 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.preferences.LaunchConfigurationsPreferencePage;
 import org.eclipse.debug.internal.ui.preferences.PerspectivePreferencePage;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
@@ -44,6 +46,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -338,12 +341,18 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private void createGettingStarted(Composite parent) {
 		Font font = parent.getFont();
 		GridData gd = null;
-		createWrapLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_1);
-		createWrapLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_2);
-		createWrapLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_3);
-		createWrapLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_4);
-        createWrapLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_6);
-		
+		createWrapLabel(parent, null, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_1);
+		createWrapLabel(parent, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_NEW_CONFIG), 
+				LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_2);
+		createWrapLabel(parent, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_DUPLICATE_CONFIG),
+        		LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_6);
+		createWrapLabel(parent, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_REMOVE), 
+				LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_4);
+        createWrapLabel(parent, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS),
+        		LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_8);
+        createWrapLabel(parent, DebugUITools.getImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT), 
+        		LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_3);
+        
 		createSpacer(parent, 2);
 		Link link = new Link(parent, SWT.LEFT | SWT.WRAP);
 		link.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_5);
@@ -357,7 +366,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
-		
 		createSpacer(parent, 2);
 		link = new Link(parent, SWT.LEFT | SWT.WRAP);
 		link.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_7);
@@ -379,13 +387,14 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
      * @param parent
      * @param text
      */
-    private void createWrapLabel(Composite parent, String text) {
-        Label label = new Label(parent, SWT.LEFT | SWT.WRAP);
-        label.setFont(parent.getFont());
-        label.setText(text);
+    private void createWrapLabel(Composite parent, Image image, String text) {
+    	CLabel lbl = new CLabel(parent, SWT.NONE | SWT.WRAP);
+    	lbl.setImage(image);
+        lbl.setFont(parent.getFont());
+        lbl.setText(text);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.widthHint = parent.getBounds().width - 30;
-        label.setLayoutData(gd);
+        lbl.setLayoutData(gd);
     }
 	
 	/**

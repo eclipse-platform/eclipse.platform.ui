@@ -183,4 +183,6 @@ public class LaunchConfigurationsMessages extends NLS {
 
 	public static String LaunchConfigurationsDialog_7;
 
+	public static String LaunchConfigurationTabGroupViewer_8;
+
 }
