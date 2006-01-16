@@ -13,6 +13,7 @@ package org.eclipse.team.internal.core.mapping;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.RepositoryProvider;
@@ -225,6 +226,28 @@ public class WorkspaceSubscriber extends Subscriber implements ISubscriberChange
 			monitor.done();
 		}
 		return false;
+	}
+	
+	public int getState(ResourceMapping mapping, int stateMask, IProgressMonitor monitor) throws CoreException {
+		int state = 0;
+		try {
+			List errors = new ArrayList();
+			Subscriber[] subscribers = getSubscribers();
+			monitor.beginTask(null, subscribers.length * 100);
+			for (int i = 0; i < subscribers.length; i++) {
+				Subscriber subscriber = subscribers[i];
+				try {
+					int subscriberState = subscriber.getState(mapping, stateMask, Policy.subMonitorFor(monitor, 100));
+					state |= subscriberState;
+				} catch (TeamException e) {
+					errors.add(e);
+				}
+			}
+			handleErrors((CoreException[]) errors.toArray(new CoreException[errors.size()]));
+		} finally {
+			monitor.done();
+		}
+		return state & stateMask;
 	}
 	
 	/* (non-Javadoc)

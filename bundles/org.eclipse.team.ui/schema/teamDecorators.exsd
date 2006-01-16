@@ -63,6 +63,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="decoratedDirection" type="string">
+            <annotation>
+               <documentation>
+                  A comma delimited string of the decorated direction state. The valid state flags are INCOMING and OUTGOING. If the decorateDirection field is ommitted, bith directions are assumed.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

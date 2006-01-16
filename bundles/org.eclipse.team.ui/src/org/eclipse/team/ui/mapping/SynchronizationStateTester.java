@@ -23,6 +23,7 @@ import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.registry.TeamDecoratorDescription;
 import org.eclipse.team.internal.ui.registry.TeamDecoratorManager;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.PlatformUI;
@@ -115,12 +116,45 @@ public class SynchronizationStateTester {
 	}
 	
 	/**
-	 * Return whether state decoration is enabled. If <code>true</code>
+	 * Return the mask that indicates what state the appropriate team decorator
+	 * is capable of decorating. The state is determined by querying the
+	 * <code>org.eclipse.team.ui.teamDecorators</code> extension point.
+	 * 
+	 * <p>
+	 * The state mask can consist of the following flags:
+	 * <ul>
+	 * <li>The diff kinds of {@link IDiffNode#ADD}, {@link IDiffNode#REMOVE}
+	 * and {@link IDiffNode#CHANGE}.
+	 * <li>The directions {@link IThreeWayDiff#INCOMING} and
+	 * {@link IThreeWayDiff#OUTGOING}.
+	 * </ul>
+	 * For convenience sake, if there are no kind flags but there is at least
+	 * one direction flag then all kinds are assumed.
+	 * 
+	 * @param element
+	 *            the model element to be decorated
+	 * @return the mask that indicates what state the appropriate team decorator
+	 *         will decorate
+	 * @see IDiffNode
+	 * @see IThreeWayDiff
+	 */
+	public final int getDecoratedStateMask(Object element) {
+		ResourceMapping mapping = Utils.getResourceMapping(element);
+		if (mapping != null) {
+			IProject[] projects = mapping.getProjects();
+			return internalGetDecoratedStateMask(projects);
+		}
+		return 0;
+	}
+
+	/**
+	 * Return whether state decoration is enabled for the context
+	 * to which this tester is associated. If <code>true</code>
 	 * is returned, team decorators will use the state methods provided
 	 * on this class to calculate the synchronization state of model
 	 * elements for the purpose of decoration. If <code>false</code>
 	 * is returned, team decorators will not decorate the elements with any
-	 * synchronization elated decorations. Subclasses will want to disable
+	 * synchronization related decorations. Subclasses will want to disable
 	 * state decoration if state decoration is being provided another way
 	 * (e.g. by a {@link SynchronizationLabelProvider}). By default, 
 	 * <code>true</code>is returned. Subclasses may override.
@@ -129,84 +163,52 @@ public class SynchronizationStateTester {
 	public boolean isStateDecorationEnabled() {
 		return true;
 	}
-	
-	private boolean internalIsDecorationEnabled(IProject[] projects) {
-		Set providerIds = new HashSet();
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
-			String id = getProviderId(project);
-			if (id != null)
-				providerIds.add(id);
-		}
-		for (Iterator iter = providerIds.iterator(); iter.hasNext();) {
-			String providerId = (String) iter.next();
-			if (internalIsDecorationEnabled(providerId)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private String getProviderId(IProject project) {
-		RepositoryProvider provider = RepositoryProvider.getProvider(project);
-		if (provider != null)
-			return provider.getID();
-		return null;
-	}
-
-	private boolean internalIsDecorationEnabled(String providerId) {
-		String decoratorId = getDecoratorId(providerId);
-		if (decoratorId != null) {
-			return PlatformUI.getWorkbench().getDecoratorManager().getEnabled(decoratorId);
-		}
-		return false;
-	}
-
-	private String getDecoratorId(String providerId) {
-		return TeamDecoratorManager.getInstance().getDecoratorId(providerId);
-	}
 
 	/**
-	 * Return whether the given element has an outgoing change. By default, the
-	 * element is adapted to a resource mapping and, using the mapping's
-	 * traversals, the subcriber is consulted to determine if the element has
-	 * outgoing changes. Subclasses may override either in order to cache the
-	 * dirty state for performance reasons or to change how dirty state is
-	 * determined (e.g. if the element is represented in only a portion
-	 * of a file or if the dirty state decoration is being done by the 
-	 * label provider).
+	 * Return the synchronization state of the given element. Only the portion
+	 * of the synchronization state covered by <code>stateMask</code> is
+	 * returned. By default, this method calls
+	 * {@link Subscriber#getState(ResourceMapping, int, IProgressMonitor)}.
+	 * <p>
+	 * Team decorators will use this method to detemine how to decorate the
+	 * provided element. The {@link #getDecoratedStateMask(Object)} returns the
+	 * state that the corresponding team decorator is capable of decorating but
+	 * the decorator may be configured to decorate only a portion of that state.
+	 * When the team decorator invokes this method, it will pass the stateMask that
+	 * it is currently configured to show. If a mask of zero is provided, this indicates
+	 * that the team decorator is not configured to decorate the synchronization state
+	 * of model elements.
+	 * <p>
+	 * Subclasses may want to override this method in the following cases:
+	 * <ol>
+	 * <li>The subclass wishes to fire appropriate label change events when the
+	 * decorated state of a model element changes. In this case the subclass
+	 * can override this method to record the stateMask and returned state. It can
+	 * use this recorded information to determine whether local changes or subscriber changes
+	 * result in a change in the deocrated sstate of the model element.
+	 * <li>The subclasses wishes to provide a more accurate change description for a model
+	 * element that represents only a portion of the file. In this case, the subclass can
+	 * use the remote file contents available from the subscriber to determine whether
+	 * </ol>
 	 * 
-	 * @param element the element being tested
-	 * @param deep indicates whether the team deocrator is configured to show deep or shallow decoration
+	 * @param element the model element
+	 * @param stateMask the mask that identifies which state flags are desired if
+	 *            present
 	 * @param monitor a progress monitor
-	 * @return whether the given element has an outgoing change
-	 * @throws CoreException if an error occurs
+	 * @return the synchronization state of the given element
+	 * @throws CoreException
+	 * @see Subscriber#getState(ResourceMapping, int, IProgressMonitor)
 	 */
-	public boolean hasOutgoingChange(Object element, boolean deep, IProgressMonitor monitor) throws CoreException {
-		if (deep) {
-			ResourceMapping mapping = Utils.getResourceMapping(element);
-			if (mapping != null) {
-				ResourceTraversal[] traversals = mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
-				return subscriber.hasLocalChanges(traversals, monitor);
-			}
-		} else {
-			IResource resource = Utils.getResource(element);
-			if (resource != null) {
-				IDiffNode node = subscriber.getDiff(resource);
-				if (node != null) {
-					if (node instanceof IThreeWayDiff) {
-						IThreeWayDiff twd = (IThreeWayDiff) node;
-						return twd.getDirection() == IThreeWayDiff.OUTGOING 
-							|| twd.getDirection() == IThreeWayDiff.CONFLICTING;
-					}
-				}
-			}
+	public int getState(Object element, int stateMask, IProgressMonitor monitor) throws CoreException {
+		ResourceMapping mapping = Utils.getResourceMapping(element);
+		if (mapping != null) {
+			return subscriber.getState(mapping, stateMask, monitor);
 		}
-		return false;
+		return 0;
 	}
-
+	
 	/**
-	 * Return whether the given element is supervised. To determine, the
+	 * Return whether the given element is supervised. To determine this, the
 	 * element is adapted to a resource mapping and, using the mapping's
 	 * traversals, the subcriber is consulted to determine if the element is supervised.
 	 * An element is supervised if all the resources covered by it's traversals are
@@ -247,5 +249,66 @@ public class SynchronizationStateTester {
 	 */
 	public Subscriber getSubscriber() {
 		return subscriber;
+	}
+	
+	private boolean internalIsDecorationEnabled(IProject[] projects) {
+		String[] providerIds = getProviderIds(projects);
+		for (int i = 0; i < providerIds.length; i++) {
+			String providerId = providerIds[i];
+			if (internalIsDecorationEnabled(providerId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private String[] getProviderIds(IProject[] projects) {
+		Set providerIds = new HashSet();
+		for (int i = 0; i < projects.length; i++) {
+			IProject project = projects[i];
+			String id = getProviderId(project);
+			if (id != null)
+				providerIds.add(id);
+		}
+		return (String[]) providerIds.toArray(new String[providerIds.size()]);
+	}
+	
+	private int internalGetDecoratedStateMask(IProject[] projects) {
+		int stateMask = 0;
+		String[] providerIds = getProviderIds(projects);
+		for (int i = 0; i < providerIds.length; i++) {
+			String providerId = providerIds[i];
+			stateMask |= internalGetDecoratedStateMask(providerId);
+		}
+		return stateMask;
+	}
+
+	private String getProviderId(IProject project) {
+		RepositoryProvider provider = RepositoryProvider.getProvider(project);
+		if (provider != null)
+			return provider.getID();
+		return null;
+	}
+
+	private boolean internalIsDecorationEnabled(String providerId) {
+		String decoratorId = getDecoratorId(providerId);
+		if (decoratorId != null) {
+			return PlatformUI.getWorkbench().getDecoratorManager().getEnabled(decoratorId);
+		}
+		return false;
+	}
+
+	private int internalGetDecoratedStateMask(String providerId) {
+		TeamDecoratorDescription decoratorDescription = TeamDecoratorManager.getInstance().getDecoratorDescription(providerId);
+		if (decoratorDescription != null)
+			return decoratorDescription.getDecoratedDirectionFlags();
+		return 0;
+	}
+	
+	private String getDecoratorId(String providerId) {
+		TeamDecoratorDescription decoratorDescription = TeamDecoratorManager.getInstance().getDecoratorDescription(providerId);
+		if (decoratorDescription != null)
+			return decoratorDescription.getDecoratorId();
+		return null;
 	}
 }

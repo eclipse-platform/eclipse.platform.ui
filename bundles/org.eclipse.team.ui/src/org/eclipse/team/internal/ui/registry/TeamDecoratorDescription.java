@@ -11,8 +11,8 @@
 package org.eclipse.team.internal.ui.registry;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 
@@ -21,9 +21,13 @@ public class TeamDecoratorDescription {
 	private static final String TAG_TEAM_DECORATOR = "teamDecorator"; //$NON-NLS-1$
 	private static final String ATT_REPOSITORY_ID = "repositoryId"; //$NON-NLS-1$
 	private static final String ATT_DECORATOR_ID = "decoratorId"; //$NON-NLS-1$
+	private static final String ATT_DECORATED_DIRECTION_ID = "decoratedDirection"; //$NON-NLS-1$
+	private static final String OUTGOING_FLAG = "OUTGOING"; //$NON-NLS-1$
+	private static final String INCOMING_FLAG = "INCOMING"; //$NON-NLS-1$
 	
 	private String repositoryId;
 	private String decoratorId;
+	private int decoratedDirection;
 	
 	public TeamDecoratorDescription(IExtension extension) throws CoreException {
 		readExtension(extension);
@@ -42,7 +46,21 @@ public class TeamDecoratorDescription {
 			String name = element.getName();
 			if (name.equalsIgnoreCase(TAG_TEAM_DECORATOR)) {
 				repositoryId = element.getAttribute(ATT_REPOSITORY_ID);
-				repositoryId = element.getAttribute(ATT_DECORATOR_ID);
+				decoratorId = element.getAttribute(ATT_DECORATOR_ID);
+				String flags = element.getAttribute(ATT_DECORATED_DIRECTION_ID);
+				if (flags == null) {
+					decoratedDirection = IThreeWayDiff.INCOMING | IThreeWayDiff.OUTGOING;
+				} else {
+					if (flags.indexOf(INCOMING_FLAG) != -1) {
+						decoratedDirection |= IThreeWayDiff.INCOMING;
+					}
+					if (flags.indexOf(OUTGOING_FLAG) != -1) {
+						decoratedDirection |= IThreeWayDiff.OUTGOING;
+					}
+					if (decoratedDirection == 0) {
+						decoratedDirection = IThreeWayDiff.INCOMING | IThreeWayDiff.OUTGOING;
+					}
+				}
 			}
 		}
 		if (repositoryId == null)
@@ -61,5 +79,9 @@ public class TeamDecoratorDescription {
 
 	public String getRepositoryId() {
 		return repositoryId;
+	}
+
+	public int getDecoratedDirectionFlags() {
+		return decoratedDirection;
 	}
 }

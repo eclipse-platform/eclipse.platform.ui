@@ -14,14 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.*;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IThreeWayDiff;
-import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
-import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
+import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.core.variants.*;
@@ -294,6 +294,43 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.Subscriber#getState(org.eclipse.core.resources.mapping.ResourceMapping, int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public int getState(ResourceMapping mapping, int stateMask, IProgressMonitor monitor) throws CoreException {
+		if ((stateMask & IThreeWayDiff.INCOMING) == 0) {
+			// If we're only interested in outgoing changes, used the cached modified state
+			ResourceTraversal[] traversals = mapping.getTraversals(new SubscriberResourceMappingContext(this, false), monitor);
+			if (hasLocalChanges(traversals, monitor)) {
+				int state = IThreeWayDiff.OUTGOING;
+				state |= getOutgoingKind(traversals, monitor);
+			} else {
+				return 0;
+			}
+		}
+		return super.getState(mapping, stateMask, monitor);
+	}
+	
+	private int getOutgoingKind(ResourceTraversal[] traversals, IProgressMonitor monitor) throws CoreException {
+		int kind = 0;
+		for (int i = 0; i < traversals.length; i++) {
+			ResourceTraversal traversal = traversals[i];
+			IResource[] resources = traversal.getResources();
+			for (int j = 0; j < resources.length; j++) {
+				IResource resource = resources[j];
+				IDiffNode node = getDiff(resource);
+				if (node == null)
+					return IDiffNode.CHANGE;
+				int nextKind = node.getKind();
+				if (kind == 0)
+					kind = nextKind;
+				if (nextKind != kind || nextKind == IDiffNode.CHANGE)
+					return IDiffNode.CHANGE;
+			}
+		}
+		return kind;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.subscribers.Subscriber#hasLocalChanges(org.eclipse.core.resources.mapping.ResourceTraversal[], org.eclipse.core.runtime.IProgressMonitor)
 	 */

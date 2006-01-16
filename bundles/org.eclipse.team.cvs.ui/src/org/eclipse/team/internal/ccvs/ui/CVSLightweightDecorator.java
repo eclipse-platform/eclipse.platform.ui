@@ -23,6 +23,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -197,7 +199,12 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
         if (tester.isStateDecorationEnabled()) {
 			if (tester.isSupervised(element)) {
 				result.setHasRemote(true);
-	        	if (tester.hasOutgoingChange(element, store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY), new NullProgressMonitor())) {
+				int state = tester.getState(element, 
+						store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY) 
+							? IDiffNode.ADD | IDiffNode.REMOVE | IDiffNode.CHANGE | IThreeWayDiff.OUTGOING 
+							: 0, 
+						new NullProgressMonitor());
+	        	if ((state & IThreeWayDiff.OUTGOING) != 0) {
 	        		result.setDirty(true);
 	        	}
 	        } else {
@@ -224,6 +231,25 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 			cvsDecoration.setIgnored(true);
 		}
 		if (!cvsDecoration.isIgnored()) {
+			// Dirty: Only decorate dirty state if we're not set to decorate models
+			boolean decorateModel = store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY);
+			if (!decorateModel) {
+				// Dirty
+				try {
+					IDiffNode node = getSubscriber().getDiff(resource);
+					if (node != null) {
+						if (node instanceof IThreeWayDiff) {
+							IThreeWayDiff twd = (IThreeWayDiff) node;
+							cvsDecoration.setDirty(twd.getDirection() == IThreeWayDiff.OUTGOING 
+								|| twd.getDirection() == IThreeWayDiff.CONFLICTING);
+						}
+					}
+				} catch (CoreException e) {
+					handleException(resource, e);
+				}
+				// Has a remote
+				//cvsDecoration.setHasRemote(CVSWorkspaceRoot.hasRemote(resource));
+			}
 			// Tag
 			CVSTag tag = getTagToShow(resource);
 			if (tag != null) {
@@ -236,8 +262,6 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 				}
 				cvsDecoration.setTag(name);
 			}
-			// Has a remote
-			cvsDecoration.setHasRemote(CVSWorkspaceRoot.hasRemote(resource));
 			// Is a new resource
 			if (store.getBoolean(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION)) {
 				if (cvsResource.exists()) {

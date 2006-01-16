@@ -1402,6 +1402,7 @@
    <extension
          point="org.eclipse.team.ui.teamDecorators">
       <teamDecorator
+            decoratedDirection="OUTGOING"
             decoratorId="org.eclipse.team.cvs.ui.decorator"
             repositoryId="org.eclipse.team.cvs.core.cvsnature"/>
    </extension>
