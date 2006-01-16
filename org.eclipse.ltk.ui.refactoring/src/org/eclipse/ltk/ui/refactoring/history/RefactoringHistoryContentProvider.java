@@ -143,7 +143,8 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 					}
 				}
 			}
-		}
+		} else if (element instanceof RefactoringHistory)
+			return getElements(element);
 		return NO_ELEMENTS;
 	}
 
@@ -155,7 +156,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 			if (fControlConfiguration.isTimeDisplayed())
 				return getRootElements();
 			else if (fRefactoringHistory != null && !fRefactoringHistory.isEmpty())
-				return new Object[] { new RefactoringHistoryCollection() };
+				return new Object[] { new RefactoringHistoryCollection()};
 		}
 		return NO_ELEMENTS;
 	}

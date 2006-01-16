@@ -95,7 +95,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 				 */
 				public final void checkStateChanged(final CheckStateChangedEvent event) {
 					updateCheckState(event.getElement(), event.getChecked());
-					handleCheckStateChanged(event);
+					handleCheckStateChanged();
 				}
 
 			});
@@ -230,7 +230,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			for (int index= 0; index < children.length; index++) {
 				updateCheckState(children[index]);
 			}
-			propagateCheckState(element, children);
+			if (children.length > 0)
+				propagateCheckState(element, children);
 		}
 
 		/**
@@ -486,11 +487,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Handles the check state changed event.
-	 * 
-	 * @param event
-	 *            the check state event
 	 */
-	protected void handleCheckStateChanged(final CheckStateChangedEvent event) {
+	protected void handleCheckStateChanged() {
 		final RefactoringDescriptorProxy[] proxies= getCheckedDescriptors();
 		final RefactoringDescriptorProxy[] total= RefactoringHistoryControl.this.getInput().getDescriptors();
 		fHistoryPane.setText(NLS.bind(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { getHistoryPaneText(), String.valueOf(proxies.length), String.valueOf(total.length)}));
@@ -533,7 +531,12 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		Assert.isNotNull(descriptors);
 		if (fHistoryViewer instanceof RefactoringHistoryTreeViewer) {
 			final RefactoringHistoryTreeViewer viewer= (RefactoringHistoryTreeViewer) fHistoryViewer;
-			viewer.setCheckedElements(descriptors);
+			final RefactoringHistoryNode[] nodes= new RefactoringHistoryNode[descriptors.length];
+			for (int index= 0; index < descriptors.length; index++)
+				nodes[index]= new RefactoringHistoryEntry(null, descriptors[index]);
+			viewer.setCheckedElements(nodes);
+			viewer.updateCheckState();
+			handleCheckStateChanged();
 		}
 	}
 
@@ -561,7 +564,11 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	public final void setSelectedDescriptors(final RefactoringDescriptorProxy[] descriptors) {
 		Assert.isNotNull(descriptors);
-		if (fHistoryViewer != null)
-			fHistoryViewer.setSelection(new StructuredSelection(descriptors));
+		if (fHistoryViewer != null) {
+			final RefactoringHistoryNode[] nodes= new RefactoringHistoryNode[descriptors.length];
+			for (int index= 0; index < descriptors.length; index++)
+				nodes[index]= new RefactoringHistoryEntry(null, descriptors[index]);
+			fHistoryViewer.setSelection(new StructuredSelection(nodes));
+		}
 	}
 }
