@@ -133,11 +133,15 @@ public interface IRefactoringHistoryService {
 	 *            the start time stamp, inclusive
 	 * @param end
 	 *            the end time stamp, inclusive
+	 * @param flags
+	 *            the refactoring descriptor flags which must be present in
+	 *            order to be returned in the refactoring history object, or
+	 *            <code>RefactoringDescriptor#NONE</code>
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
 	 * @return the project refactoring history
 	 */
-	public RefactoringHistory getProjectHistory(IProject project, long start, long end, IProgressMonitor monitor);
+	public RefactoringHistory getProjectHistory(IProject project, long start, long end, int flags, IProgressMonitor monitor);
 
 	/**
 	 * Returns the combined refactoring history for the specified projects.
@@ -167,11 +171,15 @@ public interface IRefactoringHistoryService {
 	 *            the start time stamp, inclusive
 	 * @param end
 	 *            the end time stamp, inclusive
+	 * @param flags
+	 *            the refactoring descriptor flags which must be present in
+	 *            order to be returned in the refactoring history object, or
+	 *            <code>RefactoringDescriptor#NONE</code>
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
 	 * @return the combined refactoring history
 	 */
-	public RefactoringHistory getRefactoringHistory(IProject[] projects, long start, long end, IProgressMonitor monitor);
+	public RefactoringHistory getRefactoringHistory(IProject[] projects, long start, long end, int flags, IProgressMonitor monitor);
 
 	/**
 	 * Returns the workspace refactoring history.
@@ -218,7 +226,7 @@ public interface IRefactoringHistoryService {
 	 * 
 	 * @param stream
 	 *            the input stream
-	 * @param filter
+	 * @param flags
 	 *            the refactoring descriptor flags to filter the refactoring
 	 *            descriptors
 	 * @return a refactoring history containing the filtered refactoring
@@ -243,7 +251,7 @@ public interface IRefactoringHistoryService {
 	 * @see IRefactoringCoreStatusCodes#UNSUPPORTED_REFACTORING_HISTORY_VERSION
 	 * @see IRefactoringCoreStatusCodes#MISSING_REFACTORING_HISTORY_VERSION
 	 */
-	public RefactoringHistory readRefactoringHistory(InputStream stream, int filter) throws CoreException;
+	public RefactoringHistory readRefactoringHistory(InputStream stream, int flags) throws CoreException;
 
 	/**
 	 * Removes the specified refactoring execution listener from this service.
@@ -304,7 +312,7 @@ public interface IRefactoringHistoryService {
 	 *            the refactoring descriptor proxies
 	 * @param stream
 	 *            the output stream
-	 * @param filter
+	 * @param flags
 	 *            the flags which must be present in order to be written to the
 	 *            output stream
 	 * @param monitor
@@ -326,5 +334,5 @@ public interface IRefactoringHistoryService {
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
 	 */
-	public void writeRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, OutputStream stream, int filter, IProgressMonitor monitor) throws CoreException;
+	public void writeRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, OutputStream stream, int flags, IProgressMonitor monitor) throws CoreException;
 }

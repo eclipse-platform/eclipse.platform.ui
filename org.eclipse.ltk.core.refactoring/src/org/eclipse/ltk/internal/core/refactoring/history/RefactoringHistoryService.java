@@ -662,17 +662,18 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 * {@inheritDoc}
 	 */
 	public RefactoringHistory getProjectHistory(final IProject project, IProgressMonitor monitor) {
-		return getProjectHistory(project, 0, Long.MAX_VALUE, monitor);
+		return getProjectHistory(project, 0, Long.MAX_VALUE, RefactoringDescriptor.NONE, monitor);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public RefactoringHistory getProjectHistory(final IProject project, final long start, final long end, IProgressMonitor monitor) {
+	public RefactoringHistory getProjectHistory(final IProject project, final long start, final long end, final int flags, IProgressMonitor monitor) {
 		Assert.isNotNull(project);
 		Assert.isTrue(project.exists());
 		Assert.isTrue(start >= 0);
 		Assert.isTrue(end >= 0);
+		Assert.isTrue(flags >= RefactoringDescriptor.NONE);
 		if (project.isOpen()) {
 			if (monitor == null)
 				monitor= new NullProgressMonitor();
@@ -698,16 +699,17 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 * {@inheritDoc}
 	 */
 	public RefactoringHistory getRefactoringHistory(final IProject[] projects, final IProgressMonitor monitor) {
-		return getRefactoringHistory(projects, 0, Long.MAX_VALUE, monitor);
+		return getRefactoringHistory(projects, 0, Long.MAX_VALUE, RefactoringDescriptor.NONE, monitor);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public RefactoringHistory getRefactoringHistory(final IProject[] projects, final long start, final long end, IProgressMonitor monitor) {
+	public RefactoringHistory getRefactoringHistory(final IProject[] projects, final long start, final long end, final int flags, IProgressMonitor monitor) {
 		Assert.isNotNull(projects);
 		Assert.isTrue(start >= 0);
 		Assert.isTrue(end >= start);
+		Assert.isTrue(flags >= RefactoringDescriptor.NONE);
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		try {
@@ -716,7 +718,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			for (int index= 0; index < projects.length; index++) {
 				final IProject project= projects[index];
 				if (project.isAccessible()) {
-					final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, new SubProgressMonitor(monitor, 1)).getDescriptors();
+					final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, flags, new SubProgressMonitor(monitor, 1)).getDescriptors();
 					for (int offset= 0; offset < proxies.length; offset++)
 						set.add(proxies[offset]);
 				}
@@ -740,7 +742,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 * {@inheritDoc}
 	 */
 	public RefactoringHistory getWorkspaceHistory(final long start, final long end, IProgressMonitor monitor) {
-		return getRefactoringHistory(ResourcesPlugin.getWorkspace().getRoot().getProjects(), start, end, monitor);
+		return getRefactoringHistory(ResourcesPlugin.getWorkspace().getRoot().getProjects(), start, end, RefactoringDescriptor.NONE, monitor);
 	}
 
 	/**
