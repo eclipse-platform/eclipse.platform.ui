@@ -10,10 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
+import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
@@ -28,21 +37,44 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  * Note: this class is not intended to be extended by clients.
  * </p>
  *
- * @TODO Make references to the corresponding core API
+ * @see ResourceChangeValidator
  * 
- * <p>
- * The API is experimental and might change before its final state.
- * </p>
  * @since 3.2
  */
 public class ResourceOperationChecker implements IConditionChecker {
 
+	private IResourceChangeDescriptionFactory fDeltaFactory;
+	
+	public ResourceOperationChecker() {
+		fDeltaFactory= ResourceChangeValidator.getValidator().createDeltaFactory();
+	}
+	
+	/**
+	 * Returns the delta factory to be used to record resource 
+	 * operations.
+	 * 
+	 * @return the delta factory
+	 */
+	public IResourceChangeDescriptionFactory getDeltaFactory() {
+		return fDeltaFactory;
+	}
+	
 	public RefactoringStatus check(IProgressMonitor monitor) throws CoreException {
-		return new RefactoringStatus();
+		IStatus status= ResourceChangeValidator.getValidator().validateChange(fDeltaFactory.getDelta());
+		return RefactoringStatus.create(status);
 	}
 
-	public IFile[] getChangedFiles() {
-		// TODO forward to delta when available
-		return new IFile[0];
+	/* package */ IFile[] getChangedFiles() throws CoreException {
+		IResourceDelta root= fDeltaFactory.getDelta();
+		final List result= new ArrayList();
+		root.accept(new IResourceDeltaVisitor() {
+			public boolean visit(IResourceDelta delta) throws CoreException {
+				if ((delta.getKind() & IResourceDelta.CHANGED) != 0 && delta.getResource().getType() == IResource.FILE) {
+					result.add(delta.getResource());
+				}
+				return true;
+			}
+		});
+		return (IFile[]) result.toArray(new IFile[result.size()]);
 	}
 }

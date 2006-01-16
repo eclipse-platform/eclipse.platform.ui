@@ -127,7 +127,7 @@ public class CheckConditionsContext {
 		return result;
 	}
 	
-	private void mergeResourceOperationAndValidateEdit() {
+	private void mergeResourceOperationAndValidateEdit() throws CoreException {
 		ValidateEditChecker validateEditChecker= (ValidateEditChecker) getChecker(ValidateEditChecker.class);
 		if (validateEditChecker == null)
 			return;

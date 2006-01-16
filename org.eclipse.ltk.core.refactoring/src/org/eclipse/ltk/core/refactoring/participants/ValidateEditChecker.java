@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
@@ -32,6 +33,14 @@ import org.eclipse.ltk.internal.core.refactoring.Resources;
  * if the files are in sync with the underlying files system.
  * Additionally <code>IWorkspace#validateEdit</code> is called for
  * all read-only resources.
+ * <p>
+ * Since 3.2 a {@link ResourceOperationChecker} exists. If clients
+ * add their changed files to the {@link ResourceOperationChecker}
+ * their is no need to add them to a validate edit checker as
+ * well. Files marked as changed in the resource operation checker
+ * will be automatically added to a validate edit checker (if one 
+ * exists).  
+ * </p>
  * <p> 
  * Note: this class is not intended to be extended by clients.
  * </p>
@@ -42,7 +51,7 @@ import org.eclipse.ltk.internal.core.refactoring.Resources;
  */
 public class ValidateEditChecker implements IConditionChecker {
 
-	private List fFiles= new ArrayList();
+	private Set fFiles= new HashSet();
 	private Object fContext;
 	
 	/**
