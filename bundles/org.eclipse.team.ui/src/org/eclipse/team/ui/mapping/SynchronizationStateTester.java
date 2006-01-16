@@ -82,10 +82,10 @@ public class SynchronizationStateTester {
 	/**
 	 * Create a tester that uses the workspace subscriber to
 	 * obtain the synchronization state of resources.
-	 * @see Team#getWorksaceSubscriber()
+	 * @see Team#getWorkspaceSubscriber()
 	 */
 	public SynchronizationStateTester() {
-		this(Team.getWorksaceSubscriber());
+		this(Team.getWorkspaceSubscriber());
 	}
 	
 	/**

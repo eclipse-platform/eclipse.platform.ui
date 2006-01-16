@@ -16,6 +16,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.*;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.core.TeamPlugin;
@@ -175,5 +176,12 @@ public class CVSTeamProviderType extends RepositoryProviderType {
 		}
         if (CVSProviderPlugin.getPlugin().isAutoshareOnImport())
             getAutoShareJob().share(project);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.RepositoryProviderType#getSubscriber()
+	 */
+	public Subscriber getSubscriber() {
+		return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
 	}
 }

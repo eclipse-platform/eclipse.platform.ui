@@ -203,31 +203,6 @@ public class WorkspaceSubscriber extends Subscriber implements ISubscriberChange
 		accept(new ResourceTraversal[] { new ResourceTraversal(resources, depth, IResource.NONE)}, visitor);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.subscribers.Subscriber#hasLocalChanges(org.eclipse.core.resources.mapping.ResourceTraversal[], org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public boolean hasLocalChanges(ResourceTraversal[] traversals, IProgressMonitor monitor) throws CoreException {
-		try {
-			List errors = new ArrayList();
-			Subscriber[] subscribers = getSubscribers();
-			monitor.beginTask(null, subscribers.length * 100);
-			for (int i = 0; i < subscribers.length; i++) {
-				Subscriber subscriber = subscribers[i];
-				try {
-					if (subscriber.hasLocalChanges(traversals, Policy.subMonitorFor(monitor, 100))) {
-						return true;
-					}
-				} catch (TeamException e) {
-					errors.add(e);
-				}
-			}
-			handleErrors((CoreException[]) errors.toArray(new CoreException[errors.size()]));
-		} finally {
-			monitor.done();
-		}
-		return false;
-	}
-	
 	public int getState(ResourceMapping mapping, int stateMask, IProgressMonitor monitor) throws CoreException {
 		int state = 0;
 		try {

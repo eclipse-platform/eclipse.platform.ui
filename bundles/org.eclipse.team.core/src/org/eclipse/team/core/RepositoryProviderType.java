@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.core.DefaultProjectSetCapability;
 import org.eclipse.team.internal.core.TeamPlugin;
 
@@ -183,5 +184,16 @@ public abstract class RepositoryProviderType {
 	 */
 	public void metaFilesDetected(IProject project, IContainer[] containers) {
 		// Do nothing by default
+	}
+	
+	/**
+	 * Return a {@link Subscriber} that describes the synchronization state
+	 * of the resources contained in the project associated with this 
+	 * provider type. By default, <code>null</code> is returned. Subclasses
+	 * may override.
+	 * @return a subscriber that provides resource synchronization state or <code>null</code>
+	 */
+	public Subscriber getSubscriber() {
+		return null;
 	}
 }

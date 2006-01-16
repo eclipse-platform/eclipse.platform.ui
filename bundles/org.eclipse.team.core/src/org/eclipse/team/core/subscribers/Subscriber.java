@@ -461,55 +461,6 @@ abstract public class Subscriber {
 	}
 	
 	/**
-	 * Convenience method that returns whether there are any local changes covered
-	 * by the given traversals. Clients could also get this information by visiting
-	 * the diffs returned from the subscriber but this method is provided so that sublcasses
-	 * have any opportunity to optimize this check for clients who are only looking for 
-	 * local changes. Locla changes can only exist if the subscriber is three-way.
-	 * Resources covered by the traversals are ignored in the following cases:
-	 * <ul>
-	 * <li>if they do not exist either in the workspace or in the corresponding
-	 * remote location</li>
-	 * <li>if the given resource is not supervised by this subscriber</li>
-	 * <li>if the given resource is a closed project (they are ineligible for
-	 * synchronization)</li>
-	 * </ul>
-	 * <p>
-	 * The default implementation uses the {@link #accept(ResourceTraversal[], IDiffVisitor)}
-	 * method to look for local changes. Subclasses may override.
-	 * </p>
-	 * @since 3.2
-	 * @param traversals the resource traversals
-	 * @param monitor a progress monitor or <code>null</code> if progress reporting is not required
-	 * @return whether there are any local changes covered
-	 * by the given traversals
-	 * @throws CoreException if errors occur
-	 */
-	public boolean hasLocalChanges(ResourceTraversal[] traversals, IProgressMonitor monitor) throws CoreException {
-		if (getResourceComparator().isThreeWay()) {
-			monitor = Policy.monitorFor(monitor);
-			final CoreException found = new CoreException(Status.OK_STATUS);
-			try {
-				accept(traversals, new IDiffVisitor() {
-					public boolean visit(IDiffNode delta) throws CoreException {
-						if (delta instanceof IThreeWayDiff) {
-							IThreeWayDiff twd = (IThreeWayDiff) delta;
-							if (twd.getLocalChange() != null && twd.getLocalChange().getKind() != IDiffNode.NO_CHANGE) {
-								throw found;
-							}
-						}
-						return true;
-					}
-				});
-			} catch (CoreException e) {
-				if (e == found)
-					return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Return the synchronization state of the given resource mapping.
 	 * Only return the portion of the synchronization state that matches
 	 * the provided stateMask. The synchronization state flags that are

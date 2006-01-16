@@ -806,11 +806,15 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	/**
 	 * Return a {@link Subscriber} that describes the synchronization state
 	 * of the resources contained in the project associated with this 
-	 * provider. By default, <code>null</code> is returned. Subclasses
-	 * may override.
+	 * provider. The subscriber is obtained from the {@link RepositoryProviderType}
+	 * associated with a provider and is thus shared for all providers of the
+	 * same type.
 	 * @return a subscriber that provides resource synchronization state or <code>null</code>
 	 */
-	public Subscriber getSubscriber() {
+	public final Subscriber getSubscriber() {
+		RepositoryProviderType type = RepositoryProviderType.getProviderType(getID());
+		if (type != null)
+			return type.getSubscriber();
 		return null;
 	}
 }	

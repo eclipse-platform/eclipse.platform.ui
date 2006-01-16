@@ -464,7 +464,7 @@ public final class Team {
      * 
      * @since 3.2
      */
-    public static Subscriber getWorksaceSubscriber() {
+    public static Subscriber getWorkspaceSubscriber() {
     	return WorkspaceSubscriber.getInstance();
     }
 }
