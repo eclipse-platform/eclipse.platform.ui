@@ -66,13 +66,12 @@ public final class GridLayoutFactory {
     }
     
     /**
-     * Copies an existing factory
+     * Creates a copy of the reciever.
      * 
-     * @param f factory to copy
-     * @return a copy of the argument
+     * @return a copy of the reciever
      */
-    public static GridLayoutFactory createFrom(GridLayoutFactory f) {
-    	return new GridLayoutFactory(f.create());
+    public GridLayoutFactory copy() {
+    	return new GridLayoutFactory(create());
     }
     
     /**

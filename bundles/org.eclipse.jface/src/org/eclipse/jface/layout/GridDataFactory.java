@@ -146,17 +146,6 @@ public final class GridDataFactory {
     public static GridDataFactory createFrom(GridData data) {
     	return new GridDataFactory(copyData(data));
     }
-
-    /**
-     * Creates a new GridDataFactory that creates copies of the given GridData
-     * by default.
-     * 
-     * @param data GridData to copy
-     * @return a new GridDataFactory that creates copies of the argument by default
-     */
-    public static GridDataFactory createFrom(GridDataFactory data) {
-    	return new GridDataFactory(data.create());
-    }
     
     /**
      * Creates a GridDataFactory initialized with defaults that will cause
@@ -369,6 +358,15 @@ public final class GridDataFactory {
         return copyData(data);
     }
 
+    /**
+     * Creates a copy of the reciever.
+     * 
+     * @return a copy of the reciever
+     */
+    public GridDataFactory copy() {
+    	return new GridDataFactory(create());
+    }
+    
     /**
      * Returns a copy of the given GridData 
      * 
