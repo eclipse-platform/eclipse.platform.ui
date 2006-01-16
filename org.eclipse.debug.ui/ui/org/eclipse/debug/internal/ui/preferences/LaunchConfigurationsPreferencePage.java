@@ -122,6 +122,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	private Composite createComposite(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout());
+		comp.setFont(parent.getFont());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		comp.setLayoutData(gd);
 		return comp;
@@ -166,6 +167,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		gd.widthHint = 350;
 		label.setLayoutData(gd);
 		label.setText(DebugPreferencesMessages.LaunchingPreferencePage_26);
+		label.setFont(parent.getFont());
 		fMigrateNow = SWTUtil.createPushButton(group, DebugPreferencesMessages.LaunchingPreferencePage_27, null);
 		gd = new GridData(SWT.BEGINNING);
 		gd.widthHint = 100;
@@ -216,6 +218,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		tviewer.setSorter(new WorkbenchViewerSorter());
 		tviewer.addFilter(new LaunchGroupFilter(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(DEBUG_LAUNCH_GROUP)));
 		tviewer.setInput(getLaunchConfigurationTypes());
+		fTable.setFont(parent.getFont());
 		return comp;
 	}
 	
@@ -234,6 +237,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		gd.verticalIndent = 0;
 		group.setLayoutData(gd);
 		group.setText(text);
+		group.setFont(parent.getFont());
 		return group;
 	}
 	

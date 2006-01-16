@@ -73,6 +73,7 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 	private Composite createComposite(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout());
+		comp.setFont(parent.getFont());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		comp.setLayoutData(gd);
 		return comp;
@@ -166,6 +167,7 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(gd);
 		group.setText(text);
+		group.setFont(parent.getFont());
 		return group;
 	}
 	
