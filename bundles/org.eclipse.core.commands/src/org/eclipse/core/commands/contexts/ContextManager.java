@@ -94,8 +94,10 @@ public final class ContextManager extends HandleObjectManager implements
 			} else {
 				definedHandleObjects.remove(context);
 			}
-			fireContextManagerChanged(new ContextManagerEvent(this, contextId,
-					contextIdAdded, false, null));
+			if (isListenerAttached()) {
+				fireContextManagerChanged(new ContextManagerEvent(this,
+						contextId, contextIdAdded, false, null));
+			}
 		}
 	}
 

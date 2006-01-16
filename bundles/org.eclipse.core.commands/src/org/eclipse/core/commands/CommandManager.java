@@ -326,8 +326,10 @@ public final class CommandManager extends HandleObjectManager implements
 			} else {
 				definedCategoryIds.remove(categoryId);
 			}
-			fireCommandManagerChanged(new CommandManagerEvent(this, null,
-					false, false, categoryId, categoryIdAdded, true));
+			if (isListenerAttached()) {
+				fireCommandManagerChanged(new CommandManagerEvent(this, null,
+						false, false, categoryId, categoryIdAdded, true));
+			}
 		}
 	}
 
@@ -346,8 +348,10 @@ public final class CommandManager extends HandleObjectManager implements
 			} else {
 				definedHandleObjects.remove(command);
 			}
-			fireCommandManagerChanged(new CommandManagerEvent(this, commandId,
-					commandIdAdded, true, null, false, false));
+			if (isListenerAttached()) {
+				fireCommandManagerChanged(new CommandManagerEvent(this,
+						commandId, commandIdAdded, true, null, false, false));
+			}
 		}
 	}
 
