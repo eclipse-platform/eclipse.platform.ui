@@ -137,7 +137,7 @@ public abstract class MarkerView extends TableView {
 		}
 
 		boolean buildDone = true;
-
+		
 		private Collection refreshes = new ArrayList();
 
 		private Collection adds = new ArrayList();
@@ -179,8 +179,7 @@ public abstract class MarkerView extends TableView {
 		 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
 		 */
 		public boolean shouldRun() {
-			//Don't run until the clipboard is created as it is the last widget
-			return clipboard != null && buildDone;
+			return buildDone;
 		}
 
 		/**
@@ -533,6 +532,11 @@ public abstract class MarkerView extends TableView {
 					ResourcesPlugin.FAMILY_AUTO_BUILD);
 		}
 		loadFiltersPreferences();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+				markerUpdateListener,
+				IResourceChangeEvent.POST_CHANGE
+						| IResourceChangeEvent.PRE_BUILD
+						| IResourceChangeEvent.POST_BUILD);
 
 	}
 
@@ -662,6 +666,8 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
+		
+		clipboard = new Clipboard(parent.getDisplay());
 		super.createPartControl(parent);
 
 		initDragAndDrop();
@@ -669,11 +675,6 @@ public abstract class MarkerView extends TableView {
 		getSite().getPage().addSelectionListener(focusListener);
 		focusSelectionChanged(getSite().getPage().getActivePart(), getSite()
 				.getPage().getSelection());
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-				markerUpdateListener,
-				IResourceChangeEvent.POST_CHANGE
-						| IResourceChangeEvent.PRE_BUILD
-						| IResourceChangeEvent.POST_BUILD);
 		PlatformUI.getWorkbench().getWorkingSetManager()
 				.addPropertyChangeListener(getWorkingSetListener());
 
@@ -690,12 +691,8 @@ public abstract class MarkerView extends TableView {
 				PlatformUI.getWorkbench().getHelpSystem().displayHelp(context);
 			}
 		});
-
-		//This is created last as the updates are blocked until it is
-		//created. If this is deleted be sure there is still a mechanism
-		//to block the updates.
-		//@see MarkerProcessJob#shouldRun
-		clipboard = new Clipboard(parent.getDisplay());
+		
+		
 	}
 
 	/*
