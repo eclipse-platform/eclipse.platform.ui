@@ -37,14 +37,14 @@ import org.eclipse.ui.handlers.IHandlerService;
  * popup can be dismissed in the same manor as all popup dialogs, but 
  * additionally allows users the option of specifying a command id that 
  * can be used to persist the contents of the dialog.
- * 
- * Client are expected to subclass this.
- * 
- * Note: This class subclasses PopupDialog which is currently
- * marked as experimental API. Users should therefore consider
+ * <p>
+ * Clients may subclass this.
+ * </p>
+ * <p>
+ * Note: This class subclasses {@link org.eclipse.jface.dialogs.PopupDialog}
+ * which is currently marked as experimental API. Users should therefore consider
  * this class to be experimental as well.
- * @see org.eclipse.jface.dialogs.PopupDialog
- * 
+ * <p>
  * @since 3.2
  */
 public abstract class DebugPopup extends PopupDialog {
