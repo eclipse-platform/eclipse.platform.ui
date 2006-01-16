@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,9 +54,11 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	 */
 	private final LockManager manager;
 	private final int number;
+
 	/**
 	 * Queue of semaphores for threads currently waiting
-	 * on the lock.
+	 * on the lock. This queue is not thread-safe, so access
+	 * to this queue must be synchronized on the lock instance.
 	 */
 	private final Queue operations = new Queue();
 
@@ -151,7 +153,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 			//hook granted immediate access
 			//remove semaphore for the lock request from the queue
 			//do not log in graph because this thread did not really get the lock
-			operations.remove(semaphore);
+			removeFromQueue(semaphore);
 			depth++;
 			manager.addLockThread(currentOperationThread, this);
 			return true;
@@ -174,9 +176,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 			depth++;
 			updateCurrentOperation();
 		} else {
-			//operation timed out
-			//remove request semaphore from queue and update graph
-			operations.remove(semaphore);
+			removeFromQueue(semaphore);
 			manager.removeLockWaitThread(Thread.currentThread(), this);
 		}
 		return success;
@@ -245,6 +245,15 @@ public class OrderedLock implements ILock, ISchedulingRule {
 			doRelease();
 		else
 			manager.removeLockThread(currentOperationThread, this);
+	}
+
+	/**
+	 * Removes a semaphore from the queue of waiting operations.
+	 * 
+	 * @param semaphore The semaphore to remove
+	 */
+	private synchronized void removeFromQueue(Semaphore semaphore) {
+		operations.remove(semaphore);
 	}
 
 	/**
