@@ -262,10 +262,13 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	 */
 	private void registerActionWithWorkbench(IAction action) {
 		ISynchronizePageSite site = configuration.getSite();
-		site.getActionBars().setGlobalActionHandler(action.getId(), action);
-		IKeyBindingService keyBindingService = site.getKeyBindingService();
-		if(keyBindingService != null)
-			keyBindingService.registerAction(action);
+		String id = action.getId();
+		if (id != null) {
+			site.getActionBars().setGlobalActionHandler(id, action);
+			IKeyBindingService keyBindingService = site.getKeyBindingService();
+			if(keyBindingService != null)
+				keyBindingService.registerAction(action);
+		}
 	}
 
 	/**
