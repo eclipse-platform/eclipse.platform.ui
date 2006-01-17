@@ -478,6 +478,13 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		if (!operation.canExecute()) {
 			return IOperationHistory.OPERATION_INVALID_STATUS;
 		}
+		
+		// check with the operation approvers
+		IStatus status = getExecuteApproval(operation, info);
+		if (!status.isOK()) {
+			// not approved.  No notifications are sent, just return the status.
+			return status;
+		}
 
 		/*
 		 * If we are in the middle of an open composite, then we will add this
@@ -503,7 +510,6 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		 */
 		if (!merging)
 			notifyAboutToExecute(operation);
-		IStatus status;
 		try {
 			status = operation.execute(monitor, info);
 		} catch (OperationCanceledException e) {
@@ -834,6 +840,35 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			}
 		}
 		return null;
+	}
+	
+	/*
+	 * Consult the IOperationApprovers to see if the proposed execution
+	 * should be allowed.
+	 * 
+	 * @since 3.2
+	 */
+	private IStatus getExecuteApproval(IUndoableOperation operation,
+			IAdaptable info) {
+
+		final Object[] approverArray = approvers.getListeners();
+
+		for (int i = 0; i < approverArray.length; i++) {
+			if (approverArray[i] instanceof IOperationApprover2) {
+				IOperationApprover2 approver = (IOperationApprover2)approverArray[i];
+				IStatus approval = approver.proceedExecuting(operation, this, info);
+				if (!approval.isOK()) {
+					if (DEBUG_OPERATION_HISTORY_APPROVAL) {
+						Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+								"Execute not approved by " + approver //$NON-NLS-1$
+										+ "for operation " + operation //$NON-NLS-1$
+										+ " with status " + approval); //$NON-NLS-1$
+					}
+					return approval;
+				}
+			}
+		}
+		return Status.OK_STATUS;
 	}
 
 	/*

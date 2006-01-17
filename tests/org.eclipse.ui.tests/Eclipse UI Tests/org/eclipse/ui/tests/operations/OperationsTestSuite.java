@@ -32,5 +32,6 @@ public class OperationsTestSuite extends TestSuite {
 		addTest(new TestSuite(OperationsAPITest.class));
 		addTest(new TestSuite(WorkbenchOperationHistoryTests.class));
 		addTest(new TestSuite(MultiThreadedOperationsTests.class));
+		addTest(new TestSuite(WorkbenchOperationStressTests.class));
 	}
 }

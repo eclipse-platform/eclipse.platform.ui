@@ -132,7 +132,7 @@ public interface IOperationHistory {
 	/**
 	 * <p>
 	 * Add the specified approver to the list of operation approvers consulted
-	 * by the operation history before an undo or redo is allowed to proceed.
+	 * by the operation history before an undo or redo is attempted.
 	 * </p>
 	 * 
 	 * @param approver
@@ -155,8 +155,8 @@ public interface IOperationHistory {
 	 * @param listener
 	 *            the IOperationHistoryListener to be added as a listener. Must
 	 *            not be <code>null</code>. If an attempt is made to register
-	 *            an instance which is already registered with this instance, this
-	 *            method has no effect.
+	 *            an instance which is already registered with this instance,
+	 *            this method has no effect.
 	 * 
 	 * @see org.eclipse.core.commands.operations.IOperationHistoryListener
 	 * @see org.eclipse.core.commands.operations.OperationHistoryEvent
@@ -257,9 +257,10 @@ public interface IOperationHistory {
 	 * Execute the specified operation and add it to the operations history if
 	 * successful. This method is used by clients who wish operation history
 	 * listeners to receive notifications before and after the execution of the
-	 * operation. Listeners will be notified before (
-	 * <code>ABOUT_TO_EXECUTE</code>) and after (<code>DONE</code> or
-	 * <code>OPERATION_NOT_OK</code>).
+	 * operation. Execution of the operation is subject to approval by any
+	 * registered {@link IOperationApprover2}. If execution is approved,
+	 * listeners will be notified before (<code>ABOUT_TO_EXECUTE</code>) and
+	 * after (<code>DONE</code> or <code>OPERATION_NOT_OK</code>).
 	 * </p>
 	 * <p>
 	 * If the operation successfully executes, an additional notification that
@@ -300,7 +301,8 @@ public interface IOperationHistory {
 	 * operation will not be added to the history. For all severities other than
 	 * <code>OK</code>, listeners will receive the
 	 * <code>OPERATION_NOT_OK</code> notification instead of the
-	 * <code>DONE</code> notification.
+	 * <code>DONE</code> notification if the execution was approved and
+	 * attempted.
 	 * </p>
 	 * 
 	 * @throws ExecutionException
@@ -439,7 +441,9 @@ public interface IOperationHistory {
 
 	/**
 	 * <p>
-	 * Redo the most recently undone operation in the given context
+	 * Redo the most recently undone operation in the given context. The redo of
+	 * the operation is subject to approval by any registered
+	 * {@link IOperationApprover} before it is attempted.
 	 * </p>
 	 * 
 	 * @param context
@@ -464,24 +468,28 @@ public interface IOperationHistory {
 	 * will receive the <code>REDONE</code> notification.
 	 * </p>
 	 * <p>
-	 * Other severity codes (<code>CANCEL</code>, <code>ERROR</code>, <code>INFO</code>,
-	 * etc.) are not specifically interpreted by the history.  The operation will remain
-	 * in the history and the returned status is simply passed back to the
-	 * caller. For all severities other than <code>OK</code>, listeners
-	 * will receive the <code>OPERATION_NOT_OK</code> notification
-	 * instead of the <code>REDONE</code> notification.
+	 * Other severity codes (<code>CANCEL</code>, <code>ERROR</code>,
+	 * <code>INFO</code>, etc.) are not specifically interpreted by the
+	 * history. The operation will remain in the history and the returned status
+	 * is simply passed back to the caller. For all severities other than
+	 * <code>OK</code>, listeners will receive the
+	 * <code>OPERATION_NOT_OK</code> notification instead of the
+	 * <code>REDONE</code> notification if the redo was approved and
+	 * attempted.
 	 * </p>
 	 * 
 	 * @throws ExecutionException
 	 *             if an exception occurred during redo.
-	 *
+	 * 
 	 */
 	IStatus redo(IUndoContext context, IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException;
 
 	/**
 	 * <p>
-	 * Redo the specified operation
+	 * Redo the specified operation. The redo of the operation is subject to
+	 * approval by any registered {@link IOperationApprover} before it is
+	 * attempted.
 	 * </p>
 	 * 
 	 * @param operation
@@ -510,10 +518,10 @@ public interface IOperationHistory {
 	 * Other severity codes (<code>CANCEL</code>, <code>ERROR</code>,
 	 * <code>INFO</code>, etc.) are not specifically interpreted by the
 	 * history. The operation will remain in the history and the returned status
-	 * is simply passed back to the caller. For all severities other than
-	 * <code>OK</code>, listeners will receive the
-	 * <code>OPERATION_NOT_OK</code> notification instead of the
-	 * <code>REDONE</code> notification.
+	 * is simply passed back to the caller. For all severities other than <code>OK</code>,
+	 * listeners will receive the <code>OPERATION_NOT_OK</code> notification
+	 * instead of the <code>REDONE</code> notification if the redo was
+	 * approved and attempted.
 	 * </p>
 	 * 
 	 * @throws ExecutionException
@@ -586,7 +594,9 @@ public interface IOperationHistory {
 
 	/**
 	 * <p>
-	 * Undo the most recently executed operation in the given context
+	 * Undo the most recently executed operation in the given context. The undo
+	 * of the operation is subject to approval by any registered
+	 * {@link IOperationApprover} before it is attempted.
 	 * </p>
 	 * 
 	 * @param context
@@ -612,12 +622,14 @@ public interface IOperationHistory {
 	 * will receive the <code>UNDONE</code> notification.
 	 * </p>
 	 * <p>
-	 * Other severity codes (<code>CANCEL</code>, <code>ERROR</code>, <code>INFO</code>,
-	 * etc.) are not specifically interpreted by the history.  The operation will remain
-	 * in the history and the returned status is simply passed back to the
-	 * caller. For all severities other than <code>OK</code>, listeners
-	 * will receive the <code>OPERATION_NOT_OK</code> notification
-	 * instead of the <code>UNDONE</code> notification.
+	 * Other severity codes (<code>CANCEL</code>, <code>ERROR</code>,
+	 * <code>INFO</code>, etc.) are not specifically interpreted by the
+	 * history. The operation will remain in the history and the returned status
+	 * is simply passed back to the caller. For all severities other than
+	 * <code>OK</code>, listeners will receive the
+	 * <code>OPERATION_NOT_OK</code> notification instead of the
+	 * <code>UNDONE</code> notification if the undo was approved and
+	 * attempted.
 	 * </p>
 	 * 
 	 * @throws ExecutionException
@@ -629,7 +641,9 @@ public interface IOperationHistory {
 
 	/**
 	 * <p>
-	 * Undo the specified operation
+	 * Undo the specified operation. The undo of the operation is subject to
+	 * approval by any registered {@link IOperationApprover} before it is
+	 * attempted.
 	 * </p>
 	 * 
 	 * @param operation
@@ -655,12 +669,14 @@ public interface IOperationHistory {
 	 * will receive the <code>UNDONE</code> notification.
 	 * </p>
 	 * <p>
-	 * Other severity codes (<code>CANCEL</code>, <code>ERROR</code>, <code>INFO</code>,
-	 * etc.) are not specifically interpreted by the history.  The operation will remain
-	 * in the history and the returned status is simply passed back to the
-	 * caller. For all severities other than <code>OK</code>, listeners
-	 * will receive the <code>OPERATION_NOT_OK</code> notification
-	 * instead of the <code>UNDONE</code> notification.
+	 * Other severity codes (<code>CANCEL</code>, <code>ERROR</code>,
+	 * <code>INFO</code>, etc.) are not specifically interpreted by the
+	 * history. The operation will remain in the history and the returned status
+	 * is simply passed back to the caller. For all severities other than
+	 * <code>OK</code>, listeners will receive the
+	 * <code>OPERATION_NOT_OK</code> notification instead of the
+	 * <code>UNDONE</code> notification if the undo was approved and
+	 * attempted.
 	 * </p>
 	 * 
 	 * @throws ExecutionException

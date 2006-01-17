@@ -16,6 +16,7 @@ import junit.framework.TestCase;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.ICompositeOperation;
+import org.eclipse.core.commands.operations.IOperationApprover2;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.IOperationApprover;
@@ -36,6 +37,9 @@ import org.eclipse.core.runtime.Status;
  * @since 3.1
  */
 public class OperationsAPITest extends TestCase {
+	
+	// number of operations to perform a stress test
+	static int STRESS_NUM = 5000;
 
 	ObjectUndoContext contextA, contextB, contextC, contextW;
 	IOperationHistory history;
@@ -573,5 +577,53 @@ public class OperationsAPITest extends TestCase {
 		op = history.getUndoOperation(contextA);
 		assertTrue("Local edit A should be original edit", op.getLabel().equals("op1a"));
 		
+	}
+	
+	public void testOperationApprover2() throws ExecutionException {
+		// clear out the history
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
+
+		history.addOperationApprover(new IOperationApprover2() {
+
+			public IStatus proceedRedoing(IUndoableOperation o, IOperationHistory h, IAdaptable a) {
+				return Status.OK_STATUS;
+			}
+			public IStatus proceedExecuting(IUndoableOperation o, IOperationHistory h, IAdaptable a) {
+				if (o == op6)
+					return Status.CANCEL_STATUS;
+				return Status.OK_STATUS;
+			}
+			public IStatus proceedUndoing(IUndoableOperation o, IOperationHistory h, IAdaptable a) {
+				return Status.OK_STATUS;
+			}
+		});
+		IStatus status = history.execute(op1, null, null);
+		assertTrue(status.isOK());
+		assertTrue(preExec == 1 && postExec == 1);
+		
+		status = history.execute(op6, null, null);
+		assertFalse(status.isOK());
+		// listener counts should not have changed
+		assertTrue(preExec == 1 && postExec == 1);
+	}
+	
+	public void testStressTestAPI() throws ExecutionException {
+		history.setLimit(contextA, STRESS_NUM);
+		for (int i=0; i < STRESS_NUM; i++) {
+			IUndoableOperation op = new TestOperation("test");
+			op.addContext(contextA);
+			if (i%3 == 0) {
+				op.addContext(contextB);
+			}
+			history.execute(op, null, null);
+		}
+		for (int i=0; i < STRESS_NUM; i++) {
+			if (i%2 == 0) {
+				history.undo(contextA, null, null);
+			}
+			if (i%5 == 0) {
+				history.redo(contextA, null, null);
+			}
+		}
 	}
 }
