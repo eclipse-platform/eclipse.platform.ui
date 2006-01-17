@@ -38,6 +38,14 @@
                 <xsd:extension base="string"/>
             </xsd:simpleContent>
         </xsd:complexType>
+    </xsd:element> 
+    
+    <xsd:element name="onCompletion">
+        <xsd:complexType>
+            <xsd:simpleContent>
+                <xsd:extension base="string"/>
+            </xsd:simpleContent>
+        </xsd:complexType>
     </xsd:element>
 
     <xsd:element name="item">
@@ -50,6 +58,7 @@
 		                <xsd:element ref="command"/>
 		                <xsd:element ref="perform-when"/>
 		            </xsd:choice>
+		            <xsd:element minOccurs="0" maxOccurs="1" ref="onCompletion"/>
 	            </xsd:sequence>
 	            <xsd:choice maxOccurs="unbounded" minOccurs="0">
 	                <xsd:element ref="subitem"/>

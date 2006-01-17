@@ -22,6 +22,7 @@ public class Item extends Intro implements IExecutableItem, IPerformWhenItem, IS
 	private PerformWhen performWhen;
 	
 	private ArrayList subItems;
+	private String completionMessage;
 
 	/**
 	 * Constructor for Item.
@@ -167,5 +168,13 @@ public class Item extends Intro implements IExecutableItem, IPerformWhenItem, IS
 
 	public void setExecutable(AbstractExecutable executable) {
 		this.executable = executable;	
+	}
+
+	public void setCompletionMessage(String message) {
+		this.completionMessage = message;	
+	}
+	
+	public String getCompletionMessage() {
+		return completionMessage;
 	}
 }

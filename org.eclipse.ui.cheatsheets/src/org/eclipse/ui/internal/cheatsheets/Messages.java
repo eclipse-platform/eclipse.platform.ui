@@ -15,7 +15,7 @@ import org.eclipse.osgi.util.NLS;
 public final class Messages extends NLS {
 
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.cheatsheets.Messages";//$NON-NLS-1$
-
+	
 	private Messages() {
 		// Do not instantiate
 	}
@@ -41,6 +41,8 @@ public final class Messages extends NLS {
 	public static String ERROR_CREATING_CLASS_FOR_ACTION;
 	public static String START_CHEATSHEET_TOOLTIP;
 	public static String RESTART_CHEATSHEET_TOOLTIP;
+	public static String ADVANCE_TASK_TOOLTIP;
+	public static String RETURN_TO_INTRO_TOOLTIP;
 	public static String HELP_BUTTON_TOOLTIP;
 	public static String ERROR_RUNNING_ACTION;
 	public static String ERROR_INVALID_CHEATSHEET_ID;
@@ -90,6 +92,8 @@ public final class Messages extends NLS {
 	public static String WARNING_PARSING_UNKNOWN_ATTRIBUTE;
 	public static String WARNING_PARSING_UNKNOWN_ELEMENT;
 	public static String WARNING_PARSING_DESCRIPTION_UNKNOWN_ELEMENT;
+	public static String WARNING_PARSING_ON_COMPLETION_UNKNOWN_ELEMENT;
+
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

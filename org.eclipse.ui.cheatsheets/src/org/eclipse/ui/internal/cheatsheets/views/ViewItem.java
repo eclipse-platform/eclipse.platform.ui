@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -57,11 +58,14 @@ public abstract class ViewItem {
 	private Composite bodyComp;
 
 	protected FormText bodyText;
+	protected FormText completionText;
 //	protected Label bodyText;
 	protected Composite bodyWrapperComposite;
 	protected Composite buttonComposite;
+	protected Composite completionComposite;
 
 	private boolean buttonExpanded = true;
+	private boolean completionMessageExpanded = false;
 	private Label checkDoneLabel;
 	private boolean completed = false;
 
@@ -258,6 +262,8 @@ public abstract class ViewItem {
 			bodyText.dispose();
 		if (buttonComposite != null)
 			buttonComposite.dispose();
+		if (completionComposite != null) 
+			completionComposite.dispose();
 		if (bodyComp != null)
 			bodyComp.dispose();
 		if (bodyWrapperComposite != null)
@@ -332,6 +338,10 @@ public abstract class ViewItem {
 	public boolean isExpanded() {
 		return mainItemComposite.isExpanded();
 	}
+	
+	public boolean isCompletionMessageExpanded() {
+	    return completionMessageExpanded;
+    }
 
 	/**
      * Returns whether or not cheat sheet viewer containing this item is in
@@ -381,8 +391,7 @@ public abstract class ViewItem {
 	/*package*/
 	void setAsCurrentActiveItem() {
 		setColorAsCurrent(true);
-		if (!buttonExpanded)
-			setButtonsExpanded();
+		setButtonsExpanded();
 		setExpanded();
 		setBold(true);
 		mainItemComposite.setFocus();
@@ -404,21 +413,21 @@ public abstract class ViewItem {
 
 	private void setBodyColor(Color color) {
 		mainItemComposite.setBackground(color);
-		bodyWrapperComposite.setBackground(color);
-
-		if (buttonComposite != null)
-			buttonComposite.setBackground(color);
-
-		Control[] bodyChildren = bodyWrapperComposite.getChildren();
-		for (int i = 0; i < bodyChildren.length; i++) {
-			bodyChildren[i].setBackground(color);
-		}
-
-		if (buttonComposite != null) {
-			buttonComposite.setBackground(color);
-			bodyChildren = buttonComposite.getChildren();
-			for (int i = 0; i < bodyChildren.length; i++) {
-				bodyChildren[i].setBackground(color);
+		setBackgroundColor(bodyWrapperComposite, color);
+		setBackgroundColor(buttonComposite, color);
+		setBackgroundColor(completionComposite, color);
+	}
+	
+	/*
+	 * Set the background color of this composite and its children.
+	 * If the composite is null do nothing.
+	 */
+	protected void setBackgroundColor(Composite composite, Color color) {
+		if (composite != null) {
+			composite.setBackground(color);
+			Control[] children = composite.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				children[i].setBackground(color);
 			}
 		}
 	}
@@ -449,7 +458,7 @@ public abstract class ViewItem {
 			}
 
 	}
-
+	
 	//expands the item
 	/*package*/
 	void setButtonsExpanded() {
@@ -463,6 +472,28 @@ public abstract class ViewItem {
 				FormToolkit.ensureVisible(getMainItemComposite());
 			}
 		}
+	}
+	
+	protected void setCompletionMessageExpanded(boolean isFinalItem) {
+		if (hasCompletionMessage()) {
+			if (completionComposite == null) {
+				createCompletionComposite(isFinalItem);
+			}
+			if (!completionMessageExpanded) {
+				completionComposite.setVisible(true);
+				completionMessageExpanded = true;
+			}
+		}
+	}
+	
+	abstract void createCompletionComposite(boolean isFinalItem);
+
+	protected void setCompletionMessageCollapsed() {
+		if (completionComposite != null)
+			if (completionMessageExpanded) {
+				completionComposite.setVisible(false);
+				completionMessageExpanded = false;
+			}
 	}
 
 	//collapses the item
@@ -490,7 +521,7 @@ public abstract class ViewItem {
 	//marks the item as complete.
 	/*package*/
 	void setComplete() {
-		completed = true;
+		completed = true;		
 		checkDoneLabel.setImage(getCompleteImage());
 
 		if(initialized) {
@@ -570,4 +601,7 @@ public abstract class ViewItem {
 		if (bodyText!=null && !bodyText.isDisposed())
 			bodyText.copy();
 	}
+	
+	abstract boolean hasCompletionMessage();
+
 }

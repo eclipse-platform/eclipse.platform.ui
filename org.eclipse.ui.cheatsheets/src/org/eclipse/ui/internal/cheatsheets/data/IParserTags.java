@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2004 IBM Corporation and others.
+ * Copyright (c) 2002, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,8 +121,10 @@ public interface IParserTags {
 	 */
 	public static final String PERFORMWHEN = "perform-when"; //$NON-NLS-1$
 	
-	public static final String COMMAND = "command";
-	public static final String SERIALIZATION = "serialization";
+	// Miscellaneous tags
+	public static final String COMMAND = "command"; //$NON-NLS-1$
+	public static final String SERIALIZATION = "serialization"; //$NON-NLS-1$
+	public static final String ON_COMPLETION = "onCompletion"; //$NON-NLS-1$
 
 	// Constants for re-escaping XML characters
 	public static final String LESS_THAN = "&lt;"; //$NON-NLS-1$

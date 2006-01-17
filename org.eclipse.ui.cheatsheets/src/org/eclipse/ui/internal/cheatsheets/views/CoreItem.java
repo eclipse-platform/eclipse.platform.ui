@@ -16,10 +16,17 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
@@ -34,6 +41,7 @@ import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.data.AbstractExecutable;
 import org.eclipse.ui.internal.cheatsheets.data.AbstractSubItem;
 import org.eclipse.ui.internal.cheatsheets.data.ConditionalSubItem;
+import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
 import org.eclipse.ui.internal.cheatsheets.data.RepeatedSubItem;
 import org.eclipse.ui.internal.cheatsheets.data.SubItem;
@@ -71,6 +79,7 @@ public class CoreItem extends ViewItem {
 		spacerData.widthHint = 16;
 		spacer.setLayoutData(spacerData);
 	}
+	
 
 	private void createButtons(AbstractExecutable executable) {
 		/*
@@ -353,9 +362,7 @@ public class CoreItem extends ViewItem {
 		}
 
 		if(refreshRequired) {
-			buttonComposite.layout();
-			getMainItemComposite().layout();
-			page.getForm().reflow(true);
+			refresh(buttonComposite);
 		}
 	}
 
@@ -382,9 +389,7 @@ public class CoreItem extends ViewItem {
 		createButtons(performExecutable);
 		
 		if(refreshRequired) {
-			buttonComposite.layout();
-			getMainItemComposite().layout();
-			page.getForm().reflow(true);
+			refresh(buttonComposite);
 		}
 	}
 
@@ -530,4 +535,82 @@ public class CoreItem extends ViewItem {
 			startButton.setToolTipText(Messages.PERFORM_TASK_TOOLTIP);
 		}
 	}
+
+	boolean hasCompletionMessage() {
+		return item.getCompletionMessage() != null;
+	}
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * Create a composite to hold the message defined in an onCompletion element
+	 * and a button to advance to the next step or return to the introduction if 
+	 * this is the last step.
+	 */
+	void createCompletionComposite(boolean isFinalItem) {
+		String completionMessage = item.getCompletionMessage();
+		if (completionMessage != null) {
+			Color backgroundColor = bodyWrapperComposite.getBackground();
+			completionComposite = page.getToolkit().createComposite(
+					bodyWrapperComposite);
+			GridLayout completionlayout = new GridLayout(2, false);
+			completionlayout.marginHeight = 2;
+			completionlayout.marginWidth = 2;
+			completionlayout.verticalSpacing = 2;
+
+			TableWrapData completionData = new TableWrapData(TableWrapData.FILL);
+
+			completionComposite.setLayout(completionlayout);
+			completionComposite.setLayoutData(completionData);
+			completionComposite.setBackground(backgroundColor);
+
+			Label completionLabel = page.getToolkit().createLabel(completionComposite,
+					completionMessage);
+			completionLabel.setBackground(backgroundColor);
+			final ImageHyperlink skipButton = createButton(
+					completionComposite,
+					getCompletionButtonIcon(isFinalItem),
+					this, 
+					backgroundColor, 
+					getCompletionButtonTooltip(isFinalItem));
+			page.getToolkit().adapt(skipButton, true, true);
+			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
+				public void linkActivated(HyperlinkEvent e) {
+					viewer.advanceItem(skipButton, true);
+				}
+			});
+			completionComposite.setVisible(false);
+			// The line below is necessary because without it the color of
+			// the composite containing the button does not get set
+			setBackgroundColor(completionComposite, backgroundColor);
+			refresh(completionComposite);
+		}
+	}
+
+	private Image getCompletionButtonIcon(boolean isFinalItem) {
+		if (isFinalItem) {
+			return CheatSheetPlugin
+			.getPlugin()
+			.getImage(
+					ICheatSheetResource.CHEATSHEET_RESTART);
+		}
+		return CheatSheetPlugin
+				.getPlugin()
+				.getImage(
+						ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE);
+	}
+	
+	private String getCompletionButtonTooltip(boolean isFinalItem) {
+		if (isFinalItem) {
+			return Messages.RETURN_TO_INTRO_TOOLTIP;
+		}
+		return Messages.ADVANCE_TASK_TOOLTIP;	
+	}
+	
+	private void refresh(Composite composite) {
+		composite.layout();
+		getMainItemComposite().layout();
+		page.getForm().reflow(true);
+	}
+		
 }

@@ -318,47 +318,8 @@ public class CheatSheetParser {
 		Node descriptionNode = findNode(startNode, IParserTags.DESCRIPTION);
 		
 		if(descriptionNode != null) {
-			NodeList nodes = descriptionNode.getChildNodes();
-			
-			StringBuffer text = new StringBuffer();
-			boolean containsMarkup = false;
-
-			for (int i = 0; i < nodes.getLength(); i++) {
-				Node node = nodes.item(i);
-				if(node.getNodeType() == Node.TEXT_NODE) {
-					text.append(node.getNodeValue());
-				} else if(node.getNodeType() == Node.ELEMENT_NODE) {
-					// handle <b></b> and <br/>
-					if(node.getNodeName().equals(IParserTags.BOLD)) {
-						containsMarkup = true;
-						text.append(IParserTags.BOLD_START_TAG);
-						text.append(node.getFirstChild().getNodeValue());
-						text.append(IParserTags.BOLD_END_TAG);
-					} else if(node.getNodeName().equals(IParserTags.BREAK)) {
-						containsMarkup = true;
-								
-										
-							
-						text.append(IParserTags.BREAK_TAG);
-					} else {
-						Node parentNode = startNode;
-						if( startNode.getNodeName().equals(IParserTags.DESCRIPTION) ) {
-							parentNode = startNode.getParentNode();
-						}
-						String message = NLS.bind(Messages.WARNING_PARSING_DESCRIPTION_UNKNOWN_ELEMENT, (new Object[] {parentNode.getNodeName(), node.getNodeName()}));
-						logMessage(IStatus.WARNING, false, message, null, null);
-					}
-				}
-			}
-
-			if(containsMarkup) {
-				text = escapeXMLCharacters(text);
-				text.insert(0, IParserTags.FORM_START_TAG);
-				text.append(IParserTags.FORM_END_TAG);
-			}
-
-			// Remove the new line, form feed and tab chars
-			item.setDescription(text.toString().trim());
+			String text = handleMarkedUpText(descriptionNode, startNode, IParserTags.DESCRIPTION);
+			item.setDescription(text);
 		} else {
 			Node parentNode = startNode;
 			if( startNode.getNodeName().equals(IParserTags.DESCRIPTION) ) {
@@ -367,6 +328,65 @@ public class CheatSheetParser {
 			String message = NLS.bind(Messages.ERROR_PARSING_NO_DESCRIPTION, (new Object[] {parentNode.getNodeName()}));
 			throw new CheatSheetParserException(message);
 		}
+	}
+
+	private String handleMarkedUpText(Node nodeContainingText, Node startNode, String nodeName ) {
+		NodeList nodes = nodeContainingText.getChildNodes();	
+		StringBuffer text = new StringBuffer();
+		
+		boolean containsMarkup = false;
+
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node node = nodes.item(i);
+			if(node.getNodeType() == Node.TEXT_NODE) {
+				text.append(node.getNodeValue());
+			} else if(node.getNodeType() == Node.ELEMENT_NODE) {
+				// handle <b></b> and <br/>
+				if(node.getNodeName().equals(IParserTags.BOLD)) {
+					containsMarkup = true;
+					text.append(IParserTags.BOLD_START_TAG);
+					text.append(node.getFirstChild().getNodeValue());
+					text.append(IParserTags.BOLD_END_TAG);
+				} else if(node.getNodeName().equals(IParserTags.BREAK)) {
+					containsMarkup = true;	
+					text.append(IParserTags.BREAK_TAG);
+				} else {
+					warnUnknownMarkupElement(startNode, nodeName, node);
+				}
+			}
+		}
+
+		if(containsMarkup) {
+			text = escapeXMLCharacters(text);
+			text.insert(0, IParserTags.FORM_START_TAG);
+			text.append(IParserTags.FORM_END_TAG);
+		}
+
+		// Remove the new line, form feed and tab chars
+		return text.toString().trim();
+	}
+
+	/*
+	 * Write a warning to the log
+	 */
+	private void warnUnknownMarkupElement(Node startNode, String nodeName, Node node) {
+		Node parentNode = startNode;
+		if( startNode.getNodeName().equals(nodeName) ) {
+			parentNode = startNode.getParentNode();
+		}
+		String message;
+		if (nodeName == IParserTags.DESCRIPTION) {
+		    message = NLS.bind(Messages.WARNING_PARSING_DESCRIPTION_UNKNOWN_ELEMENT, (new Object[] {parentNode.getNodeName(), node.getNodeName()}));
+		} else {
+			message = NLS.bind(Messages.WARNING_PARSING_ON_COMPLETION_UNKNOWN_ELEMENT, (new Object[] {parentNode.getNodeName(), node.getNodeName()}));
+		}
+		logMessage(IStatus.WARNING, false, message, null, null);
+
+	}
+	
+	private void handleOnCompletion(Item item, Node onCompletionNode) {
+		String text = handleMarkedUpText(onCompletionNode, onCompletionNode, IParserTags.ON_COMPLETION);
+		item.setCompletionMessage(text);
 	}
 	
 	private void handleIntro(CheatSheet cheatSheet, Document document) throws CheatSheetParserException {
@@ -440,6 +460,8 @@ public class CheatSheetParser {
 			} else if(node.getNodeName().equals(IParserTags.DESCRIPTION)) {
 				description = true;
 				handleDescription(item, node);
+			} else if(node.getNodeName().equals(IParserTags.ON_COMPLETION)) {
+				handleOnCompletion(item, node);
 			} else if(node.getNodeName().equals(IParserTags.SUBITEM)) {
 				handleSubItem(item, node);
 			} else if(node.getNodeName().equals(IParserTags.CONDITIONALSUBITEM)) {

@@ -164,9 +164,25 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		saveCurrentSheet();
 	}
 
-	/*package*/ void advanceItem(ImageHyperlink link, boolean markAsCompleted) {
+	/*package*/ 
+	/*
+	 * This function can do one of three things
+	 * 1. If this item has a completion message which has not been displayed, display it
+	 * 2. Otherwise if this is the final item return to the introduction
+	 * 3. If neither condition 1 or 2 is satisfied move to the next item
+	 */
+	void advanceItem(ImageHyperlink link, boolean markAsCompleted) {
 		currentItem = (ViewItem) link.getData();
 		int indexNextItem = getIndexOfItem(currentItem) +1;
+		boolean isFinalItem = indexNextItem >= viewItemList.size();
+		
+		if (markAsCompleted 
+				&& currentItem.hasCompletionMessage() 
+				&& !currentItem.isCompletionMessageExpanded()) {
+			currentItem.setCompletionMessageExpanded(isFinalItem);
+			currentItem.setComplete();
+			return;
+		}
 
 		if (indexNextItem < currentItemNum) {
 			ViewItem vi = getViewItemAtIndex(currentItemNum);
@@ -177,7 +193,9 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			currentItem.setAsNormalCollapsed();
 			//set that item as complete.
 			if (markAsCompleted) {
-				currentItem.setComplete();
+				if (!currentItem.isCompleted()) {
+				    currentItem.setComplete();
+				}
 				/* LP-item event */
 				// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_COMPLETED, currentItem);
 				// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_DEACTIVATED, currentItem);
@@ -188,7 +206,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 				// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_DEACTIVATED, currentItem);
 			}
 		}
-		if (indexNextItem < viewItemList.size()) {
+		if (!isFinalItem) {
 			ViewItem nextItem = getViewItemAtIndex(indexNextItem);
 			currentItemNum = indexNextItem;
 			if (nextItem != null) {
@@ -350,19 +368,20 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 						}
 					}
 					if (expandedStatesList.contains(Integer.toString(i))) {
-						if (i <= currentItemNum) {
-							item.setButtonsExpanded();
-						} else {
-							item.setButtonsCollapsed();
-						}
 						item.setExpanded();
 					} else {
 						item.setCollapsed();
-						if (i > currentItemNum) {
-							item.setButtonsCollapsed();
-						} else {
-							item.setButtonsExpanded();
-						}
+					}
+					if (i > currentItemNum) {
+						item.setButtonsCollapsed();
+						item.setCompletionMessageCollapsed();
+					} else {
+						item.setButtonsExpanded();
+						if (i >currentItemNum || item.isCompleted()) {
+						    item.setCompletionMessageExpanded(i + 1 >= viewItemList.size());
+					    } else {
+							item.setCompletionMessageCollapsed();
+					    }
 					}
 					if (expandRestoreList.contains(Integer.toString(i))) {
 						item.setCollapsed();
@@ -372,18 +391,21 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 						StringTokenizer st = new StringTokenizer(subItemNumbers, ","); //$NON-NLS-1$
 						if (item instanceof CoreItem) {
 							CoreItem coreitemws = (CoreItem) item;
-							while (st.hasMoreTokens()) {
-								String token = st.nextToken();
-								((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).setCompleted(true);
-								((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).getIconLabel().setImage(item.getCompleteImage());
-								ArrayList l = coreitemws.getListOfSubItemCompositeHolders();
-								SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(Integer.parseInt(token));
-								if (s != null && s.getStartButton() != null) {
-									s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));
-									s.getStartButton().setToolTipText(Messages.RESTART_TASK_TOOLTIP);
+							ArrayList subItemCompositeHolders = coreitemws.getListOfSubItemCompositeHolders();
+		                    if (subItemCompositeHolders != null) {
+								while (st.hasMoreTokens()) {
+									String token = st.nextToken();
+									((SubItemCompositeHolder) subItemCompositeHolders.get(Integer.parseInt(token))).setCompleted(true);
+									((SubItemCompositeHolder) subItemCompositeHolders.get(Integer.parseInt(token))).getIconLabel().setImage(item.getCompleteImage());
+									ArrayList l = subItemCompositeHolders;
+									SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(Integer.parseInt(token));
+									if (s != null && s.getStartButton() != null) {
+										s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));
+										s.getStartButton().setToolTipText(Messages.RESTART_TASK_TOOLTIP);
+									}
+		
 								}
-	
-							}
+		                    }
 						}
 					}
 					if (skippedSubItemsItemList.contains(Integer.toString(i))) {
@@ -504,6 +526,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		for (Iterator iter = viewItemList.listIterator(1); iter.hasNext();) {
 			ViewItem item = (ViewItem) iter.next();
 			item.setButtonsCollapsed();
+			item.setCompletionMessageCollapsed();
 		}
 	}
 

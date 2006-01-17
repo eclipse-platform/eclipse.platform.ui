@@ -73,4 +73,12 @@ public class IntroItem extends ViewItem {
 		});
 	}
 
+	boolean hasCompletionMessage() {
+		return false;
+	}
+
+	void createCompletionComposite(boolean isFinalItem) {
+		// Not called	
+	}
+
 }
