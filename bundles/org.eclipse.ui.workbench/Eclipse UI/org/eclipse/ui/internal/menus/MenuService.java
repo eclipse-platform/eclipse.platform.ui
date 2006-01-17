@@ -20,7 +20,7 @@ import org.eclipse.jface.menus.SActionSet;
 import org.eclipse.jface.menus.SGroup;
 import org.eclipse.jface.menus.SItem;
 import org.eclipse.jface.menus.SMenu;
-import org.eclipse.jface.menus.SMenuLayout;
+import org.eclipse.jface.menus.SPartMenuLayout;
 import org.eclipse.jface.menus.SMenuManager;
 import org.eclipse.jface.menus.SWidget;
 import org.eclipse.ui.ISourceProvider;
@@ -132,7 +132,7 @@ public final class MenuService implements IMenuService {
 		return menuManager.getItem(itemId);
 	}
 
-	public final SMenuLayout getLayout() {
+	public final SPartMenuLayout getLayout() {
 		return menuManager.getLayout();
 	}
 
