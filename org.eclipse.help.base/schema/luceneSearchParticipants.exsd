@@ -196,8 +196,6 @@ Search participants are associated with the plug-in the extension appears in. In
       </appInfo>
       <documentation>
          The supplied search participant class must extend the &lt;samp&gt;org.eclipse.help.search.LuceneSearchParticipant&lt;/samp&gt; abstract class.
-&lt;p&gt;
-[Add blurb about XHTML participant]
       </documentation>
    </annotation>
 
@@ -206,7 +204,7 @@ Search participants are associated with the plug-in the extension appears in. In
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         Help system provides search participant for XHTML files (xhtml extension).
+         Help system provides search participant for XHTML files (xhtml extension). Plug-ins that have dynamic XHTML documents as part of TOC must bind to this participant using &lt;code&gt;binding&lt;/code&gt; element and &lt;code&gt;org.eclipse.help.base.xhtml&lt;/code&gt; as the target participant id.
       </documentation>
    </annotation>
 

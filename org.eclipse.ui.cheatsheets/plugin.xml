@@ -73,7 +73,7 @@
       <searchParticipant
             icon="icons/obj16/cheatsheet_obj.gif"
             id="org.eclipse.ui.cheatsheets"
-            name="Cheet Sheets"
+            name="%searchParticipant.name"
             participant="org.eclipse.ui.internal.cheatsheets.CheatsheetSearchParticipant"/>
    </extension>
 </plugin>
