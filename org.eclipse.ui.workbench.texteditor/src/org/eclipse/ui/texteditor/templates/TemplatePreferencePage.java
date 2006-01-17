@@ -675,7 +675,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 	private void export(TemplatePersistenceData[] templates) {
 		FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
-		dialog.setText(NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_title, new Integer(templates.length)));
+		dialog.setText(TextEditorTemplateMessages.TemplatePreferencePage_export_title);
 		dialog.setFilterExtensions(new String[] {TextEditorTemplateMessages.TemplatePreferencePage_export_extension});
 		dialog.setFileName(TextEditorTemplateMessages.TemplatePreferencePage_export_filename);
 		String path= dialog.open();
