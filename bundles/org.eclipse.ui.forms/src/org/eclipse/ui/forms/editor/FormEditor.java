@@ -12,17 +12,27 @@ package org.eclipse.ui.forms.editor;
 
 import java.util.Vector;
 
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorActionBarContributor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
+import org.eclipse.ui.part.MultiPageEditorPart;
+import org.eclipse.ui.part.MultiPageSelectionProvider;
 
 /**
  * This class forms a base of multi-page form editors that typically use one or
@@ -129,8 +139,16 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 	 * @see #addPages
 	 */
 	protected void createPages() {
-		toolkit = createToolkit(getContainer().getDisplay());
 		addPages();
+	}
+	
+	/*
+	 * @see org.eclipse.ui.part.MultiPageEditorPart#createPageContainer(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Composite createPageContainer(Composite parent) {
+		parent = super.createPageContainer(parent);
+		toolkit = createToolkit(parent.getDisplay());
+		return parent;
 	}
 
 	/**
