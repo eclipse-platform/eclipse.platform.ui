@@ -119,6 +119,11 @@ The following predefined actions are included in the intro framework:
 no parameters required<br>
 <br>
 
+<b>execute</b> - executes the specified command.  See the <code>serialize()</code> method on <code>org.eclipse.core.command.ParameterizedCommand</code> for details of the command serialization format. Since 3.2.<br>
+<i>command</i> - a serialized <code>ParameterizedCommand</code><br>
+<i>standby (optional) = ("true" | "false") "false"</i> - indicate whether to set the intro into standby mode after executing the command<br>
+<br>
+
 <b>navigate</b> - navigate through the intro pages in a given direction or return to the home page<br>
 <i>direction = ("backward" | "forward" | "home")</i> - specifies the direction to navigate<br>
 <br>

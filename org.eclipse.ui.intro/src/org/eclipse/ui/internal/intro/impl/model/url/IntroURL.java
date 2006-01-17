@@ -16,6 +16,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.Geometry;
@@ -24,9 +26,11 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.RectangleAnimation;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
@@ -83,6 +87,7 @@ public class IntroURL implements IIntroURL {
     public static final String SHOW_MESSAGE = "showMessage"; //$NON-NLS-1$
     public static final String NAVIGATE = "navigate"; //$NON-NLS-1$
     public static final String SWITCH_TO_LAUNCH_BAR = "switchToLaunchBar"; //$NON-NLS-1$
+    public static final String EXECUTE = "execute"; //$NON-NLS-1$
 
     /**
      * Constants that represent valid action keys.
@@ -99,6 +104,7 @@ public class IntroURL implements IIntroURL {
     public static final String KEY_EMBED = "embed"; //$NON-NLS-1$
     public static final String KEY_EMBED_TARGET = "embedTarget"; //$NON-NLS-1$
     public static final String KEY_DECODE = "decode"; //$NON-NLS-1$
+    public static final String KEY_COMAND = "command"; //$NON-NLS-1$
 
 
     public static final String VALUE_BACKWARD = "backward"; //$NON-NLS-1$
@@ -185,6 +191,10 @@ public class IntroURL implements IIntroURL {
             // the parameters and the standby state.
             return runAction(getParameter(KEY_PLUGIN_ID),
                 getParameter(KEY_CLASS), parameters, getParameter(KEY_STANDBY));
+        
+        else if (action.equals(EXECUTE))
+			// execute a serialized command
+			return executeCommand(getParameter(KEY_COMAND), getParameter(KEY_STANDBY));
 
         else if (action.equals(SHOW_PAGE))
             // display an Intro Page.
@@ -297,6 +307,44 @@ public class IntroURL implements IIntroURL {
             return false;
         }
     }
+    
+    /**
+	 * Executes a serialized <code>ParameterizedCommand</code>. Uses
+	 * {@link ICommandService#deserialize(String)} to convert the <code>command</code> argument
+	 * into the parameterized command.
+	 */
+	private boolean executeCommand(String command, String standbyState) {
+		ICommandService commandService = getCommandService();
+		if (commandService == null) {
+			Log.error("Could not get ICommandService while trying to execute: " + command, null); //$NON-NLS-1$
+			return false;
+		}
+
+		try {
+			ParameterizedCommand pCommand = commandService.deserialize(command);
+			pCommand.executeWithChecks(null, null);
+
+			// Executed command successfully. Now set intro standby if needed.
+			if (standbyState == null)
+				return true;
+			return setStandbyState(standbyState);
+		} catch (CommandException ex) {
+			Log.error("Could not execute command: " + command, ex); //$NON-NLS-1$
+			return false;
+		}
+	}
+    
+    private ICommandService getCommandService() {
+		IWorkbench wb =	PlatformUI.getWorkbench(); 
+		if (wb != null) {
+			Object serviceObject = wb.getAdapter(ICommandService.class);
+		    if (serviceObject != null) {
+			    ICommandService service = (ICommandService)serviceObject;
+			    return service;
+		    }
+		}
+		return null;
+	}
 
 
     /**
