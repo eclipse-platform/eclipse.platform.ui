@@ -36,7 +36,7 @@ import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Combo;
 
-public class ReadOnlyComboScenarios extends ScenariosTestCase {
+public class ComboScenarios extends ScenariosTestCase {
 
 	protected ComboViewer cviewer = null;
 
@@ -448,6 +448,50 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 
 	}
 
+	/**
+	 * This scenario tests a simple SWT CCombo that is bound to a list of
+	 * Country objects. The Country object's name property is listed in the
+	 * Combo.
+	 * 
+	 * The Combo's selection is bounded to the Country property of an Account.
+	 */
+	public void test_WCombo_SWTCCombo() {
+
+		// Create a list of Strings for the countries
+		List list = new ArrayList();
+		for (int i = 0; i < catalog.getAccounts().length; i++)
+			list.add(catalog.getAccounts()[i].getCountry());
+
+		CCombo ccombo = new CCombo(getComposite(), SWT.READ_ONLY
+				| SWT.DROP_DOWN);
+
+		// Bind the combo's content to that of the String based list
+		getDbc().bind(ccombo, new Property(list, null), null);
+		assertEquals(Arrays.asList(ccombo.getItems()), list);
+
+		Account account = (Account) catalog.getAccounts()[0];
+
+		// simple Combo's selection bound to the Account's country property
+		getDbc().bind(
+				new Property(ccombo, SWTProperties.SELECTION),
+				new Property(account, "country"), null);
+
+		// Drive the combo selection
+		String selection = (String) list.get(2);
+		ccombo.setText(selection); // this should drive the selection
+		assertEquals(account.getCountry(), selection);
+		
+		selection = (String) list.get(1);
+		account.setCountry(selection);
+		assertEquals(selection, ccombo.getItem(ccombo.getSelectionIndex()));
+		assertEquals(selection, ccombo.getText());
+		
+		selection = "country not in list";
+		account.setCountry(selection);
+		assertEquals(-1, ccombo.getSelectionIndex());
+		assertEquals(selection, ccombo.getText());
+	}
+	
 	/**
 	 * This scenario tests a simple SWT CCombo that is bound to a list of
 	 * Country objects. The Country object's name property is listed in the

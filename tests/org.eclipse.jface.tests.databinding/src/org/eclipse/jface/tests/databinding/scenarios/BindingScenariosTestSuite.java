@@ -64,7 +64,7 @@ public class BindingScenariosTestSuite extends TestSuite {
 		addTestSuite(CustomScenarios.class);
 		addTestSuite(CustomConverterScenarios.class);
 		addTestSuite(MasterDetailScenarios.class);
-		addTestSuite(ReadOnlyComboScenarios.class);
+		addTestSuite(ComboScenarios.class);
 		addTestSuite(TableScenarios.class);
 		addTestSuite(TreeScenarios.class);
 		// Test each of the basic SWT controls

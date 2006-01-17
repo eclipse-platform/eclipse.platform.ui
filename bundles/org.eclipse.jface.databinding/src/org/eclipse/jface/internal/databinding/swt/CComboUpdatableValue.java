@@ -79,7 +79,11 @@ public class CComboUpdatableValue extends UpdatableValue {
 									break;
 								}
 							}
-							ccombo.select(index); // -1 will not "unselect"
+							if (index == -1) {
+								ccombo.setText((String) value);
+							} else {
+								ccombo.select(index); // -1 will not "unselect"
+							}
 						}
 					}
 				} finally {
