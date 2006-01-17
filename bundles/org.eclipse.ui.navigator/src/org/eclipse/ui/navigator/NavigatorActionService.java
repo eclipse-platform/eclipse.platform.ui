@@ -29,7 +29,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.navigator.internal.NavigatorContentService;
@@ -51,17 +50,17 @@ import org.eclipse.ui.navigator.internal.extensions.SkeletonActionProvider;
  * 'allowsPlatformContributions' attribute. "Platform Contributions" are menu
  * items that are added through the <b>org.eclipse.ui.popupMenus</b> extension
  * point.
- * </p>  
+ * </p>
  * <p>
- * A {@link CommonActionProvider} has opportunities to contribute to the
- * context menu and {@link org.eclipse.ui.IActionBars} whenever the selection in
- * the viewer changes. Action Providers are selected based on the enablement
+ * A {@link CommonActionProvider} has opportunities to contribute to the context
+ * menu and {@link org.eclipse.ui.IActionBars} whenever the selection in the
+ * viewer changes. Action Providers are selected based on the enablement
  * expressions of their associated content extension or their own enablement
- * expression if it is declared as a top-level &lt;actionProvider /&gt; element (of the
- * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point). See the schema
- * documentation of <b>org.eclipse.ui.navigator.navigatorContent</b> for more
- * information on how to specify an Action Provider.
- * </p> 
+ * expression if it is declared as a top-level &lt;actionProvider /&gt; element
+ * (of the <b>org.eclipse.ui.navigator.navigatorContent</b> extension point).
+ * See the schema documentation of <b>org.eclipse.ui.navigator.navigatorContent</b>
+ * for more information on how to specify an Action Provider.
+ * </p>
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
@@ -89,7 +88,7 @@ public final class NavigatorActionService extends ActionGroup implements
 			new Separator(ICommonMenuConstants.GROUP_ADDITIONS),
 			new Separator(ICommonMenuConstants.GROUP_PROPERTIES) };
 
-	private final IViewPart viewPart;
+	private final ICommonViewerSite commonViewerSite;
 
 	private final StructuredViewer structuredViewer;
 
@@ -111,10 +110,9 @@ public final class NavigatorActionService extends ActionGroup implements
 	private boolean disposed = false;
 
 	/**
-	 * 
-	 * @param aViewPart
-	 *            The associated IViewPart (for the IActionBars). <b>May NOT be
-	 *            null.</b>
+	 * @param aCommonViewerSite
+	 *            A site that provides information about the context for
+	 *            extensions.
 	 * @param aStructuredViewer
 	 *            The associated StructuredViewer. Used to initialize
 	 *            extensions. <b>May NOT be null.</b>
@@ -123,15 +121,15 @@ public final class NavigatorActionService extends ActionGroup implements
 	 *            coordinate behavior with content extensions -- either nested
 	 *            or top-level action providers). <b>May NOT be null.</b>
 	 */
-	public NavigatorActionService(IViewPart aViewPart,
+	public NavigatorActionService(ICommonViewerSite aCommonViewerSite,
 			StructuredViewer aStructuredViewer,
 			INavigatorContentService aContentService) {
 		super();
-		Assert.isNotNull(aViewPart);
+		Assert.isNotNull(aCommonViewerSite);
 		Assert.isNotNull(aStructuredViewer);
 		Assert.isNotNull(aContentService);
 
-		viewPart = aViewPart;
+		commonViewerSite = aCommonViewerSite;
 		contentService = (NavigatorContentService) aContentService;
 		structuredViewer = aStructuredViewer;
 		viewerDescriptor = contentService.getViewerDescriptor();
@@ -167,9 +165,9 @@ public final class NavigatorActionService extends ActionGroup implements
 		 */
 		if (force
 				|| viewerDescriptor.allowsPlatformContributionsToContextMenu())
-			viewPart.getViewSite().registerContextMenu(
-					contentService.getViewerDescriptor().getPopupMenuId(),
-					menu, aSelectionProvider);
+			commonViewerSite.registerContextMenu(contentService
+					.getViewerDescriptor().getPopupMenuId(), menu,
+					aSelectionProvider);
 
 	}
 
@@ -378,13 +376,12 @@ public final class NavigatorActionService extends ActionGroup implements
 		if (anActionProvider != null
 				&& anActionProvider != SkeletonActionProvider.INSTANCE) {
 			CommonActionProviderConfig configuration = new CommonActionProviderConfig(
-					id, viewPart, contentService, structuredViewer);
+					id, commonViewerSite, contentService, structuredViewer);
 			anActionProvider.init(configuration);
 			anActionProvider.restoreState(memento);
 			anActionProvider.setContext(new ActionContext(
 					StructuredSelection.EMPTY));
-			anActionProvider.fillActionBars(viewPart.getViewSite()
-					.getActionBars());
+			anActionProvider.fillActionBars(commonViewerSite.getActionBars());
 		}
 
 	}

@@ -2,8 +2,6 @@ package org.eclipse.ui.navigator;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewSite;
 
 /**
  * 
@@ -29,7 +27,7 @@ public final class CommonActionProviderConfig {
 
 	private String extensionId;
 
-	private IViewPart viewPart;
+	private ICommonViewerSite commonViewerSite;
 
 	private INavigatorContentService contentService;
 
@@ -42,9 +40,10 @@ public final class CommonActionProviderConfig {
 	 * @param anExtensionId
 	 *            The unique identifier of the associated content extension or
 	 *            the top-level action provider. <b>May NOT be null.</b>
-	 * @param aViewPart
-	 *            The view part that will be using the instantiated
-	 *            CommonActionProvider. <b>May NOT be null.</b>
+	 * @param aCommonViewerSite
+	 *            The common viewer site may be used to access information
+	 *            about the part for which the instantiated CommonActionProvider
+	 *            will be used. <b>May NOT be null.</b>
 	 * @param aContentService
 	 *            The associated content service to allow coordination with
 	 *            content extensions via the IExtensionStateModel. Clients may
@@ -56,14 +55,14 @@ public final class CommonActionProviderConfig {
 	 *            Action Provider. <b>May NOT be null.</b>
 	 */
 	public CommonActionProviderConfig(String anExtensionId,
-			IViewPart aViewPart, INavigatorContentService aContentService,
+			ICommonViewerSite aCommonViewerSite, INavigatorContentService aContentService,
 			StructuredViewer aStructuredViewer) {
 		Assert.isNotNull(anExtensionId);
 		Assert.isNotNull(aContentService);
-		Assert.isNotNull(aViewPart);
+		Assert.isNotNull(aCommonViewerSite);
 		Assert.isNotNull(aStructuredViewer);
 		extensionId = anExtensionId;
-		viewPart = aViewPart;
+		commonViewerSite = aCommonViewerSite;
 		contentService = aContentService;
 		structuredViewer = aStructuredViewer;
 
@@ -111,20 +110,12 @@ public final class CommonActionProviderConfig {
 	public StructuredViewer getStructuredViewer() {
 		return structuredViewer;
 	}
-
-	/**
-	 * @return The associated IViewPart for the instantiated Common Action
-	 *         Provider.
-	 */
-	public IViewPart getViewPart() {
-		return viewPart;
-	}
-
+ 
 	/**
 	 * 
-	 * @return The IViewSite from the contained IViewPart. Equivalent to getViewPart().getViewSite().
+	 * @return The ICommonViewerSite from the CommonViewer. 
 	 */
-	public IViewSite getViewSite() {
-		return viewPart.getViewSite();
+	public ICommonViewerSite getViewSite() {
+		return commonViewerSite;
 	}
 }

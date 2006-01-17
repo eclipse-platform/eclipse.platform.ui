@@ -80,6 +80,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	private static final ILabelProvider[] NO_LABEL_PROVIDERS = new ILabelProvider[0];
 
 	private static final INavigatorContentDescriptor[] NO_DESCRIPTORS = new INavigatorContentDescriptor[0];
+
 	private static final String[] NO_EXTENSION_IDS = new String[0];
 
 	private final NavigatorViewerDescriptor viewerDescriptor;
@@ -102,6 +103,8 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	private ILabelProvider labelProvider;
 
+	private final VisibilityAssistant assistant;
+
 	/**
 	 * 
 	 */
@@ -110,6 +113,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		aViewerId = aViewerId != null ? aViewerId : ""; //$NON-NLS-1$
 		viewerDescriptor = VIEWER_DESCRIPTOR_REGISTRY
 				.getNavigatorViewerDescriptor(aViewerId);
+		assistant = new VisibilityAssistant(viewerDescriptor);
 		NavigatorActivationService.getInstance()
 				.addExtensionActivationListener(viewerDescriptor.getViewerId(),
 						this);
@@ -122,101 +126,146 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		this(aViewerId);
 		structuredViewerManager = new StructuredViewerManager(aViewer);
 	}
-	
+
 	public String[] getVisibleExtensionIds() {
 
 		List visibleExtensionIds = new ArrayList();
-		
-		NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();
+
+		NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY
+				.getAllContentDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
-			if (viewerDescriptor.isVisibleContentExtension(descriptors[i].getId())) 
+			if (assistant.isVisible(descriptors[i].getId()))
 				visibleExtensionIds.add(descriptors[i].getId());
-		} 
-		if(visibleExtensionIds.isEmpty())
+		}
+		if (visibleExtensionIds.isEmpty())
 			return NO_EXTENSION_IDS;
-		return (String[]) visibleExtensionIds.toArray(new String[visibleExtensionIds.size()]);
-		
+		return (String[]) visibleExtensionIds
+				.toArray(new String[visibleExtensionIds.size()]);
 
 	}
-	
+
 	public INavigatorContentDescriptor[] getVisibleExtensions() {
 		List visibleDescriptors = new ArrayList();
-		
-		NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();
+
+		NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY
+				.getAllContentDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
-			if (viewerDescriptor.isVisibleContentExtension(descriptors[i].getId())) 
+			if (assistant.isVisible(descriptors[i].getId()))
 				visibleDescriptors.add(descriptors[i]);
-		} 
-		if(visibleDescriptors.isEmpty())
+		}
+		if (visibleDescriptors.isEmpty())
 			return NO_DESCRIPTORS;
-		return (INavigatorContentDescriptor[]) visibleDescriptors.toArray(new INavigatorContentDescriptor[visibleDescriptors.size()]);
-		
+		return (INavigatorContentDescriptor[]) visibleDescriptors
+				.toArray(new INavigatorContentDescriptor[visibleDescriptors
+						.size()]);
+
 	}
-	
-	public INavigatorContentDescriptor[] activateExtensions(String[] extensionIds, boolean toDeactivateAllOthers) {
-		
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.navigator.INavigatorContentService#bindExtensions(java.lang.String[])
+	 */
+	public INavigatorContentDescriptor[] bindExtensions(String[] extensionIds) {
+		if (extensionIds == null || extensionIds.length == 0)
+			return NO_DESCRIPTORS;
+
+		for (int i = 0; i < extensionIds.length; i++)
+			assistant.bindExtensions(extensionIds);
+		Set boundDescriptors = new HashSet();
+		INavigatorContentDescriptor descriptor;
+		for (int i = 0; i < extensionIds.length; i++) {
+			descriptor = CONTENT_DESCRIPTOR_REGISTRY
+					.getContentDescriptor(extensionIds[i]);
+			if (descriptor != null)
+				boundDescriptors.add(descriptor);
+		}
+		if (boundDescriptors.size() == 0)
+			return NO_DESCRIPTORS;
+		return (INavigatorContentDescriptor[]) boundDescriptors
+				.toArray(new INavigatorContentDescriptor[boundDescriptors
+						.size()]); 
+
+	}
+
+	public INavigatorContentDescriptor[] activateExtensions(
+			String[] extensionIds, boolean toDeactivateAllOthers) {
+
 		Set activatedDescriptors = new HashSet();
 		final String viewerId = viewerDescriptor.getViewerId();
-		NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, extensionIds, true);
-		for(int extId = 0; extId < extensionIds.length; extId++) {			
-			activatedDescriptors.add(CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(extensionIds[extId]));
+		NavigatorActivationService.getInstance().activateNavigatorExtension(
+				viewerId, extensionIds, true);
+		for (int extId = 0; extId < extensionIds.length; extId++) {
+			activatedDescriptors.add(CONTENT_DESCRIPTOR_REGISTRY
+					.getContentDescriptor(extensionIds[extId]));
 		}
-		
-		if(toDeactivateAllOthers) {
-			NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();			
-			List descriptorList =  new ArrayList( Arrays.asList(descriptors) );
 
-					
-			for(int descriptorIndx=0; descriptorIndx<descriptors.length; descriptorIndx++)
-				for(int extId=0; extId <extensionIds.length; extId++)
-					if(descriptors[descriptorIndx].getId().equals(extensionIds[extId]))
+		if (toDeactivateAllOthers) {
+			NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY
+					.getAllContentDescriptors();
+			List descriptorList = new ArrayList(Arrays.asList(descriptors));
+
+			for (int descriptorIndx = 0; descriptorIndx < descriptors.length; descriptorIndx++)
+				for (int extId = 0; extId < extensionIds.length; extId++)
+					if (descriptors[descriptorIndx].getId().equals(
+							extensionIds[extId]))
 						descriptorList.remove(descriptors[descriptorIndx]);
-			
+
 			String[] deactivatedExtensions = new String[descriptorList.size()];
-			for(int i=0; i<descriptorList.size(); i++) {
-				INavigatorContentDescriptor descriptor = (INavigatorContentDescriptor) descriptorList.get(i);
-				deactivatedExtensions[i] = descriptor.getId();		
-			}							
-			NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, deactivatedExtensions, false);		
+			for (int i = 0; i < descriptorList.size(); i++) {
+				INavigatorContentDescriptor descriptor = (INavigatorContentDescriptor) descriptorList
+						.get(i);
+				deactivatedExtensions[i] = descriptor.getId();
+			}
+			NavigatorActivationService.getInstance()
+					.activateNavigatorExtension(viewerId,
+							deactivatedExtensions, false);
 		}
 
-		if(activatedDescriptors.size() == 0)
+		if (activatedDescriptors.size() == 0)
 			return NO_DESCRIPTORS;
-		return (INavigatorContentDescriptor[]) activatedDescriptors.toArray(new NavigatorContentDescriptor[activatedDescriptors.size()]);
+		return (INavigatorContentDescriptor[]) activatedDescriptors
+				.toArray(new NavigatorContentDescriptor[activatedDescriptors
+						.size()]);
 	}
-	
-	public INavigatorContentDescriptor[] deactivateExtensions(String[] extensionIds, boolean toEnableAllOthers) {
+
+	public INavigatorContentDescriptor[] deactivateExtensions(
+			String[] extensionIds, boolean toEnableAllOthers) {
 
 		Set activatedDescriptors = new HashSet();
 		final String viewerId = viewerDescriptor.getViewerId();
-		NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, extensionIds, false); 
-		
-		if(toEnableAllOthers) {
-			NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();			
-			List descriptorList =  new ArrayList( Arrays.asList(descriptors) );
+		NavigatorActivationService.getInstance().activateNavigatorExtension(
+				viewerId, extensionIds, false);
 
-					
-			for(int descriptorIndx=0; descriptorIndx<descriptors.length; descriptorIndx++)
-				for(int extId=0; extId <extensionIds.length; extId++)
-					if(descriptors[descriptorIndx].getId().equals(extensionIds[extId]))
-						descriptorList.remove(descriptors[descriptorIndx]); 
-			
+		if (toEnableAllOthers) {
+			NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY
+					.getAllContentDescriptors();
+			List descriptorList = new ArrayList(Arrays.asList(descriptors));
+
+			for (int descriptorIndx = 0; descriptorIndx < descriptors.length; descriptorIndx++)
+				for (int extId = 0; extId < extensionIds.length; extId++)
+					if (descriptors[descriptorIndx].getId().equals(
+							extensionIds[extId]))
+						descriptorList.remove(descriptors[descriptorIndx]);
 
 			String[] activatedExtensions = new String[descriptorList.size()];
-			for(int i=0; i<descriptorList.size(); i++) {
-				NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) descriptorList.get(i);
-				activatedExtensions[i] = descriptor.getId();	
+			for (int i = 0; i < descriptorList.size(); i++) {
+				NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) descriptorList
+						.get(i);
+				activatedExtensions[i] = descriptor.getId();
 				activatedDescriptors.add(descriptor);
 			}
-			NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, activatedExtensions, true);
+			NavigatorActivationService.getInstance()
+					.activateNavigatorExtension(viewerId, activatedExtensions,
+							true);
 		}
-		if(activatedDescriptors.size() == 0)
+		if (activatedDescriptors.size() == 0)
 			return NO_DESCRIPTORS;
-		
-		return (INavigatorContentDescriptor[]) activatedDescriptors.toArray(new NavigatorContentDescriptor[activatedDescriptors.size()]);
+
+		return (INavigatorContentDescriptor[]) activatedDescriptors
+				.toArray(new NavigatorContentDescriptor[activatedDescriptors
+						.size()]);
 	}
-	
-	
 
 	/*
 	 * (non-Javadoc)
@@ -224,11 +273,12 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see org.eclipse.ui.navigator.internal.INavigatorContentService#createCommonContentProvider()
 	 */
 	public ITreeContentProvider createCommonContentProvider() {
-		if(contentProvider != null)
+		if (contentProvider != null)
 			return contentProvider;
-		synchronized(this) {
-			if(contentProvider == null)
-				contentProvider = new NavigatorContentServiceContentProvider(this);
+		synchronized (this) {
+			if (contentProvider == null)
+				contentProvider = new NavigatorContentServiceContentProvider(
+						this);
 		}
 		return contentProvider;
 	}
@@ -239,13 +289,13 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see org.eclipse.ui.navigator.internal.INavigatorContentService#createCommonLabelProvider()
 	 */
 	public ILabelProvider createCommonLabelProvider() {
-		if(labelProvider != null)
+		if (labelProvider != null)
 			return labelProvider;
-		synchronized(this) {
-			if(labelProvider == null)
+		synchronized (this) {
+			if (labelProvider == null)
 				labelProvider = new NavigatorContentServiceLabelProvider(this);
 		}
-		return labelProvider; 
+		return labelProvider;
 	}
 
 	/*
@@ -284,33 +334,28 @@ public class NavigatorContentService implements IExtensionActivationListener,
 			rootContentProviders = extractContentProviders(resultInstances);
 		}
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.internal.INavigatorContentService#findStateModel(java.lang.String)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.INavigatorContentService#findEnabledContentDescriptors(java.lang.Object)
 	 */
+	public Set findEnabledContentDescriptors(Object anElement) {
+		return getEnabledDescriptors(anElement);
+	}
+
+ 
 	public IExtensionStateModel findStateModel(String anExtensionId) {
 		return getExtension(
 				CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(anExtensionId))
 				.getStateModel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.internal.INavigatorContentService#findParentContentProviders(java.lang.Object)
-	 */
+ 
 	public ITreeContentProvider[] findParentContentProviders(Object anElement) {
 		NavigatorContentExtension[] resultInstances = findRelevantContentExtensions(anElement);
 		return extractContentProviders(resultInstances);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.internal.INavigatorContentService#findRootContentProviders(java.lang.Object)
-	 */
+ 
 	public ITreeContentProvider[] findRootContentProviders(Object anElement) {
 		if (rootContentProviders != null)
 			return rootContentProviders;
@@ -329,60 +374,35 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return rootContentProviders;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.internal.INavigatorContentService#findRelevantContentProviders(java.lang.Object)
-	 */
+ 
 	public ITreeContentProvider[] findRelevantContentProviders(Object anElement) {
 		NavigatorContentExtension[] resultInstances = findRelevantContentExtensions(anElement);
 		return extractContentProviders(resultInstances);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.internal.INavigatorContentService#findRelevantLabelProviders(java.lang.Object)
-	 */
-
-	public ILabelProvider[] findRelevantLabelProviders(Object anElement) { 
+ 
+	public ILabelProvider[] findRelevantLabelProviders(Object anElement) {
 		NavigatorContentExtension[] resultInstances = findRelevantContentExtensions(
 				anElement, false);
 		return extractLabelProviders(resultInstances);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.internal.INavigatorContentService#findRelevantContentExtensions(java.lang.Object)
-	 */
+ 
 	public NavigatorContentExtension[] findRelevantContentExtensions(
 			Object anElement) {
 		return findRelevantContentExtensions(anElement, true);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.internal.INavigatorContentService#findRelevantContentExtensions(java.lang.Object,
-	 *      boolean)
-	 */
+ 
 	public NavigatorContentExtension[] findRelevantContentExtensions(
 			Object anElement, boolean toLoadIfNecessary) {
 		Set enabledDescriptors = getEnabledDescriptors(anElement);
 		return extractDescriptorInstances(enabledDescriptors, toLoadIfNecessary);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.internal.INavigatorContentService#findRelevantContentExtensions(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
+ 
 	public NavigatorContentExtension[] findRelevantContentExtensions(
 			IStructuredSelection aSelection) {
 		Set contentDescriptors = getEnabledDescriptors(aSelection);
 		if (contentDescriptors.size() == 0)
-			return NO_DESCRIPTOR_INSTANCES; 
+			return NO_DESCRIPTOR_INSTANCES;
 		return extractDescriptorInstances(contentDescriptors);
 
 	}
@@ -402,7 +422,8 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	public NavigatorContentDescriptor getSourceOfContribution(Object element) {
-		return (NavigatorContentDescriptor) getContributionMemory().get(element);
+		return (NavigatorContentDescriptor) getContributionMemory()
+				.get(element);
 	}
 
 	/**
@@ -421,19 +442,18 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	private Set getEnabledDescriptors(Object anElement) {
 		Set enabledByExpression = CONTENT_DESCRIPTOR_REGISTRY
-				.getEnabledContentDescriptors(anElement, viewerDescriptor);
+				.getEnabledContentDescriptors(anElement, assistant);
 		NavigatorContentDescriptor descriptor = getSourceOfContribution(anElement);
-		if(descriptor != null)
+		if (descriptor != null)
 			enabledByExpression.add(descriptor);
 		return enabledByExpression;
 	}
 
 	private Set getEnabledDescriptors(IStructuredSelection aSelection) {
-		return CONTENT_DESCRIPTOR_REGISTRY
-				.getEnabledContentDescriptors(aSelection, viewerDescriptor);
-	} 
+		return CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(
+				aSelection, assistant);
+	}
 
- 
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -461,7 +481,8 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public void update() {
 		rootContentProviders = null;
-		structuredViewerManager.safeRefresh();
+		if(structuredViewerManager != null)
+			structuredViewerManager.safeRefresh();
 	}
 
 	/*
@@ -545,12 +566,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 					}
 
 					public void handleException(Throwable exception) {
-						NavigatorPlugin
-								.logError(
-										0,
-										"Could not restore state for Common Navigator content extension" //$NON-NLS-1$
-												+ element.getId(),
-										exception);
+						NavigatorPlugin.logError(0,
+								"Could not restore state for Common Navigator content extension" //$NON-NLS-1$
+										+ element.getId(), exception);
 
 					}
 				};
@@ -582,24 +600,27 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	protected final NavigatorContentExtension[] findRootContentDescriptors(
-			Object anElement, boolean toRespectViewerRoots) { 
+			Object anElement, boolean toRespectViewerRoots) {
 		NavigatorContentExtension[] resultInstances = null;
 
-		if (toRespectViewerRoots && viewerDescriptor.hasOverriddenRootExtensions()) {
+		if (toRespectViewerRoots
+				&& viewerDescriptor.hasOverriddenRootExtensions()) {
 			List resultInstancesList = new ArrayList();
 
-			NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();
-			
+			NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY
+					.getAllContentDescriptors();
+
 			NavigatorContentExtension extension = null;
 			for (int i = 0; i < descriptors.length; i++) {
-				if (isActive(descriptors[i].getId()) && 
-						viewerDescriptor.isRootExtension(descriptors[i].getId())) {
+				if (isActive(descriptors[i].getId())
+						&& viewerDescriptor.isRootExtension(descriptors[i]
+								.getId())) {
 					extension = getExtension(descriptors[i]);
 					if (!extension.hasLoadingFailed())
 						resultInstancesList.add(extension);
 				}
 			}
-			
+
 			resultInstances = (NavigatorContentExtension[]) resultInstancesList
 					.toArray((resultInstances = new NavigatorContentExtension[resultInstancesList
 							.size()]));
@@ -609,8 +630,11 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	protected boolean isActive(String anExtensionId) {
-		return NAVIGATOR_ACTIVATION_SERVICE.isNavigatorExtensionActive(
-						getViewerId(), anExtensionId);
+		return assistant.isActive(anExtensionId);
+	}
+
+	public boolean isVisible(String anExtensionId) {
+		return assistant.isVisible(anExtensionId);
 	}
 
 	protected final Collection getExtensions() {
@@ -697,7 +721,8 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		if (theDescriptors.size() == 0)
 			return NO_DESCRIPTOR_INSTANCES;
 		Set resultInstances = new HashSet();
-		for (Iterator descriptorIter = theDescriptors.iterator(); descriptorIter.hasNext(); ) {
+		for (Iterator descriptorIter = theDescriptors.iterator(); descriptorIter
+				.hasNext();) {
 			NavigatorContentExtension extension = getExtension(
 					(NavigatorContentDescriptor) descriptorIter.next(),
 					toLoadAllIfNecessary);
@@ -706,7 +731,8 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 			}
 		}
-		NavigatorContentExtension[] extensions = (NavigatorContentExtension[]) resultInstances.toArray(new NavigatorContentExtension[resultInstances.size()]);
+		NavigatorContentExtension[] extensions = (NavigatorContentExtension[]) resultInstances
+				.toArray(new NavigatorContentExtension[resultInstances.size()]);
 		Arrays.sort(extensions, EXTENSION_COMPARATOR);
 		return extensions;
 	}
@@ -727,7 +753,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return (ILabelProvider[]) resultProvidersList
 				.toArray(new ILabelProvider[resultProvidersList.size()]);
 	}
-	
 
 	private static final Comparator EXTENSION_COMPARATOR = new Comparator() {
 		/*
@@ -735,8 +760,11 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		 * 
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
-		public int compare(Object lvalue, Object rvalue) { 
-			return ((NavigatorContentExtension) lvalue).getDescriptor().getPriority() - ((NavigatorContentExtension) rvalue).getDescriptor().getPriority();
+		public int compare(Object lvalue, Object rvalue) {
+			return ((NavigatorContentExtension) lvalue).getDescriptor()
+					.getPriority()
+					- ((NavigatorContentExtension) rvalue).getDescriptor()
+							.getPriority();
 		}
 	};
 }

@@ -25,9 +25,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
-import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
-import org.eclipse.ui.navigator.internal.Utilities;
+import org.eclipse.ui.navigator.internal.VisibilityAssistant;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -99,14 +98,14 @@ public class NavigatorContentDescriptorManager {
 	 * 
 	 * @param aStructuredSelection
 	 *            The element to return the best content descriptor for
-	 * @param aViewerDescriptor
-	 *            The relevant viewer descriptor; used to filter out unbound
+	 * @param aVisibilityAssistant
+	 *            The relevant viewer assistant; used to filter out unbound
 	 *            content descriptors.
 	 * @return the best content descriptor for the given element.
 	 */
 	public Set getEnabledContentDescriptors(
 			IStructuredSelection aStructuredSelection,
-			INavigatorViewerDescriptor aViewerDescriptor) {
+			VisibilityAssistant aVisibilityAssistant) {
 		Set descriptors = new HashSet();
 
 		/* Find other ContentProviders which enable for this object */
@@ -115,7 +114,7 @@ public class NavigatorContentDescriptorManager {
 			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) contentDescriptorsItr
 					.next();
 
-			if (Utilities.isApplicable(aViewerDescriptor, descriptor,
+			if (aVisibilityAssistant.isApplicable(descriptor,
 					aStructuredSelection))
 				descriptors.add(descriptor);
 		}
@@ -131,13 +130,13 @@ public class NavigatorContentDescriptorManager {
 	 * @param anElement
 	 *            the element to return the best content descriptor for
 	 * 
-	 * @param aViewerDescriptor
-	 *            The relevant viewer descriptor; used to filter out unbound
+	 * @param aVisibilityAssistant
+	 *            The relevant viewer assistant; used to filter out unbound
 	 *            content descriptors.
 	 * @return the best content descriptor for the given element.
 	 */
 	public Set getEnabledContentDescriptors(Object anElement,
-			INavigatorViewerDescriptor aViewerDescriptor) {
+			VisibilityAssistant aVisibilityAssistant) {
 		Set descriptors = new HashSet();
 
 		/* Find other ContentProviders which enable for this object */
@@ -146,14 +145,14 @@ public class NavigatorContentDescriptorManager {
 			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) contentDescriptorsItr
 					.next();
 
-			if (Utilities
-					.isApplicable(aViewerDescriptor, descriptor, anElement))
+			if (aVisibilityAssistant.isApplicable(descriptor, anElement))
 				descriptors.add(descriptor);
 		}
 		// Collections.sort(descriptors, EXTENSION_COMPARATOR);
 
 		return descriptors;
 	}
+	 
 
 	/**
 	 * Returns the navigator content descriptor with the given id.
@@ -242,8 +241,9 @@ public class NavigatorContentDescriptorManager {
 		return imageRegistry;
 	}
 
-	private class NavigatorContentDescriptorRegistry extends NavigatorContentRegistryReader {
-  
+	private class NavigatorContentDescriptorRegistry extends
+			NavigatorContentRegistryReader {
+
 		protected boolean readElement(IConfigurationElement anElement) {
 			if (TAG_NAVIGATOR_CONTENT.equals(anElement.getName())) {
 				try {

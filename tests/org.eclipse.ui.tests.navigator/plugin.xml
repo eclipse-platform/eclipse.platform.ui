@@ -53,6 +53,15 @@
             <instanceof value="org.eclipse.core.resources.IResource"/>
          </enablement>
       </actionProvider>
+      <navigatorContent
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProvider"
+            id="org.eclipse.ui.tests.navigator.testContent2"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProvider"
+            name="Test Navigator Extension [Programmatic Binding]">
+	     <triggerPoints>
+            <instanceof value="org.eclipse.core.resources.IProject"/>
+         </triggerPoints>            
+      </navigatorContent>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.viewer">

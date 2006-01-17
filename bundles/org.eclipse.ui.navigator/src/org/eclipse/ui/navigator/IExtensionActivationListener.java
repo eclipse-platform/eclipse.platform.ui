@@ -23,6 +23,9 @@ package org.eclipse.ui.navigator;
  * consulting with the Platform/UI team.
  * </p>
  * 
+ *<p>
+ * Clients may implement this interface.
+ *</p> 
  * @since 3.2
  * @see NavigatorActivationService
  * @see NavigatorActivationService#addExtensionActivationListener(String,

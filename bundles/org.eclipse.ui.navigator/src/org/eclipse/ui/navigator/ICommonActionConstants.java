@@ -12,6 +12,9 @@ package org.eclipse.ui.navigator;
  * consulting with the Platform/UI team.
  * </p>
  * 
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * @since 3.2
  *
  */

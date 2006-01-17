@@ -9,13 +9,13 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.CommonActionProviderConfig;
 import org.eclipse.ui.navigator.ICommonActionConstants;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
+import org.eclipse.ui.navigator.ICommonViewerSite;
 import org.eclipse.ui.navigator.internal.AdaptabilityUtility;
 import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMessages;
 
@@ -29,7 +29,7 @@ public class OpenActionProvider extends CommonActionProvider   {
 
 	private OpenFileAction openFileAction;
  
-	private IWorkbenchPartSite viewSite = null;
+	private ICommonViewerSite viewSite = null;
 
 	public void init(CommonActionProviderConfig aConfig) {
 		viewSite = aConfig.getViewSite();

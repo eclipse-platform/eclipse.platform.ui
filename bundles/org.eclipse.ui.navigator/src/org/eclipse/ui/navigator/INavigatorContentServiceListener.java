@@ -23,6 +23,9 @@ package org.eclipse.ui.navigator;
  * Please do not use this API without consulting with the Platform/UI team.
  * </p>
  * 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 3.2
  */
 public interface INavigatorContentServiceListener {

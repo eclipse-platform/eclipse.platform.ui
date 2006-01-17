@@ -262,7 +262,7 @@ In the case of &apos;actionProvider&apos;, clients must define an expression tha
                   A subclass of INavigatorExtensionFilter.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.INavigatorExtensionFilter"/>
                </appInfo>
             </annotation>
          </attribute>

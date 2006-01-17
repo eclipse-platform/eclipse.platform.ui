@@ -63,9 +63,7 @@ public class CommonSorter extends ViewerSorter {
 	 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
 	 */
 	public int category(Object anElement) {
-		Set descriptors = CONTENT_DESCRIPTOR_REGISTRY
-				.getEnabledContentDescriptors(anElement, contentService
-						.getViewerDescriptor());
+		Set descriptors = contentService.findEnabledContentDescriptors(anElement);
 		Iterator dItr = descriptors.iterator();
 		if (dItr.hasNext())
 			return ((INavigatorContentDescriptor) dItr.next()).getPriority();

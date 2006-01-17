@@ -32,26 +32,26 @@ import org.eclipse.ui.navigator.internal.dnd.CommonNavigatorDropAdapter;
 import org.eclipse.ui.part.PluginTransfer;
 
 /**
- * <p>
- * Provides the Tree Viewer for the Common Navigator. Content and labels are
- * provided by an instance of
- * {@link INavigatorContentService}&nbsp;
- * which uses the ID supplied in the constructor
- * {@link CommonViewer#CommonViewer(String, Composite, int)} or through 
- * {@link NavigatorContentServiceFactory#createContentService(String, org.eclipse.jface.viewers.StructuredViewer)}.
  * 
+ * Provides the Tree Viewer for the Common Navigator. Content and labels are
+ * provided by an instance of {@link INavigatorContentService}&nbsp; which uses
+ * the ID supplied in the constructor
+ * {@link CommonViewer#CommonViewer(String, Composite, int)} or through
+ * {@link NavigatorContentServiceFactory#createContentService(String, org.eclipse.jface.viewers.StructuredViewer)}.
+ *  
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
+ * 
  * @since 3.2
  */
 public class CommonViewer extends TreeViewer {
 
 	private final NavigatorContentService contentService;
- 
+  
 	/**
 	 * <p>
 	 * Constructs the Tree Viewer for the Common Navigator and the corresponding
@@ -66,6 +66,8 @@ public class CommonViewer extends TreeViewer {
 	 * @param aViewerId
 	 *            An id tied to the extensions that is used to focus specific
 	 *            content to a particular instance of the Common Navigator
+	 * @param aCommonViewerSite
+	 *            A valid site as created by the common viewer site factory.
 	 * @param aParent
 	 *            A Composite parent to contain the actual SWT widget
 	 * @param aStyle
@@ -73,7 +75,7 @@ public class CommonViewer extends TreeViewer {
 	 *            Composite.
 	 */
 	public CommonViewer(String aViewerId, Composite aParent, int aStyle) {
-		super(aParent, aStyle);
+		super(aParent, aStyle); 
 		contentService = new NavigatorContentService(aViewerId, this);
 		init();
 	}
@@ -92,12 +94,11 @@ public class CommonViewer extends TreeViewer {
 				contentService.createCommonLabelProvider(), PlatformUI
 						.getWorkbench().getDecoratorManager()
 						.getLabelDecorator());
-		setLabelProvider(decoratingProvider); 
+		setLabelProvider(decoratingProvider);
 		initDragAndDrop();
-		
 
 	}
-
+  
 	/**
 	 * <p>
 	 * Disposes of the NavigatorContentService, which will dispose the Content
@@ -138,9 +139,9 @@ public class CommonViewer extends TreeViewer {
 	 */
 	protected void internalAdd(Widget widget, Object parentElement,
 			Object[] childElements) {
-		//super.internalRefresh(widget, parentElement, true, true);
+		// super.internalRefresh(widget, parentElement, true, true);
 		super.internalAdd(widget, parentElement, childElements);
-		
+
 	}
 
 	/**
@@ -185,10 +186,11 @@ public class CommonViewer extends TreeViewer {
 		/* Handle Drag and Drop */
 		int operations = DND.DROP_COPY | DND.DROP_MOVE;
 		Transfer[] transfers = new Transfer[] {
-		// TODO Removed LocalSelectTransfer and ResourceTransfer to break dependency on ide and resources plugins.
-		//		LocalSelectionTransfer.getInstance(),
+		// TODO Removed LocalSelectTransfer and ResourceTransfer to break
+				// dependency on ide and resources plugins.
+				// LocalSelectionTransfer.getInstance(),
 				PluginTransfer.getInstance(), FileTransfer.getInstance(),
-		//		ResourceTransfer.getInstance() 
+		// ResourceTransfer.getInstance()
 		};
 		addDragSupport(operations, transfers, new CommonNavigatorDragAdapter(
 				this));
@@ -210,7 +212,7 @@ public class CommonViewer extends TreeViewer {
 			ex.printStackTrace();
 		} catch (Error e) {
 			e.printStackTrace();
-		} 
+		}
 
 	}
 
@@ -224,12 +226,13 @@ public class CommonViewer extends TreeViewer {
 			ArrayList others = new ArrayList();
 			for (int i = 0; i < changed.length; i++) {
 				Object curr = changed[i];
-				// TODO Resource Mapper removed. Perhaps this would be a good chance to use ResourceMapping?  
-//				if (curr instanceof IResource) {
-//					fResourceToItemsMapper.resourceChanged((IResource) curr);
-//				} else {
-					others.add(curr);
-//				}
+				// TODO Resource Mapper removed. Perhaps this would be a good
+				// chance to use ResourceMapping?
+				// if (curr instanceof IResource) {
+				// fResourceToItemsMapper.resourceChanged((IResource) curr);
+				// } else {
+				others.add(curr);
+				// }
 			}
 			if (others.isEmpty()) {
 				return;
@@ -244,32 +247,32 @@ public class CommonViewer extends TreeViewer {
 		super.handleDispose(event);
 		dispose();
 	}
-	
-    /* (non-Javadoc) Method declared on StructuredViewer. */
-    protected void setSelectionToWidget(List v, boolean reveal) {
-        if (v == null) {
-            setSelection(new ArrayList(0));
-            return;
-        }
-        int size = v.size();
-        List newSelection = new ArrayList(size);
-        for (int i = 0; i < size; ++i) {
-            // Use internalExpand since item may not yet be created. See
-            // 1G6B1AR.
-            Widget w = internalExpand(v.get(i), reveal);
-            if (w instanceof Item) {
-                newSelection.add(w);
-            }
-        }
-        setSelection(newSelection);
-        
-//        // Although setting the selection in the control should reveal it,
-//        // setSelection may be a no-op if the selection is unchanged,
-//        // so explicitly reveal the first item in the selection here.
-//        // See bug 100565 for more details.
-//        if (reveal && newSelection.size() > 0) {
-//            showItem((Item) newSelection.get(0));
-//        }
-    }
+
+	/* (non-Javadoc) Method declared on StructuredViewer. */
+	protected void setSelectionToWidget(List v, boolean reveal) {
+		if (v == null) {
+			setSelection(new ArrayList(0));
+			return;
+		}
+		int size = v.size();
+		List newSelection = new ArrayList(size);
+		for (int i = 0; i < size; ++i) {
+			// Use internalExpand since item may not yet be created. See
+			// 1G6B1AR.
+			Widget w = internalExpand(v.get(i), reveal);
+			if (w instanceof Item) {
+				newSelection.add(w);
+			}
+		}
+		setSelection(newSelection);
+
+		// // Although setting the selection in the control should reveal it,
+		// // setSelection may be a no-op if the selection is unchanged,
+		// // so explicitly reveal the first item in the selection here.
+		// // See bug 100565 for more details.
+		// if (reveal && newSelection.size() > 0) {
+		// showItem((Item) newSelection.get(0));
+		// }
+	}
 
 }

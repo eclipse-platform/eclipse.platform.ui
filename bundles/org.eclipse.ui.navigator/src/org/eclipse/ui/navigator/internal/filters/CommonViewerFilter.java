@@ -55,7 +55,7 @@ public class CommonViewerFilter extends ViewerFilter {
 	 */
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		boolean select = true;
-		Set contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(element, contentService.getViewerDescriptor());
+		Set contentDescriptors = contentService.findEnabledContentDescriptors(element);
 
 		for (Iterator descriptorsIterator = contentDescriptors.iterator(); descriptorsIterator.hasNext() && select;) {
 			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) descriptorsIterator.next();

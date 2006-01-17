@@ -88,11 +88,14 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	}
 
 	private void init() {
-		commonNavigator.getCommonViewer().addSelectionChangedListener(this);
-		updateStatusBar(commonNavigator.getCommonViewer().getSelection());
-		actionService = new NavigatorActionService(commonNavigator,
-				commonNavigator.getCommonViewer(), contentService);
-		// commonNavigator.getCommonViewer().addOpenListener(commonOpenService);
+		CommonViewer commonViewer = commonNavigator.getCommonViewer();
+		commonViewer.addSelectionChangedListener(this);
+		updateStatusBar(commonViewer.getSelection());
+
+		ICommonViewerSite commonViewerSite = CommonViewerSiteFactory.createCommonViewerSite(commonNavigator.getViewSite());
+		actionService = new NavigatorActionService(commonViewerSite, commonViewer, commonViewer
+				.getNavigatorContentService()); 
+		
 		initContextMenu();
 		initViewMenu();
 
@@ -116,7 +119,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 */
 	protected void dispose() {
 		commonNavigator.getCommonViewer().removeSelectionChangedListener(this);
-  actionService.dispose();
+		actionService.dispose();
 	}
 
 	/**
@@ -171,7 +174,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	protected void fillContextMenu(IMenuManager aMenuManager) {
 		ISelection selection = commonNavigator.getCommonViewer().getSelection();
 		actionService.setContext(new ActionContext(selection));
-		actionService.fillContextMenu(aMenuManager); 
+		actionService.fillContextMenu(aMenuManager);
 	}
 
 	/**
@@ -192,10 +195,10 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		TreeViewer commonViewer = commonNavigator.getCommonViewer();
 		Menu menu = menuMgr.createContextMenu(commonViewer.getTree());
 
-		commonViewer.getTree().setMenu(menu);  
-		
-		actionService.prepareMenuForPlatformContributions(menuMgr, commonViewer, false);
+		commonViewer.getTree().setMenu(menu);
 
+		actionService.prepareMenuForPlatformContributions(menuMgr,
+				commonViewer, false);
 
 	}
 

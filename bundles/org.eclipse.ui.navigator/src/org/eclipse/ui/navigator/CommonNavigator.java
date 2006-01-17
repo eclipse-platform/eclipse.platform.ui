@@ -331,7 +331,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 *            A composite parent to contain the Common Viewer
 	 * @return An initialized instance of CommonViewer
 	 */
-	protected CommonViewer createCommonViewer(Composite aParent) {
+	protected CommonViewer createCommonViewer(Composite aParent) {		
 		CommonViewer aViewer = new CommonViewer(getViewSite().getId(), aParent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		initListeners(aViewer);
 		aViewer.getNavigatorContentService().restoreState(memento);

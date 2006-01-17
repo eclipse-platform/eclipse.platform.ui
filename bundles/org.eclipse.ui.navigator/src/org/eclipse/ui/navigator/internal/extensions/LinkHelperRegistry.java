@@ -62,9 +62,7 @@ public class LinkHelperRegistry extends RegistryReader {
 		if (aSelection.isEmpty())
 			return NO_LINK_HELPERS;
 
-		Set contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY
-				.getEnabledContentDescriptors(aSelection.getFirstElement(),
-						contentService.getViewerDescriptor());
+		Set contentDescriptors = contentService.findEnabledContentDescriptors(aSelection.getFirstElement());
 		if (contentDescriptors.isEmpty())
 			return NO_LINK_HELPERS;
 
