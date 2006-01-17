@@ -311,6 +311,9 @@ final class MenuPersistence extends RegistryPersistence {
 			final Expression visibleWhenExpression = readWhenElement(
 					configurationElement, ELEMENT_VISIBLE_WHEN, id,
 					warningsToLog);
+			if (visibleWhenExpression == ERROR_EXPRESSION) {
+				continue;
+			}
 
 			// Read out the location elements.
 			final SLocation[] locations = readLocationElementsFromRegistry(
@@ -384,6 +387,9 @@ final class MenuPersistence extends RegistryPersistence {
 			final Expression visibleWhenExpression = readWhenElement(
 					configurationElement, ELEMENT_VISIBLE_WHEN, id,
 					warningsToLog);
+			if (visibleWhenExpression == ERROR_EXPRESSION) {
+				continue;
+			}
 
 			// Read out the location elements.
 			final SLocation[] locations = readLocationElementsFromRegistry(
@@ -554,6 +560,9 @@ final class MenuPersistence extends RegistryPersistence {
 			final Expression visibleWhenExpression = readWhenElement(
 					configurationElement, ELEMENT_VISIBLE_WHEN, id,
 					warningsToLog);
+			if (visibleWhenExpression == ERROR_EXPRESSION) {
+				continue;
+			}
 
 			// Read out the location elements.
 			final SLocation[] locations = readLocationElementsFromRegistry(
@@ -872,6 +881,9 @@ final class MenuPersistence extends RegistryPersistence {
 			final Expression visibleWhenExpression = readWhenElement(
 					configurationElement, ELEMENT_VISIBLE_WHEN, id,
 					warningsToLog);
+			if (visibleWhenExpression == ERROR_EXPRESSION) {
+				continue;
+			}
 
 			// Read out the location elements.
 			final SLocation[] locations = readLocationElementsFromRegistry(

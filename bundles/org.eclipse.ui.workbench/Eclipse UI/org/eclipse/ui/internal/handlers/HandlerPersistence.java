@@ -162,9 +162,15 @@ final class HandlerPersistence extends RegistryPersistence {
 			final Expression activeWhenExpression = readWhenElement(
 					configurationElement, ELEMENT_ACTIVE_WHEN, commandId,
 					warningsToLog);
+			if (activeWhenExpression == ERROR_EXPRESSION) {
+				continue;
+			}
 			final Expression enabledWhenExpression = readWhenElement(
 					configurationElement, ELEMENT_ENABLED_WHEN, commandId,
 					warningsToLog);
+			if (enabledWhenExpression == ERROR_EXPRESSION) {
+				continue;
+			}
 
 			handlerActivations.add(handlerService.activateHandler(commandId,
 					new HandlerProxy(configurationElement, ATTRIBUTE_CLASS,
