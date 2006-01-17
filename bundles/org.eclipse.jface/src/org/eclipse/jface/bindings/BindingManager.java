@@ -2032,9 +2032,11 @@ public final class BindingManager extends HandleObjectManager implements
 				}
 			}
 
-			fireBindingManagerChanged(new BindingManagerEvent(this, false,
-					null, activeSchemeChanged, scheme, schemeIdAdded, false,
-					false));
+			if (isListenerAttached()) {
+				fireBindingManagerChanged(new BindingManagerEvent(this, false,
+						null, activeSchemeChanged, scheme, schemeIdAdded,
+						false, false));
+			}
 		}
 	}
 

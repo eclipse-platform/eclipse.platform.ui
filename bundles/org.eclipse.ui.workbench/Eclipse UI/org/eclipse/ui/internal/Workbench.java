@@ -1122,44 +1122,43 @@ public final class Workbench extends EventManager implements IWorkbench {
 		Command.DEBUG_COMMAND_EXECUTION = Policy.DEBUG_COMMANDS;
 		commandManager = new CommandManager();
 		final CommandService commandService = new CommandService(commandManager);
+		commandService.readRegistry();
 		serviceLocator.registerService(ICommandService.class, commandService);
+		
 		ContextManager.DEBUG = Policy.DEBUG_CONTEXTS;
 		contextManager = new ContextManager();
 		final IContextService contextService = new ContextService(
 				contextManager);
+		contextService.readRegistry();
 		serviceLocator.registerService(IContextService.class, contextService);
+		
 		final IHandlerService handlerService = new HandlerService(
 				commandManager);
+		handlerService.readRegistry();
 		serviceLocator.registerService(IHandlerService.class, handlerService);
+		
 		BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
 		bindingManager = new BindingManager(contextManager, commandManager);
 		final IBindingService bindingService = new BindingService(
 				bindingManager, commandService, this);
+		bindingService.readRegistryAndPreferences(commandService);
 		serviceLocator.registerService(IBindingService.class, bindingService);
+		
 		final CommandImageManager commandImageManager = new CommandImageManager();
 		final CommandImageService commandImageService = new CommandImageService(
 				commandImageManager, commandService);
+		commandImageService.readRegistry();
 		serviceLocator.registerService(ICommandImageService.class,
 				commandImageService);
+		
 		final SMenuManager menuManager = new SMenuManager();
 		final IMenuService menuService = new MenuService(menuManager,
 				commandService);
+		menuService.readRegistry();
 		serviceLocator.registerService(IMenuService.class, menuService);
 
 		/*
-		 * Phase 2 of the initialization of commands. The registry and
-		 * preference store are parsed into memory. When this phase completes,
-		 * all persisted state should be available to the application.
-		 */
-		commandService.readRegistry();
-		handlerService.readRegistry();
-		contextService.readRegistry();
-		bindingService.readRegistryAndPreferences(commandService);
-		commandImageService.readRegistry();
-		menuService.readRegistry();
-
-		/*
-		 * Phase 3 of the initialization of commands. The source providers that
+		 * Phase 2 of the initialization of commands. The source providers that
 		 * the workbench provides are creating and registered with the above
 		 * services. These source providers notify the services when particular
 		 * pieces of workbench state change.
@@ -1201,7 +1200,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		sourceProviderService.registerProvider(menuSourceProvider);
 
 		/*
-		 * Phase 4 of the initialization of commands. This handles the creation
+		 * Phase 3 of the initialization of commands. This handles the creation
 		 * of wrappers for legacy APIs. By the time this phase completes, any
 		 * code trying to access commands through legacy APIs should work.
 		 */
@@ -1210,7 +1209,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				menuService);
 		serviceLocator.registerService(LegacyActionPersistence.class,
 				deprecatedSupport);
-		deprecatedSupport.read();
+		deprecatedSupport.read();		
 		workbenchContextSupport = new WorkbenchContextSupport(this,
 				contextManager);
 		workbenchCommandSupport = new WorkbenchCommandSupport(bindingManager,

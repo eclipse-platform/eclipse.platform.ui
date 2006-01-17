@@ -143,7 +143,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @return A location instance encapsulating this information; never
 	 *         <code>null</code>.
 	 */
-	private static final SLocation createLocation(final int barType,
+	private static final SLocation createLocation(final String barType,
 			final String path, final LegacyLocationInfo locationInfo,
 			final char mnemonic, final String imageStyle) {
 		final LeafLocationElement leafElement = new SBar(barType, path);
