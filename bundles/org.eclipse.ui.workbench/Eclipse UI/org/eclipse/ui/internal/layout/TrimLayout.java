@@ -89,7 +89,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	/**
 	 * IDs for the current trim areas we support.
 	 */
-	private static final int[] TRIM_ID_INFO = { TOP, BOTTOM, LEFT, RIGHT };
+	private static final int[] TRIM_ID_INFO = { LEFT, RIGHT, TOP, BOTTOM };
 
 	private SizeCache centerArea = new SizeCache();
 

@@ -1342,7 +1342,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 					getStatusLineManager().getControl(),
 					"org.eclipse.jface.action.StatusLineManager", //$NON-NLS-1$
 					WorkbenchMessages.TrimCommon_StatusLine_TrimName,
-					SWT.BOTTOM, true);
+					SWT.NONE, true);
 		}
 		return statusLineTrim;
 	}

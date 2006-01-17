@@ -1,124 +1,113 @@
 package org.eclipse.ui.internal.dnd;
 
-import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IWindowTrim;
-import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.themes.ColorUtil;
 
 /**
- * This class provides 'insertion' feedback to the User. It draws a
- * triangle pointing toward the given side and whose tip is at
- * <code>pos</code>.
+ * This class provides 'insertion' feedback to the User. It can be used to draw a
+ * 'bracket' based on the trim area's rectangle.
  *
  * @since 3.2
  */
 public class InsertCaret {
-	// Control info
-	private Composite clientControl;
-	private Canvas caretControl;
-	private static final int arrowSize = 10;
-	private static final int barSize = 5;
+	// Constants
+	private static final int width = 6; // the handle's 'thickness'
+	private static final int pctInset = 10; // The percentage of the area left at each 'end'
 
+	// Control info
+	private Canvas caretControl;
+	private Canvas end1;
+	private Canvas end2;
+	
 	// Colors
 	private Color baseColor;
 	private Color hilightColor;
 	private boolean isHighlight;
 	
-	// 'Model' info
-	private int areaId;
-	private IWindowTrim insertBefore;
-	private TrimLayout layout;
-	private boolean asBar;
-	
 	/**
-	 * Creates the insert caret, remembering the parameters necessary to insert a piece
-	 * of trim at the caret's 'location'.
+	 * Creates an affordance to indicate that the given trim area is a valid location for the
+	 * trim being dragged.
 	 * 
-	 * @param parent The composite owning the caret
-	 * @param pos The position at which to place the head
-	 * @param areaId
-	 * @param insertBefore
+	 * @param windowComposite The window to create the affordance as a child of
+	 * @param trimRect The rectangle to show the affordance for
+	 * @param swtSide The 'side' that the rectangle is on
+	 * @param threshold The amount to offfset the affordance by
 	 */
-	public InsertCaret(Composite parent, Point pos, int areaId, IWindowTrim insertBefore, TrimLayout layout, boolean asBar) {
-		this.clientControl = parent;
-		caretControl = new Canvas (parent, SWT.NONE);
-		caretControl.setSize(arrowSize, arrowSize);
-		caretControl.setVisible(false);
-
-		// Remember the trim item that this insert is associated with
-		this.areaId = areaId;
-		this.insertBefore = insertBefore;
-		this.layout = layout;
-		this.asBar = asBar;
-		
+	public InsertCaret(Composite parent, Rectangle trimRect, int swtSide, int threshold) {
 		// Use the SWT 'title' colors since they should always have a proper contrast
 		// and are 'related' (i.e. should look good together)
-		baseColor = caretControl.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
-		RGB background  = caretControl.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();
+		baseColor = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
+		RGB background  = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();
 		RGB blended = ColorUtil.blend(baseColor.getRGB(), background);
-		hilightColor = new Color(caretControl.getDisplay(), blended);
+		hilightColor = new Color(parent.getDisplay(), blended);
 
-		// set up the painting vars
-		setHighlight(false);
-		
-		// if we are -not- displaying as a 'bar' then we'll need to paint the control
-		if (!asBar) {
-			caretControl.addPaintListener(new PaintListener() {
-				public void paintControl(PaintEvent e) {
-					paintArrowCaret(e);
-				}
-			});
-		}
-
-		showCaret(pos, areaId);
+		//Create the caret control
+		createControl(parent, trimRect, swtSide, threshold);
 	}
 
 	/**
-	 * @param e
+	 * Creates a control to show the 'area valid' affordance. The current implementation creates a
+	 * simple rect half the length of the rect, centered and offset by the 'threshold' value.
+	 * 
+	 * @param parent The control to used as the parent of the affordance control
+	 * @param trimRect The trim rectangle
+	 * @param swtSide The SWT side that the trim is on
+	 * @param threshold The offset value
 	 */
-	protected void paintArrowCaret(PaintEvent e) {
-		if (isHighlight) {
-			e.gc.setBackground(hilightColor);
-		}
-		else {
-			e.gc.setBackground(baseColor);
-		}
-
-		switch (getAreaId()) {
-		case SWT.LEFT:
-			{
-				int[] points = { 0, arrowSize/2, arrowSize, 0, arrowSize, arrowSize };
-				e.gc.fillPolygon(points);
-			}
-			break;
-		case SWT.RIGHT:
-			{
-				int[] points = { arrowSize, arrowSize/2, 0, arrowSize, 0, 0 };
-				e.gc.fillPolygon(points);
-			}
-			break;
+	private void createControl(Composite parent, Rectangle trimRect, int swtSide, int threshold) {
+		int hDelta = trimRect.width/pctInset;
+		int vDelta = trimRect.height/pctInset;
+		caretControl = new Canvas (parent.getShell(), SWT.BORDER);
+		
+		end1 = new Canvas (parent.getShell(), SWT.BORDER);
+		end1.setSize(width, width);
+		end2 = new Canvas (parent.getShell(), SWT.BORDER);
+		end2.setSize(width, width);
+		
+		Rectangle bb;
+		switch (swtSide) {
 		case SWT.TOP:
-			{
-				int[] points = { arrowSize/2, 0, 0, arrowSize-1, arrowSize, arrowSize-1 };
-				e.gc.fillPolygon(points);
-			}
+			caretControl.setSize(trimRect.width-(2*hDelta), width);
+			caretControl.setLocation(trimRect.x + hDelta, trimRect.y + trimRect.height + threshold);
+			bb = caretControl.getBounds();
+			end1.setLocation(bb.x, bb.y-width);
+			end2.setLocation((bb.x+bb.width)-width, bb.y-width);
 			break;
 		case SWT.BOTTOM:
-			{
-				int[] points = { arrowSize/2, arrowSize, 0, 0, arrowSize, 0 };
-				e.gc.fillPolygon(points);
-			}
+			caretControl.setSize(trimRect.width-(2*hDelta), width);
+			caretControl.setLocation(trimRect.x + hDelta, trimRect.y - threshold); 
+			bb = caretControl.getBounds();
+			end1.setLocation(bb.x, bb.y+width);
+			end2.setLocation((bb.x+bb.width)-width, bb.y+width);
+			break;
+		case SWT.LEFT:
+			caretControl.setSize(width, trimRect.height -(2*vDelta));
+			caretControl.setLocation(trimRect.x + trimRect.width + threshold,
+									trimRect.y + vDelta); 
+			bb = caretControl.getBounds();
+			end1.setLocation(bb.x-bb.width, bb.y);
+			end2.setLocation(bb.x-bb.width, (bb.y+bb.height)-width);
+			break;
+		case SWT.RIGHT:
+			caretControl.setSize(width, trimRect.height -(2*vDelta));
+			caretControl.setLocation(trimRect.x - threshold,
+									trimRect.y + vDelta); 
+			bb = caretControl.getBounds();
+			end1.setLocation(bb.x+bb.width, bb.y);
+			end2.setLocation(bb.x+bb.width, (bb.y+bb.height)-width);
 			break;
 		}
+		
+		// Initially create as not hilighted
+		setHighlight(false);
+		caretControl.moveAbove(null);
+		end1.moveAbove(null);
+		end2.moveAbove(null);
 	}
 
 	/**
@@ -130,122 +119,25 @@ public class InsertCaret {
 
 		// if we're displaying as a 'bar' then set the control's background to the
 		// appropriate value
-		if (asBar) {
-			if (isHighlight)
-				caretControl.setBackground(hilightColor);
-			else
-				caretControl.setBackground(baseColor);
+		if (isHighlight) {
+			caretControl.setBackground(hilightColor);
+			end1.setBackground(hilightColor);
+			end2.setBackground(hilightColor);
 		}
-		
-		caretControl.redraw();
-	}
-	
-	/**
-	 * @return The area ID that this caret is 'on'
-	 */
-	public int getAreaId() {
-		return areaId;
-	}
-
-	/**
-	 * @return The 'beforeMe' trim for this insertion caret
-	 */
-	public IWindowTrim getInsertTrim() {
-		return insertBefore;
-	}
-	
-	public void showCaret(Point pos, int side) {
-		// Set the appropriate size / location based on the format of the caret
-		if (asBar)
-			formatBarCaret(pos, side);
-		else 
-			formatArrowCaret(pos, side);
-
-		// Force the control into the client rect
-		Rectangle bb = caretControl.getBounds();
-		Rectangle cr = clientControl.getClientArea();
-		Geometry.moveInside(bb,cr);
-		caretControl.setBounds(bb);
-		
-		caretControl.moveAbove(null);
-		caretControl.setVisible(true);
-		caretControl.redraw();
-	}
-	
-	/**
-	 * @param pos
-	 * @param side
-	 */
-	private void formatBarCaret(Point pos, int side) {
-		Rectangle trimRect = layout.getTrimRect(caretControl.getParent(), side);
-		
-		// KLUDGE!! the current trimRect calcs return a zero width/height if the area is 'empty'
-		// for just hack it
-		if (trimRect.width == 0) {
-			trimRect.width = 5;
-		
-			// If it's on the right then we have to offset the rect's position as well
-			if (areaId == SWT.RIGHT)
-				trimRect.x -= trimRect.width;
+		else {
+			caretControl.setBackground(baseColor);
+			end1.setBackground(baseColor);
+			end2.setBackground(baseColor);
 		}
-		
-		if (trimRect.height == 0)
-			trimRect.height = 5;
-		
-		trimRect = Geometry.toControl(caretControl.getParent(), trimRect);
-		System.out.println("showBar: id = " + areaId + " trimRect = " + trimRect);  //$NON-NLS-1$//$NON-NLS-2$
-		
-		switch (side) {
-		case SWT.LEFT:
-		case SWT.RIGHT:
-			caretControl.setSize(trimRect.width, barSize);
-			caretControl.setLocation(trimRect.x, pos.y - (barSize/2));
-			break;
-		case SWT.TOP:
-		case SWT.BOTTOM:
-			caretControl.setSize(barSize, trimRect.height);
-			caretControl.setLocation(pos.x - (barSize/2), trimRect.y);
-			break;
-		}
-	}
-
-	/**
-	 * Formats the control to display the caret as an 'arrow'.
-	 * 
-	 * @param pos The position of the 'head' of the arrow
-	 * @param side The SWT 'side' that the caret is pointing towards
-	 */
-	private void formatArrowCaret(Point pos, int side) {
-		caretControl.setSize(arrowSize, arrowSize);
-		
-		switch (side) {
-		case SWT.LEFT:
-			caretControl.setLocation(pos.x, pos.y - (arrowSize/2));
-			break;
-		case SWT.RIGHT:
-			caretControl.setLocation(pos.x-arrowSize, pos.y - (arrowSize/2));
-			break;
-		case SWT.TOP:
-			caretControl.setLocation(pos.x-(arrowSize/2), pos.y);
-			break;
-		case SWT.BOTTOM:
-			caretControl.setLocation(pos.x-(arrowSize/2), pos.y - arrowSize);
-			break;
-		}
-	}
-
-	public void hideCaret() {
-		caretControl.setVisible(false);
-	}
-
-	public Rectangle getBounds() {
-		return caretControl.getBounds();
 	}
 
 	public void dispose() {
 		// Dispose the control's resources (we don't have to dispose the
 		// 'bacseColor' because it's a system color
 		hilightColor.dispose();
+		
 		caretControl.dispose();
+		end1.dispose();
+		end2.dispose();
 	}
 }

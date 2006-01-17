@@ -28,47 +28,16 @@ public class TrimDragPreferences {
 	 * How close to a caret the cursor has to be to be 'valid'
 	 */
 
-	private static int thresholdPref = 100;
-	/**
-	 * This preference determines the look of the insertion carets;
-	 * 'true' means to use a 'bar' format
-	 * 'false' means to use an 'arrow' format
-	 */
-	private static boolean useBarsPref = false;
-	
-	/**
-	 * If 'true' only uses the four-way 'move' and 'no drop' cursors
-	 */
-	private static boolean inhibitCustomCursors = false;
-	
-	/**
-	 * If 'true' then the insertion point for an 'empty' trim is in the middle
-	 * If 'false' then the insertion point for an 'empty' trim is at the 'start'
-	 */
-	private static boolean useMiddleIfEmpty = true;
+	private static int thresholdPref = 50;
 	
 	/**
 	 * 'true' means that each trim element can have a different 'height'
 	 */
 	private static boolean raggedTrim = false;
-	
-	/**
-	 * Determines whether the control is docked instead
-	 * of just 'snapping' to the insert point
-	 */
-	private static boolean autoDock = false;
 
 	/*
 	 * Accessor Methods
 	 */
-	public static void setUseBars(boolean useBars) {
-		useBarsPref = useBars;
-	}
-	
-	public static boolean useBars() {
-		return useBarsPref;
-	}
-
 	/**
 	 * @return Returns the threshold.
 	 */
@@ -84,34 +53,6 @@ public class TrimDragPreferences {
 	}
 
 	/**
-	 * @return Returns the inhibitCustomCursors.
-	 */
-	public static boolean inhibitCustomCursors() {
-		return inhibitCustomCursors;
-	}
-
-	/**
-	 * @param inhibitCustomCursors The inhibitCustomCursors to set.
-	 */
-	public static void setInhibitCustomCursors(boolean inhibitCustomCursors) {
-		TrimDragPreferences.inhibitCustomCursors = inhibitCustomCursors;
-	}
-
-	/**
-	 * @return Returns the useMiddleIfEmpty.
-	 */
-	public static boolean useMiddleIfEmpty() {
-		return useMiddleIfEmpty;
-	}
-
-	/**
-	 * @param useMiddleIfEmpty The useMiddleIfEmpty to set.
-	 */
-	public static void setUseMiddleIfEmpty(boolean useMiddleIfEmpty) {
-		TrimDragPreferences.useMiddleIfEmpty = useMiddleIfEmpty;
-	}
-
-	/**
 	 * @return Returns the raggedTrim.
 	 */
 	public static boolean showRaggedTrim() {
@@ -123,19 +64,5 @@ public class TrimDragPreferences {
 	 */
 	public static void setRaggedTrim(boolean raggedTrim) {
 		TrimDragPreferences.raggedTrim = raggedTrim;
-	}
-
-	/**
-	 * @return Returns the autoDock.
-	 */
-	public static boolean autoDock() {
-		return autoDock;
-	}
-
-	/**
-	 * @param autoDock The autoDock to set.
-	 */
-	public static void setAutoDock(boolean autoDock) {
-		TrimDragPreferences.autoDock = autoDock;
 	}
 }

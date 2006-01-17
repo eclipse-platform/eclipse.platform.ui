@@ -80,20 +80,30 @@ public class DragBorder {
      * <code>clientControl</code>.
      * 
      * @param newPos The new position for the border
-     * @param centered <code>true</code> iff the border should be centered on the point
+     * @param alignment The location of the cursor relative to the border being dragged.
+     * Current implementation only recognizes SWT.TOP & SWT.BOTTOM (which implies SWT.LEFT)
+     * and SWT.CENTER (which centers teh dragged border on the cursor.
      */
-    public void setLocation(Point newPos, boolean centered) {
+    public void setLocation(Point newPos, int alignment) {
 		// Move the border but ensure that it is still inside the Client area
-    	if (centered) {
+    	if (alignment == SWT.CENTER) {
     		Point size = border.getSize();
     		border.setLocation(newPos.x - (size.x/2), newPos.y - (size.y/2));
     	}
-    	else
+    	else if (alignment == SWT.TOP) {
     		border.setLocation(newPos.x, newPos.y);
+    	}
+    	else
+    		border.setLocation(newPos.x, newPos.y - border.getSize().y);
     	
+    	// Force the control to remain inside the shell
 		Rectangle bb = border.getBounds();
 		Rectangle cr = clientControl.getClientArea();
 		Geometry.moveInside(bb,cr);
+		
+		// Ensure that the controls are the 'topmost' controls
+		border.moveAbove(null);
+		dragControl.moveAbove(null);
 		
 		// OK, now move the drag control and the border to their new locations
 		dragControl.setLocation(bb.x+1, bb.y+1);
