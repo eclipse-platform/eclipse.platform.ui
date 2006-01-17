@@ -11,8 +11,6 @@
 package org.eclipse.jface.fieldassist;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -23,7 +21,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Region;
@@ -377,13 +374,6 @@ public class DecoratedField {
 		// Set up the preferred width of the control and attachments to the
 		// decorations.
 		FormData data = new FormData();
-		GC gc = new GC(control);
-		gc.setFont(control.getFont());
-		FontMetrics fontMetrics = gc.getFontMetrics();
-		gc.dispose();
-		data.width = Dialog.convertHorizontalDLUsToPixels(fontMetrics,
-				IDialogConstants.ENTRY_FIELD_WIDTH)
-				+ 2 * RESERVED_WIDTH;
 		data.left = new FormAttachment(decDatas[LEFT_TOP].label);
 		data.right = new FormAttachment(decDatas[RIGHT_TOP].label);
 		data.top = new FormAttachment(0, 0);
