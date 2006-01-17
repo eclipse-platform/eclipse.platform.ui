@@ -1243,51 +1243,48 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		int start= MarkerUtilities.getCharStart(marker);
 		int end= MarkerUtilities.getCharEnd(marker);
+		
+		boolean selectLine= start < 0 || end < 0; 
 
-		if (start < 0 || end < 0) {
+		// look up the current range of the marker when the document has been edited
+		IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
+		if (model instanceof AbstractMarkerAnnotationModel) {
 
-			// there is only a line number
-			int line= MarkerUtilities.getLineNumber(marker);
-			if (line > -1) {
-
-				// marker line numbers are 1-based
-				-- line;
-
-				try {
-
-					IDocument document= getDocumentProvider().getDocument(getEditorInput());
-					selectAndReveal(document.getLineOffset(line), document.getLineLength(line));
-
-				} catch (BadLocationException x) {
-					// marker refers to invalid text position -> do nothing
-				}
+			AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
+			Position pos= markerModel.getMarkerPosition(marker);
+			if (pos != null && !pos.isDeleted()) {
+				// use position instead of marker values
+				start= pos.getOffset();
+				end= pos.getOffset() + pos.getLength();
 			}
 
-		} else {
-
-			// look up the current range of the marker when the document has been edited
-			IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
-			if (model instanceof AbstractMarkerAnnotationModel) {
-
-				AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
-				Position pos= markerModel.getMarkerPosition(marker);
-				if (pos != null && !pos.isDeleted()) {
-					// use position instead of marker values
-					start= pos.getOffset();
-					end= pos.getOffset() + pos.getLength();
-				}
-
-				if (pos != null && pos.isDeleted()) {
-					// do nothing if position has been deleted
-					return;
-				}
+			if (pos != null && pos.isDeleted()) {
+				// do nothing if position has been deleted
+				return;
 			}
-
-			IDocument document= getDocumentProvider().getDocument(getEditorInput());
-			int length= document.getLength();
-			if (end - 1 < length && start < length)
-				selectAndReveal(start, end - start);
 		}
+
+		IDocument document= getDocumentProvider().getDocument(getEditorInput());
+
+		if (selectLine) {
+			int line;
+			try {
+				if (start >= 0)
+					line= document.getLineOfOffset(start);
+				else {
+					line= MarkerUtilities.getLineNumber(marker);
+					// Marker line numbers are 1-based
+					-- line;
+				}
+				end= start + document.getLineLength(line) - 1;
+			} catch (BadLocationException e) {
+				return;
+			}
+		}
+
+		int length= document.getLength();
+		if (end - 1 < length && start < length)
+			selectAndReveal(start, end - start);
 	}
 
 	/*
@@ -1678,6 +1675,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		String key= preference == null ? null : preference.getIsGoToNextNavigationTargetKey();
 		return (key != null && getPreferenceStore().getBoolean(key));
 	}
+	
+	
+	
+	
 	
 	/**
 	 * {@inheritDoc}
