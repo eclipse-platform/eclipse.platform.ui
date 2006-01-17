@@ -84,8 +84,8 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.application.ActionBarAdvisor;
+import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
-import org.eclipse.ui.internal.AbstractActionBarConfigurer;
 import org.eclipse.ui.internal.ActionSetActionBars;
 import org.eclipse.ui.internal.ActionSetContributionItem;
 import org.eclipse.ui.internal.ActionSetMenuManager;
@@ -384,8 +384,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
      * window's hardwired menus and toolbars in order to display their
      * structure properly in the preview panes.
      */
-    public class CustomizeActionBars extends AbstractActionBarConfigurer
-            implements IActionBars2 {
+    public class CustomizeActionBars implements IActionBarConfigurer,
+			IActionBars2 {
         
         IWorkbenchWindowConfigurer configurer;
         

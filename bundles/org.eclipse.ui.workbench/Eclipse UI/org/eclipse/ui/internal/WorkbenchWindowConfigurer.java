@@ -140,7 +140,7 @@ public final class WorkbenchWindowConfigurer implements
      * Action bar configurer that changes this workbench window.
      * This implementation keeps track of of cool bar items
      */
-    class WindowActionBarConfigurer extends AbstractActionBarConfigurer {
+    class WindowActionBarConfigurer implements IActionBarConfigurer {
 
         private IActionBarConfigurer proxy;
         
