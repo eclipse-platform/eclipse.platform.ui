@@ -82,7 +82,18 @@ public class SubActionBars extends EventManager implements IActionBars {
 		this.serviceLocator = serviceLocator;
 	}
 
-	/**
+    /**
+     * Construct a new SubActionBars object.
+     * 
+	 * @param parent
+	 *            The parent of this action bar; must not be <code>null</code>.
+     */
+    public SubActionBars(IActionBars parent) {
+        this.parent = parent;
+        this.serviceLocator = PlatformUI.getWorkbench();
+    }
+
+    /**
 	 * Activate the contributions.
 	 */
 	public void activate() {
