@@ -35,19 +35,26 @@ import org.eclipse.ui.services.IServiceLocator;
  * Generic implementation of the <code>IActionBars</code> interface.
  */
 public class SubActionBars extends EventManager implements IActionBars {
-	private IActionBars parent;
-
-	private boolean active = false;
+	/**
+	 * Property constant for changes to action handlers.
+	 */
+	public static final String P_ACTION_HANDLERS = "org.eclipse.ui.internal.actionHandlers"; //$NON-NLS-1$
 
 	private Map actionHandlers;
 
+	private boolean actionHandlersChanged;
+
+	/**
+	 * A map of handler activations indexed by action id. This value is
+	 * <code>null</code> if there are no activations.
+	 */
+	private Map activationsByActionId;
+
+	private boolean active = false;
+
 	private SubMenuManager menuMgr;
 
-	private SubStatusLineManager statusLineMgr;
-
-	private SubToolBarManager toolBarMgr;
-
-	private boolean actionHandlersChanged;
+	private IActionBars parent;
 
 	/**
 	 * A service locator appropriate for this action bar. This value is never
@@ -56,16 +63,20 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 */
 	private final IServiceLocator serviceLocator;
 
-	/**
-	 * A map of handler activations indexed by action id. This value is
-	 * <code>null</code> if there are no activations.
-	 */
-	private Map activationsByActionId;
+	private SubStatusLineManager statusLineMgr;
+
+	private SubToolBarManager toolBarMgr;
 
 	/**
-	 * Property constant for changes to action handlers.
+	 * Construct a new <code>SubActionBars</code> object. The service locator
+	 * will simply be the service locator of the parent.
+	 * 
+	 * @param parent
+	 *            The parent of this action bar; must not be <code>null</code>.
 	 */
-	public static final String P_ACTION_HANDLERS = "org.eclipse.ui.internal.actionHandlers"; //$NON-NLS-1$
+	public SubActionBars(final IActionBars parent) {
+		this(parent, null);
+	}
 
 	/**
 	 * Constructs a new instance of <code>SubActionBars</code>.
@@ -78,22 +89,15 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 */
 	public SubActionBars(final IActionBars parent,
 			final IServiceLocator serviceLocator) {
+		if (parent == null) {
+			throw new NullPointerException("The parent cannot be null"); //$NON-NLS-1$
+		}
+
 		this.parent = parent;
 		this.serviceLocator = serviceLocator;
 	}
 
-    /**
-     * Construct a new SubActionBars object.
-     * 
-	 * @param parent
-	 *            The parent of this action bar; must not be <code>null</code>.
-     */
-    public SubActionBars(IActionBars parent) {
-        this.parent = parent;
-        this.serviceLocator = PlatformUI.getWorkbench();
-    }
-
-    /**
+	/**
 	 * Activate the contributions.
 	 */
 	public void activate() {
@@ -125,6 +129,14 @@ public class SubActionBars extends EventManager implements IActionBars {
 	}
 
 	/**
+	 * Sets the active flag. Clients should not call this method directly unless
+	 * they are overriding the setActive() method.
+	 */
+	protected final void basicSetActive(boolean active) {
+		this.active = active;
+	}
+
+	/**
 	 * Clear the global action handlers.
 	 */
 	public void clearGlobalActionHandlers() {
@@ -133,7 +145,8 @@ public class SubActionBars extends EventManager implements IActionBars {
 			actionHandlersChanged = true;
 
 			// Clean up the activations.
-			final IHandlerService service = (IHandlerService) serviceLocator
+			final IServiceLocator locator = getServiceLocator();
+			final IHandlerService service = (IHandlerService) locator
 					.getService(IHandlerService.class);
 			final Iterator activationItr = activationsByActionId.values()
 					.iterator();
@@ -208,6 +221,19 @@ public class SubActionBars extends EventManager implements IActionBars {
 	}
 
 	/**
+	 * Notifies any property change listeners if the global action handlers have
+	 * changed
+	 */
+	protected void fireActionHandlersChanged() {
+		if (actionHandlersChanged) {
+			// Doesn't actually pass the old and new values
+			firePropertyChange(new PropertyChangeEvent(this, P_ACTION_HANDLERS,
+					null, null));
+			actionHandlersChanged = false;
+		}
+	}
+
+	/**
 	 * Notifies any property change listeners that a property has changed. Only
 	 * listeners registered at the time this method is called are notified.
 	 * 
@@ -220,19 +246,6 @@ public class SubActionBars extends EventManager implements IActionBars {
 		Object[] listeners = getListeners();
 		for (int i = 0; i < listeners.length; ++i) {
 			((IPropertyChangeListener) listeners[i]).propertyChange(event);
-		}
-	}
-
-	/**
-	 * Notifies any property change listeners if the global action handlers have
-	 * changed
-	 */
-	protected void fireActionHandlersChanged() {
-		if (actionHandlersChanged) {
-			// Doesn't actually pass the old and new values
-			firePropertyChange(new PropertyChangeEvent(this, P_ACTION_HANDLERS,
-					null, null));
-			actionHandlersChanged = false;
 		}
 	}
 
@@ -286,6 +299,14 @@ public class SubActionBars extends EventManager implements IActionBars {
 		return parent;
 	}
 
+	public final IServiceLocator getServiceLocator() {
+		if (serviceLocator != null) {
+			return serviceLocator;
+		}
+
+		return parent.getServiceLocator();
+	}
+
 	/**
 	 * Returns the status line manager. If items are added or removed from the
 	 * manager be sure to call <code>updateActionBars</code>.
@@ -323,17 +344,17 @@ public class SubActionBars extends EventManager implements IActionBars {
 	}
 
 	/**
-	 * Return whether the sub toolbar manager has been created yet.
-	 */
-	protected final boolean isSubToolBarManagerCreated() {
-		return toolBarMgr != null;
-	}
-
-	/**
 	 * Return whether the sub status line manager has been created yet.
 	 */
 	protected final boolean isSubStatusLineManagerCreated() {
 		return statusLineMgr != null;
+	}
+
+	/**
+	 * Return whether the sub toolbar manager has been created yet.
+	 */
+	protected final boolean isSubToolBarManagerCreated() {
+		return toolBarMgr != null;
 	}
 
 	/**
@@ -351,14 +372,6 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		removeListenerObject(listener);
-	}
-
-	/**
-	 * Sets the active flag. Clients should not call this method directly unless
-	 * they are overriding the setActive() method.
-	 */
-	protected final void basicSetActive(boolean active) {
-		this.active = active;
 	}
 
 	/**
@@ -386,6 +399,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 *            may be passed to deregister a handler.
 	 */
 	public void setGlobalActionHandler(String actionID, IAction handler) {
+		final IServiceLocator locator = getServiceLocator();
 		if (handler != null) {
 			// Update the action handlers.
 			if (actionHandlers == null)
@@ -393,7 +407,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 			actionHandlers.put(actionID, handler);
 
 			// Update the handler activations.
-			final IHandlerService service = (IHandlerService) serviceLocator
+			final IHandlerService service = (IHandlerService) locator
 					.getService(IHandlerService.class);
 			if (activationsByActionId == null) {
 				activationsByActionId = new HashMap();
@@ -409,10 +423,10 @@ public class SubActionBars extends EventManager implements IActionBars {
 			}
 
 			// Add a mapping from this action id to the command id.
-			final IActionCommandMappingService mappingService = (IActionCommandMappingService) serviceLocator
+			final IActionCommandMappingService mappingService = (IActionCommandMappingService) locator
 					.getService(IActionCommandMappingService.class);
 			final String commandId = mappingService.getCommandId(actionID);
-			
+
 			if (commandId != null) {
 				// Register this as a handler with the given definition id.
 				final IHandler actionHandler = new ActionHandler(handler);
@@ -426,7 +440,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 				actionHandlers.remove(actionID);
 
 			// Remove the handler activation.
-			final IHandlerService service = (IHandlerService) serviceLocator
+			final IHandlerService service = (IHandlerService) locator
 					.getService(IHandlerService.class);
 			if (activationsByActionId != null) {
 				if (activationsByActionId.containsKey(actionID)) {

@@ -17,6 +17,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.services.IServiceLocator;
 
 public class WWinActionBars implements IActionBars2 {
     private WorkbenchWindow window;
@@ -33,16 +34,6 @@ public class WWinActionBars implements IActionBars2 {
      * Clears the global action handler list.
      */
     public void clearGlobalActionHandlers() {
-    }
-
-    /**
-     * Returns the tool bar manager.
-     * 
-     */
-    public IToolBarManager getToolBarManager() {
-        // This should never be called
-        Assert.isTrue(false);
-        return null;
     }
 
     /**
@@ -74,6 +65,10 @@ public class WWinActionBars implements IActionBars2 {
         return window.getMenuManager();
     }
 
+	public final IServiceLocator getServiceLocator() {
+		return window;
+	}
+
     /**
      * Returns the status line manager.  If items are added or
      * removed from the manager be sure to call <code>updateActionBars</code>.
@@ -82,6 +77,16 @@ public class WWinActionBars implements IActionBars2 {
      */
     public IStatusLineManager getStatusLineManager() {
         return window.getStatusLineManager();
+    }
+
+    /**
+     * Returns the tool bar manager.
+     * 
+     */
+    public IToolBarManager getToolBarManager() {
+        // This should never be called
+        Assert.isTrue(false);
+        return null;
     }
 
     /**
@@ -99,7 +104,7 @@ public class WWinActionBars implements IActionBars2 {
     public void setGlobalActionHandler(String actionID, IAction handler) {
     }
 
-    /**
+	/**
      * Commits all UI changes.  This should be called
      * after additions or subtractions have been made to a 
      * menu, status line, or toolbar.

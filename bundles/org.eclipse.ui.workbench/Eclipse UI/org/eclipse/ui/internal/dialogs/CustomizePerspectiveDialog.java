@@ -106,6 +106,7 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
@@ -474,6 +475,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	        menuManager.dispose();	
 	        statusLineManager.dispose();
 	    }
+
+		public final IServiceLocator getServiceLocator() {
+			return configurer.getWindow();
+		}
     }
 
     class ShortcutMenuItemContentProvider implements IStructuredContentProvider {
