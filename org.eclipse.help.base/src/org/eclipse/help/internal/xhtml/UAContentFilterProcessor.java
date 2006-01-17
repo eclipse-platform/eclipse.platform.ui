@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2004, 2006 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -43,7 +43,7 @@ public class UAContentFilterProcessor {
 			if (!filteredIn)
 				return;
 		} else if (hasFiltersAsChildren(element)) {
-			Element[] filters = DOMUtil.getElementsByTagName(element, "filter");
+			Element[] filters = DOMUtil.getElementsByTagName(element, "filter"); //$NON-NLS-1$
 			filteredIn = processFilterChildren(element, filters);
 			if (!filteredIn)
 				return;
@@ -66,7 +66,7 @@ public class UAContentFilterProcessor {
 	}
 
 	private static boolean hasFiltersAsChildren(Element element) {
-		Element[] filters = DOMUtil.getElementsByTagName(element, "filter");
+		Element[] filters = DOMUtil.getElementsByTagName(element, "filter"); //$NON-NLS-1$
 		if (filters != null && filters.length > 0)
 			return true;
 		return false;
@@ -96,8 +96,8 @@ public class UAContentFilterProcessor {
 	private boolean processFilterChildren(Element parent, Element[] filters) {
 		boolean filtered_in = false;
 		for (int i = 0; i < filters.length; i++) {
-			String filter = filters[i].getAttribute("name");
-			String value = filters[i].getAttribute("value");
+			String filter = filters[i].getAttribute("name"); //$NON-NLS-1$
+			String value = filters[i].getAttribute("value"); //$NON-NLS-1$
 			filtered_in = isFilteredIn(filter, value);
 			if (!filtered_in) {
 				parent.getParentNode().removeChild(parent);

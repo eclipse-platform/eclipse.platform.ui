@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2004, 2006 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,7 @@
 
 package org.eclipse.help.internal.xhtml;
 
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.w3c.dom.Document;
 
 
@@ -37,8 +38,11 @@ public class XHTMLSupport {
 
 	public Document processDOM() {
 
-		// resolve filters.
-		filterProcessor.applyFilters(document);
+		// filters do not apply to infocenter
+		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
+			// resolve filters.
+			filterProcessor.applyFilters(document);
+		}
 
 		// resolve includes.
 		mergeProcessor.resolveIncludes();

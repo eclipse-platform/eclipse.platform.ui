@@ -168,4 +168,10 @@
             participant="org.eclipse.help.internal.search.XHTMLSearchParticipant"/>
    </extension>
 
+   <extension
+         id="dynamic"
+         point="org.eclipse.help.contentProducer">
+      <contentProducer producer="org.eclipse.help.internal.base.DynamicContentProducer"/>
+   </extension>
+
 </plugin>
