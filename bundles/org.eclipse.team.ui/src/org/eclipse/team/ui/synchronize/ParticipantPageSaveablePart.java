@@ -41,6 +41,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.commands.*;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Displays a synchronize participant page combined with the compare/merge infrastructure. This only works if the
@@ -523,6 +524,9 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 					}
 				}
 				public void updateActionBars() {
+				}
+				public IServiceLocator getServiceLocator() {
+					return null;
 				}
 			};
 		}

@@ -25,6 +25,7 @@ import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Standalone presentation of a participant page within a view pane. This
@@ -204,6 +205,9 @@ public final class ParticipantPagePane {
 				}
 
 				public void updateActionBars() {
+				}
+				public IServiceLocator getServiceLocator() {
+					return null;
 				}
 			};
 		}
