@@ -197,7 +197,7 @@
          id="org.eclipse.ui.browser.ie"
          name="%browserInternetExplorer"
          os="MacOSX"
-         executable="Internet Explorer">
+         executable="Internet&#0032;Explorer">
          <location>Applications/Internet Explorer.app/Contents/MacOS/"Internet Explorer"</location>
       </browser>
    </extension>

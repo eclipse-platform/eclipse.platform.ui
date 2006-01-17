@@ -73,7 +73,7 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 
 	private int currentPage = -1;
 
-	private ListenerList pageListeners = new ListenerList(3);
+	private ListenerList pageListeners = new ListenerList();
 
 	private static class FormEditorSelectionProvider extends
 			MultiPageSelectionProvider {

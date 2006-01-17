@@ -110,12 +110,6 @@ public class BusyIndicator extends Canvas {
 							drawBackground(offScreenImageGC, 0, 0, loader.logicalScreenWidth, loader.logicalScreenHeight);
 						}
 					});
-					//if (getBackground()!=null) 
-					//	offScreenImageGC.setBackground(getBackground());
-					//offScreenImageGC.fillRectangle(0, 0,
-					//		loader.logicalScreenWidth,
-					//		loader.logicalScreenHeight);
-
 					try {
 						/*
 						 * Create the first image and draw it on the off-screen
@@ -198,8 +192,8 @@ public class BusyIndicator extends Canvas {
 								repeatCount--;
 						}
 					} catch (SWTException ex) {
-						System.out
-								.println("There was an error animating the GIF");
+						//System.out
+						//		.println("There was an error animating the GIF");
 					} finally {
 						if (offScreenImage != null
 								&& !offScreenImage.isDisposed())
