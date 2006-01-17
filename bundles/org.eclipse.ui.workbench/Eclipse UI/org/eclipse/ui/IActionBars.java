@@ -14,6 +14,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Used by a part to access its menu, toolbar, and status line managers.  
@@ -86,17 +87,25 @@ public interface IActionBars {
      * @return the menu manager
      */
     public IMenuManager getMenuManager();
+    
+    /**
+	 * Returns the service locator for these action bars. The locator is found
+	 * by looking locally, and then ascending the action bar hierarchy.
+	 * 
+	 * @return The service locator; never <code>null</code>.
+	 */
+	public IServiceLocator getServiceLocator();
 
     /**
-     * Returns the status line manager.
-     * <p>
-     * Note: Clients who add or remove items from the returned status line manager 
-     * are responsible for calling <code>updateActionBars</code> so that the changes
-     * can be propagated throughout the workbench.
-     * </p>
-     *
-     * @return the status line manager
-     */
+	 * Returns the status line manager.
+	 * <p>
+	 * Note: Clients who add or remove items from the returned status line
+	 * manager are responsible for calling <code>updateActionBars</code> so
+	 * that the changes can be propagated throughout the workbench.
+	 * </p>
+	 * 
+	 * @return the status line manager
+	 */
     public IStatusLineManager getStatusLineManager();
 
     /**
