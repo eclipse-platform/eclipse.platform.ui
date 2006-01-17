@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.model.url;
 
+import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
@@ -173,12 +175,54 @@ public class IntroURLParser {
                         + params[i]);
                 continue;
             }
-            properties.setProperty(keyValuePair[0], keyValuePair[1]);
+            
+            String key = urlDecode(keyValuePair[0]);
+			if (key == null) {
+				Log.warning("Failed to URL decode key: " + keyValuePair[0]); //$NON-NLS-1$
+				continue;
+			}
+
+			String value = urlDecode(keyValuePair[1]);
+			if (value == null) {
+				Log.warning("Failed to URL decode value: " + keyValuePair[1]); //$NON-NLS-1$
+				continue;
+			}
+            
+            properties.setProperty(key, value);
         }
         return properties;
     }
 
 
+    /*
+	 * Note: This was copied and adapted from org.eclipse.help.internal.util.URLCoder
+	 */
+    private static String urlDecode(String encodedURL) {
+		int len = encodedURL.length();
+		ByteArrayOutputStream os = new ByteArrayOutputStream(len);
 
+		try {
+			for (int i = 0; i < len;) {
+				switch (encodedURL.charAt(i)) {
+				case '%':
+					if (len >= i + 3) {
+						os.write(Integer.parseInt(encodedURL.substring(i + 1, i + 3), 16));
+					}
+					i += 3;
+					break;
+				case '+': // exception from standard
+					os.write(' ');
+					i++;
+					break;
+				default:
+					os.write(encodedURL.charAt(i++));
+					break;
+				}
+			}
+			return new String(os.toByteArray(), "UTF8"); //$NON-NLS-1$
+		} catch (UnsupportedEncodingException ex) {
+			return null;
+		}
+	}
 
 }
