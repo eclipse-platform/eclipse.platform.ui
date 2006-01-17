@@ -536,14 +536,15 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		 * Figure out whether this a pulldown or not. If it is a pulldown, then
 		 * we are going to need to make an SWidget rather than an SItem.
 		 */
-		final String style = readOptional(element, ATTRIBUTE_STYLE);
-		final boolean pulldown = readBoolean(element, ATTRIBUTE_PULLDOWN, false);
-		if (pulldown || STYLE_PULLDOWN.equals(style)) {
+		if (isPulldown(element)) {
 			final SWidget widget = menuService.getWidget(id);
 			final IWidget proxy = new PulldownDelegateWidgetProxy(element,
 					ATTRIBUTE_CLASS);
 			widget.define(proxy, locations);
-			// TODO Cannot duplicate the class instance between handler and item
+			/*
+			 * TODO Cannot duplicate the class instance between handler and item
+			 * Note that this is not an issue when creating a retarget pulldown.
+			 */
 			final IMenuContribution contribution = menuService.contributeMenu(
 					widget, visibleWhenExpression);
 			menuContributions.add(contribution);
