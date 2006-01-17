@@ -178,11 +178,16 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								break;
 							case RefactoringHistoryNode.DAY:
 								pattern= fControlConfiguration.getDayPattern();
-								final int type= node.getParent().getKind();
-								if (type == RefactoringHistoryNode.THIS_WEEK || type == RefactoringHistoryNode.LAST_WEEK)
-									format= new SimpleDateFormat(NLS.bind(RefactoringUIMessages.RefactoringHistoryControlConfiguration_day_detailed_pattern, DateFormat.getDateInstance().format(stamp)), new Locale(RefactoringUIMessages.RefactoringHistoryLabelProvider_label_language, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_country, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_variant));
-								else
+								try {
+									final Locale locale= new Locale(RefactoringUIMessages.RefactoringHistoryLabelProvider_label_language, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_country, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_variant);
+									final int type= node.getParent().getKind();
+									if (type == RefactoringHistoryNode.THIS_WEEK || type == RefactoringHistoryNode.LAST_WEEK)
+										format= new SimpleDateFormat(NLS.bind(RefactoringUIMessages.RefactoringHistoryControlConfiguration_day_detailed_pattern, DateFormat.getDateInstance().format(stamp)), locale);
+									else
+										format= DateFormat.getDateInstance();
+								} catch (RuntimeException exception) {
 									format= DateFormat.getDateInstance();
+								}
 								break;
 							case RefactoringHistoryNode.YESTERDAY:
 								pattern= fControlConfiguration.getYesterdayPattern();
