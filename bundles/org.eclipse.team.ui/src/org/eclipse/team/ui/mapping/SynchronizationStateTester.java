@@ -237,6 +237,7 @@ public class SynchronizationStateTester {
 				} catch (CoreException e) {
 					if (e == shared)
 						return true;
+					throw e;
 				}
 			}
 		}
