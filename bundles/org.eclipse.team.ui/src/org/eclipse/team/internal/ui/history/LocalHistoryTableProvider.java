@@ -42,10 +42,10 @@ public class LocalHistoryTableProvider {
 					String revision = DateFormat.getInstance().format(new Date(entry.getModificationTime()));
 					return revision;
 				case COL_AUTHOR:
-					return "local user";
+					return ""; //$NON-NLS-1$
 					
 				case COL_COMMENT:
-					return "local revision";
+					return TeamUIMessages.LocalHistoryTableProvider_localRevision;
 			}
 			return ""; //$NON-NLS-1$
 		}

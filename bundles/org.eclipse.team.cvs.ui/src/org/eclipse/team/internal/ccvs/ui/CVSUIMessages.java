@@ -1045,5 +1045,7 @@ public class CVSUIMessages extends NLS {
 	public static String ModelReplaceOperation_3;
 	public static String MergeWizardPage_14;
 	public static String CVSHistoryFilterDialog_showLocalRevisions;
+	public static String CVSHistoryTableProvider_base;
+	public static String CVSHistoryTableProvider_currentVersion;
 
 }

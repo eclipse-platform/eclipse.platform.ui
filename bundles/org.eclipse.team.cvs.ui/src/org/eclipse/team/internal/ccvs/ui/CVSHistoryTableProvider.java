@@ -62,7 +62,7 @@ public class CVSHistoryTableProvider {
 					String currentRevision = getCurrentRevision();
 					if (currentRevision != null && currentRevision.equals(revision)) {
 						if (baseModified)
-							revision = NLS.bind(CVSUIMessages.nameAndRevision, new String[] { revision, "<base>"}); //NLS.bind(CVSUIMessages.currentRevision, new String[] { revision }); 
+							revision = NLS.bind(CVSUIMessages.nameAndRevision, new String[] { revision, CVSUIMessages.CVSHistoryTableProvider_base}); //NLS.bind(CVSUIMessages.currentRevision, new String[] { revision }); 
 						else
 							revision = NLS.bind(CVSUIMessages.currentRevision, new String[] {revision}); //NLS.bind(CVSUIMessages.currentRevision, new String[] { revision });
 					}
@@ -129,7 +129,7 @@ public class CVSHistoryTableProvider {
 			String comment = entry.getComment();
 			String tempCurrentRevision = getCurrentRevision();
 			if (tempCurrentRevision != null && tempCurrentRevision.equals(revision) ||
-				comment.equals("<current version>")) {
+				comment.equals(CVSUIMessages.CVSHistoryTableProvider_currentVersion)) {
 				if (currentRevisionFont == null) {
 					Font defaultFont = JFaceResources.getDefaultFont();
 					FontData[] data = defaultFont.getFontData();

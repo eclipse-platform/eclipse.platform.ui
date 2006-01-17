@@ -58,9 +58,9 @@ public class FileRevisionEditorInput implements IWorkbenchAdapter,IStorageEditor
 			return NLS.bind(TeamUIMessages.nameAndRevision, new String[] { file.getName(), file.getContentIdentifier()});
 		
 		if (storage != null){
-			return storage.getName() +  " " + DateFormat.getInstance().format(new Date(((IFileState) storage).getModificationTime())) ;
+			return storage.getName() +  " " + DateFormat.getInstance().format(new Date(((IFileState) storage).getModificationTime())) ; //$NON-NLS-1$
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 		
 	}
 
@@ -73,7 +73,7 @@ public class FileRevisionEditorInput implements IWorkbenchAdapter,IStorageEditor
 		if (file != null)
 			return file.getContentIdentifier();
 		
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public Object getAdapter(Class adapter) {
@@ -99,7 +99,7 @@ public class FileRevisionEditorInput implements IWorkbenchAdapter,IStorageEditor
 		if (storage != null){
 			return storage.getName();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public Object getParent(Object o) {

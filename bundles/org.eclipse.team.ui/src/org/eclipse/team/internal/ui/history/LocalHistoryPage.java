@@ -40,7 +40,7 @@ public class LocalHistoryPage extends Page implements IHistoryPage {
 	
 	private IViewSite parentSite;
 	private OpenLocalFileAction openAction;
-	private CompareLocalFileAction compareAction;
+	//private CompareLocalFileAction compareAction;
 
 	
 	public void showHistory(IResource resource, boolean refetch) {
@@ -85,7 +85,7 @@ public class LocalHistoryPage extends Page implements IHistoryPage {
 
 	private void contributeActions() {
 		// Double click open action
-		openAction = new OpenLocalFileAction("Open Local File");
+		openAction = new OpenLocalFileAction(TeamUIMessages.LocalHistoryPage_openRevision);
 		tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
 			public void handleEvent(Event e) {
 				openAction.selectionChanged((IStructuredSelection) tableViewer.getSelection());
@@ -93,7 +93,7 @@ public class LocalHistoryPage extends Page implements IHistoryPage {
 			}
 		});
 		
-		compareAction = new CompareLocalFileAction("Compare File");
+		//compareAction = new CompareLocalFileAction("Compare");
 		
 		//Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
@@ -115,9 +115,9 @@ public class LocalHistoryPage extends Page implements IHistoryPage {
 			IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
 		    openAction.selectionChanged(selection);
 		    menuMgr.add(openAction);
-		    compareAction.setEnabled(selection.size() == 2);
+		    /*compareAction.setEnabled(selection.size() == 2);
 		    compareAction.selectionChanged(selection);
-		    menuMgr.add(compareAction);
+		    menuMgr.add(compareAction);*/
 		    menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
@@ -189,7 +189,7 @@ public class LocalHistoryPage extends Page implements IHistoryPage {
 		public IFile localFile;
 
 		public FetchLocalHistoryJob() {
-			super("Fetching Local History");
+			super(TeamUIMessages.LocalHistoryPage_fetchingLocalHistory);
 		}
 
 		public IFile getFile() {

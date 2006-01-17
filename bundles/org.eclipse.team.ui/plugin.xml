@@ -123,7 +123,7 @@
                class="org.eclipse.team.internal.ui.history.ShowLocalHistory"
                enablesFor="1"
                id="org.eclipse.team.ui.showlocalhistory"
-               label="&amp;Show Local History"
+               label="%ShowLocalHistory.label"
                menubarPath="local"/>
       </objectContribution>
    </extension>

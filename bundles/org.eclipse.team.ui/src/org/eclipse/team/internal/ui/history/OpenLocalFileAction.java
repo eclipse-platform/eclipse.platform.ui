@@ -23,7 +23,7 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
 
-public class OpenLocalFileAction extends BaseSelectionListenerAction  {
+public class OpenLocalFileAction extends BaseSelectionListenerAction {
 
 	protected OpenLocalFileAction(String text) {
 		super(text);
@@ -31,33 +31,32 @@ public class OpenLocalFileAction extends BaseSelectionListenerAction  {
 
 	public void run() {
 		try {
-					IStructuredSelection structSel = getStructuredSelection();
+			IStructuredSelection structSel = getStructuredSelection();
 
-					Object[] objArray = structSel.toArray();
+			Object[] objArray = structSel.toArray();
 
-					for (int i = 0; i < objArray.length; i++) {
-						IFileState state = (IFileState) objArray[i];
-						if (!state.exists()) {
-							MessageDialog.openError(TeamUIPlugin.getActivePage().getActivePart().getSite().getShell(), TeamUIMessages.OpenRevisionAction_DeletedRevisionTitle, TeamUIMessages.OpenRevisionAction_DeletedRevisionMessage);
-						} else {
-							String id = getEditorID(state.getName(), state.getContents());
-							IWorkbenchPage page = TeamUIPlugin.getActivePage();
-							if (page != null){
-								page.openEditor(new FileRevisionEditorInput(state), id);
-							}
-						}
-
+			for (int i = 0; i < objArray.length; i++) {
+				IFileState state = (IFileState) objArray[i];
+				if (!state.exists()) {
+					MessageDialog.openError(TeamUIPlugin.getActivePage().getActivePart().getSite().getShell(), TeamUIMessages.OpenRevisionAction_DeletedRevisionTitle, TeamUIMessages.OpenRevisionAction_DeletedRevisionMessage);
+				} else {
+					String id = getEditorID(state.getName(), state.getContents());
+					IWorkbenchPage page = TeamUIPlugin.getActivePage();
+					if (page != null) {
+						page.openEditor(new FileRevisionEditorInput(state), id);
 					}
-
-				} catch (Exception e) {
-				
 				}
+
+			}
+
+		} catch (Exception e) {
+
+		}
 	}
 
 	/* private */String getEditorID(String fileName, InputStream contents) {
 		IWorkbench workbench = TeamUIPlugin.getPlugin().getWorkbench();
 		IEditorRegistry registry = workbench.getEditorRegistry();
-		IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
 
 		IContentType type = null;
 		if (contents != null) {
@@ -80,6 +79,5 @@ public class OpenLocalFileAction extends BaseSelectionListenerAction  {
 
 		return id;
 	}
-	
 
 }

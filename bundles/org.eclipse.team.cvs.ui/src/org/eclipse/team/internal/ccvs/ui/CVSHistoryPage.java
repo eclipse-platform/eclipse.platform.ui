@@ -91,6 +91,8 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 
 	/* private */boolean shutdown = false;
 
+	private HistoryResourceListener resourceListener;
+
 	// preferences
 	public final static String PREF_GENERIC_HISTORYVIEW_SHOW_COMMENTS = "pref_generichistory_show_comments"; //$NON-NLS-1$
 
@@ -114,6 +116,9 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 		contributeActions();
 
 		setViewerVisibility();
+		
+		resourceListener = new HistoryResourceListener();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, IResourceChangeEvent.POST_CHANGE);
 	}
 
 	private TextViewer createText(SashForm parent) {
@@ -398,18 +403,20 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 
 	/* private */ void fillTableMenu(IMenuManager manager) {
 		// file actions go first (view file)
-		// file actions go first (view file)
 		manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
 		if (file != null) {
 			// Add the "Add to Workspace" action if 1 revision is selected.
 			ISelection sel = tableViewer.getSelection();
 			if (!sel.isEmpty()) {
 				if (sel instanceof IStructuredSelection) {
-					if (((IStructuredSelection)sel).size() == 1) {
+					IStructuredSelection tempSelection = (IStructuredSelection) sel;
+					if (tempSelection.size() == 1) {
 						manager.add(getContentsAction);
-						manager.add(getRevisionAction);
-						manager.add(new Separator());
-						manager.add(tagWithExistingAction);
+						if (!(tempSelection.getFirstElement() instanceof LocalFileRevision)) {
+							manager.add(getRevisionAction);
+							manager.add(new Separator());
+							manager.add(tagWithExistingAction);
+						}
 					}
 				}
 			}
@@ -509,72 +516,72 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 
 	private Action getContextMenuAction(String title, final boolean needsProgressDialog, final IWorkspaceRunnable action) {
 		return new Action(title) {
-		public void run() {
-			try {
-				if (file == null) return;
-				ISelection selection = tableViewer.getSelection();
-				if (!(selection instanceof IStructuredSelection)) return;
-				IStructuredSelection ss = (IStructuredSelection)selection;
-				Object o = ss.getFirstElement();
-				currentSelection = (IFileRevision)o;
-				if(needsProgressDialog) {
-					PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							try {				
-								action.run(monitor);
-							} catch (CoreException e) {
-								throw new InvocationTargetException(e);
+			public void run() {
+				try {
+					if (file == null) return;
+					ISelection selection = tableViewer.getSelection();
+					if (!(selection instanceof IStructuredSelection)) return;
+					IStructuredSelection ss = (IStructuredSelection)selection;
+					Object o = ss.getFirstElement();
+					currentSelection = (IFileRevision)o;
+					if(needsProgressDialog) {
+						PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								try {				
+									action.run(monitor);
+								} catch (CoreException e) {
+									throw new InvocationTargetException(e);
+								}
 							}
+						});
+					} else {
+						try {				
+							action.run(null);
+						} catch (CoreException e) {
+							throw new InvocationTargetException(e);
 						}
-					});
-				} else {
-					try {				
-						action.run(null);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
-				}							
-			} catch (InvocationTargetException e) {
-				CVSUIPlugin.openError(parentSite.getShell(), null, null, e, CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
-			} catch (InterruptedException e) {
-				// Do nothing
-			}
-		}
-		
-		public boolean isEnabled() {
-			ISelection selection = tableViewer.getSelection();
-			if (!(selection instanceof IStructuredSelection)) return false;
-			IStructuredSelection ss = (IStructuredSelection)selection;
-			if(ss.size() != 1) return false;
-			return true;
-		}
-	};
-}
-
-private boolean confirmOverwrite() {
-	if (file!=null && file.exists()) {
-		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
-		try {
-			if(cvsFile.isModified(null)) {
-				String title = CVSUIMessages.HistoryView_overwriteTitle; 
-				String msg = CVSUIMessages.HistoryView_overwriteMsg; 
-				final MessageDialog dialog = new MessageDialog(parentSite.getShell(), title, null, msg, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
-				final int[] result = new int[1];
-				parentSite.getShell().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					result[0] = dialog.open();
-				}});
-				if (result[0] != 0) {
-					// cancel
-					return false;
+					}							
+				} catch (InvocationTargetException e) {
+					CVSUIPlugin.openError(parentSite.getShell(), null, null, e, CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
+				} catch (InterruptedException e) {
+					// Do nothing
 				}
 			}
-		} catch(CVSException e) {
-			CVSUIPlugin.log(e);
-		}
+			
+			public boolean isEnabled() {
+				ISelection selection = tableViewer.getSelection();
+				if (!(selection instanceof IStructuredSelection)) return false;
+				IStructuredSelection ss = (IStructuredSelection)selection;
+				if(ss.size() != 1) return false;
+				return true;
+			}
+		};
 	}
-	return true;
-}
+
+	private boolean confirmOverwrite() {
+		if (file!=null && file.exists()) {
+			ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
+			try {
+				if(cvsFile.isModified(null)) {
+					String title = CVSUIMessages.HistoryView_overwriteTitle; 
+					String msg = CVSUIMessages.HistoryView_overwriteMsg; 
+					final MessageDialog dialog = new MessageDialog(parentSite.getShell(), title, null, msg, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
+					final int[] result = new int[1];
+					parentSite.getShell().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						result[0] = dialog.open();
+					}});
+					if (result[0] != 0) {
+						// cancel
+						return false;
+					}
+				}
+			} catch(CVSException e) {
+				CVSUIPlugin.log(e);
+			}
+		}
+		return true;
+	}
 
 	/*
 	 * Refresh the view by refetching the log entries for the remote file
@@ -583,9 +590,14 @@ private boolean confirmOverwrite() {
 		entries = null;
 		BusyIndicator.showWhile(tableViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
-				// if a local file was fed to the history view then we
-				// will have to refetch the handle
-				// to properly display the current revision marker.
+				// if a local file was fed to the history view then we will have to refetch the handle
+				// to properly display the current revision marker. 
+				if(file != null) {
+					RepositoryProvider teamProvider = RepositoryProvider.getProvider(file.getProject());
+					IFileHistory fileHistory = teamProvider.getFileHistoryProvider().getFileHistoryFor(file, new NullProgressMonitor());
+					currentFileRevision = teamProvider.getFileHistoryProvider().getWorkspaceFileRevision(file);
+					historyTableProvider.setFile(fileHistory, file, currentFileRevision.getContentIdentifier());
+				}
 				tableViewer.refresh();
 			}
 		});
@@ -647,6 +659,11 @@ private boolean confirmOverwrite() {
 	public void dispose() {
 		shutdown = true;
 
+		if (resourceListener != null){
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
+			resourceListener = null;
+		}
+		
 		if (branchImage != null) {
 			branchImage.dispose();
 			branchImage = null;
@@ -783,6 +800,31 @@ private boolean confirmOverwrite() {
 		}
 	}
 
+	private class HistoryResourceListener implements IResourceChangeListener {
+		/**
+		 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
+		 */
+		public void resourceChanged(IResourceChangeEvent event) {
+			IResourceDelta root = event.getDelta();
+			IResourceDelta[] projectDeltas = root.getAffectedChildren();
+			processDelta(projectDeltas);
+		}
+
+		private void processDelta(IResourceDelta[] deltas) {
+			for (int i = 0; i < deltas.length; i++) {
+				IResourceDelta[] children = deltas[i].getAffectedChildren(IResourceDelta.CHANGED, IResource.FILE);
+				if (children.length == 0) {
+					//leaf
+					IResource tempResource = deltas[i].getResource();
+					if (tempResource.equals(file)) {
+						//need to refresh
+						showHistory(file, true);
+					}
+				}
+				processDelta(children);
+			}
+		}
+	}
 	public Control getControl() {
 		return sashForm;
 	}
