@@ -178,16 +178,13 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								break;
 							case RefactoringHistoryNode.DAY:
 								pattern= fControlConfiguration.getDayPattern();
-								try {
+								final int type= node.getParent().getKind();
+								if (type == RefactoringHistoryNode.THIS_WEEK || type == RefactoringHistoryNode.LAST_WEEK) {
 									final Locale locale= new Locale(RefactoringUIMessages.RefactoringHistoryLabelProvider_label_language, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_country, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_variant);
-									final int type= node.getParent().getKind();
-									if (type == RefactoringHistoryNode.THIS_WEEK || type == RefactoringHistoryNode.LAST_WEEK)
-										format= new SimpleDateFormat(NLS.bind(RefactoringUIMessages.RefactoringHistoryControlConfiguration_day_detailed_pattern, DateFormat.getDateInstance().format(stamp)), locale);
-									else
-										format= DateFormat.getDateInstance();
-								} catch (RuntimeException exception) {
+									final SimpleDateFormat simple= new SimpleDateFormat("EEEE", locale); //$NON-NLS-1$
+									buffer.append(NLS.bind(RefactoringUIMessages.RefactoringHistoryControlConfiguration_day_detailed_pattern, new String[] { simple.format(stamp), DateFormat.getDateInstance().format(stamp)}));
+								} else
 									format= DateFormat.getDateInstance();
-								}
 								break;
 							case RefactoringHistoryNode.YESTERDAY:
 								pattern= fControlConfiguration.getYesterdayPattern();
@@ -198,7 +195,8 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								format= DateFormat.getDateInstance();
 								break;
 						}
-						buffer.append(NLS.bind(pattern, new String[] { format.format(stamp)}));
+						if (format != null)
+							buffer.append(NLS.bind(pattern, new String[] { format.format(stamp)}));
 					}
 				}
 			}
