@@ -116,7 +116,7 @@
          </action>
       </objectContribution>
       <objectContribution
-            adaptable="false"
+            adaptable="true"
             id="org.eclipse.team.ui.ShowLocalHistoryContribution"
             objectClass="org.eclipse.core.resources.IResource">
          <action
