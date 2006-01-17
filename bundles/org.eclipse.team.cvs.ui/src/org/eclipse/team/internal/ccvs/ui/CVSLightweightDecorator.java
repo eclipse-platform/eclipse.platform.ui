@@ -502,7 +502,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 	 * are accessible (i.e. exist in an open project).
 	 */
 	private static void handleException(IResource resource, CoreException e) {
-		if (resource.isAccessible())
+		if (resource == null || resource.isAccessible())
 			exceptions.handleException(e);
 	}
 
