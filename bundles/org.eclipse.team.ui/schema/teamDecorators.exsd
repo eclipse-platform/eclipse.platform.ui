@@ -88,13 +88,14 @@
       </appInfo>
       <documentation>
          Here is an example teamDecorators extension
-
+&lt;pre&gt;
    &lt;extension
          point=&quot;org.eclipse.team.ui.teamDecorators&quot;&gt;
       &lt;teamDecorator
             decoratorId=&quot;org.eclipse.team.cvs.ui.decorator&quot;
             repositoryId=&quot;org.eclipse.team.cvs.core.cvsnature&quot;/&gt;
    &lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 

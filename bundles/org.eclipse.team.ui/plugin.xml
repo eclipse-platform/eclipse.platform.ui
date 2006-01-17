@@ -5,8 +5,8 @@
      <extension-point id="configurationWizards" name="%configurationWizards" schema="schema/configurationWizards.exsd"/>
    <extension-point id="synchronizeParticipants" name="%synchronizeParticipants" schema="schema/synchronizeParticipants.exsd"/>
    <extension-point id="synchronizeWizards" name="%synchronizeWizards" schema="schema/synchronizeWizards.exsd"/>
-   <extension-point id="teamContentProviders" name="Team Content Providers" schema="schema/teamContentProviders.exsd"/>
-   <extension-point id="teamDecorators" name="Team Decorators" schema="schema/teamDecorators.exsd"/>
+   <extension-point id="teamContentProviders" name="%TeamContentProvider" schema="schema/teamContentProviders.exsd"/>
+   <extension-point id="teamDecorators" name="%TeamDecorators" schema="schema/teamDecorators.exsd"/>
 
 <!-- **************** PREFERENCES ******************* -->
    <extension
@@ -149,7 +149,7 @@
             class="org.eclipse.team.internal.ui.history.GenericHistoryView"
             icon="icons/full/obj/changeset_obj.gif"
             id="org.eclipse.team.ui.GenericHistoryView"
-            name="History"/>
+            name="%HistoryView"/>
     <!--  <view
             name="%CompareView.name"
             icon="$nl$/icons/full/eview16/compare_view.gif"
@@ -378,7 +378,7 @@
    <extension
          point="org.eclipse.team.ui.synchronizeParticipants">
       <participant
-            name="Synchronization"
+            name="%ModelSyncParticipant"
             icon="$nl$/icons/full/eview16/synch_synch.gif"
             class="org.eclipse.team.ui.operations.ModelSynchronizeParticipant"
             id="org.eclipse.team.ui.synchronization_context_synchronize_participant">

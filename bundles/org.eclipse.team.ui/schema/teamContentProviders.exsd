@@ -81,7 +81,7 @@
       </appInfo>
       <documentation>
          Here is an example teamContentProvider extension
-
+&lt;pre&gt;
    &lt;extension
          id=&quot;jdtContentProvider&quot;
          point=&quot;org.eclipse.team.ui.teamContentProviders&quot;&gt;
@@ -89,6 +89,7 @@
             contentExtensionId=&quot;org.eclipse.jdt.ui.resourceContent&quot;
             modelProviderId=&quot;org.eclipse.jdt.ui.modelProvider&quot;/&gt;
    &lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
