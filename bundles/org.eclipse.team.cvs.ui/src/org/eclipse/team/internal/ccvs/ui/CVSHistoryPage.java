@@ -229,7 +229,7 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 
 		getRevisionAction = getContextMenuAction(CVSUIMessages.HistoryView_getRevisionAction, true /* needs progress */, new IWorkspaceRunnable() { 
 			public void run(IProgressMonitor monitor) throws CoreException {
-				ICVSRemoteFile remoteFile = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(file);
+				ICVSRemoteFile remoteFile = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(((CVSFileRevision) currentSelection).getCVSRemoteFile());
 				try {
 					if(confirmOverwrite()) {
 						CVSTag revisionTag = new CVSTag(remoteFile.getRevision(), CVSTag.VERSION);
@@ -242,10 +242,9 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 									revisionTag)
 										.run(monitor);
 							
-							//historyTableProvider.setFile(remoteFile);
 							Display.getDefault().asyncExec(new Runnable() {
 								public void run() {
-									tableViewer.refresh();
+									refresh();
 								}
 							});
 						}
@@ -597,6 +596,7 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 					IFileHistory fileHistory = teamProvider.getFileHistoryProvider().getFileHistoryFor(file, new NullProgressMonitor());
 					currentFileRevision = teamProvider.getFileHistoryProvider().getWorkspaceFileRevision(file);
 					historyTableProvider.setFile(fileHistory, file, currentFileRevision.getContentIdentifier());
+					tableViewer.setInput(fileHistory);
 				}
 				tableViewer.refresh();
 			}
@@ -611,7 +611,7 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 	public void showHistory(IResource resource, boolean refetch) {
 		if (resource instanceof IFile) {
 			IFile newfile = (IFile) resource;
-			if (!refetch && this.file != null && newfile.equals(this.file)) {
+			if (!refetch && this.file != null || newfile.equals(this.file)) {
 				return;
 			}
 			this.file = newfile;
@@ -806,22 +806,10 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 		 */
 		public void resourceChanged(IResourceChangeEvent event) {
 			IResourceDelta root = event.getDelta();
-			IResourceDelta[] projectDeltas = root.getAffectedChildren();
-			processDelta(projectDeltas);
-		}
-
-		private void processDelta(IResourceDelta[] deltas) {
-			for (int i = 0; i < deltas.length; i++) {
-				IResourceDelta[] children = deltas[i].getAffectedChildren(IResourceDelta.CHANGED, IResource.FILE);
-				if (children.length == 0) {
-					//leaf
-					IResource tempResource = deltas[i].getResource();
-					if (tempResource.equals(file)) {
-						//need to refresh
-						showHistory(file, true);
-					}
-				}
-				processDelta(children);
+			IResourceDelta resourceDelta = root.findMember(file.getFullPath());
+			if (resourceDelta != null){
+				//showHistory(file, true);
+				refresh();
 			}
 		}
 	}
