@@ -26,6 +26,21 @@ function findHelpTop() {
 }
 
 /**
+ * Call this Javascript method to execute a serialized command in
+ * the workbench.
+ *
+ * The parameter is a serialized parameterized command as described
+ * in the JavaDoc for ParameterizedCommand#serialize().
+ */
+function executeCommand(command)
+{
+	liveAction(
+		"org.eclipse.ui.workbench",
+		"org.eclipse.ui.internal.help.ExecuteCommandAction",
+		command);
+}
+
+/**
  * Call this Javascript method to trigger a specified live help action
  * in the workbench. 
  * The parameters for liveAction  are:
