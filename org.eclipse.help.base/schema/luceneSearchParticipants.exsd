@@ -109,6 +109,13 @@ Search participants are associated with the plug-in the extension appears in. In
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="headless" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  specifies whether or not this search participant should be used when running the help system outside an eclipse workbench, i.e. it is running in either standalone or infocenter mode. The default value is &lt;code&gt;false&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -180,7 +187,8 @@ Search participants are associated with the plug-in the extension appears in. In
    &lt;searchParticipant id=&quot;org.eclipse.myGlobalParticipant&quot;
      name=&quot;Global Participant&quot;
      icon=&quot;icons/mydoc.gif&quot;
-     participant=&quot;org.eclipse.myPlugin.myPackage.MyGlobalParticipant&quot;/&gt;
+     participant=&quot;org.eclipse.myPlugin.myPackage.MyGlobalParticipant&quot;
+     headless=&quot;true&quot;/&gt;
    &lt;searchParticipant id=&quot;org.eclipse.myXYZParticipant&quot;
      extensions=&quot;xyz&quot;
      participant=&quot;org.eclipse.myPlugin.myPackage.MyXYZParticipant&quot;/&gt;
@@ -213,7 +221,7 @@ Search participants are associated with the plug-in the extension appears in. In
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2005, 2006 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which accompanies 
 this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;

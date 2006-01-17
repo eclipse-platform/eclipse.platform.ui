@@ -206,6 +206,21 @@ public class SearchManager implements ITocsChangedListener {
 		}
 		return false;
 	}
+	
+	/**
+	 * Returns whether or not a participant with the given headless attribute should be
+	 * enabled in the current mode. Participants that support headless are always enabled, and
+	 * those that don't are only enabled when in workbench mode.
+	 * 
+	 * @param headless whether or not the participant supports headless mode
+	 * @return whether or not the participant should be enabled
+	 */
+	private static boolean isParticipantEnabled(boolean headless) {
+		if (!headless) {
+			return (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH);
+		}
+		return true;
+	}
 
 	public static String getPluginId(String href) {
 		href = trimQuery(href);
@@ -362,6 +377,8 @@ public class SearchManager implements ITocsChangedListener {
 				// ignore global participant
 				if (element.getAttribute("extensions") == null) //$NON-NLS-1$
 					continue;
+				if (!isParticipantEnabled(String.valueOf(true).equals(element.getAttribute("headless")))) //$NON-NLS-1$
+					continue;
 				if (list == null)
 					list = new ArrayList();
 				list.add(new ParticipantDescriptor(element));
@@ -442,6 +459,8 @@ public class SearchManager implements ITocsChangedListener {
 			if (!element.getName().equals(SEARCH_PARTICIPANT_XP_NAME))
 				continue;
 			if (element.getAttribute("extensions") != null) //$NON-NLS-1$
+				continue;
+			if (!isParticipantEnabled(String.valueOf(true).equals(element.getAttribute("headless")))) //$NON-NLS-1$
 				continue;
 			ParticipantDescriptor desc = new ParticipantDescriptor(element);
 			globalSearchParticipants.add(desc);

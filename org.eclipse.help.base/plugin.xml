@@ -165,7 +165,8 @@
       <searchParticipant
             extensions="xhtml"
             id="org.eclipse.help.base.xhtml"
-            participant="org.eclipse.help.internal.search.XHTMLSearchParticipant"/>
+            participant="org.eclipse.help.internal.search.XHTMLSearchParticipant"
+            headless="true"/>
    </extension>
 
    <extension
