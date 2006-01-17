@@ -4,7 +4,7 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.core.filesystem; singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)"
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)"
 Export-Package: org.eclipse.core.filesystem,
  org.eclipse.core.filesystem.provider,
  org.eclipse.core.internal.filesystem;x-internal:=true,
