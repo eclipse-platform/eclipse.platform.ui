@@ -46,33 +46,6 @@
             streamMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringHistoryMerger"/>
    </extension>
    <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            label="%ScriptingActionSet.label"
-            description="%ScriptingActionSet.description"
-            visible="true"
-            id="org.eclipse.ltk.ui.ScriptingActionSet">
-         <menu
-               label="%Refactoring.menu.label"
-               path="edit"
-               id="org.eclipse.jdt.ui.refactoring.menu">
-            <separator name="scriptGroup"/>
-         </menu>
-        <action
-               class="org.eclipse.ltk.internal.ui.refactoring.actions.ApplyRefactoringScriptAction"
-               definitionId="org.eclipse.ltk.ui.refactor.apply.refactoring.script"
-               id="org.eclipse.ltk.ui.actions.ApplyRefactoringStript"
-               label="%Refactoring.applyScript.label"
-               menubarPath="org.eclipse.jdt.ui.refactoring.menu/scriptGroup"/>
-        <action
-              class="org.eclipse.ltk.internal.ui.refactoring.actions.CreateRefactoringScriptAction"
-              definitionId="org.eclipse.ltk.ui.refactor.create.refactoring.script"
-              id="org.eclipse.ltk.ui.actions.CreateRefactoringScript"
-              label="%Refactoring.createScript.label"
-              menubarPath="org.eclipse.jdt.ui.refactoring.menu/scriptGroup"/>
-       </actionSet>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <category
             name="%Category.refactoring.name"
