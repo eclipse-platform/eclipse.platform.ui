@@ -13,13 +13,14 @@ import java.net.URI;
 import java.util.HashMap;
 
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.provider.FileSystem;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ccvs.core.CVSMessages;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 
-public class CVSFileSystem {
+public class CVSFileSystem extends FileSystem {
 
 
 	private CVSFileTree cvsTree;
