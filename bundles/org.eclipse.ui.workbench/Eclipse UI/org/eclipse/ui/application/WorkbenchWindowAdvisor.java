@@ -220,6 +220,8 @@ public class WorkbenchWindowAdvisor {
      * @return <code>true</code> to allow the window to close, and
      *         <code>false</code> to prevent the window from closing
      * @see org.eclipse.ui.IWorkbenchWindow#close
+     * @see WorkbenchAdvisor#preShutdown()
+     *
      */
     public boolean preWindowShellClose() {
         // do nothing, but allow the close() to proceed
