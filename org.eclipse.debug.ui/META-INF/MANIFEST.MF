@@ -11,6 +11,8 @@ Export-Package: org.eclipse.debug.internal.ui;x-internal:=true,
  org.eclipse.debug.internal.ui.actions.breakpointGroups;x-internal:=true,
  org.eclipse.debug.internal.ui.actions.breakpoints,
  org.eclipse.debug.internal.ui.actions.context;x-internal:=true,
+ org.eclipse.debug.internal.ui.actions.expressions,
+ org.eclipse.debug.internal.ui.actions.variables,
  org.eclipse.debug.internal.ui.contexts;x-internal:=true,
  org.eclipse.debug.internal.ui.elements.adapters;x-internal:=true,
  org.eclipse.debug.internal.ui.importexport.breakpoints;x-internal:=true,
@@ -49,3 +51,4 @@ Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui.editors;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)"
 Eclipse-LazyStart: true
+Bundle-ClassPath: .
