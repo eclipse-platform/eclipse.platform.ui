@@ -67,6 +67,9 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 	public Set getAllDocuments(String locale) {
 		HashSet set = new HashSet();
 		IProduct product = Platform.getProduct();
+		if (product == null) {
+			return set;
+		}
 		String productId = product.getId();
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
 				"org.eclipse.ui.intro");
