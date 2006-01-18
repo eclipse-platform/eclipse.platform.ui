@@ -36,16 +36,6 @@ public abstract class FileSystemContributor {
 	public abstract URI browseFileSystem(String initialPath, Shell shell);
 	
 	/**
-	 * Return the string to display to the user for the
-	 * supplied uri.
-	 * @param uri
-	 * @return String
-	 */
-	public String getDisplayString(URI uri){
-		return uri.toString();		
-	}
-	
-	/**
 	 * Return a URI for the supplied String from the user.
 	 * @param string
 	 * @return URI or <code>null</code> if the string is 
