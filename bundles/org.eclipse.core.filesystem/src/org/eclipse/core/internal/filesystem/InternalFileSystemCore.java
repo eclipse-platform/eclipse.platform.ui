@@ -15,7 +15,6 @@ import java.util.HashMap;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.provider.FileSystem;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.registry.*;
 import org.eclipse.osgi.util.NLS;
 
