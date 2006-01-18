@@ -114,6 +114,8 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 		}
 
 		private static ITypedElement asTypedElement(IFileState state) {
+			if (state == null)
+				return null;
 			return new FileStateTypedElement(state);
 		}
 
