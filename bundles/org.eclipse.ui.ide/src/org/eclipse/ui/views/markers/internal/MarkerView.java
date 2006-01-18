@@ -488,6 +488,16 @@ public abstract class MarkerView extends TableView {
 
 	private IPropertyChangeListener workingSetListener;
 
+	private MarkerAdapter adapter;
+
+	/**
+	 * Create a new instance of the receiver,
+	 */
+	public MarkerView() {
+		super();
+		adapter = new MarkerAdapter(this);
+	}
+
 	/**
 	 * Get the current markers for the receiver.
 	 * 
@@ -503,7 +513,7 @@ public abstract class MarkerView extends TableView {
 	 * @return MarkerAdapter
 	 */
 	protected MarkerAdapter getMarkerAdapter() {
-		return ((MarkerAdapter) getViewerInput());
+		return adapter;
 	}
 
 	/**
@@ -1531,7 +1541,7 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.markers.internal.TableView#createViewerInput()
 	 */
 	Object createViewerInput() {
-		return new MarkerAdapter(this);
+		return adapter;
 	}
 
 	/**
