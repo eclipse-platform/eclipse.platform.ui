@@ -19,6 +19,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.WorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.util.PrefUtil;
@@ -205,36 +206,38 @@ public class WorkbenchWindowAdvisor {
     }
 
     /**
-     * Performs arbitrary actions as the window's shell is being closed
-     * directly, and possibly veto the close.
-     * <p>
-     * This method is called from a ShellListener associated with the window. It
-     * is not called when the window is being closed for other reasons. Clients
-     * must not call this method directly (although super calls are okay). If
-     * this method returns <code>false</code>, then the user's request to
-     * close the shell is ignored. This gives the workbench advisor an
-     * opportunity to query the user and/or veto the closing of a window under
-     * some circumstances.
-     * </p>
-     * 
-     * @return <code>true</code> to allow the window to close, and
-     *         <code>false</code> to prevent the window from closing
-     * @see org.eclipse.ui.IWorkbenchWindow#close
-     * @see WorkbenchAdvisor#preShutdown()
-     */
-    public boolean preWindowShellClose() {
-        // do nothing, but allow the close() to proceed
-        return true;
-    }
+	 * Performs arbitrary actions as the window's shell is being closed
+	 * directly, and possibly veto the close.
+	 * <p>
+	 * This method is called from a ShellListener associated with the window,
+	 * for example when the user clicks the window's close button. It is not
+	 * called when the window is being closed for other reasons, such as if the
+	 * user exits the workbench via the {@link ActionFactory#QUIT} action.
+	 * Clients must not call this method directly (although super calls are
+	 * okay). If this method returns <code>false</code>, then the user's
+	 * request to close the shell is ignored. This gives the workbench advisor
+	 * an opportunity to query the user and/or veto the closing of a window
+	 * under some circumstances.
+	 * </p>
+	 * 
+	 * @return <code>true</code> to allow the window to close, and
+	 *         <code>false</code> to prevent the window from closing
+	 * @see org.eclipse.ui.IWorkbenchWindow#close
+	 * @see WorkbenchAdvisor#preShutdown()
+	 */
+	public boolean preWindowShellClose() {
+		// do nothing, but allow the close() to proceed
+		return true;
+	}
 
     /**
-     * Performs arbitrary actions after the window is closed.
-     * <p>
-     * This method is called after the window's controls have been disposed.
-     * Clients must not call this method directly (although super calls are okay).
-     * The default implementation does nothing. Subclasses may override.
-     * </p>
-     */
+	 * Performs arbitrary actions after the window is closed.
+	 * <p>
+	 * This method is called after the window's controls have been disposed.
+	 * Clients must not call this method directly (although super calls are
+	 * okay). The default implementation does nothing. Subclasses may override.
+	 * </p>
+	 */
     public void postWindowClose() {
         // do nothing
     }
