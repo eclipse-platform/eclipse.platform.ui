@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -64,4 +64,24 @@ public class ExternalToolsLaunchConfigurationMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ExternalToolsLaunchConfigurationMessages.class);
 	}
+
+    public static String ExternalToolsBuilderTab_17;
+
+    public static String ExternalToolsBuilderTab_18;
+
+    public static String ExternalToolsBuilderTab_19;
+
+    public static String ExternalToolsBuilderTab_20;
+
+    public static String ExternalToolsBuilderTab_21;
+
+    public static String ExternalToolsBuilderTab_22;
+
+    public static String ExternalToolsBuilderTab_23;
+
+    public static String ExternalToolsBuilderTab_24;
+
+    public static String ExternalToolsBuilderTab_25;
+
+    public static String ExternalToolsBuilderTab_26;
 }

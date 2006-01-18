@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,17 +12,25 @@
 package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.RefreshTab;
+import org.eclipse.debug.ui.StringVariableSelectionDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -31,16 +39,23 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.externaltools.internal.model.BuilderUtils;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 
@@ -55,6 +70,15 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	protected ILaunchConfiguration fConfiguration;
 	
     private boolean fCreateBuildScheduleComponent= true;
+    
+    // Console Output widgets
+    private Button fConsoleOutput;
+    private Button fFileOutput;
+    private Button fFileBrowse;
+    private Text fFileText;
+    private Button fVariables;
+    private Button fAppend;
+    private Button fWorkspaceBrowse;
     
     public ExternalToolsBuilderTab() {
     }
@@ -88,10 +112,9 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);
 		mainComposite.setFont(parent.getFont());
+        createOutputCaptureComponent(mainComposite);
 		createLaunchInBackgroundComposite(mainComposite);
-        createVerticalSpacer(mainComposite, 2);
 		createBuildScheduleComponent(mainComposite);
-		
 	}
 	
 	/**
@@ -138,6 +161,118 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
         label.setText(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_2);
         label.setFont(parent.getFont());
 	}
+    
+    private void createOutputCaptureComponent(Composite parent) {
+        Group group = new Group(parent, SWT.NONE);
+        group.setText(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_17); 
+        GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+        gd.horizontalSpan = 2;
+        group.setLayoutData(gd);
+        GridLayout layout = new GridLayout(5, false);
+        group.setLayout(layout);
+        group.setFont(parent.getFont());
+        
+        fConsoleOutput = createCheckButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_18); 
+        gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
+        gd.horizontalSpan = 5;
+        fConsoleOutput.setLayoutData(gd);
+        
+        fConsoleOutput.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                updateLaunchConfigurationDialog();
+            }
+        });
+        
+        fFileOutput = createCheckButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_19); 
+        fFileOutput.setLayoutData(new GridData(SWT.BEGINNING, SWT.NORMAL, false, false));
+        
+        fFileText = new Text(group, SWT.SINGLE | SWT.BORDER);
+        gd = new GridData(SWT.FILL, SWT.NORMAL, true, false);
+        gd.horizontalSpan = 4;
+        fFileText.setLayoutData(gd);
+        fFileText.setFont(parent.getFont());
+        
+        Label spacer = new Label(group,SWT.NONE);
+        gd = new GridData(SWT.FILL, SWT.NORMAL, true, false);
+        gd.horizontalSpan=2;
+        spacer.setLayoutData(gd);
+        fWorkspaceBrowse = createPushButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_20, null); 
+        fFileBrowse = createPushButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_21, null); 
+        fVariables = createPushButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_22, null); 
+
+        spacer = new Label(group,SWT.NONE);
+        spacer.setLayoutData(new GridData(SWT.FILL, SWT.NORMAL, false, false));
+        fAppend = createCheckButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_23); 
+        gd = new GridData(SWT.LEFT, SWT.TOP, true, false);
+        gd.horizontalSpan = 4;
+        fAppend.setLayoutData(gd);
+        
+        fFileOutput.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                boolean enabled = fFileOutput.getSelection();
+                fFileText.setEnabled(enabled);
+                fFileBrowse.setEnabled(enabled);
+                fWorkspaceBrowse.setEnabled(enabled);
+                fVariables.setEnabled(enabled);
+                fAppend.setEnabled(enabled);
+                updateLaunchConfigurationDialog();
+            }
+        });
+        
+        fAppend.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                updateLaunchConfigurationDialog();
+            }
+        });
+        
+        fWorkspaceBrowse.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+                dialog.setTitle(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_24); 
+                dialog.setMessage(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_25); 
+                dialog.setInput(ResourcesPlugin.getWorkspace().getRoot()); 
+                dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+                int buttonId = dialog.open();
+                if (buttonId == IDialogConstants.OK_ID) {
+                    IResource resource = (IResource) dialog.getFirstResult();
+                    String arg = resource.getFullPath().toString();
+                    String fileLoc = VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", arg); //$NON-NLS-1$
+                    fFileText.setText(fileLoc);
+                }
+            }
+        });
+        
+        fFileBrowse.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                String filePath = fFileText.getText();
+                FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
+                
+                filePath = dialog.open();
+                if (filePath != null) {
+                    fFileText.setText(filePath);
+                }
+            }
+        });
+        
+        fFileText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                updateLaunchConfigurationDialog();
+            }
+        });
+        
+        fVariables.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {
+                StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+                dialog.open();
+                String variable = dialog.getVariableExpression();
+                if (variable != null) {
+                    fFileText.insert(variable);
+                }
+            }
+            public void widgetDefaultSelected(SelectionEvent e) {   
+            }
+        });
+    }
 	
 	/*
 	 * Creates a check button in the given composite with the given text
@@ -219,11 +354,38 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		workingSetButton.setEnabled(enabled);
 		specifyResources.setEnabled(enabled && workingSetButton.getSelection());
 		updateRunInBackground(configuration);
+        updateConsoleOutput(configuration);
 	}
 	
 	protected void updateRunInBackground(ILaunchConfiguration configuration) { 
 		fLaunchInBackgroundButton.setSelection(isLaunchInBackground(configuration));
 	}
+    
+    private void updateConsoleOutput(ILaunchConfiguration configuration) {
+        boolean outputToConsole = true;
+        String outputFile = null;
+        boolean append = false;
+        
+        try {
+            outputToConsole = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
+            outputFile = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
+            append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
+        } catch (CoreException e) {
+        }
+        
+        fConsoleOutput.setSelection(outputToConsole);
+        fAppend.setSelection(append);
+        boolean haveOutputFile= outputFile != null;
+        if (haveOutputFile) {
+            fFileText.setText(outputFile);
+        }
+        fFileOutput.setSelection(haveOutputFile);
+        fFileText.setEnabled(haveOutputFile);
+        fFileBrowse.setEnabled(haveOutputFile);
+        fWorkspaceBrowse.setEnabled(haveOutputFile);
+        fVariables.setEnabled(haveOutputFile);
+        fAppend.setEnabled(haveOutputFile);
+    }
 	
 	/**
 	 * Returns whether the given configuration should be run in the background.
@@ -269,6 +431,32 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, (String)null);
 		}
 		configuration.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, fLaunchInBackgroundButton.getSelection());
+        
+        boolean captureOutput = false;
+        if (fConsoleOutput.getSelection()) {
+            captureOutput = true;
+            configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, (String)null);
+        } else {
+            configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, false);
+        }
+        if (fFileOutput.getSelection()) {
+            captureOutput = true;
+            String file = fFileText.getText();
+            configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, file);
+            if(fAppend.getSelection()) {
+                configuration.setAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, true);
+            } else {
+                configuration.setAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, (String)null);
+            }
+        } else {
+            configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
+        }
+        
+        if (!captureOutput) {
+            configuration.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, false);
+        } else {
+            configuration.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, (String)null);
+        }
 	}
 
 	/* (non-Javadoc)
@@ -303,7 +491,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
             return false;
 		}
 		
-		return true;
+		return validateRedirectFile();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
@@ -344,4 +532,15 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on deactivation
 	}
+    
+    private boolean validateRedirectFile() {
+        if(fFileOutput.getSelection()) {
+            int len = fFileText.getText().trim().length();
+            if (len == 0) {
+                setErrorMessage(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_26); 
+                return false;
+            }
+        }
+        return true;
+    }
 }
