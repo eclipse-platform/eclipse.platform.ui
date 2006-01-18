@@ -237,10 +237,12 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				try {
 					subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_resolving_information, fImplementation.size());
 					for (final Iterator iterator= fImplementation.iterator(); iterator.hasNext();) {
-						descriptor= (RefactoringDescriptor) iterator.next();
+						final RefactoringDescriptor current= (RefactoringDescriptor) iterator.next();
 						subMonitor.worked(1);
-						if (descriptor.getTimeStamp() == stamp)
+						if (current.getTimeStamp() == stamp) {
+							descriptor= current;
 							break;
+						}
 					}
 				} finally {
 					subMonitor.done();
