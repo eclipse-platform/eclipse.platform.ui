@@ -1870,11 +1870,15 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				else {
 					int cidex = findIndexOfChild(path.getFirstSegment(), path.getLastSegment());
 					TreeItem parent = tree.getItem(pidex);
+					int ccount = parent.getItemCount();
 					if(cidex == -1) {
 						if(parent.getItemCount() == 0) {
 							sel = parent.getData();
 						}
 						else {
+							if(cidx > ccount) {
+								cidx = ccount-1;
+							}
 							sel = (cidx == 0 ? parent.getItem(cidx).getData() : parent.getItem(cidx-1).getData());
 						}
 					}
