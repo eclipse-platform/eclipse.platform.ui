@@ -23,37 +23,15 @@ import org.eclipse.team.core.mapping.provider.ScopeGenerator;
 import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.dialogs.AdditionalMappingsDialog;
+import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Here's a summary of the input determination scheme
- * <ol>
- * <li>Obtain selected mappings
- * <li>Project mappings onto resources using the appropriate
- * context(s) in order to obtain a set of ResourceTraverals
- * <li>Determine what model providers are interested in the targeted resources
- * <li>From those model providers, obtain the set of affected resource mappings
- * <li>If the original set is the same as the new set, we are done.
- * <li>if the set differs from the original selection, rerun the mapping process
- * for any new mappings
- *     <ul>
- *     <li>Only need to query model providers for mappings for new resources
- *     <li>If new mappings are obtained, 
- *     ask model provider to compress the mappings?
- *     <li>keep repeating until no new mappings or resources are added
- *     </ul> 
- * <li>Use model provider relationships to result?
- * <li>Display the original set and the new set with an explanation
- *     <ul>
- *     <li>The original set and final set may involve mappings from
- *     multiple providers.
- *     <li>The number of providers can be reduced by assuming that
- *     extending models can display the elements of extended models.
- *     Then we are only left with conflicting models.
- *     <li>Could use a content provider approach a.k.a. Common Navigator
- *     or component based approach
- *     </ul> 
- * </ol> 
+ * An abstract operation that uses a set of input mappings to create
+ * an operation scope that includes the complete set of mappings
+ * that must be included in the operation to ensure model consistency.
+ * The scope generation phase will prompt the user if additional resources
+ * have been added to the scope.
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -64,7 +42,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * 
  * @since 3.2
  */
-public abstract class ResourceMappingOperation extends ModelProviderOperation {
+public abstract class ResourceMappingOperation extends TeamOperation {
 	
 	private static final ScopeGenerator DEFAULT_SCOPE_BUILDER = new ScopeGenerator();
 	private final ResourceMapping[] selectedMappings;
@@ -72,18 +50,26 @@ public abstract class ResourceMappingOperation extends ModelProviderOperation {
 	private IResourceMappingScope scope;
 	private boolean previewRequested;
     
-    /**
-     * Create a resource mapping based operation
-     * @param part the workspace part from which the operation was launched
-     * @param input the input to the operation (which must have already been built by
-     * invoking <code>buildInput</code>.
-     */
+
+	/**
+	 * Create a resoure mapping operation
+	 * @param part the workbench part from which the merge was launched or <code>null</code>
+	 * @param selectedMappings the selected mappings
+	 * @param context the resource mapping context used to generate the full scope of the operation
+	 */
 	protected ResourceMappingOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext context) {
 		super(part);
 		this.selectedMappings = selectedMappings;
 		this.context = context;
 	}
 
+	/**
+	 * Run the operation. This method first ensures that the scope is built
+	 * by calling {@link #buildScope(IProgressMonitor)} and then invokes the 
+	 * {@link #execute(IProgressMonitor)} method.
+	 * @param monitor a progress monitor
+	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
 		buildScope(monitor);

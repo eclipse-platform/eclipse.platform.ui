@@ -347,7 +347,7 @@
             contentProvider="org.eclipse.team.internal.ui.mapping.ResourceTeamAwareContentProvider"
             id="org.eclipse.team.ui.resourceContent"
             labelProvider="org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider"
-            name="Resource Mappings"
+            name="Resources Team Content"
             sorter="org.eclipse.team.internal.ui.mapping.ResourceModelSorter">
          <enablement>
            <or>         
@@ -357,6 +357,7 @@
             <instanceof value="org.eclipse.team.core.mapping.ISynchronizationContext"/>
            </or>
          </enablement>
+         <actionProvider class="org.eclipse.team.internal.ui.mapping.ResourceModelActionProvider"/>
        </navigatorContent>
    </extension>
    <extension
@@ -364,14 +365,39 @@
       <viewerContentBinding 
          viewerId="org.eclipse.team.ui.navigatorViewer">                     
          <includes>                     
-            <!-- <contentExtension   
-               pattern="org.eclipse.team.ui.navigatorContent" 
-               isRoot="true"/> -->
             <contentExtension   
                pattern="org.eclipse.team.ui.resourceContent" 
                isRoot="true"/>
-         </includes>   
-       </viewerContentBinding>   
+         </includes>
+       </viewerContentBinding>
+       <viewer
+             viewerId="org.eclipse.team.ui.navigatorViewer">
+           <popupMenu
+                allowsPlatformContributions="false"
+                id="org.eclipse.team.ui.navigatorViewer#PopupMenu">  
+             <insertionPoint name="file"/>  
+             <insertionPoint name="edit"/>          
+             <insertionPoint name="synchronize"/>
+             <insertionPoint
+                   name="navigate"
+                   separator="true"/>
+             <insertionPoint
+                   name="merge"
+                   separator="true"/>
+             <insertionPoint
+                   name="other"
+                   separator="true"/> 
+             <insertionPoint
+                   name="sort"
+                   separator="true"/>
+             <insertionPoint
+                   name="additions"
+                   separator="true"/>              
+             <insertionPoint
+                   name="properties"
+                   separator="true"/>
+          </popupMenu>
+       </viewer>
    </extension>
    
    <!-- *************** Synchronize View Participant **************** -->
@@ -380,7 +406,7 @@
       <participant
             name="%ModelSyncParticipant"
             icon="$nl$/icons/full/eview16/synch_synch.gif"
-            class="org.eclipse.team.ui.operations.ModelSynchronizeParticipant"
+            class="org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant"
             id="org.eclipse.team.ui.synchronization_context_synchronize_participant">
       </participant>
    </extension>

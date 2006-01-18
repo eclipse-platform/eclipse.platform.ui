@@ -23,7 +23,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
+import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 
@@ -68,8 +68,8 @@ public class OpenInCompareAction extends Action {
 			if (info != null)
 				return openCompareEditor(participant, info, keepFocus, site);
 		}
-		if (participant instanceof ModelSynchronizeParticipant) {
-			ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
+		if (participant instanceof ResourceMappingSynchronizeParticipant) {
+			ResourceMappingSynchronizeParticipant msp = (ResourceMappingSynchronizeParticipant) participant;
 			ICompareInput input = msp.asCompareInput(object);
 			if (input != null) {
 				return openCompareEditor(new ModelCompareEditorInput(msp, input), keepFocus, site);

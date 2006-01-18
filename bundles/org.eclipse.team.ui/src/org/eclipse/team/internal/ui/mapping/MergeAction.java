@@ -1,90 +1,89 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ * IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.diff.IDiffNode;
-import org.eclipse.team.core.mapping.IMergeContext;
-import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.operations.*;
+import org.eclipse.core.commands.*;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.action.Action;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.team.ui.mapping.MergeActionHandler;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
- * Action that merges the selected files
+ * An action that delegates to an appropriate handler when performing 
+ * a merge opereration.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ * 
+ * @since 3.2
  */
-public class MergeAction extends ModelProviderAction {
+public class MergeAction extends Action {
 	
-	private final boolean overwrite;
-
-	public MergeAction(ISynchronizePageConfiguration configuration, boolean overwrite) {
-		super(null, configuration);
-		this.overwrite = overwrite;
-		if (overwrite)
-			Utils.initAction(this, "action.overwrite."); //$NON-NLS-1$
-		else
-			Utils.initAction(this, "action.merge."); //$NON-NLS-1$
+	private final String handlerId;
+	private final CommonMenuManager manager;
+	private final ISynchronizePageConfiguration configuration;
+	
+	public MergeAction(String handlerId, CommonMenuManager manager, ISynchronizePageConfiguration configuration) {
+		Assert.isNotNull(handlerId);
+		Assert.isNotNull(manager);
+		Assert.isNotNull(configuration);
+		this.handlerId = handlerId;
+		this.manager = manager;
+		this.configuration = configuration;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
-	public void run() {
-		final IMergeContext context = (IMergeContext)((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
-		try {
-			new ModelProviderOperation(getConfiguration()) {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException,
-						InterruptedException {
-					try {
-						IDiffNode[] diffs = getFileDeltas(getStructuredSelection());
-						IStatus status = context.merge(diffs, overwrite, monitor);
-						if (!status.isOK())
-							throw new CoreException(status);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
-				}
-			
-			}.run();
-		} catch (InvocationTargetException e) {
-			Utils.handle(e);
-		} catch (InterruptedException e) {
-			// Ignore
+	
+	public void runWithEvent(Event event) {
+		IHandler handler = getHandler();
+		if (handler != null && handler.isEnabled()) {
+			try {
+				handler.execute(new ExecutionEvent(null, Collections.EMPTY_MAP, event, null));
+			} catch (ExecutionException e) {
+				handle(e);
+			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.mapping.ModelProviderAction#isEnabledForSelection(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
-	protected boolean isEnabledForSelection(IStructuredSelection selection) {
-		return getFileDeltas(selection).length > 0;
+	private void handle(Throwable e) {
+		if (e instanceof ExecutionException) {
+			ExecutionException ee = (ExecutionException) e;
+			if (ee.getCause() != null) {
+				handle(e.getCause());
+			}
+		}
+		//TODO: handle the exception
+	}
+
+	private IHandler getHandler() {
+		IHandler handler = manager.getHandler(handlerId);
+		if (handler == null)
+			return getDefaultHandler();
+		return handler;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.operations.ModelProviderAction#getDiffFilter()
-	 */
-	protected FastDiffNodeFilter getDiffFilter() {
-		return new FastDiffNodeFilter() {
-			public boolean select(IDiffNode node) {
-				if (node instanceof IThreeWayDiff) {
-					IThreeWayDiff twd = (IThreeWayDiff) node;
-					if ((twd.getDirection() == IThreeWayDiff.OUTGOING && overwrite) || twd.getDirection() == IThreeWayDiff.CONFLICTING || twd.getDirection() == IThreeWayDiff.INCOMING) {
-						return true;
-					}
-				}
-				return false;
-			}
-		};
+	private IHandler getDefaultHandler() {
+		return MergeActionHandler.getDefaultHandler(handlerId, configuration);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#isEnabled()
+	 */
+	public boolean isEnabled() {
+		IHandler handler = getHandler();
+		return handler != null && handler.isEnabled();
+	}
+
 }

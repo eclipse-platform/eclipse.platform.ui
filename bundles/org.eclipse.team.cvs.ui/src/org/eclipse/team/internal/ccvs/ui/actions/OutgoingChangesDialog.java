@@ -28,7 +28,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceSubscriberContext;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
-import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
+import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ParticipantPagePane;
 import org.eclipse.ui.PlatformUI;
@@ -38,7 +38,7 @@ public class OutgoingChangesDialog extends DetailsDialog {
 	private final String message;
 	private ParticipantPagePane pane;
 	private final IResourceMappingScope scope;
-	private ModelSynchronizeParticipant participant;
+	private ResourceMappingSynchronizeParticipant participant;
 	private final String title;
 	private final String detailsMessage;
 
@@ -108,9 +108,9 @@ public class OutgoingChangesDialog extends DetailsDialog {
 		return composite;
 	}
 
-	private ModelSynchronizeParticipant createParticipant() throws InvocationTargetException, InterruptedException {
+	private ResourceMappingSynchronizeParticipant createParticipant() throws InvocationTargetException, InterruptedException {
 		ISynchronizationContext context = createSynchronizationContext(scope);
-		ModelSynchronizeParticipant participant = new ModelSynchronizeParticipant(context, title);
+		ResourceMappingSynchronizeParticipant participant = new ResourceMappingSynchronizeParticipant(context, title);
 		participant.setMergingEnabled(false);
 		return participant;
 	}

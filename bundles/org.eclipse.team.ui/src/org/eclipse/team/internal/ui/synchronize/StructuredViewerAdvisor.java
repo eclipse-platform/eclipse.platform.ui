@@ -212,12 +212,7 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 				}
 			}
 			
-			getActionGroup().fillActionBars(actionBars);
-			updateActionBars((IStructuredSelection) getViewer().getSelection());
-			Object input = getViewer().getInput();
-			if (input instanceof ISynchronizeModelElement) {
-				getActionGroup().modelChanged((ISynchronizeModelElement) input);
-			}
+			fillActionBars(actionBars);
 		}		
 	}
 	
@@ -238,18 +233,11 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 	 * @see fillContextMenu(StructuredViewer, IMenuManager)
 	 */
 	private void hookContextMenu(final StructuredViewer viewer) {
-		String targetID;
-		Object o = getConfiguration().getProperty(ISynchronizePageConfiguration.P_OBJECT_CONTRIBUTION_ID);
-		if (o instanceof String) {
-			targetID = (String)o;
-		} else {
-			targetID = null;
-		}
-		final MenuManager menuMgr = new MenuManager(targetID); 
+		String targetID = getContextMenuId(viewer);
+		final MenuManager menuMgr = createContextMenuManager(targetID); 
 		
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
-	
 			public void menuAboutToShow(IMenuManager manager) {
 				fillContextMenu(viewer, manager);
 			}
@@ -279,6 +267,27 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 			}
 		});
 		viewer.getControl().setMenu(menu);
+		registerContextMenu(viewer, menuMgr);
+	}
+
+	/**
+	 * Create the menu manager to be used to manage the context
+	 * menu of the viewer.
+	 * @param targetID the context menu id
+	 * @return the menu manager to be used to manage the context
+	 * menu of the viewer
+	 */
+	protected MenuManager createContextMenuManager(String targetID) {
+		return new MenuManager(targetID);
+	}
+
+	/**
+	 * Register the context menu with the platform if apropriate.
+	 * @param viewer the viewer
+	 * @param menuMgr the context menu manager
+	 */
+	protected void registerContextMenu(final StructuredViewer viewer, MenuManager menuMgr) {
+		String targetID = getContextMenuId(viewer);
 		if (targetID != null) {
 			IWorkbenchSite workbenchSite = getConfiguration().getSite().getWorkbenchSite();
 			IWorkbenchPartSite ws = null;
@@ -289,8 +298,24 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 			}
 		}
 	}
+
+	/**
+	 * Return the context menu id.
+	 * @param viewer the viewer
+	 * @return the context menu id
+	 */
+	protected String getContextMenuId(StructuredViewer viewer) {
+		String targetID;
+		Object o = getConfiguration().getProperty(ISynchronizePageConfiguration.P_OBJECT_CONTRIBUTION_ID);
+		if (o instanceof String) {
+			targetID = (String)o;
+		} else {
+			targetID = null;
+		}
+		return targetID;
+	}
 	
-	/*
+	/**
 	 * Callback that is invoked when a context menu is about to be shown in the
 	 * viewer. Subsclasses must implement to contribute menus. Also, menus can
 	 * contributed by creating a viewer contribution with a <code>targetID</code> 
@@ -299,7 +324,17 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 	 * @param viewer the viewer in which the context menu is being shown.
 	 * @param manager the menu manager to which actions can be added.
 	 */
-	private void fillContextMenu(StructuredViewer viewer, final IMenuManager manager) {
+	protected void fillContextMenu(StructuredViewer viewer, final IMenuManager manager) {
+		addContextMenuGroups(manager);
+		getActionGroup().setContext(new ActionContext(viewer.getSelection()));
+		getActionGroup().fillContextMenu(manager);
+	}
+
+	/**
+	 * Add the context menu groups to the context menu.
+	 * @param manager the menu manager
+	 */
+	protected void addContextMenuGroups(final IMenuManager manager) {
 		// Populate the menu with the configured groups
 		Object o = getConfiguration().getProperty(ISynchronizePageConfiguration.P_CONTEXT_MENU);
 		if (!(o instanceof String[])) {
@@ -311,11 +346,27 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 			// There is no need to adjust the group ids in a contetx menu (see setActionBars)
 			manager.add(new Separator(group));
 		}
-		getActionGroup().setContext(new ActionContext(viewer.getSelection()));
-		getActionGroup().fillContextMenu(manager);
 	}
 	
-	private void updateActionBars(IStructuredSelection selection) {
+	/**
+	 * Invoked once when the action bars are set.
+	 * @param actionBars the action bars
+	 */
+	protected void fillActionBars(IActionBars actionBars) {
+		getActionGroup().fillActionBars(actionBars);
+		updateActionBars((IStructuredSelection) getViewer().getSelection());
+		Object input = getViewer().getInput();
+		if (input instanceof ISynchronizeModelElement) {
+			getActionGroup().modelChanged((ISynchronizeModelElement) input);
+		}
+	}
+	
+	/**
+	 * Invoked each time the selection in the view changes in order
+	 * to update the ction bars.
+	 * @param selection the selection from the viewer
+	 */
+	protected void updateActionBars(IStructuredSelection selection) {
 		ActionGroup group = getActionGroup();
 		if (group != null) {
 			group.setContext(new ActionContext(selection));

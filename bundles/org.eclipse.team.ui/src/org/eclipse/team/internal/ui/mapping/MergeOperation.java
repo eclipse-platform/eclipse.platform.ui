@@ -8,23 +8,20 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.operations;
+package org.eclipse.team.internal.ui.mapping;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.mapping.DefaultResourceMappingMerger;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.TeamOperation;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -38,37 +35,68 @@ import org.eclipse.ui.IWorkbenchPart;
  * 
  * @since 3.2
  */
-public abstract class ModelProviderOperation extends TeamOperation {
+public class MergeOperation extends TeamOperation {
 
+	private final IMergeContext context;
+
+	public static IStatus validateMerge(IMergeContext context, IProgressMonitor monitor) {
+		ModelProvider[] providers = context.getScope().getModelProviders();
+		monitor.beginTask(null, 100 * providers.length);
+		List notOK = new ArrayList();
+		for (int i = 0; i < providers.length; i++) {
+			ModelProvider provider = providers[i];
+			IStatus status = validateMerge(provider, context, Policy.subMonitorFor(monitor, 100));
+			if (!status.isOK())
+				notOK.add(status);
+		}
+		if (notOK.isEmpty())
+			return Status.OK_STATUS;
+		if (notOK.size() == 1)
+			return (IStatus)notOK.get(0);
+		return new MultiStatus(TeamUIPlugin.ID, 0, (IStatus[]) notOK.toArray(new IStatus[notOK.size()]), TeamUIMessages.ResourceMappingMergeOperation_3, null);
+	}
+	
+	/**
+	 * Validate the merge by obtaining the {@link IResourceMappingMerger} for the
+	 * given provider.
+	 * @param provider the model provider
+	 * @param context the merge context
+	 * @param monitor a progress monitor
+	 * @return the status obtained from the merger for the provider
+	 */
+	private static IStatus validateMerge(ModelProvider provider, IMergeContext context, IProgressMonitor monitor) {
+		IResourceMappingMerger merger = getMerger(provider);
+		return merger.validateMerge(context, monitor);
+	}
+	
+	/**
+	 * Return the auto-merger associated with the given model provider
+	 * view the adaptable mechanism.
+	 * If the model provider does not have a merger associated with
+	 * it, a default merger that performs the merge at the file level
+	 * is returned.
+	 * @param provider the model provider of the elements to be merged
+	 * (must not be <code>null</code>)
+	 * @return a merger
+	 */
+	private static IResourceMappingMerger getMerger(ModelProvider provider) {
+		Assert.isNotNull(provider);
+		Object o = provider.getAdapter(IResourceMappingMerger.class);
+		if (o instanceof IResourceMappingMerger) {
+			return (IResourceMappingMerger) o;	
+		}
+		return new DefaultResourceMappingMerger(provider);
+	}
+	
 	/**
 	 * Create the operation
 	 * @param part the workbench part from which the operation was
 	 * launched or <code>null</code>
+	 * @param context the merge context whose changes are to be merged
 	 */
-	public ModelProviderOperation(IWorkbenchPart part) {
+	public MergeOperation(IWorkbenchPart part, IMergeContext context) {
 		super(part);
-	}
-
-	/*
-	 * Helper method for extracting the part safely from a configuration
-	 */
-	private static IWorkbenchPart getPart(ISynchronizePageConfiguration configuration) {
-		if (configuration != null) {
-			ISynchronizePageSite site = configuration.getSite();
-			if (site != null) {
-				return site.getPart();
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Create a model provider operation
-	 * @param configuration the configuration of the page from which
-	 * the operation was launched
-	 */
-	protected ModelProviderOperation(ISynchronizePageConfiguration configuration) {
-		this(getPart(configuration));
+		this.context = context;
 	}
 	
 	/**
@@ -82,7 +110,7 @@ public abstract class ModelProviderOperation extends TeamOperation {
 	 * TODO should return more useful information
 	 * @throws CoreException
 	 */
-	protected boolean performMerge(final IMergeContext context, IProgressMonitor monitor) throws CoreException {
+	public boolean performMerge(IProgressMonitor monitor) throws CoreException {
 		final ModelProvider[] providers = sortByExtension(context.getScope().getModelProviders());
 		final List failedMerges = new ArrayList();
 		context.run(new IWorkspaceRunnable() {
@@ -90,7 +118,7 @@ public abstract class ModelProviderOperation extends TeamOperation {
 				monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 				for (int i = 0; i < providers.length; i++) {
 					ModelProvider provider = providers[i];
-					if (!performMerge(provider, context, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN))) {
+					if (!performMerge(provider, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN))) {
 						failedMerges.add(provider);
 					}
 				}
@@ -128,6 +156,7 @@ public abstract class ModelProviderOperation extends TeamOperation {
 		}
 		return false;
 	}
+	
 	/**
 	 * Merge all the mappings that come from the given provider. By default,
 	 * an automatic merge is attempted. After this, a manual merge (i.e. with user
@@ -138,9 +167,9 @@ public abstract class ModelProviderOperation extends TeamOperation {
 	 * @param monitor a progress monitor
 	 * @throws CoreException
 	 */
-	protected boolean performMerge(ModelProvider provider, IMergeContext mergeContext, IProgressMonitor monitor) throws CoreException {
+	protected boolean performMerge(ModelProvider provider, IProgressMonitor monitor) throws CoreException {
 		IResourceMappingMerger merger = getMerger(provider);
-		IStatus status = merger.merge(mergeContext, monitor);
+		IStatus status = merger.merge(context, monitor);
 		if (!status.isOK()) {
 			if (status.getCode() == IMergeStatus.CONFLICTS) {
 				return false;
@@ -150,64 +179,16 @@ public abstract class ModelProviderOperation extends TeamOperation {
 		}
 		return true;
 	}
-	
-	/**
-	 * Validate the merge by obtaining the {@link IResourceMappingMerger} for the
-	 * given provider.
-	 * @param provider the model provider
-	 * @param context the merge context
-	 * @param monitor a progress monitor
-	 * @return the status obtained from the merger for the provider
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IStatus validateMerge(ModelProvider provider, IMergeContext context, IProgressMonitor monitor) {
-		IResourceMappingMerger merger = getMerger(provider);
-		return merger.validateMerge(context, monitor);
-	}
-	
-	/**
-	 * Return the auto-merger associated with the given model provider
-	 * view the adaptable mechanism.
-	 * If the model provider does not have a merger associated with
-	 * it, a default merger that performs the merge at the file level
-	 * is returned.
-	 * @param provider the model provider of the elements to be merged
-	 * (must not be <code>null</code>)
-	 * @return a merger
-	 */
-	protected IResourceMappingMerger getMerger(ModelProvider provider) {
-		Assert.isNotNull(provider);
-		Object o = provider.getAdapter(IResourceMappingMerger.class);
-		if (o instanceof IResourceMappingMerger) {
-			return (IResourceMappingMerger) o;	
-		}
-		return new DefaultResourceMappingMerger(provider);
-	}
-	
-	/**
-	 * Return whether the given diff tree contains any deltas that match the given filter.
-	 * @param tree the diff tree
-	 * @param filter the diff node filter
-	 * @param monitor a progress monitor
-	 * @return whether the given diff tree contains any deltas that match the given filter
-	 */
-	protected boolean hasChangesMatching(IDiffTree tree, final FastDiffNodeFilter filter) {
-		final CoreException found = new CoreException(Status.OK_STATUS);
+	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
-			tree.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
-				public boolean visit(IDiffNode delta) throws CoreException {
-					if (filter.select(delta)) {
-						throw found;
-					}
-					return false;
-				}
-			
-			}, IResource.DEPTH_INFINITE);
+			performMerge(monitor);
 		} catch (CoreException e) {
-			if (e == found)
-				return true;
-			TeamUIPlugin.log(e);
+			throw new InvocationTargetException(e);
 		}
-		return false;
 	}
 
 }

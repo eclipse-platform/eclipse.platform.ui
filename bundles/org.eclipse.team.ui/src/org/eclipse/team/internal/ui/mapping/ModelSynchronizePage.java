@@ -13,11 +13,11 @@ package org.eclipse.team.internal.ui.mapping;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.synchronize.*;
-import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
+import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
- * A synchronize page for displaying a {@link ModelSynchronizeParticipant}.
+ * A synchronize page for displaying a {@link ResourceMappingSynchronizeParticipant}.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
@@ -29,7 +29,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  **/
 public class ModelSynchronizePage extends AbstractSynchronizePage {
 
-	private ModelSynchronizeParticipant participant;
+	private ResourceMappingSynchronizeParticipant participant;
 
 	/**
 	 * Create a page from the given configuration
@@ -37,7 +37,7 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 	 */
 	public ModelSynchronizePage(ISynchronizePageConfiguration configuration) {
 		super(configuration);
-		this.participant = (ModelSynchronizeParticipant)configuration.getParticipant();
+		this.participant = (ResourceMappingSynchronizeParticipant)configuration.getParticipant();
 		configuration.setComparisonType(isThreeWay() 
 						? ISynchronizePageConfiguration.THREE_WAY 
 						: ISynchronizePageConfiguration.TWO_WAY);
@@ -72,7 +72,7 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 	 * Return the participant of this page.
 	 * @return the participant of this page
 	 */
-	protected ModelSynchronizeParticipant getParticipant() {
+	protected ResourceMappingSynchronizeParticipant getParticipant() {
 		return participant;
 	}
 

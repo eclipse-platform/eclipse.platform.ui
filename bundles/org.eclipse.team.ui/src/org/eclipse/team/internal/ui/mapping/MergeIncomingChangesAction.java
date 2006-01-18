@@ -18,10 +18,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.mapping.SynchronizationOperation;
 import org.eclipse.team.ui.operations.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -39,13 +39,14 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		final IMergeContext context = (IMergeContext)((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
+		final IMergeContext context = (IMergeContext)((ResourceMappingSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
 		try {
-			new ModelProviderOperation(getConfiguration()) {
+			new SynchronizationOperation(getConfiguration()) {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
 					try {
-						if (performMerge(context, monitor)) {
+						// TODO: Should validate before merging
+						if (new MergeOperation(getPart(), context).performMerge(monitor)) {
 							promptForNoChanges();
 						} else {
 							promptForMergeFailure();

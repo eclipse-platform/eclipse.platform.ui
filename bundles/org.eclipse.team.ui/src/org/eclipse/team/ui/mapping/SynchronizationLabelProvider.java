@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.AbstractSynchronizeLabelProvider;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
@@ -33,7 +34,7 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
  * 
  * @since 3.2
  */
-public abstract class SynchronizationLabelProvider extends AbstractSynchronizationLabelProvider implements ICommonLabelProvider {
+public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLabelProvider implements ICommonLabelProvider {
 
 	private IResourceMappingScope scope;
 	private ISynchronizationContext context;

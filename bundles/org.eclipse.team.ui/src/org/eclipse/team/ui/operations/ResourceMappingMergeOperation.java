@@ -11,10 +11,10 @@
 package org.eclipse.team.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -24,6 +24,7 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.mapping.MergeOperation;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ICompareAdapter;
 import org.eclipse.team.ui.synchronize.*;
@@ -103,6 +104,12 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 
 	private IMergeContext context;
 
+	/**
+	 * Create a merge operation
+	 * @param part the workbench part from which the merge was launched or <code>null</code>
+	 * @param selectedMappings the selected mappings
+	 * @param context the resource mapping context used to generate the full scope of the operation
+	 */
 	protected ResourceMappingMergeOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext context) {
 		super(part, selectedMappings, context);
 	}
@@ -120,7 +127,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 				return;
 			}
 			if (!isPreviewRequested()) {
-				IStatus status = validateMerge(context, Policy.subMonitorFor(monitor, 5));
+				IStatus status = MergeOperation.validateMerge(context, Policy.subMonitorFor(monitor, 5));
 				if (status.isOK()) {
 					if (performMerge(Policy.subMonitorFor(monitor, 20)))
 						// The merge was sucessful so we can just return
@@ -164,23 +171,6 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 			}
 		});
 	}
-	
-	private IStatus validateMerge(IMergeContext context, IProgressMonitor monitor) {
-		ModelProvider[] providers = getScope().getModelProviders();
-		monitor.beginTask(null, 100 * providers.length);
-		List notOK = new ArrayList();
-		for (int i = 0; i < providers.length; i++) {
-			ModelProvider provider = providers[i];
-			IStatus status = validateMerge(provider, context, Policy.subMonitorFor(monitor, 100));
-			if (!status.isOK())
-				notOK.add(status);
-		}
-		if (notOK.isEmpty())
-			return Status.OK_STATUS;
-		if (notOK.size() == 1)
-			return (IStatus)notOK.get(0);
-		return new MultiStatus(TeamUIPlugin.ID, 0, (IStatus[]) notOK.toArray(new IStatus[notOK.size()]), TeamUIMessages.ResourceMappingMergeOperation_3, null);
-	}
 
 	/**
 	 * Method invoked when the context contains no changes so that the user
@@ -203,10 +193,10 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 		calculateStates(context, Policy.subMonitorFor(monitor, 5));
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				ModelSynchronizeParticipant participant = new ModelSynchronizeParticipant(context, title);
+				ResourceMappingSynchronizeParticipant participant = new ResourceMappingSynchronizeParticipant(context, title);
 				if (isPreviewInDialog()) {
 					CompareConfiguration cc = new CompareConfiguration();
-					ModelParticipantPageSavablePart input = new ModelParticipantPageSavablePart(getShell(), cc, participant.createPageConfiguration(), participant);
+					ParticipantPageSaveablePart input = new ParticipantPageSaveablePart(getShell(), cc, participant.createPageConfiguration(), participant);
 					ParticipantPageDialog dialog = new ParticipantPageDialog(getShell(), input, participant) {
 						private Button doneButton;
 	
@@ -277,7 +267,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	 * @throws CoreException
 	 */
 	protected boolean performMerge(IProgressMonitor monitor) throws CoreException {
-		boolean merged = performMerge(context, monitor);
+		boolean merged = new MergeOperation(getPart(), context).performMerge(monitor);
 		if (merged) {
 			context.dispose();
 		}
@@ -306,6 +296,33 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 			return TeamUIMessages.ResourceMappingMergeOperation_4; 
 		}
 		return super.getPreviewRequestMessage();
+	}
+	
+	/**
+	 * Return whether the given diff tree contains any deltas that match the given filter.
+	 * @param tree the diff tree
+	 * @param filter the diff node filter
+	 * @param monitor a progress monitor
+	 * @return whether the given diff tree contains any deltas that match the given filter
+	 */
+	protected boolean hasChangesMatching(IDiffTree tree, final FastDiffNodeFilter filter) {
+		final CoreException found = new CoreException(Status.OK_STATUS);
+		try {
+			tree.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
+				public boolean visit(IDiffNode delta) throws CoreException {
+					if (filter.select(delta)) {
+						throw found;
+					}
+					return false;
+				}
+			
+			}, IResource.DEPTH_INFINITE);
+		} catch (CoreException e) {
+			if (e == found)
+				return true;
+			TeamUIPlugin.log(e);
+		}
+		return false;
 	}
 
 }

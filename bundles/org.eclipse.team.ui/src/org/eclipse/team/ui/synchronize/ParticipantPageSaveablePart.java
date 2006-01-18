@@ -37,6 +37,7 @@ import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.SaveablePartAdapter;
+import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
 import org.eclipse.ui.*;
 import org.eclipse.ui.commands.*;
 import org.eclipse.ui.part.IPageBookViewPage;
@@ -45,7 +46,8 @@ import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Displays a synchronize participant page combined with the compare/merge infrastructure. This only works if the
- * synchronize page viewer provides selections that are of the following types: ITypedElement and ICompareInput. 
+ * synchronize page viewer provides selections that are of the following types: ITypedElement and ICompareInput
+ * or if the participant is a {@link ResourceMappingSynchronizeParticipant}.
  * 
  * @since 3.0
  */
@@ -554,16 +556,15 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		return participant;
 	}
 
-	/**
+	/*
 	 * Return a compare input that represents the selection.
 	 * This input is used to feed the structure and content
 	 * viewers. By default, a compare input is returned if the selection is
 	 * of size 1 and the selected element implements <code>ICompareInput</code>
 	 * @param selection the selection
 	 * @return a compare input representing the selection
-	 * @since 3.2
 	 */
-	protected ICompareInput getCompareInput(ISelection selection) {
+	private ICompareInput getCompareInput(ISelection selection) {
 		if (selection != null && selection instanceof IStructuredSelection) {
 			IStructuredSelection ss= (IStructuredSelection) selection;
 			if (ss.size() == 1) {
@@ -571,12 +572,16 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 				if(o instanceof ICompareInput) {
 					return (ICompareInput)o;
 				}
+				if (participant instanceof ResourceMappingSynchronizeParticipant) {
+					ResourceMappingSynchronizeParticipant msp = (ResourceMappingSynchronizeParticipant) participant;
+					return msp.asCompareInput(o);
+				}
 			}
 		}
 		return null;
 	}
 	
-	/**
+	/*
 	 * Find a viewer that can provide a structure view for the given compare input.
 	 * Return <code>null</code> if a suitable viewer could not be found.
 	 * @param parent the parent composite for the viewer
@@ -584,13 +589,18 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	 * @param input the compare input to be viewed
 	 * @return a viewer capable of displaying a structure view of the input or
 	 * <code>null</code> if such a viewer is not available.
-	 * @since 3.2
 	 */
-	protected Viewer findStructureViewer(Composite parent, Viewer oldViewer, ICompareInput input) {
+	private Viewer findStructureViewer(Composite parent, Viewer oldViewer, ICompareInput input) {
+		if (participant instanceof ResourceMappingSynchronizeParticipant) {
+			ResourceMappingSynchronizeParticipant msp = (ResourceMappingSynchronizeParticipant) participant;
+			Viewer viewer = msp.findStructureViewer(parent, oldViewer, input, cc);
+			if (viewer != null)
+				return viewer;
+		}
 		return CompareUI.findStructureViewer(oldViewer, input, parent, cc);
 	}
 	
-	/**
+	/*
 	 * Find a viewer that can provide a content compare view for the given compare input.
 	 * Return <code>null</code> if a suitable viewer could not be found.
 	 * @param parent the parent composite for the viewer
@@ -598,19 +608,22 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	 * @param input the compare input to be viewed
 	 * @return a viewer capable of displaying a content compare view of the input or
 	 * <code>null</code> if such a viewer is not available.
-	 * @since 3.2
 	 */
-	protected Viewer findContentViewer(Composite parent, Viewer oldViewer, ICompareInput input) {
+	private Viewer findContentViewer(Composite parent, Viewer oldViewer, ICompareInput input) {
+		if (participant instanceof ResourceMappingSynchronizeParticipant) {
+			ResourceMappingSynchronizeParticipant msp = (ResourceMappingSynchronizeParticipant) participant;
+			Viewer viewer = msp.findContentViewer(parent, oldViewer, input, cc);
+			if (viewer != null)
+				return viewer;
+		}
 		return CompareUI.findContentViewer(oldViewer, input, parent, cc);
 	}
 
-	/**
+	/*
 	 * Return the compare configuration for this part.
 	 * @return the compare configuration for this part
-	 * 
-	 * @since 3.2
 	 */
-	protected CompareConfiguration getCompareConfiguration() {
+	private CompareConfiguration getCompareConfiguration() {
 		return cc;
 	}
 }

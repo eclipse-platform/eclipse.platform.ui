@@ -10,14 +10,14 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
+import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
 
 public class ModelCompareEditorInput extends CompareEditorInput {
 
-	private final ModelSynchronizeParticipant participant;
+	private final ResourceMappingSynchronizeParticipant participant;
 	private final ICompareInput input;
 
-	public ModelCompareEditorInput(ModelSynchronizeParticipant participant, ICompareInput input) {
+	public ModelCompareEditorInput(ResourceMappingSynchronizeParticipant participant, ICompareInput input) {
 		super(new CompareConfiguration());
 		Assert.isNotNull(participant);
 		Assert.isNotNull(input);

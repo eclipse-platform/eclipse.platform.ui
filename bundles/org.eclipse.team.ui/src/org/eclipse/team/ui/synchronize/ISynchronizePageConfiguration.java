@@ -389,4 +389,13 @@ public interface ISynchronizePageConfiguration {
 	 * @return a runnable context (or <code>null</code>)
 	 */
 	IRunnableContext getRunnableContext();
+
+	/**
+	 * Return the id of the viewer to which this configuration is 
+	 * associated.
+	 * @return the id of the viewer to which this configuration is 
+	 * associated
+	 * @since 3.2
+	 */
+	String getViewerId();
 }

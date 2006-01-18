@@ -21,6 +21,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.mapping.CommonViewerAdvisor;
 import org.eclipse.team.internal.ui.synchronize.actions.DefaultSynchronizePageActions;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IActionBars;
@@ -587,5 +588,10 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 	 */
 	public IRunnableContext getRunnableContext() {
 		return context;
+	}
+
+	public String getViewerId() {
+		// TODO Should be a property
+		return CommonViewerAdvisor.TEAM_NAVIGATOR_CONTENT;
 	}
 }

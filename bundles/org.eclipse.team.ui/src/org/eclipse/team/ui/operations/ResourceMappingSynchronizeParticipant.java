@@ -20,16 +20,19 @@ import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.mapping.*;
+import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ICompareAdapter;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
  * Synchronize participant that obtains it's synchronization state from
  * a {@link ISynchronizationContext}.
+ * <p>
+ * This class may be subclassed by clients
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
@@ -39,109 +42,19 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * 
  * @since 3.2
  **/
-public class ModelSynchronizeParticipant extends
+public class ResourceMappingSynchronizeParticipant extends
 		AbstractSynchronizeParticipant {
-
-	/**
-	 * The id of the merge action group that determines where the merge
-	 * actions (e.g. merge and overwrite) appear in the context menu or toolbar.
-	 */
-	public static final String MERGE_ACTION_GROUP = "merge_action_group"; //$NON-NLS-1$
-
-	/**
-	 * The id of the action group that determines where the other
-	 * actions (e.g. mark-as-mered) appear in the context menu.
-	 */
-	public static final String OTHER_ACTION_GROUP = "other_action_group"; //$NON-NLS-1$
 	
 	private ISynchronizationContext context;
 	
 	private boolean mergingEnabled = true;
 
 	/**
-	 * Actions for a model participant
-	 */
-	private class ModelActionContribution extends SynchronizePageActionGroup {
-		private MergeIncomingChangesAction updateToolbarAction;
-		
-		public void initialize(ISynchronizePageConfiguration configuration) {
-			super.initialize(configuration);
-			
-			ISynchronizationContext context = ((ModelSynchronizeParticipant)configuration.getParticipant()).getContext();
-			if (context instanceof IMergeContext) {
-				updateToolbarAction = new MergeIncomingChangesAction(configuration);
-				appendToGroup(
-						ISynchronizePageConfiguration.P_TOOLBAR_MENU,
-						MERGE_ACTION_GROUP,
-						updateToolbarAction);
-				appendToGroup(
-						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-						MERGE_ACTION_GROUP,
-						new MergeAction(configuration, false));
-				appendToGroup(
-						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-						MERGE_ACTION_GROUP,
-						new MergeAction(configuration, true));
-				appendToGroup(
-						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-						OTHER_ACTION_GROUP,
-						new MarkAsMergedAction(configuration));
-			}
-			
-//			appendToGroup(
-//					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-//					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-//					new WorkspaceCommitAction(configuration));
-//			appendToGroup(
-//					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-//					CONTEXT_MENU_CONTRIBUTION_GROUP_2,
-//					new OverrideAndUpdateAction(configuration));
-//			appendToGroup(
-//					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-//					CONTEXT_MENU_CONTRIBUTION_GROUP_2,
-//					new OverrideAndCommitAction(configuration));
-//			appendToGroup(
-//					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-//					CONTEXT_MENU_CONTRIBUTION_GROUP_2,
-//					new ConfirmMergedAction(configuration));		
-//			appendToGroup(
-//					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-//					CONTEXT_MENU_CONTRIBUTION_GROUP_3,
-//					new CVSActionDelegateWrapper(new IgnoreAction(), configuration));
-//			if (!configuration.getSite().isModal()) {
-//				appendToGroup(
-//						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-//						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
-//						new CreatePatchAction(configuration));
-//				appendToGroup(
-//						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-//						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
-//						new CVSActionDelegateWrapper(new BranchAction(), configuration));
-//				appendToGroup(
-//						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-//						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
-//						new CVSActionDelegateWrapper(new ShowAnnotationAction(), configuration));
-//				appendToGroup(
-//						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-//						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
-//						new CVSActionDelegateWrapper(new ShowResourceInHistoryAction(), configuration));
-//				appendToGroup(
-//						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-//						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
-//						new CVSActionDelegateWrapper(new SetKeywordSubstitutionAction(), configuration));	
-//			}
-//			appendToGroup(
-//					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-//					CONTEXT_MENU_CONTRIBUTION_GROUP_4,
-//					new RefreshDirtyStateAction(configuration));
-		}
-	}
-	
-	/**
 	 * Create a participant for the given context
 	 * @param context the synchronization context
+	 * @param name the na,me of the participant
 	 */
-	public ModelSynchronizeParticipant(ISynchronizationContext context, String name) {
+	public ResourceMappingSynchronizeParticipant(ISynchronizationContext context, String name) {
 		initializeContext(context);
 		try {
 			setInitializationData(TeamUI.getSynchronizeManager().getParticipantDescriptor("org.eclipse.team.ui.synchronization_context_synchronize_participant")); //$NON-NLS-1$
@@ -150,6 +63,7 @@ public class ModelSynchronizeParticipant extends
 		}
 		setSecondaryId(Long.toString(System.currentTimeMillis()));
 		setName(name);
+		mergingEnabled = context instanceof IMergeContext;
 	}
 
 	/* (non-Javadoc)
@@ -158,19 +72,29 @@ public class ModelSynchronizeParticipant extends
 	protected void initializeConfiguration(
 			ISynchronizePageConfiguration configuration) {
 		if (isMergingEnabled()) {
-			configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, MERGE_ACTION_GROUP);
-			configuration.addMenuGroup(ISynchronizePageConfiguration.P_CONTEXT_MENU, MERGE_ACTION_GROUP);
-			configuration.addMenuGroup(ISynchronizePageConfiguration.P_CONTEXT_MENU, OTHER_ACTION_GROUP);
-			configuration.addActionContribution(new ModelActionContribution());
+			// The contetx menu groups are defined by the org.eclipse.ui.navigator.viewer extension
+			configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, MergeActionGroup.MERGE_ACTION_GROUP);
+			configuration.addActionContribution(createMergeActionGroup());
 		}
 		configuration.setSupportedModes(ISynchronizePageConfiguration.ALL_MODES);
 		configuration.setMode(ISynchronizePageConfiguration.BOTH_MODE);
 	}
 
+	/**
+	 * Create the merge action group for this participant.
+	 * Subclasses can override in order to provide a 
+	 * merge action group that configures certain aspects
+	 * of the merge actions.
+	 * @return the merge action group for this participant
+	 */
+	protected MergeActionGroup createMergeActionGroup() {
+		return new MergeActionGroup();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#createPage(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
 	 */
-	public IPageBookViewPage createPage(
+	public final IPageBookViewPage createPage(
 			ISynchronizePageConfiguration configuration) {
 		return new ModelSynchronizePage(configuration);
 	}
@@ -283,10 +207,20 @@ public class ModelSynchronizeParticipant extends
 		return false;
 	}
 
+	/**
+	 * Return whether merge capabilities are enabled for this participant.
+	 * If merging is enabled, merge actions can be shown. If merging is disabled, no 
+	 * merge actions should be surfaced.
+	 * @return whether merge capabilities should be enabled for this participant
+	 */
 	public boolean isMergingEnabled() {
 		return mergingEnabled;
 	}
 
+	/**
+	 * Set whether merge capabilities should be enabled for this participant.
+	 * @param mergingEnabled whether merge capabilities should be enabled for this participant
+	 */
 	public void setMergingEnabled(boolean mergingEnabled) {
 		this.mergingEnabled = mergingEnabled;
 	}

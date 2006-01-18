@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.mapping;
+package org.eclipse.team.ui.synchronize;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.Differencer;
@@ -34,7 +34,7 @@ import org.eclipse.team.internal.ui.*;
  * 
  * @since 3.2
  */
-public abstract class AbstractSynchronizationLabelProvider implements ILabelProvider {
+public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider {
 	
 	// Contains direction images
 	private CompareConfiguration compareConfig = new CompareConfiguration();
