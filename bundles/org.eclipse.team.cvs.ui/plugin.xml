@@ -605,11 +605,11 @@
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareRevisionAction"
                enablesFor="2"
                id="org.eclipse.team.ui.CompareRevisionAction"
-               label="&amp;Compare"/>
+               label="%action.label.compare"/>
          <action
                class="org.eclipse.team.internal.ccvs.ui.actions.OpenRevisionAction"
                id="org.eclipse.team.ui.FileRevisionsContribution"
-               label="&amp;Open Revision"/>
+               label="%action.label.open"/>
       </objectContribution>
    </extension>
    
