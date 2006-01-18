@@ -53,8 +53,6 @@ public class ProblemView extends MarkerView {
 
 	private IField severity = new FieldSeverity();
 
-	private IField category = new FieldCategory();
-
 	private IField folder = new FieldFolder();
 
 	private IField resource = new FieldResource();
@@ -144,7 +142,7 @@ public class ProblemView extends MarkerView {
 	 * @see org.eclipse.ui.views.markers.internal.TableView#getSortingFields()
 	 */
 	protected IField[] getSortingFields() {
-		return new IField[] { severity, category, folder, resource, message,
+		return new IField[] { severity, folder, resource, message,
 				lineNumber, creationTime,
 				// Add the marker ID so the table sorter won't reduce
 				// errors on the same line bug 82502
@@ -203,7 +201,7 @@ public class ProblemView extends MarkerView {
 
 		// Add the marker ID so the table sorter won't reduce
 		// errors on the same line bug 82502
-		return new IField[] { message, resource, folder, category, lineNumber,
+		return new IField[] { message, resource, folder, lineNumber,
 				creationTime };
 	}
 
@@ -364,7 +362,7 @@ public class ProblemView extends MarkerView {
 
 		MenuManager groupByMenu = new MenuManager(MarkerMessages.ProblemView_GroupByMenu);
 		groupByMenu.add(new GroupingAction(MarkerMessages.ProblemView_Severity, severity, this));
-		groupByMenu.add(new GroupingAction(MarkerMessages.ProblemView_Category, category, this));
+		groupByMenu.add(new GroupingAction(MarkerMessages.ProblemView_Category, new FieldCategory(), this));
 		
 		Iterator definedGroups = MarkerSupportRegistry.getInstance().getMarkerGroups().iterator();
 		
