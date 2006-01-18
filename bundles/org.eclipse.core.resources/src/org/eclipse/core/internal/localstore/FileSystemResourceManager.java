@@ -898,7 +898,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 			}
 		}
-		store.mkdir(EFS.NONE, null);
+		store.mkdir(EFS.NONE, monitor);
 		ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
 		updateLocalSync(info, store.fetchInfo().getLastModified());
 	}

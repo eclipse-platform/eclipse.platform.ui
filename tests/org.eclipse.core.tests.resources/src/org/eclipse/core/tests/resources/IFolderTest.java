@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,10 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 public class IFolderTest extends ResourceTest {
+	public static Test suite() {
+		return new TestSuite(IFolderTest.class);
+	}
+
 	public IFolderTest() {
 		super();
 	}
@@ -26,10 +30,6 @@ public class IFolderTest extends ResourceTest {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-	}
-
-	public static Test suite() {
-		return new TestSuite(IFolderTest.class);
 	}
 
 	protected void tearDown() throws Exception {
@@ -89,6 +89,75 @@ public class IFolderTest extends ResourceTest {
 		//the destination should not exist, because the source does not exist
 		assertTrue("1.1", !before.exists());
 		assertTrue("1.2", !after.exists());
+	}
+
+	public void testCreateDerived() {
+		IProject project = getWorkspace().getRoot().getProject("Project");
+		IFolder derived = project.getFolder("derived");
+		ensureExistsInWorkspace(project, true);
+		ensureDoesNotExistInWorkspace(derived);
+
+		try {
+			derived.create(IResource.DERIVED, true, getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+		assertTrue("1.0", derived.isDerived());
+		assertTrue("1.1", !derived.isTeamPrivateMember());
+		try {
+			derived.delete(false, getMonitor());
+			derived.create(IResource.NONE, true, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		assertTrue("2.0", !derived.isDerived());
+		assertTrue("2.1", !derived.isTeamPrivateMember());
+	}
+
+	public void testCreateDerivedTeamPrivate() {
+		IProject project = getWorkspace().getRoot().getProject("Project");
+		IFolder teamPrivate = project.getFolder("teamPrivate");
+		ensureExistsInWorkspace(project, true);
+		ensureDoesNotExistInWorkspace(teamPrivate);
+
+		try {
+			teamPrivate.create(IResource.TEAM_PRIVATE | IResource.DERIVED, true, getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+		assertTrue("1.0", teamPrivate.isTeamPrivateMember());
+		assertTrue("1.1", teamPrivate.isDerived());
+		try {
+			teamPrivate.delete(false, getMonitor());
+			teamPrivate.create(IResource.NONE, true, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		assertTrue("2.0", !teamPrivate.isTeamPrivateMember());
+		assertTrue("2.1", !teamPrivate.isDerived());
+	}
+
+	public void testCreateTeamPrivate() {
+		IProject project = getWorkspace().getRoot().getProject("Project");
+		IFolder teamPrivate = project.getFolder("teamPrivate");
+		ensureExistsInWorkspace(project, true);
+		ensureDoesNotExistInWorkspace(teamPrivate);
+
+		try {
+			teamPrivate.create(IResource.TEAM_PRIVATE, true, getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+		assertTrue("1.0", teamPrivate.isTeamPrivateMember());
+		assertTrue("1.1", !teamPrivate.isDerived());
+		try {
+			teamPrivate.delete(false, getMonitor());
+			teamPrivate.create(IResource.NONE, true, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		assertTrue("2.0", !teamPrivate.isTeamPrivateMember());
+		assertTrue("2.1", !teamPrivate.isDerived());
 	}
 
 	public void testFolderCreation() throws Exception {

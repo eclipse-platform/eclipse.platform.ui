@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -265,17 +265,29 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * If the stream is <code>null</code> then a file is not created in the local
 	 * file system and the created file is marked as being non-local.
 	 * <p>
-	 * The <code>FORCE</code> update flag controls how this method deals with
+	 * The {@link IResource#FORCE} update flag controls how this method deals with
 	 * cases where the workspace is not completely in sync with the local file 
-	 * system. If <code>FORCE</code> is not specified, the method will only attempt
+	 * system. If {@link IResource#FORCE} is not specified, the method will only attempt
 	 * to write a file in the local file system if it does not already exist. 
 	 * This option ensures there is no unintended data loss; it is the recommended
-	 * setting. However, if <code>FORCE</code> is specified, this method will 
+	 * setting. However, if {@link IResource#FORCE} is specified, this method will 
 	 * attempt to write a corresponding file in the local file system, 
 	 * overwriting any existing one if need be.
 	 * </p>
 	 * <p>
-	 * Update flags other than <code>FORCE</code> are ignored.
+	 * The {@link IResource#DERIVED} update flag indicates that this resource
+	 * should immediately be set as a derived resource.  Specifying this flag
+	 * is equivalent to atomically calling {@link IResource#setDerived(boolean)}
+	 * with a value of <code>true</code> immediately after creating the resource.
+	 * </p>
+	 * <p>
+	 * The {@link IResource#TEAM_PRIVATE} update flag indicates that this resource
+	 * should immediately be set as a team private resource.  Specifying this flag
+	 * is equivalent to atomically calling {@link IResource#setTeamPrivateMember(boolean)}
+	 * with a value of <code>true</code> immediately after creating the resource.
+	 * </p>
+	 * <p>
+	 * Update flags other than those listed above are ignored.
 	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
@@ -290,7 +302,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @param source an input stream containing the initial contents of the file,
 	 *    or <code>null</code> if the file should be marked as not local
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   (only <code>FORCE</code> is relevant here)
+	 *   ({@link IResource#FORCE}, {@link IResource#DERIVED}, and {@link IResource#TEAM_PRIVATE})
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:
@@ -362,7 +374,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 *
 	 * @param localLocation a file system path where the file should be linked 
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   (only ALLOW_MISSING_LOCAL is relevant here)
+	 *   ({@link IResource#ALLOW_MISSING_LOCAL} and {@link IResource#REPLACE})
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:
@@ -438,7 +450,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 *
 	 * @param location a file system URI where the file should be linked 
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   (only ALLOW_MISSING_LOCAL is relevant here)
+	 *   ({@link IResource#ALLOW_MISSING_LOCAL} and {@link IResource#REPLACE})
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:

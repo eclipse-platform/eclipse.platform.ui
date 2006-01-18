@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,25 +20,36 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
 public class IFileTest extends ResourceTest {
-	IProject[] projects = null;
-
-	ArrayList allFiles = new ArrayList();
-	ArrayList localOnlyFiles = new ArrayList();
-	ArrayList workspaceOnlyFiles = new ArrayList();
-	ArrayList nonExistingFiles = new ArrayList();
-	ArrayList existingFiles = new ArrayList();
-	ArrayList outOfSyncFiles = new ArrayList();
-
 	//name of files according to sync category
 	public static final String DOES_NOT_EXIST = "DoesNotExistFile";
-	public static final String LOCAL_ONLY = "LocalOnlyFile";
-	public static final String EXISTING = "ExistingFile";
-	public static final String WORKSPACE_ONLY = "WorkspaceOnlyFile";
-	public static final String OUT_OF_SYNC = "OutOfSyncFile";
 
-	protected static final Boolean[] TRUE_AND_FALSE = new Boolean[] {Boolean.TRUE, Boolean.FALSE};
+	public static final String EXISTING = "ExistingFile";
+	public static final String LOCAL_ONLY = "LocalOnlyFile";
+	public static final String OUT_OF_SYNC = "OutOfSyncFile";
 	//	protected static final IProgressMonitor[] PROGRESS_MONITORS = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
 	protected static final IProgressMonitor[] PROGRESS_MONITORS = new IProgressMonitor[] {new FussyProgressMonitor(), null};
+	protected static final Boolean[] TRUE_AND_FALSE = new Boolean[] {Boolean.TRUE, Boolean.FALSE};
+	public static final String WORKSPACE_ONLY = "WorkspaceOnlyFile";
+
+	ArrayList allFiles = new ArrayList();
+	ArrayList existingFiles = new ArrayList();
+	ArrayList localOnlyFiles = new ArrayList();
+	ArrayList nonExistingFiles = new ArrayList();
+	ArrayList outOfSyncFiles = new ArrayList();
+
+	IProject[] projects = null;
+	ArrayList workspaceOnlyFiles = new ArrayList();
+
+	/**
+	 * Sets up the test suite for this class
+	 */
+	public static Test suite() {
+		return new TestSuite(IFileTest.class);
+
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new IFileTest("testInvalidFileNames"));
+		//		return suite;
+	}
 
 	public IFileTest() {
 		super();
@@ -101,7 +112,7 @@ public class IFileTest extends ResourceTest {
 		nonExistingFiles.add(file);
 		allFiles.add(file);
 
-		//exists in filesystem only
+		//exists in file system only
 		file = container.getFile(new Path(LOCAL_ONLY));
 		localOnlyFiles.add(file);
 		allFiles.add(file);
@@ -231,7 +242,7 @@ public class IFileTest extends ResourceTest {
 	 * Makes sure file requirements are met (out of sync, workspace only, etc).
 	 */
 	public void refreshFiles() {
-		for (Iterator it = allFiles.iterator(); it.hasNext();) 
+		for (Iterator it = allFiles.iterator(); it.hasNext();)
 			refreshFile((IFile) it.next());
 	}
 
@@ -243,17 +254,6 @@ public class IFileTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("Failed in setup for FileTest", e);
 		}
-	}
-
-	/**
-	 * Sets up the test suite for this class
-	 */
-	public static Test suite() {
-		return new TestSuite(IFileTest.class);
-
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new IFileTest("testInvalidFileNames"));
-//		return suite;
 	}
 
 	protected void tearDown() throws Exception {
@@ -285,6 +285,98 @@ public class IFileTest extends ResourceTest {
 		}
 	}
 
+	public void testAppendContents2() {
+		IFile file = projects[0].getFile("file1");
+		ensureDoesNotExistInWorkspace(file);
+
+		// If force=true, IFile is non-local, file exists in local file system:
+		// make IFile local, append contents (the thinking being that this file,
+		// though marked non-local, was in fact local awaiting discovery; so 
+		// force=true says we it is ok to make file local and proceed as per normal)
+		try {
+			// setup
+			file.create(null, false, getMonitor());
+			assertTrue("1.0", !file.isLocal(IResource.DEPTH_ZERO));
+			assertTrue("1.1", !file.getLocation().toFile().exists());
+			ensureExistsInFileSystem(file);
+			assertTrue("1.2", !file.isLocal(IResource.DEPTH_ZERO));
+		} catch (CoreException e) {
+			fail("1.3", e);
+		}
+		try {
+			file.appendContents(getRandomContents(), IResource.FORCE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.4", e);
+		}
+		assertTrue("1.5", file.isLocal(IResource.DEPTH_ZERO));
+		assertTrue("1.6", file.getLocation().toFile().exists());
+		// cleanup
+		ensureDoesNotExistInWorkspace(file);
+
+		// If force=true, IFile is non-local, file does not exist in local file system:
+		// fail - file not local (this file is not local for real - cannot append
+		// something to a file that you don't have)
+		try {
+			// setup
+			file.create(null, false, getMonitor());
+			assertTrue("2.0", !file.isLocal(IResource.DEPTH_ZERO));
+			assertTrue("2.1", !file.getLocation().toFile().exists());
+		} catch (CoreException e) {
+			fail("2.2", e);
+		}
+		try {
+			file.appendContents(getRandomContents(), IResource.FORCE, getMonitor());
+			fail("2.3");
+		} catch (CoreException e) {
+			// should fail
+		}
+		assertTrue("2.4", !file.isLocal(IResource.DEPTH_ZERO));
+		// cleanup
+		ensureDoesNotExistInWorkspace(file);
+
+		// If force=false, IFile is non-local, file exists in local file system:
+		// fail - file not local
+		try {
+			// setup
+			file.create(null, false, getMonitor());
+			assertTrue("3.0", !file.isLocal(IResource.DEPTH_ZERO));
+			assertTrue("3.1", !file.getLocation().toFile().exists());
+			ensureExistsInFileSystem(file);
+			assertTrue("3.2", !file.isLocal(IResource.DEPTH_ZERO));
+		} catch (CoreException e) {
+			fail("3.3", e);
+		}
+		try {
+			file.appendContents(getRandomContents(), IResource.NONE, getMonitor());
+			fail("3.4");
+		} catch (CoreException e) {
+			// should fail
+		}
+		assertTrue("3.5", !file.isLocal(IResource.DEPTH_ZERO));
+		// cleanup
+		ensureDoesNotExistInWorkspace(file);
+
+		// If force=false, IFile is non-local, file does not exist in local file system:
+		// fail - file not local
+		try {
+			// setup
+			file.create(null, false, getMonitor());
+			assertTrue("4.0", !file.isLocal(IResource.DEPTH_ZERO));
+			assertTrue("4.1", !file.getLocation().toFile().exists());
+		} catch (CoreException e) {
+			fail("4.2", e);
+		}
+		try {
+			file.appendContents(getRandomContents(), IResource.NONE, getMonitor());
+			fail("4.3");
+		} catch (CoreException e) {
+			// should fail
+		}
+		assertTrue("4.4", !file.isLocal(IResource.DEPTH_ZERO));
+		// cleanup
+		ensureDoesNotExistInWorkspace(file);
+	}
+
 	/**
 	 * Performs black box testing of the following method:
 	 *     void create(InputStream, boolean, IProgressMonitor)
@@ -292,23 +384,9 @@ public class IFileTest extends ResourceTest {
 	public void testCreate() {
 		Object[][] inputs = new Object[][] {interestingFiles(), interestingStreams(), TRUE_AND_FALSE, PROGRESS_MONITORS};
 		new TestPerformer("IFileTest.testCreate") {
-			public boolean shouldFail(Object[] args, int count) {
+			public void cleanUp(Object[] args, int count) {
 				IFile file = (IFile) args[0];
-				IPath fileLocation = file.getLocation();
-				boolean force = ((Boolean) args[2]).booleanValue();
-				boolean fileExistsInWS = file.exists();
-				boolean fileExistsInFS = fileLocation != null && fileLocation.toFile().exists();
-
-				// parent must be accessible
-				if (!file.getParent().isAccessible())
-					return true;
-
-				// should never fail if force is true
-				if (force && !fileExistsInWS)
-					return false;
-
-				// file must not exist in WS or on filesystem.
-				return fileExistsInWS || fileExistsInFS;
+				refreshFile(file);
 			}
 
 			public Object[] interestingOldState(Object[] args) throws Exception {
@@ -328,16 +406,96 @@ public class IFileTest extends ResourceTest {
 				return null;
 			}
 
+			public boolean shouldFail(Object[] args, int count) {
+				IFile file = (IFile) args[0];
+				IPath fileLocation = file.getLocation();
+				boolean force = ((Boolean) args[2]).booleanValue();
+				boolean fileExistsInWS = file.exists();
+				boolean fileExistsInFS = fileLocation != null && fileLocation.toFile().exists();
+
+				// parent must be accessible
+				if (!file.getParent().isAccessible())
+					return true;
+
+				// should never fail if force is true
+				if (force && !fileExistsInWS)
+					return false;
+
+				// file must not exist in WS or on filesystem.
+				return fileExistsInWS || fileExistsInFS;
+			}
+
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IFile file = (IFile) args[0];
 				return file.exists();
 			}
-
-			public void cleanUp(Object[] args, int count) {
-				IFile file = (IFile) args[0];
-				refreshFile(file);
-			}
 		}.performTest(inputs);
+	}
+
+	public void testCreateDerived() {
+		IFile derived = projects[0].getFile("derived.txt");
+		ensureExistsInWorkspace(projects[0], true);
+		ensureDoesNotExistInWorkspace(derived);
+
+		try {
+			derived.create(getRandomContents(), IResource.DERIVED, getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+		assertTrue("1.0", derived.isDerived());
+		assertTrue("1.1", !derived.isTeamPrivateMember());
+		try {
+			derived.delete(false, getMonitor());
+			derived.create(getRandomContents(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		assertTrue("2.0", !derived.isDerived());
+		assertTrue("2.1", !derived.isTeamPrivateMember());
+	}
+
+	public void testCreateDerivedTeamPrivate() {
+		IFile teamPrivate = projects[0].getFile("teamPrivateDerived.txt");
+		ensureExistsInWorkspace(projects[0], true);
+		ensureDoesNotExistInWorkspace(teamPrivate);
+
+		try {
+			teamPrivate.create(getRandomContents(), IResource.TEAM_PRIVATE | IResource.DERIVED, getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+		assertTrue("1.0", teamPrivate.isTeamPrivateMember());
+		assertTrue("1.1", teamPrivate.isDerived());
+		try {
+			teamPrivate.delete(false, getMonitor());
+			teamPrivate.create(getRandomContents(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		assertTrue("2.0", !teamPrivate.isTeamPrivateMember());
+		assertTrue("2.1", !teamPrivate.isDerived());
+	}
+
+	public void testCreateTeamPrivate() {
+		IFile teamPrivate = projects[0].getFile("teamPrivate.txt");
+		ensureExistsInWorkspace(projects[0], true);
+		ensureDoesNotExistInWorkspace(teamPrivate);
+
+		try {
+			teamPrivate.create(getRandomContents(), IResource.TEAM_PRIVATE, getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+		assertTrue("1.0", teamPrivate.isTeamPrivateMember());
+		assertTrue("1.1", !teamPrivate.isDerived());
+		try {
+			teamPrivate.delete(false, getMonitor());
+			teamPrivate.create(getRandomContents(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		assertTrue("2.0", !teamPrivate.isTeamPrivateMember());
+		assertTrue("2.1", !teamPrivate.isDerived());
 	}
 
 	public void testFileCreation() {
@@ -568,6 +726,20 @@ public class IFileTest extends ResourceTest {
 	public void testGetContents() {
 		Object[][] inputs = new Object[][] {interestingFiles()};
 		new TestPerformer("IFileTest.testGetContents") {
+			public void cleanUp(Object[] args, int count) {
+				IFile file = (IFile) args[0];
+				refreshFile(file);
+			}
+
+			public Object[] interestingOldState(Object[] args) throws Exception {
+				return null;
+			}
+
+			public Object invokeMethod(Object[] args, int count) throws Exception {
+				IFile file = (IFile) args[0];
+				return file.getContents(false);
+			}
+
 			public boolean shouldFail(Object[] args, int count) {
 				IFile file = (IFile) args[0];
 
@@ -583,26 +755,12 @@ public class IFileTest extends ResourceTest {
 				return false;
 			}
 
-			public Object[] interestingOldState(Object[] args) throws Exception {
-				return null;
-			}
-
-			public Object invokeMethod(Object[] args, int count) throws Exception {
-				IFile file = (IFile) args[0];
-				return file.getContents(false);
-			}
-
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IFile file = (IFile) args[0];
 				InputStream contents = (InputStream) result;
 				boolean returnVal = file.exists() && contents != null;
 				contents.close();
 				return returnVal;
-			}
-
-			public void cleanUp(Object[] args, int count) {
-				IFile file = (IFile) args[0];
-				refreshFile(file);
 			}
 		}.performTest(inputs);
 	}
@@ -735,20 +893,9 @@ public class IFileTest extends ResourceTest {
 	public void testSetContents1() {
 		Object[][] inputs = new Object[][] {interestingFiles(), interestingStreams(), TRUE_AND_FALSE, PROGRESS_MONITORS};
 		new TestPerformer("IFileTest.testSetContents1") {
-			public boolean shouldFail(Object[] args, int count) {
+			public void cleanUp(Object[] args, int count) {
 				IFile file = (IFile) args[0];
-				boolean force = ((Boolean) args[2]).booleanValue();
-
-				//file must exist
-				if (!file.exists()) {
-					return true;
-				}
-
-				//file must be in sync if force is false
-				if (!force && outOfSync(file)) {
-					return true;
-				}
-				return false;
+				refreshFile(file);
 			}
 
 			public Object[] interestingOldState(Object[] args) throws Exception {
@@ -768,14 +915,25 @@ public class IFileTest extends ResourceTest {
 				return null;
 			}
 
+			public boolean shouldFail(Object[] args, int count) {
+				IFile file = (IFile) args[0];
+				boolean force = ((Boolean) args[2]).booleanValue();
+
+				//file must exist
+				if (!file.exists()) {
+					return true;
+				}
+
+				//file must be in sync if force is false
+				if (!force && outOfSync(file)) {
+					return true;
+				}
+				return false;
+			}
+
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IFile file = (IFile) args[0];
 				return file.exists();
-			}
-
-			public void cleanUp(Object[] args, int count) {
-				IFile file = (IFile) args[0];
-				refreshFile(file);
 			}
 		}.performTest(inputs);
 	}
@@ -808,98 +966,6 @@ public class IFileTest extends ResourceTest {
 				// ignore
 			}
 		}
-	}
-
-	public void testAppendContents2() {
-		IFile file = projects[0].getFile("file1");
-		ensureDoesNotExistInWorkspace(file);
-
-		// If force=true, IFile is non-local, file exists in local file system:
-		// make IFile local, append contents (the thinking being that this file,
-		// though marked non-local, was in fact local awaiting discovery; so 
-		// force=true says we it is ok to make file local and proceed as per normal)
-		try {
-			// setup
-			file.create(null, false, getMonitor());
-			assertTrue("1.0", !file.isLocal(IResource.DEPTH_ZERO));
-			assertTrue("1.1", !file.getLocation().toFile().exists());
-			ensureExistsInFileSystem(file);
-			assertTrue("1.2", !file.isLocal(IResource.DEPTH_ZERO));
-		} catch (CoreException e) {
-			fail("1.3", e);
-		}
-		try {
-			file.appendContents(getRandomContents(), IResource.FORCE, getMonitor());
-		} catch (CoreException e) {
-			fail("1.4", e);
-		}
-		assertTrue("1.5", file.isLocal(IResource.DEPTH_ZERO));
-		assertTrue("1.6", file.getLocation().toFile().exists());
-		// cleanup
-		ensureDoesNotExistInWorkspace(file);
-
-		// If force=true, IFile is non-local, file does not exist in local file system:
-		// fail - file not local (this file is not local for real - cannot append
-		// something to a file that you don't have)
-		try {
-			// setup
-			file.create(null, false, getMonitor());
-			assertTrue("2.0", !file.isLocal(IResource.DEPTH_ZERO));
-			assertTrue("2.1", !file.getLocation().toFile().exists());
-		} catch (CoreException e) {
-			fail("2.2", e);
-		}
-		try {
-			file.appendContents(getRandomContents(), IResource.FORCE, getMonitor());
-			fail("2.3");
-		} catch (CoreException e) {
-			// should fail
-		}
-		assertTrue("2.4", !file.isLocal(IResource.DEPTH_ZERO));
-		// cleanup
-		ensureDoesNotExistInWorkspace(file);
-
-		// If force=false, IFile is non-local, file exists in local file system:
-		// fail - file not local
-		try {
-			// setup
-			file.create(null, false, getMonitor());
-			assertTrue("3.0", !file.isLocal(IResource.DEPTH_ZERO));
-			assertTrue("3.1", !file.getLocation().toFile().exists());
-			ensureExistsInFileSystem(file);
-			assertTrue("3.2", !file.isLocal(IResource.DEPTH_ZERO));
-		} catch (CoreException e) {
-			fail("3.3", e);
-		}
-		try {
-			file.appendContents(getRandomContents(), IResource.NONE, getMonitor());
-			fail("3.4");
-		} catch (CoreException e) {
-			// should fail
-		}
-		assertTrue("3.5", !file.isLocal(IResource.DEPTH_ZERO));
-		// cleanup
-		ensureDoesNotExistInWorkspace(file);
-
-		// If force=false, IFile is non-local, file does not exist in local file system:
-		// fail - file not local
-		try {
-			// setup
-			file.create(null, false, getMonitor());
-			assertTrue("4.0", !file.isLocal(IResource.DEPTH_ZERO));
-			assertTrue("4.1", !file.getLocation().toFile().exists());
-		} catch (CoreException e) {
-			fail("4.2", e);
-		}
-		try {
-			file.appendContents(getRandomContents(), IResource.NONE, getMonitor());
-			fail("4.3");
-		} catch (CoreException e) {
-			// should fail
-		}
-		assertTrue("4.4", !file.isLocal(IResource.DEPTH_ZERO));
-		// cleanup
-		ensureDoesNotExistInWorkspace(file);
 	}
 
 	public void testSetGetFolderPersistentProperty() throws Throwable {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,7 +93,19 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * be deemed a success even if there already is a corresponding directory.
 	 * </p>
 	 * <p>
-	 * Update flags other than <code>FORCE</code> are ignored.
+	 * The {@link IResource#DERIVED} update flag indicates that this resource
+	 * should immediately be set as a derived resource.  Specifying this flag
+	 * is equivalent to atomically calling {@link IResource#setDerived(boolean)}
+	 * with a value of <code>true</code> immediately after creating the resource.
+	 * </p>
+	 * <p>
+	 * The {@link IResource#TEAM_PRIVATE} update flag indicates that this resource
+	 * should immediately be set as a team private resource.  Specifying this flag
+	 * is equivalent to atomically calling {@link IResource#setTeamPrivateMember(boolean)}
+	 * with a value of <code>true</code> immediately after creating the resource.
+	 * </p>
+	 * <p>
+	 * Update flags other than those listed above are ignored.
 	 * </p>
 	 * <p>
 	 * This method synchronizes this resource with the local file system.
@@ -109,7 +121,7 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * </p>
 	 * 
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   (only <code>FORCE</code> is relevant here)
+	 *   ({@link IResource#FORCE}, {@link IResource#DERIVED}, and {@link IResource#TEAM_PRIVATE})
 	 * @param local a flag controlling whether or not the folder will be local
 	 *    after the creation
 	 * @param monitor a progress monitor, or <code>null</code> if progress

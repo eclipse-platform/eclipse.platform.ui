@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,7 +97,7 @@ public class Folder extends Container implements IFolder {
 						throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
 					}
 				}
-				internalCreate(force, local, Policy.subMonitorFor(monitor, Policy.opWork));
+				internalCreate(updateFlags, local, Policy.subMonitorFor(monitor, Policy.opWork));
 				workspace.getAliasManager().updateAliases(this, getStore(), IResource.DEPTH_ZERO, monitor);
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
@@ -138,7 +138,7 @@ public class Folder extends Container implements IFolder {
 			parent.checkExists(getFlags(info), true);
 		} else
 			((Folder) parent).ensureExists(monitor);
-		internalCreate(true, true, monitor);
+		internalCreate(IResource.FORCE, true, monitor);
 	}
 
 	/* (non-Javadoc)
@@ -158,22 +158,27 @@ public class Folder extends Container implements IFolder {
 		return FOLDER;
 	}
 
-	public void internalCreate(boolean force, boolean local, IProgressMonitor monitor) throws CoreException {
+	public void internalCreate(int updateFlags, boolean local, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String message = NLS.bind(Messages.resources_creating, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
-			workspace.createResource(this, false);
+			ResourceInfo info = workspace.createResource(this, false);
+			if ((updateFlags & IResource.DERIVED) != 0)
+				info.set(ICoreConstants.M_DERIVED);
+			if ((updateFlags & IResource.TEAM_PRIVATE) != 0)
+				info.set(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
 			if (local) {
 				try {
-					getLocalManager().write(this, force, Policy.subMonitorFor(monitor, Policy.totalWork * 75 / 100));
+					final boolean force = (updateFlags & IResource.FORCE) != 0;
+					getLocalManager().write(this, force, Policy.subMonitorFor(monitor, Policy.totalWork));
 				} catch (CoreException e) {
 					// a problem happened creating the folder on disk, so delete from the workspace
 					workspace.deleteResource(this);
 					throw e; // rethrow
 				}
 			}
-			setLocal(local, DEPTH_ZERO, Policy.subMonitorFor(monitor, Policy.totalWork * 25 / 100));
+			internalSetLocal(local, DEPTH_ZERO);
 			if (!local)
 				getResourceInfo(true, true).clearModificationStamp();
 		} finally {

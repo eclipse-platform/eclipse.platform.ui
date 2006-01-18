@@ -244,6 +244,29 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 */
 	public static final int CHECK_ANCESTORS = 0x200;
 
+	/**
+	 * Update flag constant (bit mask value 0x400) indicating that a
+	 * resource should be marked as derived.
+	 *
+	 * @see IFile#create(java.io.InputStream, int, IProgressMonitor)
+	 * @see IFolder#create(int, boolean, IProgressMonitor)
+	 * @see IResource#setDerived(boolean)
+	 * @since 3.2
+	 */
+	public static final int DERIVED = 0x400;
+
+	/**
+	 * Update flag constant (bit mask value 0x800) indicating that a 
+	 * resource should be marked as team private.
+	 *
+	 * @see IFile#create(java.io.InputStream, int, IProgressMonitor)
+	 * @see IFolder#create(int, boolean, IProgressMonitor)
+	 * @see IResource#setTeamPrivateMember(boolean)
+	 * @since 3.2
+	 */
+	public static final int TEAM_PRIVATE = 0x800;
+
+	
 	/*====================================================================
 	 * Other constants:
 	 *====================================================================*/
