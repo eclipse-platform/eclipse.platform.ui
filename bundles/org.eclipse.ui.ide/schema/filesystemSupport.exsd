@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.ide" id="filesystemSupport" name="File System Support"/>
       </appInfo>
       <documentation>
-         filesystemSupport supplies IDE contributions to support filesystems contributed using the org.eclipse.core.filesystems.filesystem extension.
+         filesystemSupport supplies IDE contributions to support filesystems contributed using the org.eclipse.core.filesystem.filesystems extension point.
       </documentation>
    </annotation>
 
