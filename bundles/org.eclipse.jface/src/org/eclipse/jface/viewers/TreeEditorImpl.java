@@ -200,7 +200,7 @@ import org.eclipse.swt.widgets.Item;
 
         IStructuredSelection structuredSelection;
         if(element instanceof TreePath) {
-        	structuredSelection = new TreeSelection((TreePath)element);
+        	structuredSelection = new TreeSelection((TreePath)element, viewer.getComparer());
         } else {
         	structuredSelection = new StructuredSelection(element);
         }

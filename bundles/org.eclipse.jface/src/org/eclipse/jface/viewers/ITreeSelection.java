@@ -25,4 +25,14 @@ public interface ITreeSelection extends IStructuredSelection {
 	 */
 	public TreePath[] getPaths();
 
+	/**
+	 * Returns the paths in this selection whose last segment is equal
+	 * to the given element
+	 * 
+	 * @param element the element to get the tree paths for
+	 * 
+	 * @return the array of tree paths
+	 */
+	public TreePath[] getPathsFor(Object element);
+
 }

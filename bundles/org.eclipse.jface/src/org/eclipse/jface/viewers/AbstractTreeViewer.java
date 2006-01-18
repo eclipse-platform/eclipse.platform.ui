@@ -2110,7 +2110,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			}
 		}
 		return new TreeSelection((TreePath[]) list.toArray(new TreePath[list
-				.size()]));
+				.size()]), getComparer());
 	}
 	
 	protected void setSelectionToWidget(ISelection selection, boolean reveal) {
