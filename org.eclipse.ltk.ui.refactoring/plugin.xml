@@ -46,25 +46,6 @@
             streamMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringHistoryMerger"/>
    </extension>
    <extension
-         point="org.eclipse.ui.commands">
-      <category
-            name="%Category.refactoring.name"
-            description="%Category.refactoring.description"
-            id="org.eclipse.ltk.ui.category.refactoring">
-      </category>
-      <command
-            categoryId="org.eclipse.ltk.ui.category.refactoring"
-            description="%ActionDefinition.apply.description"
-            id="org.eclipse.ltk.ui.refactor.apply.refactoring.script"
-            name="%ActionDefinition.apply.name">
-      </command>
-      <command
-            categoryId="org.eclipse.ltk.ui.category.refactoring"
-            description="%ActionDefinition.create.description"
-            id="org.eclipse.ltk.ui.refactor.create.refactoring.script"
-            name="%ActionDefinition.create.name"/>
-   </extension>
-   <extension
          point="org.eclipse.core.runtime.adapters">
       <factory
             adaptableType="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorCompareInput"
