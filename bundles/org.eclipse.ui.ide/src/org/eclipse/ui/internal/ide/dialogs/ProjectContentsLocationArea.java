@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.ide.dialogs;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -22,6 +21,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -35,6 +40,8 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.filesystem.FileSystemConfiguration;
+import org.eclipse.ui.internal.ide.filesystem.FileSystemSupportRegistry;
 
 /**
  * ProjectContentsLocationArea is a convenience class for area that handle entry
@@ -82,6 +89,8 @@ public class ProjectContentsLocationArea {
 
 	private IProject existingProject;
 
+	private ComboViewer fileSystems;
+
 	/**
 	 * Create a new instance of the receiver.
 	 * 
@@ -120,10 +129,14 @@ public class ProjectContentsLocationArea {
 	}
 
 	private void createContents(Composite composite, boolean defaultEnabled) {
+
+		int columns = FileSystemSupportRegistry.getInstance()
+				.hasOneFileSystem() ? 3 : 4;
+
 		// project specification group
 		Composite projectGroup = new Composite(composite, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
+		layout.numColumns = columns;
 		projectGroup.setLayout(layout);
 		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -132,7 +145,7 @@ public class ProjectContentsLocationArea {
 				.setText(IDEWorkbenchMessages.ProjectLocationSelectionDialog_useDefaultLabel);
 		useDefaultsButton.setSelection(defaultEnabled);
 		GridData buttonData = new GridData();
-		buttonData.horizontalSpan = 3;
+		buttonData.horizontalSpan = columns;
 		useDefaultsButton.setLayoutData(buttonData);
 
 		createUserEntryArea(projectGroup, defaultEnabled);
@@ -174,6 +187,8 @@ public class ProjectContentsLocationArea {
 		locationLabel
 				.setText(IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationLabel);
 
+		createFileSystemSelection(composite);
+
 		// project location entry field
 		locationPathField = new Text(composite, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -213,6 +228,70 @@ public class ProjectContentsLocationArea {
 	}
 
 	/**
+	 * Create the file system selection area.
+	 * 
+	 * @param composite
+	 */
+	private void createFileSystemSelection(Composite composite) {
+
+		// Always use the default if that is all there is.
+		if (FileSystemSupportRegistry.getInstance().hasOneFileSystem())
+			return;
+
+		fileSystems = new ComboViewer(composite, SWT.READ_ONLY);
+
+		fileSystems.setLabelProvider(new LabelProvider() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
+			 */
+			public String getText(Object element) {
+				return ((FileSystemConfiguration) element).getLabel();
+			}
+		});
+
+		fileSystems.setContentProvider(new IStructuredContentProvider() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+			 */
+			public void dispose() {
+				// Nothing to do
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+			 */
+			public Object[] getElements(Object inputElement) {
+				return FileSystemSupportRegistry.getInstance()
+						.getConfigurations();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+			 *      java.lang.Object, java.lang.Object)
+			 */
+			public void inputChanged(org.eclipse.jface.viewers.Viewer viewer,
+					Object oldInput, Object newInput) {
+				// Nothing to do
+			}
+
+		});
+
+		fileSystems.setInput(this);
+		fileSystems.setSelection(new StructuredSelection(
+				FileSystemSupportRegistry.getInstance()
+						.getDefaultConfiguration()));
+	}
+
+	/**
 	 * Return the path we are going to display. If it is a file URI then remove
 	 * the file prefix.
 	 * 
@@ -242,6 +321,8 @@ public class ProjectContentsLocationArea {
 		locationLabel.setEnabled(enabled);
 		locationPathField.setEnabled(enabled);
 		browseButton.setEnabled(enabled);
+		if (fileSystems != null)
+			fileSystems.getControl().setEnabled(enabled);
 	}
 
 	/**
@@ -306,8 +387,8 @@ public class ProjectContentsLocationArea {
 	 * @return String
 	 */
 	public String checkValidLocation() {
-		
-		if(isDefault())
+
+		if (isDefault())
 			return null;
 
 		String locationFieldContents = locationPathField.getText();
@@ -349,15 +430,34 @@ public class ProjectContentsLocationArea {
 	 */
 	private URI getLocationFieldURI() {
 
-		String locationContents = locationPathField.getText();
-		try {
-			return new URI(locationContents);
-		} catch (URISyntaxException e) {
+		FileSystemConfiguration configuration = getSelectedConfiguration();
+		if (configuration == null)
+			return null;
 
-			// See if it was acceptable as a file
-			return new File(locationContents).toURI();
+		return configuration.getContributor().getURI(
+				locationPathField.getText());
+
+	}
+
+	/**
+	 * Return the selected contributor
+	 * 
+	 * @return FileSystemConfiguration or <code>null</code> if it cannot be
+	 *         determined.
+	 */
+	private FileSystemConfiguration getSelectedConfiguration() {
+		if (fileSystems == null)
+			return FileSystemSupportRegistry.getInstance()
+					.getDefaultConfiguration();
+
+		ISelection selection = fileSystems.getSelection();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structured = (IStructuredSelection) selection;
+			if (structured.size() == 1) {
+				return (FileSystemConfiguration) structured.getFirstElement();
+			}
 		}
-
+		return null;
 	}
 
 	/**

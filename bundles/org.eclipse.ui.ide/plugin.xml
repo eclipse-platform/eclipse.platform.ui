@@ -10,6 +10,7 @@
    <extension-point id="projectNatureImages" name="%ExtPoint.projectNatureImages" schema="schema/projectNatureImages.exsd"/>
    <extension-point id="resourceFilters" name="%ExtPoint.resourceFilters" schema="schema/resourceFilters.exsd"/>
    <extension-point id="markerSupport" name="%ExtPoint.markerSupport" schema="schema/markerSupport.exsd"/>
+   <extension-point id="filesystemSupport" name="%ExtPoint.fileSystemSupport" schema="schema/filesystemSupport.exsd"/>
 
    <extension
          id="workbench"
@@ -965,14 +966,7 @@
                value="false"/>
       </triggerPoint>
    </extension>
-   <extension
-         point="org.eclipse.ui.ide.markerSupport">
-      <hierarchy>
-         <markerTypeReference id="org.eclipse.core.resources.problemmarker"/>
-         <hierarchyReference type="SEVERITY"/>
-         <hierarchyReference type="RESOURCE"/>
-      </hierarchy>
-   </extension>
+  
    
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -981,6 +975,13 @@
             adaptableType="org.eclipse.core.internal.resources.mapping.ResourceModelProvider">
          <adapter type="org.eclipse.ui.internal.provisional.ide.IEditorOpenStrategy"/>
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.filesystemSupport">
+      <filesystemContributor
+            class="org.eclipse.ui.internal.ide.filesystem.LocalFileSystemContributor"
+            label="%FileSystemContribution.local"
+            filesystem="org.eclipse.core.filesystem.local"/>
    </extension>
    
 </plugin>
