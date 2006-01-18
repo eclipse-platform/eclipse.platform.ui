@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class InitLegacyPreferences implements ILegacyPreferences {
 	 * 
 	 * @deprecated
 	 */
-	public void init(Object object, String name) {
+	public Object init(Object object, String name) {
 		Plugin plugin = null;
 		if (object instanceof Plugin)
 			plugin = (Plugin) object;
@@ -40,12 +40,13 @@ public class InitLegacyPreferences implements ILegacyPreferences {
 		if (plugin == null) {
 			if (InternalPlatform.DEBUG_PLUGIN_PREFERENCES)
 				InternalPlatform.message("No plug-in object available to set plug-in default preference overrides for:" + name); //$NON-NLS-1$
-			return;
+			return null;
 		}
 		if (InternalPlatform.DEBUG_PLUGIN_PREFERENCES)
 			InternalPlatform.message("Applying plug-in default preference overrides for plug-in: " + plugin.getDescriptor().getUniqueIdentifier()); //$NON-NLS-1$
 
 		plugin.internalInitializeDefaultPluginPreferences();
+		return plugin;
 	}
 
 }

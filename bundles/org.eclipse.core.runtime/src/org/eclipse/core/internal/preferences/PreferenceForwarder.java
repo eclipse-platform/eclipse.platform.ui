@@ -54,23 +54,34 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		super();
 		this.plugin = plugin;
 		this.pluginID = pluginID;
-		pluginRoot.addNodeChangeListener(this);
 	}
 
 	/*
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 	 */
-	public void added(IEclipsePreferences.NodeChangeEvent event) {
-		if (listeners.size() > 0 && pluginID.equals(event.getChild().name()))
-			getPluginPreferences(true).addPreferenceChangeListener(this);
+	public synchronized void added(IEclipsePreferences.NodeChangeEvent event) {
+		if (listeners.size() > 0 && pluginID.equals(event.getChild().name())) {
+			try {
+				EclipsePreferences prefs = (EclipsePreferences) event.getChild();
+				prefs.addPreferenceChangeListener(this);
+			} catch (ClassCastException e) {
+				throw new RuntimeException("Plug-in preferences must be instances of EclipsePreferences: " + e.getMessage()); //$NON-NLS-1$
+			}
+		}
 	}
 
 	/*
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 	 */
-	public void removed(IEclipsePreferences.NodeChangeEvent event) {
-		// don't worry about removing the preference change listener since
-		// we won't get any notification from a removed node anyways.
+	public synchronized void removed(IEclipsePreferences.NodeChangeEvent event) {
+		if (listeners.size() > 0 && pluginID.equals(event.getChild().name())) {
+			try {
+				EclipsePreferences prefs = (EclipsePreferences) event.getChild();
+				prefs.removePreferenceChangeListener(this);
+			} catch (ClassCastException e) {
+				throw new RuntimeException("Plug-in preferences must be instances of EclipsePreferences: " + e.getMessage()); //$NON-NLS-1$
+			}
+		}
 	}
 
 	/**
@@ -79,10 +90,17 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 *
 	 * @param listener a property change listener
 	 */
-	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		getPluginPreferences(true).addPreferenceChangeListener(this);
+	public synchronized void addPropertyChangeListener(IPropertyChangeListener listener) {
+		if (listeners.size() == 0) {
+			EclipsePreferences prefs = getPluginPreferences(false);
+			if (prefs != null) {
+				prefs.addPreferenceChangeListener(this);
+			}
+			pluginRoot.addNodeChangeListener(this);
+		}
 		listeners.add(listener);
 	}
+
 
 	/*
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
@@ -125,9 +143,17 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 *
 	 * @param listener a property change listener
 	 */
-	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+	public synchronized void removePropertyChangeListener(IPropertyChangeListener listener) {
 		listeners.remove(listener);
+		if (listeners.size() == 0) {
+			EclipsePreferences prefs = getPluginPreferences(false);
+			if (prefs != null) {
+				prefs.removePreferenceChangeListener(this);
+			}
+			pluginRoot.removeNodeChangeListener(this);
+		}
 	}
+
 
 	/**
 	 * Does its best at determining the default value for the given key. Checks the
