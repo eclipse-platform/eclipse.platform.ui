@@ -80,6 +80,10 @@ public final class CreateRefactoringScriptAction implements IWorkbenchWindowActi
 			}, ResourcesPlugin.getWorkspace().getRoot());
 			final ExportRefactoringHistoryDialog dialog= new ExportRefactoringHistoryDialog(fWindow.getShell(), new RefactoringHistoryDialogConfiguration(null, true, true) {
 
+				public final String getButtonLabel() {
+					return IDialogConstants.OK_LABEL;
+				}
+
 				public final String getDialogTitle() {
 					return ScriptingMessages.CreateRefactoringScriptAction_dialog_title;
 				}
