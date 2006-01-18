@@ -328,7 +328,9 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 			option = fileInfo.getKeywordMode();
 		}
 		cvsDecoration.setKeywordSubstitution(option.getShortDisplayText());
-		cvsDecoration.setWatchEditEnabled(getCVSProviderFor(resource).isWatchEditEnabled());	
+		CVSTeamProvider provider = getCVSProviderFor(resource);
+		if (provider != null)
+			cvsDecoration.setWatchEditEnabled(provider.isWatchEditEnabled());	
 	}
 
 	/**
