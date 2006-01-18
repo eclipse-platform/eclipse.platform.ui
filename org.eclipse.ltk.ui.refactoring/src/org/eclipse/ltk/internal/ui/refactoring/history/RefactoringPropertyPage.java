@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
+import java.io.IOException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -21,10 +23,13 @@ import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringPreferenceConstants;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -33,14 +38,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferencePageContainer;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
 
-import org.eclipse.ltk.ui.refactoring.RefactoringUI;
-import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 import org.osgi.service.prefs.BackingStoreException;
@@ -51,6 +57,9 @@ import org.osgi.service.prefs.BackingStoreException;
  * @since 3.2
  */
 public final class RefactoringPropertyPage extends PropertyPage {
+
+	/** Preference key for the warn delete preference */
+	private static final String PREFERENCE_DO_NOT_WARN_DELETE= RefactoringUIPlugin.getPluginId() + ".do.not.warn.delete.history"; //$NON-NLS-1$;
 
 	/** The enable history button, or <code>null</code> */
 	private Button fEnableButton= null;
@@ -81,9 +90,44 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		final Label label= new Label(composite, SWT.WRAP);
 		label.setText(RefactoringUIMessages.RefactoringPropertyPage_label_message);
 
-		final IRefactoringHistoryControl control= (IRefactoringHistoryControl) RefactoringUI.createRefactoringHistoryControl(composite, new RefactoringHistoryControlConfiguration(getCurrentProject(), true, false));
+		final ManageRefactoringHistoryControl control= new ManageRefactoringHistoryControl(composite, new RefactoringHistoryControlConfiguration(getCurrentProject(), true, true));
 		control.createControl();
+		control.getDeleteAllButton().addSelectionListener(new SelectionAdapter() {
 
+			public final void widgetSelected(final SelectionEvent event) {
+				final IProject project= getCurrentProject();
+				final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
+				MessageDialogWithToggle dialog= null;
+				if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE) && !control.getInput().isEmpty()) {
+					dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_pattern, project.getName()), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
+					store.setValue(PREFERENCE_DO_NOT_WARN_DELETE, dialog.getToggleState());
+				}
+				if (dialog == null || dialog.getReturnCode() == IDialogConstants.YES_ID) {
+					IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+					try {
+						service.connect();
+						try {
+							RefactoringCore.getRefactoringHistoryService().deleteProjectHistory(project, null);
+						} catch (CoreException exception) {
+							final Throwable throwable= exception.getStatus().getException();
+							if (throwable instanceof IOException)
+								MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
+							else
+								RefactoringUIPlugin.log(exception);
+						}
+						control.setInput(service.getProjectHistory(project, null));
+					} finally {
+						service.disconnect();
+					}
+				}
+			}
+		});
+		control.getDeleteButton().addSelectionListener(new SelectionAdapter() {
+
+			public final void widgetSelected(final SelectionEvent event) {
+				super.widgetSelected(event);
+			}
+		});
 		fEnableButton= new Button(composite, SWT.CHECK);
 		fEnableButton.setText(RefactoringUIMessages.RefactoringPropertyPage_enable_message);
 		fEnableButton.setData(RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY);
