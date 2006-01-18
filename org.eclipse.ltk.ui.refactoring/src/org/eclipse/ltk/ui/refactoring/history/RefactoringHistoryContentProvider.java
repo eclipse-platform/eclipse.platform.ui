@@ -29,7 +29,10 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
- * Tree content provider to display a refactoring history.
+ * Tree content provider to display a refactoring history. This content provider
+ * may be used with {@link RefactoringHistory} elements and returns model
+ * elements suitable to be rendered using
+ * {@link RefactoringHistoryLabelProvider}.
  * <p>
  * Note: this class is not indented to be subclassed outside the refactoring
  * framework.

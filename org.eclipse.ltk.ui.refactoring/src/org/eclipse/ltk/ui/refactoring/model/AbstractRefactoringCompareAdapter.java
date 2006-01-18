@@ -29,8 +29,8 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 /**
  * Partial implementation of a refactoring-aware compare adapter.
  * <p>
- * This class provides a special compare viewer to display an overview about a
- * refactoring descriptor during team synchronization.
+ * The refactoring compare adapter provides compare support for the refactoring
+ * history objects associated with the refactoring model provider.
  * </p>
  * <p>
  * Note: this class is intended to be extended by clients who need refactoring

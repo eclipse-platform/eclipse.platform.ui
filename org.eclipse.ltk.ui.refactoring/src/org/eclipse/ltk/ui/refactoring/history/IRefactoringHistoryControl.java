@@ -80,9 +80,17 @@ public interface IRefactoringHistoryControl {
 
 	/**
 	 * Sets the checked refactoring descriptors.
+	 * <p>
+	 * In case the refactoring history control is created with a non-checkable
+	 * tree viewer, this method is equivalent to
+	 * {@link #setSelectedDescriptors(RefactoringDescriptorProxy[])}.
+	 * </p>
 	 * 
 	 * @param descriptors
 	 *            the refactoring descriptors to check, or an empty array
+	 * 
+	 * @see IRefactoringHistoryControl#setSelectedDescriptors(RefactoringDescriptorProxy[])
+	 * @see RefactoringHistoryControlConfiguration#isCheckableViewer()
 	 */
 	public void setCheckedDescriptors(RefactoringDescriptorProxy[] descriptors);
 
