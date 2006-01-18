@@ -11,12 +11,12 @@
 
 package org.eclipse.team.internal.ccvs.ui;
 
-import org.eclipse.team.ui.history.IFileHistoryProviderParticipant;
+import org.eclipse.team.ui.history.IHistoryPageSource;
 import org.eclipse.ui.part.Page;
 
-public class CVSFileHistoryProviderParticipant implements IFileHistoryProviderParticipant {
+public class CVSFileHistoryProviderParticipant implements IHistoryPageSource {
 
-	public Page createPage() {
+	public Page createPage(Object object) {
 		CVSHistoryPage page = new CVSHistoryPage();
 		return page;
 	}

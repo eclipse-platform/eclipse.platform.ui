@@ -11,30 +11,28 @@
 
 package org.eclipse.team.ui.history;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.ui.part.Page;
 
 /**
- *  IFileHistoryProviderParticipant is the visual component of an 
- *  {@link IFileHistoryProvider}. It is used by the HistoryView to associate
- *  an IFileHistoryProvider with its corresponding Page. Clients should provide an 
- *  implementation for all IFileHistory types they wish to display in the history
- *  view.
+ * Interface to an object which is capable of supplying a history page for display
+ * by the history view or other views, dialogs or editors that wish to display
+ * the history of an object. 
  *  
- *  An IFileHistoryProviderParticipant is associated with its IFileHistoryProvider through
- *  the {@link IAdaptable} mechanism. 
+ * TODO: There are two ways a history page source is obtained...
  *  
  * @see IFileHistoryProvider
  * @since 3.2
  */
-public interface IFileHistoryProviderParticipant {
+public interface IHistoryPageSource {
+	
 	/**
-	 * Called by the HistoryView to create the page for this IFileHistoryProvider. The
+	 * Called by the historyview to create the page for this IFileHistoryProvider. The
 	 * page must implement {@link IHistoryPage}.
+	 * @param object TODO
 	 * 
 	 * @see IHistoryPage
-	 * @return a Page that implements IHistoryPage
+	 * @return a Page that implements IHistoryPage (should return either an IPage, IPageBookViewPage or an IHistoryPage
 	 */
-	public Page createPage();
+	public Page createPage(Object object);
 }

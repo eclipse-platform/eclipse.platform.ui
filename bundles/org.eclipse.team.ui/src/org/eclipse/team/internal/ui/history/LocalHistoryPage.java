@@ -43,15 +43,16 @@ public class LocalHistoryPage extends Page implements IHistoryPage {
 	//private CompareLocalFileAction compareAction;
 
 	
-	public void showHistory(IResource resource, boolean refetch) {
+	public boolean showHistory(IResource resource, boolean refetch) {
 		if (resource instanceof IFile) {
 			IFile newfile = (IFile) resource;
 			if (!refetch || resource == null)
-				return;
+				return false;
 		
 			//historyTableProvider.setFile(fileHistory, newfile);
 			tableViewer.setInput(newfile);
 		}
+		return true;
 	}
 
 	public boolean canShowHistoryFor(IResource resource) {

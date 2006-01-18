@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.CVSFileHistoryProviderParticipant;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
-import org.eclipse.team.ui.history.IFileHistoryProviderParticipant;
+import org.eclipse.team.ui.history.IHistoryPageSource;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -51,7 +51,7 @@ public class CVSAdapterFactory implements IAdapterFactory {
 			return getPropertySource(adaptableObject);
 		}
 		
-		if (IFileHistoryProviderParticipant.class == adapterType){
+		if (IHistoryPageSource.class == adapterType){
 			return historyParticipant;
 		}
 		

@@ -39,8 +39,9 @@ public class GenericHistoryViewDefaultPage extends Page implements IHistoryPage 
 		pgComp.setFocus();
 	}
 
-	public void showHistory(IResource resource, boolean refetch) {
+	public boolean showHistory(IResource resource, boolean refetch) {
 		//no history to show
+		return false;
 	}
 
 	public boolean canShowHistoryFor(IResource resource) {

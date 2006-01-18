@@ -594,6 +594,8 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 				if(file != null) {
 					RepositoryProvider teamProvider = RepositoryProvider.getProvider(file.getProject());
 					IFileHistory fileHistory = teamProvider.getFileHistoryProvider().getFileHistoryFor(file, new NullProgressMonitor());
+					if (fileHistory == null)
+						return;
 					currentFileRevision = teamProvider.getFileHistoryProvider().getWorkspaceFileRevision(file);
 					historyTableProvider.setFile(fileHistory, file, currentFileRevision.getContentIdentifier());
 					tableViewer.setInput(fileHistory);
@@ -608,16 +610,18 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 	 * 
 	 * Only files are supported for now.
 	 */
-	public void showHistory(IResource resource, boolean refetch) {
+	public boolean showHistory(IResource resource, boolean refetch) {
 		if (resource instanceof IFile) {
 			IFile newfile = (IFile) resource;
 			if (!refetch && this.file != null || newfile.equals(this.file)) {
-				return;
+				return false;
 			}
 			this.file = newfile;
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(file.getProject());
 			IFileHistory fileHistory = teamProvider.getFileHistoryProvider().getFileHistoryFor(resource, new NullProgressMonitor());
-
+			if (fileHistory == null)
+				return false;
+			
 			currentFileRevision = teamProvider.getFileHistoryProvider().getWorkspaceFileRevision(file);
 			
 			historyTableProvider.setFile(fileHistory, file, currentFileRevision.getContentIdentifier());
@@ -627,7 +631,7 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 			tableViewer.setInput(null);
 		}
 
-		return;
+		return true;
 	}
 
 	/* private */void setViewerVisibility() {
@@ -808,8 +812,11 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 			IResourceDelta root = event.getDelta();
 			IResourceDelta resourceDelta = root.findMember(file.getFullPath());
 			if (resourceDelta != null){
-				//showHistory(file, true);
-				refresh();
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						refresh();
+					}
+				});
 			}
 		}
 	}

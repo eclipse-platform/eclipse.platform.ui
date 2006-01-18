@@ -17,8 +17,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
@@ -34,10 +33,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.history.IFileHistoryProvider;
-import org.eclipse.team.internal.ui.ITeamUIImages;
-import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.history.IFileHistoryProviderParticipant;
+import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.ui.history.IHistoryPageSource;
 import org.eclipse.team.ui.history.IHistoryPage;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
@@ -191,7 +188,7 @@ public class GenericHistoryView extends ViewPart {
 
 	private boolean viewPinned;
 
-	private static String viewId = "org.eclipse.team.ui.GenericHistoryView"; //$NON-NLS-1$
+	public final static String viewId = "org.eclipse.team.ui.GenericHistoryView"; //$NON-NLS-1$
 
 	/**
 	 * Refreshes the global actions for the active page.
@@ -414,13 +411,14 @@ public class GenericHistoryView extends ViewPart {
 
 	public void itemDropped(Object object) {
 
-		if (object instanceof IResource) {
-			IResource newResource = (IResource) object;
+		//If this is not a resource object try to adapt it to a resource
+		IResource resource = Utils.getResource(object);
+		if (resource != null) {
 			//check first to see if this view is pinned
 			if (isViewPinned()) {
 				try {
 					//get the file name
-					IViewPart view = getSite().getPage().showView(viewId, viewId + newResource.getName() + System.currentTimeMillis(), IWorkbenchPage.VIEW_CREATE);
+					IViewPart view = getSite().getPage().showView(viewId, viewId + resource.getName() + System.currentTimeMillis(), IWorkbenchPage.VIEW_CREATE);
 					if (view instanceof GenericHistoryView) {
 						GenericHistoryView view2 = (GenericHistoryView) view;
 						view2.itemDropped(object);
@@ -430,22 +428,23 @@ public class GenericHistoryView extends ViewPart {
 				}
 			}
 
-			RepositoryProvider teamProvider = RepositoryProvider.getProvider(newResource.getProject());
+			RepositoryProvider teamProvider = RepositoryProvider.getProvider(resource.getProject());
 			IFileHistoryProvider fileHistory = teamProvider.getFileHistoryProvider();
-			Object tempParticipant = Platform.getAdapterManager().getAdapter(fileHistory, IFileHistoryProviderParticipant.class);
-			if (tempParticipant instanceof IFileHistoryProviderParticipant) {
-				IFileHistoryProviderParticipant participant = (IFileHistoryProviderParticipant) tempParticipant;
+			Object tempParticipant = Platform.getAdapterManager().getAdapter(fileHistory, IHistoryPageSource.class);
+			if (tempParticipant instanceof IHistoryPageSource) {
+				IHistoryPageSource participant = (IHistoryPageSource) tempParticipant;
 
 				//If a current page exists, see if it can handle the dropped item
 				if (currentPageContainer.getPage() instanceof IHistoryPage) {
 					PageContainer tempPageContainer = currentPageContainer;
-					if (!((IHistoryPage) tempPageContainer.getPage()).canShowHistoryFor(newResource)) {
-						tempPageContainer = createPage(participant);
+					if (!((IHistoryPage) tempPageContainer.getPage()).canShowHistoryFor(resource)) {
+						tempPageContainer = createPage(participant, resource);
 					}
 					if (tempPageContainer != null) {
-						((IHistoryPage) tempPageContainer.getPage()).showHistory(newResource, true);
-						setContentDescription(newResource.getName());
-						showPageRec(tempPageContainer);
+						if (((IHistoryPage) tempPageContainer.getPage()).showHistory(resource, true)){
+							setContentDescription(resource.getName());
+							showPageRec(tempPageContainer);
+						}
 					} else {
 						showPageRec(defaultPageContainer);
 					}
@@ -459,8 +458,8 @@ public class GenericHistoryView extends ViewPart {
 		return viewPinned;
 	}
 
-	private PageContainer createPage(IFileHistoryProviderParticipant participant) {
-		Page page = participant.createPage();
+	private PageContainer createPage(IHistoryPageSource participant, Object object) {
+		Page page = participant.createPage(object);
 		PageSite site = initPage(page);
 		((IHistoryPage) page).setSite(getViewSite());
 		page.createControl(book);
@@ -537,8 +536,9 @@ public class GenericHistoryView extends ViewPart {
 
 	public void localItemDropped(IResource resource) {
 		PageContainer container = createLocalPage(this.book);
-		((IHistoryPage) container.getPage()).showHistory(resource, true);
-		setContentDescription(resource.getName());
-		showPageRec(container);
+		if (((IHistoryPage) container.getPage()).showHistory(resource, true)){
+			setContentDescription(resource.getName());
+			showPageRec(container);
+		}
 	}
 }

@@ -14,16 +14,20 @@ package org.eclipse.team.ui.history;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.IViewSite;
 
+/**
+ * TODO: provide a comment and an abstract class
+ * 
+ * @since 3.2
+ */
 public interface IHistoryPage {
 	/**
 	 * Fetches and populates the history page for the given IResource. Clients
 	 * should provide an implementation for their individual pages.
 	 * 
 	 * @param resource	the resource for which history is being requested for
-	 * @return true if the page can show the history for the given resource, false if 
-	 * it can't
+	 * @return true if the page was able to display the history for the resource, false otherwise
 	 */
-	public void showHistory(IResource resource, boolean refetch);
+	public boolean showHistory(IResource resource, boolean refetch);
 
 	/**
 	 * Returns true if this history page can show a history for the given resource, false if it cannot
@@ -49,6 +53,8 @@ public interface IHistoryPage {
 	 * IHistoryPageSite in order to allow history pages to be displayed in 
 	 * both views and dialogs
 	 * @param viewSite
+	 * 
+	 * TODO: Create an IHistoryPageSite
 	 */
 	public void setSite(IViewSite viewSite);
 }

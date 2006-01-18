@@ -18,8 +18,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.HistoryView;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ui.history.GenericHistoryView;
 
 public class ShowResourceInHistoryAction extends WorkspaceAction {
 	/*
@@ -30,9 +31,9 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				IResource[] resources = getSelectedResources();
 				if (resources.length != 1) return;
-				HistoryView view = (HistoryView)showView(HistoryView.VIEW_ID);
+				GenericHistoryView view = (GenericHistoryView)showView(GenericHistoryView.viewId);
 				if (view != null) {
-					view.showHistory(resources[0], true /* fetch */);
+					view.itemDropped(resources[0]);
 				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);

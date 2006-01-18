@@ -1384,7 +1384,7 @@
       <factory
             adaptableType="org.eclipse.team.internal.ccvs.core.filehistory.CVSFileHistoryProvider"
             class="org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory">
-         <adapter type="org.eclipse.team.ui.history.IFileHistoryProviderParticipant"/>
+         <adapter type="org.eclipse.team.ui.history.IHistoryPageSource"/>
       </factory>
    </extension>
    <extension
