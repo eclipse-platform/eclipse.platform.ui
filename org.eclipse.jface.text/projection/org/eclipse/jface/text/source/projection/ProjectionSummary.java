@@ -297,16 +297,15 @@ class ProjectionSummary {
 	}
 
 	private AnnotationBag findBagForType(Map bagMap, String annotationType) {
-		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
+		AnnotationBag bag= (AnnotationBag) bagMap.get(annotationType);
+		if (bag == null && fAnnotationAccess instanceof IAnnotationAccessExtension) {
 			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
 			Object[] superTypes= extension.getSupertypes(annotationType);
-			for (int i= 0; i < superTypes.length; i++) {
-				AnnotationBag bag= (AnnotationBag) bagMap.get(superTypes[i]);
-				if (bag != null)
-					return bag;
+			for (int i= 0; i < superTypes.length && bag == null; i++) {
+				bag= (AnnotationBag) bagMap.get(superTypes[i]);
 			}
 		}
-		return null;
+		return bag;
 	}
 
 	private boolean includes(IRegion[] regions, Position position) {
