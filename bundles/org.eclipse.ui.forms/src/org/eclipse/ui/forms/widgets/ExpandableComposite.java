@@ -26,6 +26,7 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -59,7 +60,7 @@ import org.eclipse.ui.internal.forms.widgets.FormsResources;
  * @see Section
  * @since 3.0
  */
-public class ExpandableComposite extends Composite {
+public class ExpandableComposite extends Canvas {
 	/**
 	 * If this style is used, a twistie will be used to render the expansion
 	 * toggle.
@@ -526,6 +527,8 @@ public class ExpandableComposite extends Composite {
 	public ExpandableComposite(Composite parent, int style, int expansionStyle) {
 		super(parent, style);
 		this.expansionStyle = expansionStyle;
+		if ((expansionStyle & TITLE_BAR)!=0) 
+			setBackgroundMode(SWT.INHERIT_DEFAULT);
 		super.setLayout(new ExpandableLayout());
 		listeners = new Vector();
 		if (hasTitleBar()) {
@@ -663,10 +666,12 @@ public class ExpandableComposite extends Composite {
 	 */
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
-		if (textLabel != null)
-			textLabel.setBackground(bg);
-		if (toggle != null)
-			toggle.setBackground(bg);
+		if ((getExpansionStyle() & TITLE_BAR)==0) {
+			if (textLabel != null)
+				textLabel.setBackground(bg);
+			if (toggle != null)
+				toggle.setBackground(bg);
+		}
 	}
 
 	/**

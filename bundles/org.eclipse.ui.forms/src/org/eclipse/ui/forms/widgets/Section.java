@@ -19,11 +19,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 
 /**
  * A variation of the expandable composite that adds optional description below
@@ -80,6 +83,16 @@ public class Section extends ExpandableComposite {
 		int rtl = cstyle & SWT.RIGHT_TO_LEFT;
 		if ((style & DESCRIPTION) != 0) {
 			descriptionControl = new Label(this, SWT.WRAP | rtl);
+		}
+		if ((style & TITLE_BAR) != 0) {
+			addListener(SWT.Resize, new Listener() {
+				public void handleEvent(Event e) {
+					Image image = Section.super.getBackgroundImage();
+					if (image != null)
+						image.dispose();
+					Section.super.setBackgroundImage(null);
+				}
+			});
 		}
 	}
 
@@ -254,11 +267,13 @@ public class Section extends ExpandableComposite {
 	 */
 	public void setTitleBarGradientBackground(Color color) {
 		putTitleBarColor(COLOR_GBG, color);
+		/*
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
 			textLabel.setBackground(color);
 			if (toggle != null)
 				toggle.setBackground(color);
 		}
+		*/
 	}
 
 	/**
@@ -310,6 +325,16 @@ public class Section extends ExpandableComposite {
 		Color gbg = null;
 		Color fg = null;
 		Color border = null;
+
+		GC gc = e.gc;
+		Image buffer = null;
+		Rectangle bounds = getClientArea();
+
+		if ((getExpansionStyle() & TITLE_BAR) != 0) {
+			buffer = new Image(getDisplay(), bounds.width, bounds.height);
+			// buffer.setBackground(getBackground());
+			gc = new GC(buffer);
+		}
 		if (titleColors != null) {
 			bg = (Color) titleColors.get(COLOR_BG);
 			gbg = (Color) titleColors.get(COLOR_GBG);
@@ -324,7 +349,6 @@ public class Section extends ExpandableComposite {
 			border = fg;
 		if (gbg == null)
 			gbg = bg;
-		Rectangle bounds = getClientArea();
 		int theight = 0;
 		int tvmargin = GAP;
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
@@ -351,18 +375,19 @@ public class Section extends ExpandableComposite {
 		}
 		int midpoint = (theight * 66) / 100;
 		int rem = theight - midpoint;
-		GC gc = e.gc;
+
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
-			gc.setForeground(bg);
-			gc.setBackground(gbg);
-			gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width
-					- 1 - marginWidth - marginWidth, midpoint - 1, true);
-			gc.setForeground(gbg);
-			gc.setBackground(getBackground());
-			gc
-					.fillGradientRectangle(marginWidth, marginHeight + midpoint
-							- 1, bounds.width - 1 - marginWidth - marginWidth,
-							rem - 1, true);
+			if (getBackgroundImage() == null)
+				updateHeaderImage(bg, gbg, bounds, theight, midpoint, rem);
+			drawBackground(gc, bounds.x, bounds.y, bounds.width, theight);
+			/*
+			 * gc.setForeground(bg); gc.setBackground(gbg);
+			 * gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width -
+			 * 1 - marginWidth - marginWidth, midpoint - 1, true);
+			 * gc.setForeground(gbg); gc.setBackground(getBackground()); gc
+			 * .fillGradientRectangle(marginWidth, marginHeight + midpoint - 1,
+			 * bounds.width - 1 - marginWidth - marginWidth, rem - 1, true);
+			 */
 		} else if (isExpanded()) {
 			gc.setForeground(bg);
 			gc.setBackground(getBackground());
@@ -413,5 +438,33 @@ public class Section extends ExpandableComposite {
 			gc.fillGradientRectangle(bounds.width - marginWidth - 1,
 					marginHeight + 2, 1, theight - 2, true);
 		}
+		if (buffer != null) {
+			// e.gc.drawImage(buffer, bounds.x, bounds.y);
+			e.gc.drawImage(buffer, 0, 0);
+			gc.dispose();
+			buffer.dispose();
+		}
+	}
+
+	private void updateHeaderImage(Color bg, Color gbg, Rectangle bounds,
+			int theight, int midpoint, int rem) {
+		Image image = new Image(getDisplay(), bounds.width, theight);
+		GC gc = new GC(image);
+		gc.setForeground(bg);
+		gc.setBackground(gbg);
+		gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width - 1
+				- marginWidth - marginWidth, midpoint - 1, true);
+		gc.setForeground(gbg);
+		gc.setBackground(getBackground());
+		gc.fillGradientRectangle(marginWidth, marginHeight + midpoint - 1,
+				bounds.width - 1 - marginWidth - marginWidth, rem - 1, true);
+		gc.dispose();
+		super.setBackgroundImage(image);
+	}
+
+	/**
+	 * Background image is used for the title gradent - does nothing.
+	 */
+	public final void setBackgroundImage(Image image) {
 	}
 }

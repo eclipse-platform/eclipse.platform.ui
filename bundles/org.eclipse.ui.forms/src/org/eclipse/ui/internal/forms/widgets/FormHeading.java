@@ -30,6 +30,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -48,7 +49,7 @@ import org.eclipse.ui.internal.forms.Messages;
 /**
  * Form header moved out of the form class.
  */
-public class FormHeading extends Composite {
+public class FormHeading extends Canvas {
 	private int TITLE_HMARGIN = 10;
 
 	private int TITLE_VMARGIN = 5;
@@ -530,7 +531,7 @@ public class FormHeading extends Composite {
 							- tbsize.x, TITLE_VMARGIN + height, tbsize.x,
 							tbsize.y);
 					height += tbsize.y;
-					//height += TITLE_GAP;
+					// height += TITLE_GAP;
 				}
 			}
 			if (height > 0)
@@ -544,8 +545,8 @@ public class FormHeading extends Composite {
 				Point masize = messageArea
 						.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				int may = messageArea.isAnimationStart()
-						&& messageArea.getState() == MessageArea.OPENNING ? height-1
-						: height-1 - masize.y;
+						&& messageArea.getState() == MessageArea.OPENNING ? height - 1
+						: height - 1 - masize.y;
 				if (isSeparatorVisible())
 					may -= SEPARATOR_HEIGHT;
 				if (headClient != null)
@@ -765,34 +766,54 @@ public class FormHeading extends Composite {
 	}
 
 	private void onPaint(GC gc) {
-		if (!isSeparatorVisible())
+		if (!isSeparatorVisible() && getBackgroundImage() == null)
 			return;
 		Rectangle carea = getClientArea();
-		// gradient
-		if (gradientInfo != null && gradientInfo.gradientColors.length >= 2) {
-			gc.setBackground(gradientInfo.gradientColors[0]);
-			gc.setForeground(gradientInfo.gradientColors[gradientInfo.gradientColors.length - 1]);
-			gc.fillGradientRectangle(0, carea.height - SEPARATOR_HEIGHT + 3,
-					carea.width, SEPARATOR_HEIGHT - 2, gradientInfo.vertical);
+		Image buffer = new Image(getDisplay(), carea.width, carea.height);
+		buffer.setBackground(getBackground());
+		GC igc = new GC(buffer);
+		if (getBackgroundImage() != null) {
+			if (gradientInfo!=null || isBackgroundImageTiled())
+				drawBackground(igc, carea.x, carea.y, carea.width, carea.height);
+			else {
+				Image bgImage = getBackgroundImage();
+				Rectangle ibounds = bgImage.getBounds();
+				drawBackground(igc, carea.x, carea.y, ibounds.width,
+						ibounds.height);
+			}
 		}
-		// bg separator
-		gc.setForeground(baseBg);
-		gc.drawPolyline(new int[] { 0, carea.height - SEPARATOR_HEIGHT + 2, 2,
-				carea.height - SEPARATOR_HEIGHT, carea.width - 3,
-				carea.height - SEPARATOR_HEIGHT, carea.width - 1,
-				carea.height - SEPARATOR_HEIGHT + 2 });
-		// color separator
-		if (separatorColor != null)
-			gc.setForeground(separatorColor);
-		else
-			gc.setForeground(getForeground());
-		gc.drawPolyline(new int[] { 
-				0, carea.height,
-				0, carea.height - SEPARATOR_HEIGHT + 3, 
-				2, carea.height - SEPARATOR_HEIGHT + 1, 
-				carea.width - 3, carea.height - SEPARATOR_HEIGHT + 1, 
-				carea.width - 1, carea.height - SEPARATOR_HEIGHT + 3,
-				carea.width - 1, carea.height });
+		if (isSeparatorVisible()) {
+			// gradient
+			if (gradientInfo != null && gradientInfo.gradientColors.length >= 2) {
+				igc.setBackground(gradientInfo.gradientColors[0]);
+				igc
+						.setForeground(gradientInfo.gradientColors[gradientInfo.gradientColors.length - 1]);
+				igc.fillGradientRectangle(0, carea.height - SEPARATOR_HEIGHT
+						+ 3, carea.width, SEPARATOR_HEIGHT - 2,
+						gradientInfo.vertical);
+			}
+			// bg separator
+			igc.setForeground(baseBg);
+			igc.drawPolyline(new int[] { 0,
+					carea.height - SEPARATOR_HEIGHT + 2, 2,
+					carea.height - SEPARATOR_HEIGHT, carea.width - 3,
+					carea.height - SEPARATOR_HEIGHT, carea.width - 1,
+					carea.height - SEPARATOR_HEIGHT + 2 });
+			// color separator
+			if (separatorColor != null)
+				igc.setForeground(separatorColor);
+			else
+				igc.setForeground(getForeground());
+			igc.drawPolyline(new int[] { 0, carea.height, 0,
+					carea.height - SEPARATOR_HEIGHT + 3, 2,
+					carea.height - SEPARATOR_HEIGHT + 1, carea.width - 3,
+					carea.height - SEPARATOR_HEIGHT + 1, carea.width - 1,
+					carea.height - SEPARATOR_HEIGHT + 3, carea.width - 1,
+					carea.height });
+		}
+		gc.drawImage(buffer, carea.x, carea.y);
+		igc.dispose();
+		buffer.dispose();
 	}
 
 	private void updateGradientImage() {
@@ -1018,7 +1039,9 @@ public class FormHeading extends Composite {
 			if (messageArea == null) {
 				messageArea = new MessageArea(this, SWT.NULL);
 				messageArea.setBackground(baseBg);
-				messageArea.setForeground(separatorColor!=null?separatorColor:getForeground());
+				messageArea
+						.setForeground(separatorColor != null ? separatorColor
+								: getForeground());
 			}
 			messageArea.setText(newMessage);
 			messageArea.setImage(newImage);
