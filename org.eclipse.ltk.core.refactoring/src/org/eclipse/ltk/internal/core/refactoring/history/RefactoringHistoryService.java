@@ -948,4 +948,37 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			disconnect();
 		}
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void deleteProjectHistory(final IProject project, IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(project);
+		Assert.isTrue(project.isAccessible());
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
+		try {
+			monitor.beginTask("", 100); //$NON-NLS-1$
+			final String name= project.getName();
+			final URI uri= project.getLocationURI();
+			if (uri != null) {
+				try {
+					final IFileStore metaStore= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(name);
+					metaStore.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+					final IFileStore projectStore= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
+					projectStore.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+				} finally {
+					project.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 60));
+				}
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void deleteRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, IProgressMonitor monitor) throws CoreException {
+	}
 }

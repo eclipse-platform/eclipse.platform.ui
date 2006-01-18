@@ -91,6 +91,59 @@ public interface IRefactoringHistoryService {
 	public void connect();
 
 	/**
+	 * Deletes the refactoring history of a project. Refactorings associated
+	 * with the workspace are not deleted.
+	 * <p>
+	 * If a refactoring history is deleted, all files stored in the
+	 * <code>.refactorings</code> folder of the project folder is removed. If
+	 * no explicit refactoring history is enabled, the refactoring history
+	 * information is removed internally.
+	 * </p>
+	 * <p>
+	 * Note: This API must not be called from outside the refactoring framework.
+	 * </p>
+	 * 
+	 * @param project
+	 *            the project to delete its history
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
+	 * @throws CoreException
+	 *             if an error occurs while deleting the refactoring history.
+	 *             Reasons include:
+	 *             <ul>
+	 *             <li>An I/O error occurs while deleting the refactoring
+	 *             history.</li>
+	 *             </ul>
+	 */
+	public void deleteProjectHistory(IProject project, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Deletes the specified refactoring descriptors from their associated
+	 * refactoring histories.
+	 * <p>
+	 * Note: This API must not be called from outside the refactoring framework.
+	 * </p>
+	 * 
+	 * @param proxies
+	 *            the refactoring descriptor proxies
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
+	 * @throws CoreException
+	 *             if an error occurs while deleting the refactoring
+	 *             descriptors. Reasons include:
+	 *             <ul>
+	 *             <li>The refactoring history has an illegal format, contains
+	 *             illegal arguments or otherwise illegal information.</li>
+	 *             <li>An I/O error occurs while deleting the refactoring
+	 *             descriptors from the refactoring history.</li>
+	 *             </ul>
+	 * 
+	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
+	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
+	 */
+	public void deleteRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, IProgressMonitor monitor) throws CoreException;
+
+	/**
 	 * Disconnects the refactoring history service from the workbench's
 	 * operation history if necessary and decrements an internal counter.
 	 * <p>
