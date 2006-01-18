@@ -211,6 +211,12 @@
             id="org.eclipse.ui.tests.api.MockViewPart4">
       </view>
       <view
+            name="Context Mock View 5"
+            icon="icons\view.gif"
+            class="org.eclipse.ui.tests.contexts.MockViewPart5"
+            id="org.eclipse.ui.tests.contexts.MockViewPart5">
+      </view>
+      <view
             allowMultiple="true"
             name="Mock View Mult"
             icon="icons\view.gif"
@@ -1617,6 +1623,14 @@
          	name="Test Context 2"
          	description="A test for the preferred context support"
          	parentId="org.eclipse.ui.tests.contexts.context1" />
+      <context
+            id="org.eclipse.ui.tests.contexts.ViewPart"
+            name="View Part Context"
+            parentId="org.eclipse.ui.contexts.window"/>
+      <context
+            id="org.eclipse.ui.tests.contexts.WorkbenchWindow"
+            name="WorkbenchWindow Part Context"
+            parentId="org.eclipse.ui.contexts.window"/>
    </extension>
 <!-- Marker Image Provider tests -->
    <extension

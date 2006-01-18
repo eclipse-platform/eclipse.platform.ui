@@ -95,6 +95,7 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.contexts.SlaveContextService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.SwtUtil;
@@ -1341,8 +1342,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			statusLineTrim = new WindowTrimProxy(
 					getStatusLineManager().getControl(),
 					"org.eclipse.jface.action.StatusLineManager", //$NON-NLS-1$
-					WorkbenchMessages.TrimCommon_StatusLine_TrimName,
-					SWT.NONE, true);
+					WorkbenchMessages.TrimCommon_StatusLine_TrimName, SWT.NONE,
+					true);
 		}
 		return statusLineTrim;
 	}
@@ -1403,13 +1404,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			contextService.unregisterShell(getShell());
 
 			closeAllPages();
-			
+
 			fireWindowClosed();
 
 			getActionBarAdvisor().dispose();
 			getWindowAdvisor().dispose();
 			detachedWindowShells.dispose();
-			
+
 			// Bring down all of the services.
 			serviceLocator.dispose();
 
@@ -3325,13 +3326,20 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 */
 	private final void initializeDefaultServices() {
 		final IWorkbench workbench = getWorkbench();
+
 		final IHandlerService parentHandlerService = (IHandlerService) workbench
 				.getAdapter(IHandlerService.class);
 		final Expression defaultExpression = new WorkbenchWindowExpression(this);
 		final IHandlerService handlerService = new SlaveHandlerService(
 				parentHandlerService, defaultExpression);
 		serviceLocator.registerService(IHandlerService.class, handlerService);
-		
+
+		final IContextService parentContextService = (IContextService) serviceLocator
+				.getService(IContextService.class);
+		final IContextService contextService = new SlaveContextService(
+				parentContextService, defaultExpression);
+		serviceLocator.registerService(IContextService.class, contextService);
+
 		final ActionCommandMappingService mappingService = new ActionCommandMappingService();
 		serviceLocator.registerService(IActionCommandMappingService.class,
 				mappingService);
@@ -3345,7 +3353,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	public final Object getService(final Object key) {
 		return serviceLocator.getService(key);
 	}
-	
+
 	public final boolean hasService(final Object key) {
 		return serviceLocator.hasService(key);
 	}
