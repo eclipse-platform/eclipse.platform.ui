@@ -11,7 +11,7 @@
 package org.eclipse.jface.databinding;
 
 /**
- * A checked exception indicating a binding problem.
+ * An unchecked exception indicating a binding problem.
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
