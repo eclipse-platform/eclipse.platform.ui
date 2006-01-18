@@ -264,7 +264,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 			final IHandlerActivation currentActivation = (IHandlerActivation) activationItr
 					.next();
 			final int comparison = bestActivation.compareTo(currentActivation);
-			if (comparison < 0) {
+			if (comparison > 0) {
 				bestActivation = currentActivation;
 				conflict = false;
 

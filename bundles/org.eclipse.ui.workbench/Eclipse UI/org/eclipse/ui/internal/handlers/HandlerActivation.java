@@ -109,17 +109,21 @@ final class HandlerActivation extends EvaluationResultCache implements
 
 	public final int compareTo(final Object object) {
 		final IHandlerActivation activation = (IHandlerActivation) object;
+		int difference;
 
 		// Check the priorities
 		final int thisPriority = this.getSourcePriority();
 		final int thatPriority = activation.getSourcePriority();
-		final int difference = thatPriority - thisPriority;
+		difference = thatPriority - thisPriority;
 		if (difference != 0) {
 			return difference;
 		}
 
 		// Check depth
-		return this.getDepth() - activation.getDepth();
+		final int thisDepth = this.getDepth();
+		final int thatDepth = activation.getDepth();
+		difference = thatDepth - thisDepth;
+		return difference;
 	}
 
 	public final String getCommandId() {
