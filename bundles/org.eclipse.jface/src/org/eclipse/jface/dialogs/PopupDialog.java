@@ -372,6 +372,13 @@ public class PopupDialog extends Window {
 				if (listenToDeactivate && event.widget == getShell()
 						&& getShell().getShells().length == 0) {
 					close();
+				} else {
+					/* We typically ignore deactivates to work around platform-specific
+					 * event ordering.  Now that we've ignored whatever we were supposed to,
+					 * start listening to deactivates.  Example issues can be found in
+					 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=123392
+					 */
+					listenToDeactivate = true;
 				}
 			}
 		});
@@ -743,15 +750,12 @@ public class PopupDialog extends Window {
 
 		// Ignore any deactivate events caused by opening the tracker.
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=120656
-		boolean oldListenToDeactivate = listenToDeactivate;
 		listenToDeactivate = false;
 		if (tracker.open()) {
 			if (shell != null && !shell.isDisposed()) {
 				shell.setBounds(tracker.getRectangles()[0]);
 			}
 		}
-		listenToDeactivate = oldListenToDeactivate;
-
 	}
 
 	/**
