@@ -1846,7 +1846,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		if(path != null) {
 			Object sel = path.getLastSegment();
 			int pidex = findIndexOfParent(path.getFirstSegment());
-			if(path.getSegmentCount() == 1) {
+			if(tree.getItemCount() == 0) {
+				setMessage(LaunchConfigurationsMessages.LaunchConfigurationsDialog_7);
+				updateButtons();
+			}
+			else if(path.getSegmentCount() == 1) {
 				if(pidex == -1) {
 					sel = (pidx == 0 ? tree.getItem(pidx).getData() : tree.getItem(pidx-1).getData());
 				}
@@ -1856,7 +1860,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			}
 			else {
 				if(pidex == -1) {
-					sel = tree.getItem(pidx-1).getData();
+					sel = (pidx == 0 ? tree.getItem(pidx).getData() : tree.getItem(pidx-1).getData());
 				}
 				else {
 					int cidex = findIndexOfChild(path.getFirstSegment(), path.getLastSegment());
