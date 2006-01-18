@@ -108,7 +108,10 @@ public final class RefactoringUIMessages extends NLS {
 	public static String ExportRefactoringHistoryControl_export_all_label;
 	public static String ExportRefactoringHistoryControl_wildcard_filter_name;
 	public static String ExportRefactoringHistoryControl_wildcard_filter_extension;
-	
+
+	public static String ManageRefactoringHistorycontrol_delete_label;
+	public static String ManageRefactoringHistorycontrol_delete_all_label;
+
 	public static String RefactoringHistoryControl_resolving_information;
 	public static String RefactoringHistoryControl_selection_pattern;
 	
