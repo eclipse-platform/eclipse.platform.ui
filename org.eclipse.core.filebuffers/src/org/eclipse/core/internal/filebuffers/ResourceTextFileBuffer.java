@@ -29,8 +29,6 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
 
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -320,10 +318,6 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			InputStream stream= new ByteArrayInputStream(bytes);
 			if (fFile.exists()) {
 
-				if (!overwrite)
-					checkSynchronizationState();
-
-
 				// here the file synchronizer should actually be removed and afterwards added again. However,
 				// we are already inside an operation, so the delta is sent AFTER we have added the listener
 				fFile.setContents(stream, overwrite, true, monitor);
@@ -532,19 +526,6 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 					contentStream.close();
 			} catch (IOException x) {
 			}
-		}
-	}
-
-	/**
-	 * Checks whether the given file is synchronized with the the local file system.
-	 * If the file has been changed, a <code>CoreException</code> is thrown.
-	 *
-	 * @exception CoreException if file has been changed on the file system
-	 */
-	private void checkSynchronizationState() throws CoreException {
-		if (!fFile.isSynchronized(IResource.DEPTH_ZERO)) {
-			Status status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, FileBuffersMessages.FileBuffer_error_outOfSync, null);
-			throw new CoreException(status);
 		}
 	}
 }
