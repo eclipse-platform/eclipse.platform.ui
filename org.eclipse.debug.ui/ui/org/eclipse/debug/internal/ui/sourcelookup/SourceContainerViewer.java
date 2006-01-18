@@ -154,7 +154,7 @@ public class SourceContainerViewer extends TreeViewer {
 		if (sel.isEmpty()) {
 			for (int i = 0; i < entries.length; i++) {
 				if (!fEntries.contains(entries[i])) {
-					fEntries.add(i, entries[i]);
+					fEntries.add(entries[i]);
 				}
 			}
 		} 
