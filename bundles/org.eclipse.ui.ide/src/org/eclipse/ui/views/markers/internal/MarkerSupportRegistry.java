@@ -105,7 +105,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Get the instance of the registry.
 	 * 
-	 * @return ProblemFilterRegistry
+	 * @return MarkerSupportRegistry
 	 */
 	public static MarkerSupportRegistry getInstance() {
 		if (singleton == null) {
