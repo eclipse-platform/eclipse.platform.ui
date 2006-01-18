@@ -26,6 +26,24 @@ import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
  * representing a view selection into the complete set of resources to be
  * operated on.
  * <p>
+ * Here's a summary of the scope generation algorithm:
+ * <ol>
+ * <li>Obtain selected mappings
+ * <li>Project mappings onto resources using the appropriate
+ * context(s) in order to obtain a set of ResourceTraverals
+ * <li>Determine what model providers are interested in the targeted resources
+ * <li>From those model providers, obtain the set of affected resource mappings
+ * <li>If the original set is the same as the new set, we are done.
+ * <li>if the set differs from the original selection, rerun the mapping process
+ * for any new mappings
+ *     <ul>
+ *     <li>Only need to query model providers for mappings for new resources
+ *     <li>If new mappings are obtained, 
+ *     ask model provider to compress the mappings?
+ *     <li>keep repeating until no new mappings or resources are added
+ *     </ul> 
+ * </ol> 
+ * <p>
  * This class is can be subclasses by clients.
  * 
  * <p>
