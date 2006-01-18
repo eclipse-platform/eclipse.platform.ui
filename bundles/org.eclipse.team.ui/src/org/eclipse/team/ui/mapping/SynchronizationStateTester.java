@@ -10,18 +10,19 @@
  *******************************************************************************/
 package org.eclipse.team.ui.mapping;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IDecorationContext;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.registry.TeamDecoratorDescription;
 import org.eclipse.team.internal.ui.registry.TeamDecoratorManager;
@@ -202,7 +203,18 @@ public class SynchronizationStateTester {
 	public int getState(Object element, int stateMask, IProgressMonitor monitor) throws CoreException {
 		ResourceMapping mapping = Utils.getResourceMapping(element);
 		if (mapping != null) {
-			return subscriber.getState(mapping, stateMask, monitor);
+			try {
+				return subscriber.getState(mapping, stateMask, monitor);
+			} catch (CoreException e) {
+				IProject[] projects = mapping.getProjects();
+				for (int i = 0; i < projects.length; i++) {
+					IProject project = projects[i];
+					// Only through the exception if the project for the mapping is accessible
+					if (project.isAccessible()) {
+						throw e;
+					}
+				}
+			}
 		}
 		return 0;
 	}
@@ -225,19 +237,11 @@ public class SynchronizationStateTester {
 			ResourceTraversal[] traversals = mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
 			for (int i = 0; i < traversals.length; i++) {
 				ResourceTraversal traversal = traversals[i];
-				final CoreException shared = new CoreException(new Status(IStatus.OK, TeamUIPlugin.ID, 0, "", null)); //$NON-NLS-1$
-				try {
-					traversal.accept(new IResourceVisitor() {
-						public boolean visit(IResource resource) throws CoreException {
-							if (subscriber.isSupervised(resource))
-								throw shared;
-							return false;
-						}
-					});
-				} catch (CoreException e) {
-					if (e == shared)
+				IResource[] resources = traversal.getResources();
+				for (int j = 0; j < resources.length; j++) {
+					IResource resource = resources[j];
+					if (subscriber.isSupervised(resource))
 						return true;
-					throw e;
 				}
 			}
 		}
