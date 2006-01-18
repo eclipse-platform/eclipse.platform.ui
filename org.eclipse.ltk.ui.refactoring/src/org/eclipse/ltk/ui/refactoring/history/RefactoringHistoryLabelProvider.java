@@ -35,7 +35,10 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Label provider to display a refactoring history.
+ * Label provider to display a refactoring history. This label provider can be
+ * used in conjunction with {@link RefactoringHistoryContentProvider} or
+ * directly on {@link RefactoringDescriptorProxy} and {@link RefactoringHistory}
+ * elements.
  * <p>
  * Note: this class is not indented to be subclassed outside the refactoring
  * framework.
@@ -46,6 +49,7 @@ import org.eclipse.osgi.util.NLS;
  * 
  * @see IRefactoringHistoryControl
  * @see RefactoringHistoryControlConfiguration
+ * @see RefactoringHistoryContentProvider
  * 
  * @since 3.2
  */
@@ -150,15 +154,15 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 						switch (kind) {
 							case RefactoringHistoryNode.THIS_WEEK:
 								pattern= fControlConfiguration.getThisWeekPattern();
-								format= new SimpleDateFormat("ww"); //$NON-NLS-1$
+								format= new SimpleDateFormat("w"); //$NON-NLS-1$
 								break;
 							case RefactoringHistoryNode.LAST_WEEK:
 								pattern= fControlConfiguration.getLastWeekPattern();
-								format= new SimpleDateFormat("ww"); //$NON-NLS-1$
+								format= new SimpleDateFormat("w"); //$NON-NLS-1$
 								break;
 							case RefactoringHistoryNode.WEEK:
 								pattern= fControlConfiguration.getWeekPattern();
-								format= new SimpleDateFormat("ww"); //$NON-NLS-1$
+								format= new SimpleDateFormat("w"); //$NON-NLS-1$
 								break;
 							case RefactoringHistoryNode.YEAR:
 								pattern= fControlConfiguration.getYearPattern();
