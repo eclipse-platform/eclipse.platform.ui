@@ -174,8 +174,8 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 */
 	public ILaunchConfiguration getRecentLaunch() {
 		try {
-			if(fRecentLaunch != null && fRecentLaunch.exists()) {
-				if(DebugUIPlugin.doLaunchConfigurationFiltering(fRecentLaunch) && !WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(fRecentLaunch.getType()))) {
+			if(fRecentLaunch != null) {
+				if(fRecentLaunch.exists() && DebugUIPlugin.doLaunchConfigurationFiltering(fRecentLaunch) && !WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(fRecentLaunch.getType()))) {
 					return fRecentLaunch;
 				}
 			}

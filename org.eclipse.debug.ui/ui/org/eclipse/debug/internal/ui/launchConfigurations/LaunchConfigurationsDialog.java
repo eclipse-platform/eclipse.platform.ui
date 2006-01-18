@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -59,6 +58,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
@@ -79,6 +80,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
  
 /**
@@ -659,16 +662,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		setSelectionArea(comp);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
-//		layout.marginHeight = 0;
-//		layout.marginWidth = 5;
 		comp.setLayout(layout);
 		comp.setFont(font);
-		
-		
-//		//create the tree view
-//		Label treelabel = new Label(comp, SWT.NONE);
-//		treelabel.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Con_figurations__1);
-//		treelabel.setFont(font);
 
 		//create the toolbar area
 		createToolbarArea(comp);
@@ -714,9 +709,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		fFilteringLabel = new Label(comp, SWT.NONE);
 		fFilteringLabel.setFont(font);
 		refreshFilteringLabel();
-		if(fInitialSelection.isEmpty()) {
-			setInitialSelection(getNewSelection());
-		}
 		
 		// confirmation requestors
 		AbstractLaunchConfigurationAction.IConfirmationRequestor requestor = new AbstractLaunchConfigurationAction.IConfirmationRequestor() {
@@ -759,9 +751,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				}
 			}
 			TreeViewer viewer = ((TreeViewer)fLaunchConfigurationView.getViewer());
+			IStructuredSelection sel = (IStructuredSelection)viewer.getSelection();
 			viewer.getTree().selectAll();
 			int filtered = ((IStructuredSelection)viewer.getSelection()).size();
 			viewer.getTree().deselectAll();
+			viewer.setSelection(sel);
 			fFilteringLabel.setText(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationsDialog_6, new Object[] {new Integer(filtered), new Integer(total)}));
 			
 		}
@@ -1113,7 +1107,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @param event selection changed event
 	 */
  	protected void handleLaunchConfigurationSelectionChanged(SelectionChangedEvent event) {
- 		
  		Object input = getTabViewer().getInput();
  		Object newInput = null;
  		ISelection selection = event.getSelection();
@@ -1789,7 +1782,15 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		TreeViewer viewer = fLaunchConfigurationView.getTreeViewer();
+		TreeSelection sel = (TreeSelection)viewer.getSelection();
+		TreePath path = null;
+		int pidx = -1, cidx = -1;
 		boolean newvalue = false;
+		if(!sel.isEmpty()) {
+			path = sel.getPaths()[0];
+			pidx = findIndexOfParent(path.getFirstSegment());
+			cidx = findIndexOfChild(path.getFirstSegment(), path.getLastSegment());
+		}
 		if(event.getNewValue() instanceof Boolean) {
 			newvalue = ((Boolean)event.getNewValue()).booleanValue();
 		}
@@ -1797,7 +1798,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			newvalue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
 		}
 		if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
-			if(newvalue) {
+			if(newvalue) { 
 				viewer.addFilter(fClosedProjectFilter);
 			}
 			else {
@@ -1826,62 +1827,96 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		viewer.expandAll();
 		refreshFilteringLabel();
-		updateButtons();
-		if(!initialSelectionExists()) {
-			fInitialSelection = getNewSelection();
-		}
-		doInitialTreeSelection();
+		updateSelection(path, pidx, cidx);
 	}
-	
+
 	/**
-	 * Checks to see if the initial selection is still part of the viewer. i.e not filtered
-	 * @return true if the initial selection has not been filtered out, false otherwise
+	 * updates the selection after a filteribng has taken place
+	 * @param path the <code>TreePath</code> to the last selected item
+	 * @param pidx the original index of the parent item
+	 * @param cidx the original index of the child item
 	 * @since 3.2
 	 */
-	private boolean initialSelectionExists() {
+	private void updateSelection(TreePath path, int pidx, int cidx) {
 		TreeViewer viewer = fLaunchConfigurationView.getTreeViewer();
-		viewer.getTree().selectAll();
-		IStructuredSelection ss = (IStructuredSelection)viewer.getSelection();
-		viewer.getTree().deselectAll();
-		for(Iterator iter = ss.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
-			for(Iterator iter2 = fInitialSelection.iterator(); iter2.hasNext();) {	
-				if(obj instanceof ILaunchConfiguration & iter2.next().equals(obj)) {
-					return true;
+		Tree tree = viewer.getTree();
+		if(path != null) {
+			Object sel = path.getLastSegment();
+			int pidex = findIndexOfParent(path.getFirstSegment());
+			if(tree.getItemCount() == 0) {
+				setMessage(LaunchConfigurationsMessages.LaunchConfigurationsDialog_7);
+			}
+			else if(path.getSegmentCount() == 1) {
+				if(pidex == -1) {
+					sel = (pidx == 0 ? tree.getItem(pidx).getData() : tree.getItem(pidx-1).getData());
+				}
+				else {
+					sel = tree.getItem(pidex).getData();
 				}
 			}
-		}
-		return false;
-	}
-	
-	/**
-	 * refreshs the selection of the tree view after a filtering has been done.
-	 * This method will take the first ILaunchConfiguration found in the tree, if there was no last launched entry in the workbench.
-	 * Failing that an empty selection will be returned when filtering has filtered everything from the viewer. 
-	 * In the event that there is nothing left in the viewer but ILaunchConfigurationTypes we simple take the first one of those.  
-	 * @param viewer the viewer that the selection should be updated on.
-	 * @since 3.2
-	 */
-	private IStructuredSelection getNewSelection() {
-		TreeViewer viewer = fLaunchConfigurationView.getTreeViewer();
-		if(getLastLaunchedWorkbenchConfiguration() != null) {
-			return new StructuredSelection(getLastLaunchedWorkbenchConfiguration());
-		}
-		if(viewer.getTree().getItemCount() == 0) {
-			setMessage(LaunchConfigurationsMessages.LaunchConfigurationsDialog_7);
-			return new StructuredSelection(new Object[0]);
-		}
-		viewer.getTree().selectAll();
-		IStructuredSelection ss = (IStructuredSelection)viewer.getSelection();
-		viewer.getTree().deselectAll();
-		for(Iterator iter = ss.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
-			if(obj instanceof ILaunchConfiguration) {
-				return new StructuredSelection(obj);
+			else {
+				if(pidex == -1) {
+					sel = tree.getItem(pidx-1).getData();
+				}
+				else {
+					int cidex = findIndexOfChild(path.getFirstSegment(), path.getLastSegment());
+					TreeItem parent = tree.getItem(pidex);
+					if(cidex == -1) {
+						if(parent.getItemCount() == 0) {
+							sel = parent.getData();
+						}
+						else {
+							sel = (cidx == 0 ? parent.getItem(cidx).getData() : parent.getItem(cidx-1).getData());
+						}
+					}
+					else {
+						sel = parent.getItem(cidex).getData();
+					}
+				}
 			}
+			viewer.setSelection(new StructuredSelection(sel));
 		}
-		return new StructuredSelection(ss.getFirstElement());
 		
 	}
 	
+	/**
+	 * finds the given parent item in the viewer, in this case the parent item will always be an
+	 * <code>ILaunchConfigurationType</code>
+	 * @param parent thep arent item to find
+	 * @return the index of the parent item or -1 if not found
+	 * @since 3.2
+	 */
+	private int findIndexOfParent(Object parent) {
+		Tree tree = fLaunchConfigurationView.getTreeViewer().getTree();
+		TreeItem[] roots = tree.getItems();
+		for(int i = 0; i < roots.length; i++) {
+			if(roots[i].getData().equals(parent)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	/**
+	 * Finds the index of a child item in the entire tree using the parent node and the child node
+	 * derived from a <code>TreePath</code>
+	 * @param parent the parent, in this case always an <code>ILaunchConfigurationType</code>
+	 * @param child the child to find within the parent, in this case always an <code>ILaunchConfiguration,</code>
+	 * @return the index of the child or -1 if not found
+	 * @since 3.2
+	 */
+	private int findIndexOfChild(Object parent, Object child) {
+		Tree tree = fLaunchConfigurationView.getTreeViewer().getTree();
+		int pidx = findIndexOfParent(parent);
+		if(pidx != -1) {
+			TreeItem root = tree.getItem(pidx);
+			TreeItem[] children = root.getItems();
+			for(int j = 0; j < children.length; j++) {
+				if(children[j].getData().equals(child)) {
+					return j;
+				}
+			}
+		}
+		return -1;
+	}
 }

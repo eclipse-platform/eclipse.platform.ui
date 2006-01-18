@@ -318,11 +318,13 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getHistory());
 			createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getFavorites());
 			ILaunchConfiguration configuration = history.getRecentLaunch();
-			if (configuration != null && configuration.exists()) {
-				Element last = doc.createElement(HISTORY_LAST_LAUNCH_NODE);
-				last.setAttribute(HISTORY_MEMENTO_ATT, configuration.getMemento());
-				last.setAttribute(HISTORY_MODE_ATT, history.getLaunchGroup().getMode());
-				historyRootElement.appendChild(last);
+			if (configuration != null) {
+				if(configuration.exists()) {
+					Element last = doc.createElement(HISTORY_LAST_LAUNCH_NODE);
+					last.setAttribute(HISTORY_MEMENTO_ATT, configuration.getMemento());
+					last.setAttribute(HISTORY_MODE_ATT, history.getLaunchGroup().getMode());
+					historyRootElement.appendChild(last);
+				}
 			}
 		}
 		
