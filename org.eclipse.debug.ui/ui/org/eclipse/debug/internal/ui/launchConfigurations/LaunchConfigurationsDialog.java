@@ -1840,13 +1840,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private void updateSelection(TreePath path, int pidx, int cidx) {
 		TreeViewer viewer = fLaunchConfigurationView.getTreeViewer();
 		Tree tree = viewer.getTree();
+		if(tree.getItemCount() == 0) {
+			setMessage(LaunchConfigurationsMessages.LaunchConfigurationsDialog_7);
+		}
 		if(path != null) {
 			Object sel = path.getLastSegment();
 			int pidex = findIndexOfParent(path.getFirstSegment());
-			if(tree.getItemCount() == 0) {
-				setMessage(LaunchConfigurationsMessages.LaunchConfigurationsDialog_7);
-			}
-			else if(path.getSegmentCount() == 1) {
+			if(path.getSegmentCount() == 1) {
 				if(pidex == -1) {
 					sel = (pidx == 0 ? tree.getItem(pidx).getData() : tree.getItem(pidx-1).getData());
 				}
