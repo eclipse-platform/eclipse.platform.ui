@@ -1899,6 +1899,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			}
 			viewer.setSelection(new StructuredSelection(sel));
 		}
+		else {
+			setErrorMessage(null);
+			setMessage(LaunchConfigurationsMessages.LaunchConfigurationDialog_Ready_to_launch_2);
+		}
 	}
 	
 	/**
