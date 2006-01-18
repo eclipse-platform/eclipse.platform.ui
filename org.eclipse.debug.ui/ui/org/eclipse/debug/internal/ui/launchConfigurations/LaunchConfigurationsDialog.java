@@ -16,8 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -83,6 +85,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.WorkbenchJob;
  
 /**
  * The dialog used to edit and launch launch configurations.
@@ -1780,58 +1783,65 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		TreeViewer viewer = fLaunchConfigurationView.getTreeViewer();
-		TreeSelection sel = (TreeSelection)viewer.getSelection();
-		TreePath path = null;
-		int pidx = -1, cidx = -1;
-		boolean newvalue = false;
-		if(!sel.isEmpty()) {
-			path = sel.getPaths()[0];
-			pidx = findIndexOfParent(path.getFirstSegment());
-			cidx = findIndexOfChild(path.getFirstSegment(), path.getLastSegment());
-		}
-		if(event.getNewValue() instanceof Boolean) {
-			newvalue = ((Boolean)event.getNewValue()).booleanValue();
-		}
-		else {
-			newvalue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
-		}
-		if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
-			if(newvalue) { 
-				viewer.addFilter(fClosedProjectFilter);
-			}
-			else {
-				viewer.removeFilter(fClosedProjectFilter);
-			}
-		}
-		else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED)) {
-			if(newvalue) {
-				viewer.addFilter(fDeletedProjectFilter);
-			}
-			else {
-				viewer.removeFilter(fDeletedProjectFilter);
-			}
-		}
-		else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES)) {
-			if(newvalue) {
-				viewer.addFilter(fLCTFilter);
-			}
-			else {
-				viewer.removeFilter(fLCTFilter);
-			}
-		}
-		else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_TYPE_LIST)) {
-			viewer.removeFilter(fLCTFilter);
-			viewer.addFilter(fLCTFilter);
-		}
-		viewer.expandAll();
-		refreshFilteringLabel();
-		updateSelection(path, pidx, cidx);
+	public void propertyChange(final PropertyChangeEvent event) {
+		WorkbenchJob job = new WorkbenchJob(LaunchConfigurationsMessages.LaunchConfigurationsDialog_8) {
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				TreeViewer viewer = fLaunchConfigurationView.getTreeViewer();
+				TreeSelection sel = (TreeSelection)viewer.getSelection();
+				TreePath path = null;
+				int pidx = -1, cidx = -1;
+				boolean newvalue = false;
+				if(!sel.isEmpty()) {
+					path = sel.getPaths()[0];
+					pidx = findIndexOfParent(path.getFirstSegment());
+					cidx = findIndexOfChild(path.getFirstSegment(), path.getLastSegment());
+				}
+				if(event.getNewValue() instanceof Boolean) {
+					newvalue = ((Boolean)event.getNewValue()).booleanValue();
+				}
+				else {
+					newvalue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
+				}
+				if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
+					if(newvalue) { 
+						viewer.addFilter(fClosedProjectFilter);
+					}
+					else {
+						viewer.removeFilter(fClosedProjectFilter);
+					}
+				}
+				else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED)) {
+					if(newvalue) {
+						viewer.addFilter(fDeletedProjectFilter);
+					}
+					else {
+						viewer.removeFilter(fDeletedProjectFilter);
+					}
+				}
+				else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES)) {
+					if(newvalue) {
+						viewer.addFilter(fLCTFilter);
+					}
+					else {
+						viewer.removeFilter(fLCTFilter);
+					}
+				}
+				else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_TYPE_LIST)) {
+					viewer.removeFilter(fLCTFilter);
+					viewer.addFilter(fLCTFilter);
+				}
+				viewer.expandAll();
+				refreshFilteringLabel();
+				updateSelection(path, pidx, cidx);
+				return null;
+			}	
+		};
+		
+		job.run(new NullProgressMonitor());
 	}
 
 	/**
-	 * updates the selection after a filteribng has taken place
+	 * updates the selection after a filtering has taken place
 	 * @param path the <code>TreePath</code> to the last selected item
 	 * @param pidx the original index of the parent item
 	 * @param cidx the original index of the child item
