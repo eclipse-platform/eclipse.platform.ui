@@ -79,11 +79,33 @@ public class TreeSelection extends StructuredSelection implements ITreeSelection
 	 * 
 	 * @param paths
 	 *            tree paths
+	 */
+	public TreeSelection(TreePath[] paths) {
+		this(new InitializeData(paths, null));
+	}
+
+	/**
+	 * Constructs a selection based on the elements identified by the given tree
+	 * paths.
+	 * 
+	 * @param paths
+	 *            tree paths
 	 * @param comparer 
 	 *            the comparer, or <code>null</code> if default equals is to be used
 	 */
 	public TreeSelection(TreePath[] paths, IElementComparer comparer) {
 		this(new InitializeData(paths, comparer));
+	}
+
+	/**
+	 * Constructs a selection based on the elements identified by the given tree
+	 * path.
+	 * 
+	 * @param treePath
+	 *            tree path, or <code>null</code> for an empty selection
+	 */
+	public TreeSelection(TreePath treePath) {
+		this(treePath != null ? new TreePath[] { treePath } : EMPTY_TREE_PATHS, null);
 	}
 
 	/**
