@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -22,6 +23,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
@@ -70,18 +72,24 @@ public final class ExportRefactoringHistoryControl extends RefactoringHistoryCon
 		fExportButton= new Button(composite, SWT.NONE);
 		fExportButton.setEnabled(false);
 		fExportButton.setText(RefactoringUIMessages.ExportRefactoringHistoryControl_export_label);
-
 		data= new GridData();
-		data.horizontalAlignment= SWT.FILL;
+		data.horizontalAlignment= GridData.FILL;
+		data.grabExcessHorizontalSpace= true;
+		data.verticalAlignment= GridData.BEGINNING;
+		data.widthHint= SWTUtil.getButtonWidthHint(fExportButton);
 		fExportButton.setLayoutData(data);
 
 		fExportAllButton= new Button(composite, SWT.NONE);
 		fExportAllButton.setEnabled(false);
 		fExportAllButton.setText(RefactoringUIMessages.ExportRefactoringHistoryControl_export_all_label);
-
 		data= new GridData();
-		data.horizontalAlignment= SWT.FILL;
+		data.horizontalAlignment= GridData.FILL;
+		data.grabExcessHorizontalSpace= true;
+		data.verticalAlignment= GridData.BEGINNING;
+		data.widthHint= SWTUtil.getButtonWidthHint(fExportAllButton);
 		fExportAllButton.setLayoutData(data);
+
+		Dialog.applyDialogFont(parent);
 	}
 
 	/**

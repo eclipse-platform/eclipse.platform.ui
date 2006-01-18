@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -367,6 +368,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		fCommentPane.setText(fControlConfiguration.getCommentCaption());
 		fCommentPane.setEnabled(false);
 		fSplitterControl.setWeights(new int[] { 80, 20});
+
+		Dialog.applyDialogFont(this);
 	}
 
 	/**
@@ -537,7 +540,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			viewer.setCheckedElements(nodes);
 			viewer.updateCheckState();
 			handleCheckStateChanged();
-		}
+		} else
+			setSelectedDescriptors(descriptors);
 	}
 
 	/**

@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogSettings;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
 import org.eclipse.ui.PlatformUI;
@@ -139,8 +138,6 @@ public class RefactoringHistoryDialog extends Dialog {
 				close();
 			}
 		};
-		button.addSelectionListener(adapter);
-		button= createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		button.addSelectionListener(adapter);
 	}
 

@@ -10,23 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 
@@ -34,29 +18,21 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringPreferenceConstants;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
-import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
-import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferencePageContainer;
 
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -64,12 +40,13 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
 
 import org.eclipse.ltk.ui.refactoring.RefactoringUI;
+import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * Property page for the project refactoring history.
+ * Property page for a project's refactoring history.
  * 
  * @since 3.2
  */
@@ -80,9 +57,6 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 	/** The refactoring preference */
 	private boolean fHasProjectHistory= false;
-
-	/** The refactoring history control */
-	private ExportRefactoringHistoryControl fHistoryControl= null;
 
 	/** The preferences working copy manager, or <code>null</code> */
 	private IWorkingCopyManager fManager= null;
@@ -101,29 +75,14 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		final GridLayout layout= new GridLayout();
 		layout.marginWidth= 0;
 		layout.marginHeight= 0;
-		layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.marginRight= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
 
 		final Label label= new Label(composite, SWT.WRAP);
 		label.setText(RefactoringUIMessages.RefactoringPropertyPage_label_message);
 
-		fHistoryControl= (ExportRefactoringHistoryControl) RefactoringUI.createRefactoringExportControl(composite, new RefactoringHistoryControlConfiguration(getCurrentProject(), true, true));
-		fHistoryControl.createControl();
-
-		fHistoryControl.getExportAllButton().addSelectionListener(new SelectionAdapter() {
-
-			public final void widgetSelected(final SelectionEvent event) {
-				final RefactoringHistory history= fHistoryControl.getInput();
-				if (history != null)
-					handleExport(RefactoringUIMessages.ExportRefactoringHistoryControl_export_all_caption, history.getDescriptors());
-			}
-		});
-		fHistoryControl.getExportButton().addSelectionListener(new SelectionAdapter() {
-
-			public final void widgetSelected(final SelectionEvent event) {
-				handleExport(RefactoringUIMessages.ExportRefactoringHistoryControl_export_caption, fHistoryControl.getCheckedDescriptors());
-			}
-		});
+		final IRefactoringHistoryControl control= (IRefactoringHistoryControl) RefactoringUI.createRefactoringHistoryControl(composite, new RefactoringHistoryControlConfiguration(getCurrentProject(), true, false));
+		control.createControl();
 
 		fEnableButton= new Button(composite, SWT.CHECK);
 		fEnableButton.setText(RefactoringUIMessages.RefactoringPropertyPage_enable_message);
@@ -139,7 +98,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
 			try {
 				service.connect();
-				fHistoryControl.setInput(service.getProjectHistory(project, null));
+				control.setInput(service.getProjectHistory(project, null));
 			} finally {
 				service.disconnect();
 			}
@@ -172,93 +131,6 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		if (manager != null)
 			return manager.getWorkingCopy(preferences);
 		return preferences;
-	}
-
-	/**
-	 * Handles the export event.
-	 * 
-	 * @param caption
-	 *            the caption of the export dialog
-	 * @param proxies
-	 *            the refactoring descriptor proxies to export
-	 */
-	private void handleExport(final String caption, final RefactoringDescriptorProxy[] proxies) {
-		Assert.isNotNull(caption);
-		Assert.isNotNull(proxies);
-		RefactoringDescriptorProxy[] writable= proxies;
-		final FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
-		dialog.setText(caption);
-		dialog.setFilterNames(new String[] { RefactoringUIMessages.ExportRefactoringHistoryControl_file_filter_name, RefactoringUIMessages.ExportRefactoringHistoryControl_wildcard_filter_name });
-		dialog.setFilterExtensions(new String[] { RefactoringUIMessages.ExportRefactoringHistoryControl_file_filter_extension, RefactoringUIMessages.ExportRefactoringHistoryControl_wildcard_filter_extension });
-		dialog.setFileName(RefactoringUIMessages.ExportRefactoringHistoryControl_file_default_name);
-		final String path= dialog.open();
-		if (path != null) {
-			final File file= new File(path);
-			if (file.exists()) {
-				final MessageDialog message= new MessageDialog(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, null, Messages.format(RefactoringUIMessages.ExportRefactoringHistoryControl_file_overwrite_query, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}), MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
-				final int result= message.open();
-				if (result == 0) {
-					InputStream stream= null;
-					try {
-						stream= new BufferedInputStream(new FileInputStream(file));
-						final RefactoringDescriptorProxy[] existing= RefactoringCore.getRefactoringHistoryService().readRefactoringHistory(stream, RefactoringDescriptor.NONE).getDescriptors();
-						final Set set= new HashSet();
-						for (int index= 0; index < existing.length; index++)
-							set.add(existing[index]);
-						for (int index= 0; index < proxies.length; index++)
-							set.add(proxies[index]);
-						writable= new RefactoringDescriptorProxy[set.size()];
-						set.toArray(writable);
-					} catch (FileNotFoundException exception) {
-						MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, exception.getLocalizedMessage());
-					} catch (CoreException exception) {
-						final Throwable throwable= exception.getStatus().getException();
-						if (throwable instanceof IOException)
-							MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
-						else
-							RefactoringUIPlugin.log(exception);
-					} finally {
-						if (stream != null) {
-							try {
-								stream.close();
-							} catch (IOException exception) {
-								// Do nothing
-							}
-						}
-					}
-				} else if (result == 2)
-					return;
-			}
-			OutputStream stream= null;
-			try {
-				stream= new BufferedOutputStream(new FileOutputStream(file));
-				Arrays.sort(writable, new Comparator() {
-
-					public final int compare(final Object first, final Object second) {
-						final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
-						final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
-						return (int) (predecessor.getTimeStamp() - successor.getTimeStamp());
-					}
-				});
-				RefactoringCore.getRefactoringHistoryService().writeRefactoringDescriptors(writable, stream, RefactoringDescriptor.NONE, new NullProgressMonitor());
-			} catch (CoreException exception) {
-				final Throwable throwable= exception.getStatus().getException();
-				if (throwable instanceof IOException)
-					MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
-				else
-					RefactoringUIPlugin.log(exception);
-			} catch (FileNotFoundException exception) {
-				MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, exception.getLocalizedMessage());
-			} finally {
-				if (stream != null) {
-					try {
-						stream.close();
-					} catch (IOException exception) {
-						// Do nothing
-					}
-				}
-			}
-		}
 	}
 
 	/**
