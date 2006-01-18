@@ -1279,8 +1279,19 @@ public class EclipseTest extends ResourceTest {
 			public void run(IProgressMonitor monitor) {
 				for (int i = 0; i < projects.length; i++) {
 					try {
-						if (projects[i].exists())
-							projects[i].delete(true, null);
+						if (projects[i].exists()) {
+							try {
+								projects[i].delete(true, null);
+							} catch (CoreException e) {
+								// Ignore the exception and try again after making
+								// sure the project doesn't contain any read-only resources
+								ensureNotReadOnly(projects[i]);
+								if (projects[i].exists()) {
+									projects[i].refreshLocal(IResource.DEPTH_INFINITE, null);
+									projects[i].delete(true, null);
+								}
+							}
+						}
 					} catch (CoreException e) {
 						write(new CVSStatus(IStatus.ERROR, "Could not delete project " + projects[i].getName(), e), 0);
 						failures.put(projects[i], e);
