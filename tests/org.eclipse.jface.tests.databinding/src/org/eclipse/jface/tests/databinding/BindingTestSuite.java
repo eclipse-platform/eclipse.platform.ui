@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
+import org.eclipse.jface.databinding.SelectionAwareUpdatableCollectionTest;
+import org.eclipse.jface.databinding.UpdatableCollectionTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 
 import junit.framework.Test;
@@ -29,6 +31,8 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(UpdatableTest.class);
 		addTestSuite(JavaBeansScalarUpdatableValueFactoryTest.class);
 		addTestSuite(DatabindingContextTest.class);
+		addTestSuite(UpdatableCollectionTest.class);
+		addTestSuite(SelectionAwareUpdatableCollectionTest.class);
 		addTest(BindingScenariosTestSuite.suite());
 	}
 }

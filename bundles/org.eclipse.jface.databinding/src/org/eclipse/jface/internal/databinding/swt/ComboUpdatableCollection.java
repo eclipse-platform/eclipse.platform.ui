@@ -12,8 +12,7 @@ package org.eclipse.jface.internal.databinding.swt;
 
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IUpdatableCollection;
-import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.SelectionAwareUpdatableCollection;
 import org.eclipse.jface.databinding.swt.SWTProperties;
 import org.eclipse.jface.databinding.viewers.ViewersProperties;
 import org.eclipse.swt.events.ModifyEvent;
@@ -24,7 +23,7 @@ import org.eclipse.swt.widgets.Combo;
  * @since 3.2
  *
  */
-public class ComboUpdatableCollection extends Updatable implements IUpdatableCollection {
+public class ComboUpdatableCollection extends SelectionAwareUpdatableCollection {
 	
 	private final Combo combo;
 
@@ -117,4 +116,33 @@ public class ComboUpdatableCollection extends Updatable implements IUpdatableCol
 		return String.class;
 	}
 
+	public Object getSelectedObject() {
+		SyncRunnable runnable = new SyncRunnable() {
+			public Object run() {
+				int index = combo.getSelectionIndex();
+				if (index > -1) {
+					return combo.getItem(index);
+				}
+				return null;
+			}
+		};
+		return runnable.runOn(combo.getDisplay());
+	}
+
+	public void setSelectedObject(final Object object) {
+		SyncRunnable runnable = new SyncRunnable() {
+			public Object run() {
+				if (object == null) {
+					combo.deselectAll();
+				} else {
+					int index = combo.indexOf((String) object);
+					if (index != -1) {
+						combo.select(index);
+					}
+				}
+				return null;
+			}
+		};
+		runnable.runOn(combo.getDisplay());
+	}
 }

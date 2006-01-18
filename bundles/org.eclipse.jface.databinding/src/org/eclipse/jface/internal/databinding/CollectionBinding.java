@@ -141,19 +141,10 @@ public class CollectionBinding extends Binding {
 	private void copyContents(IUpdatableCollection destination,
 			IUpdatableCollection source) {
 		try {
-			updating = true;
-			// Remove old, if any
-			while (destination.getSize() > 0)
-				destination.removeElement(0);
-
-			// Set the target List with the content of the Model List
-			for (int i = 0; i < source.getSize(); i++) {
-				// TODO: Shouldn't this go through the converter?
-				destination.addElement(source.getElement(i), i);
-			}
+		   updating = true;
+           destination.setElements(source.getElements());
 		} finally {
 			updating = false;
 		}
 	}
-
 }

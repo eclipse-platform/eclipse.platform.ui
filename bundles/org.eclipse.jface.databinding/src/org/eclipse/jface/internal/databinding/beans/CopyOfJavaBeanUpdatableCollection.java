@@ -19,20 +19,18 @@ import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.JavaBeansScalarUpdatableValueFactory;
 import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.UpdatableCollection;
 import org.eclipse.jface.util.Assert;
 
 /**
  * @since 3.2
  * 
  */
-public class CopyOfJavaBeanUpdatableCollection extends Updatable implements
-		IUpdatableCollection {
+public class CopyOfJavaBeanUpdatableCollection extends UpdatableCollection {
 
 //	private PropertyChangeListener collectionListener = new PropertyChangeListener() {
 //		public void propertyChange(java.beans.PropertyChangeEvent event) {

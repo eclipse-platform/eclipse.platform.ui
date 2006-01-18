@@ -14,21 +14,21 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IUpdatableCollection;
-import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.UpdatableCollection;
 import org.eclipse.jface.util.Assert;
 
 /**
  * @since 3.2
  * 
  */
-public class JavaBeanUpdatableCollection extends Updatable implements
-		IUpdatableCollection {
+public class JavaBeanUpdatableCollection extends UpdatableCollection {
 	private final Object object;
 
 	private PropertyChangeListener collectionListener = new PropertyChangeListener() {
@@ -218,4 +218,11 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		return elementType;
 	}
 
+	public List getElements() {
+		List elements = new ArrayList();
+		for (int i = 0; i < getSize(); i++) {
+			elements.add(getElement(i));
+		}
+		return elements;
+	}
 }

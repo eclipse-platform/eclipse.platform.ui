@@ -57,10 +57,12 @@ public class TableViewerUpdatableCollectionExtended extends
 		}
 
 		private Object getConvertedValue(Object element, Column column) {
-			Object value = getValue(element, column);
-			Object convertedValue = column.getConverter().convertModelToTarget(
-					value);
-			return convertedValue;
+			IConverter converter = column.getConverter();
+			if (converter != null) {
+				Object convertedValue = column.getConverter().convertModelToTarget(getValue(element, column));
+				return convertedValue;
+			}
+			return null;
 		}
 
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -68,28 +70,42 @@ public class TableViewerUpdatableCollectionExtended extends
 					&& columnIndex >= 0) {
 				Column column = getColumn(columnIndex);
 				IConverter converter = column.getConverter();
-				if (converter.getTargetType().equals(ViewerLabel.class)) {
+				if (converter != null && converter.getTargetType().equals(ViewerLabel.class)) {
 					ViewerLabel viewerLabel = (ViewerLabel) getConvertedValue(
 							element, column);
-					return viewerLabel.getImage();
+					if (viewerLabel != null) {
+						return viewerLabel.getImage();
+					}
 				}
 			}
 			return null;
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			Object convertedValue = null;
+			Object value = null;
 			if (columnIndex < tableViewerDescription.getColumnCount()
 					&& columnIndex >= 0) {
 				Column column = getColumn(columnIndex);
-				convertedValue = getConvertedValue(element, column);
-				IConverter converter = column.getConverter();
-				if (converter.getTargetType().equals(ViewerLabel.class)) {
-					ViewerLabel viewerLabel = (ViewerLabel) convertedValue;
-					return viewerLabel.getText();
+				value = getConvertedValue(element, column);
+				if (value != null) {
+					IConverter converter = column.getConverter();
+					if (converter.getTargetType().equals(ViewerLabel.class)) {
+						ViewerLabel viewerLabel = (ViewerLabel) value;
+						return viewerLabel.getText();
+					}
 				}
+				if (value == null) {
+					value = getValue(element, column);
+				}
+				
 			}
-			return convertedValue == null ? "" : (String) convertedValue; //$NON-NLS-1$
+			if (value == null) {
+				return ""; //$NON-NLS-1$
+			} else if (value instanceof String) {
+				return (String) value;
+			} else {
+				return value.toString();
+			}
 		}
 
 		// In case that no TreeColumn() was added to the visual
@@ -164,7 +180,7 @@ public class TableViewerUpdatableCollectionExtended extends
 			private Column findColumn(String property) {
 				for (int i = 0; i < tableViewerDescription.getColumnCount(); i++) {
 					Column column = tableViewerDescription.getColumn(i);
-					if (column.getPropertyName().equals(property)) {
+					if (column.getPropertyName() != null && column.getPropertyName().equals(property)) {
 						return column;
 					}
 				}

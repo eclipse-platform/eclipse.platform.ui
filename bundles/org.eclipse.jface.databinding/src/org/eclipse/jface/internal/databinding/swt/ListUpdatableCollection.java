@@ -11,8 +11,7 @@
 package org.eclipse.jface.internal.databinding.swt;
 
 import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IUpdatableCollection;
-import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.SelectionAwareUpdatableCollection;
 import org.eclipse.jface.databinding.swt.SWTProperties;
 import org.eclipse.jface.databinding.viewers.ViewersProperties;
 import org.eclipse.swt.widgets.List;
@@ -21,7 +20,7 @@ import org.eclipse.swt.widgets.List;
  * @since 3.2
  *
  */
-public class ListUpdatableCollection extends Updatable implements IUpdatableCollection {
+public class ListUpdatableCollection extends SelectionAwareUpdatableCollection {
 	
 	private final List list;
 
@@ -109,4 +108,23 @@ public class ListUpdatableCollection extends Updatable implements IUpdatableColl
 		return String.class;
 	}
 
+	public Object getSelectedObject() {
+		if (list.getSelectionCount() > 0) {
+			return list.getSelection()[0];
+		} 
+		return null;
+	}
+
+	public void setSelectedObject(Object object) {
+		if (object == null) {
+			list.setSelection(-1);
+		} else {
+			int index = list.indexOf((String) object);
+			if (index > -1) {
+				list.setSelection(index);
+			}
+		}
+	}
+
+	
 }

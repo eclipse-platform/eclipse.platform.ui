@@ -1,5 +1,8 @@
 package org.eclipse.jface.databinding;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Class UpdatableCollection.  Provides a base class for clients that wish to
  * implement IUpdatableCollection and permits evolution of the IUpdatableCollection
@@ -38,4 +41,24 @@ public abstract class UpdatableCollection extends Updatable implements IUpdatabl
 	 * @see org.eclipse.jface.databinding.IUpdatableCollection#getElementType()
 	 */
 	public abstract Class getElementType();
+
+	public List getElements() {
+		List elements = new ArrayList();
+		for (int i = 0; i < getSize(); i++) {
+			elements.add(getElement(i));
+		}
+		return elements;
+	}
+
+	public void setElements(List elements) {
+		while (getSize() > 0) {
+			removeElement(0);
+		}
+		
+		for (int i = 0; i < elements.size(); i++) {
+			addElement(elements.get(i), i);
+		}
+	}
+	
+	
 }

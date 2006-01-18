@@ -16,15 +16,14 @@ import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.UpdatableCollection;
 import org.eclipse.jface.util.Assert;
 
 /**
  * @since 3.2
  * 
  */
-public class NestedUpdatableCollection extends Updatable implements
-		IUpdatableCollection {
+public class NestedUpdatableCollection extends UpdatableCollection {
 
 	private boolean updating = false;
 

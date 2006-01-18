@@ -13,11 +13,13 @@ package org.eclipse.jface.internal.databinding.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.databinding.IUpdatableCollection;
-import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.BindingException;
+import org.eclipse.jface.databinding.SelectionAwareUpdatableCollection;
 import org.eclipse.jface.internal.databinding.swt.AsyncRunnable;
 import org.eclipse.jface.internal.databinding.swt.SyncRunnable;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -27,10 +29,9 @@ import org.eclipse.jface.viewers.Viewer;
  * (though I'm assuming the viewer collection is being used as the target in this case).  
  * Note that CollectionBinding copies one at a time from the model to the target as well.
  */
-public class TableViewerUpdatableCollection extends Updatable implements
-		IUpdatableCollection {
+public class TableViewerUpdatableCollection extends SelectionAwareUpdatableCollection {
 
-	private final TableViewer viewer;
+	protected final TableViewer viewer;
 
 	private List elements = new ArrayList();
 
@@ -119,12 +120,53 @@ public class TableViewerUpdatableCollection extends Updatable implements
 		runnable.runOn(viewer.getControl().getDisplay());
 	}
 
-	public Object getElement(int index) {
-		return elements.get(index);
+	public Object getElement(final int index) {
+		SyncRunnable runnable = new SyncRunnable(){
+			public Object run(){
+				return elements.get(index);
+			}
+		};
+		return runnable.runOn(viewer.getControl().getDisplay());
+	}
+
+	public Object getSelectedObject() {
+		SyncRunnable runnable = new SyncRunnable(){
+			public Object run(){
+				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
+				if (selection.isEmpty()) {
+					return null;
+				}
+				return selection.getFirstElement();
+			}
+		};
+		return runnable.runOn(viewer.getControl().getDisplay());
 	}
 
 	public Class getElementType() {
 		return Object.class;
 	}
 
+	public void setSelectedObject(Object object) {
+	    ISelection selection;
+		if (object instanceof ISelection) {
+			throw new BindingException("Selected object can not be an ISelection."); //$NON-NLS-1$
+		}
+		if (object == null) {
+			selection = new StructuredSelection();
+		} else {
+			if (getElements().contains(object)) {
+				selection = new StructuredSelection(object);
+			} else { 
+				return;
+			}
+		}
+		final ISelection selectedObject = selection;
+		SyncRunnable runnable = new SyncRunnable(){
+			public Object run(){
+				viewer.setSelection(selectedObject);
+				return null;
+			}
+		};
+		runnable.runOn(viewer.getControl().getDisplay());
+	}
 }

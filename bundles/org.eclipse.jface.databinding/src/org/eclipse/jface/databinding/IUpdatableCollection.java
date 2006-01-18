@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding;
 
+import java.util.List;
+
 /**
  * 
  * IMPORTANT: This interface is not intended to be implemented directly by clients.  
@@ -61,4 +63,21 @@ public interface IUpdatableCollection extends IUpdatable {
 	 * @return the element type
 	 */
 	public Class getElementType();
+	
+	/**
+	 * Method getElements. Return all the elements in the collection. The method
+	 * must return the elements in a new List instance, separate from the
+	 * wrapped collection.
+	 * 
+	 * @return The elements in the underlying collection in a new List.
+	 */
+	public List getElements();
+	
+	/**
+	 * Method setElements. Set all the elements in the underlying 
+	 * collection from the specified List elements.
+	 * 
+	 * @param elements The elements to add.
+	 */
+	public void setElements(List elements);
 }

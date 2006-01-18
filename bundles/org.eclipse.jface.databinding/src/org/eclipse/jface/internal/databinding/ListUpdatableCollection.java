@@ -13,15 +13,13 @@ package org.eclipse.jface.internal.databinding;
 import java.util.List;
 
 import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IUpdatableCollection;
-import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.UpdatableCollection;
 
 /**
  * @since 3.2
  *
  */
-public class ListUpdatableCollection extends Updatable implements
-		IUpdatableCollection {
+public class ListUpdatableCollection extends UpdatableCollection {
 
 	private final List elements;
 

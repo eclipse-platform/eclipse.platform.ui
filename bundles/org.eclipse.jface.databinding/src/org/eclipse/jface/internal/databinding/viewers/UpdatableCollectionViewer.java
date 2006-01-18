@@ -13,19 +13,21 @@ package org.eclipse.jface.internal.databinding.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IUpdatableCollection;
-import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.SelectionAwareUpdatableCollection;
+import org.eclipse.jface.internal.databinding.swt.SyncRunnable;
 import org.eclipse.jface.viewers.AbstractListViewer;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @since 3.2
  *
  */
-public class UpdatableCollectionViewer extends Updatable implements
-		IUpdatableCollection {
+public class UpdatableCollectionViewer extends SelectionAwareUpdatableCollection {
 
 	private final AbstractListViewer viewer;
 
@@ -133,4 +135,47 @@ public class UpdatableCollectionViewer extends Updatable implements
 		return Object.class;
 	}
 
+	public Object getSelectedObject() {
+		SyncRunnable runnable = new SyncRunnable(){
+			public Object run(){
+				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
+				if (selection.isEmpty()) {
+					return null;
+				}
+				return selection.getFirstElement();
+			}
+		};
+		return runnable.runOn(viewer.getControl().getDisplay());
+	}
+	
+	public void setSelectedObject(Object object) {
+	    ISelection selection;
+		if (object instanceof ISelection) {
+			throw new BindingException("Selected object can not be an ISelection."); //$NON-NLS-1$
+		}
+		if (object == null) {
+			selection = new StructuredSelection();
+		} else {
+			if (getElements().contains(object)) {
+				selection = new StructuredSelection(object);
+			} else { 
+				return;
+			}
+		}
+		final ISelection selectedObject = selection;
+		SyncRunnable runnable = new SyncRunnable(){
+			public Object run(){
+				viewer.setSelection(selectedObject);
+				return null;
+			}
+		};
+		runnable.runOn(viewer.getControl().getDisplay());
+	}
+
+
+	public void setElements(List elements) {
+		Object selection = getSelectedObject();
+		super.setElements(elements);
+		setSelectedObject(selection);
+	}
 }
