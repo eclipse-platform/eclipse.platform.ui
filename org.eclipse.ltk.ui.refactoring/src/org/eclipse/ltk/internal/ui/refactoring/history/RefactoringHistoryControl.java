@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -28,6 +27,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
@@ -459,7 +459,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		String text= null;
 		final IProject project= fControlConfiguration.getProject();
 		if (project != null)
-			text= MessageFormat.format(fControlConfiguration.getProjectPattern(), new String[] { project.getName()});
+			text= Messages.format(fControlConfiguration.getProjectPattern(), new String[] { project.getName()});
 		else
 			text= fControlConfiguration.getWorkspaceCaption();
 		return text;

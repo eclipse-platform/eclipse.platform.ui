@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,6 +23,7 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
+import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringInstanceFactory;
@@ -92,9 +91,9 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 			if (arguments != null)
 				status.merge(component.initialize(arguments));
 			else
-				status.addFatalError(MessageFormat.format(RefactoringCoreMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
+				status.addFatalError(Messages.format(RefactoringCoreMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
 		} else
-			status.addFatalError(MessageFormat.format(RefactoringCoreMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
+			status.addFatalError(Messages.format(RefactoringCoreMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
 		return status;
 	}
 

@@ -11,7 +11,6 @@
 package org.eclipse.ltk.ui.refactoring.history;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -268,9 +267,9 @@ public class RefactoringHistoryWizard extends Wizard {
 			if (arguments != null)
 				status.merge(component.initialize(arguments));
 			else
-				status.addFatalError(MessageFormat.format(RefactoringUIMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
+				status.addFatalError(Messages.format(RefactoringUIMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
 		} else
-			status.addFatalError(MessageFormat.format(RefactoringUIMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
+			status.addFatalError(Messages.format(RefactoringUIMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
 		return status;
 	}
 

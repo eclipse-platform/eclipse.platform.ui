@@ -12,7 +12,6 @@ package org.eclipse.ltk.ui.refactoring.history;
 
 import java.text.DateFormat;
 import java.text.Format;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -22,6 +21,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryDate;
@@ -110,7 +110,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 		if (fControlConfiguration.isTimeDisplayed()) {
 			final long stamp= descriptor.getTimeStamp();
 			if (stamp >= 0)
-				return MessageFormat.format(fControlConfiguration.getRefactoringPattern(), new String[] { DateFormat.getTimeInstance().format(new Date(stamp)), descriptor.getDescription()});
+				return Messages.format(fControlConfiguration.getRefactoringPattern(), new String[] { DateFormat.getTimeInstance().format(new Date(stamp)), descriptor.getDescription()});
 		}
 		return descriptor.getDescription();
 	}
