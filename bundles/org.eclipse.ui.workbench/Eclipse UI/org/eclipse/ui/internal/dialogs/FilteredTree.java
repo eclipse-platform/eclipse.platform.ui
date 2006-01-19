@@ -285,9 +285,11 @@ public class FilteredTree extends Composite {
 						Display display = filterText.getDisplay();
 						display.asyncExec(new Runnable() {
 		                    public void run() {
-								if (getInitialText().equals(filterText.getText().trim())){
-									filterText.selectAll();
-								}
+		                    	if (!filterText.isDisposed()){
+									if (getInitialText().equals(filterText.getText().trim())){
+										filterText.selectAll();
+									}
+		                    	}
 		                    }
 						});
 					}
