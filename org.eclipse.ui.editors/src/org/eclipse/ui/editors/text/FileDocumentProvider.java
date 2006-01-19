@@ -1066,7 +1066,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	protected ISchedulingRule getResetRule(Object element) {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
-			return fResourceRuleFactory.modifyRule(input.getFile());
+			return fResourceRuleFactory.refreshRule(input.getFile());
 		}
 		return null;
 	}

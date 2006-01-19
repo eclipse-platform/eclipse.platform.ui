@@ -711,7 +711,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 				public ISchedulingRule getSchedulingRule() {
 					if (info.fElement instanceof IFileEditorInput) {
 						IFileEditorInput input= (IFileEditorInput) info.fElement;
-						return fResourceRuleFactory.modifyRule((input).getFile());
+						return fResourceRuleFactory.refreshRule((input).getFile());
 					}
 					return null;
 				}
