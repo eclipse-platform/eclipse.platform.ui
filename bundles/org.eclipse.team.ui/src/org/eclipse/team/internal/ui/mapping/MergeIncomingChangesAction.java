@@ -32,7 +32,6 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 
 	public MergeIncomingChangesAction(ISynchronizePageConfiguration configuration) {
 		super(null, configuration);
-		Utils.initAction(this, "action.mergeAll."); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

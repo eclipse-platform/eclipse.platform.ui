@@ -47,7 +47,7 @@ public abstract class SubscriberMergeContext extends MergeContext {
 		this.subscriber = subscriber;
 	}
 
-	private static String getType(Subscriber subscriber) {
+	private static int getType(Subscriber subscriber) {
 		return subscriber.getResourceComparator().isThreeWay()
 			? THREE_WAY : TWO_WAY;
 	}

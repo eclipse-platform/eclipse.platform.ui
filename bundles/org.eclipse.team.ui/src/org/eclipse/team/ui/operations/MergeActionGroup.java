@@ -1,6 +1,8 @@
 package org.eclipse.team.ui.operations;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.team.core.mapping.IMergeContext;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.*;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
@@ -45,6 +47,11 @@ public class MergeActionGroup extends SynchronizePageActionGroup {
 	public static final String OTHER_ACTION_GROUP = "other"; //$NON-NLS-1$
 	
 	/**
+	 * The id used to identify the Merge All action.
+	 */
+	protected static final String MERGE_ALL_ACTION_ID = "org.eclipse.team.ui.mergeAll"; //$NON-NLS-1$
+	
+	/**
 	 * Create a merge action group.
 	 */
 	public MergeActionGroup() {
@@ -61,6 +68,7 @@ public class MergeActionGroup extends SynchronizePageActionGroup {
 		ResourceMappingSynchronizeParticipant participant = ((ResourceMappingSynchronizeParticipant)configuration.getParticipant());
 		if (participant.isMergingEnabled()) {
 			updateToolbarAction = new MergeIncomingChangesAction(configuration);
+			configureMergeAction(MERGE_ALL_ACTION_ID, updateToolbarAction);
 			appendToGroup(
 					ISynchronizePageConfiguration.P_TOOLBAR_MENU,
 					MERGE_ACTION_GROUP,
@@ -92,15 +100,19 @@ public class MergeActionGroup extends SynchronizePageActionGroup {
 	private void addMergeActions(CommonMenuManager cmm) {
 		ResourceMappingSynchronizeParticipant participant = ((ResourceMappingSynchronizeParticipant)getConfiguration().getParticipant());
 		if (participant.isMergingEnabled()) {
-			MergeAction merge = new MergeAction(SynchronizationActionProvider.MERGE_ACTION_ID, cmm, getConfiguration());
-			configureMergeAction(SynchronizationActionProvider.MERGE_ACTION_ID, merge);
-			addToContextMenu(SynchronizationActionProvider.MERGE_ACTION_ID, merge, cmm);
+			if (!isTwoWayMerge()) {
+				MergeAction merge = new MergeAction(SynchronizationActionProvider.MERGE_ACTION_ID, cmm, getConfiguration());
+				configureMergeAction(SynchronizationActionProvider.MERGE_ACTION_ID, merge);
+				addToContextMenu(SynchronizationActionProvider.MERGE_ACTION_ID, merge, cmm);
+			}
 			MergeAction overwrite = new MergeAction(SynchronizationActionProvider.OVERWRITE_ACTION_ID, cmm, getConfiguration());
 			configureMergeAction(SynchronizationActionProvider.OVERWRITE_ACTION_ID, overwrite);
 			addToContextMenu(SynchronizationActionProvider.OVERWRITE_ACTION_ID, overwrite, cmm);
-			MergeAction markAsMerged = new MergeAction(SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID, cmm, getConfiguration());
-			configureMergeAction(SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID, markAsMerged);
-			addToContextMenu(SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID, markAsMerged, cmm);
+				if (!isTwoWayMerge()) {
+				MergeAction markAsMerged = new MergeAction(SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID, cmm, getConfiguration());
+				configureMergeAction(SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID, markAsMerged);
+				addToContextMenu(SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID, markAsMerged, cmm);
+			}
 		}
 	}
 	
@@ -118,10 +130,30 @@ public class MergeActionGroup extends SynchronizePageActionGroup {
 		if (mergeActionId == SynchronizationActionProvider.MERGE_ACTION_ID) {
 			Utils.initAction(action, "action.merge."); //$NON-NLS-1$
 		} else if (mergeActionId == SynchronizationActionProvider.OVERWRITE_ACTION_ID) {
-			Utils.initAction(action, "action.overwrite."); //$NON-NLS-1$
+			if (isTwoWayMerge()) {
+				Utils.initAction(action, "action.replace."); //$NON-NLS-1$
+			} else {
+				Utils.initAction(action, "action.overwrite."); //$NON-NLS-1$
+			}
 		} else if (mergeActionId == SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID) {
 			Utils.initAction(action, "action.markAsMerged."); //$NON-NLS-1$
+		} else if (mergeActionId == MERGE_ALL_ACTION_ID) {
+			if (isTwoWayMerge()) {
+				Utils.initAction(action, "action.replaceAll."); //$NON-NLS-1$
+			} else {
+				Utils.initAction(action, "action.mergeAll."); //$NON-NLS-1$
+			}
 		}
+	}
+	
+	private boolean isTwoWayMerge() {
+		ResourceMappingSynchronizeParticipant participant = ((ResourceMappingSynchronizeParticipant)getConfiguration().getParticipant());
+		ISynchronizationContext context = participant.getContext();
+		if (context instanceof IMergeContext) {
+			IMergeContext mc = (IMergeContext) context;
+			return (mc.getMergeType() == ISynchronizationContext.TWO_WAY);
+		}
+		return false;
 	}
 	
 	/**

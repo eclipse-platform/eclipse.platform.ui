@@ -40,6 +40,21 @@ import org.eclipse.team.core.mapping.provider.MergeContext;
 public interface IMergeContext extends ISynchronizationContext {
 
 	/**
+	 * Return the type of merge that will be performed when using this
+	 * context (either {@link ISynchronizationContext#TWO_WAY} or
+	 * {@link ISynchronizationContext#THREE_WAY}). In most cases,
+	 * this type which mathc that returned by {@link ISynchronizationContext#getType()}.
+	 * However, for some THREE_WAY synchronizations, the merge type may
+	 * be TWO_WAY whioch indicates that clients of the context should
+	 * ignore locla changes when performing merges. This capability is
+	 * provided to support replace operations that support three-way
+	 * preview but ignore local changes when repalcing.
+	 * @return the type of merge that will be performed when using this
+	 * context.
+	 */
+	public int getMergeType();
+	
+	/**
 	 * Method that allows the model merger to signal that the file associated
 	 * with the given diff node has been completely merged. Model mergers can
 	 * call this method if they have transfered all changes from a remote file
@@ -103,8 +118,8 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * Method that can be called by the model merger to attempt a file-system
 	 * level merge. This is useful for cases where the model merger does not
 	 * need to do any special processing to perform the merge. By default, this
-	 * method attempts to use an appropriate {@link IStreamMerger} to merge the
-	 * files covered by the provided traversals. If a stream merger cannot be
+	 * method attempts to use an appropriate {@link IStorageMerger} to merge the
+	 * files covered by the provided traversals. If a storage merger cannot be
 	 * found, the text merger is used. If this behavior is not desired,
 	 * sub-classes of {@link MergeContext} may override this method.
 	 * <p>
@@ -131,12 +146,14 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * with namespace conflicts. Implementors should ensure that any namespace
 	 * conflicts are dealt with before the merger is invoked.
 	 * <p>
-	 * The deltas provided to this method should be those obtained from the tree ({@link ISynchronizationContext#getDiffTree()})
+	 * The deltas provided to this method should be those obtained from the tree 
+	 * ({@link ISynchronizationContext#getDiffTree()})
 	 * of this context. Any resource changes triggered by this merge will be
 	 * reported through the resource delta mechanism and the change notification
 	 * mechanisms of the delta tree associated with this context.
 	 * <p>
-	 * For two-way merging, clients can either accept changes using the
+	 * For two-way merging, as indicated by either the {@link ISynchronizationContext#getType()}
+	 * or {@link #getMergeType()} methods, clients can either accept changes using the
 	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method or reject
 	 * them using {@link #markAsMerged(IFile, boolean, IProgressMonitor) }.
 	 * Three-way changes are a bit more complicated. The following list

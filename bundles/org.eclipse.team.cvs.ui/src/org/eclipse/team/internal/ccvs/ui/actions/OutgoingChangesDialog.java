@@ -120,7 +120,7 @@ public class OutgoingChangesDialog extends DetailsDialog {
 		PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
-					context[0] = WorkspaceSubscriberContext.createContext(scope, false, new NullProgressMonitor());
+					context[0] = WorkspaceSubscriberContext.createContext(scope, false, ISynchronizationContext.THREE_WAY, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				}

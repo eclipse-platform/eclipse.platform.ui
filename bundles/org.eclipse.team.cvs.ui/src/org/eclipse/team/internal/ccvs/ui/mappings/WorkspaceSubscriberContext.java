@@ -31,15 +31,18 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 
-	public static IMergeContext createContext(IResourceMappingScope scope, boolean refresh, IProgressMonitor monitor) throws CoreException {
+	private final int type;
+
+	public static IMergeContext createContext(IResourceMappingScope scope, boolean refresh, int type, IProgressMonitor monitor) throws CoreException {
 		Subscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
-		WorkspaceSubscriberContext mergeContext = new WorkspaceSubscriberContext(subscriber, scope);
+		WorkspaceSubscriberContext mergeContext = new WorkspaceSubscriberContext(subscriber, scope, type);
 		mergeContext.initialize(monitor, refresh);
 		return mergeContext;
 	}
 	
-	protected WorkspaceSubscriberContext(Subscriber subscriber, IResourceMappingScope scope) {
+	protected WorkspaceSubscriberContext(Subscriber subscriber, IResourceMappingScope scope, int type) {
 		super(subscriber, scope);
+		this.type = type;
 	}
 
 	public void markAsMerged(final IDiffNode node, final boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
@@ -104,6 +107,9 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		// First, verify that the provided delta matches the current state
 		// i.e. it is possible that a concurrent change has occurred
 		SyncInfo info = getSyncInfo(getDiffTree().getResource(delta));
+		if (getMergeType() == ISynchronizationContext.TWO_WAY) {
+			force = true;
+		}
 		if (info == null || info.getKind() == SyncInfo.IN_SYNC || (SyncInfo.getDirection(info.getKind()) == SyncInfo.OUTGOING && !force)) {
 			// Seems like this one was already merged so return OK
 			return Status.OK_STATUS;
@@ -137,5 +143,11 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 			CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()),
 			cvsResources);
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.provider.MergeContext#getMergeType()
+	 */
+	public int getMergeType() {
+		return type;
+	}
 }

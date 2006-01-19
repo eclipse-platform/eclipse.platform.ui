@@ -30,7 +30,7 @@ import org.eclipse.team.internal.core.mapping.DiffCache;
 public abstract class SynchronizationContext implements ISynchronizationContext {
 
 	private IResourceMappingScope input;
-    private final String type;
+    private final int type;
     private final IResourceDiffTree deltaTree;
     private DiffCache cache;
 
@@ -40,7 +40,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
      * @param type the type of synchronization (ONE_WAY or TWO_WAY)
      * @param tree the sync info tree that contains all out-of-sync resources
      */
-    protected SynchronizationContext(IResourceMappingScope input, String type, IResourceDiffTree deltaTree) {
+    protected SynchronizationContext(IResourceMappingScope input, int type, IResourceDiffTree deltaTree) {
     	this.input = input;
 		this.type = type;
 		this.deltaTree = deltaTree;
@@ -56,7 +56,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getType()
 	 */
-	public String getType() {
+	public int getType() {
 		return type;
 	}
 

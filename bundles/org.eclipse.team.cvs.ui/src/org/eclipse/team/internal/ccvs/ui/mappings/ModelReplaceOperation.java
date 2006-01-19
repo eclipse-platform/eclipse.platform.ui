@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -42,14 +43,20 @@ public class ModelReplaceOperation extends ModelUpdateOperation {
 		return !context.getDiffTree().isEmpty();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.mappings.ModelUpdateOperation#getMergeType()
+	 */
+	protected int getMergeType() {
+		return ISynchronizationContext.TWO_WAY;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.operations.ResourceMappingMergeOperation#performMerge(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	protected boolean performMerge(IProgressMonitor monitor) throws CoreException {
 		// TODO: cancel must free context to avoid leaking
 		if (!hasLocalChanges() || promptForOverwrite()) {
-			// Merge all changes ignoring any locla changes
-			IDiffNode[] diffs = getContext().getDiffTree().getDiffs(getScope().getTraversals());
-			((IMergeContext)getContext()).merge(diffs, true /* overwrite */, monitor);
-			getContext().dispose();
-			return true;
+			return super.performMerge(monitor);
 		}
 		return false;
 	}

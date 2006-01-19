@@ -48,7 +48,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * Create a merge context.
 	 * @param type 
      */
-    protected MergeContext(IResourceMappingScope input, String type, IResourceDiffTree deltaTree) {
+    protected MergeContext(IResourceMappingScope input, int type, IResourceDiffTree deltaTree) {
     	super(input, type, deltaTree);
     }
     
@@ -96,10 +96,10 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.IMergeContext#merge(org.eclipse.team.core.diff.IDiffNode, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IStatus merge(IDiffNode delta, boolean force, IProgressMonitor monitor) throws CoreException {
+	public IStatus merge(IDiffNode delta, boolean ignoreLocalChanges, IProgressMonitor monitor) throws CoreException {
 		if (getDiffTree().getResource(delta).getType() != IResource.FILE)
 			return Status.OK_STATUS;
-    	if (delta instanceof IThreeWayDiff && !force) {
+    	if (delta instanceof IThreeWayDiff && !ignoreLocalChanges && getMergeType() == THREE_WAY) {
 			IThreeWayDiff twDelta = (IThreeWayDiff) delta;
         	int direction = twDelta.getDirection();
     		if (direction == IThreeWayDiff.OUTGOING) {
@@ -339,5 +339,12 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 			}
 		}
 		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IMergeContext#getMergeType()
+	 */
+	public int getMergeType() {
+		return getType();
 	}
 }

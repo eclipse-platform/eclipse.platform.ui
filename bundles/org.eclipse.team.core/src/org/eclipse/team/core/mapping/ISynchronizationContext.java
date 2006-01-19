@@ -56,13 +56,13 @@ public interface ISynchronizationContext {
 	 * Synchronization type constant that indicates that
 	 * context is a two-way synchronization.
 	 */
-	public final static String TWO_WAY = "two-way"; //$NON-NLS-1$
+	public final static int TWO_WAY = 2;
 	
 	/**
 	 * Synchronization type constant that indicates that
 	 * context is a three-way synchronization.
 	 */
-	public final static String THREE_WAY = "three-way"; //$NON-NLS-1$
+	public final static int THREE_WAY = 3;
 
 	/**
 	 * Return the input that defined the scope of this synchronization context.
@@ -98,19 +98,19 @@ public interface ISynchronizationContext {
 
 	/**
 	 * Return the synchronization type. A type of <code>TWO_WAY</code>
-	 * indicates that the synchronization information (i.e.
-	 * <code>SyncInfo</code>) associated with the context will also be
-	 * two-way (i.e. there is only a remote but no base involved in the
-	 * comparison used to determine the synchronization state of resources. A
-	 * type of <code>THREE_WAY</code> indicates that the synchronization
-	 * information will be three-way and include the local, base (or ancestor)
-	 * and remote.
+	 * indicates that the synchronization information associated with the
+	 * context will also be two-way {@link IDiffNode} instances (i.e. there is
+	 * only a remote but no base involved in the comparison used to determine
+	 * the synchronization state of resources. A type of <code>THREE_WAY</code>
+	 * indicates that the synchronization information will be three-way
+	 * {@link IThreeWayDiff} instances.
 	 * 
-	 * @return the type of merge to take place
+	 * @return the type of synchronization information available in the context
 	 * 
-	 * @see org.eclipse.team.core.synchronize.SyncInfo
+	 * @see IDiffNode
+	 * @see IThreeWayDiff
 	 */
-	public String getType();
+	public int getType();
 	
 	/**
 	 * Return the cache associated with this synchronization context.

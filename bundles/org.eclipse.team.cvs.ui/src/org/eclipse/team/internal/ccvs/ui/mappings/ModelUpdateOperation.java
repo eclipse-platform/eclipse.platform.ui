@@ -15,6 +15,7 @@ import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.IMergeContext;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -47,9 +48,17 @@ public class ModelUpdateOperation extends AbstractModelMergeOperation {
 	 */
 	protected IMergeContext buildMergeContext(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 100);
-		IMergeContext context = WorkspaceSubscriberContext.createContext(getScope(), true /* refresh */, Policy.subMonitorFor(monitor, 50));
+		IMergeContext context = WorkspaceSubscriberContext.createContext(getScope(), true /* refresh */, getMergeType(), Policy.subMonitorFor(monitor, 50));
 		cacheContents(getPart(), context, monitor);
 		monitor.done();
 		return context;
+	}
+
+	/**
+	 * Return the merge type associated with this operation.
+	 * @return the merge type associated with this operation
+	 */
+	protected int getMergeType() {
+		return ISynchronizationContext.THREE_WAY;
 	}
 }
