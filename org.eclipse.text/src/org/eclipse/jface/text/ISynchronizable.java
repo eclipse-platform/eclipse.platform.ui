@@ -31,6 +31,10 @@ public interface ISynchronizable {
 	 * <code>null</code> subsequent calls to specified methods of this object
 	 * are synchronized on this lock object. Which methods are synchronized is
 	 * specified by the implementer.
+	 * <p>
+	 * <em>You should not override an existing lock object unless you own
+	 * that lock object yourself.</em>
+	 * </p>
 	 *
 	 * @param lockObject the lock object. May be <code>null</code>.
 	 */
