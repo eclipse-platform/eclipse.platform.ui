@@ -11,15 +11,10 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.preferences.LaunchConfigurationsPreferencePage;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.custom.BusyIndicator;
 
 /**
  * provides the iplementation of the filtering action for the launch configuration view
@@ -46,20 +41,7 @@ public class FilterLaunchConfigurationAction extends AbstractLaunchConfiguration
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractLaunchConfigurationAction#performAction()
 	 */
 	protected void performAction() {
-		final IPreferenceNode targetNode = new PreferenceNode("org.eclipse.debug.ui.LaunchConfigurationsPreferenecPage",  //$NON-NLS-1$
-				new LaunchConfigurationsPreferencePage());
-		PreferenceManager manager = new PreferenceManager();
-		manager.addToRoot(targetNode);
-		final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
-		final boolean [] result = new boolean[] { false };
-		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
-			public void run() {
-				dialog.create();
-				dialog.setMessage(targetNode.getLabelText());
-				result[0]= (dialog.open() == Window.OK);
-			}
-		});	
-		
+		SWTUtil.showPreferencePage("org.eclipse.debug.ui.LaunchConfigurations", new LaunchConfigurationsPreferencePage()); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -68,6 +50,4 @@ public class FilterLaunchConfigurationAction extends AbstractLaunchConfiguration
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return true;
 	}
-
-	
 }

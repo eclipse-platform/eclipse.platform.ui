@@ -16,7 +16,10 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -86,4 +89,31 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getDisabledImageDescriptor()
+	 */
+	public ImageDescriptor getDisabledImageDescriptor() {
+		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getImageDescriptor()
+	 */
+	public ImageDescriptor getImageDescriptor() {
+		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getToolTipText()
+	 */
+	public String getToolTipText() {
+		return LaunchConfigurationsMessages.LaunchConfigurationsDialog_1;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getText()
+	 */
+	public String getText() {
+		return LaunchConfigurationsMessages.LaunchConfigurationDialog_Dele_te_14;
+	}
 }

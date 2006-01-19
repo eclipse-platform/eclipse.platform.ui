@@ -185,4 +185,12 @@ public class LaunchConfigurationsMessages extends NLS {
 
 	public static String LaunchConfigurationTabGroupViewer_8;
 
+	public static String FilterDropDownMenuCreator_0;
+
+	public static String FilterDropDownMenuCreator_1;
+
+	public static String FilterDropDownMenuCreator_2;
+
+	public static String FilterDropDownMenuCreator_3;
+
 }

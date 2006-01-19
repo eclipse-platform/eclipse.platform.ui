@@ -17,9 +17,12 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -86,4 +89,31 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 		return selection.size() == 1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getDisabledImageDescriptor()
+	 */
+	public ImageDescriptor getDisabledImageDescriptor() {
+		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_NEW_CONFIG);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getImageDescriptor()
+	 */
+	public ImageDescriptor getImageDescriptor() {
+		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_NEW_CONFIG);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getToolTipText()
+	 */
+	public String getToolTipText() {
+		return LaunchConfigurationsMessages.LaunchConfigurationsDialog_0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getText()
+	 */
+	public String getText() {
+		return LaunchConfigurationsMessages.LaunchConfigurationDialog_Ne_w_13;
+	}
 }

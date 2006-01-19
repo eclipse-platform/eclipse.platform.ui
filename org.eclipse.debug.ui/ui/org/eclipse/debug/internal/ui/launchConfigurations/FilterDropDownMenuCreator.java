@@ -1,0 +1,134 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.debug.internal.ui.launchConfigurations;
+
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.preferences.LaunchConfigurationsPreferencePage;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferenceNode;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+
+/**
+ * Creates the drop down menu for the filtering button in the launch configuration dialog
+ * @since 3.2
+ */
+public class FilterDropDownMenuCreator implements IMenuCreator {
+
+	/**
+	 * Class to describe a filtering action
+	 * @since 3.2
+	 */
+	private class FilterAction extends Action {
+		
+		/** The preference store. */
+		private IPreferenceStore fStore;
+
+		/** The preference key for the value in the store. */
+		private String fKey;
+		
+		/**
+		 * Constructor
+		 * @param store the pref store
+		 * @param name the name of the action
+		 * @param key the pref key it is tied to
+		 */
+		public FilterAction(Menu menu, IPreferenceStore store, String name, String key) {
+			super(name, IAction.AS_CHECK_BOX);
+			fStore = store;
+			fKey = key;
+			setChecked(fStore.getBoolean(fKey));
+			ActionContributionItem item = new ActionContributionItem(this);
+			item.fill(menu, -1);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.action.Action#run()
+		 */
+		public void run() {
+			fStore.setValue(fKey, isChecked());
+		}
+	}
+	
+	/**
+	 * the menu created via this class
+	 */
+	private Menu fCreatedMenu = null;
+
+	/**
+	 * gets the DebugUIPlugin preference store
+	 * @return the pref store
+	 */
+	private IPreferenceStore getDebugPrefStore() {
+		return DebugUIPlugin.getDefault().getPreferenceStore();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
+	 */
+	public void dispose() {
+		fCreatedMenu = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
+	 */
+	public Menu getMenu(Control parent) {
+		if(fCreatedMenu != null) {
+			fCreatedMenu.dispose();
+		}
+		//create the menu & items
+		fCreatedMenu = new Menu(parent);
+		new FilterAction(fCreatedMenu, getDebugPrefStore(), LaunchConfigurationsMessages.FilterDropDownMenuCreator_0, IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED);
+		new FilterAction(fCreatedMenu, getDebugPrefStore(), LaunchConfigurationsMessages.FilterDropDownMenuCreator_1, IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED);
+		new FilterAction(fCreatedMenu, getDebugPrefStore(), LaunchConfigurationsMessages.FilterDropDownMenuCreator_2, IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES);
+		//add separator
+		new MenuItem(fCreatedMenu, SWT.SEPARATOR);
+
+		//add pref action
+		IAction action = new Action(LaunchConfigurationsMessages.FilterDropDownMenuCreator_3) {
+			public void run() {
+				final IPreferenceNode targetNode = new PreferenceNode("org.eclipse.debug.ui.LaunchConfigurationsPreferenecPage",  //$NON-NLS-1$
+						new LaunchConfigurationsPreferencePage());
+				PreferenceManager manager = new PreferenceManager();
+				manager.addToRoot(targetNode);
+				final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
+				BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+					public void run() {
+						dialog.create();
+						dialog.setMessage(targetNode.getLabelText());
+						dialog.open();
+					}
+				});
+			}
+		};
+		new ActionContributionItem(action).fill(fCreatedMenu, -1);
+		return fCreatedMenu;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
+	 */
+	public Menu getMenu(Menu parent) {
+		return fCreatedMenu;
+	}
+}

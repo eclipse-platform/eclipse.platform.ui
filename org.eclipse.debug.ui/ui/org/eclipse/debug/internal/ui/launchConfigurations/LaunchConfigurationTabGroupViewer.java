@@ -26,24 +26,17 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
-import org.eclipse.debug.internal.ui.preferences.LaunchConfigurationsPreferencePage;
 import org.eclipse.debug.internal.ui.preferences.PerspectivePreferencePage;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CLabel;
@@ -362,20 +355,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		link.setLayoutData(gd);
 		link.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				showPreferencePage("org.eclipse.debug.ui.PerspectivePreferencePage", new PerspectivePreferencePage()); //$NON-NLS-1$
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {}
-		});
-		createSpacer(parent, 2);
-		link = new Link(parent, SWT.LEFT | SWT.WRAP);
-		link.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_7);
-		link.setFont(font);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = parent.getBounds().width - 30;
-		link.setLayoutData(gd);
-		link.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				showPreferencePage("org.eclipse.debug.ui.LaunchConfigurationsPreferenecPage", new LaunchConfigurationsPreferencePage()); //$NON-NLS-1$
+				SWTUtil.showPreferencePage("org.eclipse.debug.ui.PerspectivePreferencePage", new PerspectivePreferencePage()); //$NON-NLS-1$
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
@@ -396,26 +376,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
         gd.widthHint = parent.getBounds().width - 30;
         lbl.setLayoutData(gd);
     }
-	
-	/**
-	 * This method allows us to open the preference dialog on the specific page, in this case the perspective page
-	 * @param id the id of pref page to show
-	 * @param page the actual page to show
-	 */
-	private void showPreferencePage(String id, IPreferencePage page) {
-		final IPreferenceNode targetNode = new PreferenceNode(id, page);
-		PreferenceManager manager = new PreferenceManager();
-		manager.addToRoot(targetNode);
-		final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
-		final boolean [] result = new boolean[] { false };
-		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
-			public void run() {
-				dialog.create();
-				dialog.setMessage(targetNode.getLabelText());
-				result[0]= (dialog.open() == Window.OK);
-			}
-		});		
-	}
 	
 	/**
 	 * Creates the tab folder for displaying config instances

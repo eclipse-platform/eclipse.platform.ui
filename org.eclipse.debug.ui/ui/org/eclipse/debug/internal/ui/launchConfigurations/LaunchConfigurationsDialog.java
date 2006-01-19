@@ -251,30 +251,18 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Double-click action
 	 */
 	private IAction fDoubleClickAction;
-	
-	/**
-	 * The 'New' toolbar action
-	 * @since 3.2
-	 */
-	private IAction fNewAction;
-	
-	/**
-	 * the 'Delete' toolbar action
-	 * @since 3.2
-	 */
-	private IAction fDeleteAction;
 
 	/**
-	 * the 'Filter' toolbar action
+	 * the toolbar for the viewer
 	 * @since 3.2
 	 */
-	private IAction fFilterAction;
+	private ToolBar fToolbar;
 	
 	/**
-	 * the 'Duplicate' toolbar action
+	 * the label for the viewer about items filtered
 	 * @since 3.2
 	 */
-	private IAction fDuplicateAction;
+	private Label fFilteringLabel;
 	
 	/**
 	 * Filters for the LCD
@@ -283,7 +271,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private ClosedProjectFilter fClosedProjectFilter;
 	private DeletedProjectFilter fDeletedProjectFilter;
 	private LaunchConfigurationTypeFilter fLCTFilter;
-	private Label fFilteringLabel;
+	
 	
 	/**
 	 * Specifies how this dialog behaves when opened.  Value is one of the 
@@ -438,6 +426,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private int[] calculateNewSashWeights(int widthIncrease) {
 		int[] newWeights = new int[2];
 		newWeights[0] = getSelectionArea().getBounds().width;
+		if(newWeights[0] < 180) {
+			newWeights[0] = 180;
+		}
 		newWeights[1] = getEditArea().getBounds().width + widthIncrease;
 		return newWeights;
 	}
@@ -599,55 +590,37 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		toolbarcomp.setLayoutData(gd);
 		toolbarcomp.setFont(font);
 		
-		ToolBar toolbar = new ToolBar(toolbarcomp, SWT.FLAT);
-		toolbar.setLayout(new GridLayout());
-		toolbar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		toolbar.setFont(font);
-		ToolBarManager tmanager = new ToolBarManager(toolbar);
+		fToolbar = new ToolBar(toolbarcomp, SWT.FLAT);
+		fToolbar.setLayout(new GridLayout());
+		fToolbar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		fToolbar.setFont(font);		
+		return toolbarcomp;
+	}
+	
+	/**
+	 * Creates all of the actions for the toolbar
+	 * @param toolbar
+	 */
+	protected void createToolbarActions() {
+		ToolBarManager tmanager = new ToolBarManager(fToolbar);
 		
-		fNewAction = new Action(LaunchConfigurationsMessages.LaunchConfigurationDialog_Ne_w_13, DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_NEW_CONFIG)) {
-			public void run() {
-				getNewAction().run();
-				refreshFilteringLabel();
-			}
-		};
-		fNewAction.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_NEW_CONFIG));
-		fNewAction.setToolTipText(LaunchConfigurationsMessages.LaunchConfigurationsDialog_0);
-		
-		fDeleteAction = new Action(LaunchConfigurationsMessages.LaunchConfigurationDialog_Dele_te_14, DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE)) {
-			public void run() {
-				getDeleteAction().run();
-				refreshFilteringLabel();
-			}
-		};
-		fDeleteAction.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE));
-		fDeleteAction.setToolTipText(LaunchConfigurationsMessages.LaunchConfigurationsDialog_1);
-		
-		fFilterAction = new Action(LaunchConfigurationsMessages.LaunchConfigurationsDialog_2, DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS)) {
+		Action faction = new Action(LaunchConfigurationsMessages.LaunchConfigurationsDialog_2, IAction.AS_DROP_DOWN_MENU) {
 			public void run() {
 				getFilterAction().run();
 			}
 		};
-		fFilterAction.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS));
-		fFilterAction.setToolTipText(LaunchConfigurationsMessages.LaunchConfigurationsDialog_4);
+		faction.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS));
+		faction.setToolTipText(LaunchConfigurationsMessages.LaunchConfigurationsDialog_4);
+		faction.setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS));
+		faction.setMenuCreator(new FilterDropDownMenuCreator());
 		
-		fDuplicateAction = new Action(LaunchConfigurationsMessages.DuplicateLaunchConfigurationAction__Duplicate_1, DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DUPLICATE_CONFIG)) {
-			public void run() {
-				getDuplicateAction().run();
-				refreshFilteringLabel();
-			}
-		};
-		fDuplicateAction.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DUPLICATE_CONFIG));
-		fDuplicateAction.setToolTipText(LaunchConfigurationsMessages.LaunchConfigurationsDialog_5);
-		
-		tmanager.add(fNewAction);
-		tmanager.add(fDuplicateAction);
-		tmanager.add(fDeleteAction);
-		tmanager.add(fFilterAction);
+		tmanager.add(getNewAction());
+		tmanager.add(getDuplicateAction());
+		tmanager.add(getDeleteAction());
+		tmanager.add(faction);
 		tmanager.update(true);
 
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
-		return toolbarcomp;
 	}
 	
 	/**
@@ -667,12 +640,16 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		layout.numColumns = 1;
 		comp.setLayout(layout);
 		comp.setFont(font);
-
-		//create the toolbar area
+		
+	//	create the toolbar area
 		createToolbarArea(comp);
 		
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup());
 		fLaunchConfigurationView.createLaunchDialogControl(comp);
+		
+	//create toolbar actions
+		createToolbarActions();
+		
 		fDoubleClickAction = new Action() {
 			public void run() {
 				IStructuredSelection selection = (IStructuredSelection)fLaunchConfigurationView.getViewer().getSelection();
@@ -710,7 +687,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		control.setFont(font);
 		
 		fFilteringLabel = new Label(comp, SWT.NONE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fFilteringLabel.setFont(font);
+		fFilteringLabel.setLayoutData(gd);
 		refreshFilteringLabel();
 		
 		// confirmation requestors
@@ -726,9 +705,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		((StructuredViewer) viewer).addPostSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleLaunchConfigurationSelectionChanged(event);
-				fNewAction.setEnabled(getNewAction().isEnabled());
-				fDeleteAction.setEnabled(getDeleteAction().isEnabled());
-				fDuplicateAction.setEnabled(getDuplicateAction().isEnabled());
+				getNewAction().setEnabled(getNewAction().isEnabled());
+				getDeleteAction().setEnabled(getDeleteAction().isEnabled());
+				getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
 			}
 		});
 		return comp;
@@ -738,7 +717,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Displays how many of the items showing matched the filtering currently in operation
 	 * @since 3.2
 	 */
-	private void refreshFilteringLabel() {
+	public void refreshFilteringLabel() {
 		try {
 			int total = 0;
 			ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
@@ -1763,9 +1742,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public void updateButtons() {
 		// New, Delete, & Duplicate toolbar actions
- 		fNewAction.setEnabled(getNewAction().isEnabled());
-		fDeleteAction.setEnabled(getDeleteAction().isEnabled());
-		fDuplicateAction.setEnabled(getDuplicateAction().isEnabled());
+ 		getNewAction().setEnabled(getNewAction().isEnabled());
+		getDeleteAction().setEnabled(getDeleteAction().isEnabled());
+		getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
 		
 		// Launch button
 		getTabViewer().refresh();

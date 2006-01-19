@@ -16,6 +16,9 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -55,6 +58,34 @@ public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurat
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return selection.size() == 1 && selection.getFirstElement() instanceof ILaunchConfiguration;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getDisabledImageDescriptor()
+	 */
+	public ImageDescriptor getDisabledImageDescriptor() {
+		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DUPLICATE_CONFIG);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getImageDescriptor()
+	 */
+	public ImageDescriptor getImageDescriptor() {
+		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DUPLICATE_CONFIG);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getToolTipText()
+	 */
+	public String getToolTipText() {
+		return LaunchConfigurationsMessages.LaunchConfigurationsDialog_5;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getText()
+	 */
+	public String getText() {
+		return LaunchConfigurationsMessages.DuplicateLaunchConfigurationAction__Duplicate_1;
 	}
 
 }
