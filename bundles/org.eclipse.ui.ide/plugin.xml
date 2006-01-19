@@ -976,12 +976,5 @@
          <adapter type="org.eclipse.ui.internal.provisional.ide.IEditorOpenStrategy"/>
       </factory>
    </extension>
-   <extension
-         point="org.eclipse.ui.ide.filesystemSupport">
-      <filesystemContributor
-            class="org.eclipse.ui.internal.ide.filesystem.LocalFileSystemContributor"
-            label="%FileSystemContribution.local"
-            filesystem="org.eclipse.core.filesystem.local"/>
-   </extension>
    
 </plugin>

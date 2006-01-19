@@ -11,9 +11,13 @@
 
 package org.eclipse.ui.internal.ide.filesystem;
 
+import java.io.File;
+import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -23,9 +27,13 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.fileSystem.FileSystemContributor;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 
 /**
  * @since 3.2
@@ -39,9 +47,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 
 	private static final String LABEL = "label";//$NON-NLS-1$
 
-	private static final Object LOCAL_FILE_SYSTEM = "org.eclipse.core.filesystem.local";//$NON-NLS-1$
-
-	private static final String FILESYSTEM = "filesystem";//$NON-NLS-1$
+	private static final String SCHEME = "scheme";//$NON-NLS-1$
 
 	private static FileSystemSupportRegistry singleton;
 
@@ -58,7 +64,36 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 
 	private Collection registeredContributions = new HashSet(0);
 
-	private FileSystemConfiguration defaultFileSystem;
+	FileSystemConfiguration defaultConfiguration = new FileSystemConfiguration(
+			FileSystemMessages.DefaultFileSystem_name, new FileSystemContributor() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.ui.ide.fileSystem.FileSystemContributor#browseFileSystem(java.lang.String,
+				 *      org.eclipse.swt.widgets.Shell)
+				 */
+				public URI browseFileSystem(String initialPath, Shell shell) {
+
+					DirectoryDialog dialog = new DirectoryDialog(shell);
+					dialog
+							.setMessage(IDEWorkbenchMessages.ProjectLocationSelectionDialog_directoryLabel);
+
+					if (!initialPath.equals(IDEResourceInfoUtils.EMPTY_STRING)) {
+						IFileInfo info = IDEResourceInfoUtils
+								.getFileInfo(initialPath);
+						if (info != null && info.exists())
+							dialog.setFilterPath(initialPath);
+					}
+
+					String selectedDirectory = dialog.open();
+					if (selectedDirectory == null)
+						return null;
+					return new File(selectedDirectory).toURI();
+
+				}
+			}, null);
+
+	private FileSystemConfiguration[] allConfigurations;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -91,7 +126,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 	 */
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		processExtension(tracker, extension);
-
+		allConfigurations = null;//Clear the cache
 	}
 
 	/*
@@ -104,6 +139,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 		for (int i = 0; i < objects.length; i++) {
 			registeredContributions.remove(objects[i]);
 		}
+		allConfigurations = null;//Clear the cache
 
 	}
 
@@ -161,11 +197,9 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 		if (exceptions[0] != null)
 			return null;
 		String name = element.getAttribute(LABEL);
-		String fileSystem = element.getAttribute(FILESYSTEM);
+		String fileSystem = element.getAttribute(SCHEME);
 		FileSystemConfiguration config = new FileSystemConfiguration(name,
-				contributors[0]);
-		if (fileSystem.equals(LOCAL_FILE_SYSTEM))
-			defaultFileSystem = config;
+				contributors[0], fileSystem);
 
 		return config;
 
@@ -177,10 +211,19 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 	 * @return FileSystemConfiguration[]
 	 */
 	public FileSystemConfiguration[] getConfigurations() {
-		FileSystemConfiguration[] configs = new FileSystemConfiguration[registeredContributions
-				.size()];
-		registeredContributions.toArray(configs);
-		return configs;
+		if (allConfigurations == null) {
+			allConfigurations = new FileSystemConfiguration[registeredContributions
+					.size() + 1];
+			allConfigurations[0] = defaultConfiguration;
+
+			Iterator iterator = registeredContributions.iterator();
+			int index = 0;
+			while (iterator.hasNext()) {
+				allConfigurations[++index] = (FileSystemConfiguration) iterator
+						.next();
+			}
+		}
+		return allConfigurations;
 	}
 
 	/**
@@ -190,16 +233,15 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 	 * @return FileSystemConfiguration
 	 */
 	public FileSystemConfiguration getDefaultConfiguration() {
-		return defaultFileSystem;
+		return defaultConfiguration;
 	}
 
 	/**
-	 * Return whether or not there is only one file 
-	 * system registered.
-	 * @return <code>true</code> if there is only one file 
-	 * system.
+	 * Return whether or not there is only one file system registered.
+	 * 
+	 * @return <code>true</code> if there is only one file system.
 	 */
 	public boolean hasOneFileSystem() {
-		return registeredContributions.size() == 1;
+		return registeredContributions.size() == 0;
 	}
 }

@@ -69,10 +69,10 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="filesystem" type="string" use="required">
+         <attribute name="scheme" type="string" use="required">
             <annotation>
                <documentation>
-                  The filesystem is the id of the org.eclipse.core.filesystems.filesystem this contribution corresponds to.
+                  The scheme is the scheme of a org.eclipse.core.filesystems.filesystem this contribution corresponds to.
                </documentation>
             </annotation>
          </attribute>

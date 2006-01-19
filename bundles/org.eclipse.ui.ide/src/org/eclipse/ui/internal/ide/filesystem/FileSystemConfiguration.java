@@ -26,17 +26,20 @@ public class FileSystemConfiguration {
 
 	FileSystemContributor contributor;
 
+	private String scheme;
+
+
 	/**
 	 * Create a new FileSystemConfiguration with the defined
-	 * contributor and userLabel.
-	 * @param userLabel
-	 * @param definedContributor
+	 * contributor and userLabel for the supplied scheme.
+	 * @param name
+	 * @param declaredContributor
+	 * @param fileSystem
 	 */
-	public FileSystemConfiguration(String userLabel,
-			FileSystemContributor definedContributor) {
-
-		label = userLabel;
-		contributor = definedContributor;
+	public FileSystemConfiguration(String name, FileSystemContributor declaredContributor, String fileSystem) {
+		label = name;
+		contributor = declaredContributor;
+		scheme = fileSystem;
 	}
 
 	/**
@@ -53,6 +56,14 @@ public class FileSystemConfiguration {
 	 */
 	public FileSystemContributor getContributor() {
 		return contributor;
+	}
+
+	/**
+	 * Return the filesystem scheme for the receiver.
+	 * @return Returns the scheme.
+	 */
+	public String getScheme() {
+		return scheme;
 	}
 
 }

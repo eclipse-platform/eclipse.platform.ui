@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.filesystem.FileSystemConfiguration;
+import org.eclipse.ui.internal.ide.filesystem.FileSystemMessages;
 import org.eclipse.ui.internal.ide.filesystem.FileSystemSupportRegistry;
 
 /**
@@ -91,6 +92,8 @@ public class ProjectContentsLocationArea {
 
 	private ComboViewer fileSystems;
 
+	private Label fileSystemTitle;
+
 	/**
 	 * Create a new instance of the receiver.
 	 * 
@@ -128,10 +131,14 @@ public class ProjectContentsLocationArea {
 		createContents(composite, true);
 	}
 
+	/**
+	 * Create the contents of the receiver.
+	 * @param composite
+	 * @param defaultEnabled
+	 */
 	private void createContents(Composite composite, boolean defaultEnabled) {
 
-		int columns = FileSystemSupportRegistry.getInstance()
-				.hasOneFileSystem() ? 3 : 4;
+		int columns = 4;
 
 		// project specification group
 		Composite projectGroup = new Composite(composite, SWT.NONE);
@@ -187,12 +194,12 @@ public class ProjectContentsLocationArea {
 		locationLabel
 				.setText(IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationLabel);
 
-		createFileSystemSelection(composite);
-
+		
 		// project location entry field
 		locationPathField = new Text(composite, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
+		data.horizontalSpan = 2;
 		locationPathField.setLayoutData(data);
 
 		// browse button
@@ -203,6 +210,8 @@ public class ProjectContentsLocationArea {
 				handleLocationBrowseButtonPressed();
 			}
 		});
+		
+		createFileSystemSelection(composite);
 
 		if (defaultEnabled)// Will be null if it is not set
 			locationPathField.setText(getDefaultPathDisplayString());
@@ -237,8 +246,15 @@ public class ProjectContentsLocationArea {
 		// Always use the default if that is all there is.
 		if (FileSystemSupportRegistry.getInstance().hasOneFileSystem())
 			return;
+		
+		new Label(composite,SWT.NONE);
+		
+		fileSystemTitle = new Label(composite,SWT.NONE);
+		fileSystemTitle.setText(FileSystemMessages.FileSystemSelection_title);
 
 		fileSystems = new ComboViewer(composite, SWT.READ_ONLY);
+		
+		fileSystems.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 
 		fileSystems.setLabelProvider(new LabelProvider() {
 			/*
@@ -321,8 +337,10 @@ public class ProjectContentsLocationArea {
 		locationLabel.setEnabled(enabled);
 		locationPathField.setEnabled(enabled);
 		browseButton.setEnabled(enabled);
-		if (fileSystems != null)
+		if (fileSystems != null){
 			fileSystems.getControl().setEnabled(enabled);
+			fileSystemTitle.setEnabled(enabled);
+		}
 	}
 
 	/**

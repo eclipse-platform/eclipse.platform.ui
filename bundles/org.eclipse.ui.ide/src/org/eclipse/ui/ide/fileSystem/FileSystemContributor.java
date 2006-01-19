@@ -13,6 +13,7 @@ package org.eclipse.ui.ide.fileSystem;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.eclipse.swt.widgets.Shell;
 
@@ -42,7 +43,12 @@ public abstract class FileSystemContributor {
 	 * invalid.
 	 */
 	public URI getURI(String string){
-		return (new File(string)).toURI();
+		try {
+			return new URI(string);
+		} catch (URISyntaxException e) {
+			return (new File(string)).toURI();
+		}
+		
 	}
 
 }
