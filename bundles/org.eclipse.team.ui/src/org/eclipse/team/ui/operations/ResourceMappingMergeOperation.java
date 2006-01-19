@@ -205,6 +205,13 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 						private Button doneButton;
 						private Button replaceButton;
 	
+						protected boolean isOfferToRememberParticipant() {
+							boolean isReplace = context.getMergeType() == ISynchronizationContext.TWO_WAY;
+							if (isReplace)
+								return false;
+							return super.isOfferToRememberParticipant();
+						}
+						
 						protected void createButtonsForButtonBar(Composite parent) {
 							boolean isReplace = context.getMergeType() == ISynchronizationContext.TWO_WAY;
 							if (isReplace) {

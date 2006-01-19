@@ -49,7 +49,7 @@ public class ParticipantPageDialog extends SaveablePartDialog {
 	 */
 	protected Control createDialogArea(Composite parent2) {
 		Composite parent = (Composite) super.createDialogArea(parent2);	
-		if (participant != null && ! particantRegisteredWithSynchronizeManager(participant)) {
+		if (isOfferToRememberParticipant() && participant != null && ! particantRegisteredWithSynchronizeManager(participant)) {
 			rememberParticipantButton = new Button(parent, SWT.CHECK);
 			rememberParticipantButton.setText(TeamUIMessages.ParticipantCompareDialog_1); 
 		}
@@ -91,5 +91,17 @@ public class ParticipantPageDialog extends SaveablePartDialog {
 	 */
 	protected ISynchronizeParticipant getParticipant() {
 		return participant;
+	}
+	
+	/**
+	 * Return whether the ability to remember the participant in the synchronize
+	 * view should be presented to the user. By default, <code>true</code> is
+	 * returned. Subclasses may override.
+	 * @return whether the ability to remember the participant in the synchronize
+	 * view should be presented to the user
+	 * @since 3.2
+	 */
+	protected boolean isOfferToRememberParticipant() {
+		return true;
 	}
 }
