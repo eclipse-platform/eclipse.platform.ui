@@ -772,6 +772,8 @@ public class FormHeading extends Canvas {
 		Image buffer = new Image(getDisplay(), carea.width, carea.height);
 		buffer.setBackground(getBackground());
 		GC igc = new GC(buffer);
+		igc.setBackground(getBackground());
+		igc.fillRectangle(0, 0, carea.width, carea.height);
 		if (getBackgroundImage() != null) {
 			if (gradientInfo!=null || isBackgroundImageTiled())
 				drawBackground(igc, carea.x, carea.y, carea.width, carea.height);

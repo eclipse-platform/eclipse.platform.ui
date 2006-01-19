@@ -79,7 +79,7 @@ public class Section extends ExpandableComposite {
 	}
 
 	Section(Composite parent, int cstyle, int style) {
-		super(parent, cstyle, style);
+		super(parent, cstyle|getBackgroundStyle(style), style);
 		int rtl = cstyle & SWT.RIGHT_TO_LEFT;
 		if ((style & DESCRIPTION) != 0) {
 			descriptionControl = new Label(this, SWT.WRAP | rtl);
@@ -94,6 +94,10 @@ public class Section extends ExpandableComposite {
 				}
 			});
 		}
+	}
+	
+	private static int getBackgroundStyle(int estyle) {
+		return ((estyle & TITLE_BAR)!=0)?SWT.NO_BACKGROUND:SWT.NULL;
 	}
 
 	protected void internalSetExpanded(boolean expanded) {
@@ -332,7 +336,7 @@ public class Section extends ExpandableComposite {
 
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
 			buffer = new Image(getDisplay(), bounds.width, bounds.height);
-			// buffer.setBackground(getBackground());
+			buffer.setBackground(getBackground());
 			gc = new GC(buffer);
 		}
 		if (titleColors != null) {
@@ -379,7 +383,15 @@ public class Section extends ExpandableComposite {
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
 			if (getBackgroundImage() == null)
 				updateHeaderImage(bg, gbg, bounds, theight, midpoint, rem);
+			gc.setBackground(getBackground());
+			gc.fillRectangle(bounds.x, bounds.y, bounds.width, bounds.height);
 			drawBackground(gc, bounds.x, bounds.y, bounds.width, theight);
+			if (marginWidth>0) {
+				// fix up margins
+				gc.setBackground(getBackground());
+				gc.fillRectangle(0, 0, marginWidth, theight);
+				gc.fillRectangle(bounds.x+bounds.width-marginWidth, 0, marginWidth, theight);
+			}
 			/*
 			 * gc.setForeground(bg); gc.setBackground(gbg);
 			 * gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width -
@@ -448,16 +460,18 @@ public class Section extends ExpandableComposite {
 
 	private void updateHeaderImage(Color bg, Color gbg, Rectangle bounds,
 			int theight, int midpoint, int rem) {
-		Image image = new Image(getDisplay(), bounds.width, theight);
+		Image image = new Image(getDisplay(), 1, theight);
+		image.setBackground(getBackground());
 		GC gc = new GC(image);
+		gc.setBackground(getBackground());
+		gc.fillRectangle(0, 0, 1, theight);
 		gc.setForeground(bg);
 		gc.setBackground(gbg);
-		gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width - 1
-				- marginWidth - marginWidth, midpoint - 1, true);
+		gc.fillGradientRectangle(0, marginHeight, 1, midpoint - 1, true);
 		gc.setForeground(gbg);
 		gc.setBackground(getBackground());
-		gc.fillGradientRectangle(marginWidth, marginHeight + midpoint - 1,
-				bounds.width - 1 - marginWidth - marginWidth, rem - 1, true);
+		gc.fillGradientRectangle(0, marginHeight + midpoint - 1, 
+				1, rem - 1, true);
 		gc.dispose();
 		super.setBackgroundImage(image);
 	}
