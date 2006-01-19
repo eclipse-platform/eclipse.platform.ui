@@ -566,6 +566,7 @@ public class Project extends Container implements IProject {
 
 				// close the property store so incorrect info is not copied to the destination
 				getPropertyManager().closePropertyStore(this);
+				getLocalManager().getHistoryStore().closeHistoryStore(this);
 
 				// copy the meta area for the project
 				copyMetaArea(this, destination, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
@@ -633,6 +634,7 @@ public class Project extends Container implements IProject {
 	protected void internalCopyProjectOnly(IResource destination, IProgressMonitor monitor) throws CoreException {
 		// close the property store so bogus values aren't copied to the destination
 		getPropertyManager().closePropertyStore(this);
+		getLocalManager().getHistoryStore().closeHistoryStore(this);
 		// copy the tree and properties
 		workspace.copyTree(this, destination.getFullPath(), IResource.DEPTH_ZERO, IResource.NONE, false);
 		getPropertyManager().copy(this, destination, IResource.DEPTH_ZERO);

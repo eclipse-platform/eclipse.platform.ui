@@ -95,9 +95,9 @@ public class HistoryStore2 implements IHistoryStore {
 			tree.loadBucketFor(key);
 			HistoryBucket currentBucket = (HistoryBucket) tree.getCurrent();
 			currentBucket.addBlob(key, uuid, lastModified);
-			currentBucket.save();
+			//			currentBucket.save();
 		} catch (CoreException e) {
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			log(e);
 		}
 		return new FileState(this, key, lastModified, uuid);
 	}
@@ -112,7 +112,7 @@ public class HistoryStore2 implements IHistoryStore {
 				}
 			}, root, depth == IResource.DEPTH_INFINITE ? BucketTree.DEPTH_INFINITE : depth);
 		} catch (CoreException e) {
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			log(e);
 		}
 		return allFiles;
 	}
@@ -178,6 +178,18 @@ public class HistoryStore2 implements IHistoryStore {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.localstore.IHistoryStore#closeHistory(org.eclipse.core.resources.IResource)
+	 */
+	public void closeHistoryStore(IResource resource) {
+		try {
+			tree.getCurrent().save();
+			tree.getCurrent().flush();
+		} catch (CoreException e) {
+			log(e);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.internal.localstore.IHistoryStore#copyHistory(org.eclipse.core.resources.IResource, org.eclipse.core.resources.IResource, boolean)
@@ -204,21 +216,22 @@ public class HistoryStore2 implements IHistoryStore {
 		Assert.isLegal(destination.segmentCount() > 0);
 		Assert.isLegal(source.segmentCount() > 1 || destination.segmentCount() == 1);
 
-		// special case: we are moving a project
-		if (moving && sourceResource.getType() == IResource.PROJECT) {
-			// flush the tree to avoid confusion if another project is created with the same name
-			tree.getCurrent().flush();
-			return;
-		}
-
 		try {
+			// special case: we are moving a project
+			if (moving && sourceResource.getType() == IResource.PROJECT) {
+				// flush the tree to avoid confusion if another project is created with the same name
+				final Bucket bucket = tree.getCurrent();
+				bucket.save();
+				bucket.flush();
+				return;
+			}
 			// copy history by visiting the source tree
 			HistoryCopyVisitor copyVisitor = new HistoryCopyVisitor(source, destination);
 			tree.accept(copyVisitor, source, BucketTree.DEPTH_INFINITE);
 			// apply clean-up policy to the destination tree 
 			applyPolicy(destinationResource.getFullPath());
 		} catch (CoreException e) {
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			log(e);
 		}
 	}
 
@@ -252,7 +265,7 @@ public class HistoryStore2 implements IHistoryStore {
 				states[i] = new FileState(this, fileEntry.getPath(), fileEntry.getTimestamp(i), fileEntry.getUUID(i));
 			return states;
 		} catch (CoreException ce) {
-			ResourcesPlugin.getPlugin().getLog().log(ce.getStatus());
+			log(ce);
 			return new IFileState[0];
 		}
 	}
@@ -281,6 +294,17 @@ public class HistoryStore2 implements IHistoryStore {
 		return result;
 	}
 
+	/**
+	 * Logs a CoreException
+	 */
+	private void log(CoreException e) {
+		//create a new status to wrap the exception if there is no exception in the status
+		IStatus status = e.getStatus();
+		if (status.getException() == null)
+			status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_WRITE_METADATA, "Internal error in history store", e); //$NON-NLS-1$
+		ResourcesPlugin.getPlugin().getLog().log(status);
+	}
+
 	public synchronized void remove(IPath root, IProgressMonitor monitor) {
 		try {
 			final Set tmpBlobsToRemove = blobsToRemove;
@@ -294,7 +318,7 @@ public class HistoryStore2 implements IHistoryStore {
 				}
 			}, root, BucketTree.DEPTH_INFINITE);
 		} catch (CoreException ce) {
-			ResourcesPlugin.getPlugin().getLog().log(ce.getStatus());
+			log(ce);
 		}
 	}
 

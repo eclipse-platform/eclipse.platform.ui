@@ -615,6 +615,7 @@ class ResourceTree implements IResourceTree {
 				// Rename the project metadata area. Close the property store to flush everything to disk
 				try {
 					source.getPropertyManager().closePropertyStore(source);
+					localManager.getHistoryStore().closeHistoryStore(source);
 				} catch (CoreException e) {
 					String message = NLS.bind(Messages.properties_couldNotClose, source.getFullPath());
 					IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);

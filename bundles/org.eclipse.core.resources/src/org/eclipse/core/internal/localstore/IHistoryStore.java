@@ -95,6 +95,11 @@ public interface IHistoryStore extends IManager {
 	public void clean(IProgressMonitor monitor);
 
 	/**
+	 * Closes the history store for the given resource.
+	 */
+	public void closeHistoryStore(IResource resource);
+	
+	/**
 	 * Copies the history store information from the source path given destination path.
 	 * Note that destination may already have some history store information. Also note
 	 * that this is a DEPTH_INFINITY operation. That is, history will be copied for partial
