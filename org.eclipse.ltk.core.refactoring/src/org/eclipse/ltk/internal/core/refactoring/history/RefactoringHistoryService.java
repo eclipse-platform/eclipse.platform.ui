@@ -892,17 +892,19 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	public RefactoringHistory readRefactoringHistory(final InputStream stream, int filter) throws CoreException {
 		Assert.isNotNull(stream);
 		Assert.isTrue(filter >= RefactoringDescriptor.NONE);
-		final RefactoringSessionDescriptor descriptor= new RefactoringSessionReader().readSession(new InputSource(stream));
-		final RefactoringDescriptor[] descriptors= descriptor.getRefactorings();
 		final List list= new ArrayList();
-		if (filter > RefactoringDescriptor.NONE) {
-			for (int index= 0; index < descriptors.length; index++) {
-				final int flags= descriptors[index].getFlags();
-				if ((flags | filter) == flags)
-					list.add(descriptors[index]);
-			}
-		} else
-			list.addAll(Arrays.asList(descriptors));
+		final RefactoringSessionDescriptor descriptor= new RefactoringSessionReader().readSession(new InputSource(stream));
+		if (descriptor != null) {
+			final RefactoringDescriptor[] descriptors= descriptor.getRefactorings();
+			if (filter > RefactoringDescriptor.NONE) {
+				for (int index= 0; index < descriptors.length; index++) {
+					final int flags= descriptors[index].getFlags();
+					if ((flags | filter) == flags)
+						list.add(descriptors[index]);
+				}
+			} else
+				list.addAll(Arrays.asList(descriptors));
+		}
 		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[list.size()];
 		for (int index= 0; index < list.size(); index++)
 			proxies[index]= new RefactoringDescriptorProxyAdapter((RefactoringDescriptor) list.get(index));
