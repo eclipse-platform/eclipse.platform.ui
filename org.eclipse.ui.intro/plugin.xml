@@ -32,6 +32,19 @@
             id="org.eclipse.ui.intro"
             name="Welcome"
             participant="org.eclipse.ui.internal.intro.impl.model.IntroSearchParticipant"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro">
+      <intro
+            class="org.eclipse.ui.intro.config.CustomizableIntroPart"
+            id="org.eclipse.ui.intro.shared"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro.config">
+      <config
+            content="$nl$/shared/introContent.xml"
+            id="org.eclipse.ui.intro.sharedConfig"
+            introId="org.eclipse.ui.intro.shared"/>
    </extension>     
    
  
