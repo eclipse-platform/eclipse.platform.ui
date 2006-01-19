@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,12 @@ public interface IAntUIPreferenceConstants {
 	public static final String CONSOLE_DEBUG_COLOR = "org.eclipse.ant.ui.debugColor"; //$NON-NLS-1$	
 	
 	public static final String ANT_TOOLS_JAR_WARNING= "toolsJAR"; //$NON-NLS-1$
+    
+    /**
+     * int preference identifier constant which specifies the length of time to wait
+     * to connect with the socket that communicates with the separate JRE to capture the output
+     */
+    public static final String ANT_COMMUNICATION_TIMEOUT= "timeout"; //$NON-NLS-1$
 	
 	public static final String ANT_ERROR_DIALOG= "errorDialog"; //$NON-NLS-1$
 	

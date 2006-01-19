@@ -11,12 +11,15 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 
+import java.text.MessageFormat;
+
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.resource.StringConverter;
@@ -42,7 +45,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	private List fConsoleColorList;
 	private ColorEditor fConsoleColorEditor;
 	
-	private BooleanFieldEditor toolsWarningEditor= null;
+	private BooleanFieldEditor fToolsWarningEditor= null;
 	
 	// Array containing the message to display, the preference key, and the 
 	// default value (initialized in storeInitialValues()) for each color preference
@@ -93,8 +96,8 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 			gd.widthHint= convertWidthInCharsToPixels(60);
 			label.setLayoutData(gd);
 			label.setFont(font);
-			toolsWarningEditor= new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.AntPreferencePage_1, getFieldEditorParent());
-			addField(toolsWarningEditor);
+			fToolsWarningEditor= new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.AntPreferencePage_1, getFieldEditorParent());
+			addField(fToolsWarningEditor);
 			new Label(getFieldEditorParent(), SWT.NONE);
 		}
 		
@@ -107,6 +110,13 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		
 		createSpace();
 		
+        IntegerFieldEditor timeout = new IntegerFieldEditor(IAntUIPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, AntPreferencesMessages.AntPreferencePage_13, getFieldEditorParent());
+        int minValue= AntUIPlugin.getDefault().getPreferenceStore().getDefaultInt(IAntUIPreferenceConstants.ANT_COMMUNICATION_TIMEOUT);
+        timeout.setValidRange(minValue, Integer.MAX_VALUE);
+        timeout.setErrorMessage(MessageFormat.format(AntPreferencesMessages.AntPreferencePage_14, new Object[] {new Integer(minValue)})); 
+        addField(timeout);
+        
+        createSpace();
 		createColorComposite();
 		getPreferenceStore().addPropertyChangeListener(this);
 	}
@@ -283,8 +293,8 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING)) {
-			if (toolsWarningEditor != null) {
-				toolsWarningEditor.load();
+			if (fToolsWarningEditor != null) {
+				fToolsWarningEditor.load();
 			}
 		} else {
 			super.propertyChange(event);

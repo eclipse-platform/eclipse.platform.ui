@@ -33,6 +33,7 @@ import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.ExternalHyperlink;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
+import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.debug.core.DebugPlugin;
@@ -40,6 +41,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.console.FileLink;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Region;
 import org.eclipse.ui.console.IHyperlink;
 
@@ -59,11 +61,9 @@ public class RemoteAntBuildListener implements ILaunchesListener {
      * The server socket
      */
     private ServerSocket fServerSocket;
-    private static final int fgServerSocketTimeout= 10000;
     private Socket fSocket;
     private int fPort= -1;
     private BufferedReader fBufferedReader;
-    protected boolean fDebug= false;
     private IProcess fProcess;
     private String fProcessId;
     private File fBuildFileParent= null;
@@ -89,15 +89,11 @@ public class RemoteAntBuildListener implements ILaunchesListener {
         public void run() {
             Exception exception= null;
             try {
-                if (fDebug) {
-                    System.out.println("Creating server socket " + fServerPort); //$NON-NLS-1$
-                }
                 fServerSocket= new ServerSocket(fServerPort);
-                fServerSocket.setSoTimeout(fgServerSocketTimeout);
+                IPreferenceStore prefs = AntUIPlugin.getDefault().getPreferenceStore();
+                int socketTimeout= prefs.getInt(IAntUIPreferenceConstants.ANT_COMMUNICATION_TIMEOUT);
+                fServerSocket.setSoTimeout(socketTimeout);
                 fSocket= fServerSocket.accept();
-                if (fDebug) {
-                    System.out.println("Connection"); //$NON-NLS-1$
-                }   
                 fBufferedReader= new BufferedReader(new InputStreamReader(fSocket.getInputStream()));
                 String message;
                 while(fBufferedReader != null && (message= fBufferedReader.readLine()) != null) {
@@ -136,9 +132,6 @@ public class RemoteAntBuildListener implements ILaunchesListener {
     }
 
     protected synchronized void shutDown() {
-        if (fDebug) {
-            System.out.println("shutdown " + fPort); //$NON-NLS-1$
-        }
         fLaunch= null;
         fFileNameToIFile= null;
         DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
@@ -166,9 +159,6 @@ public class RemoteAntBuildListener implements ILaunchesListener {
     }
         
     protected void receiveMessage(String message) {
-        if (fDebug) {
-            System.out.println(message);
-        }
         if (message.startsWith(MessageIds.TASK)) {
             receiveTaskMessage(message);
         } else if (message.startsWith(MessageIds.TARGET)) {
