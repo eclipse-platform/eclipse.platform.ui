@@ -17,6 +17,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 
 public interface IPropertyManager extends IManager {
+	/**
+	 * Closes the property store for a resource
+	 * 
+	 * @param target The resource to close the property store for
+	 * @throws CoreException
+	 */
 	public void closePropertyStore(IResource target) throws CoreException;
 
 	/**
