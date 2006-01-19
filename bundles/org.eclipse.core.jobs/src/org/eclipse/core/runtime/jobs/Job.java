@@ -351,7 +351,13 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * <tt>run</tt> method, the join will return at the end of the first execution.
 	 * In other words, join will return the first time this job exits the
 	 * <tt>RUNNING</tt> state, or as soon as this job enters the <tt>NONE</tt> state.
-	 * </p><p>
+	 * </p>
+	 * <p>
+	 * If this method is called while the job manager is suspended, this job
+	 * will only be joined if it is already running; if this job is waiting or sleeping,
+	 * this method returns immediately.
+	 * </p>
+	 * <p>
 	 * Note that there is a deadlock risk when using join.  If the calling thread owns
 	 * a lock or object monitor that the joined thread is waiting for, deadlock 
 	 * will occur.
@@ -359,6 +365,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @exception InterruptedException if this thread is interrupted while waiting
 	 * @see ILock
+	 * @see IJobManager#suspend()
 	 */
 	public final void join() throws InterruptedException {
 		super.join();

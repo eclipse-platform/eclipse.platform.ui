@@ -186,6 +186,11 @@ public interface IJobManager {
 	 * immediately.  Feedback on how the join is progressing is provided to a  progress 
 	 * monitor.
 	 * <p>
+	 * If this method is called while the job manager is suspended, only jobs
+	 * that are currently running will be joined; Once there are no jobs
+	 * in the family in the {@link Job#RUNNING} state, this method returns.
+	 * </p>
+	 * <p>
 	 * Note that there is a deadlock risk when using join.  If the calling thread owns
 	 * a lock or object monitor that the joined thread is waiting for, deadlock 
 	 * will occur. This method can also result in starvation of the current thread if
@@ -199,6 +204,7 @@ public interface IJobManager {
 	 * @exception InterruptedException if this thread is interrupted while waiting
 	 * @exception OperationCanceledException if the progress monitor is canceled while waiting
 	 * @see Job#belongsTo(Object)
+	 * @see #suspend()
 	 */
 	public void join(Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException;
 
@@ -295,6 +301,7 @@ public interface IJobManager {
 	 * to resume execution soon afterwards.
 	 * 
 	 * @see #resume()
+	 * @see #join(Object, IProgressMonitor)
 	 */
 	public void suspend();
 
