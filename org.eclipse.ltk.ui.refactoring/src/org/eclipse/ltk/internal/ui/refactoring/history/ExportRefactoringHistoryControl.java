@@ -135,5 +135,6 @@ public final class ExportRefactoringHistoryControl extends RefactoringHistoryCon
 	public void setInput(final RefactoringHistory history) {
 		super.setInput(history);
 		fExportAllButton.setEnabled(history != null && !history.isEmpty());
+		fExportButton.setEnabled(false);
 	}
 }

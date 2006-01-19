@@ -135,5 +135,6 @@ public final class ManageRefactoringHistoryControl extends RefactoringHistoryCon
 	public void setInput(final RefactoringHistory history) {
 		super.setInput(history);
 		fDeleteAllButton.setEnabled(history != null && !history.isEmpty());
+		fDeleteButton.setEnabled(false);
 	}
 }
