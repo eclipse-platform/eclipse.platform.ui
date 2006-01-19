@@ -646,7 +646,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 	 * @param project The project to check for deletion
 	 * @param location The project location
 	 * @return <code>true</code> if the project has been deleted, and <code>false</code> otherwise
-	 * @throws CoreException
+	 * @exception CoreException
 	 */
 	private boolean checkDeletion(Project project, IFileStore location) throws CoreException {
 		if (project.exists() && !location.fetchInfo().exists()) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,7 +97,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @return the resource mappings that cover the given resource.
-	 * @throws CoreException 
+	 * @exception CoreException 
 	 */
 	public ResourceMapping[] getMappings(IResource resource, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		return new ResourceMapping[] {new SimpleResourceMapping(resource)};
@@ -114,7 +114,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 *    reporting is not desired
 	 * @param context a resource mapping context
 	 * @return the set of mappings that cover the given resources
-	 * @throws CoreException 
+	 * @exception CoreException 
 	 */
 	public ResourceMapping[] getMappings(IResource[] resources, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		Set mappings = new HashSet();
@@ -141,7 +141,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @return a set of traversals that cover the given mappings
-	 * @throws CoreException
+	 * @exception CoreException
 	 */
 	public ResourceTraversal[] getTraversals(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		try {

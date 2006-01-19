@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -163,7 +163,7 @@ public abstract class Bucket {
 	 * @param filter
 	 * @param depth the number of trailing segments that can differ from the filter 
 	 * @return one of STOP, RETURN or CONTINUE constants
-	 * @throws CoreException
+	 * @exception CoreException
 	 */
 	public final int accept(Visitor visitor, IPath filter, int depth) throws CoreException {
 		if (entries.isEmpty())

@@ -632,7 +632,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 *  
 	 * @return a description for this file's current contents, or 
 	 * <code>null</code>
-	 * @throws CoreException if this method fails. Reasons include:
+	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This resource does not exist.</li>
 	 * <li> This resource could not be read.</li>

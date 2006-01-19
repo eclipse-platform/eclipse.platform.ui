@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,7 +111,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 *            reporting is not desired
 	 * @return whether the contents of the corresponding remote differ from the
 	 *         base.
-	 * @throws CoreException if the contents could not be compared. Reasons
+	 * @exception CoreException if the contents could not be compared. Reasons
 	 *             include:
 	 *             <ul>
 	 *             <li>The server could not be contacted for some reason (e.g.
@@ -130,7 +130,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
      * @param resource the resource being tested
      * @param monitor a progress monitor
      * @return whether the resource contains local modifications
-	 * @throws CoreException if the contents could not be compared. Reasons
+	 * @exception CoreException if the contents could not be compared. Reasons
 	 *             include:
 	 *             <ul>
 	 *             <li>The server could not be contacted for some reason (e.g.
@@ -162,7 +162,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * @return a storage that provides access to the contents of the local
 	 *         resource's corresponding remote resource. If the remote file does
 	 *         not exist, <code>null</code> is returned
-	 * @throws CoreException if the contents could not be fetched. Reasons
+	 * @exception CoreException if the contents could not be fetched. Reasons
 	 *             include:
 	 *             <ul>
 	 *             <li>The server could not be contacted for some reason (e.g.
@@ -194,7 +194,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * @return a storage that provides access to the contents of the local
 	 *         resource's corresponding remote resource. If the remote file does
 	 *         not exist, <code>null</code> is returned
-	 * @throws CoreException if the contents could not be fetched. Reasons
+	 * @exception CoreException if the contents could not be fetched. Reasons
 	 *             include:
 	 *             <ul>
 	 *             <li>The server could not be contacted for some reason (e.g.
@@ -229,7 +229,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
      * @return a list of member resources whose corresponding remote resources
      *    are members of the remote counterpart of the given container or
      *    <code>null</code> if the remote does not exist.
-     * @throws CoreException if the members could not be fetched. Reasons include:
+     * @exception CoreException if the members could not be fetched. Reasons include:
      * <ul>
      * <li>The server could not be contacted for some reason (e.g.
      *     the context in which the operation is being called must
@@ -275,7 +275,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
-	 * @throws CoreException
+	 * @exception CoreException
 	 *             if the refresh fails. Reasons include:
 	 *             <ul>
 	 *             <li>The server could not be contacted for some reason (e.g.

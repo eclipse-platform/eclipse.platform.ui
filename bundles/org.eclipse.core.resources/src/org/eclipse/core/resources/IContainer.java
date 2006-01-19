@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -194,7 +194,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * </p>
 	 *
 	 * @return the name of the default charset encoding for this container 
-	 * @throws CoreException if this method fails
+	 * @exception CoreException if this method fails
 	 * @see IContainer#getDefaultCharset(boolean) 
 	 * @see IFile#getCharset()
 	 * @since 3.0
@@ -225,7 +225,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * </p>
 	 * @return the name of the default charset encoding for this container,
 	 * or <code>null</code> 
-	 * @throws CoreException if this method fails
+	 * @exception CoreException if this method fails
 	 * @see IFile#getCharset()
 	 * @since 3.0
 	 */

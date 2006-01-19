@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ public interface IPropertyManager extends IManager {
 	 * Closes the property store for a resource
 	 * 
 	 * @param target The resource to close the property store for
-	 * @throws CoreException
+	 * @exception CoreException
 	 */
 	public void closePropertyStore(IResource target) throws CoreException;
 
@@ -38,7 +38,7 @@ public interface IPropertyManager extends IManager {
 	 * </p>
 	 * @param target
 	 * @param depth
-	 * @throws CoreException
+	 * @exception CoreException
 	 */
 	public void deleteProperties(IResource target, int depth) throws CoreException;
 

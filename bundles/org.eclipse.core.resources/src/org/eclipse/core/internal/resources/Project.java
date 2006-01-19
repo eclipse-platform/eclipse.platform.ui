@@ -1089,7 +1089,7 @@ public class Project extends Container implements IProject {
 	 * @param updateFlags The write operation update flags
 	 * @param hasPublicChanges Whether the public sections of the description have changed
 	 * @param hasPrivateChanges Whether the private sections of the description have changed
-	 * @throws CoreException On failure to write the description
+	 * @exception CoreException On failure to write the description
 	 */
 	public void writeDescription(IProjectDescription description, int updateFlags, boolean hasPublicChanges, boolean hasPrivateChanges) throws CoreException {
 		if (ProjectDescription.isReading)
