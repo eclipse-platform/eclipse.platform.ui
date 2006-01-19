@@ -200,7 +200,8 @@ public class HistoryStore implements IHistoryStore {
 	/**
 	 * @see IHistoryStore#addState(IPath, IFileStore, long, boolean)
 	 */
-	public IFileState addState(IPath key, IFileStore localFile, long lastModified, boolean moveContents) {
+	public IFileState addState(IPath key, IFileStore localFile, IFileInfo info, boolean moveContents) {
+		long lastModified = info.getLastModified();
 		if (Policy.DEBUG_HISTORY)
 			System.out.println("History: Adding state for key: " + key + ", file: " + localFile + ", timestamp: " + lastModified + ", size: " + localFile.fetchInfo().getLength()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		if (!isValid(localFile))
