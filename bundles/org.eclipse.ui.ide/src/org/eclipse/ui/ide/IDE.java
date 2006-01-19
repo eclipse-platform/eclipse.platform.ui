@@ -18,15 +18,27 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.mapping.IModelProviderDescriptor;
+import org.eclipse.core.resources.mapping.ModelProvider;
+import org.eclipse.core.resources.mapping.ModelStatus;
+import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeMatcher;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -988,5 +1000,104 @@ public final class IDE {
 		} finally {
 			UIStats.end(UIStats.CONTENT_TYPE_LOOKUP, file, fileName);
 		}
+	}
+	
+    /**
+     * Prompt the user to inform them of the possible side effects
+     * of an operation on resources. Do not prompt for side effects 
+     * from ignored model providers. A model provider can be ignored if
+     * it is the client calling this API. Any message from the provided
+     * model provider id or any model providers it extends will be ignored. 
+     * @param shell the shell to parent the prompt dialog
+     * @param title the title of the dialog
+     * @param message the message for the dialog
+     * @param delta a delta built ising an <code>IProposedResourceDeltaFactory</code>
+     * @param ignoreModelProviderIds model providers to be ignored
+     * @param syncExec prompt in a sync exec (required when called from a non-UI thread
+     * @return whether the user chose to continue
+     * @since 3.2
+     */
+    public static boolean promptToConfirm(final Shell shell, final String title, String message, IResourceDelta delta, String[] ignoreModelProviderIds, boolean syncExec) {
+    	IStatus status = ResourceChangeValidator.getValidator().validateChange(delta);
+    	if (status.isOK())
+    		return true;
+    	final IStatus displayStatus;
+    	if (status.isMultiStatus()) {
+    		List result = new ArrayList();
+    		IStatus[] children = status.getChildren();
+    		for (int i = 0; i < children.length; i++) {
+				IStatus child = children[i];
+	    		if (!isIgnoredStatus(child, ignoreModelProviderIds))
+	    			result.add(child);
+			}
+    		if (result.isEmpty())
+    			return true;
+    		if (result.size() == 1) {
+    			displayStatus = (IStatus)result.get(0);
+    		} else {
+    			displayStatus = new MultiStatus(status.getPlugin(), status.getCode(), (IStatus[]) result.toArray(new IStatus[result.size()]), status.getMessage(), status.getException());
+    		}
+    	} else {
+    		if (isIgnoredStatus(status, ignoreModelProviderIds))
+    			return true;
+    		displayStatus = status;
+    	}
+    	
+    	if (message == null) {
+    		message = IDEWorkbenchMessages.IDE_sideEffectWarning;
+    	}
+    	final String dialogMessage = NLS.bind(IDEWorkbenchMessages.IDE_areYouSure, message);
+    	
+    	final boolean[] result = new boolean[] { false };
+    	Runnable runnable = new Runnable() {
+			public void run() {
+				ErrorDialog dialog = new ErrorDialog(shell, title, dialogMessage, displayStatus, IStatus.ERROR | IStatus.WARNING | IStatus.INFO) {
+					protected void createButtonsForButtonBar(Composite parent) {
+				        createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL,
+				                false);
+						createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL,
+								true);
+				        createDetailsButton(parent);
+					}
+					/* (non-Javadoc)
+					 * @see org.eclipse.jface.dialogs.ErrorDialog#buttonPressed(int)
+					 */
+					protected void buttonPressed(int id) {
+						if (id == IDialogConstants.YES_ID)
+							super.buttonPressed(IDialogConstants.OK_ID);
+						else if (id == IDialogConstants.NO_ID)
+							super.buttonPressed(IDialogConstants.CANCEL_ID);
+						super.buttonPressed(id);
+					}
+				};
+				int code = dialog.open();
+				result[0] = code == 0;
+			}
+		};
+		if (syncExec) {
+			shell.getDisplay().syncExec(runnable);
+		} else {
+			runnable.run();
+		}
+		return result[0];
+	}
+    
+    private static boolean isIgnoredStatus(IStatus status, String[] ignoreModelProviderIds) {
+    	if (ignoreModelProviderIds == null)
+    		return false;
+    	if (status instanceof ModelStatus) {
+			ModelStatus ms = (ModelStatus) status;		
+			for (int i = 0; i < ignoreModelProviderIds.length; i++) {
+				String id = ignoreModelProviderIds[i];
+				if (ms.getModelProviderId().equals(id))
+					return true;
+				IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor(id);
+				String[] extended = desc.getExtendedModels();
+				if (isIgnoredStatus(status, extended)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

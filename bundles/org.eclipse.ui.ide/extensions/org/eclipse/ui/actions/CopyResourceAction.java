@@ -54,6 +54,8 @@ public class CopyResourceAction extends SelectionListenerAction implements
      */
     protected CopyFilesAndFoldersOperation operation;
 
+	private String[] modelProviderIds;
+
     /**
      * Returns a new name for a copy of the resource at the given path in the given
      * workspace. This name could be determined either automatically or by querying
@@ -193,6 +195,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
     public void run() {
         try {
             operation = createOperation();
+            operation.setModelProviderIds(getModelProviderIds());
 
             // WARNING: do not query the selected resources more than once
             // since the selection may change during the run, 
@@ -266,4 +269,29 @@ public class CopyResourceAction extends SelectionListenerAction implements
         }
         return true;
     }
+    
+    /**
+     * Returns the model provider ids that are known to the client
+     * that instantiated this operation.
+     * 
+     * @return the model provider ids that are known to the client
+     * that instantiated this operation.
+     * @since 3.2
+     */
+	public String[] getModelProviderIds() {
+		return modelProviderIds;
+	}
+
+	/**
+     * Sets the model provider ids that are known to the client
+     * that instantiated this operation. Any potential side effects
+     * reported by these models during validation will be ignored.
+     * 
+	 * @param modelProviderIds the model providers known to the client
+	 * who is using this operation.
+	 * @since 3.2
+	 */
+	public void setModelProviderIds(String[] modelProviderIds) {
+		this.modelProviderIds = modelProviderIds;
+	}
 }

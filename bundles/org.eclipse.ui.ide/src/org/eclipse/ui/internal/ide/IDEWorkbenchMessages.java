@@ -840,9 +840,27 @@ public class IDEWorkbenchMessages extends NLS {
     public static String IDEEditorsPreferencePage_WorkbenchPreference_contentTypesRelatedLink;
 	public static String IDEWorkspacePreferencePage_WorkbenchPreference_relatedLink;
 	public static String WorkbenchEncoding_invalidCharset;
+	public static String CopyProjectAction_confirm;
+	public static String CopyProjectAction_warning;
+	public static String DeleteResourceAction_confirm;
+	public static String DeleteResourceAction_warning;
+	public static String CloseResourceAction_warningForOne;
+	public static String CloseResourceAction_warningForMultiple;
+	public static String CloseResourceAction_confirm;
+	public static String CopyFilesAndFoldersOperation_confirmMove;
+	public static String CopyFilesAndFoldersOperation_warningMove;
+	public static String CopyFilesAndFoldersOperation_confirmCopy;
+	public static String CopyFilesAndFoldersOperation_warningCopy;
+	public static String RenameResourceAction_confirm;
+	public static String RenameResourceAction_warning;
+
+	public static String IDE_sideEffectWarning;
+
+	public static String IDE_areYouSure;
 
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, IDEWorkbenchMessages.class);
 	}
+
 }

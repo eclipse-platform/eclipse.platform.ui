@@ -216,4 +216,11 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
         }
         return super.validateDestination(destination, sourceResources);
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.actions.CopyFilesAndFoldersOperation#isMove()
+     */
+    protected boolean isMove() {
+    	return true;
+    }
 }

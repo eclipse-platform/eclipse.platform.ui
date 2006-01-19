@@ -66,6 +66,8 @@ public class CopyProjectAction extends SelectionListenerAction {
      */
     protected IStatus errorStatus;
 
+	private String[] modelProviderIds;
+
     /**
      * Creates a new project copy action with the default text.
      *
@@ -234,6 +236,8 @@ public class CopyProjectAction extends SelectionListenerAction {
 
         String newName = (String) destinationPaths[0];
         IPath newLocation = new Path((String) destinationPaths[1]);
+        if (!CopyProjectOperation.validateCopy(shell, project, newName, getModelProviderIds()))
+        	return;
 
         boolean completed = performCopy(project, newName, newLocation);
 
@@ -248,7 +252,7 @@ public class CopyProjectAction extends SelectionListenerAction {
         }
     }
 
-    /**
+	/**
      * The <code>CopyResourceAction</code> implementation of this
      * <code>SelectionListenerAction</code> method enables this action only if 
      * there is a single selection which is a project.
@@ -270,4 +274,29 @@ public class CopyProjectAction extends SelectionListenerAction {
             return true;
         return false;
     }
+    
+    /**
+     * Returns the model provider ids that are known to the client
+     * that instantiated this operation.
+     * 
+     * @return the model provider ids that are known to the client
+     * that instantiated this operation.
+     * @since 3.2
+     */
+	public String[] getModelProviderIds() {
+		return modelProviderIds;
+	}
+
+	/**
+     * Sets the model provider ids that are known to the client
+     * that instantiated this operation. Any potential side effects
+     * reported by these models during validation will be ignored.
+     * 
+	 * @param modelProviderIds the model providers known to the client
+	 * who is using this operation.
+	 * @since 3.2
+	 */
+	public void setModelProviderIds(String[] modelProviderIds) {
+		this.modelProviderIds = modelProviderIds;
+	}
 }

@@ -15,6 +15,8 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
+import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,6 +27,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationMoveDialog;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -156,6 +159,9 @@ public class MoveProjectAction extends CopyProjectAction {
 		String projectName = (String) destinationPaths[0];
 		IPath newLocation = new Path((String) destinationPaths[1]);
 
+		if (!validateMove(project, projectName))
+			return;
+		
 		boolean completed = performMove(project, projectName, newLocation);
 
 		if (!completed) // ie.- canceled
@@ -167,5 +173,23 @@ public class MoveProjectAction extends CopyProjectAction {
 					.openError(this.shell, PROBLEMS_TITLE, null, errorStatus);
 			errorStatus = null;
 		}
+	}
+	
+	/**
+	 * Validates the operation against the model providers.
+	 *
+	 * @param project the project to move
+	 * @param newName the new name
+	 * @return whether the operation should proceed
+	 * @since 3.2
+	 */
+    private boolean validateMove(IProject project, String newName) {
+    	if (project.getName().equals(newName)) {
+    		// Only the location changed
+    		return true;
+    	}
+    	IResourceChangeDescriptionFactory factory = ResourceChangeValidator.getValidator().createDeltaFactory();
+    	factory.move(project, new Path(newName));
+		return IDE.promptToConfirm(shell, IDEWorkbenchMessages.CopyProjectAction_confirm, NLS.bind(IDEWorkbenchMessages.CopyProjectAction_warning, project.getName()), factory.getDelta(), getModelProviderIds(), false /* no need to syncExec */);
 	}
 }

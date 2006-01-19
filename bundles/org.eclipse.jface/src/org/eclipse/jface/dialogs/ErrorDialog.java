@@ -158,11 +158,20 @@ public class ErrorDialog extends IconAndMessageDialog {
         // create OK and Details buttons
         createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
                 true);
-        if (shouldShowDetailsButton()) {
+        createDetailsButton(parent);
+    }
+
+    /**
+     * Create the details button if it should be included.
+     * @param parent the parent composite
+     * @since 3.2
+     */
+	protected void createDetailsButton(Composite parent) {
+		if (shouldShowDetailsButton()) {
             detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
                     IDialogConstants.SHOW_DETAILS_LABEL, false);
         }
-    }
+	}
 
     /**
      * This implementation of the <code>Dialog</code> framework method creates

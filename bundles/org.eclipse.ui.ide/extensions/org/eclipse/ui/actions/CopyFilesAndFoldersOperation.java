@@ -30,6 +30,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
+import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -52,6 +54,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
@@ -88,6 +91,8 @@ public class CopyFilesAndFoldersOperation {
 	 * Overwrite all flag.
 	 */
 	private boolean alwaysOverwrite = false;
+
+	private String[] modelProviderIds;
 
 	/**
 	 * Returns a new name for a copy of the resource at the given path in the
@@ -531,6 +536,10 @@ public class CopyFilesAndFoldersOperation {
 			displayError(errorMsg);
 			return copiedResources[0];
 		}
+		
+		if (!validateOperation(resources, destinationPath)) {
+			return copiedResources[0];
+		}
 
 		if (fork) {
 			WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
@@ -559,6 +568,45 @@ public class CopyFilesAndFoldersOperation {
 			errorStatus = null;
 		}
 		return copiedResources[0];
+	}
+
+	/**
+	 * Validates the copy or move operation.
+	 *
+	 * @param resources the resources being copied or moved
+	 * @param destinationPath the destination of the copy or move
+	 * @return whether the operation should proceed
+	 * @since 3.2
+	 */
+	private boolean validateOperation(IResource[] resources, IPath destinationPath) {
+    	IResourceChangeDescriptionFactory factory = ResourceChangeValidator.getValidator().createDeltaFactory();
+    	for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			if (isMove()) {
+				factory.move(resource, destinationPath.append(resource.getName()));
+			} else {
+				factory.copy(resource, destinationPath.append(resource.getName()));
+			}
+		}
+    	String title;
+    	String message;
+    	if (isMove()) {
+    		title = IDEWorkbenchMessages.CopyFilesAndFoldersOperation_confirmMove;
+			message = IDEWorkbenchMessages.CopyFilesAndFoldersOperation_warningMove;
+    	} else {
+			title = IDEWorkbenchMessages.CopyFilesAndFoldersOperation_confirmCopy;
+			message = IDEWorkbenchMessages.CopyFilesAndFoldersOperation_warningCopy;
+    	}
+		return IDE.promptToConfirm(messageShell, title, message, factory.getDelta(), modelProviderIds, true /* syncExec */);
+	}
+
+	/**
+	 * Return whether the operation is a move or a copy
+	 * @return whether the operation is a move or a copy
+	 * @since 3.2
+	 */
+	protected boolean isMove() {
+		return false;
 	}
 
 	private void display(InvocationTargetException e) {
@@ -1677,5 +1725,30 @@ public class CopyFilesAndFoldersOperation {
 
 			performFileImport(stores, container, monitor);
 		}
+	}
+	
+    /**
+     * Returns the model provider ids that are known to the client
+     * that instantiated this operation.
+     * 
+     * @return the model provider ids that are known to the client
+     * that instantiated this operation.
+     * @since 3.2
+     */
+	public String[] getModelProviderIds() {
+		return modelProviderIds;
+	}
+
+	/**
+     * Sets the model provider ids that are known to the client
+     * that instantiated this operation. Any potential side effects
+     * reported by these models during validation will be ignored.
+     * 
+	 * @param modelProviderIds the model providers known to the client
+	 * who is using this operation.
+	 * @since 3.2
+	 */
+	public void setModelProviderIds(String[] modelProviderIds) {
+		this.modelProviderIds = modelProviderIds;
 	}
 }

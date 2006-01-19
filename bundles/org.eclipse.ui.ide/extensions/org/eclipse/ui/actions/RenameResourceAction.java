@@ -21,6 +21,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
+import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,6 +32,7 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.FocusAdapter;
@@ -44,6 +47,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -84,6 +88,8 @@ public class RenameResourceAction extends WorkspaceAction {
      * The new path.
      */
     private IPath newPath;
+
+	private String[] modelProviderIds;
 
     private static final String CHECK_RENAME_TITLE = IDEWorkbenchMessages.RenameResourceAction_checkTitle;
 
@@ -329,6 +335,9 @@ public class RenameResourceAction extends WorkspaceAction {
     protected void invokeOperation(IResource resource, IProgressMonitor monitor)
             throws CoreException {
 
+    	if (!validateMove(resource, newPath)) {
+    		return;
+    	}
         monitor.beginTask(RENAMING_MESSAGE, 100);
         IWorkspaceRoot workspaceRoot = resource.getWorkspace().getRoot();
 
@@ -367,7 +376,21 @@ public class RenameResourceAction extends WorkspaceAction {
                     new SubProgressMonitor(monitor, 50));
     }
 
-    /**
+	/**
+	 * Validates the operation against the model providers.
+	 *
+	 * @param resource the resource to move
+	 * @param path the new path
+	 * @return whether the operation should proceed
+	 * @since 3.2
+	 */
+    private boolean validateMove(IResource resource, IPath path) {
+    	IResourceChangeDescriptionFactory factory = ResourceChangeValidator.getValidator().createDeltaFactory();
+    	factory.move(resource, path);
+		return IDE.promptToConfirm(getShell(), IDEWorkbenchMessages.RenameResourceAction_confirm, NLS.bind(IDEWorkbenchMessages.RenameResourceAction_warning, resource.getName()), factory.getDelta(), modelProviderIds, true /* syncExec */);
+	}
+
+	/**
      * Return the new name to be given to the target resource.
      *
      * @return java.lang.String
@@ -591,5 +614,30 @@ public class RenameResourceAction extends WorkspaceAction {
         }
         return true;
     }
+    
+    /**
+     * Returns the model provider ids that are known to the client
+     * that instantiated this operation.
+     * 
+     * @return the model provider ids that are known to the client
+     * that instantiated this operation.
+     * @since 3.2
+     */
+	public String[] getModelProviderIds() {
+		return modelProviderIds;
+	}
+
+	/**
+     * Sets the model provider ids that are known to the client
+     * that instantiated this operation. Any potential side effects
+     * reported by these models during validation will be ignored.
+     * 
+	 * @param modelProviderIds the model providers known to the client
+	 * who is using this operation.
+	 * @since 3.2
+	 */
+	public void setModelProviderIds(String[] modelProviderIds) {
+		this.modelProviderIds = modelProviderIds;
+	}
 
 }

@@ -23,6 +23,8 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
+import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -30,6 +32,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -37,6 +40,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -57,6 +61,7 @@ public class CloseResourceAction extends WorkspaceAction implements
      */
     public static final String ID = PlatformUI.PLUGIN_ID
             + ".CloseResourceAction"; //$NON-NLS-1$
+	private String[] modelProviderIds;
 
     /**
      * Creates a new action.
@@ -177,6 +182,9 @@ public class CloseResourceAction extends WorkspaceAction implements
     public void run() {
         if (!saveDirtyEditors())
             return;
+        if (!validateClose()) {
+        	return;
+        }
         //be conservative and include all projects in the selection - projects
         //can change state between now and when the job starts
     	ISchedulingRule rule = null;
@@ -283,4 +291,53 @@ public class CloseResourceAction extends WorkspaceAction implements
             }
         }
     }
+    
+    /**
+     * Returns the model provider ids that are known to the client
+     * that instantiated this operation.
+     * 
+     * @return the model provider ids that are known to the client
+     * that instantiated this operation.
+     * @since 3.2
+     */
+	public String[] getModelProviderIds() {
+		return modelProviderIds;
+	}
+
+	/**
+     * Sets the model provider ids that are known to the client
+     * that instantiated this operation. Any potential side effects
+     * reported by these models during validation will be ignored.
+     * 
+	 * @param modelProviderIds the model providers known to the client
+	 * who is using this operation.
+	 * @since 3.2
+	 */
+	public void setModelProviderIds(String[] modelProviderIds) {
+		this.modelProviderIds = modelProviderIds;
+	}
+	
+	/**
+	 * Validates the operation against the model providers.
+	 * 
+	 * @return whether the operation should proceed
+	 */
+    private boolean validateClose() {
+    	IResourceChangeDescriptionFactory factory = ResourceChangeValidator.getValidator().createDeltaFactory();
+    	List resources = getActionResources();
+    	for (Iterator iter = resources.iterator(); iter.hasNext();) {
+			IResource resource = (IResource) iter.next();
+			if (resource instanceof IProject) {
+				IProject project = (IProject) resource;
+				factory.close(project);
+			}
+		}
+    	String message;
+    	if (resources.size() == 1) {
+    		message = NLS.bind(IDEWorkbenchMessages.CloseResourceAction_warningForOne, ((IResource)resources.get(0)).getName());
+    	} else {
+    		message = IDEWorkbenchMessages.CloseResourceAction_warningForMultiple;
+    	}
+		return IDE.promptToConfirm(getShell(), IDEWorkbenchMessages.CloseResourceAction_confirm, message, factory.getDelta(), getModelProviderIds(), false /* no need to syncExec */);
+	}
 }

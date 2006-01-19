@@ -12,6 +12,7 @@ package org.eclipse.ui.actions;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
@@ -19,6 +20,8 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
+import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -44,6 +47,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -197,6 +201,8 @@ public class DeleteResourceAction extends SelectionListenerAction {
      */
     protected boolean fTestingMode = false;
 
+	private String[] modelProviderIds;
+
     /**
      * Creates a new delete resource action.
      *
@@ -328,10 +334,13 @@ public class DeleteResourceAction extends SelectionListenerAction {
      *  if the deletion should be abandoned
      */
     private boolean confirmDelete(IResource[] resources) {
-        if (containsOnlyProjects(resources)) {
-            return confirmDeleteProjects(resources);
-        }
-        return confirmDeleteNonProjects(resources);
+    	if (validateDelete(resources)) {
+	        if (containsOnlyProjects(resources)) {
+	            return confirmDeleteProjects(resources);
+	        }
+	        return confirmDeleteNonProjects(resources);
+    	} 
+    	return false;
     }
 
     /**
@@ -606,4 +615,44 @@ public class DeleteResourceAction extends SelectionListenerAction {
             return IDialogConstants.NO_ID;
         return IDialogConstants.CANCEL_ID;
     }
+    
+	/**
+	 * Validates the operation against the model providers.
+	 *
+	 * @param resources the resources to be deleted
+	 * @return whether the operation should proceed
+     */
+    private boolean validateDelete(IResource[] resources) {
+    	IResourceChangeDescriptionFactory factory = ResourceChangeValidator.getValidator().createDeltaFactory();
+    	for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			factory.delete(resource);
+		}
+		return IDE.promptToConfirm(shell, IDEWorkbenchMessages.DeleteResourceAction_confirm, IDEWorkbenchMessages.DeleteResourceAction_warning, factory.getDelta(), getModelProviderIds(), false /* no need to syncExec */);
+	}
+    
+    /**
+     * Returns the model provider ids that are known to the client
+     * that instantiated this operation.
+     * 
+     * @return the model provider ids that are known to the client
+     * that instantiated this operation.
+     * @since 3.2
+     */
+	public String[] getModelProviderIds() {
+		return modelProviderIds;
+	}
+
+	/**
+     * Sets the model provider ids that are known to the client
+     * that instantiated this operation. Any potential side effects
+     * reported by these models during validation will be ignored.
+     * 
+	 * @param modelProviderIds the model providers known to the client
+	 * who is using this operation.
+	 * @since 3.2
+	 */
+	public void setModelProviderIds(String[] modelProviderIds) {
+		this.modelProviderIds = modelProviderIds;
+	}
 }
