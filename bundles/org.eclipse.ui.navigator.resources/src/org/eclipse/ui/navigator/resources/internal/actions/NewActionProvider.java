@@ -12,6 +12,7 @@ import org.eclipse.ui.actions.NewProjectAction;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.CommonActionProviderConfig;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
+import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 import org.eclipse.ui.navigator.WizardActionGroup;
 import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.wizards.IWizardCategory;
@@ -48,17 +49,24 @@ public class NewActionProvider extends CommonActionProvider {
 	private IAction newExampleAction;
 
 	private WizardActionGroup newWizardActionGroup;
+	
+	private boolean contribute = false;
 
 	public void init(CommonActionProviderConfig aConfig) {
 
-		IWorkbenchWindow window = aConfig.getViewSite().getWorkbenchWindow();
-		showDlgAction = ActionFactory.NEW.create(window);
-		newProjectAction = new NewProjectAction(window);
-		newExampleAction = new NewExampleAction(window);
+		if (aConfig.getViewSite() instanceof ICommonViewerWorkbenchSite) {
+			IWorkbenchWindow window = ((ICommonViewerWorkbenchSite) aConfig
+					.getViewSite()).getWorkbenchWindow();
+			showDlgAction = ActionFactory.NEW.create(window);
+			newProjectAction = new NewProjectAction(window);
+			newExampleAction = new NewExampleAction(window);
 
-		newWizardActionGroup = new WizardActionGroup(window, PlatformUI
-				.getWorkbench().getNewWizardRegistry(), WizardActionGroup.TYPE_NEW);
-
+			newWizardActionGroup = new WizardActionGroup(window, PlatformUI
+					.getWorkbench().getNewWizardRegistry(),
+					WizardActionGroup.TYPE_NEW);
+			
+			contribute = true;
+		}
 	}
 
 	/**
@@ -81,7 +89,8 @@ public class NewActionProvider extends CommonActionProvider {
 		IMenuManager submenu = new MenuManager(
 				WorkbenchNavigatorMessages.Workbench_new,
 				ICommonMenuConstants.GROUP_NEW);
-
+		if(!contribute)
+			return;
 		// Add new project wizard shortcut
 		submenu.add(newProjectAction);
 		submenu.add(new Separator());

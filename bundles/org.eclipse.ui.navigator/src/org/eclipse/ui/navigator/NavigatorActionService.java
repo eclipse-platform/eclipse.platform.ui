@@ -159,16 +159,17 @@ public final class NavigatorActionService extends ActionGroup implements
 			ISelectionProvider aSelectionProvider, boolean force) {
 		Assert.isTrue(!disposed);
 
-		/*
-		 * Hooks into the Eclipse framework for Object contributions, and View
-		 * contributions.
-		 */
-		if (force
-				|| viewerDescriptor.allowsPlatformContributionsToContextMenu())
-			commonViewerSite.registerContextMenu(contentService
-					.getViewerDescriptor().getPopupMenuId(), menu,
-					aSelectionProvider);
-
+		if(commonViewerSite instanceof ICommonViewerWorkbenchSite) {
+			/*
+			 * Hooks into the Eclipse framework for Object contributions, and View
+			 * contributions.
+			 */
+			if (force
+					|| viewerDescriptor.allowsPlatformContributionsToContextMenu())
+				((ICommonViewerWorkbenchSite)commonViewerSite).registerContextMenu(contentService
+						.getViewerDescriptor().getPopupMenuId(), menu,
+						aSelectionProvider);
+		}
 	}
 
 	/**
@@ -381,7 +382,8 @@ public final class NavigatorActionService extends ActionGroup implements
 			anActionProvider.restoreState(memento);
 			anActionProvider.setContext(new ActionContext(
 					StructuredSelection.EMPTY));
-			anActionProvider.fillActionBars(commonViewerSite.getActionBars());
+			if(commonViewerSite instanceof ICommonViewerWorkbenchSite)
+				anActionProvider.fillActionBars(((ICommonViewerWorkbenchSite)commonViewerSite).getActionBars());
 		}
 
 	}

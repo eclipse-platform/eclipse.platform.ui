@@ -1,10 +1,9 @@
 package org.eclipse.ui.navigator;
 
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.ui.IActionBars;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.navigator.internal.CommonViewerSiteDelegate;
 import org.eclipse.ui.navigator.internal.CommonViewerSiteIEditorPartSiteDelegate;
 import org.eclipse.ui.navigator.internal.CommonViewerSiteIPageSiteDelegate;
@@ -36,7 +35,7 @@ public final class CommonViewerSiteFactory {
 	 *            contract of ICommonViewerSite.
 	 * @return An ICommonViewerSite that delegates to the given parameter.
 	 */
-	public static ICommonViewerSite createCommonViewerSite(IViewSite aViewSite) {
+	public static ICommonViewerWorkbenchSite createCommonViewerSite(IViewSite aViewSite) {
 		return new CommonViewerSiteIViewSiteDelegate(aViewSite);
 	}
 
@@ -47,7 +46,7 @@ public final class CommonViewerSiteFactory {
 	 *            contract of ICommonViewerSite.
 	 * @return An ICommonViewerSite that delegates to the given parameter.
 	 */
-	public static ICommonViewerSite createCommonViewerSite(
+	public static ICommonViewerWorkbenchSite createCommonViewerSite(
 			IEditorSite aEditorSite) {
 		return new CommonViewerSiteIEditorPartSiteDelegate(aEditorSite);
 	}
@@ -57,29 +56,18 @@ public final class CommonViewerSiteFactory {
 	 * @param anId
 	 *            The unique identifier corresponding to the abstract viewer for
 	 *            the returned ICommonViewerSite.
-	 * @param aPage
-	 *            The page that will be returned by
-	 *            {@link ICommonViewerSite#getPage()}
-	 * 
-	 * @param aMenuRegistration
-	 *            The menu registration assistant for any possible context
-	 *            menus. See
-	 *            {@link ICommonViewerSite#registerContextMenu(String, org.eclipse.jface.action.MenuManager, ISelectionProvider)}
 	 * 
 	 * @param aSelectionProvider
 	 *            The selection provider that will initially be returned by
 	 *            {@link ICommonViewerSite#getSelectionProvider()}
 	 * 
-	 * @param theActionBars
-	 *            The action bars that will be returned by
-	 *            {@link ICommonViewerSite#getActionBars()}
+	 * @param aShell
+	 *            The shell that will be returned by
+	 *            {@link ICommonViewerSite#getShell()}
 	 * @return An ICommonViewerSite that delegates to the given parameter.
 	 */
-	public static ICommonViewerSite createCommonViewerSite(String anId,
-			IWorkbenchPage aPage, IMenuRegistration aMenuRegistration,
-			ISelectionProvider aSelectionProvider, IActionBars theActionBars) {
-		return new CommonViewerSiteDelegate(anId, aPage, aMenuRegistration,
-				aSelectionProvider, theActionBars);
+	public static ICommonViewerSite createCommonViewerSite(String anId, ISelectionProvider aSelectionProvider, Shell aShell) {
+		return new CommonViewerSiteDelegate(anId, aSelectionProvider, aShell);
 	}
 
 	/**
@@ -92,7 +80,7 @@ public final class CommonViewerSiteFactory {
 	 *            contract of ICommonViewerSite.
 	 * @return An ICommonViewerSite that delegates to the given parameter.
 	 */
-	public static ICommonViewerSite createCommonViewerSite(String anId,
+	public static ICommonViewerWorkbenchSite createCommonViewerSite(String anId,
 			IPageSite aPageSite) {
 		return new CommonViewerSiteIPageSiteDelegate(anId, aPageSite);
 	}

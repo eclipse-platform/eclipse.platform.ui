@@ -15,7 +15,7 @@ import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.CommonActionProviderConfig;
 import org.eclipse.ui.navigator.ICommonActionConstants;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
-import org.eclipse.ui.navigator.ICommonViewerSite;
+import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 import org.eclipse.ui.navigator.internal.AdaptabilityUtility;
 import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMessages;
 
@@ -29,15 +29,23 @@ public class OpenActionProvider extends CommonActionProvider   {
 
 	private OpenFileAction openFileAction;
  
-	private ICommonViewerSite viewSite = null;
+	private ICommonViewerWorkbenchSite viewSite = null;
+
+	private boolean contribute = false;
 
 	public void init(CommonActionProviderConfig aConfig) {
-		viewSite = aConfig.getViewSite();
-		openFileAction = new OpenFileAction(viewSite.getPage());
+		if(aConfig.getViewSite() instanceof ICommonViewerWorkbenchSite) {
+			viewSite = (ICommonViewerWorkbenchSite) aConfig
+			.getViewSite();
+			openFileAction = new OpenFileAction(viewSite.getPage());
+			contribute  = true;
+		}
 	}
  
 
 	public void fillContextMenu(IMenuManager aMenu) {
+		if(!contribute)
+			return;
 		openFileAction.selectionChanged((IStructuredSelection) getContext()
 				.getSelection());
 		if (openFileAction.isEnabled()) {
@@ -47,6 +55,8 @@ public class OpenActionProvider extends CommonActionProvider   {
 	}
 
 	public void fillActionBars(IActionBars theActionBars) {
+		if(!contribute)
+			return;
 		IStructuredSelection selection = (IStructuredSelection) getContext()
 		.getSelection();
 		if(selection.size() == 1 && selection.getFirstElement() instanceof IFile) { 

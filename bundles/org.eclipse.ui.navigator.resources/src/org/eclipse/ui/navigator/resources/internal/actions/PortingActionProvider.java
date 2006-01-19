@@ -31,6 +31,7 @@ import org.eclipse.ui.actions.ImportResourcesAction;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.CommonActionProviderConfig;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
+import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 import org.eclipse.ui.navigator.WizardActionGroup;
 import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorPlugin;
@@ -67,25 +68,34 @@ public class PortingActionProvider extends CommonActionProvider {
 
 	private boolean disposed = false;
 
+	private boolean contribute= false;
+
 	public void init(CommonActionProviderConfig aConfig) {
 
 		Assert.isTrue(!disposed);
-		
-		IWorkbenchWindow window = (aConfig.getViewSite() != null) ? aConfig
-				.getViewSite().getWorkbenchWindow() : null;
-		importAction = new ImportResourcesAction(window);
-		exportAction = new ExportResourcesAction(window);
-		importWizardActionGroup = new WizardActionGroup(window, PlatformUI
-				.getWorkbench().getImportWizardRegistry(), WizardActionGroup.TYPE_IMPORT);
-		exportWizardActionGroup = new WizardActionGroup(window, PlatformUI
-				.getWorkbench().getExportWizardRegistry(), WizardActionGroup.TYPE_EXPORT);
 
+		if (aConfig.getViewSite() instanceof ICommonViewerWorkbenchSite) {
+
+			IWorkbenchWindow window = ((ICommonViewerWorkbenchSite) aConfig
+					.getViewSite()).getWorkbenchWindow();
+			importAction = new ImportResourcesAction(window);
+			exportAction = new ExportResourcesAction(window);
+			importWizardActionGroup = new WizardActionGroup(window, PlatformUI
+					.getWorkbench().getImportWizardRegistry(),
+					WizardActionGroup.TYPE_IMPORT);
+			exportWizardActionGroup = new WizardActionGroup(window, PlatformUI
+					.getWorkbench().getExportWizardRegistry(),
+					WizardActionGroup.TYPE_EXPORT);
+			contribute = true;
+		}
 	}
 
 	/**
 	 * Extends the superclass implementation to dispose the subgroups.
 	 */
 	public void dispose() {
+		if(!contribute)
+			return;
 		importWizardActionGroup.dispose();
 		exportWizardActionGroup.dispose();
 		importAction = null;
@@ -94,20 +104,24 @@ public class PortingActionProvider extends CommonActionProvider {
 	}
 
 	public void fillActionBars(IActionBars theActionBars) {
-	
+		if(!contribute)
+			return;
+
 		Assert.isTrue(!disposed);
-		
+
 		theActionBars.setGlobalActionHandler(ActionFactory.IMPORT.getId(),
 				importAction);
 		theActionBars.setGlobalActionHandler(ActionFactory.EXPORT.getId(),
 				exportAction);
-	
+
 	}
 
 	public void fillContextMenu(IMenuManager aMenu) {
-	
+		if(!contribute)
+			return;
+
 		Assert.isTrue(!disposed);
-		
+
 		ISelection selection = getContext().getSelection();
 		if (selection.isEmpty() || !(selection instanceof IStructuredSelection))
 			addSimplePortingMenus(aMenu);

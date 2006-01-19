@@ -7,9 +7,9 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.navigator.ICommonViewerSite;
+import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 
-public class CommonViewerSiteIViewSiteDelegate implements ICommonViewerSite {
+public class CommonViewerSiteIViewSiteDelegate implements ICommonViewerWorkbenchSite {
 
 	private IViewSite viewSite;
 
