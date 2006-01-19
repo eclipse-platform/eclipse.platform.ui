@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,9 +75,6 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 	}
 	
 	protected void receiveMessage(String message) {
-		if (fDebug) {
-			System.out.println(message);
-		}
 		if (message.startsWith(DebugMessageIds.BUILD_STARTED)) {
 			buildStarted();
 		} else if (message.startsWith(DebugMessageIds.SUSPENDED)){
@@ -179,9 +176,6 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 	}
 	
 	protected synchronized void shutDown() {
-		if (fDebug) {
-			System.out.println("shutdown " + fRequestPort); //$NON-NLS-1$
-		}
         if (fTarget != null) {
             fTarget.terminated();
             fTarget= null;
