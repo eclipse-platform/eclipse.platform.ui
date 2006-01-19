@@ -1867,10 +1867,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 
 	/**
 	 * Renames or relocates this project so that it is the project specified by the
-	 * given project description. The description specifies the name, location and
-	 * attributes of the new project. After successful completion, the old project
+	 * given project description. The description specifies the name and location
+	 * of the new project. After successful completion, the old project
 	 * and any direct or indirect members will no longer exist; but corresponding
-	 * new resources will now exist at the project.
+	 * new resources will now exist in the new project.
 	 * <p>
 	 * When a resource moves, its session and persistent properties move with it.
 	 * Likewise for all the other attributes of the resource including markers.
@@ -1879,11 +1879,11 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * When this project's location is the default location, then the directories
 	 * and files on disk are moved to be in the location specified by the given
 	 * description. If the given description specifies the default location for the
-	 * project, the directories and files are moved to the default location. In all
-	 * other cases the directories and files on disk are left untouched. If the name
+	 * project, the directories and files are moved to the default location. If the name
 	 * in the given description is the same as this project's name and the location
 	 * is different, then the project contents will be moved to the new location.
-	 * All other parts of the given description are ignored.
+ 	 * In all other cases the directories and files on disk are left untouched.
+	 * Parts of the supplied description other than the name and location are ignored.
 	 * </p>
 	 * <p>
 	 * The <code>FORCE</code> update flag controls how this method deals with cases
@@ -1927,9 +1927,18 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <code>SHALLOW</code> update flag is ignored when moving non- linked
 	 * resources.
 	 * </p>
+	 * <p>
+	 * The {@link IResource#REPLACE} update flag controls how this method deals
+	 * with a change of location.  If the location changes and the {@link IResource#REPLACE}
+	 * flag is not specified, then the projects contents on disk are moved to the new
+	 * location.  If the location changes and the {@link IResource#REPLACE}
+	 * flag is specified, then the project is reoriented to correspond to the new
+	 * location, but no contents are moved on disk.  The contents already on
+	 * disk at the new location become the project contents.  If the new project
+	 * location does not exist, it will be created.
+	 * </p>
 	 * <p>  
-	 * Update flags other than <code>FORCE</code>, <code>KEEP_HISTORY</code> and
-	 * <code>SHALLOW</code> are ignored.
+	 * Update flags other than those listed above are ignored.
 	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported in a subsequent

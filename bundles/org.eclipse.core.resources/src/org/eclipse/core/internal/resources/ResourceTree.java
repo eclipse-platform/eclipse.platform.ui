@@ -716,10 +716,16 @@ class ResourceTree implements IResourceTree {
 				destLocation = rootLocation.append(destDescription.getName()).toFile().toURI();
 			}
 			IFileStore destStore = EFS.getStore(destLocation);
+			
+			//If this is a replace, just make sure the destination location exists, and return
+			boolean replace = (flags & IResource.REPLACE) != 0;
+			if (replace) {
+				destStore.mkdir(EFS.NONE, Policy.subMonitorFor(monitor, 10));
+				return;
+			}
 
 			// Move the contents on disk.
-			localManager.move(source, destStore, flags, monitor);
-			monitor.worked(9);
+			localManager.move(source, destStore, flags, Policy.subMonitorFor(monitor, 9));
 
 			//if this is a deep move, move the contents of any linked resources
 			if ((flags & IResource.SHALLOW) == 0) {
@@ -1036,7 +1042,7 @@ class ResourceTree implements IResourceTree {
 			// and we need to update the workspace tree.
 			movedProjectSubtree(source, description);
 			monitor.worked(Policy.totalWork * 1 / 8);
-			
+
 			boolean isDeep = (flags & IResource.SHALLOW) == 0;
 			updateTimestamps(source.getWorkspace().getRoot().getProject(description.getName()), isDeep);
 			monitor.worked(Policy.totalWork * 1 / 8);
@@ -1083,10 +1089,10 @@ class ResourceTree implements IResourceTree {
 					return true;
 				}
 				//only needed if underlying file system does not preserve timestamps
-//				if (resource.getType() == IResource.FILE) {
-//					IFile file = (IFile) resource;
-//					updateMovedFileTimestamp(file, computeTimestamp(file));
-//				}
+				//				if (resource.getType() == IResource.FILE) {
+				//					IFile file = (IFile) resource;
+				//					updateMovedFileTimestamp(file, computeTimestamp(file));
+				//				}
 				return true;
 			}
 		};
