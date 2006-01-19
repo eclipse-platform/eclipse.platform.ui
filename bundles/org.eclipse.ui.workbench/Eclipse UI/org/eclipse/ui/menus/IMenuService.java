@@ -18,7 +18,7 @@ import org.eclipse.jface.menus.SActionSet;
 import org.eclipse.jface.menus.SGroup;
 import org.eclipse.jface.menus.SItem;
 import org.eclipse.jface.menus.SMenu;
-import org.eclipse.jface.menus.SPartMenuLayout;
+import org.eclipse.jface.menus.SMenuLayout;
 import org.eclipse.jface.menus.SWidget;
 import org.eclipse.ui.services.IServiceWithSources;
 
@@ -190,7 +190,7 @@ public interface IMenuService extends IServiceWithSources {
 	 * 
 	 * @return The menu layout; never <code>null</code>.
 	 */
-	public SPartMenuLayout getLayout();
+	public SMenuLayout getLayout();
 
 	/**
 	 * Retrieves the menu with the given identifier. If no such menu exists,

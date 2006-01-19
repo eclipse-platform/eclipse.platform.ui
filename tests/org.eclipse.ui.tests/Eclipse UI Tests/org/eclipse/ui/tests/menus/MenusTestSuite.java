@@ -32,5 +32,6 @@ public class MenusTestSuite extends TestSuite {
      */
     public MenusTestSuite() {
         addTest(new TestSuite(ObjectContributionTest.class));
+        addTest(new TestSuite(OrderingTest.class));
     }
 }
