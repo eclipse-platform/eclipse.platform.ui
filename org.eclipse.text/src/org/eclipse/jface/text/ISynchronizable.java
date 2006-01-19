@@ -33,7 +33,7 @@ public interface ISynchronizable {
 	 * specified by the implementer.
 	 * <p>
 	 * <em>You should not override an existing lock object unless you own
-	 * that lock object yourself.</em>
+	 * that lock object yourself. Use the existing lock object instead.</em>
 	 * </p>
 	 *
 	 * @param lockObject the lock object. May be <code>null</code>.
