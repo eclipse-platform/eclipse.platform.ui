@@ -209,7 +209,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 
     public IResourceMappingScope buildScope(IProgressMonitor monitor) throws InterruptedException, CVSException {
     	if (scope == null) {
-			ResourceMappingOperation op = new ResourceMappingOperation(getPart(), selectedMappings, getResourceMappingContext()) {
+			ResourceMappingOperation op = new ResourceMappingOperation(getPart(), selectedMappings) {
 				/* (non-Javadoc)
 				 * @see org.eclipse.team.ui.operations.ResourceMappingOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 				 */
@@ -223,6 +223,10 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 					if (!consultModelsWhenBuildingScope)
 						return false;
 					return RepositoryProviderOperation.this.consultModelsForMappings();
+				}
+				
+				protected ResourceMappingContext getResourceMappingContext() {
+					return RepositoryProviderOperation.this.getResourceMappingContext();
 				}
 			};
 			// Run the operation to build the scope

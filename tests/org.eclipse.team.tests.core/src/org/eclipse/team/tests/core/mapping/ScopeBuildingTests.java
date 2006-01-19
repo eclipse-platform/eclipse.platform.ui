@@ -38,7 +38,7 @@ public class ScopeBuildingTests extends TeamTest {
 		private ResourceMapping[] additionalMappings;
 
 		protected TestResourceMappingOperation(ResourceMapping[] selectedMappings, ResourceMapping[] additionalMappings) {
-			super(null, selectedMappings, ResourceMappingContext.LOCAL_CONTEXT);
+			super(null, selectedMappings);
 			this.additionalMappings = additionalMappings;
 		}
 
@@ -52,16 +52,16 @@ public class ScopeBuildingTests extends TeamTest {
 		}
 		
 		protected ScopeGenerator getScopeGenerator() {
-			return new ScopeGenerator() {	
+			return new ScopeGenerator(getResourceMappingContext(), false) {	
 				public IResourceMappingScope prepareScope(
-						ResourceMapping[] selectedMappings, ResourceMappingContext context, boolean consultModel,
+						ResourceMapping[] selectedMappings,
 						IProgressMonitor monitor) throws CoreException {
 					
-					IResourceMappingScope resourceMappingScope = super.prepareScope(selectedMappings, context, false, monitor);
+					IResourceMappingScope resourceMappingScope = super.prepareScope(selectedMappings, monitor);
 					// Add the additional test mappings to the scope
 					for (int i = 0; i < additionalMappings.length; i++) {
 						ResourceMapping mapping = additionalMappings[i];
-						ResourceTraversal[] traversals = mapping.getTraversals(context, monitor);
+						ResourceTraversal[] traversals = mapping.getTraversals(getContext(), monitor);
 						((ResourceMappingScope)resourceMappingScope).addMapping(mapping, traversals);
 						// TODO: The additional mappings and additional resources boolean will not be set
 						// TODO: This may bring in mappings from the resources modle provider

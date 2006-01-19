@@ -18,8 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.mapping.ResourceMappingInputScope;
-import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
+import org.eclipse.team.internal.core.mapping.*;
 
 /**
  * Class for translating a set of <code>ResourceMapping</code> objects
@@ -59,27 +58,32 @@ import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
  */
 public class ScopeGenerator {
 
+	private final ResourceMappingContext context;
+	private final boolean consultModels;
+
+	public ScopeGenerator(ResourceMappingContext resourceMappingContext, boolean consultModels) {
+		this.context = resourceMappingContext;
+		this.consultModels = consultModels;
+	}
+
 	/**
 	 * Build the scope that is used to determine the complete set of resource
 	 * mappings, and hence resources, that an operation should be performed on.
 	 * 
 	 * @param selectedMappings the selected set of resource mappings
-	 * @param context the resource mapping context used to determine the
-	 *            resources to be oeprated on
-	 * @param consultModels whether models should be consulted during scope generation
 	 * @param monitor a progress monitor
 	 * @return a scope that defines the complete set of resources to be operated
 	 *         on
 	 * @throws CoreException
 	 */
 	public IResourceMappingScope prepareScope(
-			ResourceMapping[] selectedMappings, ResourceMappingContext context,
-			boolean consultModels, IProgressMonitor monitor) throws CoreException {
+			ResourceMapping[] selectedMappings,
+			IProgressMonitor monitor) throws CoreException {
 
 		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 
 		// Create the scope
-		ResourceMappingScope scope = createScope(selectedMappings);
+		IResourceMappingScope scope = createScope(selectedMappings);
 
 		// Accumulate the initial set of mappings we need traversals for
 		Set targetMappings = new HashSet();
@@ -87,31 +91,17 @@ public class ScopeGenerator {
 			ResourceMapping mapping = selectedMappings[i];
 			targetMappings.add(mapping);
 		}
-		Set handledResources = new HashSet();
 		Set newResources;
 		boolean firstTime = true;
 		boolean hasAdditionalResources = false;
 		do {
-			newResources = addMappingsToScope(scope, targetMappings, context,
+			newResources = addMappingsToScope(scope, targetMappings,
 					Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 			if (consultModels) {
 				IResource[] adjusted = adjustNewResources(newResources);
 				targetMappings = internalGetMappingsFromProviders(adjusted,
-						context, Policy
-								.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
-	
-				// TODO: The new resources aren't really just the new ones so reduce
-				// the set if needed
-				if (!handledResources.isEmpty()) {
-					for (Iterator iter = newResources.iterator(); iter.hasNext();) {
-						IResource resource = (IResource) iter.next();
-						if (handledResources.contains(resource)) {
-							iter.remove();
-						}
-					}
-				}
-	
-				handledResources.addAll(newResources);
+						context, 
+						Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 				if (firstTime) {
 					firstTime = false;
 				} else if (!hasAdditionalResources) {
@@ -120,23 +110,91 @@ public class ScopeGenerator {
 			}
 		} while (consultModels & !newResources.isEmpty());
 		setHasAdditionalMappings(scope, consultModels && hasAdditionalMappings(scope));
-		scope.setHasAdditionalResources(consultModels && hasAdditionalResources);
+		setHasAdditionalResources(scope, consultModels && hasAdditionalResources);
 		return scope;
 	}
 
 	/**
+	 * Refresh the scope for the given mappings.
+	 * @param scope the scope being refreshed
+	 * @param mappings the mappings to be refreshed
+	 * @param monitor a progress monitor
+	 * @throws CoreException 
+	 */
+	public void refreshScope(IResourceMappingScope scope, ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask(null, 100 * mappings.length + 100);
+		ResourceTraversal[] originalTraversals = scope.getTraversals();
+		Set newResources = new HashSet();
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping mapping = mappings[i];
+			ResourceTraversal[] oldTraversals = scope.getTraversals(mapping);
+			// Only refresh mappings that are known to the scope
+			if (oldTraversals != null) {
+				ResourceTraversal[] newTraversals = mapping.getTraversals(context,
+						Policy.subMonitorFor(monitor, 100));
+				// Accumulate the new traversals
+				IResource[] newOnes = addMappingToScope(scope, mapping, newTraversals);
+				newResources.addAll(Arrays.asList(newOnes));
+			}
+		}
+		if (!newResources.isEmpty()) {
+			addResourcesToScope(scope, (IResource[]) newResources.toArray(new IResource[newResources.size()]), Policy.subMonitorFor(monitor, 100));
+			fireTraversalsChangedEvent(scope, originalTraversals);
+		}
+		
+		monitor.done();
+	}
+
+	private void addResourcesToScope(IResourceMappingScope scope, IResource[] newResources, IProgressMonitor monitor) throws CoreException {
+		Set targetMappings;
+		Set moreNewResources;
+		do {
+			if (consultModels) {
+				IResource[] adjusted = adjustInputResources(newResources);
+				targetMappings = internalGetMappingsFromProviders(adjusted,
+						context, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
+				moreNewResources = addMappingsToScope(scope, targetMappings,
+						Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
+				// TODO: Need to iterate
+			}
+		} while (false /* consultModels & !moreNewResources.isEmpty() */);
+	}
+
+	/**
+	 * Fire a traversals changed event to any listeners on the scope.
+	 * The new traversals are obtained from the scope.
+	 * @param scope the scope
+	 * @param originalTraversals the original traversals on the scope.
+	 */
+	protected final void fireTraversalsChangedEvent(IResourceMappingScope scope, ResourceTraversal[] originalTraversals) {
+		((ResourceMappingScope)scope).fireTraversalsChangedEvent(originalTraversals);
+	}
+
+	/**
 	 * set whether the scope has additional mappings. This method is not
-	 * intended to be subclassed.
+	 * intended to be overridden.
 	 * 
 	 * @param scope the scope
 	 * @param hasAdditionalMappings a boolean indicating if the scope has
 	 *            additional mappings
 	 */
-	protected void setHasAdditionalMappings(
-			ResourceMappingScope scope, boolean hasAdditionalMappings) {
-		scope.setHasAdditionalMappings(hasAdditionalMappings);
+	protected final void setHasAdditionalMappings(
+			IResourceMappingScope scope, boolean hasAdditionalMappings) {
+		((ResourceMappingScope)scope).setHasAdditionalMappings(hasAdditionalMappings);
 	}
 
+	/**
+	 * set whether the scope has additional resources. This method is not
+	 * intended to be overridden.
+	 * 
+	 * @param scope the scope
+	 * @param hasAdditionalResources a boolean indicating if the scope has
+	 *            additional resources
+	 */
+	protected final void setHasAdditionalResources(IResourceMappingScope scope, boolean hasAdditionalResources) {
+		((ResourceMappingScope)scope).setHasAdditionalResources(hasAdditionalResources);
+	}
+	
 	/**
 	 * Create the scope that will be populated and returned by the builder. This
 	 * method is not intended to be overridden by clients.
@@ -145,9 +203,9 @@ public class ScopeGenerator {
 	 * @return a newly created scope that will be populated and returned by the
 	 *         builder
 	 */
-	protected ResourceMappingScope createScope(
+	protected final IResourceMappingScope createScope(
 			ResourceMapping[] inputMappings) {
-		return new ResourceMappingScope(inputMappings);
+		return new ResourceMappingScope(this, inputMappings);
 	}
 
 	/**
@@ -157,6 +215,8 @@ public class ScopeGenerator {
 	 * override. Overriding methods should return a set of resources that
 	 * include the original resource either explicitly or implicitly as a child
 	 * of a returned resource.
+	 * <p>
+	 * Subclasses may override this method to include additional resources
 	 * 
 	 * @param resources the input resources
 	 * @return the input resources adjusted to include any additional resources
@@ -166,8 +226,8 @@ public class ScopeGenerator {
 		return resources;
 	}
 
-	private Set addMappingsToScope(ResourceMappingScope scope,
-			Set targetMappings, ResourceMappingContext context,
+	private Set addMappingsToScope(IResourceMappingScope scope,
+			Set targetMappings,
 			IProgressMonitor monitor) throws CoreException {
 		Set newResources = new HashSet();
 		for (Iterator iter = targetMappings.iterator(); iter.hasNext();) {
@@ -175,38 +235,26 @@ public class ScopeGenerator {
 			if (scope.getTraversals(mapping) == null) {
 				ResourceTraversal[] traversals = mapping.getTraversals(context,
 						Policy.subMonitorFor(monitor, 100));
-				addMappingToScope(scope, mapping, traversals);
-				newResources.addAll(internalGetResources(traversals));
+				IResource[] newOnes = addMappingToScope(scope, mapping, traversals);
+				newResources.addAll(Arrays.asList(newOnes));
 			}
 		}
 		return newResources;
 	}
 
 	/**
-	 * Add the mapping and its caclulated traversals to the scope. This method
+	 * Add the mapping and its calculated traversals to the scope. Return the
+	 * resources that were not previously covered by the scope. This method
 	 * is not intended to be subclassed by clients.
 	 * 
 	 * @param scope the scope
 	 * @param mapping the resource mapping
 	 * @param traversals the resource mapping's traversals
+	 * @return the resources that were not previously covered by the scope
 	 */
-	protected void addMappingToScope(ResourceMappingScope scope,
+	protected final IResource[] addMappingToScope(IResourceMappingScope scope,
 			ResourceMapping mapping, ResourceTraversal[] traversals) {
-		scope.addMapping(mapping, traversals);
-	}
-
-	private Collection internalGetResources(ResourceTraversal[] traversals) {
-		Set result = new HashSet();
-		for (int i = 0; i < traversals.length; i++) {
-			ResourceTraversal traversal = traversals[i];
-			IResource[] resources = traversal.getResources();
-			for (int j = 0; j < resources.length; j++) {
-				IResource resource = resources[j];
-				// TODO: should we check for parent/child relationships?
-				result.add(resource);
-			}
-		}
-		return result;
+		return ((ResourceMappingScope)scope).addMapping(mapping, traversals);
 	}
 
 	/*
@@ -245,7 +293,7 @@ public class ScopeGenerator {
 				context, monitor);
 	}
 
-	private boolean hasAdditionalMappings(ResourceMappingScope scope) {
+	private boolean hasAdditionalMappings(IResourceMappingScope scope) {
 		ResourceMapping[] inputMappings = scope.getInputMappings();
 		ResourceMapping[] mappings = scope.getMappings();
 		if (inputMappings.length == mappings.length) {
@@ -278,5 +326,25 @@ public class ScopeGenerator {
 	 */
 	public final IResourceMappingScope asInputScope(IResourceMappingScope scope) {
 		return new ResourceMappingInputScope(scope);
+	}
+
+	/**
+	 * Return whether the model providers should be consulted in
+	 * order to see if the scope needs to be expanded.
+	 * @return whether the model providers should be consulted
+	 */
+	public boolean isConsultModels() {
+		return consultModels;
+	}
+
+	/**
+	 * Return the resource mapping context used during the scope 
+	 * generation process in order to determine what resources
+	 * are to be included in the scope.
+	 * @return the resource mapping context used during the scope 
+	 * generation process
+	 */
+	public ResourceMappingContext getContext() {
+		return context;
 	}
 }

@@ -11,6 +11,7 @@
 package org.eclipse.team.core.mapping;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -158,5 +159,19 @@ public interface ISynchronizationContext {
 	 *             </ul>
 	 */
     public void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException;
+    
+    /**
+     * Refresh the portion of the context related to the given resource mappings.
+     * The provided mappings must be mappings that appear in the scope of this context.
+     * The refresh will first regenerate the scope for the mappings in case new resources
+     * are included in the mappings. Then the synchronization state of the resources covered 
+     * by the mapping will be refreshed. If new resources are included in the scope, a property
+     * change event will be fired from the scope. If the synchronization state of any of the resources
+     * covered by the mapping change, a change event will be fired from the diff tree of this contet.
+     * @param mappings the mappings to be refreshed
+     * @param monitor a progress monitor
+     * @throws CoreException if errors occur
+     */
+    public void refresh(ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException;
 
 }

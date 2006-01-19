@@ -13,8 +13,11 @@ package org.eclipse.team.internal.core.mapping;
 import java.util.*;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.PropertyChangeEvent;
+import org.eclipse.team.core.mapping.provider.ScopeGenerator;
 
 /**
  * Concrete implementation of the {@link IResourceMappingScope}
@@ -39,6 +42,8 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	private final Map mappingsToTraversals = new HashMap();
 	private boolean hasAdditionalMappings;
 	private boolean hasAdditionalResources;
+	private final ScopeGenerator generator;
+	private final CompoundResourceTraversal compoundTraversal = new CompoundResourceTraversal();
 
 	public static ResourceTraversal[] combineTraversals(ResourceTraversal[] allTraversals) {
 		Set zero = new HashSet();
@@ -74,7 +79,8 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	/**
 	 * @param selectedMappings
 	 */
-	public ResourceMappingScope(ResourceMapping[] selectedMappings) {
+	public ResourceMappingScope(ScopeGenerator generator, ResourceMapping[] selectedMappings) {
+		this.generator = generator;
 		inputMappings = selectedMappings;
 	}
 	
@@ -84,8 +90,11 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	 * @param mapping the mapping being added to the scope
 	 * @param traversals the traversals for that mapping
 	 */
-	public void addMapping(ResourceMapping mapping, ResourceTraversal[] traversals) {
+	public IResource[] addMapping(ResourceMapping mapping, ResourceTraversal[] traversals) {
+		IResource[] newResources = compoundTraversal.getUncoveredResources(traversals);
 		mappingsToTraversals.put(mapping, traversals);
+		compoundTraversal.addTraversals(traversals);
+		return newResources;
 	}
 	
 	/* (non-Javadoc)
@@ -106,16 +115,7 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	 * @see org.eclipse.team.ui.mapping.IResourceMappingOperationScope#getTraversals()
 	 */
 	public ResourceTraversal[] getTraversals() {
-		Collection values = mappingsToTraversals.values();
-		List result = new ArrayList();
-		for (Iterator iter = values.iterator(); iter.hasNext();) {
-			ResourceTraversal[] traversals = (ResourceTraversal[]) iter.next();
-			for (int i = 0; i < traversals.length; i++) {
-				ResourceTraversal traversal = traversals[i];
-				result.add(traversal);
-			}
-		}
-		return combineTraversals((ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]));
+		return compoundTraversal.asTraversals();
 	}
 
 	/* (non-Javadoc)
@@ -155,5 +155,17 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	 */
 	public boolean hasAdditonalResources() {
 		return hasAdditionalResources;
+	}
+
+	public ScopeGenerator getGenerator() {
+		return generator;
+	}
+	
+	public void fireTraversalsChangedEvent(ResourceTraversal[] oldTraversals) {
+		firePropertyChangedEvent(new PropertyChangeEvent(this, IResourceMappingScope.TRAVERSALS, oldTraversals, getTraversals()));
+	}
+
+	public CompoundResourceTraversal getCompoundTraversal() {
+		return compoundTraversal;
 	}
 }

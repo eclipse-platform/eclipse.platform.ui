@@ -10,8 +10,18 @@
  *******************************************************************************/
 package org.eclipse.team.core.mapping.provider;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.mapping.DiffCache;
+import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
 
 /**
  * Abstract implementation of the {@link ISynchronizationContext} interface.
@@ -84,6 +94,36 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	 */
 	public IResourceDiffTree getDiffTree() {
 		return deltaTree;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.ISynchronizationContext#refresh(org.eclipse.core.resources.mapping.ResourceMapping[], org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void refresh(ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask(null, 100);
+		ScopeGenerator scopeGenerator = getScopeGenerator();
+		if (scopeGenerator != null)
+			scopeGenerator.refreshScope(getScope(), mappings, Policy.subMonitorFor(monitor, 50));
+		List traversals = new ArrayList();
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping mapping = mappings[i];
+			ResourceTraversal[] mappingTraversals = input.getTraversals(mapping);
+			for (int j = 0; j < mappingTraversals.length; j++) {
+				ResourceTraversal traversal = mappingTraversals[j];
+				traversals.add(traversal);
+			}
+		}
+		if (!traversals.isEmpty())
+			refresh((ResourceTraversal[]) traversals.toArray(new ResourceTraversal[traversals.size()]), IResource.NONE, Policy.subMonitorFor(monitor, 50));
+		monitor.done();
+	}
+
+	private ScopeGenerator getScopeGenerator() {
+		if (input instanceof ResourceMappingScope) {
+			ResourceMappingScope rms = (ResourceMappingScope) input;
+			rms.getGenerator();
+		}
+		return null;
 	}
 
 }

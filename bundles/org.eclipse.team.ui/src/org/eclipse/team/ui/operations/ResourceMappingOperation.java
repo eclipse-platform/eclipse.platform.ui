@@ -44,23 +44,19 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public abstract class ResourceMappingOperation extends TeamOperation {
 	
-	private static final ScopeGenerator DEFAULT_SCOPE_BUILDER = new ScopeGenerator();
 	private final ResourceMapping[] selectedMappings;
-	private final ResourceMappingContext context;
 	private IResourceMappingScope scope;
 	private boolean previewRequested;
     
-
 	/**
 	 * Create a resoure mapping operation
 	 * @param part the workbench part from which the merge was launched or <code>null</code>
 	 * @param selectedMappings the selected mappings
 	 * @param context the resource mapping context used to generate the full scope of the operation
 	 */
-	protected ResourceMappingOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext context) {
+	protected ResourceMappingOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings) {
 		super(part);
 		this.selectedMappings = selectedMappings;
-		this.context = context;
 	}
 
 	/**
@@ -89,8 +85,9 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 	 */
 	protected void buildScope(IProgressMonitor monitor) throws InvocationTargetException {
 		try {
-			scope = getScopeGenerator().prepareScope(selectedMappings, context, consultModelsWhenGeneratingScope(), monitor);
-			IResourceMappingScope inputScope = getScopeGenerator().asInputScope(scope);
+			ScopeGenerator scopeGenerator = getScopeGenerator();
+			scope = scopeGenerator.prepareScope(selectedMappings, monitor);
+			IResourceMappingScope inputScope = scopeGenerator.asInputScope(scope);
 			if (scope.hasAdditionalMappings()) {
 				boolean prompt = false;
 				// There are additional mappings so we may need to prompt
@@ -289,13 +286,18 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 
 	/**
 	 * Return the scope builder used to build the scope of this
-	 * operation from the input mappings. This method can be
-	 * overridden by subclasses.
+	 * operation from the input mappings. By default, this method passes
+	 * the resource mapping context and the result of {@link #consultModelsWhenGeneratingScope()}
+	 * to the scope builder constructor.
+	 * 
+	 * This method can be overridden by subclasses.
+	 * @param context the resource mapping context used to obtain traversals from 
+	 * the mappings in the input
 	 * @return the scope builder used to build the scope of this
 	 * operation from the input mappings.
 	 */
 	protected ScopeGenerator getScopeGenerator() {
-		return DEFAULT_SCOPE_BUILDER;
+		return new ScopeGenerator(getResourceMappingContext(), consultModelsWhenGeneratingScope());
 	}
 
 	/**
@@ -383,6 +385,18 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 	 */
 	protected boolean consultModelsWhenGeneratingScope() {
 		return true;
+	}
+	
+	/**
+	 * Return the resource mapping context used during the 
+	 * scope generation and refresh process to determine
+	 * what resources are to be included in the resulting
+	 * synchronization context.
+	 * Subclasses may override.
+	 * @return the resource mapping context
+	 */
+	protected ResourceMappingContext getResourceMappingContext() {
+		return ResourceMappingContext.LOCAL_CONTEXT;
 	}
 	
 }

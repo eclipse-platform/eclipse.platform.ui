@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ui.mapping;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.ui.operations.ResourceMappingOperation;
 import org.eclipse.ui.IWorkbenchPart;
@@ -84,8 +83,8 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public abstract class ResourceMappingCheckinOperation extends ResourceMappingOperation {
 
-	protected ResourceMappingCheckinOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext context) {
-		super(part, selectedMappings, context);
+	protected ResourceMappingCheckinOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings) {
+		super(part, selectedMappings);
 	}
 
 	protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {

@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheRemoteContentsOperation;
 import org.eclipse.team.ui.operations.ResourceMappingMergeOperation;
@@ -26,10 +25,20 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public abstract class AbstractModelMergeOperation extends ResourceMappingMergeOperation {
 
-	protected AbstractModelMergeOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext context) {
-		super(part, selectedMappings, context);
-	}
+	private ResourceMappingContext context;
 	
+	public AbstractModelMergeOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext resourceMappingContext) {
+		super(part, selectedMappings);
+		this.context = resourceMappingContext;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.operations.ResourceMappingOperation#getResourceMappingContext()
+	 */
+	protected ResourceMappingContext getResourceMappingContext() {;
+		return context;
+	}
+
 	protected void cacheContents(IWorkbenchPart part, IMergeContext context, IProgressMonitor monitor) throws CVSException {
 		// cache the base and remote contents
 		// TODO: Refreshing and caching now takes 3 round trips.

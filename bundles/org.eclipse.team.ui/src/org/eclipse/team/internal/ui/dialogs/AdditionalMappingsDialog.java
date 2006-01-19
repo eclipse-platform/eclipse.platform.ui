@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.dialogs;
 
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -47,7 +48,7 @@ public class AdditionalMappingsDialog extends DetailsDialog {
      */
     private void createSelectedMappingsArea(Composite parent) {
         Composite composite = createComposite(parent);
-        selectedMappingsArea = ResourceMappingHierarchyArea.create(new ScopeGenerator().asInputScope(scope), null /* no context */);
+        selectedMappingsArea = ResourceMappingHierarchyArea.create(new ScopeGenerator(ResourceMappingContext.LOCAL_CONTEXT, false).asInputScope(scope), null /* no context */);
         selectedMappingsArea.setDescription(TeamUIMessages.AdditionalMappingsDialog_1);
         selectedMappingsArea.createArea(composite);
         // Create a separator between the two sets of buttons

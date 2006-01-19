@@ -114,8 +114,8 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	 * @param selectedMappings the selected mappings
 	 * @param context the resource mapping context used to generate the full scope of the operation
 	 */
-	protected ResourceMappingMergeOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext context) {
-		super(part, selectedMappings, context);
+	protected ResourceMappingMergeOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings) {
+		super(part, selectedMappings);
 	}
 
 	/* (non-Javadoc)
