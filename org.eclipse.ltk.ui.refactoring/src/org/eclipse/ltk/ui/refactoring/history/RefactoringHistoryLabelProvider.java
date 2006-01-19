@@ -24,11 +24,15 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringDescriptorImageDescriptor;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryDate;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEntry;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryNode;
+import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringImageDescriptor;
 
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.jface.viewers.LabelProvider;
 
@@ -64,6 +68,12 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	/** The resource bundle to use */
 	private final RefactoringHistoryControlConfiguration fControlConfiguration;
 
+	/** The decorated element image */
+	private Image fDecoratedElementImage= null;
+
+	/** The decorated item image */
+	private Image fDecoratedItemImage= null;
+
 	/** The element image */
 	private Image fElementImage= null;
 
@@ -86,6 +96,42 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	}
 
 	/**
+	 * Decorates the image for the specified element.
+	 * 
+	 * @param image
+	 *            the image to decorate
+	 * @param element
+	 *            the associated element
+	 * @return the decorated image
+	 */
+	private Image decorateImage(final Image image, final Object element) {
+		Image result= image;
+		RefactoringDescriptorProxy extended= null;
+		if (element instanceof RefactoringHistoryEntry)
+			extended= ((RefactoringHistoryEntry) element).getDescriptor();
+		else if (element instanceof RefactoringDescriptorProxy)
+			extended= (RefactoringDescriptorProxy) element;
+		if (extended != null) {
+			final String project= extended.getProject();
+			if (project == null || "".equals(project)) { //$NON-NLS-1$
+				if (image == fElementImage && fDecoratedElementImage != null)
+					result= fDecoratedElementImage;
+				else if (image == fItemImage && fDecoratedItemImage != null)
+					result= fDecoratedItemImage;
+				else {
+					final Rectangle bounds= image.getBounds();
+					result= new RefactoringDescriptorImageDescriptor(new RefactoringImageDescriptor(image), RefactoringDescriptorImageDescriptor.WORKSPACE, new Point(bounds.width, bounds.height)).createImage();
+					if (image == fElementImage)
+						fDecoratedElementImage= image;
+					else if (image == fItemImage)
+						fDecoratedItemImage= image;
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public void dispose() {
@@ -97,6 +143,10 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 			fElementImage.dispose();
 		if (fItemImage != null)
 			fItemImage.dispose();
+		if (fDecoratedElementImage != null)
+			fDecoratedElementImage.dispose();
+		if (fDecoratedItemImage != null)
+			fDecoratedItemImage.dispose();
 	}
 
 	/**
@@ -119,11 +169,13 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	 * {@inheritDoc}
 	 */
 	public Image getImage(final Object element) {
+		Image image= null;
 		final boolean time= fControlConfiguration.isTimeDisplayed();
 		if (element instanceof RefactoringHistoryEntry || element instanceof RefactoringDescriptorProxy)
-			return time ? fElementImage : fItemImage;
+			image= time ? fElementImage : fItemImage;
 		else
-			return time ? fContainerImage : fCollectionImage;
+			image= time ? fContainerImage : fCollectionImage;
+		return decorateImage(image, element);
 	}
 
 	/**
