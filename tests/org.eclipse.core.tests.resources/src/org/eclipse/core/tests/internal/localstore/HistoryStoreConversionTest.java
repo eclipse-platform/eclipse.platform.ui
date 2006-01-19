@@ -80,7 +80,7 @@ public class HistoryStoreConversionTest extends ResourceTest {
 			for (int i = 0; i < files.length; i++)
 				for (int j = 0; j < 10; j++) {
 					IFileStore store = ((Resource)files[i]).getStore();
-					original.addState(files[i].getFullPath(), store, store.fetchInfo().getLastModified(), false);
+					original.addState(files[i].getFullPath(), store, store.fetchInfo(), false);
 				}
 			// close existing history store so all data is committed
 			try {

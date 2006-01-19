@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.internal.localstore.IHistoryStore;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
@@ -366,7 +367,9 @@ public class HistoryStoreTest extends ResourceTest {
 		createFileInFileSystem(fileStore);
 
 		// add the data to the history store
-		store.addState(file.getFullPath(), fileStore, System.currentTimeMillis(), true);
+		FileInfo fileInfo = new FileInfo(file.getName());
+		fileInfo.setLastModified(System.currentTimeMillis());
+		store.addState(file.getFullPath(), fileStore, fileInfo, true);
 		IFileState[] states = store.getStates(file.getFullPath(), getMonitor());
 		assertEquals("2.0", 1, states.length);
 
@@ -1357,7 +1360,9 @@ public class HistoryStoreTest extends ResourceTest {
 
 		/* Add multiple editions for one file location. */
 		for (int i = 0; i < ITERATIONS; i++, myLong++) {
-			historyStore.addState(file.getFullPath(), ((Resource)file).getStore(), myLong, true);
+			FileInfo fileInfo = new FileInfo(file.getName());
+			fileInfo.setLastModified(myLong);
+			historyStore.addState(file.getFullPath(), ((Resource)file).getStore(), fileInfo, true);
 			try {
 				contents = "This file has some contents in testGetContents.";
 				InputStream is = new ByteArrayInputStream(contents.getBytes());
@@ -1370,7 +1375,9 @@ public class HistoryStoreTest extends ResourceTest {
 
 		/* Add multiple editions for second file location. */
 		for (int i = 0; i < ITERATIONS; i++, myLong++) {
-			historyStore.addState(secondValidFile.getFullPath(), ((Resource)secondValidFile).getStore(), myLong, true);
+			FileInfo fileInfo = new FileInfo(file.getName());
+			fileInfo.setLastModified(myLong);
+			historyStore.addState(secondValidFile.getFullPath(), ((Resource)secondValidFile).getStore(), fileInfo, true);
 			try {
 				contents = "A file with some other contents in testGetContents.";
 				InputStream is = new ByteArrayInputStream(contents.getBytes());
