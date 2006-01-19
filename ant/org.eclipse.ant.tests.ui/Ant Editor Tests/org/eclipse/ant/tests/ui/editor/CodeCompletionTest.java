@@ -391,10 +391,9 @@ public class CodeCompletionTest extends AbstractAntUITest {
      */
 	public void testExtensionPointTaskProposals() {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("taskdef.xml"));
-
 		ICompletionProposal[] proposals = processor.getTaskProposals(getCurrentDocument(), "target", "cool");
-		assertEquals(4, proposals.length);
 		assertContains("coolUITask", proposals);
+		assertContains("coolUIType", proposals);
         processor.dispose();
 	}
     
