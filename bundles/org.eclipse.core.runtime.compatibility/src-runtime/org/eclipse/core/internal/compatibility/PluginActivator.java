@@ -30,9 +30,14 @@ public class PluginActivator implements BundleActivator {
 			plugin.start(context);
 			plugin.startup();
 		} catch(Exception e) {
-			plugin.shutdown();
-			plugin.stop(context);
-			pd.markAsDeactivated();
+			try {
+				plugin.shutdown();
+				plugin.stop(context);
+				pd.markAsDeactivated();
+			} catch(Exception e1) {
+				// We are mostly interested in the original exception 
+				e1.printStackTrace();
+			}
 			throw e;
 		}
 	}
