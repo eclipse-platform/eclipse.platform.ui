@@ -31,6 +31,13 @@ public class ModelReplaceOperation extends ModelUpdateOperation {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.TeamOperation#getJobName()
+	 */
+	protected String getJobName() {
+		return CVSUIMessages.ReplaceOperation_taskName;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.operations.ResourceMappingMergeOperation#isAttemptHeadlessMerge()
 	 */
 	protected boolean isAttemptHeadlessMerge() {
