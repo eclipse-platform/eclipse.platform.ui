@@ -12,7 +12,7 @@ package org.eclipse.team.core.mapping.provider;
 
 import java.util.*;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -121,7 +121,17 @@ public class ScopeGenerator {
 	 * @param monitor a progress monitor
 	 * @throws CoreException 
 	 */
-	public void refreshScope(IResourceMappingScope scope, ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
+	public void refreshScope(final IResourceMappingScope scope, final ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
+		// We need to lock the workspace when building the scope
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		workspace.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				internalRefreshScope(scope, mappings, monitor);
+			}
+		}, workspace.getRoot(), IResource.NONE, monitor);
+	}
+
+	private void internalRefreshScope(IResourceMappingScope scope, ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 100 * mappings.length + 100);
 		ResourceTraversal[] originalTraversals = scope.getTraversals();
 		Set newResources = new HashSet();
