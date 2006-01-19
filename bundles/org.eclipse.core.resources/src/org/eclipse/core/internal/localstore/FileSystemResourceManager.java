@@ -863,7 +863,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			// add entry to History Store.
 			if (keepHistory && fileInfo.exists())
 				//never move to the history store, because then the file is missing if write fails
-				getHistoryStore().addState(target.getFullPath(), store, lastModified, false);
+				getHistoryStore().addState(target.getFullPath(), store, fileInfo, false);
 			if (!fileInfo.exists())
 				store.getParent().mkdir(EFS.NONE, null);
 			int options = append ? EFS.APPEND : EFS.NONE;

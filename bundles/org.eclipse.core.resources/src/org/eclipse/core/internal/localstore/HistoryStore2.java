@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,7 @@ package org.eclipse.core.internal.localstore;
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.internal.localstore.Bucket.Entry;
 import org.eclipse.core.internal.localstore.HistoryBucket.HistoryEntry;
@@ -84,10 +83,11 @@ public class HistoryStore2 implements IHistoryStore {
 	/**
 	 * @see IHistoryStore#addState(IPath, FileStore, long, boolean)
 	 */
-	public synchronized IFileState addState(IPath key, IFileStore localFile, long lastModified, boolean moveContents) {
+	public synchronized IFileState addState(IPath key, IFileStore localFile, IFileInfo info, boolean moveContents) {
+		long lastModified = info.getLastModified();
 		if (Policy.DEBUG_HISTORY)
 			System.out.println("History: Adding state for key: " + key + ", file: " + localFile + ", timestamp: " + lastModified + ", size: " + localFile.fetchInfo().getLength()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		if (!isValid(localFile))
+		if (!isValid(localFile, info))
 			return null;
 		UniversalUniqueIdentifier uuid = null;
 		try {
@@ -270,9 +270,9 @@ public class HistoryStore2 implements IHistoryStore {
 	 * @return <code>true</code> if this file should be added to the history
 	 * 	store and <code>false</code> otherwise
 	 */
-	private boolean isValid(IFileStore localFile) {
+	private boolean isValid(IFileStore localFile, IFileInfo info) {
 		WorkspaceDescription description = workspace.internalGetDescription();
-		long length = localFile.fetchInfo().getLength();
+		long length = info.getLength();
 		boolean result = length <= description.getMaxFileStateSize();
 		if (Policy.DEBUG_HISTORY && !result)
 			System.out.println("History: Ignoring file (too large). File: " + localFile.toString() + //$NON-NLS-1$

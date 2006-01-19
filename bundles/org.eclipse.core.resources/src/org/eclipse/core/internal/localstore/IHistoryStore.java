@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.core.internal.localstore;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Set;
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.IManager;
 import org.eclipse.core.resources.IFileState;
@@ -42,7 +43,7 @@ public interface IHistoryStore extends IManager {
 	 * </p>
 	 * @param key full workspace path to resource being logged
 	 * @param localFile local file system file handle
-	 * @param lastModified timestamp for the entry
+	 * @param fileInfo The IFileInfo for the entry
 	 * @return the file state or <code>null</code>
 	 * 
 	 * TODO: should this method take a progress monitor?
@@ -51,7 +52,7 @@ public interface IHistoryStore extends IManager {
 	 * copy over the file attributes to the local history? If we did that here then
 	 * we wouldn't have to have that other API.
 	 */
-	public IFileState addState(IPath key, IFileStore localFile, long lastModified, boolean moveContents);
+	public IFileState addState(IPath key, IFileStore localFile, IFileInfo fileInfo, boolean moveContents);
 
 	/**
 	 * Returns the paths of all files with entries in this history store at or below
