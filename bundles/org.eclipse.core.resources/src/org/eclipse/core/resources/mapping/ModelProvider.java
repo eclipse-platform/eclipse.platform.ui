@@ -94,7 +94,8 @@ public abstract class ModelProvider extends PlatformObject {
 	 * 
 	 * @param resource the resource
 	 * @param context a resource mapping context
-	 * @param monitor a progress monitor
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting is not desired
 	 * @return the resource mappings that cover the given resource.
 	 * @throws CoreException 
 	 */
@@ -109,8 +110,9 @@ public abstract class ModelProvider extends PlatformObject {
 	 * calls <code>getMapping(IResource)</code> for each resource.
 	 * Subclasses may override.
 	 * @param resources
-	 * @param monitor 
-	 * @param context 
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting is not desired
+	 * @param context a resource mapping context
 	 * @return the set of mappings that cover the given resources
 	 * @throws CoreException 
 	 */
@@ -136,7 +138,8 @@ public abstract class ModelProvider extends PlatformObject {
 	 * @param mappings the mappings being mapped to resources
 	 * @param context the context used to determine the set of traversals that
 	 *            cover the mappings
-	 * @param monitor a progress monitor
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting is not desired
 	 * @return a set of traversals that cover the given mappings
 	 * @throws CoreException
 	 */
@@ -187,6 +190,15 @@ public abstract class ModelProvider extends PlatformObject {
 	}
 
 	/**
+	 * @deprecated Use {@link #validateChange(IResourceDelta, IProgressMonitor)}
+	 * instead.  This method will be deleted the week of January 23, 2006.
+	 * TODO: Delete this method
+	 */
+	public IStatus validateChange(IResourceDelta delta) {
+		return new ModelStatus(IStatus.OK, ResourcesPlugin.PI_RESOURCES, descriptor.getId(), Status.OK_STATUS.getMessage());
+	}
+
+	/**
 	 * Validate the proposed changes contained in the given delta. 
 	 * <p>
 	 * This method must return either a {@link ModelStatus}, or a {@link MultiStatus}
@@ -202,10 +214,13 @@ public abstract class ModelProvider extends PlatformObject {
 	 * validation specific to their model.
 	 * </p>
 	 * @param delta a delta tree containing the proposed changes
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting is not desired
 	 * @return a status indicating any potential side effects
 	 * on the model that provided this validator.
 	 */
-	public IStatus validateChange(IResourceDelta delta) {
-		return new ModelStatus(IStatus.OK, ResourcesPlugin.PI_RESOURCES, descriptor.getId(), Status.OK_STATUS.getMessage());
+	public IStatus validateChange(IResourceDelta delta, IProgressMonitor monitor) {
+		//call the old method for now to avoid breaking current clients
+		return validateChange(delta);
 	}
 }

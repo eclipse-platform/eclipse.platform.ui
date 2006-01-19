@@ -26,7 +26,10 @@ public class TestModelProvider extends ModelProvider {
 		return new ResourceMapping[0];
 	}
 	
-	public IStatus validateChange(IResourceDelta rootDelta) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.mapping.ModelProvider#validateChange(org.eclipse.core.resources.IResourceDelta, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus validateChange(IResourceDelta rootDelta, IProgressMonitor monitor) {
 		final ChangeDescription description = new ChangeDescription();
 		try {
 			rootDelta.accept(new IResourceDeltaVisitor() {

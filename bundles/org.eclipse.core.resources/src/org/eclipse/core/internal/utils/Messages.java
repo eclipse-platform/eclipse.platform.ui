@@ -81,6 +81,7 @@ public class Messages extends NLS {
 	public static String mapping_invalidDef;
 	public static String mapping_wrongType;
 	public static String mapping_noIdentifier;
+	public static String mapping_validate;
 	public static String ResourceChangeValidator_0;
 
 	// internal.resources

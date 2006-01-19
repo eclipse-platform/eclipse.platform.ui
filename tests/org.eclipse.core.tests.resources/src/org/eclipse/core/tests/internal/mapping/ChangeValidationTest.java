@@ -29,7 +29,7 @@ public class ChangeValidationTest extends ResourceTest {
 	}
 
 	private IStatus validateChange(IResourceChangeDescriptionFactory factory) {
-		return ResourceChangeValidator.getValidator().validateChange(factory.getDelta());
+		return ResourceChangeValidator.getValidator().validateChange(factory.getDelta(), getMonitor());
 	}
 
 	private IResourceChangeDescriptionFactory createEmptyChangeDescription() {

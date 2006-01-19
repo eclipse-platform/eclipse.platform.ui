@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.core.internal.resources.mapping.ChangeDescription;
 import org.eclipse.core.internal.resources.mapping.ResourceChangeDescriptionFactory;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -44,7 +45,7 @@ public final class ResourceChangeValidator {
 			instance = new ResourceChangeValidator();
 		return instance;
 	}
-	
+
 	/**
 	 * Singleton accessor method should be used instead.
 	 * @see #getValidator()
@@ -117,6 +118,15 @@ public final class ResourceChangeValidator {
 	}
 
 	/**
+	 * @deprecated Use {@link #validateChange(IResourceDelta, IProgressMonitor)}
+	 * instead.  This method will be deleted the week of January 23, 2006.
+	 * TODO: Delete this method
+	 */
+	public IStatus validateChange(IResourceDelta delta) {
+		return validateChange(delta, null);
+	}
+
+	/**
 	 * Validate the proposed changes contained in the given delta
 	 * by consulting all model providers to determine if the changes
 	 * have any adverse side effects.
@@ -135,16 +145,20 @@ public final class ResourceChangeValidator {
 	 * @return a status indicating any potential side effects
 	 * on models stored in the affected resources.
 	 */
-	public IStatus validateChange(IResourceDelta delta) {
-		IResource[] resources = getRootResources(delta);
-		ModelProvider[] providers = getProviders(resources);
-		if (providers.length == 0)
-			return Status.OK_STATUS;
-		IStatus[] result = new IStatus[providers.length];
-		for (int i = 0; i < providers.length; i++) {
-			ModelProvider provider = providers[i];
-			result[i] = provider.validateChange(delta);
+	public IStatus validateChange(IResourceDelta delta, IProgressMonitor monitor) {
+		monitor = Policy.monitorFor(monitor);
+		try {
+			IResource[] resources = getRootResources(delta);
+			ModelProvider[] providers = getProviders(resources);
+			if (providers.length == 0)
+				return Status.OK_STATUS;
+			monitor.beginTask(Messages.mapping_validate, providers.length);
+			IStatus[] result = new IStatus[providers.length];
+			for (int i = 0; i < providers.length; i++)
+				result[i] = providers[i].validateChange(delta, Policy.subMonitorFor(monitor, 1));
+			return combineResults(result);
+		} finally {
+			monitor.done();
 		}
-		return combineResults(result);
 	}
 }
