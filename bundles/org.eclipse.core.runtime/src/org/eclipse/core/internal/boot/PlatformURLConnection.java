@@ -317,30 +317,6 @@ public abstract class PlatformURLConnection extends URLConnection {
 		throw new IOException();
 	}
 
-	private String resolvePath(String spec) {
-		if (spec.length() == 0 || spec.charAt(0) != '$')
-			return spec;
-		int i = spec.indexOf('/', 1);
-		String first = ""; //$NON-NLS-1$
-		String rest = ""; //$NON-NLS-1$
-		if (i == -1)
-			first = spec;
-		else {
-			first = spec.substring(0, i);
-			rest = spec.substring(i);
-		}
-		if (first.equalsIgnoreCase("$ws$")) //$NON-NLS-1$
-			return "ws/" + PlatformURLConnection.ws + rest; //$NON-NLS-1$
-		if (first.equalsIgnoreCase("$os$")) //$NON-NLS-1$
-			return "os/" + PlatformURLConnection.os + rest; //$NON-NLS-1$
-		if (first.equalsIgnoreCase("$nl$")) { //$NON-NLS-1$
-			String nl = PlatformURLConnection.nl;
-			nl = nl.replace('_', '/');
-			return "nl/" + nl + rest; //$NON-NLS-1$
-		}
-		return spec;
-	}
-
 	protected String getId(String spec) {
 		int i = spec.lastIndexOf('_');
 		return i >= 0 ? spec.substring(0, i) : spec;
