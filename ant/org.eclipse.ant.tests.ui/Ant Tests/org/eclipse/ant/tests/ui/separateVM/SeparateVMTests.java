@@ -56,7 +56,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
     }
     
     /**
-     * Tests launching Ant in a separate vm and having an extra classpath entry designated to be availble.
+     * Tests launching Ant in a separate vm and having an extra classpath entry designated to be available.
      */
     public void testExtraClasspathEntries() throws CoreException {
       	launch("extensionPointSepVM");
@@ -65,7 +65,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
     }
     
     /**
-     * Tests launching Ant in a separate vm and having an extra classpath entry designated to be available.
+     * Tests launching Ant in a separate vm and having a property designated to be available.
      */
     public void testProperties() throws CoreException {
       	launch("extensionPointSepVM");
@@ -75,7 +75,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
     }
     
     /**
-     * Tests launching Ant in a separate vm and having an extra classpath entry designated to be available.
+     * Tests launching Ant in a separate vm and having an task designated to be available.
      */
     public void testExtensionPointTask() throws CoreException {
       	launch("extensionPointTaskSepVM");
@@ -84,7 +84,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
     }
     
     /**
-     * Tests launching Ant in a separate vm and having an extra classpath entry designated to be available.
+     * Tests launching Ant in a separate vm and having a type designated to be available.
      */
     public void testExtensionPointType() throws CoreException {
       	launch("extensionPointTypeSepVM");
