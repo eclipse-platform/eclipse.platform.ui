@@ -17,8 +17,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
@@ -29,6 +29,7 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ICompareAdapter;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * The steps of an optimistic merge operation are:
@@ -101,6 +102,9 @@ import org.eclipse.ui.IWorkbenchPart;
  * @since 3.2
  */
 public abstract class ResourceMappingMergeOperation extends ResourceMappingOperation {
+	
+	private static final int DONE_ID = IDialogConstants.CLIENT_ID + 1;
+	private static final int REPLACE_ID = IDialogConstants.CLIENT_ID + 2;
 
 	private IMergeContext context;
 
@@ -199,17 +203,55 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 					ParticipantPageSaveablePart input = new ParticipantPageSaveablePart(getShell(), cc, participant.createPageConfiguration(), participant);
 					ParticipantPageDialog dialog = new ParticipantPageDialog(getShell(), input, participant) {
 						private Button doneButton;
+						private Button replaceButton;
 	
 						protected void createButtonsForButtonBar(Composite parent) {
-							doneButton = createButton(parent, 10, TeamUIMessages.ResourceMappingMergeOperation_2, true); 
+							boolean isReplace = context.getMergeType() == ISynchronizationContext.TWO_WAY;
+							if (isReplace) {
+								replaceButton = createButton(parent, REPLACE_ID, "&Replace", true); 
+								replaceButton.setEnabled(true); 
+							}
+							doneButton = createButton(parent, DONE_ID, TeamUIMessages.ResourceMappingMergeOperation_2, !isReplace); 
 							doneButton.setEnabled(true); 
 							// Don't call super because we don't want the OK button to appear
 						}
 						protected void buttonPressed(int buttonId) {
-							if (buttonId == 10)
+							if (buttonId == DONE_ID) {
 								super.buttonPressed(IDialogConstants.OK_ID);
-							else 
+							} else if (buttonId == REPLACE_ID) {
+								try {
+									// Do this inline so we don't have to manage disposing of the context
+									PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+										public void run(IProgressMonitor monitor) throws InvocationTargetException,
+												InterruptedException {
+											try {
+												performMerge(monitor);
+											} catch (CoreException e) {
+												throw new InvocationTargetException(e);
+											}
+										}
+									
+									});
+								} catch (InvocationTargetException e) {
+									Throwable t = e.getTargetException();
+									IStatus status;
+									if (t instanceof CoreException) {
+										CoreException ce = (CoreException) t;
+										status = ce.getStatus();
+									} else {
+										status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, TeamUIMessages.internal, t);
+										TeamUIPlugin.log(status);
+									}
+									ErrorDialog.openError(getShell(), null, null, status);
+									return;
+								} catch (InterruptedException e) {
+									// Operation was cancelled. Leave the dialog open
+									return;
+								}
+								super.buttonPressed(IDialogConstants.OK_ID);
+							} else {
 								super.buttonPressed(buttonId);
+							}
 						}
 					};
 					int result = dialog.open();

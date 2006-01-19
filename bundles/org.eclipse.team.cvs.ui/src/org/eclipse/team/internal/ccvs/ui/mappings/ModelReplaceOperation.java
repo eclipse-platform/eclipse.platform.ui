@@ -23,6 +23,8 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class ModelReplaceOperation extends ModelUpdateOperation {
+	
+	boolean hasPrompted = false;
 
 	public ModelReplaceOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext context) {
 		super(part, selectedMappings, context);
@@ -65,6 +67,8 @@ public class ModelReplaceOperation extends ModelUpdateOperation {
 	 * Mde porotected to be overriden by test cases.
 	 */
 	protected boolean promptForOverwrite() {
+		if (hasPrompted)
+			return true;
 		final int[] result = new int[] { 1 };
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
@@ -83,6 +87,7 @@ public class ModelReplaceOperation extends ModelUpdateOperation {
 		});
         if (result[0] == 2)
         	throw new OperationCanceledException();
+        hasPrompted = true;
         return result[0] == 0;
 	}
 
