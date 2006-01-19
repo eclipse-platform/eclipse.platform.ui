@@ -153,7 +153,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		} else {
 			locationElement = locationInfo.append(leafElement);
 		}
-		return new SLocation(mnemonic, imageStyle, null, locationElement);
+		return new SLocation(locationElement, null, mnemonic, imageStyle);
 	}
 
 	/**

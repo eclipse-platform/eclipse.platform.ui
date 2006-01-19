@@ -469,8 +469,8 @@ final class MenuPersistence extends RegistryPersistence {
 				continue;
 			}
 
-			final SLocation location = new SLocation(mnemonicChar, imageStyle,
-					orderings, menuLocation);
+			final SLocation location = new SLocation(menuLocation, orderings,
+					mnemonicChar, imageStyle);
 			locations.add(location);
 		}
 
