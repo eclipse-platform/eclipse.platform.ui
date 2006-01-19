@@ -43,10 +43,10 @@ public class LocalHistoryPage extends Page implements IHistoryPage {
 	//private CompareLocalFileAction compareAction;
 
 	
-	public boolean showHistory(IResource resource, boolean refetch) {
-		if (resource instanceof IFile) {
-			IFile newfile = (IFile) resource;
-			if (!refetch || resource == null)
+	public boolean showHistory(Object object, boolean refetch) {
+		if (object instanceof IFile) {
+			IFile newfile = (IFile) object;
+			if (!refetch || object == null)
 				return false;
 		
 			//historyTableProvider.setFile(fileHistory, newfile);
@@ -55,7 +55,7 @@ public class LocalHistoryPage extends Page implements IHistoryPage {
 		return true;
 	}
 
-	public boolean canShowHistoryFor(IResource resource) {
+	public boolean canShowHistoryFor(Object object) {
 		// TODO Auto-generated method stub
 		return false;
 	}

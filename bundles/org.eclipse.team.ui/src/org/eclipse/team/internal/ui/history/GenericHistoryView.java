@@ -411,23 +411,12 @@ public class GenericHistoryView extends ViewPart {
 
 	public void itemDropped(Object object) {
 
-		//If this is not a resource object try to adapt it to a resource
 		IResource resource = Utils.getResource(object);
 		if (resource != null) {
 			//check first to see if this view is pinned
-			if (isViewPinned()) {
-				try {
-					//get the file name
-					IViewPart view = getSite().getPage().showView(viewId, viewId + resource.getName() + System.currentTimeMillis(), IWorkbenchPage.VIEW_CREATE);
-					if (view instanceof GenericHistoryView) {
-						GenericHistoryView view2 = (GenericHistoryView) view;
-						view2.itemDropped(object);
-					}
-					return;
-				} catch (PartInitException e) {
-				}
-			}
-
+			if (checkForPinnedView(object, resource.getName()))
+				return;
+		
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(resource.getProject());
 			IFileHistoryProvider fileHistory = teamProvider.getFileHistoryProvider();
 			Object tempParticipant = Platform.getAdapterManager().getAdapter(fileHistory, IHistoryPageSource.class);
@@ -451,7 +440,45 @@ public class GenericHistoryView extends ViewPart {
 				}
 			}
 		}
+		else if (object != null){
+			IHistoryPageSource historyPageSource = (IHistoryPageSource) Utils.getAdapter(object, IHistoryPageSource.class);
+			//If a current page exists, see if it can handle the dropped item
+			if (currentPageContainer.getPage() instanceof IHistoryPage) {
+				PageContainer tempPageContainer = currentPageContainer;
+				if (!((IHistoryPage) tempPageContainer.getPage()).canShowHistoryFor(object)) {
+					tempPageContainer = createPage(historyPageSource, object);
+				}
+				if (tempPageContainer != null) {
+					
+					if (checkForPinnedView(object, ((IHistoryPage) tempPageContainer.getPage()).getName()))
+						return;
+					
+					if (((IHistoryPage) tempPageContainer.getPage()).showHistory(object, true)){
+						setContentDescription(((IHistoryPage) tempPageContainer.getPage()).getName());
+						showPageRec(tempPageContainer);
+					}
+				} else {
+					showPageRec(defaultPageContainer);
+				}
+			}
+		}
 
+	}
+
+	private boolean checkForPinnedView(Object object, String objectName) {
+		if (isViewPinned()) {
+			try {
+				//get the file name
+				IViewPart view = getSite().getPage().showView(viewId, viewId + objectName + System.currentTimeMillis(), IWorkbenchPage.VIEW_CREATE);
+				if (view instanceof GenericHistoryView) {
+					GenericHistoryView view2 = (GenericHistoryView) view;
+					view2.itemDropped(object);
+				}
+				return true;
+			} catch (PartInitException e) {
+			}
+		}
+		return false;
 	}
 
 	boolean isViewPinned() {

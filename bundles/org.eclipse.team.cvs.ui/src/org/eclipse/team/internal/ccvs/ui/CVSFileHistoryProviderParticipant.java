@@ -17,7 +17,7 @@ import org.eclipse.ui.part.Page;
 public class CVSFileHistoryProviderParticipant implements IHistoryPageSource {
 
 	public Page createPage(Object object) {
-		CVSHistoryPage page = new CVSHistoryPage();
+		CVSHistoryPage page = new CVSHistoryPage(object);
 		return page;
 	}
 

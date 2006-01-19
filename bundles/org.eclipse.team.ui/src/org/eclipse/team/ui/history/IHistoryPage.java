@@ -11,7 +11,6 @@
 
 package org.eclipse.team.ui.history;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.IViewSite;
 
 /**
@@ -21,20 +20,20 @@ import org.eclipse.ui.IViewSite;
  */
 public interface IHistoryPage {
 	/**
-	 * Fetches and populates the history page for the given IResource. Clients
+	 * Fetches and populates the history page for the given Object. Clients
 	 * should provide an implementation for their individual pages.
 	 * 
-	 * @param resource	the resource for which history is being requested for
-	 * @return true if the page was able to display the history for the resource, false otherwise
+	 * @param object	the object for which history is being requested for
+	 * @return true if the page was able to display the history for the object, false otherwise
 	 */
-	public boolean showHistory(IResource resource, boolean refetch);
+	public boolean showHistory(Object object, boolean refetch);
 
 	/**
-	 * Returns true if this history page can show a history for the given resource, false if it cannot
-	 * @param resource the resource that is to have history shown
+	 * Returns true if this history page can show a history for the given object, false if it cannot
+	 * @param object the object that is to have history shown
 	 * @return boolean 
 	 */
-	public boolean canShowHistoryFor(IResource resource);
+	public boolean canShowHistoryFor(Object object);
 
 	/**
 	 * Requests a refresh of the information presented by the history page.

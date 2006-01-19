@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.*;
@@ -39,6 +38,7 @@ import org.eclipse.team.core.history.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileHistory;
 import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
@@ -52,7 +52,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 public class CVSHistoryPage extends Page implements IHistoryPage {
 	
-	/* private */ IFile file;
+	/* private */ ICVSFile file;
 
 	/* private */ IFileRevision currentFileRevision;
 	
@@ -85,7 +85,7 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 	
 	protected IFileRevision currentSelection;
 
-	protected FetchLogEntriesJob fetchLogEntriesJob;
+	protected RefreshCVSFileHistory  refreshCVSFileHistoryJob;
 
 	private IViewSite parentSite;
 
@@ -99,6 +99,10 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 	public final static String PREF_GENERIC_HISTORYVIEW_WRAP_COMMENTS = "pref_generichistory_wrap_comments"; //$NON-NLS-1$
 
 	public final static String PREF_GENERIC_HISTORYVIEW_SHOW_TAGS = "pref_generichistory_show_tags"; //$NON-NLS-1$
+
+	public CVSHistoryPage(Object object) {
+		this.file = getCVSFile(object);
+	}
 
 	public void createControl(Composite parent) {
 		initializeImages();
@@ -216,7 +220,7 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 					if(confirmOverwrite()) {
 						IStorage currentStorage = currentSelection.getStorage(new SubProgressMonitor(monitor, 50));
 						InputStream in = currentStorage.getContents();
-						file.setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
+						((IFile)file.getIResource()).setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
 					}
 				} catch (TeamException e) {
 					throw new CoreException(e.getStatus());
@@ -234,10 +238,10 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 					if(confirmOverwrite()) {
 						CVSTag revisionTag = new CVSTag(remoteFile.getRevision(), CVSTag.VERSION);
 						
-						if(CVSAction.checkForMixingTags(getSite().getShell(), new IResource[] {file}, revisionTag)) {
+						if(CVSAction.checkForMixingTags(getSite().getShell(), new IResource[] {file.getIResource()}, revisionTag)) {
 							new UpdateOperation(
 									null, 
-									new IResource[] {file},
+									new IResource[] {file.getIResource()},
 									new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES}, 
 									revisionTag)
 										.run(monitor);
@@ -449,37 +453,14 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 				// The entries of already been fetch so return them
 				if (entries != null)
 					return entries;
-
-				// The entries need to be fetch (or are being fetched)
+				
 				if (!(inputElement instanceof IFileHistory))
-					return null;
+					return new Object[0];
 
-				final IFileHistory remoteFile = (IFileHistory) inputElement;
-				if (fetchLogEntriesJob == null) {
-					fetchLogEntriesJob = new FetchLogEntriesJob();
-				}
-
-				IFileHistory tempFile = fetchLogEntriesJob.getRemoteFile();
-
-				if (tempFile == null || !tempFile.equals(remoteFile)) { // The resource
-					// has changed
-					// so stop the
-					// currently
-					// running job
-					if (fetchLogEntriesJob.getState() != Job.NONE) {
-						fetchLogEntriesJob.cancel();
-						try {
-							fetchLogEntriesJob.join();
-						} catch (InterruptedException e) {
-							TeamUIPlugin.log(new TeamException(NLS.bind(TeamUIMessages.GenericHistoryView_ErrorFetchingEntries, new String[] {""}), e)); //$NON-NLS-1$
-						}
-					}
-					fetchLogEntriesJob.setRemoteFile(remoteFile);
-					fetchLogEntriesJob.setLocalFile(file);
-				} // Schedule the job even if it is already running
-				Utils.schedule(fetchLogEntriesJob, /*getSite()*/parentSite);
-
-				return new Object[0];
+				final IFileHistory fileHistory = (IFileHistory) inputElement;
+				entries = fileHistory.getFileRevisions();
+				
+				return entries;
 			}
 
 			public void dispose() {
@@ -558,10 +539,9 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 	}
 
 	private boolean confirmOverwrite() {
-		if (file!=null && file.exists()) {
-			ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
+		if (file!=null && file.getIResource().exists()) {
 			try {
-				if(cvsFile.isModified(null)) {
+				if(file.isModified(null)) {
 					String title = CVSUIMessages.HistoryView_overwriteTitle; 
 					String msg = CVSUIMessages.HistoryView_overwriteMsg; 
 					final MessageDialog dialog = new MessageDialog(parentSite.getShell(), title, null, msg, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
@@ -592,12 +572,10 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 				// if a local file was fed to the history view then we will have to refetch the handle
 				// to properly display the current revision marker. 
 				if(file != null) {
-					RepositoryProvider teamProvider = RepositoryProvider.getProvider(file.getProject());
-					IFileHistory fileHistory = teamProvider.getFileHistoryProvider().getFileHistoryFor(file, new NullProgressMonitor());
-					if (fileHistory == null)
-						return;
-					currentFileRevision = teamProvider.getFileHistoryProvider().getWorkspaceFileRevision(file);
-					historyTableProvider.setFile(fileHistory, file, currentFileRevision.getContentIdentifier());
+					//Could use Repository Provider to get a FileHistoryProvider which will return an IFileHistory, but
+					//we can just create a file history directly
+					CVSFileHistory fileHistory = new CVSFileHistory(file);
+					historyTableProvider.setFile(fileHistory, file);
 					tableViewer.setInput(fileHistory);
 				}
 				tableViewer.refresh();
@@ -610,28 +588,38 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 	 * 
 	 * Only files are supported for now.
 	 */
-	public boolean showHistory(IResource resource, boolean refetch) {
-		if (resource instanceof IFile) {
-			IFile newfile = (IFile) resource;
-			if (!refetch && this.file != null || newfile.equals(this.file)) {
-				return false;
+	public boolean showHistory(Object object, boolean refetch) {
+		ICVSFile cvsFile = getCVSFile(object);
+		this.file = cvsFile;
+		if (cvsFile == null)
+			return false;
+		
+		CVSFileHistory fileHistory = new CVSFileHistory(cvsFile);
+		fileHistory.includeLocalRevisions(true);
+		if (refreshCVSFileHistoryJob == null)
+			refreshCVSFileHistoryJob = new RefreshCVSFileHistory();
+		
+		if (refreshCVSFileHistoryJob.getState() != Job.NONE){
+			refreshCVSFileHistoryJob.cancel();
+			try {
+				refreshCVSFileHistoryJob.join();
+			} catch (InterruptedException e) {
+				TeamUIPlugin.log(new TeamException(NLS.bind(TeamUIMessages.GenericHistoryView_ErrorFetchingEntries, new String[] {""}), e)); //$NON-NLS-1$
 			}
-			this.file = newfile;
-			RepositoryProvider teamProvider = RepositoryProvider.getProvider(file.getProject());
-			IFileHistory fileHistory = teamProvider.getFileHistoryProvider().getFileHistoryFor(resource, new NullProgressMonitor());
-			if (fileHistory == null)
-				return false;
-			
-			currentFileRevision = teamProvider.getFileHistoryProvider().getWorkspaceFileRevision(file);
-			
-			historyTableProvider.setFile(fileHistory, file, currentFileRevision.getContentIdentifier());
-			tableViewer.setInput(fileHistory);
-		} else {
-			this.file = null;
-			tableViewer.setInput(null);
 		}
-
+		refreshCVSFileHistoryJob.setFileHistory(fileHistory);
+		Utils.schedule(refreshCVSFileHistoryJob, /*getSite()*/parentSite);
 		return true;
+	}
+
+	private ICVSFile getCVSFile(Object object) {
+		if (object instanceof IFile){
+			return CVSWorkspaceRoot.getCVSFileFor((IFile) object);
+		} else if (object instanceof ICVSRemoteFile){
+			return (ICVSRemoteFile) object;
+		}
+		
+		return null;
 	}
 
 	/* private */void setViewerVisibility() {
@@ -677,100 +665,51 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 			versionImage = null;
 		}
 		
-		if (fetchLogEntriesJob != null) {
-			if (fetchLogEntriesJob.getState() != Job.NONE) {
-				fetchLogEntriesJob.cancel();
+		//
+		/*if (refreshCVSFileHistoryJob != null) {
+			if (refreshCVSFileHistoryJob.getState() != Job.NONE) {
+				refreshCVSFileHistoryJob.cancel();
 				try {
-					fetchLogEntriesJob.join();
+					refreshCVSFileHistoryJob.join();
 				} catch (InterruptedException e) {
 					TeamUIPlugin.log(new TeamException(NLS.bind(TeamUIMessages.GenericHistoryView_ErrorFetchingEntries, new String[] {""}), e)); //$NON-NLS-1$
 				}
 			}
-		}
+		}*/
 	}
 
-	private class FetchLogEntriesJob extends Job {
-		public IFileHistory fileHistory;
-		public IFile localFile;
+	private class RefreshCVSFileHistory extends Job {
+		private CVSFileHistory fileHistory;
+	
+		public RefreshCVSFileHistory() {
+			super(CVSUIMessages.HistoryView_fetchHistoryJob);
+		}
 		
-		public FetchLogEntriesJob() {
-			super(TeamUIMessages.GenericHistoryView_GenericFileHistoryFetcher);
+		public void setFileHistory(CVSFileHistory fileHistory) {
+			this.fileHistory = fileHistory;
 		}
-
-		public void setLocalFile(IFile file) {
-			this.localFile = file;
-		}
-
-		public void setRemoteFile(IFileHistory file) {
-			this.fileHistory = file;
-		}
+	
 
 		public IStatus run(IProgressMonitor monitor)  {
 			try {
 				if (fileHistory != null && !shutdown) {
-					IFileRevision[] remoteRevisions = fileHistory.getFileRevisions();
-					IFileState[] localRevisions = localFile.getHistory(monitor);
-					final IFileRevision[] convertedLocalRevisions = convertToFileRevision(localRevisions);
-					IFileRevision[] completeRevisions = new IFileRevision[remoteRevisions.length + convertedLocalRevisions.length];
-					System.arraycopy(remoteRevisions, 0, completeRevisions, 0, remoteRevisions.length);
-					System.arraycopy(convertedLocalRevisions, 0, completeRevisions, remoteRevisions.length,convertedLocalRevisions.length);
-					entries = completeRevisions;
-					
+					fileHistory.refresh(monitor);
 					getSite().getShell().getDisplay().asyncExec(new Runnable() {
 						public void run() {
-							
-							if (entries != null && tableViewer != null && !tableViewer.getTable().isDisposed()) {
-								historyTableProvider.setLocalRevisionsDisplayed(convertedLocalRevisions.length != 0);
-								tableViewer.refresh();
-							}
+							historyTableProvider.setLocalRevisionsDisplayed(fileHistory.getIncludesExists());
+							historyTableProvider.setFile(fileHistory, file);
+							tableViewer.setInput(fileHistory);
 						}
 					});
+					
 				}
 				return Status.OK_STATUS;
 			} catch (TeamException e) {
 				return e.getStatus();
-			} catch (CoreException e) {
-				return e.getStatus();
-			}
-		}
-
-		private IFileRevision[] convertToFileRevision(IFileState[] localRevisions) {
-			boolean modified = false;
-			try {
-				modified = CVSWorkspaceRoot.getCVSFileFor(localFile).isModified(null);
-				historyTableProvider.setBaseModified(modified);
-			} catch (CVSException e) {
-				
-			}
-			
-			int arrayLength=0;
-			if (modified)
-				arrayLength++;
-			
-			arrayLength+=localRevisions.length;
-			
-			IFileRevision[] fileRevisions = new IFileRevision[arrayLength];
-			for (int i = 0; i < localRevisions.length; i++) {
-				IFileState localFileState = localRevisions[i];
-				LocalFileRevision localRevision = new LocalFileRevision(localFileState);
-				fileRevisions[i] = localRevision;
-			}
-			
-			if (modified){
-				//local file exists
-				 LocalFileRevision currentFile = new LocalFileRevision(localFile);
-				 currentFile.setBaseRevision(currentFileRevision);
-				 fileRevisions[localRevisions.length] = currentFile;
 			} 
-		
-			return fileRevisions;
-		}
-
-		public IFileHistory getRemoteFile() {
-			return this.fileHistory;
 		}
 	}
-
+	
 	/**
 	 * A default content provider to prevent subclasses from
 	 * having to implement methods they don't need.
@@ -810,7 +749,7 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 		 */
 		public void resourceChanged(IResourceChangeEvent event) {
 			IResourceDelta root = event.getDelta();
-			IResourceDelta resourceDelta = root.findMember(file.getFullPath());
+			IResourceDelta resourceDelta = root.findMember(((IFile)file.getIResource()).getFullPath());
 			if (resourceDelta != null){
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
@@ -824,12 +763,15 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 		return sashForm;
 	}
 
-	public boolean canShowHistoryFor(IResource resource) {
-
-		RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
+	public boolean canShowHistoryFor(Object object) {
+		if (object instanceof IResource){
+		RepositoryProvider provider = RepositoryProvider.getProvider(((IResource)object).getProject());
 		if (provider instanceof CVSTeamProvider)
 			return true;
-
+		} else if (object instanceof ICVSRemoteResource){
+			return true;
+		}
+		
 		return false;
 	}
 

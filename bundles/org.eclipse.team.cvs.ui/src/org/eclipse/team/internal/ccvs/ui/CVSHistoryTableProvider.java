@@ -14,7 +14,6 @@ package org.eclipse.team.internal.ccvs.ui;
 import java.text.DateFormat;
 import java.util.Date;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
@@ -25,14 +24,16 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.history.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.core.LocalFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 
 public class CVSHistoryTableProvider {
 
 	private IFileHistory currentFileHistory;
-	private IFile currentFile;
-	private String currentRevision;
+	private ICVSFile cvsFile;
+
 	/* private */TableViewer viewer;
 	/* private */Font currentRevisionFont;
 	private boolean baseModified;
@@ -386,10 +387,9 @@ public class CVSHistoryTableProvider {
 		};
 	}
 
-	public void setFile(IFileHistory fileHistory, IFile file, String currentRevision) {
+	public void setFile(IFileHistory fileHistory, ICVSFile cvsFile) {
 		this.currentFileHistory = fileHistory;
-		this.currentFile = file;
-		this.currentRevision = currentRevision;
+		this.cvsFile = cvsFile;
 	}
 
 
@@ -398,7 +398,11 @@ public class CVSHistoryTableProvider {
 	}
 
 	public String getCurrentRevision() {
-		return currentRevision;
+		try {
+			return cvsFile.getSyncInfo().getRevision();
+		} catch (CVSException e) {
+		}
+		return ""; //$NON-NLS-1$
 	}
 	
 	/*

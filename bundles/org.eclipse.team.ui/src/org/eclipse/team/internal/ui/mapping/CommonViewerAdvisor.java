@@ -19,7 +19,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.internal.ui.synchronize.AbstractTreeViewerAdvisor;
 import org.eclipse.team.ui.TeamUI;
@@ -133,12 +132,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 			IPageSite ps = (IPageSite) site;
 			return CommonViewerSiteFactory.createCommonViewerSite(configuration.getViewerId(), ps);
 		}
-		return CommonViewerSiteFactory.createCommonViewerSite(configuration.getViewerId(), TeamUIPlugin.getActivePage(), new IMenuRegistration() {
-			public void registerContextMenu(String menuId, MenuManager menuManager,
-					ISelectionProvider selectionProvider) {
-				// Do nothing since dialogs can't have object contributions
-			}
-		}, viewer, configuration.getSite().getActionBars());
+		return CommonViewerSiteFactory.createCommonViewerSite(configuration.getViewerId(), viewer, configuration.getSite().getShell());
 	}
 
 	private Object getInitialInput() {

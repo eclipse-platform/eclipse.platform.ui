@@ -605,11 +605,11 @@
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareRevisionAction"
                enablesFor="2"
                id="org.eclipse.team.ui.CompareRevisionAction"
-               label="%action.label.compare"/>
+               label="%HistoryView.Compare.label"/>
          <action
                class="org.eclipse.team.internal.ccvs.ui.actions.OpenRevisionAction"
                id="org.eclipse.team.ui.FileRevisionsContribution"
-               label="%action.label.open"/>
+               label="%HistoryView.Open.label"/>
       </objectContribution>
    </extension>
    
@@ -1383,6 +1383,11 @@
          point="org.eclipse.core.runtime.adapters">
       <factory
             adaptableType="org.eclipse.team.internal.ccvs.core.filehistory.CVSFileHistoryProvider"
+            class="org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory">
+         <adapter type="org.eclipse.team.ui.history.IHistoryPageSource"/>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.team.internal.ccvs.core.ICVSRemoteFile"
             class="org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory">
          <adapter type="org.eclipse.team.ui.history.IHistoryPageSource"/>
       </factory>

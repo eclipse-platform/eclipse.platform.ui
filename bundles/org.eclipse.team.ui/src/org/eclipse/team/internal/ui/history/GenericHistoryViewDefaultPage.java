@@ -11,7 +11,6 @@
 
 package org.eclipse.team.internal.ui.history;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -39,12 +38,12 @@ public class GenericHistoryViewDefaultPage extends Page implements IHistoryPage 
 		pgComp.setFocus();
 	}
 
-	public boolean showHistory(IResource resource, boolean refetch) {
+	public boolean showHistory(Object object, boolean refetch) {
 		//no history to show
 		return false;
 	}
 
-	public boolean canShowHistoryFor(IResource resource) {
+	public boolean canShowHistoryFor(Object object) {
 		return false;
 	}
 

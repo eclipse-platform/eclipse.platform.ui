@@ -11,7 +11,6 @@
 
 package org.eclipse.team.core.history;
 
-import org.eclipse.team.core.TeamException;
 
 /**
  * 
@@ -33,9 +32,8 @@ public interface IFileHistory {
 	 * and all descendents)
 	 * @return an array containing all of the file revisions for this particular file or
 	 * an empty array if this file has no revisions
-	 * @throws TeamException 
 	 */
-	public abstract IFileRevision[] getFileRevisions() throws TeamException;
+	public abstract IFileRevision[] getFileRevisions();
 	
 	/**
 	 * Returns the file revision that corresponds to the passed in content identifier.
@@ -43,7 +41,7 @@ public interface IFileHistory {
 	 * @return the file revision corresponding to the passed in content id or null if no file revisions 
 	 * match the given id
 	 */
-	public abstract IFileRevision getFileRevision(String id) throws TeamException;
+	public abstract IFileRevision getFileRevision(String id);
 	
 	/**
 	 * Returns the previous version of the passed in file revision.
@@ -51,7 +49,7 @@ public interface IFileHistory {
 	 * @return the previous version of the passed in revision or null if the revision had no 
 	 * predecessor
 	 */
-	public abstract IFileRevision getPredecessor(IFileRevision revision) throws TeamException;
+	public abstract IFileRevision getPredecessor(IFileRevision revision);
 	
 	/**
 	 * Returns all of the direct descendents of the passed in file revision. 
@@ -60,7 +58,7 @@ public interface IFileHistory {
 	 * @return an array containing all of the the descendents or an empty array if the revision has
 	 * no direct descendents
 	 */
-	public abstract IFileRevision[] getDirectDescendents(IFileRevision revision) throws TeamException;
+	public abstract IFileRevision[] getDirectDescendents(IFileRevision revision);
 	
 	//TODO: Methods for getting all direct children of file revision, all elements along a branch (predecessors, file revision and descendent)
 }
