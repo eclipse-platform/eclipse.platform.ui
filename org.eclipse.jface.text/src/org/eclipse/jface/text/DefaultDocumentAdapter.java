@@ -87,8 +87,13 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 
 		if (!fIsForwarding) {
 			fDocumentClone= null;
-			fOriginalContent= fDocument.get();
-			fOriginalLineDelimiters= fDocument.getLegalLineDelimiters();
+			if (fDocument != null) {
+				fOriginalContent= fDocument.get();
+				fOriginalLineDelimiters= fDocument.getLegalLineDelimiters();
+			} else {
+				fOriginalContent= null;
+				fOriginalLineDelimiters= null;
+			}
 		}
 
 		if (fDocument != null)
