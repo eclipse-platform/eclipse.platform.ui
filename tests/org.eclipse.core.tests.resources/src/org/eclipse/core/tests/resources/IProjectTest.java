@@ -25,7 +25,7 @@ public class IProjectTest extends ResourceTest {
 		return new TestSuite(IProjectTest.class);
 
 		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new IProjectTest("testRenameExternalProject"));
+		//		suite.addTest(new IProjectTest("testReplaceLocation"));
 		//		return suite;
 	}
 
@@ -2455,6 +2455,55 @@ public class IProjectTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("2.14", e);
 		}
+	}
+
+	/**
+	 * Tests {@link IResource#move(IProjectDescription, int, IProgressMonitor)}
+	 * in conjunction with {@link IResource#REPLACE}.
+	 */
+	public void testReplaceLocation() {
+		IProject target = getWorkspace().getRoot().getProject("testReplaceLocation");
+		ensureExistsInWorkspace(target, true);
+
+		IFileStore projectStore = getTempStore();
+		IFileStore childFile = projectStore.getChild("File.txt");
+
+		//add some content to the current location
+		IFolder folder = target.getFolder("Folder");
+		IFile file = folder.getFile("File.txt");
+		ensureExistsInWorkspace(file, true);
+
+		//add content to new location
+		IFile newFile = target.getFile(childFile.getName());
+		createFileInFileSystem(childFile);
+
+		//replace project location
+		try {
+			IProjectDescription description = target.getDescription();
+			description.setLocationURI(projectStore.toURI());
+			target.move(description, IResource.REPLACE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+
+		//existing contents should no longer exist
+		assertTrue("2.0", !folder.exists());
+		assertTrue("2.1", !file.exists());
+		assertTrue("2.2", newFile.exists());
+
+		//move back to default location
+		try {
+			IProjectDescription description = target.getDescription();
+			description.setLocationURI(null);
+			target.move(description, IResource.REPLACE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+
+		//old resources should now exist
+		assertTrue("3.0", folder.exists());
+		assertTrue("3.1", file.exists());
+		assertTrue("3.2", !newFile.exists());
 	}
 
 	public void testSetGetProjectPersistentProperty() {
