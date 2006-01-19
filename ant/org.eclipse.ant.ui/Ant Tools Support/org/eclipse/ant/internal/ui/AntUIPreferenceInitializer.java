@@ -35,7 +35,7 @@ public class AntUIPreferenceInitializer extends AbstractPreferenceInitializer {
 		
 		prefs.setDefault(IAntUIPreferenceConstants.DOCUMENTATION_URL, "http://ant.apache.org/manual"); //$NON-NLS-1$
         
-        prefs.setDefault(IAntUIPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, 10000);
+        prefs.setDefault(IAntUIPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, 20000);
 		
 		EditorsUI.useAnnotationsPreferencePage(prefs);
 		EditorsUI.useQuickDiffPreferencePage(prefs);
