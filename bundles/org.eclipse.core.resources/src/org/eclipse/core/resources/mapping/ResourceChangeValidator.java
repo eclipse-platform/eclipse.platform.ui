@@ -68,7 +68,7 @@ public final class ResourceChangeValidator {
 		if (notOK.size() == 1) {
 			return (IStatus) notOK.get(0);
 		}
-		return new MultiStatus(ResourcesPlugin.PI_RESOURCES, 0, (IStatus[]) notOK.toArray(new IStatus[notOK.size()]), Messages.ResourceChangeValidator_0, null);
+		return new MultiStatus(ResourcesPlugin.PI_RESOURCES, 0, (IStatus[]) notOK.toArray(new IStatus[notOK.size()]), Messages.mapping_multiProblems, null);
 	}
 
 	/**

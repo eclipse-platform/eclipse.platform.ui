@@ -58,7 +58,7 @@ public class Messages extends NLS {
 	public static String links_workspaceVeto;
 	public static String links_wrongLocalType;
 
-	// localstore
+	// local store
 	public static String localstore_copying;
 	public static String localstore_copyProblem;
 	public static String localstore_couldnotDelete;
@@ -82,7 +82,7 @@ public class Messages extends NLS {
 	public static String mapping_wrongType;
 	public static String mapping_noIdentifier;
 	public static String mapping_validate;
-	public static String ResourceChangeValidator_0;
+	public static String mapping_multiProblems;
 
 	// internal.resources
 	public static String natures_duplicateNature;
