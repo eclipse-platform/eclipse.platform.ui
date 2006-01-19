@@ -12,6 +12,7 @@ package org.eclipse.ltk.internal.ui.refactoring.history;
 
 import java.io.IOException;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -20,7 +21,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringPreferenceConstants;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.history.IRefactoringDescriptorDeleteQuery;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
@@ -58,8 +62,32 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public final class RefactoringPropertyPage extends PropertyPage {
 
+	/** The refactoring descriptor delete query */
+	private class RefactoringDescriptorDeleteQuery implements IRefactoringDescriptorDeleteQuery {
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public RefactoringStatus proceed(final RefactoringDescriptorProxy proxy) {
+			Assert.isNotNull(proxy);
+			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
+			MessageDialogWithToggle dialog= null;
+			if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE)) {
+				final String project= proxy.getProject();
+				dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, (project == null || "".equals(project)) ? RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_workspace_pattern : RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_project_pattern, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null); //$NON-NLS-1$
+				store.setValue(PREFERENCE_DO_NOT_WARN_DELETE, dialog.getToggleState());
+			}
+			if (dialog == null || dialog.getReturnCode() == IDialogConstants.YES_ID)
+				return new RefactoringStatus();
+			return RefactoringStatus.createErrorStatus(IDialogConstants.NO_LABEL);
+		}
+	}
+
 	/** Preference key for the warn delete preference */
-	private static final String PREFERENCE_DO_NOT_WARN_DELETE= RefactoringUIPlugin.getPluginId() + ".do.not.warn.delete.history"; //$NON-NLS-1$;
+	private static final String PREFERENCE_DO_NOT_WARN_DELETE= RefactoringUIPlugin.getPluginId() + ".do.not.warn.delete.descriptor"; //$NON-NLS-1$;
+
+	/** Preference key for the warn delete all preference */
+	private static final String PREFERENCE_DO_NOT_WARN_DELETE_ALL= RefactoringUIPlugin.getPluginId() + ".do.not.warn.delete.history"; //$NON-NLS-1$;
 
 	/** The enable history button, or <code>null</code> */
 	private Button fEnableButton= null;
@@ -98,16 +126,16 @@ public final class RefactoringPropertyPage extends PropertyPage {
 				final IProject project= getCurrentProject();
 				final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 				MessageDialogWithToggle dialog= null;
-				if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE) && !control.getInput().isEmpty()) {
-					dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_pattern, project.getName()), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
-					store.setValue(PREFERENCE_DO_NOT_WARN_DELETE, dialog.getToggleState());
+				if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE_ALL) && !control.getInput().isEmpty()) {
+					dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_all_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_all_pattern, project.getName()), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
+					store.setValue(PREFERENCE_DO_NOT_WARN_DELETE_ALL, dialog.getToggleState());
 				}
 				if (dialog == null || dialog.getReturnCode() == IDialogConstants.YES_ID) {
 					IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
 					try {
 						service.connect();
 						try {
-							RefactoringCore.getRefactoringHistoryService().deleteProjectHistory(project, null);
+							service.deleteProjectHistory(project, null);
 						} catch (CoreException exception) {
 							final Throwable throwable= exception.getStatus().getException();
 							if (throwable instanceof IOException)
@@ -125,7 +153,25 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		control.getDeleteButton().addSelectionListener(new SelectionAdapter() {
 
 			public final void widgetSelected(final SelectionEvent event) {
-				super.widgetSelected(event);
+				final RefactoringDescriptorProxy[] selection= control.getCheckedDescriptors();
+				if (selection.length > 0) {
+					IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+					try {
+						service.connect();
+						try {
+							service.deleteRefactoringDescriptors(selection, new RefactoringDescriptorDeleteQuery(), null);
+						} catch (CoreException exception) {
+							final Throwable throwable= exception.getStatus().getException();
+							if (throwable instanceof IOException)
+								MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
+							else
+								RefactoringUIPlugin.log(exception);
+						}
+						control.setInput(service.getProjectHistory(getCurrentProject(), null));
+					} finally {
+						service.disconnect();
+					}
+				}
 			}
 		});
 		fEnableButton= new Button(composite, SWT.CHECK);

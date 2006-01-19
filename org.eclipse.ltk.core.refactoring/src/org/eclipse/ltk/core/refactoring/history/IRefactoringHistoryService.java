@@ -126,6 +126,8 @@ public interface IRefactoringHistoryService {
 	 * 
 	 * @param proxies
 	 *            the refactoring descriptor proxies
+	 * @param query
+	 *            the refactoring descriptor delete query to use
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
 	 * @throws CoreException
@@ -141,7 +143,7 @@ public interface IRefactoringHistoryService {
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
 	 */
-	public void deleteRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, IProgressMonitor monitor) throws CoreException;
+	public void deleteRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, IRefactoringDescriptorDeleteQuery query, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Disconnects the refactoring history service from the workbench's

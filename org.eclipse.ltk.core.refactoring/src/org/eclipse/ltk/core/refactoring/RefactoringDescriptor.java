@@ -182,7 +182,10 @@ public class RefactoringDescriptor implements Comparable {
 	 */
 	private final String fProject;
 
-	/** The time stamp, or <code>-1</code> */
+	/**
+	 * The time stamp, or <code>-1</code> if no time is associated with the
+	 * refactoring
+	 */
 	private long fTimeStamp= -1;
 
 	/**

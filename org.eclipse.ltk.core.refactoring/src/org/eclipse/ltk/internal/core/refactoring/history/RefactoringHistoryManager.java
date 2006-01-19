@@ -136,7 +136,8 @@ public final class RefactoringHistoryManager {
 	 * @param stream
 	 *            the input stream where to read from
 	 * @param project
-	 *            the name of the project, or <code>null</code>
+	 *            the name of the project, or <code>null</code> for the
+	 *            workspace
 	 * @param start
 	 *            the start time stamp, inclusive
 	 * @param end
@@ -224,7 +225,8 @@ public final class RefactoringHistoryManager {
 	 * @param store
 	 *            the file store to read
 	 * @param project
-	 *            the name of the project, or <code>null</code>
+	 *            the name of the project, or <code>null</code> for the
+	 *            workspace
 	 * @param collection
 	 *            the collection of proxies to fill in
 	 * @param start
@@ -599,7 +601,7 @@ public final class RefactoringHistoryManager {
 	 *            the history file store
 	 * @param name
 	 *            the non-empty name of the managed project, or
-	 *            <code>null</code>
+	 *            <code>null</code> for the workspace
 	 */
 	RefactoringHistoryManager(final IFileStore store, final String name) {
 		Assert.isNotNull(store);

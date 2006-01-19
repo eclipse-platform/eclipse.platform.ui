@@ -59,6 +59,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringPreferenceConstants;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
+import org.eclipse.ltk.core.refactoring.history.IRefactoringDescriptorDeleteQuery;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringExecutionListener;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
@@ -136,12 +137,12 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 * @param store
 		 *            the file store describing the history location
 		 * @param name
-		 *            the non-empty project name, or <code>null</code>
+		 *            the non-empty project name, or <code>null</code> for the
+		 *            workspace
 		 * @return the refactoring history manager
 		 */
 		private RefactoringHistoryManager getManager(final IFileStore store, final String name) {
 			Assert.isNotNull(store);
-			Assert.isNotNull(name);
 			RefactoringHistoryManager manager= (RefactoringHistoryManager) fManagerCache.get(store);
 			if (manager == null) {
 				manager= new RefactoringHistoryManager(store, name);
@@ -184,7 +185,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					}
 
 					public void run() throws Exception {
-						listener.historyNotification(new RefactoringHistoryEvent(RefactoringHistoryService.this, RefactoringHistoryEvent.REMOVED, descriptor));
+						listener.historyNotification(new RefactoringHistoryEvent(RefactoringHistoryService.this, RefactoringHistoryEvent.POPPED, new RefactoringDescriptorProxyAdapter(descriptor)));
 					}
 				});
 			}
@@ -211,7 +212,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					}
 
 					public void run() throws Exception {
-						listener.historyNotification(new RefactoringHistoryEvent(RefactoringHistoryService.this, RefactoringHistoryEvent.ADDED, descriptor));
+						listener.historyNotification(new RefactoringHistoryEvent(RefactoringHistoryService.this, RefactoringHistoryEvent.PUSHED, new RefactoringDescriptorProxyAdapter(descriptor)));
 					}
 				});
 			}
@@ -300,31 +301,31 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					case OperationHistoryEvent.ABOUT_TO_EXECUTE:
 						fDescriptor= change.getRefactoringDescriptor();
 						if (fDescriptor != null)
-							fireAboutToPerformEvent(fDescriptor);
+							fireAboutToPerformEvent(new RefactoringDescriptorProxyAdapter(fDescriptor));
 						else
-							fireAboutToPerformEvent(fUnknownDescriptor);
+							fireAboutToPerformEvent(fUnknownProxy);
 						break;
 					case OperationHistoryEvent.DONE:
 						handleRefactoringPerformed(fDescriptor);
 						if (fDescriptor != null)
-							fireRefactoringPerformedEvent(fDescriptor);
+							fireRefactoringPerformedEvent(new RefactoringDescriptorProxyAdapter(fDescriptor));
 						else
-							fireRefactoringPerformedEvent(fUnknownDescriptor);
+							fireRefactoringPerformedEvent(fUnknownProxy);
 						fDescriptor= null;
 						break;
 					case OperationHistoryEvent.ABOUT_TO_UNDO:
-						fireAboutToUndoEvent(fUndoStack.peek());
+						fireAboutToUndoEvent(new RefactoringDescriptorProxyAdapter(fUndoStack.peek()));
 						break;
 					case OperationHistoryEvent.UNDONE:
 						handleChangeUndone();
-						fireRefactoringUndoneEvent((RefactoringDescriptor) fRedoQueue.getFirst());
+						fireRefactoringUndoneEvent(new RefactoringDescriptorProxyAdapter((RefactoringDescriptor) fRedoQueue.getFirst()));
 						break;
 					case OperationHistoryEvent.ABOUT_TO_REDO:
-						fireAboutToRedoEvent((RefactoringDescriptor) fRedoQueue.getFirst());
+						fireAboutToRedoEvent(new RefactoringDescriptorProxyAdapter((RefactoringDescriptor) fRedoQueue.getFirst()));
 						break;
 					case OperationHistoryEvent.REDONE:
 						handleChangeRedone();
-						fireRefactoringRedoneEvent(fUndoStack.peek());
+						fireRefactoringRedoneEvent(new RefactoringDescriptorProxyAdapter(fUndoStack.peek()));
 						break;
 				}
 			}
@@ -420,7 +421,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	public static final String NAME_INDEX_FILE= "refactorings.index"; //$NON-NLS-1$
 
 	/** The name of the special workspace project */
-	static final String NAME_WORKSPACE_PROJECT= ".workspace"; //$NON-NLS-1$
+	public static final String NAME_WORKSPACE_PROJECT= ".workspace"; //$NON-NLS-1$
 
 	/** The no history constant */
 	private static final NullRefactoringHistory NO_HISTORY= new NullRefactoringHistory();
@@ -463,11 +464,14 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/** The unknown refactoring descriptor */
 	private final RefactoringDescriptor fUnknownDescriptor= new UnknownRefactoringDescriptor();
 
+	/** The unknown refactoring descriptor proxy */
+	private final RefactoringDescriptorProxy fUnknownProxy;
+
 	/**
 	 * Creates a new refactoring history.
 	 */
 	private RefactoringHistoryService() {
-		// Not for instantiation
+		fUnknownProxy= new RefactoringDescriptorProxyAdapter(fUnknownDescriptor);
 	}
 
 	/**
@@ -506,6 +510,58 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * {@inheritDoc}
 	 */
+	public void deleteProjectHistory(final IProject project, IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(project);
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
+		try {
+			monitor.beginTask("", 100); //$NON-NLS-1$
+			final String name= project.getName();
+			final IFileStore stateStore= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation());
+			if (name.equals(NAME_WORKSPACE_PROJECT)) {
+				final IFileStore metaStore= stateStore.getChild(NAME_HISTORY_FOLDER).getChild(name);
+				metaStore.delete(EFS.NONE, new SubProgressMonitor(monitor, 100));
+			} else {
+				final URI uri= project.getLocationURI();
+				if (uri != null && project.isAccessible()) {
+					try {
+						final IFileStore metaStore= stateStore.getChild(NAME_HISTORY_FOLDER).getChild(name);
+						metaStore.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+						final IFileStore projectStore= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
+						projectStore.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+					} finally {
+						project.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 60));
+					}
+				}
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void deleteRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final IRefactoringDescriptorDeleteQuery query, IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(proxies);
+		Assert.isNotNull(query);
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
+		try {
+			monitor.beginTask("", proxies.length); //$NON-NLS-1$
+			for (int index= 0; index < proxies.length; index++) {
+				if (query.proceed(proxies[index]).isOK())
+					fireRefactoringDeletedEvent(proxies[index]);
+				monitor.worked(1);
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void disconnect() {
 		if (fReferenceCount > 0) {
 			fUndoStack.fManagerCache.clear();
@@ -525,11 +581,11 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * Fires the about to perform event.
 	 * 
-	 * @param descriptor
-	 *            the refactoring descriptor
+	 * @param proxy
+	 *            the refactoring descriptor proxy
 	 */
-	void fireAboutToPerformEvent(final RefactoringDescriptor descriptor) {
-		Assert.isNotNull(descriptor);
+	void fireAboutToPerformEvent(final RefactoringDescriptorProxy proxy) {
+		Assert.isNotNull(proxy);
 		for (int index= 0; index < fExecutionListeners.size(); index++) {
 			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
 			Platform.run(new ISafeRunnable() {
@@ -539,7 +595,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				}
 
 				public void run() throws Exception {
-					listener.executionNotification(new RefactoringExecutionEvent(RefactoringHistoryService.this, RefactoringExecutionEvent.ABOUT_TO_PERFORM, descriptor));
+					listener.executionNotification(new RefactoringExecutionEvent(RefactoringHistoryService.this, RefactoringExecutionEvent.ABOUT_TO_PERFORM, proxy));
 				}
 			});
 		}
@@ -548,11 +604,11 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * Fires the about to redo event.
 	 * 
-	 * @param descriptor
-	 *            the refactoring descriptor
+	 * @param proxy
+	 *            the refactoring descriptor proxy
 	 */
-	void fireAboutToRedoEvent(final RefactoringDescriptor descriptor) {
-		Assert.isNotNull(descriptor);
+	void fireAboutToRedoEvent(final RefactoringDescriptorProxy proxy) {
+		Assert.isNotNull(proxy);
 		for (int index= 0; index < fExecutionListeners.size(); index++) {
 			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
 			Platform.run(new ISafeRunnable() {
@@ -562,7 +618,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				}
 
 				public void run() throws Exception {
-					listener.executionNotification(new RefactoringExecutionEvent(RefactoringHistoryService.this, RefactoringExecutionEvent.ABOUT_TO_REDO, descriptor));
+					listener.executionNotification(new RefactoringExecutionEvent(RefactoringHistoryService.this, RefactoringExecutionEvent.ABOUT_TO_REDO, proxy));
 				}
 			});
 		}
@@ -571,11 +627,11 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * Fires the about to undo event.
 	 * 
-	 * @param descriptor
-	 *            the refactoring descriptor
+	 * @param proxy
+	 *            the refactoring descriptor proxy
 	 */
-	void fireAboutToUndoEvent(final RefactoringDescriptor descriptor) {
-		Assert.isNotNull(descriptor);
+	void fireAboutToUndoEvent(final RefactoringDescriptorProxy proxy) {
+		Assert.isNotNull(proxy);
 		for (int index= 0; index < fExecutionListeners.size(); index++) {
 			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
 			Platform.run(new ISafeRunnable() {
@@ -585,7 +641,30 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				}
 
 				public void run() throws Exception {
-					listener.executionNotification(new RefactoringExecutionEvent(RefactoringHistoryService.this, RefactoringExecutionEvent.ABOUT_TO_UNDO, descriptor));
+					listener.executionNotification(new RefactoringExecutionEvent(RefactoringHistoryService.this, RefactoringExecutionEvent.ABOUT_TO_UNDO, proxy));
+				}
+			});
+		}
+	}
+
+	/**
+	 * Fires the refactoring deleted event.
+	 * 
+	 * @param proxy
+	 *            the refactoring descriptor proxy
+	 */
+	void fireRefactoringDeletedEvent(final RefactoringDescriptorProxy proxy) {
+		Assert.isNotNull(proxy);
+		for (int index= 0; index < fHistoryListeners.size(); index++) {
+			final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
+			Platform.run(new ISafeRunnable() {
+
+				public void handleException(final Throwable throwable) {
+					RefactoringCorePlugin.log(throwable);
+				}
+
+				public void run() throws Exception {
+					listener.historyNotification(new RefactoringHistoryEvent(RefactoringHistoryService.this, RefactoringHistoryEvent.DELETED, proxy));
 				}
 			});
 		}
@@ -594,11 +673,11 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * Fires the refactoring performed event.
 	 * 
-	 * @param descriptor
-	 *            the refactoring descriptor
+	 * @param proxy
+	 *            the refactoring descriptor proxy
 	 */
-	void fireRefactoringPerformedEvent(final RefactoringDescriptor descriptor) {
-		Assert.isNotNull(descriptor);
+	void fireRefactoringPerformedEvent(final RefactoringDescriptorProxy proxy) {
+		Assert.isNotNull(proxy);
 		for (int index= 0; index < fExecutionListeners.size(); index++) {
 			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
 			Platform.run(new ISafeRunnable() {
@@ -608,7 +687,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				}
 
 				public void run() throws Exception {
-					listener.executionNotification(new RefactoringExecutionEvent(RefactoringHistoryService.this, RefactoringExecutionEvent.PERFORMED, descriptor));
+					listener.executionNotification(new RefactoringExecutionEvent(RefactoringHistoryService.this, RefactoringExecutionEvent.PERFORMED, proxy));
 				}
 			});
 		}
@@ -617,11 +696,11 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * Fires the refactoring redone event.
 	 * 
-	 * @param descriptor
-	 *            the refactoring descriptor
+	 * @param proxy
+	 *            the refactoring descriptor proxy
 	 */
-	void fireRefactoringRedoneEvent(final RefactoringDescriptor descriptor) {
-		Assert.isNotNull(descriptor);
+	void fireRefactoringRedoneEvent(final RefactoringDescriptorProxy proxy) {
+		Assert.isNotNull(proxy);
 		for (int index= 0; index < fExecutionListeners.size(); index++) {
 			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
 			Platform.run(new ISafeRunnable() {
@@ -631,7 +710,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				}
 
 				public void run() throws Exception {
-					listener.executionNotification(new RefactoringExecutionEvent(RefactoringHistoryService.this, RefactoringExecutionEvent.REDONE, descriptor));
+					listener.executionNotification(new RefactoringExecutionEvent(RefactoringHistoryService.this, RefactoringExecutionEvent.REDONE, proxy));
 				}
 			});
 		}
@@ -640,11 +719,11 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * Fires the refactoring undone event.
 	 * 
-	 * @param descriptor
-	 *            the refactoring descriptor
+	 * @param proxy
+	 *            the refactoring descriptor proxy
 	 */
-	void fireRefactoringUndoneEvent(final RefactoringDescriptor descriptor) {
-		Assert.isNotNull(descriptor);
+	void fireRefactoringUndoneEvent(final RefactoringDescriptorProxy proxy) {
+		Assert.isNotNull(proxy);
 		for (int index= 0; index < fExecutionListeners.size(); index++) {
 			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
 			Platform.run(new ISafeRunnable() {
@@ -654,7 +733,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				}
 
 				public void run() throws Exception {
-					listener.executionNotification(new RefactoringExecutionEvent(RefactoringHistoryService.this, RefactoringExecutionEvent.UNDONE, descriptor));
+					listener.executionNotification(new RefactoringExecutionEvent(RefactoringHistoryService.this, RefactoringExecutionEvent.UNDONE, proxy));
 				}
 			});
 		}
@@ -947,38 +1026,5 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		} finally {
 			disconnect();
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void deleteProjectHistory(final IProject project, IProgressMonitor monitor) throws CoreException {
-		Assert.isNotNull(project);
-		Assert.isTrue(project.isAccessible());
-		if (monitor == null)
-			monitor= new NullProgressMonitor();
-		try {
-			monitor.beginTask("", 100); //$NON-NLS-1$
-			final String name= project.getName();
-			final URI uri= project.getLocationURI();
-			if (uri != null) {
-				try {
-					final IFileStore metaStore= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(name);
-					metaStore.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
-					final IFileStore projectStore= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
-					projectStore.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
-				} finally {
-					project.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 60));
-				}
-			}
-		} finally {
-			monitor.done();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void deleteRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, IProgressMonitor monitor) throws CoreException {
 	}
 }

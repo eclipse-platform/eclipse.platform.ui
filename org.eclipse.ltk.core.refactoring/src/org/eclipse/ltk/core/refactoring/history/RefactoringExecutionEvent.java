@@ -12,7 +12,7 @@ package org.eclipse.ltk.core.refactoring.history;
 
 import org.eclipse.core.runtime.Assert;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
  * Event object to communicate refactoring execution notifications. These
@@ -54,8 +54,8 @@ public final class RefactoringExecutionEvent {
 	/** Event type indicating that a refactoring has been undone (value 2) */
 	public static final int UNDONE= 2;
 
-	/** The refactoring descriptor */
-	private final RefactoringDescriptor fDescriptor;
+	/** The refactoring descriptor proxy */
+	private final RefactoringDescriptorProxy fProxy;
 
 	/** The refactoring history service */
 	private final IRefactoringHistoryService fService;
@@ -70,24 +70,24 @@ public final class RefactoringExecutionEvent {
 	 *            the refactoring history service
 	 * @param type
 	 *            the event type
-	 * @param descriptor
-	 *            the refactoring descriptor
+	 * @param proxy
+	 *            the refactoring descriptor proxy
 	 */
-	public RefactoringExecutionEvent(final IRefactoringHistoryService service, final int type, final RefactoringDescriptor descriptor) {
+	public RefactoringExecutionEvent(final IRefactoringHistoryService service, final int type, final RefactoringDescriptorProxy proxy) {
 		Assert.isNotNull(service);
-		Assert.isNotNull(descriptor);
+		Assert.isNotNull(proxy);
 		fService= service;
 		fType= type;
-		fDescriptor= descriptor;
+		fProxy= proxy;
 	}
 
 	/**
-	 * Returns the refactoring descriptor.
+	 * Returns the refactoring descriptor proxy.
 	 * 
-	 * @return the refactoring descriptor
+	 * @return the refactoring descriptor proxy
 	 */
-	public RefactoringDescriptor getDescriptor() {
-		return fDescriptor;
+	public RefactoringDescriptorProxy getDescriptor() {
+		return fProxy;
 	}
 
 	/**

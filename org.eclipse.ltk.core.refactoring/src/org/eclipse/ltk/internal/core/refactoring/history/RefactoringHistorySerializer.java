@@ -23,7 +23,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistoryEvent;
 
@@ -41,11 +41,13 @@ public final class RefactoringHistorySerializer implements IRefactoringHistoryLi
 	 * {@inheritDoc}
 	 */
 	public void historyNotification(final RefactoringHistoryEvent event) {
-		final RefactoringDescriptor descriptor= event.getDescriptor();
-		if (!descriptor.isUnknown()) {
-			final long stamp= descriptor.getTimeStamp();
+		Assert.isNotNull(event);
+		final int type= event.getEventType();
+		if (type == RefactoringHistoryEvent.DELETED || type == RefactoringHistoryEvent.PUSHED || type == RefactoringHistoryEvent.POPPED) {
+			final RefactoringDescriptorProxy proxy= event.getDescriptor();
+			final long stamp= proxy.getTimeStamp();
 			if (stamp >= 0) {
-				final String name= descriptor.getProject();
+				final String name= proxy.getProject();
 				final IFileStore store= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER);
 				if (name != null && !"".equals(name)) { //$NON-NLS-1$
 					final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
@@ -97,14 +99,12 @@ public final class RefactoringHistorySerializer implements IRefactoringHistoryLi
 	 *             if an error occurs
 	 */
 	private void processHistoryNotification(final IFileStore store, final RefactoringHistoryEvent event, final String name) throws CoreException {
-		Assert.isNotNull(store);
-		Assert.isNotNull(event);
-		final RefactoringDescriptor descriptor= event.getDescriptor();
+		final RefactoringDescriptorProxy proxy= event.getDescriptor();
 		final int type= event.getEventType();
 		final RefactoringHistoryManager manager= new RefactoringHistoryManager(store, name);
-		if (type == RefactoringHistoryEvent.ADDED)
-			manager.writeRefactoringDescriptor(descriptor, new NullProgressMonitor());
-		else if (type == RefactoringHistoryEvent.REMOVED)
-			manager.removeRefactoringDescriptor(descriptor.getTimeStamp(), new NullProgressMonitor());
+		if (type == RefactoringHistoryEvent.PUSHED)
+			manager.writeRefactoringDescriptor(proxy.requestDescriptor(new NullProgressMonitor()), new NullProgressMonitor());
+		else if (type == RefactoringHistoryEvent.POPPED || type == RefactoringHistoryEvent.DELETED)
+			manager.removeRefactoringDescriptor(proxy.getTimeStamp(), new NullProgressMonitor());
 	}
 }

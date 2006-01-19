@@ -12,7 +12,7 @@ package org.eclipse.ltk.core.refactoring.history;
 
 import org.eclipse.core.runtime.Assert;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
  * Event object to communicate refactoring history notifications. These include
@@ -35,14 +35,26 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
  */
 public final class RefactoringHistoryEvent {
 
-	/** Event type indicating that a refactoring descriptor has been added (value 1) */
-	public static final int ADDED= 1;
+	/**
+	 * Event type indicating that a refactoring descriptor has been deleted from
+	 * its associated history (value 2)
+	 */
+	public static final int DELETED= 3;
 
-	/** Event type indicating that a refactoring descriptor has been removed (value 2) */
-	public static final int REMOVED= 2;
+	/**
+	 * Event type indicating that a refactoring descriptor has been popped from
+	 * the history (value 2)
+	 */
+	public static final int POPPED= 2;
 
-	/** The refactoring descriptor */
-	private final RefactoringDescriptor fDescriptor;
+	/**
+	 * Event type indicating that a refactoring descriptor has been pushed to
+	 * the history (value 1)
+	 */
+	public static final int PUSHED= 1;
+
+	/** The refactoring descriptor proxy */
+	private final RefactoringDescriptorProxy fProxy;
 
 	/** The refactoring history service */
 	private final IRefactoringHistoryService fService;
@@ -57,24 +69,28 @@ public final class RefactoringHistoryEvent {
 	 *            the refactoring history service
 	 * @param type
 	 *            the event type
-	 * @param descriptor
-	 *            the refactoring descriptor
+	 * @param proxy
+	 *            the refactoring descriptor proxy
 	 */
-	public RefactoringHistoryEvent(final IRefactoringHistoryService service, final int type, final RefactoringDescriptor descriptor) {
+	public RefactoringHistoryEvent(final IRefactoringHistoryService service, final int type, final RefactoringDescriptorProxy proxy) {
 		Assert.isNotNull(service);
-		Assert.isNotNull(descriptor);
+		Assert.isNotNull(proxy);
 		fService= service;
 		fType= type;
-		fDescriptor= descriptor;
+		fProxy= proxy;
 	}
 
 	/**
-	 * Returns the refactoring descriptor.
+	 * Returns the refactoring descriptor proxy.
+	 * <p>
+	 * Depending on the event, this descriptor proxy does not exist and cannot
+	 * be resolved.
+	 * </p>
 	 * 
-	 * @return the refactoring descriptor
+	 * @return the refactoring descriptor proxy
 	 */
-	public RefactoringDescriptor getDescriptor() {
-		return fDescriptor;
+	public RefactoringDescriptorProxy getDescriptor() {
+		return fProxy;
 	}
 
 	/**
