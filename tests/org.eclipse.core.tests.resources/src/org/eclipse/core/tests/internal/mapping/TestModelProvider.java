@@ -20,6 +20,12 @@ import org.eclipse.core.runtime.*;
  */
 public class TestModelProvider extends ModelProvider {
 	
+	/**
+	 * Validation enablement flag to prevent validation when the 
+	 * tests are not running.
+	 */
+	public static boolean enabled = false;
+	
 	public static final String ID = "org.eclipse.core.tests.resources.modelProvider";
 
 	public ResourceMapping[] getMappings(IResource resource, ResourceMappingContext context, IProgressMonitor monitor) {
@@ -30,6 +36,8 @@ public class TestModelProvider extends ModelProvider {
 	 * @see org.eclipse.core.resources.mapping.ModelProvider#validateChange(org.eclipse.core.resources.IResourceDelta, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus validateChange(IResourceDelta rootDelta, IProgressMonitor monitor) {
+		if (!enabled)
+			return new ModelStatus(IStatus.OK, ResourcesPlugin.PI_RESOURCES, ID, Status.OK_STATUS.getMessage());
 		final ChangeDescription description = new ChangeDescription();
 		try {
 			rootDelta.accept(new IResourceDeltaVisitor() {

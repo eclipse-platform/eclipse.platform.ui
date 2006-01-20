@@ -23,19 +23,11 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * Tests for change validation
  */
 public class ChangeValidationTest extends ResourceTest {
-	
+
 	public static Test suite() {
 		return new TestSuite(ChangeValidationTest.class);
 	}
 
-	private IStatus validateChange(IResourceChangeDescriptionFactory factory) {
-		return ResourceChangeValidator.getValidator().validateChange(factory.getDelta(), getMonitor());
-	}
-
-	private IResourceChangeDescriptionFactory createEmptyChangeDescription() {
-		return ResourceChangeValidator.getValidator().createDeltaFactory();
-	}
-	
 	private void assertStatusEqual(IStatus status, String[] expectedMessages) {
 		List actualMessages = new ArrayList();
 		if (status.isMultiStatus()) {
@@ -72,7 +64,11 @@ public class ChangeValidationTest extends ResourceTest {
 			}
 		}
 	}
-	
+
+	private IResourceChangeDescriptionFactory createEmptyChangeDescription() {
+		return ResourceChangeValidator.getValidator().createDeltaFactory();
+	}
+
 	/*
 	 * Only return the message of the status if it
 	 * came from our test model provider
@@ -87,99 +83,95 @@ public class ChangeValidationTest extends ResourceTest {
 		return null;
 	}
 
+	protected void setUp() throws Exception {
+		TestModelProvider.enabled = true;
+		super.setUp();
+	}
+
+	protected void tearDown() throws Exception {
+		TestModelProvider.enabled = false;
+		super.tearDown();
+	}
+
 	public void testSimpleChanges() {
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IResource[] before = buildResources(project, new String[] {"c/", "c/b/", "c/x", "c/b/y", "c/b/z"});
 		ensureExistsInWorkspace(before, true);
 		assertExistsInWorkspace(before);
-		
+
 		// A project close
 		IResourceChangeDescriptionFactory factory = createEmptyChangeDescription();
 		factory.close(project);
 		IStatus status = validateChange(factory);
 		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.CLOSED, project)});
-		
+
 		// A project deletion
 		factory = createEmptyChangeDescription();
 		factory.delete(project);
 		status = validateChange(factory);
 		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project)});
-		
+
 		// Some file deletions
 		factory = createEmptyChangeDescription();
 		factory.delete(project.findMember("c/x"));
 		factory.delete(project.findMember("c/b/y"));
 		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {
-				ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project.findMember("c/x")),
-				ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project.findMember("c/b/y"))
-				});
-		
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project.findMember("c/x")), ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project.findMember("c/b/y"))});
+
 		// A folder deletion
 		factory = createEmptyChangeDescription();
 		factory.delete(project.findMember("c/b/"));
 		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {
-				ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project.findMember("c/b")),
-				});
-		
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project.findMember("c/b")),});
+
 		// A project move
 		factory = createEmptyChangeDescription();
 		factory.move(project, new Path("MovedProject"));
 		status = validateChange(factory);
 		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.MOVED, project)});
-		
+
 		// some file moves
 		factory = createEmptyChangeDescription();
 		factory.move(project.findMember("c/x"), new Path("c/x2"));
 		factory.move(project.findMember("c/b/y"), new Path("c/y"));
 		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {
-				ChangeDescription.getMessageFor(ChangeDescription.MOVED, project.findMember("c/x")),
-				ChangeDescription.getMessageFor(ChangeDescription.MOVED, project.findMember("c/b/y"))
-				});
-		
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.MOVED, project.findMember("c/x")), ChangeDescription.getMessageFor(ChangeDescription.MOVED, project.findMember("c/b/y"))});
+
 		// A folder move
 		factory = createEmptyChangeDescription();
 		factory.move(project.findMember("c/b/"), new Path("c/d"));
 		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {
-				ChangeDescription.getMessageFor(ChangeDescription.MOVED, project.findMember("c/b/")),
-				});
-		
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.MOVED, project.findMember("c/b/")),});
+
 		// A project copy
 		factory = createEmptyChangeDescription();
 		factory.copy(project, new Path("MovedProject"));
 		status = validateChange(factory);
 		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.COPIED, project)});
-		
+
 		// some file copy
 		factory = createEmptyChangeDescription();
 		factory.copy(project.findMember("c/x"), new Path("c/x2"));
 		factory.copy(project.findMember("c/b/y"), new Path("c/y"));
 		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {
-				ChangeDescription.getMessageFor(ChangeDescription.COPIED, project.findMember("c/x")),
-				ChangeDescription.getMessageFor(ChangeDescription.COPIED, project.findMember("c/b/y"))
-				});
-		
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.COPIED, project.findMember("c/x")), ChangeDescription.getMessageFor(ChangeDescription.COPIED, project.findMember("c/b/y"))});
+
 		// A folder copy
 		factory = createEmptyChangeDescription();
 		factory.copy(project.findMember("c/b/"), new Path("c/d"));
 		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {
-				ChangeDescription.getMessageFor(ChangeDescription.COPIED, project.findMember("c/b/")),
-				});
-		
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.COPIED, project.findMember("c/b/")),});
+
 		// some file changes
 		factory = createEmptyChangeDescription();
-		factory.change((IFile)project.findMember("c/x"));
-		factory.change((IFile)project.findMember("c/b/y"));
+		factory.change((IFile) project.findMember("c/x"));
+		factory.change((IFile) project.findMember("c/b/y"));
 		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {
-				ChangeDescription.getMessageFor(ChangeDescription.CHANGED, project.findMember("c/x")),
-				ChangeDescription.getMessageFor(ChangeDescription.CHANGED, project.findMember("c/b/y"))
-				});
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.CHANGED, project.findMember("c/x")), ChangeDescription.getMessageFor(ChangeDescription.CHANGED, project.findMember("c/b/y"))});
+	}
+
+	private IStatus validateChange(IResourceChangeDescriptionFactory factory) {
+		return ResourceChangeValidator.getValidator().validateChange(factory.getDelta(), getMonitor());
 	}
 
 }
