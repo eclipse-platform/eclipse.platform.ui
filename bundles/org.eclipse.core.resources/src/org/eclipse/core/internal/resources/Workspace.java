@@ -31,65 +31,73 @@ import org.osgi.framework.Bundle;
 import org.xml.sax.InputSource;
 
 public class Workspace extends PlatformObject implements IWorkspace, ICoreConstants {
+	public static final boolean caseSensitive = Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new java.io.File("a").compareTo(new java.io.File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
 	// whether the resources plugin is in debug mode.
 	public static boolean DEBUG = false;
-	public static final boolean caseSensitive = Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new java.io.File("a").compareTo(new java.io.File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
 
-	protected WorkspacePreferences description;
-	protected LocalMetaArea localMetaArea;
-	protected boolean openFlag = false;
-	protected ElementTree tree;
-	protected ElementTree operationTree; // tree at the start of the current operation
-	protected SaveManager saveManager;
-	protected BuildManager buildManager;
-	protected NatureManager natureManager;
-	protected NotificationManager notificationManager;
-	protected FileSystemResourceManager fileSystemManager;
-	protected PathVariableManager pathVariableManager;
-	protected IPropertyManager propertyManager;
-	protected MarkerManager markerManager;
-	protected ContentDescriptionManager contentDescriptionManager;
 	/**
 	 * Work manager should never be accessed directly because accessor
 	 * asserts that workspace is still open.
 	 */
 	protected WorkManager _workManager;
 	protected AliasManager aliasManager;
-	protected CharsetManager charsetManager;
-	protected RefreshManager refreshManager;
-
-	protected long nextNodeId = 1;
-	protected long nextMarkerId = 0;
-	protected Synchronizer synchronizer;
+	protected BuildManager buildManager;
 	protected IProject[] buildOrder = null;
+	protected CharsetManager charsetManager;
+	protected ContentDescriptionManager contentDescriptionManager;
+	/** indicates if the workspace crashed in a previous session */
+	protected boolean crashed = false;
 	protected final IWorkspaceRoot defaultRoot = new WorkspaceRoot(Path.ROOT, this);
-
+	protected WorkspacePreferences description;
+	protected FileSystemResourceManager fileSystemManager;
 	protected final HashSet lifecycleListeners = new HashSet(10);
+	protected LocalMetaArea localMetaArea;
+	/**
+	 * Helper class for performing validation of resource names and locations.
+	 */
+	protected final LocationValidator locationValidator = new LocationValidator(this);
+	protected MarkerManager markerManager;
+	/**
+	 * The currently installed Move/Delete hook.
+	 */
+	protected IMoveDeleteHook moveDeleteHook = null;
+	protected NatureManager natureManager;
+	protected long nextMarkerId = 0;
+	protected long nextNodeId = 1;
+
+	protected NotificationManager notificationManager;
+	protected boolean openFlag = false;
+	protected ElementTree operationTree; // tree at the start of the current operation
+	protected PathVariableManager pathVariableManager;
+	protected IPropertyManager propertyManager;
+
+	protected RefreshManager refreshManager;
 
 	/**
 	 * Scheduling rule factory
 	 */
 	private IResourceRuleFactory ruleFactory;
 
+	protected SaveManager saveManager;
 	/**
 	 * File modification validation.  If it is true and validator is null, we try/initialize 
 	 * validator first time through.  If false, there is no validator.
 	 */
 	protected boolean shouldValidate = true;
-	/**
-	 * The currently installed file modification validator.
-	 */
-	protected IFileModificationValidator validator = null;
 
 	/**
-	 * The currently installed Move/Delete hook.
+	 * Job that performs periodic string pool canonicalization.
 	 */
-	protected IMoveDeleteHook moveDeleteHook = null;
+	private StringPoolJob stringPoolJob;
+
+	protected Synchronizer synchronizer;
 
 	/**
 	 * The currently installed team hook.
 	 */
 	protected TeamHook teamHook = null;
+
+	protected ElementTree tree;
 
 	/**
 	 * This field is used to control access to the workspace tree during
@@ -99,18 +107,64 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected Thread treeLocked = null;
 
-	/** indicates if the workspace crashed in a previous session */
-	protected boolean crashed = false;
+	/**
+	 * The currently installed file modification validator.
+	 */
+	protected IFileModificationValidator validator = null;
 
 	/**
-	 * Job that performs periodic string pool canonicalization.
+	 * Deletes all the files and directories from the given root down (inclusive).
+	 * Returns false if we could not delete some file or an exception occurred
+	 * at any point in the deletion.
+	 * Even if an exception occurs, a best effort is made to continue deleting.
 	 */
-	private StringPoolJob stringPoolJob;
-	
+	public static boolean clear(java.io.File root) {
+		boolean result = clearChildren(root);
+		try {
+			if (root.exists())
+				result &= root.delete();
+		} catch (Exception e) {
+			result = false;
+		}
+		return result;
+	}
+
 	/**
-	 * Helper class for performing validation of resource names and locations.
+	 * Deletes all the files and directories from the given root down, except for 
+	 * the root itself.
+	 * Returns false if we could not delete some file or an exception occurred
+	 * at any point in the deletion.
+	 * Even if an exception occurs, a best effort is made to continue deleting.
 	 */
-	protected  final LocationValidator locationValidator = new LocationValidator(this);
+	public static boolean clearChildren(java.io.File root) {
+		boolean result = true;
+		if (root.isDirectory()) {
+			String[] list = root.list();
+			// for some unknown reason, list() can return null.  
+			// Just skip the children If it does.
+			if (list != null)
+				for (int i = 0; i < list.length; i++)
+					result &= clear(new java.io.File(root, list[i]));
+		}
+		return result;
+	}
+
+	public static WorkspaceDescription defaultWorkspaceDescription() {
+		return new WorkspaceDescription("Workspace"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns true if the object at the specified position has any
+	 * other copy in the given array.
+	 */
+	private static boolean isDuplicate(Object[] array, int position) {
+		if (array == null || position >= array.length)
+			return false;
+		for (int j = position - 1; j >= 0; j--)
+			if (array[j].equals(array[position]))
+				return true;
+		return false;
+	}
 
 	public Workspace() {
 		super();
@@ -181,11 +235,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			newWorkingTree();
 	}
 
-	public void broadcastPostChange() {
-		ResourceChangeEvent event = new ResourceChangeEvent(this, IResourceChangeEvent.POST_CHANGE, 0, null);
-		notificationManager.broadcastChanges(tree,  event, true);
-	}
-
 	public void broadcastBuildEvent(Object source, int type, int buildTrigger) {
 		ResourceChangeEvent event = new ResourceChangeEvent(source, type, buildTrigger, null);
 		notificationManager.broadcastChanges(tree, event, false);
@@ -200,6 +249,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			ILifecycleListener listener = (ILifecycleListener) it.next();
 			listener.handleEvent(event);
 		}
+	}
+
+	public void broadcastPostChange() {
+		ResourceChangeEvent event = new ResourceChangeEvent(this, IResourceChangeEvent.POST_CHANGE, 0, null);
+		notificationManager.broadcastChanges(tree, event, true);
 	}
 
 	/* (non-Javadoc)
@@ -253,43 +307,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		} catch (CoreException e) {
 			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 		}
-	}
-
-	/**
-	 * Deletes all the files and directories from the given root down (inclusive).
-	 * Returns false if we could not delete some file or an exception occurred
-	 * at any point in the deletion.
-	 * Even if an exception occurs, a best effort is made to continue deleting.
-	 */
-	public static boolean clear(java.io.File root) {
-		boolean result = clearChildren(root);
-		try {
-			if (root.exists())
-				result &= root.delete();
-		} catch (Exception e) {
-			result = false;
-		}
-		return result;
-	}
-	
-	/**
-	 * Deletes all the files and directories from the given root down, except for 
-	 * the root itself.
-	 * Returns false if we could not delete some file or an exception occurred
-	 * at any point in the deletion.
-	 * Even if an exception occurs, a best effort is made to continue deleting.
-	 */
-	public static boolean clearChildren(java.io.File root) {
-		boolean result = true;
-		if (root.isDirectory()) {
-			String[] list = root.list();
-			// for some unknown reason, list() can return null.  
-			// Just skip the children If it does.
-			if (list != null)
-				for (int i = 0; i < list.length; i++)
-					result &= clear(new java.io.File(root, list[i]));
-		}
-		return result;
 	}
 
 	/**
@@ -354,6 +371,69 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			Platform.getJobManager().endRule(getRoot());
 			monitor.done();
 		}
+	}
+
+	/**
+	 * Computes the global total ordering of all open projects in the
+	 * workspace based on project references. If an existing and open project P
+	 * references another existing and open project Q also included in the list,
+	 * then Q should come before P in the resulting ordering. Closed and non-
+	 * existent projects are ignored, and will not appear in the result. References
+	 * to non-existent or closed projects are also ignored, as are any self-
+	 * references.
+	 * <p>
+	 * When there are choices, the choice is made in a reasonably stable way. For
+	 * example, given an arbitrary choice between two projects, the one with the
+	 * lower collating project name is usually selected.
+	 * </p>
+	 * <p>
+	 * When the project reference graph contains cyclic references, it is
+	 * impossible to honor all of the relationships. In this case, the result
+	 * ignores as few relationships as possible.  For example, if P2 references P1,
+	 * P4 references P3, and P2 and P3 reference each other, then exactly one of the
+	 * relationships between P2 and P3 will have to be ignored. The outcome will be
+	 * either [P1, P2, P3, P4] or [P1, P3, P2, P4]. The result also contains
+	 * complete details of any cycles present.
+	 * </p>
+	 *
+	 * @return result describing the global project order
+	 * @since 2.1
+	 */
+	private ProjectOrder computeFullProjectOrder() {
+
+		// determine the full set of accessible projects in the workspace
+		// order the set in descending alphabetical order of project name
+		SortedSet allAccessibleProjects = new TreeSet(new Comparator() {
+			public int compare(Object x, Object y) {
+				IProject px = (IProject) x;
+				IProject py = (IProject) y;
+				return py.getName().compareTo(px.getName());
+			}
+		});
+		IProject[] allProjects = getRoot().getProjects();
+		// List<IProject[]> edges
+		List edges = new ArrayList(allProjects.length);
+		for (int i = 0; i < allProjects.length; i++) {
+			Project project = (Project) allProjects[i];
+			// ignore projects that are not accessible
+			if (!project.isAccessible())
+				continue;
+			ProjectDescription desc = project.internalGetDescription();
+			if (desc == null)
+				continue;
+			//obtain both static and dynamic project references
+			IProject[] refs = desc.getAllReferences(false);
+			allAccessibleProjects.add(project);
+			for (int j = 0; j < refs.length; j++) {
+				IProject ref = refs[j];
+				// ignore self references and references to projects that are not accessible
+				if (ref.isAccessible() && !ref.equals(project))
+					edges.add(new IProject[] {project, ref});
+			}
+		}
+
+		ProjectOrder fullProjectOrder = ComputeProjectOrder.computeProjectOrder(allAccessibleProjects, edges);
+		return fullProjectOrder;
 	}
 
 	/**
@@ -475,67 +555,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return new ProjectOrder(p1, (k1.length > 0), k1);
 	}
 
-	/**
-	 * Computes the global total ordering of all open projects in the
-	 * workspace based on project references. If an existing and open project P
-	 * references another existing and open project Q also included in the list,
-	 * then Q should come before P in the resulting ordering. Closed and non-
-	 * existent projects are ignored, and will not appear in the result. References
-	 * to non-existent or closed projects are also ignored, as are any self-
-	 * references.
-	 * <p>
-	 * When there are choices, the choice is made in a reasonably stable way. For
-	 * example, given an arbitrary choice between two projects, the one with the
-	 * lower collating project name is usually selected.
-	 * </p>
-	 * <p>
-	 * When the project reference graph contains cyclic references, it is
-	 * impossible to honor all of the relationships. In this case, the result
-	 * ignores as few relationships as possible.  For example, if P2 references P1,
-	 * P4 references P3, and P2 and P3 reference each other, then exactly one of the
-	 * relationships between P2 and P3 will have to be ignored. The outcome will be
-	 * either [P1, P2, P3, P4] or [P1, P3, P2, P4]. The result also contains
-	 * complete details of any cycles present.
-	 * </p>
-	 *
-	 * @return result describing the global project order
-	 * @since 2.1
+	/* (non-Javadoc)
+	 * @see IWorkspace#copy(IResource[], IPath, boolean, IProgressMonitor)
 	 */
-	private ProjectOrder computeFullProjectOrder() {
-
-		// determine the full set of accessible projects in the workspace
-		// order the set in descending alphabetical order of project name
-		SortedSet allAccessibleProjects = new TreeSet(new Comparator() {
-			public int compare(Object x, Object y) {
-				IProject px = (IProject) x;
-				IProject py = (IProject) y;
-				return py.getName().compareTo(px.getName());
-			}
-		});
-		IProject[] allProjects = getRoot().getProjects();
-		// List<IProject[]> edges
-		List edges = new ArrayList(allProjects.length);
-		for (int i = 0; i < allProjects.length; i++) {
-			Project project = (Project) allProjects[i];
-			// ignore projects that are not accessible
-			if (!project.isAccessible())
-				continue;
-			ProjectDescription desc = project.internalGetDescription();
-			if (desc == null)
-				continue;
-			//obtain both static and dynamic project references
-			IProject[] refs = desc.getAllReferences(false);
-			allAccessibleProjects.add(project);
-			for (int j = 0; j < refs.length; j++) {
-				IProject ref = refs[j];
-				// ignore self references and references to projects that are not accessible
-				if (ref.isAccessible() && !ref.equals(project))
-					edges.add(new IProject[] {project, ref});
-			}
-		}
-
-		ProjectOrder fullProjectOrder = ComputeProjectOrder.computeProjectOrder(allAccessibleProjects, edges);
-		return fullProjectOrder;
+	public IStatus copy(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
+		int updateFlags = force ? IResource.FORCE : IResource.NONE;
+		return copy(resources, destination, updateFlags, monitor);
 	}
 
 	/* (non-Javadoc)
@@ -608,14 +633,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#copy(IResource[], IPath, boolean, IProgressMonitor)
-	 */
-	public IStatus copy(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
-		int updateFlags = force ? IResource.FORCE : IResource.NONE;
-		return copy(resources, destination, updateFlags, monitor);
-	}
-
 	protected void copyTree(IResource source, IPath destination, int depth, int updateFlags, boolean keepSyncInfo) throws CoreException {
 		// retrieve the resource at the destination if there is one (phantoms included).
 		// if there isn't one, then create a new handle based on the type that we are
@@ -678,7 +695,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		//copy .project file first if project is being copied, otherwise links won't be able to update description
 		boolean projectCopy = source.getType() == IResource.PROJECT && destinationType == IResource.PROJECT;
 		if (projectCopy) {
-			IResource dotProject = ((Project)source).findMember(IProjectDescription.DESCRIPTION_FILE_NAME);
+			IResource dotProject = ((Project) source).findMember(IProjectDescription.DESCRIPTION_FILE_NAME);
 			if (dotProject != null)
 				copyTree(dotProject, destination.append(dotProject.getName()), depth, updateFlags, keepSyncInfo);
 		}
@@ -720,6 +737,32 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				return count[0];
 		}
 		return 0;
+	}
+
+	/*
+	 * Creates the given resource in the tree and returns the new resource info object.  
+	 * If phantom is true, the created element is marked as a phantom.
+	 * If there is already be an element in the tree for the given resource
+	 * in the given state (i.e., phantom), a CoreException is thrown.  
+	 * If there is already a phantom in the tree and the phantom flag is false, 
+	 * the element is overwritten with the new element. (but the synchronization
+	 * information is preserved)
+	 */
+	public ResourceInfo createResource(IResource resource, boolean phantom) throws CoreException {
+		return createResource(resource, null, phantom, false, false);
+	}
+
+	/**
+	 * Creates a resource, honoring update flags requesting that the resource
+	 * be immediately made derived and/or team private
+	 */
+	public ResourceInfo createResource(IResource resource, int updateFlags) throws CoreException {
+		ResourceInfo info = createResource(resource, null, false, false, false);
+		if ((updateFlags & IResource.DERIVED) != 0)
+			info.set(M_DERIVED);
+		if ((updateFlags & IResource.TEAM_PRIVATE) != 0)
+			info.set(M_TEAM_PRIVATE_MEMBER);
+		return info;
 	}
 
 	/*
@@ -773,34 +816,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return info;
 	}
 
-	/*
-	 * Creates the given resource in the tree and returns the new resource info object.  
-	 * If phantom is true, the created element is marked as a phantom.
-	 * If there is already be an element in the tree for the given resource
-	 * in the given state (i.e., phantom), a CoreException is thrown.  
-	 * If there is already a phantom in the tree and the phantom flag is false, 
-	 * the element is overwritten with the new element. (but the synchronization
-	 * information is preserved)
+	/* (non-Javadoc)
+	 * @see IWorkspace#delete(IResource[], boolean, IProgressMonitor)
 	 */
-	public ResourceInfo createResource(IResource resource, boolean phantom) throws CoreException {
-		return createResource(resource, null, phantom, false, false);
-	}
-	
-	/**
-	 * Creates a resource, honoring update flags requesting that the resource
-	 * be immediately made derived and/or team private
-	 */
-	public ResourceInfo createResource(IResource resource, int updateFlags) throws CoreException {
-		ResourceInfo info = createResource(resource, null, false, false, false);
-		if ((updateFlags & IResource.DERIVED) != 0)
-			info.set(M_DERIVED);
-		if ((updateFlags & IResource.TEAM_PRIVATE) != 0)
-			info.set(M_TEAM_PRIVATE_MEMBER);
-		return info;
-	}
-
-	public static WorkspaceDescription defaultWorkspaceDescription() {
-		return new WorkspaceDescription("Workspace"); //$NON-NLS-1$
+	public IStatus delete(IResource[] resources, boolean force, IProgressMonitor monitor) throws CoreException {
+		int updateFlags = force ? IResource.FORCE : IResource.NONE;
+		updateFlags |= IResource.KEEP_HISTORY;
+		return delete(resources, updateFlags, monitor);
 	}
 
 	/* (non-Javadoc)
@@ -852,15 +874,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		} finally {
 			monitor.done();
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see IWorkspace#delete(IResource[], boolean, IProgressMonitor)
-	 */
-	public IStatus delete(IResource[] resources, boolean force, IProgressMonitor monitor) throws CoreException {
-		int updateFlags = force ? IResource.FORCE : IResource.NONE;
-		updateFlags |= IResource.KEEP_HISTORY;
-		return delete(resources, updateFlags, monitor);
 	}
 
 	/* (non-Javadoc)
@@ -1224,43 +1237,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	/**
-	 * A file modification validator hasn't been initialized. Check the extension point and 
-	 * try to create a new validator if a user has one defined as an extension.
-	 */
-	protected void initializeValidator() {
-		shouldValidate = false;
-		if (!canCreateExtensions())
-			return;
-		IConfigurationElement[] configs = Platform.getExtensionRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_FILE_MODIFICATION_VALIDATOR);
-		// no-one is plugged into the extension point so disable validation
-		if (configs == null || configs.length == 0) {
-			return;
-		}
-		// can only have one defined at a time. log a warning, disable validation, but continue with
-		// the #setContents (e.g. don't throw an exception)
-		if (configs.length > 1) {
-			//XXX: should provide a meaningful status code
-			IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_oneValidator, null);
-			ResourcesPlugin.getPlugin().getLog().log(status);
-			return;
-		}
-		// otherwise we have exactly one validator extension. Try to create a new instance 
-		// from the user-specified class.
-		try {
-			IConfigurationElement config = configs[0];
-			validator = (IFileModificationValidator) config.createExecutableExtension("class"); //$NON-NLS-1$
-			shouldValidate = true;
-		} catch (CoreException e) {
-			//ignore the failure if we are shutting down (expected since extension
-			//provider plugin has probably already shut down
-			if (canCreateExtensions()) {
-				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_initValidator, e);
-				ResourcesPlugin.getPlugin().getLog().log(status);
-			}
-		}
-	}
-
-	/**
 	 * A move/delete hook hasn't been initialized. Check the extension point and 
 	 * try to create a new hook if a user has one defined as an extension. Otherwise
 	 * use the Core's implementation as the default.
@@ -1345,6 +1321,43 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 	}
 
+	/**
+	 * A file modification validator hasn't been initialized. Check the extension point and 
+	 * try to create a new validator if a user has one defined as an extension.
+	 */
+	protected void initializeValidator() {
+		shouldValidate = false;
+		if (!canCreateExtensions())
+			return;
+		IConfigurationElement[] configs = Platform.getExtensionRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_FILE_MODIFICATION_VALIDATOR);
+		// no-one is plugged into the extension point so disable validation
+		if (configs == null || configs.length == 0) {
+			return;
+		}
+		// can only have one defined at a time. log a warning, disable validation, but continue with
+		// the #setContents (e.g. don't throw an exception)
+		if (configs.length > 1) {
+			//XXX: should provide a meaningful status code
+			IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_oneValidator, null);
+			ResourcesPlugin.getPlugin().getLog().log(status);
+			return;
+		}
+		// otherwise we have exactly one validator extension. Try to create a new instance 
+		// from the user-specified class.
+		try {
+			IConfigurationElement config = configs[0];
+			validator = (IFileModificationValidator) config.createExecutableExtension("class"); //$NON-NLS-1$
+			shouldValidate = true;
+		} catch (CoreException e) {
+			//ignore the failure if we are shutting down (expected since extension
+			//provider plugin has probably already shut down
+			if (canCreateExtensions()) {
+				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_initValidator, e);
+				ResourcesPlugin.getPlugin().getLog().log(status);
+			}
+		}
+	}
+
 	public WorkspaceDescription internalGetDescription() {
 		return description;
 	}
@@ -1354,19 +1367,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	public boolean isAutoBuilding() {
 		return description.isAutoBuilding();
-	}
-
-	/**
-	 * Returns true if the object at the specified position has any
-	 * other copy in the given array.
-	 */
-	private static boolean isDuplicate(Object[] array, int position) {
-		if (array == null || position >= array.length)
-			return false;
-		for (int j = position - 1; j >= 0; j--)
-			if (array[j].equals(array[position]))
-				return true;
-		return false;
 	}
 
 	public boolean isOpen() {
@@ -1385,6 +1385,22 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected void linkTrees(IPath path, ElementTree[] newTrees) {
 		tree = tree.mergeDeltaChain(path, newTrees);
+	}
+
+	/* (non-Javadoc)
+	 * @see IWorkspace#loadProjectDescription(InputStream)
+	 * @since 3.1
+	 */
+	public IProjectDescription loadProjectDescription(InputStream stream) throws CoreException {
+		IProjectDescription result = null;
+		IOException e = null;
+		result = new ProjectDescriptionReader().read(new InputSource(stream));
+		if (result == null || e != null) {
+			String message = NLS.bind(Messages.resources_errorReadProject, stream.toString());
+			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, message, e);
+			throw new ResourceException(status);
+		}
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -1416,22 +1432,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	/* (non-Javadoc)
-	 * @see IWorkspace#loadProjectDescription(InputStream)
-	 * @since 3.1
+	 * @see IWorkspace#move(IResource[], IPath, boolean, IProgressMonitor)
 	 */
-	public IProjectDescription loadProjectDescription(InputStream stream) throws CoreException {
-		IProjectDescription result = null;
-		IOException e = null;
-		result = new ProjectDescriptionReader().read(new InputSource(stream));
-		if (result == null || e != null) {
-			String message = NLS.bind(Messages.resources_errorReadProject, stream.toString());
-			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, message, e);
-			throw new ResourceException(status);
-		}
-		return result;
+	public IStatus move(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
+		int updateFlags = force ? IResource.FORCE : IResource.NONE;
+		updateFlags |= IResource.KEEP_HISTORY;
+		return move(resources, destination, updateFlags, monitor);
 	}
 
-	
 	/* (non-Javadoc)
 	 * @see IWorkspace#move(IResource[], IPath, int, IProgressMonitor)
 	 */
@@ -1498,15 +1506,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		} finally {
 			monitor.done();
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see IWorkspace#move(IResource[], IPath, boolean, IProgressMonitor)
-	 */
-	public IStatus move(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
-		int updateFlags = force ? IResource.FORCE : IResource.NONE;
-		updateFlags |= IResource.KEEP_HISTORY;
-		return move(resources, destination, updateFlags, monitor);
 	}
 
 	/**
@@ -1710,6 +1709,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	/* (non-Javadoc)
+	 * @see IWorkspace#run(IWorkspaceRunnable, IProgressMonitor)
+	 */
+	public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException {
+		run(action, defaultRoot, IWorkspace.AVOID_UPDATE, monitor);
+	}
+
+	/* (non-Javadoc)
 	 * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor)
 	 */
 	public void run(IWorkspaceRunnable action, ISchedulingRule rule, int options, IProgressMonitor monitor) throws CoreException {
@@ -1738,13 +1744,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		} finally {
 			monitor.done();
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see IWorkspace#run(IWorkspaceRunnable, IProgressMonitor)
-	 */
-	public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException {
-		run(action, defaultRoot, IWorkspace.AVOID_UPDATE, monitor);
 	}
 
 	/* (non-Javadoc)
@@ -1942,12 +1941,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// otherwise call the API and throw an exception if appropriate
 		final IStatus[] status = new IStatus[1];
 		ISafeRunnable body = new ISafeRunnable() {
-			public void run() throws Exception {
-				status[0] = validator.validateEdit(files, context);
-			}
-
 			public void handleException(Throwable exception) {
 				status[0] = new ResourceStatus(IStatus.ERROR, null, Messages.resources_errorValidator, exception);
+			}
+
+			public void run() throws Exception {
+				status[0] = validator.validateEdit(files, context);
 			}
 		};
 		Platform.run(body);
@@ -2028,12 +2027,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// otherwise call the API and throw an exception if appropriate
 		final IStatus[] status = new IStatus[1];
 		ISafeRunnable body = new ISafeRunnable() {
-			public void run() throws Exception {
-				status[0] = validator.validateSave(file);
-			}
-
 			public void handleException(Throwable exception) {
 				status[0] = new ResourceStatus(IStatus.ERROR, null, Messages.resources_errorValidator, exception);
+			}
+
+			public void run() throws Exception {
+				status[0] = validator.validateSave(file);
 			}
 		};
 		Platform.run(body);
