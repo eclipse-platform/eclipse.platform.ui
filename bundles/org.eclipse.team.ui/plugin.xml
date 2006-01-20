@@ -347,7 +347,7 @@
             contentProvider="org.eclipse.team.internal.ui.mapping.ResourceTeamAwareContentProvider"
             id="org.eclipse.team.ui.resourceContent"
             labelProvider="org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider"
-            name="Resources Team Content"
+            name="%ResourcesContentExtension"
             sorter="org.eclipse.team.internal.ui.mapping.ResourceModelSorter">
          <enablement>
            <or>         
