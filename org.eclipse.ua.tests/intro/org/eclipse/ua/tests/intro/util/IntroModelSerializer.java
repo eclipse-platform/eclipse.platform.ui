@@ -11,6 +11,7 @@
 package org.eclipse.ua.tests.intro.util;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Set;
 
@@ -118,12 +119,14 @@ public class IntroModelSerializer {
         Set set = altStylesHashtable.keySet();
         String[] sorted = new String[set.size()];
         set.toArray(sorted);
+        for (int i=0;i<sorted.length;++i) {
+        	Bundle bundle = (Bundle) altStylesHashtable.get(sorted[i]);
+            sorted[i] = filterURL(sorted[i]) + " from " + bundle.getSymbolicName(); //$NON-NLS-1$
+        }
         Arrays.sort(sorted);
         
         for (int i=0;i<sorted.length;++i) {
-            Bundle bundle = (Bundle) altStylesHashtable.get(sorted[i]);
-            text.append(filterURL(sorted[i]) + " from " + bundle.getSymbolicName()); //$NON-NLS-1$
-            text.append("\n\t\t"); //$NON-NLS-1$
+            text.append(sorted[i] + "\n\t\t"); //$NON-NLS-1$
         }
     }
 

@@ -20,15 +20,6 @@
             id="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat">
       </category>
       <cheatsheet
-            name="ActionsTest"
-            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
-            contentFile="data/cheatsheet/valid/TestActionsWithSkip.xml"
-            id="org.eclipse.ua.tests.cheatsheet.actions.TestActionsWithSkip">
-         <description>
-            This is a test cheat sheet used to verify actions.
-         </description>
-      </cheatsheet>
-      <cheatsheet
             name="Hello World"
             category="org.eclipse.ua.tests.cheatsheet.cheatSheetsCat"
             contentFile="data/cheatsheet/valid/HelloWorld.xml"
