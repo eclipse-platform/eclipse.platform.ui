@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
-
 /**
  * <code>Assert</code> is useful for for embedding runtime sanity checks
  * in code. The static predicate methods all test a condition and throw some

@@ -14,7 +14,7 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-/* package */ class TextEditMessages {
+class TextEditMessages {
 
 	private static final String BUNDLE_NAME= "org.eclipse.text.edits.Messages"; //$NON-NLS-1$
 
