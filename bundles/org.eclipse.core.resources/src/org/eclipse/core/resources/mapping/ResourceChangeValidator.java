@@ -110,7 +110,7 @@ public final class ResourceChangeValidator {
 				}
 			});
 		} catch (CoreException e) {
-			// Shouldn't happen since the ProposedResourceDelta accept doesn't thow an
+			// Shouldn't happen since the ProposedResourceDelta accept doesn't throw an
 			// exception and our visitor doesn't either
 			ResourcesPlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 0, "Internal error", e)); //$NON-NLS-1$
 		}
