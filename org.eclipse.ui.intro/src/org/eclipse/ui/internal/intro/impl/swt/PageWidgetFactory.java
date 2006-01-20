@@ -342,7 +342,7 @@ public class PageWidgetFactory {
     }
 
 
-    protected Control createContentProvider(Composite parent,
+    public Control createContentProvider(Composite parent,
             IntroContentProvider provider) {
         // If we've already loaded the content provider for this element,
         // retrieve it, otherwise load the class.

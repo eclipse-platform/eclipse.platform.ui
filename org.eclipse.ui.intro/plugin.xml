@@ -37,14 +37,42 @@
          point="org.eclipse.ui.intro">
       <intro
             class="org.eclipse.ui.intro.config.CustomizableIntroPart"
+            icon="shared/css/graphics/icons/etool/overview.gif"
             id="org.eclipse.ui.intro.shared"/>
+      <introProductBinding
+            introId="org.eclipse.ui.intro.shared"
+            productId="org.eclipse.ui.intro.product"/>
    </extension>
    <extension
          point="org.eclipse.ui.intro.config">
       <config
             content="$nl$/shared/introContent.xml"
             id="org.eclipse.ui.intro.sharedConfig"
-            introId="org.eclipse.ui.intro.shared"/>
+            introId="org.eclipse.ui.intro.shared">
+         <presentation
+               home-page-id="root" standby-page-id="standby">
+             <implementation
+                  style="$nl$/shared/css/shared.css"
+                  kind="html"
+                  os="win32,linux,macosx">
+            </implementation>
+            <implementation
+                  kind="swt">
+            </implementation>
+         </presentation>
+      </config>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.ui.ide.workbench"
+            description="TestProductForSharedIntro"
+            name="TestIntroProduct">
+         <property
+               name="sharedIntroData"
+               value="sharedIntroData.xml"/>
+      </product>
    </extension>     
    
  

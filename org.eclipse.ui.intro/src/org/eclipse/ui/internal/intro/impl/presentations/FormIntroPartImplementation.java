@@ -165,6 +165,7 @@ public class FormIntroPartImplementation extends
             // if we do not have a root page form, create one
             RootPageForm rootPageForm = new RootPageForm(toolkit, model, form);
             rootPageForm.createPartControl(pageBook, sharedStyleManager);
+            rootPageForm.setContentProviderSite(this);
         }
 
         // Create the two Page forms .

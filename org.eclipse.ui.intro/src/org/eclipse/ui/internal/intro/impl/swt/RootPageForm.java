@@ -31,6 +31,7 @@ import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.AbstractBaseIntroElement;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.IntroContentProvider;
 import org.eclipse.ui.internal.intro.impl.model.IntroGroup;
 import org.eclipse.ui.internal.intro.impl.model.IntroHomePage;
 import org.eclipse.ui.internal.intro.impl.model.IntroLink;
@@ -40,6 +41,7 @@ import org.eclipse.ui.internal.intro.impl.util.DialogUtil;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
 import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 import org.eclipse.ui.internal.intro.impl.util.Util;
+import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 
 /**
  * A Composite that represents the Root Page. It is swapped in the main page
@@ -52,6 +54,8 @@ public class RootPageForm implements IIntroConstants {
     private Form parentForm;
     protected Label descriptionLabel;
     private PageStyleManager rootPageStyleManager;
+    private IIntroContentProviderSite site;
+	private PageWidgetFactory factory;
 
     class PageComposite extends Composite {
 
@@ -205,7 +209,7 @@ public class RootPageForm implements IIntroConstants {
         contentComposite.setLayoutData(gd);
         AbstractIntroElement[] children = (AbstractIntroElement[]) rootPage
             .getChildrenOfType(AbstractIntroElement.GROUP
-                    | AbstractIntroElement.LINK);
+                    | AbstractIntroElement.LINK | AbstractIntroElement.CONTENT_PROVIDER);
         int numChildren = children.length;
         GridLayout layout = new GridLayout();
         // separate links a bit more.
@@ -227,6 +231,8 @@ public class RootPageForm implements IIntroConstants {
                 createGroupContent(contentComposite, (IntroGroup) children[i]);
             else if (children[i].getType() == AbstractIntroElement.LINK)
                 createImageHyperlink(contentComposite, (IntroLink) children[i]);
+            else if (children[i].getType() == AbstractIntroElement.CONTENT_PROVIDER)
+            	createContentProvider(contentComposite, (IntroContentProvider)children[i]);
         }
     }
 
@@ -236,7 +242,8 @@ public class RootPageForm implements IIntroConstants {
     private void createGroupContent(Composite parent, IntroGroup group) {
         AbstractIntroElement[] children = (AbstractIntroElement[]) group
             .getChildrenOfType(AbstractIntroElement.GROUP
-                    | AbstractIntroElement.LINK);
+                    | AbstractIntroElement.LINK |
+                    AbstractIntroElement.CONTENT_PROVIDER);
         int numChildren = children.length;
         // setup page composite/layout
         Composite contentComposite = toolkit.createComposite(parent);
@@ -262,6 +269,8 @@ public class RootPageForm implements IIntroConstants {
                 createGroupContent(contentComposite, (IntroGroup) children[i]);
             else if (children[i].getType() == AbstractIntroElement.LINK)
                 createImageHyperlink(contentComposite, (IntroLink) children[i]);
+            else if (children[i].getType() == AbstractIntroElement.CONTENT_PROVIDER)
+            	createContentProvider(contentComposite, (IntroContentProvider)children[i]);
         }
     }
 
@@ -323,5 +332,16 @@ public class RootPageForm implements IIntroConstants {
         label.setAlignment(SWT.CENTER);
         label.setFont(PageStyleManager.getBannerFont());
         return label;
+    }
+    
+    private void createContentProvider(Composite parent, IntroContentProvider providerElement) {
+    	if (factory==null) {
+    		factory = new PageWidgetFactory(toolkit, rootPageStyleManager);
+    		factory.setContentProviderSite(site);
+    	}
+        factory.createContentProvider(parent, providerElement);
+    }
+    public void setContentProviderSite(IIntroContentProviderSite site) {
+        this.site = site;
     }
 }

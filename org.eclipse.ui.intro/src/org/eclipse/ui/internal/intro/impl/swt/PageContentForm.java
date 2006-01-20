@@ -102,7 +102,7 @@ public class PageContentForm implements IIntroConstants {
         // setup page composite/layout
         PageWidgetFactory factory = new PageWidgetFactory(toolkit, styleManager);
         factory.setContentProviderSite(site);
-        Composite pageComposite = createPageTableComposite(factory, parent);
+        Composite pageComposite = createPageTableComposite(factory, toolkit, styleManager, parent);
         // now add all children
         AbstractIntroElement[] children = page.getChildren();
         for (int i = 0; i < children.length; i++)
@@ -117,8 +117,8 @@ public class PageContentForm implements IIntroConstants {
      * @param parent
      * @return
      */
-    private Composite createPageTableComposite(PageWidgetFactory factory,
-            Composite parent) {
+    static Composite createPageTableComposite(PageWidgetFactory factory, FormToolkit toolkit, 
+    		PageStyleManager styleManager, Composite parent) {
         Composite client = toolkit.createComposite(parent);
         TableWrapLayout layout = new TableWrapLayout();
         layout.topMargin = 0;
