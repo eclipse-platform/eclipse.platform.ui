@@ -36,7 +36,8 @@ import org.eclipse.core.internal.commands.util.Util;
  * 
  * @since 3.1
  */
-public abstract class HandleObject extends EventManager {
+public abstract class HandleObject extends EventManager implements
+		IIdentifiable {
 
 	/**
 	 * The constant integer hash code value meaning the hash code has not yet
@@ -121,12 +122,7 @@ public abstract class HandleObject extends EventManager {
 		return Util.equals(id, handle.id)
 				&& (this.getClass() == handle.getClass());
 	}
-
-    /**
-     * Returns the identifier for this handle object.
-     * 
-     * @return The identifier; never <code>null</code>.
-     */
+	
     public final String getId() {
         return id;
     }
