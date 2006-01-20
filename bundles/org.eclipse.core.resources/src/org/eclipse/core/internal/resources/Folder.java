@@ -163,11 +163,7 @@ public class Folder extends Container implements IFolder {
 		try {
 			String message = NLS.bind(Messages.resources_creating, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
-			ResourceInfo info = workspace.createResource(this, false);
-			if ((updateFlags & IResource.DERIVED) != 0)
-				info.set(ICoreConstants.M_DERIVED);
-			if ((updateFlags & IResource.TEAM_PRIVATE) != 0)
-				info.set(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
+			ResourceInfo info = workspace.createResource(this, updateFlags);
 			if (local) {
 				try {
 					final boolean force = (updateFlags & IResource.FORCE) != 0;

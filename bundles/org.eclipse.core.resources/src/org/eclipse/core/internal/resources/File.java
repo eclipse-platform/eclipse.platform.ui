@@ -144,11 +144,7 @@ public class File extends Resource implements IFile {
 				}
 				monitor.worked(Policy.opWork * 40 / 100);
 
-				info = workspace.createResource(this, false);
-				if ((updateFlags & IResource.DERIVED) != 0)
-					info.set(ICoreConstants.M_DERIVED);
-				if ((updateFlags & IResource.TEAM_PRIVATE) != 0)
-					info.set(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
+				info = workspace.createResource(this, updateFlags);
 				boolean local = content != null;
 				if (local) {
 					try {

@@ -263,6 +263,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @see IFile#create(java.io.InputStream, int, IProgressMonitor)
 	 * @see IFolder#create(int, boolean, IProgressMonitor)
+	 * @see IResource#copy(IPath, int, IProgressMonitor)
 	 * @see IResource#setTeamPrivateMember(boolean)
 	 * @since 3.2
 	 */
@@ -585,8 +586,20 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * permitted.  The <code>SHALLOW</code> update flag is ignored when copying non-
 	 * linked resources.
 	 * </p>
-	 * <p> 
-	 * Update flags other than <code>FORCE</code> and <code>SHALLOW</code> are ignored.
+	 * <p>
+	 * The {@link IResource#DERIVED} update flag indicates that the new resource
+	 * should immediately be set as a derived resource.  Specifying this flag
+	 * is equivalent to atomically calling {@link IResource#setDerived(boolean)}
+	 * with a value of <code>true</code> immediately after creating the resource.
+	 * </p>
+	 * <p>
+	 * The {@link IResource#TEAM_PRIVATE} update flag indicates that the new resource
+	 * should immediately be set as a team private resource.  Specifying this flag
+	 * is equivalent to atomically calling {@link IResource#setTeamPrivateMember(boolean)}
+	 * with a value of <code>true</code> immediately after creating the resource.
+	 * </p>
+	 * <p>
+	 * Update flags other than those listed above are ignored.
 	 * </p>
 	 * <p> 
 	 * This operation changes resources; these changes will be reported in a
@@ -605,7 +618,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @param destination the destination path 
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   (<code>FORCE</code> and <code>SHALLOW</code>)
+	 *   ({@link FORCE}, {@link SHALLOW}, {@link #DERIVED}, {@link #TEAM_PRIVATE})
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this resource could not be copied. Reasons include:
@@ -636,6 +649,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #FORCE
 	 * @see #SHALLOW
+	 * @see #DERIVED
+	 * @see #TEAM_PRIVATE
 	 * @see IResourceRuleFactory#copyRule(IResource, IResource)
 	 * @since 2.0
 	 */

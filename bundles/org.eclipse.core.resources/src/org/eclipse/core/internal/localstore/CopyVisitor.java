@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,7 +78,7 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 			IFileStore destinationStore = destination.getStore();
 			sourceStore.copy(destinationStore, EFS.SHALLOW, Policy.subMonitorFor(monitor, 0));
 			//create the destination in the workspace
-			ResourceInfo info = localManager.getWorkspace().createResource(destination, false);
+			ResourceInfo info = localManager.getWorkspace().createResource(destination, updateFlags);
 			localManager.updateLocalSync(info, destinationStore.fetchInfo().getLastModified());
 			//update timestamps on aliases
 			getWorkspace().getAliasManager().updateAliases(destination, destinationStore, IResource.DEPTH_ZERO, monitor);

@@ -785,6 +785,19 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public ResourceInfo createResource(IResource resource, boolean phantom) throws CoreException {
 		return createResource(resource, null, phantom, false, false);
 	}
+	
+	/**
+	 * Creates a resource, honoring update flags requesting that the resource
+	 * be immediately made derived and/or team private
+	 */
+	public ResourceInfo createResource(IResource resource, int updateFlags) throws CoreException {
+		ResourceInfo info = createResource(resource, null, false, false, false);
+		if ((updateFlags & IResource.DERIVED) != 0)
+			info.set(M_DERIVED);
+		if ((updateFlags & IResource.TEAM_PRIVATE) != 0)
+			info.set(M_TEAM_PRIVATE_MEMBER);
+		return info;
+	}
 
 	public static WorkspaceDescription defaultWorkspaceDescription() {
 		return new WorkspaceDescription("Workspace"); //$NON-NLS-1$
