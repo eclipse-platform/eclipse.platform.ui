@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.Set;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -154,21 +153,6 @@ public interface IHistoryStore extends IManager {
 	 * @return the list of file states
 	 */
 	public IFileState[] getStates(IPath path, IProgressMonitor monitor);
-
-	/**
-	 * Return the java.io.File associated with this file state.
-	 * 
-	 * @param state the file state
-	 * @return the associated java.io.File
-	 * @deprecated see the note below...we shouldn't have this method 
-	 * 	in this API
-	 * 
-	 * TODO: This may not be applicable to all types of backing
-	 * stores. This method is called to copy file attributes from the
-	 * source file to the file in the history store. Perhaps there is
-	 * a better means to do this...
-	 */
-	public File getFileFor(IFileState state);
 
 	/**
 	 * Remove all of the file states for the given resource path and

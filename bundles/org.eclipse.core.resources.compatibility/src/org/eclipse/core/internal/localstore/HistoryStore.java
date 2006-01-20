@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.*;
 import org.eclipse.core.filesystem.*;
@@ -426,15 +425,6 @@ public class HistoryStore implements IHistoryStore {
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 		}
 		return blobStore.getBlob(((FileState) target).getUUID());
-	}
-
-	/**
-	 * @see IHistoryStore#getFileFor(IFileState)
-	 */
-	public File getFileFor(IFileState state) {
-		if (!(state instanceof FileState))
-			return null;
-		return new java.io.File(blobStore.fileFor(((FileState) state).getUUID()).toString());
 	}
 
 	/**

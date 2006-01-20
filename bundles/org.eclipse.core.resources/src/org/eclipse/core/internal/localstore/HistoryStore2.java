@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.*;
 import org.eclipse.core.filesystem.*;
@@ -245,12 +244,6 @@ public class HistoryStore2 implements IHistoryStore {
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 		}
 		return blobStore.getBlob(((FileState) target).getUUID());
-	}
-
-	public File getFileFor(IFileState state) {
-		IFileStore store = blobStore.fileFor(((FileState) state).getUUID());
-		//assume it is local - java.io.File is leaking out of our internal API here
-		return new java.io.File(store.toString());
 	}
 
 	public synchronized IFileState[] getStates(IPath filePath, IProgressMonitor monitor) {
