@@ -50,6 +50,9 @@ public interface IRefactoringSerializationConstants {
 	/** The output encoding */
 	public static final String OUTPUT_ENCODING= "utf-8"; //$NON-NLS-1$
 
+	/** The indent flag */
+	public static final String OUTPUT_INDENT= "yes"; //$NON-NLS-1$
+
 	/** The output method */
 	public static final String OUTPUT_METHOD= "xml"; //$NON-NLS-1$
 }

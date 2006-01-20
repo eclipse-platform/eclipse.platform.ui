@@ -94,10 +94,10 @@ public interface IRefactoringHistoryService {
 	 * Deletes the refactoring history of a project. Refactorings associated
 	 * with the workspace are not deleted.
 	 * <p>
-	 * If a refactoring history is deleted, all files stored in the
-	 * <code>.refactorings</code> folder of the project folder is removed. If
-	 * no explicit refactoring history is enabled, the refactoring history
-	 * information is removed internally.
+	 * If a refactoring history is deleted, all files stored in the hidden
+	 * refactoring history folder of the project folder are removed. If no
+	 * explicit refactoring history is enabled, the refactoring history
+	 * information is removed from the internal workspace refactoring history.
 	 * </p>
 	 * <p>
 	 * Note: This API must not be called from outside the refactoring framework.
@@ -166,6 +166,14 @@ public interface IRefactoringHistoryService {
 	 * Clients must connect to the refactoring history service first before
 	 * calling this method.
 	 * </p>
+	 * <p>
+	 * Note that calling this method with a flag argument unequal to
+	 * <code>RefactoringDescriptor#NONE</code> may result in a performance
+	 * degradation, since the actual descriptors have to be eagerly resolved.
+	 * This in turn results in faster execution of any subsequent calls to
+	 * {@link RefactoringDescriptorProxy#requestDescriptor(IProgressMonitor)}
+	 * which try to request a descriptor from the returned refactoring history.
+	 * </p>
 	 * 
 	 * @param project
 	 *            the project, which must exist
@@ -180,6 +188,14 @@ public interface IRefactoringHistoryService {
 	 * <p>
 	 * Clients must connect to the refactoring history service first before
 	 * calling this method.
+	 * </p>
+	 * <p>
+	 * Note that calling this method with a flag argument unequal to
+	 * <code>RefactoringDescriptor#NONE</code> may result in a performance
+	 * degradation, since the actual descriptors have to be eagerly resolved.
+	 * This in turn results in faster execution of any subsequent calls to
+	 * {@link RefactoringDescriptorProxy#requestDescriptor(IProgressMonitor)}
+	 * which try to request a descriptor from the returned refactoring history.
 	 * </p>
 	 * 
 	 * @param project
@@ -218,6 +234,14 @@ public interface IRefactoringHistoryService {
 	 * <p>
 	 * Clients must connect to the refactoring history service first before
 	 * calling this method.
+	 * </p>
+	 * <p>
+	 * Note that calling this method with a flag argument unequal to
+	 * <code>RefactoringDescriptor#NONE</code> may result in a performance
+	 * degradation, since the actual descriptors have to be eagerly resolved.
+	 * This in turn results in faster execution of any subsequent calls to
+	 * {@link RefactoringDescriptorProxy#requestDescriptor(IProgressMonitor)}
+	 * which try to request a descriptor from the returned refactoring history.
 	 * </p>
 	 * 
 	 * @param projects
@@ -278,6 +302,10 @@ public interface IRefactoringHistoryService {
 
 	/**
 	 * Reads a refactoring history from the input stream.
+	 * <p>
+	 * The resulting refactoring history contains resolved refactoring
+	 * descriptors and should not be held on to.
+	 * </p>
 	 * 
 	 * @param stream
 	 *            the input stream
@@ -334,10 +362,10 @@ public interface IRefactoringHistoryService {
 	 * Determines whether a project has an explicit refactoring history.
 	 * <p>
 	 * If an explicit refactoring history is enabled, refactorings executed on
-	 * that particular project are stored in a <code>.refactorings</code>
-	 * folder of the project folder. If no explicit refactoring history is
-	 * enabled, all refactorings are tracked as well, but persisted internally
-	 * in a plugin-specific way without altering the project.
+	 * that particular project are stored in a hidden refactoring history folder
+	 * of the project folder. If no explicit refactoring history is enabled, all
+	 * refactorings are tracked as well, but persisted internally in a
+	 * plugin-specific way without altering the project.
 	 * </p>
 	 * <p>
 	 * Note: This API must not be called from outside the refactoring framework.
@@ -362,6 +390,8 @@ public interface IRefactoringHistoryService {
 
 	/**
 	 * Writes the specified refactoring descriptor proxies to the output stream.
+	 * Refactoring descriptor proxies which cannot be resolved are automatically
+	 * skipped.
 	 * 
 	 * @param proxies
 	 *            the refactoring descriptor proxies
@@ -369,7 +399,7 @@ public interface IRefactoringHistoryService {
 	 *            the output stream
 	 * @param flags
 	 *            the flags which must be present in order to be written to the
-	 *            output stream
+	 *            output stream, or <code>RefactoringDescriptor#NONE</code>
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
 	 * @throws CoreException

@@ -103,7 +103,7 @@ public final class RefactoringHistorySerializer implements IRefactoringHistoryLi
 		final int type= event.getEventType();
 		final RefactoringHistoryManager manager= new RefactoringHistoryManager(store, name);
 		if (type == RefactoringHistoryEvent.PUSHED)
-			manager.writeRefactoringDescriptor(proxy.requestDescriptor(new NullProgressMonitor()), new NullProgressMonitor());
+			manager.addRefactoringDescriptor(proxy.requestDescriptor(new NullProgressMonitor()), new NullProgressMonitor());
 		else if (type == RefactoringHistoryEvent.POPPED || type == RefactoringHistoryEvent.DELETED)
 			manager.removeRefactoringDescriptor(proxy.getTimeStamp(), new NullProgressMonitor());
 	}

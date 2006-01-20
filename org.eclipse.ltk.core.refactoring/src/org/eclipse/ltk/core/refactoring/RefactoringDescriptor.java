@@ -266,26 +266,25 @@ public class RefactoringDescriptor implements Comparable {
 	}
 
 	/**
-	 * Returns a human-readable description of the particular refactoring
-	 * instance.
+	 * Returns a human-readable description of this refactoring.
 	 * 
-	 * @return a description of the refactoring
+	 * @return a description of this refactoring
 	 */
 	public final String getDescription() {
 		return fDescription;
 	}
 
 	/**
-	 * Returns the flags of the refactoring descriptor.
+	 * Returns the flags of this refactoring.
 	 * 
-	 * @return the flags of the refactoring descriptor
+	 * @return the flags of this refactoring
 	 */
 	public final int getFlags() {
 		return fFlags;
 	}
 
 	/**
-	 * Returns the unique id of the refactoring.
+	 * Returns the unique id of this refactoring.
 	 * 
 	 * @return the unique id
 	 */
@@ -294,7 +293,7 @@ public class RefactoringDescriptor implements Comparable {
 	}
 
 	/**
-	 * Returns the name of the project this refactoring is associated with.
+	 * Returns the name of the associated project.
 	 * 
 	 * @return the non-empty name of the project, or <code>null</code>
 	 */

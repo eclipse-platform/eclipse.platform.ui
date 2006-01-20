@@ -47,7 +47,6 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringInstanceFactory;
 import org.eclipse.ltk.internal.ui.refactoring.ChangeExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.IErrorWizardPage;
@@ -263,7 +262,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		final RefactoringStatus status= new RefactoringStatus();
 		if (refactoring instanceof IInitializableRefactoringComponent) {
 			final IInitializableRefactoringComponent component= (IInitializableRefactoringComponent) refactoring;
-			final RefactoringArguments arguments= RefactoringInstanceFactory.getInstance().createArguments(descriptor);
+			final RefactoringArguments arguments= RefactoringCore.getRefactoringInstanceCreator().createArguments(descriptor);
 			if (arguments != null)
 				status.merge(component.initialize(arguments));
 			else

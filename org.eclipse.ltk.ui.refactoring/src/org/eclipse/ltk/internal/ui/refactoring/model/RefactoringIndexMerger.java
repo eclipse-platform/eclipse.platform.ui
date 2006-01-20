@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManager;
@@ -49,8 +50,8 @@ public final class RefactoringIndexMerger implements IStreamMerger {
 	 */
 	public IStatus merge(final OutputStream output, final String outputEncoding, final InputStream ancestor, final String ancestorEncoding, final InputStream target, final String targetEncoding, final InputStream source, final String sourceEncoding, final IProgressMonitor monitor) {
 		try {
-			final RefactoringDescriptorProxy[] sourceProxies= RefactoringHistoryManager.readRefactoringDescriptorProxies(source, null, 0, Long.MAX_VALUE);
-			final RefactoringDescriptorProxy[] targetProxies= RefactoringHistoryManager.readRefactoringDescriptorProxies(target, null, 0, Long.MAX_VALUE);
+			final RefactoringDescriptorProxy[] sourceProxies= RefactoringHistoryManager.readRefactoringDescriptorProxies(source, null, 0, Long.MAX_VALUE, RefactoringDescriptor.NONE);
+			final RefactoringDescriptorProxy[] targetProxies= RefactoringHistoryManager.readRefactoringDescriptorProxies(target, null, 0, Long.MAX_VALUE, RefactoringDescriptor.NONE);
 			final Set set= new HashSet();
 			for (int index= 0; index < sourceProxies.length; index++)
 				set.add(sourceProxies[index]);
@@ -71,8 +72,8 @@ public final class RefactoringIndexMerger implements IStreamMerger {
 				final RefactoringDescriptorProxy proxy= outputProxies[index];
 				buffer.setLength(0);
 				buffer.append(proxy.getTimeStamp());
-				buffer.append(RefactoringHistoryManager.DELIMITER_STAMP);
-				buffer.append(proxy.getDescription());
+				buffer.append(RefactoringHistoryManager.DELIMITER_COMPONENT);
+				buffer.append(RefactoringHistoryManager.escapeString(proxy.getDescription()));
 				buffer.append(RefactoringHistoryManager.DELIMITER_ENTRY);
 				output.write(buffer.toString().getBytes(outputEncoding));
 			}
