@@ -13,19 +13,16 @@ package org.eclipse.team.ui.synchronize;
 
 import org.eclipse.compare.CompareViewerPane;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.synchronize.DialogSynchronizePageSite;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
-import org.eclipse.ui.*;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPageBookViewPage;
-import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Standalone presentation of a participant page within a view pane. This
@@ -44,60 +41,8 @@ public final class ParticipantPagePane {
 	
 	//	 SWT controls
 	private CompareViewerPane fEditionPane;
-	private Viewer viewer;
-	
-	private IActionBars actionBars;
 	private IPageBookViewPage fPage;
-
-	/*
-	 * Page site that allows hosting the participant page in a dialog.
-	 */
-	class CompareViewerPaneSite implements ISynchronizePageSite {
-		ISelectionProvider selectionProvider;
-		public IWorkbenchPage getPage() {
-			return null;
-		}
-		public ISelectionProvider getSelectionProvider() {
-			if (selectionProvider != null) 
-				return selectionProvider;
-			return viewer;
-		}
-		public Shell getShell() {
-			return shell;
-		}
-		public IWorkbenchWindow getWorkbenchWindow() {
-			return null;
-		}
-		public void setSelectionProvider(ISelectionProvider provider) {
-			selectionProvider = provider;
-		}
-		public Object getAdapter(Class adapter) {
-			return null;
-		}
-		public IWorkbenchSite getWorkbenchSite() {
-			return null;
-		}
-		public IWorkbenchPart getPart() {
-			return null;
-		}
-		public IKeyBindingService getKeyBindingService() {
-			return null;
-		}
-		public void setFocus() {
-		}
-		public IDialogSettings getPageSettings() {
-			return null;
-		}
-		public IActionBars getActionBars() {
-			return ParticipantPagePane.this.getActionBars();
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.team.ui.synchronize.ISynchronizePageSite#isModal()
-		 */
-		public boolean isModal() {
-			return isModal;
-		}	
-	}
+	private DialogSynchronizePageSite site;
 	
 	/**
 	 * Creates a part for the provided participant. The page configuration is used when creating the participant page and the resulting
@@ -116,7 +61,6 @@ public final class ParticipantPagePane {
 		this.shell = shell;
 		this.participant = participant;
 		this.pageConfiguration = pageConfiguration;
-		
 	}
 	
 	/* (non-Javadoc)
@@ -129,6 +73,8 @@ public final class ParticipantPagePane {
 		if (fPage != null) {
 			fPage.dispose();
 		}
+		if (site != null)
+			site.dispose();
 	}
 	
 	/* (non-Javadoc)
@@ -167,9 +113,10 @@ public final class ParticipantPagePane {
 		fEditionPane.setLayoutData(SWTUtils.createHVFillGridData());
 		
 		fPage = participant.createPage(pageConfiguration);
-		((SynchronizePageConfiguration)pageConfiguration).setSite(new CompareViewerPaneSite());
+		site = new DialogSynchronizePageSite(shell, isModal);
+		((SynchronizePageConfiguration)pageConfiguration).setSite(site);
 		ToolBarManager tbm = CompareViewerPane.getToolBarManager(fEditionPane);
-		createActionBars(tbm);
+		site.createActionBars(tbm);
 		try {
 			((ISynchronizePage)fPage).init(pageConfiguration.getSite());
 		} catch (PartInitException e1) {
@@ -177,44 +124,11 @@ public final class ParticipantPagePane {
 		}
 
 		fPage.createControl(fEditionPane);
-		fPage.setActionBars(getActionBars());
+		fPage.setActionBars(site.getActionBars());
 		fEditionPane.setContent(fPage.getControl());
 		tbm.update(true);
 		
 		return top;
-	}
-	
-	private void createActionBars(final IToolBarManager toolbar) {
-		if (actionBars == null) {
-			actionBars = new IActionBars() {
-				public void clearGlobalActionHandlers() {
-				}
-				public IAction getGlobalActionHandler(String actionId) {
-					return null;
-				}
-				public IMenuManager getMenuManager() {
-					return null;
-				}
-				public IStatusLineManager getStatusLineManager() {
-					return null;
-				}
-				public IToolBarManager getToolBarManager() {
-					return toolbar;
-				}
-				public void setGlobalActionHandler(String actionId, IAction action) {				
-				}
-
-				public void updateActionBars() {
-				}
-				public IServiceLocator getServiceLocator() {
-					return null;
-				}
-			};
-		}
-	}
-	
-	private IActionBars getActionBars() {
-		return actionBars;
 	}
 	
 	/**

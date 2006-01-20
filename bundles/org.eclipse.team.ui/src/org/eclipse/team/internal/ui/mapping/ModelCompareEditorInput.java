@@ -6,8 +6,6 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
@@ -40,26 +38,6 @@ public class ModelCompareEditorInput extends CompareEditorInput {
             monitor.done();
         }
 		return input;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.CompareEditorInput#findStructureViewer(org.eclipse.jface.viewers.Viewer, org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.swt.widgets.Composite)
-	 */
-	public Viewer findStructureViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
-		Viewer viewer = participant.findStructureViewer(parent, oldViewer, input, getCompareConfiguration());
-		if (viewer != null)
-			return viewer;
-		return super.findStructureViewer(oldViewer, input, parent);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.CompareEditorInput#findContentViewer(org.eclipse.jface.viewers.Viewer, org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.swt.widgets.Composite)
-	 */
-	public Viewer findContentViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
-		Viewer viewer = participant.findContentViewer(parent, oldViewer, input, getCompareConfiguration());
-		if (viewer != null)
-			return viewer;
-		return super.findContentViewer(oldViewer, input, parent);
 	}
 
 	/**

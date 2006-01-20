@@ -11,16 +11,14 @@
 package org.eclipse.team.ui.synchronize;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.List;
+import java.util.ArrayList;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -38,11 +36,10 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.SaveablePartAdapter;
 import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
-import org.eclipse.ui.*;
-import org.eclipse.ui.commands.*;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Displays a synchronize participant page combined with the compare/merge infrastructure. This only works if the
@@ -57,7 +54,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	private ISynchronizeParticipant participant;
 	private ISynchronizePageConfiguration pageConfiguration;
 	private Image titleImage;
-	private Shell dialogShell;
+	Shell dialogShell;
 	
 	// Tracking of dirty state
 	private boolean fDirty= false;
@@ -68,69 +65,15 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	private CompareViewerSwitchingPane fContentPane;
 	private CompareViewerPane fEditionPane;
 	private CompareViewerSwitchingPane fStructuredComparePane;
-	private Viewer viewer;
+	Viewer viewer;
 	private Control control;
 	
 	// Configuration options
 	private boolean showContentPanes = true;
 
-	
-	// Keybindings enabled in the dialog, these should be removed
-	// when the dialog is closed.
-	private IActionBars actionBars;
-	private List actionHandlers = new ArrayList(2);
 	private IPageBookViewPage page;
+	private DialogSynchronizePageSite site;
 
-	/*
-	 * Page site that allows hosting the participant page in a dialog.
-	 */
-	class CompareViewerPaneSite implements ISynchronizePageSite {
-		ISelectionProvider selectionProvider;
-		public IWorkbenchPage getPage() {
-			return null;
-		}
-		public ISelectionProvider getSelectionProvider() {
-			if (selectionProvider != null) 
-				return selectionProvider;
-			return viewer;
-		}
-		public Shell getShell() {
-			return dialogShell;
-		}
-		public IWorkbenchWindow getWorkbenchWindow() {
-			return null;
-		}
-		public void setSelectionProvider(ISelectionProvider provider) {
-			selectionProvider = provider;
-		}
-		public Object getAdapter(Class adapter) {
-			return null;
-		}
-		public IWorkbenchSite getWorkbenchSite() {
-			return null;
-		}
-		public IWorkbenchPart getPart() {
-			return null;
-		}
-		public IKeyBindingService getKeyBindingService() {
-			return null;
-		}
-		public void setFocus() {
-		}
-		public IDialogSettings getPageSettings() {
-			return null;
-		}
-		public IActionBars getActionBars() {
-			return ParticipantPageSaveablePart.this.getActionBars();
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.team.ui.synchronize.ISynchronizePageSite#isModal()
-		 */
-		public boolean isModal() {
-			return true;
-		}	
-	}
-	
 	/**
 	 * Creates a part for the provided participant. The page configuration is used when creating the participant page and the resulting
 	 * compare/merge panes will be configured with the provided compare configuration.
@@ -171,11 +114,8 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		}
 		if (page != null) 
 			page.dispose();
-		IWorkbenchCommandSupport cm = PlatformUI.getWorkbench().getCommandSupport();
-		for (Iterator it = actionHandlers.iterator(); it.hasNext();) {
-			HandlerSubmission handler = (HandlerSubmission) it.next();
-			cm.removeHandlerSubmission(handler);
-		}
+		if (site != null)
+			site.dispose();
 		super.dispose();
 	}
 	
@@ -218,9 +158,8 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see CompareEditorInput#saveChanges(org.eclipse.core.runtime.IProgressMonitor)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor pm) {
 		//super.saveChanges(pm);
@@ -275,9 +214,10 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		fEditionPane.setText(TeamUIMessages.ParticipantPageSaveablePart_0); 
 		
 		page = participant.createPage(pageConfiguration);
-		((SynchronizePageConfiguration)pageConfiguration).setSite(new CompareViewerPaneSite());
+		site = new DialogSynchronizePageSite(dialogShell, true);
+		((SynchronizePageConfiguration)pageConfiguration).setSite(site);
 		ToolBarManager tbm = CompareViewerPane.getToolBarManager(fEditionPane);
-		createActionBars(tbm);
+		site.createActionBars(tbm);
 		try {
 			((ISynchronizePage)page).init(pageConfiguration.getSite());
 		} catch (PartInitException e1) {
@@ -296,11 +236,11 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 			initializeDiffViewer(((ISynchronizePage)page).getViewer());
 		}
 		
-		page.setActionBars(getActionBars());
+		page.setActionBars(site.getActionBars());
 		fEditionPane.setContent(page.getControl());
 		tbm.update(true);
 		if(page instanceof ISynchronizePage) {
-			this.viewer = ((ISynchronizePage)page).getViewer();			
+			this.viewer = ((ISynchronizePage)page).getViewer();
 		}
 		
 		fContentPane = new CompareViewerSwitchingPane(vsplitter, SWT.BORDER | SWT.FLAT) {
@@ -500,44 +440,6 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 			fDirtyViewers.remove(source);
 	}	
 	
-	private void createActionBars(final IToolBarManager toolbar) {
-		if (actionBars == null) {
-			actionBars = new IActionBars() {
-				public void clearGlobalActionHandlers() {
-				}
-				public IAction getGlobalActionHandler(String actionId) {
-					return null;
-				}
-				public IMenuManager getMenuManager() {
-					return null;
-				}
-				public IStatusLineManager getStatusLineManager() {
-					return null;
-				}
-				public IToolBarManager getToolBarManager() {
-					return toolbar;
-				}
-				public void setGlobalActionHandler(String actionId, IAction action) {
-					if (actionId != null && !"".equals(actionId)) { //$NON-NLS-1$
-						IHandler handler = new ActionHandler(action);
-						HandlerSubmission handlerSubmission = new HandlerSubmission(null, dialogShell, null, actionId, handler, Priority.MEDIUM);
-						PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(handlerSubmission);
-						actionHandlers.add(handlerSubmission);
-					}
-				}
-				public void updateActionBars() {
-				}
-				public IServiceLocator getServiceLocator() {
-					return null;
-				}
-			};
-		}
-	}
-	
-	private IActionBars getActionBars() {
-		return actionBars;
-	}
-	
 	/**
 	 * Return the synchronize page configuration for this part
 	 * 
@@ -591,12 +493,6 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	 * <code>null</code> if such a viewer is not available.
 	 */
 	private Viewer findStructureViewer(Composite parent, Viewer oldViewer, ICompareInput input) {
-		if (participant instanceof ResourceMappingSynchronizeParticipant) {
-			ResourceMappingSynchronizeParticipant msp = (ResourceMappingSynchronizeParticipant) participant;
-			Viewer viewer = msp.findStructureViewer(parent, oldViewer, input, cc);
-			if (viewer != null)
-				return viewer;
-		}
 		return CompareUI.findStructureViewer(oldViewer, input, parent, cc);
 	}
 	
@@ -610,20 +506,6 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	 * <code>null</code> if such a viewer is not available.
 	 */
 	private Viewer findContentViewer(Composite parent, Viewer oldViewer, ICompareInput input) {
-		if (participant instanceof ResourceMappingSynchronizeParticipant) {
-			ResourceMappingSynchronizeParticipant msp = (ResourceMappingSynchronizeParticipant) participant;
-			Viewer viewer = msp.findContentViewer(parent, oldViewer, input, cc);
-			if (viewer != null)
-				return viewer;
-		}
 		return CompareUI.findContentViewer(oldViewer, input, parent, cc);
-	}
-
-	/*
-	 * Return the compare configuration for this part.
-	 * @return the compare configuration for this part
-	 */
-	private CompareConfiguration getCompareConfiguration() {
-		return cc;
 	}
 }

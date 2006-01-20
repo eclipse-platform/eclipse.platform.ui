@@ -144,15 +144,8 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.ICompareAdapter#findStructureViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.viewers.Viewer, org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.CompareConfiguration)
-	 */
-	public Viewer findStructureViewer(Composite parent, Viewer oldViewer,
-			ICompareInput input, CompareConfiguration configuration) {
-		return null;
-	}
-
-	/* (non-Javadoc)
+	/**
+	 * @deprecated
 	 * @see org.eclipse.team.ui.mapping.ICompareAdapter#findContentViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.viewers.Viewer, org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.CompareConfiguration)
 	 */
 	public Viewer findContentViewer(Composite parent, Viewer oldViewer,

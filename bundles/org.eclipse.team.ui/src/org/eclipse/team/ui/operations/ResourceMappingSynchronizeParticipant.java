@@ -14,8 +14,6 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
@@ -146,41 +144,9 @@ public class ResourceMappingSynchronizeParticipant extends
 			return adapter.asCompareInput(getContext(), o);
 		return null;
 	}
-	
-	/**
-	 * Return a structure viewer for viewing the structure of the given compare input
-	 * @param parent the parent composite of the viewer
-	 * @param oldViewer the current viewer which can be returned if it is appropriate for use with the given input
-	 * @param input the compare input to be viewed
-	 * @param configuration the compare configuration information
-	 * @return a viewer for viewing the structure of the given compare input
-	 */ 
-	public Viewer findStructureViewer(Composite parent, Viewer oldViewer, ICompareInput input, CompareConfiguration configuration) {
-		// Get a structure viewer from the model provider's compare adapter
-		ICompareAdapter adapter = Utils.getCompareAdapter(input);
-		if (adapter != null)
-			return adapter.findStructureViewer(parent, oldViewer, input, configuration);
-		return null;
-	}
 
 	/**
-	 * Return a viewer for comparing the content of the given compare input.
-	 * @param parent the parent composite of the viewer
-	 * @param oldViewer the current viewer which can be returned if it is appropriate for use with the given input
-	 * @param input the compare input to be viewed
-	 * @param configuration the compare configuration information
-	 * @return a viewer for comparing the content of the given compare input
-	 */ 
-	public Viewer findContentViewer(Composite parent, Viewer oldViewer, ICompareInput input, CompareConfiguration configuration) {
-		// Get a content viewer from the model provider's compare adapter
-		ICompareAdapter adapter = Utils.getCompareAdapter(input);
-		if (adapter != null)
-			return adapter.findContentViewer(parent, oldViewer, input, configuration);
-		return null;
-	}
-
-	/**
-	 * Prepare the compare inout for display using the compare configuration. 
+	 * Prepare the compare input for display using the compare configuration. 
 	 * @param input the compare input to be displayed
 	 * @param configuration the compare configuration for the editor that will display the input
 	 * @param monitor a progress monitor
@@ -223,5 +189,16 @@ public class ResourceMappingSynchronizeParticipant extends
 	 */
 	public void setMergingEnabled(boolean mergingEnabled) {
 		this.mergingEnabled = mergingEnabled;
+	}
+
+	/**
+	 * Return whether there are unsaved changes associated with the 
+	 * context of this participant.
+	 * @return whether there are unsaved changes associated with the 
+	 * context of this participant
+	 */
+	public boolean hasUnsavedChanges() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

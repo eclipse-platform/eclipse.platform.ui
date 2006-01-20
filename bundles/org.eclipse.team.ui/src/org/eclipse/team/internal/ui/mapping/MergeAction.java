@@ -15,8 +15,10 @@ import java.util.Collections;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.team.ui.mapping.MergeActionHandler;
+import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -47,6 +49,9 @@ public class MergeAction extends Action {
 	}
 	
 	public void runWithEvent(Event event) {
+		if (!promptForUnsavedChanges()) {
+			return;
+		}
 		IHandler handler = getHandler();
 		if (handler != null && handler.isEnabled()) {
 			try {
@@ -55,6 +60,14 @@ public class MergeAction extends Action {
 				handle(e);
 			}
 		}
+	}
+
+	private boolean promptForUnsavedChanges() {
+		ResourceMappingSynchronizeParticipant participant = (ResourceMappingSynchronizeParticipant)configuration.getParticipant();
+		if (participant.hasUnsavedChanges()) {
+			return MessageDialog.openQuestion(configuration.getSite().getShell(), "Unsaved Changes", "There are unsaved changes");
+		}
+		return true;
 	}
 
 	private void handle(Throwable e) {
