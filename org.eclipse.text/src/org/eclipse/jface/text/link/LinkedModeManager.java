@@ -60,7 +60,7 @@ class LinkedModeManager {
 	}
 
 	/** Global map from documents to managers. */
-	private static Map fManagers= new HashMap();
+	private static Map fgManagers= new HashMap();
 
 	/**
 	 * Returns whether there exists a <code>LinkedModeManager</code> on <code>document</code>.
@@ -69,7 +69,7 @@ class LinkedModeManager {
 	 * @return <code>true</code> if there exists a <code>LinkedModeManager</code> on <code>document</code>, <code>false</code> otherwise
 	 */
 	public static boolean hasManager(IDocument document) {
-		return fManagers.get(document) != null;
+		return fgManagers.get(document) != null;
 	}
 
 	/**
@@ -102,7 +102,7 @@ class LinkedModeManager {
 		Set mgrs= new HashSet();
 		LinkedModeManager mgr= null;
 		for (int i= 0; i < documents.length; i++) {
-			mgr= (LinkedModeManager) fManagers.get(documents[i]);
+			mgr= (LinkedModeManager) fgManagers.get(documents[i]);
 			if (mgr != null)
 				mgrs.add(mgr);
 		}
@@ -120,7 +120,7 @@ class LinkedModeManager {
 			mgr= new LinkedModeManager();
 
 		for (int i= 0; i < documents.length; i++)
-			fManagers.put(documents[i], mgr);
+			fgManagers.put(documents[i], mgr);
 
 		return mgr;
 	}
@@ -131,7 +131,7 @@ class LinkedModeManager {
 	 * @param document the document whose <code>LinkedModeManager</code> should be canceled
 	 */
 	public static void cancelManager(IDocument document) {
-		LinkedModeManager mgr= (LinkedModeManager) fManagers.get(document);
+		LinkedModeManager mgr= (LinkedModeManager) fgManagers.get(document);
 		if (mgr != null)
 			mgr.closeAllEnvironments();
 	}
@@ -172,9 +172,9 @@ class LinkedModeManager {
 	}
 
 	private void removeManager() {
-		for (Iterator it= fManagers.keySet().iterator(); it.hasNext();) {
+		for (Iterator it= fgManagers.keySet().iterator(); it.hasNext();) {
 			IDocument doc= (IDocument) it.next();
-			if (fManagers.get(doc) == this)
+			if (fgManagers.get(doc) == this)
 				it.remove();
 		}
 	}
