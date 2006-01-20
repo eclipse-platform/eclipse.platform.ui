@@ -52,7 +52,8 @@ public class JobOSGiUtils {
 	private void initServices() throws ClassNotFoundException {
 		BundleContext context = Activator.getContext();
 		if (context == null) {
-			JobMessages.message("JobsOSGiUtils called before plugin started"); //$NON-NLS-1$
+			if (JobManager.DEBUG)
+				JobMessages.message("JobsOSGiUtils called before plugin started"); //$NON-NLS-1$
 			return;
 		}
 
@@ -76,7 +77,8 @@ public class JobOSGiUtils {
 
 	public boolean getBooleanDebugOption(String option, boolean defaultValue) throws ClassNotFoundException {
 		if (debugTracker == null) {
-			JobMessages.message("Debug tracker is not set"); //$NON-NLS-1$
+			if (JobManager.DEBUG)
+				JobMessages.message("Debug tracker is not set"); //$NON-NLS-1$
 			return defaultValue;
 		}
 		DebugOptions options = (DebugOptions) debugTracker.getService();
@@ -94,7 +96,8 @@ public class JobOSGiUtils {
 	 */
 	public String getBundleId(Object object) throws ClassNotFoundException {
 		if (bundleTracker == null) {
-			JobMessages.message("Bundle tracker is not set"); //$NON-NLS-1$
+			if (JobManager.DEBUG)
+				JobMessages.message("Bundle tracker is not set"); //$NON-NLS-1$
 			return null;
 		}
 		PackageAdmin packageAdmin = (PackageAdmin) bundleTracker.getService();
