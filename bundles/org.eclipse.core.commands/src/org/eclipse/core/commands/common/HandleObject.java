@@ -123,7 +123,7 @@ public abstract class HandleObject extends EventManager {
 	}
 
     /**
-     * Returns the identifier for this command.
+     * Returns the identifier for this handle object.
      * 
      * @return The identifier; never <code>null</code>.
      */
