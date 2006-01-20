@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  */
 public class MarkerAdapter {
 
-	private class MarkerCategory extends MarkerNode {
+	class MarkerCategory extends MarkerNode {
 
 		MarkerAdapter markerAdapter;
 
@@ -39,9 +39,7 @@ public class MarkerAdapter {
 
 		int fieldIndex = 0;
 
-		MarkerCategory parent;
-
-		private MarkerNode[] children;
+		private ConcreteMarker[] children;
 
 		private String name;
 
@@ -52,21 +50,14 @@ public class MarkerAdapter {
 		 * @param adapter
 		 * @param startIndex
 		 * @param endIndex
-		 * @param fieldNumber
-		 * @param parentCategory
 		 */
-		MarkerCategory(MarkerAdapter adapter, int startIndex, int endIndex,
-				int fieldNumber, MarkerCategory parentCategory) {
+		MarkerCategory(MarkerAdapter adapter, int startIndex, int endIndex) {
 			markerAdapter = adapter;
 			start = startIndex;
 			end = endIndex;
-			fieldIndex = fieldNumber;
-			parent = parentCategory;
 
-			IField field = adapter.getCategorySorter().getCategoryField();
-
-			name = field
-					.getValue(markerAdapter.lastMarkers.toArray()[startIndex]);
+			name = adapter.getCategorySorter().getCategoryField().getValue(
+					markerAdapter.lastMarkers.toArray()[startIndex]);
 		}
 
 		/*
@@ -78,18 +69,9 @@ public class MarkerAdapter {
 
 			if (children == null) {
 
-				if (view.getTableSorter().getFields().length >= fieldIndex) {
-					children = buildHierarchy(markerAdapter.lastMarkers, start,
-							end, fieldIndex + 1, this);
-					if (children != null)// De we find any?
-						return children;
-				}
-
-				// We are at the leaf
-
 				ConcreteMarker[] allMarkers = markerAdapter.lastMarkers
 						.toArray();
-				children = new MarkerNode[end - start + 1];
+				children = new ConcreteMarker[end - start + 1];
 
 				System.arraycopy(allMarkers, start, children, 0, end - start
 						+ 1);
@@ -97,7 +79,7 @@ public class MarkerAdapter {
 				view.getTableSorter().sort(view.getViewer(), children);
 
 				for (int i = 0; i < children.length; i++) {
-					((ConcreteMarker) children[i]).setCategory(this);
+					children[i].setCategory(this);
 				}
 			}
 			return children;
@@ -110,7 +92,7 @@ public class MarkerAdapter {
 		 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getParent()
 		 */
 		public MarkerNode getParent() {
-			return parent;
+			return null;
 		}
 
 		/*
@@ -129,6 +111,15 @@ public class MarkerAdapter {
 		 */
 		public boolean isConcrete() {
 			return false;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getConcreteRepresentative()
+		 */
+		public ConcreteMarker getConcreteRepresentative() {
+			return markerAdapter.lastMarkers.getMarker(start);
 		}
 	}
 
@@ -227,7 +218,7 @@ public class MarkerAdapter {
 
 			if (isShowingHierarchy()) {
 				categories = buildHierarchy(lastMarkers, 0, lastMarkers
-						.getSize() - 1, 0, null);
+						.getSize() - 1, 0);
 			}
 
 			if (monitor.isCanceled())
@@ -268,7 +259,7 @@ public class MarkerAdapter {
 	 *         of the tree
 	 */
 	MarkerCategory[] buildHierarchy(MarkerList markers, int start, int end,
-			int sortIndex, MarkerCategory parent) {
+			int sortIndex) {
 		CategorySorter sorter = getCategorySorter();
 
 		if (sortIndex > 0)
@@ -287,7 +278,7 @@ public class MarkerAdapter {
 				// Are we at a category boundary?
 				if (sorter.compare(previous, elements[i], sortIndex, false) != 0) {
 					categories.add(new MarkerCategory(this, categoryStart,
-							i - 1, sortIndex, parent));
+							i - 1));
 					categoryStart = i;
 				}
 			}
@@ -296,14 +287,13 @@ public class MarkerAdapter {
 		}
 
 		if (end >= categoryStart) {
-			categories.add(new MarkerCategory(this, categoryStart, end,
-					sortIndex, parent));
+			categories.add(new MarkerCategory(this, categoryStart, end));
 		}
 
 		// Flatten single categories
-//		if (categories.size() == 1) {
-//			return buildHierarchy(markers, start, end, sortIndex + 1, parent);
-//		}
+		// if (categories.size() == 1) {
+		// return buildHierarchy(markers, start, end, sortIndex + 1, parent);
+		// }
 		MarkerCategory[] nodes = new MarkerCategory[categories.size()];
 		categories.toArray(nodes);
 		return nodes;
@@ -319,7 +309,7 @@ public class MarkerAdapter {
 		if (lastMarkers == null) {// First time?
 			view.scheduleMarkerUpdate();
 			building = true;
-		}	
+		}
 		if (building)
 			return new MarkerList();
 		return lastMarkers;
@@ -336,7 +326,7 @@ public class MarkerAdapter {
 		if (lastMarkers == null) {// First time?
 			view.scheduleMarkerUpdate();
 			building = true;
-		}	
+		}
 		if (building)
 			return Util.EMPTY_MARKER_ARRAY;
 		if (isShowingHierarchy() && categories != null)
@@ -347,8 +337,9 @@ public class MarkerAdapter {
 	/**
 	 * Return whether or not the receiver has markers without scheduling
 	 * anything if it doesn't.
-	 * @return boolean <code>true</code> if the markers have not been 
-	 * calculated.
+	 * 
+	 * @return boolean <code>true</code> if the markers have not been
+	 *         calculated.
 	 */
 	public boolean hasNoMarkers() {
 		return lastMarkers == null;

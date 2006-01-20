@@ -976,5 +976,22 @@
          <adapter type="org.eclipse.ui.internal.provisional.ide.IEditorOpenStrategy"/>
       </factory>
    </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerSupport">
+      <markerGrouping
+            attribute="severity"
+            name="Severity">
+         <markerTypeReference id="org.eclipse.core.resources.problemmarker"/>
+         <markerAttributeMapping
+               name="Errors"
+               value="2"/>
+         <markerAttributeMapping
+               name="Warnings"
+               value="1"/>
+         <markerAttributeMapping
+               name="Info"
+               value="0"/>
+      </markerGrouping>
+   </extension>
    
 </plugin>

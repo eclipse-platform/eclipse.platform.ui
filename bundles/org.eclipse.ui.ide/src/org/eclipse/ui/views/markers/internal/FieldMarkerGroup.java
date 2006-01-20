@@ -12,6 +12,7 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -24,11 +25,36 @@ import org.eclipse.swt.graphics.Image;
  */
 public class FieldMarkerGroup implements IField {
 
+	class AttributeMapping {
+
+		// The priority in sort order. The lower the priority
+		// the higher in the sort order
+		int priority;
+
+		// The value to display
+		String displayString;
+
+		/**
+		 * Create a mapping definition to display label with sortIndex of
+		 * sortOrder.
+		 * 
+		 * @param label
+		 * @param sortPriority
+		 */
+		AttributeMapping(String label, int sortPriority) {
+			priority = sortPriority;
+			displayString = label;
+		}
+	}
+
+	private AttributeMapping undefinedMapping = new AttributeMapping(
+			MarkerMessages.FieldCategory_Uncategorized, 100000);
+
 	private String title;
 
 	private String markerAttribute;
 
-	private Map valueMapping;
+	private Map valueMapping = new HashMap();
 
 	private Collection types;
 
@@ -41,17 +67,23 @@ public class FieldMarkerGroup implements IField {
 	 * 
 	 * @param name
 	 * @param attribute
-	 * @param providers
 	 * @param markerTypes
 	 */
-	public FieldMarkerGroup(String name, String attribute, Map providers,
-			String[] markerTypes) {
+	public FieldMarkerGroup(String name, String attribute, String[] markerTypes) {
 		title = name;
 		markerAttribute = attribute;
-		valueMapping = providers;
 		types = new HashSet();
+
+		MarkerTypesModel model = MarkerTypesModel.getInstance();
 		for (int i = 0; i < markerTypes.length; i++) {
-			types.add(markerTypes[i]);
+			MarkerType type = model.getType(markerTypes[i]);
+			if (type != null) {
+				types.add(markerTypes[i]);
+				MarkerType[] subs = type.getAllSubTypes();
+				for (int j = 0; j < subs.length; j++) {
+					types.add(subs[j].getId());
+				}
+			}
 		}
 	}
 
@@ -97,38 +129,52 @@ public class FieldMarkerGroup implements IField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
 	 */
 	public String getValue(Object obj) {
-		if (!(obj instanceof ConcreteMarker))
-			return Util.EMPTY_STRING;
+		MarkerNode node = (MarkerNode) obj;
 
-		ConcreteMarker marker = (ConcreteMarker) obj;
-		if (marker.getGroup() == null) {
-			String value = findGroupValue(marker);
-			if (value == null)
-				marker.setGroup(MarkerMessages.FieldCategory_Uncategorized);
-			else
-				marker.setGroup(value);
+		if (node.isConcrete()) {
+			AttributeMapping mapping = getMapping((ConcreteMarker) node);
+			return mapping.displayString;
 		}
-		return marker.getGroup();
+		return node.getDescription();
 	}
 
 	/**
-	 * Find the group value. If it cannot be found in an 
-	 * attribute mapping then return null;
+	 * Get the attribute mapping for the marker
+	 * 
 	 * @param marker
-	 * @return String or <code>null</code> 
+	 * @return AttributeMapping
 	 */
-	private String findGroupValue(ConcreteMarker marker) {
+	private AttributeMapping getMapping(ConcreteMarker marker) {
+
+		if (marker.getGroup() == null) {
+			AttributeMapping value = findGroupValue(marker);
+			if (value == null)
+				marker.setGroup(undefinedMapping);
+			else
+				marker.setGroup(value);
+		}
+		return (AttributeMapping) marker.getGroup();
+	}
+
+	/**
+	 * Find the group value. If it cannot be found in an attribute mapping then
+	 * return null;
+	 * 
+	 * @param marker
+	 * @return String or <code>null</code>
+	 */
+	private AttributeMapping findGroupValue(ConcreteMarker marker) {
 
 		if (types.contains(marker.getType())) {
 			String value;
 			try {
-				value = (String) marker.getMarker().getAttribute(
-						markerAttribute);
+				value = (marker.getMarker().getAttribute(markerAttribute))
+						.toString();
 			} catch (CoreException e) {
 				return null;
 			}
 			if (valueMapping.containsKey(value))
-				return (String) valueMapping.get(value);
+				return (AttributeMapping) valueMapping.get(value);
 		}
 		return null;
 
@@ -149,15 +195,13 @@ public class FieldMarkerGroup implements IField {
 	 *      java.lang.Object)
 	 */
 	public int compare(Object obj1, Object obj2) {
-		if (obj1 == null || obj2 == null || !(obj1 instanceof ConcreteMarker)
-				|| !(obj2 instanceof ConcreteMarker)) {
-			return 0;
-		}
 
-		ConcreteMarker marker1 = (ConcreteMarker) obj1;
-		ConcreteMarker marker2 = (ConcreteMarker) obj2;
+		AttributeMapping mapping1 = getMapping(((MarkerNode) obj1)
+				.getConcreteRepresentative());
+		AttributeMapping mapping2 = getMapping(((MarkerNode) obj2)
+				.getConcreteRepresentative());
+		return mapping1.priority - mapping2.priority;
 
-		return getValue(marker1).compareTo(getValue(marker2));
 	}
 
 	/*
@@ -194,6 +238,18 @@ public class FieldMarkerGroup implements IField {
 	 */
 	public void setShowing(boolean showing) {
 		this.showing = showing;
+
+	}
+
+	/**
+	 * Add a mapping for the attribute value value to the string and index.
+	 * 
+	 * @param value
+	 * @param displayString
+	 * @param index
+	 */
+	public void addMapping(String value, String displayString, int index) {
+		valueMapping.put(value, new AttributeMapping(displayString, index));
 
 	}
 }

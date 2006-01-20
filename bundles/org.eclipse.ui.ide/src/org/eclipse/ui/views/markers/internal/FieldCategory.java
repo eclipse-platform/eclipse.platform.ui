@@ -62,7 +62,7 @@ public class FieldCategory extends AbstractField {
 				marker.setGroup(groupName);
 			}
 
-			return marker.getGroup();
+			return (String) marker.getGroup();
 
 		}
 		return Util.EMPTY_STRING;

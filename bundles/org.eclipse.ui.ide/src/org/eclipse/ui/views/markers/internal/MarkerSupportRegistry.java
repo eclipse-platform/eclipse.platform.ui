@@ -172,13 +172,13 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			if (element.getName().equals(MARKER_GROUPING)) {
 
 				String[] markerTypes = getMarkerTypes(element);
-				Map providers = getProviders(element);
 
 				String name = element.getAttribute(NAME);
 				String attribute = element.getAttribute(ATTRIBUTE);
 
-				FieldMarkerGroup group = new FieldMarkerGroup(name, attribute, providers,
+				FieldMarkerGroup group = new FieldMarkerGroup(name, attribute,
 						markerTypes);
+				getProviders(group, element);
 
 				markerGroups.add(group);
 				tracker.registerObject(extension, group,
@@ -272,15 +272,16 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @param element
 	 * @return Map
 	 */
-	private Map getProviders(final IConfigurationElement element) {
+	private Map getProviders(FieldMarkerGroup group,
+			final IConfigurationElement element) {
 
 		IConfigurationElement[] mappings = element
 				.getChildren(ATTRIBUTE_MAPPING);
 
 		HashMap valuesToStrings = new HashMap();
 		for (int i = 0; i < mappings.length; i++) {
-			valuesToStrings.put(mappings[i].getAttribute(VALUE), mappings[i]
-					.getAttribute(NAME));
+			group.addMapping(mappings[i].getAttribute(VALUE), mappings[i]
+					.getAttribute(NAME), i);
 		}
 
 		return valuesToStrings;
@@ -569,6 +570,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Return the FieldMarkerGroups in the receiver.
+	 * 
 	 * @return Collection of FieldMarkerGroup
 	 */
 	public Collection getMarkerGroups() {

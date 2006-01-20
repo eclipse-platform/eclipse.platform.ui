@@ -188,7 +188,7 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
             <meta.element labelAttribute="label"/>
          </appInfo>
          <documentation>
-            A markerGrouping is a definition of a grouping criterea for the marker views that support it (currently only the problems view).
+            A markerGrouping is a definition of a grouping criterea for the marker views that support it (currently only the problems view). The sort order of the group is the order of specification of attribute mappings.
          </documentation>
       </annotation>
       <complexType>

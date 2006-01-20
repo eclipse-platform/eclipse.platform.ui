@@ -55,7 +55,7 @@ public class ConcreteMarker extends MarkerNode{
 
 	private String shortFolder;
 	
-	private String group;
+	private Object group;
 
 	public ConcreteMarker(IMarker toCopy) {
         marker = toCopy;
@@ -231,7 +231,7 @@ public class ConcreteMarker extends MarkerNode{
 	 * Get the group for the reciever.
 	 * @return Returns the group.
 	 */
-	public String getGroup() {
+	public Object getGroup() {
 		return group;
 	}
 
@@ -239,7 +239,14 @@ public class ConcreteMarker extends MarkerNode{
 	 * Set the group name.
 	 * @param group the group name
 	 */
-	public void setGroup(String group) {
+	public void setGroup(Object group) {
 		this.group = group;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getConcreteRepresentative()
+	 */
+	public ConcreteMarker getConcreteRepresentative() {
+		return this;
 	}
 }

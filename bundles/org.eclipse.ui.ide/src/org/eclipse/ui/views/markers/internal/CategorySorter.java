@@ -16,8 +16,6 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 
 	IField categoryField;
 
-	boolean reverseSort = false;
-	
 	private final String TAG_FIELD = "categoryField"; //$NON-NLS-1$
 
 	/**
@@ -48,33 +46,18 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 
 		MarkerNode marker1;
 		MarkerNode marker2;
-		if (reverseSort) {
-			marker1 = (MarkerNode) obj2;
-			marker2 = (MarkerNode) obj1;
-		} else {
-			marker1 = (MarkerNode) obj1;
-			marker2 = (MarkerNode) obj2;
-		}
 
-		if (!marker1.isConcrete() || !marker2.isConcrete())
-			return marker1.getDescription().compareTo(marker2.getDescription());
+		marker1 = (MarkerNode) obj1;
+		marker2 = (MarkerNode) obj2;
 
 		if (categoryField == null)
 			return innerSorter.compare(marker1, marker2, depth,
 					continueSearching);
 
-		if (depth == 0) { // Is this the hierachy check
-			int result = categoryField.compare(marker1, marker2);
-			if (continueSearching && result == 0)
-				return innerSorter.compare(marker1, marker2, 0,
-						continueSearching);
-			return result;
-		}
-
-		// Now head for the table sorter
-		return innerSorter.compare(marker1, marker2, depth - 1,
-				continueSearching);
-
+		int result = categoryField.compare(marker1, marker2);
+		if (continueSearching && result == 0)
+			return innerSorter.compare(marker1, marker2, 0, continueSearching);
+		return result;
 	}
 
 	/*
@@ -112,28 +95,21 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 	 */
 	public void setCategoryField(IField field) {
 		this.categoryField = field;
-		reverseSort = false;
-	}
-
-	/**
-	 * Reverse the direction we are sorting in
-	 */
-	public void reverseSortDirection() {
-		reverseSort = !reverseSort;
-
 	}
 
 	/**
 	 * Set the inner sorter to the new sorter.
+	 * 
 	 * @param sorter2
 	 */
 	public void setTableSorter(TableSorter sorter2) {
 		innerSorter = sorter2;
-		
+
 	}
 
 	/**
 	 * Save the state of the receiver.
+	 * 
 	 * @param dialogSettings
 	 */
 	public void saveState(IDialogSettings dialogSettings) {
@@ -144,19 +120,21 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 		IDialogSettings settings = dialogSettings
 				.getSection(TableSorter.TAG_DIALOG_SECTION);
 		if (settings == null) {
-			settings = dialogSettings.addNewSection(TableSorter.TAG_DIALOG_SECTION);
+			settings = dialogSettings
+					.addNewSection(TableSorter.TAG_DIALOG_SECTION);
 		}
-		
+
 		String description = Util.EMPTY_STRING;
-		if(categoryField != null)
+		if (categoryField != null)
 			description = categoryField.getDescription();
-		
+
 		settings.put(TAG_FIELD, description);
-		
+
 	}
 
 	/**
 	 * Restore the state of the receiver from the dialog settings.
+	 * 
 	 * @param dialogSettings
 	 * @param view
 	 */
@@ -167,16 +145,10 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 
 		IDialogSettings settings = dialogSettings
 				.getSection(TableSorter.TAG_DIALOG_SECTION);
-		if (settings == null) 
+		if (settings == null)
 			return;
-		
-		String description = settings.get(TAG_FIELD);
-		
-		if(description == null || description.length() == 0){
-			categoryField = null;
-			return;
-		}
-		
-		categoryField = view.findField(description);
+
+		//String description = settings.get(TAG_FIELD);
+
 	}
 }

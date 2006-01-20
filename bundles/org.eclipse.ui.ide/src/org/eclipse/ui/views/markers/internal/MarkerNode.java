@@ -43,4 +43,13 @@ public abstract class MarkerNode {
 	 */
 	public abstract String getDescription() ;
 
+	/**
+	 * Get a concrete marker from the receiver. If the receiver
+	 * is concrete return the receiver otherwise return one of the
+	 * concrete markers it contains.
+	 * @return ConcreteMarker
+	 */
+	public abstract ConcreteMarker getConcreteRepresentative();
+	
+
 }
