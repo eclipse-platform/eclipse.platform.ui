@@ -198,7 +198,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 						"Save Changes", null, 
 						NLS.bind("{0} has unsaved changes. Do you want to save them?", buffer.getName()),
 						MessageDialog.QUESTION,
-						new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL},
+						options,
 						result[0]);
 				result[0] = dialog.open();
 			}
