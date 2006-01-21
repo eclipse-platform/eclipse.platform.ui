@@ -16,7 +16,6 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.mapping.CommonMenuManager;
-import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.navigator.*;
@@ -104,7 +103,7 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 	 * the common viewer
 	 */
 	protected final ISynchronizePageConfiguration getSynchronizePageConfiguration() {
-		return (ISynchronizePageConfiguration)getExtensionStateModel().getProperty(TeamUI.SYNCHRONIZATION_PAGE_CONFIGURATION);
+		return (ISynchronizePageConfiguration)getExtensionStateModel().getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_PAGE_CONFIGURATION);
 	}
 
 	/**
@@ -124,7 +123,7 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 	 * apply
 	 */
 	protected final ISynchronizationContext getSynchronizationContext() {
-		return (ISynchronizationContext)getExtensionStateModel().getProperty(TeamUI.SYNCHRONIZATION_CONTEXT);
+		return (ISynchronizationContext)getExtensionStateModel().getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT);
 	}
 	
 	/**
@@ -160,5 +159,18 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 		// TODO: Register the handlers
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
+	 */
+	public void dispose() {
+		for (Iterator iter = handlers.values().iterator(); iter.hasNext();) {
+			IHandler handler = (IHandler) iter.next();
+			if (handler instanceof MergeActionHandler) {
+				MergeActionHandler mah = (MergeActionHandler) handler;
+				mah.dispose();
+			}
+		}
+		super.dispose();
+	}
 
 }

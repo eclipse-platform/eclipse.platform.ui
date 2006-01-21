@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
-import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.ui.navigator.*;
 
 public class ResourceMappingHierarchyArea extends DialogArea implements INavigatorContentServiceListener {
@@ -98,9 +98,9 @@ public class ResourceMappingHierarchyArea extends DialogArea implements INavigat
 	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentServiceListener#onLoad(org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension)
 	 */
 	public void onLoad(INavigatorContentExtension anExtension) {
-		anExtension.getStateModel().setProperty(TeamUI.RESOURCE_MAPPING_SCOPE, scope);
+		anExtension.getStateModel().setProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE, scope);
 		if (context != null) {
-			anExtension.getStateModel().setProperty(TeamUI.SYNCHRONIZATION_CONTEXT, context);
+			anExtension.getStateModel().setProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT, context);
 		}
 	}
 

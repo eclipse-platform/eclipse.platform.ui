@@ -30,11 +30,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.mapping.ModelProviderAction;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.SaveablePartAdapter;
+import org.eclipse.team.ui.compare.*;
+import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -73,6 +74,8 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 
 	private IPageBookViewPage page;
 	private DialogSynchronizePageSite site;
+	
+	private Object currentEditingContext;
 
 	/**
 	 * Creates a part for the provided participant. The page configuration is used when creating the participant page and the resulting
@@ -162,6 +165,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor pm) {
+		// TODO needs to work for models
 		//super.saveChanges(pm);
 		Object input = viewer.getInput();
 		if (input instanceof ISynchronizeModelElement) {
@@ -356,36 +360,73 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	}
 	
 	/* package */ void prepareCompareInput(final ICompareInput input) {
-		if (input instanceof SyncInfoModelElement) {
-			final SyncInfoModelElement node = (SyncInfoModelElement) input;
-			IResource resource = node.getResource();
-			if (resource != null && resource.getType() == IResource.FILE) {
-				// Cache the contents because compare doesn't show progress
-				// when calling getContents on a diff node.
-				IProgressService manager = PlatformUI.getWorkbench().getProgressService();
-				try {
-					manager.busyCursorWhile(new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							try {	
-								participant.prepareCompareInput(node, cc, monitor);
-								hookContentChangeListener(node);
-							} catch (TeamException e) {
-								Utils.handle(e);
-							}
-						}
-					});
-				} catch (InvocationTargetException e) {
-					Utils.handle(e);
-				} catch (InterruptedException e) {
-					// Ignore
+		// TODO Merge operations would need to do this check as well
+		// TODO Where should this check live
+		// TODO What about the left vs. right side changes (perhaps a buffer that wraps three buffers)
+		if (input == null)
+			return;
+		IProgressService manager = PlatformUI.getWorkbench().getProgressService();
+		try {
+			// TODO: we need a better progress story here
+			manager.busyCursorWhile(new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			        internalPrepareInput(input, monitor);
 				}
-			}
-		} else if (input != null) {
-			hookContentChangeListener(input);
+			});
+		} catch (InvocationTargetException e) {
+			Utils.handle(e);
+		} catch (InterruptedException e) {
+			// Ignore
 		}
 	}
 	
+	/* private */ void internalPrepareInput(final ICompareInput input, IProgressMonitor monitor) throws InvocationTargetException {
+		monitor.beginTask(TeamUIMessages.SyncInfoCompareInput_3, 100);
+        monitor.setTaskName(TeamUIMessages.SyncInfoCompareInput_3);
+		try {
+			// First, see if the active buffer is changing
+			IModelBuffer currentBuffer = (IModelBuffer)pageConfiguration.getProperty(ISynchronizationConstants.P_ACTIVE_BUFFER);
+			IModelBuffer targetBuffer = getTargetBuffer(input);
+			try {
+				ModelProviderAction.handleBufferChange(pageConfiguration.getSite().getShell(), targetBuffer, currentBuffer, false /* cancel not allowed */, Policy.subMonitorFor(monitor, 10));
+			} catch (InterruptedException e) {
+				// Ignore since we indicated that cancel is not supported
+			}
+			pageConfiguration.setProperty(ISynchronizationConstants.P_ACTIVE_BUFFER, targetBuffer);
+			if (input instanceof SyncInfoModelElement) {
+				final SyncInfoModelElement node = (SyncInfoModelElement) input;
+				IResource resource = node.getResource();
+				if (resource != null && resource.getType() == IResource.FILE) {
+					participant.prepareCompareInput(node, cc, monitor);
+					hookContentChangeListener(input);
+				}
+			} else {
+				IPrepareCompareInputAdapter adapter = getPrepareAdapter(input);
+				if (adapter != null) {
+					adapter.prepareInput(input, cc, Policy.subMonitorFor(monitor, 90));
+				}
+				hookContentChangeListener(input);
+			}
+		} catch (CoreException e) {
+			throw new InvocationTargetException(e);
+		} finally {
+            monitor.done();
+        }
+	}
+	
+	private IModelBuffer getTargetBuffer(ICompareInput input) {
+		IModelBufferAdapter adapter = (IModelBufferAdapter)Utils.getAdapter(input, IModelBufferAdapter.class);
+		if (adapter != null)
+			return adapter.getBuffer(input);
+		return null;
+	}
+
+	private IPrepareCompareInputAdapter getPrepareAdapter(ICompareInput input) {
+		return (IPrepareCompareInputAdapter)Utils.getAdapter(input, IPrepareCompareInputAdapter.class);
+	}
+	
 	private void hookContentChangeListener(ICompareInput node) {
+		// TODO: there is no unhook which may lead to a leak
 		ITypedElement left = node.getLeft();
 		if(left instanceof IContentChangeNotifier) {
 			((IContentChangeNotifier)left).addContentChangeListener(this);

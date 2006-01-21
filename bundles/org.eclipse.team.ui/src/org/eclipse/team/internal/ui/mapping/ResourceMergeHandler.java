@@ -23,46 +23,63 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 public class ResourceMergeHandler extends MergeActionHandler {
 	
 	private final boolean overwrite;
+	private ResourceModelProviderOperation operation;
 
 	public ResourceMergeHandler(ISynchronizePageConfiguration configuration, boolean overwrite) {
 		super(configuration);
 		this.overwrite = overwrite;
 	}
 
-	protected SynchronizationOperation createOperation(ISynchronizePageConfiguration configuration, IStructuredSelection structuredSelection) {
-		return new ResourceModelProviderOperation(configuration, structuredSelection.toArray()) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			public void run(IProgressMonitor monitor) throws InvocationTargetException,
-					InterruptedException {
-				try {
-					IMergeContext context = (IMergeContext)getContext();
-					IDiffNode[] diffs = getFileDeltas(getElements());
-					IStatus status = context.merge(diffs, overwrite, monitor);
-					if (!status.isOK())
-						throw new CoreException(status);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.team.internal.ui.mapping.ResourceModelProviderOperation#getDiffFilter()
-			 */
-			protected FastDiffNodeFilter getDiffFilter() {
-				return new FastDiffNodeFilter() {
-					public boolean select(IDiffNode node) {
-						if (node instanceof IThreeWayDiff) {
-							IThreeWayDiff twd = (IThreeWayDiff) node;
-							if ((twd.getDirection() == IThreeWayDiff.OUTGOING && overwrite) || twd.getDirection() == IThreeWayDiff.CONFLICTING || twd.getDirection() == IThreeWayDiff.INCOMING) {
-								return true;
-							}
-						}
-						return false;
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.MergeActionHandler#getOperation()
+	 */
+	protected synchronized SynchronizationOperation getOperation() {
+		if (operation == null) {
+			operation = new ResourceModelProviderOperation(getConfiguration(), getStructuredSelection().toArray()) {
+				/* (non-Javadoc)
+				 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+				 */
+				public void run(IProgressMonitor monitor) throws InvocationTargetException,
+						InterruptedException {
+					try {
+						IMergeContext context = (IMergeContext)getContext();
+						IDiffNode[] diffs = getFileDeltas(getElements());
+						IStatus status = context.merge(diffs, overwrite, monitor);
+						if (!status.isOK())
+							throw new CoreException(status);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
 					}
-				};
-			}
-		};
+				}
+				/* (non-Javadoc)
+				 * @see org.eclipse.team.internal.ui.mapping.ResourceModelProviderOperation#getDiffFilter()
+				 */
+				protected FastDiffNodeFilter getDiffFilter() {
+					return new FastDiffNodeFilter() {
+						public boolean select(IDiffNode node) {
+							if (node instanceof IThreeWayDiff) {
+								IThreeWayDiff twd = (IThreeWayDiff) node;
+								if ((twd.getDirection() == IThreeWayDiff.OUTGOING && overwrite) || twd.getDirection() == IThreeWayDiff.CONFLICTING || twd.getDirection() == IThreeWayDiff.INCOMING) {
+									return true;
+								}
+							}
+							return false;
+						}
+					};
+				}
+			};
+		}
+		return operation;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.MergeActionHandler#updateEnablement(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	protected void updateEnablement(IStructuredSelection selection) {
+		synchronized (this) {
+			operation = null;
+		}
+		super.updateEnablement(selection);
 	}
 
 }

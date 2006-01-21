@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -29,15 +29,15 @@ public class ResourceModelActionProvider extends SynchronizationActionProvider {
 		super.initialize();
 		// Register the merge, overwrite and mark-as-merged handlers
 		ResourceMergeHandler mergeHandler = new ResourceMergeHandler(
-				(ISynchronizePageConfiguration)getExtensionStateModel().getProperty(TeamUI.SYNCHRONIZATION_PAGE_CONFIGURATION), 
+				(ISynchronizePageConfiguration)getExtensionStateModel().getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_PAGE_CONFIGURATION), 
 				false /* overwrite */);
 		registerHandler(MERGE_ACTION_ID, mergeHandler);
 		ResourceMergeHandler overwriteHandler = new ResourceMergeHandler(
-				(ISynchronizePageConfiguration)getExtensionStateModel().getProperty(TeamUI.SYNCHRONIZATION_PAGE_CONFIGURATION), 
+				(ISynchronizePageConfiguration)getExtensionStateModel().getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_PAGE_CONFIGURATION), 
 				true /* overwrite */);
 		registerHandler(OVERWRITE_ACTION_ID, overwriteHandler);
 		ResourceMarkAsMergedHandler markAsMergedHandler = new ResourceMarkAsMergedHandler(
-				(ISynchronizePageConfiguration)getExtensionStateModel().getProperty(TeamUI.SYNCHRONIZATION_PAGE_CONFIGURATION));
+				(ISynchronizePageConfiguration)getExtensionStateModel().getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_PAGE_CONFIGURATION));
 		registerHandler(MARK_AS_MERGE_ACTION_ID, markAsMergedHandler);
 	}
 }

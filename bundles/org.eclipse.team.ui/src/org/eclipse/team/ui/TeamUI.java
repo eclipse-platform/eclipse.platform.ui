@@ -42,31 +42,6 @@ public class TeamUI {
 	public static final String GLOBAL_FILE_TYPES_CHANGED = TeamUIPlugin.ID + "global_file_types_changed"; //$NON-NLS-1$
 
 	/**
-	 * Property constant used to store and retrieve the synchronization context
-	 * from the {@link org.eclipse.ui.navigator.IExtensionStateModel} used by the Common Navigator framework.
-	 * 
-	 * @since 3.2
-	 */
-	public static final String SYNCHRONIZATION_CONTEXT = "org.eclipse.team.ui.synchronizationContext"; //$NON-NLS-1$
-
-	/**
-	 * Property constant used to store and retrieve the resource mapping scope
-	 * from the {@link org.eclipse.ui.navigator.IExtensionStateModel} used by the Common Navigator framework.
-	 * 
-	 * @since 3.2
-	 */
-	public static final String RESOURCE_MAPPING_SCOPE = "org.eclipse.team.ui.resourceMappingScope"; //$NON-NLS-1$
-
-	/**
-	 * Property constant used to store and retrieve the synchronization page configuration
-	 * from the {@link org.eclipse.ui.navigator.IExtensionStateModel} used by the Common Navigator framework.
-	 * 
-	 * @since 3.2
-	 */
-	public static final String SYNCHRONIZATION_PAGE_CONFIGURATION = "org.eclipse.team.ui.synchronizationPageConfiguration"; //$NON-NLS-1$
-
-	
-	/**
 	 * Return the synchronize manager.
 	 * 
 	 * @return the synchronize manager
@@ -97,6 +72,11 @@ public class TeamUI {
 		TeamUIPlugin.removePropertyChangeListener(listener);
 	}
 	
+	/**
+	 * TODO: This won't work!!! We need to find the view in
+	 * the current perspective and, if we can't, open it
+	 * @return
+	 */
 	public static IHistoryView getHistoryView(){
 		if (historyView == null)
 			historyView = new GenericHistoryView();

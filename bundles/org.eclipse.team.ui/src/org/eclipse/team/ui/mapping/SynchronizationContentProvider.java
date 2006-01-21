@@ -25,7 +25,6 @@ import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentProvider;
@@ -167,8 +166,8 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	public void init(IExtensionStateModel aStateModel, IMemento aMemento) {
 		stateModel = aStateModel;
 		stateModel.addPropertyChangeListener(this);
-		scope = (IResourceMappingScope)aStateModel.getProperty(TeamUI.RESOURCE_MAPPING_SCOPE);
-		context = (ISynchronizationContext)aStateModel.getProperty(TeamUI.SYNCHRONIZATION_CONTEXT);
+		scope = (IResourceMappingScope)aStateModel.getProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE);
+		context = (ISynchronizationContext)aStateModel.getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT);
 		ITreeContentProvider provider = getDelegateContentProvider();
 		if (provider instanceof ICommonContentProvider) {
 			((ICommonContentProvider) provider).init(aStateModel, aMemento);	
@@ -245,7 +244,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @return the synchronization page configuration or <code>null</code>
 	 */
 	protected ISynchronizePageConfiguration getConfiguration() {
-		return (ISynchronizePageConfiguration)stateModel.getProperty(TeamUI.SYNCHRONIZATION_PAGE_CONFIGURATION);
+		return (ISynchronizePageConfiguration)stateModel.getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_PAGE_CONFIGURATION);
 	}
 	
 	/* (non-Javadoc)

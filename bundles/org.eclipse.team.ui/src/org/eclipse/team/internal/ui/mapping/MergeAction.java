@@ -10,16 +10,21 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 
 import org.eclipse.core.commands.*;
-import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.ui.compare.IModelBuffer;
+import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.mapping.MergeActionHandler;
-import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * An action that delegates to an appropriate handler when performing 
@@ -49,11 +54,35 @@ public class MergeAction extends Action {
 	}
 	
 	public void runWithEvent(Event event) {
-		if (!promptForUnsavedChanges()) {
-			return;
-		}
 		IHandler handler = getHandler();
 		if (handler != null && handler.isEnabled()) {
+			final IModelBuffer currentBuffer = (IModelBuffer)configuration.getProperty(ISynchronizationConstants.P_ACTIVE_BUFFER);
+			if (currentBuffer != null && currentBuffer.isDirty()) {
+				IModelBuffer targetBuffer = null;
+				if (handler instanceof MergeActionHandler) {
+					MergeActionHandler mah = (MergeActionHandler) handler;
+					targetBuffer = mah.getTargetBuffer();
+				}
+				final IModelBuffer target = targetBuffer;
+				try {
+					PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException,
+								InterruptedException {
+							try {
+								ModelProviderAction.handleBufferChange(configuration.getSite().getShell(), target, currentBuffer, true, monitor);
+							} catch (CoreException e) {
+								throw new InvocationTargetException(e);
+							}
+						}			
+					});
+				} catch (InvocationTargetException e) {
+					Utils.handle(e);
+					return;
+				} catch (InterruptedException e) {
+					return;
+				}
+				configuration.setProperty(ISynchronizationConstants.P_ACTIVE_BUFFER, targetBuffer);
+			}
 			try {
 				handler.execute(new ExecutionEvent(null, Collections.EMPTY_MAP, event, null));
 			} catch (ExecutionException e) {
@@ -62,22 +91,25 @@ public class MergeAction extends Action {
 		}
 	}
 
-	private boolean promptForUnsavedChanges() {
-		ResourceMappingSynchronizeParticipant participant = (ResourceMappingSynchronizeParticipant)configuration.getParticipant();
-		if (participant.hasUnsavedChanges()) {
-			return MessageDialog.openQuestion(configuration.getSite().getShell(), "Unsaved Changes", "There are unsaved changes");
-		}
-		return true;
-	}
-
-	private void handle(Throwable e) {
-		if (e instanceof ExecutionException) {
-			ExecutionException ee = (ExecutionException) e;
+	/**
+	 * Handle the given exception. By default, the user is prompted
+	 * @param exception the exception
+	 */
+	protected void handle(Throwable exception) {
+		if (exception instanceof ExecutionException) {
+			ExecutionException ee = (ExecutionException) exception;
 			if (ee.getCause() != null) {
-				handle(e.getCause());
+				handle(exception.getCause());
 			}
 		}
-		//TODO: handle the exception
+		IStatus status;
+		if (exception instanceof CoreException) {
+			CoreException ce = (CoreException) exception;
+			status = ce.getStatus();
+		} else {
+			status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, TeamUIMessages.exception, exception);
+		}
+		ErrorDialog.openError(configuration.getSite().getShell(), null, null, status);
 	}
 
 	private IHandler getHandler() {

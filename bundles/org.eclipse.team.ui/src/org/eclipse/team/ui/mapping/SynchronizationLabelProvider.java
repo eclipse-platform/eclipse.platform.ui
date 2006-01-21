@@ -16,7 +16,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.AbstractSynchronizeLabelProvider;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
@@ -48,7 +47,7 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 	 * @see org.eclipse.ui.navigator.ICommonLabelProvider#init(org.eclipse.ui.navigator.IExtensionStateModel, org.eclipse.jface.viewers.ITreeContentProvider)
 	 */
 	public void init(IExtensionStateModel aStateModel, ITreeContentProvider aContentProvider) {
-		init((IResourceMappingScope)aStateModel.getProperty(TeamUI.RESOURCE_MAPPING_SCOPE), (ISynchronizationContext)aStateModel.getProperty(TeamUI.SYNCHRONIZATION_CONTEXT));
+		init((IResourceMappingScope)aStateModel.getProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE), (ISynchronizationContext)aStateModel.getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT));
 		ILabelProvider provider = getDelegateLabelProvider();
 		if (provider instanceof ICommonLabelProvider) {
 			if (aContentProvider instanceof SynchronizationContentProvider) {

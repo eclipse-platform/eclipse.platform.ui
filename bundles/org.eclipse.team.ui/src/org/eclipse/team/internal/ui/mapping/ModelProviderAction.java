@@ -10,22 +10,25 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.mapping.IResourceDiffTree;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.compare.IModelBuffer;
+import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
 
 /**
@@ -107,52 +110,6 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	protected ISynchronizationContext getContext() {
 		return ((ResourceMappingSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
 	}
-	
-	/**
-	 * Return the file deltas that are either contained in the selection
-	 * or are children of the selection and visible given the current
-	 * mode of the page configuration.
-	 * @param selection the selected
-	 * @return the file deltas contained in or descended from the selection
-	 */
-	protected IDiffNode[] getFileDeltas(IStructuredSelection selection) {
-		Set result = new HashSet();
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			Object element = iter.next();
-			IDiffNode[] diffs = getFileDeltas(element);
-			for (int i = 0; i < diffs.length; i++) {
-				IDiffNode node = diffs[i];
-				result.add(node);
-			}
-		}
-		return (IDiffNode[]) result.toArray(new IDiffNode[result.size()]);
-	}
-
-	private IDiffNode[] getFileDeltas(Object o) {
-		IResource resource = Utils.getResource(o);
-		if (resource != null) {
-			ISynchronizationContext context = getContext();
-			final IResourceDiffTree diffTree = context.getDiffTree();
-			if (resource.getType() == IResource.FILE) {
-				IDiffNode delta = diffTree.getDiff(resource);
-				if (getDiffFilter().select(delta))
-					return new IDiffNode[] { delta };
-			} else {
-				// Find all the deltas for the folder
-				ResourceTraversal[] traversals = getTraversals(o);
-				IDiffNode[] diffs = diffTree.getDiffs(traversals);
-				// Now filter the diffs by the mode of the configuration
-				List result = new ArrayList();
-				for (int i = 0; i < diffs.length; i++) {
-					IDiffNode node = diffs[i];
-					if (isVisible(node) && getDiffFilter().select(node))
-						result.add(node);
-				}
-				return (IDiffNode[]) result.toArray(new IDiffNode[result.size()]);
-			}
-		}
-		return new IDiffNode[0];
-	}
 
 	/**
 	 * Return whether the given node is visible in the page based
@@ -188,29 +145,98 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 		}
 		return false;
 	}
+	
+	/**
+	 * Check to see if the target buffer differs from the currently 
+	 * active buffer. If it does, prompt to save changes in the
+	 * active buffer if it is dirty.
+	 * @throws InterruptedException 
+	 * @throws InvocationTargetException 
+	 */
+	protected void handleBufferChange() throws InvocationTargetException, InterruptedException {
+		final IModelBuffer targetBuffer = getTargetBuffer();
+		final IModelBuffer  currentBuffer = getActiveBuffer();
+		if (currentBuffer != null && currentBuffer.isDirty()) {
+			PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {	
+				public void run(IProgressMonitor monitor) throws InvocationTargetException,
+						InterruptedException {
+					try {
+						handleBufferChange(configuration.getSite().getShell(), targetBuffer, currentBuffer, true, monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			});
+		}
+		setActiveBuffer(targetBuffer);
+	}
 
-	private ResourceTraversal[] getTraversals(Object o) {
-		ResourceMapping mapping = Utils.getResourceMapping(o);
-		if (mapping != null) {
-			// First, check if we have already calculated the traversal
-			ResourceTraversal[] traversals = getContext().getScope().getTraversals(mapping);
-			if (traversals != null)
-				return traversals;
-			// We need to determine the traversals from the mapping
-			// TODO: this is not right: see bug 120114
-			try {
-				return mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, new NullProgressMonitor());
-			} catch (CoreException e) {
-				TeamUIPlugin.log(e);
+	public static void handleBufferChange(Shell shell, IModelBuffer targetBuffer, IModelBuffer currentBuffer, boolean allowCancel, IProgressMonitor monitor) throws CoreException, InterruptedException {
+		if (currentBuffer != null && targetBuffer != currentBuffer) {
+			if (currentBuffer.isDirty()) {
+				if (promptToSaveChanges(shell, currentBuffer, allowCancel)) {
+					currentBuffer.save(monitor);
+				} else {
+					currentBuffer.revert(monitor);
+				}
 			}
 		}
-		return new ResourceTraversal[0];
+	}
+
+	public static boolean promptToSaveChanges(final Shell shell, final IModelBuffer buffer, final boolean allowCancel) throws InterruptedException {
+		final int[] result = new int[] { 0 };
+		Runnable runnable = new Runnable() {
+			public void run() {
+				String[] options;
+				if (allowCancel) {
+					options = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
+				} else {
+					options = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL};
+				}
+				MessageDialog dialog = new MessageDialog(
+						shell, 
+						"Save Changes", null, 
+						NLS.bind("{0} has unsaved changes. Do you want to save them?", buffer.getName()),
+						MessageDialog.QUESTION,
+						new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL},
+						result[0]);
+				result[0] = dialog.open();
+			}
+		};
+		shell.getDisplay().syncExec(runnable);
+		if (result[0] == 2)
+			throw new InterruptedException();
+		return result[0] == 0;
+	}
+
+	/**
+	 * Return the currently active buffer. By default,
+	 * the active buffer is obtained from the synchronization
+	 * page configuration.
+	 * @return the currently active buffer (or <code>null</code> if
+	 * no buffer is active).
+	 */
+	protected IModelBuffer getActiveBuffer() {
+		return (IModelBuffer)configuration.getProperty(ISynchronizationConstants.P_ACTIVE_BUFFER);
+	}
+
+	/**
+	 * Set the active buffer. By default to active buffer is stored with the
+	 * snchronize page configuration.
+	 * @param buffer the buffer that is now active (or <code>null</code> if
+	 * no buffer is active).
+	 */
+	protected void setActiveBuffer(IModelBuffer buffer) {
+		configuration.setProperty(ISynchronizationConstants.P_ACTIVE_BUFFER, buffer);
 	}
 	
 	/**
-	 * Return the filter used to match diffs to which this action applies.
-	 * @return the filter used to match diffs to which this action applies
+	 * Return the buffer that is the target of this operation.
+	 * By default, <code>null</code> is returned.
+	 * @return the buffer that is the target of this operation
 	 */
-	protected abstract FastDiffNodeFilter getDiffFilter();
+	protected IModelBuffer getTargetBuffer() {
+		return null;
+	}
 	
 }

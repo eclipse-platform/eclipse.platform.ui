@@ -34,7 +34,9 @@ public interface ISynchronizePageConfiguration {
 	
 	/**
 	 * Property constant for the <code>SyncInfoSet</code> that is being 
-	 * displayed by the page.
+	 * displayed by the page. Some pages may not be displaying the 
+	 * contents of a <code>SyncInfoSet</code> in which case the value
+	 * associated with this property will be <code>null</code>.
 	 */
 	public static final String P_SYNC_INFO_SET = TeamUIPlugin.ID  + ".P_SYNC_INFO_SET"; //$NON-NLS-1$
 		

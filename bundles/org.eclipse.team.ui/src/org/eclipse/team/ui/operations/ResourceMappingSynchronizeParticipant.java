@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.ui.operations;
 
-import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
@@ -21,6 +19,7 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ICompareAdapter;
+import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IWorkbenchPart;
@@ -76,6 +75,8 @@ public class ResourceMappingSynchronizeParticipant extends
 		}
 		configuration.setSupportedModes(ISynchronizePageConfiguration.ALL_MODES);
 		configuration.setMode(ISynchronizePageConfiguration.BOTH_MODE);
+		configuration.setProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT, getContext());
+		configuration.setProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE, getContext().getScope());
 	}
 
 	/**
@@ -146,19 +147,6 @@ public class ResourceMappingSynchronizeParticipant extends
 	}
 
 	/**
-	 * Prepare the compare input for display using the compare configuration. 
-	 * @param input the compare input to be displayed
-	 * @param configuration the compare configuration for the editor that will display the input
-	 * @param monitor a progress monitor
-	 */
-	public void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		// Get a content viewer from the model provider's compare adapter
-		ICompareAdapter adapter = Utils.getCompareAdapter(input);
-		if (adapter != null)
-			adapter.prepareInput(input, configuration, monitor);
-	}
-
-	/**
 	 * Return whether their is a compare input associated with the given object.
 	 * In otherwords, return <code>true</code> if {@link #asCompareInput(Object) }
 	 * would return a value and <code>false</code> if it would return <code>null</code>.
@@ -189,16 +177,5 @@ public class ResourceMappingSynchronizeParticipant extends
 	 */
 	public void setMergingEnabled(boolean mergingEnabled) {
 		this.mergingEnabled = mergingEnabled;
-	}
-
-	/**
-	 * Return whether there are unsaved changes associated with the 
-	 * context of this participant.
-	 * @return whether there are unsaved changes associated with the 
-	 * context of this participant
-	 */
-	public boolean hasUnsavedChanges() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }

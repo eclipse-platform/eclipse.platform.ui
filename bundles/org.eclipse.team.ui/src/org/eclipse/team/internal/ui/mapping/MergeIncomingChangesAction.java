@@ -15,15 +15,18 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.compare.IModelBuffer;
 import org.eclipse.team.ui.mapping.SynchronizationOperation;
-import org.eclipse.team.ui.operations.*;
+import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Action that performs an optimistic merge
@@ -38,6 +41,15 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
+		try {
+			handleBufferChange();
+		} catch (InvocationTargetException e) {
+			handle(e);
+			return;
+		} catch (InterruptedException e) {
+			// Cancelled so return
+			return;
+		}
 		final IMergeContext context = (IMergeContext)((ResourceMappingSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
 		try {
 			new SynchronizationOperation(getConfiguration()) {
@@ -60,6 +72,10 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 		} catch (InterruptedException e) {
 			// Ignore
 		}
+	}
+
+	private void handle(Throwable throwable) {
+		Utils.handle(throwable);
 	}
 
 	protected void promptForMergeFailure() {
@@ -101,6 +117,23 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 				return false;
 			}
 		};
+	}
+	
+	protected void handleBufferChange() throws InvocationTargetException, InterruptedException {
+		final IModelBuffer currentBuffer = getActiveBuffer();
+		if (currentBuffer != null && currentBuffer.isDirty()) {
+			PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {	
+				public void run(IProgressMonitor monitor) throws InvocationTargetException,
+						InterruptedException {
+					try {
+						handleBufferChange(getConfiguration().getSite().getShell(), null, currentBuffer, true, monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			});
+		}
+		setActiveBuffer(null);
 	}
 	
 }

@@ -13,6 +13,7 @@ package org.eclipse.team.ui.mapping;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.TeamOperation;
+import org.eclipse.team.ui.compare.IModelBuffer;
 import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
@@ -76,6 +77,18 @@ public abstract class SynchronizationOperation extends TeamOperation {
 	 */
 	public boolean shouldRun() {
 		return super.shouldRun();
+	}
+
+	/**
+	 * Return the buffer that this operation will write its results
+	 * to or <code>null</code> if the operation does not buffer
+	 * its results. By default, <code>null</code> is returned but 
+	 * subclasses may override.
+	 * @return the buffer that this operation will write its results
+	 * to or <code>null</code>
+	 */
+	public IModelBuffer getTargetBuffer() {
+		return null;
 	}
 
 

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.ui.mapping;
 
-import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -69,13 +68,5 @@ public interface ICompareAdapter {
 	 *         in-sync or otherwise cannot be compared.
 	 */
 	ICompareInput asCompareInput(ISynchronizationContext context, Object o);
-
-	/**
-	 * Prepare the compare input for display using the compare configuration. 
-	 * @param input the compare input to be displayed
-	 * @param configuration the compare configuration for the editor that will display the input
-	 * @param monitor a progress monitor
-	 */
-	void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor);
 
 }

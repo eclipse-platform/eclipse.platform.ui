@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.internal.ui.synchronize.AbstractTreeViewerAdvisor;
-import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.mapping.SynchronizationStateTester;
 import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -144,10 +144,10 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	 */
 	public void onLoad(INavigatorContentExtension anExtension) {
 		extensions.add(anExtension);
-		anExtension.getStateModel().setProperty(TeamUI.RESOURCE_MAPPING_SCOPE, getParticipant().getContext().getScope());
-		anExtension.getStateModel().setProperty(TeamUI.SYNCHRONIZATION_PAGE_CONFIGURATION, getConfiguration());
+		anExtension.getStateModel().setProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE, getParticipant().getContext().getScope());
+		anExtension.getStateModel().setProperty(ISynchronizationConstants.P_SYNCHRONIZATION_PAGE_CONFIGURATION, getConfiguration());
 		if (getParticipant().getContext() != null) {
-			anExtension.getStateModel().setProperty(TeamUI.SYNCHRONIZATION_CONTEXT, getParticipant().getContext());
+			anExtension.getStateModel().setProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT, getParticipant().getContext());
 		}
 		for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
 			String element = (String) iter.next();

@@ -473,10 +473,17 @@ public class Utils {
         return getResources(elements, null, true);
     }
 	
-	public static Object getAdapter(Object element, Class adapter) {
+	public static Object getAdapter(Object element, Class adapterType) {
+		if (adapterType.isInstance(element))
+			return element;
 		if (element instanceof IAdaptable) {
-			return ((IAdaptable) element).getAdapter(adapter);
-		} 
+			Object adapted = ((IAdaptable) element).getAdapter(adapterType);
+			if (adapterType.isInstance(adapted))
+				return adapted;
+		}
+		Object adapted = Platform.getAdapterManager().getAdapter(element, adapterType);
+		if (adapterType.isInstance(adapted))
+			return adapted;
 		return null;
 	}
 	

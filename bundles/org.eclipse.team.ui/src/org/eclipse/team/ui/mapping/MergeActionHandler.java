@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceMarkAsMergedHandler;
 import org.eclipse.team.internal.ui.mapping.ResourceMergeHandler;
+import org.eclipse.team.ui.compare.IModelBuffer;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -70,34 +71,54 @@ public abstract class MergeActionHandler extends AbstractHandler {
 	 */
 	public MergeActionHandler(ISynchronizePageConfiguration configuration) {
 		this.configuration = configuration;
-		getSelectionProvider(null).addSelectionChangedListener(listener);
-		updateEnablement(getSelectionProvider(null).getSelection(), getConfiguration(null));
+		getSelectionProvider().addSelectionChangedListener(listener);
+		updateEnablement((IStructuredSelection)getSelectionProvider().getSelection());
+	}
+	
+	/**
+	 * Deregister this handler from selection change events. 
+	 */
+	public void dispose() {
+		getSelectionProvider().removeSelectionChangedListener(listener);
 	}
 
 	/* private */ void updatedEnablement(SelectionChangedEvent event) {
-		updateEnablement(event.getSelection(), getConfiguration(null));
+		updateEnablement((IStructuredSelection)event.getSelection());
 	}
 
-	private void updateEnablement(ISelection selection, ISynchronizePageConfiguration configuration) {
-		boolean isEnabled = isEnabled((IStructuredSelection)selection, configuration);
+	/**
+	 * Update the enablement of this handler for the new selection.
+	 * By default, this method uses the <code>shouldRun</code>
+	 * method of the handler's operation to determine the enablement
+	 * of this handler. Subclasses may override but should
+	 * either still invoke this method or {@link #setEnabled(boolean)}
+	 * to set the enablement.
+	 * @param selection the selection
+	 */
+	protected void updateEnablement(IStructuredSelection selection) {
+		boolean isEnabled = getOperation().shouldRun();
 		setEnabled(isEnabled);
 	}
 
-	private boolean isEnabled(IStructuredSelection selection, ISynchronizePageConfiguration configuration) {
-		SynchronizationOperation op = createOperation(configuration, selection);
-		return op.shouldRun();
-	}
-
-	private final ISynchronizePageConfiguration getConfiguration(ExecutionEvent event) {
+	/**
+	 * Return the configuration of the synchronize page that is surfacing
+	 * the merge action to which this handler is registered.
+	 * @return 
+	 */
+	protected final ISynchronizePageConfiguration getConfiguration() {
 		return configuration;
 	}
 
-	private final IStructuredSelection getStructuredSelection(ExecutionEvent event) {
-		return (IStructuredSelection)getSelectionProvider(event).getSelection();
+	/**
+	 * Return the current selection.
+	 * @return the current selection.
+	 */
+	protected final IStructuredSelection getStructuredSelection() {
+		return (IStructuredSelection)getSelectionProvider().getSelection();
 	}
 
-	private ISelectionProvider getSelectionProvider(ExecutionEvent event) {
-		return getConfiguration(event).getSite().getSelectionProvider();
+	private ISelectionProvider getSelectionProvider() {
+		return getConfiguration().getSite().getSelectionProvider();
 	}
 	
 	/* (non-Javadoc)
@@ -123,7 +144,7 @@ public abstract class MergeActionHandler extends AbstractHandler {
 	 */
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		try {
-			createOperation(event).run();
+			getOperation().run();
 		} catch (InvocationTargetException e) {
 			Utils.handle(e);
 		} catch (InterruptedException e) {
@@ -132,21 +153,19 @@ public abstract class MergeActionHandler extends AbstractHandler {
 		return null;
 	}
 
-	private SynchronizationOperation createOperation(ExecutionEvent event) {
-		ISynchronizePageConfiguration configuration = getConfiguration(event);
-		IStructuredSelection structuredSelection = getStructuredSelection(event);
-		return createOperation(configuration, structuredSelection);
-	}
-
 	/**
-	 * Create and return a model provider operation that can perform
+	 * Return the synchronizatio operation that performs
 	 * the merge operaton.
-	 * @param configuration the configuration of the page showing the model
-	 * @param structuredSelection the selected elements
-	 * @return a model provider operation that can perform
-	 * the desired merge operaton
+	 * @return a synchronization operation
 	 */
-	protected abstract SynchronizationOperation createOperation(
-			ISynchronizePageConfiguration configuration, 
-			IStructuredSelection structuredSelection);
+	protected abstract SynchronizationOperation getOperation();
+	
+	/**
+	 * Return the buffer that is the target of this handler.
+	 * By default, <code>null</code> is returned.
+	 * @return the buffer that is the target of this operation
+	 */
+	public IModelBuffer getTargetBuffer() {
+		return getOperation().getTargetBuffer();
+	}
 }
