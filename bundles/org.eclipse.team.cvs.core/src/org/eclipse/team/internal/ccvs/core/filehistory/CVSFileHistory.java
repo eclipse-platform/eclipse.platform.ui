@@ -34,6 +34,8 @@ public class CVSFileHistory extends FileHistory {
 	}
 	
 	public IFileRevision[] getFileRevisions() {
+		if (revisions == null)
+			return new IFileRevision[0];
 		return revisions;
 	}
 
