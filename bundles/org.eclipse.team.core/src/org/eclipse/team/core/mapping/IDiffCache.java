@@ -35,7 +35,7 @@ public interface IDiffCache {
 	 * @param name the property name that uniquely identifies the property
 	 * @param value the value to be cached.
 	 */
-	void addProperty(String name, Object value);
+	void putProperty(String name, Object value);
 	
 	/**
 	 * Retrieve a property that has been cached with the context

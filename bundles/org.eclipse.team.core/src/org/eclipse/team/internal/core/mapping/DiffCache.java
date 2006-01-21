@@ -47,7 +47,7 @@ public class DiffCache implements IDiffCache {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizeOperationContext#addProperty(java.lang.String, java.lang.Object)
 	 */
-	public synchronized void addProperty(String name, Object value) {
+	public synchronized void putProperty(String name, Object value) {
 		if (properties == null) {
 			properties = new HashMap();
 		}
