@@ -13,7 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.model;
  
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.ui.CVSFileHistoryProviderParticipant;
+import org.eclipse.team.internal.ccvs.ui.CVSHistoryPageSource;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
 import org.eclipse.team.ui.history.IHistoryPageSource;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -25,7 +25,7 @@ public class CVSAdapterFactory implements IAdapterFactory {
 	private Object folderAdapter = new RemoteFolderElement();
 	private Object rootAdapter = new CVSRepositoryRootElement();
 
-	private Object historyParticipant = new CVSFileHistoryProviderParticipant();
+	private Object historyParticipant = new CVSHistoryPageSource();
 	
 	// Property cache
 	private Object cachedPropertyObject = null;

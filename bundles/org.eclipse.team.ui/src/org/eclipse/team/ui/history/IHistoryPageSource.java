@@ -21,6 +21,10 @@ import org.eclipse.ui.part.Page;
  *  
  * TODO: There are two ways a history page source is obtained...
  *  
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * Clients can instead subclass {@link HistoryPage}.
+ *  
  * @see IFileHistoryProvider
  * @since 3.2
  */

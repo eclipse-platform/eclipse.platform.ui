@@ -17,8 +17,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.core.history.provider.FileHistory;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.core.FileHistory;
 import org.eclipse.team.internal.core.LocalFileRevision;
 
 public class CVSFileHistory extends FileHistory {

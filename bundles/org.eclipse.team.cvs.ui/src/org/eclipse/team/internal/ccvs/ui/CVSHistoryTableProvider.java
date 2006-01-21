@@ -81,7 +81,7 @@ public class CVSHistoryTableProvider {
 				case COL_DATE :
 					long date = entry.getTimestamp();
 					Date dateFromLong = new Date(date);
-					return DateFormat.getInstance().format(dateFromLong);
+					return DateFormat.getDateTimeInstance().format(dateFromLong);
 				case COL_AUTHOR :
 					return entry.getAuthor();
 				case COL_COMMENT :
@@ -398,11 +398,15 @@ public class CVSHistoryTableProvider {
 	}
 
 	public String getCurrentRevision() {
+		
 		try {
-			return cvsFile.getSyncInfo().getRevision();
+			if (cvsFile != null && cvsFile.getSyncInfo() != null) {
+				return cvsFile.getSyncInfo().getRevision();
+			}
 		} catch (CVSException e) {
 		}
-		return ""; //$NON-NLS-1$
+
+		return null;
 	}
 	
 	/*

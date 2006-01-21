@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.ITag;
+import org.eclipse.team.core.history.provider.FileRevision;
 
 /**
  * A LocalFileRevision is used for wrapping local files in order to display

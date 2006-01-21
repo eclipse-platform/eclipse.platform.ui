@@ -21,12 +21,11 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.history.IHistoryPage;
-import org.eclipse.ui.IViewSite;
+import org.eclipse.team.ui.history.HistoryPage;
+import org.eclipse.team.ui.history.IHistoryPageSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.part.Page;
 
-public class LocalHistoryPage extends Page implements IHistoryPage {
+public class LocalHistoryPage extends HistoryPage {
 
 	Composite pgComp;
 	TableViewer tableViewer;
@@ -38,9 +37,9 @@ public class LocalHistoryPage extends Page implements IHistoryPage {
 	
 	protected FetchLocalHistoryJob fetchLocalHistoryJob;
 	
-	private IViewSite parentSite;
+	private IHistoryPageSite parentSite;
 	private OpenLocalFileAction openAction;
-	//private CompareLocalFileAction compareAction;
+
 
 	
 	public boolean showHistory(Object object, boolean refetch) {
@@ -70,7 +69,7 @@ public class LocalHistoryPage extends Page implements IHistoryPage {
 		return null;
 	}
 
-	public void setSite(IViewSite viewSite) {
+	public void setSite(IHistoryPageSite viewSite) {
 		this.parentSite = viewSite;
 	}
 
@@ -94,8 +93,6 @@ public class LocalHistoryPage extends Page implements IHistoryPage {
 			}
 		});
 		
-		//compareAction = new CompareLocalFileAction("Compare");
-		
 		//Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
 		Menu menu = menuMgr.createContextMenu(tableViewer.getTable());
@@ -108,7 +105,7 @@ public class LocalHistoryPage extends Page implements IHistoryPage {
 		});
 		menuMgr.setRemoveAllWhenShown(true);
 		tableViewer.getTable().setMenu(menu);
-		parentSite.registerContextMenu(menuMgr, tableViewer);
+		parentSite.getWorkbenchPartSite().registerContextMenu(menuMgr, tableViewer);
 		
 	}
 
@@ -159,7 +156,7 @@ public class LocalHistoryPage extends Page implements IHistoryPage {
 					}
 					fetchLocalHistoryJob.setFile(inputFile);
 				} // Schedule the job even if it is already running
-				Utils.schedule(fetchLocalHistoryJob, /*getSite()*/parentSite);
+				Utils.schedule(fetchLocalHistoryJob, /*getSite()*/parentSite.getWorkbenchPartSite());
 
 				return new Object[0];
 			}

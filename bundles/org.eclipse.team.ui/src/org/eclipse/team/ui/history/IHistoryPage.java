@@ -11,10 +11,12 @@
 
 package org.eclipse.team.ui.history;
 
-import org.eclipse.ui.IViewSite;
 
 /**
  * TODO: provide a comment and an abstract class
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * Clients can instead subclass {@link HistoryPage}.
  * 
  * @since 3.2
  */
@@ -53,7 +55,7 @@ public interface IHistoryPage {
 	 * both views and dialogs
 	 * @param viewSite
 	 * 
-	 * TODO: Create an IHistoryPageSite
+	 * TODO: Create an IHistoryPageSit
 	 */
-	public void setSite(IViewSite viewSite);
+	public void setSite(IHistoryPageSite viewSite);
 }

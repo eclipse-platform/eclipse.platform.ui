@@ -11,11 +11,16 @@
 
 package org.eclipse.team.core.history;
 
+import org.eclipse.team.core.history.provider.FileHistory;
+
 
 /**
  * 
  * Provides a complete set of IFileRevisions that make up this IFileHistory.
  * 
+ * <p>
+ * This interface is not intended to be implemented by clients. Clients can
+ * instead subclass {@link FileHistory}
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will

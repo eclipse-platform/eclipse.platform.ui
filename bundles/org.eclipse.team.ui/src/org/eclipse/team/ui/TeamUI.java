@@ -12,7 +12,9 @@ package org.eclipse.team.ui;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.history.GenericHistoryView;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
+import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.team.ui.synchronize.ISynchronizeManager;
 
 /**
@@ -24,6 +26,9 @@ public class TeamUI {
 
 	// manages synchronize participants
 	private static ISynchronizeManager synchronizeManager;
+	
+	//returns the history view
+	private static IHistoryView historyView;
 
 	/**
 	 * Property constant indicating the global ignores list has changed. 
@@ -90,5 +95,12 @@ public class TeamUI {
 	 */
 	public static void removePropertyChangeListener(IPropertyChangeListener listener) {
 		TeamUIPlugin.removePropertyChangeListener(listener);
+	}
+	
+	public static IHistoryView getHistoryView(){
+		if (historyView == null)
+			historyView = new GenericHistoryView();
+			
+		return historyView;
 	}
 }

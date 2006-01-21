@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.history.IFileHistory;
 import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.core.history.provider.FileHistoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
@@ -23,7 +24,6 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.core.FileHistoryProvider;
 
 public class CVSFileHistoryProvider extends FileHistoryProvider {
 

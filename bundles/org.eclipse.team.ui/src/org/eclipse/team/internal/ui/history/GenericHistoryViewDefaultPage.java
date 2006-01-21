@@ -16,11 +16,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.ui.history.IHistoryPage;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.part.Page;
+import org.eclipse.team.ui.history.HistoryPage;
+import org.eclipse.team.ui.history.IHistoryPageSite;
 
-public class GenericHistoryViewDefaultPage extends Page implements IHistoryPage {
+public class GenericHistoryViewDefaultPage extends HistoryPage {
 
 	private Composite pgComp;
 
@@ -55,7 +54,7 @@ public class GenericHistoryViewDefaultPage extends Page implements IHistoryPage 
 		return ""; //$NON-NLS-1$
 	}
 
-	public void setSite(IViewSite viewSite) {
+	public void setSite(IHistoryPageSite  viewSite) {
 		//nothing to set
 	}
 

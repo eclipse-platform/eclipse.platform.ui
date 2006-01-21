@@ -18,13 +18,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.history.IFileState;
+import org.eclipse.team.core.history.provider.FileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.provider.*;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.variants.FileState;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.internal.core.FileRevision;
 
 /**
  * Covert a SyncInfoSet into a SyncDeltaTree

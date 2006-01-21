@@ -8,18 +8,13 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.history;
+package org.eclipse.team.ui.history;
 
-import org.eclipse.ui.actions.BaseSelectionListenerAction;
-
-public class CompareLocalFileAction extends BaseSelectionListenerAction {
-
-	protected CompareLocalFileAction(String text) {
-		super(text);
-	}
-	
-	public void run() {
-	
-	}
+/**
+ * Abstract HistoryPageSource class.
+ * @see IHistoryPageSource
+ * @since 3.2
+ */
+public abstract class HistoryPageSource implements IHistoryPageSource {
 
 }

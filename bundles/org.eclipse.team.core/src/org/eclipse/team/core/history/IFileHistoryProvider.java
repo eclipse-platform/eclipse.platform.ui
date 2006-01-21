@@ -13,9 +13,14 @@ package org.eclipse.team.core.history;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.history.provider.FileHistoryProvider;
 
 /**
  * This is API to access individual file histories.
+ * 
+ * <p>
+ * This interface is not intended to be implemented by clients. Clients can
+ * instead subclass {@link FileHistoryProvider}
  * 
  * <p><strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will

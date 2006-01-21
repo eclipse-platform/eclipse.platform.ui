@@ -18,10 +18,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.ITag;
+import org.eclipse.team.core.history.provider.FileRevision;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
-import org.eclipse.team.internal.core.FileRevision;
 
 public class CVSFileRevision extends FileRevision {
 

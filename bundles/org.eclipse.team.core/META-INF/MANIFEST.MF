@@ -9,6 +9,7 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.team.core,
  org.eclipse.team.core.diff,
  org.eclipse.team.core.history,
+ org.eclipse.team.core.history.provider,
  org.eclipse.team.core.mapping,
  org.eclipse.team.core.mapping.provider,
  org.eclipse.team.core.subscribers,

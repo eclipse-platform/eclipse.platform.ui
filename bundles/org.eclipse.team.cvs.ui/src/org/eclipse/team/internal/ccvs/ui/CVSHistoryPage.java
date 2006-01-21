@@ -45,12 +45,12 @@ import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.core.LocalFileRevision;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.history.IHistoryPage;
+import org.eclipse.team.ui.history.HistoryPage;
+import org.eclipse.team.ui.history.IHistoryPageSite;
 import org.eclipse.ui.*;
-import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
-public class CVSHistoryPage extends Page implements IHistoryPage {
+public class CVSHistoryPage extends HistoryPage {
 	
 	/* private */ ICVSFile file;
 
@@ -87,7 +87,7 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 
 	protected RefreshCVSFileHistory  refreshCVSFileHistoryJob;
 
-	private IViewSite parentSite;
+	private IHistoryPageSite parentSite;
 
 	/* private */boolean shutdown = false;
 
@@ -362,7 +362,7 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 		});
 		menuMgr.setRemoveAllWhenShown(true);
 		tableViewer.getTable().setMenu(menu);
-		parentSite.registerContextMenu(menuMgr, tableViewer);
+		parentSite.getWorkbenchPartSite().registerContextMenu(menuMgr, tableViewer);
 
 		// Contribute toggle text visible to the toolbar drop-down
 		IActionBars actionBars = getSite().getActionBars();
@@ -608,7 +608,7 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 			}
 		}
 		refreshCVSFileHistoryJob.setFileHistory(fileHistory);
-		Utils.schedule(refreshCVSFileHistoryJob, /*getSite()*/parentSite);
+		Utils.schedule(refreshCVSFileHistoryJob, /*getSite()*/parentSite.getWorkbenchPartSite());
 		return true;
 	}
 
@@ -665,17 +665,12 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 			versionImage = null;
 		}
 		
-		//
-		/*if (refreshCVSFileHistoryJob != null) {
+		//Cancel any incoming 
+		if (refreshCVSFileHistoryJob != null) {
 			if (refreshCVSFileHistoryJob.getState() != Job.NONE) {
 				refreshCVSFileHistoryJob.cancel();
-				try {
-					refreshCVSFileHistoryJob.join();
-				} catch (InterruptedException e) {
-					TeamUIPlugin.log(new TeamException(NLS.bind(TeamUIMessages.GenericHistoryView_ErrorFetchingEntries, new String[] {""}), e)); //$NON-NLS-1$
-				}
 			}
-		}*/
+		}
 	}
 
 	private class RefreshCVSFileHistory extends Job {
@@ -749,6 +744,11 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 		 */
 		public void resourceChanged(IResourceChangeEvent event) {
 			IResourceDelta root = event.getDelta();
+			//Safety check for non-managed files that are added with the CVSHistoryPage
+			//in view
+			if (file == null ||	file.getIResource() == null)
+				 return;
+			
 			IResourceDelta resourceDelta = root.findMember(((IFile)file.getIResource()).getFullPath());
 			if (resourceDelta != null){
 				Display.getDefault().asyncExec(new Runnable() {
@@ -779,8 +779,8 @@ public class CVSHistoryPage extends Page implements IHistoryPage {
 		return file.getName();
 	}
 
-	public void setSite(IViewSite viewSite) {
-		this.parentSite = viewSite;
+	public void setSite(IHistoryPageSite historySite) {
+		this.parentSite = historySite;
 	}
 
 	/*

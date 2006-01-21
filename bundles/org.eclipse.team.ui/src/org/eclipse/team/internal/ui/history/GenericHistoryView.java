@@ -11,52 +11,30 @@
 
 package org.eclipse.team.internal.ui.history;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DropTarget;
-import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.history.IHistoryPageSource;
-import org.eclipse.team.ui.history.IHistoryPage;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.SubActionBars;
+import org.eclipse.team.ui.history.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.ide.ResourceUtil;
-import org.eclipse.ui.part.IPageBookViewPage;
-import org.eclipse.ui.part.Page;
-import org.eclipse.ui.part.PageBook;
-import org.eclipse.ui.part.PageSite;
-import org.eclipse.ui.part.ResourceTransfer;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.part.*;
 
-public class GenericHistoryView extends ViewPart {
+public class GenericHistoryView extends ViewPart implements IHistoryView {
 
 	class PageContainer {
 		private Page page;
@@ -417,17 +395,23 @@ public class GenericHistoryView extends ViewPart {
 			if (checkForPinnedView(object, resource.getName()))
 				return;
 		
+			//check to see if resource is managed
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(resource.getProject());
+			//couldn't find a repo provider; try showing it in a local page
+			if (teamProvider == null){
+				localItemDropped(resource);
+				return;
+			}
 			IFileHistoryProvider fileHistory = teamProvider.getFileHistoryProvider();
-			Object tempParticipant = Platform.getAdapterManager().getAdapter(fileHistory, IHistoryPageSource.class);
-			if (tempParticipant instanceof IHistoryPageSource) {
-				IHistoryPageSource participant = (IHistoryPageSource) tempParticipant;
+			Object tempPageSource = Platform.getAdapterManager().getAdapter(fileHistory, IHistoryPageSource.class);
+			if (tempPageSource instanceof IHistoryPageSource) {
+				IHistoryPageSource pageSource = (IHistoryPageSource) tempPageSource;
 
 				//If a current page exists, see if it can handle the dropped item
 				if (currentPageContainer.getPage() instanceof IHistoryPage) {
 					PageContainer tempPageContainer = currentPageContainer;
 					if (!((IHistoryPage) tempPageContainer.getPage()).canShowHistoryFor(resource)) {
-						tempPageContainer = createPage(participant, resource);
+						tempPageContainer = createPage(pageSource, resource);
 					}
 					if (tempPageContainer != null) {
 						if (((IHistoryPage) tempPageContainer.getPage()).showHistory(resource, true)){
@@ -442,6 +426,11 @@ public class GenericHistoryView extends ViewPart {
 		}
 		else if (object != null){
 			IHistoryPageSource historyPageSource = (IHistoryPageSource) Utils.getAdapter(object, IHistoryPageSource.class);
+			//Check to see that this object can be adapted to an IHistoryPageSource, else
+			//we don't know how to display it
+			if (historyPageSource == null)
+				return;
+			
 			//If a current page exists, see if it can handle the dropped item
 			if (currentPageContainer.getPage() instanceof IHistoryPage) {
 				PageContainer tempPageContainer = currentPageContainer;
@@ -488,7 +477,7 @@ public class GenericHistoryView extends ViewPart {
 	private PageContainer createPage(IHistoryPageSource participant, Object object) {
 		Page page = participant.createPage(object);
 		PageSite site = initPage(page);
-		((IHistoryPage) page).setSite(getViewSite());
+		((IHistoryPage) page).setSite(new WorkbenchHistoryPageSite(this, page.getSite()));
 		page.createControl(book);
 		PageContainer container = new PageContainer(page);
 		container.setSubBars((SubActionBars) site.getActionBars());
@@ -507,7 +496,7 @@ public class GenericHistoryView extends ViewPart {
 	protected PageContainer createLocalPage(PageBook book){
 		LocalHistoryPage page = new LocalHistoryPage();
 		PageSite site = initPage(page);
-		((IHistoryPage) page).setSite(getViewSite());
+		((IHistoryPage) page).setSite(new WorkbenchHistoryPageSite(this, page.getSite()));
 		page.createControl(book);
 		PageContainer container = new PageContainer(page);
 		container.setSubBars((SubActionBars) site.getActionBars());
@@ -567,5 +556,9 @@ public class GenericHistoryView extends ViewPart {
 			setContentDescription(resource.getName());
 			showPageRec(container);
 		}
+	}
+
+	public void showHistoryFor(Object object) {
+		itemDropped(object);
 	}
 }

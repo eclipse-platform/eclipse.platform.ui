@@ -9,12 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.internal.core;
+package org.eclipse.team.core.history.provider;
 
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.ITag;
 import org.eclipse.team.core.variants.FileState;
 
+/**
+ * Abstract FileRevision class.
+ * @see IFileRevision
+ * @since 3.2
+ */
 public abstract class FileRevision extends FileState implements IFileRevision {
 
 	public String getContentIdentifier() {
