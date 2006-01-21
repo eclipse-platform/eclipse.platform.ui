@@ -429,4 +429,10 @@ public class CVSCompareRevisionsInput extends CompareEditorInput implements ISav
 	public void removePropertyListener(IPropertyListener listener) {
 		// noop
 	}
+	
+	public Object getAdapter(Class adapter) {
+		if (adapter == IFile.class || adapter == IResource.class)
+			return resource;
+		return super.getAdapter(adapter);
+	}
 }
