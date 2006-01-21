@@ -149,6 +149,8 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 */
 	public void dispose() {
 		stateModel.removePropertyChangeListener(this);
+		if (context != null)
+			context.getDiffTree().removeDiffChangeListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -171,6 +173,8 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		if (provider instanceof ICommonContentProvider) {
 			((ICommonContentProvider) provider).init(aStateModel, aMemento);	
 		}
+		if (context != null)
+			context.getDiffTree().addDiffChangeListener(this);
 	}
 
 	/* (non-Javadoc)

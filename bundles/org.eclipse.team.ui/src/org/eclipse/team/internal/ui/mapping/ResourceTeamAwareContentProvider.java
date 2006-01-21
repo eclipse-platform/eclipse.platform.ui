@@ -22,9 +22,7 @@ import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
-import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.navigator.IExtensionStateModel;
 
 /**
  * This content provider displays the mappings as a flat list 
@@ -92,24 +90,10 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.mapping.AbstractTeamAwareContentProvider#init(org.eclipse.ui.navigator.IExtensionStateModel, org.eclipse.ui.IMemento)
-	 */
-	public void init(IExtensionStateModel aStateModel, IMemento aMemento) {
-		super.init(aStateModel, aMemento);
-		// TODO: must explicilty register for sync change events (perhaps this should be a flag of some sort)
-		org.eclipse.team.core.mapping.ISynchronizationContext context = getContext();
-		if (context != null)
-			context.getDiffTree().addDiffChangeListener(this);
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.mapping.AbstractTeamAwareContentProvider#dispose()
 	 */
 	public void dispose() {
 		provider.dispose();
-		ISynchronizationContext context = getContext();
-		if (context != null)
-			context.getDiffTree().removeDiffChangeListener(this);
 		super.dispose();
 	}
 	
