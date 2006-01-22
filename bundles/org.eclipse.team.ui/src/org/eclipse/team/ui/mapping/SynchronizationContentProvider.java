@@ -69,7 +69,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		if (parent == getModelProvider()) {
 			return filter(parent, getDelegateContentProvider().getChildren(getModelRoot()));
 		}
-		return filter(parent, getDelegateContentProvider().getElements(parent));
+		return filter(parent, getDelegateContentProvider().getChildren(parent));
 	}
 
 	/* (non-Javadoc)
