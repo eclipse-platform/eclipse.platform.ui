@@ -11,6 +11,7 @@
 package org.eclipse.ltk.internal.core.refactoring.history;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
@@ -64,7 +65,7 @@ final class DefaultRefactoringDescriptorProxy extends RefactoringDescriptorProxy
 		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 		try {
 			service.connect();
-			final RefactoringDescriptor descriptor= service.requestDescriptor(this, null);
+			final RefactoringDescriptor descriptor= service.requestDescriptor(this, new NullProgressMonitor());
 			if (descriptor != null)
 				result= descriptor.getFlags();
 		} finally {
