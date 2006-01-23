@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringPreferenceConstants;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -42,6 +43,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferencePageContainer;
@@ -89,14 +91,14 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	/** Preference key for the warn delete all preference */
 	private static final String PREFERENCE_DO_NOT_WARN_DELETE_ALL= RefactoringUIPlugin.getPluginId() + ".do.not.warn.delete.history"; //$NON-NLS-1$;
 
-	/** The enable history button, or <code>null</code> */
-	private Button fEnableButton= null;
-
 	/** The refactoring preference */
 	private boolean fHasProjectHistory= false;
 
 	/** The preferences working copy manager, or <code>null</code> */
 	private IWorkingCopyManager fManager= null;
+
+	/** The share history button, or <code>null</code> */
+	private Button fShareHistory= null;
 
 	/**
 	 * {@inheritDoc}
@@ -135,7 +137,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 					try {
 						service.connect();
 						try {
-							service.deleteProjectHistory(project, null);
+							service.deleteRefactoringHistory(project, null);
 						} catch (CoreException exception) {
 							final Throwable throwable= exception.getStatus().getException();
 							if (throwable instanceof IOException)
@@ -174,12 +176,41 @@ public final class RefactoringPropertyPage extends PropertyPage {
 				}
 			}
 		});
-		fEnableButton= new Button(composite, SWT.CHECK);
-		fEnableButton.setText(RefactoringUIMessages.RefactoringPropertyPage_enable_message);
-		fEnableButton.setData(RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY);
+		control.getEditButton().addSelectionListener(new SelectionAdapter() {
 
-		fEnableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		fEnableButton.setSelection(hasRefactoringHistory());
+			public final void widgetSelected(final SelectionEvent event) {
+				String comment= ""; //$NON-NLS-1$
+				final RefactoringDescriptorProxy[] selection= control.getSelectedDescriptors();
+				if (selection.length > 0) {
+					IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+					try {
+						service.connect();
+						final RefactoringDescriptor descriptor= selection[0].requestDescriptor(null);
+						if (descriptor != null) {
+							final String current= descriptor.getComment();
+							if (current != null)
+								comment= current;
+						}
+						final InputDialog dialog= new InputDialog(getShell(), RefactoringUIMessages.RefactoringPropertyPage_edit_caption, RefactoringUIMessages.RefactoringPropertyPage_edit_message, comment, null);
+						if (dialog.open() == 0) {
+							service.setRefactoringComment(selection[0], dialog.getValue(), null);
+							control.setSelectedDescriptors(new RefactoringDescriptorProxy[0]);
+							control.setSelectedDescriptors(new RefactoringDescriptorProxy[] { selection[0]});
+						}
+					} catch (CoreException exception) {
+						RefactoringUIPlugin.log(exception);
+					} finally {
+						service.disconnect();
+					}
+				}
+			}
+		});
+		fShareHistory= new Button(composite, SWT.CHECK);
+		fShareHistory.setText(RefactoringUIMessages.RefactoringPropertyPage_share_message);
+		fShareHistory.setData(RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY);
+
+		fShareHistory.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		fShareHistory.setSelection(hasSharedRefactoringHistory());
 
 		new Label(composite, SWT.NONE);
 
@@ -224,15 +255,15 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	}
 
 	/**
-	 * Returns whether a project has an explicit refactoring history.
+	 * Returns whether a project has an shared refactoring history.
 	 * 
-	 * @return <code>true</code> if the project contains an explicit project
+	 * @return <code>true</code> if the project contains an shared project
 	 *         history, <code>false</code> otherwise
 	 */
-	private boolean hasRefactoringHistory() {
+	private boolean hasSharedRefactoringHistory() {
 		final IProject project= getCurrentProject();
 		if (project != null)
-			return RefactoringCore.getRefactoringHistoryService().hasProjectHistory(project);
+			return RefactoringCore.getRefactoringHistoryService().hasSharedRefactoringHistory(project);
 		return false;
 	}
 
@@ -252,14 +283,14 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	public boolean performOk() {
 		final IProject project= getCurrentProject();
 		if (project != null)
-			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.valueOf(fEnableButton.getSelection()).toString());
+			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.valueOf(fShareHistory.getSelection()).toString());
 		if (fManager != null)
 			try {
 				fManager.applyChanges();
 				final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
-				final boolean history= service.hasProjectHistory(project);
+				final boolean history= service.hasSharedRefactoringHistory(project);
 				if (history != fHasProjectHistory && project != null)
-					service.setProjectHistory(project, history, null);
+					service.setSharedRefactoringHistory(project, history, null);
 			} catch (BackingStoreException exception) {
 				RefactoringUIPlugin.log(exception);
 			} catch (CoreException exception) {
@@ -292,7 +323,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	 * {@inheritDoc}
 	 */
 	public void setVisible(final boolean visible) {
-		fHasProjectHistory= hasRefactoringHistory();
+		fHasProjectHistory= hasSharedRefactoringHistory();
 		super.setVisible(visible);
 	}
 }

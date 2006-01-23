@@ -30,6 +30,7 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -312,7 +313,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		setLayout(layout);
 		final GridData data= new GridData();
 		data.grabExcessHorizontalSpace= true;
-		data.grabExcessVerticalSpace= true;
+		data.heightHint= new PixelConverter(this).convertHeightInCharsToPixels(24);
 		data.horizontalAlignment= SWT.FILL;
 		data.verticalAlignment= SWT.FILL;
 		setLayoutData(data);
@@ -396,38 +397,17 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	public final RefactoringDescriptorProxy[] getCheckedDescriptors() {
-		if (fHistoryViewer instanceof RefactoringHistoryTreeViewer) {
-			final RefactoringHistoryTreeViewer viewer= (RefactoringHistoryTreeViewer) fHistoryViewer;
-			final Set set= new HashSet();
-			final Object[] elements= viewer.getCheckedElements();
-			for (int index= 0; index < elements.length; index++)
-				getDescriptorProxies(viewer, set, elements[index]);
-			return (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]);
-		}
-		return getSelectedDescriptors();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public final Control getControl() {
-		return this;
-	}
-
-	/**
-	 * Computes the refactoring descriptor proxies of the specified element.
+	 * Computes the checked refactoring descriptor proxies of the specified
+	 * element.
 	 * 
 	 * @param viewer
 	 *            the refactoring history viewer
 	 * @param set
-	 *            the set of refactoring descriptors
+	 *            the set of checked refactoring descriptors
 	 * @param element
 	 *            the element to compute the descriptors for
 	 */
-	private void getDescriptorProxies(final TreeViewer viewer, final Set set, final Object element) {
+	private void getCheckedDescriptorProxies(final TreeViewer viewer, final Set set, final Object element) {
 		if (element instanceof RefactoringHistoryEntry) {
 			if (viewer instanceof RefactoringHistoryTreeViewer) {
 				final RefactoringHistoryTreeViewer extended= (RefactoringHistoryTreeViewer) viewer;
@@ -445,9 +425,31 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			if (provider != null) {
 				final Object[] elements= provider.getChildren(element);
 				for (int index= 0; index < elements.length; index++)
-					getDescriptorProxies(viewer, set, elements[index]);
+					getCheckedDescriptorProxies(viewer, set, elements[index]);
 			}
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final RefactoringDescriptorProxy[] getCheckedDescriptors() {
+		if (fHistoryViewer instanceof RefactoringHistoryTreeViewer) {
+			final RefactoringHistoryTreeViewer viewer= (RefactoringHistoryTreeViewer) fHistoryViewer;
+			final Set set= new HashSet();
+			final Object[] elements= viewer.getCheckedElements();
+			for (int index= 0; index < elements.length; index++)
+				getCheckedDescriptorProxies(viewer, set, elements[index]);
+			return (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]);
+		}
+		return getSelectedDescriptors();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final Control getControl() {
+		return this;
 	}
 
 	/**
@@ -482,8 +484,13 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		final ISelection selection= fHistoryViewer.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection structured= (IStructuredSelection) selection;
-			for (final Iterator iterator= structured.iterator(); iterator.hasNext();)
-				getDescriptorProxies(fHistoryViewer, set, iterator.next());
+			for (final Iterator iterator= structured.iterator(); iterator.hasNext();) {
+				final RefactoringHistoryNode node= (RefactoringHistoryNode) iterator.next();
+				if (node instanceof RefactoringHistoryEntry) {
+					final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) node;
+					set.add(entry.getDescriptor());
+				}
+			}
 		}
 		return (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]);
 	}

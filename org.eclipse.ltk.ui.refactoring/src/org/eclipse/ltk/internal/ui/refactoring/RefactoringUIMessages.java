@@ -111,6 +111,7 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String ManageRefactoringHistorycontrol_delete_label;
 	public static String ManageRefactoringHistorycontrol_delete_all_label;
+	public static String ManageRefactoringHistoryControl_edit_label;
 
 	public static String RefactoringHistoryControl_resolving_information;
 	public static String RefactoringHistoryControl_selection_pattern;
@@ -135,13 +136,15 @@ public final class RefactoringUIMessages extends NLS {
 	public static String RefactoringHistoryDialogConfiguration_commit_button_label;
 	public static String RefactoringHistoryDialogConfiguration_dialog_title;
 	
-	public static String RefactoringPropertyPage_enable_message;
+	public static String RefactoringPropertyPage_share_message;
 	public static String RefactoringPropertyPage_label_message;
 	public static String RefactoringPropertyPage_confirm_delete_all_caption;
 	public static String RefactoringPropertyPage_confirm_delete_all_pattern;
 	public static String RefactoringPropertyPage_confirm_delete_caption;
 	public static String RefactoringPropertyPage_confirm_delete_workspace_pattern;
 	public static String RefactoringPropertyPage_confirm_delete_project_pattern;
+	public static String RefactoringPropertyPage_edit_caption;
+	public static String RefactoringPropertyPage_edit_message;
 
 	public static String RefactoringModelMerger_project_pattern;
 	public static String RefactoringModelMerger_workspace_caption;

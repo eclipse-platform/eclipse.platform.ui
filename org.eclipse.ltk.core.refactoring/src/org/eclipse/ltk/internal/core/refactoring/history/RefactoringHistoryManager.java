@@ -68,6 +68,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -905,5 +906,73 @@ public final class RefactoringHistoryManager {
 			monitor.done();
 		}
 		return null;
+	}
+
+	/**
+	 * Sets the comment of the specified refactoring.
+	 * 
+	 * @param proxy
+	 *            the refactoring descriptor proxy
+	 * @param comment
+	 *            the comment
+	 * @param monitor
+	 *            the progress monitor to use
+	 * @throws CoreException
+	 *             if an error occurs while setting the comment
+	 */
+	void setRefactoringComment(final RefactoringDescriptorProxy proxy, final String comment, final IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(comment);
+		try {
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 100);
+			final long stamp= proxy.getTimeStamp();
+			if (stamp >= 0) {
+				final IPath path= stampToPath(stamp);
+				final IFileStore folder= fHistoryStore.getChild(path);
+				if (folder != null) {
+					final IFileStore history= folder.getChild(RefactoringHistoryService.NAME_HISTORY_FILE);
+					if (history != null) {
+						if (history.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).exists()) {
+							InputStream input= null;
+							try {
+								input= new BufferedInputStream(history.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 40, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
+								if (input != null) {
+									final Document document= getCachedDocument(path, input);
+									try {
+										input.close();
+										input= null;
+									} catch (IOException exception) {
+										// Do nothing
+									}
+									final String time= String.valueOf(stamp);
+									final NodeList list= document.getElementsByTagName(IRefactoringSerializationConstants.ELEMENT_REFACTORING);
+									for (int index= 0; index < list.getLength(); index++) {
+										final Element element= (Element) list.item(index);
+										if (time.equals(element.getAttribute(IRefactoringSerializationConstants.ATTRIBUTE_STAMP)))
+											element.setAttribute(IRefactoringSerializationConstants.ATTRIBUTE_COMMENT, comment);
+									}
+									addHistoryEntry(history, document, new SubProgressMonitor(monitor, 40, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+								}
+							} catch (ParserConfigurationException exception) {
+								new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+							} catch (IOException exception) {
+								new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+							} catch (SAXException exception) {
+								new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+							} finally {
+								if (input != null) {
+									try {
+										input.close();
+									} catch (IOException exception) {
+										// Do nothing
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		} finally {
+			monitor.done();
+		}
 	}
 }

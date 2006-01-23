@@ -238,9 +238,10 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				try {
 					subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_resolving_information, fImplementation.size());
 					for (final Iterator iterator= fImplementation.iterator(); iterator.hasNext();) {
-						final RefactoringDescriptor current= (RefactoringDescriptor) iterator.next();
 						subMonitor.worked(1);
-						if (current.getTimeStamp() == stamp) {
+						final RefactoringDescriptor current= (RefactoringDescriptor) iterator.next();
+						final long time= current.getTimeStamp();
+						if (time >= 0 && time == stamp) {
 							descriptor= current;
 							break;
 						}
@@ -258,7 +259,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						try {
 							final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 							if (project.isAccessible()) {
-								if (hasProjectHistory(project)) {
+								if (hasSharedRefactoringHistory(project)) {
 									final URI uri= project.getLocationURI();
 									if (uri != null)
 										return getManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).requestDescriptor(proxy, new SubProgressMonitor(monitor, 1));
@@ -273,6 +274,61 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				}
 				monitor.worked(6);
 				return descriptor;
+			} finally {
+				monitor.done();
+			}
+		}
+
+		/**
+		 * Sets the comment of the specified refactoring.
+		 * 
+		 * @param proxy
+		 *            the refactoring descriptor proxy
+		 * @param comment
+		 *            the comment
+		 * @param monitor
+		 *            the progress monitor to use
+		 * @throws CoreException
+		 *             if an error occurs while setting the comment
+		 */
+		private void setComment(final RefactoringDescriptorProxy proxy, final String comment, final IProgressMonitor monitor) throws CoreException {
+			Assert.isNotNull(proxy);
+			Assert.isNotNull(comment);
+			Assert.isNotNull(monitor);
+			try {
+				monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 11);
+				final long stamp= proxy.getTimeStamp();
+				final IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 4);
+				try {
+					subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, fImplementation.size());
+					for (final Iterator iterator= fImplementation.iterator(); iterator.hasNext();) {
+						final RefactoringDescriptor descriptor= (RefactoringDescriptor) iterator.next();
+						subMonitor.worked(1);
+						if (descriptor.getTimeStamp() == stamp) {
+							descriptor.setComment(comment);
+							break;
+						}
+					}
+				} finally {
+					subMonitor.done();
+				}
+				if (monitor.isCanceled())
+					throw new OperationCanceledException();
+				monitor.worked(1);
+				final String name= proxy.getProject();
+				final IFileStore store= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER);
+				if (name != null && !"".equals(name)) {//$NON-NLS-1$
+					final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+					if (project.isAccessible()) {
+						if (hasSharedRefactoringHistory(project)) {
+							final URI uri= project.getLocationURI();
+							if (uri != null)
+								getManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).setRefactoringComment(proxy, comment, new SubProgressMonitor(monitor, 2));
+						} else
+							getManager(store.getChild(name), name).setRefactoringComment(proxy, comment, new SubProgressMonitor(monitor, 2));
+					}
+				} else
+					getManager(store.getChild(NAME_WORKSPACE_PROJECT), null).setRefactoringComment(proxy, comment, new SubProgressMonitor(monitor, 2));
 			} finally {
 				monitor.done();
 			}
@@ -514,7 +570,27 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * {@inheritDoc}
 	 */
-	public void deleteProjectHistory(final IProject project, IProgressMonitor monitor) throws CoreException {
+	public void deleteRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final IRefactoringDescriptorDeleteQuery query, IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(proxies);
+		Assert.isNotNull(query);
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
+		try {
+			monitor.beginTask("", proxies.length); //$NON-NLS-1$
+			for (int index= 0; index < proxies.length; index++) {
+				if (query.proceed(proxies[index]).isOK())
+					fireRefactoringDeletedEvent(proxies[index]);
+				monitor.worked(1);
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void deleteRefactoringHistory(final IProject project, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(project);
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
@@ -537,26 +613,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						project.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 60));
 					}
 				}
-			}
-		} finally {
-			monitor.done();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void deleteRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final IRefactoringDescriptorDeleteQuery query, IProgressMonitor monitor) throws CoreException {
-		Assert.isNotNull(proxies);
-		Assert.isNotNull(query);
-		if (monitor == null)
-			monitor= new NullProgressMonitor();
-		try {
-			monitor.beginTask("", proxies.length); //$NON-NLS-1$
-			for (int index= 0; index < proxies.length; index++) {
-				if (query.proceed(proxies[index]).isOK())
-					fireRefactoringDeletedEvent(proxies[index]);
-				monitor.worked(1);
 			}
 		} finally {
 			monitor.done();
@@ -765,7 +821,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			try {
 				monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 12);
 				final String name= project.getName();
-				if (hasProjectHistory(project)) {
+				if (hasSharedRefactoringHistory(project)) {
 					final URI uri= project.getLocationURI();
 					if (uri != null)
 						return fUndoStack.getManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).readRefactoringHistory(start, end, flags, new SubProgressMonitor(monitor, 12));
@@ -848,7 +904,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean hasProjectHistory(final IProject project) {
+	public boolean hasSharedRefactoringHistory(final IProject project) {
 		Assert.isNotNull(project);
 		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
 		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
@@ -956,7 +1012,18 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setProjectHistory(final IProject project, final boolean enable, IProgressMonitor monitor) throws CoreException {
+	public void setRefactoringComment(final RefactoringDescriptorProxy proxy, final String comment, IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(proxy);
+		Assert.isTrue(comment == null || !"".equals(comment)); //$NON-NLS-1$
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
+		fUndoStack.setComment(proxy, comment, monitor);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setSharedRefactoringHistory(final IProject project, final boolean enable, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(project);
 		Assert.isTrue(project.isAccessible());
 		if (monitor == null)

@@ -91,33 +91,6 @@ public interface IRefactoringHistoryService {
 	public void connect();
 
 	/**
-	 * Deletes the refactoring history of a project. Refactorings associated
-	 * with the workspace are not deleted.
-	 * <p>
-	 * If a refactoring history is deleted, all files stored in the hidden
-	 * refactoring history folder of the project folder are removed. If no
-	 * explicit refactoring history is enabled, the refactoring history
-	 * information is removed from the internal workspace refactoring history.
-	 * </p>
-	 * <p>
-	 * Note: This API must not be called from outside the refactoring framework.
-	 * </p>
-	 * 
-	 * @param project
-	 *            the project to delete its history
-	 * @param monitor
-	 *            the progress monitor to use, or <code>null</code>
-	 * @throws CoreException
-	 *             if an error occurs while deleting the refactoring history.
-	 *             Reasons include:
-	 *             <ul>
-	 *             <li>An I/O error occurs while deleting the refactoring
-	 *             history.</li>
-	 *             </ul>
-	 */
-	public void deleteProjectHistory(IProject project, IProgressMonitor monitor) throws CoreException;
-
-	/**
 	 * Deletes the specified refactoring descriptors from their associated
 	 * refactoring histories.
 	 * <p>
@@ -144,6 +117,33 @@ public interface IRefactoringHistoryService {
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
 	 */
 	public void deleteRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, IRefactoringDescriptorDeleteQuery query, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Deletes the refactoring history of a project. Refactorings associated
+	 * with the workspace are not deleted.
+	 * <p>
+	 * If a refactoring history is deleted, all files stored in the hidden
+	 * refactoring history folder of the project folder are removed. If no
+	 * shared refactoring history is enabled, the refactoring history
+	 * information is removed from the internal workspace refactoring history.
+	 * </p>
+	 * <p>
+	 * Note: This API must not be called from outside the refactoring framework.
+	 * </p>
+	 * 
+	 * @param project
+	 *            the project to delete its history
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
+	 * @throws CoreException
+	 *             if an error occurs while deleting the refactoring history.
+	 *             Reasons include:
+	 *             <ul>
+	 *             <li>An I/O error occurs while deleting the refactoring
+	 *             history.</li>
+	 *             </ul>
+	 */
+	public void deleteRefactoringHistory(IProject project, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Disconnects the refactoring history service from the workbench's
@@ -291,14 +291,14 @@ public interface IRefactoringHistoryService {
 	public RefactoringHistory getWorkspaceHistory(long start, long end, IProgressMonitor monitor);
 
 	/**
-	 * Returns whether a project has an explicit refactoring history.
+	 * Returns whether a project has a shared refactoring history.
 	 * 
 	 * @param project
 	 *            the project to test
-	 * @return <code>true</code> if the project contains an explicit project
-	 *         history, <code>false</code> otherwise
+	 * @return <code>true</code> if the project has a shared project history,
+	 *         <code>false</code> otherwise
 	 */
-	public boolean hasProjectHistory(IProject project);
+	public boolean hasSharedRefactoringHistory(IProject project);
 
 	/**
 	 * Reads a refactoring history from the input stream.
@@ -359,11 +359,39 @@ public interface IRefactoringHistoryService {
 	public void removeHistoryListener(IRefactoringHistoryListener listener);
 
 	/**
-	 * Determines whether a project has an explicit refactoring history.
+	 * Sets the comment of a refactoring in the refactoring history.
 	 * <p>
-	 * If an explicit refactoring history is enabled, refactorings executed on
-	 * that particular project are stored in a hidden refactoring history folder
-	 * of the project folder. If no explicit refactoring history is enabled, all
+	 * Note: This API must not be called from outside the refactoring framework.
+	 * </p>
+	 * 
+	 * @param proxy
+	 *            the refactoring descriptor proxy
+	 * @param comment
+	 *            the new non-empty comment of the refactoring, or
+	 *            <code>null</code>
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
+	 * @throws CoreException
+	 *             if an error occurs while setting the comment of the
+	 *             refactoring. Reasons include:
+	 *             <ul>
+	 *             <li>The refactoring history has an illegal format, contains
+	 *             illegal arguments or otherwise illegal information.</li>
+	 *             <li>An I/O error occurs while setting the refactoring
+	 *             comment in the refactoring history.</li>
+	 *             </ul>
+	 * 
+	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
+	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
+	 */
+	public void setRefactoringComment(RefactoringDescriptorProxy proxy, String comment, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Determines whether a project has a shared refactoring history.
+	 * <p>
+	 * If a shared refactoring history is enabled, refactorings executed on that
+	 * particular project are stored in a hidden refactoring history folder of
+	 * the project folder. If no shared refactoring history is enabled, all
 	 * refactorings are tracked as well, but persisted internally in a
 	 * plugin-specific way without altering the project.
 	 * </p>
@@ -372,21 +400,21 @@ public interface IRefactoringHistoryService {
 	 * </p>
 	 * 
 	 * @param project
-	 *            the project to set
+	 *            the project to set the shared refactoring history property
 	 * @param enable
-	 *            <code>true</code> to enable an explicit project history,
+	 *            <code>true</code> to enable a shared refactoring history,
 	 *            <code>false</code> otherwise
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
 	 * @throws CoreException
-	 *             if an error occurs while changing the explicit refactoring
+	 *             if an error occurs while changing the shared refactoring
 	 *             history property. Reasons include:
 	 *             <ul>
-	 *             <li>An I/O error occurs while changing the explicit
+	 *             <li>An I/O error occurs while changing the shared
 	 *             refactoring history property.</li>
 	 *             </ul>
 	 */
-	public void setProjectHistory(IProject project, boolean enable, IProgressMonitor monitor) throws CoreException;
+	public void setSharedRefactoringHistory(IProject project, boolean enable, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Writes the specified refactoring descriptor proxies to the output stream.

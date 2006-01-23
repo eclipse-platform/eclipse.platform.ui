@@ -165,7 +165,7 @@ public class RefactoringDescriptor implements Comparable {
 	private final Map fArguments;
 
 	/** The comment associated with this refactoring, or <code>null</code> */
-	private final String fComment;
+	private String fComment;
 
 	/** A human-readable description of the particular refactoring instance */
 	private final String fDescription;
@@ -332,6 +332,19 @@ public class RefactoringDescriptor implements Comparable {
 	 */
 	public boolean isUnknown() {
 		return false;
+	}
+
+	/**
+	 * Sets the comment of this refactoring.
+	 * <p>
+	 * Note: This API must not be called from outside the refactoring framework.
+	 * </p>
+	 * 
+	 * @param comment
+	 *            the non-empty comment to set, or <code>null</code>
+	 */
+	public final void setComment(final String comment) {
+		fComment= comment;
 	}
 
 	/**

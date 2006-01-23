@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
 import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
 
 import org.eclipse.swt.SWT;
@@ -24,6 +25,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
@@ -40,6 +43,9 @@ public final class ManageRefactoringHistoryControl extends RefactoringHistoryCon
 
 	/** The delete button, or <code>null</code> */
 	private Button fDeleteButton= null;
+
+	/** The edit button, or <code>null</code> */
+	private Button fEditButton= null;
 
 	/**
 	 * Creates a new manage refactoring history control.
@@ -89,6 +95,17 @@ public final class ManageRefactoringHistoryControl extends RefactoringHistoryCon
 		data.widthHint= SWTUtil.getButtonWidthHint(fDeleteAllButton);
 		fDeleteAllButton.setLayoutData(data);
 
+		fEditButton= new Button(composite, SWT.NONE);
+		fEditButton.setEnabled(false);
+		fEditButton.setText(RefactoringUIMessages.ManageRefactoringHistoryControl_edit_label);
+		data= new GridData();
+		data.verticalIndent= new PixelConverter(parent).convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		data.horizontalAlignment= GridData.FILL;
+		data.grabExcessHorizontalSpace= true;
+		data.verticalAlignment= GridData.BEGINNING;
+		data.widthHint= SWTUtil.getButtonWidthHint(fEditButton);
+		fEditButton.setLayoutData(data);
+
 		Dialog.applyDialogFont(parent);
 	}
 
@@ -122,6 +139,15 @@ public final class ManageRefactoringHistoryControl extends RefactoringHistoryCon
 	}
 
 	/**
+	 * Returns the edit button.
+	 * 
+	 * @return the edit button
+	 */
+	public Button getEditButton() {
+		return fEditButton;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	protected void handleCheckStateChanged() {
@@ -132,9 +158,18 @@ public final class ManageRefactoringHistoryControl extends RefactoringHistoryCon
 	/**
 	 * {@inheritDoc}
 	 */
+	protected void handleSelectionChanged(final IStructuredSelection selection) {
+		super.handleSelectionChanged(selection);
+		fEditButton.setEnabled(getSelectedDescriptors().length == 1);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void setInput(final RefactoringHistory history) {
 		super.setInput(history);
 		fDeleteAllButton.setEnabled(history != null && !history.isEmpty());
 		fDeleteButton.setEnabled(false);
+		fEditButton.setEnabled(false);
 	}
 }
