@@ -2609,9 +2609,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		styledText.setMenu(fTextContextMenu);
 
 		if (fEditorContextMenuId != null)
-			getSite().registerContextMenu(fEditorContextMenuId, manager, getSelectionProvider());
+			getEditorSite().registerContextMenu(fEditorContextMenuId, manager, getSelectionProvider(), isEditorInputIncludedInContextMenu());
 		else if (fCompatibilityMode)
-			getSite().registerContextMenu(DEFAULT_EDITOR_CONTEXT_MENU_ID, manager, getSelectionProvider());
+			getEditorSite().registerContextMenu(DEFAULT_EDITOR_CONTEXT_MENU_ID, manager, getSelectionProvider(), isEditorInputIncludedInContextMenu());
 
 		if ((fEditorContextMenuId != null && fCompatibilityMode) || fEditorContextMenuId  == null) {
 			String partId= getSite().getId();
@@ -2663,6 +2663,20 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		initializeSourceViewer(getEditorInput());
 
 		JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
+	}
+	
+	/**
+     * Tells whether the editor input should be included when adding object
+     * contributions to this editor's context menu.
+     * <p>
+     * This implementation always returns <code>true</code>.
+     * </p>
+     * 
+	 * @return <code>true</code> if the editor input should be considered
+     * @since 3.2
+	 */
+	protected boolean isEditorInputIncludedInContextMenu() {
+		return true;
 	}
 
 	/**
