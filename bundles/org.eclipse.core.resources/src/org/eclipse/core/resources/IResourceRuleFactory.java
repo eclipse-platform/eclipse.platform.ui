@@ -24,9 +24,9 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * obtain any scheduling rules needed to perform the modification.  However, if you
  * are aggregating a set of changes to the workspace using <code>WorkspaceJob</code>
  * or <code>IWorkspaceRunnable</code> you can use scheduling rules to lock a 
- * portion of the workspace for the duration of the job or runnable.  If you do so,
- * a runtime exception will occur if you try to modify a portion of the workspace
- * that is not covered by the rule for the runnable or job.
+ * portion of the workspace for the duration of the job or runnable.  If you
+ * provide a non-null scheduling rule, a runtime exception will occur if you try to 
+ * modify a portion of the workspace that is not covered by the rule for the runnable or job.
  * <p>
  * If more than one rule is needed, they can be aggregated using the
  * <code>MultiRule.combine</code> method.  Simplifying a group of rules does not change
