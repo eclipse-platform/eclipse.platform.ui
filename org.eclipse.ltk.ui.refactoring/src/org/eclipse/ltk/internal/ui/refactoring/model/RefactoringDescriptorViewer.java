@@ -82,12 +82,12 @@ public class RefactoringDescriptorViewer extends Viewer {
 		final StringBuffer buffer= new StringBuffer();
 		HTMLPrinter.insertPageProlog(buffer, 0, fBrowser.getBackground().getRGB());
 		if (proxy != null) {
-			HTMLPrinter.addSmallHeader(buffer, proxy.getDescription());
+			HTMLPrinter.addSmallHeader(buffer, HTMLPrinter.convertToHTMLContent(proxy.getDescription()));
 			final RefactoringDescriptor descriptor= proxy.requestDescriptor(new NullProgressMonitor());
 			if (descriptor != null) {
 				final String comment= descriptor.getComment();
 				if (comment != null && !"".equals(comment)) //$NON-NLS-1$
-					HTMLPrinter.addParagraph(buffer, comment);
+					HTMLPrinter.addParagraph(buffer, HTMLPrinter.convertToHTMLContent(comment));
 				HTMLPrinter.startBulletList(buffer);
 				final int flags= descriptor.getFlags();
 				if ((flags & RefactoringDescriptor.BREAKING_CHANGE) > 0)
@@ -118,7 +118,7 @@ public class RefactoringDescriptorViewer extends Viewer {
 		if (text != null && text.length() > 0) {
 			if ((fBrowser.getShell().getStyle() & SWT.RIGHT_TO_LEFT) != 0) {
 				final StringBuffer buffer= new StringBuffer(text);
-				HTMLPrinter.insertStyles(buffer, new String[] { "direction:rtl", "overflow:hidden"}); //$NON-NLS-1$ //$NON-NLS-2$
+				HTMLPrinter.insertStyles(buffer, new String[] { "direction:rtl", "overflow:hidden" }); //$NON-NLS-1$ //$NON-NLS-2$
 				text= buffer.toString();
 			}
 		}
