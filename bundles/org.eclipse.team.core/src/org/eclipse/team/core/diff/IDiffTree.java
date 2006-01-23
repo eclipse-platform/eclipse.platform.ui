@@ -98,5 +98,21 @@ public interface IDiffTree {
 	 * @return whether the set is empty
 	 */
 	public boolean isEmpty();
+	
+	
+	/**
+	 * Return the number of out-of-sync elements in the given set whose synchronization
+	 * state matches the given mask. A mask of 0 assumes a direct match of the given state.
+	 * <p>
+	 * For example, this will return the number of outgoing changes in the set:
+	 * <pre>
+	 *  long outgoing =  countFor(IThreeWayDiff.OUTGOING, IThreeWayDiff.DIRECTION_MASK);
+	 * </pre>
+	 * </p>
+	 * @param state the sync state
+	 * @param mask the sync state mask
+	 * @return the number of matching resources in the set.
+	 */
+	public long countFor(int state, int mask);
 
 }

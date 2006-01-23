@@ -64,6 +64,11 @@ public interface IThreeWayDiff extends IDiffNode {
 	public static final int CONFLICTING = OUTGOING | INCOMING;
 	
 	/**
+	 * Bit mask for extracting the synchronization direction. 
+	 */
+	public static final int DIRECTION_MASK = CONFLICTING;
+	
+	/**
 	 * Return the local change associated with this delta.
 	 * If there is no local change, either a delta with kind 
 	 * {@link IDiffNode#NO_CHANGE} is returned or <code>null</code>

@@ -17,6 +17,7 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.mapping.DiffChangeEvent;
 import org.eclipse.team.internal.core.mapping.PathTree;
+import org.eclipse.team.internal.core.subscribers.DiffTreeStatistics;
 
 /**
  * Implementation of {@link IDiffTree}.
@@ -38,6 +39,8 @@ public class DiffTree implements IDiffTree {
 	private PathTree pathTree = new PathTree();
 	
 	private ILock lock = Platform.getJobManager().newLock();
+	
+	private DiffTreeStatistics statistics = new DiffTreeStatistics();
 	
 	private DiffChangeEvent changes;
 
@@ -168,6 +171,7 @@ public class DiffTree implements IDiffTree {
 		try {
 			beginInput();
 			pathTree.clear();
+			statistics.clear();
 			internalReset();
 		} finally {
 			endInput(null);
@@ -258,11 +262,22 @@ public class DiffTree implements IDiffTree {
 
 	private void internalAdd(IDiffNode delta) {
 		Assert.isTrue(!lockedForModification);
+		IDiffNode oldDiff = (IDiffNode)pathTree.get(delta.getPath());
 		pathTree.put(delta.getPath(), delta);
+		if(oldDiff == null) {
+			statistics.add(delta);
+		} else {
+			statistics.remove(oldDiff);
+			statistics.add(delta);
+		}
 	}
 	
 	private void internalRemove(IDiffNode delta) {
 		Assert.isTrue(!lockedForModification);
+		IDiffNode oldDiff = (IDiffNode)pathTree.get(delta.getPath());
+		if(oldDiff == null) {
+			statistics.remove(oldDiff);
+		}
 		pathTree.remove(delta.getPath());
 	}
 	
@@ -295,6 +310,13 @@ public class DiffTree implements IDiffTree {
 	 */
 	public IDiffNode[] getDiffs() {
 		return (IDiffNode[]) pathTree.values().toArray(new IDiffNode[pathTree.size()]);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.IDiffTree#countFor(int, int)
+	 */
+	public long countFor(int state, int mask) {
+		return statistics.countFor(state, mask);
 	}
 
 }
