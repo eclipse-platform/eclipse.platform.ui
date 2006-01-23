@@ -112,8 +112,9 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		
         IntegerFieldEditor timeout = new IntegerFieldEditor(IAntUIPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, AntPreferencesMessages.AntPreferencePage_13, getFieldEditorParent());
         int minValue= AntUIPlugin.getDefault().getPreferenceStore().getDefaultInt(IAntUIPreferenceConstants.ANT_COMMUNICATION_TIMEOUT);
-        timeout.setValidRange(minValue, Integer.MAX_VALUE);
-        timeout.setErrorMessage(MessageFormat.format(AntPreferencesMessages.AntPreferencePage_14, new Object[] {new Integer(minValue), new Integer(Integer.MAX_VALUE)})); 
+        int maxValue = 1200000;
+        timeout.setValidRange(minValue, maxValue);
+        timeout.setErrorMessage(MessageFormat.format(AntPreferencesMessages.AntPreferencePage_14, new Object[] {new Integer(minValue), new Integer(maxValue)})); 
         addField(timeout);
         
         createSpace();
