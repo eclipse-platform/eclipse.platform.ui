@@ -110,6 +110,13 @@ public interface ISynchronizePageConfiguration {
 	public static final String P_SUPPORTED_MODES = TeamUIPlugin.ID  + ".P_SUPPORTED_MODES";	 //$NON-NLS-1$
 	
 	/**
+	 * Property constant for the id of the viewer to be used for this page.
+	 * The viewer id corresponds to the viewer definition in the Common
+	 * Navigator framework.
+	 */
+	public static final String P_VIEWER_ID = TeamUIPlugin.ID + ".P_VIEWER_ID"; //$NON-NLS-1$
+	
+	/**
 	 * The id of the synchronize group the determines where the synchronize 
 	 * actions appear.
 	 */

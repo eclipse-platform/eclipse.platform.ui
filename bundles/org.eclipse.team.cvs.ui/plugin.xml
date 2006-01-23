@@ -43,6 +43,12 @@
             id="org.eclipse.team.cvs.ui.cvsworkspace-participant">
       </participant>
       <participant
+            name="%CVSResourceMappingParticipant"
+            icon="$nl$/icons/full/eview16/cvs_persp.gif"
+            class="org.eclipse.team.internal.ccvs.ui.mappings.CVSResourceMappingParticipant"
+            id="org.eclipse.team.cvs.ui.workspace-participant">
+      </participant>
+      <participant
             name="%CVSMergeParticipant"
             icon="$nl$/icons/full/elcl16/newstream_wiz.gif"
             class="org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant"
@@ -55,6 +61,55 @@
             class="org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant"
             id="org.eclipse.team.cvs.ui.compare-participant">
       </participant>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewerContentBinding 
+         viewerId="org.eclipse.team.cvs.ui.workspaceSynchronization">                     
+         <includes>                     
+            <contentExtension   
+               pattern=".*" 
+               isRoot="true"/>
+         </includes>
+       </viewerContentBinding>
+       <viewer
+             viewerId="org.eclipse.team.cvs.ui.workspaceSynchronization">
+           <popupMenu
+                allowsPlatformContributions="false"
+                id="org.eclipse.team.cvs.ui.workspaceSynchronizationMenu">  
+             <insertionPoint name="file"/>  
+             <insertionPoint name="edit"/>          
+             <insertionPoint name="synchronize"/>
+             <insertionPoint
+                   name="navigate"
+                   separator="true"/>
+             <insertionPoint
+                   name="update"
+                   separator="true"/>
+             <insertionPoint
+                   name="commit"
+                   separator="false"/>
+             <insertionPoint
+                   name="overrideActions"
+                   separator="true"/>
+             <insertionPoint
+                   name="otherActions1"
+                   separator="true"/>
+             <insertionPoint
+                   name="otherActions2"
+                   separator="true"/> 
+             <insertionPoint
+                   name="sort"
+                   separator="true"/>
+             <insertionPoint
+                   name="additions"
+                   separator="true"/>              
+             <insertionPoint
+                   name="properties"
+                   separator="true"/>
+          </popupMenu>
+       </viewer>
    </extension>
    
 <!-- *************** Authenticator **************** -->

@@ -366,7 +366,7 @@
          viewerId="org.eclipse.team.ui.navigatorViewer">                     
          <includes>                     
             <contentExtension   
-               pattern="org.eclipse.team.ui.resourceContent" 
+               pattern=".*" 
                isRoot="true"/>
          </includes>
        </viewerContentBinding>

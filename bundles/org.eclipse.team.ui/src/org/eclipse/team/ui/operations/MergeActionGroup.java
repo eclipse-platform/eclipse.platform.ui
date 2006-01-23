@@ -108,7 +108,7 @@ public class MergeActionGroup extends SynchronizePageActionGroup {
 			MergeAction overwrite = new MergeAction(SynchronizationActionProvider.OVERWRITE_ACTION_ID, cmm, getConfiguration());
 			configureMergeAction(SynchronizationActionProvider.OVERWRITE_ACTION_ID, overwrite);
 			addToContextMenu(SynchronizationActionProvider.OVERWRITE_ACTION_ID, overwrite, cmm);
-				if (!isTwoWayMerge()) {
+			if (!isTwoWayMerge()) {
 				MergeAction markAsMerged = new MergeAction(SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID, cmm, getConfiguration());
 				configureMergeAction(SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID, markAsMerged);
 				addToContextMenu(SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID, markAsMerged, cmm);

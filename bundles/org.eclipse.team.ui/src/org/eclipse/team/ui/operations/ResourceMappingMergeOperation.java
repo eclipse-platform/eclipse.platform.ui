@@ -140,7 +140,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 			}
 			// Either auto-merging was not attemped or it was not 100% sucessful
 			// TODO If there is a problem between here and when the preview is shown, the context may be leaked
-			showPreview(getJobName(), Policy.subMonitorFor(monitor, 25));
+			showPreview(Policy.subMonitorFor(monitor, 25));
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
@@ -193,11 +193,11 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	 * @param title the title of the merge.
 	 * @param monitor a progress monitor
 	 */
-	protected void showPreview(final String title, IProgressMonitor monitor) {
+	protected void showPreview(IProgressMonitor monitor) {
 		calculateStates(context, Policy.subMonitorFor(monitor, 5));
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				ResourceMappingSynchronizeParticipant participant = new ResourceMappingSynchronizeParticipant(context, title);
+				ResourceMappingSynchronizeParticipant participant = createParticipant();
 				if (isPreviewInDialog()) {
 					CompareConfiguration cc = new CompareConfiguration();
 					ISynchronizePageConfiguration pageConfiguration = participant.createPageConfiguration();
@@ -378,6 +378,20 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 			TeamUIPlugin.log(e);
 		}
 		return false;
+	}
+
+	/**
+	 * Create the synchronize pariticipant to be used by this operation
+	 * to preview changes. By default, a {@link ResourceMappingSynchronizeParticipant}
+	 * is created using he context ({@link #getContext()}) and job name ({@link #getJobName()})
+	 * of this operation. Subclasses may override this method.
+	 * <p>
+	 * Once created, it is the responsibility of the participant to dispose of the 
+	 * synchronization context when it is no longer needed. 
+	 * @return a newly created synchronize pariticipant to be used by this operation
+	 */
+	protected ResourceMappingSynchronizeParticipant createParticipant() {
+		return new ResourceMappingSynchronizeParticipant(getContext(), getJobName());
 	}
 
 }

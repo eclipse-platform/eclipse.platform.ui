@@ -16,6 +16,8 @@ import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -26,6 +28,8 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IFileContentManager;
 import org.eclipse.team.core.Team;
+import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
@@ -33,6 +37,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
+import org.eclipse.team.ui.operations.ResourceMappingOperation;
 import org.eclipse.team.ui.synchronize.ResourceScope;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -135,6 +140,7 @@ public class CommitWizard extends ResizableWizard {
     private CommitWizardFileTypePage fFileTypePage;
     private CommitWizardCommitPage fCommitPage;
 	private IJobChangeListener jobListener;
+	private IWorkbenchPart part;
     
     public CommitWizard(SyncInfoSet infos) throws CVSException {
         this(infos.getResources());
@@ -158,6 +164,12 @@ public class CommitWizard extends ResizableWizard {
 	public CommitWizard(SyncInfoSet infos, IJobChangeListener jobListener) throws CVSException {
 		this(infos);
 		this.jobListener = jobListener;
+	}
+
+	public CommitWizard(Shell shell, IWorkbenchPart part, IResourceMappingScope scope) throws CVSException {
+		// TODO: should use scope to create appropriate model sync
+		this(scope.getRoots());
+		this.part = part;
 	}
 
 	private SyncInfoSet getAllOutOfSync() throws CVSException {
@@ -291,7 +303,61 @@ public class CommitWizard extends ResizableWizard {
 		}
     }
 
-    private IWorkbenchPart getPart() {
+	public static void run(IWorkbenchPart part, Shell shell, ResourceMapping[] mappings) throws CVSException {
+        try {
+        	IResourceMappingScope scope = buildScope(part, mappings);
+        	CommitWizard commitWizard = new CommitWizard(shell, part, scope);
+			run(shell, commitWizard);
+		} catch (OperationCanceledException e) {
+			// Ignore
+		} catch (InvocationTargetException e) {
+			throw CVSException.wrapException(e);
+		} catch (InterruptedException e) {
+			// Ignore
+		}
+	}
+	
+    private static IResourceMappingScope buildScope(final IWorkbenchPart part, final ResourceMapping[] mappings) throws InvocationTargetException, InterruptedException {
+    	final IResourceMappingScope[] scope = new IResourceMappingScope[] { null };
+		PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException,
+					InterruptedException {
+				try {
+					scope[0] = buildScope(part, mappings, monitor);
+				} catch (CVSException e) {
+					throw new InvocationTargetException(e);
+				}
+			}
+		});
+		return scope[0];
+	}
+    
+    public static IResourceMappingScope buildScope(IWorkbenchPart part, ResourceMapping[] mappings, IProgressMonitor monitor) throws InterruptedException, CVSException {
+		ResourceMappingOperation op = new ResourceMappingOperation(part, mappings) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.team.ui.operations.ResourceMappingOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				// No need to do anything. We just wanted to build the scope
+			}
+			
+			protected ResourceMappingContext getResourceMappingContext() {
+				// TODO: Could use a context built using the source sync-context
+				return SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
+			}
+		};
+		// Run the operation to build the scope
+		try {
+			op.run(monitor);
+		} catch (InvocationTargetException e) {
+			throw CVSException.wrapException(e);
+		}
+		return op.getScope();
+    }
+
+	private IWorkbenchPart getPart() {
+    	if (part != null)
+    		return part;
         return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().getActivePart();
     }
     
@@ -343,5 +409,6 @@ public class CommitWizard extends ResizableWizard {
         }
         return cvsResource.isManaged();
     }
+
 }    
 

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class ModelUpdateOperation extends AbstractModelMergeOperation {
@@ -60,5 +61,12 @@ public class ModelUpdateOperation extends AbstractModelMergeOperation {
 	 */
 	protected int getMergeType() {
 		return ISynchronizationContext.THREE_WAY;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.operations.ResourceMappingMergeOperation#createParticipant()
+	 */
+	protected ResourceMappingSynchronizeParticipant createParticipant() {
+		return new CVSResourceMappingParticipant(getContext(), getJobName());
 	}
 }

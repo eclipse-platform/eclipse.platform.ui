@@ -591,7 +591,9 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 	}
 
 	public String getViewerId() {
-		// TODO Should be a property
+		String viewerId = (String)getProperty(P_VIEWER_ID);
+		if (viewerId != null)
+			return viewerId;
 		return CommonViewerAdvisor.TEAM_NAVIGATOR_CONTENT;
 	}
 }
