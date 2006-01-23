@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ide.dialogs.PathVariableSelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.filesystem.FileSystemSupportRegistry;
 
 /**
  * Widget group for specifying a linked file or folder target.
@@ -99,6 +100,8 @@ public class CreateLinkedResourceGroup {
     
     private String lastUpdatedValue;
 
+	private FileSystemSelectionArea fileSystemSelectionArea;
+
     /**
      * Creates a link target group 
      *
@@ -151,6 +154,8 @@ public class CreateLinkedResourceGroup {
                 browseButton.setEnabled(createLink);
                 variablesButton.setEnabled(createLink);
                 linkTargetField.setEnabled(createLink);
+                fileSystemSelectionArea.setEnabled(createLink);
+                
                 if (listener != null)
                     listener.handleEvent(new Event());
             }
@@ -169,7 +174,6 @@ public class CreateLinkedResourceGroup {
      */
     private void createLinkLocationGroup(Composite locationGroup,
             boolean enabled) {
-        Font font = locationGroup.getFont();
         Button button = new Button(locationGroup, SWT.CHECK);
         int indent = button.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 
@@ -179,21 +183,20 @@ public class CreateLinkedResourceGroup {
         // resolvedPathGroup layout
         Composite linkTargetGroup = new Composite(locationGroup, SWT.NONE);
         GridLayout layout = new GridLayout();
-        layout.numColumns = 3;
+        layout.numColumns = 4;
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         linkTargetGroup.setLayout(layout);
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         data.horizontalIndent = indent;
         linkTargetGroup.setLayoutData(data);
-        linkTargetGroup.setFont(font);
-
+     
         // link target location entry field
         linkTargetField = new Text(linkTargetGroup, SWT.BORDER);
         data = new GridData(GridData.FILL_HORIZONTAL);
         data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+        data.horizontalSpan = 2;
         linkTargetField.setLayoutData(data);
-        linkTargetField.setFont(font);
         linkTargetField.setEnabled(enabled);
         linkTargetField.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -214,9 +217,9 @@ public class CreateLinkedResourceGroup {
                     listener.handleEvent(new Event());
             }
         });
+        
         // browse button
         browseButton = new Button(linkTargetGroup, SWT.PUSH);      
-        browseButton.setFont(font);
         browseButton.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_browseButton);
         browseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
@@ -228,7 +231,6 @@ public class CreateLinkedResourceGroup {
 
         // variables button
         variablesButton = new Button(linkTargetGroup, SWT.PUSH);
-        variablesButton.setFont(font);
         variablesButton.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_variablesButton);
         variablesButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
@@ -238,7 +240,40 @@ public class CreateLinkedResourceGroup {
         variablesButton.setEnabled(enabled);
         setButtonLayoutData(variablesButton);
         
-        Composite resolvedPathGroup = new Composite(locationGroup, SWT.NONE);
+        createFileSystemSelection(linkTargetGroup,enabled);
+        
+        createResolvedPathGroup(locationGroup, indent);
+ 
+        if (linkTarget != null)
+            linkTargetField.setText(linkTarget);
+    }
+    
+    /**
+	 * Create the file system selection area.
+	 * 
+	 * @param composite
+	 * @param enabled the initial enablement state.
+	 */
+	private void createFileSystemSelection(Composite composite,boolean enabled) {
+
+		// Always use the default if that is all there is.
+		if (FileSystemSupportRegistry.getInstance().hasOneFileSystem())
+			return;
+		
+		fileSystemSelectionArea = new FileSystemSelectionArea();
+		fileSystemSelectionArea.createContents(composite);
+		fileSystemSelectionArea.setEnabled(enabled);
+	}
+
+	/**
+	 * Create the composite for the resolved path.
+	 * @param locationGroup
+	 * @param indent
+	 */
+	private void createResolvedPathGroup(Composite locationGroup, int indent) {
+		GridLayout layout;
+		GridData data;
+		Composite resolvedPathGroup = new Composite(locationGroup, SWT.NONE);
         layout = new GridLayout();
         layout.numColumns = 2;
         layout.marginHeight = 0;
@@ -247,22 +282,16 @@ public class CreateLinkedResourceGroup {
         data = new GridData(GridData.FILL_HORIZONTAL);
         data.horizontalIndent = indent;
         resolvedPathGroup.setLayoutData(data);
-        resolvedPathGroup.setFont(font);
-
+ 
         resolvedPathLabelText = new Label(resolvedPathGroup, SWT.SINGLE);
         resolvedPathLabelText.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_resolvedPathLabel);
         resolvedPathLabelText.setVisible(false);
-        resolvedPathLabelText.setFont(font);
-
+ 
         resolvedPathLabelData = new Label(resolvedPathGroup, SWT.SINGLE);
         data = new GridData(GridData.FILL_HORIZONTAL);
         resolvedPathLabelData.setLayoutData(data);
         resolvedPathLabelData.setVisible(false);
-        resolvedPathLabelData.setFont(font);
-
-        if (linkTarget != null)
-            linkTargetField.setText(linkTarget);
-    }
+	}
 
     /**
      * Returns a new status object with the given severity and message.

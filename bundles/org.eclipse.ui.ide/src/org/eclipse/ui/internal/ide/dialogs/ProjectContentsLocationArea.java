@@ -21,12 +21,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -41,7 +35,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.filesystem.FileSystemConfiguration;
-import org.eclipse.ui.internal.ide.filesystem.FileSystemMessages;
 import org.eclipse.ui.internal.ide.filesystem.FileSystemSupportRegistry;
 
 /**
@@ -90,9 +83,7 @@ public class ProjectContentsLocationArea {
 
 	private IProject existingProject;
 
-	private ComboViewer fileSystems;
-
-	private Label fileSystemTitle;
+	private FileSystemSelectionArea fileSystemSelectionArea;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -249,62 +240,8 @@ public class ProjectContentsLocationArea {
 		
 		new Label(composite,SWT.NONE);
 		
-		fileSystemTitle = new Label(composite,SWT.NONE);
-		fileSystemTitle.setText(FileSystemMessages.FileSystemSelection_title);
-
-		fileSystems = new ComboViewer(composite, SWT.READ_ONLY);
-		
-		fileSystems.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
-
-		fileSystems.setLabelProvider(new LabelProvider() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-			 */
-			public String getText(Object element) {
-				return ((FileSystemConfiguration) element).getLabel();
-			}
-		});
-
-		fileSystems.setContentProvider(new IStructuredContentProvider() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-			 */
-			public void dispose() {
-				// Nothing to do
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-			 */
-			public Object[] getElements(Object inputElement) {
-				return FileSystemSupportRegistry.getInstance()
-						.getConfigurations();
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
-			public void inputChanged(org.eclipse.jface.viewers.Viewer viewer,
-					Object oldInput, Object newInput) {
-				// Nothing to do
-			}
-
-		});
-
-		fileSystems.setInput(this);
-		fileSystems.setSelection(new StructuredSelection(
-				FileSystemSupportRegistry.getInstance()
-						.getDefaultConfiguration()));
+		fileSystemSelectionArea = new FileSystemSelectionArea();
+		fileSystemSelectionArea.createContents(composite);
 	}
 
 	/**
@@ -337,9 +274,8 @@ public class ProjectContentsLocationArea {
 		locationLabel.setEnabled(enabled);
 		locationPathField.setEnabled(enabled);
 		browseButton.setEnabled(enabled);
-		if (fileSystems != null){
-			fileSystems.getControl().setEnabled(enabled);
-			fileSystemTitle.setEnabled(enabled);
+		if (fileSystemSelectionArea != null){
+			fileSystemSelectionArea.setEnabled(enabled);
 		}
 	}
 
@@ -464,18 +400,11 @@ public class ProjectContentsLocationArea {
 	 *         determined.
 	 */
 	private FileSystemConfiguration getSelectedConfiguration() {
-		if (fileSystems == null)
+		if (fileSystemSelectionArea == null)
 			return FileSystemSupportRegistry.getInstance()
 					.getDefaultConfiguration();
 
-		ISelection selection = fileSystems.getSelection();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structured = (IStructuredSelection) selection;
-			if (structured.size() == 1) {
-				return (FileSystemConfiguration) structured.getFirstElement();
-			}
-		}
-		return null;
+		return fileSystemSelectionArea.getSelectedConfiguration();
 	}
 
 	/**
