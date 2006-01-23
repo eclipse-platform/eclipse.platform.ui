@@ -25,11 +25,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
-import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.synchronize.ISynchronizeManager;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.UIJob;
@@ -47,7 +44,7 @@ import org.eclipse.ui.progress.UIJob;
  * </p>
  * @since 3.0
  */
-public final class RefreshSubscriberJob extends Job {
+public abstract class RefreshParticipantJob extends Job {
 	
     private final static boolean TEST_PROGRESS_VIEW = false;
 	/**
@@ -78,7 +75,7 @@ public final class RefreshSubscriberJob extends Job {
 	/**
 	 * The participant that is being refreshed.
 	 */
-	private SubscriberParticipant participant;
+	private ISynchronizeParticipant participant;
 	
 	/**
 	 * The task name for this refresh. This is usually more descriptive than the
@@ -137,7 +134,7 @@ public final class RefreshSubscriberJob extends Job {
         	if(gotoAction != null) {
         		return gotoAction.getToolTipText();
         	}
-        	return Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, RefreshSubscriberJob.this.getName());
+        	return Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, RefreshParticipantJob.this.getName());
         }
         public void dispose() {
         	super.dispose();
@@ -190,11 +187,11 @@ public final class RefreshSubscriberJob extends Job {
 	 * if the job is blocking another.
 	 */
 	private class NonblockingProgressMonitor extends ProgressMonitorWrapper {
-		private final RefreshSubscriberJob job;
+		private final RefreshParticipantJob job;
 		private long blockTime;
 		private static final int THRESHOLD = 250;
 		private boolean wasBlocking = false;
-		protected NonblockingProgressMonitor(IProgressMonitor monitor, RefreshSubscriberJob job) {
+		protected NonblockingProgressMonitor(IProgressMonitor monitor, RefreshParticipantJob job) {
 			super(monitor);
 			this.job = job;
 		}
@@ -229,7 +226,7 @@ public final class RefreshSubscriberJob extends Job {
 	 * @param resources
 	 * @param subscriber
 	 */
-	public RefreshSubscriberJob(SubscriberParticipant participant, String jobName, String taskName, IResource[] resources, IRefreshSubscriberListener listener) {
+	public RefreshParticipantJob(ISynchronizeParticipant participant, String jobName, String taskName, IResource[] resources, IRefreshSubscriberListener listener) {
 		super(taskName);
 		Assert.isNotNull(resources);
 		Assert.isNotNull(participant);
@@ -253,7 +250,7 @@ public final class RefreshSubscriberJob extends Job {
 						// Restart in 5 seconds
 						delay = 5000;
 					}
-					RefreshSubscriberJob.this.schedule(delay);
+					RefreshParticipantJob.this.schedule(delay);
 					restartOnCancel = true;
 				}
 			}
@@ -261,20 +258,9 @@ public final class RefreshSubscriberJob extends Job {
 		if(listener != null)
 			initialize(listener);
 	}
-	
-	/**
-	 * If a collector is available then run the refresh and the background event processing 
-	 * within the same progess group.
-	 */
-	public boolean shouldRun() {
-		// Ensure that any progress shown as a result of this refresh occurs hidden in a progress group.
-		return getSubscriber() != null;
-	}
 
 	public boolean belongsTo(Object family) {	
-		if(family instanceof RefreshSubscriberJob) {
-			return ((RefreshSubscriberJob)family).getSubscriber() == getSubscriber();
-		} else if (family instanceof SubscriberParticipant) {
+		if (family instanceof SubscriberParticipant) {
 			return family == participant;
 		} else {
 			return (family == getFamily() || family == ISynchronizeManager.FAMILY_SYNCHRONIZE_OPERATION);
@@ -312,32 +298,27 @@ public final class RefreshSubscriberJob extends Job {
 				}
 				Policy.checkCanceled(monitor);
 			}
-			Subscriber subscriber = getSubscriber();
 			IResource[] roots = getResources();
 			
 			// if there are no resources to refresh, just return
-			if(subscriber == null || roots == null) {
+			if(roots == null) {
 				return Status.OK_STATUS;
 			}
-			SubscriberSyncInfoCollector collector = getCollector();
-			RefreshEvent event = new RefreshEvent(reschedule ? IRefreshEvent.SCHEDULED_REFRESH : IRefreshEvent.USER_REFRESH, roots, collector.getSubscriber());
-			RefreshChangeListener changeListener = new RefreshChangeListener(collector);
+			RefreshEvent event = new RefreshEvent(reschedule ? IRefreshEvent.SCHEDULED_REFRESH : IRefreshEvent.USER_REFRESH, roots, participant);
 			IStatus status = null;
 			NonblockingProgressMonitor wrappedMonitor = null;
+			RefreshChangeListener changeListener = null;
 			try {
 				event.setStartTime(System.currentTimeMillis());
 				if(monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
-				// Set-up change listener so that we can determine the changes found
-				// during this refresh.						
-				subscriber.addListener(changeListener);
 				// Pre-Notify
 				notifyListeners(STARTED, event);
 				// Perform the refresh		
 				monitor.setTaskName(getName());
-				wrappedMonitor = new NonblockingProgressMonitor(monitor, this);
-				subscriber.refresh(roots, IResource.DEPTH_INFINITE, wrappedMonitor);
+				wrappedMonitor = new NonblockingProgressMonitor(monitor, this);				
+				changeListener = doRefresh(wrappedMonitor);
 				// Prepare the results
 				setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.valueOf(! isJobModal()));
 			} catch(OperationCanceledException e2) {
@@ -366,14 +347,12 @@ public final class RefreshSubscriberJob extends Job {
 			            }
 			        }
 			    }
-// TODO: Code that can be added when new error handling gets released (see bug 76726)
-//		        if (!isUser() && status.getSeverity() == IStatus.ERROR) {
-//		            // Never prompt for errors on non-user jobs
-//		            setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
-//		        }
+		        if (!isUser() && status.getSeverity() == IStatus.ERROR) {
+		            // Never prompt for errors on non-user jobs
+		            setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
+		        }
 			} finally {
 				event.setStopTime(System.currentTimeMillis());
-				subscriber.removeListener(changeListener);
 			}
 			
 			// Post-Notify
@@ -389,6 +368,16 @@ public final class RefreshSubscriberJob extends Job {
             monitor.done();
 		}
 	}
+
+	protected abstract RefreshChangeListener doRefresh(IProgressMonitor monitor) throws TeamException;
+	
+	/**
+	 * Return the total number of changes covered by the resources
+	 * of this job.
+	 * @return the total number of changes covered by the resources
+	 * of this job
+	 */
+	protected abstract int getChangeCount();
 	
 	private boolean isJobInFamilyRunning(Object family) {
 		Job[] jobs = Platform.getJobManager().find(family);
@@ -407,52 +396,31 @@ public final class RefreshSubscriberJob extends Job {
 		StringBuffer text = new StringBuffer();
 		int code = IStatus.OK;
 		SyncInfo[] changes = event.getChanges();
-		SubscriberSyncInfoCollector collector = getCollector();
-		if (collector != null) {
-			int numChanges = refreshedResourcesContainChanges(event);
-			if (numChanges > 0) {
-				code = IRefreshEvent.STATUS_CHANGES;
-				if (changes.length > 0) {
-				// New changes found
-					String numNewChanges = Integer.toString(event.getChanges().length);
-					if (event.getChanges().length == 1) {
-							text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesSingular, (new Object[]{getName(), numNewChanges}))); 
-					} else {
-							text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesPlural, (new Object[]{getName(), numNewChanges}))); 
-						}
+		int numChanges = getChangeCount();
+		if (numChanges > 0) {
+			code = IRefreshEvent.STATUS_CHANGES;
+			if (changes.length > 0) {
+			// New changes found
+				String numNewChanges = Integer.toString(event.getChanges().length);
+				if (event.getChanges().length == 1) {
+						text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesSingular, (new Object[]{getName(), numNewChanges}))); 
 				} else {
-					// Refreshed resources contain changes
-					if (numChanges == 1) {
-						text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_changesSingular, (new Object[]{getName(), new Integer(numChanges)}))); 
-					} else {
-						text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_changesPlural, (new Object[]{getName(), new Integer(numChanges)}))); 
+						text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesPlural, (new Object[]{getName(), numNewChanges}))); 
 					}
-				}
 			} else {
-				// No changes found
-				code = IRefreshEvent.STATUS_NO_CHANGES;
-				text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_6, new String[] { getName() })); 
-			}
-			return new Status(IStatus.OK, TeamUIPlugin.ID, code, text.toString(), null);
-		}
-		return Status.OK_STATUS;
-	}
-	
-	private int refreshedResourcesContainChanges(IRefreshEvent event) {
-		int numChanges = 0;
-		SubscriberSyncInfoCollector collector = getCollector();
-		if (collector != null) {
-			SyncInfoTree set = collector.getSyncInfoSet();
-			IResource[] resources = event.getResources();
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
-				SyncInfo[] infos = set.getSyncInfos(resource, IResource.DEPTH_INFINITE);
-				if(infos != null && infos.length > 0) {
-					numChanges += infos.length;
+				// Refreshed resources contain changes
+				if (numChanges == 1) {
+					text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_changesSingular, (new Object[]{getName(), new Integer(numChanges)}))); 
+				} else {
+					text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_changesPlural, (new Object[]{getName(), new Integer(numChanges)}))); 
 				}
 			}
+		} else {
+			// No changes found
+			code = IRefreshEvent.STATUS_NO_CHANGES;
+			text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_6, new String[] { getName() })); 
 		}
-		return numChanges;
+		return new Status(IStatus.OK, TeamUIPlugin.ID, code, text.toString(), null);
 	}
 	
 	private void initialize(final IRefreshSubscriberListener listener) {
@@ -461,7 +429,7 @@ public final class RefreshSubscriberJob extends Job {
 		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
 		group.beginTask(taskName, 100);
 		setProgressGroup(group, 80);
-		getCollector().setProgressGroup(group, 20);
+		handleProgressGroupSet(group);
 		setProperty(IProgressConstants.ICON_PROPERTY, participant.getImageDescriptor());
 		setProperty(IProgressConstants.ACTION_PROPERTY, actionWrapper);
 		setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.valueOf(! isJobModal()));
@@ -495,27 +463,21 @@ public final class RefreshSubscriberJob extends Job {
 							actionWrapper.setGotoAction(runnable);
 						}
 					}
-					RefreshSubscriberJob.removeRefreshListener(this);
+					RefreshParticipantJob.removeRefreshListener(this);
 				}
 				return null;
 			}
 		};
 		
 		if (listener != null) {
-			RefreshSubscriberJob.addRefreshListener(autoListener);
+			RefreshParticipantJob.addRefreshListener(autoListener);
 		}	
 	}
+
+	protected abstract void handleProgressGroupSet(IProgressMonitor group);
 	
 	protected IResource[] getResources() {
 		return resources;
-	}
-	
-	protected Subscriber getSubscriber() {
-		return participant.getSubscriber();
-	}
-	
-	protected SubscriberSyncInfoCollector getCollector() {
-		return participant.getSubscriberSyncInfoCollector();
 	}
 	
 	public long getScheduleDelay() {
@@ -603,5 +565,9 @@ public final class RefreshSubscriberJob extends Job {
 		Boolean isModal = (Boolean)getProperty(IProgressConstants.PROPERTY_IN_DIALOG);
 		if(isModal == null) return false;
 		return isModal.booleanValue();
+	}
+
+	public ISynchronizeParticipant getParticipant() {
+		return participant;
 	}
 }

@@ -12,33 +12,29 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 /**
  * A refresh event generated to notify clients of the refresh lifecycle.
  */
 public class RefreshEvent implements IRefreshEvent {
 	int type; 
-	Subscriber subscriber;
 	SyncInfo[] changes;
 	long startTime = 0;
 	long stopTime = 0;
 	IStatus status;
 	IResource[] resources;
+	private final ISynchronizeParticipant participant;
 	
-	public RefreshEvent(int type, IResource[] resources, Subscriber subscriber) {
+	public RefreshEvent(int type, IResource[] resources, ISynchronizeParticipant participant) {
 		this.type = type;
-		this.subscriber = subscriber;
 		this.resources = resources;
+		this.participant = participant;
 	}
 	
 	public int getRefreshType() {
 		return type;
-	}
-
-	public Subscriber getSubscriber() {
-		return subscriber;
 	}
 
 	public SyncInfo[] getChanges() {
@@ -75,5 +71,9 @@ public class RefreshEvent implements IRefreshEvent {
 
 	public IResource[] getResources() {
 		return resources;
+	}
+
+	public ISynchronizeParticipant getParticipant() {
+		return participant;
 	}
 }

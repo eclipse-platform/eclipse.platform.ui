@@ -39,7 +39,7 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 
 	public ActionFactory.IWorkbenchAction refreshDone(final IRefreshEvent event) {
 		//	Ensure that this event was generated for this participant
-		if (event.getSubscriber() != participant.getSubscriber())
+		if (event.getParticipant() != participant)
 			return null;
 		//	 If the event is for a cancelled operation, there's nothing to do
 		int severity = event.getStatus().getSeverity();

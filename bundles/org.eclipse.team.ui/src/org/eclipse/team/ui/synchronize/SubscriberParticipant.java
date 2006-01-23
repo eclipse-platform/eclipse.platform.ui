@@ -162,7 +162,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 */
 	public final IStatus refreshNow(IResource[] resources, String taskName, IProgressMonitor monitor) {
 		Platform.getJobManager().cancel(this);
-		RefreshSubscriberJob job = new RefreshSubscriberJob(this, taskName, taskName, resources, null);
+		RefreshParticipantJob job = new RefreshSubscriberParticipantJob(this, taskName, taskName, resources, null);
 		return job.run(monitor);
 	}
 	
@@ -462,7 +462,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		if (taskName == null)
 		    taskName = getLongTaskName(resources);
 		Platform.getJobManager().cancel(this);
-		RefreshSubscriberJob job = new RefreshSubscriberJob(this, jobName, taskName, resources, listener);
+		RefreshParticipantJob job = new RefreshSubscriberParticipantJob(this, jobName, taskName, resources, listener);
 		job.setUser(true);
 		Utils.schedule(job, site);
 		

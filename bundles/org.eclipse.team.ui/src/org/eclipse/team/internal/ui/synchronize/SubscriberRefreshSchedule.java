@@ -33,7 +33,7 @@ public class SubscriberRefreshSchedule {
 	
 	private boolean enabled = false;
 	
-	private RefreshSubscriberJob job;
+	private RefreshParticipantJob job;
 	
 	private SubscriberParticipant participant;
 	
@@ -53,7 +53,7 @@ public class SubscriberRefreshSchedule {
 		public void refreshStarted(IRefreshEvent event) {
 		}
 		public ActionFactory.IWorkbenchAction refreshDone(final IRefreshEvent event) {
-			if (event.getSubscriber() == participant.getSubscriber()) {
+			if (event.getParticipant() == participant) {
 				lastRefreshEvent = event;
 				if(enabled && event.getRefreshType() == IRefreshEvent.SCHEDULED_REFRESH) {
 					RefreshUserNotificationPolicy policy = new RefreshUserNotificationPolicy(participant);
@@ -67,7 +67,7 @@ public class SubscriberRefreshSchedule {
 	
 	public SubscriberRefreshSchedule(SubscriberParticipant participant) {
 		this.participant = participant;
-		RefreshSubscriberJob.addRefreshListener(refreshSubscriberListener);
+		RefreshParticipantJob.addRefreshListener(refreshSubscriberListener);
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class SubscriberRefreshSchedule {
 		}
 		if(job == null) {
 			SubscriberParticipant participant = getParticipant();
-			job = new RefreshSubscriberJob(participant, TeamUIMessages.RefreshSchedule_14, NLS.bind(TeamUIMessages.RefreshSchedule_15, new String[] { participant.getName(), getRefreshIntervalAsString() }), participant.getResources(), new RefreshUserNotificationPolicy(getParticipant())); // 
+			job = new RefreshSubscriberParticipantJob(participant, TeamUIMessages.RefreshSchedule_14, NLS.bind(TeamUIMessages.RefreshSchedule_15, new String[] { participant.getName(), getRefreshIntervalAsString() }), participant.getResources(), new RefreshUserNotificationPolicy(getParticipant())); 
 			job.setUser(false);
 		} else if(job.getState() != Job.NONE){
 			stopJob();
@@ -146,7 +146,7 @@ public class SubscriberRefreshSchedule {
 
 	public void dispose() {
 		stopJob();
-		RefreshSubscriberJob.removeRefreshListener(refreshSubscriberListener);
+		RefreshParticipantJob.removeRefreshListener(refreshSubscriberListener);
 	}
 	
 	public void saveState(IMemento memento) {

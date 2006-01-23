@@ -102,7 +102,8 @@ public class ResourceMappingSynchronizeParticipant extends
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#run(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void run(IWorkbenchPart part) {
-		// TODO Auto-generated method stub
+		// TODO
+		// getContext().refresh(getContext().getScope().getMappings(), monitor);
 	}
 
 	/* (non-Javadoc)

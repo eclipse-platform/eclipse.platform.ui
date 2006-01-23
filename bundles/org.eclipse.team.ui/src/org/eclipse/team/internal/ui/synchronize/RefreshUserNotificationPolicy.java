@@ -57,7 +57,7 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 	 */
 	public ActionFactory.IWorkbenchAction refreshDone(final IRefreshEvent event) {
 		// Ensure that this event was generated for this participant
-		if (event.getSubscriber() != participant.getSubscriberSyncInfoCollector().getSubscriber()) return null;
+		if (event.getParticipant() != participant) return null;
 		// If the event is for a cancelled operation, there's nothing to do
 		int severity = event.getStatus().getSeverity();
 		if(severity == IStatus.CANCEL || severity == IStatus.ERROR) return null;

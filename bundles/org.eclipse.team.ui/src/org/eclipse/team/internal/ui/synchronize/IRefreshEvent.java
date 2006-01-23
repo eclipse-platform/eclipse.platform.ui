@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 /**
  * An event describing the lifecycle of a {@link Subscriber#refresh(IResource[], int, IProgressMonitor)} operation.
@@ -60,11 +61,11 @@ public interface IRefreshEvent {
 	public int getRefreshType();
 	
 	/**
-	 * The subscriber that was refreshed.
+	 * The participant that was refreshed.
 	 * 
-	 * @return the subscriber that was refreshed.
+	 * @return the participant that was refreshed.
 	 */
-	public Subscriber getSubscriber();
+	public ISynchronizeParticipant getParticipant();
 	
 	/**
 	 * The changes found during the refresh or an empty list if no changes were found.

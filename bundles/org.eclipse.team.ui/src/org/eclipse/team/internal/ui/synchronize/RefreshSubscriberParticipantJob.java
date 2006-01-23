@@ -1,0 +1,95 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.team.internal.ui.synchronize;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoTree;
+import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+
+public class RefreshSubscriberParticipantJob extends RefreshParticipantJob {
+
+	public RefreshSubscriberParticipantJob(SubscriberParticipant participant, String jobName, String taskName, IResource[] resources, IRefreshSubscriberListener listener) {
+		super(participant, jobName, taskName, resources, listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.synchronize.RefreshSubscriberJob#getSubscriber()
+	 */
+	protected Subscriber getSubscriber() {
+		return ((SubscriberParticipant)getParticipant()).getSubscriber();
+	}
+	
+	private SubscriberSyncInfoCollector getCollector() {
+		return ((SubscriberParticipant)getParticipant()).getSubscriberSyncInfoCollector();
+	}
+	
+	protected int getChangeCount() {
+		int numChanges = 0;
+		SubscriberSyncInfoCollector collector = getCollector();
+		IResource[] resources = getResources();
+		if (collector != null) {
+			SyncInfoTree set = collector.getSyncInfoSet();
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				SyncInfo[] infos = set.getSyncInfos(resource, IResource.DEPTH_INFINITE);
+				if(infos != null && infos.length > 0) {
+					numChanges += infos.length;
+				}
+			}
+		}
+		return numChanges;
+	}
+	
+	protected RefreshChangeListener getChangeListener() {
+		return new RefreshChangeListener(getCollector());
+	}
+	
+	protected void handleProgressGroupSet(IProgressMonitor group) {
+		getCollector().setProgressGroup(group, 20);
+	}
+	
+	/**
+	 * If a collector is available then run the refresh and the background event processing 
+	 * within the same progess group.
+	 */
+	public boolean shouldRun() {
+		// Ensure that any progress shown as a result of this refresh occurs hidden in a progress group.
+		return getSubscriber() != null;
+	}
+	
+	public boolean belongsTo(Object family) {	
+		if(family instanceof RefreshSubscriberParticipantJob) {
+			return ((RefreshSubscriberParticipantJob)family).getSubscriber() == getSubscriber();
+		}
+		return super.belongsTo(family);
+	}
+	
+	protected RefreshChangeListener doRefresh(IProgressMonitor monitor) throws TeamException {
+		// Set-up change listener so that we can determine the changes found
+		// during this refresh.		
+		RefreshChangeListener changeListener = getChangeListener();
+		Subscriber subscriber = getSubscriber();
+		if (subscriber != null) {
+			try {
+				subscriber.addListener(changeListener);
+				subscriber.refresh(getResources(), IResource.DEPTH_INFINITE, monitor);
+			} finally {
+				subscriber.removeListener(changeListener);
+			}
+		}
+		return changeListener;
+	}
+}
