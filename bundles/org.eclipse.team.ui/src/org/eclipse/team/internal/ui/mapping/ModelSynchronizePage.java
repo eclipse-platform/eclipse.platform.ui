@@ -64,7 +64,8 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 	protected void updateMode(int mode) {
 		if (isThreeWay()) {
 			CommonViewerAdvisor advisor = (CommonViewerAdvisor)getConfiguration().getProperty(SynchronizePageConfiguration.P_ADVISOR);
-			advisor.setExtentionProperty(ISynchronizePageConfiguration.P_MODE, mode);
+			if (advisor != null)
+				advisor.setExtentionProperty(ISynchronizePageConfiguration.P_MODE, mode);
 		}
 	}
 
