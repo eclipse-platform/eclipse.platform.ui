@@ -159,5 +159,12 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 	public boolean hasCompareInput(ISynchronizationContext context, Object object) {
 		return asCompareInput(context, object) != null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.ICompareAdapter#countFor(org.eclipse.team.core.mapping.ISynchronizationContext, int, int)
+	 */
+	public long countFor(ISynchronizationContext context, int state, int mask) {
+		return context.getDiffTree().countFor(state, mask);
+	}
 
 }

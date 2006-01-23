@@ -13,6 +13,7 @@ package org.eclipse.team.ui.mapping;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 
 /**
@@ -68,5 +69,24 @@ public interface ICompareAdapter {
 	 *         in-sync or otherwise cannot be compared.
 	 */
 	ICompareInput asCompareInput(ISynchronizationContext context, Object o);
+	
+	/**
+	 * Return the number of out-of-sync elements in the given context whose synchronization
+	 * state matches the given mask. A mask of 0 assumes a direct match of the given state.
+	 * This method is used to determine if there are changes of interest in the given context.
+	 * Implementations can obtain the count from the diff tree of the context using
+	 * {@link IDiffTree#countFor(int, int)} or perform the calculation themselves.
+	 * <p>
+	 * For example, this will return the number of outgoing changes in the set:
+	 * <pre>
+	 *  long outgoing =  countFor(context, IThreeWayDiff.OUTGOING, IThreeWayDiff.DIRECTION_MASK);
+	 * </pre>
+	 * </p>
+	 * @param contxt the synchronization context
+	 * @param state the sync state
+	 * @param mask the sync state mask
+	 * @return the number of matching resources in the set.
+	 */
+	public long countFor(ISynchronizationContext context, int state, int mask);
 
 }
