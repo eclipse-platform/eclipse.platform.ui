@@ -95,6 +95,13 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
                 site.supportsState(IStackPresentationSite.STATE_MINIMIZED), 
                 site.supportsState(IStackPresentationSite.STATE_MAXIMIZED));
 
+        final IPreferenceStore store = PlatformUI.getPreferenceStore();
+        final int minimumCharacters = store
+                .getInt(IWorkbenchPreferenceConstants.VIEW_MINIMUM_CHARACTERS);
+        if (minimumCharacters >= 0) {
+            folder.setMinimumCharacters(minimumCharacters);
+        }
+        
         PresentablePartFolder partFolder = new PresentablePartFolder(folder);
         
         folder.setUnselectedCloseVisible(false);

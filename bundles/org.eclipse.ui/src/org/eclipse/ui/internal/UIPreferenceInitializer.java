@@ -91,12 +91,18 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.put(IWorkbenchPreferenceConstants.CURRENT_THEME_ID,
 				IThemeManager.DEFAULT_THEME);
 		
-		//The default character width is undefined (i.e., -1)
+		//The default minimum character width for editor tabs is undefined (i.e., -1)
 		node
 				.putInt(
 						IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS,
 						-1);
 
+		//The default minimum character width for view tabs is 1
+		node
+				.putInt(
+						IWorkbenchPreferenceConstants.VIEW_MINIMUM_CHARACTERS,
+						1);
+		
         // Default for closing editors on exit.
         node.putBoolean(IWorkbenchPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);
         

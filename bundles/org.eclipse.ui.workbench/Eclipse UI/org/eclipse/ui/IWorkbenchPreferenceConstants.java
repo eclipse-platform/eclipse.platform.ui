@@ -324,6 +324,18 @@ public interface IWorkbenchPreferenceConstants {
      */
     public static final String EDITOR_MINIMUM_CHARACTERS = "EDITOR_MINIMUM_CHARACTERS"; //$NON-NLS-1$
 
+    /**
+     * <p>
+     * Workbench preference identifier for the minimum width of view tabs. 
+     * </p>
+     * <p>
+     * The default value for this preference is <code>1</code>.
+     * </p>
+     * 
+     * @since 3.2
+     */
+    public static final String VIEW_MINIMUM_CHARACTERS = "VIEW_MINIMUM_CHARACTERS"; //$NON-NLS-1$
+    
 	/**
 	 * Stores whether or not system jobs are being shown.
      * 
