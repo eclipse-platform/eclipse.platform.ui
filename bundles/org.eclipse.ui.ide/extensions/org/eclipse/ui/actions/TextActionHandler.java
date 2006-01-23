@@ -19,6 +19,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
@@ -141,9 +142,22 @@ public class TextActionHandler {
 
         public void runWithEvent(Event event) {
             if (activeTextControl != null && !activeTextControl.isDisposed()) {
-                activeTextControl.clearSelection();
-                return;
-            }
+				String text = activeTextControl.getText();
+				Point selection = activeTextControl.getSelection();
+				if (selection.y == selection.x) {
+					++selection.y;
+				}
+				if (selection.y > text.length()) {
+					return;
+				}
+				StringBuffer buf = new StringBuffer(text.substring(0,
+						selection.x));
+				buf.append(text.substring(selection.y));
+				activeTextControl.setText(buf.toString());
+				activeTextControl.setSelection(selection.x, selection.x);
+				updateActionsEnableState();
+				return;
+			}
             if (deleteAction != null) {
                 deleteAction.runWithEvent(event);
                 return;
@@ -180,6 +194,7 @@ public class TextActionHandler {
         public void runWithEvent(Event event) {
             if (activeTextControl != null && !activeTextControl.isDisposed()) {
                 activeTextControl.cut();
+                updateActionsEnableState();
                 return;
             }
             if (cutAction != null) {
@@ -216,6 +231,7 @@ public class TextActionHandler {
         public void runWithEvent(Event event) {
             if (activeTextControl != null && !activeTextControl.isDisposed()) {
                 activeTextControl.copy();
+                updateActionsEnableState();
                 return;
             }
             if (copyAction != null) {
@@ -252,6 +268,7 @@ public class TextActionHandler {
         public void runWithEvent(Event event) {
             if (activeTextControl != null && !activeTextControl.isDisposed()) {
                 activeTextControl.paste();
+                updateActionsEnableState();
                 return;
             }
             if (pasteAction != null) {
@@ -288,6 +305,7 @@ public class TextActionHandler {
         public void runWithEvent(Event event) {
             if (activeTextControl != null && !activeTextControl.isDisposed()) {
                 activeTextControl.selectAll();
+                updateActionsEnableState();
                 return;
             }
             if (selectAllAction != null) {
