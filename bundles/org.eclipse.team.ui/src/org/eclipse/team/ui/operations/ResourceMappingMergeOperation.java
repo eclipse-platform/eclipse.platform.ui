@@ -200,7 +200,11 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 				ResourceMappingSynchronizeParticipant participant = new ResourceMappingSynchronizeParticipant(context, title);
 				if (isPreviewInDialog()) {
 					CompareConfiguration cc = new CompareConfiguration();
-					ParticipantPageSaveablePart input = new ParticipantPageSaveablePart(getShell(), cc, participant.createPageConfiguration(), participant);
+					ISynchronizePageConfiguration pageConfiguration = participant.createPageConfiguration();
+					// Restrict preview page to only support incomign and conflict modes
+					pageConfiguration.setSupportedModes(ISynchronizePageConfiguration.INCOMING_MODE | ISynchronizePageConfiguration.CONFLICTING_MODE);
+					pageConfiguration.setMode(ISynchronizePageConfiguration.INCOMING_MODE);
+					ParticipantPageSaveablePart input = new ParticipantPageSaveablePart(getShell(), cc, pageConfiguration, participant);
 					ParticipantPageDialog dialog = new ParticipantPageDialog(getShell(), input, participant) {
 						private Button doneButton;
 						private Button replaceButton;
