@@ -15,6 +15,9 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.swt.widgets.Control;
 
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+
 /**
  * Control which is capable of displaying parts of a refactoring history.
  * <p>
@@ -35,6 +38,30 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.2
  */
 public interface IRefactoringHistoryControl {
+
+	/**
+	 * Registers the specified check state listener with this control.
+	 * <p>
+	 * If the listener is already registered with the control, or the control
+	 * has no checkable viewer or has not yet been created, nothing happens.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            the listener to register
+	 */
+	public void addCheckStateListener(ICheckStateListener listener);
+
+	/**
+	 * Registers the specified selection changed listener with this control.
+	 * <p>
+	 * If the listener is already registered with the control or has not yet
+	 * been created, nothing happens.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            the listener to register
+	 */
+	public void addSelectionChangedListener(ISelectionChangedListener listener);
 
 	/**
 	 * Creates the refactoring history control.
@@ -77,6 +104,28 @@ public interface IRefactoringHistoryControl {
 	 * @return the selected refactoring descriptors, or an empty array.
 	 */
 	public RefactoringDescriptorProxy[] getSelectedDescriptors();
+
+	/**
+	 * Unregisters the specified check state listener with this control.
+	 * <p>
+	 * If the listener is not registered with this control, nothing happens.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            the listener to unregister
+	 */
+	public void removeCheckStateListener(ICheckStateListener listener);
+
+	/**
+	 * Unregisters the specified selection changed listener with this control.
+	 * <p>
+	 * If the listener is not registered with this control, nothing happens.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            the listener to unregister
+	 */
+	public void removeSelectionChangedListener(ISelectionChangedListener listener);
 
 	/**
 	 * Sets the checked refactoring descriptors.

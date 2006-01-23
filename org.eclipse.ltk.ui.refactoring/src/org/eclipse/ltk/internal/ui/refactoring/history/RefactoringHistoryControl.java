@@ -311,6 +311,26 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public final void addCheckStateListener(final ICheckStateListener listener) {
+		Assert.isNotNull(listener);
+		if (fHistoryViewer instanceof RefactoringHistoryTreeViewer) {
+			final RefactoringHistoryTreeViewer viewer= (RefactoringHistoryTreeViewer) fHistoryViewer;
+			viewer.addCheckStateListener(listener);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final void addSelectionChangedListener(final ISelectionChangedListener listener) {
+		Assert.isNotNull(listener);
+		if (fHistoryViewer != null)
+			fHistoryViewer.addSelectionChangedListener(listener);
+	}
+
+	/**
 	 * Creates the button bar at the right of the component.
 	 * 
 	 * @param parent
@@ -389,7 +409,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		};
 		fCommentPane.setText(fControlConfiguration.getCommentCaption());
 		fCommentPane.setEnabled(false);
-		fSplitterControl.setWeights(new int[] { 80, 20});
+		fSplitterControl.setWeights(new int[] { 80, 20 });
 
 		Dialog.applyDialogFont(this);
 	}
@@ -482,7 +502,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		String text= null;
 		final IProject project= fControlConfiguration.getProject();
 		if (project != null)
-			text= Messages.format(fControlConfiguration.getProjectPattern(), new String[] { project.getName()});
+			text= Messages.format(fControlConfiguration.getProjectPattern(), new String[] { project.getName() });
 		else
 			text= fControlConfiguration.getWorkspaceCaption();
 		return text;
@@ -510,7 +530,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 				if (node instanceof RefactoringHistoryEntry) {
 					final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) node;
 					set.add(entry.getDescriptor());
-				}
+		}
 			}
 		}
 		return (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]);
@@ -521,7 +541,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	protected void handleCheckStateChanged() {
 		if (fControlConfiguration.isCheckableViewer())
-			fHistoryPane.setText(NLS.bind(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { getHistoryPaneText(), String.valueOf(getCheckedDescriptors().length), String.valueOf(RefactoringHistoryControl.this.getInput().getDescriptors().length)}));
+			fHistoryPane.setText(NLS.bind(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { getHistoryPaneText(), String.valueOf(getCheckedDescriptors().length), String.valueOf(RefactoringHistoryControl.this.getInput().getDescriptors().length) }));
 		else
 			fHistoryPane.setText(getHistoryPaneText());
 	}
@@ -554,6 +574,27 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		}
 		fCommentPane.setInput(null);
 		fCommentPane.setText(fControlConfiguration.getCommentCaption());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final void removeCheckStateListener(final ICheckStateListener listener) {
+		Assert.isNotNull(listener);
+		Assert.isNotNull(listener);
+		if (fHistoryViewer instanceof RefactoringHistoryTreeViewer) {
+			final RefactoringHistoryTreeViewer viewer= (RefactoringHistoryTreeViewer) fHistoryViewer;
+			viewer.removeCheckStateListener(listener);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final void removeSelectionChangedListener(final ISelectionChangedListener listener) {
+		Assert.isNotNull(listener);
+		if (fHistoryViewer != null)
+			fHistoryViewer.removeSelectionChangedListener(listener);
 	}
 
 	/**
