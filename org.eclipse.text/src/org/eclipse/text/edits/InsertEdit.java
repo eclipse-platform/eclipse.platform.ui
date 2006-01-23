@@ -61,7 +61,7 @@ public final class InsertEdit extends TextEdit {
 		return new InsertEdit(this);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see TextEdit#accept0
 	 */
 	protected void accept0(TextEditVisitor visitor) {
@@ -71,7 +71,7 @@ public final class InsertEdit extends TextEdit {
 		}
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#performDocumentUpdating
 	 */
 	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {

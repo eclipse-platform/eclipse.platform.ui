@@ -170,7 +170,7 @@ public final class CopySourceEdit extends TextEdit {
 		return new CopySourceEdit(this);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see TextEdit#accept0
 	 */
 	protected void accept0(TextEditVisitor visitor) {

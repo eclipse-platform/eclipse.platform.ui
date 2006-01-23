@@ -47,7 +47,7 @@ public final class DeleteEdit extends TextEdit {
 		return new DeleteEdit(this);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see TextEdit#accept0
 	 */
 	protected void accept0(TextEditVisitor visitor) {

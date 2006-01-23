@@ -39,7 +39,7 @@ public class HippieCompletionTest extends TestCase {
 		super(name);
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {

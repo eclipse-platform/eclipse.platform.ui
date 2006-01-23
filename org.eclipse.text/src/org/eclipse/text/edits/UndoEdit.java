@@ -37,14 +37,14 @@ public final class UndoEdit extends TextEdit {
 		super(other);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.text.edits.TextEdit#internalAdd(org.eclipse.text.edits.TextEdit)
 	 */
 	/* package */ void internalAdd(TextEdit child) throws MalformedTreeException {
 		throw new MalformedTreeException(null, this, TextEditMessages.getString("UndoEdit.no_children")); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.text.edits.MultiTextEdit#aboutToBeAdded(org.eclipse.text.edits.TextEdit)
 	 */
 	/* package */ void aboutToBeAdded(TextEdit parent) {
@@ -59,14 +59,14 @@ public final class UndoEdit extends TextEdit {
 		processor.checkIntegrityUndo();
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.text.edits.TextEdit#doCopy()
 	 */
 	protected TextEdit doCopy() {
 		return new UndoEdit(this);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see TextEdit#accept0
 	 */
 	protected void accept0(TextEditVisitor visitor) {
@@ -76,7 +76,7 @@ public final class UndoEdit extends TextEdit {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see TextEdit#performDocumentUpdating
 	 */
 	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {

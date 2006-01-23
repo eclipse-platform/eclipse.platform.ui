@@ -44,7 +44,7 @@ public final class RangeDifferencer {
 
 	private static final RangeDifference[] EMPTY_RESULT= new RangeDifference[0];
 
-	/* (non Javadoc)
+	/*
 	 * Non instantiateable!
 	 */
 	private RangeDifferencer() {

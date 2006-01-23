@@ -114,7 +114,7 @@ public final class CopyTargetEdit extends TextEdit {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see TextEdit#accept0
 	 */
 	protected void accept0(TextEditVisitor visitor) {
@@ -124,14 +124,14 @@ public final class CopyTargetEdit extends TextEdit {
 		}
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#traverseConsistencyCheck
 	 */
 	/* package */ int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
 		return super.traverseConsistencyCheck(processor, document, sourceEdits) + 1;
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#performConsistencyCheck
 	 */
 	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {

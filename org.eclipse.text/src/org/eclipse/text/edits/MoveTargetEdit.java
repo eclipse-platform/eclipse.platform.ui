@@ -114,7 +114,7 @@ public final class MoveTargetEdit extends TextEdit {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see TextEdit#accept0
 	 */
 	protected void accept0(TextEditVisitor visitor) {
@@ -171,7 +171,7 @@ public final class MoveTargetEdit extends TextEdit {
 
 	//---- region updating --------------------------------------------------------------
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.text.edits.TextEdit#traversePassThree
 	 */
 	/* package */ int traverseRegionUpdating(TextEditProcessor processor, IDocument document, int accumulatedDelta, boolean delete) {
