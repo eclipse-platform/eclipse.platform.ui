@@ -35,8 +35,8 @@ function findHelpTop() {
 function executeCommand(command)
 {
 	liveAction(
-		"org.eclipse.ui.workbench",
-		"org.eclipse.ui.internal.help.ExecuteCommandAction",
+		"org.eclipse.help.ui",
+		"org.eclipse.help.ui.internal.ExecuteCommandAction",
 		command);
 }
 
