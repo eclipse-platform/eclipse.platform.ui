@@ -18,6 +18,7 @@ import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.ICompositeOperation;
 import org.eclipse.core.commands.operations.IOperationApprover2;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IOperationHistory;
@@ -626,4 +627,33 @@ public class OperationsAPITest extends TestCase {
 			}
 		}
 	}
+	
+	public void testReplaceContext() throws ExecutionException {
+		// clear out history which will also reset operation execution counts
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
+		TriggeredOperations batch = new TriggeredOperations(op1, history);
+		history.openOperation(batch, IOperationHistory.EXECUTE);
+		op1.execute(null, null);
+		op2.execute(null, null);
+		history.add(op2);
+		history.execute(op3, null, null);
+		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
+		assertTrue("no operations should be in history yet", op == null);
+		history.closeOperation(true, true, IOperationHistory.EXECUTE);
+		op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
+		assertTrue("Operation should be batching", op == batch);
+		IUndoContext contextD = new ObjectUndoContext("D");
+		batch.replaceContext(contextC, contextD);
+		assertFalse("Operation should not have context", batch.hasContext(contextC));
+		assertFalse("Operation should not have context", op1.hasContext(contextC));
+		assertFalse("Operation should not have context", op2.hasContext(contextC));
+		assertFalse("Operation should not have context", op3.hasContext(contextC));
+		batch.replaceContext(contextD, contextC);
+		assertTrue("Operation should have context", batch.hasContext(contextC));
+		assertFalse("Operation should not have context", op1.hasContext(contextC));
+		assertTrue("Operation should have context", op2.hasContext(contextC));
+		assertTrue("Operation should have context", op3.hasContext(contextC));
+	
+	}
+
 }
