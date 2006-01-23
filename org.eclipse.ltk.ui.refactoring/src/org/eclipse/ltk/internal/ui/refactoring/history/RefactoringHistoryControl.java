@@ -53,8 +53,10 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -99,7 +101,26 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 					updateCheckState(event.getElement(), event.getChecked());
 					handleCheckStateChanged();
 				}
+			});
+			addTreeListener(new ITreeViewerListener() {
 
+				/**
+				 * {@inheritDoc}
+				 */
+				public final void treeCollapsed(final TreeExpansionEvent event) {
+					// Do nothing
+				}
+
+				/**
+				 * {@inheritDoc}
+				 */
+				public final void treeExpanded(final TreeExpansionEvent event) {
+					final Object element= event.getElement();
+					if (getChecked(element)) {
+						setSubTreeGrayed(element, false);
+						setSubtreeChecked(element, true);
+					}
+				}
 			});
 		}
 
@@ -499,9 +520,10 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 * Handles the check state changed event.
 	 */
 	protected void handleCheckStateChanged() {
-		final RefactoringDescriptorProxy[] proxies= getCheckedDescriptors();
-		final RefactoringDescriptorProxy[] total= RefactoringHistoryControl.this.getInput().getDescriptors();
-		fHistoryPane.setText(NLS.bind(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { getHistoryPaneText(), String.valueOf(proxies.length), String.valueOf(total.length)}));
+		if (fControlConfiguration.isCheckableViewer())
+			fHistoryPane.setText(NLS.bind(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { getHistoryPaneText(), String.valueOf(getCheckedDescriptors().length), String.valueOf(RefactoringHistoryControl.this.getInput().getDescriptors().length)}));
+		else
+			fHistoryPane.setText(getHistoryPaneText());
 	}
 
 	/**

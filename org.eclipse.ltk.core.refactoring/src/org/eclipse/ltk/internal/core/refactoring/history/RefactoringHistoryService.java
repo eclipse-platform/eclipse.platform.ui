@@ -956,8 +956,8 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			final RefactoringDescriptor[] descriptors= descriptor.getRefactorings();
 			if (flags > RefactoringDescriptor.NONE) {
 				for (int index= 0; index < descriptors.length; index++) {
-					final int filter= descriptors[index].getFlags();
-					if ((filter | flags) == filter)
+					final int current= descriptors[index].getFlags();
+					if ((current | flags) == current)
 						list.add(descriptors[index]);
 				}
 			} else
@@ -1073,10 +1073,10 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * {@inheritDoc}
 	 */
-	public void writeRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final OutputStream stream, final int filter, IProgressMonitor monitor) throws CoreException {
+	public void writeRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final OutputStream stream, final int flags, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(proxies);
 		Assert.isNotNull(stream);
-		Assert.isTrue(filter >= RefactoringDescriptor.NONE);
+		Assert.isTrue(flags >= RefactoringDescriptor.NONE);
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		try {
@@ -1086,8 +1086,8 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			for (int index= 0; index < proxies.length; index++) {
 				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 100));
 				if (descriptor != null) {
-					final int flags= descriptor.getFlags();
-					if ((flags | filter) == flags)
+					final int current= descriptor.getFlags();
+					if ((current | flags) == current)
 						list.add(descriptor);
 				}
 			}
