@@ -459,8 +459,8 @@ final class MenuPersistence extends RegistryPersistence {
 					ATTRIBUTE_IMAGE_STYLE);
 
 			// Read the position and the relativeTo attributes.
-			final SOrder[] orderings = readOrderingsFromRegistry(
-					locationElement, id, warningsToLog);
+			final SOrder ordering = readOrderingFromRegistry(locationElement,
+					id, warningsToLog);
 
 			// Read the menu location information.
 			final LocationElement menuLocation = readMenuLocationFromRegistry(
@@ -469,7 +469,7 @@ final class MenuPersistence extends RegistryPersistence {
 				continue;
 			}
 
-			final SLocation location = new SLocation(menuLocation, orderings,
+			final SLocation location = new SLocation(menuLocation, ordering,
 					mnemonicChar, imageStyle);
 			locations.add(location);
 		}
@@ -595,68 +595,70 @@ final class MenuPersistence extends RegistryPersistence {
 	 * @param warningsToLog
 	 *            The collection of warnings to log; must not be
 	 *            <code>null</code>.
-	 * @return The ordering constraints for this location element; may be
+	 * @return The ordering constraint for this location element; may be
 	 *         <code>null</code> if none.
 	 */
-	private static final SOrder[] readOrderingsFromRegistry(
+	private static final SOrder readOrderingFromRegistry(
 			final IConfigurationElement parentElement, final String id,
 			final List warningsToLog) {
 		// Check to see if we have an order element.
 		final IConfigurationElement[] orderingElements = parentElement
 				.getChildren(ELEMENT_ORDER);
 		final int length = orderingElements.length;
-		final ArrayList orderings = new ArrayList(length);
-		for (int i = 0; i < length; i++) {
-			final IConfigurationElement orderingElement = orderingElements[i];
+		if (length < 1) {
+			return null;
+		} else if (length > 1) {
+			addWarning(warningsToLog,
+					"There can only be one ordering constraint", parentElement, //$NON-NLS-1$
+					id);
+		}
+		final IConfigurationElement orderingElement = orderingElements[0];
 
-			// Read the position attribute.
-			final String position = readRequired(orderingElement,
-					ATTRIBUTE_POSITION, warningsToLog,
-					"Order elements require a position element", id); //$NON-NLS-1$
-			final int positionInteger;
-			if (POSITION_AFTER.equals(position)) {
-				positionInteger = SOrder.POSITION_AFTER;
-			} else if (POSITION_BEFORE.equals(position)) {
-				positionInteger = SOrder.POSITION_BEFORE;
-			} else if (POSITION_START.equals(position)) {
-				positionInteger = SOrder.POSITION_START;
-			} else if (POSITION_END.equals(position)) {
-				positionInteger = SOrder.POSITION_END;
-			} else {
-				// The position was not understood.
-				addWarning(warningsToLog, "The position was not understood", //$NON-NLS-1$
-						parentElement, id, "position", position); //$NON-NLS-1$
-				return null;
-			}
-
-			// Read the relativeTo attribute.
-			String relativeTo = null;
-			if ((positionInteger == SOrder.POSITION_AFTER)
-					|| (positionInteger == SOrder.POSITION_BEFORE)) {
-				relativeTo = readRequired(
-						parentElement,
-						ATTRIBUTE_RELATIVE_TO,
-						warningsToLog,
-						"A relativeTo attribute is required is the position is 'after' or 'before'", //$NON-NLS-1$
-						id);
-			} else {
-				// There should be no relativeTo attribute.
-				final String value = parentElement
-						.getAttribute(ATTRIBUTE_RELATIVE_TO);
-				if (value != null) {
-					addWarning(warningsToLog,
-							"The position was not understood", parentElement, //$NON-NLS-1$
-							id, "position", position); //$NON-NLS-1$
-					return null;
-
-				}
-			}
-
-			final SOrder order = new SOrder(positionInteger, relativeTo);
-			orderings.add(order);
+		// Read the position attribute.
+		final String position = readRequired(orderingElement,
+				ATTRIBUTE_POSITION, warningsToLog,
+				"Order elements require a position element", id); //$NON-NLS-1$
+		final int positionInteger;
+		if (POSITION_AFTER.equals(position)) {
+			positionInteger = SOrder.POSITION_AFTER;
+		} else if (POSITION_BEFORE.equals(position)) {
+			positionInteger = SOrder.POSITION_BEFORE;
+		} else if (POSITION_START.equals(position)) {
+			positionInteger = SOrder.POSITION_START;
+		} else if (POSITION_END.equals(position)) {
+			positionInteger = SOrder.POSITION_END;
+		} else {
+			// The position was not understood.
+			addWarning(warningsToLog, "The position was not understood", //$NON-NLS-1$
+					parentElement, id, "position", position); //$NON-NLS-1$
+			return null;
 		}
 
-		return (SOrder[]) orderings.toArray(new SOrder[orderings.size()]);
+		// Read the relativeTo attribute.
+		String relativeTo = null;
+		if ((positionInteger == SOrder.POSITION_AFTER)
+				|| (positionInteger == SOrder.POSITION_BEFORE)) {
+			relativeTo = readRequired(
+					parentElement,
+					ATTRIBUTE_RELATIVE_TO,
+					warningsToLog,
+					"A relativeTo attribute is required is the position is 'after' or 'before'", //$NON-NLS-1$
+					id);
+		} else {
+			// There should be no relativeTo attribute.
+			final String value = parentElement
+					.getAttribute(ATTRIBUTE_RELATIVE_TO);
+			if (value != null) {
+				addWarning(warningsToLog,
+						"The position was not understood", parentElement, //$NON-NLS-1$
+						id, "position", position); //$NON-NLS-1$
+				return null;
+
+			}
+		}
+
+		final SOrder order = new SOrder(positionInteger, relativeTo);
+		return order;
 	}
 
 	/**

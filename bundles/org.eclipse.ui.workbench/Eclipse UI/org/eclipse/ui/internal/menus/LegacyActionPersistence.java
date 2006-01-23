@@ -52,7 +52,6 @@ import org.eclipse.jface.menus.SGroup;
 import org.eclipse.jface.menus.SItem;
 import org.eclipse.jface.menus.SLocation;
 import org.eclipse.jface.menus.SMenu;
-import org.eclipse.jface.menus.SOrder;
 import org.eclipse.jface.menus.SReference;
 import org.eclipse.jface.menus.SWidget;
 import org.eclipse.ui.PlatformUI;
@@ -154,8 +153,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		} else {
 			locationElement = locationInfo.append(leafElement);
 		}
-		return new SLocation(locationElement, (SOrder[]) null, mnemonic,
-				imageStyle);
+		return new SLocation(locationElement, null, mnemonic, imageStyle);
 	}
 
 	/**
