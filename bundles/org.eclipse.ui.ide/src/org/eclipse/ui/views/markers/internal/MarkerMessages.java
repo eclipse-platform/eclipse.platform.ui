@@ -200,8 +200,6 @@ public class MarkerMessages extends NLS{
 	public static String MarkerView_19;
 	public static String SortUtil_finding_first;
 	public static String SortUtil_partitioning;
-	public static String MnemonicAssigner_valid_mnemonics;
-	public static String MnemonicAssigner_missing_mnemonic_format;
 	public static String OpenMarker_errorTitle;
 	public static String PasteMarker_errorTitle;
 	public static String RemoveMarker_errorTitle;
