@@ -202,8 +202,10 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 					CompareConfiguration cc = new CompareConfiguration();
 					ISynchronizePageConfiguration pageConfiguration = participant.createPageConfiguration();
 					// Restrict preview page to only support incomign and conflict modes
-					pageConfiguration.setSupportedModes(ISynchronizePageConfiguration.INCOMING_MODE | ISynchronizePageConfiguration.CONFLICTING_MODE);
-					pageConfiguration.setMode(ISynchronizePageConfiguration.INCOMING_MODE);
+					if (pageConfiguration.getComparisonType() == ISynchronizePageConfiguration.THREE_WAY) {
+						pageConfiguration.setSupportedModes(ISynchronizePageConfiguration.INCOMING_MODE | ISynchronizePageConfiguration.CONFLICTING_MODE);
+						pageConfiguration.setMode(ISynchronizePageConfiguration.INCOMING_MODE);
+					}
 					ParticipantPageSaveablePart input = new ParticipantPageSaveablePart(getShell(), cc, pageConfiguration, participant);
 					ParticipantPageDialog dialog = new ParticipantPageDialog(getShell(), input, participant) {
 						private Button doneButton;
