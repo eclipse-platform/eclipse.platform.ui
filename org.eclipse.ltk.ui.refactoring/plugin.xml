@@ -46,6 +46,13 @@
             streamMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringHistoryMerger"/>
    </extension>
    <extension
+         point="org.eclipse.compare.contentMergeViewers">
+      <viewer
+            class="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorCompareViewerCreator"
+            extensions="refactoring_descriptor"
+            id="org.eclipse.ltk.ui.refactoring.descriptor.viewer"/>
+   </extension>
+   <extension
          point="org.eclipse.core.runtime.adapters">
       <factory
             adaptableType="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorCompareInput"

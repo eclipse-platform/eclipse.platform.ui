@@ -52,15 +52,15 @@ public final class RefactoringDescriptorCompareInput extends PlatformObject impl
 		 * {@inheritDoc}
 		 */
 		public String getType() {
-			return TYPE_REFACTORING;
+			return TYPE_REFACTORING_DESCRIPTOR;
 		}
 	}
 
 	/** Has the image already been registered? */
 	private static boolean fImageRegistered= false;
 
-	/** The refactoring type */
-	private static final String TYPE_REFACTORING= "refactoring"; //$NON-NLS-1$
+	/** The refactoring descriptor type */
+	private static final String TYPE_REFACTORING_DESCRIPTOR= "refactoring_descriptor"; //$NON-NLS-1$
 
 	/** The refactoring descriptor */
 	private final RefactoringDescriptorProxy fDescriptor;
@@ -73,14 +73,15 @@ public final class RefactoringDescriptorCompareInput extends PlatformObject impl
 	 * 
 	 * @param descriptor
 	 *            the refactoring descriptor
-	 * @param kind the differencer kind
+	 * @param kind
+	 *            the differencer kind
 	 */
 	public RefactoringDescriptorCompareInput(final RefactoringDescriptorProxy descriptor, final int kind) {
 		Assert.isNotNull(descriptor);
 		fDescriptor= descriptor;
 		fKind= kind;
 		if (!fImageRegistered) {
-			CompareUI.registerImageDescriptor(TYPE_REFACTORING, RefactoringPluginImages.DESC_OBJS_REFACTORING);
+			CompareUI.registerImageDescriptor(TYPE_REFACTORING_DESCRIPTOR, RefactoringPluginImages.DESC_OBJS_REFACTORING);
 			fImageRegistered= true;
 		}
 	}
@@ -119,7 +120,7 @@ public final class RefactoringDescriptorCompareInput extends PlatformObject impl
 	 * {@inheritDoc}
 	 */
 	public Image getImage() {
-		return CompareUI.getImage(TYPE_REFACTORING);
+		return CompareUI.getImage(TYPE_REFACTORING_DESCRIPTOR);
 	}
 
 	/**

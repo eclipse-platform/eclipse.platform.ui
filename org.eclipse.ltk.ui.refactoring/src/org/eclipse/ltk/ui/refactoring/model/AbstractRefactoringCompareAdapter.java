@@ -16,14 +16,7 @@ import org.eclipse.team.ui.mapping.AbstractCompareAdapter;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorCompareInput;
-import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorCompareViewer;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-
-import org.eclipse.jface.viewers.Viewer;
-
-import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 
 /**
@@ -53,15 +46,6 @@ public abstract class AbstractRefactoringCompareAdapter extends AbstractCompareA
 		if (element instanceof RefactoringDescriptorProxy)
 			return new RefactoringDescriptorCompareInput((RefactoringDescriptorProxy) element, getKind(context, (RefactoringDescriptorProxy) element));
 		return super.asCompareInput(context, element);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Viewer findContentViewer(final Composite parent, final Viewer viewer, final ICompareInput input, final CompareConfiguration configuration) {
-		if (input instanceof RefactoringDescriptorCompareInput)
-			return new RefactoringDescriptorCompareViewer(parent, SWT.NONE);
-		return super.findContentViewer(parent, viewer, input, configuration);
 	}
 
 	/**
