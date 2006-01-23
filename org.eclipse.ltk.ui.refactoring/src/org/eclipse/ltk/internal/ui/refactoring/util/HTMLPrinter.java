@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.util;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.net.URL;
 
 import org.eclipse.swt.SWT;
@@ -61,11 +59,6 @@ public final class HTMLPrinter {
 		insertPageProlog(buffer, buffer.length());
 	}
 
-	public static void addParagraph(StringBuffer buffer, Reader paragraphReader) {
-		if (paragraphReader != null)
-			addParagraph(buffer, read(paragraphReader));
-	}
-
 	public static void addParagraph(StringBuffer buffer, String paragraph) {
 		if (paragraph != null) {
 			buffer.append("<p>"); //$NON-NLS-1$
@@ -94,9 +87,9 @@ public final class HTMLPrinter {
 
 		buffer.append("<head>"); //$NON-NLS-1$
 
-		buffer.append("<LINK REL=\"stylesheet\" HREF= \""); //$NON-NLS-1$
+		buffer.append("<link rel=\"stylesheet\" href= \""); //$NON-NLS-1$
 		buffer.append(styleSheetURL);
-		buffer.append("\" CHARSET=\"ISO-8859-1\" TYPE=\"text/css\">"); //$NON-NLS-1$
+		buffer.append("\" charset=\"ISO-8859-1\" type=\"text/css\">"); //$NON-NLS-1$
 
 		buffer.append("</head>"); //$NON-NLS-1$
 	}
@@ -131,7 +124,7 @@ public final class HTMLPrinter {
 			StringBuffer pageProlog= new StringBuffer(60);
 			pageProlog.append("<html><body text=\"#000000\" bgcolor=\""); //$NON-NLS-1$
 			appendColor(pageProlog, bgRGB);
-			pageProlog.append("\"><font size=-1>"); //$NON-NLS-1$
+			pageProlog.append("\"><font face=\"Verdana\" size=-1>"); //$NON-NLS-1$
 			buffer.insert(position, pageProlog.toString());
 		}
 	}
@@ -149,7 +142,7 @@ public final class HTMLPrinter {
 
 			pageProlog.append("<body text=\"#000000\" bgcolor=\""); //$NON-NLS-1$
 			appendColor(pageProlog, bgRGB);
-			pageProlog.append("\"><font size=-1>"); //$NON-NLS-1$
+			pageProlog.append("\"><font face=\"Verdana\" size=-1>"); //$NON-NLS-1$
 
 			buffer.insert(position, pageProlog.toString());
 		}
@@ -176,24 +169,6 @@ public final class HTMLPrinter {
 			return;
 
 		buffer.insert(index + 5, styleBuf);
-	}
-
-	public static String read(Reader rd) {
-
-		StringBuffer buffer= new StringBuffer();
-		char[] readBuffer= new char[2048];
-
-		try {
-			int n= rd.read(readBuffer);
-			while (n > 0) {
-				buffer.append(readBuffer, 0, n);
-				n= rd.read(readBuffer);
-			}
-			return buffer.toString();
-		} catch (IOException x) {
-		}
-
-		return null;
 	}
 
 	private static String replace(String text, char c, String s) {
