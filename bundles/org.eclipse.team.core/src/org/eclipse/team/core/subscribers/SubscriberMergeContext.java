@@ -64,7 +64,8 @@ public abstract class SubscriberMergeContext extends MergeContext {
 		handler.start();
 		if (refresh)
 			subscriber.refresh(getScope().getTraversals(), monitor);
-		handler.waitUntilIdle(monitor);
+		else
+			handler.waitUntilIdle(monitor);
 	}
 	
 	/* (non-Javadoc)
@@ -73,6 +74,7 @@ public abstract class SubscriberMergeContext extends MergeContext {
 	public void refresh(ResourceTraversal[] traversals, int flags,
 			IProgressMonitor monitor) throws CoreException {
 		subscriber.refresh(traversals, monitor);
+		handler.waitUntilIdle(monitor);
 	}
 	
 	/* (non-Javadoc)
