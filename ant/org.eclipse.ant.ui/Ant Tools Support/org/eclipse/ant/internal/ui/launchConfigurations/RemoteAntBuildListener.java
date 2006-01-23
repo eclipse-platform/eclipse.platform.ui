@@ -62,7 +62,6 @@ public class RemoteAntBuildListener implements ILaunchesListener {
      */
     private ServerSocket fServerSocket;
     private Socket fSocket;
-    private int fPort= -1;
     private BufferedReader fBufferedReader;
     private IProcess fProcess;
     private String fProcessId;
@@ -126,7 +125,6 @@ public class RemoteAntBuildListener implements ILaunchesListener {
      * @param port The port number to create the server connection on
      */
     public synchronized void startListening(int eventPort){
-        fPort = eventPort;
         ServerConnection connection = new ServerConnection(eventPort);
         connection.start();
     }
