@@ -88,8 +88,9 @@ public interface IDataBindingContext {
 	 * @param modelUpdatable
 	 * @param bindSpec
 	 *            the bind spec, or null
+	 * @return The IBinding that manages this data flow
 	 */
-	public void bind(IUpdatable targetUpdatable, IUpdatable modelUpdatable,
+	public IBinding bind(IUpdatable targetUpdatable, IUpdatable modelUpdatable,
 			IBindSpec bindSpec) ;
 
 	/**
@@ -100,8 +101,9 @@ public interface IDataBindingContext {
 	 * @param modelDescription
 	 * @param bindSpec
 	 *            the bind spec, or null
+	 * @return The IBinding that manages this data flow
 	 */
-	public void bind(IUpdatable targetUpdatable, Object modelDescription,
+	public IBinding bind(IUpdatable targetUpdatable, Object modelDescription,
 			IBindSpec bindSpec);
 
 	/**
@@ -112,8 +114,9 @@ public interface IDataBindingContext {
 	 * @param modelUpdatable
 	 * @param bindSpec
 	 *            the bind spec, or null
+	 * @return The IBinding that manages this data flow
 	 */
-	public void bind(Object targetDescription, IUpdatable modelUpdatable,
+	public IBinding bind(Object targetDescription, IUpdatable modelUpdatable,
 			IBindSpec bindSpec) ;
 
 	/**
@@ -124,8 +127,9 @@ public interface IDataBindingContext {
 	 * @param modelDescription
 	 * @param bindSpec
 	 *            the bind spec, or null
+	 * @return The IBinding that manages this data flow
 	 */
-	public void bind(Object targetDescription, Object modelDescription,
+	public IBinding bind(Object targetDescription, Object modelDescription,
 			IBindSpec bindSpec) ;
 
 	/**
@@ -143,7 +147,7 @@ public interface IDataBindingContext {
 	 * interpreted by implementors of IUpdatableFactory, the data binding
 	 * framework does not impose any semantics on them.
 	 * 
-	 * @param description
+	 * @param nestedProperty
 	 * @return IUpdatable for the given description
 	 */
 	public IUpdatable createNestedUpdatable(NestedProperty nestedProperty);

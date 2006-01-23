@@ -15,8 +15,11 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.databinding.BindSpec;
+import org.eclipse.jface.databinding.BindingAdapter;
+import org.eclipse.jface.databinding.BindingEvent;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.DataBinding;
+import org.eclipse.jface.databinding.IBinding;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableFactory;
@@ -113,6 +116,37 @@ public class DatabindingContextTest extends TestCase {
 		assertEquals(o1, settableValue2.getValue());
 		settableValue2.setValue(o2);
 		assertEquals(o2, settableValue1.getValue());
+	}
+	
+	public void testBindingListeners() {
+		final int[] calls = new int[] {0, 0};
+		final int[] pipelinePositions = new int[] {0, 1, 2, 3, 4, 0, 2, 4, 1};
+		settableValue1.setValue(o1);
+		settableValue2.setValue(o2);
+		IBinding binding = dbc.bind(settableValue1, settableValue2, null);
+		binding.addBindingEventListener(new BindingAdapter() {
+			public String bindingEvent(BindingEvent e) {
+				assertEquals("Unexpected pipeline position", pipelinePositions[calls[0]], e.pipelinePosition);
+				calls[0]++;
+				return null;
+			}
+		});
+		binding.addBindingEventListener(new BindingAdapter() {
+			public String bindingEvent(BindingEvent e) {
+				calls[1]++;
+				return null;
+			}
+		});
+		assertEquals(o2, settableValue1.getValue());
+		assertEquals("Both binding events should be called the same number of times", calls[0], calls[1]);
+		settableValue1.setValue(o1);
+		assertEquals(o1, settableValue2.getValue());
+		assertEquals("Both binding events should be called the same number of times", calls[0], calls[1]);
+		settableValue2.setValue(o2);
+		assertEquals(o2, settableValue1.getValue());
+		assertEquals("Both binding events should be called the same number of times", calls[0], calls[1]);
+		assertEquals("binding events should be called at least once", true, calls[0] > 0);
+		assertEquals("should be 9 binding events", 9, calls[0]);
 	}
 	
 	public void testCreateNestedUpdatableWithArrays() {

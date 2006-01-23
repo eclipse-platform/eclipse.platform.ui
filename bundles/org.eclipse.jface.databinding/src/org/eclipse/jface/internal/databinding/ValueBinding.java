@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding;
 
+import org.eclipse.jface.databinding.BindingEvent;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IBindSpec;
@@ -49,7 +50,6 @@ public class ValueBinding extends Binding {
 		if (converter == null) {
 			throw new BindingException("Missing converter from " + target.getValueType() + " to " + model.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		// FIXME: Waiting for M4 to ship to commit; also need to write a test case
 		if (!converter.getModelType().isAssignableFrom(model.getValueType())) {
 			throw new BindingException(
 					"Converter does not apply to model type. Expected: " + model.getValueType() + ", actual: " + converter.getModelType()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -105,31 +105,43 @@ public class ValueBinding extends Binding {
 	 * This also does validation.
 	 */
 	public void updateModelFromTarget() {
-		Object value = target.getValue();
-		String validationError = doValidateTarget(value);
-		context.updateValidationError(targetChangeListener, validationError);
-		if (validationError == null) {
-			try {
-				updating = true;
-				model.setValue(converter.convertTargetToModel(value));
-			} catch (Exception ex) {
-				context.updateValidationError(targetChangeListener, BindingMessages
-						.getString("ValueBinding_ErrorWhileSettingValue")); //$NON-NLS-1$
-			} finally {
-				updating = false;
-			}
+		BindingEvent e = new BindingEvent();
+		e.copyType = BindingEvent.COPY_TO_MODEL;
+		e.originalValue = target.getValue();
+		e.pipelinePosition = BindingEvent.PIPELINE_AFTER_GET;
+		fireBindingEvent(e);
+		
+		String validationError = doValidate(e.originalValue);
+		if (validationError != null) {
+			context.updatePartialValidationError(targetChangeListener, validationError);
+			return;
+		}
+		e.pipelinePosition = BindingEvent.PIPELINE_AFTER_VALIDATE;
+		fireBindingEvent(e);
+		
+		try {
+			updating = true;
+			
+			e.convertedValue = converter.convertTargetToModel(e.originalValue);
+			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CONVERT;
+			fireBindingEvent(e);
+			
+			// FIXME: Need to add business validation
+			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_BUSINESS_VALIDATE;
+			fireBindingEvent(e);
+			
+			model.setValue(e.convertedValue);
+			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_SET;
+			fireBindingEvent(e);
+		} catch (Exception ex) {
+			context.updateValidationError(targetChangeListener, BindingMessages
+					.getString("ValueBinding_ErrorWhileSettingValue")); //$NON-NLS-1$
+		} finally {
+			updating = false;
 		}
 	}
 
-	/**
-	 * 
-	 */
-	public void validateTarget() {
-		Object value = target.getValue();
-		doValidateTarget(value);
-	}
-
-	private String doValidateTarget(Object value) {
+	private String doValidate(Object value) {
 		String validationError = validator.isValid(value);
 		context.updatePartialValidationError(targetChangeListener, null);
 		context.updateValidationError(targetChangeListener, validationError);
@@ -142,8 +154,23 @@ public class ValueBinding extends Binding {
 	public void updateTargetFromModel() {
 		try {
 			updating = true;
-			target.setValue(converter.convertModelToTarget(model.getValue()));
-			validateTarget();
+			BindingEvent e = new BindingEvent();
+			e.copyType = BindingEvent.COPY_TO_TARGET;
+			e.originalValue = model.getValue();
+			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_GET;
+			fireBindingEvent(e);
+			
+			e.convertedValue = converter.convertModelToTarget(e.originalValue);
+			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CONVERT;
+			fireBindingEvent(e);
+			
+			target.setValue(e.convertedValue);
+			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_SET;
+			fireBindingEvent(e);
+			
+			doValidate(target.getValue());
+			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_VALIDATE;
+			fireBindingEvent(e);
 		} finally {
 			updating = false;
 		}

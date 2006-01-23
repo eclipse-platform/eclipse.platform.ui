@@ -23,6 +23,7 @@ import org.eclipse.jface.databinding.BindSpec;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.IBindSpec;
 import org.eclipse.jface.databinding.IBindSupportFactory;
+import org.eclipse.jface.databinding.IBinding;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
@@ -327,7 +328,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 *      org.eclipse.jface.databinding.IUpdatable,
 	 *      org.eclipse.jface.databinding.IBindSpec)
 	 */
-	public void bind(IUpdatable targetUpdatable, IUpdatable modelUpdatable,
+	public IBinding bind(IUpdatable targetUpdatable, IUpdatable modelUpdatable,
 			IBindSpec bindSpec) {
 		Binding binding;
 		if (bindSpec == null) {
@@ -375,6 +376,7 @@ public class DataBindingContext implements IDataBindingContext {
 		// targetUpdatable.addChangeListener(binding);
 		// modelUpdatable.addChangeListener(binding);
 		binding.updateTargetFromModel();
+		return binding;
 	}
 
 	/*
@@ -384,9 +386,9 @@ public class DataBindingContext implements IDataBindingContext {
 	 *      org.eclipse.jface.databinding.IUpdatable,
 	 *      org.eclipse.jface.databinding.IBindSpec)
 	 */
-	public void bind(Object targetDescription, IUpdatable modelUpdatable,
+	public IBinding bind(Object targetDescription, IUpdatable modelUpdatable,
 			IBindSpec bindSpec) {
-		bind(createUpdatable(targetDescription), modelUpdatable, bindSpec);
+		return bind(createUpdatable(targetDescription), modelUpdatable, bindSpec);
 	}
 
 	/*
@@ -395,7 +397,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 * @see org.eclipse.jface.databinding.IDataBindingContext#bind(org.eclipse.jface.databinding.IUpdatable,
 	 *      java.lang.Object, org.eclipse.jface.databinding.IBindSpec)
 	 */
-	public void bind(IUpdatable targetUpdatable, Object modelDescription,
+	public IBinding bind(IUpdatable targetUpdatable, Object modelDescription,
 			IBindSpec bindSpec) {
 		if (bindSpec == null) {
 			bindSpec = new BindSpec(null, null);
@@ -408,7 +410,7 @@ public class DataBindingContext implements IDataBindingContext {
 					.getElementType();
 		}
 		fillBindSpecDefaults(bindSpec, fromType, null, modelDescription);
-		bind(targetUpdatable, createUpdatable(modelDescription), bindSpec);
+		return bind(targetUpdatable, createUpdatable(modelDescription), bindSpec);
 	}
 
 	protected void fillBindSpecDefaults(IBindSpec bindSpec, Class fromType,
@@ -463,9 +465,9 @@ public class DataBindingContext implements IDataBindingContext {
 	 * @see org.eclipse.jface.databinding.IDataBindingContext#bind(java.lang.Object,
 	 *      java.lang.Object, org.eclipse.jface.databinding.IBindSpec)
 	 */
-	public void bind(Object targetDescription, Object modelDescription,
+	public IBinding bind(Object targetDescription, Object modelDescription,
 			IBindSpec bindSpec) {
-		bind(createUpdatable(targetDescription), modelDescription, bindSpec);
+		return bind(createUpdatable(targetDescription), modelDescription, bindSpec);
 	}
 
 	/*
