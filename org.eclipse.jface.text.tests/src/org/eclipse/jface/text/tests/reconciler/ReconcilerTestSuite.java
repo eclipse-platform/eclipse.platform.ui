@@ -22,7 +22,7 @@ import junit.framework.TestSuite;
 public class ReconcilerTestSuite {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite org.eclipse.jface.text.tests.reconciler");
+		TestSuite suite= new TestSuite("Test Suite org.eclipse.jface.text.tests.reconciler");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(AbstractReconcilerTest.class);
 		//$JUnit-END$

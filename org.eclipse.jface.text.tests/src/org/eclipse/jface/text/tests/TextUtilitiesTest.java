@@ -211,7 +211,7 @@ public class TextUtilitiesTest extends TestCase {
 				if (Math.random() < 0.3) {
 //					System.err.println("check");	
 					check(reference, testee);
-//					System.err.println("length = " + reference.getLength());
+//					System.err.println("length= " + reference.getLength());
 				}
 			}
 			

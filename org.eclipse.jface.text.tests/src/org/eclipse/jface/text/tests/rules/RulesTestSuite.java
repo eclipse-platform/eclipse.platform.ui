@@ -22,7 +22,7 @@ import junit.framework.TestSuite;
 public class RulesTestSuite {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite org.eclipse.jface.text.tests.rules");
+		TestSuite suite= new TestSuite("Test Suite org.eclipse.jface.text.tests.rules");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(FastPartitionerTest.class);
 		suite.addTestSuite(DefaultPartitionerTest.class);
