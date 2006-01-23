@@ -11,8 +11,12 @@
 package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
 
@@ -22,13 +26,36 @@ public class RefreshResourceMappingParticipantJob extends RefreshParticipantJob 
 		super(participant, jobName, taskName, resources, listener);
 	}
 
-	protected RefreshChangeListener doRefresh(IProgressMonitor monitor) throws TeamException {
+	protected RefreshChangeListener doRefresh(IProgressMonitor monitor) throws CoreException {
+		// TODO Auto-generated method stub
+		ISynchronizationContext context = ((ResourceMappingSynchronizeParticipant)getParticipant()).getContext();
+		IDiffChangeListener listener = null;
+		try {
+			context.getDiffTree().addDiffChangeListener(listener);
+			context.refresh(getTraversals(), IResource.NONE, monitor);
+		} finally {
+			context.getDiffTree().removeDiffChangeListener(listener);
+		}
+		return null;
+	}
+
+	private ResourceTraversal[] getTraversals() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	protected int getChangeCount() {
-		// TODO Auto-generated method stub
+		ISynchronizationContext context = ((ResourceMappingSynchronizeParticipant)getParticipant()).getContext();
+		try {
+			context.getDiffTree().accept(new IDiffVisitor() {
+				public boolean visit(IDiffNode delta) throws CoreException {
+					// TODO Auto-generated method stub
+					return false;
+				}
+			}, getTraversals());
+		} catch (CoreException e) {
+			TeamUIPlugin.log(e);
+		}
 		return 0;
 	}
 

@@ -22,7 +22,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
@@ -333,7 +332,7 @@ public abstract class RefreshParticipantJob extends Job {
 						status = Status.CANCEL_STATUS;
 					}
 				}
-			} catch(TeamException e) {
+			} catch(CoreException e) {
 			    // Determine the status to be returned and the GOTO action
 			    status = e.getStatus();
 			    if (!isUser()) {
@@ -369,7 +368,7 @@ public abstract class RefreshParticipantJob extends Job {
 		}
 	}
 
-	protected abstract RefreshChangeListener doRefresh(IProgressMonitor monitor) throws TeamException;
+	protected abstract RefreshChangeListener doRefresh(IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Return the total number of changes covered by the resources
