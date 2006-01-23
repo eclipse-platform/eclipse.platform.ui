@@ -120,6 +120,8 @@ public class MergeOperation extends TeamOperation {
 					ModelProvider provider = providers[i];
 					if (!performMerge(provider, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN))) {
 						failedMerges.add(provider);
+						// If an auto-merge fails then do not attempt an auto-merge for any other model
+						break;
 					}
 				}
 				monitor.done();
