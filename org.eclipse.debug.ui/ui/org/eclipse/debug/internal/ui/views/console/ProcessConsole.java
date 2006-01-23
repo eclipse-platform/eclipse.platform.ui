@@ -561,6 +561,9 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             this.fStreamMonitor = monitor;
             this.fStream = stream;
             fStreamMonitor.addListener(this);
+            
+            //fix to bug 121454. Ensure that output to fast processes is processed.
+            streamAppended(null, monitor);
         }
 
         /*
