@@ -608,7 +608,7 @@ public abstract class TextEdit {
 	 * General template for implementation on each concrete TextEdit class:
 	 * <pre>
 	 * <code>
-	 * boolean visitChildren = visitor.visit(this);
+	 * boolean visitChildren= visitor.visit(this);
 	 * if (visitChildren) {
 	 *    acceptChildren(visitor);
 	 * }

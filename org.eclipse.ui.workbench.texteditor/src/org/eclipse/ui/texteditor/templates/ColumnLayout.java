@@ -41,7 +41,7 @@ final class ColumnLayout extends Layout {
 	 * 
 	 * @since 3.1
 	 */
-	private static int COLUMN_TRIM = "carbon".equals(SWT.getPlatform()) ? 24 : 3; //$NON-NLS-1$
+	private static int COLUMN_TRIM= "carbon".equals(SWT.getPlatform()) ? 24 : 3; //$NON-NLS-1$
 	
 	private List columns= new ArrayList();
 
@@ -195,7 +195,7 @@ final class ColumnLayout extends Layout {
         	// (in which case it is already subtracted above)
             ScrollBar vBar= table.getVerticalBar();
             if (!vBar.isVisible() || tableWidth <= 1) {
-            	Point vBarSize = vBar.getSize();
+            	Point vBarSize= vBar.getSize();
             	trim += vBarSize.x;
             }
         }

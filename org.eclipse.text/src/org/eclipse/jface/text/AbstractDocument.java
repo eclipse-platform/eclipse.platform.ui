@@ -1216,7 +1216,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 			Iterator e= changes.iterator();
 			while (e.hasNext()) {
-				RegisteredReplace replace = (RegisteredReplace) e.next();
+				RegisteredReplace replace= (RegisteredReplace) e.next();
 				replace.fReplace.perform(this, replace.fOwner);
 			}
 		}

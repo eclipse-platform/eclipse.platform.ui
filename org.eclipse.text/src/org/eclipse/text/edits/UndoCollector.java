@@ -76,7 +76,7 @@ import org.eclipse.jface.text.IDocumentListener;
 		else
 			fLastCurrentText= currentText;
 
-		String newText = event.getText();
+		String newText= event.getText();
 		undo.add(new ReplaceEdit(offset, newText != null ? newText.length() : 0, currentText));
 	}
 }

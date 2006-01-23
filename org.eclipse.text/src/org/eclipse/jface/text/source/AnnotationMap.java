@@ -42,7 +42,7 @@ class AnnotationMap implements IAnnotationMap {
      * @param capacity the capacity
      */
     public AnnotationMap(int capacity) {
-        fInternalMap = new HashMap(capacity);
+        fInternalMap= new HashMap(capacity);
     }
 
     /*

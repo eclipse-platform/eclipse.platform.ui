@@ -192,7 +192,7 @@ public final class CompoundEditExitStrategy {
 	}
 	
 	private void removeListeners(ITextViewer editor) {
-		ICommandService commandService = (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+		ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 		if (commandService != null)
 			commandService.removeExecutionListener(fEventListener);
 		

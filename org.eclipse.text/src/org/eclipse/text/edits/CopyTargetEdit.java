@@ -118,7 +118,7 @@ public final class CopyTargetEdit extends TextEdit {
 	 * @see TextEdit#accept0
 	 */
 	protected void accept0(TextEditVisitor visitor) {
-		boolean visitChildren = visitor.visit(this);
+		boolean visitChildren= visitor.visit(this);
 		if (visitChildren) {
 			acceptChildren(visitor);
 		}

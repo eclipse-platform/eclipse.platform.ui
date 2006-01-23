@@ -233,7 +233,7 @@ public class TemplateTranslator {
 			case IDENTIFIER:
 				switch (ch) {
 				case IDENTIFIER_END:
-					int offset = ((Integer) fOffsets.get(fOffsets.size() - 1)).intValue();
+					int offset= ((Integer) fOffsets.get(fOffsets.size() - 1)).intValue();
 					fLengths.add(new Integer(fBuffer.length() - offset));
 					fState= TEXT;
 					break;
