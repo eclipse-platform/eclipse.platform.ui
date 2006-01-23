@@ -48,8 +48,7 @@ public class CacheBaseContentsOperation extends CacheTreeContentsOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CacheTreeContentsOperation#isEnabledForDirection(int)
 	 */
 	protected boolean isEnabledForDirection(int direction) {
-		return direction == IThreeWayDiff.CONFLICTING || 
-		(includeOutgoing && direction == IThreeWayDiff.OUTGOING);
+		return true;
 	}
 
 	/* (non-Javadoc)

@@ -37,7 +37,7 @@ public class CacheRemoteContentsOperation extends CacheTreeContentsOperation {
 		IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
 		if (diff == null)
 			return null;
-		return diff.getBeforeState();
+		return diff.getAfterState();
 	}
 
 	/* (non-Javadoc)
