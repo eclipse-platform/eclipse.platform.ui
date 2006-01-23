@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.Status;
  * @since 3.1
  */
 public final class TriggeredOperations extends AbstractOperation implements
-		ICompositeOperation, IAdvancedUndoableOperation {
+		ICompositeOperation, IAdvancedUndoableOperation, IContextReplacingOperation {
 
 	private IUndoableOperation triggeringOperation;
 
@@ -373,6 +373,45 @@ public final class TriggeredOperations extends AbstractOperation implements
 			}
 		return Status.OK_STATUS;
 
+	}
+	
+	/**
+	 * Replace the undo context of the receiver with the provided replacement
+	 * undo context.  In the case of triggered operations, all contained operations
+	 * are checked and any occurrence of the original context is replaced with the
+	 * new undo context.
+	 * <p>
+	 * This message has no effect if the original undo context is not present in
+	 * the receiver.
+	 * 
+	 * @param original the undo context which is to be replaced
+	 * @param replacement the undo context which is replacing the original
+	 * 
+	 */
+	public void replaceContext(IUndoContext original, IUndoContext replacement) {
+		
+		// first check the triggering operation
+		if (triggeringOperation != null && triggeringOperation.hasContext(original)) {
+			if (triggeringOperation instanceof IContextReplacingOperation) {
+				((IContextReplacingOperation)triggeringOperation).replaceContext(original, replacement);
+			} else {
+				triggeringOperation.removeContext(original);
+				triggeringOperation.addContext(replacement);
+			}
+		}
+		// Now check all the children
+		for (int i = 0; i < children.size(); i++) {
+			IUndoableOperation child = (IUndoableOperation) children.get(i);
+			if (child.hasContext(original)) {
+				if (child instanceof IContextReplacingOperation) {
+					((IContextReplacingOperation)child).replaceContext(original, replacement);
+				} else {
+					child.removeContext(original);
+					child.addContext(replacement);
+				}
+			}
+		}		
+		recomputeContexts();
 	}
 
 }
