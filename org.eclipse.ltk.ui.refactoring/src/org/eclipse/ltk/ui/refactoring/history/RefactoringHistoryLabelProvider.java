@@ -201,6 +201,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 					if (node instanceof RefactoringHistoryDate) {
 						final RefactoringHistoryDate date= (RefactoringHistoryDate) node;
 						final Date stamp= new Date(date.getTimeStamp());
+						final Locale locale= new Locale(RefactoringUIMessages.RefactoringHistoryLabelProvider_label_language, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_country, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_variant);
 						Format format= null;
 						String pattern= ""; //$NON-NLS-1$
 						switch (kind) {
@@ -222,11 +223,11 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								break;
 							case RefactoringHistoryNode.THIS_MONTH:
 								pattern= fControlConfiguration.getThisMonthPattern();
-								format= new SimpleDateFormat("MMMMM"); //$NON-NLS-1$
+								format= new SimpleDateFormat("MMMMM yyyy"); //$NON-NLS-1$
 								break;
 							case RefactoringHistoryNode.LAST_MONTH:
 								pattern= fControlConfiguration.getLastMonthPattern();
-								format= new SimpleDateFormat("MMMMM"); //$NON-NLS-1$
+								format= new SimpleDateFormat("MMMMM yyyy"); //$NON-NLS-1$
 								break;
 							case RefactoringHistoryNode.MONTH:
 								pattern= fControlConfiguration.getMonthPattern();
@@ -236,7 +237,6 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								pattern= fControlConfiguration.getDayPattern();
 								final int type= node.getParent().getKind();
 								if (type == RefactoringHistoryNode.THIS_WEEK || type == RefactoringHistoryNode.LAST_WEEK) {
-									final Locale locale= new Locale(RefactoringUIMessages.RefactoringHistoryLabelProvider_label_language, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_country, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_variant);
 									final SimpleDateFormat simple= new SimpleDateFormat("EEEE", locale); //$NON-NLS-1$
 									buffer.append(NLS.bind(RefactoringUIMessages.RefactoringHistoryControlConfiguration_day_detailed_pattern, new String[] { simple.format(stamp), DateFormat.getDateInstance().format(stamp)}));
 								} else
