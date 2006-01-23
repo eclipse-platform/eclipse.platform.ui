@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.ui.mapping;
 
-import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileState;
@@ -141,15 +138,6 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 					return new ResourceDiffCompareInput(node);
 			}
 		}
-		return null;
-	}
-
-	/**
-	 * @deprecated
-	 * @see org.eclipse.team.ui.mapping.ICompareAdapter#findContentViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.viewers.Viewer, org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.CompareConfiguration)
-	 */
-	public Viewer findContentViewer(Composite parent, Viewer oldViewer,
-			ICompareInput input, CompareConfiguration configuration) {
 		return null;
 	}
 
