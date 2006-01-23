@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ua.tests.intro.util.IntroModelSerializer;
 import org.eclipse.ua.tests.intro.util.IntroModelSerializerTest;
@@ -49,10 +50,18 @@ public class PlatformTest extends TestCase {
 	 * Test the platform's parsed intro content.
 	 */
 	public void testModel() {
+		final String INTRO_CONFIG_ID = "intro";		
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.config");
-		Assert.assertEquals("The platform did not have the expected number of \"org.eclipse.ui.intro.config\" extensions.", 1, elements.length);
-		
-		IConfigurationElement element = elements[0];
+		IConfigurationElement element = null;
+		for (int i=0;i<elements.length;++i) {
+			if (elements[i] != null) {
+				IExtension ext = elements[i].getDeclaringExtension();
+				if (INTRO_CONFIG_ID.equals(ext.getSimpleIdentifier())) {
+					element = elements[i];
+				}
+			}
+		}
+		Assert.assertNotNull("Could not find the \"org.eclipse.ui.intro.config\" extension with the id \"" + INTRO_CONFIG_ID + "\".", element);
 		
 		String pluginRoot = ResourceFinder.findFile(UserAssistanceTestPlugin.getDefault(), "/").toString().substring("file:".length());
 		String content = element.getAttribute("content");
