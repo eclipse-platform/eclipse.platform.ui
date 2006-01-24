@@ -241,8 +241,12 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		return new ArrayList(0);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object, java.lang.Object)
+	 */
 	protected void inputChanged(Object input, Object oldInput) {
 		super.inputChanged(input, oldInput);
+		refreshAll();
 	}
 
 	/*
