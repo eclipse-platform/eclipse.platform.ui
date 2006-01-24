@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.osgi.framework.BundleContext;
 
 public class AntCoreUtil {
@@ -147,7 +151,20 @@ public class AntCoreUtil {
                     }
                 }
             }
-          
+            Enumeration propertyNames = props.propertyNames();
+            while (propertyNames.hasMoreElements()) {
+                String name = (String) propertyNames.nextElement();
+                
+                String value= props.getProperty(name);
+                props.remove(name);
+                IStringVariableManager stringVariableManager = VariablesPlugin.getDefault().getStringVariableManager();
+				try {
+					name= stringVariableManager.performStringSubstitution(name);
+					value= stringVariableManager.performStringSubstitution(value);
+				} catch (CoreException e) {
+				}
+                props.setProperty(name, value);
+            }
             allProperties.add(props);
         }
 		return allProperties;
