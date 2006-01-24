@@ -282,7 +282,7 @@
             id="org.eclipse.team.ccvs.ui.ResourceMapperContributions">
 		 <enablement>
            <adapt type="org.eclipse.core.resources.mapping.ResourceMapping">
-              <test property="org.eclipse.ui.ide.projectPersistentProperty" args="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature,allowUnsetProjects" />
+              <test property="org.eclipse.core.resources.projectPersistentProperty" args="org.eclipse.team.core.repository,org.eclipse.team.cvs.core.cvsnature" />
            </adapt>
          </enablement>
          <action
