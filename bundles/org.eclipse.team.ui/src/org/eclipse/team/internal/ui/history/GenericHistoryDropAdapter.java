@@ -13,13 +13,11 @@ package org.eclipse.team.internal.ui.history;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.viewers.ViewerDropAdapter;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.ResourceTransfer;
 
-public class GenericHistoryDropAdapter extends ViewerDropAdapter {
+public class GenericHistoryDropAdapter extends PluginDropAdapter {
 
 	private GenericHistoryView view;
 
@@ -72,7 +70,11 @@ public class GenericHistoryDropAdapter extends ViewerDropAdapter {
 		if (transferType != null && ResourceTransfer.getInstance().isSupportedType(transferType)) {
 			return true;
 		}
-		return false;
+		
+		return super.validateDrop(target, operation, transferType);
 	}
 
+	protected Object getCurrentTarget() {
+		return view;
+	}
 }

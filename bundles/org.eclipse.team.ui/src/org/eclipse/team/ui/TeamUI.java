@@ -16,6 +16,8 @@ import org.eclipse.team.internal.ui.history.GenericHistoryView;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.team.ui.synchronize.ISynchronizeManager;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 
 /**
  * TeamUI contains public API for generic UI-based Team functionality.
@@ -27,9 +29,6 @@ public class TeamUI {
 	// manages synchronize participants
 	private static ISynchronizeManager synchronizeManager;
 	
-	//returns the history view
-	private static IHistoryView historyView;
-
 	/**
 	 * Property constant indicating the global ignores list has changed. 
 	 */
@@ -73,14 +72,39 @@ public class TeamUI {
 	}
 	
 	/**
-	 * TODO: This won't work!!! We need to find the view in
-	 * the current perspective and, if we can't, open it
+	 * Shows the history view and returns a handle to it. Note that in the case of many
+	 * history views, the main history view is the one returned here. Users should use
+	 * {@link #getHistoryView(IWorkbenchPage, Object)} if they want a particular instance 
+	 * of the history view.
+	 * 
+	 * @return an IHistoryView which is the main history view if it is found or null if it can't be found
+	 */
+	public static IHistoryView getHistoryView() {
+		try {
+			TeamUIPlugin.getActivePage().showView(GenericHistoryView.viewId);
+			return (IHistoryView) TeamUIPlugin.getActivePage().findView(GenericHistoryView.viewId);
+		} catch (PartInitException e) {
+		}
+
+		return null;
+	}
+
+	/**
+	 * TODO: Enable this method by adding an id field to the IHistoryPageSource
+	 * which can be used to uniquely identify each view.
+	 * 
+	 * Returns the history view for the given object. The object needs to 
+	 * adapt to an IHistoryPageSource.
+	 * @param object
 	 * @return
 	 */
-	public static IHistoryView getHistoryView(){
-		if (historyView == null)
-			historyView = new GenericHistoryView();
-			
-		return historyView;
+	public static IHistoryView getHistoryView(IWorkbenchPage page, Object object) {
+		try {
+			page.showView(GenericHistoryView.viewId);
+			return (IHistoryView) page.findView(GenericHistoryView.viewId);
+		} catch (PartInitException e) {
+		}
+
+		return null;
 	}
 }

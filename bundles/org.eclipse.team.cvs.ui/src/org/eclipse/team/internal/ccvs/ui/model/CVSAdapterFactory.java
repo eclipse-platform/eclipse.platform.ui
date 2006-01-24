@@ -75,7 +75,7 @@ public class CVSAdapterFactory implements IAdapterFactory {
 	 * Method declared on IAdapterFactory.
 	 */
 	public Class[] getAdapterList() {
-		return new Class[] {IWorkbenchAdapter.class, IPropertySource.class, IDeferredWorkbenchAdapter.class};
+		return new Class[] {IWorkbenchAdapter.class, IPropertySource.class, IDeferredWorkbenchAdapter.class, IHistoryPageSource.class};
 	}
 	/**
 	 * Returns the property source for the given object.  Caches

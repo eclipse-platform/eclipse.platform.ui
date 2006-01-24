@@ -13,8 +13,7 @@ package org.eclipse.team.internal.ui.history;
 
 import java.util.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
@@ -82,6 +81,13 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 	 * The current page container
 	 */
 	PageContainer currentPageContainer;
+	
+	/**
+	 * The drop target + drop target listener
+	 */
+	DropTarget dropTarget;
+	GenericHistoryDropAdapter dropAdapter;
+	
 
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart part) {
@@ -291,13 +297,14 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 	 */
 	void initDragAndDrop() {
 		int ops = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
-		Transfer[] transfers = new Transfer[] {ResourceTransfer.getInstance(), ResourceTransfer.getInstance()};
+		Transfer[] transfers = new Transfer[] {ResourceTransfer.getInstance(), PluginTransfer.getInstance()};
 
-		DropTarget dropTarget = new DropTarget(book, ops);
+		dropTarget = new DropTarget(book, ops);
 		dropTarget.setTransfer(transfers);
-		dropTarget.addDropListener(new GenericHistoryDropAdapter(this));
+		dropAdapter = new GenericHistoryDropAdapter(this);
+		dropTarget.addDropListener(dropAdapter);
 	}
-
+	
 	public void setFocus() {
 		// TODO Auto-generated method stub
 
@@ -519,7 +526,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		if (input instanceof FileRevisionEditorInput) {
 			IFile file;
 			try {
-				file = ResourceUtil.getFile(((FileRevisionEditorInput) input).getStorage().getFullPath());
+				file = ResourcesPlugin.getWorkspace().getRoot().getFile(((FileRevisionEditorInput) input).getStorage().getFullPath());
 				if (file != null) {
 					itemDropped(file);
 				}
@@ -540,6 +547,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 
 	public void dispose() {
 		super.dispose();
+		//Remove the drop listener
+		dropTarget.removeDropListener(dropAdapter);
 		//Call dispose on current and default pages
 		currentPageContainer.getPage().dispose();
 		defaultPageContainer.getPage().dispose();

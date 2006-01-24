@@ -39,7 +39,7 @@ public class LocalHistoryTableProvider {
 				return ""; //$NON-NLS-1$
 			switch (columnIndex) {
 				case COL_DATE :
-					String revision = DateFormat.getInstance().format(new Date(entry.getModificationTime()));
+					String revision = DateFormat.getDateTimeInstance().format(new Date(entry.getModificationTime()));
 					return revision;
 				case COL_AUTHOR:
 					return ""; //$NON-NLS-1$
