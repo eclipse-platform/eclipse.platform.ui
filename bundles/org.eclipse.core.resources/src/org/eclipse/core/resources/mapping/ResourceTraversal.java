@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
  * <p>
  * The flags of the traversal indicate which special resources should be
  * included or excluded from the traversal. The flags used are the same as
- * those passed to the <code>IResource#accept(IResourceVisitor, int, int)</code> method.
+ * those passed to the {@link IResource#accept(IResourceVisitor, int, int)} method.
  * 
  * <p>
  * This class may be instantiated or subclassed by clients.
@@ -53,25 +53,34 @@ public class ResourceTraversal {
 	}
 
 	/**
-	 * Visit the resources of this traversal.
+	 * Visits all existing resources defined by this traversal.
 	 * 
 	 * @param visitor a resource visitor
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li> A resource in this traversal does not exist.</li>
 	 * <li> The visitor failed with this exception.</li>
 	 * </ul>
 	 */
 	public void accept(IResourceVisitor visitor) throws CoreException {
 		for (int i = 0, imax = resources.length; i < imax; i++)
-			resources[i].accept(visitor, depth, flags);
+			try {
+				if (resources[i].exists())
+					resources[i].accept(visitor, depth, flags);
+			} catch (CoreException e) {
+				//ignore failure in the case of concurrent deletion
+				if (e.getStatus().getCode() != IResourceStatus.RESOURCE_NOT_FOUND)
+					throw e;
+			}
 	}
 
 	/**
 	 * Return whether the given resource is contained in or
-	 * covered by this traversal.
+	 * covered by this traversal, regardless of whether the resource
+	 * currently exists.
+	 * 
 	 * @param resource the resource to be tested
-	 * @return whether the resource is contained in this traversal
+	 * @return <code>true</code> if the resource is in this traversal, and 
+	 * <code>false</code> otherwise.
 	 */
 	public boolean contains(IResource resource) {
 		for (int i = 0; i < resources.length; i++) {
@@ -100,17 +109,14 @@ public class ResourceTraversal {
 	 * available to clients because underlying non-API methods are used that
 	 * may change.
 	 */
-	void doFindMarkers(ArrayList result, String type, boolean includeSubtypes) throws CoreException {
+	void doFindMarkers(ArrayList result, String type, boolean includeSubtypes) {
 		MarkerManager markerMan = ((Workspace) ResourcesPlugin.getWorkspace()).getMarkerManager();
-		for (int i = 0; i < resources.length; i++) {
-			Resource resource = (Resource) resources[i];
-			resource.checkAccessible(resource.getFlags(resource.getResourceInfo(false, false)));
-			markerMan.doFindMarkers(resource, result, type, includeSubtypes, depth);
-		}
+		for (int i = 0; i < resources.length; i++)
+			markerMan.doFindMarkers(resources[i], result, type, includeSubtypes, depth);
 	}
 
 	/**
-	 * Returns all markers of the specified type on the resources in this traversal.
+	 * Returns all markers of the specified type on existing resources in this traversal.
 	 * If <code>includeSubtypes</code> is <code>false</code>, only markers 
 	 * whose type exactly matches the given type are returned.  Returns an empty 
 	 * array if there are no matching markers.
@@ -118,10 +124,8 @@ public class ResourceTraversal {
 	 * @param type the type of marker to consider, or <code>null</code> to indicate all types
 	 * @param includeSubtypes whether or not to consider sub-types of the given type
 	 * @return an array of markers
-	 * @exception CoreException if this method fails. Reasons include:
-	 * <ul>
-	 * <li> A resource in this traversal does not exist.</li>
-	 * </ul>
+	 * @exception CoreException if this method fails.
+	 * @see IResource#findMarkers(String, boolean, int)
 	 */
 	public IMarker[] findMarkers(String type, boolean includeSubtypes) throws CoreException {
 		if (resources.length == 0)

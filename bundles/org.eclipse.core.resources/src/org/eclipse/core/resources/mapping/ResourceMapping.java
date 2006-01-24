@@ -40,9 +40,9 @@ import org.eclipse.core.runtime.*;
 public abstract class ResourceMapping extends PlatformObject {
 
 	/**
-	 * Accepts the given visitor for the resources in this mapping.
-	 * The visitor's {@link IResourceVisitor#visit} method is called for each resource
-	 * in this mapping. 
+	 * Accepts the given visitor for all existing resources in this mapping.
+	 * The visitor's {@link IResourceVisitor#visit} method is called for each 
+	 * accessible resource in this mapping. 
 	 * 
 	 * @param context the traversal context
 	 * @param visitor the visitor
@@ -50,16 +50,13 @@ public abstract class ResourceMapping extends PlatformObject {
 	 *    reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li> A resource in this mapping does not exist.</li>
 	 * <li> The visitor failed with this exception.</li>
 	 * </ul>
 	 */
 	public void accept(ResourceMappingContext context, IResourceVisitor visitor, IProgressMonitor monitor) throws CoreException {
 		ResourceTraversal[] traversals = getTraversals(context, monitor);
-		for (int i = 0; i < traversals.length; i++) {
-			ResourceTraversal traversal = traversals[i];
-			traversal.accept(visitor);
-		}
+		for (int i = 0; i < traversals.length; i++)
+			traversals[i].accept(visitor);
 	}
 
 	/**
@@ -87,10 +84,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @return an array of markers
-	 * @exception CoreException if this method fails. Reasons include:
-	 * <ul>
-	 * <li> A resource in this mapping does not exist.</li>
-	 * </ul>
+	 * @exception CoreException if this method fails.
 	 */
 	public IMarker[] findMarkers(String type, boolean includeSubtypes, IProgressMonitor monitor) throws CoreException {
 		final ResourceTraversal[] traversals = getTraversals(ResourceMappingContext.LOCAL_CONTEXT, monitor);
