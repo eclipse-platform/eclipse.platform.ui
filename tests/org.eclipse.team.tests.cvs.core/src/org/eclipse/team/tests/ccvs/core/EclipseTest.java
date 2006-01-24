@@ -571,8 +571,8 @@ public class EclipseTest extends ResourceTest {
 	protected void assertEquals(IPath parent, ICVSFile file1, ICVSFile file2, boolean includeTimestamps, boolean includeTags) throws CoreException, CVSException {
 		if (file1.getName().equals(".project")) return;
 		// Getting the contents first is important as it will fetch the proper sync info if one of the files is a remote handle
-		assertTrue("Contents of " + parent.append(file1.getName()) + " do not match", compareContent(getContents(file1), getContents(file2)));
 		assertEquals(parent.append(file1.getName()), file1.getSyncInfo(), file2.getSyncInfo(), includeTimestamps, includeTags);
+		assertTrue("Contents of " + parent.append(file1.getName()) + " do not match", compareContent(getContents(file1), getContents(file2)));
 	}
 	
 	/*
