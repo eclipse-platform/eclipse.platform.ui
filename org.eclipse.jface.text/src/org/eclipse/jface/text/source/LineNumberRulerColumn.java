@@ -531,6 +531,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 		fMouseHandler= new MouseHandler();
 		fCanvas.addMouseListener(fMouseHandler);
+		fCanvas.addMouseMoveListener(fMouseHandler);
 
 		if (fCachedTextViewer != null) {
 
@@ -751,7 +752,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			return;
 		}
 
-		if (fCanvas != null && !fCanvas.isDisposed()) {
+		if (fCachedTextViewer != null && fCanvas != null && !fCanvas.isDisposed()) {
 			GC gc= new GC(fCanvas);
 			doubleBufferPaint(gc);
 			gc.dispose();
