@@ -96,7 +96,7 @@ public class PatternMatchListenerExtension implements IPluginContribution {
         if (fPattern == null) {
             fPattern = fConfig.getAttributeAsIs("regex"); //$NON-NLS-1$
             try {
-            	fPattern = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fPattern);
+            	fPattern = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fPattern, false);
             } catch (CoreException e) {
             	ConsolePlugin.log(e);
             }
@@ -133,7 +133,7 @@ public class PatternMatchListenerExtension implements IPluginContribution {
     	if (fQualifier == null) {
     		fQualifier = fConfig.getAttribute("qualifier"); //$NON-NLS-1$
     		try {
-				fQualifier = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fQualifier);
+				fQualifier = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fQualifier, false);
 			} catch (CoreException e) {
 				ConsolePlugin.log(e);
 			}
