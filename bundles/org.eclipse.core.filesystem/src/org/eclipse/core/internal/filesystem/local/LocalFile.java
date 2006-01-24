@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.core.internal.filesystem.local;
 
 import java.io.*;
 import java.net.URI;
+import java.nio.channels.FileChannel;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.filesystem.provider.FileStore;
@@ -29,7 +30,7 @@ public class LocalFile extends FileStore {
 	 * Cached constant indicating if the current OS is Mac OSX
 	 */
 	private static final boolean MACOSX = Platform.getOS().equals(Platform.OS_MACOSX);
-	
+
 	/**
 	 * The java.io.File that this store represents.
 	 */
@@ -55,6 +56,22 @@ public class LocalFile extends FileStore {
 		this.filePath = file.getAbsolutePath();
 	}
 
+	private void channelCopy(File source, File destination) throws IOException {
+		FileInputStream in = null;
+		FileOutputStream out = null;
+		try {
+			in = new FileInputStream(source);
+			out = new FileOutputStream(destination);
+			FileChannel channel= in.getChannel();
+			// do the file copy
+			channel.transferTo(0, channel.size(), out.getChannel());
+		} finally {
+			//closing the streams will automatically close the channels
+			Policy.safeClose(in);
+			Policy.safeClose(out);
+		}
+	}
+
 	/**
 	 * This method is called after a failure to modify a file or directory.
 	 * Check to see if the parent is read-only and if so then
@@ -78,24 +95,32 @@ public class LocalFile extends FileStore {
 	}
 
 	public void copy(IFileStore destFile, int options, IProgressMonitor monitor) throws CoreException {
-		if (destFile instanceof LocalFile) {
-			File source = file;
-			File destination = ((LocalFile) destFile).file;
-			//handle case variants on a case-insensitive OS, or copying between
-			//two equivalent files in an environment that supports symbolic links.
-			//in these nothing needs to be copied (and doing so would likely lose data)
-			try {
-				if (source.getCanonicalFile().equals(destination.getCanonicalFile())) {
-					//nothing to do
-					return;
-				}
-			} catch (IOException e) {
-				String message = NLS.bind(Messages.couldNotRead, source.getAbsolutePath());
-				Policy.error(EFS.ERROR_READ, message, e);
-			}
+		if (!(destFile instanceof LocalFile)) {
+			//fall through to super implementation
+			super.copy(destFile, options, monitor);
+			return;
 		}
-		//fall through to super implementation
-		super.copy(destFile, options, monitor);
+		File source = file;
+		File destination = ((LocalFile) destFile).file;
+		//handle case variants on a case-insensitive OS, or copying between
+		//two equivalent files in an environment that supports symbolic links.
+		//in these nothing needs to be copied (and doing so would likely lose data)
+		try {
+			if (source.getCanonicalFile().equals(destination.getCanonicalFile())) {
+				//nothing to do
+				return;
+			}
+			IFileInfo sourceInfo = fetchInfo();
+			if (sourceInfo.isDirectory()) {
+				copyDirectory(sourceInfo, destFile, options, Policy.monitorFor(monitor));
+			} else {
+				channelCopy(source, destination);
+				destFile.putInfo(sourceInfo, EFS.SET_ATTRIBUTES | EFS.SET_LAST_MODIFIED, null);
+			}
+		} catch (IOException e) {
+			String message = NLS.bind(Messages.couldNotRead, source.getAbsolutePath());
+			Policy.error(EFS.ERROR_READ, message, e);
+		}
 	}
 
 	public void delete(int options, IProgressMonitor monitor) throws CoreException {
@@ -113,7 +138,7 @@ public class LocalFile extends FileStore {
 			return false;
 		//Mac oddity: file.equals returns false when case is different even when
 		//file system is not case sensitive (Radar bug 3190672)
-		LocalFile otherFile = (LocalFile)obj;
+		LocalFile otherFile = (LocalFile) obj;
 		if (MACOSX)
 			return filePath.toLowerCase().equals(otherFile.filePath.toLowerCase());
 		return file.equals(otherFile.file);
@@ -143,7 +168,7 @@ public class LocalFile extends FileStore {
 		info.setAttribute(EFS.ATTRIBUTE_HIDDEN, file.isHidden());
 		return info;
 	}
-	
+
 	public IFileStore getChild(IPath path) {
 		return new LocalFile(new File(file, path.toOSString()));
 	}
@@ -370,7 +395,7 @@ public class LocalFile extends FileStore {
 		if ((options & EFS.SET_LAST_MODIFIED) != 0)
 			file.setLastModified(info.getLastModified());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.provider.FileStore#toLocalFile(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
