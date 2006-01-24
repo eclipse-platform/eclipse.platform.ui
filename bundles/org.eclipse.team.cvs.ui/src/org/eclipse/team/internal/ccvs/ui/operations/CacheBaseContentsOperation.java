@@ -38,8 +38,8 @@ public class CacheBaseContentsOperation extends CacheTreeContentsOperation {
 
 	private final boolean includeOutgoing;
 
-	public CacheBaseContentsOperation(IWorkbenchPart part, ResourceMapping[] mappers, IResourceDiffTree tree, boolean includeOutgoing) {
-		super(part, mappers, tree);
+	public CacheBaseContentsOperation(IWorkbenchPart part, ResourceMapping[] mappings, IResourceDiffTree tree, boolean includeOutgoing) {
+		super(part, mappings, tree);
 		this.includeOutgoing = includeOutgoing;
 	}
 
@@ -73,7 +73,7 @@ public class CacheBaseContentsOperation extends CacheTreeContentsOperation {
 		super.execute(provider, resources, recurse, monitor);
 		// Now that the contents are cached, reset the timestamps for any false local changes
 		if (localChanges.length > 0) {
-			performCleanTimestampa(localChanges[0].getProject(), localChanges, monitor);
+			performCleanTimestamps(localChanges[0].getProject(), localChanges, monitor);
 		}
 	}
 	
@@ -101,7 +101,7 @@ public class CacheBaseContentsOperation extends CacheTreeContentsOperation {
 		return false;
 	}
 	
-	private void performCleanTimestampa(IProject project, final IResource[] resources, IProgressMonitor monitor) throws CVSException {
+	private void performCleanTimestamps(IProject project, final IResource[] resources, IProgressMonitor monitor) throws CVSException {
 		ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project);
         final ContentComparisonSyncInfoFilter comparator = new SyncInfoFilter.ContentComparisonSyncInfoFilter(false);
 		folder.run(new ICVSRunnable() {

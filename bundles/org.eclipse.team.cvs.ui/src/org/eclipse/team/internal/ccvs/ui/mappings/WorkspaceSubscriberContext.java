@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.IDiffNode;
@@ -29,6 +31,8 @@ import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.CacheRemoteContentsOperation;
 import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 
 public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
@@ -157,7 +161,8 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 	 * @see org.eclipse.team.core.subscribers.SubscriberMergeContext#refresh(org.eclipse.core.resources.mapping.ResourceTraversal[], int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException {
-		super.refresh(traversals, flags, monitor);
+		monitor.beginTask(null, 50);
+		super.refresh(traversals, flags, Policy.subMonitorFor(monitor, 25));
 		// Prune any empty folders within the traversals
 		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) {
 			CompoundResourceTraversal ct = new CompoundResourceTraversal();
@@ -170,6 +175,37 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 			new PruneFolderVisitor().visit(
 				CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()),
 				cvsResources);
+		}
+		cacheContents(traversals, Policy.subMonitorFor(monitor, 25));
+		monitor.done();
+	}
+	
+	protected void cacheContents(final ResourceTraversal[] traversals, IProgressMonitor monitor) throws CVSException {
+		// cache the base and remote contents
+		// TODO: Refreshing and caching now takes 3 round trips.
+		// OPTIMIZE: remote state and contents could be obtained in 1
+		// OPTIMIZE: Based could be avoided if we always cached base locally
+		ResourceMapping[] mappings = new ResourceMapping[] { new ResourceMapping() {
+			public Object getModelObject() {
+				return WorkspaceSubscriberContext.this;
+			}
+			public IProject[] getProjects() {
+				return ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			}
+			public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
+				return traversals;
+			}
+		}};
+		try {
+			monitor.beginTask(null, 50);
+			new CacheBaseContentsOperation(null, mappings, getDiffTree(), true).run(Policy.subMonitorFor(monitor, 25));
+			new CacheRemoteContentsOperation(null, mappings, getDiffTree()).run(Policy.subMonitorFor(monitor, 25));
+		} catch (InvocationTargetException e) {
+			throw CVSException.wrapException(e);
+		} catch (InterruptedException e) {
+			// Ignore
+		} finally {
+			monitor.done();
 		}
 	}
 }

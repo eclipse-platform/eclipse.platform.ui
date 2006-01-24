@@ -41,8 +41,8 @@ public abstract class CacheTreeContentsOperation extends SingleCommandOperation 
 
 	private final IResourceDiffTree tree;
 
-	public CacheTreeContentsOperation(IWorkbenchPart part, ResourceMapping[] mappers, IResourceDiffTree tree) {
-		super(part, mappers, Command.NO_LOCAL_OPTIONS);
+	public CacheTreeContentsOperation(IWorkbenchPart part, ResourceMapping[] mappings, IResourceDiffTree tree) {
+		super(part, mappings, Command.NO_LOCAL_OPTIONS);
 		this.tree = tree;
 	}
 	
@@ -176,6 +176,10 @@ public abstract class CacheTreeContentsOperation extends SingleCommandOperation 
 		return CVSUIMessages.CacheTreeContentsOperation_1;
 	}
 
+	/**
+	 * Return the diff tree whose contents are being cached
+	 * @return
+	 */
 	protected IResourceDiffTree getTree() {
 		return tree;
 	}

@@ -10,16 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.mapping.IMergeContext;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.CacheRemoteContentsOperation;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.ui.operations.ResourceMappingMergeOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -37,21 +31,6 @@ public abstract class AbstractModelMergeOperation extends ResourceMappingMergeOp
 	 */
 	protected ResourceMappingContext getResourceMappingContext() {;
 		return context;
-	}
-
-	protected void cacheContents(IWorkbenchPart part, IMergeContext context, IProgressMonitor monitor) throws CVSException {
-		// cache the base and remote contents
-		// TODO: Refreshing and caching now takes 3 round trips.
-		// OPTIMIZE: remote state and contents could be obtained in 1
-		// OPTIMIZE: Based could be avoided if we always cached base locally
-		try {
-			new CacheBaseContentsOperation(part, context.getScope().getMappings(), context.getDiffTree(), true).run(Policy.subMonitorFor(monitor, 25));
-			new CacheRemoteContentsOperation(part, context.getScope().getMappings(), context.getDiffTree()).run(Policy.subMonitorFor(monitor, 25));
-		} catch (InvocationTargetException e) {
-			throw CVSException.wrapException(e);
-		} catch (InterruptedException e) {
-			// Ignore
-		}
 	}
 	
 	/* (non-Javadoc)

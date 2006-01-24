@@ -33,7 +33,6 @@ public class ModelMergeOperation extends AbstractModelMergeOperation {
 			throws CoreException {
 		monitor.beginTask(null, 100);
 		IMergeContext context = MergeSubscriberContext.createContext(getScope(), subscriber, Policy.subMonitorFor(monitor, 50));
-		cacheContents(getPart(), context, monitor);
 		monitor.done();
 		return context;
 	}

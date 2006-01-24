@@ -89,11 +89,6 @@ public class CVSResourceMappingParticipant extends
 						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
 						new CVSActionDelegateWrapper(new SetKeywordSubstitutionAction(), configuration));	
 			}
-			//TODO: needs to be converted
-//			appendToGroup(
-//					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-//					CONTEXT_MENU_CONTRIBUTION_GROUP_4,
-//					new RefreshDirtyStateAction(configuration));
 		}
 		
 		/* (non-Javadoc)

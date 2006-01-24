@@ -24,8 +24,8 @@ public abstract class SingleCommandOperation extends RepositoryProviderOperation
 	
 	private LocalOption[] options = Command.NO_LOCAL_OPTIONS;
 	
-	public SingleCommandOperation(IWorkbenchPart part, ResourceMapping[] mappers, LocalOption[] options) {
-		super(part, mappers);
+	public SingleCommandOperation(IWorkbenchPart part, ResourceMapping[] mappings, LocalOption[] options) {
+		super(part, mappings);
 		if (options != null) {
 			this.options = options;
 		}
