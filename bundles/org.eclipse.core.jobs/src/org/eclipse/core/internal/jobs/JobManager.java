@@ -304,7 +304,11 @@ public class JobManager implements IJobManager {
 					waiting.enqueue(job);
 					break;
 				case Job.SLEEPING :
-					sleeping.enqueue(job);
+					try {
+						sleeping.enqueue(job);
+					} catch (RuntimeException e) {
+						throw new RuntimeException("Error changing from state: " + oldState); //$NON-NLS-1$
+					}
 					break;
 				case Job.RUNNING :
 				case InternalJob.ABOUT_TO_RUN :
