@@ -458,6 +458,11 @@
             class="org.eclipse.ui.tests.internal.Bug78470Test$MyViewPart"
             id="org.eclipse.ui.tests.internal.Bug78470Test.MyViewPart3"
             name="org.eclipse.ui.tests.internal.Bug78470Test.MyViewPart3"/>
+      <view
+            class="org.eclipse.ui.tests.contexts.MockPageView"
+            icon="icons/view.gif"
+            id="org.eclipse.ui.tests.contexts.MockPageView"
+            name="Service PageBookView"/>
 
    </extension>
    <extension
@@ -1630,6 +1635,10 @@
       <context
             id="org.eclipse.ui.tests.contexts.WorkbenchWindow"
             name="WorkbenchWindow Part Context"
+            parentId="org.eclipse.ui.contexts.window"/>
+      <context
+            id="org.eclipse.ui.tests.contexts.Page"
+            name="Page Context"
             parentId="org.eclipse.ui.contexts.window"/>
    </extension>
 <!-- Marker Image Provider tests -->

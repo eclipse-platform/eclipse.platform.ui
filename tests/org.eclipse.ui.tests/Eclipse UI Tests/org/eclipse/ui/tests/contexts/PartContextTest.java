@@ -13,11 +13,16 @@ package org.eclipse.ui.tests.contexts;
 
 import java.util.Collection;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockViewPart;
+import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -27,6 +32,16 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * @since 3.2
  */
 public class PartContextTest extends UITestCase {
+	/**
+	 * 
+	 */
+	public static final String PAGE_VIEW_ID = "org.eclipse.ui.tests.contexts.MockPageView";
+
+	/**
+	 * 
+	 */
+	private static final String TEXT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor";
+
 	public static final String WINDOW_CONTEXT_ID = "org.eclipse.ui.tests.contexts.WorkbenchWindow";
 
 	public PartContextTest(String name) {
@@ -91,9 +106,64 @@ public class PartContextTest extends UITestCase {
 				.getService(IContextService.class);
 		localService.activateContext(WINDOW_CONTEXT_ID);
 		checkActiveContext(globalService, WINDOW_CONTEXT_ID, true);
-		
+
 		window.close();
 		checkActiveContext(globalService, WINDOW_CONTEXT_ID, false);
+	}
+
+	/**
+	 * Test context activation while switching through the pages of a pagebook.
+	 * Exercises the NestableContextService.
+	 * 
+	 * @throws Exception
+	 *             on error
+	 */
+	public void testPageBookPageContextActivation() throws Exception {
+		IContextService globalService = (IContextService) getWorkbench()
+				.getService(IContextService.class);
+		checkActiveContext(globalService, ContextPage.TEST_CONTEXT_ID, false);
+
+		IWorkbenchWindow window = openTestWindow();
+		IWorkbenchPage page = window.getActivePage();
+
+		IViewPart pageView = page.showView(PAGE_VIEW_ID);
+		assertNotNull(pageView);
+
+		checkActiveContext(globalService, ContextPage.TEST_CONTEXT_ID, false);
+
+		IProject proj = FileUtil.createProject("ContextTest");
+		IFile test01 = FileUtil.createFile("test01.txt", proj);
+		IEditorPart editor01 = page.openEditor(new FileEditorInput(test01),
+				TEXT_EDITOR_ID);
+		assertNotNull(editor01);
+		page.activate(pageView);
+		checkActiveContext(globalService, ContextPage.TEST_CONTEXT_ID, false);
+
+		IFile test02 = FileUtil.createFile("test02.xml", proj);
+		IEditorPart editor02 = page.openEditor(new FileEditorInput(test02),
+				TEXT_EDITOR_ID);
+		assertNotNull(editor02);
+		page.activate(pageView);
+		checkActiveContext(globalService, ContextPage.TEST_CONTEXT_ID, true);
+
+		page.activate(editor01);
+		checkActiveContext(globalService, ContextPage.TEST_CONTEXT_ID, false);
+		page.activate(pageView);
+		checkActiveContext(globalService, ContextPage.TEST_CONTEXT_ID, false);
+
+		page.activate(editor02);
+		checkActiveContext(globalService, ContextPage.TEST_CONTEXT_ID, false);
+		page.activate(pageView);
+		checkActiveContext(globalService, ContextPage.TEST_CONTEXT_ID, true);
+
+		page.activate(editor01);
+		page.activate(pageView);
+		checkActiveContext(globalService, ContextPage.TEST_CONTEXT_ID, false);
+
+		page.activate(editor01);
+		page.closeEditor(editor01, false);
+		page.activate(pageView);
+		checkActiveContext(globalService, ContextPage.TEST_CONTEXT_ID, true);
 	}
 
 	/**

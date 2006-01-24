@@ -12,8 +12,10 @@
 package org.eclipse.ui.internal.contexts;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.commands.contexts.Context;
@@ -46,19 +48,27 @@ public class SlaveContextService implements IContextService {
 	/**
 	 * The parent context service, which is never <code>null</code>.
 	 */
-	private IContextService fParentService;
+	protected IContextService fParentService;
 
 	/**
 	 * The default expression used when {@link #activateContext(String) } is
 	 * called. Contexts contributed that use this expression will only be active
 	 * with this service is active.
 	 */
-	private Expression fDefaultExpression;
+	protected Expression fDefaultExpression;
 
 	/**
 	 * Our contexts that are currently active with the parent context service.
 	 */
-	private Set fParentActivations;
+	protected Set fParentActivations;
+
+	/**
+	 * A map of the local activation to the parent activations. If this service
+	 * is inactive, then all parent activations are <code>null</code>.
+	 * Otherwise, they point to the corresponding activation in the parent
+	 * service.
+	 */
+	protected Map fLocalActivations;
 
 	/**
 	 * Construct the new slave.
@@ -79,6 +89,7 @@ public class SlaveContextService implements IContextService {
 		fParentService = parentService;
 		fDefaultExpression = defaultExpression;
 		fParentActivations = new HashSet();
+		fLocalActivations = new HashMap();
 	}
 
 	/*
@@ -87,7 +98,9 @@ public class SlaveContextService implements IContextService {
 	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String)
 	 */
 	public IContextActivation activateContext(String contextId) {
-		return activateContext(contextId, fDefaultExpression);
+		ContextActivation activation = new ContextActivation(contextId,
+				fDefaultExpression, this);
+		return doActivateContext(activation);
 	}
 
 	/*
@@ -115,6 +128,23 @@ public class SlaveContextService implements IContextService {
 		return activateContext(contextId, expression);
 	}
 
+	/**
+	 * Activate the context with respect to this slave service.
+	 * 
+	 * @param contextId
+	 *            the context id
+	 * @param expression
+	 *            the expression to use
+	 * @return the activated context
+	 */
+	protected IContextActivation doActivateContext(IContextActivation activation) {
+		IContextActivation parentActivation = fParentService.activateContext(
+				activation.getContextId(), activation.getExpression());
+		fParentActivations.add(parentActivation);
+		fLocalActivations.put(activation, parentActivation);
+		return activation;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -130,8 +160,17 @@ public class SlaveContextService implements IContextService {
 	 * @see org.eclipse.ui.contexts.IContextService#deactivateContext(org.eclipse.ui.contexts.IContextActivation)
 	 */
 	public void deactivateContext(IContextActivation activation) {
-		fParentService.deactivateContext(activation);
-		fParentActivations.remove(activation);
+		IContextActivation parentActivation = null;
+		if (fLocalActivations.containsKey(activation)) {
+			parentActivation = (IContextActivation) fLocalActivations
+					.remove(activation);
+		} else {
+			parentActivation = activation;
+		}
+		if (parentActivation != null) {
+			fParentService.deactivateContext(parentActivation);
+			fParentActivations.remove(parentActivation);
+		}
 	}
 
 	/*
@@ -255,5 +294,6 @@ public class SlaveContextService implements IContextService {
 	public void dispose() {
 		fParentService.deactivateContexts(fParentActivations);
 		fParentActivations.clear();
+		fLocalActivations.clear();
 	}
 }
