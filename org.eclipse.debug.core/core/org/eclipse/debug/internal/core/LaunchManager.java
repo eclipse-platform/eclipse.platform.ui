@@ -1326,6 +1326,32 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return configs;
 	}
 	
+	/**
+	 * Returns the launch configuraitons mappingh to the specified resource
+	 * @param resource teh resource to collect mapped launch configuraitons for
+	 * @return a list of launch configurations if found or an empty list, never null
+	 * @since 3.2
+	 */
+	public ILaunchConfiguration[] getMappedConfigurations(IResource resource) {
+		List configurations = new ArrayList();
+		try {
+			ILaunchConfiguration[] configs = getLaunchConfigurations();
+			IResource[] resources = null;
+			for(int i = 0; i < configs.length; i++) {
+				resources = configs[i].getMappedResources();
+				if(resources != null) {
+					for(int j = 0; j < resources.length; j++) {
+						if(resources[j].equals(resource)) {
+							configurations.add(configs[i]);
+						}
+					}
+				}
+			}
+		}
+		catch(CoreException e) {DebugPlugin.log(e);}
+		return (ILaunchConfiguration[])configurations.toArray(new ILaunchConfiguration[configurations.size()]);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchManager#getMigrationCandidates()
 	 */
@@ -1640,7 +1666,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		} 
 		return true;
 	}
-
+	
 	/**
 	 * Returns whether the given String is composed solely of digits
 	 */
@@ -1781,6 +1807,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				launchConfigurationDeleted(configuration);
 			}
 		}
+		//bug 12134
+		terminateMappedConfigurations(project);
 	}
 	
 	/**
@@ -1931,6 +1959,26 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		getWorkspace().removeResourceChangeListener(this);
 	}
 
+	/**
+	 * finds and terminates any running launch configurations associated with the given resource
+	 * @param resource the resource to search for launch configurations and hence launches for
+	 * @since 3.2
+	 */
+	protected void terminateMappedConfigurations(IResource resource) {
+		ILaunch[] launches = getLaunches();
+		ILaunchConfiguration[] configs = getMappedConfigurations(resource);
+		try {
+			for(int i = 0; i < launches.length; i++) {
+				for(int j = 0; j < configs.length; j++) {
+					if(launches[i].getLaunchConfiguration().equals(configs[j]) & launches[i].canTerminate()) {
+						launches[i].terminate();
+					}
+				}
+			}
+		}
+		catch(CoreException e) {DebugPlugin.log(e);}
+	}
+	
 	/**
 	 * Throws a debug exception with the given throwable that occurred
 	 * while processing the given configuration.
