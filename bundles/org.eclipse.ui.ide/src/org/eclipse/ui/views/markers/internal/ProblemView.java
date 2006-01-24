@@ -473,4 +473,10 @@ public class ProblemView extends MarkerView {
 		return category;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#canBeEditable()
+	 */
+	boolean canBeEditable() {
+		return false;
+	}
 }

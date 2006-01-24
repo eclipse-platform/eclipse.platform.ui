@@ -941,12 +941,24 @@ public abstract class MarkerView extends TableView {
 		manager.add(copyAction);
 		pasteAction.updateEnablement();
 		manager.add(pasteAction);
-		manager.add(deleteAction);
+		
+		if(canBeEditable())
+			manager.add(deleteAction);
 		manager.add(selectAllAction);
 		fillContextMenuAdditions(manager);
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		manager.add(new Separator());
 		manager.add(propertiesAction);
+	}
+
+	/**
+	 * Return whether or not any of the types in the 
+	 * receiver can be editable.
+	 * @return <code>true</code> if it is possible to have
+	 * an editable marker in this view.
+	 */
+	boolean canBeEditable() {
+		return true;
 	}
 
 	/**
