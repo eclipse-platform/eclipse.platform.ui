@@ -120,16 +120,10 @@ class JobListeners {
 
 	private void handleException(Object listener, Throwable e) {
 		//this code is roughly copied from InternalPlatform.run(ISafeRunnable), 
-		//but inlined here for performance reasons
+		//but in-lined here for performance reasons
 		if (e instanceof OperationCanceledException)
 			return;
-		String pluginId = null;
-		try {
-			pluginId = JobOSGiUtils.getDefault().getBundleId(listener);
-		} catch (ClassNotFoundException e1) {
-			// Debug only message - don't translate
-			JobMessages.message("Unable to obtain Bundle Id in the Jobs plugin. Check if OSGi plugin is installed."); //$NON-NLS-1$
-		}
+		String pluginId = JobOSGiUtils.getDefault().getBundleId(listener);
 		if (pluginId == null)
 			pluginId = JobManager.PI_JOBS;
 		String message = NLS.bind(JobMessages.meta_pluginProblems, pluginId);

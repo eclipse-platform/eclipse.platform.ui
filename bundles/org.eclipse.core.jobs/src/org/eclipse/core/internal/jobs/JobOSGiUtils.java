@@ -32,6 +32,10 @@ public class JobOSGiUtils {
 
 	private static final JobOSGiUtils singleton = new JobOSGiUtils();
 
+	/**
+	 * Accessor for the singleton instance
+	 * @return The JobOSGiUtils instance
+	 */
 	public static JobOSGiUtils getDefault() {
 		return singleton;
 	}
@@ -40,16 +44,10 @@ public class JobOSGiUtils {
 	 * Private constructor to block instance creation.
 	 */
 	private JobOSGiUtils() {
-		super();
-
-		try {
-			initServices();
-		} catch (ClassNotFoundException e) {
-			// expected if OSGi is not present
-		}
+		initServices();
 	}
 
-	private void initServices() throws ClassNotFoundException {
+	private void initServices() {
 		BundleContext context = JobActivator.getContext();
 		if (context == null) {
 			if (JobManager.DEBUG)
@@ -64,7 +62,7 @@ public class JobOSGiUtils {
 		bundleTracker.open();
 	}
 
-	void closeServices() throws ClassNotFoundException {
+	void closeServices() {
 		if (debugTracker != null) {
 			debugTracker.close();
 			debugTracker = null;
@@ -75,7 +73,7 @@ public class JobOSGiUtils {
 		}
 	}
 
-	public boolean getBooleanDebugOption(String option, boolean defaultValue) throws ClassNotFoundException {
+	public boolean getBooleanDebugOption(String option, boolean defaultValue) {
 		if (debugTracker == null) {
 			if (JobManager.DEBUG)
 				JobMessages.message("Debug tracker is not set"); //$NON-NLS-1$
@@ -94,7 +92,7 @@ public class JobOSGiUtils {
 	 * Returns the bundle id of the bundle that contains the provided object, or
 	 * <code>null</code> if the bundle could not be determined.
 	 */
-	public String getBundleId(Object object) throws ClassNotFoundException {
+	public String getBundleId(Object object) {
 		if (bundleTracker == null) {
 			if (JobManager.DEBUG)
 				JobMessages.message("Bundle tracker is not set"); //$NON-NLS-1$
