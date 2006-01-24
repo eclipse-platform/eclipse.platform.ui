@@ -12,6 +12,7 @@ package org.eclipse.jface.internal.databinding;
 
 import java.util.Collection;
 
+import org.eclipse.jface.databinding.BindingEvent;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
@@ -22,7 +23,6 @@ import org.eclipse.jface.databinding.IUpdatableTree;
  *    o No Conversion, Validation on various tree elements
  *    o On a bind, only root elements will be pushed from the model to the target
  *    o <code>ChangeEvent.VIRTUAL</code> event will request children as needed
- * 
  */
 public class TreeBinding extends Binding {
 
@@ -98,9 +98,17 @@ public class TreeBinding extends Binding {
 		Object parent = event.getParent();
 			try {
 				updating ++;
+				int copyType = BindingEvent.EVENT_COPY_TO_MODEL;
+				if (needsUpdate == target) {
+					copyType = BindingEvent.EVENT_COPY_TO_TARGET;
+				}
+				BindingEvent bindingEvent = new BindingEvent(event, copyType, BindingEvent.PIPELINE_AFTER_GET);
+				bindingEvent.originalValue = event.getNewValue();
+				
 				switch (event.getChangeType()) {
 					case ChangeEvent.VIRTUAL:
-						source.setElements(parent, needsUpdate.getElements(parent));
+						bindingEvent.originalValue = needsUpdate.getElements(parent);
+						source.setElements(parent, (Object[])bindingEvent.originalValue);
 						break;
 						
 					case ChangeEvent.CHANGE:
@@ -125,17 +133,35 @@ public class TreeBinding extends Binding {
 							throw new BindingException ("Invalid REPLACE event"); //$NON-NLS-1$
 					    break;
 				}
+
+				if (failure(errMsg(fireBindingEvent(bindingEvent)))) {
+					return;
+				}
+				
 			} finally {
 				updating --;				
 			}
 	}
 
+	private String errMsg(String validationError) {
+		context.updatePartialValidationError(targetChangeListener, null);
+		context.updateValidationError(targetChangeListener, validationError);
+		return validationError;
+	}
+	
+	private boolean failure(String errorMessage) {
+		if (errorMessage != null) {
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * Copy model's root elements into the target
 	 * It is up to the target to fire a Virtual request event to get
 	 * the rest of the children
 	 */
-	public void updateTargetFromModel() {
+	public void updateTargetFromModel(ChangeEvent changeEvent) {
 		copyRootContents(target, model);
 	}
 
@@ -143,7 +169,10 @@ public class TreeBinding extends Binding {
 			IUpdatableTree source) {
 		try {
 			updating ++;
-			destination.setElements(null, source.getElements(null));
+			BindingEvent bindingEvent = new BindingEvent(null, BindingEvent.PIPELINE_AFTER_CHANGE, BindingEvent.PIPELINE_AFTER_GET);
+			bindingEvent.originalValue = source.getElements(null);
+			destination.setElements(null, (Object[]) bindingEvent.originalValue);
+			fireBindingEvent(bindingEvent);
 		} finally {
 			updating --;
 		}

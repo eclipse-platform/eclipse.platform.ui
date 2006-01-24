@@ -20,10 +20,12 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.jface.databinding.BindSpec;
+import org.eclipse.jface.databinding.BindingEvent;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.IBindSpec;
 import org.eclipse.jface.databinding.IBindSupportFactory;
 import org.eclipse.jface.databinding.IBinding;
+import org.eclipse.jface.databinding.IBindingListener;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
@@ -375,7 +377,7 @@ public class DataBindingContext implements IDataBindingContext {
 		// listeners.
 		// targetUpdatable.addChangeListener(binding);
 		// modelUpdatable.addChangeListener(binding);
-		binding.updateTargetFromModel();
+		binding.updateTargetFromModel(null);
 		return binding;
 	}
 
@@ -576,4 +578,30 @@ public class DataBindingContext implements IDataBindingContext {
 		Assert.isTrue(false, "updateModels is not yet implemented"); //$NON-NLS-1$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#addBindingEventListener(org.eclipse.jface.databinding.IBindingListener)
+	 */
+	public void addBindingEventListener(IBindingListener listener) {
+		bindingEventListeners.add(listener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#removeBindingEventListener(org.eclipse.jface.databinding.IBindingListener)
+	 */
+	public void removeBindingEventListener(IBindingListener listener) {
+		bindingEventListeners.remove(listener);
+	}
+	
+	private List bindingEventListeners = new ArrayList();
+	
+	protected String fireBindingEvent(BindingEvent event) {
+		String result = null;
+		for (Iterator bindingEventIter = bindingEventListeners.iterator(); bindingEventIter.hasNext();) {
+			IBindingListener listener = (IBindingListener) bindingEventIter.next();
+			result = listener.bindingEvent(event);
+			if (result != null)
+				break;
+		}
+		return result;
+	}
 }

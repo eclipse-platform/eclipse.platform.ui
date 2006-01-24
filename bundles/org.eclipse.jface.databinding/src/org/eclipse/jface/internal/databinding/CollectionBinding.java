@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding;
 
+import java.util.List;
+
+import org.eclipse.jface.databinding.BindingEvent;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IBindSpec;
@@ -68,12 +71,22 @@ public class CollectionBinding extends Binding {
 		public void handleChange(ChangeEvent changeEvent) {
 			if (updating)
 				return;
+
 			if (changeEvent.getChangeType() == ChangeEvent.VERIFY) {
 				// we are notified of a pending change, do validation
 				// and veto the change if it is not valid
 				Object value = changeEvent.getNewValue();
 				String partialValidationError = validator
 						.isPartiallyValid(value);
+				context.updatePartialValidationError(this,
+						partialValidationError);
+				if (partialValidationError != null) {
+					changeEvent.setVeto(true);
+				}
+
+				BindingEvent e = new BindingEvent(changeEvent, BindingEvent.EVENT_PARTIAL_VALIDATE, BindingEvent.PIPELINE_AFTER_VALIDATE);
+				e.originalValue = changeEvent.getNewValue();
+				partialValidationError = fireBindingEvent(e);
 				context.updatePartialValidationError(this,
 						partialValidationError);
 				if (partialValidationError != null) {
@@ -109,22 +122,40 @@ public class CollectionBinding extends Binding {
 	 * 
 	 * @param needsUpdate
 	 *            IUpdatable to be updated
-	 * @param event
+	 * @param changeEvent
 	 */
-	private void update(IUpdatableCollection needsUpdate, IUpdatableCollection source, ChangeEvent event) {
-		int row = event.getPosition();
+	private void update(IUpdatableCollection needsUpdate, IUpdatableCollection source, ChangeEvent changeEvent) {
+		int row = changeEvent.getPosition();
 		if (row == -1) {
 			// full update
-			copyContents(needsUpdate, source);
+			copyContents(changeEvent, needsUpdate, source);
 		} else {
 			try {
 				updating = true;
-				if (event.getChangeType() == ChangeEvent.CHANGE)
-					needsUpdate.setElement(row, event.getNewValue());
-				else if (event.getChangeType() == ChangeEvent.ADD)
-					needsUpdate.addElement(event.getNewValue(), row);
-				else if (event.getChangeType() == ChangeEvent.REMOVE)
+				int copyType = BindingEvent.EVENT_COPY_TO_MODEL;
+				if (needsUpdate == target) {
+					copyType = BindingEvent.EVENT_COPY_TO_TARGET;
+				}
+				BindingEvent e = new BindingEvent(changeEvent, copyType, BindingEvent.PIPELINE_AFTER_GET);
+				e.originalValue = changeEvent.getNewValue();
+				if (failure(errMsg(fireBindingEvent(e)))) {
+					return;
+				}
+
+				if (changeEvent.getChangeType() == ChangeEvent.CHANGE) {
+					needsUpdate.setElement(row, changeEvent.getNewValue());
+				}
+				else if (changeEvent.getChangeType() == ChangeEvent.ADD) {
+					needsUpdate.addElement(changeEvent.getNewValue(), row);
+				}
+				else if (changeEvent.getChangeType() == ChangeEvent.REMOVE) {
 					needsUpdate.removeElement(row);
+				}
+
+				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
+				if (failure(errMsg(fireBindingEvent(e)))) {
+					return;
+				}
 			} finally {
 				updating = false;
 			}
@@ -134,17 +165,45 @@ public class CollectionBinding extends Binding {
 	/**
 	 * Copy model's element into the target
 	 */
-	public void updateTargetFromModel() {
-		copyContents(target, model);
+	public void updateTargetFromModel(ChangeEvent changeEvent) {
+		copyContents(changeEvent, target, model);
 	}
 
-	private void copyContents(IUpdatableCollection destination,
-			IUpdatableCollection source) {
+	private void copyContents(ChangeEvent changeEvent,
+			IUpdatableCollection destination, IUpdatableCollection source) {
 		try {
 		   updating = true;
-           destination.setElements(source.getElements());
+		   
+		   int copyType = BindingEvent.EVENT_COPY_TO_MODEL;
+		   if (destination == target) {
+			   copyType = BindingEvent.EVENT_COPY_TO_TARGET;
+		   }
+		   BindingEvent e = new BindingEvent(changeEvent, copyType, BindingEvent.PIPELINE_AFTER_GET);
+		   e.originalValue = source.getElements();
+		   if (failure(errMsg(fireBindingEvent(e)))) {
+			   return;
+		   }
+		   
+           destination.setElements((List)e.originalValue);
+           e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
+		   if (failure(errMsg(fireBindingEvent(e)))) {
+			   return;
+		   }
 		} finally {
 			updating = false;
 		}
 	}
-}
+
+	private String errMsg(String validationError) {
+		context.updatePartialValidationError(targetChangeListener, null);
+		context.updateValidationError(targetChangeListener, validationError);
+		return validationError;
+	}
+	
+	private boolean failure(String errorMessage) {
+		if (errorMessage != null) {
+			return true;
+		}
+		return false;
+	}}
+

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
+import java.util.LinkedList;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -29,6 +30,7 @@ import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.UpdatableValue;
 import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.converters.IdentityConverter;
+import org.eclipse.jface.databinding.updatables.SettableList;
 import org.eclipse.jface.databinding.updatables.SettableValue;
 import org.eclipse.jface.databinding.validator.IValidator;
 import org.eclipse.jface.tests.databinding.util.Mocks;
@@ -120,13 +122,17 @@ public class DatabindingContextTest extends TestCase {
 	
 	public void testBindingListeners() {
 		final int[] calls = new int[] {0, 0};
-		final int[] pipelinePositions = new int[] {0, 1, 2, 3, 4, 0, 2, 4, 1};
+		// this exact sequence of positions are not API and may change from release to release.
+		// This is just here to check that we got a sane sequence of pipeline positions.
+		// See BindingEvent#pipelinePosition for details.
+		final int[] pipelinePositions = new int[] {0, 1, 2, 3, 4, 0, 2, 4, 1, 0, 1, 2, 3, 4, 0, 2, 4, 1};
 		settableValue1.setValue(o1);
 		settableValue2.setValue(o2);
 		IBinding binding = dbc.bind(settableValue1, settableValue2, null);
 		binding.addBindingEventListener(new BindingAdapter() {
 			public String bindingEvent(BindingEvent e) {
-				assertEquals("Unexpected pipeline position", pipelinePositions[calls[0]], e.pipelinePosition);
+				// Make sure we get the right sequence of pipeline positions
+				assertEquals("Unexpected pipeline position at call #" + calls[0], pipelinePositions[calls[0]], e.pipelinePosition);
 				calls[0]++;
 				return null;
 			}
@@ -143,10 +149,52 @@ public class DatabindingContextTest extends TestCase {
 		assertEquals(o1, settableValue2.getValue());
 		assertEquals("Both binding events should be called the same number of times", calls[0], calls[1]);
 		settableValue2.setValue(o2);
+		assertEquals("Both binding events should be called the same number of times", calls[0], calls[1]);
 		assertEquals(o2, settableValue1.getValue());
+		
+		// Now test forcing an error from the event handler...
+		binding.addBindingEventListener(new BindingAdapter() {
+			public String bindingEvent(BindingEvent e) {
+				if (e.pipelinePosition == BindingEvent.PIPELINE_AFTER_CONVERT) {
+					return "error";
+				}
+				return null;
+			}
+		});
+		settableValue1.setValue(o1);
+		settableValue2.setValue(o2);
 		assertEquals("Both binding events should be called the same number of times", calls[0], calls[1]);
 		assertEquals("binding events should be called at least once", true, calls[0] > 0);
-		assertEquals("should be 9 binding events", 9, calls[0]);
+	}
+	
+	public void testCollectionBindingListeners() {
+		LinkedList l1 = new LinkedList();
+		LinkedList l2 = new LinkedList();
+		SettableList v1 = new SettableList(l1, String.class);
+		SettableList v2 = new SettableList(l2, String.class);
+		
+		IBinding binding = dbc.bind(v1, v2, null);
+		final int[] calls = new int[] {0};
+		binding.addBindingEventListener(new BindingAdapter() {
+			public String bindingEvent(BindingEvent e) {
+				calls[0]++;
+				return null;
+			}
+		});
+		
+		v2.addElement("test", 0);
+		assertBindingCalls(calls);
+		v2.removeElement(0);
+		assertBindingCalls(calls);
+		v2.addElement("test2", 0);
+		assertBindingCalls(calls);
+		v2.setElement(0, "test3");
+		assertBindingCalls(calls);
+	}
+
+	private void assertBindingCalls(final int[] calls) {
+		assertTrue("Should have seen some binding event calls", calls[0] > 0);
+		calls[0] = 0;
 	}
 	
 	public void testCreateNestedUpdatableWithArrays() {

@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.databinding.BindingEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IBinding;
 import org.eclipse.jface.databinding.IBindingListener;
 
@@ -36,7 +37,7 @@ abstract public class Binding implements IBinding {
 	/**
 	 * 
 	 */
-	abstract public void updateTargetFromModel();
+	abstract public void updateTargetFromModel(ChangeEvent changeEvent);
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.IBinding#addBindingEventListener(org.eclipse.jface.databinding.IBindingListener)
@@ -62,6 +63,7 @@ abstract public class Binding implements IBinding {
 			if (result != null)
 				break;
 		}
+		result = context.fireBindingEvent(event);
 		return result;
 	}
 }

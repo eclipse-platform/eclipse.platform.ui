@@ -84,7 +84,7 @@ public class ValueBinding extends Binding {
 			} else {
 				// the target (usually a widget) has changed, validate
 				// the value and update the source
-				updateModelFromTarget();
+				updateModelFromTarget(changeEvent);
 			}
 		}
 	};
@@ -96,20 +96,22 @@ public class ValueBinding extends Binding {
 			// The model has changed so we must update the target
 			if (changeEvent.getChangeType() == ChangeEvent.VERIFY) {
 			} else {
-				updateTargetFromModel();
+				updateTargetFromModel(changeEvent);
 			}
 		}
 	};
+	
 
 	/**
 	 * This also does validation.
+	 * @param changeEvent TODO
 	 */
-	public void updateModelFromTarget() {
-		BindingEvent e = new BindingEvent();
-		e.copyType = BindingEvent.COPY_TO_MODEL;
+	public void updateModelFromTarget(ChangeEvent changeEvent) {
+		BindingEvent e = new BindingEvent(changeEvent, BindingEvent.EVENT_COPY_TO_MODEL, BindingEvent.PIPELINE_AFTER_GET);
 		e.originalValue = target.getValue();
-		e.pipelinePosition = BindingEvent.PIPELINE_AFTER_GET;
-		fireBindingEvent(e);
+		if (failure(errMsg(fireBindingEvent(e)))) {
+			return;
+		}
 		
 		String validationError = doValidate(e.originalValue);
 		if (validationError != null) {
@@ -117,21 +119,27 @@ public class ValueBinding extends Binding {
 			return;
 		}
 		e.pipelinePosition = BindingEvent.PIPELINE_AFTER_VALIDATE;
-		fireBindingEvent(e);
+		if (failure(errMsg(fireBindingEvent(e)))) {
+			return;
+		}
 		
 		try {
 			updating = true;
 			
 			e.convertedValue = converter.convertTargetToModel(e.originalValue);
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CONVERT;
-			fireBindingEvent(e);
+			if (failure(errMsg(fireBindingEvent(e)))) {
+				return;
+			}
 			
 			// FIXME: Need to add business validation
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_BUSINESS_VALIDATE;
-			fireBindingEvent(e);
+			if (failure(errMsg(fireBindingEvent(e)))) {
+				return;
+			}
 			
 			model.setValue(e.convertedValue);
-			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_SET;
+			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
 			fireBindingEvent(e);
 		} catch (Exception ex) {
 			context.updateValidationError(targetChangeListener, BindingMessages
@@ -143,30 +151,45 @@ public class ValueBinding extends Binding {
 
 	private String doValidate(Object value) {
 		String validationError = validator.isValid(value);
+		return errMsg(validationError);
+	}
+
+	private String errMsg(String validationError) {
 		context.updatePartialValidationError(targetChangeListener, null);
 		context.updateValidationError(targetChangeListener, validationError);
 		return validationError;
 	}
+	
+	private boolean failure(String errorMessage) {
+		if (errorMessage != null) {
+			return true;
+		}
+		return false;
+	}
 
-	/**
-	 * 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.Binding#updateTargetFromModel()
 	 */
-	public void updateTargetFromModel() {
+	public void updateTargetFromModel(ChangeEvent changeEvent) {
 		try {
 			updating = true;
-			BindingEvent e = new BindingEvent();
-			e.copyType = BindingEvent.COPY_TO_TARGET;
+			BindingEvent e = new BindingEvent(changeEvent, BindingEvent.EVENT_COPY_TO_TARGET, BindingEvent.PIPELINE_AFTER_GET);
 			e.originalValue = model.getValue();
-			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_GET;
-			fireBindingEvent(e);
+			if (failure(errMsg(fireBindingEvent(e)))) {
+				return;
+			}
 			
 			e.convertedValue = converter.convertModelToTarget(e.originalValue);
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CONVERT;
-			fireBindingEvent(e);
+			if (failure(errMsg(fireBindingEvent(e)))) {
+				return;
+			}
 			
 			target.setValue(e.convertedValue);
-			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_SET;
-			fireBindingEvent(e);
+			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
+			if (failure(errMsg(fireBindingEvent(e)))) {
+				return;
+			}
 			
 			doValidate(target.getValue());
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_VALIDATE;

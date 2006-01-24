@@ -235,4 +235,21 @@ public interface IDataBindingContext {
 	public void updateValidationError(IChangeListener listener,
 			String validationMessage);
 
+	/**
+	 * Add a listener to the set of listeners that will be notified when
+	 * an event occurs in the data flow pipeline that is managed by any
+	 * binding created by this data binding context.
+	 * 
+	 * @param listener The listener to add.
+	 */
+	public void addBindingEventListener(IBindingListener listener);
+	/**
+	 * Removes a listener from the set of listeners that will be notified when
+	 * an event occurs in the data flow pipeline that is managed by any 
+	 * binding created by this data binding context.
+	 * 
+	 * @param listener The listener to remove.
+	 */
+	public void removeBindingEventListener(IBindingListener listener);
+
 }
