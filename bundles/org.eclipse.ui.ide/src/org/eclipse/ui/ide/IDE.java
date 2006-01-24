@@ -1011,14 +1011,14 @@ public final class IDE {
      * @param shell the shell to parent the prompt dialog
      * @param title the title of the dialog
      * @param message the message for the dialog
-     * @param delta a delta built ising an <code>IProposedResourceDeltaFactory</code>
+     * @param delta a delta built using an <code>IProposedResourceDeltaFactory</code>
      * @param ignoreModelProviderIds model providers to be ignored
      * @param syncExec prompt in a sync exec (required when called from a non-UI thread
      * @return whether the user chose to continue
      * @since 3.2
      */
     public static boolean promptToConfirm(final Shell shell, final String title, String message, IResourceDelta delta, String[] ignoreModelProviderIds, boolean syncExec) {
-    	IStatus status = ResourceChangeValidator.getValidator().validateChange(delta);
+    	IStatus status = ResourceChangeValidator.getValidator().validateChange(delta, null);
     	if (status.isOK())
     		return true;
     	final IStatus displayStatus;
