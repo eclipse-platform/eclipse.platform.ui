@@ -31,6 +31,7 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 
 	private ResourceDiffTree tree;
 	private SubscriberDiffCollector collector;
+	private Object family;
 
 	/*
 	 * An event used to represent a change in a diff
@@ -198,6 +199,13 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	public void shutdown() {
 		collector.dispose();
 		super.shutdown();
+	}
+
+	protected Object getJobFamiliy() {
+		return family;
+	}
+	public void setJobFamily(Object family) {
+		this.family = family;
 	}
 
 }
