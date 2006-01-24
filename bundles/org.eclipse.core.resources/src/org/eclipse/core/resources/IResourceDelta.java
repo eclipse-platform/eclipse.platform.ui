@@ -124,6 +124,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * This flag is only used when describing potential changes using an {@link IResourceChangeDescriptionFactory}.
 	 * 
 	 * @see IResourceDelta#getFlags()
+	 * @since 3.2
 	 */
 	public static final int COPIED_FROM = 0x800;
 	/**
