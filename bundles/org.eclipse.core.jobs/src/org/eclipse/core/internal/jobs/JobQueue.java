@@ -75,9 +75,10 @@ public class JobQueue {
 		while (tail != dummy && tail.compareTo(newEntry) < 0 && (allowConflictOvertaking || !newEntry.isConflicting(tail)))
 			tail = tail.next();
 		//new entry is smaller than tail
+		final InternalJob tailPrevious = tail.previous();
 		newEntry.setNext(tail);
-		newEntry.setPrevious(tail.previous());
-		tail.previous().setNext(newEntry);
+		newEntry.setPrevious(tailPrevious);
+		tailPrevious.setNext(newEntry);
 		tail.setPrevious(newEntry);
 	}
 
