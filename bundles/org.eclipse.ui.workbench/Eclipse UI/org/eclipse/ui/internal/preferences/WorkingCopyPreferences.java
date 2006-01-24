@@ -42,13 +42,13 @@ public class WorkingCopyPreferences extends EventManager implements
 	private final Map temporarySettings;
 	private final IEclipsePreferences original;
 	private boolean removed = false;
-	private WorkingCopyManager manager;
+	private org.eclipse.ui.preferences.WorkingCopyManager manager;
 
 	/**
 	 * @param original the underlying preference node
 	 * @param manager the working copy manager
 	 */
-	public WorkingCopyPreferences(IEclipsePreferences original, WorkingCopyManager manager) {
+	public WorkingCopyPreferences(IEclipsePreferences original, org.eclipse.ui.preferences.WorkingCopyManager manager) {
 		super();
 		this.original = original;
 		this.manager = manager;
@@ -116,16 +116,13 @@ public class WorkingCopyPreferences extends EventManager implements
 		removed = true;
 	}
 
-	private WorkingCopyManager getManager() {
-		return manager;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.osgi.service.prefs.Preferences#node(java.lang.String)
 	 */
 	public Preferences node(String path) {
 		checkRemoved();
-		return getManager().getWorkingCopy((IEclipsePreferences) getOriginal().node(path));
+		return manager.getWorkingCopy((IEclipsePreferences) getOriginal().node(path));
 	}
 
 	/* (non-Javadoc)
@@ -431,7 +428,7 @@ public class WorkingCopyPreferences extends EventManager implements
 	 */
 	public Preferences parent() {
 		checkRemoved();
-		return getManager().getWorkingCopy((IEclipsePreferences) getOriginal().parent());
+		return manager.getWorkingCopy((IEclipsePreferences) getOriginal().parent());
 	}
 
 	/* (non-Javadoc)
