@@ -51,6 +51,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> The visitor failed with this exception.</li>
+	 * <li> The traversals for this mapping could not be obtained.</li>
 	 * </ul>
 	 */
 	public void accept(ResourceMappingContext context, IResourceVisitor visitor, IProgressMonitor monitor) throws CoreException {
