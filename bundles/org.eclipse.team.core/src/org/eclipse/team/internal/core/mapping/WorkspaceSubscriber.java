@@ -55,8 +55,8 @@ public class WorkspaceSubscriber extends Subscriber implements ISubscriberChange
 				// TODO This will instantiate all providers
 				RepositoryProvider provider = RepositoryProvider.getProvider(project);
 				Subscriber subscriber = provider.getSubscriber();
-				subscriber.addListener(this);
 				if (subscriber != null) {
+					subscriber.addListener(this);
 					projects.put(project, subscriber);
 				}
 			}
