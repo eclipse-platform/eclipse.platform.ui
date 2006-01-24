@@ -68,6 +68,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.text.undo.DocumentUndoManagerRegistry;
+import org.eclipse.text.undo.IDocumentUndoManager;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -393,19 +396,38 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 							final IDocumentProvider d= getDocumentProvider();
 							final String previousContent;
+							IDocumentUndoManager previousUndoManager=null;
 							IDocument changed= null;
-							if (isDirty()) {
-								changed= d.getDocument(getEditorInput());
-								if (changed != null)
+							boolean wasDirty= isDirty();
+							changed= d.getDocument(getEditorInput());
+							if (changed != null) {
+								if (wasDirty)
 									previousContent= changed.get();
 								else
 									previousContent= null;
-							} else
+								
+								previousUndoManager= DocumentUndoManagerRegistry.getDocumentUndoManager(changed);
+								if (previousUndoManager != null)
+									previousUndoManager.connect(this);
+							}
+							else
 								previousContent= null;
-
+							
 							setInput((IEditorInput) movedElement);
+							
+							// The undo manager needs to be replaced with one for the new document.
+							// Transfer the undo history and then disconnect from the old undo manager.
+							if (previousUndoManager != null) {
+								IDocument newDocument= getDocumentProvider().getDocument(movedElement); 
+								if (newDocument != null) {
+									IDocumentUndoManager newUndoManager= DocumentUndoManagerRegistry.getDocumentUndoManager(newDocument);
+									if (newUndoManager != null)
+										newUndoManager.transferUndoHistory(previousUndoManager);
+								}
+								previousUndoManager.disconnect(this);
+							}
 
-							if (changed != null) {
+							if (wasDirty && changed != null) {
 								Runnable r2= new Runnable() {
 									public void run() {
 										validateState(getEditorInput());
@@ -2657,14 +2679,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		createNavigationActions();
 		createAccessibilityActions();
-		createUndoRedoActions();
 		createActions();
 
 		initializeSourceViewer(getEditorInput());
+		
+		/* since 3.2 - undo redo actions should be created after 
+		 * the source viewer is initialized, so that the undo manager
+		 * can obtain its undo context from its document.
+		 */
+		createUndoRedoActions();
 
 		JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
 	}
-	
+
 	/**
      * Tells whether the editor input should be included when adding object
      * contributions to this editor's context menu.

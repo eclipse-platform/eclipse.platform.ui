@@ -18,10 +18,10 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.DefaultTextHover;
-import org.eclipse.jface.text.DefaultUndoManager;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.TextViewerUndoManager;
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
@@ -282,7 +282,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 			return super.getUndoManager(sourceViewer);
 
 		int undoHistorySize= fPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE);
-		return new DefaultUndoManager(undoHistorySize);
+		return new TextViewerUndoManager(undoHistorySize);
 	}
 	
 	/*

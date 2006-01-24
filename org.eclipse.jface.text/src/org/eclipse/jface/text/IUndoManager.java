@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
-
-
 /**
  * An undo manager is connected to at most one
  * {@link org.eclipse.jface.text.ITextViewer}.
@@ -29,11 +27,11 @@ package org.eclipse.jface.text;
  * </ul></p>
  * <p>
  * Clients may implement this interface or use the standard implementation
- * <code>DefaultUndoManager</code>.
+ * <code>TextViewerUndoManager</code>.
  * </p>
  *
- * @see org.eclipse.jface.text.DefaultUndoManager
- * @see org.eclipse.jface.text.IUndoManagerExtension
+ * @see TextViewerHoverManager
+ * @see IUndoManagerExtension
  */
 public interface IUndoManager {
 

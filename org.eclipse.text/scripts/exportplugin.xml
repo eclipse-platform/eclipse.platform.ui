@@ -4,7 +4,7 @@
 		<property name="destdir" value="../../plugin-export" />
 		<property name="plugin"  value="org.eclipse.text" />
 		<property name="qualifier" value="zzz${DSTAMP}-${TSTAMP}" />
-		<property name="plugin_version"  value="_3.1.100.${qualifier}" />
+		<property name="plugin_version"  value="_3.2.0.${qualifier}" />
 		<property name="dest"  value="${destdir}/${plugin}${plugin_version}" />
 		<property name="destjar"  value="${destdir}/${plugin}${plugin_version}.jar" />
 	</target>

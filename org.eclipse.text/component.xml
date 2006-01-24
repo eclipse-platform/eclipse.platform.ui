@@ -44,6 +44,12 @@
    <type name="TextEditProcessor" subclass="false"/>
    <type name="UndoEdit" subclass="false" instantiate="false"/>
  </package>
+ 
+ <package name="org.eclipse.text.undo">
+   <type name="DocumentUndoEvent" subclass="false" instantiate="false"/>
+   <type name="DocumentUndoManager" subclass="false"/>
+   <type name="DocumentUndoManagerRegistry" subclass="false" instantiate="false"/>
+ </package>
 
  <component-depends unrestricted="true"/>
 

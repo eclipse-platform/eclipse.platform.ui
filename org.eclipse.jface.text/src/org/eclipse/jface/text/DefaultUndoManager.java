@@ -68,6 +68,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
  * @see org.eclipse.core.commands.operations.IOperationHistory
  * @see MouseListener
  * @see KeyListener
+ * @deprecated As of 3.2, replaced by {@link TextViewerUndoManager}
  */
 public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 

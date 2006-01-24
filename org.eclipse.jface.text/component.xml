@@ -21,6 +21,7 @@
    <type name="IMarkSelection" implement="false"/>
    <type name="MarginPainter" subclass="false"/>
    <type name="TextViewer" subclass="false"/>
+   <type name="TextViewerUndoManager" subclass="false"/>
  </package>
 
  <package name="org.eclipse.jface.text.contentassist">

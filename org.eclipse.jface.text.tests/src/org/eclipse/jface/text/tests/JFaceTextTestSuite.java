@@ -24,12 +24,13 @@ import junit.framework.TestSuite;
 public class JFaceTextTestSuite extends TestSuite {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for org.eclipse.jface.text"); //$NON-NLS-1$
+		TestSuite suite= new TestSuite("Test Suite for org.eclipse.jface.text"); //$NON-NLS-1$
 		
 		suite.addTest(TextHoverPopupTest.suite());
 		suite.addTest(TextPresentationTest.suite());
 		suite.addTest(TextUtilitiesTest.suite());
-		suite.addTest(UndoManagerTest.suite());
+		suite.addTest(DefaultUndoManagerTest.suite());
+		suite.addTest(TextViewerUndoManagerTest.suite());
 		
 		suite.addTest(RulesTestSuite.suite());
 		suite.addTest(ReconcilerTestSuite.suite());

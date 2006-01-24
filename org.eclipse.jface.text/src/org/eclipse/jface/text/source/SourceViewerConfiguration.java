@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.text.DefaultAutoIndentStrategy;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.DefaultTextDoubleClickStrategy;
-import org.eclipse.jface.text.DefaultUndoManager;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IAutoIndentStrategy;
 import org.eclipse.jface.text.IDocument;
@@ -29,6 +28,7 @@ import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.TextViewerUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
@@ -88,7 +88,7 @@ public class SourceViewerConfiguration {
 	 * @return an undo manager or <code>null</code> if no undo/redo should not be supported
 	 */
 	public IUndoManager getUndoManager(ISourceViewer sourceViewer) {
-		return new DefaultUndoManager(25);
+		return new TextViewerUndoManager(25);
 	}
 
 	/**

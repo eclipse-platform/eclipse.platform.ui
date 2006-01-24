@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DefaultUndoManager;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
@@ -27,9 +24,9 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextViewer;
 
 /**
- * Test for DefaultUndoManager
+ * Tests for DefaultUndoManager.
  */
-public class UndoManagerTest extends TestCase {
+public abstract class AbstractUndoManagerTest extends TestCase {
 
 	/** The maximum undo level. */
 	private static final int MAX_UNDO_LEVEL= 256;
@@ -53,14 +50,11 @@ public class UndoManagerTest extends TestCase {
 
 	private static final boolean DEBUG= false;
 
-	public static Test suite() {
-		return new TestSuite(UndoManagerTest.class);
-	}
 	
 	/*
 	 * @see TestCase#TestCase(String)
 	 */
-	public UndoManagerTest(final String name) {
+	public AbstractUndoManagerTest(final String name) {
 		super(name);	
 	}
 	
@@ -69,12 +63,14 @@ public class UndoManagerTest extends TestCase {
 	 */
 	protected void setUp() {
 		fShell= new Shell();	
-		fUndoManager= new DefaultUndoManager(MAX_UNDO_LEVEL);
+		fUndoManager= createUndoManager(MAX_UNDO_LEVEL);
 		fTextViewer= new TextViewer(fShell, SWT.NONE);
 		fTextViewer.setUndoManager(fUndoManager);
 		fUndoManager.connect(fTextViewer);
 	}
 	
+	abstract protected IUndoManager createUndoManager(int maxUndoLevel);
+
 	/*
 	 *  @see TestCase#tearDown()
 	 */
@@ -133,13 +129,13 @@ public class UndoManagerTest extends TestCase {
 	
 	private void doChange(IDocument document, int count) {
 		try {
-			String before = document.get();
+			String before= document.get();
 			
 			if (DEBUG)
 				System.out.println(before);
 			
-			Position [] positions = new Position[count];
-			String [] strings = new String[count];
+			Position [] positions= new Position[count];
+			String [] strings= new String[count];
 			for (int i= 0; i < count; i++) {
 				final Position position= createRandomPositionPoisson(document.getLength());
 				final String string= createRandomStringPoisson(4);
