@@ -587,15 +587,15 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * linked resources.
 	 * </p>
 	 * <p>
-	 * The {@link IResource#DERIVED} update flag indicates that the new resource
+	 * The {@link #DERIVED} update flag indicates that the new resource
 	 * should immediately be set as a derived resource.  Specifying this flag
-	 * is equivalent to atomically calling {@link IResource#setDerived(boolean)}
+	 * is equivalent to atomically calling {@link #setDerived(boolean)}
 	 * with a value of <code>true</code> immediately after creating the resource.
 	 * </p>
 	 * <p>
-	 * The {@link IResource#TEAM_PRIVATE} update flag indicates that the new resource
+	 * The {@link #TEAM_PRIVATE} update flag indicates that the new resource
 	 * should immediately be set as a team private resource.  Specifying this flag
-	 * is equivalent to atomically calling {@link IResource#setTeamPrivateMember(boolean)}
+	 * is equivalent to atomically calling {@link #setTeamPrivateMember(boolean)}
 	 * with a value of <code>true</code> immediately after creating the resource.
 	 * </p>
 	 * <p>
@@ -618,7 +618,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @param destination the destination path 
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   ({@link FORCE}, {@link SHALLOW}, {@link #DERIVED}, {@link #TEAM_PRIVATE})
+	 *   ({@link #FORCE}, {@link #SHALLOW}, {@link #DERIVED}, {@link #TEAM_PRIVATE})
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this resource could not be copied. Reasons include:
@@ -1945,10 +1945,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * resources.
 	 * </p>
 	 * <p>
-	 * The {@link IResource#REPLACE} update flag controls how this method deals
-	 * with a change of location.  If the location changes and the {@link IResource#REPLACE}
+	 * The {@link #REPLACE} update flag controls how this method deals
+	 * with a change of location.  If the location changes and the {@link #REPLACE}
 	 * flag is not specified, then the projects contents on disk are moved to the new
-	 * location.  If the location changes and the {@link IResource#REPLACE}
+	 * location.  If the location changes and the {@link #REPLACE}
 	 * flag is specified, then the project is reoriented to correspond to the new
 	 * location, but no contents are moved on disk.  The contents already on
 	 * disk at the new location become the project contents.  If the new project
