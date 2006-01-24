@@ -28,7 +28,6 @@ public class DecoratingLabelProvider extends LabelProvider implements
 	/**
 	 * The UPDATE_LABEL flag indicates that the label should 
 	 * be updated for the element passed to the validator.
-	 * @see ILabelUpdateValidator
 	 * @deprecated should be removed by 3.2 M5
 	 */
 	public static final String UPDATE_LABEL = "UPDATE_LABEL";//$NON-NLS-1$
