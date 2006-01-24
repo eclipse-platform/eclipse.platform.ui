@@ -50,7 +50,7 @@ public class ModelUpdateOperation extends AbstractModelMergeOperation {
 	protected IMergeContext buildMergeContext(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 100);
 		IMergeContext context = WorkspaceSubscriberContext.createContext(getScope(), true /* refresh */, getMergeType(), Policy.subMonitorFor(monitor, 50));
-		cacheContents(getPart(), context, monitor);
+		cacheContents(getPart(), context, Policy.subMonitorFor(monitor, 40));
 		monitor.done();
 		return context;
 	}
