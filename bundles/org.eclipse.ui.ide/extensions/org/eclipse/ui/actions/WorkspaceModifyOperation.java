@@ -123,6 +123,7 @@ public abstract class WorkspaceModifyOperation implements IRunnableWithProgress,
     }
 	/* (non-Javadoc)
 	 * @see IThreadListener#threadChange(Thread);
+	 * @since 3.2
 	 */
 	public void threadChange(Thread thread) {
 		//we must make sure we aren't transferring control away from a thread that
