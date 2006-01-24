@@ -7,7 +7,7 @@
  * Contributors: IBM Corporation - initial API and implementation
  **************************************************************************************************/
 
-package org.eclipse.help.internal.base;
+package org.eclipse.help.internal;
 
 import java.io.IOException;
 import java.io.InputStream;

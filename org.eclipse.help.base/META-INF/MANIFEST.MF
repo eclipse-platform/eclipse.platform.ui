@@ -15,7 +15,6 @@ Export-Package: org.eclipse.help.browser,
  org.eclipse.help.internal.search.federated;x-friends:="org.eclipse.help.ui",
  org.eclipse.help.internal.standalone;x-internal:=true,
  org.eclipse.help.internal.workingset;x-friends:="org.eclipse.help.ui,org.eclipse.help.webapp",
- org.eclipse.help.internal.xhtml;x-friends:="org.eclipse.help.ui",
  org.eclipse.help.search,
  org.eclipse.help.standalone
 Require-Bundle: org.apache.lucene;bundle-version="[1.4.3,2.0.0)",

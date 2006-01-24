@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.HelpSystem;
 import org.eclipse.help.ILiveHelpAction;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.appserver.*;
@@ -338,6 +339,7 @@ public final class BaseHelpSystem {
 	 */
 	public static void setMode(int mode) {
 		getInstance().mode = mode;
+		HelpSystem.setShared(mode == MODE_INFOCENTER);
 	}
 
 	/**

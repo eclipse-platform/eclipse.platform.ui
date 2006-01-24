@@ -9,7 +9,7 @@
 
 package org.eclipse.help.internal.xhtml;
 
-import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.HelpSystem;
 import org.w3c.dom.Document;
 
 
@@ -38,8 +38,8 @@ public class XHTMLSupport {
 
 	public Document processDOM() {
 
-		// filters do not apply to infocenter
-		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
+		// filters do not apply to shared help systems
+		if (!HelpSystem.isShared()) {
 			// resolve filters.
 			filterProcessor.applyFilters(document);
 		}

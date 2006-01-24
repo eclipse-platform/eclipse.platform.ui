@@ -30,6 +30,8 @@ import org.eclipse.help.internal.protocols.*;
  */
 public final class HelpSystem {
 
+	private static boolean fShared;
+	
 	/**
 	 * This class is not intended to be instantiated.
 	 */
@@ -82,5 +84,46 @@ public final class HelpSystem {
 		} catch (IOException ioe) {
 			return null;
 		}
+	}
+
+	/**
+	 * Returns whether or not the help system, in its current mode of operation,
+	 * can be shared by multiple (potentially remote) users. This is a hint to
+	 * the help system implementation that it should not perform operations that
+	 * are specific to the help system's local environment.
+	 * 
+	 * <p>
+	 * For example, when <code>true</code>, the default dynamic content producer
+	 * implementation will not perform any filtering based on local system
+	 * properties such as operating system or activities.
+	 * </p>
+	 * <p>
+	 * If you are providing your own help implementation that is shared, you
+	 * must notify the platform on startup by calling <code>setShared(true)</code>.
+	 * </p>
+	 * 
+	 * @return whether or not the help system can be shared by multiple users
+	 * @since 3.2
+	 */
+	public static boolean isShared() {
+		return fShared;
+	}
+	
+	/**
+	 * Sets whether or not the help system, in its current mode of operation,
+	 * can be shared by multiple (potentially remote) users. This is a hint to
+	 * the help system implementation that it should not perform operations that
+	 * are specific to the help system's local environment.
+	 * 
+	 * <p>
+	 * By default the help system is flagged as not shared. If you are providing 
+	 * your own help implementation that is shared, you must call this on startup
+	 * with the parameter <code>true</code>.
+	 * </p>
+	 * 
+	 * @param shared whether or not the help system can be shared by multiple users
+	 */
+	public static void setShared(boolean shared) {
+		fShared = shared;
 	}
 }

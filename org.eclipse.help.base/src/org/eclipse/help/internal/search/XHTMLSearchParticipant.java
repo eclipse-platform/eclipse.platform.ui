@@ -9,7 +9,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.help.internal.base.DynamicContentProducer;
+import org.eclipse.help.internal.DynamicContentProducer;
 import org.eclipse.help.search.XMLSearchParticipant;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
