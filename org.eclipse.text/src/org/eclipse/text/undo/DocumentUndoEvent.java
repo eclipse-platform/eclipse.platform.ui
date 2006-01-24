@@ -11,8 +11,6 @@
 
 package org.eclipse.text.undo;
 
-import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IDocument;
 
@@ -74,8 +72,8 @@ public class DocumentUndoEvent {
 	/** Bit mask of event types describing the event */
 	private int fEventType;
 
-	/** The adaptable describing UI context of the triggering undo. */
-	private IAdaptable fInfoAdapter;
+	/** The the source that triggered this event or <code>null</code> if unknown. */
+	private Object fSource;
 
 	/**
 	 * Creates a new document event.
@@ -85,9 +83,9 @@ public class DocumentUndoEvent {
 	 * @param text the substitution text
 	 * @param preservedText the replaced text
 	 * @param eventType a bit mask describing the type(s) of event
-	 * @param uiInfo an adapter providing information about the triggering undo or redo or <code>null</code>
+	 * @param source the source that triggered this event or <code>null</code> if unknown
 	 */
-	DocumentUndoEvent(IDocument doc, int offset, String text, String preservedText, int eventType, IAdaptable uiInfo) {
+	DocumentUndoEvent(IDocument doc, int offset, String text, String preservedText, int eventType, Object source) {
 
 		Assert.isNotNull(doc);
 		Assert.isTrue(offset >= 0);
@@ -97,7 +95,7 @@ public class DocumentUndoEvent {
 		fText= text;
 		fPreservedText= preservedText;
 		fEventType= eventType;
-		fInfoAdapter= uiInfo;
+		fSource= source;
 	}
 
 	/**
@@ -146,14 +144,12 @@ public class DocumentUndoEvent {
 	}
 
 	/**
-	 * Returns the adapter providing additional undo or redo information.
+	 * Returns the source that triggered this event.
 	 * 
-	 * @return the adapter providing adapters for additional contextual
-	 *         information about the triggering undo or redo.  This adapter
-	 *         may be <code>null</code>.
+	 * @return the source that triggered this event.
 	 */
-	public IAdaptable getInfoAdapter() {
-		return fInfoAdapter;
+	public Object getSource() {
+		return fSource;
 	}
 
 	/**

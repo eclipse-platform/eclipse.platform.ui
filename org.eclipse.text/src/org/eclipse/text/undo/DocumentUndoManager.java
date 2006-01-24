@@ -22,7 +22,6 @@ import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
 
 import org.eclipse.jface.text.Assert;
@@ -362,19 +361,18 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	 * @param offset the document offset
 	 * @param text the text that was inserted
 	 * @param preservedText the text being replaced
-	 * @param uiInfo an adapter that may provide additional UI info about the triggering action
+	 * @param source the source which triggered the event
 	 * @param eventType the type of event causing the change
 	 * @param isCompound a flag indicating whether the change is a compound change
 	 * @see IDocumentUndoListener
 	 */
-	void fireDocumentUndo(int offset, String text, String preservedText, IAdaptable uiInfo, int eventType, boolean isCompound) {
+	void fireDocumentUndo(int offset, String text, String preservedText, Object source, int eventType, boolean isCompound) {
 		eventType= isCompound ? eventType | DocumentUndoEvent.COMPOUND : eventType;
-		DocumentUndoEvent event= new DocumentUndoEvent(fDocument, offset, text, preservedText, eventType, uiInfo);
+		DocumentUndoEvent event= new DocumentUndoEvent(fDocument, offset, text, preservedText, eventType, source);
 		Object[] listeners= fDocumentUndoListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++) {
 			((IDocumentUndoListener)listeners[i]).documentUndoNotification(event);
 		}
-
 	}
 
 	/**

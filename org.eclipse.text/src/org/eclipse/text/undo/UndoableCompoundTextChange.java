@@ -51,7 +51,7 @@ class UndoableCompoundTextChange extends UndoableTextChange {
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.UndoableTextChange#undo()
+	 * @see org.eclipse.text.undo.UndoableTextChange#undo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
 	public IStatus undo(IProgressMonitor monitor, IAdaptable uiInfo) {
 
@@ -60,8 +60,7 @@ class UndoableCompoundTextChange extends UndoableTextChange {
 			UndoableTextChange c;
 
 			c= (UndoableTextChange) fChanges.get(0);
-			manager.fireDocumentUndo(c.fStart, c.fPreservedText, c.fText, uiInfo,
-					DocumentUndoEvent.ABOUT_TO_UNDO, true);
+			manager.fireDocumentUndo(c.fStart, c.fPreservedText, c.fText, uiInfo, DocumentUndoEvent.ABOUT_TO_UNDO, true);
 
 			for (int i= size - 1; i >= 0; --i) {
 				c= (UndoableTextChange) fChanges.get(i);
@@ -74,7 +73,7 @@ class UndoableCompoundTextChange extends UndoableTextChange {
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.UndoableTextChange#redo()
+	 * @see org.eclipse.text.undo.UndoableTextChange#redo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
 	public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
 
@@ -83,8 +82,7 @@ class UndoableCompoundTextChange extends UndoableTextChange {
 
 			UndoableTextChange c;
 			c= (UndoableTextChange) fChanges.get(size - 1);
-			manager.fireDocumentUndo(c.fStart, c.fText, c.fPreservedText, uiInfo,
-					DocumentUndoEvent.ABOUT_TO_REDO, true);
+			manager.fireDocumentUndo(c.fStart, c.fText, c.fPreservedText, uiInfo, DocumentUndoEvent.ABOUT_TO_REDO, true);
 
 			for (int i= 0; i <= size - 1; ++i) {
 				c= (UndoableTextChange) fChanges.get(i);
@@ -98,7 +96,7 @@ class UndoableCompoundTextChange extends UndoableTextChange {
 	}
 
 	/*
-	 * @see UndoableTextChange#updateUndoableTextChange
+	 * @see org.eclipse.text.undo.UndoableTextChange#updateTextChange()
 	 */
 	protected void updateTextChange() {
 		// first gather the data from the buffers
@@ -119,7 +117,7 @@ class UndoableCompoundTextChange extends UndoableTextChange {
 	}
 
 	/*
-	 * @see UndoableTextChange#createCurrent
+	 * @see org.eclipse.text.undo.UndoableTextChange#createCurrent()
 	 */
 	protected UndoableTextChange createCurrent() {
 
@@ -131,7 +129,7 @@ class UndoableCompoundTextChange extends UndoableTextChange {
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.UndoableTextChange#commit()
+	 * @see org.eclipse.text.undo.UndoableTextChange#commit()
 	 */
 	protected void commit() {
 		// if there is pending data, update the text change
@@ -140,19 +138,15 @@ class UndoableCompoundTextChange extends UndoableTextChange {
 		manager.fCurrent= createCurrent();
 	}
 
-	/**
-	 * Checks whether the text change is valid for undo or redo.
-	 * 
-	 * @return true if the text change is valid
+	/*
+	 * @see org.eclipse.text.undo.UndoableTextChange#isValid()
 	 */
 	protected boolean isValid() {
 		return fStart > -1 || fChanges.size() > 0;
 	}
 
-	/**
-	 * Returns the undo modification stamp.
-	 * 
-	 * @return the undo modification stamp
+	/*
+	 * @see org.eclipse.text.undo.UndoableTextChange#getUndoModificationStamp()
 	 */
 	protected long getUndoModificationStamp() {
 		if (fStart > -1)
@@ -164,10 +158,8 @@ class UndoableCompoundTextChange extends UndoableTextChange {
 		return fUndoModificationStamp;
 	}
 
-	/**
-	 * Returns the redo modification stamp.
-	 * 
-	 * @return the redo modification stamp
+	/*
+	 * @see org.eclipse.text.undo.UndoableTextChange#getRedoModificationStamp()
 	 */
 	protected long getRedoModificationStamp() {
 		if (fStart > -1)

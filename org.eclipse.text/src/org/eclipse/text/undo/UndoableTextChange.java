@@ -12,6 +12,7 @@ package org.eclipse.text.undo;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -204,8 +205,7 @@ class UndoableTextChange extends AbstractOperation {
 	}
 
 	/*
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#execute(org.eclipse.core.runtime.IProgressMonitor,
-	 *      org.eclipse.core.runtime.IAdaptable)
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation.IUndoableOperation#execute(IProgressMonitor, IAdaptable)
 	 */
 	public IStatus execute(IProgressMonitor monitor, IAdaptable uiInfo) {
 		// Text changes execute as they are typed, so executing one has no
@@ -233,8 +233,7 @@ class UndoableTextChange extends AbstractOperation {
 	protected void redoTextChange() {
 		try {
 			if (manager.fDocument instanceof IDocumentExtension4)
-				((IDocumentExtension4) manager.fDocument).replace(fStart, fEnd
-						- fStart, fText, fRedoModificationStamp);
+				((IDocumentExtension4) manager.fDocument).replace(fStart, fEnd - fStart, fText, fRedoModificationStamp);
 			else
 				manager.fDocument.replace(fStart, fEnd - fStart, fText);
 		} catch (BadLocationException x) {
@@ -251,11 +250,9 @@ class UndoableTextChange extends AbstractOperation {
 	 */
 	public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
 		if (isValid()) {
-			manager.fireDocumentUndo(fStart, fText, fPreservedText, uiInfo,
-					DocumentUndoEvent.ABOUT_TO_REDO, false);
+			manager.fireDocumentUndo(fStart, fText, fPreservedText, uiInfo, DocumentUndoEvent.ABOUT_TO_REDO, false);
 			redoTextChange();
-			manager.fireDocumentUndo(fStart, fText, fPreservedText, uiInfo,
-					DocumentUndoEvent.REDONE, false);
+			manager.fireDocumentUndo(fStart, fText, fPreservedText, uiInfo, DocumentUndoEvent.REDONE, false);
 			return Status.OK_STATUS;
 		}
 		return IOperationHistory.OPERATION_INVALID_STATUS;
@@ -279,15 +276,15 @@ class UndoableTextChange extends AbstractOperation {
 	 * @return a new, uncommitted text change or a compound text change
 	 */
 	protected UndoableTextChange createCurrent() {
-		return manager.fFoldingIntoCompoundChange ? new UndoableCompoundTextChange(
-				manager) : new UndoableTextChange(manager);
+		if (manager.fFoldingIntoCompoundChange)
+			return new UndoableCompoundTextChange(manager);
+		return new UndoableTextChange(manager);
 	}
 
 	/**
 	 * Commits the current change into this one.
 	 */
 	protected void commit() {
-
 		if (fStart < 0) {
 			if (manager.fFoldingIntoCompoundChange) {
 				manager.fCurrent= createCurrent();
@@ -316,7 +313,7 @@ class UndoableTextChange extends AbstractOperation {
 	 * created as a result of the commit.
 	 * 
 	 * @return <code>true</code> if the change was committed and created
-	 * 			a new fCurrent, <code>false</code> if not
+	 *			a new <code>fCurrent</code>, <code>false</code> if not
 	 */
 	protected boolean attemptCommit() {
 		pretendCommit();
