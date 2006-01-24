@@ -318,12 +318,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
                     fFileToConfig.put(file, configuration);
                 }
             }
-            //bug 113772
-            try {
-	            IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-		        handler.handleStatus(deleteAssociatedLaunchConfigs, project);
-            }
-            catch (CoreException e){e.printStackTrace();}
         }	
 		
 		/**
@@ -339,6 +333,17 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		public boolean visit(IResourceDelta delta) {
 			if (delta == null) {
 				return false;
+			}
+			if((delta.getKind() == IResourceDelta.REMOVED) & (delta.getFlags() != IResourceDelta.MOVED_TO)) {
+				 //bug 113772 & 125005
+	            try {
+	            	if (delta.getResource() instanceof IProject) {
+						IProject project = (IProject)delta.getResource();
+						IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+						handler.handleStatus(deleteAssociatedLaunchConfigs, project);
+	            	}
+	            }
+	            catch (CoreException e){e.printStackTrace();}
 			}
 			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
 				if (delta.getResource() instanceof IProject) {
