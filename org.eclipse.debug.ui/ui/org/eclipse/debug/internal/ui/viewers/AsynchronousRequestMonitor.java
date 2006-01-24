@@ -107,14 +107,12 @@ abstract class AsynchronousRequestMonitor implements IAsynchronousRequestMonitor
      * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
      */
     public void beginTask(String name, int totalWork) {
-        // TODO Auto-generated method stub
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
      */
     public void internalWorked(double work) {
-        // TODO Auto-generated method stub
     }
 
     /* (non-Javadoc)
@@ -135,21 +133,18 @@ abstract class AsynchronousRequestMonitor implements IAsynchronousRequestMonitor
      * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
      */
     public void setTaskName(String name) {
-        // TODO Auto-generated method stub
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
      */
     public void subTask(String name) {
-        // TODO Auto-generated method stub
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
      */
     public void worked(int work) {
-        // TODO Auto-generated method stub
     }
     
     /* (non-Javadoc)
