@@ -47,30 +47,6 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	protected static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 	/**
-	 * Closes a stream and ignores any resulting exception.
-	 */
-	private static void safeClose(InputStream in) {
-		try {
-			if (in != null)
-				in.close();
-		} catch (IOException e) {
-			//ignore
-		}
-	}
-
-	/**
-	 * Closes a stream and ignores any resulting exception.
-	 */
-	private static void safeClose(OutputStream out) {
-		try {
-			if (out != null)
-				out.close();
-		} catch (IOException e) {
-			//ignore
-		}
-	}
-
-	/**
 	 * Transfers the contents of an input stream to an output stream, using a large
 	 * buffer.
 	 * 
@@ -112,8 +88,8 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 				}
 			}
 		} finally {
-			safeClose(source);
-			safeClose(destination);
+			Policy.safeClose(source);
+			Policy.safeClose(destination);
 		}
 	}
 
@@ -241,8 +217,8 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 				transferStreams(in, out, sourcePath, monitor);
 				transferAttributes(sourceInfo, destination);
 			} catch (CoreException e) {
-				safeClose(in);
-				safeClose(out);
+				Policy.safeClose(in);
+				Policy.safeClose(out);
 				//if we failed to write, try to cleanup the half written file
 				if (!destination.fetchInfo(0, null).exists())
 					destination.delete(EFS.NONE, null);
