@@ -96,7 +96,7 @@ public class TeamUI {
 	 * Returns the history view for the given object. The object needs to 
 	 * adapt to an IHistoryPageSource.
 	 * @param object
-	 * @return
+	 * @return an instance of the history view
 	 */
 	public static IHistoryView getHistoryView(IWorkbenchPage page, Object object) {
 		try {
