@@ -16,6 +16,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
@@ -54,7 +55,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	/**
 	 * Handles all the mouse interaction in this line number ruler column.
 	 */
-	private class MouseHandler implements MouseListener {
+	private class MouseHandler implements MouseListener, MouseMoveListener {
 
 		/*
 		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
@@ -73,6 +74,13 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseDoubleClick(MouseEvent event) {
+			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseMove(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
 		}
 	}
@@ -192,6 +200,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		});
 
 		fCanvas.addMouseListener(fMouseHandler);
+		fCanvas.addMouseMoveListener(fMouseHandler);
 
 		if (fCachedTextViewer != null) {
 
@@ -303,7 +312,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	 */
 	public void redraw() {
 
-		if (fCanvas != null && !fCanvas.isDisposed()) {
+		if (fCachedTextViewer != null && fCanvas != null && !fCanvas.isDisposed()) {
 			GC gc= new GC(fCanvas);
 			doubleBufferPaint(gc);
 			gc.dispose();

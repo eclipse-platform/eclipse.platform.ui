@@ -104,7 +104,8 @@ public final class RevisionPainter {
 		private RGB adaptColorToAge(Revision revision, RGB rgb, boolean focus) {
 			long age= computeAge(revision);
 			// relative age: newest is 0, oldest is 1
-			double relativeAge= (double) fRevisions.indexOf(new Long(age)) / (fRevisions.size() - 1);
+			int size= fRevisions.size();
+			double relativeAge= size == 1 ? 0.5 : (double) fRevisions.indexOf(new Long(age)) / (size - 1);
 			
 			return getShadedColor(rgb, 1 - relativeAge, focus);
 		}
