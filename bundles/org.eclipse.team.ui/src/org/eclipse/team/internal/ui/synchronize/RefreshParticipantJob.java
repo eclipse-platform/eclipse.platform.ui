@@ -306,7 +306,7 @@ public abstract class RefreshParticipantJob extends Job {
 			RefreshEvent event = new RefreshEvent(reschedule ? IRefreshEvent.SCHEDULED_REFRESH : IRefreshEvent.USER_REFRESH, roots, participant);
 			IStatus status = null;
 			NonblockingProgressMonitor wrappedMonitor = null;
-			RefreshChangeListener changeListener = null;
+			RefreshChangeListener changeListener = getChangeListener();
 			try {
 				event.setStartTime(System.currentTimeMillis());
 				if(monitor.isCanceled()) {
@@ -317,7 +317,7 @@ public abstract class RefreshParticipantJob extends Job {
 				// Perform the refresh		
 				monitor.setTaskName(getName());
 				wrappedMonitor = new NonblockingProgressMonitor(monitor, this);				
-				changeListener = doRefresh(wrappedMonitor);
+				doRefresh(changeListener, wrappedMonitor);
 				// Prepare the results
 				setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.valueOf(! isJobModal()));
 			} catch(OperationCanceledException e2) {
@@ -368,7 +368,7 @@ public abstract class RefreshParticipantJob extends Job {
 		}
 	}
 
-	protected abstract RefreshChangeListener doRefresh(IProgressMonitor monitor) throws CoreException;
+	protected abstract void doRefresh(RefreshChangeListener changeListener, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Return the total number of changes covered by the resources
@@ -474,6 +474,8 @@ public abstract class RefreshParticipantJob extends Job {
 	}
 
 	protected abstract void handleProgressGroupSet(IProgressMonitor group);
+	
+	protected abstract RefreshChangeListener getChangeListener();
 	
 	protected IResource[] getResources() {
 		return resources;

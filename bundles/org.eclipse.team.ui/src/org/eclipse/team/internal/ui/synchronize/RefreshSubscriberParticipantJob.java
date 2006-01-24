@@ -77,10 +77,7 @@ public class RefreshSubscriberParticipantJob extends RefreshParticipantJob {
 		return super.belongsTo(family);
 	}
 	
-	protected RefreshChangeListener doRefresh(IProgressMonitor monitor) throws TeamException {
-		// Set-up change listener so that we can determine the changes found
-		// during this refresh.		
-		RefreshChangeListener changeListener = getChangeListener();
+	protected void doRefresh(RefreshChangeListener changeListener, IProgressMonitor monitor) throws TeamException {
 		Subscriber subscriber = getSubscriber();
 		if (subscriber != null) {
 			try {
@@ -90,6 +87,5 @@ public class RefreshSubscriberParticipantJob extends RefreshParticipantJob {
 				subscriber.removeListener(changeListener);
 			}
 		}
-		return changeListener;
 	}
 }

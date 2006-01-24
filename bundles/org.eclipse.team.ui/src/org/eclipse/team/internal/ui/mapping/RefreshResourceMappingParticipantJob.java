@@ -26,7 +26,7 @@ public class RefreshResourceMappingParticipantJob extends RefreshParticipantJob 
 		super(participant, jobName, taskName, resources, listener);
 	}
 
-	protected RefreshChangeListener doRefresh(IProgressMonitor monitor) throws CoreException {
+	protected void doRefresh(RefreshChangeListener changeListener, IProgressMonitor monitor) throws CoreException {
 		// TODO Auto-generated method stub
 		ISynchronizationContext context = ((ResourceMappingSynchronizeParticipant)getParticipant()).getContext();
 		IDiffChangeListener listener = null;
@@ -36,7 +36,6 @@ public class RefreshResourceMappingParticipantJob extends RefreshParticipantJob 
 		} finally {
 			context.getDiffTree().removeDiffChangeListener(listener);
 		}
-		return null;
 	}
 
 	private ResourceTraversal[] getTraversals() {
@@ -62,6 +61,11 @@ public class RefreshResourceMappingParticipantJob extends RefreshParticipantJob 
 	protected void handleProgressGroupSet(IProgressMonitor group) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	protected RefreshChangeListener getChangeListener() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
