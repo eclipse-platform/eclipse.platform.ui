@@ -202,7 +202,7 @@ A group can contain menus, items and other groups.
       </annotation>
       <complexType>
          <sequence>
-            <element ref="order" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="order" minOccurs="0" maxOccurs="1"/>
             <choice>
                <element ref="bar"/>
                <element ref="part"/>
