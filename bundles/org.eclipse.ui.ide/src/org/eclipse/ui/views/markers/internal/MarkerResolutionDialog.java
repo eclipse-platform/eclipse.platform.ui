@@ -20,7 +20,9 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -183,7 +185,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 					 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 					 */
 					public void selectionChanged(SelectionChangedEvent event) {
-						setComplete(!event.getSelection().isEmpty());
+						setComplete(false);
 						addMatching
 								.setEnabled(getSelectedWorkbenchResolution() != null);
 						markersTable.refresh();
@@ -503,6 +505,20 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 						IMarker.SEVERITY, -1));
 			}
 		});
+		
+		markersTable.addCheckStateListener(new ICheckStateListener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
+			 */
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				if(event.getChecked() == true)
+					setComplete(true);
+				else{
+					setComplete(markersTable.getCheckedElements().length > 0);
+				}
+				
+			}
+		});
 
 		markersTable.setInput(this);
 		markersTable.setAllChecked(true);
@@ -538,9 +554,9 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		// If there is only one select it
 		if (resolutionsList.getList().getItemCount() == 1) {
 			resolutionsList.getList().select(0);
-			setComplete(true);
-		} else
-			setComplete(false);
+			markersTable.refresh();
+		}
+		setComplete(false);
 	}
 
 	/*
@@ -571,7 +587,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 			// Allow paint events and wake up the button
 			getShell().getDisplay().readAndDispatch();
-			if (!progressCancelled()) {
+			if (!progressCancelled() && checked.length == 1) {
 
 				// There will only be one
 				IMarker marker = (IMarker) checked[0];
