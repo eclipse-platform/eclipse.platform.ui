@@ -59,7 +59,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	/**
 	 * Constructs an operation to import breakpoints.
 	 * 
-	 * @param inputfile the file to read breakpoints from - the file should have been
+	 * @param fileName the file to read breakpoints from - the file should have been
 	 *  created from an export operation
 	 * @param overwrite whether imported breakpoints will overwrite existing equivalent breakpoints
 	 * @param createWorkingSets whether breakpoint working sets should be created. Breakpoints
