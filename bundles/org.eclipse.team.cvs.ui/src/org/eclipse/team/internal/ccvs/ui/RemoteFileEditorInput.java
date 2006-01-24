@@ -12,11 +12,7 @@ package org.eclipse.team.internal.ccvs.ui;
 
  
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
@@ -30,7 +26,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * An editor input for a file in a repository.
  */
-public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorInput {
+public class RemoteFileEditorInput extends PlatformObject implements IWorkbenchAdapter, IStorageEditorInput {
 	ICVSRemoteFile file;
 	IStorage storage;
 
@@ -90,7 +86,7 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 		if (adapter == IWorkbenchAdapter.class) {
 			return this;
 		}
-		return null;
+		return super.getAdapter(adapter);
 	}
 	/**
 	 * Returns the children of this object.  When this object
