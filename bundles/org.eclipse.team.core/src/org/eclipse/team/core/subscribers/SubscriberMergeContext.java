@@ -62,9 +62,11 @@ public abstract class SubscriberMergeContext extends MergeContext {
 	protected void initialize(IProgressMonitor monitor, boolean refresh) throws CoreException {
 		handler = new SubscriberDiffTreeEventHandler(subscriber, getScope(), (ResourceDiffTree)getDiffTree());
 		handler.start();
-		if (refresh)
-			subscriber.refresh(getScope().getTraversals(), monitor);
-		handler.waitUntilIdle(monitor);
+		if (refresh) {
+			refresh(getScope().getTraversals(), IResource.NONE, monitor);
+		} else {
+			handler.waitUntilIdle(monitor);
+		}
 	}
 	
 	/* (non-Javadoc)

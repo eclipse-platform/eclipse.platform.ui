@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.IDiffNode;
@@ -28,6 +29,7 @@ import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 
 public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 
@@ -149,5 +151,25 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 	 */
 	public int getMergeType() {
 		return type;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.SubscriberMergeContext#refresh(org.eclipse.core.resources.mapping.ResourceTraversal[], int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException {
+		super.refresh(traversals, flags, monitor);
+		// Prune any empty folders within the traversals
+		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) {
+			CompoundResourceTraversal ct = new CompoundResourceTraversal();
+			ct.addTraversals(traversals);
+			IResource[] roots = ct.getRoots();
+			ICVSResource[] cvsResources = new ICVSResource[roots.length];
+			for (int i = 0; i < cvsResources.length; i++) {
+				cvsResources[i] = CVSWorkspaceRoot.getCVSResourceFor(roots[i]);
+			}
+			new PruneFolderVisitor().visit(
+				CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()),
+				cvsResources);
+		}
 	}
 }

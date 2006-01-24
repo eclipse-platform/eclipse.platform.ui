@@ -232,4 +232,13 @@ public class CompoundResourceTraversal {
 		return (ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]);
 	}
 
+	public IResource[] getRoots() {
+		List result = new ArrayList();
+		result.addAll(files);
+		result.addAll(zeroFolders);
+		result.addAll(shallowFolders);
+		result.addAll(deepFolders);
+		return (IResource[]) result.toArray(new IResource[result.size()]);
+	}
+
 }

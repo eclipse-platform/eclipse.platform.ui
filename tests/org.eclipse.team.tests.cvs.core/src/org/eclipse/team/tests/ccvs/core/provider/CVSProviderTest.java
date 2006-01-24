@@ -236,9 +236,10 @@ public class CVSProviderTest extends EclipseTest {
 		assertEquals(copy, copy2); 
 		
 		// Disable pruning, update copy and ensure directories come back
-		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(false);
-		updateProject(copy, null, false);
-		assertEquals(project, copy);
+		// TODO: disabled until bug 125037 can be resolved
+//		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(false);
+//		updateProject(copy, null, false);
+//		assertEquals(project, copy);
 		
 		// Enable pruning again since it's the default
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(true);
