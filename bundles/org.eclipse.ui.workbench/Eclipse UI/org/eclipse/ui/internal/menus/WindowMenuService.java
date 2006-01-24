@@ -21,17 +21,16 @@ import org.eclipse.jface.menus.SGroup;
 import org.eclipse.jface.menus.SItem;
 import org.eclipse.jface.menus.SMenu;
 import org.eclipse.jface.menus.SMenuLayout;
-import org.eclipse.jface.menus.SMenuManager;
 import org.eclipse.jface.menus.SWidget;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.ISourceProvider;
-import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.menus.IMenuContribution;
 import org.eclipse.ui.menus.IMenuService;
 
 /**
  * <p>
- * Provides services related to contributing menu elements to the workbench.
- * </p>
+ * Provides services related to contributing menu elements to a workbench
+ * window. Visibility and showing are tracked at the workbench window level.
  * </p>
  * <p>
  * This class is only intended for internal use within the
@@ -46,7 +45,7 @@ import org.eclipse.ui.menus.IMenuService;
  * 
  * @since 3.2
  */
-public final class MenuService implements IMenuService {
+public final class WindowMenuService implements IMenuService {
 
 	/**
 	 * The central authority for determining which menus are visible.
@@ -54,29 +53,16 @@ public final class MenuService implements IMenuService {
 	private final MenuAuthority menuAuthority;
 
 	/**
-	 * The menu manager underlying this menu service; never <code>null</code>.
-	 */
-	private final SMenuManager menuManager;
-
-	/**
-	 * The class providing persistence for this service.
-	 */
-	private final MenuPersistence menuPersistence;
-
-	/**
 	 * Constructs a new instance of <code>MenuService</code> using a menu
 	 * manager.
 	 * 
-	 * @param menuManager
-	 *            The menu manager to use; must not be <code>null</code>.
-	 * @param commandService
-	 *            The command service to use; must not be <code>null</code>.
+	 * @param parent The parent window service for this window.  This parent
+	 * must track menu definitions and regsirt
+	 * @param window
+	 *            The workbench window to use; must not be <code>null</code>.
 	 */
-	public MenuService(final SMenuManager menuManager,
-			final ICommandService commandService) {
-		this.menuAuthority = new MenuAuthority();
-		this.menuManager = menuManager;
-		this.menuPersistence = new MenuPersistence(this, commandService);
+	public WindowMenuService(final IMenuService parent, final Window window) {
+		this.menuAuthority = new MenuAuthority(window);
 	}
 
 	public final void addSourceProvider(final ISourceProvider provider) {
@@ -97,7 +83,6 @@ public final class MenuService implements IMenuService {
 
 	public final void dispose() {
 		menuAuthority.dispose();
-		menuPersistence.dispose();
 	}
 
 	public final SActionSet getActionSet(final String actionSetId) {

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.menus.MenuElement;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
 import org.eclipse.ui.menus.IMenuContribution;
 
@@ -62,9 +63,20 @@ final class MenuAuthority extends ExpressionAuthority {
 	private final Set[] showingContributionsBySourcePriority = new Set[33];
 
 	/**
+	 * The window for which this authority applies. This is used for determining
+	 * visibility of particular menu elements.
+	 */
+	private final Window window;
+
+	/**
 	 * Constructs a new instance of <code>MenuAuthority</code>.
 	 */
-	MenuAuthority() {
+	MenuAuthority(final Window window) {
+		if (window == null) {
+			throw new NullPointerException(
+					"A menu authority cannot be constructed with a null window"); //$NON-NLS-1$
+		}
+		this.window = window;
 	}
 
 	/**
@@ -95,7 +107,7 @@ final class MenuAuthority extends ExpressionAuthority {
 		}
 
 		// Next we update the source priority bucket sort of activations.
-		if (contribution.getMenuElement().isShowing()) {
+		if (contribution.getMenuElement().isShowing(window)) {
 			final int sourcePriority = contribution.getSourcePriority();
 			for (int i = 1; i <= 32; i++) {
 				if ((sourcePriority & (1 << i)) != 0) {
@@ -143,7 +155,7 @@ final class MenuAuthority extends ExpressionAuthority {
 		}
 
 		// Next we update the source priority bucket sort of activations.
-		if (element.isShowing()) {
+		if (element.isShowing(window)) {
 			final int sourcePriority = contribution.getSourcePriority();
 			for (int i = 1; i <= 32; i++) {
 				if ((sourcePriority & (1 << i)) != 0) {
@@ -201,7 +213,7 @@ final class MenuAuthority extends ExpressionAuthority {
 			contribution.clearResult();
 			final boolean newVisible = evaluate(contribution);
 			if (newVisible != currentlyVisible) {
-				contribution.getMenuElement().setVisible(newVisible);
+				contribution.getMenuElement().setVisible(window, newVisible);
 			}
 		}
 	}
