@@ -66,7 +66,7 @@
          <attribute name="regex" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the regular expression to be matched
+                  specifies the regular expression to be matched. Since 3.2, this attribute supports string variable substitution.
                </documentation>
             </annotation>
          </attribute>
@@ -80,7 +80,7 @@
          <attribute name="qualifier" type="string">
             <annotation>
                <documentation>
-                  a simple regular expression used to identify a line that may contain this pattern match listener&apos;s complete regular expression &lt;code&gt;regex&lt;/code&gt;. When a line is found containing this expression, a search is performed from the beginning of the line for this pattern matcher&apos;s complete &lt;code&gt;regex&lt;/code&gt;. Use of this attribute is optional but can greatly improve performance as lines not containing this expression are disqualified from the search.
+                  a simple regular expression used to identify a line that may contain this pattern match listener&apos;s complete regular expression &lt;code&gt;regex&lt;/code&gt;. When a line is found containing this expression, a search is performed from the beginning of the line for this pattern matcher&apos;s complete &lt;code&gt;regex&lt;/code&gt;. Use of this attribute is optional but can greatly improve performance as lines not containing this expression are disqualified from the search. Since 3.2, this attribute supports string variable substitution.
                </documentation>
             </annotation>
          </attribute>

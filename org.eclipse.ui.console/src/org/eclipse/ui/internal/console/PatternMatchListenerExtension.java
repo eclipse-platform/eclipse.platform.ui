@@ -19,6 +19,7 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
@@ -29,6 +30,7 @@ public class PatternMatchListenerExtension implements IPluginContribution {
     private IConfigurationElement fConfig;
     private Expression fEnablementExpression;
     private String fPattern;
+    private String fQualifier;
     private int fFlags = -1;
    
     public PatternMatchListenerExtension(IConfigurationElement extension) {
@@ -93,6 +95,11 @@ public class PatternMatchListenerExtension implements IPluginContribution {
     public String getPattern() {
         if (fPattern == null) {
             fPattern = fConfig.getAttributeAsIs("regex"); //$NON-NLS-1$
+            try {
+            	fPattern = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fPattern);
+            } catch (CoreException e) {
+            	ConsolePlugin.log(e);
+            }
         }
         return fPattern;
     }
@@ -123,6 +130,14 @@ public class PatternMatchListenerExtension implements IPluginContribution {
     }
 
     public String getQuickPattern() {
-    	return fConfig.getAttribute("qualifier"); //$NON-NLS-1$
+    	if (fQualifier == null) {
+    		fQualifier = fConfig.getAttribute("qualifier"); //$NON-NLS-1$
+    		try {
+				fQualifier = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fQualifier);
+			} catch (CoreException e) {
+				ConsolePlugin.log(e);
+			}
+    	}
+    	return fQualifier;
     }
 }
