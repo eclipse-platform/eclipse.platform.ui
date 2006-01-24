@@ -393,7 +393,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		}
 		return null;
 	}
-
+	
 	public void itemDropped(Object object) {
 
 		IResource resource = Utils.getResource(object);
@@ -556,7 +556,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		getSite().getPage().removePartListener(partListener);
 		getSite().getPage().removePartListener(partListener2);
 		//Remove the selection listener
-		getSite().getPage().addSelectionListener(selectionListener);
+		getSite().getPage().removeSelectionListener(selectionListener);
 	}
 
 	public void localItemDropped(IResource resource) {

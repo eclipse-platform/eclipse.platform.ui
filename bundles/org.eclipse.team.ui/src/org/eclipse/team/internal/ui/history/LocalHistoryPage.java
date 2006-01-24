@@ -50,12 +50,13 @@ public class LocalHistoryPage extends HistoryPage {
 		
 			//historyTableProvider.setFile(fileHistory, newfile);
 			tableViewer.setInput(newfile);
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	public boolean canShowHistoryFor(Object object) {
-		// TODO Auto-generated method stub
+		//don't volunteer to use this page unless forced to do so
 		return false;
 	}
 
