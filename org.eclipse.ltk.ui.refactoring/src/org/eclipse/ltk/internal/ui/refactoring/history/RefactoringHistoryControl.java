@@ -30,7 +30,6 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -343,7 +342,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	/**
 	 * {@inheritDoc}
 	 */
-	public final void createControl() {
+	public void createControl() {
 		RefactoringCore.getRefactoringHistoryService().connect();
 		fCaptionImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_COLL.createImage();
 		GridLayout layout= new GridLayout(2, false);
@@ -354,7 +353,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		setLayout(layout);
 		final GridData data= new GridData();
 		data.grabExcessHorizontalSpace= true;
-		data.heightHint= new PixelConverter(this).convertHeightInCharsToPixels(24);
+		data.grabExcessVerticalSpace= true;
 		data.horizontalAlignment= SWT.FILL;
 		data.verticalAlignment= SWT.FILL;
 		setLayoutData(data);

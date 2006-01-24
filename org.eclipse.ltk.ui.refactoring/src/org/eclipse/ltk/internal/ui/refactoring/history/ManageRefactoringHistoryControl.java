@@ -112,6 +112,19 @@ public final class ManageRefactoringHistoryControl extends RefactoringHistoryCon
 	/**
 	 * {@inheritDoc}
 	 */
+	public void createControl() {
+		super.createControl();
+		final GridData data= new GridData();
+		data.grabExcessHorizontalSpace= true;
+		data.heightHint= new PixelConverter(this).convertHeightInCharsToPixels(24);
+		data.horizontalAlignment= SWT.FILL;
+		data.verticalAlignment= SWT.FILL;
+		setLayoutData(data);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected TreeViewer createHistoryViewer(final Composite parent) {
 		Assert.isNotNull(parent);
 		if (fControlConfiguration.isCheckableViewer())
