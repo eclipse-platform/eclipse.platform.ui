@@ -109,8 +109,9 @@ public class CacheBaseContentsOperation extends CacheTreeContentsOperation {
 				monitor.beginTask(null, resources.length * 100);
 				for (int i = 0; i < resources.length; i++) {
 					IResource resource = resources[i];
-					if (resource.getType() == IResource.FILE) {
-						if (comparator.compareContents((IFile)resource, (IResourceVariant)CVSWorkspaceRoot.getRemoteResourceFor(resource), Policy.subMonitorFor(monitor, 100))) {
+					if (resource.exists() && resource.getType() == IResource.FILE) {
+						IResourceVariant remoteResource = (IResourceVariant)CVSWorkspaceRoot.getRemoteResourceFor(resource);
+						if (remoteResource != null && comparator.compareContents((IFile)resource, remoteResource, Policy.subMonitorFor(monitor, 100))) {
 							ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
 							cvsFile.checkedIn(null, false /* not a commit */);
 						}
