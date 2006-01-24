@@ -7,6 +7,6 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.core.internal.jobs;x-internal:=true,
  org.eclipse.core.runtime.jobs
-Bundle-Activator: org.eclipse.core.internal.jobs.Activator
+Bundle-Activator: org.eclipse.core.internal.jobs.JobActivator
 Require-Bundle: org.eclipse.equinox.common,
  system.bundle;resolution:=optional

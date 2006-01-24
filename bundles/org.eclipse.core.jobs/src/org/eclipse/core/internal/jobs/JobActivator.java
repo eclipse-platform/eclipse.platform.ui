@@ -17,7 +17,7 @@ import org.osgi.framework.*;
 /**
  * The Jobs plugin class.
  */
-public class Activator implements BundleActivator {
+public class JobActivator implements BundleActivator {
 
 	/**
 	 * The bundle associated this plug-in

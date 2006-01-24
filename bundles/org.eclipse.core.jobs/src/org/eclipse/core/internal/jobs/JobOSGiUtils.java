@@ -50,7 +50,7 @@ public class JobOSGiUtils {
 	}
 
 	private void initServices() throws ClassNotFoundException {
-		BundleContext context = Activator.getContext();
+		BundleContext context = JobActivator.getContext();
 		if (context == null) {
 			if (JobManager.DEBUG)
 				JobMessages.message("JobsOSGiUtils called before plugin started"); //$NON-NLS-1$
