@@ -1679,7 +1679,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 												 MessageDialog.QUESTION,
 												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32, LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33, LaunchConfigurationsMessages.LaunchConfigurationDialog_Cancel_34}, //  
 												 0);
-		if (dialog.open() == IDialogConstants.OK_ID) {
+		int ret = dialog.open();
+		if (ret == IDialogConstants.OK_ID) {
 			// Turn off auto select if prompting to save changes. The user
 			// has made another selection and we don't want a 'rename' to
 			// cause an auto-select.
@@ -1690,6 +1691,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			if (fLaunchConfigurationView != null) {
 				fLaunchConfigurationView.setAutoSelect(true);
 			}
+			return true;
+		}
+		//bug 124257
+		if(ret == 1) {
+			//1 is the index in of the 'No' button, from the specified index in the dialog above
 			return true;
 		}
 		return false;
