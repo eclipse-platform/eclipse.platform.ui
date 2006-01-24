@@ -1014,7 +1014,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	public void setRefactoringComment(final RefactoringDescriptorProxy proxy, final String comment, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(proxy);
-		Assert.isTrue(comment == null || !"".equals(comment)); //$NON-NLS-1$
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		fUndoStack.setComment(proxy, comment, monitor);
