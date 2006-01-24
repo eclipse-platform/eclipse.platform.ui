@@ -11,6 +11,9 @@
 
 package org.eclipse.jface.databinding;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * The event that is passed to a #bindingEvent method of an IBindingListener.
  * 
@@ -32,7 +35,20 @@ public class BindingEvent {
 		this.changeEvent = changeEvent;
 		this.eventType = copyType;
 		this.pipelinePosition = pipelinePosition;
+		createSymbolTable();
 	}
+	
+	/**
+	 * A Map of Integer --> String mapping the integer constants for the event
+	 * types defined in this class to their String symbols.
+	 */
+	public final Map eventConstants = new HashMap();
+	
+	/**
+	 * A Map of Integer --> String mapping the integer constants for the pipeline
+	 * events defined in this class to their String symbols.
+	 */
+	public final Map pipelineConstants = new HashMap();
 
 	/**
 	 * The ChangeEvent that is being processed.
@@ -126,4 +142,33 @@ public class BindingEvent {
 	 * converted value has been set/changed on the updatable.
 	 */
 	public static final int PIPELINE_AFTER_CHANGE = 4;
+	
+	/**
+	 * Creates a table of constants from this class.
+	 */
+	private void createSymbolTable() {
+		eventConstants.put(new Integer(0), "EVENT_COPY_TO_TARGET"); //$NON-NLS-1$
+		eventConstants.put(new Integer(1), "EVENT_COPY_TO_MODEL"); //$NON-NLS-1$
+		eventConstants.put(new Integer(2), "EVENT_PARTIAL_VALIDATE"); //$NON-NLS-1$
+		eventConstants.put(new Integer(3), "EVENT_REMOVE"); //$NON-NLS-1$
+		
+		pipelineConstants.put(new Integer(0), "PIPELINE_AFTER_GET"); //$NON-NLS-1$
+		pipelineConstants.put(new Integer(1), "PIPELINE_AFTER_VALIDATE"); //$NON-NLS-1$
+		pipelineConstants.put(new Integer(2), "PIPELINE_AFTER_CONVERT"); //$NON-NLS-1$
+		pipelineConstants.put(new Integer(3), "PIPELINE_AFTER_BUSINESS_VALIDATE"); //$NON-NLS-1$
+		pipelineConstants.put(new Integer(4), "PIPELINE_AFTER_CHANGE"); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer result = new StringBuffer();
+		result.append("(" + eventConstants.get(new Integer(eventType)) + ", "); //$NON-NLS-1$ //$NON-NLS-2$
+		result.append(pipelineConstants.get(new Integer(pipelinePosition))); //$NON-NLS-1$
+		result.append("): ChangeEvent(" + changeEvent.getChangeType() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+		return result.toString();
+	}
+
+
 }
