@@ -30,7 +30,7 @@ package org.eclipse.core.commands;
  * <code>commandParameterType</code> elemement of the
  * <code>org.eclipse.ui.commands</code> extension-point. Objects implementing
  * this interface may also be passed directly to
- * {@link ParameterType#define(Class, AbstractParameterValueConverter)} by
+ * {@link ParameterType#define(String, AbstractParameterValueConverter)} by
  * clients.
  * </p>
  * 
