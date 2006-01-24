@@ -14,11 +14,11 @@ package org.eclipse.debug.internal.ui.elements.adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeContentAdapter;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
-public class MemoryRetrievalContentAdapter extends AsynchronousTreeContentAdapter{
+public class MemoryRetrievalContentAdapter extends AsynchronousContentAdapter{
 
 	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 		String id = context.getPart().getSite().getId();

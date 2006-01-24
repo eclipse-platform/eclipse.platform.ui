@@ -19,13 +19,13 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Abstract implementation of an asynchronous tree contenxt adapter.
+ * Abstract implementation of an asynchronous content adapter.
  * <p>
  * Clients may subclass this class.
  * </p>
  * @since 3.2
  */
-public abstract class AsynchronousTreeContentAdapter implements IAsynchronousTreeContentAdapter {
+public abstract class AsynchronousContentAdapter implements IAsynchronousContentAdapter {
 	
 	protected static final Object[] EMPTY = new Object[0];
 	

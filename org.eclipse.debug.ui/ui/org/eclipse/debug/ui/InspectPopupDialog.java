@@ -23,7 +23,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeContentAdapter;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.TreePath;
@@ -202,7 +202,7 @@ public class InspectPopupDialog extends DebugPopup {
         return fTree;
     }
 
-    private class TreeRoot extends AsynchronousTreeContentAdapter {
+    private class TreeRoot extends AsynchronousContentAdapter {
         protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
             return new Object[] { fExpression };
         }

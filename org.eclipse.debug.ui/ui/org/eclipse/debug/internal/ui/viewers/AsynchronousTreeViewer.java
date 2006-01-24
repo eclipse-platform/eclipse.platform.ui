@@ -184,7 +184,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      *            widget associated with the element in this viewer's tree
      */
     protected void updateHasChildren(Object element, Widget widget) {
-        IAsynchronousTreeContentAdapter adapter = getTreeContentAdapter(element);
+        IAsynchronousContentAdapter adapter = getTreeContentAdapter(element);
         if (adapter != null) {
             IContainerRequestMonitor update = new ContainerRequestMonitor(widget, this);
             schedule(update);
@@ -201,7 +201,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      *            widget associated with the element in this viewer's tree
      */
     protected void updateChildren(Object parent, Widget widget) {
-        IAsynchronousTreeContentAdapter adapter = getTreeContentAdapter(parent);
+        IAsynchronousContentAdapter adapter = getTreeContentAdapter(parent);
         if (adapter != null) {
             IChildrenRequestMonitor update = new ChildrenRequestMonitor(widget, this);
             schedule(update);
@@ -217,13 +217,13 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      *            element to retrieve adapter for
      * @return presentation adapter or <code>null</code>
      */
-    protected IAsynchronousTreeContentAdapter getTreeContentAdapter(Object element) {        
-        IAsynchronousTreeContentAdapter adapter = null;
-        if (element instanceof IAsynchronousTreeContentAdapter) {
-            adapter = (IAsynchronousTreeContentAdapter) element;
+    protected IAsynchronousContentAdapter getTreeContentAdapter(Object element) {        
+        IAsynchronousContentAdapter adapter = null;
+        if (element instanceof IAsynchronousContentAdapter) {
+            adapter = (IAsynchronousContentAdapter) element;
         } else if (element instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) element;
-            adapter = (IAsynchronousTreeContentAdapter) adaptable.getAdapter(IAsynchronousTreeContentAdapter.class);
+            adapter = (IAsynchronousContentAdapter) adaptable.getAdapter(IAsynchronousContentAdapter.class);
         }
         return adapter;
     }

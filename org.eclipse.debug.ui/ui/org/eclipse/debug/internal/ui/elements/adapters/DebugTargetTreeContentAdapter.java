@@ -15,11 +15,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeContentAdapter;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
-public class DebugTargetTreeContentAdapter extends AsynchronousTreeContentAdapter {
+public class DebugTargetTreeContentAdapter extends AsynchronousContentAdapter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)

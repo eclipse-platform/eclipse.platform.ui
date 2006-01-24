@@ -216,7 +216,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
     protected void internalRefresh(Object element, Widget widget) {
         super.internalRefresh(element, widget);
         if (element.equals(getRoot())) {
-            IAsynchronousTreeContentAdapter adapter = getTableContentAdapter(element);
+            IAsynchronousContentAdapter adapter = getTableContentAdapter(element);
             if (adapter != null) {
                 IChildrenRequestMonitor update = new ChildrenRequestMonitor(widget, this);
                 schedule(update);
@@ -225,13 +225,13 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
         }
     }
 
-    private IAsynchronousTreeContentAdapter getTableContentAdapter(Object element) {
-        IAsynchronousTreeContentAdapter adapter = null;
-        if (element instanceof IAsynchronousTreeContentAdapter) {
-            adapter = (IAsynchronousTreeContentAdapter) element;
+    private IAsynchronousContentAdapter getTableContentAdapter(Object element) {
+        IAsynchronousContentAdapter adapter = null;
+        if (element instanceof IAsynchronousContentAdapter) {
+            adapter = (IAsynchronousContentAdapter) element;
         } else if (element instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) element;
-            adapter = (IAsynchronousTreeContentAdapter) adaptable.getAdapter(IAsynchronousTreeContentAdapter.class);
+            adapter = (IAsynchronousContentAdapter) adaptable.getAdapter(IAsynchronousContentAdapter.class);
         }
         return adapter;
     }

@@ -42,7 +42,7 @@ import org.eclipse.debug.internal.ui.elements.adapters.ThreadTreeContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableTreeContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.IAsynchronousLabelAdapter;
-import org.eclipse.debug.internal.ui.viewers.IAsynchronousTreeContentAdapter;
+import org.eclipse.debug.internal.ui.viewers.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.IModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultModelProxyFactory;
@@ -64,17 +64,17 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IAsynchronousLabelAdapter fgExpressionLabelAdapter = new ExpressionLabelAdapter();
     private static IAsynchronousLabelAdapter fgMemoryBlockLabelAdapter = new MemoryBlockLabelAdapter();
     
-    private static IAsynchronousTreeContentAdapter fgAsyncLaunchManager = new LauchManagerTreeContentAdapter();
-    private static IAsynchronousTreeContentAdapter fgAsyncLaunch = new LaunchTreeContentAdapter();
-    private static IAsynchronousTreeContentAdapter fgAsyncTarget = new DebugTargetTreeContentAdapter();
-    private static IAsynchronousTreeContentAdapter fgAsyncProcess = new ProcessTreeAdapter();
-    private static IAsynchronousTreeContentAdapter fgAsyncThread = new ThreadTreeContentAdapter();
-    private static IAsynchronousTreeContentAdapter fgAsyncFrame = new StackFrameTreeContentAdapter();
-    private static IAsynchronousTreeContentAdapter fgAsyncVariable = new VariableTreeContentAdapter();
-    private static IAsynchronousTreeContentAdapter fgAsyncRegisterGroup = new RegisterGroupTreeContentAdapter();
-    private static IAsynchronousTreeContentAdapter fgAsyncExpressionManager = new ExpressionManagerTreeContentAdapter();
-    private static IAsynchronousTreeContentAdapter fgAsyncExpression = new ExpressionTreeContentAdapter();
-    private static IAsynchronousTreeContentAdapter fgAsyncMemoryRetrieval = new MemoryRetrievalContentAdapter();
+    private static IAsynchronousContentAdapter fgAsyncLaunchManager = new LauchManagerTreeContentAdapter();
+    private static IAsynchronousContentAdapter fgAsyncLaunch = new LaunchTreeContentAdapter();
+    private static IAsynchronousContentAdapter fgAsyncTarget = new DebugTargetTreeContentAdapter();
+    private static IAsynchronousContentAdapter fgAsyncProcess = new ProcessTreeAdapter();
+    private static IAsynchronousContentAdapter fgAsyncThread = new ThreadTreeContentAdapter();
+    private static IAsynchronousContentAdapter fgAsyncFrame = new StackFrameTreeContentAdapter();
+    private static IAsynchronousContentAdapter fgAsyncVariable = new VariableTreeContentAdapter();
+    private static IAsynchronousContentAdapter fgAsyncRegisterGroup = new RegisterGroupTreeContentAdapter();
+    private static IAsynchronousContentAdapter fgAsyncExpressionManager = new ExpressionManagerTreeContentAdapter();
+    private static IAsynchronousContentAdapter fgAsyncExpression = new ExpressionTreeContentAdapter();
+    private static IAsynchronousContentAdapter fgAsyncMemoryRetrieval = new MemoryRetrievalContentAdapter();
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -84,7 +84,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
 			return adaptableObject;
 		}
         
-        if (adapterType.equals(IAsynchronousTreeContentAdapter.class)) {
+        if (adapterType.equals(IAsynchronousContentAdapter.class)) {
             if (adaptableObject instanceof ILaunchManager) {
                 return fgAsyncLaunchManager;
             }
@@ -159,7 +159,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
      */
     public Class[] getAdapterList() {
-        return new Class[] {IWorkbenchAdapter.class, IWorkbenchAdapter2.class, IDeferredWorkbenchAdapter.class, IAsynchronousLabelAdapter.class, IAsynchronousTreeContentAdapter.class,
+        return new Class[] {IWorkbenchAdapter.class, IWorkbenchAdapter2.class, IDeferredWorkbenchAdapter.class, IAsynchronousLabelAdapter.class, IAsynchronousContentAdapter.class,
         		IModelProxyFactory.class, ISourceDisplayAdapter.class, IModelSelectionPolicy.class};
     }
 

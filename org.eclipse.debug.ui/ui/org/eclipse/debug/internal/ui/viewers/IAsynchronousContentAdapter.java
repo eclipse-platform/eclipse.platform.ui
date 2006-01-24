@@ -11,14 +11,14 @@
 package org.eclipse.debug.internal.ui.viewers;
 
 /**
- * Provides content for elements in a tree viewer. Note that implementations
+ * Provides content for elements in an <code>AsynchronousViewer</code>. Note that implementations
  * must provide content asynchronously. 
  * <p>
  * Clients may implement this interface.
  * </p>
  * @since 3.2
  */
-public interface IAsynchronousTreeContentAdapter {
+public interface IAsynchronousContentAdapter {
 
     /**
      * Asynchronously retrieves the children of the given parent reporting to the

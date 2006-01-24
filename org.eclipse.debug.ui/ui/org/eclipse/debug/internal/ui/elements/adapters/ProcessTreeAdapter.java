@@ -11,11 +11,11 @@
 package org.eclipse.debug.internal.ui.elements.adapters;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeContentAdapter;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
-public class ProcessTreeAdapter extends AsynchronousTreeContentAdapter {
+public class ProcessTreeAdapter extends AsynchronousContentAdapter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)

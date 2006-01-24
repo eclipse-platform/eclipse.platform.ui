@@ -9,9 +9,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeContentAdapter;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.viewers.IAsynchronousTreeContentAdapter;
+import org.eclipse.debug.internal.ui.viewers.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.IUpdatePolicy;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -33,13 +33,13 @@ public class LaunchViewer extends AsynchronousTreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.treeviewer.AsynchronousTreeViewer#getTreeContentAdapter(java.lang.Object)
 	 */
-	protected IAsynchronousTreeContentAdapter getTreeContentAdapter(Object element) {
-		AsynchronousTreeContentAdapter legacyAdapter = getLegacyAdapter(element);
+	protected IAsynchronousContentAdapter getTreeContentAdapter(Object element) {
+		AsynchronousContentAdapter legacyAdapter = getLegacyAdapter(element);
 		if (legacyAdapter != null) {
 			return legacyAdapter;
 		}
 
-		IAsynchronousTreeContentAdapter presentationAdapter = super.getTreeContentAdapter(element);
+		IAsynchronousContentAdapter presentationAdapter = super.getTreeContentAdapter(element);
 		if (presentationAdapter != null) {
 			return presentationAdapter;
 		}
@@ -53,7 +53,7 @@ public class LaunchViewer extends AsynchronousTreeViewer {
 	 * @param element
 	 * @return
 	 */
-	private AsynchronousTreeContentAdapter getLegacyAdapter(Object element) {
+	private AsynchronousContentAdapter getLegacyAdapter(Object element) {
 		if (element instanceof IDeferredWorkbenchAdapter) {
 			return new WrappedDeferredWorkbenchTreeAdapter((IDeferredWorkbenchAdapter) element, element);
 		}
@@ -109,7 +109,7 @@ public class LaunchViewer extends AsynchronousTreeViewer {
 
 	}
 
-	private class WrappedDeferredWorkbenchTreeAdapter extends AsynchronousTreeContentAdapter {
+	private class WrappedDeferredWorkbenchTreeAdapter extends AsynchronousContentAdapter {
 		private IDeferredWorkbenchAdapter fAdapter;
 
 		private Object fElement;
@@ -140,7 +140,7 @@ public class LaunchViewer extends AsynchronousTreeViewer {
 		}		
 	}
 
-	private class WrappedWorkbenchTreeAdapter extends AsynchronousTreeContentAdapter {
+	private class WrappedWorkbenchTreeAdapter extends AsynchronousContentAdapter {
 		private IWorkbenchAdapter fAdapter;
 
 		public WrappedWorkbenchTreeAdapter(IWorkbenchAdapter adapter) {
@@ -167,7 +167,7 @@ public class LaunchViewer extends AsynchronousTreeViewer {
 
 	}
 	
-	private class BogusTreeAdapter extends AsynchronousTreeContentAdapter {
+	private class BogusTreeAdapter extends AsynchronousContentAdapter {
 		protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 			return new Object[0];
 		}
