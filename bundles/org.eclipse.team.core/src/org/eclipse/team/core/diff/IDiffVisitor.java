@@ -54,10 +54,10 @@ public interface IDiffVisitor {
 
 	/** 
 	 * Visits the given diff.
-	 * 
+	 * @param diff the diff being visited
 	 * @return <code>true</code> if the diff's children should
 	 *		be visited; <code>false</code> if they should be skipped.
 	 * @exception CoreException if the visit fails for some reason.
 	 */
-	public boolean visit(IDiffNode delta) throws CoreException;
+	public boolean visit(IDiffNode diff) throws CoreException;
 }
