@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources.mapping;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -45,6 +44,8 @@ public class SimpleResourceMapping extends ResourceMapping {
 	 * Method declared on ResourceMapping.
 	 */
 	public IProject[] getProjects() {
+		if (resource.getType() == IResource.ROOT)
+			return ((IWorkspaceRoot)resource).getProjects();
 		return new IProject[] {resource.getProject()};
 	}
 
