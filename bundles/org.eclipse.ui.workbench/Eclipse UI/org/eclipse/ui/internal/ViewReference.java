@@ -377,7 +377,10 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 						element.getDeclaringExtension(), view,
 						IExtensionTracker.REF_WEAK);
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			if ((e instanceof Error) && !(e instanceof LinkageError))
+				throw (Error) e;
+			
 			// An exception occurred. First deallocate anything we've allocated
 			// in the try block (see the top
 			// of the try block for a list of objects that need to be explicitly
