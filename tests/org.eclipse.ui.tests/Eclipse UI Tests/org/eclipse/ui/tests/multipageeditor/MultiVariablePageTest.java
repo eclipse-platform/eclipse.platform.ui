@@ -31,9 +31,9 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
- * Test that the MultiPageEditorPart is acting on events and changes.  
- * These tests are for making sure that selection events and page
- * change events are handled.
+ * Test that the MultiPageEditorPart is acting on events and changes. These
+ * tests are for making sure that selection events and page change events are
+ * handled.
  * 
  * @since 3.2
  */
@@ -53,8 +53,8 @@ public class MultiVariablePageTest extends UITestCase {
 
 	/**
 	 * Make sure that setting the active page programmatically calls
-	 * pageChanged(int) on the way.  This method is overridden in a lot
-	 * of editors to provide their functionality on page changes.
+	 * pageChanged(int) on the way. This method is overridden in a lot of
+	 * editors to provide their functionality on page changes.
 	 * 
 	 * @throws Throwable
 	 */
@@ -64,25 +64,27 @@ public class MultiVariablePageTest extends UITestCase {
 		IEditorPart part = openMultivarFile();
 
 		MultiVariablePageEditor editor = (MultiVariablePageEditor) part;
+
+		editor.setPage(1);
 		ISelection selection = editor.getEditorSite().getSelectionProvider()
 				.getSelection();
 		TextSelection text = (TextSelection) selection;
-		// when the first page comes up, we should have selected the first
-		// section.
-		assertEquals("#section01", text.getText());
-
-		editor.setPage(1);
-		selection = editor.getEditorSite().getSelectionProvider()
-				.getSelection();
-		text = (TextSelection) selection;
 		// when we change to the second page, the selection should be
 		// updated.
 		assertEquals("#section02", text.getText());
+
+		editor.setPage(0);
+		selection = editor.getEditorSite().getSelectionProvider()
+				.getSelection();
+		text = (TextSelection) selection;
+		// when we change back to the first page, the selection should be
+		// updated.
+		assertEquals("#section01", text.getText());
 	}
 
 	/**
-	 * Make sure that removing a page that is a Control (instead of an
-	 * editor) disposes of the Control immediately.
+	 * Make sure that removing a page that is a Control (instead of an editor)
+	 * disposes of the Control immediately.
 	 * 
 	 * @throws Throwable
 	 */
@@ -97,7 +99,7 @@ public class MultiVariablePageTest extends UITestCase {
 		assertFalse(c.isDisposed());
 		editor.removeLastPage();
 		assertTrue(c.isDisposed());
-		
+
 		c = editor.getTestControl(1);
 		assertFalse(c.isDisposed());
 		editor.removeLastPage();
@@ -105,14 +107,14 @@ public class MultiVariablePageTest extends UITestCase {
 		editor.setPage(0);
 		editor.getSite().getPage().activate(editor);
 	}
-	
+
 	/**
-	 * Now the MPEP site's selection provider should by default support
-	 * post selection listeners.  Since the MVPE is based on Text
-	 * editors, we should be getting the post selection events when
-	 * we change pages.
+	 * Now the MPEP site's selection provider should by default support post
+	 * selection listeners. Since the MVPE is based on Text editors, we should
+	 * be getting the post selection events when we change pages.
 	 * 
-	 * @throws Throwable on error cases
+	 * @throws Throwable
+	 *             on error cases
 	 */
 	public void testPostSelection() throws Throwable {
 		// Open a new test window.
@@ -122,16 +124,16 @@ public class MultiVariablePageTest extends UITestCase {
 		MultiVariablePageEditor editor = (MultiVariablePageEditor) part;
 		ISelectionProvider sp = editor.getEditorSite().getSelectionProvider();
 		assertTrue(sp instanceof IPostSelectionProvider);
-		
+
 		IPostSelectionProvider postProvider = (IPostSelectionProvider) sp;
-		
+
 		fPostCalled = 0;
 		ISelectionChangedListener listener = new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				++fPostCalled;
 			}
 		};
-		
+
 		try {
 			postProvider.addPostSelectionChangedListener(listener);
 			editor.setPage(1);
@@ -143,7 +145,8 @@ public class MultiVariablePageTest extends UITestCase {
 		}
 	}
 
-	private IEditorPart openMultivarFile() throws CoreException, PartInitException {
+	private IEditorPart openMultivarFile() throws CoreException,
+			PartInitException {
 		IWorkbenchPage page = openTestWindow().getActivePage();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProject testProject = workspace.getRoot().getProject(
@@ -158,7 +161,7 @@ public class MultiVariablePageTest extends UITestCase {
 					new ByteArrayInputStream(FILE_CONTENTS.getBytes()), true,
 					null);
 		}
-		
+
 		// I can't be bothered to use the ID, but this editor has an
 		// extention registered against it.
 		IEditorPart part = IDE.openEditor(page, multiFile);
@@ -166,5 +169,5 @@ public class MultiVariablePageTest extends UITestCase {
 				part instanceof MultiVariablePageEditor);
 		return part;
 	}
-	
+
 }
