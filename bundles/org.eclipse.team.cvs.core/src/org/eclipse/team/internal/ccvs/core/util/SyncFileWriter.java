@@ -410,9 +410,12 @@ public class SyncFileWriter {
 					public void run(IProgressMonitor monitor) throws CoreException {
 						// Recheck existance in case this method was called without a resource rule
 						if (! cvsSubDir.exists()) {
-							cvsSubDir.create(false /*don't force*/, true /*make local*/, null);
+							cvsSubDir.create(IResource.TEAM_PRIVATE, true /*make local*/, null);
+						} else {
+							if (!cvsSubDir.isTeamPrivateMember()) {
+								cvsSubDir.setTeamPrivateMember(true);
+							}
 						}
-						cvsSubDir.setTeamPrivateMember(true);
 					} 
 				}, folder, 0, null);
 			}
