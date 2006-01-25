@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IPath;
  * contain child paths in the set.
  * <p>
  * This interface is not intended to be implemented by clients. Clients
- * should use {@link org.eclipse.team.core.mapping.provider.DiffTree} instead.
+ * should use {@link org.eclipse.team.core.diff.provider.DiffTree} instead.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IPath;
  * consulting with the Platform/Team team.
  * </p>
  * 
- * @see org.eclipse.team.core.mapping.provider.DiffTree
+ * @see org.eclipse.team.core.diff.provider.DiffTree
  * @since 3.2
  */
 public interface IDiffTree {

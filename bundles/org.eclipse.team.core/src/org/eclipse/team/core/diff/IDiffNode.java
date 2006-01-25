@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.core.diff;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.team.core.diff.provider.Diff;
 
 /**
- * A diff node describes differences between two or more model objects.
+ * A diff describes differences between two or more model objects.
  * <p>
  * This interface is not intended to be implemented by clients.
+ * Instead, clients can subclass {@link Diff}.
  * </p>
  * 
  * <p>

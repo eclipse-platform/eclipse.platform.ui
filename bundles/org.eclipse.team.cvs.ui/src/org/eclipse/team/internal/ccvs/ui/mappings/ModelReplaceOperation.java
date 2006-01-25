@@ -99,7 +99,7 @@ public class ModelReplaceOperation extends ModelUpdateOperation {
 	}
 
 	private boolean hasLocalChanges() {
-		return hasChangesMatching(getContext().getDiffTree(), new FastDiffNodeFilter() {
+		return hasChangesMatching(getContext().getDiffTree(), new FastDiffFilter() {
 			public boolean select(IDiffNode node) {
 				if (node instanceof IThreeWayDiff) {
 					IThreeWayDiff twd = (IThreeWayDiff) node;

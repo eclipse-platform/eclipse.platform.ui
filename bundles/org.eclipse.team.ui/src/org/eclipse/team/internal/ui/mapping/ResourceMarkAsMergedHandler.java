@@ -87,8 +87,8 @@ public class ResourceMarkAsMergedHandler extends MergeActionHandler {
 				/* (non-Javadoc)
 				 * @see org.eclipse.team.internal.ui.mapping.ResourceModelProviderOperation#getDiffFilter()
 				 */
-				protected FastDiffNodeFilter getDiffFilter() {
-					return new FastDiffNodeFilter() {
+				protected FastDiffFilter getDiffFilter() {
+					return new FastDiffFilter() {
 						public boolean select(IDiffNode node) {
 							if (node instanceof IThreeWayDiff) {
 								IThreeWayDiff twd = (IThreeWayDiff) node;

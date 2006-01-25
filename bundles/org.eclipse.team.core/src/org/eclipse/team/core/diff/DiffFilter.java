@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @since 3.2
  */
-public abstract class DiffNodeFilter {
+public abstract class DiffFilter {
 
 	/**
 	 * Return <code>true</code> if the provided <code>IDiffNode</code> matches the filter.

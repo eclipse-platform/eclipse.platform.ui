@@ -20,7 +20,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiffNode;
-import org.eclipse.team.core.mapping.provider.DiffNode;
+import org.eclipse.team.core.diff.provider.Diff;
 import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber;
@@ -125,14 +125,14 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 		if (node == null) {
 			actualFlags = IDiffNode.NO_CHANGE;
 		} else {
-			actualFlags = ((DiffNode)node).getStatus();
+			actualFlags = ((Diff)node).getStatus();
 		}
 		// Special handling for folders
 		if (actualFlags != expectedFlags && resource.getType() == IResource.FOLDER) {
 			// The only two states for folders are outgoing addition and in-sync.
 			// Other additions will appear as in-sync
-			int expectedKind = expectedFlags & DiffNode.KIND_MASK;
-			int actualKind = actualFlags & DiffNode.KIND_MASK;
+			int expectedKind = expectedFlags & Diff.KIND_MASK;
+			int actualKind = actualFlags & Diff.KIND_MASK;
 			if (actualKind == IDiffNode.NO_CHANGE 
 					&& expectedKind == IDiffNode.ADD) {
 				return;

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.mapping.provider;
+package org.eclipse.team.core.diff.provider;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;

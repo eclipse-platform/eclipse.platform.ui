@@ -12,6 +12,7 @@ package org.eclipse.team.core.mapping.provider;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.team.core.diff.provider.TwoWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
 

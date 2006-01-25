@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.mapping.provider;
+package org.eclipse.team.core.diff.provider;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.core.diff.*;
@@ -29,7 +29,7 @@ import org.eclipse.team.internal.core.Messages;
  * @see IThreeWayDiff
  * @since 3.2
  */
-public abstract class DiffNode implements IDiffNode {
+public abstract class Diff implements IDiffNode {
 
 	/**
 	 * Constant (bit mask) that defines the area of the status that is reserved
@@ -50,7 +50,7 @@ public abstract class DiffNode implements IDiffNode {
 	 * @param status the status of the diff. The kind should be encoded in the
 	 *            status along with any additional flags required by a subclass.
 	 */
-	protected DiffNode(IPath path, int status) {
+	protected Diff(IPath path, int status) {
 		this.path = path;
 		this.status = status;
 	}

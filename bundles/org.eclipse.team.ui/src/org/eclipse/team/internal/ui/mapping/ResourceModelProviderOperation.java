@@ -136,7 +136,7 @@ public abstract class ResourceModelProviderOperation extends SynchronizationOper
 	 * Return the filter used to match diffs to which this action applies.
 	 * @return the filter used to match diffs to which this action applies
 	 */
-	protected abstract FastDiffNodeFilter getDiffFilter();
+	protected abstract FastDiffFilter getDiffFilter();
 
 	public Object[] getElements() {
 		return elements;

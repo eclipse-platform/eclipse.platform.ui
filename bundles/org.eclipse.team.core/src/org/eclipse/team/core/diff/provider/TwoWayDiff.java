@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.mapping.provider;
+package org.eclipse.team.core.diff.provider;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.core.diff.ITwoWayDiff;
@@ -30,7 +30,7 @@ import org.eclipse.team.core.diff.ITwoWayDiff;
  * 
  * @since 3.2
  */
-public class TwoWayDiff extends DiffNode implements ITwoWayDiff {
+public class TwoWayDiff extends Diff implements ITwoWayDiff {
 
 	/**
 	 * Constant (bit mask) that defines the area of the status that is reserved
@@ -38,7 +38,7 @@ public class TwoWayDiff extends DiffNode implements ITwoWayDiff {
 	 * However, subclasses may include their own bits in the flag
 	 * as long as they do not overlap with the bits in the <code>FLAG_MASK</code>
 	 * 
-	 * @see DiffNode#getStatus()
+	 * @see Diff#getStatus()
 	 */
 	protected static final int FLAG_MASK = 0xFF00;
 

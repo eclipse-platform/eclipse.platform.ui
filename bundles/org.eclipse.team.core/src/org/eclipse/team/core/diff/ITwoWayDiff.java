@@ -12,7 +12,7 @@ package org.eclipse.team.core.diff;
 
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.core.mapping.provider.TwoWayDiff;
+import org.eclipse.team.core.diff.provider.TwoWayDiff;
 
 /**
  * A two-way diff represents the changes between two states of the same object,

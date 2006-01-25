@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.core.diff;
 
-import org.eclipse.team.core.mapping.provider.ThreeWayDiff;
+import org.eclipse.team.core.diff.provider.ThreeWayDiff;
 
 /**
  * A three-way delta that describe the synchronization state between

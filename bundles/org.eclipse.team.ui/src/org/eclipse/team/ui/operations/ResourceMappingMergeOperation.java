@@ -159,7 +159,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	}
 
 	private boolean hasIncomingChanges(IDiffTree tree) {
-		return hasChangesMatching(tree, new FastDiffNodeFilter() {
+		return hasChangesMatching(tree, new FastDiffFilter() {
 			public boolean select(IDiffNode node) {
 				if (node instanceof IThreeWayDiff) {
 					IThreeWayDiff twd = (IThreeWayDiff) node;
@@ -360,7 +360,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	 * @param monitor a progress monitor
 	 * @return whether the given diff tree contains any deltas that match the given filter
 	 */
-	protected boolean hasChangesMatching(IDiffTree tree, final FastDiffNodeFilter filter) {
+	protected boolean hasChangesMatching(IDiffTree tree, final FastDiffFilter filter) {
 		final CoreException found = new CoreException(Status.OK_STATUS);
 		try {
 			tree.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {

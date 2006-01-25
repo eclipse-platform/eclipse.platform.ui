@@ -105,8 +105,8 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.operations.ModelProviderAction#getDiffFilter()
 	 */
-	protected FastDiffNodeFilter getDiffFilter() {
-		return new FastDiffNodeFilter() {
+	protected FastDiffFilter getDiffFilter() {
+		return new FastDiffFilter() {
 			public boolean select(IDiffNode node) {
 				if (node instanceof IThreeWayDiff) {
 					IThreeWayDiff twd = (IThreeWayDiff) node;

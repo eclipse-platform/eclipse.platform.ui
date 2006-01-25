@@ -19,10 +19,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @see IDiffNode
  * @see IDiffTree
- * @see DiffNodeFilter
+ * @see DiffFilter
  * @since 3.2
  */
-public abstract class FastDiffNodeFilter extends DiffNodeFilter {
+public abstract class FastDiffFilter extends DiffFilter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.DiffNodeFilter#select(org.eclipse.team.core.diff.IDiffNode, org.eclipse.core.runtime.IProgressMonitor)

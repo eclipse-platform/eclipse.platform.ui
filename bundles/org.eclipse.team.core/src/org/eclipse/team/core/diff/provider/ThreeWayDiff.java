@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.mapping.provider;
+package org.eclipse.team.core.diff.provider;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
@@ -32,7 +32,7 @@ import org.eclipse.team.internal.core.Messages;
  * 
  * @since 3.2
  */
-public class ThreeWayDiff extends DiffNode implements IThreeWayDiff {
+public class ThreeWayDiff extends Diff implements IThreeWayDiff {
 
 	private final ITwoWayDiff localChange;
 	private final ITwoWayDiff remoteChange;
