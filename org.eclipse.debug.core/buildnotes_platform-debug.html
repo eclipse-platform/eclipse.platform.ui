@@ -14,6 +14,9 @@
 <ul>
   <li>Added API to consolePatternMatchListeners extension to support the use of 
     string variable substitution in pattern matchers. See extension point documentation.</li>
+  <li>Added API to delegate watch expression creation to debug model via IWatchExpressionFactoryAdapter. 
+    Allows a debugger to override default watch expression creation based on a 
+    variable's name.</li>
 </ul>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=119488">119488</a>: java stack trace hyperlinks not .java agnostic<br>
