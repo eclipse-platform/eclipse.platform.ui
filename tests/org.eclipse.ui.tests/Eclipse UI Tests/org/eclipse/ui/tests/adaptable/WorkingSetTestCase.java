@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.adaptable;
 
+import org.eclipse.core.internal.propertytester.ResourceMappingPropertyTester;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -21,7 +22,6 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.ui.IResourceActionFilter;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.internal.ide.model.ProjectPersistentPropertyTester;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -84,34 +84,32 @@ public class WorkingSetTestCase extends UITestCase {
         String name = adapter.getLabel(set);
         assertEquals("test", name);
         
-        // Test the persistant property filter
+        // Test the persistent property filter
         QualifiedName key = new QualifiedName("org.eclipse.ui.test", "set");
-        ProjectPersistentPropertyTester tester = new ProjectPersistentPropertyTester();
+        ResourceMappingPropertyTester tester = new ResourceMappingPropertyTester();
         
-        // Test with no persistant properties set
-        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set=one"}, null));
-        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set=one", "allowUnsetProjects"}, null));
+        // Test with no persistent properties set
+        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "one"}, null));
 
-        // Tets with one set on a seubset of projects
+        // Test with one set on a subset of projects
         resources[0].setPersistentProperty(key, "one");
-        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set=one"}, null));
-        assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set=one", "allowUnsetProjects"}, null));
+        assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "one"}, null));
+        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "wrong"}, null));
         
         // Test again with the property set to two different values
         resources[1].setPersistentProperty(key, "two");
-        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set=one"}, null));
-        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set=one", "allowUnsetProjects"}, null));
+        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "one"}, null));
+        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "two"}, null));
 
         // Test with them all set
         resources[1].setPersistentProperty(key, "one");
         resources[2].setPersistentProperty(key, "one");
-        assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set=one"}, null));
-        assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set=one", "allowUnsetProjects"}, null));
+        assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "one"}, null));
+        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "two"}, null));
 
         // Test with a closed project in the set
         ((IProject)resources[0]).close(null);
-        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set=one"}, null));
-        assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set=one", "allowUnsetProjects"}, null));
+        assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "one"}, null));
     }
 
 }
