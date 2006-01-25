@@ -59,7 +59,7 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 	 * {@inheritDoc}
 	 */
 	public RefactoringDescriptorProxy[] getDescriptors() {
-		if (!fSorted) {
+		if (!fSorted && fDescriptorProxies.length > 1) {
 			Arrays.sort(fDescriptorProxies, new Comparator() {
 
 				public final int compare(final Object first, final Object second) {
@@ -68,8 +68,8 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 					return (int) (successor.getTimeStamp() - predecessor.getTimeStamp());
 				}
 			});
-			fSorted= true;
 		}
+		fSorted= true;
 		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[fDescriptorProxies.length];
 		System.arraycopy(fDescriptorProxies, 0, proxies, 0, fDescriptorProxies.length);
 		return proxies;
