@@ -242,7 +242,12 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#exists()
 	 */
 	public boolean exists() {
-		return getLocation().toFile().exists();
+		if (isLocal()) {
+			return getLocation().toFile().exists();
+		}
+
+		IFile file = getFile();
+		return file != null && file.exists();
 	}
 
 	/* (non-Javadoc)
