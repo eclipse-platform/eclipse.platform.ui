@@ -82,6 +82,13 @@ A repository provider type can also specify one or more meta-file paths (delimit
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="fileSystemScheme" type="string">
+            <annotation>
+               <documentation>
+                  This field identifies the scheme of a filesystem registered with the org.eclipse.core.filesystem.filesystems extension point
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

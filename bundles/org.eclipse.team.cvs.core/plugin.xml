@@ -39,10 +39,11 @@
    <extension
          point="org.eclipse.team.core.repository">
       <repository
-            typeClass="org.eclipse.team.internal.ccvs.core.CVSTeamProviderType"
             class="org.eclipse.team.internal.ccvs.core.CVSTeamProvider"
+            fileSystemScheme="cvs"
+            id="org.eclipse.team.cvs.core.cvsnature"
             metaFilePaths="CVS/Root,CVS/Repository"
-            id="org.eclipse.team.cvs.core.cvsnature">
+            typeClass="org.eclipse.team.internal.ccvs.core.CVSTeamProviderType">
       </repository>
    </extension>
 <!-- *************** Resource patterns ignored by CVS **************** -->

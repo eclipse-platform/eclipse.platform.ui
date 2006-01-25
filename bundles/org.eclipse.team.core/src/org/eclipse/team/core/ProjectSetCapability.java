@@ -12,7 +12,9 @@
 package org.eclipse.team.core;
 
 import java.io.File;
+import java.net.URI;
 import java.util.*;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.core.Messages;
@@ -267,5 +269,49 @@ public abstract class ProjectSetCapability {
 	 */
 	void setSerializer(IProjectSetSerializer serializer) {
 		this.serializer = serializer;
+	}
+	
+	/**
+	 * Return the URI for the given reference string or <code>null</code>
+	 * if this capability does not support file system schemes as defined by
+	 * the <code>org.eclipse.core.filesystem.filesystems</code> extension 
+	 * point.
+	 * @see #getProject(String)
+	 * @param referenceString a reference string obtained from 
+	 * {@link #asReference(IProject[], ProjectSetSerializationContext, IProgressMonitor)}
+	 * @return the URI for the given reference string or <code>null</code>
+	 * @since 3.2
+	 */
+	public URI getURI(String referenceString) {
+		return null;
+	}
+	
+	/**
+	 * Return the name of the project that is the target of the given
+	 * reference string or <code>null</code> if this capability does not
+	 * support parsing of reference strings.
+	 * @see #getURI(String)
+	 * @param referenceString  reference string obtained from 
+	 * {@link #asReference(IProject[], ProjectSetSerializationContext, IProgressMonitor)}
+	 * @return  the name of the project that is the target of the given
+	 * reference string or <code>null</code>
+	 * @since 3.2
+	 */
+	public String getProject(String referenceString) {
+		return null;
+	}
+	
+	/**
+	 * Convert the given URI and projectName to a reference string that can be
+	 * passed to the {@link #addToWorkspace(String[], ProjectSetSerializationContext, IProgressMonitor)}
+	 * method. The scheme of the provided URI must match the scheme of the
+	 * repository provider type from which this capability was obtained.
+	 * @param uri the uri that identifies the location of the project in the repository.
+	 * @param projectName the name of the project.
+	 * @return the reference string representing a project that can be loaded into the workspace
+	 * @since 3.2
+	 */
+	public String asReference(URI uri, String projectName) {
+		return null;
 	}
 }

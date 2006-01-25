@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.core;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -60,6 +59,8 @@ public abstract class RepositoryProviderType {
 	
 	private String id;
 
+	private String scheme;
+
 	public RepositoryProviderType() {
 	}
 
@@ -81,6 +82,43 @@ public abstract class RepositoryProviderType {
 		//Its possible that newProviderType() will return null, but in that case it will have also logged the error	so just return the result
 		return newProviderType(id);
 	}
+	
+	/**
+	 * Return the repository type for the given file system scheme or
+	 * <code>null</code> if there isn't one. The scheme corresponds to
+	 * the scheme used for the <code>org.eclipse.core.filesystem.filesystems</code>
+	 * extension point.
+	 * @param scheme the file system scheme
+	 * @return the repository type for the given file system scheme or
+	 * <code>null</code>
+	 * @since 3.2
+	 */
+	public static RepositoryProviderType getTypeForScheme(String scheme) {
+		for (Iterator iter = allProviderTypes.values().iterator(); iter.hasNext();) {
+			RepositoryProviderType type = (RepositoryProviderType) iter.next();
+			if (type.getFileSystemScheme() != null && type.getFileSystemScheme().equals(scheme))
+				return type;
+		}
+		return findProviderForScheme(scheme);
+	}
+	
+	private static RepositoryProviderType findProviderForScheme(String scheme) {
+		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(TeamPlugin.ID, TeamPlugin.REPOSITORY_EXTENSION);
+		if (extension != null) {
+			IExtension[] extensions =  extension.getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				IConfigurationElement [] configElements = extensions[i].getConfigurationElements();
+				for (int j = 0; j < configElements.length; j++) {
+					String extensionId = configElements[j].getAttribute("id"); //$NON-NLS-1$
+					String typeScheme = configElements[j].getAttribute("fileSystemScheme"); //$NON-NLS-1$
+					if (typeScheme != null && typeScheme.equals(scheme) && extensionId != null) {
+						return newProviderType(extensionId);
+					}
+				}
+			}
+		}		
+		return null;
+	}	
 	
 	private void setID(String id) {
 		this.id = id;
@@ -107,6 +145,8 @@ public abstract class RepositoryProviderType {
 							
 							providerType.setID(id);
 							allProviderTypes.put(id, providerType);
+							String scheme = configElements[j].getAttribute("fileSystemScheme"); //$NON-NLS-1$
+							providerType.setFileSystemScheme(scheme);
 							return providerType;
 						} catch (CoreException e) {
 							TeamPlugin.log(e);
@@ -122,6 +162,10 @@ public abstract class RepositoryProviderType {
 		return null;
 	}	
 	
+	private void setFileSystemScheme(String scheme) {
+		this.scheme = scheme;
+	}
+
 	/**
 	 * Answer the id of this provider type. The id will be the repository
 	 * provider type's id as defined in the provider plugin's plugin.xml.
@@ -195,5 +239,18 @@ public abstract class RepositoryProviderType {
 	 */
 	public Subscriber getSubscriber() {
 		return null;
+	}
+
+	/**
+	 * Return the file system scheme for this provider type or
+	 * <code>null</code> if the type doesn't support file systems
+	 * as defined by the <code>org.eclipse.core.filesystem.filesystems</code>
+	 * extension point.
+	 * @return the file system scheme for this provider type or
+	 * <code>null</code>
+	 * @since 3.2
+	 */
+	public final String getFileSystemScheme() {
+		return scheme;
 	}
 }
