@@ -20,10 +20,8 @@ import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
 import org.eclipse.jface.databinding.updatables.CalculatedValue;
 import org.eclipse.jface.databinding.updatables.SettableValue;
-import org.eclipse.jface.databinding.viewers.ViewersUpdatableFactory;
 import org.eclipse.jface.examples.databinding.model.ModelObject;
 
 /**
@@ -138,8 +136,8 @@ public class CalculatedValueTest extends TestCase {
 		
 		// Hook beans...
 		IDataBindingContext dbc = DataBinding.createContext(new IUpdatableFactory[] {
-				new BeanUpdatableFactory(), 
-				new SWTUpdatableFactory(), new ViewersUpdatableFactory()});
+				new BeanUpdatableFactory()
+				});
 
 		cv.setDependencies(dbc, new Object[] {new Property(test1, "a"), new Property(test2, "a")});
 		assertEquals("CalculatedValue should be " + calcNewValue(seed), calcNewValue(seed), cv.getValue());
