@@ -10,3 +10,5 @@ Export-Package: org.eclipse.core.internal.jobs;x-internal:=true,
 Bundle-Activator: org.eclipse.core.internal.jobs.JobActivator
 Require-Bundle: org.eclipse.equinox.common,
  system.bundle;resolution:=optional
+Bundle-RequiredExecutionEnvironment: CDC-1.0/Foundation-1.0,
+ J2SE-1.3
