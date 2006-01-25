@@ -605,7 +605,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		fNameWidget.setVisible(false);
 		((StackLayout)fTabPlaceHolder.getLayout()).topControl = fGettingStarted;
 		fTabPlaceHolder.layout(true);
-		disposeExistingTabs();				
+		disposeExistingTabs();	
+		updateButtons();
 	}
 	
     protected void setFocusOnName() {
