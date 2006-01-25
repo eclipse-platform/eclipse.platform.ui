@@ -175,7 +175,7 @@ public abstract class CalculatedValue extends UpdatableValue {
 			Method addPCL = bean.getClass().getMethod("addPropertyChangeListener", new Class[] {PropertyChangeListener.class}); //$NON-NLS-1$
 			addPCL.invoke(bean, new Object[] {propertyChangeListener});
 		} catch (Exception e) {
-			throw new IllegalArgumentException(bean.getClass().getName() + " does not define addPropertyChangeListener", e); //$NON-NLS-1$
+			throw new IllegalArgumentException(bean.getClass().getName() + " does not define addPropertyChangeListener" + e); //$NON-NLS-1$
 		}
 	}
 	
@@ -184,7 +184,7 @@ public abstract class CalculatedValue extends UpdatableValue {
 			Method addPCL = bean.getClass().getMethod("removePropertyChangeListener", new Class[] {PropertyChangeListener.class}); //$NON-NLS-1$
 			addPCL.invoke(bean, new Object[] {propertyChangeListener});
 		} catch (Exception e) {
-			throw new IllegalArgumentException(bean.getClass().getName() + " does not define removePropertyChangeListener", e); //$NON-NLS-1$
+			throw new IllegalArgumentException(bean.getClass().getName() + " does not define removePropertyChangeListener" + e); //$NON-NLS-1$
 		}
 	}
 

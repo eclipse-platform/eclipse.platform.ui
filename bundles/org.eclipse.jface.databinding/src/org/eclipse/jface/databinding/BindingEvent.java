@@ -165,7 +165,7 @@ public class BindingEvent {
 	public String toString() {
 		StringBuffer result = new StringBuffer();
 		result.append("(" + eventConstants.get(new Integer(eventType)) + ", "); //$NON-NLS-1$ //$NON-NLS-2$
-		result.append(pipelineConstants.get(new Integer(pipelinePosition))); //$NON-NLS-1$
+		result.append(pipelineConstants.get(new Integer(pipelinePosition)));
 		result.append("): ChangeEvent(" + changeEvent.getChangeType() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		return result.toString();
 	}
