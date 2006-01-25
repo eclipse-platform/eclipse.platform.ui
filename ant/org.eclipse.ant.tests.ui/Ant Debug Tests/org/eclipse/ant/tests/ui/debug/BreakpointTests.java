@@ -201,10 +201,15 @@ public class BreakpointTests extends AbstractAntDebugTest {
 			ILaunchConfiguration config= getLaunchConfiguration(fileName);
 			ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
 			copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, defaultTargetName);
+            if (!sepVM) {
+                Thread.sleep(3000); //TODO bug 121207
+            }
 		    thread= launchToLineBreakpoint(copy, bp);
 			bp= createLineBreakpoint(secondLineNumber, file);
 		    resumeToLineBreakpoint(thread, bp);
-		} finally {
+		} catch (InterruptedException e) {
+           
+        } finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
