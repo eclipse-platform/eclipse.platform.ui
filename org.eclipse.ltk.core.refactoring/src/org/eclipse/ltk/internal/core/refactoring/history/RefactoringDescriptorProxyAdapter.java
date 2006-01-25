@@ -12,7 +12,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
  * 
  * @since 3.2
  */
-final class RefactoringDescriptorProxyAdapter extends RefactoringDescriptorProxy {
+public final class RefactoringDescriptorProxyAdapter extends RefactoringDescriptorProxy {
 
 	/** The encapsulated descriptor */
 	private final RefactoringDescriptor fDescriptor;
@@ -23,7 +23,7 @@ final class RefactoringDescriptorProxyAdapter extends RefactoringDescriptorProxy
 	 * @param descriptor
 	 *            the descriptor to encapsulate
 	 */
-	RefactoringDescriptorProxyAdapter(final RefactoringDescriptor descriptor) {
+	public RefactoringDescriptorProxyAdapter(final RefactoringDescriptor descriptor) {
 		Assert.isNotNull(descriptor);
 		fDescriptor= descriptor;
 	}
