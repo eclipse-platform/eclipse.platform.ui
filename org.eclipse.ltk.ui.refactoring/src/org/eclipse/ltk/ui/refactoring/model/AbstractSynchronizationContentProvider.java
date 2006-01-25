@@ -25,6 +25,7 @@ import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -49,8 +50,16 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
  * Partial implementation of a refactoring-aware synchronization content
  * provider.
  * <p>
- * Note: this class is intended to be extended by clients who need refactoring
- * support in a synchronization content provider.
+ * This class provides a method
+ * {@link #getPendingRefactorings(ISynchronizationContext, IProject, IProgressMonitor)}
+ * which may be used in subclasses to render pending refactorings in team
+ * synchronization views.
+ * </p>
+ * <p>
+ * Note: this class is designed to be extended by clients. Programming language
+ * implementers who need refactoring support in a synchronization content
+ * provider used in team syncrhonization views may use this class as a basis for
+ * refactoring-aware synchronization content providers.
  * </p>
  * <p>
  * Note: This API is considered experimental and may change in the near future.
@@ -60,24 +69,27 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
  * 
  * @since 3.2
  */
-public abstract class AbstractRefactoringSynchronizationContentProvider extends SynchronizationContentProvider {
+public abstract class AbstractSynchronizationContentProvider extends SynchronizationContentProvider {
 
 	/**
-	 * Returns the incoming refactoring history for the specified project.
+	 * Returns the pending refactorings for the specified project.
 	 * <p>
-	 * This method fetches all refactorings which are present in the remote
-	 * location and have not already been performed on the local workspace.
+	 * This method fetches history information for all refactorings which are
+	 * present in the remote location and have not already been performed on the
+	 * local workspace.
 	 * </p>
 	 * 
 	 * @param context
-	 *            the synchronization context
+	 *            the synchronization context to use
 	 * @param project
-	 *            the project to get its incoming refactorings
+	 *            the project to compute its pending refactorings
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
-	 * @return the refactoring history representing the incoming refactorings
+	 * @return the refactoring history representing the pending refactorings
 	 */
-	protected RefactoringHistory getIncomingRefactorings(final ISynchronizationContext context, final IProject project, IProgressMonitor monitor) {
+	protected RefactoringHistory getPendingRefactorings(final ISynchronizationContext context, final IProject project, IProgressMonitor monitor) {
+		Assert.isNotNull(context);
+		Assert.isNotNull(project);
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		try {

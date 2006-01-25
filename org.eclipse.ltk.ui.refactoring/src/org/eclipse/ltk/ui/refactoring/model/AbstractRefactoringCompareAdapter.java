@@ -22,18 +22,20 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 /**
  * Partial implementation of a refactoring-aware compare adapter.
  * <p>
- * The refactoring compare adapter provides compare support for the refactoring
- * history objects associated with the refactoring model provider.
+ * This class provides compare support for the refactoring history objects
+ * associated with a refactoring model provider.
  * </p>
  * <p>
- * Note: this class is intended to be extended by clients who need refactoring
- * support in a synchronization viewer.
+ * Note: this class is designed to be extended by clients. Programming language
+ * implementers which need a refactoring-aware compare adapter to contribute to
+ * team synchronization views may extend this class to provide specific compare
+ * inputs for their model elements.
  * </p>
  * <p>
  * Note: This API is considered experimental and may change in the near future.
  * </p>
  * 
- * @see AbstractCompareAdapter
+ * @see org.eclipse.team.ui.mapping.AbstractCompareAdapter
  * 
  * @since 3.2
  */
