@@ -53,16 +53,33 @@ public final class WindowMenuService implements IMenuService {
 	private final MenuAuthority menuAuthority;
 
 	/**
+	 * The parent menu service for this window. This parent must track menu
+	 * definitions and the regsitry. Must not be <code>null</code>
+	 */
+	private final IMenuService parent;
+
+	/**
 	 * Constructs a new instance of <code>MenuService</code> using a menu
 	 * manager.
 	 * 
-	 * @param parent The parent window service for this window.  This parent
-	 * must track menu definitions and regsirt
+	 * @param parent
+	 *            The parent menu service for this window. This parent must
+	 *            track menu definitions and the regsitry. Must not be
+	 *            <code>null</code>
 	 * @param window
 	 *            The workbench window to use; must not be <code>null</code>.
 	 */
 	public WindowMenuService(final IMenuService parent, final Window window) {
+		if (parent == null) {
+			throw new NullPointerException(
+					"The parent service must not be null"); //$NON-NLS-1$
+		}
+		if (window == null) {
+			throw new NullPointerException("The window must not be null"); //$NON-NLS-1$
+		}
+
 		this.menuAuthority = new MenuAuthority(window);
+		this.parent = parent;
 	}
 
 	public final void addSourceProvider(final ISourceProvider provider) {
@@ -86,51 +103,51 @@ public final class WindowMenuService implements IMenuService {
 	}
 
 	public final SActionSet getActionSet(final String actionSetId) {
-		return menuManager.getActionSet(actionSetId);
+		return parent.getActionSet(actionSetId);
 	}
 
 	public final SActionSet[] getDefinedActionSets() {
-		return menuManager.getDefinedActionSets();
+		return parent.getDefinedActionSets();
 	}
 
 	public final SGroup[] getDefinedGroups() {
-		return menuManager.getDefinedGroups();
+		return parent.getDefinedGroups();
 	}
 
 	public final SItem[] getDefinedItems() {
-		return menuManager.getDefinedItems();
+		return parent.getDefinedItems();
 	}
 
 	public final SMenu[] getDefinedMenus() {
-		return menuManager.getDefinedMenus();
+		return parent.getDefinedMenus();
 	}
 
 	public final SWidget[] getDefinedWidgets() {
-		return menuManager.getDefinedWidgets();
+		return parent.getDefinedWidgets();
 	}
 
 	public final SGroup getGroup(final String groupId) {
-		return menuManager.getGroup(groupId);
+		return parent.getGroup(groupId);
 	}
 
 	public final SItem getItem(final String itemId) {
-		return menuManager.getItem(itemId);
+		return parent.getItem(itemId);
 	}
 
 	public final SMenuLayout getLayout() {
-		return menuManager.getLayout();
+		return parent.getLayout();
 	}
 
 	public final SMenu getMenu(final String menuId) {
-		return menuManager.getMenu(menuId);
+		return parent.getMenu(menuId);
 	}
 
 	public final SWidget getWidget(final String widgetId) {
-		return menuManager.getWidget(widgetId);
+		return parent.getWidget(widgetId);
 	}
 
 	public final void readRegistry() {
-		menuPersistence.read();
+		parent.readRegistry();
 	}
 
 	public final void removeContribution(final IMenuContribution contribution) {

@@ -73,7 +73,8 @@ public final class WorkbenchMenuService implements IMenuService {
 	}
 
 	public final void addSourceProvider(final ISourceProvider provider) {
-		menuAuthority.addSourceProvider(provider);
+		throw new UnsupportedOperationException(
+				"The workbench menu service does not track sources"); //$NON-NLS-1$
 	}
 
 	public final IMenuContribution contributeMenu(final MenuElement menuElement) {
@@ -156,6 +157,7 @@ public final class WorkbenchMenuService implements IMenuService {
 	}
 
 	public final void removeSourceProvider(final ISourceProvider provider) {
-		menuAuthority.removeSourceProvider(provider);
+		throw new UnsupportedOperationException(
+				"The workbench menu service does not track sources"); //$NON-NLS-1$
 	}
 }
