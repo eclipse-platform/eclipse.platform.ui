@@ -45,9 +45,6 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.navigator.IExtensionStateModel;
-
 /**
  * Partial implementation of a refactoring-aware synchronization content
  * provider.
@@ -64,16 +61,6 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
  * @since 3.2
  */
 public abstract class AbstractRefactoringSynchronizationContentProvider extends SynchronizationContentProvider {
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void dispose() {
-		super.dispose();
-		final ISynchronizationContext context= getContext();
-		if (context != null)
-			context.getDiffTree().removeDiffChangeListener(this);
-	}
 
 	/**
 	 * Returns the incoming refactoring history for the specified project.
@@ -162,15 +149,5 @@ public abstract class AbstractRefactoringSynchronizationContentProvider extends 
 		} finally {
 			monitor.done();
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void init(final IExtensionStateModel model, final IMemento memento) {
-		super.init(model, memento);
-		final ISynchronizationContext context= getContext();
-		if (context != null)
-			context.getDiffTree().addDiffChangeListener(this);
 	}
 }
