@@ -272,8 +272,9 @@ public abstract class MultiPageEditorPart extends EditorPart {
 		createPages();
 		// set the active page (page 0 by default), unless it has already been
 		// done
-		if (getActivePage() == -1)
-			setActivePage(0);
+		if (getActivePage() == -1) {
+			getTabFolder().setSelection(0);
+		}
 	}
 
 	/**
