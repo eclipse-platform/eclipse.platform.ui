@@ -65,8 +65,8 @@ public class SearchResultPageTest extends TestCase {
 	}
 
 	public void atestBasicDisplay() throws Exception {
-		ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
+		ISearchResultViewPart view= NewSearchUI.getSearchResultView();
 		FileSearchPage page= (FileSearchPage) view.getActivePage();
 		page.setLayout(AbstractTextSearchViewPage.FLAG_LAYOUT_TREE);
 		checkViewerDisplay(page);
@@ -88,8 +88,8 @@ public class SearchResultPageTest extends TestCase {
 	}
 
 	public void atestRemoveTreeMatches() throws Exception {
-		ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
+		ISearchResultViewPart view= NewSearchUI.getSearchResultView();
 		FileSearchPage page= (FileSearchPage) view.getActivePage();
 		page.setLayout(AbstractTextSearchViewPage.FLAG_LAYOUT_TREE);
 		AbstractTreeViewer viewer= (AbstractTreeViewer) page.getViewer();
@@ -133,8 +133,8 @@ public class SearchResultPageTest extends TestCase {
 	}
 	
 	public void testTableNavigation() {
-		ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
+		ISearchResultViewPart view= NewSearchUI.getSearchResultView();
 		FileSearchPage page= (FileSearchPage) view.getActivePage();
 		page.setLayout(AbstractTextSearchViewPage.FLAG_LAYOUT_FLAT);
 		Table table= ((TableViewer) page.getViewer()).getTable();

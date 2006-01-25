@@ -11,52 +11,54 @@
 package org.eclipse.search.core.tests;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.IEditorMatchAdapter;
 import org.eclipse.search.ui.text.IFileMatchAdapter;
 
-public class NullSearchResult extends AbstractTextSearchResult {
+import org.eclipse.search.internal.ui.text.FileSearchResult;
+
+public class NullSearchResult extends FileSearchResult { // inherit from FileSearchResult so a search result view can be found
+
+	private final NullQuery fNullQuery;
+	public NullSearchResult(NullQuery query) {
+		super(null);
+		fNullQuery= query;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getText(org.eclipse.search.ui.ISearchResult)
 	 */
 	public String getLabel() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Null Query"; //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getTooltip(org.eclipse.search.ui.ISearchResult)
 	 */
 	public String getTooltip() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Null Query"; //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getImageDescriptor(org.eclipse.search.ui.ISearchResult)
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getQuery()
 	 */
 	public ISearchQuery getQuery() {
-		// TODO Auto-generated method stub
-		return null;
+		return fNullQuery;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getEditorMatchAdapter()
 	 */
 	public IEditorMatchAdapter getEditorMatchAdapter() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getFileMatchAdapter()
 	 */
 	public IFileMatchAdapter getFileMatchAdapter() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

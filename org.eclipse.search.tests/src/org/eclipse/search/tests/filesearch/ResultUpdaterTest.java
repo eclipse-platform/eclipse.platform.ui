@@ -65,7 +65,6 @@ public class ResultUpdaterTest extends TestCase {
 	}
 	
 	public void testRemoveFile() throws Exception {
-		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
 		Object[] elements= result.getElements();
@@ -77,7 +76,6 @@ public class ResultUpdaterTest extends TestCase {
 	}
 	
 	public void testRemoveProject() throws Exception {
-		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
 		ResourceHelper.delete(fProject);

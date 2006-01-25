@@ -83,4 +83,10 @@ public final class SearchMessages extends NLS {
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, SearchMessages.class);
 	}
+
+	public static String SearchHistoryDropDownAction_showemptyview_title;
+	public static String SearchHistoryDropDownAction_showemptyview_tooltip;
+	public static String PinSearchViewAction_label;
+	public static String PinSearchViewAction_tooltip;
+	public static String SearchPageRegistry_error_creating_extensionpoint;
 }

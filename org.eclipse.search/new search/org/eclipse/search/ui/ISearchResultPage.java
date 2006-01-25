@@ -37,7 +37,7 @@ public interface ISearchResultPage extends IPageBookViewPage {
 	 * Implementers should restore UI state (e.g. selection) from the previously
 	 * saved <code>uiState</code> object.
 	 * 
-	 * @param search the search result to be shown
+	 * @param search the search result to be shown or <code>null</code> to clear the page.
 	 * @param uiState the previously saved UI state
 	 * 
 	 * @see ISearchResultPage#getUIState()

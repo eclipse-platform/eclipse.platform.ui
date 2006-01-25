@@ -65,7 +65,6 @@ public class PositionTrackerTest extends TestCase {
 	}
 	
 	public void testInsertAt0() throws Exception {
-		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
 		Object[] elements= result.getElements();
@@ -79,7 +78,6 @@ public class PositionTrackerTest extends TestCase {
 	}
 	
 	public void testInsertInsideMatch() throws Exception {
-		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		FileSearchResult result= (FileSearchResult) fQuery1.getSearchResult();
 		Object[] elements= result.getElements();

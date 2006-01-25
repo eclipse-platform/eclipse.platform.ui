@@ -30,6 +30,11 @@ class QueryManager {
 		fListeners= new ArrayList();
 		fLRU= new ArrayList();
 	}
+	
+	synchronized boolean hasQueries() {
+		return !fQueries.isEmpty();
+	}
+	
 	synchronized ISearchQuery[] getQueries() {
 		ISearchQuery[] result= new ISearchQuery[fQueries.size()];
 		return (ISearchQuery[]) fQueries.toArray(result);

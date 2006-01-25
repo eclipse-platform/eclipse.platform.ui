@@ -83,7 +83,6 @@ public class LineAnnotationManagerTest extends TestCase {
 	}
 	
 	public void testLineBasedQuery() throws Exception {
-		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fLineQuery);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fLineQuery.getSearchResult();
 		Object[] files= result.getElements();

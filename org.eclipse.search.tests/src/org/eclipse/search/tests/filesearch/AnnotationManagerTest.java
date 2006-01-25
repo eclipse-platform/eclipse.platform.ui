@@ -88,7 +88,6 @@ public class AnnotationManagerTest extends TestCase {
 	}
 	
 	public void testAddAnnotation() throws Exception {
-		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
 		Object[] files= result.getElements();
@@ -120,7 +119,6 @@ public class AnnotationManagerTest extends TestCase {
 	}
 	
 	public void testBogusAnnotation() throws Exception {
-		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		FileSearchResult result= (FileSearchResult) fQuery1.getSearchResult();
 		IFile file= (IFile) result.getElements()[0];
@@ -129,7 +127,6 @@ public class AnnotationManagerTest extends TestCase {
 	}
 	
 	public void testRemoveQuery() throws Exception {
-		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
 		Object[] files= result.getElements();
@@ -156,7 +153,6 @@ public class AnnotationManagerTest extends TestCase {
 
 	
 	public void testReplaceQuery() throws Exception {
-		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
 		Object[] files= result.getElements();
@@ -184,7 +180,6 @@ public class AnnotationManagerTest extends TestCase {
 	}
 
 	public void testSwitchQuery() throws Exception {
-		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
 		Object[] files= result.getElements();

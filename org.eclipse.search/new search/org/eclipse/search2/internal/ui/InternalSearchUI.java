@@ -25,12 +25,8 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 import org.eclipse.search.ui.IQueryListener;
@@ -40,8 +36,6 @@ import org.eclipse.search.ui.NewSearchUI;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
-import org.eclipse.search.internal.ui.SearchPreferencePage;
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 import org.eclipse.search2.internal.ui.text.PositionTracker;
 
@@ -56,9 +50,10 @@ public class InternalSearchUI {
 	
 	private QueryManager fSearchResultsManager;
 	private PositionTracker fPositionTracker;
+	
+	private SearchViewManager fSearchViewManager;
 
 	public static final Object FAMILY_SEARCH = new Object();
-	
 
 	private class SearchJobRecord {
 		public ISearchQuery query;
@@ -123,6 +118,9 @@ public class InternalSearchUI {
 		fSearchJobs= new HashMap();
 		fSearchResultsManager= new QueryManager();
 		fPositionTracker= new PositionTracker();
+		
+		fSearchViewManager= new SearchViewManager(fSearchResultsManager);
+		
 		PlatformUI.getWorkbench().getProgressService().registerIconForFamily(SearchPluginImages.DESC_VIEW_SEARCHRES, FAMILY_SEARCH);
 	}
 
@@ -152,6 +150,9 @@ public class InternalSearchUI {
 	public boolean runSearchInBackground(ISearchQuery query) {
 		if (isQueryRunning(query))
 			return false;
+		
+		// prepare view
+		getSearchViewManager().activateSearchView(true);
 				
 		addQuery(query);
 
@@ -168,6 +169,7 @@ public class InternalSearchUI {
 		} else {
 			job.schedule();
 		}
+		
 		return true;
 	}
 
@@ -180,6 +182,9 @@ public class InternalSearchUI {
 		if (isQueryRunning(query)) {
 			return Status.CANCEL_STATUS;
 		}
+		
+		// prepare view
+		getSearchViewManager().activateSearchView(true);
 
 		addQuery(query);
 		
@@ -238,6 +243,9 @@ public class InternalSearchUI {
 				element.job.cancel();
 		}
 		fPositionTracker.dispose();
+		
+		fSearchViewManager.dispose(fSearchResultsManager);
+		
 	}
 
 	public void cancelSearch(ISearchQuery job) {
@@ -246,33 +254,14 @@ public class InternalSearchUI {
 			rec.job.cancel();
 	}
 
-	public ISearchResultViewPart activateSearchView() {
-		String defaultPerspectiveId= NewSearchUI.getDefaultPerspectiveId();
-		if (defaultPerspectiveId != null) {
-			IWorkbenchWindow window= window= SearchPlugin.getActiveWorkbenchWindow();
-			if (window != null && window.getShell() != null && !window.getShell().isDisposed()) {
-				try {
-					PlatformUI.getWorkbench().showPerspective(defaultPerspectiveId, window);
-				} catch (WorkbenchException ex) {
-					// show view in current perspective
-				}
-			}
-		}
 
-		try {
-			ISearchResultViewPart viewPart= (ISearchResultViewPart) SearchPlugin.getActivePage().findView(NewSearchUI.SEARCH_VIEW_ID);
-			if (viewPart == null || SearchPreferencePage.isViewBroughtToFront()) {
-				viewPart= (ISearchResultViewPart) SearchPlugin.getActivePage().showView(NewSearchUI.SEARCH_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
-			}
-			return viewPart;
-		} catch (PartInitException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.Search_Error_openResultView_title, SearchMessages.Search_Error_openResultView_message); 
-		}	
-		return null;
-	}
 
 	public QueryManager getSearchManager() {
 		return fSearchResultsManager;
+	}
+	
+	public SearchViewManager getSearchViewManager() {
+		return fSearchViewManager;
 	}
 
 	public PositionTracker getPositionTracker() {

@@ -60,7 +60,9 @@ class ShowSearchHistoryDialogAction extends Action {
 		if (dlg.open() == Window.OK) {
 			List result= Arrays.asList(dlg.getResult());
 			if (result != null && result.size() == 1) {
-				fSearchView.showSearchResult((ISearchResult) result.get(0));
+				ISearchResult searchResult= (ISearchResult) result.get(0);
+				InternalSearchUI.getInstance().getSearchManager().touch(searchResult.getQuery());
+				fSearchView.showSearchResult(searchResult);
 			}
 		}
 

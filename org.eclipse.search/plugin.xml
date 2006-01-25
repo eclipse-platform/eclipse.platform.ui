@@ -176,6 +176,7 @@
             icon="$nl$/icons/full/eview16/searchres.gif"
             category="org.eclipse.ui"
             class="org.eclipse.search2.internal.ui.SearchView"
+            allowMultiple="true"
             id="org.eclipse.search.ui.views.SearchView">
       	</view>
 	</extension>

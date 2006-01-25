@@ -37,7 +37,7 @@ public class NewSearchUI {
 	 *         search result view couldn't be activated
 	 */
 	public static ISearchResultViewPart activateSearchResultView() {
-		return InternalSearchUI.getInstance().activateSearchView();
+		return InternalSearchUI.getInstance().getSearchViewManager().activateSearchView(false);
 	}
 	/**
 	 * Gets the search result view shown in the current workbench window.
@@ -46,7 +46,7 @@ public class NewSearchUI {
 	 *         in the current workbench window page
 	 */
 	public static ISearchResultViewPart getSearchResultView() {
-		return InternalSearchUI.getInstance().getSearchView();
+		return InternalSearchUI.getInstance().getSearchViewManager().getActiveSearchView();
 	}
 	/**
 	 * Runs the given search query. This method may run the given query in a
@@ -79,7 +79,11 @@ public class NewSearchUI {
 	 * Runs the given search query. This method will execute the query in a
 	 * background thread and not block until the search is finished. 
 	 * Running a query adds it to the set of known queries and notifies
-	 * any registered <code>IQueryListener</code>s about the addition.
+	 * any registered {@link IQueryListener}s about the addition.
+	 * <p>
+	 * The search view that shows the result will be activated. That means a call
+	 * to {@link #activateSearchResultView} is not required.
+	 * </p>
 	 * 
 	 * @param query
 	 *            the query to execute. The query must be able to run in background, that means
@@ -98,7 +102,11 @@ public class NewSearchUI {
 	 * Runs the given search query. This method will execute the query in the
 	 * same thread as the caller. This method blocks until the query is
 	 * finished. Running a query adds it to the set of known queries and notifies
-	 * any registered <code>IQueryListener</code>s about the addition.
+	 * any registered {@link IQueryListener}s about the addition.
+	 * <p>
+	 * The result will be shown in a search view that will be activated. That means a call
+	 * to {@link #activateSearchResultView} is not required.
+	 * </p>
 	 * 
 	 * @param context
 	 *            the runnable context to run the query in

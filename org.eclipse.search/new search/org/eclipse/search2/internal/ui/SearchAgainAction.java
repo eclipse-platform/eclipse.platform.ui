@@ -30,7 +30,7 @@ class SearchAgainAction extends Action {
 	public SearchAgainAction(SearchView view) {
 		setText(SearchMessages.SearchAgainAction_label); 
 		setToolTipText(SearchMessages.SearchAgainAction_tooltip); 
-		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_TOOL, SearchPluginImages.IMG_TOOL_SEARCH);
+		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_AGAIN);
 		fView= view;	
 	}
 

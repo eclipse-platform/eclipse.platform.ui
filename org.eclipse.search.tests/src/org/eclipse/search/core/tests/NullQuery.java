@@ -37,6 +37,6 @@ public class NullQuery implements ISearchQuery {
 	}
 
 	public ISearchResult getSearchResult() {
-		return new NullSearchResult();
+		return new NullSearchResult(this);
 	}
 }
