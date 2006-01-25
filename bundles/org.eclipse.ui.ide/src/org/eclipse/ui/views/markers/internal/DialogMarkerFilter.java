@@ -66,6 +66,11 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
  * instantiated by clients.
  */
 public abstract class DialogMarkerFilter extends TrayDialog {
+
+	static final int SELECT_ALL_FILTERS_ID = IDialogConstants.CLIENT_ID + 4;
+
+	static final int DESELECT_ALL_FILTERS_ID = IDialogConstants.CLIENT_ID + 5;
+
 	/**
 	 * button IDs
 	 */
@@ -350,6 +355,7 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 
 		/**
 		 * Return the marker type this is wrapping
+		 * 
 		 * @return Object
 		 */
 		public Object getMarkerType() {
@@ -513,18 +519,31 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
 	protected void buttonPressed(int buttonId) {
-		if (buttonId == RESET_ID) {
+		
+		switch (buttonId) {
+		case RESET_ID:
 			resetPressed();
 			markDirty();
-		} else if (buttonId == SELECT_WORKING_SET_ID) {
+			break;
+		case SELECT_WORKING_SET_ID:
 			workingSetGroup.selectPressed();
-		} else if (buttonId == SELECT_ALL_ID) {
+			break;
+		case SELECT_ALL_ID:
 			typesViewer.setAllChecked(true);
-		} else if (buttonId == DESELECT_ALL_ID) {
+			break;
+		case DESELECT_ALL_ID:
 			typesViewer.setAllChecked(false);
-		} else {
-			super.buttonPressed(buttonId);
+			break;
+		case SELECT_ALL_FILTERS_ID:
+			filtersList.setAllChecked(true);
+			break;
+		case DESELECT_ALL_FILTERS_ID:
+			filtersList.setAllChecked(false);
+			break;
+		default:
+			break;
 		}
+		super.buttonPressed(buttonId);
 	}
 
 	/**
@@ -642,12 +661,30 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 	void createFiltersArea(Composite dialogArea) {
 
 		Composite listArea = new Composite(dialogArea, SWT.NONE);
-		listArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
+		listArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		listArea.setLayout(new GridLayout());
 
-		Label title = new Label(listArea, SWT.NONE);
+		createUserFiltersArea(listArea);
+		createFilterSelectButtons(listArea);
+	}
+
+	/**
+	 * Create the area for the user to select thier filters.
+	 * @param listArea
+	 */
+	void createUserFiltersArea(Composite listArea) {
+		
+		Composite userComposite = new Composite(listArea,SWT.NONE);
+		userComposite.setLayout(new GridLayout(2,false));
+		userComposite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+		
+		Label title = new Label(userComposite, SWT.NONE);
 		title.setText(MarkerMessages.MarkerFilter_filtersTitle);
-		filtersList = CheckboxTableViewer.newCheckList(listArea, SWT.BORDER);
+		GridData titleData = new GridData();
+		titleData.horizontalSpan = 2;
+		title.setLayoutData(titleData);		
+		
+		filtersList = CheckboxTableViewer.newCheckList(userComposite, SWT.BORDER);
 		filtersList.setContentProvider(new IStructuredContentProvider() {
 			/*
 			 * (non-Javadoc)
@@ -690,19 +727,6 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 			}
 		});
 
-		filtersList.addCheckStateListener(new ICheckStateListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
-			 */
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				((MarkerFilter) event.getElement()).setEnabled(event
-						.getChecked());
-
-			}
-		});
-
 		selectedFilters = new MarkerFilter[] { filters[0] };
 		filtersList.setSelection(new StructuredSelection(selectedFilters));
 
@@ -726,11 +750,17 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 			filtersList.setChecked(filters[i], filters[i].isEnabled());
 		}
 
-		filtersList.getControl().setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, false, true));
+		GridData listData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		listData.widthHint = convertHorizontalDLUsToPixels(100);
+		filtersList.getControl().setLayoutData(listData);
 
-		Composite buttons = new Composite(listArea, SWT.NONE);
-		buttons.setLayout(new GridLayout(2, false));
+		Composite buttons = new Composite(userComposite, SWT.NONE);
+		GridLayout buttonLayout = new GridLayout();
+		buttonLayout.marginWidth = 0;
+		buttons.setLayout(buttonLayout);
+		GridData buttonsData = new GridData();
+		buttonsData.verticalAlignment = GridData.BEGINNING;
+		buttons.setLayoutData(buttonsData);
 
 		Button addNew = new Button(buttons, SWT.PUSH);
 		addNew.setText(MarkerMessages.MarkerFilter_addFilterName);
@@ -759,6 +789,7 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 				}
 			}
 		});
+		setButtonLayoutData(addNew);
 
 		Button remove = new Button(buttons, SWT.PUSH);
 		remove.setText(MarkerMessages.MarkerFilter_deleteSelectedName);
@@ -767,6 +798,7 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 				removeFilters(filtersList.getSelection());
 			}
 		});
+		setButtonLayoutData(remove);
 	}
 
 	/**
@@ -1090,7 +1122,7 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 		for (int i = 0; i < checkElements.length; i++) {
 			AbstractNode node = (AbstractNode) checkElements[i];
 			if (!node.isCategory())
-				selected.add(((MarkerTypeNode)node).getMarkerType());
+				selected.add(((MarkerTypeNode) node).getMarkerType());
 
 		}
 		return selected;
@@ -1116,13 +1148,23 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 		};
 	}
 
-	/**
-	 * Updates the filter from the UI state. Must be done here rather than by
-	 * extending open() because after super.open() is called, the widgetry is
-	 * disposed.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
+		/**
+		 * Updates the filter from the UI state. Must be done here rather than
+		 * by extending open() because after super.open() is called, the
+		 * widgetry is disposed.
+		 */
 		updateFilterFromUI();
+
+		for (int i = 0; i < filters.length; i++) {
+			filters[i].setEnabled(filtersList.getChecked(filters[i]));
+
+		}
 		super.okPressed();
 	}
 
@@ -1155,8 +1197,9 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 			Object obj = markerTypes.get(i);
 			if (obj instanceof MarkerType) {
 
-				Object mapping = nodeToTypeMapping.get(((MarkerType) obj).getId());
-				if (mapping != null){
+				Object mapping = nodeToTypeMapping.get(((MarkerType) obj)
+						.getId());
+				if (mapping != null) {
 					typesViewer.setChecked(mapping, true);
 					setParentCheckState(mapping, true);
 				}
@@ -1388,7 +1431,7 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 			// All checked - check the parent
 			typesViewer.setChecked(parent, false);
 		}
-	
+
 	}
 
 	/**
@@ -1404,6 +1447,22 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 				typesViewer.setChecked(children[i], checked);
 			}
 		}
+	}
+
+	/**
+	 * Create the buttons for selecting the filters.
+	 * @param listArea
+	 */
+	protected void createFilterSelectButtons(Composite listArea) {
+		Composite buttons = new Composite(listArea, SWT.NONE);
+		GridLayout buttonLayout = new GridLayout(2, false);
+		buttonLayout.marginWidth = 0;
+		buttons.setLayout(buttonLayout);
+	
+		createButton(buttons, SELECT_ALL_FILTERS_ID,
+				MarkerMessages.filtersDialog_selectAll, false);
+		createButton(buttons, DESELECT_ALL_FILTERS_ID,
+				MarkerMessages.filtersDialog_deselectAll, false);
 	}
 
 }

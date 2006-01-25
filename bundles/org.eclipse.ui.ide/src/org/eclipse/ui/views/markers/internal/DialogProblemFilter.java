@@ -15,9 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -56,6 +54,8 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 
 	private Label systemSettingsLabel;
 
+	private CheckboxTableViewer definedList;
+
 	private class DescriptionGroup {
 		private Label descriptionLabel;
 
@@ -73,12 +73,18 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 		 * @param parent
 		 */
 		public DescriptionGroup(Composite parent) {
-			descriptionLabel = new Label(parent, SWT.NONE);
+
+			Composite descriptionComposite = new Composite(parent, SWT.NONE);
+			descriptionComposite.setLayout(new GridLayout(2, false));
+			descriptionComposite.setLayoutData(new GridData(
+					GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
+
+			descriptionLabel = new Label(descriptionComposite, SWT.NONE);
 			descriptionLabel.setFont(parent.getFont());
 			descriptionLabel
 					.setText(MarkerMessages.filtersDialog_descriptionLabel);
 
-			combo = new Combo(parent, SWT.READ_ONLY);
+			combo = new Combo(descriptionComposite, SWT.READ_ONLY);
 			combo.setFont(parent.getFont());
 			combo.add(contains);
 			combo.add(doesNotContain);
@@ -103,10 +109,12 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 				}
 			});
 
-			description = new Text(parent, SWT.SINGLE | SWT.BORDER);
+			description = new Text(descriptionComposite, SWT.SINGLE
+					| SWT.BORDER);
 			description.setFont(parent.getFont());
 			GridData data = new GridData(GridData.FILL_HORIZONTAL);
-			data.horizontalSpan = 3;
+			data.horizontalSpan = 2;
+
 			description.setLayoutData(data);
 			description.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
@@ -167,6 +175,12 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 		 * @param parent
 		 */
 		public SeverityGroup(Composite parent) {
+
+			Composite severityComposite = new Composite(parent, SWT.NONE);
+			severityComposite.setLayout(new GridLayout(4, false));
+			severityComposite.setLayoutData(new GridData(
+					GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
+
 			SelectionListener listener = new SelectionAdapter() {
 				/*
 				 * (non-Javadoc)
@@ -179,16 +193,15 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 				}
 			};
 
-			enablementButton = new Button(parent, SWT.CHECK);
+			enablementButton = new Button(severityComposite, SWT.CHECK);
 			GridData data = new GridData(GridData.FILL_HORIZONTAL);
-			data.horizontalSpan = 2;
 			enablementButton.setLayoutData(data);
 			enablementButton.setFont(parent.getFont());
 			enablementButton
 					.setText(MarkerMessages.filtersDialog_severityLabel);
 			enablementButton.addSelectionListener(listener);
 
-			errorButton = new Button(parent, SWT.CHECK);
+			errorButton = new Button(severityComposite, SWT.CHECK);
 			errorButton.setFont(parent.getFont());
 			errorButton.setText(MarkerMessages.filtersDialog_severityError);
 			errorButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -203,7 +216,7 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 				}
 			});
 
-			warningButton = new Button(parent, SWT.CHECK);
+			warningButton = new Button(severityComposite, SWT.CHECK);
 			warningButton.setFont(parent.getFont());
 			warningButton.setText(MarkerMessages.filtersDialog_severityWarning);
 			warningButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -218,7 +231,7 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 				}
 			});
 
-			infoButton = new Button(parent, SWT.CHECK);
+			infoButton = new Button(severityComposite, SWT.CHECK);
 			infoButton.setFont(parent.getFont());
 			infoButton.setText(MarkerMessages.filtersDialog_severityInfo);
 			infoButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -301,7 +314,7 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setFont(parent.getFont());
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout layout = new GridLayout(5, false);
+		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
 
 		descriptionGroup = new DescriptionGroup(composite);
@@ -395,6 +408,11 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 		return new ProblemFilter(newName);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#createFiltersArea(org.eclipse.swt.widgets.Composite)
+	 */
 	void createFiltersArea(Composite dialogArea) {
 
 		Composite mainComposite = new Composite(dialogArea, SWT.NONE);
@@ -413,7 +431,7 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 		topComposite.setLayoutData(topData);
 		topComposite.setLayout(new GridLayout());
 
-		super.createFiltersArea(topComposite);
+		createUserFiltersArea(topComposite);
 
 		Composite bottomComposite = new Composite(mainComposite, SWT.NONE);
 		FormData bottomData = new FormData();
@@ -426,6 +444,7 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 		bottomComposite.setLayout(new GridLayout());
 
 		createRegisteredFilters(bottomComposite);
+		createFilterSelectButtons(bottomComposite);
 
 	}
 
@@ -437,8 +456,7 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 
 		Label title = new Label(listArea, SWT.NONE);
 		title.setText(MarkerMessages.ProblemFilterDialog_System_Filters_Title);
-		CheckboxTableViewer definedList = CheckboxTableViewer.newCheckList(
-				listArea, SWT.BORDER);
+		definedList = CheckboxTableViewer.newCheckList(listArea, SWT.BORDER);
 		definedList.setContentProvider(new IStructuredContentProvider() {
 			/*
 			 * (non-Javadoc)
@@ -482,19 +500,6 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 			}
 		});
 
-		definedList.addCheckStateListener(new ICheckStateListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
-			 */
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				((MarkerFilter) event.getElement()).setEnabled(event
-						.getChecked());
-
-			}
-		});
-
 		definedList
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 
@@ -532,6 +537,8 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 		definedList.getControl().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true));
 
+		
+
 	}
 
 	/**
@@ -548,7 +555,7 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 			filterBuffer.append(scopeString);
 
 		String descriptionString = getDescriptionString(filter);
-		if (descriptionString != null){
+		if (descriptionString != null) {
 			filterBuffer.append(Util.TWO_LINE_FEED);
 			filterBuffer.append(descriptionString);
 		}
@@ -730,5 +737,37 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 	private Label createSystemSettingsLabel(Composite wrapper) {
 
 		return new Label(wrapper, SWT.NONE);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#buttonPressed(int)
+	 */
+	protected void buttonPressed(int buttonId) {
+		if (buttonId == SELECT_ALL_FILTERS_ID) {
+			definedList.setAllChecked(true);
+		} else if (buttonId == DESELECT_ALL_FILTERS_ID) {
+			definedList.setAllChecked(false);
+		} 
+		
+		super.buttonPressed(buttonId);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#okPressed()
+	 */
+	protected void okPressed() {
+
+		Iterator registered = MarkerSupportRegistry.getInstance()
+				.getRegisteredFilters().iterator();
+		while (registered.hasNext()) {
+			ProblemFilter next = (ProblemFilter) registered.next();
+			next.setEnabled(definedList.getChecked(next));
+
+		}
+		super.okPressed();
 	}
 }
