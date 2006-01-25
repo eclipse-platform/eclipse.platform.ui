@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     The Pampered Chef - Initial API and implementation
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.updatables;
