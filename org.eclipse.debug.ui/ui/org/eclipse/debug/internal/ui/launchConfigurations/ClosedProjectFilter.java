@@ -49,7 +49,7 @@ public class ClosedProjectFilter extends ViewerFilter {
 				ILaunchConfiguration config = (ILaunchConfiguration)element;
 				if(config.exists()) {
 					IResource[] resources = config.getMappedResources();
-					//if ithas no mapping, it might be have migration delegate, so let it pass
+					//if it has no mapping, it might not have migration delegate, so let it pass
 					if(resources == null) {
 						return true;
 					}

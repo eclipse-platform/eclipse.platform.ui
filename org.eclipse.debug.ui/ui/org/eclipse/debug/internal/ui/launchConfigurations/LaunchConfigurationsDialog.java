@@ -600,24 +600,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Creates all of the actions for the toolbar
 	 * @param toolbar
+	 * @sicne 3.2
 	 */
 	protected void createToolbarActions() {
 		ToolBarManager tmanager = new ToolBarManager(fToolbar);
-		
-		Action faction = new Action(LaunchConfigurationsMessages.LaunchConfigurationsDialog_2, IAction.AS_DROP_DOWN_MENU) {
-			public void run() {
-				getFilterAction().run();
-			}
-		};
-		faction.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS));
-		faction.setToolTipText(LaunchConfigurationsMessages.LaunchConfigurationsDialog_4);
-		faction.setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS));
-		faction.setMenuCreator(new FilterDropDownMenuCreator());
-		
 		tmanager.add(getNewAction());
 		tmanager.add(getDuplicateAction());
 		tmanager.add(getDeleteAction());
-		tmanager.add(faction);
+		tmanager.add(getFilterAction());
 		tmanager.update(true);
 
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
@@ -647,7 +637,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup());
 		fLaunchConfigurationView.createLaunchDialogControl(comp);
 		
-	//create toolbar actions
+	//create toolbar actions, we reuse the actions form the view so we wait until after
+	//the view is created to add them to the toolbar
 		createToolbarActions();
 		
 		fDoubleClickAction = new Action() {
@@ -816,8 +807,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @return the filter menu action
 	 * @since 3.2
 	 */
-	protected AbstractLaunchConfigurationAction getFilterAction() {
-		return (AbstractLaunchConfigurationAction)fLaunchConfigurationView.getAction(FilterLaunchConfigurationAction.ID_FILTER_ACTION);
+	protected IAction getFilterAction() {
+		return fLaunchConfigurationView.getAction(FilterLaunchConfigurationAction.ID_FILTER_ACTION);
 	}
 	
 	 /* (non-Javadoc)
@@ -1235,6 +1226,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			try {
 				int w1, w2;
 				w1 = settings.getInt(DIALOG_SASH_WEIGHTS_1);
+				//just to make sure we are always visible for the toolbar
+				if(w1 < 300) {
+					w1 = 300;
+				}
 				w2 = settings.getInt(DIALOG_SASH_WEIGHTS_2);
 				sashWeights = new int[] {w1, w2};
 			} catch (NumberFormatException e) {

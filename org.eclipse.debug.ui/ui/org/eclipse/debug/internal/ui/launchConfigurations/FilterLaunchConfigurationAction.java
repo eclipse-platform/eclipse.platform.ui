@@ -11,16 +11,21 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.preferences.LaunchConfigurationsPreferencePage;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * provides the iplementation of the filtering action for the launch configuration view
+ * provides the implementation of the filtering action for the launch configuration view within the 
+ * Launch Configuration Dialog
  * @since 3.2
  */
-public class FilterLaunchConfigurationAction extends AbstractLaunchConfigurationAction {
+public class FilterLaunchConfigurationAction extends Action {
 
 	/**
 	 * Action identifier for IDebugView#getAction(String)
@@ -28,26 +33,60 @@ public class FilterLaunchConfigurationAction extends AbstractLaunchConfiguration
 	public static final String ID_FILTER_ACTION = DebugUIPlugin.getUniqueIdentifier() + ".ID_FILTER_ACTION"; //$NON-NLS-1$
 	
 	/**
+	 * the menu for this drop down style action
+	 */
+	private FilterDropDownMenuCreator fMenuCreator;
+	
+	/**
 	 * Constructor
 	 * @param text the text for the action
 	 * @param viewer the viewer the action acts upon
 	 * @param mode the mode
 	 */
-	public FilterLaunchConfigurationAction(Viewer viewer, String mode) {
-		super(LaunchConfigurationsMessages.FilterLaunchConfigurationAction_0, viewer, mode);
+	public FilterLaunchConfigurationAction() {
+		super(LaunchConfigurationsMessages.FilterLaunchConfigurationAction_0, IAction.AS_DROP_DOWN_MENU);
+		fMenuCreator = new FilterDropDownMenuCreator();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractLaunchConfigurationAction#performAction()
+	 * @see org.eclipse.jface.action.Action#run()
 	 */
-	protected void performAction() {
+	public void run() {
 		SWTUtil.showPreferencePage("org.eclipse.debug.ui.LaunchConfigurations", new LaunchConfigurationsPreferencePage()); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
+	 * @see org.eclipse.jface.action.Action#getDescription()
 	 */
-	protected boolean updateSelection(IStructuredSelection selection) {
-		return true;
+	public String getDescription() {
+		return LaunchConfigurationsMessages.LaunchConfigurationsDialog_4;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getDisabledImageDescriptor()
+	 */
+	public ImageDescriptor getDisabledImageDescriptor() {
+		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getImageDescriptor()
+	 */
+	public ImageDescriptor getImageDescriptor() {
+		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getMenuCreator()
+	 */
+	public IMenuCreator getMenuCreator() {
+		return fMenuCreator;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#getToolTipText()
+	 */
+	public String getToolTipText() {
+		return LaunchConfigurationsMessages.LaunchConfigurationsDialog_4;
 	}
 }

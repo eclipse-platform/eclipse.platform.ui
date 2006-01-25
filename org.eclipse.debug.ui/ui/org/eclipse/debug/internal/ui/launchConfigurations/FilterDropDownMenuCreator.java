@@ -103,7 +103,7 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 		new FilterAction(fCreatedMenu, getDebugPrefStore(), LaunchConfigurationsMessages.FilterDropDownMenuCreator_2, IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES);
 		//add separator
 		new MenuItem(fCreatedMenu, SWT.SEPARATOR);
-
+		
 		//add pref action
 		IAction action = new Action(LaunchConfigurationsMessages.FilterDropDownMenuCreator_3) {
 			public void run() {

@@ -64,6 +64,10 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	private CreateLaunchConfigurationAction fCreateAction;
 	private DeleteLaunchConfigurationAction fDeleteAction;
 	private DuplicateLaunchConfigurationAction fDuplicateAction;
+	/**
+	 * Action for providing filtering to the Launch Configuraiton Dialog
+	 * @since 3.2
+	 */
 	private FilterLaunchConfigurationAction fFilterAction;
 	
 	/**
@@ -178,7 +182,6 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
-		
 		fCreateAction = new CreateLaunchConfigurationAction(getViewer(), getLaunchGroup().getMode());
 		setAction(CreateLaunchConfigurationAction.ID_CREATE_ACTION, fCreateAction);
 		
@@ -189,9 +192,8 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		fDuplicateAction = new DuplicateLaunchConfigurationAction(getViewer(), getLaunchGroup().getMode());
 		setAction(DuplicateLaunchConfigurationAction.ID_DUPLICATE_ACTION, fDuplicateAction);
 		
-		fFilterAction = new FilterLaunchConfigurationAction(getViewer(), getLaunchGroup().getMode());
+		fFilterAction = new FilterLaunchConfigurationAction();
 		setAction(FilterLaunchConfigurationAction.ID_FILTER_ACTION, fFilterAction);
-		
 	}
 
 	/**
@@ -233,7 +235,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		fCreateAction.dispose();
 		fDeleteAction.dispose();
 		fDuplicateAction.dispose();
-		fFilterAction.dispose();
+		fFilterAction = null;
 		getLaunchManager().removeLaunchConfigurationListener(this);
 	}
 
