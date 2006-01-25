@@ -275,7 +275,7 @@ public class DiffTree implements IDiffTree {
 	private void internalRemove(IDiffNode delta) {
 		Assert.isTrue(!lockedForModification);
 		IDiffNode oldDiff = (IDiffNode)pathTree.get(delta.getPath());
-		if(oldDiff == null) {
+		if(oldDiff != null) {
 			statistics.remove(oldDiff);
 		}
 		pathTree.remove(delta.getPath());
@@ -317,6 +317,13 @@ public class DiffTree implements IDiffTree {
 	 */
 	public long countFor(int state, int mask) {
 		return statistics.countFor(state, mask);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.IDiffTree#size()
+	 */
+	public int size() {
+		return pathTree.size();
 	}
 
 }

@@ -20,8 +20,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -33,13 +33,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
  * 
  * @since 3.0
  */
-public class SyncInfoSetChangesSection extends ChangesSection {
-	
-	/**
-	 * Shows message to user is no changes are to be shown in the diff
-	 * tree viewer.
-	 */
-	private Composite filteredContainer;
+public class SyncInfoSetChangesSection extends ForwardingChangesSection {
 	
 	/**
 	 * Boolean that indicates whether the error page is being shown.
@@ -104,25 +98,19 @@ public class SyncInfoSetChangesSection extends ChangesSection {
 	 * @see org.eclipse.team.internal.ui.synchronize.ChangesSection#initializeChangesViewer()
 	 */
 	protected void initializeChangesViewer() {
-		calculateDescription();
+		super.initializeChangesViewer();
 		getConfiguration().addActionContribution(changedListener);
 		getParticipantSyncInfoSet().addSyncSetChangedListener(subscriberListener);
 		getVisibleSyncInfoSet().addSyncSetChangedListener(outputSetListener);
 	}
 	
-	private void calculateDescription() {
+	protected void calculateDescription() {
 		SyncInfoTree syncInfoTree = getVisibleSyncInfoSet();
 		if (syncInfoTree.getErrors().length > 0) {
 			if (!showingError) {
 				TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 					public void run() {
-						if (getContainer().isDisposed()) return;
-						if(filteredContainer != null) {
-							filteredContainer.dispose();
-							filteredContainer = null;
-						}
-						filteredContainer = getErrorComposite(getContainer());
-						getContainer().showPage(filteredContainer);
+						updatePage(getErrorComposite(getContainer()));
 						showingError = true;
 					}
 				});
@@ -131,93 +119,11 @@ public class SyncInfoSetChangesSection extends ChangesSection {
 		}
 		
 		showingError = false;
-		if(syncInfoTree.size() == 0) {
-			TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-				public void run() {
-					if (getContainer().isDisposed()) return;
-					if(filteredContainer != null) {
-						filteredContainer.dispose();
-						filteredContainer = null;
-					}
-					filteredContainer = getEmptyChangesComposite(getContainer());
-					getContainer().showPage(filteredContainer);
-				}
-			});
-		} else {
-			TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-				public void run() {
-					if(filteredContainer != null) {
-						filteredContainer.dispose();
-						filteredContainer = null;
-					}
-					Control control = SyncInfoSetChangesSection.this.getChangesViewer().getControl();
-					if (!getContainer().isDisposed() && !control.isDisposed()) {
-						getContainer().showPage(control);
-					}
-				}
-			});
-		}
-	}
-	
-	private boolean isThreeWay() {
-		return ISynchronizePageConfiguration.THREE_WAY.equals(getConfiguration().getComparisonType());
-	}
-	
-	private Composite getEmptyChangesComposite(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(getBackgroundColor());
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		composite.setLayout(layout);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.grabExcessVerticalSpace = true;
-		composite.setLayoutData(data);
-		
-		if(! isThreeWay()) {
-			createDescriptionLabel(composite,NLS.bind(TeamUIMessages.ChangesSection_noChanges, new String[] { getConfiguration().getParticipant().getName() }));	 
-			return composite;
-		}
-		
-		SyncInfoSet participantSet = getParticipantSyncInfoSet();
-		
-		int allChanges = participantSet.size();
-		int visibleChanges = getVisibleSyncInfoSet().size();
-		
-		if(visibleChanges == 0 && allChanges != 0) {
-			final int candidateMode = getCandidateMode(participantSet);
-			int currentMode = getConfiguration().getMode();
-			if (candidateMode != currentMode) {
-				long numChanges = getChangesInMode(participantSet, candidateMode);
-				if (numChanges > 0) {
-					String message;
-					if(numChanges > 1) {
-                        message = NLS.bind(TeamUIMessages.ChangesSection_filterHidesPlural, new String[] { Long.toString(numChanges), Utils.modeToString(candidateMode) });
-					} else {
-                        message = NLS.bind(TeamUIMessages.ChangesSection_filterHidesSingular, new String[] { Long.toString(numChanges), Utils.modeToString(candidateMode) });
-					}
-					message = NLS.bind(TeamUIMessages.ChangesSection_filterHides, new String[] { Utils.modeToString(getConfiguration().getMode()), message });
-					
-					Label warning = new Label(composite, SWT.NONE);
-					warning.setImage(TeamUIPlugin.getPlugin().getImage(ISharedImages.IMG_WARNING_OVR));
-					
-					Hyperlink link = getForms().createHyperlink(composite, NLS.bind(TeamUIMessages.ChangesSection_filterChange, new String[] { Utils.modeToString(candidateMode) }), SWT.WRAP); 
-					link.addHyperlinkListener(new HyperlinkAdapter() {
-						public void linkActivated(HyperlinkEvent e) {
-							getConfiguration().setMode(candidateMode);
-						}
-					});
-					getForms().getHyperlinkGroup().add(link);
-					createDescriptionLabel(composite, message);
-					return composite;
-				}
-			}
-		}
-		// There is no other mode that can be shown so just indicate that there are no changes
-		createDescriptionLabel(composite,NLS.bind(TeamUIMessages.ChangesSection_noChanges, new String[] { getConfiguration().getParticipant().getName() }));	 //	
-		return composite;
+		super.calculateDescription();
 	}
 
-	private long getChangesInMode(SyncInfoSet participantSet, final int candidateMode) {
+	protected long getChangesInMode(int candidateMode) {
+		SyncInfoSet participantSet = getParticipantSyncInfoSet();
 		long numChanges;
 		switch (candidateMode) {
 		case ISynchronizePageConfiguration.OUTGOING_MODE:
@@ -241,7 +147,8 @@ public class SyncInfoSetChangesSection extends ChangesSection {
 	 * Return the candidate mode based on the presence of unfiltered changes
 	 * and the modes supported by the page.
 	 */
-	private int getCandidateMode(SyncInfoSet participantSet) {
+	protected int getCandidateMode() {
+		SyncInfoSet participantSet = getParticipantSyncInfoSet();
 		SynchronizePageConfiguration configuration = (SynchronizePageConfiguration)getConfiguration();
 		long outgoingChanges = participantSet.countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK);
 		if (outgoingChanges > 0) {
@@ -262,17 +169,6 @@ public class SyncInfoSetChangesSection extends ChangesSection {
 			}
 		}
 		return configuration.getMode();
-	}
-	
-	private Label createDescriptionLabel(Composite parent, String text) {
-		Label description = new Label(parent, SWT.WRAP);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		data.widthHint = 100;
-		description.setLayoutData(data);
-		description.setText(text);
-		description.setBackground(getBackgroundColor());
-		return description;
 	}
 	
 	public void dispose() {
@@ -326,6 +222,14 @@ public class SyncInfoSetChangesSection extends ChangesSection {
 			MultiStatus multi = new MultiStatus(TeamUIPlugin.ID, 0, status, TeamUIMessages.ChangesSection_12, null); 
 			ErrorDialog.openError(getShell(), title, null, multi);
 		}
+	}
+	
+	protected int getChangesCount() {
+		return getParticipantSyncInfoSet().size();
+	}
+	
+	protected long getVisibleChangesCount() {
+		return getVisibleSyncInfoSet().size();
 	}
 	
 	/*

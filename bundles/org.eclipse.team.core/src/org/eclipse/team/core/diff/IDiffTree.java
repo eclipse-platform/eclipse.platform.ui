@@ -94,6 +94,12 @@ public interface IDiffTree {
 	public IPath[] getChildren(IPath parent);
 
 	/**
+	 * Return the number of diffs contained in the tree.
+	 * @return the number of diffs contained in the tree
+	 */
+	public int size();
+	
+	/**
 	 * Return whether the set is empty.
 	 * @return whether the set is empty
 	 */

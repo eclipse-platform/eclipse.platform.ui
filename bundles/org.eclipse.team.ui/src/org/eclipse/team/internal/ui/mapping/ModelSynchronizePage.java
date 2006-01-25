@@ -90,7 +90,7 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 	 * @see org.eclipse.team.internal.ui.synchronize.AbstractSynchronizePage#createChangesSection()
 	 */
 	protected ChangesSection createChangesSection(Composite parent) {
-		return new ChangesSection(parent, this, getConfiguration());
+		return new DiffTreeChangesSection(parent, this, getConfiguration());
 	}
 
 }

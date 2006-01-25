@@ -126,4 +126,8 @@ public class ChangesSection extends Composite {
 	public Viewer getChangesViewer() {
 		return changesViewer;
 	}
+	
+	protected boolean isThreeWay() {
+		return ISynchronizePageConfiguration.THREE_WAY.equals(getConfiguration().getComparisonType());
+	}
 }
