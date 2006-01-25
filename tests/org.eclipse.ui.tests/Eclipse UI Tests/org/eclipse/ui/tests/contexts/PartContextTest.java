@@ -155,6 +155,10 @@ public class PartContextTest extends UITestCase {
 		checkActiveContext(globalService, ContextPage.TEST_CONTEXT_ID, false);
 		page.activate(pageView);
 		checkActiveContext(globalService, ContextPage.TEST_CONTEXT_ID, true);
+		page.activate(editor02);
+		checkActiveContext(globalService, ContextPage.TEST_CONTEXT_ID, false);
+		page.activate(pageView);
+		checkActiveContext(globalService, ContextPage.TEST_CONTEXT_ID, true);
 
 		page.activate(editor01);
 		page.activate(pageView);
