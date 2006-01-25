@@ -907,7 +907,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	public boolean hasSharedRefactoringHistory(final IProject project) {
 		Assert.isNotNull(project);
 		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
-		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
+		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
 		if (preference != null)
 			return Boolean.valueOf(preference).booleanValue();
 		return false;

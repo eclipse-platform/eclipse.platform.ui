@@ -207,7 +207,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		});
 		fShareHistory= new Button(composite, SWT.CHECK);
 		fShareHistory.setText(RefactoringUIMessages.RefactoringPropertyPage_share_message);
-		fShareHistory.setData(RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY);
+		fShareHistory.setData(RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY);
 
 		fShareHistory.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		fShareHistory.setSelection(hasSharedRefactoringHistory());
@@ -274,7 +274,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		super.performDefaults();
 		final IProject project= getCurrentProject();
 		if (project != null)
-			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, null);
+			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, null);
 	}
 
 	/**
@@ -283,7 +283,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	public boolean performOk() {
 		final IProject project= getCurrentProject();
 		if (project != null)
-			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.valueOf(fShareHistory.getSelection()).toString());
+			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.valueOf(fShareHistory.getSelection()).toString());
 		if (fManager != null)
 			try {
 				fManager.applyChanges();
