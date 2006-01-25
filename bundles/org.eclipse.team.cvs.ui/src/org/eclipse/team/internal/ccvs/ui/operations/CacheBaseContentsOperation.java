@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IThreeWayDiff;
-import org.eclipse.team.core.history.IFileState;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.synchronize.SyncInfoFilter;
@@ -46,11 +46,11 @@ public class CacheBaseContentsOperation extends CacheTreeContentsOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CacheTreeContentsOperation#getRemoteFileState(org.eclipse.team.core.diff.IThreeWayDiff)
 	 */
-	protected IFileState getRemoteFileState(IThreeWayDiff twd) {
+	protected IFileRevision getRemoteFileState(IThreeWayDiff twd) {
 		IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
 		if (diff == null)
 			diff = (IResourceDiff)twd.getLocalChange();
-		IFileState base = diff.getBeforeState();
+		IFileRevision base = diff.getBeforeState();
 		return base;
 	}
 

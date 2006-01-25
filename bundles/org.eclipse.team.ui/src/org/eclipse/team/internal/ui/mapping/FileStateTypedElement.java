@@ -17,17 +17,17 @@ import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.team.core.history.IFileState;
+import org.eclipse.team.core.history.IFileRevision;
 
 /**
  * A typed element for file revisions
  */
 public class FileStateTypedElement extends BufferedContent implements ITypedElement, IEditableContent, IEncodedStreamContentAccessor {
 
-	IFileState state;
+	IFileRevision state;
 	private IStorage bufferedContents;
 	
-	public FileStateTypedElement(IFileState state) {
+	public FileStateTypedElement(IFileRevision state) {
 		this.state = state;
 	}
 	

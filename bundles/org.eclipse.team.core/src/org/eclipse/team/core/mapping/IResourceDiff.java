@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.core.mapping;
 
+import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.diff.ITwoWayDiff;
-import org.eclipse.team.core.history.IFileState;
+import org.eclipse.team.core.history.IFileRevision;
 
 /**
  * A resource diff represents the changes between two resources.
@@ -72,7 +73,7 @@ public interface IResourceDiff extends ITwoWayDiff {
 	 * @return a handle to the file state representing the "before" state
 	 *         used to calculate this diff
 	 */
-	public IFileState getBeforeState();
+	public IFileRevision getBeforeState();
 	
 	/**
 	 * Return a handle to the file state representing the "after" state
@@ -85,5 +86,5 @@ public interface IResourceDiff extends ITwoWayDiff {
 	 * @return a handle to the file state representing the "before" state
 	 *         used to calculate this diff
 	 */
-	public IFileState getAfterState();
+	public IFileRevision getAfterState();
 }

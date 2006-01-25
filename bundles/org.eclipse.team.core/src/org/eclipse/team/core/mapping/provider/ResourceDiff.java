@@ -12,7 +12,7 @@ package org.eclipse.team.core.mapping.provider;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.team.core.history.IFileState;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
 
 /**
@@ -31,8 +31,8 @@ import org.eclipse.team.core.mapping.IResourceDiff;
  */
 public class ResourceDiff extends TwoWayDiff implements IResourceDiff {
 
-	private final IFileState before;
-	private final IFileState after;
+	private final IFileRevision before;
+	private final IFileRevision after;
 	private final IResource resource;
 
 	/**
@@ -43,7 +43,7 @@ public class ResourceDiff extends TwoWayDiff implements IResourceDiff {
 	 * @param before the before state of the model object
 	 * @param after the after state of the model object
 	 */
-	public ResourceDiff(IResource resource, int kind, int flags, IFileState before, IFileState after) {
+	public ResourceDiff(IResource resource, int kind, int flags, IFileRevision before, IFileRevision after) {
 		super(resource.getFullPath(), kind, flags);
 		this.resource = resource;
 		this.before = before;
@@ -65,14 +65,14 @@ public class ResourceDiff extends TwoWayDiff implements IResourceDiff {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IResourceDiff#getBeforeState()
 	 */
-	public IFileState getBeforeState() {
+	public IFileRevision getBeforeState() {
 		return before;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IResourceDiff#getAfterState()
 	 */
-	public IFileState getAfterState() {
+	public IFileRevision getAfterState() {
 		return after;
 	}
 

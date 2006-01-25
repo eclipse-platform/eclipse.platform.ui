@@ -19,7 +19,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
-import org.eclipse.team.core.history.IFileState;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -83,7 +82,7 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 
 	protected void ensureRemotesMatch(IResource resource, IDiffNode node, SyncInfo info) throws CVSException {
 		IResourceVariant variant = info.getRemote();
-		IFileState remote = getRemote(node);
+		IFileRevision remote = getRemote(node);
 		if (variant != null && remote != null && remote instanceof IFileRevision) {
 			String ci1 = variant.getContentIdentifier();
 			String ci2 = ((IFileRevision)remote).getContentIdentifier();
@@ -93,7 +92,7 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		}
 	}
 
-	private IFileState getRemote(IDiffNode node) {
+	private IFileRevision getRemote(IDiffNode node) {
 		if (node == null) return null;
 		if (node instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) node;

@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IThreeWayDiff;
-import org.eclipse.team.core.history.IFileState;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.mapping.DelegatingStorageMerger;
@@ -121,8 +121,8 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     		}
 			// type == SyncInfo.CHANGE
 			IResourceDiff remoteChange = (IResourceDiff)twDelta.getRemoteChange();
-			IFileState base = null;
-			IFileState remote = null;
+			IFileRevision base = null;
+			IFileRevision remote = null;
         	if (remoteChange != null) {
 				base = remoteChange.getBeforeState();
 	        	remote = remoteChange.getAfterState();
@@ -155,8 +155,8 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 		IStorageMerger merger = DelegatingStorageMerger.getInstance();
 		IFile file = (IFile)localDiff.getResource();
 		String osEncoding = file.getCharset();
-		IFileState ancestorState = localDiff.getBeforeState();
-		IFileState remoteState = remoteDiff.getAfterState();
+		IFileRevision ancestorState = localDiff.getBeforeState();
+		IFileRevision remoteState = remoteDiff.getAfterState();
 		IStorage ancestorStorage = ancestorState.getStorage(Policy.subMonitorFor(monitor, 30));
 		IStorage remoteStorage = remoteState.getStorage(Policy.subMonitorFor(monitor, 30));
 		OutputStream os = getTempOutputStream(file);
@@ -243,7 +243,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     private void performReplace(final IDiffNode delta, IProgressMonitor monitor) throws CoreException {
     	IResourceDiff d;
     	IFile file = getLocalFile(delta);
-    	IFileState remote = null;
+    	IFileRevision remote = null;
     	if (delta instanceof IResourceDiff) {
     		d = (IResourceDiff) delta;
     	} else {
@@ -263,7 +263,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     	}
 	}
 
-	private void performReplace(final IDiffNode delta, final IFile file, final IFileState remote, IProgressMonitor monitor) throws CoreException {
+	private void performReplace(final IDiffNode delta, final IFile file, final IFileRevision remote, IProgressMonitor monitor) throws CoreException {
 		run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				if ((remote == null || !remote.exists()) && file.exists()) {

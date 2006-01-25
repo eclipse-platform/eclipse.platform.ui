@@ -17,13 +17,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.history.IFileState;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.provider.*;
 import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.core.variants.FileState;
 import org.eclipse.team.core.variants.IResourceVariant;
 
 /**
@@ -170,8 +169,8 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 					kind = IDiffNode.CHANGE;
 				}
 				if (local.getType() == IResource.FILE) {
-					IFileState after = asFileState(remote);
-					IFileState before = FileState.getFileStateFor((IFile)local);
+					IFileRevision after = asFileState(remote);
+					IFileRevision before = FileRevision.getFileRevisionFor((IFile)local);
 					return new ResourceDiff(info.getLocal(), kind, 0, before, after);
 				}
 				// For folders, we don't need file states
@@ -196,8 +195,8 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 			}
 			// For folders, we don't need file states
 			if (info.getLocal().getType() == IResource.FILE) {
-				IFileState before = asFileState(ancestor);
-				IFileState after = asFileState(remote);
+				IFileRevision before = asFileState(ancestor);
+				IFileRevision after = asFileState(remote);
 				return new ResourceDiff(info.getLocal(), kind, 0, before, after);
 			}
 
@@ -206,7 +205,7 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 		return null;
 	}
 
-	private static IFileState asFileState(final IResourceVariant variant) {
+	private static IFileRevision asFileState(final IResourceVariant variant) {
 		if (variant == null)
 			return null;
 		return new ResourceVariantFileRevision(variant);
@@ -226,8 +225,8 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 				kind = IDiffNode.CHANGE;
 			}
 			if (local.getType() == IResource.FILE) {
-				IFileState before = asFileState(ancestor);
-				IFileState after = FileState.getFileStateFor((IFile)local);
+				IFileRevision before = asFileState(ancestor);
+				IFileRevision after = FileRevision.getFileRevisionFor((IFile)local);
 				return new ResourceDiff(info.getLocal(), kind, 0, before, after);
 			}
 			// For folders, we don't need file states

@@ -21,7 +21,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IThreeWayDiff;
-import org.eclipse.team.core.history.IFileState;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -74,7 +74,7 @@ public abstract class CacheTreeContentsOperation extends SingleCommandOperation 
 		if (node instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) node;	
 			IResource local = getTree().getResource(node);
-			IFileState remote = getRemoteFileState(twd);
+			IFileRevision remote = getRemoteFileState(twd);
 			if (local.getType() == IResource.FILE 
 					&& isEnabledForDirection(twd.getDirection()) 
 					&& remote instanceof SyncInfoToDiffConverter.ResourceVariantFileRevision) {
@@ -95,7 +95,7 @@ public abstract class CacheTreeContentsOperation extends SingleCommandOperation 
 	 * @param twd a three way diff
 	 * @return the remote file state that is of interest
 	 */
-	protected abstract IFileState getRemoteFileState(IThreeWayDiff twd);
+	protected abstract IFileRevision getRemoteFileState(IThreeWayDiff twd);
 
 	/**
 	 * Return whether the direction is of interest.

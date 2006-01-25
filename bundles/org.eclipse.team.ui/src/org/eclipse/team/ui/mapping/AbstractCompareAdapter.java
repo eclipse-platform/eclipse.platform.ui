@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IThreeWayDiff;
-import org.eclipse.team.core.history.IFileState;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
@@ -110,7 +110,7 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 			return null;
 		}
 
-		private static ITypedElement asTypedElement(IFileState state) {
+		private static ITypedElement asTypedElement(IFileRevision state) {
 			if (state == null)
 				return null;
 			return new FileStateTypedElement(state);
