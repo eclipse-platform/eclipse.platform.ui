@@ -689,14 +689,13 @@ public class CVSHistoryPage extends HistoryPage {
 			try {
 				if (fileHistory != null && !shutdown) {
 					fileHistory.refresh(monitor);
-					getSite().getShell().getDisplay().asyncExec(new Runnable() {
-						public void run() {
-							historyTableProvider.setLocalRevisionsDisplayed(fileHistory.getIncludesExists());
-							historyTableProvider.setFile(fileHistory, file);
-							tableViewer.setInput(fileHistory);
-						}
-					});
-					
+					Utils.asyncExec(new Runnable() {
+							public void run() {
+								historyTableProvider.setLocalRevisionsDisplayed(fileHistory.getIncludesExists());
+								historyTableProvider.setFile(fileHistory, file);
+								tableViewer.setInput(fileHistory);
+							}
+						}, tableViewer);
 				}
 				return Status.OK_STATUS;
 			} catch (TeamException e) {
