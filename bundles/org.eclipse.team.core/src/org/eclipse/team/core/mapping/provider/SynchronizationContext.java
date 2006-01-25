@@ -56,22 +56,22 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 		this.deltaTree = deltaTree;
     }
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getInput()
+	/**
+	 * {@inheritDoc}
 	 */
 	public IResourceMappingScope getScope() {
 		return input;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getType()
+	/**
+	 * {@inheritDoc}
 	 */
 	public int getType() {
 		return type;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#dispose()
+	/**
+	 * {@inheritDoc}
 	 */
 	public void dispose() {
 		if (cache != null) {
@@ -79,8 +79,8 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getCache()
+	/**
+	 * {@inheritDoc}
 	 */
 	public synchronized IDiffCache getCache() {
 		if (cache == null) {
@@ -89,15 +89,15 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 		return cache;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.mapping.ISynchronizationContext#getDiffTree()
+	/**
+	 * {@inheritDoc}
 	 */
 	public IResourceDiffTree getDiffTree() {
 		return deltaTree;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.mapping.ISynchronizationContext#refresh(org.eclipse.core.resources.mapping.ResourceMapping[], org.eclipse.core.runtime.IProgressMonitor)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void refresh(ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 100);

@@ -157,13 +157,12 @@ public class ScopeGenerator {
 
 	private void addResourcesToScope(IResourceMappingScope scope, IResource[] newResources, IProgressMonitor monitor) throws CoreException {
 		Set targetMappings;
-		Set moreNewResources;
 		do {
 			if (consultModels) {
 				IResource[] adjusted = adjustInputResources(newResources);
 				targetMappings = internalGetMappingsFromProviders(adjusted,
 						context, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
-				moreNewResources = addMappingsToScope(scope, targetMappings,
+				addMappingsToScope(scope, targetMappings,
 						Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 				// TODO: Need to iterate
 			}
