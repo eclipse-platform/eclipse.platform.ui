@@ -125,7 +125,7 @@ public class DatabindingContextTest extends TestCase {
 		// this exact sequence of positions are not API and may change from release to release.
 		// This is just here to check that we got a sane sequence of pipeline positions.
 		// See BindingEvent#pipelinePosition for details.
-		final int[] pipelinePositions = new int[] {0, 1, 2, 3, 4, 0, 2, 4, 1, 0, 1, 2, 3, 4, 0, 2, 4, 1};
+		final int[] pipelinePositions = new int[] {0, 1, 2, 3, 4, 0, 2, 4, 1, 0, 1, 2, 0, 2, 4, 1};
 		settableValue1.setValue(o1);
 		settableValue2.setValue(o2);
 		IBinding binding = dbc.bind(settableValue1, settableValue2, null);
