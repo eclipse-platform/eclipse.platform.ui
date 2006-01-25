@@ -70,8 +70,6 @@ public class MarkerMessages extends NLS{
 	public static String description_priority;
 	public static String description_completion;
 	public static String description_markerId;
-	public static String description_subcategory;
-	public static String description_category;
 	public static String description_type;
 	public static String description_project;
 
@@ -261,8 +259,7 @@ public class MarkerMessages extends NLS{
 	public static String MarkerResolutionDialog_AddOthers;
 	
 	public static String ProblemView_GroupByMenu;
-	public static String ProblemView_Severity;
-	public static String ProblemView_Category;
+	public static String ProblemView_Type;
 	public static String ProblemView_None;
 	
 	public static String Util_WorkspaceName;

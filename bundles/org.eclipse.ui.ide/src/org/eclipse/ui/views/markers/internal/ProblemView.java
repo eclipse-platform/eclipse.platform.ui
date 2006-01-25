@@ -361,7 +361,7 @@ public class ProblemView extends MarkerView {
 	void addDropDownContributions(IMenuManager menu) {
 
 		MenuManager groupByMenu = new MenuManager(MarkerMessages.ProblemView_GroupByMenu);
-		groupByMenu.add(new GroupingAction(MarkerMessages.ProblemView_Category, new FieldCategory(), this));
+		groupByMenu.add(new GroupingAction(MarkerMessages.ProblemView_Type, new FieldCategory(), this));
 		
 		Iterator definedGroups = MarkerSupportRegistry.getInstance().getMarkerGroups().iterator();
 		

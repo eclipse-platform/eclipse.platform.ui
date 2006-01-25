@@ -14,7 +14,7 @@ public class FieldCategory extends AbstractField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
 	 */
 	public String getDescription() {
-		return MarkerMessages.description_category;
+		return MarkerMessages.description_type;
 	}
 
 	/*
