@@ -304,6 +304,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 			if (hasLocalChanges(traversals, monitor)) {
 				int state = IThreeWayDiff.OUTGOING;
 				state |= getOutgoingKind(traversals, monitor);
+				return state;
 			} else {
 				return 0;
 			}
