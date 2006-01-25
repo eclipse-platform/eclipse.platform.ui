@@ -20,7 +20,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  * called from a non user interface thread.
  * </p>
  * <p>
- * Note: this interface is not intended to be used outside the refactoring framework.
+ * Note: this interface is not intended to be used or extended outside the refactoring framework.
  * </p>
  * <p>
  * Note: This API is considered experimental and may change in the near future.
