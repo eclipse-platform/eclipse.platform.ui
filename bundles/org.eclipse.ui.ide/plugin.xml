@@ -734,6 +734,20 @@
             categoryId="org.eclipse.ui.category.window"
             id="org.eclipse.ui.navigate.selectWorkingSets">
       </command>
+      <category
+            description="%category.update.description"
+            id="org.eclipse.ui.category.update"
+            name="%category.update.name"/>
+      <command
+            categoryId="org.eclipse.ui.category.update"
+            description="%command.manageConfiguration.description"
+            id="org.eclipse.ui.update.manageConfiguration"
+            name="%command.manageConfiguration.name"/>
+      <command
+            categoryId="org.eclipse.ui.category.update"
+            description="%command.findAndInstallUpdates.description"
+            id="org.eclipse.ui.update.findAndInstallUpdates"
+            name="%command.findAndInstallUpdates.name"/>
    </extension>
    
    <extension
@@ -877,20 +891,22 @@
             </separator>
          </menu>
          <action
-               label="%UpdateActionSet.configManager.label"
-               icon="icons/full/elcl16/configs.gif"
-               helpContextId="org.eclipse.update.ui.newUpdates"
                class="org.eclipse.ui.internal.ide.update.ConfigurationManagerAction"
-               menubarPath="help/org.eclipse.update.ui.updateMenu/group0"
-               id="org.eclipse.update.ui.configManager">
+               definitionId="org.eclipse.ui.update.manageConfiguration"
+               helpContextId="org.eclipse.update.ui.newUpdates"
+               icon="icons/full/elcl16/configs.gif"
+               id="org.eclipse.update.ui.configManager"
+               label="%UpdateActionSet.configManager.label"
+               menubarPath="help/org.eclipse.update.ui.updateMenu/group0">
          </action>
          <action
-               label="%UpdateActionSet.updates.label"
-               icon="icons/full/elcl16/usearch_obj.gif"
-               helpContextId="org.eclipse.update.ui.newUpdates"
                class="org.eclipse.ui.internal.ide.update.InstallWizardAction"
-               menubarPath="help/org.eclipse.update.ui.updateMenu/group0"
-               id="org.eclipse.update.ui.newUpdates">
+               definitionId="org.eclipse.ui.update.findAndInstallUpdates"
+               helpContextId="org.eclipse.update.ui.newUpdates"
+               icon="icons/full/elcl16/usearch_obj.gif"
+               id="org.eclipse.update.ui.newUpdates"
+               label="%UpdateActionSet.updates.label"
+               menubarPath="help/org.eclipse.update.ui.updateMenu/group0">
          </action>
       </actionSet>
    </extension>
