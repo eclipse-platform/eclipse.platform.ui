@@ -11,21 +11,26 @@
 
 package org.eclipse.jface.tests.databinding;
 
-import java.beans.PropertyChangeEvent;
-
 import junit.framework.TestCase;
 
+import org.eclipse.jface.databinding.BeanUpdatableFactory;
 import org.eclipse.jface.databinding.ChangeEvent;
+import org.eclipse.jface.databinding.DataBinding;
+import org.eclipse.jface.databinding.IDataBindingContext;
+import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IUpdatableValue;
+import org.eclipse.jface.databinding.Property;
+import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
 import org.eclipse.jface.databinding.updatables.CalculatedValue;
 import org.eclipse.jface.databinding.updatables.SettableValue;
+import org.eclipse.jface.databinding.viewers.ViewersUpdatableFactory;
 import org.eclipse.jface.examples.databinding.model.ModelObject;
 
 /**
  * @since 3.2
  *
  */
-public class CalculatedUpdatableValueTest extends TestCase {
+public class CalculatedValueTest extends TestCase {
 	public void test_ctor() throws Exception {
 		CalculatedValue cv = new CalculatedValue(Integer.TYPE) {
 			protected Object calculate() {
@@ -51,9 +56,6 @@ public class CalculatedUpdatableValueTest extends TestCase {
 				return calcNewValue(seed);
 			}
 		};
-		assertEquals("CalculatedValue should be " + calcNewValue(seed), calcNewValue(seed), cv.getValue());
-		seed[0]++;
-		cv.getPropertyChangeListener().propertyChange(new PropertyChangeEvent(this, "", null, null));
 		assertEquals("CalculatedValue should be " + calcNewValue(seed), calcNewValue(seed), cv.getValue());
 		seed[0]++;
 		cv.getUpdatableChangeListener().handleChange(new ChangeEvent(this, ChangeEvent.CHANGE, null, null));
@@ -105,12 +107,26 @@ public class CalculatedUpdatableValueTest extends TestCase {
 	}
 	
 	private static class TestModel extends ModelObject {
-		public void fireChange() {
-			firePropertyChange("fireChange", null, null);
+		private int a = 0;
+
+		/**
+		 * @return Returns the a.
+		 */
+		public int getA() {
+			return a;
+		}
+
+		/**
+		 * @param a The a to set.
+		 */
+		public void setA(int a) {
+			int oldValue = this.a;
+			this.a = a;
+			firePropertyChange("a", oldValue, a);
 		}
 	}
 
-	public void test_hookAndUnhookPropertyChangeListeners() throws Exception {
+	public void test_convertToUpdatables() throws Exception {
 		final int[] seed = new int[] {42};
 		CalculatedValue cv = new CalculatedValue(Integer.TYPE) {
 			protected Object calculate() {
@@ -121,32 +137,36 @@ public class CalculatedUpdatableValueTest extends TestCase {
 		TestModel test2 = new TestModel();
 		
 		// Hook beans...
-		cv.setDependencies(new Object[] {test1, test2});
+		IDataBindingContext dbc = DataBinding.createContext(new IUpdatableFactory[] {
+				new BeanUpdatableFactory(), 
+				new SWTUpdatableFactory(), new ViewersUpdatableFactory()});
+
+		cv.setDependencies(dbc, new Object[] {new Property(test1, "a"), new Property(test2, "a")});
 		assertEquals("CalculatedValue should be " + calcNewValue(seed), calcNewValue(seed), cv.getValue());
 		
 		seed[0]++;
-		test1.fireChange();
+		test1.setA(1);
 		assertEquals("CalculatedValue should be " + calcNewValue(seed), calcNewValue(seed), cv.getValue());
 		
 		seed[0]++;
-		test2.fireChange();
+		test2.setA(2);
 		assertEquals("CalculatedValue should be " + calcNewValue(seed), calcNewValue(seed), cv.getValue());
 		
 		// Unhook beans...
 		TestModel test3 = new TestModel();
 		TestModel test4 = new TestModel();
-		cv.setDependencies(new Object[] {test3, test4});
+		cv.setDependencies(dbc, new Object[] {new Property(test3, "a"), new Property(test4, "a")});
 		
 		Integer oldValue = (Integer) cv.getValue();
 		
 		seed[0]++;
-		test2.fireChange();
+		test2.setA(3);
 		assertEquals("CalculatedValue should be " + oldValue, oldValue, cv.getValue());
-		test3.fireChange();
+		test3.setA(4);
 		assertEquals("CalculatedValue should be " + calcNewValue(seed), calcNewValue(seed), cv.getValue());
 		
 		seed[0]++;
-		test4.fireChange();
+		test4.setA(5);
 		assertEquals("CalculatedValue should be " + calcNewValue(seed), calcNewValue(seed), cv.getValue());
 	}
 }

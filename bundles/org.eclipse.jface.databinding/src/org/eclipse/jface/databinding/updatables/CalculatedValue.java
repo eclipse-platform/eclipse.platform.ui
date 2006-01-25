@@ -11,20 +11,18 @@
 
 package org.eclipse.jface.databinding.updatables;
 
-import java.beans.PropertyChangeListener;
-import java.lang.reflect.Method;
-
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IUpdatableValue;
+import org.eclipse.jface.databinding.IDataBindingContext;
+import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.UpdatableValue;
 
 /**
  * An IUpdatableValue implementation that represents a calculated value
  * that depends on the values of other IUpdatables or Java Beans.
  * <p>
- * Exposes an IChangeListener and a PropertyChangeListener that may
- * be added to objects on which this calculation depends.
+ * Exposes an IChangeListener that may be added to objects on which this 
+ * calculation depends.
  * 
  * @since 3.2
  */
@@ -95,22 +93,6 @@ public abstract class CalculatedValue extends UpdatableValue {
 		}
 	};
 	
-	private final PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-		/* (non-Javadoc)
-		 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-		 */
-		public void propertyChange(java.beans.PropertyChangeEvent arg0) {
-			CalculatedValue.this.handleChange();
-		}
-	};
-
-	/**
-	 * @return Returns the propertyChangeListener.
-	 */
-	public PropertyChangeListener getPropertyChangeListener() {
-		return propertyChangeListener;
-	}
-
 	/**
 	 * @return Returns the updatableChangeListener.
 	 */
@@ -118,25 +100,27 @@ public abstract class CalculatedValue extends UpdatableValue {
 		return updatableChangeListener;
 	}
 	
-	private IUpdatableValue[] dependantUpdatableValues;
+	private IUpdatable[] dependantUpdatableValues;
+	private boolean selfMadeUpdatables;
 
 	/**
-	 * Adds an array of IUpdatableValue objects as objects on which this
+	 * Adds an array of IUpdatable objects as objects on which this
 	 * calculation depends.  Whenever any of these objects changes, this
 	 * object will recalculate.
 	 * 
-	 * @param values An array of IUpdatableValue objects to set.
+	 * @param values An array of IUpdatable objects to set.
 	 */
-	public void setDependencies(IUpdatableValue[] values) {
+	public void setDependencies(IUpdatable[] values) {
 		unhookDependantUpdatableValues();
 		this.dependantUpdatableValues = values;
 		hookDependantUpdatableValues();
+		selfMadeUpdatables=false;
 	}
 
 	/**
 	 * @return Returns the dependantUpdatableValues.
 	 */
-	protected IUpdatableValue[] getDependantUpdatableValues() {
+	protected IUpdatable[] getDependantUpdatableValues() {
 		return dependantUpdatableValues;
 	}
 
@@ -146,7 +130,11 @@ public abstract class CalculatedValue extends UpdatableValue {
 		
 		for (int i = 0; i < dependantUpdatableValues.length; i++) {
 			dependantUpdatableValues[i].removeChangeListener(getUpdatableChangeListener());
+			if (selfMadeUpdatables) {
+				dependantUpdatableValues[i].dispose();
+			}
 		}
+		dependantUpdatableValues = null;
 	}
 
 	private void hookDependantUpdatableValues() {
@@ -155,52 +143,36 @@ public abstract class CalculatedValue extends UpdatableValue {
 		}
 	}
 	
-	private Object[] dependantJavaBeans;
-
 	/**
-	 * Adds an array of IUpdatableValue objects as objects on which this
-	 * calculation depends.  Whenever any of these objects changes, this
-	 * object will recalculate.
-	 * 
-	 * @param objects An array of Java bean objects to set.
+	 * Adds an array of dependencies.  These objects must be all convertable
+	 * to instances of IUpdatable using IDataBindingContext#createUpdatable.
+	 * <p>
+	 * Often this is used to make this CalculatedValue depend on one or more
+	 * JavaBean property change events, but anything that can be converted to
+	 * an IUpdatable will work.
+	 *  
+	 * @param dbc The data binding context to use for converting objects into IUpdatableValues
+	 * @param descriptionObjects An array of description objects that are convertable to IUpdatableValues.
 	 */
-	public void setDependencies(Object[] objects) {
-		unhookDependantJavaBeans();
-		this.dependantJavaBeans = objects;
-		hookDependantJavaBeans();
+	public void setDependencies(IDataBindingContext dbc, Object[] descriptionObjects) {
+		IUpdatable[] values = convertToUpdatables(dbc, descriptionObjects);
+		setDependencies(values);
+		selfMadeUpdatables = true;
 	}
 	
-	private void addPropertyChangeListener(Object bean) {
-		try {
-			Method addPCL = bean.getClass().getMethod("addPropertyChangeListener", new Class[] {PropertyChangeListener.class}); //$NON-NLS-1$
-			addPCL.invoke(bean, new Object[] {propertyChangeListener});
-		} catch (Exception e) {
-			throw new IllegalArgumentException(bean.getClass().getName() + " does not define addPropertyChangeListener" + e); //$NON-NLS-1$
+	private IUpdatable[] convertToUpdatables(IDataBindingContext dbc, Object[] objects) {
+		IUpdatable[] result = new IUpdatable[objects.length];
+		for (int i = 0; i < objects.length; i++) {
+			result[i] = dbc.createUpdatable(objects[i]);
 		}
-	}
-	
-	private void removePropertyChangeListener(Object bean) {
-		try {
-			Method addPCL = bean.getClass().getMethod("removePropertyChangeListener", new Class[] {PropertyChangeListener.class}); //$NON-NLS-1$
-			addPCL.invoke(bean, new Object[] {propertyChangeListener});
-		} catch (Exception e) {
-			throw new IllegalArgumentException(bean.getClass().getName() + " does not define removePropertyChangeListener" + e); //$NON-NLS-1$
-		}
+		return result;
 	}
 
-	private void unhookDependantJavaBeans() {
-		if (dependantJavaBeans == null)
-			return;
-		
-		for (int i = 0; i < dependantJavaBeans.length; i++) {
-			removePropertyChangeListener(dependantJavaBeans[i]);
-		}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.Updatable#dispose()
+	 */
+	public void dispose() {
+		unhookDependantUpdatableValues();
+		super.dispose();
 	}
-
-	private void hookDependantJavaBeans() {
-		for (int i = 0; i < dependantJavaBeans.length; i++) {
-			addPropertyChangeListener(dependantJavaBeans[i]);
-		}
-	}
-
 }
