@@ -4,5 +4,13 @@
 
     <extension-point id="valueVariables" name="%valueVariablesExtensionPointName" schema="schema/valueVariables.exsd"/>
    <extension-point id="dynamicVariables" name="%dynamicVariablesExtensionPointName" schema="schema/dynamicVariables.exsd"/>
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            description="%eclipse_home.description"
+            name="eclipse_home"
+            resolver="org.eclipse.core.internal.variables.EclipseHomeVariableResolver"
+            supportsArgument="false"/>
+   </extension>
 
 </plugin>
