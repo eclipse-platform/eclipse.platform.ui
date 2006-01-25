@@ -16,37 +16,37 @@ import org.eclipse.team.core.diff.ITwoWayDiff;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 /**
- * Diff node for an incoming refactoring.
+ * Diff of a refactoring history.
  * 
  * @since 3.2
  */
-public final class RefactoringDescriptorDiffNode implements IThreeWayDiff {
-
-	/** The refactoring descriptor */
-	private final RefactoringDescriptorProxy fDescriptor;
+public final class RefactoringHistoryDiff implements IThreeWayDiff {
 
 	/** The diff direction */
 	private final int fDirection;
+
+	/** The refactoring history */
+	private final RefactoringHistory fHistory;
 
 	/** The diff kind */
 	private final int fKind;
 
 	/**
-	 * Creates a new refactoring descriptor diff node.
+	 * Creates a new refactoring history diff.
 	 * 
-	 * @param descriptor
+	 * @param history
 	 *            the refactoring descriptor
 	 * @param kind
+	 *            the diff kind
 	 * @param direction
+	 *            the diff direction
 	 */
-	public RefactoringDescriptorDiffNode(final RefactoringDescriptorProxy descriptor, final int kind, final int direction) {
-		Assert.isNotNull(descriptor);
-		fDescriptor= descriptor;
+	public RefactoringHistoryDiff(final RefactoringHistory history, final int kind, final int direction) {
+		Assert.isNotNull(history);
+		fHistory= history;
 		fKind= kind;
 		fDirection= direction;
 	}
@@ -80,6 +80,15 @@ public final class RefactoringDescriptorDiffNode implements IThreeWayDiff {
 	}
 
 	/**
+	 * Returns the refactoring history.
+	 * 
+	 * @return the refactoring history
+	 */
+	public RefactoringHistory getRefactoringHistory() {
+		return fHistory;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public ITwoWayDiff getRemoteChange() {
@@ -90,6 +99,6 @@ public final class RefactoringDescriptorDiffNode implements IThreeWayDiff {
 	 * {@inheritDoc}
 	 */
 	public String toDiffString() {
-		return NLS.bind(ModelMessages.RefactoringDescriptorDiffNode_diff_string, fDescriptor.getDescription());
+		return ModelMessages.RefactoringHistoryDiff_diff_string;
 	}
 }

@@ -14,17 +14,25 @@ import org.eclipse.osgi.util.NLS;
 
 public final class ModelMessages extends NLS {
 
+	public static String AcceptRefactoringsAction_description;
+
+	public static String AcceptRefactoringsAction_title;
+
+	public static String AcceptRefactoringsAction_tool_tip;
+
 	private static final String BUNDLE_NAME= "org.eclipse.ltk.internal.ui.refactoring.model.ModelMessages"; //$NON-NLS-1$
 
 	public static String RefactoringDescriptorCompareInput_pending_refactoring;
 
-	public static String RefactoringDescriptorDiffNode_diff_string;
+	public static String RefactoringDescriptorDiff_diff_string;
 
 	public static String RefactoringDescriptorViewer_breaking_change_message;
 
 	public static String RefactoringDescriptorViewer_closure_change_message;
 
 	public static String RefactoringDescriptorViewer_structural_change_message;
+
+	public static String RefactoringHistoryDiff_diff_string;
 
 	static {
 		// initialize resource bundle
