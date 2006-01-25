@@ -899,24 +899,6 @@
       <initializer class="org.eclipse.ui.internal.ide.IDEPreferenceInitializer"/>
    </extension>
 <!-- End Update -->
-   <extension
-         point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            namespace="org.eclipse.ui.ide"
-            type="org.eclipse.core.resources.mapping.ResourceMapping"
-            class="org.eclipse.ui.internal.ide.model.ProjectPersistentPropertyTester"
-            properties="projectPersistentProperty"
-            id="org.eclipse.ui.ide.mappingProjectPersistentPropertyTester"/>
-   </extension>
-      <extension
-         point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            namespace="org.eclipse.ui.ide"
-            type="org.eclipse.core.resources.IResource"
-            class="org.eclipse.ui.internal.ide.model.ProjectPersistentPropertyTester"
-            properties="projectPersistentProperty"
-            id="org.eclipse.ui.ide.projectPersistentPropertyTester"/>
-   </extension>
   <extension
          point="org.eclipse.ui.preferenceTransfer">
        <transfer
