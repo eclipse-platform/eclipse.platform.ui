@@ -67,11 +67,10 @@ public class CVSResourceMappingParticipant extends
 			}
 			
 			if (!configuration.getSite().isModal()) {
-				// TODO: needs to be converted
-//				appendToGroup(
-//						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-//						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
-//						new CreatePatchAction(configuration));
+				appendToGroup(
+						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
+						new CreatePatchAction(configuration));
 				appendToGroup(
 						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
