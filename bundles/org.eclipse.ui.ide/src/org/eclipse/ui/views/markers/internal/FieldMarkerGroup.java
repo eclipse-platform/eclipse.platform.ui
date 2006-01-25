@@ -168,8 +168,10 @@ public class FieldMarkerGroup implements IField {
 		if (types.contains(marker.getType())) {
 			String value;
 			try {
-				value = (marker.getMarker().getAttribute(markerAttribute))
-						.toString();
+				Object attributeValue = marker.getMarker().getAttribute(markerAttribute);
+				if(attributeValue == null)
+					return null;
+				value = attributeValue.toString();
 			} catch (CoreException e) {
 				return null;
 			}
