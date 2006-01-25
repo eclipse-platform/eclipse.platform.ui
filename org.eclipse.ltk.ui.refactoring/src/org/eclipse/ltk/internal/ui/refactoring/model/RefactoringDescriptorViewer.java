@@ -20,10 +20,13 @@ import org.eclipse.ltk.internal.ui.refactoring.util.HTMLPrinter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -80,22 +83,29 @@ public class RefactoringDescriptorViewer extends Viewer {
 	 */
 	protected String getInputText(final RefactoringDescriptorProxy proxy) {
 		final StringBuffer buffer= new StringBuffer();
-		HTMLPrinter.insertPageProlog(buffer, 0, fBrowser.getBackground().getRGB());
+		final Font font= JFaceResources.getDialogFont();
+		final FontData[] data= font.getFontData();
+		String face= data[0].getName();
+		int index= face.indexOf('-');
+		if (index >= 0 && index < face.length() - 1)
+			face= face.substring(index + 1);
+		final int size= data[0].getHeight();
+		HTMLPrinter.insertPageProlog(buffer, face, size, 0, fBrowser.getBackground().getRGB());
 		if (proxy != null) {
-			HTMLPrinter.addSmallHeader(buffer, HTMLPrinter.convertToHTMLContent(proxy.getDescription()));
+			HTMLPrinter.addSmallHeader(buffer, face, size, HTMLPrinter.convertToHTMLContent(proxy.getDescription()));
 			final RefactoringDescriptor descriptor= proxy.requestDescriptor(new NullProgressMonitor());
 			if (descriptor != null) {
 				final String comment= descriptor.getComment();
 				if (comment != null && !"".equals(comment)) //$NON-NLS-1$
-					HTMLPrinter.addParagraph(buffer, HTMLPrinter.convertToHTMLContent(comment));
+					HTMLPrinter.addParagraph(buffer, face, size, HTMLPrinter.convertToHTMLContent(comment));
 				HTMLPrinter.startBulletList(buffer);
 				final int flags= descriptor.getFlags();
 				if ((flags & RefactoringDescriptor.BREAKING_CHANGE) > 0)
-					HTMLPrinter.addBullet(buffer, ModelMessages.RefactoringDescriptorViewer_breaking_change_message);
+					HTMLPrinter.addBullet(buffer, face, size, ModelMessages.RefactoringDescriptorViewer_breaking_change_message);
 				if ((flags & RefactoringDescriptor.STRUCTURAL_CHANGE) > 0)
-					HTMLPrinter.addBullet(buffer, ModelMessages.RefactoringDescriptorViewer_structural_change_message);
+					HTMLPrinter.addBullet(buffer, face, size, ModelMessages.RefactoringDescriptorViewer_structural_change_message);
 				if ((flags & RefactoringDescriptor.MULTI_CHANGE) > 0)
-					HTMLPrinter.addBullet(buffer, ModelMessages.RefactoringDescriptorViewer_closure_change_message);
+					HTMLPrinter.addBullet(buffer, face, size, ModelMessages.RefactoringDescriptorViewer_closure_change_message);
 				HTMLPrinter.endBulletList(buffer);
 			}
 		}
@@ -118,7 +128,7 @@ public class RefactoringDescriptorViewer extends Viewer {
 		if (text != null && text.length() > 0) {
 			if ((fBrowser.getShell().getStyle() & SWT.RIGHT_TO_LEFT) != 0) {
 				final StringBuffer buffer= new StringBuffer(text);
-				HTMLPrinter.insertStyles(buffer, new String[] { "direction:rtl", "overflow:hidden" }); //$NON-NLS-1$ //$NON-NLS-2$
+				HTMLPrinter.insertStyles(buffer, new String[] { "direction:rtl", "overflow:hidden"}); //$NON-NLS-1$ //$NON-NLS-2$
 				text= buffer.toString();
 			}
 		}
