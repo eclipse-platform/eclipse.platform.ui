@@ -111,7 +111,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * This method will batch change notification by using the
 	 * {@link #run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor) }
 	 * method. The rule for he method will be obtained using
-	 * {@link #getMergeRule(IResource) } and the flags will be
+	 * {@link #getMergeRule(IDiffNode)} and the flags will be
 	 * <code>IResource.NONE</code> meaning that intermittent change events may
 	 * occur. Clients may wrap the call in an outer run that either uses a
 	 * broader scheduling rule or the <code>IWorkspace.AVOID_UPDATES</code>
@@ -167,7 +167,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * For two-way merging, as indicated by either the {@link ISynchronizationContext#getType()}
 	 * or {@link #getMergeType()} methods, clients can either accept changes using the
 	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method or reject
-	 * them using {@link #markAsMerged(IFile, boolean, IProgressMonitor) }.
+	 * them using {@link #markAsMerged(IDiffNode, boolean, IProgressMonitor) }.
 	 * Three-way changes are a bit more complicated. The following list
 	 * summarizes how particular remote file changes can be handled. The delta
 	 * kind and flags mentioned in the descriptions are obtained the remote
@@ -213,7 +213,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * methods. In the case where there are local changes to the file being
 	 * deleted, the model may either choose to merge using the force flag (thus
 	 * removing the file and the local changes) or call
-	 * {@link #markAsMerged(IFile, boolean, IProgressMonitor) } on the file
+	 * {@link #markAsMerged(IDiffNode, boolean, IProgressMonitor) } on the file
 	 * which will convert the incoming deletion to an outgoing addition.</li>
 	 * 
 	 * <li>When the delta kind is {@link IDiffNode#CHANGE} and there is no
@@ -221,7 +221,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method to merge
 	 * these changes as this is the most efficient means to do so. However, the
 	 * model can choose to perform the merge themselves and then invoke
-	 * {@link #markAsMerged(IFile, boolean, IProgressMonitor) } with the
+	 * {@link #markAsMerged(IDiffNode, boolean, IProgressMonitor) } with the
 	 * <code>inSyncHint</code> set to <code>true</code> but this will be
 	 * less efficient. </li>
 	 * 
@@ -229,17 +229,17 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * conflict, the model can use the
 	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method to merge
 	 * these changes. If the force flag is not set, an auto-merge is attempted
-	 * using an appropriate {@link IStreamMerger}. If the force flag is set,
+	 * using an appropriate {@link IStorageMerger}. If the force flag is set,
 	 * the local changes are discarded. The model can choose to attempt the
 	 * merge themselves and, if it is successful, invoke
-	 * {@link #markAsMerged(IFile, boolean, IProgressMonitor) } with the
+	 * {@link #markAsMerged(IDiffNode, boolean, IProgressMonitor) } with the
 	 * <code>inSyncHint</code> set to <code>false</code> which will make the
 	 * file an outgoing change. </li>
 	 * </ul>
 	 * 
 	 * TODO: need to talk about ITwoWayDelta CONTENT and REPLACED
 	 * 
-	 * @see IDiffTree#addDiffChangeListener(org.eclipse.team.core.diff.ISyncDeltaChangeListener)
+	 * @see IDiffTree#addDiffChangeListener(IDiffChangeListener)
 	 * @see org.eclipse.core.resources.IWorkspace#addResourceChangeListener(IResourceChangeListener)
 	 * 
 	 * @param diff the difference to be merged
@@ -263,7 +263,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * This method will batch change notification by using the
 	 * {@link #run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor) }
 	 * method. The rule for he method will be obtained using
-	 * {@link #getMergeRule(IResource) } and the flags will be
+	 * {@link #getMergeRule(IDiffNode) } and the flags will be
 	 * <code>IResource.NONE</code> meaning that intermittent change events may
 	 * occur. Clients may wrap the call in an outer run that either uses a
 	 * broader scheduling rule or the <code>IWorkspace.AVOID_UPDATES</code>
@@ -304,7 +304,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * associated with the given diff. If a resource being merged is a folder or
 	 * project, the returned rule will be sufficient to merge any files
 	 * contained in the folder or project. The returned rule also applies to
-	 * {@link #markAsMerged(IFile, boolean, IProgressMonitor) }.
+	 * {@link #markAsMerged(IDiffNode, boolean, IProgressMonitor) }.
 	 * 
 	 * @param node the node to be merged
 	 * @return the scheduling rule that is required to merge the resource of the
@@ -317,7 +317,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * associated with the given diffs. If a resource being merged is a folder
 	 * or project, the returned rule will be sufficient to merge any files
 	 * contained in the folder or project. The returned rule also applies to
-	 * {@link #markAsMerged(IFile, boolean, IProgressMonitor) }.
+	 * {@link #markAsMerged(IDiffNode, boolean, IProgressMonitor) }.
 	 * 
 	 * @param nodes the nodes being merged
 	 * @return the scheduling rule that is required to merge the resources of

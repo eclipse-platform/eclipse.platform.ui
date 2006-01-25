@@ -43,7 +43,7 @@ public interface IResourceDiff extends ITwoWayDiff {
 	 * For example, if the current state of the resource is open then 
 	 * it was previously closed.
 	 * 
-	 * @see ITwoWayDelta#getFlags()
+	 * @see ITwoWayDiff#getFlags()
 	 * @see org.eclipse.core.resources.IResourceDelta#OPEN
 	 */
 	public static final int OPEN = 0x10000;
@@ -51,7 +51,7 @@ public interface IResourceDiff extends ITwoWayDiff {
 	/**
 	 * Change constant (bit mask) indicating that a project's description has changed. 
 	 * 
-	 * @see ITwoWayDelta#getFlags()
+	 * @see ITwoWayDiff#getFlags()
 	 * @see org.eclipse.core.resources.IResourceDelta#DESCRIPTION
 	 */
 	public static final int DESCRIPTION = 0x20000;

@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.CoreException;
  * <p> 
  * Usage:
  * <pre>
- * class Visitor implements IDeltaVisitor {
- *     public boolean visit(IDelta delta) {
- *         switch (delta.getKind()) {
+ * class Visitor implements IDiffVisitor {
+ *     public boolean visit(IDiffNode diff) {
+ *         switch (diff.getKind()) {
  *         case IResourceDelta.ADDED :
  *             // handle added resource
  *             break;
@@ -33,8 +33,8 @@ import org.eclipse.core.runtime.CoreException;
  *     return true;
  *     }
  * }
- * IDelta rootDelta = ...;
- * rootDelta.accept(new Visitor());
+ * IDiffTree tree = ...;
+ * tree.accept(new Visitor());
  * </pre>
  * </p>
  * <p>
@@ -46,7 +46,7 @@ import org.eclipse.core.runtime.CoreException;
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/Team team.
  * </p>
- * @see IDiffNode#accept(IDeltaVisitor)
+ * @see IDiffTree#accept(org.eclipse.core.runtime.IPath, IDiffVisitor, int)
  * 
  * @since 3.2
  */

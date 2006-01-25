@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.*;
  * {@link ResourceMappingMerger} instead.
  * 
  * @see ResourceMappingMerger
- * @see org.eclipse.compare.IStreamMerger
+ * @see IStorageMerger
  * @see org.eclipse.core.resources.mapping.ResourceMapping
  * @see org.eclipse.core.resources.mapping.ModelProvider
  * @see org.eclipse.team.core.mapping.IMergeContext

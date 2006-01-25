@@ -90,7 +90,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getSyncDeltaTree()
+	 * @see org.eclipse.team.core.mapping.ISynchronizationContext#getDiffTree()
 	 */
 	public IResourceDiffTree getDiffTree() {
 		return deltaTree;

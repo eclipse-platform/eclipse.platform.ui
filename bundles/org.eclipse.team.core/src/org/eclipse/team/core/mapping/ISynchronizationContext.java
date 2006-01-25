@@ -89,24 +89,24 @@ public interface ISynchronizationContext {
 	IResourceMappingScope getScope();
 
 	/**
-	 * Return a tree that contains {@link IDiffNode} nodes for resources that
+	 * Return a tree that contains {@link IDiffNode} entries for resources that
 	 * are out-of-sync. The tree will contain diffs for any out-of-sync
 	 * resources that are within the scope of this context. The tree may include
 	 * diffs for additional resources, which should be ignored by the client.
 	 * Clients can test for inclusion using the method
 	 * {@link IResourceMappingScope#contains(IResource)}.
 	 * <p>
-	 * The returned {@link IDiffTree} will be homogeneous and contain either
+	 * The returned {@link IResourceDiffTree} will be homogeneous and contain either
 	 * {@link IResourceDiff} or {@link IThreeWayDiff} instances. Any
 	 * {@link IThreeWayDiff} contained in the returned tree will contain
 	 * {@link IResourceDiff} instances as the local and remote changes. This
 	 * interface also has several helper methods for handling diffs contained in
 	 * the returned diff tree.
 	 * 
-	 * @return a tree that contains an <code>IDiffNode</code> node for any
+	 * @return a tree that contains an entry for any
 	 *         resources that are out-of-sync.
-	 * @see #getDiffs(ResourceTraversal[])
-	 * @see #getResource(IDiffNode)
+	 * @see IResourceDiffTree#getDiffs(ResourceTraversal[])
+	 * @see IResourceDiffTree#getResource(IDiffNode)
 	 */
 	public IResourceDiffTree getDiffTree();
 

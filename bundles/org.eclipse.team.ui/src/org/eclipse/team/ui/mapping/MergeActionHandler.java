@@ -66,8 +66,7 @@ public abstract class MergeActionHandler extends AbstractHandler {
 
 	/**
 	 * Create the handler.
-	 * @param model the extension state model that contains the state
-	 * provided by the synchronize page display the model.
+	 * @param configuration the configiuration for the synchronize page displaying the model.
 	 */
 	public MergeActionHandler(ISynchronizePageConfiguration configuration) {
 		this.configuration = configuration;

@@ -47,8 +47,6 @@ public class TwoWayDiff extends Diff implements ITwoWayDiff {
 	 * @param path the path of the model object that has changed
 	 * @param kind the kind of change
 	 * @param flags additional flags that describe the change
-	 * @param before the before state of the model object
-	 * @param after the after state of the model object
 	 */
 	public TwoWayDiff(IPath path, int kind, int flags) {
 		super(path, (kind & KIND_MASK) | (flags & ~KIND_MASK));

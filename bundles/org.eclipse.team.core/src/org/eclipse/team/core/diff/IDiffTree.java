@@ -57,7 +57,7 @@ public interface IDiffTree {
 	 * if applicable. If the visitor returns <code>true</code>, any of the
 	 * delta's children in this tree are also visited.
 	 * 
-	 * @param delta the delta to be visited
+	 * @param path the path to start the visit in the tree
 	 * @param visitor the visitor
 	 * @param depth the depth to visit
 	 * @exception CoreException if the visitor failed with this exception.

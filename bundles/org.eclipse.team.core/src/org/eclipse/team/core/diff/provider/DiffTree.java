@@ -149,7 +149,7 @@ public class DiffTree implements IDiffTree {
 	 * nest sync set modifications within <code>beginInput/endInput</code>.
 	 * </p>
 	 * 
-	 * @param resource the local resource to remove
+	 * @param path the path to remove
 	 */
 	public synchronized void remove(IPath path) {
 		try {

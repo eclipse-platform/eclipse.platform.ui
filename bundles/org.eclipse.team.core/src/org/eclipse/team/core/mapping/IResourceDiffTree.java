@@ -17,9 +17,9 @@ import org.eclipse.team.core.diff.*;
 
 /**
  * A resource diff tree provides access to a tree of {@link IDiffNode} instances
- * that either contain {@link org.eclipse.team.core.mapping.provider.IResourceDiff}
+ * that either contain {@link IResourceDiff}
  * nodes or {@link IThreeWayDiff} nodes that contain
- * {@link org.eclipse.team.core.mapping.provider.IResourceDiff} nodes as the local and
+ * {@link IResourceDiff} nodes as the local and
  * remote changes. For efficiency reasons, the tree only provides diffs for
  * resources that have changes. Resources that do not contain a change but are
  * returned from the tree will contain children in the set.
@@ -48,7 +48,7 @@ public interface IResourceDiffTree extends IDiffTree {
 	 * Return the resource associated with the given diff. This method will only
 	 * return meaningful results for diffs which were obtained from this tree.
 	 * 
-	 * @param delta a delta
+	 * @param diff a diff
 	 * @return the resource associated with the given diff
 	 */
 	IResource getResource(IDiffNode diff);

@@ -311,7 +311,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	
 	/**
 	 * Default implementation of <code>run</code> that invokes the
-	 * corresponding <code>run</code> on {@link IWorkspace}.
+	 * corresponding <code>run</code> on {@link org.eclipse.core.resources.IWorkspace}.
 	 * @see org.eclipse.team.core.mapping.IMergeContext#run(org.eclipse.core.resources.IWorkspaceRunnable, org.eclipse.core.runtime.jobs.ISchedulingRule, int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(IWorkspaceRunnable runnable, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException {
@@ -321,7 +321,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	/**
 	 * Default implementation that returns the resource itself.
 	 * Subclass should override to provide the appropriate rule.
-	 * @see org.eclipse.team.core.mapping.IMergeContext#getMergeRule(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.core.mapping.IMergeContext#getMergeRule(IDiffNode)
 	 */
 	public ISchedulingRule getMergeRule(IDiffNode node) {
 		return getDiffTree().getResource(node);

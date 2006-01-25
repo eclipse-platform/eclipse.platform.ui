@@ -29,7 +29,7 @@ import org.eclipse.team.core.history.ITag;
  * consulting with the Platform/Team team.
  * </p>
  * 
- * @see IFileRevisione
+ * @see IFileRevision
  * 
  * @since 3.2
  */

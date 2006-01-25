@@ -46,7 +46,7 @@ public interface ICompareAdapter {
 	
 	/**
 	 * Return whether their is a compare input associated with the given object.
-	 * In otherwords, return <code>true</code> if {@link #asCompareInput(Object) }
+	 * In otherwords, return <code>true</code> if {@link #asCompareInput(ISynchronizationContext, Object) }
 	 * would return a value and <code>false</code> if it would return <code>null</code>.
 	 * @param context the synchronization context
 	 * @param object the object.
@@ -82,7 +82,7 @@ public interface ICompareAdapter {
 	 *  long outgoing =  countFor(context, IThreeWayDiff.OUTGOING, IThreeWayDiff.DIRECTION_MASK);
 	 * </pre>
 	 * </p>
-	 * @param contxt the synchronization context
+	 * @param context the synchronization context
 	 * @param state the sync state
 	 * @param mask the sync state mask
 	 * @return the number of matching resources in the set.
