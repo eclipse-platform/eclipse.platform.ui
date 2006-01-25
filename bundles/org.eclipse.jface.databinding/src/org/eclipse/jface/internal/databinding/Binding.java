@@ -63,7 +63,8 @@ abstract public class Binding implements IBinding {
 			if (result != null)
 				break;
 		}
-		result = context.fireBindingEvent(event);
+		if (result == null)
+			result = context.fireBindingEvent(event);
 		return result;
 	}
 }
