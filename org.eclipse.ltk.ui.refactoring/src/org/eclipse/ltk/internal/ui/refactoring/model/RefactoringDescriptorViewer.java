@@ -32,7 +32,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
- * Viewer which displays an overview of a refactoring descriptor.
+ * Viewer which displays a summary of a pending refactoring.
  * 
  * @since 3.2
  */

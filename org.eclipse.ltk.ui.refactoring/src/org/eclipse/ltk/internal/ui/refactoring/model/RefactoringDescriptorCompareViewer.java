@@ -18,7 +18,7 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 
 /**
- * Viewer which displays an overview of a refactoring descriptor input.
+ * Compare viewer which displays a summary of a pending refactoring.
  * 
  * @since 3.2
  */

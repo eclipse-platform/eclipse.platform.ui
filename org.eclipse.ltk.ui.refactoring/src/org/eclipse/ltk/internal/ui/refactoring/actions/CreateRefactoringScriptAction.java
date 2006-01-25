@@ -37,7 +37,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
 /**
- * Action to apply a refactoring script to the workspace.
+ * Action to create a refactoring script from the refactoring history.
  * 
  * @since 3.2
  */

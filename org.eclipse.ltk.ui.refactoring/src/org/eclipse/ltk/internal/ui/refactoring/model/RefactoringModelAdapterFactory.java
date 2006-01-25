@@ -17,7 +17,7 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
- * Adaptor factory for model support.
+ * Adaptor factory for refactoring model support.
  * 
  * @since 3.2
  */

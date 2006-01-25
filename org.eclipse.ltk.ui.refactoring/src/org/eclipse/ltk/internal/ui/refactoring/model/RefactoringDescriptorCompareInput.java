@@ -25,7 +25,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 
 /**
- * Compare input displaying an incoming refactoring.
+ * Compare input which represents a pending refactoring.
  * 
  * @since 3.2
  */

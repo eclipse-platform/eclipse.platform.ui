@@ -32,7 +32,7 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.compare.IStreamMerger;
 
 /**
- * Stream merger for refactoring history indexes.
+ * Stream merger for refactoring history index files.
  * 
  * @since 3.2
  */
