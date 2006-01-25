@@ -10,22 +10,18 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.ITeamStatus;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionGroup;
 
-public class StatusLineContributionGroup extends ActionGroup implements ISyncInfoSetChangeListener {
+public abstract class StatusLineContributionGroup extends ActionGroup {
 
 	private static final String INCOMING_ID = TeamUIPlugin.ID + "org.eclipse.team.iu.statusline.incoming"; //$NON-NLS-1$
 	private static final String OUTGOING_ID = TeamUIPlugin.ID + "org.eclipse.team.iu.statusline.outgoing"; //$NON-NLS-1$
@@ -53,19 +49,11 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 		} else {
 			this.totalChanges = new StatusLineCLabelContribution(TOTALS_ID, TEXT_FIELD_MAX_SIZE);
 		}
-		
-		// Listen to changes to update the counts
-		SyncInfoSet set = getSyncInfoSet();
-		set.addSyncSetChangedListener(this);
 		updateCounts();
 	}
 
 	private boolean isThreeWay() {
 		return configuration.getComparisonType() == ISynchronizePageConfiguration.THREE_WAY;
-	}
-	
-	private SubscriberParticipant getParticipant() {
-		return (SubscriberParticipant)configuration.getParticipant();
 	}
 
 	private StatusLineCLabelContribution createStatusLineContribution(String id, final int mode, String label, Image image) {
@@ -81,54 +69,44 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 	}
 
 	public void dispose() {
-		getSyncInfoSet().removeSyncSetChangedListener(this);
 		if (isThreeWay()) {
 			incomingImage.dispose();
 			outgoingImage.dispose();
 			conflictingImage.dispose();
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.team.internal.ui.sync.sets.ISyncSetChangedListener#syncSetChanged(org.eclipse.team.internal.ui.sync.sets.SyncSetChangedEvent)
-	 */
-	public void syncInfoChanged(ISyncInfoSetChangeEvent event, IProgressMonitor monitor) {
-		updateCounts();
-	}
 
-	private void updateCounts() {
-		if (getParticipant().getSubscriber() != null) {
-			SyncInfoSet workspaceSetStats = getSyncInfoSet();
+	protected void updateCounts() {
+		final int total = getChangeCount();
+		final int workspaceConflicting = countFor(SyncInfo.CONFLICTING);
+		final int workspaceOutgoing = countFor(SyncInfo.OUTGOING);
+		final int workspaceIncoming = countFor(SyncInfo.INCOMING);
 
-			final int total = workspaceSetStats.size();
-			final int workspaceConflicting = (int) workspaceSetStats.countFor(SyncInfo.CONFLICTING, SyncInfo.DIRECTION_MASK);
-			final int workspaceOutgoing = (int) workspaceSetStats.countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK);
-			final int workspaceIncoming = (int) workspaceSetStats.countFor(SyncInfo.INCOMING, SyncInfo.DIRECTION_MASK);
+		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+			public void run() {
+				if (isThreeWay()) {
+					conflicting.setText(new Integer(workspaceConflicting).toString()); 
+					incoming.setText(new Integer(workspaceIncoming).toString()); 
+					outgoing.setText(new Integer(workspaceOutgoing).toString()); 
 
-			TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-				public void run() {
-					if (isThreeWay()) {
-						conflicting.setText(new Integer(workspaceConflicting).toString()); 
-						incoming.setText(new Integer(workspaceIncoming).toString()); 
-						outgoing.setText(new Integer(workspaceOutgoing).toString()); 
-	
-						conflicting.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_conflicting })); // 
-						outgoing.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_outgoing })); // 
-						incoming.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_incoming })); // 
+					conflicting.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_conflicting })); // 
+					outgoing.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_outgoing })); // 
+					incoming.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_incoming })); // 
+				} else {
+					if (total == 1) {
+						totalChanges.setText(NLS.bind(TeamUIMessages.StatisticsPanel_numberTotalSingular, new String[] { Integer.toString(total) })); 
 					} else {
-						if (total == 1) {
-							totalChanges.setText(NLS.bind(TeamUIMessages.StatisticsPanel_numberTotalSingular, new String[] { Integer.toString(total) })); 
-						} else {
-							totalChanges.setText(NLS.bind(TeamUIMessages.StatisticsPanel_numberTotalPlural, new String[] { Integer.toString(total) })); 
-						}
+						totalChanges.setText(NLS.bind(TeamUIMessages.StatisticsPanel_numberTotalPlural, new String[] { Integer.toString(total) })); 
 					}
 				}
-			});
-		}
+			}
+		});
 	}
 
+	protected abstract int getChangeCount();
+
+	protected abstract int countFor(int state);
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -145,21 +123,7 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.subscribers.ISyncInfoSetChangeListener#syncInfoSetReset(org.eclipse.team.core.subscribers.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void syncInfoSetReset(SyncInfoSet set, IProgressMonitor monitor) {
-		updateCounts();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.subscribers.ISyncInfoSetChangeListener#syncInfoSetError(org.eclipse.team.core.subscribers.SyncInfoSet, org.eclipse.team.core.ITeamStatus[], org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void syncInfoSetErrors(SyncInfoSet set, ITeamStatus[] errors, IProgressMonitor monitor) {
-		// Nothing to do for errors
-	}
-	
-	private SyncInfoSet getSyncInfoSet() {
-		return (SyncInfoSet)configuration.getProperty(SynchronizePageConfiguration.P_WORKING_SET_SYNC_INFO_SET);
+	public ISynchronizePageConfiguration getConfiguration() {
+		return configuration;
 	}
 }

@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.synchronize.actions.DiffTreeStatusLineContributionGroup;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
@@ -76,6 +77,7 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 			}
 		}
 	};
+	private DiffTreeStatusLineContributionGroup statusLine;
 
 	/**
 	 * Create an advisor that will allow viewer contributions with the given <code>targetID</code>. This
@@ -110,6 +112,8 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 		if (getActionGroup() != null) {
 			getActionGroup().dispose();
 		}
+		if (statusLine != null)
+			statusLine.dispose();
 		TeamUIPlugin.getPlugin().getPreferenceStore().removePropertyChangeListener(propertyListener);
 	}
 	
@@ -221,7 +225,13 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 	 * @param actionBars the action bars
 	 */
 	protected void initializeStatusLine(IActionBars actionBars) {
-		// Do nothing
+		statusLine = new DiffTreeStatusLineContributionGroup(
+				getConfiguration().getSite().getShell(), 
+				getConfiguration());
+		IStatusLineManager statusLineMgr = actionBars.getStatusLineManager();
+		if (statusLineMgr != null && statusLine != null) {
+			statusLine.fillActionBars(actionBars);
+		}
 	}
 
 	/*

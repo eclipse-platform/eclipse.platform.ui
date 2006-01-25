@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.StatusLineContributionGroup;
+import org.eclipse.team.internal.ui.synchronize.actions.SyncInfoSetStatusLineContributionGroup;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
@@ -332,7 +333,7 @@ public class TreeViewerAdvisor extends AbstractTreeViewerAdvisor {
 	 * @see org.eclipse.team.internal.ui.synchronize.StructuredViewerAdvisor#initializeStatusLine(org.eclipse.ui.IActionBars)
 	 */
 	protected void initializeStatusLine(IActionBars actionBars) {
-		statusLine = new StatusLineContributionGroup(
+		statusLine = new SyncInfoSetStatusLineContributionGroup(
 				getConfiguration().getSite().getShell(), 
 				getConfiguration());
 		IStatusLineManager statusLineMgr = actionBars.getStatusLineManager();
