@@ -370,7 +370,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	public IWorkbenchWindow getWorkbenchWindow() {
 		return getMultiPageEditor().getSite().getWorkbenchWindow();
 	}
-	
+
 	/**
 	 * Handles a post selection changed even from the nexted editor.
 	 * <p>
