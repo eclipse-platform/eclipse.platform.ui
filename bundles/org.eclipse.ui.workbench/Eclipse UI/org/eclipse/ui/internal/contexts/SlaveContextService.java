@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.contexts;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -179,10 +178,10 @@ public class SlaveContextService implements IContextService {
 	 * @see org.eclipse.ui.contexts.IContextService#deactivateContexts(java.util.Collection)
 	 */
 	public void deactivateContexts(Collection activations) {
-		final Iterator i = activations.iterator();
-		while (i.hasNext()) {
-			final IContextActivation activation = (IContextActivation) i.next();
-			deactivateContext(activation);
+		Object[] array = activations.toArray();
+		for (int i = 0; i < array.length; i++) {
+			deactivateContext((IContextActivation) array[i]);
+			array[i] = null;
 		}
 	}
 
