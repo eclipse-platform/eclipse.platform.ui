@@ -295,18 +295,28 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
      */
     protected void firePropertyChange(String changeId, Object oldValue,
             Object newValue) {
+        final Object[] listeners = getListeners();
+		
+        if (listeners.length == 0)
+			return;
+		
         final PropertyChangeEvent event = new PropertyChangeEvent(this,
                 changeId, oldValue, newValue);
-
-        Display.getDefault().syncExec(new Runnable() {
-            public void run() {
-                Object[] listeners = getListeners();
-                for (int i = 0; i < listeners.length; i++) {
-                    ((IPropertyChangeListener) listeners[i])
-                            .propertyChange(event);
-                }
-            }
-        });
+		Runnable notifier = new Runnable() {
+			public void run() {
+				for (int i = 0; i < listeners.length; i++) {
+					((IPropertyChangeListener) listeners[i])
+							.propertyChange(event);
+				}
+			}
+		};
+		// Notifications are sent on the UI thread.
+		if (Display.getCurrent() != null) {
+			notifier.run();
+		} else {
+			// Use an asyncExec to avoid deadlocks.
+			Display.getDefault().asyncExec(notifier);
+		}
     }
     
     /**
