@@ -274,6 +274,7 @@ public class UAContentMergeProcessor {
 			Node targetNode = document.importNode(children[i], true);
 			replaceElement.getParentNode().insertBefore(targetNode, replaceElement);
 		}
+		replaceElement.getParentNode().removeChild(replaceElement);
 		return true;
 	}
 
