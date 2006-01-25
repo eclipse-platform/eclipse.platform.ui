@@ -45,15 +45,18 @@ public class DeletedProjectFilter extends ViewerFilter {
 		}
 		if(element instanceof ILaunchConfiguration) {
 			try {
-				IResource[] resources = ((ILaunchConfiguration)element).getMappedResources();
-				if(resources == null) {
-					return true;
-				}
-				for(int i = 0; i < resources.length; i++) {
-					if(resources[i] instanceof IProject) {
-						IProject project = (IProject)resources[i];
-						if(project.exists()) {
-							return true;
+				ILaunchConfiguration config = (ILaunchConfiguration)element;
+				if(config.exists()) {
+					IResource[] resources = config.getMappedResources();
+					if(resources == null) {
+						return true;
+					}
+					for(int i = 0; i < resources.length; i++) {
+						if(resources[i] instanceof IProject) {
+							IProject project = (IProject)resources[i];
+							if(project.exists()) {
+								return true;
+							}
 						}
 					}
 				}
