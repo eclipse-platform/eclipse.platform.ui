@@ -12,8 +12,8 @@ package org.eclipse.debug.internal.ui.actions.expressions;
 
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
@@ -24,6 +24,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -76,9 +77,14 @@ public class WatchAction implements IObjectActionDelegate {
 
 	private void createExpression(IVariable variable) {
 		IWatchExpression expression;
+		IWatchExpressionFactoryAdapter factory = (IWatchExpressionFactoryAdapter) variable.getAdapter(IWatchExpressionFactoryAdapter.class);
 		try {
-			expression = DebugPlugin.getDefault().getExpressionManager().newWatchExpression(variable.getName());
-		} catch (DebugException e) {
+			String exp = variable.getName();
+			if (factory != null) {
+				exp = factory.createWatchExpression(variable);
+			}
+			expression = DebugPlugin.getDefault().getExpressionManager().newWatchExpression(exp);
+		} catch (CoreException e) {
 			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.WatchAction_0, ActionMessages.WatchAction_1, e); // 
 			return;
 		}
