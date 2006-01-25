@@ -548,7 +548,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 	public void dispose() {
 		super.dispose();
 		//Remove the drop listener
-		dropTarget.removeDropListener(dropAdapter);
+		if (dropTarget != null && !dropTarget.isDisposed())
+			dropTarget.removeDropListener(dropAdapter);
 		//Call dispose on current and default pages
 		currentPageContainer.getPage().dispose();
 		defaultPageContainer.getPage().dispose();
