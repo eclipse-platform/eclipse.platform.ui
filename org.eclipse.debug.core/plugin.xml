@@ -66,14 +66,17 @@
          point="org.eclipse.debug.core.launchModes">
       <launchMode
             label="%run"
+            launchAsLabel="%runAs.label"
             mode="run">
       </launchMode>
       <launchMode
             label="%debug"
+            launchAsLabel="%debugAs.label"
             mode="debug">
       </launchMode>
       <launchMode
             label="%profile"
+            launchAsLabel="%profileAs.label"
             mode="profile">
       </launchMode>
    </extension>

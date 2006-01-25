@@ -65,6 +65,16 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="launchAsLabel" type="string">
+            <annotation>
+               <documentation>
+                  A human-readable label to be used in a launch cascade menu. For example &quot;Run As&quot;. This attribute was added in 3.2 to allow the label to be properly externalized. When unspecified, a default label is created via concatenation.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

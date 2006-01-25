@@ -11,18 +11,19 @@
 package org.eclipse.debug.ui.actions;
 
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
@@ -86,8 +87,8 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	public LaunchShortcutsAction(String launchGroupIdentifier) {
 		super();
 		fGroup = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(launchGroupIdentifier);
-		String label = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(fGroup.getMode()).getLabel();
-		setText(MessageFormat.format(ActionMessages.LaunchShortcutsAction_0, new String[] { label })); 
+		ILaunchMode mode = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(fGroup.getMode());
+		setText(mode.getLaunchAsLabel()); 
 		setMenuCreator(this);
 		setEnabled(existsConfigTypesForMode());
 	}

@@ -132,10 +132,8 @@ public class ActionMessages extends NLS {
 
 	public static String RetargetAction_2;
 	public static String RetargetAction_3;
-	public static String LaunchAsAction_0;
 	public static String ModifyWatchpointAction_0;
 	public static String ModifyWatchpointAction_1;
-	public static String LaunchShortcutsAction_0;
 	public static String LaunchShortcutsAction_1;
 	public static String FindDialog_1;
 	public static String FindDialog_3;

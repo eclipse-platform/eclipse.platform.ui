@@ -47,4 +47,19 @@ public interface ILaunchMode {
 	 * @return a human readable label for this launch mode
 	 */
 	public String getLabel();
+	
+	/**
+	 * Returns a human readable label for this launch mode when used in a
+	 * cascade menu. For example, "Run As". Allows the label to be
+	 * properly localized.
+	 * <p>
+	 * A new attribute has been added the the launch mode extension in 3.2
+	 * to specify this label. When unspecified a default label is generated
+	 * by concatenation, for backwards compatibility.
+	 * </p>
+	 * @return human readable label for this launch mode when used in a
+	 * cascade menu
+	 * @since 3.2
+	 */
+	public String getLaunchAsLabel();
 }

@@ -110,4 +110,6 @@ public class DebugCoreMessages extends NLS {
 	}
 
 	public static String LaunchConfiguration_10;
+
+	public static String LaunchMode_0;
 }

@@ -72,4 +72,15 @@ public class LaunchMode implements ILaunchMode {
 	public String getLabel() {
 		return fConfigurationElement.getAttribute("label"); //$NON-NLS-1$;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchMode#getLaunchAsLabel()
+	 */
+	public String getLaunchAsLabel() {
+		String label = fConfigurationElement.getAttribute("launchAsLabel"); //$NON-NLS-1$
+		if (label == null) {
+			return MessageFormat.format(DebugCoreMessages.LaunchMode_0, new String[]{getLabel()});
+		}
+		return label;
+	}
 }
