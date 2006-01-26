@@ -19,6 +19,7 @@ import org.eclipse.core.commands.IState;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -237,10 +238,23 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	}
 
 	public final Object execute(final ExecutionEvent event) {
-		final IAction action = getAction();
+		final IAction action = getAction();		
 		if (loadDelegate() && (action != null)) {
 			final Object trigger = event.getTrigger();
 			final IActionDelegate delegate = getDelegate();
+			
+			// Attempt to update the selection.
+			final Object applicationContext = event.getApplicationContext();
+			if (applicationContext instanceof IEvaluationContext) {
+				final IEvaluationContext context = (IEvaluationContext) applicationContext;
+				final Object selectionObject = context.getDefaultVariable();
+				if (selectionObject instanceof ISelection) {
+					final ISelection selection = (ISelection) selectionObject;
+					delegate.selectionChanged(action, selection);
+				}
+			}
+			
+			// Decide what type of delegate we have.
 			if ((delegate instanceof IActionDelegate2)
 					&& (trigger instanceof Event)) {
 				// This supports Eclipse 2.1 to Eclipse 3.1.
