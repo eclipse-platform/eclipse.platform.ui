@@ -36,6 +36,7 @@ consulting with the Platform/UI team.
                <element ref="navigatorContent" minOccurs="0" maxOccurs="1"/>
                <element ref="actionProvider" minOccurs="0" maxOccurs="1"/>
                <element ref="commonWizard" minOccurs="0" maxOccurs="1"/>
+               <element ref="commonFilter" minOccurs="0" maxOccurs="1"/>
             </choice>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -90,6 +91,16 @@ Optionally, clients may also provide an action provider which can provide menu c
                <documentation>
                   A unique ID to identify this extension. Used for extension activation and by other extensions that would like to extend the defined extension (e.g. add another org.eclipse.ui.navigator.CommonActionProvider)
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Specify a display name for the Content Extension. The display name is used in the activation dialog to allow clients to turn an extension on or off.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="priority">
@@ -163,13 +174,6 @@ Clients may also implement &lt;code&gt;org.eclipse.ui.navigator.IDescriptionProv
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ILabelProvider"/>
                </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Specify a display name for the Content Extension. The display name is used in the activation dialog to allow clients to turn an extension on or off.
-               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -262,7 +266,7 @@ In the case of &apos;actionProvider&apos;, clients must define an expression tha
                   A subclass of INavigatorExtensionFilter.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.INavigatorExtensionFilter"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ViewerFilter"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -277,12 +281,12 @@ In the case of &apos;actionProvider&apos;, clients must define an expression tha
          <documentation>
             Supplies the name of a class that implements &lt;code&gt;org.eclipse.ui.navigator.CommonActionProvider&lt;/code&gt;. The action provider has an opportunity to contribute to the context menu and the retargetable actions defined in the IActionBars for the view that holds the navigator. Clients may also contribute directly to the view menu through the IActionBars view menu.
 &lt;p&gt;
-A top level &lt;actionProvider /&gt; is &apos;visible&apos; to an abstract viewer if there is a &lt;viewerActionBinding /&gt; for that &lt;actionProvider /&gt;. For actionProviders that are nested under a navigatorContent element, the visibility will be controlled by the id of the navigatorContent extension id. Child action providers will automatically
-be picked up by matching viewerContentBindings. See org.eclipse.ui.navigator.viewer for more information on visibility bindings.
+A top level &lt;actionProvider /&gt; is &lt;i&gt;visible&lt;/i&gt; to an abstract viewer if there is a &lt;viewerActionBinding /&gt; for that &lt;actionProvider /&gt;. For actionProviders that are nested under a &lt;navigatorContent /&gt; element, the visibility will be controlled by the id of the navigatorContent extension id. Child action providers will automatically
+be picked up by matching &lt;viewerContentBinding /&gt;s. See &lt;b&gt;org.eclipse.ui.navigator.viewer&lt;/b&gt; for more information on visibility bindings.
 &lt;p&gt;
-Clients may provider &apos;actionProvider&apos;(s) under the root &apos;extention&apos; element (peer to &apos;navigatorContent&apos;) in order to better control the binding (see &apos;veiwerActionBinding&apos;) and their enablement (the root level &apos;actionProvider&apos; element supports a nested &apos;enablement&apos; Eclipse core expression).
+Clients may provide &lt;actionProvider /&gt;(s) under the root &lt;extention /&gt; element (peer to other &lt;navigatorContent /&gt;) in order to better control their enablement and viewer binding (see &lt;veiwerActionBinding /&gt;).
 &lt;p&gt;
-For root &apos;actionProviders&apos; with no id, the id defaults to &apos;org.eclipse.ui.navigator.actionProvider&apos;. For these actionProviders to be given the opportunity to contribute the menus or action bars of a viewer, a viewerActionBinding must be defined (as part of the org.eclipse.ui.navigator.viewer extension point) which declares a binding between the specific viewer and the default id (&quot;org.eclipse.ui.navigator.actionProvider&quot;). See the documentation for &apos;viewerActionBinding&apos; under the schema documentation of org.eclipse.ui.navigator.viewer for more information.
+For root &lt;actionProviders /&gt; with no id, the id defaults to &quot;org.eclipse.ui.navigator.actionProvider&quot;. For these &lt;actionProvider/&gt;s to be given the opportunity to contribute the menus or action bars of a viewer, a &lt;viewerActionBinding /&gt; must be defined (as part of the &lt;b&gt;org.eclipse.ui.navigator.viewer extension point&lt;/b&gt;) which declares a binding between the specific viewer and the default id (&quot;org.eclipse.ui.navigator.actionProvider&quot;). See the documentation for &lt;viewerActionBinding /&gt; under the schema documentation of &lt;b&gt;org.eclipse.ui.navigator.viewer&lt;/b&gt; for more information.
          </documentation>
       </annotation>
       <complexType>
@@ -356,6 +360,93 @@ If the required action provider is disabled or unbound to the current viewer, th
                </documentation>
             </annotation>
          </attribute>
+      </complexType>
+   </element>
+
+   <element name="commonFilter">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="filterExpression" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier that will be used for management of this filterExpression.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A translateable name that will be used to refer to this particular filter in dialogs presented to the user.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A translatable description of what this filter is designed to hide from the view.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  Clients may choose to define an explicit ViewerFilter subclass via the &apos;class&apos; attribute. Alternatively, clients may choose to nest a &lt;filterExpression /&gt; element to describe what the filter should hide. Clients may use either &lt;filterExpression /&gt; or the &apos;class&apos; attribute, but not both.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ViewerFilter"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="activeByDefault" type="boolean">
+            <annotation>
+               <documentation>
+                  A value of true indicates the filter should be &quot;on&quot; by default. The user may customize whether the filter is on or off regardless of the value of this attribute. This attribute defines whether the filter is &quot;on&quot; the first time the view is brought up.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="filterExpression">
+      <annotation>
+         <documentation>
+            An optional Eclipse Core Expression that defines what the filter should hide from a particular view. 
+&lt;p&gt;
+For instance, clients may decide to hide all resources that have a particular pattern in their name (like &quot;*.acme&quot;). When the filter is active (turned on by default or by the user), then all resources that end in &quot;acme&quot; would be hidden from the user&apos;s view. 
+&lt;/p&gt;
+&lt;p&gt;
+Clients may use either &lt;filterExpression /&gt; or the &apos;class&apos; attribute, but not both.
+&lt;/p&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="not"/>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+         </sequence>
       </complexType>
    </element>
 
