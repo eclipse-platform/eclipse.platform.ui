@@ -140,9 +140,12 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	/**
 	 * Build the part site.
 	 * 
-	 * @param ref the part reference
-	 * @param part the part
-	 * @param page the page it belongs to
+	 * @param ref
+	 *            the part reference
+	 * @param part
+	 *            the part
+	 * @param page
+	 *            the page it belongs to
 	 */
 	public PartSite(IWorkbenchPartReference ref, IWorkbenchPart part,
 			IWorkbenchPage page) {
@@ -174,8 +177,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 				.getService(IContextService.class);
 		final IContextService contextService = new SlaveContextService(
 				parentContextService, defaultExpression);
-		serviceLocator.registerService(IContextService.class,
-				contextService);
+		serviceLocator.registerService(IContextService.class, contextService);
 	}
 
 	/**
