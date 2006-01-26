@@ -42,15 +42,19 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 
 	protected long getChangesInMode(int candidateMode) {
 		long numChanges;
+		long numConflicts = context.getDiffTree().countFor(IThreeWayDiff.CONFLICTING, IThreeWayDiff.DIRECTION_MASK);
 		switch (candidateMode) {
+		case ISynchronizePageConfiguration.CONFLICTING_MODE:
+			numChanges = numConflicts;
+			break;
 		case ISynchronizePageConfiguration.OUTGOING_MODE:
-			numChanges = context.getDiffTree().countFor(IThreeWayDiff.OUTGOING, IThreeWayDiff.DIRECTION_MASK);
+			numChanges = numConflicts + context.getDiffTree().countFor(IThreeWayDiff.OUTGOING, IThreeWayDiff.DIRECTION_MASK);
 			break;
 		case ISynchronizePageConfiguration.INCOMING_MODE:
-			numChanges = context.getDiffTree().countFor(IThreeWayDiff.INCOMING, IThreeWayDiff.DIRECTION_MASK);
+			numChanges = numConflicts + context.getDiffTree().countFor(IThreeWayDiff.INCOMING, IThreeWayDiff.DIRECTION_MASK);
 			break;
 		case ISynchronizePageConfiguration.BOTH_MODE:
-			numChanges = context.getDiffTree().countFor(IThreeWayDiff.INCOMING, IThreeWayDiff.DIRECTION_MASK) 
+			numChanges = numConflicts + context.getDiffTree().countFor(IThreeWayDiff.INCOMING, IThreeWayDiff.DIRECTION_MASK) 
 				+ context.getDiffTree().countFor(IThreeWayDiff.OUTGOING, IThreeWayDiff.DIRECTION_MASK);
 			break;
 		default:
