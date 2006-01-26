@@ -307,7 +307,8 @@ final class HandlerAuthority extends ExpressionAuthority {
 				Tracing.printTrace(TRACING_COMPONENT,
 						"Unresolved conflict detected for '" //$NON-NLS-1$
 								+ commandId + '\'');
-			} else if ((DEBUG_VERBOSE)
+			} else if ((bestActivation != null)
+					&& (DEBUG_VERBOSE)
 					&& ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
 							.equals(commandId)))) {
 				Tracing
