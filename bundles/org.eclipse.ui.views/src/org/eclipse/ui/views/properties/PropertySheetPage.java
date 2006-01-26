@@ -12,6 +12,7 @@
 
 package org.eclipse.ui.views.properties;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -38,6 +39,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -53,7 +56,7 @@ import org.eclipse.ui.part.Page;
  * a table of property names and values obtained from the current selection
  * in the active workbench part.
  * <p>
- * This page obtains the information about what to properties display from 
+ * This page obtains the information about what properties to display from 
  * the current selection (which it tracks). 
  * </p>
  * <p>
@@ -75,7 +78,7 @@ import org.eclipse.ui.part.Page;
  *
  * @see IPropertySource
  */
-public class PropertySheetPage extends Page implements IPropertySheetPage {
+public class PropertySheetPage extends Page implements IPropertySheetPage, IAdaptable {
     /**
      * Help context id 
      * (value <code>"org.eclipse.ui.property_sheet_page_help_context"</code>).
@@ -104,6 +107,39 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 
     private Clipboard clipboard;
 
+	private IWorkbenchPart sourcePart;
+
+	/**
+	 * Part listener which cleans up this page when the source part is closed.
+	 * This is hooked only when there is a source part.
+	 *  
+	 * @since 3.2
+	 */
+	private class PartListener implements IPartListener {
+		public void partActivated(IWorkbenchPart part) {
+		}
+
+		public void partBroughtToTop(IWorkbenchPart part) {
+		}
+
+		public void partClosed(IWorkbenchPart part) {
+			if (sourcePart == part) {
+				sourcePart = null;
+				if (viewer != null && !viewer.getControl().isDisposed()) {
+					viewer.setInput(new Object[0]);
+				}
+			}
+		}
+
+		public void partDeactivated(IWorkbenchPart part) {
+		}
+
+		public void partOpened(IWorkbenchPart part) {
+		}
+	}
+	
+	private PartListener partListener = new PartListener();
+	
     /**
      * Creates a new property sheet page.
      */
@@ -203,6 +239,9 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
      */
     public void dispose() {
         super.dispose();
+        if (sourcePart != null) {
+        	sourcePart.getSite().getPage().removePartListener(partListener);
+        }        
         if (rootEntry != null) {
             rootEntry.dispose();
             rootEntry = null;
@@ -213,6 +252,34 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
         }
     }
 
+    /**
+     * The <code>PropertySheetPage</code> implementation of this <code>IAdaptable</code> method
+     * handles the <code>ISaveablePart</code> adapter by delegating to the source part.
+     * 
+     * @since 3.2
+     */
+    public Object getAdapter(Class adapter) {
+		if (ISaveablePart.class.equals(adapter)) {
+			return getSaveablePart();
+		}
+    	return null;
+    }
+    
+	/**
+	 * Returns an <code>ISaveablePart</code> that delegates to the source part
+	 * for the current page if it implements <code>ISaveablePart</code>, or
+	 * <code>null</code> otherwise.
+	 * 
+	 * @return an <code>ISaveablePart</code> or <code>null</code>
+	 * @since 3.2
+	 */
+	protected ISaveablePart getSaveablePart() {
+		if (sourcePart instanceof ISaveablePart) {
+			return (ISaveablePart) sourcePart;
+		}
+		return null;
+	}
+    
     /**
      * Returns the cell editor activation listener for this page
      * @return ICellEditorActivationListener the cell editor activation listener for this page
@@ -387,9 +454,19 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
         if (viewer == null)
             return;
 
+        if (sourcePart != null) {
+        	sourcePart.getSite().getPage().removePartListener(partListener);
+        	sourcePart = null;
+        }
+        
         // change the viewer input since the workbench selection has changed.
         if (selection instanceof IStructuredSelection) {
+        	sourcePart = part;
             viewer.setInput(((IStructuredSelection) selection).toArray());
+        }
+
+        if (sourcePart != null) {
+        	sourcePart.getSite().getPage().addPartListener(partListener);
         }
     }
 

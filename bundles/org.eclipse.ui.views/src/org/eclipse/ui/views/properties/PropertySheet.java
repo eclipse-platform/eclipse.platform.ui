@@ -13,6 +13,7 @@ package org.eclipse.ui.views.properties;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
@@ -211,4 +212,34 @@ public class PropertySheet extends PageBookView implements ISelectionListener {
         if (page != null)
             page.selectionChanged(part, sel);
     }
+    
+    /**
+	 * The <code>PropertySheet</code> implementation of this
+	 * <code>PageBookView</code> method handles the <code>ISaveablePart</code>
+	 * adapter case by calling <code>getSaveablePart()</code>.
+	 * 
+	 * @since 3.2
+	 */
+	protected Object getViewAdapter(Class key) {
+		if (ISaveablePart.class.equals(key)) {
+			return getSaveablePart();
+		}
+		return super.getViewAdapter(key);
+	}
+
+	/**
+	 * Returns an <code>ISaveablePart</code> that delegates to the source part
+	 * for the current page if it implements <code>ISaveablePart</code>, or
+	 * <code>null</code> otherwise.
+	 * 
+	 * @return an <code>ISaveablePart</code> or <code>null</code>
+	 * @since 3.2
+	 */
+	protected ISaveablePart getSaveablePart() {
+		IWorkbenchPart part = getCurrentContributingPart();
+		if (part instanceof ISaveablePart) {
+			return (ISaveablePart) part;
+		}
+		return null;
+	}
 }

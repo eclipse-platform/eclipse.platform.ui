@@ -474,7 +474,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		return mapPageToNumRecs.containsKey(page);
 	}
 
-	/**
+    /**
 	 * The <code>PageBookView</code> implementation of this
 	 * <code>IAdaptable</code> method delegates to the current page, if it
 	 * implements <code>IAdaptable</code>.
@@ -483,11 +483,36 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		// delegate to the current page, if supported
 		IPage page = getCurrentPage();
 		if (page instanceof IAdaptable) {
-			Object adaptable = ((IAdaptable) page).getAdapter(key);
-			if (adaptable != null)
-				return adaptable;
+			Object adapter = ((IAdaptable) page).getAdapter(key);
+			if (adapter != null)
+				return adapter;
 		}
+		// if the page did not find the adapter, look for one provided by
+		// this view before delegating to super.
+		Object adapter = getViewAdapter(key);
+		if (adapter != null)
+			return adapter;
+		// delegate to super
 		return super.getAdapter(key);
+	}
+
+	/**
+	 * Returns an adapter of the specified type, as provided by this view (not
+	 * the current page), or <code>null</code> if this view does not provide
+	 * an adapter of the specified adapter.
+	 * <p>
+	 * The default implementation returns <code>null</code>. Subclasses may
+	 * override.
+	 * </p>
+	 * 
+	 * @param adapter
+	 *            the adapter class to look up
+	 * @return a object castable to the given class, or <code>null</code> if
+	 *         this object does not have an adapter for the given class
+	 * @since 3.2
+	 */
+	protected Object getViewAdapter(Class key) {
+		return null;
 	}
 
 	/**
