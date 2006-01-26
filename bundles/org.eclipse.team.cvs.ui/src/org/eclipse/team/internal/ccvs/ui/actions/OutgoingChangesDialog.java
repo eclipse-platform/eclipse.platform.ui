@@ -110,7 +110,7 @@ public class OutgoingChangesDialog extends DetailsDialog {
 
 	private ResourceMappingSynchronizeParticipant createParticipant() throws InvocationTargetException, InterruptedException {
 		ISynchronizationContext context = createSynchronizationContext(scope);
-		ResourceMappingSynchronizeParticipant participant = new ResourceMappingSynchronizeParticipant(context, title);
+		ResourceMappingSynchronizeParticipant participant = ResourceMappingSynchronizeParticipant.createParticipant(context, title);
 		participant.setMergingEnabled(false);
 		return participant;
 	}

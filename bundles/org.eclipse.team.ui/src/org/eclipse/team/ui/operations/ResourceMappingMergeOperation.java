@@ -388,7 +388,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	 * @return a newly created synchronize pariticipant to be used by this operation
 	 */
 	protected ResourceMappingSynchronizeParticipant createParticipant() {
-		return new ResourceMappingSynchronizeParticipant(getContext(), getJobName());
+		return ResourceMappingSynchronizeParticipant.createParticipant(getContext(), getJobName());
 	}
 
 }

@@ -58,7 +58,16 @@ public class ResourceMappingSynchronizeParticipant extends
 	 * @param context the synchronization context
 	 * @param name the name of the participant
 	 */
-	public ResourceMappingSynchronizeParticipant(ISynchronizationContext context, String name) {
+	public static ResourceMappingSynchronizeParticipant createParticipant(ISynchronizationContext context, String name) {
+		return new ResourceMappingSynchronizeParticipant(context, name);
+	}
+	
+	/*
+	 * Create a participant for the given context
+	 * @param context the synchronization context
+	 * @param name the name of the participant
+	 */
+	private ResourceMappingSynchronizeParticipant(ISynchronizationContext context, String name) {
 		initializeContext(context);
 		try {
 			setInitializationData(TeamUI.getSynchronizeManager().getParticipantDescriptor("org.eclipse.team.ui.synchronization_context_synchronize_participant")); //$NON-NLS-1$
@@ -67,6 +76,16 @@ public class ResourceMappingSynchronizeParticipant extends
 		}
 		setSecondaryId(Long.toString(System.currentTimeMillis()));
 		setName(name);
+		mergingEnabled = context instanceof IMergeContext;
+		refreshSchedule = new SubscriberRefreshSchedule(createRefreshable());
+	}
+
+	/**
+	 * Create a participant for the given context
+	 * @param context the synchronization context
+	 */
+	public ResourceMappingSynchronizeParticipant(ISynchronizationContext context) {
+		initializeContext(context);
 		mergingEnabled = context instanceof IMergeContext;
 		refreshSchedule = new SubscriberRefreshSchedule(createRefreshable());
 	}

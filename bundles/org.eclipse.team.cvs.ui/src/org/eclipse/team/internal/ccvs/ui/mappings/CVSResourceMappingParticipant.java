@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ccvs.ui.subscriber.*;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.operations.MergeActionGroup;
 import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
@@ -128,7 +131,13 @@ public class CVSResourceMappingParticipant extends
 	}
 	
 	public CVSResourceMappingParticipant(ISynchronizationContext context, String name) {
-		super(context, name);
+		super(context);
+		try {
+			setInitializationData(TeamUI.getSynchronizeManager().getParticipantDescriptor("org.eclipse.team.cvs.ui.workspace-participant")); //$NON-NLS-1$
+		} catch (CoreException e) {
+			TeamUIPlugin.log(e);
+		}
+		setSecondaryId(Long.toString(System.currentTimeMillis()));
 	}
 	
 	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
