@@ -342,8 +342,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 						IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
 						handler.handleStatus(deleteAssociatedLaunchConfigs, project);
 	            	}
+	            } catch (CoreException e){
+	            	DebugPlugin.log(e);
 	            }
-	            catch (CoreException e){e.printStackTrace();}
 			}
 			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
 				if (delta.getResource() instanceof IProject) {
