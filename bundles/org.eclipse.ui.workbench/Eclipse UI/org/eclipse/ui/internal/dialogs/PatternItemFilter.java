@@ -12,12 +12,15 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.text.BreakIterator;
 
+import org.eclipse.ui.dialogs.PatternFilter;
+
 /**
- * Abstract class that handles filtering items based on a supplied
- * matching string.
+ * Abstract class that handles filtering of elements in a viewer based on a supplied
+ * matching string.  The matching algorithm used in this filter is more sophisticated  
+ * then that of PatternFilter.
  * 
- * @since 3.1
- * 
+ * @see org.eclipse.ui.dialogs.PatternFilter
+ * @since 3.2
  */
 public abstract class PatternItemFilter extends PatternFilter {
 	protected boolean matchItem;

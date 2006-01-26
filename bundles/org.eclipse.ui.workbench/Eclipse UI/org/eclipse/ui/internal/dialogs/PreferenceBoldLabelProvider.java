@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.dialogs;
 import org.eclipse.jface.preference.PreferenceLabelProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.ui.dialogs.FilteredTree;
+import org.eclipse.ui.dialogs.PatternFilter;
 
 /**
  * This PreferenceBoldLabelProvider will bold those elements which really match

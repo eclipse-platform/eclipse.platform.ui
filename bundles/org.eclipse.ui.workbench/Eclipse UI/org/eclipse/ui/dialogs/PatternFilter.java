@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.dialogs;
+package org.eclipse.ui.dialogs;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,13 +22,15 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.internal.misc.StringMatcher;
 
 /**
- * A filter used in conjunction with <code>FilteredTree</code>.  This filter is 
- * inefficient - in order to see if a node should be filtered it must use the 
- * content provider of the tree to do pattern matching on its children.  This 
- * causes the entire tree structure to be realized.
+ * A filter used in conjunction with <code>FilteredTree</code>.  In order to 
+ * determine if a node should be filtered it uses the content provider of the 
+ * tree to do pattern matching on its children.  This causes the entire tree
+ * structure to be realized.
  * 
- * @see org.eclipse.ui.internal.dialogs.FilteredTree  
- * @since 3.0
+ * Note: this API is experimental and may change before 3.2 M5 
+ *  
+ * @see org.eclipse.ui.dialogs.FilteredTree  
+ * @since 3.2
  */
 public class PatternFilter extends ViewerFilter {
 	
@@ -40,6 +42,9 @@ public class PatternFilter extends ViewerFilter {
 	 */
 	private boolean includeLeadingWildcard = false;
 
+	/**
+	 * The string pattern matcher used for this pattern filter.  
+	 */
     private StringMatcher matcher;
 
     /* (non-Javadoc)
@@ -77,6 +82,8 @@ public class PatternFilter extends ViewerFilter {
 	}
 
     /**
+     * The pattern string for which this filter should select 
+     * elements in the viewer.
      * 
      * @param patternString
      */
@@ -101,15 +108,19 @@ public class PatternFilter extends ViewerFilter {
      * @return whether the string matches the pattern
      */
     protected boolean match(String string) {
+    	if (matcher == null)	// pattern string to match is null or empty
+    		return true;
         return matcher.match(string);
     }
     
     /**
-     * Answers whether the given Object should be selected in 
-     * the filtered control.
+     * Answers whether the given element is a valid selection in 
+     * the filtered tree.  For example, if a tree has items that 
+     * are categorized, the category itself may  not be a valid 
+     * selection since it is used merely to organize the elements.
      * 
      * @param element
-     * @return true if this element should be auto selected
+     * @return true if this element is eligible for automatic selection
      */
     protected boolean isElementSelectable(Object element){
     	return element != null;
@@ -119,8 +130,9 @@ public class PatternFilter extends ViewerFilter {
      * Answers whether the given element in the given viewer matches
      * the filter pattern.  This is a default implementation that will 
      * match any entry in the tree based on whether the provided filter 
-     * text matches the text of the given element's text.  Subclasses 
-     * should override this method.
+     * text matches the text of the given element's text.  
+     * 
+     * Subclasses should override this method.
      * 
      * @param viewer the tree viewer in which the element resides
      * @param element the element in the tree to check for a match
