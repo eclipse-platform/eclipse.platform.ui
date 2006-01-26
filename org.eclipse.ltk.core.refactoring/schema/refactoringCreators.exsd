@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ltk.core.refactoring">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ltk.core.refactoring" id="refactoringCreators" name="Refactoring Creators"/>
+      </appInfo>
+      <documentation>
+         The extension point is used to define refactoring instance creators. Refactoring instance creators provide a means to dynamically construct a ready-to-execute refactoring instance based on a &lt;code&gt;RefactoringDescriptor&lt;/code&gt;.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="creator" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="creator">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The globally unique id of the contributed refactoring type. The id is usually a fully qualified identifier composed from the name of the contributing plugin and a unique identifier of the refactoring, e.g. org.eclipse.ltk.core.renameResource.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The fully qualified name of a refactoring instance creator implementation which implements &lt;code&gt;org.eclipse.ltk.core.refactoring.IRefactoringInstanceCreator&lt;/code&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ltk.core.refactoring.IRefactoringInstanceCreator"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.2
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The example below defines a refactoring instance creator implemented by class &lt;code&gt;RenameResourceRefactoringInstanceCreator&lt;/code&gt; for the rename resource refactoring with unique id &lt;code&gt;org.eclipse.ltk.core.rename.resource&lt;/code&gt;:
+
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ltk.core.refactoring.refactoringCreators&quot;&gt;
+      &lt;creator
+            class=&quot;org.eclipse.ltk.core.refactoring.scripting.RenameResourceRefactoringInstanceCreator&quot;
+            id=&quot;org.eclipse.ltk.core.rename.resource&quot;/&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The contributed class must implement &lt;code&gt;org.eclipse.ltk.core.refactoring.IRefactoringInstanceCreator&lt;/code&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         This plugin offers a partial implementation &lt;code&gt;RefactoringInstanceCreator&lt;/code&gt; of the interface &lt;code&gt;IRefactoringInstanceCreator&lt;/code&gt;, which converts arguments from refactoring descriptors to generic refactoring arguments (class &lt;code&gt;GenericRefactoringArguments&lt;/code&gt;).
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2006 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
+
+</schema>
