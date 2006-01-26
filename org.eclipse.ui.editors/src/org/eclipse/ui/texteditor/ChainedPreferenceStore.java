@@ -14,10 +14,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.ListenerList;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 
@@ -37,7 +38,7 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	private IPreferenceStore[] fPreferenceStores;
 
 	/** Listeners on this chained preference store. */
-	private ListenerList fClientListeners= new ListenerList();
+	private ListenerList fClientListeners= new ListenerList(ListenerList.IDENTITY);
 
 	/** Listeners on the child preference stores. */
 	private List fChildListeners= new ArrayList();

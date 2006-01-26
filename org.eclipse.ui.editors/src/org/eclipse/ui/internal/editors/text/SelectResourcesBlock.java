@@ -26,9 +26,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -80,7 +80,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	private Collection whiteCheckedTreeItems= new HashSet();
 
-	private ListenerList listeners= new ListenerList();
+	private ListenerList listeners= new ListenerList(ListenerList.IDENTITY);
 
 	private ITreeContentProvider treeContentProvider;
 

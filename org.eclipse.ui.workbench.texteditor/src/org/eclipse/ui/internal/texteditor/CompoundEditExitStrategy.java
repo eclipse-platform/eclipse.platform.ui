@@ -20,15 +20,17 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.VerifyEvent;
 
-import org.eclipse.jface.text.ITextViewer;
-
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IExecutionListener;
 import org.eclipse.core.commands.NotHandledException;
+
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.util.ListenerList;
+
+import org.eclipse.jface.text.ITextViewer;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 
@@ -116,7 +118,7 @@ public final class CompoundEditExitStrategy {
 
 	private final String[] fCommandIds;
 	private final EventListener fEventListener= new EventListener();
-	private final ListenerList fListenerList= new ListenerList();
+	private final ListenerList fListenerList= new ListenerList(ListenerList.IDENTITY);
 
 	private ITextViewer fViewer;
 	private StyledText fWidgetEventSource;
