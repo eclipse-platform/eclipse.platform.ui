@@ -82,4 +82,15 @@ public interface IWorkbenchPartReference {
      * @since 3.0  
      */
     public String getContentDescription();
+    
+
+    /**
+     * Returns whether the part is dirty (i.e. has unsaved changes).
+     * 
+     * @return <code>true</code> if the part is dirty, <code>false</code> otherwise
+     * 
+     * @since 3.2 (previously existed on IEditorReference)
+     */
+    public boolean isDirty();
+    
 }

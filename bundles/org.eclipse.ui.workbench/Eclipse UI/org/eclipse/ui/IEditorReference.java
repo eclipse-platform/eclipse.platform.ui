@@ -44,11 +44,6 @@ public interface IEditorReference extends IWorkbenchPartReference {
     public IEditorPart getEditor(boolean restore);
 
     /**
-     * Returns true if the editor is dirty otherwise returns false.
-     */
-    public boolean isDirty();
-
-    /**
      * Returns true if the editor is pinned otherwise returns false.
      */
     public boolean isPinned();
