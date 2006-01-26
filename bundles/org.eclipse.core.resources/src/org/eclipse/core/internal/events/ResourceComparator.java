@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.eclipse.core.resources.IResourceDelta;
  * whether the comparison is zero (equal) or non-zero (not equal).
  */
 public class ResourceComparator implements IElementComparator, ICoreConstants {
-	/* Singeton instances */
+	/* Singleton instances */
 	protected static final ResourceComparator notificationSingleton = new ResourceComparator(true, false);
 	protected static final ResourceComparator buildSingleton = new ResourceComparator(false, false);
 
@@ -135,7 +135,7 @@ public class ResourceComparator implements IElementComparator, ICoreConstants {
 	}
 
 	private boolean compareMarkers(ResourceInfo oldElement, ResourceInfo newElement) {
-		// If both sets of markers are null then prehaps we added some markers
+		// If both sets of markers are null then perhaps we added some markers
 		// but then deleted them right away before notification. In that case
 		// don't signify a marker change in the delta.
 		boolean bothNull = oldElement.getMarkers(false) == null && newElement.getMarkers(false) == null;
