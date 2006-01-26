@@ -129,8 +129,9 @@ public interface IResourceDelta extends IAdaptable {
 	public static final int COPIED_FROM = 0x800;
 	/**
 	 * Change constant (bit mask) indicating that the resource was opened or closed.
-	 * For example, if the current state of the resource is open then 
-	 * it was previously closed.
+	 * This flag is also set when the project did not exist in the "before" state.
+	 * For example, if the current state of the resource is open then it was previously closed
+	 * or did not exist.
 	 * 
 	 * @see IResourceDelta#getFlags()
 	 */
