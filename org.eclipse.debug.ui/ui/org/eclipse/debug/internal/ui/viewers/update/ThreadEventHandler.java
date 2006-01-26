@@ -121,7 +121,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 		return new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
 	}
 	
-	private ModelDelta addPathToThread(ModelDelta delta, IThread thread) {
+	protected ModelDelta addPathToThread(ModelDelta delta, IThread thread) {
 		delta = delta.addNode(thread.getLaunch(), IModelDelta.NOCHANGE);
 		return delta.addNode(thread.getDebugTarget(), IModelDelta.EXPAND);
 	}
