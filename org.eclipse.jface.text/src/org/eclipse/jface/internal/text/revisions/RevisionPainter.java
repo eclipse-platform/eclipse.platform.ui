@@ -295,6 +295,8 @@ public final class RevisionPainter {
 	private boolean fWheelHandlerInstalled= false;
 
 	public RevisionPainter(IVerticalRulerColumn column, ISharedTextColors sharedColors) {
+		Assert.isLegal(column != null);
+		Assert.isLegal(sharedColors != null);
 		fColumn= column;
 		fSharedColors= sharedColors;
 	}
@@ -316,8 +318,8 @@ public final class RevisionPainter {
 	}
 	
 	public void paint(GC gc, ILineRange visibleLines) {
-		getWidgets();
-		if (fWidget == null)
+		connectIfNeeded();
+		if (!isConnected())
 			return;
 		
 		// draw change regions
@@ -328,24 +330,36 @@ public final class RevisionPainter {
 		}
 	}
 
-	private void getWidgets() {
-		if (fWidget == null && fParentRuler != null) {
-			fViewer= fParentRuler.getTextViewer();
-			fWidget= fViewer.getTextWidget();
+	private void connectIfNeeded() {
+		if (isConnected() || fParentRuler == null)
+			return;
 
-			fControl= fColumn.getControl();
-			fControl.addMouseTrackListener(fMouseHandler);
-			fControl.addMouseMoveListener(fMouseHandler);
-			fControl.addDisposeListener(new DisposeListener() {
-				/*
-				 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-				 */
-				public void widgetDisposed(DisposeEvent e) {
-					handleDispose();
-				}
-			});
-		}
+		fViewer= fParentRuler.getTextViewer();
+		if (fViewer == null)
+			return;
 		
+		fWidget= fViewer.getTextWidget();
+		if (fWidget == null)
+			return;
+		
+		fControl= fColumn.getControl();
+		if (fControl == null)
+			return;
+		
+		fControl.addMouseTrackListener(fMouseHandler);
+		fControl.addMouseMoveListener(fMouseHandler);
+		fControl.addDisposeListener(new DisposeListener() {
+			/*
+			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+			 */
+			public void widgetDisposed(DisposeEvent e) {
+				handleDispose();
+			}
+		});
+	}
+
+	private boolean isConnected() {
+		return fControl != null;
 	}
 
 	public void setModel(IAnnotationModel model) {
@@ -783,7 +797,7 @@ public final class RevisionPainter {
 	 * Triggers a redraw in the display thread.
 	 */
 	private final void postRedraw() {
-		if (fControl != null && !fControl.isDisposed()) {
+		if (isConnected() && !fControl.isDisposed()) {
 			Display d= fControl.getDisplay();
 			if (d != null) {
 				d.asyncExec(new Runnable() {
