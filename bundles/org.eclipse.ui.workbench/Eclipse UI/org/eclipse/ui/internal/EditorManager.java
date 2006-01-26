@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -44,12 +45,15 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ActiveShellExpression;
+import org.eclipse.ui.IDocument;
+import org.eclipse.ui.IDocumentSource;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -84,8 +88,6 @@ import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.model.AdaptableList;
-import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
@@ -1030,7 +1032,7 @@ public class EditorManager implements IExtensionChangeHandler {
 		}
 
 		// If confirmation is required ..
-		return saveAll(dirtyParts, confirm, window);
+		return saveAll(dirtyParts, confirm, closing, window);
 	}
 
 	/**
@@ -1039,16 +1041,20 @@ public class EditorManager implements IExtensionChangeHandler {
 	 * @param dirtyParts
 	 *            the dirty views and editors
 	 * @param confirm
-	 *            <code>true</code> prompt whether to save, <code>false</code>
+	 *            <code>true</code> to prompt whether to save, <code>false</code>
 	 *            to save without prompting
+	 * @param closing
+	 *            <code>true</code> if the parts are being closed,
+	 *            <code>false</code> if just being saved without closing
 	 * @param window
 	 *            the window to use as the parent for the dialog that prompts to
 	 *            save multiple dirty editors and views
 	 * @return <code>true</code> on success, <code>false</code> if the user
 	 *         canceled the save
 	 */
-	public static boolean saveAll(List dirtyParts, boolean confirm,
+	public static boolean saveAll(List dirtyParts, boolean confirm, boolean closing,
 			final IWorkbenchWindow window) {
+    	List documentsToSave;
 		if (confirm) {
 			boolean saveable2Processed = false;
 			// Process all parts that implement ISaveablePart2.
@@ -1137,66 +1143,76 @@ public class EditorManager implements IExtensionChangeHandler {
 				}
 			}
 
-			// If the editor list is empty return.
-			if (dirtyParts.isEmpty())
-				return true;
-
-			// Convert the list into an element collection.
-			AdaptableList input = new AdaptableList(dirtyParts);
-
-			ListSelectionDialog dlg = new ListSelectionDialog(
-					window.getShell(), input,
-					new BaseWorkbenchContentProvider(),
-					new WorkbenchPartLabelProvider(), RESOURCES_TO_SAVE_MESSAGE);
-
-			dlg.setInitialSelections(dirtyParts.toArray(new Object[dirtyParts
-					.size()]));
-			dlg.setTitle(SAVE_RESOURCES_TITLE);
-
-			int result = IDialogConstants.OK_ID;
-
-			// this "if" statement aids in testing.
-			if (SaveableHelper.testGetAutomatedResponse() == SaveableHelper.USER_RESPONSE) {
-				result = dlg.open();
-				// Just return false to prevent the operation continuing
-				if (result == IDialogConstants.CANCEL_ID)
-					return false;
-
-				dirtyParts = Arrays.asList(dlg.getResult());
-			}
-
-			if (dirtyParts == null)
-				return false;
-
-			// If the editor list is empty return.
-			if (dirtyParts.isEmpty())
-				return true;
+            documentsToSave = convertToDocuments(dirtyParts, closing);
+            
+            // If the document list is empty return.
+            if (documentsToSave.isEmpty())
+            	return true;
+            // Use a simpler dialog if there's only one
+            if (documentsToSave.size() == 1) {
+            	IDocument doc = (IDocument) documentsToSave.get(0);
+				String message = NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, doc.getName()); 
+				// Show a dialog.
+				String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
+					MessageDialog d = new MessageDialog(
+						window.getShell(), WorkbenchMessages.Save_Resource,
+						null, message, MessageDialog.QUESTION, buttons, 0);
+				int choice = d.open();
+				
+				// Branch on the user choice.
+				// The choice id is based on the order of button labels above.
+				switch (choice) {
+					case ISaveablePart2.YES : //yes
+						break;
+					case ISaveablePart2.NO : //no
+						return true;
+					default :
+					case ISaveablePart2.CANCEL : //cancel
+						return false;
+				}
+            }
+            else {
+	            ListSelectionDialog dlg = new ListSelectionDialog(
+	                    window.getShell(), documentsToSave,
+	                    new ArrayContentProvider(),
+	                    new WorkbenchPartLabelProvider(), RESOURCES_TO_SAVE_MESSAGE);
+	            dlg.setInitialSelections(documentsToSave.toArray());
+	            dlg.setTitle(SAVE_RESOURCES_TITLE);
+	
+	            // this "if" statement aids in testing.
+	            if (SaveableHelper.testGetAutomatedResponse()==SaveableHelper.USER_RESPONSE) {
+	            	int result = dlg.open();
+	                //Just return false to prevent the operation continuing
+	                if (result == IDialogConstants.CANCEL_ID)
+	                    return false;
+	
+	                documentsToSave = Arrays.asList(dlg.getResult());
+	            }
+            }
+        }
+        else {
+        	documentsToSave = convertToDocuments(dirtyParts, closing);
 		}
 
+        // If the editor list is empty return.
+        if (documentsToSave.isEmpty())
+            return true;
+		
 		// Create save block.
-		// @issue reference to workspace runnable!
-		final List finalParts = dirtyParts;
-
+        final List finalDocs = documentsToSave;
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				// try {
-				// @issue reference to workspace to run runnable
 				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(
 						monitor);
-				// ResourcesPlugin.getWorkspace().run(workspaceOp, monitorWrap);
-
-				// --------- This code was in the IWorkspaceRunnable above
-				monitorWrap.beginTask("", finalParts.size()); //$NON-NLS-1$
-				Iterator itr = finalParts.iterator();
-				while (itr.hasNext()) {
-					ISaveablePart part = (ISaveablePart) itr.next();
-					if (part.isDirty()) {
-						part.doSave(new SubProgressMonitor(monitorWrap, 1));
+				monitorWrap.beginTask("", finalDocs.size()); //$NON-NLS-1$
+				for (Iterator i = finalDocs.iterator(); i.hasNext();) {
+					IDocument doc = (IDocument) i.next();
+					if (doc.isDirty()) {
+						doc.doSave(new SubProgressMonitor(monitorWrap, 1));
 					}
 					if (monitorWrap.isCanceled())
 						break;
 				}
-				// -----------
 				monitorWrap.done();
 			}
 		};
@@ -1206,20 +1222,103 @@ public class EditorManager implements IExtensionChangeHandler {
 				WorkbenchMessages.Save_All, progressOp, window);
 	}
 
+    /**
+	 * For each part (view or editor) in the given list, attempts to convert it
+	 * to one or more documents. Duplicate documents are removed. If closing is true,
+	 * then documents that will remain open in parts other than the given parts
+	 * are removed.
+	 * 
+	 * @param parts
+	 *            the parts (list of IViewPart or IEditorPart)
+	 * @param closing
+	 *            whether the parts are being closed
+	 * @return the dirty views, editors and documents
+	 */
+	private static List convertToDocuments(List parts, boolean closing) {
+		ArrayList result = new ArrayList();
+		HashSet seen = new HashSet();
+		for (Iterator i = parts.iterator(); i.hasNext();) {
+			IWorkbenchPart part = (IWorkbenchPart) i.next();
+			IDocument[] docs = getDocuments(part);
+			for (int j = 0; j < docs.length; j++) {
+				IDocument doc = docs[j];
+				if (doc.isDirty() && !seen.contains(doc)) {
+					seen.add(doc);
+					if (!closing
+							|| closingLastPartShowingDocument(doc, parts, part
+									.getSite().getPage())) {
+						result.add(doc);
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Returns the documents provided by the given part.
+	 * If the part does not provide any documents, a default document
+	 * is returned representing the part.
+	 * 
+	 * @param part the workbench part
+	 * @return the documents
+	 */
+	private static IDocument[] getDocuments(IWorkbenchPart part) {
+		if (part instanceof IDocumentSource) {
+			IDocumentSource source = (IDocumentSource) part;
+			return source.getDocuments();
+		}
+		return new IDocument[] { new DefaultDocument(part) };
+	}
+
+	/**
+	 * Returns true if, in the given page, no more parts will reference the
+	 * given document if the given parts are closed.
+	 * 
+	 * @param doc
+	 *            the document
+	 * @param closingParts
+	 *            the parts being closed (list of IViewPart or IEditorPart)
+	 * @param page
+	 *            the page
+	 * @return <code>true</code> if no more parts in the page will reference
+	 *         the given document, <code>false</code> otherwise
+	 */
+	private static boolean closingLastPartShowingDocument(IDocument doc,
+			List closingParts, IWorkbenchPage page) {
+		HashSet closingPartsWithSameDoc = new HashSet();
+		for (Iterator i = closingParts.iterator(); i.hasNext();) {
+			IWorkbenchPart part = (IWorkbenchPart) i.next();
+			IDocument[] docs = getDocuments(part);
+			if (Arrays.asList(docs).contains(doc)) {
+				closingPartsWithSameDoc.add(part);
+			}
+		}
+		IWorkbenchPartReference[] pagePartRefs = ((WorkbenchPage) page).getAllParts();
+		HashSet pagePartsWithSameDoc = new HashSet();
+		for (int i = 0; i < pagePartRefs.length; i++) {
+			IWorkbenchPartReference partRef = pagePartRefs[i];
+			IWorkbenchPart part = partRef.getPart(false);
+			if (part != null) {
+				IDocument[] docs = getDocuments(part);
+				if (Arrays.asList(docs).contains(doc)) {
+					pagePartsWithSameDoc.add(part);
+				}
+			}
+		}
+		for (Iterator i = closingPartsWithSameDoc.iterator(); i.hasNext();) {
+			IWorkbenchPart part = (IWorkbenchPart) i.next();
+			pagePartsWithSameDoc.remove(part);
+		}
+		return pagePartsWithSameDoc.isEmpty();
+	}
+	
 	/*
 	 * Saves the workbench part.
 	 */
 	public boolean savePart(final ISaveablePart saveable, IWorkbenchPart part,
 			boolean confirm) {
 		return SaveableHelper.savePart(saveable, part, window, confirm);
-	}
-
-	/**
-	 * Save and close an editor. Return true if successful. Return false if the
-	 * user has cancelled the command.
-	 */
-	public boolean saveEditor(IEditorPart part, boolean confirm) {
-		return savePart(part, part, confirm);
 	}
 
 	/**

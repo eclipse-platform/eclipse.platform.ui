@@ -526,7 +526,7 @@ public class EditorList {
             }
 
             if (dirtyEditorList.size() != 0) {
-                EditorManager.saveAll(dirtyEditorList, false, window);
+                EditorManager.saveAll(dirtyEditorList, false, false, window);
             }
             destroyControl();
         }
@@ -566,7 +566,7 @@ public class EditorList {
 
             boolean result = true;
             if (dirtyEditorList.size() != 0) {
-                result = EditorManager.saveAll(dirtyEditorList, true, window);
+                result = EditorManager.saveAll(dirtyEditorList, true, true, window); 
             }
 
             // now close the editors

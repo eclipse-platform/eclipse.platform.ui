@@ -1189,16 +1189,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             }
             // Save parts, exit the method if cancel is pressed.
             if (intersect.size() > 0) {
-                // If there is exactly one editor open, show the simpler dialog
-                if (intersect.size() == 1) {
-                    if (!getEditorManager().saveEditor((IEditorPart)(intersect.get(0)), true)) {
-                        return false;
-                    }
-                } else {
-                    if (!EditorManager.saveAll(intersect, true,
-                            getWorkbenchWindow()))
-                        return false;
-                }
+                if (!EditorManager.saveAll(intersect, true, true,
+                        getWorkbenchWindow()))
+                    return false;
             }
         }
 

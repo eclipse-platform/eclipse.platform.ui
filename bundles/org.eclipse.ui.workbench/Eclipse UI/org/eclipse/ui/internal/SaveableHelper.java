@@ -11,16 +11,21 @@
 package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.IDocument;
+import org.eclipse.ui.IDocumentSource;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IWorkbenchPart;
@@ -67,6 +72,7 @@ public class SaveableHelper {
 	
 	/**
 	 * Saves the workbench part.
+	 * 
 	 * @param saveable the part
 	 * @param part the same part
 	 * @param window the workbench window
@@ -111,6 +117,10 @@ public class SaveableHelper {
 			}
 		}
 
+		if (saveable instanceof IDocumentSource) {
+			return saveDocuments((IDocumentSource) saveable, window);
+		}
+
 		// Create save block.
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -120,9 +130,46 @@ public class SaveableHelper {
 		};
 
 		// Do the save.
-		return runProgressMonitorOperation(WorkbenchMessages.Save, progressOp,window); 
+		return runProgressMonitorOperation(WorkbenchMessages.Save, progressOp, window); 
 	}
 	
+	/**
+	 * Saves the selected dirty documents from the given document source.
+	 * 
+	 * @param docSource the document source
+	 * @param window the workbench window
+	 * @return <code>true</code> for continue, <code>false</code> if the operation
+	 *   was cancelled.
+	 */
+	private static boolean saveDocuments(IDocumentSource docSource, IWorkbenchWindow window) {
+		IDocument[] selectedDocs = docSource.getActiveDocuments();
+		final ArrayList dirtyDocs = new ArrayList();
+		for (int i = 0; i < selectedDocs.length; i++) {
+			IDocument doc = selectedDocs[i];
+			if (doc.isDirty()) {
+				dirtyDocs.add(doc);
+			}
+		}
+		if (dirtyDocs.isEmpty())
+			return true;
+		
+		// Create save block.
+		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
+				monitorWrap.beginTask("", dirtyDocs.size()); //$NON-NLS-1$
+				for (Iterator i = dirtyDocs.iterator(); i.hasNext();) {
+					IDocument doc = (IDocument) i.next();
+					doc.doSave(new SubProgressMonitor(monitorWrap, 1));
+				}
+				monitorWrap.done();
+			}
+		};
+
+		// Do the save.
+		return runProgressMonitorOperation(WorkbenchMessages.Save, progressOp, window); 
+	}
+
 	/**
 	 * Saves the workbench part ... this is similar to 
 	 * {@link SaveableHelper#savePart(ISaveablePart, IWorkbenchPart, IWorkbenchWindow, boolean) }
@@ -202,4 +249,27 @@ public class SaveableHelper {
 		}
 		return !wasCanceled[0];
 	}
+
+	/**
+	 * Returns whether the document source needs saving. This is true if any of
+	 * the active documents are dirty. This logic must correspond with 
+	 * {@link #saveDocuments} above.
+	 * 
+	 * @param docSource
+	 *            the document source
+	 * @return <code>true</code> if save is required, <code>false</code>
+	 *         otherwise
+	 * @since 3.2
+	 */
+	public static boolean needsSave(IDocumentSource docSource) {
+		IDocument[] selectedDocs = docSource.getActiveDocuments();
+		for (int i = 0; i < selectedDocs.length; i++) {
+			IDocument doc = selectedDocs[i];
+			if (doc.isDirty()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }

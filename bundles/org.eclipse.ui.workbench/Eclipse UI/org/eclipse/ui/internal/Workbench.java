@@ -679,7 +679,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					if (w == null)
 						w = windows[0];
 					result[0] = EditorManager.saveAll(dirtyParts,
-							finalConfirm, w);
+							finalConfirm, false, w);
 				}
 			}
 		});

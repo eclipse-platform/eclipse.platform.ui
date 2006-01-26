@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.ui.IDocumentSource;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -51,9 +52,7 @@ public class SaveAction extends BaseSaveAction {
         }
         /* **********************************************************************************
          * The code below was added to track the view with focus
-         * in order to support save actions from a view. Remove this
-         * experimental code if the decision is to not allow views to 
-         * participate in save actions (see bug 10234) 
+         * in order to support save actions from a view (see bug 10234). 
          */
         ISaveablePart saveView = getSaveableView();
         if (saveView != null) {
@@ -61,7 +60,6 @@ public class SaveAction extends BaseSaveAction {
                     saveView, getActivePart(), false);
             return;
         }
-        /* **********************************************************************************/
 
         IEditorPart part = getActiveEditor();
         if (part != null) {
@@ -70,24 +68,24 @@ public class SaveAction extends BaseSaveAction {
         }
     }
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
      * Method declared on ActiveEditorAction.
      */
     protected void updateState() {
         /* **********************************************************************************
          * The code below was added to track the view with focus
-         * in order to support save actions from a view. Remove this
-         * experimental code if the decision is to not allow views to 
-         * participate in save actions (see bug 10234) 
+         * in order to support save actions from a view (see bug 10234). 
          */
-        ISaveablePart saveView = getSaveableView();
-        if (saveView != null) {
-            setEnabled(saveView.isDirty());
-            return;
+        ISaveablePart saveable = getSaveableView();
+        if (saveable == null) {
+        	saveable = getActiveEditor();
         }
         /* **********************************************************************************/
-
-        IEditorPart editor = getActiveEditor();
-        setEnabled(editor != null && editor.isDirty());
+        if (saveable instanceof IDocumentSource) {
+			IDocumentSource docSource = (IDocumentSource) saveable;
+			setEnabled(SaveableHelper.needsSave(docSource));
+			return;
+        }
+        setEnabled(saveable != null && saveable.isDirty());
     }
 }

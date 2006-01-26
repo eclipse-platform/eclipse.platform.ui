@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -184,8 +185,8 @@ public class Perspective {
 		if (view instanceof ISaveablePart) {
 			ISaveablePart saveable = (ISaveablePart)view;
 			if (saveable.isSaveOnCloseNeeded()) {
-				IWorkbenchWindow window = view.getSite().getWorkbenchWindow();		
-				return SaveableHelper.savePart(saveable, view, window, true);
+				IWorkbenchWindow window = view.getSite().getWorkbenchWindow();
+				return EditorManager.saveAll(Collections.singletonList(view), true, true, window);
 			}
 		}
     	return true;

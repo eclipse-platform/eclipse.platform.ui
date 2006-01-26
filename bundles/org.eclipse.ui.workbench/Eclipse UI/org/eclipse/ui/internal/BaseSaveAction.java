@@ -27,6 +27,11 @@ import org.eclipse.ui.IWorkbenchWindow;
  * The abstract superclass for save actions that depend on the active editor.
  */
 public abstract class BaseSaveAction extends ActiveEditorAction {
+    /*
+     * The view-related code below was added to track the view with focus
+     * in order to support save actions from a view (see bug 10234). 
+     */
+	
     /**
      * List of parts (element type: <code>IWorkbenchPart</code>)
      * against which this class has outstanding property listeners registered.
@@ -74,15 +79,6 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
         }
     }
 
-    /*
-     * **********************************************************************************
-     * **********************************************************************************
-     * **********************************************************************************
-     * The code below was added to track the view with focus
-     * in order to support save actions from a view. Remove this
-     * experimental code if the decision is to not allow views to 
-     * participate in save actions (see bug 10234) 
-     */
     private IViewPart activeView;
 
     private final IPropertyListener propListener2 = new IPropertyListener() {

@@ -10,10 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.model;
 
+import java.util.HashMap;
+
+import org.eclipse.jface.resource.DeviceResourceException;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IDocument;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A table label provider implementation for showing workbench views and
@@ -28,6 +37,9 @@ import org.eclipse.ui.IWorkbenchPart;
 public final class WorkbenchPartLabelProvider extends LabelProvider implements
         ITableLabelProvider {
 
+	private ResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources());
+	private HashMap images = new HashMap();
+	
     /**
      * Creates a new label provider for workbench parts.
      */
@@ -41,6 +53,24 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
     public final Image getImage(Object element) {
         if (element instanceof IWorkbenchPart) {
             return ((IWorkbenchPart) element).getTitleImage();
+        }
+        if (element instanceof IDocument) {
+        	IDocument doc = (IDocument) element;
+        	ImageDescriptor imageDesc = doc.getImageDescriptor();
+        	// convert from ImageDescriptor to Image
+        	if (imageDesc == null)
+        		return null;
+        	Image image = (Image) images.get(imageDesc);
+        	if (image == null) {
+        		try {
+        			image = resourceManager.createImage(imageDesc);
+        			images.put(imageDesc, image);
+        		}
+        		catch (DeviceResourceException e) {
+        			WorkbenchPlugin.log(getClass(), "getImage", e); //$NON-NLS-1$
+        		}
+        	}
+        	return image;
         }
         return null;
     }
@@ -57,6 +87,15 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
             }
             return part.getTitle() + "  [" + path + "]"; //$NON-NLS-1$ //$NON-NLS-2$
         }
+        if (element instanceof IDocument) {
+        	IDocument doc = (IDocument) element;
+            String path = doc.getToolTipText();
+            if (path == null || path.trim().length() == 0) {
+                return doc.getName();
+            }
+            return doc.getName() + "  [" + path + "]";  //$NON-NLS-1$ //$NON-NLS-2$
+        	
+        }
         return null;
     }
 
@@ -72,5 +111,13 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
      */
     public final String getColumnText(Object element, int columnIndex) {
         return getText(element);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.LabelProvider#dispose()
+     */
+    public void dispose() {
+    	resourceManager.dispose();
+    	super.dispose();
     }
 }

@@ -838,7 +838,7 @@ public final class IDE {
                             if (w == null)
                                 w = windows[0];
                             result[0] = EditorManager.saveAll(dirtyEditors,
-                                    finalConfirm, w);
+                                    finalConfirm, false, w);
                         }
                     }
                 });
