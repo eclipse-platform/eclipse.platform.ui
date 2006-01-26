@@ -919,7 +919,7 @@
          point="org.eclipse.ui.preferenceTransfer">
        <transfer
             id="org.eclipse.ui.ide.transfer.keys"
-            icon="\icons\full\obj16\keyspref_obj.gif"
+            icon="/icons/full/obj16/keyspref_obj.gif"
             name="%KeysPreference.Name">
             <mapping scope="instance">
             	<entry node="org.eclipse.ui.workbench">
