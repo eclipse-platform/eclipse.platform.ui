@@ -27,7 +27,11 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String RefactoringCorePlugin_internal_error;
 	public static String RefactoringCorePlugin_listener_removed;
 	public static String RefactoringCorePlugin_participant_removed;
-	
+	public static String RefactoringCorePlugin_duplicate_warning;
+	public static String RefactoringCorePlugin_creation_error;
+	public static String RefactoringCorePlugin_missing_class_attribute;
+	public static String RefactoringCorePlugin_missing_attribute;
+
 	public static String Resources_outOfSyncResources;
 	public static String Resources_outOfSync;
 	public static String Resources_modifiedResources;

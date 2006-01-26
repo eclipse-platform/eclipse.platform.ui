@@ -15,22 +15,40 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.ltk.core.refactoring.IRefactoringInstanceCreator;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
+
+import org.eclipse.ltk.internal.core.refactoring.Messages;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
  * Factory class to create refactoring instances from refactoring descriptors.
  * 
  * @since 3.2
  */
-public final class RefactoringInstanceFactory implements IRefactoringInstanceCreator {
+public final class RefactoringInstanceFactory implements IRegistryChangeListener, IRefactoringInstanceCreator {
+
+	/** The class attribute */
+	private static final String ATTRIBUTE_CLASS= "class"; //$NON-NLS-1$
+
+	/** The id attribute */
+	private static final String ATTRIBUTE_ID= "id"; //$NON-NLS-1$
 
 	/** The singleton instance */
 	private static RefactoringInstanceFactory fInstance= null;
+
+	/** The refactoring creators extension point */
+	private static final String REFACTORING_CREATORS_EXTENSION_POINT= "refactoringCreators"; //$NON-NLS-1$
 
 	/**
 	 * Returns the singleton instance of the refactoring instance factory.
@@ -44,10 +62,10 @@ public final class RefactoringInstanceFactory implements IRefactoringInstanceCre
 	}
 
 	/**
-	 * The creator registry (element type: &lt;String,
-	 * IRefactoringInstanceCreator&gt;)
+	 * The refactoring creator cache (element type: &lt;String,
+	 * <code>IRefactoringInstanceCreator&gt;</code>)
 	 */
-	private Map fCreatorRegistry= new HashMap();
+	private Map fCreatorCache= null;
 
 	/**
 	 * Creates a new refactoring instance factory.
@@ -57,13 +75,20 @@ public final class RefactoringInstanceFactory implements IRefactoringInstanceCre
 	}
 
 	/**
+	 * Connects this factory to the platform's extension registry.
+	 */
+	public void connect() {
+		Platform.getExtensionRegistry().addRegistryChangeListener(this, RefactoringCore.ID_PLUGIN);
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public RefactoringArguments createArguments(final RefactoringDescriptor descriptor) {
 		Assert.isNotNull(descriptor);
 		final String id= descriptor.getID();
 		if (id != null) {
-			final IRefactoringInstanceCreator creator= (IRefactoringInstanceCreator) fCreatorRegistry.get(id);
+			final IRefactoringInstanceCreator creator= createRefactoringCreator(id);
 			if (creator != null)
 				return creator.createArguments(descriptor);
 		}
@@ -77,7 +102,7 @@ public final class RefactoringInstanceFactory implements IRefactoringInstanceCre
 		Assert.isNotNull(descriptor);
 		final String id= descriptor.getID();
 		if (id != null) {
-			final IRefactoringInstanceCreator creator= (IRefactoringInstanceCreator) fCreatorRegistry.get(id);
+			final IRefactoringInstanceCreator creator= createRefactoringCreator(id);
 			if (creator != null)
 				return creator.createRefactoring(descriptor);
 		}
@@ -85,31 +110,56 @@ public final class RefactoringInstanceFactory implements IRefactoringInstanceCre
 	}
 
 	/**
-	 * Registers the specified refactoring instance creator with the specified
-	 * refactoring id.
+	 * Creates a refactoring instance creator for the specified id.
 	 * 
 	 * @param id
 	 *            the refactoring id
-	 * @param creator
-	 *            the refactoring instance creator
+	 * @return the refactoring instance creator, or <code>null</code>
 	 */
-	public void registerCreator(final String id, final IRefactoringInstanceCreator creator) {
+	private IRefactoringInstanceCreator createRefactoringCreator(final String id) {
 		Assert.isNotNull(id);
 		Assert.isTrue(!"".equals(id)); //$NON-NLS-1$
-		Assert.isNotNull(creator);
-		fCreatorRegistry.put(id, creator);
+		if (fCreatorCache == null) {
+			fCreatorCache= new HashMap();
+			final IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(RefactoringCore.ID_PLUGIN, REFACTORING_CREATORS_EXTENSION_POINT);
+			for (int index= 0; index < elements.length; index++) {
+				final IConfigurationElement element= elements[index];
+				final String attributeId= element.getAttribute(ATTRIBUTE_ID);
+				final String point= RefactoringCore.ID_PLUGIN + "." + REFACTORING_CREATORS_EXTENSION_POINT; //$NON-NLS-1$
+				if (attributeId != null && !"".equals(attributeId)) { //$NON-NLS-1$
+					final String className= element.getAttribute(ATTRIBUTE_CLASS);
+					if (className != null && !"".equals(className)) { //$NON-NLS-1$
+						try {
+							final Object implementation= element.createExecutableExtension(ATTRIBUTE_CLASS);
+							if (implementation instanceof IRefactoringInstanceCreator) {
+								if (fCreatorCache.get(attributeId) != null)
+									RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_duplicate_warning, new String[] { attributeId, point}));
+								fCreatorCache.put(attributeId, implementation);
+							} else
+								RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_creation_error, new String[] { point, attributeId}));
+						} catch (CoreException exception) {
+							RefactoringCorePlugin.log(exception);
+						}
+					} else
+						RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_missing_class_attribute, new String[] { point, attributeId, ATTRIBUTE_CLASS}));
+				} else
+					RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_missing_attribute, new String[] { point, ATTRIBUTE_ID}));
+			}
+		}
+		return (IRefactoringInstanceCreator) fCreatorCache.get(id);
 	}
 
 	/**
-	 * Unregisters the refactoring instance creator registered with the
-	 * specified id.
-	 * 
-	 * @param id
-	 *            the refactoring id
+	 * Disconnects this factory from the platform's extensionr registry.
 	 */
-	public void unregisterCreator(final String id) {
-		Assert.isNotNull(id);
-		Assert.isTrue(!"".equals(id)); //$NON-NLS-1$
-		fCreatorRegistry.remove(id);
+	public void disconnect() {
+		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void registryChanged(final IRegistryChangeEvent event) {
+		fCreatorCache= null;
 	}
 }
