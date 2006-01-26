@@ -177,19 +177,23 @@ public class DetachedWindow implements IDragOverListener {
             part.reparent(shell);
         folder.add(part);
         
-        // Ensure that the shell's minimum size is capable of showing the initial first tab 
-        TabbedStackPresentation stack = (TabbedStackPresentation) folder.getPresentation();
-        AbstractTabFolder tabFolder = stack.getTabFolder();
-        if (tabFolder.getItemCount() == 1) {
-        	// Get the space that we need to show the tab
-        	AbstractTabItem firstItem = tabFolder.getItem(0);
-        	Rectangle tabRect = firstItem.getBounds();
-        	
-        	// Take the current shell 'trim' into account
-        	int shellHeight = windowShell.getBounds().height - windowShell.getClientArea().height;
-        	int shellWidth = windowShell.getBounds().width - windowShell.getClientArea().width;
-        	
-        	windowShell.setMinimumSize(tabRect.width + shellWidth, tabRect.height + shellHeight);
+        // Ensure that the shell's minimum size is capable of showing the initial first tab
+        // We can only do this for 'Tabbed' stacked presentations...
+        if (folder.getPresentation() instanceof TabbedStackPresentation) {
+	        TabbedStackPresentation stack = (TabbedStackPresentation) folder.getPresentation();
+	        
+	        AbstractTabFolder tabFolder = stack.getTabFolder();
+	        if (tabFolder.getItemCount() == 1) {
+	        	// Get the space that we need to show the tab
+	        	AbstractTabItem firstItem = tabFolder.getItem(0);
+	        	Rectangle tabRect = firstItem.getBounds();
+	        	
+	        	// Take the current shell 'trim' into account
+	        	int shellHeight = windowShell.getBounds().height - windowShell.getClientArea().height;
+	        	int shellWidth = windowShell.getBounds().width - windowShell.getClientArea().width;
+	        	
+	        	windowShell.setMinimumSize(tabRect.width + shellWidth, tabRect.height + shellHeight);
+	        }
         }
     }
 
