@@ -13,7 +13,6 @@ package org.eclipse.ui.part;
 import java.util.ArrayList;
 
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -31,10 +30,12 @@ import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.contexts.NestableContextService;
 import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.NestableHandlerService;
 import org.eclipse.ui.internal.services.INestable;
@@ -116,13 +117,28 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 
 		final IServiceLocator parentServiceLocator = multiPageEditor.getSite();
 		serviceLocator = new ServiceLocator(parentServiceLocator);
-		final IHandlerService parentService = (IHandlerService) parentServiceLocator
-				.getService(IHandlerService.class);
+
+		initializeDefaultServices();
+	}
+
+	/**
+	 * Initialize the slave services for this site.
+	 */
+	private void initializeDefaultServices() {
 		final Expression defaultExpression = new ActivePartExpression(
 				multiPageEditor);
+
+		final IHandlerService parentService = (IHandlerService) serviceLocator
+				.getService(IHandlerService.class);
 		final IHandlerService slave = new NestableHandlerService(parentService,
 				defaultExpression);
-		this.serviceLocator.registerService(IHandlerService.class, slave);
+		serviceLocator.registerService(IHandlerService.class, slave);
+
+		final IContextService parentContext = (IContextService) serviceLocator
+				.getService(IContextService.class);
+		final IContextService context = new NestableContextService(
+				parentContext, defaultExpression);
+		serviceLocator.registerService(IContextService.class, context);
 	}
 
 	public final void activate() {
@@ -416,24 +432,6 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 
 	public final boolean hasService(final Object key) {
 		return serviceLocator.hasService(key);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPartSite#progressEnd()
-	 */
-	public void progressEnd(Job job) {
-		// Do nothing
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPartSite#progressStart()
-	 */
-	public void progressStart(Job job) {
-		// Do nothing
 	}
 
 	/**

@@ -85,7 +85,7 @@ public class PageSite implements IPageSite, INestable {
 	}
 
 	/**
-	 * 
+	 * Initialize the slave services for this site.
 	 */
 	private void initializeDefaultServices() {
 		final IWorkbenchPart parentPart = parentSite.getPart();

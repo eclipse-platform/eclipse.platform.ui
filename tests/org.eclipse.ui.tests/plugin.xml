@@ -1640,6 +1640,10 @@
             id="org.eclipse.ui.tests.contexts.Page"
             name="Page Context"
             parentId="org.eclipse.ui.contexts.window"/>
+      <context
+            id="org.eclipse.ui.tests.multipageeditor.contextEditor"
+            name="MPEP Context"
+            parentId="org.eclipse.ui.textEditorScope"/>
    </extension>
 <!-- Marker Image Provider tests -->
    <extension

@@ -26,8 +26,8 @@ import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
- * A MultiPageEditorPart with methods that take a peek at things like
- * selection events or selection status or page change events.
+ * A MultiPageEditorPart with methods that take a peek at things like selection
+ * events or selection status or page change events.
  * 
  * @since 3.2
  */
@@ -36,8 +36,8 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 	private Composite lastPage;
 
 	/**
-	 * Default with 2 pages, although they're on the same editor input
-	 * and they're the TextEditor.
+	 * Default with 2 pages, although they're on the same editor input and
+	 * they're the TextEditor.
 	 */
 	protected void createPages() {
 		try {
@@ -48,6 +48,10 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 			TextEditor section2 = new TextEditor();
 			index = addPage(section2, getEditorInput());
 			setPageText(index, section2.getTitle());
+
+			ContextTextEditor section3 = new ContextTextEditor();
+			index = addPage(section3, getEditorInput());
+			setPageText(index, section3.getTitle());
 
 		} catch (PartInitException e) {
 			throw new RuntimeException(e);
@@ -65,6 +69,7 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 
 	/**
 	 * No save as.
+	 * 
 	 * @return false
 	 */
 	public boolean isSaveAsAllowed() {
@@ -99,48 +104,52 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 	}
 
 	/**
-	 * Set the active page in this MPEP.  Just delegate back to
+	 * Set the active page in this MPEP. Just delegate back to
 	 * setActivePage(int).
-	 * @param index The page index which must be valid.
+	 * 
+	 * @param index
+	 *            The page index which must be valid.
 	 */
 	public void setPage(int index) {
 		super.setActivePage(index);
 	}
-	
+
 	/**
 	 * Add a page with a composite for testing.
-	 *
+	 * 
 	 */
 	public void addLastPage() {
 		lastPage = new Composite(getContainer(), SWT.NONE);
 		Label l = new Label(lastPage, SWT.SHADOW_IN);
 		l.setText(getEditorInput().getName());
-		addPage(2, lastPage);
+		addPage(lastPage);
 	}
-	
+
 	/**
 	 * remove the last page for testing.
-	 *
+	 * 
 	 */
 	public void removeLastPage() {
-		if (getPageCount()>0) {
-			removePage(getPageCount()-1);
+		if (getPageCount() > 0) {
+			removePage(getPageCount() - 1);
 		}
 		lastPage = null;
 	}
-	
+
 	/**
 	 * Get the last page composite for testing.
+	 * 
 	 * @return the last page.
 	 */
 	public Control getLastPage() {
 		return lastPage;
 	}
-	
+
 	/**
 	 * Return the control for testing (like the editor control).
 	 * 
-	 * @param index the page index to get
+	 * @param index
+	 *            the page index to get
 	 * @return the control for that page
 	 */
 	public Control getTestControl(int index) {

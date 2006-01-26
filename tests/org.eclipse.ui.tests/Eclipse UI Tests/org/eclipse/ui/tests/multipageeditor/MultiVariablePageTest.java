@@ -11,6 +11,7 @@
 package org.eclipse.ui.tests.multipageeditor;
 
 import java.io.ByteArrayInputStream;
+import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -27,13 +28,19 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
+ * <p>
  * Test that the MultiPageEditorPart is acting on events and changes. These
  * tests are for making sure that selection events and page change events are
  * handled.
+ * </p>
+ * <p>
+ * It also checks for changing Contexts.
+ * </p>
  * 
  * @since 3.2
  */
@@ -100,7 +107,7 @@ public class MultiVariablePageTest extends UITestCase {
 		editor.removeLastPage();
 		assertTrue(c.isDisposed());
 
-		c = editor.getTestControl(1);
+		c = editor.getTestControl(2);
 		assertFalse(c.isDisposed());
 		editor.removeLastPage();
 		assertTrue(c.isDisposed());
@@ -170,4 +177,59 @@ public class MultiVariablePageTest extends UITestCase {
 		return part;
 	}
 
+	/**
+	 * Make sure that contexts are activated-deactivated by pages changes and
+	 * other editors.
+	 * 
+	 * @throws Throwable
+	 *             on error
+	 */
+	public void testContextActivation() throws Throwable {
+		IContextService globalService = (IContextService) getWorkbench()
+				.getService(IContextService.class);
+
+		// Open a new test window.
+		// Create and open a blurb file.
+		IEditorPart part = openMultivarFile();
+
+		MultiVariablePageEditor editor = (MultiVariablePageEditor) part;
+		checkActiveContext(globalService, ContextTextEditor.CONTEXT_ID, false);
+		checkActiveContext(globalService, ContextTextEditor.TEXT_CONTEXT_ID,
+				true);
+
+		editor.setPage(1);
+		checkActiveContext(globalService, ContextTextEditor.CONTEXT_ID, false);
+		checkActiveContext(globalService, ContextTextEditor.TEXT_CONTEXT_ID,
+				true);
+
+		editor.setPage(2);
+		checkActiveContext(globalService, ContextTextEditor.CONTEXT_ID, true);
+		checkActiveContext(globalService, ContextTextEditor.TEXT_CONTEXT_ID,
+				true);
+
+		editor.setPage(1);
+		checkActiveContext(globalService, ContextTextEditor.CONTEXT_ID, false);
+		checkActiveContext(globalService, ContextTextEditor.TEXT_CONTEXT_ID,
+				true);
+
+		editor.setPage(2);
+		checkActiveContext(globalService, ContextTextEditor.CONTEXT_ID, true);
+		editor.removeLastPage();
+		checkActiveContext(globalService, ContextTextEditor.CONTEXT_ID, false);
+		checkActiveContext(globalService, ContextTextEditor.TEXT_CONTEXT_ID,
+				true);
+	}
+
+	/**
+	 * Assert if the contextId is active in the contextService.
+	 * 
+	 * @param contextService
+	 * @param contextId
+	 * @param isActive
+	 */
+	private void checkActiveContext(IContextService contextService,
+			String contextId, boolean isActive) {
+		Collection activeContexts = contextService.getActiveContextIds();
+		assertEquals(contextId, isActive, activeContexts.contains(contextId));
+	}
 }
