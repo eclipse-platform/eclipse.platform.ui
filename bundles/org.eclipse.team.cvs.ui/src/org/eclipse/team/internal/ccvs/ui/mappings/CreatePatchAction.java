@@ -47,22 +47,24 @@ public class CreatePatchAction extends CVSModelProviderAction {
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object element = iter.next();
 			ResourceMapping mapping = Utils.getResourceMapping(element);
-			ResourceTraversal[] traversals = mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
-			final IResourceDiffTree diffTree = getContext().getDiffTree();
-			diffTree.accept(new IDiffVisitor() {
-				public boolean visit(IDiffNode delta) throws CoreException {
-					IResource resource = diffTree.getResource(delta);
-					if (resource.getType() == IResource.FILE && delta instanceof IThreeWayDiff) {
-						IThreeWayDiff twd = (IThreeWayDiff) delta;
-						IDiffNode local = twd.getLocalChange();
-						if (local != null && local.getKind() != IDiffNode.NO_CHANGE) {
-							resources.add(resource);
+			if (mapping != null) {
+				ResourceTraversal[] traversals = mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
+				final IResourceDiffTree diffTree = getContext().getDiffTree();
+				diffTree.accept(new IDiffVisitor() {
+					public boolean visit(IDiffNode delta) throws CoreException {
+						IResource resource = diffTree.getResource(delta);
+						if (resource.getType() == IResource.FILE && delta instanceof IThreeWayDiff) {
+							IThreeWayDiff twd = (IThreeWayDiff) delta;
+							IDiffNode local = twd.getLocalChange();
+							if (local != null && local.getKind() != IDiffNode.NO_CHANGE) {
+								resources.add(resource);
+							}
 						}
+						return true;
 					}
-					return true;
-				}
-			
-			}, traversals);
+				
+				}, traversals);
+			}
 		}
 		return (IResource[]) resources.toArray(new IResource[resources.size()]);
 	}
