@@ -229,12 +229,6 @@ public class EditorReference extends WorkbenchPartReference implements
         return editorMemento;
     }
 
-    public boolean isDirty() {
-        if (part == null)
-            return false;
-        return ((IEditorPart) part).isDirty();
-    }
-
     public IWorkbenchPage getPage() {
         return this.manager.page;
     }

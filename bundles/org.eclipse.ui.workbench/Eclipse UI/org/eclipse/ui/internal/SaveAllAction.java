@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -113,8 +112,8 @@ public class SaveAllAction extends PageEventAction implements IPropertyListener 
      * Method declared on IPropertyListener.
      */
     public void propertyChanged(Object source, int propID) {
-        if (source instanceof IEditorPart) {
-            if (propID == IEditorPart.PROP_DIRTY) {
+        if (source instanceof ISaveablePart) {
+            if (propID == ISaveablePart.PROP_DIRTY) {
                 updateState();
             }
         }
