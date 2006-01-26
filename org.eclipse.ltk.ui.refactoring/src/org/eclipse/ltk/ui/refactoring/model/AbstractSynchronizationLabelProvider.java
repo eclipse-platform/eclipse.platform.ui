@@ -18,6 +18,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorDiff;
+import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryDiff;
 
 /**
  * Partial implementation of a refactoring-aware synchronization label provider. *
@@ -58,7 +59,7 @@ public abstract class AbstractSynchronizationLabelProvider extends Synchronizati
 		if (element instanceof RefactoringDescriptorProxy)
 			return new RefactoringDescriptorDiff((RefactoringDescriptorProxy) element, getKind(element), getDirection(element));
 		else if (element instanceof RefactoringHistory)
-			return new RefactoringDescriptorDiff((RefactoringDescriptorProxy) element, getKind(element), getDirection(element));
+			return new RefactoringHistoryDiff((RefactoringHistory) element, getKind(element), getDirection(element));
 		return super.getDiff(element);
 	}
 
