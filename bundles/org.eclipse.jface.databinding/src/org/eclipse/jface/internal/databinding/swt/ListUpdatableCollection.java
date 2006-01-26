@@ -55,19 +55,19 @@ public class ListUpdatableCollection extends SelectionAwareUpdatableCollection {
 			throw new IllegalArgumentException();
 	}
 
-	public int getSize() {
+	public int computeSize() {
 		return list.getItemCount();
 	}
 
 	public int addElement(Object value, int index) {
 		updating=true;		
 		try {
-			if (index<0 || index>getSize())
-				index=getSize();
-			String[] newItems = new String[getSize()+1];			
+			if (index<0 || index>computeSize())
+				index=computeSize();
+			String[] newItems = new String[computeSize()+1];			
 			System.arraycopy(list.getItems(), 0, newItems,0, index);
 			newItems[index]=(String)value;
-			System.arraycopy(list.getItems(), index, newItems,index+1, getSize()-index);
+			System.arraycopy(list.getItems(), index, newItems,index+1, computeSize()-index);
 			list.setItems(newItems);
 			fireChangeEvent(ChangeEvent.ADD, null, value, index);
 		}
@@ -80,12 +80,12 @@ public class ListUpdatableCollection extends SelectionAwareUpdatableCollection {
 	public void removeElement(int index) {
 		updating=true;		
 		try {
-			if (index<0 || index>getSize())
-				index=getSize();
-			String[] newItems = new String[getSize()-1];
+			if (index<0 || index>computeSize())
+				index=computeSize();
+			String[] newItems = new String[computeSize()-1];
 			String old = list.getItem(index);
 			System.arraycopy(list.getItems(), 0, newItems,0, index);			
-			System.arraycopy(list.getItems(), index, newItems,index-1, getSize()-index);			
+			System.arraycopy(list.getItems(), index, newItems,index-1, computeSize()-index);			
 			list.setItems(newItems);
 			fireChangeEvent(ChangeEvent.REMOVE, old, null, index);
 		}
@@ -100,7 +100,7 @@ public class ListUpdatableCollection extends SelectionAwareUpdatableCollection {
 		fireChangeEvent(ChangeEvent.CHANGE, old, value, index);
 	}
 
-	public Object getElement(int index) {
+	public Object computeElement(int index) {
 		return list.getItem(index);
 	}
 

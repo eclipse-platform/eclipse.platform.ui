@@ -279,7 +279,7 @@ public class DatabindingContextTest extends TestCase {
 
 
 
-		public Object getValue() {
+		public Object computeValue() {
 			// TODO Auto-generated method stub
 			return null;
 		}

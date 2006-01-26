@@ -170,7 +170,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 			}
 		};
 
-		assertFalse(((Boolean) selectionExistsUpdatable.getValue())
+		assertFalse(((Boolean) selectionExistsUpdatable.computeValue())
 				.booleanValue());
 
 		final Text txtName = new Text(getComposite(), SWT.BORDER);

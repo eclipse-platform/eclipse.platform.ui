@@ -90,7 +90,7 @@ public class ComboUpdatableValue extends UpdatableValue {
 		runnable.runOn(combo.getDisplay());
 	}
 
-	public Object getValue() {
+	public Object computeValue() {
 		SyncRunnable runnable = new SyncRunnable() {
 			public Object run() {
 				if (attribute.equals(SWTProperties.TEXT))

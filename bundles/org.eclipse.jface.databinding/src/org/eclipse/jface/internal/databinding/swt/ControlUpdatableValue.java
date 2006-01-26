@@ -37,7 +37,7 @@ public class ControlUpdatableValue extends UpdatableValue {
 	}
 
 	public void setValue(Object value) {
-		Object oldValue = getValue();
+		Object oldValue = computeValue();
 		if (attribute.equals(SWTProperties.ENABLED)) {
 			control.setEnabled(((Boolean) value).booleanValue());
 		} else if (attribute.equals(SWTProperties.VISIBLE)) {
@@ -46,7 +46,7 @@ public class ControlUpdatableValue extends UpdatableValue {
 		fireChangeEvent(ChangeEvent.CHANGE, oldValue, value);
 	}
 
-	public Object getValue() {
+	public Object computeValue() {
 		return new Boolean(attribute.equals(SWTProperties.ENABLED) ? control.getEnabled() : control.getVisible());
 	}
 

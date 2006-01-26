@@ -58,7 +58,7 @@ public abstract class CalculatedValue extends UpdatableValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.IUpdatableValue#getValue()
 	 */
-	public Object getValue() {
+	public Object computeValue() {
 		return calculatedResult;
 	}
 	

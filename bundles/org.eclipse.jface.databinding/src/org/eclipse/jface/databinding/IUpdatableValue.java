@@ -23,7 +23,7 @@ package org.eclipse.jface.databinding;
  * 
  * @since 3.2
  */
-public interface IUpdatableValue extends IUpdatable {
+public interface IUpdatableValue extends IReadableValue {
 
 	/**
 	 * Sets the value of this updatable value to the given object, which must be
@@ -42,15 +42,6 @@ public interface IUpdatableValue extends IUpdatable {
 	 * @param value
 	 */
 	public void setValue(Object value);
-
-	/**
-	 * Returns the current value, which must be an instance of the value type
-	 * returned by getValueType(). If the value type is an object type, then the
-	 * returned value may be </code>null</code>.
-	 * 
-	 * @return the current value
-	 */
-	public Object getValue();
 
 	/**
 	 * Returns the type of the values that this updatable value can hold. This

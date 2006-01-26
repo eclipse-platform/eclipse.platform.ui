@@ -43,23 +43,6 @@ public class TreeBinding extends Binding {
 		this.target = target;
 		this.model = model;
 		
-		// some sanity check, target should support all declared model elements
-		Class[] targetTypes=target.getTypes();
-		Class[] modelTypes=model.getTypes();
-		if (targetTypes==null || modelTypes==null)
-			throw new BindingException("Tree type is not set"); //$NON-NLS-1$
-						
-		
-		for (int i = 0; i < modelTypes.length; i++) {
-			boolean canHandle=false;
-			for (int j = 0; j < targetTypes.length; j++) 
-				if (targetTypes[j].isAssignableFrom(modelTypes[i])) {
-					canHandle=true;
-					break;
-				}
-			if (!canHandle)
-				throw new BindingException("Target does not supports type: " + modelTypes[i]); //$NON-NLS-1$
-		}
 		target.addChangeListener(targetChangeListener);
 		model.addChangeListener(modelChangeListener);
 	}
@@ -82,7 +65,9 @@ public class TreeBinding extends Binding {
 			if (updating != 0  && changeEvent.getChangeType()!=ChangeEvent.VIRTUAL)
 				return;
 
-			update(target, model, changeEvent);
+			if ((changeEvent.getChangeType() &  (ChangeEvent.CHANGE | ChangeEvent.REPLACE | ChangeEvent.VIRTUAL)) != 0) {
+				update(target, model, changeEvent);
+			}
 		}
 	};
 

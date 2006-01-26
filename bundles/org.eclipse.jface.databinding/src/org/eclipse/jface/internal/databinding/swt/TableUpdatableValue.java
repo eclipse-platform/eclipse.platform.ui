@@ -59,7 +59,7 @@ public class TableUpdatableValue extends UpdatableValue {
 		}
 	}
 
-	public Object getValue() {
+	public Object computeValue() {
 		return new Integer(table.getSelectionIndex());
 	}
 

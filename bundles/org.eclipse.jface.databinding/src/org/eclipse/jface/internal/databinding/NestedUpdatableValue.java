@@ -66,9 +66,11 @@ public class NestedUpdatableValue extends UpdatableValue {
 
 	IChangeListener outerChangeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
-			Object oldValue = getValue();
-			updateInnerUpdatableValue(outerUpdatableValue);
-			fireChangeEvent(ChangeEvent.CHANGE, oldValue, getValue());
+			if (changeEvent.getChangeType() == ChangeEvent.CHANGE) {
+				Object oldValue = computeValue();
+				updateInnerUpdatableValue(outerUpdatableValue);
+				fireChangeEvent(ChangeEvent.CHANGE, oldValue, computeValue());
+			}
 		}
 	};
 	
@@ -98,7 +100,7 @@ public class NestedUpdatableValue extends UpdatableValue {
 		   innerUpdatableValue.setValue(value);
 	}
 
-	public Object getValue() {
+	public Object computeValue() {
 		return innerUpdatableValue == null ? null : innerUpdatableValue
 				.getValue();
 	}

@@ -92,7 +92,7 @@ public class CollectionBinding extends Binding {
 				if (partialValidationError != null) {
 					changeEvent.setVeto(true);
 				}
-			} else {
+			} else if ((changeEvent.getChangeType() &  (ChangeEvent.CHANGE | ChangeEvent.ADD | ChangeEvent.ADD_MANY | ChangeEvent.REMOVE | ChangeEvent.REMOVE_MANY)) != 0){
 				// Update	
 				// TODO, at this time we validate only the "value/conversion" not the index (add/remove)
 				String validationError = null;
@@ -113,7 +113,9 @@ public class CollectionBinding extends Binding {
 			if (updating)
 				return;
 			// TODO validation
-			update(target, model, changeEvent);
+			if ((changeEvent.getChangeType() &  (ChangeEvent.CHANGE | ChangeEvent.ADD | ChangeEvent.ADD_MANY | ChangeEvent.REMOVE | ChangeEvent.REMOVE_MANY)) != 0) {
+				update(target, model, changeEvent);
+			}
 		}
 	};
 

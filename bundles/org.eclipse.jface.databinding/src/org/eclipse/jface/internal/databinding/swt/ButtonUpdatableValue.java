@@ -56,7 +56,7 @@ public class ButtonUpdatableValue extends UpdatableValue {
 		runnable.runOn(button.getDisplay());
 	}
 
-	public Object getValue() {
+	public Object computeValue() {
 		SyncRunnable runnable = new SyncRunnable(){
 			public Object run(){
 				return new Boolean(button.getSelection());				

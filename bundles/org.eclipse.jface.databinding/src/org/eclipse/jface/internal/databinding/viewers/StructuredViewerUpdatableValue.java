@@ -47,7 +47,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 			viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
 					if (!updating) {
-						fireChangeEvent(ChangeEvent.CHANGE, null, getValue());
+						fireChangeEvent(ChangeEvent.CHANGE, null, computeValue());
 					}
 				}
 			});
@@ -63,10 +63,10 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 				try {
 					updating = true;
 					if (attribute.equals(ViewersProperties.SINGLE_SELECTION)) {
-						Object oldValue= getValue();
+						Object oldValue= computeValue();
 						viewer.setSelection(value == null ? StructuredSelection.EMPTY
 								: new StructuredSelection(value));
-						fireChangeEvent(ChangeEvent.CHANGE, oldValue, getValue());
+						fireChangeEvent(ChangeEvent.CHANGE, oldValue, computeValue());
 					}
 				} finally {
 					updating = false;
@@ -76,7 +76,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 		runnable.runOn(viewer.getControl().getDisplay());
 	}
 
-	public Object getValue() {
+	public Object computeValue() {
 		SyncRunnable runnable = new SyncRunnable(){
 			public Object run(){
 				if (attribute.equals(ViewersProperties.SINGLE_SELECTION)) {

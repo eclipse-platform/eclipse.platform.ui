@@ -27,13 +27,7 @@ import java.util.List;
  * @since 3.2
  * 
  */
-public interface IUpdatableCollection extends IUpdatable {
-
-	/**
-	 * @return the size
-	 */
-	public int getSize();
-
+public interface IUpdatableCollection extends IReadableList, IUpdatable {
 	/**
 	 * @param value
 	 * @param index
@@ -52,12 +46,6 @@ public interface IUpdatableCollection extends IUpdatable {
 	 * @param value
 	 */
 	public void setElement(int index, Object value);
-
-	/**
-	 * @param index
-	 * @return the element at the given index
-	 */
-	public Object getElement(int index);
 
 	/**
 	 * @return the element type

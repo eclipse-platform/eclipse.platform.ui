@@ -18,7 +18,7 @@ import java.util.Map;
 
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableTree;
-import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.WritableUpdatable;
 import org.eclipse.jface.internal.databinding.swt.AsyncRunnable;
 import org.eclipse.jface.internal.databinding.swt.SyncRunnable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  */
 //TODO Thread safe
-public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree {
+public class TreeViewerUpdatableTree extends WritableUpdatable implements IUpdatableTree {
 			
 	protected TreeViewer viewer;
 	

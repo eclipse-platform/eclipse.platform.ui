@@ -95,7 +95,7 @@ public class CComboUpdatableValue extends UpdatableValue {
 		runnable.runOn(ccombo.getDisplay());
 	}
 
-	public Object getValue() {
+	public Object computeValue() {
 		SyncRunnable runnable = new SyncRunnable() {
 			public Object run() {
 				if (attribute.equals(SWTProperties.TEXT)) 

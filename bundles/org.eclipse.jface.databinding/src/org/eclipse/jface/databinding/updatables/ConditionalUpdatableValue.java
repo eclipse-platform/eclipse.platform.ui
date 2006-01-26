@@ -34,7 +34,9 @@ public abstract class ConditionalUpdatableValue extends UpdatableValue {
 
 	IChangeListener changeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
-			fireChangeEvent(ChangeEvent.CHANGE, null, null);
+			if (changeEvent.getChangeType() == ChangeEvent.CHANGE) {
+				fireChangeEvent(ChangeEvent.CHANGE, null, null);
+			}
 		}
 	};
 
@@ -63,7 +65,7 @@ public abstract class ConditionalUpdatableValue extends UpdatableValue {
 		throw new UnsupportedOperationException();
 	}
 
-	public Object getValue() {
+	public Object computeValue() {
 		Object[] currentValues = new Object[innerUpdatableValues.length];
 		for (int i = 0; i < currentValues.length; i++) {
 			currentValues[i] = innerUpdatableValues[i].getValue();

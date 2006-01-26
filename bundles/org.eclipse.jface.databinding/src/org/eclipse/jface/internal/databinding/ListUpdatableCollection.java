@@ -33,7 +33,7 @@ public class ListUpdatableCollection extends UpdatableCollection {
 		this.elements = elements;
 	}
 
-	public int getSize() {
+	public int computeSize() {
 		return elements.size();
 	}
 
@@ -68,7 +68,7 @@ public class ListUpdatableCollection extends UpdatableCollection {
 		}
 	}
 
-	public Object getElement(int index) {
+	public Object computeElement(int index) {
 		return elements.get(index);
 	}
 

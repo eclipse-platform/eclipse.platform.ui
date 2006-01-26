@@ -84,7 +84,7 @@ public class ListUpdatableValue extends UpdatableValue {
 		fireChangeEvent(ChangeEvent.CHANGE, oldValue, value);
 	}
 
-	public Object getValue() {
+	public Object computeValue() {
 		Assert.isTrue(attribute.equals(SWTProperties.SELECTION),
 				"unexpected attribute" + attribute); //$NON-NLS-1$
 		int index = list.getSelectionIndex();

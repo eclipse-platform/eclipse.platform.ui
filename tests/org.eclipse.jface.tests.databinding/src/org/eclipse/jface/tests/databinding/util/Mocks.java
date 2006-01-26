@@ -19,8 +19,6 @@ import java.util.List;
 
 import junit.framework.AssertionFailedError;
 
-import org.eclipse.jface.databinding.IUpdatableValue;
-
 public class Mocks {
 
 	public static interface EqualityComparator {
@@ -287,7 +285,7 @@ public class Mocks {
 		return ((Mock) mock).getMockInvocationHandler();
 	}
 
-	public static void setLastReturnValue(IUpdatableValue mock, Object object) {
+	public static void setLastReturnValue(Object mock, Object object) {
 		getMockInvocationHandler(mock).setLastReturnValue(object);
 	}
 }

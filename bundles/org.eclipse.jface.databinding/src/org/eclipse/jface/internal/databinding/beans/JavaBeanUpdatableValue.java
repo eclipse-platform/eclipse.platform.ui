@@ -81,14 +81,14 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 	public void setValue(Object value) {
 		updating = true;
 		try {
-			Object oldValue = getValue();
+			Object oldValue = computeValue();
 			Method writeMethod = propertyDescriptor.getWriteMethod();
 			if (!writeMethod.isAccessible()) {
 				writeMethod.setAccessible(true);
 			}
 			writeMethod.invoke(object,
 					new Object[] { value });
-			fireChangeEvent(ChangeEvent.CHANGE, oldValue, getValue());
+			fireChangeEvent(ChangeEvent.CHANGE, oldValue, computeValue());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -96,7 +96,7 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 		}
 	}
 
-	public Object getValue() {
+	public Object computeValue() {
 		try {
 			Method readMethod = propertyDescriptor.getReadMethod();
 			if (readMethod == null) {

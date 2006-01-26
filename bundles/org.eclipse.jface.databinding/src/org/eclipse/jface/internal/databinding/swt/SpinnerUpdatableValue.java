@@ -83,7 +83,7 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 		runnable.runOn(spinner.getDisplay());
 	}
 
-	public Object getValue() {
+	public Object computeValue() {
 		SyncRunnable runnable = new SyncRunnable(){
 			public Object run(){
 				int value = 0;

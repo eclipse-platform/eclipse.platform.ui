@@ -130,7 +130,7 @@ public class JavaBeanUpdatableCollection extends UpdatableCollection {
 		collectionListenSupport.dispose();
 	}
 
-	public int getSize() {
+	public int computeSize() {
 		return getValues().length;
 	}
 
@@ -212,7 +212,7 @@ public class JavaBeanUpdatableCollection extends UpdatableCollection {
 		}
 	}
 
-	public Object getElement(int index) {
+	public Object computeElement(int index) {
 		return getValues()[index];
 	}
 

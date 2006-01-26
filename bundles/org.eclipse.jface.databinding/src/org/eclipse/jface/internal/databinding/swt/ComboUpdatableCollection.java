@@ -57,19 +57,19 @@ public class ComboUpdatableCollection extends SelectionAwareUpdatableCollection 
 			throw new IllegalArgumentException();
 	}
 
-	public int getSize() {
+	public int computeSize() {
 		return combo.getItemCount();
 	}
 
 	public int addElement(Object value, int index) {
 		updating=true;		
 		try {
-			if (index<0 || index>getSize())
-				index=getSize();
-			String[] newItems = new String[getSize()+1];			
+			if (index<0 || index>computeSize())
+				index=computeSize();
+			String[] newItems = new String[computeSize()+1];			
 			System.arraycopy(combo.getItems(), 0, newItems,0, index);
 			newItems[index]=(String)value;
-			System.arraycopy(combo.getItems(), index, newItems,index+1, getSize()-index);
+			System.arraycopy(combo.getItems(), index, newItems,index+1, computeSize()-index);
 			combo.setItems(newItems);
 			fireChangeEvent(ChangeEvent.ADD, null, value, index);
 		}
@@ -82,16 +82,16 @@ public class ComboUpdatableCollection extends SelectionAwareUpdatableCollection 
 	public void removeElement(int index) {
 		updating=true;		
 		try {
-			if (index<0 || index > getSize() - 1)
+			if (index<0 || index > computeSize() - 1)
 				throw new BindingException("Request to remove an element out of the collection bounds"); //$NON-NLS-1$
 
-			String[] newItems = new String[getSize()-1];
+			String[] newItems = new String[computeSize()-1];
 			String old = combo.getItem(index);
 			System.arraycopy(combo.getItems(), 0, newItems,0, index);
 			if (newItems.length > 0) {
 				System.arraycopy(combo.getItems(), 0, newItems,0, index);
-				if (getSize() - 1 > index) {
-					System.arraycopy(combo.getItems(), index + 1, newItems, index, getSize() - index - 1);
+				if (computeSize() - 1 > index) {
+					System.arraycopy(combo.getItems(), index + 1, newItems, index, computeSize() - index - 1);
 				}
 			}
 			combo.setItems(newItems);
@@ -108,7 +108,7 @@ public class ComboUpdatableCollection extends SelectionAwareUpdatableCollection 
 		fireChangeEvent(ChangeEvent.CHANGE, old, value, index);
 	}
 
-	public Object getElement(int index) {
+	public Object computeElement(int index) {
 		return combo.getItem(index);
 	}
 

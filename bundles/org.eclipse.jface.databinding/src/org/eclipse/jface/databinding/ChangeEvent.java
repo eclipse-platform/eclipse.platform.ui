@@ -45,21 +45,21 @@ public class ChangeEvent extends EventObject  {
 	 * added or removed, or if the position of the changed, added or removed
 	 * element is not known.
 	 */
-	public static final int CHANGE = 1;
+	public static final int CHANGE = 1<<0;
 
 	/**
 	 * Change type constant denoting an addition of an element to a list. The
 	 * added element will be returned by getNewValue(), and the position of the
 	 * added element will be returned by getPosition().
 	 */
-	public static final int ADD = 2;
+	public static final int ADD = 1<<1;
 
 	/**
 	 * Change type constant denoting a removal of an element from a list. The
 	 * removed element will be returned by getOldValue(), and the position of
 	 * the removed element before the removal will be returned by getPosition().
 	 */
-	public static final int REMOVE = 3;
+	public static final int REMOVE = 1<<2;
 
 	/**
 	 * Change type constant used to inform listeners about a pending change that
@@ -70,21 +70,69 @@ public class ChangeEvent extends EventObject  {
 	 * TODO turn this into flags, so that we can
 	 * express pre-add etc.
 	 */
-	public static final int VERIFY = 4;
+	public static final int VERIFY = 1<<3;
 	
 	/**
 	 * Change type constant denoting a complete replacement of a list. The
 	 * added list will be returned by getNewValue(), and the position of the
 	 * added element will be returned by getPosition().
 	 */	
-	public static final int REPLACE = 5;
+	public static final int REPLACE = 1<<4;
 		
 	/**
 	 * Change type constant that is used to inform a listener that a virtual data is being
 	 * requested.
 	 */
-	public static final int VIRTUAL = 6;
+	public static final int VIRTUAL = 1<<5;
 
+	/**
+	 * Change type constant indicating that the result of the updatable's stale state
+	 * has changed. That is, asynchronous processing for this updatable has started or
+	 * finished. The getNewValue() method returns Boolean.TRUE if the updatable has
+	 * become stale and Boolean.FALSE if the updatable is no longer stale.
+	 */
+	public static final int STALE = 1<<6;
+	
+	/**
+	 * Change type constant indicating that the updatable's value has changed since
+	 * the last time one of its getters was called. The change event does not contain
+	 * any information about what changed. getNewValue() and getOldValue() will return
+	 * null. In order to determine what changed, the reciever must query the original
+	 * object. Once the dirty event is fired, the updatable will remain dirty until
+	 * a getter is called. This event is only fired when the object first becomes dirty.
+	 * If a dirty updatable changes again before a getter is called, this event will not
+	 * be fired a second time. 
+	 * 
+	 */
+	public static final int DIRTY = 1<<7;
+	
+	/**
+	 * Change type indicating the addition of one or more elements. Fired by <code>IReadableSet</code>. 
+	 * The new value will be of type Collection. The old value will be null.
+	 * The position will be POSITION_UNKNOWN.
+	 */
+	public static final int ADD_MANY = 1<<8;
+
+	/**
+	 * Change type indicating the addition of many elements. Fired by <code>IReadableSet</code>. 
+	 * The new value will be of type Collection. The old value will be null.
+	 * The position will be POSITION_UNKNOWN.
+	 */
+	public static final int REMOVE_MANY = 1<<9;
+	
+	/**
+	 * Change type indicating that the result of an IUpdatableFunction has 
+	 * changed for one or more domain objects. getNewValue()
+	 * contains a Collection of domain objects for which the function value has
+	 * changed.
+	 */
+	public static final int FUNCTION_CHANGED = 1<<10;
+	
+	/**
+	 * Change type indicating that the IUpdatable has been disposed.
+	 */
+	public static final int DISPOSED = 1<<11;
+	
 	/**
 	 * 
 	 */
@@ -92,15 +140,15 @@ public class ChangeEvent extends EventObject  {
 
 	private final int changeType;
 
-	private final Object oldValue;
+	/* package */ Object oldValue;
 
-	private final Object newValue;
+	/* package */ Object newValue;
 	
 	private final Object parent;
 
 	private final int position;
 
-	private boolean vetoed = false;
+	/* package */ boolean vetoed = false;
 
 	/**
 	 * @param source

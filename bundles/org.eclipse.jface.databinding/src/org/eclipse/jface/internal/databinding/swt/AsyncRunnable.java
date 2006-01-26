@@ -25,7 +25,8 @@ public abstract class AsyncRunnable implements Runnable {
 		if(aDisplay == Display.getCurrent()){
 			run();
 		} else {
-			aDisplay.asyncExec(this);
+			// Use greedyExec rather than asyncExec to reduce flicker
+			SWTUtil.greedyExec(aDisplay, this);
 		}		
 	}
 }

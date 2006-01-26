@@ -12,7 +12,7 @@
  *  Created Oct 21, 2005 by Gili Mendel
  * 
  *  $RCSfile: UpdatableFactoriesTest.java,v $
- *  $Revision: 1.4 $  $Date: 2005/11/15 19:11:42 $ 
+ *  $Revision: 1.5 $  $Date: 2005/11/21 16:07:44 $ 
  */
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -68,7 +68,15 @@ public class UpdatableFactoriesTest extends ScenariosTestCase {
 				return new TestIUpdatable() {
 					public void dispose() {
 					}
-
+ 
+					public boolean isDisposed() {
+						return false;
+					}
+					
+					public boolean isStale() {
+						return false;
+					}
+					
 					public void removeChangeListener(
 							IChangeListener changeListener) {
 					}

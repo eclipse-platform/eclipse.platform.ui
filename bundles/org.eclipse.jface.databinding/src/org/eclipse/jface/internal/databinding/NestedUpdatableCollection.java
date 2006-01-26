@@ -64,8 +64,10 @@ public class NestedUpdatableCollection extends UpdatableCollection {
 		updateInnerUpdatableValue(outerUpdatableValue);
 		IChangeListener outerChangeListener = new IChangeListener() {
 			public void handleChange(ChangeEvent changeEvent) {
-				updateInnerUpdatableValue(outerUpdatableValue);
-				fireChangeEvent(ChangeEvent.CHANGE, null, null);
+				if ((changeEvent.getChangeType() &  (ChangeEvent.CHANGE | ChangeEvent.ADD | ChangeEvent.ADD_MANY | ChangeEvent.REMOVE | ChangeEvent.REMOVE_MANY)) != 0) {
+					updateInnerUpdatableValue(outerUpdatableValue);
+					fireChangeEvent(ChangeEvent.CHANGE, null, null);
+				}
 			}
 		};
 		outerUpdatableValue.addChangeListener(outerChangeListener);
@@ -119,7 +121,7 @@ public class NestedUpdatableCollection extends UpdatableCollection {
 		innerChangeListener = null;
 	}
 
-	public int getSize() {
+	public int computeSize() {
 		return innerUpdatableCollection == null ? 0 : innerUpdatableCollection
 				.getSize();
 	}
@@ -136,7 +138,7 @@ public class NestedUpdatableCollection extends UpdatableCollection {
 		innerUpdatableCollection.setElement(index, value);
 	}
 
-	public Object getElement(int index) {
+	public Object computeElement(int index) {
 		return innerUpdatableCollection.getElement(index);
 	}
 

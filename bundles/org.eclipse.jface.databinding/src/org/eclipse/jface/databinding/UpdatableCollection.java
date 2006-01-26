@@ -10,12 +10,20 @@ import java.util.List;
  * 
  * @since 3.2
  */
-public abstract class UpdatableCollection extends Updatable implements IUpdatableCollection {
+public abstract class UpdatableCollection extends WritableUpdatable implements IUpdatableCollection {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.IUpdatableCollection#getSize()
 	 */
-	public abstract int getSize();
+	public final int getSize() {
+		UpdatableTracker.getterCalled(this);
+		return computeSize();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.IUpdatableCollection#getSize()
+	 */
+	protected abstract int computeSize();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.IUpdatableCollection#addElement(java.lang.Object, int)
@@ -35,7 +43,16 @@ public abstract class UpdatableCollection extends Updatable implements IUpdatabl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.IUpdatableCollection#getElement(int)
 	 */
-	public abstract Object getElement(int index);
+	public final Object getElement(int index) {
+		UpdatableTracker.getterCalled(this);
+		
+		return computeElement(index);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.IUpdatableCollection#getElement(int)
+	 */
+	protected abstract Object computeElement(int index);
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.IUpdatableCollection#getElementType()

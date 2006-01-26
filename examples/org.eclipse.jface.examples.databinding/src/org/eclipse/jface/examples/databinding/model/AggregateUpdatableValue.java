@@ -27,7 +27,7 @@ public class AggregateUpdatableValue extends UpdatableValue {
 
 	private IChangeListener listener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
-			if (!updating) 
+			if (!updating && changeEvent.getChangeType() == ChangeEvent.CHANGE) 
 			   fireChangeEvent(ChangeEvent.CHANGE, null, null);
 		}
 	};
@@ -42,7 +42,7 @@ public class AggregateUpdatableValue extends UpdatableValue {
 	}
 
 	public void setValue(Object value) {
-		Object oldValue = getValue();
+		Object oldValue = computeValue();
 		StringTokenizer tokenizer = new StringTokenizer((String) value,
 				delimiter);
 		try {
@@ -58,10 +58,10 @@ public class AggregateUpdatableValue extends UpdatableValue {
 		} finally {
 			updating = false;
 		}
-		fireChangeEvent(ChangeEvent.CHANGE, oldValue, getValue());
+		fireChangeEvent(ChangeEvent.CHANGE, oldValue, computeValue());
 	}
 
-	public Object getValue() {
+	public Object computeValue() {
 		StringBuffer result = new StringBuffer();
 		for (int i = 0; i < updatableValues.length; i++) {
 			if (i > 0 & i < updatableValues.length) {

@@ -113,12 +113,6 @@ public interface ITree  {
 	public Object[] getChildren(Object parentElement);
 	
 	/**
-	 * @param parentElement or <code>null</code> for root elements
-	 * @param children
-	 */
-	public void setChildren(Object parentElement, Object[] children);
-
-	/**
 	 * Returns whether the given element has children.
 	 *
 	 * @param element the element
@@ -146,10 +140,9 @@ public interface ITree  {
      */
     public void dispose();
 
-	
 	/**
-	 * @return types of all tree nodes that are expected on this tree.
+	 * @param parentElement or <code>null</code> for root elements
+	 * @param children
 	 */
-	public Class[] getTypes();
-
+	public void setChildren(Object parentElement, Object[] children);
 }

@@ -39,7 +39,7 @@ public class SettableValue extends UpdatableValue {
 	 * @param type
 	 * @param initialValue
 	 */
-	public SettableValue(Class type, String initialValue) {
+	public SettableValue(Class type, Object initialValue) {
 		this.type = type;
 		value = initialValue;
 	}
@@ -60,7 +60,7 @@ public class SettableValue extends UpdatableValue {
 		fireChangeEvent(ChangeEvent.CHANGE, oldValue, value);
 	}
 
-	public Object getValue() {
+	public Object computeValue() {
 		return value;
 	}
 

@@ -60,7 +60,7 @@ public class SelectionAwareUpdatableCollectionTest extends TestCase {
 			return index;
 		}
 
-		public Object getElement(int index) {
+		public Object computeElement(int index) {
 			return elements.get(index);
 		}
 
@@ -68,7 +68,7 @@ public class SelectionAwareUpdatableCollectionTest extends TestCase {
 			return Object.class;
 		}
 
-		public int getSize() {
+		public int computeSize() {
 			return elements.size();
 		}
 

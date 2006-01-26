@@ -14,7 +14,7 @@ import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.ITree;
 import org.eclipse.jface.databinding.IUpdatableTree;
-import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.WritableUpdatable;
 
 
 
@@ -22,10 +22,9 @@ import org.eclipse.jface.databinding.Updatable;
  * @since 3.2
  *
  */
-public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
+public class JavaBeanUpdatableTree extends WritableUpdatable implements IUpdatableTree {
 	
 	private ITree tree;
-	private Class[] classTypes;
 	
 	private boolean updating=false;
 
@@ -49,7 +48,6 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 	 */
 	public JavaBeanUpdatableTree (ITree tree)  {
 		this.tree = tree;	
-		this.classTypes = tree.getTypes();
 		tree.addTreeChangeListener(treeListener);	
 	}
 		
@@ -142,13 +140,6 @@ public class JavaBeanUpdatableTree extends Updatable implements IUpdatableTree {
 		tree.removeTreeChangeListener(treeListener);
 		tree.dispose();
 	}
-
-	public Class[] getTypes() {
-		return classTypes;
-	}
-
-
-
 
 
 }

@@ -107,7 +107,7 @@ public class CopyOfJavaBeanUpdatableCollection extends UpdatableCollection {
 		return (Object[])objectUpdatable.getValue();
 	}
 
-	public int getSize() {
+	public int computeSize() {
 		if (descriptor.getPropertyType().isArray()) {
 			return array().length;
 		}
@@ -182,7 +182,7 @@ public class CopyOfJavaBeanUpdatableCollection extends UpdatableCollection {
 		}
 	}
 
-	public Object getElement(int index) {
+	public Object computeElement(int index) {
 		if (descriptor.getPropertyType().isArray()) {
 			return array()[index];
 		}

@@ -134,7 +134,7 @@ public class TextUpdatableValue extends UpdatableValue {
 		runnable.runOn(text.getDisplay());
 	}
 
-	public Object getValue() {
+	public Object computeValue() {
 		SyncRunnable runnable = new SyncRunnable(){
 			public Object run() {
 				return text.getText();

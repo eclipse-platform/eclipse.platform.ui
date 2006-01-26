@@ -25,7 +25,7 @@ package org.eclipse.jface.databinding;
 public interface IUpdatableTree extends IUpdatable {
 
 	/**
-\	 * 
+	 * 
 	 * @param parentElement <code>null</code> for root element
 	 * @param value is the new tree element as a child of parentElement
 	 * @param index
@@ -63,13 +63,6 @@ public interface IUpdatableTree extends IUpdatable {
 	 * @param parentElement <code>null</code> for root element
 	 * @return children elements of parentElement
 	 */
-	public Object[] getElements(Object parentElement);
-
-	/**
-	 * 
-	 * @return the potential types of tree elements
-	 */
-	public Class[] getTypes();			
-	
+	public Object[] getElements(Object parentElement);		
 	
 }

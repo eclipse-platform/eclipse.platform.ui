@@ -18,14 +18,14 @@ import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.IUpdatableTree;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.TreeModelDescription;
-import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.WritableUpdatable;
 import org.eclipse.jface.util.Assert;
 
 /**
  * @since 3.2
  *
  */
-public class NestedUpdatableTree extends Updatable implements IUpdatableTree {
+public class NestedUpdatableTree extends WritableUpdatable implements IUpdatableTree {
 	
 	private IDataBindingContext  databindingContext;
 	private TreeModelDescription originalDescription;
@@ -60,9 +60,11 @@ public class NestedUpdatableTree extends Updatable implements IUpdatableTree {
 		updateInnerUpdatableValue(outerUpdatableValue);
 		IChangeListener outerChangeListener = new IChangeListener() {
 			public void handleChange(ChangeEvent changeEvent) {
-				Object[] old = getElements(null);
-				updateInnerUpdatableValue(outerUpdatableValue);				
-				fireChangeEvent(ChangeEvent.REPLACE, old, getElements(null), null, -1); 
+				if ((changeEvent.getChangeType() &  (ChangeEvent.CHANGE | ChangeEvent.REPLACE | ChangeEvent.VIRTUAL)) != 0) {
+					Object[] old = getElements(null);
+					updateInnerUpdatableValue(outerUpdatableValue);				
+					fireChangeEvent(ChangeEvent.REPLACE, old, getElements(null), null, -1); 
+				}
 			}
 		};
 		outerUpdatableValue.addChangeListener(outerChangeListener);
@@ -127,10 +129,6 @@ public class NestedUpdatableTree extends Updatable implements IUpdatableTree {
 
 	public Object[] getElements(Object parentElement) {
 		return innerUpdatableTree.getElements(parentElement);
-	}
-
-	public Class[] getTypes() {
-		return innerUpdatableTree.getTypes();
 	}
 
 }

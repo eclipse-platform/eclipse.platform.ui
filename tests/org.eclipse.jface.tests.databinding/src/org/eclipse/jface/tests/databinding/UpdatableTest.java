@@ -17,7 +17,7 @@ import org.eclipse.jface.tests.databinding.util.Mocks;
 
 public class UpdatableTest extends TestCase {
 
-	private static class MyUpdatable extends Updatable {
+	private static class MyUpdatable extends WritableUpdatable {
 		public void fireChange(int changeType, Object oldValue,
 				Object newValue, int position) {
 			fireChangeEvent(changeType, oldValue, newValue, position);
@@ -76,6 +76,11 @@ public class UpdatableTest extends TestCase {
 		updatable.addChangeListener(changeListenerMock);
 		updatable.fireChange(0, null, null, 0);
 		Mocks.verify(changeListenerMock);
+		
+		// dispose() will call another handleChange.  Prevent this from causing a test failure
+		Mocks.reset(changeListenerMock);
+		changeListenerMock.handleChange(null);
+		Mocks.startChecking(changeListenerMock);
 	}
 
 	/*
@@ -139,6 +144,11 @@ public class UpdatableTest extends TestCase {
 		updatable.fireChange(ChangeEvent.CHANGE, o1, o2);
 		updatable.fireChange(ChangeEvent.CHANGE, o1, o2, 42);
 		Mocks.verify(changeListenerMock);
+
+		// dispose() will call another handleChange.  Prevent this from causing a test failure
+		Mocks.reset(changeListenerMock);
+		changeListenerMock.handleChange(null);
+		Mocks.startChecking(changeListenerMock);
 	}
 
 }

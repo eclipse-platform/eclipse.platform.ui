@@ -40,7 +40,7 @@ public class SettableList extends UpdatableCollection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.UpdatableCollection#getSize()
 	 */
-	public int getSize() {
+	public int computeSize() {
 		return list.size();
 	}
 
@@ -72,7 +72,7 @@ public class SettableList extends UpdatableCollection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.UpdatableCollection#getElement(int)
 	 */
-	public Object getElement(int index) {
+	public Object computeElement(int index) {
 		return list.get(index);
 	}
 

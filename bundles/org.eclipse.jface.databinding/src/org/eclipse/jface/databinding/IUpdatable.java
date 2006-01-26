@@ -15,7 +15,7 @@ package org.eclipse.jface.databinding;
  * 
  * <p>
  * This interface is not intended to be implemented by clients. Instead,
- * create a subclass of the abstract base class {@link Updatable}.
+ * create a subclass of the abstract base class {@link WritableUpdatable}.
  * </p>
  * 
  * <p>
@@ -27,31 +27,19 @@ package org.eclipse.jface.databinding;
  * 
  * @since 3.2
  */
-public interface IUpdatable {
-
-	/**
-	 * Add the given change listener to this updatable. Has no effect if an
-	 * identical listener is already registered.
-	 * <p>
-	 * Change listeners are informed about state changes that affect the value
-	 * or structure of this updatable object.
-	 * </p>
-	 * 
-	 * @param changeListener
-	 */
-	public void addChangeListener(IChangeListener changeListener);
-
-	/**
-	 * Removes a change listener from this updatable. Has no effect if an
-	 * identical listener is not registered.
-	 * @param changeListener 
-	 */
-	public void removeChangeListener(IChangeListener changeListener);
-
+public interface IUpdatable extends IReadable {
+	
 	/**
 	 * Disposes of this updatable. This removes all remaining change listeners
 	 * from this updatable, and deregisters any listeners this updatable object
 	 * has registered on other (UI or model) objects.
 	 */
 	public void dispose();
+	
+	/**
+	 * Returns true iff the updatable has been disposed.
+	 * 
+	 * @return true iff the updatable has been disposed
+	 */
+	public boolean isDisposed();
 }

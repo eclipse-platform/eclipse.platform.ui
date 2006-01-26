@@ -58,7 +58,7 @@ public class UpdatableCollectionViewer extends SelectionAwareUpdatableCollection
 		viewer.setInput(this);
 	}
 
-	public int getSize() {
+	public int computeSize() {
 		return elements.size();
 	}
 
@@ -116,7 +116,7 @@ public class UpdatableCollectionViewer extends SelectionAwareUpdatableCollection
 					viewer.update(element, null);
 					old = element;
 				} else {
-					old = getElement(index);
+					old = computeElement(index);
 					removeElement(index);
 					addElement(element, index);
 				}
@@ -127,7 +127,7 @@ public class UpdatableCollectionViewer extends SelectionAwareUpdatableCollection
 		}
 	}
 
-	public Object getElement(int index) {
+	public Object computeElement(int index) {
 		return elements.get(index);
 	}
 

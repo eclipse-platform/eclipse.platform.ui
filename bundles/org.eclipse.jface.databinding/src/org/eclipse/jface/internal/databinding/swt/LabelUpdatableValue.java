@@ -40,7 +40,7 @@ public class LabelUpdatableValue extends UpdatableValue {
 		runnable.runOn(label.getDisplay());
 	}
  
-	public Object getValue() {
+	public Object computeValue() {
 		
 		SyncRunnable runnable = new SyncRunnable(){
 			public Object run(){

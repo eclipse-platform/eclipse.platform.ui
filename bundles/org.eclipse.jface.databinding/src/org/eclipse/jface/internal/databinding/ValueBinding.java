@@ -81,7 +81,7 @@ public class ValueBinding extends Binding {
 				if (partialValidationError != null) {
 					changeEvent.setVeto(true);
 				}
-			} else {
+			} else if (changeEvent.getChangeType() == ChangeEvent.CHANGE) {
 				// the target (usually a widget) has changed, validate
 				// the value and update the source
 				updateModelFromTarget(changeEvent);
@@ -95,7 +95,7 @@ public class ValueBinding extends Binding {
 				return;
 			// The model has changed so we must update the target
 			if (changeEvent.getChangeType() == ChangeEvent.VERIFY) {
-			} else {
+			} else if (changeEvent.getChangeType() == ChangeEvent.CHANGE) {
 				updateTargetFromModel(changeEvent);
 			}
 		}

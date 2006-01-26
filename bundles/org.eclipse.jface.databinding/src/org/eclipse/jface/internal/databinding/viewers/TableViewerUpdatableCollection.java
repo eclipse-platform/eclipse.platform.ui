@@ -55,7 +55,7 @@ public class TableViewerUpdatableCollection extends SelectionAwareUpdatableColle
 		});
 	}
 
-	public int getSize() {
+	public int computeSize() {
 		return elements.size();
 	}
 	
@@ -120,7 +120,7 @@ public class TableViewerUpdatableCollection extends SelectionAwareUpdatableColle
 		runnable.runOn(viewer.getControl().getDisplay());
 	}
 
-	public Object getElement(final int index) {
+	public Object computeElement(final int index) {
 		SyncRunnable runnable = new SyncRunnable(){
 			public Object run(){
 				return elements.get(index);
