@@ -148,6 +148,12 @@ public interface IInternalDebugUIConstants {
     public static final String PREF_FILTER_TYPE_LIST = IDebugUIConstants.PLUGIN_ID + ".PREF_FILTER_TYPE_LIST"; //$NON-NLS-1$
     
     /**
+     * Preference for filtering launch configurations based on the currently active working sets
+     * @since 3.2
+     */
+    public static final String PREF_FILTER_WORKING_SETS = IDebugUIConstants.PLUGIN_ID + ".PREF_FILTER_WORKING_SETS"; //$NON-NLS-1$
+    
+    /**
      * Preference for using step filters.
      * 
      * @since 3.0

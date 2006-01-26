@@ -35,19 +35,19 @@ import org.eclipse.swt.widgets.MenuItem;
 public class FilterDropDownMenuCreator implements IMenuCreator {
 
 	/**
-	 * Class to describe a filtering action
+	 * Provides wrapper action for filtering actions on the launch configuration dialog
 	 * @since 3.2
 	 */
-	private class FilterAction extends Action {
+	class FilterAction extends Action {
 		
 		/** The preference store. */
-		private IPreferenceStore fStore;
+		private IPreferenceStore fStore = null;
 
 		/** The preference key for the value in the store. */
-		private String fKey;
+		private String fKey = null;
 		
 		/**
-		 * Constructor
+		 * Constructor for check style menu items
 		 * @param store the pref store
 		 * @param name the name of the action
 		 * @param key the pref key it is tied to
@@ -57,7 +57,28 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 			fStore = store;
 			fKey = key;
 			setChecked(fStore.getBoolean(fKey));
-			ActionContributionItem item = new ActionContributionItem(this);
+			fillIntoMenu(menu, this);
+		}
+		
+		/**
+		 * Constructor for flyout menu style actions
+		 * @param menu the parent menu
+		 * @param name the text of the action
+		 * @param creator the menu creator for this action
+		 */
+		public FilterAction(Menu menu, String name, IMenuCreator creator) {
+			super(name, IAction.AS_DROP_DOWN_MENU);
+			setMenuCreator(creator);
+			fillIntoMenu(menu, this);
+		}
+		
+		/**
+		 * fills the new action into the specified menu
+		 * @param menu the parent menu
+		 * @param action the new aciton to fill in to the parent
+		 */
+		private void fillIntoMenu(Menu menu, IAction action) {
+			ActionContributionItem item = new ActionContributionItem(action);
 			item.fill(menu, -1);
 		}
 		
@@ -65,7 +86,9 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
 		public void run() {
-			fStore.setValue(fKey, isChecked());
+			if(fStore != null) {
+				fStore.setValue(fKey, isChecked());
+			}
 		}
 	}
 	
@@ -101,9 +124,11 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 		new FilterAction(fCreatedMenu, getDebugPrefStore(), LaunchConfigurationsMessages.FilterDropDownMenuCreator_0, IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED);
 		new FilterAction(fCreatedMenu, getDebugPrefStore(), LaunchConfigurationsMessages.FilterDropDownMenuCreator_1, IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED);
 		new FilterAction(fCreatedMenu, getDebugPrefStore(), LaunchConfigurationsMessages.FilterDropDownMenuCreator_2, IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES);
+		new FilterAction(fCreatedMenu, getDebugPrefStore(), LaunchConfigurationsMessages.FilterDropDownMenuCreator_4, IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS);
+		
 		//add separator
 		new MenuItem(fCreatedMenu, SWT.SEPARATOR);
-		
+	
 		//add pref action
 		IAction action = new Action(LaunchConfigurationsMessages.FilterDropDownMenuCreator_3) {
 			public void run() {

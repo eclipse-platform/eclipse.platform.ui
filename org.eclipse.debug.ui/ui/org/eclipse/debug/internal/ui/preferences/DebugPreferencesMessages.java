@@ -128,6 +128,8 @@ public class DebugPreferencesMessages extends NLS {
 	public static String PerspectivePreferencePage_8;
 
 	public static String LaunchConfigurationsPreferencePage_2;
+
+	public static String LaunchConfigurationsPreferencePage_3;
 	
 	
 

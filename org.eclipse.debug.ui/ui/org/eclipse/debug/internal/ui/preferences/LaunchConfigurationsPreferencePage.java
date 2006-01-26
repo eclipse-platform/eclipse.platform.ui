@@ -150,6 +150,8 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		fFieldEditors.add(edit);
 		edit = new BooleanFieldEditor(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED, DebugPreferencesMessages.LaunchingPreferencePage_34, SWT.NONE, spacer);
 		fFieldEditors.add(edit);
+		edit = new BooleanFieldEditor(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS, DebugPreferencesMessages.LaunchConfigurationsPreferencePage_3, SWT.NONE, spacer);
+		fFieldEditors.add(edit);
 		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, DebugPreferencesMessages.LaunchConfigurationsPreferencePage_2, 3,  
 				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_3, MessageDialogWithToggle.ALWAYS}, 
 				 {DebugPreferencesMessages.LaunchingPreferencePage_4, MessageDialogWithToggle.NEVER},

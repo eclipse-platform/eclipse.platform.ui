@@ -271,6 +271,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private ClosedProjectFilter fClosedProjectFilter;
 	private DeletedProjectFilter fDeletedProjectFilter;
 	private LaunchConfigurationTypeFilter fLCTFilter;
+	private WorkingSetsFilter fWorkingSetsFilter;
 	
 	
 	/**
@@ -670,6 +671,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		fLCTFilter = new LaunchConfigurationTypeFilter();
 		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES)) {
 			((StructuredViewer)viewer).addFilter(fLCTFilter);
+		}
+		fWorkingSetsFilter = new WorkingSetsFilter();
+		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS)) {
+			((StructuredViewer)viewer).addFilter(fWorkingSetsFilter);
 		}
 		
 		Control control = viewer.getControl();
@@ -1804,6 +1809,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 					}
 					else {
 						viewer.removeFilter(fLCTFilter);
+					}
+				}
+				else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS)) {
+					if(newvalue) {
+						viewer.addFilter(fWorkingSetsFilter);
+					}
+					else {
+						viewer.removeFilter(fWorkingSetsFilter);
 					}
 				}
 				else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_TYPE_LIST)) {

@@ -193,4 +193,6 @@ public class LaunchConfigurationsMessages extends NLS {
 
 	public static String FilterDropDownMenuCreator_3;
 
+	public static String FilterDropDownMenuCreator_4;
+
 }
