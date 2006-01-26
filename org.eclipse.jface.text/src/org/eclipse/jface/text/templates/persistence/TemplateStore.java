@@ -48,6 +48,13 @@ public class TemplateStore {
 	 * of context type should be loaded.
 	 */
 	private ContextTypeRegistry fRegistry;
+	/**
+	 * Set to <code>true</code> if property change events should be ignored (e.g. during writing
+	 * to the preference store).
+	 * 
+	 * @since 3.2
+	 */
+	private boolean fIgnoreLoad= false;
 
 
 	/**
@@ -88,9 +95,16 @@ public class TemplateStore {
 	 * @throws IOException if loading fails.
 	 */
 	public void load() throws IOException {
-		fTemplates.clear();
-		loadContributedTemplates();
-		loadCustomTemplates();
+		/*
+		 * Don't load if we are in the process of saving ourselves. We are in sync anyway after the
+		 * save operation, and clients may trigger reloading by listening to preference store
+		 * updates.
+		 */
+		if (!fIgnoreLoad) {
+			fTemplates.clear();
+			loadContributedTemplates();
+			loadCustomTemplates();
+		}
 	}
 
 	/**
@@ -140,9 +154,14 @@ public class TemplateStore {
 		TemplateReaderWriter writer= new TemplateReaderWriter();
 		writer.save((TemplatePersistenceData[]) custom.toArray(new TemplatePersistenceData[custom.size()]), output);
 
-		fPreferenceStore.setValue(fKey, output.toString());
-		if (fPreferenceStore instanceof IPersistentPreferenceStore)
-			((IPersistentPreferenceStore)fPreferenceStore).save();
+		fIgnoreLoad= true;
+		try {
+			fPreferenceStore.setValue(fKey, output.toString());
+			if (fPreferenceStore instanceof IPersistentPreferenceStore)
+				((IPersistentPreferenceStore)fPreferenceStore).save();
+		} finally {
+			fIgnoreLoad= false;
+		}
 	}
 
 	/**
