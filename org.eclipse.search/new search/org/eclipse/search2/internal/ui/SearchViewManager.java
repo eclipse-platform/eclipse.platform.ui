@@ -89,9 +89,11 @@ public class SearchViewManager {
 		if (activePage != null) {
 			try {
 				ISearchResultViewPart viewPart= findLRUSearchResultView(activePage, useForNewSearch);
-				String secondaryId;
+				String secondaryId= null;
 				if (viewPart == null) {
-					secondaryId= String.valueOf(++fViewCount);
+					if (activePage.findViewReference(NewSearchUI.SEARCH_VIEW_ID) != null) {
+						secondaryId= String.valueOf(++fViewCount); // avoid a secondary ID because of bug 125315
+					}
 				} else {
 					secondaryId= viewPart.getViewSite().getSecondaryId();
 				}
