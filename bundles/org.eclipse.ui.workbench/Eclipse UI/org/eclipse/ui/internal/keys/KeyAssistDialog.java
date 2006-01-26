@@ -33,15 +33,15 @@ import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -500,8 +500,8 @@ final class KeyAssistDialog extends PopupDialog {
 		 * If you double-click on the table, it should execute the selected
 		 * command.
 		 */
-		completionsTable.addSelectionListener(new SelectionAdapter() {
-			public final void widgetDefaultSelected(final SelectionEvent event) {
+		completionsTable.addListener(SWT.DefaultSelection, new Listener() {
+			public final void handleEvent(final Event event) {
 				executeKeyBinding(event);
 			}
 		});
@@ -531,7 +531,7 @@ final class KeyAssistDialog extends PopupDialog {
 	 * Handles the default selection event on the table of possible completions.
 	 * This attempts to execute the given command.
 	 */
-	private final void executeKeyBinding(final Object trigger) {
+	private final void executeKeyBinding(final Event trigger) {
 		// Try to execute the corresponding command.
 		final int selectionIndex = completionsTable.getSelectionIndex();
 		if (selectionIndex >= 0) {

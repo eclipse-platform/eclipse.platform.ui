@@ -13,9 +13,17 @@ package org.eclipse.ui.handlers;
 
 import java.util.Collection;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.services.IServiceWithSources;
 
 /**
@@ -149,6 +157,43 @@ public interface IHandlerService extends IServiceWithSources {
 			IHandler handler, Expression expression, int sourcePriorities);
 
 	/**
+	 * Creates an execution event based on an SWT event. This execution event
+	 * can then be passed to a command for execution.
+	 * 
+	 * @param command
+	 *            The command for which an execution event should be created;
+	 *            must not be <code>null</code>.
+	 * @param event
+	 *            The SWT event triggering the command execution; may be
+	 *            <code>null</code>.
+	 * @return An execution event suitable for calling
+	 *         {@link Command#executeWithChecks(ExecutionEvent)}.
+	 * @since 3.2
+	 * @see Command#executeWithChecks(ExecutionEvent)
+	 */
+	public ExecutionEvent createExecutionEvent(Command command, Event event);
+
+	/**
+	 * Creates a parameterized execution event based on an SWT event and a
+	 * parameterized command. This execution event can then be passed to a
+	 * command for execution.
+	 * 
+	 * @param command
+	 *            The parameterized command for which an execution event should
+	 *            be created; must not be <code>null</code>.
+	 * @param event
+	 *            The SWT event triggering the command execution; may be
+	 *            <code>null</code>.
+	 * @return An execution event suitable for calling
+	 *         {@link Command#executeWithChecks(ExecutionEvent)}.
+	 * @since 3.2
+	 * @see ParameterizedCommand#getCommand()
+	 * @see Command#executeWithChecks(ExecutionEvent)
+	 */
+	public ExecutionEvent createExecutionEvent(ParameterizedCommand command,
+			Event event);
+
+	/**
 	 * Deactivates the given handler within the context of this service. If the
 	 * handler was activated with a different service, then it must be
 	 * deactivated from that service instead. It is only possible to retract a
@@ -177,10 +222,64 @@ public interface IHandlerService extends IServiceWithSources {
 	public void deactivateHandlers(Collection activations);
 
 	/**
+	 * Executes the command with the given identifier and no parameters.
+	 * 
+	 * @param commandId
+	 *            The identifier of the command to execute; must not be
+	 *            <code>null</code>.
+	 * @param event
+	 *            The SWT event triggering the command execution; may be
+	 *            <code>null</code>.
+	 * @return The return value from the execution; may be <code>null</code>.
+	 * @throws ExecutionException
+	 *             If the handler has problems executing this command.
+	 * @throws NotDefinedException
+	 *             If the command you are trying to execute is not defined.
+	 * @throws NotEnabledException
+	 *             If the command you are trying to execute is not enabled.
+	 * @throws NotHandledException
+	 *             If there is no handler.
+	 * @since 3.2
+	 * @see Command#executeWithChecks(ExecutionEvent)
+	 */
+	public Object executeCommand(String commandId, Event event)
+			throws ExecutionException, NotDefinedException,
+			NotEnabledException, NotHandledException;
+
+	/**
+	 * Executes the given parameterized command.
+	 * 
+	 * @param command
+	 *            The parameterized command to be executed; must not be
+	 *            <code>null</code>.
+	 * @param event
+	 *            The SWT event triggering the command execution; may be
+	 *            <code>null</code>.
+	 * @return The return value from the execution; may be <code>null</code>.
+	 * @throws ExecutionException
+	 *             If the handler has problems executing this command.
+	 * @throws NotDefinedException
+	 *             If the command you are trying to execute is not defined.
+	 * @throws NotEnabledException
+	 *             If the command you are trying to execute is not enabled.
+	 * @throws NotHandledException
+	 *             If there is no handler.
+	 * @since 3.2
+	 * @see Command#executeWithChecks(ExecutionEvent)
+	 */
+	public Object executeCommand(ParameterizedCommand command, Event event)
+			throws ExecutionException, NotDefinedException,
+			NotEnabledException, NotHandledException;
+
+	/**
 	 * Returns an evaluation context representing the current state of the
-	 * world.
+	 * world. This is equivalent to the application context required by
+	 * {@link ExecutionEvent}.
 	 * 
 	 * @return the current state of the application; never <code>null</code>.
+	 * @see ParameterizedCommand#executeWithChecks(Object, Object)
+	 * @see ExecutionEvent#ExecutionEvent(Command, java.util.Map, Object,
+	 *      Object)
 	 */
 	public IEvaluationContext getCurrentState();
 

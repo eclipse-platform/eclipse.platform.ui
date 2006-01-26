@@ -23,7 +23,6 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.util.Tracing;
-import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.Binding;
@@ -430,7 +429,7 @@ public final class WorkbenchKeyboard {
 	 *             log the message, display a dialog, or ignore this exception
 	 *             entirely.
 	 */
-	final boolean executeCommand(final Binding binding, final Object trigger)
+	final boolean executeCommand(final Binding binding, final Event trigger)
 			throws CommandException {
 		final ParameterizedCommand parameterizedCommand = binding
 				.getParameterizedCommand();
@@ -464,8 +463,7 @@ public final class WorkbenchKeyboard {
 		try {
 			final IHandlerService handlerService = (IHandlerService) workbench
 					.getAdapter(IHandlerService.class);
-			final IEvaluationContext context = handlerService.getCurrentState();
-			parameterizedCommand.executeWithChecks(trigger, context);
+			handlerService.executeCommand(parameterizedCommand, trigger);
 		} catch (final NotDefinedException e) {
 			// The command is not defined. Forwarded to the IExecutionListener.
 		} catch (final NotEnabledException e) {

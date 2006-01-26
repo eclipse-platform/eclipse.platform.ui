@@ -16,9 +16,16 @@ import java.util.Iterator;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
@@ -42,6 +49,12 @@ public final class HandlerService implements IHandlerService {
 	}
 
 	/**
+	 * The command manager for this handler service. This value is never
+	 * <code>null</code>.
+	 */
+	private final CommandManager commandManager;
+
+	/**
 	 * The central authority for determining which handler we should use.
 	 */
 	private final HandlerAuthority handlerAuthority;
@@ -59,6 +72,11 @@ public final class HandlerService implements IHandlerService {
 	 *            The command manager to use; must not be <code>null</code>.
 	 */
 	public HandlerService(final CommandManager commandManager) {
+		if (commandManager == null) {
+			throw new NullPointerException(
+					"A handler service requires a command manager"); //$NON-NLS-1$
+		}
+		this.commandManager = commandManager;
 		this.handlerAuthority = new HandlerAuthority(commandManager);
 		this.handlerPersistence = new HandlerPersistence(this);
 	}
@@ -98,6 +116,17 @@ public final class HandlerService implements IHandlerService {
 		handlerAuthority.addSourceProvider(provider);
 	}
 
+	public final ExecutionEvent createExecutionEvent(final Command command,
+			final Event event) {
+		return new ExecutionEvent(command, null, event, getCurrentState());
+	}
+
+	public ExecutionEvent createExecutionEvent(
+			final ParameterizedCommand command, final Event event) {
+		return new ExecutionEvent(command.getCommand(), command
+				.getParameterMap(), event, getCurrentState());
+	}
+
 	public final void deactivateHandler(final IHandlerActivation activation) {
 		if (activation.getHandlerService() == this) {
 			handlerAuthority.deactivateHandler(activation);
@@ -116,6 +145,21 @@ public final class HandlerService implements IHandlerService {
 	public final void dispose() {
 		handlerAuthority.dispose();
 		handlerPersistence.dispose();
+	}
+
+	public final Object executeCommand(final ParameterizedCommand command,
+			final Event trigger) throws ExecutionException,
+			NotDefinedException, NotEnabledException, NotHandledException {
+		return command.executeWithChecks(trigger, getCurrentState());
+	}
+
+	public final Object executeCommand(final String commandId,
+			final Event trigger) throws ExecutionException,
+			NotDefinedException, NotEnabledException, NotHandledException {
+		final Command command = commandManager.getCommand(commandId);
+		final ExecutionEvent event = new ExecutionEvent(command, null, trigger,
+				getCurrentState());
+		return command.executeWithChecks(event);
 	}
 
 	public final IEvaluationContext getCurrentState() {
