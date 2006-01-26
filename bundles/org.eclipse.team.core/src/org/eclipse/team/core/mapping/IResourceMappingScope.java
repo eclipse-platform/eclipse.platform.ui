@@ -37,6 +37,19 @@ import org.eclipse.team.core.mapping.provider.ScopeGenerator;
 public interface IResourceMappingScope extends ISynchronizationScope {
 	
 	/**
+	 * Property change constant used to indicate that the mappings
+	 * of the scope have changed. The input mappings of the scope
+	 * do not change but it is possible that changes to resources
+	 * will result in additional mappings in the scope due to
+	 * relationships between models and the resources that contain them.
+	 * A mapping propery change event may proceed a traversal change 
+	 * event if both properties have changed simultaneoulsy.
+	 * The value associatd with the event will be an array of
+	 * resource mappings (i.e. <code>ResourceMapping[]</code>)
+	 */
+	public static final String MAPPINGS = "org.eclipse.team.core.traversalsChanged"; //$NON-NLS-1$
+	
+	/**
 	 * Return the array of mappings that acted as the input to the scope builder
 	 * that was used to build this scope. This set usually come from a view
 	 * selection but could come from another source. In most cases, clients will

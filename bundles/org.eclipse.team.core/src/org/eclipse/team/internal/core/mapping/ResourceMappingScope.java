@@ -168,4 +168,8 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	public CompoundResourceTraversal getCompoundTraversal() {
 		return compoundTraversal;
 	}
+
+	public void fireMappingChangedEvent(ResourceMapping[] originalMappings) {
+		firePropertyChangedEvent(new PropertyChangeEvent(this, IResourceMappingScope.MAPPINGS, originalMappings, getMappings()));
+	}
 }

@@ -58,6 +58,7 @@ import org.eclipse.team.internal.core.mapping.*;
  */
 public class ScopeGenerator {
 
+	private static final int MAX_ITERATION = 10;
 	private final ResourceMappingContext context;
 	private final boolean consultModels;
 
@@ -91,24 +92,25 @@ public class ScopeGenerator {
 			ResourceMapping mapping = selectedMappings[i];
 			targetMappings.add(mapping);
 		}
-		Set newResources;
+		IResource[] newResources;
 		boolean firstTime = true;
 		boolean hasAdditionalResources = false;
+		int count = 0;
 		do {
 			newResources = addMappingsToScope(scope, targetMappings,
 					Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 			if (consultModels) {
-				IResource[] adjusted = adjustNewResources(newResources);
+				IResource[] adjusted = adjustInputResources(newResources);
 				targetMappings = internalGetMappingsFromProviders(adjusted,
 						context, 
 						Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 				if (firstTime) {
 					firstTime = false;
 				} else if (!hasAdditionalResources) {
-					hasAdditionalResources = !newResources.isEmpty();
+					hasAdditionalResources = newResources.length != 0;
 				}
 			}
-		} while (consultModels & !newResources.isEmpty());
+		} while (consultModels & newResources.length != 0 && count++ < MAX_ITERATION);
 		setHasAdditionalMappings(scope, consultModels && hasAdditionalMappings(scope));
 		setHasAdditionalResources(scope, consultModels && hasAdditionalResources);
 		return scope;
@@ -136,48 +138,101 @@ public class ScopeGenerator {
 
 	private ResourceTraversal[] internalRefreshScope(IResourceMappingScope scope, ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 100 * mappings.length + 100);
+		ResourceMapping[] originalMappings = scope.getMappings();
 		ResourceTraversal[] originalTraversals = scope.getTraversals();
-		Set newResources = new HashSet();
+		CompoundResourceTraversal refreshTraversals = new CompoundResourceTraversal();
+		boolean expanded = false;
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
-			ResourceTraversal[] oldTraversals = scope.getTraversals(mapping);
-			// Only refresh mappings that are known to the scope
-			if (oldTraversals != null) {
-				ResourceTraversal[] newTraversals = mapping.getTraversals(context,
-						Policy.subMonitorFor(monitor, 100));
-				// Accumulate the new traversals
-				IResource[] newOnes = addMappingToScope(scope, mapping, newTraversals);
-				newResources.addAll(Arrays.asList(newOnes));
+			ResourceTraversal[] mappingTraversals = mapping.getTraversals(
+					context, Policy.subMonitorFor(monitor, 100));
+			refreshTraversals.addTraversals(mappingTraversals);
+			IResource[] uncovered = getUncoveredResources(scope, mappingTraversals);
+			if (uncovered.length > 0) {
+				expanded = true;
+				ResourceTraversal[] result = performExpandScope(scope, mapping, mappingTraversals, uncovered, monitor);
+				refreshTraversals.addTraversals(result);
 			}
 		}
-		if (!newResources.isEmpty()) {
-			addResourcesToScope(scope, (IResource[]) newResources.toArray(new IResource[newResources.size()]), Policy.subMonitorFor(monitor, 100));
+		if (scope.getMappings().length > originalMappings.length) {
+			fileMappingsChangedEvent(scope, originalMappings);
+		}
+		if (expanded) {
 			fireTraversalsChangedEvent(scope, originalTraversals);
 		}
 		
 		monitor.done();
-		return scope.getTraversals();
+		return refreshTraversals.asTraversals();
+	}
+
+	private ResourceTraversal[] performExpandScope(IResourceMappingScope scope,
+			ResourceMapping mapping, ResourceTraversal[] mappingTraversals,
+			IResource[] uncovered, IProgressMonitor monitor)
+			throws CoreException {
+		ResourceMapping ancestor = findAncestor(scope, mapping);
+		if (ancestor == null) {
+			uncovered = addMappingToScope(scope, mapping, mappingTraversals);
+			addResourcesToScope(scope, uncovered, monitor);
+			return mappingTraversals;
+		} else {
+			ResourceTraversal[] ancestorTraversals = ancestor.getTraversals(
+					context, Policy.subMonitorFor(monitor, 100));
+			uncovered = addMappingToScope(scope, ancestor, ancestorTraversals);
+			addResourcesToScope(scope, uncovered, monitor);
+			return ancestorTraversals;
+		}
+	}
+
+	private ResourceMapping findAncestor(IResourceMappingScope scope, ResourceMapping mapping) {
+		ResourceMapping[] mappings = scope.getMappings(mapping.getModelProviderId());
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping m = mappings[i];
+			if (m.contains(mapping)) {
+				return m;
+			}
+		}
+		return null;
+	}
+
+	private IResource[] getUncoveredResources(IResourceMappingScope scope, ResourceTraversal[] traversals) {
+		return ((ResourceMappingScope)scope).getCompoundTraversal().getUncoveredResources(traversals);
 	}
 
 	private void addResourcesToScope(IResourceMappingScope scope, IResource[] newResources, IProgressMonitor monitor) throws CoreException {
+		if (!consultModels)
+			return;
 		Set targetMappings;
+		int count = 0;
 		do {
-			if (consultModels) {
-				IResource[] adjusted = adjustInputResources(newResources);
-				targetMappings = internalGetMappingsFromProviders(adjusted,
-						context, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
-				addMappingsToScope(scope, targetMappings,
-						Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
-				// TODO: Need to iterate
-			}
-		} while (false /* consultModels & !moreNewResources.isEmpty() */);
+			IResource[] adjusted = adjustInputResources(newResources);
+			targetMappings = internalGetMappingsFromProviders(adjusted,
+					context, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
+			newResources = addMappingsToScope(scope, targetMappings,
+					Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
+		} while (newResources.length != 0 && count++ < MAX_ITERATION);
+		if (!scope.hasAdditionalMappings()) {
+			setHasAdditionalMappings(scope, hasAdditionalMappings(scope));
+		}
+		if (!scope.hasAdditonalResources()) {
+			setHasAdditionalResources(scope, true);
+		}
 	}
 
+	/**
+	 * Fire a mappings changed event to any listeners on the scope.
+	 * The new mappings are obtained from the scope.
+	 * @param scope the scope
+	 * @param originalMappings the original mappings of the scope.
+	 */
+	private void fileMappingsChangedEvent(IResourceMappingScope scope, ResourceMapping[] originalMappings) {
+		((ResourceMappingScope)scope).fireMappingChangedEvent(originalMappings);
+	}
+	
 	/**
 	 * Fire a traversals changed event to any listeners on the scope.
 	 * The new traversals are obtained from the scope.
 	 * @param scope the scope
-	 * @param originalTraversals the original traversals on the scope.
+	 * @param originalTraversals the original traversals of the scope.
 	 */
 	protected final void fireTraversalsChangedEvent(IResourceMappingScope scope, ResourceTraversal[] originalTraversals) {
 		((ResourceMappingScope)scope).fireTraversalsChangedEvent(originalTraversals);
@@ -238,7 +293,7 @@ public class ScopeGenerator {
 		return resources;
 	}
 
-	private Set addMappingsToScope(IResourceMappingScope scope,
+	private IResource[] addMappingsToScope(IResourceMappingScope scope,
 			Set targetMappings,
 			IProgressMonitor monitor) throws CoreException {
 		Set newResources = new HashSet();
@@ -251,7 +306,7 @@ public class ScopeGenerator {
 				newResources.addAll(Arrays.asList(newOnes));
 			}
 		}
-		return newResources;
+		return (IResource[]) newResources.toArray(new IResource[newResources.size()]);
 	}
 
 	/**
@@ -267,17 +322,6 @@ public class ScopeGenerator {
 	protected final IResource[] addMappingToScope(IResourceMappingScope scope,
 			ResourceMapping mapping, ResourceTraversal[] traversals) {
 		return ((ResourceMappingScope)scope).addMapping(mapping, traversals);
-	}
-
-	/*
-	 * Give the subclass a chance to add resources to the set of affected
-	 * resources
-	 */
-	private IResource[] adjustNewResources(Set newResources) {
-		IResource[] resources = (IResource[]) newResources
-				.toArray(new IResource[newResources.size()]);
-		IResource[] adjusted = adjustInputResources(resources);
-		return adjusted;
 	}
 
 	private Set internalGetMappingsFromProviders(IResource[] resources,

@@ -173,9 +173,9 @@ public class CompoundResourceTraversal {
 	}
 
 	/**
-	 * Return the resource contained in the given traversals that are not covered by this traversal
+	 * Return the resources contained in the given traversals that are not covered by this traversal
 	 * @param traversals the traversals being testes
-	 * @return the resource contained in the given traversals that are not covered by this traversal
+	 * @return the resources contained in the given traversals that are not covered by this traversal
 	 */
 	public IResource[] getUncoveredResources(ResourceTraversal[] traversals) {
 		CompoundResourceTraversal newTraversals = new CompoundResourceTraversal();

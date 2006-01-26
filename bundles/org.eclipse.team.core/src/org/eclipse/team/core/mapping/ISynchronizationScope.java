@@ -31,7 +31,9 @@ public interface ISynchronizationScope {
 
 	/**
 	 * Property change constant used to indicate that the traversals
-	 * of the scope have changed.
+	 * of the scope have changed. The value associated with the
+	 * change event will be an array of traversals (i.e.
+	 * <code>ResourceTraversal[]</code>
 	 */
 	public static final String TRAVERSALS = "org.eclipse.team.core.traversalsChanged"; //$NON-NLS-1$
 	
