@@ -46,6 +46,18 @@ import org.eclipse.ui.internal.services.ExpressionAuthority;
 final class HandlerAuthority extends ExpressionAuthority {
 
 	/**
+	 * The default size of the set containing the activations to recompute. This
+	 * is more than enough to cover the average case.
+	 */
+	private static final int ACTIVATIONS_BY_SOURCE_SIZE = 256;
+
+	/**
+	 * The default size of the set containing the activations to recompute. This
+	 * is more than enough to cover the average case.
+	 */
+	private static final int ACTIVATIONS_TO_RECOMPUTE_SIZE = 1024;
+
+	/**
 	 * Whether the workbench command support should kick into debugging mode.
 	 * This causes the unresolvable handler conflicts to be printed to the
 	 * console.
@@ -64,6 +76,11 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 * The command identifier to which the verbose output should be restricted.
 	 */
 	private static final String DEBUG_VERBOSE_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
+
+	/**
+	 * The component name to print when displaying tracing information.
+	 */
+	private static final String TRACING_COMPONENT = "HANDLERS"; //$NON-NLS-1$
 
 	/**
 	 * A bucket sort of the handler activations based on source priority. Each
@@ -115,13 +132,12 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 */
 	final void activateHandler(final IHandlerActivation activation) {
 		// First we update the handlerActivationsByCommandId map.
-		final String commandId = activation.getCommandId();		
+		final String commandId = activation.getCommandId();
 		final Object value = handlerActivationsByCommandId.get(commandId);
 		if (value instanceof Collection) {
 			final Collection handlerActivations = (Collection) value;
 			if (!handlerActivations.contains(activation)) {
 				handlerActivations.add(activation);
-				updateCurrentState();
 				updateCommand(commandId, resolveConflicts(commandId,
 						handlerActivations));
 			}
@@ -132,13 +148,11 @@ final class HandlerAuthority extends ExpressionAuthority {
 				handlerActivations.add(activation);
 				handlerActivationsByCommandId
 						.put(commandId, handlerActivations);
-				updateCurrentState();
 				updateCommand(commandId, resolveConflicts(commandId,
 						handlerActivations));
 			}
 		} else {
 			handlerActivationsByCommandId.put(commandId, activation);
-			updateCurrentState();
 			updateCommand(commandId, (evaluate(activation) ? activation : null));
 		}
 
@@ -148,7 +162,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 			if ((sourcePriority & (1 << i)) != 0) {
 				Set activations = activationsBySourcePriority[i];
 				if (activations == null) {
-					activations = new HashSet(1);
+					activations = new HashSet(ACTIVATIONS_BY_SOURCE_SIZE);
 					activationsBySourcePriority[i] = activations;
 				}
 				activations.add(activation);
@@ -193,7 +207,6 @@ final class HandlerAuthority extends ExpressionAuthority {
 		} else if (value instanceof IHandlerActivation) {
 			if (value == activation) {
 				handlerActivationsByCommandId.remove(commandId);
-				updateCurrentState();
 				updateCommand(commandId, null);
 			}
 		}
@@ -233,7 +246,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 *            The identifier of the command for which the conflicts should
 	 *            be detected; must not be <code>null</code>. This is only
 	 *            used for debugging purposes.
-	 * @param handlerActivations
+	 * @param activations
 	 *            All of the possible handler activations for the given command
 	 *            identifier; must not be <code>null</code>.
 	 * @return The best matching handler activation. If none can be found (e.g.,
@@ -241,10 +254,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 *         <code>null</code>.
 	 */
 	private final IHandlerActivation resolveConflicts(final String commandId,
-			final Collection handlerActivations) {
-		// Create a collection with only the activation that are active.
-		final Collection activations = trimInactive(handlerActivations);
-
+			final Collection activations) {
 		// If we don't have any, then there is no match.
 		if (activations.isEmpty()) {
 			return null;
@@ -257,12 +267,26 @@ final class HandlerAuthority extends ExpressionAuthority {
 		final Iterator activationItr = activations.iterator();
 		IHandlerActivation bestActivation = (IHandlerActivation) activationItr
 				.next();
+		if (!evaluate(bestActivation)) {
+			bestActivation = null; // only consider potentially active handlers
+		}
 		boolean conflict = false;
 
 		// Cycle over the activations, remembered the current best.
 		while (activationItr.hasNext()) {
 			final IHandlerActivation currentActivation = (IHandlerActivation) activationItr
 					.next();
+			if (!evaluate(currentActivation)) {
+				continue; // only consider potentially active handlers
+			}
+
+			// Check to see if we haven't found a potentially active handler yet
+			if (bestActivation == null) {
+				bestActivation = currentActivation;
+				conflict = false;
+			}
+
+			// Compare the two handlers.
 			final int comparison = bestActivation.compareTo(currentActivation);
 			if (comparison > 0) {
 				bestActivation = currentActivation;
@@ -280,17 +304,16 @@ final class HandlerAuthority extends ExpressionAuthority {
 		// If we are logging information, now is the time to do it.
 		if (DEBUG) {
 			if (conflict) {
-				Tracing
-						.printTrace("HANDLERS", //$NON-NLS-1$
-								"Unresolved conflict detected for '" //$NON-NLS-1$
-										+ commandId + '\'');
+				Tracing.printTrace(TRACING_COMPONENT,
+						"Unresolved conflict detected for '" //$NON-NLS-1$
+								+ commandId + '\'');
 			} else if ((DEBUG_VERBOSE)
 					&& ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
 							.equals(commandId)))) {
 				Tracing
-						.printTrace("HANDLERS", //$NON-NLS-1$
+						.printTrace(TRACING_COMPONENT,
 								"Resolved conflict detected.  The following activation won: "); //$NON-NLS-1$
-				Tracing.printTrace("HANDLERS", "    " + bestActivation); //$NON-NLS-1$ //$NON-NLS-2$
+				Tracing.printTrace(TRACING_COMPONENT, "    " + bestActivation); //$NON-NLS-1$
 			}
 		}
 
@@ -316,7 +339,8 @@ final class HandlerAuthority extends ExpressionAuthority {
 		 * set for future processing. We add it to a set so that we avoid
 		 * handling any individual activation more than once.
 		 */
-		final Set activationsToRecompute = new HashSet();
+		final Set activationsToRecompute = new HashSet(
+				ACTIVATIONS_TO_RECOMPUTE_SIZE);
 		for (int i = 1; i <= 32; i++) {
 			if ((sourcePriority & (1 << i)) != 0) {
 				final Collection activations = activationsBySourcePriority[i];
@@ -327,6 +351,15 @@ final class HandlerAuthority extends ExpressionAuthority {
 					}
 				}
 			}
+		}
+
+		/*
+		 * If tracing, then print out how many activations are about to be
+		 * recomputed.
+		 */
+		if (DEBUG) {
+			Tracing.printTrace(TRACING_COMPONENT, activationsToRecompute.size()
+					+ " activations to recompute"); //$NON-NLS-1$
 		}
 
 		/*
@@ -368,31 +401,6 @@ final class HandlerAuthority extends ExpressionAuthority {
 				updateCommand(commandId, null);
 			}
 		}
-	}
-
-	/**
-	 * Returns a subset of the given <code>activations</code> containing only
-	 * those that are active
-	 * 
-	 * @param activations
-	 *            The activations to trim; must not be <code>null</code>, but
-	 *            may be empty.
-	 * @return A collection containing only those activations that are actually
-	 *         active; never <code>null</code>.
-	 */
-	private final Collection trimInactive(final Collection activations) {
-		final Collection trimmed = new ArrayList(activations.size());
-
-		final Iterator activationItr = activations.iterator();
-		while (activationItr.hasNext()) {
-			final IHandlerActivation activation = (IHandlerActivation) activationItr
-					.next();
-			if (evaluate(activation)) {
-				trimmed.add(activation);
-			}
-		}
-
-		return trimmed;
 	}
 
 	/**

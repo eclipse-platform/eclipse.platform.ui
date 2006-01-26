@@ -47,6 +47,12 @@ import org.eclipse.ui.internal.services.ExpressionAuthority;
 final class ContextAuthority extends ExpressionAuthority {
 
 	/**
+	 * The default size of the set containing the activations to recompute. This
+	 * is more than enough to cover the average case.
+	 */
+	private static final int ACTIVATIONS_TO_RECOMPUTE_SIZE = 4;
+
+	/**
 	 * Whether the context authority should kick into debugging mode. This
 	 * causes the unresolvable handler conflicts to be printed to the console.
 	 */
@@ -56,6 +62,11 @@ final class ContextAuthority extends ExpressionAuthority {
 	 * The name of the data tag containing the dispose listener information.
 	 */
 	private static final String DISPOSE_LISTENER = "org.eclipse.ui.internal.contexts.ContextAuthority"; //$NON-NLS-1$
+
+	/**
+	 * The component name to print when displaying tracing information.
+	 */
+	private static final String TRACING_COMPONENT = "CONTEXTS"; //$NON-NLS-1$
 
 	/**
 	 * A bucket sort of the context activations based on source priority. Each
@@ -139,7 +150,6 @@ final class ContextAuthority extends ExpressionAuthority {
 			final Collection contextActivations = (Collection) value;
 			if (!contextActivations.contains(activation)) {
 				contextActivations.add(activation);
-				updateCurrentState();
 				updateContext(contextId, containsActive(contextActivations));
 			}
 		} else if (value instanceof IContextActivation) {
@@ -149,12 +159,10 @@ final class ContextAuthority extends ExpressionAuthority {
 				contextActivations.add(activation);
 				contextActivationsByContextId
 						.put(contextId, contextActivations);
-				updateCurrentState();
 				updateContext(contextId, containsActive(contextActivations));
 			}
 		} else {
 			contextActivationsByContextId.put(contextId, activation);
-			updateCurrentState();
 			updateContext(contextId, evaluate(activation));
 		}
 
@@ -333,7 +341,6 @@ final class ContextAuthority extends ExpressionAuthority {
 		} else if (value instanceof IContextActivation) {
 			if (value == activation) {
 				contextActivationsByContextId.remove(contextId);
-				updateCurrentState();
 				updateContext(contextId, false);
 			}
 		}
@@ -482,7 +489,7 @@ final class ContextAuthority extends ExpressionAuthority {
 				buffer.append("unknown"); //$NON-NLS-1$
 				break;
 			}
-			Tracing.printTrace("CONTEXTS", buffer.toString()); //$NON-NLS-1$
+			Tracing.printTrace(TRACING_COMPONENT, buffer.toString());
 		}
 
 		// Build the list of submissions.
@@ -504,7 +511,6 @@ final class ContextAuthority extends ExpressionAuthority {
 			activations.add(dialogActivation);
 			break;
 		case IContextService.TYPE_NONE:
-			updateCurrentState();
 			break;
 		case IContextService.TYPE_WINDOW:
 			expression = new ActiveShellExpression(shell);
@@ -593,7 +599,8 @@ final class ContextAuthority extends ExpressionAuthority {
 		 * set for future processing. We add it to a set so that we avoid
 		 * handling any individual activation more than once.
 		 */
-		final Set activationsToRecompute = new HashSet();
+		final Set activationsToRecompute = new HashSet(
+				ACTIVATIONS_TO_RECOMPUTE_SIZE);
 		for (int i = 1; i <= 32; i++) {
 			if ((sourcePriority & (1 << i)) != 0) {
 				final Collection activations = activationsBySourcePriority[i];
@@ -604,6 +611,15 @@ final class ContextAuthority extends ExpressionAuthority {
 					}
 				}
 			}
+		}
+
+		/*
+		 * If tracing, then print out how many activations are about to be
+		 * recomputed.
+		 */
+		if (DEBUG) {
+			Tracing.printTrace(TRACING_COMPONENT, activationsToRecompute.size()
+					+ " activations to recompute"); //$NON-NLS-1$
 		}
 
 		/*
