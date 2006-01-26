@@ -249,8 +249,8 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 				final IEvaluationContext context = (IEvaluationContext) applicationContext;
 				final Object selectionObject = context.getDefaultVariable();
 				if (selectionObject instanceof ISelection) {
-					final ISelection selection = (ISelection) selectionObject;
-					delegate.selectionChanged(action, selection);
+					currentSelection = (ISelection) selectionObject;
+					delegate.selectionChanged(action, currentSelection);
 				}
 			}
 			
