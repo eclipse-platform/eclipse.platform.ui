@@ -376,7 +376,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @param children the children
 	 * @return the subset of children that are of interest from the given context
 	 */
-	protected Object[] getChildrenInContext(Object parentElemnt, Object[] children) {
+	protected Object[] getChildrenInContext(Object parent, Object[] children) {
 		ISynchronizationContext context = getContext();
 		if (context == null)
 			return children;

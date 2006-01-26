@@ -185,20 +185,18 @@ public interface ISynchronizationContext {
 
 	/**
 	 * Refresh the portion of the context related to the given resource
-	 * mappings. The provided mappings must be mappings that appear in the scope
-	 * of this context. The refresh will first regenerate the scope for the
-	 * mappings in case new resources are included in the mappings. Then the
-	 * synchronization state of the resources covered by the mapping will be
-	 * refreshed. If new resources are included in the scope, a property change
-	 * event will be fired from the scope. If the synchronization state of any
-	 * of the resources covered by the mapping change, a change event will be
-	 * fired from the diff tree of this contet.
+	 * mappings. The provided mappings must be within the scope of this context.
+	 * Refreshing mappings may result in additional resources being added to the
+	 * scope of this context. If new resources are included in the scope, a
+	 * property change event will be fired from the scope. If the
+	 * synchronization state of any of the resources covered by the mapping
+	 * change, a change event will be fired from the diff tree of this contet.
 	 * <p>
-	 * Changes to the diff tree may be triggered by a call to this method or by a
-	 * refresh triggered by some other source. Hence, the callback from the diff tree
-	 * to report changes may occur in the same thread as the refresh or
-	 * <a href="#async">asynchronously</a> in a separate thread, regardless of who triggered 
-	 * the refresh.
+	 * Changes to the diff tree may be triggered by a call to this method or by
+	 * a refresh triggered by some other source. Hence, the callback from the
+	 * diff tree to report changes may occur in the same thread as the refresh
+	 * or <a href="#async">asynchronously</a> in a separate thread, regardless
+	 * of who triggered the refresh.
 	 * 
 	 * @param mappings
 	 *            the mappings to be refreshed

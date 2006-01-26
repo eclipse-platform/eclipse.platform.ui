@@ -12,7 +12,6 @@ package org.eclipse.team.ui.operations;
 
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
@@ -133,28 +132,22 @@ public class ResourceMappingSynchronizeParticipant extends
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#run(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void run(IWorkbenchPart part) {
-		refresh(getContext().getScope().getMappings(), null, null, null, part != null ? part.getSite() : null);
+		refresh(part != null ? part.getSite() : null, new ResourceMapping[0]);
 	}
 
 	/**
 	 * Refresh a participant in the background the result of the refresh are shown in the progress view. Refreshing 
 	 * can also be considered synchronizing, or refreshing the synchronization state. Basically this is a long
-	 * running operation that will update the participants sync info sets with new changes detected on the
-	 * server. Either or both of the <code>shortTaskName</code> and <code>longTaskName</code> can be <code>null</code>
-	 * in which case, the default values for these are returned by the methods <code>getShortTaskName()</code> and
-	 * <code>getLongTaskName(IResource[])</code> will be used.
+	 * running operation that will update the participant's context with new changes detected on the
+	 * server. Passing an empty array of resource mappings will refresh all mappings in the context.
 	 * 
-	 * @param resources the resources to be refreshed.
-	 * @param shortTaskName the taskName of the background job that will run the synchronize or <code>null</code>
-	 * if the default job name is desired.
-	 * @param longTaskName the taskName of the progress monitor running the synchronize or <code>null</code>
-	 * if the default job name is desired.
 	 * @param site the workbench site the synchronize is running from. This can be used to notify the site
 	 * that a job is running.
+	 * @param mappings the resource mappings to be refreshed
 	 */
-	public final void refresh(ResourceMapping[] mappings, ResourceTraversal[] traversals, String shortTaskName, String longTaskName, IWorkbenchSite site) {
+	public final void refresh(IWorkbenchSite site, ResourceMapping[] mappings) {
 		IRefreshSubscriberListener listener = new RefreshUserNotificationPolicy(this);
-		internalRefresh(mappings, traversals, shortTaskName, longTaskName, site, listener);
+		internalRefresh(mappings, null, null, site, listener);
 	}
 	
 	/* (non-Javadoc)
@@ -162,6 +155,8 @@ public class ResourceMappingSynchronizeParticipant extends
 	 */
 	public void dispose() {
 		context.dispose();
+		Platform.getJobManager().cancel(this);
+		refreshSchedule.dispose();
 	}
 	
 	/**
@@ -184,17 +179,17 @@ public class ResourceMappingSynchronizeParticipant extends
 	/**
 	 * Return a compare input for the given model object or <code>null</code>
 	 * if the object is not eligible for comparison.
-	 * @param o the model object
+	 * @param object the model object
 	 * @return a compare input for the model object or <code>null</code>
 	 */
-	public ICompareInput asCompareInput(Object o) {
-		if (o instanceof ICompareInput) {
-			return (ICompareInput) o;
+	public ICompareInput asCompareInput(Object object) {
+		if (object instanceof ICompareInput) {
+			return (ICompareInput) object;
 		}
 		// Get a compare input from the model provider's compare adapter
-		ICompareAdapter adapter = Utils.getCompareAdapter(o);
+		ICompareAdapter adapter = Utils.getCompareAdapter(object);
 		if (adapter != null)
-			return adapter.asCompareInput(getContext(), o);
+			return adapter.asCompareInput(getContext(), object);
 		return null;
 	}
 
@@ -231,13 +226,13 @@ public class ResourceMappingSynchronizeParticipant extends
 		this.mergingEnabled = mergingEnabled;
 	}
 	
-	private void internalRefresh(ResourceMapping[] mappings, ResourceTraversal[] traversals, String jobName, String taskName, IWorkbenchSite site, IRefreshSubscriberListener listener) {
+	private void internalRefresh(ResourceMapping[] mappings, String jobName, String taskName, IWorkbenchSite site, IRefreshSubscriberListener listener) {
 		if (jobName == null)
 		    jobName = getShortTaskName();
 		if (taskName == null)
 		    taskName = getLongTaskName(mappings);
 		Platform.getJobManager().cancel(this);
-		RefreshParticipantJob job = new RefreshModelParticipantJob(this, jobName, taskName, listener);
+		RefreshParticipantJob job = new RefreshModelParticipantJob(this, jobName, taskName, mappings, listener);
 		job.setUser(true);
 		Utils.schedule(job, site);
 		
@@ -291,7 +286,8 @@ public class ResourceMappingSynchronizeParticipant extends
 			public RefreshParticipantJob createJob(String interval) {
 				return new RefreshModelParticipantJob(ResourceMappingSynchronizeParticipant.this, 
 						TeamUIMessages.RefreshSchedule_14, 
-						NLS.bind(TeamUIMessages.RefreshSchedule_15, new String[] { ResourceMappingSynchronizeParticipant.this.getName(), interval }), 
+						NLS.bind(TeamUIMessages.RefreshSchedule_15, new String[] { ResourceMappingSynchronizeParticipant.this.getName(), interval }),
+						new ResourceMapping[0],
 						new RefreshUserNotificationPolicy(ResourceMappingSynchronizeParticipant.this));
 			}
 			public ISynchronizeParticipant getParticipant() {

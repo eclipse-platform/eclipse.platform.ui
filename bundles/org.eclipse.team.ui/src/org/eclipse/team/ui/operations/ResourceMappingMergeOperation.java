@@ -112,7 +112,6 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	 * Create a merge operation
 	 * @param part the workbench part from which the merge was launched or <code>null</code>
 	 * @param selectedMappings the selected mappings
-	 * @param context the resource mapping context used to generate the full scope of the operation
 	 */
 	protected ResourceMappingMergeOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings) {
 		super(part, selectedMappings);
@@ -190,7 +189,6 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 
 	/**
 	 * Preview the merge so the user can perform the merge manually.
-	 * @param title the title of the merge.
 	 * @param monitor a progress monitor
 	 */
 	protected void showPreview(IProgressMonitor monitor) {
@@ -357,7 +355,6 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	 * Return whether the given diff tree contains any deltas that match the given filter.
 	 * @param tree the diff tree
 	 * @param filter the diff node filter
-	 * @param monitor a progress monitor
 	 * @return whether the given diff tree contains any deltas that match the given filter
 	 */
 	protected boolean hasChangesMatching(IDiffTree tree, final FastDiffFilter filter) {

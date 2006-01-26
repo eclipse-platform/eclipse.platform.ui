@@ -39,11 +39,7 @@ public class RefreshActionContribution extends SynchronizePageActionGroup {
 				public void run() {
 					IStructuredSelection selection = (IStructuredSelection)site.getSelectionProvider().getSelection();
 					ResourceMapping[] mappings = Utils.getResourceMappings(selection.toArray());
-					if (mappings.length == 0) {
-						// Refresh all participant resources
-						mappings = null;
-					}
-					participant.refresh(null, null, null, null, site.getWorkbenchSite());
+					participant.refresh(site.getWorkbenchSite(), mappings);
 				}
 			};
 			Utils.initAction(refreshSelectionAction, "action.refreshWithRemote."); //$NON-NLS-1$

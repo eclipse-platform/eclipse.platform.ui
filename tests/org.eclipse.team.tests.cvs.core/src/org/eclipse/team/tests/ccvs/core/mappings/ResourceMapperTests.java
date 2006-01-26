@@ -308,6 +308,9 @@ public class ResourceMapperTests extends EclipseTest {
 			public String getModelProviderId() {
 				return "org.eclipse.team.tests.cvs.core.modelProvider";
 			}
+		    public boolean isAncestorOf(ResourceMapping mapping) {
+		    	return false;
+		    }
         };
     }
     

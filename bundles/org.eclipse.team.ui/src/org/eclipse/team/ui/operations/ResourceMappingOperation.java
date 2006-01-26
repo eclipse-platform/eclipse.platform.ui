@@ -52,7 +52,6 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 	 * Create a resoure mapping operation
 	 * @param part the workbench part from which the merge was launched or <code>null</code>
 	 * @param selectedMappings the selected mappings
-	 * @param context the resource mapping context used to generate the full scope of the operation
 	 */
 	protected ResourceMappingOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings) {
 		super(part);
@@ -289,10 +288,9 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 	 * operation from the input mappings. By default, this method passes
 	 * the resource mapping context and the result of {@link #consultModelsWhenGeneratingScope()}
 	 * to the scope builder constructor.
-	 * 
+	 * <p>
 	 * This method can be overridden by subclasses.
-	 * @param context the resource mapping context used to obtain traversals from 
-	 * the mappings in the input
+	 * 
 	 * @return the scope builder used to build the scope of this
 	 * operation from the input mappings.
 	 */
@@ -306,7 +304,7 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 	 * @param requestPreviewMessage message to be displayed for the option to force a preview
 	 * (or <code>null</code> if the preview option shoudl not be presented
 	 * @param monitor a progress monitor
-	 * @returns whether a preview of the operation results was requested
+	 * @return whether a preview of the operation results was requested
 	 * @throws OperationCanceledException if the user choose to cancel
 	 */
 	protected boolean promptForInputChange(String requestPreviewMessage, IProgressMonitor monitor) {

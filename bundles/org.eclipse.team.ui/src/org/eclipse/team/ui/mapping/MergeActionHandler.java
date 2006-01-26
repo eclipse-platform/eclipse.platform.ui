@@ -102,7 +102,7 @@ public abstract class MergeActionHandler extends AbstractHandler {
 	/**
 	 * Return the configuration of the synchronize page that is surfacing
 	 * the merge action to which this handler is registered.
-	 * @return 
+	 * @return the synchronize page configuration
 	 */
 	protected final ISynchronizePageConfiguration getConfiguration() {
 		return configuration;

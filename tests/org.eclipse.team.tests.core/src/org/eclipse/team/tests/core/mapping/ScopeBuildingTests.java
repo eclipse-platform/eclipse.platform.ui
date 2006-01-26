@@ -119,6 +119,9 @@ public class ScopeBuildingTests extends TeamTest {
 			public String getModelProviderId() {
 				return TEST_MODEL_PROVIDER_ID;
 			}
+		    public boolean isAncestorOf(ResourceMapping mapping) {
+		    	return false;
+		    }
 		
 		};
 	}

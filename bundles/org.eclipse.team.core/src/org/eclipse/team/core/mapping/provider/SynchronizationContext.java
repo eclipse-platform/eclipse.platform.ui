@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.core.mapping.provider;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
@@ -39,28 +36,28 @@ import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
  */
 public abstract class SynchronizationContext implements ISynchronizationContext {
 
-	private IResourceMappingScope input;
+	private IResourceMappingScope scope;
     private final int type;
-    private final IResourceDiffTree deltaTree;
+    private final IResourceDiffTree diffTree;
     private DiffCache cache;
 
     /**
-     * Create a synchronization context
-     * @param input the input that defines the scope of the synchronization
+     * Create a synchronization context.
+     * @param scope the input that defines the scope of the synchronization
      * @param type the type of synchronization (ONE_WAY or TWO_WAY)
-     * @param tree the sync info tree that contains all out-of-sync resources
+     * @param diffTree the sync info tree that contains all out-of-sync resources
      */
-    protected SynchronizationContext(IResourceMappingScope input, int type, IResourceDiffTree deltaTree) {
-    	this.input = input;
+    protected SynchronizationContext(IResourceMappingScope scope, int type, IResourceDiffTree diffTree) {
+    	this.scope = scope;
 		this.type = type;
-		this.deltaTree = deltaTree;
+		this.diffTree = diffTree;
     }
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	public IResourceMappingScope getScope() {
-		return input;
+		return scope;
 	}
 
 	/**
@@ -93,7 +90,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	 * {@inheritDoc}
 	 */
 	public IResourceDiffTree getDiffTree() {
-		return deltaTree;
+		return diffTree;
 	}
 	
 	/**
@@ -102,25 +99,20 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	public void refresh(ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 100);
 		ScopeGenerator scopeGenerator = getScopeGenerator();
-		if (scopeGenerator != null)
-			scopeGenerator.refreshScope(getScope(), mappings, Policy.subMonitorFor(monitor, 50));
-		List traversals = new ArrayList();
-		for (int i = 0; i < mappings.length; i++) {
-			ResourceMapping mapping = mappings[i];
-			ResourceTraversal[] mappingTraversals = input.getTraversals(mapping);
-			for (int j = 0; j < mappingTraversals.length; j++) {
-				ResourceTraversal traversal = mappingTraversals[j];
-				traversals.add(traversal);
-			}
+		if (scopeGenerator == null) {
+			// The scope generator is missing so just refresh everything
+			refresh(scope.getTraversals(), IResource.NONE, Policy.subMonitorFor(monitor, 50));
+		} else {
+			ResourceTraversal[] traversals = scopeGenerator.refreshScope(getScope(), mappings, Policy.subMonitorFor(monitor, 50));
+			if (traversals.length > 0)
+				refresh(traversals, IResource.NONE, Policy.subMonitorFor(monitor, 50));
 		}
-		if (!traversals.isEmpty())
-			refresh((ResourceTraversal[]) traversals.toArray(new ResourceTraversal[traversals.size()]), IResource.NONE, Policy.subMonitorFor(monitor, 50));
 		monitor.done();
 	}
 
 	private ScopeGenerator getScopeGenerator() {
-		if (input instanceof ResourceMappingScope) {
-			ResourceMappingScope rms = (ResourceMappingScope) input;
+		if (scope instanceof ResourceMappingScope) {
+			ResourceMappingScope rms = (ResourceMappingScope) scope;
 			rms.getGenerator();
 		}
 		return null;

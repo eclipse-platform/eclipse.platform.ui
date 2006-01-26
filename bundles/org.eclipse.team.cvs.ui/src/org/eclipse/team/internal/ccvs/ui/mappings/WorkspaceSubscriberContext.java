@@ -194,6 +194,9 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 			public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 				return traversals;
 			}
+		    public boolean isAncestorOf(ResourceMapping mapping) {
+		    	return false;
+		    }
 		}};
 		try {
 			monitor.beginTask(null, 50);

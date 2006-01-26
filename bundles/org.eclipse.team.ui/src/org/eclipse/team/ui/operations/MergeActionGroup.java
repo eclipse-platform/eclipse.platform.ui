@@ -160,7 +160,7 @@ public class MergeActionGroup extends SynchronizePageActionGroup {
 	 * Add the merge action to the context menu manager. 
 	 * Subclasses may override but should invoke the overridden
 	 * method for unrecognized ids in order to support future additions.
-	 * @param id the id of the merge action (one of 
+	 * @param mergeActionId the id of the merge action (one of 
 	 * {@link SynchronizationActionProvider#MERGE_ACTION_ID},
 	 * {@link SynchronizationActionProvider#OVERWRITE_ACTION_ID} or
 	 * {@link SynchronizationActionProvider#MARK_AS_MERGE_ACTION_ID})

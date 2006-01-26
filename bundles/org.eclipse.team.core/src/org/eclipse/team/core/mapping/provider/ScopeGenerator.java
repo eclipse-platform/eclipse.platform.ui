@@ -119,19 +119,22 @@ public class ScopeGenerator {
 	 * @param scope the scope being refreshed
 	 * @param mappings the mappings to be refreshed
 	 * @param monitor a progress monitor
+	 * @return a set of traversals that cover the given mappings
 	 * @throws CoreException 
 	 */
-	public void refreshScope(final IResourceMappingScope scope, final ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
+	public ResourceTraversal[] refreshScope(final IResourceMappingScope scope, final ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
 		// We need to lock the workspace when building the scope
+		final ResourceTraversal[][] traversals = new ResourceTraversal[][] { new ResourceTraversal[0] };
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				internalRefreshScope(scope, mappings, monitor);
+				traversals[0] = internalRefreshScope(scope, mappings, monitor);
 			}
 		}, workspace.getRoot(), IResource.NONE, monitor);
+		return traversals[0];
 	}
 
-	private void internalRefreshScope(IResourceMappingScope scope, ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
+	private ResourceTraversal[] internalRefreshScope(IResourceMappingScope scope, ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 100 * mappings.length + 100);
 		ResourceTraversal[] originalTraversals = scope.getTraversals();
 		Set newResources = new HashSet();
@@ -153,6 +156,7 @@ public class ScopeGenerator {
 		}
 		
 		monitor.done();
+		return scope.getTraversals();
 	}
 
 	private void addResourcesToScope(IResourceMappingScope scope, IResource[] newResources, IProgressMonitor monitor) throws CoreException {
@@ -207,7 +211,6 @@ public class ScopeGenerator {
 	/**
 	 * Create the scope that will be populated and returned by the builder. This
 	 * method is not intended to be overridden by clients.
-	 * @param label a label that describes the operation
 	 * @param inputMappings the input mappings
 	 * @return a newly created scope that will be populated and returned by the
 	 *         builder

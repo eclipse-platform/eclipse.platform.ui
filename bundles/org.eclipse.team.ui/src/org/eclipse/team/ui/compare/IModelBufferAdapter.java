@@ -34,8 +34,8 @@ public interface IModelBufferAdapter {
 	
 	/**
 	 * Return the buffer for the given model element.
-	 * @param modelElement
-	 * @return
+	 * @param modelElement the modle element
+	 * @return a model buffer for the element
 	 */
 	IModelBuffer getBuffer(Object modelElement);
 

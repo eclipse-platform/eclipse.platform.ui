@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.synchronize;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
@@ -21,8 +22,9 @@ import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 public class RefreshModelParticipantJob extends RefreshParticipantJob {
 
-	public class ChangeDescription implements IChangeDescription, IDiffChangeListener {
+	private final ResourceMapping[] mappings;
 
+	public class ChangeDescription implements IChangeDescription, IDiffChangeListener {
 		Map changes = new HashMap();
 		
 		public int getChangeCount() {
@@ -43,8 +45,13 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 		}
 	}
 	
-	public RefreshModelParticipantJob(ISynchronizeParticipant participant, String jobName, String taskName, IRefreshSubscriberListener listener) {
+	public RefreshModelParticipantJob(ISynchronizeParticipant participant, String jobName, String taskName, ResourceMapping[] mappings, IRefreshSubscriberListener listener) {
 		super(participant, jobName, taskName, listener);
+		ISynchronizationContext context = ((ResourceMappingSynchronizeParticipant)getParticipant()).getContext();
+		if (mappings.length == 0)
+			this.mappings = context.getScope().getMappings();
+		else 
+			this.mappings = mappings;
 	}
 
 	protected void doRefresh(IChangeDescription changeListener,
@@ -53,7 +60,7 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 		try {
 			context.getDiffTree().addDiffChangeListener((ChangeDescription)changeListener);
 			// TODO: finer grained refresh
-			context.refresh(context.getScope().getMappings(), monitor);
+			context.refresh(mappings, monitor);
 			// Wait for any asynchronous updating to complete
 			try {
 				Platform.getJobManager().join(context, monitor);
@@ -71,11 +78,16 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 
 	protected void handleProgressGroupSet(IProgressMonitor group) {
 		// TODO Auto-generated method stub
-
 	}
 
 	protected IChangeDescription createChangeDescription() {
 		return new ChangeDescription();
+	}
+	
+	public boolean belongsTo(Object family) {
+		if (family == ((ResourceMappingSynchronizeParticipant)getParticipant()).getContext())
+			return true;
+		return super.belongsTo(family);
 	}
 
 }
