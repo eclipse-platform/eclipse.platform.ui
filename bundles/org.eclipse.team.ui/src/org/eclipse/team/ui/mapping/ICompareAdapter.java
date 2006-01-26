@@ -11,8 +11,7 @@
 package org.eclipse.team.ui.mapping;
 
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 
@@ -88,5 +87,21 @@ public interface ICompareAdapter {
 	 * @return the number of matching resources in the set.
 	 */
 	public long countFor(ISynchronizationContext context, int state, int mask);
+	
+	/**
+	 * Get the name associated with the given model object.
+	 * This name sould be suitable for display to the user.
+	 * @param object the model object
+	 * @return the name of the object
+	 */
+	public String getName(Object object);
+	
+	/**
+	 * Get the path associated with the given model object.
+	 * Ths path sould be suitable for display to the user.
+	 * @param object the model object
+	 * @return the path of the object
+	 */
+	public IPath getFullPath(Object object);
 
 }

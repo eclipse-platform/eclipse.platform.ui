@@ -51,10 +51,12 @@ public class ResourceMappingSynchronizeParticipant extends
 
 	protected SubscriberRefreshSchedule refreshSchedule;
 
+	private String description;
+
 	/**
 	 * Create a participant for the given context
 	 * @param context the synchronization context
-	 * @param name the na,me of the participant
+	 * @param name the name of the participant
 	 */
 	public ResourceMappingSynchronizeParticipant(ISynchronizationContext context, String name) {
 		initializeContext(context);
@@ -74,12 +76,9 @@ public class ResourceMappingSynchronizeParticipant extends
 	 */
 	public String getName() {
 		String name = super.getName();
-		return NLS.bind(TeamUIMessages.SubscriberParticipant_namePattern, new String[] { name, getScopeDescription() }); 
-	}
-	
-	private String getScopeDescription() {
-		// TODO Auto-generated method stub
-		return "Model";
+		if (description == null)
+			description = Utils.getScopeDescription(getContext().getScope());
+		return NLS.bind(TeamUIMessages.SubscriberParticipant_namePattern, new String[] { name, description }); 
 	}
 
 	/**
@@ -270,15 +269,10 @@ public class ResourceMappingSynchronizeParticipant extends
         }
         int mappingCount = mappings.length;
         if (mappingCount == 1) {
-            return NLS.bind(TeamUIMessages.Participant_synchronizingMoreDetails, new String[] { getShortName(), getLabel(mappings[0]) }); 
+            return NLS.bind(TeamUIMessages.Participant_synchronizingMoreDetails, new String[] { getShortName(), Utils.getLabel(mappings[0]) }); 
         }
         return NLS.bind(TeamUIMessages.Participant_synchronizingResources, new String[] { getShortName(), Integer.toString(mappingCount) }); 
     }
-
-	private String getLabel(ResourceMapping mapping) {
-		// TODO Auto-generated method stub
-		return "";
-	}
 	
 	private IRefreshable createRefreshable() {
 		return new IRefreshable() {

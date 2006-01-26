@@ -32,6 +32,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
@@ -769,5 +770,29 @@ public class Utils {
 				result.add(mapping);
 		}
 		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
+	}
+
+	public static String getLabel(ResourceMapping mapping) {
+		ModelProvider provider = mapping.getModelProvider();
+		ICompareAdapter adapter = (ICompareAdapter)getAdapter(provider, ICompareAdapter.class);
+		return adapter.getFullPath(mapping.getModelObject()).toString();
+	}
+
+	public static String getScopeDescription(IResourceMappingScope scope) {
+		ResourceMapping[] mappings = scope.getInputMappings();
+		StringBuffer  buffer = new StringBuffer();
+		int count = 0;
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping mapping = mappings[i];
+			String label = getLabel(mapping);
+			if (label.length() > 0) {
+				if(count > 0) buffer.append(", "); //$NON-NLS-1$
+				buffer.append(label);
+				count++;
+			}
+		}
+		if (buffer.length() == 0)
+			return new Date().toString(); //$NON-NLS-1$
+		return buffer.toString();
 	}
 }

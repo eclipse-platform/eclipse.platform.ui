@@ -10,19 +10,23 @@
  *******************************************************************************/
 package org.eclipse.team.ui.mapping;
 
+import java.util.*;
+
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.FileStateTypedElement;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * A abstract implementation of {@link ICompareAdapter}. Most of the methods
@@ -155,4 +159,67 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 		return context.getDiffTree().countFor(state, mask);
 	}
 
+	/**
+	 * Return the name of the given object. By default, the object is adapted to
+	 * {@link IWorkbenchAdapter} to obtain the name. Models that do not adpapt to
+	 * this interface should override to provide a more meaningful name.
+	 * 
+	 * @param object the model object
+	 * @return the name of the object
+	 * @see org.eclipse.team.ui.mapping.ICompareAdapter#getName(java.lang.Object)
+	 */
+	public String getName(Object object) {
+		if (object instanceof ResourceMapping) {
+			ResourceMapping mapping = (ResourceMapping) object;
+			object = mapping.getModelObject();
+		}
+		IWorkbenchAdapter adapter = (IWorkbenchAdapter) Utils.getAdapter(
+				object, IWorkbenchAdapter.class);
+		if (adapter != null) {
+			String label = adapter.getLabel(object);
+			if (label != null)
+				return label;
+		}
+		IResource resource = Utils.getResource(object);
+		if (resource != null)
+			return resource.getName();
+		return ""; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Return the path of the given object. By default, the object is adapted to
+	 * {@link IWorkbenchAdapter} to obtain the path. Models that do not adapt to
+	 * this interface should override to provide a more meaningful path.
+	 * 
+	 * @param object the model object
+	 * @return the path of the object
+	 * @see org.eclipse.team.ui.mapping.ICompareAdapter#getFullPath(Object)
+	 */
+	public IPath getFullPath(Object object) {
+		if (object instanceof ResourceMapping) {
+			ResourceMapping mapping = (ResourceMapping) object;
+			object = mapping.getModelObject();
+		}
+		IWorkbenchAdapter adapter = (IWorkbenchAdapter) Utils.getAdapter(
+				object, IWorkbenchAdapter.class);
+		if (adapter != null) {
+			List segments = new ArrayList();
+			Object parent = object;
+			do {
+				String segment = adapter.getLabel(parent);
+				if (segment != null && segment.length() > 0)
+					segments.add(0, segment);
+				parent = adapter.getParent(parent);
+			} while (parent != null);
+			if (!segments.isEmpty()) {
+				IPath path = Path.EMPTY;
+				for (Iterator iter = segments.iterator(); iter.hasNext();) {
+					String segment = (String) iter.next();
+					path = path.append(segment);
+				}
+				return path;
+			}
+		}
+		return new Path(getName(object));
+	}
 }
