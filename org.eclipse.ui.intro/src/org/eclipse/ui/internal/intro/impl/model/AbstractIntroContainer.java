@@ -26,7 +26,8 @@ import org.w3c.dom.NodeList;
  */
 public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 
-    // vector is lazily created when children are loaded in a call to
+    protected static final String ATT_BG_IMAGE = "bgImage";
+	// vector is lazily created when children are loaded in a call to
     // loadChildren().
     protected Vector children;
     protected boolean loaded = false;
@@ -210,6 +211,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     protected void loadChildren() {
         // init the children vector. old children are disposed automatically.
         children = new Vector();
+        
 
         NodeList nodeList = element.getChildNodes();
         Vector vector = new Vector();
@@ -598,6 +600,10 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     public void addChild(AbstractIntroElement child) {
         children.add(child);
     }
+
+	public String getBackgroundImage() {
+		return getAttribute(element, ATT_BG_IMAGE);
+	}
 
 
 }

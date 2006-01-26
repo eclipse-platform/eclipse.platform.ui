@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
+import java.util.Enumeration;
+
+import org.eclipse.ui.intro.config.IntroElement;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 
@@ -21,9 +24,8 @@ public class IntroGroup extends AbstractIntroContainer {
 
     protected static final String TAG_GROUP = "group"; //$NON-NLS-1$
     private static final String ATT_LABEL = "label"; //$NON-NLS-1$
-
+    private static final String ATT_DYNAMIC = "dynamic"; //$NON-NLS-1$
     private String label;
-
     /**
      * @param element
      */
@@ -38,7 +40,7 @@ public class IntroGroup extends AbstractIntroContainer {
     public String getLabel() {
         return label;
     }
-
+    
     /*
      * (non-Javadoc)
      * 
@@ -47,5 +49,49 @@ public class IntroGroup extends AbstractIntroContainer {
     public int getType() {
         return AbstractIntroElement.GROUP;
     }
+    
+    protected void loadChildren() {
+    	String value = getAttribute(element, ATT_DYNAMIC);
+    	if (value!=null && value.equalsIgnoreCase("true"))
+    		loadDynamicNodes();
+    	super.loadChildren();
+    }
 
+    private void loadDynamicNodes() {
+    	IntroModelRoot root = getModelRoot();
+    	if (root==null)
+    		return;
+    	AbstractIntroPage page = getParentPage();
+    	String pageId = page.getId();
+    	IntroElement [] nodes = root.getConfigurer().getGroupChildren(pageId, getId());
+    	addDynamicNodes(this.element, nodes);
+    }
+  
+    private void addDynamicNodes(Element target, IntroElement [] nodes) {
+    	for (int i=0; i<nodes.length; i++) {
+    		IntroElement node = nodes[i];
+    		addDynamicNode(target, node);
+    	}
+    }
+    private void addDynamicNode(Element target, IntroElement node) {
+    	// clone node itself
+    	Element clone = target.getOwnerDocument().createElement(node.getName());
+    	// set attributes
+    	Enumeration atts = node.getAttributes();
+    	for (;atts.hasMoreElements();) {
+    		String aname = (String)atts.nextElement();
+    		String avalue = node.getAttribute(aname);
+    		clone.setAttribute(aname, avalue);
+    	}
+    	// set value
+    	String value = node.getValue();
+    	if (value!=null)
+    		clone.setNodeValue(value);
+    	// clone children
+    	IntroElement [] cnodes = node.getChildren();
+    	if (cnodes.length>0)
+    		addDynamicNodes(clone, cnodes);
+    	// add the clone to the target
+    	target.appendChild(clone);
+    }
 }

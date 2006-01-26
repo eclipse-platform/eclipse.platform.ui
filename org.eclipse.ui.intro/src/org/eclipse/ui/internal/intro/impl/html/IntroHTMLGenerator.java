@@ -212,6 +212,10 @@ public class IntroHTMLGenerator {
         if (introPage.getStyleId() != null)
             pageContentDiv.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS,
                 introPage.getStyleId());
+        if (introPage.getBackgroundImage() != null)
+        	pageContentDiv.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE,
+        	"background-image : url("+introPage.getBackgroundImage()+")"); //$NON-NLS-1$
+        	
         // Add any children of the page, in the order they are defined
         AbstractIntroElement[] children = introPage.getChildren();
         for (int i = 0; i < children.length; i++) {
@@ -305,6 +309,9 @@ public class IntroHTMLGenerator {
                 indentLevel + 1);
             divElement.addContent(divLabel);
         }
+        if (element.getBackgroundImage() != null)
+        	divElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE,
+        	"style=\"background-image : url("+element.getBackgroundImage()+")\""); //$NON-NLS-1$
         // Add any children of the div, in the order they are defined
         AbstractIntroElement[] children = element.getChildren();
         for (int i = 0; i < children.length; i++) {

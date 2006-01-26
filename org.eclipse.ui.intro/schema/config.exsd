@@ -83,6 +83,16 @@ The content file is parsed at run time by the intro framework. Based on the sett
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="configurer" type="string">
+            <annotation>
+               <documentation>
+                  a name of the fully qualified class that provides for dynamic aspects of the intro configuration. This class can provide values of the substitution variables, children of the dynamic groups and resolve incomplete target paths. The class must extend &lt;code&gt;org.eclipse.ui.intro.IntroConfigurer&lt;/code&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.intro.config.IntroConfigurer"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

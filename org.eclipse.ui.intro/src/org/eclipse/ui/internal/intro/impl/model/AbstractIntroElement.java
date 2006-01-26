@@ -234,8 +234,15 @@ public abstract class AbstractIntroElement implements Cloneable {
      * @return
      */
     protected String getAttribute(Element element, String att) {
-        if (element.hasAttribute(att))
-            return element.getAttribute(att);
+        if (element.hasAttribute(att)) {
+            String value = element.getAttribute(att);
+            if (value!=null) {
+            	IntroModelRoot root = getModelRoot();
+            	if (root!=null)
+            		return root.resolveVariables(value);
+            	return value;
+            }
+        }
         return null;
     }
 
@@ -338,6 +345,23 @@ public abstract class AbstractIntroElement implements Cloneable {
         if (parent.isOfType(ABSTRACT_PAGE))
             return (AbstractIntroPage) parent;
         return null;
+    }
+    
+    public IntroModelRoot getModelRoot() {
+        // return yourself if you are a model root.
+        if (isOfType(AbstractIntroElement.MODEL_ROOT))
+            return (IntroModelRoot) this;
+
+        AbstractIntroElement parent = getParent();
+        if (parent == null)
+            return null;
+
+        while (parent != null && parent.getParent() != null
+                && !parent.isOfType(AbstractIntroElement.MODEL_ROOT))
+            parent = parent.getParent();
+        if (parent.isOfType(MODEL_ROOT))
+            return (IntroModelRoot) parent;
+        return null;    	
     }
 
 

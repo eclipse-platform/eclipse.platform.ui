@@ -15,15 +15,18 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.intro.config.IntroConfigurer;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -94,13 +97,14 @@ public class IntroModelRoot extends AbstractIntroContainer {
     public static final int CURRENT_PAGE_PROPERTY_ID = 1;
 
     private static final String ATT_CONTENT = "content"; //$NON-NLS-1$
-
+    private static final String ATT_CONFIGURER = "configurer"; //$NON-NLS-1$
 
     // False if there is no valid contribution to the
     // org.eclipse.ui.into.config extension point. Start off with true, and set
     // to false whenever something bad happens.
     private boolean hasValidConfig = true;
     private boolean isdynamicIntro;
+    private IntroConfigurer configurer;
     private IntroPartPresentation introPartPresentation;
     private IntroHomePage homePage;
     private String currentPageId;
@@ -159,6 +163,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
             Log.warning("Could not find presentation element in intro config."); //$NON-NLS-1$
             return;
         }
+        
+        loadConfigurer();
 
         introPartPresentation = new IntroPartPresentation(presentationElement);
         children.add(introPartPresentation);
@@ -222,8 +228,20 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 IntroPartPresentation.ATT_HOME_PAGE_ID);
         return presentationElement;
     }
-
-
+    
+    private void loadConfigurer() {
+    	String cname = getCfgElement().getAttribute(ATT_CONFIGURER);
+    	if (cname!=null) {
+    		try {
+    			Object obj = getCfgElement().createExecutableExtension(ATT_CONFIGURER);
+    			if (obj instanceof IntroConfigurer)
+    				configurer = (IntroConfigurer)obj;
+    		}
+    		catch (CoreException e) {
+    			Log.error("Error loading intro configurer", e); //$NON-NLS-1$
+    		}
+    	}
+    }
 
     /**
      * Loads all pages defined in this config from the xml content file.
@@ -596,6 +614,10 @@ public class IntroModelRoot extends AbstractIntroContainer {
     public IntroPartPresentation getPresentation() {
         return introPartPresentation;
     }
+    
+    public IntroConfigurer getConfigurer() {
+    	return configurer;
+    }
 
     /**
      * @return Returns the rootPage.
@@ -773,7 +795,34 @@ public class IntroModelRoot extends AbstractIntroContainer {
         String content = configElement.getAttribute(ATT_CONTENT);
         return ModelUtil.getParentFolderToString(content);
     }
-
-  
-
+    
+    public String resolveVariables(String text) {
+    	if (configurer==null) return text;
+    	if (text.indexOf('$')== -1)
+    		return text;
+    	// resolve
+    	boolean inVariable=false;
+    	StringBuffer buf = new StringBuffer();
+    	int vindex=0;
+    	for (int i=0; i<text.length(); i++) {
+    		char c = text.charAt(i);
+    		if (c=='$') {
+    			if (!inVariable) {
+    				inVariable=true;
+    				vindex=i+1;
+    				continue;
+    			}
+ 				inVariable=false;
+   				String variable=text.substring(vindex, i);
+   				String value = configurer.getVariable(variable);
+   				if (value==null)
+   					value = "$"+variable+"$";
+   				buf.append(value);
+   				continue;
+    		}
+    		else if (!inVariable)
+    			buf.append(c);
+    	}
+    	return buf.toString();
+    }
 }

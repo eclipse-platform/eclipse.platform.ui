@@ -175,6 +175,13 @@ Since 3.1, if the content of the external file is XHTML 1.0, then the page is re
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="dynamic" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  if &lt;code&gt;true&lt;/code&gt;, the children of this group will be provided by the intro configurer at run time. It is advised not to define any children statically in this case.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -655,9 +662,9 @@ Another difference between the tags is that the html tag is only supported for t
          </documentation>
       </annotation>
       <complexType>
-         <all>
+         <sequence>
             <element ref="text" minOccurs="0" maxOccurs="1"/>
-         </all>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>

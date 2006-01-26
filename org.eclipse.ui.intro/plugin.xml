@@ -37,15 +37,13 @@
          point="org.eclipse.ui.intro">
       <intro
             class="org.eclipse.ui.intro.config.CustomizableIntroPart"
-            icon="shared/css/graphics/icons/etool/overview.gif"
+            icon="icons/welcome_item.gif"
             id="org.eclipse.ui.intro.shared"/>
-      <introProductBinding
-            introId="org.eclipse.ui.intro.shared"
-            productId="org.eclipse.ui.intro.product"/>
    </extension>
    <extension
          point="org.eclipse.ui.intro.config">
       <config
+            configurer="org.eclipse.ui.internal.intro.shared.SharedIntroConfigurer"
             content="$nl$/shared/introContent.xml"
             id="org.eclipse.ui.intro.sharedConfig"
             introId="org.eclipse.ui.intro.shared">
@@ -62,18 +60,6 @@
          </presentation>
       </config>
    </extension>
-   <extension
-         id="product"
-         point="org.eclipse.core.runtime.products">
-      <product
-            application="org.eclipse.ui.ide.workbench"
-            description="TestProductForSharedIntro"
-            name="TestIntroProduct">
-         <property
-               name="sharedIntroData"
-               value="sharedIntroData.xml"/>
-      </product>
-   </extension>     
    
  
      

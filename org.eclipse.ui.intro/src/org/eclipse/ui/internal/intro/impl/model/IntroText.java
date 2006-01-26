@@ -46,6 +46,9 @@ public class IntroText extends AbstractBaseIntroElement {
      * @return Returns the text description.
      */
     public String getText() {
+    	IntroModelRoot root = getModelRoot();
+    	if (root!=null)
+    		return root.resolveVariables(text);
         return text;
     }
 

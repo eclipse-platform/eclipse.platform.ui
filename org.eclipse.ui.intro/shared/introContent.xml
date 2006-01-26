@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <introContent>
-	<page 	alt-style="css/root_swt.properties" 
-			style="css/root.css" 
-			id="root" 
-			style-id="page">
-        <title style-id="intro-header">Welcome to Eclipse 3.2</title>
+	<page id="root" bgImage="$introBackgroundImage$">
+        <title>$introTitle$</title>
         <group id="links-background">
-        	<group id="page-links">
-        	   <contentProvider id="rootLinks"
-        	           class="org.eclipse.ui.internal.intro.shared.RootContentProvider"/>
-        	</group>
+           <group id="page-links" dynamic="true"/>
         </group>
     </page>
     <!-- 
