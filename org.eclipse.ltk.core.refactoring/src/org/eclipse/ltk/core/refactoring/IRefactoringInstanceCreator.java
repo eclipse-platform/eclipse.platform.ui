@@ -12,12 +12,14 @@ package org.eclipse.ltk.core.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 
-
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 /**
  * Interface for objects which are capable of creating a specific refactoring
- * instance.
+ * instance. Refactoring instance creators are stateless objects. They are
+ * instantiated on demand by the refactoring framework. It is not guaranteed
+ * that the same refactoring instance creator object will be used to create the
+ * arguments for a refactoring and to create the refactoring itself.
  * <p>
  * Note: this interface is not intended to be implemented by clients.
  * </p>
