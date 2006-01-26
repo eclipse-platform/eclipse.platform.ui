@@ -61,8 +61,27 @@ public abstract class ResourceMapping extends PlatformObject {
 	}
 
 	/**
+	 * Return whether this resource mapping contains all the resources
+	 * of the given mapping.
+	 * <p>
+	 * This method always returns <code>false</code> when the given resource 
+	 * mapping's model provider id does not match that the of the receiver.
+	 * </p>
+	 * 
+	 * @param mapping the given resource mapping
+	 * @return <code>true</code> if this mapping contains all the resources
+	 * of the given mapping, and <code>false</code> otherwise.
+	 */
+	public boolean contains(ResourceMapping mapping) {
+		return false;
+	}
+
+	/**
 	 * Override equals to compare the model objects of the
 	 * mapping in order to determine equality.
+	 * @param obj the object to compare
+	 * @return <code>true</code> if the receiver is equal to the
+	 * given object, and <code>false</code> otherwise.
 	 */
 	public boolean equals(Object obj) {
 		if (obj == this)
@@ -175,7 +194,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * @exception CoreException if the traversals could not be obtained.
 	 */
 	public abstract ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException;
-
+	
 	/**
 	 * Override hashCode to use the model object.
 	 */

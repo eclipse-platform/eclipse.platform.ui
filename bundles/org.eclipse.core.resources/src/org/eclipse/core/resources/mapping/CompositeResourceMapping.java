@@ -24,8 +24,8 @@ import org.eclipse.core.runtime.*;
  */
 public final class CompositeResourceMapping extends ResourceMapping {
 
-	private final Object modelObject;
 	private final ResourceMapping[] mappings;
+	private final Object modelObject;
 	private IProject[] projects;
 	private String providerId;
 
@@ -38,6 +38,19 @@ public final class CompositeResourceMapping extends ResourceMapping {
 		this.modelObject = modelObject;
 		this.mappings = mappings;
 		this.providerId = providerId;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.mapping.ResourceMapping#isAncestorOf(org.eclipse.core.resources.mapping.ResourceMapping)
+	 */
+	public boolean contains(ResourceMapping mapping) {
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping childMapping = mappings[i];
+			if (childMapping.contains(mapping)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

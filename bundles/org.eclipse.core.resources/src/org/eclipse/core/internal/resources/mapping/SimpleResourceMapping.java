@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,20 @@ public class SimpleResourceMapping extends ResourceMapping {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.mapping.ResourceMapping#contains(org.eclipse.core.resources.mapping.ResourceMapping)
+	 */
+	public boolean contains(ResourceMapping mapping) {
+		if (mapping.getModelProviderId().equals(this.getModelProviderId())) {
+			Object object = mapping.getModelObject();
+			if (object instanceof IResource) {
+				IResource other = (IResource) object;
+				return resource.getFullPath().isPrefixOf(other.getFullPath());
+			}
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
 	 * Method declared on ResourceMapping.
 	 */
 	public Object getModelObject() {
@@ -48,7 +62,7 @@ public class SimpleResourceMapping extends ResourceMapping {
 			return ((IWorkspaceRoot)resource).getProjects();
 		return new IProject[] {resource.getProject()};
 	}
-
+	
 	/* (non-Javadoc)
 	 * Method declared on ResourceMapping.
 	 */
