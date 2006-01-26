@@ -19,7 +19,7 @@ import org.eclipse.jface.databinding.UpdatableValue;
 
 /**
  * An IUpdatableValue implementation that represents a calculated value
- * that depends on the values of other IUpdatables or Java Beans.
+ * that depends on the values of other IUpdatables.
  * <p>
  * Exposes an IChangeListener that may be added to objects on which this 
  * calculation depends.
