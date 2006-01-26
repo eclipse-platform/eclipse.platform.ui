@@ -190,15 +190,6 @@ public abstract class ModelProvider extends PlatformObject {
 	}
 
 	/**
-	 * @deprecated Use {@link #validateChange(IResourceDelta, IProgressMonitor)}
-	 * instead.  This method will be deleted the week of January 23, 2006.
-	 * TODO: Delete this method
-	 */
-	public IStatus validateChange(IResourceDelta delta) {
-		return new ModelStatus(IStatus.OK, ResourcesPlugin.PI_RESOURCES, descriptor.getId(), Status.OK_STATUS.getMessage());
-	}
-
-	/**
 	 * Validate the proposed changes contained in the given delta. 
 	 * <p>
 	 * This method must return either a {@link ModelStatus}, or a {@link MultiStatus}
@@ -220,7 +211,6 @@ public abstract class ModelProvider extends PlatformObject {
 	 * on the model that provided this validator.
 	 */
 	public IStatus validateChange(IResourceDelta delta, IProgressMonitor monitor) {
-		//call the old method for now to avoid breaking current clients
-		return validateChange(delta);
+		return new ModelStatus(IStatus.OK, ResourcesPlugin.PI_RESOURCES, descriptor.getId(), Status.OK_STATUS.getMessage());
 	}
 }
