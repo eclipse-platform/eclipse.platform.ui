@@ -46,10 +46,13 @@ public abstract class ForwardingChangesSection extends ChangesSection {
 	}
 	
 	protected void calculateDescription() {
+		if (getContainer().isDisposed())
+			return;
 		if(getVisibleChangesCount() == 0) {
 			TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 				public void run() {
-					updatePage(getEmptyChangesComposite(getContainer()));
+					if (!getContainer().isDisposed())
+						updatePage(getEmptyChangesComposite(getContainer()));
 				}
 			});
 		} else {
