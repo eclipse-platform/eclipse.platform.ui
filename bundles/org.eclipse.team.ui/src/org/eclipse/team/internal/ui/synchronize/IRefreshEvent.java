@@ -11,9 +11,10 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.ui.synchronize.RefreshParticipantJob.IChangeDescription;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 /**
@@ -68,11 +69,11 @@ public interface IRefreshEvent {
 	public ISynchronizeParticipant getParticipant();
 	
 	/**
-	 * The changes found during the refresh or an empty list if no changes were found.
+	 * Return a description of the changes found.
 	 * 
-	 * @return the changes found during the refresh or an empty list if no changes were found.
+	 * @return a description of the changes found
 	 */
-	public SyncInfo[] getChanges();
+	public IChangeDescription getChangeDescription();
 	
 	/**
 	 * The time, in milliseconds, at which the refresh was started. 
@@ -95,11 +96,4 @@ public interface IRefreshEvent {
 	 * @return the status of the refresh operation.
 	 */
 	public IStatus getStatus();
-	
-	/**
-	 * Returns the list of resources that were refreshed.
-	 * 
-	 * @return the list of resources that were refreshed.
-	 */
-	public IResource[] getResources();
 }

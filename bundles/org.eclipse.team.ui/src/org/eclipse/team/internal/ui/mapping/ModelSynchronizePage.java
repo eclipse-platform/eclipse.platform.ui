@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.mapping;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.synchronize.*;
+import org.eclipse.team.internal.ui.synchronize.actions.RefreshActionContribution;
 import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -41,9 +42,7 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 		configuration.setComparisonType(isThreeWay() 
 						? ISynchronizePageConfiguration.THREE_WAY 
 						: ISynchronizePageConfiguration.TWO_WAY);
-		// TODO: This is a hack to get something working
-		//configuration.setProperty(ISynchronizePageConfiguration.P_SYNC_INFO_SET, new SyncInfoTree());
-		//configuration.setProperty(SynchronizePageConfiguration.P_WORKING_SET_SYNC_INFO_SET, new SyncInfoTree());
+		configuration.addActionContribution(new RefreshActionContribution());
 	}
 
 	private boolean isThreeWay() {

@@ -11,8 +11,7 @@
 package org.eclipse.team.ui.synchronize;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -65,7 +64,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * @see AbstractSynchronizeParticipant
  * @since 3.0
  */
-public interface ISynchronizeParticipant extends IExecutableExtension {
+public interface ISynchronizeParticipant extends IExecutableExtension, IAdaptable {
 	/**
 	 * Returns the unique id that identified the <i>type</i> of this
 	 * synchronize participant. The synchronize manager supports registering

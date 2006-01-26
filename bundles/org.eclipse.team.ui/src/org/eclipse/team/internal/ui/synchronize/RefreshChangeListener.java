@@ -12,18 +12,21 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
 import org.eclipse.team.core.subscribers.ISubscriberChangeListener;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
+import org.eclipse.team.internal.ui.synchronize.RefreshParticipantJob.IChangeDescription;
 
-public class RefreshChangeListener implements ISubscriberChangeListener {
+public class RefreshChangeListener implements ISubscriberChangeListener, IChangeDescription {
 	private List changes = new ArrayList();
 	private SubscriberSyncInfoCollector collector;
+	private IResource[] resources;
 
-	public RefreshChangeListener(SubscriberSyncInfoCollector collector) {
+	public RefreshChangeListener(IResource[] resources, SubscriberSyncInfoCollector collector) {
+		this.resources = resources;
 		this.collector = collector;
 	}
 	public void subscriberResourceChanged(ISubscriberChangeEvent[] deltas) {
@@ -34,8 +37,7 @@ public class RefreshChangeListener implements ISubscriberChangeListener {
 			}
 		}
 	}
-	public SyncInfo[] getChanges(IProgressMonitor monitor) {
-		collector.waitForCollector(monitor);
+	public SyncInfo[] getChanges() {
 		List changedSyncInfos = new ArrayList();
 		SyncInfoSet set = collector.getSyncInfoSet();
 		for (Iterator it = changes.iterator(); it.hasNext();) {
@@ -60,5 +62,11 @@ public class RefreshChangeListener implements ISubscriberChangeListener {
 	
 	private boolean isThreeWay() {
 		return collector.getSubscriber().getResourceComparator().isThreeWay();
+	}
+	public int getChangeCount() {
+		return getChanges().length;
+	}
+	public IResource[] getResources() {
+		return resources;
 	}
 }

@@ -79,7 +79,28 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * Constructor initializes the schedule. Subclasses must call this method.
 	 */
 	public SubscriberParticipant() {
-		refreshSchedule = new SubscriberRefreshSchedule(this);
+		refreshSchedule = new SubscriberRefreshSchedule(createRefreshable());
+	}
+
+	private IRefreshable createRefreshable() {
+		return new IRefreshable() {
+			public RefreshParticipantJob createJob(String interval) {
+				return new RefreshSubscriberParticipantJob(SubscriberParticipant.this, 
+						TeamUIMessages.RefreshSchedule_14, 
+						NLS.bind(TeamUIMessages.RefreshSchedule_15, new String[] { SubscriberParticipant.this.getName(), interval }), getResources(), 
+						new RefreshUserNotificationPolicy(SubscriberParticipant.this));
+			}
+			public ISynchronizeParticipant getParticipant() {
+				return SubscriberParticipant.this;
+			}
+			public void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
+				SubscriberParticipant.this.setRefreshSchedule(schedule);
+			}
+			public SubscriberRefreshSchedule getRefreshSchedule() {
+				return SubscriberParticipant.this.getRefreshSchedule();
+			}
+		
+		};
 	}
 	
 	/**
@@ -273,7 +294,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		if(memento != null) {
 			IMemento settings = memento.getChild(CTX_SUBSCRIBER_PARTICIPANT_SETTINGS);
 			if(settings != null) {
-				SubscriberRefreshSchedule schedule = SubscriberRefreshSchedule.init(settings.getChild(CTX_SUBSCRIBER_SCHEDULE_SETTINGS), this);
+				SubscriberRefreshSchedule schedule = SubscriberRefreshSchedule.init(settings.getChild(CTX_SUBSCRIBER_SCHEDULE_SETTINGS), createRefreshable());
 				setRefreshSchedule(schedule);
 				this.scope = AbstractSynchronizeScope.createScope(settings);
 				scope.addPropertyChangeListener(this);
@@ -478,5 +499,16 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 */
 	public ISynchronizeScope getScope() {
 		return scope;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == IRefreshable.class && refreshSchedule != null) {
+			return refreshSchedule.getRefreshable();
+			
+		}
+		return super.getAdapter(adapter);
 	}
 }

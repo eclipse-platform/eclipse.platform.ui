@@ -19,8 +19,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.actions.OpenInCompareAction;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.actions.ActionFactory;
 
 /**
@@ -28,9 +27,9 @@ import org.eclipse.ui.actions.ActionFactory;
  */
 public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener {
 
-	private SubscriberParticipant participant;
+	private ISynchronizeParticipant participant;
 
-	public RefreshUserNotificationPolicy(SubscriberParticipant participant) {
+	public RefreshUserNotificationPolicy(ISynchronizeParticipant participant) {
 		this.participant = participant;
 	}
 
@@ -66,23 +65,7 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 			public void run() {
 				boolean prompt = (event.getStatus().getCode() == IRefreshEvent.STATUS_NO_CHANGES);
 				
-				SyncInfo[] infos = event.getChanges();
-				List selectedResources = new ArrayList();
-				selectedResources.addAll(Arrays.asList(event.getResources()));
-				for (int i = 0; i < infos.length; i++) {
-					selectedResources.add(infos[i].getLocal());
-				}
-				IResource[] resources = (IResource[]) selectedResources.toArray(new IResource[selectedResources.size()]);
-				
-				// If it's a file, simply show the compare editor
-				if (resources.length == 1 && resources[0].getType() == IResource.FILE) {
-					IResource file = resources[0];
-					SyncInfo info = participant.getSubscriberSyncInfoCollector().getSyncInfoSet().getSyncInfo(file);
-					if(info != null) {
-						OpenInCompareAction.openCompareEditor(participant, info, false /* do not keep focus */, null);
-						prompt = false;
-					}
-				}
+				prompt = handleRefreshDone(event, prompt);
 				
 				// Prompt user if preferences are set for this type of refresh.
 				if (prompt) {
@@ -112,5 +95,30 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 				MessageDialog.openInformation(Utils.getShell(null), title, event.getStatus().getMessage());
 			}
 		});
+	}
+	
+	protected boolean handleRefreshDone(final IRefreshEvent event, boolean prompt) {
+		if (participant instanceof SubscriberParticipant) {
+			SubscriberParticipant sp = (SubscriberParticipant) participant;
+			SyncInfo[] infos = ((RefreshChangeListener)event.getChangeDescription()).getChanges();
+			List selectedResources = new ArrayList();
+			selectedResources.addAll(Arrays.asList(((RefreshChangeListener)event.getChangeDescription()).getResources()));
+			for (int i = 0; i < infos.length; i++) {
+				selectedResources.add(infos[i].getLocal());
+			}
+			IResource[] resources = (IResource[]) selectedResources.toArray(new IResource[selectedResources.size()]);
+			
+			// If it's a file, simply show the compare editor
+			if (resources.length == 1 && resources[0].getType() == IResource.FILE) {
+				IResource file = resources[0];
+				SyncInfo info = sp.getSubscriberSyncInfoCollector().getSyncInfoSet().getSyncInfo(file);
+				if(info != null) {
+					OpenInCompareAction.openCompareEditor(participant, info, false /* do not keep focus */, null);
+					prompt = false;
+				}
+			}
+		}
+		// TODO: Implement one change case for model participant
+		return prompt;
 	}
 }

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.ui.synchronize.RefreshParticipantJob.IChangeDescription;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 /**
@@ -24,25 +24,17 @@ public class RefreshEvent implements IRefreshEvent {
 	long startTime = 0;
 	long stopTime = 0;
 	IStatus status;
-	IResource[] resources;
 	private final ISynchronizeParticipant participant;
+	private final IChangeDescription description;
 	
-	public RefreshEvent(int type, IResource[] resources, ISynchronizeParticipant participant) {
+	public RefreshEvent(int type, ISynchronizeParticipant participant, IChangeDescription description) {
 		this.type = type;
-		this.resources = resources;
 		this.participant = participant;
+		this.description = description;
 	}
 	
 	public int getRefreshType() {
 		return type;
-	}
-
-	public SyncInfo[] getChanges() {
-		return changes != null ? changes : new SyncInfo[0];
-	}
-	
-	public void setChanges(SyncInfo[] changes) {
-		this.changes = changes;
 	}
 	
 	public long getStartTime() {
@@ -69,11 +61,11 @@ public class RefreshEvent implements IRefreshEvent {
 		this.status = status;
 	}
 
-	public IResource[] getResources() {
-		return resources;
-	}
-
 	public ISynchronizeParticipant getParticipant() {
 		return participant;
+	}
+
+	public IChangeDescription getChangeDescription() {
+		return description;
 	}
 }

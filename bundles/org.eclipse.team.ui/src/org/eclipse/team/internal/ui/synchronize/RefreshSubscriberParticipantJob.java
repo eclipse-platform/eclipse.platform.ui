@@ -21,8 +21,11 @@ import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 
 public class RefreshSubscriberParticipantJob extends RefreshParticipantJob {
 
+	private final IResource[] resources;
+
 	public RefreshSubscriberParticipantJob(SubscriberParticipant participant, String jobName, String taskName, IResource[] resources, IRefreshSubscriberListener listener) {
-		super(participant, jobName, taskName, resources, listener);
+		super(participant, jobName, taskName, listener);
+		this.resources = resources;
 	}
 
 	/* (non-Javadoc)
@@ -39,7 +42,6 @@ public class RefreshSubscriberParticipantJob extends RefreshParticipantJob {
 	protected int getChangeCount() {
 		int numChanges = 0;
 		SubscriberSyncInfoCollector collector = getCollector();
-		IResource[] resources = getResources();
 		if (collector != null) {
 			SyncInfoTree set = collector.getSyncInfoSet();
 			for (int i = 0; i < resources.length; i++) {
@@ -53,8 +55,8 @@ public class RefreshSubscriberParticipantJob extends RefreshParticipantJob {
 		return numChanges;
 	}
 	
-	protected RefreshChangeListener getChangeListener() {
-		return new RefreshChangeListener(getCollector());
+	protected RefreshParticipantJob.IChangeDescription createChangeDescription() {
+		return new RefreshChangeListener(resources, getCollector());
 	}
 	
 	protected void handleProgressGroupSet(IProgressMonitor group) {
@@ -67,7 +69,7 @@ public class RefreshSubscriberParticipantJob extends RefreshParticipantJob {
 	 */
 	public boolean shouldRun() {
 		// Ensure that any progress shown as a result of this refresh occurs hidden in a progress group.
-		return getSubscriber() != null;
+		return getSubscriber() != null && getCollector().getSyncInfoSet() != null;
 	}
 	
 	public boolean belongsTo(Object family) {	
@@ -77,14 +79,15 @@ public class RefreshSubscriberParticipantJob extends RefreshParticipantJob {
 		return super.belongsTo(family);
 	}
 	
-	protected void doRefresh(RefreshChangeListener changeListener, IProgressMonitor monitor) throws TeamException {
+	protected void doRefresh(IChangeDescription changeListener, IProgressMonitor monitor) throws TeamException {
 		Subscriber subscriber = getSubscriber();
 		if (subscriber != null) {
 			try {
-				subscriber.addListener(changeListener);
-				subscriber.refresh(getResources(), IResource.DEPTH_INFINITE, monitor);
+				subscriber.addListener((RefreshChangeListener)changeListener);
+				subscriber.refresh(resources, IResource.DEPTH_INFINITE, monitor);
+				getCollector().waitForCollector(monitor);
 			} finally {
-				subscriber.removeListener(changeListener);
+				subscriber.removeListener((RefreshChangeListener)changeListener);
 			}
 		}
 	}

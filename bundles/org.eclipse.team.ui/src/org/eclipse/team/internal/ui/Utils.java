@@ -759,4 +759,15 @@ public class Utils {
 		}
 		return null;
 	}
+
+	public static ResourceMapping[] getResourceMappings(Object[] objects) {
+		List result = new ArrayList();
+		for (int i = 0; i < objects.length; i++) {
+			Object object = objects[i];
+			ResourceMapping mapping = getResourceMapping(object);
+			if (mapping != null)
+				result.add(mapping);
+		}
+		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
+	}
 }

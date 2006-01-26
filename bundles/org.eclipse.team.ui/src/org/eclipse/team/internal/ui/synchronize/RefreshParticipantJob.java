@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ui.synchronize;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -23,7 +22,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.actions.ActionFactory;
@@ -45,7 +43,6 @@ import org.eclipse.ui.progress.UIJob;
  */
 public abstract class RefreshParticipantJob extends Job {
 	
-    private final static boolean TEST_PROGRESS_VIEW = false;
 	/**
 	 * Uniquely identifies this type of job. This is used for cancellation.
 	 */
@@ -65,11 +62,6 @@ public abstract class RefreshParticipantJob extends Job {
 	 * The schedule delay used when rescheduling a completed job 
 	 */
 	private static long scheduleDelay;
-	
-	/**
-	 * The subscribers and resources to refresh.
-	 */
-	private IResource[] resources;
 
 	/**
 	 * The participant that is being refreshed.
@@ -217,6 +209,10 @@ public abstract class RefreshParticipantJob extends Job {
 		}
 	}
 	
+	public static interface IChangeDescription {
+		int getChangeCount();
+	}
+	
 	/**
 	 * Create a job to refresh the specified resources with the subscriber.
 	 * 
@@ -225,12 +221,9 @@ public abstract class RefreshParticipantJob extends Job {
 	 * @param resources
 	 * @param subscriber
 	 */
-	public RefreshParticipantJob(ISynchronizeParticipant participant, String jobName, String taskName, IResource[] resources, IRefreshSubscriberListener listener) {
+	public RefreshParticipantJob(ISynchronizeParticipant participant, String jobName, String taskName, IRefreshSubscriberListener listener) {
 		super(taskName);
-		Assert.isNotNull(resources);
 		Assert.isNotNull(participant);
-		Assert.isNotNull(resources);
-		this.resources = resources;
 		this.participant = participant;
 		this.taskName = jobName;
 		setPriority(Job.DECORATE);
@@ -297,16 +290,11 @@ public abstract class RefreshParticipantJob extends Job {
 				}
 				Policy.checkCanceled(monitor);
 			}
-			IResource[] roots = getResources();
 			
-			// if there are no resources to refresh, just return
-			if(roots == null) {
-				return Status.OK_STATUS;
-			}
-			RefreshEvent event = new RefreshEvent(reschedule ? IRefreshEvent.SCHEDULED_REFRESH : IRefreshEvent.USER_REFRESH, roots, participant);
+			IChangeDescription changeDescription = createChangeDescription();
+			RefreshEvent event = new RefreshEvent(reschedule ? IRefreshEvent.SCHEDULED_REFRESH : IRefreshEvent.USER_REFRESH, participant, changeDescription);
 			IStatus status = null;
 			NonblockingProgressMonitor wrappedMonitor = null;
-			RefreshChangeListener changeListener = getChangeListener();
 			try {
 				event.setStartTime(System.currentTimeMillis());
 				if(monitor.isCanceled()) {
@@ -317,7 +305,7 @@ public abstract class RefreshParticipantJob extends Job {
 				// Perform the refresh		
 				monitor.setTaskName(getName());
 				wrappedMonitor = new NonblockingProgressMonitor(monitor, this);				
-				doRefresh(changeListener, wrappedMonitor);
+				doRefresh(changeDescription, wrappedMonitor);
 				// Prepare the results
 				setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.valueOf(! isJobModal()));
 			} catch(OperationCanceledException e2) {
@@ -336,15 +324,13 @@ public abstract class RefreshParticipantJob extends Job {
 			    // Determine the status to be returned and the GOTO action
 			    status = e.getStatus();
 			    if (!isUser()) {
-			        if (!TEST_PROGRESS_VIEW) {
-			            // Use the GOTO action to show the error and return OK
-			            Object prop = getProperty(IProgressConstants.ACTION_PROPERTY);
-			            if (prop instanceof GotoActionWrapper) {
-			                GotoActionWrapper wrapper = (GotoActionWrapper)prop;
-			                wrapper.setStatus(e.getStatus());
-			                status = new Status(IStatus.OK, TeamUIPlugin.ID, IStatus.OK, e.getStatus().getMessage(), e);
-			            }
-			        }
+		            // Use the GOTO action to show the error and return OK
+		            Object prop = getProperty(IProgressConstants.ACTION_PROPERTY);
+		            if (prop instanceof GotoActionWrapper) {
+		                GotoActionWrapper wrapper = (GotoActionWrapper)prop;
+		                wrapper.setStatus(e.getStatus());
+		                status = new Status(IStatus.OK, TeamUIPlugin.ID, IStatus.OK, e.getStatus().getMessage(), e);
+		            }
 			    }
 		        if (!isUser() && status.getSeverity() == IStatus.ERROR) {
 		            // Never prompt for errors on non-user jobs
@@ -355,7 +341,6 @@ public abstract class RefreshParticipantJob extends Job {
 			}
 			
 			// Post-Notify
-			event.setChanges(changeListener.getChanges(monitor));
 			if (status == null) {
 				status = calculateStatus(event);
 			}
@@ -368,7 +353,7 @@ public abstract class RefreshParticipantJob extends Job {
 		}
 	}
 
-	protected abstract void doRefresh(RefreshChangeListener changeListener, IProgressMonitor monitor) throws CoreException;
+	protected abstract void doRefresh(IChangeDescription changeListener, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Return the total number of changes covered by the resources
@@ -394,14 +379,14 @@ public abstract class RefreshParticipantJob extends Job {
 	private IStatus calculateStatus(IRefreshEvent event) {
 		StringBuffer text = new StringBuffer();
 		int code = IStatus.OK;
-		SyncInfo[] changes = event.getChanges();
+		int changeCount = event.getChangeDescription().getChangeCount();
 		int numChanges = getChangeCount();
 		if (numChanges > 0) {
 			code = IRefreshEvent.STATUS_CHANGES;
-			if (changes.length > 0) {
+			if (changeCount > 0) {
 			// New changes found
-				String numNewChanges = Integer.toString(event.getChanges().length);
-				if (event.getChanges().length == 1) {
+				String numNewChanges = Integer.toString(changeCount);
+				if (changeCount == 1) {
 						text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesSingular, (new Object[]{getName(), numNewChanges}))); 
 				} else {
 						text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesPlural, (new Object[]{getName(), numNewChanges}))); 
@@ -475,11 +460,7 @@ public abstract class RefreshParticipantJob extends Job {
 
 	protected abstract void handleProgressGroupSet(IProgressMonitor group);
 	
-	protected abstract RefreshChangeListener getChangeListener();
-	
-	protected IResource[] getResources() {
-		return resources;
-	}
+	protected abstract IChangeDescription createChangeDescription();
 	
 	public long getScheduleDelay() {
 		return scheduleDelay;

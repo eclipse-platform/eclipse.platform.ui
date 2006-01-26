@@ -37,7 +37,7 @@ import org.eclipse.ui.PartInitException;
  * @see ISynchronizeParticipant
  * @since 3.0
  */
-public abstract class AbstractSynchronizeParticipant implements ISynchronizeParticipant {
+public abstract class AbstractSynchronizeParticipant extends PlatformObject implements ISynchronizeParticipant {
 	
 	/**
 	 * Property key used in the property change event fired when the pinned

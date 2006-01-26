@@ -12,13 +12,12 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import java.text.DateFormat;
 import java.util.Date;
+
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
 
@@ -35,7 +34,7 @@ public class SubscriberRefreshSchedule {
 	
 	private RefreshParticipantJob job;
 	
-	private SubscriberParticipant participant;
+	private IRefreshable refreshable;
 	
 	private IRefreshEvent lastRefreshEvent;
 	
@@ -53,10 +52,10 @@ public class SubscriberRefreshSchedule {
 		public void refreshStarted(IRefreshEvent event) {
 		}
 		public ActionFactory.IWorkbenchAction refreshDone(final IRefreshEvent event) {
-			if (event.getParticipant() == participant) {
+			if (event.getParticipant() == refreshable) {
 				lastRefreshEvent = event;
 				if(enabled && event.getRefreshType() == IRefreshEvent.SCHEDULED_REFRESH) {
-					RefreshUserNotificationPolicy policy = new RefreshUserNotificationPolicy(participant);
+					RefreshUserNotificationPolicy policy = new RefreshUserNotificationPolicy(refreshable.getParticipant());
 					policy.refreshDone(event);
 				}
 			}
@@ -65,8 +64,8 @@ public class SubscriberRefreshSchedule {
 	};
 	
 	
-	public SubscriberRefreshSchedule(SubscriberParticipant participant) {
-		this.participant = participant;
+	public SubscriberRefreshSchedule(IRefreshable refreshable) {
+		this.refreshable = refreshable;
 		RefreshParticipantJob.addRefreshListener(refreshSubscriberListener);
 	}
 
@@ -99,8 +98,8 @@ public class SubscriberRefreshSchedule {
 		return refreshInterval;
 	}
 
-	public SubscriberParticipant getParticipant() {
-		return participant;
+	public ISynchronizeParticipant getParticipant() {
+		return refreshable.getParticipant();
 	}
 	
 	/**
@@ -117,13 +116,8 @@ public class SubscriberRefreshSchedule {
 	}
 	
 	public void startJob() {
-		SyncInfoSet set = participant.getSubscriberSyncInfoCollector().getSyncInfoSet();
-		if(set == null) { 
-			return;
-		}
 		if(job == null) {
-			SubscriberParticipant participant = getParticipant();
-			job = new RefreshSubscriberParticipantJob(participant, TeamUIMessages.RefreshSchedule_14, NLS.bind(TeamUIMessages.RefreshSchedule_15, new String[] { participant.getName(), getRefreshIntervalAsString() }), participant.getResources(), new RefreshUserNotificationPolicy(getParticipant())); 
+			job = refreshable.createJob(getRefreshIntervalAsString());
 			job.setUser(false);
 		} else if(job.getState() != Job.NONE){
 			stopJob();
@@ -154,8 +148,8 @@ public class SubscriberRefreshSchedule {
 		memento.putInteger(CTX_REFRESHSCHEDULE_INTERVAL, (int)refreshInterval);
 	}
 
-	public static SubscriberRefreshSchedule init(IMemento memento, SubscriberParticipant participant) {
-		SubscriberRefreshSchedule schedule = new SubscriberRefreshSchedule(participant);
+	public static SubscriberRefreshSchedule init(IMemento memento, IRefreshable refreshable) {
+		SubscriberRefreshSchedule schedule = new SubscriberRefreshSchedule(refreshable);
 		if(memento != null) {
 			String enabled = memento.getString(CTX_REFRESHSCHEDULE_ENABLED);
 			int interval = memento.getInteger(CTX_REFRESHSCHEDULE_INTERVAL).intValue();
@@ -178,13 +172,13 @@ public class SubscriberRefreshSchedule {
 			Date lastTimeRun = new Date(stopMills);
 			text.append(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(lastTimeRun));
 		}
-		SyncInfo[] changes = event.getChanges();
-		if (changes.length == 0) {
+		int changeCount = event.getChangeDescription().getChangeCount();
+		if (changeCount == 0) {
 			text.append(TeamUIMessages.RefreshSchedule_7); 
-		} else if (changes.length == 1) {
-			text.append(NLS.bind(TeamUIMessages.RefreshSchedule_changesSingular, new String[] { Integer.toString(changes.length) })); 
+		} else if (changeCount == 1) {
+			text.append(NLS.bind(TeamUIMessages.RefreshSchedule_changesSingular, new String[] { Integer.toString(changeCount) })); 
 		} else {
-			text.append(NLS.bind(TeamUIMessages.RefreshSchedule_changesPlural, new String[] { Integer.toString(changes.length) })); 
+			text.append(NLS.bind(TeamUIMessages.RefreshSchedule_changesPlural, new String[] { Integer.toString(changeCount) })); 
 		}
 		return text.toString();
 	} 
@@ -211,5 +205,9 @@ public class SubscriberRefreshSchedule {
 			unit = (hours ? TeamUIMessages.RefreshSchedule_11 : TeamUIMessages.RefreshSchedule_12); // 
 		}
 		return NLS.bind(TeamUIMessages.RefreshSchedule_13, new String[] { Long.toString(minutes), unit }); 
+	}
+
+	public IRefreshable getRefreshable() {
+		return refreshable;
 	}
 }

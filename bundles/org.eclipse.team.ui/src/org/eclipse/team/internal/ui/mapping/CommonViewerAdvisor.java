@@ -103,6 +103,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 			dlp.setDecorationContext(decorationContext);
 		}
         viewer.setInput(getInitialInput());
+        viewer.expandToLevel(2);
 	}
 
 	/* (non-Javadoc)

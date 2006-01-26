@@ -11,18 +11,22 @@
 package org.eclipse.team.ui.operations;
 
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
+import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ICompareAdapter;
 import org.eclipse.team.ui.mapping.ISynchronizationConstants;
-import org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
@@ -46,6 +50,8 @@ public class ResourceMappingSynchronizeParticipant extends
 	
 	private boolean mergingEnabled = true;
 
+	protected SubscriberRefreshSchedule refreshSchedule;
+
 	/**
 	 * Create a participant for the given context
 	 * @param context the synchronization context
@@ -61,8 +67,33 @@ public class ResourceMappingSynchronizeParticipant extends
 		setSecondaryId(Long.toString(System.currentTimeMillis()));
 		setName(name);
 		mergingEnabled = context instanceof IMergeContext;
+		refreshSchedule = new SubscriberRefreshSchedule(createRefreshable());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#getName()
+	 */
+	public String getName() {
+		String name = super.getName();
+		return NLS.bind(TeamUIMessages.SubscriberParticipant_namePattern, new String[] { name, getScopeDescription() }); 
+	}
+	
+	private String getScopeDescription() {
+		// TODO Auto-generated method stub
+		return "Model";
+	}
+
+	/**
+	 * Return the name of the participant as specified in the plugin manifest file. 
+	 * This method is provided to give access to this name since it is masked by
+	 * the <code>getName()</code> method defined in this class.
+	 * @return the name of the participant as specified in the plugin manifest file
+	 * @since 3.1
+	 */
+	protected final String getShortName() {
+	    return super.getName();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#initializeConfiguration(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
 	 */
@@ -102,10 +133,30 @@ public class ResourceMappingSynchronizeParticipant extends
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#run(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void run(IWorkbenchPart part) {
-		// TODO
-		// getContext().refresh(getContext().getScope().getMappings(), monitor);
+		refresh(getContext().getScope().getMappings(), null, null, null, part != null ? part.getSite() : null);
 	}
 
+	/**
+	 * Refresh a participant in the background the result of the refresh are shown in the progress view. Refreshing 
+	 * can also be considered synchronizing, or refreshing the synchronization state. Basically this is a long
+	 * running operation that will update the participants sync info sets with new changes detected on the
+	 * server. Either or both of the <code>shortTaskName</code> and <code>longTaskName</code> can be <code>null</code>
+	 * in which case, the default values for these are returned by the methods <code>getShortTaskName()</code> and
+	 * <code>getLongTaskName(IResource[])</code> will be used.
+	 * 
+	 * @param resources the resources to be refreshed.
+	 * @param shortTaskName the taskName of the background job that will run the synchronize or <code>null</code>
+	 * if the default job name is desired.
+	 * @param longTaskName the taskName of the progress monitor running the synchronize or <code>null</code>
+	 * if the default job name is desired.
+	 * @param site the workbench site the synchronize is running from. This can be used to notify the site
+	 * that a job is running.
+	 */
+	public final void refresh(ResourceMapping[] mappings, ResourceTraversal[] traversals, String shortTaskName, String longTaskName, IWorkbenchSite site) {
+		IRefreshSubscriberListener listener = new RefreshUserNotificationPolicy(this);
+		internalRefresh(mappings, traversals, shortTaskName, longTaskName, site, listener);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#dispose()
 	 */
@@ -179,4 +230,92 @@ public class ResourceMappingSynchronizeParticipant extends
 	public void setMergingEnabled(boolean mergingEnabled) {
 		this.mergingEnabled = mergingEnabled;
 	}
+	
+	private void internalRefresh(ResourceMapping[] mappings, ResourceTraversal[] traversals, String jobName, String taskName, IWorkbenchSite site, IRefreshSubscriberListener listener) {
+		if (jobName == null)
+		    jobName = getShortTaskName();
+		if (taskName == null)
+		    taskName = getLongTaskName(mappings);
+		Platform.getJobManager().cancel(this);
+		RefreshParticipantJob job = new RefreshModelParticipantJob(this, jobName, taskName, listener);
+		job.setUser(true);
+		Utils.schedule(job, site);
+		
+		// Remember the last participant synchronized
+		TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT, getId());
+		TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT_SEC_ID, getSecondaryId());
+	}
+	
+	/**
+	 * Returns the short task name (e.g. no more than 25 characters) to describe
+	 * the behavior of the refresh operation to the user. This is typically
+	 * shown in the status line when this participant is refreshed in the
+	 * background. When refreshed in the foreground, only the long task name is
+	 * shown.
+	 * 
+	 * @return the short task name to show in the status line.
+	 */
+	protected String getShortTaskName() {
+		return TeamUIMessages.Participant_synchronizing; 
+	}
+	
+	/**
+	 * Returns the long task name to describe the behavior of the refresh
+	 * operation to the user. This is typically shown in the status line when
+	 * this subscriber is refreshed in the background.
+	 * 
+	 * @param mappings the mappings being refreshed
+	 * @return the long task name
+	 * @since 3.1
+	 */
+    protected String getLongTaskName(ResourceMapping[] mappings) {
+        if (mappings == null || (mappings.length == getContext().getScope().getMappings().length)) {
+            // Assume we are refrshing everything
+            return NLS.bind(TeamUIMessages.Participant_synchronizingDetails, new String[] { getName() }); 
+        }
+        int mappingCount = mappings.length;
+        if (mappingCount == 1) {
+            return NLS.bind(TeamUIMessages.Participant_synchronizingMoreDetails, new String[] { getShortName(), getLabel(mappings[0]) }); 
+        }
+        return NLS.bind(TeamUIMessages.Participant_synchronizingResources, new String[] { getShortName(), Integer.toString(mappingCount) }); 
+    }
+
+	private String getLabel(ResourceMapping mapping) {
+		// TODO Auto-generated method stub
+		return "";
+	}
+	
+	private IRefreshable createRefreshable() {
+		return new IRefreshable() {
+		
+			public RefreshParticipantJob createJob(String interval) {
+				return new RefreshModelParticipantJob(ResourceMappingSynchronizeParticipant.this, 
+						TeamUIMessages.RefreshSchedule_14, 
+						NLS.bind(TeamUIMessages.RefreshSchedule_15, new String[] { ResourceMappingSynchronizeParticipant.this.getName(), interval }), 
+						new RefreshUserNotificationPolicy(ResourceMappingSynchronizeParticipant.this));
+			}
+			public ISynchronizeParticipant getParticipant() {
+				return ResourceMappingSynchronizeParticipant.this;
+			}
+			public void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
+				refreshSchedule = schedule;
+			}
+			public SubscriberRefreshSchedule getRefreshSchedule() {
+				return refreshSchedule;
+			}
+		
+		};
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == IRefreshable.class && refreshSchedule != null) {
+			return refreshSchedule.getRefreshable();
+			
+		}
+		return super.getAdapter(adapter);
+	}
+	
 }

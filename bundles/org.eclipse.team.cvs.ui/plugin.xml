@@ -79,7 +79,7 @@
                 allowsPlatformContributions="false"
                 id="org.eclipse.team.cvs.ui.workspaceSynchronizationMenu">  
              <insertionPoint name="file"/>  
-             <insertionPoint name="edit"/>          
+             <insertionPoint name="edit" separator="true"/>          
              <insertionPoint name="synchronize"/>
              <insertionPoint
                    name="navigate"

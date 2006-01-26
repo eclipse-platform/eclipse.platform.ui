@@ -19,7 +19,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 /**
  * A composite that allows editing a subscriber refresh schedule. A validator can be used to allow
@@ -160,13 +160,13 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 		}
 		
 		// update schedule
-		SubscriberParticipant participant = schedule.getParticipant();
+		ISynchronizeParticipant participant = schedule.getParticipant();
 		if (!participant.isPinned() && schedule.isEnabled()) {
 			participant.setPinned(MessageDialog.openQuestion(getShell(), 
 					NLS.bind(TeamUIMessages.ConfigureSynchronizeScheduleComposite_0, new String[] { Utils.getTypeName(participant) }), 
 					NLS.bind(TeamUIMessages.ConfigureSynchronizeScheduleComposite_1, new String[] { Utils.getTypeName(participant) }))); 
 		}
-		participant.setRefreshSchedule(schedule);
+		schedule.getRefreshable().setRefreshSchedule(schedule);
 	}
 
 	/* (non-Javadoc)
