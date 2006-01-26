@@ -33,20 +33,28 @@ import org.eclipse.team.core.history.provider.FileHistoryProvider;
 public interface IFileHistoryProvider {
 
 	/**
-	 * Returns the file history for the passed in resource
+	 * Returns the file history for the given in resource.
+	 * If <code>singleLine</code> is <code>true</code> then the
+	 * resulting history will be restricted to a single line-of-descent
+	 * (e.g. a single branch). In this mode, the 
+	 * {@link IFileHistory#getContributors(IFileRevision)} and
+	 * {@link IFileHistory#getTargets(IFileRevision)} should either
+	 * return zero or one revision.
 	 * 
-	 * @param resource
-	 * @param monitor 
+	 * 
+	 * @param resource the resource
+	 * @param singleLine whether the returned history should be restricted to a single line of descent
+	 * @param monitor  a progress monitor
 	 * @return the history of the file
 	 */
-	public abstract IFileHistory getFileHistoryFor(IResource resource, IProgressMonitor monitor);
+	public abstract IFileHistory getFileHistoryFor(IResource resource, boolean singleLine, IProgressMonitor monitor);
 	
 
 	/**
 	 * Returns the file revision of the passed in resourrce or null if that file revision cannot be
 	 * determined
 	 * 
-	 * @param resource
+	 * @param resource the resource
 	 * @return the file revision belonging to the passed in resource or null
 	 */
 	public abstract IFileRevision getWorkspaceFileRevision(IResource resource);

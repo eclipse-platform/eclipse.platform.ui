@@ -79,7 +79,7 @@ public class CVSFileHistory extends FileHistory {
 		return null;
 	}
 
-	public IFileRevision getPredecessor(IFileRevision revision) {
+	public IFileRevision[] getContributors(IFileRevision revision) {
 		
 		IFileRevision[] revisions = getFileRevisions();
 
@@ -98,13 +98,14 @@ public class CVSFileHistory extends FileHistory {
 				}
 			}
 		}
-		
-		return fileRevision;
+		if (fileRevision == null)
+			return new IFileRevision[0]; 
+		return new IFileRevision[] { fileRevision };
 	}
 
 
 
-	public IFileRevision[] getDirectDescendents(IFileRevision revision)  {
+	public IFileRevision[] getTargets(IFileRevision revision)  {
 		IFileRevision[] revisions = getFileRevisions();
 
 		//the predecessor is the file with a timestamp that is the largest timestamp
