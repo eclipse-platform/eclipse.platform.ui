@@ -222,12 +222,17 @@ public class TemplateStore {
 	 * Deletes all user-added templates and reverts all contributed templates.
 	 */
 	public void restoreDefaults() {
-		for (Iterator it= fTemplates.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
-			if (data.isUserAdded())
-				it.remove();
-			else
-				data.revert();
+		try {
+			fIgnoreLoad= true;
+			fPreferenceStore.setToDefault(fKey);
+		} finally {
+			fIgnoreLoad= false;
+		}
+		try {
+			load();
+		} catch (IOException x) {
+			// can't log from jface-text
+			x.printStackTrace();
 		}
 	}
 
