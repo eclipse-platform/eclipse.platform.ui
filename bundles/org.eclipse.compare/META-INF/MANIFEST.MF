@@ -11,6 +11,7 @@ Export-Package: org.eclipse.compare,
  org.eclipse.compare.internal;x-internal:=true,
  org.eclipse.compare.internal.merge;x-internal:=true,
  org.eclipse.compare.internal.patch;x-internal:=true,
+ org.eclipse.compare.patch,
  org.eclipse.compare.rangedifferencer,
  org.eclipse.compare.structuremergeviewer
 Require-Bundle: org.eclipse.ui;bundle-version="[3.1.0,4.0.0)",
