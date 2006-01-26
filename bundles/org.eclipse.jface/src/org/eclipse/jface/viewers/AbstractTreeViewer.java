@@ -1392,7 +1392,14 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				}
 			}            
         }
-        Control tree = getControl();
+        internalReconcileParentItems(parentItems);
+    }
+
+	/**
+	 * @param parentItems
+	 */
+	private void internalReconcileParentItems(CustomHashtable parentItems) {
+		Control tree = getControl();
         for (Enumeration e = parentItems.keys(); e.hasMoreElements();) {
             Item parentItem = (Item) e.nextElement();
             if(parentItem.isDisposed())
@@ -1407,6 +1414,49 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 }
             }
         }
+	}
+    
+    /**
+     * Removes the given elements from this viewer, whenever those elements appear as children
+     * of the given parent. 
+     * 
+     * @param elements
+     *           the elements to remove
+     * @since 3.1
+     */
+    protected void internalRemove(Object parent, Object[] elements) {
+    	
+    	CustomHashtable toRemove = new CustomHashtable(getComparer());
+    	for (int i = 0; i < elements.length; i++) {
+			toRemove.put(elements[i], elements[i]);
+		}
+        // Note: do not use the comparer here since the hashtable
+        // contains SWT Items, not model elements.
+        CustomHashtable parentItems = new CustomHashtable(5);
+
+        // Find each place the parent appears in the tree
+    	Widget[] parentItemArray = findItems(parent);
+        for (int i = 0; i < parentItemArray.length; i++) {
+        	Widget parentItem = parentItemArray[i];
+        	
+        	if (parentItem instanceof Item) {
+        		parentItems.put(parentItem, parentItem);
+        	}
+        	
+        	// Iterate over the child items and remove each one
+        	Item[] children = getChildren(parentItem);
+        	
+        	for (int j = 0; j < children.length; j++) {
+				Item child = children[j];
+				
+		        Object data = child.getData();
+		        if (data !=null && toRemove.containsKey(data)) {
+					disassociate(child);
+					child.dispose();
+		        }
+			}            	
+		}            
+        internalReconcileParentItems(parentItems);
     }
 
     /**
@@ -1537,6 +1587,33 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             }
         });
     }
+    
+    /**
+     * Removes the given elements from this viewer whenever they appear as children
+     * of the given parent element. If the given elements also appear as children
+     * of some other parent, the other parent will remain unchanged. The selection 
+     * is updated if required.
+     * <p>
+     * This method should be called (by the content provider) when elements
+     * have been removed from the model, in order to cause the viewer to
+     * accurately reflect the model. This method only affects the viewer, not
+     * the model.
+     * </p>
+     * 
+     * @param elements
+     *           the elements to remove
+     */
+    public void remove(final Object parent, final Object[] elements) {
+        assertElementsNotNull(elements);
+        if (elements.length == 0) {
+        	return;
+        }
+        preservingSelection(new Runnable() {
+            public void run() {
+                internalRemove(parent, elements);
+            }
+        });
+    }    
 
     /**
      * Removes the given element from the viewer. The selection is updated if

@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Widget;
  * @since 3.2
  */
 public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
-
+	
 	private TestElement element_2;
 
 	private TestElement element_2_1;
@@ -69,6 +69,53 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 	}
 
 	protected void setUpModel() {
+		/*
+		 * - fRootElement
+		 * |+element_0
+		 * |-element_1
+		 * ||+element_1_0
+		 * ||+element_1_1
+		 * ||+element_1_2
+		 * ||+element_1_3
+		 * ||+element_1_4
+		 * ||+element_1_5
+		 * ||+element_1_6
+		 * ||+element_1_7
+		 * ||+element_1_8
+		 * ||+element_1_9
+		 * ||+element_2
+		 * ||+element_2_1
+		 * ||+element_2_1_2
+		 * |-element_2
+		 * ||+element_2_0
+		 * ||-element_2_1
+		 * |||+element_2_1_0
+		 * |||+element_2_1_1
+		 * |||+element_2_1_2
+		 * |||+element_2_1_3
+		 * |||+element_2_1_4
+		 * |||+element_2_1_5
+		 * |||+element_2_1_6
+		 * |||+element_2_1_7
+		 * |||+element_2_1_8
+		 * |||+element_2_1_9
+		 * ||+element_2_2
+		 * ||+element_2_3
+		 * ||+element_2_4
+		 * ||+element_2_5
+		 * ||+element_2_6
+		 * ||+element_2_7
+		 * ||+element_2_8
+		 * ||+element_2_9
+		 * |+element_3
+		 * |+element_4
+		 * |+element_5
+		 * |+element_6
+		 * |+element_7
+		 * |+element_8
+		 * |+element_9
+		 */
+
 		fRootElement = TestElement.createModel(3, 10);
 		element_2 = fRootElement.getChildAt(2);
 		element_2_1 = element_2.getChildAt(1);
@@ -189,5 +236,27 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 		Widget[] items = getTreeViewer().testFindItems(newElement);
 		assertEquals(2, items.length);
 	}
+	
+	public void testRemoveWithParentAfterMaterialize() {
+		// materialize
+		getTreeViewer().expandToLevel(element_1, AbstractTreeViewer.ALL_LEVELS);
+		getTreeViewer().expandToLevel(element_2, AbstractTreeViewer.ALL_LEVELS);
+		element_2.basicDeleteChild(element_2_1);
+		getTreeViewer().remove(element_2, new Object[]{element_2_1});
+		assertEquals(2, getTreeViewer().testFindItems(element_2).length);
+		assertEquals(1, getTreeViewer().testFindItems(element_2_1).length);
+		assertEquals(2, getTreeViewer().testFindItems(element_2_1_2).length);
+	}
 
+	public void testRemoveWithParentBeforeMaterialize() {
+		element_2.basicDeleteChild(element_2_1);
+		getTreeViewer().remove(element_2, new Object[]{element_2_1});
+		// materialize
+		getTreeViewer().expandToLevel(element_1, AbstractTreeViewer.ALL_LEVELS);
+		getTreeViewer().expandToLevel(element_2, AbstractTreeViewer.ALL_LEVELS);
+		assertEquals(2, getTreeViewer().testFindItems(element_2).length);
+		assertEquals(1, getTreeViewer().testFindItems(element_2_1).length);
+		assertEquals(2, getTreeViewer().testFindItems(element_2_1_2).length);
+	}
+	
 }
