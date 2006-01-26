@@ -19,6 +19,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -341,8 +342,8 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 				builder.readActionExtensions(view);
 				ActionDescriptor[] actionDescriptors = builder
 						.getExtendedActions();
-				KeyBindingService keyBindingService = (KeyBindingService) view
-						.getSite().getKeyBindingService();
+				IKeyBindingService keyBindingService = view.getSite()
+						.getKeyBindingService();
 
 				if (actionDescriptors != null) {
 					for (int i = 0; i < actionDescriptors.length; i++) {

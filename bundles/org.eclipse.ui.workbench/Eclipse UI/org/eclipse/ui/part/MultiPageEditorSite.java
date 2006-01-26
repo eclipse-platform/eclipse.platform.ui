@@ -26,7 +26,6 @@ import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -34,7 +33,7 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ProxyKeyBindingService;
 import org.eclipse.ui.internal.contexts.NestableContextService;
 import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.NestableHandlerService;
@@ -161,15 +160,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		}
 
 		// Remove myself from the list of nested key binding services.
-		if (service != null) {
-			IKeyBindingService parentService = getEditor().getSite()
-					.getKeyBindingService();
-			if (parentService instanceof INestableKeyBindingService) {
-				INestableKeyBindingService nestableParent = (INestableKeyBindingService) parentService;
-				nestableParent.removeKeyBindingService(this);
-			}
-			service = null;
-		}
+		service = null;
 
 		if (serviceLocator != null) {
 			serviceLocator.dispose();
@@ -245,23 +236,8 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		if (service == null) {
-			service = getMultiPageEditor().getEditorSite()
-					.getKeyBindingService();
-			if (service instanceof INestableKeyBindingService) {
-				INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
-				service = nestableService.getKeyBindingService(this);
-
-			} else {
-				/*
-				 * This is an internal reference, and should not be copied by
-				 * client code. If you are thinking of copying this, DON'T DO
-				 * IT.
-				 */
-				WorkbenchPlugin
-						.log("MultiPageEditorSite.getKeyBindingService()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
-			}
+			service = new ProxyKeyBindingService(this);
 		}
-
 		return service;
 	}
 

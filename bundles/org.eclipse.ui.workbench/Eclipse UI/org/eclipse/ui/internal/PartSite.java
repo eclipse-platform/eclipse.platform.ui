@@ -129,7 +129,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	private SubActionBars actionBars;
 
-	private KeyBindingService keyBindingService;
+	private IKeyBindingService keyBindingService;
 
 	protected ArrayList menuExtenders;
 
@@ -191,8 +191,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 			menuExtenders = null;
 		}
 
-		if (keyBindingService != null)
-			keyBindingService.dispose();
+		// if (keyBindingService != null)
+		// keyBindingService.dispose();
 
 		if (progressService != null)
 			progressService.dispose();
@@ -425,7 +425,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(this);
+			keyBindingService = new ProxyKeyBindingService(this);
 
 			// TODO why is this here? and it should be using HandlerSubmissions
 			// directly..

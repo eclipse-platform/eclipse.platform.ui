@@ -32,12 +32,9 @@ import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -688,35 +685,14 @@ public abstract class MultiPageEditorPart extends EditorPart {
 			activeServiceLocator = null;
 		}
 
-		final IKeyBindingService service = getSite().getKeyBindingService();
 		if (pageIndex < 0 || pageIndex >= getPageCount()) {
 			// There is no selected page, so deactivate the active service.
-			if (service instanceof INestableKeyBindingService) {
-				final INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
-				nestableService.activateKeyBindingService(null);
-			} else {
-				WorkbenchPlugin
-						.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
-			}
 			return;
 		}
 
 		final IEditorPart editor = getEditor(pageIndex);
 		if (editor != null) {
 			editor.setFocus();
-			// There is no selected page, so deactivate the active service.
-			if (service instanceof INestableKeyBindingService) {
-				final INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
-				if (editor != null) {
-					nestableService.activateKeyBindingService(editor
-							.getEditorSite());
-				} else {
-					nestableService.activateKeyBindingService(null);
-				}
-			} else {
-				WorkbenchPlugin
-						.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
-			}
 
 			// Activate the services for the new service locator.
 			final IServiceLocator serviceLocator = editor.getEditorSite();
@@ -726,14 +702,6 @@ public abstract class MultiPageEditorPart extends EditorPart {
 			}
 
 		} else {
-			// There is no selected editor, so deactivate the active service.
-			if (service instanceof INestableKeyBindingService) {
-				final INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
-				nestableService.activateKeyBindingService(null);
-			} else {
-				WorkbenchPlugin
-						.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
-			}
 
 			// Give the page's control focus.
 			final Control control = getControl(pageIndex);
