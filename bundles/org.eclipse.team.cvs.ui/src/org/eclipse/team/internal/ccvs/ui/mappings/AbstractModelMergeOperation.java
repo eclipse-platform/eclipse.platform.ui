@@ -14,10 +14,10 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.ui.operations.ResourceMappingMergeOperation;
+import org.eclipse.team.ui.operations.ModelMergeOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
-public abstract class AbstractModelMergeOperation extends ResourceMappingMergeOperation {
+public abstract class AbstractModelMergeOperation extends ModelMergeOperation {
 
 	private ResourceMappingContext context;
 	

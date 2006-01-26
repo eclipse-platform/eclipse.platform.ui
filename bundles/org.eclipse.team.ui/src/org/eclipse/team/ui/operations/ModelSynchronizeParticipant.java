@@ -24,8 +24,7 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ICompareAdapter;
 import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
@@ -42,15 +41,27 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * 
  * @since 3.2
  **/
-public class ResourceMappingSynchronizeParticipant extends
+public class ModelSynchronizeParticipant extends
 		AbstractSynchronizeParticipant {
 	
-	private ISynchronizationContext context;
+	/*
+	 * Key for settings in memento
+	 */
+	private static final String CTX_PARTICIPANT_SETTINGS = TeamUIPlugin.ID + ".MODEL_PARTICIPANT_SETTINGS"; //$NON-NLS-1$
 	
+	/*
+	 * Key for schedule in memento
+	 */
+	private static final String CTX_REFRESH_SCHEDULE_SETTINGS = TeamUIPlugin.ID + ".MODEL_PARTICIPANT_REFRESH_SCHEDULE"; //$NON-NLS-1$
+
+	/*
+	 * Key for description in memento
+	 */
+	private static final String CTX_DESCRIPTION = TeamUIPlugin.ID + ".MODEL_PARTICIPANT_DESCRIPTION"; //$NON-NLS-1$
+	
+	private ISynchronizationContext context;
 	private boolean mergingEnabled = true;
-
 	protected SubscriberRefreshSchedule refreshSchedule;
-
 	private String description;
 
 	/**
@@ -58,8 +69,8 @@ public class ResourceMappingSynchronizeParticipant extends
 	 * @param context the synchronization context
 	 * @param name the name of the participant
 	 */
-	public static ResourceMappingSynchronizeParticipant createParticipant(ISynchronizationContext context, String name) {
-		return new ResourceMappingSynchronizeParticipant(context, name);
+	public static ModelSynchronizeParticipant createParticipant(ISynchronizationContext context, String name) {
+		return new ModelSynchronizeParticipant(context, name);
 	}
 	
 	/*
@@ -67,7 +78,7 @@ public class ResourceMappingSynchronizeParticipant extends
 	 * @param context the synchronization context
 	 * @param name the name of the participant
 	 */
-	private ResourceMappingSynchronizeParticipant(ISynchronizationContext context, String name) {
+	private ModelSynchronizeParticipant(ISynchronizationContext context, String name) {
 		initializeContext(context);
 		try {
 			setInitializationData(TeamUI.getSynchronizeManager().getParticipantDescriptor("org.eclipse.team.ui.synchronization_context_synchronize_participant")); //$NON-NLS-1$
@@ -84,7 +95,7 @@ public class ResourceMappingSynchronizeParticipant extends
 	 * Create a participant for the given context
 	 * @param context the synchronization context
 	 */
-	public ResourceMappingSynchronizeParticipant(ISynchronizationContext context) {
+	public ModelSynchronizeParticipant(ISynchronizationContext context) {
 		initializeContext(context);
 		mergingEnabled = context instanceof IMergeContext;
 		refreshSchedule = new SubscriberRefreshSchedule(createRefreshable());
@@ -297,17 +308,17 @@ public class ResourceMappingSynchronizeParticipant extends
 		return new IRefreshable() {
 		
 			public RefreshParticipantJob createJob(String interval) {
-				return new RefreshModelParticipantJob(ResourceMappingSynchronizeParticipant.this, 
+				return new RefreshModelParticipantJob(ModelSynchronizeParticipant.this, 
 						TeamUIMessages.RefreshSchedule_14, 
-						NLS.bind(TeamUIMessages.RefreshSchedule_15, new String[] { ResourceMappingSynchronizeParticipant.this.getName(), interval }),
+						NLS.bind(TeamUIMessages.RefreshSchedule_15, new String[] { ModelSynchronizeParticipant.this.getName(), interval }),
 						new ResourceMapping[0],
-						new RefreshUserNotificationPolicy(ResourceMappingSynchronizeParticipant.this));
+						new RefreshUserNotificationPolicy(ModelSynchronizeParticipant.this));
 			}
 			public ISynchronizeParticipant getParticipant() {
-				return ResourceMappingSynchronizeParticipant.this;
+				return ModelSynchronizeParticipant.this;
 			}
 			public void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
-				refreshSchedule = schedule;
+				ModelSynchronizeParticipant.this.setRefreshSchedule(schedule);
 			}
 			public SubscriberRefreshSchedule getRefreshSchedule() {
 				return refreshSchedule;
@@ -325,6 +336,43 @@ public class ResourceMappingSynchronizeParticipant extends
 			
 		}
 		return super.getAdapter(adapter);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		IMemento settings = memento.createChild(CTX_PARTICIPANT_SETTINGS);
+		if (description != null)
+			settings.putString(CTX_DESCRIPTION, description);
+		refreshSchedule.saveState(settings.createChild(CTX_REFRESH_SCHEDULE_SETTINGS));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
+	 */
+	public void init(String secondaryId, IMemento memento) throws PartInitException {
+		super.init(secondaryId, memento);
+		if(memento != null) {
+			IMemento settings = memento.getChild(CTX_PARTICIPANT_SETTINGS);
+			if(settings != null) {
+				SubscriberRefreshSchedule schedule = SubscriberRefreshSchedule.init(settings.getChild(CTX_REFRESH_SCHEDULE_SETTINGS), createRefreshable());
+				description = settings.getString(CTX_DESCRIPTION);
+				setRefreshSchedule(schedule);
+			}
+		}
+	}
+	
+	/* private */ void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
+		if (refreshSchedule != schedule) {
+			if (refreshSchedule != null) {
+				refreshSchedule.dispose();
+			}
+	        this.refreshSchedule = schedule;
+		}
+		// Always fir the event since the schedule may have been changed
+        firePropertyChange(this, AbstractSynchronizeParticipant.P_SCHEDULED, schedule, schedule);
 	}
 	
 }

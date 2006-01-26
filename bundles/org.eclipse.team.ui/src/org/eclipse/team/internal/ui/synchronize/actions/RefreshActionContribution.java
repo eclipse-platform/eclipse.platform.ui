@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.ConfigureRefreshScheduleDialog;
 import org.eclipse.team.internal.ui.synchronize.IRefreshable;
-import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
+import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IActionBars;
 
@@ -32,7 +32,7 @@ public class RefreshActionContribution extends SynchronizePageActionGroup {
 	public void initialize(final ISynchronizePageConfiguration configuration) {
 		super.initialize(configuration);
 		final ISynchronizePageSite site = configuration.getSite();
-		final ResourceMappingSynchronizeParticipant participant = (ResourceMappingSynchronizeParticipant)configuration.getParticipant();
+		final ModelSynchronizeParticipant participant = (ModelSynchronizeParticipant)configuration.getParticipant();
 		// toolbar
 		if (participant.doesSupportSynchronize()) {
 			refreshSelectionAction = new Action() {

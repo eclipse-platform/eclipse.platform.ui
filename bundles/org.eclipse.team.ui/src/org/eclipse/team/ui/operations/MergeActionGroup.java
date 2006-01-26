@@ -65,7 +65,7 @@ public class MergeActionGroup extends SynchronizePageActionGroup {
 	public void initialize(ISynchronizePageConfiguration configuration) {
 		super.initialize(configuration);
 		
-		ResourceMappingSynchronizeParticipant participant = ((ResourceMappingSynchronizeParticipant)configuration.getParticipant());
+		ModelSynchronizeParticipant participant = ((ModelSynchronizeParticipant)configuration.getParticipant());
 		if (participant.isMergingEnabled()) {
 			updateToolbarAction = new MergeIncomingChangesAction(configuration);
 			configureMergeAction(MERGE_ALL_ACTION_ID, updateToolbarAction);
@@ -98,7 +98,7 @@ public class MergeActionGroup extends SynchronizePageActionGroup {
 	 * @param cmm the menu manager
 	 */
 	private void addMergeActions(CommonMenuManager cmm) {
-		ResourceMappingSynchronizeParticipant participant = ((ResourceMappingSynchronizeParticipant)getConfiguration().getParticipant());
+		ModelSynchronizeParticipant participant = ((ModelSynchronizeParticipant)getConfiguration().getParticipant());
 		if (participant.isMergingEnabled()) {
 			if (!isTwoWayMerge()) {
 				MergeAction merge = new MergeAction(SynchronizationActionProvider.MERGE_ACTION_ID, cmm, getConfiguration());
@@ -147,7 +147,7 @@ public class MergeActionGroup extends SynchronizePageActionGroup {
 	}
 	
 	private boolean isTwoWayMerge() {
-		ResourceMappingSynchronizeParticipant participant = ((ResourceMappingSynchronizeParticipant)getConfiguration().getParticipant());
+		ModelSynchronizeParticipant participant = ((ModelSynchronizeParticipant)getConfiguration().getParticipant());
 		ISynchronizationContext context = participant.getContext();
 		if (context instanceof IMergeContext) {
 			IMergeContext mc = (IMergeContext) context;

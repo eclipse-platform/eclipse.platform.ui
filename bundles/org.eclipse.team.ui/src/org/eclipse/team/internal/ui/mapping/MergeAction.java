@@ -21,8 +21,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.compare.IModelBuffer;
-import org.eclipse.team.ui.mapping.ISynchronizationConstants;
-import org.eclipse.team.ui.mapping.MergeActionHandler;
+import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.PlatformUI;
 

@@ -8,14 +8,14 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.compare.IPrepareCompareInputAdapter;
-import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
+import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 
 public class ModelCompareEditorInput extends CompareEditorInput {
 
-	private final ResourceMappingSynchronizeParticipant participant;
+	private final ModelSynchronizeParticipant participant;
 	private final ICompareInput input;
 
-	public ModelCompareEditorInput(ResourceMappingSynchronizeParticipant participant, ICompareInput input) {
+	public ModelCompareEditorInput(ModelSynchronizeParticipant participant, ICompareInput input) {
 		super(new CompareConfiguration());
 		Assert.isNotNull(participant);
 		Assert.isNotNull(input);

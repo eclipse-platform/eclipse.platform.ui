@@ -23,7 +23,7 @@ import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.internal.ui.synchronize.AbstractTreeViewerAdvisor;
 import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.mapping.SynchronizationStateTester;
-import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
+import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
@@ -137,7 +137,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	}
 
 	private Object getInitialInput() {
-		return ((ResourceMappingSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
+		return ((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
 	}
 	
 	/* (non-Javadoc)
@@ -160,8 +160,8 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 		}
 	}
 
-	private ResourceMappingSynchronizeParticipant getParticipant() {
-		return (ResourceMappingSynchronizeParticipant)getConfiguration().getParticipant();
+	private ModelSynchronizeParticipant getParticipant() {
+		return (ModelSynchronizeParticipant)getConfiguration().getParticipant();
 	}
 
 	/**

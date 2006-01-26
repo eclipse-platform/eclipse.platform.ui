@@ -26,14 +26,14 @@ import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.provider.ScopeGenerator;
 import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
 import org.eclipse.team.tests.core.TeamTest;
-import org.eclipse.team.ui.operations.ResourceMappingOperation;
+import org.eclipse.team.ui.operations.ModelOperation;
 
 public class ScopeBuildingTests extends TeamTest {
 
 	private static final RuntimeException PROMPT_EXCEPTION = new RuntimeException();
 	protected static final String TEST_MODEL_PROVIDER_ID = "id1";
 
-	private class TestResourceMappingOperation extends ResourceMappingOperation {
+	private class TestResourceMappingOperation extends ModelOperation {
 		
 		private ResourceMapping[] additionalMappings;
 

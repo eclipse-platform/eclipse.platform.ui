@@ -37,7 +37,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
-import org.eclipse.team.ui.operations.ResourceMappingOperation;
+import org.eclipse.team.ui.operations.ModelOperation;
 import org.eclipse.team.ui.synchronize.ResourceScope;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -333,7 +333,7 @@ public class CommitWizard extends ResizableWizard {
 	}
     
     public static IResourceMappingScope buildScope(IWorkbenchPart part, ResourceMapping[] mappings, IProgressMonitor monitor) throws InterruptedException, CVSException {
-		ResourceMappingOperation op = new ResourceMappingOperation(part, mappings) {
+		ModelOperation op = new ModelOperation(part, mappings) {
 			/* (non-Javadoc)
 			 * @see org.eclipse.team.ui.operations.ResourceMappingOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 			 */

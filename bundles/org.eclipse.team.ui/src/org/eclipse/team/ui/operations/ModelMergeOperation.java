@@ -101,7 +101,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 3.2
  */
-public abstract class ResourceMappingMergeOperation extends ResourceMappingOperation {
+public abstract class ModelMergeOperation extends ModelOperation {
 	
 	private static final int DONE_ID = IDialogConstants.CLIENT_ID + 1;
 	private static final int REPLACE_ID = IDialogConstants.CLIENT_ID + 2;
@@ -113,7 +113,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	 * @param part the workbench part from which the merge was launched or <code>null</code>
 	 * @param selectedMappings the selected mappings
 	 */
-	protected ResourceMappingMergeOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings) {
+	protected ModelMergeOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings) {
 		super(part, selectedMappings);
 	}
 
@@ -195,7 +195,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 		calculateStates(context, Policy.subMonitorFor(monitor, 5));
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				ResourceMappingSynchronizeParticipant participant = createParticipant();
+				ModelSynchronizeParticipant participant = createParticipant();
 				if (isPreviewInDialog()) {
 					CompareConfiguration cc = new CompareConfiguration();
 					ISynchronizePageConfiguration pageConfiguration = participant.createPageConfiguration();
@@ -379,7 +379,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 
 	/**
 	 * Create the synchronize pariticipant to be used by this operation
-	 * to preview changes. By default, a {@link ResourceMappingSynchronizeParticipant}
+	 * to preview changes. By default, a {@link ModelSynchronizeParticipant}
 	 * is created using he context ({@link #getContext()}) and job name ({@link #getJobName()})
 	 * of this operation. Subclasses may override this method.
 	 * <p>
@@ -387,8 +387,8 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	 * synchronization context when it is no longer needed. 
 	 * @return a newly created synchronize pariticipant to be used by this operation
 	 */
-	protected ResourceMappingSynchronizeParticipant createParticipant() {
-		return ResourceMappingSynchronizeParticipant.createParticipant(getContext(), getJobName());
+	protected ModelSynchronizeParticipant createParticipant() {
+		return ModelSynchronizeParticipant.createParticipant(getContext(), getJobName());
 	}
 
 }

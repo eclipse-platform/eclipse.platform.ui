@@ -24,7 +24,7 @@ import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.compare.IModelBuffer;
 import org.eclipse.team.ui.mapping.SynchronizationOperation;
-import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
+import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.PlatformUI;
 
@@ -50,7 +50,7 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 			// Cancelled so return
 			return;
 		}
-		final IMergeContext context = (IMergeContext)((ResourceMappingSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
+		final IMergeContext context = (IMergeContext)((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
 		try {
 			new SynchronizationOperation(getConfiguration()) {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,

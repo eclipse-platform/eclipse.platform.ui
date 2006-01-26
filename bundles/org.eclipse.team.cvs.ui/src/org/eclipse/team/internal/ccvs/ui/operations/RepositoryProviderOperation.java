@@ -29,7 +29,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.ui.operations.ResourceMappingOperation;
+import org.eclipse.team.ui.operations.ModelOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -209,7 +209,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 
     public IResourceMappingScope buildScope(IProgressMonitor monitor) throws InterruptedException, CVSException {
     	if (scope == null) {
-			ResourceMappingOperation op = new ResourceMappingOperation(getPart(), selectedMappings) {
+			ModelOperation op = new ModelOperation(getPart(), selectedMappings) {
 				/* (non-Javadoc)
 				 * @see org.eclipse.team.ui.operations.ResourceMappingOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 				 */

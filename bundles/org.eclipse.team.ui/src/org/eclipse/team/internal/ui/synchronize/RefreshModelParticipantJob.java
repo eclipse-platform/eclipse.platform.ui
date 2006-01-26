@@ -17,7 +17,7 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
+import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 public class RefreshModelParticipantJob extends RefreshParticipantJob {
@@ -47,7 +47,7 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 	
 	public RefreshModelParticipantJob(ISynchronizeParticipant participant, String jobName, String taskName, ResourceMapping[] mappings, IRefreshSubscriberListener listener) {
 		super(participant, jobName, taskName, listener);
-		ISynchronizationContext context = ((ResourceMappingSynchronizeParticipant)getParticipant()).getContext();
+		ISynchronizationContext context = ((ModelSynchronizeParticipant)getParticipant()).getContext();
 		if (mappings.length == 0)
 			this.mappings = context.getScope().getMappings();
 		else 
@@ -56,7 +56,7 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 
 	protected void doRefresh(IChangeDescription changeListener,
 			IProgressMonitor monitor) throws CoreException {
-		ISynchronizationContext context = ((ResourceMappingSynchronizeParticipant)getParticipant()).getContext();
+		ISynchronizationContext context = ((ModelSynchronizeParticipant)getParticipant()).getContext();
 		try {
 			context.getDiffTree().addDiffChangeListener((ChangeDescription)changeListener);
 			// TODO: finer grained refresh
@@ -73,7 +73,7 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 	}
 
 	protected int getChangeCount() {
-		return ((ResourceMappingSynchronizeParticipant)getParticipant()).getContext().getDiffTree().size();
+		return ((ModelSynchronizeParticipant)getParticipant()).getContext().getDiffTree().size();
 	}
 
 	protected void handleProgressGroupSet(IProgressMonitor group) {
@@ -85,7 +85,7 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 	}
 	
 	public boolean belongsTo(Object family) {
-		if (family == ((ResourceMappingSynchronizeParticipant)getParticipant()))
+		if (family == ((ModelSynchronizeParticipant)getParticipant()))
 			return true;
 		return super.belongsTo(family);
 	}

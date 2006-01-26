@@ -36,7 +36,7 @@ import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.SaveablePartAdapter;
 import org.eclipse.team.ui.compare.*;
 import org.eclipse.team.ui.mapping.ISynchronizationConstants;
-import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
+import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.IPageBookViewPage;
@@ -45,7 +45,7 @@ import org.eclipse.ui.progress.IProgressService;
 /**
  * Displays a synchronize participant page combined with the compare/merge infrastructure. This only works if the
  * synchronize page viewer provides selections that are of the following types: ITypedElement and ICompareInput
- * or if the participant is a {@link ResourceMappingSynchronizeParticipant}.
+ * or if the participant is a {@link ModelSynchronizeParticipant}.
  * 
  * @since 3.0
  */
@@ -515,8 +515,8 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 				if(o instanceof ICompareInput) {
 					return (ICompareInput)o;
 				}
-				if (participant instanceof ResourceMappingSynchronizeParticipant) {
-					ResourceMappingSynchronizeParticipant msp = (ResourceMappingSynchronizeParticipant) participant;
+				if (participant instanceof ModelSynchronizeParticipant) {
+					ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
 					return msp.asCompareInput(o);
 				}
 			}

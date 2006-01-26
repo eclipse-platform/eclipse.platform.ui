@@ -21,11 +21,11 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.operations.MergeActionGroup;
-import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
+import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public class CVSResourceMappingParticipant extends
-		ResourceMappingSynchronizeParticipant {
+		ModelSynchronizeParticipant {
 
 	public static final String VIEWER_ID = "org.eclipse.team.cvs.ui.workspaceSynchronization"; //$NON-NLS-1$
 	

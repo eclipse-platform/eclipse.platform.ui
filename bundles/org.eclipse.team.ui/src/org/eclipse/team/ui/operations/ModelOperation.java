@@ -42,7 +42,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * 
  * @since 3.2
  */
-public abstract class ResourceMappingOperation extends TeamOperation {
+public abstract class ModelOperation extends TeamOperation {
 	
 	private final ResourceMapping[] selectedMappings;
 	private IResourceMappingScope scope;
@@ -53,7 +53,7 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 	 * @param part the workbench part from which the merge was launched or <code>null</code>
 	 * @param selectedMappings the selected mappings
 	 */
-	protected ResourceMappingOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings) {
+	protected ModelOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings) {
 		super(part);
 		this.selectedMappings = selectedMappings;
 	}

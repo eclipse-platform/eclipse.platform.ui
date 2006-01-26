@@ -14,7 +14,7 @@ import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.team.ui.compare.IModelBuffer;
-import org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant;
+import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.ui.IWorkbenchPart;
@@ -68,7 +68,7 @@ public abstract class SynchronizationOperation extends TeamOperation {
 	 * @return the synchronization context associated with this action
 	 */
 	protected ISynchronizationContext getContext() {
-		return ((ResourceMappingSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
+		return ((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
 	}
 	
 	/**
