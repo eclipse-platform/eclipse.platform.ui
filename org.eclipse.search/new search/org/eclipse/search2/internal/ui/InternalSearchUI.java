@@ -147,12 +147,16 @@ public class InternalSearchUI {
 		return null;
 	}
 	
-	public boolean runSearchInBackground(ISearchQuery query) {
+	public boolean runSearchInBackground(ISearchQuery query, ISearchResultViewPart view) {
 		if (isQueryRunning(query))
 			return false;
 		
 		// prepare view
-		getSearchViewManager().activateSearchView(true);
+		if (view == null) {
+			getSearchViewManager().activateSearchView(true);
+		} else {
+			getSearchViewManager().activateSearchView(view);
+		}
 				
 		addQuery(query);
 
@@ -178,13 +182,17 @@ public class InternalSearchUI {
 		return sjr != null && sjr.isRunning;
 	}
 
-	public IStatus runSearchInForeground(IRunnableContext context, final ISearchQuery query) {
+	public IStatus runSearchInForeground(IRunnableContext context, final ISearchQuery query, ISearchResultViewPart view) {
 		if (isQueryRunning(query)) {
 			return Status.CANCEL_STATUS;
 		}
 		
 		// prepare view
-		getSearchViewManager().activateSearchView(true);
+		if (view == null) {
+			getSearchViewManager().activateSearchView(true);
+		} else {
+			getSearchViewManager().activateSearchView(view);
+		}
 
 		addQuery(query);
 		

@@ -41,11 +41,11 @@ class SearchAgainAction extends Action {
 			NewSearchUI.cancelQuery(query);
 			if (query.canRerun()) {
 				if (query.canRunInBackground())
-					NewSearchUI.runQueryInBackground(query);
+					NewSearchUI.runQueryInBackground(query, fView);
 				else {
 					Shell shell= fView.getSite().getShell();
 					ProgressMonitorDialog pmd= new ProgressMonitorDialog(shell);
-					IStatus status= NewSearchUI.runQueryInForeground(pmd, query);
+					IStatus status= NewSearchUI.runQueryInForeground(pmd, query, fView);
 					if (!status.isOK() && status.getSeverity() != IStatus.CANCEL) {
 						ErrorDialog.openError(shell, SearchMessages.SearchAgainAction_Error_title, SearchMessages.SearchAgainAction_Error_message, status); 
 					}

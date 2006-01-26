@@ -102,6 +102,16 @@ public class SearchViewManager {
 		}
 		return null;
 	}
+	
+	public void activateSearchView(ISearchResultViewPart viewPart) {
+		try {
+			IWorkbenchPage activePage= viewPart.getSite().getPage();
+			String secondaryId= viewPart.getViewSite().getSecondaryId();
+			activePage.showView(NewSearchUI.SEARCH_VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
+		} catch (PartInitException ex) {
+			ExceptionHandler.handle(ex, SearchMessages.Search_Error_openResultView_title, SearchMessages.Search_Error_openResultView_message); 
+		}	
+	}
 
 	private ISearchResultViewPart findLRUSearchResultView(IWorkbenchPage page, boolean noPinnedViews) {
 		for (Iterator iter= fLRUSearchViews.iterator(); iter.hasNext();) {

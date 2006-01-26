@@ -75,6 +75,7 @@ public class NewSearchUI {
 			}
 		}
 	}
+	
 	/**
 	 * Runs the given search query. This method will execute the query in a
 	 * background thread and not block until the search is finished. 
@@ -92,8 +93,31 @@ public class NewSearchUI {
 	 * @since 3.1
 	 */
 	public static void runQueryInBackground(ISearchQuery query) throws IllegalArgumentException {
+		runQueryInBackground(query, null);
+	}
+	
+	/**
+	 * Runs the given search query. This method will execute the query in a
+	 * background thread and not block until the search is finished. 
+	 * Running a query adds it to the set of known queries and notifies
+	 * any registered {@link IQueryListener}s about the addition.
+	 * <p>
+	 * The result will be shown in the given search result view which will be activated. A call to
+	 * to {@link #activateSearchResultView} is not required.
+	 * </p>
+	 * 
+	 * @param query
+	 *            the query to execute. The query must be able to run in background, that means
+	 *            {@link ISearchQuery#canRunInBackground()} must be <code>true</code>
+	 * @param view
+	 *           the search result view to show the result in. If <code>null</code> is passed in, the default activation
+	 *           mechanism is used to open a new result view or to select the view to be reused.
+	 * @throws IllegalArgumentException Thrown when the passed query is not able to run in background
+	 * @since 3.2
+	 */
+	public static void runQueryInBackground(ISearchQuery query, ISearchResultViewPart view) throws IllegalArgumentException {
 		if (query.canRunInBackground())
-			InternalSearchUI.getInstance().runSearchInBackground(query);
+			InternalSearchUI.getInstance().runSearchInBackground(query, view);
 		else
 			throw new IllegalArgumentException("Query can not be run in background"); //$NON-NLS-1$
 	}
@@ -116,8 +140,35 @@ public class NewSearchUI {
 	 *            that the query was canceled.
 	 */
 	public static IStatus runQueryInForeground(IRunnableContext context, ISearchQuery query) {
-		return InternalSearchUI.getInstance().runSearchInForeground(context, query);
+		return runQueryInForeground(context, query, null);
 	}
+	
+	/**
+	 * Runs the given search query. This method will execute the query in the
+	 * same thread as the caller. This method blocks until the query is
+	 * finished. Running a query adds it to the set of known queries and notifies
+	 * any registered {@link IQueryListener}s about the addition.
+	 * <p>
+	 * The result will be shown in the given search result view which will be activated. A call to
+	 * to {@link #activateSearchResultView} is not required.
+	 * </p>
+	 * 
+	 * @param context
+	 *            the runnable context to run the query in
+	 * @param query
+	 *            the query to execute
+	 * @param view
+	 *           the search result view to show the result in. If <code>null</code> is passed in, the default activation
+	 *           mechanism is used to open a new result view or to select the view to be reused.
+	 * @return a status indicating whether the query ran correctly, including {@link IStatus#CANCEL} to signal
+	 *            that the query was canceled.
+	 *            
+	 * @since 3.2
+	 */
+	public static IStatus runQueryInForeground(IRunnableContext context, ISearchQuery query, ISearchResultViewPart view) {
+		return InternalSearchUI.getInstance().runSearchInForeground(context, query, view);
+	}
+	
 	/**
 	 * Registers the given listener to receive notification of changes to
 	 * queries. The listener will be notified whenever a query has been added,
