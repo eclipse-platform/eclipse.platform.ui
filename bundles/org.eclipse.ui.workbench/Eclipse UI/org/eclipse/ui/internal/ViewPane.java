@@ -313,18 +313,6 @@ public class ViewPane extends PartPane {
     }
 
     /**
-     * Indicates that a property has changed.
-     *
-     * @param source the object whose property has changed
-     * @param propId the id of the property which has changed; property ids
-     *   are generally defined as constants on the source class
-     */
-    public void propertyChanged(Object source, int propId) {
-        if (propId == IWorkbenchPart.PROP_TITLE)
-            updateTitles();
-    }
-
-    /**
      * Sets the fast view state.  If this view is a fast view then
      * various controls like pin and minimize are added to the
      * system bar.
