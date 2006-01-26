@@ -60,14 +60,14 @@ public abstract class ModelOperation extends TeamOperation {
 
 	/**
 	 * Run the operation. This method first ensures that the scope is built
-	 * by calling {@link #buildScope(IProgressMonitor)} and then invokes the 
+	 * by calling {@link #prepareScope(IProgressMonitor)} and then invokes the 
 	 * {@link #execute(IProgressMonitor)} method.
 	 * @param monitor a progress monitor
 	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
-		buildScope(monitor);
+		prepareScope(monitor);
 		execute(monitor);
 	}
 
@@ -82,80 +82,111 @@ public abstract class ModelOperation extends TeamOperation {
 	 * </ol>
 	 * @param monitor a progress monitor
 	 */
-	protected void buildScope(IProgressMonitor monitor) throws InvocationTargetException {
+	protected void prepareScope(IProgressMonitor monitor) throws InvocationTargetException {
 		try {
 			ScopeGenerator scopeGenerator = getScopeGenerator();
-			scope = scopeGenerator.prepareScope(selectedMappings, monitor);
-			IResourceMappingScope inputScope = scopeGenerator.asInputScope(scope);
-			if (scope.hasAdditionalMappings()) {
-				boolean prompt = false;
-				// There are additional mappings so we may need to prompt
-				ModelProvider[] inputModelProviders = inputScope.getModelProviders();
-				if (hasAdditionalMappingsFromIndependantModel(inputModelProviders, scope.getModelProviders())) {
-					// Prompt if the is a new model provider in the scope that is independant
-					// of any of the input mappings
-					prompt = true;
-				} else if (scope.hasAdditonalResources()) {
-					// We definitely need to prompt to indicate that additional resources
-					prompt = true;
-				} else if (inputModelProviders.length == 1) {
-					// We may need to prompt depending on the nature of the additional mappings
-					// We need to prompt if the additional mappings are from the same model as
-					// the input or if they are from a model that has no relationship to the input model
-					String modelProviderId = inputModelProviders[0].getDescriptor().getId();
-					ResourceMapping[] mappings = scope.getMappings();
-					for (int i = 0; i < mappings.length; i++) {
-						ResourceMapping mapping = mappings[i];
-						if (inputScope.getTraversals(mapping) == null) {
-							// This mapping was not in the input
-							String id = mapping.getModelProviderId();
-							if (id.equals(modelProviderId)) {
-								prompt = true;
-								break;
-							} else if (isIndependantModel(modelProviderId, id)) {
-								prompt = true;
-								break;
-							}
+			scope = scopeGenerator.prepareScope(selectedMappings, isUseLocalContext(), monitor);
+			promptIfInputChange(monitor);
+		} catch (CoreException e) {
+			throw new InvocationTargetException(e);
+		}
+	}
+
+	/**
+	 * Prompt the user by calling {@link #promptForInputChange(String, IProgressMonitor)}
+	 * if the scope of the operation was expanded.
+	 * @param monitor a progress monitor
+	 */
+	protected void promptIfInputChange(IProgressMonitor monitor) {
+		IResourceMappingScope inputScope = getInputScope();
+		if (scope.hasAdditionalMappings()) {
+			boolean prompt = false;
+			// There are additional mappings so we may need to prompt
+			ModelProvider[] inputModelProviders = inputScope.getModelProviders();
+			if (hasAdditionalMappingsFromIndependantModel(inputModelProviders, scope.getModelProviders())) {
+				// Prompt if the is a new model provider in the scope that is independant
+				// of any of the input mappings
+				prompt = true;
+			} else if (scope.hasAdditonalResources()) {
+				// We definitely need to prompt to indicate that additional resources
+				prompt = true;
+			} else if (inputModelProviders.length == 1) {
+				// We may need to prompt depending on the nature of the additional mappings
+				// We need to prompt if the additional mappings are from the same model as
+				// the input or if they are from a model that has no relationship to the input model
+				String modelProviderId = inputModelProviders[0].getDescriptor().getId();
+				ResourceMapping[] mappings = scope.getMappings();
+				for (int i = 0; i < mappings.length; i++) {
+					ResourceMapping mapping = mappings[i];
+					if (inputScope.getTraversals(mapping) == null) {
+						// This mapping was not in the input
+						String id = mapping.getModelProviderId();
+						if (id.equals(modelProviderId)) {
+							prompt = true;
+							break;
+						} else if (isIndependantModel(modelProviderId, id)) {
+							prompt = true;
+							break;
 						}
 					}
-				} else {
-					// We need to prompt if there are additional mappings from an input
-					// provider whose traversals overlap those of the input mappings.
-					for (int i = 0; i < inputModelProviders.length; i++) {
-						ModelProvider provider = inputModelProviders[i];
-						String id = provider.getDescriptor().getId();
-						ResourceMapping[] inputMappings = inputScope.getMappings(id);
-						ResourceMapping[] scopeMappings = scope.getMappings(id);
-						if (inputMappings.length != scopeMappings.length) {
-							// There are more mappings for this provider.
-							// We need to see if any of the new ones overlap the old ones.
-							for (int j = 0; j < scopeMappings.length; j++) {
-								ResourceMapping mapping = scopeMappings[j];
-								ResourceTraversal[] inputTraversals = inputScope.getTraversals(mapping);
-								if (inputTraversals == null) {
-									// This mapping was not in the input.
-									// We need to prompt if the traversal for this mapping overlaps with
-									// the input mappings for the model provider
-									// TODO could check for project overlap first
-									ResourceTraversal[] scopeTraversals = scope.getTraversals(mapping);
-									ResourceTraversal[] inputModelTraversals = getTraversals(inputScope, inputMappings);
-									if (overlaps(scopeTraversals, inputModelTraversals)) {
-										prompt = true;
-										break;
-									}
+				}
+			} else {
+				// We need to prompt if there are additional mappings from an input
+				// provider whose traversals overlap those of the input mappings.
+				for (int i = 0; i < inputModelProviders.length; i++) {
+					ModelProvider provider = inputModelProviders[i];
+					String id = provider.getDescriptor().getId();
+					ResourceMapping[] inputMappings = inputScope.getMappings(id);
+					ResourceMapping[] scopeMappings = scope.getMappings(id);
+					if (inputMappings.length != scopeMappings.length) {
+						// There are more mappings for this provider.
+						// We need to see if any of the new ones overlap the old ones.
+						for (int j = 0; j < scopeMappings.length; j++) {
+							ResourceMapping mapping = scopeMappings[j];
+							ResourceTraversal[] inputTraversals = inputScope.getTraversals(mapping);
+							if (inputTraversals == null) {
+								// This mapping was not in the input.
+								// We need to prompt if the traversal for this mapping overlaps with
+								// the input mappings for the model provider
+								// TODO could check for project overlap first
+								ResourceTraversal[] scopeTraversals = scope.getTraversals(mapping);
+								ResourceTraversal[] inputModelTraversals = getTraversals(inputScope, inputMappings);
+								if (overlaps(scopeTraversals, inputModelTraversals)) {
+									prompt = true;
+									break;
 								}
 							}
 						}
 					}
 				}
-				if (prompt) {
-					String previewMessage = getPreviewRequestMessage();
-					previewRequested = promptForInputChange(previewMessage, monitor);
-				}
 			}
-		} catch (CoreException e) {
-			throw new InvocationTargetException(e);
+			if (prompt) {
+				String previewMessage = getPreviewRequestMessage();
+				previewRequested = promptForInputChange(previewMessage, monitor);
+			}
 		}
+	}
+
+	/**
+	 * Return a scope that represents the input to the operation
+	 * before the scope was expanded to include any additional models.
+	 * @return a scope that represents the input to the operation
+	 */
+	protected IResourceMappingScope getInputScope() {
+		ScopeGenerator scopeGenerator = getScopeGenerator();
+		IResourceMappingScope inputScope = scopeGenerator.asInputScope(scope);
+		return inputScope;
+	}
+
+	/**
+	 * Indicate whether the local context should be used when preparing the scope.
+	 * Subclasses may wish to do this when initial creation of the
+	 * scope cannot be log running but they will perform future refreshes on the
+	 * scope that can be.
+	 * @return whether the local context should be used when preparing the scope
+	 */
+	protected boolean isUseLocalContext() {
+		return false;
 	}
 
 	/**
@@ -295,6 +326,8 @@ public abstract class ModelOperation extends TeamOperation {
 	 * operation from the input mappings.
 	 */
 	protected ScopeGenerator getScopeGenerator() {
+		if (scope != null)
+			return ((ResourceMappingScope)scope).getGenerator();
 		return new ScopeGenerator(getResourceMappingContext(), consultModelsWhenGeneratingScope());
 	}
 

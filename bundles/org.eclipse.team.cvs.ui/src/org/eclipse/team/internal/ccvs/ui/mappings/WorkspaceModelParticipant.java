@@ -10,21 +10,29 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
-import org.eclipse.core.runtime.CoreException;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.provider.ScopeGenerator;
+import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
-import org.eclipse.team.internal.ccvs.ui.subscriber.*;
+import org.eclipse.team.internal.ccvs.ui.subscriber.CVSActionDelegateWrapper;
+import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
-import org.eclipse.team.ui.operations.MergeActionGroup;
-import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
+import org.eclipse.team.ui.operations.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.ui.PartInitException;
 
-public class CVSResourceMappingParticipant extends
+public class WorkspaceModelParticipant extends
 		ModelSynchronizeParticipant {
 
 	public static final String VIEWER_ID = "org.eclipse.team.cvs.ui.workspaceSynchronization"; //$NON-NLS-1$
@@ -130,7 +138,10 @@ public class CVSResourceMappingParticipant extends
 		}
 	}
 	
-	public CVSResourceMappingParticipant(ISynchronizationContext context, String name) {
+	public WorkspaceModelParticipant() {
+	}
+	
+	public WorkspaceModelParticipant(ISynchronizationContext context, String name) {
 		super(context);
 		try {
 			setInitializationData(TeamUI.getSynchronizeManager().getParticipantDescriptor("org.eclipse.team.cvs.ui.workspace-participant")); //$NON-NLS-1$
@@ -151,5 +162,47 @@ public class CVSResourceMappingParticipant extends
 	protected MergeActionGroup createMergeActionGroup() {
 		return new WorkspaceMergeActionGroup();
 	}
+	
+	protected void initializeContext(ResourceTraversal[] traversals) throws PartInitException {
+		CompoundResourceTraversal traversal = new CompoundResourceTraversal();
+		traversal.addTraversals(traversals);
+		try {
+			// When restoring, we can't do anything long running so we'll need to use the local content for everything
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			ResourceMapping[] mappings = ScopeGenerator.getMappingsFromProviders(traversal.getRoots(), ResourceMappingContext.LOCAL_CONTEXT, monitor);
+			IResourceMappingScope scope = createScope(mappings, monitor);
+			IMergeContext context = WorkspaceSubscriberContext.createContext(scope, false /* refresh */, ISynchronizationContext.THREE_WAY, monitor);
+			initializeContext(context);
+		} catch (CoreException e) {
+			CVSUIPlugin.log(e);
+			throw new PartInitException(e.getStatus());
+		}
+	}
 
+	private IResourceMappingScope createScope(ResourceMapping[] mappings, IProgressMonitor monitor) throws PartInitException {
+		ModelOperation op = new ModelOperation(null, mappings) {
+			protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				// Do nothing, we just want to build the scope
+			}
+			protected void promptIfInputChange(IProgressMonitor monitor) {
+				// Don't prompt
+			}
+			protected boolean isUseLocalContext() {
+				return true;
+			}
+			protected ResourceMappingContext getResourceMappingContext() {
+				return new SubscriberResourceMappingContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), true);
+			}
+		};
+		// Run the operatin in order to build the scope
+		try {
+			op.run(monitor);
+		} catch (InvocationTargetException e) {
+			CVSUIPlugin.log(IStatus.ERROR, "An error occurred", e.getTargetException());
+			throw new PartInitException("Unexpected error during participant restore");
+		} catch (InterruptedException e) {
+			throw new PartInitException("Unexpected interrupt during participant restore");
+		}
+		return op.getScope();
+	}
 }

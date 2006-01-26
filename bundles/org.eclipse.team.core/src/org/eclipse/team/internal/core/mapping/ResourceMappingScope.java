@@ -44,7 +44,7 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	private boolean hasAdditionalResources;
 	private final ScopeGenerator generator;
 	private final CompoundResourceTraversal compoundTraversal = new CompoundResourceTraversal();
-
+	
 	public static ResourceTraversal[] combineTraversals(ResourceTraversal[] allTraversals) {
 		Set zero = new HashSet();
 		Set shallow = new HashSet();

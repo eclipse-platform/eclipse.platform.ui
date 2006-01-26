@@ -45,7 +45,7 @@
       <participant
             name="%CVSResourceMappingParticipant"
             icon="$nl$/icons/full/eview16/cvs_persp.gif"
-            class="org.eclipse.team.internal.ccvs.ui.mappings.CVSResourceMappingParticipant"
+            class="org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceModelParticipant"
             id="org.eclipse.team.cvs.ui.workspace-participant">
       </participant>
       <participant

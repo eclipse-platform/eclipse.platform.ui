@@ -62,6 +62,50 @@ public class ScopeGenerator {
 	private final ResourceMappingContext context;
 	private final boolean consultModels;
 
+	/**
+	 * Convenience method for obtaining the set of resource
+	 * mappings from all model providers that overlap
+	 * with the given resources.
+	 * @param resources the resources
+	 * @param context the resource mapping context
+	 * @param monitor a progress monitor
+	 * @return the resource mappings
+	 * @throws CoreException
+	 */
+	public static ResourceMapping[] getMappingsFromProviders(IResource[] resources,
+			ResourceMappingContext context,
+			IProgressMonitor monitor) throws CoreException {
+		Set result = new HashSet();
+		IModelProviderDescriptor[] descriptors = ModelProvider
+				.getModelProviderDescriptors();
+		for (int i = 0; i < descriptors.length; i++) {
+			IModelProviderDescriptor descriptor = descriptors[i];
+			ResourceMapping[] mappings = getMappings(descriptor, resources,
+					context, monitor);
+			result.addAll(Arrays.asList(mappings));
+		}
+		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
+	}
+	
+	private static ResourceMapping[] getMappings(IModelProviderDescriptor descriptor,
+			IResource[] resources,
+			ResourceMappingContext context, IProgressMonitor monitor)
+			throws CoreException {
+		IResource[] matchingResources = descriptor.getMatchingResources(
+				resources);
+		return descriptor.getModelProvider().getMappings(matchingResources,
+				context, monitor);
+	}
+	
+	/**
+	 * Create a sope generator that uses the given context to 
+	 * determine what resources should be included in the scope.
+	 * If <code>consultModels</code> is <code>true</code> then
+	 * the moel providers will be queried in order to determine if
+	 * additional mappings should be included in the scope
+	 * @param resourceMappingContext a resource mapping context
+	 * @param consultModels whether modle providers should be consulted
+	 */
 	public ScopeGenerator(ResourceMappingContext resourceMappingContext, boolean consultModels) {
 		this.context = resourceMappingContext;
 		this.consultModels = consultModels;
@@ -70,8 +114,14 @@ public class ScopeGenerator {
 	/**
 	 * Build the scope that is used to determine the complete set of resource
 	 * mappings, and hence resources, that an operation should be performed on.
+	 * If <code>useLocalContext</code> is <code>true</code> then the 
+	 * {@link ResourceMappingContext#LOCAL_CONTEXT} is used to prepare the scope instead
+	 * of the context associatd with the generator. Clients may wish to do this
+	 * when long running operations should not occur.
 	 * 
 	 * @param selectedMappings the selected set of resource mappings
+	 * @param useLocalContext indicates that the localcontext should be used
+	 * when building the scope
 	 * @param monitor a progress monitor
 	 * @return a scope that defines the complete set of resources to be operated
 	 *         on
@@ -79,6 +129,7 @@ public class ScopeGenerator {
 	 */
 	public IResourceMappingScope prepareScope(
 			ResourceMapping[] selectedMappings,
+			boolean useLocalContext,
 			IProgressMonitor monitor) throws CoreException {
 
 		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
@@ -87,21 +138,17 @@ public class ScopeGenerator {
 		IResourceMappingScope scope = createScope(selectedMappings);
 
 		// Accumulate the initial set of mappings we need traversals for
-		Set targetMappings = new HashSet();
-		for (int i = 0; i < selectedMappings.length; i++) {
-			ResourceMapping mapping = selectedMappings[i];
-			targetMappings.add(mapping);
-		}
+		ResourceMapping[] targetMappings = selectedMappings;
 		IResource[] newResources;
 		boolean firstTime = true;
 		boolean hasAdditionalResources = false;
 		int count = 0;
 		do {
-			newResources = addMappingsToScope(scope, targetMappings,
+			newResources = addMappingsToScope(scope, targetMappings, useLocalContext,
 					Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 			if (consultModels) {
 				IResource[] adjusted = adjustInputResources(newResources);
-				targetMappings = internalGetMappingsFromProviders(adjusted,
+				targetMappings = getMappingsFromProviders(adjusted,
 						context, 
 						Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 				if (firstTime) {
@@ -201,13 +248,13 @@ public class ScopeGenerator {
 	private void addResourcesToScope(IResourceMappingScope scope, IResource[] newResources, IProgressMonitor monitor) throws CoreException {
 		if (!consultModels)
 			return;
-		Set targetMappings;
+		ResourceMapping[] targetMappings;
 		int count = 0;
 		do {
 			IResource[] adjusted = adjustInputResources(newResources);
-			targetMappings = internalGetMappingsFromProviders(adjusted,
+			targetMappings = getMappingsFromProviders(adjusted,
 					context, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
-			newResources = addMappingsToScope(scope, targetMappings,
+			newResources = addMappingsToScope(scope, targetMappings, false,
 					Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 		} while (newResources.length != 0 && count++ < MAX_ITERATION);
 		if (!scope.hasAdditionalMappings()) {
@@ -294,11 +341,14 @@ public class ScopeGenerator {
 	}
 
 	private IResource[] addMappingsToScope(IResourceMappingScope scope,
-			Set targetMappings,
-			IProgressMonitor monitor) throws CoreException {
+			ResourceMapping[] targetMappings,
+			boolean useLocalContext, IProgressMonitor monitor) throws CoreException {
 		Set newResources = new HashSet();
-		for (Iterator iter = targetMappings.iterator(); iter.hasNext();) {
-			ResourceMapping mapping = (ResourceMapping) iter.next();
+		ResourceMappingContext context = this.context;
+		if (useLocalContext)
+			context = ResourceMappingContext.LOCAL_CONTEXT;
+		for (int i = 0; i < targetMappings.length; i++) {
+			ResourceMapping mapping = targetMappings[i];
 			if (scope.getTraversals(mapping) == null) {
 				ResourceTraversal[] traversals = mapping.getTraversals(context,
 						Policy.subMonitorFor(monitor, 100));
@@ -322,31 +372,6 @@ public class ScopeGenerator {
 	protected final IResource[] addMappingToScope(IResourceMappingScope scope,
 			ResourceMapping mapping, ResourceTraversal[] traversals) {
 		return ((ResourceMappingScope)scope).addMapping(mapping, traversals);
-	}
-
-	private Set internalGetMappingsFromProviders(IResource[] resources,
-			ResourceMappingContext context,
-			IProgressMonitor monitor) throws CoreException {
-		Set result = new HashSet();
-		IModelProviderDescriptor[] descriptors = ModelProvider
-				.getModelProviderDescriptors();
-		for (int i = 0; i < descriptors.length; i++) {
-			IModelProviderDescriptor descriptor = descriptors[i];
-			ResourceMapping[] mappings = getMappings(descriptor, resources,
-					context, monitor);
-			result.addAll(Arrays.asList(mappings));
-		}
-		return result;
-	}
-
-	private ResourceMapping[] getMappings(IModelProviderDescriptor descriptor,
-			IResource[] resources,
-			ResourceMappingContext context, IProgressMonitor monitor)
-			throws CoreException {
-		IResource[] matchingResources = descriptor.getMatchingResources(
-				resources);
-		return descriptor.getModelProvider().getMappings(matchingResources,
-				context, monitor);
 	}
 
 	private boolean hasAdditionalMappings(IResourceMappingScope scope) {

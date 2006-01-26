@@ -65,8 +65,6 @@ public abstract class SubscriberMergeContext extends MergeContext {
 		handler.start();
 		if (refresh) {
 			refresh(getScope().getTraversals(), IResource.NONE, monitor);
-		} else {
-			handler.waitUntilIdle(monitor);
 		}
 	}
 	
