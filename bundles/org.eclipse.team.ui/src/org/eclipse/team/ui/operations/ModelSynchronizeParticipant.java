@@ -16,12 +16,11 @@ import java.util.List;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.mapping.IMergeContext;
-import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.provider.ScopeGenerator;
 import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
@@ -446,7 +445,7 @@ public class ModelSynchronizeParticipant extends
 		}
 	}
 	
-	/**
+	/*
 	 * Initialize the content of this participant based on the provided traversals.
 	 * This method is invoked when a persisted participant is restored. By default,
 	 * a <code>PartInitException</code> si thrown. Subclasses that have indicated that
@@ -456,10 +455,48 @@ public class ModelSynchronizeParticipant extends
 	 * @param traversals the saved traversals
 	 * @throws PartInitException
 	 */
-	protected void initializeContext(ResourceTraversal[] traversals) throws PartInitException {
-		throw new PartInitException(NLS.bind("Participant {0} could not initialize its context from its persisted state", getId()));
+	private void initializeContext(ResourceTraversal[] traversals) throws PartInitException {
+		CompoundResourceTraversal traversal = new CompoundResourceTraversal();
+		traversal.addTraversals(traversals);
+		try {
+			// When restoring, we can't do anything long running so we'll need to use the local content for everything
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			ResourceMapping[] mappings = ScopeGenerator.getMappingsFromProviders(traversal.getRoots(), ResourceMappingContext.LOCAL_CONTEXT, monitor);
+			IResourceMappingScope scope = createScopeGenerator().prepareScope(mappings, true, monitor);
+			IMergeContext context = restoreContext(scope, monitor);
+			initializeContext(context);
+		} catch (CoreException e) {
+			TeamUIPlugin.log(e);
+			throw new PartInitException(e.getStatus());
+		}
 	}
 
+	/**
+	 * Recreate the context for this participant. This method is invoked when
+	 * the participant is restored after a restart. Although it is provided
+	 * with a progress monitor, long running operations should be avoided.
+	 * @param scope the restored scope
+	 * @param monitor a progress monitor
+	 * @return the context for this participant
+	 * @throws CoreException
+	 */
+	protected IMergeContext restoreContext(IResourceMappingScope scope, IProgressMonitor monitor) throws CoreException {
+		throw new PartInitException(NLS.bind("Participant {0} is not capable of restoring its context", getId()));
+	}
+
+	/**
+	 * Create a return a scope generator that can be used to build the scope of this
+	 * participant when it is restored after a restart. By default, this method 
+	 * returns a scope generator that uses the local content.
+	 * This method can be overridden by subclasses.
+	 * 
+	 * @return a scope generator that can be used to build the scope of this
+	 * participant when it is restored after a restart
+	 */
+	protected ScopeGenerator createScopeGenerator() {
+		return new ScopeGenerator(ResourceMappingContext.LOCAL_CONTEXT, true);
+	}
+	
 	/* private */ void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
 		if (refreshSchedule != schedule) {
 			if (refreshSchedule != null) {
