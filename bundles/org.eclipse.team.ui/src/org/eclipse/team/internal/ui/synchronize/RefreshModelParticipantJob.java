@@ -85,7 +85,7 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 	}
 	
 	public boolean belongsTo(Object family) {
-		if (family == ((ResourceMappingSynchronizeParticipant)getParticipant()).getContext())
+		if (family == ((ResourceMappingSynchronizeParticipant)getParticipant()))
 			return true;
 		return super.belongsTo(family);
 	}
