@@ -89,8 +89,6 @@ public final class PaneFolder {
 
     private SizeCache topLeftCache = new SizeCache();
 
-    private int tabPosition;
-
     private boolean putTrimOnTop = true;
 
     // HACK: Sometimes the topright control isn't resized when
@@ -212,6 +210,8 @@ public final class PaneFolder {
      * Make sure we don't recursively enter the layout() code.
      */
 	private boolean inLayout = false;
+
+	private int tabPosition;
 
     /**
      * Creates a pane folder. This will create exactly one child control in the

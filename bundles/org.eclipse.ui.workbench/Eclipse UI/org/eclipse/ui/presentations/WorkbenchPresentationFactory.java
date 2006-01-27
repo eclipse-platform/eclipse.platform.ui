@@ -36,12 +36,21 @@ import org.eclipse.ui.internal.presentations.util.TabbedStackPresentation;
  */
 public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
 
+	// don't reset these dynamically, so just keep the information static.
+	// see bug:
+	// 75422 [Presentations] Switching presentation to R21 switches immediately,
+	// but only partially
+	private static int editorTabPosition = WorkbenchPlugin
+		.getDefault().getPreferenceStore().getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
+	private static int viewTabPosition = WorkbenchPlugin
+		.getDefault().getPreferenceStore().getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+	
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.AbstractPresentationFactory#createEditorPresentation(org.eclipse.swt.widgets.Composite, org.eclipse.ui.presentations.IStackPresentationSite)
      */
     public StackPresentation createEditorPresentation(Composite parent,
             IStackPresentationSite site) {
-        DefaultTabFolder folder = new DefaultTabFolder(parent, SWT.BORDER, 
+        DefaultTabFolder folder = new DefaultTabFolder(parent, editorTabPosition | SWT.BORDER, 
                 site.supportsState(IStackPresentationSite.STATE_MINIMIZED), 
                 site.supportsState(IStackPresentationSite.STATE_MAXIMIZED));
         
@@ -91,7 +100,7 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
     public StackPresentation createViewPresentation(Composite parent,
             IStackPresentationSite site) {
         
-        DefaultTabFolder folder = new DefaultTabFolder(parent, SWT.BORDER, 
+        DefaultTabFolder folder = new DefaultTabFolder(parent, viewTabPosition | SWT.BORDER, 
                 site.supportsState(IStackPresentationSite.STATE_MINIMIZED), 
                 site.supportsState(IStackPresentationSite.STATE_MAXIMIZED));
 
