@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.core.commands.operations.OperationHistoryFactory;
 
 import org.eclipse.text.undo.DocumentUndoEvent;
 import org.eclipse.text.undo.DocumentUndoManager;
@@ -345,14 +344,8 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	 * @see org.eclipse.jface.text.IUndoManager#reset()
 	 */
 	public void reset() {
-		/*
-		 * Disconnected and reconnecting will only initialize the history
-		 * if there are no other clients tracking the undo history.
-		 */
-		if (isConnected()) {
-			fDocumentUndoManager.disconnect(this);
-			fDocumentUndoManager.connect(this);
-		}
+		if (isConnected())
+			fDocumentUndoManager.reset();
 		
 	}
 
@@ -361,7 +354,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	 */
 	public boolean redoable() {
 		if (isConnected())
-			return OperationHistoryFactory.getOperationHistory().canRedo(fDocumentUndoManager.getUndoContext());
+			return fDocumentUndoManager.redoable();
 		return false;
 	}
 
@@ -370,7 +363,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	 */
 	public boolean undoable() {
 		if (isConnected())
-			return OperationHistoryFactory.getOperationHistory().canUndo(getUndoContext());
+			return fDocumentUndoManager.undoable();
 		return false;
 	}
 
@@ -378,9 +371,9 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	 * @see org.eclipse.jface.text.IUndoManager#redo()
 	 */
 	public void redo() {
-		if (isConnected() && redoable()) {
+		if (isConnected()) {
 			try {
-				OperationHistoryFactory.getOperationHistory().redo(getUndoContext(), null, null);
+				fDocumentUndoManager.redo();
 			} catch (ExecutionException ex) {
 				openErrorDialog(JFaceTextMessages.getString("DefaultUndoManager.error.redoFailed.title"), ex); //$NON-NLS-1$
 			}
@@ -391,9 +384,9 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	 * @see org.eclipse.jface.text.IUndoManager#undo()
 	 */
 	public void undo() {
-		if (isConnected() && undoable()) {
+		if (isConnected()) {
 			try {
-				OperationHistoryFactory.getOperationHistory().undo(getUndoContext(), null, null);
+				fDocumentUndoManager.undo();
 			} catch (ExecutionException ex) {
 				openErrorDialog(JFaceTextMessages.getString("DefaultUndoManager.error.undoFailed.title"), ex); //$NON-NLS-1$
 			}
