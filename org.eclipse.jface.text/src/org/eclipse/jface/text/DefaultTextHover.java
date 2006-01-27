@@ -20,7 +20,7 @@ import org.eclipse.jface.text.source.ISourceViewerExtension2;
 /**
  * Standard implementation of {@link org.eclipse.jface.text.ITextHover}.
  * <p>
- * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
+ * This class is not intended to be subclassed.
  * </p>
  * 
  * @since 3.2
