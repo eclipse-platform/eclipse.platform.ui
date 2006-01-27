@@ -37,7 +37,11 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 
 	private static final String TAG_VIEWER_ACTION_BINDING = "viewerActionBinding"; //$NON-NLS-1$
 
-	private static final String TAG_POPUP_MENU = "popupMenu"; //$NON-NLS-1$
+	private static final String TAG_POPUP_MENU = "popupMenu"; //$NON-NLS-1$ 
+
+	private static final String TAG_OPTIONS = "options"; //$NON-NLS-1$ 
+
+	private static final String TAG_PROPERTY = "property"; //$NON-NLS-1$
 
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 
@@ -53,12 +57,15 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 
 	private static final String ATT_POPUP_MENU_ID = "popupMenuId"; //$NON-NLS-1$
 
+	private static final String ATT_VALUE = "value"; //$NON-NLS-1$
+
 	private static boolean isInitialized = false;
 
 	private final Map viewerDescriptors = new HashMap();
 
 	/**
-	 * @return The intialized singleton instance of the viewer descriptor registry. 
+	 * @return The intialized singleton instance of the viewer descriptor
+	 *         registry.
 	 */
 	public static NavigatorViewerDescriptorRegistry getInstance() {
 		if (isInitialized)
@@ -82,7 +89,8 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 
 	/**
 	 * 
-	 * @param viewerId The viewer id for the viewer configuration
+	 * @param viewerId
+	 *            The viewer id for the viewer configuration
 	 * @return The viewer descriptor for the given viewer id.
 	 */
 	public NavigatorViewerDescriptor getNavigatorViewerDescriptor(
@@ -94,6 +102,7 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 		if (TAG_VIEWER.equals(element.getName())) {
 			String viewerId = element.getAttribute(ATT_VIEWER_ID);
 			NavigatorViewerDescriptor descriptor = getViewerDescriptor(viewerId);
+
 			String attPopupMenuId = element.getAttribute(ATT_POPUP_MENU_ID);
 			IConfigurationElement[] tagPopupMenu = element
 					.getChildren(TAG_POPUP_MENU);
@@ -102,35 +111,69 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 			else {
 				if (attPopupMenuId != null)
 					NavigatorPlugin
-							.logError(0, "A popupMenuId attribute and popupMenu element may NOT be concurrently specified. (see " + element.getNamespace() + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
-				else if (tagPopupMenu.length > 1) 
+							.logError(
+									0,
+									"A popupMenuId attribute and popupMenu element may NOT be concurrently specified. (see " + element.getNamespace() + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
+				else if (tagPopupMenu.length > 1)
 					NavigatorPlugin
-					.logError(0, "Only one 'popupMenu' child of 'viewer' id may be specified. (see " + element.getNamespace() + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
+							.logError(
+									0,
+									"Only one \"popupMenu\" child of \"viewer\" may be specified. (see " + element.getNamespace() + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
 				else { // valid case
-					
+
 					String popupMenuId = tagPopupMenu[0].getAttribute(ATT_ID);
-					String allowsPlatformContributions = tagPopupMenu[0].getAttribute(ATT_ALLOWS_PLATFORM_CONTRIBUTIONS);
-					
-					if(popupMenuId != null)
+					String allowsPlatformContributions = tagPopupMenu[0]
+							.getAttribute(ATT_ALLOWS_PLATFORM_CONTRIBUTIONS);
+
+					if (popupMenuId != null)
 						descriptor.setPopupMenuId(popupMenuId);
-					
-					if(allowsPlatformContributions != null) 
-						descriptor.setAllowsPlatformContributions(Boolean.valueOf(allowsPlatformContributions).booleanValue());
-					
-					IConfigurationElement[] insertionPointElements = tagPopupMenu[0].getChildren(TAG_INSERTION_POINT);
+
+					if (allowsPlatformContributions != null)
+						descriptor.setAllowsPlatformContributions(Boolean
+								.valueOf(allowsPlatformContributions)
+								.booleanValue());
+
+					IConfigurationElement[] insertionPointElements = tagPopupMenu[0]
+							.getChildren(TAG_INSERTION_POINT);
 					InsertionPoint[] insertionPoints = new InsertionPoint[insertionPointElements.length];
 					String name;
-					String stringAttSeparator; 
-					
+					String stringAttSeparator;
+
 					boolean isSeparator;
-					for(int indx=0; indx< insertionPointElements.length; indx++) {
-						name = insertionPointElements[indx].getAttribute(ATT_NAME);
-						stringAttSeparator = insertionPointElements[indx].getAttribute(ATT_SEPARATOR);
-						isSeparator = stringAttSeparator != null ? Boolean.valueOf(stringAttSeparator).booleanValue() : false;
-						insertionPoints[indx] = new InsertionPoint(name, isSeparator);
+					for (int indx = 0; indx < insertionPointElements.length; indx++) {
+						name = insertionPointElements[indx]
+								.getAttribute(ATT_NAME);
+						stringAttSeparator = insertionPointElements[indx]
+								.getAttribute(ATT_SEPARATOR);
+						isSeparator = stringAttSeparator != null ? Boolean
+								.valueOf(stringAttSeparator).booleanValue()
+								: false;
+						insertionPoints[indx] = new InsertionPoint(name,
+								isSeparator);
 					}
 					descriptor.setCustomInsertionPoints(insertionPoints);
 				}
+			}
+
+			IConfigurationElement[] options = element.getChildren(TAG_OPTIONS);
+			if (options.length == 1) {
+				IConfigurationElement[] properties = options[0]
+						.getChildren(TAG_PROPERTY);
+				String name;
+				String value;
+				for (int i = 0; i < properties.length; i++) {
+					name = properties[i].getAttribute(ATT_NAME);
+					if (name != null) {
+						value = properties[i].getAttribute(ATT_VALUE);
+						descriptor.setProperty(name, value);
+					}
+				}
+			} else if (options.length > 1){
+				NavigatorPlugin
+						.logError(
+								0,
+								"Only one \"options\" child of \"viewer\" may be specified. (see " + element.getNamespace() + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
+
 			}
 			return true;
 		}

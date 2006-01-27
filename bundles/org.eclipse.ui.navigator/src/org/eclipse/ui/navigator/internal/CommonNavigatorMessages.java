@@ -26,7 +26,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class CommonNavigatorMessages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ui.navigator.internal.navigator_messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.ui.navigator.internal.messages"; //$NON-NLS-1$
 
 	public static String Link_With_Editor_Job_;
 
@@ -80,21 +80,21 @@ public class CommonNavigatorMessages extends NLS {
 
 	public static String PropertyDialog_text;
 
-	public static String CommonFilterSelectionDialog_4;
 
 	public static String ExtensionFilterDescriptor_11;
 
-	public static String CommonFilterSelectionDialog_3;
 
 	public static String ExtensionFilterDescriptor_10;
 
-	public static String CommonFilterSelectionDialog_2;
 
-	public static String CommonFilterSelectionDialog_1;
 
 	public static String SelectFiltersActionDelegate_1;
 
-	public static String CommonFilterSelectionDialog_0;
+	public static String CommonFilterSelectionDialog_Available_Filters;
+	public static String CommonFilterSelectionDialog_Available_Content;
+	public static String CommonFilterSelectionDialog_Hides_all_content_associated;
+	public static String CommonFilterSelectionDialog_Select_the_available_extensions;
+	public static String CommonFilterSelectionDialog_Select_the_filters_to_apply;
 
 	public static String SelectFiltersActionDelegate_0;
 
@@ -137,6 +137,12 @@ public class CommonNavigatorMessages extends NLS {
 	public static String NewProjectWizard_errorTitle;
 	
 	public static String NewProjectAction_text;
+
+	public static String UpdateFiltersOperation_Update_CommonViewer_Filter_;
+
+	public static String CommonFilterSelectionDialog_enter_name_of_filte_;
+
+	public static String CommonFilterSelectionDialog_Available_customization_;
 
 	
 	static {

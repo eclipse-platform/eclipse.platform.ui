@@ -40,6 +40,10 @@ import org.eclipse.ui.part.PluginTransfer;
  * {@link NavigatorContentServiceFactory#createContentService(String, org.eclipse.jface.viewers.StructuredViewer)}.
  *  
  * <p>
+ * Clients may extend this class.
+ * </p>
+ *  
+ * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
  * work nor that it will remain the same. Please do not use this API without
@@ -274,5 +278,10 @@ public class CommonViewer extends TreeViewer {
 		// showItem((Item) newSelection.get(0));
 		// }
 	}
+	
+    public boolean isExpandable(Object element) {
+        
+        return getFilteredChildren(element).length != 0;
+    }
 
 }

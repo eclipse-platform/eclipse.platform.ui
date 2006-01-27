@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator.internal.extensions;
 
+import java.util.Properties;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.WorkbenchException;
@@ -42,7 +44,7 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 
 	private static final String TAG_CONTENT_EXTENSION = "contentExtension"; //$NON-NLS-1$
 
-	private static final String TAG_ACTION_EXTENSION = "actionExtension"; //$NON-NLS-1$
+	private static final String TAG_ACTION_EXTENSION = "actionExtension"; //$NON-NLS-1$ 
 
 	private final String viewerId;
 
@@ -55,6 +57,8 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 	private InsertionPoint[] customInsertionPoints = null;
 
 	private boolean allowsPlatformContributions = true;
+	
+	private final Properties properties = new Properties();
 
 	/**
 	 * Creates a new content descriptor from a configuration element.
@@ -231,5 +235,28 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 			boolean toAllowPlatformContributions) {
 		allowsPlatformContributions = toAllowPlatformContributions;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.INavigatorViewerDescriptor#getStringConfigProperty(java.lang.String)
+	 */
+	public String getStringConfigProperty(String aPropertyName) {
+		return properties.getProperty(aPropertyName);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.INavigatorViewerDescriptor#getBooleanConfigProperty(java.lang.String)
+	 */
+	public boolean getBooleanConfigProperty(String aPropertyName) {
+		String propValue = properties.getProperty(aPropertyName);
+		if(propValue == null)
+			return false;
+		return Boolean.valueOf(propValue).booleanValue();
+	}
+	
+	protected void setProperty(String aPropertyName, String aPropertyValue) {
+		properties.setProperty(aPropertyName, aPropertyValue);
+	}
+ 
 
 }

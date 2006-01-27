@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.navigator;
+package org.eclipse.ui.navigator.internal;
 
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -29,8 +29,14 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.RetargetAction;
-import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
-import org.eclipse.ui.navigator.internal.NavigatorContentServiceDescriptionProvider;
+import org.eclipse.ui.navigator.CommonNavigator;
+import org.eclipse.ui.navigator.CommonViewer;
+import org.eclipse.ui.navigator.CommonViewerSiteFactory;
+import org.eclipse.ui.navigator.ICommonActionConstants;
+import org.eclipse.ui.navigator.ICommonViewerSite;
+import org.eclipse.ui.navigator.IDescriptionProvider;
+import org.eclipse.ui.navigator.INavigatorContentService;
+import org.eclipse.ui.navigator.NavigatorActionService;
 
 /**
  * <p>
@@ -74,7 +80,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 *            The CommonNavigator managed by this class. Requires a non-null
 	 *            value.
 	 */
-	protected CommonNavigatorManager(CommonNavigator aNavigator) {
+	public CommonNavigatorManager(CommonNavigator aNavigator) {
 		super();
 		commonNavigator = aNavigator;
 		contentService = commonNavigator.getNavigatorContentService();
@@ -117,7 +123,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 * Called by {@link CommonNavigator} when the View Part is disposed.
 	 * 
 	 */
-	protected void dispose() {
+	public void dispose() {
 		commonNavigator.getCommonViewer().removeSelectionChangedListener(this);
 		actionService.dispose();
 	}
@@ -146,7 +152,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 *            Used to restore state of action extensions via the
 	 *            {@link NavigatorActionService}.
 	 */
-	protected void restoreState(IMemento aMemento) {
+	public void restoreState(IMemento aMemento) {
 		actionService.restoreState(aMemento);
 	}
 
@@ -155,7 +161,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 *            Used to save state of action extensions via the
 	 *            {@link NavigatorActionService}.
 	 */
-	protected void saveState(IMemento aMemento) {
+	public void saveState(IMemento aMemento) {
 		actionService.saveState(aMemento);
 	}
 

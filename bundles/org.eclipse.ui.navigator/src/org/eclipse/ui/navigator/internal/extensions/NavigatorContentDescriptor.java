@@ -27,13 +27,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
-import org.eclipse.ui.navigator.INavigatorExtensionFilter;
 import org.eclipse.ui.navigator.Priority;
 import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.CustomAndExpression;
@@ -54,7 +54,7 @@ import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 public final class NavigatorContentDescriptor implements
 		INavigatorContentDescriptor, INavigatorContentExtPtConstants {
 
-	private static final INavigatorExtensionFilter[] NO_VIEWER_FILTERS = new INavigatorExtensionFilter[0];
+	private static final ViewerFilter[] NO_VIEWER_FILTERS = new ViewerFilter[0];
 
 	private static final IConfigurationElement[] NO_DUPLICATE_CONTENT_FILTERS = new IConfigurationElement[0];
  
@@ -130,7 +130,7 @@ public final class NavigatorContentDescriptor implements
 				if (enablement.evaluate(context) == EvaluationResult.FALSE)
 					return false;
 			} catch (CoreException e) {
-				NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
+				NavigatorPlugin.logError( 0, e.getMessage(), e);
 				return false;
 			}
 		}
@@ -152,7 +152,7 @@ public final class NavigatorContentDescriptor implements
 		try {
 			return (enablement.evaluate(new EvaluationContext(null, anElement)) == EvaluationResult.TRUE);
 		} catch (CoreException e) {
-			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
+			NavigatorPlugin.logError( 0, e.getMessage(), e);
 		}
 		return false;
 	}
@@ -185,7 +185,7 @@ public final class NavigatorContentDescriptor implements
 				return (enablement.evaluate(new EvaluationContext(null,
 						anElement)) == EvaluationResult.TRUE);
 		} catch (CoreException e) {
-			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
+			NavigatorPlugin.logError( 0, e.getMessage(), e);
 		}
 		return false;
 	}
@@ -406,15 +406,15 @@ public final class NavigatorContentDescriptor implements
 	 * 
 	 * @return The duplicate content filters associated with this descriptor.
 	 */
-	public INavigatorExtensionFilter[] createDuplicateContentFilters() {
+	public ViewerFilter[] createDuplicateContentFilters() {
 
 		List viewerFiltersList = new ArrayList();
 		IConfigurationElement[] dupeFilters = getDuplicateContentFilterElements();
-		INavigatorExtensionFilter vFilter = null;
+		ViewerFilter vFilter = null;
 		for (int i = 0; i < dupeFilters.length; i++) {
 			try {
 
-				vFilter = (INavigatorExtensionFilter) dupeFilters[i]
+				vFilter = (ViewerFilter) dupeFilters[i]
 						.createExecutableExtension(ATT_VIEWER_FILTER);
 				viewerFiltersList.add(vFilter);
 			} catch (CoreException e) {
@@ -424,8 +424,8 @@ public final class NavigatorContentDescriptor implements
 			}
 
 		}
-		return (INavigatorExtensionFilter[]) (viewerFiltersList.size() > 0 ? viewerFiltersList
-				.toArray(new INavigatorExtensionFilter[viewerFiltersList.size()])
+		return (ViewerFilter[]) (viewerFiltersList.size() > 0 ? viewerFiltersList
+				.toArray(new ViewerFilter[viewerFiltersList.size()])
 				: NO_VIEWER_FILTERS);
 	}
 

@@ -28,12 +28,11 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.navigator.internal.CommonNavigatorActionGroup;
+import org.eclipse.ui.navigator.internal.CommonNavigatorManager;
 import org.eclipse.ui.navigator.internal.CommonSorter;
 import org.eclipse.ui.navigator.internal.NavigatorContentService;
 import org.eclipse.ui.navigator.internal.actions.CollapseAllAction;
 import org.eclipse.ui.navigator.internal.actions.LinkEditorAction;
-import org.eclipse.ui.navigator.internal.filters.CommonViewerFilter;
-import org.eclipse.ui.navigator.internal.filters.ExtensionFilterRegistryManager;
 import org.eclipse.ui.navigator.internal.filters.SelectFiltersAction;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.ViewPart;
@@ -51,15 +50,7 @@ import org.eclipse.ui.part.ViewPart;
  * that renders the extensible tree. Creates and manages the 
  * lifecylce of the Navigator Content Service (described below).
  * </p>
- * </li>
- * <li>
- * <p>
- * {@link org.eclipse.ui.navigator.CommonNavigatorManager}: 
- * Handles auxillary functions, such as updating the status bar, 
- * populating popup menus, and managing the Navigator Action 
- * Service (described below). Not expected to be needed by clients.
- * </p>
- * </li>
+ * </li> 
  * <li>
  * <p>
  * {@link org.eclipse.ui.navigator.NavigatorActionService}: 
@@ -158,7 +149,13 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	public void createPartControl(Composite aParent) {
 
 		commonViewer = createCommonViewer(aParent);
-		commonViewer.addFilter(createCommonFilter(commonViewer));
+		//commonViewer.addFilter(new DuplicateContentFilter(commonViewer));
+		
+		INavigatorFilterService filterService = commonViewer.getNavigatorContentService().getFilterService();
+		ViewerFilter[] visibleFilters = filterService.getVisibleFilters(true);
+		for(int i=0; i<visibleFilters.length; i++)
+			commonViewer.addFilter(visibleFilters[i]);
+		
 		commonViewer.setSorter(createCommonSorter(commonViewer));
  
 
@@ -340,6 +337,18 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 
 	/**
 	 * <p>
+	 * The following method creates a basic sorter for the M3 release. This functionality will
+	 * change substantially for the M4 release.
+	 * </p>
+	 * 
+	 * @return The ViewerSorter to sort the contents of the Common Viewer
+	 */
+	protected ViewerSorter createCommonSorter(CommonViewer aViewer) {
+		return new CommonSorter(aViewer.getNavigatorContentService());
+	}
+
+	/**
+	 * <p>
 	 * Adds the listeners to the Common Viewer.
 	 * </p>
 	 * 
@@ -429,37 +438,8 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 */
 	protected ActionGroup createCommonActionGroup() {
 		return new CommonNavigatorActionGroup(this, commonViewer);
-	}
+	} 
 
-	/**
-	 * <p>
-	 * The default implementation hooks into the extensible navigator's framework for extensions to
-	 * provide filters. Custom implementations will probably require some changes to
-	 * {@link SelectFiltersAction}&nbsp;as
-	 * well.
-	 * </p>
-	 * 
-	 * @see CommonViewerFilter
-	 * @see ExtensionFilterRegistryManager
-	 * @return The ViewerFilter to provide the desired extensibility for Filters
-	 */
-	protected ViewerFilter createCommonFilter(CommonViewer aViewer) {
-		return new CommonViewerFilter(aViewer);
-	}
-
-
-
-	/**
-	 * <p>
-	 * The following method creates a basic sorter for the M3 release. This functionality will
-	 * change substantially for the M4 release.
-	 * </p>
-	 * 
-	 * @return The ViewerSorter to sort the contents of the Common Viewer
-	 */
-	protected ViewerSorter createCommonSorter(CommonViewer aViewer) {
-		return new CommonSorter(aViewer.getNavigatorContentService());
-	}
 
 	/**
 	 * @return A listener to track the disposal of the Eclipse view part in order to dispose of the

@@ -11,17 +11,10 @@
 
 package org.eclipse.ui.navigator.internal.filters;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
-import org.eclipse.ui.navigator.internal.Utilities;
-import org.eclipse.ui.navigator.internal.NavigatorContentService;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorManager;
+import org.eclipse.ui.navigator.INavigatorFilterService;
 
 /**
  * 
@@ -36,14 +29,12 @@ import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorMa
  */
 public class CommonFilterContentProvider implements IStructuredContentProvider {
 
-	private static final NavigatorContentDescriptorManager CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorManager.getInstance();
 	private INavigatorContentService contentService;
-
-	public CommonFilterContentProvider() {
-	}
+	private Object[] NO_ELEMENTS = new Object[0];
+ 
  
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (newInput instanceof NavigatorContentService)
+		if (newInput instanceof INavigatorContentService)
 			contentService = (INavigatorContentService) newInput;
 	}
 
@@ -53,19 +44,12 @@ public class CommonFilterContentProvider implements IStructuredContentProvider {
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-
-		ExtensionFilterViewerRegistry filterRegistry = ExtensionFilterRegistryManager.getInstance().getViewerRegistry(contentService.getViewerId());
-
-		List results = new ArrayList();
-		INavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();
-		for (int i = 0; i < descriptors.length; i++)
-			if (Utilities.isActive(contentService
-					.getViewerDescriptor(), descriptors[i])
-					&& Utilities.isVisible(contentService
-							.getViewerDescriptor(), descriptors[i]))
-			results.addAll(Arrays.asList(filterRegistry.getAllDescriptors(descriptors[i].getId())));
-
-		return results.toArray();
+		if(contentService != null) {
+			INavigatorFilterService filterService = contentService.getFilterService();
+			return filterService.getVisibleFilterDescriptors();
+		}
+		return NO_ELEMENTS ;
+		
 	}
 
 	/*

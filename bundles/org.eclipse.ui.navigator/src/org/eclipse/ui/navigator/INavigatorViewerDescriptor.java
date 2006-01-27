@@ -5,8 +5,8 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.navigator.internal.extensions.InsertionPoint;
 
 /**
- * Provides a basic metadata about the abstract viewer for a particular
- * content service.
+ * Provides a basic metadata about the abstract viewer for a particular content
+ * service.
  * 
  * 
  * <p>
@@ -18,10 +18,40 @@ import org.eclipse.ui.navigator.internal.extensions.InsertionPoint;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * 
  * @since 3.2
  * 
  */
 public interface INavigatorViewerDescriptor {
+
+	/**
+	 * {@value #PROP_HIDE_AVAILABLE_EXT_TAB } (boolean): True indicates the
+	 * "Available Extensions" tab in the "Available Customizations" dialog
+	 * should not be available for the user (defaults to <b>false</b>).
+	 * 
+	 */
+	String PROP_HIDE_AVAILABLE_EXT_TAB = "org.eclipse.ui.navigator.hideAvailableExtensionsTab"; //$NON-NLS-1$
+
+	/**
+	 * {@value #PROP_HIDE_AVAILABLE_CUSTOMIZATIONS_DIALOG } (boolean): True
+	 * indicates the entire "Available Customizations" dialog should not be
+	 * available for the user (defaults to <b>false</b>).
+	 */
+	String PROP_HIDE_AVAILABLE_CUSTOMIZATIONS_DIALOG = "org.eclipse.ui.navigator.hideAvailableCustomizationsDialog"; //$NON-NLS-1$
+
+	/**
+	 * {@value #PROP_HIDE_COLLAPSE_ALL_ACTION } (boolean): True indicates the
+	 * "Collapse All" button should not be available for the user (defaults to
+	 * <b>false</b>).
+	 */
+	String PROP_HIDE_COLLAPSE_ALL_ACTION = "org.eclipse.ui.navigator.hideCollapseAllAction"; //$NON-NLS-1$
+
+	/**
+	 * {@value #PROP_HIDE_LINK_WITH_EDITOR_ACTION } (boolean): True indicates
+	 * the "Link With Editor" action should not be available for the user
+	 * (defaults to <b>false</b>).
+	 */
+	String PROP_HIDE_LINK_WITH_EDITOR_ACTION = "org.eclipse.ui.navigator.hideLinkWithEditorAction"; //$NON-NLS-1$
 
 	/**
 	 * Returns the id of the viewer targeted by this extension.
@@ -100,8 +130,9 @@ public interface INavigatorViewerDescriptor {
 	 * 
 	 * Custom insertion points are declared through a nested 'popupMenu' element
 	 * in the <b>org.eclipse.ui.navigator.viewer</b> extension point. Each
-	 * insertion point represents either a {@link Separator} or {@link GroupMarker} in
-	 * the context menu of the viewer.<p>
+	 * insertion point represents either a {@link Separator} or
+	 * {@link GroupMarker} in the context menu of the viewer.
+	 * <p>
 	 * 
 	 * @return The set of custom insertion points, if any. A null list indicates
 	 *         the default set (as defined by {@link NavigatorActionService})
@@ -109,5 +140,23 @@ public interface INavigatorViewerDescriptor {
 	 *         insertion points.
 	 */
 	InsertionPoint[] getCustomInsertionPoints();
- 
+
+	/**
+	 * @param aPropertyName
+	 *            A property name corresponding to a configuration option from
+	 *            <b>org.eclipse.ui.navigator.viewer</b>
+	 * @return The unmodified string value returned from the extension (<b>null</b>
+	 *         is a possible return value).
+	 */
+	String getStringConfigProperty(String aPropertyName);
+
+	/**
+	 * @param aPropertyName
+	 *            A property name corresponding to a configuration option from
+	 *            <b>org.eclipse.ui.navigator.viewer</b>
+	 * @return The boolean value returned from the extension (<b>null</b> is a
+	 *         possible return value).
+	 */
+	boolean getBooleanConfigProperty(String aPropertyName);
+
 }

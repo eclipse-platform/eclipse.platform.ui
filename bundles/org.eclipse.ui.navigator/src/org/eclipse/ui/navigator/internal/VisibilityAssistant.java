@@ -29,6 +29,7 @@ public class VisibilityAssistant {
 	private final INavigatorViewerDescriptor viewerDescriptor;
 
 	private final Set programmaticVisibilityBindings = new HashSet();
+	private final Set programmaticRootBindings = new HashSet();
 
 	/**
 	 * Create a visibility assistant for the given viewer descriptor.
@@ -45,12 +46,17 @@ public class VisibilityAssistant {
 	 * 
 	 * @param theExtensions
 	 *            The extensions that should be made visible to the viewer.
+	 * @param isRoot 
 	 */
-	public void bindExtensions(String[] theExtensions) {
+	public void bindExtensions(String[] theExtensions, boolean isRoot) {
 		if (theExtensions == null)
 			return;
-		for (int i = 0; i < theExtensions.length; i++) 
+		for (int i = 0; i < theExtensions.length; i++) {
 			programmaticVisibilityBindings.add(theExtensions[i]);
+			if (isRoot) {
+				programmaticRootBindings.add(theExtensions[i]);
+			}
+		}
 	}
 
 	/**
@@ -149,6 +155,16 @@ public class VisibilityAssistant {
 						.isVisibleContentExtension(aContentExtensionId);
 	}
 
+	/**
+	 * Return whether the given content extension is a root extension.
+	 * @param aContentExtensionId the id of the content extension.
+	 * @return whether the given content extension is a root extension
+	 */
+	public boolean isRootExtension(String aContentExtensionId) {
+		return programmaticRootBindings.contains(aContentExtensionId)
+			|| viewerDescriptor
+				.isRootExtension(aContentExtensionId);
+	}
 	/**
 	 * 
 	 * @param aContentDescriptor

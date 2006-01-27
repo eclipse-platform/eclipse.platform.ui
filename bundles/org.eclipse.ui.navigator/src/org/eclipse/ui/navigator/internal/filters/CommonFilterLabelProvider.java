@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.navigator.ICommonFilterDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorManager;
@@ -33,8 +34,7 @@ public class CommonFilterLabelProvider implements ITableLabelProvider, ILabelPro
 
 	private static final NavigatorContentDescriptorManager CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorManager.getInstance();
 
-	public CommonFilterLabelProvider() {
-	}
+	 
 
 	/*
 	 * (non-Javadoc)
@@ -55,8 +55,8 @@ public class CommonFilterLabelProvider implements ITableLabelProvider, ILabelPro
 	public String getText(Object element) {
 		if (element instanceof NavigatorContentDescriptor)
 			return ((INavigatorContentDescriptor) element).getName();
-		else if (element instanceof ExtensionFilterDescriptor)
-			return ((ExtensionFilterDescriptor) element).getName();
+		else if (element instanceof ICommonFilterDescriptor)
+			return ((ICommonFilterDescriptor) element).getName();
 		return null;
 	}
 
@@ -120,8 +120,8 @@ public class CommonFilterLabelProvider implements ITableLabelProvider, ILabelPro
 			case 0 :
 				return getText(element);
 			case 1 : {
-				if (element instanceof ExtensionFilterDescriptor) {
-					String d = ((ExtensionFilterDescriptor) element).getDescription();
+				if (element instanceof ICommonFilterDescriptor) {
+					String d = ((ICommonFilterDescriptor) element).getDescription();
 					return d == null ? "" : d; //$NON-NLS-1$
 				}
 			}

@@ -27,12 +27,7 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
  * @since 3.2
  */
 public class ResourceExtensionLabelProvider extends WorkbenchLabelProvider implements ICommonLabelProvider {
-
-	public ResourceExtensionLabelProvider() {
-		//super(new WorkbenchLabelProvider(), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());
-		
-	}
-
+ 
  
 	public void init(IExtensionStateModel aModel, ITreeContentProvider aContentProvider) {
 		//init

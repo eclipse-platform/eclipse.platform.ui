@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator.internal.extensions;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
@@ -25,7 +24,6 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.IMementoAware;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentExtension;
-import org.eclipse.ui.navigator.INavigatorExtensionFilter;
 import org.eclipse.ui.navigator.internal.NavigatorContentService;
 
 /**
@@ -66,7 +64,7 @@ public class NavigatorContentExtension implements IMementoAware, INavigatorConte
 
 	private StructuredViewerManager viewerManager;
 
-	private INavigatorExtensionFilter[] viewerFilters;
+	private ViewerFilter[] viewerFilters;
 
 	/**
 	 * Create an object to manage the instantiated 
@@ -179,11 +177,10 @@ public class NavigatorContentExtension implements IMementoAware, INavigatorConte
 		return labelProvider;
 	}
  
-	public INavigatorExtensionFilter[] getDuplicateContentFilters() {
+	public ViewerFilter[] getDuplicateContentFilters() {
 		if (viewerFilters != null)
 			return viewerFilters;
-
-		List viewerFiltersList = new ArrayList();
+ 
 		synchronized (this) {
 			if (viewerFilters == null)
 				viewerFilters = descriptor.createDuplicateContentFilters();

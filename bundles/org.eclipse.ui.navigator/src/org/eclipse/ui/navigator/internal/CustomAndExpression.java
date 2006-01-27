@@ -15,17 +15,21 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * Create an AND-type core expression from an IConfigurationElement of arbitrary name. 
- *
+ * Create an AND-type core expression from an IConfigurationElement of arbitrary
+ * name.
+ * 
  */
 public class CustomAndExpression extends Expression {
 
 	protected List fExpressions;
 
 	/**
-	 * Create an AND-type core expression from an IConfigurationElement of arbitrary name. 
-	 *
-	 *@param element An IConfigurationElement of arbitrary name.
+	 * Create an AND-type core expression from an IConfigurationElement of
+	 * arbitrary name. The children elements are combined using boolean AND
+	 * semantics to evaluate the expression.
+	 * 
+	 * @param element
+	 *            An IConfigurationElement of arbitrary name.
 	 */
 	public CustomAndExpression(IConfigurationElement element) {
 		Assert.isNotNull(element);

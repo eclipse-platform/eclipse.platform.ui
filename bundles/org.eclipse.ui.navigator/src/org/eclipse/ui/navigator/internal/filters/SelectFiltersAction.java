@@ -16,7 +16,7 @@ package org.eclipse.ui.navigator.internal.filters;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.navigator.CommonNavigator;
+import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 
 /**
@@ -31,16 +31,21 @@ import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
  */
 public class SelectFiltersAction extends Action implements IAction {
 
-	private final CommonNavigator commonNavigator;
+	private final CommonViewer commonViewer; 
 
-	public SelectFiltersAction(CommonNavigator aCommonNavigator) {
+	/**
+	 * Create an action to drive the Filter selection dialog
+	 * for a particular instance of the CommonViewer.
+	 * @param aCommonViewer
+	 */
+	public SelectFiltersAction(CommonViewer aCommonViewer) {
 		super(CommonNavigatorMessages.SelectFiltersActionDelegate_0); 
 		setToolTipText(CommonNavigatorMessages.SelectFiltersActionDelegate_1); 
-		commonNavigator = aCommonNavigator;
+		commonViewer = aCommonViewer; 
 	}
 
 	public void run() {
-		CommonFilterSelectionDialog filterSelectionDialog = new CommonFilterSelectionDialog(commonNavigator);
+		CommonFilterSelectionDialog filterSelectionDialog = new CommonFilterSelectionDialog(commonViewer);
 		filterSelectionDialog.open();
 	}
 

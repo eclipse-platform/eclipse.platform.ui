@@ -27,7 +27,7 @@ import org.eclipse.ui.IMemento;
  * </p>
  * 
  * <p>
- * Clients are not required to implement this interface if there is no cause to
+ * Clients may (but are not required to) implement this interface if there is no cause to
  * do so. {@link ITreeContentProvider} is respected by the Common Navigator.
  * </p>
  * 

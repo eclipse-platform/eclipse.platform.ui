@@ -225,7 +225,7 @@ public final class NavigatorActionService extends ActionGroup implements
 	private void addCommonActionProviderMenu(IMenuManager aMenu) {
 
 		CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager
-				.getInstance().findRelevantActionDescriptors(viewerDescriptor,
+				.getInstance().findRelevantActionDescriptors(contentService,
 						getContext());
 		if (providerDescriptors.length > 0) {
 			CommonActionProvider provider = null;
@@ -258,7 +258,7 @@ public final class NavigatorActionService extends ActionGroup implements
 		theActionBars.clearGlobalActionHandlers();
 
 		CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager
-				.getInstance().findRelevantActionDescriptors(viewerDescriptor,
+				.getInstance().findRelevantActionDescriptors(contentService,
 						getContext());
 		if (providerDescriptors.length > 0) {
 			CommonActionProvider provider = null;

@@ -56,22 +56,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	private final INavigatorContentService contentService;
 	private final boolean isContentServiceSelfManaged;
 
-	/**
-	 * <p>
-	 * Creates a cached {@link NavigatorContentService}&nbsp;from the given viewer Id.
-	 * </p>
-	 * 
-	 * @param aViewerId
-	 *            The associated viewer id that this NavigatorContentServiceLabelProvider will
-	 *            provide labels for
-	 */
-	public NavigatorContentServiceLabelProvider(String aViewerId) {
-		super();
-		contentService = new NavigatorContentService(aViewerId);
-		decorator = PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
-		isContentServiceSelfManaged = true;
-	}
-
+  
 	/**
 	 * <p>
 	 * Uses the supplied content service to acquire the available extensions.
@@ -154,7 +139,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 
 	/**
 	 * <p>
-	 * Label provider listeners are currently unsupported.
+	 * Label provider listeners are currently supported.
 	 * </p>
 	 * 
 	 * {@inheritDoc}
@@ -166,7 +151,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 
 	/**
 	 * <p>
-	 * Label provider listeners are currently unsupported.
+	 * Label provider listeners are currently supported.
 	 * </p>
 	 * 
 	 * {@inheritDoc}

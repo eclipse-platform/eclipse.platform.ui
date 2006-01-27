@@ -96,7 +96,7 @@ consulting with the Platform/UI team.
    <element name="viewerContentBinding">
       <annotation>
          <documentation>
-            Clients must define one or more &lt;b&gt;viwerContentBinding&lt;/b&gt; elements to describe which content extensions are &lt;i&gt;visible&lt;/i&gt; to the viewer. A content extension is &lt;i&gt;visible&lt;/i&gt; if the id of the content extension matches an &lt;b&gt;includes&lt;/b&gt; statement under a &lt;b&gt;viewerContentBinding&lt;/b&gt; and is not excluded by an &lt;b&gt;excludes&lt;/b&gt; statement. If a content extension is not &lt;i&gt;visible&lt;/i&gt; to a viewer, then the extension will never be asked for content by a content service for that viewer. 
+            Clients must define one or more &lt;b&gt;viwerContentBinding&lt;/b&gt; elements to describe which content extensions and common filters are &lt;i&gt;visible&lt;/i&gt; to the viewer. A content extension or common filter is &lt;i&gt;visible&lt;/i&gt; if the id of the content extension or common filter matches an &lt;b&gt;includes&lt;/b&gt; statement under a &lt;b&gt;viewerContentBinding&lt;/b&gt; and is not excluded by an &lt;b&gt;excludes&lt;/b&gt; statement. If a content extension or common filter is not &lt;i&gt;visible&lt;/i&gt; to a viewer, then the extension will never be asked for content by a content service for that viewer or be presented to the user in the available filters dialog. 
 &lt;p&gt;
 Clients may define an &lt;b&gt;includes&lt;/b&gt; element to select which extensions are &lt;i&gt;visible&lt;/i&gt; to the viewer, and similarly an &lt;b&gt;excludes&lt;/b&gt; element for extensions that should not be made &lt;i&gt;visible&lt;/i&gt; to the viewer. Clients may further define the extensions that should be explicitly queried for root elements (through  ITreeContentProvider.getElements()) by the &quot;isRoot&quot; attribute. If one or more &lt;b&gt;contentExtension&lt;/b&gt; elements have &quot;isRoot&quot; set to true within the &lt;b&gt;includes&lt;/b&gt; statement, only those extensions will be queried for root elements. The &quot;isRoot&quot; attribute has no effect for exclusions.
 &lt;p&gt;
@@ -182,8 +182,8 @@ For &lt;b&gt;actionProvider&lt;/b&gt; definitions which are not nested under a &
    <element name="contentExtension">
       <annotation>
          <documentation>
-            Indicates that the content extension should be queried by &lt;code&gt;ITreeContentProvider.getElements()&lt;/code&gt; or &lt;code&gt;ITreeContentProvider.getChildren()&lt;/code&gt;
-for the root of the viewer. 
+            Indicates the id (or matching pattern) of a content extension that should be queried by &lt;code&gt;ITreeContentProvider.getElements()&lt;/code&gt; or &lt;code&gt;ITreeContentProvider.getChildren()&lt;/code&gt;
+for the root of the viewer or a common filter that should be available to the user in the &quot;Available Filters&quot; dialog.
 &lt;p&gt;
 Clients may specify &quot;isRoot&quot; to select specific root extensions to override 
 the extensions which would otherwise be enabled for the viewer input element

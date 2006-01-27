@@ -12,6 +12,7 @@ package org.eclipse.ui.navigator.internal;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -46,32 +47,21 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 		return plugin;
 	}
  
-
+	
 	/**
-	 * Log the given status to the ISV log.
-	 * 
-	 * When to use this:
-	 * 
-	 * This should be used when a PluginException or a ExtensionException occur but for which an
-	 * error dialog cannot be safely shown.
-	 * 
-	 * If you can show an ErrorDialog then do so, and do not call this method.
-	 * 
-	 * If you have a plugin exception or core exception in hand call log(String, IStatus)
-	 * 
-	 * This convenience method is for internal use by the Workbench only and must not be called
-	 * outside the workbench.
-	 * 
-	 * This method is supported in the event the log allows plugin related information to be logged
-	 * (1FTTJKV). This would be done by this method.
-	 * 
-	 * This method is internal to the workbench and must not be called by any plugins, or examples.
-	 * 
-	 * @param message
-	 *            A high level UI message describing when the problem happened.
-	 *  
+	 * Returns an image descriptor for the image file at the given
+	 * plug-in relative path.
+	 *
+	 * @param path the path
+	 * @return the image descriptor
 	 */
-
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+  
+	/**
+	 * Logs messages.
+	 */
 	public static void log(String message) {
 		getDefault().getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, 0, message, null));
 		System.err.println(message);

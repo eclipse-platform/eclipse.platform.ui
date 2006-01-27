@@ -40,7 +40,7 @@
       <actionProvider
             class="org.eclipse.ui.tests.navigator.extension.DependentActionProvider"
             dependsOn="Invalid Id"
-            id="org.eclipse.ui.tests.navigator.extension.[If this menu option shows, it is an ERROR from org.eclipse.ui.tests.navigator!]">
+            id="org.eclipse.ui.tests.navigator.extension.[If this menu option shows, it is an ERROR from org.eclipse.ui.tests.navigator! A warning SHOULD appear in the log!]">
          <enablement>
             <instanceof value="org.eclipse.core.resources.IResource"/>
          </enablement>
@@ -62,16 +62,63 @@
             <instanceof value="org.eclipse.core.resources.IProject"/>
          </triggerPoints>            
       </navigatorContent>
+      <commonFilter
+            class="org.eclipse.ui.tests.navigator.extension.TestItemsThatEndIn3"
+            description="Hide TestItem objects that end in the number &quot;3&quot;"
+            id="org.eclipse.ui.tests.navigator.filters.TestItemsThatEndWith3"
+            name="TestItems that end with &quot;3&quot;"
+            activeByDefault="true"
+            /> 
+      <commonFilter
+            description="Hides all instances of Test Item"
+            id="org.eclipse.ui.tests.navigator.filters.AllTestItems"
+            name="A TestItem Exp Filter (should be sorted alphab..)">
+         <filterExpression>
+            <instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
+         </filterExpression>
+      </commonFilter>      
+      <commonFilter
+            class="org.eclipse.ui.tests.navigator.extension.TestItemsThatEndIn3"
+            description="This filter specifies a class an an expression; selecting it should result in a warning in the log."
+            id="org.eclipse.ui.tests.navigator.filters.ErrantFilter"
+            name="An errant filter">
+         <filterExpression>
+            <instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
+         </filterExpression>
+      </commonFilter>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.viewer">
       <viewer
-            viewerId="org.eclipse.ui.tests.navigator.TestView"
-            popupMenuId="org.eclipse.ui.tests.navigator.TestView#PopupMenu"/>
+            popupMenuId="org.eclipse.ui.tests.navigator.TestView#PopupMenu"
+            viewerId="org.eclipse.ui.tests.navigator.TestView">
+         <options>
+            <property
+                  name="org.eclipse.ui.navigator.hideAvailableExtensionsTab"
+                  value="true"/>
+            <!-- 
+            <property
+                  name="org.eclipse.ui.navigator.hideAvailableCustomizationsDialog"
+                  value="true"/>
+                  
+             --> 
+             <!--   -->
+            <property
+                  name="org.eclipse.ui.navigator.hideLinkWithEditorAction"
+                  value="true"/> 
+             <!--  -->
+            <property
+                  name="org.eclipse.ui.navigator.hideCollapseAllAction"
+                  value="true"/>  
+         </options>
+      </viewer>
       <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.TestView">
          <includes>
             <contentExtension pattern="org.eclipse.ui.tests.navigator.testContent"/>
             <contentExtension pattern="org.eclipse.ui.navigator.resourceContent"/>
+            <contentExtension pattern="org.eclipse.ui.tests.navigator.filters.*"/> 
+            <!-- pick up the resource filters for free --> 
+            <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/> 
          </includes>
       </viewerContentBinding>
       <viewerActionBinding viewerId="org.eclipse.ui.tests.navigator.TestView">

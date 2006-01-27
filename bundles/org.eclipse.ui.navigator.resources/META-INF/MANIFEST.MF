@@ -6,8 +6,7 @@ Bundle-Version: 3.2.0.qualifier
 Bundle-Activator: org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorPlugin
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
-Export-Package: .,
- org.eclipse.ui.navigator.resources.expressions,
+Export-Package: ., 
  org.eclipse.ui.navigator.resources.internal.actions,
  org.eclipse.ui.navigator.resources.internal.plugin,
  org.eclipse.ui.navigator.resources.internal.workbench

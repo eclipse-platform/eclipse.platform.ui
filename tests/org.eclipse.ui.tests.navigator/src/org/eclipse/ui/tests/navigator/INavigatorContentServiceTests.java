@@ -169,7 +169,7 @@ public class INavigatorContentServiceTests extends TestCase {
 		INavigatorContentService contentServiceWithProgrammaticBindings = NavigatorContentServiceFactory.INSTANCE
 				.createContentService(COMMON_NAVIGATOR_INSTANCE_ID);
 		INavigatorContentDescriptor[] boundDescriptors = contentServiceWithProgrammaticBindings
-				.bindExtensions(new String[] { TEST_EXTENSION_2_ID });
+				.bindExtensions(new String[] { TEST_EXTENSION_2_ID }, false);
 		contentServiceWithProgrammaticBindings.activateExtensions(new String[] {RESOURCE_EXTENSION_ID, TEST_EXTENSION_ID, TEST_EXTENSION_2_ID}, false);
 
 

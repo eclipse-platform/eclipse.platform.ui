@@ -23,6 +23,11 @@ public class Utilities {
 		return NavigatorActivationService.getInstance().isNavigatorExtensionActive(aViewerDescriptor.getViewerId(), aContentExtensionId);
 	}
 	
+	
+	public static boolean isActive(String aViewerId, String aContentExtensionId) {
+		return NavigatorActivationService.getInstance().isNavigatorExtensionActive(aViewerId, aContentExtensionId);
+	}
+	
 	public static boolean isVisible(INavigatorViewerDescriptor aViewerDescriptor, INavigatorContentDescriptor aContentDescriptor) {
 		return aViewerDescriptor.isVisibleContentExtension(aContentDescriptor.getId());
 	}

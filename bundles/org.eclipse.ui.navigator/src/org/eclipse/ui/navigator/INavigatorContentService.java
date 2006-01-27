@@ -268,9 +268,19 @@ public interface INavigatorContentService {
 	/**
 	 * @param anExtensionId
 	 *            The unqiue identifier from a content extension.
+	 * @return True if and only if the given extension id is <i>active</i> for
+	 *         this content service.
+	 * @see INavigatorContentService For more information on what <i>active</i> means.        
+	 * 
+	 */
+	boolean isActive(String anExtensionId);
+	
+	/**
+	 * @param anExtensionId
+	 *            The unqiue identifier from a content extension.
 	 * @return True if and only if the given extension id is <i>visible</i> to
 	 *         this content service.
-	 * 
+	 * @see INavigatorContentService For more information on what <i>visible</i> means.
 	 */
 	boolean isVisible(String anExtensionId);
 
@@ -305,10 +315,11 @@ public interface INavigatorContentService {
 	 * 
 	 * @param extensionIds
 	 *            The list of extensions to make visible.
+	 * @param isRoot whether the context provider shold be a root content provider
 	 * @return A list of all INavigatorContentDescriptors that correspond to the
 	 *         given extensionIds.
 	 */
-	INavigatorContentDescriptor[] bindExtensions(String[] extensionIds);
+	INavigatorContentDescriptor[] bindExtensions(String[] extensionIds, boolean isRoot);
 
 	/**
 	 * Activate the extensions specified by the extensionIds array. Clients may
@@ -407,5 +418,12 @@ public interface INavigatorContentService {
 	 *         enabled for the given element.
 	 */
 	Set findEnabledContentDescriptors(Object anElement);
+
+	/**
+	 * 
+	 * @return An INavigatorFilterService that can provide information to a
+	 *         viewer about what filters are 'visible' and 'active'.
+	 */
+	INavigatorFilterService getFilterService();
 
 }

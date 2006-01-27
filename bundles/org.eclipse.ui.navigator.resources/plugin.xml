@@ -38,9 +38,17 @@
        <viewerContentBinding 
              viewerId="org.eclipse.ui.navigator.resourceContent">
 		          <includes>
-		       	      <contentExtension pattern="org.eclipse.ui.navigator.resourceContent" />
+		       	      <contentExtension pattern="org.eclipse.ui.navigator.resourceContent" />		       	      
+			          <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/>
 		          </includes>
        </viewerContentBinding>
+       <viewerActionBinding
+            viewerId="org.eclipse.ui.navigator.resourceContent">
+         <includes>
+             <actionExtension pattern="org.eclipse.ui.navigator.resources.*" />
+         </includes>
+       </viewerActionBinding>
+       
    </extension>
    
 <!-- Resource Content  -->
@@ -70,46 +78,9 @@
 		         </or>
          </enablement>
       </navigatorContent>
-   </extension>
-<!-- Handle Resource drag and drop -->
-   <extension
-         id="resourceDropHandler"
-         point="org.eclipse.ui.navigator.dropHandler">
-      <dropHandler
-            class="org.eclipse.ui.navigator.resources.internal.workbench.ResourceDropAction"
-            id="org.eclipse.navigator.resources.dropHandler"
-            name="%moveCopy.name"
-            description="%moveCopy.desc">
-         <dragEnablement>
-            <and>
-               <not>
-                  <instanceof
-                        value="org.eclipse.core.resources.IProject" /> 
-               </not>
-               <adapt 
-                     type="org.eclipse.core.resources.IResource"/> 
-            </and>
-         </dragEnablement>
-         <dropEnablement> 
-               <adapt 
-                     type="org.eclipse.core.resources.IResource" />  
-         </dropEnablement>
-      </dropHandler>
-   </extension>
-
-   <extension 
-         point="org.eclipse.ui.navigator.viewer">
-      <viewerActionBinding
-            viewerId="org.eclipse.ui.navigator.resourceContent">
-         <includes>
-             <actionExtension pattern="org.eclipse.ui.navigator.resources.*" />
-         </includes>
-      </viewerActionBinding>
-   </extension>
-
-	<extension
-    		point="org.eclipse.ui.navigator.navigatorContent">
-		<actionProvider 
+      
+      <!-- Action Providers -->
+      <actionProvider 
       			id="org.eclipse.ui.navigator.resources.OpenActions"
 				class="org.eclipse.ui.navigator.resources.internal.actions.OpenActionProvider">
 			<enablement>
@@ -141,12 +112,50 @@
 				</or>
 	         </enablement>
 		</actionProvider>
-   </extension>
-    
-     
-	<extension
-    		point="org.eclipse.ui.navigator.navigatorContent"> 
-		<commonWizard
+      
+      <!-- Expression Filters -->  
+      <commonFilter
+            id="org.eclipse.ui.navigator.resources.filters.startsWithDot"
+            name="%filters.startsWithDot.name"
+            description="%filters.startsWithDot.description"
+            activeByDefault="true"
+            >
+         <filterExpression>
+         	<and>
+	            <instanceof value="org.eclipse.core.resources.IResource"/>
+            	<test property="org.eclipse.core.resources.name" value=".*"/>	            
+	        </and>
+         </filterExpression>
+      </commonFilter>
+      <commonFilter  
+            id="org.eclipse.ui.navigator.resources.filters.endsWithClass"
+            name="%filters.endsWithClass.name"
+            description="%filters.endsWithClass.description"
+            activeByDefault="false"
+            >
+         <filterExpression>
+         	<and>
+	            <instanceof value="org.eclipse.core.resources.IFile"/>
+            	<test property="org.eclipse.core.resources.name" value="*.class"/>	            
+	        </and>
+         </filterExpression>
+      </commonFilter> 
+      <commonFilter
+            id="org.eclipse.ui.navigator.resources.filters.closedProject"
+            name="%filters.closedProject.name"
+            description="%filters.closedProject.description" 
+            activeByDefault="false"
+           >
+         <filterExpression>
+         	<and>
+	            <instanceof value="org.eclipse.core.resources.IProject"/>
+            	<test property="org.eclipse.core.resources.open" value="false"/>	            
+	        </and>
+         </filterExpression>
+      </commonFilter>  
+      
+      <!-- Menu Shortcut Actions for Wizards -->
+      <commonWizard
         		type="new"
 				wizardId="org.eclipse.ui.wizards.new.folder">
 			<enablement>
@@ -170,15 +179,31 @@
 				</or>
 	         </enablement>
 		</commonWizard>
-	</extension> 
-    
-   <extension
-         point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            class="org.eclipse.ui.navigator.resources.expressions.ResourcePropertyTester"
-            id="org.eclipse.ui.navigator.resources"
-            namespace="org.eclipse.ui.navigator.resources"
-            properties="projectNature"
-            type="org.eclipse.core.resources.IResource"/>
    </extension>
+<!-- Handle Resource drag and drop -->
+   <extension
+         id="resourceDropHandler"
+         point="org.eclipse.ui.navigator.dropHandler">
+      <dropHandler
+            class="org.eclipse.ui.navigator.resources.internal.workbench.ResourceDropAction"
+            id="org.eclipse.navigator.resources.dropHandler"
+            name="%moveCopy.name"
+            description="%moveCopy.desc">
+         <dragEnablement>
+            <and>
+               <not>
+                  <instanceof
+                        value="org.eclipse.core.resources.IProject" /> 
+               </not>
+               <adapt 
+                     type="org.eclipse.core.resources.IResource"/> 
+            </and>
+         </dragEnablement>
+         <dropEnablement> 
+               <adapt 
+                     type="org.eclipse.core.resources.IResource" />  
+         </dropEnablement>
+      </dropHandler>
+   </extension>
+
 </plugin> 
