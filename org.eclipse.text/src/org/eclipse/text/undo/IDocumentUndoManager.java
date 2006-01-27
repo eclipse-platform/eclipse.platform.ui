@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.text.undo;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoContext;
 
 /**
@@ -35,8 +36,6 @@ import org.eclipse.core.commands.operations.IUndoContext;
  * 
  * @see DocumentUndoManagerRegistry
  * @see IDocumentUndoListener
- * @see UndoableTextChange
- * @see UndoableCompoundTextChange
  * @see org.eclipse.jface.text.IDocument
  * @since 3.2
  */
@@ -59,7 +58,7 @@ public interface IDocumentUndoManager {
 	 * 
 	 * @param listener the document undo listener to be added as a listener
 	 */
-	public abstract void addDocumentUndoListener(IDocumentUndoListener listener);
+	void addDocumentUndoListener(IDocumentUndoListener listener);
 
 	/**
 	 * Removes the specified listener from the list of document undo listeners.
@@ -69,19 +68,19 @@ public interface IDocumentUndoManager {
 	 * 
 	 * @param listener the document undo listener to be removed
 	 */
-	public abstract void removeDocumentUndoListener(IDocumentUndoListener listener);
+	void removeDocumentUndoListener(IDocumentUndoListener listener);
 
 	/**
 	 * Returns the undo context registered for this document
 	 * 
 	 * @return the undo context registered for this document
 	 */
-	public abstract IUndoContext getUndoContext();
+	IUndoContext getUndoContext();
 
 	/**
 	 * Closes the currently open text edit and open a new one.
 	 */
-	public abstract void commit();
+	void commit();
 
 	/**
 	 * Connects to the undo manager. Used to signify that a client is monitoring
@@ -90,7 +89,7 @@ public interface IDocumentUndoManager {
 	 * 
 	 * @param client the object connecting to the undo manager
 	 */
-	public abstract void connect(Object client);
+	void connect(Object client);
 
 	/**
 	 * Disconnects from the undo manager. Used to signify that a client is no
@@ -100,20 +99,20 @@ public interface IDocumentUndoManager {
 	 * 
 	 * @param client the object disconnecting from the undo manager
 	 */
-	public abstract void disconnect(Object client);
+	void disconnect(Object client);
 
 	/**
 	 * Signals the undo manager that all subsequent changes until
 	 * <code>endCompoundChange</code> is called are to be undone in one piece.
 	 */
-	public abstract void beginCompoundChange();
+	void beginCompoundChange();
 
 	/**
 	 * Signals the undo manager that the sequence of changes which started with
 	 * <code>beginCompoundChange</code> has been finished. All subsequent
 	 * changes are considered to be individually undo-able.
 	 */
-	public abstract void endCompoundChange();
+	void endCompoundChange();
 
 	/**
 	 * Sets the limit of the undo history to the specified value. The provided
@@ -121,7 +120,42 @@ public interface IDocumentUndoManager {
 	 * 
 	 * @param undoLimit the length of this undo manager's history
 	 */
-	public abstract void setUndoLimit(int undoLimit);
+	void setMaximalUndoLevel(int undoLimit);
+	
+	/**
+	 * Resets the history of the undo manager. After that call,
+	 * there aren't any undo-able or redo-able text changes.
+	 */
+	void reset();
+
+	/**
+	 * Returns whether at least one text change can be rolled back.
+	 *
+	 * @return <code>true</code> if at least one text change can be rolled back
+	 */
+	boolean undoable();
+
+	/**
+	 * Returns whether at least one text change can be repeated. A text change
+	 * can be repeated only if it was executed and rolled back.
+	 *
+	 * @return <code>true</code> if at least on text change can be repeated
+	 */
+	boolean redoable();
+
+	/**
+	 * Rolls back the most recently executed text change.
+	 * 
+	 * @throws ExecutionException if an exception occurred during undo
+	 */
+	void undo() throws ExecutionException;
+
+	/**
+	 * Repeats the most recently rolled back text change.
+	 * 
+	 * @throws ExecutionException if an exception occurred during redo
+	 */
+	void redo() throws ExecutionException;
 
 	/**
 	 * Transfers the undo history from the specified document undo manager to

@@ -59,10 +59,11 @@ import org.eclipse.jface.dialogs.MessageDialog;
  */
 public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtension {
 
+	
 	/**
 	 * Internal listener to mouse and key events.
 	 */
-	class KeyAndMouseListener implements MouseListener, KeyListener {
+	private class KeyAndMouseListener implements MouseListener, KeyListener {
 
 		/*
 		 * @see MouseListener#mouseDoubleClick
@@ -110,10 +111,11 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 		}
 	}
 
+
 	/**
 	 * Internal text input listener.
 	 */
-	class TextInputListener implements ITextInputListener {
+	private class TextInputListener implements ITextInputListener {
 
 		/*
 		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
@@ -129,11 +131,12 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 			connectDocumentUndoManager(newInput);
 		}
 	}
-	
+
+
 	/**
 	 * Internal document undo listener.
 	 */
-	class DocumentUndoListener implements IDocumentUndoListener {
+	private class DocumentUndoListener implements IDocumentUndoListener {
 
 		/*
 		 * @see org.eclipse.jface.text.IDocumentUndoListener#documentUndoNotification(DocumentUndoEvent)
@@ -219,7 +222,6 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	 * Returns whether this undo manager is connected to a text viewer.
 	 *
 	 * @return <code>true</code> if connected, <code>false</code> otherwise
-	 * @since 3.1
 	 */
 	private boolean isConnected() {
 		return fTextViewer != null && fDocumentUndoManager != null;
@@ -281,7 +283,6 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	 *
 	 * @param title the dialog title
 	 * @param ex the exception
-	 * @since 3.1
 	 */
 	private void openErrorDialog(final String title, final Exception ex) {
 		Shell shell= null;
@@ -313,7 +314,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	public void setMaximalUndoLevel(int undoLevel) {
 		fUndoLevel= Math.max(0, undoLevel);
 		if (isConnected()) {
-			fDocumentUndoManager.setUndoLimit(fUndoLevel);
+			fDocumentUndoManager.setMaximalUndoLevel(fUndoLevel);
 		}
 	}
 
@@ -404,9 +405,8 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	 *
 	 * @param offset the offset of the range
 	 * @param length the length of the range
-	 * @since 3.0
 	 */
-	protected void selectAndReveal(int offset, int length) {
+	private void selectAndReveal(int offset, int length) {
 		if (fTextViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
 			extension.exposeModelRange(new Region(offset, length));
@@ -419,7 +419,6 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 
 	/*
 	 * @see org.eclipse.jface.text.IUndoManagerExtension#getUndoContext()
-	 * @since 3.1
 	 */
 	public IUndoContext getUndoContext() {
 		if (isConnected()) {

@@ -30,15 +30,12 @@ import org.eclipse.jface.text.IDocument;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
- * <p>
- * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
- * </p>
  *
  * @since 3.2
  */
 public final class DocumentUndoManagerRegistry {
 	
-	final private static class Record {
+	private static final class Record {
 		public Record(IDocument document) {
 			count= 0;
 			undoManager= new DocumentUndoManager(document);
