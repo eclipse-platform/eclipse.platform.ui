@@ -558,8 +558,9 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     }
 
     public synchronized void handleEvent(final Event event) {
-        preservingSelection(new Runnable() {
-            public void run() {
+    	// TODO: workaround for bug 125499: don't preserve selection when item is revealed
+//        preservingSelection(new Runnable() {
+//            public void run() {
                 TreeItem item = (TreeItem) event.item;
                 Widget parentItem = item.getParentItem();
                 int index = 0;
@@ -573,10 +574,10 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
                 Object element = fContentManager.getChildElement(parentItem, index);
                 if (element != null) {
                     map(element, item);
-                    internalRefresh(element, true);
+                    internalRefresh(element, item);
                 } 
-            }
-        });
+//            }
+//        });
     }
 
     /**
