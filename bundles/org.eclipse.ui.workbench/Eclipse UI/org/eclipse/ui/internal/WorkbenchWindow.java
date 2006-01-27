@@ -1009,6 +1009,21 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		};
 	}
 
+    /**
+	 * <p>
+	 * Returns a new menu manager for this workbench window. This menu manager
+	 * will just be a proxy to the new command-based menu service.
+	 * </p>
+	 * <p>
+	 * Subclasses may override this method to customize the menu manager.
+	 * </p>
+	 * 
+	 * @return a menu manager for this workbench window; never <code>null</code>.
+	 */
+	protected MenuManager createMenuManager() {
+		return new LegacyMenuManager(this);
+	}
+
 	/**
 	 * Set the perspective bar location
 	 * 
