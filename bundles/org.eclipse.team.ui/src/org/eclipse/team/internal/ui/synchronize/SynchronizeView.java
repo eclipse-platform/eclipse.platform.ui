@@ -322,8 +322,8 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	 */
 	protected void configureToolBar(IActionBars bars) {
 		IToolBarManager mgr = bars.getToolBarManager();
-		mgr.add(fPinAction);
 		mgr.add(fPageDropDown);
+		mgr.add(fPinAction);
 		IMenuManager menu = bars.getMenuManager();
 		menu.add(fRemoveCurrentAction);
 		menu.add(fRemoveAllAction);
