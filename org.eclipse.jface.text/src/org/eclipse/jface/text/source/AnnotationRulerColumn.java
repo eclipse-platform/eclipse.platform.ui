@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.jface.internal.text.MigrationHelper;
+import org.eclipse.jface.internal.text.JFaceTextUtil;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -526,7 +526,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 */
 	protected int getInclusiveTopIndexStartOffset() {
 		if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {
-			int top= MigrationHelper.getPartialTopIndex(fCachedTextViewer);
+			int top= JFaceTextUtil.getPartialTopIndex(fCachedTextViewer);
 			try {
 				IDocument document= fCachedTextViewer.getDocument();
 				return document.getLineOffset(top);
@@ -545,7 +545,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	private int getExclusiveBottomIndexEndOffset() {
 
 		if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {
-			int bottom= MigrationHelper.getPartialBottomIndex(fCachedTextViewer);
+			int bottom= JFaceTextUtil.getPartialBottomIndex(fCachedTextViewer);
 			try {
 				IDocument document= fCachedTextViewer.getDocument();
 
@@ -656,12 +656,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 					endLine -= topLine;
 
 					r.x= 0;
-					r.y= MigrationHelper.computeLineHeight(fCachedTextWidget, 0, startLine, startLine)  - fScrollPos;
+					r.y= JFaceTextUtil.computeLineHeight(fCachedTextWidget, 0, startLine, startLine)  - fScrollPos;
 					
 					r.width= dimension.x;
 					int lines= endLine - startLine;
 					
-					r.height= MigrationHelper.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
+					r.height= JFaceTextUtil.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
 
 					if (r.y < dimension.y && fAnnotationAccessExtension != null)  // annotation within visible area
 						fAnnotationAccessExtension.paint(annotation, gc, fCanvas, r);
@@ -748,11 +748,11 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 					continue;
 
 				r.x= 0;
-				r.y= MigrationHelper.computeLineHeight(fCachedTextWidget, 0, startLine, startLine)  - fScrollPos;
+				r.y= JFaceTextUtil.computeLineHeight(fCachedTextWidget, 0, startLine, startLine)  - fScrollPos;
 				
 				r.width= dimension.x;
 				int lines= endLine - startLine;
-				r.height= MigrationHelper.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
+				r.height= JFaceTextUtil.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
 
 				if (r.y < dimension.y && fAnnotationAccessExtension != null)  // annotation within visible area
 					fAnnotationAccessExtension.paint(annotation, gc, fCanvas, r);

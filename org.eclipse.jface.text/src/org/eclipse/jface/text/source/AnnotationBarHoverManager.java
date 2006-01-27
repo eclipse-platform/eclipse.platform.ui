@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import org.eclipse.jface.internal.text.MigrationHelper;
+import org.eclipse.jface.internal.text.JFaceTextUtil;
 
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.AbstractInformationControlManager;
@@ -444,8 +444,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			Rectangle trim= text.computeTrim(0, 0, 0, 0);
 			int height= size.height - trim.height;
 			
-			int lines= MigrationHelper.getLineIndex(text, height) - text.getTopIndex();
-			MigrationHelper.getValue(lines, height / MigrationHelper.getLineHeight(text));
+			int lines= JFaceTextUtil.getLineIndex(text, height) - text.getTopIndex();
 			
 			int bottomLine= topLine + lines;
 			
@@ -520,8 +519,8 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		try {
 			StyledText text= fSourceViewer.getTextWidget();
 			final int startLine= getWidgetLineNumber(lineRange.getStartLine());
-			int y= MigrationHelper.computeLineHeight(text, 0, startLine, startLine) - text.getTopPixel();
-			int height= MigrationHelper.computeLineHeight(text, startLine, startLine + lineRange.getNumberOfLines(), lineRange.getNumberOfLines());
+			int y= JFaceTextUtil.computeLineHeight(text, 0, startLine, startLine) - text.getTopPixel();
+			int height= JFaceTextUtil.computeLineHeight(text, startLine, startLine + lineRange.getNumberOfLines(), lineRange.getNumberOfLines());
 			Point size= fVerticalRulerInfo.getControl().getSize();
 			return new Rectangle(0, y, size.x, height);
 		} catch (BadLocationException x) {
@@ -535,10 +534,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * @return the number of the currently visible lines
 	 */
 	private int computeNumberOfVisibleLines() {
-		StyledText text= fSourceViewer.getTextWidget();
-		Point size= fVerticalRulerInfo.getControl().getSize();
-		int lines= MigrationHelper.getVisibleLinesInViewport(text);
-		return MigrationHelper.getValue(lines, size.y / MigrationHelper.getLineHeight(text));
+		return JFaceTextUtil.getVisibleLinesInViewport(fSourceViewer.getTextWidget());
 	}
 
 	/**
@@ -609,7 +605,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		try {
 			StyledText text= fSourceViewer.getTextWidget();
 			int widgetLine= getWidgetLineNumber(line);
-			int y= MigrationHelper.computeLineHeight(text, 0, widgetLine, widgetLine) - text.getTopPixel();
+			int y= JFaceTextUtil.computeLineHeight(text, 0, widgetLine, widgetLine) - text.getTopPixel();
 			Point size= fVerticalRulerInfo.getControl().getSize();
 			return new Rectangle(0, y, size.x, text.getLineHeight(text.getOffsetAtLine(widgetLine)));
 		} catch (IllegalArgumentException ex) {

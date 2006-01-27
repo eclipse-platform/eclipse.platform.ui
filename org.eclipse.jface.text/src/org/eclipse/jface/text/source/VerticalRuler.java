@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.jface.internal.text.MigrationHelper;
+import org.eclipse.jface.internal.text.JFaceTextUtil;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -253,7 +253,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 
 		StyledText textWidget= fTextViewer.getTextWidget();
 		if (textWidget != null && !textWidget.isDisposed()) {
-			int top= MigrationHelper.getPartialTopIndex(fTextViewer);
+			int top= JFaceTextUtil.getPartialTopIndex(fTextViewer);
 			try {
 				IDocument document= fTextViewer.getDocument();
 				return document.getLineOffset(top);
@@ -346,12 +346,12 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 					endLine -= topLine;
 
 					r.x= 0;
-					r.y= MigrationHelper.computeLineHeight(styledText, 0, startLine, startLine)  - fScrollPos;
+					r.y= JFaceTextUtil.computeLineHeight(styledText, 0, startLine, startLine)  - fScrollPos;
 					
 					r.width= d.x;
 					int lines= endLine - startLine;
 					
-					r.height= MigrationHelper.computeLineHeight(styledText, startLine, endLine + 1, (lines+1));
+					r.height= JFaceTextUtil.computeLineHeight(styledText, startLine, endLine + 1, (lines+1));
 
 					if (r.y < d.y && annotationAccessExtension != null)  // annotation within visible area
 						annotationAccessExtension.paint(annotation, gc, fCanvas, r);
@@ -424,12 +424,12 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 					continue;
 
 				r.x= 0;
-				r.y= MigrationHelper.computeLineHeight(textWidget, 0, startLine, startLine)  - fScrollPos;
+				r.y= JFaceTextUtil.computeLineHeight(textWidget, 0, startLine, startLine)  - fScrollPos;
 				
 				r.width= dimension.x;
 				int lines= endLine - startLine;
 				
-				r.height= MigrationHelper.computeLineHeight(textWidget, startLine, endLine + 1, lines+1);
+				r.height= JFaceTextUtil.computeLineHeight(textWidget, startLine, endLine + 1, lines+1);
 
 				if (r.y < dimension.y && annotationAccessExtension != null)  // annotation within visible area
 					annotationAccessExtension.paint(annotation, gc, fCanvas, r);

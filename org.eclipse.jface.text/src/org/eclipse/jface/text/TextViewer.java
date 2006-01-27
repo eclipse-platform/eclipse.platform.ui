@@ -57,7 +57,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
 
-import org.eclipse.jface.internal.text.MigrationHelper;
+import org.eclipse.jface.internal.text.JFaceTextUtil;
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -2732,7 +2732,7 @@ public class TextViewer extends Viewer implements
 		if (fTextWidget == null)
 			return -1;
 		
-		int widgetBottom= MigrationHelper.getBottomIndex(fTextWidget);
+		int widgetBottom= JFaceTextUtil.getBottomIndex(fTextWidget);
 		return widgetLine2ModelLine(widgetBottom);
 	}
 
@@ -2822,7 +2822,7 @@ public class TextViewer extends Viewer implements
 			if (top > -1) {
 
 				// scroll vertically
-				int bottom= MigrationHelper.getBottomIndex(fTextWidget);
+				int bottom= JFaceTextUtil.getBottomIndex(fTextWidget);
 				int lines= bottom - top;
 				
 				// if the widget is not scrollable as it is displaying the entire content

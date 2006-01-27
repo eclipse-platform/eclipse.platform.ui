@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.jface.internal.text.MigrationHelper;
+import org.eclipse.jface.internal.text.JFaceTextUtil;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -1101,7 +1101,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private int getInclusiveTopIndexStartOffset() {
 
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {
-			int top= MigrationHelper.getPartialTopIndex(fSourceViewer);
+			int top= JFaceTextUtil.getPartialTopIndex(fSourceViewer);
 			try {
 				IDocument document= fSourceViewer.getDocument();
 				return document.getLineOffset(top);
@@ -1121,7 +1121,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private int getExclusiveBottomIndexEndOffset() {
 
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {
-			int bottom= MigrationHelper.getPartialBottomIndex(fSourceViewer);
+			int bottom= JFaceTextUtil.getPartialBottomIndex(fSourceViewer);
 			try {
 				IDocument document= fSourceViewer.getDocument();
 

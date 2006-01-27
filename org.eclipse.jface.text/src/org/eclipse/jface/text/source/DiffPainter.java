@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.ITextViewer;
 
-import org.eclipse.jface.internal.text.MigrationHelper;
+import org.eclipse.jface.internal.text.JFaceTextUtil;
 
 /**
  * 
@@ -124,7 +124,7 @@ final class DiffPainter {
 	}
 	
 	private void paintLine(int line, GC gc) {
-		int widgetLine= MigrationHelper.modelLineToWidgetLine(fViewer, line);
+		int widgetLine= JFaceTextUtil.modelLineToWidgetLine(fViewer, line);
 		if (widgetLine == -1)
 			return;
 	

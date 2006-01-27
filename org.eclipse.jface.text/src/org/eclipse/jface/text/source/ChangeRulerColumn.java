@@ -42,7 +42,7 @@ import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 
-import org.eclipse.jface.internal.text.MigrationHelper;
+import org.eclipse.jface.internal.text.JFaceTextUtil;
 import org.eclipse.jface.internal.text.revisions.RevisionPainter;
 
 /**
@@ -275,7 +275,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	 *             StyledText supports variable line heights
 	 */
 	protected int getVisibleLinesInViewport() {
-		return MigrationHelper.getVisibleLinesInViewport(fCachedTextWidget);
+		return JFaceTextUtil.getVisibleLinesInViewport(fCachedTextWidget);
 	}
 
 	/**
@@ -286,7 +286,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	 * @since 3.2
 	 */
 	protected final boolean isViewerCompletelyShown() {
-		return MigrationHelper.isShowingEntireContents(fCachedTextWidget);
+		return JFaceTextUtil.isShowingEntireContents(fCachedTextWidget);
 	}
 
 	/**
@@ -484,13 +484,13 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 			
 			// ITextViewer.getTopIndex returns the fully visible line, but we want the partially
 			// visible one
-			int widgetTopLine= MigrationHelper.getPartialTopIndex(fCachedTextWidget);
+			int widgetTopLine= JFaceTextUtil.getPartialTopIndex(fCachedTextWidget);
 			topLine= extension.widgetLine2ModelLine(widgetTopLine);
 			
 			coverage= extension.getModelCoverage();
 			
 		} else {
-			topLine= MigrationHelper.getPartialTopIndex(fCachedTextViewer); 
+			topLine= JFaceTextUtil.getPartialTopIndex(fCachedTextViewer); 
 			coverage= fCachedTextViewer.getVisibleRegion();
 		}
 		

@@ -42,7 +42,7 @@ import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.TextEvent;
 
-import org.eclipse.jface.internal.text.MigrationHelper;
+import org.eclipse.jface.internal.text.JFaceTextUtil;
 
 /**
  * A vertical ruler column displaying line numbers.
@@ -287,7 +287,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		 */
 		private int getInclusiveTopIndex() {
 			if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {
-				return MigrationHelper.getPartialTopIndex(fCachedTextViewer);
+				return JFaceTextUtil.getPartialTopIndex(fCachedTextViewer);
 			}
 			return -1;
 		}
@@ -599,7 +599,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			gc.setBackground(getBackground(fCanvas.getDisplay()));
 			gc.fillRectangle(0, 0, size.x, size.y);
 
-			ILineRange visibleLines= MigrationHelper.getVisibleModelLines(fCachedTextViewer);
+			ILineRange visibleLines= JFaceTextUtil.getVisibleModelLines(fCachedTextViewer);
 			if (visibleLines == null)
 				return;
 			doPaint(gc, visibleLines);
@@ -618,7 +618,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 *             StyledText supports variable line heights
 	 */
 	protected int getVisibleLinesInViewport() {
-		return MigrationHelper.getVisibleLinesInViewport(fCachedTextWidget);
+		return JFaceTextUtil.getVisibleLinesInViewport(fCachedTextWidget);
 	}
 
 	/**
@@ -629,7 +629,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * @since 3.2
 	 */
 	protected final boolean isViewerCompletelyShown() {
-		return MigrationHelper.isShowingEntireContents(fCachedTextWidget);
+		return JFaceTextUtil.isShowingEntireContents(fCachedTextWidget);
 	}
 
 	/**
@@ -645,11 +645,11 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		Display display= fCachedTextWidget.getDisplay();
 		
 		// draw diff info
-		int y= -MigrationHelper.getHiddenTopLinePixels(fCachedTextWidget);
+		int y= -JFaceTextUtil.getHiddenTopLinePixels(fCachedTextWidget);
 		
 		int lastLine= end(visibleLines);
 		for (int line= visibleLines.getStartLine(); line < lastLine; line++) {
-			int widgetLine= MigrationHelper.modelLineToWidgetLine(fCachedTextViewer, line);
+			int widgetLine= JFaceTextUtil.modelLineToWidgetLine(fCachedTextViewer, line);
 			if (widgetLine == -1)
 				continue;
 
@@ -715,7 +715,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * @since 3.0
 	 */
 	protected void paintLine(int line, int y, int lineheight, GC gc, Display display) {
-		int widgetLine= MigrationHelper.modelLineToWidgetLine(fCachedTextViewer, line);
+		int widgetLine= JFaceTextUtil.modelLineToWidgetLine(fCachedTextViewer, line);
 
 		String s= createDisplayString(line);
 		int indentation= fIndentation[s.length()];

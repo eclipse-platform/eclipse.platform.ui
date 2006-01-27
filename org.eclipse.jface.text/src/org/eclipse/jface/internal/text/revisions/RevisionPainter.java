@@ -66,7 +66,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.LineRange;
 
-import org.eclipse.jface.internal.text.MigrationHelper;
+import org.eclipse.jface.internal.text.JFaceTextUtil;
 
 /**
  * 
@@ -775,7 +775,7 @@ public final class RevisionPainter {
 		
 		int widgetCurrentFocusLine= modelLinesToWidgetLines(new LineRange(documentHoverLine, 1)).getStartLine();
 		int widgetNextFocusLine= nextWidgetRange.getStartLine();
-		int newTopPixel= fWidget.getTopPixel() + MigrationHelper.computeLineHeight(fWidget, widgetCurrentFocusLine, widgetNextFocusLine, widgetNextFocusLine - widgetCurrentFocusLine);
+		int newTopPixel= fWidget.getTopPixel() + JFaceTextUtil.computeLineHeight(fWidget, widgetCurrentFocusLine, widgetNextFocusLine, widgetNextFocusLine - widgetCurrentFocusLine);
 		fWidget.setTopPixel(newTopPixel);
 		if (newTopPixel < 0) {
 			Point cursorLocation= fWidget.getDisplay().getCursorLocation();
