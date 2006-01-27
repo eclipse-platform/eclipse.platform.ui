@@ -184,7 +184,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      *            widget associated with the element in this viewer's tree
      */
     protected void updateHasChildren(Object element, Widget widget) {
-        IAsynchronousContentAdapter adapter = getTreeContentAdapter(element);
+        IAsynchronousContentAdapter adapter = getContentAdapter(element);
         if (adapter != null) {
             IContainerRequestMonitor update = new ContainerRequestMonitor(widget, this);
             schedule(update);
@@ -201,7 +201,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      *            widget associated with the element in this viewer's tree
      */
     protected void updateChildren(Object parent, Widget widget) {
-        IAsynchronousContentAdapter adapter = getTreeContentAdapter(parent);
+        IAsynchronousContentAdapter adapter = getContentAdapter(parent);
         if (adapter != null) {
             IChildrenRequestMonitor update = new ChildrenRequestMonitor(widget, this);
             schedule(update);
@@ -217,7 +217,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      *            element to retrieve adapter for
      * @return presentation adapter or <code>null</code>
      */
-    protected IAsynchronousContentAdapter getTreeContentAdapter(Object element) {        
+    protected IAsynchronousContentAdapter getContentAdapter(Object element) {        
         IAsynchronousContentAdapter adapter = null;
         if (element instanceof IAsynchronousContentAdapter) {
             adapter = (IAsynchronousContentAdapter) element;
@@ -464,7 +464,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      * @param parent
      * @param child
      */
-    synchronized void add(Widget parentWidget, Object child) {
+    protected synchronized void add(Widget parentWidget, Object child) {
         Object[] children = filter(new Object[] { child });
         if (children.length == 0) {
             return; // added element was filtered out.
@@ -487,7 +487,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      * @param widget
      * @param newChildren
      */
-    synchronized void setChildren(final Widget widget, final List newChildren) {
+    protected synchronized void setChildren(final Widget widget, final List newChildren) {
         // apply filters
         final Object[] children = filter(newChildren.toArray());
         
@@ -528,7 +528,6 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 		        fContentManager.setChildElements(widget, children);
 		        
 		        //set item count
-		        Widget theWidget = widget;
 		        setItemCount(widget, children.length);
 			}
 		});

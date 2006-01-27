@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.viewers;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Widget;
@@ -25,6 +26,8 @@ import org.eclipse.swt.widgets.Widget;
  * @since 3.2
  */
 class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChildrenRequestMonitor {
+    
+    private boolean fFirstUpdate = true;
     
 	/**
 	 * Collection of children retrieved
@@ -45,16 +48,24 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
      * @see org.eclipse.debug.ui.viewers.IChildrenRequestMonitor#addChild(java.lang.Object)
      */
     public void addChild(Object child) {
-        fChildren.add(child);
+        synchronized (fChildren) {
+            fChildren.add(child);
+        }
+        
+        scheduleViewerUpdate(500);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.viewers.IChildrenRequestMonitor#addChildren(java.lang.Object[])
      */
     public void addChildren(Object[] children) {
-        for (int i = 0; i < children.length; i++) {
-            fChildren.add(children[i]);
+        synchronized (fChildren) {
+            for (int i = 0; i < children.length; i++) {
+                fChildren.add(children[i]);
+            }
         }
+        
+        scheduleViewerUpdate(0);
     }
     
     /* (non-Javadoc)
@@ -68,7 +79,19 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
      * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#performUpdate()
      */
     protected void performUpdate() {
-        getViewer().setChildren(getWidget(), fChildren);
+        synchronized (fChildren) {
+            if (fFirstUpdate) {
+                getViewer().setChildren(getWidget(), fChildren);
+                fFirstUpdate = false;
+            } else {
+                for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
+                    Object child = iter.next();
+                    getViewer().add(getWidget(), child);    
+                }
+            }
+            
+            fChildren.clear();
+        }
     }
 
 }

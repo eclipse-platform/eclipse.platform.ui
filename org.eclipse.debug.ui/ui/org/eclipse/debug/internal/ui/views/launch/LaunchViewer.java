@@ -39,7 +39,7 @@ public class LaunchViewer extends AsynchronousTreeViewer {
 			return legacyAdapter;
 		}
 
-		IAsynchronousContentAdapter presentationAdapter = super.getTreeContentAdapter(element);
+		IAsynchronousContentAdapter presentationAdapter = super.getContentAdapter(element);
 		if (presentationAdapter != null) {
 			return presentationAdapter;
 		}

@@ -46,6 +46,22 @@ abstract class AsynchronousRequestMonitor implements IAsynchronousRequestMonitor
      */
     private IStatus fStatus = null;
 
+    protected WorkbenchJob fViewerUpdateJob = new WorkbenchJob("AsynchronousRequestMonitor.fViewerUpdateJob") { //$NON-NLS-1$
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+            // necessary to check if widget is disposed. The item may
+            // have been removed from the tree when another children update
+            // occured.
+            getViewer().updateComplete(AsynchronousRequestMonitor.this);
+            if (!isCanceled() && !getWidget().isDisposed()) {
+                if (fStatus != null && !fStatus.isOK()) {
+                    getViewer().handlePresentationFailure(AsynchronousRequestMonitor.this, fStatus);
+                }
+                performUpdate();
+            }
+            return Status.OK_STATUS;
+        }
+    };
+    
     /**
      * Constructs an udpate rooted at the given item.
      * 
@@ -54,6 +70,7 @@ abstract class AsynchronousRequestMonitor implements IAsynchronousRequestMonitor
     AsynchronousRequestMonitor(Widget item, AsynchronousViewer viewer) {
         fWidget = item;
         fViewer = viewer;
+        fViewerUpdateJob.setSystem(true);
     }
     
     /**
@@ -152,26 +169,15 @@ abstract class AsynchronousRequestMonitor implements IAsynchronousRequestMonitor
      */
     public final void done() {
 		if (!isCanceled()) {
-			WorkbenchJob job = new WorkbenchJob("AsynchronousRequestMonitor.done()") { //$NON-NLS-1$
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					// necessary to check if widget is disposed. The item may
-					// have been removed from the tree when another children update
-					// occured.
-					getViewer().updateComplete(AsynchronousRequestMonitor.this);
-					if (!isCanceled() && !getWidget().isDisposed()) {
-						if (fStatus != null && !fStatus.isOK()) {
-							getViewer().handlePresentationFailure(AsynchronousRequestMonitor.this, fStatus);
-						}
-						performUpdate();
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			job.setSystem(true);
-			job.schedule();
+			fViewerUpdateJob.schedule();
 		}
 	}
 
+    protected void scheduleViewerUpdate(long ms) {
+        if(!isCanceled()) 
+            fViewerUpdateJob.schedule(ms);
+    }
+    
     /**
 	 * Notification this update has been completed and should now be applied to
 	 * this update's viewer. This method is called in the UI thread.

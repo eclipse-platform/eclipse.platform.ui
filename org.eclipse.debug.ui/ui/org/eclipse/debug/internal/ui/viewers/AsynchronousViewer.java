@@ -994,6 +994,6 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 		super.updateSelection(selection);
 	}
 
-	abstract void setChildren(Widget widget, List children);
-
+	protected abstract void setChildren(Widget widget, List children);
+	protected abstract void add(Widget parent, Object element);
 }

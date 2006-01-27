@@ -181,7 +181,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
         return (Table) getControl();
     }
 
-    void setChildren(Widget widget, List children) {
+    protected void setChildren(Widget widget, List children) {
         Object[] elements = filter(children.toArray());
         if (elements.length > 0) {
             ViewerSorter sorter = getSorter();
@@ -452,6 +452,11 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
                 max = mid - 1;
         }
         return min;
+    }
+
+    
+    protected void add(Widget parent, Object element) {
+        add(element);
     }
 
     public void add(Object element) {
