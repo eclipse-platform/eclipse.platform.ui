@@ -92,6 +92,14 @@ public class DefaultTabFolder extends AbstractTabFolder {
     private DefaultTabFolderColors[] inactiveShellColors = {defaultColors, defaultColors, defaultColors};
     private boolean shellActive = false;
     
+    /**
+     * Create a new instance of the receiver
+     * 
+     * @param parent
+     * @param flags
+     * @param allowMin
+     * @param allowMax
+     */
     public DefaultTabFolder(Composite parent, int flags, boolean allowMin, boolean allowMax) {
         paneFolder = new PaneFolder(parent, flags | SWT.NO_BACKGROUND);
         paneFolder.addButtonListener(buttonListener);
