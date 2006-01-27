@@ -66,12 +66,7 @@
    <extension
          point="org.eclipse.ui.navigator.viewer">
       <viewerContentBinding 
-         viewerId="org.eclipse.team.cvs.ui.workspaceSynchronization">                     
-         <includes>                     
-            <contentExtension   
-               pattern=".*" 
-               isRoot="true"/>
-         </includes>
+         viewerId="org.eclipse.team.cvs.ui.workspaceSynchronization">
        </viewerContentBinding>
        <viewer
              viewerId="org.eclipse.team.cvs.ui.workspaceSynchronization">
