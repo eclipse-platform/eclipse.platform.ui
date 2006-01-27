@@ -406,6 +406,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		return parent;
 	}
 
+	/*
+	 * @since 3.2
+	 */
 	private int computeMinimumColumnWidth(GC gc, String string) {
 		return gc.stringExtent(string).x + 10; // pad 10 to accomodate table header trimmings
 	}
@@ -833,6 +836,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		MessageDialog.openError(getShell(), title, message);
 	}
 
+	/*
+	 * @since 3.2
+	 */
 	private void openWriteErrorDialog() {
 		String title= TextEditorTemplateMessages.TemplatePreferencePage_error_write_title;
 		String message= TextEditorTemplateMessages.TemplatePreferencePage_error_write_message;
