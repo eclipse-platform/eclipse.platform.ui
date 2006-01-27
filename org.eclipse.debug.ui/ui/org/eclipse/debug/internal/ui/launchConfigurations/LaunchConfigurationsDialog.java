@@ -64,6 +64,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -78,7 +79,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
@@ -362,12 +362,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		
 		// Create the SashForm that contains the selection area on the left,
 		// and the edit area on the right
-		setSashForm(new SashForm(topComp, SWT.NONE));
-		getSashForm().setOrientation(SWT.HORIZONTAL);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
-		getSashForm().setLayoutData(gd);
-		getSashForm().setFont(dialogComp.getFont());
+		SashForm sash = new SashForm(topComp, SWT.SMOOTH);
+		sash.setOrientation(SWT.HORIZONTAL);
+		sash.setLayoutData(gd);
+		sash.setFont(dialogComp.getFont());
+		sash.setVisible(true);
+		setSashForm(sash);
 		
 		// Build the launch configuration selection area and put it into the composite.
 		Control launchConfigSelectionArea = createLaunchConfigurationSelectionArea(getSashForm());
@@ -565,9 +567,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected Composite createLaunchConfigurationEditArea(Composite parent) {
 		setTabViewer(new LaunchConfigurationTabGroupViewer(parent, this));
 		getTabViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-			/**
-			 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-			 */
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleTabSelectionChanged();
 			}
@@ -584,16 +583,23 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected Composite createToolbarArea(Composite parent) {
 		Font font = parent.getFont();
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		Composite toolbarcomp = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
+		GridLayout layout = new GridLayout(1, true);
+		layout.horizontalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		toolbarcomp.setLayout(layout);
 		toolbarcomp.setLayoutData(gd);
 		toolbarcomp.setFont(font);
 		
 		fToolbar = new ToolBar(toolbarcomp, SWT.FLAT);
-		fToolbar.setLayout(new GridLayout());
-		fToolbar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		layout = new GridLayout(1, true);
+		layout.horizontalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		fToolbar.setLayout(layout);
+		fToolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fToolbar.setFont(font);		
 		return toolbarcomp;
 	}
@@ -624,17 +630,18 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */ 
 	protected Control createLaunchConfigurationSelectionArea(Composite parent) {
 		Font font = parent.getFont();
-		Group comp = new Group(parent, SWT.NONE);
-		comp.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Con_figurations__1);
+		Composite comp = new Composite(parent, SWT.NONE);
+		//comp.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Con_figurations__1);
 		setSelectionArea(comp);
 		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
 		layout.numColumns = 1;
 		comp.setLayout(layout);
 		comp.setFont(font);
 		
 	//	create the toolbar area
 		createToolbarArea(comp);
-		
+
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup());
 		fLaunchConfigurationView.createLaunchDialogControl(comp);
 		
@@ -1775,49 +1782,23 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				TreeSelection sel = (TreeSelection)viewer.getSelection();
 				TreePath path = null;
 				int pidx = -1, cidx = -1;
-				boolean newvalue = false;
 				if(!sel.isEmpty()) {
 					path = sel.getPaths()[0];
 					pidx = findIndexOfParent(path.getFirstSegment());
 					cidx = findIndexOfChild(path.getFirstSegment(), path.getLastSegment());
 				}
-				if(event.getNewValue() instanceof Boolean) {
-					newvalue = ((Boolean)event.getNewValue()).booleanValue();
-				}
-				else {
-					newvalue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
-				}
+				boolean newvalue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
 				if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
-					if(newvalue) { 
-						viewer.addFilter(fClosedProjectFilter);
-					}
-					else {
-						viewer.removeFilter(fClosedProjectFilter);
-					}
+					updateFilter(newvalue, fClosedProjectFilter);
 				}
 				else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED)) {
-					if(newvalue) {
-						viewer.addFilter(fDeletedProjectFilter);
-					}
-					else {
-						viewer.removeFilter(fDeletedProjectFilter);
-					}
+					updateFilter(newvalue, fDeletedProjectFilter);
 				}
 				else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES)) {
-					if(newvalue) {
-						viewer.addFilter(fLCTFilter);
-					}
-					else {
-						viewer.removeFilter(fLCTFilter);
-					}
+					updateFilter(newvalue, fLCTFilter);
 				}
 				else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS)) {
-					if(newvalue) {
-						viewer.addFilter(fWorkingSetsFilter);
-					}
-					else {
-						viewer.removeFilter(fWorkingSetsFilter);
-					}
+					updateFilter(newvalue, fWorkingSetsFilter);
 				}
 				else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_TYPE_LIST)) {
 					viewer.removeFilter(fLCTFilter);
@@ -1833,6 +1814,21 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		job.runInUIThread(new NullProgressMonitor());
 	}
 
+	/**
+	 * Updates the state of a filter based on the state variable
+	 * @param state if the filter needs to be added or removed, true indicates add, false indicates sremove
+	 * @param filter the filter to update
+	 */
+	private void updateFilter(boolean state, ViewerFilter filter) {
+		TreeViewer viewer = (TreeViewer)fLaunchConfigurationView.getViewer();
+		if(state) {
+			viewer.addFilter(filter);
+		}
+		else {
+			viewer.removeFilter(filter);
+		}
+	}
+	
 	/**
 	 * updates the selection after a filtering has taken place
 	 * @param path the <code>TreePath</code> to the last selected item
