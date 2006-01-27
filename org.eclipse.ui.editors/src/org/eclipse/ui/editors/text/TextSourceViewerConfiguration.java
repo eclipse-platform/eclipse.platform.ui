@@ -69,7 +69,6 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
-	 * @since 3.2
 	 */
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new DefaultAnnotationHover() {
@@ -97,7 +96,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getOverviewRulerAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
-	 * @since 3.1
+	 * @since 3.2
 	 */
 	public IAnnotationHover getOverviewRulerAnnotationHover(ISourceViewer sourceViewer) {
 		return new DefaultAnnotationHover() {
@@ -124,6 +123,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 	/*
 	 * @see SourceViewerConfiguration#getConfiguredTextHoverStateMasks(ISourceViewer, String)
+	 * @since 3.2
 	 */
 	public int[] getConfiguredTextHoverStateMasks(ISourceViewer sourceViewer, String contentType) {
 		return new int[] { ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK };
@@ -131,6 +131,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 	/*
 	 * @see SourceViewerConfiguration#getTextHover(ISourceViewer, String)
+	 * @since 3.2
 	 */
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		return new DefaultTextHover(sourceViewer) {

@@ -53,7 +53,10 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 		/** The preference key for the value in the store. */
 		private String fKey;
 		
-		/** The display string. */
+		/**
+		 * The display string.
+		 * @since 3.2
+		 */
 		private String fName;
 
 		/**
@@ -80,7 +83,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 
 		/*
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
-		 * @since 3.1
+		 * @since 3.2
 		 */
 		public int compareTo(Object o) {
 			if (!(o instanceof NavigationEnablementAction))
