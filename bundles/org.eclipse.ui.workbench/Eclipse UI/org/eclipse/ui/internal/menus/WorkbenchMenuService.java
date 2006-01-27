@@ -48,6 +48,12 @@ import org.eclipse.ui.menus.IMenuService;
 public final class WorkbenchMenuService implements IMenuService {
 
 	/**
+	 * The central authority for determining which menus are visible within this
+	 * window.
+	 */
+	private final MenuAuthority menuAuthority;
+	
+	/**
 	 * The menu manager underlying this menu service; never <code>null</code>.
 	 */
 	private final SMenuManager menuManager;
@@ -68,6 +74,7 @@ public final class WorkbenchMenuService implements IMenuService {
 	 */
 	public WorkbenchMenuService(final SMenuManager menuManager,
 			final ICommandService commandService) {
+		this.menuAuthority = new MenuAuthority(null);
 		this.menuManager = menuManager;
 		this.menuPersistence = new MenuPersistence(this, commandService);
 	}

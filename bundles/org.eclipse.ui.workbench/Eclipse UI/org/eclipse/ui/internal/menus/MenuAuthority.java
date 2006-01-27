@@ -70,12 +70,13 @@ final class MenuAuthority extends ExpressionAuthority {
 
 	/**
 	 * Constructs a new instance of <code>MenuAuthority</code>.
+	 * 
+	 * @param window
+	 *            The window to use when calling
+	 *            {@link MenuElement#setVisible(Window, boolean)}; may be
+	 *            <code>null</code>.
 	 */
 	MenuAuthority(final Window window) {
-		if (window == null) {
-			throw new NullPointerException(
-					"A menu authority cannot be constructed with a null window"); //$NON-NLS-1$
-		}
 		this.window = window;
 	}
 

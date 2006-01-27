@@ -48,7 +48,8 @@ import org.eclipse.ui.menus.IMenuService;
 public final class WindowMenuService implements IMenuService {
 
 	/**
-	 * The central authority for determining which menus are visible.
+	 * The central authority for determining which menus are visible within this
+	 * window.
 	 */
 	private final MenuAuthority menuAuthority;
 
