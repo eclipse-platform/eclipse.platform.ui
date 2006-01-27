@@ -795,6 +795,19 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public IMarker createMarker(String type) throws CoreException;
 
 	/**
+	 * Creates a resource proxy representing the current state of this resource.
+	 * <p>
+	 * Note that once a proxy has been created, it does not stay in sync
+	 * with the corresponding resource.  Changes to the resource after
+	 * the proxy is created will not be reflected in the state of the proxy.
+	 * </p>
+	 * 
+	 * @return A proxy representing this resource
+	 * @since 3.2
+	 */
+	public IResourceProxy createProxy();
+	
+	/**
 	 * Deletes this resource from the workspace.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:

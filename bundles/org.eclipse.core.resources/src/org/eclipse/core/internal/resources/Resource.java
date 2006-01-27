@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
 
-public abstract class Resource extends PlatformObject implements IResource, ICoreConstants, Cloneable {
+public abstract class Resource extends PlatformObject implements IResource, ICoreConstants, Cloneable, IPathRequestor {
 	/* package */IPath path;
 	/* package */Workspace workspace;
 
@@ -460,6 +460,53 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	}
 
 	/* (non-Javadoc)
+	 * @see IResource#copy(IPath, boolean, IProgressMonitor)
+	 */
+	public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
+		int updateFlags = force ? IResource.FORCE : IResource.NONE;
+		copy(destination, updateFlags, monitor);
+	}
+
+	/* (non-Javadoc)
+	 * @see IResource#copy(IPath, int, IProgressMonitor)
+	 */
+	public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
+		try {
+			monitor = Policy.monitorFor(monitor);
+			String message = NLS.bind(Messages.resources_copying, getFullPath());
+			monitor.beginTask(message, Policy.totalWork);
+			Policy.checkCanceled(monitor);
+			destination = makePathAbsolute(destination);
+			checkValidPath(destination, getType(), false);
+			Resource destResource = workspace.newResource(destination, getType());
+			final ISchedulingRule rule = workspace.getRuleFactory().copyRule(this, destResource);
+			try {
+				workspace.prepareOperation(rule, monitor);
+				// The following assert method throws CoreExceptions as stated in the IResource.copy API
+				// and assert for programming errors. See checkCopyRequirements for more information.
+				assertCopyRequirements(destination, getType(), updateFlags);
+				workspace.beginOperation(true);
+				getLocalManager().copy(this, destResource, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork));
+			} catch (OperationCanceledException e) {
+				workspace.getWorkManager().operationCanceled();
+				throw e;
+			} finally {
+				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see IResource#copy(IProjectDescription, boolean, IProgressMonitor)
+	 */
+	public void copy(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
+		int updateFlags = force ? IResource.FORCE : IResource.NONE;
+		copy(destDesc, updateFlags, monitor);
+	}
+
+	/* (non-Javadoc)
 	 * Used when a folder is to be copied to a project.
 	 * @see IResource#copy(IProjectDescription, int, IProgressMonitor)
 	 */
@@ -503,53 +550,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		} finally {
 			monitor.done();
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see IResource#copy(IProjectDescription, boolean, IProgressMonitor)
-	 */
-	public void copy(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
-		int updateFlags = force ? IResource.FORCE : IResource.NONE;
-		copy(destDesc, updateFlags, monitor);
-	}
-
-	/* (non-Javadoc)
-	 * @see IResource#copy(IPath, int, IProgressMonitor)
-	 */
-	public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		try {
-			monitor = Policy.monitorFor(monitor);
-			String message = NLS.bind(Messages.resources_copying, getFullPath());
-			monitor.beginTask(message, Policy.totalWork);
-			Policy.checkCanceled(monitor);
-			destination = makePathAbsolute(destination);
-			checkValidPath(destination, getType(), false);
-			Resource destResource = workspace.newResource(destination, getType());
-			final ISchedulingRule rule = workspace.getRuleFactory().copyRule(this, destResource);
-			try {
-				workspace.prepareOperation(rule, monitor);
-				// The following assert method throws CoreExceptions as stated in the IResource.copy API
-				// and assert for programming errors. See checkCopyRequirements for more information.
-				assertCopyRequirements(destination, getType(), updateFlags);
-				workspace.beginOperation(true);
-				getLocalManager().copy(this, destResource, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork));
-			} catch (OperationCanceledException e) {
-				workspace.getWorkManager().operationCanceled();
-				throw e;
-			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
-			}
-		} finally {
-			monitor.done();
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see IResource#copy(IPath, boolean, IProgressMonitor)
-	 */
-	public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
-		int updateFlags = force ? IResource.FORCE : IResource.NONE;
-		copy(destination, updateFlags, monitor);
 	}
 
 	/**
@@ -641,6 +641,25 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
+	public IResourceProxy createProxy() {
+		ResourceProxy result = new ResourceProxy();
+		result.info = getResourceInfo(false, false);
+		result.requestor = this;
+		result.resource = this;
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see IProject#delete(boolean, boolean, IProgressMonitor)
+	 * @see IWorkspaceRoot#delete(boolean, boolean, IProgressMonitor)
+	 * N.B. This is not an IResource method!
+	 */
+	public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+		int updateFlags = force ? IResource.FORCE : IResource.NONE;
+		updateFlags |= keepHistory ? IResource.KEEP_HISTORY : IResource.NONE;
+		delete(updateFlags, monitor);
+	}
+
 	/* (non-Javadoc)
 	 * @see IResource#delete(boolean, IProgressMonitor)
 	 */
@@ -703,17 +722,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		} finally {
 			monitor.done();
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see IProject#delete(boolean, boolean, IProgressMonitor)
-	 * @see IWorkspaceRoot#delete(boolean, boolean, IProgressMonitor)
-	 * N.B. This is not an IResource method!
-	 */
-	public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-		int updateFlags = force ? IResource.FORCE : IResource.NONE;
-		updateFlags |= keepHistory ? IResource.KEEP_HISTORY : IResource.NONE;
-		delete(updateFlags, monitor);
 	}
 
 	/* (non-Javadoc)
@@ -805,6 +813,31 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return flags != NULL_FLAG && !(checkType && ResourceInfo.getType(flags) != getType());
 	}
 
+	/**
+	 * Helper method for case insensitive file systems.  Returns
+	 * an existing resource whose path differs only in case from
+	 * the given path, or null if no such resource exists.
+	 */
+	public IResource findExistingResourceVariant(IPath target) {
+		if (!workspace.tree.includesIgnoreCase(target))
+			return null;
+		//ignore phantoms
+		ResourceInfo info = (ResourceInfo) workspace.tree.getElementDataIgnoreCase(target);
+		if (info != null && info.isSet(M_PHANTOM))
+			return null;
+		//resort to slow lookup to find exact case variant
+		IPath result = Path.ROOT;
+		int segmentCount = target.segmentCount();
+		for (int i = 0; i < segmentCount; i++) {
+			String[] childNames = workspace.tree.getNamesOfChildren(result);
+			String name = findVariant(target.segment(i), childNames);
+			if (name == null)
+				return null;
+			result = result.append(name);
+		}
+		return workspace.getRoot().findMember(result);
+	}
+
 	/* (non-Javadoc)
 	 * @see IResource#findMarker(long)
 	 */
@@ -822,6 +855,19 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		// But markers have the #exists method that callers can use to check if it is
 		// still valid.
 		return workspace.getMarkerManager().findMarkers(this, type, includeSubtypes, depth);
+	}
+
+	/**
+	 * Searches for a variant of the given target in the list,
+	 * that differs only in case. Returns the variant from
+	 * the list if one is found, otherwise returns null.
+	 */
+	private String findVariant(String target, String[] list) {
+		for (int i = 0; i < list.length; i++) {
+			if (target.equalsIgnoreCase(list[i]))
+				return list[i];
+		}
+		return null;
 	}
 
 	protected void fixupAfterMoveSource() throws CoreException {
@@ -1097,6 +1143,58 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return path.isPrefixOf(otherPath) || otherPath.isPrefixOf(path);
 	}
 
+	/* (non-Javadoc)
+	 * @see IResource#isDerived()
+	 */
+	public boolean isDerived() {
+		ResourceInfo info = getResourceInfo(false, false);
+		return isDerived(getFlags(info));
+	}
+
+	/**
+	 * Returns whether the derived flag is set in the given resource info flags.
+	 * 
+	 * @param flags resource info flags (bitwise or of M_* constants)
+	 * @return <code>true</code> if the derived flag is set, and <code>false</code>
+	 *    if the derived flag is not set or if the flags are <code>NULL_FLAG</code>
+	 */
+	public boolean isDerived(int flags) {
+		return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_DERIVED);
+	}
+
+	/* (non-Javadoc)
+	 * @see IResource#isLinked()
+	 */
+	public boolean isLinked() {
+		return isLinked(NONE);
+	}
+
+	/* (non-Javadoc)
+	 * @see IResource#isLinked()
+	 */
+	public boolean isLinked(int options) {
+		if ((options & CHECK_ANCESTORS) != 0) {
+			IProject project = getProject();
+			if (project == null)
+				return false;
+			ProjectDescription desc = ((Project) project).internalGetDescription();
+			if (desc == null)
+				return false;
+			HashMap links = desc.getLinks();
+			if (links == null)
+				return false;
+			IPath myPath = getProjectRelativePath();
+			for (Iterator it = links.values().iterator(); it.hasNext();) {
+				if (((LinkDescription) it.next()).getProjectRelativePath().isPrefixOf(myPath))
+					return true;
+			}
+			return false;
+		}
+		//the no ancestor checking case
+		ResourceInfo info = getResourceInfo(false, false);
+		return info != null && info.isSet(M_LINK);
+	}
+
 	/**
 	 * @see IResource#isLocal(int)
 	 * @deprecated
@@ -1163,38 +1261,34 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return getLocalManager().isSynchronized(this, depth);
 	}
 
+	/* (non-Javadoc)
+	 * @see IResource#isTeamPrivateMember()
+	 */
+	public boolean isTeamPrivateMember() {
+		ResourceInfo info = getResourceInfo(false, false);
+		int flags = getFlags(info);
+		return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_TEAM_PRIVATE_MEMBER);
+	}
+
+	/**
+	 * Returns true if this resource is a linked resource, or a child of a linked
+	 * resource, and false otherwise.
+	 */
+	public boolean isUnderLink() {
+		int depth = path.segmentCount();
+		if (depth < 2)
+			return false;
+		if (depth == 2)
+			return isLinked();
+		//check if parent at depth two is a link
+		IPath linkParent = path.removeLastSegments(depth - 2);
+		return workspace.getResourceInfo(linkParent, false, false).isSet(ICoreConstants.M_LINK);
+	}
+
 	protected IPath makePathAbsolute(IPath target) {
 		if (target.isAbsolute())
 			return target;
 		return getParent().getFullPath().append(target);
-	}
-
-	/* (non-Javadoc)
-	 * @see IResource#move(IProjectDescription, boolean, IProgressMonitor)
-	 */
-	public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-		int updateFlags = force ? IResource.FORCE : IResource.NONE;
-		updateFlags |= keepHistory ? IResource.KEEP_HISTORY : IResource.NONE;
-		move(description, updateFlags, monitor);
-	}
-
-	/* (non-Javadoc)
-	 * @see IResource#move(IPath, int, IProgressMonitor)
-	 */
-	public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		Assert.isNotNull(description);
-		if (getType() != IResource.PROJECT) {
-			String message = NLS.bind(Messages.resources_moveNotProject, getFullPath(), description.getName());
-			throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
-		}
-		((Project) this).move(description, updateFlags, monitor);
-	}
-
-	/* (non-Javadoc)
-	 * @see IResource#move(IPath, boolean, IProgressMonitor)
-	 */
-	public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
-		move(destination, force ? IResource.FORCE : IResource.NONE, monitor);
 	}
 
 	/* (non-Javadoc)
@@ -1204,6 +1298,13 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
 		updateFlags |= keepHistory ? IResource.KEEP_HISTORY : IResource.NONE;
 		move(destination, updateFlags, monitor);
+	}
+
+	/* (non-Javadoc)
+	 * @see IResource#move(IPath, boolean, IProgressMonitor)
+	 */
+	public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
+		move(destination, force ? IResource.FORCE : IResource.NONE, monitor);
 	}
 
 	/* (non-Javadoc)
@@ -1259,6 +1360,27 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	}
 
 	/* (non-Javadoc)
+	 * @see IResource#move(IProjectDescription, boolean, IProgressMonitor)
+	 */
+	public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+		int updateFlags = force ? IResource.FORCE : IResource.NONE;
+		updateFlags |= keepHistory ? IResource.KEEP_HISTORY : IResource.NONE;
+		move(description, updateFlags, monitor);
+	}
+
+	/* (non-Javadoc)
+	 * @see IResource#move(IPath, int, IProgressMonitor)
+	 */
+	public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(description);
+		if (getType() != IResource.PROJECT) {
+			String message = NLS.bind(Messages.resources_moveNotProject, getFullPath(), description.getName());
+			throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
+		}
+		((Project) this).move(description, updateFlags, monitor);
+	}
+
+	/* (non-Javadoc)
 	 * @see IResource#refreshLocal(int, IProgressMonitor)
 	 */
 	public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException {
@@ -1288,6 +1410,20 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	}
 
 	/* (non-Javadoc)
+	 * Method declared on {@link IPathRequestor}.
+	 */
+	public String requestName() {
+		return getName();
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on {@link IPathRequestor}.
+	 */
+	public IPath requestPath() {
+		return getFullPath();
+	}
+
+	/* (non-Javadoc)
 	 * @see IResource#revertModificationStamp
 	 */
 	public void revertModificationStamp(long value) throws CoreException {
@@ -1300,6 +1436,26 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		checkAccessible(flags);
 		checkLocal(flags, DEPTH_ZERO);
 		info.setModificationStamp(value);
+	}
+
+	/* (non-Javadoc)
+	 * @see IResource#setDerived(boolean)
+	 */
+	public void setDerived(boolean isDerived) throws CoreException {
+		// fetch the info but don't bother making it mutable even though we are going
+		// to modify it.  We don't know whether or not the tree is open and it really doesn't
+		// matter as the change we are doing does not show up in deltas.
+		ResourceInfo info = getResourceInfo(false, false);
+		int flags = getFlags(info);
+		checkAccessible(flags);
+		// ignore attempts to set derived flag on anything except files and folders
+		if (info.getType() == FILE || info.getType() == FOLDER) {
+			if (isDerived) {
+				info.set(ICoreConstants.M_DERIVED);
+			} else {
+				info.clear(ICoreConstants.M_DERIVED);
+			}
+		}
 	}
 
 	/**
@@ -1389,6 +1545,26 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		info.setSessionProperty(key, value);
 	}
 
+	/* (non-Javadoc)
+	 * @see IResource#setTeamPrivateMember(boolean)
+	 */
+	public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException {
+		// fetch the info but don't bother making it mutable even though we are going
+		// to modify it.  We don't know whether or not the tree is open and it really doesn't
+		// matter as the change we are doing does not show up in deltas.
+		ResourceInfo info = getResourceInfo(false, false);
+		int flags = getFlags(info);
+		checkAccessible(flags);
+		// ignore attempts to set team private member flag on anything except files and folders
+		if (info.getType() == FILE || info.getType() == FOLDER) {
+			if (isTeamPrivate) {
+				info.set(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
+			} else {
+				info.clear(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
+			}
+		}
+	}
+
 	/**
 	 * Returns true if this resource has the potential to be
 	 * (or have been) synchronized.  
@@ -1436,160 +1612,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			}
 		} finally {
 			monitor.done();
-		}
-	}
-
-	/**
-	 * Helper method for case insensitive file systems.  Returns
-	 * an existing resource whose path differs only in case from
-	 * the given path, or null if no such resource exists.
-	 */
-	public IResource findExistingResourceVariant(IPath target) {
-		if (!workspace.tree.includesIgnoreCase(target))
-			return null;
-		//ignore phantoms
-		ResourceInfo info = (ResourceInfo) workspace.tree.getElementDataIgnoreCase(target);
-		if (info != null && info.isSet(M_PHANTOM))
-			return null;
-		//resort to slow lookup to find exact case variant
-		IPath result = Path.ROOT;
-		int segmentCount = target.segmentCount();
-		for (int i = 0; i < segmentCount; i++) {
-			String[] childNames = workspace.tree.getNamesOfChildren(result);
-			String name = findVariant(target.segment(i), childNames);
-			if (name == null)
-				return null;
-			result = result.append(name);
-		}
-		return workspace.getRoot().findMember(result);
-	}
-
-	/**
-	 * Searches for a variant of the given target in the list,
-	 * that differs only in case. Returns the variant from
-	 * the list if one is found, otherwise returns null.
-	 */
-	private String findVariant(String target, String[] list) {
-		for (int i = 0; i < list.length; i++) {
-			if (target.equalsIgnoreCase(list[i]))
-				return list[i];
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see IResource#isDerived()
-	 */
-	public boolean isDerived() {
-		ResourceInfo info = getResourceInfo(false, false);
-		return isDerived(getFlags(info));
-	}
-
-	/**
-	 * Returns whether the derived flag is set in the given resource info flags.
-	 * 
-	 * @param flags resource info flags (bitwise or of M_* constants)
-	 * @return <code>true</code> if the derived flag is set, and <code>false</code>
-	 *    if the derived flag is not set or if the flags are <code>NULL_FLAG</code>
-	 */
-	public boolean isDerived(int flags) {
-		return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_DERIVED);
-	}
-
-	/* (non-Javadoc)
-	 * @see IResource#isLinked()
-	 */
-	public boolean isLinked() {
-		return isLinked(NONE);
-	}
-
-	/* (non-Javadoc)
-	 * @see IResource#isLinked()
-	 */
-	public boolean isLinked(int options) {
-		if ((options & CHECK_ANCESTORS) != 0) {
-			IProject project = getProject();
-			if (project == null)
-				return false;
-			ProjectDescription desc = ((Project)project).internalGetDescription();
-			if (desc == null)
-				return false;
-			HashMap links = desc.getLinks();
-			if (links == null)
-				return false;
-			IPath myPath = getProjectRelativePath();
-			for (Iterator it = links.values().iterator(); it.hasNext();) {
-				if (((LinkDescription) it.next()).getProjectRelativePath().isPrefixOf(myPath))
-					return true;
-			}
-			return false;
-		}
-		//the no ancestor checking case
-		ResourceInfo info = getResourceInfo(false, false);
-		return info != null && info.isSet(M_LINK);
-	}
-
-	/* (non-Javadoc)
-	 * @see IResource#setDerived(boolean)
-	 */
-	public void setDerived(boolean isDerived) throws CoreException {
-		// fetch the info but don't bother making it mutable even though we are going
-		// to modify it.  We don't know whether or not the tree is open and it really doesn't
-		// matter as the change we are doing does not show up in deltas.
-		ResourceInfo info = getResourceInfo(false, false);
-		int flags = getFlags(info);
-		checkAccessible(flags);
-		// ignore attempts to set derived flag on anything except files and folders
-		if (info.getType() == FILE || info.getType() == FOLDER) {
-			if (isDerived) {
-				info.set(ICoreConstants.M_DERIVED);
-			} else {
-				info.clear(ICoreConstants.M_DERIVED);
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see IResource#isTeamPrivateMember()
-	 */
-	public boolean isTeamPrivateMember() {
-		ResourceInfo info = getResourceInfo(false, false);
-		int flags = getFlags(info);
-		return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_TEAM_PRIVATE_MEMBER);
-	}
-
-	/**
-	 * Returns true if this resource is a linked resource, or a child of a linked
-	 * resource, and false otherwise.
-	 */
-	public boolean isUnderLink() {
-		int depth = path.segmentCount();
-		if (depth < 2)
-			return false;
-		if (depth == 2)
-			return isLinked();
-		//check if parent at depth two is a link
-		IPath linkParent = path.removeLastSegments(depth - 2);
-		return workspace.getResourceInfo(linkParent, false, false).isSet(ICoreConstants.M_LINK);
-	}
-
-	/* (non-Javadoc)
-	 * @see IResource#setTeamPrivateMember(boolean)
-	 */
-	public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException {
-		// fetch the info but don't bother making it mutable even though we are going
-		// to modify it.  We don't know whether or not the tree is open and it really doesn't
-		// matter as the change we are doing does not show up in deltas.
-		ResourceInfo info = getResourceInfo(false, false);
-		int flags = getFlags(info);
-		checkAccessible(flags);
-		// ignore attempts to set team private member flag on anything except files and folders
-		if (info.getType() == FILE || info.getType() == FOLDER) {
-			if (isTeamPrivate) {
-				info.set(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
-			} else {
-				info.clear(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
-			}
 		}
 	}
 

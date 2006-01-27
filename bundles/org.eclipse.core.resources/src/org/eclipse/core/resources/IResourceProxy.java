@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,11 @@ import org.eclipse.core.runtime.QualifiedName;
  * duration of a single visit method.  A proxy should not be referenced once the
  * single resource visit is complete. The equals and hashCode methods should not
  * be relied on.
+ * </p>
+ * <p>
+ * A proxy can also be created using {@ link IResource#createProxy()}. In
+ * this case the proxy is valid indefinitely, but will not remain in sync with
+ * the state of the corresponding resource.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
