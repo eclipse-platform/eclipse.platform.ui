@@ -33,7 +33,10 @@ public final class Levenstein {
 	private static final boolean DEBUG= false;
 	private static final boolean MATRIX= false;
 	
-	/* asserts - enable conditional compilation by not making this a trace option */
+	/*
+	 * asserts - enable conditional compilation by not making this a trace option.
+	 * @since 3.2
+	 */
 	private static final boolean ASSERT= false;
 
 	/* edit cost constants */

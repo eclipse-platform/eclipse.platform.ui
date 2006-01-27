@@ -295,6 +295,9 @@ public class RangeDifference {
 		return fRegion;
 	}
 	
+	/*
+	 * @since 3.2
+	 */
 	public String toString() {
 		StringBuffer buf= new StringBuffer("RangeDifference {"); //$NON-NLS-1$
 		switch (fKind) {
