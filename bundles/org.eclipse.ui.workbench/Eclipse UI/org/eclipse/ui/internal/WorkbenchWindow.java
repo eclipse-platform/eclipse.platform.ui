@@ -78,6 +78,7 @@ import org.eclipse.ui.IPersistable;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ITrimManager;
 import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.IWorkbench;
@@ -120,6 +121,7 @@ import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.menus.IMenuService;
@@ -3367,6 +3369,14 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				.getService(IMenuService.class);
 		final IMenuService menuService = new WindowMenuService(
 				parentMenuService, this);
+		final ISourceProviderService sourceProviderService = (ISourceProviderService) serviceLocator
+				.getService(ISourceProviderService.class);
+		final ISourceProvider[] sourceProviders = sourceProviderService
+				.getSourceProviders();
+		for (int i = 0; i < sourceProviders.length; i++) {
+			final ISourceProvider provider = sourceProviders[i];
+			menuService.addSourceProvider(provider);
+		}
 		serviceLocator.registerService(IMenuService.class, menuService);
 
 		final ActionCommandMappingService mappingService = new ActionCommandMappingService();

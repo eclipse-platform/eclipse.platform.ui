@@ -52,7 +52,7 @@ public final class WorkbenchMenuService implements IMenuService {
 	 * window.
 	 */
 	private final MenuAuthority menuAuthority;
-	
+
 	/**
 	 * The menu manager underlying this menu service; never <code>null</code>.
 	 */
@@ -80,8 +80,7 @@ public final class WorkbenchMenuService implements IMenuService {
 	}
 
 	public final void addSourceProvider(final ISourceProvider provider) {
-		throw new UnsupportedOperationException(
-				"The workbench menu service does not track sources"); //$NON-NLS-1$
+		menuAuthority.addSourceProvider(provider);
 	}
 
 	public final IMenuContribution contributeMenu(final MenuElement menuElement) {
@@ -164,7 +163,6 @@ public final class WorkbenchMenuService implements IMenuService {
 	}
 
 	public final void removeSourceProvider(final ISourceProvider provider) {
-		throw new UnsupportedOperationException(
-				"The workbench menu service does not track sources"); //$NON-NLS-1$
+		menuAuthority.removeSourceProvider(provider);
 	}
 }
