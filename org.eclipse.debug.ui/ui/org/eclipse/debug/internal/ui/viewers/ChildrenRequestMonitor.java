@@ -52,7 +52,7 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
             fChildren.add(child);
         }
         
-        scheduleViewerUpdate(500);
+        scheduleViewerUpdate(250);
     }
 
     /* (non-Javadoc)
