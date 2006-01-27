@@ -118,15 +118,6 @@ public final class ResourceChangeValidator {
 	}
 
 	/**
-	 * @deprecated Use {@link #validateChange(IResourceDelta, IProgressMonitor)}
-	 * instead.  This method will be deleted the week of January 23, 2006.
-	 * TODO: Delete this method
-	 */
-	public IStatus validateChange(IResourceDelta delta) {
-		return validateChange(delta, null);
-	}
-
-	/**
 	 * Validate the proposed changes contained in the given delta
 	 * by consulting all model providers to determine if the changes
 	 * have any adverse side effects.
