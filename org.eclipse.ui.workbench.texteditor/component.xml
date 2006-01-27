@@ -14,6 +14,7 @@
    <type name="DefaultRangeIndicator" subclass="false"/>
    <type name="FindNextAction" subclass="false"/>
    <type name="FindReplaceAction" subclass="false"/>
+   <type name="GotoAnnotationAction" subclass="false"/>
    <type name="GotoLineAction" subclass="false"/>
    <type name="IncrementalFindAction" subclass="false"/>
    <type name="ITextEditorActionConstants" implement="false"/>

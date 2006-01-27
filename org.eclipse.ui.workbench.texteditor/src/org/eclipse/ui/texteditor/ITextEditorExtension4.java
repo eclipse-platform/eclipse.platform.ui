@@ -20,7 +20,7 @@ import org.eclipse.jface.text.source.Annotation;
  * 	<li>annotation navigation</li>
  * </ul>
  * <p>
- * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
+ * This interface may be implemented by clients.
  * </p>
  *
  * @since 3.2

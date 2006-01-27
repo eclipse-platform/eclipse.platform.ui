@@ -18,10 +18,9 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * Action for jumping to a particular annotation in the editor's text viewer.
  * <p>
  * This action only runs if <code>getTextEditor()</code>
- * implements {@link org.eclipse.ui.texteditor.ITextEditorExtension4}.
- * </p>
+ * implements {@link org.eclipse.ui.texteditor.ITextEditorExtension4}.</p>
  * <p>
- * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
+ * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * 
  * @since 3.2
