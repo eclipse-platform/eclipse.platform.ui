@@ -53,6 +53,8 @@ public interface IIntroSite extends IWorkbenchSite {
      * </p>
      * 
      * @return the key binding service in use
+     * @deprecated Use IServiceLocator#getService(*) to retrieve
+     * IContextService and IHandlerService instead.
      */
     public IKeyBindingService getKeyBindingService();
 

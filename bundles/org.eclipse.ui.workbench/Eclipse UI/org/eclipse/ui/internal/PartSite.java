@@ -420,7 +420,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		selectionProvider = provider;
 	}
 
-	/**
+	/*
 	 * @see IWorkbenchPartSite#getKeyBindingService()
 	 */
 	public IKeyBindingService getKeyBindingService() {

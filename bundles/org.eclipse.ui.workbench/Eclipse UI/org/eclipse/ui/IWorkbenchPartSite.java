@@ -114,6 +114,8 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
      * 
      * @return the key binding service in use
      * @since 2.1
+     * @deprecated Use IServiceLocator#getService(*) to retrieve
+     * IContextService and IHandlerService instead.
      */
     public IKeyBindingService getKeyBindingService();
     

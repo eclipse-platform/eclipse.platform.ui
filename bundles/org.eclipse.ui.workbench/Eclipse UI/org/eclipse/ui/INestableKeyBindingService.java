@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
+import org.eclipse.ui.services.IServiceLocator;
+
 /**
  * <p>
  * A service that is capable of nesting other services within itself.  This 
@@ -22,6 +24,8 @@ package org.eclipse.ui;
  * </p>
  * 
  * @since 2.1.3
+ * @deprecated This is now handled by {@link IServiceLocator} which can
+ * be nested.
  */
 public interface INestableKeyBindingService extends IKeyBindingService {
 
