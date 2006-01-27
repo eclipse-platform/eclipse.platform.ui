@@ -660,7 +660,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * Takes the selected proposal and applies it.
 	 *
 	 * @param stateMask the state mask
-	 * @since 2.1
+	 * @since 3.2
 	 */
 	private void insertSelectedProposalWithMask(int stateMask) {
 		ICompletionProposal p= getSelectedProposal();
@@ -983,6 +983,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	/**
 	 * Installs the document listener if not already done. 
+	 *
+	 * @since 3.2
 	 */
 	private void ensureDocumentListenerInstalled() {
 		if (fDocumentListener == null) {

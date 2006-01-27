@@ -432,7 +432,7 @@ public class HyperlinkManager implements Listener, KeyListener, MouseListener, M
 
 	/*
 	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-	 * @since 3.1
+	 * @since 3.2
 	 */
 	public void handleEvent(Event event) {
 		deactivate();

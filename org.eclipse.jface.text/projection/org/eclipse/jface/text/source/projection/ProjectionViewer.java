@@ -593,6 +593,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 	}
 
+	/*
+	 * @since 3.2
+	 */
 	private void collapseAll() {
 		int offset= 0;
 		IDocument doc= getDocument();

@@ -154,6 +154,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	 * Creates a new revision ruler column.
 	 * 
 	 * @param sharedColors the colors to look up RGBs
+	 * @since 3.2
 	 */
 	public ChangeRulerColumn(ISharedTextColors sharedColors) {
 		Assert.isNotNull(sharedColors);
@@ -470,6 +471,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	 * Computes the document based line range visible in the text widget.
 	 * 
 	 * @return the document based line range visible in the text widget
+	 * @since 3.2
 	 */
 	private final ILineRange computeVisibleModelLines() {
 		IDocument doc= fCachedTextViewer.getDocument();
