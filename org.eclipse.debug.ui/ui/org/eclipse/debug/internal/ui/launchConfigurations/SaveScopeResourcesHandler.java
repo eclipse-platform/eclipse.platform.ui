@@ -24,6 +24,7 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorPart;
@@ -49,6 +50,12 @@ import org.eclipse.ui.model.WorkbenchPartLabelProvider;
  */
 public class SaveScopeResourcesHandler implements IStatusHandler {
 
+	
+	/**
+	 * The objects to save (if any)
+	 */
+	Object[] fSaves = null;
+	
 	/* (non-Javadoc)
 	 * 
 	 * Source object is an array - a launch configuration and an array of projects to save resources for.
@@ -66,21 +73,25 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 				 projects = (IProject[]) objects[1];
 			}
 		}
-		
         if (config != null) {
             if (DebugUITools.isPrivate(config)) {
                 return Boolean.TRUE;
             }
         } 
-
         if (projects != null) {
             IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
             String save = store.getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
-            doSave(projects, !save.equals(MessageDialogWithToggle.NEVER), save.equals(MessageDialogWithToggle.PROMPT));
-        } else {
+            int ret = showSaveDialog(projects, !save.equals(MessageDialogWithToggle.NEVER), save.equals(MessageDialogWithToggle.PROMPT));
+            if(ret == IDialogConstants.OK_ID) {
+            	doSave();
+            	return Boolean.TRUE;
+            }
+            return Boolean.FALSE;
+        } 
+        else {
             DebugUIPlugin.preLaunchSave();
+            return Boolean.TRUE;
         }
-        return Boolean.TRUE;
     }
 	
 	/**
@@ -113,16 +124,27 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 	}
 	
 	/**
-	 * 
 	 * Performs the save of the editor parts returned by getScopedResources
-	 * 
-	 * @param projects the list of projects to confine the save to
-	 * @return
 	 */
-	protected void doSave(IProject[] projects, boolean save, boolean prompt) {
+	protected void doSave() {
+		if(fSaves != null) {
+			for (int i = 0; i < fSaves.length; i++) {
+				((IEditorPart)fSaves[i]).doSave(new NullProgressMonitor());
+			}
+		}
+	}
+	
+	/**
+	 * show the save dialog with a list of editors to save (if any)
+	 * The dialog is also not shown if the the pref for automatically saving dirty before laucnh is set to always
+	 * @param projects the projects to consider for the save
+	 * @param save if we should save
+	 * @param prompt if we should prompt to save or do it automatically
+	 * @return the dialog status, to be propogated back to the <code>handleStatus</code> method
+	 */
+	protected int showSaveDialog(IProject[] projects, boolean save, boolean prompt) {
 		if(save) {
 			IEditorPart[] editors = getScopedDirtyEditors(projects);
-			Object[] saves;
 			if(prompt && (editors.length > 0)) {
 				ListSelectionDialog lsd = new ListSelectionDialog(DebugUIPlugin.getShell(),
 						new AdaptableList(editors),
@@ -131,17 +153,15 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 						LaunchConfigurationsMessages.SaveScopeResourcesHandler_2);
 				lsd.setInitialSelections(editors);
 				lsd.setTitle(LaunchConfigurationsMessages.SaveScopeResourcesHandler_3);
-				lsd.open();
-				saves = lsd.getResult();
+				if(lsd.open() == IDialogConstants.CANCEL_ID) {
+					return IDialogConstants.CANCEL_ID;
+				}
+				fSaves = lsd.getResult();
 			}
 			else {
-				saves = editors;
-			}
-			if(saves != null) {
-				for (int i = 0; i < saves.length; i++) {
-					((IEditorPart)saves[i]).doSave(new NullProgressMonitor());
-				}
+				fSaves = editors;
 			}
 		}
+		return IDialogConstants.OK_ID;
 	}
 }
