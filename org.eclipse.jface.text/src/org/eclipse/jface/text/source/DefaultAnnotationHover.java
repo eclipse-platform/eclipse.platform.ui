@@ -23,9 +23,6 @@ import org.eclipse.jface.text.source.projection.AnnotationBag;
 
 /**
  * Standard implementation of {@link org.eclipse.jface.text.source.IAnnotationHover}.
- * <p>
- * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
- * </p>
  * 
  * @since 3.2
  */
