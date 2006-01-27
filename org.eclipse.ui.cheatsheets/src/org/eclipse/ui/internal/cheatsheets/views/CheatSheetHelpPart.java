@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.cheatsheets.Messages;
  */
 public class CheatSheetHelpPart extends AbstractFormPart implements IHelpPart {
 	
-	public static final String ID = "cheatsheet-page";
+	public static final String ID = "cheatsheet-page"; //$NON-NLS-1$
 	
 	private CheatSheetViewer viewer;
 	private String id;

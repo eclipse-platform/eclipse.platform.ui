@@ -133,7 +133,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		IPath path = ICONS_PATH.append(T_OBJ).append("cheatsheet_obj.gif");//$NON-NLS-1$
 		ImageDescriptor imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
-		reg.put(ICheatSheetResource.CHEATSHEET_OBJ, imageDescriptor);
+		reg.put(ICheatSheetResource.CHEATSHEET_OBJ, imageDescriptor);	
 		
 		path = ICONS_PATH.append(T_OBJ).append("skip_status.gif");//$NON-NLS-1$
 		imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
@@ -170,6 +170,11 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 		path = ICONS_PATH.append(T_ELCL).append("restart_task.gif");//$NON-NLS-1$
 		imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
 		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART, imageDescriptor);
+	
+		// Images used by composites
+		path = ICONS_PATH.append(T_OBJ).append("composite_obj.gif");//$NON-NLS-1$
+		imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
+		reg.put(ICheatSheetResource.COMPOSITE_OBJ, imageDescriptor);
 	}
 
 	/**

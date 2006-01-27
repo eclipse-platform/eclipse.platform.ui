@@ -76,4 +76,15 @@
             name="%searchParticipant.name"
             participant="org.eclipse.ui.internal.cheatsheets.CheatsheetSearchParticipant"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+      <taskEditor
+            class="org.eclipse.ui.internal.cheatsheets.composite.views.CheatsheetTaskEditor"
+            icon="icons/obj16/cheatsheet_obj.gif"
+            id="cheatsheet"/>
+      <taskExplorer
+            class="org.eclipse.ui.internal.cheatsheets.composite.explorer.TreeTaskExplorer"
+            name="Tree based explorer"
+            id="tree"/>
+   </extension>
 </plugin>

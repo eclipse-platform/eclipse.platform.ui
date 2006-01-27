@@ -20,6 +20,7 @@ import java.util.ListIterator;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -45,6 +46,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.cheatsheets.CheatSheetListener;
 import org.eclipse.ui.cheatsheets.ICheatSheetEvent;
 import org.eclipse.ui.cheatsheets.ICheatSheetViewer;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -53,9 +55,12 @@ import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetStopWatch;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
+import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
+import org.eclipse.ui.internal.cheatsheets.composite.views.CompositeCheatSheetPage;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParser;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetSaveHelper;
+import org.eclipse.ui.internal.cheatsheets.data.ICheatSheet;
 import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
@@ -68,14 +73,13 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	private URL contentURL;
 	private String currentID;
 	private int currentItemNum;
-	private boolean hascontent = false;
 	// Used to indicate if an invalid cheat sheet id was specified via setInput.
 	private boolean invalidCheatSheetId = false;
 	// Used to indicate if a null cheat sheet id was specified via setInput.
 	private boolean nullCheatSheetId = false;
 
 	private CheatSheetParser parser;
-	private CheatSheet cheatSheet;
+	private ICheatSheet model;
 	private CheatSheetManager manager;
 	private CheatSheetSaveHelper saveHelper;
 
@@ -94,11 +98,16 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 	private Cursor busyCursor;
 	
-	private ErrorPage errorPage;
-	private CheatSheetPage cheatSheetPage;
+	// The page currently displayed, may be a CheatSheetPage, CompositeCheatSheetPage
+	// or ErrorPage
+	private Page currentPage;  
 	private Label howToBegin;
 	private boolean inDialog;
 	private Listener listener;
+	
+	private IPath savePath = null;
+	private IPath nextSavePath = null;
+	private String restorePath;
 
 	/**
 	 * The constructor.
@@ -181,6 +190,9 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 				&& !currentItem.isCompletionMessageExpanded()) {
 			currentItem.setCompletionMessageExpanded(isFinalItem);
 			currentItem.setComplete();
+			if (isFinalItem) {
+				getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_COMPLETED);
+			}
 			return;
 		}
 
@@ -227,7 +239,9 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			item.setExpanded();
 			item.setBold(true);
 			item.getMainItemComposite().setFocus();
-			getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_COMPLETED);
+			if (!currentItem.isCompletionMessageExpanded()) { // The event will already have been fired
+			    getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_COMPLETED);
+			}
 		}
 
 		saveCurrentSheet();
@@ -304,7 +318,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 	private boolean checkSavedState() {
 		try {
-			Properties props = saveHelper.loadState(currentID);
+			Properties props = saveHelper.loadState(currentID, savePath);
 	
 			// There is a bug which causes the background of the buttons to
 			// remain white, even though the color is set. So instead of calling
@@ -475,11 +489,11 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 			internalDispose();
 
-			// Reinitialize a few variables because there is no currentItem or cheatSheetPage now
+			// Reinitialize a few variables because there is no currentItem or currentPage now
 			contentURL = null;
 			currentItem = null;
 			currentItemNum = -1;
-			cheatSheetPage = null;
+			currentPage = null;
 			expandRestoreList = new ArrayList();
 			viewItemList = new ArrayList();
 			
@@ -532,12 +546,11 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 	private void createErrorPage(String message) {
 		if(message != null) {
-			errorPage = new ErrorPage(message);
+			currentPage = new ErrorPage(message);
 		} else {
-			errorPage = new ErrorPage();
+			currentPage = new ErrorPage();
 		}
-		errorPage.createPart(control);
-		hascontent = true;
+		currentPage.createPart(control);
 		control.layout(true);
 	}
 
@@ -581,7 +594,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		 * org.eclipse.help.ui is an optional dependency; only perform this
 		 * step is this plugin is present.
 		 */
-		if (!inDialog && (Platform.getBundle("org.eclipse.help.ui") != null)) {
+		if (!inDialog && (Platform.getBundle("org.eclipse.help.ui") != null)) { //$NON-NLS-1$
 			listener = new Listener() {
 				public void handleEvent(Event event) {
 					if (isTrayDialog(event.widget)) {
@@ -660,8 +673,8 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	/*
 	 * Returns the cheat sheet being viewed. 
 	 */
-	public CheatSheet getCheatSheet() {
-		return cheatSheet;
+	public ICheatSheet getCheatSheet() {
+		return model;
 	}
 	
 	/* (non-Javadoc)
@@ -689,15 +702,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	 */
 	public Control getControl() {
 		return control;
-	}
-
-	/**
-	 * Returns the hascontent.
-	 * true if the cheatsheet has content loaded and displayed.
-	 * @return boolean
-	 */
-	private boolean getHasContent() {
-		return hascontent;
 	}
 
 	private int getIndexOfItem(ViewItem item) {
@@ -735,7 +739,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	 * @return whether this viewer contains the given Control or not
 	 */
 	public boolean hasFocusControl(Control control) {
-		return (control == this.control) || (cheatSheetPage.getForm() == control);
+		return (control == this.control) || (currentPage.getControl() == control);
 	}
 	
 	private void initCheatSheetView() {
@@ -752,9 +756,8 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		currentItemNum = 0;
 		viewItemList = new ArrayList();
 
-		// Reset the page variables 
-		errorPage = null;
-		cheatSheetPage = null;
+		// Reset the page variable
+		currentPage = null;
 		
 		if(howToBegin != null) {
 			howToBegin.dispose();
@@ -780,26 +783,31 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			}
 			return;
 		}
-
+		
 		control.setRedraw(false);
-		cheatSheetPage = new CheatSheetPage(cheatSheet, viewItemList, this);
-		CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after CheatSheetPage() call: "); //$NON-NLS-1$ //$NON-NLS-2$
-		cheatSheetPage.createPart(control);
-		CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after CheatSheetPage.createPart() call: "); //$NON-NLS-1$ //$NON-NLS-2$
-		hascontent = true;
+		if (model instanceof CheatSheet) {	
+		    currentPage = new CheatSheetPage((CheatSheet)model, viewItemList, this);
+		} else if (model instanceof CompositeCheatSheetModel) {
+			currentPage = new CompositeCheatSheetPage((CompositeCheatSheetModel)model);
+	    }
+	    CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after CheatSheetPage() call: "); //$NON-NLS-1$ //$NON-NLS-2$
+	    currentPage.createPart(control);
+	    CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after CheatSheetPage.createPart() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 
-		getNewManager().fireEvent(ICheatSheetEvent.CHEATSHEET_OPENED);
-		CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after fireEvent() call: "); //$NON-NLS-1$ //$NON-NLS-2$
-
-		if(!checkSavedState()) {
-			// An error occurred when apply the saved state data.
-			control.setRedraw(true);
-			control.layout();
-			return;
-		}
+	    if (model instanceof CheatSheet) {	
+			getNewManager().fireEvent(ICheatSheetEvent.CHEATSHEET_OPENED);
+			CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after fireEvent() call: "); //$NON-NLS-1$ //$NON-NLS-2$
+	
+			if(!checkSavedState()) {
+				// An error occurred when apply the saved state data.
+				control.setRedraw(true);
+				control.layout();
+				return;
+			}
+	    }
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after checkSavedState() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 
-		cheatSheetPage.initialized();
+		currentPage.initialized();
 		control.setRedraw(true);
 		control.layout();
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after layout() call: "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -820,12 +828,8 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			item.dispose();
 		}
 
-		if(errorPage != null) {
-			errorPage.dispose();
-		}
-
-		if(cheatSheetPage != null) {
-			cheatSheetPage.dispose();
+		if(currentPage != null) {
+			currentPage.dispose();
 		}
 	}
 
@@ -869,8 +873,8 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	private boolean readFile() {
 		if(parser == null)
 			parser = new CheatSheetParser();
-		cheatSheet = parser.parse(contentURL);
-		return cheatSheet == null ? false : true;
+		model = parser.parse(contentURL);
+		return model == null ? false : true;
 	}
 
 	private void restoreExpandStates() {
@@ -940,7 +944,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			boolean expandRestoreActionState = false;
 			if(expandRestoreAction != null)
 				expandRestoreActionState = expandRestoreAction.isCollapsed();			
-			saveHelper.saveState(currentItemNum, viewItemList, expandRestoreActionState, expandRestoreList, currentID, getManager());
+			saveHelper.saveState(currentItemNum, viewItemList, expandRestoreActionState, expandRestoreList, currentID, restorePath, getManager());
 		}
 	}
 
@@ -949,11 +953,9 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 		if (element != null && element.equals(contentElement))
 			return;
-
-		if (getHasContent()) {
-			// Cleanup previous contents
-			internalDispose();
-		}
+		
+		// Cleanup previous contents
+		internalDispose();
 
 		// Set the current content to new content
 		contentElement = element;
@@ -962,6 +964,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		contentURL = null;
 		if (element != null) {
 			currentID = element.getID();
+			restorePath = element.getRestorePath();
 	
 			Bundle bundle = null;
 			if(element != null && element.getConfigurationElement() != null)
@@ -976,12 +979,8 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			}
 	
 			if (contentURL == null) {
-				URL checker;
 				try {
-					checker = new URL(element.getContentFile());
-					if (checker.getProtocol().equalsIgnoreCase("http")) { //$NON-NLS-1$
-						contentURL = checker;
-					}
+					contentURL = new URL(element.getContentFile());
 				} catch (MalformedURLException mue) {
 				}
 			}
@@ -990,6 +989,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.setContent(CheatSheetElement element)", "Time in CheatSheetViewer.setContent() before initCheatSheetView() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 		// Initialize the view with the new contents
 		if (control != null) {
+			initSavePath();
 			initCheatSheetView();
 		}
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.setContent(CheatSheetElement element)", "Time in CheatSheetViewer.setContent() after initCheatSheetView() call: "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1056,9 +1056,8 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		invalidCheatSheetId = false;
 		setContent(element);
 	}
-
-
-	/*package*/ void toggleExpandRestore() {
+	
+    /*package*/ void toggleExpandRestore() {
 		if(expandRestoreAction == null)
 			return;
 
@@ -1086,4 +1085,38 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		if (currentItem!=null)
 			currentItem.copy();
 	}
+	
+	/**
+	 * Sets the location to be used for saving the state of the 
+	 * cheatsheet which is currently displayed. 
+	 * @param path The path of a directory on the file system or null
+	 * to cause the default location to be used
+	 */
+	public void setSavePath(IPath path) {
+		saveHelper.setSavePath(path, currentID, true);
+		saveCurrentSheet();
+	}
+
+	/**
+	 * Sets the location where the state will be stored for the next cheatsheet
+	 * which is launched. Does not affect the state location for the currently
+	 * displayed cheatsheet.
+	 * @param savePath
+	 */
+	public void setNextSavePath(IPath savePath) {
+	    nextSavePath = savePath;		
+	}
+	
+	private void initSavePath() {
+		savePath = nextSavePath;
+		nextSavePath = null;
+	}
+
+	public void addListener(CheatSheetListener listener) {
+		if (manager != null) {
+			manager.addListener(listener);
+		}
+		
+	}
+
 }

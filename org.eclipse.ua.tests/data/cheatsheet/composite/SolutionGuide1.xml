@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compositeCheatsheet title="Building and Publishing Plugins">
+    <task kind="html" title= "Introduction to the PDE" ref="docs/introduction.html">
+         <task kind="cheatsheet" title= "Create a java project" ref="org.eclipse.jdt.helloworld" />
+         <task kind="cheatsheet" title= "Deploy a java project" ref="org.eclipse.pde.updates" />
+         <task kind="html" title= "Additional Resources" ref="docs/additionalresources.html">
+             <task kind="html" title= "Creating a help plugin" ref="docs/helpplugin.html" />
+             <task kind="html" title= "The Eclipse Update Manager" ref="docs/updatemanager.html" />
+             <task kind="html" title= "Eclipse home page" ref="http://www.eclipse.org" />
+         </task>
+    </task>
+</compositeCheatsheet>

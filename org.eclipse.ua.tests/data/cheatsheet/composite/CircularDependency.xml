@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compositeCheatsheet title="Test Guide">
+    <task  title= "Task Title">
+        <task title="This is Task1" id = "task1" >
+            <dependsOn task = "task2"/>
+        </task>
+        <task title="This is Task2" id = "task2"> 
+            <dependsOn task = "task3"/>
+        </task>
+        <task title="This is Task3" id = "task3"> 
+            <dependsOn task = "task1"/>
+        </task>
+    </task>
+</compositeCheatsheet>

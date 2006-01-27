@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.cheatsheets.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -30,15 +31,18 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
@@ -72,6 +76,12 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	private Text desc;
 
 	private Button showAllButton;
+	
+	private Button selectRegisteredRadio;
+	
+	private Button selectFileRadio;
+	
+	private Text selectFileText;
 
 	private ActivityViewerFilter activityViewerFilter = new ActivityViewerFilter();
 
@@ -82,6 +92,8 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	private final static String STORE_EXPANDED_CATEGORIES_ID = "CheatSheetCategoryBasedSelectionDialog.STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$
 
 	private final static String STORE_SELECTED_CHEATSHEET_ID = "CheatSheetCategoryBasedSelectionDialog.STORE_SELECTED_CHEATSHEET_ID"; //$NON-NLS-1$
+
+	private Button browseFileButton;
 
 	private static class ActivityViewerFilter extends ViewerFilter {
 		private boolean hasEncounteredFilteredItem = false;
@@ -127,9 +139,16 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		}
 
 		public Image getImage(Object obj) {
-			if (obj instanceof CheatSheetElement)
-				return CheatSheetPlugin.getPlugin().getImageRegistry().get(
-						ICheatSheetResource.CHEATSHEET_OBJ);
+			if (obj instanceof CheatSheetElement) {
+				CheatSheetElement element = (CheatSheetElement)obj;
+				if (element.isComposite()) {
+					return CheatSheetPlugin.getPlugin().getImageRegistry().get(
+							ICheatSheetResource.COMPOSITE_OBJ);
+				} else {
+					return CheatSheetPlugin.getPlugin().getImageRegistry().get(
+							ICheatSheetResource.CHEATSHEET_OBJ);
+			    }
+			}
 			return PlatformUI.getWorkbench().getSharedImages().getImage(
 					ISharedImages.IMG_OBJ_FOLDER);
 		}
@@ -188,16 +207,18 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 
 		// top level group
 		Composite outerContainer = (Composite) super.createDialogArea(parent);
-		Layout layout = outerContainer.getLayout();
-		if (layout == null || !(layout instanceof GridLayout)) {
-			GridLayout gridLayout = new GridLayout();
-			outerContainer.setLayout(gridLayout);
-			outerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-		}
+
+		GridLayout gridLayout = new GridLayout();
+		outerContainer.setLayout(gridLayout);
+		outerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// Create label
 		createMessageArea(outerContainer);
-
+        
+		// Create radio button
+		selectRegisteredRadio = new Button(outerContainer, SWT.RADIO);
+		selectRegisteredRadio.setText(Messages.SELECTION_DIALOG_OPEN_REGISTERED);
+		
 		// category tree pane...create SWT tree directly to
 		// get single selection mode instead of multi selection.
 		Tree tree = new Tree(outerContainer, SWT.SINGLE | SWT.H_SCROLL
@@ -239,6 +260,24 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 			}
 		});
 
+		
+        // Create radio button
+		selectFileRadio = new Button(outerContainer, SWT.RADIO);
+		selectFileRadio.setText(Messages.SELECTION_DIALOG_OPEN_FROM_FILE);
+		
+		Composite selectFileComposite = new Composite(outerContainer, SWT.NULL);
+		GridLayout selectFileLayout = new GridLayout();
+		selectFileLayout.numColumns = 2;
+		selectFileComposite.setLayout(selectFileLayout);
+		GridData sfCompositeData = new GridData(GridData.FILL_HORIZONTAL);
+		selectFileComposite.setLayoutData(sfCompositeData);
+		selectFileText = new Text(selectFileComposite, SWT.BORDER);
+		GridData sfTextData = new GridData(GridData.FILL_HORIZONTAL);
+		selectFileText.setLayoutData(sfTextData);
+		browseFileButton = new Button(selectFileComposite, SWT.NULL);
+		browseFileButton.setText(Messages.SELECTION_DIALOG_FILEPICKER_BROWSE);
+		selectRegisteredRadio.setSelection(true);
+		
 		restoreWidgetValues();
 
 		if (!treeViewer.getSelection().isEmpty())
@@ -246,7 +285,63 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 			treeViewer.getTree().setFocus();
 
 		Dialog.applyDialogFont(outerContainer);
+		selectFileText.addModifyListener(new FileTextListener());
+		browseFileButton.addSelectionListener(new BrowseListener());
+		selectRegisteredRadio.addSelectionListener(new RadioSelectionListener());
+		checkRadioButtons();
 		return outerContainer;
+	}
+	
+	private class RadioSelectionListener implements SelectionListener {
+
+		public void widgetSelected(SelectionEvent e) {
+			checkRadioButtons();			
+		}
+
+		public void widgetDefaultSelected(SelectionEvent e) {
+			// do nothing
+		}
+	}
+	
+	private class BrowseListener implements SelectionListener {
+
+		public void widgetSelected(SelectionEvent e) {
+			// Launch a file dialog to select a cheatsheet file
+			FileDialog fileDlg = new FileDialog(PlatformUI.getWorkbench()
+	                .getActiveWorkbenchWindow().getShell());
+			fileDlg.setFilterExtensions(new String[]{"*.xml"}); //$NON-NLS-1$
+			fileDlg.setText(Messages.SELECTION_DIALOG_FILEPICKER_TITLE);
+			fileDlg.open();
+			String filename = fileDlg.getFileName();
+			if (filename != null) {				
+				IPath folderPath = new Path(fileDlg.getFilterPath());
+				IPath filePath = folderPath.append(filename);
+				selectFileText.setText(filePath.toOSString());
+				checkRadioButtons();
+			}
+		}
+
+		public void widgetDefaultSelected(SelectionEvent e) {
+			// do nothing			
+		}
+		
+	}
+	
+	private class FileTextListener implements ModifyListener {
+
+		public void modifyText(ModifyEvent e) {
+			setOkButton();
+		}	
+	}
+
+	/*
+	 * Check the state of the Radio buttons and disable those parts of teh UI that don't apply
+	 */
+	private void checkRadioButtons() {
+		selectFileText.setEnabled(selectFileRadio.getSelection());	
+		browseFileButton.setEnabled(selectFileRadio.getSelection());	
+		treeViewer.getTree().setEnabled(selectRegisteredRadio.getSelection());
+		setOkButton();
 	}
 
 	/**
@@ -354,15 +449,24 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	public void selectionChanged(SelectionChangedEvent selectionEvent) {
 		Object obj = getSingleSelection(selectionEvent.getSelection());
 		if (obj instanceof CheatSheetCollectionElement) {
-			enableOKButton(false);
-			desc.setText(""); //$NON-NLS-1$
+			currentSelection = null;
 		} else {
 			currentSelection = (CheatSheetElement) obj;
+		}
 
-			if (currentSelection != null) {
-				enableOKButton(true);
-				desc.setText(currentSelection.getDescription());
-			}
+		if (currentSelection != null) {
+			desc.setText(currentSelection.getDescription());
+		} else {
+			desc.setText(""); //$NON-NLS-1$
+		}
+		setOkButton();
+	}
+	
+	private void setOkButton() {
+		if (selectRegisteredRadio.getSelection()) {
+			enableOKButton(currentSelection != null);
+		} else {
+			enableOKButton(selectFileText.getText().length() > 0);
 		}
 	}
 
@@ -370,24 +474,45 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
 	protected void okPressed() {
-		if (currentSelection != null) {
-			ArrayList result = new ArrayList(1);
-			ITriggerPoint triggerPoint = PlatformUI.getWorkbench()
-					.getActivitySupport().getTriggerPointManager()
-					.getTriggerPoint(ICheatSheetResource.TRIGGER_POINT_ID);
-			if (!WorkbenchActivityHelper.allowUseOf(triggerPoint,
-					currentSelection))
-				return;
-			result.add(currentSelection);
-			setResult(result);
+		if (selectFileRadio.getSelection()) {
+			setResultFromFile();
 		} else {
-			return;
+			setResultFromTree();
 		}
 
 		// save our selection state
 		saveWidgetValues();
 
 		super.okPressed();
+	}
+
+	private void setResultFromTree() {
+		if (currentSelection != null) {
+			ArrayList result = new ArrayList(1);
+			ITriggerPoint triggerPoint = PlatformUI.getWorkbench()
+					.getActivitySupport().getTriggerPointManager()
+					.getTriggerPoint(ICheatSheetResource.TRIGGER_POINT_ID);
+			if (WorkbenchActivityHelper.allowUseOf(triggerPoint,
+					currentSelection)) {
+				result.add(currentSelection);
+				setResult(result);
+			}
+		}
+	}
+
+	private void setResultFromFile() {
+		// Use the filename without extension as the id of this cheatsheet
+		IPath filePath = new Path(selectFileText.getText());
+		String id = filePath.lastSegment();
+		int extensionIndex = id.indexOf('.');
+		if (extensionIndex > 0) {
+		    id = id.substring(0, extensionIndex);
+		}
+		// Use the id as the name
+		CheatSheetElement element = new CheatSheetElement(id);
+		element.setID(id);
+		element.setContentFile(selectFileText.getText());
+		setSelectionResult(new Object[]{element});
 	}
 
 	/**

@@ -61,8 +61,8 @@ public class SharedIntroConfigurer extends IntroConfigurer {
 			if (groupId.equals("page-links"))
 				return getRootPageLinks(false);
 		} else if (pageId.equals("standby")) {
-				if (groupId.equals("page-links"))
-					return getRootPageLinks(true);
+			if (groupId.equals("page-links"))
+				return getRootPageLinks(true);
 		}
 		return new IntroElement[0];
 	}
@@ -70,42 +70,45 @@ public class SharedIntroConfigurer extends IntroConfigurer {
 	private IntroElement[] getRootPageLinks(boolean standby) {
 		ArrayList links = new ArrayList();
 		String ids = getVariable("introRootPages");
-		if (ids!=null) {
+		if (ids != null) {
 			StringTokenizer stok = new StringTokenizer(ids, ",");
 			while (stok.hasMoreTokens()) {
 				String id = stok.nextToken().trim();
 				IntroElement page = createRootPageLink(id);
-				if (page!=null)
+				if (page != null)
 					links.add(page);
 			}
 		}
 		return (IntroElement[]) links.toArray(new IntroElement[links.size()]);
 	}
-	
+
 	private IntroElement createRootPageLink(String id) {
 		if (id.equals("overview"))
-		return createRootLink("Overview", "http://org.eclipse.ui.intro/showPage?id=overview", "overview",
-				"overview_img", "css/graphics/root/overview.png", "Overview",
-				"Find out what Eclipse is all about");
+			return createRootLink("Overview", "http://org.eclipse.ui.intro/showPage?id=overview", "overview",
+					"overview_img", "css/graphics/root/overview.png", "Overview",
+					"Find out what Eclipse is all about");
 		if (id.equals("firststeps"))
-		return createRootLink("First Steps", "http://org.eclipse.ui.intro/showPage?id=firststeps",
-				"firststeps", "firststeps_img", "css/graphics/root/firststeps.png", "First Steps",
-				"Make first steps");
+			return createRootLink("First Steps", "http://org.eclipse.ui.intro/showPage?id=firststeps",
+					"firststeps", "firststeps_img", "css/graphics/root/firststeps.png", "First Steps",
+					"Make first steps");
 		if (id.equals("tutorials"))
 			return createRootLink("Tutorials", "http://org.eclipse.ui.intro/showPage?id=tutorials",
-				"tutorials", "tutorials_img", "css/graphics/root/tutorials.png", "Tutorials",
-				"Go through tutorials");
+					"tutorials", "tutorials_img", "css/graphics/root/tutorials.png", "Tutorials",
+					"Go through tutorials");
 		if (id.equals("samples"))
 			return createRootLink("Samples", "http://org.eclipse.ui.intro/showPage?id=samples", "samples",
-				"samples_img", "css/graphics/root/samples.png", "Samples",
-				"Try out the samples");
+					"samples_img", "css/graphics/root/samples.png", "Samples", "Try out the samples");
 		if (id.equals("whatsnew"))
-			return createRootLink("What's New", "http://org.eclipse.ui.intro/showPage?id=whatsnew", "whatsnew",				"whatsnew_img", "css/graphics/root/whatsnew.png", "What's New",
-				"Find out what is new");
+			return createRootLink("What's New", "http://org.eclipse.ui.intro/showPage?id=whatsnew",
+					"whatsnew", "whatsnew_img", "css/graphics/root/whatsnew.png", "What's New",
+					"Find out what is new");
+		if (id.equals("migrate"))
+			return createRootLink("Migrate", "http://org.eclipse.ui.intro/showPage?id=migrate", "migrate",
+					"migrate_img", "css/graphics/root/migrate.png", "Migrate", "Migrate to the new release");
 		if (id.equals("webresources"))
 			return createRootLink("Web Resources", "http://org.eclipse.ui.intro/showPage?id=webresources",
-				"webresources", "webresources_img", "css/graphics/root/webresources.png", "Web Resources",
-				"Read more on the Web");
+					"webresources", "webresources_img", "css/graphics/root/webresources.png",
+					"Web Resources", "Read more on the Web");
 		return null;
 	}
 

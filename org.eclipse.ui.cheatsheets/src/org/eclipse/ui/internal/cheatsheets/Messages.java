@@ -93,7 +93,26 @@ public final class Messages extends NLS {
 	public static String WARNING_PARSING_UNKNOWN_ELEMENT;
 	public static String WARNING_PARSING_DESCRIPTION_UNKNOWN_ELEMENT;
 	public static String WARNING_PARSING_ON_COMPLETION_UNKNOWN_ELEMENT;
-
+	public static String EXCEPTION_RUNNING_ACTION;
+	public static String ACTION_FAILED;
+	public static String ERROR_MULTIPLE_ERRORS;
+	public static String ERROR_PARSING_ROOT_NODE_TYPE;
+	public static String COMPLETED_TASK;
+	public static String ERROR_PARSING_DUPLICATE_TASK_ID;
+	public static String ERROR_PARSING_NO_VALUE;
+	public static String ERROR_PARSING_NO_NAME;
+	public static String ERROR_PARSING_NO_ID;
+	public static String ERROR_PARSING_MULTIPLE_ROOT;
+	public static String ERROR_PARSING_NO_ROOT;
+	public static String ERROR_PARSING_INVALID_ID;
+	public static String ERROR_PARSING_CYCLE_DETECTED;
+	public static String ERROR_PARSING_CYCLE_CONTAINS;
+	public static String SELECTION_DIALOG_FILEPICKER_TITLE;
+	public static String SELECTION_DIALOG_FILEPICKER_BROWSE;
+	public static String SELECTION_DIALOG_OPEN_REGISTERED;
+	public static String SELECTION_DIALOG_OPEN_FROM_FILE;
+	public static String ERROR_READING_ID_FROM_STATEFILE;
+	public static String ERROR_SAVING_STATE_REFERENCE = null;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

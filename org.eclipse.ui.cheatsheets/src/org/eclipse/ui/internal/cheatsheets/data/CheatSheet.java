@@ -16,12 +16,11 @@ import java.util.ArrayList;
 /**
  * 
  */
-public class CheatSheet {
+public class CheatSheet implements ICheatSheet {
 	
 	protected String title;
 	private Item introItem;
 	private ArrayList items;
-
 
 	/**
 	 * Creates a new cheat sheet.

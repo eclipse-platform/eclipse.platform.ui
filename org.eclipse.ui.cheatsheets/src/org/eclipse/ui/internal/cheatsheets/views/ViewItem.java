@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -489,11 +488,12 @@ public abstract class ViewItem {
 	abstract void createCompletionComposite(boolean isFinalItem);
 
 	protected void setCompletionMessageCollapsed() {
-		if (completionComposite != null)
+		if (completionComposite != null) {
 			if (completionMessageExpanded) {
 				completionComposite.setVisible(false);
-				completionMessageExpanded = false;
 			}
+		}
+		completionMessageExpanded = false;
 	}
 
 	//collapses the item

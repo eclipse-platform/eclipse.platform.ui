@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compositeCheatsheet title="Test Guide">
+    <task kind="html" title= "Task Title">
+        <task  title="This is Task1" id = "task1" />
+        <task  title="This is Task2" id = "task1" /> 
+    </task>
+</compositeCheatsheet>

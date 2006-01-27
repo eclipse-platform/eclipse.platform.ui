@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.actions;
 
+import java.io.File;
+import java.net.MalformedURLException;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
@@ -30,13 +33,13 @@ import org.eclipse.ui.internal.cheatsheets.registry.*;
 public class CheatSheetCategoryBasedSelectionAction extends Action {
 
 	/**
-	 * Create a new <code>CheatSheetSelectionAction</code> action.
+	 * Create a new <code>CheatSheetCategoryBasedSelectionAction</code> action.
 	 */
 	public CheatSheetCategoryBasedSelectionAction() {
 	}
 
 	/**
-	 * Constructor for CheatSheetSelectionAction.
+	 * Constructor for CheatSheetCategoryBasedSelectionAction.
 	 * @param text
 	 */
 	public CheatSheetCategoryBasedSelectionAction(String text) {
@@ -44,7 +47,7 @@ public class CheatSheetCategoryBasedSelectionAction extends Action {
 	}
 
 	/**
-	 * Constructor for CheatSheetSelectionAction.
+	 * Constructor for CheatSheetCategoryBasedSelectionAction.
 	 * @param text
 	 * @param image
 	 */
@@ -68,8 +71,17 @@ public class CheatSheetCategoryBasedSelectionAction extends Action {
 		notifyResult(true);
 
 		CheatSheetElement result = (CheatSheetElement)dialog.getResult()[0];
-
-		new OpenCheatSheetAction(result.getID()).run();
+	    
+	    if (result.isRegistered()) {
+	    	new OpenCheatSheetAction(result.getID()).run();
+		} else {
+			File contentFile = new File(result.getContentFile());
+			try {
+				new OpenCheatSheetAction(result.getID(), result.getID() ,contentFile.toURL()).run();
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}		
 	}
 }
 

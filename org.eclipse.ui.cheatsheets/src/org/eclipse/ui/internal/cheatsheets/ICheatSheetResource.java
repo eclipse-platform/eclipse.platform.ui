@@ -35,7 +35,8 @@ public interface ICheatSheetResource {
 	//
 	// Constants used to retrieve images from the cheatsheet image registry.
 	//
-	public static final String CHEATSHEET_OBJ = "CHEATSHEET_OBJ";//$NON-NLS-1$
+	public static final String CHEATSHEET_OBJ = "CHEATSHEET_OBJ";//$NON-NLS-1$	
+	public static final String COMPOSITE_OBJ = "COMPOSITE_OBJ";//$NON-NLS-1$
 	public static final String CHEATSHEET_ITEM_SKIP = "CHEATSHEET_ITEM_SKIP"; //$NON-NLS-1$
 	public static final String CHEATSHEET_ITEM_COMPLETE = "CHEATSHEET_ITEM_COMPLETE"; //$NON-NLS-1$
 	public static final String CHEATSHEET_ITEM_HELP = "CHEATSHEET_ITEM_HELP"; //$NON-NLS-1$

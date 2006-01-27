@@ -128,4 +128,7 @@ public abstract class Page {
 	}
 
 	protected abstract String getTitle();
+
+	public abstract void initialized();
+	
 }

@@ -20,7 +20,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.osgi.framework.Bundle;
 
 /**
- *	Instances represent registered cheatsheets.
+ *	Instances represent registered cheatsheets or cheatsheets opened using the content file.
  */
 public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, IPluginContribution {
 	private String contentFile;
@@ -29,6 +29,8 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 	private String description;
 	private IConfigurationElement configurationElement;
 	private String listenerClass;
+	private boolean composite;
+	private boolean registered = false;
 
 	/**
 	 *	Create a new instance of this class
@@ -111,7 +113,7 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 	/**
 	 *	Set the contentFile parameter of this element
 	 *
-	 *	@param value java.lang.String
+	 *	@param value the URL of the content file
 	 */
 	public void setContentFile(String value) {
 		contentFile = value;
@@ -183,4 +185,35 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 	public String getPluginId() {
 		return configurationElement.getNamespace();
 	}
+	
+	public void setComposite(boolean composite) {
+		this.composite = composite;
+	}
+
+	public boolean isComposite() {
+		return composite;
+	}
+
+	/**
+	 * Get a URL which is saved with the state so the cheatsheet can later be 
+	 * reopened from the state file.
+	 * @return null if the cheatsheet was opened from the registry otherwise
+	 * the URL of the content file.
+	 */
+	public String getRestorePath() {
+		if (registered) {
+			return null;
+		} else {
+		    return contentFile;
+		}
+	}
+
+	public void setRegistered(boolean registered) {
+		this.registered = registered;
+	}
+
+	public boolean isRegistered() {
+		return registered;
+	}
+
 }

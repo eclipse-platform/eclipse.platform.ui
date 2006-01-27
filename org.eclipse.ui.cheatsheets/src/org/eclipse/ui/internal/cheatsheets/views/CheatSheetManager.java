@@ -21,13 +21,16 @@ import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 public class CheatSheetManager implements ICheatSheetManager {
 
 	private String cheatsheetID;
-	private CheatSheetListener listener;
+	private List listeners;
 	private Hashtable dataTable = null;
-
-	//Package protected:  We don't want anyone else creating instances of this class.	
-	CheatSheetManager(CheatSheetElement element) {
+	
+	public CheatSheetManager(CheatSheetElement element) {
 		cheatsheetID = element.getID();
-		listener = element.createListenerInstance();
+		listeners = new ArrayList();
+		CheatSheetListener listener = element.createListenerInstance();
+		if (listener != null) {
+			addListener(listener);
+		}
 	}
 
 
@@ -38,16 +41,13 @@ public class CheatSheetManager implements ICheatSheetManager {
 		return cheatsheetID;
 	}
 
-	//Package protected:  We don't want anyone else firing events but the view.
-	//this method will be called by the c.s. view when events occur.
-	void fireEvent(int eventType) {
-		//First check to see if we have a listener for this cheatsheet
-		if(listener == null) {
-			return;
+	public void fireEvent(int eventType) {
+		// Send an event to every listener
+		for (Iterator iterator = listeners.iterator();iterator.hasNext();) {
+		    ICheatSheetEvent event = new CheatSheetEvent(eventType, cheatsheetID, this);
+		    CheatSheetListener listener = (CheatSheetListener)iterator.next();
+		    listener.cheatSheetEvent(event);
 		}
-
-		ICheatSheetEvent event = new CheatSheetEvent(eventType, cheatsheetID, this);
-		listener.cheatSheetEvent(event);
 	}
 
 	/**
@@ -94,5 +94,15 @@ public class CheatSheetManager implements ICheatSheetManager {
 		}
 
 		dataTable.put(key, data);
+	}
+
+	/**
+	 * Add a listener for cheatsheet events
+	 * @param listener
+	 */
+	public void addListener(CheatSheetListener listener) {
+		if (listener != null) {
+		    listeners.add(listener);
+		}
 	}
 }

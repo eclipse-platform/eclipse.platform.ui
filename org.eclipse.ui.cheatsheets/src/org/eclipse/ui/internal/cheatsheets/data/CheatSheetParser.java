@@ -22,6 +22,9 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
 import org.eclipse.ui.internal.cheatsheets.*;
+import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
+import org.eclipse.ui.internal.cheatsheets.composite.parser.CompositeCheatSheetParser;
+import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
 import org.eclipse.ui.internal.cheatsheets.registry.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
@@ -39,13 +42,6 @@ import org.xml.sax.*;
  */
 public class CheatSheetParser {
 
-	
-	class CheatSheetParserException extends Exception {
-		private static final long serialVersionUID = 6009335074727417445L;
-		public CheatSheetParserException(String message) {
-			super(message);
-		}
-	}
 	
 	private static final String TRUE_STRING = "true"; //$NON-NLS-1$
 
@@ -781,14 +777,17 @@ public class CheatSheetParser {
 	 */
 	private void logMessage(int severity, boolean informUser, String message, String title, Throwable exception) {
 		IStatus status = new Status(severity, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, exception);
-		CheatSheetPlugin.getPlugin().getLog().log(status);
-		
+		logMessage(informUser, title, status);
+	}
+
+	private void logMessage(boolean informUser, String title, IStatus status) {
+		CheatSheetPlugin.getPlugin().getLog().log(status);		
 		if(informUser) {
 			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, null, status);
 		}
 	}
 
-	public CheatSheet parse(URL url) {
+	public ICheatSheet parse(URL url) {
 		if(url == null) {
 			return null;
 		}
@@ -835,12 +834,29 @@ public class CheatSheetParser {
 			}
 		}
 		
+		if (isComposite(document)) {
+			CompositeCheatSheetParser compositeParser = new CompositeCheatSheetParser();
+			CompositeCheatSheetModel result = compositeParser.parseCompositeCheatSheet(document, url);
+			if (!compositeParser.getStatus().isOK()) {
+				logMessage(true, Messages.ERROR_TITLE, compositeParser.getStatus());
+			}
+			return result;
+		}
 		try {
 			return parseCheatSheet(document);
 		} catch(CheatSheetParserException e) {
 			logMessage(IStatus.ERROR, true, e.getMessage(), Messages.ERROR_TITLE, e);
 		}
 		return null;
+	}
+
+	private boolean isComposite(Document document) {
+		if (document != null) {
+			Node rootnode = document.getDocumentElement();		
+			// Is the root node compositeCheatsheet?
+			return rootnode.getNodeName().equals(ICompositeCheatsheetTags.COMPOSITE_CHEATSHEET) ;
+		}
+		return false;
 	}
 
 	private CheatSheet parseCheatSheet(Document document) throws CheatSheetParserException {

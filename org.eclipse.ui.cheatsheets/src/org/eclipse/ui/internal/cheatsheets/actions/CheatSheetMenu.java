@@ -76,7 +76,13 @@ public class CheatSheetMenu extends ContributionItem {
 
 		MenuItem mi = new MenuItem(menu, bCheck ? SWT.RADIO : SWT.PUSH, index);
 		mi.setText(element.getLabel(null));
-		mi.setImage(CheatSheetPlugin.getPlugin().getImageRegistry().get(ICheatSheetResource.CHEATSHEET_OBJ));
+		String key;
+		if (element.isComposite()) { 
+			key = ICheatSheetResource.COMPOSITE_OBJ;
+		} else {
+			key = ICheatSheetResource.CHEATSHEET_OBJ;
+		}
+		mi.setImage(CheatSheetPlugin.getPlugin().getImageRegistry().get(key));
 		mi.setSelection(bCheck);
 		mi.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

@@ -125,6 +125,7 @@ public interface IParserTags {
 	public static final String COMMAND = "command"; //$NON-NLS-1$
 	public static final String SERIALIZATION = "serialization"; //$NON-NLS-1$
 	public static final String ON_COMPLETION = "onCompletion"; //$NON-NLS-1$
+	public static final String CONTENT_URL = "contentURL"; //$NON-NLS-1$
 
 	// Constants for re-escaping XML characters
 	public static final String LESS_THAN = "&lt;"; //$NON-NLS-1$
@@ -146,5 +147,7 @@ public interface IParserTags {
 	public static final String EXPANDRESTORE = "expandRestore"; //$NON-NLS-1$
 	public static final String BUTTON = "button"; //$NON-NLS-1$
 	public static final String BUTTONSTATE = "buttonstate"; //$NON-NLS-1$
+	public static final String PATH = "path"; //$NON-NLS-1$
+	public static final String CHEATSHEET_STATE_REFERENCE = "CHEATSHEET_STATE_REFERENCE"; //$NON-NLS-1$
 	
 }

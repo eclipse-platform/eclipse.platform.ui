@@ -13,6 +13,7 @@ package org.eclipse.ua.tests.cheatsheet;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.ua.tests.cheatsheet.composite.AllCompositeTests;
 import org.eclipse.ua.tests.cheatsheet.execution.AllExecutionTests;
 import org.eclipse.ua.tests.cheatsheet.parser.AllParserTests;
 
@@ -34,5 +35,6 @@ public class AllCheatSheetTests extends TestSuite {
 	public AllCheatSheetTests() {
 		addTest(AllParserTests.suite());
 		addTest(AllExecutionTests.suite());
+		addTest(AllCompositeTests.suite());
 	}
 }

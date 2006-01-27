@@ -16,9 +16,11 @@ Cheat sheets may optionally specify a description subelement whose body should c
 
    <element name="extension">
       <complexType>
-         <choice minOccurs="0" maxOccurs="unbounded">
+         <choice>
             <element ref="category"/>
             <element ref="cheatsheet"/>
+            <element ref="taskEditor"/>
+            <element ref="taskExplorer"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -139,6 +141,13 @@ The content file is parsed at run time by the cheat sheet framework. Based on th
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="composite" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Since Eclipse 3.2 a new kind of cheatsheet, a composite cheatsheet was introduced. A composite cheatsheet manages a set of tasks, each task can be a simple cheatsheet or other kind of task.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -148,6 +157,96 @@ The content file is parsed at run time by the cheat sheet framework. Based on th
             a short description of the cheat sheet
          </documentation>
       </annotation>
+   </element>
+
+   <element name="taskEditor">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="id"/>
+         </appInfo>
+         <documentation>
+            The taskEditor extension point allows for custom UI to appear in the editor pane of a composite cheatsheet. Any task in a compostite cheatsheet whose kind matches the id of this extension will use the class defined in this extension point to create the editor area.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  An id which must be unique among task editors.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A class which implements a task editor
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.cheatsheets.ITaskEditor"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The icon which will be displayed in the task explorer for a task which uses this kind of editor.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="taskExplorer">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="id"/>
+         </appInfo>
+         <documentation>
+            This extension point allows for the contribution of a task explorer which will be used when opening a composite cheatsheet.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of this explorer which must be unique among task explorer ids. If a composite cheatsheet has the explorerId set to this id, this explorer will be displayed in the task explorer area of a composite cheatsheet.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  A class which implements ITaskExplorer. The class must display the tasks in the composite cheatsheet and allow the user to select the tasks to be displayed in the editor.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.cheatsheets.ITaskExplorer"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  An icon to be used in the dropdown menu which allows for switching between explorers.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
    </element>
 
    <annotation>

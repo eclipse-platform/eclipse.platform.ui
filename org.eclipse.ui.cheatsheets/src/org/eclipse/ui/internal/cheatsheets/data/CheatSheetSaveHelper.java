@@ -27,9 +27,10 @@ import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 
 public class CheatSheetSaveHelper {
+
 	// Get the path to the cheatsheet folder in the .metadata folder of
 	// workspace.
-	private IPath savePath;
+	protected IPath savePath;
 
 	protected Vector stateVector = new Vector();
 
@@ -118,7 +119,7 @@ public class CheatSheetSaveHelper {
 	/**
 	 * Method parses attribute from named node map. Returns value as string.
 	 */
-	private String getAttributeWithName(NamedNodeMap map, String name) {
+	protected String getAttributeWithName(NamedNodeMap map, String name) {
 		try {
 			return map.getNamedItem(name).getNodeValue();
 		} catch (Exception e) {
@@ -143,10 +144,20 @@ public class CheatSheetSaveHelper {
 	}
 
 	public Path getStateFile(String csID) {
-		return new Path(savePath.append(csID + ".xml").toOSString()); //$NON-NLS-1$
+		return getStateFile(csID, savePath);
+	}
+	
+	protected Path getStateFile(String csID, IPath rootPath) {
+		return new Path(rootPath.append(csID + ".xml").toOSString()); //$NON-NLS-1$
 	}
 
-	public Properties loadState(String csID) {
+	public Properties loadState(String csID, IPath savePath) {
+		if (savePath != null) {
+			this.savePath = savePath;
+	    } else {
+		    this.savePath = Platform
+		        .getPluginStateLocation(CheatSheetPlugin.getPlugin());
+	    }
 		Properties returnProps = null;
 		Hashtable subskipped = null;
 		Hashtable subcompleted = null;
@@ -173,6 +184,10 @@ public class CheatSheetSaveHelper {
 			Hashtable ht = null;
 			Node rootnode = doc.getDocumentElement();
 			NamedNodeMap rootatts = rootnode.getAttributes();
+			if (isReference(doc)) {
+				String path = getAttributeWithName(rootatts, IParserTags.PATH);
+				return loadState(csID, new Path(path));
+			}
 			String currentID = getAttributeWithName(rootatts, IParserTags.ID);
 
 			String number = getAttributeWithName(doc.getElementsByTagName(
@@ -255,10 +270,15 @@ public class CheatSheetSaveHelper {
 		return returnProps;
 	}
 
+	protected boolean isReference(Document doc) {
+		Node rootnode = doc.getDocumentElement();
+		return IParserTags.CHEATSHEET_STATE_REFERENCE.equals(rootnode.getNodeName());
+	}
+
 	// Attempts to read an xml file from the provided url. Returns a Dom
 	// Document object if parses ok,
 	// returns null if the parse or read fails.
-	private Document readXMLFile(URL url) {
+	protected Document readXMLFile(URL url) {
 		InputStream is = null;
 		InputSource source = null;
 
@@ -290,7 +310,7 @@ public class CheatSheetSaveHelper {
 		return null;
 	}
 
-	private void saveState(Properties saveProperties, CheatSheetManager csm) {
+	private void saveState(Properties saveProperties, String contentPath, CheatSheetManager csm) {
 
 		String csID = null;
 
@@ -320,6 +340,9 @@ public class CheatSheetSaveHelper {
 			// Create the root element for the document now:
 			Element root = doc.createElement(IParserTags.CHEATSHEET);
 			root.setAttribute(IParserTags.ID, csID);
+			if (contentPath != null) {
+				root.setAttribute(IParserTags.CONTENT_URL, contentPath);
+			}
 			doc.appendChild(root);
 
 			// create current element.
@@ -411,12 +434,119 @@ public class CheatSheetSaveHelper {
 		}
 	}
 
+	/**
+	 * Save the state of a cheatsheet
+	 * @param currentItemNum the current item
+	 * @param items a list of the items in this cheatsheet
+	 * @param buttonIsDown 
+	 * @param expandRestoreStates
+	 * @param csID the cheatsheet id
+	 * @param contentPath will be null if the cheatsheet was launched using information from
+	 * the registry, otherwise it is the url of the cheatsheet content file.
+	 * @param csm the cheatsheet manager
+	 */
 	public void saveState(int currentItemNum, ArrayList items,
 			boolean buttonIsDown, ArrayList expandRestoreStates, String csID,
-			CheatSheetManager csm) {
+			String contentPath, CheatSheetManager csm) {
 		Properties properties = createProperties(currentItemNum, items,
 				buttonIsDown, expandRestoreStates, csID);
-		saveState(properties, csm);
+		saveState(properties, contentPath, csm);
+	}
+	
+	public IStatus setSavePath(IPath path, String csID, boolean saveReference) {
+		IStatus status = Status.OK_STATUS;
+		this.savePath = path;
+		if (saveReference) {
+			// Store a reference to the new location in the metadata
+			DocumentBuilder documentBuilder;
+			try {
+				documentBuilder = DocumentBuilderFactory
+						.newInstance().newDocumentBuilder();
+			
+
+				Document doc = documentBuilder.newDocument();
+	
+				IPath filePath = getStateFile(csID, Platform
+						   .getPluginStateLocation(CheatSheetPlugin.getPlugin()));
+	
+				// Create the root element for the document now:
+				Element root = doc.createElement(IParserTags.CHEATSHEET_STATE_REFERENCE);
+				root.setAttribute(IParserTags.PATH, path.toOSString());
+				doc.appendChild(root);
+	
+				StreamResult streamResult = new StreamResult(filePath.toFile());
+	
+				DOMSource domSource = new DOMSource(doc);
+				Transformer transformer = TransformerFactory.newInstance()
+						.newTransformer();
+				transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+				transformer.transform(domSource, streamResult);
+			} catch (ParserConfigurationException e) {
+				status = saveErrorStatus(e);
+			} catch (FactoryConfigurationError e) {
+				status = saveErrorStatus(e);
+			} catch (TransformerConfigurationException e) {
+				status = saveErrorStatus(e);
+			} catch (TransformerFactoryConfigurationError e) {
+				status = saveErrorStatus(e);
+			} catch (TransformerException e) {
+				status = saveErrorStatus(e);
+			}
+		}
+		return status;
+	}
+
+	private IStatus saveErrorStatus(Throwable e) {
+		return new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, 0, Messages.ERROR_SAVING_STATE_REFERENCE, e);
+	}
+	
+	
+	/**
+	 * Data needed to locate the content file for a cheatsheet, which is
+	 * the contentPath or if that is null the id
+	 * 
+	 */
+	public class RestoreInfo {
+		public String id;
+		public String contentURL;
+	}
+	
+	/**
+	 * Read a saved state file and get the Cheatsheet id and content file path. 
+	 * @param url
+	 * @return An object containing the id and content file path. The content file
+	 * path will be null if this cheatsheet was opened using the registry.
+	 */
+	public RestoreInfo getIdFromStateFile(URL url) {
+		Document doc = null;
+		doc = readXMLFile(url);
+
+		if (doc != null) {
+			RestoreInfo result = new RestoreInfo();
+			// Parse document here.
+			Node rootnode = doc.getDocumentElement();
+			NamedNodeMap rootatts = rootnode.getAttributes();
+			result.id = getAttributeWithName(rootatts, IParserTags.ID);
+			if (result.id == null) {
+				IStatus status = new Status(IStatus.ERROR,
+						ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK,
+						Messages.ERROR_READING_ID_FROM_STATEFILE, null);
+				CheatSheetPlugin.getPlugin().getLog().log(status);
+			}
+			result.contentURL = getAttributeWithName(rootatts, IParserTags.CONTENT_URL); // May be null
+			return result;
+		}
+		return null;
+	}
+
+	/**
+	 * Read a saved state file and get the Cheatsheet id. 
+	 * @param url
+	 * @return A cheatsheet id, or null if the state file could not be opened
+	 * or has invalid format.
+	 */
+	public IPath getSavePath() {
+		return savePath;
 	}
 
 }

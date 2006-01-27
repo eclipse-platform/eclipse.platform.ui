@@ -16,12 +16,8 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -35,13 +31,13 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.data.AbstractExecutable;
 import org.eclipse.ui.internal.cheatsheets.data.AbstractSubItem;
 import org.eclipse.ui.internal.cheatsheets.data.ConditionalSubItem;
-import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
 import org.eclipse.ui.internal.cheatsheets.data.RepeatedSubItem;
 import org.eclipse.ui.internal.cheatsheets.data.SubItem;
@@ -553,10 +549,8 @@ public class CoreItem extends ViewItem {
 			Color backgroundColor = bodyWrapperComposite.getBackground();
 			completionComposite = page.getToolkit().createComposite(
 					bodyWrapperComposite);
-			GridLayout completionlayout = new GridLayout(2, false);
-			completionlayout.marginHeight = 2;
-			completionlayout.marginWidth = 2;
-			completionlayout.verticalSpacing = 2;
+			TableWrapLayout completionlayout = new TableWrapLayout();
+			completionlayout.numColumns = 2;
 
 			TableWrapData completionData = new TableWrapData(TableWrapData.FILL);
 
@@ -565,7 +559,7 @@ public class CoreItem extends ViewItem {
 			completionComposite.setBackground(backgroundColor);
 
 			Label completionLabel = page.getToolkit().createLabel(completionComposite,
-					completionMessage);
+					completionMessage, SWT.WRAP);
 			completionLabel.setBackground(backgroundColor);
 			final ImageHyperlink skipButton = createButton(
 					completionComposite,

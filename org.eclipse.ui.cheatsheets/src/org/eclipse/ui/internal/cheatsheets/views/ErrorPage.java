@@ -47,4 +47,8 @@ public class ErrorPage extends Page {
 	protected String getTitle() {
 		return Messages.ERROR_LOADING_CHEATSHEET_CONTENT;
 	}
+
+	public void initialized() {
+		// No initialization required
+	}
 }

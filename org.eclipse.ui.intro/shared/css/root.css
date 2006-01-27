@@ -21,7 +21,7 @@ body {
 }
 #root {
 	min-height : 450px;	height : 100%;	height : expression(document.body.clientHeight < 450? "450px": "100%" );
-	overflow : hidden;
+	overflow: hidden;
 }
 
 #branding {

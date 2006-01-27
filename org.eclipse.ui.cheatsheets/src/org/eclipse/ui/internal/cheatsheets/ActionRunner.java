@@ -27,7 +27,6 @@ import org.osgi.framework.Bundle;
  * Class which can run actions and determine the outcome
  */
 public class ActionRunner {
-	
 	public IStatus runAction(Action cheatSheetAction, ICheatSheetManager csm) {
 
 		IStatus status =  Status.OK_STATUS;
@@ -89,7 +88,7 @@ public class ActionRunner {
 			try {
 				action.run();
 			} catch (Throwable e) {
-				status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, "Exception thrown while running action", e);
+				status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, Messages.EXCEPTION_RUNNING_ACTION, e);
 			}
 		}
 
@@ -98,7 +97,7 @@ public class ActionRunner {
 
 		if (status.isOK() && listenerFired[0]) {
 			if (!listenerResult[0]) {				
-			    status =new Status(IStatus.WARNING, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, "Action returned a failure status", null);
+			    status =new Status(IStatus.WARNING, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, Messages.ACTION_FAILED, null);
 		    }
 		}
 

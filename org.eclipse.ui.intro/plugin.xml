@@ -49,7 +49,7 @@
             introId="org.eclipse.ui.intro.shared">
          <presentation
                home-page-id="root" standby-page-id="standby">
-             <implementation
+              <implementation
                   style="$nl$/shared/css/shared.css"
                   kind="html"
                   os="win32,linux,macosx">

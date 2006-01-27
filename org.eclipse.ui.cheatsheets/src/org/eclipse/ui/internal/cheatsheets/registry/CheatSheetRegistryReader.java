@@ -45,6 +45,81 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		}
 	}
 
+	/**
+     * Represents a taskEditor entry in the registry
+	 */
+	public class TaskEditorNode {
+		private String className;
+		private String iconPath;
+		private String id;
+		private String pluginId;
+		public void setClassName(String className) {
+			this.className = className;
+		}
+		public String getClassName() {
+			return className;
+		}
+		public void setIconPath(String iconPath) {
+			this.iconPath = iconPath;
+		}
+		public String getIconPath() {
+			return iconPath;
+		}
+		public void setId(String id) {
+			this.id = id;
+		}
+		public String getId() {
+			return id;
+		}
+		public void setPluginId(String pluginId) {
+			this.pluginId = pluginId;
+		}
+		public String getPluginId() {
+			return pluginId;
+		}
+	}
+	
+	/**
+     * Represents a taskExplorer entry in the registry
+	 */
+	public class TaskExplorerNode {
+		private String className;
+		private String iconPath;
+		private String name;
+		private String id;
+		private String pluginId;
+		public void setClassName(String className) {
+			this.className = className;
+		}
+		public String getClassName() {
+			return className;
+		}
+		public void setIconPath(String iconPath) {
+			this.iconPath = iconPath;
+		}
+		public String getIconPath() {
+			return iconPath;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
+		public String getName() {
+			return name;
+		}
+		public void setId(String id) {
+			this.id = id;
+		}
+		public String getId() {
+			return id;
+		}
+		public void setPluginId(String pluginId) {
+			this.pluginId = pluginId;
+		}
+		public String getPluginId() {
+			return pluginId;
+		}
+	}
+
 	// constants
 	private final static String ATT_CATEGORY = "category"; //$NON-NLS-1$
 	public final static String ATT_CONTENTFILE = "contentFile"; //$NON-NLS-1$
@@ -53,12 +128,15 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	protected final static String ATT_LISTENERCLASS = "listener"; //$NON-NLS-1$
 	protected final static String ATT_NAME = "name"; //$NON-NLS-1$
 	protected final static String ATT_CLASS = "class"; //$NON-NLS-1$
+	private final static String ATT_COMPOSITE = "composite"; //$NON-NLS-1$
 	private final static String CATEGORY_SEPARATOR = "/"; //$NON-NLS-1$
 	private final static String ATT_ITEM_ATTRIBUTE = "itemAttribute"; //$NON-NLS-1$
 	private static CheatSheetRegistryReader instance;
 	private final static String TAG_CATEGORY = "category"; //$NON-NLS-1$
 	protected final static String TAG_CHEATSHEET = "cheatsheet"; //$NON-NLS-1$
 	protected final static String TAG_ITEM_EXTENSION = "itemExtension"; //$NON-NLS-1$
+	protected final static String TAG_TASK_EDITOR = "taskEditor"; //$NON-NLS-1$
+	protected final static String TAG_TASK_EXPLORER = "taskExplorer"; //$NON-NLS-1$
 	protected final static String trueString = "TRUE"; //$NON-NLS-1$
 	private final static String UNCATEGORIZED_CHEATSHEET_CATEGORY = "org.eclipse.ui.Other"; //$NON-NLS-1$
 	private final static String UNCATEGORIZED_CHEATSHEET_CATEGORY_LABEL = Messages.CHEAT_SHEET_OTHER_CATEGORY;
@@ -85,6 +163,8 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	private ArrayList deferCheatSheets = null;
 	private final String pluginPoint = "cheatSheetContent"; //$NON-NLS-1$
 	private final String csItemExtension = "cheatSheetItemExtension"; //$NON-NLS-1$
+	protected Map taskExplorers = new HashMap();
+	protected Map taskEditors = new HashMap();
 
 	/**
 	 *	Create an instance of this class.
@@ -189,6 +269,25 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 				return element;
 		}
 		return null;
+	}
+	
+	/**
+	 *	Returns the first task editor
+	 *  with a given id.
+	 */
+	public TaskEditorNode findTaskEditor(String id) {
+		return (TaskEditorNode)taskEditors.get(id);
+	}
+	
+	/**
+	 *	Returns the first task explorer
+	 *  with a given id.
+	 */
+	public TaskExplorerNode findTaskExplorer(String id) {
+		if (cheatsheets == null) {
+		    readCheatSheets(); // Ensure that the registry has been read
+		}
+		return (TaskExplorerNode)taskExplorers.get(id);
 	}
 
 	/**
@@ -361,6 +460,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		element.setID(config.getAttribute(ATT_ID));
 		element.setDescription(getDescription(config));
 		element.setConfigurationElement(config);
+		element.setRegistered(true);
 
 		String contentFile = config.getAttribute(ATT_CONTENTFILE);
 		if (contentFile != null) {
@@ -376,6 +476,10 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		String listenerClass = config.getAttribute(ATT_LISTENERCLASS);
 		if (listenerClass != null) {
 			element.setListenerClass(listenerClass);
+		}
+		String composite = config.getAttribute(ATT_COMPOSITE);
+		if (composite != null) {
+			element.setComposite(composite.equalsIgnoreCase(trueString));
 		}
 		return true;
 	}
@@ -464,6 +568,49 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 
 		cheatsheetItemExtensions.add(itemExtensionElement);		
 	}
+	
+	/*
+	 * Get a required attribute. Log an error if it has no value.
+	 */
+	private String getAndCheckAttribute(IConfigurationElement element, String name) {
+		String result = element.getAttribute(name);
+		if (result == null) {
+			logMissingAttribute(element, name);
+		}
+		return result;
+	}
+	
+	private void createTaskExplorerElement(IConfigurationElement element) {
+		String icon = element.getAttribute(ATT_ICON);
+		String className = getAndCheckAttribute(element, ATT_CLASS);
+		String name = getAndCheckAttribute(element, ATT_NAME);
+		String id = getAndCheckAttribute(element, ATT_ID);
+		String pluginId = element.getNamespace();
+		if (id != null && className != null && name != null ) {
+			TaskExplorerNode node = new TaskExplorerNode();
+            node.setId(id);
+			node.setIconPath(icon);
+			node.setClassName(className);
+			node.setName(name);
+			node.setPluginId(pluginId);
+			taskExplorers.put(id, node);
+		} 
+	}
+
+	private void createTaskEditorElement(IConfigurationElement element) {
+		String icon = getAndCheckAttribute(element, ATT_ICON);
+		String className = getAndCheckAttribute(element, ATT_CLASS);
+		String id = getAndCheckAttribute(element, ATT_ID);
+		String pluginId = element.getNamespace();
+		if (id != null && className != null && icon != null ) {
+			TaskEditorNode node = new TaskEditorNode();
+            node.setId(id);
+			node.setIconPath(icon);
+			node.setClassName(className);
+			node.setPluginId(pluginId);
+			taskEditors.put(id, node);
+		} 
+	}
 
 	/**
 	 * Implement this method to read element attributes.
@@ -475,6 +622,12 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		} else if (element.getName().equals(TAG_ITEM_EXTENSION)) {
 			createItemExtensionElement(element);
 			return true;
+		} else if (element.getName().equals(TAG_TASK_EDITOR)) {
+			createTaskEditorElement(element);
+			return true;
+		} else if (element.getName().equals(TAG_TASK_EXPLORER)) {
+			createTaskExplorerElement(element);
+			return true;
 		} else {
 			if (!element.getName().equals(TAG_CHEATSHEET))
 				return false;
@@ -485,7 +638,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 			return true;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
 	 */
