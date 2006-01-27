@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,9 +131,10 @@ public final class InternalPlatform {
 
 	private ServiceRegistration legacyPreferencesService = null;
 	private ServiceRegistration customPreferencesService = null;
+	private ServiceRegistration platformURLConverterService = null;
 
 	private ServiceTracker environmentTracker = null;
-	private ServiceTracker urlTracker = null;
+	private Map urlTrackers = new HashMap();
 	private ServiceTracker logTracker = null;
 	private ServiceTracker bundleTracker = null;
 	private ServiceTracker debugTracker = null;
@@ -169,35 +170,12 @@ public final class InternalPlatform {
 		AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
 	}
 
-	private URL asActualURL(URL url) throws IOException {
-		if (!url.getProtocol().equals(PlatformURLHandler.PROTOCOL))
-			return url;
-		URLConnection connection = url.openConnection();
-		if (connection instanceof PlatformURLConnection)
-			return ((PlatformURLConnection) connection).getResolvedURL();
-		return url;
-	}
-
 	/**
-	 * @see Platform
+	 * @see Platform#asLocalURL(URL)
 	 */
 	public URL asLocalURL(URL url) throws IOException {
-		URL result = url;
-		// If this is a platform URL get the local URL from the PlatformURLConnection
-		if (result.getProtocol().equals(PlatformURLHandler.PROTOCOL))
-			result = asActualURL(url);
-
-		// If the result is a bundleentry or bundleresouce URL then 
-		// convert it to a file URL.  This will end up extracting the 
-		// bundle entry to cache if the bundle is packaged as a jar.
-		if (result.getProtocol().startsWith(PlatformURLHandler.BUNDLE)) {
-			URLConverter theConverter = getURLConverter();
-			if (theConverter == null)
-				throw new IOException("url.noaccess"); //$NON-NLS-1$
-			result = theConverter.convertToFileURL(result);
-		}
-
-		return result;
+		URLConverter converter = getURLConverter(url);
+		return converter == null ? url : converter.toFileURL(url);
 	}
 
 	private void assertInitialized() {
@@ -660,12 +638,27 @@ public final class InternalPlatform {
 		return admin == null ? -1 : admin.getState(false).getTimeStamp();
 	}
 
-	public URLConverter getURLConverter() {
-		if (urlTracker == null) {
-			urlTracker = new ServiceTracker(context, URLConverter.class.getName(), null);
-			urlTracker.open();
+	private URLConverter getURLConverter(URL url) {
+		String protocol = url.getProtocol();
+		synchronized (urlTrackers) {
+			ServiceTracker tracker = (ServiceTracker) urlTrackers.get(protocol);
+			if (tracker == null) {
+				// get the right service based on the protocol
+				String FILTER_PREFIX = "(&(objectClass=org.eclipse.osgi.service.urlconversion.URLConverter)(protocol="; //$NON-NLS-1$
+				String FILTER_POSTFIX = "))"; //$NON-NLS-1$
+				Filter filter = null;
+				try {
+					filter = context.createFilter(FILTER_PREFIX + protocol + FILTER_POSTFIX);
+				} catch (InvalidSyntaxException e) {
+					return null;
+				}
+				tracker = new ServiceTracker(context, filter, null);
+				tracker.open();
+				// cache it in the registry
+				urlTrackers.put(protocol, tracker);
+			}
+			return (URLConverter) tracker.getService();
 		}
-		return (URLConverter) urlTracker.getService();
 	}
 
 	public Location getUserLocation() {
@@ -926,20 +919,11 @@ public final class InternalPlatform {
 	}
 
 	/**
-	 * @see Platform
+	 * @see Platform#resolve(URL)
 	 */
 	public URL resolve(URL url) throws IOException {
-		URL result = asActualURL(url);
-		if (!result.getProtocol().startsWith(PlatformURLHandler.BUNDLE))
-			return result;
-
-		URLConverter theConverter = getURLConverter();
-		if (theConverter == null) {
-			throw new IOException("url.noaccess"); //$NON-NLS-1$
-		}
-		result = theConverter.convertToLocalURL(result);
-
-		return result;
+		URLConverter converter = getURLConverter(url);
+		return converter == null ? url : converter.resolve(url);
 	}
 
 	public void setExtensionRegistry(IExtensionRegistry value) {
@@ -1029,6 +1013,10 @@ public final class InternalPlatform {
 	private void startServices() {
 		customPreferencesService = getBundleContext().registerService(IProductPreferencesService.class.getName(), new ProductPreferencesService(), new Hashtable());
 		legacyPreferencesService = getBundleContext().registerService(ILegacyPreferences.class.getName(), new InitLegacyPreferences(), new Hashtable());
+		
+		Dictionary urlProperties = new Hashtable();
+		urlProperties.put("protocol", "platform");  //$NON-NLS-1$ //$NON-NLS-2$
+		platformURLConverterService = context.registerService(URLConverter.class.getName(), new PlatformURLConverter(), urlProperties);
 	}
 
 	private void stopServices() {
@@ -1039,6 +1027,10 @@ public final class InternalPlatform {
 		if (customPreferencesService != null) {
 			customPreferencesService.unregister();
 			customPreferencesService = null;
+		}
+		if (platformURLConverterService != null) {
+			platformURLConverterService.unregister();
+			platformURLConverterService = null;
 		}
 	}
 
@@ -1095,9 +1087,15 @@ public final class InternalPlatform {
 			logTracker.close();
 			logTracker = null;
 		}
-		if (urlTracker != null) {
-			urlTracker.close();
-			urlTracker = null;
+		synchronized (urlTrackers) {
+			if (!urlTrackers.isEmpty()) {
+				for (Iterator iter = urlTrackers.keySet().iterator(); iter.hasNext();) {
+					String key = (String) iter.next();
+					ServiceTracker tracker = (ServiceTracker) urlTrackers.get(key);
+					tracker.close();
+				}
+				urlTrackers = new HashMap();
+			}
 		}
 		if (environmentTracker != null) {
 			environmentTracker.close();
