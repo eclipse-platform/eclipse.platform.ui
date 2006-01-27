@@ -1239,8 +1239,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				int w1, w2;
 				w1 = settings.getInt(DIALOG_SASH_WEIGHTS_1);
 				//just to make sure we are always visible for the toolbar
-				if(w1 < 300) {
-					w1 = 300;
+				if(w1 < 270) {
+					w1 = 270;
 				}
 				w2 = settings.getInt(DIALOG_SASH_WEIGHTS_2);
 				sashWeights = new int[] {w1, w2};
