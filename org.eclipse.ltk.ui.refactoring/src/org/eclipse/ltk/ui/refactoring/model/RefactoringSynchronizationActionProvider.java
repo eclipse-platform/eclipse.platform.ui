@@ -255,8 +255,9 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	 */
 	public void fillContextMenu(final IMenuManager menu) {
 		super.fillContextMenu(menu);
-		final AcceptRefactoringsAction action= new AcceptRefactoringsAction();
-		action.setRefactoringDescriptors(getRefactorings(getSynchronizationContext(), getSynchronizePageConfiguration()));
+		final ISynchronizePageConfiguration configuration= getSynchronizePageConfiguration();
+		final AcceptRefactoringsAction action= new AcceptRefactoringsAction(configuration.getSite().getShell());
+		action.setRefactoringDescriptors(getRefactorings(getSynchronizationContext(), configuration));
 		menu.add(action);
 	}
 

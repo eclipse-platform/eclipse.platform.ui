@@ -20,6 +20,14 @@ public final class ModelMessages extends NLS {
 
 	public static String AcceptRefactoringsAction_tool_tip;
 
+	public static String AcceptRefactoringsAction_wizard_description;
+
+	public static String AcceptRefactoringsAction_wizard_project_pattern;
+
+	public static String AcceptRefactoringsAction_wizard_title;
+
+	public static String AcceptRefactoringsAction_wizard_workspace_caption;
+
 	private static final String BUNDLE_NAME= "org.eclipse.ltk.internal.ui.refactoring.model.ModelMessages"; //$NON-NLS-1$
 
 	public static String RefactoringDescriptorCompareInput_pending_refactoring;
