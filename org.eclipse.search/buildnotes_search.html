@@ -23,11 +23,13 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <pre>
 - Multiple search result views: Views can be pinned<br>
 - new API on NewSearchUI to start a query in a particular view
-    o runQueryInBackground(ISearchQuery query, ISearchResultViewPart view)<br>
-    o runQueryInForeground(IRunnableContext context, ISearchQuery query, ISearchResultViewPart view)
+    o runQueryInBackground(ISearchQuery query, ISearchResultViewPart view)
+    o runQueryInForeground(IRunnableContext context, ISearchQuery query, ISearchResultViewPart view)<br>
 - new API on AbstractTextSearchViewPage
     o made handleSearchResultChanged(SearchResultEvent e) protected to participate
       on serach result events<br>
+- modified new API TextSearchRequestor.acceptFile(IResourceProxy)
+  to TextSearchRequestor.acceptFile(IFile)<br>
 </pre>
 <br>
 ========== Eclipse Build Input I20051205 ==========<br>

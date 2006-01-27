@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
 
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
@@ -28,8 +27,8 @@ import org.eclipse.search.core.text.TextSearchEngine;
 import org.eclipse.search.core.text.TextSearchMatchAccess;
 import org.eclipse.search.core.text.TextSearchRequestor;
 
-import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
+import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 
@@ -46,9 +45,9 @@ public class FileSearchQuery implements ISearchQuery {
 			fIsFileSearchOnly= isFileSearchOnly;
 		}
 		
-		public boolean acceptFile(IResourceProxy proxy) throws CoreException {
+		public boolean acceptFile(IFile file) throws CoreException {
 			if (fIsFileSearchOnly) {
-				fResult.addMatch(new FileMatch((IFile) proxy.requestResource(), 0, 0));
+				fResult.addMatch(new FileMatch(file, 0, 0));
 			}
 			return true;
 		}

@@ -13,6 +13,7 @@ package org.eclipse.search.core.text;
 
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceProxy;
 
 /**
@@ -23,10 +24,10 @@ import org.eclipse.core.resources.IResourceProxy;
  * method, and possibly override other life cycle methods.
  * <p>
  * The search engine calls {@link #beginReporting()} when a search starts,
- * then calls {@link #acceptFile(IResourceProxy)} for a file visited followed by
+ * then calls {@link #acceptFile(IFile)} for a file visited followed by
  * {@link #acceptPatternMatch(TextSearchMatchAccess)} for each pattern match found
  * in this file. The end of the search is signaled with a call to {@link #endReporting()}.
- * Note that {@link #acceptFile(IResourceProxy)} is called for all files in the search scope,
+ * Note that {@link #acceptFile(IFile)} is called for all files in the search scope,
  * even if no match can be found.
  * </p>
  * <p>
@@ -75,8 +76,24 @@ public abstract class TextSearchRequestor {
 	 * @return If false, no pattern matches will be reported for the content of this file.
 	 * @throws CoreException implementors can throw a {@link CoreException} if accessing the resource fails or another
 	 * problem prevented the processing of the search match.
+	 * 
+	 * @deprecated This API will be removed before M5. Use {@link #acceptFile(IFile)} instead.
 	 */
 	public boolean acceptFile(IResourceProxy fileProxy) throws CoreException {
+		return true;
+	}
+	
+	/**
+	 * Notification sent before search starts in the given file. This method is called for all files that are contained
+	 * in the search scope. The <code>fileProxy</code> is guaranteed to be of type {@link org.eclipse.core.resources.IResource#FILE}
+	 * Implementors can decide if the file content should be searched for search matches or not.
+	 * 
+	 * @param file the file resource to be searched.
+	 * @return If false, no pattern matches will be reported for the content of this file.
+	 * @throws CoreException implementors can throw a {@link CoreException} if accessing the resource fails or another
+	 * problem prevented the processing of the search match.
+	 */
+	public boolean acceptFile(IFile file) throws CoreException {
 		return true;
 	}
 	

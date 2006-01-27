@@ -205,12 +205,15 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 			return true;
 		}
 		try {
-			boolean res= fCollector.acceptFile(proxy);
+			IFile file= (IFile) proxy.requestResource();
+			
+			boolean res= fCollector.acceptFile(file);
+			res= res || fCollector.acceptFile(proxy); //call for compatibility, remove before M5
 			if (!res || fMatcher == null) {
 				return false;
 			}
 			
-			IFile file= (IFile) proxy.requestResource();
+
 			IDocument document= getOpenDocument(file);
 			
 			if (document != null) {
