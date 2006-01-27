@@ -47,6 +47,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	private ISynchronizationContext context;
 	private Viewer viewer;
 	private IExtensionStateModel stateModel;
+	private boolean empty;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
@@ -55,15 +56,20 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		if (parent instanceof IResourceMappingScope) {
 			IResourceMappingScope rms = (IResourceMappingScope) parent;
 			if (rms.getMappings(getModelProviderId()).length > 0) {
+				empty = false;
 				return new Object[] { getModelProvider() };
 			}
+			empty = true;
 			return new Object[0];
 		} else if (parent instanceof ISynchronizationContext) {
 			ISynchronizationContext sc = (ISynchronizationContext) parent;
 			if (sc.getScope().getMappings(getModelProviderId()).length > 0) {
-				if (filter(parent, getDelegateContentProvider().getChildren(getModelRoot())).length > 0)
+				if (filter(parent, getDelegateContentProvider().getChildren(getModelRoot())).length > 0) {
+					empty = false;
 					return new Object[] { getModelProvider() };
+				}
 			}
+			empty = true;
 			return new Object[0];
 		}
 		if (parent == getModelProvider()) {
@@ -126,15 +132,20 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		if (inputElement instanceof IResourceMappingScope) {
 			IResourceMappingScope rms = (IResourceMappingScope) inputElement;
 			if (rms.getMappings(getModelProviderId()).length > 0) {
+				empty = false;
 				return new Object[] { getModelProvider() };
 			}
+			empty = true;
 			return new Object[0];
 		} else if (inputElement instanceof ISynchronizationContext) {
 			ISynchronizationContext sc = (ISynchronizationContext) inputElement;
 			if (sc.getScope().getMappings(getModelProviderId()).length > 0) {
-				if (filter(getModelRoot(), getDelegateContentProvider().getChildren(getModelRoot())).length > 0)
+				if (filter(getModelRoot(), getDelegateContentProvider().getChildren(getModelRoot())).length > 0) {
+					empty = false;
 					return new Object[] { getModelProvider() };
+				}
 			}
+			empty = true;
 			return new Object[0];
 		}
 		if (inputElement == getModelProvider()) {
@@ -281,7 +292,11 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		Utils.syncExec(new Runnable() {
 			public void run() {
 				TreeViewer treeViewer = ((TreeViewer)getViewer());
-				treeViewer.refresh(getModelProvider());
+				// TODO: Need to know if the model root is present in order to refresh properly
+				if (empty)
+					treeViewer.refresh();
+				else
+					treeViewer.refresh(getModelProvider());
 			}
 		
 		}, getViewer().getControl());
