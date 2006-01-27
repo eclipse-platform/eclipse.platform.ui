@@ -60,7 +60,7 @@ public class ResourceOperationChecker implements IConditionChecker {
 	}
 	
 	public RefactoringStatus check(IProgressMonitor monitor) throws CoreException {
-		IStatus status= ResourceChangeValidator.getValidator().validateChange(fDeltaFactory.getDelta());
+		IStatus status= ResourceChangeValidator.getValidator().validateChange(fDeltaFactory.getDelta(), monitor);
 		return RefactoringStatus.create(status);
 	}
 
