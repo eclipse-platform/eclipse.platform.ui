@@ -19,14 +19,25 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 <br>
 <br>
+========== Eclipse Build Input I20060131 ==========<br>
+<pre>
+- Multiple search result views: Views can be pinned<br>
+- new API on NewSearchUI to start a query in a particular view
+    o runQueryInBackground(ISearchQuery query, ISearchResultViewPart view)<br>
+    o runQueryInForeground(IRunnableContext context, ISearchQuery query, ISearchResultViewPart view)
+- new API on AbstractTextSearchViewPage
+    o made handleSearchResultChanged(SearchResultEvent e) protected to participate
+      on serach result events<br>
+</pre>
+<br>
 ========== Eclipse Build Input I20051205 ==========<br>
 <pre>
-- new API to use the text search programmatically<br>
+- new API to use the text search programmatically
   package org.eclipse.search.core.text:
     o TextSearchEngine
     o TextSearchScope
     o TextSearchMatchAccess
-    o TextSearchRequestor
+    o TextSearchRequestor<br>
 </pre>
 <pre>
 </pre>
