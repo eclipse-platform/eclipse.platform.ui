@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.osgi.framework.Bundle;
 
@@ -443,6 +444,7 @@ public final class Platform {
 	 * <ul>
 	 * <li>The keyring could not be saved.</li>
 	 * </ul>
+	 * XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
 	public static void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
 		InternalPlatform.getDefault().addAuthorizationInfo(serverUrl, realm, authScheme, info);
@@ -480,6 +482,7 @@ public final class Platform {
 	 * <ul>
 	 * <li>The key ring could not be saved.</li>
 	 * </ul>
+	 * XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
 	public static void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
 		InternalPlatform.getDefault().addProtectionSpace(resourceUrl, realm);
@@ -504,6 +507,7 @@ public final class Platform {
 	 * @see #resolve(URL)
 	 * @see #find(Bundle, IPath)
 	 * @see Bundle#getEntry(String)
+	 * XXX deprecate and use the new class being cerated from the renaming of BundleFinder.
 	 */
 	public static URL asLocalURL(URL url) throws IOException {
 		return InternalPlatform.getDefault().asLocalURL(url);
@@ -511,6 +515,7 @@ public final class Platform {
 
 	/**
 	 * Takes down the splash screen if one was put up.
+	 * XXX this is application life cycle. Need to have the appropriate method on IApplication.
 	 */
 	public static void endSplash() {
 		InternalPlatform.getDefault().endSplash();
@@ -535,6 +540,7 @@ public final class Platform {
 	 * <ul>
 	 * <li>The keyring could not be saved.</li>
 	 * </ul>
+	 * XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
 	public static void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
 		InternalPlatform.getDefault().flushAuthorizationInfo(serverUrl, realm, authScheme);
@@ -546,6 +552,8 @@ public final class Platform {
 	 *
 	 * @return the adapter manager for this platform
 	 * @see IAdapterManager
+	 * XXX register as a service (same pattern than Jobs)
+	 * Do we want to make it available as a singleton?
 	 */
 	public static IAdapterManager getAdapterManager() {
 		return InternalPlatform.getDefault().getAdapterManager();
@@ -567,6 +575,7 @@ public final class Platform {
 	 * @return the authorization information for the specified protection
 	 *		space and given authorization scheme, or <code>null</code> if no
 	 *		such information exists
+	 *XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
 	public static Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
 		return InternalPlatform.getDefault().getAuthorizationInfo(serverUrl, realm, authScheme);
@@ -580,6 +589,7 @@ public final class Platform {
 	 * if they are being run individually rather than with <code>Platform.run()</code>.
 	 * 
 	 * @return the command line used to start the platform
+	 * XXX Use the Environment info service. Need to see how to set the value of the app args.
 	 */
 	public static String[] getCommandLineArgs() {
 		return InternalPlatform.getDefault().getCommandLineArgs();
@@ -619,6 +629,8 @@ public final class Platform {
 	 *
 	 * @return the location of the platform
 	 * @see #getInstanceLocation()
+	 * XXX lookup the service and change to path
+	 * 
 	 */
 	public static IPath getLocation() throws IllegalStateException {
 		return InternalPlatform.getDefault().getLocation();
@@ -637,8 +649,10 @@ public final class Platform {
 	 * being lost.  It is strongly recommended that clients wanting to read the
 	 * log file for extended periods should copy the log file contents elsewhere,
 	 * and immediately close the original file.</p>
-	 * 
 	 * @return the path of the log file on disk.
+	 * 
+	 * XXX  consider making an ILogger interface that listeners can implements and it allows 
+     * us to implement Platform.getLogLocation()
 	 */
 	public static IPath getLogFileLocation() {
 		return InternalPlatform.getDefault().getMetaArea().getLogLocation();
@@ -718,6 +732,7 @@ public final class Platform {
 	 *
 	 * @param plugin the plug-in whose state location is returned
 	 * @return a local file system path
+	 * XXX deprecate this one and use getStateLocation
 	 */
 	public static IPath getPluginStateLocation(Plugin plugin) {
 		return plugin.getStateLocation();
@@ -731,6 +746,7 @@ public final class Platform {
 	 *		returned. For example, "http://www.example.com/folder/".
 	 * @return the protection space (realm) for the specified resource, or
 	 *		<code>null</code> if the realm is unknown
+	 *	 * XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
 	public static String getProtectionSpace(URL resourceUrl) {
 		return InternalPlatform.getDefault().getProtectionSpace(resourceUrl);
@@ -743,6 +759,7 @@ public final class Platform {
 	 * @param listener the listener to de-register
 	 * @see ILog#removeLogListener(ILogListener)
 	 * @see #addLogListener(ILogListener)
+	 * XXX Use the LogMgr service.
 	 */
 	public static void removeLogListener(ILogListener listener) {
 		InternalPlatform.getDefault().removeLogListener(listener);
@@ -769,6 +786,7 @@ public final class Platform {
 	 * @see #asLocalURL(URL)
 	 * @see #find(Bundle, IPath)
 	 * @see Bundle#getEntry(String)
+	 * XXX deprecate and use the new class being cerated from the renaming of BundleFinder.
 	 */
 	public static URL resolve(URL url) throws IOException {
 		return InternalPlatform.getDefault().resolve(url);
@@ -780,6 +798,7 @@ public final class Platform {
 	 * exception handler.  Such exceptions are not rethrown by this method.
 	 *
 	 * @param runnable the runnable to run
+	 * XXX deprecate and use SafeRunner.run().
 	 */
 	public static void run(ISafeRunnable runnable) {
 		SafeRunner.run(runnable);
@@ -791,6 +810,8 @@ public final class Platform {
 	 * 
 	 * @return the platform's job manager
 	 * @since 3.0
+	 * XXX deprecate to use Job.getJobManager().
+	 * Does it need to have a service? YES.
 	 */
 	public static IJobManager getJobManager() {
 		return Job.getJobManager();
@@ -820,6 +841,7 @@ public final class Platform {
 	 * @see #resolve(URL)
 	 * @see #asLocalURL(URL)
 	 * @since 3.0
+	 * XXX deprecate and use the new class being cerated from the renaming of BundleFinder.
 	 */
 	public static URL find(Bundle bundle, IPath path) {
 		// TODO deparecate this method?
@@ -876,6 +898,7 @@ public final class Platform {
 	 * @see #resolve(URL)
 	 * @see #asLocalURL(URL)
 	 * @since 3.0
+	 * XXX deprecate and use the new class being cerated from the renaming of BundleFinder.
 	 */
 	public static URL find(Bundle bundle, IPath path, Map override) {
 		// TODO: deprecate this method?
@@ -899,6 +922,7 @@ public final class Platform {
 	 * @param bundle the bundle whose state location if returned
 	 * @return a local file system path
 	 * @since 3.0
+	 * XXX Investigate the usage of a service factory
 	 */
 	public static IPath getStateLocation(Bundle bundle) {
 		return InternalPlatform.getDefault().getStateLocation(bundle);
@@ -911,6 +935,7 @@ public final class Platform {
 	 * 
 	 * @return a number related to the set of installed plug-ins
 	 * @since 3.1
+	 * XXX use {@link PlatformAdmin} and do getState().gettimeStamp() or something like that. 
 	 */
 	public static long getStateStamp() {
 		return InternalPlatform.getDefault().getStateTimeStamp();
@@ -922,6 +947,10 @@ public final class Platform {
 	 * @param bundle the bundle whose log is returned
 	 * @return the log for the given bundle
 	 * @since 3.0
+	 * XXX change this into a LogMgr service that would keep track of the map. See if it can be a service factory.
+	 * It would contain all the methods that are here.
+	 * Relate to RuntimeLog if appropriate.
+	 * The sytem log listener needs to be optional: turned on or off. What about a system property? :-)
 	 */
 	public static ILog getLog(Bundle bundle) {
 		return InternalPlatform.getDefault().getLog(bundle);
@@ -945,6 +974,7 @@ public final class Platform {
 	 * @return the resource bundle
 	 * @exception MissingResourceException if the resource bundle was not found
 	 * @since 3.0
+	 * XXX this is deprecated. use NLS or BundleFinder.find()
 	 */
 	public static ResourceBundle getResourceBundle(Bundle bundle) throws MissingResourceException {
 		return InternalPlatform.getDefault().getResourceBundle(bundle);
@@ -972,6 +1002,7 @@ public final class Platform {
 	 * @return the resource string
 	 * @see #getResourceBundle(Bundle)
 	 * @since 3.0
+	 * XXX this is deprecated. use NLS or  BundleFinder.find()
 	 */
 	public static String getResourceString(Bundle bundle, String value) {
 		return InternalPlatform.getDefault().getResourceString(bundle, value);
@@ -1010,6 +1041,7 @@ public final class Platform {
 	 * @return the resource string
 	 * @see #getResourceBundle(Bundle)
 	 * @since 3.0
+	 * XXX this is deprecated. use NLS or  BundleFinder.find()
 	 */
 	public static String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle) {
 		return InternalPlatform.getDefault().getResourceString(bundle, value, resourceBundle);
@@ -1023,6 +1055,7 @@ public final class Platform {
 	 * 
 	 * @return the string name of the current system architecture
 	 * @since 3.0
+	 * XXX Use the {@link EnvironmentInfo} service.
 	 */
 	public static String getOSArch() {
 		return InternalPlatform.getDefault().getOSArch();
@@ -1034,6 +1067,7 @@ public final class Platform {
 	 *
 	 * @return the string name of the current locale
 	 * @since 3.0
+	 * XXX Use the {@link EnvironmentInfo} service.
 	 */
 	public static String getNL() {
 		return InternalPlatform.getDefault().getNL();
@@ -1049,6 +1083,7 @@ public final class Platform {
 	 *
 	 * @return the string name of the current operating system
 	 * @since 3.0
+	 * XXX Use the {@link EnvironmentInfo} service.
 	 */
 	public static String getOS() {
 		return InternalPlatform.getDefault().getOS();
@@ -1061,6 +1096,7 @@ public final class Platform {
 	 *
 	 * @return the string name of the current window system or <code>null</code>
 	 * @since 3.0
+	 * XXX Use the {@link EnvironmentInfo} service.
 	 */
 	public static String getWS() {
 		return InternalPlatform.getDefault().getWS();
@@ -1073,6 +1109,7 @@ public final class Platform {
 	 * 
 	 * @return the array of command line arguments not consumed by the framework.
 	 * @since 3.0
+	 * XXX Use the Environment info service. Need to see how to set the value of the app args.
 	 */
 	public static String[] getApplicationArgs() {
 		return InternalPlatform.getDefault().getApplicationArgs();
@@ -1092,6 +1129,7 @@ public final class Platform {
 	 * 
 	 * @return the platform admin for this instance of Eclipse
 	 * @since 3.0
+	 * XXX use the service {@link PlatformAdmin}
 	 */
 	public static PlatformAdmin getPlatformAdmin() {
 		return InternalPlatform.getDefault().getPlatformAdmin();
@@ -1106,6 +1144,7 @@ public final class Platform {
 	 *</p>
 	 * @return the location of the platform's instance data area or <code>null</code> if none
 	 * @since 3.0
+	 * XXX refer to the constants in Location for the LDAP filter.
 	 */
 	public static Location getInstanceLocation() {
 		return InternalPlatform.getDefault().getInstanceLocation();
@@ -1115,6 +1154,7 @@ public final class Platform {
 	 * Returns the currently registered bundle group providers
 	 * @return the currently registered bundle group providers
 	 * @since 3.0
+	 * XXX DJ is doing a service for it
 	 */
 	public static IBundleGroupProvider[] getBundleGroupProviders() {
 		return InternalPlatform.getDefault().getBundleGroupProviders();
@@ -1127,6 +1167,7 @@ public final class Platform {
 	 * 
 	 * @return an object to interface into the preference mechanism
 	 * @since 3.0
+	 * XXX Acquire {@link IPreferencesService}
 	 */
 	public static IPreferencesService getPreferencesService() {
 		return InternalPlatform.getDefault().getPreferencesService();
@@ -1137,6 +1178,7 @@ public final class Platform {
 	 * or <code>null</code> if none
 	 * @return the current product or <code>null</code> if none
 	 * @since 3.0
+	 * XXX move this into the app model.
 	 */
 	public static IProduct getProduct() {
 		return InternalPlatform.getDefault().getProduct();
@@ -1146,6 +1188,7 @@ public final class Platform {
 	 * Registers the given bundle group provider with the platform
 	 * @param provider a provider to register
 	 * @since 3.0
+	 * XXX DJ is doing a service for it
 	 */
 	public static void registerBundleGroupProvider(IBundleGroupProvider provider) {
 		InternalPlatform.getDefault().registerBundleGroupProvider(provider);
@@ -1155,6 +1198,7 @@ public final class Platform {
 	 * De-registers the given bundle group provider with the platform
 	 * @param provider a provider to de-register
 	 * @since 3.0
+	 * XXX DJ is doing a service for it
 	 */
 	public static void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
 		InternalPlatform.getDefault().unregisterBundleGroupProvider(provider);
@@ -1173,6 +1217,7 @@ public final class Platform {
 	 *</p>
 	 * @return the location of the platform's configuration data area or <code>null</code> if none
 	 * @since 3.0
+	 * XXX refer to the constants in Location for the LDAP filter.
 	 */
 	public static Location getConfigurationLocation() {
 		return InternalPlatform.getDefault().getConfigurationLocation();
@@ -1189,6 +1234,7 @@ public final class Platform {
 	 *</p>
 	 * @return the location of the platform's user data area or <code>null</code> if none
 	 * @since 3.0
+	 * XXX refer to the constants in Location for the LDAP filter.
 	 */
 	public static Location getUserLocation() {
 		return InternalPlatform.getDefault().getUserLocation();
@@ -1203,6 +1249,7 @@ public final class Platform {
 	 *</p>
 	 * @return the location of the platform's installation area or <code>null</code> if none
 	 * @since 3.0
+	 * XXX refer to the constants in Location for the LDAP filter.
 	 */
 	public static Location getInstallLocation() {
 		return InternalPlatform.getDefault().getInstallLocation();
@@ -1214,6 +1261,7 @@ public final class Platform {
 	 * @param bundle the bundle to query
 	 * @return true if the specified bundle is a fragment bundle; otherwise false is returned.
 	 * @since 3.0
+	 * XXX Document the use of the packageAdmin service and filter if needed
 	 */
 	public static boolean isFragment(Bundle bundle) {
 		return InternalPlatform.getDefault().isFragment(bundle);
@@ -1228,6 +1276,7 @@ public final class Platform {
 	 * @return an array of fragment bundles or <tt>null</tt> if the bundle does not 
 	 * have any attached fragment bundles. 
 	 * @since 3.0
+	 * XXX Document the use of the packageAdmin service and filter if needed
 	 */
 	public static Bundle[] getFragments(Bundle bundle) {
 		return InternalPlatform.getDefault().getFragments(bundle);
@@ -1242,6 +1291,7 @@ public final class Platform {
 	 * @return the bundle that has the specified symbolic name with the 
 	 * highest version, or <tt>null</tt> if no bundle is found.
 	 * @since 3.0
+	 * XXX Document the use of the packageAdmin service and filter if needed
 	 */
 	public static Bundle getBundle(String symbolicName) {
 		return InternalPlatform.getDefault().getBundle(symbolicName);
@@ -1260,6 +1310,7 @@ public final class Platform {
 	 * or <tt>null</tt> if no version matching is to be done. 
 	 * @return the array of Bundles with the specified name that match the 
 	 * specified version and match rule, or <tt>null</tt> if no bundles are found.
+	 * XXX Document the use of the packageAdmin service and filter if needed
 	 */
 	public static Bundle[] getBundles(String symbolicName, String version) {
 		return InternalPlatform.getDefault().getBundles(symbolicName, version);
@@ -1274,6 +1325,7 @@ public final class Platform {
 	 * @return an array of host bundles or null if the bundle does not have any
 	 * host bundles.
 	 * @since 3.0
+	 * XXX Document the use of the packageAdmin service and filter if needed
 	 */
 	public static Bundle[] getHosts(Bundle bundle) {
 		return InternalPlatform.getDefault().getHosts(bundle);
@@ -1285,6 +1337,7 @@ public final class Platform {
 	 * @return <code>true</code> if the platform is running, 
 	 *		and <code>false</code> otherwise
 	 *@since 3.0
+	 *XXX do what you want to do. track osgi, track runtime, or whatever.
 	 */
 	public static boolean isRunning() {
 		return InternalPlatform.getDefault().isRunning();
@@ -1302,6 +1355,7 @@ public final class Platform {
 	 * @return the list of system architectures known to the system
 	 * @see #getOSArch()
 	 * @since 3.0
+	 * XXX This is useless
 	 */
 	public static String[] knownOSArchValues() {
 		return InternalPlatform.getDefault().knownOSArchValues();
@@ -1319,6 +1373,7 @@ public final class Platform {
 	 * @return the list of operating systems known to the system
 	 * @see #getOS()
 	 * @since 3.0
+	 * XXX This is useless
 	 */
 	public static String[] knownOSValues() {
 		return InternalPlatform.getDefault().knownOSValues();
@@ -1352,6 +1407,7 @@ public final class Platform {
 	 * @return the list of window systems known to the system
 	 * @see #getWS()
 	 * @since 3.0
+	 * XXX This is useless
 	 */
 	public static String[] knownWSValues() {
 		return InternalPlatform.getDefault().knownWSValues();
@@ -1364,6 +1420,7 @@ public final class Platform {
 	 *
 	 * @return whether or not the platform is running in debug mode
 	 * @since 3.0
+	 * XXX Use {@link EnvironmentInfo} service
 	 */
 	public static boolean inDebugMode() {
 		return System.getProperty("osgi.debug") != null; //$NON-NLS-1$
@@ -1377,6 +1434,7 @@ public final class Platform {
 	 *
 	 * @return whether or not the platform is running in development mode
 	 * @since 3.0
+	 * XXX Use {@link EnvironmentInfo} service
 	 */
 	public static boolean inDevelopmentMode() {
 		return System.getProperty("osgi.dev") != null; //$NON-NLS-1$

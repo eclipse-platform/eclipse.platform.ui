@@ -71,6 +71,7 @@ public final class InternalPlatform {
 	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
 	private static String keyringFile;
 
+	//XXX This is not synchronized
 	private static Map logs = new HashMap(5);
 	private static final String NEW_UPDATES = "-newUpdates"; //$NON-NLS-1$
 

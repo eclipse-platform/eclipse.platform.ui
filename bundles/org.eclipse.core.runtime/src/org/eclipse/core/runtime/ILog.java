@@ -19,6 +19,8 @@ import org.osgi.framework.Bundle;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * XXX Need to create a new log interface on common plugin. That interface should be a super interface of this ILog.
+ * getBundle() would stay here. In the super interface we would have getName()
  */
 public interface ILog {
 	/**

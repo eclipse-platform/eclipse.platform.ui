@@ -220,6 +220,7 @@ public abstract class Plugin implements BundleActivator {
 	 * 
 	 * @param path path relative to plug-in installation location 
 	 * @return a URL for the given path or <code>null</code>
+	 * XXX deprecate and use {@link BundleFinder}
 	 */
 	public final URL find(IPath path) {
 		return BundleFinder.find(bundle, path, null);
@@ -238,6 +239,7 @@ public abstract class Plugin implements BundleActivator {
 	 * or does not contain the required substitution argument, the default
 	 * is used.
 	 * @return a URL for the given path or <code>null</code>
+	 * XXX deprecate and use {@link BundleFinder}
 	 */
 	public final URL find(IPath path, Map override) {
 		return BundleFinder.find(bundle, path, override);
@@ -265,6 +267,7 @@ public abstract class Plugin implements BundleActivator {
 	 * Returns the log for this plug-in.  If no such log exists, one is created.
 	 *
 	 * @return the log for this plug-in
+	 * XXX change this into a LogMgr service that would keep track of the map. See if it can be a service factory.
 	 */
 	public final ILog getLog() {
 		return InternalPlatform.getDefault().getLog(bundle);
@@ -286,6 +289,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @throws IllegalStateException, when the system is running with no data area (-data @none),
 	 * or when a data area has not been set yet.
 	 * @return a local file system path
+	 *  XXX Investigate the usage of a service factory (see also platform.getStateLocation)
 	 */
 	public final IPath getStateLocation() throws IllegalStateException {
 		return InternalPlatform.getDefault().getStateLocation(bundle, true);
@@ -318,6 +322,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @see Preferences#setValue(String, String)
 	 * @see Preferences#setToDefault(String)
 	 * @since 2.0
+	 * XXX deprecate since this does not leverage the config, project scopes, etc...
 	 */
 	public final Preferences getPluginPreferences() {
 		if (preferences != null) {
@@ -342,6 +347,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @see Preferences#store(OutputStream, String)
 	 * @see Preferences#needsSaving()
 	 * @since 2.0
+	 * XXX deprecate call flush on the node for this bundle on the instance scope
 	 */
 	public final void savePluginPreferences() {
 		// populate the "preferences" instvar. We still might
@@ -423,6 +429,7 @@ public abstract class Plugin implements BundleActivator {
 	 * </p>
 	 *
 	 * @return whether this plug-in is in debug mode
+	 * XXX deprecate use the service and cache as needed
 	 */
 	public boolean isDebugging() {
 		return debug;
@@ -437,6 +444,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @exception IOException if the given path cannot be found in this plug-in
 	 * 
 	 * @see #openStream(IPath,boolean)
+	 * XXX deprecate and use {@link BundleFinder}
 	 */
 	public final InputStream openStream(IPath file) throws IOException {
 		return BundleFinder.openStream(bundle, file, false);
@@ -460,6 +468,7 @@ public abstract class Plugin implements BundleActivator {
 	 *   as specified
 	 * @return an input stream
 	 * @exception IOException if the given path cannot be found in this plug-in
+	 * XXX deprecate and use {@link BundleFinder}
 	 */
 	public final InputStream openStream(IPath file, boolean localized) throws IOException {
 		return BundleFinder.openStream(bundle, file, localized);
@@ -477,6 +486,7 @@ public abstract class Plugin implements BundleActivator {
 	 * </p>
 	 *
 	 * @param value whether or not this plug-in is in debug mode
+	 * XXX deprecate use the service and cache as needed
 	 */
 	public void setDebugging(boolean value) {
 		debug = value;
