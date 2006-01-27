@@ -181,15 +181,19 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 				return (ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]);
 			} else {
 				// The resource is a parent of an in-scope resource
-				IResource[] roots = scope.getRoots();
+				// TODO: fails due to se of roots
+				ResourceMapping[] mappings = scope.getMappings(ModelProvider.RESOURCE_MODEL_PROVIDER_ID);
 				List result = new ArrayList();
-				for (int i = 0; i < roots.length; i++) {
-					IResource root = roots[i];
-					if (resource.getFullPath().isPrefixOf(root.getFullPath())) {
-						mapping = scope.getMapping(root);
-						if (mapping != null) {
-							ResourceTraversal[] traversals = scope.getTraversals(mapping);
-							result.addAll(Arrays.asList(traversals));
+				for (int i = 0; i < mappings.length; i++) {
+					ResourceMapping resourceMapping = mappings[i];
+					if (resourceMapping.getModelObject() instanceof IResource) {
+						IResource root = (IResource) resourceMapping.getModelObject();
+						if (resource.getFullPath().isPrefixOf(root.getFullPath())) {
+							mapping = scope.getMapping(root);
+							if (mapping != null) {
+								ResourceTraversal[] traversals = scope.getTraversals(mapping);
+								result.addAll(Arrays.asList(traversals));
+							}
 						}
 					}
 				}
