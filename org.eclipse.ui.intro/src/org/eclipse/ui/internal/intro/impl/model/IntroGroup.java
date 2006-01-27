@@ -16,6 +16,7 @@ import java.util.Enumeration;
 import org.eclipse.ui.intro.config.IntroElement;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 /**
  * An intro div.
@@ -85,8 +86,10 @@ public class IntroGroup extends AbstractIntroContainer {
     	}
     	// set value
     	String value = node.getValue();
-    	if (value!=null)
-    		clone.setNodeValue(value);
+    	if (value!=null) {
+    		Text textNode = target.getOwnerDocument().createTextNode(value);
+    		clone.appendChild(textNode);
+    	}
     	// clone children
     	IntroElement [] cnodes = node.getChildren();
     	if (cnodes.length>0)

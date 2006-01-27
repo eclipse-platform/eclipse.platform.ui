@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <introContent>
-	<page id="root" bgImage="$introBackgroundImage$">
-        <title>$introTitle$</title>
-        <group id="links-background">
+	<page id="root" alt-style="css/root_swt.properties" style="css/root.css" style-id="page"
+									 bgImage="$introBackgroundImage$">
+        <title style-id="intro-header">$introTitle$</title>
+        <group id="links-background" bgImage="css/graphics/root/circles.png">
            <group id="page-links" dynamic="true"/>
         </group>
+        <group id="branding" style-id="branding" bgImage="$introBrandingImage$">
+        </group>
     </page>
+    <page id="standby" alt-style="css/standby_swt.properties" style="css/standby_root.css" 
+    		 style-id="page" bgImage="$introBackgroundImage$">
+        <title style-id="intro-header">$introTitle$</title>
+        <group id="links-background">
+            <group id="page-links" dynamic="true">
+            </group>
+        </group>
+        <group id="branding" style-id="branding" bgImage="$introBrandingImage$">
+        </group>
+    </page>    
     <!-- 
     <page alt-style="css/root_swt.properties" style="css/root.css" id="root" style-id="page">
         <title style-id="intro-header">Welcome to Eclipse 3.2</title>

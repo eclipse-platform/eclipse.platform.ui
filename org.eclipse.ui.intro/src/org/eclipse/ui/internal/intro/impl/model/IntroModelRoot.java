@@ -14,9 +14,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPropertyListener;
@@ -114,7 +114,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private IConfigurationElement[] configExtensionElements;
 
     // maintain listener list for model changes.
-    public ListenerList propChangeListeners = new ListenerList(2);
+    public ListenerList propChangeListeners = new ListenerList();
 
     // a hashtable to hold all loaded DOMs until resolving all configExtensions
     // is done. Key is one extensionContent DOM element, while value is the

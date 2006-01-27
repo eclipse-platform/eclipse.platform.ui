@@ -25,25 +25,26 @@ public class IntroImage extends AbstractBaseIntroElement {
     private static final String ATT_SRC = "src"; //$NON-NLS-1$
     private static final String ATT_ALT = "alt"; //$NON-NLS-1$
 
-    private String srcAsIs;
+    private Element element;
     private String src;
-    private String alt;
+    private String base;
 
     IntroImage(Element element, Bundle bundle, String base) {
         super(element, bundle);
-        src = getAttribute(element, ATT_SRC);
-        srcAsIs = src;
-        alt = getAttribute(element, ATT_ALT);
-
-        // Resolve src.
-        src = BundleUtil.getResolvedResourceLocation(base, src, bundle);
+        this.element = element;
+        this.base = base;
+    }
+    
+    protected void loadFromParent() {
+    	// Resolve src.
+        src = BundleUtil.getResolvedResourceLocation(base, getSrcAsIs(), getBundle());
     }
 
     /**
      * @return Returns the alt.
      */
     public String getAlt() {
-        return alt;
+        return getAttribute(element, ATT_ALT);
     }
 
 
@@ -68,6 +69,6 @@ public class IntroImage extends AbstractBaseIntroElement {
      *         url. The src value is relative to the parent plugin.
      */
     public String getSrcAsIs() {
-        return srcAsIs;
+        return getAttribute(element, ATT_SRC);
     }
 }

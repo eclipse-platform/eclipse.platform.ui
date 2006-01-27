@@ -258,6 +258,9 @@ public abstract class AbstractIntroElement implements Cloneable {
             return element.getAttribute(att).split(","); //$NON-NLS-1$
         return null;
     }
+    
+    protected void loadFromParent() {
+    }
 
 
     /**
@@ -311,6 +314,8 @@ public abstract class AbstractIntroElement implements Cloneable {
      */
     public void setParent(AbstractIntroElement parent) {
         this.parent = parent;
+        if (parent!=null)
+        	loadFromParent();
     }
 
     public void setBundle(Bundle bundle) {

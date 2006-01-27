@@ -18,6 +18,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.AbstractBaseIntroElement;
@@ -309,9 +310,21 @@ public class IntroHTMLGenerator {
                 indentLevel + 1);
             divElement.addContent(divLabel);
         }
-        if (element.getBackgroundImage() != null)
-        	divElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE,
-        	"style=\"background-image : url("+element.getBackgroundImage()+")\""); //$NON-NLS-1$
+        if (element.getBackgroundImage() != null) {
+        	String imageUrl = element.getBackgroundImage();
+        	String style;
+        	if (Platform.getWS().equals(Platform.WS_WIN32) &&
+        			imageUrl.toLowerCase().endsWith(".png")) {
+        		// IE 5.5+ does not handle alphas in PNGs without
+        		// this hack. Remove when IE7 becomes widespread
+        		imageUrl = BundleUtil.getResolvedResourceLocation(element.getBase(), imageUrl, element.getBundle());
+           		style = "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"+imageUrl+"', sizingMethod='crop');";
+        	}
+        	else {
+           		style = "background-image : url("+imageUrl+")"; //$NON-NLS-1$
+        	}
+        	divElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE, style);
+        }
         // Add any children of the div, in the order they are defined
         AbstractIntroElement[] children = element.getChildren();
         for (int i = 0; i < children.length; i++) {
@@ -888,7 +901,21 @@ public class IntroHTMLGenerator {
             String imageClass, int indentLevel) {
         HTMLElement image = new FormattedHTMLElement(
             IIntroHTMLConstants.ELEMENT_IMG, indentLevel, true, false);
-        image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SRC, imageSrc);
+        if (Platform.getWS().equals(Platform.WS_WIN32) && imageSrc.toLowerCase().endsWith(".png")) {
+        	// we must handle PNGs here - IE does not support alpha blanding well.
+        	// We will set the alpha image loader and load the real image
+        	// that way. The 'src' attribute in the image itself will
+        	// get the blank image.
+            String blankImageURL = BundleUtil.getResolvedResourceLocation(
+                    IIntroHTMLConstants.IMAGE_SRC_BLANK, IIntroConstants.PLUGIN_ID);
+            if (blankImageURL!=null) {
+            	image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SRC, blankImageURL);
+            	String style = "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"+imageSrc+"', sizingMethod='scale')";
+            	image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE, style);
+            }
+        }
+        else 
+        	image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SRC, imageSrc);
         if (altText == null)
             altText = ""; //$NON-NLS-1$
         image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ALT, altText);
