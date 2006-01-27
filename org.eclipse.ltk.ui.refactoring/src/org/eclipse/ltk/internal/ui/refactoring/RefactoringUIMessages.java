@@ -186,6 +186,7 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String AbstractRefactoringModelMerger_wizard_title;
 	public static String AbstractRefactoringModelMerger_wizard_description;
+	public static String AbstractRefactoringModelMerger_accept_question;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringUIMessages.class);
