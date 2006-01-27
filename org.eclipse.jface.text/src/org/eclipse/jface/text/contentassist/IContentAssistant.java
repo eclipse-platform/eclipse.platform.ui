@@ -40,6 +40,15 @@ import org.eclipse.jface.text.ITextViewer;
  *				<li>insertion of common completion prefixes</li>
  *			</ul>
  * </li>
+ * <li>{@link org.eclipse.jface.text.contentassist.IContentAssistantExtension2} since version 3.2 introducing
+ *		the following functions:
+ *			<ul>
+ *				<li>repeated invocation (cycling) mode</li>
+ *				<li>completion listeners</li>
+ *				<li>a local status line for the completion popup</li>
+ *				<li>control over the behavior when no proposals are available</li>
+ *			</ul>
+ * </li>
  * </ul>
  * </p>
  * <p>

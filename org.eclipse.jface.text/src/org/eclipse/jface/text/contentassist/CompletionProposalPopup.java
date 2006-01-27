@@ -428,7 +428,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 3.2
 	 */
 	private void handleRepeatedInvocation() {
-		if (fContentAssistant.isCyclingMode()) {
+		if (fContentAssistant.isRepeatedInvocationMode()) {
 			fComputedProposals= computeProposals(fFilterOffset);
 			setProposals(fComputedProposals, false);
 		}
@@ -488,19 +488,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 		layout.verticalSpacing= 1;
 		fProposalShell.setLayout(layout);
 		
-		if (fContentAssistant.isCyclingMode()) {
-			fMessageText= new Label(fProposalShell, SWT.RIGHT);
-			GridData textData= new GridData(SWT.FILL, SWT.BOTTOM, true, false);
-			fMessageText.setLayoutData(textData);
-			fMessageText.setText(fContentAssistant.getMessage() + " "); //$NON-NLS-1$
-			Font font= fMessageText.getFont();
-			Display display= fProposalShell.getDisplay();
-			FontData[] fontDatas= font.getFontData();
-			for (int i= 0; i < fontDatas.length; i++)
-				fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
-			fMessageTextFont= new Font(display, fontDatas);
-			fMessageText.setFont(fMessageTextFont);
-			fMessageText.setCursor(fProposalShell.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+		if (fContentAssistant.isStatusLineVisible()) {
+			createMessageText();
 		}
 
 		GridData data= new GridData(GridData.FILL_BOTH);
@@ -534,16 +523,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (!"carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
 			fProposalShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_GRAY));
 
-		Color c= fContentAssistant.getProposalSelectorBackground();
-		if (c == null)
-			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		Color c= getBackgroundColor(control);
 		fProposalTable.setBackground(c);
-		if (fMessageText != null)
-			fMessageText.setBackground(c);
 
-		c= fContentAssistant.getProposalSelectorForeground();
-		if (c == null)
-			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		c= getForegroundColor(control);
 		fProposalTable.setForeground(c);
 
 		fProposalTable.addSelectionListener(new SelectionListener() {
@@ -565,11 +548,64 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		fProposalTable.setHeaderVisible(false);
 		fContentAssistant.addToLayout(this, fProposalShell, ContentAssistant.LayoutManager.LAYOUT_PROPOSAL_SELECTOR, fContentAssistant.getSelectionOffset());
-		
-		if (fMessageText != null) {
+	}
+
+	/**
+	 * Returns the background color to use.
+	 * 
+	 * @param control the control to get the display from
+	 * @return the background color
+	 * @since 3.2
+	 */
+	private Color getBackgroundColor(Control control) {
+		Color c= fContentAssistant.getProposalSelectorBackground();
+		if (c == null)
+			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		return c;
+	}
+
+	/**
+	 * Returns the foreground color to use.
+	 * 
+	 * @param control the control to get the display from
+	 * @return the foreground color
+	 * @since 3.2
+	 */
+	private Color getForegroundColor(Control control) {
+		Color c= fContentAssistant.getProposalSelectorForeground();
+		if (c == null)
+			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		return c;
+	}
+	
+	/**
+	 * Creates the caption line under the proposal table.
+	 * 
+	 * @since 3.2
+	 */
+	private void createMessageText() {
+		if (fMessageText == null) {
+			fMessageText= new Label(fProposalShell, SWT.RIGHT);
+			GridData textData= new GridData(SWT.FILL, SWT.BOTTOM, true, false);
+			fMessageText.setLayoutData(textData);
+			fMessageText.setText(fContentAssistant.getStatusMessage() + " "); //$NON-NLS-1$
+			if (fMessageTextFont == null) {
+				Font font= fMessageText.getFont();
+				Display display= fProposalShell.getDisplay();
+				FontData[] fontDatas= font.getFontData();
+				for (int i= 0; i < fontDatas.length; i++)
+					fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
+				fMessageTextFont= new Font(display, fontDatas);
+			}
+			fMessageText.setFont(fMessageTextFont);
+			fMessageText.setCursor(fProposalShell.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+			fMessageText.setBackground(getBackgroundColor(fProposalShell));
+			fMessageText.setForeground(getForegroundColor(fProposalShell));
+			
 			fMessageText.addMouseListener(new MouseAdapter() {
 				public void mouseUp(MouseEvent e) {
 					fLastCompletionOffset= fFilterOffset;
+					fProposalTable.setFocus();
 					handleRepeatedInvocation();
 				}
 				
@@ -1504,7 +1540,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	
 	/**
 	 * Sets the message for the repetition affordance text at the bottom of the proposal. Only has
-	 * an effect if {@link ContentAssistant#isCyclingMode()} returns <code>true</code>.
+	 * an effect if {@link ContentAssistant#isRepeatedInvocationMode()} returns <code>true</code>.
 	 * 
 	 * @param message the new caption
 	 * @since 3.2
@@ -1525,5 +1561,24 @@ class CompletionProposalPopup implements IContentAssistListener {
 	void setEmptyMessage(String message) {
 		Assert.isNotNull(message);
 		fEmptyMessage= message;
+	}
+
+	/**
+	 * Enables or disables showing of the caption line. See also {@link #setMessage(String)}.
+	 * 
+	 * @param show
+	 * @since 3.2
+	 */
+	public void setStatusLineVisible(boolean show) {
+		if (!isActive() || show == (fMessageText != null))
+			return; // nothing to do
+		
+		if (show) {
+			createMessageText();
+		} else {
+			fMessageText.dispose();
+			fMessageText= null;
+		}
+		fProposalShell.layout();
 	}
 }

@@ -67,7 +67,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
  * The standard implementation of the <code>IContentAssistant</code> interface.
  * Usually, clients instantiate this class and configure it before using it.
  */
-public class ContentAssistant implements IContentAssistant, IContentAssistantExtension, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
+public class ContentAssistant implements IContentAssistant, IContentAssistantExtension, IContentAssistantExtension2, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
 	
 	/**
 	 * A generic closer class used to monitor various
@@ -774,13 +774,19 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * 
 	 * @since 3.2
 	 */
-	private boolean fIsCyclingMode= false;
+	private boolean fIsRepetitionMode= false;
 	/**
 	 * The show empty property.
 	 * 
 	 * @since 3.2
 	 */
 	private boolean fShowEmptyList= false;
+	/**
+	 * The message line property.
+	 * 
+	 * @since 3.2
+	 */
+	private boolean fIsStatusLineVisible;
 
 	/**
 	 * Creates a new content assistant. The content assistant is not automatically activated,
@@ -1911,30 +1917,20 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		return fProposalPopup.hasFocus();
 	}
 	
-	/**
-	 * Adds a completion listener that will be informed before proposals are computed.
-	 * <p>
-	 * XXX this API is provisional and may change anytime during the course of 3.2
-	 * </p>
-	 * 
-	 * @param listener the listener
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension2#addCompletionListener(org.eclipse.jface.text.contentassist.ICompletionListener)
 	 * @since 3.2
 	 */
 	public void addCompletionListener(ICompletionListener listener) {
-		Assert.isNotNull(listener);
+		Assert.isLegal(listener != null);
 		fCompletionListeners.add(listener);
 	}
 	
-	/**
-	 * Removes the completion listener.
-	 * <p>
-	 * XXX this API is provisional and may change anytime during the course of 3.2
-	 * </p>
-	 * 
-	 * @param listener the listener to remove
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension2#removeCompletionListener(org.eclipse.jface.text.contentassist.ICompletionListener)
 	 * @since 3.2
 	 */
-	public void removeListener(ICompletionListener listener) {
+	public void removeCompletionListener(ICompletionListener listener) {
 		fCompletionListeners.remove(listener);
 	}
 
@@ -1960,38 +1956,28 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 	}
 
-	/**
-	 * Enables cycling mode, which will cause a user affordance to be displayed at the bottom of the
-	 * completion pop-up. The default is no cycling.
-	 * <p>
-	 * XXX this API is provisional and may change anytime during the course of 3.2
-	 * </p>
-	 * 
-	 * @param cycling <code>true</code> to enable cycling mode, <code>false</code> to disable
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension2#setRepeatedInvocationMode(boolean)
 	 * @since 3.2
 	 */
-	public void setCyclingMode(boolean cycling) {
-		fIsCyclingMode= cycling;
+	public void setRepeatedInvocationMode(boolean cycling) {
+		fIsRepetitionMode= cycling;
 	}
 
 	/**
-	 * Returns <code>true</code> if cycling mode is enabled, <code>false</code> otherwise.
+	 * Returns <code>true</code> if repeated invocation mode is enabled, <code>false</code>
+	 * otherwise.
 	 * 
-	 * @return <code>true</code> if cycling mode is enabled, <code>false</code> otherwise
+	 * @return <code>true</code> if repeated invocation mode is enabled, <code>false</code>
+	 *         otherwise
 	 * @since 3.2
 	 */
-	boolean isCyclingMode() {
-		return fIsCyclingMode;
+	boolean isRepeatedInvocationMode() {
+		return fIsRepetitionMode;
 	}
 	
-	/**
-	 * Enables displaying an empty completion proposal pop-up. The default is not to show an empty
-	 * list.
-	 * <p>
-	 * XXX this API is provisional and may change anytime during the course of 3.2
-	 * </p>
-	 * 
-	 * @param showEmpty <code>true</code> to show empty lists
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension2#setShowEmptyList(boolean)
 	 * @since 3.2
 	 */
 	public void setShowEmptyList(boolean showEmpty) {
@@ -2010,16 +1996,33 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		return fShowEmptyList;
 	}
 
-	/**
-	 * Sets the caption message displayed at the bottom of the completion proposal popup.
-	 * <p>
-	 * XXX this API is provisional and may change anytime during the course of 3.2
-	 * </p>
-	 * 
-	 * @param message the message
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension2#setStatusLineVisible(boolean)
 	 * @since 3.2
 	 */
-	public void setMessage(String message) {
+	public void setStatusLineVisible(boolean show) {
+		fIsStatusLineVisible= show;
+		if (fProposalPopup != null)
+			fProposalPopup.setStatusLineVisible(show);
+	}
+	
+	/**
+	 * Returns <code>true</code> if a message line should be displayed, <code>false</code>
+	 * otherwise.
+	 * 
+	 * @return <code>true</code> if a message line should be displayed, <code>false</code>
+	 *         otherwise
+	 * @since 3.2
+	 */
+	boolean isStatusLineVisible() {
+		return fIsStatusLineVisible;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension2#setStatusMessage(java.lang.String)
+	 * @since 3.2
+	 */
+	public void setStatusMessage(String message) {
 		Assert.isLegal(message != null);
 		fMessage= message;
 		if (fProposalPopup != null)
@@ -2032,18 +2035,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @return the affordance caption for the cycling affordance at the bottom of the pop-up
 	 * @since 3.2
 	 */
-	String getMessage() {
+	String getStatusMessage() {
 		return fMessage;
 	}
 
-	/**
-	 * Sets the text to be shown if no proposals are available and
-	 * {@link #setShowEmptyList(boolean) empty lists} are displayed.
-	 * <p>
-	 * XXX this API is provisional and may change anytime during the course of 3.2
-	 * </p>
-	 * 
-	 * @param message the text for the empty list
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension2#setEmptyMessage(java.lang.String)
 	 * @since 3.2
 	 */
 	public void setEmptyMessage(String message) {

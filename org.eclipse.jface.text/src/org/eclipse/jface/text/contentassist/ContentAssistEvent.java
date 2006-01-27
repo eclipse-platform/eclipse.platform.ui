@@ -13,7 +13,7 @@ package org.eclipse.jface.text.contentassist;
  */
 public final class ContentAssistEvent {
 
-	ContentAssistEvent(ContentAssistant ca, IContentAssistProcessor proc) {
+	ContentAssistEvent(IContentAssistant ca, IContentAssistProcessor proc) {
 		assistant= ca;
 		processor= proc;
 	}
@@ -21,6 +21,9 @@ public final class ContentAssistEvent {
 	/**
 	 * The content assistant computing proposals.
 	 */
-	public final ContentAssistant assistant;
+	public final IContentAssistant assistant;
+	/**
+	 * The processor for the current partition.
+	 */
 	public final IContentAssistProcessor processor;
 }
