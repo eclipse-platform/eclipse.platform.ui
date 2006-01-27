@@ -304,8 +304,8 @@ public class RefactoringHistoryWizard extends Wizard {
 	/**
 	 * Adds user defined wizard pages in front of the wizard.
 	 * <p>
-	 * Clients may extend this method to add custom wizard pages in front
-	 * of the wizard.
+	 * Clients may extend this method to add custom wizard pages in front of the
+	 * wizard.
 	 * </p>
 	 */
 	protected void addUserDefinedPages() {
@@ -965,7 +965,8 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Hook method which is called when the specified refactoring has been
-	 * performed. This method may be called from non-UI threads.
+	 * performed, e.g. its change object has been successfully applied to the
+	 * workspace. This method may be called from non-UI threads.
 	 * <p>
 	 * Subclasses may reimplement this method to perform any special processing.
 	 * </p>
@@ -1011,8 +1012,8 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * 
 	 * @param entry
 	 *            the status entry to select
-	 * @return <code>true</code> if the status entry passes the
-	 *         filter, <code>false</code> otherwise
+	 * @return <code>true</code> if the status entry passes the filter,
+	 *         <code>false</code> otherwise
 	 */
 	protected boolean selectStatusEntry(final RefactoringStatusEntry entry) {
 		return true;
