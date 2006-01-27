@@ -23,6 +23,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.internal.ui.contexts.IDebugContextManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -180,7 +181,12 @@ public abstract class AbstractDebugContextActionDelegate implements IWorkbenchWi
 	 */
 	public void init(IWorkbenchWindow window) {
 		setWindow(window);
-		DebugContextManager.getDefault().addDebugContextListener(this, window);
+		IDebugContextManager manager = DebugContextManager.getDefault();
+		manager.addDebugContextListener(this, window);
+		ISelection activeContext = manager.getActiveContext(window);
+		if (activeContext != null) {
+			contextActivated(activeContext, null);
+		}
 	}
 
 	/*
