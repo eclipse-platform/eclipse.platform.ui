@@ -255,6 +255,11 @@ public interface IRegistryConstants {
 	public static String ATTRIBUTE_RETARGET = "retarget"; //$NON-NLS-1$
 
 	/**
+	 * The name of the returnTypeId attribute, which appears on command elements.
+	 */
+	public static String ATTRIBUTE_RETURN_TYPE_ID = "returnTypeId"; //$NON-NLS-1$
+	
+	/**
 	 * The name of the attribute storing the identifier for the active scheme.
 	 * This is called a 'keyConfigurationId' for legacy reasons.
 	 */
