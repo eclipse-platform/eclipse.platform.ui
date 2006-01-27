@@ -1054,6 +1054,8 @@ public class EditorManager implements IExtensionChangeHandler {
 	 */
 	public static boolean saveAll(List dirtyParts, boolean confirm, boolean closing,
 			final IWorkbenchWindow window) {
+		// clone the input list
+		dirtyParts = new ArrayList(dirtyParts);
     	List documentsToSave;
 		if (confirm) {
 			boolean saveable2Processed = false;
