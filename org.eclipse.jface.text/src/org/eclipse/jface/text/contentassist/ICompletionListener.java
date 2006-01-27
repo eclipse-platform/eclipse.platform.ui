@@ -1,7 +1,7 @@
 package org.eclipse.jface.text.contentassist;
 
 /**
- * A completion listener is informed before the content assisant computes completion proposals.
+ * A completion listener is informed before the content assistant computes completion proposals.
  * <p>
  * Clients may implement this interface.
  * </p>
