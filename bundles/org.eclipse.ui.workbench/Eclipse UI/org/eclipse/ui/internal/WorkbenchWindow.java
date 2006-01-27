@@ -108,6 +108,7 @@ import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.layout.CacheWrapper;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.TrimLayout;
+import org.eclipse.ui.internal.menus.WindowMenuService;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
@@ -118,6 +119,7 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.menus.IMenuService;
 
 /**
  * A window within the workbench.
@@ -3339,6 +3341,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		final IContextService contextService = new SlaveContextService(
 				parentContextService, defaultExpression);
 		serviceLocator.registerService(IContextService.class, contextService);
+
+		final IMenuService parentMenuService = (IMenuService) serviceLocator
+				.getService(IMenuService.class);
+		final IMenuService menuService = new WindowMenuService(
+				parentMenuService, this);
+		serviceLocator.registerService(IMenuService.class, menuService);
 
 		final ActionCommandMappingService mappingService = new ActionCommandMappingService();
 		serviceLocator.registerService(IActionCommandMappingService.class,

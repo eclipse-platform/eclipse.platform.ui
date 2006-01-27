@@ -32,7 +32,6 @@ import org.eclipse.ui.menus.IMenuService;
  * <p>
  * Provides services related to contributing menu elements to the workbench.
  * </p>
- * </p>
  * <p>
  * This class is only intended for internal use within the
  * <code>org.eclipse.ui.workbench</code> plug-in.
@@ -46,13 +45,14 @@ import org.eclipse.ui.menus.IMenuService;
  * 
  * @since 3.2
  */
-public final class MenuService implements IMenuService {
+public final class WorkbenchMenuService implements IMenuService {
 
 	/**
-	 * The central authority for determining which menus are visible.
+	 * The central authority for determining which menus are visible within this
+	 * window.
 	 */
 	private final MenuAuthority menuAuthority;
-
+	
 	/**
 	 * The menu manager underlying this menu service; never <code>null</code>.
 	 */
@@ -72,15 +72,16 @@ public final class MenuService implements IMenuService {
 	 * @param commandService
 	 *            The command service to use; must not be <code>null</code>.
 	 */
-	public MenuService(final SMenuManager menuManager,
+	public WorkbenchMenuService(final SMenuManager menuManager,
 			final ICommandService commandService) {
-		this.menuAuthority = new MenuAuthority();
+		this.menuAuthority = new MenuAuthority(null);
 		this.menuManager = menuManager;
 		this.menuPersistence = new MenuPersistence(this, commandService);
 	}
 
 	public final void addSourceProvider(final ISourceProvider provider) {
-		menuAuthority.addSourceProvider(provider);
+		throw new UnsupportedOperationException(
+				"The workbench menu service does not track sources"); //$NON-NLS-1$
 	}
 
 	public final IMenuContribution contributeMenu(final MenuElement menuElement) {
@@ -96,7 +97,6 @@ public final class MenuService implements IMenuService {
 	}
 
 	public final void dispose() {
-		menuAuthority.dispose();
 		menuPersistence.dispose();
 	}
 
@@ -164,6 +164,7 @@ public final class MenuService implements IMenuService {
 	}
 
 	public final void removeSourceProvider(final ISourceProvider provider) {
-		menuAuthority.removeSourceProvider(provider);
+		throw new UnsupportedOperationException(
+				"The workbench menu service does not track sources"); //$NON-NLS-1$
 	}
 }
