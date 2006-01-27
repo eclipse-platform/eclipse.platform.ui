@@ -249,7 +249,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fBatchedUpdates = new HashSet();
 		fListener = new ISearchResultListener() {
 			public void searchResultChanged(SearchResultEvent e) {
-				handleSearchResultsChanged(e);
+				handleSearchResultChanged(e);
 			}
 		};
 
@@ -718,7 +718,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		updateBusyLabel();
 		turnOffDecoration();
 		scheduleUIUpdate();
-	}
+	}	
 
 	/**
 	 * {@inheritDoc}
@@ -993,7 +993,13 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	// multi-threaded update handling.
-	private synchronized void handleSearchResultsChanged(final SearchResultEvent e) {
+	
+	/**
+	 * Handles a search result event for the current search result.
+	 * 
+	 * @since 3.2
+	 */
+	protected void handleSearchResultChanged(final SearchResultEvent e) {
 		if (e instanceof MatchEvent) {
 			MatchEvent me = (MatchEvent) e;
 			postUpdate(me.getMatches());
@@ -1008,9 +1014,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 		scheduleUIUpdate();
 	}
-	
-
-
 
 	private synchronized void runBatchedUpdates() {
 		if (false /*fBatchedUpdates.size() > 50*/) {
@@ -1028,7 +1031,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		updateBusyLabel();
 	}
 
-	private void postClear() {
+	private synchronized void postClear() {
 		asyncExec(new Runnable() {
 			public void run() {
 				runClear();
