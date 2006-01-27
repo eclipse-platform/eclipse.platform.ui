@@ -1154,21 +1154,26 @@ public class EditorManager implements IExtensionChangeHandler {
 				String message = NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, doc.getName()); 
 				// Show a dialog.
 				String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
-					MessageDialog d = new MessageDialog(
-						window.getShell(), WorkbenchMessages.Save_Resource,
-						null, message, MessageDialog.QUESTION, buttons, 0);
-				int choice = d.open();
+				MessageDialog d = new MessageDialog(
+					window.getShell(), WorkbenchMessages.Save_Resource,
+					null, message, MessageDialog.QUESTION, buttons, 0);
 				
+				int choice = SaveableHelper.testGetAutomatedResponse();
+				if (SaveableHelper.testGetAutomatedResponse() == SaveableHelper.USER_RESPONSE) {
+					choice = d.open();
+				}
+
 				// Branch on the user choice.
-				// The choice id is based on the order of button labels above.
+				// The choice id is based on the order of button labels
+				// above.
 				switch (choice) {
-					case ISaveablePart2.YES : //yes
-						break;
-					case ISaveablePart2.NO : //no
-						return true;
-					default :
-					case ISaveablePart2.CANCEL : //cancel
-						return false;
+				case ISaveablePart2.YES: // yes
+					break;
+				case ISaveablePart2.NO: // no
+					return true;
+				default:
+				case ISaveablePart2.CANCEL: // cancel
+					return false;
 				}
             }
             else {
