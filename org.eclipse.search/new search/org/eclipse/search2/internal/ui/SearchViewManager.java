@@ -14,6 +14,7 @@ package org.eclipse.search2.internal.ui;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -115,11 +116,29 @@ public class SearchViewManager {
 		}	
 	}
 
-	private ISearchResultViewPart findLRUSearchResultView(IWorkbenchPage page, boolean noPinnedViews) {
+	private ISearchResultViewPart findLRUSearchResultView(IWorkbenchPage page, boolean avoidPinnedViews) {
+		boolean viewFoundInPage= false;
 		for (Iterator iter= fLRUSearchViews.iterator(); iter.hasNext();) {
 			SearchView view= (SearchView) iter.next();
-			if (page.equals(view.getSite().getPage()) && !(noPinnedViews && view.isPinned())) {
-				return view;
+			if (page.equals(view.getSite().getPage())) {
+				if (!avoidPinnedViews || !view.isPinned()) {
+					return view;
+				}
+				viewFoundInPage= true;
+			}
+		}
+		if (!viewFoundInPage) {
+			// find unresolved views
+			IViewReference[] viewReferences= page.getViewReferences();
+			for (int i= 0; i < viewReferences.length; i++) {
+				IViewReference curr= viewReferences[i];
+				if (NewSearchUI.SEARCH_VIEW_ID.equals(curr.getId()) && page.equals(curr.getPage())) {
+					SearchView view= (SearchView) curr.getView(true);
+					if (view != null && !avoidPinnedViews || !view.isPinned()) {
+						return view;
+					}
+					
+				}
 			}
 		}
 		return null;
