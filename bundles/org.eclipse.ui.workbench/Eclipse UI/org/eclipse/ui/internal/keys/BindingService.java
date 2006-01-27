@@ -117,6 +117,10 @@ public final class BindingService implements IBindingService {
 		return bindingManager.getBestActiveBindingFor(commandId);
 	}
 
+	public final String getBestActiveBindingFormattedFor(final String commandId) {
+		return bindingManager.getBestActiveBindingFormattedFor(commandId);
+	}
+
 	public final Binding[] getBindings() {
 		return bindingManager.getBindings();
 	}
