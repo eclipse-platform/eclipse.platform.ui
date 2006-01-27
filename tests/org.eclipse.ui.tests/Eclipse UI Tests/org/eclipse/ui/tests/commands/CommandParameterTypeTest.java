@@ -243,6 +243,19 @@ public class CommandParameterTypeTest extends UITestCase {
 	}
 	
 	
+	/**
+	 * Test {@link Command#getReturnType()}, making sure we can get the return
+	 * type of the subtract command.
+	 */
+	public void testGetReturnType() throws CommandException {
+		ICommandService commandService = getCommandService();
+		Command command = commandService.getCommand(SUBTRACT);
+		
+		ParameterType returnType = command.getReturnType();
+		assertNotNull(returnType);
+		assertEquals(TYPE, returnType.getId());
+	}
+	
 	private ICommandService getCommandService() {
 		Object serviceObject = getWorkbench().getAdapter(ICommandService.class);
 		if (serviceObject != null) {

@@ -197,6 +197,10 @@ final class CommandPersistence extends RegistryPersistence {
 			// Read out the parameters.
 			final Parameter[] parameters = readParameters(configurationElement,
 					warningsToLog, commandService);
+			
+			// Read out the returnTypeId.
+			final String returnTypeId = readOptional(configurationElement,
+					ATTRIBUTE_RETURN_TYPE_ID);
 
 			final Command command = commandService.getCommand(commandId);
 			final Category category = commandService.getCategory(categoryId);
@@ -207,8 +211,15 @@ final class CommandPersistence extends RegistryPersistence {
 						configurationElement, commandId,
 						"categoryId", categoryId); //$NON-NLS-1$
 			}
+			
+			final ParameterType returnType;
+			if (returnTypeId == null) {
+				returnType = null;
+			} else {
+				returnType = commandService.getParameterType(returnTypeId);
+			}
 
-			command.define(name, description, category, parameters);
+			command.define(name, description, category, parameters, returnType);
 			readState(configurationElement, warningsToLog, command);
 		}
 

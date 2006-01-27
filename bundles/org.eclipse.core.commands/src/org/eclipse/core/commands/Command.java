@@ -90,6 +90,14 @@ public final class Command extends NamedHandleObjectWithState implements
 	 * is undefined. It may also be empty.
 	 */
 	private IParameter[] parameters = null;
+	
+	/**
+	 * The type of the return value of this command. This value may be
+	 * <code>null</code> if the command does not declare a return type.
+	 * 
+	 * @since 3.2
+	 */
+	private ParameterType returnType = null;
 
 	/**
 	 * Constructs a new instance of <code>Command</code> based on the given
@@ -193,7 +201,7 @@ public final class Command extends NamedHandleObjectWithState implements
 		}
 		return compareTo;
 	}
-
+	
 	/**
 	 * <p>
 	 * Defines this command by giving it a name, and possibly a description as
@@ -216,6 +224,37 @@ public final class Command extends NamedHandleObjectWithState implements
 	 */
 	public final void define(final String name, final String description,
 			final Category category, final IParameter[] parameters) {
+		define(name, description, category, parameters, null);
+	}
+
+	/**
+	 * <p>
+	 * Defines this command by giving it a name, and possibly a description as
+	 * well. The defined property automatically becomes <code>true</code>.
+	 * </p>
+	 * <p>
+	 * Notification is sent to all listeners that something has changed.
+	 * </p>
+	 * 
+	 * @param name
+	 *            The name of this command; must not be <code>null</code>.
+	 * @param description
+	 *            The description for this command; may be <code>null</code>.
+	 * @param category
+	 *            The category for this command; must not be <code>null</code>.
+	 * @param parameters
+	 *            The parameters understood by this command. This value may be
+	 *            either <code>null</code> or empty if the command does not
+	 *            accept parameters.
+	 * @param returnType
+	 *            The type of value returned by this command. This value may be
+	 *            <code>null</code> if the command does not declare a return
+	 *            type.
+	 * @since 3.2
+	 */
+	public final void define(final String name, final String description,
+			final Category category, final IParameter[] parameters,
+			ParameterType returnType) {
 		if (name == null) {
 			throw new NullPointerException(
 					"The name of a command cannot be null"); //$NON-NLS-1$
@@ -242,10 +281,14 @@ public final class Command extends NamedHandleObjectWithState implements
 		final boolean parametersChanged = !Util.equals(this.parameters,
 				parameters);
 		this.parameters = parameters;
+		
+		final boolean returnTypeChanged = !Util.equals(this.returnType,
+				returnType);
+		this.returnType = returnType;
 
 		fireCommandChanged(new CommandEvent(this, categoryChanged,
 				definedChanged, descriptionChanged, false, nameChanged,
-				parametersChanged));
+				parametersChanged, returnTypeChanged));
 	}
 
 	/**
@@ -621,6 +664,27 @@ public final class Command extends NamedHandleObjectWithState implements
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns the {@link ParameterType} for the return value of this command or
+	 * <code>null</code> if this command does not declare a return value
+	 * parameter type.
+	 * 
+	 * @return The {@link ParameterType} for the return value of this command or
+	 *         <code>null</code> if this command does not declare a return
+	 *         value parameter type.
+	 * @throws NotDefinedException
+	 *             If the handle is not currently defined.
+	 * @since 3.2
+	 */
+	public final ParameterType getReturnType() throws NotDefinedException {
+		if (!isDefined()) {
+			throw new NotDefinedException(
+					"Cannot get the return type of an undefined command"); //$NON-NLS-1$
+		}
+		
+		return returnType;
+	}
 
 	/**
 	 * Returns whether this command has a handler, and whether this handler is
@@ -762,7 +826,7 @@ public final class Command extends NamedHandleObjectWithState implements
 
 		// Send notification
 		fireCommandChanged(new CommandEvent(this, false, false, false, true,
-				false, false));
+				false, false, false));
 
 		return true;
 	}
@@ -788,6 +852,8 @@ public final class Command extends NamedHandleObjectWithState implements
 			stringBuffer.append(handler);
 			stringBuffer.append(',');
 			stringBuffer.append(parameters);
+			stringBuffer.append(',');
+			stringBuffer.append(returnType);
 			stringBuffer.append(',');
 			stringBuffer.append(defined);
 			stringBuffer.append(')');
@@ -818,6 +884,9 @@ public final class Command extends NamedHandleObjectWithState implements
 
 		final boolean parametersChanged = parameters != null;
 		parameters = null;
+		
+		final boolean returnTypeChanged = returnType != null;
+		returnType = null;
 
 		final String[] stateIds = getStateIds();
 		if (stateIds != null) {
@@ -843,6 +912,6 @@ public final class Command extends NamedHandleObjectWithState implements
 
 		fireCommandChanged(new CommandEvent(this, categoryChanged,
 				definedChanged, descriptionChanged, false, nameChanged,
-				parametersChanged));
+				parametersChanged, returnTypeChanged));
 	}
 }

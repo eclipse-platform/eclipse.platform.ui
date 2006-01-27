@@ -2164,7 +2164,8 @@
       <command
             defaultHandler="org.eclipse.ui.tests.commands.SubtractIntegerHandler"
             id="org.eclipse.ui.tests.commands.subtractInteger"
-            name="Subtract 2 Integers">
+            name="Subtract 2 Integers"
+            returnTypeId="org.eclipse.ui.tests.commands.Integer">
          <commandParameter
                id="minuend"
                name="Minuend"

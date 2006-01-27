@@ -187,6 +187,13 @@ This element has been replaced with a preference.  If your application needs to 
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="returnTypeId" type="string">
+            <annotation>
+               <documentation>
+                  The id of a commandParameterType indicating the type of value returned by this command.  Specifying a returnTypeId allows clients executing the command to associate the value returned with a Java type and to convert the value to a String form that may be stored and/or passed to another command that accepts parameters of the same type.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
