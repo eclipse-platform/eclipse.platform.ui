@@ -43,6 +43,8 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.commands.ActionHandler;
+import org.eclipse.jface.menus.ILayoutNode;
+import org.eclipse.jface.menus.SMenuLayout;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
@@ -108,6 +110,7 @@ import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.layout.CacheWrapper;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.TrimLayout;
+import org.eclipse.ui.internal.menus.LegacyMenuManager;
 import org.eclipse.ui.internal.menus.WindowMenuService;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
@@ -1021,7 +1024,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @return a menu manager for this workbench window; never <code>null</code>.
 	 */
 	protected MenuManager createMenuManager() {
-		return new LegacyMenuManager(this);
+		final IMenuService menuService = (IMenuService) getService(IMenuService.class);
+		final SMenuLayout layout = menuService.getLayout();
+		final ILayoutNode layoutNode = layout.getMenuBar();
+		return new LegacyMenuManager(this, layoutNode);
 	}
 
 	/**
