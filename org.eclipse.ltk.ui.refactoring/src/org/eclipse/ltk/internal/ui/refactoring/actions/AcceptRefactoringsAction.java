@@ -11,6 +11,7 @@
 package org.eclipse.ltk.internal.ui.refactoring.actions;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -26,6 +27,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImple
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.internal.ui.refactoring.model.ModelMessages;
 
 import org.eclipse.swt.widgets.Shell;
@@ -103,7 +105,11 @@ public final class AcceptRefactoringsAction extends Action {
 			try {
 				monitor.beginTask("", 1); //$NON-NLS-1$
 				if (fDescriptor != null && !fDescriptor.isUnknown())
-					RefactoringHistoryService.getInstance().addRefactoringDescriptor(fDescriptor, new SubProgressMonitor(monitor, 1));
+					try {
+						RefactoringHistoryService.getInstance().mergeDescriptor(fDescriptor, new SubProgressMonitor(monitor, 1));
+					} catch (CoreException exception) {
+						RefactoringUIPlugin.log(exception);
+					}
 				return super.refactoringPerformed(refactoring, monitor);
 			} finally {
 				monitor.done();

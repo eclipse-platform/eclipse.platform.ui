@@ -748,6 +748,26 @@ public final class RefactoringHistoryManager {
 	}
 
 	/**
+	 * Merges the refactoring descriptor with this managed history.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 * @param monitor
+	 *            the progress monitor to use
+	 * @throws CoreException
+	 *             if an error occurs while merging the descriptor
+	 */
+	void mergeDescriptor(final RefactoringDescriptor descriptor, final IProgressMonitor monitor) throws CoreException {
+		try {
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 100);
+
+			// TODO: implement
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
 	 * Reads the refactoring history from disk.
 	 * 
 	 * @param start
@@ -920,7 +940,7 @@ public final class RefactoringHistoryManager {
 	 * @throws CoreException
 	 *             if an error occurs while setting the comment
 	 */
-	void setRefactoringComment(final RefactoringDescriptorProxy proxy, final String comment, final IProgressMonitor monitor) throws CoreException {
+	void setComment(final RefactoringDescriptorProxy proxy, final String comment, final IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(comment);
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 100);
