@@ -18,7 +18,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -834,8 +833,11 @@ public class ContentProposalAdapter {
 	 * @param labelProvider
 	 *            the label provider which provides text and image information
 	 *            for content proposals. A <code>null</code> value indicates
-	 *            that a default label provider is sufficient for any content
-	 *            proposals that may occur.
+	 *            that no label provider is needed, and all values will be
+	 *            obtained from the proposals themselves. The lifecycle of the
+	 *            specified label provider is not managed by this adapter.
+	 *            Clients must dispose the label provider when it is no longer
+	 *            needed.
 	 * @param keyStroke
 	 *            the keystroke that will invoke the content proposal popup. If
 	 *            this value is <code>null</code>, then proposals will be
@@ -900,20 +902,19 @@ public class ContentProposalAdapter {
 	}
 
 	/**
-	 * Get the label provider that is used to show proposals. A default label
-	 * provider will be used if one has not been set.
+	 * Get the label provider that is used to show proposals.
 	 * 
-	 * @return the {@link ILabelProvider} used to show proposals
+	 * @return the {@link ILabelProvider} used to show proposals, or
+	 *         <code>null</code> if one has not been installed.
 	 */
 	public ILabelProvider getLabelProvider() {
-		if (labelProvider == null) {
-			labelProvider = new LabelProvider();
-		}
 		return labelProvider;
 	}
 
 	/**
-	 * Set the label provider that is used to show proposals.
+	 * Set the label provider that is used to show proposals. The lifecycle of
+	 * the specified label provider is not managed by this adapter. Clients must
+	 * dispose the label provider when it is no longer needed.
 	 * 
 	 * @param labelProvider
 	 *            the (@link ILabelProvider} used to show proposals.
@@ -1202,9 +1203,9 @@ public class ContentProposalAdapter {
 	}
 
 	/**
-	 * Open the proposal popup and display the proposals provided
-	 * by the proposal provider.  This method returns immediately.
-	 * That is, it does not wait for a proposal to be selected.
+	 * Open the proposal popup and display the proposals provided by the
+	 * proposal provider. This method returns immediately. That is, it does not
+	 * wait for a proposal to be selected.
 	 */
 	protected void openProposalPopup() {
 		if (popup == null) {
