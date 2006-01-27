@@ -31,6 +31,10 @@ class AnnotationMap implements IAnnotationMap {
      * <code>IAnnotationMap</code>
      */
     private Object fLockObject;
+    /**
+     * The internal lock object used if <code>fLockObject</code> is <code>null</code>.
+	 * @since 3.2
+	 */
     private final Object fInternalLockObject= new Object();
 
     /** The map holding the annotations */
