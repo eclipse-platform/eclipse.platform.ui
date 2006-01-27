@@ -24,9 +24,15 @@ import org.eclipse.debug.internal.ui.viewers.TreeSelection;
  * @since 3.2
  */
 public class DefaultUpdatePolicy extends AbstractUpdatePolicy implements IModelChangedListener {
+	
+	// cache of latest tree path for a node
+	private TreePath fTreePath;
+	private IModelDelta fNode;
 
     public void modelChanged(IModelDelta delta) {
         updateNodes(new IModelDelta[] { delta });
+        fTreePath = null;
+        fNode = null;
     }
 
     protected void updateNodes(IModelDelta[] nodes) {
@@ -39,27 +45,26 @@ public class DefaultUpdatePolicy extends AbstractUpdatePolicy implements IModelC
             IModelDelta node = nodes[i];
             int flags = node.getFlags();
 
-            TreePath treePath = getTreePath(node);
             if ((flags & IModelDelta.ADDED) != 0) {
-                handleAdd(viewer, treePath);
+                handleAdd(viewer, node);
             }
             if ((flags & IModelDelta.REMOVED) != 0) {
-                handleRemove(viewer, treePath);
+                handleRemove(viewer, node);
             }
             if ((flags & IModelDelta.CHANGED) != 0) {
-                handleChange(viewer, node.getElement());
+                handleChange(viewer, node);
             }
             if ((flags & IModelDelta.CONTENT) != 0) {
-                handleContent(viewer, node.getElement());
+                handleContent(viewer, node);
             }
             if ((flags & IModelDelta.EXPAND) != 0) {
-                handleExpand(viewer, treePath);
+                handleExpand(viewer, node);
             }
             if ((flags & IModelDelta.SELECT) != 0) {
-                handleSelect(viewer, treePath);
+                handleSelect(viewer, node);
             }
             if ((flags & IModelDelta.STATE) != 0) {
-                handleState(viewer, node.getElement());
+                handleState(viewer, node);
             }
             if ((flags & IModelDelta.INSERTED) != 0) {
                 // TODO
@@ -72,43 +77,47 @@ public class DefaultUpdatePolicy extends AbstractUpdatePolicy implements IModelC
         }
     }
 
-    protected void handleChange(AsynchronousTreeViewer viewer, Object element) {
+    protected void handleChange(AsynchronousTreeViewer viewer, IModelDelta delta) {
         //do nothing...
     }
 
-    protected void handleState(AsynchronousTreeViewer viewer, Object element) {
-        viewer.update(element);
+    protected void handleState(AsynchronousTreeViewer viewer, IModelDelta delta) {
+        viewer.update(delta.getElement());
     }
 
-    protected void handleSelect(AsynchronousTreeViewer viewer, TreePath treePath) {
-        viewer.setSelection(new TreeSelection(treePath));
+    protected void handleSelect(AsynchronousTreeViewer viewer, IModelDelta delta) {
+        viewer.setSelection(new TreeSelection(getTreePath(delta)));
     }
 
-    protected void handleExpand(AsynchronousTreeViewer viewer, TreePath treePath) {
-        viewer.expand(new TreeSelection(treePath));
+    protected void handleExpand(AsynchronousTreeViewer viewer, IModelDelta delta) {
+        viewer.expand(new TreeSelection(getTreePath(delta)));
     }
 
-    protected void handleContent(AsynchronousTreeViewer viewer, Object element) {
-        viewer.refresh(element);
+    protected void handleContent(AsynchronousTreeViewer viewer, IModelDelta delta) {
+        viewer.refresh(delta.getElement());
     }
 
-    protected void handleRemove(AsynchronousTreeViewer viewer, TreePath treePath) {
-        viewer.remove(treePath);
+    protected void handleRemove(AsynchronousTreeViewer viewer, IModelDelta delta) {
+        viewer.remove(getTreePath(delta));
     }
 
-    protected void handleAdd(AsynchronousTreeViewer viewer, TreePath treePath) {
-        viewer.add(treePath);
+    protected void handleAdd(AsynchronousTreeViewer viewer, IModelDelta delta) {
+        viewer.add(getTreePath(delta));
     }
 
     protected TreePath getTreePath(IModelDelta node) {
-        ArrayList list = new ArrayList();
-        list.add(0, node.getElement());
-        while (node.getParent() != null) {
-            node = node.getParent();
+    	if (node != fNode) {
+            ArrayList list = new ArrayList();
             list.add(0, node.getElement());
-        }
+            while (node.getParent() != null) {
+                node = node.getParent();
+                list.add(0, node.getElement());
+            }
 
-        return new TreePath(list.toArray());
+            fTreePath = new TreePath(list.toArray());
+            fNode = node;
+    	}
+        return fTreePath;
     }
 
 }

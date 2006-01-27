@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
+import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultUpdatePolicy;
 
 /**
@@ -33,12 +34,15 @@ public class LaunchViewUpdatePolicy extends DefaultUpdatePolicy {
 		fView = null;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.update.DefaultUpdatePolicy#handleState(org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer, java.lang.Object)
-     */
-    protected void handleState(AsynchronousTreeViewer viewer, Object element) {
-        super.handleState(viewer, element);
-        fView.possibleContextChange(element);
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.DefaultUpdatePolicy#handleState(org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer, org.eclipse.debug.internal.ui.viewers.IModelDelta)
+	 */
+	protected void handleState(AsynchronousTreeViewer viewer, IModelDelta delta) {
+		 super.handleState(viewer, delta);
+		 // only context change if not already selected
+		 if ((delta.getFlags() & IModelDelta.SELECT) == 0) {
+			 fView.possibleContextChange(delta.getElement());
+		 }
 	}
-	
+
 }
