@@ -11,13 +11,19 @@
 package org.eclipse.ltk.internal.ui.refactoring.actions;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.model.ModelMessages;
@@ -67,6 +73,44 @@ public final class AcceptRefactoringsAction extends Action {
 		}
 	}
 
+	/** The refactoring history accept wizard */
+	private static final class RefactoringHistoryAcceptWizard extends RefactoringHistoryWizard {
+
+		/** The refactoring descriptor, or <code>null</code> */
+		private RefactoringDescriptor fDescriptor;
+
+		/**
+		 * Creates a new refactoring history accept wizard.
+		 */
+		public RefactoringHistoryAcceptWizard() {
+			super(RefactoringUIMessages.RefactoringWizard_refactoring, ModelMessages.AcceptRefactoringsAction_wizard_title, ModelMessages.AcceptRefactoringsAction_wizard_description);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
+			Assert.isNotNull(descriptor);
+			fDescriptor= descriptor;
+			return super.aboutToPerformRefactoring(refactoring, descriptor, monitor);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		protected RefactoringStatus refactoringPerformed(final Refactoring refactoring, final IProgressMonitor monitor) {
+			Assert.isNotNull(monitor);
+			try {
+				monitor.beginTask("", 1); //$NON-NLS-1$
+				if (fDescriptor != null && !fDescriptor.isUnknown())
+					RefactoringHistoryService.getInstance().addRefactoringDescriptor(fDescriptor, new SubProgressMonitor(monitor, 1));
+				return super.refactoringPerformed(refactoring, monitor);
+			} finally {
+				monitor.done();
+			}
+		}
+	}
+
 	/** The wizard height */
 	private static final int SIZING_WIZARD_HEIGHT= 520;
 
@@ -105,7 +149,7 @@ public final class AcceptRefactoringsAction extends Action {
 	 */
 	public void run() {
 		if (fProxies != null && fProxies.length > 0) {
-			final RefactoringHistoryWizard wizard= new RefactoringHistoryWizard(RefactoringUIMessages.RefactoringWizard_refactoring, ModelMessages.AcceptRefactoringsAction_wizard_title, ModelMessages.AcceptRefactoringsAction_wizard_description);
+			final RefactoringHistoryWizard wizard= new RefactoringHistoryAcceptWizard();
 			final WizardDialog dialog= new WizardDialog(fShell, wizard);
 			IProject project= null;
 			for (int index= 0; index < fProxies.length; index++) {

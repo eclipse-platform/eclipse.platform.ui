@@ -55,6 +55,7 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringPreferenceConstants;
@@ -553,6 +554,13 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/**
+	 * @param descriptor
+	 * @param monitor
+	 */
+	public void addRefactoringDescriptor(final RefactoringDescriptor descriptor, final SubProgressMonitor monitor) {
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public void connect() {
@@ -568,7 +576,27 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Deletes the specified refactoring descriptors from their associated
+	 * refactoring histories.
+	 * 
+	 * @param proxies
+	 *            the refactoring descriptor proxies
+	 * @param query
+	 *            the refactoring descriptor delete query to use
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
+	 * @throws CoreException
+	 *             if an error occurs while deleting the refactoring
+	 *             descriptors. Reasons include:
+	 *             <ul>
+	 *             <li>The refactoring history has an illegal format, contains
+	 *             illegal arguments or otherwise illegal information.</li>
+	 *             <li>An I/O error occurs while deleting the refactoring
+	 *             descriptors from the refactoring history.</li>
+	 *             </ul>
+	 * 
+	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
+	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
 	 */
 	public void deleteRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final IRefactoringDescriptorDeleteQuery query, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(proxies);
@@ -588,7 +616,26 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Deletes the refactoring history of a project. Refactorings associated
+	 * with the workspace are not deleted.
+	 * <p>
+	 * If a refactoring history is deleted, all files stored in the hidden
+	 * refactoring history folder of the project folder are removed. If no
+	 * shared refactoring history is enabled, the refactoring history
+	 * information is removed from the internal workspace refactoring history.
+	 * </p>
+	 * 
+	 * @param project
+	 *            the project to delete its history
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
+	 * @throws CoreException
+	 *             if an error occurs while deleting the refactoring history.
+	 *             Reasons include:
+	 *             <ul>
+	 *             <li>An I/O error occurs while deleting the refactoring
+	 *             history.</li>
+	 *             </ul>
 	 */
 	public void deleteRefactoringHistory(final IProject project, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(project);
@@ -902,7 +949,12 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Returns whether a project has a shared refactoring history.
+	 * 
+	 * @param project
+	 *            the project to test
+	 * @return <code>true</code> if the project has a shared project history,
+	 *         <code>false</code> otherwise
 	 */
 	public boolean hasSharedRefactoringHistory(final IProject project) {
 		Assert.isNotNull(project);
@@ -990,9 +1042,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 * <p>
 	 * The refactoring history must be in connected state.
 	 * </p>
-	 * <p>
-	 * Note: This API must not be called from outside the refactoring framework.
-	 * </p>
 	 * 
 	 * @param proxy
 	 *            the refactoring descriptor proxy
@@ -1010,7 +1059,27 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Sets the comment of a refactoring in the refactoring history.
+	 * 
+	 * @param proxy
+	 *            the refactoring descriptor proxy
+	 * @param comment
+	 *            the new non-empty comment of the refactoring, or
+	 *            <code>null</code>
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
+	 * @throws CoreException
+	 *             if an error occurs while setting the comment of the
+	 *             refactoring. Reasons include:
+	 *             <ul>
+	 *             <li>The refactoring history has an illegal format, contains
+	 *             illegal arguments or otherwise illegal information.</li>
+	 *             <li>An I/O error occurs while setting the refactoring
+	 *             comment in the refactoring history.</li>
+	 *             </ul>
+	 * 
+	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
+	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
 	 */
 	public void setRefactoringComment(final RefactoringDescriptorProxy proxy, final String comment, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(proxy);
@@ -1020,7 +1089,29 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Determines whether a project has a shared refactoring history.
+	 * <p>
+	 * If a shared refactoring history is enabled, refactorings executed on that
+	 * particular project are stored in a hidden refactoring history folder of
+	 * the project folder. If no shared refactoring history is enabled, all
+	 * refactorings are tracked as well, but persisted internally in a
+	 * plugin-specific way without altering the project.
+	 * </p>
+	 * 
+	 * @param project
+	 *            the project to set the shared refactoring history property
+	 * @param enable
+	 *            <code>true</code> to enable a shared refactoring history,
+	 *            <code>false</code> otherwise
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
+	 * @throws CoreException
+	 *             if an error occurs while changing the shared refactoring
+	 *             history property. Reasons include:
+	 *             <ul>
+	 *             <li>An I/O error occurs while changing the shared
+	 *             refactoring history property.</li>
+	 *             </ul>
 	 */
 	public void setSharedRefactoringHistory(final IProject project, final boolean enable, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(project);

@@ -28,6 +28,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringDescriptorDeleteQuery;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
@@ -133,7 +134,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 					store.setValue(PREFERENCE_DO_NOT_WARN_DELETE_ALL, dialog.getToggleState());
 				}
 				if (dialog == null || dialog.getReturnCode() == IDialogConstants.YES_ID) {
-					IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+					RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 					try {
 						service.connect();
 						try {
@@ -157,7 +158,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			public final void widgetSelected(final SelectionEvent event) {
 				final RefactoringDescriptorProxy[] selection= control.getCheckedDescriptors();
 				if (selection.length > 0) {
-					IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+					RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 					try {
 						service.connect();
 						try {
@@ -182,7 +183,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 				String comment= ""; //$NON-NLS-1$
 				final RefactoringDescriptorProxy[] selection= control.getSelectedDescriptors();
 				if (selection.length > 0) {
-					IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+					RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 					try {
 						service.connect();
 						final RefactoringDescriptor descriptor= selection[0].requestDescriptor(null);
@@ -263,7 +264,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	private boolean hasSharedRefactoringHistory() {
 		final IProject project= getCurrentProject();
 		if (project != null)
-			return RefactoringCore.getRefactoringHistoryService().hasSharedRefactoringHistory(project);
+			return RefactoringHistoryService.getInstance().hasSharedRefactoringHistory(project);
 		return false;
 	}
 
@@ -287,7 +288,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		if (fManager != null)
 			try {
 				fManager.applyChanges();
-				final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+				final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 				final boolean history= service.hasSharedRefactoringHistory(project);
 				if (history != fHasProjectHistory && project != null)
 					service.setSharedRefactoringHistory(project, history, null);
