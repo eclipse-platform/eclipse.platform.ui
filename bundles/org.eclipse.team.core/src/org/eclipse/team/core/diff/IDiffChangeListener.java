@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.core.diff;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -33,5 +34,7 @@ public interface IDiffChangeListener {
 	 * @param monitor a progress monitor
 	 */
 	void diffChanged(IDiffChangeEvent event, IProgressMonitor monitor);
+	
+	void propertyChanged(int property, IPath[] paths);
 
 }

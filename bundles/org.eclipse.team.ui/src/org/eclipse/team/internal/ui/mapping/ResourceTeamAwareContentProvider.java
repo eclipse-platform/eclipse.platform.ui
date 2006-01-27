@@ -16,11 +16,11 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IDiffTree;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
-import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
@@ -212,11 +212,67 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 			IFolder folder = (IFolder) element;
 			// For folders check to see if the delta contains any children
 			ISynchronizationContext context = getContext();
-			IDiffTree tree = context.getDiffTree();
-			if (tree.getChildren(folder.getFullPath()).length > 0) {
-				return true;
+			if (context != null) {
+				IDiffTree tree = context.getDiffTree();
+				if (tree.getChildren(folder.getFullPath()).length > 0) {
+					return true;
+				}
 			}
 		}
 		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#propertyChanged(int, org.eclipse.core.runtime.IPath[])
+	 */
+	public void propertyChanged(final int property, final IPath[] paths) {
+		Utils.syncExec(new Runnable() {
+			public void run() {
+				ISynchronizationContext context = getContext();
+				if (context != null) {
+					IResource[] resources = getResources(paths);
+					if (resources.length > 0)
+						((AbstractTreeViewer)getViewer()).update(resources, null);
+				}
+			}
+		}, (StructuredViewer)getViewer());
+	}
+
+	private IResource[] getResources(IPath[] paths) {
+		List resources = new ArrayList();
+		for (int i = 0; i < paths.length; i++) {
+			IPath path = paths[i];
+			IResource resource = getResource(path);
+			if (resource != null)
+				resources.add(resource);
+		}
+		return (IResource[]) resources.toArray(new IResource[resources.size()]);
+	}
+
+	private IResource getResource(IPath path) {
+		// Does the resource exist locally
+		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+		if (resource != null) {
+			return resource;
+		}
+		// Look in the diff tree for a phantom
+		ISynchronizationContext context = getContext();
+		if (context != null) {
+			IResourceDiffTree diffTree = context.getDiffTree();
+			// Is there a diff for the path
+			IDiffNode node = diffTree.getDiff(path);
+			if (node != null) {
+				return diffTree.getResource(node);
+			}
+			// Is there any descendants of the path
+			if (diffTree.getChildren(path).length > 0) {
+				if (path.segmentCount() == 1) {
+					return ResourcesPlugin.getWorkspace().getRoot().getProject(path.segment(0));
+				} else if (path.segmentCount() > 1) {
+					return ResourcesPlugin.getWorkspace().getRoot().getFolder(path);
+				}
+			}
+		}
+		return null;
 	}
 }

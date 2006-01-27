@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.core.diff.provider;
 
+import java.util.*;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
@@ -34,6 +36,12 @@ import org.eclipse.team.internal.core.subscribers.DiffTreeStatistics;
  */
 public class DiffTree implements IDiffTree {
 	
+	/**
+	 * Constant that indicates the start of the property value
+	 * range that clients can use when storing properties in this tree.
+	 */
+	public static final int START_CLIENT_PROPERTY_RANGE = 1024;
+	
 	private ListenerList listeners = new ListenerList();
 	
 	private PathTree pathTree = new PathTree();
@@ -45,6 +53,8 @@ public class DiffTree implements IDiffTree {
 	private DiffChangeEvent changes;
 
 	private  boolean lockedForModification;
+
+	private Map propertyChanges = new HashMap();
 
 	/**
 	 * Create an empty diff tree.
@@ -123,9 +133,9 @@ public class DiffTree implements IDiffTree {
 	public void add(IDiffNode delta) {
 		try {
 			beginInput();
-			boolean alreadyExists = getDiff(delta.getPath()) != null;
+			IDiffNode oldDiff = getDiff(delta.getPath());
 			internalAdd(delta);
-			if (alreadyExists) {
+			if (oldDiff != null) {
 				internalChanged(delta);
 			} else {
 				internalAdded(delta);
@@ -223,11 +233,15 @@ public class DiffTree implements IDiffTree {
 	private void fireChanges(final IProgressMonitor monitor) {
 		// Use a synchronized block to ensure that the event we send is static
 		final DiffChangeEvent event;
+		final Map propertyChanges;
+		
 		synchronized(this) {
 			event = getChangeEvent();
 			resetChanges();
+			propertyChanges = this.propertyChanges;
+			this.propertyChanges = new HashMap();
 		}
-		if(event.isEmpty() && ! event.isReset()) return;
+		if(event.isEmpty() && ! event.isReset() && propertyChanges.isEmpty()) return;
 		Object[] listeners = this.listeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			final IDiffChangeListener listener = (IDiffChangeListener)listeners[i];
@@ -238,7 +252,15 @@ public class DiffTree implements IDiffTree {
 				public void run() throws Exception {
 					try {
 						lockedForModification = true;
-						listener.diffChanged(event, Policy.subMonitorFor(monitor, 100));
+						if (!event.isEmpty() || event.isReset())
+							listener.diffChanged(event, Policy.subMonitorFor(monitor, 100));
+						for (Iterator iter = propertyChanges.keySet().iterator(); iter.hasNext();) {
+							Integer key = (Integer) iter.next();
+							Set paths = (Set)propertyChanges.get(key);
+							listener.propertyChanged(key.intValue(), (IPath[]) paths.toArray(new IPath[paths
+									.size()]));
+						}
+						
 					} finally {
 						lockedForModification = false;
 					}
@@ -270,14 +292,19 @@ public class DiffTree implements IDiffTree {
 			statistics.remove(oldDiff);
 			statistics.add(delta);
 		}
+		boolean isConflict = false;
+		if (delta instanceof IThreeWayDiff) {
+			IThreeWayDiff twd = (IThreeWayDiff) delta;
+			isConflict = twd.getDirection() == IThreeWayDiff.CONFLICTING;
+		}
+		setPropertyToRoot(delta, P_HAS_DESCENDANT_CONFLICTS, isConflict);
 	}
 	
 	private void internalRemove(IDiffNode delta) {
 		Assert.isTrue(!lockedForModification);
-		IDiffNode oldDiff = (IDiffNode)pathTree.get(delta.getPath());
-		if(oldDiff != null) {
-			statistics.remove(oldDiff);
-		}
+		statistics.remove(delta);
+		setPropertyToRoot(delta, P_HAS_DESCENDANT_CONFLICTS, false);
+		setPropertyToRoot(delta, P_BUSY_HINT, false);
 		pathTree.remove(delta.getPath());
 	}
 	
@@ -326,4 +353,66 @@ public class DiffTree implements IDiffTree {
 		return pathTree.size();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.IDiffTree#setPropertyToRoot(org.eclipse.core.runtime.IPath, int, boolean)
+	 */
+	public void setPropertyToRoot(IDiffNode node, int property, boolean value) {
+		try {
+			beginInput();
+			IPath[] paths = pathTree.setPropogatedProperty(node.getPath(), property, value);
+			accumulatePropertyChanges(property, paths);
+		} finally {
+			endInput(null);
+		}
+	}
+	
+	private void accumulatePropertyChanges(int property, IPath[] paths) {
+		Integer key = new Integer(property);
+		Set changes = (Set)propertyChanges.get(key);
+		if (changes == null) {
+			changes = new HashSet();
+			propertyChanges.put(key, changes);
+		}
+		for (int i = 0; i < paths.length; i++) {
+			IPath path = paths[i];
+			changes.add(path);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.IDiffTree#getProperty(org.eclipse.core.runtime.IPath, int)
+	 */
+	public boolean getProperty(IPath path, int property) {
+		return pathTree.getProperty(path, property);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.IDiffTree#setBusy(org.eclipse.team.core.diff.IDiffNode[], org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void setBusy(IDiffNode[] diffs, IProgressMonitor monitor) {
+		try {
+			beginInput();
+			for (int i = 0; i < diffs.length; i++) {
+				IDiffNode node = diffs[i];
+				setPropertyToRoot(node, P_BUSY_HINT, true);
+			}
+		} finally {
+			endInput(monitor);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.IDiffTree#clearBusy(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void clearBusy(IProgressMonitor monitor) {
+		try {
+			IPath[] paths = pathTree.getPaths();
+			for (int i = 0; i < paths.length; i++) {
+				IPath path = paths[i];
+				pathTree.setPropogatedProperty(path, P_BUSY_HINT, false);
+			}
+		} finally {
+			endInput(monitor);
+		}
+	}
 }

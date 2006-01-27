@@ -52,8 +52,8 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 		}
 		final IMergeContext context = (IMergeContext)((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
 		try {
-			new SynchronizationOperation(getConfiguration()) {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException,
+			new SynchronizationOperation(getConfiguration(), getContext().getScope().getMappings()) {
+				public void execute(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
 					try {
 						// TODO: Should validate before merging

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -96,6 +97,13 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		calculateDescription();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.IDiffChangeListener#propertyChanged(int, org.eclipse.core.runtime.IPath[])
+	 */
+	public void propertyChanged(int property, IPath[] paths) {
+		// Do nothing
+	}
+	
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(ISynchronizePageConfiguration.P_MODE)) {
 			calculateDescription();

@@ -10,8 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.ui.mapping;
 
-import org.eclipse.team.core.mapping.IMergeContext;
-import org.eclipse.team.core.mapping.ISynchronizationContext;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.team.ui.compare.IModelBuffer;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
@@ -40,6 +47,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public abstract class SynchronizationOperation extends TeamOperation {
 
 	private final ISynchronizePageConfiguration configuration;
+	private final Object[] elements;
 
 	/*
 	 * Helper method for extracting the part safely from a configuration
@@ -54,11 +62,23 @@ public abstract class SynchronizationOperation extends TeamOperation {
 		return null;
 	}
 	
-	protected SynchronizationOperation(ISynchronizePageConfiguration configuration) {
+	/**
+	 * Create a synchronize operation that operations on the given elements
+	 * @param configuration the configuration for the page the operation is associated with
+	 * @param elements the elements to be operated on
+	 */
+	protected SynchronizationOperation(ISynchronizePageConfiguration configuration, Object[] elements) {
 		super(getPart(configuration));
 		this.configuration = configuration;
+		this.elements = elements;
 	}
 
+	/**
+	 * Return the configuration for the page from which this
+	 * operation was launched.
+	 * @return the configuration for the page from which this
+	 * operation was launched
+	 */
 	public ISynchronizePageConfiguration getConfiguration() {
 		return configuration;
 	}
@@ -69,6 +89,14 @@ public abstract class SynchronizationOperation extends TeamOperation {
 	 */
 	protected ISynchronizationContext getContext() {
 		return ((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
+	}
+	
+	/**
+	 * Return the model elements that are the target of this operation.
+	 * @return the model elements that are the target of this operation
+	 */
+	public Object[] getElements() {
+		return elements;
 	}
 	
 	/**
@@ -90,6 +118,43 @@ public abstract class SynchronizationOperation extends TeamOperation {
 	public IModelBuffer getTargetBuffer() {
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public final void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		try {
+			setContextBusy(monitor);
+			execute(monitor);
+		} finally {
+			clearContextBusy(monitor);
+		}
+	}
 
+	private void clearContextBusy(final IProgressMonitor monitor) {
+		final IResourceDiffTree diffTree = getContext().getDiffTree();
+		diffTree.clearBusy(monitor);
+	}
+
+	private void setContextBusy(final IProgressMonitor monitor) {
+		try {
+			ResourceTraversal[] traversals = Utils.getTraversals(getElements());
+			final IResourceDiffTree diffTree = getContext().getDiffTree();
+			IDiffNode[] diffs = diffTree.getDiffs(traversals);
+			diffTree.setBusy(diffs, monitor);
+		} catch (CoreException e) {
+			TeamUIPlugin.log(e);
+		}
+	}
+
+	/**
+	 * Execute the operation. Subclasses should implement the operations behavior in the
+	 * execute method. Clients should call either {@link #run()} or {@link #run(IProgressMonitor)}
+	 * to invoke the operation.
+	 * @param monitor a progress monitor
+	 * @throws InvocationTargetException
+	 * @throws InterruptedException
+	 */
+	protected abstract void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException;
 
 }

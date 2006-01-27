@@ -39,7 +39,7 @@ public class ResourceMergeHandler extends MergeActionHandler {
 				/* (non-Javadoc)
 				 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 				 */
-				public void run(IProgressMonitor monitor) throws InvocationTargetException,
+				public void execute(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
 					try {
 						IMergeContext context = (IMergeContext)getContext();

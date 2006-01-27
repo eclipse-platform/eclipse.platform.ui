@@ -11,18 +11,18 @@
 package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
-import org.eclipse.ui.navigator.IExtensionStateModel;
 
 /**
  * Resource label provider that can decorate using sync state.
  */
 public class ResourceModelLabelProvider extends
-		SynchronizationLabelProvider {
+		SynchronizationLabelProvider implements IFontProvider {
 
 	private ILabelProvider provider = new ResourceMappingLabelProvider();
 
@@ -55,20 +55,24 @@ public class ResourceModelLabelProvider extends
 		}
 		return null;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.IDescriptionProvider#getDescription(java.lang.Object)
-	 */
-	public String getDescription(Object anElement) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	protected boolean isBusy(Object element) {
+		if (element instanceof IResource) {
+			IResource resource = (IResource) element;
+			ISynchronizationContext context = getContext();
+			if (context != null)
+				return context.getDiffTree().getProperty(resource.getFullPath(), IDiffTree.P_BUSY_HINT);
+		}
+		return super.isBusy(element);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.mapping.SynchronizationOperationLabelProvider#init(org.eclipse.ui.navigator.IExtensionStateModel, org.eclipse.jface.viewers.ITreeContentProvider)
-	 */
-	public void init(IExtensionStateModel aStateModel, ITreeContentProvider aContentProvider) {
-		// TODO Auto-generated method stub
-		super.init(aStateModel, aContentProvider);
+	
+	protected boolean hasDecendantConflicts(Object element) {
+		if (element instanceof IResource) {
+			IResource resource = (IResource) element;
+			ISynchronizationContext context = getContext();
+			if (context != null)
+				return context.getDiffTree().getProperty(resource.getFullPath(), IDiffTree.P_HAS_DESCENDANT_CONFLICTS);
+		}
+		return super.hasDecendantConflicts(element);
 	}
 }

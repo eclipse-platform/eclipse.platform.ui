@@ -18,8 +18,7 @@ import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.synchronize.AbstractSynchronizeLabelProvider;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.navigator.ICommonLabelProvider;
-import org.eclipse.ui.navigator.IExtensionStateModel;
+import org.eclipse.ui.navigator.*;
 
 /**
  * A label provider wrapper that adds synchronization image and/or text decorations
@@ -33,7 +32,7 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
  * 
  * @since 3.2
  */
-public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLabelProvider implements ICommonLabelProvider {
+public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLabelProvider implements ICommonLabelProvider, IFontProvider {
 
 	private IResourceMappingScope scope;
 	private ISynchronizationContext context;
@@ -107,10 +106,10 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 	 */
 	public String getDescription(Object anElement) {
 		ILabelProvider provider = getDelegateLabelProvider();
-		if (provider instanceof ICommonLabelProvider) {
-			return ((ICommonLabelProvider) provider).getDescription(anElement);
+		if (provider instanceof IDescriptionProvider) {
+			return ((IDescriptionProvider) provider).getDescription(anElement);
 		}
-		return getDelegateLabelProvider().toString();
+		return null;
 	}
 
 	/* (non-Javadoc)

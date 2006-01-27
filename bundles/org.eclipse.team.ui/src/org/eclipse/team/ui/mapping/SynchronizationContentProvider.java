@@ -15,8 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
@@ -283,6 +282,13 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 */
 	public void diffChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
 		refresh();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.IDiffChangeListener#propertyChanged(int, org.eclipse.core.runtime.IPath[])
+	 */
+	public void propertyChanged(int property, IPath[] paths) {
+		// Property changes only effect labels
 	}
 
 	/**

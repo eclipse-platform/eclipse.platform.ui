@@ -26,11 +26,8 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public abstract class ResourceModelProviderOperation extends SynchronizationOperation {
 
-	private final Object[] elements;
-
 	protected ResourceModelProviderOperation(ISynchronizePageConfiguration configuration, Object[] elements) {
-		super(configuration);
-		this.elements = elements;
+		super(configuration, elements);
 	}
 
 	/**
@@ -137,10 +134,6 @@ public abstract class ResourceModelProviderOperation extends SynchronizationOper
 	 * @return the filter used to match diffs to which this action applies
 	 */
 	protected abstract FastDiffFilter getDiffFilter();
-
-	public Object[] getElements() {
-		return elements;
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ModelProviderOperation#shouldRun()

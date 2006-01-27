@@ -36,6 +36,7 @@ import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
@@ -792,7 +793,19 @@ public class Utils {
 			}
 		}
 		if (buffer.length() == 0)
-			return new Date().toString(); //$NON-NLS-1$
+			return new Date().toString();
 		return buffer.toString();
+	}
+
+	public static ResourceTraversal[] getTraversals(Object[] elements) throws CoreException {
+		CompoundResourceTraversal traversal = new CompoundResourceTraversal();
+		for (int i = 0; i < elements.length; i++) {
+			Object object = elements[i];
+			ResourceMapping mapping = getResourceMapping(object);
+			if (mapping != null) {
+				traversal.addTraversals(mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null));
+			}
+		}
+		return traversal.asTraversals();
 	}
 }

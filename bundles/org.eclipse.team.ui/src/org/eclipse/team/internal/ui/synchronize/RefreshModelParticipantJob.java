@@ -43,6 +43,10 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 				changes.put(node.getPath(), node);
 			}
 		}
+		
+		public void propertyChanged(int property, IPath[] paths) {
+			// Do nothing
+		}
 	}
 	
 	public RefreshModelParticipantJob(ISynchronizeParticipant participant, String jobName, String taskName, ResourceMapping[] mappings, IRefreshSubscriberListener listener) {

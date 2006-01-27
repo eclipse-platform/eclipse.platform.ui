@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -67,6 +68,13 @@ public class WorkspaceCommitAction extends ModelProviderAction implements IDiffC
 		updateEnablement();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.IDiffChangeListener#propertyChanged(int, org.eclipse.core.runtime.IPath[])
+	 */
+	public void propertyChanged(int property, IPath[] paths) {
+		// Do nothing
+	}
+	
 	private void updateEnablement() {
 		boolean enabled = (getDiffTree().countFor(IThreeWayDiff.OUTGOING, IThreeWayDiff.DIRECTION_MASK) > 0)
 			&& (getDiffTree().countFor(IThreeWayDiff.CONFLICTING, IThreeWayDiff.DIRECTION_MASK) == 0);

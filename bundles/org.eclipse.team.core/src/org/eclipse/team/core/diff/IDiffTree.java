@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.core.diff;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 
 /**
  * A diff tree provides access to a tree of {@link IDiffNode} instances.
@@ -32,6 +31,16 @@ import org.eclipse.core.runtime.IPath;
  * @since 3.2
  */
 public interface IDiffTree {
+	
+	/**
+	 * Property constant used to indicate that a particular path may be involved in an operation.
+	 */
+	public static final int P_BUSY_HINT = 1;
+	
+	/**
+	 * Property constant used to indicate that a particular path has descendants that are conflicts.
+	 */
+	public static final int P_HAS_DESCENDANT_CONFLICTS = 2;
 
 	/**
 	 * Add a listener to the tree. The listener will be informed of any changes
@@ -105,7 +114,6 @@ public interface IDiffTree {
 	 */
 	public boolean isEmpty();
 	
-	
 	/**
 	 * Return the number of out-of-sync elements in the given set whose synchronization
 	 * state matches the given mask. A mask of 0 assumes a direct match of the given state.
@@ -120,5 +128,29 @@ public interface IDiffTree {
 	 * @return the number of matching resources in the set.
 	 */
 	public long countFor(int state, int mask);
+	
+	/**
+	 * Set the given diff nodes and all their parents to busy
+	 * @param diffs the busy diffs
+	 * @param monitor a progress monitor or <code>null</code> if progress indication 
+	 * is not required
+	 */
+	public void setBusy(IDiffNode[] diffs, IProgressMonitor monitor);
+	
+	/**
+	 * Return the value of the property for the given path.
+	 * @param path the path
+	 * @param property the property
+	 * @return the value of the property
+	 */
+	public boolean getProperty(IPath path, int property);
+
+	
+	/**
+	 * Clear all busy properties in this tree.
+	 * @param monitor a progress monitor or <code>null</code> if progress indication 
+	 * is not required
+	 */
+	public void clearBusy(IProgressMonitor monitor);
 
 }

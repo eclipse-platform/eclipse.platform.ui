@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.diff.*;
@@ -56,6 +57,13 @@ public class DiffTreeStatusLineContributionGroup extends
 
 	public void diffChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
 		updateCounts();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.IDiffChangeListener#propertyChanged(int, org.eclipse.core.runtime.IPath[])
+	 */
+	public void propertyChanged(int property, IPath[] paths) {
+		// Do nothing
 	}
 
 }
