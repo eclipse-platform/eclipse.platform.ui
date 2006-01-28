@@ -5,12 +5,13 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import org.eclipse.jface.databinding.AbstractUpdatableSet;
+import org.eclipse.jface.databinding.IUpdatableSet;
 import org.eclipse.jface.util.Assert;
 
 /**
  * Represents a writable implementation of IReadableSet.
  */
-public final class WritableSet extends AbstractUpdatableSet {
+public class WritableSet extends AbstractUpdatableSet implements IUpdatableSet {
 
 	private HashSet data = new HashSet();
 	

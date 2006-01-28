@@ -6,7 +6,7 @@ import java.util.HashSet;
 
 import org.eclipse.jface.util.Assert;
 
-public class Updatable {
+abstract public class Updatable implements IUpdatable {
 
 	/**
 	 * Collection of IChangeListener. null if disposed
@@ -171,7 +171,7 @@ public class Updatable {
 		return false;
 	}
 
-	protected void dispose() {
+	public void dispose() {
 		if (isDisposed()) {
 			return;
 		}
@@ -181,7 +181,7 @@ public class Updatable {
 		changeListeners = null;
 	}
 	
-	protected boolean isDisposed() {
+	public boolean isDisposed() {
 		return changeListeners == null;
 	}
 }
