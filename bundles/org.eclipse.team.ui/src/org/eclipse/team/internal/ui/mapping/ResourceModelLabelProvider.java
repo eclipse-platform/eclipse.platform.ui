@@ -10,21 +10,38 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.viewers.IFontProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
+import org.eclipse.ui.navigator.IExtensionStateModel;
 
 /**
  * Resource label provider that can decorate using sync state.
  */
 public class ResourceModelLabelProvider extends
-		SynchronizationLabelProvider implements IFontProvider {
+		SynchronizationLabelProvider implements IFontProvider, IResourceChangeListener {
 
 	private ILabelProvider provider = new ResourceMappingLabelProvider();
+	private ResourceTeamAwareContentProvider contentProvider;
+
+	public void init(IExtensionStateModel aStateModel, ITreeContentProvider aContentProvider) {
+		if (aContentProvider instanceof ResourceTeamAwareContentProvider) {
+			contentProvider = (ResourceTeamAwareContentProvider) aContentProvider;
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		}
+		super.init(aStateModel, aContentProvider);
+	}
+	public void dispose() {
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		super.dispose();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.mapping.SynchronizationOperationLabelProvider#getBaseLabelProvider()
@@ -44,8 +61,7 @@ public class ResourceModelLabelProvider extends
 				IDiffNode delta = context.getDiffTree().getDiff(resource.getFullPath());
 				return delta;
 			}
-		}
-			
+		}		
 		return null;
 	}
 
@@ -56,6 +72,16 @@ public class ResourceModelLabelProvider extends
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeLabelProvider#isIncludeOverlays()
+	 */
+	protected boolean isIncludeOverlays() {
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeLabelProvider#isBusy(java.lang.Object)
+	 */
 	protected boolean isBusy(Object element) {
 		if (element instanceof IResource) {
 			IResource resource = (IResource) element;
@@ -66,6 +92,9 @@ public class ResourceModelLabelProvider extends
 		return super.isBusy(element);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeLabelProvider#hasDecendantConflicts(java.lang.Object)
+	 */
 	protected boolean hasDecendantConflicts(Object element) {
 		if (element instanceof IResource) {
 			IResource resource = (IResource) element;
@@ -74,5 +103,36 @@ public class ResourceModelLabelProvider extends
 				return context.getDiffTree().getProperty(resource.getFullPath(), IDiffTree.P_HAS_DESCENDANT_CONFLICTS);
 		}
 		return super.hasDecendantConflicts(element);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		String[] markerTypes = new String[] {IMarker.PROBLEM};
+		final Set handledResources = new HashSet();
+		
+		// Accumulate all distinct resources that have had problem marker
+		// changes
+		for (int idx = 0; idx < markerTypes.length; idx++) {
+			IMarkerDelta[] markerDeltas = event.findMarkerDeltas(markerTypes[idx], true);
+				for (int i = 0; i < markerDeltas.length; i++) {
+					IMarkerDelta delta = markerDeltas[i];
+					IResource resource = delta.getResource();
+					while (resource != null && resource.getType() != IResource.ROOT && !handledResources.contains(resource)) {
+						handledResources.add(resource);
+						resource = resource.getParent();
+					}
+				}
+			}
+		
+		if (!handledResources.isEmpty()) {
+		    Utils.asyncExec(new Runnable() {
+				public void run() {
+					contentProvider.getStructuredViewer().update(
+							(IResource[]) handledResources.toArray(new IResource[handledResources.size()]), null);
+				}
+			}, contentProvider.getStructuredViewer());
+		}
 	}
 }

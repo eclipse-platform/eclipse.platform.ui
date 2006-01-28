@@ -275,4 +275,8 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 		}
 		return null;
 	}
+	
+	protected StructuredViewer getStructuredViewer() {
+		return (StructuredViewer)getViewer();
+	}
 }

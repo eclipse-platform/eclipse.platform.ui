@@ -308,13 +308,15 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	
 	/**
 	 * Indicate whether the overlays provided by this class should be applied.
-	 * By default, <code>true</code> is returned. Subclasses may override
+	 * By default, <code>false</code> is returned. Subclasses may override
 	 * and control individual overlays by overriding the appropriate
-	 * query methods.
+	 * query methods. Overlays provided by this class include problem marker
+	 * severity ({@link #getMarkerSeverity(Object)}), propogated conflicts 
+	 * ({@link #hasDecendantConflicts(Object)} and busy state ({@link #isBusy(Object)}).
 	 * @return hether the overlays provided by this class should be applied
 	 */
 	protected boolean isIncludeOverlays() {
-		return true;
+		return false;
 	}
 
 	/**
@@ -323,7 +325,7 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	 * there are no markers. By Default, the element is adapted to resource
 	 * mapping in order to look for markers.
 	 * <p>
-	 * Although this class handles providing the label updates, it does not react 
+	 * Although this class handles providing the overlays, it does not react 
 	 * to marker changes. Subclasses must issue label updates when the markers on 
 	 * a logical model element change.
 	 * 
