@@ -205,7 +205,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
 			monitor.beginTask(null, 100);
-			if (context != null)
+			if (context == null)
 				context = buildMergeContext(Policy.subMonitorFor(monitor, 75));
 			if (!hasChangesOfInterest()) {
 				promptForNoChanges();

@@ -76,6 +76,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	private DialogSynchronizePageSite site;
 	
 	private Object currentEditingContext;
+	private IPropertyChangeListener listener;
 
 	/**
 	 * Creates a part for the provided participant. The page configuration is used when creating the participant page and the resulting
@@ -119,6 +120,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 			page.dispose();
 		if (site != null)
 			site.dispose();
+		pageConfiguration.removePropertyChangeListener(listener);
 		super.dispose();
 	}
 	
@@ -215,7 +217,17 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 				feedInput2(e.getSelection());
 			}
 		});
-		fEditionPane.setText(TeamUIMessages.ParticipantPageSaveablePart_0); 
+		
+		fEditionPane.setText(TeamUIMessages.ParticipantPageSaveablePart_0);
+		listener = new IPropertyChangeListener() {
+					public void propertyChange(PropertyChangeEvent event) {
+						if (event.getProperty().equals(ISynchronizePageConfiguration.P_PAGE_DESCRIPTION)) {
+							updateDescription();
+						}
+					}
+				};
+		pageConfiguration.addPropertyChangeListener(listener);
+		updateDescription();
 		
 		page = participant.createPage(pageConfiguration);
 		site = new DialogSynchronizePageSite(dialogShell, true);
@@ -275,6 +287,13 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		
 		if(! showContentPanes) {
 			hsplitter.setMaximizedControl(fEditionPane);
+		}
+	}
+
+	private void updateDescription() {
+		String description = (String)pageConfiguration.getProperty(ISynchronizePageConfiguration.P_PAGE_DESCRIPTION);
+		if (description != null) {
+			fEditionPane.setText(description);
 		}
 	}
 	
