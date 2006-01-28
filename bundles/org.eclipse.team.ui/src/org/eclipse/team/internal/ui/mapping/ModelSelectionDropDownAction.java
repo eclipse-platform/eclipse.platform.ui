@@ -48,10 +48,13 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 				ModelSelectionDropDownAction.this.configuration.setProperty(
 						ISynchronizationConstants.P_ACTIVE_MODEL_PROVIDER,
 						ISynchronizationConstants.ALL_MODEL_PROVIDERS_ACTIVE);
+				ModelSelectionDropDownAction.this.configuration.setProperty(
+						ISynchronizePageConfiguration.P_PAGE_DESCRIPTION,
+						ModelSelectionDropDownAction.this.configuration.getParticipant().getName());
 			}
 		};
 		//showAllAction.setImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_SYNC_VIEW));
-		showAllAction.setActionDefinitionId("org.eclipse.team.ui.showAllModels"); //$NON-NLS-1$
+		//showAllAction.setActionDefinitionId("org.eclipse.team.ui.showAllModels"); //$NON-NLS-1$
 		setMenuCreator(this);		
 		update();	
 	}

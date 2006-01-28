@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -24,6 +25,7 @@ public class SynchronizeViewWorkbenchPart implements IWorkbenchPart {
 
 	private ISynchronizeParticipant participant;
 	private IWorkbenchPartSite site;
+	private ISynchronizePageConfiguration configuration;
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -121,5 +123,13 @@ public class SynchronizeViewWorkbenchPart implements IWorkbenchPart {
 	 */
 	public ISynchronizeParticipant getParticipant() {
 		return participant;
+	}
+
+	public void setConfiguration(ISynchronizePageConfiguration configuration) {
+		this.configuration = configuration;
+	}
+
+	public ISynchronizePageConfiguration getConfiguration() {
+		return configuration;
 	}
 }

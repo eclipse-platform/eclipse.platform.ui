@@ -113,8 +113,18 @@ public interface ISynchronizePageConfiguration {
 	 * Property constant for the id of the viewer to be used for this page.
 	 * The viewer id corresponds to the viewer definition in the Common
 	 * Navigator framework.
+	 * 
+	 * @since 3.2
 	 */
 	public static final String P_VIEWER_ID = TeamUIPlugin.ID + ".P_VIEWER_ID"; //$NON-NLS-1$
+	
+	/**
+	 * Property constant for the description (String) of the page that appears
+	 * as the description of the view when the page is active.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String P_PAGE_DESCRIPTION = TeamUIPlugin.ID + ".P_PAGE_DESCRIPTION"; //$NON-NLS-1$
 	
 	/**
 	 * The id of the synchronize group the determines where the synchronize 

@@ -94,6 +94,12 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 				updateTitle();
 			}
 		}
+		if (source instanceof ISynchronizePageConfiguration && event.getProperty().equals(ISynchronizePageConfiguration.P_PAGE_DESCRIPTION)) {
+			ISynchronizePageConfiguration configuration = (ISynchronizePageConfiguration) source;
+			if (configuration.getParticipant().equals(getParticipant())) {
+				updateTitle();
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -129,7 +135,13 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			setContentDescription(""); //$NON-NLS-1$
 		} else {
 			SynchronizeViewWorkbenchPart part = (SynchronizeViewWorkbenchPart)fParticipantToPart.get(participant);
-			setContentDescription(Utils.shortenText(MAX_NAME_LENGTH, part.getParticipant().getName())); 
+			ISynchronizePageConfiguration configuration = part.getConfiguration();
+			String description = (String)configuration.getProperty(ISynchronizePageConfiguration.P_PAGE_DESCRIPTION);
+			if (description == null)
+				description = part.getParticipant().getName();
+			// TODO: Get the description from the configuration
+			// TODO: listen to the configuration for description changes
+			setContentDescription(Utils.shortenText(MAX_NAME_LENGTH, description)); 
 		}
 	}
 	
@@ -147,6 +159,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 
 	private void clearCrossReferenceCache(IWorkbenchPart part, ISynchronizeParticipant participant) {
 		participant.removePropertyChangeListener(this);
+		((SynchronizeViewWorkbenchPart)part).getConfiguration().removePropertyChangeListener(this);
 		fPartToParticipant.remove(part);
 		fParticipantToPart.remove(participant);
 	}
@@ -159,6 +172,8 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		ISynchronizeParticipant participant = part.getParticipant();	
 		participant.addPropertyChangeListener(this);
 		ISynchronizePageConfiguration configuration = participant.createPageConfiguration();
+		part.setConfiguration(configuration);
+		configuration.addPropertyChangeListener(this);
 		IPageBookViewPage page = participant.createPage(configuration);
 		if(page != null) {
 			initPage(page);

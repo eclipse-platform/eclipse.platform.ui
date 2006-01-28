@@ -14,6 +14,7 @@ import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -34,6 +35,9 @@ public class ShowModelProviderAction extends Action {
 		configuration.setProperty(
 				ISynchronizationConstants.P_ACTIVE_MODEL_PROVIDER,
 				provider.getDescriptor().getId());
+		configuration.setProperty(
+				ISynchronizePageConfiguration.P_PAGE_DESCRIPTION,
+				NLS.bind("{0} for {1}", new String[] {provider.getDescriptor().getLabel(), configuration.getParticipant().getName()}));
 	}
 
 	public String getProviderId() {
