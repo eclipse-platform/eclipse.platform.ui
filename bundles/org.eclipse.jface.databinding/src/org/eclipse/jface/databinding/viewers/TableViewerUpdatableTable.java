@@ -25,7 +25,7 @@ import org.eclipse.swt.graphics.Image;
  * @since 3.2
  *
  */
-public class TableViewerTableThing extends WritableSet implements
+public class TableViewerUpdatableTable extends WritableSet implements
 		IUpdatableTable {
 	
 	private final class LabelProvider extends ViewerLabelProvider implements ITableLabelProvider {
@@ -50,7 +50,7 @@ public class TableViewerTableThing extends WritableSet implements
 	private UpdatableSetContentProvider contentProvider;
 	private ICellProvider cellProvider;
 
-	public TableViewerTableThing(TableViewer tableViewer) {
+	public TableViewerUpdatableTable(TableViewer tableViewer) {
 		this.tableViewer = tableViewer;
 		contentProvider = new UpdatableSetContentProvider();
 		tableViewer.setContentProvider(contentProvider);

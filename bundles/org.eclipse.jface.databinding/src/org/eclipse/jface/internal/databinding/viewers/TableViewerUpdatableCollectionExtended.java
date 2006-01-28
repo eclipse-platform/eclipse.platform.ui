@@ -192,7 +192,7 @@ public class TableViewerUpdatableCollectionExtended extends
 				return column != null && column.isEditable();
 			}
 
-			private List getNestedPorperties (String properties) {	
+			private List getNestedProperties (String properties) {	
 				//TODO jUnit for nested column
 				StringTokenizer stk = new StringTokenizer(properties,TableViewerDescription.COLUMN_PROPERTY_NESTING_SEPERATOR);
 				List list = new ArrayList(stk.countTokens());
@@ -219,7 +219,7 @@ public class TableViewerUpdatableCollectionExtended extends
 					return null;
 				}
 				try {						
-					return getGetterValue(element,getNestedPorperties(property));
+					return getGetterValue(element,getNestedProperties(property));
 				} catch (SecurityException e) {
 					// TODO log
 				} catch (NoSuchMethodException e) {
@@ -251,7 +251,7 @@ public class TableViewerUpdatableCollectionExtended extends
 					}
 				}
 				try {
-					List getters = getNestedPorperties(property);
+					List getters = getNestedProperties(property);
 					String setterSig;
 					Object target;
 					if (getters.size()>1) {
