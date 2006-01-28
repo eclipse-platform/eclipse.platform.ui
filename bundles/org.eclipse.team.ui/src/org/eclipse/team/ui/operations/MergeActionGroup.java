@@ -58,6 +58,8 @@ public class MergeActionGroup extends SynchronizePageActionGroup {
 	}
 
 	private MergeIncomingChangesAction updateToolbarAction;
+
+	private ModelSelectionDropDownAction modelPicker;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.SynchronizePageActionGroup#initialize(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
@@ -75,6 +77,11 @@ public class MergeActionGroup extends SynchronizePageActionGroup {
 					updateToolbarAction);
 			// TODO: Should add a merge all to the context menu as well?
 		}
+		modelPicker = new ModelSelectionDropDownAction(configuration);
+		appendToGroup(
+				ISynchronizePageConfiguration.P_TOOLBAR_MENU,
+				ISynchronizePageConfiguration.NAVIGATE_GROUP,
+				modelPicker);
 	}
 	
 	/* (non-Javadoc)
@@ -181,5 +188,10 @@ public class MergeActionGroup extends SynchronizePageActionGroup {
 		} else {
 			manager.add(action);
 		}
+	}
+	
+	public void dispose() {
+		modelPicker.dispose();
+		super.dispose();
 	}
 }

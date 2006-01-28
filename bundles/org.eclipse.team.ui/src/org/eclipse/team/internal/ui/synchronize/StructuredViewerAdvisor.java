@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.synchronize.actions.DiffTreeStatusLineContributionGroup;
+import org.eclipse.team.internal.ui.mapping.DiffTreeStatusLineContributionGroup;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;

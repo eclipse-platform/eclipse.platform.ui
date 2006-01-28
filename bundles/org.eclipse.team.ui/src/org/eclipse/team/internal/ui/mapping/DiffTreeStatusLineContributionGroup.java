@@ -8,7 +8,7 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.synchronize.actions;
+package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.ui.synchronize.actions.StatusLineContributionGroup;
 import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
