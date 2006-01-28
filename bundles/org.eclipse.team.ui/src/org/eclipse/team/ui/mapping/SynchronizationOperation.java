@@ -13,8 +13,8 @@ package org.eclipse.team.ui.mapping;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.diff.IDiffNode;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
@@ -107,6 +107,12 @@ public abstract class SynchronizationOperation extends TeamOperation {
 		return super.shouldRun();
 	}
 
+	public boolean belongsTo(Object family) {
+		if (family == getContext())
+			return true;
+		return super.belongsTo(family);
+	}
+	
 	/**
 	 * Return the buffer that this operation will write its results
 	 * to or <code>null</code> if the operation does not buffer
@@ -132,8 +138,20 @@ public abstract class SynchronizationOperation extends TeamOperation {
 	}
 
 	private void clearContextBusy(final IProgressMonitor monitor) {
-		final IResourceDiffTree diffTree = getContext().getDiffTree();
-		diffTree.clearBusy(monitor);
+		// Add a job change listener to the job manager that will clear the busy
+		// when there are no more jobs related to the context running
+		final IJobManager jobManager = Platform.getJobManager();
+		final IJobChangeListener listener = new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				Job[] jobs = jobManager.find(getContext());
+				if (jobs.length == 0) {
+					final IResourceDiffTree diffTree = getContext().getDiffTree();
+					diffTree.clearBusy(null);
+					jobManager.removeJobChangeListener(this);
+				}
+			}
+		};
+		jobManager.addJobChangeListener(listener);
 	}
 
 	private void setContextBusy(final IProgressMonitor monitor) {
