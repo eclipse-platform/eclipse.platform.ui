@@ -115,6 +115,7 @@ import org.eclipse.ui.internal.contexts.ActiveContextSourceProvider;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.contexts.WorkbenchContextSupport;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
+import org.eclipse.ui.internal.fieldassist.WorkbenchFieldDecorationSupport;
 import org.eclipse.ui.internal.handlers.HandlerService;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
@@ -945,7 +946,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		//Set up the JFace preference store
 		JFaceUtil.initializeJFacePreferences();
-		
+				
 		// create workbench window manager
 		windowManager = new WindowManager();
 
@@ -967,6 +968,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		initializeFonts();
 		initializeColors();
 		initializeApplicationColors();
+		initializeFieldDecorations();
 
 		// now that the workbench is sufficiently initialized, let the advisor
 		// have a turn.
@@ -2778,5 +2780,17 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	public final void removeShowingMenus(final Set menuIds) {
 		menuSourceProvider.removeShowingMenus(menuIds);
+	}
+	
+	/*
+	 * Initialize any common workbench field decorations.
+	 * The decorations are placed in the JFace FieldDecorationRegistry.
+	 * Image management is performed by WorkbenchImages and its registry, so
+	 * there are no life cycle issues here.
+	 * 
+	 * @since 3.2
+	 */
+	private void initializeFieldDecorations() {
+		WorkbenchFieldDecorationSupport.initializeFieldDecorations();
 	}
 }

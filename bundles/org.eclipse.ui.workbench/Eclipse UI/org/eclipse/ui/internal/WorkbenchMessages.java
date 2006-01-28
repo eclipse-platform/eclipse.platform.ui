@@ -927,6 +927,10 @@ public class WorkbenchMessages extends NLS {
 
 
     public static String FastViewBar_show_view;
+    
+    // Content assist support
+    public static String ContentAssist_Cue_Description;
+    public static String ContentAssist_Cue_Description_Key;
 
 
 }

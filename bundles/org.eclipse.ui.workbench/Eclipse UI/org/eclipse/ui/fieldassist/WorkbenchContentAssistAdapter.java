@@ -15,15 +15,20 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.fieldassist.IControlContentAdapter;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.keys.IBindingService;
 
 /**
  * WorkbenchContentAssistAdapter extends {@link ContentProposalAdapter} to
@@ -44,7 +49,11 @@ public class WorkbenchContentAssistAdapter extends ContentProposalAdapter {
 
 	private String commandId;
 
-	/* package */static final String CONTENT_PROPOSAL_COMMAND = "org.eclipse.ui.edit.text.contentAssist.proposals"; //$NON-NLS-1$
+	/**
+	 * The command id used for content assist. (value
+	 * <code>"org.eclipse.ui.edit.text.contentAssist.proposals"</code>)
+	 */
+	public static final String CONTENT_PROPOSAL_COMMAND = "org.eclipse.ui.edit.text.contentAssist.proposals"; //$NON-NLS-1$
 
 	private IHandlerService handlerService;
 
@@ -57,6 +66,49 @@ public class WorkbenchContentAssistAdapter extends ContentProposalAdapter {
 		}
 
 	};
+
+	/**
+	 * Get a field decoration appropriate for cueing the user, including a
+	 * description of the active key binding, for the specified command id.
+	 * 
+	 * @param commandId
+	 *            the id of the command that is used to invoke content assist,
+	 *            or null if the default workbench content assist command is to
+	 *            be used.
+	 * @return the FieldDecoration that can cue the user for this content assist
+	 *         adapter.
+	 */
+	public static FieldDecoration getFieldDecoration(String commandId) {
+		// Look for a decoration installed for this command.
+		if (commandId == null)
+			commandId = CONTENT_PROPOSAL_COMMAND;
+		String decId = IWorkbenchFieldDecorationConstants.CONTENT_ASSIST_CUE
+				+ commandId;
+		FieldDecoration dec = FieldDecorationRegistry.getDefault()
+				.getFieldDecoration(decId);
+
+		// If there is not one, base it on the content assist decoration without
+		// a keybinding
+		if (dec == null) {
+			FieldDecoration originalDec = FieldDecorationRegistry
+					.getDefault()
+					.getFieldDecoration(
+							IWorkbenchFieldDecorationConstants.CONTENT_ASSIST_CUE);
+			dec = new FieldDecoration(originalDec.getImage(), null);
+			FieldDecorationRegistry.getDefault().addFieldDecoration(decId, dec);
+		}
+
+		// Update the description with the latest key binding, since it may
+		// have changed since the last activation.
+		IBindingService bindingService = (IBindingService) PlatformUI
+				.getWorkbench().getAdapter(IBindingService.class);
+		dec.setDescription(NLS.bind(
+				WorkbenchMessages.ContentAssist_Cue_Description_Key,
+				bindingService.getBestActiveBindingFormattedFor(commandId)));
+
+		// Now return the field decoration
+		return dec;
+	}
 
 	/**
 	 * Construct a content proposal adapter that can assist the user with
@@ -75,8 +127,8 @@ public class WorkbenchContentAssistAdapter extends ContentProposalAdapter {
 	 *            no content proposal is available.
 	 * @param labelProvider
 	 *            an optional label provider which provides text and image
-	 *            information for content proposals. Clients are responsible
-	 *            for disposing the label provider when it is no longer needed.
+	 *            information for content proposals. Clients are responsible for
+	 *            disposing the label provider when it is no longer needed.
 	 * @param commandId
 	 *            the String id of the command that will invoke the content
 	 *            assistant. If not supplied, the default value will be
