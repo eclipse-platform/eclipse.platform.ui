@@ -12,6 +12,7 @@ package org.eclipse.team.ui.mapping;
 
 import java.util.*;
 
+import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IResource;
@@ -26,6 +27,7 @@ import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.FileStateTypedElement;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
+import org.eclipse.team.ui.compare.IPrepareCompareInputAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -43,10 +45,13 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class AbstractCompareAdapter implements ICompareAdapter {
 
-	private static class ResourceDiffCompareInput extends DiffNode {
+	private static class ResourceDiffCompareInput extends DiffNode implements IAdaptable, IPrepareCompareInputAdapter {
+
+		private final IDiffNode node;
 
 		public ResourceDiffCompareInput(IDiffNode node) {
 			super(getCompareKind(node), getAncestor(node), getLeftContributor(node), getRightContributor(node));
+			this.node = node;
 		}
 		
 		private static int getCompareKind(IDiffNode node) {
@@ -120,6 +125,16 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 			return new FileStateTypedElement(state);
 		}
 
+		public Object getAdapter(Class adapter) {
+			if (adapter == IPrepareCompareInputAdapter.class) {
+				return this;
+			}
+			return Platform.getAdapterManager().getAdapter(this, adapter);
+		}
+
+		public void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+			Utils.updateLabels(node, configuration);
+		}
 		
 	}
 	

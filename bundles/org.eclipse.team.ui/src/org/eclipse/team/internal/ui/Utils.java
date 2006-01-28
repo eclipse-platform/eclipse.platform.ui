@@ -16,7 +16,8 @@ import java.util.*;
 import java.util.List;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.structuremergeviewer.IDiffContainer;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
@@ -31,7 +32,13 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.history.IFileHistoryProvider;
+import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -315,6 +322,92 @@ public class Utils {
 		} else {
 			config.setAncestorLabel(TeamUIMessages.SyncInfoCompareInput_baseLabel); 
 		}
+	}
+	
+	public static void updateLabels(IDiffNode diff, CompareConfiguration config) {
+		final IFileRevision remote = getRemote(diff);
+		final IFileRevision base = getBase(diff);
+		String localContentId = getLocalContentId(diff);
+		if (localContentId != null) {
+			config.setLeftLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_localLabelExists, new String[] { localContentId })); 
+		} else {
+			config.setLeftLabel(TeamUIMessages.SyncInfoCompareInput_localLabel); 
+		}
+		if (remote != null) {
+			config.setRightLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelExists, new String[] { remote.getContentIdentifier() })); 
+		} else {
+			config.setRightLabel(TeamUIMessages.SyncInfoCompareInput_remoteLabel); 
+		}
+		if (base != null) {
+			config.setAncestorLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelExists, new String[] { base.getContentIdentifier() })); 
+		} else {
+			config.setAncestorLabel(TeamUIMessages.SyncInfoCompareInput_baseLabel); 
+		}
+	}
+
+	public static String getLocalContentId(IDiffNode diff) {
+		if (diff instanceof IThreeWayDiff) {
+			IThreeWayDiff twd = (IThreeWayDiff) diff;
+			diff = twd.getLocalChange();
+			if (diff == null)
+				diff = twd.getRemoteChange();
+		}
+		if (diff instanceof IResourceDiff) {
+			IResourceDiff rd = (IResourceDiff) diff;
+			IResource resource = rd.getResource();
+			IFileHistoryProvider provider = getHistoryProvider(resource);
+			if (provider != null) {
+				IFileRevision revision = provider.getWorkspaceFileRevision(resource);
+				if (revision != null)
+					return revision.getContentIdentifier();
+			}
+		}
+		return null;
+	}
+
+	public static IFileHistoryProvider getHistoryProvider(IResource resource) {
+		RepositoryProvider rp = RepositoryProvider.getProvider(resource.getProject());
+		if (rp != null)
+			return rp.getFileHistoryProvider();
+		return null;
+	}
+
+	public static IFileRevision getBase(IDiffNode diff) {
+		if (diff instanceof IThreeWayDiff) {
+			IThreeWayDiff twd = (IThreeWayDiff) diff;
+			IDiffNode remoteChange = twd.getRemoteChange();
+			if (remoteChange instanceof IResourceDiff) {
+				IResourceDiff rd = (IResourceDiff) remoteChange;
+				return rd.getBeforeState();
+			}
+			IDiffNode localChange = twd.getLocalChange();
+			if (localChange instanceof IResourceDiff) {
+				IResourceDiff ld = (IResourceDiff) localChange;
+				return ld.getBeforeState();
+			}
+		}
+		return null;
+	}
+
+	public static IFileRevision getRemote(IDiffNode diff) {
+		if (diff instanceof IResourceDiff) {
+			IResourceDiff rd = (IResourceDiff) diff;
+			return rd.getAfterState();
+		}
+		if (diff instanceof IThreeWayDiff) {
+			IThreeWayDiff twd = (IThreeWayDiff) diff;
+			IDiffNode remoteChange = twd.getRemoteChange();
+			if (remoteChange instanceof IResourceDiff) {
+				IResourceDiff rd = (IResourceDiff) remoteChange;
+				return rd.getAfterState();
+			}
+			IDiffNode localChange = twd.getLocalChange();
+			if (localChange instanceof IResourceDiff) {
+				IResourceDiff ld = (IResourceDiff) localChange;
+				return ld.getBeforeState();
+			}
+		}
+		return null;
 	}
 
 	/**
