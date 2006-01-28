@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.ui.mapping;
 
+import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.team.ui.compare.IModelBuffer;
 import org.eclipse.team.ui.synchronize.ISynchronizePage;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -61,5 +62,20 @@ public interface ISynchronizationConstants {
 	 * from an {@link ISynchronizePageConfiguration}.
 	 */
 	public static final String P_ACTIVE_BUFFER = "org.eclipse.team.ui.activeBuffer"; //$NON-NLS-1$
+	
+	/**
+	 * Property constant used to store and retrieve the id active
+	 * {@link ModelProvider} from an {@link ISynchronizePageConfiguration}. The
+	 * active model provider will be the only one visible in the page. If
+	 * <code>null</code> or <code>ALL_MODEL_PROVIDERS_ACTIVE</code> is
+	 * returned, all model providers are considered active and are visible.
+	 */
+	public static final String P_ACTIVE_MODEL_PROVIDER = "org.eclipse.team.ui.activeModelProvider"; //$NON-NLS-1$
+	
+	/**
+	 * Constant used with the <code>P_ACTIVE_MODEL_PROVIDER</code> property to indicate
+	 * that all modle providers are active.
+	 */
+	public static final String ALL_MODEL_PROVIDERS_ACTIVE = "org.eclipse.team.ui.activeModelProvider"; //$NON-NLS-1$
 
 }

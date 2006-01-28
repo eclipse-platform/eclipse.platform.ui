@@ -14,16 +14,14 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
-import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.compare.IModelBuffer;
 import org.eclipse.team.ui.mapping.SynchronizationOperation;
+import org.eclipse.team.ui.operations.ModelMergeOperation;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.PlatformUI;
@@ -55,16 +53,17 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 			new SynchronizationOperation(getConfiguration(), getContext().getScope().getMappings()) {
 				public void execute(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
-					try {
-						// TODO: Should validate before merging
-						if (new MergeOperation(getPart(), context).performMerge(monitor)) {
-							promptForNoChanges();
-						} else {
-							promptForMergeFailure();
+					new ModelMergeOperation(getPart(), context) {
+						protected IMergeContext buildMergeContext(IProgressMonitor monitor) throws CoreException {
+							return context;
 						}
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
+						public boolean isPreviewRequested() {
+							return false;
+						}
+						protected void showPreview(IProgressMonitor monitor) {
+							// Do nothing since this action was launched from a preview
+						}
+					}.run(monitor);
 				}
 			}.run();
 		} catch (InvocationTargetException e) {
@@ -76,22 +75,6 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 
 	private void handle(Throwable throwable) {
 		Utils.handle(throwable);
-	}
-
-	protected void promptForMergeFailure() {
-		Display.getDefault().syncExec(new Runnable() {
-			public void run() {
-				MessageDialog.openInformation(getConfiguration().getSite().getShell(), TeamUIMessages.MergeIncomingChangesAction_0, TeamUIMessages.MergeIncomingChangesAction_1);
-			};
-		});
-	}
-
-	private void promptForNoChanges() {
-		Display.getDefault().syncExec(new Runnable() {
-			public void run() {
-				MessageDialog.openInformation(getConfiguration().getSite().getShell(), TeamUIMessages.MergeIncomingChangesAction_2, TeamUIMessages.MergeIncomingChangesAction_3);
-			};
-		});
 	}
 
 	/* (non-Javadoc)

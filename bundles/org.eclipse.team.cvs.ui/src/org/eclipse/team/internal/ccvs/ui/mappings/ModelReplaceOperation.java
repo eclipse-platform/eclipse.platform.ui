@@ -20,6 +20,7 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class ModelReplaceOperation extends ModelUpdateOperation {
@@ -62,12 +63,12 @@ public class ModelReplaceOperation extends ModelUpdateOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.operations.ResourceMappingMergeOperation#performMerge(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected boolean performMerge(IProgressMonitor monitor) throws CoreException {
+	protected IStatus performMerge(IProgressMonitor monitor) throws CoreException {
 		// TODO: cancel must free context to avoid leaking
 		if (!hasLocalChanges() || promptForOverwrite()) {
 			return super.performMerge(monitor);
 		}
-		return false;
+		return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUEST_PREVIEW, "", null); //$NON-NLS-1$
 	}
 
 	/*

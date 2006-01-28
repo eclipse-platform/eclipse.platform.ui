@@ -14,6 +14,7 @@ import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public class ShowModelProviderAction extends Action {
@@ -30,6 +31,13 @@ public class ShowModelProviderAction extends Action {
 	public void run() {
 		Viewer v = configuration.getPage().getViewer();
 		v.setInput(provider);
+		configuration.setProperty(
+				ISynchronizationConstants.P_ACTIVE_MODEL_PROVIDER,
+				provider.getDescriptor().getId());
+	}
+
+	public String getProviderId() {
+		return provider.getDescriptor().getId();
 	}
 
 }

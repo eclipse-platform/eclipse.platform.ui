@@ -11,20 +11,22 @@
 package org.eclipse.team.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ModelProvider;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.mapping.IMergeContext;
-import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.mapping.MergeOperation;
+import org.eclipse.team.internal.ui.mapping.DefaultResourceMappingMerger;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ICompareAdapter;
 import org.eclipse.team.ui.synchronize.*;
@@ -103,11 +105,77 @@ import org.eclipse.ui.PlatformUI;
  */
 public abstract class ModelMergeOperation extends ModelOperation {
 	
+	/*
+	 * Ids for custom buttons when previewing a merge/replace
+	 */
 	private static final int DONE_ID = IDialogConstants.CLIENT_ID + 1;
 	private static final int REPLACE_ID = IDialogConstants.CLIENT_ID + 2;
 
 	private IMergeContext context;
+	private boolean ownsContext = true;
 
+	/**
+	 * Validate the merge context with the model providers that have mappings in
+	 * the scope of the context. The {@link IResourceMappingMerger} for each
+	 * model provider will be consulted and any non-OK status will be
+	 * accumulated and returned,
+	 * 
+	 * @param context
+	 *            the merge context being validated
+	 * @param monitor
+	 *            a progress monitor
+	 * @return a status or multi-status that identify any conditions that should
+	 *         force a preview of the merge
+	 */
+	public static IStatus validateMerge(IMergeContext context, IProgressMonitor monitor) {
+		ModelProvider[] providers = context.getScope().getModelProviders();
+		monitor.beginTask(null, 100 * providers.length);
+		List notOK = new ArrayList();
+		for (int i = 0; i < providers.length; i++) {
+			ModelProvider provider = providers[i];
+			IStatus status = validateMerge(provider, context, Policy.subMonitorFor(monitor, 100));
+			if (!status.isOK())
+				notOK.add(status);
+		}
+		if (notOK.isEmpty())
+			return Status.OK_STATUS;
+		if (notOK.size() == 1)
+			return (IStatus)notOK.get(0);
+		return new MultiStatus(TeamUIPlugin.ID, 0, (IStatus[]) notOK.toArray(new IStatus[notOK.size()]), TeamUIMessages.ResourceMappingMergeOperation_3, null);
+	}
+	
+	/*
+	 * Validate the merge by obtaining the {@link IResourceMappingMerger} for the
+	 * given provider.
+	 * @param provider the model provider
+	 * @param context the merge context
+	 * @param monitor a progress monitor
+	 * @return the status obtained from the merger for the provider
+	 */
+	private static IStatus validateMerge(ModelProvider provider, IMergeContext context, IProgressMonitor monitor) {
+		IResourceMappingMerger merger = getMerger(provider);
+		return merger.validateMerge(context, monitor);
+	}
+	
+	/**
+	 * Return the auto-merger associated with the given model provider using the
+	 * adaptable mechanism. If the model provider does not have a merger
+	 * associated with it, a default merger that performs the merge at the file
+	 * level is returned.
+	 * 
+	 * @param provider
+	 *            the model provider of the elements to be merged (must not be
+	 *            <code>null</code>)
+	 * @return a merger
+	 */
+	public static IResourceMappingMerger getMerger(ModelProvider provider) {
+		Assert.isNotNull(provider);
+		IResourceMappingMerger merger = (IResourceMappingMerger)Utils.getAdapter(provider, IResourceMappingMerger.class);
+		if (merger != null)
+			return merger;
+		return new DefaultResourceMappingMerger(provider);
+	}
+	
 	/**
 	 * Create a merge operation
 	 * @param part the workbench part from which the merge was launched or <code>null</code>
@@ -117,36 +185,71 @@ public abstract class ModelMergeOperation extends ModelOperation {
 		super(part, selectedMappings);
 	}
 
+	/**
+	 * Create the model merge operation for the given context.
+	 * The merge will be performed for the given context but
+	 * the context will not be disposed by this operation
+	 * (i.e. it is considered to be owned by the client).
+	 * @param part the workbench part from which the merge was launched or <code>null</code>
+	 * @param context the merge context to be merged
+	 */
+	public ModelMergeOperation(IWorkbenchPart part, IMergeContext context) {
+		super(part, context.getScope());
+		this.context = context;
+		ownsContext = false;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ResourceMappingOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
 			monitor.beginTask(null, 100);
-			context = buildMergeContext(Policy.subMonitorFor(monitor, 75));
+			if (context != null)
+				context = buildMergeContext(Policy.subMonitorFor(monitor, 75));
 			if (!hasChangesOfInterest()) {
 				promptForNoChanges();
-				context.dispose();
 				return;
 			}
 			if (!isPreviewRequested()) {
-				IStatus status = MergeOperation.validateMerge(context, Policy.subMonitorFor(monitor, 5));
+				IStatus status = validateMerge(context, Policy.subMonitorFor(monitor, 5));
 				if (status.isOK()) {
-					if (performMerge(Policy.subMonitorFor(monitor, 20)))
+					status = performMerge(Policy.subMonitorFor(monitor, 20));
+					if (status.isOK()) {
 						// The merge was sucessful so we can just return
 						return;
+					} else {
+						if (status.getCode() == IMergeStatus.CONFLICTS) {
+							promptForMergeFailure(status);
+						}
+					}
+				} else {
+					// TODO prompt with validation message
 				}
 			}
 			// Either auto-merging was not attemped or it was not 100% sucessful
-			// TODO If there is a problem between here and when the preview is shown, the context may be leaked
 			showPreview(Policy.subMonitorFor(monitor, 25));
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
+			if (ownsContext)
+				context.dispose();
 			monitor.done();
 		}
 	}
 
+	/**
+	 * Prompt for a failure to auto-merge
+	 * @param status the status returned from the merger that reported the conflict
+	 */
+	protected void promptForMergeFailure(IStatus status) {
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				MessageDialog.openInformation(getShell(), TeamUIMessages.MergeIncomingChangesAction_0, TeamUIMessages.MergeIncomingChangesAction_1);
+			};
+		});
+	}
+	
 	/**
 	 * Return whether the context of this operation has changes that are
 	 * of interest to the operation. Sublcasses may override.
@@ -193,9 +296,11 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	 */
 	protected void showPreview(IProgressMonitor monitor) {
 		calculateStates(context, Policy.subMonitorFor(monitor, 5));
+		// TODO Ownership of the context is being transferred to the participant
+		final ModelSynchronizeParticipant participant = createParticipant();
+		ownsContext = false;
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				ModelSynchronizeParticipant participant = createParticipant();
 				if (isPreviewInDialog()) {
 					CompareConfiguration cc = new CompareConfiguration();
 					ISynchronizePageConfiguration pageConfiguration = participant.createPageConfiguration();
@@ -309,24 +414,81 @@ public abstract class ModelMergeOperation extends ModelOperation {
 		}
 		monitor.done();
 	}
-
+	
 	/**
-	 * Perform the merge for the context of the operation. If the merge was not
-	 * succesful in it's entirety, there are still changes left to be merged.
-	 * Clients can decide how to handle this.
+	 * Attempt a headless merge of the elements in the context of this
+	 * operation. The merge is performed by obtaining the
+	 * {@link IResourceMappingMerger} for the model providers in the context's
+	 * scope. The merger of the model providers are invoked in the order
+	 * determined by the {@link ModelOperation#sortByExtension(ModelProvider[])}
+	 * method. The method will stop on the first conflict encountered.
+	 * This method will gthrow a runtime exception
+	 * if the operation does not have a merge context.
 	 * 
-	 * @param monitor a prohress monitor
-	 * @return whether the merge was successful in it's entirety
+	 * @param monitor
+	 *            a progress monitor
+	 * @return a status that indicates whether the merge succeeded.
 	 * @throws CoreException
+	 *             if an error occurred
 	 */
-	protected boolean performMerge(IProgressMonitor monitor) throws CoreException {
-		boolean merged = new MergeOperation(getPart(), context).performMerge(monitor);
-		if (merged) {
-			context.dispose();
+	protected IStatus performMerge(IProgressMonitor monitor) throws CoreException {
+		ISynchronizationContext sc = getContext();
+		if (sc instanceof IMergeContext) {
+			IMergeContext context = (IMergeContext) sc;		
+			final ModelProvider[] providers = sortByExtension(context.getScope().getModelProviders());
+			final IStatus[] result = new IStatus[] { Status.OK_STATUS };
+			context.run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					try {
+						monitor.beginTask(null, IProgressMonitor.UNKNOWN);
+						for (int i = 0; i < providers.length; i++) {
+							ModelProvider provider = providers[i];
+							IStatus status = performMerge(provider, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
+							if (!status.isOK()) {
+								// Stop at the first failure
+								result[0] = status;
+								return;
+							}
+							// TODO: Need to wait until diff tree is up-to-date
+						}
+					} finally {
+						monitor.done();
+					}
+				}
+			}, null /* scheduling rule */, IResource.NONE, monitor);
+			return result[0];
 		}
-		return merged;
+		return noMergeContextAvailable();
+	}
+	
+	/**
+	 * Attempt to merge all the mappings that come from the given provider.
+	 * Return a status which indicates whether the merge succeeded or if
+	 * unmergeable conflicts were found. This method will gthrow a runtime exception
+	 * if the operation does not have a merge context.
+	 * @param provider the model provider whose mappings are to be merged
+	 * @param monitor a progress monitor
+	 * @return a non-OK status if there were unmergable conflicts
+	 * @throws CoreException if an error occurred
+	 */
+	protected IStatus performMerge(ModelProvider provider, IProgressMonitor monitor) throws CoreException {
+		ISynchronizationContext sc = getContext();
+		if (sc instanceof IMergeContext) {
+			IMergeContext context = (IMergeContext) sc;
+			IResourceMappingMerger merger = getMerger(provider);
+			IStatus status = merger.merge(context, monitor);
+			if (status.isOK() || status.getCode() == IMergeStatus.CONFLICTS) {
+				return status;
+			}
+			throw new TeamException(status);
+		}
+		return noMergeContextAvailable();
 	}
 
+	private IStatus noMergeContextAvailable() {
+		throw new IllegalStateException("Merges should only be attemped for operations that have a merge context");
+	}
+	
 	/**
 	 * Build and initialize a merge context for the input of this operation.
 	 * @param monitor a progress monitor
