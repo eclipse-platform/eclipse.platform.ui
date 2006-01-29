@@ -71,7 +71,8 @@ public interface ICompareAdapter {
 	
 	/**
 	 * Return the number of out-of-sync elements in the given context whose synchronization
-	 * state matches the given mask. A mask of 0 assumes a direct match of the given state.
+	 * state matches the given mask. A state of 0 assumes a count of all changes.
+	 * A mask of 0 assumes a direct match of the given state.
 	 * This method is used to determine if there are changes of interest in the given context.
 	 * Implementations can obtain the count from the diff tree of the context using
 	 * {@link IDiffTree#countFor(int, int)} or perform the calculation themselves.
