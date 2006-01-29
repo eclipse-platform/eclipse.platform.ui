@@ -108,20 +108,27 @@ public class NewTableScenarios extends ScenariosTestCase {
 	}
 
 	public void testScenario01() throws IntrospectionException {
-		// Factory
+		// Factory for directly creating IUpdatables for beans
 		JavaBeans javaBeans = new JavaBeans();
-		// Show that a TableViewer with three columns renders the accounts
-		IReadableSet accountSet = javaBeans.createReadableSet(catalog,
-				new PropertyDescriptor("accounts", Catalog.class, "getAccounts", null),
-				Account.class);
-		IUpdatableCellProvider accountCellProvider = javaBeans.createUpdatableCellProvider(
-				accountSet, new String[] { "firstName", "lastName", "state" });
-
+		
+		// Wrap the TableViewer in an IUpdatableTable
 		IUpdatableTable accountTable = new TableViewerUpdatableTable(
 				tableViewer);
 
+		// Create a readable set to track the catalog's accounts
+		IReadableSet accountSet = javaBeans.createReadableSet(catalog,
+				new PropertyDescriptor("accounts", Catalog.class, "getAccounts", null),
+				Account.class);
+		
+		// Create an updatable cell provider to track the given accounts' properties.
+		IUpdatableCellProvider accountCellProvider = javaBeans.createUpdatableCellProvider(
+				accountSet, new String[] { "firstName", "lastName", "state" });
+
+		// bind
 		getDbc().bind(accountTable, accountCellProvider, null);
-		//interact();
+		
+		// uncomment next line to see result interactively
+		// interact();
 
 		// Verify the data in the table columns matches the accounts
 		Account[] accounts = catalog.getAccounts();
