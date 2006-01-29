@@ -81,6 +81,7 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 	 */
 	protected AbstractViewerAdvisor createViewerAdvisor(Composite parent) {
 		CommonViewerAdvisor commonViewerAdvisor = new CommonViewerAdvisor(parent, getConfiguration());
+		commonViewerAdvisor.addEmptyTreeListener((DiffTreeChangesSection)getChangesSection());
 		updateMode(getConfiguration().getMode());
 		return commonViewerAdvisor;
 	}

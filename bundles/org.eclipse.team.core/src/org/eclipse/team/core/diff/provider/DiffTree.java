@@ -343,6 +343,8 @@ public class DiffTree implements IDiffTree {
 	 * @see org.eclipse.team.core.diff.IDiffTree#countFor(int, int)
 	 */
 	public long countFor(int state, int mask) {
+		if (state == 0)
+			return size();
 		return statistics.countFor(state, mask);
 	}
 

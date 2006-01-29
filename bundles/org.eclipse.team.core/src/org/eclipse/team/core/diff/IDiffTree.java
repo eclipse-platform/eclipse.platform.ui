@@ -116,7 +116,8 @@ public interface IDiffTree {
 	
 	/**
 	 * Return the number of out-of-sync elements in the given set whose synchronization
-	 * state matches the given mask. A mask of 0 assumes a direct match of the given state.
+	 * state matches the given mask. A state of 0 assumes a count of all changes.
+	 * A mask of 0 assumes a direct match of the given state.
 	 * <p>
 	 * For example, this will return the number of outgoing changes in the set:
 	 * <pre>

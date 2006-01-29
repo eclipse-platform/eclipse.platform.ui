@@ -17,8 +17,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.internal.ui.synchronize.AbstractTreeViewerAdvisor;
 import org.eclipse.team.ui.mapping.ISynchronizationConstants;
@@ -34,11 +33,14 @@ import org.eclipse.ui.part.IPageSite;
 /**
  * Provides a Common Navigator based viewer for use by a {@link ModelSynchronizePage}.
  */
-public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements INavigatorContentServiceListener {
+public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements INavigatorContentServiceListener, IEmptyTreeListener {
 
-	private static final class NavigableCommonViewer extends CommonViewer implements ITreeViewerAccessor {
-		private NavigableCommonViewer(String id, Composite parent, int style) {
+	public static final class NavigableCommonViewer extends CommonViewer implements ITreeViewerAccessor {
+		private final IEmptyTreeListener listener;
+		private boolean empty;
+		private NavigableCommonViewer(String id, Composite parent, int style, IEmptyTreeListener listener) {
 			super(id, parent, style);
+			this.listener = listener;
 		}
 		protected ILabelProvider wrapLabelProvider(ILabelProvider provider) {
 			// Don't wrap since we don't want any decoration
@@ -50,13 +52,53 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 		public void openSelection() {
 			fireOpen(new OpenEvent(this, getSelection()));
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.navigator.CommonViewer#init()
-		 */
 		protected void init() {
 			super.init();
 			setSorter(new CommonSorter(getNavigatorContentService()));
+		}
+		protected void internalRefresh(Object element, boolean updateLabels) {
+			super.internalRefresh(element, updateLabels);
+			checkForEmptyViewer();
+		}
+		protected void internalRemove(Object parent, Object[] elements) {
+			super.internalRemove(parent, elements);
+			if (parent == getInput())
+				checkForEmptyViewer();
+		}
+		protected void internalRemove(Object[] elements) {
+			super.internalRemove(elements);
+			checkForEmptyViewer();
+		}
+		protected void internalAdd(Widget widget, Object parentElement, Object[] childElements) {
+			super.internalAdd(widget, parentElement, childElements);
+			if (empty) {
+				empty = false;
+				listener.notEmpty(this);
+			}
+				
+		}
+		protected void inputChanged(Object input, Object oldInput) {
+			super.inputChanged(input, oldInput);
+			checkForEmptyViewer();
+		}
+		private void checkForEmptyViewer() {
+			Object input = getInput();
+			if (input != null) {
+				Widget w = findItem(input);
+				Item[] children = getChildren(w);
+				if (children.length == 0) {
+					if (!empty) {
+						empty = true;
+						listener.treeEmpty(this);
+					}
+					return;
+				}
+			}
+			empty = false;
+			listener.notEmpty(this);
+		}
+		public boolean isEmpty() {
+			return empty;
 		}
 	}
 
@@ -66,6 +108,8 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	private Map properties = new HashMap();
 	
 	private NavigatorActionService actionService;
+
+	private IEmptyTreeListener emptyTreeListener;
 	
 	/**
 	 * Create a common viewer
@@ -73,8 +117,8 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	 * @param configuration the configuration for the viewer
 	 * @return a newly created common viewer
 	 */
-	private static CommonViewer createViewer(Composite parent, ISynchronizePageConfiguration configuration) {
-		CommonViewer v = new NavigableCommonViewer(configuration.getViewerId(), parent, SWT.NONE);
+	private static CommonViewer createViewer(Composite parent, ISynchronizePageConfiguration configuration, IEmptyTreeListener listener) {
+		CommonViewer v = new NavigableCommonViewer(configuration.getViewerId(), parent, SWT.NONE, listener);
 		v.getNavigatorContentService().bindExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
 		v.getNavigatorContentService().activateExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
 		configuration.getSite().setSelectionProvider(v);
@@ -87,7 +131,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	 */
 	public CommonViewerAdvisor(Composite parent, ISynchronizePageConfiguration configuration) {
 		super(configuration);
-		CommonViewer viewer = CommonViewerAdvisor.createViewer(parent, configuration);
+		CommonViewer viewer = CommonViewerAdvisor.createViewer(parent, configuration, this);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(data);
         viewer.getNavigatorContentService().addListener(this);
@@ -244,6 +288,20 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	 */
 	protected void addContextMenuGroups(IMenuManager manager) {
 		// Don't do anything. The groups will be added by the action service
+	}
+
+	public void addEmptyTreeListener(IEmptyTreeListener emptyTreeListener) {
+		this.emptyTreeListener = emptyTreeListener;
+	}
+
+	public void treeEmpty(TreeViewer viewer) {
+		if (emptyTreeListener != null)
+			emptyTreeListener.treeEmpty(viewer);
+	}
+
+	public void notEmpty(TreeViewer viewer) {
+		if (emptyTreeListener != null)
+			emptyTreeListener.notEmpty(viewer);
 	}
 
 }

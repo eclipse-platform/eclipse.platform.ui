@@ -292,4 +292,8 @@ public abstract class AbstractSynchronizePage extends Page implements ISynchroni
 	 * @param mode the mode to be used
 	 */
 	protected abstract void updateMode(int mode);
+
+	public ChangesSection getChangesSection() {
+		return changesSection;
+	}
 }
