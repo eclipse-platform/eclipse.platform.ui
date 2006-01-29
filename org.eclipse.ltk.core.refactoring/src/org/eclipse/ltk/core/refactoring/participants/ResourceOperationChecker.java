@@ -61,7 +61,7 @@ public class ResourceOperationChecker implements IConditionChecker {
 	
 	public RefactoringStatus check(IProgressMonitor monitor) throws CoreException {
 		IStatus status= ResourceChangeValidator.getValidator().validateChange(fDeltaFactory.getDelta(), monitor);
-		return RefactoringStatus.create(status);
+		return createFrom(status);
 	}
 
 	/* package */ IFile[] getChangedFiles() throws CoreException {
@@ -76,5 +76,34 @@ public class ResourceOperationChecker implements IConditionChecker {
 			}
 		});
 		return (IFile[]) result.toArray(new IFile[result.size()]);
+	}
+	
+	private static RefactoringStatus createFrom(IStatus status) {
+		if (status.isOK())
+			return new RefactoringStatus();
+
+		if (!status.isMultiStatus()) {
+			switch (status.getSeverity()) {
+				case IStatus.OK :
+					return new RefactoringStatus();
+				case IStatus.INFO :
+					return RefactoringStatus.createInfoStatus(status.getMessage());
+				case IStatus.WARNING :
+					return RefactoringStatus.createWarningStatus(status.getMessage());
+				case IStatus.ERROR :
+					return RefactoringStatus.createErrorStatus(status.getMessage());
+				case IStatus.CANCEL :
+					return RefactoringStatus.createFatalErrorStatus(status.getMessage());
+				default :
+					return RefactoringStatus.createFatalErrorStatus(status.getMessage());
+			}
+		} else {
+			IStatus[] children= status.getChildren();
+			RefactoringStatus result= new RefactoringStatus();
+			for (int i= 0; i < children.length; i++) {
+				result.merge(createFrom(children[i]));
+			}
+			return result;
+		}
 	}
 }
