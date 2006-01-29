@@ -43,6 +43,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.NewSearchUI;
 
+import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
@@ -68,15 +69,18 @@ public class SearchPlugin extends AbstractUIPlugin {
 	public static final int INTERNAL_ERROR= 1;
 	
 	private static SearchPlugin fgSearchPlugin;
+
 			
 	private List fPageDescriptors;
 	private List fSorterDescriptors;
+	private TextSearchEngineRegistry fTextSearchEngineRegistry;
 	
 
 	public SearchPlugin() {
 		super();
 		Assert.isTrue(fgSearchPlugin == null);
 		fgSearchPlugin= this;
+		fTextSearchEngineRegistry= null;
 	}
 
 	/**
@@ -287,7 +291,15 @@ public class SearchPlugin extends AbstractUIPlugin {
 			fSorterDescriptors= createSorterDescriptors(elements);
 		}	
 		return fSorterDescriptors;
-	} 
+	}
+	
+	
+    public TextSearchEngineRegistry getTextSearchEngineRegistry() {
+        if (fTextSearchEngineRegistry == null) {
+        	fTextSearchEngineRegistry= new TextSearchEngineRegistry();
+        }
+        return fTextSearchEngineRegistry;
+    }
 
 	/**
 	 * Creates all necessary sorter description nodes.

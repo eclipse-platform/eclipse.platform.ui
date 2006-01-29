@@ -510,7 +510,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	}
 	
 	private Pattern createReplacePattern(FileSearchQuery query) {
-		return PatternConstructor.createPattern(query.getSearchString(), query.isCaseSensitive(), true);
+		return PatternConstructor.createPattern(query.getSearchString(), true, true, query.isCaseSensitive(), false);
 	}
 
 	private String computeReplacementString(Pattern pattern, String originalText, String replacementText) {

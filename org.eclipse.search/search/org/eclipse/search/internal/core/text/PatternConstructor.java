@@ -22,108 +22,145 @@ public class PatternConstructor {
 	private PatternConstructor() {
 		// don't instantiate
 	}
+	
+	public static Pattern createPattern(String pattern, boolean isCaseSensitive, boolean isRegex) throws PatternSyntaxException {
+		return createPattern(pattern, isRegex, true, isCaseSensitive, false);
+	}
 
 	/**
 	 * Creates a pattern element from the pattern string which is either a reg-ex expression or in our old
 	 * 'StringMatcher' format.
 	 * @param pattern The search pattern
+	 * @param isRegex <code>true</code> if the passed string already is a reg-ex pattern
+	 * @param isStringMatcher <code>true</code> if the passed string is in the StringMatcher format.
 	 * @param isCaseSensitive Set to <code>true</code> to create a case insensitive pattern
-	 * @param isRegexSearch <code>true</code> if the passed string already is a reg-ex pattern
+	 * @param isWholeWord <code>true</code> to create a pattern that requires a word boundary at the beginning and the end.
 	 * @return The created pattern
 	 * @throws PatternSyntaxException
 	 */
-	public static Pattern createPattern(String pattern, boolean isCaseSensitive, boolean isRegexSearch) throws PatternSyntaxException {
-		if (!isRegexSearch) {
-			pattern=  asRegEx(pattern, new StringBuffer()).toString();			
+	public static Pattern createPattern(String pattern, boolean isRegex, boolean isStringMatcher, boolean isCaseSensitive, boolean isWholeWord) throws PatternSyntaxException {
+		if (isRegex) {
+			if (isWholeWord) {
+				StringBuffer buffer= new StringBuffer(pattern.length() + 10);
+				buffer.append("\\b(?:").append(pattern).append(")\\b"); //$NON-NLS-1$ //$NON-NLS-2$
+				pattern= buffer.toString();
+			}
+		} else {
+			int len= pattern.length();
+			StringBuffer buffer= new StringBuffer(len + 10);
+			// don't add a word boundary if the search text does not start with
+			// a word char. (this works around a user input error).
+			if (isWholeWord && len > 0 && isWordChar(pattern.charAt(0))) {
+				buffer.append("\\b"); //$NON-NLS-1$
+			}
+			appendAsRegEx(isStringMatcher, pattern, buffer);
+			if (isWholeWord && len > 0 && isWordChar(pattern.charAt(len - 1))) {
+				buffer.append("\\b"); //$NON-NLS-1$
+			}
+			pattern= buffer.toString();
 		}
-		
-		if (!isCaseSensitive)
-			return Pattern.compile(pattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.MULTILINE);
-		
-		return Pattern.compile(pattern, Pattern.MULTILINE);
+
+		int regexOptions= Pattern.MULTILINE;
+		if (!isCaseSensitive) {
+			regexOptions|= Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
+		}
+		return Pattern.compile(pattern, regexOptions);
 	}
 	
-	/**
-	 * Creates a pattern element from the pattern string which is either a reg-ex expression or in our old
+    private static boolean isWordChar(char c) {
+        return Character.isLetterOrDigit(c);
+    }
+
+    /**
+	 * Creates a pattern element from an array of patterns in the old
 	 * 'StringMatcher' format.
 	 * @param patterns The search patterns
 	 * @param isCaseSensitive Set to <code>true</code> to create a case insensitive pattern
-	 * @param isRegexSearch <code>true</code> if the passed string already is a reg-ex pattern
 	 * @return The created pattern
 	 * @throws PatternSyntaxException
 	 */
-	public static Pattern createPattern(String[] patterns, boolean isCaseSensitive, boolean isRegexSearch) throws PatternSyntaxException {
+	public static Pattern createPattern(String[] patterns, boolean isCaseSensitive) throws PatternSyntaxException {
 		StringBuffer pattern= new StringBuffer();
 		for (int i= 0; i < patterns.length; i++) {
 			if (i > 0) {
+                // note that this works only as we know that the operands of the
+                // or expression will be simple and need no brackets.
 				pattern.append('|');
 			}
-			if (isRegexSearch) {
-				pattern.append(patterns[i]);
-			} else {
-				asRegEx(patterns[i], pattern);
-			}
+			appendAsRegEx(true, patterns[i], pattern);
 		}
-		return createPattern(pattern.toString(), isCaseSensitive, true);
+		return createPattern(pattern.toString(), true, true, isCaseSensitive, false);
 	}
 	
 	
-	/**
-	 * Translates a StringMatcher pattern (using '*' and '?') to a regex pattern string
-	 * @param stringMatcherPattern a pattern using '*' and '?'
-	 */
-	private static StringBuffer asRegEx(String stringMatcherPattern, StringBuffer out) {	
-		boolean escaped= false;
-		boolean quoting= false;
-		
-		int i= 0;
-		while (i < stringMatcherPattern.length()) {
-			char ch= stringMatcherPattern.charAt(i++);
-			
-			if (ch == '*' && !escaped) {
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append(".*"); //$NON-NLS-1$
-				escaped= false;
-				continue;
-			} else if (ch == '?' && !escaped) {
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append("."); //$NON-NLS-1$
-				escaped= false;
-				continue;
-			} else if (ch == '\\' && !escaped) {
-				escaped= true;
-				continue;								
-				
-			} else if (ch == '\\' && escaped) {
-				escaped= false;
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append("\\\\"); //$NON-NLS-1$
-				continue;								
-			}
-			
-			if (!quoting) {
-				out.append("\\Q"); //$NON-NLS-1$
-				quoting= true;
-			}
-			if (escaped && ch != '*' && ch != '?' && ch != '\\')
-				out.append('\\');
-			out.append(ch);
-			escaped= ch == '\\';
-			
-		}
-		if (quoting)
-			out.append("\\E"); //$NON-NLS-1$
-		
-		return out;
-	}
-
+	public static StringBuffer appendAsRegEx(boolean isStringMatcher, String pattern, StringBuffer buffer) {
+        boolean isEscaped= false;
+        for (int i = 0; i < pattern.length(); i++) {
+            char c = pattern.charAt(i);
+            switch(c) {
+            // the backslash
+            case '\\':
+                // the backslash is escape char in string matcher
+                if (isStringMatcher && !isEscaped) {
+                    isEscaped= true;
+                }
+                else {
+                    buffer.append("\\\\");  //$NON-NLS-1$
+                    isEscaped= false;
+                }
+                break;
+            // characters that need to be escaped in the regex.
+            case '(':
+            case ')':
+            case '{':
+            case '}':
+            case '.':
+            case '[':
+            case ']':
+            case '$':
+            case '^':
+            case '+':
+            case '|':
+                if (isEscaped) {
+                    buffer.append("\\\\");  //$NON-NLS-1$
+                    isEscaped= false;
+                }
+                buffer.append('\\');
+                buffer.append(c);
+                break;
+            case '?':
+                if (isStringMatcher && !isEscaped) {
+                    buffer.append('.');
+                }
+                else {
+                    buffer.append('\\');
+                    buffer.append(c);
+                    isEscaped= false;
+                }
+                break;
+            case '*':
+                if (isStringMatcher && !isEscaped) {
+                    buffer.append(".*"); //$NON-NLS-1$
+                }
+                else {
+                    buffer.append('\\');
+                    buffer.append(c);
+                    isEscaped= false;
+                }
+                break;
+            default:
+                if (isEscaped) {
+                    buffer.append("\\\\");  //$NON-NLS-1$
+                    isEscaped= false;
+                }
+                buffer.append(c);
+                break;
+            }
+        }
+        if (isEscaped) {
+            buffer.append("\\\\");  //$NON-NLS-1$
+            isEscaped= false;
+        }
+        return buffer;
+    }
 }

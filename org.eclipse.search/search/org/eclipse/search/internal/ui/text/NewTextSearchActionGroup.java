@@ -42,7 +42,7 @@ import org.eclipse.search.ui.IContextMenuConstants;
  * 
  * @since 2.1
  */
-class NewTextSearchActionGroup extends ActionGroup {
+public class NewTextSearchActionGroup extends ActionGroup {
 
 	private ISelectionProvider fSelectionProvider;		
 	private IWorkbenchPage fPage;

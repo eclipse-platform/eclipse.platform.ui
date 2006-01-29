@@ -11,13 +11,14 @@
 
 package org.eclipse.search.core.text;
 
+import java.util.Comparator;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
-
 import org.eclipse.search.internal.core.text.TextSearchVisitor;
+import org.eclipse.search.internal.ui.SearchPlugin;
 
 /**
  * A {@link TextSearchEngine} searches the content of a workspace file resources
@@ -37,8 +38,7 @@ public abstract class TextSearchEngine {
 	 * @return the created {@link TextSearchEngine}.
 	 */
 	public static TextSearchEngine create() {
-		// TODO: An future extension point will allow to contribute a new text search engine
-		return createDefault();
+		return SearchPlugin.getDefault().getTextSearchEngineRegistry().getPreferred();
 	}
 	
 	/**
@@ -50,10 +50,12 @@ public abstract class TextSearchEngine {
 	public static TextSearchEngine createDefault() {
 		return new TextSearchEngine() {
 			public IStatus search(TextSearchScope scope, TextSearchRequestor requestor, Pattern searchPattern, IProgressMonitor monitor) {
-				return TextSearchVisitor.search(scope, requestor, searchPattern, monitor);
+				 return new TextSearchVisitor(requestor, searchPattern, monitor).search(scope, getSearchOrderHint());
 			}
 		};
 	}
+
+    private Comparator fSearchOrderHint;
 		
 	/**
 	 * Uses a given search pattern to find matches in the content of a workspace file resource. If the file is open in an editor, the
@@ -66,5 +68,28 @@ public abstract class TextSearchEngine {
 	 * @return the status containing information about problems in resources searched.
 	 */
 	public abstract IStatus search(TextSearchScope scope, TextSearchRequestor requestor, Pattern searchPattern, IProgressMonitor monitor);
-
+    
+    /**
+     * Sets a comparator to be used by the search engine to order the files before searching them.
+     * The passed comparator will be used with instances of type {@link org.eclipse.core.resources.IFile}.
+     * The comparator on serves as a hint: The search engine is free to ignore the comparator and 
+     * search the files in any order.
+     * 
+     * @param comparator a comparator that is capable of comparing instances of type {@link org.eclipse.core.resources.IFile}
+     * or <code>null</code> not not provide a hint for the search order.
+     */
+    public void setSearchOrderHint(Comparator comparator) {
+        fSearchOrderHint= comparator;
+    }
+    
+    /**
+     * Returns the comparator provided to give a hint of the order the search result should be provided. <code>null</code>
+     * is returned if no such order has been configured with {@link #setSearchOrderHint(Comparator)}.
+     * 
+     * @return the comparator that can be used to order the files before searching, or
+     * <code>null</code> if no order hint has been configured.
+     */
+    protected Comparator getSearchOrderHint() {
+        return fSearchOrderHint;
+    }
 }

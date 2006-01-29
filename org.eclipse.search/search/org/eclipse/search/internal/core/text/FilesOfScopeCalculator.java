@@ -10,46 +10,53 @@
  *******************************************************************************/
 package org.eclipse.search.internal.core.text;
 
-import org.eclipse.core.runtime.CoreException;
+import java.util.ArrayList;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.MultiStatus;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 
 import org.eclipse.search.core.text.TextSearchScope;
 
-/**
- * The visitor that does the actual work.
- */
-public class AmountOfWorkCalculator implements IResourceProxyVisitor {
-	
-	private final TextSearchScope fScope;
-	
-	private int fFileCount;
+public class FilesOfScopeCalculator implements IResourceProxyVisitor {
 
-	public AmountOfWorkCalculator(TextSearchScope scope) {
+	private final TextSearchScope fScope;
+	private final MultiStatus fStatus;
+	private ArrayList fFiles;
+
+	public FilesOfScopeCalculator(TextSearchScope scope, MultiStatus status) {
 		fScope= scope;
+		fStatus= status;
 	}
-		
+
 	public boolean visit(IResourceProxy proxy) {
 		boolean inScope= fScope.contains(proxy);
-		
+
 		if (inScope && proxy.getType() == IResource.FILE) {
-			fFileCount++;
+			fFiles.add(proxy.requestResource());
 		}
 		return inScope;
 	}
-	
-	public int process() {
-		fFileCount= 0;
-		IResource[] roots= fScope.getRoots();
-		for (int i= 0; i < roots.length; i++) {
-			try {
-				roots[i].accept(this, 0);
-			} catch (CoreException ex) {
-				// ignore
+
+	public IFile[] process() {
+		fFiles= new ArrayList();
+		try {
+			IResource[] roots= fScope.getRoots();
+			for (int i= 0; i < roots.length; i++) {
+				try {
+					roots[i].accept(this, 0);
+				} catch (CoreException ex) {
+					// report and ignore
+					fStatus.add(ex.getStatus());
+				}
 			}
+			return (IFile[]) fFiles.toArray(new IFile[fFiles.size()]);
+		} finally {
+			fFiles= null;
 		}
-		return fFileCount;
 	}
 }

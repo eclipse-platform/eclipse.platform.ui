@@ -56,6 +56,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -70,6 +71,7 @@ import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 
 import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
+import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.ISearchHelpContextIds;
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.ScopePart;
@@ -78,9 +80,17 @@ import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.FileTypeEditor;
 import org.eclipse.search.internal.ui.util.SWTUtil;
 
+import org.eclipse.search2.internal.ui.text2.CurrentProjectScopeDescription;
+import org.eclipse.search2.internal.ui.text2.IScopeDescription;
+import org.eclipse.search2.internal.ui.text2.RetrieverQuery;
+import org.eclipse.search2.internal.ui.text2.WindowWorkingSetScopeDescription;
+import org.eclipse.search2.internal.ui.text2.WorkingSetScopeDescription;
+import org.eclipse.search2.internal.ui.text2.WorkspaceScopeDescription;
+
 public class TextSearchPage extends DialogPage implements ISearchPage, IReplacePage {
 
-	private static final int HISTORY_SIZE= 12;
+    private static final String TMP_WORKING_SET_NAME = "tmp_for_search";
+    private static final int HISTORY_SIZE= 12;
 	public static final String EXTENSION_POINT_ID= "org.eclipse.search.internal.ui.text.TextSearchPage"; //$NON-NLS-1$
 
 	// Dialog store id constants
@@ -99,7 +109,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private boolean fSearchDerived;
 	
 	private Combo fPattern;
-	private Button fIgnoreCase;
+	private Button fIsCaseSensitiveCheckbox;
 	private Combo fExtensions;
 	private Button fIsRegExCheckbox;
 	private CLabel fStatusLabel;
@@ -109,18 +119,23 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private FileTypeEditor fFileTypeEditor;
 
 	private ContentAssistHandler fReplaceContentAssistHandler;
+    
+    // mstodo remove before release
+    private Button fUseNewTextUICheckbox;
+    private boolean fUseNewTextUI;
+    private static final String STORE_USE_NEW_TEXT_UI = "use-new-text-ui";
 
 	private static class SearchPatternData {
-		public final boolean ignoreCase;
+		public final boolean isCaseSensitive;
 		public final boolean isRegExSearch;
 		public final String textPattern;
 		public final String[] fileNamePatterns;
 		public final int scope;
 		public final IWorkingSet[] workingSets;
 		
-		public SearchPatternData(String textPattern, boolean ignoreCase, boolean isRegExSearch, String[] fileNamePatterns, int scope, IWorkingSet[] workingSets) {
+		public SearchPatternData(String textPattern, boolean isCaseSensitive, boolean isRegExSearch, String[] fileNamePatterns, int scope, IWorkingSet[] workingSets) {
 			Assert.isNotNull(fileNamePatterns);
-			this.ignoreCase= ignoreCase;
+			this.isCaseSensitive= isCaseSensitive;
 			this.isRegExSearch= isRegExSearch;
 			this.textPattern= textPattern;
 			this.fileNamePatterns= fileNamePatterns;
@@ -129,7 +144,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		}
 		
 		public void store(IDialogSettings settings) {
-			settings.put("ignoreCase", ignoreCase); //$NON-NLS-1$
+			settings.put("ignoreCase", !isCaseSensitive); //$NON-NLS-1$
 			settings.put("isRegExSearch", isRegExSearch); //$NON-NLS-1$
 			settings.put("textPattern", textPattern); //$NON-NLS-1$
 			settings.put("fileNamePatterns", fileNamePatterns); //$NON-NLS-1$
@@ -169,7 +184,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				boolean isRegExSearch= settings.getBoolean("isRegExSearch"); //$NON-NLS-1$
 				boolean ignoreCase= settings.getBoolean("ignoreCase"); //$NON-NLS-1$
 
-				return	new SearchPatternData(textPattern, ignoreCase, isRegExSearch, fileNamePatterns, scope, workingSets);
+				return	new SearchPatternData(textPattern, !ignoreCase, isRegExSearch, fileNamePatterns, scope, workingSets);
 			} catch (NumberFormatException e) {
 				return null;
 			}
@@ -179,7 +194,12 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	//---- Action Handling ------------------------------------------------
 	
 	public boolean performAction() {
-		NewSearchUI.runQueryInBackground(getSearchQuery());
+        if (fUseNewTextUI) {
+            NewSearchUI.runQueryInBackground(getNewSearchQuery());
+        }
+        else {
+            NewSearchUI.runQueryInBackground(getSearchQuery());
+        }
 		return true;
 	}
 	
@@ -246,6 +266,56 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return new FileSearchQuery(scope,  getSearchOptions(), patternData.textPattern);
 	}
 
+    private ISearchQuery getNewSearchQuery() {
+        // create query
+        RetrieverQuery query= new RetrieverQuery(getActivePage());
+
+        // extract data
+        SearchPatternData patternData= getPatternData();
+
+        // check if we have a string matcher pattern.
+        String pattern= patternData.textPattern;
+        boolean isRegex= patternData.isRegExSearch;
+        if (!isRegex) {
+            String literal= PatternConstructor.appendAsRegEx(false, pattern, new StringBuffer()).toString();
+            String strMatcher= PatternConstructor.appendAsRegEx(true, pattern, new StringBuffer()).toString();
+            if (!literal.equals(strMatcher)) {
+                isRegex= true;
+                pattern= strMatcher;
+            }
+        }
+        
+        // Setup search scope
+        IScopeDescription scope= null;
+        switch (getContainer().getSelectedScope()) {
+            case ISearchPageContainer.SELECTION_SCOPE:
+                scope= getSelectedResourcesScopeDescription();
+                break;
+            case ISearchPageContainer.SELECTED_PROJECTS_SCOPE:
+                scope= getEnclosingProjectScopeDescription();
+                break;
+            case ISearchPageContainer.WORKING_SET_SCOPE:
+                scope= getWorkingSetScopeDescription();
+                break;
+            case ISearchPageContainer.WORKSPACE_SCOPE:
+            default:
+                scope= new WorkspaceScopeDescription();
+                break;
+        }
+
+        query.setSearchString(pattern);
+        query.setIsCaseSensitive(patternData.isCaseSensitive);
+        query.setIsRegularExpression(isRegex);
+
+        query.setFilePatterns(patternData.fileNamePatterns);
+        query.setSearchScope(scope, fSearchDerived);
+        return query;
+    }
+
+    private IWorkbenchPage getActivePage() {
+        return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+    }
+
 	private String getPattern() {
 		return fPattern.getText();
 	}
@@ -272,7 +342,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		}
 		match= new SearchPatternData(
 					getPattern(),
-					ignoreCase(),
+					isCaseSensitive(),
 					fIsRegExCheckbox.getSelection(),
 					getExtensions(),
 					getContainer().getSelectedScope(),
@@ -303,7 +373,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	
 	private String getSearchOptions() {
 		StringBuffer result= new StringBuffer();
-		if (!ignoreCase())
+		if (!isCaseSensitive())
 			result.append('i');
 
 		if (fIsRegExSearch)
@@ -316,8 +386,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return fFileTypeEditor.getFileTypes();
 	}
 
-	private boolean ignoreCase() {
-		return fIgnoreCase.getSelection();
+	private boolean isCaseSensitive() {
+		return fIsCaseSensitiveCheckbox.getSelection();
 	}
 
 	/*
@@ -424,16 +494,16 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		data.widthHint= convertWidthInCharsToPixels(50);
 		fPattern.setLayoutData(data);
 		
-		fIgnoreCase= new Button(group, SWT.CHECK);
-		fIgnoreCase.setText(SearchMessages.SearchPage_caseSensitive); 
-		fIgnoreCase.setSelection(!fIsCaseSensitive);
-		fIgnoreCase.addSelectionListener(new SelectionAdapter() {
+		fIsCaseSensitiveCheckbox= new Button(group, SWT.CHECK);
+		fIsCaseSensitiveCheckbox.setText(SearchMessages.SearchPage_caseSensitive); 
+		fIsCaseSensitiveCheckbox.setSelection(!fIsCaseSensitive);
+		fIsCaseSensitiveCheckbox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fIsCaseSensitive= !fIgnoreCase.getSelection();
+				fIsCaseSensitive= fIsCaseSensitiveCheckbox.getSelection();
 			}
 		});
-		fIgnoreCase.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		fIgnoreCase.setFont(group.getFont());
+		fIsCaseSensitiveCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		fIsCaseSensitiveCheckbox.setFont(group.getFont());
 
 		// Text line which explains the special characters
 		fStatusLabel= new CLabel(group, SWT.LEAD);
@@ -468,7 +538,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		SearchPatternData patternData= (SearchPatternData) fPreviousSearchPatterns.get(selectionIndex);
 		if (!fPattern.getText().equals(patternData.textPattern))
 			return;
-		fIgnoreCase.setSelection(patternData.ignoreCase);
+		fIsCaseSensitiveCheckbox.setSelection(patternData.isCaseSensitive);
 		fIsRegExCheckbox.setSelection(patternData.isRegExSearch);
 		fPattern.setText(patternData.textPattern);
 		fFileTypeEditor.setFileTypes(patternData.fileNamePatterns);
@@ -583,6 +653,18 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		});
 		fSearchDerivedCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		fSearchDerivedCheckbox.setFont(group.getFont());
+        
+        fUseNewTextUICheckbox= new Button(group, SWT.CHECK);
+        fUseNewTextUICheckbox.setText("Work in progress: show search results in new Text Search UI"); 
+        fUseNewTextUICheckbox.setSelection(fUseNewTextUI);
+        fUseNewTextUICheckbox.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                fUseNewTextUI= fUseNewTextUICheckbox.getSelection();
+                writeConfiguration();
+            }
+        });
+        fUseNewTextUICheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+        fUseNewTextUICheckbox.setFont(group.getFont());
 	}
 
 	/**
@@ -624,6 +706,52 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return FileNamePatternSearchScope.newSearchScope(name, res, fSearchDerived);
 	}
 	
+    private IScopeDescription getEnclosingProjectScopeDescription() {
+        String[] enclosingProjectName= getContainer().getSelectedProjectNames();
+        if (enclosingProjectName == null) {
+            return new WorkspaceScopeDescription();
+        }
+        
+        IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
+        IResource[] res= new IResource[enclosingProjectName.length];
+        for (int i= 0; i < res.length; i++) {
+            res[i]= root.getProject(enclosingProjectName[i]);
+        }
+        if (res.length == 0) {
+            return new CurrentProjectScopeDescription();
+        }
+        return getScopeDescription(res);
+    }
+    
+    private IScopeDescription getScopeDescription(IResource[] res) {
+        if (res.length == 1) {
+            if (res[0].equals(CurrentProjectScopeDescription.getCurrentProject(getActivePage()))) {
+                return new CurrentProjectScopeDescription();
+            }
+        }
+        return new WorkingSetScopeDescription(createWorkingSet(res));
+    }
+    
+    private IScopeDescription getWorkingSetScopeDescription() {
+        IWorkingSet[] wss= getContainer().getSelectedWorkingSets();
+        if (wss.length == 0) {
+            return new WorkspaceScopeDescription();
+        }
+        if (wss.length == 1) {
+            if (wss[0].equals(getActivePage().getAggregateWorkingSet())) {
+                return new WindowWorkingSetScopeDescription();
+            }
+            return new WorkingSetScopeDescription(wss[0]);
+        }
+        IWorkingSetManager wm= PlatformUI.getWorkbench().getWorkingSetManager();
+        StringBuffer id = new StringBuffer();
+        id.append("Aggregate:"); //$NON-NLS-1$
+        for (int i = 0; i < wss.length; i++) {
+            id.append(wss[i].getName()).append(':');
+        }
+        return new WorkingSetScopeDescription(wm.createAggregateWorkingSet(
+                id.toString(), "Multiple Working Sets", wss)); //$NON-NLS-1$
+    }
 
 	private FileNamePatternSearchScope getSelectedResourcesScope() {
 		HashSet resources= new HashSet();
@@ -656,9 +784,54 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return FileNamePatternSearchScope.newSearchScope(SearchMessages.SelectionScope, arr, fSearchDerived);
 	}
 
+    private IScopeDescription getSelectedResourcesScopeDescription() {
+        HashSet resources= new HashSet();
+        ISelection selection= getSelection();
+        if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+            Iterator iter= ((IStructuredSelection) selection).iterator();
+            while (iter.hasNext()) {
+                Object curr= iter.next();
+                if (curr instanceof IWorkingSet) {
+                    IWorkingSet workingSet= (IWorkingSet) curr;
+                    if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
+                        return new WorkspaceScopeDescription();
+                    }
+                    IAdaptable[] elements= workingSet.getElements();
+                    for (int i= 0; i < elements.length; i++) {
+                        IResource resource= (IResource)elements[i].getAdapter(IResource.class);
+                        if (resource != null && resource.isAccessible()) {
+                            resources.add(resource);
+                        }
+                    }
+                } else if (curr instanceof IAdaptable) {
+                    IResource resource= (IResource) ((IAdaptable)curr).getAdapter(IResource.class);
+                    if (resource != null && resource.isAccessible()) {
+                        resources.add(resource);
+                    }
+                }
+            }
+        }
+        return getScopeDescription((IResource[]) resources.toArray(new IResource[resources.size()]));
+    }
+
+    private IWorkingSet createWorkingSet(IResource[] arr) {
+        IWorkingSetManager wsm= PlatformUI.getWorkbench().getWorkingSetManager();
+        IWorkingSet ws= wsm.getWorkingSet(TMP_WORKING_SET_NAME);
+        if (ws == null) {
+            ws= wsm.createWorkingSet(TMP_WORKING_SET_NAME, arr);
+            ws.setId("org.eclipse.ui.resourceWorkingSetPage");  //$NON-NLS-1$
+            wsm.addWorkingSet(ws);
+        }
+        else {
+            ws.setElements(arr);
+        }
+        return ws;
+    }
+
+
 	//--------------- Configuration handling --------------
 	
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
 	public void dispose() {
@@ -684,6 +857,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fIsCaseSensitive= s.getBoolean(STORE_CASE_SENSITIVE);
 		fIsRegExSearch= s.getBoolean(STORE_IS_REG_EX_SEARCH);
 		fSearchDerived= s.getBoolean(STORE_SEARCH_DERIVED);
+        fUseNewTextUI= s.getBoolean(STORE_USE_NEW_TEXT_UI);
 		
 		try {
 			int historySize= s.getInt(STORE_HISTORY_SIZE);
@@ -709,6 +883,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		s.put(STORE_CASE_SENSITIVE, fIsCaseSensitive);
 		s.put(STORE_IS_REG_EX_SEARCH, fIsRegExSearch);
 		s.put(STORE_SEARCH_DERIVED, fSearchDerived);
+        s.put(STORE_USE_NEW_TEXT_UI, fUseNewTextUI);
 		
 		int historySize= Math.min(fPreviousSearchPatterns.size(), HISTORY_SIZE);
 		s.put(STORE_HISTORY_SIZE, historySize);

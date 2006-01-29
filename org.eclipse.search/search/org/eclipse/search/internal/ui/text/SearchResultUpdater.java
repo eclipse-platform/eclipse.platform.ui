@@ -20,16 +20,18 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 
-public class SearchResultUpdater implements IResourceChangeListener, IQueryListener {
-	FileSearchResult fResult;
+import org.eclipse.search.internal.ui.SearchPlugin;
 
-	public SearchResultUpdater(FileSearchResult result) {
+public class SearchResultUpdater implements IResourceChangeListener, IQueryListener {
+	private AbstractTextSearchResult fResult;
+
+	public SearchResultUpdater(AbstractTextSearchResult result) {
 		fResult= result;
 		NewSearchUI.addQueryListener(this);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
@@ -63,7 +65,7 @@ public class SearchResultUpdater implements IResourceChangeListener, IQueryListe
 				}
 			});
 		} catch (CoreException e) {
-			SearchPlugin.getDefault().getLog().log(e.getStatus());
+			SearchPlugin.log(e);
 		}
 	}
 

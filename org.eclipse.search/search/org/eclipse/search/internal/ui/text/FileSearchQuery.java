@@ -135,7 +135,7 @@ public class FileSearchQuery implements ISearchQuery {
 		if (searchString.trim().equals(String.valueOf('*'))) {
 			searchString= new String();
 		}		
-		return PatternConstructor.createPattern(searchString, isCaseSensitive(), isRegexSearch());
+		return PatternConstructor.createPattern(searchString, isRegexSearch(), true, isCaseSensitive(), false);
 	}
 	
 	

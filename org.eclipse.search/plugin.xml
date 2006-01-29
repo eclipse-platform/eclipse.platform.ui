@@ -11,6 +11,8 @@
 	<extension-point name="%searchPages" id="searchPages" schema="schema/searchPages.exsd"/>
 	<extension-point name="%searchResultSorters" id="searchResultSorters" schema="schema/searchResultSorters.exsd"/>
   	<extension-point name="%searchResultViewPages" id="searchResultViewPages" schema="schema/searchResultViewPages.exsd"/>
+    <extension-point name="%textFileScanner" id="textFileScanner" schema="schema/textFileScanner.exsd"/>
+    <extension-point id="textSearchEngine" name="%textSearchEngine" schema="schema/textSearchEngine.exsd"/>
 	
 	
 	<!-- Extensions -->
@@ -93,6 +95,37 @@
 			name="%ViewCommand.searchView.name"
 			description="%ViewCommand.searchView.description"
 		/>
+		
+		<command
+        categoryId="org.eclipse.search.ui.category.search"
+        description="%command.performTextSearch.description"
+        id="org.eclipse.search.ui.performTextSearch"
+        name="%command.performTextSearch.name"/>
+		<command 
+			categoryId="org.eclipse.search.ui.category.search" 
+  			id="org.eclipse.search.ui.performTextSearchWorkingSet" 
+			name="%command.performTextSearchWorkingSet.name" 
+			description="%command.performTextSearchWorkingSet.description"
+	    />
+		<command 
+			categoryId="org.eclipse.search.ui.category.search" 
+  			id="org.eclipse.search.ui.performTextSearchWorkspace" 
+			name="%command.performTextSearchWorkspace.name" 
+			description="%command.performTextSearchWorkspace.description"
+	    />
+		<command 
+			categoryId="org.eclipse.search.ui.category.search" 
+  			id="org.eclipse.search.ui.performTextSearchProject" 
+			name="%command.performTextSearchProject.name" 
+			description="%command.performTextSearchProject.description"
+	    />
+		<command 
+			categoryId="org.eclipse.search.ui.category.search" 
+  			id="org.eclipse.search.ui.performTextSearchFile" 
+			name="%command.performTextSearchFile.name" 
+			description="%command.performTextSearchFile.description"
+	    />
+
 	</extension>
 	
 	<extension point="org.eclipse.ui.bindings">
@@ -118,6 +151,18 @@
 			sequence="COMMAND+ALT+Q S"
 			commandId="org.eclipse.search.ui.views.SearchView"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<key 
+			contextId="org.eclipse.ui.globalScope"
+			sequence="Ctrl+2" 
+			commandId="org.eclipse.search.ui.performTextSearch" 
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"  
+	    />
+      	<key 
+      		contextId="org.eclipse.jdt.ui.javaEditorScope"
+      		sequence="Ctrl+2 2" 
+      		commandId="org.eclipse.search.ui.performTextSearch" 
+      		schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"  
 		/>
 	</extension>
 	
@@ -160,9 +205,57 @@
 				icon="$nl$/icons/full/etool16/search.gif"
 				helpContextId="open_search_dialog_action_context"
 				class="org.eclipse.search.internal.ui.OpenSearchDialogAction"/>
+        		
+         	<action id="org.eclipse.search.TextSearchWorkingSet"
+         	    definitionId="org.eclipse.search.ui.performTextSearchWorkingSet"
+         	    menubarPath="org.eclipse.search.menu/textSearchSubMenu/group1"
+         	    style="push" 
+         	    label="%action.performTextSearchWorkingSet.label" 
+         	    tooltip= "%action.performTextSearchWorkingSet.tooltip"
+         	    class="org.eclipse.search2.internal.ui.text2.FindInWorkingSetActionDelegate"/>         	    
+
+            <!-- Various actions for the text search in a sub menu -->
+  		    <menu id="textSearchSubMenu"
+		        label="%textSearchSubMenu.label"
+        		path="org.eclipse.search.menu/contextMenuActionsGroup">
+        		<separator name="group0"/>
+        		<separator name="group1"/>
+            </menu>
+         	<action id="org.eclipse.search.TextSearchFile"
+         	    definitionId="org.eclipse.search.ui.performTextSearchFile"
+         	    menubarPath="org.eclipse.search.menu/textSearchSubMenu/group1"
+         	    style="push" 
+         	    label="%action.performTextSearchFile.label" 
+         	    tooltip= "%action.performTextSearchFile.tooltip"
+         	    class="org.eclipse.search2.internal.ui.text2.FindInFileActionDelegate"/>
+
+         	<action id="org.eclipse.search.TextSearchProject"
+         	    definitionId="org.eclipse.search.ui.performTextSearchProject"
+         	    menubarPath="org.eclipse.search.menu/textSearchSubMenu/group1"
+         	    style="push" 
+         	    label="%action.performTextSearchProject.label" 
+         	    tooltip= "%action.performTextSearchProject.tooltip"
+         	    class="org.eclipse.search2.internal.ui.text2.FindInProjectActionDelegate"/>
+
+         	<action id="org.eclipse.search.TextSearchWorkspace"
+         	    definitionId="org.eclipse.search.ui.performTextSearchWorkspace"
+         	    menubarPath="org.eclipse.search.menu/textSearchSubMenu/group1"
+         	    style="push" 
+         	    label="%action.performTextSearchWorkspace.label" 
+         	    tooltip= "%action.performTextSearchWorkspace.tooltip"
+         	    class="org.eclipse.search2.internal.ui.text2.FindInWorkspaceActionDelegate"/>
+
+         	<action
+                class="org.eclipse.search2.internal.ui.text2.FindInRecentScopeActionDelegate"
+                definitionId="org.eclipse.search.ui.performTextSearch"
+                id="org.eclipse.search.TextSearch"
+                label="%action.performTextSearch.label"
+                menubarPath="org.eclipse.search.menu/textSearchSubMenu/group0"
+                style="push"
+                tooltip="%action.performTextSearch.tooltip"/>
 	     </actionSet>
 	</extension>
-	
+		
 	<extension point="org.eclipse.ui.views">
 		<view
 		   id="org.eclipse.search.SearchResultView"
@@ -189,6 +282,14 @@
 			id="org.eclipse.search.text.FileSearchResultPage"
 			searchResultClass="org.eclipse.search.internal.ui.text.FileSearchResult"
 			class="org.eclipse.search.internal.ui.text.FileSearchPage">
+		</viewPage>
+		<viewPage
+        	class="org.eclipse.search2.internal.ui.text2.RetrieverPage"
+        	emptyPageUseful="true"
+        	icon="icons/full/obj16/tsearch_dpdn_obj.gif"
+        	id="org.eclipse.search.text.RetrieverPage"
+        	label="%RetrieverPage.label"
+        	searchResultClass="org.eclipse.search2.internal.ui.text2.RetrieverResult">
 		</viewPage>
 	</extension>
 	
@@ -283,9 +384,21 @@
 		<factory 
 			class="org.eclipse.search.internal.ui.SearchResultViewEntryAdapterFactory" 
 			adaptableType="org.eclipse.search.ui.ISearchResultViewEntry">
-			<adapter type="org.eclipse.core.resources.IResource"/>
-			<adapter type="org.eclipse.core.resources.IMarker"/>
+				<adapter type="org.eclipse.core.resources.IResource"/>
+				<adapter type="org.eclipse.core.resources.IMarker"/>
 		</factory>
-	</extension>     	
-
+	</extension>
+	<extension
+    		id="java-scanner"
+         	point="org.eclipse.search.textFileScanner">
+ 		<textFileScanner
+        	    class="org.eclipse.search2.internal.ui.text2.JavaScanner"
+            	contentTypeIDs="org.eclipse.jdt.core.javaSource"
+	            fileExtensions=".java"
+    	        supportsComments="true"
+               	supportsFunctions="false"
+            	supportsIncludes="true"
+            	supportsPreprocessor="false"
+            	supportsStrings="true"/>
+   	</extension>
 </plugin>

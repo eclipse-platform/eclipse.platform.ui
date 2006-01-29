@@ -61,15 +61,17 @@ public class SearchPluginImages {
 	public static final String IMG_LCL_SEARCH_CANCEL= NAME_PREFIX + "stop.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_COLLAPSE_ALL= NAME_PREFIX + "collapseall.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_EXPAND_ALL= NAME_PREFIX + "expandall.gif"; //$NON-NLS-1$
-
+	public static final String IMG_LCL_SEARCH_FILTER= NAME_PREFIX + "filter_ps.gif"; //$NON-NLS-1$
 	public static final String IMG_VIEW_SEARCHRES= NAME_PREFIX + "searchres.gif"; //$NON-NLS-1$
 
 	public static final String IMG_OBJ_TSEARCH_DPDN= NAME_PREFIX + "tsearch_dpdn_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJ_SEARCHMARKER= NAME_PREFIX + "searchm_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJ_TEXT_SEARCH_LINE= NAME_PREFIX + "line_match.gif"; //$NON-NLS-1$
 
 	// Define images
 	public static final ImageDescriptor DESC_OBJ_TSEARCH_DPDN= createManaged(T_OBJ, IMG_OBJ_TSEARCH_DPDN);
 	public static final ImageDescriptor DESC_OBJ_SEARCHMARKER= createManaged(T_OBJ, IMG_OBJ_SEARCHMARKER);
+	public static final ImageDescriptor DESC_OBJ_TEXT_SEARCH_LINE= createManaged(T_OBJ, IMG_OBJ_TEXT_SEARCH_LINE);
 	public static final ImageDescriptor DESC_VIEW_SEARCHRES= createManaged(T_EVIEW, IMG_VIEW_SEARCHRES);
 	
 	public static Image get(String key) {
@@ -81,7 +83,7 @@ public class SearchPluginImages {
 		PLUGIN_REGISTRY.put(name, result);
 		return result;
 	}
-	
+
 	/*
 	 * Creates an image descriptor for the given prefix and name in the Search plugin bundle. The path can
 	 * contain variables like $NL$.

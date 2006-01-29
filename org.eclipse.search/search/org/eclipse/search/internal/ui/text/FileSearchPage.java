@@ -165,7 +165,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 	protected void showMatch(Match match, int offset, int length, boolean activate) throws PartInitException {
 		IFile file= (IFile) match.getElement();
-		IEditorPart editor= fEditorOpener.open(match, activate);
+		IEditorPart editor= fEditorOpener.open(file, activate);
 		if (offset != 0 && length != 0) {
 			if (editor instanceof ITextEditor) {
 				ITextEditor textEditor= (ITextEditor) editor;

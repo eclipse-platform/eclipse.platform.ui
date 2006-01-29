@@ -79,7 +79,8 @@ public class ComboFieldEditor extends FieldEditor {
 	protected void adjustForNumColumns(int numColumns) {
 		Control control= getLabelControl();
 		if (control != null) {
-			((GridData)control.getLayoutData()).horizontalSpan= numColumns;
+			((GridData)control.getLayoutData()).horizontalSpan= numColumns-1;
+            numColumns=1;
 		}
 		((GridData)fCombo.getLayoutData()).horizontalSpan= numColumns;
 	}

@@ -11,9 +11,7 @@
 package org.eclipse.search.internal.ui.text;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.text.Match;
+
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -25,23 +23,26 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
+import org.eclipse.search.ui.NewSearchUI;
+
+import org.eclipse.search.internal.ui.SearchPlugin;
+
 public class EditorOpener {
 
 	private IEditorPart fEditor;
 	
-	IEditorPart open(Match match, boolean activate) throws PartInitException {
+	public IEditorPart open(IFile file, boolean activate) throws PartInitException {
 		IWorkbenchPage wbPage= SearchPlugin.getActivePage();
 		if (NewSearchUI.reuseEditor())
-			return showWithReuse(match, wbPage, activate);
-		return showWithoutReuse(match, wbPage, activate);
+			return showWithReuse(file, wbPage, activate);
+		return showWithoutReuse(file, wbPage, activate);
 	}
 	
-	private IEditorPart showWithoutReuse(Match match, IWorkbenchPage wbPage, boolean activate) throws PartInitException {
-		return IDE.openEditor(wbPage, (IFile) match.getElement(), activate);
+	private IEditorPart showWithoutReuse(IFile file, IWorkbenchPage wbPage, boolean activate) throws PartInitException {
+		return IDE.openEditor(wbPage, file, activate);
 	}
 
-	private IEditorPart showWithReuse(Match match, IWorkbenchPage wbPage, boolean activate) throws PartInitException {
-		IFile file= (IFile) match.getElement();
+	private IEditorPart showWithReuse(IFile file, IWorkbenchPage wbPage, boolean activate) throws PartInitException {
 		String editorID= getEditorID(file);
 		return showInEditor(wbPage, file, editorID, activate);
 	}

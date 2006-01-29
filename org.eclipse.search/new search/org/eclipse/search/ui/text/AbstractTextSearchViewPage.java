@@ -135,6 +135,14 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			} else {
 				fIsUIUpdateScheduled= false;
 				turnOnDecoration();
+                updateBusyLabel();
+                if (fScheduleEnsureSelection) {
+                    fScheduleEnsureSelection= false;
+                    AbstractTextSearchResult result = getInput();
+                    if (result != null && fViewer.getSelection().isEmpty()) {
+                        navigateNext(true);
+                    }
+                }
 			}
 			fViewPart.updateLabel();
 			return Status.OK_STATUS;
@@ -179,7 +187,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	}
 
-	private transient boolean  fIsUIUpdateScheduled= false;
+	private volatile boolean fIsUIUpdateScheduled= false;
+    private volatile boolean fScheduleEnsureSelection= false;
 	private static final String KEY_LAYOUT = "org.eclipse.search.resultpage.layout"; //$NON-NLS-1$
 	
 	/**
@@ -516,24 +525,18 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			}
 
 			public void queryFinished(final ISearchQuery query) {
-				final Runnable runnable2 = new Runnable() {
-					public void run() {
-						updateBusyLabel();
-						AbstractTextSearchResult result = getInput();
-
-						if (result == null || !result.getQuery().equals(query)) {
-							return;
-						}
-						
-						if (fViewer.getSelection().isEmpty()) {
-							navigateNext(true);
-						}
-					}
-				};
-				asyncExec(runnable2);
+                // handle the end of the query in the UIUpdateJob, as ui updates
+                // may not be finished here.
+                postEnsureSelection();
 			}
 		};
 	}
+
+    protected void postEnsureSelection() {
+        fScheduleEnsureSelection= true;
+        scheduleUIUpdate();
+    }
+
 
 	private void updateBusyLabel() {
 		AbstractTextSearchResult result = getInput();
@@ -812,10 +815,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		Match nextMatch = getCurrentMatch();
 		if (nextMatch == null) {
 			navigateNext(false);
-			fCurrentMatchIndex = getInput().getMatchCount(getFirstSelectedElement()) - 1;
+			fCurrentMatchIndex = getDisplayedMatchCount(getFirstSelectedElement()) - 1;
 		}
 		showCurrentMatch(activateEditor);
 	}
+    
 	private void navigateNext(boolean forward) {
 		INavigate navigator = null;
 		if (fViewer instanceof TableViewer) {

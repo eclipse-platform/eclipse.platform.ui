@@ -20,6 +20,8 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
+
+import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
 import org.eclipse.search.internal.ui.util.ComboFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -52,6 +54,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	public static final String BRING_VIEW_TO_FRONT= "org.eclipse.search.bringToFront"; //$NON-NLS-1$
 	public static final String LIMIT_TABLE_TO= "org.eclipse.search.limitTableTo"; //$NON-NLS-1$
 	public static final String LIMIT_TABLE= "org.eclipse.search.limitTable"; //$NON-NLS-1$
+    public static final String TEXT_SEARCH_ENGINE = "org.eclipse.search.textSearchEngine"; //$NON-NLS-1$
 	
 	private ColorFieldEditor fColorEditor;
 	private BooleanFieldEditor fEmphasizedCheckbox;
@@ -91,6 +94,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		store.setDefault(DEFAULT_PERSPECTIVE, NO_DEFAULT_PERSPECTIVE);
 		store.setDefault(LIMIT_TABLE_TO, 200);
 		store.setDefault(LIMIT_TABLE, false);
+		store.setDefault(TEXT_SEARCH_ENGINE, ""); //default search engine is empty string //$NON-NLS-1$
 	}
 
 
@@ -146,6 +150,18 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 			perspectiveNamesAndIds,
 			getFieldEditorParent());
 		addField(comboEditor);
+        
+        // in case we have a contributed engine, let the user choose.
+        TextSearchEngineRegistry reg= SearchPlugin.getDefault().getTextSearchEngineRegistry();
+        String[][] engineNamesAndIds= reg.getAvailableEngines();
+        if (engineNamesAndIds.length > 1) {
+            comboEditor= new ComboFieldEditor(
+                    TEXT_SEARCH_ENGINE,
+                    SearchMessages.SearchPreferencePage_textSearchEngine, 
+                    engineNamesAndIds,
+                    getFieldEditorParent());
+            addField(comboEditor);
+        }
 	}
 
 	private void createTableLimit() {
