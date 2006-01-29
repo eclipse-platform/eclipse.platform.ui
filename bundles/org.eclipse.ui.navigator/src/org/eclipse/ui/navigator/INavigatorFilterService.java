@@ -57,6 +57,9 @@ public interface INavigatorFilterService {
 
 	/**
 	 * 
+	 * Determine the set of filters which are <i>visible</i> to the
+	 * content service associated with this filter service. 
+	 * 
 	 * @param toReturnOnlyActiveFilters
 	 *            True indicates that only active filters should be returned.
 	 * @return An array of ViewerFilters that should be applied to the viewer

@@ -108,7 +108,7 @@ public class CommonWizardDescriptorManager {
 			CommonWizardDescriptor descriptor = (CommonWizardDescriptor) commonWizardDescriptorsItr
 					.next();
 
-			if (descriptor.isEnabledFor(anElement))
+			if (descriptor.getWizardId() != null && descriptor.isEnabledFor(anElement))
 				descriptorIds.add(descriptor.getWizardId());
 		}
 		String[] wizardIds = new String[descriptorIds.size()];

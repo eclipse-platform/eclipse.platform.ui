@@ -121,4 +121,11 @@ public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 			return SkeletonViewerFilter.INSTANCE;
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "CommonFilterDescriptor["+getName()+" ("+getId()+")]";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+	}
 }

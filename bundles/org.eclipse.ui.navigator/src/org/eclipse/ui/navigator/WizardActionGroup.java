@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -229,8 +230,9 @@ public final class WizardActionGroup extends ActionGroup {
 	 * @param wizardActionIds
 	 *            The wizardActionIds to set.
 	 */
-	protected void setWizardActionIds(String[] wizardActionIds) {
-		this.wizardActionIds = wizardActionIds;
+	protected void setWizardActionIds(String[] theWizardActionIds) {
+		Arrays.sort(theWizardActionIds);
+		wizardActionIds = theWizardActionIds;
 	}
 
 }

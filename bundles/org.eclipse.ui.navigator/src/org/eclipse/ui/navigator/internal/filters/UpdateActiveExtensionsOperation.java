@@ -11,48 +11,64 @@
 
 package org.eclipse.ui.navigator.internal.filters;
 
+import java.util.Arrays;
+
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.navigator.CommonViewer;
+import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
-import org.eclipse.ui.navigator.INavigatorFilterService;
 import org.eclipse.ui.navigator.NavigatorActivationService;
 import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 
-class UpdateFiltersOperation extends AbstractOperation {
+/**
+ * Ensures that a given set of content extensions is <i>active</i> and 
+ * a second non-intersecting set of content extensions are not <i>active</i>.
+ * 
+ * <p>
+ * This operation is smart enough not to force any change if each id in each
+ * set is already in its desired state (<i>active</i> or <i>inactive</i>).
+ * </p>
+ * @since 3.2
+ *
+ */
+public class UpdateActiveExtensionsOperation extends AbstractOperation {
 
 	private static final NavigatorActivationService NAVIGATOR_ACTIVATION_SERVICE = NavigatorActivationService
 			.getInstance();
 
-	private String[] activeContentExts;
-
-	private String[] inactiveContentExts;
-
-	private String[] activeFilterIds;
-
-	private String[] inactiveFilterIds; 
-
+	private String[] contentExtensionsToActivate;
+  
 	private final CommonViewer commonViewer;
 
 	private final INavigatorContentService contentService;
 
-	UpdateFiltersOperation(CommonViewer aCommonViewer,
-			INavigatorContentService aContentService,
-			String[] theActiveFilterIds, String[] theInactiveFilterIds,
-			String[] theExtensionsToActivate, String[] theExtensionsToDeactivate) {
+	/**
+	 * Create an operation to activate extensions and refresh the viewer.
+	 * 
+	 * p>
+	 * To use only one part of this operation (either "activate" or
+	 * "deactivate", but not both), then supply <b>null</b> for the array state
+	 * you are not concerned with. 
+	 * </p>
+	 * 
+	 * @param aCommonViewer
+	 *            The CommonViewer instance to update
+	 * @param theExtensionsToActivate
+	 *            An array of ids that correspond to the extensions that should
+	 *            be in the <i>active</i> state after this operation executes. 
+	 */
+	public UpdateActiveExtensionsOperation(CommonViewer aCommonViewer,
+			String[] theExtensionsToActivate ) {
 		super(
 				CommonNavigatorMessages.UpdateFiltersOperation_Update_CommonViewer_Filter_);
 		commonViewer = aCommonViewer;
-		contentService = aContentService;
-		activeFilterIds = theActiveFilterIds;
-		inactiveFilterIds = theInactiveFilterIds;
-		activeContentExts = theExtensionsToActivate;
-		inactiveContentExts = theExtensionsToDeactivate;
+		contentService = commonViewer.getNavigatorContentService();
+		contentExtensionsToActivate = theExtensionsToActivate; 
 
 	}
 
@@ -65,46 +81,37 @@ class UpdateFiltersOperation extends AbstractOperation {
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info) {
 
 		boolean updateExtensionActivation = false;
-		boolean updateFilterActivation = false; 
+		
+		// we sort the array in order to use Array.binarySearch();
+		Arrays.sort(contentExtensionsToActivate);
 
 		try {
 			commonViewer.getControl().setRedraw(false);
-
-			/* is there a delta? */
-			for (int i = 0; i < activeContentExts.length && !updateExtensionActivation; i++)
-				updateExtensionActivation |= !contentService.isActive(activeContentExts[i]);
-			for (int i = 0; i < inactiveContentExts.length && !updateExtensionActivation; i++)
-				updateExtensionActivation |= contentService.isActive(inactiveContentExts[i]);
 			
+
+			INavigatorContentDescriptor[] visibleContentDescriptors = contentService.getVisibleExtensions();
+			  
+
+			int indexofContentExtensionIdToBeActivated;
+			/* is there a delta? */
+			for (int i = 0; i < visibleContentDescriptors.length
+					&& !updateExtensionActivation; i++) {
+				indexofContentExtensionIdToBeActivated = Arrays.binarySearch(contentExtensionsToActivate, visibleContentDescriptors[i].getId());
+				/* Either we have a filter that should be active that isn't XOR 
+				 * a filter that shouldn't be active that is currently
+				 */
+				if(indexofContentExtensionIdToBeActivated >= 0 ^ contentService.isActive(visibleContentDescriptors[i].getId()))  
+					updateExtensionActivation = true;  
+			}
+
 			/* If so, update */
 			if (updateExtensionActivation) {
-				contentService.activateExtensions(activeContentExts, true);
+				contentService.activateExtensions(contentExtensionsToActivate, true);
 				NAVIGATOR_ACTIVATION_SERVICE
 						.persistExtensionActivations(contentService
 								.getViewerId());
-			}
 
-			INavigatorFilterService filterService = contentService
-					.getFilterService();
-			/* is there a delta? */
-			for (int i = 0; i < activeFilterIds.length && !updateFilterActivation; i++)
-				updateFilterActivation |= !filterService.isActive(activeFilterIds[i]);
-			for (int i = 0; i < inactiveFilterIds.length && !updateFilterActivation; i++)
-				updateFilterActivation |= filterService.isActive(inactiveFilterIds[i]);
-			
-			/* If so, update */
-			if (updateFilterActivation) {
-				filterService.setActiveFilterIds(activeFilterIds);
-				filterService.persistFilterActivationState();
-
-				commonViewer.resetFilters();
-
-				ViewerFilter[] visibleFilters = filterService
-						.getVisibleFilters(true);
-				for (int i = 0; i < visibleFilters.length; i++)
-					commonViewer.addFilter(visibleFilters[i]);
-			}
-			if (updateExtensionActivation || updateFilterActivation) {
+				// automatically calls viewer.refresh()
 				contentService.update();
 				// the action providers may no longer be enabled, so we reset
 				// the selection.

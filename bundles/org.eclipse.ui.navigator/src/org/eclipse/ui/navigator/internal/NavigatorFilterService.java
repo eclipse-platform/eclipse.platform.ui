@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.navigator.ICommonFilterDescriptor;
@@ -244,6 +245,7 @@ public class NavigatorFilterService implements INavigatorFilterService,
 	 * @see org.eclipse.ui.navigator.INavigatorFilterService#activateFilters(java.lang.String[])
 	 */
 	public void setActiveFilterIds(String[] theFilterIds) {
+		Assert.isNotNull(theFilterIds);
 		synchronized (activeFilters) {
 			activeFilters.clear();
 			activeFilters.addAll(Arrays.asList(theFilterIds));

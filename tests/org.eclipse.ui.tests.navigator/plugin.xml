@@ -93,10 +93,11 @@
             popupMenuId="org.eclipse.ui.tests.navigator.TestView#PopupMenu"
             viewerId="org.eclipse.ui.tests.navigator.TestView">
          <options>
+            <!-- 
             <property
                   name="org.eclipse.ui.navigator.hideAvailableExtensionsTab"
                   value="true"/>
-            <!-- 
+            
             <property
                   name="org.eclipse.ui.navigator.hideAvailableCustomizationsDialog"
                   value="true"/>

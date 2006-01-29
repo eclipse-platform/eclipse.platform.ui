@@ -133,7 +133,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 		customizationsTabFolder.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				if(descriptionText != null)
+				if (descriptionText != null)
 					descriptionText.setText(""); //$NON-NLS-1$
 			}
 
@@ -175,11 +175,9 @@ public class CommonFilterSelectionDialog extends Dialog {
 	 */
 	protected void okPressed() {
 
-		String[] activeContentExtensions = new String[0];
-		String[] inactiveContentExtensions = new String[0];
+		String[] contentExtensionIdsToActivate = new String[0]; 
 		if (contentExtensionsTab != null) {
-			List checkedExtensions = new ArrayList();
-			List uncheckedExtensions = new ArrayList();
+			List checkedExtensions = new ArrayList(); 
 			TableItem[] tableItems = contentExtensionsTab.getTable().getItems();
 			INavigatorContentDescriptor descriptor;
 			for (int i = 0; i < tableItems.length; i++) {
@@ -187,49 +185,38 @@ public class CommonFilterSelectionDialog extends Dialog {
 						.getData();
 
 				if (tableItems[i].getChecked())
-					checkedExtensions.add(descriptor.getId());
-				else
-					uncheckedExtensions.add(descriptor.getId());
+					checkedExtensions.add(descriptor.getId()); 
 			}
 			if (checkedExtensions.size() != 0)
-				activeContentExtensions = (String[]) checkedExtensions
+				contentExtensionIdsToActivate = (String[]) checkedExtensions
 						.toArray(new String[checkedExtensions.size()]);
-
-			if (uncheckedExtensions.size() != 0)
-				inactiveContentExtensions = (String[]) uncheckedExtensions
-						.toArray(new String[uncheckedExtensions.size()]);
+ 
 		}
 
-		String[] activeFilterIds = new String[0];
-		String[] inactiveFilterIds = new String[0];
+		String[] filterIdsToActivate = new String[0]; 
 		if (commonFiltersTab != null) {
-			List checkedFilters = new ArrayList();
-			List uncheckedFilters = new ArrayList();
+			List checkedFilters = new ArrayList(); 
 			TableItem[] tableItems = commonFiltersTab.getTable().getItems();
 			ICommonFilterDescriptor descriptor;
 			for (int i = 0; i < tableItems.length; i++) {
 				descriptor = (ICommonFilterDescriptor) tableItems[i].getData();
 
 				if (tableItems[i].getChecked())
-					checkedFilters.add(descriptor.getId());
-				else
-					uncheckedFilters.add(descriptor.getId());
+					checkedFilters.add(descriptor.getId()); 
 			}
 
 			if (checkedFilters.size() != 0)
-				activeFilterIds = (String[]) checkedFilters
+				filterIdsToActivate = (String[]) checkedFilters
 						.toArray(new String[checkedFilters.size()]);
-
-			if (uncheckedFilters.size() != 0)
-				inactiveFilterIds = (String[]) uncheckedFilters
-						.toArray(new String[uncheckedFilters.size()]);
+ 
 		}
 
-		UpdateFiltersOperation updateFilters = new UpdateFiltersOperation(
-				commonViewer, contentService, activeFilterIds,
-				inactiveFilterIds, activeContentExtensions,
-				inactiveContentExtensions);
+		UpdateActiveExtensionsOperation updateExtensions = new UpdateActiveExtensionsOperation(
+				commonViewer, contentExtensionIdsToActivate);
+		UpdateActiveFiltersOperation updateFilters = new UpdateActiveFiltersOperation(
+				commonViewer, filterIdsToActivate);
 
+		updateExtensions.execute(null, null);
 		updateFilters.execute(null, null);
 		super.okPressed();
 	}

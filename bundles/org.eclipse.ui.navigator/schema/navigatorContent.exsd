@@ -454,6 +454,60 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
       </complexType>
    </element>
 
+   <element name="commonSorter">
+      <annotation>
+         <documentation>
+            A &lt;b&gt;commonSorter&lt;/b&gt; declares an subclass of &lt;code&gt;org.eclipse.jface.viewers.ViewerSorter&lt;/code&gt; which is used to sort children in the tree. The nested &lt;b&gt;parentExpression&lt;/b&gt; describes when the &lt;b&gt;commonSorter&lt;/b&gt; should be used. If an element matches the &lt;b&gt;parentExpression&lt;/b&gt;, then its children will be sorted by this &lt;b&gt;commonSorter&lt;/b&gt;.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="parentExpression"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The &quot;id&quot; attribute is used to determine when a &lt;b&gt;commonSorter&lt;/b&gt; should be bound to a particular viewer. If the &quot;id&quot; attribute matches a &lt;b&gt;org.eclipse.ui.navigator.viewer/viewerContentBinding&lt;/b&gt; for a given viewer, then the sorter is eligible to affect the sorting of the viewer. 
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ViewerSorter"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="parentExpression" >
+      <annotation>
+         <documentation>
+            A &lt;b&gt;parentExpression&lt;/b&gt; is used by &lt;b&gt;commonSorter&lt;/b&gt; to identify when it is applicable. If the &lt;b&gt;parentExpression&lt;/b&gt; for a &lt;b&gt;commonSorter&lt;/b&gt; matches a given element, then that &lt;b&gt;commonSorter&lt;/b&gt; will be used to sort the children of that element (as returned by the content provider of the content service).
+         </documentation>
+      </annotation> 
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="not"/>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+         </sequence>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>
