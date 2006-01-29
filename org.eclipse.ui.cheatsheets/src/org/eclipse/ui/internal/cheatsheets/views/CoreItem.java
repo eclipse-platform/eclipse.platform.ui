@@ -116,10 +116,9 @@ public class CoreItem extends ViewItem {
 
 	private void createSubItemButtonComposite() {
 		buttonComposite = page.getToolkit().createComposite(bodyWrapperComposite);
-		GridLayout xbuttonlayout = new GridLayout(6, false);
-		xbuttonlayout.marginHeight = 2;
-		xbuttonlayout.marginWidth = 2;
-		xbuttonlayout.verticalSpacing = 2;
+		
+		TableWrapLayout xbuttonlayout = new TableWrapLayout();
+		xbuttonlayout.numColumns = 6;
 
 		TableWrapData xbuttonData = new TableWrapData(TableWrapData.FILL);
 
@@ -134,9 +133,6 @@ public class CoreItem extends ViewItem {
 		//Spacer label added.
 		Label checkDoneLabel = page.getToolkit().createLabel(buttonComposite, null);
 		checkDoneLabel.setBackground(itemColor);
-		GridData checkDoneData = new GridData();
-		checkDoneData.widthHint = 16;
-		checkDoneLabel.setLayoutData(checkDoneData);
 		added++;
 
 		//Now add the label.
@@ -146,7 +142,7 @@ public class CoreItem extends ViewItem {
 		} else {
 			labelText = sub.getLabel();
 		}
-		Label label = page.getToolkit().createLabel(buttonComposite, labelText);
+		Label label = page.getToolkit().createLabel(buttonComposite, labelText, SWT.WRAP);
 		label.setBackground(itemColor);
 		added++;
 
