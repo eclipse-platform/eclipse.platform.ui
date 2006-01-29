@@ -106,6 +106,9 @@ public class JavaBeansUpdatableCellProvider extends Updatable implements IUpdata
 	 * @see org.eclipse.jface.databinding.ICellProvider#getCellValue(java.lang.Object, int)
 	 */
 	public Object getCellValue(Object element, int index) {
+		if (index >= propertyNames.length) {
+			return null;
+		}
 		String prop = propertyNames[index];
 		Method getter;
 		try {

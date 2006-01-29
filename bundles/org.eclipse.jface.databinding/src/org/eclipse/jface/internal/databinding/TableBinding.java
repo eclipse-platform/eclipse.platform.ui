@@ -116,13 +116,14 @@ public class TableBinding extends Binding {
 	 * @see org.eclipse.jface.internal.databinding.Binding#updateTargetFromModel(org.eclipse.jface.databinding.ChangeEvent)
 	 */
 	public void updateTargetFromModel(ChangeEvent changeEvent) {
-		target.removeAll(target.toCollection());
+		target.clear();
 		target.addAll(modelSet.toCollection());
 		target.setCellProvider(new ICellProvider() {
 
 			public Object getCellValue(Object element, int index) {
 				// TODO conversion
-				return model.getCellValue(element,index);
+				Object cellValue = model.getCellValue(element,index);
+				return cellValue == null ? "" : cellValue; //$NON-NLS-1$
 			}
 
 			public void setCellValue(Object element, int index, Object value) {

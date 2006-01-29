@@ -17,7 +17,7 @@ import java.util.Collection;
  * @since 3.2
  *
  */
-public interface IUpdatableSet extends IReadableSet {
+public interface IUpdatableSet extends IReadableSet, IUpdatable {
 
 	/**
 	 * Clears the elements in the reciever 

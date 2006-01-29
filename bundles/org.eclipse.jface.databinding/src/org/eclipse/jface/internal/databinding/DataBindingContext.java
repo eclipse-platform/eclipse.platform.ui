@@ -29,8 +29,10 @@ import org.eclipse.jface.databinding.IBindingListener;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
+import org.eclipse.jface.databinding.IUpdatableCellProvider;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.IUpdatableFactory;
+import org.eclipse.jface.databinding.IUpdatableTable;
 import org.eclipse.jface.databinding.IUpdatableTree;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.NestedProperty;
@@ -370,6 +372,14 @@ public class DataBindingContext implements IDataBindingContext {
 						"incompatible updatables: target is collection, model is " + modelUpdatable.getClass().getName()); //$NON-NLS-1$
 			}
 
+		} else if (targetUpdatable instanceof IUpdatableTable) {
+			if (modelUpdatable instanceof IUpdatableCellProvider) {
+				binding = new TableBinding(this, (IUpdatableTable)targetUpdatable,
+						(IUpdatableCellProvider)modelUpdatable, new BindSpec(null, null));
+			} else {
+				throw new BindingException(
+						"incompatible updatables: target is IUpdatableTable, model is " + modelUpdatable.getClass().getName()); //$NON-NLS-1$
+			}
 		} else {
 			throw new BindingException("not yet implemented"); //$NON-NLS-1$
 		}

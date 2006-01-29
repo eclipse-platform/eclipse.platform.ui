@@ -58,7 +58,7 @@ public abstract class AbstractUpdatableSet extends Updatable implements IReadabl
         }
     }
 	
-	public final void dispose() {
+	public void dispose() {
 	}
 
 	protected final void fireStale(boolean isStale) {
