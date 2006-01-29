@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -177,8 +177,10 @@ public class AntJRETab extends JavaJRETab {
 			 	//null out the vm type to get the default vm install from JavaRuntime
 			 	copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 			 	IVMInstall defaultVMInstall= getDefaultVMInstall(copy);
-			 	//update if required
-				setDefaultVMInstallAttributes(defaultVMInstall, copy);
+			 	if (defaultVMInstall != null) {
+			 		//update if required
+			 		setDefaultVMInstallAttributes(defaultVMInstall, copy);
+			 	}
 				if (needsSaving) {
 					configuration= copy.doSave();
 				}
