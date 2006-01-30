@@ -186,25 +186,30 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 			}
 		}
 
+		// Opening a project just affects icon, but we need to refresh when
+		// a project is closed because if child items have not yet been created
+		// in the tree we still need to update the item's children
+		int changeFlags = delta.getFlags();
+		if ((changeFlags & IResourceDelta.OPEN) != 0) {
+			if (resource.isAccessible())  {
+				runnables.add(getUpdateRunnable(resource));
+			} else {
+				runnables.add(getRefreshRunnable(resource));
+				return;
+			}
+		}
 		// Check the flags for changes the Navigator cares about.
 		// See ResourceLabelProvider for the aspects it cares about.
 		// Notice we don't care about F_CONTENT or F_MARKERS currently.
-		int changeFlags = delta.getFlags();
-		if ((changeFlags & (IResourceDelta.OPEN | IResourceDelta.SYNC
+		if ((changeFlags & (IResourceDelta.SYNC
 				| IResourceDelta.TYPE | IResourceDelta.DESCRIPTION)) != 0) {
-			Runnable updateRunnable =  new Runnable(){
-				public void run() {
-					((StructuredViewer) viewer).update(resource, null);
-				}
-			};
-			runnables.add(updateRunnable);
+			runnables.add(getUpdateRunnable(resource));
 		}
 		// Replacing a resource may affect its label and its children
 		if ((changeFlags & IResourceDelta.REPLACED) != 0) {
 			runnables.add(getRefreshRunnable(resource));
 			return;
 		}
-
 
 		// Handle changed children .
 		for (int i = 0; i < affectedChildren.length; i++) {
@@ -297,7 +302,6 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 		};
 		runnables.add(addAndRemove);
 	}
-
 	/**
 	 * Return a runnable for refreshing a resource.
 	 * @param resource
@@ -310,4 +314,17 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 			}
 		};
 	}
+
+		/**
+		 * Return a runnable for refreshing a resource.
+		 * @param resource
+		 * @return Runnable
+		 */
+		private Runnable getUpdateRunnable(final IResource resource) {
+			return new Runnable(){
+				public void run() {
+					((StructuredViewer) viewer).update(resource, null);
+				}
+			};
+		}
 }
