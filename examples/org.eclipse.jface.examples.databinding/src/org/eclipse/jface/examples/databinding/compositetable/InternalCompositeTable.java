@@ -791,6 +791,84 @@ public class InternalCompositeTable extends Composite implements Listener {
 					}
 				}
 				return;
+			case SWT.INSERT:
+				// If no insertHandler has been registered, bail out 
+			 	if (parent.insertHandlers.size() < 1) {
+					return;
+				}
+				
+				// Make sure we can leave the current row
+				if (!fireRequestRowChangeEvent()) {
+					return;
+				}
+				needToRequestRC = false;
+				
+				// Insert the new object
+				int newRowPosition = fireInsertEvent();
+				if (newRowPosition < 0) {
+					// This should never happen, but...
+					return;
+				}
+				
+				disposeEmptyTablePlaceholder();
+				
+				// If the current widget has a selection, deselect it
+				deselect(e.widget);
+				
+				// If the new row is in the visible space, refresh it
+				if (topRow <= newRowPosition && 
+						numRowsVisible > newRowPosition - topRow) {
+					insertRowAt(newRowPosition - topRow);
+					++numRowsInCollection;
+					updateVisibleRows();
+					int newRowNumber = newRowPosition - topRow;
+					if (newRowNumber != currentRow) {
+						internalSetSelection(currentColumn, newRowNumber, false);
+					} else {
+						internalSetSelection(currentColumn, newRowNumber, true);
+					}
+					return;
+				}
+				
+				// else...
+				
+				++numRowsInCollection;
+
+				// If the new row is above us, scroll up to it
+				if (newRowPosition < topRow + currentRow) {
+					setTopRow(newRowPosition);
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							updateVisibleRows();
+							if (currentRow != 0) {
+								internalSetSelection(currentColumn, 0, false);
+							} else {
+								internalSetSelection(currentColumn, 0, true);
+							}
+						}
+					});
+				} else {
+					// If we're appending
+					if (numRowsInDisplay > numRowsVisible) {
+						updateVisibleRows();
+						int newRowNumber = newRowPosition - topRow;
+						if (newRowNumber != currentRow) {
+							internalSetSelection(currentColumn, newRowNumber, false);
+						} else {
+							internalSetSelection(currentColumn, newRowNumber, true);
+						}
+					} else {
+						// It's somewhere in the middle below us; scroll down to it
+						setTopRow(newRowPosition-numRowsVisible+1);
+						int newRowNumber = numRowsVisible-1;
+						if (newRowNumber != currentRow) {
+							internalSetSelection(currentColumn, newRowNumber, false);
+						} else {
+							internalSetSelection(currentColumn, newRowNumber, true);
+						}
+					}
+				}
+				return;
 			case SWT.DEL:
 				if (fireDeleteEvent()) {
 					// We know the object is gone if we made it here, so now refresh the display...
@@ -837,85 +915,6 @@ public class InternalCompositeTable extends Composite implements Listener {
 			}
 		}
 		switch (e.keyCode) {
-		case SWT.INSERT:
-			// If no insertHandler has been registered, bail out 
-		 	if (parent.insertHandlers.size() < 1) {
-				return;
-			}
-			
-			// Make sure we can leave the current row
-			if (!fireRequestRowChangeEvent()) {
-				return;
-			}
-			needToRequestRC = false;
-			
-			// Insert the new object
-			int newRowPosition = fireInsertEvent();
-			if (newRowPosition < 0) {
-				// This should never happen, but...
-				return;
-			}
-			
-			disposeEmptyTablePlaceholder();
-			
-			// If the current widget has a selection, deselect it
-			deselect(e.widget);
-			
-			// If the new row is in the visible space, refresh it
-			if (topRow <= newRowPosition && 
-					numRowsVisible > newRowPosition - topRow) {
-				insertRowAt(newRowPosition - topRow);
-				++numRowsInCollection;
-				updateVisibleRows();
-				int newRowNumber = newRowPosition - topRow;
-				if (newRowNumber != currentRow) {
-					internalSetSelection(currentColumn, newRowNumber, false);
-				} else {
-					internalSetSelection(currentColumn, newRowNumber, true);
-				}
-				return;
-			}
-			
-			// else...
-			
-			++numRowsInCollection;
-
-			// If the new row is above us, scroll up to it
-			if (newRowPosition < topRow + currentRow) {
-				setTopRow(newRowPosition);
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						updateVisibleRows();
-						if (currentRow != 0) {
-							internalSetSelection(currentColumn, 0, false);
-						} else {
-							internalSetSelection(currentColumn, 0, true);
-						}
-					}
-				});
-			} else {
-				// If we're appending
-				if (numRowsInDisplay > numRowsVisible) {
-					updateVisibleRows();
-					int newRowNumber = newRowPosition - topRow;
-					if (newRowNumber != currentRow) {
-						internalSetSelection(currentColumn, newRowNumber, false);
-					} else {
-						internalSetSelection(currentColumn, newRowNumber, true);
-					}
-				} else {
-					// It's somewhere in the middle below us; scroll down to it
-					setTopRow(newRowPosition-numRowsVisible+1);
-					int newRowNumber = numRowsVisible-1;
-					if (newRowNumber != currentRow) {
-						internalSetSelection(currentColumn, newRowNumber, false);
-					} else {
-						internalSetSelection(currentColumn, newRowNumber, true);
-					}
-				}
-			}
-			
-			return;
 		case SWT.ARROW_UP:
 			if (maxRowsVisible <= 1)
 				return;
