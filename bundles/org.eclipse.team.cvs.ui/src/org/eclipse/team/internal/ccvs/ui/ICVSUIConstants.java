@@ -162,6 +162,8 @@ public interface ICVSUIConstants {
 	public final String PREF_UPDATE_PREVIEW_IN_DIALOG = "dialog"; //$NON-NLS-1$
 	public final String PREF_UPDATE_PREVIEW_IN_SYNCVIEW = "syncView"; //$NON-NLS-1$
 	
+	public final String PREF_ENABLE_MODEL_SYNC = "enableModelSync"; //$NON-NLS-1$
+	
 	// Wizard banners
 	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.gif";	 //$NON-NLS-1$
 	public final String IMG_WIZBAN_MERGE = "wizban/mergestream_wizban.gif";	 //$NON-NLS-1$

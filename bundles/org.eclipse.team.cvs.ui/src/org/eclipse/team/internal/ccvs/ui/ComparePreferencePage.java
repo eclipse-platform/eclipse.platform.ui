@@ -68,6 +68,11 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
 		        CVSUIMessages.ComparePreferencePage_2, 
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()));
+		addField(new BooleanFieldEditor(
+		        ICVSUIConstants.PREF_ENABLE_MODEL_SYNC, 
+		        "Work in progess: Enable model sync", 
+				BooleanFieldEditor.DEFAULT, 
+				getFieldEditorParent()));
         
         IPreferencePageContainer container = getContainer();
         if (container instanceof IWorkbenchPreferenceContainer) {

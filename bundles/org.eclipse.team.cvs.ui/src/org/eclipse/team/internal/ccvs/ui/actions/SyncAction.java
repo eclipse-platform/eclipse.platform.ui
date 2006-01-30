@@ -25,8 +25,8 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.mappings.ModelUpdateOperation;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.OpenInCompareAction;
@@ -45,6 +45,22 @@ public class SyncAction extends WorkspaceTraversalAction {
 		
 		if(isSingleFile(resources)) {
 			showSingleFileComparison(getShell(), CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), resources[0], getTargetPage());
+		}else if (isShowModelSync()) {
+			try {
+				new ModelUpdateOperation(getTargetPart(), getCVSResourceMappings(), getResourceMappingContext()) {
+					protected boolean isAttemptHeadlessMerge() {
+						return false;
+					}
+					protected boolean isPreviewInDialog() {
+						return false;
+					}
+					protected String getJobName() {
+						return "Synchronizing CVS";
+					}
+				}.run();
+			} catch (InterruptedException e) {
+				// Ignore
+			}
 		} else {
 			// First check if there is an existing matching participant
 			WorkspaceSynchronizeParticipant participant = (WorkspaceSynchronizeParticipant)SubscriberParticipant.getMatchingParticipant(WorkspaceSynchronizeParticipant.ID, resources);
@@ -68,7 +84,11 @@ public class SyncAction extends WorkspaceTraversalAction {
 		}
 	}
     
-    private IWorkingSet[] getSelectedWorkingSets() {
+    private boolean isShowModelSync() {
+		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_ENABLE_MODEL_SYNC);
+	}
+
+	private IWorkingSet[] getSelectedWorkingSets() {
         ResourceMapping[] mappings = getCVSResourceMappings();
         List sets = new ArrayList();
         for (int i = 0; i < mappings.length; i++) {
