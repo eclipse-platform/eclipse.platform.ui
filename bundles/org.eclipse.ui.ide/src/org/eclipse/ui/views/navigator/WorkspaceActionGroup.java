@@ -31,6 +31,7 @@ import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.actions.OpenResourceAction;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.ide.IDEActionFactory;
+import org.eclipse.ui.internal.ide.actions.CloseUnrelatedProjectsAction;
 
 /**
  * This is the action group for workspace actions such as Build, Refresh Local,
@@ -43,6 +44,8 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
     private OpenResourceAction openProjectAction;
 
     private CloseResourceAction closeProjectAction;
+    
+    private CloseUnrelatedProjectsAction closeUnrelatedProjectsAction;
 
     private RefreshAction refreshAction;
 
@@ -59,6 +62,8 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
                 IDEActionFactory.OPEN_PROJECT.getId(), openProjectAction);
         actionBars.setGlobalActionHandler(IDEActionFactory.CLOSE_PROJECT
                 .getId(), closeProjectAction);
+        actionBars.setGlobalActionHandler(IDEActionFactory.CLOSE_UNRELATED_PROJECTS
+                .getId(), closeUnrelatedProjectsAction);
     }
 
     /**
@@ -134,6 +139,8 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
             if (hasOpenProjects) {
                 closeProjectAction.selectionChanged(selection);
                 menu.add(closeProjectAction);
+                closeUnrelatedProjectsAction.selectionChanged(selection);
+                menu.add(closeUnrelatedProjectsAction);
             }
         }
     }
@@ -174,6 +181,7 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
         Shell shell = navigator.getSite().getShell();
         openProjectAction = new OpenResourceAction(shell);
         closeProjectAction = new CloseResourceAction(shell);
+        closeUnrelatedProjectsAction = new CloseUnrelatedProjectsAction(shell);
         refreshAction = new RefreshAction(shell);
         refreshAction
                 .setDisabledImageDescriptor(getImageDescriptor("dlcl16/refresh_nav.gif"));//$NON-NLS-1$
@@ -189,6 +197,7 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
         refreshAction.selectionChanged(selection);
         buildAction.selectionChanged(selection);
         openProjectAction.selectionChanged(selection);
+        closeUnrelatedProjectsAction.selectionChanged(selection);
         closeProjectAction.selectionChanged(selection);
     }
 }

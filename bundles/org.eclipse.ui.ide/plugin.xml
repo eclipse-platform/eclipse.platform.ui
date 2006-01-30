@@ -675,6 +675,12 @@
             id="org.eclipse.ui.project.closeProject">
       </command>
       <command
+            name="%command.closeUnrelatedProjects.name"
+            description="%command.closeUnrelatedProjects.description"
+            categoryId="org.eclipse.ui.category.project"
+            id="org.eclipse.ui.project.closeUnrelatedProjects">
+      </command>
+      <command
             name="%command.buildProject.name"
             description="%command.buildProject.description"
             categoryId="org.eclipse.ui.category.project"

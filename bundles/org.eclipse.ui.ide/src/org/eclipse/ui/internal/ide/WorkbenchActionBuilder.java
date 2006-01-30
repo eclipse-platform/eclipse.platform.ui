@@ -217,6 +217,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IWorkbenchAction openProjectAction;
 
     private IWorkbenchAction closeProjectAction;
+    
+    private IWorkbenchAction closeUnrelatedProjectsAction;
 
     // contribution items
     // @issue should obtain from ContributionItemFactory
@@ -609,6 +611,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         menu.add(openProjectAction);
         menu.add(closeProjectAction);
+        menu.add(closeUnrelatedProjectsAction);
         menu.add(new GroupMarker(IWorkbenchActionConstants.OPEN_EXT));
         menu.add(new Separator());
         menu.add(buildAllAction);
@@ -1117,6 +1120,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         buildProjectAction = null;
         openProjectAction = null;
         closeProjectAction = null;
+        closeUnrelatedProjectsAction = null;
         newWizardMenu = null;
         pinEditorContributionItem = null;
 //        searchComboItem = null;
@@ -1397,6 +1401,9 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         closeProjectAction = IDEActionFactory.CLOSE_PROJECT.create(window);
         register(closeProjectAction);
+
+        closeUnrelatedProjectsAction = IDEActionFactory.CLOSE_UNRELATED_PROJECTS.create(window);
+        register(closeUnrelatedProjectsAction);
 
         openWorkspaceAction = IDEActionFactory.OPEN_WORKSPACE
                 .create(window);

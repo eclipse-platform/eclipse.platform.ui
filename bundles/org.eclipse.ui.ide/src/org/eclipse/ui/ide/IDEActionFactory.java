@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.ide;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
@@ -107,6 +108,7 @@ public final class IDEActionFactory {
     /**
      * IDE-specific workbench action: Build clean
      * This action maintains its enablement state.
+     * @since 3.0
      */
     public static final ActionFactory BUILD_CLEAN = new ActionFactory(
             "buildClean") { //$NON-NLS-1$
@@ -122,8 +124,9 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Build automaticaly
+     * IDE-specific workbench action: Build automatically
      * This action maintains its enablement state.
+     * @since 3.0
      */
     public static final ActionFactory BUILD_AUTOMATICALLY = new ActionFactory(
             "buildAutomatically") { //$NON-NLS-1$
@@ -171,10 +174,40 @@ public final class IDEActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.Workbench_closeProject);
-            action.setToolTipText(IDEWorkbenchMessages.Workbench_closeProjectToolTip);
+            RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.CloseResourceAction_text);
+            action.setToolTipText(IDEWorkbenchMessages.CloseResourceAction_text);
             window.getPartService().addPartListener(action);
             action.setActionDefinitionId("org.eclipse.ui.project.closeProject"); //$NON-NLS-1$
+            return action;
+        }
+    };
+
+    /**
+     * IDE-specific workbench action: Close unrelated projects.
+     * <p>
+     * This action closes all projects that are unrelated to the selected projects. A
+     * project is unrelated if it is not directly or transitively referenced by one 
+     * of the selected projects, and does not directly or transitively reference
+     * one of the selected projects.
+     * </p>
+     * This action is a {@link RetargetAction} with 
+     * id "closeUnrelatedProjects". This action maintains its enablement state.
+     * @see IProject#getReferencedProjects()
+     * @see IProject#getReferencingProjects()
+     * @see IProject#close(org.eclipse.core.runtime.IProgressMonitor)
+     * @since 3.2
+     */
+    public static final ActionFactory CLOSE_UNRELATED_PROJECTS = new ActionFactory(
+            "closeUnrelatedProjects") { //$NON-NLS-1$
+        /* (non-javadoc) method declared on ActionFactory */
+        public IWorkbenchAction create(IWorkbenchWindow window) {
+            if (window == null) {
+                throw new IllegalArgumentException();
+            }
+            RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.CloseUnrelatedProjectsAction_text);
+            action.setToolTipText(IDEWorkbenchMessages.CloseUnrelatedProjectsAction_toolTip);
+            window.getPartService().addPartListener(action);
+            action.setActionDefinitionId("org.eclipse.ui.project.closeUnrelatedProjects"); //$NON-NLS-1$
             return action;
         }
     };
@@ -213,8 +246,8 @@ public final class IDEActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.Workbench_openProject);
-            action.setToolTipText(IDEWorkbenchMessages.Workbench_openProjectToolTip);
+            RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.OpenResourceAction_text);
+            action.setToolTipText(IDEWorkbenchMessages.OpenResourceAction_toolTip);
             window.getPartService().addPartListener(action);
             action.setActionDefinitionId("org.eclipse.ui.project.openProject"); //$NON-NLS-1$
             return action;

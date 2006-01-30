@@ -38,6 +38,9 @@ public interface IIDEHelpContextIds {
     public static final String CLOSE_RESOURCE_ACTION = PREFIX
             + "close_resource_action_context"; //$NON-NLS-1$
 
+    public static final String CLOSE_UNRELATED_PROJECTS_ACTION = PREFIX
+    + "close_unrelated_projects_action_context"; //$NON-NLS-1$
+
     public static final String OPEN_RESOURCE_ACTION = PREFIX
             + "open_resource_action_context"; //$NON-NLS-1$
 

@@ -87,11 +87,6 @@ public class IDEWorkbenchMessages extends NLS {
 	// --- Project Menu ---
 	public static String Workbench_project;
 
-	public static String Workbench_openProject;
-	public static String Workbench_openProjectToolTip;
-	public static String Workbench_closeProject;
-	public static String Workbench_closeProjectToolTip;
-
 	public static String Workbench_buildProject;
 	public static String Workbench_buildProjectToolTip;
 	public static String Workbench_rebuildProject;
@@ -235,10 +230,16 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String OpenResourceAction_operationMessage;
 
 	public static String CloseResourceAction_text;
+	public static String CloseResourceAction_warningForOne;
+	public static String CloseResourceAction_warningForMultiple;
+	public static String CloseResourceAction_confirm;
 	public static String CloseResourceAction_toolTip;
 	public static String CloseResourceAction_title;
 	public static String CloseResourceAction_problemMessage;
 	public static String CloseResourceAction_operationMessage;
+
+	public static String CloseUnrelatedProjectsAction_text;
+	public static String CloseUnrelatedProjectsAction_toolTip;
 
 	public static String BuildAction_text;
 	public static String BuildAction_toolTip;
@@ -844,9 +845,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CopyProjectAction_warning;
 	public static String DeleteResourceAction_confirm;
 	public static String DeleteResourceAction_warning;
-	public static String CloseResourceAction_warningForOne;
-	public static String CloseResourceAction_warningForMultiple;
-	public static String CloseResourceAction_confirm;
 	public static String CopyFilesAndFoldersOperation_confirmMove;
 	public static String CopyFilesAndFoldersOperation_warningMove;
 	public static String CopyFilesAndFoldersOperation_confirmCopy;
