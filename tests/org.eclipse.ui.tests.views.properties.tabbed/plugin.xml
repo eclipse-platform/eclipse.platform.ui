@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Tabbed Properties Example View"
+            id="org.eclipse.ui.views.properties.tabbed.views">
+      </category>
+      <view
+            name="Tabbed Properties Tests View"
+            category="org.eclipse.ui.views.properties.tabbed.views"
+            icon="icons/sample.gif"
+            class="org.eclipse.ui.tests.views.properties.tabbed.views.TestsView"
+            id="org.eclipse.ui.tests.views.properties.tabbed.views.TestsView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor
+            contributorId="org.eclipse.ui.tests.views.properties.tabbed.views.TestsView"
+            labelProvider="org.eclipse.ui.tests.views.properties.tabbed.views.LabelProvider"
+            typeMapper="org.eclipse.ui.tests.views.properties.tabbed.views.TypeMapper">
+         <propertyCategory category="first">
+         </propertyCategory>
+         <propertyCategory category="second">
+         </propertyCategory>
+      </propertyContributor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+      <propertyTabs contributorId="org.eclipse.ui.tests.views.properties.tabbed.views.TestsView">
+         <propertyTab
+               category="first"
+               id="propertyTab1"
+               label="Name"/>
+         <propertyTab
+               afterTab="propertyTab1"
+               category="first"
+               id="propertyTab2"
+               label="Project"/>
+         <propertyTab
+               afterTab="propertyTab2"
+               category="first"
+               id="propertyTab3"
+               label="Folder"/>
+         <propertyTab
+               afterTab="propertyTab3"
+               category="first"
+               id="propertyTab4"
+               label="File"/>
+         <propertyTab
+               afterTab="propertyTab4"
+               category="first"
+               id="propertyTab5"
+               label="Information"/>
+         <propertyTab
+               afterTab="propertyTab5"
+               category="first"
+               id="propertyTab6"
+               label="Warning"/>
+         <propertyTab
+               afterTab="propertyTab6"
+               category="first"
+               id="propertyTab7"
+               label="Error"/>
+         <propertyTab
+               category="second"
+               id="propertyTab8"
+               indented="true"
+               label="Message"/>
+         <propertyTab
+               category="second"
+               image="icons/sample.gif"
+               id="propertyTab9"
+               label="Resource"/>
+      </propertyTabs>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
+      <propertySections contributorId="org.eclipse.ui.tests.views.properties.tabbed.views.TestsView">
+         <propertySection
+               class="org.eclipse.ui.tests.views.properties.tabbed.sections.NameSection"
+               enablesFor="1"
+               id="propertySection1"
+               tab="propertyTab1">
+            <input type="org.eclipse.ui.tests.views.properties.tabbed.model.Element"/>
+         </propertySection>
+         <propertySection
+               class="org.eclipse.ui.tests.views.properties.tabbed.sections.LabelSection"
+               id="propertySection2"
+               tab="propertyTab2">
+            <input type="org.eclipse.ui.tests.views.properties.tabbed.model.Project"/>
+         </propertySection>
+         <propertySection
+               class="org.eclipse.ui.tests.views.properties.tabbed.sections.LabelSection"
+               id="propertySection3"
+               tab="propertyTab3">
+            <input type="org.eclipse.ui.tests.views.properties.tabbed.model.Folder"/>
+         </propertySection>
+         <propertySection
+               class="org.eclipse.ui.tests.views.properties.tabbed.sections.LabelSection"
+               id="propertySection4"
+               tab="propertyTab4">
+            <input type="org.eclipse.ui.tests.views.properties.tabbed.model.File"/>
+         </propertySection>
+         <propertySection
+               class="org.eclipse.ui.tests.views.properties.tabbed.sections.LabelSection"
+               id="propertySection5"
+               tab="propertyTab5">
+            <input type="org.eclipse.ui.tests.views.properties.tabbed.model.Information"/>
+         </propertySection>
+         <propertySection
+               class="org.eclipse.ui.tests.views.properties.tabbed.sections.LabelSection"
+               id="propertySection6"
+               tab="propertyTab6">
+            <input type="org.eclipse.ui.tests.views.properties.tabbed.model.Warning"/>
+         </propertySection>
+         <propertySection
+               class="org.eclipse.ui.tests.views.properties.tabbed.sections.LabelSection"
+               id="propertySection7"
+               tab="propertyTab7">
+            <input type="org.eclipse.ui.tests.views.properties.tabbed.model.Error"/>
+         </propertySection>
+         <propertySection
+               class="org.eclipse.ui.tests.views.properties.tabbed.sections.MessageSection"
+               id="propertySection8"
+               tab="propertyTab8">
+            <input type="org.eclipse.ui.tests.views.properties.tabbed.model.Error"/>
+            <input type="org.eclipse.ui.tests.views.properties.tabbed.model.Warning"/>
+            <input type="org.eclipse.ui.tests.views.properties.tabbed.model.Information"/>
+         </propertySection>
+         <propertySection
+               class="org.eclipse.ui.tests.views.properties.tabbed.sections.ResourceSection"
+               id="propertySection9"
+               tab="propertyTab9">
+            <input type="org.eclipse.ui.tests.views.properties.tabbed.model.File"/>
+            <input type="org.eclipse.ui.tests.views.properties.tabbed.model.Folder"/>
+            <input type="org.eclipse.ui.tests.views.properties.tabbed.model.Project"/>
+         </propertySection>
+         <propertySection
+               afterSection="propertySection5"
+               class="org.eclipse.ui.tests.views.properties.tabbed.sections.InformationTwoSection"
+               filter="org.eclipse.ui.tests.views.properties.tabbed.views.InformationTwoFilter"
+               id="propertySection10"
+               tab="propertyTab1">
+            <input type="org.eclipse.ui.tests.views.properties.tabbed.model.Information"/>
+         </propertySection>
+      </propertySections>
+   </extension>
+
+
+</plugin>

@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.views.properties.tabbed">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.views.properties.tabbed" id="propertySections" name="Property Sections"/>
+      </appInfo>
+      <documentation>
+         Describes a list of sections to be displayed within tabs that will be contributed to the tabbed property sheet page.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="propertySections"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="propertySections">
+      <complexType>
+         <sequence>
+            <element ref="propertySection" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="contributorId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of the property sheet page contributor.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="propertySection">
+      <complexType>
+         <sequence>
+            <element ref="input" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="tab" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The tab in which this section appears.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique id for the section.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The class that implements the section, i.e. extends &lt;tt&gt;org.eclipse.ui.views.properties.tabbed.AbstractPropertySection&lt;/tt&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.views.properties.tabbed.AbstractPropertySection"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="afterSection" type="string">
+            <annotation>
+               <documentation>
+                  When there is more than one section in a tab, sections are sorted by the afterSection attribute.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="filter" type="string">
+            <annotation>
+               <documentation>
+                  The class that implements a section filter, i.e. implements &lt;tt&gt;org.eclipse.jface.viewers.IFilter&lt;/tt&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.IFilter"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="enablesFor" type="string">
+            <annotation>
+               <documentation>
+                  a value indicating the selection count which must be met to enable the section. If specified and the condition is not met, the section is not displayed. If omitted, the section enablement is not affected. The following attribute formats are currently supported: 
+    &lt;table border=&quot;0&quot; width=&quot;80%&quot;&gt;
+      &lt;tr&gt;
+ &lt;td valign=&quot;top&quot; width=&quot;25&quot;&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot; nowrap&gt;&lt;b&gt;n&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot;&gt;- a precise number of items selected.&amp;nbsp;
+          For example: enablesFor=&amp;quot; 1&amp;quot; enables the section only when 1
+          item is selected&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="input">
+      <complexType>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The selected class or interface that will enable the display on the section in the tab.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ui.tests.views.properties.tabbed.propertySections&quot;&gt;
+      &lt;propertySections contributorId=&quot;org.eclipse.ui.views.properties.tabbed.views.TestsView&quot;&gt;
+         &lt;propertySection
+               class=&quot;org.eclipse.ui.tests.views.properties.tabbed.sections.NameSection&quot;
+               enablesFor=&quot;1&quot;
+               id=&quot;propertySection1&quot;
+               tab=&quot;propertyTab1&quot;&gt;
+            &lt;input type=&quot;org.eclipse.ui.tests.views.properties.tabbed.model.Element&quot;&gt;
+            &lt;/input&gt;
+         &lt;/propertySection&gt;
+      &lt;/propertySections&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2005, 2006 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Eclipse Public License v1.0 which accompanies 
+this distribution, and is available at &lt;a
+href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
+
+</schema>
