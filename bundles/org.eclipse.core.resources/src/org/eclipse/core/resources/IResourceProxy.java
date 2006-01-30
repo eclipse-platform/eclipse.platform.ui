@@ -14,15 +14,15 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
 
 /**
- * A callback for requesting information about a resource when using a fast
- * resource visitor. All of the "get" methods on a resource proxy have trivial
- * performance cost. Requesting the full path or the actual resource handle will
- * cause extra objects to be created and will thus have greater cost.
+ * A lightweight interface for requesting information about a resource.
+ * All of the "get" methods on a resource proxy have trivial performance cost. 
+ * Requesting the full path or the actual resource handle will cause extra objects 
+ * to be created and will thus have greater cost.
  * <p>
- * Note that a resource proxy is a transient object that is only valid for the
- * duration of a single visit method.  A proxy should not be referenced once the
- * single resource visit is complete. The equals and hashCode methods should not
- * be relied on.
+ * When a resource proxy is used within an {@link IResourceProxyVisitor},
+ * it is a transient object that is only valid for the duration of a single visit method.  
+ * A proxy should not be referenced once the single resource visit is complete. 
+ * The equals and hashCode methods should not be relied on.
  * </p>
  * <p>
  * A proxy can also be created using {@ link IResource#createProxy()}. In
