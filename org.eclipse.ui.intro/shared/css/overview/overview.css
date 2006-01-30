@@ -1,13 +1,8 @@
-body {
-	background-image : url(../graphics/contentpage/overview_wtr.jpg);
-}
-
 /* show the "selected" image for this page */
 #navigation-links a#overview img, #navigation-links a#overview:hover img { 
 	background-image : url(../graphics/icons/ctool/overview48sel.gif); 
 	}
-
-
+	
 iframe {
 	position:relative;
 	top:16px;

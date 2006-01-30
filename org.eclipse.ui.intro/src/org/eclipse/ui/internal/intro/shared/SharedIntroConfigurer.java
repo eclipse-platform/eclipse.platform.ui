@@ -64,6 +64,8 @@ public class SharedIntroConfigurer extends IntroConfigurer {
 			if (groupId.equals("page-links"))
 				return getRootPageLinks(true);
 		}
+		if (groupId.equals("page-links"))
+			return getNavLinks(pageId);
 		return new IntroElement[0];
 	}
 
@@ -75,6 +77,21 @@ public class SharedIntroConfigurer extends IntroConfigurer {
 			while (stok.hasMoreTokens()) {
 				String id = stok.nextToken().trim();
 				IntroElement page = createRootPageLink(id);
+				if (page != null)
+					links.add(page);
+			}
+		}
+		return (IntroElement[]) links.toArray(new IntroElement[links.size()]);
+	}
+
+	private IntroElement[] getNavLinks(String pageId) {
+		ArrayList links = new ArrayList();
+		String ids = getVariable("introRootPages");
+		if (ids != null) {
+			StringTokenizer stok = new StringTokenizer(ids, ",");
+			while (stok.hasMoreTokens()) {
+				String id = stok.nextToken().trim();
+				IntroElement page = createNavLink(id, pageId);
 				if (page != null)
 					links.add(page);
 			}
@@ -111,6 +128,38 @@ public class SharedIntroConfigurer extends IntroConfigurer {
 					"Web Resources", "Read more on the Web");
 		return null;
 	}
+	
+	private IntroElement createNavLink(String id, String pageId) {
+		if (id.equals("overview"))
+			return createNavLink("Overview",
+					"http://org.eclipse.ui.intro/showPage?id="+id,
+					id, "left");
+		if (id.equals("firststeps"))
+			return createNavLink("First Steps",
+					"http://org.eclipse.ui.intro/showPage?id="+id,
+					id, "left");
+		if (id.equals("tutorials"))
+			return createNavLink("Tutorials",
+					"http://org.eclipse.ui.intro/showPage?id="+id,
+					id, "left");
+		if (id.equals("samples"))
+			return createNavLink("Samples",
+					"http://org.eclipse.ui.intro/showPage?id="+id,
+					id, "left");
+		if (id.equals("whatsnew"))
+			return createNavLink("What's New",
+					"http://org.eclipse.ui.intro/showPage?id="+id,
+					id, "left");
+		if (id.equals("migrate"))
+			return createNavLink("Migrate",
+					"http://org.eclipse.ui.intro/showPage?id="+id,
+					id, "left");
+		if (id.equals("webresources"))
+			return createNavLink("Web Resources",
+					"http://org.eclipse.ui.intro/showPage?id="+id,
+					id, "left");
+		return null;
+	}
 
 	private IntroElement createRootLink(String name, String url, String id, String imgId, String imgSrc,
 			String imgAlt, String imgText) {
@@ -127,6 +176,15 @@ public class SharedIntroConfigurer extends IntroConfigurer {
 		text.setValue(imgText);
 		element.addChild(img);
 		element.addChild(text);
+		return element;
+	}
+
+	private IntroElement createNavLink(String label, String url, String id, String styleId) {
+		IntroElement element = new IntroElement("link");
+		element.setAttribute("label", label);
+		element.setAttribute("url", url);
+		element.setAttribute("id", "id");
+		element.setAttribute("style-id", styleId);
 		return element;
 	}
 

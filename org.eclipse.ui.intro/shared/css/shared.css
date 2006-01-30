@@ -151,7 +151,7 @@ body, .page{
 #page-content {
 	background-repeat : no-repeat;
 	background-position : bottom right;
-	height : 70%;
+	height : 80%;
 }
 
 /* 
@@ -160,10 +160,10 @@ body, .page{
  */
 #navigation-links {
 	position : relative;
-	left : 10px;
-	top : 5px;
-	height : 60px;
-	width : 98%;
+	left : 0px;
+	top : 0px;
+	height : 118px;
+	width : 100%;
 }
 
 #navigation-links a {

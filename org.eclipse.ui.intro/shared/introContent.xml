@@ -35,27 +35,58 @@
     </page>    
     
     <page style="css/overview/overview.css" alt-style="css/overview/swt.properties" id="overview" style-id="page">
-        <title style-id="intro-header">$introTitle$</title>
+        <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/ov_banner.jpg">
+            <group id="page-links" dynamic="true">
+            </group>
+            <img id="banner-lines" src="css/graphics/banner_left_lines.png"/>
+            <group id="action-links">
+                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
+                    <text>Go to the workbench</text>
+                </link>
+            </group>
+        </group>
         <group id="page-content">
             <group id="content-header" label="OVERVIEW" filteredFrom="swt">
             </group>
             <text style-id="page-title" id="page-title" filteredFrom="html">OVERVIEW</text>
             <text style-id="page-description" id="page-description">Eclipse is a kind of universal tool platform - an open extensible IDE for anything and nothing in particular. It provides a feature-rich development environment that allows the developer to efficiently create tools that integrate seamlessly into the Eclipse Platform.</text>
             <group id="overview-links">
+               <anchor id="linksAnchor"/>
             </group>
         </group>
     </page>
 	<page style="css/tutorials/tutorials.css" alt-style="css/tutorials/swt.properties" id="tutorials" style-id="page">
-        <title style-id="intro-header">$introTitle$</title>
+        <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/tu_banner.jpg">
+            <group id="page-links" dynamic="true">
+            </group>
+            <img id="banner-lines" src="css/graphics/banner_left_lines.png"/>
+            <group id="action-links">
+                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
+                    <text>Go to the workbench</text>
+                </link>
+            </group>
+        </group>
         <group id="page-content">
             <group id="content-header" label="TUTORIALS" filteredFrom="swt">
             </group>
             <text style-id="page-title" id="page-title" filteredFrom="html">TUTORIALS</text>
             <text style-id="page-description" id="page-description">Learn how to be productive using Eclipse by completing end-to-end tutorials that will guide you along the way.</text>
+            <group id="tutorials-links">
+               <anchor id="linksAnchor"/>
+            </group>
         </group>
     </page>
 	 <page style="css/samples/samples.css" alt-style="css/samples/swt.properties" id="samples" style-id="page">
-        <title style-id="intro-header">$introTitle$</title>
+        <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/sa_banner.jpg">
+            <group id="page-links" dynamic="true">
+            </group>
+            <img id="banner-lines" src="css/graphics/banner_left_lines.png"/>
+            <group id="action-links">
+                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
+                    <text>Go to the workbench</text>
+                </link>
+            </group>
+        </group>
         <group id="page-content">
             <group id="content-header" label="SAMPLES" filteredFrom="swt">
             </group>
@@ -65,7 +96,16 @@
     </page>
 
     <page style="css/whatsnew/whatsnew.css" alt-style="css/whatsnew/swt.properties" id="whatsnew" style-id="page">
-        <title style-id="intro-header">$introTitle$</title>
+        <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/wn_banner.jpg">
+            <group id="page-links" dynamic="true">
+            </group>
+            <img id="banner-lines" src="css/graphics/banner_left_lines.png"/>
+            <group id="action-links">
+                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
+                    <text>Go to the workbench</text>
+                </link>
+            </group>
+        </group>
         <group id="page-content">
             <group id="content-header" label="WHAT'S NEW" filteredFrom="swt">
             </group>
@@ -74,7 +114,16 @@
     </page>
     
     <page style="css/firststeps/firststeps.css" alt-style="css/firststeps/swt.properties" id="firststeps" style-id="page">
-        <title style-id="intro-header">$introTitle$</title>
+        <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/fs_banner.jpg">
+            <group id="page-links" dynamic="true">
+            </group>
+            <img id="banner-lines" src="css/graphics/banner_left_lines.png"/>
+            <group id="action-links">
+                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
+                    <text>Go to the workbench</text>
+                </link>
+            </group>
+        </group>
         <group id="page-content">
             <group id="content-header" label="FIRST STEPS" filteredFrom="swt">
             </group>
@@ -83,7 +132,16 @@
     </page>
     
     <page style="css/webresources/webresources.css" alt-style="css/webresources/swt.properties" id="webresources" style-id="page">
-        <title style-id="intro-header">$introTitle$</title>
+        <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/wr_banner.jpg">
+            <group id="page-links" dynamic="true">
+            </group>
+            <img id="banner-lines" src="css/graphics/banner_left_lines.png"/>
+            <group id="action-links">
+                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
+                    <text>Go to the workbench</text>
+                </link>
+            </group>
+        </group>
         <group id="page-content">
             <group id="content-header" label="WEB RESOURCES" filteredFrom="swt">
             </group>
@@ -92,7 +150,16 @@
     </page>
     
     <page style="css/migrate/migrate.css" alt-style="css/migrate/swt.properties" id="migrate" style-id="page">
-        <title style-id="intro-header">$introTitle$</title>
+        <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/mi_banner.jpg">
+            <group id="page-links" dynamic="true">
+            </group>
+            <img id="banner-lines" src="css/graphics/banner_left_lines.png"/>
+            <group id="action-links">
+                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
+                    <text>Go to the workbench</text>
+                </link>
+            </group>
+        </group>
         <group id="page-content">
             <group id="content-header" label="MIGRATE" filteredFrom="swt">
             </group>

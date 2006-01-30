@@ -312,12 +312,12 @@ public class IntroHTMLGenerator {
         }
         if (element.getBackgroundImage() != null) {
         	String imageUrl = element.getBackgroundImage();
+    		imageUrl = BundleUtil.getResolvedResourceLocation(element.getBase(), imageUrl, element.getBundle());
         	String style;
         	if (Platform.getWS().equals(Platform.WS_WIN32) &&
         			imageUrl.toLowerCase().endsWith(".png")) {
         		// IE 5.5+ does not handle alphas in PNGs without
         		// this hack. Remove when IE7 becomes widespread
-        		imageUrl = BundleUtil.getResolvedResourceLocation(element.getBase(), imageUrl, element.getBundle());
            		style = "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"+imageUrl+"', sizingMethod='crop');";
         	}
         	else {
