@@ -85,17 +85,6 @@ public abstract class RefactoringDescriptorProxy extends PlatformObject implemen
 	public abstract String getDescription();
 
 	/**
-	 * Returns the flags of this refactoring.
-	 * <p>
-	 * Note that calling this method may result in a performance degradation,
-	 * since the actual descriptor has to be eagerly resolved.
-	 * </p>
-	 * 
-	 * @return the flags of this refactoring
-	 */
-	public abstract int getFlags();
-
-	/**
 	 * Returns the name of the associated project.
 	 * 
 	 * @return the non-empty name of the project, or <code>null</code>

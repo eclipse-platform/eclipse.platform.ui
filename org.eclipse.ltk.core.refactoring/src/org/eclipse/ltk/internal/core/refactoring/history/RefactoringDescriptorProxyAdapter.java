@@ -45,13 +45,6 @@ public final class RefactoringDescriptorProxyAdapter extends RefactoringDescript
 	/**
 	 * {@inheritDoc}
 	 */
-	public int getFlags() {
-		return fDescriptor.getFlags();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public String getProject() {
 		return fDescriptor.getProject();
 	}

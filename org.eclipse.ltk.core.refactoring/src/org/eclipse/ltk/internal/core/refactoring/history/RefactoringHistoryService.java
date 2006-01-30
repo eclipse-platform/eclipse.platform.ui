@@ -947,7 +947,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		try {
-			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, projects.length);
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 2 * projects.length);
 			final Set set= new HashSet();
 			final boolean flagged= flags > RefactoringDescriptor.NONE;
 			if (flagged) {
@@ -955,10 +955,19 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					final IProject project= projects[index];
 					if (project.isAccessible()) {
 						final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, flags, new SubProgressMonitor(monitor, 1)).getDescriptors();
-						for (int offset= 0; offset < proxies.length; offset++) {
-							final int filter= proxies[offset].getFlags();
-							if ((filter | flags) == filter)
-								set.add(proxies[offset]);
+						final IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
+						try {
+							subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, proxies.length);
+							for (int offset= 0; offset < proxies.length; offset++) {
+								final RefactoringDescriptor descriptor= proxies[offset].requestDescriptor(new SubProgressMonitor(subMonitor, 1));
+								if (descriptor != null) {
+									final int filter= descriptor.getFlags();
+									if ((filter | flags) == filter)
+										set.add(proxies[offset]);
+								}
+							}
+						} finally {
+							subMonitor.done();
 						}
 					}
 				}
@@ -966,7 +975,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				for (int index= 0; index < projects.length; index++) {
 					final IProject project= projects[index];
 					if (project.isAccessible()) {
-						final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, RefactoringDescriptor.NONE, new SubProgressMonitor(monitor, 1)).getDescriptors();
+						final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, RefactoringDescriptor.NONE, new SubProgressMonitor(monitor, 2)).getDescriptors();
 						for (int offset= 0; offset < proxies.length; offset++)
 							set.add(proxies[offset]);
 					}
