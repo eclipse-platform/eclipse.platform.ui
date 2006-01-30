@@ -50,6 +50,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.internal.console.ConsoleDocumentAdapter;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -88,6 +90,23 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
             updateLinks(event.fOffset);
         }
     };
+    // event listener used to send event to hyperlink for IHyperlink2
+    private Listener mouseUpListener = new Listener() {
+		public void handleEvent(Event event) {
+	        if (hyperlink != null) {
+	            String selection = getTextWidget().getSelectionText();
+	            if (selection.length() <= 0) {
+	                if (event.button == 1) {
+	                	if (hyperlink instanceof IHyperlink2) {
+							((IHyperlink2) hyperlink).linkActivated(event);
+						} else {
+							hyperlink.linkActivated();
+						}
+	                }
+	            }
+	        }
+		}
+	};
 
     WorkbenchJob revealJob = new WorkbenchJob("Reveal End of Document") {//$NON-NLS-1$
         public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -143,6 +162,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
         styledText.setEditable(true);
         setFont(console.getFont());
         styledText.addMouseTrackListener(this);
+        styledText.addListener(SWT.MouseUp, mouseUpListener);
 
         ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
         propertyChangeListener = new HyperlinkColorChangeListener();
@@ -518,14 +538,6 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
      * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
      */
     public void mouseUp(MouseEvent e) {
-        if (hyperlink != null) {
-            String selection = getTextWidget().getSelectionText();
-            if (selection.length() <= 0) {
-                if (e.button == 1) {
-                    hyperlink.linkActivated();
-                }
-            }
-        }
     }
 
     /*
