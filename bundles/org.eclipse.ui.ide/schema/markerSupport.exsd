@@ -16,15 +16,10 @@
             <element ref="problemFilter" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerTypeCategory" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerGrouping" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerGroupingEntry" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerAttributeGrouping" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string">
             <annotation>
                <documentation>
                   
@@ -39,6 +34,13 @@
                <appInfo>
                   <meta.attribute translatable="true"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -192,21 +194,20 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
          </documentation>
       </annotation>
       <complexType>
-         <sequence>
-            <element ref="markerTypeReference" minOccurs="1" maxOccurs="unbounded"/>
-            <element ref="markerAttributeMapping" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
-         <attribute name="attribute" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The attribute is the name of the marker attribute to test for this category.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
+         <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
                   The label is the human readable String that will be used to create the entry in the Group By-&gt; menu for this marker grouping.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id is non translatable identifier for the markerGrouping. Referred to in a markerGroupingEntry.
                </documentation>
             </annotation>
          </attribute>
@@ -227,10 +228,88 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string" use="required">
+         <attribute name="markerGroupingEntry" type="string" use="required">
             <annotation>
                <documentation>
-                  The name of the category that this attribute value indicates
+                  The id of the markerGroupingEntry that this attribute value maps to.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="markerGroupingEntry">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="label"/>
+         </appInfo>
+         <documentation>
+            A markerGroupingEntry is the specification of one of the entries in a markerGrouping.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the markerGroupingEntry. Referred to in a markerAttributeGrouping.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="markerGrouping" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The markerGrouping is the id of the markerGrouping this entry will be added to.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The translable label of the entry.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The priority of the entry. Higher priorities show up higher in the list.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="markerAttributeGrouping">
+      <annotation>
+         <documentation>
+            markerAttributeGrouping is a definition of attribute mappings for a particular markerType
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="markerAttributeMapping" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="markerType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the markerType this grouping applies to.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="attribute" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The attribute is the name of the attribute to test.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="defaultGroupingEntry" type="string">
+            <annotation>
+               <documentation>
+                  The defaultGroupingEntry is the optional category for groupings that do not satisfy any of the markerAttributeMappings in the receiver. This default will be applied when the attribute value does not match a mapping or when the attribute is not available.
                </documentation>
             </annotation>
          </attribute>

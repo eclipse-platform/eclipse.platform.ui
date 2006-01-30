@@ -977,19 +977,38 @@
    <extension
          point="org.eclipse.ui.ide.markerSupport">
       <markerGrouping
+            id="org.eclipse.ui.ide.severity"
+            label="%markerGrouping.severity"
+            >
+      </markerGrouping>
+      <markerGroupingEntry
+            markerGrouping="org.eclipse.ui.ide.severity"
+            id="org.eclipse.ui.ide.errorSeverity"
+            label="%markerGrouping.errors"
+            priority="30"/>
+      <markerGroupingEntry
+            markerGrouping="org.eclipse.ui.ide.severity"
+            id="org.eclipse.ui.ide.warningSeverity"
+            label="%markerGrouping.warnings"
+            priority="20"/>
+      <markerGroupingEntry
+            markerGrouping="org.eclipse.ui.ide.severity"
+            id="org.eclipse.ui.ide.infoSeverity"
+            label="%markerGrouping.infos"
+            priority="10"/>
+      <markerAttributeGrouping
             attribute="severity"
-            name="Severity">
-         <markerTypeReference id="org.eclipse.core.resources.problemmarker"/>
+            markerType="org.eclipse.core.resources.problemmarker">
          <markerAttributeMapping
-               name="Errors"
+               markerGroupingEntry="org.eclipse.ui.ide.errorSeverity"
                value="2"/>
          <markerAttributeMapping
-               name="Warnings"
+               markerGroupingEntry="org.eclipse.ui.ide.warningSeverity"
                value="1"/>
          <markerAttributeMapping
-               name="Info"
+               markerGroupingEntry="org.eclipse.ui.ide.infoSeverity"
                value="0"/>
-      </markerGrouping>
+      </markerAttributeGrouping>
    </extension>
    
 </plugin>

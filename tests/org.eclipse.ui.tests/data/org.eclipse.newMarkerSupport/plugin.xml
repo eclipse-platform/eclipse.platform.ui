@@ -39,16 +39,9 @@
       <markerCategory name="dynamicCategory">
          <markerTypeReference id="org.eclipse.ui.tests.dynamicTestMarker"/>
       </markerCategory>
-      <hierarchy>
-         <hierarchyReference
-               direction="ASCENDING"
-               type="PROJECT"/>
-         <markerTypeReference id="org.eclipse.ui.tests.dynamicTestMarker"/>
-      </hierarchy>
       <markerGrouping
-            attribute="testAtttribute"
+            id="dynamic"
             name="Dynamic Test Grouping">
-         <markerTypeReference id="org.eclipse.ui.tests.dynamicTestMarker"/>
       </markerGrouping>
   
    </extension>

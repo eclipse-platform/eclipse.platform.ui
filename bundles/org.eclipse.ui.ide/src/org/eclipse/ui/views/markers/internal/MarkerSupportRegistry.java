@@ -3,6 +3,7 @@ package org.eclipse.ui.views.markers.internal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
@@ -69,33 +71,27 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final String MARKER_TYPE_REFERENCE = "markerTypeReference"; //$NON-NLS-1$
 
-	private static final Object MARKER_CATEGORY = "markerCategory";//$NON-NLS-1$
-
-	private static final Object HIERARCHY = "hierarchy";//$NON-NLS-1$
-
-	private static final String HIERARCHY_REFERENCE = "hierarchyReference";//$NON-NLS-1$
-
-	private static final String TYPE = "type";//$NON-NLS-1$
-
-	private static final String PATH = "PATH";//$NON-NLS-1$
-
-	private static final String MESSAGE = "MESSAGE";//$NON-NLS-1$
-
-	private static final String RESOURCE = "RESOURCE";//$NON-NLS-1$
-
-	private static final String SEVERITY_HIERARCHY = "SEVERITY";//$NON-NLS-1$
-
-	private static final String DIRECTION = "direction";//$NON-NLS-1$
-
-	private static final String ASCENDING = "ASCENDING"; //$NON-NLS-1$
+	private static final String MARKER_CATEGORY = "markerCategory";//$NON-NLS-1$
 
 	private static final String ATTRIBUTE_MAPPING = "markerAttributeMapping"; //$NON-NLS-1$
 
-	private static final Object MARKER_GROUPING = "markerGrouping"; //$NON-NLS-1$
+	private static final String MARKER_GROUPING = "markerGrouping"; //$NON-NLS-1$
 
 	private static final String ATTRIBUTE = "attribute"; //$NON-NLS-1$
 
 	private static final String VALUE = "value"; //$NON-NLS-1$
+
+	private static final String LABEL = "label"; //$NON-NLS-1$
+
+	private static final String MARKER_ATTRIBUTE_GROUPING = "markerAttributeGrouping";//$NON-NLS-1$
+
+	private static final String DEFAULT_GROUPING_ENTRY = "defaultGroupingEntry";//$NON-NLS-1$
+
+	private static final String MARKER_TYPE = "markerType";//$NON-NLS-1$
+
+	private static final String PRIORITY = "priority"; //$NON-NLS-1$
+
+	private static final String MARKER_GROUPING_ENTRY = "markerGroupingEntry"; //$NON-NLS-1$
 
 	private static MarkerSupportRegistry singleton;
 
@@ -120,7 +116,9 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private Collection registeredFilters = new ArrayList();
 
-	private Collection markerGroups = new ArrayList();
+	private Map markerGroups = new HashMap();
+
+	private Map markerGroupingEntries = new HashMap();
 
 	private HashMap categories = new HashMap();
 
@@ -159,6 +157,10 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private void processExtension(IExtensionTracker tracker,
 			IExtension extension) {
 		IConfigurationElement[] elements = extension.getConfigurationElements();
+
+		Map groupingEntries = new HashMap();
+		Collection attributeMappings = new HashSet();
+
 		for (int j = 0; j < elements.length; j++) {
 			IConfigurationElement element = elements[j];
 			if (element.getName().equals(PROBLEM_FILTER)) {
@@ -171,17 +173,45 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			}
 			if (element.getName().equals(MARKER_GROUPING)) {
 
-				String[] markerTypes = getMarkerTypes(element);
-
-				String name = element.getAttribute(NAME);
-				String attribute = element.getAttribute(ATTRIBUTE);
-
-				FieldMarkerGroup group = new FieldMarkerGroup(name, attribute,
-						markerTypes);
-				getProviders(group, element);
-
-				markerGroups.add(group);
+				FieldMarkerGroup group = new FieldMarkerGroup(element
+						.getAttribute(LABEL), element.getAttribute(ID));
+				markerGroups.put(group.getId(), group);
 				tracker.registerObject(extension, group,
+						IExtensionTracker.REF_STRONG);
+			}
+
+			if (element.getName().equals(MARKER_GROUPING_ENTRY)) {
+
+				MarkerGroupingEntry entry = new MarkerGroupingEntry(element
+						.getAttribute(LABEL), element.getAttribute(ID),
+						(Integer.valueOf(element.getAttribute(PRIORITY))
+								.intValue()));
+
+				String groupName = element.getAttribute(MARKER_GROUPING);
+
+				Collection entries;
+				if (groupingEntries.containsKey(groupName))
+					entries = (Collection) groupingEntries.get(groupName);
+				else
+					entries = new HashSet();
+
+				entries.add(entry);
+				groupingEntries.put(groupName, entries);
+
+				tracker.registerObject(extension, entry,
+						IExtensionTracker.REF_STRONG);
+			}
+
+			if (element.getName().equals(MARKER_ATTRIBUTE_GROUPING)) {
+
+				AttributeMarkerGrouping grouping = new AttributeMarkerGrouping(
+						element.getAttribute(ATTRIBUTE), element
+								.getAttribute(MARKER_TYPE), element
+								.getAttribute(DEFAULT_GROUPING_ENTRY), element);
+
+				attributeMappings.add(grouping);
+
+				tracker.registerObject(extension, grouping,
 						IExtensionTracker.REF_STRONG);
 			}
 
@@ -198,55 +228,87 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 						IExtensionTracker.REF_STRONG);
 			}
 
-			if (element.getName().equals(HIERARCHY)) {
+			processGroupingEntries(groupingEntries);
+			processAttributeMappings(attributeMappings);
 
-				String markerType = getMarkerTypes(element)[0];
+		}
+	}
 
-				IConfigurationElement[] types = element
-						.getChildren(HIERARCHY_REFERENCE);
-				IField[] properties = new IField[types.length];
-				int[] directions = new int[types.length];
-				for (int i = 0; i < types.length; i++) {
-					properties[i] = getFieldFor(types[i].getAttribute(TYPE));
-					String direction = types[i].getAttribute(DIRECTION);
-					if (direction == ASCENDING)
-						directions[i] = TableSorter.ASCENDING;
-					else
-						directions[i] = TableSorter.DESCENDING;
+	/**
+	 * Process the grouping entries into thier required plug-ins.
+	 * 
+	 * @param groupingEntries
+	 */
+	private void processGroupingEntries(Map groupingEntries) {
+		Iterator entriesIterator = groupingEntries.keySet().iterator();
+		while (entriesIterator.hasNext()) {
+			String nextGroupId = (String) entriesIterator.next();
+			Iterator nextEntriesIterator = ((Collection) groupingEntries
+					.get(nextGroupId)).iterator();
+			if (markerGroups.containsKey(nextGroupId)) {
+				while (nextEntriesIterator.hasNext()) {
+					MarkerGroupingEntry next = (MarkerGroupingEntry) nextEntriesIterator
+							.next();
+					markerGroupingEntries.put(next.getId(), next);
+					next.setGroupingEntry((FieldMarkerGroup) markerGroups
+							.get(nextGroupId));
+
 				}
-
-				int[] priorities = new int[properties.length];
-				for (int i = 0; i < priorities.length; i++) {
-					priorities[i] = i;
+			} else {
+				while (nextEntriesIterator.hasNext()) {
+					MarkerGroupingEntry next = (MarkerGroupingEntry) nextEntriesIterator
+							.next();
+					IDEWorkbenchPlugin
+							.log(NLS
+									.bind(
+											"markerGroupingEntry {0} defines invalid group {1}",//$NON-NLS-1$
+											new String[] { next.getId(),
+													nextGroupId }));
 				}
-
-				TableSorter sorter = new TableSorter(properties, priorities,
-						directions);
-				hierarchyOrders.put(markerType, sorter);
-				tracker.registerObject(extension, sorter,
-						IExtensionTracker.REF_STRONG);
-
 			}
 		}
 	}
 
 	/**
-	 * Return the field that matches attribute
+	 * Process the attribute mappings into thier required plug-ins.
 	 * 
-	 * @param attribute
-	 * @return IField or <code>null</code> if there is no matching field.
+	 * @param attributeMappings
 	 */
-	private IField getFieldFor(String attribute) {
-		if (attribute.equals(PATH))
-			return new FieldFolder();
-		if (attribute.equals(MESSAGE))
-			return new FieldMessage();
-		if (attribute.equals(SEVERITY_HIERARCHY))
-			return new FieldSeverity();
-		if (attribute.equals(RESOURCE))
-			return new FieldResource();
+	private void processAttributeMappings(Collection attributeMappings) {
+		Iterator mappingsIterator = attributeMappings.iterator();
+		while (mappingsIterator.hasNext()) {
+			AttributeMarkerGrouping next = (AttributeMarkerGrouping) mappingsIterator
+					.next();
+			String defaultEntryId = next.getDefaultGroupingEntry();
+			if (defaultEntryId != null) {
+				if (markerGroupingEntries.containsKey(defaultEntryId)) {
+					MarkerGroupingEntry entry = (MarkerGroupingEntry) markerGroupingEntries
+							.get(defaultEntryId);
+					entry.setAsDefault(next.getMarkerType());
+				} else
+					IDEWorkbenchPlugin.log(NLS.bind(
+							"Reference to invalid markerGroupingEntry {0}",//$NON-NLS-1$
+							defaultEntryId));
+			}
+			IConfigurationElement[] mappings = next.getElement().getChildren(
+					ATTRIBUTE_MAPPING);
 
-		return null;
+			for (int i = 0; i < mappings.length; i++) {
+				String entryId = mappings[i]
+						.getAttribute(MARKER_GROUPING_ENTRY);
+
+				if (markerGroupingEntries.containsKey(entryId)) {
+					MarkerGroupingEntry entry = (MarkerGroupingEntry) markerGroupingEntries
+							.get(entryId);
+					entry.mapAttribute(next.getMarkerType(), next
+							.getAttribute(), mappings[i].getAttribute(VALUE));
+				} else
+					IDEWorkbenchPlugin.log(NLS.bind(
+							"Reference to invaild markerGroupingEntry {0}", //$NON-NLS-1$
+							defaultEntryId));
+
+			}
+		}
 
 	}
 
@@ -264,27 +326,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			ids[i] = types[i].getAttribute(ID);
 		}
 		return ids;
-	}
-
-	/**
-	 * Find the attributeMappings from element.
-	 * 
-	 * @param element
-	 * @return Map
-	 */
-	private Map getProviders(FieldMarkerGroup group,
-			final IConfigurationElement element) {
-
-		IConfigurationElement[] mappings = element
-				.getChildren(ATTRIBUTE_MAPPING);
-
-		HashMap valuesToStrings = new HashMap();
-		for (int i = 0; i < mappings.length; i++) {
-			group.addMapping(mappings[i].getAttribute(VALUE), mappings[i]
-					.getAttribute(NAME), i);
-		}
-
-		return valuesToStrings;
 	}
 
 	/*
@@ -431,22 +472,44 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 *      java.lang.Object[])
 	 */
 	public void removeExtension(IExtension extension, Object[] objects) {
+
+		Collection removedGroups = new ArrayList();
+
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof ProblemFilter)
 				registeredFilters.remove(objects[i]);
 
 			if (objects[i] instanceof FieldMarkerGroup) {
-				markerGroups.remove(objects[i]);
+				markerGroups.remove(((FieldMarkerGroup) objects[i]).getId());
+				removedGroups.add(objects[i]);
+			}
+
+			if (objects[i] instanceof MarkerGroupingEntry) {
+				MarkerGroupingEntry entry = (MarkerGroupingEntry) objects[i];
+				entry.getMarkerGroup().remove(entry);
+				markerGroupingEntries.remove(entry.getId());
 			}
 
 			if (objects[i] instanceof String) {
 				removeValues(objects[i], categories);
 			}
 
-			if (objects[i] instanceof TableSorter) {
-				removeValues(objects[i], hierarchyOrders);
-			}
+		}
 
+		Iterator entriesIterator = markerGroupingEntries.keySet().iterator();
+		Collection removedKeys = new ArrayList();
+		while (entriesIterator.hasNext()) {
+			String entryId = (String) entriesIterator.next();
+			MarkerGroupingEntry entry = (MarkerGroupingEntry) markerGroupingEntries
+					.get(entryId);
+			if (removedGroups.contains(entry.getMarkerGroup())) {
+				removedKeys.add(entryId);
+			}
+		}
+
+		Iterator removedIterator = removedKeys.iterator();
+		while (removedIterator.hasNext()) {
+			markerGroupingEntries.remove(removedIterator.next());
 		}
 
 	}
@@ -574,7 +637,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @return Collection of FieldMarkerGroup
 	 */
 	public Collection getMarkerGroups() {
-		return markerGroups;
+		return markerGroups.values();
 	}
 
 }

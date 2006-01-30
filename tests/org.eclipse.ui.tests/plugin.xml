@@ -2774,16 +2774,35 @@
          <markerTypeReference id="org.eclipse.ui.tests.testmarker2"/>
       </markerTypeCategory>
        <markerGrouping
+             id="org.eclipse.ui.tests.test"
+             label="Test Grouping">
+       </markerGrouping>
+       <markerGroupingEntry
+             id="org.eclipse.ui.tests.test1"
+             label="First category"
+             markerGrouping="org.eclipse.ui.tests.test"
+             priority="2"/>
+       <markerGroupingEntry
+             id="org.eclipse.ui.tests.test2"
+             label="Second category"
+             markerGrouping="org.eclipse.ui.tests.test"
+             priority="1"/>
+       <markerAttributeGrouping
              attribute="testAttribute"
-             name="Test Markers">
+             defaultGroupingEntry="org.eclipse.ui.tests.default"
+             markerType="org.eclipse.ui.tests.testmarker">
           <markerAttributeMapping
-                name="First category"
+                markerGroupingEntry="org.eclipse.ui.tests.test1"
                 value="0"/>
           <markerAttributeMapping
-                name="Second Category"
+                markerGroupingEntry="org.eclipse.ui.tests.test2"
                 value="1"/>
-          <markerTypeReference id="org.eclipse.ui.tests.testmarker"/>
-       </markerGrouping>
+       </markerAttributeGrouping>
+       <markerGroupingEntry
+             id="org.eclipse.ui.tests.default"
+             label="Uncategorized"
+             markerGrouping="org.eclipse.ui.tests.test"
+             priority="0"/>
      
    </extension>
    <extension
