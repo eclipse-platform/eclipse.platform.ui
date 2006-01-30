@@ -8,9 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.services;
+package org.eclipse.ui.internal.services;
 
 import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.services.IDisposable;
 
 /**
  * <p>

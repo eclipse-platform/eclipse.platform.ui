@@ -20,7 +20,7 @@ import org.eclipse.jface.menus.SItem;
 import org.eclipse.jface.menus.SMenu;
 import org.eclipse.jface.menus.SMenuLayout;
 import org.eclipse.jface.menus.SWidget;
-import org.eclipse.ui.services.IServiceWithSources;
+import org.eclipse.ui.internal.services.IServiceWithSources;
 
 /**
  * <p>
