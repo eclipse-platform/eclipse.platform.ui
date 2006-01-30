@@ -15,11 +15,11 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffVisitor;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.diff.ITwoWayDiff;
-import org.eclipse.team.core.history.IFileState;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
@@ -100,19 +100,19 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 				final IResourceDiffTree tree= context.getDiffTree();
 				tree.accept(project.getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER).getFullPath(), new IDiffVisitor() {
 
-					public final boolean visit(final IDiffNode node) throws CoreException {
-						if (node instanceof IThreeWayDiff) {
-							final IThreeWayDiff threeWay= (IThreeWayDiff) node;
-							final IResource resource= tree.getResource(node);
+					public final boolean visit(final IDiff diff) throws CoreException {
+						if (diff instanceof IThreeWayDiff) {
+							final IThreeWayDiff threeWay= (IThreeWayDiff) diff;
+							final IResource resource= tree.getResource(diff);
 							if (resource.getName().equals(RefactoringHistoryService.NAME_HISTORY_FILE) && resource.getType() == IResource.FILE) {
 								final int direction= threeWay.getDirection();
 								if (direction == IThreeWayDiff.INCOMING || direction == IThreeWayDiff.CONFLICTING) {
-									final ITwoWayDiff twoWay= threeWay.getRemoteChange();
-									if (twoWay instanceof IResourceDiff) {
-										final IFileState remoteState= ((IResourceDiff) twoWay).getAfterState();
+									final ITwoWayDiff remoteDiff= threeWay.getRemoteChange();
+									if (remoteDiff instanceof IResourceDiff) {
+										final IFileRevision remoteRevision= ((IResourceDiff) remoteDiff).getAfterState();
 										IStorage storage= null;
 										try {
-											storage= remoteState.getStorage(new SubProgressMonitor(finalMonitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+											storage= remoteRevision.getStorage(new SubProgressMonitor(finalMonitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 										} catch (CoreException exception) {
 											RefactoringUIPlugin.log(exception);
 										}

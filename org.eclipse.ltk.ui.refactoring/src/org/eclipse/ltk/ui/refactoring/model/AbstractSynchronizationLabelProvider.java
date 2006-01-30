@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.model;
 
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
 
@@ -55,7 +55,7 @@ public abstract class AbstractSynchronizationLabelProvider extends Synchronizati
 	/**
 	 * {@inheritDoc}
 	 */
-	protected IDiffNode getDiff(final Object element) {
+	protected IDiff getDiff(final Object element) {
 		if (element instanceof RefactoringDescriptorProxy)
 			return new RefactoringDescriptorDiff((RefactoringDescriptorProxy) element, getKind(element), getDirection(element));
 		else if (element instanceof RefactoringHistory)
@@ -93,7 +93,7 @@ public abstract class AbstractSynchronizationLabelProvider extends Synchronizati
 	 *            the refactoring history object
 	 * @return the kind of difference
 	 * 
-	 * @see IDiffNode#getKind()
+	 * @see IDiff#getKind()
 	 */
 	protected abstract int getKind(Object element);
 }
