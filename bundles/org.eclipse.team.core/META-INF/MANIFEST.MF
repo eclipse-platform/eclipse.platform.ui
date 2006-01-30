@@ -17,7 +17,7 @@ Export-Package: org.eclipse.team.core,
  org.eclipse.team.core.synchronize,
  org.eclipse.team.core.variants,
  org.eclipse.team.internal.core;x-friends:="org.eclipse.team.cvs.core,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui,org.eclipse.team.ui",
- org.eclipse.team.internal.core.mapping,
+ org.eclipse.team.internal.core.mapping;x-friends:="org.eclipse.team.cvs.core,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui,org.eclipse.team.ui",
  org.eclipse.team.internal.core.streams;x-friends:="org.eclipse.team.cvs.core,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui,org.eclipse.team.ui",
  org.eclipse.team.internal.core.subscribers;x-friends:="org.eclipse.team.cvs.core,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui,org.eclipse.team.ui"
 Require-Bundle: org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",

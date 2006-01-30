@@ -232,7 +232,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
-			if (ownsContext)
+			if (ownsContext && context != null)
 				context.dispose();
 			monitor.done();
 		}

@@ -95,7 +95,8 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 				}
 			}
 			empty = false;
-			listener.notEmpty(this);
+			if (listener != null)
+				listener.notEmpty(this);
 		}
 		public boolean isEmpty() {
 			return empty;

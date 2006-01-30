@@ -63,24 +63,24 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.mapping.AbstractTeamAwareContentProvider#isInScope(java.lang.Object, java.lang.Object)
+	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#isInScope(org.eclipse.team.core.mapping.IResourceMappingScope, java.lang.Object, java.lang.Object)
 	 */
-	protected boolean isInScope(Object parent, Object object) {
+	protected boolean isInScope(IResourceMappingScope scope, Object parent, Object object) {
 		if (object instanceof IResource) {
 			IResource resource = (IResource) object;
 			if (resource == null)
 				return false;
-			if (getScope().contains(resource))
+			if (scope.contains(resource))
 				return true;
-			if (hasChildrenInScope(object, resource)) {
+			if (hasChildrenInScope(scope, object, resource)) {
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	private boolean hasChildrenInScope(Object object, IResource resource) {
-		IResource[] roots = getScope().getRoots();
+	private boolean hasChildrenInScope(IResourceMappingScope scope, Object object, IResource resource) {
+		IResource[] roots = scope.getRoots();
 		for (int i = 0; i < roots.length; i++) {
 			IResource root = roots[i];
 			if (resource.getFullPath().isPrefixOf(root.getFullPath()))
@@ -96,52 +96,46 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 		provider.dispose();
 		super.dispose();
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.mapping.AbstractTeamAwareContentProvider#getChildrenInScope(java.lang.Object, java.lang.Object[])
+	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#getChildrenInContext(org.eclipse.team.core.mapping.ISynchronizationContext, java.lang.Object, java.lang.Object[])
 	 */
-	protected Object[] getChildrenInScope(Object parent, Object[] children) {
-		Object[] objects = super.getChildrenInScope(parent, children);
-		// Add any resources in the context that are also in scope
-		ISynchronizationContext context = getContext();
-		if (context != null) {
-			if (parent instanceof IResource) {
-				Set result = new HashSet();
-				for (int i = 0; i < objects.length; i++) {
-					Object object = objects[i];
-					result.add(object);
-				}
-				IResource resource = (IResource) parent;
-				IPath[] childPaths = context.getDiffTree().getChildren(resource.getFullPath());
-				for (int i = 0; i < childPaths.length; i++) {
-					IPath path = childPaths[i];
-					IDiffNode delta = context.getDiffTree().getDiff(path);
-					IResource child;
-					if (delta == null) {
-						// the path has descendent deltas so it must be a folder
-						if (path.segmentCount() == 1) {
-							child = ((IWorkspaceRoot)resource).getProject(path.lastSegment());
-						} else {
-							child = ((IContainer)resource).getFolder(new Path(path.lastSegment()));
-						}
-					} else {
-						child = context.getDiffTree().getResource(delta);
-					}
-					if (isInScope(parent, child)) {
-						result.add(child);
-					}
-				}
-				return result.toArray(new Object[result.size()]);
+	protected Object[] getChildrenInContext(ISynchronizationContext context, Object parent, Object[] children) {
+		Object[] objects = super.getChildrenInContext(context, parent, children);
+		if (parent instanceof IResource) {
+			IResource resource = (IResource) parent;
+			
+			Set result = new HashSet();
+			for (int i = 0; i < objects.length; i++) {
+				Object object = objects[i];
+				result.add(object);
 			}
+			IPath[] childPaths = context.getDiffTree().getChildren(resource.getFullPath());
+			for (int i = 0; i < childPaths.length; i++) {
+				IPath path = childPaths[i];
+				IDiffNode delta = context.getDiffTree().getDiff(path);
+				IResource child;
+				if (delta == null) {
+					// the path has descendent deltas so it must be a folder
+					if (path.segmentCount() == 1) {
+						child = ((IWorkspaceRoot)resource).getProject(path.lastSegment());
+					} else {
+						child = ((IContainer)resource).getFolder(new Path(path.lastSegment()));
+					}
+				} else {
+					child = context.getDiffTree().getResource(delta);
+				}
+				if (isInScope(context.getScope(), parent, child)) {
+					result.add(child);
+				}
+			}
+			return result.toArray(new Object[result.size()]);
 		}
-		return objects;
+		return children;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.mapping.AbstractTeamAwareContentProvider#getTraversals(java.lang.Object)
-	 */
-	protected ResourceTraversal[] getTraversals(Object object) {
-		IResourceMappingScope scope = getScope();
+
+	protected ResourceTraversal[] getTraversals(ISynchronizationContext context, Object object) {
+		IResourceMappingScope scope = context.getScope();
 		// First see if the object is a root of the scope
 		ResourceMapping mapping = scope.getMapping(object);
 		if (mapping != null)
@@ -203,18 +197,16 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 		return new ResourceTraversal[0];
 	}
 	
-
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#hasPhantomChildren(java.lang.Object)
+	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#hasChildrenInContext(org.eclipse.team.core.mapping.ISynchronizationContext, java.lang.Object)
 	 */
-	protected boolean hasPhantomChildren(Object element) {
-		if (element instanceof IFolder) {
-			IFolder folder = (IFolder) element;
-			// For folders check to see if the delta contains any children
-			ISynchronizationContext context = getContext();
+	protected boolean hasChildrenInContext(ISynchronizationContext context, Object element) {
+		if (element instanceof IContainer) {
+			IContainer container = (IContainer) element;
+			// For containers check to see if the delta contains any children
 			if (context != null) {
 				IDiffTree tree = context.getDiffTree();
-				if (tree.getChildren(folder.getFullPath()).length > 0) {
+				if (tree.getChildren(container.getFullPath()).length > 0) {
 					return true;
 				}
 			}
