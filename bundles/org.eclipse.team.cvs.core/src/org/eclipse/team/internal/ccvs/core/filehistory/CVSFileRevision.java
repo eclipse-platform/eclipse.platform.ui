@@ -53,14 +53,9 @@ public class CVSFileRevision extends FileRevision {
 		return (this.getTimestamp() > compareRevisionTime);
 	}
 
-	public IStorage getStorage(IProgressMonitor monitor) {
+	public IStorage getStorage(IProgressMonitor monitor) throws TeamException {
 		RemoteFile remoteFile = (RemoteFile) entry.getRemoteFile();
-		try {
-			return remoteFile.getStorage(monitor);
-		} catch (TeamException e) {
-		}
-
-		return null;
+		return remoteFile.getStorage(monitor);
 	}
 
 	public String getName(){
