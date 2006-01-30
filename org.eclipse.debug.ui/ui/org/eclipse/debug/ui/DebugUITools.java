@@ -33,6 +33,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
+import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
@@ -47,6 +48,7 @@ import org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -54,6 +56,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.console.IConsole;
 
 /**
@@ -186,7 +189,20 @@ public class DebugUITools {
 	 * @since 2.0
 	 */
 	public static IAdaptable getDebugContext() {
-	    return SelectedResourceManager.getDefault().getDebugContext();
+	    IWorkbenchWindow activeWindow = SelectedResourceManager.getDefault().getActiveWindow();
+	    if (activeWindow != null) {
+	    	ISelection activeContext = DebugContextManager.getDefault().getActiveContext(activeWindow);
+	    	if (activeContext instanceof IStructuredSelection) {
+	    		IStructuredSelection selection = (IStructuredSelection) activeContext;
+	    		if (!selection.isEmpty()) {
+	    			Object firstElement = selection.getFirstElement();
+	    			if (firstElement instanceof IAdaptable) {
+						return (IAdaptable) firstElement;
+					}
+	    		}
+	    	}
+	    }
+	    return null;
 	}
 
 	/**

@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -41,8 +41,6 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	private IResource fSelectedResource = null;
 	private ITextSelection fSelectedText = null;
 	private Stack fWindowStack = new Stack();
-	private ContextListener fDebugListener = new ContextListener();
-	private IAdaptable fDebugContext = null;
 	
 	private SelectedResourceManager() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
@@ -53,27 +51,6 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 				windowActivated(activeWindow);
 			}
 		} 
-	}
-	
-	/**
-	 * Listens to selection changes in the debug view to update the debug context
-	 */
-	class ContextListener implements ISelectionListener {
-
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-         */
-        public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-            fDebugContext = null;
-            if (selection instanceof IStructuredSelection) {
-                IStructuredSelection ss = (IStructuredSelection) selection;
-                Object firstElement = ss.getFirstElement();
-                if (firstElement instanceof IAdaptable) {
-                    fDebugContext = (IAdaptable) firstElement;
-                }
-            }
-        }
-	    
 	}
 	
 	/**
@@ -95,7 +72,6 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 		fWindowStack.remove(window);
 		fWindowStack.push(window);
 		ISelectionService service = window.getSelectionService(); 
-		service.addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fDebugListener);
 		service.addSelectionListener(this);
 		IWorkbenchPage page = window.getActivePage();
 		if (page != null) {
@@ -115,7 +91,6 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	public void windowClosed(IWorkbenchWindow window) {
 		ISelectionService selectionService = window.getSelectionService();
         selectionService.removeSelectionListener(this);
-		selectionService.removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fDebugListener);
 		fWindowStack.remove(window);
 	}
 
@@ -192,12 +167,17 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	}
 	
 	/**
-	 * Returns the selected object in the debug view, or <code>null</code> if none.
+	 * Returns the active workbench window, or <code>null</code> if none.
 	 * 
-	 * @return the selected object in the debug view, or <code>null</code> if none
+	 * @return the active workbench window, or <code>null</code> if none
+	 * @since 3.2
 	 */
-	public IAdaptable getDebugContext() {
-	    return fDebugContext;
+	public IWorkbenchWindow getActiveWindow() {
+		try {
+			return (IWorkbenchWindow) fWindowStack.peek();
+		} catch (EmptyStackException e) {
+		}
+		return null;
 	}
 
 }
