@@ -136,9 +136,9 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 		IStackFrame frame = (IStackFrame)context;
 		if (!force && frame.equals(fPrevFrame)) {
 			fPrevResult.updateArtifact(context);
-			(new SourceDisplayJob(fPrevResult, page)).schedule();
+			new SourceDisplayJob(fPrevResult, page).schedule();
 		} else {
-			(new SourceLookupJob(frame, frame.getLaunch().getSourceLocator(), page)).schedule();
+			new SourceLookupJob(frame, frame.getLaunch().getSourceLocator(), page).schedule();
 		}
 		
 	}
