@@ -10,6 +10,7 @@ Export-Package:
  org.eclipse.ui.contentassist,
  org.eclipse.ui.internal.texteditor;x-internal:=true,
  org.eclipse.ui.internal.texteditor.quickdiff;x-internal:=true,
+ org.eclipse.ui.internal.texteditor.quickdiff.compare.equivalence;x-internal:=true,
  org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;x-internal:=true,
  org.eclipse.ui.internal.texteditor.spelling;x-internal:=true,
  org.eclipse.ui.texteditor,
