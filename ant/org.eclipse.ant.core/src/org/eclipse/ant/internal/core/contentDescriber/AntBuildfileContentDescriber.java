@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philippe Ombredanne (pombredanne@nexb.com) - bug 125367
  *******************************************************************************/
 package org.eclipse.ant.internal.core.contentDescriber;
 
@@ -25,12 +26,13 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * A content describer for detecting the name of the top-level project element.
+ * A content describer for Ant buildfiles.
  * <p>
  * If project top level element is found 
  *      then if:
- *          target subelements are found returns VALID
+ *          target sub-elements are found returns VALID
  *          default attribute is found returns VALID
+ *          some other likely Ant element is found (classpath, import, macrodef, path, property, taskdef, typedef) returns VALID
  *      else:
  *          returns INDETERMINATE
  * else
@@ -68,8 +70,9 @@ public final class AntBuildfileContentDescriber extends XMLContentDescriber impl
 		}
 		// Check to see if we matched our criteria.
 		if (antHandler.hasRootProjectElement()) {
-			if (antHandler.hasProjectDefaultAttribute() || antHandler.hasTargetElement()) {
-                //project and default attribute or project and target element(s)
+			if (antHandler.hasProjectDefaultAttribute() || antHandler.hasTargetElement() || antHandler.hasAntElement()) {
+                //project and default attribute or project and target element(s) 
+				//or project and top level ant element(s) (classpath, import, macrodef, path, property, taskdef, typedef)
                 return VALID;
             }
             //only a top level project element...maybe an Ant buildfile

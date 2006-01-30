@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philippe Ombredanne (pombredanne@nexb.com) - bug 125367
  *******************************************************************************/
 package org.eclipse.ant.internal.core.contentDescriber;
 
@@ -28,7 +29,8 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * An xml event handler for detecting the project top-level element in an Ant buildfile.
  * Also records whether a default attribute is present for the project and if any target 
- * elements are present.
+ * or some other typical ant elements are present. There are still cases where we could 
+ * ignore a valid ant buildfile though.
  * 
  * @since 3.1
  */
@@ -56,6 +58,13 @@ public final class AntHandler extends DefaultHandler {
     private static final String DEFAULT_ATTRIBUTE= "default"; //$NON-NLS-1$
     private static final String PROJECT = "project"; //$NON-NLS-1$
     private static final String TARGET= "target"; //$NON-NLS-1$
+    private static final String MACRODEF= "macrodef"; //$NON-NLS-1$
+    private static final String TASKDEF= "taskdef"; //$NON-NLS-1$
+    private static final String TYPEDEF= "typedef"; //$NON-NLS-1$
+    private static final String PROPERTY= "property"; //$NON-NLS-1$
+    private static final String CLASSPATH= "classpath"; //$NON-NLS-1$
+    private static final String PATH= "path"; //$NON-NLS-1$
+    private static final String IMPORT= "import"; //$NON-NLS-1$
     
     /**
      * This is the name of the top-level element found in the XML file. This
@@ -67,7 +76,8 @@ public final class AntHandler extends DefaultHandler {
 
     private boolean fDefaultAttributeFound= false;
     private boolean fTargetFound = false;
-    
+    private boolean fAntElementFound = false;
+
     private int fLevel= -1;
 
     /**
@@ -158,8 +168,17 @@ public final class AntHandler extends DefaultHandler {
             fTargetFound= true;
             throw new StopParsingException();
         }
+        
+        //top level Ant elements
+        if (fLevel == 1 && (MACRODEF.equals(elementName) 
+        || TASKDEF.equals(elementName) || TYPEDEF.equals(elementName) 
+        || PROPERTY.equals(elementName)|| CLASSPATH.equals(elementName) 
+        || PATH.equals(elementName) || IMPORT.equals(elementName))) {
+            fAntElementFound= true;
+            throw new StopParsingException();
+        }
     }
-    
+
     /* (non-Javadoc)
      * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
      */
@@ -177,6 +196,10 @@ public final class AntHandler extends DefaultHandler {
     }
     
     protected boolean hasTargetElement() {
-       return fTargetFound;
-    }
+        return fTargetFound;
+     }
+    
+    protected boolean hasAntElement() {
+        return fAntElementFound;
+     }
 }
