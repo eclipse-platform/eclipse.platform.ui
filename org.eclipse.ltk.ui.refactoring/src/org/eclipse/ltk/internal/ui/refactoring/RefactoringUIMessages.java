@@ -168,7 +168,15 @@ public final class RefactoringUIMessages extends NLS {
 	public static String RefactoringHistoryLabelProvider_label_language;
 	public static String RefactoringHistoryLabelProvider_label_country;
 	public static String RefactoringHistoryLabelProvider_label_variant;
-	
+	public static String RefactoringHistoryLabelProvider_this_week_format;
+	public static String RefactoringHistoryLabelProvider_last_week_format;
+	public static String RefactoringHistoryLabelProvider_week_format;
+	public static String RefactoringHistoryLabelProvider_year_format;
+	public static String RefactoringHistoryLabelProvider_this_month_format;
+	public static String RefactoringHistoryLabelProvider_last_month_format;
+	public static String RefactoringHistoryLabelProvider_month_format;
+	public static String RefactoringHistoryLabelProvider_day_format;
+
 	public static String RefactoringHistoryErrorPage_description;
 	public static String RefactoringHistoryErrorPage_fatal_error;
 	public static String RefactoringHistoryErrorPage_info_error;
