@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class LegacyConfigurationElementHandle implements org.eclipse.core.runtim
 
 	public boolean equals(Object object) {
 		if (object instanceof LegacyConfigurationElementHandle)
-			return target.equals(((LegacyConfigurationElementHandle) object).getInternalHandle());
+			return target.equals(((LegacyConfigurationElementHandle) object).toEquinox());
 		return false;
 	}
 
@@ -109,7 +109,7 @@ public class LegacyConfigurationElementHandle implements org.eclipse.core.runtim
 	 * Unwraps handle to obtain underlying Equinox handle form Eclipse handle
 	 * @return - Equinox handle 
 	 */
-	public org.eclipse.equinox.registry.IConfigurationElement getInternalHandle() {
+	public org.eclipse.equinox.registry.IConfigurationElement toEquinox() {
 		return target;
 	}
 }

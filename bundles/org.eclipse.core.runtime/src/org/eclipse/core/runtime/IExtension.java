@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,4 +141,13 @@ public interface IExtension {
 	 * @since 3.1
 	 */
 	public boolean isValid();
+	
+	/**
+	 * Converts this object into an equivalent Equinox registry object.
+	 *
+	 * @return an Equinox extension
+	 * @since org.eclipse.core.runtime 3.2
+	 * @see org.eclipse.equinox.registry.IExtension
+	 */
+	public org.eclipse.equinox.registry.IExtension toEquinox();
 }

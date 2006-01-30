@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.runtime;
-
 
 /**
  * An extension point declared in a plug-in.
@@ -156,7 +155,7 @@ public interface IExtensionPoint {
 	 * @see Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o);
-	
+
 	/**
 	 * Returns whether this extension point object is valid.
 	 * 
@@ -165,4 +164,13 @@ public interface IExtensionPoint {
 	 * @since 3.1
 	 */
 	public boolean isValid();
+
+	/**
+	 * Converts this object into an equivalent Equinox registry object.
+	 *
+	 * @return an Equinox extension point
+	 * @since org.eclipse.core.runtime 3.2
+	 * @see org.eclipse.equinox.registry.IExtensionPoint
+	 */
+	public org.eclipse.equinox.registry.IExtensionPoint toEquinox();
 }

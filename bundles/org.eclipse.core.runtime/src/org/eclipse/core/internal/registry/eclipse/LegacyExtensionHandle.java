@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,7 @@ package org.eclipse.core.internal.registry.eclipse;
 import org.eclipse.core.internal.registry.ExtensionHandle;
 import org.eclipse.core.internal.registry.IObjectManager;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.osgi.framework.Bundle;
 
 /**
@@ -31,7 +30,7 @@ public class LegacyExtensionHandle implements org.eclipse.core.runtime.IExtensio
 
 	public boolean equals(Object object) {
 		if (object instanceof LegacyExtensionHandle)
-			return target.equals(((LegacyExtensionHandle) object).getInternalHandle());
+			return target.equals(((LegacyExtensionHandle) object).toEquinox());
 		return false;
 	}
 
@@ -79,7 +78,7 @@ public class LegacyExtensionHandle implements org.eclipse.core.runtime.IExtensio
 	 * Unwraps handle to obtain underlying Equinox handle form Eclipse handle
 	 * @return - Equinox handle 
 	 */
-	public org.eclipse.equinox.registry.IExtension getInternalHandle() {
+	public org.eclipse.equinox.registry.IExtension toEquinox() {
 		return target;
 	}
 

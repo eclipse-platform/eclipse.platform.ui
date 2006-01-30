@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,9 @@ import org.eclipse.core.runtime.*;
 /**
  * Implementation of org.eclipse.core.runtime.IExtensionPoint provided for 
  * backward compatibility.
- * 
  * For general use, consider ExtensionHandle class instead.
+ *
+ * @since org.eclipse.core.runtime 3.2 
  */
 public class LegacyExtensionPointHandle implements IExtensionPoint {
 
@@ -26,7 +27,7 @@ public class LegacyExtensionPointHandle implements IExtensionPoint {
 
 	public boolean equals(Object object) {
 		if (object instanceof LegacyExtensionPointHandle)
-			return target.equals(((LegacyExtensionPointHandle) object).getInternalHandle());
+			return target.equals(((LegacyExtensionPointHandle) object).toEquinox());
 		return false;
 	}
 
@@ -82,7 +83,7 @@ public class LegacyExtensionPointHandle implements IExtensionPoint {
 	 * Unwraps handle to obtain underlying Equinox handle form Eclipse handle
 	 * @return - Equinox handle 
 	 */
-	public org.eclipse.equinox.registry.IExtensionPoint getInternalHandle() {
+	public org.eclipse.equinox.registry.IExtensionPoint toEquinox() {
 		return target;
 	}
 

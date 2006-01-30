@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,19 +49,19 @@ public interface IConfigurationElement {
 	 * identified by the named attribute of this configuration element.
 	 * The named attribute value must contain a fully qualified name
 	 * of a Java class. The class can either refer to a class implementing 
-     * the executable extension or to a factory capable of returning the 
-     * executable extension.
+	 * the executable extension or to a factory capable of returning the 
+	 * executable extension.
 	 * <p>
 	 * The specified class is instantiated using its 0-argument public constructor.
 	 * <p>
 	 * Then the following checks are done:<br>
-     * If the specified class implements the {@link IExecutableExtension} 
-     * interface, the method {@link IExecutableExtension#setInitializationData(IConfigurationElement, String, Object)} 
-     * is called, passing to the object the configuration information that was used to create it. 
+	 * If the specified class implements the {@link IExecutableExtension} 
+	 * interface, the method {@link IExecutableExtension#setInitializationData(IConfigurationElement, String, Object)} 
+	 * is called, passing to the object the configuration information that was used to create it. 
 	 * <p>
-     * If the specified class implements {@link IExecutableExtensionFactory} 
-     * interface, the method {@link IExecutableExtensionFactory#create()} 
-     * is invoked.
+	 * If the specified class implements {@link IExecutableExtensionFactory} 
+	 * interface, the method {@link IExecutableExtensionFactory#create()} 
+	 * is invoked.
 	 * </p>
 	 * <p>
 	 * Unlike other methods on this object, invoking this method may activate 
@@ -73,10 +73,10 @@ public interface IConfigurationElement {
 	 * @exception CoreException if an instance of the executable extension
 	 *   could not be created for any reason
 	 * @see IExecutableExtension#setInitializationData(IConfigurationElement, String, Object)
-     * @see IExecutableExtensionFactory
+	 * @see IExecutableExtensionFactory
 	 */
 	public Object createExecutableExtension(String propertyName) throws CoreException;
-    
+
 	/**
 	 * Returns the named attribute of this configuration element, or
 	 * <code>null</code> if none. 
@@ -263,7 +263,7 @@ public interface IConfigurationElement {
 	 * @throws InvalidRegistryObjectException if this configuration element is no longer valid
 	 */
 	public String getValueAsIs() throws InvalidRegistryObjectException;
-	
+
 	/**
 	 * Returns the namespace for this configuration element. This value can be used
 	 * in various global facilities to discover this configuration element's provider.
@@ -276,12 +276,12 @@ public interface IConfigurationElement {
 	 * @since 3.1
 	 */
 	public String getNamespace() throws InvalidRegistryObjectException;
-	
+
 	/* (non-javadoc) 
 	 * @see Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o);
-	
+
 	/**
 	 * Returns whether this configuration element object is valid.
 	 * 
@@ -290,4 +290,13 @@ public interface IConfigurationElement {
 	 * @since 3.1
 	 */
 	public boolean isValid();
+
+	/**
+	 * Converts this object into an equvalent Equinox registry object.
+	 *
+	 * @return an Equinox configuration element
+	 * @since org.eclipse.core.runtime 3.2
+	 * @see org.eclipse.equinox.registry.IConfigurationElement
+	 */
+	public org.eclipse.equinox.registry.IConfigurationElement toEquinox();
 }

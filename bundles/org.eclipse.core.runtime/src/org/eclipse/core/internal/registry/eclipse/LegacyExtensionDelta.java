@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry.eclipse;
 
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.*;
 
 /**
  * A registry change event implementation provided for backward compatibility.
- * 
  * For general use consider ExtensionDelta.
+ *
+ * @since org.eclipse.core.runtime 3.2 
  */
 public class LegacyExtensionDelta implements org.eclipse.core.runtime.IExtensionDelta {
 
@@ -42,7 +42,7 @@ public class LegacyExtensionDelta implements org.eclipse.core.runtime.IExtension
 	 * Unwraps handle to obtain underlying Equinox handle form Eclipse handle
 	 * @return - Equinox handle 
 	 */
-	public org.eclipse.equinox.registry.IExtensionDelta getInternalHandle() {
+	public org.eclipse.equinox.registry.IExtensionDelta toEquinox() {
 		return target;
 	}
 

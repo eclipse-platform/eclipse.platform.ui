@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,13 @@ package org.eclipse.core.internal.registry.eclipse;
 
 import java.util.Map;
 import org.eclipse.core.internal.registry.RegistryChangeEvent;
-import org.eclipse.core.runtime.IExtensionDelta;
-import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.*;
 
 /**
  * A registry change event implementation provided for backward compatibility.
- * 
  * For general use consider RegistryChangeEvent.
+ *
+ * @since org.eclipse.core.runtime 3.2 
  */
 public final class LegacyRegistryChangeEvent implements IRegistryChangeEvent {
 
@@ -52,7 +52,7 @@ public final class LegacyRegistryChangeEvent implements IRegistryChangeEvent {
 	 * Unwraps handle to obtain underlying Equinox handle form Eclipse handle
 	 * @return - Equinox handle 
 	 */
-	public org.eclipse.equinox.registry.IRegistryChangeEvent getInternalHandle() {
+	public org.eclipse.equinox.registry.IRegistryChangeEvent toEquinox() {
 		return target;
 	}
 }
