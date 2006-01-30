@@ -104,7 +104,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 	 *            the indent
 	 * @return the grid data
 	 */
-	protected GridData createGridData(final int flag, final int hspan, final int indent) {
+	private GridData createGridData(final int flag, final int hspan, final int indent) {
 		final GridData data= new GridData(flag);
 		data.horizontalIndent= indent;
 		data.horizontalSpan= hspan;
@@ -117,7 +117,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 	 * @param parent
 	 *            the parent control
 	 */
-	protected void createLocationGroup(final Composite parent) {
+	private void createLocationGroup(final Composite parent) {
 		Assert.isNotNull(parent);
 		new Label(parent, SWT.NONE).setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_location_caption);
 		final Composite composite= new Composite(parent, SWT.NONE);
@@ -131,7 +131,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 		fLocationField.addModifyListener(new ModifyListener() {
 
 			public final void modifyText(final ModifyEvent event) {
-				handleInputChanged();
+				handleLocationChanged();
 			}
 		});
 		fLocationField.setFocus();
@@ -151,7 +151,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 	/**
 	 * Handles the browse button selected event.
 	 */
-	protected void handleBrowseButtonSelected() {
+	private void handleBrowseButtonSelected() {
 		final FileDialog file= new FileDialog(getShell(), SWT.OPEN);
 		file.setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_browse_caption);
 		file.setFilterNames(new String[] { ScriptingMessages.ApplyRefactoringScriptWizardPage_filter_name_script, ScriptingMessages.ApplyRefactoringScriptWizardPage_filter_name_wildcard});
@@ -162,9 +162,9 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 	}
 
 	/**
-	 * Handles the input changed event.
+	 * Handles the location changed event.
 	 */
-	protected void handleInputChanged() {
+	private void handleLocationChanged() {
 		fWizard.setRefactoringHistory(null);
 		setErrorMessage(null);
 		setPageComplete(true);
@@ -175,7 +175,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 	/**
 	 * Handles the script file changed event.
 	 */
-	protected void handleScriptFileChanged() {
+	private void handleScriptFileChanged() {
 		if (fLocationField != null) {
 			final String path= fLocationField.getText();
 			if ("".equals(path)) { //$NON-NLS-1$
