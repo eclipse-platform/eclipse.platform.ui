@@ -27,7 +27,6 @@ import org.eclipse.jface.wizard.WizardPage;
 
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.ltk.ui.refactoring.RefactoringUI;
 import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
@@ -89,7 +88,7 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 		final Composite composite= new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-		fHistoryControl= (IRefactoringHistoryControl) RefactoringUI.createRefactoringHistoryControl(composite, fControlConfiguration);
+		fHistoryControl= new RefactoringHistoryControl(composite, fControlConfiguration);
 		fHistoryControl.createControl();
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
