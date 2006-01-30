@@ -15,6 +15,9 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * @since 3.2
+ */
 public class SWTUtil {
     /**
      * Stores a work queue for each display
