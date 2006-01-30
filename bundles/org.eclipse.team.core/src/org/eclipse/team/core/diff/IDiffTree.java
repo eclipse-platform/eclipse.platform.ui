@@ -13,7 +13,7 @@ package org.eclipse.team.core.diff;
 import org.eclipse.core.runtime.*;
 
 /**
- * A diff tree provides access to a tree of {@link IDiffNode} instances.
+ * A diff tree provides access to a tree of {@link IDiff} instances.
  * For efficiency reasons, the tree only provides diffs for paths that represent a change.
  * Paths that do not contain a diff represent but are returned from the tree will
  * contain child paths in the set.
@@ -70,7 +70,7 @@ public interface IDiffTree {
 	 * @param visitor the visitor
 	 * @param depth the depth to visit
 	 * @exception CoreException if the visitor failed with this exception.
-	 * @see IDiffVisitor#visit(IDiffNode)
+	 * @see IDiffVisitor#visit(IDiff)
 	 */
 	public void accept(IPath path, IDiffVisitor visitor, int depth)
 			throws CoreException;
@@ -89,7 +89,7 @@ public interface IDiffTree {
 	 * @return the delta, or <code>null</code> if no such
 	 *         delta exists
 	 */
-	public IDiffNode getDiff(IPath path);
+	public IDiff getDiff(IPath path);
 
 	/**
 	 * Returns the child paths of the given path that either point to
@@ -136,7 +136,7 @@ public interface IDiffTree {
 	 * @param monitor a progress monitor or <code>null</code> if progress indication 
 	 * is not required
 	 */
-	public void setBusy(IDiffNode[] diffs, IProgressMonitor monitor);
+	public void setBusy(IDiff[] diffs, IProgressMonitor monitor);
 	
 	/**
 	 * Return the value of the property for the given path.

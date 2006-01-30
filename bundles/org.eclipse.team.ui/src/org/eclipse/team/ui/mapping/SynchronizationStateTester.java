@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IDecorationContext;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ui.Utils;
@@ -124,8 +124,8 @@ public class SynchronizationStateTester {
 	 * <p>
 	 * The state mask can consist of the following flags:
 	 * <ul>
-	 * <li>The diff kinds of {@link IDiffNode#ADD}, {@link IDiffNode#REMOVE}
-	 * and {@link IDiffNode#CHANGE}.
+	 * <li>The diff kinds of {@link IDiff#ADD}, {@link IDiff#REMOVE}
+	 * and {@link IDiff#CHANGE}.
 	 * <li>The directions {@link IThreeWayDiff#INCOMING} and
 	 * {@link IThreeWayDiff#OUTGOING}.
 	 * </ul>
@@ -136,7 +136,7 @@ public class SynchronizationStateTester {
 	 *            the model element to be decorated
 	 * @return the mask that indicates what state the appropriate team decorator
 	 *         will decorate
-	 * @see IDiffNode
+	 * @see IDiff
 	 * @see IThreeWayDiff
 	 */
 	public final int getDecoratedStateMask(Object element) {

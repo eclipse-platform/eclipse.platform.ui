@@ -17,7 +17,7 @@ import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.Utils;
@@ -113,7 +113,7 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 			IPath[] childPaths = context.getDiffTree().getChildren(resource.getFullPath());
 			for (int i = 0; i < childPaths.length; i++) {
 				IPath path = childPaths[i];
-				IDiffNode delta = context.getDiffTree().getDiff(path);
+				IDiff delta = context.getDiffTree().getDiff(path);
 				IResource child;
 				if (delta == null) {
 					// the path has descendent deltas so it must be a folder
@@ -252,7 +252,7 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 		if (context != null) {
 			IResourceDiffTree diffTree = context.getDiffTree();
 			// Is there a diff for the path
-			IDiffNode node = diffTree.getDiff(path);
+			IDiff node = diffTree.getDiff(path);
 			if (node != null) {
 				return diffTree.getResource(node);
 			}

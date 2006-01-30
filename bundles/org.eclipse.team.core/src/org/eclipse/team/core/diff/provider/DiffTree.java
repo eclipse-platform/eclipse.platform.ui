@@ -82,7 +82,7 @@ public class DiffTree implements IDiffTree {
 	 */
 	public void accept(IPath path, IDiffVisitor visitor, int depth)
 			throws CoreException {
-		IDiffNode delta = getDiff(path);
+		IDiff delta = getDiff(path);
 		if (delta == null || visitor.visit(delta)) {
 			if (depth == IResource.DEPTH_ZERO)
 				return;
@@ -97,8 +97,8 @@ public class DiffTree implements IDiffTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ISyncDeltaTree#findMember(org.eclipse.core.runtime.IPath)
 	 */
-	public IDiffNode getDiff(IPath path) {
-		return (IDiffNode)pathTree.get(path);
+	public IDiff getDiff(IPath path) {
+		return (IDiff)pathTree.get(path);
 	}
 
 	/* (non-Javadoc)
@@ -116,7 +116,7 @@ public class DiffTree implements IDiffTree {
 	}
 
 	/**
-	 * Add the given {@link IDiffNode} to the tree. A change event will
+	 * Add the given {@link IDiff} to the tree. A change event will
 	 * be generated unless the call to this method is nested in between calls
 	 * to <code>beginInput()</code> and <code>endInput(IProgressMonitor)</code>
 	 * in which case the event for this addition and any other sync set
@@ -130,10 +130,10 @@ public class DiffTree implements IDiffTree {
 	 * </p>
 	 * @param delta the delta to be added to this set.
 	 */
-	public void add(IDiffNode delta) {
+	public void add(IDiff delta) {
 		try {
 			beginInput();
-			IDiffNode oldDiff = getDiff(delta.getPath());
+			IDiff oldDiff = getDiff(delta.getPath());
 			internalAdd(delta);
 			if (oldDiff != null) {
 				internalChanged(delta);
@@ -164,7 +164,7 @@ public class DiffTree implements IDiffTree {
 	public synchronized void remove(IPath path) {
 		try {
 			beginInput();
-			IDiffNode delta = getDiff(path);
+			IDiff delta = getDiff(path);
 			if (delta != null) {
 				internalRemove(delta);
 				internalRemoved(path, delta);
@@ -282,9 +282,9 @@ public class DiffTree implements IDiffTree {
 		return new DiffChangeEvent(this);
 	}
 
-	private void internalAdd(IDiffNode delta) {
+	private void internalAdd(IDiff delta) {
 		Assert.isTrue(!lockedForModification);
-		IDiffNode oldDiff = (IDiffNode)pathTree.get(delta.getPath());
+		IDiff oldDiff = (IDiff)pathTree.get(delta.getPath());
 		pathTree.put(delta.getPath(), delta);
 		if(oldDiff == null) {
 			statistics.add(delta);
@@ -300,7 +300,7 @@ public class DiffTree implements IDiffTree {
 		setPropertyToRoot(delta, P_HAS_DESCENDANT_CONFLICTS, isConflict);
 	}
 	
-	private void internalRemove(IDiffNode delta) {
+	private void internalRemove(IDiff delta) {
 		Assert.isTrue(!lockedForModification);
 		statistics.remove(delta);
 		setPropertyToRoot(delta, P_HAS_DESCENDANT_CONFLICTS, false);
@@ -308,14 +308,14 @@ public class DiffTree implements IDiffTree {
 		pathTree.remove(delta.getPath());
 	}
 	
-	private void internalAdded(IDiffNode delta) {
+	private void internalAdded(IDiff delta) {
 		changes.added(delta);
 	}
 	
-	private void internalChanged(IDiffNode delta) {
+	private void internalChanged(IDiff delta) {
 		changes.changed(delta);
 	}
-	private void internalRemoved(IPath path, IDiffNode delta) {
+	private void internalRemoved(IPath path, IDiff delta) {
 		changes.removed(path, delta);
 	}
 	
@@ -335,8 +335,8 @@ public class DiffTree implements IDiffTree {
 	 * Return all the diffs contained in this diff tree.
 	 * @return all the diffs contained in this diff tree
 	 */
-	public IDiffNode[] getDiffs() {
-		return (IDiffNode[]) pathTree.values().toArray(new IDiffNode[pathTree.size()]);
+	public IDiff[] getDiffs() {
+		return (IDiff[]) pathTree.values().toArray(new IDiff[pathTree.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -358,7 +358,7 @@ public class DiffTree implements IDiffTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IDiffTree#setPropertyToRoot(org.eclipse.core.runtime.IPath, int, boolean)
 	 */
-	public void setPropertyToRoot(IDiffNode node, int property, boolean value) {
+	public void setPropertyToRoot(IDiff node, int property, boolean value) {
 		try {
 			beginInput();
 			IPath[] paths = pathTree.setPropogatedProperty(node.getPath(), property, value);
@@ -391,11 +391,11 @@ public class DiffTree implements IDiffTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IDiffTree#setBusy(org.eclipse.team.core.diff.IDiffNode[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void setBusy(IDiffNode[] diffs, IProgressMonitor monitor) {
+	public void setBusy(IDiff[] diffs, IProgressMonitor monitor) {
 		try {
 			beginInput();
 			for (int i = 0; i < diffs.length; i++) {
-				IDiffNode node = diffs[i];
+				IDiff node = diffs[i];
 				setPropertyToRoot(node, P_BUSY_HINT, true);
 			}
 		} finally {

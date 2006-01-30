@@ -86,7 +86,7 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 			SyncInfo[] infos = set.getSyncInfos();
 			for (int i = 0; i < infos.length; i++) {
 				SyncInfo info = infos[i];
-				IDiffNode delta = getDeltaFor(info);
+				IDiff delta = getDeltaFor(info);
 				tree.add(delta);
 			}
 		} finally {
@@ -103,13 +103,13 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 			SyncInfo[] added = event.getAddedResources();
 			for (int i = 0; i < added.length; i++) {
 				SyncInfo info = added[i];
-				IDiffNode delta = getDeltaFor(info);
+				IDiff delta = getDeltaFor(info);
 				tree.add(delta);
 			}
 			SyncInfo[] changed = event.getChangedResources();
 			for (int i = 0; i < changed.length; i++) {
 				SyncInfo info = changed[i];
-				IDiffNode delta = getDeltaFor(info);
+				IDiff delta = getDeltaFor(info);
 				tree.add(delta);
 			}
 			IResource[] removed = event.getRemovedResources();
@@ -124,18 +124,18 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 
 	public static int asDiffFlags(int syncInfoFlags) {
 		if (syncInfoFlags == SyncInfo.IN_SYNC)
-			return IDiffNode.NO_CHANGE;
+			return IDiff.NO_CHANGE;
 		int kind = SyncInfo.getChange(syncInfoFlags);
 		int diffFlags = 0;
 		switch (kind) {
 		case SyncInfo.ADDITION:
-			diffFlags = IDiffNode.ADD;
+			diffFlags = IDiff.ADD;
 			break;
 		case SyncInfo.DELETION:
-			diffFlags = IDiffNode.REMOVE;
+			diffFlags = IDiff.REMOVE;
 			break;
 		case SyncInfo.CHANGE:
-			diffFlags = IDiffNode.CHANGE;
+			diffFlags = IDiff.CHANGE;
 			break;
 		}
 		int direction = SyncInfo.getDirection(syncInfoFlags);
@@ -153,7 +153,7 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 		return diffFlags;
 	}
 	
-	public static IDiffNode getDeltaFor(SyncInfo info) {
+	public static IDiff getDeltaFor(SyncInfo info) {
 		if (info.getComparator().isThreeWay()) {
 			ITwoWayDiff local = getLocalDelta(info);
 			ITwoWayDiff remote = getRemoteDelta(info);
@@ -164,11 +164,11 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 				IResource local = info.getLocal();
 				int kind;
 				if (remote == null) {
-					kind = IDiffNode.REMOVE;
+					kind = IDiff.REMOVE;
 				} else if (!local.exists()) {
-					kind = IDiffNode.ADD;
+					kind = IDiff.ADD;
 				} else {
-					kind = IDiffNode.CHANGE;
+					kind = IDiff.CHANGE;
 				}
 				if (local.getType() == IResource.FILE) {
 					IFileRevision after = asFileState(remote);
@@ -189,11 +189,11 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 			IResourceVariant remote = info.getRemote();
 			int kind;
 			if (ancestor == null) {
-				kind = IDiffNode.ADD;
+				kind = IDiff.ADD;
 			} else if (remote == null) {
-				kind = IDiffNode.REMOVE;
+				kind = IDiff.REMOVE;
 			} else {
-				kind = IDiffNode.CHANGE;
+				kind = IDiff.CHANGE;
 			}
 			// For folders, we don't need file states
 			if (info.getLocal().getType() == IResource.FILE) {
@@ -220,11 +220,11 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 			IResource local = info.getLocal();
 			int kind;
 			if (ancestor == null) {
-				kind = IDiffNode.ADD;
+				kind = IDiff.ADD;
 			} else if (!local.exists()) {
-				kind = IDiffNode.REMOVE;
+				kind = IDiff.REMOVE;
 			} else {
-				kind = IDiffNode.CHANGE;
+				kind = IDiff.CHANGE;
 			}
 			if (local.getType() == IResource.FILE) {
 				IFileRevision before = asFileState(ancestor);

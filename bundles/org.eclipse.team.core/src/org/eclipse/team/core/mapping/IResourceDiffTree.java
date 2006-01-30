@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.diff.*;
 
 /**
- * A resource diff tree provides access to a tree of {@link IDiffNode} instances
+ * A resource diff tree provides access to a tree of {@link IDiff} instances
  * that either contain {@link IResourceDiff}
  * nodes or {@link IThreeWayDiff} nodes that contain
  * {@link IResourceDiff} nodes as the local and
@@ -42,7 +42,7 @@ public interface IResourceDiffTree extends IDiffTree {
 	 * @return the diff associated with the resource or <code>null</code> if
 	 *         the resource does not have any changes.
 	 */
-	IDiffNode getDiff(IResource resource);
+	IDiff getDiff(IResource resource);
 
 	/**
 	 * Return the resource associated with the given diff. This method will only
@@ -51,7 +51,7 @@ public interface IResourceDiffTree extends IDiffTree {
 	 * @param diff a diff
 	 * @return the resource associated with the given diff
 	 */
-	IResource getResource(IDiffNode diff);
+	IResource getResource(IDiff diff);
 
 	/**
 	 * Visit all diffs in this tree that are covered by the given traversals.
@@ -71,7 +71,7 @@ public interface IResourceDiffTree extends IDiffTree {
 	 * @return all the diffs in the tree that are contained in the given
 	 *         traversals
 	 */
-	IDiffNode[] getDiffs(ResourceTraversal[] traversals);
+	IDiff[] getDiffs(ResourceTraversal[] traversals);
 
 	/**
 	 * Return all the diffs in the tree that are found for
@@ -82,7 +82,7 @@ public interface IResourceDiffTree extends IDiffTree {
 	 * @return all the diffs in the tree that are found for
 	 * the given resource when traversed to the given depth
 	 */
-	IDiffNode[] getDiffs(IResource resource, int depth);
+	IDiff[] getDiffs(IResource resource, int depth);
 	
 	/**
 	 * Return the members of the given resource that either have diffs in this

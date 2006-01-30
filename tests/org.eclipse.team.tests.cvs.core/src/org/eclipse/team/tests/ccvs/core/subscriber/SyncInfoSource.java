@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -60,7 +60,7 @@ public class SyncInfoSource {
 	/**
 	 * Return the diff for the given subscriber for the given resource.
 	 */
-	public IDiffNode getDiff(Subscriber subscriber, IResource resource) throws CoreException {
+	public IDiff getDiff(Subscriber subscriber, IResource resource) throws CoreException {
 		return subscriber.getDiff(resource);
 	}
 	

@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -88,7 +88,7 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#getDiff(org.eclipse.team.core.subscribers.Subscriber, org.eclipse.core.resources.IResource)
 	 */
-	public IDiffNode getDiff(Subscriber subscriber, IResource resource) throws CoreException {
+	public IDiff getDiff(Subscriber subscriber, IResource resource) throws CoreException {
 		SyncInfo info = getSyncInfo(subscriber, resource);
 		if (info == null || info.getKind() == SyncInfo.IN_SYNC) {
 			return null;

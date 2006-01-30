@@ -14,10 +14,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 
 /**
- * A <code>DiffNodeFilter</code> tests an {@link IDiffNode} for inclusion,
+ * A <code>DiffNodeFilter</code> tests an {@link IDiff} for inclusion,
  * typically in an {@link IDiffTree}.
  * 
- * @see IDiffNode
+ * @see IDiff
  * @see IDiffTree
  * 
  * @since 3.2
@@ -31,5 +31,5 @@ public abstract class DiffFilter {
 	 * @param monitor a progress monitor
 	 * @return <code>true</code> if the <code>IDiffNode</code> matches the filter
 	 */
-	public abstract boolean select(IDiffNode node, IProgressMonitor monitor);
+	public abstract boolean select(IDiff node, IProgressMonitor monitor);
 }

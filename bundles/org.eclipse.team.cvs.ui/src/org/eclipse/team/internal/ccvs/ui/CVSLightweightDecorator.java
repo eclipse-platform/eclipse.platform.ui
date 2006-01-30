@@ -23,7 +23,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
@@ -201,7 +201,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 				result.setHasRemote(true);
 				int state = tester.getState(element, 
 						store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY) 
-							? IDiffNode.ADD | IDiffNode.REMOVE | IDiffNode.CHANGE | IThreeWayDiff.OUTGOING 
+							? IDiff.ADD | IDiff.REMOVE | IDiff.CHANGE | IThreeWayDiff.OUTGOING 
 							: 0, 
 						new NullProgressMonitor());
 	        	if ((state & IThreeWayDiff.OUTGOING) != 0) {
@@ -236,7 +236,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 			if (!decorateModel) {
 				// Dirty
 				try {
-					IDiffNode node = getSubscriber().getDiff(resource);
+					IDiff node = getSubscriber().getDiff(resource);
 					if (node != null) {
 						if (node instanceof IThreeWayDiff) {
 							IThreeWayDiff twd = (IThreeWayDiff) node;

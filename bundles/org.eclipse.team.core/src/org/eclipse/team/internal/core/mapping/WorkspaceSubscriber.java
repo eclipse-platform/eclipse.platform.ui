@@ -18,7 +18,7 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffVisitor;
 import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -108,7 +108,7 @@ public class WorkspaceSubscriber extends Subscriber implements ISubscriberChange
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.subscribers.Subscriber#getDiff(org.eclipse.core.resources.IResource)
 	 */
-	public IDiffNode getDiff(IResource resource) throws CoreException {
+	public IDiff getDiff(IResource resource) throws CoreException {
 		Subscriber subscriber = getSubscriber(resource);
 		if (subscriber != null)
 			return subscriber.getDiff(resource);

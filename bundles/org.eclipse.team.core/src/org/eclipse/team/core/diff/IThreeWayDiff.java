@@ -33,7 +33,7 @@ import org.eclipse.team.core.diff.provider.ThreeWayDiff;
  * </p> 
  * @since 3.2
  */
-public interface IThreeWayDiff extends IDiffNode {
+public interface IThreeWayDiff extends IDiff {
 	
 	/*====================================================================
 	 * Constants defining synchronization direction: 
@@ -71,7 +71,7 @@ public interface IThreeWayDiff extends IDiffNode {
 	/**
 	 * Return the local change associated with this delta.
 	 * If there is no local change, either a delta with kind 
-	 * {@link IDiffNode#NO_CHANGE} is returned or <code>null</code>
+	 * {@link IDiff#NO_CHANGE} is returned or <code>null</code>
 	 * may be returned.
 	 * @return the local change associated with this delta or <code>null</code>
 	 */
@@ -80,7 +80,7 @@ public interface IThreeWayDiff extends IDiffNode {
 	/**
 	 * Return the remote change associated with this delta.
 	 * If there is no remote change, either a delta with kind 
-	 * {@link IDiffNode#NO_CHANGE} is returned or <code>null</code>
+	 * {@link IDiff#NO_CHANGE} is returned or <code>null</code>
 	 * may be returned.
 	 * @return the remote change associated with this delta or <code>null</code>
 	 */

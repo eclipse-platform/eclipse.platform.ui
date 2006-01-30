@@ -51,12 +51,12 @@ public class CreatePatchAction extends CVSModelProviderAction {
 				ResourceTraversal[] traversals = mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
 				final IResourceDiffTree diffTree = getContext().getDiffTree();
 				diffTree.accept(new IDiffVisitor() {
-					public boolean visit(IDiffNode delta) throws CoreException {
+					public boolean visit(IDiff delta) throws CoreException {
 						IResource resource = diffTree.getResource(delta);
 						if (resource.getType() == IResource.FILE && delta instanceof IThreeWayDiff) {
 							IThreeWayDiff twd = (IThreeWayDiff) delta;
-							IDiffNode local = twd.getLocalChange();
-							if (local != null && local.getKind() != IDiffNode.NO_CHANGE) {
+							IDiff local = twd.getLocalChange();
+							if (local != null && local.getKind() != IDiff.NO_CHANGE) {
 								resources.add(resource);
 							}
 						}

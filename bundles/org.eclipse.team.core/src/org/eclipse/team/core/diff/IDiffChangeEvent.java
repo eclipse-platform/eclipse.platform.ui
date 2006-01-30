@@ -38,7 +38,7 @@ public interface IDiffChangeEvent {
 	 * Returns the delta nodes that have been added to the delta tree.
 	 * @return the delta nodes that have been added to the delta tree
 	 */
-	public IDiffNode[] getAdditions();
+	public IDiff[] getAdditions();
 	
 	/**
 	 * Return the paths of the delta nodes that have been removed from the delta tree.
@@ -50,5 +50,5 @@ public interface IDiffChangeEvent {
 	 * Return the delta nodes contained in the delta tree that have changed in some way.
 	 * @return the delta nodes contained in the delta tree that have changed
 	 */
-	public IDiffNode[] getChanges();
+	public IDiff[] getChanges();
 }

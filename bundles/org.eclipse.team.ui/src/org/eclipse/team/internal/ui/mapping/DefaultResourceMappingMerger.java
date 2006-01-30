@@ -15,7 +15,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.MergeStatus;
 import org.eclipse.team.internal.ui.Policy;
@@ -35,7 +35,7 @@ public class DefaultResourceMappingMerger extends ResourceMappingMerger {
 
 	public IStatus merge(IMergeContext mergeContext, IProgressMonitor monitor) throws CoreException {
 		try {
-			IDiffNode[] deltas = getSetToMerge(mergeContext);
+			IDiff[] deltas = getSetToMerge(mergeContext);
 			monitor.beginTask(null, 100);
 			IStatus status = mergeContext.merge(deltas, false /* don't force */, Policy.subMonitorFor(monitor, 75));
 			return covertFilesToMappings(status, mergeContext);
@@ -44,19 +44,19 @@ public class DefaultResourceMappingMerger extends ResourceMappingMerger {
 		}
 	}
 
-	private IDiffNode[] getSetToMerge(IMergeContext mergeContext) {
+	private IDiff[] getSetToMerge(IMergeContext mergeContext) {
 		ResourceMapping[] mappings = mergeContext.getScope().getMappings(provider.getDescriptor().getId());
 		Set result = new HashSet();
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
 			ResourceTraversal[] traversals = mergeContext.getScope().getTraversals(mapping);
-			IDiffNode[] deltas = mergeContext.getDiffTree().getDiffs(traversals);
+			IDiff[] deltas = mergeContext.getDiffTree().getDiffs(traversals);
 			for (int j = 0; j < deltas.length; j++) {
-				IDiffNode delta = deltas[j];
+				IDiff delta = deltas[j];
 				result.add(delta);
 			}
 		}
-		return (IDiffNode[]) result.toArray(new IDiffNode[result.size()]);
+		return (IDiff[]) result.toArray(new IDiff[result.size()]);
 	}
 
 	private IStatus covertFilesToMappings(IStatus status, IMergeContext mergeContext) {

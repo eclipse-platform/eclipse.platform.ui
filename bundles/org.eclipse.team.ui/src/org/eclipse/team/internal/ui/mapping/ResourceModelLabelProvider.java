@@ -15,7 +15,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
@@ -53,12 +53,12 @@ public class ResourceModelLabelProvider extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.AbstractSynchronizationLabelProvider#getSyncDelta(java.lang.Object)
 	 */
-	protected IDiffNode getDiff(Object element) {
+	protected IDiff getDiff(Object element) {
 		IResource resource = getResource(element);
 		if (resource != null) {
 			ISynchronizationContext context = getContext();
 			if (context != null) {
-				IDiffNode delta = context.getDiffTree().getDiff(resource.getFullPath());
+				IDiff delta = context.getDiffTree().getDiff(resource.getFullPath());
 				return delta;
 			}
 		}		

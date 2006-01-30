@@ -19,7 +19,7 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.*;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -319,14 +319,14 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 			IResource[] resources = traversal.getResources();
 			for (int j = 0; j < resources.length; j++) {
 				IResource resource = resources[j];
-				IDiffNode node = getDiff(resource);
+				IDiff node = getDiff(resource);
 				if (node == null)
-					return IDiffNode.CHANGE;
+					return IDiff.CHANGE;
 				int nextKind = node.getKind();
 				if (kind == 0)
 					kind = nextKind;
-				if (nextKind != kind || nextKind == IDiffNode.CHANGE)
-					return IDiffNode.CHANGE;
+				if (nextKind != kind || nextKind == IDiff.CHANGE)
+					return IDiff.CHANGE;
 			}
 		}
 		return kind;
@@ -382,11 +382,11 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 			if (isDirty(resource, monitor))
 				return true;
 		} else {
-			IDiffNode node = getDiff(resource);
+			IDiff node = getDiff(resource);
 			if (node != null 
 					&& node instanceof IThreeWayDiff 
 					&& ((IThreeWayDiff)node).getLocalChange() != null
-					&& ((IThreeWayDiff)node).getLocalChange().getKind() != IDiffNode.NO_CHANGE)
+					&& ((IThreeWayDiff)node).getLocalChange().getKind() != IDiff.NO_CHANGE)
 				return true;
 		}
 		return false;

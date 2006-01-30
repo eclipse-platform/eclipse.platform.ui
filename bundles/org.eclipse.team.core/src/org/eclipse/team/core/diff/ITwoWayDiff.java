@@ -33,7 +33,7 @@ import org.eclipse.team.core.diff.provider.TwoWayDiff;
  * 
  * @since 3.2
  */
-public interface ITwoWayDiff extends IDiffNode {
+public interface ITwoWayDiff extends IDiff {
 
 	/*====================================================================
 	 * Constants which describe resource changes:

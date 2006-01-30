@@ -420,7 +420,7 @@ public class ResourceMapperTests extends EclipseTest {
     private IResourceDiffTree getAllDiffs(IProject[] projects) throws CoreException {
         final ResourceDiffTree tree = new ResourceDiffTree();
         CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().accept(projects, IResource.DEPTH_INFINITE, new IDiffVisitor() {
-			public boolean visit(IDiffNode delta) throws CoreException {
+			public boolean visit(IDiff delta) throws CoreException {
 				tree.add(delta);
 				return true;
 			}
@@ -632,7 +632,7 @@ public class ResourceMapperTests extends EclipseTest {
 		IResource[] resources = tree.getAffectedResources();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			IDiffNode node = tree.getDiff(resource);
+			IDiff node = tree.getDiff(resource);
 			if (node instanceof IThreeWayDiff) {
 				IThreeWayDiff twd = (IThreeWayDiff) node;
 				IResourceVariant remote = SyncInfoToDiffConverter.getRemoteVariant(twd);
@@ -653,7 +653,7 @@ public class ResourceMapperTests extends EclipseTest {
 		IResource[] resources = tree.getAffectedResources();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			IDiffNode node = tree.getDiff(resource);
+			IDiff node = tree.getDiff(resource);
 			if (node instanceof IThreeWayDiff) {
 				IThreeWayDiff twd = (IThreeWayDiff) node;
 				IResourceVariant base = SyncInfoToDiffConverter.getBaseVariant(twd);

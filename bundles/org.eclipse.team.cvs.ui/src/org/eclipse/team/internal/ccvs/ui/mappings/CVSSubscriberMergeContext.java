@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberMergeContext;
@@ -51,7 +51,7 @@ public abstract class CVSSubscriberMergeContext extends SubscriberMergeContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.MergeContext#getMergeRule(org.eclipse.core.resources.IResource)
 	 */
-	public ISchedulingRule getMergeRule(IDiffNode node) {
+	public ISchedulingRule getMergeRule(IDiff node) {
 		// Return the project since that is what the EclipseSynchronize needs
 		return getDiffTree().getResource(node).getProject();
 	}

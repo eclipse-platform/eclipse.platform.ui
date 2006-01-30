@@ -79,7 +79,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * being merged with local content (i.e. the file exists both locally and
 	 * remotely) with the exception that it can also be used to keep local
 	 * changes to a file that has been deleted. See the
-	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method for more
+	 * {@link #merge(IDiff[], boolean, IProgressMonitor) } method for more
 	 * details. For other cases in which either the local file or remote file
 	 * does not exist, one of the <code>merge</code> methods should be used.
 	 * This is done to accommodate repositories that have special handling for
@@ -99,19 +99,19 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * @param monitor a progress monitor
 	 * @throws CoreException if errors occur
 	 */
-	public void markAsMerged(IDiffNode node, boolean inSyncHint,
+	public void markAsMerged(IDiff node, boolean inSyncHint,
 			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Mark the files associated with the given diff nodes as being merged.
-	 * This method is equivalent to calling {@link #markAsMerged(IDiffNode, boolean, IProgressMonitor) }
+	 * This method is equivalent to calling {@link #markAsMerged(IDiff, boolean, IProgressMonitor) }
 	 * for each diff but gives the context the opportunity to optimize the 
 	 * operation for multiple files.
 	 * <p>
 	 * This method will batch change notification by using the
 	 * {@link #run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor) }
 	 * method. The rule for he method will be obtained using
-	 * {@link #getMergeRule(IDiffNode)} and the flags will be
+	 * {@link #getMergeRule(IDiff)} and the flags will be
 	 * <code>IResource.NONE</code> meaning that intermittent change events may
 	 * occur. Clients may wrap the call in an outer run that either uses a
 	 * broader scheduling rule or the <code>IWorkspace.AVOID_UPDATES</code>
@@ -123,7 +123,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * @param monitor a progress monitor
 	 * @throws CoreException if errors occur
 	 */
-	public void markAsMerged(IDiffNode[] nodes, boolean inSyncHint,
+	public void markAsMerged(IDiff[] nodes, boolean inSyncHint,
 			IProgressMonitor monitor) throws CoreException;
 	
 	/**
@@ -166,8 +166,8 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * <p>
 	 * For two-way merging, as indicated by either the {@link ISynchronizationContext#getType()}
 	 * or {@link #getMergeType()} methods, clients can either accept changes using the
-	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method or reject
-	 * them using {@link #markAsMerged(IDiffNode, boolean, IProgressMonitor) }.
+	 * {@link #merge(IDiff[], boolean, IProgressMonitor) } method or reject
+	 * them using {@link #markAsMerged(IDiff, boolean, IProgressMonitor) }.
 	 * Three-way changes are a bit more complicated. The following list
 	 * summarizes how particular remote file changes can be handled. The delta
 	 * kind and flags mentioned in the descriptions are obtained the remote
@@ -175,64 +175,64 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * are indicated by the three-way delta itself.
 	 * <ul>
 	 * 
-	 * <li> When the delta kind is {@link IDiffNode#ADD} and the delta is also
+	 * <li> When the delta kind is {@link IDiff#ADD} and the delta is also
 	 * a move (i.e. the {@link ITwoWayDiff#MOVE_FROM} is set). The merge can
-	 * either use the {@link #merge(IDiffNode[], boolean, IProgressMonitor) }
+	 * either use the {@link #merge(IDiff[], boolean, IProgressMonitor) }
 	 * method to accept the rename or perform an
 	 * {@link IFile#move(IPath, boolean, boolean, IProgressMonitor) } where the
 	 * source file is obtained using {@link ITwoWayDiff#getFromPath()} and
-	 * the destination is the path of the delta ({@link IDiffNode#getPath()}).
+	 * the destination is the path of the delta ({@link IDiff#getPath()}).
 	 * This later approach is helpful in the case where the local file and
 	 * remote file both contain content changes (i.e. the file can be moved by
 	 * the model and then the contents can be merged by the model). </li>
 	 * 
-	 * <li> When the delta kind is {@link IDiffNode#REMOVE} and the delta is
+	 * <li> When the delta kind is {@link IDiff#REMOVE} and the delta is
 	 * also a move (i.e. the {@link ITwoWayDiff#MOVE_TO} is set). The merge can
-	 * either use the {@link #merge(IDiffNode[], boolean, IProgressMonitor) }
+	 * either use the {@link #merge(IDiff[], boolean, IProgressMonitor) }
 	 * method to accept the rename or perform an
 	 * {@link IFile#move(IPath, boolean, boolean, IProgressMonitor) } where the
-	 * source file is obtained using {@link IDiffNode#getPath()} and the
+	 * source file is obtained using {@link IDiff#getPath()} and the
 	 * destination is obtained from {@link ITwoWayDiff#getToPath()}. This
 	 * later approach is helpful in the case where the local file and remote
 	 * file both contain content changes (i.e. the file can be moved by the
 	 * model and then the contents can be merged by the model). </li>
 	 * 
-	 * <li> When the delta kind is {@link IDiffNode#ADD} and it is not part of
+	 * <li> When the delta kind is {@link IDiff#ADD} and it is not part of
 	 * a move, the merger must use the
-	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method to accept
+	 * {@link #merge(IDiff[], boolean, IProgressMonitor) } method to accept
 	 * this change. If there is a conflicting addition, the force flag can be
 	 * set to override the local change. If the model wishes to keep the local
 	 * changes, they can overwrite the file after merging it. Models should
 	 * consult the flags to see if the remote change is a rename ({@link ITwoWayDiff#MOVE_FROM}).
 	 * </li>
 	 * 
-	 * <li>When the delta kind is {@link IDiffNode#REMOVE} and it is not part
+	 * <li>When the delta kind is {@link IDiff#REMOVE} and it is not part
 	 * of a move, the merger can use the
-	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method but could
+	 * {@link #merge(IDiff[], boolean, IProgressMonitor) } method but could
 	 * also perform the delete manually using any of the {@link IFile} delete
 	 * methods. In the case where there are local changes to the file being
 	 * deleted, the model may either choose to merge using the force flag (thus
 	 * removing the file and the local changes) or call
-	 * {@link #markAsMerged(IDiffNode, boolean, IProgressMonitor) } on the file
+	 * {@link #markAsMerged(IDiff, boolean, IProgressMonitor) } on the file
 	 * which will convert the incoming deletion to an outgoing addition.</li>
 	 * 
-	 * <li>When the delta kind is {@link IDiffNode#CHANGE} and there is no
+	 * <li>When the delta kind is {@link IDiff#CHANGE} and there is no
 	 * conflict, the model is advised to use the
-	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method to merge
+	 * {@link #merge(IDiff[], boolean, IProgressMonitor) } method to merge
 	 * these changes as this is the most efficient means to do so. However, the
 	 * model can choose to perform the merge themselves and then invoke
-	 * {@link #markAsMerged(IDiffNode, boolean, IProgressMonitor) } with the
+	 * {@link #markAsMerged(IDiff, boolean, IProgressMonitor) } with the
 	 * <code>inSyncHint</code> set to <code>true</code> but this will be
 	 * less efficient. </li>
 	 * 
-	 * <li>When the delta kind is {@link IDiffNode#CHANGE} and there is a
+	 * <li>When the delta kind is {@link IDiff#CHANGE} and there is a
 	 * conflict, the model can use the
-	 * {@link #merge(IDiffNode[], boolean, IProgressMonitor) } method to merge
+	 * {@link #merge(IDiff[], boolean, IProgressMonitor) } method to merge
 	 * these changes. If the force flag is not set, an auto-merge is attempted
 	 * using an appropriate {@link IStorageMerger}. If the force flag is set,
 	 * the local changes are discarded. The model can choose to attempt the
 	 * merge themselves and, if it is successful, invoke
-	 * {@link #markAsMerged(IDiffNode, boolean, IProgressMonitor) } with the
+	 * {@link #markAsMerged(IDiff, boolean, IProgressMonitor) } with the
 	 * <code>inSyncHint</code> set to <code>false</code> which will make the
 	 * file an outgoing change. </li>
 	 * </ul>
@@ -250,20 +250,20 @@ public interface IMergeContext extends ISynchronizationContext {
 	 *         contain non-mergable conflicts and must be merged manually.
 	 * @throws CoreException if an error occurs
 	 */
-	public IStatus merge(IDiffNode diff, boolean ignoreLocalChanges, IProgressMonitor monitor)
+	public IStatus merge(IDiff diff, boolean ignoreLocalChanges, IProgressMonitor monitor)
 			throws CoreException;
 
 	/**
 	 * Attempt to merge any files associated with the given diffs. This method
 	 * is equivalent to calling
-	 * {@link #merge(IDiffNode, boolean, IProgressMonitor) } for each diff
+	 * {@link #merge(IDiff, boolean, IProgressMonitor) } for each diff
 	 * individually but gives the context a chance to perform a more optimal
 	 * merge involving multiple resources.
 	 * <p>
 	 * This method will batch change notification by using the
 	 * {@link #run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor) }
 	 * method. The rule for he method will be obtained using
-	 * {@link #getMergeRule(IDiffNode) } and the flags will be
+	 * {@link #getMergeRule(IDiff) } and the flags will be
 	 * <code>IResource.NONE</code> meaning that intermittent change events may
 	 * occur. Clients may wrap the call in an outer run that either uses a
 	 * broader scheduling rule or the <code>IWorkspace.AVOID_UPDATES</code>
@@ -277,7 +277,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 *         contain non-mergable conflicts and must be merged manually.
 	 * @throws CoreException if an error occurs
 	 */
-	public IStatus merge(IDiffNode[] diffs, boolean ignoreLocalChanges,
+	public IStatus merge(IDiff[] diffs, boolean ignoreLocalChanges,
 			IProgressMonitor monitor) throws CoreException;
 
 	/**
@@ -304,25 +304,25 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * associated with the given diff. If a resource being merged is a folder or
 	 * project, the returned rule will be sufficient to merge any files
 	 * contained in the folder or project. The returned rule also applies to
-	 * {@link #markAsMerged(IDiffNode, boolean, IProgressMonitor) }.
+	 * {@link #markAsMerged(IDiff, boolean, IProgressMonitor) }.
 	 * 
 	 * @param node the node to be merged
 	 * @return the scheduling rule that is required to merge the resource of the
 	 *         given diff
 	 */
-	public ISchedulingRule getMergeRule(IDiffNode node);
+	public ISchedulingRule getMergeRule(IDiff node);
 
 	/**
 	 * Return the scheduling rule that is required to merge the resources
 	 * associated with the given diffs. If a resource being merged is a folder
 	 * or project, the returned rule will be sufficient to merge any files
 	 * contained in the folder or project. The returned rule also applies to
-	 * {@link #markAsMerged(IDiffNode, boolean, IProgressMonitor) }.
+	 * {@link #markAsMerged(IDiff, boolean, IProgressMonitor) }.
 	 * 
 	 * @param nodes the nodes being merged
 	 * @return the scheduling rule that is required to merge the resources of
 	 *         the given diffs
 	 */
-	public ISchedulingRule getMergeRule(IDiffNode[] nodes);
+	public ISchedulingRule getMergeRule(IDiff[] nodes);
 
 }

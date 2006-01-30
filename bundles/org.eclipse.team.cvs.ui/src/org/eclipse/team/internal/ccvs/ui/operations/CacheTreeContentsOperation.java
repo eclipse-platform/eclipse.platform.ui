@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
@@ -59,9 +59,9 @@ public abstract class CacheTreeContentsOperation extends SingleCommandOperation 
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			IDiffNode[] nodes = tree.getDiffs(resource, recurse ? IResource.DEPTH_INFINITE: IResource.DEPTH_ONE);
+			IDiff[] nodes = tree.getDiffs(resource, recurse ? IResource.DEPTH_INFINITE: IResource.DEPTH_ONE);
 			for (int j = 0; j < nodes.length; j++) {
-				IDiffNode node = nodes[j];
+				IDiff node = nodes[j];
 				if (needsContents(node)) {
 					result.add(tree.getResource(node));
 				}
@@ -70,7 +70,7 @@ public abstract class CacheTreeContentsOperation extends SingleCommandOperation 
 		return (IResource[]) result.toArray(new IResource[result.size()]);
 	}
 
-	protected boolean needsContents(IDiffNode node) {
+	protected boolean needsContents(IDiff node) {
 		if (node instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) node;	
 			IResource local = getTree().getResource(node);

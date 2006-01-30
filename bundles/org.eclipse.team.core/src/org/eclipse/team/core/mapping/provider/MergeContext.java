@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.*;
@@ -55,11 +55,11 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     /* (non-Javadoc)
      * @see org.eclipse.team.core.mapping.IMergeContext#markAsMerged(org.eclipse.team.core.diff.IDiffNode[], boolean, org.eclipse.core.runtime.IProgressMonitor)
      */
-    public void markAsMerged(final IDiffNode[] nodes, final boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
+    public void markAsMerged(final IDiff[] nodes, final boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
 		run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < nodes.length; i++) {
-					IDiffNode node = nodes[i];
+					IDiff node = nodes[i];
 					markAsMerged(node, inSyncHint, monitor);
 				}
 			}
@@ -69,12 +69,12 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     /* (non-Javadoc)
      * @see org.eclipse.team.ui.mapping.IMergeContext#merge(org.eclipse.team.core.delta.ISyncDelta[], boolean, org.eclipse.core.runtime.IProgressMonitor)
      */
-    public IStatus merge(final IDiffNode[] deltas, final boolean force, IProgressMonitor monitor) throws CoreException {
+    public IStatus merge(final IDiff[] deltas, final boolean force, IProgressMonitor monitor) throws CoreException {
 		final List failedFiles = new ArrayList();
 		run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < deltas.length; i++) {
-					IDiffNode delta = deltas[i];
+					IDiff delta = deltas[i];
 					IStatus s = merge(delta, force, monitor);
 					if (!s.isOK()) {
 						if (s.getCode() == IMergeStatus.CONFLICTS) {
@@ -96,7 +96,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.IMergeContext#merge(org.eclipse.team.core.diff.IDiffNode, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IStatus merge(IDiffNode delta, boolean ignoreLocalChanges, IProgressMonitor monitor) throws CoreException {
+	public IStatus merge(IDiff delta, boolean ignoreLocalChanges, IProgressMonitor monitor) throws CoreException {
 		if (getDiffTree().getResource(delta).getType() != IResource.FILE)
 			return Status.OK_STATUS;
     	if (delta instanceof IThreeWayDiff && !ignoreLocalChanges && getMergeType() == THREE_WAY) {
@@ -113,7 +113,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     		}
 			// direction == SyncInfo.CONFLICTING
     		int type = twDelta.getKind();
-    		if (type == IDiffNode.REMOVE) {
+    		if (type == IDiff.REMOVE) {
     			// TODO: either we need to spec mark as merged to work in this case
     			// or somehow involve the subclass (or just ignore it)
     			markAsMerged(delta, false, monitor);
@@ -232,7 +232,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
         return TeamPlugin.getPlugin().getStateLocation().append(".tmp").append(file.getName() + ".tmp").toFile(); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
-	private IFile getLocalFile(IDiffNode delta) {
+	private IFile getLocalFile(IDiff delta) {
 		return ResourcesPlugin.getWorkspace().getRoot().getFile(delta.getPath());
 	}
 
@@ -240,7 +240,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * Replace the local contents with the remote contents.
      * The local resource must be a file.
      */
-    private void performReplace(final IDiffNode delta, IProgressMonitor monitor) throws CoreException {
+    private void performReplace(final IDiff delta, IProgressMonitor monitor) throws CoreException {
     	IResourceDiff d;
     	IFile file = getLocalFile(delta);
     	IFileRevision remote = null;
@@ -263,7 +263,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     	}
 	}
 
-	private void performReplace(final IDiffNode delta, final IFile file, final IFileRevision remote, IProgressMonitor monitor) throws CoreException {
+	private void performReplace(final IDiff delta, final IFile file, final IFileRevision remote, IProgressMonitor monitor) throws CoreException {
 		run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				if ((remote == null || !remote.exists()) && file.exists()) {
@@ -321,16 +321,16 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	/**
 	 * Default implementation that returns the resource itself.
 	 * Subclass should override to provide the appropriate rule.
-	 * @see org.eclipse.team.core.mapping.IMergeContext#getMergeRule(IDiffNode)
+	 * @see org.eclipse.team.core.mapping.IMergeContext#getMergeRule(IDiff)
 	 */
-	public ISchedulingRule getMergeRule(IDiffNode node) {
+	public ISchedulingRule getMergeRule(IDiff node) {
 		return getDiffTree().getResource(node);
 	}
 	
-	public ISchedulingRule getMergeRule(IDiffNode[] deltas) {
+	public ISchedulingRule getMergeRule(IDiff[] deltas) {
 		ISchedulingRule result = null;
 		for (int i = 0; i < deltas.length; i++) {
-			IDiffNode node = deltas[i];
+			IDiff node = deltas[i];
 			ISchedulingRule rule = getMergeRule(node);
 			if (result == null) {
 				result = rule;

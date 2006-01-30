@@ -48,7 +48,7 @@ public class ResourceMarkAsMergedHandler extends MergeActionHandler {
 						throws InvocationTargetException, InterruptedException {
 					try {
 						final IMergeContext context = (IMergeContext) getContext();
-						final IDiffNode[] deltas = getFileDeltas(getElements());
+						final IDiff[] deltas = getFileDeltas(getElements());
 						ISchedulingRule rule = getMergeRule(context, deltas);
 						context.run(new IWorkspaceRunnable() {
 							public void run(IProgressMonitor monitor)
@@ -64,10 +64,10 @@ public class ResourceMarkAsMergedHandler extends MergeActionHandler {
 				}
 	
 				private ISchedulingRule getMergeRule(IMergeContext context,
-						IDiffNode[] deltas) {
+						IDiff[] deltas) {
 					ISchedulingRule result = null;
 					for (int i = 0; i < deltas.length; i++) {
-						IDiffNode node = deltas[i];
+						IDiff node = deltas[i];
 						ISchedulingRule rule = context.getMergeRule(node);
 						if (result == null) {
 							result = rule;
@@ -78,7 +78,7 @@ public class ResourceMarkAsMergedHandler extends MergeActionHandler {
 					return result;
 				}
 	
-				private void markAsMerged(IDiffNode[] deltas,
+				private void markAsMerged(IDiff[] deltas,
 						final IMergeContext context, IProgressMonitor monitor)
 						throws CoreException {
 					context.markAsMerged(deltas, false, monitor);
@@ -89,7 +89,7 @@ public class ResourceMarkAsMergedHandler extends MergeActionHandler {
 				 */
 				protected FastDiffFilter getDiffFilter() {
 					return new FastDiffFilter() {
-						public boolean select(IDiffNode node) {
+						public boolean select(IDiff node) {
 							if (node instanceof IThreeWayDiff) {
 								IThreeWayDiff twd = (IThreeWayDiff) node;
 								if (twd.getDirection() == IThreeWayDiff.CONFLICTING

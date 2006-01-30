@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * This enables these filters to be used when determining menu enablement or other
  * operations that must be short running.
  * 
- * @see IDiffNode
+ * @see IDiff
  * @see IDiffTree
  * @see DiffFilter
  * @since 3.2
@@ -27,7 +27,7 @@ public abstract class FastDiffFilter extends DiffFilter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.DiffNodeFilter#select(org.eclipse.team.core.diff.IDiffNode, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public final boolean select(IDiffNode node, IProgressMonitor monitor) {
+	public final boolean select(IDiff node, IProgressMonitor monitor) {
 		return select(node);
 	}
 
@@ -37,5 +37,5 @@ public abstract class FastDiffFilter extends DiffFilter {
 	 * @param node the <code>IDiffNode</code> to be tested
 	 * @return <code>true</code> if the <code>IDiffNode</code> matches the filter
 	 */
-	public abstract boolean select(IDiffNode node);
+	public abstract boolean select(IDiff node);
 }

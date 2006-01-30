@@ -21,7 +21,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.compare.IModelBuffer;
@@ -117,7 +117,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	 * @param node a diff node
 	 * @return whether the given node is visible in the page
 	 */
-	protected boolean isVisible(IDiffNode node) {
+	protected boolean isVisible(IDiff node) {
 		ISynchronizePageConfiguration configuration = getConfiguration();
 		if (configuration.getComparisonType() == ISynchronizePageConfiguration.THREE_WAY 
 				&& node instanceof IThreeWayDiff) {

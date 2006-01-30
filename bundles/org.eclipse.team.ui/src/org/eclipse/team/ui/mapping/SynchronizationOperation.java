@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
@@ -158,7 +158,7 @@ public abstract class SynchronizationOperation extends TeamOperation {
 		try {
 			ResourceTraversal[] traversals = Utils.getTraversals(getElements());
 			final IResourceDiffTree diffTree = getContext().getDiffTree();
-			IDiffNode[] diffs = diffTree.getDiffs(traversals);
+			IDiff[] diffs = diffTree.getDiffs(traversals);
 			diffTree.setBusy(diffs, monitor);
 		} catch (CoreException e) {
 			TeamUIPlugin.log(e);

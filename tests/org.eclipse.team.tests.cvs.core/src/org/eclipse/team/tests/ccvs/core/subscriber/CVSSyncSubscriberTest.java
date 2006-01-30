@@ -19,7 +19,7 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.provider.Diff;
 import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -120,10 +120,10 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 	}
 	
 	protected void assertDiffKindEquals(String message, Subscriber subscriber, IResource resource, int expectedFlags) throws CoreException {
-		IDiffNode node = getDiff(subscriber, resource);
+		IDiff node = getDiff(subscriber, resource);
 		int actualFlags;
 		if (node == null) {
-			actualFlags = IDiffNode.NO_CHANGE;
+			actualFlags = IDiff.NO_CHANGE;
 		} else {
 			actualFlags = ((Diff)node).getStatus();
 		}
@@ -133,8 +133,8 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 			// Other additions will appear as in-sync
 			int expectedKind = expectedFlags & Diff.KIND_MASK;
 			int actualKind = actualFlags & Diff.KIND_MASK;
-			if (actualKind == IDiffNode.NO_CHANGE 
-					&& expectedKind == IDiffNode.ADD) {
+			if (actualKind == IDiff.NO_CHANGE 
+					&& expectedKind == IDiff.ADD) {
 				return;
 			}
 		}
@@ -142,7 +142,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 				expectedFlags + " but was " + actualFlags, actualFlags == expectedFlags);
 	}
 	
-	protected IDiffNode getDiff(Subscriber subscriber, IResource resource) throws CoreException {
+	protected IDiff getDiff(Subscriber subscriber, IResource resource) throws CoreException {
 		return getSyncInfoSource().getDiff(subscriber, resource);
 	}
 

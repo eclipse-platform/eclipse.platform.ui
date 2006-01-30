@@ -16,7 +16,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.*;
@@ -50,7 +50,7 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		this.type = type;
 	}
 
-	public void markAsMerged(final IDiffNode node, final boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
+	public void markAsMerged(final IDiff node, final boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
 		run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// Get the latest sync info for the file (i.e. not what is in the set).
@@ -80,7 +80,7 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		}, getMergeRule(node), IResource.NONE, monitor);
 	}
 
-	protected void ensureRemotesMatch(IResource resource, IDiffNode node, SyncInfo info) throws CVSException {
+	protected void ensureRemotesMatch(IResource resource, IDiff node, SyncInfo info) throws CVSException {
 		IResourceVariant variant = info.getRemote();
 		IFileRevision remote = getRemote(node);
 		if (variant != null && remote != null && remote instanceof IFileRevision) {
@@ -92,7 +92,7 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		}
 	}
 
-	private IFileRevision getRemote(IDiffNode node) {
+	private IFileRevision getRemote(IDiff node) {
 		if (node == null) return null;
 		if (node instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) node;
@@ -108,7 +108,7 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.MergeContext#merge(org.eclipse.team.core.diff.IDiffNode, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IStatus merge(IDiffNode delta, boolean force, IProgressMonitor monitor) throws CoreException {
+	public IStatus merge(IDiff delta, boolean force, IProgressMonitor monitor) throws CoreException {
 		// First, verify that the provided delta matches the current state
 		// i.e. it is possible that a concurrent change has occurred
 		SyncInfo info = getSyncInfo(getDiffTree().getResource(delta));
@@ -124,19 +124,19 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 //			throw new CVSException(NLS.bind(CVSUIMessages.CVSMergeContext_1, delta.getPath()));
 //		}
 		IStatus status = super.merge(delta, force, monitor);
-		if (status.isOK() && delta.getKind() == IDiffNode.REMOVE) {
+		if (status.isOK() && delta.getKind() == IDiff.REMOVE) {
 			IResource resource = getDiffTree().getResource(delta);
 			if (resource.getType() == IResource.FILE && !resource.exists()) {
 				// TODO: This behavior is specific to an update from the same branch
 				ICVSResource localResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 				localResource.unmanage(monitor);
 			}
-			pruneEmptyParents(new IDiffNode[] { delta });
+			pruneEmptyParents(new IDiff[] { delta });
 		}
 		return status;
 	}
 
-	private void pruneEmptyParents(IDiffNode[] deltas) throws CVSException {
+	private void pruneEmptyParents(IDiff[] deltas) throws CVSException {
 		// TODO: A more explicit tie in to the pruning mechanism would be preferable.
 		// i.e. I don't like referencing the option and visitor directly
 		if (!CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) return;

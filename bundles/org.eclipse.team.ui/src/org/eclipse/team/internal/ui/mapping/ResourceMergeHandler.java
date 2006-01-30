@@ -43,7 +43,7 @@ public class ResourceMergeHandler extends MergeActionHandler {
 						InterruptedException {
 					try {
 						IMergeContext context = (IMergeContext)getContext();
-						IDiffNode[] diffs = getFileDeltas(getElements());
+						IDiff[] diffs = getFileDeltas(getElements());
 						IStatus status = context.merge(diffs, overwrite, monitor);
 						if (!status.isOK())
 							throw new CoreException(status);
@@ -56,7 +56,7 @@ public class ResourceMergeHandler extends MergeActionHandler {
 				 */
 				protected FastDiffFilter getDiffFilter() {
 					return new FastDiffFilter() {
-						public boolean select(IDiffNode node) {
+						public boolean select(IDiff node) {
 							if (node instanceof IThreeWayDiff) {
 								IThreeWayDiff twd = (IThreeWayDiff) node;
 								if ((twd.getDirection() == IThreeWayDiff.OUTGOING && overwrite) || twd.getDirection() == IThreeWayDiff.CONFLICTING || twd.getDirection() == IThreeWayDiff.INCOMING) {

@@ -30,7 +30,7 @@ import org.eclipse.team.core.diff.provider.Diff;
  * @see IThreeWayDiff
  * @since 3.2
  */
-public interface IDiffNode {
+public interface IDiff {
 
 	/*
 	 * ====================================================================
@@ -42,7 +42,7 @@ public interface IDiffNode {
 	 * Diff kind constant (bit mask) indicating that the resource has not been changed in
 	 * any way.
 	 * 
-	 * @see IDiffNode#getKind()
+	 * @see IDiff#getKind()
 	 */
 	public static final int NO_CHANGE = 0;
 
@@ -51,7 +51,7 @@ public interface IDiffNode {
 	 * added to its parent. That is, one that appears in the "after" state, not
 	 * in the "before" one.
 	 * 
-	 * @see IDiffNode#getKind()
+	 * @see IDiff#getKind()
 	 */
 	public static final int ADD = 0x1;
 
@@ -60,7 +60,7 @@ public interface IDiffNode {
 	 * removed from its parent. That is, one that appears in the "before" state,
 	 * not in the "after" one.
 	 * 
-	 * @see IDiffNode#getKind()
+	 * @see IDiff#getKind()
 	 */
 	public static final int REMOVE = 0x2;
 
@@ -69,7 +69,7 @@ public interface IDiffNode {
 	 * changed. That is, one that appears in both the "before" and "after"
 	 * states.
 	 * 
-	 * @see IDiffNode#getKind()
+	 * @see IDiff#getKind()
 	 */
 	public static final int CHANGE = 0x4;
 	
@@ -89,9 +89,9 @@ public interface IDiffNode {
 	 * <code>ADDED</code>, <code>REMOVED</code>, <code>CHANGED</code>.
 	 * 
 	 * @return the kind of this diff
-	 * @see IDiffNode#ADD
-	 * @see IDiffNode#REMOVE
-	 * @see IDiffNode#CHANGE
+	 * @see IDiff#ADD
+	 * @see IDiff#REMOVE
+	 * @see IDiff#CHANGE
 	 */
 	public int getKind();
 

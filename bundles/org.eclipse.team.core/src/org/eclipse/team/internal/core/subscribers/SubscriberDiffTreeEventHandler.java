@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.ITeamStatus;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffVisitor;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
@@ -37,13 +37,13 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	 * An event used to represent a change in a diff
 	 */
 	private class SubscriberDiffChangedEvent extends SubscriberEvent {
-		private final IDiffNode node;
+		private final IDiff node;
 
-		public SubscriberDiffChangedEvent(IResource resource, int type, int depth, IDiffNode node) {
+		public SubscriberDiffChangedEvent(IResource resource, int type, int depth, IDiff node) {
 			super(resource, type, depth);
 			this.node = node;
 		}
-		public IDiffNode getChangedNode() {
+		public IDiff getChangedNode() {
 			return node;
 		}
 	}
@@ -95,7 +95,7 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	 * @see org.eclipse.team.internal.core.subscribers.SubscriberEventHandler#handleChange(org.eclipse.core.resources.IResource)
 	 */
 	protected void handleChange(IResource resource) throws CoreException {
-		IDiffNode node = getSubscriber().getDiff(resource);
+		IDiff node = getSubscriber().getDiff(resource);
 		if (node == null) {
 			queueDispatchEvent(
 				new SubscriberEvent(resource, SubscriberEvent.REMOVAL, IResource.DEPTH_ZERO));
@@ -113,7 +113,7 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 		ResourceTraversal[] traversals = new ResourceTraversal[] { new ResourceTraversal(new IResource[] { resource }, depth, IResource.NONE) };
 		try {
 			getSubscriber().accept(traversals, new IDiffVisitor() {
-				public boolean visit(IDiffNode node) throws CoreException {
+				public boolean visit(IDiff node) throws CoreException {
 					// Queue up any found diffs for inclusion into the output tree
 					queueDispatchEvent(
 							new SubscriberDiffChangedEvent(tree.getResource(node), SubscriberEvent.CHANGE, IResource.DEPTH_ZERO, node));
@@ -141,8 +141,8 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 					case SubscriberEvent.CHANGE :
 						if (event instanceof SubscriberDiffChangedEvent) {
 							SubscriberDiffChangedEvent se = (SubscriberDiffChangedEvent) event;
-							IDiffNode changedNode = se.getChangedNode();
-							if (changedNode.getKind() == IDiffNode.NO_CHANGE) {
+							IDiff changedNode = se.getChangedNode();
+							if (changedNode.getKind() == IDiff.NO_CHANGE) {
 								tree.remove(changedNode.getPath());
 							} else {
 								tree.add(changedNode);
@@ -150,9 +150,9 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 						}
 						break;
 					case SubscriberEvent.REMOVAL :
-						IDiffNode[] nodesToRemove = tree.getDiffs(new ResourceTraversal[] { event.asTraversal() });
+						IDiff[] nodesToRemove = tree.getDiffs(new ResourceTraversal[] { event.asTraversal() });
 						for (int j = 0; j < nodesToRemove.length; j++) {
-							IDiffNode node = nodesToRemove[j];
+							IDiff node = nodesToRemove[j];
 							tree.remove(node.getPath());
 						}
 						break;

@@ -43,14 +43,14 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 	 * @param node the diff node.
 	 * @return the resource for the diff node
 	 */
-	public static IResource getResourceFor(IDiffNode node) {
+	public static IResource getResourceFor(IDiff node) {
 		if (node instanceof IResourceDiff) {
 			IResourceDiff rd = (IResourceDiff) node;
 			return rd.getResource();
 		}
 		if (node instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) node;
-			IDiffNode child = twd.getLocalChange();
+			IDiff child = twd.getLocalChange();
 			if (child != null)
 				return getResourceFor(child);
 			child = twd.getRemoteChange();
@@ -64,14 +64,14 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IResourceDiffTree#getDiff(org.eclipse.core.resources.IResource)
 	 */
-	public IDiffNode getDiff(IResource resource) {
+	public IDiff getDiff(IResource resource) {
 		return getDiff(resource.getFullPath());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IResourceDiffTree#getResource(org.eclipse.team.core.diff.IDiffNode)
 	 */
-	public IResource getResource(IDiffNode diff) {
+	public IResource getResource(IDiff diff) {
 		if (diff instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) diff;
 			IResourceDiff localChange = ((IResourceDiff)twd.getLocalChange());
@@ -87,18 +87,18 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 	 * @see org.eclipse.team.core.diff.IResourceDiffTree#accept(org.eclipse.team.core.diff.IDiffVisitor, org.eclipse.core.resources.mapping.ResourceTraversal[])
 	 */
 	public void accept(IDiffVisitor visitor, ResourceTraversal[] traversals) throws CoreException {
-		IDiffNode[] diffs = getDiffs(traversals);
+		IDiff[] diffs = getDiffs(traversals);
 		for (int i = 0; i < diffs.length; i++) {
-			IDiffNode node = diffs[i];
+			IDiff node = diffs[i];
 			visitor.visit(node);
 		}
 	}
 
-	public IDiffNode[] getDiffs(final ResourceTraversal[] traversals) {
+	public IDiff[] getDiffs(final ResourceTraversal[] traversals) {
 		final Set result = new HashSet();
 		try {
 			accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
-				public boolean visit(IDiffNode delta) throws CoreException {
+				public boolean visit(IDiff delta) throws CoreException {
 					for (int i = 0; i < traversals.length; i++) {
 						ResourceTraversal traversal = traversals[i];
 						if (traversal.contains(getResource(delta))) {
@@ -111,13 +111,13 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 		} catch (CoreException e) {
 			TeamPlugin.log(e);
 		}
-		return (IDiffNode[]) result.toArray(new IDiffNode[result.size()]);
+		return (IDiff[]) result.toArray(new IDiff[result.size()]);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.IResourceDiffTree#getDiffs(org.eclipse.core.resources.IResource, int)
 	 */
-	public IDiffNode[] getDiffs(IResource resource, int depth) {
+	public IDiff[] getDiffs(IResource resource, int depth) {
 		return getDiffs(new ResourceTraversal[] { new ResourceTraversal(new IResource[] { resource }, depth, IResource.NONE) } );
 	}
 
@@ -135,7 +135,7 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 		IPath[] paths = getChildren(resource.getFullPath());
 		for (int i = 0; i < paths.length; i++) {
 			IPath path = paths[i];
-			IDiffNode node = getDiff(path);
+			IDiff node = getDiff(path);
 			if (node == null) {
 				result.add(internalGetResource(path, true));
 			} else {
@@ -150,9 +150,9 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 	 */
 	public IResource[] getAffectedResources() {
 		List result = new ArrayList();
-		IDiffNode[] nodes = getDiffs();
+		IDiff[] nodes = getDiffs();
 		for (int i = 0; i < nodes.length; i++) {
-			IDiffNode node = nodes[i];
+			IDiff node = nodes[i];
 			result.add(getResource(node));
 		}
 		return (IResource[]) result.toArray(new IResource[result.size()]);
@@ -161,7 +161,7 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.provider.DiffTree#add(org.eclipse.team.core.diff.IDiffNode)
 	 */
-	public void add(IDiffNode delta) {
+	public void add(IDiff delta) {
 		Assert.isTrue(delta instanceof IResourceDiff || delta instanceof IThreeWayDiff);
 		super.add(delta);
 	}

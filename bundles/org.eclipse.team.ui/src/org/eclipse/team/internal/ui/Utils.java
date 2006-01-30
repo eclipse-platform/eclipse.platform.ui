@@ -34,7 +34,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.core.history.IFileRevision;
@@ -324,7 +324,7 @@ public class Utils {
 		}
 	}
 	
-	public static void updateLabels(IDiffNode diff, CompareConfiguration config) {
+	public static void updateLabels(IDiff diff, CompareConfiguration config) {
 		final IFileRevision remote = getRemote(diff);
 		final IFileRevision base = getBase(diff);
 		String localContentId = getLocalContentId(diff);
@@ -345,7 +345,7 @@ public class Utils {
 		}
 	}
 
-	public static String getLocalContentId(IDiffNode diff) {
+	public static String getLocalContentId(IDiff diff) {
 		if (diff instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) diff;
 			diff = twd.getLocalChange();
@@ -372,15 +372,15 @@ public class Utils {
 		return null;
 	}
 
-	public static IFileRevision getBase(IDiffNode diff) {
+	public static IFileRevision getBase(IDiff diff) {
 		if (diff instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) diff;
-			IDiffNode remoteChange = twd.getRemoteChange();
+			IDiff remoteChange = twd.getRemoteChange();
 			if (remoteChange instanceof IResourceDiff) {
 				IResourceDiff rd = (IResourceDiff) remoteChange;
 				return rd.getBeforeState();
 			}
-			IDiffNode localChange = twd.getLocalChange();
+			IDiff localChange = twd.getLocalChange();
 			if (localChange instanceof IResourceDiff) {
 				IResourceDiff ld = (IResourceDiff) localChange;
 				return ld.getBeforeState();
@@ -389,19 +389,19 @@ public class Utils {
 		return null;
 	}
 
-	public static IFileRevision getRemote(IDiffNode diff) {
+	public static IFileRevision getRemote(IDiff diff) {
 		if (diff instanceof IResourceDiff) {
 			IResourceDiff rd = (IResourceDiff) diff;
 			return rd.getAfterState();
 		}
 		if (diff instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) diff;
-			IDiffNode remoteChange = twd.getRemoteChange();
+			IDiff remoteChange = twd.getRemoteChange();
 			if (remoteChange instanceof IResourceDiff) {
 				IResourceDiff rd = (IResourceDiff) remoteChange;
 				return rd.getAfterState();
 			}
-			IDiffNode localChange = twd.getLocalChange();
+			IDiff localChange = twd.getLocalChange();
 			if (localChange instanceof IResourceDiff) {
 				IResourceDiff ld = (IResourceDiff) localChange;
 				return ld.getBeforeState();

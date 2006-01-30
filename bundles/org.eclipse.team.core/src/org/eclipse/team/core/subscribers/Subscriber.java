@@ -337,7 +337,7 @@ abstract public class Subscriber {
 	}
 	
 	/**
-	 * Returns synchronization info, in the form of an {@link IDiffNode} for the
+	 * Returns synchronization info, in the form of an {@link IDiff} for the
 	 * given resource, or <code>null</code> if there is no synchronization
 	 * info because the subscriber does not apply to this resource or the resource
 	 * is in-sync.
@@ -361,7 +361,7 @@ abstract public class Subscriber {
 	 * @throws TeamException if errors occur
 	 * @since 3.2
 	 */
-	public IDiffNode getDiff(IResource resource) throws CoreException {
+	public IDiff getDiff(IResource resource) throws CoreException {
 		SyncInfo info = getSyncInfo(resource);
 		if (info == null || info.getKind() == SyncInfo.IN_SYNC)
 			return null;
@@ -419,8 +419,8 @@ abstract public class Subscriber {
 	}
 
 	private void accept(IResource resource, int depth, IDiffVisitor visitor) throws CoreException {
-		IDiffNode node = getDiff(resource);
-		if (node != null && node.getKind() != IDiffNode.NO_CHANGE) {
+		IDiff node = getDiff(resource);
+		if (node != null && node.getKind() != IDiff.NO_CHANGE) {
 			if (!visitor.visit(node))
 				return;
 		}
@@ -466,16 +466,16 @@ abstract public class Subscriber {
 	 * the provided stateMask. The synchronization state flags that are
 	 * guaranteed to be interpreted by this method are:
 	 * <ul>
-	 * <li>The kind flags {@link IDiffNode#ADD}, {@link IDiffNode#REMOVE} and {@link IDiffNode#CHANGE}.
+	 * <li>The kind flags {@link IDiff#ADD}, {@link IDiff#REMOVE} and {@link IDiff#CHANGE}.
 	 * If none of these flags are included then all are assumed.
 	 * <li>The direction flags {@link IThreeWayDiff#INCOMING} and {@link IThreeWayDiff#OUTGOING} if the
 	 * subscriber is a three-way subscriber. If neither are provided, both are assumed.
 	 * </ul>
 	 * Other flags can be included and may or may not be interpreted by the subscriber.
 	 * <p>
-	 * An element will only include {@link IDiffNode#ADD} in the returned state if all resources covered
-	 * by the traversals mappings are added. Similarly, {@link IDiffNode#REMOVE} will only be included
-	 * if all the resources covered by the tarversals are deleted. Otherwise {@link IDiffNode#CHANGE}
+	 * An element will only include {@link IDiff#ADD} in the returned state if all resources covered
+	 * by the traversals mappings are added. Similarly, {@link IDiff#REMOVE} will only be included
+	 * if all the resources covered by the tarversals are deleted. Otherwise {@link IDiff#CHANGE}
 	 * will be returned. 
 	 * 
 	 * @param mapping the resource mapping whose synchronization state is to be determined
@@ -484,7 +484,7 @@ abstract public class Subscriber {
 	 * @return the synchronization state of the given resource mapping
 	 * @throws CoreException 
 	 * @since 3.2
-	 * @see IDiffNode
+	 * @see IDiff
 	 * @see IThreeWayDiff
 	 */
 	public int getState(ResourceMapping mapping, int stateMask, IProgressMonitor monitor) throws CoreException {
@@ -492,7 +492,7 @@ abstract public class Subscriber {
 		final int[] direction = new int[] { 0 };
 		final int[] kind = new int[] { 0 };
 		accept(traversals, new IDiffVisitor() {
-			public boolean visit(IDiffNode diff) throws CoreException {
+			public boolean visit(IDiff diff) throws CoreException {
 				if (diff instanceof IThreeWayDiff) {
 					IThreeWayDiff twd = (IThreeWayDiff) diff;
 					direction[0] |= twd.getDirection();
@@ -502,10 +502,10 @@ abstract public class Subscriber {
 				if (kind[0] == 0)
 					kind[0] = diffKind;
 				if (kind[0] != diffKind) {
-					kind[0] = IDiffNode.CHANGE;
+					kind[0] = IDiff.CHANGE;
 				}
 				// Only need to visit the childen of a change
-				return diffKind == IDiffNode.CHANGE;
+				return diffKind == IDiff.CHANGE;
 			}
 		});
 		return (direction[0] | kind[0]) & stateMask;

@@ -32,14 +32,14 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 		}
 
 		public void diffChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
-			IDiffNode[] additions = event.getAdditions();
+			IDiff[] additions = event.getAdditions();
 			for (int i = 0; i < additions.length; i++) {
-				IDiffNode node = additions[i];
+				IDiff node = additions[i];
 				changes.put(node.getPath(), node);
 			}
-			IDiffNode[] changed = event.getChanges();
+			IDiff[] changed = event.getChanges();
 			for (int i = 0; i < changed.length; i++) {
-				IDiffNode node = changed[i];
+				IDiff node = changed[i];
 				changes.put(node.getPath(), node);
 			}
 		}

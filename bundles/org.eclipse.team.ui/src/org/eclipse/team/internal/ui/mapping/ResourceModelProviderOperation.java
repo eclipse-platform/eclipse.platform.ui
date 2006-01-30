@@ -37,43 +37,43 @@ public abstract class ResourceModelProviderOperation extends SynchronizationOper
 	 * @param elements the selected elements
 	 * @return the file deltas contained in or descended from the selection
 	 */
-	protected IDiffNode[] getFileDeltas(Object[] elements) {
+	protected IDiff[] getFileDeltas(Object[] elements) {
 		Set result = new HashSet();
 		for (int j = 0; j < elements.length; j++) {
 			Object element = elements[j];
-			IDiffNode[] diffs = getFileDeltas(element);
+			IDiff[] diffs = getFileDeltas(element);
 			for (int i = 0; i < diffs.length; i++) {
-				IDiffNode node = diffs[i];
+				IDiff node = diffs[i];
 				result.add(node);
 			}
 		}
-		return (IDiffNode[]) result.toArray(new IDiffNode[result.size()]);
+		return (IDiff[]) result.toArray(new IDiff[result.size()]);
 	}
 	
-	private IDiffNode[] getFileDeltas(Object o) {
+	private IDiff[] getFileDeltas(Object o) {
 		IResource resource = Utils.getResource(o);
 		if (resource != null) {
 			ISynchronizationContext context = getContext();
 			final IResourceDiffTree diffTree = context.getDiffTree();
 			if (resource.getType() == IResource.FILE) {
-				IDiffNode delta = diffTree.getDiff(resource);
+				IDiff delta = diffTree.getDiff(resource);
 				if (getDiffFilter().select(delta))
-					return new IDiffNode[] { delta };
+					return new IDiff[] { delta };
 			} else {
 				// Find all the deltas for the folder
 				ResourceTraversal[] traversals = getTraversals(o);
-				IDiffNode[] diffs = diffTree.getDiffs(traversals);
+				IDiff[] diffs = diffTree.getDiffs(traversals);
 				// Now filter the diffs by the mode of the configuration
 				List result = new ArrayList();
 				for (int i = 0; i < diffs.length; i++) {
-					IDiffNode node = diffs[i];
+					IDiff node = diffs[i];
 					if (isVisible(node) && getDiffFilter().select(node))
 						result.add(node);
 				}
-				return (IDiffNode[]) result.toArray(new IDiffNode[result.size()]);
+				return (IDiff[]) result.toArray(new IDiff[result.size()]);
 			}
 		}
-		return new IDiffNode[0];
+		return new IDiff[0];
 	}
 	
 	/**
@@ -82,7 +82,7 @@ public abstract class ResourceModelProviderOperation extends SynchronizationOper
 	 * @param node a diff node
 	 * @return whether the given node is visible in the page
 	 */
-	protected boolean isVisible(IDiffNode node) {
+	protected boolean isVisible(IDiff node) {
 		ISynchronizePageConfiguration configuration = getConfiguration();
 		if (configuration.getComparisonType() == ISynchronizePageConfiguration.THREE_WAY 
 				&& node instanceof IThreeWayDiff) {

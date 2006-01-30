@@ -59,5 +59,5 @@ public interface IDiffVisitor {
 	 *		be visited; <code>false</code> if they should be skipped.
 	 * @exception CoreException if the visit fails for some reason.
 	 */
-	public boolean visit(IDiffNode diff) throws CoreException;
+	public boolean visit(IDiff diff) throws CoreException;
 }

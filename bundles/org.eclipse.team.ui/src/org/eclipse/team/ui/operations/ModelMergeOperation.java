@@ -262,7 +262,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 
 	private boolean hasIncomingChanges(IDiffTree tree) {
 		return hasChangesMatching(tree, new FastDiffFilter() {
-			public boolean select(IDiffNode node) {
+			public boolean select(IDiff node) {
 				if (node instanceof IThreeWayDiff) {
 					IThreeWayDiff twd = (IThreeWayDiff) node;
 					int direction = twd.getDirection();
@@ -523,7 +523,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 		final CoreException found = new CoreException(Status.OK_STATUS);
 		try {
 			tree.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
-				public boolean visit(IDiffNode delta) throws CoreException {
+				public boolean visit(IDiff delta) throws CoreException {
 					if (filter.select(delta)) {
 						throw found;
 					}

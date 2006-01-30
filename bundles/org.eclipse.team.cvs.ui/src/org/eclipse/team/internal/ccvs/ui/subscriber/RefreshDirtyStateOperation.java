@@ -20,7 +20,7 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.synchronize.SyncInfoFilter.ContentComparisonSyncInfoFilter;
@@ -79,17 +79,17 @@ public class RefreshDirtyStateOperation extends CVSSubscriberOperation {
 		List diffs = new ArrayList();
 		for (int i = 0; i < infos.length; i++) {
 			SyncInfo info = infos[i];
-			IDiffNode node = SyncInfoToDiffConverter.getDeltaFor(info);
+			IDiff node = SyncInfoToDiffConverter.getDeltaFor(info);
 			diffs.add(node);
 		}
-		ensureBaseContentsCached(project, (IDiffNode[]) diffs.toArray(new IDiffNode[diffs.size()]), monitor);
+		ensureBaseContentsCached(project, (IDiff[]) diffs.toArray(new IDiff[diffs.size()]), monitor);
 	}
 
-	private void ensureBaseContentsCached(IProject project, IDiffNode[] nodes, IProgressMonitor monitor) throws CVSException {
+	private void ensureBaseContentsCached(IProject project, IDiff[] nodes, IProgressMonitor monitor) throws CVSException {
 		try {
 			ResourceDiffTree tree = new ResourceDiffTree();
 			for (int i = 0; i < nodes.length; i++) {
-				IDiffNode node = nodes[i];
+				IDiff node = nodes[i];
 				tree.add(node);
 			}
 			new CacheBaseContentsOperation(getPart(), new ResourceMapping[] { (ResourceMapping)project.getAdapter(ResourceMapping.class) },

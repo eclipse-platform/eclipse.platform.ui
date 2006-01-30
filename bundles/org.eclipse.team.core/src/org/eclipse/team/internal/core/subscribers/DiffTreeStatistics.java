@@ -12,7 +12,7 @@ package org.eclipse.team.internal.core.subscribers;
 
 import java.util.*;
 
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.synchronize.SyncInfo;
 
@@ -102,17 +102,17 @@ public class DiffTreeStatistics {
 		return out.toString();
 	}
 
-	public void add(IDiffNode delta) {
+	public void add(IDiff delta) {
 		int state = getState(delta);
 		add(state);
 	}
 
-	public void remove(IDiffNode delta) {
+	public void remove(IDiff delta) {
 		int state = getState(delta);
 		remove(state);
 	}
 
-	private int getState(IDiffNode delta) {
+	private int getState(IDiff delta) {
 		int state = delta.getKind();
 		if (delta instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) delta;

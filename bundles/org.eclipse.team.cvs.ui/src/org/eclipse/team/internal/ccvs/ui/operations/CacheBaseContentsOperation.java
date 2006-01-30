@@ -17,7 +17,7 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
@@ -81,9 +81,9 @@ public class CacheBaseContentsOperation extends CacheTreeContentsOperation {
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			IDiffNode[] nodes = getTree().getDiffs(resource, recurse ? IResource.DEPTH_INFINITE: IResource.DEPTH_ONE);
+			IDiff[] nodes = getTree().getDiffs(resource, recurse ? IResource.DEPTH_INFINITE: IResource.DEPTH_ONE);
 			for (int j = 0; j < nodes.length; j++) {
-				IDiffNode node = nodes[j];
+				IDiff node = nodes[j];
 				if (isFileWithLocalChange(node)) {
 					result.add(getTree().getResource(node));
 				}
@@ -92,7 +92,7 @@ public class CacheBaseContentsOperation extends CacheTreeContentsOperation {
 		return (IResource[]) result.toArray(new IResource[result.size()]);
 	}
 
-	private boolean isFileWithLocalChange(IDiffNode node) {
+	private boolean isFileWithLocalChange(IDiff node) {
 		if (node instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) node;
 			return (twd.getDirection() == IThreeWayDiff.OUTGOING || twd.getDirection() == IThreeWayDiff.CONFLICTING)

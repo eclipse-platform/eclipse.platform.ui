@@ -48,8 +48,8 @@ public class DiffChangeEvent implements IDiffChangeEvent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeEvent#getAdditions()
 	 */
-	public IDiffNode[] getAdditions() {
-		return (IDiffNode[]) addedResources.values().toArray(new IDiffNode[addedResources.size()]);
+	public IDiff[] getAdditions() {
+		return (IDiff[]) addedResources.values().toArray(new IDiff[addedResources.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -62,11 +62,11 @@ public class DiffChangeEvent implements IDiffChangeEvent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeEvent#getChanges()
 	 */
-	public IDiffNode[] getChanges() {
-		return (IDiffNode[]) changedResources.values().toArray(new IDiffNode[changedResources.size()]);
+	public IDiff[] getChanges() {
+		return (IDiff[]) changedResources.values().toArray(new IDiff[changedResources.size()]);
 	}
 	
-	public void added(IDiffNode delta) {
+	public void added(IDiff delta) {
 		if (removedResources.contains(delta.getPath())) {
 			// A removal followed by an addition is treated as a change
 			removedResources.remove(delta.getPath());
@@ -76,7 +76,7 @@ public class DiffChangeEvent implements IDiffChangeEvent {
 		}
 	}
 	
-	public void removed(IPath path, IDiffNode delta) {
+	public void removed(IPath path, IDiff delta) {
 		if (changedResources.containsKey(path)) {
 			// No use in reporting the change since it has subsequently been removed
 			changedResources.remove(path);
@@ -88,7 +88,7 @@ public class DiffChangeEvent implements IDiffChangeEvent {
 		removedResources.add(path);
 	}
 	
-	public void changed(IDiffNode delta) {
+	public void changed(IDiff delta) {
 		if (addedResources.containsKey(delta.getPath())) {
 			// An addition followed by a change is an addition
 			addedResources.put(delta.getPath(), delta);

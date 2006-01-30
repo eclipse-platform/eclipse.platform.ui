@@ -89,7 +89,7 @@ public interface ISynchronizationContext {
 	IResourceMappingScope getScope();
 
 	/**
-	 * Return a tree that contains {@link IDiffNode} entries for resources that
+	 * Return a tree that contains {@link IDiff} entries for resources that
 	 * are out-of-sync. The tree will contain diffs for any out-of-sync
 	 * resources that are within the scope of this context. The tree may include
 	 * diffs for additional resources, which should be ignored by the client.
@@ -106,14 +106,14 @@ public interface ISynchronizationContext {
 	 * @return a tree that contains an entry for any
 	 *         resources that are out-of-sync.
 	 * @see IResourceDiffTree#getDiffs(ResourceTraversal[])
-	 * @see IResourceDiffTree#getResource(IDiffNode)
+	 * @see IResourceDiffTree#getResource(IDiff)
 	 */
 	public IResourceDiffTree getDiffTree();
 
 	/**
 	 * Return the synchronization type. A type of <code>TWO_WAY</code>
 	 * indicates that the synchronization information associated with the
-	 * context will also be two-way {@link IDiffNode} instances (i.e. there is
+	 * context will also be two-way {@link IDiff} instances (i.e. there is
 	 * only a remote but no base involved in the comparison used to determine
 	 * the synchronization state of resources. A type of <code>THREE_WAY</code>
 	 * indicates that the synchronization information will be three-way
@@ -121,7 +121,7 @@ public interface ISynchronizationContext {
 	 * 
 	 * @return the type of synchronization information available in the context
 	 * 
-	 * @see IDiffNode
+	 * @see IDiff
 	 * @see IThreeWayDiff
 	 */
 	public int getType();

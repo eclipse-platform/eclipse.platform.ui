@@ -18,7 +18,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
@@ -47,26 +47,26 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 
 	private static class ResourceDiffCompareInput extends DiffNode implements IAdaptable, IPrepareCompareInputAdapter {
 
-		private final IDiffNode node;
+		private final IDiff node;
 
-		public ResourceDiffCompareInput(IDiffNode node) {
+		public ResourceDiffCompareInput(IDiff node) {
 			super(getCompareKind(node), getAncestor(node), getLeftContributor(node), getRightContributor(node));
 			this.node = node;
 		}
 		
-		private static int getCompareKind(IDiffNode node) {
+		private static int getCompareKind(IDiff node) {
 			switch (node.getKind()) {
-			case IDiffNode.CHANGE:
+			case IDiff.CHANGE:
 				return Differencer.CHANGE;
-			case IDiffNode.ADD:
+			case IDiff.ADD:
 				return Differencer.ADDITION;
-			case IDiffNode.REMOVE:
+			case IDiff.REMOVE:
 				return Differencer.DELETION;
 			}
 			return 0;
 		}
 		
-		private static ITypedElement getRightContributor(IDiffNode node) {
+		private static ITypedElement getRightContributor(IDiff node) {
 			// For a resource diff, use the after state
 			if (node instanceof IResourceDiff) {
 				IResourceDiff rd = (IResourceDiff) node;
@@ -86,7 +86,7 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 			return null;
 		}
 
-		private static ITypedElement getLeftContributor(final IDiffNode node) {
+		private static ITypedElement getLeftContributor(final IDiff node) {
 			// The left contributor is always the local resource
 			final IResource resource = ResourceDiffTree.getResourceFor(node);
 			return new LocalResourceTypedElement(resource) {
@@ -97,17 +97,17 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 					return super.isEditable();
 				}
 
-				private boolean isOutgoingDeletion(IDiffNode node) {
+				private boolean isOutgoingDeletion(IDiff node) {
 					if (node instanceof IThreeWayDiff) {
 						IThreeWayDiff twd = (IThreeWayDiff) node;
-						return twd.getKind() == IDiffNode.REMOVE && twd.getDirection() == IThreeWayDiff.OUTGOING;
+						return twd.getKind() == IDiff.REMOVE && twd.getDirection() == IThreeWayDiff.OUTGOING;
 					}
 					return false;
 				}
 			};
 		}
 
-		private static ITypedElement getAncestor(IDiffNode node) {
+		private static ITypedElement getAncestor(IDiff node) {
 			if (node instanceof IThreeWayDiff) {
 				IThreeWayDiff twd = (IThreeWayDiff) node;
 				IResourceDiff diff = (IResourceDiff)twd.getLocalChange();
@@ -152,7 +152,7 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 		if (o instanceof IResource) {
 			IResource resource = (IResource) o;
 			if (resource.getType() == IResource.FILE) {
-				IDiffNode node = context.getDiffTree().getDiff(resource);
+				IDiff node = context.getDiffTree().getDiff(resource);
 				if (node != null)
 					return new ResourceDiffCompareInput(node);
 			}

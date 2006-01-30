@@ -90,7 +90,7 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 	 */
 	protected FastDiffFilter getDiffFilter() {
 		return new FastDiffFilter() {
-			public boolean select(IDiffNode node) {
+			public boolean select(IDiff node) {
 				if (node instanceof IThreeWayDiff) {
 					IThreeWayDiff twd = (IThreeWayDiff) node;
 					if (twd.getDirection() == IThreeWayDiff.CONFLICTING || twd.getDirection() == IThreeWayDiff.INCOMING) {

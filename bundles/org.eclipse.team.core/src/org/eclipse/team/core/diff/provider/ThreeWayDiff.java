@@ -113,7 +113,7 @@ public class ThreeWayDiff extends Diff implements IThreeWayDiff {
 	public String toDiffString() {
 		int kind = getKind();
 		String label = ""; //$NON-NLS-1$
-		if(kind==IDiffNode.NO_CHANGE) {
+		if(kind==IDiff.NO_CHANGE) {
 			label = super.toDiffString(); 
 		} else {
 			switch(getDirection()) {

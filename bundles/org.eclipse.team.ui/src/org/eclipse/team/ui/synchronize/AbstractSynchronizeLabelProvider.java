@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
@@ -82,7 +82,7 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	 * @see CompareConfiguration#getImage(Image, int)
 	 */
 	protected Image decorateImage(Image base, Object element) {
-		IDiffNode node = getDiff(element);
+		IDiff node = getDiff(element);
 		Image decoratedImage;
 		decoratedImage = getCompareImage(base, node);				
 		// The reason we still overlay the compare image is to
@@ -102,17 +102,17 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 		return base;
 	}
 
-	private Image getCompareImage(Image base, IDiffNode node) {
+	private Image getCompareImage(Image base, IDiff node) {
 		int compareKind = 0;
 		if (node != null) {
 			switch (node.getKind()) {
-			case IDiffNode.ADD:
+			case IDiff.ADD:
 				compareKind = Differencer.ADDITION;
 				break;
-			case IDiffNode.REMOVE:
+			case IDiff.REMOVE:
 				compareKind = Differencer.DELETION;
 				break;
-			case IDiffNode.CHANGE:
+			case IDiff.CHANGE:
 				compareKind = Differencer.CHANGE;
 				break;
 			}
@@ -174,8 +174,8 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	 * @see #getDiff(Object)
 	 */
 	protected String decorateText(String base, Object element) {
-		IDiffNode node = getDiff(element);
-		if (node != null && node.getKind() != IDiffNode.NO_CHANGE) {			
+		IDiff node = getDiff(element);
+		if (node != null && node.getKind() != IDiff.NO_CHANGE) {			
 			String syncKindString = node.toDiffString();
 			return NLS.bind(TeamUIMessages.AbstractSynchronizationLabelProvider_0, new String[] { base, syncKindString }); 
 		}
@@ -254,7 +254,7 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	 * @param element the element being tested
 	 * @return the sync kind of the given element
 	 */
-	protected IDiffNode getDiff(Object element) {
+	protected IDiff getDiff(Object element) {
 		return null;
 	}
 	
@@ -369,7 +369,7 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	}
 
 	private boolean isConflicting(Object element) {
-		IDiffNode node = getDiff(element);
+		IDiff node = getDiff(element);
 		if (node != null) {
 			if (node instanceof IThreeWayDiff) {
 				IThreeWayDiff twd = (IThreeWayDiff) node;

@@ -17,7 +17,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.RemoteResourceMappingContext;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.diff.IDiffNode;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
@@ -60,24 +60,24 @@ public final class SynchronizationResourceMappingContext extends
 	 * @see org.eclipse.core.resources.mapping.RemoteResourceMappingContext#hasRemoteChange(org.eclipse.core.resources.IResource, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean hasRemoteChange(IResource resource, IProgressMonitor monitor) throws CoreException {
-		IDiffNode diff = context.getDiffTree().getDiff(resource);
+		IDiff diff = context.getDiffTree().getDiff(resource);
 		if (diff instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) diff;
-			IDiffNode remote = twd.getRemoteChange();
-			return remote != null && remote.getKind() != IDiffNode.NO_CHANGE;
+			IDiff remote = twd.getRemoteChange();
+			return remote != null && remote.getKind() != IDiff.NO_CHANGE;
 		}
-		return diff != null && diff.getKind() != IDiffNode.NO_CHANGE;
+		return diff != null && diff.getKind() != IDiff.NO_CHANGE;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.RemoteResourceMappingContext#hasLocalChange(org.eclipse.core.resources.IResource, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean hasLocalChange(IResource resource, IProgressMonitor monitor) throws CoreException {
-		IDiffNode diff = context.getDiffTree().getDiff(resource);
+		IDiff diff = context.getDiffTree().getDiff(resource);
 		if (diff instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) diff;
-			IDiffNode local = twd.getLocalChange();
-			return local != null && local.getKind() != IDiffNode.NO_CHANGE;
+			IDiff local = twd.getLocalChange();
+			return local != null && local.getKind() != IDiff.NO_CHANGE;
 		}
 		return false;
 	}
@@ -86,10 +86,10 @@ public final class SynchronizationResourceMappingContext extends
 	 * @see org.eclipse.core.resources.mapping.RemoteResourceMappingContext#fetchRemoteContents(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStorage fetchRemoteContents(IFile file, IProgressMonitor monitor) throws CoreException {
-		IDiffNode diff = context.getDiffTree().getDiff(file);
+		IDiff diff = context.getDiffTree().getDiff(file);
 		if (diff instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) diff;
-			IDiffNode remote = twd.getRemoteChange();
+			IDiff remote = twd.getRemoteChange();
 			if (remote instanceof IResourceDiff) {
 				IResourceDiff rd = (IResourceDiff) remote;
 				return rd.getAfterState().getStorage(monitor);
@@ -105,15 +105,15 @@ public final class SynchronizationResourceMappingContext extends
 	 * @see org.eclipse.core.resources.mapping.RemoteResourceMappingContext#fetchBaseContents(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStorage fetchBaseContents(IFile file, IProgressMonitor monitor) throws CoreException {
-		IDiffNode diff = context.getDiffTree().getDiff(file);
+		IDiff diff = context.getDiffTree().getDiff(file);
 		if (diff instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) diff;
-			IDiffNode remote = twd.getRemoteChange();
+			IDiff remote = twd.getRemoteChange();
 			if (remote instanceof IResourceDiff) {
 				IResourceDiff rd = (IResourceDiff) remote;
 				return rd.getBeforeState().getStorage(monitor);
 			}
-			IDiffNode local = twd.getLocalChange();
+			IDiff local = twd.getLocalChange();
 			if (local instanceof IResourceDiff) {
 				IResourceDiff rd = (IResourceDiff) local;
 				return rd.getBeforeState().getStorage(monitor);
@@ -132,7 +132,7 @@ public final class SynchronizationResourceMappingContext extends
 		IPath[] childPaths = context.getDiffTree().getChildren(container.getFullPath());
 		for (int i = 0; i < childPaths.length; i++) {
 			IPath path = childPaths[i];
-			IDiffNode delta = context.getDiffTree().getDiff(path);
+			IDiff delta = context.getDiffTree().getDiff(path);
 			IResource child;
 			if (delta == null) {
 				// the path has descendent deltas so it must be a folder

@@ -495,11 +495,11 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 				// TODO: need to do this asynchronously
 				traversals = getTraversals(context, object, null);
 			}
-			IDiffNode[] deltas = context.getDiffTree().getDiffs(traversals);
+			IDiff[] deltas = context.getDiffTree().getDiffs(traversals);
 			if (deltas.length > 0) {
 				boolean include = false;
 				for (int j = 0; j < deltas.length; j++) {
-					IDiffNode delta = deltas[j];
+					IDiff delta = deltas[j];
 					if (delta instanceof IThreeWayDiff) {
 						IThreeWayDiff twd = (IThreeWayDiff) delta;
 						if (includeDirection(twd.getDirection())) {

@@ -15,7 +15,7 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.internal.core.Messages;
 
 /**
- * Abstract implementation of {@link IDiffNode} that can be subclassed by
+ * Abstract implementation of {@link IDiff} that can be subclassed by
  * clients.
  * 
  * <p>
@@ -29,7 +29,7 @@ import org.eclipse.team.internal.core.Messages;
  * @see IThreeWayDiff
  * @since 3.2
  */
-public abstract class Diff implements IDiffNode {
+public abstract class Diff implements IDiff {
 
 	/**
 	 * Constant (bit mask) that defines the area of the status that is reserved
@@ -91,13 +91,13 @@ public abstract class Diff implements IDiffNode {
 	public String toDiffString() {
 		int kind = getKind();
 		String label = ""; //$NON-NLS-1$
-		if(kind==IDiffNode.NO_CHANGE) {
+		if(kind==IDiff.NO_CHANGE) {
 			label = Messages.RemoteSyncElement_insync; 
 		} else {
 			switch(kind) {
-				case IDiffNode.CHANGE: label = Messages.RemoteSyncElement_change ; break;
-				case IDiffNode.ADD: label = Messages.RemoteSyncElement_addition; break;
-				case IDiffNode.REMOVE: label = Messages.RemoteSyncElement_deletion; break; 
+				case IDiff.CHANGE: label = Messages.RemoteSyncElement_change ; break;
+				case IDiff.ADD: label = Messages.RemoteSyncElement_addition; break;
+				case IDiff.REMOVE: label = Messages.RemoteSyncElement_deletion; break; 
 			}
 		}
 		return label; 
