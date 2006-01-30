@@ -14,6 +14,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.intro.config.IntroConfigurer;
@@ -29,6 +31,8 @@ import org.osgi.framework.Bundle;
 
 public class SharedIntroConfigurer extends IntroConfigurer {
 
+	private ArrayList introData;
+
 	public SharedIntroConfigurer() {
 		initialize();
 	}
@@ -38,22 +42,28 @@ public class SharedIntroConfigurer extends IntroConfigurer {
 		if (product != null) {
 			String value = product.getProperty(variableName);
 			if (value != null) {
-				if (value.startsWith("bundle:")) {
-					try {
-						Bundle bundle = product.getDefiningBundle();
-						String path = value.substring(7);
-						URL url = bundle.getEntry(path);
-						URL localURL = Platform.asLocalURL(url);
-						return localURL.toString();
-					} catch (IOException e) {
-						// just use the value as-is
-						return value;
-					}
-				}
+				value = resolveVariable(product.getDefiningBundle(), value);
 			}
 			return value;
 		}
 		return null;
+	}
+
+	private String resolveVariable(Bundle bundle, String value) {
+		if (value != null) {
+			if (value.startsWith("bundle:")) {
+				try {
+					String path = value.substring(7);
+					URL url = bundle.getEntry(path);
+					URL localURL = Platform.asLocalURL(url);
+					return localURL.toString();
+				} catch (IOException e) {
+					// just use the value as-is
+					return value;
+				}
+			}
+		}
+		return value;
 	}
 
 	public IntroElement[] getGroupChildren(String pageId, String groupId) {
@@ -128,36 +138,22 @@ public class SharedIntroConfigurer extends IntroConfigurer {
 					"Web Resources", "Read more on the Web");
 		return null;
 	}
-	
+
 	private IntroElement createNavLink(String id, String pageId) {
 		if (id.equals("overview"))
-			return createNavLink("Overview",
-					"http://org.eclipse.ui.intro/showPage?id="+id,
-					id, "left");
+			return createNavLink("Overview", "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");
 		if (id.equals("firststeps"))
-			return createNavLink("First Steps",
-					"http://org.eclipse.ui.intro/showPage?id="+id,
-					id, "left");
+			return createNavLink("First Steps", "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");
 		if (id.equals("tutorials"))
-			return createNavLink("Tutorials",
-					"http://org.eclipse.ui.intro/showPage?id="+id,
-					id, "left");
+			return createNavLink("Tutorials", "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");
 		if (id.equals("samples"))
-			return createNavLink("Samples",
-					"http://org.eclipse.ui.intro/showPage?id="+id,
-					id, "left");
+			return createNavLink("Samples", "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");
 		if (id.equals("whatsnew"))
-			return createNavLink("What's New",
-					"http://org.eclipse.ui.intro/showPage?id="+id,
-					id, "left");
+			return createNavLink("What's New", "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");
 		if (id.equals("migrate"))
-			return createNavLink("Migrate",
-					"http://org.eclipse.ui.intro/showPage?id="+id,
-					id, "left");
+			return createNavLink("Migrate", "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");
 		if (id.equals("webresources"))
-			return createNavLink("Web Resources",
-					"http://org.eclipse.ui.intro/showPage?id="+id,
-					id, "left");
+			return createNavLink("Web Resources", "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");
 		return null;
 	}
 
@@ -189,6 +185,38 @@ public class SharedIntroConfigurer extends IntroConfigurer {
 	}
 
 	private void initialize() {
-		// load the data
+		// add intro data for this product first
+		String dataFile = getVariable("introData");
+		String pid = Platform.getProduct().getId();
+		if (dataFile != null)
+			introData.add(new IntroData(pid, dataFile, true));
+		IConfigurationElement[] products = Platform.getExtensionRegistry().getConfigurationElementsFor(
+				"org.eclipse.core.runtime.products");
+		for (int i = 0; i < products.length; i++) {
+			IConfigurationElement product = products[i];
+			IExtension extension = product.getDeclaringExtension();
+			String uid = extension.getUniqueIdentifier();
+			// skip this product
+			if (pid.equals(uid))
+				continue;
+			addIntroDataFor(uid, product);
+		}
+	}
+
+	private void addIntroDataFor(String pid, IConfigurationElement product) {
+		IConfigurationElement[] children = product.getChildren("property");
+		for (int i = 0; i < children.length; i++) {
+			IConfigurationElement child = children[i];
+			String name = child.getAttribute("name");
+			if (name != null && name.equals("introData")) {
+				String value = child.getAttribute("value");
+				String bid = child.getDeclaringExtension().getNamespace();
+				Bundle bundle = Platform.getBundle(bid);
+				if (bundle != null) {
+					String dataFile = resolveVariable(bundle, value);
+					introData.add(new IntroData(pid, dataFile, false));
+				}
+			}
+		}
 	}
 }

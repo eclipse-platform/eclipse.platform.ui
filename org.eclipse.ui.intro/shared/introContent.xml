@@ -34,7 +34,7 @@
         </group>
     </page>    
     
-    <page style="css/overview/overview.css" alt-style="css/overview/swt.properties" id="overview" style-id="page">
+    <page id="overview" style="css/overview/overview.css" alt-style="css/overview/swt.properties" style-id="page">
         <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/ov_banner.jpg">
             <group id="page-links" dynamic="true">
             </group>
@@ -51,11 +51,12 @@
             <text style-id="page-title" id="page-title" filteredFrom="html">OVERVIEW</text>
             <text style-id="page-description" id="page-description">Eclipse is a kind of universal tool platform - an open extensible IDE for anything and nothing in particular. It provides a feature-rich development environment that allows the developer to efficiently create tools that integrate seamlessly into the Eclipse Platform.</text>
             <group id="overview-links">
-               <anchor id="linksAnchor"/>
+				<group id="left"/>
+				<group id="right"/>
             </group>
         </group>
     </page>
-	<page style="css/tutorials/tutorials.css" alt-style="css/tutorials/swt.properties" id="tutorials" style-id="page">
+	<page id="tutorials" style="css/tutorials/tutorials.css" alt-style="css/tutorials/swt.properties" style-id="page">
         <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/tu_banner.jpg">
             <group id="page-links" dynamic="true">
             </group>
@@ -72,11 +73,12 @@
             <text style-id="page-title" id="page-title" filteredFrom="html">TUTORIALS</text>
             <text style-id="page-description" id="page-description">Learn how to be productive using Eclipse by completing end-to-end tutorials that will guide you along the way.</text>
             <group id="tutorials-links">
-               <anchor id="linksAnchor"/>
-            </group>
+				<group id="left"/>
+				<group id="right"/>
+			</group>
         </group>
     </page>
-	 <page style="css/samples/samples.css" alt-style="css/samples/swt.properties" id="samples" style-id="page">
+	 <page id="samples" style="css/samples/samples.css" alt-style="css/samples/swt.properties" style-id="page">
         <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/sa_banner.jpg">
             <group id="page-links" dynamic="true">
             </group>
@@ -95,7 +97,7 @@
         </group>
     </page>
 
-    <page style="css/whatsnew/whatsnew.css" alt-style="css/whatsnew/swt.properties" id="whatsnew" style-id="page">
+    <page id="whatsnew" style="css/whatsnew/whatsnew.css" alt-style="css/whatsnew/swt.properties" style-id="page">
         <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/wn_banner.jpg">
             <group id="page-links" dynamic="true">
             </group>
@@ -113,7 +115,7 @@
         </group>
     </page>
     
-    <page style="css/firststeps/firststeps.css" alt-style="css/firststeps/swt.properties" id="firststeps" style-id="page">
+    <page id="firststeps" style="css/firststeps/firststeps.css" alt-style="css/firststeps/swt.properties" style-id="page">
         <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/fs_banner.jpg">
             <group id="page-links" dynamic="true">
             </group>
@@ -131,7 +133,7 @@
         </group>
     </page>
     
-    <page style="css/webresources/webresources.css" alt-style="css/webresources/swt.properties" id="webresources" style-id="page">
+    <page id="webresources" style="css/webresources/webresources.css" alt-style="css/webresources/swt.properties" style-id="page">
         <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/wr_banner.jpg">
             <group id="page-links" dynamic="true">
             </group>
@@ -149,7 +151,7 @@
         </group>
     </page>
     
-    <page style="css/migrate/migrate.css" alt-style="css/migrate/swt.properties" id="migrate" style-id="page">
+    <page id="migrate" style="css/migrate/migrate.css" alt-style="css/migrate/swt.properties" style-id="page">
         <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/mi_banner.jpg">
             <group id="page-links" dynamic="true">
             </group>

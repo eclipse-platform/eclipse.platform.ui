@@ -60,6 +60,13 @@
          </presentation>
       </config>
    </extension>
+   <extension
+         id="introData"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run class="org.eclipse.ui.internal.intro.shared.IntroDataApplication"/>
+      </application>
+   </extension>
    
  
      
