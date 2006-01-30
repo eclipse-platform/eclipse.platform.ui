@@ -10,31 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.actions;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
-import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
-import org.eclipse.ltk.internal.ui.refactoring.history.ExportRefactoringHistoryDialog;
-import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryDialogConfiguration;
-import org.eclipse.ltk.internal.ui.refactoring.scripting.ScriptingMessages;
+import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
+import org.eclipse.ltk.internal.ui.refactoring.scripting.CreateRefactoringScriptWizard;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.WizardDialog;
 
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.IProgressService;
 
 /**
  * Action to create a refactoring script from the refactoring history.
@@ -42,6 +28,12 @@ import org.eclipse.ui.progress.IProgressService;
  * @since 3.2
  */
 public final class CreateRefactoringScriptAction implements IWorkbenchWindowActionDelegate {
+
+	/** The wizard height */
+	private static final int SIZING_WIZARD_HEIGHT= 570;
+
+	/** The wizard width */
+	private static final int SIZING_WIZARD_WIDTH= 490;
 
 	/** The workbench window, or <code>null</code> */
 	private IWorkbenchWindow fWindow= null;
@@ -64,38 +56,13 @@ public final class CreateRefactoringScriptAction implements IWorkbenchWindowActi
 	 * {@inheritDoc}
 	 */
 	public void run(final IAction action) {
-		final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
-		try {
-			service.connect();
-			final IProgressService progress= PlatformUI.getWorkbench().getProgressService();
-			IRunnableContext context= fWindow;
-			if (context == null)
-				context= progress;
-			final RefactoringHistory[] history= { null};
-			progress.runInUI(context, new IRunnableWithProgress() {
-
-				public final void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					history[0]= service.getWorkspaceHistory(monitor);
-				}
-			}, ResourcesPlugin.getWorkspace().getRoot());
-			final ExportRefactoringHistoryDialog dialog= new ExportRefactoringHistoryDialog(fWindow.getShell(), new RefactoringHistoryDialogConfiguration(null, true, true) {
-
-				public final String getButtonLabel() {
-					return IDialogConstants.OK_LABEL;
-				}
-
-				public final String getDialogTitle() {
-					return ScriptingMessages.CreateRefactoringScriptAction_dialog_title;
-				}
-
-			}, history[0], IDialogConstants.OK_ID);
+		if (fWindow != null) {
+			final IWizard wizard= new CreateRefactoringScriptWizard();
+			final WizardDialog dialog= new WizardDialog(fWindow.getShell(), wizard);
+			dialog.create();
+			dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IRefactoringHelpContextIds.REFACTORING_CREATE_SCRIPT_PAGE);
 			dialog.open();
-		} catch (InvocationTargetException exception) {
-			RefactoringUIPlugin.log(exception);
-		} catch (InterruptedException exception) {
-			// Do nothing
-		} finally {
-			service.disconnect();
 		}
 	}
 

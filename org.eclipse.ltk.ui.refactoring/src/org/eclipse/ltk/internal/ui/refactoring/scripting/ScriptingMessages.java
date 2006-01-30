@@ -12,7 +12,7 @@ package org.eclipse.ltk.internal.ui.refactoring.scripting;
 
 import org.eclipse.osgi.util.NLS;
 
-public class ScriptingMessages extends NLS {
+public final class ScriptingMessages extends NLS {
 
 	public static String ApplyRefactoringScriptWizard_caption;
 
@@ -50,7 +50,17 @@ public class ScriptingMessages extends NLS {
 
 	private static final String BUNDLE_NAME= "org.eclipse.ltk.internal.ui.refactoring.scripting.ScriptingMessages"; //$NON-NLS-1$
 
-	public static String CreateRefactoringScriptAction_dialog_title;
+	public static String CreateRefactoringScriptWizard_caption;
+
+	public static String CreateRefactoringScriptWizard_description;
+
+	public static String CreateRefactoringScriptWizard_overwrite_query;
+
+	public static String CreateRefactoringScriptWizard_title;
+
+	public static String CreateRefactoringScriptWizardPage_browse_caption;
+
+	public static String CreateRefactoringScriptWizardPage_script_extension;
 
 	static {
 		// initialize resource bundle
