@@ -271,6 +271,14 @@ public abstract class MultiPageEditorPart extends EditorPart {
 		// done
 		if (getActivePage() == -1) {
 			getTabFolder().setSelection(0);
+			IEditorPart part = getEditor(0);
+			if (part!=null) {
+				final IServiceLocator serviceLocator = part.getEditorSite();
+				if (serviceLocator instanceof INestable) {
+					activeServiceLocator = (INestable) serviceLocator;
+					activeServiceLocator.activate();
+				}
+			}
 		}
 	}
 
@@ -553,6 +561,12 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 *            the index of the activated page
 	 */
 	protected void pageChange(int newPageIndex) {
+		// Deactivate the nested services from the last active service locator.
+		if (activeServiceLocator != null) {
+			activeServiceLocator.deactivate();
+			activeServiceLocator = null;
+		}
+
 		setFocus();
 		IEditorPart activeEditor = getEditor(newPageIndex);
 		IEditorActionBarContributor contributor = getEditorSite()
@@ -563,6 +577,14 @@ public abstract class MultiPageEditorPart extends EditorPart {
 					.setActivePage(activeEditor);
 		}
 		if (activeEditor != null) {
+
+			// Activate the services for the new service locator.
+			final IServiceLocator serviceLocator = activeEditor.getEditorSite();
+			if (serviceLocator instanceof INestable) {
+				activeServiceLocator = (INestable) serviceLocator;
+				activeServiceLocator.activate();
+			}
+
 			ISelectionProvider selectionProvider = activeEditor.getSite()
 					.getSelectionProvider();
 			if (selectionProvider != null) {
@@ -679,11 +701,6 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 *            the index of the page
 	 */
 	private void setFocus(int pageIndex) {
-		// Deactivate the nested services from the last active service locator.
-		if (activeServiceLocator != null) {
-			activeServiceLocator.deactivate();
-			activeServiceLocator = null;
-		}
 
 		if (pageIndex < 0 || pageIndex >= getPageCount()) {
 			// There is no selected page, so deactivate the active service.
@@ -693,13 +710,6 @@ public abstract class MultiPageEditorPart extends EditorPart {
 		final IEditorPart editor = getEditor(pageIndex);
 		if (editor != null) {
 			editor.setFocus();
-
-			// Activate the services for the new service locator.
-			final IServiceLocator serviceLocator = editor.getEditorSite();
-			if (serviceLocator instanceof INestable) {
-				activeServiceLocator = (INestable) serviceLocator;
-				activeServiceLocator.activate();
-			}
 
 		} else {
 
