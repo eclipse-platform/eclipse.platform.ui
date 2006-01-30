@@ -76,7 +76,7 @@ public final class ProxyKeyBindingService implements IKeyBindingService {
 			ActionHandler handler = new ActionHandler(action);
 			IHandlerActivation activation = fHandlerService.activateHandler(
 					commandId, handler);
-			fActiveHandlers.put(action, activation);
+			fActiveHandlers.put(commandId, activation);
 		}
 	}
 
@@ -100,9 +100,10 @@ public final class ProxyKeyBindingService implements IKeyBindingService {
 		String commandId = action.getActionDefinitionId();
 		if (commandId != null) {
 			IHandlerActivation activation = (IHandlerActivation) fActiveHandlers
-					.remove(action);
+					.remove(commandId);
 			if (activation != null) {
 				fHandlerService.deactivateHandler(activation);
+				activation.getHandler().dispose();
 			}
 		}
 	}
