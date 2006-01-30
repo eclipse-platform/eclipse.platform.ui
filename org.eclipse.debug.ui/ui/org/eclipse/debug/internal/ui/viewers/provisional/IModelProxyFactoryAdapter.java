@@ -22,7 +22,7 @@ package org.eclipse.debug.internal.ui.viewers.provisional;
  * @see IModelDelta
  * @since 3.2
  */
-public interface IModelProxyFactory {
+public interface IModelProxyFactoryAdapter {
 	/**
 	 * Creates and returns a model proxy for the given element in the specified
 	 * context or <code>null</code> if none.

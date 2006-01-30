@@ -27,7 +27,7 @@ package org.eclipse.debug.internal.ui.viewers.provisional;
  * must subclass {@link AbstractModelProxy}.
  * </p>
  * @see IModelDelta
- * @see IModelProxyFactory
+ * @see IModelProxyFactoryAdapter
  * @see IModelChangedListener
  * @since 3.2
  */

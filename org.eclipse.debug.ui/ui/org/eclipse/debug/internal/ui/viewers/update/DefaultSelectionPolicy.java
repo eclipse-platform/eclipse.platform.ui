@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.viewers.update;
 
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicy;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicyAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelection;
@@ -22,7 +22,7 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * @since 3.2
  */
-public class DefaultSelectionPolicy implements IModelSelectionPolicy {
+public class DefaultSelectionPolicy implements IModelSelectionPolicyAdapter {
 	
 	private IDebugElement fDebugElement;
 	

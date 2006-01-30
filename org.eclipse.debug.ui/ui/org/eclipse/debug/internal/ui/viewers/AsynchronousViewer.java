@@ -26,8 +26,8 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMon
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactory;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicy;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicyAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultUpdatePolicy;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -277,13 +277,13 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 	 * @param element element to retrieve adapters for
 	 * @return model proxy factory adapter or <code>null</code>
 	 */
-	protected IModelProxyFactory getModelProxyFactoryAdapter(Object element) {
-		IModelProxyFactory adapter = null;
-		if (element instanceof IModelProxyFactory) {
-			adapter = (IModelProxyFactory) element;
+	protected IModelProxyFactoryAdapter getModelProxyFactoryAdapter(Object element) {
+		IModelProxyFactoryAdapter adapter = null;
+		if (element instanceof IModelProxyFactoryAdapter) {
+			adapter = (IModelProxyFactoryAdapter) element;
 		} else if (element instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) element;
-			adapter = (IModelProxyFactory) adaptable.getAdapter(IModelProxyFactory.class);
+			adapter = (IModelProxyFactoryAdapter) adaptable.getAdapter(IModelProxyFactoryAdapter.class);
 		}
 		return adapter;
 	}
@@ -456,7 +456,7 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 	public void installModelProxy(Object element) {
 		synchronized (fModelProxies) {
 			if (!fModelProxies.containsKey(element)) {
-				IModelProxyFactory modelProxyFactory = getModelProxyFactoryAdapter(element);
+				IModelProxyFactoryAdapter modelProxyFactory = getModelProxyFactoryAdapter(element);
 				if (modelProxyFactory != null) {
 					IModelProxy proxy = modelProxyFactory.createModelProxy(element, getPresentationContext());
 					if (proxy != null) {
@@ -739,7 +739,7 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 	 * @return
 	 */
 	protected boolean overrideSelection(ISelection current, ISelection candidate) {
-		IModelSelectionPolicy selectionPolicy = getSelectionPolicy(current);
+		IModelSelectionPolicyAdapter selectionPolicy = getSelectionPolicy(current);
 		if (selectionPolicy == null) {
 			return true;
 		}
@@ -794,13 +794,13 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 	 * @param selection or <code>null</code>
 	 * @return selection policy or <code>null</code>
 	 */
-	protected IModelSelectionPolicy getSelectionPolicy(ISelection selection) {
+	protected IModelSelectionPolicyAdapter getSelectionPolicy(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
 			Object element = ss.getFirstElement();
 			if (element instanceof IAdaptable) {
 				IAdaptable adaptable = (IAdaptable) element;
-				return (IModelSelectionPolicy) adaptable.getAdapter(IModelSelectionPolicy.class);
+				return (IModelSelectionPolicyAdapter) adaptable.getAdapter(IModelSelectionPolicyAdapter.class);
 			}
 		}
 		return null;

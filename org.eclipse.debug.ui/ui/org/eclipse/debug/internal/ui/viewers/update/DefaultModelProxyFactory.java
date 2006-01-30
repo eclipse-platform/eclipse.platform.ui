@@ -19,12 +19,12 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactory;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IWorkbenchPart;
 
-public class DefaultModelProxyFactory implements IModelProxyFactory {
+public class DefaultModelProxyFactory implements IModelProxyFactoryAdapter {
 
 	public IModelProxy createModelProxy(Object element, IPresentationContext context) {
 		IWorkbenchPart part = context.getPart();
