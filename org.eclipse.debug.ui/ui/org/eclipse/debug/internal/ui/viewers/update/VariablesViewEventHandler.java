@@ -14,7 +14,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.internal.ui.viewers.AbstractModelProxy;
-import org.eclipse.debug.internal.ui.viewers.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 
 /**
  *

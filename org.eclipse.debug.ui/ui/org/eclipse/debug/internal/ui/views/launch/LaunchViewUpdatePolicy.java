@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.viewers.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultUpdatePolicy;
 
 /**

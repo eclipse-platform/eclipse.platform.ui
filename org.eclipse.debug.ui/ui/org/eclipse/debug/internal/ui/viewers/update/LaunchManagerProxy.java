@@ -15,8 +15,8 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.viewers.AbstractModelProxy;
-import org.eclipse.debug.internal.ui.viewers.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 
 public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesListener2 {
 

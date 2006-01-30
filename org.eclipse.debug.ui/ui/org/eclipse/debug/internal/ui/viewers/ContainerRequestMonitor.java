@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers;
 
+import org.eclipse.debug.internal.ui.viewers.provisional.IContainerRequestMonitor;
 import org.eclipse.swt.widgets.Widget;
 
 /**

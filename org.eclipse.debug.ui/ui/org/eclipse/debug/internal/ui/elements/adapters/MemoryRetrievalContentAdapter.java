@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,8 @@ package org.eclipse.debug.internal.ui.elements.adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousContentAdapter;
-import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class MemoryRetrievalContentAdapter extends AsynchronousContentAdapter{

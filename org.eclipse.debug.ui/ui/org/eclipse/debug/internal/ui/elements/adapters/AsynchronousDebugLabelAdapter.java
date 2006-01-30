@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,9 +19,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousLabelAdapter;
-import org.eclipse.debug.internal.ui.viewers.ILabelRequestMonitor;
-import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousLabelAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
+import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugView;

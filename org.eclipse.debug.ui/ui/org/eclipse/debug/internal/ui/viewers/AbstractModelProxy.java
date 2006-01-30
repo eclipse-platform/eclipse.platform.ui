@@ -14,6 +14,10 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
+import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 
 /**
  * Common function for model proxies.

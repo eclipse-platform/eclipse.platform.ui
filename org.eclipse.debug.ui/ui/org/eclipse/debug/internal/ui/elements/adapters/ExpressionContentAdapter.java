@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,12 +14,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IErrorReportingExpression;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 
 /**
  *
  */
-public class ExpressionTreeContentAdapter extends VariableTreeContentAdapter {
+public class ExpressionContentAdapter extends VariableContentAdapter {
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)

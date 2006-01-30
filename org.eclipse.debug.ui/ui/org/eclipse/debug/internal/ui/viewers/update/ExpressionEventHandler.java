@@ -15,8 +15,8 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.ui.viewers.AbstractModelProxy;
-import org.eclipse.debug.internal.ui.viewers.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.IModelProxy;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
 
 /**
  * Event handler for an expression.

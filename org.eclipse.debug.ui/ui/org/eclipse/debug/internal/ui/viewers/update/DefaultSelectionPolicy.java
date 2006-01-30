@@ -12,8 +12,8 @@ package org.eclipse.debug.internal.ui.viewers.update;
 
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.internal.ui.viewers.IModelSelectionPolicy;
-import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicy;
+import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;

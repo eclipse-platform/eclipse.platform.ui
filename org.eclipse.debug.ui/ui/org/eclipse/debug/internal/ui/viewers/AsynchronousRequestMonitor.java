@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.viewers;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.progress.WorkbenchJob;
 

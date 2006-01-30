@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.viewers.AbstractModelProxy;
-import org.eclipse.debug.internal.ui.viewers.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 
 /**
  * Handles debug events for an event update policy in a viewer.

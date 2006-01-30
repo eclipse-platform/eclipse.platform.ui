@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.debug.internal.ui.viewers.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 
 /**
  * A model delta. Used to create model deltas.

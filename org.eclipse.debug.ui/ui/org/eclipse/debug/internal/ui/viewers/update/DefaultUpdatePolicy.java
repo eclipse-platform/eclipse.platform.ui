@@ -13,10 +13,10 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import java.util.ArrayList;
 
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.viewers.IModelChangedListener;
-import org.eclipse.debug.internal.ui.viewers.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.TreePath;
 import org.eclipse.debug.internal.ui.viewers.TreeSelection;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 
 /**
  * Default update policy updates a viewer based on model deltas.

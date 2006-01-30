@@ -12,8 +12,8 @@ package org.eclipse.debug.internal.ui.viewers.update;
 
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewer;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousViewer;
-import org.eclipse.debug.internal.ui.viewers.IModelChangedListener;
-import org.eclipse.debug.internal.ui.viewers.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
