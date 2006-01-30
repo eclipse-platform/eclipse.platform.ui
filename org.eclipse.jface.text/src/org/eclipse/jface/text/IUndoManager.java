@@ -30,7 +30,7 @@ package org.eclipse.jface.text;
  * <code>TextViewerUndoManager</code>.
  * </p>
  *
- * @see TextViewerHoverManager
+ * @see TextViewerUndoManager
  * @see IUndoManagerExtension
  */
 public interface IUndoManager {
