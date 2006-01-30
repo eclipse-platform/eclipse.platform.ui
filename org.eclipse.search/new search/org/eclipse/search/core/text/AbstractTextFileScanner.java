@@ -20,6 +20,11 @@ import org.eclipse.core.resources.IFile;
  * Abstract base class for scanners supplied via the 
  * org.eclipse.search.textFileScanner extension point. 
  * It suffices to implement the scanFile() method. 
+ * 
+ * @since 3.2
+ * 
+ * This API is experimental and might be removed before 3.2
+ * 
  */
 public abstract class AbstractTextFileScanner {
 	public final static int LOCATION_OTHER= 0;
