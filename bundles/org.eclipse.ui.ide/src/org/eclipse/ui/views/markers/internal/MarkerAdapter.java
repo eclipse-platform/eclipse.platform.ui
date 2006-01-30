@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
@@ -101,7 +102,8 @@ public class MarkerAdapter {
 		 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getDescription()
 		 */
 		public String getDescription() {
-			return name;
+			return NLS.bind(MarkerMessages.Category_Label, new Object[] { name,
+					String.valueOf(end - start + 1) });
 		}
 
 		/*
