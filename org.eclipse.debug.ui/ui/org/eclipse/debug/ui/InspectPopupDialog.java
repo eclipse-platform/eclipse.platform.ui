@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,6 @@ import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewer;
 import org.eclipse.jface.bindings.TriggerSequence;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
@@ -96,13 +95,13 @@ public class InspectPopupDialog extends DebugPopup {
      * Creates a new inspect popup.
      * 
      * @param shell The parent shell
-     * @param viewer The viewer on which the popup will be installed
+     * @param anchor point at which to anchor the popup in Display coordinates
      * @param commandId The command id to be used for persistance of 
      * the dialog (possibly <code>null</code>)
      * @param expression The expression being inspected
      */
-    public InspectPopupDialog(Shell shell, ITextViewer viewer, String commandId, IExpression expression) {
-        super(shell, viewer);
+    public InspectPopupDialog(Shell shell, Point anchor, String commandId, IExpression expression) {
+        super(shell, anchor);
         fCommandId = commandId;
         fExpression = expression;
     }

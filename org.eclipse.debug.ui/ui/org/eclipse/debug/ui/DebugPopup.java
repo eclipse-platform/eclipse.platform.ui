@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,6 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.PopupDialog;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -49,7 +46,7 @@ import org.eclipse.ui.handlers.IHandlerService;
  */
 public abstract class DebugPopup extends PopupDialog {
 
-    private ITextViewer fViewer;
+    private Point fAnchor;
 
     private IHandlerActivation fActivation;
 
@@ -58,11 +55,11 @@ public abstract class DebugPopup extends PopupDialog {
     /**
      * Constructs a new popup dialog of type <code>PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE</code>
      * @param parent The parent shell
-     * @param viewer The text viewer on which the popup is to be installed
+     * @param anchor point at which to anchor the popup dialog in Display coordinate space
      */
-    public DebugPopup(Shell parent, ITextViewer viewer) {
+    public DebugPopup(Shell parent, Point anchor) {
         super(parent, PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE, true, true, false, true, null, null);
-        fViewer = viewer;
+        fAnchor = anchor;
     }
 
     /**
@@ -112,26 +109,14 @@ public abstract class DebugPopup extends PopupDialog {
      * @return the initial location of the shell
      */
     protected Point getInitialLocation(Point initialSize) {
-        StyledText textWidget = fViewer.getTextWidget();
-        Point docRange = textWidget.getSelectionRange();
-        int midOffset = docRange.x + (docRange.y / 2);
-        Point point = textWidget.getLocationAtOffset(midOffset);
-        point = textWidget.toDisplay(point);
-
-        GC gc = new GC(textWidget);
-        gc.setFont(textWidget.getFont());
-        int height = gc.getFontMetrics().getHeight();
-        gc.dispose();
-        point.y += height;
-
-        Rectangle monitor = textWidget.getMonitor().getClientArea();
+        Point point = fAnchor;
+        Rectangle monitor = getShell().getMonitor().getClientArea();
         if (monitor.width < point.x + initialSize.x) {
             point.x = Math.max(0, point.x - initialSize.x);
         }
         if (monitor.height < point.y + initialSize.y) {
-            point.y = Math.max(0, point.y - initialSize.y - height);
+            point.y = Math.max(0, point.y - initialSize.y);
         }
-
         return point;
     }
 
