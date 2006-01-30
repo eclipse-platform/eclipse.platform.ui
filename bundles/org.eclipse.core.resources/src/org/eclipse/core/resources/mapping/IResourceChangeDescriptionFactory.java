@@ -60,6 +60,12 @@ public interface IResourceChangeDescriptionFactory {
 	 * @param destination the destination the resource is being copied to
 	 */
 	public void copy(IResource resource, IPath destination);
+	
+	/**
+	 * Record a delta that represents a resource being created.
+	 * @param resource the resource that is created
+	 */
+	public void create(IResource resource);
 
 	/**
 	 * Record the set of deltas representing a deletion of the given resource.

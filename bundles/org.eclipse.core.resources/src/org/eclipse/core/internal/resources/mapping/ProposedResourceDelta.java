@@ -175,12 +175,16 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	public IResource getResource() {
 		return resource;
 	}
+	
+	protected void setKind(int kind) {
+		status = getFlags() | (kind & KIND_MASK);
+	}
 
-	public void setMovedFromPath(IPath path) {
+	protected void setMovedFromPath(IPath path) {
 		movedFromPath = path;
 	}
 
-	public void setMovedToPath(IPath path) {
+	protected void setMovedToPath(IPath path) {
 		movedToPath = path;
 	}
 

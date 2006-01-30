@@ -26,7 +26,7 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 	 */
 	public void change(IFile file) {
 		ProposedResourceDelta delta = getDelta(file);
-		delta.status |= IResourceDelta.CHANGED;
+		delta.setKind(IResourceDelta.CHANGED);
 		delta.status |= IResourceDelta.CONTENT;
 	}
 
@@ -47,6 +47,23 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory#create(org.eclipse.core.resources.IResource)
+	 */
+	public void create(IResource resource) {
+		try {
+			resource.accept(new IResourceVisitor() {
+				public boolean visit(IResource child) {
+					ProposedResourceDelta delta = getDelta(child);
+					delta.setKind(IResourceDelta.ADDED);
+					return true;
+				}
+			});
+		} catch (CoreException e) {
+			fail(e);
+		}
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.IProposedResourceDeltaFactory#delete(org.eclipse.core.resources.IResource)
 	 */
 	public void delete(IResource resource) {
@@ -54,7 +71,7 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 			resource.accept(new IResourceVisitor() {
 				public boolean visit(IResource child) {
 					ProposedResourceDelta delta = getDelta(child);
-					delta.status |= IResourceDelta.REMOVED;
+					delta.setKind(IResourceDelta.REMOVED);
 					return true;
 				}
 			});
@@ -134,14 +151,14 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 					// First, create the delta for the source
 					if (move) {
 						ProposedResourceDelta sourceDelta = getDelta(child);
-						sourceDelta.status |= IResourceDelta.REMOVED;
+						sourceDelta.setKind(IResourceDelta.REMOVED);
 						sourceDelta.status |= IResourceDelta.MOVED_TO;
 						sourceDelta.setMovedToPath(destinationPrefix.append(child.getFullPath().removeFirstSegments(sourcePrefix.segmentCount())));
 					}
 					// Next, create the delta for the destination
 					IResource destinationResource = getDestinationResource(child, sourcePrefix, destinationPrefix);
 					ProposedResourceDelta destinationDelta = getDelta(destinationResource);
-					destinationDelta.status |= IResourceDelta.ADDED;
+					destinationDelta.setKind(IResourceDelta.ADDED);
 					destinationDelta.status |= move ? IResourceDelta.MOVED_FROM : IResourceDelta.COPIED_FROM;
 					destinationDelta.setMovedFromPath(child.getFullPath());
 					return true;
