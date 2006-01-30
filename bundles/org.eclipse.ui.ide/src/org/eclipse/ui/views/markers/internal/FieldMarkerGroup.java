@@ -250,7 +250,7 @@ public class FieldMarkerGroup implements IField {
 				.getConcreteRepresentative());
 		MarkerGroupingEntry entry2 = getMapping(((MarkerNode) obj2)
 				.getConcreteRepresentative());
-		return entry1.getPriority() - entry2.getPriority();
+		return entry2.getPriority() - entry1.getPriority();
 
 	}
 

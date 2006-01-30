@@ -2787,23 +2787,22 @@
              label="Second category"
              markerGrouping="org.eclipse.ui.tests.test"
              priority="1"/>
+        <markerGroupingEntry
+             id="org.eclipse.ui.tests.default"
+             label="Uncategorized"
+             markerGrouping="org.eclipse.ui.tests.test"
+             priority="0"/>
        <markerAttributeGrouping
              attribute="testAttribute"
              defaultGroupingEntry="org.eclipse.ui.tests.default"
-             markerType="org.eclipse.ui.tests.testmarker">
+             markerType="org.eclipse.ui.tests.categoryTestMarker">
           <markerAttributeMapping
                 markerGroupingEntry="org.eclipse.ui.tests.test1"
                 value="0"/>
           <markerAttributeMapping
                 markerGroupingEntry="org.eclipse.ui.tests.test2"
                 value="1"/>
-       </markerAttributeGrouping>
-       <markerGroupingEntry
-             id="org.eclipse.ui.tests.default"
-             label="Uncategorized"
-             markerGrouping="org.eclipse.ui.tests.test"
-             priority="0"/>
-     
+       </markerAttributeGrouping>    
    </extension>
    <extension
          id="categoryTestMarker"
