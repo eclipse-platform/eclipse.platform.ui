@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import org.eclipse.core.internal.boot.PlatformURLConnection;
+import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.osgi.service.urlconversion.URLConverter;
 
 /**
@@ -29,9 +30,14 @@ public class PlatformURLConverter implements URLConverter {
 	 */
 	public URL toFileURL(URL url) throws IOException {
 		URLConnection connection = url.openConnection();
-		if (connection instanceof PlatformURLConnection)
-			return ((PlatformURLConnection) connection).getURLAsLocal();
-		return url;
+		if (!(connection instanceof PlatformURLConnection))
+			return url;
+		URL result = ((PlatformURLConnection) connection).getURLAsLocal();
+		// if we have a bundle*: url we should try to convert it
+		if (!result.getProtocol().startsWith(PlatformURLHandler.BUNDLE))
+			return result;
+		URLConverter converter = InternalPlatform.getDefault().getURLConverter(result);
+		return result == null ? result : converter.toFileURL(result);
 	}
 
 	/* (non-Javadoc)
@@ -39,9 +45,13 @@ public class PlatformURLConverter implements URLConverter {
 	 */
 	public URL resolve(URL url) throws IOException {
 		URLConnection connection = url.openConnection();
-		if (connection instanceof PlatformURLConnection)
-			return ((PlatformURLConnection) connection).getResolvedURL();
-		return url;
+		if (!(connection instanceof PlatformURLConnection))
+			return url;
+		URL result = ((PlatformURLConnection) connection).getResolvedURL();
+		// if we have a bundle*: url we should try to convert it
+		if (!result.getProtocol().startsWith(PlatformURLHandler.BUNDLE))
+			return result;
+		URLConverter converter = InternalPlatform.getDefault().getURLConverter(result);
+		return result == null ? result : converter.resolve(result);
 	}
-
 }

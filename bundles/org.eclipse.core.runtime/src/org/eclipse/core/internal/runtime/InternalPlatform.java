@@ -639,7 +639,7 @@ public final class InternalPlatform {
 		return admin == null ? -1 : admin.getState(false).getTimeStamp();
 	}
 
-	private URLConverter getURLConverter(URL url) {
+	/*package*/ URLConverter getURLConverter(URL url) {
 		String protocol = url.getProtocol();
 		synchronized (urlTrackers) {
 			ServiceTracker tracker = (ServiceTracker) urlTrackers.get(protocol);
