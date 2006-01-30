@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.core.refactoring.history;
+package org.eclipse.ltk.internal.core.refactoring.history;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -18,12 +18,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  * <p>
  * Clients should be aware that the methods defined by this interface can be
  * called from a non user interface thread.
- * </p>
- * <p>
- * Note: this interface is not intended to be used or extended outside the refactoring framework.
- * </p>
- * <p>
- * Note: This API is considered experimental and may change in the near future.
  * </p>
  * 
  * @since 3.2
