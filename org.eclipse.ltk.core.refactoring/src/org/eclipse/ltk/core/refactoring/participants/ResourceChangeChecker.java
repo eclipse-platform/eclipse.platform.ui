@@ -41,12 +41,32 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  * 
  * @since 3.2
  */
-public class ResourceOperationChecker implements IConditionChecker {
+public class ResourceChangeChecker implements IConditionChecker {
 
 	private IResourceChangeDescriptionFactory fDeltaFactory;
 	
-	public ResourceOperationChecker() {
+	public ResourceChangeChecker() {
 		fDeltaFactory= ResourceChangeValidator.getValidator().createDeltaFactory();
+	}
+	
+	/**
+	 * A helper method to check a set of changed files. 
+	 * 
+	 * @param files the array of files that change
+	 * @param monitor a progress monitor to report progress or <code>null</code>
+	 *  if progress reporting is not desired
+	 *  
+	 * @return a refactoring status containing the detect problems
+	 * @throws CoreException a {@link CoreException} if an error occurs
+	 * 
+	 * @see ResourceChangeValidator#validateChange(IResourceDelta, IProgressMonitor)
+	 */
+	public static RefactoringStatus checkFilesToBeChanged(IFile[] files, IProgressMonitor monitor) throws CoreException {
+		ResourceChangeChecker checker= new ResourceChangeChecker();
+		for (int i= 0; i < files.length; i++) {
+			checker.getDeltaFactory().change(files[i]);
+		}
+		return checker.check(monitor);
 	}
 	
 	/**

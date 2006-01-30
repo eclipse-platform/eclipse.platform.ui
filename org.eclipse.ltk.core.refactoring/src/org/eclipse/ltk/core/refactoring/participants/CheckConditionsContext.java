@@ -110,9 +110,9 @@ public class CheckConditionsContext {
 				// Note there can only be one ResourceOperationChecker. So it
 				// is save to not test the case that both objects are 
 				// ResourceOperationChecker
-				if (o1 instanceof ResourceOperationChecker)
+				if (o1 instanceof ResourceChangeChecker)
 					return -1;
-				if (o2 instanceof ResourceOperationChecker)
+				if (o2 instanceof ResourceChangeChecker)
 					return 1;
 				return 0;
 			}
@@ -131,11 +131,11 @@ public class CheckConditionsContext {
 		ValidateEditChecker validateEditChecker= (ValidateEditChecker) getChecker(ValidateEditChecker.class);
 		if (validateEditChecker == null)
 			return;
-		ResourceOperationChecker resourceOperationChecker= (ResourceOperationChecker) getChecker(ResourceOperationChecker.class);
-		if (resourceOperationChecker == null)
+		ResourceChangeChecker resourceChangeChecker= (ResourceChangeChecker) getChecker(ResourceChangeChecker.class);
+		if (resourceChangeChecker == null)
 			return;
 		
-		IFile[] changedFiles= resourceOperationChecker.getChangedFiles();
+		IFile[] changedFiles= resourceChangeChecker.getChangedFiles();
 		validateEditChecker.addFiles(changedFiles);
 	}
 }

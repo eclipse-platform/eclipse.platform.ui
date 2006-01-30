@@ -12,7 +12,15 @@
 <h1>
 Eclipse Platform Build Notes 3.2 Stream&nbsp;<br>
 LTK Core Refactoring</h1>
-<h3>3.2 M6, January 26, 2006</h3>
+<h3>3.2 M5, January 31, 2006</h3>
+<h4>API</h4>
+LTK Core has started to leverage the new ResourceChangeValidator API released in Core/Resources.
+Plug/ins that implement a participant are requested to add their resource changes to the pre-delta.
+Participants can do so using the new class ResourceChangeChecker which superceeds the old
+ValidateEditChecker. The new checker can be accessed via the OperationContext passed to the 
+RefactoringParticipant#checkFinalConditions method (analog to the olde ValidateEditChecker).
+
+<h3>3.2 M5, January 26, 2006</h3>
 <h4>Implementation Changes</h4>
 The refactoring framework has been extended by scripting facilities. Refactorings which support scripting can now be exported
 from the refactoring history and saved in a refactoring script. These scripts can then be reapplied on a remote workspace.<p>

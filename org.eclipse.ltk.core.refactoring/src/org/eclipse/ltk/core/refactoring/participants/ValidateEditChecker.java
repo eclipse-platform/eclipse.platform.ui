@@ -34,8 +34,8 @@ import org.eclipse.ltk.internal.core.refactoring.Resources;
  * Additionally <code>IWorkspace#validateEdit</code> is called for
  * all read-only resources.
  * <p>
- * Since 3.2 a {@link ResourceOperationChecker} exists. If clients
- * add their changed files to the {@link ResourceOperationChecker}
+ * Since 3.2 a {@link ResourceChangeChecker} exists. If clients
+ * add their changed files to the {@link ResourceChangeChecker}
  * their is no need to add them to a validate edit checker as
  * well. Files marked as changed in the resource operation checker
  * will be automatically added to a validate edit checker (if one 

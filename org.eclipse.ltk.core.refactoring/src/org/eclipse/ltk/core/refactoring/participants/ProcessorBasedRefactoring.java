@@ -337,7 +337,7 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	private CheckConditionsContext createCheckConditionsContext() throws CoreException {
 		CheckConditionsContext result= new CheckConditionsContext();
 		result.add(new ValidateEditChecker(getValidationContext()));
-		result.add(new ResourceOperationChecker());
+		result.add(new ResourceChangeChecker());
 		return result;
 	}
 	
