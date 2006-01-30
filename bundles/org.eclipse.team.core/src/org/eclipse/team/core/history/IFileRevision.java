@@ -33,7 +33,7 @@ import org.eclipse.team.core.history.provider.FileRevision;
  * 
  * @since 3.2
  */
-public interface IFileRevision extends IFileState {
+public interface IFileRevision {
 
 	/**
 	 * Returns the storage for this file revision.
