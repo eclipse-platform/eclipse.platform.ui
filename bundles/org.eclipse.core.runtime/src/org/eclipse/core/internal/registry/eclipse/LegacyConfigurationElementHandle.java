@@ -44,16 +44,28 @@ public class LegacyConfigurationElementHandle implements org.eclipse.core.runtim
 		target = element;
 	}
 
-	public String getAttribute(String propertyName) {
-		return target.getAttribute(propertyName);
+	public String getAttribute(String propertyName) throws InvalidRegistryObjectException {
+		try {
+			return target.getAttribute(propertyName);
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public String[] getAttributeNames() {
-		return target.getAttributeNames();
+	public String[] getAttributeNames() throws InvalidRegistryObjectException {
+		try {
+			return target.getAttributeNames();
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public IConfigurationElement[] getChildren() {
-		return LegacyRegistryConverter.convert(target.getChildren());
+	public IConfigurationElement[] getChildren() throws InvalidRegistryObjectException {
+		try {
+			return LegacyRegistryConverter.convert(target.getChildren());
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
 	public Object createExecutableExtension(String propertyName) throws CoreException {
@@ -61,44 +73,76 @@ public class LegacyConfigurationElementHandle implements org.eclipse.core.runtim
 
 	}
 
-	public String getAttributeAsIs(String name) {
-		return target.getAttributeAsIs(name);
+	public String getAttributeAsIs(String name) throws InvalidRegistryObjectException {
+		try {
+			return target.getAttributeAsIs(name);
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public IConfigurationElement[] getChildren(String name) {
-		return LegacyRegistryConverter.convert(target.getChildren(name));
+	public IConfigurationElement[] getChildren(String name) throws InvalidRegistryObjectException {
+		try {
+			return LegacyRegistryConverter.convert(target.getChildren(name));
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public IExtension getDeclaringExtension() {
-		return LegacyRegistryConverter.convert(target.getDeclaringExtension());
+	public IExtension getDeclaringExtension() throws InvalidRegistryObjectException {
+		try {
+			return LegacyRegistryConverter.convert(target.getDeclaringExtension());
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public String getName() {
-		return target.getName();
+	public String getName() throws InvalidRegistryObjectException {
+		try {
+			return target.getName();
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public Object getParent() {
-		Object internalResult = target.getParent();
-		if (internalResult instanceof org.eclipse.equinox.registry.IConfigurationElement)
-			return LegacyRegistryConverter.convert((org.eclipse.equinox.registry.IConfigurationElement)internalResult);
-		else if (internalResult instanceof org.eclipse.equinox.registry.IExtensionPoint)
-			return LegacyRegistryConverter.convert((org.eclipse.equinox.registry.IExtensionPoint)internalResult);
-		else if (internalResult instanceof org.eclipse.equinox.registry.IExtension)
-			return LegacyRegistryConverter.convert((org.eclipse.equinox.registry.IExtension)internalResult);
-		else 
-			return internalResult;
+	public Object getParent() throws InvalidRegistryObjectException {
+		try {
+			Object internalResult = target.getParent();
+			if (internalResult instanceof org.eclipse.equinox.registry.IConfigurationElement)
+				return LegacyRegistryConverter.convert((org.eclipse.equinox.registry.IConfigurationElement)internalResult);
+			else if (internalResult instanceof org.eclipse.equinox.registry.IExtensionPoint)
+				return LegacyRegistryConverter.convert((org.eclipse.equinox.registry.IExtensionPoint)internalResult);
+			else if (internalResult instanceof org.eclipse.equinox.registry.IExtension)
+				return LegacyRegistryConverter.convert((org.eclipse.equinox.registry.IExtension)internalResult);
+			else 
+				return internalResult;
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public String getValue() {
-		return target.getValue();
+	public String getValue() throws InvalidRegistryObjectException {
+		try {
+			return target.getValue();
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public String getValueAsIs() {
-		return target.getValueAsIs();
+	public String getValueAsIs() throws InvalidRegistryObjectException {
+		try {
+			return target.getValueAsIs();
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public String getNamespace() {
-		return target.getNamespace();
+	public String getNamespace() throws InvalidRegistryObjectException {
+		try {
+			return target.getNamespace();
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
 	public boolean isValid() {

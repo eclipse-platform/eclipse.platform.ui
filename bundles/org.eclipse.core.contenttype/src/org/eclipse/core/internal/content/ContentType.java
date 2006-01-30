@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.equinox.registry.IConfigurationElement;
+import org.eclipse.equinox.registry.InvalidRegistryObjectException;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;

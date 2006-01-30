@@ -46,28 +46,52 @@ public class LegacyExtensionHandle implements org.eclipse.core.runtime.IExtensio
 		target = extension;
 	}
 
-	public String getNamespace() {
-		return target.getNamespace();
+	public String getNamespace() throws InvalidRegistryObjectException {
+		try {
+			return target.getNamespace();
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public String getExtensionPointUniqueIdentifier() {
-		return target.getExtensionPointUniqueIdentifier();
+	public String getExtensionPointUniqueIdentifier() throws InvalidRegistryObjectException {
+		try {
+			return target.getExtensionPointUniqueIdentifier();
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public String getLabel() {
-		return target.getLabel();
+	public String getLabel() throws InvalidRegistryObjectException {
+		try {
+			return target.getLabel();
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public String getSimpleIdentifier() {
-		return target.getSimpleIdentifier();
+	public String getSimpleIdentifier() throws InvalidRegistryObjectException {
+		try {
+			return target.getSimpleIdentifier();
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public String getUniqueIdentifier() {
-		return target.getUniqueIdentifier();
+	public String getUniqueIdentifier() throws InvalidRegistryObjectException {
+		try {
+			return target.getUniqueIdentifier();
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public IConfigurationElement[] getConfigurationElements() {
-		return LegacyRegistryConverter.convert(target.getConfigurationElements());
+	public IConfigurationElement[] getConfigurationElements() throws InvalidRegistryObjectException {
+		try {
+			return LegacyRegistryConverter.convert(target.getConfigurationElements());
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
 	public boolean isValid() {
@@ -85,7 +109,7 @@ public class LegacyExtensionHandle implements org.eclipse.core.runtime.IExtensio
 	/**
 	 * @deprecated
 	 */
-	public org.eclipse.core.runtime.IPluginDescriptor getDeclaringPluginDescriptor() {
+	public org.eclipse.core.runtime.IPluginDescriptor getDeclaringPluginDescriptor() throws InvalidRegistryObjectException {
 		String namespace = getNamespace();
 		org.eclipse.core.runtime.IPluginDescriptor result = org.eclipse.core.internal.runtime.CompatibilityHelper.getPluginDescriptor(namespace);
 		if (result == null) {

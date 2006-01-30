@@ -153,4 +153,15 @@ public final class LegacyRegistryConverter {
 			result[i] = convert(equinoxDeltas[i]);
 		return result;
 	}
+
+	/**
+	 * Converts the given Equinox registry exception to an equivalent legacy runtime exception.
+	 * @param exception the exception in the Equinox registry format
+	 * @return the exception converted to the legacy registry format
+	 */
+	public final static InvalidRegistryObjectException convert(org.eclipse.equinox.registry.InvalidRegistryObjectException exception) {
+		InvalidRegistryObjectException wrappedException = new InvalidRegistryObjectException();
+		wrappedException.setStackTrace(exception.getStackTrace());
+		return wrappedException;
+	}
 }

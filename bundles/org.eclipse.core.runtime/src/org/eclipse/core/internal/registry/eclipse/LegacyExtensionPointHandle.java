@@ -43,36 +43,68 @@ public class LegacyExtensionPointHandle implements IExtensionPoint {
 		target = extensionPoint;
 	}
 
-	public IExtension[] getExtensions() {
-		return LegacyRegistryConverter.convert(target.getExtensions());
+	public IExtension[] getExtensions() throws InvalidRegistryObjectException {
+		try {
+			return LegacyRegistryConverter.convert(target.getExtensions());
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public String getNamespace() {
-		return target.getNamespace();
+	public String getNamespace() throws InvalidRegistryObjectException {
+		try {
+			return target.getNamespace();
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public IExtension getExtension(String extensionId) {
-		return LegacyRegistryConverter.convert(target.getExtension(extensionId));
+	public IExtension getExtension(String extensionId) throws InvalidRegistryObjectException {
+		try {
+			return LegacyRegistryConverter.convert(target.getExtension(extensionId));
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public IConfigurationElement[] getConfigurationElements() {
-		return LegacyRegistryConverter.convert(target.getConfigurationElements());
+	public IConfigurationElement[] getConfigurationElements() throws InvalidRegistryObjectException {
+		try {
+			return LegacyRegistryConverter.convert(target.getConfigurationElements());
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public String getLabel() {
-		return target.getLabel();
+	public String getLabel() throws InvalidRegistryObjectException {
+		try {
+			return target.getLabel();
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public String getSchemaReference() {
-		return target.getSchemaReference();
+	public String getSchemaReference() throws InvalidRegistryObjectException {
+		try {
+			return target.getSchemaReference();
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public String getSimpleIdentifier() {
-		return target.getSimpleIdentifier();
+	public String getSimpleIdentifier() throws InvalidRegistryObjectException {
+		try {
+			return target.getSimpleIdentifier();
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
-	public String getUniqueIdentifier() {
-		return target.getUniqueIdentifier();
+	public String getUniqueIdentifier() throws InvalidRegistryObjectException {
+		try {
+			return target.getUniqueIdentifier();
+		} catch (org.eclipse.equinox.registry.InvalidRegistryObjectException e) {
+			throw LegacyRegistryConverter.convert(e);
+		}
 	}
 
 	public boolean isValid() {
