@@ -529,7 +529,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 				if (node instanceof RefactoringHistoryEntry) {
 					final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) node;
 					set.add(entry.getDescriptor());
-		}
+				}
 			}
 		}
 		return (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]);
@@ -539,8 +539,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 * Handles the check state changed event.
 	 */
 	protected void handleCheckStateChanged() {
-		if (fControlConfiguration.isCheckableViewer())
-			fHistoryPane.setText(NLS.bind(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { getHistoryPaneText(), String.valueOf(getCheckedDescriptors().length), String.valueOf(RefactoringHistoryControl.this.getInput().getDescriptors().length) }));
+		final int total= RefactoringHistoryControl.this.getInput().getDescriptors().length;
+		if (total > 0 && fControlConfiguration.isCheckableViewer())
+			fHistoryPane.setText(NLS.bind(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { getHistoryPaneText(), String.valueOf(getCheckedDescriptors().length), String.valueOf(total)}));
 		else
 			fHistoryPane.setText(getHistoryPaneText());
 	}
