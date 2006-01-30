@@ -16,7 +16,7 @@ import org.eclipse.jface.databinding.WritableUpdatable;
 /**
  * A Lazily calculated value that automatically computes and registers 
  * listeners on its dependencies as long as all of its dependencies are 
- * IUpdatableValues
+ * IReadableValues
  * 
  * @since 3.2
  */
