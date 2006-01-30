@@ -90,11 +90,11 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	 * @param mapping the mapping being added to the scope
 	 * @param traversals the traversals for that mapping
 	 */
-	public IResource[] addMapping(ResourceMapping mapping, ResourceTraversal[] traversals) {
-		IResource[] newResources = compoundTraversal.getUncoveredResources(traversals);
+	public ResourceTraversal[] addMapping(ResourceMapping mapping, ResourceTraversal[] traversals) {
+		ResourceTraversal[] newTraversals = compoundTraversal.getUncoveredTraversals(traversals);
 		mappingsToTraversals.put(mapping, traversals);
 		compoundTraversal.addTraversals(traversals);
-		return newResources;
+		return newTraversals;
 	}
 	
 	/* (non-Javadoc)

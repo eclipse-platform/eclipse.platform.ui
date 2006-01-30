@@ -461,7 +461,7 @@ public class ModelSynchronizeParticipant extends
 		try {
 			// When restoring, we can't do anything long running so we'll need to use the local content for everything
 			NullProgressMonitor monitor = new NullProgressMonitor();
-			ResourceMapping[] mappings = ScopeGenerator.getMappingsFromProviders(traversal.getRoots(), ResourceMappingContext.LOCAL_CONTEXT, monitor);
+			ResourceMapping[] mappings = ScopeGenerator.getMappingsFromProviders(traversal.asTraversals(), ResourceMappingContext.LOCAL_CONTEXT, monitor);
 			IResourceMappingScope scope = createScopeGenerator().prepareScope(mappings, true, monitor);
 			IMergeContext context = restoreContext(scope, monitor);
 			initializeContext(context);

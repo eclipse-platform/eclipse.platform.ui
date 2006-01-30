@@ -241,4 +241,40 @@ public class CompoundResourceTraversal {
 		return (IResource[]) result.toArray(new IResource[result.size()]);
 	}
 
+	public ResourceTraversal[] getUncoveredTraversals(ResourceTraversal[] traversals) {
+		CompoundResourceTraversal other = new CompoundResourceTraversal();
+		other.addTraversals(traversals);
+		return getUncoveredTraversals(other);
+	}
+
+	private ResourceTraversal[] getUncoveredTraversals(CompoundResourceTraversal otherTraversal) {
+		CompoundResourceTraversal uncovered = new CompoundResourceTraversal();
+		for (Iterator iter = otherTraversal.files.iterator(); iter.hasNext();) {
+			Set files = new HashSet();
+			IResource resource = (IResource) iter.next();
+			if (!isCovered(resource, IResource.DEPTH_ZERO)) {
+				uncovered.addResource(resource, IResource.DEPTH_ZERO);
+			}
+		}
+		for (Iterator iter = otherTraversal.zeroFolders.iterator(); iter.hasNext();) {
+			IResource resource = (IResource) iter.next();
+			if (!isCovered(resource, IResource.DEPTH_ZERO)) {
+				uncovered.addResource(resource, IResource.DEPTH_ZERO);
+			}
+		}
+		for (Iterator iter = otherTraversal.shallowFolders.iterator(); iter.hasNext();) {
+			IResource resource = (IResource) iter.next();
+			if (!isCovered(resource, IResource.DEPTH_ONE)) {
+				uncovered.addResource(resource, IResource.DEPTH_ONE);
+			}
+		}
+		for (Iterator iter = otherTraversal.deepFolders.iterator(); iter.hasNext();) {
+			IResource resource = (IResource) iter.next();
+			if (!isCovered(resource, IResource.DEPTH_INFINITE)) {
+				uncovered.addResource(resource, IResource.DEPTH_INFINITE);
+			}
+		}
+		return uncovered.asTraversals();
+	}
+
 }
