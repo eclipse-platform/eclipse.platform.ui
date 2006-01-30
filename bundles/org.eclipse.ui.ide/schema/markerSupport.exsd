@@ -299,10 +299,10 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="attribute" type="string" use="required">
+         <attribute name="attribute" type="string">
             <annotation>
                <documentation>
-                  The attribute is the name of the attribute to test.
+                  The attribute is the name of the attribute to test. If it is not specified then only the defaultGroupingEntry will be checked.
                </documentation>
             </annotation>
          </attribute>
