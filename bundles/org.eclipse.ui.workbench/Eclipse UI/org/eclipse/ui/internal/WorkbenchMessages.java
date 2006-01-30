@@ -438,6 +438,7 @@ public class WorkbenchMessages extends NLS {
 
 	//---- General Preferences----
 	public static String PreferencePage_noDescription;
+	public static String PreferencePageParameterValues_pageLabelSeparator;
 
 	// --- Workbench -----
 	public static String WorkbenchPreference_openMode;
@@ -927,6 +928,10 @@ public class WorkbenchMessages extends NLS {
 
 
     public static String FastViewBar_show_view;
+    
+    // Content assist support
+    public static String ContentAssist_Cue_Description;
+    public static String ContentAssist_Cue_Description_Key;
 
 
 }

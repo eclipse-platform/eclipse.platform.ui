@@ -24,7 +24,7 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.services.IServiceWithSources;
+import org.eclipse.ui.internal.services.IServiceWithSources;
 
 /**
  * <p>

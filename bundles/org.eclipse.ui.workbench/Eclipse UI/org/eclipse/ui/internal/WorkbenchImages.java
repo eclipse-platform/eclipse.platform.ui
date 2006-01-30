@@ -95,6 +95,8 @@ public/*final*/class WorkbenchImages {
     //private final static String PATH_STAT = ICONS_PATH+"stat/";
     //private final static String PATH_MISC = ICONS_PATH+"misc/";
     //private final static String PATH_OVERLAY = ICONS_PATH+"ovr16/";
+    
+    private final static String PATH_FIELDDECS = ICONS_PATH+"fielddecs/"; // Field decorations //$NON-NLS-1$
 
     /**
      * Declares a workbench image given the path of the image file (relative to
@@ -374,6 +376,11 @@ public/*final*/class WorkbenchImages {
                 PATH_POINTER + "tofastview_source.bmp", true); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOFASTVIEW_MASK,
                 PATH_POINTER + "tofastview_mask.bmp", true); //$NON-NLS-1$
+        
+        // Field decorators
+        declareImage(ISharedImages.IMG_DEC_CONTENTPROPOSAL,
+        		PATH_FIELDDECS + "content_proposal_cue.gif", true); //$NON-NLS-1$
+
         
         // Manually create the view menu
         

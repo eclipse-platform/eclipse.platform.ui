@@ -16,7 +16,7 @@ import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.services.IServiceWithSources;
+import org.eclipse.ui.internal.services.IServiceWithSources;
 
 /**
  * <p>

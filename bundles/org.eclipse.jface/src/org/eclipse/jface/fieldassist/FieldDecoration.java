@@ -14,11 +14,16 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Simple data structure class for specifying a decoration for a field.
+ * May be rendered in different ways depending on the type of field it
+ * is used with.
  * 
  * <p>
  * This API is considered experimental. It is still evolving during 3.2 and is
  * subject to change. It is being released to obtain feedback from early
  * adopters.
+ * 
+ * @see FieldDecorationRegistry
+ * @see DecoratedField
  * 
  * @since 3.2
  */

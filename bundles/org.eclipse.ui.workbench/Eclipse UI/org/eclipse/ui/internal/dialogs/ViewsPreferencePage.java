@@ -64,8 +64,9 @@ import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
 /**
- * The ViewsPreferencePage is the page used to set preferences for the look of
- * the views in the workbench.
+ * The ViewsPreferencePage is the page used to set preferences for the 
+ * appearance of the workbench.  Originally this applied only to views but now 
+ * applies to the overall appearance, hence the name.
  */
 public class ViewsPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {

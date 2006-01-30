@@ -50,11 +50,6 @@ import org.eclipse.swt.widgets.Shell;
 public class DecoratedField {
 
 	/**
-	 * Number of pixels to reserve for decorations.
-	 */
-	private static int RESERVED_WIDTH = 8;
-
-	/**
 	 * Cached platform flags for dealing with platform-specific issues.
 	 */
 	private static boolean CARBON = "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
@@ -73,34 +68,6 @@ public class DecoratedField {
 	private static final int RIGHT_BOTTOM = 3;
 
 	private static final int DECORATION_SLOTS = 4;
-
-	/**
-	 * Get the width (in pixels) that should always be reserved for field
-	 * decorations, regardless of the actual width of any supplied decorations.
-	 * This value is used as the minimum width for any decorations that have
-	 * been added to the field, and can be used by clients to compute margins in
-	 * order to align non-decorated fields with decorated fields.
-	 * 
-	 * @return decorationWidth the width in pixels reserved for decorations
-	 */
-	public static int getReservedDecorationWidth() {
-		return RESERVED_WIDTH;
-	}
-
-	/**
-	 * Set the width (in pixels) that should always be reserved for field
-	 * decorations, regardless of the actual width of any supplied decorations.
-	 * Field alignment within dialogs will look best when all decorations
-	 * supplied conform to the reserved width. However, the field decoration
-	 * area for a particular field will be expanded if decorations larger than
-	 * the reserved width are supplied.
-	 * 
-	 * @param decorationWidth
-	 *            the width in pixels reserved for decorations
-	 */
-	public static void setReservedDecorationWidth(int decorationWidth) {
-		RESERVED_WIDTH = decorationWidth;
-	}
 
 	/**
 	 * Simple data structure class for specifying the internals for a field
@@ -448,7 +415,7 @@ public class DecoratedField {
 		 * set both values since we may be reusing a form data.
 		 */
 		if (decoration.getImage() == null) {
-			formData.width = RESERVED_WIDTH;
+			formData.width = FieldDecorationRegistry.getDefault().getReservedDecorationWidth();
 			formData.height = 0;
 		} else {
 			formData.width = SWT.DEFAULT;

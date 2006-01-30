@@ -286,6 +286,13 @@ public interface ISharedImages {
      * Identifies the up image in the disabled state.
      */
     public final static String IMG_TOOL_UP_DISABLED = "IMG_TOOL_UP_DISABLED"; //$NON-NLS-1$
+    
+    /**
+     * Identifies the content proposal cue decorator.
+     * 
+     * @since 3.2
+     */
+    public final static String IMG_DEC_CONTENTPROPOSAL = "IMG_DEC_CONTENTPROPOSAL"; //$NON-NLS-1$
 
     /**
      * Retrieves the specified image from the workbench plugin's image registry.
