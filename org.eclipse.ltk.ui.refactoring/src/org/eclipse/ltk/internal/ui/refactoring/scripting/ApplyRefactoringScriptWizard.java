@@ -143,7 +143,8 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 			final Object element= selection.getFirstElement();
 			if (element instanceof IFile) {
 				final IFile file= (IFile) element;
-				fScriptURI= file.getRawLocationURI();
+				if (file.getFileExtension().equals(ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension))
+					fScriptURI= file.getRawLocationURI();
 			}
 		}
 	}
