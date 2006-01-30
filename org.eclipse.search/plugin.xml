@@ -154,16 +154,10 @@
 		/>
 		<key 
 			contextId="org.eclipse.ui.globalScope"
-			sequence="Ctrl+2" 
+			sequence="Ctrl+3" 
 			commandId="org.eclipse.search.ui.performTextSearch" 
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"  
 	    />
-      	<key 
-      		contextId="org.eclipse.jdt.ui.javaEditorScope"
-      		sequence="Ctrl+2 2" 
-      		commandId="org.eclipse.search.ui.performTextSearch" 
-      		schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"  
-		/>
 	</extension>
 	
 	<!-- action sets -->
