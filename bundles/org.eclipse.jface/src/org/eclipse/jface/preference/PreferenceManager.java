@@ -180,13 +180,24 @@ public class PreferenceManager {
         return root;
     }
 
+	/**
+	 * Returns the root level nodes of this preference manager.
+	 * 
+	 * @return an array containing the root nodes
+	 * @since 3.2
+	 */
+	public final IPreferenceNode[] getRootSubNodes() {
+		return getRoot().getSubNodes();
+	}
+
     /**
-     * Removes the prefernece node at the given path.
-     *
-     * @param path the path
-     * @return the node that was removed, or <code>null</code>
-     *  if there was no node at the given path
-     */
+	 * Removes the preference node at the given path.
+	 * 
+	 * @param path
+	 *            the path
+	 * @return the node that was removed, or <code>null</code> if there was no
+	 *         node at the given path
+	 */
     public IPreferenceNode remove(String path) {
         Assert.isNotNull(path);
         int index = path.lastIndexOf(separator);

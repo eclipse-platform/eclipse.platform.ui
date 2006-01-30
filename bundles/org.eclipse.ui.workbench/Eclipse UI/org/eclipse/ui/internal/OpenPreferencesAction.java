@@ -47,7 +47,6 @@ public class OpenPreferencesAction extends Action implements ActionFactory.IWork
 			throw new IllegalArgumentException();
 		}
 		this.workbenchWindow = window;
-		setActionDefinitionId("org.eclipse.ui.window.preferences"); //$NON-NLS-1$
 		// @issue action id not set
 		setToolTipText(WorkbenchMessages.OpenPreferences_toolTip); 
 		window.getWorkbench().getHelpSystem().setHelp(this,

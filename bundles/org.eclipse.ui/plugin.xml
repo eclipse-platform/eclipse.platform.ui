@@ -692,10 +692,17 @@
             categoryId="org.eclipse.ui.category.window"
             id="org.eclipse.ui.window.pinEditor" />
       <command
-            name="%command.preferences.name"
-            description="%command.preferences.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.preferences" />
+            defaultHandler="org.eclipse.ui.internal.handlers.ShowPreferencePageHandler"
+            description="%command.preferences.description"
+            id="org.eclipse.ui.window.preferences"
+            name="%command.preferences.name">
+         <commandParameter
+               id="preferencePageId"
+               name="%command.preferences.preferencePageIdParameter"
+               optional="true"
+               values="org.eclipse.ui.internal.registry.PreferencePageParameterValues"/>
+      </command>
       <command
             name="%command.resetPerspective.name"
             description="%command.resetPerspective.description"

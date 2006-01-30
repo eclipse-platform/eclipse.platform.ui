@@ -438,6 +438,7 @@ public class WorkbenchMessages extends NLS {
 
 	//---- General Preferences----
 	public static String PreferencePage_noDescription;
+	public static String PreferencePageParameterValues_pageLabelSeparator;
 
 	// --- Workbench -----
 	public static String WorkbenchPreference_openMode;
