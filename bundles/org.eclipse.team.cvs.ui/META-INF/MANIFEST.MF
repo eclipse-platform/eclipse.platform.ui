@@ -9,7 +9,7 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.team.internal.ccvs.ui;x-internal:=true,
  org.eclipse.team.internal.ccvs.ui.actions;x-internal:=true,
  org.eclipse.team.internal.ccvs.ui.console;x-internal:=true,
- org.eclipse.team.internal.ccvs.ui.mappings,
+ org.eclipse.team.internal.ccvs.ui.mappings;x-internal:=true,
  org.eclipse.team.internal.ccvs.ui.model;x-internal:=true,
  org.eclipse.team.internal.ccvs.ui.operations;x-internal:=true,
  org.eclipse.team.internal.ccvs.ui.repo;x-internal:=true,
