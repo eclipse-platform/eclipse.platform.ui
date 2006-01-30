@@ -37,25 +37,25 @@ public class MergeSubscriberContext extends CVSSubscriberMergeContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.IMergeContext#markAsMerged(org.eclipse.team.core.diff.IDiffNode, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void markAsMerged(final IDiff node, boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
+	public void markAsMerged(final IDiff diff, boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
 		run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				((CVSMergeSubscriber)getSubscriber()).merged(new IResource[] { ((IResourceDiff)node).getResource() });
+				((CVSMergeSubscriber)getSubscriber()).merged(new IResource[] { getDiffTree().getResource(diff)});
 			}
-		}, getMergeRule(node), IResource.NONE, monitor);
+		}, getMergeRule(diff), IResource.NONE, monitor);
 	}
 	
-	public void markAsMerged(final IDiff[] nodes, boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
+	public void markAsMerged(final IDiff[] diffs, boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
 		run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				List result = new ArrayList();
-				for (int i = 0; i < nodes.length; i++) {
-					IDiff node = nodes[i];
-					result.add(((IResourceDiff)node).getResource());
+				for (int i = 0; i < diffs.length; i++) {
+					IDiff diff = diffs[i];
+					result.add(getDiffTree().getResource(diff));
 				}
 				((CVSMergeSubscriber)getSubscriber()).merged((IResource[]) result.toArray(new IResource[result.size()]));
 			}
-		}, getMergeRule(nodes), IResource.NONE, monitor);
+		}, getMergeRule(diffs), IResource.NONE, monitor);
 	}
 	
 	public void dispose() {
