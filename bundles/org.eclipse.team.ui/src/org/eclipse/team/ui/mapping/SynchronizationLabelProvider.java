@@ -13,6 +13,7 @@ package org.eclipse.team.ui.mapping;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
@@ -36,6 +37,7 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 
 	private IResourceMappingScope scope;
 	private ISynchronizationContext context;
+	private ITreeContentProvider contentProvider;
 	
 	private void init(IResourceMappingScope input, ISynchronizationContext context) {
 		this.scope = input;
@@ -46,6 +48,7 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 	 * @see org.eclipse.ui.navigator.ICommonLabelProvider#init(org.eclipse.ui.navigator.IExtensionStateModel, org.eclipse.jface.viewers.ITreeContentProvider)
 	 */
 	public void init(IExtensionStateModel aStateModel, ITreeContentProvider aContentProvider) {
+		contentProvider = aContentProvider;
 		init((IResourceMappingScope)aStateModel.getProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE), (ISynchronizationContext)aStateModel.getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT));
 		ILabelProvider provider = getDelegateLabelProvider();
 		if (provider instanceof ICommonLabelProvider) {
@@ -138,5 +141,19 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 	 */
 	protected Object getModelRoot() {
 		return ResourcesPlugin.getWorkspace().getRoot();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeLabelProvider#getText(java.lang.Object)
+	 */
+	public String getText(Object element) {
+		String text = super.getText(element);
+		if (contentProvider instanceof SynchronizationContentProvider) {
+			SynchronizationContentProvider scp = (SynchronizationContentProvider) contentProvider;
+			if (!scp.isInitialized(getContext())) {
+				return NLS.bind("{0} Initializing", text);
+			}
+		}
+		return text;
 	}
 }

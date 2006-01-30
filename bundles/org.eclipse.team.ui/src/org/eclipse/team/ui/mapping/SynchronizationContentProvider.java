@@ -60,67 +60,23 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		Object parent = parentPath.getLastSegment();
 		if (parentPath.getSegmentCount() == 1)
 			return getElements(parent);
-		return internalGetChildren(parent);
+		return internalGetChildren(parent, false);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parent) {
-		return internalGetChildren(parent);
+		return internalGetChildren(parent, false);
 	}
 
-	private Object[] internalGetChildren(Object parent) {
-		if (parent instanceof IResourceMappingScope) {
-			// If the root is a scope, we want to include all models in the scope
-			IResourceMappingScope rms = (IResourceMappingScope) parent;
-			if (rms.getMappings(getModelProviderId()).length > 0) {
-				empty = false;
-				return new Object[] { getModelProvider() };
-			}
-			empty = true;
-			return new Object[0];
-		} else if (parent instanceof ISynchronizationContext) {
-			// If the root is a context, we want to filter by the context
-			ISynchronizationContext sc = (ISynchronizationContext) parent;
-			if (sc.getScope().getMappings(getModelProviderId()).length > 0) {
-				Object root = getModelRoot();
-				if (getChildrenInContext(sc, root, getDelegateChildren(root)).length > 0) {
-					empty = false;
-					return new Object[] { getModelProvider() };
-				}
-			}
-			empty = true;
-			return new Object[0];
-		}
-		if (parent == getModelProvider()) {
-			parent = getModelRoot();
-		}
-		Object[] delegateChildren = getDelegateChildren(parent);
-		ISynchronizationContext sc = getContext();
-		if (context == null) {
-			IResourceMappingScope scope = getScope();
-			if (scope == null) {
-				return delegateChildren;
-			} else {
-				return getChildrenInScope(scope, parent, delegateChildren);
-			}
-		} else {
-			return getChildrenInContext(sc, parent, delegateChildren);
-		}
-	}
-
-	/**
-	 * Return the children for the given element from the
-	 * delegate content provider.
-	 * @param parent the parent element
-	 * @return the children for the given element from the
-	 * delegate content provider
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
-	protected Object[] getDelegateChildren(Object parent) {
-		return getDelegateContentProvider().getChildren(parent);
+	public Object[] getElements(Object parent) {
+		return internalGetChildren(parent, true);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
@@ -140,6 +96,99 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 */
 	public boolean hasChildren(Object element) {
 		return internalHasChildren(element);
+	}
+	
+	private Object[] internalGetChildren(Object parent, boolean isElement) {
+		if (parent instanceof IResourceMappingScope) {
+			// If the root is a scope, we want to include all models in the scope
+			IResourceMappingScope rms = (IResourceMappingScope) parent;
+			if (rms.getMappings(getModelProviderId()).length > 0) {
+				empty = false;
+				return new Object[] { getModelProvider() };
+			}
+			empty = true;
+			return new Object[0];
+		} else if (parent instanceof ISynchronizationContext) {
+			// If the root is a context, we want to filter by the context
+			ISynchronizationContext sc = (ISynchronizationContext) parent;
+			if (sc.getScope().getMappings(getModelProviderId()).length > 0) {
+				Object root = getModelRoot();
+				boolean initialized = isInitialized(context);
+				if (!initialized || getChildrenInContext(sc, root, getDelegateChildren(root, isElement)).length > 0) {
+					if (!initialized)
+						requestInitialization(context);
+					empty = false;
+					return new Object[] { getModelProvider() };
+				}
+			}
+			empty = true;
+			return new Object[0];
+		}
+		if (parent == getModelProvider()) {
+			if (!isInitialized(context)) {
+				return new Object[0];
+			}
+			parent = getModelRoot();
+		}
+		Object[] delegateChildren = getDelegateChildren(parent, isElement);
+		ISynchronizationContext sc = getContext();
+		if (context == null) {
+			IResourceMappingScope scope = getScope();
+			if (scope == null) {
+				return delegateChildren;
+			} else {
+				return getChildrenInScope(scope, parent, delegateChildren);
+			}
+		} else {
+			return getChildrenInContext(sc, parent, delegateChildren);
+		}
+	}
+
+	/**
+	 * Return whether the content provider has been initialized and is ready to
+	 * provide content in the given context. By default, <code>true</code> is returned. Subclasses
+	 * that need to perform extra processing to prepare should override this method and 
+	 * also override {@link #requestInitialization(ISynchronizationContext)}.
+	 * 
+	 * @param context the context
+	 * @return whether the content provider has been initialized and is ready to
+	 * provide content in he given context.
+	 */
+	protected boolean isInitialized(ISynchronizationContext context) {
+		return true;
+	}
+	
+	/**
+	 * Subclasses that need to perform extra processing to prepare their model
+	 * to be displayed by this content provider should override this method and
+	 * launch a background task to prepare what is required to display their
+	 * model for the given context. An appropriate viewer refresh on the model
+	 * provider should be issued when the model is prepared.
+	 * 
+	 * @param context
+	 *            the context
+	 * @return whether the content provider has been initialized and is ready to
+	 *         provide content in he given context.
+	 */
+	protected void requestInitialization(ISynchronizationContext context) {
+		// Do nothing by default
+	}
+
+	/**
+	 * Return the children for the given element from the
+	 * delegate content provider.
+	 * @param parent the parent element
+	 * @return the children for the given element from the
+	 * delegate content provider
+	 */
+	protected Object[] getDelegateChildren(Object parent) {
+		return getDelegateContentProvider().getChildren(parent);
+	}
+
+	private Object[] getDelegateChildren(Object parent, boolean isElement) {
+		if (isElement)
+			return getDelegateContentProvider().getElements(parent);
+		return getDelegateChildren(parent);
 	}
 
 	private boolean internalHasChildren(Object element) {
@@ -207,49 +256,6 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		if (traversals == null)
 			return true;
 		return context.getDiffTree().getDiffs(traversals).length > 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
-	public Object[] getElements(Object parent) {
-		if (parent instanceof IResourceMappingScope) {
-			// If the root is a scope, we want to include all models in the scope
-			IResourceMappingScope rms = (IResourceMappingScope) parent;
-			if (rms.getMappings(getModelProviderId()).length > 0) {
-				empty = false;
-				return new Object[] { getModelProvider() };
-			}
-			empty = true;
-			return new Object[0];
-		} else if (parent instanceof ISynchronizationContext) {
-			// If the root is a context, we want to filter by the context
-			ISynchronizationContext sc = (ISynchronizationContext) parent;
-			if (sc.getScope().getMappings(getModelProviderId()).length > 0) {
-				Object root = getModelRoot();
-				if (getChildrenInContext(sc, root, getDelegateContentProvider().getElements(root)).length > 0) {
-					empty = false;
-					return new Object[] { getModelProvider() };
-				}
-			}
-			empty = true;
-			return new Object[0];
-		}
-		if (parent == getModelProvider()) {
-			parent = getModelRoot();
-		}
-		Object[] delegateChildren = getDelegateContentProvider().getElements(parent);
-		ISynchronizationContext sc = getContext();
-		if (context == null) {
-			IResourceMappingScope scope = getScope();
-			if (scope == null) {
-				return delegateChildren;
-			} else {
-				return getChildrenInScope(scope, parent, delegateChildren);
-			}
-		} else {
-			return getChildrenInContext(sc, parent, delegateChildren);
-		}
 	}
 
 	/* (non-Javadoc)
@@ -463,7 +469,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		List result = new ArrayList();
 		for (int i = 0; i < children.length; i++) {
 			Object object = children[i];
-			if (isInScope(scope, parent, object)) {
+			if (object != null && isInScope(scope, parent, object)) {
 				result.add(object);
 			}
 		}
@@ -487,14 +493,14 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 			children = getChildrenInScope(context.getScope(), parent, children);
 		if (children.length == 0)
 			return children;
+		return internalGetChildren(context, parent, children);
+	}
+
+	private Object[] internalGetChildren(ISynchronizationContext context, Object parent, Object[] children) {
 		List result = new ArrayList();
 		for (int i = 0; i < children.length; i++) {
 			Object object = children[i];
 			ResourceTraversal[] traversals = getTraversals(context, object);
-			if (traversals == null) {
-				// TODO: need to do this asynchronously
-				traversals = getTraversals(context, object, null);
-			}
 			IDiff[] deltas = context.getDiffTree().getDiffs(traversals);
 			if (deltas.length > 0) {
 				boolean include = false;
@@ -519,18 +525,15 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	/**
 	 * Return the traversals for the given object in the given context. This 
 	 * method must not be long running. If a long running calculation is required
-	 * to calculate the traversals, <code>null</code> can be returned which will
-	 * result in an asynchronous call to 
-	 * {@link #getTraversals(ISynchronizationContext, Object, IProgressMonitor)}.
-	 * By default, <code>null</code> is returned.
+	 * to calculate the traversals, an empty traversal should be returned and the
+	 * content provider should initiate a background task to calculate the 
+	 * required traversals and update the vew according when the task completes.
 	 * @param context the synchronization context
 	 * @param object the object
 	 * @return the traversals for the given object in the given context
 	 */
-	protected ResourceTraversal[] getTraversals(ISynchronizationContext context, Object object) {
-		return null;
-	}
-
+	protected abstract ResourceTraversal[] getTraversals(ISynchronizationContext context, Object object);
+	
 	/**
 	 * Return the traversals for the given model object. By default, the scope
 	 * is checked in case the traversals have already been calculated. If they have not,
