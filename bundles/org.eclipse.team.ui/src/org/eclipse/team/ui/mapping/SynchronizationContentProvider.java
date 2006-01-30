@@ -599,15 +599,4 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		}
 		return false;
 	}
-	
-	/**
-	 * @deprecated use {@link #getChildrenInScope(IResourceMappingScope, Object, Object[])} instead
-	 * @param parent the parent
-	 * @param children the children
-	 * @return the children in the scope
-	 */
-	protected Object[] getChildrenInScope(Object parent, Object[] children) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
