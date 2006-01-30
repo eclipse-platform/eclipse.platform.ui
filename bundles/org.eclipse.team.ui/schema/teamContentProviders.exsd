@@ -63,6 +63,26 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  An icon that will be used when showing this model in lists and menus.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="preferencePage" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.preference.IPreferencePage"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

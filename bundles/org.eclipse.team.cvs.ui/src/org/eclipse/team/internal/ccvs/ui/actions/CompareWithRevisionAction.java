@@ -12,22 +12,27 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CVSCompareRevisionsInput;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ui.history.DialogHistoryPageSite;
 import org.eclipse.team.ui.SaveablePartDialog;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.history.*;
+import org.eclipse.ui.part.Page;
 
 /**
  * Compare with revision will allow a user to browse the history of a file, compare with the
@@ -91,15 +96,28 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 		// Show the compare viewer
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				CVSCompareRevisionsInput input = new CVSCompareRevisionsInput((IFile)getSelectedResources()[0], entries[0]);
+				IFile tempFile = (IFile) getSelectedResources()[0];
+				IFileHistoryProvider fileHistoryProvider = RepositoryProvider.getProvider(tempFile.getProject()).getFileHistoryProvider();
+				Object tempPageSource = Platform.getAdapterManager().getAdapter(fileHistoryProvider, IHistoryPageSource.class);
+				
 				if(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG)) {
-					// running with a null progress monitor is fine because we have already pre-fetched the log entries above.
-					input.run(new NullProgressMonitor());
+					HistoryPageSaveablePart input = null;
+					if (tempPageSource instanceof IHistoryPageSource) {
+						IHistoryPageSource pageSource = (IHistoryPageSource) tempPageSource;
+						Page histPage = pageSource.createPage(tempFile);
+						DialogHistoryPageSite dialogHistorySite = new DialogHistoryPageSite(getTargetPart().getSite(), false);
+						((IHistoryPage)histPage).setSite(dialogHistorySite);
+						((IHistoryPage)histPage).showHistory(tempFile, true);
+						CompareConfiguration cc = new CompareConfiguration();
+						cc.setLeftEditable(false);
+						cc.setRightEditable(false);
+						input = new HistoryPageSaveablePart(getShell(),cc,(IHistoryPage)histPage);
+					}
 					SaveablePartDialog cd = createCompareDialog(getShell(), input);
 					cd.setBlockOnOpen(true);
 					cd.open();
 				} else {
-					CompareUI.openCompareEditor(input);
+					TeamUI.getHistoryView().showHistoryFor((IFile)getSelectedResources()[0]);
 				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
@@ -108,7 +126,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 	/**
 	 * Return the compare dialog to use to show the compare input.
 	 */
-	protected SaveablePartDialog createCompareDialog(Shell shell, CVSCompareRevisionsInput input) {
+	protected SaveablePartDialog createCompareDialog(Shell shell, HistoryPageSaveablePart input) {
 		return new SaveablePartDialog(shell, input); 
 	}
 	

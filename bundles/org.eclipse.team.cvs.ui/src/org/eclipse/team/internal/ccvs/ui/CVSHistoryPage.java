@@ -16,6 +16,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -28,7 +30,8 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -45,12 +48,13 @@ import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.core.LocalFileRevision;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.history.HistoryPage;
-import org.eclipse.team.ui.history.IHistoryPageSite;
+import org.eclipse.team.internal.ui.history.DialogHistoryPageSite;
+import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
+import org.eclipse.team.ui.history.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
-public class CVSHistoryPage extends HistoryPage {
+public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryCompareAdapter {
 	
 	/* private */ ICVSFile file;
 
@@ -65,7 +69,7 @@ public class CVSHistoryPage extends HistoryPage {
 	protected TextViewer textViewer;
 	protected TableViewer tagViewer;
 
-	/* private */OpenRevisionAction openAction;
+	/* private */CompareRevisionAction compareAction;
 	private CVSHistoryFilterAction  cvsHistoryFilter;
 	private IAction toggleTextAction;
 	private IAction toggleTextWrapAction;
@@ -120,6 +124,9 @@ public class CVSHistoryPage extends HistoryPage {
 		contributeActions();
 
 		setViewerVisibility();
+		
+		if (parentSite != null && parentSite instanceof DialogHistoryPageSite && tableViewer != null)
+			parentSite.setSelectionProvider(tableViewer);
 		
 		resourceListener = new HistoryResourceListener();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, IResourceChangeEvent.POST_CHANGE);
@@ -205,11 +212,13 @@ public class CVSHistoryPage extends HistoryPage {
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
 
 		// Double click open action
-		openAction = new OpenRevisionAction();
+		compareAction = new CompareRevisionAction();
 		tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
 			public void handleEvent(Event e) {
-				openAction.selectionChanged(null, tableViewer.getSelection());
-				openAction.run(null);
+				Object tableSelection = ((StructuredSelection) tableViewer.getSelection()).getFirstElement();
+				StructuredSelection sel = new StructuredSelection(new Object[]{tableSelection, currentFileRevision});
+				compareAction.selectionChanged(null, sel);
+				compareAction.run(null);
 			}
 		});
 
@@ -365,12 +374,14 @@ public class CVSHistoryPage extends HistoryPage {
 		parentSite.getWorkbenchPartSite().registerContextMenu(menuMgr, tableViewer);
 
 		// Contribute toggle text visible to the toolbar drop-down
-		IActionBars actionBars = getSite().getActionBars();
+		IActionBars actionBars= parentSite.getActionBars();
 		IMenuManager actionBarsMenu = actionBars.getMenuManager();
-		actionBarsMenu.add(toggleTextWrapAction);
-		actionBarsMenu.add(new Separator());
-		actionBarsMenu.add(toggleTextAction);
-		actionBarsMenu.add(toggleListAction);
+		if (actionBarsMenu != null){
+			actionBarsMenu.add(toggleTextWrapAction);
+			actionBarsMenu.add(new Separator());
+			actionBarsMenu.add(toggleTextAction);
+			actionBarsMenu.add(toggleListAction);
+		}
 		
 		cvsHistoryFilter = new CVSHistoryFilterAction(this);
 		cvsHistoryFilter.setImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_FILTER_HISTORY));
@@ -566,8 +577,8 @@ public class CVSHistoryPage extends HistoryPage {
 	 * Refresh the view by refetching the log entries for the remote file
 	 */
 	public void refresh() {
-		entries = null;
-		BusyIndicator.showWhile(tableViewer.getTable().getDisplay(), new Runnable() {
+		entries = null;		
+		Utils.asyncExec(new Runnable() {
 			public void run() {
 				// if a local file was fed to the history view then we will have to refetch the handle
 				// to properly display the current revision marker. 
@@ -580,7 +591,7 @@ public class CVSHistoryPage extends HistoryPage {
 				}
 				tableViewer.refresh();
 			}
-		});
+		}, tableViewer);
 	}
 
 	/**
@@ -693,6 +704,7 @@ public class CVSHistoryPage extends HistoryPage {
 							public void run() {
 								historyTableProvider.setLocalRevisionsDisplayed(fileHistory.getIncludesExists());
 								historyTableProvider.setFile(fileHistory, file);
+								currentFileRevision = fileHistory.getFileRevision(historyTableProvider.getCurrentRevision());
 								tableViewer.setInput(fileHistory);
 							}
 						}, tableViewer);
@@ -790,5 +802,34 @@ public class CVSHistoryPage extends HistoryPage {
 	 */
 	public void setSorter(boolean localDisplayed) {
 		historyTableProvider.setLocalRevisionsDisplayed(localDisplayed);
+	}
+
+	public IHistoryPageSite getHistoryPageSite() {
+		return parentSite;
+	}
+
+	public Object getAdapter(Class adapter) {
+		if(adapter == IHistoryCompareAdapter.class) {
+			return this;
+		}
+		return null;
+	}
+
+	public ICompareInput getCompareInput(Object object) {
+		
+		if (object != null && object instanceof IStructuredSelection) {
+			IStructuredSelection ss= (IStructuredSelection) object;
+			if (ss.size() == 1) {
+				Object o = ss.getFirstElement();
+				if (o instanceof IFileRevision){
+					IFileRevision selectedFileRevision = (IFileRevision)o;
+					FileRevisionTypedElement left = new FileRevisionTypedElement((IFile) file.getIResource());
+					FileRevisionTypedElement right = new FileRevisionTypedElement(selectedFileRevision);
+					DiffNode node = new DiffNode(left,right);
+					return node;
+				}
+			}
+		}
+		return null;
 	}
 }

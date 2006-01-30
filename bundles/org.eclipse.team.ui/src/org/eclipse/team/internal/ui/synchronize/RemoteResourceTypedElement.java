@@ -10,23 +10,20 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import java.io.InputStream;
-
-import org.eclipse.compare.*;
-import org.eclipse.core.resources.IEncodedStorage;
+import org.eclipse.compare.ITypedElement;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.internal.ui.StorageTypedElement;
 
 /**
  * RemoteResourceTypedElement
  */
-public class RemoteResourceTypedElement extends BufferedContent implements ITypedElement, IEditableContent, IEncodedStreamContentAccessor {
+public class RemoteResourceTypedElement extends StorageTypedElement {
 
 	private IResourceVariant remote;
-	private IStorage bufferedContents;
 
 	/**
 	 * Creates a new content buffer for the given team node.
@@ -34,10 +31,6 @@ public class RemoteResourceTypedElement extends BufferedContent implements IType
 	public RemoteResourceTypedElement(IResourceVariant remote) {
 		Assert.isNotNull(remote);
 		this.remote = remote;
-	}
-
-	public Image getImage() {
-		return CompareUI.getImage(getType());
 	}
 
 	public String getName() {
@@ -52,16 +45,7 @@ public class RemoteResourceTypedElement extends BufferedContent implements IType
 		if (remote.isContainer()) {
 			return ITypedElement.FOLDER_TYPE;
 		}
-		String name = getName();
-		if (name != null) {
-			int index = name.lastIndexOf('.');
-			if (index == -1)
-				return ""; //$NON-NLS-1$
-			if (index == (name.length() - 1))
-				return ""; //$NON-NLS-1$
-			return name.substring(index + 1);
-		}
-		return ITypedElement.FOLDER_TYPE;		
+		return super.getType();		
 	}
 
 	/**
@@ -90,29 +74,12 @@ public class RemoteResourceTypedElement extends BufferedContent implements IType
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see BufferedContent#createStream()
-	 */
-	protected InputStream createStream() throws CoreException {
-		if(bufferedContents == null) {
-			cacheContents(new NullProgressMonitor());
-		}
-		if (bufferedContents != null) {
-			return bufferedContents.getContents();
-		}
-		return null;
-	}
-	
-	public IResourceVariant getRemote() {
-		return remote;
-	}
-
 	/**
 	 * Cache the contents for the remote resource in a local buffer
 	 * @param monitor
 	 */
-	public void cacheContents(IProgressMonitor monitor) throws TeamException {
-		bufferedContents = remote.getStorage(monitor);		
+	protected IStorage getElementStorage(IProgressMonitor monitor) throws TeamException {
+		return remote.getStorage(monitor);		
 	}
 
 	/**
@@ -126,16 +93,5 @@ public class RemoteResourceTypedElement extends BufferedContent implements IType
 		fireContentChanged();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.IEncodedStreamContentAccessor#getCharset()
-	 */
-	public String getCharset() throws CoreException {
-		if(bufferedContents == null) {
-			cacheContents(new NullProgressMonitor());
-		}
-		if (bufferedContents instanceof IEncodedStorage) {
-			return ((IEncodedStorage)bufferedContents).getCharset();
-		}
-		return null;
-	}
+	
 }

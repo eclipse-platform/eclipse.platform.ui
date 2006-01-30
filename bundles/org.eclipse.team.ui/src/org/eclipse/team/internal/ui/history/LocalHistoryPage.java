@@ -219,4 +219,13 @@ public class LocalHistoryPage extends HistoryPage {
 
 	}
 
+	public IHistoryPageSite getHistoryPageSite() {
+		return parentSite;
+	}
+
+	public Object getAdapter(Class adapter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

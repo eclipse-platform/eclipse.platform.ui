@@ -14,7 +14,6 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareUI;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -24,7 +23,7 @@ import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
-import org.eclipse.team.internal.ui.history.RevisionEditionNode;
+import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 
 public class CompareRevisionAction extends TeamAction {
 
@@ -41,8 +40,9 @@ public class CompareRevisionAction extends TeamAction {
 					IFileRevision file1 = (IFileRevision) objArray[0];
 					IFileRevision file2 = (IFileRevision) objArray[1];
 
-					RevisionEditionNode left = new RevisionEditionNode(file1);
-					RevisionEditionNode right = new RevisionEditionNode(file2);
+					FileRevisionTypedElement left = new FileRevisionTypedElement(file1);
+					FileRevisionTypedElement right = new FileRevisionTypedElement(file2);
+					
 					CompareUI.openCompareEditorOnPage(new CompareFileRevisionEditorInput(left, right), getTargetPage());
 
 				} catch (Exception e) {
@@ -53,7 +53,6 @@ public class CompareRevisionAction extends TeamAction {
 	}
 
 	protected boolean isEnabled() throws TeamException {
-		IResource[] res = getSelectedResources();
 		int sizeofSelection = getSelection().size();
 
 		if (sizeofSelection == 2)

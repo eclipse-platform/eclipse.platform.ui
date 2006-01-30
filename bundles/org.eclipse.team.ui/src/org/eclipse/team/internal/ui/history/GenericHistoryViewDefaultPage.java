@@ -58,4 +58,12 @@ public class GenericHistoryViewDefaultPage extends HistoryPage {
 		//nothing to set
 	}
 
+	public IHistoryPageSite getHistoryPageSite() {
+		return null;
+	}
+
+	public Object getAdapter(Class adapter) {
+		return null;
+	}
+
 }

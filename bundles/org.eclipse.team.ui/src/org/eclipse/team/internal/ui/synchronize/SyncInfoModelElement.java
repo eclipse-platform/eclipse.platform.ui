@@ -13,8 +13,7 @@ package org.eclipse.team.internal.ui.synchronize;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
@@ -183,6 +182,8 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 			if (remote != null && remote instanceof RemoteResourceTypedElement) {
 				((RemoteResourceTypedElement)remote).cacheContents(Policy.subMonitorFor(monitor, 50));
 			}
+		} catch (CoreException e) {
+			throw TeamException.asTeamException(e);
 		} finally {
 			monitor.done();
 		}

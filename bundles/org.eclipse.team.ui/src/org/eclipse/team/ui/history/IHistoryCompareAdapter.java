@@ -10,15 +10,21 @@
  *******************************************************************************/
 package org.eclipse.team.ui.history;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.part.Page;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 
 /**
- * Abstract HistoryPage class.
- * @see IHistoryPage
+ * Used to display the contents of an IHistoryPage in a dialog
+ * 
  * @since 3.2
+ * @see HistoryPageSaveablePart
+ * @see IHistoryPage
  */
-public abstract class HistoryPage extends Page implements IHistoryPage, IAdaptable {
-
-
+public interface IHistoryCompareAdapter {
+	/**
+	 * Returns an ICompareInput for the passed in object
+	 * @param object
+	 * @return
+	 */
+	public ICompareInput getCompareInput(Object object);
+	
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.ui.history;
 
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
@@ -81,10 +82,16 @@ public interface IHistoryPageSite {
 	void setFocus();
 	
 	/**
-	 * Returns the action bars for this synchronize page site.
+	 * Returns the action bars for this history page site.
 	 *
 	 * @return the action bars
 	 */
 	IActionBars getActionBars();
+
+	/**
+	 * Sets the Toolbar Manager for this history page site.
+	 * @param toolBarManager
+	 */
+	void setToolBarManager(ToolBarManager toolBarManager);
 
 }

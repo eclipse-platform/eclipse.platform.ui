@@ -115,17 +115,6 @@
                id="nonbound.org.eclipse.team.ui.ImportProjectSetAction">
          </action>
       </objectContribution>
-      <objectContribution
-            adaptable="true"
-            id="org.eclipse.team.ui.ShowLocalHistoryContribution"
-            objectClass="org.eclipse.core.resources.IResource">
-         <action
-               class="org.eclipse.team.internal.ui.history.ShowLocalHistory"
-               enablesFor="1"
-               id="org.eclipse.team.ui.showlocalhistory"
-               label="%ShowLocalHistory.label"
-               menubarPath="local"/>
-      </objectContribution>
    </extension>
 <!-- ************** Views ********************** -->
    <extension

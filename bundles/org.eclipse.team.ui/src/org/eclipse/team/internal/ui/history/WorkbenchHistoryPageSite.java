@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.history;
 
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ui.history.IHistoryPageSite;
@@ -62,6 +63,11 @@ public class WorkbenchHistoryPageSite implements IHistoryPageSite {
 
 	public boolean isModal() {
 		return false;
+	}
+
+	public void setToolBarManager(ToolBarManager toolBarManager) {
+		//not needed
+
 	}
 
 

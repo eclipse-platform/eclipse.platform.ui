@@ -54,8 +54,12 @@ public interface IHistoryPage {
 	 * IHistoryPageSite in order to allow history pages to be displayed in 
 	 * both views and dialogs
 	 * @param viewSite
-	 * 
-	 * TODO: Create an IHistoryPageSit
 	 */
 	public void setSite(IHistoryPageSite viewSite);
+	
+	/**
+	 * Returns the IHistoryPageSite set for this page.
+	 * @return an IHistoryPageSite
+	 */
+	public IHistoryPageSite getHistoryPageSite();
 }
