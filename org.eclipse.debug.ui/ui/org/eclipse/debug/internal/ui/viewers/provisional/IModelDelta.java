@@ -20,8 +20,8 @@ import org.eclipse.debug.internal.ui.viewers.update.ModelDelta;
  * <p>
  * Each node in a model delta describes the following:
  * <ul>
- * <li>the type of change - for example, whether an element was added, removed or changed</li>
- * <li>how it changed - for example, content versus state change</li>
+ * <li>the type of change - for example, whether an element was added, removed,
+ *  or whether its content or state changed</li>
  * <li>action to consider - for example, select or reveal the element</li>
  * </ul> 
  * </p>
@@ -41,7 +41,7 @@ public interface IModelDelta {
 	 * Indicates an element has not changed, but has children that have
 	 * changed in some way.
 	 */
-	public static int NOCHANGE = 0;
+	public static int NO_CHANGE = 0;
 	/**
 	 * Indicates an element has been added to the model, as described by
 	 * its path.
@@ -52,11 +52,6 @@ public interface IModelDelta {
 	 * its path.
 	 */
 	public static int REMOVED = 1 << 1;
-	/**
-	 * Indicates an element in the model has changed, as described by its path.
-	 * Flags indicate how the element changed (i.e. content and/or state) 
-	 */
-	public static int CHANGED = 1 << 2;
 	/**
 	 * Indicates an element has been replaced in the model, as described by
 	 * its path. In this case a replacement element is also specified in the

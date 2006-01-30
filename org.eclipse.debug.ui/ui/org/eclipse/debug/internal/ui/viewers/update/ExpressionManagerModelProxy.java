@@ -55,11 +55,11 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsChanged(org.eclipse.debug.core.model.IExpression[])
 	 */
 	public void expressionsChanged(IExpression[] expressions) {
-		updateExpressions(expressions, IModelDelta.CHANGED | IModelDelta.CONTENT | IModelDelta.STATE);		
+		updateExpressions(expressions, IModelDelta.CONTENT | IModelDelta.STATE);		
 	}
     
     private void updateExpressions(IExpression[] expressions, int flags) {
-		ModelDelta delta = new ModelDelta(DebugPlugin.getDefault() .getExpressionManager(), IModelDelta.NOCHANGE);
+		ModelDelta delta = new ModelDelta(DebugPlugin.getDefault() .getExpressionManager(), IModelDelta.NO_CHANGE);
 		for (int i = 0; i < expressions.length; i++) {
 			IExpression expression = expressions[i];
 			delta.addNode(expression, flags);

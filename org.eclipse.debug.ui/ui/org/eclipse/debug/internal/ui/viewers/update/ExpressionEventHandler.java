@@ -35,7 +35,7 @@ public class ExpressionEventHandler extends DebugEventHandler {
     }
 
     protected void handleChange(DebugEvent event) {
-    	ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getExpressionManager(), IModelDelta.NOCHANGE);
+    	ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getExpressionManager(), IModelDelta.NO_CHANGE);
 		IExpression expression = null;
     	if (event.getSource() instanceof IExpression) {
     		expression = (IExpression) event.getSource();
@@ -47,13 +47,13 @@ public class ExpressionEventHandler extends DebugEventHandler {
 			}
 		}
     	if (expression != null) {
-	    	delta.addNode(expression, IModelDelta.CHANGED | IModelDelta.CONTENT | IModelDelta.STATE);
+	    	delta.addNode(expression, IModelDelta.CONTENT | IModelDelta.STATE);
 			fireDelta(delta);
     	}
     }
 
     protected void refreshRoot(DebugEvent event) {
-        ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getExpressionManager(), IModelDelta.CHANGED | IModelDelta.CONTENT);
+        ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getExpressionManager(), IModelDelta.CONTENT);
         fireDelta(delta);
     }
     

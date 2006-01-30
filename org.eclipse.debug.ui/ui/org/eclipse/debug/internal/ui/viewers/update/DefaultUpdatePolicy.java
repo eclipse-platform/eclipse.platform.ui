@@ -51,9 +51,6 @@ public class DefaultUpdatePolicy extends AbstractUpdatePolicy implements IModelC
             if ((flags & IModelDelta.REMOVED) != 0) {
                 handleRemove(viewer, node);
             }
-            if ((flags & IModelDelta.CHANGED) != 0) {
-                handleChange(viewer, node);
-            }
             if ((flags & IModelDelta.CONTENT) != 0) {
                 handleContent(viewer, node);
             }
@@ -75,10 +72,6 @@ public class DefaultUpdatePolicy extends AbstractUpdatePolicy implements IModelC
 
             updateNodes(node.getNodes());
         }
-    }
-
-    protected void handleChange(AsynchronousTreeViewer viewer, IModelDelta delta) {
-        //do nothing...
     }
 
     protected void handleState(AsynchronousTreeViewer viewer, IModelDelta delta) {

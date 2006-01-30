@@ -52,7 +52,7 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	}
 
 	public void launchesTerminated(ILaunch[] launches) {
-		fireDelta(launches, IModelDelta.CHANGED | IModelDelta.CONTENT);
+		fireDelta(launches, IModelDelta.CONTENT);
 	}
 
 	public void launchesRemoved(ILaunch[] launches) {
@@ -64,11 +64,11 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	}
 
 	public void launchesChanged(ILaunch[] launches) {
-		fireDelta(launches, IModelDelta.CHANGED | IModelDelta.STATE | IModelDelta.CONTENT);
+		fireDelta(launches, IModelDelta.STATE | IModelDelta.CONTENT);
 	}
 	
 	protected void fireDelta(ILaunch[] launches, int launchFlags) {
-		ModelDelta delta = new ModelDelta(fLaunchManager, IModelDelta.NOCHANGE);
+		ModelDelta delta = new ModelDelta(fLaunchManager, IModelDelta.NO_CHANGE);
 		for (int i = 0; i < launches.length; i++) {
 			delta.addNode(launches[i], launchFlags);	
 		}

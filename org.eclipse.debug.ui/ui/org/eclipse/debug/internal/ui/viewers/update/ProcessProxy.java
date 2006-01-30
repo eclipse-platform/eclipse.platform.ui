@@ -28,10 +28,10 @@ public class ProcessProxy extends EventHandlerModelProxy {
 			ModelDelta delta = null;
         	synchronized (ProcessProxy.this) {
         		if (!isDisposed()) {
-                    delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
+                    delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
                     ModelDelta node = delta;
-                    node = node.addNode(fProcess.getLaunch(), IModelDelta.NOCHANGE);
-                    node.addNode(fProcess, IModelDelta.CHANGED | IModelDelta.STATE);        			
+                    node = node.addNode(fProcess.getLaunch(), IModelDelta.NO_CHANGE);
+                    node.addNode(fProcess, IModelDelta.STATE);        			
         		}
 			}
         	if (delta != null && !isDisposed()) {

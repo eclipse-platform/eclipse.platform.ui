@@ -28,16 +28,20 @@ public class DefaultTableUpdatePolicy extends AbstractUpdatePolicy implements IM
         updateNodes(nodes);
     }
 
-    private void updateElementContent(IModelDelta node) {
+    private void handleState(IModelDelta node) {
         AsynchronousViewer viewer = getViewer();
         if (viewer != null) {
-            int flags = node.getFlags();
-            if ((flags & IModelDelta.STATE) != 0) {
-                viewer.update(node.getElement());
-            }
-            if ((flags & IModelDelta.CONTENT) != 0) {
-                viewer.refresh(node.getElement());
-            }
+            Object element = node.getElement();
+			viewer.update(element);
+            updateSelection(element, node.getFlags());
+        }
+    }
+    private void handleContent(IModelDelta node) {
+    	AsynchronousViewer viewer = getViewer();
+        if (viewer != null) {
+        	Object element = node.getElement();
+			viewer.refresh(element);
+        	updateSelection(element, node.getFlags());
         }
     }
 
@@ -55,15 +59,22 @@ public class DefaultTableUpdatePolicy extends AbstractUpdatePolicy implements IM
             IModelDelta node = nodes[i];
             int flags = node.getFlags();
 
-            if ((flags & IModelDelta.CHANGED) != 0) {
-                handleChange(node);
-            } else if ((flags & IModelDelta.ADDED) != 0) {
+            if ((flags & IModelDelta.STATE) != 0) {
+                handleState(node);
+            }
+            if ((flags & IModelDelta.CONTENT) != 0) {
+                handleContent(node);
+            }
+            if ((flags & IModelDelta.ADDED) != 0) {
                 handleAdd(node);
-            } else if ((flags & IModelDelta.REMOVED) != 0) {
+            } 
+            if ((flags & IModelDelta.REMOVED) != 0) {
                 handleRemove(node);
-            } else if ((flags & IModelDelta.REPLACED) != 0) {
+            }
+            if ((flags & IModelDelta.REPLACED) != 0) {
                 handleReplace(node);
-            } else if ((flags & IModelDelta.INSERTED) != 0) {
+            }
+            if ((flags & IModelDelta.INSERTED) != 0) {
                 handleInsert(node);
             }
 
@@ -86,11 +97,6 @@ public class DefaultTableUpdatePolicy extends AbstractUpdatePolicy implements IM
             viewer.replace(node.getElement(), node.getReplacementElement());
             updateSelection(node.getReplacementElement(), node.getFlags());
         }
-    }
-
-    protected void handleChange(IModelDelta node) {
-        updateElementContent(node);
-        updateSelection(node.getElement(), node.getFlags());
     }
 
     protected void handleAdd(IModelDelta node) {

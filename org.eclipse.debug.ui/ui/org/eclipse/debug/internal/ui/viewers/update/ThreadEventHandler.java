@@ -65,14 +65,14 @@ public class ThreadEventHandler extends DebugEventHandler {
 			try {
 				IStackFrame frame = thread.getTopStackFrame();
                 if (frame != null) { 
-                    node.addNode(frame, IModelDelta.CHANGED | IModelDelta.STATE);
+                    node.addNode(frame, IModelDelta.STATE);
                     fireDelta(delta);
                 }
 			} catch (DebugException e) {
 			}
         } else {
         	queueSuspendedThread(event);
-        	fireDeltaUpdatingTopFrame(thread, IModelDelta.NOCHANGE);
+        	fireDeltaUpdatingTopFrame(thread, IModelDelta.NO_CHANGE);
         }
 	}
 	
@@ -88,10 +88,10 @@ public class ThreadEventHandler extends DebugEventHandler {
 
 	protected void handleResume(DebugEvent event) {
 		IThread thread = removeSuspendedThread(event);
-		fireDeltaAndClearTopFrame(thread, IModelDelta.CHANGED | IModelDelta.STATE | IModelDelta.CONTENT);
+		fireDeltaAndClearTopFrame(thread, IModelDelta.STATE | IModelDelta.CONTENT);
 		thread = getNextSuspendedThread();
 		if (thread != null) {
-			fireDeltaUpdatingTopFrame(thread, IModelDelta.NOCHANGE);
+			fireDeltaUpdatingTopFrame(thread, IModelDelta.NO_CHANGE);
 		}
 	}
 
@@ -104,25 +104,25 @@ public class ThreadEventHandler extends DebugEventHandler {
 	}
 
 	protected void handleChange(DebugEvent event) {
-		fireDeltaUpdatingTopFrame((IThread) event.getSource(), IModelDelta.CHANGED | IModelDelta.STATE);
+		fireDeltaUpdatingTopFrame((IThread) event.getSource(), IModelDelta.STATE);
 	}
 
 	protected void handleLateSuspend(DebugEvent suspend, DebugEvent resume) {
 		IThread thread = queueSuspendedThread(suspend);
-		fireDeltaUpdatingTopFrame(thread, IModelDelta.CHANGED | IModelDelta.CONTENT | IModelDelta.EXPAND);
+		fireDeltaUpdatingTopFrame(thread, IModelDelta.CONTENT | IModelDelta.EXPAND);
 	}
 
 	protected void handleSuspendTimeout(DebugEvent event) {
 		IThread thread = removeSuspendedThread(event);
-		fireDeltaAndClearTopFrame(thread, IModelDelta.CHANGED | IModelDelta.CONTENT);
+		fireDeltaAndClearTopFrame(thread, IModelDelta.CONTENT);
 	}
 	
 	private ModelDelta buildRootDelta() {
-		return new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
+		return new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
 	}
 	
 	protected ModelDelta addPathToThread(ModelDelta delta, IThread thread) {
-		delta = delta.addNode(thread.getLaunch(), IModelDelta.NOCHANGE);
+		delta = delta.addNode(thread.getLaunch(), IModelDelta.NO_CHANGE);
 		return delta.addNode(thread.getDebugTarget(), IModelDelta.EXPAND);
 	}
 
@@ -149,12 +149,12 @@ public class ThreadEventHandler extends DebugEventHandler {
 		} catch (DebugException e) {
 		}
     	if (isEqual(frame, prev)) {
-    		node = node.addNode(thread, flags | IModelDelta.CHANGED | IModelDelta.EXPAND);
+    		node = node.addNode(thread, flags | IModelDelta.EXPAND);
     	} else {
-			node = node.addNode(thread, flags | IModelDelta.CHANGED | IModelDelta.CONTENT | IModelDelta.EXPAND);
+			node = node.addNode(thread, flags | IModelDelta.CONTENT | IModelDelta.EXPAND);
     	}
     	if (frame != null) {
-            node.addNode(frame, IModelDelta.CHANGED | IModelDelta.STATE | IModelDelta.SELECT);
+            node.addNode(frame, IModelDelta.STATE | IModelDelta.SELECT);
         }
     	synchronized (this) {
     		if (!isDisposed()) {

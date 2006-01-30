@@ -39,7 +39,7 @@ public class DebugTargetEventHandler extends DebugEventHandler {
 	}
 
 	protected void handleChange(DebugEvent event) {
-		fireDelta((IDebugTarget) event.getSource(), IModelDelta.CHANGED | IModelDelta.STATE);
+		fireDelta((IDebugTarget) event.getSource(), IModelDelta.STATE);
 	}
 
 	protected void handleCreate(DebugEvent event) {
@@ -47,20 +47,20 @@ public class DebugTargetEventHandler extends DebugEventHandler {
 	}
 
 	protected void handleResume(DebugEvent event) {
-		fireDelta((IDebugTarget) event.getSource(), IModelDelta.CHANGED | IModelDelta.CONTENT | IModelDelta.STATE);
+		fireDelta((IDebugTarget) event.getSource(), IModelDelta.CONTENT | IModelDelta.STATE);
 	}
 
 	protected void handleSuspend(DebugEvent event) {
-		fireDelta((IDebugTarget) event.getSource(), IModelDelta.CHANGED | IModelDelta.CONTENT);
+		fireDelta((IDebugTarget) event.getSource(), IModelDelta.CONTENT);
 	}
 
 	protected void handleTerminate(DebugEvent event) {
-		fireDelta((IDebugTarget) event.getSource(), IModelDelta.CHANGED | IModelDelta.STATE);
+		fireDelta((IDebugTarget) event.getSource(), IModelDelta.STATE);
 	}
 
 	private void fireDelta(IDebugTarget target, int flags) {
-		ModelDelta root = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
-		ModelDelta delta = root.addNode(target.getLaunch(), IModelDelta.NOCHANGE);
+		ModelDelta root = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
+		ModelDelta delta = root.addNode(target.getLaunch(), IModelDelta.NO_CHANGE);
 		delta.addNode(target, flags);
 		fireDelta(root);
 	}
