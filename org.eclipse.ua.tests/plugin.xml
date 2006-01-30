@@ -151,4 +151,65 @@
       </command>
    </extension>
 
+   <!--
+      Intro test content
+   -->
+   <extension
+         point="org.eclipse.ui.intro">
+      <intro
+            class="org.eclipse.ui.intro.config.CustomizableIntroPart"
+            id="org.eclipse.ua.tests.intro.dynamicXHTML">
+      </intro>
+      <intro
+            class="org.eclipse.ui.intro.config.CustomizableIntroPart"
+            id="org.eclipse.ua.tests.intro.dynamicXML">
+      </intro>
+      <introProductBinding
+            introId="org.eclipse.ua.tests.intro.dynamicXML"
+            productId="org.eclipse.sdk.ide">
+      </introProductBinding>
+   </extension>   
+   <extension
+         point="org.eclipse.ui.intro.config">
+      <config
+            introId="org.eclipse.ua.tests.intro.dynamicXHTML"
+            content="data/intro/dynamicXHTML/introContent.xml"
+            id="org.eclipse.ua.tests.intro.config.dynamicXHTML">
+         <presentation
+               home-page-id="root">
+            <implementation
+                  kind="html"
+                  os="win32,linux,macosx">
+            </implementation>
+         </presentation>
+      </config>
+      <config
+            introId="org.eclipse.ua.tests.intro.dynamicXML"
+            id="org.eclipse.ua.tests.intro.config.dynamicXML"
+            content="data/intro/dynamicXML/introContent.xml">
+         <presentation
+               home-page-id="root" standby-page-id="standby">
+            <implementation
+                  style="data/intro/dynamicXML/css/shared.css"
+                  kind="html"
+                  os="win32,linux,macosx">
+            </implementation>
+            <implementation
+                  kind="swt">
+            </implementation>
+         </presentation>
+      </config>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <configExtension
+            content="data/intro/dynamicXHTML/ext.xml"
+            configId="org.eclipse.ua.tests.intro.config.dynamicXHTML">
+      </configExtension>
+      <configExtension
+            content="data/intro/dynamicXML/ext.xml"
+            configId="org.eclipse.ua.tests.intro.config.dynamicXML">
+      </configExtension>
+   </extension>
+   
 </plugin>

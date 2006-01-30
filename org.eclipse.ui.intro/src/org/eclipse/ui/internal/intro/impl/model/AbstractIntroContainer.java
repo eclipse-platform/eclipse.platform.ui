@@ -11,9 +11,12 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.help.internal.xhtml.XHTMLSupport;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.osgi.framework.Bundle;
@@ -80,8 +83,10 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         if (!resolved)
             resolveChildren();
 
+        Vector filtered = filterChildren(children);
+        
         AbstractIntroElement[] childrenElements = (AbstractIntroElement[]) convertToModelArray(
-            children, AbstractIntroElement.ELEMENT);
+        	filtered, AbstractIntroElement.ELEMENT);
         return childrenElements;
     }
 
@@ -341,6 +346,49 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             insertTarget(include, target);
     }
 
+    /**
+     * Filters the appropriate elements from the given Vector, according to the current
+     * environment. For example, if one of the elements has a tag to filter for os=linux and
+     * the os is win32, the element will not be returned in the resulting Vector.
+     * 
+     * @param unfiltered the unfiltered elements
+     * @return a new Vector with elements filtered
+     */
+    private Vector filterChildren(Vector unfiltered) {
+    	Vector filtered = new Vector();
+    	Iterator iter = unfiltered.iterator();
+    	while (iter.hasNext()) {
+    		Object element = iter.next();
+    		if (!filterElement(element)) {
+        		filtered.add(element);
+    		}
+    	}
+    	return filtered;
+    }
+    
+    /**
+     * Returns whether or not the given element should be filtered in. This is true only if all
+     * the filters on the element pass.
+     * 
+     * @param element the element to decide whether to filter
+     * @return whether or not the given element should be filtered in
+     */
+    private boolean filterElement(Object element) {
+    	if (element instanceof AbstractIntroIdElement) {
+    		Map filters = ((AbstractIntroIdElement)element).getFilters();
+    		if (filters != null) {
+    			Iterator iter = filters.entrySet().iterator();
+    			while (iter.hasNext()) {
+    				Map.Entry entry = (Map.Entry)iter.next();
+        			if (!XHTMLSupport.getFilterProcessor().isFilteredIn((String)entry.getKey(), (String)entry.getValue())) {
+        				return true;
+        			}
+    			}
+    		}
+    	}
+		return false;
+    }
+    
     /**
      * Find the target element pointed to by the path in the include. It is
      * assumed that configId always points to an external config, and not the

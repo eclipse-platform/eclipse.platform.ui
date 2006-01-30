@@ -22,8 +22,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetCommand;
+import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 
 /**
  * Execute a command defined in a cheatsheet
@@ -46,10 +48,11 @@ public class CommandRunner {
 	/**
 	 * Attempt to execute a command 
 	 * @param command a CheatSheetCommand created by the parser
+	 * @param csm 
 	 * @return OK_STATUS if the command completes withour error, otherwise
 	 * an error status
 	 */
-	public IStatus executeCommand(CheatSheetCommand command) {
+	public IStatus executeCommand(CheatSheetCommand command, ICheatSheetManager csm) {
 		ICommandService service = getCommandService();
 		if (service == null) {
 			return new Status
@@ -59,11 +62,15 @@ public class CommandRunner {
 		}
 
 		ParameterizedCommand selectedCommand;
+		Object result;			
+		String rawSerialization = command.getSerialization();
 		try {
-			selectedCommand = service.deserialize(command.getSerialization());
-			selectedCommand.executeWithChecks(null, null);
+			String substitutedSerialization = CheatSheetManager.performVariableSubstitution
+			    (rawSerialization, csm);
+			selectedCommand = service.deserialize(substitutedSerialization);
+			result = selectedCommand.executeWithChecks(null, null);
 		} catch (NotDefinedException e) {
-			String message = NLS.bind(Messages.ERROR_COMMAND_ID_NOT_FOUND, (new Object[] {command.getSerialization()}));
+			String message = NLS.bind(Messages.ERROR_COMMAND_ID_NOT_FOUND, (new Object[] {rawSerialization}));
 			return new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);		
 		} catch (SerializationException e) {
 			return commandFailureStatus(e);
@@ -77,6 +84,15 @@ public class CommandRunner {
 			return commandFailureStatus(e);
 		}
 		
+		if (command.getReturns() != null) {
+			String returnValue;
+			if (result == null) {
+				returnValue = "";  //$NON-NLS-1$
+			} else {
+				returnValue = result.toString();
+			}
+			csm.setData(command.getReturns(),  returnValue);
+		}
 		return Status.OK_STATUS;
 	}
 	

@@ -12,6 +12,7 @@ public class AllExecutionTests {
 		TestSuite suite = new TestSuite(
 				"org.eclipse.ua.tests.cheatsheet.AllExecutionTests");
 		//$JUnit-BEGIN$
+		suite.addTestSuite(TestVariableSubstitution.class);
 		suite.addTestSuite(TestActionExecution.class);
 		suite.addTestSuite(TestCommandExecution.class);
 		//$JUnit-END$

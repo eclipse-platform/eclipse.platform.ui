@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   An extension to the dynamicXML test intro that contributes a group into an anchor.
+   The link should appear in the anchor examples page (see introContent.xml in same folder).
+-->
+<introContent>
+	<!--
+	   The group below will be placed where the anchor is in the anchor page in introContent.xml in
+	   the same folder.
+	-->
+    <extensionContent path="anchor/my.id.anchor">
+        <group>
+            <link label="This link is from extension content ext.xml and is to be contributed into a page with an anchor." url="http://org.eclipse.ui.intro/showPage?id=anchor"/>
+        </group>
+    </extensionContent>
+</introContent>

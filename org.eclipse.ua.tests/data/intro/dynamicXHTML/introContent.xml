@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+   This is an intro used to test dynamic content with XHTML files. This lists all the pages, and
+   the referenced XHTML files contain the content. See the files for more details.
+-->
+<introContent>
+    <page id="root" content="content/root.xhtml"/>
+    <page id="static" content="content/static.xhtml"/>
+    <page id="filter" content="content/filter.xhtml"/>
+    <page id="include" content="content/include.xhtml"/>
+    <page id="include2" content="content/include2.xhtml"/>
+    <page id="anchor" content="content/anchor.xhtml"/>
+</introContent>

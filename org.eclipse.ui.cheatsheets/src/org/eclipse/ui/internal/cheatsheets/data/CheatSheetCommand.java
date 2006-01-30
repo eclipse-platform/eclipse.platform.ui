@@ -25,6 +25,7 @@ import org.w3c.dom.Node;
 public class CheatSheetCommand extends AbstractExecutable {
 
 	private String serialization;
+	private String returns;
 	private boolean serializationFound;
 	
 	public void setSerialization(String serialization) {
@@ -36,11 +37,11 @@ public class CheatSheetCommand extends AbstractExecutable {
 	}
 
 	public boolean isCheatSheetManagerUsed() {
-		return false;
+		return true;
 	}
 
 	public IStatus execute(ICheatSheetManager csm) {
-		return new CommandRunner().executeCommand(this);
+		return new CommandRunner().executeCommand(this, csm);
 	}
 
 	public boolean hasParams() {
@@ -48,11 +49,13 @@ public class CheatSheetCommand extends AbstractExecutable {
 	}
 
 	public boolean handleAttribute(Node attribute) {
-
 		if (IParserTags.SERIALIZATION.equals(attribute.getNodeName())) {
 		    setSerialization(attribute.getNodeValue());
 		    serializationFound = true;
 		    return true;
+		} else if (IParserTags.RETURNS.equals(attribute.getNodeName())) {
+			setReturns(attribute.getNodeValue());
+			return true;
 		}
 		return false;
 	}
@@ -62,6 +65,14 @@ public class CheatSheetCommand extends AbstractExecutable {
 			return NLS.bind(Messages.ERROR_PARSING_NO_SERIALIZATION, (new Object[] {node.getNodeName()}));
 		}
 		return null;
+	}
+
+	public void setReturns(String returns) {
+		this.returns = returns;
+	}
+
+	public String getReturns() {
+		return returns;
 	}
 
 }

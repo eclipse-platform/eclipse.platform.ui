@@ -247,7 +247,7 @@ public class BrowserIntroPartImplementation extends
      * Note: Resolving dynamic content is done at the UI level, consistant with
      * SWT presentation.
      */
-    private String generateXHTMLPage(AbstractIntroPage page,
+    public String generateXHTMLPage(AbstractIntroPage page,
             IIntroContentProviderSite site) {
         // get/cache all content provider elements in DOM.
         Document dom = page.getResolvedDocument();

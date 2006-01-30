@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   An extension to introContent.xml with an additional page and a contribution to an anchor.
+-->
+<introContent>
+  <extensionContent content="content/anchor2.xhtml" path="anchor/my.anchor.id" />
+  <page id="anchor2" content="content/anchor2.xhtml"/>
+</introContent>

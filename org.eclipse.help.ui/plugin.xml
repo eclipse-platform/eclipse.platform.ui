@@ -126,16 +126,12 @@
     <extension
          point="org.eclipse.ui.commands">
       <command
-            categoryId="org.eclipse.help.ui.category.help"
+            categoryId="org.eclipse.ui.category.help"
             defaultHandler="org.eclipse.help.ui.internal.CloseHelpTrayHandler"
             description="%command.closeTray.description"
             id="org.eclipse.help.ui.closeTray"
             name="%command.closeTray.name">
       </command>
-      <category
-            description="%command.category.help.description"
-            id="org.eclipse.help.ui.category.help"
-            name="%command.category.help.name"/>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">

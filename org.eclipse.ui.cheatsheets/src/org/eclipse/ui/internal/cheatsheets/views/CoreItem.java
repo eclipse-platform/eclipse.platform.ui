@@ -540,7 +540,8 @@ public class CoreItem extends ViewItem {
 	 * this is the last step.
 	 */
 	void createCompletionComposite(boolean isFinalItem) {
-		String completionMessage = item.getCompletionMessage();
+		String completionMessage = CheatSheetManager.performVariableSubstitution
+		    (item.getCompletionMessage(), viewer.getManager());
 		if (completionMessage != null) {
 			Color backgroundColor = bodyWrapperComposite.getBackground();
 			completionComposite = page.getToolkit().createComposite(

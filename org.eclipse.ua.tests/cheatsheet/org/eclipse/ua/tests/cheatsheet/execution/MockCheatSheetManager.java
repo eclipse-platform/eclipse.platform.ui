@@ -9,21 +9,30 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ua.tests.cheatsheet.composite;
+package org.eclipse.ua.tests.cheatsheet.execution;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.HashMap;
+import java.util.Map;
 
-public class AllCompositeTests {
+import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				"org.eclipse.ua.tests.cheatsheet.AllCompositeTests");
-		//$JUnit-BEGIN$
-		suite.addTestSuite(TestCompositeParser.class);
-		suite.addTestSuite(TestEventing.class);
-		//$JUnit-END$
-		return suite;
+/**
+ * Mock object used in JUnit tests for command execution
+ */
+
+public class MockCheatSheetManager implements ICheatSheetManager {
+
+	private Map dataStore = new HashMap();
+	public String getCheatSheetID() {
+		return "Mock";
+	}
+
+	public String getData(String key) {
+		return (String)dataStore.get(key);
+	}
+
+	public void setData(String key, String data) {
+		dataStore.put(key, data);
 	}
 
 }

@@ -115,7 +115,7 @@ public class UAContentFilterProcessor {
 	 * @param value
 	 * @return
 	 */
-	protected boolean isFilteredIn(String filter, String value) {
+	public boolean isFilteredIn(String filter, String value) {
 		boolean filtered_in = false;
 		if (filter.equals("ws")) { //$NON-NLS-1$
 			filtered_in = filterByWS(value);

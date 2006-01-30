@@ -124,6 +124,7 @@ public interface IParserTags {
 	// Miscellaneous tags
 	public static final String COMMAND = "command"; //$NON-NLS-1$
 	public static final String SERIALIZATION = "serialization"; //$NON-NLS-1$
+	public static final String RETURNS = "returns"; //$NON-NLS-1$
 	public static final String ON_COMPLETION = "onCompletion"; //$NON-NLS-1$
 	public static final String CONTENT_URL = "contentURL"; //$NON-NLS-1$
 

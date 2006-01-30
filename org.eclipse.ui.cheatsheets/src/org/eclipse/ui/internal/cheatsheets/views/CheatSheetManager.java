@@ -20,6 +20,8 @@ import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
  */
 public class CheatSheetManager implements ICheatSheetManager {
 
+	private static final String VARIABLE_END = "}";
+	private static final String VARIABLE_BEGIN = "${";
 	private String cheatsheetID;
 	private List listeners;
 	private Hashtable dataTable = null;
@@ -65,11 +67,44 @@ public class CheatSheetManager implements ICheatSheetManager {
 
 	public String getVariableData(String variable) {
 		String result = variable;
-		if(variable != null && variable.startsWith("${") && variable.endsWith("}")) { //$NON-NLS-1$ //$NON-NLS-2$
+		if(variable != null && variable.startsWith(VARIABLE_BEGIN) && variable.endsWith(VARIABLE_END)) { //$NON-NLS-1$ //$NON-NLS-2$
 			result = variable.substring(2,variable.length()-1);
 			result = getData(result);
 		}
 		return result;
+	}
+	
+    /**
+     * Substitute occurences of ${data} with values from the cheatsheetmanager.
+     * This function is static to allow for JUnit testing
+     * @param input The input string
+     * @param csm The cheatsheet manager
+     * @return The input string with substitutions made for any cheatsheet 
+     * variables encountered.
+     */
+	public static String performVariableSubstitution(String input,
+			             ICheatSheetManager csm)
+	{
+		String remaining = input;
+		String output = ""; //$NON-NLS-1$
+		while (remaining.length() > 0) {
+			int varIndex = remaining.indexOf(VARIABLE_BEGIN);
+			int endIndex = remaining.indexOf(VARIABLE_END, varIndex + 1);
+			if (varIndex < 0 || endIndex < 0) {
+				output += remaining;
+				remaining = "";
+			} else {
+                String varName = remaining.substring(varIndex + VARIABLE_BEGIN.length(),
+                		                         endIndex);
+                String value = csm.getData(varName);
+                output += remaining.substring(0, varIndex);
+                if (value != null) {
+                	output += value;
+                }
+                remaining = remaining.substring(endIndex + VARIABLE_END.length());
+			}
+		}
+		return output;
 	}
 
 	/*package*/ void setData(Hashtable data) {

@@ -21,7 +21,7 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  */
 public class UIContentFilterProcessor extends UAContentFilterProcessor {
 
-	protected boolean isFilteredIn(String filter, String value) {
+	public boolean isFilteredIn(String filter, String value) {
 		boolean filtered_in = false;
 		if (filter.equals("category")) { //$NON-NLS-1$
 			filtered_in = filterByCategory(value);

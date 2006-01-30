@@ -128,6 +128,7 @@
             <xsd:attribute name="when" type="xsd:string" use="required"/>
             <xsd:attribute name="confirm" type="xsd:boolean" use="optional" default="false"/>
             <xsd:attribute name="serialization" type="xsd:string" use="optional"/>
+            <xsd:attribute name="returns" type="xsd:string" use="optional"/>
         </xsd:complexType>
     </xsd:element>
     

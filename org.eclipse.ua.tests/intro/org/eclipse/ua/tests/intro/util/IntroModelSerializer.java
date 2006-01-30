@@ -345,6 +345,7 @@ public class IntroModelSerializer {
             .getChildrenOfType(AbstractIntroElement.GROUP
                     | AbstractIntroElement.LINK);
         text.append("\n\t\t\tGroups and Links: " + linksAndGroups.length); //$NON-NLS-1$
+        text.append("\n"); //$NON-NLS-1$
     }
 
     /**

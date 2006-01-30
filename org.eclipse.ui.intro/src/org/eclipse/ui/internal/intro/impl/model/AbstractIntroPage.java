@@ -16,8 +16,8 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.xhtml.XHTMLSupport;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
-import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
@@ -634,6 +634,9 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             ModelUtil.insertStyle(dom, style);
         }
 
+        // filter the content
+        XHTMLSupport.getFilterProcessor().applyFilters(dom);
+        
         // and resolve includes.
         resolveIncludes();
 
@@ -845,6 +848,13 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         return this.iframe.getIFrameURL();
     }
 
+    /**
+     * Returns the raw or unprocessed base location.
+     */
+    public String getInitialBase() {
+    	return initialBase;
+    }
+    
     /**
      * Return the url of the embedded IFrame, if this page is an IFrame page.
      * 

@@ -11,7 +11,8 @@ Require-Bundle: org.junit,
  org.eclipse.help.appserver,
  org.eclipse.ui,
  org.eclipse.ui.cheatsheets,
- org.eclipse.ui.intro
+ org.eclipse.ui.intro,
+ org.eclipse.help.ui
 Eclipse-LazyStart: true
 Bundle-Vendor: Eclipse.org
 Bundle-ClassPath: ua-tests.jar

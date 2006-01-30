@@ -53,6 +53,9 @@ public class XHTMLSupport {
 		return document;
 	}
 
+	public static UAContentFilterProcessor getFilterProcessor() {
+		return filterProcessor;
+	}
 
 	/**
 	 * Used by the UI plugin to override base functionality and add more filtering capabilities.

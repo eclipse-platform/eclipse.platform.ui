@@ -24,6 +24,7 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.cheatsheets.CommandRunner;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetCommand;
@@ -44,7 +45,7 @@ public class TestCommandExecution extends TestCase {
 	private static final String SERIALIZED_COMMAND = COMMAND_ID + '(' 
 	    + PARAM1_ID + '=' + PARAM1_VALUE + ',' 
 	    + PARAM2_ID + '=' + PARAM2_VALUE + ')';	
-	    // "org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.ui.views.TaskList)";
+	private static final String RETURN_STORE = "retData";
 
 	protected void setUp() throws Exception {
 		CommandHandler.reset();
@@ -95,27 +96,44 @@ public class TestCommandExecution extends TestCase {
 	
 	public void testCommandRunner() {
 		CheatSheetCommand command = new CheatSheetCommand();
+		ICheatSheetManager csm = new MockCheatSheetManager();
 		command.setSerialization(SERIALIZED_COMMAND);
 		
-		IStatus status = new CommandRunner().executeCommand(command);
+		IStatus status = new CommandRunner().executeCommand(command, csm);
 		assertTrue(status.isOK());
 		
 		checkCommandExecution();
 	}
 	
+	public void testCommandWithResult() {
+		CheatSheetCommand command = new CheatSheetCommand();
+		ICheatSheetManager csm = new MockCheatSheetManager();
+		command.setSerialization(SERIALIZED_COMMAND);
+		command.setReturns(RETURN_STORE);
+		
+		IStatus status = new CommandRunner().executeCommand(command, csm);
+		assertTrue(status.isOK());
+		String result = csm.getData(RETURN_STORE);
+		assertNotNull(result);
+		assertEquals(CommandHandler.RESULT_TO_STRING, result);
+		checkCommandExecution();
+	}
+	
 	public void testInvalidCommandId() {
 		CheatSheetCommand command = new CheatSheetCommand();
+		ICheatSheetManager csm = new MockCheatSheetManager();
 		command.setSerialization(COMMAND_ID + ".invalid");	 //$NON-NLS-1$
-		IStatus status = new CommandRunner().executeCommand(command);
+		IStatus status = new CommandRunner().executeCommand(command, csm);
 		assertFalse(status.isOK());		
 	}
 	
 	public void testCommandException() {
 		CheatSheetCommand command = new CheatSheetCommand();
+		ICheatSheetManager csm = new MockCheatSheetManager();
 		command.setSerialization(SERIALIZED_COMMAND);
 		CommandHandler.setThrowException(true);
 		
-		IStatus status = new CommandRunner().executeCommand(command);
+		IStatus status = new CommandRunner().executeCommand(command, csm);
 		assertFalse(status.isOK());		
 	}
 

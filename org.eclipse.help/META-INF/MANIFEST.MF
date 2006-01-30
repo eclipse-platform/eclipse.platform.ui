@@ -14,6 +14,6 @@ Export-Package: org.eclipse.help,
  org.eclipse.help.internal.protocols;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp",
  org.eclipse.help.internal.toc;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp",
  org.eclipse.help.internal.util;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp",
- org.eclipse.help.internal.xhtml;x-friends:="org.eclipse.help.ui"
+ org.eclipse.help.internal.xhtml;x-friends:="org.eclipse.help.ui,org.eclipse.ui.intro"
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)"
 Eclipse-LazyStart: true

@@ -12,7 +12,14 @@ package org.eclipse.ua.tests.intro.util;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -20,10 +27,17 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.ResourceFinder;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
+import org.eclipse.ui.internal.intro.impl.model.IntroHomePage;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.model.IntroPage;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
+import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation;
+import org.eclipse.ui.intro.config.IIntroContentProvider;
+import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 
 /*
  * A utility for regenerating the _serialized.txt files that contain the expected
@@ -41,6 +55,13 @@ import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
  * 2. Right-click in "Package Explorer -> Refresh".
  * 
  * The new files should appear.
+ * 
+ * Note: Some of the files have os, ws, and arch appended, for example
+ * <original_name>_serialized_linux_gtk_x86.txt. These are filtering tests that have
+ * filters by os/ws/arch so the result is different on each combination. This test will
+ * only generate the _serialized file and will be the one for the current platform. You
+ * need to make one copy for each combination and edit the files manually to have the
+ * correct content (or generate on each platform).
  */
 public class IntroModelSerializerTest extends TestCase {
 	
@@ -49,6 +70,14 @@ public class IntroModelSerializerTest extends TestCase {
 	 */
 	public static Test suite() {
 		return new TestSuite(IntroModelSerializerTest.class);
+	}
+	
+	/*
+	 * Ensure that org.eclipse.help.ui is started. It contributes extra content
+	 * filtering that is used by this test. See UIContentFilterProcessor.
+	 */
+	protected void setUp() throws Exception {
+		HelpUIPlugin.getDefault();
 	}
 	
 	public void testRunSerializer() {
@@ -77,7 +106,7 @@ public class IntroModelSerializerTest extends TestCase {
 		}
 
 		/*
-		 * Serialize the test intro.
+		 * Serialize the test intros.
 		 */
 		elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.config");
 		for (int i=0;i<elements.length;++i) {
@@ -89,16 +118,39 @@ public class IntroModelSerializerTest extends TestCase {
 				String content = elements[i].getAttribute("content");
 				String id = elements[i].getAttribute("id");
 
+				/*
+				 * First do the intro XML files.
+				 */
 				IntroModelRoot model = ExtensionPointManager.getInst().getModel(id);
 				IntroModelSerializer serializer = new IntroModelSerializer(model);
 				
 				try {
-					PrintWriter out = new PrintWriter(new FileOutputStream(getResultFile(pluginRoot + content)));
+					String file = getResultFile(pluginRoot + content);
+					PrintWriter out = new PrintWriter(new FileOutputStream(file));
 					out.print(serializer.toString());
 					out.close();
 				}
 				catch(FileNotFoundException e) {
 					e.printStackTrace();
+				}
+				
+				/*
+				 * Now do the intro XHTML files. Find all the XHTML files referenced
+				 * from the model.
+				 */
+				Map map = getXHTMLFiles(model);
+				Iterator iter = map.entrySet().iterator();
+				while (iter.hasNext()) {
+					Map.Entry entry = (Map.Entry)iter.next();
+					try {
+						String file = getResultFile(pluginRoot + entry.getKey());
+						PrintWriter out = new PrintWriter(new FileOutputStream(file));
+						out.print((String)entry.getValue());
+						out.close();
+					}
+					catch(IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -109,6 +161,79 @@ public class IntroModelSerializerTest extends TestCase {
 	 * for the intro xml referred to by the string.
 	 */
 	public static String getResultFile(String in) {
-		return in.substring(0, in.lastIndexOf('.')) + "_serialized.txt";
+		return getResultFile(in, false);
+	}
+
+	/*
+	 * Same as above, but gives the option of appending os, ws, and arch. For example,
+	 * myfile_serialized_macosx_carbon_ppc.txt.
+	 */
+	public static String getResultFile(String in, boolean env) {
+		StringBuffer buf = new StringBuffer();
+		buf.append(in.substring(0, in.lastIndexOf('.')) + "_serialized");
+		if (env) {
+			buf.append('_');
+			buf.append(Platform.getOS());
+			buf.append('_');
+			buf.append(Platform.getWS());
+			buf.append('_');
+			buf.append(Platform.getOSArch());
+		}
+		buf.append(".txt");
+		return buf.toString();
+	}
+
+	/*
+	 * Search through the given model and find all XHTML files referred to by the model.
+	 * Also loads the contents of the XHTML files. The result is a mapping of filenames relative
+	 * to the test plugin to Strings, the contents of the XHTML files.
+	 */
+	public static Map getXHTMLFiles(IntroModelRoot model) {
+		Map map = new HashMap();
+		Collection pages = new ArrayList();
+		IntroHomePage home = model.getHomePage();
+		if (home.isXHTMLPage()) {
+			pages.add(home);
+		}
+		IntroPage[] otherPages = model.getPages();
+		for (int i=0;i<otherPages.length;++i) {
+			if (otherPages[i].isXHTMLPage()) {
+				pages.add(otherPages[i]);
+			}
+		}
+		Iterator iter = pages.iterator();
+		while (iter.hasNext()) {
+			AbstractIntroPage page = (AbstractIntroPage)iter.next();
+			BrowserIntroPartImplementation impl = new BrowserIntroPartImplementation();
+			String xhtml = impl.generateXHTMLPage(page, new IIntroContentProviderSite() {
+				public void reflow(IIntroContentProvider provider, boolean incremental) {
+					// dummy site
+				}
+			});
+			xhtml = removeEnvironmentSpecificContent(xhtml);
+			map.put(page.getInitialBase() + page.getRawContent(), xhtml);
+		}
+		return map;
+	}
+	
+	/*
+	 * Some of the XHTML content is environment-specific. This means it changes depending on
+	 * the test machine, location on filesystem, etc. This content is not important for this
+	 * test so just strip it out before comparing the serializations.
+	 */
+	private static String removeEnvironmentSpecificContent(String xhtml) {
+		/*
+		 * The base tag is added before showing in browser. It contains an absolute path
+		 * in filesystem.
+		 */
+		xhtml = xhtml.replaceAll("<base href=\".*\" />", "");
+
+		/*
+		 * The order of the params for the meta tag comes out differently on different platforms.
+		 * I'm not sure why, and why just this tag. We don't care about this one for our tests anyway,
+		 * so just strip it.
+		 */
+		xhtml = xhtml.replaceAll("<meta .*/>", "");
+		return xhtml;
 	}
 }
