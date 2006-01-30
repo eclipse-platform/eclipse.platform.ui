@@ -70,7 +70,7 @@ public final class UpdatableSetContentProvider implements IStructuredContentProv
     			added((Collection)changeEvent.getNewValue());
     			break;
     		case ChangeEvent.REMOVE_MANY:
-    			doRemove((Collection)changeEvent.getNewValue());
+    			doRemove((Collection)changeEvent.getNewValue(), !viewer.getControl().isDisposed());
     			break;
     		case ChangeEvent.STALE:
     			elements.doFireStale(((Boolean)changeEvent.getNewValue()).booleanValue());
@@ -89,7 +89,7 @@ public final class UpdatableSetContentProvider implements IStructuredContentProv
                 }
             }
 
-            doAdd(filtered);
+            doAdd(filtered, !viewer.getControl().isDisposed());
         }
 
     };
@@ -105,32 +105,33 @@ public final class UpdatableSetContentProvider implements IStructuredContentProv
         return readableSet.toCollection().toArray();
     }
 
-    private void doAdd(Collection added) {
+    private void doAdd(Collection added, boolean updateViewer) {
     	elements.doFireAdd(added);
     	
-    	Object[] toAdd = added.toArray();
-    	
-    	if (viewer instanceof TableViewer) {
-    		TableViewer tv = (TableViewer) viewer;
-    		tv.add(toAdd);
-    	} else if (viewer instanceof AbstractListViewer) {
-    		AbstractListViewer lv = (AbstractListViewer) viewer;
-    		
-    		lv.add(toAdd);    		
-    	}
+		if (updateViewer) {
+			Object[] toAdd = added.toArray();
+	    	if (viewer instanceof TableViewer) {
+	    		TableViewer tv = (TableViewer) viewer;
+    			tv.add(toAdd);
+	    	} else if (viewer instanceof AbstractListViewer) {
+	    		AbstractListViewer lv = (AbstractListViewer) viewer;
+	    		lv.add(toAdd);    		
+	    	}
+		}
     }
     
-    private void doRemove(Collection toRemove) {
-    	Object[] removed = toRemove.toArray();
-    	if (viewer instanceof TableViewer) {
-    		TableViewer tv = (TableViewer) viewer;
-    		tv.remove(removed);
-    	} else if (viewer instanceof AbstractListViewer) {
-    		AbstractListViewer lv = (AbstractListViewer) viewer;
-    		
-    		lv.remove(removed);
-    	}
-    	
+    private void doRemove(Collection toRemove, boolean updateViewer) {
+		if (updateViewer) {
+	    	Object[] removed = toRemove.toArray();
+	    	if (viewer instanceof TableViewer) {
+	    		TableViewer tv = (TableViewer) viewer;
+	    		tv.remove(removed);
+	    	} else if (viewer instanceof AbstractListViewer) {
+	    		AbstractListViewer lv = (AbstractListViewer) viewer;
+	    		
+	    		lv.remove(removed);
+	    	}
+		}    	
     	elements.doFireRemove(toRemove);
     }
 
@@ -166,8 +167,11 @@ public final class UpdatableSetContentProvider implements IStructuredContentProv
     }
 
     private void setInput(IReadableSet newSet) {
+    	boolean updateViewer = true;
         if (newSet == null) {
             newSet = EmptyReadableSet.getInstance();
+            // don't update the viewer - its input is null
+            updateViewer = false;
         }
         
         boolean wasStale = false;
@@ -189,8 +193,8 @@ public final class UpdatableSetContentProvider implements IStructuredContentProv
         
         readableSet = newSet;
 
-        doAdd(additions);
-        doRemove(removals);
+        doAdd(additions, updateViewer);
+        doRemove(removals, updateViewer);
         
         if (readableSet != null) {
         	readableSet.addChangeListener(listener);
