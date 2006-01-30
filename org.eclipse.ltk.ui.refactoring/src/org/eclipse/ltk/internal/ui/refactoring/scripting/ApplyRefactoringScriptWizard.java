@@ -35,7 +35,7 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
  */
 public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard implements IWorkbenchWizard {
 
-	/** Proxy which requests the refactoring history from the import data */
+	/** Proxy which encapsulates a refactoring history */
 	private final class RefactoringHistoryProxy extends RefactoringHistory {
 
 		/**
