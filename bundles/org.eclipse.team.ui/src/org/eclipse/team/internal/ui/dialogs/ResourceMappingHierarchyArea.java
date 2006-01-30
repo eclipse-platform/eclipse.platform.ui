@@ -60,6 +60,7 @@ public class ResourceMappingHierarchyArea extends DialogArea implements INavigat
         		return provider;
         	};
         };
+        viewer.getNavigatorContentService().bindExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
         viewer.getNavigatorContentService().activateExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
         GridData data = new GridData(GridData.FILL_BOTH);
         data.heightHint = 100;
