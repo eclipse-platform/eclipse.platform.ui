@@ -13,7 +13,14 @@ import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.UpdatableTracker;
 import org.eclipse.jface.databinding.WritableUpdatable;
 
-public abstract class ComputedValue extends WritableUpdatable implements
+/**
+ * A Lazily calculated value that automatically computes and registers 
+ * listeners on its dependencies as long as all of its dependencies are 
+ * IUpdatableValues
+ * 
+ * @since 3.2
+ */
+public abstract class LazyCalculatedValue extends WritableUpdatable implements
 		ILazyReadableValue {
 	
 	private boolean dirty = true;
@@ -54,7 +61,7 @@ public abstract class ComputedValue extends WritableUpdatable implements
 	 */	
 	private class PrivateInterfaces implements Runnable, IChangeListener {		
 		public void run() {
-			cachedValue = computeValue();
+			cachedValue = calculate();
 		}
 		
 		public void handleChange(ChangeEvent changeEvent) {
@@ -127,7 +134,7 @@ public abstract class ComputedValue extends WritableUpdatable implements
 	 *  
 	 * @return the object's value
 	 */
-	protected abstract Object computeValue();
+	protected abstract Object calculate();
 
 	protected final void makeDirty() {
 		if (!dirty) {
