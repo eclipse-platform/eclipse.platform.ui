@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Action to toggle a breakpoint in a vertical ruler of a workbench part
@@ -37,7 +38,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * @since 3.1
  * @see org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate
  */
-public class ToggleBreakpointAction extends Action {
+public class ToggleBreakpointAction extends Action implements IUpdate {
 	
 	private IWorkbenchPart fPart;
 	private IDocument fDocument;
@@ -158,6 +159,56 @@ public class ToggleBreakpointAction extends Action {
 		}
 		
 		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.IUpdate#update()
+	 */
+	public void update() {
+		IDocument document= getDocument();
+		if (document != null) {
+			IToggleBreakpointsTarget adapter = (IToggleBreakpointsTarget) fPart.getAdapter(IToggleBreakpointsTarget.class);
+			if (adapter == null) {
+				// attempt to force load adapter
+				IAdapterManager manager = Platform.getAdapterManager();
+				if (manager.hasAdapter(fPart, IToggleBreakpointsTarget.class.getName())) {
+					adapter = (IToggleBreakpointsTarget) manager.loadAdapter(fPart, IToggleBreakpointsTarget.class.getName());
+				}
+			}
+			if (adapter != null) {
+				int line = fRulerInfo.getLineOfLastMouseButtonActivity();
+				
+				// Test if line is valid 
+				if (line > 0) {
+					/*
+					 * XXX: remove once the following bug is fixed:
+					 * 		https://bugs.eclipse.org/bugs/show_bug.cgi?id=99234
+					 */ 
+					if (line < document.getNumberOfLines()) {
+						try {
+							IRegion region = document.getLineInformation(line);
+							ITextSelection selection = new TextSelection(document, region.getOffset(), 0);
+							if (adapter instanceof IToggleBreakpointsTargetExtension) {
+								IToggleBreakpointsTargetExtension extension = (IToggleBreakpointsTargetExtension) adapter;
+								if (extension.canToggleBreakpoints(fPart, selection)) {
+									setEnabled(true);
+									return;
+								}
+							}
+							if (adapter.canToggleLineBreakpoints(fPart, selection) |
+								adapter.canToggleWatchpoints(fPart, selection) |
+								adapter.canToggleMethodBreakpoints(fPart, selection)) {
+									setEnabled(true);
+									return;
+							}
+						} catch (BadLocationException e) {
+							reportException(e);
+						}
+					}
+				}
+			}
+		}
+		setEnabled(false);
 	}
 
 }
