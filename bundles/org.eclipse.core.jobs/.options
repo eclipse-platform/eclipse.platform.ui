@@ -1,5 +1,9 @@
 # Debugging options for the org.eclipse.core.runtime plugin
 
+# NOTE: There is a deadlock risk when using these debug flags in a workspace
+# launched from Eclipse due to interaction with a lock in the debugger console.  
+# For details: https://bugs.eclipse.org/bugs/show_bug.cgi?id=93968
+
 # Prints debug information on running background jobs
 org.eclipse.core.jobs/jobs=false
 # Includes current date and time in job debug information
