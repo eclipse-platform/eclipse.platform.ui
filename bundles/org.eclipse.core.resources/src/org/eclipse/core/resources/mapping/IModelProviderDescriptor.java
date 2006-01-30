@@ -70,10 +70,22 @@ public interface IModelProviderDescriptor {
 	 * rule specified for the model provider descriptor. The resource mappings
 	 * for the returned resources can then be obtained by invoking
 	 * {@link ModelProvider#getMappings(IResource[], ResourceMappingContext, IProgressMonitor)}
+	 * 
 	 * @param resources the resources
 	 * @return the resources that match the descriptor's enablement rule
 	 */
 	public IResource[] getMatchingResources(IResource[] resources) throws CoreException;
+
+	/**
+	 * Return the set of traversals that overlap with the resources that
+	 * this descriptor matches.
+	 * 
+	 * @param traversals the traversals being tested
+	 * @return the subset of these traversals that overlap with the resources
+	 * that match this descriptor
+	 * @throws CoreException 
+	 */
+	public ResourceTraversal[] getMatchingTraversals(ResourceTraversal[] traversals) throws CoreException;
 
 	/**
 	 * Return the model provider for this descriptor, instantiating it if it is

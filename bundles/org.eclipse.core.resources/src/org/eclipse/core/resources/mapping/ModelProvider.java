@@ -12,7 +12,6 @@ package org.eclipse.core.resources.mapping;
 
 import java.util.*;
 import org.eclipse.core.internal.resources.mapping.ModelProviderManager;
-import org.eclipse.core.internal.resources.mapping.SimpleResourceMapping;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -57,10 +56,9 @@ public abstract class ModelProvider extends PlatformObject {
 	}
 
 	/**
-	 * Return the descriptors for all model providers that are
-	 * registered.
-	 * @return the descriptors for all model providers that are
-	 * registered.
+	 * Return the descriptors for all model providers that are registered.
+	 * 
+	 * @return the descriptors for all model providers that are registered.
 	 */
 	public static IModelProviderDescriptor[] getModelProviderDescriptors() {
 		return ModelProviderManager.getDefault().getDescriptors();
@@ -89,8 +87,11 @@ public abstract class ModelProvider extends PlatformObject {
 
 	/**
 	 * Return the resource mappings that cover the given resource.
-	 * By default a single resource mapping that traverses the given resource
-	 * deeply is returned. Subclass may override.
+	 * By default, an empty array is returned. Subclass may override
+	 * this method but should consider overriding either 
+	 * {@link #getMappings(IResource[], ResourceMappingContext, IProgressMonitor)}
+	 * or ({@link #getMappings(ResourceTraversal[], ResourceMappingContext, IProgressMonitor)}
+	 * if more context is needed to determine the proper mappings.
 	 * 
 	 * @param resource the resource
 	 * @param context a resource mapping context
@@ -100,7 +101,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * @exception CoreException 
 	 */
 	public ResourceMapping[] getMappings(IResource resource, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
-		return new ResourceMapping[] {new SimpleResourceMapping(resource)};
+		return new ResourceMapping[0];
 	}
 
 	/**
@@ -108,11 +109,14 @@ public abstract class ModelProvider extends PlatformObject {
 	 * This method is used to map operations on resources to
 	 * operations on resource mappings. By default, this method
 	 * calls <code>getMapping(IResource)</code> for each resource.
-	 * Subclasses may override.
-	 * @param resources
+	 * <p>
+	 * Subclasses may override this method.
+	 * </p>
+	 * 
+	 * @param resources the resources
+	 * @param context a resource mapping context
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
-	 * @param context a resource mapping context
 	 * @return the set of mappings that cover the given resources
 	 * @exception CoreException 
 	 */
@@ -121,9 +125,37 @@ public abstract class ModelProvider extends PlatformObject {
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			ResourceMapping[] resourceMappings = getMappings(resource, context, monitor);
-			mappings.addAll(Arrays.asList(resourceMappings));
+			if (resourceMappings.length > 0)
+				mappings.addAll(Arrays.asList(resourceMappings));
 		}
 		return (ResourceMapping[]) mappings.toArray(new ResourceMapping[mappings.size()]);
+	}
+
+	/**
+	 * Return the set of mappings that overlap with the given resource traversals.
+	 * This method is used to map operations on resources to
+	 * operations on resource mappings. By default, this method
+	 * calls {@link #getMappings(IResource[], ResourceMappingContext, IProgressMonitor)}
+	 * with the resources extract from each traversal.
+	 * <p>
+	 * Subclasses may override this method.
+	 * </p>
+	 * 
+	 * @param traversals the traversals
+	 * @param context a resource mapping context
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting is not desired
+	 * @return the set of mappings that overlap with the given resource traversals
+	 */
+	public ResourceMapping[] getMappings(ResourceTraversal[] traversals, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
+		Set result = new HashSet();
+		for (int i = 0; i < traversals.length; i++) {
+			ResourceTraversal traversal = traversals[i];
+			ResourceMapping[] mappings = getMappings(traversal.getResources(), context, monitor);
+			for (int j = 0; j < mappings.length; j++)
+				result.add(mappings[j]);
+		}
+		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
 	}
 
 	/**
@@ -134,6 +166,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * The default implementation accumulates the traversals from the given
 	 * mappings. Subclasses can override to provide a more optimal
 	 * transformation.
+	 * </p>
 	 * 
 	 * @param mappings the mappings being mapped to resources
 	 * @param context the context used to determine the set of traversals that
@@ -204,6 +237,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * severity <code>OK</code>. Subclasses should override to perform
 	 * validation specific to their model.
 	 * </p>
+	 * 
 	 * @param delta a delta tree containing the proposed changes
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired

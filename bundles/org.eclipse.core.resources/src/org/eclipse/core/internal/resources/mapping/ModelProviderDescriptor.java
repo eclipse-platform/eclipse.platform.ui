@@ -17,8 +17,7 @@ import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.mapping.IModelProviderDescriptor;
-import org.eclipse.core.resources.mapping.ModelProvider;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
@@ -124,6 +123,17 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 			}
 		}
 		extendedModels = (String[]) extendsList.toArray(new String[extendsList.size()]);
+	}
+
+	public ResourceTraversal[] getMatchingTraversals(ResourceTraversal[] traversals) throws CoreException {
+		List result = new ArrayList();
+		for (int i = 0; i < traversals.length; i++) {
+			ResourceTraversal traversal = traversals[i];
+			if (getMatchingResources(traversal.getResources()).length > 0) {
+				result.add(traversal);
+			}
+		}
+		return (ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]);
 	}
 
 }

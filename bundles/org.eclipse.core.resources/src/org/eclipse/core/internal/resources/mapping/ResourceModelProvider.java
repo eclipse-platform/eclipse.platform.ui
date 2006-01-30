@@ -10,8 +10,80 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources.mapping;
 
-import org.eclipse.core.resources.mapping.ModelProvider;
+import java.util.HashSet;
+import java.util.Set;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * A simple model provider that represents the resource model itself.
+ * 
+ * @since 3.2
+ */
 public final class ResourceModelProvider extends ModelProvider {
-	//
+
+	private IResource[] getChildren(IContainer container, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
+		if (context instanceof RemoteResourceMappingContext) {
+			Set result = new HashSet();
+			RemoteResourceMappingContext rrmc = (RemoteResourceMappingContext) context;
+			IResource[] remoteMembers = rrmc.fetchMembers(container, monitor);
+			for (int i = 0; i < remoteMembers.length; i++) {
+				IResource resource = remoteMembers[i];
+				result.add(resource);
+			}
+			IResource[] localMembers = container.members();
+			for (int i = 0; i < localMembers.length; i++) {
+				IResource resource = localMembers[i];
+				result.add(resource);
+			}
+		}
+		return container.members();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.mapping.ModelProvider#getMappings(org.eclipse.core.resources.IResource, org.eclipse.core.resources.mapping.ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public ResourceMapping[] getMappings(IResource resource, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
+		return new ResourceMapping[] {new SimpleResourceMapping(resource)};
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.mapping.ModelProvider#getMappings(org.eclipse.core.resources.mapping.ResourceTraversal[], org.eclipse.core.resources.mapping.ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public ResourceMapping[] getMappings(ResourceTraversal[] traversals, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
+		Set result = new HashSet();
+		for (int i = 0; i < traversals.length; i++) {
+			ResourceTraversal traversal = traversals[i];
+			IResource[] resources = traversal.getResources();
+			int depth = traversal.getDepth();
+			for (int j = 0; j < resources.length; j++) {
+				IResource resource = resources[j];
+				switch (depth) {
+					case IResource.DEPTH_INFINITE :
+						result.add(resource);
+						break;
+					case IResource.DEPTH_ONE :
+						if (resource.getType() == IResource.FILE) {
+							result.add(resource);
+						} else {
+							IResource[] children = getChildren((IContainer) resource, context, monitor);
+							for (int k = 0; k < children.length; k++) {
+								IResource child = children[k];
+								if (child.getType() == IResource.FILE)
+									result.add(child);
+							}
+						}
+						break;
+					case IResource.DEPTH_ZERO :
+						if (resource.getType() == IResource.FILE)
+							result.add(resource);
+						break;
+				}
+			}
+		}
+		return getMappings((IResource[]) result.toArray(new IResource[result.size()]), context, monitor);
+	}
 }
