@@ -47,6 +47,11 @@ import org.eclipse.ui.menus.IMenuService;
 public final class SourcePriorityNameMapping implements ISources {
 
 	/**
+	 * The variable name to use when boosting priority on an activation.
+	 */
+	public static final String LEGACY_LEGACY_NAME = "LEGACY"; //$NON-NLS-1$
+
+	/**
 	 * The value returned if there is source priority for the given name
 	 * 
 	 * @see SourcePriorityNameMapping#getMapping(String)
@@ -79,6 +84,7 @@ public final class SourcePriorityNameMapping implements ISources {
 		addMapping(ACTIVE_WORKBENCH_WINDOW_NAME, ACTIVE_WORKBENCH_WINDOW);
 		addMapping(ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
 				ACTIVE_WORKBENCH_WINDOW_SHELL);
+		addMapping(LEGACY_LEGACY_NAME, LEGACY_LEGACY);
 	}
 
 	/**

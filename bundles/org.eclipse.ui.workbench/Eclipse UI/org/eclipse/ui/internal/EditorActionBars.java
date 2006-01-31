@@ -308,6 +308,7 @@ public class EditorActionBars extends SubActionBars2 {
 		super.partChanged(part);
 		if (part instanceof IEditorPart) {
 			IEditorPart editor = (IEditorPart) part;
+			setServiceLocator(editor.getEditorSite());
 			if (editorContributor != null)
 				editorContributor.setActiveEditor(editor);
 			if (extensionContributor != null)

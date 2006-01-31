@@ -16,6 +16,10 @@ import java.util.Map;
 
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.common.EventManager;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionInfo;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -29,6 +33,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
+import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -61,7 +66,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 * <code>null</code>. It must be capable of providing a
 	 * {@link IHandlerService}.
 	 */
-	private final IServiceLocator serviceLocator;
+	private IServiceLocator serviceLocator;
 
 	private SubStatusLineManager statusLineMgr;
 
@@ -75,7 +80,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 *            The parent of this action bar; must not be <code>null</code>.
 	 */
 	public SubActionBars(final IActionBars parent) {
-		this(parent, null);
+		this(parent, parent.getServiceLocator());
 	}
 
 	/**
@@ -429,9 +434,22 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 			if (commandId != null) {
 				// Register this as a handler with the given definition id.
+				// the expression gives the setGlobalActionHandler() a
+				// priority.
 				final IHandler actionHandler = new ActionHandler(handler);
 				final IHandlerActivation activation = service.activateHandler(
-						commandId, actionHandler);
+						commandId, actionHandler, new Expression() {
+							public final EvaluationResult evaluate(
+									final IEvaluationContext context) {
+								return EvaluationResult.TRUE;
+							}
+
+							public final void collectExpressionInfo(
+									final ExpressionInfo info) {
+								info
+										.addVariableNameAccess(SourcePriorityNameMapping.LEGACY_LEGACY_NAME);
+							}
+						});
 				activationsByActionId.put(actionID, activation);
 			}
 
@@ -454,6 +472,19 @@ public class SubActionBars extends EventManager implements IActionBars {
 			}
 		}
 		actionHandlersChanged = true;
+	}
+	
+	/**
+	 * Sets the service locator for this action bar.
+	 * 
+	 * @param locator
+	 *            The new locator; must not be <code>null</code>.
+	 */
+	protected final void setServiceLocator(final IServiceLocator locator) {
+		if (locator == null) {
+			throw new NullPointerException("The service locator cannot be null"); //$NON-NLS-1$
+		}
+		this.serviceLocator = locator;
 	}
 
 	/**
