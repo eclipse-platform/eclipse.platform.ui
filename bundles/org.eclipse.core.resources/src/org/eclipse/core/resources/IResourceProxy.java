@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.QualifiedName;
  * The equals and hashCode methods should not be relied on.
  * </p>
  * <p>
- * A proxy can also be created using {@ link IResource#createProxy()}. In
+ * A proxy can also be created using {@link IResource#createProxy()}. In
  * this case the proxy is valid indefinitely, but will not remain in sync with
  * the state of the corresponding resource.
  * </p>
