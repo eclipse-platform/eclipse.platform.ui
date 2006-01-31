@@ -53,7 +53,7 @@ public class IntroGroup extends AbstractIntroContainer {
     
     protected void loadChildren() {
     	String value = getAttribute(element, ATT_DYNAMIC);
-    	if (value!=null && value.equalsIgnoreCase("true"))
+    	if (value!=null && value.equalsIgnoreCase("true")) //$NON-NLS-1$
     		loadDynamicNodes();
     	super.loadChildren();
     }

@@ -47,8 +47,19 @@ iframe {
 	height : 57px;
 	width : 57px;
 	vertical-align : middle;
-		
 }	
+
+#left {
+	display: inline;
+	width: 50%;
+	background-color: #ffa0a0;
+}
+
+#right {
+	display: inline;
+	width: 50%;
+	background-color: #a0ffa0;
+}
 
 #overview-links a .link-label {
 	display : block;

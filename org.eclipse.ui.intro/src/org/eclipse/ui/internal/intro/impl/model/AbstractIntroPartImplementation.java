@@ -86,7 +86,7 @@ public abstract class AbstractIntroPartImplementation {
     protected Action homeAction = new Action() {
 
         {
-            setToolTipText(Messages.Browser_homeButton_tooltip); //$NON-NLS-1$
+            setToolTipText(Messages.Browser_homeButton_tooltip);
             setImageDescriptor(ImageUtil
                 .createImageDescriptor("full/elcl16/home_nav.gif")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil

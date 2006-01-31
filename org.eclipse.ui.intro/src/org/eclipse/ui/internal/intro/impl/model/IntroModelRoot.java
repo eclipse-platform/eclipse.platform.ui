@@ -816,7 +816,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
    				String variable=text.substring(vindex, i);
    				String value = configurer.getVariable(variable);
    				if (value==null)
-   					value = "$"+variable+"$";
+   					value = "$"+variable+"$"; //$NON-NLS-1$ //$NON-NLS-2$
    				buf.append(value);
    				continue;
     		}

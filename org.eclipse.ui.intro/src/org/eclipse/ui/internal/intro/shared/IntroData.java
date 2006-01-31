@@ -18,7 +18,7 @@ import org.xml.sax.SAXParseException;
 
 public class IntroData {
 	private String productId;
-	private Hashtable pages;
+	private Hashtable pages=new Hashtable();
 	private boolean active;
 	
 	public IntroData(String productId, String dataFile, boolean active) {
@@ -43,7 +43,7 @@ public class IntroData {
 		NodeList pages = root.getChildNodes();
 		for (int i = 0; i < pages.getLength(); i++) {
 			Node node = pages.item(i);
-			if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals("page")) {
+			if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals("page")) { //$NON-NLS-1$
 				loadPage((Element) node);
 			}
 		}

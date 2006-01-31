@@ -515,7 +515,7 @@ public class IntroLaunchBar implements IWindowTrim {
 	 * @see org.eclipse.ui.internal.IWindowTrim#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.ui.internal.intro.impl.presentations.IntroLaunchBar";
+		return "org.eclipse.ui.internal.intro.impl.presentations.IntroLaunchBar"; //$NON-NLS-1$
 	}
 
 	/*

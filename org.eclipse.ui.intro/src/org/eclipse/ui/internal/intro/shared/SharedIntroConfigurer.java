@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.intro.config.IntroConfigurer;
 import org.eclipse.ui.intro.config.IntroElement;
 import org.osgi.framework.Bundle;
@@ -29,9 +30,9 @@ import org.osgi.framework.Bundle;
  * @since 3.2
  */
 
-public class SharedIntroConfigurer extends IntroConfigurer {
+public class SharedIntroConfigurer extends IntroConfigurer implements ISharedIntroConstants {
 
-	private ArrayList introData;
+	private ArrayList introData=new ArrayList();
 
 	public SharedIntroConfigurer() {
 		initialize();
@@ -51,7 +52,7 @@ public class SharedIntroConfigurer extends IntroConfigurer {
 
 	private String resolveVariable(Bundle bundle, String value) {
 		if (value != null) {
-			if (value.startsWith("bundle:")) {
+			if (value.startsWith("bundle:")) { //$NON-NLS-1$
 				try {
 					String path = value.substring(7);
 					URL url = bundle.getEntry(path);
@@ -67,23 +68,23 @@ public class SharedIntroConfigurer extends IntroConfigurer {
 	}
 
 	public IntroElement[] getGroupChildren(String pageId, String groupId) {
-		if (pageId.equals("root")) {
-			if (groupId.equals("page-links"))
+		if (pageId.equals(ID_ROOT)) {
+			if (groupId.equals(DIV_PAGE_LINKS))
 				return getRootPageLinks(false);
-		} else if (pageId.equals("standby")) {
-			if (groupId.equals("page-links"))
+		} else if (pageId.equals(ID_STANDBY)) {
+			if (groupId.equals(DIV_PAGE_LINKS))
 				return getRootPageLinks(true);
 		}
-		if (groupId.equals("page-links"))
+		if (groupId.equals(DIV_PAGE_LINKS))
 			return getNavLinks(pageId);
 		return new IntroElement[0];
 	}
 
 	private IntroElement[] getRootPageLinks(boolean standby) {
 		ArrayList links = new ArrayList();
-		String ids = getVariable("introRootPages");
+		String ids = getVariable(VAR_INTRO_ROOT_PAGES);
 		if (ids != null) {
-			StringTokenizer stok = new StringTokenizer(ids, ",");
+			StringTokenizer stok = new StringTokenizer(ids, ","); //$NON-NLS-1$
 			while (stok.hasMoreTokens()) {
 				String id = stok.nextToken().trim();
 				IntroElement page = createRootPageLink(id);
@@ -96,9 +97,9 @@ public class SharedIntroConfigurer extends IntroConfigurer {
 
 	private IntroElement[] getNavLinks(String pageId) {
 		ArrayList links = new ArrayList();
-		String ids = getVariable("introRootPages");
+		String ids = getVariable(VAR_INTRO_ROOT_PAGES);
 		if (ids != null) {
-			StringTokenizer stok = new StringTokenizer(ids, ",");
+			StringTokenizer stok = new StringTokenizer(ids, ","); //$NON-NLS-1$
 			while (stok.hasMoreTokens()) {
 				String id = stok.nextToken().trim();
 				IntroElement page = createNavLink(id, pageId);
@@ -110,65 +111,65 @@ public class SharedIntroConfigurer extends IntroConfigurer {
 	}
 
 	private IntroElement createRootPageLink(String id) {
-		if (id.equals("overview"))
-			return createRootLink("Overview", "http://org.eclipse.ui.intro/showPage?id=overview", "overview",
-					"overview_img", "css/graphics/root/overview.png", "Overview",
-					"Find out what Eclipse is all about");
-		if (id.equals("firststeps"))
-			return createRootLink("First Steps", "http://org.eclipse.ui.intro/showPage?id=firststeps",
-					"firststeps", "firststeps_img", "css/graphics/root/firststeps.png", "First Steps",
-					"Make first steps");
-		if (id.equals("tutorials"))
-			return createRootLink("Tutorials", "http://org.eclipse.ui.intro/showPage?id=tutorials",
-					"tutorials", "tutorials_img", "css/graphics/root/tutorials.png", "Tutorials",
-					"Go through tutorials");
-		if (id.equals("samples"))
-			return createRootLink("Samples", "http://org.eclipse.ui.intro/showPage?id=samples", "samples",
-					"samples_img", "css/graphics/root/samples.png", "Samples", "Try out the samples");
-		if (id.equals("whatsnew"))
-			return createRootLink("What's New", "http://org.eclipse.ui.intro/showPage?id=whatsnew",
-					"whatsnew", "whatsnew_img", "css/graphics/root/whatsnew.png", "What's New",
-					"Find out what is new");
-		if (id.equals("migrate"))
-			return createRootLink("Migrate", "http://org.eclipse.ui.intro/showPage?id=migrate", "migrate",
-					"migrate_img", "css/graphics/root/migrate.png", "Migrate", "Migrate to the new release");
-		if (id.equals("webresources"))
-			return createRootLink("Web Resources", "http://org.eclipse.ui.intro/showPage?id=webresources",
-					"webresources", "webresources_img", "css/graphics/root/webresources.png",
-					"Web Resources", "Read more on the Web");
+		if (id.equals(ID_OVERVIEW))
+			return createRootLink(Messages.SharedIntroConfigurer_overview_name, "http://org.eclipse.ui.intro/showPage?id=overview", id,  //$NON-NLS-1$
+					"overview_img", "css/graphics/root/overview.png", Messages.SharedIntroConfigurer_overview_alt, //$NON-NLS-1$ //$NON-NLS-2$
+					Messages.SharedIntroConfigurer_overview_tooltip);
+		if (id.equals(ID_FIRSTSTEPS))
+			return createRootLink(Messages.SharedIntroConfigurer_firststeps_name, "http://org.eclipse.ui.intro/showPage?id=firststeps",  //$NON-NLS-1$
+					id, "firststeps_img", "css/graphics/root/firststeps.png", Messages.SharedIntroConfigurer_firststeps_alt, //$NON-NLS-1$ //$NON-NLS-2$
+					Messages.SharedIntroConfigurer_firststeps_tooltip);
+		if (id.equals(ID_TUTORIALS))
+			return createRootLink(Messages.SharedIntroConfigurer_tutorials_name, "http://org.eclipse.ui.intro/showPage?id=tutorials",  //$NON-NLS-1$
+					id, "tutorials_img", "css/graphics/root/tutorials.png", Messages.SharedIntroConfigurer_tutorials_alt, //$NON-NLS-1$ //$NON-NLS-2$
+					Messages.SharedIntroConfigurer_tutorials_tooltip);
+		if (id.equals(ID_SAMPLES))
+			return createRootLink(Messages.SharedIntroConfigurer_samples_name, "http://org.eclipse.ui.intro/showPage?id=samples", id,  //$NON-NLS-1$
+					"samples_img", "css/graphics/root/samples.png", Messages.SharedIntroConfigurer_samples_alt, Messages.SharedIntroConfigurer_samples_tooltip); //$NON-NLS-1$ //$NON-NLS-2$
+		if (id.equals(ID_WHATSNEW))
+			return createRootLink(Messages.SharedIntroConfigurer_whatsnew_name, "http://org.eclipse.ui.intro/showPage?id=whatsnew",  //$NON-NLS-1$
+					id, "whatsnew_img", "css/graphics/root/whatsnew.png", Messages.SharedIntroConfigurer_whatsnew_alt, //$NON-NLS-1$ //$NON-NLS-2$
+					Messages.SharedIntroConfigurer_whatsnew_tooltip);
+		if (id.equals(ID_MIGRATE))
+			return createRootLink(Messages.SharedIntroConfigurer_migrate_name, "http://org.eclipse.ui.intro/showPage?id=migrate", id,  //$NON-NLS-1$
+					"migrate_img", "css/graphics/root/migrate.png", Messages.SharedIntroConfigurer_migrate_alt, Messages.SharedIntroConfigurer_migrate_tooltip); //$NON-NLS-1$ //$NON-NLS-2$
+		if (id.equals(ID_WEBRESOURCES))
+			return createRootLink(Messages.SharedIntroConfigurer_webresources_name, "http://org.eclipse.ui.intro/showPage?id=webresources",  //$NON-NLS-1$
+					id, "webresources_img", "css/graphics/root/webresources.png", //$NON-NLS-1$ //$NON-NLS-2$
+					Messages.SharedIntroConfigurer_webresources_alt, Messages.SharedIntroConfigurer_webresources_tooltip);
 		return null;
 	}
 
 	private IntroElement createNavLink(String id, String pageId) {
-		if (id.equals("overview"))
-			return createNavLink("Overview", "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");
-		if (id.equals("firststeps"))
-			return createNavLink("First Steps", "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");
-		if (id.equals("tutorials"))
-			return createNavLink("Tutorials", "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");
-		if (id.equals("samples"))
-			return createNavLink("Samples", "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");
-		if (id.equals("whatsnew"))
-			return createNavLink("What's New", "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");
-		if (id.equals("migrate"))
-			return createNavLink("Migrate", "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");
-		if (id.equals("webresources"))
-			return createNavLink("Web Resources", "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");
+		if (id.equals(ID_OVERVIEW))
+			return createNavLink(Messages.SharedIntroConfigurer_overview_nav, "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");  //$NON-NLS-1$//$NON-NLS-2$ 
+		if (id.equals(ID_FIRSTSTEPS))
+			return createNavLink(Messages.SharedIntroConfigurer_firststeps_nav, "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");  //$NON-NLS-1$//$NON-NLS-2$ 
+		if (id.equals(ID_TUTORIALS))
+			return createNavLink(Messages.SharedIntroConfigurer_tutorials_nav, "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");  //$NON-NLS-1$//$NON-NLS-2$ 
+		if (id.equals(ID_SAMPLES))
+			return createNavLink(Messages.SharedIntroConfigurer_samples_nav, "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");  //$NON-NLS-1$//$NON-NLS-2$ 
+		if (id.equals(ID_WHATSNEW))
+			return createNavLink(Messages.SharedIntroConfigurer_whatsnew_nav, "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");  //$NON-NLS-1$//$NON-NLS-2$ 
+		if (id.equals(ID_MIGRATE))
+			return createNavLink(Messages.SharedIntroConfigurer_migrate_nav, "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");  //$NON-NLS-1$//$NON-NLS-2$ 
+		if (id.equals(ID_WEBRESOURCES))
+			return createNavLink(Messages.SharedIntroConfigurer_webresources_nav, "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");  //$NON-NLS-1$//$NON-NLS-2$ 
 		return null;
 	}
 
 	private IntroElement createRootLink(String name, String url, String id, String imgId, String imgSrc,
 			String imgAlt, String imgText) {
-		IntroElement element = new IntroElement("link");
-		element.setAttribute("label", name);
-		element.setAttribute("url", url);
-		element.setAttribute("id", id);
-		IntroElement img = new IntroElement("img");
-		img.setAttribute("id", imgId);
-		img.setAttribute("style-id", "content-img");
-		img.setAttribute("src", imgSrc);
-		img.setAttribute("alt", imgAlt);
-		IntroElement text = new IntroElement("text");
+		IntroElement element = new IntroElement("link"); //$NON-NLS-1$
+		element.setAttribute("label", name); //$NON-NLS-1$
+		element.setAttribute("url", url); //$NON-NLS-1$
+		element.setAttribute("id", id); //$NON-NLS-1$
+		IntroElement img = new IntroElement("img"); //$NON-NLS-1$
+		img.setAttribute("id", imgId); //$NON-NLS-1$
+		img.setAttribute("style-id", "content-img"); //$NON-NLS-1$ //$NON-NLS-2$
+		img.setAttribute("src", imgSrc); //$NON-NLS-1$
+		img.setAttribute("alt", imgAlt); //$NON-NLS-1$
+		IntroElement text = new IntroElement("text"); //$NON-NLS-1$
 		text.setValue(imgText);
 		element.addChild(img);
 		element.addChild(text);
@@ -176,22 +177,22 @@ public class SharedIntroConfigurer extends IntroConfigurer {
 	}
 
 	private IntroElement createNavLink(String label, String url, String id, String styleId) {
-		IntroElement element = new IntroElement("link");
-		element.setAttribute("label", label);
-		element.setAttribute("url", url);
-		element.setAttribute("id", "id");
-		element.setAttribute("style-id", styleId);
+		IntroElement element = new IntroElement("link"); //$NON-NLS-1$
+		element.setAttribute("label", label); //$NON-NLS-1$
+		element.setAttribute("url", url); //$NON-NLS-1$
+		element.setAttribute("id", "id"); //$NON-NLS-1$ //$NON-NLS-2$
+		element.setAttribute("style-id", styleId); //$NON-NLS-1$
 		return element;
 	}
 
 	private void initialize() {
 		// add intro data for this product first
-		String dataFile = getVariable("introData");
+		String dataFile = getVariable(VAR_INTRO_DATA);
 		String pid = Platform.getProduct().getId();
 		if (dataFile != null)
 			introData.add(new IntroData(pid, dataFile, true));
 		IConfigurationElement[] products = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				"org.eclipse.core.runtime.products");
+				"org.eclipse.core.runtime.products"); //$NON-NLS-1$
 		for (int i = 0; i < products.length; i++) {
 			IConfigurationElement product = products[i];
 			IExtension extension = product.getDeclaringExtension();
@@ -204,12 +205,12 @@ public class SharedIntroConfigurer extends IntroConfigurer {
 	}
 
 	private void addIntroDataFor(String pid, IConfigurationElement product) {
-		IConfigurationElement[] children = product.getChildren("property");
+		IConfigurationElement[] children = product.getChildren("property"); //$NON-NLS-1$
 		for (int i = 0; i < children.length; i++) {
 			IConfigurationElement child = children[i];
-			String name = child.getAttribute("name");
-			if (name != null && name.equals("introData")) {
-				String value = child.getAttribute("value");
+			String name = child.getAttribute("name"); //$NON-NLS-1$
+			if (name != null && name.equals(VAR_INTRO_DATA)) {
+				String value = child.getAttribute("value"); //$NON-NLS-1$
 				String bid = child.getDeclaringExtension().getNamespace();
 				Bundle bundle = Platform.getBundle(bid);
 				if (bundle != null) {

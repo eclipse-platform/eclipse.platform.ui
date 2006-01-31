@@ -234,7 +234,7 @@ public class IntroURL implements IIntroURL {
             introPart = (CustomizableIntroPart) IntroPlugin.showIntro(true);
         // store the flag to indicate that standbypart is needed.
         introPart.getControl().setData(IIntroConstants.SHOW_STANDBY_PART,
-            VALUE_TRUE); //$NON-NLS-1$
+            VALUE_TRUE);
         IntroPlugin.setIntroStandby(true);
         StandbyPart standbyPart = (StandbyPart) introPart
             .getAdapter(StandbyPart.class);
@@ -257,7 +257,7 @@ public class IntroURL implements IIntroURL {
     private boolean setStandbyState(String state) {
         if (state == null)
             return false;
-        boolean standby = state.equals(VALUE_TRUE) ? true : false; //$NON-NLS-1$
+        boolean standby = state.equals(VALUE_TRUE) ? true : false;
         IIntroPart introPart = IntroPlugin.showIntro(standby);
         if (introPart == null)
             return false;

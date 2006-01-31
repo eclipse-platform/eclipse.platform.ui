@@ -52,6 +52,34 @@ public class Messages extends NLS {
     // Misc
     // -------
     public static String IntroPart_showContentButton_tooltip;
+	public static String SharedIntroConfigurer_overview_name;
+	public static String SharedIntroConfigurer_overview_alt;
+	public static String SharedIntroConfigurer_overview_tooltip;
+	public static String SharedIntroConfigurer_firststeps_name;
+	public static String SharedIntroConfigurer_firststeps_alt;
+	public static String SharedIntroConfigurer_firststeps_tooltip;
+	public static String SharedIntroConfigurer_tutorials_name;
+	public static String SharedIntroConfigurer_tutorials_alt;
+	public static String SharedIntroConfigurer_tutorials_tooltip;
+	public static String SharedIntroConfigurer_samples_name;
+	public static String SharedIntroConfigurer_samples_alt;
+	public static String SharedIntroConfigurer_samples_tooltip;
+	public static String SharedIntroConfigurer_whatsnew_name;
+	public static String SharedIntroConfigurer_whatsnew_alt;
+	public static String SharedIntroConfigurer_whatsnew_tooltip;
+	public static String SharedIntroConfigurer_migrate_name;
+	public static String SharedIntroConfigurer_migrate_alt;
+	public static String SharedIntroConfigurer_migrate_tooltip;
+	public static String SharedIntroConfigurer_webresources_name;
+	public static String SharedIntroConfigurer_webresources_alt;
+	public static String SharedIntroConfigurer_webresources_tooltip;
+	public static String SharedIntroConfigurer_overview_nav;
+	public static String SharedIntroConfigurer_firststeps_nav;
+	public static String SharedIntroConfigurer_tutorials_nav;
+	public static String SharedIntroConfigurer_samples_nav;
+	public static String SharedIntroConfigurer_whatsnew_nav;
+	public static String SharedIntroConfigurer_migrate_nav;
+	public static String SharedIntroConfigurer_webresources_nav;
 
 
 

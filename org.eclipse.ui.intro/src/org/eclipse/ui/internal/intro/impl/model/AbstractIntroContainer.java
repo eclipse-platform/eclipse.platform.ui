@@ -29,7 +29,7 @@ import org.w3c.dom.NodeList;
  */
 public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 
-    protected static final String ATT_BG_IMAGE = "bgImage";
+    protected static final String ATT_BG_IMAGE = "bgImage"; //$NON-NLS-1$
 	// vector is lazily created when children are loaded in a call to
     // loadChildren().
     protected Vector children;

@@ -67,8 +67,8 @@ public class IntroModelSerializer {
      */
     private String filterURL(String url) {
         if (filter) {
-            if (url != null && url.startsWith("file:/")) {
-                return "file:/" + "<filtered>" + url.substring(url.lastIndexOf('/'));
+            if (url != null && url.startsWith("file:/")) { //$NON-NLS-1$
+                return "file:/" + "<filtered>" + url.substring(url.lastIndexOf('/')); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
         return url;

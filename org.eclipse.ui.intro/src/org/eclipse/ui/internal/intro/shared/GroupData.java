@@ -12,23 +12,23 @@ public class GroupData {
 	private ArrayList extensions = new ArrayList();
 	
 	public GroupData(Element element) {
-		if (element.getNodeName().equals("hidden"))
+		if (element.getNodeName().equals("hidden")) //$NON-NLS-1$
 			path = ISharedIntroConstants.HIDDEN;
 		else
-			path = element.getAttribute("path");
+			path = element.getAttribute("path"); //$NON-NLS-1$
 		NodeList children = element.getChildNodes();
 		for (int i=0; i<children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType()==Node.ELEMENT_NODE &&
-					child.getNodeName().equals("extension")) {
+					child.getNodeName().equals("extension")) { //$NON-NLS-1$
 				loadExtension((Element)child);
 			}
 		}
 	}
 	
 	private void loadExtension(Element element) {
-		String id = element.getAttribute("id");
-		String importance = element.getAttribute("importance");
+		String id = element.getAttribute("id"); //$NON-NLS-1$
+		String importance = element.getAttribute("importance"); //$NON-NLS-1$
 		ExtensionData ed = new ExtensionData(id, importance);
 		extensions.add(ed);
 	}

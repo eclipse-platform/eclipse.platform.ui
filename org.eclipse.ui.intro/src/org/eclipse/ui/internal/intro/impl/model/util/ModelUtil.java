@@ -269,7 +269,7 @@ public class ModelUtil {
 
         // make sure to create element with any namespace uri to enable finding
         // it again using Dom.getElementsByTagNameNS()
-        Element element = dom.createElementNS("", elementName);
+        Element element = dom.createElementNS("", elementName); //$NON-NLS-1$
         if (attributes != null) {
             Enumeration e = attributes.keys();
             while (e.hasMoreElements()) {

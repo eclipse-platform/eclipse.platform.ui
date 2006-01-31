@@ -40,19 +40,19 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 	 */
 	public Set getContributingPlugins() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				"org.eclipse.ui.intro.config");
+				"org.eclipse.ui.intro.config"); //$NON-NLS-1$
 		HashSet set = new HashSet();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (!element.getName().equals("config"))
+			if (!element.getName().equals("config")) //$NON-NLS-1$
 				continue;
 			set.add(element.getNamespace());
 		}
 		elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				"org.eclipse.ui.intro.configExtension");
+				"org.eclipse.ui.intro.configExtension"); //$NON-NLS-1$
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (!element.getName().equals("configExtension"))
+			if (!element.getName().equals("configExtension")) //$NON-NLS-1$
 				continue;
 			set.add(element.getNamespace());
 		}
@@ -72,13 +72,13 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 		}
 		String productId = product.getId();
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				"org.eclipse.ui.intro");
+				"org.eclipse.ui.intro"); //$NON-NLS-1$
 		String targetIntroId = null;
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (element.getName().equals("introProductBinding")) {
-				String pid = element.getAttribute("productId");
-				String iid = element.getAttribute("introId");
+			if (element.getName().equals("introProductBinding")) { //$NON-NLS-1$
+				String pid = element.getAttribute("productId"); //$NON-NLS-1$
+				String iid = element.getAttribute("introId"); //$NON-NLS-1$
 				if (productId.equals(pid)) {
 					targetIntroId = iid;
 					break;
@@ -87,12 +87,12 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 		}
 		if (targetIntroId == null)
 			return set;
-		elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.config");
+		elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.config"); //$NON-NLS-1$
 		IConfigurationElement config = null;
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (element.getName().equals("config")) {
-				String iid = element.getAttribute("introId");
+			if (element.getName().equals("config")) { //$NON-NLS-1$
+				String iid = element.getAttribute("introId"); //$NON-NLS-1$
 				if (targetIntroId.equals(iid)) {
 					config = element;
 					break;
@@ -122,7 +122,7 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 				href = resolveVariables(bundleId, content, locale);
 			else
 				href = pageId;
-			set.add("/" + bundleId + "/" + href + "?id=" + pageId);
+			set.add("/" + bundleId + "/" + href + "?id=" + pageId); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 
@@ -158,8 +158,8 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 		if (children.length > 0) {
 			StringBuffer buf = new StringBuffer();
 			addChildren(children, buf, doc);
-			doc.add(Field.Text("contents", new StringReader(buf.toString())));
-			doc.add(Field.Text("exact_contents", new StringReader(buf.toString())));
+			doc.add(Field.Text("contents", new StringReader(buf.toString()))); //$NON-NLS-1$
+			doc.add(Field.Text("exact_contents", new StringReader(buf.toString()))); //$NON-NLS-1$
 			return Status.OK_STATUS;
 		}
 		// delegate to the help system
@@ -186,7 +186,7 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 
 	private void appendNewText(StringBuffer buf, String text) {
 		if (buf.length() > 0)
-			buf.append(" ");
+			buf.append(" "); //$NON-NLS-1$
 		buf.append(text);
 	}
 
@@ -210,7 +210,7 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 				.showIntro(PlatformUI.getWorkbench().getActiveWorkbenchWindow(), false);
 		if (intro == null)
 			return false;
-		IIntroURL url = IntroURLFactory.createIntroURL("http://org.eclipse.ui.intro/showPage?id=" + id);
+		IIntroURL url = IntroURLFactory.createIntroURL("http://org.eclipse.ui.intro/showPage?id=" + id); //$NON-NLS-1$
 		return url.execute();
 	}
 }

@@ -12,16 +12,16 @@ public class PageData {
 	private GroupData hidden=null;
 	
 	public PageData(Element page) {
-		this.id = page.getAttribute("id");
+		this.id = page.getAttribute("id"); //$NON-NLS-1$
 		NodeList children = page.getChildNodes();
 		for (int i=0; i<children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType()==Node.ELEMENT_NODE) {
 				Element element = (Element)child;
-				if (element.getNodeName().equals("group")) {
+				if (element.getNodeName().equals("group")) { //$NON-NLS-1$
 					addGroup(element);
 				}
-				else if (element.getNodeName().equals("hidden")) {
+				else if (element.getNodeName().equals(ISharedIntroConstants.HIDDEN)) {
 					addGroup(element);
 				}
 			}
@@ -42,7 +42,7 @@ public class PageData {
 		for (int i=0; i<groups.size(); i++) {
 			GroupData gdata = (GroupData)groups.get(i);
 			if (gdata.contains(extensionId)) {
-				return id+"/"+gdata.getPath()+"/"+extensionId;
+				return id+"/"+gdata.getPath()+"/"+extensionId;  //$NON-NLS-1$//$NON-NLS-2$
 			}
 		}
 		// check the hidden
@@ -51,6 +51,6 @@ public class PageData {
 		// create the default: pick the last group
 		if (groups.size()==0) return null;
 		GroupData last = (GroupData)groups.get(groups.size()-1);
-		return id + "/" + last.getPath() + "/" + ISharedIntroConstants.DEFAULT_ANCHOR;
+		return id + "/" + last.getPath() + "/" + ISharedIntroConstants.DEFAULT_ANCHOR;  //$NON-NLS-1$//$NON-NLS-2$
 	}
 }

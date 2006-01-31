@@ -33,40 +33,40 @@ class PageData {
 	}
 
 	private void writeIntroData(Hashtable pages, PrintStream stream) {
-		stream.println("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-		stream.println("<extensions>");
-		writePage("overview", stream, pages);
-		writePage("firststeps", stream, pages);
-		writePage("tutorials", stream, pages);
-		writePage("samples", stream, pages);
-		writePage("migrate", stream, pages);
-		writePage("whatsnew", stream, pages);
-		writePage("webresources", stream, pages);
-		stream.println("</extensions>");
+		stream.println("<?xml version=\"1.0\" encoding=\"utf-8\" ?>"); //$NON-NLS-1$
+		stream.println("<extensions>"); //$NON-NLS-1$
+		writePage(ISharedIntroConstants.ID_OVERVIEW, stream, pages);
+		writePage(ISharedIntroConstants.ID_FIRSTSTEPS, stream, pages);
+		writePage(ISharedIntroConstants.ID_TUTORIALS, stream, pages);
+		writePage(ISharedIntroConstants.ID_SAMPLES, stream, pages);
+		writePage(ISharedIntroConstants.ID_WHATSNEW, stream, pages);
+		writePage(ISharedIntroConstants.ID_MIGRATE, stream, pages);
+		writePage(ISharedIntroConstants.ID_WEBRESOURCES, stream, pages);
+		stream.println("</extensions>"); //$NON-NLS-1$
 	}
 
 	private void writePage(String id, PrintStream stream, Hashtable pages) {
 		PageData pd = (PageData)pages.get(id);
 		if (pd==null)
 			return;
-		stream.println("   <page id=\""+id+"\">");
-		stream.println("      <group path=\""+"??"+"\">");
+		stream.println("   <page id=\""+id+"\">");  //$NON-NLS-1$//$NON-NLS-2$
+		stream.println("      <group path=\""+"??"+"\">");  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
 		for (int i=0; i<pd.extensions.size(); i++) {
 			String eid = (String)pd.extensions.get(i);
-			stream.println("         <extension id=\""+eid+"\" importance=\"low\"/>");
+			stream.println("         <extension id=\""+eid+"\" importance=\"low\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		stream.println("      </group>");
-		stream.println("   </page>");
+		stream.println("      </group>"); //$NON-NLS-1$
+		stream.println("   </page>"); //$NON-NLS-1$
 	}
 
 	private Hashtable findCandidates() {
 		Hashtable pages = new Hashtable();
-		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.configExtension");
+		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.configExtension"); //$NON-NLS-1$
 		for (int i=0; i<elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (element.getName().equals("configExtension")) {
-				String cid = element.getAttribute("configId");
-				if (cid!=null && cid.equals("org.eclipse.ui.intro.sharedConfig")) {
+			if (element.getName().equals("configExtension")) { //$NON-NLS-1$
+				String cid = element.getAttribute("configId"); //$NON-NLS-1$
+				if (cid!=null && cid.equals("org.eclipse.ui.intro.sharedConfig")) { //$NON-NLS-1$
 					addCandidate(pages, element);
 				}
 			}
@@ -74,14 +74,14 @@ class PageData {
 		return pages;
 	}
 	private void addCandidate(Hashtable pages, IConfigurationElement element) {
-		String fileName = element.getAttribute("content");
+		String fileName = element.getAttribute("content"); //$NON-NLS-1$
 		if (fileName==null)
 			return;
 		String bundleId = element.getDeclaringExtension().getNamespace();
 		Bundle bundle = Platform.getBundle(bundleId);
 		if (bundle==null)
 			return;
-		String content = BundleUtil.getResolvedResourceLocation("", fileName,
+		String content = BundleUtil.getResolvedResourceLocation("", fileName, //$NON-NLS-1$
                 bundle);
         IntroContentParser parser = new IntroContentParser(content);
         Document dom = parser.getDocument();
@@ -92,7 +92,7 @@ class PageData {
         	Node child = children.item(i);
         	if (child.getNodeType()==Node.ELEMENT_NODE) {
         		Element el = (Element)child;
-        		if (el.getNodeName().equalsIgnoreCase("extensionContent")) {
+        		if (el.getNodeName().equalsIgnoreCase("extensionContent")) { //$NON-NLS-1$
         			extension = el;
         			break;
         		}
@@ -100,11 +100,11 @@ class PageData {
          }
         if (extension==null)
         	return;
-        String id = extension.getAttribute("id");
-        String path = extension.getAttribute("path");
+        String id = extension.getAttribute("id"); //$NON-NLS-1$
+        String path = extension.getAttribute("path"); //$NON-NLS-1$
         if (id==null || path==null)
         	return;
-        int at = path.lastIndexOf("/@");
+        int at = path.lastIndexOf("/@"); //$NON-NLS-1$
         if (at == -1)
         	return;
         path = path.substring(0, at);
