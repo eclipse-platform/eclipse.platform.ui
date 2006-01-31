@@ -28,6 +28,7 @@ import org.eclipse.search.internal.ui.SearchPreferencePage;
 
 public class TextSearchEngineRegistry {
 
+	private static final String EXTENSION_POINT_ID= "org.eclipse.search.textSearchEngine"; //$NON-NLS-1$
 	private static final String ENGINE_NODE_NAME= "textSearchEngine"; //$NON-NLS-1$
 	private static final String ATTRIB_ID= "id"; //$NON-NLS-1$
 	private static final String ATTRIB_LABEL= "label"; //$NON-NLS-1$
@@ -80,10 +81,10 @@ public class TextSearchEngineRegistry {
 
 		SafeRunnable safe= new SafeRunnable() {
 			public void run() throws Exception {
-				IConfigurationElement[] extensions= Platform.getExtensionRegistry().getConfigurationElementsFor(ENGINE_NODE_NAME);
+				IConfigurationElement[] extensions= Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID);
 				for (int i= 0; i < extensions.length; i++) {
 					IConfigurationElement curr= extensions[i];
-					if (id.equals(curr.getAttribute(ATTRIB_ID))) {
+					if (ENGINE_NODE_NAME.equals(curr.getName()) && id.equals(curr.getAttribute(ATTRIB_ID))) {
 						res[0]= (TextSearchEngine) curr.createExecutableExtension(ATTRIB_CLASS);
 						return;
 					}
@@ -101,10 +102,12 @@ public class TextSearchEngineRegistry {
 		ArrayList res= new ArrayList();
 		res.add(new String[] { SearchMessages.TextSearchEngineRegistry_defaulttextsearch_label, "" }); //$NON-NLS-1$
 
-		IConfigurationElement[] extensions= Platform.getExtensionRegistry().getConfigurationElementsFor(ENGINE_NODE_NAME);
+		IConfigurationElement[] extensions= Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID);
 		for (int i= 0; i < extensions.length; i++) {
-			IConfigurationElement elem= extensions[i];
-			res.add(new String[] { elem.getAttribute(ATTRIB_LABEL), elem.getAttribute(ATTRIB_ID) });
+			IConfigurationElement engine= extensions[i];
+			if (ENGINE_NODE_NAME.equals(engine.getName())) {
+				res.add(new String[] { engine.getAttribute(ATTRIB_LABEL), engine.getAttribute(ATTRIB_ID) });
+			}
 		}
 		return (String[][]) res.toArray(new String[res.size()][]);
 	}
