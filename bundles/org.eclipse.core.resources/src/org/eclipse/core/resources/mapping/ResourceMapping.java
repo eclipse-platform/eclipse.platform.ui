@@ -138,15 +138,12 @@ public abstract class ResourceMapping extends PlatformObject {
 	}
 
 	/**
-	 * Return the id of the model provider that generated this resource
-	 * mapping.  This default implementation returns the resource
-	 * model provider id.  Subclasses may override.
+	 * Returns the id of the model provider that generated this resource
+	 * mapping.
 	 * 
 	 * @return the model provider id
 	 */
-	public String getModelProviderId() {
-		return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
-	}
+	public abstract String getModelProviderId();
 
 	/**
 	 * Returns the projects that contain the resources that constitute this 
