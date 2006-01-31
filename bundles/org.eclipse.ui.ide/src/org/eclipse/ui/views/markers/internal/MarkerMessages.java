@@ -241,6 +241,7 @@ public class MarkerMessages extends NLS{
 	public static String FieldCategory_Uncategorized;
 	public static String FieldMessage_WrongType;
 	public static String Category_Label;
+	public static String Category_Limit_Label;
 	
 	public static String ActionResolveMarker_CalculatingJob;
 	public static String ActionResolveMarker_OpenWizardJob;

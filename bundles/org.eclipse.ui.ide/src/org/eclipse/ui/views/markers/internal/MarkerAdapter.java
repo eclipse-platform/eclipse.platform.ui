@@ -72,10 +72,11 @@ public class MarkerAdapter {
 
 				ConcreteMarker[] allMarkers = markerAdapter.lastMarkers
 						.toArray();
-				children = new ConcreteMarker[end - start + 1];
 
-				System.arraycopy(allMarkers, start, children, 0, end - start
-						+ 1);
+				int totalSize = getDisplayedSize();
+				children = new ConcreteMarker[totalSize];
+
+				System.arraycopy(allMarkers, start, children, 0, totalSize);
 				// Sort them locally now
 				view.getTableSorter().sort(view.getViewer(), children);
 
@@ -85,6 +86,17 @@ public class MarkerAdapter {
 			}
 			return children;
 
+		}
+
+		/**
+		 * Return the number of errors being displayed.
+		 * 
+		 * @return int
+		 */
+		private int getDisplayedSize() {
+			if (view.getMarkerLimit() > 0)
+				return Math.min(getTotalSize(), view.getMarkerLimit());
+			return getTotalSize();
 		}
 
 		/*
@@ -102,8 +114,22 @@ public class MarkerAdapter {
 		 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getDescription()
 		 */
 		public String getDescription() {
-			return NLS.bind(MarkerMessages.Category_Label, new Object[] { name,
-					String.valueOf(end - start + 1) });
+
+			if (view.getMarkerLimit() < 0)
+				return NLS.bind(MarkerMessages.Category_Label, new Object[] {
+						name, String.valueOf(getDisplayedSize()) });
+			return NLS.bind(MarkerMessages.Category_Limit_Label, new Object[] {
+					name, String.valueOf(getDisplayedSize()),
+					String.valueOf(getTotalSize()) });
+		}
+
+		/**
+		 * Get the total size of the receiver.
+		 * 
+		 * @return int
+		 */
+		private int getTotalSize() {
+			return end - start + 1;
 		}
 
 		/*
@@ -197,7 +223,7 @@ public class MarkerAdapter {
 
 			ViewerSorter sorter = view.getViewer().getSorter();
 
-			if (markerLimit == -1) {
+			if (markerLimit == -1 || isShowingHierarchy()) {
 				sorter.sort(view.getViewer(), lastMarkers.toArray());
 			} else {
 
@@ -212,6 +238,7 @@ public class MarkerAdapter {
 			}
 
 			if (lastMarkers.getSize() == 0) {
+				categories = new MarkerCategory[0];
 				monitor.done();
 				return;
 			}
