@@ -23,7 +23,7 @@ public interface IHistoryCompareAdapter {
 	/**
 	 * Returns an ICompareInput for the passed in object
 	 * @param object
-	 * @return
+	 * @return returns an ICompareInput
 	 */
 	public ICompareInput getCompareInput(Object object);
 	

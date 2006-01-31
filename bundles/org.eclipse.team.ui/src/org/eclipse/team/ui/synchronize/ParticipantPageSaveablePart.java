@@ -35,7 +35,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 /**
  * Displays a synchronize participant page combined with the compare/merge infrastructure. This only works if the
  * synchronize page viewer provides selections that are of the following types: ITypedElement and ICompareInput
- * or if the participant is a {@link ResourceMappingSynchronizeParticipant}.
+ * or if the participant is a {@link ModelSynchronizeParticipant}.
  * 
  * @since 3.0
  */
