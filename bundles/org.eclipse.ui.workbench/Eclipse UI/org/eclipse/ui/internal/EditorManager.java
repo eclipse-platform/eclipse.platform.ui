@@ -52,8 +52,8 @@ import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ActiveShellExpression;
-import org.eclipse.ui.IDocument;
-import org.eclipse.ui.IDocumentSource;
+import org.eclipse.ui.ISaveableModel;
+import org.eclipse.ui.ISaveableModelSource;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -1056,7 +1056,7 @@ public class EditorManager implements IExtensionChangeHandler {
 			final IWorkbenchWindow window) {
 		// clone the input list
 		dirtyParts = new ArrayList(dirtyParts);
-    	List documentsToSave;
+    	List modelsToSave;
 		if (confirm) {
 			boolean saveable2Processed = false;
 			// Process all parts that implement ISaveablePart2.
@@ -1145,15 +1145,15 @@ public class EditorManager implements IExtensionChangeHandler {
 				}
 			}
 
-            documentsToSave = convertToDocuments(dirtyParts, closing);
+            modelsToSave = convertToModels(dirtyParts, closing);
             
-            // If the document list is empty return.
-            if (documentsToSave.isEmpty())
+            // If nothing to save, return.
+            if (modelsToSave.isEmpty())
             	return true;
             // Use a simpler dialog if there's only one
-            if (documentsToSave.size() == 1) {
-            	IDocument doc = (IDocument) documentsToSave.get(0);
-				String message = NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, doc.getName()); 
+            if (modelsToSave.size() == 1) {
+            	ISaveableModel model = (ISaveableModel) modelsToSave.get(0);
+				String message = NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, model.getName()); 
 				// Show a dialog.
 				String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
 				MessageDialog d = new MessageDialog(
@@ -1180,10 +1180,10 @@ public class EditorManager implements IExtensionChangeHandler {
             }
             else {
 	            ListSelectionDialog dlg = new ListSelectionDialog(
-	                    window.getShell(), documentsToSave,
+	                    window.getShell(), modelsToSave,
 	                    new ArrayContentProvider(),
 	                    new WorkbenchPartLabelProvider(), RESOURCES_TO_SAVE_MESSAGE);
-	            dlg.setInitialSelections(documentsToSave.toArray());
+	            dlg.setInitialSelections(modelsToSave.toArray());
 	            dlg.setTitle(SAVE_RESOURCES_TITLE);
 	
 	            // this "if" statement aids in testing.
@@ -1193,29 +1193,29 @@ public class EditorManager implements IExtensionChangeHandler {
 	                if (result == IDialogConstants.CANCEL_ID)
 	                    return false;
 	
-	                documentsToSave = Arrays.asList(dlg.getResult());
+	                modelsToSave = Arrays.asList(dlg.getResult());
 	            }
             }
         }
         else {
-        	documentsToSave = convertToDocuments(dirtyParts, closing);
+        	modelsToSave = convertToModels(dirtyParts, closing);
 		}
 
         // If the editor list is empty return.
-        if (documentsToSave.isEmpty())
+        if (modelsToSave.isEmpty())
             return true;
 		
 		// Create save block.
-        final List finalDocs = documentsToSave;
+        final List finalModels = modelsToSave;
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(
 						monitor);
-				monitorWrap.beginTask("", finalDocs.size()); //$NON-NLS-1$
-				for (Iterator i = finalDocs.iterator(); i.hasNext();) {
-					IDocument doc = (IDocument) i.next();
-					if (doc.isDirty()) {
-						doc.doSave(new SubProgressMonitor(monitorWrap, 1));
+				monitorWrap.beginTask("", finalModels.size()); //$NON-NLS-1$
+				for (Iterator i = finalModels.iterator(); i.hasNext();) {
+					ISaveableModel model = (ISaveableModel) i.next();
+					if (model.isDirty()) {
+						model.doSave(new SubProgressMonitor(monitorWrap, 1));
 					}
 					if (monitorWrap.isCanceled())
 						break;
@@ -1231,30 +1231,30 @@ public class EditorManager implements IExtensionChangeHandler {
 
     /**
 	 * For each part (view or editor) in the given list, attempts to convert it
-	 * to one or more documents. Duplicate documents are removed. If closing is true,
-	 * then documents that will remain open in parts other than the given parts
+	 * to one or more saveable models. Duplicate models are removed. If closing is true,
+	 * then models that will remain open in parts other than the given parts
 	 * are removed.
 	 * 
 	 * @param parts
 	 *            the parts (list of IViewPart or IEditorPart)
 	 * @param closing
 	 *            whether the parts are being closed
-	 * @return the dirty views, editors and documents
+	 * @return the dirty models
 	 */
-	private static List convertToDocuments(List parts, boolean closing) {
+	private static List convertToModels(List parts, boolean closing) {
 		ArrayList result = new ArrayList();
 		HashSet seen = new HashSet();
 		for (Iterator i = parts.iterator(); i.hasNext();) {
 			IWorkbenchPart part = (IWorkbenchPart) i.next();
-			IDocument[] docs = getDocuments(part);
-			for (int j = 0; j < docs.length; j++) {
-				IDocument doc = docs[j];
-				if (doc.isDirty() && !seen.contains(doc)) {
-					seen.add(doc);
+			ISaveableModel[] models = getSaveableModels(part);
+			for (int j = 0; j < models.length; j++) {
+				ISaveableModel model = models[j];
+				if (model.isDirty() && !seen.contains(model)) {
+					seen.add(model);
 					if (!closing
-							|| closingLastPartShowingDocument(doc, parts, part
+							|| closingLastPartShowingModel(model, parts, part
 									.getSite().getPage())) {
-						result.add(doc);
+						result.add(model);
 					}
 				}
 			}
@@ -1263,61 +1263,61 @@ public class EditorManager implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Returns the documents provided by the given part.
-	 * If the part does not provide any documents, a default document
+	 * Returns the saveable models provided by the given part.
+	 * If the part does not provide any models, a default model
 	 * is returned representing the part.
 	 * 
 	 * @param part the workbench part
-	 * @return the documents
+	 * @return the saveable models
 	 */
-	private static IDocument[] getDocuments(IWorkbenchPart part) {
-		if (part instanceof IDocumentSource) {
-			IDocumentSource source = (IDocumentSource) part;
-			return source.getDocuments();
+	private static ISaveableModel[] getSaveableModels(IWorkbenchPart part) {
+		if (part instanceof ISaveableModelSource) {
+			ISaveableModelSource source = (ISaveableModelSource) part;
+			return source.getModels();
 		}
-		return new IDocument[] { new DefaultDocument(part) };
+		return new ISaveableModel[] { new DefaultSaveableModel(part) };
 	}
 
 	/**
 	 * Returns true if, in the given page, no more parts will reference the
-	 * given document if the given parts are closed.
+	 * given model if the given parts are closed.
 	 * 
-	 * @param doc
-	 *            the document
+	 * @param model
+	 *            the model
 	 * @param closingParts
 	 *            the parts being closed (list of IViewPart or IEditorPart)
 	 * @param page
 	 *            the page
 	 * @return <code>true</code> if no more parts in the page will reference
-	 *         the given document, <code>false</code> otherwise
+	 *         the given model, <code>false</code> otherwise
 	 */
-	private static boolean closingLastPartShowingDocument(IDocument doc,
+	private static boolean closingLastPartShowingModel(ISaveableModel model,
 			List closingParts, IWorkbenchPage page) {
-		HashSet closingPartsWithSameDoc = new HashSet();
+		HashSet closingPartsWithSameModel = new HashSet();
 		for (Iterator i = closingParts.iterator(); i.hasNext();) {
 			IWorkbenchPart part = (IWorkbenchPart) i.next();
-			IDocument[] docs = getDocuments(part);
-			if (Arrays.asList(docs).contains(doc)) {
-				closingPartsWithSameDoc.add(part);
+			ISaveableModel[] models = getSaveableModels(part);
+			if (Arrays.asList(models).contains(model)) {
+				closingPartsWithSameModel.add(part);
 			}
 		}
 		IWorkbenchPartReference[] pagePartRefs = ((WorkbenchPage) page).getAllParts();
-		HashSet pagePartsWithSameDoc = new HashSet();
+		HashSet pagePartsWithSameModels = new HashSet();
 		for (int i = 0; i < pagePartRefs.length; i++) {
 			IWorkbenchPartReference partRef = pagePartRefs[i];
 			IWorkbenchPart part = partRef.getPart(false);
 			if (part != null) {
-				IDocument[] docs = getDocuments(part);
-				if (Arrays.asList(docs).contains(doc)) {
-					pagePartsWithSameDoc.add(part);
+				ISaveableModel[] models = getSaveableModels(part);
+				if (Arrays.asList(models).contains(model)) {
+					pagePartsWithSameModels.add(part);
 				}
 			}
 		}
-		for (Iterator i = closingPartsWithSameDoc.iterator(); i.hasNext();) {
+		for (Iterator i = closingPartsWithSameModel.iterator(); i.hasNext();) {
 			IWorkbenchPart part = (IWorkbenchPart) i.next();
-			pagePartsWithSameDoc.remove(part);
+			pagePartsWithSameModels.remove(part);
 		}
-		return pagePartsWithSameDoc.isEmpty();
+		return pagePartsWithSameModels.isEmpty();
 	}
 	
 	/*

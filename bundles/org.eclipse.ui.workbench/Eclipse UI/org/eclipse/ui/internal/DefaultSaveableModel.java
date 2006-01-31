@@ -14,32 +14,35 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IDocument;
+import org.eclipse.ui.ISaveableModel;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 
 /**
- * A default {@link IDocument} implementation that wrappers a regular
- * workbench part (one that does not itself adapt to IDocument).
+ * A default {@link ISaveableModel} implementation that wrappers a regular
+ * workbench part (one that does not itself adapt to ISaveableModel).
  * 
  * @since 3.2
  */
-public class DefaultDocument implements IDocument {
+public class DefaultSaveableModel implements ISaveableModel {
 
 	private IWorkbenchPart part;
-	
+
 	/**
-	 * Creates a new DefaultDocument.
+	 * Creates a new DefaultSaveableModel.
 	 * 
-	 * @param part the part represented by this document
+	 * @param part
+	 *            the part represented by this model
 	 */
-	public DefaultDocument(IWorkbenchPart part) {
+	public DefaultSaveableModel(IWorkbenchPart part) {
 		this.part = part;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IDocument#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.ISaveableModel#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		if (part instanceof ISaveablePart) {
@@ -48,8 +51,10 @@ public class DefaultDocument implements IDocument {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IDocument#getName()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.ISaveableModel#getName()
 	 */
 	public String getName() {
 		if (part instanceof IWorkbenchPart2) {
@@ -58,8 +63,10 @@ public class DefaultDocument implements IDocument {
 		return part.getTitle();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IDocument#getImageDescriptor()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.ISaveableModel#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
 		Image image = part.getTitleImage();
@@ -68,15 +75,19 @@ public class DefaultDocument implements IDocument {
 		return ImageDescriptor.createFromImage(image);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IDocument#getToolTipText()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.ISaveableModel#getToolTipText()
 	 */
 	public String getToolTipText() {
 		return part.getTitleToolTip();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IDocument#isDirty()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.ISaveableModel#isDirty()
 	 */
 	public boolean isDirty() {
 		if (part instanceof ISaveablePart) {

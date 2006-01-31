@@ -20,7 +20,7 @@ import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IDocument;
+import org.eclipse.ui.ISaveableModel;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -54,9 +54,9 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
         if (element instanceof IWorkbenchPart) {
             return ((IWorkbenchPart) element).getTitleImage();
         }
-        if (element instanceof IDocument) {
-        	IDocument doc = (IDocument) element;
-        	ImageDescriptor imageDesc = doc.getImageDescriptor();
+        if (element instanceof ISaveableModel) {
+        	ISaveableModel model = (ISaveableModel) element;
+        	ImageDescriptor imageDesc = model.getImageDescriptor();
         	// convert from ImageDescriptor to Image
         	if (imageDesc == null)
         		return null;
@@ -87,13 +87,13 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
             }
             return part.getTitle() + "  [" + path + "]"; //$NON-NLS-1$ //$NON-NLS-2$
         }
-        if (element instanceof IDocument) {
-        	IDocument doc = (IDocument) element;
-            String path = doc.getToolTipText();
+        if (element instanceof ISaveableModel) {
+        	ISaveableModel model = (ISaveableModel) element;
+            String path = model.getToolTipText();
             if (path == null || path.trim().length() == 0) {
-                return doc.getName();
+                return model.getName();
             }
-            return doc.getName() + "  [" + path + "]";  //$NON-NLS-1$ //$NON-NLS-2$
+            return model.getName() + "  [" + path + "]";  //$NON-NLS-1$ //$NON-NLS-2$
         	
         }
         return null;

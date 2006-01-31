@@ -15,33 +15,34 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * An <code>IDocument</code> represents an editable subset of the domain
- * model. Different workbench parts (editors and views) may present the same
- * document in different ways. This interface allows the workbench to provide
- * more appropriate handling of operations such as saving and closing workbench
- * parts. For example, if two editors sharing the same document with unsaved
- * changes are closed simultaneously, the user is only prompted to save the
- * changes once for the shared document, rather than once for each editor.
+ * An <code>ISaveableModel</code> represents an editable subset of the domain
+ * model that may contain unsaved changes. Different workbench parts (editors
+ * and views) may present the same model(s) in different ways. This interface
+ * allows the workbench to provide more appropriate handling of operations such
+ * as saving and closing workbench parts. For example, if two editors sharing
+ * the same model with unsaved changes are closed simultaneously, the user is
+ * only prompted to save the changes once for the shared model, rather than once
+ * for each editor.
  * <p>
- * Workbench parts that work in terms of documents should implement
- * {@link IDocumentSource}.
+ * Workbench parts that work in terms of saveable models should implement
+ * {@link ISaveableModelSource}.
  * </p>
  * 
- * @see IDocumentSource
+ * @see ISaveableModelSource
  * @since 3.2
  */
-public interface IDocument {
+public interface ISaveableModel {
 
 	/**
-	 * Returns the name of this document for display purposes.
+	 * Returns the name of this model for display purposes.
 	 * 
-	 * @return the document's name; never <code>null</code>.
+	 * @return the model's name; never <code>null</code>.
 	 */
 	String getName();
 
 	/**
-	 * Returns the tool tip text for this document. This text is used to
-	 * differentiate between two input with the same name. For instance,
+	 * Returns the tool tip text for this model. This text is used to
+	 * differentiate between two inputs with the same name. For instance,
 	 * MyClass.java in folder X and MyClass.java in folder Y. The format of the
 	 * text varies between input types.
 	 * 
@@ -50,15 +51,15 @@ public interface IDocument {
 	String getToolTipText();
 
 	/**
-	 * Returns the image descriptor for this document.
+	 * Returns the image descriptor for this model.
 	 * 
-	 * @return the image descriptor for this document; may be <code>null</code>
+	 * @return the image descriptor for this model; may be <code>null</code>
 	 *         if there is no image
 	 */
 	public ImageDescriptor getImageDescriptor();
 
 	/**
-	 * Saves the contents of this document.
+	 * Saves the contents of this model.
 	 * <p>
 	 * If the save is cancelled through user action, or for any other reason,
 	 * the part should invoke <code>setCancelled</code> on the
@@ -75,7 +76,7 @@ public interface IDocument {
 	void doSave(IProgressMonitor monitor);
 
 	/**
-	 * Returns whether the contents of this document have changed since the last
+	 * Returns whether the contents of this model have changed since the last
 	 * save operation.
 	 * <p>
 	 * <b>Note:</b> this method is called frequently, for example by actions to
