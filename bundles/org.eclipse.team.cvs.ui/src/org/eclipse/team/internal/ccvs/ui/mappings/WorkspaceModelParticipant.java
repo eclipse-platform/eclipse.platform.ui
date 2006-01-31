@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
 import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.core.mapping.provider.ScopeGenerator;
+import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
 import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -172,8 +172,8 @@ public class WorkspaceModelParticipant extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.operations.ModelSynchronizeParticipant#createScopeGenerator()
 	 */
-	protected ScopeGenerator createScopeGenerator() {
-		return new ScopeGenerator(new SubscriberResourceMappingContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), true), true);
+	protected ResourceMappingScopeManager createScopeManager() {
+		return new ResourceMappingScopeManager(new SubscriberResourceMappingContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), true), true);
 	}
 	
 }

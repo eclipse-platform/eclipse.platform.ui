@@ -98,22 +98,22 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	 */
 	public void refresh(ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 100);
-		ScopeGenerator scopeGenerator = getScopeGenerator();
-		if (scopeGenerator == null) {
-			// The scope generator is missing so just refresh everything
+		ResourceMappingScopeManager manager = getScopeManager();
+		if (manager == null) {
+			// The scope manager is missing so just refresh everything
 			refresh(scope.getTraversals(), IResource.NONE, Policy.subMonitorFor(monitor, 50));
 		} else {
-			ResourceTraversal[] traversals = scopeGenerator.refreshScope(getScope(), mappings, Policy.subMonitorFor(monitor, 50));
+			ResourceTraversal[] traversals = manager.refreshScope(mappings, Policy.subMonitorFor(monitor, 50));
 			if (traversals.length > 0)
 				refresh(traversals, IResource.NONE, Policy.subMonitorFor(monitor, 50));
 		}
 		monitor.done();
 	}
 
-	private ScopeGenerator getScopeGenerator() {
+	private ResourceMappingScopeManager getScopeManager() {
 		if (scope instanceof ResourceMappingScope) {
 			ResourceMappingScope rms = (ResourceMappingScope) scope;
-			rms.getGenerator();
+			rms.getManager();
 		}
 		return null;
 	}

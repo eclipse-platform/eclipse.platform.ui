@@ -66,7 +66,11 @@ public final class WorkspaceResourceMapper extends ResourceMapping {
     private ResourceTraversal[] asTraversal(IResource resource, final int depth, ResourceMappingContext context) {
         return new ResourceTraversal[] { new ResourceTraversal(new IResource[] { resource }, depth, IResource.NONE)} ;
     }
-    public boolean isAncestorOf(ResourceMapping mapping) {
+    public boolean contains(ResourceMapping mapping) {
     	return false;
     }
+
+	public String getModelProviderId() {
+		return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
+	}
 }

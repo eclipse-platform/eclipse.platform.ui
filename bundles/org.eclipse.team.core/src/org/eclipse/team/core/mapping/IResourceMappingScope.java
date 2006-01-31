@@ -11,7 +11,7 @@
 package org.eclipse.team.core.mapping;
 
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.team.core.mapping.provider.ScopeGenerator;
+import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
 
 /**
  * Interface which defines the protocol for translating a set of
@@ -19,7 +19,7 @@ import org.eclipse.team.core.mapping.provider.ScopeGenerator;
  * complete set of resources to be operated on.
  * <p>
  * This interface is not intended to be implemented by clients. Instead, clients should
- * use a {@link ScopeGenerator} to generate a resource mapping scope from
+ * use a {@link ResourceMappingScopeManager} to generate a resource mapping scope from
  * a set of input resource mappings.
  * 
  * <p>
@@ -30,7 +30,7 @@ import org.eclipse.team.core.mapping.provider.ScopeGenerator;
  * </p>
  * 
  * @see org.eclipse.core.resources.mapping.ResourceMapping
- * @see ScopeGenerator
+ * @see ResourceMappingScopeManager
  * 
  * @since 3.2
  */
@@ -60,6 +60,14 @@ public interface IResourceMappingScope extends ISynchronizationScope {
 	 *         that was used to build this scope
 	 */
 	public ResourceMapping[] getInputMappings();
+	
+	/**
+	 * Return a scope that only contains the input mappings of this
+	 * scope.
+	 * @return a scope that only contains the input mappings of this
+	 * scope
+	 */
+	public IResourceMappingScope asInputScope();
 
 	/**
 	 * Return an array of all of the mappings to be operated on. The returned

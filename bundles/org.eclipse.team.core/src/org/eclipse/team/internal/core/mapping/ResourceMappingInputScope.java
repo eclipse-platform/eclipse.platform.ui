@@ -95,4 +95,11 @@ public class ResourceMappingInputScope extends AbstractResourceMappingScope {
 	public boolean hasAdditonalResources() {
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingScope#asInputScope()
+	 */
+	public IResourceMappingScope asInputScope() {
+		return this;
+	}
 }

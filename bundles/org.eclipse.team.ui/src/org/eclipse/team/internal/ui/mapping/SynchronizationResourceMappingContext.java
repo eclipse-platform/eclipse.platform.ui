@@ -8,7 +8,7 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.mapping;
+package org.eclipse.team.internal.ui.mapping;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +21,7 @@ import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
 
 /**
  * A remote resource mapping context that wraps a synchronization context.
@@ -155,6 +156,16 @@ public final class SynchronizationResourceMappingContext extends
 
 	public ISynchronizationContext getSynchronizationContext() {
 		return context;
+	}
+
+	public IProject[] getProjects() {
+		Set projects = new HashSet();
+		IResource[] roots = context.getScope().getRoots();
+		for (int i = 0; i < roots.length; i++) {
+			IResource resource = roots[i];
+			projects.add(resource.getProject());
+		}
+		return (IProject[]) projects.toArray(new IProject[projects.size()]);
 	}
 
 }

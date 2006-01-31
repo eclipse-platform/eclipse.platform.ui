@@ -20,7 +20,7 @@ import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.core.mapping.provider.ScopeGenerator;
+import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
 import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
@@ -461,8 +461,8 @@ public class ModelSynchronizeParticipant extends
 		try {
 			// When restoring, we can't do anything long running so we'll need to use the local content for everything
 			NullProgressMonitor monitor = new NullProgressMonitor();
-			ResourceMapping[] mappings = ScopeGenerator.getMappingsFromProviders(traversal.asTraversals(), ResourceMappingContext.LOCAL_CONTEXT, monitor);
-			IResourceMappingScope scope = createScopeGenerator().prepareScope(mappings, true, monitor);
+			ResourceMapping[] mappings = ResourceMappingScopeManager.getMappingsFromProviders(traversal.asTraversals(), ResourceMappingContext.LOCAL_CONTEXT, monitor);
+			IResourceMappingScope scope = createScopeManager().prepareScope(mappings, true, monitor);
 			IMergeContext context = restoreContext(scope, monitor);
 			initializeContext(context);
 		} catch (CoreException e) {
@@ -485,16 +485,16 @@ public class ModelSynchronizeParticipant extends
 	}
 
 	/**
-	 * Create a return a scope generator that can be used to build the scope of this
+	 * Create and return a scope manager that can be used to build the scope of this
 	 * participant when it is restored after a restart. By default, this method 
-	 * returns a scope generator that uses the local content.
+	 * returns a scope manager that uses the local content.
 	 * This method can be overridden by subclasses.
 	 * 
-	 * @return a scope generator that can be used to build the scope of this
+	 * @return a scope manager that can be used to build the scope of this
 	 * participant when it is restored after a restart
 	 */
-	protected ScopeGenerator createScopeGenerator() {
-		return new ScopeGenerator(ResourceMappingContext.LOCAL_CONTEXT, true);
+	protected ResourceMappingScopeManager createScopeManager() {
+		return new ResourceMappingScopeManager(ResourceMappingContext.LOCAL_CONTEXT, true);
 	}
 	
 	/* private */ void setRefreshSchedule(SubscriberRefreshSchedule schedule) {

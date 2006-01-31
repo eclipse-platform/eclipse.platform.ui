@@ -194,9 +194,12 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 			public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 				return traversals;
 			}
-		    public boolean isAncestorOf(ResourceMapping mapping) {
+		    public boolean contains(ResourceMapping mapping) {
 		    	return false;
 		    }
+			public String getModelProviderId() {
+				return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
+			}
 		}};
 		try {
 			monitor.beginTask(null, 50);

@@ -14,8 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
@@ -23,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
-import org.eclipse.team.core.mapping.provider.ScopeGenerator;
+import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
 import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
 import org.eclipse.team.tests.core.TeamTest;
 import org.eclipse.team.ui.operations.ModelOperation;
@@ -51,8 +50,8 @@ public class ScopeBuildingTests extends TeamTest {
 			throw PROMPT_EXCEPTION;
 		}
 		
-		protected ScopeGenerator getScopeGenerator() {
-			return new ScopeGenerator(getResourceMappingContext(), false) {	
+		protected ResourceMappingScopeManager getScopeManager() {
+			return new ResourceMappingScopeManager(getResourceMappingContext(), false) {	
 				public IResourceMappingScope prepareScope(
 						ResourceMapping[] selectedMappings,
 						boolean useLocalContext,
@@ -69,7 +68,6 @@ public class ScopeBuildingTests extends TeamTest {
 					}
 					return resourceMappingScope;
 				}
-			
 			};
 		}
 		

@@ -296,4 +296,14 @@ public class SubscriberResourceMappingContext extends RemoteResourceMappingConte
 	public boolean contentDiffers(IFile file, IProgressMonitor monitor) throws CoreException {
 		return hasRemoteChange(file, monitor) || hasLocalChange(file, monitor);
 	}
+	
+	public IProject[] getProjects() {
+		Set projects = new HashSet();
+		IResource[] roots = subscriber.roots();
+		for (int i = 0; i < roots.length; i++) {
+			IResource resource = roots[i];
+			projects.add(resource.getProject());
+		}
+		return (IProject[]) projects.toArray(new IProject[projects.size()]);
+	}
 }

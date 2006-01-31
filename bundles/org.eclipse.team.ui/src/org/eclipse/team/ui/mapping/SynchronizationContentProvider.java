@@ -24,6 +24,7 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.mapping.SynchronizationResourceMappingContext;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentProvider;
@@ -534,7 +535,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 */
 	protected abstract ResourceTraversal[] getTraversals(ISynchronizationContext context, Object object);
 	
-	/**
+	/*
 	 * Return the traversals for the given model object. By default, the scope
 	 * is checked in case the traversals have already been calculated. If they have not,
 	 * the provided context is wrapped in a {@link SynchronizationResourceMappingContext}
@@ -547,7 +548,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @param monitor a progress monitor
 	 * @return the traversals for the given object in the scope of this content provider
 	 */
-	protected ResourceTraversal[] getTraversals(ISynchronizationContext context, Object object, IProgressMonitor monitor) {
+	private ResourceTraversal[] getTraversals(ISynchronizationContext context, Object object, IProgressMonitor monitor) {
 		ResourceMapping mapping = Utils.getResourceMapping(object);
 		if (mapping != null) {
 			ResourceTraversal[] traversals = context.getScope().getTraversals(mapping);

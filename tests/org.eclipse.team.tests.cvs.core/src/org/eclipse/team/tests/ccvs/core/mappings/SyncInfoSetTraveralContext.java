@@ -41,7 +41,7 @@ public class SyncInfoSetTraveralContext extends RemoteResourceMappingContext {
     /* (non-Javadoc)
      * @see org.eclipse.core.resources.mapping.ITraversalContext#contentDiffers(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
      */
-    public boolean contentDiffers(IFile file, IProgressMonitor monitor) throws CoreException {
+    public boolean contentDiffers(IFile file, IProgressMonitor monitor) {
         return getSyncInfo(file) != null;
     }
 
@@ -101,6 +101,10 @@ public class SyncInfoSetTraveralContext extends RemoteResourceMappingContext {
         if (base == null)
             return null;
         return base.getStorage(monitor);
+	}
+
+	public IProject[] getProjects() {
+		return ResourcesPlugin.getWorkspace().getRoot().getProjects();
 	}
 
 }

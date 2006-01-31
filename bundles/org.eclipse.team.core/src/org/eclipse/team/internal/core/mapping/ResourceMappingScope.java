@@ -17,7 +17,7 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.PropertyChangeEvent;
-import org.eclipse.team.core.mapping.provider.ScopeGenerator;
+import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
 
 /**
  * Concrete implementation of the {@link IResourceMappingScope}
@@ -42,7 +42,7 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	private final Map mappingsToTraversals = new HashMap();
 	private boolean hasAdditionalMappings;
 	private boolean hasAdditionalResources;
-	private final ScopeGenerator generator;
+	private final ResourceMappingScopeManager manager;
 	private final CompoundResourceTraversal compoundTraversal = new CompoundResourceTraversal();
 	
 	public static ResourceTraversal[] combineTraversals(ResourceTraversal[] allTraversals) {
@@ -76,11 +76,8 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 		return (ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]);
 	}
 	
-	/**
-	 * @param selectedMappings
-	 */
-	public ResourceMappingScope(ScopeGenerator generator, ResourceMapping[] selectedMappings) {
-		this.generator = generator;
+	public ResourceMappingScope(ResourceMappingScopeManager manager, ResourceMapping[] selectedMappings) {
+		this.manager = manager;
 		inputMappings = selectedMappings;
 	}
 	
@@ -157,8 +154,8 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 		return hasAdditionalResources;
 	}
 
-	public ScopeGenerator getGenerator() {
-		return generator;
+	public ResourceMappingScopeManager getManager() {
+		return manager;
 	}
 	
 	public void fireTraversalsChangedEvent(ResourceTraversal[] oldTraversals) {
@@ -171,5 +168,12 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 
 	public void fireMappingChangedEvent(ResourceMapping[] originalMappings) {
 		firePropertyChangedEvent(new PropertyChangeEvent(this, IResourceMappingScope.MAPPINGS, originalMappings, getMappings()));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingScope#asInputScope()
+	 */
+	public IResourceMappingScope asInputScope() {
+		return new ResourceMappingInputScope(this);
 	}
 }
