@@ -34,7 +34,7 @@ public class SomeMathFunction extends UpdatableFunction {
 		// this function, so include every element in the function domain in the event.
 		// If this was a change that would only affect a subset of elements, we would include
 		// the subset of affected elements rather than using domain.toCollection()
-		fireChangeEvent(new ChangeEvent(this, ChangeEvent.FUNCTION_CHANGED, null, domain.toCollection()));
+		fireChangeEvent(new ChangeEvent(this, ChangeEvent.CHANGE_MANY, null, domain.toCollection()));
 	}
 	
 	protected Object doComputeResult(Object input) {

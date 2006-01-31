@@ -1,8 +1,10 @@
 // TODO djo: copyright
-package org.eclipse.jface.databinding;
+package org.eclipse.jface.databinding.beans;
 
 import java.lang.reflect.Method;
 
+import org.eclipse.jface.databinding.IBindSupportFactory;
+import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.validator.IValidator;
 

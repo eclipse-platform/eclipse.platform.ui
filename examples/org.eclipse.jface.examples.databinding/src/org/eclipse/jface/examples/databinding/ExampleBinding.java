@@ -1,9 +1,10 @@
 package org.eclipse.jface.examples.databinding;
 
-import org.eclipse.jface.databinding.BeanUpdatableFactory;
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatableFactory;
+import org.eclipse.jface.databinding.NestedUpdatableFactory;
+import org.eclipse.jface.databinding.beans.BeanUpdatableFactory;
 import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
 import org.eclipse.jface.databinding.viewers.ViewersUpdatableFactory;
 import org.eclipse.swt.widgets.Control;
@@ -38,8 +39,8 @@ public class ExampleBinding {
 	 */
 	public static IDataBindingContext createContext(Control control) {
 		return DataBinding.createContext(control, new IUpdatableFactory[] {
-				new BeanUpdatableFactory(), new SWTUpdatableFactory(),
-				new ViewersUpdatableFactory() });
+				new NestedUpdatableFactory(), new BeanUpdatableFactory(),
+				new SWTUpdatableFactory(), new ViewersUpdatableFactory() });
 	}
 
 	/**

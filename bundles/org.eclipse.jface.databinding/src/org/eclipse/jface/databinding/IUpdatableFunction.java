@@ -25,7 +25,7 @@ package org.eclipse.jface.databinding;
  * remove the listener whenever it fires a CHANGE event for the object.
  * </p>
  * 
- * Fires event types: FUNCTION_CHANGED, STALE  
+ * Fires event types: CHANGE_MANY, STALE  
  * 
  * <p>
  * Not intended to be implemented by clients. Clients should subclass 
@@ -44,5 +44,5 @@ public interface IUpdatableFunction extends IReadable {
 	 * @param input domain element to evaluate the function on
 	 * @return result of the function 
 	 */
-    public abstract Object computeResult(Object input);
+    public abstract Object calculate(Object input);
 }

@@ -16,7 +16,6 @@ import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.jface.databinding.BindSpec;
@@ -37,7 +36,6 @@ import org.eclipse.jface.databinding.IUpdatableTree;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.NestedProperty;
 import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.TreeModelDescription;
 import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.converterfunction.ConversionFunctionRegistry;
 import org.eclipse.jface.databinding.converters.FunctionalConverter;
@@ -48,7 +46,6 @@ import org.eclipse.jface.databinding.validator.ValidatorRegistry;
 import org.eclipse.jface.util.Assert;
 
 /**
- * 
  * @since 3.2
  */
 public class DataBindingContext implements IDataBindingContext {
@@ -91,7 +88,6 @@ public class DataBindingContext implements IDataBindingContext {
 	 * 
 	 */
 	public DataBindingContext() {
-		registerFactories();
 		registerDefaultBindSupportFactory();
 	}
 
@@ -188,79 +184,6 @@ public class DataBindingContext implements IDataBindingContext {
 				if (toType.isAssignableFrom(fromType)
 						|| fromType.isAssignableFrom(toType)) {
 					return new IdentityConverter(fromType, toType);
-				}
-				return null;
-			}
-		});
-	}
-
-	protected void registerFactories() {
-		addUpdatableFactory(new IUpdatableFactory() {
-			public IUpdatable createUpdatable(Map properties,
-					Object description, IDataBindingContext bindingContext) {
-				if (description instanceof Property) {
-					Property propertyDescription = (Property) description;
-					Object o = propertyDescription.getObject();
-					if (o instanceof IUpdatableValue) {
-						IUpdatableValue updatableValue = (IUpdatableValue) o;
-						Class propertyType = propertyDescription
-								.getPropertyType();
-						if (propertyType == null) {
-							throw new BindingException(
-									"Missing required property type for binding to a property of an IUpdatableValue."); //$NON-NLS-1$
-						}
-						Boolean isCollectionProperty = propertyDescription
-								.isCollectionProperty();
-						if (isCollectionProperty == null) {
-							throw new BindingException(
-									"Missing required property collection information for binding to a property of an IUpdatableValue."); //$NON-NLS-1$
-						}
-						Object propertyID = propertyDescription.getPropertyID();
-						if (isCollectionProperty.booleanValue()) {
-							return new NestedUpdatableCollection(
-									DataBindingContext.this, updatableValue,
-									propertyID, propertyType);
-						}
-						return new NestedUpdatableValue(
-								DataBindingContext.this, updatableValue,
-								propertyID, propertyType);
-					} else if (o instanceof List) {
-						return new ListUpdatableCollection(
-								(List) o,
-								propertyDescription.getPropertyType() == null ? Object.class
-										: propertyDescription.getPropertyType());
-					}
-				} else if (description instanceof TreeModelDescription) {
-					TreeModelDescription treeModelDescription = (TreeModelDescription) description;
-					if (treeModelDescription.getRoot() != null) {
-						if (treeModelDescription.getRoot() instanceof IUpdatable) {
-							if (treeModelDescription.getRoot() instanceof IUpdatableTree)
-								return (IUpdatableTree) treeModelDescription
-										.getRoot();
-							// Nest the TreeModelDescription's root
-							return new NestedUpdatableTree(
-									DataBindingContext.this,
-									treeModelDescription);
-						} else if (treeModelDescription.getRoot() instanceof Property) {
-							// Create an Updatable for the
-							// TreeModelDescription's root first
-							TreeModelDescription newDescription = new TreeModelDescription(
-									DataBindingContext.this
-											.createUpdatable(treeModelDescription
-													.getRoot()));
-							Class[] types = treeModelDescription.getTypes();
-							for (int i = 0; i < types.length; i++) {
-								String[] props = treeModelDescription
-										.getChildrenProperties(types[i]);
-								for (int j = 0; j < props.length; j++)
-									newDescription.addChildrenProperty(
-											types[i], props[j]);
-							}
-							return DataBindingContext.this
-									.createUpdatable(newDescription);
-						}
-					}
-					return null;
 				}
 				return null;
 			}

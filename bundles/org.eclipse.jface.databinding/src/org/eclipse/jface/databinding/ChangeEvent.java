@@ -121,12 +121,12 @@ public class ChangeEvent extends EventObject  {
 	public static final int REMOVE_MANY = 1<<9;
 	
 	/**
-	 * Change type indicating that the result of an IUpdatableFunction has 
-	 * changed for one or more domain objects. getNewValue()
-	 * contains a Collection of domain objects for which the function value has
-	 * changed.
+	 * Change type indicating that the result of an IUpdatableFunction or an
+	 * IUpdatableCellProvider has changed for one or more domain objects.
+	 * getNewValue() contains a Collection of domain objects for which the
+	 * function value has changed.
 	 */
-	public static final int FUNCTION_CHANGED = 1<<10;
+	public static final int CHANGE_MANY = 1<<10;
 	
 	/**
 	 * Change type indicating that the IUpdatable has been disposed.

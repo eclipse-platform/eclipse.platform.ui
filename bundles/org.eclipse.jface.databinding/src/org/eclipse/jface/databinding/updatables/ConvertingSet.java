@@ -46,7 +46,7 @@ public class ConvertingSet extends AbstractUpdatableSet {
 		    			processRemoves((Collection)changeEvent.getNewValue());
 	    			}
 	    			break;
-	    		case ChangeEvent.FUNCTION_CHANGED:
+	    		case ChangeEvent.CHANGE_MANY:
 	    			if (source == func) {
 		    			// Fired by func
 		    			processChanges((Collection)changeEvent.getNewValue());
@@ -119,7 +119,7 @@ public class ConvertingSet extends AbstractUpdatableSet {
     	for (Iterator iter = added.iterator(); iter.hasNext();) {
 			Object next = iter.next();
 			 
-			Object target = func.computeResult(next);
+			Object target = func.calculate(next);
 			
 			if (target != null) {
 				Collection keys = converter.addMapping(next, target);
@@ -184,7 +184,7 @@ public class ConvertingSet extends AbstractUpdatableSet {
 		}
 		
 		// Else convert the element
-		return func.computeResult(element);
+		return func.calculate(element);
     }
     
     /**
@@ -212,7 +212,7 @@ public class ConvertingSet extends AbstractUpdatableSet {
     	for (Iterator iter = rawInput.iterator(); iter.hasNext();) {
 			Object next = iter.next();
 			
-			Object converted = func.computeResult(next);
+			Object converted = func.calculate(next);
 			if (converted != null) {
 				if (converted == adapter) {
 					result.add(next);
@@ -240,7 +240,7 @@ public class ConvertingSet extends AbstractUpdatableSet {
     	for (Iterator iter = rawInput.iterator(); iter.hasNext();) {
 			Object next = iter.next();
 			
-			Object converted = func.computeResult(next);
+			Object converted = func.calculate(next);
 			if (converted != null) {
 				result.add(converted);
 			}

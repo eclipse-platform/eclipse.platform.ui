@@ -33,7 +33,7 @@ public final class IdentityFunction implements IUpdatableFunction {
 		return factory;
 	}
 	
-	public Object computeResult(Object input) {
+	public Object calculate(Object input) {
 		return input;
 	}
 

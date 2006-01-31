@@ -11,7 +11,7 @@ import org.eclipse.jface.databinding.UpdatableTracker;
  * @since 3.2
  */
 public abstract class UpdatableFunction extends Updatable implements IUpdatableFunction {
-	public final Object computeResult(Object input) {
+	public final Object calculate(Object input) {
 		UpdatableTracker.getterCalled(this);
 		
 		return doComputeResult(input);

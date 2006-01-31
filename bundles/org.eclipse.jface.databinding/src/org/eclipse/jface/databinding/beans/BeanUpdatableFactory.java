@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.databinding;
+package org.eclipse.jface.databinding.beans;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -17,10 +17,21 @@ import java.beans.PropertyDescriptor;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.jface.databinding.BindingException;
+import org.eclipse.jface.databinding.IDataBindingContext;
+import org.eclipse.jface.databinding.IReadableList;
+import org.eclipse.jface.databinding.IReadableSet;
+import org.eclipse.jface.databinding.ITree;
+import org.eclipse.jface.databinding.IUpdatable;
+import org.eclipse.jface.databinding.IUpdatableFactory;
+import org.eclipse.jface.databinding.Property;
+import org.eclipse.jface.databinding.TreeModelDescription;
+import org.eclipse.jface.databinding.updatables.ListToSetAdapter;
 import org.eclipse.jface.internal.databinding.beans.JavaBeanTree;
 import org.eclipse.jface.internal.databinding.beans.JavaBeanUpdatableCollection;
 import org.eclipse.jface.internal.databinding.beans.JavaBeanUpdatableTree;
 import org.eclipse.jface.internal.databinding.beans.JavaBeanUpdatableValue;
+import org.eclipse.jface.internal.databinding.beans.JavaBeansUpdatableCellProvider;
 
 /**
  * A factory for creating updatable objects for properties of plain Java objects
@@ -105,6 +116,26 @@ final public class BeanUpdatableFactory implements IUpdatableFactory {
 			Object root = ((TreeModelDescription)description).getRoot();			
 			if (root==null || ! (root instanceof IUpdatable) && !(root instanceof Property)) // TODO workaround until the context's factory is driven first		     			
 			    return new JavaBeanUpdatableTree(new JavaBeanTree((TreeModelDescription)description));						 							
+		} else if (description instanceof TableModelDescription) {
+			TableModelDescription tableModelDescription = (TableModelDescription) description;
+			IUpdatable collectionUpdatable = bindingContext.createUpdatable(tableModelDescription.getCollectionProperty());
+			if (collectionUpdatable == null) {
+				return null;
+			}
+			IReadableSet readableSet;
+			if (collectionUpdatable instanceof IReadableSet) {
+				readableSet = (IReadableSet) collectionUpdatable;
+			} else if (collectionUpdatable instanceof IReadableList) {
+				readableSet = new ListToSetAdapter((IReadableList) collectionUpdatable);
+			} else {
+				throw new BindingException("collection inside a TableModelDescription needs to be IReadableSet or IReadableList"); //$NON-NLS-1$
+			}
+			Object[] columnIDs = tableModelDescription.getColumnIDs();
+			String[] propertyNames = new String[columnIDs.length];
+			for (int i = 0; i < propertyNames.length; i++) {
+				propertyNames[i] = (String) columnIDs[i];
+			}
+			return new JavaBeansUpdatableCellProvider(readableSet, propertyNames);
 		}
 		return null;
 	}

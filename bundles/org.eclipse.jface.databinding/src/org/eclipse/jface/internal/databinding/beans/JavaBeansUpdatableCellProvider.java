@@ -86,7 +86,7 @@ public class JavaBeansUpdatableCellProvider extends Updatable implements IUpdata
 		public void propertyChange(java.beans.PropertyChangeEvent event) {
 			if (!updating) {
 				if (Arrays.asList(propertyNames).indexOf(event.getPropertyName()) != -1) {
-					fireChangeEvent(ChangeEvent.FUNCTION_CHANGED, null,
+					fireChangeEvent(ChangeEvent.CHANGE_MANY, null,
 							Collections.singletonList(event.getSource()));
 				}
 			}

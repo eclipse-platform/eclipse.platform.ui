@@ -62,7 +62,7 @@ public class TableBinding extends Binding {
 
 	private IChangeListener cellsChangeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
-			if (changeEvent.getChangeType() == ChangeEvent.FUNCTION_CHANGED) {
+			if (changeEvent.getChangeType() == ChangeEvent.CHANGE_MANY) {
 				Collection changedElements = (Collection) changeEvent.getNewValue();
 				target.updateElements(changedElements.toArray());
 			}
