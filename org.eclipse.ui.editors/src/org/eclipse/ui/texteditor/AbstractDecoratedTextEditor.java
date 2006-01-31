@@ -11,7 +11,6 @@
 package org.eclipse.ui.texteditor;
 
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -86,9 +85,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ContributionItemFactory;
-import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
@@ -99,6 +95,7 @@ import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
 import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.operations.NonLocalUndoUserApprover;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
@@ -1594,16 +1591,15 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.2
 	 */
 	private String getShowInMenuLabel() {
-		String keyBinding= ""; //$NON-NLS-1$
-		final ICommandManager commandManager= PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
-		final ICommand command= commandManager.getCommand("org.eclipse.ui.navigate.showInQuickMenu"); //$NON-NLS-1$
-		if (command.isDefined()) {
-			List l= command.getKeySequenceBindings();
-			if (!l.isEmpty()) {
-				IKeySequenceBinding binding= (IKeySequenceBinding)l.get(0);
-				keyBinding= binding.getKeySequence().format();
-			}
-		}
+		String keyBinding= null;
+		
+		IBindingService bindingService= (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		if (bindingService != null)
+			keyBinding= bindingService.getBestActiveBindingFormattedFor("org.eclipse.ui.navigate.showInQuickMenu"); //$NON-NLS-1$
+		
+		if (keyBinding == null)
+			keyBinding= ""; //$NON-NLS-1$
+		
 		return NLS.bind(TextEditorMessages.AbstractDecoratedTextEditor_showIn_menu, keyBinding);
 	}
 
