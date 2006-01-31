@@ -153,8 +153,7 @@
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
 		<key 
-			contextId="org.eclipse.ui.globalScope"
-			sequence="Ctrl+3" 
+			sequence="M1+M3+G" 
 			commandId="org.eclipse.search.ui.performTextSearch" 
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"  
 	    />
