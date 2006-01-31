@@ -26,7 +26,8 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 	 */
 	public void change(IFile file) {
 		ProposedResourceDelta delta = getDelta(file);
-		delta.setKind(IResourceDelta.CHANGED);
+		if (delta.getKind() == 0)
+			delta.setKind(IResourceDelta.CHANGED);
 		delta.status |= IResourceDelta.CONTENT;
 	}
 
