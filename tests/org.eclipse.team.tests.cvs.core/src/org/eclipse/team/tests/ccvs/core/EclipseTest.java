@@ -985,6 +985,7 @@ public class EclipseTest extends ResourceTest {
 	}
     
     protected void setUp() throws Exception {
+    	RepositoryProviderOperation.consultModelsWhenBuildingScope = false;
     	if (CVSTestSetup.ENSURE_SEQUENTIAL_ACCESS)
     		obtainCVSServerLock();
         super.setUp();
@@ -994,6 +995,7 @@ public class EclipseTest extends ResourceTest {
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
+		RepositoryProviderOperation.consultModelsWhenBuildingScope = true;
 		if (CVSTestSetup.ENSURE_SEQUENTIAL_ACCESS)
 			releaseCVSServerLock();
 		super.tearDown();

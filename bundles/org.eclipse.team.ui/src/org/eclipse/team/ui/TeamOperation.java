@@ -325,7 +325,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	 */
 	protected Shell getShell() {
 		final Shell[] shell = new Shell[] { null };
-		if (canRunAsJob()) {
+		if (Display.getCurrent() == null) {
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
 					shell[0] = Utils.getShell(getSite());

@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ScopeGenerator;
@@ -413,7 +414,7 @@ public abstract class ModelOperation extends TeamOperation {
     private boolean showAllMappings(final String requestPreviewMessage) {
         final boolean[] canceled = new boolean[] { false };
         final boolean[] forcePreview = new boolean[] { false };
-        getShell().getDisplay().syncExec(new Runnable() {
+        Display.getDefault().syncExec(new Runnable() {
             public void run() {
                 AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), TeamUIMessages.ResourceMappingOperation_0, getScope(), getContext());
                 dialog.setPreviewMessage(requestPreviewMessage);

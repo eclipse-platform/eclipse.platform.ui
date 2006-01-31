@@ -57,22 +57,6 @@ public class ResourceMapperTests extends EclipseTest {
         return suite(ResourceMapperTests.class);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.team.tests.ccvs.core.EclipseTest#setUp()
-     */
-    protected void setUp() throws Exception {
-    	super.setUp();
-    	RepositoryProviderOperation.consultModelsWhenBuildingScope = false;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.team.tests.ccvs.core.EclipseTest#tearDown()
-     */
-    protected void tearDown() throws Exception {
-    	super.tearDown();
-    	RepositoryProviderOperation.consultModelsWhenBuildingScope = true;
-    }
-    
     /**
      * Update the resources contained in the given mappers and ensure that the
      * update was performed properly by comparing the result with the reference projects.
