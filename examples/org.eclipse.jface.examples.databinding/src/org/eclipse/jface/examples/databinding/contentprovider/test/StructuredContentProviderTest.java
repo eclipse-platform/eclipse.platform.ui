@@ -10,8 +10,8 @@ import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IReadableValue;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.swt.ControlUpdator;
-import org.eclipse.jface.databinding.updatables.ComputedValue;
 import org.eclipse.jface.databinding.updatables.ConvertingSet;
+import org.eclipse.jface.databinding.updatables.LazyCalculatedValue;
 import org.eclipse.jface.databinding.updatables.SettableValue;
 import org.eclipse.jface.databinding.updatables.WritableSet;
 import org.eclipse.jface.databinding.viewers.UpdatableSetContentProvider;
@@ -186,8 +186,8 @@ public class StructuredContentProviderTest {
 		outputSet = new ConvertingSet(inputSet, mathFunction);
 		
 		// sumOfOutputSet stores the current sum of the the Doubles in the output set 
-		sumOfOutputSet = new ComputedValue() {
-			protected Object computeValue() {
+		sumOfOutputSet = new LazyCalculatedValue() {
+			protected Object calculate() {
 				double sum = 0.0;
 				Collection value = outputSet.toCollection();
 				for (Iterator iter = value.iterator(); iter.hasNext();) {
