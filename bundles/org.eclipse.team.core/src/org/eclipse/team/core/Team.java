@@ -16,6 +16,8 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.team.core.mapping.IStorageMerger;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.mapping.WorkspaceSubscriber;
@@ -466,5 +468,33 @@ public final class Team {
      */
     public static Subscriber getWorkspaceSubscriber() {
     	return WorkspaceSubscriber.getInstance();
+    }
+    
+	/**
+	 * Creates a storage merger for the given content type.
+	 * If no storage merger is registered for the given content type <code>null</code> is returned.
+	 *
+	 * @param type the type for which to find a storage merger
+	 * @return a storage merger for the given type, or <code>null</code> if no
+	 *   storage merger has been registered
+	 *   
+	 * @since 3.2
+	 */
+    public IStorageMerger createStorageMerger(IContentType type) {
+    	return StorageMergerRegistry.getInstance().createStreamMerger(type);
+    }
+    
+	/**
+	 * Creates a storage merger for the given file extension.
+	 * If no storage merger is registered for the file extension <code>null</code> is returned.
+	 *
+	 * @param extension the extension for which to find a storage merger
+	 * @return a stream merger for the given type, or <code>null</code> if no
+	 *   storage merger has been registered
+	 *   
+	 * @since 3.2
+	 */
+    public IStorageMerger createStorageMerger(String extension) {
+    	return StorageMergerRegistry.getInstance().createStreamMerger(extension);
     }
 }
