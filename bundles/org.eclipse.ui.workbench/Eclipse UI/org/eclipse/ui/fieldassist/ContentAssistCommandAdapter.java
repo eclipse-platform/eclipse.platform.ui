@@ -15,28 +15,25 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
-import org.eclipse.jface.fieldassist.FieldDecoration;
-import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.fieldassist.IControlContentAdapter;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.keys.IBindingService;
 
 /**
- * WorkbenchContentAssistAdapter extends {@link ContentProposalAdapter} to
- * invoke content proposals using a specified {@link ICommand}. The ability to
- * specify a {@link KeyStroke} that explicitly invokes content proposals is
- * hidden by this class, and instead the String id of a command is used. If no
- * command id is specified by the client, then the default workbench content
- * assist command is used.
+ * ContentAssistCommandAdapter extends {@link ContentProposalAdapter} to invoke
+ * content proposals using a specified {@link ICommand}. The ability to specify
+ * a {@link KeyStroke} that explicitly invokes content proposals is hidden by
+ * this class, and instead the String id of a command is used. If no command id
+ * is specified by the client, then the default workbench content assist command
+ * is used.
  * 
  * <p>
  * This API is considered experimental. It is still evolving during 3.2 and is
@@ -45,7 +42,7 @@ import org.eclipse.ui.keys.IBindingService;
  * 
  * @since 3.2
  */
-public class WorkbenchContentAssistAdapter extends ContentProposalAdapter {
+public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 
 	private String commandId;
 
@@ -66,49 +63,6 @@ public class WorkbenchContentAssistAdapter extends ContentProposalAdapter {
 		}
 
 	};
-
-	/**
-	 * Get a field decoration appropriate for cueing the user, including a
-	 * description of the active key binding, for the specified command id.
-	 * 
-	 * @param commandId
-	 *            the id of the command that is used to invoke content assist,
-	 *            or null if the default workbench content assist command is to
-	 *            be used.
-	 * @return the FieldDecoration that can cue the user for this content assist
-	 *         adapter.
-	 */
-	public static FieldDecoration getFieldDecoration(String commandId) {
-		// Look for a decoration installed for this command.
-		if (commandId == null)
-			commandId = CONTENT_PROPOSAL_COMMAND;
-		String decId = IWorkbenchFieldDecorationConstants.CONTENT_ASSIST_CUE
-				+ commandId;
-		FieldDecoration dec = FieldDecorationRegistry.getDefault()
-				.getFieldDecoration(decId);
-
-		// If there is not one, base it on the content assist decoration without
-		// a keybinding
-		if (dec == null) {
-			FieldDecoration originalDec = FieldDecorationRegistry
-					.getDefault()
-					.getFieldDecoration(
-							IWorkbenchFieldDecorationConstants.CONTENT_ASSIST_CUE);
-			dec = new FieldDecoration(originalDec.getImage(), null);
-			FieldDecorationRegistry.getDefault().addFieldDecoration(decId, dec);
-		}
-
-		// Update the description with the latest key binding, since it may
-		// have changed since the last activation.
-		IBindingService bindingService = (IBindingService) PlatformUI
-				.getWorkbench().getAdapter(IBindingService.class);
-		dec.setDescription(NLS.bind(
-				WorkbenchMessages.ContentAssist_Cue_Description_Key,
-				bindingService.getBestActiveBindingFormattedFor(commandId)));
-
-		// Now return the field decoration
-		return dec;
-	}
 
 	/**
 	 * Construct a content proposal adapter that can assist the user with
@@ -152,7 +106,7 @@ public class WorkbenchContentAssistAdapter extends ContentProposalAdapter {
 	 *            or <code>PROPOSAL_IGNORE</code>
 	 * 
 	 */
-	public WorkbenchContentAssistAdapter(Control control,
+	public ContentAssistCommandAdapter(Control control,
 			IControlContentAdapter controlContentAdapter,
 			IContentProposalProvider proposalProvider,
 			ILabelProvider labelProvider, String commandId,
@@ -187,14 +141,44 @@ public class WorkbenchContentAssistAdapter extends ContentProposalAdapter {
 	private void addListeners(Control control) {
 		control.addFocusListener(new FocusListener() {
 			public void focusLost(FocusEvent e) {
-				if (activeHandler != null)
+				if (activeHandler != null) {
 					handlerService.deactivateHandler(activeHandler);
+					activeHandler = null;
+				}
 			}
 
 			public void focusGained(FocusEvent e) {
-				activeHandler = handlerService.activateHandler(commandId,
-						proposalHandler);
+				if (isEnabled()) {
+					if (activeHandler == null) {
+						activeHandler = handlerService.activateHandler(
+								commandId, proposalHandler);
+					}
+				} else {
+					if (activeHandler != null) {
+						handlerService.deactivateHandler(activeHandler);
+					}
+					activeHandler = null;
+				}
 			}
 		});
+		control.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if (activeHandler != null) {
+					handlerService.deactivateHandler(activeHandler);
+					activeHandler = null;
+				}
+				
+			}
+		});
+	}
+
+	/**
+	 * Return the string command ID of the command used to invoke content
+	 * assist.
+	 * 
+	 * @return the command ID of the command that invokes content assist.
+	 */
+	public String getCommandId() {
+		return commandId;
 	}
 }
