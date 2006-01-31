@@ -304,7 +304,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	/**
 	 * Return whether elements with the given synchronization kind (as define in
 	 * the {@link SyncInfo} class) should be included in the contents. This
-	 * method is invoked by the {@link #getChildrenInContext(Object, Object[]) }
+	 * method is invoked by the {@link #getChildrenInContext(ISynchronizationContext, Object, Object[])}
 	 * method to filter the list of children returned when {@link #getChildren(Object) }
 	 * is called. It accessing the <code>ISynchronizePageConfiguration.P_MODE</code>
 	 * property on the state model provided by the view to determine what kinds
@@ -544,7 +544,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * 
 	 * @param context the synchronization context
 	 * @param object the model object
-	 * @param a progress monitor
+	 * @param monitor a progress monitor
 	 * @return the traversals for the given object in the scope of this content provider
 	 */
 	protected ResourceTraversal[] getTraversals(ISynchronizationContext context, Object object, IProgressMonitor monitor) {

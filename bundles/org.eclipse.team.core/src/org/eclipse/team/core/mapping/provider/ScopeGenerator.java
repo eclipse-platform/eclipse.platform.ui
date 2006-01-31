@@ -66,7 +66,7 @@ public class ScopeGenerator {
 	 * Convenience method for obtaining the set of resource
 	 * mappings from all model providers that overlap
 	 * with the given resources.
-	 * @param resources the resources
+	 * @param traversals the resource traversals
 	 * @param context the resource mapping context
 	 * @param monitor a progress monitor
 	 * @return the resource mappings

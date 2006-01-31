@@ -45,13 +45,6 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public abstract class ModelOperation extends TeamOperation {
 	
-	/**
-	 * Status code that can be returned from the {@link #performMerge(IProgressMonitor)}
-	 * method to indicate that a subclass would liek to force a preview of the merge.
-	 * The message of such a status should be ignored.
-	 */
-	public static final int REQUEST_PREVIEW = 1024;
-	
 	private final ResourceMapping[] selectedMappings;
 	private IResourceMappingScope scope;
 	private boolean previewRequested;

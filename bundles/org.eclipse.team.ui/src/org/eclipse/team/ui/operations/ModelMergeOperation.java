@@ -105,6 +105,13 @@ import org.eclipse.ui.PlatformUI;
  */
 public abstract class ModelMergeOperation extends ModelOperation {
 	
+	/**
+	 * Status code that can be returned from the {@link #performMerge(IProgressMonitor)}
+	 * method to indicate that a subclass would liek to force a preview of the merge.
+	 * The message of such a status should be ignored.
+	 */
+	public static final int REQUEST_PREVIEW = 1024;
+	
 	/*
 	 * Ids for custom buttons when previewing a merge/replace
 	 */
