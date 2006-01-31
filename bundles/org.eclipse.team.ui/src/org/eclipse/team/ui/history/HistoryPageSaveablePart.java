@@ -56,7 +56,7 @@ public class HistoryPageSaveablePart extends PageSaveablePart {
 		((Page) historyPage).createControl(getEditionPane());
 		
 		getEditionPane().setContent(((Page) historyPage).getControl());
-		historyPage.refresh();
+
 		
 		historyPage.getHistoryPageSite().getSelectionProvider().addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -69,6 +69,7 @@ public class HistoryPageSaveablePart extends PageSaveablePart {
 			}
 		});
 	
+		historyPage.refresh();	
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.PageSaveablePart#prepareInput(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
