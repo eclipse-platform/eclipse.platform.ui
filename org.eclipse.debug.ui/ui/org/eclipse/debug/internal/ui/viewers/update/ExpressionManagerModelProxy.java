@@ -17,6 +17,7 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
 
 
 public class ExpressionManagerModelProxy extends AbstractModelProxy implements IExpressionsListener {

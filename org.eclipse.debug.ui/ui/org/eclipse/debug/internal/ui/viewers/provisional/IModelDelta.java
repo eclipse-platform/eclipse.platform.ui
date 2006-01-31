@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.provisional;
 
-import org.eclipse.debug.internal.ui.viewers.update.ModelDelta;
 
 /**
  * Describes a change within a model. A delta is a hierarchical description of changes

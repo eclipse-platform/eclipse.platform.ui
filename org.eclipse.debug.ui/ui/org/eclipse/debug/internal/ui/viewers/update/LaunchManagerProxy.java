@@ -17,6 +17,7 @@ import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
 
 public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesListener2 {
 
@@ -51,18 +52,30 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 		fLaunchManager = null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
+	 */
 	public void launchesTerminated(ILaunch[] launches) {
 		fireDelta(launches, IModelDelta.CONTENT);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
+	 */
 	public void launchesRemoved(ILaunch[] launches) {
 		fireDelta(launches, IModelDelta.REMOVED);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
+	 */
 	public void launchesAdded(ILaunch[] launches) {
 		fireDelta(launches, IModelDelta.ADDED | IModelDelta.EXPAND);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
+	 */
 	public void launchesChanged(ILaunch[] launches) {
 		fireDelta(launches, IModelDelta.STATE | IModelDelta.CONTENT);
 	}

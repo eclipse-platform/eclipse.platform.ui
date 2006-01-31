@@ -20,6 +20,7 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewPresentationContext;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.jface.viewers.ISelection;
