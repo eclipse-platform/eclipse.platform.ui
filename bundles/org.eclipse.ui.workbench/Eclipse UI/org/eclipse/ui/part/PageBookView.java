@@ -511,7 +511,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 *         this object does not have an adapter for the given class
 	 * @since 3.2
 	 */
-	protected Object getViewAdapter(Class key) {
+	protected Object getViewAdapter(Class adapter) {
 		return null;
 	}
 

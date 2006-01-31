@@ -189,13 +189,15 @@ public class WorkbenchIntroManager implements IIntroManager {
             return;
         }
 
-        ((WorkbenchPage) viewIntroAdapterPart.getSite().getPage())
-                .toggleZoom(pane.getPartReference());
+        viewIntroAdapterPart.getSite().getPage().toggleZoom(
+				pane.getPartReference());
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbench#isIntroStandby(org.eclipse.ui.intro.IIntroPart)
-     */
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbench#isIntroStandby(org.eclipse.ui.intro.IIntroPart)
+	 */
     public boolean isIntroStandby(IIntroPart part) {
         if (introPart == null || !introPart.equals(part))
             return false;

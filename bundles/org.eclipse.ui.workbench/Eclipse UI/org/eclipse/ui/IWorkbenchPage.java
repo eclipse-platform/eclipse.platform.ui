@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.internal.ICompatibleWorkbenchPage;
+import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
  * A workbench page consists of an arrangement of views and editors intended to
@@ -207,6 +208,28 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
      * @since 3.2
      */
 	public static final int MATCH_ID = 2;
+	
+	/**
+	 * State of a view in a given page when the view stack is minimized.
+	 * 
+	 * @since 3.2
+	 */
+    public static final int STATE_MINIMIZED = IStackPresentationSite.STATE_MINIMIZED;
+
+    /**
+     * State of a view in a given page when the page is zoomed in on the view stack.
+     * 
+     * @since 3.2
+     */
+    public static final int STATE_MAXIMIZED = IStackPresentationSite.STATE_MAXIMIZED;
+
+    /**
+     * State of a view in a given page when the view stack is in it's normal state.
+     * 
+     * @since 3.2
+     */
+    public static final int STATE_RESTORED = IStackPresentationSite.STATE_RESTORED;
+
 	
     /**
      * Activates the given part. The part will be brought to the front and
@@ -1031,4 +1054,58 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * @since 3.2
 	 */
 	public IWorkingSet getAggregateWorkingSet();
+	
+	/**
+	 * Returns the page "zoomed" state.
+	 * 
+	 * @return <code>true</code> if the page is zoomed in the workbench
+	 *         window, <code>false</code> otherwise.
+	 * @since 3.2
+	 */
+	public boolean isPageZoomed();
+
+	/**
+	 * Zoom the page in on a part. If the part is already in zoom then zoom out.
+	 * 
+	 * @param ref
+	 *            the workbench part to zoom in on. Must not be
+	 *            <code>null</code>.
+	 * @since 3.2
+	 */
+	public void toggleZoom(IWorkbenchPartReference ref);
+
+	/**
+	 * Returns the maximized/minimized/restored state of the given part
+	 * reference.
+	 * 
+	 * @param ref
+	 *            the workbench part to query. Must not be <code>null</code>.
+	 * @return one of the STATE_* contants.
+	 * @since 3.2
+	 */
+	public int getPartState(IWorkbenchPartReference ref);
+
+	/**
+	 * Set the state of the given part reference. Setting the state of one part
+	 * can effect the state of other parts.
+	 * 
+	 * @param ref
+	 *            the workbench part reference. Must not be <code>null</code>.
+	 * @param state
+	 *            one of the STATE_* constants.
+	 * @since 3.2
+	 */
+	public void setPartState(IWorkbenchPartReference ref, int state);
+
+	/**
+	 * Find the part reference for the given part. A convenience method to
+	 * quickly go from part to part reference.
+	 * 
+	 * @param part
+	 *            The part to search for. It can be <code>null</code>.
+	 * @return The reference for the given part, or <code>null</code> if no
+	 *         reference can be found.
+	 * @since 3.2
+	 */
+	public IWorkbenchPartReference getReference(IWorkbenchPart part);
 }

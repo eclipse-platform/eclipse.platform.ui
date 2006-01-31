@@ -912,6 +912,16 @@ public class ContentProposalAdapter {
 	}
 
 	/**
+	 * Return a boolean indicating whether the receiver is enabled.
+	 * 
+	 * @return <code>true</code> if the adapter is enabled, and
+	 *         <code>false</code> if it is not.
+	 */
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	/**
 	 * Set the label provider that is used to show proposals. The lifecycle of
 	 * the specified label provider is not managed by this adapter. Clients must
 	 * dispose the label provider when it is no longer needed.

@@ -378,7 +378,7 @@ public/*final*/class WorkbenchImages {
                 PATH_POINTER + "tofastview_mask.bmp", true); //$NON-NLS-1$
         
         // Field decorators
-        declareImage(ISharedImages.IMG_DEC_CONTENTPROPOSAL,
+        declareImage(ISharedImages.IMG_DEC_CONTENT_PROPOSAL,
         		PATH_FIELDDECS + "content_proposal_cue.gif", true); //$NON-NLS-1$
 
         

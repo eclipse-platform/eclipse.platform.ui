@@ -100,6 +100,12 @@ public final class HandlerService implements IHandlerService {
 
 	public final IHandlerActivation activateHandler(final String commandId,
 			final IHandler handler, final Expression expression) {
+		return activateHandler(commandId, handler, expression, false);
+	}
+
+	public final IHandlerActivation activateHandler(final String commandId,
+			final IHandler handler, final Expression expression,
+			final boolean global) {
 		final IHandlerActivation activation = new HandlerActivation(commandId,
 				handler, expression, IHandlerActivation.ROOT_DEPTH, this);
 		handlerAuthority.activateHandler(activation);

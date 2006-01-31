@@ -90,7 +90,9 @@ public interface IHandlerService extends IServiceWithSources {
 	 * <p>
 	 * Activates the given handler within the context of this service. The
 	 * handler becomes active when <code>expression</code> evaluates to
-	 * <code>true</code>.
+	 * <code>true</code>. This is the same as calling
+	 * {@link #activateHandler(String, IHandler, Expression, boolean)} with
+	 * global==false.
 	 * </p>
 	 * <p>
 	 * Also, it is guaranteed that the handlers submitted through a particular
@@ -118,6 +120,45 @@ public interface IHandlerService extends IServiceWithSources {
 	 */
 	public IHandlerActivation activateHandler(String commandId,
 			IHandler handler, Expression expression);
+
+	/**
+	 * <p>
+	 * Activates the given handler within the context of this service. The
+	 * handler becomes active when <code>expression</code> evaluates to
+	 * <code>true</code>, and if global==false, this handler service is the
+	 * active service. For example, the handler service on a part is active when
+	 * that part is active.
+	 * </p>
+	 * <p>
+	 * Also, it is guaranteed that the handlers submitted through a particular
+	 * service will be cleaned up when that services is destroyed. So, for
+	 * example, a service retrieved from a <code>IWorkbenchPartSite</code>
+	 * would deactivate all of its handlers when the site is destroyed.
+	 * </p>
+	 * 
+	 * @param commandId
+	 *            The identifier for the command which this handler handles;
+	 *            must not be <code>null</code>.
+	 * @param handler
+	 *            The handler to activate; must not be <code>null</code>.
+	 * @param expression
+	 *            This expression must evaluate to <code>true</code> before
+	 *            this handler will really become active. The expression may be
+	 *            <code>null</code> if the handler should always be active.
+	 * @param global
+	 *            Indicates that the handler should be activated irrespectively
+	 *            of whether the corresponding workbench component (e.g.,
+	 *            window, part, etc.) is active.
+	 * @return A token which can be used to later cancel the activation. Only
+	 *         someone with access to this token can cancel the activation. The
+	 *         activation will automatically be cancelled if the context from
+	 *         which this service was retrieved is destroyed.
+	 * 
+	 * @see org.eclipse.ui.ISources
+	 * @since 3.2
+	 */
+	public IHandlerActivation activateHandler(String commandId,
+			IHandler handler, Expression expression, boolean global);
 
 	/**
 	 * <p>

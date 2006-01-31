@@ -292,7 +292,7 @@ public interface ISharedImages {
      * 
      * @since 3.2
      */
-    public final static String IMG_DEC_CONTENTPROPOSAL = "IMG_DEC_CONTENTPROPOSAL"; //$NON-NLS-1$
+    public final static String IMG_DEC_CONTENT_PROPOSAL = "IMG_DEC_CONTENT_PROPOSAL"; //$NON-NLS-1$
 
     /**
      * Retrieves the specified image from the workbench plugin's image registry.

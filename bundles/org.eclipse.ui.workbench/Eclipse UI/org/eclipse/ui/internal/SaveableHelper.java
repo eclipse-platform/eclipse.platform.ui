@@ -24,8 +24,8 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.IDocument;
-import org.eclipse.ui.IDocumentSource;
+import org.eclipse.ui.ISaveableModel;
+import org.eclipse.ui.ISaveableModelSource;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IWorkbenchPart;
@@ -117,8 +117,8 @@ public class SaveableHelper {
 			}
 		}
 
-		if (saveable instanceof IDocumentSource) {
-			return saveDocuments((IDocumentSource) saveable, window);
+		if (saveable instanceof ISaveableModelSource) {
+			return saveModels((ISaveableModelSource) saveable, window);
 		}
 
 		// Create save block.
@@ -134,33 +134,33 @@ public class SaveableHelper {
 	}
 	
 	/**
-	 * Saves the selected dirty documents from the given document source.
+	 * Saves the selected dirty models from the given model source.
 	 * 
-	 * @param docSource the document source
+	 * @param modelSource the model source
 	 * @param window the workbench window
 	 * @return <code>true</code> for continue, <code>false</code> if the operation
 	 *   was cancelled.
 	 */
-	private static boolean saveDocuments(IDocumentSource docSource, IWorkbenchWindow window) {
-		IDocument[] selectedDocs = docSource.getActiveDocuments();
-		final ArrayList dirtyDocs = new ArrayList();
-		for (int i = 0; i < selectedDocs.length; i++) {
-			IDocument doc = selectedDocs[i];
-			if (doc.isDirty()) {
-				dirtyDocs.add(doc);
+	private static boolean saveModels(ISaveableModelSource modelSource, IWorkbenchWindow window) {
+		ISaveableModel[] selectedModels = modelSource.getActiveModels();
+		final ArrayList dirtyModels = new ArrayList();
+		for (int i = 0; i < selectedModels.length; i++) {
+			ISaveableModel model = selectedModels[i];
+			if (model.isDirty()) {
+				dirtyModels.add(model);
 			}
 		}
-		if (dirtyDocs.isEmpty())
+		if (dirtyModels.isEmpty())
 			return true;
 		
 		// Create save block.
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
-				monitorWrap.beginTask("", dirtyDocs.size()); //$NON-NLS-1$
-				for (Iterator i = dirtyDocs.iterator(); i.hasNext();) {
-					IDocument doc = (IDocument) i.next();
-					doc.doSave(new SubProgressMonitor(monitorWrap, 1));
+				monitorWrap.beginTask("", dirtyModels.size()); //$NON-NLS-1$
+				for (Iterator i = dirtyModels.iterator(); i.hasNext();) {
+					ISaveableModel model = (ISaveableModel) i.next();
+					model.doSave(new SubProgressMonitor(monitorWrap, 1));
 				}
 				monitorWrap.done();
 			}
@@ -251,21 +251,21 @@ public class SaveableHelper {
 	}
 
 	/**
-	 * Returns whether the document source needs saving. This is true if any of
-	 * the active documents are dirty. This logic must correspond with 
-	 * {@link #saveDocuments} above.
+	 * Returns whether the model source needs saving. This is true if any of
+	 * the active models are dirty. This logic must correspond with 
+	 * {@link #saveModels} above.
 	 * 
-	 * @param docSource
-	 *            the document source
+	 * @param modelSource
+	 *            the model source
 	 * @return <code>true</code> if save is required, <code>false</code>
 	 *         otherwise
 	 * @since 3.2
 	 */
-	public static boolean needsSave(IDocumentSource docSource) {
-		IDocument[] selectedDocs = docSource.getActiveDocuments();
-		for (int i = 0; i < selectedDocs.length; i++) {
-			IDocument doc = selectedDocs[i];
-			if (doc.isDirty()) {
+	public static boolean needsSave(ISaveableModelSource modelSource) {
+		ISaveableModel[] selectedModels = modelSource.getActiveModels();
+		for (int i = 0; i < selectedModels.length; i++) {
+			ISaveableModel model = selectedModels[i];
+			if (model.isDirty()) {
 				return true;
 			}
 		}

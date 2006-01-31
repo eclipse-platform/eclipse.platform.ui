@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.IDocumentSource;
+import org.eclipse.ui.ISaveableModelSource;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -81,9 +81,9 @@ public class SaveAction extends BaseSaveAction {
         	saveable = getActiveEditor();
         }
         /* **********************************************************************************/
-        if (saveable instanceof IDocumentSource) {
-			IDocumentSource docSource = (IDocumentSource) saveable;
-			setEnabled(SaveableHelper.needsSave(docSource));
+        if (saveable instanceof ISaveableModelSource) {
+			ISaveableModelSource modelSource = (ISaveableModelSource) saveable;
+			setEnabled(SaveableHelper.needsSave(modelSource));
 			return;
         }
         setEnabled(saveable != null && saveable.isDirty());

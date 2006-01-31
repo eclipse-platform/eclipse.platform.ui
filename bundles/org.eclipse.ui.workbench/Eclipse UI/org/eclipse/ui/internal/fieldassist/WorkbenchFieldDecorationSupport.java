@@ -69,7 +69,7 @@ public class WorkbenchFieldDecorationSupport {
 		registry.addFieldDecoration(
 				IWorkbenchFieldDecorationConstants.CONTENT_ASSIST_CUE,
 				new FieldDecoration(WorkbenchImages
-						.getImage(ISharedImages.IMG_DEC_CONTENTPROPOSAL),
+						.getImage(ISharedImages.IMG_DEC_CONTENT_PROPOSAL),
 						WorkbenchMessages.ContentAssist_Cue_Description));
 	}
 }
