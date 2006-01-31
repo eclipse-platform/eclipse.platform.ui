@@ -11,11 +11,9 @@
 package org.eclipse.team.core.subscribers;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
@@ -93,15 +91,6 @@ public abstract class SubscriberMergeContext extends MergeContext {
 	 */
 	protected SyncInfo getSyncInfo(IResource resource) throws CoreException {
 		return handler.getSubscriber().getSyncInfo(resource);
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public void run(final IWorkspaceRunnable runnable, final ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException {
-		super.run(runnable, rule, flags, monitor);
-		// TODO: wait for the collector so that clients will have an up-to-date diff tree
-		handler.waitUntilIdle(monitor);
 	}
 
 	/**

@@ -449,7 +449,11 @@ public abstract class ModelMergeOperation extends ModelOperation {
 								result[0] = status;
 								return;
 							}
-							// TODO: Need to wait until diff tree is up-to-date
+							try {
+								Platform.getJobManager().join(getContext(), monitor);
+							} catch (InterruptedException e) {
+								// Ignore
+							}
 						}
 					} finally {
 						monitor.done();
@@ -464,7 +468,17 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	/**
 	 * Attempt to merge all the mappings that come from the given provider.
 	 * Return a status which indicates whether the merge succeeded or if
-	 * unmergeable conflicts were found. This method will gthrow a runtime exception
+	 * unmergeable conflicts were found. By default, this method invokes
+	 * the {@link IResourceMappingMerger#merge(IMergeContext, IProgressMonitor)}
+	 * method but does not wait for the context to update (see {@link ISynchronizationContext}.
+	 * Callers that are invoking the merge on multiple models should wait until the
+	 * context has updated before invoking merge on another merger. The following
+	 * line of code will wait for the context to update:
+	 * <pre>
+	 * Platform.getJobManager().join(getContext(), monitor);
+	 * </pre>
+	 * <p>
+	 * This method will throw a runtime exception
 	 * if the operation does not have a merge context.
 	 * @param provider the model provider whose mappings are to be merged
 	 * @param monitor a progress monitor

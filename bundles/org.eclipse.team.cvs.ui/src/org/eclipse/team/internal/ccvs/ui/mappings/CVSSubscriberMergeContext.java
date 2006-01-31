@@ -55,5 +55,12 @@ public abstract class CVSSubscriberMergeContext extends SubscriberMergeContext {
 		// Return the project since that is what the EclipseSynchronize needs
 		return getDiffTree().getResource(node).getProject();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.provider.MergeContext#makeInSync(org.eclipse.team.core.diff.IDiff, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void makeInSync(IDiff diff, IProgressMonitor monitor) throws CoreException {
+		markAsMerged(diff, true, monitor);
+	}
 
 }

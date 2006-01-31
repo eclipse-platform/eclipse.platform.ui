@@ -21,7 +21,11 @@ import org.eclipse.team.internal.core.Policy;
 
 
 /**
- * Abstract implementation of {@link IResourceMappingMerger}.
+ * Abstract implementation of {@link IResourceMappingMerger}. This merger
+ * delegates the merge of all resources covered by the mappings of the
+ * model provider returned from {@link #getModelProvider()} back to the
+ * merge context. Subclasses should override the {@link #merge(IMergeContext, IProgressMonitor)}
+ * methdo in order to change this behavior.
  * 
  * <p>
  * Clients may subclass this class.

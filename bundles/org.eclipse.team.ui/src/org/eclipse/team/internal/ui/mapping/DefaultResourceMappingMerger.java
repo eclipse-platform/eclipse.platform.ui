@@ -10,15 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.core.mapping.provider.MergeStatus;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.core.resources.mapping.ModelProvider;
+import org.eclipse.team.core.mapping.ResourceMappingMerger;
 
 /**
  * A default merger that delegates the merge to the merge context.
@@ -31,40 +24,6 @@ public class DefaultResourceMappingMerger extends ResourceMappingMerger {
 
 	public DefaultResourceMappingMerger(ModelProvider provider) {
 		this.provider = provider;
-	}
-
-	public IStatus merge(IMergeContext mergeContext, IProgressMonitor monitor) throws CoreException {
-		try {
-			IDiff[] deltas = getSetToMerge(mergeContext);
-			monitor.beginTask(null, 100);
-			IStatus status = mergeContext.merge(deltas, false /* don't force */, Policy.subMonitorFor(monitor, 75));
-			return covertFilesToMappings(status, mergeContext);
-		} finally {
-			monitor.done();
-		}
-	}
-
-	private IDiff[] getSetToMerge(IMergeContext mergeContext) {
-		ResourceMapping[] mappings = mergeContext.getScope().getMappings(provider.getDescriptor().getId());
-		Set result = new HashSet();
-		for (int i = 0; i < mappings.length; i++) {
-			ResourceMapping mapping = mappings[i];
-			ResourceTraversal[] traversals = mergeContext.getScope().getTraversals(mapping);
-			IDiff[] deltas = mergeContext.getDiffTree().getDiffs(traversals);
-			for (int j = 0; j < deltas.length; j++) {
-				IDiff delta = deltas[j];
-				result.add(delta);
-			}
-		}
-		return (IDiff[]) result.toArray(new IDiff[result.size()]);
-	}
-
-	private IStatus covertFilesToMappings(IStatus status, IMergeContext mergeContext) {
-		if (status.getCode() == IMergeStatus.CONFLICTS) {
-			// In general, we can't say which mapping failed so return them all
-			return new MergeStatus(status.getPlugin(), status.getMessage(), mergeContext.getScope().getMappings(provider.getDescriptor().getId()));
-		}
-		return status;
 	}
 	
 	/* (non-Javadoc)
