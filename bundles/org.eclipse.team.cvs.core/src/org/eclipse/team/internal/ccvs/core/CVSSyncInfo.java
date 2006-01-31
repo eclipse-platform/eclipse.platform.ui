@@ -21,6 +21,7 @@ import org.eclipse.team.core.variants.ResourceVariantTreeSubscriber;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 
 /**
  * CVSSyncInfo
@@ -134,7 +135,8 @@ public class CVSSyncInfo extends SyncInfo {
 				IResource local = getLocal();
 				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(local);
 				if(!cvsResource.isFolder() && cvsResource.isManaged()) {
-					cvsResource.unmanage(null);
+					// Reconcile the conflicting deletion in the background
+					SyncFileChangeListener.getDeferredHandler().handleConflictingDeletion(local);
 				}
 				return SyncInfo.IN_SYNC;
 			} catch(CVSException e) {

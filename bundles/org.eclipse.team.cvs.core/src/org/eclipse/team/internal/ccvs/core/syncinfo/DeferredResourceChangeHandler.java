@@ -16,6 +16,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.core.BackgroundEventHandler;
 
@@ -31,9 +32,11 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 
 	private static final int IGNORE_FILE_CHANGED = 1;
 	private static final int RECREATED_CVS_RESOURCE = 2;
+	private static final int CONFLICTING_DELETION =3;
 	
 	private Set changedIgnoreFiles = new HashSet();
 	private Set recreatedResources = new HashSet();
+	private Set conflictingDeletion = new HashSet();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#processEvent(org.eclipse.team.core.subscribers.BackgroundEventHandler.Event, org.eclipse.core.runtime.IProgressMonitor)
@@ -45,6 +48,8 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 				changedIgnoreFiles.add(event.getResource());
 			case RECREATED_CVS_RESOURCE :
 				recreatedResources.add(event.getResource());
+			case CONFLICTING_DELETION :
+				conflictingDeletion.add(event.getResource());
 		}				
 	}
 	
@@ -96,6 +101,20 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 				CVSProviderPlugin.log(e);
 			}
 		}
+		IResource[] deletions = (IResource[]) conflictingDeletion.toArray(new IResource[conflictingDeletion.size()]);
+		conflictingDeletion.clear();
+		for (int i = 0; i < deletions.length; i++) {
+			IResource resource = deletions[i];
+			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+			try {
+				if(!cvsResource.isFolder() && cvsResource.isManaged()) {
+					cvsResource.unmanage(monitor);
+				}
+			} catch (CVSException e) {
+				// Log and continue
+				CVSProviderPlugin.log(e);
+			}
+		}
 		return workDone;
 	}
 	
@@ -113,4 +132,9 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 		}
 		return result;
 	}
+
+	public void handleConflictingDeletion(IResource local) {
+		queueEvent(new ResourceEvent(local, CONFLICTING_DELETION, IResource.DEPTH_ZERO), false);
+	}
+
 }
