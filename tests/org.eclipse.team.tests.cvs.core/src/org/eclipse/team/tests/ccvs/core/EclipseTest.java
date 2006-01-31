@@ -262,6 +262,9 @@ public class EclipseTest extends ResourceTest {
 	        	protected boolean consultModelsWhenGeneratingScope() {
 	        		return false;
 	        	}
+	        	protected void promptForMergeFailure(IStatus status) {
+	        		// Don't prompt
+	        	}
 	        });
         } else {
         	executeHeadless(new UpdateOperation(null, mappings, options, null));
@@ -292,6 +295,9 @@ public class EclipseTest extends ResourceTest {
         	}
         	protected boolean consultModelsWhenGeneratingScope() {
         		return false;
+        	}
+        	protected void promptForMergeFailure(IStatus status) {
+        		// Don't prompt
         	}
         });
     }
