@@ -29,9 +29,9 @@ public class ExampleBinding {
 	 * <p>
 	 * This method is a convenience method; its implementation is equivalent to
 	 * calling {@link DataBinding#createContext(Control, IUpdatableFactory[]) }
-	 * where the array of factories consists of a {@link BeanUpdatableFactory}
-	 * instance, a {@link SWTUpdatableFactory}, and a
-	 * {@link ViewersUpdatableFactory}.
+	 * where the array of factories consists of a {@link NestedUpdatableFactory},
+	 * a {@link BeanUpdatableFactory} instance, a {@link SWTUpdatableFactory},
+	 * and a {@link ViewersUpdatableFactory}.
 	 * </p>
 	 * 
 	 * @param control
@@ -53,9 +53,9 @@ public class ExampleBinding {
 	 * <p>
 	 * This method is a convenience method; its implementation is equivalent to
 	 * calling {@link DataBinding#createContext(Control, IUpdatableFactory[]) }
-	 * where the array of factories consists of a {@link BeanUpdatableFactory}
-	 * instance, a {@link SWTUpdatableFactory}, and a
-	 * {@link ViewersUpdatableFactory}.
+	 * where the array of factories consists of a {@link NestedUpdatableFactory},
+	 * a {@link BeanUpdatableFactory} instance, a {@link SWTUpdatableFactory},
+	 * and a {@link ViewersUpdatableFactory}.
 	 * </p>
 	 * 
 	 * @return a data binding context
