@@ -2048,4 +2048,18 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fProposalPopup != null)
 			fProposalPopup.setEmptyMessage(message);
 	}
+
+	/**
+	 * Fires a selection event, see {@link ICompletionListener}.
+	 * 
+	 * @param proposal the selected proposal, possibly <code>null</code>
+	 * @param smartToggle true if the smart toggle is on
+	 * @since 3.2
+	 */
+	void fireSelectionEvent(ICompletionProposal proposal, boolean smartToggle) {
+		for (Iterator it= new ArrayList(fCompletionListeners).iterator(); it.hasNext();) {
+			ICompletionListener listener= (ICompletionListener) it.next();
+			listener.selectionChanged(proposal, smartToggle);
+		}
+	}
 }

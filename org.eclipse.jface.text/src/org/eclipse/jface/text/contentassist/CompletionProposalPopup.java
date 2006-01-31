@@ -1117,12 +1117,16 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (oldProposal instanceof ICompletionProposalExtension2 && fViewer != null)
 			((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
 
-		if (fFilteredProposals == null)
+		if (fFilteredProposals == null) {
+			fireSelectionEvent(null, smartToggle);
 			return;
+		}
 		
 		ICompletionProposal proposal= fFilteredProposals[index];
 		if (proposal instanceof ICompletionProposalExtension2 && fViewer != null)
 			((ICompletionProposalExtension2) proposal).selected(fViewer, smartToggle);
+		
+		fireSelectionEvent(proposal, smartToggle);
 
 		fLastProposal= proposal;
 
@@ -1130,6 +1134,17 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fProposalTable.showSelection();
 		if (fAdditionalInfoController != null)
 			fAdditionalInfoController.handleTableSelectionChanged();
+	}
+
+	/**
+	 * Fires a selection event, see {@link ICompletionListener}.
+	 * 
+	 * @param proposal the selected proposal, possibly <code>null</code>
+	 * @param smartToggle true if the smart toggle is on
+	 * @since 3.2
+	 */
+	private void fireSelectionEvent(ICompletionProposal proposal, boolean smartToggle) {
+		fContentAssistant.fireSelectionEvent(proposal, smartToggle);
 	}
 
 	/**
