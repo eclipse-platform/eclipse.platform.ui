@@ -17,15 +17,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.core.resources.IFile;
 
 
 /**
  * @author markus.schorn@windriver.com
  */
-public class RetrieverLine implements IAdaptable {
+public class RetrieverLine {
 	private static final RetrieverMatch[] EMPTY_ARRAY= new RetrieverMatch[0];
 	private static final int HIGH_BIT= 1 << 31;
 
@@ -271,12 +269,5 @@ public class RetrieverLine implements IAdaptable {
 
 	public String substring(int begin, int end) {
 		return fLineData.substring(begin, end);
-	}
-
-	public Object getAdapter(Class adapter) {
-		/*    if (adapter.isAssignableFrom(IFile.class)) {
-		 return getParent();
-		 }*/
-		return null;
 	}
 }
