@@ -62,7 +62,7 @@ public class ExampleBinding {
 	 */
 	public static IDataBindingContext createContext() {
 		return DataBinding.createContext(new IUpdatableFactory[] {
-				new BeanUpdatableFactory(), new SWTUpdatableFactory(),
-				new ViewersUpdatableFactory() });
+				new NestedUpdatableFactory(), new BeanUpdatableFactory(),
+				new SWTUpdatableFactory(), new ViewersUpdatableFactory() });
 	}
 }
