@@ -2191,10 +2191,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return getEditorManager().isSaveAllNeeded();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPage#isPageZoomed()
+     */
+    public boolean isPageZoomed() {
+    	return isPageZoomed();
+    }
+    
     /**
      * Returns whether the page is zoomed.
+     * @return <code>true</code> if the page is zoomed.
+     * 
      */
-    public boolean isZoomed() {
+   public boolean isZoomed() {
         Perspective persp = getActivePerspective();
         if (persp == null)
             return false;
@@ -3355,6 +3364,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPage#setPartState(org.eclipse.ui.IWorkbenchPartReference, int)
+     */
+    public void setPartState(IWorkbenchPartReference ref, int state) {
+    	setState(ref, state);
+    }
+    
     /**
      * Returns the maximized/minimized/restored state of the given part reference
      * 
@@ -3382,8 +3398,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return IStackPresentationSite.STATE_RESTORED;
     }
     
-    /**
-     * Zoom in on a part. If the part is already in zoom then zoom out.
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPage#getPartState(org.eclipse.ui.IWorkbenchPartReference)
+     */
+    public int getPartState(IWorkbenchPartReference ref) {
+    	return getState(ref);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPage#toggleZoom(org.eclipse.ui.IWorkbenchPartReference)
      */
     public void toggleZoom(IWorkbenchPartReference ref) {
     	int oldState = getState(ref);
@@ -3446,7 +3469,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     /**
-     * @see IPageLayout.
+     * 
      */
     public int getEditorReuseThreshold() {
         IPreferenceStore store = WorkbenchPlugin.getDefault()
@@ -3455,7 +3478,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     /**
-     * @see IPageLayout.
+     * 
      */
     public void setEditorReuseThreshold(int openEditors) {
     }

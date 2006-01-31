@@ -404,11 +404,9 @@ public class StickyViewTest extends UITestCase {
 			IProject proj = FileUtil.createProject("TBTest");
 			IFile test01 = FileUtil.createFile("test01.txt", proj);
 
-			WorkbenchPage wpage = (WorkbenchPage) page;
-
 			// make sure the view is active
 			assertNotNull("The view must exist", viewRef.getPart(true));
-			wpage.activate(viewRef.getPart(true));
+			page.activate(viewRef.getPart(true));
 			PartSite site = (PartSite) viewRef.getPart(true).getSite();
 			ViewPane pane = (ViewPane) site.getPane();
 
@@ -421,8 +419,8 @@ public class StickyViewTest extends UITestCase {
 					.getDefaultEditor(test01.getName()).getId());
 			assertNotNull("must have my editor", editor);
 
-			IWorkbenchPartReference ref = wpage.getReference(editor);
-			wpage.toggleZoom(ref);
+			IWorkbenchPartReference ref = page.getReference(editor);
+			page.toggleZoom(ref);
 			assertFalse(pane.isVisible());
 			assertFalse(pane.getToolBar().isVisible());
 

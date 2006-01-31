@@ -116,8 +116,7 @@ public class ZoomTestCase extends UITestCase {
         if (part == null)
             throw new NullPointerException();
         page.activate(part);
-        page.toggleZoom(((PartSite) part.getSite()).getPane()
-                .getPartReference());
+        page.toggleZoom(page.getReference(part));
         Assert.assertTrue(page.isZoomed());
         Assert.assertTrue(isZoomed(part));
     }

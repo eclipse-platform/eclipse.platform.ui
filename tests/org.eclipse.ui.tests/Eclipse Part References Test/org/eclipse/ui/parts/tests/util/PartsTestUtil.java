@@ -21,7 +21,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.PartPane;
 import org.eclipse.ui.internal.PartSite;
-import org.eclipse.ui.internal.WorkbenchPage;
 
 /**
  * Utility class for the parts test suite.
@@ -113,9 +112,9 @@ public class PartsTestUtil {
      *            The part.
      */
     public static void zoom(IWorkbenchPart part) {
-        ((WorkbenchPage) part.getSite().getPage()).toggleZoom(((PartSite) part.getSite()).getPane()
-                .getPartReference());
-    }
+		part.getSite().getPage().toggleZoom(
+				part.getSite().getPage().getReference(part));
+	}
 
     /**
      * Determines if the part is zoomed.
