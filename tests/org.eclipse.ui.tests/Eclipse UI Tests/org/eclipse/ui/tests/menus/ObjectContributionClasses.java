@@ -149,6 +149,9 @@ public class ObjectContributionClasses implements IAdapterFactory {
                 public Object getModelObject() {
                     return adaptableObject;
                 }
+                public String getModelProviderId() {
+            		return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
+                }
             };
         }
         
