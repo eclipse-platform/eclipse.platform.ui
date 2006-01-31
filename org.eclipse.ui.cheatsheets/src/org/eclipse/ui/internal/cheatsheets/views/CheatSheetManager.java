@@ -20,8 +20,8 @@ import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
  */
 public class CheatSheetManager implements ICheatSheetManager {
 
-	private static final String VARIABLE_END = "}";
-	private static final String VARIABLE_BEGIN = "${";
+	private static final String VARIABLE_END = "}"; //$NON-NLS-1$
+	private static final String VARIABLE_BEGIN = "${"; //$NON-NLS-1$
 	private String cheatsheetID;
 	private List listeners;
 	private Hashtable dataTable = null;
@@ -67,7 +67,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 
 	public String getVariableData(String variable) {
 		String result = variable;
-		if(variable != null && variable.startsWith(VARIABLE_BEGIN) && variable.endsWith(VARIABLE_END)) { //$NON-NLS-1$ //$NON-NLS-2$
+		if(variable != null && variable.startsWith(VARIABLE_BEGIN) && variable.endsWith(VARIABLE_END)) {
 			result = variable.substring(2,variable.length()-1);
 			result = getData(result);
 		}
@@ -92,7 +92,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 			int endIndex = remaining.indexOf(VARIABLE_END, varIndex + 1);
 			if (varIndex < 0 || endIndex < 0) {
 				output += remaining;
-				remaining = "";
+				remaining = ""; //$NON-NLS-1$
 			} else {
                 String varName = remaining.substring(varIndex + VARIABLE_BEGIN.length(),
                 		                         endIndex);

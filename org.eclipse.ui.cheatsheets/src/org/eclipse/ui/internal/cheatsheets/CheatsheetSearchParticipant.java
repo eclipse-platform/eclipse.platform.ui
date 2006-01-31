@@ -11,15 +11,15 @@ import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
 import org.xml.sax.Attributes;
 
 public class CheatsheetSearchParticipant extends XMLSearchParticipant {
-	private static final String EL_CHEATSHEET = "cheatsheet";
+	private static final String EL_CHEATSHEET = "cheatsheet"; //$NON-NLS-1$
 
-	private static final String EL_ITEM = "item";
+	private static final String EL_ITEM = "item"; //$NON-NLS-1$
 
-	private static final String INTRO_DESC = "cheatsheet/intro/description";
+	private static final String INTRO_DESC = "cheatsheet/intro/description"; //$NON-NLS-1$
 
-	private static final String ITEM_DESC = "cheatsheet/item/description";
+	private static final String ITEM_DESC = "cheatsheet/item/description"; //$NON-NLS-1$
 
-	private static final String ATT_TITLE = "title";
+	private static final String ATT_TITLE = "title"; //$NON-NLS-1$
 
 	/**
 	 * Returns all the documents that this participant knows about. This method
@@ -32,16 +32,16 @@ public class CheatsheetSearchParticipant extends XMLSearchParticipant {
 		HashSet set = new HashSet();
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(
-						"org.eclipse.ui.cheatsheets.cheatSheetContent");
+						"org.eclipse.ui.cheatsheets.cheatSheetContent"); //$NON-NLS-1$
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (!element.getName().equals("cheatsheet"))
+			if (!element.getName().equals("cheatsheet")) //$NON-NLS-1$
 				continue;
-			String fileName = element.getAttribute("contentFile");
-			String id = element.getAttribute("id");
+			String fileName = element.getAttribute("contentFile"); //$NON-NLS-1$
+			String id = element.getAttribute("id"); //$NON-NLS-1$
 			String pluginId = element.getNamespace();
 			fileName = resolveVariables(pluginId, fileName, locale);
-			set.add("/" + pluginId + "/" + fileName + "?id=" + id);
+			set.add("/" + pluginId + "/" + fileName + "?id=" + id); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return set;
 	}
@@ -49,11 +49,11 @@ public class CheatsheetSearchParticipant extends XMLSearchParticipant {
 	public Set getContributingPlugins() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(
-						"org.eclipse.ui.cheatsheets.cheatSheetContent");
+						"org.eclipse.ui.cheatsheets.cheatSheetContent"); //$NON-NLS-1$
 		HashSet set = new HashSet();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (!element.getName().equals("cheatsheet"))
+			if (!element.getName().equals("cheatsheet")) //$NON-NLS-1$
 				continue;
 			set.add(element.getNamespace());
 		}
