@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Copyright (c) 2005, 2006 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.resources.mapping;
 
 import org.eclipse.core.resources.*;
@@ -15,13 +13,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * A remote mapping context provides a model element with a view of the remote state
- * of local resources as they relate to a repository operation that is in
+ * A remote mapping context provides a model element with a view of the remote
+ * state of local resources as they relate to a repository operation that is in
  * progress. A repository provider can pass an instance of this interface to a
  * model element when obtaining a set of traversals for a model element. This
  * allows the model element to query the remote state of a resource in order to
  * determine if there are resources that exist remotely but do not exist locally
- * that should be included in the traversal. 
+ * that should be included in the traversal.
  * <p>
  * This class may be subclassed by clients.
  * </p>
@@ -33,42 +31,34 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public abstract class RemoteResourceMappingContext extends ResourceMappingContext {
 
 	/**
-	 * Refresh flag constant (bit mask value 1) indicating that
-	 * the mapping will be making use of the contents of the files
-	 * covered by the traversals being refreshed.
+	 * Refresh flag constant (bit mask value 1) indicating that the mapping will
+	 * be making use of the contents of the files covered by the traversals
+	 * being refreshed.
 	 */
 	public static final int FILE_CONTENTS_REQUIRED = 1;
 
 	/**
-	 * Status code that is used to indicate that invoked method 
-	 * is not valid for the type of comparison supported by the remote 
-	 * context. For instance, the <code>hasRemoteChanges</code>,
-	 * <code>hasLocalChanges</code> and <code>fetchBaseContents</code>
-	 * methods only apply to three-way comparisons.
+	 * Status code that is used to indicate that invoked method is not valid for
+	 * the type of comparison supported by the remote context. For instance, the
+	 * <code>hasRemoteChanges</code>, <code>hasLocalChanges</code> and
+	 * <code>fetchBaseContents</code> methods only apply to three-way
+	 * comparisons.
 	 */
 	public static final int INVALID_FOR_COMPARISON_TYPE = -2;
 
 	/**
-	 * Refresh flag constant (bit mask value 0) indicating that no
-	 * additional refresh behavior is required.
+	 * Refresh flag constant (bit mask value 0) indicating that no additional
+	 * refresh behavior is required.
 	 */
 	public static final int NONE = 0;
 
 	/**
-	 * Status code that is used to indicate that the context is
-	 * unable to perform the requested operation because it would 
-	 * require server contact but server contact is not permitted.
-	 * For instance, server contact may not be possible in operations
-	 * that must be short running.
+	 * Status code that is used to indicate that the context is unable to
+	 * perform the requested operation because it would require server contact
+	 * but server contact is not permitted. For instance, server contact may not
+	 * be possible in operations that must be short running.
 	 */
 	public static final int SERVER_CONTACT_PROHIBITED = -1;
-
-	/**
-	 * @deprecated to be removed after 3.2 M3. Use {@link #hasRemoteChange(IResource, IProgressMonitor)}.
-	 */
-	public boolean contentDiffers(IFile file, IProgressMonitor monitor) throws CoreException {
-		return hasRemoteChange(file, monitor);
-	}
 
 	/**
 	 * For three-way comparisons, returns an instance of IStorage in order to
@@ -85,22 +75,21 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * 
 	 * @param file the local file
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
+	 * reporting is not desired
 	 * @return a storage that provides access to the contents of the local
-	 *         resource's corresponding remote resource. If the remote file does
-	 *         not exist, <code>null</code> is returned
+	 * resource's corresponding remote resource. If the remote file does not
+	 * exist, <code>null</code> is returned
 	 * @exception CoreException if the contents could not be fetched. Reasons
-	 *             include:
-	 *             <ul>
-	 *             <li>The server could not be contacted for some reason (e.g.
-	 *             the context in which the operation is being called must be
-	 *             short running). The status code will be
-	 *             SERVER_CONTACT_PROHIBITED. </li>
-	 *             <li>The corresponding remote resource is not a container
-	 *             (status code will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
-	 *             <li>The comparison type is two-way (status code will be
-	 *             INVALID_FOR_COMPARISON_TYPE)
-	 *             </ul>
+	 * include:
+	 * <ul>
+	 * <li>The server could not be contacted for some reason (e.g. the context
+	 * in which the operation is being called must be short running). The status
+	 * code will be SERVER_CONTACT_PROHIBITED. </li>
+	 * <li>The corresponding remote resource is not a container (status code
+	 * will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
+	 * <li>The comparison type is two-way (status code will be
+	 * INVALID_FOR_COMPARISON_TYPE)
+	 * </ul>
 	 */
 	public abstract IStorage fetchBaseContents(IFile file, IProgressMonitor monitor) throws CoreException;
 
@@ -120,19 +109,19 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * 
 	 * @param container the local container
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
+	 * reporting is not desired
 	 * @return a list of member resources whose corresponding remote resources
-	 *         are members of the remote counterpart of the given container or
-	 *         <code>null</code> if the remote does not exist.
-	 * @exception CoreException if the members could not be fetched. Reasons include:
-	 *                <ul>
-	 * <li>The server could not be contacted for some reason (e.g.
-	 *     the context in which the operation is being called must
-	 *     be short running). The status code will be SERVER_CONTACT_PROHIBITED.
-	 *    </li>
-	 *                <li>The corresponding remote resource is not a container
-	 *                (status code will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
-	 *                </ul>
+	 * are members of the remote counterpart of the given container or
+	 * <code>null</code> if the remote does not exist.
+	 * @exception CoreException if the members could not be fetched. Reasons
+	 * include:
+	 * <ul>
+	 * <li>The server could not be contacted for some reason (e.g. the context
+	 * in which the operation is being called must be short running). The status
+	 * code will be SERVER_CONTACT_PROHIBITED. </li>
+	 * <li>The corresponding remote resource is not a container (status code
+	 * will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
+	 * </ul>
 	 */
 	public abstract IResource[] fetchMembers(IContainer container, IProgressMonitor monitor) throws CoreException;
 
@@ -149,41 +138,49 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * 
 	 * @param file the local file
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
+	 * reporting is not desired
 	 * @return a storage that provides access to the contents of the local
-	 *         resource's corresponding remote resource. If the remote file does
-	 *         not exist, <code>null</code> is returned
+	 * resource's corresponding remote resource. If the remote file does not
+	 * exist, <code>null</code> is returned
 	 * @exception CoreException if the contents could not be fetched. Reasons
-	 *             include:
-	 *             <ul>
-	 *             <li>The server could not be contacted for some reason (e.g.
-	 *             the context in which the operation is being called must be
-	 *             short running). The status code will be
-	 *             SERVER_CONTACT_PROHIBITED. </li>
-	 *             <li>The corresponding remote resource is not a container
-	 *             (status code will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
-	 *             </ul>
+	 * include:
+	 * <ul>
+	 * <li>The server could not be contacted for some reason (e.g. the context
+	 * in which the operation is being called must be short running). The status
+	 * code will be SERVER_CONTACT_PROHIBITED. </li>
+	 * <li>The corresponding remote resource is not a container (status code
+	 * will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
+	 * </ul>
 	 */
 	public abstract IStorage fetchRemoteContents(IFile file, IProgressMonitor monitor) throws CoreException;
 
 	/**
+	 * Return the list of projects that apply to this context.
+	 * In other words, the context is only capable of querying the
+	 * remote state for projects that are contained in the 
+	 * returned list.
+	 * @return the list of projects that apply to this context
+	 */
+	public abstract IProject[] getProjects();
+
+	/**
 	 * For three-way comparisons, this method indicates whether local
 	 * modifications have been made to the given resource.
+	 * 
 	 * @param resource the resource being tested
 	 * @param monitor a progress monitor
 	 * @return whether the resource contains local modifications
 	 * @exception CoreException if the contents could not be compared. Reasons
-	 *             include:
-	 *             <ul>
-	 *             <li>The server could not be contacted for some reason (e.g.
-	 *             the context in which the operation is being called must be
-	 *             short running). The status code will be
-	 *             SERVER_CONTACT_PROHIBITED. </li>
-	 *             <li>The corresponding remote resource is not a container
-	 *             (status code will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
-	 *             <li>The comparison type is two-way (status code will be
-	 *             INVALID_FOR_COMPARISON_TYPE)
-	 *             </ul>
+	 * include:
+	 * <ul>
+	 * <li>The server could not be contacted for some reason (e.g. the context
+	 * in which the operation is being called must be short running). The status
+	 * code will be SERVER_CONTACT_PROHIBITED. </li>
+	 * <li>The corresponding remote resource is not a container (status code
+	 * will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
+	 * <li>The comparison type is two-way (status code will be
+	 * INVALID_FOR_COMPARISON_TYPE)
+	 * </ul>
 	 */
 	public abstract boolean hasLocalChange(IResource resource, IProgressMonitor monitor) throws CoreException;
 
@@ -200,9 +197,9 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * remote has changed since the last time the local resource was updated
 	 * with the remote contents.
 	 * <p>
-	 * For two-way comparisons, return <code>true</code> if the remote contents 
-	 * differ from the local contents. In this case, this method is equivalent 
-	 * to <code>contentsDiffer</code>.
+	 * For two-way comparisons, return <code>true</code> if the remote
+	 * contents differ from the local contents. In this case, this method is
+	 * equivalent to <code>contentsDiffer</code>.
 	 * <p>
 	 * This can be used by clients to determine if they need to fetch the remote
 	 * contents in order to determine if the resources that constitute the model
@@ -217,26 +214,26 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * 
 	 * @param resource the local resource
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
+	 * reporting is not desired
 	 * @return whether the contents of the corresponding remote differ from the
-	 *         base.
+	 * base.
 	 * @exception CoreException if the contents could not be compared. Reasons
-	 *             include:
-	 *             <ul>
-	 *             <li>The server could not be contacted for some reason (e.g.
-	 *             the context in which the operation is being called must be
-	 *             short running). The status code will be
-	 *             SERVER_CONTACT_PROHIBITED. </li>
-	 *             <li>The corresponding remote resource is not a container
-	 *             (status code will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
-	 *             </ul>
+	 * include:
+	 * <ul>
+	 * <li>The server could not be contacted for some reason (e.g. the context
+	 * in which the operation is being called must be short running). The status
+	 * code will be SERVER_CONTACT_PROHIBITED. </li>
+	 * <li>The corresponding remote resource is not a container (status code
+	 * will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
+	 * </ul>
 	 */
 	public abstract boolean hasRemoteChange(IResource resource, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Return <code>true</code> if the context is associated 
-	 * with an operation that is using a three-way comparison
-	 * and <code>false</code> if it is using a two-way comparison.
+	 * Return <code>true</code> if the context is associated with an operation
+	 * that is using a three-way comparison and <code>false</code> if it is
+	 * using a two-way comparison.
+	 * 
 	 * @return whether the context is a three-way or two-way
 	 */
 	public abstract boolean isThreeWay();
@@ -255,34 +252,29 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * contact the server after a call to a refresh with appropriate traversals.
 	 * Also, ideally, if {@link #FILE_CONTENTS_REQUIRED} is on of the flags,
 	 * then the contents for these files will be cached as efficiently as
-	 * possible so that calls to {@link #fetchRemoteContents} will also not need to
-	 * contact the server. This may not be possible for all context providers,
-	 * so clients cannot assume that the above mentioned methods will not be
-	 * long running. It is still advisably for clients to call {@link #refresh}
-	 * with as much details as possible since, in the case where a provider is
-	 * optimized, performance will be much better.
+	 * possible so that calls to {@link #fetchRemoteContents} will also not need
+	 * to contact the server. This may not be possible for all context
+	 * providers, so clients cannot assume that the above mentioned methods will
+	 * not be long running. It is still advisably for clients to call
+	 * {@link #refresh} with as much details as possible since, in the case
+	 * where a provider is optimized, performance will be much better.
 	 * </p>
 	 * 
-	 * @param traversals
-	 *            the resource traversals which indicate which resources are to
-	 *            be refreshed
-	 * @param flags
-	 *            additional refresh behavior. For instance, if
-	 *            <code>FILE_CONTENTS_REQUIRED</code> is one of the flags,
-	 *            this indicates that the client will be accessing the contents
-	 *            of the files covered by the traversals. <code>NONE</code>
-	 *            should be used when no additional behavior is required
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @exception CoreException
-	 *             if the refresh fails. Reasons include:
-	 *             <ul>
-	 *             <li>The server could not be contacted for some reason (e.g.
-	 *             the context in which the operation is being called must be
-	 *             short running). The status code will be
-	 *             SERVER_CONTACT_PROHIBITED. </li>
-	 *             </ul>
+	 * @param traversals the resource traversals which indicate which resources
+	 * are to be refreshed
+	 * @param flags additional refresh behavior. For instance, if
+	 * <code>FILE_CONTENTS_REQUIRED</code> is one of the flags, this indicates
+	 * that the client will be accessing the contents of the files covered by
+	 * the traversals. <code>NONE</code> should be used when no additional
+	 * behavior is required
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 * reporting is not desired
+	 * @exception CoreException if the refresh fails. Reasons include:
+	 * <ul>
+	 * <li>The server could not be contacted for some reason (e.g. the context
+	 * in which the operation is being called must be short running). The status
+	 * code will be SERVER_CONTACT_PROHIBITED. </li>
+	 * </ul>
 	 */
 	public abstract void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException;
 }
