@@ -137,8 +137,8 @@ public class SubscriberResourceMappingContext extends RemoteResourceMappingConte
 	    	ensureRefreshed(container, IResource.DEPTH_ONE, NONE, Policy.subMonitorFor(monitor, 100));
 	        SyncInfo syncInfo = subscriber.getSyncInfo(container);
 	        if (validateRemote(container, syncInfo) == null) {
-	            // There is no remote so return null to indicate this
-	            return null;
+	            // There is no remote so return an empty array
+	            return new IResource[0];
 	        }
 	        return subscriber.members(container);
 		} finally {
