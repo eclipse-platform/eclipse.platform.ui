@@ -16,8 +16,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.*;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffVisitor;
 import org.eclipse.team.core.subscribers.*;
@@ -33,7 +32,7 @@ import org.eclipse.team.internal.core.*;
  * {@link RepositoryProvider} API.
  * @since 3.2
  */
-public class WorkspaceSubscriber extends Subscriber implements ISubscriberChangeListener, IRepositoryProviderListener {
+public class WorkspaceSubscriber extends Subscriber implements ISubscriberChangeListener, IRepositoryProviderListener, IResourceChangeListener {
 	
 	private static WorkspaceSubscriber instance;
 	private Map projects = new HashMap();
@@ -48,17 +47,30 @@ public class WorkspaceSubscriber extends Subscriber implements ISubscriberChange
 	public WorkspaceSubscriber() {
 		// Add subscribers for all projects that have them
 		RepositoryProviderManager.getInstance().addListener(this);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 		IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < allProjects.length; i++) {
 			IProject project = allProjects[i];
-			if (RepositoryProvider.isShared(project)) {
-				// TODO This will instantiate all providers
-				RepositoryProvider provider = RepositoryProvider.getProvider(project);
-				Subscriber subscriber = provider.getSubscriber();
-				if (subscriber != null) {
-					subscriber.addListener(this);
-					projects.put(project, subscriber);
+			handleProject(project);
+		}
+	}
+
+	private void handleProject(IProject project) {
+		if (RepositoryProvider.isShared(project)) {
+			try {
+				String currentId = project.getPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY);
+				if (currentId != null) {
+					RepositoryProviderType type = RepositoryProviderType.getProviderType(currentId);
+					if (type != null) {
+						Subscriber subscriber = type.getSubscriber();
+						if (subscriber != null) {
+							subscriber.addListener(this);
+							projects.put(project, subscriber);
+						}
+					}
 				}
+			} catch (CoreException e) {
+				TeamPlugin.log(e);
 			}
 		}
 	}
@@ -210,7 +222,7 @@ public class WorkspaceSubscriber extends Subscriber implements ISubscriberChange
 		int state = 0;
 		try {
 			List errors = new ArrayList();
-			Subscriber[] subscribers = getSubscribers();
+			Subscriber[] subscribers = getSubscribers(mapping.getProjects());
 			monitor.beginTask(null, subscribers.length * 100);
 			for (int i = 0; i < subscribers.length; i++) {
 				Subscriber subscriber = subscribers[i];
@@ -228,6 +240,16 @@ public class WorkspaceSubscriber extends Subscriber implements ISubscriberChange
 		return state & stateMask;
 	}
 	
+	private Subscriber[] getSubscribers(IProject[] projects) {
+		for (int i = 0; i < projects.length; i++) {
+			IProject project = projects[i];
+			if (!this.projects.containsKey(project)) {
+				handleProject(project);
+			}
+		}
+		return getSubscribers();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.subscribers.Subscriber#collectOutOfSync(org.eclipse.core.resources.IResource[], int, org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -303,5 +325,26 @@ public class WorkspaceSubscriber extends Subscriber implements ISubscriberChange
 	public void providerUnmapped(IProject project) {
 		// We'll remove the project. No need to fire an event since the subscriber should have done that
 		projects.remove(project);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		IResourceDelta delta = event.getDelta();
+		IResourceDelta[] projectDeltas = delta.getAffectedChildren(IResourceDelta.ADDED | IResourceDelta.CHANGED);
+		for (int i = 0; i < projectDeltas.length; i++) {
+			IResourceDelta projectDelta = projectDeltas[i];
+			IResource resource = projectDelta.getResource();
+			if ((projectDelta.getFlags() & IResourceDelta.OPEN) != 0
+					&& resource.getType() == IResource.PROJECT) {
+				IProject project = (IProject)resource;
+				if (project.isAccessible()) {
+					handleProject(project);
+				} else {
+					projects.remove(project);
+				}
+			}
+		}
 	}
 }
