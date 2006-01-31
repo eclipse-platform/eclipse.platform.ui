@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+     <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Tabbed Properties Example View"
+            id="org.eclipse.ui.views.properties.tabbed.views">
+      </category>
+      <view
+            name="Tabbed Properties Example View"
+            category="org.eclipse.ui.views.properties.tabbed.views"
+            icon="icons/sample.gif"
+            class="org.eclipse.ui.examples.views.properties.tabbed.article.views.SampleView"
+            id="org.eclipse.ui.examples.views.properties.tabbed.article.views.SampleView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor contributorId="org.eclipse.ui.examples.views.properties.tabbed.article.views.SampleView">
+         <propertyCategory category="sample"/>
+      </propertyContributor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+      <propertyTabs contributorId="org.eclipse.ui.examples.views.properties.tabbed.article.views.SampleView">
+         <propertyTab
+               category="sample"
+               id="ButtonTab"
+               label="Button"/>
+         <propertyTab
+               afterTab="ButtonTab"
+               category="sample"
+               id="AdvancedTab"
+               label="Advanced"/>
+      </propertyTabs>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
+      <propertySections contributorId="org.eclipse.ui.examples.views.properties.tabbed.article.views.SampleView">
+         <propertySection
+               class="org.eclipse.ui.examples.views.properties.tabbed.article.views.LabelSection"
+               id="LabelSection"
+               tab="ButtonTab">
+            <input type="org.eclipse.ui.examples.views.properties.tabbed.article.views.ButtonElement"/>
+         </propertySection>
+         <propertySection
+               afterSection="LabelSection"
+               class="org.eclipse.ui.examples.views.properties.tabbed.article.views.SizeSection"
+               id="SizeSection"
+               tab="ButtonTab">
+            <input type="org.eclipse.ui.examples.views.properties.tabbed.article.views.ButtonElement"/>
+         </propertySection>
+         <propertySection
+               class="org.eclipse.ui.views.properties.tabbed.AdvancedPropertySection"
+               id="AdvancedSection"
+               tab="AdvancedTab">
+            <input type="org.eclipse.ui.examples.views.properties.tabbed.article.views.ButtonElement"/>
+         </propertySection>
+         <propertySection
+               afterSection="SizeSection"
+               class="org.eclipse.ui.examples.views.properties.tabbed.article.views.FontSection"
+               id="FontSection"
+               tab="ButtonTab">
+            <input type="org.eclipse.ui.examples.views.properties.tabbed.article.views.ButtonElement"/>
+         </propertySection>
+      </propertySections>
+   </extension>
+
+</plugin>
