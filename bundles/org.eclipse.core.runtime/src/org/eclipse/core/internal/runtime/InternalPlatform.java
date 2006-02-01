@@ -120,7 +120,7 @@ public final class InternalPlatform {
 	private ServiceTracker configurationLocation = null;
 	private BundleContext context;
 
-	private ArrayList groupProviders = new ArrayList(3);
+	private Map groupProviders = new IdentityHashMap(3);
 	private ServiceTracker installLocation = null;
 	private ServiceTracker instanceLocation = null;
 	private boolean missingProductReported = false;
@@ -143,6 +143,7 @@ public final class InternalPlatform {
 	private ServiceTracker preferencesTracker = null;
 	private ServiceTracker productTracker = null;
 	private ServiceTracker userLocation = null;
+	private ServiceTracker groupProviderTracker = null;
 
 	public static InternalPlatform getDefault() {
 		return singleton;
@@ -253,10 +254,6 @@ public final class InternalPlatform {
 		return context;
 	}
 
-	public IBundleGroupProvider[] getBundleGroupProviders() {
-		return (IBundleGroupProvider[]) groupProviders.toArray(new IBundleGroupProvider[groupProviders.size()]);
-	}
-
 	/**
 	 * Returns the bundle id of the bundle that contains the provided object, or
 	 * <code>null</code> if the bundle could not be determined.
@@ -271,6 +268,47 @@ public final class InternalPlatform {
 		if (source != null && source.getSymbolicName() != null)
 			return source.getSymbolicName();
 		return null;
+	}
+	
+	public IBundleGroupProvider[] getBundleGroupProviders() {
+		if (groupProviderTracker == null) {
+			// aquire the service and get the list of services
+			Filter filter = null;
+			try {
+				filter = getBundleContext().createFilter("(objectClass=org.eclipse.core.runtime.IBundleGroupProvider)"); //$NON-NLS-1$
+			} catch (InvalidSyntaxException e) {
+				// ignore this, it should never happen
+			}
+			groupProviderTracker = new ServiceTracker(getBundleContext(), filter, null);
+			groupProviderTracker.open();
+		}
+		Object[] objectArray = groupProviderTracker.getServices();
+		if (objectArray == null) // getServices may return null; but we can not.
+			return new IBundleGroupProvider[0];
+		IBundleGroupProvider[] result = new IBundleGroupProvider[objectArray.length];
+		System.arraycopy(objectArray, 0, result, 0, objectArray.length);
+		return result;
+	}
+
+	public void registerBundleGroupProvider(IBundleGroupProvider provider) {
+		// get the bundle context and register the provider as a service
+		ServiceRegistration registration = getBundleContext().registerService(IBundleGroupProvider.class.getName(), provider, null);
+		// store the service registration (map provider -> registration)
+		synchronized (groupProviders) {
+			groupProviders.put(provider, registration);
+		}
+	}
+
+	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
+		// get the service reference (map provider -> reference)
+		ServiceRegistration registration;
+		synchronized (groupProviders) {
+			registration = (ServiceRegistration) groupProviders.remove(provider);
+		}
+		if (registration == null)
+			return;
+		// unregister the provider
+		registration.unregister();
 	}
 
 	public Bundle[] getBundles(String symbolicName, String version) {
@@ -907,10 +945,6 @@ public final class InternalPlatform {
 		return (URL[]) result.toArray(new URL[result.size()]);
 	}
 
-	public void registerBundleGroupProvider(IBundleGroupProvider provider) {
-		groupProviders.add(provider);
-	}
-
 	/**
 	 * @see Platform#removeLogListener(ILogListener)
 	 */
@@ -1007,10 +1041,6 @@ public final class InternalPlatform {
 		return value;
 	}
 
-	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
-		groupProviders.remove(provider);
-	}
-
 	private void startServices() {
 		customPreferencesService = getBundleContext().registerService(IProductPreferencesService.class.getName(), new ProductPreferencesService(), new Hashtable());
 		legacyPreferencesService = getBundleContext().registerService(ILegacyPreferences.class.getName(), new InitLegacyPreferences(), new Hashtable());
@@ -1097,6 +1127,10 @@ public final class InternalPlatform {
 				}
 				urlTrackers = new HashMap();
 			}
+		}
+		if (groupProviderTracker != null) {
+			groupProviderTracker.close();
+			groupProviderTracker = null;
 		}
 		if (environmentTracker != null) {
 			environmentTracker.close();
