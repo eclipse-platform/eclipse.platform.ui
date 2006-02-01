@@ -248,16 +248,16 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * Note that this is really only a hint to the context provider. It is up to
 	 * implementors to decide, based on the provided traversals, how to
 	 * efficiently perform the refresh. In the ideal case, calls to
-	 * {@link #contentDiffers} and {@link #fetchMembers} would not need to
-	 * contact the server after a call to a refresh with appropriate traversals.
-	 * Also, ideally, if {@link #FILE_CONTENTS_REQUIRED} is on of the flags,
-	 * then the contents for these files will be cached as efficiently as
-	 * possible so that calls to {@link #fetchRemoteContents} will also not need
-	 * to contact the server. This may not be possible for all context
-	 * providers, so clients cannot assume that the above mentioned methods will
-	 * not be long running. It is still advisably for clients to call
-	 * {@link #refresh} with as much details as possible since, in the case
-	 * where a provider is optimized, performance will be much better.
+	 * {@link #hasRemoteChange(IResource, IProgressMonitor)} and 
+	 * {@link #fetchMembers} would not need to contact the server after a call to a 
+	 * refresh with appropriate traversals.  Also, ideally, if 
+	 * {@link #FILE_CONTENTS_REQUIRED} is on of the flags, then the contents 
+	 * for these files will be cached as efficiently as possible so that calls to 
+	 * {@link #fetchRemoteContents} will also not need to contact the server. This 
+	 * may not be possible for all context providers, so clients cannot assume that 
+	 * the above mentioned methods will not be long running. It is still advisably 
+	 * for clients to call {@link #refresh} with as much details as possible since, in 
+	 * the case where a provider is optimized, performance will be much better.
 	 * </p>
 	 * 
 	 * @param traversals the resource traversals which indicate which resources

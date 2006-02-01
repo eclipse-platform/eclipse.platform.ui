@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ public class UnifiedTree {
 	 * Pass in a a root for the tree, a file tree containing all of the entries for this 
 	 * tree and a flag indicating whether the UnifiedTree should consult the fileTree where
 	 * possible for entries
-	 * @param target
+	 * @param root
 	 * @param fileTree
 	 */
 	public UnifiedTree(IResource root, IFileTree fileTree) {

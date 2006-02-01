@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,8 +90,6 @@ public class StringMatcher {
 	 * <code>text</code>, determine if the given substring matches with aPattern  
 	 * @return true if the specified portion of the text matches the pattern
 	 * @param text a String object that contains the substring to match 
-	 * @param start marks the starting position (inclusive) of the substring
-	 * @param end marks the ending index (exclusive) of the substring 
 	 */
 	public boolean match(String text) {
 		if (text == null)
@@ -204,9 +202,10 @@ public class StringMatcher {
 	 * 
 	 * @return boolean
 	 * @param text a String to match
-	 * @param start int that indicates the starting index of match, inclusive
-	 * @param end int that indicates the ending index of match, exclusive
-	 * @param p String,  String, a simple regular expression that may contain '?'
+	 * @param tStart the starting index of match, inclusive
+	 * @param p a simple regular expression that may contain '?'
+	 * @param pStart The start position in the pattern
+	 * @param plen The length of the pattern
 	 */
 	private boolean regExpRegionMatches(String text, int tStart, String p, int pStart, int plen) {
 		while (plen-- > 0) {

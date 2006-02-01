@@ -13,7 +13,6 @@ package org.eclipse.core.internal.localstore;
 import java.io.InputStream;
 import java.util.*;
 import org.eclipse.core.filesystem.*;
-import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.internal.localstore.Bucket.Entry;
 import org.eclipse.core.internal.localstore.HistoryBucket.HistoryEntry;
 import org.eclipse.core.internal.resources.*;
@@ -80,7 +79,7 @@ public class HistoryStore2 implements IHistoryStore {
 	}
 
 	/**
-	 * @see IHistoryStore#addState(IPath, FileStore, long, boolean)
+	 * @see IHistoryStore#addState(IPath, IFileStore, IFileInfo, boolean)
 	 */
 	public synchronized IFileState addState(IPath key, IFileStore localFile, IFileInfo info, boolean moveContents) {
 		long lastModified = info.getLastModified();
