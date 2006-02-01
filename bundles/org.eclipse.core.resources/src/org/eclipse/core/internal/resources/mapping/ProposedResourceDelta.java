@@ -25,7 +25,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	private IPath movedFromPath;
 	private IPath movedToPath;
 	private IResource resource;
-	protected int status;
+	private int status;
 
 	public ProposedResourceDelta(IResource resource) {
 		this.resource = resource;
@@ -62,10 +62,18 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	 * @param delta
 	 */
 	protected void add(ProposedResourceDelta delta) {
-		if (children.size() == 0 && status == 0) {
-			status |= IResourceDelta.CHANGED;
-		}
+		if (children.size() == 0 && status == 0)
+			setKind(IResourceDelta.CHANGED);
 		children.add(delta);
+	}
+	
+	/**
+	 * Adds the given flags to this delta.
+	 * @param flags The flags to add
+	 */
+	protected void addFlags(int flags) {
+		//make sure the provided flags don't influence the kind
+		this.status |= (flags & ~KIND_MASK);
 	}
 
 	/* (non-Javadoc)

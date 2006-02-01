@@ -28,7 +28,7 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 		ProposedResourceDelta delta = getDelta(file);
 		if (delta.getKind() == 0)
 			delta.setKind(IResourceDelta.CHANGED);
-		delta.status |= IResourceDelta.CONTENT;
+		delta.addFlags(IResourceDelta.CONTENT);
 	}
 
 	/* (non-Javadoc)
@@ -37,7 +37,7 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 	public void close(IProject project) {
 		delete(project);
 		ProposedResourceDelta delta = getDelta(project);
-		delta.status |= IResourceDelta.OPEN;
+		delta.addFlags(IResourceDelta.OPEN);
 	}
 
 	/* (non-Javadoc)
@@ -149,19 +149,61 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 		try {
 			resource.accept(new IResourceVisitor() {
 				public boolean visit(IResource child) {
-					// First, create the delta for the source
-					if (move) {
-						ProposedResourceDelta sourceDelta = getDelta(child);
-						sourceDelta.setKind(IResourceDelta.REMOVED);
-						sourceDelta.status |= IResourceDelta.MOVED_TO;
-						sourceDelta.setMovedToPath(destinationPrefix.append(child.getFullPath().removeFirstSegments(sourcePrefix.segmentCount())));
+					ProposedResourceDelta sourceDelta = getDelta(child);
+					if (sourceDelta.getKind() == IResourceDelta.REMOVED) {
+						// There is already a removed delta here so there
+						// is nothing to move/copy
+						return false;
 					}
-					// Next, create the delta for the destination
 					IResource destinationResource = getDestinationResource(child, sourcePrefix, destinationPrefix);
 					ProposedResourceDelta destinationDelta = getDelta(destinationResource);
-					destinationDelta.setKind(IResourceDelta.ADDED);
-					destinationDelta.status |= move ? IResourceDelta.MOVED_FROM : IResourceDelta.COPIED_FROM;
-					destinationDelta.setMovedFromPath(child.getFullPath());
+					if ((destinationDelta.getKind() & (IResourceDelta.ADDED | IResourceDelta.CHANGED)) > 0) {
+						// There is already a resource at the destination
+						// TODO: What do we do
+						return false;
+					}
+					if (destinationResource.exists() && destinationDelta.getKind() !=IResourceDelta.ADDED) {
+						// There is already a resource at the destination
+						// TODO: What do we do
+						return false;
+					}
+					// First, create the delta for the source
+					IPath fromPath = child.getFullPath();
+					if (move) {
+						// We transfer the source flags to the destination
+						if (sourceDelta.getKind() == IResourceDelta.ADDED) {
+							if ((sourceDelta.getFlags() & IResourceDelta.MOVED_FROM) != 0) {
+								// The resource was moved from somewhere else so
+								// we need to transfer the path to the new location
+								fromPath = sourceDelta.getMovedFromPath();
+								sourceDelta.setMovedFromPath(null);
+							}
+							// The source was added and then moved so we'll
+							// make it an add at the destination
+							sourceDelta.setKind(0);
+						} else {
+							// We reset the status to be a remove/move_to
+							sourceDelta.setKind(IResourceDelta.REMOVED);
+							sourceDelta.addFlags(IResourceDelta.MOVED_TO);
+							sourceDelta.setMovedToPath(destinationPrefix.append(fromPath.removeFirstSegments(sourcePrefix.segmentCount())));
+						}
+					}
+					// Next, create the delta for the destination
+					if (destinationDelta.getKind() == IResourceDelta.REMOVED) {
+						// The destination was removed and is being re-added
+						destinationDelta.setKind(IResourceDelta.CHANGED);
+						destinationDelta.addFlags(IResourceDelta.REPLACED);
+					} else {
+						destinationDelta.setKind(IResourceDelta.ADDED);
+					}
+					if (sourceDelta.getKind() == IResourceDelta.ADDED || !fromPath.equals(child.getFullPath())) {
+						// The source wasn't added so it is a move/copy
+						destinationDelta.addFlags(move ? IResourceDelta.MOVED_FROM : IResourceDelta.COPIED_FROM);
+						destinationDelta.setMovedFromPath(fromPath);
+						// Apply the source flags
+						destinationDelta.addFlags(sourceDelta.getFlags());
+					}
+					
 					return true;
 				}
 			});
