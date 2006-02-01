@@ -741,4 +741,14 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	public void partInputChanged(IWorkbenchPartReference partRef) {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesVisible()
+	 */
+	protected void becomesVisible() {
+		super.becomesVisible();
+		getViewer().refresh();
+	}
+	
+	
+
 }
