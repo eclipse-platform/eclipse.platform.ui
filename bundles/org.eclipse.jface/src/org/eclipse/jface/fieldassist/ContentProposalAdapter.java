@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -62,6 +63,88 @@ public class ContentProposalAdapter {
 	 * popup.
 	 */
 	class ContentProposalPopup extends PopupDialog {
+		/*
+		 * The listener we install on the popup and related controls to 
+		 * determine when to close the popup.  Some events (move, resize,
+		 * close, deactivate) trigger closure as soon as they are received,
+		 * simply because one of the registered listeners received them.
+		 * Other events depend on additional circumstances.
+		 */
+		private final class PopupCloserListener implements Listener {
+			private boolean scrollbarClicked = false;
+			
+			public void handleEvent(final Event e) {
+
+				// If focus is leaving an important widget
+				if (e.type == SWT.FocusOut) {
+					scrollbarClicked = false;
+					// Ignore this event if it's only happening because focus
+					// is moving between the popup shell, control, or scrollbar.
+					// Do this in an async since the focus is not actually switched
+					// when this event is received.
+					e.display.asyncExec(new Runnable() {
+						public void run() {
+							if (proposalTable == null || proposalTable.isDisposed())
+								return;
+							Control focusControl = e.display.getFocusControl();
+							if (focusControl == proposalTable || focusControl == control || scrollbarClicked)
+								return;
+							close();
+						}
+					});
+					return;
+				}
+				// Scroll bar has been clicked.  Remember this for focus event processing.
+				if (e.type == SWT.Selection) {
+					scrollbarClicked = true;
+					return;
+				}
+				// If the shell is deactivating, we should close unless this shell is the
+				// reason why.
+				if (e.type == SWT.Deactivate) {
+					e.display.asyncExec(new Runnable() {
+						public void run() {
+							if (proposalTable == null || proposalTable.isDisposed())
+								return;
+							Control focusControl = e.display.getFocusControl();
+							if (focusControl == proposalTable || focusControl == control || scrollbarClicked)
+								return;
+							close();
+						}
+					});
+					return;
+					
+				}
+				// For all other events, merely getting them dictates closure.
+				if  (e.widget == control.getShell())
+					close();
+			}
+			// Install the listeners for events that need to be monitored for popup closure.
+			void installListeners() {
+				control.addListener(SWT.FocusOut, this);
+				proposalTable.addListener(SWT.FocusOut, this);
+				ScrollBar scrollbar = proposalTable.getVerticalBar();
+				if (scrollbar != null)
+					scrollbar.addListener(SWT.Selection, this);
+				control.getShell().addListener(SWT.Move,  popupCloser);
+				control.getShell().addListener(SWT.Resize,  popupCloser);
+				control.getShell().addListener(SWT.Deactivate,  popupCloser);
+				control.getShell().addListener(SWT.Close,  popupCloser);
+			}
+
+			// Remove installed listeners
+			void removeListeners() {
+				control.removeListener(SWT.FocusOut, this);
+				proposalTable.removeListener(SWT.FocusOut, this);
+				ScrollBar scrollbar = proposalTable.getVerticalBar();
+				if (scrollbar != null)
+					scrollbar.addListener(SWT.Selection, this);
+				control.getShell().removeListener(SWT.Move, popupCloser);				
+				control.getShell().removeListener(SWT.Resize, popupCloser);				
+				control.getShell().removeListener(SWT.Deactivate, popupCloser);				
+				control.getShell().removeListener(SWT.Close, popupCloser);				
+			}
+		}
 
 		/*
 		 * The listener we will install on the target control.
@@ -71,14 +154,6 @@ public class ContentProposalAdapter {
 			public void handleEvent(Event e) {
 				if (!isValid())
 					return;
-
-				// If we registered for any event that's not KeyDown or
-				// Traverse,
-				// it means we want to close the popup.
-				if (!(e.type == SWT.KeyDown || e.type == SWT.Traverse)) {
-					close();
-					return;
-				}
 
 				// Traverse events will be blocked when the popup is open, but
 				// we will interpret their characters as navigation within the
@@ -276,6 +351,11 @@ public class ContentProposalAdapter {
 		 * The listener installed on the target control.
 		 */
 		private Listener targetControlListener;
+
+		/*
+		 * The listener installed in order to close the popup.
+		 */
+		private PopupCloserListener popupCloser;
 
 		/*
 		 * The table used to show the list of proposals.
@@ -505,8 +585,6 @@ public class ContentProposalAdapter {
 			targetControlListener = new TargetControlListener();
 			control.addListener(SWT.KeyDown, targetControlListener);
 			control.addListener(SWT.Traverse, targetControlListener);
-			control.addListener(SWT.Move, targetControlListener);
-			control.addListener(SWT.Resize, targetControlListener);
 		}
 
 		/*
@@ -515,8 +593,6 @@ public class ContentProposalAdapter {
 		private void removeControlListener() {
 			control.removeListener(SWT.KeyDown, targetControlListener);
 			control.removeListener(SWT.Traverse, targetControlListener);
-			control.removeListener(SWT.Move, targetControlListener);
-			control.removeListener(SWT.Resize, targetControlListener);
 		}
 
 		/*
@@ -567,6 +643,9 @@ public class ContentProposalAdapter {
 		public int open() {
 			addControlListener();
 			int value = super.open();
+			if (popupCloser == null)
+				popupCloser = new PopupCloserListener();
+			popupCloser.installListeners();
 			showProposalDescription(getSelectedProposal().getDescription());
 			return value;
 		}
@@ -580,6 +659,9 @@ public class ContentProposalAdapter {
 		 */
 		public boolean close() {
 			removeControlListener();
+			popupCloser.removeListeners();
+			if (infoPopup != null)
+				infoPopup.close();
 			return super.close();
 		}
 
