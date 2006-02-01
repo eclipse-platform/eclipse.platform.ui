@@ -200,4 +200,10 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 		movedToPath = path;
 	}
 
+	/**
+	 * For debugging purposes only.
+	 */
+	public String toString() {
+		return "ProposedDelta(" + resource + ')'; //$NON-NLS-1$
+	}
 }
