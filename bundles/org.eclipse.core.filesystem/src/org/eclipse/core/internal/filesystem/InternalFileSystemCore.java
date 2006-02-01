@@ -145,6 +145,10 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 		}
 	}
 
+	/**
+	 * Implements {@link EFS#getNullFileSystem()}.
+	 * @return The null file system
+	 */
 	public IFileSystem getNullFileSystem() {
 		try {
 			return getFileSystem(EFS.SCHEME_NULL);
