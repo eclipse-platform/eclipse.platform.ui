@@ -101,5 +101,17 @@
             class="org.eclipse.platform.internal.CheatSheetStandbyContent"
             pluginId="org.eclipse.platform"/>
    </extension>
+   <!--
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.intro.config.ExtensionFactory:welcomeCustomization"
+            id="org.eclipse.platform.introCustomization"
+            name="%introCustomizationPreference.name">
+         <keywordReference id="org.eclipse.ui.ide.appearance"/>
+      </page>
+   </extension>
+   -->
 
 </plugin>
