@@ -19,8 +19,11 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -55,6 +58,17 @@ public class BuildUtilities {
 				IResource resource = (IResource) adaptable.getAdapter(IResource.class);
 				if (resource != null)
 					projects.add(resource.getProject());
+			}
+			else {
+                //attempt to find resource mapping for selection
+				IAdapterManager am = Platform.getAdapterManager();
+				Object rm = am.getAdapter(selection[i], ResourceMapping.class);
+				if (rm instanceof ResourceMapping) {
+					IProject[] theProjects = ((ResourceMapping)rm).getProjects();					
+					for(int j=0;j<theProjects.length;j++){
+						   projects.add(theProjects[j]);						
+					}
+				}
 			}
 		}
 		return (IProject[]) projects.toArray(new IProject[projects.size()]);
