@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.service.datalocation.Location;
-import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.osgi.framework.Bundle;
 
@@ -587,9 +586,16 @@ public final class Platform {
 	 * (e.g., OSGi or the launcher).
 	 * Note that individual platform runnables may be provided with different arguments
 	 * if they are being run individually rather than with <code>Platform.run()</code>.
-	 * 
+	 * <p>
+	 * This method is a convenience for aquiring the environment info
+	 * service and querying it for the command-line arguments.
+	 * <pre><code>
+	 * ServiceTracker tracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
+	 * tracker.open();
+	 * return ((EnvironmentInfo) tracker.getService()).getCommandLineArgs();
+	 * </code></pre>
+	 * </p>
 	 * @return the command line used to start the platform
-	 * XXX Use the Environment info service. Need to see how to set the value of the app args.
 	 */
 	public static String[] getCommandLineArgs() {
 		return InternalPlatform.getDefault().getCommandLineArgs();
@@ -1483,10 +1489,17 @@ public final class Platform {
 	 * Returns <code>true</code> if the platform is currently running in 
 	 * debug mode.  The platform is typically put in debug mode using the
 	 * "-debug" command line argument.
-	 *
+	 * <p>
+	 * This method is a convenience for aquiring the environment info
+	 * service and asking it whether or not we are in debug mode.
+	 * <pre><code>
+	 * ServiceTracker tracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
+	 * tracker.open();
+	 * return ((EnvironmentInfo) tracker.getService()).inDebugMode();
+	 * </code></pre>
+	 * </p>
 	 * @return whether or not the platform is running in debug mode
 	 * @since 3.0
-	 * XXX Use {@link EnvironmentInfo} service
 	 */
 	public static boolean inDebugMode() {
 		return System.getProperty("osgi.debug") != null; //$NON-NLS-1$
@@ -1497,10 +1510,17 @@ public final class Platform {
 	 * development mode.  That is, if special procedures are to be 
 	 * taken when defining plug-in class paths.  The platform is typically put in 
 	 * development mode using the "-dev" command line argument.
-	 *
+	 * <p>
+	 * This method is a convenience for aquiring the environment info
+	 * service and asking it if we are in development mode.
+	 * <pre><code>
+	 * ServiceTracker tracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
+	 * tracker.open();
+	 * return ((EnvironmentInfo) tracker.getService()).inDevelopmentMode();
+	 * </code></pre>
+	 * </p>
 	 * @return whether or not the platform is running in development mode
 	 * @since 3.0
-	 * XXX Use {@link EnvironmentInfo} service
 	 */
 	public static boolean inDevelopmentMode() {
 		return System.getProperty("osgi.dev") != null; //$NON-NLS-1$
