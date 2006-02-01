@@ -1151,10 +1151,21 @@ public final class Platform {
 	}
 
 	/**
-	 * Returns the currently registered bundle group providers
+	 * Returns the currently registered bundle group providers.
+	 * <p>
+	 * This method remains as a convenience only since it is the eventual
+	 * goal for all methods on the Platform class to become deprecated.
+	 * Early adopters should aquire the bundle group provider service
+	 * and access the bundle group providers from there.
+	 * <pre><code>
+	 * Filter filter =  myBundleContext.createFilter("(objectClass=org.eclipse.core.runtime.IBundleGroupProvider)");
+	 * ServiceTracker tracker = new ServiceTracker(myBundleContext, filter, null);
+	 * tracker.open();
+	 * return tracker.getServices();
+	 * </code></pre>
+	 * </p>
 	 * @return the currently registered bundle group providers
 	 * @since 3.0
-	 * XXX DJ is doing a service for it
 	 */
 	public static IBundleGroupProvider[] getBundleGroupProviders() {
 		return InternalPlatform.getDefault().getBundleGroupProviders();
@@ -1185,20 +1196,41 @@ public final class Platform {
 	}
 
 	/**
-	 * Registers the given bundle group provider with the platform
+	 * Registers the given bundle group provider with the platform.
+	 * <p>
+	 * This method remains as a convenience only since it is the eventual
+	 * goal for all methods on the Platform class to become deprecated.
+	 * Early adopters should register their bundle group provider as a service.
+	 * Note that the registration object should be held onto by the client
+	 * for unregistering later.
+	 * <pre><code>
+	 * ServiceRegistration registration = myBundleContext.registerService(IBundleGroupProvider.class.getName(), myProvider, null);
+	 * </code></pre>
+	 * </p>
 	 * @param provider a provider to register
 	 * @since 3.0
-	 * XXX DJ is doing a service for it
 	 */
 	public static void registerBundleGroupProvider(IBundleGroupProvider provider) {
 		InternalPlatform.getDefault().registerBundleGroupProvider(provider);
 	}
 
 	/**
-	 * De-registers the given bundle group provider with the platform
+	 * De-registers the given bundle group provider with the platform.
+	 * <p>
+	 * This method remains as a convenience only since it is the eventual
+	 * goal for all methods on the Platform class to become deprecated.
+	 * Early adopters should hold onto the registration object that they
+	 * received when registering their bundle group provider as a service,
+	 * and then unregister this object rather than calling this method.
+	 * <pre><code>
+	 * ServiceRegistration registration = ...; // store when registering service
+	 * ...
+	 * registration.unregister();
+	 * </code></pre>
+	 * </p>
 	 * @param provider a provider to de-register
 	 * @since 3.0
-	 * XXX DJ is doing a service for it
+	 * @see #registerBundleGroupProvider(IBundleGroupProvider)
 	 */
 	public static void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
 		InternalPlatform.getDefault().unregisterBundleGroupProvider(provider);
