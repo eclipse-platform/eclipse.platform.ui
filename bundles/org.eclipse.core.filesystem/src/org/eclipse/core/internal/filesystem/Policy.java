@@ -63,7 +63,7 @@ public class Policy {
 	}
 
 	public static void log(int severity, String message, Throwable t) {
-		final Bundle bundle = Platform.getBundle(PI_FILE_SYSTEM); //$NON-NLS-1$
+		final Bundle bundle = Platform.getBundle(PI_FILE_SYSTEM);
 		if (bundle == null)
 			return;
 		if (message == null)
