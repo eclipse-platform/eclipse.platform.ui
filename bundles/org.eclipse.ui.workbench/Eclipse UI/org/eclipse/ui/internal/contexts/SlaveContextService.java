@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.internal.expressions.AndExpression;
 
 /**
  * A context service which delegates almost all responsibility to the parent
@@ -110,10 +111,34 @@ public class SlaveContextService implements IContextService {
 	 */
 	public IContextActivation activateContext(String contextId,
 			Expression expression) {
-		IContextActivation activation = fParentService.activateContext(
-				contextId, expression);
-		fParentActivations.add(activation);
-		return activation;
+		return activateContext(contextId, expression, false);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String,
+	 *      org.eclipse.core.expressions.Expression, boolean)
+	 */
+	public IContextActivation activateContext(String contextId,
+			Expression expression, boolean global) {
+		if (global) {
+			IContextActivation activation = fParentService.activateContext(
+					contextId, expression);
+			fParentActivations.add(activation);
+			return activation;
+		}
+		AndExpression andExpression = null;
+		if (expression instanceof AndExpression) {
+			andExpression = (AndExpression) expression;
+		} else {
+			andExpression = new AndExpression();
+			andExpression.add(expression);
+		}
+		andExpression.add(fDefaultExpression);
+		ContextActivation activation = new ContextActivation(contextId,
+				andExpression, this);
+		return doActivateContext(activation);
 	}
 
 	/*
@@ -127,23 +152,6 @@ public class SlaveContextService implements IContextService {
 		return activateContext(contextId, expression);
 	}
 
-	/**
-	 * Activate the context with respect to this slave service.
-	 * 
-	 * @param contextId
-	 *            the context id
-	 * @param expression
-	 *            the expression to use
-	 * @return the activated context
-	 */
-	protected IContextActivation doActivateContext(IContextActivation activation) {
-		IContextActivation parentActivation = fParentService.activateContext(
-				activation.getContextId(), activation.getExpression());
-		fParentActivations.add(parentActivation);
-		fLocalActivations.put(activation, parentActivation);
-		return activation;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -151,6 +159,15 @@ public class SlaveContextService implements IContextService {
 	 */
 	public void addContextManagerListener(IContextManagerListener listener) {
 		fParentService.addContextManagerListener(listener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.services.IServiceWithSources#addSourceProvider(org.eclipse.ui.ISourceProvider)
+	 */
+	public void addSourceProvider(ISourceProvider provider) {
+		fParentService.addSourceProvider(provider);
 	}
 
 	/*
@@ -188,6 +205,34 @@ public class SlaveContextService implements IContextService {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.ui.services.IDisposable#dispose()
+	 */
+	public void dispose() {
+		fParentService.deactivateContexts(fParentActivations);
+		fParentActivations.clear();
+		fLocalActivations.clear();
+	}
+
+	/**
+	 * Activate the context with respect to this slave service.
+	 * 
+	 * @param contextId
+	 *            the context id
+	 * @param expression
+	 *            the expression to use
+	 * @return the activated context
+	 */
+	protected IContextActivation doActivateContext(IContextActivation activation) {
+		IContextActivation parentActivation = fParentService.activateContext(
+				activation.getContextId(), activation.getExpression());
+		fParentActivations.add(parentActivation);
+		fLocalActivations.put(activation, parentActivation);
+		return activation;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.contexts.IContextService#getActiveContextIds()
 	 */
 	public Collection getActiveContextIds() {
@@ -206,19 +251,19 @@ public class SlaveContextService implements IContextService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.contexts.IContextService#getDefinedContexts()
+	 * @see org.eclipse.ui.contexts.IContextService#getDefinedContextIds()
 	 */
-	public Context[] getDefinedContexts() {
-		return fParentService.getDefinedContexts();
+	public Collection getDefinedContextIds() {
+		return fParentService.getDefinedContextIds();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.contexts.IContextService#getDefinedContextIds()
+	 * @see org.eclipse.ui.contexts.IContextService#getDefinedContexts()
 	 */
-	public Collection getDefinedContextIds() {
-		return fParentService.getDefinedContextIds();
+	public Context[] getDefinedContexts() {
+		return fParentService.getDefinedContexts();
 	}
 
 	/*
@@ -261,24 +306,6 @@ public class SlaveContextService implements IContextService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.contexts.IContextService#unregisterShell(org.eclipse.swt.widgets.Shell)
-	 */
-	public boolean unregisterShell(Shell shell) {
-		return fParentService.unregisterShell(shell);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.services.IServiceWithSources#addSourceProvider(org.eclipse.ui.ISourceProvider)
-	 */
-	public void addSourceProvider(ISourceProvider provider) {
-		fParentService.addSourceProvider(provider);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.services.IServiceWithSources#removeSourceProvider(org.eclipse.ui.ISourceProvider)
 	 */
 	public void removeSourceProvider(ISourceProvider provider) {
@@ -288,11 +315,9 @@ public class SlaveContextService implements IContextService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.services.IDisposable#dispose()
+	 * @see org.eclipse.ui.contexts.IContextService#unregisterShell(org.eclipse.swt.widgets.Shell)
 	 */
-	public void dispose() {
-		fParentService.deactivateContexts(fParentActivations);
-		fParentActivations.clear();
-		fLocalActivations.clear();
+	public boolean unregisterShell(Shell shell) {
+		return fParentService.unregisterShell(shell);
 	}
 }

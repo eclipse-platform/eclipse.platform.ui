@@ -100,7 +100,8 @@ public interface IContextService extends IServiceWithSources {
 	 * <p>
 	 * Activates the given context within the context of this service. The
 	 * context becomes active when <code>expression</code> evaluates to
-	 * <code>true</code>.
+	 * <code>true</code>. This is the same as calling
+	 * {@link #activateContext(String, Expression, boolean)} with global==<code>false</code>.
 	 * </p>
 	 * <p>
 	 * Also, it is guaranteed that the context submitted through a particular
@@ -126,6 +127,42 @@ public interface IContextService extends IServiceWithSources {
 	 */
 	public IContextActivation activateContext(String contextId,
 			Expression expression);
+
+	/**
+	 * <p>
+	 * Activates the given context within the context of this service. The
+	 * context becomes active when <code>expression</code> evaluates to
+	 * <code>true</code>. If global==<code>false</code> then this service
+	 * must also be the active service to activate the context.
+	 * </p>
+	 * <p>
+	 * Also, it is guaranteed that the context submitted through a particular
+	 * service will be cleaned up when that services is destroyed. So, for
+	 * example, a service retrieved from a <code>IWorkbenchPartSite</code>
+	 * would deactivate all of its handlers when the site is destroyed.
+	 * </p>
+	 * 
+	 * @param contextId
+	 *            The identifier for the context which should be activated; must
+	 *            not be <code>null</code>.
+	 * @param expression
+	 *            This expression must evaluate to <code>true</code> before
+	 *            this context will really become active. The expression may be
+	 *            <code>null</code> if the context should always be active.
+	 * @param global
+	 *            Indicates that the handler should be activated irrespectively
+	 *            of whether the corresponding workbench component (e.g.,
+	 *            window, part, etc.) is active.
+	 * @return A token which can be used to later cancel the activation. Only
+	 *         someone with access to this token can cancel the activation. The
+	 *         activation will automatically be cancelled if the context from
+	 *         which this service was retrieved is destroyed.
+	 * 
+	 * @see org.eclipse.ui.ISources
+	 * @since 3.2
+	 */
+	public IContextActivation activateContext(String contextId,
+			Expression expression, boolean global);
 
 	/**
 	 * <p>
