@@ -169,10 +169,12 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 					}
 					// First, create the delta for the source
 					IPath fromPath = child.getFullPath();
+					boolean wasAdded = false;
+					final int flags = sourceDelta.getFlags();
 					if (move) {
 						// We transfer the source flags to the destination
 						if (sourceDelta.getKind() == IResourceDelta.ADDED) {
-							if ((sourceDelta.getFlags() & IResourceDelta.MOVED_FROM) != 0) {
+							if ((flags & IResourceDelta.MOVED_FROM) != 0) {
 								// The resource was moved from somewhere else so
 								// we need to transfer the path to the new location
 								fromPath = sourceDelta.getMovedFromPath();
@@ -181,6 +183,7 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 							// The source was added and then moved so we'll
 							// make it an add at the destination
 							sourceDelta.setKind(0);
+							wasAdded = true;
 						} else {
 							// We reset the status to be a remove/move_to
 							sourceDelta.setKind(IResourceDelta.REMOVED);
@@ -196,12 +199,12 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 					} else {
 						destinationDelta.setKind(IResourceDelta.ADDED);
 					}
-					if (sourceDelta.getKind() == IResourceDelta.ADDED || !fromPath.equals(child.getFullPath())) {
+					if (!wasAdded || !fromPath.equals(child.getFullPath())) {
 						// The source wasn't added so it is a move/copy
 						destinationDelta.addFlags(move ? IResourceDelta.MOVED_FROM : IResourceDelta.COPIED_FROM);
 						destinationDelta.setMovedFromPath(fromPath);
 						// Apply the source flags
-						destinationDelta.addFlags(sourceDelta.getFlags());
+						destinationDelta.addFlags(flags);
 					}
 					
 					return true;
