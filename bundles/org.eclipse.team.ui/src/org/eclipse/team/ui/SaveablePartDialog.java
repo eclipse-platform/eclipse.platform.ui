@@ -74,6 +74,7 @@ public class SaveablePartDialog extends ResizableDialog {
 	 * Save any changes to the compare editor.
 	 */
 	private void saveChanges() {
+		// TODO: need to look for other saveable model sources
 		MessageDialog dialog = new MessageDialog(
 				getShell(), TeamUIMessages.ParticipantCompareDialog_2, null,  
 				TeamUIMessages.ParticipantCompareDialog_3, MessageDialog.QUESTION, new String[]{IDialogConstants.YES_LABEL, 

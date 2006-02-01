@@ -11,8 +11,7 @@
 package org.eclipse.team.ui.mapping;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.ui.ISaveableModel;
+import org.eclipse.ui.*;
 
 /**
  * A saveable compare model is used to buffer changes made when comparing
@@ -33,11 +32,10 @@ import org.eclipse.ui.ISaveableModel;
  */
 public interface ISaveableCompareModel extends ISaveableModel {
 
-	/**
-	 * Property constant used to indicate when the dirty state of this
-	 * buffer changes.
-	 */
-	public static final String P_DIRTY = "org.eclipse.team.ui.dirty"; //$NON-NLS-1$
+    /**
+     * The property id for <code>isDirty</code>.
+     */
+    public static final int PROP_DIRTY = IWorkbenchPartConstants.PROP_DIRTY;
 
 	/**
 	 * Revert any changes in the buffer back to the last saved state.
@@ -51,12 +49,12 @@ public interface ISaveableCompareModel extends ISaveableModel {
 	 * that is allready registered has no effect.
 	 * @param listener the listener
 	 */
-	void addPropertyChangeListener(IPropertyChangeListener listener); 
+	void addPropertyListener(IPropertyListener listener); 
 
 	/**
 	 * Remove a property change listener. Removing a listener
 	 * that is not registered has no effect.
 	 * @param listener the listener
 	 */
-	void removePropertyChangeListener(IPropertyChangeListener listener); 
+	void removePropertyListener(IPropertyListener listener); 
 }

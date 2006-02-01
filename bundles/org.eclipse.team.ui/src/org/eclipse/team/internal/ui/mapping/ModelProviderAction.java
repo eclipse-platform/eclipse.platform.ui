@@ -12,7 +12,8 @@ package org.eclipse.team.internal.ui.mapping;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -25,7 +26,6 @@ import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.mapping.ISaveableCompareModel;
-import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.PlatformUI;
@@ -217,7 +217,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	 * no buffer is active).
 	 */
 	protected ISaveableCompareModel getActiveBuffer() {
-		return (ISaveableCompareModel)configuration.getProperty(ISynchronizationConstants.P_ACTIVE_BUFFER);
+		return ((ModelSynchronizeParticipant)configuration.getParticipant()).getCurrentModel();
 	}
 
 	/**
@@ -227,7 +227,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	 * no buffer is active).
 	 */
 	protected void setActiveBuffer(ISaveableCompareModel buffer) {
-		configuration.setProperty(ISynchronizationConstants.P_ACTIVE_BUFFER, buffer);
+		((ModelSynchronizeParticipant)configuration.getParticipant()).setCurrentModel(buffer);
 	}
 	
 	/**

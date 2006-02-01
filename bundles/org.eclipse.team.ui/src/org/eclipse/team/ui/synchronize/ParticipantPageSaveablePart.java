@@ -24,10 +24,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.mapping.ModelProviderAction;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.PageSaveablePart;
-import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.mapping.IModelCompareInput;
+import org.eclipse.team.ui.mapping.ISaveableCompareModel;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPageBookViewPage;
@@ -105,7 +105,7 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 	 * @see org.eclipse.ui.ISaveablePart#isDirty()
 	 */
 	public boolean isDirty() {
-		ISaveableCompareModel currentBuffer = (ISaveableCompareModel)pageConfiguration.getProperty(ISynchronizationConstants.P_ACTIVE_BUFFER);
+		ISaveableCompareModel currentBuffer = ((ModelSynchronizeParticipant)pageConfiguration.getParticipant()).getCurrentModel();
 		if (currentBuffer != null) {
 			return currentBuffer.isDirty();
 		}
@@ -255,14 +255,7 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
         monitor.setTaskName(TeamUIMessages.SyncInfoCompareInput_3);
 		try {
 			// First, see if the active buffer is changing
-			ISaveableCompareModel currentBuffer = (ISaveableCompareModel)pageConfiguration.getProperty(ISynchronizationConstants.P_ACTIVE_BUFFER);
-			ISaveableCompareModel targetBuffer = getTargetBuffer(input);
-			try {
-				ModelProviderAction.handleBufferChange(pageConfiguration.getSite().getShell(), targetBuffer, currentBuffer, false /* cancel not allowed */, Policy.subMonitorFor(monitor, 10));
-			} catch (InterruptedException e) {
-				// Ignore since we indicated that cancel is not supported
-			}
-			pageConfiguration.setProperty(ISynchronizationConstants.P_ACTIVE_BUFFER, targetBuffer);
+			checkForBufferChange(pageConfiguration.getSite().getShell(), input, false /* cancel not allowed */, monitor);
 			if (input instanceof SyncInfoModelElement) {
 				final SyncInfoModelElement node = (SyncInfoModelElement) input;
 				IResource resource = node.getResource();
@@ -283,12 +276,16 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
             monitor.done();
         }
 	}
-	
-	private ISaveableCompareModel getTargetBuffer(ICompareInput input) {
-		IModelCompareInput adapter = asModelCompareInput(input);
-		if (adapter != null)
-			return adapter.getCompareModel();
-		return null;
+
+	private void checkForBufferChange(Shell shell, final ICompareInput input, boolean cancelAllowed, IProgressMonitor monitor) throws CoreException {
+		ISynchronizeParticipant participant = pageConfiguration.getParticipant();
+		if (participant instanceof ModelSynchronizeParticipant) {
+			ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
+			if (input instanceof IModelCompareInput) {
+				IModelCompareInput mci = (IModelCompareInput) input;
+				msp.checkForBufferChange(shell, mci, cancelAllowed, monitor);
+			}
+		}
 	}
 
 	private IModelCompareInput asModelCompareInput(ICompareInput input) {

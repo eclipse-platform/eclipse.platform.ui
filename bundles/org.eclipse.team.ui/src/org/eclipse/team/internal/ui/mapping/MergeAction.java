@@ -21,6 +21,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.PlatformUI;
 
@@ -54,7 +55,7 @@ public class MergeAction extends Action {
 	public void runWithEvent(Event event) {
 		IHandler handler = getHandler();
 		if (handler != null && handler.isEnabled()) {
-			final ISaveableCompareModel currentBuffer = (ISaveableCompareModel)configuration.getProperty(ISynchronizationConstants.P_ACTIVE_BUFFER);
+			final ISaveableCompareModel currentBuffer = ((ModelSynchronizeParticipant)configuration.getParticipant()).getCurrentModel();
 			if (currentBuffer != null && currentBuffer.isDirty()) {
 				ISaveableCompareModel targetBuffer = null;
 				if (handler instanceof MergeActionHandler) {
@@ -79,7 +80,7 @@ public class MergeAction extends Action {
 				} catch (InterruptedException e) {
 					return;
 				}
-				configuration.setProperty(ISynchronizationConstants.P_ACTIVE_BUFFER, targetBuffer);
+				((ModelSynchronizeParticipant)configuration.getParticipant()).setCurrentModel(targetBuffer);
 			}
 			try {
 				handler.execute(new ExecutionEvent(null, Collections.EMPTY_MAP, event, null));

@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -23,6 +26,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.team.ui.mapping.IModelCompareInput;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
@@ -71,13 +75,38 @@ public class OpenInCompareAction extends Action {
 		if (participant instanceof ModelSynchronizeParticipant) {
 			ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
 			ICompareInput input = msp.asCompareInput(object);
-			if (input != null) {
+			if (input != null && isOkToOpen(site, participant, input)) {
 				return openCompareEditor(new ModelCompareEditorInput(msp, input), keepFocus, site);
 			}
 		}
 		return null;
 	}
 	
+	private static boolean isOkToOpen(final ISynchronizePageSite site, final ISynchronizeParticipant participant, final ICompareInput input) {
+		if (participant instanceof ModelSynchronizeParticipant && input instanceof IModelCompareInput) {
+			final ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
+			final boolean[] result = new boolean[] { false };
+			try {
+				PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException,
+							InterruptedException {
+						try {
+							result[0] = msp.checkForBufferChange(site.getShell(), (IModelCompareInput)input, true, monitor);
+						} catch (CoreException e) {
+							throw new InvocationTargetException(e);
+						}
+					}
+				});
+			} catch (InvocationTargetException e) {
+				Utils.handleError(site.getShell(), e, null, null);
+			} catch (InterruptedException e) {
+				return false;
+			}
+			return result[0];
+		}
+		return true;
+	}
+
 	public static CompareEditorInput openCompareEditor(ISynchronizeParticipant participant, SyncInfo info, boolean keepFocus, ISynchronizePageSite site) {		
 		Assert.isNotNull(info);
 		Assert.isNotNull(participant);	

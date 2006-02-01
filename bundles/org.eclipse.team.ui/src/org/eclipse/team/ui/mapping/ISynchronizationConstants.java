@@ -55,12 +55,6 @@ public interface ISynchronizationConstants {
 	 * Navigator framework.
 	 */
 	public static final String P_SYNCHRONIZATION_PAGE_CONFIGURATION = "org.eclipse.team.ui.synchronizationPageConfiguration"; //$NON-NLS-1$
-
-	/**
-	 * Property constant used to store and retrieve the active {@link ISaveableCompareModel}
-	 * from an {@link ISynchronizePageConfiguration}.
-	 */
-	public static final String P_ACTIVE_BUFFER = "org.eclipse.team.ui.activeBuffer"; //$NON-NLS-1$
 	
 	/**
 	 * Property constant used to store and retrieve the id active

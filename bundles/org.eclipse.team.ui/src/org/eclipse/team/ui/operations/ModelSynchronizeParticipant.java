@@ -19,15 +19,16 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
 import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.mapping.ModelProviderAction;
 import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.mapping.ICompareAdapter;
-import org.eclipse.team.ui.mapping.ISynchronizationConstants;
+import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageBookViewPage;
@@ -47,7 +48,11 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * @since 3.2
  **/
 public class ModelSynchronizeParticipant extends
-		AbstractSynchronizeParticipant {
+		AbstractSynchronizeParticipant implements ISaveableModelSource {
+	
+	public static final String PROP_CURRENT_MODEL = TeamUIPlugin.ID + ".CURRENT_MODEL"; //$NON-NLS-1$
+	
+	public static final String PROP_DIRTY = TeamUIPlugin.ID + ".DIRTY"; //$NON-NLS-1$
 	
 	/*
 	 * Key for settings in memento
@@ -81,6 +86,17 @@ public class ModelSynchronizeParticipant extends
 	private boolean mergingEnabled = true;
 	protected SubscriberRefreshSchedule refreshSchedule;
 	private String description;
+	private ISaveableCompareModel currentModel;
+
+	private IPropertyListener dirtyListener = new IPropertyListener() {
+		public void propertyChanged(Object source, int propId) {
+			if (source instanceof ISaveableCompareModel && propId == ISaveableCompareModel.PROP_DIRTY) {
+				ISaveableCompareModel scm = (ISaveableCompareModel) source;
+				boolean isDirty = scm.isDirty();
+				firePropertyChange(this, PROP_DIRTY, Boolean.valueOf(!isDirty), Boolean.valueOf(isDirty));
+			}
+		}
+	};
 
 	/**
 	 * Create a participant for the given context
@@ -506,6 +522,56 @@ public class ModelSynchronizeParticipant extends
 		}
 		// Always fir the event since the schedule may have been changed
         firePropertyChange(this, AbstractSynchronizeParticipant.P_SCHEDULED, schedule, schedule);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveableModelSource#getModels()
+	 */
+	public ISaveableModel[] getModels() {
+		if (currentModel == null)
+			return new ISaveableModel[0];
+		return new ISaveableModel[] { currentModel };
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveableModelSource#getActiveModels()
+	 */
+	public ISaveableModel[] getActiveModels() {
+		return getModels();
+	}
+
+	public ISaveableCompareModel getCurrentModel() {
+		return currentModel;
+	}
+
+	public void setCurrentModel(ISaveableCompareModel currentModel) {
+		boolean wasDirty = false;
+		ISaveableCompareModel oldModel = this.currentModel;
+		if (oldModel != null) {
+			oldModel.removePropertyListener(dirtyListener);
+			wasDirty = oldModel.isDirty();
+		}
+		this.currentModel = currentModel;
+		firePropertyChange(this, PROP_CURRENT_MODEL, oldModel, currentModel);
+		boolean isDirty = false;
+		if (currentModel != null) {
+			currentModel.addPropertyListener(dirtyListener);
+			isDirty = currentModel.isDirty();
+		}
+		if (isDirty != wasDirty)
+			firePropertyChange(this, PROP_DIRTY, Boolean.valueOf(wasDirty), Boolean.valueOf(isDirty));
+	}
+	
+	public boolean checkForBufferChange(Shell shell, IModelCompareInput input, boolean cancelAllowed, IProgressMonitor monitor) throws CoreException {
+		ISaveableCompareModel currentBuffer = getCurrentModel();
+		ISaveableCompareModel targetBuffer = input.getCompareModel();
+		try {
+			ModelProviderAction.handleBufferChange(shell, targetBuffer, currentBuffer, cancelAllowed, Policy.subMonitorFor(monitor, 10));
+		} catch (InterruptedException e) {
+			return false;
+		}
+		setCurrentModel(targetBuffer);
+		return true;
 	}
 	
 }

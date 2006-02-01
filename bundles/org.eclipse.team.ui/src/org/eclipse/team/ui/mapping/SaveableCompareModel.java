@@ -11,8 +11,7 @@
 package org.eclipse.team.ui.mapping;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.IPropertyListener;
 
 /**
  * A model buffer is used to buffer changes made when comparing
@@ -70,14 +69,14 @@ public abstract class SaveableCompareModel implements ISaveableCompareModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.compare.IModelBuffer#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
-	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+	public void addPropertyListener(IPropertyListener listener) {
 		listeners.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.compare.IModelBuffer#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
-	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+	public void removePropertyListener(IPropertyListener listener) {
 		listeners.remove(listener);
 	}
 
@@ -91,7 +90,7 @@ public abstract class SaveableCompareModel implements ISaveableCompareModel {
 			return;
 		}
 		this.dirty = dirty;
-		firePropertyChange(P_DIRTY, Boolean.valueOf(!dirty), Boolean.valueOf(dirty));
+		firePropertyChange(PROP_DIRTY);
 	}
 
 	/**
@@ -100,14 +99,13 @@ public abstract class SaveableCompareModel implements ISaveableCompareModel {
 	 * @param oldValue the old value
 	 * @param newValue the new value
 	 */
-	protected void firePropertyChange(String property, Object oldValue, Object newValue) {
-		final PropertyChangeEvent event = new PropertyChangeEvent(this, property, oldValue, newValue);
+	protected void firePropertyChange(final int property) {
 		Object[] allListeners = listeners.getListeners();
 		for (int i = 0; i < allListeners.length; i++) {
 			final Object object = allListeners[i];
 			Platform.run(new ISafeRunnable() {
 				public void run() throws Exception {
-					((IPropertyChangeListener)object).propertyChange(event);
+					((IPropertyListener)object).propertyChanged(this, property);
 				}
 				public void handleException(Throwable exception) {
 					// handled by platform

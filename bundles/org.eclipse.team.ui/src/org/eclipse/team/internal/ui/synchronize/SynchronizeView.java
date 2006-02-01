@@ -11,6 +11,8 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -20,11 +22,12 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.actions.*;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
@@ -34,7 +37,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 /**
  * Implements a Synchronize View that contains multiple synchronize participants. 
  */
-public class SynchronizeView extends PageBookView implements ISynchronizeView, ISynchronizeParticipantListener, IPropertyChangeListener {
+public class SynchronizeView extends PageBookView implements ISynchronizeView, ISynchronizeParticipantListener, IPropertyChangeListener, ISaveableModelSource, ISaveablePart {
 	
 	/**
 	 * Suggested maximum length of participant names when shown in certain menus and dialog.
@@ -89,19 +92,29 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		Object source = event.getSource();
-		if (source instanceof ISynchronizeParticipant && event.getProperty().equals(IBasicPropertyConstants.P_TEXT)) {
-			if (source.equals(getParticipant())) {
-				updateTitle();
+		if (source instanceof ISynchronizeParticipant) {
+			if (event.getProperty().equals(IBasicPropertyConstants.P_TEXT)) {
+				if (source.equals(getParticipant())) {
+					updateTitle();
+				}
+			} else if (event.getProperty().equals(ModelSynchronizeParticipant.PROP_DIRTY)) {
+				Display.getDefault().syncExec(new Runnable() {
+					public void run() {
+						firePropertyChange(PROP_DIRTY);
+					}
+				});
 			}
 		}
-		if (source instanceof ISynchronizePageConfiguration && event.getProperty().equals(ISynchronizePageConfiguration.P_PAGE_DESCRIPTION)) {
+		if (source instanceof ISynchronizePageConfiguration) {
 			ISynchronizePageConfiguration configuration = (ISynchronizePageConfiguration) source;
-			if (configuration.getParticipant().equals(getParticipant())) {
-				updateTitle();
+			if (event.getProperty().equals(ISynchronizePageConfiguration.P_PAGE_DESCRIPTION)) {
+				if (configuration.getParticipant().equals(getParticipant())) {
+					updateTitle();
+				}
 			}
 		}
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
 	 */
@@ -294,6 +307,13 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			};
 			asyncExec(r);
 		}
+	}
+
+	private ISaveableModelSource getSaveableModelSource(ISynchronizeParticipant participant) {
+		if (participant instanceof ISaveableModelSource) {
+			return (ISaveableModelSource) participant;
+		}
+		return null;
 	}
 
 	/**
@@ -519,5 +539,79 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			// That the old settings are forgotten
 			getDialogSettings().addSection(new DialogSettings(key));
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveableModelSource#getModels()
+	 */
+	public ISaveableModel[] getModels() {
+		Set result = new HashSet();
+		for (Iterator iter = fPartToParticipant.keySet().iterator(); iter.hasNext();) {
+			SynchronizeViewWorkbenchPart part = (SynchronizeViewWorkbenchPart) iter.next();
+			ISaveableModelSource ms = getSaveableModelSource(part.getParticipant());
+			if (ms != null) {
+				ISaveableModel[] models = ms.getModels();
+				for (int i = 0; i < models.length; i++) {
+					ISaveableModel model = models[i];
+					result.add(model);
+				}
+			}
+		}
+		return (ISaveableModel[]) result.toArray(new ISaveableModel[result.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveableModelSource#getActiveModels()
+	 */
+	public ISaveableModel[] getActiveModels() {
+		Set result = new HashSet();
+		for (Iterator iter = fPartToParticipant.keySet().iterator(); iter.hasNext();) {
+			SynchronizeViewWorkbenchPart part = (SynchronizeViewWorkbenchPart) iter.next();
+			ISaveableModelSource ms = getSaveableModelSource(part.getParticipant());
+			if (ms != null) {
+				ISaveableModel[] models = ms.getActiveModels();
+				for (int i = 0; i < models.length; i++) {
+					ISaveableModel model = models[i];
+					result.add(model);
+				}
+			}
+		}
+		return (ISaveableModel[]) result.toArray(new ISaveableModel[result.size()]);
+	}
+
+	public void doSave(IProgressMonitor monitor) {
+		ISaveableModel[] models = getModels();
+		if (models.length == 0)
+			return;
+		monitor.beginTask(null, 100* models.length);
+		for (int i = 0; i < models.length; i++) {
+			ISaveableModel model = models[i];
+			model.doSave(Policy.subMonitorFor(monitor, 100));
+			Policy.checkCanceled(monitor);
+		}
+		monitor.done();
+		firePropertyChange(PROP_DIRTY);
+	}
+
+	public void doSaveAs() {
+		// Not allowed
+	}
+
+	public boolean isDirty() {
+		ISaveableModel[] models = getModels();
+		for (int i = 0; i < models.length; i++) {
+			ISaveableModel model = models[i];
+			if (model.isDirty())
+				return true;
+		}
+		return false;
+	}
+
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
+
+	public boolean isSaveOnCloseNeeded() {
+		return true;
 	}
 }
