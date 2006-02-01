@@ -11,8 +11,6 @@
 
 package org.eclipse.jface.databinding.viewers;
 
-import java.util.Collection;
-
 import org.eclipse.jface.databinding.ICellProvider;
 import org.eclipse.jface.databinding.IUpdatableTable;
 import org.eclipse.jface.databinding.updatables.WritableSet;
@@ -66,22 +64,6 @@ public class TableViewerUpdatableTable extends WritableSet implements
 		tableViewer.setInput(this);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.updatables.WritableSet#addAll(java.util.Collection)
-	 */
-	public void addAll(Collection toAdd) {
-		super.addAll(toAdd);
-		tableViewer.add(toAdd.toArray());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.updatables.WritableSet#addAll(java.util.Collection)
-	 */
-	public void removeAll(Collection toRemove) {
-		super.removeAll(toRemove);
-		tableViewer.remove(toRemove.toArray());
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.ITableThing#updateElement(java.lang.Object)
 	 */

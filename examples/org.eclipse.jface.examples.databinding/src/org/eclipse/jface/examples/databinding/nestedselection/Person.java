@@ -15,7 +15,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Person {
+import org.eclipse.jface.examples.databinding.model.ModelObject;
+
+public class Person extends ModelObject {
 	
 	private String name = "";
 	private String address = "";
@@ -49,7 +51,9 @@ public class Person {
 	 * @param address The address to set.
 	 */
 	public void setAddress(String address) {
+		String old = this.address;
 		this.address = address;
+		firePropertyChange("address", old, address);
 	}
 
 	/**
@@ -63,7 +67,8 @@ public class Person {
 	 * @param city The city to set.
 	 */
 	public void setCity(String city) {
-		this.city = city;
+		String old = this.city;
+		firePropertyChange("city", old, this.city = city);
 	}
 
 	/**
@@ -77,7 +82,7 @@ public class Person {
 	 * @param name The name to set.
 	 */
 	public void setName(String name) {
-		this.name = name;
+		firePropertyChange("name", this.name, this.name = name);
 	}
 
 	/**

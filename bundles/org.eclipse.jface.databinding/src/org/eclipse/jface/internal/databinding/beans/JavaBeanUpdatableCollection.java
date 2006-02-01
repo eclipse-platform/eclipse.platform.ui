@@ -32,7 +32,10 @@ public class JavaBeanUpdatableCollection extends UpdatableCollection {
 	private final Object object;
 
 	private PropertyChangeListener collectionListener = new PropertyChangeListener() {
-		public void propertyChange(java.beans.PropertyChangeEvent event) {         
+		public void propertyChange(java.beans.PropertyChangeEvent event) {      
+			if (!event.getPropertyName().equals(descriptor.getName())) {
+				return;
+			}
 			if (!updating) {
                 if (JavaBeanUpdatableCollection.this.descriptor.getName().equals(event.getPropertyName())) {
 					Object[] values = getValues();

@@ -41,6 +41,9 @@ public class JavaBeansUpdatableCellProvider extends Updatable implements IUpdata
 		this.readableSet = readableSet;
 		this.propertyNames = propertyNames;
 		readableSet.addChangeListener(listener);
+		for (Iterator it = readableSet.toCollection().iterator(); it.hasNext();) {
+			addBeansListenerTo(it.next());
+		}
 	}
 	
 	private IChangeListener listener = new IChangeListener() {

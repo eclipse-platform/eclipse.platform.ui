@@ -28,6 +28,18 @@ public class ListToSetAdapter extends AbstractUpdatableSet {
 	private IChangeListener listener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
 			switch(changeEvent.getChangeType()) {
+			case ChangeEvent.CHANGE:
+				if(changeEvent.getPosition() == ChangeEvent.POSITION_UNKNOWN) {
+					HashSet oldElements = elements;
+					doComputeElements();
+					HashSet addedElements = new HashSet(elements);
+					HashSet removedElements = new HashSet(oldElements);
+					addedElements.removeAll(oldElements);
+					removedElements.removeAll(elements);
+					fireRemoved(removedElements);
+					fireAdded(addedElements);
+				}
+				break;
 			case ChangeEvent.ADD:
 				Object added = changeEvent.getNewValue();
 				if (!elements.contains(added)) {
@@ -82,7 +94,7 @@ public class ListToSetAdapter extends AbstractUpdatableSet {
 	}
 	
 	private HashSet doComputeElements() {
-		HashSet elements = new HashSet();
+		elements = new HashSet();
 		for (int idx = 0; idx < input.getSize(); idx++) {
 			elements.add(input.getElement(idx));
 		}
