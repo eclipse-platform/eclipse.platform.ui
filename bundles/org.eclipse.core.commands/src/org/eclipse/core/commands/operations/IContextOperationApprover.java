@@ -14,18 +14,19 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * <p>
- * IOperationApprover defines an interface for approving the undo or redo of a
- * particular operation within an operation history. Operations that are
- * candidates for undo or redo have already been validated against their current
- * state and according to the rules of the history.
+ * IContextOperationApprover defines an interface for approving the undo or redo
+ * of a particular operation within an operation history given a particular
+ * operation context. Operations that are candidates for undo or redo have
+ * already been validated against their current state.
  * </p>
  * <p>
- * By the time an IOperationApprover is consulted, the undo has already been
- * requested. Approvers should return <code>true</code> if the operation
- * should proceed, and <code>false</code> if it should not. When an operation
- * is rejected, it is expected that the object rejecting the operation has
- * already consulted the user if necessary or otherwise provided any necessary
- * information to the user about the rejection.
+ * By the time an IContextOperationApprover is consulted, the undo has already
+ * been requested. Approvers should return an IStatus with severity
+ * <code>OK</code> if the operation should proceed, and any other status if it
+ * should not. The status should further describe the rejection. When an
+ * operation is rejected, it is expected that the object rejecting the operation
+ * has already consulted the user if necessary or otherwise provided any
+ * necessary information to the user about the rejection.
  * </p>
  * <p>
  * Note: This class/interface is part of a new API under development. It has
@@ -38,7 +39,7 @@ import org.eclipse.core.runtime.IStatus;
  * @since 3.1
  * @experimental
  */
-public interface IOperationApprover {
+public interface IContextOperationApprover {
 
 	/**
 	 * Return a status indicating whether the specified operation should be
@@ -49,15 +50,18 @@ public interface IOperationApprover {
 	 * 
 	 * @param operation -
 	 *            the operation to be redone
+	 * @param context -
+	 *            the context for which the operation is to be approved
 	 * @param history -
-	 *            the history redoing the operation
+	 *            the history undoing the operation
 	 * @return the IStatus describing whether the operation is approved. The
 	 *         redo will not proceed if the status severity is no
 	 *         <code>OK</code>, and the caller requesting the redo will be
 	 *         returned the status that caused the rejection. Any other status
 	 *         severities will not be interpreted by the history.
 	 */
-	IStatus proceedRedoing(IOperation operation, IOperationHistory history);
+	IStatus proceedRedoing(IOperation operation, OperationContext context,
+			IOperationHistory history);
 
 	/**
 	 * Return a status indicating whether the specified operation should be
@@ -68,6 +72,8 @@ public interface IOperationApprover {
 	 * 
 	 * @param operation -
 	 *            the operation to be undone
+	 * @param context -
+	 *            the context for which the operation is to be approved
 	 * @param history -
 	 *            the history undoing the operation
 	 * @return the IStatus describing whether the operation is approved. The
@@ -76,6 +82,6 @@ public interface IOperationApprover {
 	 *         returned the status that caused the rejection. Any other status
 	 *         severities will not be interpreted by the history.
 	 */
-	IStatus proceedUndoing(IOperation operation, IOperationHistory history);
-
+	IStatus proceedUndoing(IOperation operation, OperationContext context,
+			IOperationHistory history);
 }

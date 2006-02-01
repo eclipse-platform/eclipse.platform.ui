@@ -12,8 +12,8 @@ package org.eclipse.core.commands.operations;
 
 /**
  * <p>
- * This interface is used to listen to notifications from an IOperationHistory.
- * The supplied OperationHistoryEvent describes the particular notification.
+ * An operation context that can be used to represent any given object. The
+ * operation contexts are equal if they both represent the same object.
  * </p>
  * <p>
  * Note: This class/interface is part of a new API under development. It has
@@ -26,15 +26,35 @@ package org.eclipse.core.commands.operations;
  * @since 3.1
  * @experimental
  */
-public interface IOperationHistoryListener {
-	/**
-	 * Something of note has happened in the IOperationHistory. Listeners should
-	 * check the supplied event for details.
-	 * 
-	 * @param event -
-	 *            the OperationHistoryEvent that describes the particular
-	 *            notification.
-	 */
-	void historyNotification(OperationHistoryEvent event);
+public class ObjectOperationContext extends OperationContext {
+
+	private IContextOperationApprover fApprover = null;
+
+	private Object fObject;
+
+	public ObjectOperationContext(Object o) {
+		super();
+		fObject = o;
+	}
+
+	public boolean acceptOperation(IOperation operation) {
+		return true;
+	}
+
+	public String getLabel() {
+		return fObject.toString();
+	}
+
+	public Object getObject() {
+		return fObject;
+	}
+
+	public IContextOperationApprover getOperationApprover() {
+		return fApprover;
+	}
+
+	public void setOperationApprover(IContextOperationApprover approver) {
+		fApprover = approver;
+	}
 
 }
