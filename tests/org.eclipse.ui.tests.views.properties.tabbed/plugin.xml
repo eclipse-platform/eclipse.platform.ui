@@ -4,12 +4,12 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="Tabbed Properties Example View"
-            id="org.eclipse.ui.views.properties.tabbed.views">
+            name="Tabbed Properties Tests"
+            id="org.eclipse.ui.tests.views.properties.tabbed.views">
       </category>
       <view
             name="Tabbed Properties Tests View"
-            category="org.eclipse.ui.views.properties.tabbed.views"
+            category="org.eclipse.ui.tests.views.properties.tabbed.views"
             icon="icons/sample.gif"
             class="org.eclipse.ui.tests.views.properties.tabbed.views.TestsView"
             id="org.eclipse.ui.tests.views.properties.tabbed.views.TestsView">
