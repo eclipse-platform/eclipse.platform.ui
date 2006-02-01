@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.osgi.framework.Bundle;
 
@@ -587,13 +588,8 @@ public final class Platform {
 	 * Note that individual platform runnables may be provided with different arguments
 	 * if they are being run individually rather than with <code>Platform.run()</code>.
 	 * <p>
-	 * This method is a convenience for aquiring the environment info
-	 * service and querying it for the command-line arguments.
-	 * <pre><code>
-	 * ServiceTracker tracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
-	 * tracker.open();
-	 * return ((EnvironmentInfo) tracker.getService()).getCommandLineArgs();
-	 * </code></pre>
+	 * Clients are also able to aquire the {@link EnvironmentInfo} service and query it for
+	 * the command-line arguments.
 	 * </p>
 	 * @return the command line used to start the platform
 	 */
@@ -1059,13 +1055,8 @@ public final class Platform {
 	 * specified on the command line, otherwise it is the value 
 	 * returned by <code>java.lang.System.getProperty("os.arch")</code>.
 	 * <p>
-	 * This method is a convenience for aquiring the environment info
-	 * service and querying it for the OSARCH.
-	 * <pre><code>
-	 * ServiceTracker tracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
-	 * tracker.open();
-	 * return ((EnvironmentInfo) tracker.getService()).getOSArch();
-	 * </code></pre>
+	 * Clients are also able to aquire the {@link EnvironmentInfo} service and query it for
+	 * the operating-system architecture.
 	 * </p>
 	 * @return the string name of the current system architecture
 	 * @since 3.0
@@ -1078,13 +1069,8 @@ public final class Platform {
 	 * Returns the string name of the current locale for use in finding files
 	 * whose path starts with <code>$nl$</code>.
 	 * <p>
-	 * This method is a convenience for aquiring the environment info
-	 * service and querying it for the NL.
-	 * <pre><code>
-	 * ServiceTracker tracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
-	 * tracker.open();
-	 * return ((EnvironmentInfo) tracker.getService()).getNL();
-	 * </code></pre>
+	 * Clients are also able to aquire the {@link EnvironmentInfo} service and query it for
+	 * the NL.
 	 * </p>
 	 * @return the string name of the current locale
 	 * @since 3.0
@@ -1101,13 +1087,8 @@ public final class Platform {
 	 * (as specified in <code>knownOSValues</code>) or a user-defined string if
 	 * the operating system name is specified on the command line.
 	 * <p>
-	 * This method is a convenience for aquiring the environment info
-	 * service and querying it for the OS.
-	 * <pre><code>
-	 * ServiceTracker tracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
-	 * tracker.open();
-	 * return ((EnvironmentInfo) tracker.getService()).getOS();
-	 * </code></pre>
+	 * Clients are also able to aquire the {@link EnvironmentInfo} service and query it for
+	 * the operating-system.
 	 * </p>
 	 * @return the string name of the current operating system
 	 * @since 3.0
@@ -1121,13 +1102,8 @@ public final class Platform {
 	 * whose path starts with <code>$ws$</code>.  <code>null</code> is returned
 	 * if the window system cannot be determined.
 	 * <p>
-	 * This method is a convenience for aquiring the environment info
-	 * service and querying it for the windowing system.
-	 * <pre><code>
-	 * ServiceTracker tracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
-	 * tracker.open();
-	 * return ((EnvironmentInfo) tracker.getService()).getWS();
-	 * </code></pre>
+	 * Clients are also able to aquire the {@link EnvironmentInfo} service and query it for
+	 * the windowing system.
 	 * </p>
 	 * @return the string name of the current window system or <code>null</code>
 	 * @since 3.0
@@ -1187,16 +1163,8 @@ public final class Platform {
 	/**
 	 * Returns the currently registered bundle group providers.
 	 * <p>
-	 * This method remains as a convenience only since it is the eventual
-	 * goal for all methods on the Platform class to become deprecated.
-	 * Early adopters should aquire the bundle group provider service
-	 * and access the bundle group providers from there.
-	 * <pre><code>
-	 * Filter filter =  myBundleContext.createFilter("(objectClass=org.eclipse.core.runtime.IBundleGroupProvider)");
-	 * ServiceTracker tracker = new ServiceTracker(myBundleContext, filter, null);
-	 * tracker.open();
-	 * return tracker.getServices();
-	 * </code></pre>
+	 * Clients are also able to aquire the {@link IBundleGroupProvider} service and query it for
+	 * the registered bundle group providers.
 	 * </p>
 	 * @return the currently registered bundle group providers
 	 * @since 3.0
@@ -1210,12 +1178,8 @@ public final class Platform {
 	 * object can be used for such operations as searching for preference 
 	 * values across multiple scopes and preference import/export.
 	 * <p>
-	 * This is a convenience method for aquiring the preference service.
-	 * <pre><code>
-	 * ServiceTracker tracker = new ServiceTracker(context, IPreferencesService.class.getName(), null);
-	 * tracker.open();
-	 * return (IPreferencesService) tracker.getService();
-	 * </code></pre>
+	 * Clients are also able to aquire the {@link IPreferencesService} service via
+	 * OSGi mechanisms and use it for preference functions.
 	 * </p>
 	 * @return an object to interface into the preference mechanism
 	 * @since 3.0
@@ -1238,14 +1202,8 @@ public final class Platform {
 	/**
 	 * Registers the given bundle group provider with the platform.
 	 * <p>
-	 * This method remains as a convenience only since it is the eventual
-	 * goal for all methods on the Platform class to become deprecated.
-	 * Early adopters should register their bundle group provider as a service.
-	 * Note that the registration object should be held onto by the client
-	 * for unregistering later.
-	 * <pre><code>
-	 * ServiceRegistration registration = myBundleContext.registerService(IBundleGroupProvider.class.getName(), myProvider, null);
-	 * </code></pre>
+	 * Clients are also able to use the {@link IBundleGroupProvider} service to
+	 * register themselves as a bundle group provider.
 	 * </p>
 	 * @param provider a provider to register
 	 * @since 3.0
@@ -1257,16 +1215,8 @@ public final class Platform {
 	/**
 	 * De-registers the given bundle group provider with the platform.
 	 * <p>
-	 * This method remains as a convenience only since it is the eventual
-	 * goal for all methods on the Platform class to become deprecated.
-	 * Early adopters should hold onto the registration object that they
-	 * received when registering their bundle group provider as a service,
-	 * and then unregister this object rather than calling this method.
-	 * <pre><code>
-	 * ServiceRegistration registration = ...; // store when registering service
-	 * ...
-	 * registration.unregister();
-	 * </code></pre>
+	 * Clients are also able to use the {@link IBundleGroupProvider} service mechanism
+	 * for un-registering themselves.
 	 * </p>
 	 * @param provider a provider to de-register
 	 * @since 3.0
@@ -1490,13 +1440,8 @@ public final class Platform {
 	 * debug mode.  The platform is typically put in debug mode using the
 	 * "-debug" command line argument.
 	 * <p>
-	 * This method is a convenience for aquiring the environment info
-	 * service and asking it whether or not we are in debug mode.
-	 * <pre><code>
-	 * ServiceTracker tracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
-	 * tracker.open();
-	 * return ((EnvironmentInfo) tracker.getService()).inDebugMode();
-	 * </code></pre>
+	 * Clients are also able to aquire the {@link EnvironmentInfo} service and query it 
+	 * to see if they are in debug mode.
 	 * </p>
 	 * @return whether or not the platform is running in debug mode
 	 * @since 3.0
@@ -1511,13 +1456,8 @@ public final class Platform {
 	 * taken when defining plug-in class paths.  The platform is typically put in 
 	 * development mode using the "-dev" command line argument.
 	 * <p>
-	 * This method is a convenience for aquiring the environment info
-	 * service and asking it if we are in development mode.
-	 * <pre><code>
-	 * ServiceTracker tracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
-	 * tracker.open();
-	 * return ((EnvironmentInfo) tracker.getService()).inDevelopmentMode();
-	 * </code></pre>
+	 * Clients are also able to aquire the {@link EnvironmentInfo} service and query it
+	 * to see if they are in development mode.
 	 * </p>
 	 * @return whether or not the platform is running in development mode
 	 * @since 3.0
