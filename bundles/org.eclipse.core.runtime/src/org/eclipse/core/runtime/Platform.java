@@ -1052,10 +1052,17 @@ public final class Platform {
 	 * The value is a user-defined string if the architecture is 
 	 * specified on the command line, otherwise it is the value 
 	 * returned by <code>java.lang.System.getProperty("os.arch")</code>.
-	 * 
+	 * <p>
+	 * This method is a convenience for aquiring the environment info
+	 * service and querying it for the OSARCH.
+	 * <pre><code>
+	 * ServiceTracker tracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
+	 * tracker.open();
+	 * return ((EnvironmentInfo) tracker.getService()).getOSArch();
+	 * </code></pre>
+	 * </p>
 	 * @return the string name of the current system architecture
 	 * @since 3.0
-	 * XXX Use the {@link EnvironmentInfo} service.
 	 */
 	public static String getOSArch() {
 		return InternalPlatform.getDefault().getOSArch();
@@ -1064,10 +1071,17 @@ public final class Platform {
 	/**
 	 * Returns the string name of the current locale for use in finding files
 	 * whose path starts with <code>$nl$</code>.
-	 *
+	 * <p>
+	 * This method is a convenience for aquiring the environment info
+	 * service and querying it for the NL.
+	 * <pre><code>
+	 * ServiceTracker tracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
+	 * tracker.open();
+	 * return ((EnvironmentInfo) tracker.getService()).getNL();
+	 * </code></pre>
+	 * </p>
 	 * @return the string name of the current locale
 	 * @since 3.0
-	 * XXX Use the {@link EnvironmentInfo} service.
 	 */
 	public static String getNL() {
 		return InternalPlatform.getDefault().getNL();
@@ -1080,10 +1094,17 @@ public final class Platform {
 	 * The value may indicate one of the operating systems known to the platform
 	 * (as specified in <code>knownOSValues</code>) or a user-defined string if
 	 * the operating system name is specified on the command line.
-	 *
+	 * <p>
+	 * This method is a convenience for aquiring the environment info
+	 * service and querying it for the OS.
+	 * <pre><code>
+	 * ServiceTracker tracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
+	 * tracker.open();
+	 * return ((EnvironmentInfo) tracker.getService()).getOS();
+	 * </code></pre>
+	 * </p>
 	 * @return the string name of the current operating system
 	 * @since 3.0
-	 * XXX Use the {@link EnvironmentInfo} service.
 	 */
 	public static String getOS() {
 		return InternalPlatform.getDefault().getOS();
@@ -1093,10 +1114,17 @@ public final class Platform {
 	 * Returns the string name of the current window system for use in finding files
 	 * whose path starts with <code>$ws$</code>.  <code>null</code> is returned
 	 * if the window system cannot be determined.
-	 *
+	 * <p>
+	 * This method is a convenience for aquiring the environment info
+	 * service and querying it for the windowing system.
+	 * <pre><code>
+	 * ServiceTracker tracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
+	 * tracker.open();
+	 * return ((EnvironmentInfo) tracker.getService()).getWS();
+	 * </code></pre>
+	 * </p>
 	 * @return the string name of the current window system or <code>null</code>
 	 * @since 3.0
-	 * XXX Use the {@link EnvironmentInfo} service.
 	 */
 	public static String getWS() {
 		return InternalPlatform.getDefault().getWS();
