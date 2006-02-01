@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	public final ISchedulingRule buildRule() {
 		return workspace.getRoot();
 	}
-	
+
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#charsetRule</code>.
 	 * This default implementation always returns the project of the resource 
@@ -63,9 +63,9 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 */
 	public ISchedulingRule charsetRule(IResource resource) {
 		if (resource.getType() == IResource.ROOT)
-			return null;		
+			return null;
 		return resource.getProject();
-	}	
+	}
 
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#copyRule</code>.
@@ -111,6 +111,11 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 */
 	public ISchedulingRule deleteRule(IResource resource) {
 		return parent(resource);
+	}
+
+	private boolean isReadOnly(IResource resource) {
+		ResourceAttributes attributes = resource.getResourceAttributes();
+		return attributes == null ? false : attributes.isReadOnly();
 	}
 
 	/**
@@ -212,11 +217,11 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 			return null;
 		//optimize rule for single file
 		if (resources.length == 1)
-			return resources[0].isReadOnly() ? parent(resources[0]) : null;
+			return isReadOnly(resources[0]) ? parent(resources[0]) : null;
 		//need a lock on the parents of all read-only files
 		HashSet rules = new HashSet();
 		for (int i = 0; i < resources.length; i++)
-			if (resources[i].isReadOnly())
+			if (isReadOnly(resources[i]))
 				rules.add(parent(resources[i]));
 		if (rules.isEmpty())
 			return null;

@@ -11,6 +11,7 @@
 package org.eclipse.core.resources;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 
 /**
  * A lock used to control write access to the resources in a workspace.
@@ -27,6 +28,9 @@ public class WorkspaceLock {
 	 * Returns a new workspace lock.
 	 */
 	public WorkspaceLock(IWorkspace workspace) throws CoreException {
+		//thwart compiler warning
+		if (false)
+			throw new CoreException(Status.OK_STATUS);
 	}
 
 	/**
@@ -38,7 +42,9 @@ public class WorkspaceLock {
 	 * @see #release()
 	 */
 	public boolean acquire() throws InterruptedException {
-		//deprecated API
+		//thwart compiler warning
+		if (false)
+			throw new InterruptedException();
 		return false;
 	}
 

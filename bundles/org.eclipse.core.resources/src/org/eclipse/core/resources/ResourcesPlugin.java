@@ -199,7 +199,7 @@ public final class ResourcesPlugin extends Plugin {
 	public static final String PREF_FILE_STATE_LONGEVITY = PREF_DESCRIPTION_PREFIX + "filestatelongevity"; //$NON-NLS-1$
 
 	/**
-	 * Name of a preference for configuring the maximum permited size of a file
+	 * Name of a preference for configuring the maximum permitted size of a file
 	 * to be stored in the local history
 	 * 
 	 * @see IWorkspaceDescription#getMaxFileStateSize()
@@ -262,6 +262,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * 
 	 * @param pluginDescriptor the plug-in descriptor for the
 	 *   Resources plug-in
+	 * @deprecated
 	 */
 	public ResourcesPlugin(IPluginDescriptor pluginDescriptor) {
 		super(pluginDescriptor);
@@ -274,13 +275,13 @@ public final class ResourcesPlugin extends Plugin {
 	 * 
 	 * @exception CoreException if the workspace structure could not be constructed.
 	 * Reasons include:
-	 * <ll>
+	 * <ul>
 	 * <li> There is an existing workspace structure on at the given location
 	 *      in the local file system.
 	 * <li> A file exists at the given location in the local file system.
 	 * <li> A directory could not be created at the given location in the
 	 *      local file system.
-	 * </ll>
+	 * </ul>
 	 */
 	private static void constructWorkspace() throws CoreException {
 		new LocalMetaArea().createMetaArea();
@@ -333,11 +334,11 @@ public final class ResourcesPlugin extends Plugin {
 	 * This implementation of the corresponding <code>Plugin</code> method
 	 * closes the workspace (without saving).
 	 * @see Plugin#shutdown()
+	 * @deprecated
 	 */
 	public void shutdown() throws CoreException {
-		if (workspace == null) {
+		if (workspace == null)
 			return;
-		}
 		// save the preferences for this plug-in
 		getPlugin().savePluginPreferences();
 		workspace.close(null);
@@ -352,6 +353,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * This implementation of the corresponding <code>Plugin</code> method
 	 * opens the workspace.
 	 * @see Plugin#startup()
+	 * @deprecated
 	 */
 	public void startup() throws CoreException {
 		if (!new LocalMetaArea().hasSavedWorkspace()) {

@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Path;
  * <p>
  * <b>Example:</b>
  <code><pre>
- // printing a crude representation of the posterchild
+ // printing a crude representation of the poster child
  IElementContentVisitor visitor=
  new IElementContentVisitor() {
  public void visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
@@ -130,14 +130,14 @@ public class ElementTreeIterator implements IPathRequestor {
 	/**
 	 * Push the first "toPush" segments of this path.
 	 */
-	private void push(IPath path, int toPush) {
+	private void push(IPath pathToPush, int toPush) {
 		if (toPush <= 0)
 			return;
 		for (int i = 0; i < toPush; i++) {
 			if (nextFreeSegment >= segments.length) {
 				grow();
 			}
-			segments[nextFreeSegment++] = path.segment(i);
+			segments[nextFreeSegment++] = pathToPush.segment(i);
 		}
 	}
 
