@@ -53,6 +53,20 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     }
     
     /* (non-Javadoc)
+     * @see org.eclipse.team.core.mapping.IMergeContext#reject(org.eclipse.team.core.diff.IDiff[], org.eclipse.core.runtime.IProgressMonitor)
+     */
+    public void reject(final IDiff[] diffs, IProgressMonitor monitor) throws CoreException {
+		run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				for (int i = 0; i < diffs.length; i++) {
+					IDiff node = diffs[i];
+					reject(node, monitor);
+				}
+			}
+		}, getMergeRule(diffs), IResource.NONE, monitor);
+    }
+    
+    /* (non-Javadoc)
      * @see org.eclipse.team.core.mapping.IMergeContext#markAsMerged(org.eclipse.team.core.diff.IDiffNode[], boolean, org.eclipse.core.runtime.IProgressMonitor)
      */
     public void markAsMerged(final IDiff[] nodes, final boolean inSyncHint, IProgressMonitor monitor) throws CoreException {

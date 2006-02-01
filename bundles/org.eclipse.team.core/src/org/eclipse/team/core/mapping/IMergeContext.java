@@ -281,6 +281,30 @@ public interface IMergeContext extends ISynchronizationContext {
 			IProgressMonitor monitor) throws CoreException;
 
 	/**
+	 * Reject the change associated with the given diff. For a two-way
+	 * merge, this should just remove the change from the set of changes in
+	 * the diff tree. For a three-way merge, this should throw away the
+	 * remote change and keep any local changes. So, for instance, if
+	 * the diff is an incoming change or a conflict, the result of rejecting the
+	 * change should be an outgoing change that will make the remote state 
+	 * match the local state.
+	 * @param diff the diff
+	 * @param monitor a progress monitor
+	 * @throws CoreException
+	 */
+	public void reject(IDiff diff, IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Reject the changes associated with the given diffs. This method is 
+	 * equivalent to calling {@link #reject(IDiff, IProgressMonitor)} for 
+	 * each diff.
+	 * @param diffs the diffs
+	 * @param monitor a progress monitor
+	 * @throws CoreException
+	 */
+	public void reject(IDiff[] diffs, IProgressMonitor monitor) throws CoreException;
+	
+	/**
 	 * Runs the given action as an atomic workspace operation. It has the same
 	 * semantics as
 	 * {@link IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor)}
@@ -300,29 +324,31 @@ public interface IMergeContext extends ISynchronizationContext {
 			int flags, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Return the scheduling rule that is required to merge the resource
+	 * Return the scheduling rule that is required to merge (or reject) the resource
 	 * associated with the given diff. If a resource being merged is a folder or
 	 * project, the returned rule will be sufficient to merge any files
 	 * contained in the folder or project. The returned rule also applies to
-	 * {@link #markAsMerged(IDiff, boolean, IProgressMonitor) }.
+	 * {@link #markAsMerged(IDiff, boolean, IProgressMonitor) } 
+	 * and {@link #reject(IDiff, IProgressMonitor)}.
 	 * 
-	 * @param node the node to be merged
+	 * @param diff the diff to be merged
 	 * @return the scheduling rule that is required to merge the resource of the
 	 *         given diff
 	 */
-	public ISchedulingRule getMergeRule(IDiff node);
+	public ISchedulingRule getMergeRule(IDiff diff);
 
 	/**
-	 * Return the scheduling rule that is required to merge the resources
+	 * Return the scheduling rule that is required to merge (or reject) the resources
 	 * associated with the given diffs. If a resource being merged is a folder
 	 * or project, the returned rule will be sufficient to merge any files
 	 * contained in the folder or project. The returned rule also applies to
-	 * {@link #markAsMerged(IDiff, boolean, IProgressMonitor) }.
+	 * {@link #markAsMerged(IDiff[], boolean, IProgressMonitor) } 
+	 * and {@link #reject(IDiff[], IProgressMonitor)}.
 	 * 
-	 * @param nodes the nodes being merged
+	 * @param diffs the diffs being merged
 	 * @return the scheduling rule that is required to merge the resources of
 	 *         the given diffs
 	 */
-	public ISchedulingRule getMergeRule(IDiff[] nodes);
+	public ISchedulingRule getMergeRule(IDiff[] diffs);
 
 }
