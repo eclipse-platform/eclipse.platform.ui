@@ -141,25 +141,20 @@ public abstract class AbstractDataTreeNode {
 				// to hide child nodes in the parent.
 				AbstractDataTreeNode[] assembledChildren = assembleWith(children, node.children, true);
 				return new DataDeltaNode(name, node.getData(), assembledChildren);
-			} else {
-				// This is a complete picture, so deletions 
-				// wipe out the child and are no longer useful
-				AbstractDataTreeNode[] assembledChildren = assembleWith(children, node.children, false);
-				return new DataTreeNode(name, node.getData(), assembledChildren);
 			}
-		} else {
-			if (this.isDelta()) {
-				AbstractDataTreeNode[] assembledChildren = assembleWith(children, node.children, true);
-				if (this.hasData()) {
-					return new DataDeltaNode(name, this.getData(), assembledChildren);
-				} else {
-					return new NoDataDeltaNode(name, assembledChildren);
-				}
-			} else {
-				AbstractDataTreeNode[] assembledChildren = assembleWith(children, node.children, false);
-				return new DataTreeNode(name, this.getData(), assembledChildren);
-			}
+			// This is a complete picture, so deletions 
+			// wipe out the child and are no longer useful
+			AbstractDataTreeNode[] assembledChildren = assembleWith(children, node.children, false);
+			return new DataTreeNode(name, node.getData(), assembledChildren);
 		}
+		if (this.isDelta()) {
+			AbstractDataTreeNode[] assembledChildren = assembleWith(children, node.children, true);
+			if (this.hasData())
+				return new DataDeltaNode(name, this.getData(), assembledChildren);
+			return new NoDataDeltaNode(name, assembledChildren);
+		}
+		AbstractDataTreeNode[] assembledChildren = assembleWith(children, node.children, false);
+		return new DataTreeNode(name, this.getData(), assembledChildren);
 	}
 
 	/**
@@ -269,7 +264,7 @@ public abstract class AbstractDataTreeNode {
 				AbstractDataTreeNode comparedNode = oldNode.compareWith(newNode, comparator);
 				NodeComparison comparison = (NodeComparison) comparedNode.getData();
 
-				/* skip empty comparisions */
+				/* skip empty comparisons */
 				if (!(comparison.isUnchanged() && comparedNode.size() == 0)) {
 					comparedNodes[count++] = comparedNode;
 				}

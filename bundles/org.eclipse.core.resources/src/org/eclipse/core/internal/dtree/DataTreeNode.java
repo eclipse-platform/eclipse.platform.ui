@@ -49,12 +49,9 @@ public class DataTreeNode extends AbstractDataTreeNode {
 	 * @see AbstractDataTreeNode#asBackwardDelta(DeltaDataTree, DeltaDataTree, IPath)
 	 */
 	AbstractDataTreeNode asBackwardDelta(DeltaDataTree myTree, DeltaDataTree parentTree, IPath key) {
-
-		if (parentTree.includes(key)) {
+		if (parentTree.includes(key))
 			return parentTree.copyCompleteSubtree(key);
-		} else {
-			return new DeletedNode(name);
-		}
+		return new DeletedNode(name);
 	}
 
 	/**
@@ -125,9 +122,8 @@ public class DataTreeNode extends AbstractDataTreeNode {
 			AbstractDataTreeNode[] childrenCopy = new AbstractDataTreeNode[children.length];
 			System.arraycopy(children, 0, childrenCopy, 0, children.length);
 			return new DataTreeNode(name, data, childrenCopy);
-		} else {
-			return new DataTreeNode(name, data, children);
 		}
+		return new DataTreeNode(name, data, children);
 	}
 
 	/**
@@ -278,9 +274,8 @@ public class DataTreeNode extends AbstractDataTreeNode {
 		AbstractDataTreeNode deltaNode = forwardDeltaWithOrNullIfEqual(this, other, comparer);
 		if (deltaNode == null) {
 			return new NoDataDeltaNode(name, NO_CHILDREN);
-		} else {
-			return deltaNode;
 		}
+		return deltaNode;
 	}
 
 	/**
@@ -296,9 +291,8 @@ public class DataTreeNode extends AbstractDataTreeNode {
 				return null;
 			}
 			return new NoDataDeltaNode(newNode.name, childDeltas);
-		} else {
-			return new DataDeltaNode(newNode.name, newData, childDeltas);
 		}
+		return new DataDeltaNode(newNode.name, newData, childDeltas);
 	}
 
 	/**
@@ -345,7 +339,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 		//copy data for thread safety
 		Object o = data;
 		if (o instanceof IStringPoolParticipant)
-			((IStringPoolParticipant)o).shareStrings(set);
+			((IStringPoolParticipant) o).shareStrings(set);
 	}
 
 	/**
