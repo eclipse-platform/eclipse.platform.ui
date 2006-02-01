@@ -187,7 +187,7 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 						} else {
 							// We reset the status to be a remove/move_to
 							sourceDelta.setKind(IResourceDelta.REMOVED);
-							sourceDelta.addFlags(IResourceDelta.MOVED_TO);
+							sourceDelta.setFlags(IResourceDelta.MOVED_TO);
 							sourceDelta.setMovedToPath(destinationPrefix.append(fromPath.removeFirstSegments(sourcePrefix.segmentCount())));
 						}
 					}

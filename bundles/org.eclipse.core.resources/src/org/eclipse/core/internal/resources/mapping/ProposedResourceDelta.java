@@ -66,7 +66,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 			setKind(IResourceDelta.CHANGED);
 		children.add(delta);
 	}
-	
+
 	/**
 	 * Adds the given flags to this delta.
 	 * @param flags The flags to add
@@ -183,7 +183,11 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	public IResource getResource() {
 		return resource;
 	}
-	
+
+	public void setFlags(int flags) {
+		status = getKind() | (flags & ~KIND_MASK);
+	}
+
 	protected void setKind(int kind) {
 		status = getFlags() | (kind & KIND_MASK);
 	}
