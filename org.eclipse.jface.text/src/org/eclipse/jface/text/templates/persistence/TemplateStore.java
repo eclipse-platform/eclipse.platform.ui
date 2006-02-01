@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
@@ -54,7 +56,13 @@ public class TemplateStore {
 	 * 
 	 * @since 3.2
 	 */
-	private boolean fIgnoreLoad= false;
+	private boolean fIgnorePreferenceStoreChanges= false;
+	/**
+	 * The property listener, if any is registered, <code>null</code> otherwise.
+	 * 
+	 * @since 3.2
+	 */
+	private IPropertyChangeListener fPropertyListener;
 
 
 	/**
@@ -95,16 +103,63 @@ public class TemplateStore {
 	 * @throws IOException if loading fails.
 	 */
 	public void load() throws IOException {
-		/*
-		 * Don't load if we are in the process of saving ourselves. We are in sync anyway after the
-		 * save operation, and clients may trigger reloading by listening to preference store
-		 * updates.
-		 */
-		if (!fIgnoreLoad) {
-			fTemplates.clear();
-			loadContributedTemplates();
-			loadCustomTemplates();
+		fTemplates.clear();
+		loadContributedTemplates();
+		loadCustomTemplates();
+	}
+	
+	/**
+	 * Starts listening for property changes on the preference store. If the configured preference
+	 * key changes, the template store is {@link #load() reloaded}. Call
+	 * {@link #stopListeningForPreferenceChanges()} to remove any listener and stop the
+	 * auto-updating behavior.
+	 * 
+	 * @since 3.2
+	 */
+	public final void startListeningForPreferenceChanges() {
+		if (fPropertyListener == null) {
+			fPropertyListener= new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					/*
+					 * Don't load if we are in the process of saving ourselves. We are in sync anyway after the
+					 * save operation, and clients may trigger reloading by listening to preference store
+					 * updates.
+					 */
+					if (!fIgnorePreferenceStoreChanges && fKey.equals(event.getProperty()))
+						try {
+							load();
+						} catch (IOException x) {
+							handleException(x);
+						}
+				}
+			};
+			fPreferenceStore.addPropertyChangeListener(fPropertyListener);
 		}
+		
+	}
+	
+	/**
+	 * Stops the auto-updating behavior started by calling
+	 * {@link #startListeningForPreferenceChanges()}.
+	 * 
+	 * @since 3.2
+	 */
+	public final void stopListeningForPreferenceChanges() {
+		if (fPropertyListener != null) {
+			fPreferenceStore.removePropertyChangeListener(fPropertyListener);
+			fPropertyListener= null;
+		}
+	}
+	
+	/**
+	 * Handles an {@link IOException} thrown during reloading the preferences due to a preference
+	 * store update. The default is to write to stderr.
+	 * 
+	 * @param x the exception
+	 * @since 3.2
+	 */
+	protected void handleException(IOException x) {
+		x.printStackTrace();
 	}
 
 	/**
@@ -154,13 +209,13 @@ public class TemplateStore {
 		TemplateReaderWriter writer= new TemplateReaderWriter();
 		writer.save((TemplatePersistenceData[]) custom.toArray(new TemplatePersistenceData[custom.size()]), output);
 
-		fIgnoreLoad= true;
+		fIgnorePreferenceStoreChanges= true;
 		try {
 			fPreferenceStore.setValue(fKey, output.toString());
 			if (fPreferenceStore instanceof IPersistentPreferenceStore)
 				((IPersistentPreferenceStore)fPreferenceStore).save();
 		} finally {
-			fIgnoreLoad= false;
+			fIgnorePreferenceStoreChanges= false;
 		}
 	}
 
@@ -223,10 +278,10 @@ public class TemplateStore {
 	 */
 	public void restoreDefaults() {
 		try {
-			fIgnoreLoad= true;
+			fIgnorePreferenceStoreChanges= true;
 			fPreferenceStore.setToDefault(fKey);
 		} finally {
-			fIgnoreLoad= false;
+			fIgnorePreferenceStoreChanges= false;
 		}
 		try {
 			load();

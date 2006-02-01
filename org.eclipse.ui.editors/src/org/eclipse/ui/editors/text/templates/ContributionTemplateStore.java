@@ -249,5 +249,12 @@ public class ContributionTemplateStore extends TemplateStore {
 	private static boolean isValidTemplateId(String id) {
 		return id != null && id.trim().length() != 0; // TODO test validity?
 	}
+	
+	/*
+	 * @see org.eclipse.jface.text.templates.persistence.TemplateStore#handleException(java.io.IOException)
+	 */
+	protected void handleException(IOException x) {
+		EditorsPlugin.log(x);
+	}
 }
 
