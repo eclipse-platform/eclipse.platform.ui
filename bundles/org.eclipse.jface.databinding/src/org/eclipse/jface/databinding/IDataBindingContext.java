@@ -143,16 +143,6 @@ public interface IDataBindingContext {
 	public IUpdatable createUpdatable(Object description);
 
 	/**
-	 * Creates a nested updatable object from a description. Description objects are
-	 * interpreted by implementors of IUpdatableFactory, the data binding
-	 * framework does not impose any semantics on them.
-	 * 
-	 * @param nestedProperty
-	 * @return IUpdatable for the given description
-	 */
-	public IUpdatable createNestedUpdatable(NestedProperty nestedProperty);
-
-	/**
 	 * Tries to create a validator that can validate values of type fromType.
 	 * Returns <code>null</code> if no validator could be created. Either
 	 * toType or modelDescription can be <code>null</code>, but not both. The

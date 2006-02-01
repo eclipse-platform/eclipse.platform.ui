@@ -21,9 +21,9 @@ import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.JavaBeansScalarUpdatableValueFactory;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.UpdatableCollection;
+import org.eclipse.jface.databinding.beans.JavaBeansScalarUpdatableValueFactory;
 import org.eclipse.jface.util.Assert;
 
 /**

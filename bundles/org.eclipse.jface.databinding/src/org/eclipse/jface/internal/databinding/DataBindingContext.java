@@ -10,13 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding;
 
-import java.beans.BeanInfo;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.eclipse.jface.databinding.BindSpec;
 import org.eclipse.jface.databinding.BindingEvent;
@@ -34,8 +30,6 @@ import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IUpdatableTable;
 import org.eclipse.jface.databinding.IUpdatableTree;
 import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.NestedProperty;
-import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.converterfunction.ConversionFunctionRegistry;
 import org.eclipse.jface.databinding.converters.FunctionalConverter;
@@ -417,61 +411,7 @@ public class DataBindingContext implements IDataBindingContext {
 		}
 		return updatable;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#createNestedUpdatable(org.eclipse.jface.databinding.NestedProperty)
-	 */
-	public IUpdatable createNestedUpdatable(NestedProperty nestedProperty) {
-		IUpdatable lastChildUpdatable = null;
-		Object targetObject = nestedProperty.getObject();
-		if (nestedProperty.getPrototypeClass() != null) {
-			Class targetClazz = nestedProperty.getPrototypeClass();
-			StringTokenizer tokenizer = new StringTokenizer((String) nestedProperty.getPropertyID(), "."); //$NON-NLS-1$
-			while (tokenizer.hasMoreElements()) {
-				String nextDesc = (String) tokenizer.nextElement();
-				try {
-					BeanInfo beanInfo = Introspector.getBeanInfo(targetClazz);
-					PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-					Class discoveredClazz = null;
-					for (int i = 0; i < propertyDescriptors.length; i++) {
-						PropertyDescriptor descriptor = propertyDescriptors[i];
-						if (descriptor.getName().equals(
-								nextDesc)) {
-							discoveredClazz = descriptor.getPropertyType();
-							break;
-						}
-					}
-					if (discoveredClazz != null) {
-						targetClazz = discoveredClazz;
-					} else {
-						throw new BindingException("Error using prototype class to determine binding types."); //$NON-NLS-1$
-					}
-				} catch (BindingException be) {
-					throw be;
-				} catch (Exception e) {
-					e.printStackTrace();
-					throw new BindingException("Exeception using prototype class to determine binding types.", e); //$NON-NLS-1$
-				}
-				lastChildUpdatable = createUpdatable(new Property(targetObject,
-						nextDesc, targetClazz, new Boolean(false)));
-				targetObject = lastChildUpdatable;
-			}
-
-		} else {
-			String[] properties = (String[]) nestedProperty.getPropertyID();
-			for (int i = 0; i < properties.length; i++) {
-				String nextDesc = properties[i];
-				Class clazz = nestedProperty.getTypes()[i];
-				lastChildUpdatable = createUpdatable(new Property(targetObject,
-						nextDesc, clazz, new Boolean(false)));
-				targetObject = lastChildUpdatable;
-			}
-		}
-		return lastChildUpdatable;
-	}
-
+	
 	protected IUpdatable doCreateUpdatable(Object description,
 			DataBindingContext thisDatabindingContext) {
 		for (int i = factories.size() - 1; i >= 0; i--) {

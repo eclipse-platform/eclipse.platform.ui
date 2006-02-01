@@ -36,6 +36,7 @@ public interface IUpdatableFactory {
 	 *            a mapping from context-defined properties to values, e.g. for
 	 *            passing policies to the factory.
 	 * @param description
+	 * @param bindingContext The data binding context
 	 * @return an updatable
 	 */
 	IUpdatable createUpdatable(Map properties, Object description, IDataBindingContext bindingContext);

@@ -1,4 +1,4 @@
-package org.eclipse.jface.databinding;
+package org.eclipse.jface.databinding.beans;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -6,6 +6,11 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.Map;
 
+import org.eclipse.jface.databinding.IDataBindingContext;
+import org.eclipse.jface.databinding.IUpdatable;
+import org.eclipse.jface.databinding.IUpdatableFactory;
+import org.eclipse.jface.databinding.IUpdatableValue;
+import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.internal.databinding.beans.JavaBeanUpdatableValue;
 
 /**

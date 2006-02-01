@@ -13,6 +13,7 @@ package org.eclipse.jface.internal.databinding;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
+import org.eclipse.jface.databinding.INestedUpdatableValue;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.UpdatableValue;
@@ -22,7 +23,7 @@ import org.eclipse.jface.util.Assert;
  * @since 3.2
  * 
  */
-public class NestedUpdatableValue extends UpdatableValue {
+public class NestedUpdatableValue extends UpdatableValue implements INestedUpdatableValue {
 	
 	private boolean updating=false;
 
@@ -131,6 +132,9 @@ public class NestedUpdatableValue extends UpdatableValue {
 		return innerUpdatableValue;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.INestedUpdatableValue#getOuterUpdatableValue()
+	 */
 	public IUpdatableValue getOuterUpdatableValue() {
 		return outerUpdatableValue;
 	}

@@ -6,8 +6,8 @@ import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.JavaBeansScalarUpdatableValueFactory;
 import org.eclipse.jface.databinding.Property;
+import org.eclipse.jface.databinding.beans.JavaBeansScalarUpdatableValueFactory;
 
 public class JavaBeansScalarUpdatableValueFactoryTest extends TestCase {
    
