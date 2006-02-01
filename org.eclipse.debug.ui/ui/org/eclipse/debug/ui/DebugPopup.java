@@ -11,11 +11,15 @@
 
 package org.eclipse.debug.ui;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.swt.graphics.Point;
@@ -27,13 +31,14 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.keys.IBindingService;
 
 /**
  * A <code>PopupDialog</code> that is automatically positioned relative
- * to the current selection on viewer on which it is installed. The 
- * popup can be dismissed in the same manor as all popup dialogs, but 
- * additionally allows users the option of specifying a command id that 
- * can be used to persist the contents of the dialog.
+ * to a specified anchor point. The popup can be dismissed in the same
+ * manor as all popup dialogs, but additionally allows clients the option
+ * of specifying a command id that can be used to persist the contents of
+ * the dialog.
  * <p>
  * Clients may subclass this.
  * </p>
@@ -52,24 +57,56 @@ public abstract class DebugPopup extends PopupDialog {
 
     private IHandlerService fHandlerService;
 
+	private String fCommandId;
+
     /**
      * Constructs a new popup dialog of type <code>PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE</code>
      * @param parent The parent shell
      * @param anchor point at which to anchor the popup dialog in Display coordinate space
+     * @param commandId The command id to be used for persistance of 
+     *  the dialog, or <code>null</code>
      */
-    public DebugPopup(Shell parent, Point anchor) {
+    public DebugPopup(Shell parent, Point anchor, String commandId) {
         super(parent, PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE, true, true, false, true, null, null);
         fAnchor = anchor;
+        fCommandId = commandId;
     }
 
     /**
      * Returns the text to be shown in the popups's info area. 
-     * May return <code>null</code>
-     * 
+     * May return <code>null</code>.
+     * <p>
+     * By default, if this dialog has a persistence command associated with it,
+     * the text displayed is of the form "Press {key-sequence} to {action}". The
+     * action text is specified by the method <code>getActionText()</code>.
+     * </p>
      * @return The text to be shown in the popup's info area or <code>null</code>
      */
     protected String getInfoText() {
-        return null;
+    	if (getCommandId() != null && getActionText() != null) {
+	        IWorkbench workbench = PlatformUI.getWorkbench();
+	        IBindingService bindingService = (IBindingService) workbench.getAdapter(IBindingService.class);
+	        TriggerSequence[] bindings = bindingService.getActiveBindingsFor(getCommandId());
+	        String infoText = null;
+	        if (bindings.length > 0) {
+	             infoText = MessageFormat.format(DebugUIViewsMessages.InspectPopupDialog_1, new String[] { bindings[0].format(), getActionText()});
+	        }
+	        return infoText;
+    	}
+    	return null;
+    }
+    
+    /**
+     * Returns the text to be shown as the action performed when this dialog's
+     * persist command is invoked, or <code>null</code>.
+     * <p>
+     * Subclasses should override as neccessary.
+     * </p>
+     * @return the text to be shown as the action performed when this dialog's
+     *  persist command is invoked
+     */
+    protected String getActionText() {
+    	return null;
     }
 
     /**
@@ -81,7 +118,7 @@ public abstract class DebugPopup extends PopupDialog {
      * dialog or <code>null</code>
      */
     protected String getCommandId() {
-        return null;
+        return fCommandId;
     }
 
     /**

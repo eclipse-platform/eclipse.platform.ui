@@ -11,7 +11,6 @@
 
 package org.eclipse.debug.ui;
 
-import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -32,7 +31,6 @@ import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewer;
-import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
@@ -51,11 +49,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.keys.IBindingService;
 
 /**
  * A <code>DebugPopup</code> that can be used to inspect an 
@@ -89,8 +84,6 @@ public class InspectPopupDialog extends DebugPopup {
 
     private IExpression fExpression;
 
-    private String fCommandId;
-
     /**
      * Creates a new inspect popup.
      * 
@@ -101,8 +94,7 @@ public class InspectPopupDialog extends DebugPopup {
      * @param expression The expression being inspected
      */
     public InspectPopupDialog(Shell shell, Point anchor, String commandId, IExpression expression) {
-        super(shell, anchor);
-        fCommandId = commandId;
+        super(shell, anchor, commandId);
         fExpression = expression;
     }
 
@@ -213,7 +205,7 @@ public class InspectPopupDialog extends DebugPopup {
         }
     }
     
-    void updateValueDisplay(IValue val) {
+    private void updateValueDisplay(IValue val) {
         IValueDetailListener valueDetailListener = new IValueDetailListener() {
             public void detailComputed(IValue value, final String result) {
                 Display.getDefault().asyncExec(new Runnable() {
@@ -233,7 +225,7 @@ public class InspectPopupDialog extends DebugPopup {
         fModelPresentation.computeDetail(val, valueDetailListener);
     }
 
-    VariablesView getViewToEmulate() {
+    private VariablesView getViewToEmulate() {
         IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
         VariablesView expressionsView = (VariablesView) page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
         if (expressionsView != null && expressionsView.isVisible()) {
@@ -248,30 +240,15 @@ public class InspectPopupDialog extends DebugPopup {
         }
         return variablesView;
     }
-
     
     /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.DebugPopup#getCommandId()
+     * @see org.eclipse.debug.ui.DebugPopup#getActionText()
      */
-    protected String getCommandId() {
-        return fCommandId;
-    }
+    protected String getActionText() {
+		return DebugUIViewsMessages.InspectPopupDialog_0;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.DebugPopup#getInfoText()
-     */
-    protected String getInfoText() {
-        IWorkbench workbench = PlatformUI.getWorkbench();
-        IBindingService bindingService = (IBindingService) workbench.getAdapter(IBindingService.class);
-        TriggerSequence[] bindings = bindingService.getActiveBindingsFor(fCommandId);
-        String infoText = null;
-        if (bindings.length > 0) {
-             infoText = MessageFormat.format(DebugUIViewsMessages.InspectPopupDialog_1, new String[] { bindings[0].format(), DebugUIViewsMessages.InspectPopupDialog_0 });
-        }
-        return infoText;
-    }
-
-    /* (non-Javadoc)
+	/* (non-Javadoc)
      * @see org.eclipse.debug.ui.DebugPopup#persist()
      */
     protected void persist() {
