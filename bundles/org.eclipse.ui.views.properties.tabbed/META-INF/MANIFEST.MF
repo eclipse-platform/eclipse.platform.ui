@@ -2,17 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.views.properties.tabbed;singleton:=true
-Bundle-Version: 3.2.0
+Bundle-Version: 3.2.0.qualifier
 Bundle-Activator: org.eclipse.ui.views.properties.tabbed.internal.TabbedPropertyViewPlugin
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.views.properties.tabbed,
- org.eclipse.ui.views.properties.tabbed.internal,
- org.eclipse.ui.views.properties.tabbed.internal.l10n,
- org.eclipse.ui.views.properties.tabbed.internal.view
+ org.eclipse.ui.views.properties.tabbed.internal;x-internal:=true,
+ org.eclipse.ui.views.properties.tabbed.internal.l10n;x-internal:=true,
+ org.eclipse.ui.views.properties.tabbed.internal.view;x-internal:=true
 Require-Bundle: org.eclipse.ui.forms;visibility:=reexport,
  org.eclipse.ui.views;visibility:=reexport,
  org.eclipse.ui;visibility:=reexport,
- org.eclipse.core.runtime,
- org.eclipse.core.boot
+ org.eclipse.core.runtime
 Eclipse-LazyStart: true

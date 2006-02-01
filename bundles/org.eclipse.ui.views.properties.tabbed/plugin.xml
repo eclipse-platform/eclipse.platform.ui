@@ -2,8 +2,8 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-   <extension-point id="propertyContributor" name="Property Contributor" schema="schema/propertyContributor.exsd"/>
-   <extension-point id="propertyTabs" name="Property Tabs" schema="schema/propertyTabs.exsd"/>
-   <extension-point id="propertySections" name="Property Sections" schema="schema/propertySections.exsd"/>
+   <extension-point id="propertyContributor" name="%ExtPoint.propertyContributor" schema="schema/propertyContributor.exsd"/>
+   <extension-point id="propertyTabs" name="%ExtPoint.propertyTabs" schema="schema/propertyTabs.exsd"/>
+   <extension-point id="propertySections" name="%ExtPoint.propertySections" schema="schema/propertySections.exsd"/>
 
 </plugin>
