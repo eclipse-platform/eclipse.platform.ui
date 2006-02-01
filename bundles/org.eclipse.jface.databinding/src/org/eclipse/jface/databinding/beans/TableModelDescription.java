@@ -24,7 +24,8 @@ public class TableModelDescription {
 
 	public TableModelDescription(Property collectionProperty, Object[] columnIDs) {
 		this.collectionProperty = collectionProperty;
-		this.columnIDs = columnIDs;}
+		this.columnIDs = columnIDs;
+	}
 
 	public Property getCollectionProperty() {
 		return collectionProperty;
