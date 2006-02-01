@@ -298,7 +298,7 @@ public class DataBindingContext implements IDataBindingContext {
 		} else if (targetUpdatable instanceof IUpdatableTable) {
 			if (modelUpdatable instanceof IUpdatableCellProvider) {
 				binding = new TableBinding(this, (IUpdatableTable)targetUpdatable,
-						(IUpdatableCellProvider)modelUpdatable, new BindSpec(null, null));
+						(IUpdatableCellProvider)modelUpdatable, bindSpec);
 			} else {
 				throw new BindingException(
 						"incompatible updatables: target is IUpdatableTable, model is " + modelUpdatable.getClass().getName()); //$NON-NLS-1$
