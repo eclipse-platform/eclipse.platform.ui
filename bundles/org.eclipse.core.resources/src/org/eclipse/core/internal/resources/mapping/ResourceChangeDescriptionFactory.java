@@ -28,7 +28,9 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 		ProposedResourceDelta delta = getDelta(file);
 		if (delta.getKind() == 0)
 			delta.setKind(IResourceDelta.CHANGED);
-		delta.addFlags(IResourceDelta.CONTENT);
+		//the CONTENT flag only applies to the changed and moved from cases
+		if (delta.getKind() == IResourceDelta.CHANGED || (delta.getFlags() & IResourceDelta.MOVED_FROM) != 0)
+			delta.addFlags(IResourceDelta.CONTENT);
 	}
 
 	/* (non-Javadoc)
@@ -162,19 +164,14 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 						// TODO: What do we do
 						return false;
 					}
-					if (destinationResource.exists() && destinationDelta.getKind() !=IResourceDelta.ADDED) {
-						// There is already a resource at the destination
-						// TODO: What do we do
-						return false;
-					}
 					// First, create the delta for the source
 					IPath fromPath = child.getFullPath();
 					boolean wasAdded = false;
-					final int flags = sourceDelta.getFlags();
+					final int sourceFlags = sourceDelta.getFlags();
 					if (move) {
 						// We transfer the source flags to the destination
 						if (sourceDelta.getKind() == IResourceDelta.ADDED) {
-							if ((flags & IResourceDelta.MOVED_FROM) != 0) {
+							if ((sourceFlags & IResourceDelta.MOVED_FROM) != 0) {
 								// The resource was moved from somewhere else so
 								// we need to transfer the path to the new location
 								fromPath = sourceDelta.getMovedFromPath();
@@ -204,9 +201,10 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 						destinationDelta.addFlags(move ? IResourceDelta.MOVED_FROM : IResourceDelta.COPIED_FROM);
 						destinationDelta.setMovedFromPath(fromPath);
 						// Apply the source flags
-						destinationDelta.addFlags(flags);
+						if (move)
+							destinationDelta.addFlags(sourceFlags);
 					}
-					
+
 					return true;
 				}
 			});
