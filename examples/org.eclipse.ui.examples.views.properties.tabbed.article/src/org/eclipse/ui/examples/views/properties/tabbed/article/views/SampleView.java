@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.views.properties.tabbed.article.views;
 
+import java.util.ArrayList;
+
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
@@ -56,11 +58,11 @@ public class SampleView
         btn.setText("Hello");//$NON-NLS-1$
 
         // fill in the element
-        AdaptableList ctlList = new AdaptableList();
+        ArrayList ctlList = new ArrayList();
         ButtonElement btnEl = new ButtonElement(btn, "Button");//$NON-NLS-1$
         ctlList.add(btnEl);
 
-        viewer.setContentProvider(new WorkbenchContentProvider());
+        viewer.setContentProvider(new ArrayContentProvider());
         viewer.setLabelProvider(new WorkbenchLabelProvider());
         viewer.setInput(ctlList);
         getSite().setSelectionProvider(viewer);
