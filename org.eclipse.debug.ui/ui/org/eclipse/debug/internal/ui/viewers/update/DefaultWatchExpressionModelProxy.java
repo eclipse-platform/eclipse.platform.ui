@@ -14,7 +14,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;

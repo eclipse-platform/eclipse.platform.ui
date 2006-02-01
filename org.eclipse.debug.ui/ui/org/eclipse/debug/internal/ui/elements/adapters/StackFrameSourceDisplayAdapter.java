@@ -22,7 +22,7 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.InstructionPointerManager;
-import org.eclipse.debug.internal.ui.contexts.ISourceDisplayAdapter;
+import org.eclipse.debug.internal.ui.contexts.provisional.ISourceDisplayAdapter;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupResult;
 import org.eclipse.debug.internal.ui.views.launch.DecorationManager;
 import org.eclipse.debug.ui.DebugUITools;

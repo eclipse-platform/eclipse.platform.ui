@@ -8,14 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.contexts;
+package org.eclipse.debug.internal.ui.contexts.provisional;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- *
+ * Notified of context activation and when the active context changes state.
+ * Listeners register with the debug context manager.
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 3.2
+ * @see IDebugContextManager
  */
 public interface IDebugContextListener {
 	

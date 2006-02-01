@@ -24,7 +24,7 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.contexts.ISourceDisplayAdapter;
+import org.eclipse.debug.internal.ui.contexts.provisional.ISourceDisplayAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.DebugTargetContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.ExpressionLabelAdapter;

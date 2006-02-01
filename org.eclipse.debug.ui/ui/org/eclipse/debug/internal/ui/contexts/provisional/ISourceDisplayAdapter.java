@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.contexts;
+package org.eclipse.debug.internal.ui.contexts.provisional;
 
 import org.eclipse.ui.IWorkbenchPage;
 

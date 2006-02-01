@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contexts;
 
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.jface.viewers.ISelection;
 
 

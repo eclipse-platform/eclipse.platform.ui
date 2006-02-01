@@ -12,8 +12,8 @@ package org.eclipse.debug.internal.ui.sourcelookup;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.IDebugContextListener;
-import org.eclipse.debug.internal.ui.contexts.ISourceDisplayAdapter;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
+import org.eclipse.debug.internal.ui.contexts.provisional.ISourceDisplayAdapter;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;

@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPage;

@@ -33,7 +33,7 @@ import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.TreePath;
 import org.eclipse.debug.internal.ui.viewers.TreeSelection;

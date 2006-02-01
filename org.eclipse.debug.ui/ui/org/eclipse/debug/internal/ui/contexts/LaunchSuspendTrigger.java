@@ -22,11 +22,13 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.contexts.provisional.ISuspendTriggerAdapter;
+import org.eclipse.debug.internal.ui.contexts.provisional.ISuspendTriggerListener;
 
 /**
  * @since 3.2
  */
-public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetListener {
+public class LaunchSuspendTrigger implements ISuspendTriggerAdapter, IDebugEventSetListener {
 
 	private ListenerList fListeners = new ListenerList();
 	

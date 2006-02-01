@@ -20,7 +20,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.action.Action;

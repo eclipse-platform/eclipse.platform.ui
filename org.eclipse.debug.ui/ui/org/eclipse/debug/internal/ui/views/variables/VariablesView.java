@@ -46,7 +46,7 @@ import org.eclipse.debug.internal.ui.actions.variables.ChangeVariableValueAction
 import org.eclipse.debug.internal.ui.actions.variables.ShowTypesAction;
 import org.eclipse.debug.internal.ui.actions.variables.ToggleDetailPaneAction;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.PresentationContext;

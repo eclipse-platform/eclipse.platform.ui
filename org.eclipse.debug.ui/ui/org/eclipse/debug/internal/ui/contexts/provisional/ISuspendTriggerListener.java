@@ -8,11 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.contexts;
+package org.eclipse.debug.internal.ui.contexts.provisional;
 
 import org.eclipse.debug.core.ILaunch;
 
 /**
+ * Listeners are notified when a launch has suspended at a context
+ * where debugging should being. For example, at a breakpoint.
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 3.2
  */
 public interface ISuspendTriggerListener {

@@ -13,6 +13,9 @@ package org.eclipse.debug.internal.ui.contexts;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;

@@ -12,19 +12,20 @@ package org.eclipse.debug.internal.ui.contexts;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.internal.ui.contexts.provisional.ISuspendTriggerAdapter;
 
 /**
  * @since 3.2
  */
 public class SuspendTriggerAdapterFactory implements IAdapterFactory {
 	
-	private static ISuspendTrigger fgTrigger = new LaunchSuspendTrigger();
+	private static ISuspendTriggerAdapter fgTrigger = new LaunchSuspendTrigger();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (adapterType.equals(ISuspendTrigger.class)) {
+		if (adapterType.equals(ISuspendTriggerAdapter.class)) {
 			if (adaptableObject instanceof ILaunch) {
 				return fgTrigger;
 			}
@@ -36,7 +37,7 @@ public class SuspendTriggerAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[]{ISuspendTrigger.class};
+		return new Class[]{ISuspendTriggerAdapter.class};
 	}
 
 }
