@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,9 +21,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -51,21 +48,14 @@ public class BuildUtilities {
 	public static IProject[] extractProjects(Object[] selection) {
 		HashSet projects = new HashSet();
 		for (int i = 0; i < selection.length; i++) {
-			if (selection[i] instanceof IResource) {
-				projects.add(((IResource) selection[i]).getProject());
-			} else if (selection[i] instanceof IAdaptable) {
-				IAdaptable adaptable = (IAdaptable) selection[i];
-				IResource resource = (IResource) adaptable.getAdapter(IResource.class);
-				if (resource != null)
-					projects.add(resource.getProject());
-			}
-			else {
-                //attempt to find resource mapping for selection
-				IAdapterManager am = Platform.getAdapterManager();
-				Object rm = am.getAdapter(selection[i], ResourceMapping.class);
-				if (rm instanceof ResourceMapping) {
-					IProject[] theProjects = ((ResourceMapping)rm).getProjects();					
-					for(int j=0;j<theProjects.length;j++){
+			IResource resource = ResourceUtil.getResource(selection[i]);
+			if (resource != null) {
+				projects.add(resource.getProject());
+			} else {
+				ResourceMapping mapping = ResourceUtil.getResourceMapping(selection[i]);
+				if (mapping != null) {
+					IProject[] theProjects = mapping.getProjects();					
+					for(int j=0; j < theProjects.length; j++) {
 						   projects.add(theProjects[j]);						
 					}
 				}
