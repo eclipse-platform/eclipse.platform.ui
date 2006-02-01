@@ -95,7 +95,7 @@ public class ChangeValidationTest extends ResourceTest {
 
 	public void testSimpleChanges() {
 		IProject project = getWorkspace().getRoot().getProject("Project");
-		IResource[] before = buildResources(project, new String[] {"c/", "c/b/", "c/x", "c/b/y", "c/b/z"});
+		IResource[] before = buildResources(project, new String[] {"c/", "c/b/", "c/a/", "c/x", "c/b/y", "c/b/z"});
 		ensureExistsInWorkspace(before, true);
 		assertExistsInWorkspace(before);
 
@@ -120,7 +120,8 @@ public class ChangeValidationTest extends ResourceTest {
 
 		// A folder deletion
 		factory = createEmptyChangeDescription();
-		factory.delete(project.findMember("c/b/"));
+		final IResource folder = project.findMember("c/b/");
+		factory.delete(folder);
 		status = validateChange(factory);
 		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project.findMember("c/b")),});
 
@@ -139,9 +140,24 @@ public class ChangeValidationTest extends ResourceTest {
 
 		// A folder move
 		factory = createEmptyChangeDescription();
-		factory.move(project.findMember("c/b/"), new Path("c/d"));
+		factory.move(folder, new Path("c/d"));
 		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.MOVED, project.findMember("c/b/")),});
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.MOVED, folder),});
+		
+		// Move to replace a deleted folder
+		factory = createEmptyChangeDescription();
+		IFolder destination = project.getFolder("/c/a/");
+		factory.delete(destination);
+		factory.move(folder, destination.getFullPath());
+		status = validateChange(factory);
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.MOVED, folder),});
+
+		// Copy folder to replace a deleted folder
+		factory = createEmptyChangeDescription();
+		factory.delete(destination);
+		factory.copy(folder, destination.getFullPath());
+		status = validateChange(factory);
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.COPIED, folder),});
 
 		// A project copy
 		factory = createEmptyChangeDescription();
@@ -158,9 +174,9 @@ public class ChangeValidationTest extends ResourceTest {
 
 		// A folder copy
 		factory = createEmptyChangeDescription();
-		factory.copy(project.findMember("c/b/"), new Path("c/d"));
+		factory.copy(folder, new Path("c/d"));
 		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.COPIED, project.findMember("c/b/")),});
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.COPIED, folder),});
 
 		// some file changes
 		factory = createEmptyChangeDescription();
