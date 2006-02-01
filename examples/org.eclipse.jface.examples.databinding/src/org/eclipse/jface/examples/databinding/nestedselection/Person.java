@@ -11,6 +11,7 @@
  */
 package org.eclipse.jface.examples.databinding.nestedselection;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,8 +19,8 @@ public class Person {
 	
 	private String name = "";
 	private String address = "";
-	private String city = "Wheaton";
-	private String state = "IL";
+	private String city = "";
+	private String state = "";
 	
 	private List orders = new LinkedList();
 	
@@ -28,6 +29,11 @@ public class Person {
 		this.address = address;
 		this.city = city;
 		this.state = state;
+		
+		int numOrders = (int) (Math.random() * 5);
+		for (int i=0; i < numOrders; ++i) {
+			orders.add(new Order(i, new Date()));
+		}
 	}
 	
 	public Person() {}

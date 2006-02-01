@@ -11,7 +11,15 @@
 
 package org.eclipse.jface.examples.databinding.nestedselection;
 
+import java.util.List;
+
 import org.eclipse.jface.databinding.IDataBindingContext;
+import org.eclipse.jface.databinding.IUpdatable;
+import org.eclipse.jface.databinding.Property;
+import org.eclipse.jface.databinding.beans.TableModelDescription;
+import org.eclipse.jface.databinding.viewers.TableViewerUpdatableTable;
+import org.eclipse.jface.databinding.viewers.ViewersProperties;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -36,17 +44,17 @@ public class TestMasterDetail {
 	}
 
    private Shell shell = null;  //  @jve:decl-index=0:visual-constraint="10,10"
-   private Table table = null;
+   private Table personsTable = null;
    private Label label = null;
    private Label label1 = null;
-   private Text text = null;
+   private Text name = null;
    private Label label2 = null;
-   private Text text1 = null;
+   private Text address = null;
    private Label label3 = null;
-   private Text text2 = null;
+   private Text city = null;
    private Label label4 = null;
-   private Text text3 = null;
-   private Table table1 = null;
+   private Text state = null;
+   private Table ordersTable = null;
    
    /**
     * This method initializes table 
@@ -59,14 +67,14 @@ public class TestMasterDetail {
       gridData.horizontalSpan = 2;
       gridData.grabExcessVerticalSpace = true;
       gridData.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
-      table = new Table(shell, SWT.NONE);
-      table.setHeaderVisible(true);
-      table.setLayoutData(gridData);
-      table.setLinesVisible(true);
-      TableColumn tableColumn = new TableColumn(table, SWT.NONE);
+      personsTable = new Table(shell, SWT.FULL_SELECTION);
+      personsTable.setHeaderVisible(true);
+      personsTable.setLayoutData(gridData);
+      personsTable.setLinesVisible(true);
+      TableColumn tableColumn = new TableColumn(personsTable, SWT.NONE);
       tableColumn.setWidth(60);
       tableColumn.setText("Name");
-      TableColumn tableColumn1 = new TableColumn(table, SWT.NONE);
+      TableColumn tableColumn1 = new TableColumn(personsTable, SWT.NONE);
       tableColumn1.setWidth(60);
       tableColumn1.setText("State");
    }
@@ -82,14 +90,14 @@ public class TestMasterDetail {
       gridData5.grabExcessHorizontalSpace = true;
       gridData5.grabExcessVerticalSpace = true;
       gridData5.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
-      table1 = new Table(shell, SWT.NONE);
-      table1.setHeaderVisible(true);
-      table1.setLayoutData(gridData5);
-      table1.setLinesVisible(true);
-      TableColumn tableColumn2 = new TableColumn(table1, SWT.NONE);
+      ordersTable = new Table(shell, SWT.FULL_SELECTION);
+      ordersTable.setHeaderVisible(true);
+      ordersTable.setLayoutData(gridData5);
+      ordersTable.setLinesVisible(true);
+      TableColumn tableColumn2 = new TableColumn(ordersTable, SWT.NONE);
       tableColumn2.setWidth(60);
       tableColumn2.setText("Order No");
-      TableColumn tableColumn3 = new TableColumn(table1, SWT.NONE);
+      TableColumn tableColumn3 = new TableColumn(ordersTable, SWT.NONE);
       tableColumn3.setWidth(60);
       tableColumn3.setText("Date");
    }
@@ -119,20 +127,20 @@ public class TestMasterDetail {
       shell.setSize(new org.eclipse.swt.graphics.Point(495,357));
       label1 = new Label(shell, SWT.NONE);
       label1.setText("Name");
-      text = new Text(shell, SWT.BORDER);
-      text.setLayoutData(gridData1);
+      name = new Text(shell, SWT.BORDER);
+      name.setLayoutData(gridData1);
       label2 = new Label(shell, SWT.NONE);
       label2.setText("Address");
-      text1 = new Text(shell, SWT.BORDER);
-      text1.setLayoutData(gridData2);
+      address = new Text(shell, SWT.BORDER);
+      address.setLayoutData(gridData2);
       label3 = new Label(shell, SWT.NONE);
       label3.setText("City");
-      text2 = new Text(shell, SWT.BORDER);
-      text2.setLayoutData(gridData4);
+      city = new Text(shell, SWT.BORDER);
+      city.setLayoutData(gridData4);
       label4 = new Label(shell, SWT.NONE);
       label4.setText("State");
-      text3 = new Text(shell, SWT.BORDER);
-      text3.setLayoutData(gridData3);
+      state = new Text(shell, SWT.BORDER);
+      state.setLayoutData(gridData3);
       createTable1();
    }
    
@@ -151,8 +159,27 @@ public class TestMasterDetail {
       }
       display.dispose();
    }
+   
+   Model model = new Model();
 
    private void bind(Control parent) {
       IDataBindingContext dbc = ExampleBinding.createContext(parent);
+      TableViewer peopleViewer = new TableViewer(personsTable);
+      dbc.bind(new TableViewerUpdatableTable(peopleViewer),
+				new TableModelDescription(new Property(model, "personList"),
+						new Object[] { "name", "state" }), null);
+      
+      IUpdatable selectedPerson = dbc.createUpdatable(new Property(peopleViewer, ViewersProperties.SINGLE_SELECTION));
+      
+      dbc.bind(name, new Property(selectedPerson, "name", String.class, Boolean.FALSE), null);
+      dbc.bind(address, new Property(selectedPerson, "address", String.class, Boolean.FALSE), null);
+      dbc.bind(city, new Property(selectedPerson, "city", String.class, Boolean.FALSE), null);
+      dbc.bind(state, new Property(selectedPerson, "state", String.class, Boolean.FALSE), null);
+      
+      TableViewer ordersViewer = new TableViewer(ordersTable);
+      dbc.bind(new TableViewerUpdatableTable(ordersViewer),
+				new TableModelDescription(new Property(selectedPerson,
+						"orders", List.class, Boolean.TRUE), new Object[] {
+						"orderNumber", "date" }), null);
    }
 }
