@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.IMemento;
 
 /**
@@ -270,17 +271,19 @@ public interface INavigatorContentService {
 	 *            The unqiue identifier from a content extension.
 	 * @return True if and only if the given extension id is <i>active</i> for
 	 *         this content service.
-	 * @see INavigatorContentService For more information on what <i>active</i> means.        
+	 * @see INavigatorContentService For more information on what <i>active</i>
+	 *      means.
 	 * 
 	 */
 	boolean isActive(String anExtensionId);
-	
+
 	/**
 	 * @param anExtensionId
 	 *            The unqiue identifier from a content extension.
 	 * @return True if and only if the given extension id is <i>visible</i> to
 	 *         this content service.
-	 * @see INavigatorContentService For more information on what <i>visible</i> means.
+	 * @see INavigatorContentService For more information on what <i>visible</i>
+	 *      means.
 	 */
 	boolean isVisible(String anExtensionId);
 
@@ -315,11 +318,13 @@ public interface INavigatorContentService {
 	 * 
 	 * @param extensionIds
 	 *            The list of extensions to make visible.
-	 * @param isRoot whether the context provider shold be a root content provider
+	 * @param isRoot
+	 *            whether the context provider shold be a root content provider
 	 * @return A list of all INavigatorContentDescriptors that correspond to the
 	 *         given extensionIds.
 	 */
-	INavigatorContentDescriptor[] bindExtensions(String[] extensionIds, boolean isRoot);
+	INavigatorContentDescriptor[] bindExtensions(String[] extensionIds,
+			boolean isRoot);
 
 	/**
 	 * Activate the extensions specified by the extensionIds array. Clients may
@@ -425,5 +430,15 @@ public interface INavigatorContentService {
 	 *         viewer about what filters are 'visible' and 'active'.
 	 */
 	INavigatorFilterService getFilterService();
+
+	/**
+	 * By default, a {@link CommonViewer} uses the sorter service to sort
+	 * elements in the tree. Clients do not need to provide their own
+	 * {@link ViewerSorter} unless they wish to override this functionality.
+	 * 
+	 * @return An INavigatorSorterService that can provide {@link ViewerSorter}
+	 *         based on the context of the parent.
+	 */
+	INavigatorSorterService getSorterService();
 
 }

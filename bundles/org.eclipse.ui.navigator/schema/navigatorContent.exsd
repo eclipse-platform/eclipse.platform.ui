@@ -37,6 +37,7 @@ consulting with the Platform/UI team.
                <element ref="actionProvider" minOccurs="0" maxOccurs="1"/>
                <element ref="commonWizard" minOccurs="0" maxOccurs="1"/>
                <element ref="commonFilter" minOccurs="0" maxOccurs="1"/>
+               <element ref="commonSorter" minOccurs="0" maxOccurs="1"/>
             </choice>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -138,16 +139,6 @@ The content provider will be consulted when addeding children to the tree. Use t
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ITreeContentProvider"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="sorter" type="string">
-            <annotation>
-               <documentation>
-                  Indicates the name of class which implements java.util.Comparator that knows how to sort the items supported by this extension. If the extension enables on types that it does not provide, but understands, it may be called upon to sort items that it did not contribute.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="java.util.Comparator"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -467,7 +458,7 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  The &quot;id&quot; attribute is used to determine when a &lt;b&gt;commonSorter&lt;/b&gt; should be bound to a particular viewer. If the &quot;id&quot; attribute matches a &lt;b&gt;org.eclipse.ui.navigator.viewer/viewerContentBinding&lt;/b&gt; for a given viewer, then the sorter is eligible to affect the sorting of the viewer. 
+                  The &quot;id&quot; attribute is used to determine when a &lt;b&gt;commonSorter&lt;/b&gt; should be bound to a particular viewer. If the &quot;id&quot; attribute matches a &lt;b&gt;org.eclipse.ui.navigator.viewer/viewerContentBinding&lt;/b&gt; for a given viewer, then the sorter is eligible to affect the sorting of the viewer.
                </documentation>
             </annotation>
          </attribute>
@@ -484,12 +475,12 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
       </complexType>
    </element>
 
-   <element name="parentExpression" >
+   <element name="parentExpression">
       <annotation>
          <documentation>
             A &lt;b&gt;parentExpression&lt;/b&gt; is used by &lt;b&gt;commonSorter&lt;/b&gt; to identify when it is applicable. If the &lt;b&gt;parentExpression&lt;/b&gt; for a &lt;b&gt;commonSorter&lt;/b&gt; matches a given element, then that &lt;b&gt;commonSorter&lt;/b&gt; will be used to sort the children of that element (as returned by the content provider of the content service).
          </documentation>
-      </annotation> 
+      </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="not"/>

@@ -24,6 +24,7 @@ public class NavigatorContentRegistryReader extends RegistryReader implements
 		return TAG_ACTION_PROVIDER.equals(elementName)
 				|| TAG_NAVIGATOR_CONTENT.equals(elementName)
 				|| TAG_COMMON_WIZARD.equals(elementName)
-				|| TAG_COMMON_FILTER.equals(elementName);
+				|| TAG_COMMON_FILTER.equals(elementName)
+				|| TAG_COMMON_SORTER.equals(elementName);
 	}
 }

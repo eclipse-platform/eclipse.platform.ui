@@ -31,7 +31,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.IExtensionActivationListener;
 import org.eclipse.ui.navigator.IExtensionStateModel;
@@ -40,6 +39,7 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.INavigatorContentServiceListener;
 import org.eclipse.ui.navigator.INavigatorFilterService;
+import org.eclipse.ui.navigator.INavigatorSorterService;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.NavigatorActivationService;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
@@ -48,6 +48,7 @@ import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorViewerDescriptorRegistry;
 import org.eclipse.ui.navigator.internal.extensions.StructuredViewerManager;
+import org.eclipse.ui.navigator.internal.sorters.NavigatorSorterService;
 
 /**
  * <p>
@@ -103,10 +104,10 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	private ILabelProvider labelProvider;
 
 	private final VisibilityAssistant assistant;
-
-	private ViewerFilter[] NO_FILTERS = new ViewerFilter[0];
-
+  
 	private NavigatorFilterService navigatorFilterService;
+
+	private INavigatorSorterService navigatorSorterService;
 
 	/**
 	 * 
@@ -667,6 +668,17 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		if (navigatorFilterService == null)
 			navigatorFilterService = new NavigatorFilterService(this);
 		return navigatorFilterService;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.navigator.INavigatorContentService#getFilterService()
+	 */
+	public INavigatorSorterService getSorterService() {
+		if (navigatorSorterService == null)
+			navigatorSorterService = new NavigatorSorterService(this);
+		return navigatorSorterService;
 	}
 
 	protected boolean isRootExtension(String anExtensionId) {

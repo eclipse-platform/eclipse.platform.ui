@@ -18,6 +18,8 @@ import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
@@ -128,26 +130,7 @@ public class CommonViewer extends TreeViewer {
 	public INavigatorContentService getNavigatorContentService() {
 		return contentService;
 	}
-
-	/**
-	 * <p>
-	 * Whenever the internal structure of the tree changes through this method,
-	 * a refresh of the parent will occur. When one extension has found the need
-	 * to modify a parent, other extensions may also choose to do update that
-	 * node as well. Extensions are also not permitted to add children to a
-	 * viewer that they would not have returned from a call to the extension
-	 * content provider ({@link ITreeContentProvider}).
-	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#internalAdd(org.eclipse.swt.widgets.Widget,
-	 *      java.lang.Object, java.lang.Object[])
-	 */
-	protected void internalAdd(Widget widget, Object parentElement,
-			Object[] childElements) {
-		// super.internalRefresh(widget, parentElement, true, true);
-		super.internalAdd(widget, parentElement, childElements);
-
-	}
-
+ 
 	/**
 	 * <p>
 	 * Removals are handled by refreshing the parents of each of the given
@@ -167,7 +150,225 @@ public class CommonViewer extends TreeViewer {
 	protected void removeWithoutRefresh(Object[] elements) {
 		super.remove(elements);
 	}
+	 
+	 
+	protected final ViewerSorter getSorter(Object parent) {
+		ViewerSorter sorter = super.getSorter();
+		if(sorter == null) {
+			INavigatorSorterService sorterService = getNavigatorContentService().getSorterService();			
+			return sorterService.findSorterForParent(parent);
+		}
+		return sorter;
+	}
+	
+	/**
+	 * Returns the sorted and filtered set of children of the given element. The
+	 * resulting array must not be modified, as it may come directly from the
+	 * model's internal state.
+	 * 
+	 * @param parent
+	 *            the parent element
+	 * @return a sorted and filtered array of child elements
+	 */
+	protected Object[] getSortedChildren(Object parent) {
+		Object[] result = getFilteredChildren(parent);
+		ViewerSorter sorter = getSorter(parent);
+		if (sorter != null) {
+			// be sure we're not modifying the original array from the model
+			result = (Object[]) result.clone();
+			sorter.sort(this, result);
+		}
+		return result;
+	}
+	 
+	// Had to pull down the following code to tap into the sorting 
 
+	/**
+     * Adds the given child elements to this viewer as children of the given
+     * parent element.
+     * <p>
+     * EXPERIMENTAL.  Not to be used except by JDT.
+     * This method was added to support JDT's explorations
+     * into grouping by working sets, which requires viewers to support multiple 
+     * equal elements.  See bug 76482 for more details.  This support will
+     * likely be removed in Eclipse 3.2 in favour of proper support for
+     * multiple equal elements. 
+     * </p>
+     *
+     * @param widget 
+     *           the widget for the parent element
+     * @param parentElement
+     *           the parent element
+     * @param childElements
+     *           the child elements to add
+     * @since 3.1
+     */
+    protected void internalAdd(Widget widget, Object parentElement, Object[] childElements) {
+		
+		// optimization!
+        // if the widget is not expanded we just invalidate the subtree
+        if (widget instanceof Item) {
+            Item ti = (Item) widget;
+            if (!getExpanded(ti)) {
+                boolean needDummy = isExpandable(parentElement);
+                boolean haveDummy = false;
+                // remove all children
+                Item[] items = getItems(ti);
+                for (int i = 0; i < items.length; i++) {
+                    if (items[i].getData() != null) {
+                        disassociate(items[i]);
+                        items[i].dispose();
+                    } else {
+                        if (needDummy && !haveDummy) {
+                            haveDummy = true;
+                        } else {
+                            items[i].dispose();
+                        }
+                    }
+                }
+                // append a dummy if necessary
+                if (needDummy && !haveDummy) 
+                    newItem(ti, SWT.NULL, -1);
+                return;
+            }
+        }
+
+        if (childElements.length > 0) {
+            Object[] filtered = filter(childElements);
+			if(getSorter(parentElement) != null)
+				getSorter(parentElement).sort(this,filtered);
+            createAddedElements(widget, parentElement, filtered);
+        }
+	}
+
+    /**
+     * See if element is the data of one of the elements in 
+     * items.
+     * @param items
+     * @param element
+     * @return <code>true</code> if the element matches.
+     */
+	private boolean itemExists(Item[] items, Object element) {
+		if(usingElementMap())//if we can do a constant time lookup find it
+			return findItem(element) != null;
+		for (int i = 0; i < items.length; i++) {
+			if(items[i].getData().equals(element))
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+     * Create the new elements in the parent widget. If the
+     * child already exists do nothing.
+     * @param widget
+     * @param elements Sorted list of elements to add.
+     */
+    private void createAddedElements(Widget widget, Object parent, Object[] elements) {
+
+		if(elements.length == 1){
+			if (equals(elements[0], widget.getData()))
+				return;
+		}
+		
+		ViewerSorter sorter = getSorter (parent);
+		Item[] items = getChildren(widget);
+		
+		//As the items are sorted already we optimize for a 
+		//start position
+		int lastInsertion = 0;		
+		
+		//Optimize for the empty case
+		if(items.length == 0){
+			for (int i = 0; i < elements.length; i++) {
+				createTreeItem(widget, elements[i], -1);		
+			}
+			return;
+		}
+	
+		for (int i = 0; i < elements.length; i++) {
+			boolean newItem = true;
+			Object element = elements[i];
+			int index;
+			if(sorter == null){
+				if(itemExists(items,element)){
+					refresh(element);
+					newItem = false;
+				}
+				index = -1;
+			}
+			else{
+				lastInsertion = insertionPosition(items,sorter,lastInsertion, element);
+				//As we are only searching the original array we keep track of those positions only
+				if(lastInsertion == items.length)
+					index = -1;
+				else{//See if we should just refresh
+					while(lastInsertion < items.length && sorter.compare(this,element,items[lastInsertion].getData()) == 0){
+						//As we cannot assume the sorter is consistent with equals() - therefore we can
+						// just check against the item prior to this index (if any)
+						if (items[lastInsertion].getData().equals(element)) {
+							//refresh the element in case it has new children
+							refresh(element);
+							newItem = false;
+						}
+						lastInsertion ++;//We had an insertion so increment
+					}
+					//Did we get to the end?
+					if(lastInsertion == items.length)
+						index = -1;
+					else
+						index = lastInsertion + i; //Add the index as the array is growing					
+				}
+			}
+			if(newItem)
+				createTreeItem(widget, element, index);		
+		}
+    }
+    
+
+	/**
+     * Returns the index where the item should be inserted. It uses sorter to
+     * determine the correct position, if sorter is not assigned, returns the
+     * index of the element after the last.
+     * 
+     * @param items the items to search
+     * @param sorter The sorter to use.
+     * @param lastInsertion
+     *            the start index to start search for position from this allows
+     *            optimising search for multiple elements that are sorted
+     *            themself.
+     * @param element
+     *            element to find position for.
+     * @return the index to use when inserting the element.
+     * 
+     */
+	
+	private int insertionPosition(Item[] items,  ViewerSorter sorter, int lastInsertion, Object element) {
+	    
+		int size = items.length;
+		if (sorter == null)
+			return size;
+	    int min = lastInsertion, max = size - 1;
+
+		while (min <= max) {
+            int mid = (min + max) / 2;
+            Object data = items[mid].getData();
+            int compare = sorter.compare(this, data, element);
+            if (compare == 0) {
+                return mid;//Return if we already match
+            }
+            if (compare < 0)
+                min = mid + 1;
+            else
+                max = mid - 1;
+	        }
+	   return min;
+	    
+			
+	}
+	
+	// End of pulled down code 
+	
 	/**
 	 * <p>
 	 * Adds DND support to the Navigator. Uses hooks into the extensible

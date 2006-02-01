@@ -9,14 +9,14 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.navigator.internal.filters;
+package org.eclipse.ui.navigator.internal.sorters;
 
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.ui.navigator.ICommonFilterDescriptor;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.navigator.internal.CustomAndExpression;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.navigator.internal.extensions.INavigatorContentExtPtConstants;
@@ -27,18 +27,16 @@ import org.eclipse.ui.navigator.internal.extensions.INavigatorContentExtPtConsta
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension.
  * 
  * @since 3.2
- * 
  */
-public class CommonFilterDescriptor implements ICommonFilterDescriptor,
-		INavigatorContentExtPtConstants {
+public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 
 	private IConfigurationElement element;
 
-	private Expression filterExpression;
+	private Expression parentExpression;
 
 	private String id;
 
-	protected CommonFilterDescriptor(IConfigurationElement anElement) {
+	protected CommonSorterDescriptor(IConfigurationElement anElement) {
 
 		element = anElement;
 		init();
@@ -49,9 +47,9 @@ public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 		if (id == null)
 			id = ""; //$NON-NLS-1$
 		IConfigurationElement[] children = element
-				.getChildren(TAG_FILTER_EXPRESSION);
+				.getChildren(TAG_PARENT_EXPRESSION);
 		if (children.length == 1)
-			filterExpression = new CustomAndExpression(children[0]);
+			parentExpression = new CustomAndExpression(children[0]);
 	}
 
 	/**
@@ -82,47 +80,41 @@ public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 
 	/**
 	 * 
-	 * @return Indicates the filter should be in an "Active" state by default.
+	 * @param aParent
+	 *            An element from the viewer
+	 * @return True if and only if this CommonSorter can sort the children of
+	 *         the given parent.
 	 */
-	public boolean isActiveByDefault() {
-		return Boolean.valueOf(element.getAttribute(ATT_ACTIVE_BY_DEFAULT))
-				.booleanValue();
+	public boolean isEnabledForParent(Object aParent) {
+		if(aParent == null)
+			return false;
+
+		if (parentExpression != null) {
+			EvaluationContext context = new EvaluationContext(null, aParent);
+			try {
+				return parentExpression.evaluate(context) == EvaluationResult.TRUE;
+			} catch (CoreException e) {
+				NavigatorPlugin.logError(0, e.getMessage(), e);
+			}
+		}
+		return false;
 	}
 
 	/**
 	 * 
-	 * @return An instance of the ViewerFilter defined by the extension. Callers
+	 * @return An instance of the ViewerSorter defined by the extension. Callers
 	 *         of this method are responsible for managing the instantiated
 	 *         filter.
 	 */
-	public ViewerFilter createFilter() {
+	public ViewerSorter createSorter() {
 		try {
-
-			if (filterExpression != null) {
-
-				if (element.getAttribute(ATT_CLASS) != null)
-					NavigatorPlugin
-							.log(
-									IStatus.WARNING,
-									0,
-									"A \"commonFilter\" was specified in " + //$NON-NLS-1$
-											element.getDeclaringExtension()
-													.getNamespace()
-											+ " which specifies a \"class\" attribute and an Core Expression.\n" + //$NON-NLS-1$
-											"Only the Core Expression will be respected.", //$NON-NLS-1$
-									null); 
-
-				return new CoreExpressionFilter(filterExpression);
-			}
-
-			return (ViewerFilter) element.createExecutableExtension(ATT_CLASS);
+			return (ViewerSorter) element.createExecutableExtension(ATT_CLASS);
 		} catch (RuntimeException re) {
 			NavigatorPlugin.logError(0, re.getMessage(), re);
 		} catch (CoreException e) {
 			NavigatorPlugin.logError(0, e.getMessage(), e);
 		}
-
-		return SkeletonViewerFilter.INSTANCE;
+		return SkeletonViewerSorter.INSTANCE;
 	}
 
 	/*
@@ -131,6 +123,6 @@ public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return "CommonFilterDescriptor[" + getName() + " (" + getId() + ")]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		return "CommonSorterDescriptor[" + getName() + " (" + getId() + ")]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 }

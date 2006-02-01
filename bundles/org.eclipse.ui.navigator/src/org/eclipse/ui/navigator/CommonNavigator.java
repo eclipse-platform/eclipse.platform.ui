@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -29,7 +28,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.navigator.internal.CommonNavigatorActionGroup;
 import org.eclipse.ui.navigator.internal.CommonNavigatorManager;
-import org.eclipse.ui.navigator.internal.CommonSorter;
 import org.eclipse.ui.navigator.internal.NavigatorContentService;
 import org.eclipse.ui.navigator.internal.actions.CollapseAllAction;
 import org.eclipse.ui.navigator.internal.actions.LinkEditorAction;
@@ -155,9 +153,8 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 		ViewerFilter[] visibleFilters = filterService.getVisibleFilters(true);
 		for(int i=0; i<visibleFilters.length; i++)
 			commonViewer.addFilter(visibleFilters[i]);
-		
-		commonViewer.setSorter(createCommonSorter(commonViewer));
- 
+		 
+		/* no sorter is necessary as the commonViewer defaults to the commonSorter automagically. */
 
 		/* make sure input is set after sorters and filters to avoid unnecessary refreshes */
 		commonViewer.setInput(getInitialInput());
@@ -334,19 +331,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 		aViewer.getNavigatorContentService().restoreState(memento);
 		return aViewer;
 	}
-
-	/**
-	 * <p>
-	 * The following method creates a basic sorter for the M3 release. This functionality will
-	 * change substantially for the M4 release.
-	 * </p>
-	 * 
-	 * @return The ViewerSorter to sort the contents of the Common Viewer
-	 */
-	protected ViewerSorter createCommonSorter(CommonViewer aViewer) {
-		return new CommonSorter(aViewer.getNavigatorContentService());
-	}
-
+ 
 	/**
 	 * <p>
 	 * Adds the listeners to the Common Viewer.

@@ -47,7 +47,7 @@ public class NavigatorFilterService implements INavigatorFilterService,
 
 	private static final String DELIM = ":"; //$NON-NLS-1$
 
-	private NavigatorContentService contentService;
+	private final NavigatorContentService contentService;
 
 	/* Map of (ICommonFilterDescriptor, ViewerFilter)-pairs */
 	private final Map declaredViewerFilters = new HashMap();

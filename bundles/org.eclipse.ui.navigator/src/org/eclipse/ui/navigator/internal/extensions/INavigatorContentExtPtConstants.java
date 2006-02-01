@@ -29,9 +29,15 @@ public interface INavigatorContentExtPtConstants {
 
 	/** */
 	String TAG_COMMON_FILTER = "commonFilter"; //$NON-NLS-1$
-	
+
+	/** */
+	String TAG_COMMON_SORTER = "commonSorter"; //$NON-NLS-1$
+
 	/** */
 	String TAG_FILTER_EXPRESSION = "filterExpression"; //$NON-NLS-1$
+
+	/** */
+	String TAG_PARENT_EXPRESSION = "parentExpression"; //$NON-NLS-1$
 
 	/** */
 	String ATT_ID = "id"; //$NON-NLS-1$
