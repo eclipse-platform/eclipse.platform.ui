@@ -76,8 +76,6 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
      * 
      * @param element element to decorate
      * @param decoration  The decoration we are adding to
-     * @return the linked resource overlay or null if element is not a 
-     * 	linked resource.
      * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(Object, IDecoration)
      */
     public void decorate(Object element, IDecoration decoration) {

@@ -840,7 +840,7 @@ public class CopyFilesAndFoldersOperation {
 	/**
 	 * Display the supplied status in an error dialog.
 	 * 
-	 * @param fileStatus
+	 * @param status The status to display
 	 */
 	private void displayError(final IStatus status) {
 		messageShell.getDisplay().syncExec(new Runnable() {

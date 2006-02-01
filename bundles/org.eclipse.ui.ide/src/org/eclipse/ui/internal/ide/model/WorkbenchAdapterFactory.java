@@ -69,7 +69,7 @@ class WorkbenchAdapterFactory implements IAdapterFactory {
      * associated with the given object. Returns <code>null</code> if
      * no such object can be found.
      *
-     * @param adaptableObject the adaptable object being queried
+     * @param o the adaptable object being queried
      *   (usually an instance of <code>IAdaptable</code>)
      * @param adapterType the type of adapter to look up
      * @return a object castable to the given adapter type, 
@@ -100,11 +100,11 @@ class WorkbenchAdapterFactory implements IAdapterFactory {
     }
 
     /**
-     * Returns the collection of adapater types handled by this
+     * Returns the collection of adapter types handled by this
      * provider.
      * <p>
      * This method is generally used by an adapter manager
-     * to discover which adapter types are supported, in adavance
+     * to discover which adapter types are supported, in advance
      * of dispatching any actual <code>getAdapter</code> requests.
      * </p>
      *
