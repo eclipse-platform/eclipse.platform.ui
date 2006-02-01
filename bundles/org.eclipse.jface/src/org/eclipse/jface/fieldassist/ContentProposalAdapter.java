@@ -174,6 +174,10 @@ public class ContentProposalAdapter {
 				case SWT.BS:
 					// Backspace should back out of any stored filter text
 					if (filter) {
+						// We have no filter to back out of, so do nothing
+						if (filterText.length() == 0)
+							return;
+						// There is filter to back out of
 						filterText = filterText.substring(0, filterText
 								.length() - 1);
 						recomputeProposals(filterText);
