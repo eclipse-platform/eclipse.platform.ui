@@ -52,7 +52,47 @@
             categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.ui.cheatsheets.views.CheatSheetView">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.help"
+            defaultHandler="org.eclipse.ui.internal.cheatsheets.handlers.OpenCheatSheetHandler"
+            description="%command.openCheatSheet.description"
+            id="org.eclipse.ui.cheatsheets.openCheatSheet"
+            name="%command.openCheatSheet.name">
+         <commandParameter
+               id="cheatSheetId"
+               name="%commandParameter.openCheatSheet.cheatSheetId.name"
+               optional="true"
+               values="org.eclipse.ui.internal.cheatsheets.registry.CheatSheetParameterValues"/>
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.help"
+            defaultHandler="org.eclipse.ui.internal.cheatsheets.handlers.OpenCheatSheetURLHandler"
+            description="%command.openCheatSheetURL.description"
+            id="org.eclipse.ui.cheatsheets.openCheatSheetURL"
+            name="%command.openCheatSheetURL.name">
+         <commandParameter
+               id="cheatSheetId"
+               name="%commandParameter.openCheatSheetURL.cheatSheetId.name"
+               optional="false"/>
+         <commandParameter
+               id="name"
+               name="%commandParameter.openCheatSheetURL.name.name"
+               optional="false"/>
+         <commandParameter
+               id="url"
+               name="%commandParameter.openCheatSheetURL.url.name"
+               optional="false"/>
+      </command>
      </extension>
+   <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="org.eclipse.ui.cheatsheets.openCheatSheet"
+            icon="$nl$/icons/view16/cheatsheet_view.gif"/>
+      <image
+            commandId="org.eclipse.ui.cheatsheets.openCheatSheetURL"
+            icon="$nl$/icons/view16/cheatsheet_view.gif"/>
+   </extension>
     <extension
     	point="org.eclipse.ui.bindings">
       <key
