@@ -70,6 +70,10 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 				errorDialog(e);
 			}
 		}
+		LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog)LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
+		if(dialog != null) {
+			dialog.refreshFilteringLabel();
+		}
 		getViewer().getControl().setRedraw(true);
 	}
 

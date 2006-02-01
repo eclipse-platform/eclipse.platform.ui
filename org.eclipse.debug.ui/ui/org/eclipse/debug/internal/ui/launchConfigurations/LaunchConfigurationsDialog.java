@@ -717,6 +717,20 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}	
 	
 	/**
+	 * Returns whether the given categories are equal.
+	 * 
+	 * @param c1 category identifier or <code>null</code>
+	 * @param c2 category identifier or <code>null</code>
+	 * @return boolean
+	 */
+	private boolean equalCategories(String c1, String c2) {
+		if (c1 == null || c2 == null) {
+			return c1 == c2;
+		}
+		return c1.equals(c2);
+	} 
+	
+	/**
 	 * Displays how many of the items showing matched the filtering currently in operation
 	 * @since 3.2
 	 */
@@ -725,13 +739,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			int total = 0;
 			ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
 			for(int i = 0; i < configs.length; i++) {
-				if(configs[i].supportsMode(getMode()) & !configs[i].getAttribute(IDebugUIConstants.ATTR_PRIVATE, false) & (configs[i].getCategory() == getLaunchGroup().getCategory())) {
+				if(configs[i].supportsMode(getMode()) & !configs[i].getAttribute(IDebugUIConstants.ATTR_PRIVATE, false) & equalCategories(configs[i].getCategory(), getLaunchGroup().getCategory())) {
 					total++;
 				}
 			}
 			ILaunchConfigurationType[] types = getLaunchManager().getLaunchConfigurationTypes();
 			for(int i = 0; i < types.length; i++) {
-				if(types[i].supportsMode(getMode()) & types[i].isPublic() & (types[i].getCategory() ==  getLaunchGroup().getCategory())) {
+				if(types[i].supportsMode(getMode()) & types[i].isPublic() & equalCategories(types[i].getCategory(), getLaunchGroup().getCategory())) {
 					total++;
 				}
 			}

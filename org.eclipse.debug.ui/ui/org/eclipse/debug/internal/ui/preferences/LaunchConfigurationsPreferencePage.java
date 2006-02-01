@@ -22,7 +22,8 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupFilter;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
+import org.eclipse.debug.internal.ui.launchConfigurations.MultiLaunchGroupFilter;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -85,6 +86,11 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	 * describes the debug launch group
 	 */
 	private static final String DEBUG_LAUNCH_GROUP = "org.eclipse.debug.ui.launchGroup.debug"; //$NON-NLS-1$
+	
+	/**
+	 * describes the external tools launch group
+	 */
+	private static final String EXT_BUILDER_GROUP = "org.eclipse.ui.externaltools.launchGroup"; //$NON-NLS-1$
 	
 	/**
 	 * to monitor the proress of the migration process
@@ -219,7 +225,10 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		tviewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		tviewer.setContentProvider(new TableContentProvider());
 		tviewer.setSorter(new WorkbenchViewerSorter());
-		tviewer.addFilter(new LaunchGroupFilter(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(DEBUG_LAUNCH_GROUP)));
+		LaunchGroupExtension[] groups = new LaunchGroupExtension[] {
+				DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(DEBUG_LAUNCH_GROUP),
+				DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(EXT_BUILDER_GROUP)};
+		tviewer.addFilter(new MultiLaunchGroupFilter(groups));
 		tviewer.setInput(getLaunchConfigurationTypes());
 		fTable.setFont(parent.getFont());
 		return comp;
