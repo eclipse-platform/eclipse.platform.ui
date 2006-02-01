@@ -8,7 +8,7 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.compare;
+package org.eclipse.team.ui.mapping;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -30,7 +30,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * 
  * @since 3.2
  */
-public abstract class ModelBuffer implements IModelBuffer {
+public abstract class SaveableCompareModel implements ISaveableCompareModel {
 
 	private boolean dirty;
 	private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
@@ -43,22 +43,27 @@ public abstract class ModelBuffer implements IModelBuffer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.compare.IModelBuffer#save(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.ui.ISaveableModel#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void save(IProgressMonitor monitor) throws CoreException {
+	public void doSave(IProgressMonitor monitor) {
 		if (!isDirty())
 			return;
-		doSave(monitor);
+		try {
+			performSave(monitor);
+		} catch (CoreException e) {
+			handleException(e);
+			monitor.setCanceled(true);
+		}
 		setDirty(false);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.compare.IModelBuffer#revert(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.ui.compare.ISaveableCompareModel#doRevert(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void revert(IProgressMonitor monitor) throws CoreException {
+	public void doRevert(IProgressMonitor monitor) {
 		if (!isDirty())
 			return;
-		doRevert(monitor);
+		performRevert(monitor);
 		setDirty(false);
 	}
 
@@ -112,19 +117,27 @@ public abstract class ModelBuffer implements IModelBuffer {
 	}
 	
 	/**
-	 * Method invoked from {@link #save(IProgressMonitor)} to write
-	 * out the buffer.
+	 * Method invoked from {@link #doSave(IProgressMonitor)} to write
+	 * out the buffer. By default, this method invokes <code>doSave</code>
+	 * on the buffers savable model.
 	 * @param monitor a progress monitor
 	 * @throws CoreException if errors occur
 	 */
-	protected abstract void doSave(IProgressMonitor monitor) throws CoreException;
+	protected abstract void performSave(IProgressMonitor monitor) throws CoreException;
 	
 	/**
-	 * Method invoked from {@link #revert(IProgressMonitor)} to discard the 
+	 * Method invoked from {@link #doRevert(IProgressMonitor)} to discard the 
 	 * changes in the buffer.
 	 * @param monitor a progress monitor
-	 * @throws CoreException if errors occur
 	 */
-	protected abstract void doRevert(IProgressMonitor monitor) throws CoreException;
+	protected abstract void performRevert(IProgressMonitor monitor);
 
+	/** 
+	 * Handle an exception that occurred during a save.
+	 * @param exception the exception
+	 */
+	protected void handleException(CoreException exception) {
+		// TODO Auto-generated method stub
+		
+	}
 }

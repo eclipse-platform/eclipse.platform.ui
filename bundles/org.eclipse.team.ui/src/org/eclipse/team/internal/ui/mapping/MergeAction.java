@@ -20,7 +20,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.compare.IModelBuffer;
 import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.PlatformUI;
@@ -55,14 +54,14 @@ public class MergeAction extends Action {
 	public void runWithEvent(Event event) {
 		IHandler handler = getHandler();
 		if (handler != null && handler.isEnabled()) {
-			final IModelBuffer currentBuffer = (IModelBuffer)configuration.getProperty(ISynchronizationConstants.P_ACTIVE_BUFFER);
+			final ISaveableCompareModel currentBuffer = (ISaveableCompareModel)configuration.getProperty(ISynchronizationConstants.P_ACTIVE_BUFFER);
 			if (currentBuffer != null && currentBuffer.isDirty()) {
-				IModelBuffer targetBuffer = null;
+				ISaveableCompareModel targetBuffer = null;
 				if (handler instanceof MergeActionHandler) {
 					MergeActionHandler mah = (MergeActionHandler) handler;
 					targetBuffer = mah.getTargetBuffer();
 				}
-				final IModelBuffer target = targetBuffer;
+				final ISaveableCompareModel target = targetBuffer;
 				try {
 					PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException,

@@ -27,7 +27,6 @@ import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.FileStateTypedElement;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
-import org.eclipse.team.ui.compare.IPrepareCompareInputAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -45,7 +44,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class AbstractCompareAdapter implements ICompareAdapter {
 
-	private static class ResourceDiffCompareInput extends DiffNode implements IAdaptable, IPrepareCompareInputAdapter {
+	private static class ResourceDiffCompareInput extends DiffNode implements IModelCompareInput {
 
 		private final IDiff node;
 
@@ -125,15 +124,12 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 			return new FileStateTypedElement(state);
 		}
 
-		public Object getAdapter(Class adapter) {
-			if (adapter == IPrepareCompareInputAdapter.class) {
-				return this;
-			}
-			return Platform.getAdapterManager().getAdapter(this, adapter);
+		public void prepareInput(CompareConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+			Utils.updateLabels(node, configuration);
 		}
 
-		public void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-			Utils.updateLabels(node, configuration);
+		public ISaveableCompareModel getCompareModel() {
+			return null;
 		}
 		
 	}
@@ -149,8 +145,8 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 	 * @see org.eclipse.team.ui.mapping.ICompareAdapter#asCompareInput(org.eclipse.team.ui.mapping.ISynchronizationContext, java.lang.Object)
 	 */
 	public ICompareInput asCompareInput(ISynchronizationContext context, Object o) {
-		if (o instanceof IResource) {
-			IResource resource = (IResource) o;
+		IResource resource = Utils.getResource(o);
+		if (resource != null) {
 			if (resource.getType() == IResource.FILE) {
 				IDiff node = context.getDiffTree().getDiff(resource);
 				if (node != null)

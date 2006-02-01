@@ -55,12 +55,17 @@ public interface ICompareAdapter {
 	
 	/**
 	 * Return a compare input for the given model object. Creation of the input
-	 * should be fast. Synchronization information calculations that ae longer
+	 * should be fast. Synchronization information calculations that are longer
 	 * running should be performed up front in the
 	 * {@link #prepareContext(ISynchronizationContext, IProgressMonitor)}
 	 * method. Clients should call this method once per context before obtaining
 	 * any compare inputs from the adapter. A <code>null</code> should be
 	 * returned if the model object is in-sync or otherwise cannot be compared.
+	 * <p>
+	 * Model paroviders can choose to return an instance of {@link IModelCompareInput}
+	 * if they wish to tailor the compare editor used to show the compare input
+	 * of provide an {@link ISaveableCompareModel} in order to have more contol
+	 * over the save lifecycle during a merge.
 	 * 
 	 * @param context the synchronization context
 	 * @param o the model object

@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.compare.IModelBuffer;
+import org.eclipse.team.ui.mapping.ISaveableCompareModel;
 import org.eclipse.team.ui.mapping.SynchronizationOperation;
 import org.eclipse.team.ui.operations.ModelMergeOperation;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
@@ -103,7 +103,7 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 	}
 	
 	protected void handleBufferChange() throws InvocationTargetException, InterruptedException {
-		final IModelBuffer currentBuffer = getActiveBuffer();
+		final ISaveableCompareModel currentBuffer = getActiveBuffer();
 		if (currentBuffer != null && currentBuffer.isDirty()) {
 			PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {	
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,

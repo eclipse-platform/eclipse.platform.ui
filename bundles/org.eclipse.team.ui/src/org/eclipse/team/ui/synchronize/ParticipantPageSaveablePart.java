@@ -21,13 +21,13 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.ModelProviderAction;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.PageSaveablePart;
-import org.eclipse.team.ui.compare.*;
-import org.eclipse.team.ui.mapping.ISynchronizationConstants;
+import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPageBookViewPage;
@@ -48,7 +48,6 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 	private IPageBookViewPage page;
 	private DialogSynchronizePageSite site;
 	
-	private Object currentEditingContext;
 	private IPropertyChangeListener listener;
 	private Viewer viewer;
 
@@ -106,6 +105,10 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 	 * @see org.eclipse.ui.ISaveablePart#isDirty()
 	 */
 	public boolean isDirty() {
+		ISaveableCompareModel currentBuffer = (ISaveableCompareModel)pageConfiguration.getProperty(ISynchronizationConstants.P_ACTIVE_BUFFER);
+		if (currentBuffer != null) {
+			return currentBuffer.isDirty();
+		}
 		return super.isDirty();
 	}
 	
@@ -252,8 +255,8 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
         monitor.setTaskName(TeamUIMessages.SyncInfoCompareInput_3);
 		try {
 			// First, see if the active buffer is changing
-			IModelBuffer currentBuffer = (IModelBuffer)pageConfiguration.getProperty(ISynchronizationConstants.P_ACTIVE_BUFFER);
-			IModelBuffer targetBuffer = getTargetBuffer(input);
+			ISaveableCompareModel currentBuffer = (ISaveableCompareModel)pageConfiguration.getProperty(ISynchronizationConstants.P_ACTIVE_BUFFER);
+			ISaveableCompareModel targetBuffer = getTargetBuffer(input);
 			try {
 				ModelProviderAction.handleBufferChange(pageConfiguration.getSite().getShell(), targetBuffer, currentBuffer, false /* cancel not allowed */, Policy.subMonitorFor(monitor, 10));
 			} catch (InterruptedException e) {
@@ -268,9 +271,9 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 					hookContentChangeListener(input);
 				}
 			} else {
-				IPrepareCompareInputAdapter adapter = getPrepareAdapter(input);
+				IModelCompareInput adapter = asModelCompareInput(input);
 				if (adapter != null) {
-					adapter.prepareInput(input, getCompareConfiguration(), Policy.subMonitorFor(monitor, 90));
+					adapter.prepareInput(getCompareConfiguration(), Policy.subMonitorFor(monitor, 90));
 				}
 				hookContentChangeListener(input);
 			}
@@ -281,15 +284,15 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
         }
 	}
 	
-	private IModelBuffer getTargetBuffer(ICompareInput input) {
-		IModelBufferAdapter adapter = (IModelBufferAdapter)Utils.getAdapter(input, IModelBufferAdapter.class);
+	private ISaveableCompareModel getTargetBuffer(ICompareInput input) {
+		IModelCompareInput adapter = asModelCompareInput(input);
 		if (adapter != null)
-			return adapter.getBuffer(input);
+			return adapter.getCompareModel();
 		return null;
 	}
 
-	private IPrepareCompareInputAdapter getPrepareAdapter(ICompareInput input) {
-		return (IPrepareCompareInputAdapter)Utils.getAdapter(input, IPrepareCompareInputAdapter.class);
+	private IModelCompareInput asModelCompareInput(ICompareInput input) {
+		return (IModelCompareInput)Utils.getAdapter(input, IModelCompareInput.class);
 	}
 	
 	private SyncInfoModelElement getElement(ISelection selection) {

@@ -17,7 +17,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceMarkAsMergedHandler;
 import org.eclipse.team.internal.ui.mapping.ResourceMergeHandler;
-import org.eclipse.team.ui.compare.IModelBuffer;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -164,7 +163,7 @@ public abstract class MergeActionHandler extends AbstractHandler {
 	 * By default, <code>null</code> is returned.
 	 * @return the buffer that is the target of this operation
 	 */
-	public IModelBuffer getTargetBuffer() {
+	public ISaveableCompareModel getTargetBuffer() {
 		return getOperation().getTargetBuffer();
 	}
 }

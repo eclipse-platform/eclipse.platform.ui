@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.ui.compare.IModelBuffer;
+import org.eclipse.team.ui.mapping.ISaveableCompareModel;
 import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -154,8 +154,8 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	 * @throws InvocationTargetException 
 	 */
 	protected void handleBufferChange() throws InvocationTargetException, InterruptedException {
-		final IModelBuffer targetBuffer = getTargetBuffer();
-		final IModelBuffer  currentBuffer = getActiveBuffer();
+		final ISaveableCompareModel targetBuffer = getTargetBuffer();
+		final ISaveableCompareModel  currentBuffer = getActiveBuffer();
 		if (currentBuffer != null && currentBuffer.isDirty()) {
 			PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {	
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
@@ -171,19 +171,19 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 		setActiveBuffer(targetBuffer);
 	}
 
-	public static void handleBufferChange(Shell shell, IModelBuffer targetBuffer, IModelBuffer currentBuffer, boolean allowCancel, IProgressMonitor monitor) throws CoreException, InterruptedException {
+	public static void handleBufferChange(Shell shell, ISaveableCompareModel targetBuffer, ISaveableCompareModel currentBuffer, boolean allowCancel, IProgressMonitor monitor) throws CoreException, InterruptedException {
 		if (currentBuffer != null && targetBuffer != currentBuffer) {
 			if (currentBuffer.isDirty()) {
 				if (promptToSaveChanges(shell, currentBuffer, allowCancel)) {
-					currentBuffer.save(monitor);
+					currentBuffer.doSave(monitor);
 				} else {
-					currentBuffer.revert(monitor);
+					currentBuffer.doRevert(monitor);
 				}
 			}
 		}
 	}
 
-	public static boolean promptToSaveChanges(final Shell shell, final IModelBuffer buffer, final boolean allowCancel) throws InterruptedException {
+	public static boolean promptToSaveChanges(final Shell shell, final ISaveableCompareModel buffer, final boolean allowCancel) throws InterruptedException {
 		final int[] result = new int[] { 0 };
 		Runnable runnable = new Runnable() {
 			public void run() {
@@ -216,8 +216,8 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	 * @return the currently active buffer (or <code>null</code> if
 	 * no buffer is active).
 	 */
-	protected IModelBuffer getActiveBuffer() {
-		return (IModelBuffer)configuration.getProperty(ISynchronizationConstants.P_ACTIVE_BUFFER);
+	protected ISaveableCompareModel getActiveBuffer() {
+		return (ISaveableCompareModel)configuration.getProperty(ISynchronizationConstants.P_ACTIVE_BUFFER);
 	}
 
 	/**
@@ -226,7 +226,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	 * @param buffer the buffer that is now active (or <code>null</code> if
 	 * no buffer is active).
 	 */
-	protected void setActiveBuffer(IModelBuffer buffer) {
+	protected void setActiveBuffer(ISaveableCompareModel buffer) {
 		configuration.setProperty(ISynchronizationConstants.P_ACTIVE_BUFFER, buffer);
 	}
 	
@@ -235,7 +235,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	 * By default, <code>null</code> is returned.
 	 * @return the buffer that is the target of this operation
 	 */
-	protected IModelBuffer getTargetBuffer() {
+	protected ISaveableCompareModel getTargetBuffer() {
 		return null;
 	}
 	

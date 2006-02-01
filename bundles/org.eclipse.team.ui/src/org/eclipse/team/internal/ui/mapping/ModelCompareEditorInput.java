@@ -7,7 +7,7 @@ import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.compare.IPrepareCompareInputAdapter;
+import org.eclipse.team.ui.mapping.IModelCompareInput;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 
 public class ModelCompareEditorInput extends CompareEditorInput {
@@ -31,9 +31,9 @@ public class ModelCompareEditorInput extends CompareEditorInput {
         monitor.beginTask(TeamUIMessages.SyncInfoCompareInput_3, 100);
         monitor.setTaskName(TeamUIMessages.SyncInfoCompareInput_3);
 		try {
-			IPrepareCompareInputAdapter adapter = getPrepareAdapter(input);
+			IModelCompareInput adapter = asModelCompareInput(input);
 			if (adapter != null) {
-				adapter.prepareInput(input, getCompareConfiguration(), Policy.subMonitorFor(monitor, 100));
+				adapter.prepareInput(getCompareConfiguration(), Policy.subMonitorFor(monitor, 100));
 			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
@@ -43,8 +43,8 @@ public class ModelCompareEditorInput extends CompareEditorInput {
 		return input;
 	}
 
-	private IPrepareCompareInputAdapter getPrepareAdapter(ICompareInput input) {
-		return (IPrepareCompareInputAdapter)Utils.getAdapter(input, IPrepareCompareInputAdapter.class);
+	private IModelCompareInput asModelCompareInput(ICompareInput input) {
+		return (IModelCompareInput)Utils.getAdapter(input, IModelCompareInput.class);
 	}
 
 	/**

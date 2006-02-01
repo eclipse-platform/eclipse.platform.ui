@@ -20,7 +20,6 @@ import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamOperation;
-import org.eclipse.team.ui.compare.IModelBuffer;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
@@ -121,7 +120,7 @@ public abstract class SynchronizationOperation extends TeamOperation {
 	 * @return the buffer that this operation will write its results
 	 * to or <code>null</code>
 	 */
-	public IModelBuffer getTargetBuffer() {
+	public ISaveableCompareModel getTargetBuffer() {
 		return null;
 	}
 	
