@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
@@ -522,7 +521,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private boolean load3_0ExtensionContent(
             IntroExtensionContent extensionContent) {
         String path = extensionContent.getPath();
-        AbstractIntroElement target = findTarget(this, path);
+        AbstractIntroElement target = findTarget(this, path, extensionContent.getId());
         if (target == null || !target.isOfType(AbstractIntroElement.ANCHOR))
             // target could not be found. Signal failure.
             return false;
@@ -824,5 +823,10 @@ public class IntroModelRoot extends AbstractIntroContainer {
     			buf.append(c);
     	}
     	return buf.toString();
+    }
+    
+    public String resolvePath(String extensionId, String path) {
+    	if (configurer==null) return null;
+    	return configurer.resolvePath(extensionId, path);
     }
 }

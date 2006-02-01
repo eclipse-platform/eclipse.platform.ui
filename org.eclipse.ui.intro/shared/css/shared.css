@@ -154,6 +154,24 @@ body, .page{
 	height : 80%;
 }
 
+#page-content #left {
+	display: inline;
+	width: 50%;
+	background-color: #ffa0a0;
+}
+
+#page-content #right {
+	display: inline;
+	width: 50%;
+	background-color: #a0ffa0;
+}
+
+#page-content #bottom {
+	display: inline;
+	width: 100%;
+	background-color: #a0a0ff;
+}
+
 /* 
  * Lay out the navigation links 
  * (Root page does something similar for its navigation)

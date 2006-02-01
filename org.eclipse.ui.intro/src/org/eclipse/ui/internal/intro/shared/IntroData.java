@@ -30,6 +30,10 @@ public class IntroData {
 	public String getProductId() {
 		return productId;
 	}
+	
+	public PageData getPage(String pageId) {
+		return (PageData)pages.get(pageId);
+	}
 
 	public boolean isActive() {
 		return active;

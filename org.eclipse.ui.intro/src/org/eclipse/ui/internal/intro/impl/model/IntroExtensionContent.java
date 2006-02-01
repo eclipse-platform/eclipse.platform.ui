@@ -38,12 +38,14 @@ public class IntroExtensionContent extends AbstractIntroElement {
     protected static final String TAG_CONTAINER_EXTENSION = "extensionContent"; //$NON-NLS-1$
 
     protected static final String ATT_PATH = "path"; //$NON-NLS-1$
+    protected static final String ATT_ID = "id"; //$NON-NLS-1$
     private static final String ATT_STYLE = "style"; //$NON-NLS-1$
     private static final String ATT_ALT_STYLE = "alt-style"; //$NON-NLS-1$
     private static final String ATT_CONTENT = "content"; //$NON-NLS-1$
 
     private String path;
     private String content;
+    private String id;
 
     private Element element;
     private String base;
@@ -55,6 +57,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
         super(element, bundle);
         path = getAttribute(element, ATT_PATH);
         content = getAttribute(element, ATT_CONTENT);
+        id = getAttribute(element, ATT_ID);
         this.element = element;
         this.base = base;
 
@@ -73,6 +76,10 @@ public class IntroExtensionContent extends AbstractIntroElement {
             this.base = newBase;
         }
 
+    }
+    
+    public String getId() {
+    	return id;
     }
 
 

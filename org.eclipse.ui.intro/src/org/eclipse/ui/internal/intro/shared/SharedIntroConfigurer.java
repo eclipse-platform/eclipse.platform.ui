@@ -16,7 +16,9 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.intro.config.IntroConfigurer;
@@ -75,8 +77,13 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 			if (groupId.equals(DIV_PAGE_LINKS))
 				return getRootPageLinks(true);
 		}
-		if (groupId.equals(DIV_PAGE_LINKS))
-			return getNavLinks(pageId);
+		else {
+			// other pages
+			if (groupId.equals(DIV_PAGE_LINKS))
+				return getNavLinks(pageId);
+			if (groupId.equals(DIV_LAYOUT_LEFT) || groupId.equals(DIV_LAYOUT_RIGHT) || groupId.equals(DIV_LAYOUT_BOTTOM))
+				return getContent(pageId, groupId);
+		}
 		return new IntroElement[0];
 	}
 
@@ -219,5 +226,38 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 				}
 			}
 		}
+	}
+
+	private IntroElement [] getContent(String pageId, String groupId) {
+		ArrayList result = new ArrayList();
+		if (introData.size()>0) {
+			//TODO getting the active product one only
+			//Eventually we should consult the data from all the products
+			IntroData idata = (IntroData)introData.get(0);
+			PageData pdata = idata.getPage(pageId);
+			if (pdata!=null) {
+				pdata.addAnchors(result, groupId);
+			}
+		}
+		// Add the fallback anchor
+		IntroElement fallback = new IntroElement("anchor"); //$NON-NLS-1$
+		fallback.setAttribute("id", ID_FALLBACK_ANCHOR); //$NON-NLS-1$
+		result.add(fallback);
+		return (IntroElement[]) result.toArray(new IntroElement[result.size()]);		
+	}
+
+	public String resolvePath(String extensionId, String path) {
+		IPath ipath = new Path(path);
+		String pageId = ipath.segment(0);
+		if (introData.size()>0) {
+			//TODO getting the active product one only
+			//Eventually we should consult the data from all the products
+			IntroData idata = (IntroData)introData.get(0);
+			PageData pdata = idata.getPage(pageId);
+			if (pdata!=null) {
+				return pdata.resolvePath(extensionId);
+			}
+		}
+		return null;
 	}
 }

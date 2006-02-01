@@ -2,6 +2,8 @@ package org.eclipse.ui.internal.intro.shared;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -27,7 +29,48 @@ public class PageData {
 			}
 		}
 	}
+
+	public void addAnchors(ArrayList result, String groupId) {
+		GroupData group = findGroup(groupId);
+		if (group==null) return;
+		group.addAnchors(result);
+	}
+
+	public String resolvePath(String extensionId) {
+		if (isHidden(extensionId))
+			return null;
+		GroupData ddata = null;
+		for (int i=0; i<groups.size(); i++) {
+			GroupData gdata = (GroupData)groups.get(i);
+			if (gdata.isDefault())
+				ddata=gdata;
+			if (gdata.contains(extensionId)) {
+				IPath resolvedPath = new Path(id);
+				resolvedPath = resolvedPath.append(gdata.getPath());
+				resolvedPath = resolvedPath.append(extensionId);
+				return resolvedPath.toString();
+			}
+		}
+		// resolve as default
+		IPath resolvedPath = new Path(id).append(ddata.getPath());
+		resolvedPath = resolvedPath.append(ISharedIntroConstants.ID_FALLBACK_ANCHOR);
+		return resolvedPath.toString();
+	}
 	
+	public boolean isHidden(String extensionId) {
+		return hidden!=null && hidden.contains(extensionId);
+	}
+	
+	private GroupData findGroup(String groupId) {
+		for (int i=0; i<groups.size(); i++) {
+			GroupData gdata = (GroupData)groups.get(i);
+			IPath path = new Path(gdata.getPath());
+			if (path.lastSegment().equals(groupId))
+				return gdata;
+		}
+		return null;
+	}
+
 	private void addGroup(Element element) {
 		GroupData gd = new GroupData(element);
 		groups.add(gd);

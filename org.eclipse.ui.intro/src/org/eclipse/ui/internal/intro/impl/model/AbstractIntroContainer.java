@@ -429,7 +429,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         String[] pathSegments = path.split("/"); //$NON-NLS-1$
         if (container == null)
             return null;
-
+        
         AbstractIntroElement target = container.findChild(pathSegments[0]);
         if (target == null)
             // there is no direct child with the specified first path segment.
@@ -447,6 +447,22 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
                 return null;
         }
         return target;
+    }
+    
+    public AbstractIntroElement findTarget(AbstractIntroContainer container,
+            String path, String extensionId) {
+        // resolve path segments if they are incomplete.
+        if (path.endsWith("@")) { //$NON-NLS-1$
+        	// new in 3.2: dynamic resolution of incomplete target paths
+        	IntroModelRoot root = getModelRoot();
+        	if (root!=null) {
+        		path = root.resolvePath(extensionId, path);
+        		if (path==null)
+        			return null;
+        	}
+
+        }
+        return this.findTarget(container, path);
     }
 
 

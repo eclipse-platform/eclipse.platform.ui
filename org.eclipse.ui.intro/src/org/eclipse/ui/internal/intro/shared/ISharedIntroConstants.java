@@ -21,6 +21,12 @@ public interface ISharedIntroConstants {
 	
 	// Page DIV ids
 	String DIV_PAGE_LINKS = "page-links"; //$NON-NLS-1$
+	String DIV_LAYOUT_LEFT = "left";  //$NON-NLS-1$
+	String DIV_LAYOUT_RIGHT = "right"; //$NON-NLS-1$
+	String DIV_LAYOUT_BOTTOM = "bottom"; //$NON-NLS-1$
+	
+	// Other ids
+	String ID_FALLBACK_ANCHOR = "defaultAnchor"; //$NON-NLS-1$
 	
 	// Product intro variables
 	String VAR_INTRO_ROOT_PAGES = "introRootPages"; //$NON-NLS-1$

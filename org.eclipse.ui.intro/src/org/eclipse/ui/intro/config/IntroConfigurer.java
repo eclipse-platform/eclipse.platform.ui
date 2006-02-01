@@ -48,4 +48,17 @@ public abstract class IntroConfigurer {
 	 *         array for no children.
 	 */
 	public abstract IntroElement[] getGroupChildren(String pageId, String groupId);
+/**
+ * Resolves an incomplete path in the form "page_id/@" where page_id
+ * represents the identifier of the target page. The configurator
+ * should complete the path according to its internal resolution
+ * mechanism. The final path must point at an anchor in the 
+ * referenced page.
+ * @param extensionId the id specified for the config extension
+ * @param path the incomplete path specified for the config extension
+ * @return the complete path that points at the anchor element
+ * in the referenced page, or <code>null</code> if the path
+ * cannot be resolved or the extension should be hidden.
+ */
+	public abstract String resolvePath(String extensionId, String path);
 }
