@@ -23,6 +23,7 @@ import org.osgi.framework.BundleContext;
  * Intro main plugin.
  */
 public class IntroPlugin extends AbstractUIPlugin {
+	public static final String PLUGIN_ID = "org.eclipse.ui.intro"; //$NON-NLS-1$
 
     // The static shared instance.
     private static IntroPlugin inst;
