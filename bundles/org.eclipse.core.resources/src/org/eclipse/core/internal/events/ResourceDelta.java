@@ -399,7 +399,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	 * For debugging only
 	 */
 	public String toString() {
-		return "ResourceDelta(" + path + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		return "ResourceDelta(" + path + ')'; //$NON-NLS-1$
 	}
 
 	/**
