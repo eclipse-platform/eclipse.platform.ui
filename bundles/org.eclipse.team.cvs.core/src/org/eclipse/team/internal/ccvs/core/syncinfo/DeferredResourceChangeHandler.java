@@ -46,10 +46,13 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 		switch (type) {
 			case IGNORE_FILE_CHANGED :
 				changedIgnoreFiles.add(event.getResource());
+				break;
 			case RECREATED_CVS_RESOURCE :
 				recreatedResources.add(event.getResource());
+				break;
 			case CONFLICTING_DELETION :
 				conflictingDeletion.add(event.getResource());
+				break;
 		}				
 	}
 	
@@ -135,6 +138,10 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 
 	public void handleConflictingDeletion(IResource local) {
 		queueEvent(new ResourceEvent(local, CONFLICTING_DELETION, IResource.DEPTH_ZERO), false);
+	}
+	
+	protected Object getJobFamiliy() {
+		return this;
 	}
 
 }
