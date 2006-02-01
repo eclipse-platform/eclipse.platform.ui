@@ -26,8 +26,18 @@ import org.eclipse.core.runtime.IPath;
  */
 
 public interface ICompositeCheatSheetTask {
+	/**
+	 * The constant that indicates that the task has not been
+	 * processed yet.
+	 */
 	int NOT_STARTED = 0;
+	/**
+	 * The constant that indicates that the task is in progress.
+	 */
 	int IN_PROGRESS = 1;
+	/**
+	 * The constant that indicates that the task has been completed.
+	 */
 	int COMPLETED = 2;
 	/**
 	 * @return the unique identifier of this task.
@@ -40,8 +50,9 @@ public interface ICompositeCheatSheetTask {
 	/**
 	 * Returns the kind of the task editor. Tasks without
 	 * editor kind are 'informational' tasks because they
-	 * cannot be 'completed. 
-	 * @return
+	 * cannot be 'completed'. 
+	 * @return task editor kind or <code>null</code> if no editor
+	 * is assoticated with this task.
 	 */
 	public String getKind();
 	/**
@@ -61,7 +72,7 @@ public interface ICompositeCheatSheetTask {
 	/**
 	 * Returns an array of subtasks that are children of this task.
 	 * The array will be empty if this is a leaf task.
-	 * @return
+	 * @return an array of subtasks for this task
 	 */
 	public ICompositeCheatSheetTask [] getSubtasks();
 	/**

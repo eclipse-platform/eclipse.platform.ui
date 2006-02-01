@@ -28,13 +28,14 @@ public interface ICompositeCheatSheet {
 	/**
 	 * The ID of the task explorer that should be the
 	 * default for this composite cheat sheet. Can be null.
-	 * @return
+	 * @return the task explorer identifier or <code>null</code> if
+	 * the view's default should be used.
 	 */
 	String getTaskExplorerId();
 	
 	/**
 	 * The root task of this composite cheat sheet
-	 * @return
+	 * @return the root task object
 	 */
 	ICompositeCheatSheetTask getRootTask();
 }
