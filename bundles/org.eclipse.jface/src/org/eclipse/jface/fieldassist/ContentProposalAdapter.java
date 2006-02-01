@@ -64,70 +64,74 @@ public class ContentProposalAdapter {
 	 */
 	class ContentProposalPopup extends PopupDialog {
 		/*
-		 * The listener we install on the popup and related controls to 
-		 * determine when to close the popup.  Some events (move, resize,
-		 * close, deactivate) trigger closure as soon as they are received,
-		 * simply because one of the registered listeners received them.
-		 * Other events depend on additional circumstances.
+		 * The listener we install on the popup and related controls to
+		 * determine when to close the popup. Some events (move, resize, close,
+		 * deactivate) trigger closure as soon as they are received, simply
+		 * because one of the registered listeners received them. Other events
+		 * depend on additional circumstances.
 		 */
 		private final class PopupCloserListener implements Listener {
 			private boolean scrollbarClicked = false;
-			
+
 			public void handleEvent(final Event e) {
 
 				// If focus is leaving an important widget or the field's
 				// shell is deactivating
-				if (e.type == SWT.FocusOut || e.type == SWT.Deactivate) {
+				if (e.type == SWT.FocusOut) {
 					scrollbarClicked = false;
 					// Ignore this event if it's only happening because focus
 					// is moving between the popup shell, control, or scrollbar.
-					// Do this in an async since the focus is not actually switched
+					// Do this in an async since the focus is not actually
+					// switched
 					// when this event is received.
 					e.display.asyncExec(new Runnable() {
 						public void run() {
-							if (proposalTable == null || proposalTable.isDisposed())
-								return;
-							Control focusControl = e.display.getFocusControl();
-							if (focusControl == proposalTable || scrollbarClicked)
-								return;
-							close();
+							if (proposalTable != null && !proposalTable.isDisposed()) {
+								Control focusControl = e.display.getFocusControl();
+								if (focusControl == proposalTable
+										|| focusControl == proposalTable.getShell()
+										|| scrollbarClicked)
+									return;
+								close();	
+							}
 						}
 					});
 					return;
 				}
-				// Scroll bar has been clicked.  Remember this for focus event processing.
+
+				// Scroll bar has been clicked. Remember this for focus event
+				// processing.
 				if (e.type == SWT.Selection) {
 					scrollbarClicked = true;
 					return;
 				}
 				// For all other events, merely getting them dictates closure.
-				if  (e.widget == control.getShell())
-					close();
+				close();
 			}
-			// Install the listeners for events that need to be monitored for popup closure.
+
+			// Install the listeners for events that need to be monitored for
+			// popup closure.
 			void installListeners() {
-				control.addListener(SWT.FocusOut, this);
 				proposalTable.addListener(SWT.FocusOut, this);
 				ScrollBar scrollbar = proposalTable.getVerticalBar();
 				if (scrollbar != null)
 					scrollbar.addListener(SWT.Selection, this);
-				control.getShell().addListener(SWT.Move,  popupCloser);
-				control.getShell().addListener(SWT.Resize,  popupCloser);
-				control.getShell().addListener(SWT.Deactivate,  popupCloser);
-				control.getShell().addListener(SWT.Close,  popupCloser);
+				proposalTable.getShell().addListener(SWT.Deactivate, popupCloser);
+				proposalTable.getShell().addListener(SWT.Close, popupCloser);
+				control.getShell().addListener(SWT.Move, popupCloser);
+				control.getShell().addListener(SWT.Resize, popupCloser);
 			}
 
 			// Remove installed listeners
 			void removeListeners() {
-				control.removeListener(SWT.FocusOut, this);
 				proposalTable.removeListener(SWT.FocusOut, this);
 				ScrollBar scrollbar = proposalTable.getVerticalBar();
 				if (scrollbar != null)
 					scrollbar.addListener(SWT.Selection, this);
-				control.getShell().removeListener(SWT.Move, popupCloser);				
-				control.getShell().removeListener(SWT.Resize, popupCloser);				
-				control.getShell().removeListener(SWT.Deactivate, popupCloser);				
-				control.getShell().removeListener(SWT.Close, popupCloser);				
+				proposalTable.getShell().removeListener(SWT.Deactivate, popupCloser);
+				proposalTable.getShell().removeListener(SWT.Close, popupCloser);
+				control.getShell().removeListener(SWT.Move, popupCloser);
+				control.getShell().removeListener(SWT.Resize, popupCloser);
 			}
 		}
 
