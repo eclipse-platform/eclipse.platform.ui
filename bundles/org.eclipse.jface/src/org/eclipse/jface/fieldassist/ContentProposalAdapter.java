@@ -75,8 +75,9 @@ public class ContentProposalAdapter {
 			
 			public void handleEvent(final Event e) {
 
-				// If focus is leaving an important widget
-				if (e.type == SWT.FocusOut) {
+				// If focus is leaving an important widget or the field's
+				// shell is deactivating
+				if (e.type == SWT.FocusOut || e.type == SWT.Deactivate) {
 					scrollbarClicked = false;
 					// Ignore this event if it's only happening because focus
 					// is moving between the popup shell, control, or scrollbar.
@@ -87,7 +88,7 @@ public class ContentProposalAdapter {
 							if (proposalTable == null || proposalTable.isDisposed())
 								return;
 							Control focusControl = e.display.getFocusControl();
-							if (focusControl == proposalTable || focusControl == control || scrollbarClicked)
+							if (focusControl == proposalTable || scrollbarClicked)
 								return;
 							close();
 						}
@@ -98,22 +99,6 @@ public class ContentProposalAdapter {
 				if (e.type == SWT.Selection) {
 					scrollbarClicked = true;
 					return;
-				}
-				// If the shell is deactivating, we should close unless this shell is the
-				// reason why.
-				if (e.type == SWT.Deactivate) {
-					e.display.asyncExec(new Runnable() {
-						public void run() {
-							if (proposalTable == null || proposalTable.isDisposed())
-								return;
-							Control focusControl = e.display.getFocusControl();
-							if (focusControl == proposalTable || focusControl == control || scrollbarClicked)
-								return;
-							close();
-						}
-					});
-					return;
-					
 				}
 				// For all other events, merely getting them dictates closure.
 				if  (e.widget == control.getShell())
