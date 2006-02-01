@@ -23,6 +23,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -200,19 +201,63 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		}
 	}
 
+	private static class SelectionManager extends EventManager {
+		/**
+		 * 
+		 * @param listener
+		 *            listen
+		 */
+		public void addSelectionChangedListener(
+				ISelectionChangedListener listener) {
+			addListenerObject(listener);
+		}
+
+		/**
+		 * 
+		 * @param listener
+		 *            listen
+		 */
+		public void removeSelectionChangedListener(
+				ISelectionChangedListener listener) {
+			removeListenerObject(listener);
+		}
+
+		/**
+		 * 
+		 * @param event
+		 *            the event
+		 */
+		public void selectionChanged(final SelectionChangedEvent event) {
+			// pass on the notification to listeners
+			Object[] listeners = getListeners();
+			for (int i = 0; i < listeners.length; ++i) {
+				final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
+				Platform.run(new SafeRunnable() {
+					public void run() {
+						l.selectionChanged(event);
+					}
+				});
+			}
+		}
+
+	}
+
 	/**
 	 * A selection provider/listener for this view. It is a selection provider
 	 * for this view's site.
 	 */
-	protected class SelectionProvider extends EventManager implements
-			ISelectionProvider {
+	protected class SelectionProvider implements IPostSelectionProvider {
+
+		private SelectionManager fSelectionListener = new SelectionManager();
+
+		private SelectionManager fPostSelectionListeners = new SelectionManager();
 
 		/*
 		 * (non-Javadoc) Method declared on ISelectionProvider.
 		 */
 		public void addSelectionChangedListener(
 				ISelectionChangedListener listener) {
-			addListenerObject(listener);
+			fSelectionListener.addSelectionChangedListener(listener);
 		}
 
 		/*
@@ -239,25 +284,19 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		 */
 		public void removeSelectionChangedListener(
 				ISelectionChangedListener listener) {
-			removeListenerObject(listener);
+			fSelectionListener.removeSelectionChangedListener(listener);
 		}
 
 		/**
-		 * The selection has changed. Process the event.
+		 * The selection has changed. Process the event, notifying selection
+		 * listeners and post selection listeners.
 		 * 
 		 * @param event
+		 *            the event that's changed.
 		 */
 		public void selectionChanged(final SelectionChangedEvent event) {
-			// pass on the notification to listeners
-			Object[] listeners = getListeners();
-			for (int i = 0; i < listeners.length; ++i) {
-				final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
-				Platform.run(new SafeRunnable() {
-					public void run() {
-						l.selectionChanged(event);
-					}
-				});
-			}
+			fSelectionListener.selectionChanged(event);
+			fPostSelectionListeners.selectionChanged(event);
 		}
 
 		/*
@@ -277,6 +316,26 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			// and set its selection
 			if (selProvider != null)
 				selProvider.setSelection(selection);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IPostSelectionProvider#addPostSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+		 */
+		public void addPostSelectionChangedListener(
+				ISelectionChangedListener listener) {
+			fPostSelectionListeners.addSelectionChangedListener(listener);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IPostSelectionProvider#removePostSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+		 */
+		public void removePostSelectionChangedListener(
+				ISelectionChangedListener listener) {
+			fPostSelectionListeners.removeSelectionChangedListener(listener);
 		}
 	}
 
