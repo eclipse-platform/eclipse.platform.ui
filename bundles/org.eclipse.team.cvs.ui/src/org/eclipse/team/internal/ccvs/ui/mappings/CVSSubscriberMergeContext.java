@@ -62,5 +62,12 @@ public abstract class CVSSubscriberMergeContext extends SubscriberMergeContext {
 	protected void makeInSync(IDiff diff, IProgressMonitor monitor) throws CoreException {
 		markAsMerged(diff, true, monitor);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IMergeContext#reject(org.eclipse.team.core.diff.IDiff, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void reject(IDiff diff, IProgressMonitor monitor) throws CoreException {
+		markAsMerged(diff, false, monitor);
+	}
 
 }
