@@ -474,7 +474,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		return mapPageToNumRecs.containsKey(page);
 	}
 
-    /**
+	/**
 	 * The <code>PageBookView</code> implementation of this
 	 * <code>IAdaptable</code> method delegates to the current page, if it
 	 * implements <code>IAdaptable</code>.
