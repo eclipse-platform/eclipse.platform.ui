@@ -1175,10 +1175,16 @@ public final class Platform {
 	 * Return the interface into the preference mechanism. The returned
 	 * object can be used for such operations as searching for preference 
 	 * values across multiple scopes and preference import/export.
-	 * 
+	 * <p>
+	 * This is a convenience method for aquiring the preference service.
+	 * <pre><code>
+	 * ServiceTracker tracker = new ServiceTracker(context, IPreferencesService.class.getName(), null);
+	 * tracker.open();
+	 * return (IPreferencesService) tracker.getService();
+	 * </code></pre>
+	 * </p>
 	 * @return an object to interface into the preference mechanism
 	 * @since 3.0
-	 * XXX Acquire {@link IPreferencesService}
 	 */
 	public static IPreferencesService getPreferencesService() {
 		return InternalPlatform.getDefault().getPreferencesService();
