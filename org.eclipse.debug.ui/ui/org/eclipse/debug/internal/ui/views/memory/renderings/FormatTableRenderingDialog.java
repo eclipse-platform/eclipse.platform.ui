@@ -18,7 +18,6 @@ import org.eclipse.debug.internal.ui.memory.IPersistableDebugElement;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -56,7 +55,7 @@ public class FormatTableRenderingDialog extends Dialog
 		private Button fDefaultButton;
 		private Text fDefaultColValue;
 		private Text fDefaultRowValue;
-		private AbstractTableRendering fRendering;
+		private AbstractBaseTableRendering fRendering;
 		private int fColumnSize;
 		private int fRowSize;
 		private Label fMsgLabel;
@@ -64,7 +63,7 @@ public class FormatTableRenderingDialog extends Dialog
 		private String fMsg;
 		
 
-		public FormatTableRenderingDialog(AbstractTableRendering rendering, Shell parentShell) {
+		public FormatTableRenderingDialog(AbstractBaseTableRendering rendering, Shell parentShell) {
 			super(parentShell);
 			setShellStyle(getShellStyle() | SWT.RESIZE);
 			fRendering = rendering;

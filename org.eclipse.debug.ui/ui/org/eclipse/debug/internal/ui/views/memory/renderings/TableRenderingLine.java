@@ -12,13 +12,14 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.model.MemoryByte;
 
 /**
  * @since 3.0
  */
 
-public class TableRenderingLine extends Object {
+public class TableRenderingLine extends PlatformObject {
 	private String fAddress;
 	private String fStrRep;
 	private MemoryByte[] fBytes;

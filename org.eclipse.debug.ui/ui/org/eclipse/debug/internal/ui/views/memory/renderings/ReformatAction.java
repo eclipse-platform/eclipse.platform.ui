@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.PlatformUI;
 
@@ -23,9 +22,9 @@ import org.eclipse.ui.PlatformUI;
  */
 public class ReformatAction extends Action {
 	
-	AbstractTableRendering fRendering;
+	private AbstractBaseTableRendering fRendering;
 	
-	public ReformatAction(AbstractTableRendering rendering)
+	public ReformatAction(AbstractBaseTableRendering rendering)
 	{
 		super(DebugUIMessages.ReformatAction_title);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".ReformatAction_context"); //$NON-NLS-1$

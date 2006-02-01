@@ -53,7 +53,12 @@ public class DebugElementHelper {
      */
     public static ImageDescriptor getImageDescriptor(Object object) {
         Image image = getPresentation().getImage(object);
-        if (image != null) {
+        return getImageDescriptor(image);
+    }
+    
+    public static ImageDescriptor getImageDescriptor(Image image)
+    {
+    	if (image != null) {
             ImageDescriptor descriptor = (ImageDescriptor) fgImages.get(image);
             if (descriptor == null) {
                 descriptor = new ImageImageDescriptor(image);
@@ -61,7 +66,7 @@ public class DebugElementHelper {
             }
             return descriptor;
         }
-        return null;
+    	return null;
     }
 
     /**

@@ -32,6 +32,7 @@ import org.eclipse.debug.internal.ui.memory.IMemoryRenderingUpdater;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -97,10 +98,10 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 					loadContentForSimpleMemoryBlock();
 				
 				// tell rendering to display table if the loading is successful
-				fInput.getMemoryRendering().displayTable();
+				getTableRendering(fInput).displayTable();
 			}
 		} catch (DebugException e) {
-			fInput.getMemoryRendering().displayError(e);
+			getTableRendering(fInput).displayError(e);
 		}
 	}
 
@@ -121,7 +122,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 				getMemoryFromMemoryBlock();
 			} catch (DebugException e) {
 				DebugUIPlugin.log(e.getStatus());
-				fInput.getMemoryRendering().displayError(e);
+				getTableRendering(fInput).displayError(e);
 				return lineCache.toArray();
 			}
 		}
@@ -129,7 +130,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		// check to see if the row size has changed
 		TableRenderingLine line = (TableRenderingLine)lineCache.get(0);
 		int currentRowSize = line.getByteArray().length;
-		int renderingRowSize = fInput.getMemoryRendering().getBytesPerLine();
+		int renderingRowSize = getTableRendering(fInput).getBytesPerLine();
 		
 		if (renderingRowSize != currentRowSize)
 		{
@@ -138,7 +139,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 				reorganizeLines(lineCache, renderingRowSize);
 			} catch (DebugException e) {
 				DebugUIPlugin.log(e.getStatus());
-				fInput.getMemoryRendering().displayError(e);
+				getTableRendering(fInput).displayError(e);
 				return lineCache.toArray();
 			}
 		}
@@ -150,12 +151,12 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		if (memoryBlock instanceof IMemoryBlockExtension)
 		{
 			loadContentForExtendedMemoryBlock();
-			fInput.getMemoryRendering().displayTable();
+			getTableRendering(fInput).displayTable();
 		}
 		else
 		{
 			loadContentForSimpleMemoryBlock();
-			fInput.getMemoryRendering().displayTable();
+			getTableRendering(fInput).displayTable();
 		}
 	}
 
@@ -170,7 +171,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		long startAddress = fInput.getMemoryBlock().getStartAddress();
 		BigInteger address = BigInteger.valueOf(startAddress);
 		long length = fInput.getMemoryBlock().getLength();
-		long numLines = length / fInput.getMemoryRendering().getBytesPerLine();
+		long numLines = length / getTableRendering(fInput).getBytesPerLine();
 		getMemoryToFitTable(address, numLines, fInput.isUpdateDelta());
 	}
 
@@ -203,7 +204,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			throw new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.TableRenderingContentProvider_0 + loadAddress.toString(16), null));
 		}
 		
-		int addressableUnitsPerLine = fInput.getMemoryRendering().getAddressableUnitPerLine();
+		int addressableUnitsPerLine = getTableRendering(fInput).getAddressableUnitPerLine();
 		BigInteger bufferStart = loadAddress.subtract(BigInteger.valueOf(fInput.getPreBuffer()*addressableUnitsPerLine));
 		BigInteger bufferEnd = loadAddress.add(BigInteger.valueOf(fInput.getPostBuffer()*addressableUnitsPerLine));
 		bufferEnd = bufferEnd.add(BigInteger.valueOf(fInput.getNumLines()*addressableUnitsPerLine));
@@ -294,7 +295,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 				
 				// adjust number of lines
 				BigInteger newAddress = new BigInteger(adjustedAddress, 16);
-				int reqLines = startingAddress.subtract(newAddress).divide(BigInteger.valueOf(fInput.getMemoryRendering().getBytesPerLine())).intValue();
+				int reqLines = startingAddress.subtract(newAddress).divide(BigInteger.valueOf(getTableRendering(fInput).getBytesPerLine())).intValue();
 				numberOfLines = numberOfLines + reqLines;
 				
 				startingAddress = new BigInteger(adjustedAddress, 16);	
@@ -311,11 +312,11 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		{
 			if (fInput.getMemoryBlock() instanceof IMemoryBlockExtension)
 			{
-				reqNumBytes = fInput.getMemoryRendering().getBytesPerLine() * numberOfLines;
+				reqNumBytes = getTableRendering(fInput).getBytesPerLine() * numberOfLines;
 				// get memory from memory block
 				extMemoryBlock = (IMemoryBlockExtension) fInput.getMemoryBlock();
 				
-				long reqNumberOfUnits = fInput.getMemoryRendering().getAddressableUnitPerLine() * numberOfLines;
+				long reqNumberOfUnits = getTableRendering(fInput).getAddressableUnitPerLine() * numberOfLines;
 						
 				memoryBuffer =	extMemoryBlock.getBytesFromAddress(startingAddress,	reqNumberOfUnits);
 		
@@ -350,12 +351,12 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 				reqNumBytes = fInput.getMemoryBlock().getLength() + prefillNumBytes;
 				
 				// figure out number of dummy bytes to append
-				while (reqNumBytes % fInput.getMemoryRendering().getBytesPerLine() != 0)
+				while (reqNumBytes % getTableRendering(fInput).getBytesPerLine() != 0)
 				{
 					reqNumBytes ++;
 				}
 				
-				numberOfLines = reqNumBytes / fInput.getMemoryRendering().getBytesPerLine();
+				numberOfLines = reqNumBytes / getTableRendering(fInput).getBytesPerLine();
 				
 				// create memory byte for IMemoryBlock
 				memoryBuffer = new MemoryByte[(int)reqNumBytes];
@@ -476,7 +477,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 					tmpAddress = "0" + tmpAddress; //$NON-NLS-1$
 				}
 			}
-			int bytesPerLine = fInput.getMemoryRendering().getBytesPerLine();
+			int bytesPerLine = getTableRendering(fInput).getBytesPerLine();
 			MemoryByte[] memory = new MemoryByte[bytesPerLine];
 			boolean isMonitored = true;
 			
@@ -535,7 +536,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			}
 			
 			// calculate delta info for the memory view line
-			if (manageDelta && !fInput.getMemoryRendering().isDisplayingError())
+			if (manageDelta && !getTableRendering(fInput).isDisplayingError())
 			{
 				if (updateDelta)
 				{
@@ -561,7 +562,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 					}
 				}
 			}
-			else if (manageDelta && fInput.getMemoryRendering().isDisplayingError())
+			else if (manageDelta && getTableRendering(fInput).isDisplayingError())
 			{
 				// show as unmonitored if the view tab is previoulsy displaying error
 				newLine.isMonitored = false;
@@ -572,7 +573,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			// increment row address
 			BigInteger bigInt = new BigInteger(address, 16);
 			fBufferEndAddress = bigInt;
-			int addressableUnit = fInput.getMemoryRendering().getBytesPerLine()/fInput.getMemoryRendering().getAddressableSize();
+			int addressableUnit = getTableRendering(fInput).getBytesPerLine()/getTableRendering(fInput).getAddressableSize();
 			address = bigInt.add(BigInteger.valueOf(addressableUnit)).toString(16);
 		}
 	}
@@ -586,7 +587,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		// make up dummy memory, needed for recovery in case the debug adapter
 		// is capable of retrieving memory again
 
-		int numBytes = (int)(fInput.getMemoryRendering().getBytesPerLine() * numberOfLines);
+		int numBytes = (int)(getTableRendering(fInput).getBytesPerLine() * numberOfLines);
 		memoryBuffer = new MemoryByte[numBytes];
 		
 		for (int i=0; i<memoryBuffer.length; i++){
@@ -604,7 +605,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	 */
 	protected void doHandleDebugEvent(DebugEvent event) {
 		
-		if (fInput.getMemoryRendering().isVisible())
+		if (getTableRendering(fInput).isVisible())
 		{
 			// only do this if it's visible
 			// still need to clear content cache if the rendering
@@ -628,7 +629,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		if (event.getKind() == DebugEvent.CHANGE && event.getSource() == fInput.getMemoryBlock())
 		{
 			if (event.getDetail() == DebugEvent.STATE){
-				fInput.getMemoryRendering().updateLabels();
+				getTableRendering(fInput).updateLabels();
 			}
 			else
 			{	
@@ -664,10 +665,10 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		takeContentSnapshot();
 		
 		//do not handle event if the rendering is not visible
-		if (!fInput.getMemoryRendering().isVisible())
+		if (!getTableRendering(fInput).isVisible())
 			 return;
 		
-		fInput.getMemoryRendering().refresh();
+		getTableRendering(fInput).refresh();
 		
 	}
 	
@@ -687,13 +688,13 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		}
 		
 		//do not handle event if the rendering is not visible
-		if (!fInput.getMemoryRendering().isVisible())
+		if (!getTableRendering(fInput).isVisible())
 			 return;
 		
 		// use existing lines as cache is the rendering is not currently displaying
 		// error.  Otherwise, leave contentCache empty as we do not have updated
 		// content.
-		if (!fInput.getMemoryRendering().isDisplayingError())
+		if (!getTableRendering(fInput).isDisplayingError())
 		{
 			for (int i=0; i<lines.length; i++)
 			{
@@ -792,7 +793,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			
 			BigInteger startAddress = new BigInteger(first.getAddress(), 16);
 			BigInteger lastAddress = new BigInteger(last.getAddress(), 16);
-			int addressableUnit = fInput.getMemoryRendering().getAddressableUnitPerLine();
+			int addressableUnit = getTableRendering(fInput).getAddressableUnitPerLine();
 			lastAddress = lastAddress.add(BigInteger.valueOf(addressableUnit)).subtract(BigInteger.valueOf(1));
 			
 			if (startAddress.compareTo(address) <= 0 &&
@@ -830,7 +831,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		
 		// do not handle event if if the memory block wants to do its
 		// own update
-		if (managedMB != null && managedMB.supportsManagedUpdate(fInput.getMemoryRendering()))
+		if (managedMB != null && managedMB.supportsManagedUpdate(getTableRendering(fInput)))
 			return true;
 		
 		return false;
@@ -953,10 +954,15 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			// increment row address
 			BigInteger bigInt = new BigInteger(address, 16);
 			fBufferEndAddress = bigInt;
-			int addressableUnit = fInput.getMemoryRendering().getBytesPerLine()/fInput.getMemoryRendering().getAddressableSize();
+			int addressableUnit = getTableRendering(fInput).getBytesPerLine()/getTableRendering(fInput).getAddressableSize();
 			address = bigInt.add(BigInteger.valueOf(addressableUnit)).toString(16);
 		}
 		
 		return (TableRenderingLine[])lines.toArray(new TableRenderingLine[lines.size()]);
+	}
+	
+	private AbstractTableRendering getTableRendering(TableRenderingContentInput input)
+	{
+		return (AbstractTableRendering)input.getAdapter(AbstractTableRendering.class);
 	}
 }

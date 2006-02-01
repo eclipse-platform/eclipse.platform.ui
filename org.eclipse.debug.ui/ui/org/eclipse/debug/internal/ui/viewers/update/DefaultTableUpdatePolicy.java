@@ -24,8 +24,10 @@ import org.eclipse.jface.viewers.StructuredSelection;
 public class DefaultTableUpdatePolicy extends AbstractUpdatePolicy implements IModelChangedListener {
 
     public void modelChanged(IModelDelta delta) {
-        IModelDelta[] nodes = delta.getNodes();
-        updateNodes(nodes);
+    	// TODO:  need to pass the base delta to update 
+    	// to allow update from root node
+    	// Kevin, please verify
+        updateNodes(new IModelDelta[] {delta});
     }
 
     private void handleState(IModelDelta node) {

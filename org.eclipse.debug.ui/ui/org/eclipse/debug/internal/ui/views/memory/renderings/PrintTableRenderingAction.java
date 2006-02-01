@@ -17,10 +17,9 @@ import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.printing.PrintDialog;
 import org.eclipse.swt.printing.Printer;
@@ -37,15 +36,16 @@ import org.eclipse.swt.widgets.TableItem;
  */
 public class PrintTableRenderingAction extends Action
 {
-	private AbstractTableRendering fRendering;
-	private TableViewer fViewer;
+	private AbstractBaseTableRendering fRendering;
+	private StructuredViewer fViewer;
 	
 	private static final String COLUMN_SEPERATOR = "  "; //$NON-NLS-1$
 	
-	public PrintTableRenderingAction(AbstractTableRendering rendering)
+	public PrintTableRenderingAction(AbstractBaseTableRendering rendering, StructuredViewer viewer)
 	{
 		super(DebugUIMessages.PrintViewTabAction_title);
 		fRendering = rendering;
+		fViewer = viewer;
 		setToolTipText(DebugUIMessages.PrintViewTabAction_tooltip);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_PRINT_TOP_VIEW_TAB));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_PRINT_TOP_VIEW_TAB));
@@ -157,12 +157,7 @@ public class PrintTableRenderingAction extends Action
 	 */
 	public void run() {
 		
-		fViewer = fRendering.getTableViewer();
-		
-		if(fViewer == null)
-			return;
-		
-		if (fViewer.getControl() == null)
+		if (!(fViewer.getControl() instanceof Table))
 			return;
 		
 		PrintDialog printDialog = new PrintDialog(fViewer.getControl().getDisplay().getActiveShell());

@@ -100,7 +100,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
         super.dispose();
     }
 
-    private AsynchronousTableViewerContentManager createContentManager() {
+    protected AsynchronousTableViewerContentManager createContentManager() {
         return new AsynchronousTableViewerContentManager(this);
     }
 
@@ -577,5 +577,10 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
         job.setSystem(true);
         job.setPriority(Job.INTERACTIVE);
         job.schedule();
+    }
+    
+    public AsynchronousTableViewerContentManager getContentManager()
+    {
+    	return fContentManager;
     }
 }

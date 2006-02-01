@@ -13,7 +13,10 @@ package org.eclipse.debug.internal.ui.views.memory;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IMemoryBlockManager;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -25,6 +28,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * Util class for Memory View
@@ -124,19 +128,26 @@ public class MemoryViewUtil {
 	 * @param message
 	 * @param e
 	 */
-	static public void openError (String title, String message, Exception e)
+	static public void openError (final String title, final String message, final Exception e)
 	{
-		// open error for the exception
-		String detail = ""; //$NON-NLS-1$
-		if (e != null)
-			detail = e.getMessage();
-		
-		Shell shell = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
-		
-		MessageDialog.openError(
-			shell,
-			title,
-			message + "\n" + detail); //$NON-NLS-1$
+		UIJob uiJob = new UIJob("open error"){ //$NON-NLS-1$
+
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+//				 open error for the exception
+				String detail = ""; //$NON-NLS-1$
+				if (e != null)
+					detail = e.getMessage();
+				
+				Shell shell = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+				
+				MessageDialog.openError(
+					shell,
+					title,
+					message + "\n" + detail); //$NON-NLS-1$
+				return Status.OK_STATUS;
+			}};
+		uiJob.setSystem(true);
+		uiJob.schedule();
 	}
 	
 	static IMemoryBlockManager getMemoryBlockManager()

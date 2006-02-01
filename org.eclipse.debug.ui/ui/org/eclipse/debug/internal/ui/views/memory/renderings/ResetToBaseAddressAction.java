@@ -28,9 +28,9 @@ import org.eclipse.jface.action.Action;
  */
 public class ResetToBaseAddressAction extends Action {
 
-    private AbstractTableRendering fRendering;
+    private AbstractBaseTableRendering fRendering;
 
-    public ResetToBaseAddressAction(AbstractTableRendering rendering) {
+    public ResetToBaseAddressAction(AbstractBaseTableRendering rendering) {
         fRendering = rendering;
         setText(DebugUIMessages.ResetMemoryBlockAction_title);
         setToolTipText(DebugUIMessages.ResetMemoryBlockAction_tootip);
@@ -67,8 +67,18 @@ public class ResetToBaseAddressAction extends Action {
 			}
 		} catch (SecurityException e) {
 		} catch (NoSuchMethodException e) {
+			try {
+				// if no such method, then it must be AbstractAsycTableRendering
+				fRendering.resetRendering();
+			} catch (DebugException e1) {
+				MemoryViewUtil.openError(DebugUIMessages.AbstractTableRendering_12, DebugUIMessages.AbstractTableRendering_13, e); //
+			}
 		}
-		// call old method
-		fRendering.reset();
+		
+		if(fRendering instanceof AbstractTableRendering)
+		{
+			// call old method
+			((AbstractTableRendering)fRendering).reset();
+		}
     }
 }

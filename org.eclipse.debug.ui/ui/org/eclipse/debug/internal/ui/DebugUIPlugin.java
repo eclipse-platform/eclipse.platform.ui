@@ -77,6 +77,7 @@ import org.eclipse.debug.internal.ui.views.breakpoints.OtherBreakpointCategory;
 import org.eclipse.debug.internal.ui.views.console.ProcessConsoleManager;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
+import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -427,6 +428,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
         manager.registerAdapters(propertiesFactory, OtherBreakpointCategory.class);
         manager.registerAdapters(propertiesFactory, IDebugElement.class);
         manager.registerAdapters(propertiesFactory, IMemoryBlockRetrieval.class);
+        manager.registerAdapters(propertiesFactory, MemorySegment.class);
 		DebugUIAdapterFactory uiFactory = new DebugUIAdapterFactory();
 		manager.registerAdapters(uiFactory, ILaunchConfiguration.class);
 		manager.registerAdapters(uiFactory, ILaunchConfigurationType.class);

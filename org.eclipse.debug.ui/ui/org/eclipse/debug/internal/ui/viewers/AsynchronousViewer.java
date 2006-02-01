@@ -1004,4 +1004,13 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 
 	protected abstract void setChildren(Widget widget, List children);
 	protected abstract void add(Widget parent, Object element);
+	
+	
+	/**
+	 * @return if there are any more pending updates in the viewer
+	 */
+	protected boolean hasPendingUpdates()
+	{
+		return !fPendingUpdates.isEmpty();
+	}
 }

@@ -18,10 +18,9 @@ import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
@@ -39,12 +38,14 @@ public class CopyTableRenderingToClipboardAction extends Action
 {
 	private final String COLUMN_SEPERATOR = "  "; //$NON-NLS-1$
 	
-	private AbstractTableRendering fRendering;
+	private AbstractBaseTableRendering fRendering;
+	private StructuredViewer fViewer;
 	
-	public CopyTableRenderingToClipboardAction(AbstractTableRendering rendering)
+	public CopyTableRenderingToClipboardAction(AbstractBaseTableRendering rendering, StructuredViewer viewer)
 	{
 		super();
 		fRendering = rendering;
+		fViewer = viewer;
 		setText(DebugUIMessages.CopyViewToClipboardAction_title);
 		setToolTipText(DebugUIMessages.CopyViewToClipboardAction_tooltip);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_COPY_VIEW_TO_CLIPBOARD));
@@ -56,10 +57,10 @@ public class CopyTableRenderingToClipboardAction extends Action
 		if (itemList.length == 0) return null;
 
 		StringBuffer tableContents = new StringBuffer();
-		TableViewer viewer = fRendering.getTableViewer();
-		Table table = viewer.getTable();
+		
+		Table table = (Table)fViewer.getControl();
 		int numColumns = table.getColumnCount();
-		ITableLabelProvider labelProvider = (ITableLabelProvider)viewer.getLabelProvider();		
+		ITableLabelProvider labelProvider = (ITableLabelProvider)fViewer.getLabelProvider();		
 		TableColumn columns[] = table.getColumns();
 		
 		// get title of view tab
@@ -152,12 +153,10 @@ public class CopyTableRenderingToClipboardAction extends Action
 		if (fRendering == null)
 			return;
 		
-		TableViewer viewer = fRendering.getTableViewer();
-		
-		if (viewer == null)
+		if (! (fViewer.getControl() instanceof Table))
 			return;
 		
-		Table table = viewer.getTable();
+		Table table = (Table)fViewer.getControl();
 		
 		if (table == null)
 			return;

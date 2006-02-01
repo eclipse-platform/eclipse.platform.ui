@@ -70,7 +70,7 @@ public class AsynchronousTableViewerContentManager implements Listener {
             index++;
         }
         
-        while (index < oldItemCount) {
+        while (index < oldItemCount && fTable.getItemCount() > index) {
             TableItem item = fTable.getItem(index);
             fViewer.unmap(fElements[index], item);
             fElements[index] = null;
@@ -92,7 +92,7 @@ public class AsynchronousTableViewerContentManager implements Listener {
         }
     }
 
-    private int getVisibleItemCount(int top) {
+    public int getVisibleItemCount(int top) {
         int itemCount = fTable.getItemCount();
         return Math.min((fTable.getBounds().height / fTable.getItemHeight()) + 2, itemCount - top);
     }
@@ -127,7 +127,7 @@ public class AsynchronousTableViewerContentManager implements Listener {
         for (int i = 0; i < fItemCount; i++) {
             Object obj = fElements[i];
             if (element.equals(obj)) {
-                System.arraycopy(fElements, i + 1, fElements, i, fItemCount - i);
+                System.arraycopy(fElements, i + 1, fElements, i, fItemCount - 1);
                 TableItem item = fTable.getItem(i);
                 fViewer.unmap(element, item);
                 item.dispose();
@@ -203,4 +203,38 @@ public class AsynchronousTableViewerContentManager implements Listener {
             }
         }
     }
+    
+    public Object getElement(int index)
+    {
+    	if (index >= 0 && index < fElements.length)
+    		return fElements[index];
+    	
+    	return null;
+    }
+    
+    public Object getElement(TableItem item)
+    {
+    	int i = fTable.indexOf(item);
+    	if (i > 0 && i<fElements.length)
+    		return fElements[i];
+    	
+    	return null;
+    }
+    
+    public int indexOfElement(Object element)
+    {
+    	for (int i=0; i<fElements.length; i++)
+    	{
+    		if (fElements[i] == element)
+    			return i;
+    	}
+    	return -1;
+    }
+    
+    protected AsynchronousTableViewer getTableViewer()
+    {
+    	return fViewer;
+    }
+    
+    
 }

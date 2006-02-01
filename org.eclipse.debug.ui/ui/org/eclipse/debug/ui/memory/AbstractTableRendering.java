@@ -31,6 +31,7 @@ import org.eclipse.debug.internal.ui.views.memory.renderings.CopyTableRenderingT
 import org.eclipse.debug.internal.ui.views.memory.renderings.FormatTableRenderingAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.FormatTableRenderingDialog;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
+import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractBaseTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.renderings.PrintTableRenderingAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.ReformatAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.ResetToBaseAddressAction;
@@ -137,7 +138,7 @@ import org.eclipse.ui.part.PageBook;
 
  * @since 3.1
  */
-public abstract class AbstractTableRendering extends AbstractMemoryRendering implements IPropertyChangeListener, IResettableMemoryRendering{	
+public abstract class AbstractTableRendering extends AbstractBaseTableRendering implements IPropertyChangeListener, IResettableMemoryRendering{	
 
 	/**
 	 *  Property identifier for the selected address in a table rendering
@@ -744,7 +745,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		getPageSizeFromPreference();
 		
 		if (isDynamicLoad())
-			fContentInput = new TableRenderingContentInput(this, 20, 20, 20, topVisibleAddress, getNumberOfVisibleLines(), false);
+			fContentInput = new TableRenderingContentInput(this, 20, 20, 20, topVisibleAddress, getNumberOfVisibleLines(), false, null);
 		else
 		{
 			BigInteger addressToLoad = topVisibleAddress;
@@ -755,7 +756,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			{
 				addressToLoad = (BigInteger)obj;
 			}
-			fContentInput = new TableRenderingContentInput(this, 0, 0, 0, addressToLoad, fPageSize, false);
+			fContentInput = new TableRenderingContentInput(this, 0, 0, 0, addressToLoad, fPageSize, false, null);
 		}
 		
 		fTableViewer.setInput(fContentInput);
@@ -1963,7 +1964,6 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	private void setColumnHeadings()
 	{
 		String[] columnLabels = new String[0];
-
 		
 		IMemoryBlockTablePresentation presentation = getTablePresentationAdapter();
 		if (presentation != null)
@@ -2080,9 +2080,9 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			
 			TableRenderingContentInput input;
 			if (isDynamicLoad())
-				input = new TableRenderingContentInput(this, fContentInput.getPreBuffer(), fContentInput.getPostBuffer(), fContentInput.getDefaultBufferSize(), topAddress, getNumberOfVisibleLines(), updateDelta);
+				input = new TableRenderingContentInput(this, fContentInput.getPreBuffer(), fContentInput.getPostBuffer(), fContentInput.getDefaultBufferSize(), topAddress, getNumberOfVisibleLines(), updateDelta, null);
 			else
-				input = new TableRenderingContentInput(this, fContentInput.getPreBuffer(), fContentInput.getPostBuffer(), fContentInput.getDefaultBufferSize(), topAddress, fPageSize, updateDelta);
+				input = new TableRenderingContentInput(this, fContentInput.getPreBuffer(), fContentInput.getPostBuffer(), fContentInput.getDefaultBufferSize(), topAddress, fPageSize, updateDelta, null);
 			
 			fContentInput = input;
 			fTableViewer.setInput(fContentInput);
@@ -2413,10 +2413,10 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	 * Create actions for the view tab
 	 */
 	protected void createActions() {
-		fCopyToClipboardAction = new CopyTableRenderingToClipboardAction(this);
+		fCopyToClipboardAction = new CopyTableRenderingToClipboardAction(this, fTableViewer);
 		fGoToAddressAction = new GoToAddressAction(this);
 		fResetMemoryBlockAction = new ResetToBaseAddressAction(this);
-		fPrintViewTabAction = new PrintTableRenderingAction(this);
+		fPrintViewTabAction = new PrintTableRenderingAction(this, fTableViewer);
 		
 		fFormatRenderingAction = new FormatTableRenderingAction(this);		
 		fReformatAction = new ReformatAction(this);

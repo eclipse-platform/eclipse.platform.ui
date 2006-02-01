@@ -12,19 +12,20 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import java.math.BigInteger;
 
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
 
 /**
  * This is an internal class for storing information about the content
  * in the table viewer.
  */
-public class TableRenderingContentInput {
+public class TableRenderingContentInput extends PlatformObject {
 
-	private AbstractTableRendering fRendering;
+	private IMemoryRendering fRendering;
 	private int fPreBuffer;					// number of lines before the top visible line
 	private int fPostBuffer;				// number of lines after thes last visible line
 	private int fDefaultBufferSize;
@@ -35,7 +36,7 @@ public class TableRenderingContentInput {
 	private BigInteger fStartAddress;
 	private BigInteger fEndAddress;
 	
-	public TableRenderingContentInput(AbstractTableRendering rendering, int preBuffer, int postBuffer, int defaultBufferSize, BigInteger loadAddress, int numOfLines, boolean updateDelta)
+	public TableRenderingContentInput(IMemoryRendering rendering, int preBuffer, int postBuffer, int defaultBufferSize, BigInteger loadAddress, int numOfLines, boolean updateDelta, BigInteger contentBaseAddress)
 	{
 		fRendering = rendering;
 		fPreBuffer = preBuffer;
@@ -45,11 +46,16 @@ public class TableRenderingContentInput {
 		fDefaultBufferSize = defaultBufferSize;
 		fUpdateDelta = updateDelta;
 
-		try {
-			updateContentBaseAddress();
-		} catch (DebugException e) {
-			// log error, cannot recover
-			DebugUIPlugin.log(e);
+		if (contentBaseAddress == null)
+		{
+			try {
+				updateContentBaseAddress();
+			} catch (DebugException e) {
+			}
+		}
+		else
+		{
+			fMemoryBlockBaseAddress = contentBaseAddress;
 		}
 	}
 
@@ -85,10 +91,7 @@ public class TableRenderingContentInput {
 	public void setUpdateDelta(boolean updateDelta) {
 		fUpdateDelta = updateDelta;
 	}
-	public AbstractTableRendering getMemoryRendering()
-	{
-		return fRendering;
-	}
+
 	public void setLoadAddress(BigInteger address)
 	{
 		fLoadAddress = address;
@@ -106,6 +109,7 @@ public class TableRenderingContentInput {
 		
 		return fMemoryBlockBaseAddress;
 	}
+	
 	public void updateContentBaseAddress() throws DebugException {
 		IMemoryBlock memoryBlock = fRendering.getMemoryBlock();
 		if (memoryBlock instanceof IMemoryBlockExtension)
@@ -189,5 +193,20 @@ public class TableRenderingContentInput {
 	public void setNumLines(int numLines)
 	{
 		fNumLines = numLines;
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if (adapter == AbstractTableRendering.class)
+		{
+			if (fRendering instanceof AbstractTableRendering)
+				return fRendering;
+		}
+		if (adapter == AbstractAsyncTableRendering.class)
+		{
+			if (fRendering instanceof AbstractAsyncTableRendering)
+				return fRendering;
+		}
+		
+		return super.getAdapter(adapter);
 	}
 }

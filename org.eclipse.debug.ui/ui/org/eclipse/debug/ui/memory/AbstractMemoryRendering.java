@@ -218,6 +218,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 			if (expression.startsWith("&")) //$NON-NLS-1$
 				label.insert(0, "&"); //$NON-NLS-1$		
 			
+			// TODO:  also may call #getBigBaseAddress on UI thread
 			// show full address if the rendering is visible
 			// hide address if the rendering is invisible
 			try {

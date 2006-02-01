@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
-import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -33,9 +32,9 @@ public class TableRenderingPropertiesPage extends PropertyPage implements
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		Composite composite = new Composite(parent, SWT.NONE);
-		if (getElement() instanceof AbstractTableRendering)
+		if (getElement() instanceof AbstractBaseTableRendering)
 		{
-			AbstractTableRendering rendering = (AbstractTableRendering)getElement();
+			AbstractBaseTableRendering rendering = (AbstractBaseTableRendering)getElement();
 			GridLayout compositeLayout = new GridLayout();
 			compositeLayout.numColumns = 2;
 			compositeLayout.makeColumnsEqualWidth = false;
@@ -56,9 +55,12 @@ public class TableRenderingPropertiesPage extends PropertyPage implements
 			MemoryByte[] bytes = rendering.getSelectedAsBytes();
 			if (bytes.length > 0) {
 				
-				String selectedAddress = "0x" + rendering.getSelectedAddress().toString(16).toUpperCase(); //$NON-NLS-1$
-				StringBuffer content = new StringBuffer(selectedAddress);
-				addProperty(composite, DebugUIMessages.TableRenderingPropertiesPage_2, content.toString());
+				if (rendering.getSelectedAddress() != null)
+				{
+					String selectedAddress = "0x" + rendering.getSelectedAddress().toString(16).toUpperCase(); //$NON-NLS-1$
+					StringBuffer content = new StringBuffer(selectedAddress);
+					addProperty(composite, DebugUIMessages.TableRenderingPropertiesPage_2, content.toString());
+				}
 				
 				String length = String.valueOf(rendering.getAddressableUnitPerColumn()) + " " + DebugUIMessages.TableRenderingPropertiesPage_3; //$NON-NLS-1$
 				addProperty(composite, DebugUIMessages.TableRenderingPropertiesPage_4, length);

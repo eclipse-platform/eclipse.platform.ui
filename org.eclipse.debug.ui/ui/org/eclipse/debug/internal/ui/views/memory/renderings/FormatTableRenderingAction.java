@@ -14,18 +14,17 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.PlatformUI;
 
 public class FormatTableRenderingAction extends Action {
 
-	AbstractTableRendering fRendering;
+	private AbstractBaseTableRendering fRendering;
 	
 	int fColumnSize = -1;
 	int fRowSize = -1;
 	
-	public FormatTableRenderingAction(AbstractTableRendering rendering)
+	public FormatTableRenderingAction(AbstractBaseTableRendering rendering)
 	{
 		fRendering = rendering;
 		setText(DebugUIMessages.FormatTableRenderingAction_16);

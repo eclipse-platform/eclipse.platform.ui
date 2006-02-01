@@ -194,8 +194,12 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 		// will get to a swt exception
 		Display display = DebugUIPlugin.getDefault().getWorkbench().getDisplay();
 		
-		display.syncExec(new Runnable() {
+		display.asyncExec(new Runnable() {
 			public void run() {
+				
+				if (isDisposed())
+					return;
+					
 				if (event.getSource() == fRendering)
 				{
 					if (event.getProperty().equals(IBasicPropertyConstants.P_TEXT))

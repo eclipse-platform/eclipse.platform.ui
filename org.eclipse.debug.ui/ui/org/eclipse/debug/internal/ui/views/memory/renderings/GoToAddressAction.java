@@ -27,7 +27,6 @@ import org.eclipse.debug.internal.ui.views.memory.MemoryView;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
@@ -46,9 +45,9 @@ import org.eclipse.ui.PlatformUI;
  */
 public class GoToAddressAction extends Action
 {
-	private AbstractTableRendering fRendering;
+	private AbstractBaseTableRendering fRendering;
 	
-	public GoToAddressAction(AbstractTableRendering rendering)
+	public GoToAddressAction(AbstractBaseTableRendering rendering)
 	{		
 		super(DebugUIMessages.GoToAddressAction_title);
 		setToolTipText(DebugUIMessages.GoToAddressAction_title);
