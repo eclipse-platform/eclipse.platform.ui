@@ -405,9 +405,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	}
 
 	/**
-	 * (Re-)initializes the differ using the current reference and <code>DiffInitializer</code>
+	 * (Re-)initializes the differ using the current reference and <code>DiffInitializer</code>.
+	 * 
+	 * @since 3.2 protected for testing reasons, package visible before
 	 */
-	synchronized void initialize() {
+	protected synchronized void initialize() {
 		// make new incoming changes go into the queue of stored events, plus signal we can't restore.
 		fState= INITIALIZING;
 
