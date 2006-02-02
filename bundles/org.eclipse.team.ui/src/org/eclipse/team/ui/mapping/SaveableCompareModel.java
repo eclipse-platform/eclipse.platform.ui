@@ -96,8 +96,6 @@ public abstract class SaveableCompareModel implements ISaveableCompareModel {
 	/**
 	 * Fire a property change event for this buffer.
 	 * @param property the property that changed
-	 * @param oldValue the old value
-	 * @param newValue the new value
 	 */
 	protected void firePropertyChange(final int property) {
 		Object[] allListeners = listeners.getListeners();
