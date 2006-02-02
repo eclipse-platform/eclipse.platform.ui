@@ -43,7 +43,6 @@ public class ProgressView extends ViewPart implements IViewPart {
 
 	Action clearAllAction;
 
-	private ProgressViewerContentProvider provider;
 
 	/*
 	 * (non-Javadoc)
@@ -81,7 +80,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * Sets the content provider for the viewer.
 	 */
 	protected void initContentProvider() {
-		provider = new ProgressViewerContentProvider(viewer, true ,true);
+		ProgressViewerContentProvider provider = new ProgressViewerContentProvider(viewer, true ,true);
 		viewer.setContentProvider(provider);
 		viewer.setInput(ProgressManager.getInstance());
 	}
@@ -208,13 +207,4 @@ public class ProgressView extends ViewPart implements IViewPart {
 			clearAllAction.setDisabledImageDescriptor(id);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
-	 */
-	public void dispose() {
-		provider.dispose();
-		super.dispose();
-	}
 }

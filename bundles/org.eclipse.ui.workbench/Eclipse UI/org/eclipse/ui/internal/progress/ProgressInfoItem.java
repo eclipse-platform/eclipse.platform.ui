@@ -71,11 +71,9 @@ class ProgressInfoItem extends Composite {
 
 	List taskEntries = new ArrayList(0);
 
-
 	private ProgressBar progressBar;
 
 	private Label jobImageLabel;
-
 
 	static final int MAX_PROGRESS_HEIGHT = 12;
 
@@ -93,7 +91,7 @@ class ProgressInfoItem extends Composite {
 		 * Select the next previous to the receiver.
 		 */
 		public void selectNext();
-		
+
 		/**
 		 * Select the receiver.
 		 */
@@ -202,8 +200,13 @@ class ProgressInfoItem extends Composite {
 		progressLabel.setText(getMainTitle());
 
 		actionBar = new ToolBar(this, SWT.FLAT);
-		actionBar.setCursor(getDisplay().getSystemCursor( SWT.CURSOR_ARROW)); // set cursor to overwrite any busy
-		
+		actionBar.setCursor(getDisplay().getSystemCursor(SWT.CURSOR_ARROW)); // set
+																				// cursor
+																				// to
+																				// overwrite
+																				// any
+																				// busy
+
 		// cursor we might have
 		actionButton = new ToolItem(actionBar, SWT.NONE);
 		actionButton
@@ -241,20 +244,21 @@ class ProgressInfoItem extends Composite {
 		progressData.right = new FormAttachment(actionBar,
 				IDialogConstants.HORIZONTAL_SPACING);
 		progressLabel.setLayoutData(progressData);
-		
-		mouseListener = new MouseAdapter(){
-			/* (non-Javadoc)
+
+		mouseListener = new MouseAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 			 */
-			public void mouseDown(MouseEvent e){
-				if(indexListener != null)
+			public void mouseDown(MouseEvent e) {
+				if (indexListener != null)
 					indexListener.select();
 			}
 		};
 		addMouseListener(mouseListener);
 		jobImageLabel.addMouseListener(mouseListener);
 		progressLabel.addMouseListener(mouseListener);
-		
 
 		setLayoutsForNoProgress();
 
@@ -338,7 +342,10 @@ class ProgressInfoItem extends Composite {
 	private String getMainTitle() {
 		if (info.isJobInfo())
 			return getJobNameAndStatus();
-		return ((GroupInfo) info).getTaskName();
+		if (info.hasChildren())
+			return ((GroupInfo) info).getTaskName();
+		return info.getDisplayString();
+
 	}
 
 	/**
@@ -368,11 +375,11 @@ class ProgressInfoItem extends Composite {
 		switch (job.getState()) {
 		case Job.RUNNING:
 			return name;
-		case Job.SLEEPING:{//if it is sleeping and has a result show it
-			if(job.getResult() == null)
+		case Job.SLEEPING: {// if it is sleeping and has a result show it
+			if (job.getResult() == null)
 				return NLS.bind(ProgressMessages.JobInfo_Sleeping, name);
 			return getJobInfoFinishedString(job, true);
-		}			
+		}
 		case Job.NONE: // Only happens for kept jobs
 			return getJobInfoFinishedString(job, true);
 		default:
@@ -425,19 +432,19 @@ class ProgressInfoItem extends Composite {
 
 		JobInfo[] infos = getJobInfos();
 		if (isRunning()) {
-			if (progressBar == null){
-				if(percentDone == IProgressMonitor.UNKNOWN){
-					//Only do it if there is an indeterminate task
-					//There may be no task so we don't want to create it 
-					//until we know for sure
+			if (progressBar == null) {
+				if (percentDone == IProgressMonitor.UNKNOWN) {
+					// Only do it if there is an indeterminate task
+					// There may be no task so we don't want to create it
+					// until we know for sure
 					for (int i = 0; i < infos.length; i++) {
-						if(infos[i].hasTaskInfo() && infos[i].getTaskInfo().totalWork == IProgressMonitor.UNKNOWN){
+						if (infos[i].hasTaskInfo()
+								&& infos[i].getTaskInfo().totalWork == IProgressMonitor.UNKNOWN) {
 							createProgressBar(SWT.INDETERMINATE);
 							break;
 						}
 					}
-				}
-				else{
+				} else {
 					createProgressBar(SWT.NONE);
 					progressBar.setMinimum(0);
 					progressBar.setMaximum(100);
@@ -445,8 +452,10 @@ class ProgressInfoItem extends Composite {
 			}
 
 			// Protect against bad counters
-			if (percentDone >= 0 && percentDone <= 100 && percentDone != progressBar.getSelection()){
-				progressBar.setSelection(percentDone);			}
+			if (percentDone >= 0 && percentDone <= 100
+					&& percentDone != progressBar.getSelection()) {
+				progressBar.setSelection(percentDone);
+			}
 		}
 
 		else if (isCompleted()) {
@@ -462,9 +471,7 @@ class ProgressInfoItem extends Composite {
 					.getImage(DISABLED_CLEAR_FINISHED_JOB_KEY));
 
 		}
-		
 
-		
 		int taskCount = 0;
 		for (int i = 0; i < infos.length; i++) {
 			JobInfo jobInfo = infos[i];
@@ -494,9 +501,9 @@ class ProgressInfoItem extends Composite {
 				if (job.getResult() != null) {
 					IStatus result = job.getResult();
 					String message = EMPTY_STRING;
-					if(result != null)
+					if (result != null)
 						message = result.getMessage();
-					setLinkText(job,message, i);
+					setLinkText(job, message, i);
 					taskCount++;
 				}
 			}
@@ -522,7 +529,7 @@ class ProgressInfoItem extends Composite {
 
 		JobInfo[] infos = getJobInfos();
 		for (int i = 0; i < infos.length; i++) {
-			if(infos[i].getJob().getResult() == null)//No result not done
+			if (infos[i].getJob().getResult() == null)// No result not done
 				return false;
 		}
 		// Only completed if there are any jobs
@@ -569,19 +576,22 @@ class ProgressInfoItem extends Composite {
 		if (info.isJobInfo())
 			return ((JobInfo) info).getPercentDone();
 
-		Object[] roots = ((GroupInfo) info).getChildren();
-		if (roots.length == 1 && roots[0] instanceof JobTreeElement) {
-			TaskInfo ti = ((JobInfo) roots[0]).getTaskInfo();
-			if (ti != null)
-				return ti.getPercentDone();
+		if (info.hasChildren()) {
+			Object[] roots = ((GroupInfo) info).getChildren();
+			if (roots.length == 1 && roots[0] instanceof JobTreeElement) {
+				TaskInfo ti = ((JobInfo) roots[0]).getTaskInfo();
+				if (ti != null)
+					return ti.getPercentDone();
+			}
+			return ((GroupInfo) info).getPercentDone();
 		}
-		return ((GroupInfo) info).getPercentDone();
+		return 0;
 	}
 
 	/**
-	 * Set the images in the toolbar based on whether the receiver
-	 * is finished or not.
-	 *
+	 * Set the images in the toolbar based on whether the receiver is finished
+	 * or not.
+	 * 
 	 */
 	private void setToolBarImages() {
 		if (isCompleted()) {
@@ -589,18 +599,16 @@ class ProgressInfoItem extends Composite {
 					.getImage(CLEAR_FINISHED_JOB_KEY));
 			actionButton.setDisabledImage(JFaceResources
 					.getImage(DISABLED_CLEAR_FINISHED_JOB_KEY));
-		}
-		else{
-			actionButton.setImage(JFaceResources
-					.getImage(STOP_IMAGE_KEY));
+		} else {
+			actionButton.setImage(JFaceResources.getImage(STOP_IMAGE_KEY));
 			actionButton.setDisabledImage(JFaceResources
 					.getImage(DISABLED_STOP_IMAGE_KEY));
-			
+
 		}
 		JobInfo[] infos = getJobInfos();
-		
+
 		for (int i = 0; i < infos.length; i++) {
-			if(infos[i].isCanceled()){
+			if (infos[i].isCanceled()) {
 				actionButton.setEnabled(false);
 				return;
 			}
@@ -721,7 +729,8 @@ class ProgressInfoItem extends Composite {
 		}
 
 		if (i % 2 == 0)
-			setAllBackgrounds(JFaceResources.getColorRegistry().get(DARK_COLOR_KEY));
+			setAllBackgrounds(JFaceResources.getColorRegistry().get(
+					DARK_COLOR_KEY));
 		else
 			setAllBackgrounds(getDisplay().getSystemColor(
 					SWT.COLOR_LIST_BACKGROUND));
@@ -761,16 +770,16 @@ class ProgressInfoItem extends Composite {
 			((Link) taskEntryIterator.next()).setBackground(color);
 		}
 
-	}	
+	}
 
 	/**
 	 * Set the focus to the button.
-	 *
+	 * 
 	 */
-	void setButtonFocus(){
+	void setButtonFocus() {
 		actionBar.setFocus();
 	}
-	
+
 	/**
 	 * Set the selection colors.
 	 * 
@@ -778,7 +787,7 @@ class ProgressInfoItem extends Composite {
 	 *            boolean that indicates whether or not to show selection.
 	 */
 	void selectWidgets(boolean select) {
-		if(select)
+		if (select)
 			setButtonFocus();
 		selected = select;
 		setColor(currentIndex);
@@ -795,6 +804,7 @@ class ProgressInfoItem extends Composite {
 
 	/**
 	 * Return whether or not the receiver is selected.
+	 * 
 	 * @return boolean
 	 */
 	boolean isSelected() {
