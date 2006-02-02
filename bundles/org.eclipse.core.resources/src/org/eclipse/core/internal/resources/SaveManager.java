@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,7 +104,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				removeClearDeltaMarks(id);
 			} else {
 				try {
-					// thread safety: (we need to guarantee that the tree is imutable when computing deltas)
+					// thread safety: (we need to guarantee that the tree is immutable when computing deltas)
 					// so, the tree inside the saved state needs to be immutable
 					workspace.prepareOperation(workspace.getRoot(), null);
 					workspace.beginOperation(true);
@@ -135,7 +135,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					continue;
 				}
 				final SaveContext context = (SaveContext) entry.getValue();
-				/* Be extra careful when calling lifecycle method on arbitary plugin */
+				/* Be extra careful when calling lifecycle method on arbitrary plugin */
 				ISafeRunnable code = new ISafeRunnable() {
 
 					public void handleException(Throwable e) {
@@ -151,7 +151,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 						executeLifecycle(lifecycle, participant, context);
 					}
 				};
-				Platform.run(code);
+				SafeRunner.run(code);
 				monitor.worked(1);
 			}
 		} finally {
@@ -1013,7 +1013,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					commit(contexts);
 					if (kind == ISaveContext.FULL_SAVE)
 						removeClearDeltaMarks();
-					//this must be done after commiting save contexts to update participant save numbers
+					//this must be done after committing save contexts to update participant save numbers
 					saveMasterTable();
 					broadcastLifecycle(DONE_SAVING, contexts, warnings, Policy.subMonitorFor(monitor, 1));
 					hookEndSave(kind, project, start);
@@ -1315,7 +1315,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (!root.isAccessible())
 			return;
 
-		// Setup vars
+		// Setup variables
 		final Synchronizer synchronizer = (Synchronizer) workspace.getSynchronizer();
 		final MarkerManager markerManager = workspace.getMarkerManager();
 		IPath markersLocation = workspace.getMetaArea().getMarkersLocationFor(root);
@@ -1438,7 +1438,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (!root.isAccessible())
 			return;
 
-		// Setup vars
+		// Setup variables
 		final Synchronizer synchronizer = (Synchronizer) workspace.getSynchronizer();
 		final MarkerManager markerManager = workspace.getMarkerManager();
 		IPath markersLocation = workspace.getMetaArea().getMarkersSnapshotLocationFor(root);

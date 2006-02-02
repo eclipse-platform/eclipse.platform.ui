@@ -1949,7 +1949,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				status[0] = validator.validateEdit(files, context);
 			}
 		};
-		Platform.run(body);
+		SafeRunner.run(body);
 		return status[0];
 	}
 
@@ -2035,7 +2035,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				status[0] = validator.validateSave(file);
 			}
 		};
-		Platform.run(body);
+		SafeRunner.run(body);
 		if (!status[0].isOK())
 			throw new ResourceException(status[0]);
 	}

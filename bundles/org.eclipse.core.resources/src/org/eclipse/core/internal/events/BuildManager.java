@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -165,7 +165,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				//release workspace lock while calling builders
 				depth = getWorkManager().beginUnprotected();
 				//do the build
-				Platform.run(getSafeRunnable(trigger, args, status, monitor));
+				SafeRunner.run(getSafeRunnable(trigger, args, status, monitor));
 			} finally {
 				if (depth >= 0)
 					getWorkManager().endUnprotected(depth);
@@ -231,7 +231,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				basicBuild(project, trigger, commands, status, monitor);
 			}
 		};
-		Platform.run(code);
+		SafeRunner.run(code);
 	}
 
 	/**
@@ -650,7 +650,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	/**
 	 * Hook for adding trace options and debug information at the end of a build.
 	 * This hook is called at the end of a build cycle invoked by calling a
-	 * build API mehtod.
+	 * build API method.
 	 */
 	private void hookEndBuild(int trigger) {
 		building = false;
@@ -898,7 +898,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	}
 
 	/**
-	 * Returns true if the nature membership rules are satisifed for the given
+	 * Returns true if the nature membership rules are satisfied for the given
 	 * builder extension on the given project, and false otherwise.  A builder that 
 	 * does not specify that it belongs to a nature is always valid.  A builder 
 	 * extension that belongs to a nature can be invalid for the following reasons:

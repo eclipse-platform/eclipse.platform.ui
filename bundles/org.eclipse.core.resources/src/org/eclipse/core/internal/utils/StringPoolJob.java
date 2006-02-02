@@ -121,7 +121,7 @@ public class StringPoolJob extends Job {
 			if (monitor.isCanceled())
 				break;
 			final IStringPoolParticipant current = toRun[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					//exceptions are already logged, so nothing to do
 				}

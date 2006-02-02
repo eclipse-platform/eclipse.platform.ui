@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,14 +152,14 @@ public class NatureManager implements ILifecycleListener, IManager {
 		if (Policy.DEBUG_NATURES) {
 			System.out.println("Configuring nature: " + natureID + " on project: " + project.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		Platform.run(code);
+		SafeRunner.run(code);
 	}
 
 	/**
 	 * Configures the natures for the given project.  Natures found in the new description
 	 * that weren't present in the old description are added, and natures missing from the
 	 * new description are removed.  Updates the old description so that it reflects
-	 * the new set of the natures.  Errors are added to the given multistatus.
+	 * the new set of the natures.  Errors are added to the given multi-status.
 	 */
 	public void configureNatures(Project project, ProjectDescription oldDescription, ProjectDescription newDescription, MultiStatus status) {
 		// Be careful not to rely on much state because (de)configuring a nature
@@ -268,7 +268,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 		if (Policy.DEBUG_NATURES) {
 			System.out.println("Deconfiguring nature: " + natureID + " on project: " + project.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		Platform.run(code);
+		SafeRunner.run(code);
 	}
 
 	/**
