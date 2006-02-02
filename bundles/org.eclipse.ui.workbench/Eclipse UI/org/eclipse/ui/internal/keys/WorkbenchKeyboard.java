@@ -593,6 +593,10 @@ public final class WorkbenchKeyboard {
 		}
 		return bindingService.getPerfectMatch(keySequence);
 	}
+	
+	final KeySequence getBuffer() {
+		return state.getCurrentSequence();
+	}
 
 	/**
 	 * Changes the key binding state to the given value. This should be an

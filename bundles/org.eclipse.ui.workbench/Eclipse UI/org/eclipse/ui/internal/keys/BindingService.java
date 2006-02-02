@@ -125,6 +125,10 @@ public final class BindingService implements IBindingService {
 		return bindingManager.getBindings();
 	}
 
+	public final TriggerSequence getBuffer() {
+		return keyboard.getBuffer();
+	}
+
 	public final String getDefaultSchemeId() {
 		return BindingPersistence.getDefaultSchemeId();
 	}
