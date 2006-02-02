@@ -36,6 +36,8 @@ import org.eclipse.jface.databinding.updatables.SettableList;
 import org.eclipse.jface.databinding.updatables.SettableValue;
 import org.eclipse.jface.databinding.validator.IValidator;
 import org.eclipse.jface.tests.databinding.util.Mocks;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 public class DatabindingContextTest extends TestCase {
 
@@ -84,6 +86,60 @@ public class DatabindingContextTest extends TestCase {
 		}
 	}
 
+	public void testRegisterForDispose() {
+		final boolean[] disposeCalled = new boolean[] {false};
+		IUpdatableValue target = new SettableValue(Integer.TYPE) {
+			public void dispose() {
+				super.dispose();
+				disposeCalled[0] = true;
+			}
+		};
+		SettableValue model = new SettableValue(Integer.TYPE);
+		model.setValue(new Integer(12));
+		Display display = new Display();
+		Shell shell = new Shell(display);
+		IDataBindingContext dbc = DataBinding.createContext(shell, 
+				new IUpdatableFactory[] {});
+		dbc.registerForDispose(target);
+		dbc.registerForDispose(model);
+		dbc.bind(target, model, null);
+		assertEquals("target should now have model's value", 12, ((Integer)target.getValue()).intValue());
+		target.setValue(new Integer(9));
+		assertEquals("model should now have target's value", 9, ((Integer)model.getValue()).intValue());
+		shell.dispose();
+		display.dispose();
+		assertTrue("dispose should have been called", disposeCalled[0]);
+	}
+	
+	private class DisposableUpdatable extends UpdatableValue {
+		protected Object computeValue() {
+			return null;
+		}
+		public void setValue(Object value) {
+		}
+		public Class getValueType() {
+			return Object.class;
+		}
+	}
+	
+	private class DisposableUpdatableFactory implements IUpdatableFactory {
+		public IUpdatable createUpdatable(Map properties, Object description, IDataBindingContext bindingContext) {
+			return new DisposableUpdatable();
+		}
+	}
+	
+	public void testDisposeCalled() {
+		Display display = new Display();
+		Shell shell = new Shell(display);
+		IDataBindingContext dbc = DataBinding.createContext(shell, 
+				new IUpdatableFactory[] {new DisposableUpdatableFactory()});
+		IUpdatable u = dbc.createUpdatable(null);
+		assertFalse("is not disposed", u.isDisposed());
+		shell.dispose();
+		display.dispose();
+		assertTrue("is disposed", u.isDisposed());
+	}
+	
 	public void testBindValueModel() {
 		Mocks.reset(updatableValueRMock);
 		updatableValueRMock.addChangeListener(null);
@@ -125,7 +181,9 @@ public class DatabindingContextTest extends TestCase {
 	public void testBindingListeners() {
 		final int[] calls = new int[] {0, 0};
 		// this exact sequence of positions are not API and may change from release to release.
-		// This is just here to check that we got a sane sequence of pipeline positions.
+		// This is just here to check that we got a sane sequence of pipeline positions
+		// and to catch when the sequence changes when we don't expect it to change.
+		//
 		// See BindingEvent#pipelinePosition for details.
 		final int[] pipelinePositions = new int[] {0, 1, 2, 3, 4, 0, 2, 4, 1, 0, 1, 2, 0, 2, 4, 1};
 		settableValue1.setValue(o1);
