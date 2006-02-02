@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -601,7 +601,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	private LaunchManagerVisitor fgVisitor;
 	
 	/**
-	 * Whether this manager is listening for resouce change events
+	 * Whether this manager is listening for resource change events
 	 */
 	private boolean fListening = false;
 	
@@ -1094,7 +1094,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			String key= (String) entry.getKey();
             String value = (String) entry.getValue();
             // translate any string substitution variables
-            value = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
+            if (value != null) {
+                value = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
+            }
             boolean added= false;
 			if (win32) {
                 // First, check if the key is an exact match for an existing key.
@@ -1313,7 +1315,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * Returns all launch configurations that are stored locally.
 	 * 
-	 * @return collection of launch configurations stored lcoally
+	 * @return collection of launch configurations stored locally
 	 */
 	protected List getLocalLaunchConfigurations() {
 		Iterator iter = getAllLaunchConfigurations().iterator();
@@ -1328,8 +1330,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	}
 	
 	/**
-	 * Returns the launch configuraitons mappingh to the specified resource
-	 * @param resource teh resource to collect mapped launch configuraitons for
+	 * Returns the launch configurations mapping to the specified resource
+	 * @param resource the resource to collect mapped launch configurations for
 	 * @return a list of launch configurations if found or an empty list, never null
 	 * @since 3.2
 	 */
@@ -1695,7 +1697,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 
 	/**
 	 * Returns whether the given launch configuration passes a basic
-	 * integritiy test by retrieving its type.
+	 * integrity test by retrieving its type.
 	 * 
 	 * @param config the configuration to verify
 	 * @return whether the config meets basic integrity constraints
@@ -1995,7 +1997,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Exceptions are logged for invalid configs.
 	 * 
 	 * @param verify the list of configs to verify
-	 * @param valid the list to place valid configrations in
+	 * @param valid the list to place valid configurations in
 	 */
 	protected void verifyConfigurations(List verify, List valid) {
 		Iterator configs = verify.iterator();
