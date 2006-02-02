@@ -124,7 +124,7 @@ public class SlaveContextService implements IContextService {
 			Expression expression, boolean global) {
 		if (global) {
 			IContextActivation activation = fParentService.activateContext(
-					contextId, expression);
+					contextId, expression, global);
 			fParentActivations.add(activation);
 			return activation;
 		}
