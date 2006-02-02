@@ -627,7 +627,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	 */
 	private void dialogOpened(TrayDialog dialog) {
 		if (isInDialogItem()) {
-			final String id = getCheatSheetID();
 			HelpTray tray = (HelpTray)dialog.getTray();
 			if (tray == null) {
 				tray = new HelpTray();
@@ -637,7 +636,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			IHelpPartPage page = helpPart.createPage(CheatSheetHelpPart.ID, null, null);
 			page.setVerticalSpacing(0);
 			page.setHorizontalMargin(0);
-			helpPart.addPart(CheatSheetHelpPart.ID, new CheatSheetHelpPart(helpPart.getForm().getForm().getBody(), helpPart.getForm().getToolkit(), page.getToolBarManager(), id));
+			helpPart.addPart(CheatSheetHelpPart.ID, new CheatSheetHelpPart(helpPart.getForm().getForm().getBody(), helpPart.getForm().getToolkit(), page.getToolBarManager(), contentElement, savePath));
 			page.addPart(CheatSheetHelpPart.ID, true);
 			helpPart.addPage(page);
 			helpPart.showPage(CheatSheetHelpPart.ID);
@@ -948,7 +947,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		}
 	}
 
-	private void setContent(CheatSheetElement element) {
+	/*package*/ void setContent(CheatSheetElement element) {
 		CheatSheetStopWatch.startStopWatch("CheatSheetViewer.setContent(CheatSheetElement element)"); //$NON-NLS-1$
 
 		if (element != null && element.equals(contentElement))

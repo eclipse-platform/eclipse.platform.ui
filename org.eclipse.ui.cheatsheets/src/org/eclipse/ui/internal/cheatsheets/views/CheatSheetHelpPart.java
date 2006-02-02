@@ -25,6 +25,7 @@ import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.Messages;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 
 /**
  * A help part wrapper that contains a cheat sheet. This is used to display
@@ -45,10 +46,12 @@ public class CheatSheetHelpPart extends AbstractFormPart implements IHelpPart {
 	 * @param tbm the toolbar we will contribute to
 	 * @param id the unique id of the cheatsheet to display in the part
 	 */
-	public CheatSheetHelpPart(Composite parent, FormToolkit toolkit, IToolBarManager tbm, String id) {
+	public CheatSheetHelpPart(Composite parent, FormToolkit toolkit, IToolBarManager tbm, CheatSheetElement content, IPath path) {
+		id = content.getID();
 		viewer = new CheatSheetViewer(true);
-		viewer.setInput(id);
 		viewer.createPartControl(parent);
+		viewer.setNextSavePath(path);
+		viewer.setContent(content);
 		contributeToToolBar(tbm);
 	}
 
