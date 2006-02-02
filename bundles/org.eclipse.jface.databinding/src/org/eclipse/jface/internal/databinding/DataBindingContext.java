@@ -412,6 +412,13 @@ public class DataBindingContext implements IDataBindingContext {
 		return updatable;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#registerForDispose(org.eclipse.jface.databinding.IUpdatable)
+	 */
+	public void registerForDispose(IUpdatable updatable) {
+		createdUpdatables.add(updatable);
+	}
+	
 	protected IUpdatable doCreateUpdatable(Object description,
 			DataBindingContext thisDatabindingContext) {
 		for (int i = factories.size() - 1; i >= 0; i--) {

@@ -242,4 +242,16 @@ public interface IDataBindingContext {
 	 */
 	public void removeBindingEventListener(IBindingListener listener);
 
+	/**
+	 * Registers an IUpdatable with the data binding context so that it
+	 * will be disposed when all other IUpdatables are disposed.  This is
+	 * only necessary for updatables like SettableValue that are instantiated
+	 * directly, rather being created by a data binding context to begin
+	 * with.
+	 * 
+	 * @param updatable The IUpdatable to register.
+	 */
+	public void registerForDispose(IUpdatable updatable);
+
 }
+
