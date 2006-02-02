@@ -331,19 +331,13 @@ public class DecoratedField {
 		this.control = controlCreator.createControl(form, style);
 
 		addControlListeners();
-		// Add a dummy decoration on each side to reserve the width needed.
-		addFieldDecoration(new FieldDecoration(null, null), SWT.LEFT | SWT.TOP,
-				true);
-		addFieldDecoration(new FieldDecoration(null, null),
-				SWT.RIGHT | SWT.TOP, true);
 		form.setTabList(new Control[] { control });
 
-		// Set up the preferred width of the control and attachments to the
-		// decorations.
+		// Set up the initial layout data.
 		FormData data = new FormData();
-		data.left = new FormAttachment(decDatas[LEFT_TOP].label);
-		data.right = new FormAttachment(decDatas[RIGHT_TOP].label);
+		data.left = new FormAttachment(0, 0);
 		data.top = new FormAttachment(0, 0);
+		data.right = new FormAttachment(100, 0);
 		control.setLayoutData(data);
 
 	}
@@ -403,28 +397,60 @@ public class DecoratedField {
 			});
 			decDatas[i] = new FieldDecorationData(decoration, label, formData,
 					showOnFocus);
+			// since there has never been a decoration in this position, we
+			// need to determine if layout data should be set on the control.
+			updateControlAttachments(i, decDatas[i]);
+
 		} else {
 			label = decDatas[i].label;
 			formData = decDatas[i].data;
 			decDatas[i].decoration = decoration;
 			decDatas[i].showOnFocus = showOnFocus;
 		}
-		/*
-		 * Layout data reserved width and height depend on whether
-		 * there is an image or this is a blank decoration.  Always
-		 * set both values since we may be reusing a form data.
-		 */
-		if (decoration.getImage() == null) {
-			formData.width = FieldDecorationRegistry.getDefault().getReservedDecorationWidth();
-			formData.height = 0;
-		} else {
-			formData.width = SWT.DEFAULT;
-			formData.height = SWT.DEFAULT;
-		}
 		label.setImage(decDatas[i].decoration.getImage());
 		label.setData(decDatas[i]);
 		label.setVisible(!showOnFocus);
 		label.setLayoutData(formData);
+	}
+
+	/*
+	 * A decoration at the specified index has been added. Update the control's
+	 * attachments if it has not previously attached on that side.
+	 */
+	private void updateControlAttachments(int index, FieldDecorationData decData) {
+		FormData formData = (FormData) control.getLayoutData();
+
+		switch (index) {
+		case LEFT_TOP:
+			if (decDatas[LEFT_BOTTOM] == null) {
+				formData.left = new FormAttachment(decData.label);
+			} else
+				return;
+			break;
+		case LEFT_BOTTOM:
+			if (decDatas[LEFT_TOP] == null) {
+				formData.left = new FormAttachment(decData.label);
+			} else
+				return;
+			break;
+		case RIGHT_TOP:
+			if (decDatas[RIGHT_BOTTOM] == null) {
+				formData.right = new FormAttachment(decData.label);
+			} else
+				return;
+			break;
+		case RIGHT_BOTTOM:
+			if (decDatas[RIGHT_TOP] == null) {
+				formData.right = new FormAttachment(decData.label);
+			} else
+				return;
+			break;
+		default:
+			return;
+		}
+		// Form data was updated.
+		control.setLayoutData(formData);
+		form.layout();
 	}
 
 	/**
@@ -546,21 +572,24 @@ public class DecoratedField {
 		case LEFT_TOP:
 			data.left = new FormAttachment(0, 0);
 			data.top = new FormAttachment(0, 0);
-			return data;
+			break;
 		case LEFT_BOTTOM:
 			data.left = new FormAttachment(0, 0);
 			data.bottom = new FormAttachment(100, 0);
-			return data;
+			break;
 		case RIGHT_TOP:
 			data.right = new FormAttachment(100, 0);
 			data.top = new FormAttachment(0, 0);
-			return data;
+			break;
 		case RIGHT_BOTTOM:
 			data.right = new FormAttachment(100, 0);
 			data.bottom = new FormAttachment(100, 0);
-			return data;
+			break;
 		}
-		// should never get here, making compiler happy
+		data.width = FieldDecorationRegistry.getDefault()
+				.getReservedDecorationWidth();
+		data.height = SWT.DEFAULT;
+
 		return data;
 	}
 
