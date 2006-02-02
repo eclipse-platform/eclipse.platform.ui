@@ -144,10 +144,9 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 				if (element.isComposite()) {
 					return CheatSheetPlugin.getPlugin().getImageRegistry().get(
 							ICheatSheetResource.COMPOSITE_OBJ);
-				} else {
-					return CheatSheetPlugin.getPlugin().getImageRegistry().get(
-							ICheatSheetResource.CHEATSHEET_OBJ);
-			    }
+				}
+				return CheatSheetPlugin.getPlugin().getImageRegistry().get(
+						ICheatSheetResource.CHEATSHEET_OBJ);
 			}
 			return PlatformUI.getWorkbench().getSharedImages().getImage(
 					ISharedImages.IMG_OBJ_FOLDER);

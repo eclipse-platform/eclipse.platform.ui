@@ -132,7 +132,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		clearIcons();
 		collapseAllButtons();
 		if(isStarted)
-			getNewManager();
+			initManager();
 
 		currentItemNum = 1;
 
@@ -722,6 +722,12 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		manager = new CheatSheetManager(contentElement);
 		return manager;
 	}
+	
+	private CheatSheetManager initManager(){
+		CheatSheetManager csManager = getManager();
+		csManager.setData(new Hashtable());
+		return csManager;
+	}
 
 	private ViewItem getViewItemAtIndex(int index) {
 		if (viewItemList != null && !viewItemList.isEmpty()) {
@@ -794,7 +800,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	    CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after CheatSheetPage.createPart() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 	    if (model instanceof CheatSheet) {	
-			getNewManager().fireEvent(ICheatSheetEvent.CHEATSHEET_OPENED);
+			initManager().fireEvent(ICheatSheetEvent.CHEATSHEET_OPENED);
 			CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after fireEvent() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 	
 			if(!checkSavedState()) {
@@ -1112,10 +1118,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	}
 
 	public void addListener(CheatSheetListener listener) {
-		if (manager != null) {
-			manager.addListener(listener);
-		}
-		
+		getManager().addListener(listener);		
 	}
 
 }

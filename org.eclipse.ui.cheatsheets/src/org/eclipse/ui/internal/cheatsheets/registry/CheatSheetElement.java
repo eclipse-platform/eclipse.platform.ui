@@ -201,11 +201,10 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 	 * the URL of the content file.
 	 */
 	public String getRestorePath() {
-		if (registered) {
-			return null;
-		} else {
+		if (!registered) {
 		    return contentFile;
 		}
+		return null;
 	}
 
 	public void setRegistered(boolean registered) {

@@ -112,7 +112,12 @@ public final class Messages extends NLS {
 	public static String SELECTION_DIALOG_OPEN_REGISTERED;
 	public static String SELECTION_DIALOG_OPEN_FROM_FILE;
 	public static String ERROR_READING_ID_FROM_STATEFILE;
-	public static String ERROR_SAVING_STATE_REFERENCE = null;
+	public static String ERROR_SAVING_STATE_REFERENCE;
+	public static String COMPOSITE_PAGE_REVIEW_TASK;
+	public static String COMPOSITE_PAGE_GOTO_TASK;
+	public static String COMPOSITE_PAGE_START_TASK;
+	public static String COMPOSITE_PAGE_BLOCKED;
+	public static String COMPOSITE_PAGE_TASK_NOT_COMPLETE;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

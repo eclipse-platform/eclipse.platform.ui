@@ -192,8 +192,8 @@ public class CheatSheetTask implements ICompositeCheatSheetTask {
 	}
 
 	public IPath getStateLocation() {
-		if (model instanceof CompositeCheatSheetModel) {
-			IPath statePath = ((CompositeCheatSheetModel)model).getStateLocation().append(getId());
+		if (model != null) {
+			IPath statePath = model.getStateLocation().append(getId());
 			File statePathAsFile = statePath.toFile();
 			// Create directory if necessary
 			if (!statePathAsFile.exists()) {
@@ -210,4 +210,7 @@ public class CheatSheetTask implements ICompositeCheatSheetTask {
 		return new URL(model.getContentUrl(), path);
 	}
 
+	public CompositeCheatSheetModel getModel() {
+		return model;
+	}
 }
