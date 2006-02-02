@@ -17,19 +17,20 @@ import java.util.List;
 import org.eclipse.jface.text.Assert;
 
 /**
- * Encapsulates revision info for one line-based document.
+ * Encapsulates revision information for one line-based document.
  * <p>
- * XXX This API is provisional and may change any time during the development of eclipse 3.2.
+ * Clients may instantiate.
  * </p>
  * 
  * @since 3.2
+ * @see Revision
  */
 public final class RevisionInformation {
 	private final List fRevisions= new ArrayList();
 	private final List fRORevisions= Collections.unmodifiableList(fRevisions);
 	
 	/**
-	 * Creates a new annotate information object.
+	 * Creates a new revision information model.
 	 */
 	public RevisionInformation() {
 	}

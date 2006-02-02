@@ -16,15 +16,11 @@ package org.eclipse.jface.text.source;
  * <ul>
  * <li>providing whether the information control can interact with the mouse wheel</li>
  * </ul>
- * <p>
- * XXX This API is provisional and may change any time during the development of eclipse 3.2.
- * </p>
  *
  * @see org.eclipse.jface.text.source.IAnnotationHover
  * @since 3.2
  */
 public interface IAnnotationHoverExtension2 {
-
 	/**
 	 * Returns whether the provided information control can interact with the mouse wheel. I.e. the
 	 * hover will not be closed when the mouse wheel is moved.

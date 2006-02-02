@@ -27,9 +27,6 @@ import org.eclipse.jface.internal.text.revisions.ChangeRegion;
  * <p>
  * Clients may subclass.
  * </p>
- * <p>
- * XXX This API is provisional and may change any time during the development of eclipse 3.2.
- * </p>
  * 
  * @since 3.2
  */
@@ -44,11 +41,12 @@ public abstract class Revision {
 	}
 	
 	/**
-	 * Adds a line range to this revision.
+	 * Adds a line range to this revision. The range must be non-empty and have a legal start line
+	 * (not -1).
 	 * 
-	 * @param range the line range that was changed with this revision
+	 * @param range a line range that was changed with this revision
 	 */
-	public void addRange(ILineRange range) {
+	public final void addRange(ILineRange range) {
 		fChangeRegions.add(new ChangeRegion(this, range));
 	}
 
@@ -57,7 +55,7 @@ public abstract class Revision {
 	 * 
 	 * @return an unmodifiable view of the contained change regions (element type: {@link Object})
 	 */
-	public List getRegions() {
+	public final List getRegions() {
 		return fROChangeRegions;
 	}
 
@@ -70,14 +68,17 @@ public abstract class Revision {
 	public abstract Object getHoverInfo();
 
 	/**
-	 * Returns the color definition to be used for this revision.
+	 * Returns the color definition to be used for this revision. The color may be used to visually
+	 * distinguish one revision from another, for example as background color. The colors of any two
+	 * revisions should be as distinct as possible.
 	 * 
 	 * @return the RGB color description for this revision
 	 */
 	public abstract RGB getColor();
 
 	/**
-	 * Returns the unique (within the document id of this revision.
+	 * Returns the unique (within the document) id of this revision. This may be the version string
+	 * or a different identifier.
 	 * 
 	 * @return the id of this revision
 	 */

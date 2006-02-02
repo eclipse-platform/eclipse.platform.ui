@@ -93,7 +93,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	/**
 	 * Handles all the mouse interaction in this line number ruler column.
 	 */
-	private class MouseHandler implements MouseListener, MouseMoveListener {
+	class MouseHandler implements MouseListener, MouseMoveListener {
 
 		/** The cached view port size */
 		private int fCachedViewportSize;
@@ -103,7 +103,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		private int fStartLineNumber;
 		/** The auto scroll direction */
 		private int fAutoScrollDirection;
-		/** Whether we are listening for moves. */
+		/* @since 3.2 */
 		private boolean fIsListeningForMove= false;
 
 		/*
@@ -343,6 +343,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			redraw();
 		}
 	};
+	/* @since 3.2 */
 	private MouseHandler fMouseHandler;
 
 
@@ -637,6 +638,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 *
 	 * @param gc the GC to draw into
 	 * @param visibleLines the visible model lines
+	 * @since 3.2
 	 */
 	void doPaint(GC gc, ILineRange visibleLines) {
 		fSensitiveToTextChanges= isViewerCompletelyShown();
@@ -659,6 +661,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 	}
 
+	/* @since 3.2 */
 	private static int end(ILineRange range) {
 		return range.getStartLine() + range.getNumberOfLines();
 	}
@@ -685,6 +688,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * @param widgetLine the widget line
 	 * @return the baseline bias to use when drawing text that is lined up with
 	 *         <code>fCachedTextWidget</code>
+	 * @since 3.2
 	 */
 	private int getBaselineBias(GC gc, int widgetLine) {
 		/*
@@ -705,7 +709,6 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	/**
 	 * Paints the line. After this method is called the line numbers are painted on top
 	 * of the result of this method.
-	 * <p>This default implementation does nothing.</p>
 	 *
 	 * @param line the line of the document which the ruler is painted for
 	 * @param y the y-coordinate of the box being painted for <code>line</code>, relative to <code>gc</code>

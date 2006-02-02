@@ -22,9 +22,6 @@ import org.eclipse.jface.text.source.LineRange;
 /**
  * A change region describes a contiguous range of lines that was changed in the same revision
  * of a document.
- * <p>
- * XXX This API is provisional and may change any time during the development of eclipse 3.2.
- * </p>
  * 
  * @since 3.2
  */

@@ -440,9 +440,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	
 	/**
 	 * Shows revision information in this editor.
-	 * <p>
-	 * XXX This API is provisional and may change any time during the development of eclipse 3.2.
-	 * </p>
 	 * 
 	 * @param info the revision information to display
 	 * @param quickDiffProviderId the quick diff provider that matches the source of the revision
@@ -463,9 +460,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	
 	/**
 	 * Hides revision information in this editor.
-	 * <p>
-	 * XXX This API is provisional and may change any time during the development of eclipse 3.2.
-	 * </p>
 	 * 
 	 * @since 3.2
 	 */
@@ -494,6 +488,16 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		return null;
 	}
 
+	/**
+	 * Ensures that quick diff information is displayed and the quick diff provider is the one with
+	 * the specified id. If a different quick diff provider is in use, the user may be asked whether
+	 * he wants to switch.
+	 * 
+	 * @param diffProviderId the quick diff provider id to use
+	 * @return <code>true</code> if quick diff could be enabled for the given id,
+	 *         <code>false</code> otherwise
+	 * @since 3.2
+	 */
 	private boolean ensureQuickDiffProvider(String diffProviderId) {
 		ISourceViewer viewer= getSourceViewer();
 		if (viewer == null)
@@ -1584,8 +1588,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	/**
-	 * Returns the menu label for 'Show In' together
-	 * with its key binding string.
+	 * Returns the menu label for 'Show In' together with its key binding string.
 	 * 
 	 * @return the 'Show In' menu label
 	 * @since 3.2

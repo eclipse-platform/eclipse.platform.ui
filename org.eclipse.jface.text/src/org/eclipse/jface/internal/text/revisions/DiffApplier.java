@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,16 +23,16 @@ import org.eclipse.jface.text.source.ILineDiffer;
  * @since 3.2
  */
 public final class DiffApplier {
-	
-	private void applyDiff(List regions, Hunk hunk) {
-		for (Iterator it= regions.iterator(); it.hasNext();) {
-			ChangeRegion region= (ChangeRegion) it.next();
-			region.adjustTo(hunk);
-		}
-	}
-	
+	/**
+	 * Adjusts the {@link ChangeRegion}s in <code>regions</code> to the diff information provided
+	 * by <code>lineDiffer</code>.
+	 * 
+	 * @param regions the list of {@link ChangeRegion}s to adjust
+	 * @param lineDiffer the differ
+	 * @param numberOfLines the number of lines to adjust
+	 */
 	public void applyDiff(List regions, ILineDiffer lineDiffer, int numberOfLines) {
-		clearDiff(regions);
+		clearDiffs(regions);
 		
 		int added= 0;
 		int changed= 0;
@@ -74,11 +74,23 @@ public final class DiffApplier {
 		
 	}
 
-	private void clearDiff(List regions) {
+	private void clearDiffs(List regions) {
 		for (Iterator it= regions.iterator(); it.hasNext();) {
 			ChangeRegion region= (ChangeRegion) it.next();
 			region.clearDiff();
 		}
 	}
 
+	/**
+	 * Adjusts the change regions to one diff hunk.
+	 * 
+	 * @param regions the list of {@link ChangeRegion}s
+	 * @param hunk the diff hunk to apply
+	 */
+	private void applyDiff(List regions, Hunk hunk) {
+		for (Iterator it= regions.iterator(); it.hasNext();) {
+			ChangeRegion region= (ChangeRegion) it.next();
+			region.adjustTo(hunk);
+		}
+	}
 }

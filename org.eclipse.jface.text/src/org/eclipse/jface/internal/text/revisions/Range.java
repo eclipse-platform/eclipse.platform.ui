@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -245,7 +245,7 @@ public final class Range implements ILineRange, Cloneable {
 	}
 	
 	/**
-	 * Returns <code>true</code> if the passed range has the same offset and lenght as the receiver.
+	 * Returns <code>true</code> if the passed range has the same offset and length as the receiver.
 	 * 
 	 * @param range another line range to compare the receiver to
 	 * @return <code>true</code> if <code>range</code> has the same offset and length as the receiver

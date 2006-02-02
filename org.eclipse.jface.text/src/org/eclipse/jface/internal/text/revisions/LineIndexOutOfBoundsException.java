@@ -12,7 +12,7 @@ package org.eclipse.jface.internal.text.revisions;
 
 /**
  * Thrown to indicate that an attempt to create or modify a {@link Range} failed because it would
- * have resulted in an illegal range. A range is illegal if its lenght is &lt;= 0 or if its start
+ * have resulted in an illegal range. A range is illegal if its length is &lt;= 0 or if its start
  * line is &lt; 0.
  * 
  * @since 3.2

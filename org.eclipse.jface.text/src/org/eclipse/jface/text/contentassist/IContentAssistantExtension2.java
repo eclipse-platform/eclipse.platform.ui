@@ -19,9 +19,6 @@ package org.eclipse.jface.text.contentassist;
  * <li>a local status line for the completion popup</li>
  * <li>control over the behavior when no proposals are available</li>
  * </ul>
- * <p>
- * XXX this API is provisional and may change anytime during the course of 3.2
- * </p>
  * 
  * @since 3.2
  */
@@ -79,5 +76,4 @@ public interface IContentAssistantExtension2 {
 	 * @param message the text for the empty list
 	 */
 	public void setEmptyMessage(String message);
-
 }

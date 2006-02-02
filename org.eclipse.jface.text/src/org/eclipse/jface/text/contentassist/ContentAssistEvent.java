@@ -5,14 +5,17 @@ package org.eclipse.jface.text.contentassist;
  * <p>
  * Clients may use this class.
  * </p>
- * <p>
- * XXX this API is provisional and may change anytime during the course of 3.2
- * </p>
  * 
  * @since 3.2
+ * @see ICompletionListener
  */
 public final class ContentAssistEvent {
-
+	/**
+	 * Creates a new event.
+	 * 
+	 * @param ca the assistant
+	 * @param proc the processor
+	 */
 	ContentAssistEvent(IContentAssistant ca, IContentAssistProcessor proc) {
 		assistant= ca;
 		processor= proc;

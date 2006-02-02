@@ -32,7 +32,17 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	private IAnnotationModel fAnnotationModel;
 	/** <code>true</code> if changes should be displayed using character indications instead of background colors. */
 	private boolean fCharacterDisplay;
+	/**
+	 * The revision painter strategy.
+	 * 
+	 * @since 3.2
+	 */
 	private final RevisionPainter fRevisionPainter;
+	/** 
+	 * The diff information painter strategy.
+	 * 
+	 * @since 3.2
+	 */
 	private final DiffPainter fDiffPainter;
 
 	/**
