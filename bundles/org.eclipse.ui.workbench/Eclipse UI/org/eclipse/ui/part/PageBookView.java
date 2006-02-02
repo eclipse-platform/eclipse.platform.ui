@@ -156,6 +156,15 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	};
 
 	/**
+	 * Selection change listener to listen for page selection changes
+	 */
+	private ISelectionChangedListener postSelectionListener = new ISelectionChangedListener() {
+		public void selectionChanged(SelectionChangedEvent event) {
+			postSelectionChanged(event);
+		}
+	};
+
+	/**
 	 * Selection provider for this view's site
 	 */
 	private SelectionProvider selectionProvider = new SelectionProvider();
@@ -292,11 +301,20 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		 * listeners and post selection listeners.
 		 * 
 		 * @param event
-		 *            the event that's changed.
+		 *            the change
 		 */
 		public void selectionChanged(final SelectionChangedEvent event) {
 			fSelectionListener.selectionChanged(event);
-			fPostSelectionListeners.selectionChanged(event);
+		}
+
+		/**
+		 * The selection has changed, so notify any post-selection listeners.
+		 * 
+		 * @param event
+		 *            the change
+		 */
+		public void postSelectionChanged(final SelectionChangedEvent event) {
+			fPostSelectionListeners.selectionChanged(event);			
 		}
 
 		/*
@@ -853,6 +871,19 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	}
 
 	/**
+	 * Handle page selection changes.
+	 * 
+	 * @param event
+	 */
+	private void postSelectionChanged(SelectionChangedEvent event) {
+		// forward this change from a page to our site's selection provider
+		SelectionProvider provider = (SelectionProvider) getSite()
+				.getSelectionProvider();
+		if (provider != null)
+			provider.postSelectionChanged(event);
+	}
+
+	/**
 	 * Shows a page for the active workbench part.
 	 */
 	private void showBootstrapPart() {
@@ -895,9 +926,14 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 
 			// remove our selection listener
 			ISelectionProvider provider = pageSite.getSelectionProvider();
-			if (provider != null)
+			if (provider != null) {
 				provider
 						.removeSelectionChangedListener(selectionChangedListener);
+				if (provider instanceof IPostSelectionProvider) {
+					((IPostSelectionProvider) provider)
+							.removePostSelectionChangedListener(postSelectionListener);
+				}
+			}
 		}
 
 		// Show new page.
@@ -917,8 +953,13 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 
 			// add our selection listener
 			ISelectionProvider provider = pageSite.getSelectionProvider();
-			if (provider != null)
+			if (provider != null) {
 				provider.addSelectionChangedListener(selectionChangedListener);
+				if (provider instanceof IPostSelectionProvider) {
+					((IPostSelectionProvider) provider)
+							.addPostSelectionChangedListener(postSelectionListener);
+				}
+			}
 			// Update action bars.
 			getViewSite().getActionBars().updateActionBars();
 		}
