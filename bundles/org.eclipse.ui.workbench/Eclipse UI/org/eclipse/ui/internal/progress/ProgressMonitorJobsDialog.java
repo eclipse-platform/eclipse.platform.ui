@@ -40,7 +40,7 @@ import org.eclipse.ui.internal.misc.Policy;
  * progress service to allow locks to show the current jobs.
  */
 public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
-    private NewProgressViewer viewer;
+    private DetailedProgressViewer viewer;
 
     /**
      * The height of the viewer. Set when the details button is selected.
@@ -112,9 +112,8 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
                 return;
             }
 
-            viewer = new NewProgressViewer(viewerComposite, SWT.MULTI
+            viewer = new DetailedProgressViewer(viewerComposite, SWT.MULTI
                     | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-            viewer.setUseHashlookup(true);
             viewer.setSorter(new ViewerSorter() {
                 /*
                  * (non-Javadoc)
@@ -127,11 +126,14 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
                 }
             });
 
-            ProgressTreeContentProvider provider = new ProgressTreeContentProvider(
-                    viewer, true);
-            viewer.setContentProvider(provider);
-            viewer.setInput(provider);
+            viewer.setContentProvider(new ProgressViewerContentProvider(viewer,true,false){
+            	public Object[] getElements(Object inputElement) {
+            		return super.getElements(inputElement);
+            	}}
+            );
+            
             viewer.setLabelProvider(new ProgressLabelProvider());
+            viewer.setInput(this);
             GridData viewerData = new GridData(GridData.FILL_BOTH);
             viewer.getControl().setLayoutData(viewerData);
             GridData viewerCompositeData = (GridData) viewerComposite.getLayoutData();

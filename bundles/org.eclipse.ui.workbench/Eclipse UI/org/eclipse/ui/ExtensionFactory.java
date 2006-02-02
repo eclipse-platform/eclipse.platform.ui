@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.dialogs.ViewsPreferencePage;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage;
 import org.eclipse.ui.internal.keys.KeysPreferencePage;
 import org.eclipse.ui.internal.keys.NewKeysPreferencePage;
-import org.eclipse.ui.internal.progress.JobView;
+import org.eclipse.ui.internal.progress.ProgressView;
 import org.eclipse.ui.internal.themes.ColorsAndFontsPreferencePage;
 import org.eclipse.ui.internal.wizards.preferences.PreferencesExportWizard;
 import org.eclipse.ui.internal.wizards.preferences.PreferencesImportWizard;
@@ -156,7 +156,7 @@ public class ExtensionFactory implements IExecutableExtensionFactory,
         if (PREFERENCES_IMPORT_WIZARD.equals(id))
         	   return configure(new PreferencesImportWizard());
         if (PROGRESS_VIEW.equals(id)) 
-            return configure(new JobView());
+            return configure(new ProgressView());
         if (WORKBENCH_PREFERENCE_PAGE.equals(id))
             return configure(new WorkbenchPreferencePage());
         if (CONTENT_TYPES_PREFERENCE_PAGE.equals(id))

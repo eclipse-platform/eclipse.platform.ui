@@ -21,7 +21,6 @@ import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.IProgressConstants;
 
 /**
@@ -34,13 +33,17 @@ class FinishedJobs extends EventManager {
      * Interface for notify listeners.
      */
     static interface KeptJobsListener {
-        /*
+       
+        /**
          * A job to be kept has finished
+         * @param jte
          */
         void finished(JobTreeElement jte);
 
-        /*
+       
+        /**
          * A kept job has been removed.
+         * @param jte
          */
         void removed(JobTreeElement jte);
     }
@@ -106,13 +109,13 @@ class FinishedJobs extends EventManager {
     static boolean keep(JobInfo info) {
         Job job = info.getJob();
         if (job != null) {
-            Object prop = job.getProperty(NewProgressViewer.KEEP_PROPERTY);
+            Object prop = job.getProperty(ProgressManagerUtil.KEEP_PROPERTY);
             if (prop instanceof Boolean) {
                 if (((Boolean) prop).booleanValue())
                     return true;
             }
 
-            prop = job.getProperty(NewProgressViewer.KEEPONE_PROPERTY);
+            prop = job.getProperty(ProgressManagerUtil.KEEPONE_PROPERTY);
             if (prop instanceof Boolean) {
                 if (((Boolean) prop).booleanValue())
                     return true;
@@ -216,7 +219,7 @@ class FinishedJobs extends EventManager {
             if (myJob != null) {
 
                 Object prop = myJob
-                        .getProperty(NewProgressViewer.KEEPONE_PROPERTY);
+                        .getProperty(ProgressManagerUtil.KEEPONE_PROPERTY);
                 if (prop instanceof Boolean && ((Boolean) prop).booleanValue()) {
                     ArrayList found = null;
                     Object myRoot = getRoot(info);
@@ -233,9 +236,6 @@ class FinishedJobs extends EventManager {
                             Job job = ji.getJob();
                             if (job != null && job != myJob
                                     && job.belongsTo(myJob)) {
-                                if (NewProgressViewer.DEBUG)
-                                    System.err
-                                            .println("found other from family " + otherRoot); //$NON-NLS-1$
                                 if (found == null)
                                     found = new ArrayList();
                                 found.add(otherRoot);
@@ -300,9 +300,7 @@ class FinishedJobs extends EventManager {
                 removed = true;
                 finishedTime.remove(jte);
                 disposeAction(jte);
-                if (NewProgressViewer.DEBUG)
-                		WorkbenchPlugin.log("FinishedJobs: sucessfully removed job"); //$NON-NLS-1$
-
+              
                 // delete all elements that have jte as their direct or indirect parent
                 JobTreeElement jtes[] = (JobTreeElement[]) keptjobinfos
                         .toArray(new JobTreeElement[keptjobinfos.size()]);
@@ -365,6 +363,11 @@ class FinishedJobs extends EventManager {
         return 0;
     }
 
+    /**
+     * Get the date that indicates the finish time.
+     * @param jte
+     * @return Date
+     */
     public Date getFinishDate(JobTreeElement jte) {
         Object o = finishedTime.get(jte);
         if (o instanceof Long)
@@ -372,10 +375,18 @@ class FinishedJobs extends EventManager {
         return null;
     }
 
+    /**
+     * Return whether or not the kept infos have the element.
+     * @param element
+     * @return boolean
+     */
     public boolean isFinished(JobTreeElement element) {
         return keptjobinfos.contains(element);
     }
 
+    /**
+     * Clear all kept jobs.
+     */
     public void clearAll() {
         synchronized (keptjobinfos) {
             JobTreeElement[] all = (JobTreeElement[]) keptjobinfos

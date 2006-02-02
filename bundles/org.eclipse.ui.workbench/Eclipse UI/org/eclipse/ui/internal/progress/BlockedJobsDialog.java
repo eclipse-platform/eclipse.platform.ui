@@ -13,11 +13,8 @@ package org.eclipse.ui.internal.progress;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobStatus;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IconAndMessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
@@ -45,21 +42,14 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	protected static BlockedJobsDialog singleton;
 
 	/**
-	 * The running jobs progress tree.
-	 * 
-	 * @see NewProgressViewer
+	 * The running jobs progress viewer.
 	 */
-	private NewProgressViewer viewer;
+	private DetailedProgressViewer viewer;
 
 	/**
 	 * The name of the task that is being blocked.
 	 */
 	private String blockedTaskName = null;
-
-	/**
-	 * The Job blocking the blocked task.
-	 */
-	private Job blockingJob;
 
 	/**
 	 * The Cancel button control.
@@ -270,8 +260,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		super(parentShell == null ? ProgressManagerUtil.getDefaultParent()
 				: parentShell);
 		blockingMonitor = blocking;
-		if (blockingStatus instanceof IJobStatus)
-			blockingJob = ((IJobStatus) blockingStatus).getJob();
 		setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL
 				| SWT.RESIZE | getDefaultOrientation());
 		// no close button
@@ -302,10 +290,8 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 *            The parent Composite.
 	 */
 	void showJobDetails(Composite parent) {
-		viewer = new NewProgressViewer(parent, SWT.MULTI | SWT.H_SCROLL
+		viewer = new DetailedProgressViewer(parent, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.BORDER);
-		if (blockingJob != null)
-			viewer.setHighlightJob(blockingJob);
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(new ViewerSorter() {
 			/*
@@ -318,7 +304,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 				return ((Comparable) e1).compareTo(e2);
 			}
 		});
-		IContentProvider provider = getContentProvider();
+		ProgressViewerContentProvider provider = getContentProvider();
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
 		viewer.setLabelProvider(new ProgressLabelProvider());
@@ -335,12 +321,11 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * 
 	 * @return ProgressTreeContentProvider
 	 */
-	private ProgressTreeContentProvider getContentProvider() {
-		return new ProgressTreeContentProvider(viewer, true) {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.internal.progress.ProgressContentProvider#getElements(java.lang.Object)
+	private ProgressViewerContentProvider getContentProvider() {
+		return new ProgressViewerContentProvider(viewer, true,false) {
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.progress.ProgressViewerContentProvider#getElements(java.lang.Object)
 			 */
 			public Object[] getElements(Object inputElement) {
 				Object[] elements = super.getElements(inputElement);

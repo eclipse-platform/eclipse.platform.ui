@@ -51,6 +51,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 				SWT.COLOR_LIST_BACKGROUND));
 
 		scrolled.setContent(control);
+		hookControl(control);
 	}
 
 	/*
@@ -365,5 +366,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		control.layout(true);
 
 	}
+
 	
 }

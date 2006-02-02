@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -369,4 +370,8 @@ public class ProgressManagerUtil {
 			}
 		};
 	}
+
+	static final QualifiedName KEEP_PROPERTY = IProgressConstants.KEEP_PROPERTY;
+
+	static final QualifiedName KEEPONE_PROPERTY = IProgressConstants.KEEPONE_PROPERTY;
 }
