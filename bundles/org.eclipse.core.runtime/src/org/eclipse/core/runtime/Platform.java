@@ -20,9 +20,11 @@ import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.osgi.framework.Bundle;
+import org.osgi.service.packageadmin.PackageAdmin;
 
 /**
  * The central class of the Eclipse Platform Runtime. This class cannot
@@ -599,7 +601,9 @@ public final class Platform {
 
 	/**
 	 * Returns the content type manager.
-	 * 
+	 * <p>
+	 * Clients are also able to aquire the {@link IContentTypeManager} service.
+	 * </p>
 	 * @return the content type manager
 	 * @since 3.0
 	 */
@@ -612,7 +616,10 @@ public final class Platform {
 	 * is returned if no such option is found.   Options are specified
 	 * in the general form <i>&lt;plug-in id&gt;/&lt;option-path&gt;</i>.  
 	 * For example, <code>org.eclipse.core.runtime/debug</code>
-	 *
+	 * <p>
+	 * Clients are also able to aquire the {@link DebugOptions} service
+	 * and query it for debug options.
+	 * </p>
 	 * @param option the name of the option to lookup
 	 * @return the value of the requested debug option or <code>null</code>
 	 */
@@ -627,12 +634,14 @@ public final class Platform {
 	 * instead.  In various, typically non IDE-related configurations of Eclipse, the platform
 	 * working directory may not be on the local file system.  As such, the more general
 	 * form of this location is as a URL.
+	 * </p><p>
+	 * Alternatively, instead of calling <code>getInstanceLocation</code> clients are 
+	 * able to aquire the {@link Location} service (with the type {@link Location.INSTANCE_FILTER})
+	 * and then change the resulting URL to a path. See the javadoc for <code>getInstanceLocation</code>
+	 * for more details.
 	 * </p>
-	 *
 	 * @return the location of the platform
 	 * @see #getInstanceLocation()
-	 * XXX lookup the service and change to path
-	 * 
 	 */
 	public static IPath getLocation() throws IllegalStateException {
 		return InternalPlatform.getDefault().getLocation();
@@ -654,7 +663,7 @@ public final class Platform {
 	 * @return the path of the log file on disk.
 	 * 
 	 * XXX  consider making an ILogger interface that listeners can implements and it allows 
-     * us to implement Platform.getLogLocation()
+	 * us to implement Platform.getLogLocation()
 	 */
 	public static IPath getLogFileLocation() {
 		return InternalPlatform.getDefault().getMetaArea().getLogLocation();
@@ -734,7 +743,7 @@ public final class Platform {
 	 *
 	 * @param plugin the plug-in whose state location is returned
 	 * @return a local file system path
-	 * XXX deprecate this one and use getStateLocation
+	 * @deprecated clients should call <code>getStateLocation</code> instead
 	 */
 	public static IPath getPluginStateLocation(Plugin plugin) {
 		return plugin.getStateLocation();
@@ -800,11 +809,10 @@ public final class Platform {
 	 * exception handler.  Such exceptions are not rethrown by this method.
 	 *
 	 * @param runnable the runnable to run
-	 * XXX deprecate and use SafeRunner.run().
+	 * @deprecated clients should use <code>SafeRunner#run</code> instead
 	 */
 	public static void run(ISafeRunnable runnable) {
 		SafeRunner.run(runnable);
-		// TODO: deprecate?
 	}
 
 	/**
@@ -934,10 +942,12 @@ public final class Platform {
 	 * Returns a number that changes whenever the set of installed plug-ins
 	 * changes. This can be used for invalidating caches that are based on 
 	 * the set of currently installed plug-ins. (e.g. extensions)
-	 * 
+	 * <p>
+	 * Clients are also able to aquire the {@link PlatformAdmin} service
+	 * and get the timestamp from its state object.
+	 * </p>
 	 * @return a number related to the set of installed plug-ins
 	 * @since 3.1
-	 * XXX use {@link PlatformAdmin} and do getState().gettimeStamp() or something like that. 
 	 */
 	public static long getStateStamp() {
 		return InternalPlatform.getDefault().getStateTimeStamp();
@@ -1135,11 +1145,12 @@ public final class Platform {
 	 * Platform is built on. Even as the Eclipse Platform evolves 
 	 * in compatible ways from release to release, the details of 
 	 * the OSGi implementation might not. 
+	 * </p><p>
+	 * Clients can also aquire the {@link PlatformAdmin} service
+	 * to retrieve this object.
 	 * </p>
-	 * 
 	 * @return the platform admin for this instance of Eclipse
 	 * @since 3.0
-	 * XXX use the service {@link PlatformAdmin}
 	 */
 	public static PlatformAdmin getPlatformAdmin() {
 		return InternalPlatform.getDefault().getPlatformAdmin();
@@ -1216,7 +1227,7 @@ public final class Platform {
 	 * De-registers the given bundle group provider with the platform.
 	 * <p>
 	 * Clients are also able to use the {@link IBundleGroupProvider} service mechanism
-	 * for un-registering themselves.
+	 * for unregistering themselves.
 	 * </p>
 	 * @param provider a provider to de-register
 	 * @since 3.0
@@ -1279,11 +1290,14 @@ public final class Platform {
 
 	/**
 	 * Checks if the specified bundle is a fragment bundle.
-	 * 
+	 * <p>
+	 * Clients are also able to aquire the {@link PackageAdmin} service
+	 * to query if the given bundle is a fragment by asking for the bundle type
+	 * and checking against constants on the service interface.
+	 * </p>
 	 * @param bundle the bundle to query
 	 * @return true if the specified bundle is a fragment bundle; otherwise false is returned.
 	 * @since 3.0
-	 * XXX Document the use of the packageAdmin service and filter if needed
 	 */
 	public static boolean isFragment(Bundle bundle) {
 		return InternalPlatform.getDefault().isFragment(bundle);
@@ -1293,12 +1307,14 @@ public final class Platform {
 	 * Returns an array of attached fragment bundles for the specified bundle.  If the 
 	 * specified bundle is a fragment then <tt>null</tt> is returned.  If no fragments are 
 	 * attached to the specified bundle then <tt>null</tt> is returned.
-	 * 
+	 * <p>
+	 * Clients are also able to aquire the {@link PackageAdmin} service and query
+	 * it for the fragments of the given bundle.
+	 * </p>
 	 * @param bundle the bundle to get the attached fragment bundles for.
 	 * @return an array of fragment bundles or <tt>null</tt> if the bundle does not 
 	 * have any attached fragment bundles. 
 	 * @since 3.0
-	 * XXX Document the use of the packageAdmin service and filter if needed
 	 */
 	public static Bundle[] getFragments(Bundle bundle) {
 		return InternalPlatform.getDefault().getFragments(bundle);
@@ -1308,12 +1324,16 @@ public final class Platform {
 	 * Returns the resolved bundle with the specified symbolic name that has the
 	 * highest version.  If no resolved bundles are installed that have the 
 	 * specified symbolic name then null is returned.
-	 * 
+	 * <p>
+	 * Clients are also able to aquire the {@link PackageAdmin} service and query
+	 * it for the bundle with the specified symbolic name. Clients can ask the
+	 * service for all bundles with that particular name and then determine the
+	 * one with the highest version.
+	 * </p>
 	 * @param symbolicName the symbolic name of the bundle to be returned.
 	 * @return the bundle that has the specified symbolic name with the 
 	 * highest version, or <tt>null</tt> if no bundle is found.
 	 * @since 3.0
-	 * XXX Document the use of the packageAdmin service and filter if needed
 	 */
 	public static Bundle getBundle(String symbolicName) {
 		return InternalPlatform.getDefault().getBundle(symbolicName);
@@ -1326,13 +1346,16 @@ public final class Platform {
 	 * the specified symbolic name and a version greater than or equal to the 
 	 * specified version are returned. The returned bundles are ordered in 
 	 * descending bundle version order.
-	 * 
+	 * <p>
+	 * Clients are also able to aquire the {@link PackageAdmin} service and query
+	 * it for all bundle versions with the given symbolic name, after turning the
+	 * specific version into a version range.
+	 * </p>
 	 * @param symbolicName the symbolic name of the bundles that are to be returned.
 	 * @param version the version that the return bundle versions must match, 
 	 * or <tt>null</tt> if no version matching is to be done. 
 	 * @return the array of Bundles with the specified name that match the 
 	 * specified version and match rule, or <tt>null</tt> if no bundles are found.
-	 * XXX Document the use of the packageAdmin service and filter if needed
 	 */
 	public static Bundle[] getBundles(String symbolicName, String version) {
 		return InternalPlatform.getDefault().getBundles(symbolicName, version);
@@ -1342,12 +1365,14 @@ public final class Platform {
 	 * Returns an array of host bundles that the specified fragment bundle is 
 	 * attached to or <tt>null</tt> if the specified bundle is not attached to a host.  
 	 * If the bundle is not a fragment bundle then <tt>null</tt> is returned.
-	 * 
+	 * <p>
+	 * Clients are also able to aquire the {@link PackageAdmin} service and query
+	 * it for the hosts for the given bundle.
+	 * </p>
 	 * @param bundle the bundle to get the host bundles for.
 	 * @return an array of host bundles or null if the bundle does not have any
 	 * host bundles.
 	 * @since 3.0
-	 * XXX Document the use of the packageAdmin service and filter if needed
 	 */
 	public static Bundle[] getHosts(Bundle bundle) {
 		return InternalPlatform.getDefault().getHosts(bundle);
