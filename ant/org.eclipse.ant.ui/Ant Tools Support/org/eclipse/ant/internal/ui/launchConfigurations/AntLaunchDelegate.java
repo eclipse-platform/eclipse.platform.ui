@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -516,9 +516,11 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
         }
         
         //set the ANT_HOME environment variable
-        Map vars = copy.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new HashMap(1));
-		vars.put("ANT_HOME", antHome); //$NON-NLS-1$
-		copy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, vars);
+        if (antHome != null) {
+            Map vars = copy.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new HashMap(1));
+            vars.put("ANT_HOME", antHome); //$NON-NLS-1$
+            copy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, vars);
+        }
 
 		//copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000");
 		IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 10);
@@ -593,14 +595,16 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		} catch (CoreException e) {
 		}
 	
-		vmArgs.append("-Dant.home=\""); //$NON-NLS-1$
-		vmArgs.append(antHome);
-		vmArgs.append("\" "); //$NON-NLS-1$
-		File antLibDir= new File(antHome, "lib"); //$NON-NLS-1$
-		vmArgs.append("-Dant.library.dir=\""); //$NON-NLS-1$
-		vmArgs.append(antLibDir.getAbsolutePath());
-		vmArgs.append('\"');
-
+        if (antHome != null) {
+            vmArgs.append("-Dant.home=\""); //$NON-NLS-1$
+            vmArgs.append(antHome);
+            vmArgs.append("\" "); //$NON-NLS-1$
+        
+            File antLibDir= new File(antHome, "lib"); //$NON-NLS-1$
+            vmArgs.append("-Dant.library.dir=\""); //$NON-NLS-1$
+            vmArgs.append(antLibDir.getAbsolutePath());
+            vmArgs.append('\"');
+        }
 		if (setInputHandler) {
 			String swtLocation= getSWTLibraryLocation();
 			if (swtLocation != null) {
