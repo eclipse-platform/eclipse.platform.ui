@@ -33,7 +33,7 @@ public class PluginCompatibilityTests extends TestCase {
 				Bundle[] installed = BundleTestingHelper.getBundles(RuntimeTestsPlugin.getContext(), "bundle01", "1.0");
 				assertEquals("1.0", 1, installed.length);
 				assertEquals("1.0", "bundle01", installed[0].getSymbolicName());
-				assertEquals("1.1", "1.0", installed[0].getHeaders().get(Constants.BUNDLE_VERSION));
+				assertEquals("1.1", new Version("1.0"), new Version((String) installed[0].getHeaders().get(Constants.BUNDLE_VERSION)));
 				assertEquals("1.2", Bundle.RESOLVED, installed[0].getState());
 				IPluginDescriptor descriptor = InternalPlatform.getPluginRegistry().getPluginDescriptor("bundle01", new PluginVersionIdentifier("1.0"));
 				assertNotNull("2.0", descriptor);
