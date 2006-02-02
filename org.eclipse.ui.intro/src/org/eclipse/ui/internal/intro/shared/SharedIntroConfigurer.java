@@ -43,7 +43,7 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 	public String getVariable(String variableName) {
 		IProduct product = Platform.getProduct();
 		if (product != null) {
-			String value = product.getProperty(variableName);
+			String value = getProductProperty(product, variableName);
 			if (value != null) {
 				value = resolveVariable(product.getDefiningBundle(), value);
 			}
@@ -58,13 +58,25 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 				try {
 					String path = value.substring(7);
 					URL url = bundle.getEntry(path);
-					URL localURL = Platform.asLocalURL(url);
-					return localURL.toString();
+					if (url!=null) {
+						URL localURL = Platform.asLocalURL(url);
+						return localURL.toString();
+					}
 				} catch (IOException e) {
 					// just use the value as-is
 					return value;
 				}
 			}
+		}
+		return value;
+	}
+	
+	private String getProductProperty(IProduct product, String variableName) {
+		String value = product.getProperty(variableName);
+		if (value==null) {
+			// return default values
+			if (variableName.equals(VAR_INTRO_BACKGROUND_IMAGE))
+				return "css/graphics/root/welcomebckgrd.jpg";
 		}
 		return value;
 	}

@@ -28,7 +28,8 @@ public interface ISharedIntroConstants {
 	// Other ids
 	String ID_FALLBACK_ANCHOR = "defaultAnchor"; //$NON-NLS-1$
 	
-	// Product intro variables
+	// Product intro variables 
+	String VAR_INTRO_BACKGROUND_IMAGE = "introBackgroundImage"; //$NON-NLS-1$
 	String VAR_INTRO_ROOT_PAGES = "introRootPages"; //$NON-NLS-1$
 	String VAR_INTRO_DATA = "introData";  //$NON-NLS-1$
 }
