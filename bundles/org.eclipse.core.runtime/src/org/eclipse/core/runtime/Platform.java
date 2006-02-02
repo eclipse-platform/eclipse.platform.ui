@@ -1328,7 +1328,8 @@ public final class Platform {
 	 * Clients are also able to aquire the {@link PackageAdmin} service and query
 	 * it for the bundle with the specified symbolic name. Clients can ask the
 	 * service for all bundles with that particular name and then determine the
-	 * one with the highest version.
+	 * one with the highest version. Note that clients may want to filter
+	 * the results based on the state of the bundles.
 	 * </p>
 	 * @param symbolicName the symbolic name of the bundle to be returned.
 	 * @return the bundle that has the specified symbolic name with the 
@@ -1349,7 +1350,8 @@ public final class Platform {
 	 * <p>
 	 * Clients are also able to aquire the {@link PackageAdmin} service and query
 	 * it for all bundle versions with the given symbolic name, after turning the
-	 * specific version into a version range.
+	 * specific version into a version range. Note that clients may want to filter
+	 * the results based on the state of the bundles.
 	 * </p>
 	 * @param symbolicName the symbolic name of the bundles that are to be returned.
 	 * @param version the version that the return bundle versions must match, 
