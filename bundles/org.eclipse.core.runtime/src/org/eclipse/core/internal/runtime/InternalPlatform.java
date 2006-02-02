@@ -269,13 +269,13 @@ public final class InternalPlatform {
 			return source.getSymbolicName();
 		return null;
 	}
-	
+
 	public IBundleGroupProvider[] getBundleGroupProviders() {
 		if (groupProviderTracker == null) {
 			// aquire the service and get the list of services
 			Filter filter = null;
 			try {
-				filter = getBundleContext().createFilter("(objectClass=org.eclipse.core.runtime.IBundleGroupProvider)"); //$NON-NLS-1$
+				filter = getBundleContext().createFilter("(objectClass=" + IBundleGroupProvider.class.getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (InvalidSyntaxException e) {
 				// ignore this, it should never happen
 			}
@@ -677,13 +677,13 @@ public final class InternalPlatform {
 		return admin == null ? -1 : admin.getState(false).getTimeStamp();
 	}
 
-	/*package*/ URLConverter getURLConverter(URL url) {
+	/*package*/URLConverter getURLConverter(URL url) {
 		String protocol = url.getProtocol();
 		synchronized (urlTrackers) {
 			ServiceTracker tracker = (ServiceTracker) urlTrackers.get(protocol);
 			if (tracker == null) {
 				// get the right service based on the protocol
-				String FILTER_PREFIX = "(&(objectClass=org.eclipse.osgi.service.urlconversion.URLConverter)(protocol="; //$NON-NLS-1$
+				String FILTER_PREFIX = "(&(objectClass=" + URLConverter.class.getName() + ")(protocol="; //$NON-NLS-1$ //$NON-NLS-2$
 				String FILTER_POSTFIX = "))"; //$NON-NLS-1$
 				Filter filter = null;
 				try {
@@ -1043,9 +1043,9 @@ public final class InternalPlatform {
 	private void startServices() {
 		customPreferencesService = getBundleContext().registerService(IProductPreferencesService.class.getName(), new ProductPreferencesService(), new Hashtable());
 		legacyPreferencesService = getBundleContext().registerService(ILegacyPreferences.class.getName(), new InitLegacyPreferences(), new Hashtable());
-		
+
 		Dictionary urlProperties = new Hashtable();
-		urlProperties.put("protocol", "platform");  //$NON-NLS-1$ //$NON-NLS-2$
+		urlProperties.put("protocol", "platform"); //$NON-NLS-1$ //$NON-NLS-2$
 		platformURLConverterService = context.registerService(URLConverter.class.getName(), new PlatformURLConverter(), urlProperties);
 	}
 
