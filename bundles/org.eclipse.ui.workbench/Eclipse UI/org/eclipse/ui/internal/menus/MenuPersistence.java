@@ -206,8 +206,7 @@ final class MenuPersistence extends RegistryPersistence {
 			// Read the type attribute.
 			final String type = readRequired(barElement, ATTRIBUTE_TYPE,
 					warningsToLog, "Bar elements require a type element", id); //$NON-NLS-1$
-			if (!((SBar.TYPE_MENU.equals(type) || (SBar.TYPE_TOOL.equals(type)) || (SBar.TYPE_STATUS
-					.equals(type))))) {
+			if (!(SBar.TYPE_MENU.equals(type)) || (SBar.TYPE_TRIM.equals(type))) {
 				// The position was not understood.
 				addWarning(warningsToLog, "The bar type was not understood", //$NON-NLS-1$
 						parentElement, id, "type", type); //$NON-NLS-1$

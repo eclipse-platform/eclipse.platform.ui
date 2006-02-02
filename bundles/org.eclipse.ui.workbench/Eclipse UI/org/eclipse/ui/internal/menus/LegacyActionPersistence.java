@@ -527,7 +527,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 						locationInfo, mnemonic, imageStyle);
 			}
 			if (toolbarPath != null) {
-				locations[i++] = createLocation(SBar.TYPE_TOOL, toolbarPath,
+				locations[i++] = createLocation(SBar.TYPE_TRIM, toolbarPath,
 						locationInfo, mnemonic, imageStyle);
 			}
 		}

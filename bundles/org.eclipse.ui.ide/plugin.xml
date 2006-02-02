@@ -360,7 +360,7 @@
            		<bar type="menu" path="window/additions" />
            </location>
            <location>
-           		<bar type="tool" path="workingSets" />
+           		<bar type="trim" path="coolbar/workingSets" />
            </location>
       </item>
       

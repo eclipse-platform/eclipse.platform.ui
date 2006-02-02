@@ -239,16 +239,20 @@ A group can contain menus, items and other groups.
          <attribute name="type" use="required">
             <annotation>
                <documentation>
-                  What type of bar to contribute to.  This can be &lt;code&gt;menu&lt;/code&gt;, &lt;code&gt;tool&lt;/code&gt; or &lt;code&gt;status&lt;/code&gt;.
+                  &lt;p&gt;
+What type of bar to contribute to.  This can be &lt;code&gt;menu&lt;/code&gt; or &lt;code&gt;trim&lt;/code&gt;.  If contributing to the menu, then the item will be parented to some widget structure.  In general, this means using widget elements does not make much sense, and an icon for an item&apos;s command is not strictly necessary.  The default value is &lt;code&gt;menu&lt;/code&gt;.  If contributing to the &lt;code&gt;trim&lt;/code&gt;, then the item&apos;s command will generally require an icon, and widget elements make more sense.
+&lt;/p&gt;
+&lt;p&gt;
+Within the trim, the workbench defines five general groups which correspond to various positions around the window.  By positioning the trim contribution within or with respect to this groups, the position is inferred by the workbench.  The five trim group ids are: &lt;code&gt;coolbar&lt;/code&gt;, &lt;code&gt;perspective&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, &lt;code&gt;leadingEdge&lt;/code&gt; and &lt;code&gt;trailingEdge&lt;/code&gt;.
+&lt;/p&gt;
+
                </documentation>
             </annotation>
             <simpleType>
                <restriction base="string">
                   <enumeration value="menu">
                   </enumeration>
-                  <enumeration value="tool">
-                  </enumeration>
-                  <enumeration value="status">
+                  <enumeration value="trim">
                   </enumeration>
                </restriction>
             </simpleType>
