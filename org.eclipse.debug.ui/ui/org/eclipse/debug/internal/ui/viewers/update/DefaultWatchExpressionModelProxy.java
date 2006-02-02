@@ -35,6 +35,20 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed()
+	 */
+	public void installed() {
+		super.installed();
+		IWorkbenchPart part = getPresentationContext().getPart();
+		if (part != null) {
+			ISelection activeContext = DebugContextManager.getDefault().getActiveContext(part.getSite().getWorkbenchWindow());
+			if (activeContext != null) {
+				contextActivated(activeContext, null);
+			}
+		}
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DefaultExpressionModelProxy#dispose()
 	 */
 	public synchronized void dispose() {
