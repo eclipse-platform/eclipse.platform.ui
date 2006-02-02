@@ -76,7 +76,7 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 		if (value==null) {
 			// return default values
 			if (variableName.equals(VAR_INTRO_BACKGROUND_IMAGE))
-				return "css/graphics/root/welcomebckgrd.jpg";
+				return "css/graphics/root/welcomebckgrd.jpg"; //$NON-NLS-1$
 		}
 		return value;
 	}
