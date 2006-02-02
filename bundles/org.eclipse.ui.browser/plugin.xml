@@ -201,5 +201,37 @@
          <location>Applications/Internet Explorer.app/Contents/MacOS/"Internet Explorer"</location>
       </browser>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.browser.OpenBrowserHandler"
+            description="%command.openBrowser.description"
+            id="org.eclipse.ui.browser.openBrowser"
+            name="%command.openBrowser.name">
+         <commandParameter
+               id="url"
+               name="%commandParameter.openBrowser.url.name"
+               optional="true"/>
+         <commandParameter
+               id="browserId"
+               name="%commandParameter.openBrowser.browserId.name"
+               optional="true"/>
+         <commandParameter
+               id="name"
+               name="%commandParameter.openBrowser.name.name"
+               optional="true"/>
+         <commandParameter
+               id="tooltip"
+               name="%commandParameter.openBrowser.tooltip.name"
+               optional="true"/>
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="org.eclipse.ui.browser.openBrowser"
+            icon="icons/obj16/internal_browser.gif"/>
+   </extension>
 
 </plugin>
