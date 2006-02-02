@@ -279,8 +279,10 @@ public class ContentProposalAdapter {
 						// There is filter to back out of
 						filterText = filterText.substring(0, filterText
 								.length() - 1);
-						recomputeProposals(filterText);
 					}
+					// Proposals are always recomputed because the client may
+					// be implementing their own cursor position based filtering
+					recomputeProposals(filterText);
 					break;
 
 				default:
@@ -290,11 +292,10 @@ public class ContentProposalAdapter {
 					if (Character.isDefined(key)) {
 						if (filterStyle == FILTER_CUMULATIVE) {
 							filterText = filterText + String.valueOf(key);
-							recomputeProposals(filterText);
 						} else if (filterStyle == FILTER_CHARACTER) {
 							filterText = String.valueOf(key);
-							recomputeProposals(filterText);
 						}
+						recomputeProposals(filterText);
 					}
 					break;
 				}
