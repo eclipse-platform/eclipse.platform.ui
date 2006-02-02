@@ -200,19 +200,19 @@ public class DatabindingContextTest extends TestCase {
 	}
 	
 	public void testCreateNestedUpdatableWithArrays() {
-//		String parentObject = "";
-//		NestedProperty nestedProperty = new NestedProperty(parentObject, new String[] {"nestedChild1", "nestedChild2", "foo"}, new Class[] {Integer.class, String.class, Float.class});
-//		IDataBindingContext ctx = DataBinding.createContext(new IUpdatableFactory[] {new MockUpdatableFactory(), new NestedUpdatableFactory()});
-//		INestedUpdatableValue updatableValue = (INestedUpdatableValue) ctx.createUpdatable(nestedProperty);
-//		assertEquals("The child IUpdatable does not have the right type.", Float.class, updatableValue.getValueType());
-//
-//		updatableValue = ((INestedUpdatableValue) updatableValue.getOuterUpdatableValue());
-//		assertEquals("The child IUpdatable does not have the right type.", String.class, updatableValue.getValueType());
-//	
-//		MockUpdatableValue v = ((MockUpdatableValue) updatableValue.getOuterUpdatableValue());
-//		assertEquals("The child IUpdatable does not have the right getter.", "nestedChild1", v.getDescription());
-//		assertSame("The child IUpdatable does not have a correct parent target object.", parentObject, v.getOuterUpdatableValue());
-//		assertEquals("The child IUpdatable does not have the right type.", Integer.class, v.getValueType());
+		String parentObject = "";
+		NestedProperty nestedProperty = new NestedProperty(parentObject, new String[] {"nestedChild1", "nestedChild2", "foo"}, new Class[] {Integer.class, String.class, Float.class});
+		IDataBindingContext ctx = DataBinding.createContext(new IUpdatableFactory[] {new MockUpdatableFactory(), new NestedUpdatableFactory()});
+		INestedUpdatableValue updatableValue = (INestedUpdatableValue) ctx.createUpdatable(nestedProperty);
+		assertEquals("The child IUpdatable does not have the right type.", Float.class, updatableValue.getValueType());
+
+		updatableValue = ((INestedUpdatableValue) updatableValue.getOuterUpdatableValue());
+		assertEquals("The child IUpdatable does not have the right type.", String.class, updatableValue.getValueType());
+	
+		MockUpdatableValue v = ((MockUpdatableValue) updatableValue.getOuterUpdatableValue());
+		assertEquals("The child IUpdatable does not have the right getter.", "nestedChild1", v.getDescription());
+		assertSame("The child IUpdatable does not have a correct parent target object.", parentObject, v.getOuterUpdatableValue());
+		assertEquals("The child IUpdatable does not have the right type.", Integer.class, v.getType());
 	}
 	
 	public void testCreateNestedUpdatableWithPrototypeClass() {
@@ -257,7 +257,6 @@ public class DatabindingContextTest extends TestCase {
 		
 		public MockUpdatableValue(Object targetObject, Object description, Class type) {
 			super();
-			// TODO Auto-generated constructor stub
 			this.targetObject = targetObject;
 			this.description = description;
 			this.type = type;
