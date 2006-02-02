@@ -88,7 +88,7 @@ public class ContentAssistField extends DecoratedField {
 				controlContentAdapter, proposalProvider, labelProvider,
 				commandId, autoActivationCharacters, 
 				true /* propagate keystrokes */,
-				ContentProposalAdapter.FILTER_CHARACTER, 
+				ContentProposalAdapter.FILTER_NONE, 
 				ContentProposalAdapter.PROPOSAL_INSERT);
 
 		addFieldDecoration(getFieldDecoration(), SWT.LEFT | SWT.TOP, true);
