@@ -93,13 +93,23 @@ public class ContentProposalAdapter {
 										|| (infoPopup != null && infoPopup
 												.hasFocus()))
 									return;
+								// Workaround a problem on X, whereby at this point, the
+								// focus control is not known.  Check the active shell.
+								Shell activeShell = e.display.getActiveShell();
+								if (activeShell == getShell() || (infoPopup != null && infoPopup.getShell() == activeShell))
+									return;
+								/*
+								System.out.println(e);
+								System.out.println(e.display.getFocusControl());
+								System.out.println(e.display.getActiveShell());
+								 */
 								close();
 							}
 						}
 					});
 					return;
 				}
-
+				
 				// Scroll bar has been clicked. Remember this for focus event
 				// processing.
 				if (e.type == SWT.Selection) {
