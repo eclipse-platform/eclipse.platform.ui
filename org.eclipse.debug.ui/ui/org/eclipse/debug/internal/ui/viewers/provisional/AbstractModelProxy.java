@@ -95,7 +95,7 @@ public abstract class AbstractModelProxy implements IModelProxy {
 	 * @return presentation context, or <code>null</code> if this
 	 *  model proxy has been disposed
 	 */
-	protected IPresentationContext getPresentationContext() {
+	public IPresentationContext getPresentationContext() {
 		return fContext;
 	}
 
