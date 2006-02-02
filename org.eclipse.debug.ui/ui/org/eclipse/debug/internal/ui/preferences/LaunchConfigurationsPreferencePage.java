@@ -220,7 +220,9 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		});
 		fFieldEditors.add(editor);
 		fTable = new Table(comp, SWT.CHECK | SWT.BORDER);
-		fTable.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 155;
+		fTable.setLayoutData(gd);
 		CheckboxTableViewer tviewer = new CheckboxTableViewer(fTable);
 		tviewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		tviewer.setContentProvider(new TableContentProvider());

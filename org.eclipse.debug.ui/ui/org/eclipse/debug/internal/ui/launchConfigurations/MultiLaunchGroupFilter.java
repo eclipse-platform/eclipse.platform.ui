@@ -23,8 +23,7 @@ public class MultiLaunchGroupFilter extends ViewerFilter {
 	
 	public MultiLaunchGroupFilter(LaunchGroupExtension[] groups) {
 		fGroups = groups;
-	}
-	                                                
+	}                                                
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
