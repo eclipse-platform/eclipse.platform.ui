@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
@@ -44,7 +45,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class AbstractCompareAdapter implements ICompareAdapter {
 
-	private static class ResourceDiffCompareInput extends DiffNode implements IModelCompareInput {
+	private static class ResourceDiffCompareInput extends DiffNode implements IModelCompareInput, IAdaptable {
 
 		private final IDiff node;
 
@@ -129,6 +130,27 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 		}
 
 		public ISaveableCompareModel getCompareModel() {
+			return null;
+		}
+
+		public Object getAdapter(Class adapter) {
+			if (adapter == IFile.class || adapter == IResource.class) {
+				if (node instanceof IResourceDiff) {
+					IResourceDiff rd = (IResourceDiff) node;
+					return (IFile)rd.getResource();
+				}
+				if (node instanceof IThreeWayDiff) {
+					IThreeWayDiff twd = (IThreeWayDiff) node;
+					IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
+					// If there is a remote change, use the after state
+					if (diff != null)
+						return (IFile)diff.getResource();
+					// There's no remote change so use the before state of the local
+					diff = (IResourceDiff)twd.getLocalChange();
+					return (IFile)diff.getResource();
+					
+				}
+			}
 			return null;
 		}
 		

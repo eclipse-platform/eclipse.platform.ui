@@ -15,6 +15,8 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.events.DisposeEvent;
@@ -63,8 +65,7 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 				}
 			}
 			public ImageDescriptor getImageDescriptor() {
-				// TODO Auto-generated method stub
-				return null;
+				return ImageDescriptor.createFromImage(getTitleImage());
 			}
 			public String getToolTipText() {
 				return ModelCompareEditorInput.this.getToolTipText();
@@ -166,6 +167,16 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 		if (propId == ISaveableCompareModel.PROP_DIRTY) {
 			setDirty(model.isDirty());
 		}
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if (IFile.class.equals(adapter)) {
+			IResource resource = Utils.getResource(input);
+			if (resource instanceof IFile) {
+				return resource;
+			}
+		}
+		return super.getAdapter(adapter);
 	}
 
 }
