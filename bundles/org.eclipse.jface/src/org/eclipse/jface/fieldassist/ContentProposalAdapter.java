@@ -75,8 +75,7 @@ public class ContentProposalAdapter {
 
 			public void handleEvent(final Event e) {
 
-				// If focus is leaving an important widget or the field's
-				// shell is deactivating
+				// Focus is leaving an important widget.
 				if (e.type == SWT.FocusOut) {
 					scrollbarClicked = false;
 					/*
@@ -93,23 +92,13 @@ public class ContentProposalAdapter {
 										|| (infoPopup != null && infoPopup
 												.hasFocus()))
 									return;
-								// Workaround a problem on X, whereby at this point, the
-								// focus control is not known.  Check the active shell.
-								Shell activeShell = e.display.getActiveShell();
-								if (activeShell == getShell() || (infoPopup != null && infoPopup.getShell() == activeShell))
-									return;
-								/*
-								System.out.println(e);
-								System.out.println(e.display.getFocusControl());
-								System.out.println(e.display.getActiveShell());
-								 */
 								close();
 							}
 						}
 					});
 					return;
 				}
-				
+
 				// Scroll bar has been clicked. Remember this for focus event
 				// processing.
 				if (e.type == SWT.Selection) {
@@ -151,10 +140,10 @@ public class ContentProposalAdapter {
 				ScrollBar scrollbar = proposalTable.getVerticalBar();
 				if (scrollbar != null)
 					scrollbar.removeListener(SWT.Selection, this);
-				
+
 				getShell().removeListener(SWT.Deactivate, this);
 				getShell().removeListener(SWT.Close, this);
-				
+
 				control.removeListener(SWT.MouseDoubleClick, this);
 				control.removeListener(SWT.MouseDown, this);
 				control.removeListener(SWT.Dispose, this);
@@ -312,7 +301,7 @@ public class ContentProposalAdapter {
 			 * Construct an info-popup with the specified parent.
 			 */
 			InfoPopupDialog(Shell parent) {
-				super(parent, PopupDialog.HOVER_SHELLSTYLE, false, false,
+				super(parent, PopupDialog.INFOPOPUP_SHELLSTYLE, false, false,
 						false, false, null, null);
 			}
 
