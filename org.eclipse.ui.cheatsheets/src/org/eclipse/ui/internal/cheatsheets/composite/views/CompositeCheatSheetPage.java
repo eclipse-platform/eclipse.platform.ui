@@ -25,13 +25,10 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Layout;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.cheatsheets.ITaskEditor;
 import org.eclipse.ui.cheatsheets.ITaskExplorer;
@@ -127,6 +124,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		editorPanel.setLayout(playout);
 		editorPanel.setBackground(colors.getColor(FormColors.TB_BORDER));		
 		taskEditorContainer = new PageBook(editorPanel, SWT.NULL);
+		toolkit.adapt(taskEditorContainer);
 		taskEditorContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 	
@@ -351,6 +349,8 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 			completePanel = new ScrolledFormText(taskEditorContainer, false);
 			mform.getToolkit().adapt(completePanel, false, false);
 			FormText text = mform.getToolkit().createFormText(completePanel, true);
+			text.marginWidth = 5;
+			text.marginHeight = 5;
 			completePanel.setFormText(text);
 		}
 		String desc = task.getCompletionMessage().trim();
