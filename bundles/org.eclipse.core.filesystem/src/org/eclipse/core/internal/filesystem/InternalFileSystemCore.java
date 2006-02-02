@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 		final HashMap registry = getFileSystemRegistry();
 		Object result = registry.get(scheme);
 		if (result == null)
-			Policy.error(EFS.ERROR_INTERNAL, NLS.bind("No file system is defined for scheme: {0}", scheme));
+			Policy.error(EFS.ERROR_INTERNAL, NLS.bind(Messages.noFileSystem, scheme));
 		if (result instanceof IFileSystem)
 			return (IFileSystem)result;
 		try {
@@ -104,7 +104,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	public IFileStore getStore(URI uri) throws CoreException {
 		final String scheme = uri.getScheme();
 		if (scheme == null)
-			Policy.error(EFS.ERROR_INTERNAL, "Must specify a URI scheme: " + uri);
+			Policy.error(EFS.ERROR_INTERNAL, Messages.noScheme + uri);
 		return getFileSystem(scheme).getStore(uri);
 	}
 

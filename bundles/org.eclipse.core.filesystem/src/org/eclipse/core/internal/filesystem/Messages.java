@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,10 @@ package org.eclipse.core.internal.filesystem;
 
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * Provides translatable messages for the file system bundle
+ * @since 3.2
+ */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.core.internal.filesystem.messages"; //$NON-NLS-1$
 
@@ -27,13 +31,15 @@ public class Messages extends NLS {
 	public static String failedCreateWrongType;
 	public static String failedMove;
 	public static String failedReadDuringWrite;
+	public static String fileExists;
 	public static String fileNotFound;
 	public static String moving;
+	public static String noFileSystem;
 	public static String noImplDelete;
 	public static String noImplWrite;
+	public static String noScheme;
 	public static String notAFile;
 	public static String readOnlyParent;
-	public static String fileExists;
 
 	static {
 		// initialize resource bundles
