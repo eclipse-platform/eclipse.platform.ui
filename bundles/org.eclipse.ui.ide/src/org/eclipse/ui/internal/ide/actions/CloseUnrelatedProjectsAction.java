@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.widgets.Shell;
@@ -41,11 +40,10 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  * @since 3.2
  */
 public class CloseUnrelatedProjectsAction extends CloseResourceAction {
-    /**
-     * The id of this action.
-     */
-	public static final String ID = PlatformUI.PLUGIN_ID
-			+ ".CloseUnrelatedProjectsAction"; //$NON-NLS-1$
+	/**
+	 * The id of this action.
+	 */
+	public static final String ID = PlatformUI.PLUGIN_ID + ".CloseUnrelatedProjectsAction"; //$NON-NLS-1$
 
 	private final List projectsToClose = new ArrayList();
 
@@ -64,8 +62,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 		super(shell, IDEWorkbenchMessages.CloseUnrelatedProjectsAction_text);
 		setId(ID);
 		setToolTipText(IDEWorkbenchMessages.CloseUnrelatedProjectsAction_toolTip);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-				IIDEHelpContextIds.CLOSE_UNRELATED_PROJECTS_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IIDEHelpContextIds.CLOSE_UNRELATED_PROJECTS_ACTION);
 	}
 
 	/**
@@ -105,12 +102,13 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	 */
 	private void computeRelated(List selection) {
 		HashSet relatedProjects = new HashSet();
-		for (Iterator it = selection.iterator(); it.hasNext();)
-			addRelatedProjects(relatedProjects, ((IResource) it.next())
-					.getProject());
+		for (Iterator it = selection.iterator(); it.hasNext();) {
+			Object next = it.next();
+			if (next instanceof IProject)
+				addRelatedProjects(relatedProjects, (IProject) next);
+		}
 		HashSet unrelated = new HashSet();
-		unrelated.addAll(Arrays.asList(ResourcesPlugin.getWorkspace().getRoot()
-				.getProjects()));
+		unrelated.addAll(Arrays.asList(ResourcesPlugin.getWorkspace().getRoot().getProjects()));
 		unrelated.removeAll(relatedProjects);
 		projectsToClose.clear();
 		projectsToClose.addAll(unrelated);
