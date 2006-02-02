@@ -129,10 +129,10 @@ public abstract class TextEdit {
 	private int fOffset;
 	private int fLength;
 
-	/* package */ TextEdit fParent;
-	/* package */ List fChildren;
+	private TextEdit fParent;
+	private List fChildren;
 
-	/* package */ int fDelta;
+	int fDelta;
 
 	/**
 	 * Create a new text edit. Parent is initialized to <code>
@@ -289,7 +289,7 @@ public abstract class TextEdit {
 	 *
 	 * @since 3.1
 	 */
-	/* package */ boolean isDefined() {
+	boolean isDefined() {
 		return true;
 	}
 
@@ -477,7 +477,7 @@ public abstract class TextEdit {
 	 * Hook called before this edit gets added to the passed
 	 * parent.
 	 */
-	/* package */ void aboutToBeAdded(TextEdit parent) {
+	void aboutToBeAdded(TextEdit parent) {
 	}
 
 	//---- Object methods ------------------------------------------------------
@@ -509,7 +509,7 @@ public abstract class TextEdit {
 		return super.hashCode();
 	}
 
-	/* non Java-doc
+	/*
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
@@ -696,41 +696,41 @@ public abstract class TextEdit {
 		return apply(document, CREATE_UNDO | UPDATE_REGIONS);
 	}
 
-	/* package */ UndoEdit dispatchPerformEdits(TextEditProcessor processor) throws BadLocationException {
+	UndoEdit dispatchPerformEdits(TextEditProcessor processor) throws BadLocationException {
 		return processor.executeDo();
 	}
 
-	/* package */ void dispatchCheckIntegrity(TextEditProcessor processor) throws MalformedTreeException {
+	void dispatchCheckIntegrity(TextEditProcessor processor) throws MalformedTreeException {
 		processor.checkIntegrityDo();
 	}
 
 	//---- internal state accessors ----------------------------------------------------------
 
-	/* package */ void internalSetParent(TextEdit parent) {
+	void internalSetParent(TextEdit parent) {
 		if (parent != null)
 			Assert.isTrue(fParent == null);
 		fParent= parent;
 	}
 
-	/* package */ void internalSetOffset(int offset) {
+	void internalSetOffset(int offset) {
 		Assert.isTrue(offset >= 0);
 		fOffset= offset;
 	}
 
-	/* package */ void internalSetLength(int length) {
+	void internalSetLength(int length) {
 		Assert.isTrue(length >= 0);
 		fLength= length;
 	}
 
-	/* package */ List internalGetChildren() {
+	List internalGetChildren() {
 		return fChildren;
 	}
 
-	/* package */ void internalSetChildren(List children) {
+	void internalSetChildren(List children) {
 		fChildren= children;
 	}
 
-	/* package */ void internalAdd(TextEdit child) throws MalformedTreeException {
+	void internalAdd(TextEdit child) throws MalformedTreeException {
 		child.aboutToBeAdded(this);
 		if (child.isDeleted())
 			throw new MalformedTreeException(this, child, TextEditMessages.getString("TextEdit.deleted_edit")); //$NON-NLS-1$
@@ -781,7 +781,7 @@ public abstract class TextEdit {
 	 *
 	 * @param delta the delta of the text replace operation
 	 */
-	/* package */ void adjustOffset(int delta) {
+	void adjustOffset(int delta) {
 		if (isDeleted())
 			return;
 		fOffset+= delta;
@@ -794,7 +794,7 @@ public abstract class TextEdit {
 	 *
 	 * @param delta the delta of the text replace operation
 	 */
-	/* package */ void adjustLength(int delta) {
+	void adjustLength(int delta) {
 		if (isDeleted())
 			return;
 		fLength+= delta;
@@ -805,7 +805,7 @@ public abstract class TextEdit {
 	 * Marks the edit as deleted. This method doesn't update
 	 * any children.
 	 */
-	/* package */ void markAsDeleted() {
+	void markAsDeleted() {
 		fOffset= DELETED_VALUE;
 		fLength= DELETED_VALUE;
 	}
@@ -822,7 +822,7 @@ public abstract class TextEdit {
 	 *
 	 * @return the number of indirect move or copy target edit children
 	 */
-	/* package */ int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
+	int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
 		int result= 0;
 		if (fChildren != null) {
 			for (int i= fChildren.size() - 1; i >= 0; i--) {
@@ -836,16 +836,16 @@ public abstract class TextEdit {
 		return result;
 	}
 
-	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) {
+	void performConsistencyCheck(TextEditProcessor processor, IDocument document) {
 	}
 
-	/* package */ void traverseSourceComputation(TextEditProcessor processor, IDocument document) {
+	void traverseSourceComputation(TextEditProcessor processor, IDocument document) {
 	}
 
-	/* package */ void performSourceComputation(TextEditProcessor processor, IDocument document) {
+	void performSourceComputation(TextEditProcessor processor, IDocument document) {
 	}
 
-	/* package */ int traverseDocumentUpdating(TextEditProcessor processor, IDocument document) throws BadLocationException {
+	int traverseDocumentUpdating(TextEditProcessor processor, IDocument document) throws BadLocationException {
 		int delta= 0;
 		if (fChildren != null) {
 			for (int i= fChildren.size() - 1; i >= 0; i--) {
@@ -878,9 +878,9 @@ public abstract class TextEdit {
 	protected void childDocumentUpdated() {
 	}
 
-	/* package */ abstract int performDocumentUpdating(IDocument document) throws BadLocationException;
+	abstract int performDocumentUpdating(IDocument document) throws BadLocationException;
 
-	/* package */ int traverseRegionUpdating(TextEditProcessor processor, IDocument document, int accumulatedDelta, boolean delete) {
+	int traverseRegionUpdating(TextEditProcessor processor, IDocument document, int accumulatedDelta, boolean delete) {
 		performRegionUpdating(accumulatedDelta, delete);
 		if (fChildren != null) {
 			boolean childDelete= delete || deleteChildren();
@@ -908,16 +908,16 @@ public abstract class TextEdit {
 	protected void childRegionUpdated() {
 	}
 
-	/* package */ void performRegionUpdating(int accumulatedDelta, boolean delete) {
+	void performRegionUpdating(int accumulatedDelta, boolean delete) {
 		if (delete)
 			markAsDeleted();
 		else
 			adjustOffset(accumulatedDelta);
 	}
 
-	/* package */ abstract boolean deleteChildren();
+	abstract boolean deleteChildren();
 
-	/* package */ void internalMoveTree(int delta) {
+	void internalMoveTree(int delta) {
 		adjustOffset(delta);
 		if (fChildren != null) {
 			for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
@@ -926,7 +926,7 @@ public abstract class TextEdit {
 		}
 	}
 
-	/* package */ void deleteTree() {
+	void deleteTree() {
 		markAsDeleted();
 		if (fChildren != null) {
 			for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
