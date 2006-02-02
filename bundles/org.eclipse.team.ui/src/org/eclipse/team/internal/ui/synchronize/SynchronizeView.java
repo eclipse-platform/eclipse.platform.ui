@@ -98,7 +98,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 					updateTitle();
 				}
 			} else if (event.getProperty().equals(ModelSynchronizeParticipant.PROP_DIRTY)) {
-				Display.getDefault().syncExec(new Runnable() {
+				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
 						firePropertyChange(PROP_DIRTY);
 					}
@@ -270,6 +270,11 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 				fPartToParticipant.put(part, participant);
 			}
 		}
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				firePropertyChange(PROP_DIRTY);
+			}
+		});
 	}
 
 	/* (non-Javadoc)
@@ -303,6 +308,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 							}
 						}
 					}
+					firePropertyChange(PROP_DIRTY);
 				}
 			};
 			asyncExec(r);

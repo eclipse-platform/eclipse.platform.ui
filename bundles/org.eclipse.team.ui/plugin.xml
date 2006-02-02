@@ -348,6 +348,23 @@
          </enablement>
          <actionProvider class="org.eclipse.team.internal.ui.mapping.ResourceModelActionProvider"/>
        </navigatorContent>
+      <commonSorter
+            class="org.eclipse.team.internal.ui.mapping.ModelProviderViewerSorter"
+            id="org.eclipse.team.ui.modelProviderSorter">
+         <parentExpression>
+         	<instanceof value="org.eclipse.core.resources.mapping.ModelProvider"/>
+         </parentExpression>
+      </commonSorter>
+      <commonSorter
+            class="org.eclipse.team.internal.ui.mapping.ResourceModelSorter"
+            id="org.eclipse.team.ui.resourceSorter">
+         <parentExpression>
+           <or>         
+            <instanceof value="org.eclipse.core.internal.resources.mapping.ResourceModelProvider"/>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
+           </or>
+         </parentExpression>
+      </commonSorter>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.viewer">

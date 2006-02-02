@@ -73,13 +73,13 @@ public class RemoveSynchronizeParticipantAction extends Action {
 		if (participant != null) {
 			final List dirtyModels = getDirtyModels(participant);
 			if (participant.isPinned() || !dirtyModels.isEmpty()) {
-				final boolean[] bail = new boolean[] { false };
+				final boolean[] keepGoing = new boolean[] { false };
 				Display.getDefault().syncExec(new Runnable() {
 					public void run() {
 						if (!dirtyModels.isEmpty()) {
-							bail[0] = promptToSave(dirtyModels);
+							keepGoing[0] = promptToSave(dirtyModels);
 						} else {
-							bail[0] = !MessageDialog.openQuestion(
+							keepGoing[0] = MessageDialog.openQuestion(
 									view.getSite().getShell(), 
 									TeamUIMessages.RemoveSynchronizeParticipantAction_0,  
 									TeamUIMessages.RemoveSynchronizeParticipantAction_1); 
@@ -87,7 +87,7 @@ public class RemoveSynchronizeParticipantAction extends Action {
 
 					}
 				});
-				if (bail[0]) {
+				if (!keepGoing[0]) {
 					return;
 				}
 			}
@@ -113,15 +113,15 @@ public class RemoveSynchronizeParticipantAction extends Action {
 		ISynchronizeParticipant[] toRemove = (ISynchronizeParticipant[]) removals.toArray(new ISynchronizeParticipant[removals.size()]);
 		final List dirtyModels = getDirtyModels(toRemove);
 		if (!dirtyModels.isEmpty()) {
-			final boolean[] bail = new boolean[] { false };
+			final boolean[] keepGoing = new boolean[] { false };
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
 					if (!dirtyModels.isEmpty()) {
-						bail[0] = promptToSave(dirtyModels);
+						keepGoing[0] = promptToSave(dirtyModels);
 					}
 				}
 			});
-			if (bail[0]) {
+			if (!keepGoing[0]) {
 				return;
 			}
 		}

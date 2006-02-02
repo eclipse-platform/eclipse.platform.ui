@@ -103,7 +103,7 @@ public abstract class SaveableCompareModel implements ISaveableCompareModel {
 			final Object object = allListeners[i];
 			Platform.run(new ISafeRunnable() {
 				public void run() throws Exception {
-					((IPropertyListener)object).propertyChanged(this, property);
+					((IPropertyListener)object).propertyChanged(SaveableCompareModel.this, property);
 				}
 				public void handleException(Throwable exception) {
 					// handled by platform

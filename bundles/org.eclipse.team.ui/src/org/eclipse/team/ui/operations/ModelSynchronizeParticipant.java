@@ -93,7 +93,7 @@ public class ModelSynchronizeParticipant extends
 			if (source instanceof ISaveableCompareModel && propId == ISaveableCompareModel.PROP_DIRTY) {
 				ISaveableCompareModel scm = (ISaveableCompareModel) source;
 				boolean isDirty = scm.isDirty();
-				firePropertyChange(this, PROP_DIRTY, Boolean.valueOf(!isDirty), Boolean.valueOf(isDirty));
+				firePropertyChange(ModelSynchronizeParticipant.this, PROP_DIRTY, Boolean.valueOf(!isDirty), Boolean.valueOf(isDirty));
 			}
 		}
 	};
