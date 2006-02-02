@@ -286,9 +286,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CopyFilesAndFoldersOperation_destinationAccessError;
 	public static String CopyFilesAndFoldersOperation_destinationDescendentError;
 	public static String CopyFilesAndFoldersOperation_overwriteProblem;
-	public static String CopyFilesAndFoldersOperation_overwriteProblemTitle;
 	public static String CopyFilesAndFoldersOperation_question;
-	public static String CopyFilesAndFoldersOperation_importErrorDialogTitle;
 	public static String CopyFilesAndFoldersOperation_inputDialogTitle;
 	public static String CopyFilesAndFoldersOperation_inputDialogMessage;
 	public static String CopyFilesAndFoldersOperation_nameExists;
@@ -301,7 +299,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CopyFilesAndFoldersOperation_CopyResourcesTask;
 	public static String CopyFilesAndFoldersOperation_parentNotEqual;
 	public static String CopyFilesAndFoldersOperation_infoNotFound;
-	public static String CopyFilesAndFoldersOperation_copy_exception;
 
 	public static String MoveFilesAndFoldersOperation_sameSourceAndDest;
 	public static String MoveFilesAndFoldersOperation_moveFailedTitle;
@@ -437,7 +434,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardNewProjectCreationPage_projectExistsMessage;
 	public static String WizardNewProjectCreationPage_projectLocationExistsMessage;
 	public static String WizardNewProjectCreationPage_projectContentsLabel;
-	public static String WizardNewProjectCreationPage_projectContentsGroupLabel;
 	public static String WizardNewProjectCreationPage_useDefaultLabel;
 	public static String WizardNewProjectCreationPage_nameLabel;
 	public static String WizardNewProjectCreationPage_directoryLabel;
