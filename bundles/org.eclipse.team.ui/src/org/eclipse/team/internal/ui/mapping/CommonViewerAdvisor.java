@@ -27,7 +27,6 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.navigator.*;
-import org.eclipse.ui.navigator.internal.CommonSorter;
 import org.eclipse.ui.part.IPageSite;
 
 /**
@@ -51,10 +50,6 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 		}
 		public void openSelection() {
 			fireOpen(new OpenEvent(this, getSelection()));
-		}
-		protected void init() {
-			super.init();
-			setSorter(new CommonSorter(getNavigatorContentService()));
 		}
 		protected void internalRefresh(Object element, boolean updateLabels) {
 			super.internalRefresh(element, updateLabels);
