@@ -15,9 +15,15 @@ import java.util.Date;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.Bundle;
 
+/**
+ * Grab bag of utility methods for the file system plugin
+ * @since 3.2
+ */
 public class Policy {
 
-	//general debug flag for the plugin
+	/**
+	 * General debug flag for the plugin
+	 */
 	public static boolean DEBUG = false;
 
 	public static final String PI_FILE_SYSTEM = "org.eclipse.core.filesystem"; //$NON-NLS-1$
