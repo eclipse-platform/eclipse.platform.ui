@@ -44,9 +44,6 @@ import org.eclipse.ui.internal.texteditor.HippieCompletionEngine;
  * <p>
  * Clients may instantiate.
  * </p>
- * <p>
- * XXX this API is provisional and may change anytime during the course of 3.2
- * </p>
  * 
  * @since 3.2
  */
