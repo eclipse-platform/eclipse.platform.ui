@@ -80,7 +80,7 @@ public class TextEditProcessor {
 	 * @return a secondary text edit processor
 	 * @since 3.1
 	 */
-	/* package */ static TextEditProcessor createSourceComputationProcessor(IDocument document, TextEdit root, int style) {
+	static TextEditProcessor createSourceComputationProcessor(IDocument document, TextEdit root, int style) {
 		return new TextEditProcessor(document, root, style, true);
 	}
 
@@ -153,7 +153,7 @@ public class TextEditProcessor {
 		return fRoot.dispatchPerformEdits(this);
 	}
 
-	/* non Java-doc
+	/*
 	 * Class isn't intended to be sub-lcassed
 	 */
 	protected boolean considerEdit(TextEdit edit) {
@@ -162,21 +162,21 @@ public class TextEditProcessor {
 
 	//---- checking --------------------------------------------------------------------
 
-	/* package */ void checkIntegrityDo() throws MalformedTreeException {
+	void checkIntegrityDo() throws MalformedTreeException {
 		fSourceEdits= new ArrayList();
 		fRoot.traverseConsistencyCheck(this, fDocument, fSourceEdits);
 		if (fRoot.getExclusiveEnd() > fDocument.getLength())
 			throw new MalformedTreeException(null, fRoot, TextEditMessages.getString("TextEditProcessor.invalid_length")); //$NON-NLS-1$
 	}
 
-	/* package */ void checkIntegrityUndo() {
+	void checkIntegrityUndo() {
 		if (fRoot.getExclusiveEnd() > fDocument.getLength())
 			throw new MalformedTreeException(null, fRoot, TextEditMessages.getString("TextEditProcessor.invalid_length")); //$NON-NLS-1$
 	}
 
 	//---- execution --------------------------------------------------------------------
 
-	/* package */ UndoEdit executeDo() throws BadLocationException {
+	UndoEdit executeDo() throws BadLocationException {
 		UndoCollector collector= new UndoCollector(fRoot);
 		try {
 			if (createUndo())
@@ -204,7 +204,7 @@ public class TextEditProcessor {
 		}
 	}
 
-	/* package */ UndoEdit executeUndo() throws BadLocationException {
+	UndoEdit executeUndo() throws BadLocationException {
 		UndoCollector collector= new UndoCollector(fRoot);
 		try {
 			if (createUndo())

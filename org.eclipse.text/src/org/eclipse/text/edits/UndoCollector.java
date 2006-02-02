@@ -17,7 +17,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 
 
-/* package */ class UndoCollector implements IDocumentListener {
+class UndoCollector implements IDocumentListener {
 
 	protected UndoEdit undo;
 	private int fOffset;

@@ -13,7 +13,7 @@ package org.eclipse.text.edits;
 import org.eclipse.jface.text.Assert;
 
 
-/* package */ class TreeIterationInfo {
+class TreeIterationInfo {
 
 	interface Visitor {
 		void visit(TextEdit edit);

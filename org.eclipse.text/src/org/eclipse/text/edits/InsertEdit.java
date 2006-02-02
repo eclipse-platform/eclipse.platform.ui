@@ -54,7 +54,7 @@ public final class InsertEdit extends TextEdit {
 		return fText;
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#doCopy
 	 */
 	protected TextEdit doCopy() {
@@ -74,20 +74,20 @@ public final class InsertEdit extends TextEdit {
 	/*
 	 * @see TextEdit#performDocumentUpdating
 	 */
-	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
+	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		document.replace(getOffset(), getLength(), fText);
 		fDelta= fText.length() - getLength();
 		return fDelta;
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#deleteChildren
 	 */
-	/* package */ boolean deleteChildren() {
+	boolean deleteChildren() {
 		return false;
 	}
 
-	/* non Java-doc
+	/*
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {

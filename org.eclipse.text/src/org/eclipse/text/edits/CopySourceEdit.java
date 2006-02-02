@@ -163,7 +163,7 @@ public final class CopySourceEdit extends TextEdit {
 		fModifier= modifier;
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#doCopy
 	 */
 	protected TextEdit doCopy() {
@@ -182,7 +182,7 @@ public final class CopySourceEdit extends TextEdit {
 
 	//---- API for CopyTargetEdit ------------------------------------------------
 
-	/* package */ String getContent() {
+	String getContent() {
 		// The source content can be null if the edit wasn't executed
 		// due to an exclusion list of the text edit processor. Return
 		// the empty string which can be moved without any harm.
@@ -191,11 +191,11 @@ public final class CopySourceEdit extends TextEdit {
 		return fSourceContent;
 	}
 
-	/* package */ void clearContent() {
+	void clearContent() {
 		fSourceContent= null;
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#postProcessCopy
 	 */
 	protected void postProcessCopy(TextEditCopier copier) {
@@ -209,7 +209,7 @@ public final class CopySourceEdit extends TextEdit {
 
 	//---- consistency check ----------------------------------------------------
 
-	/* package */ int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
+	int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
 		int result= super.traverseConsistencyCheck(processor, document, sourceEdits);
 		// Since source computation takes place in a recursive fashion (see
 		// performSourceComputation) we only do something if we don't have a
@@ -233,7 +233,7 @@ public final class CopySourceEdit extends TextEdit {
 		return result;
 	}
 
-	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
+	void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fTarget == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopySourceEdit.no_target")); //$NON-NLS-1$
 		if (fTarget.getSourceEdit() != this)
@@ -246,14 +246,14 @@ public final class CopySourceEdit extends TextEdit {
 
 	//---- source computation -------------------------------------------------------
 
-	/* package */ void traverseSourceComputation(TextEditProcessor processor, IDocument document) {
+	void traverseSourceComputation(TextEditProcessor processor, IDocument document) {
 		// always perform source computation independent of processor.considerEdit
 		// The target might need the source and the source is computed in a
 		// temporary buffer.
 		performSourceComputation(processor, document);
 	}
 
-	/* package */ void performSourceComputation(TextEditProcessor processor, IDocument document) {
+	void performSourceComputation(TextEditProcessor processor, IDocument document) {
 		try {
 			MultiTextEdit root= new MultiTextEdit(getOffset(), getLength());
 			root.internalSetChildren(internalGetChildren());
@@ -299,17 +299,17 @@ public final class CopySourceEdit extends TextEdit {
 
 	//---- document updating ----------------------------------------------------------------
 
-	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
+	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		fDelta= 0;
 		return fDelta;
 	}
 
 	//---- region updating ----------------------------------------------------------------
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#deleteChildren
 	 */
-	/* package */ boolean deleteChildren() {
+	boolean deleteChildren() {
 		return false;
 	}
 }

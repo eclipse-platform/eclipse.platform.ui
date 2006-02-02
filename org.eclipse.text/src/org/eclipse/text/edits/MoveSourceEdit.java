@@ -125,7 +125,7 @@ public final class MoveSourceEdit extends TextEdit {
 
 	//---- API for MoveTargetEdit ---------------------------------------------
 
-	/* package */ String getContent() {
+	String getContent() {
 		// The source content can be null if the edit wasn't executed
 		// due to an exclusion list of the text edit processor. Return
 		// the empty string which can be moved without any harm.
@@ -134,25 +134,25 @@ public final class MoveSourceEdit extends TextEdit {
 		return fSourceContent;
 	}
 
-	/* package */ MultiTextEdit getSourceRoot() {
+	MultiTextEdit getSourceRoot() {
 		return fSourceRoot;
 	}
 
-	/* package */ void clearContent() {
+	void clearContent() {
 		fSourceContent= null;
 		fSourceRoot= null;
 	}
 
 	//---- Copying -------------------------------------------------------------
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#doCopy
 	 */
 	protected TextEdit doCopy() {
 		return new MoveSourceEdit(this);
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#postProcessCopy
 	 */
 	protected void postProcessCopy(TextEditCopier copier) {
@@ -178,7 +178,7 @@ public final class MoveSourceEdit extends TextEdit {
 
 	//---- consistency check ----------------------------------------------------------------
 
-	/* package */ int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
+	int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
 		int result= super.traverseConsistencyCheck(processor, document, sourceEdits);
 		// Since source computation takes place in a recursive fashion (see
 		// performSourceComputation) we only do something if we don't have a
@@ -202,7 +202,7 @@ public final class MoveSourceEdit extends TextEdit {
 		return result;
 	}
 
-	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
+	void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fTarget == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveSourceEdit.no_target")); //$NON-NLS-1$
 		if (fTarget.getSourceEdit() != this)
@@ -215,14 +215,14 @@ public final class MoveSourceEdit extends TextEdit {
 
 	//---- source computation --------------------------------------------------------------
 
-	/* package */ void traverseSourceComputation(TextEditProcessor processor, IDocument document) {
+	void traverseSourceComputation(TextEditProcessor processor, IDocument document) {
 		// always perform source computation independent of processor.considerEdit
 		// The target might need the source and the source is computed in a
 		// temporary buffer.
 		performSourceComputation(processor, document);
 	}
 
-	/* package */ void performSourceComputation(TextEditProcessor processor, IDocument document) {
+	void performSourceComputation(TextEditProcessor processor, IDocument document) {
 		try {
 			TextEdit[] children= removeChildren();
 			if (children.length > 0) {
@@ -259,7 +259,7 @@ public final class MoveSourceEdit extends TextEdit {
 
 	//---- document updating ----------------------------------------------------------------
 
-	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
+	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		document.replace(getOffset(), getLength(), ""); //$NON-NLS-1$
 		fDelta= -getLength();
 		return fDelta;
@@ -267,10 +267,10 @@ public final class MoveSourceEdit extends TextEdit {
 
 	//---- region updating --------------------------------------------------------------
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#deleteChildren
 	 */
-	/* package */ boolean deleteChildren() {
+	boolean deleteChildren() {
 		return false;
 	}
 

@@ -29,7 +29,7 @@ import org.eclipse.jface.text.IDocument;
  */
 public final class UndoEdit extends TextEdit {
 
-	/* package */ UndoEdit() {
+	UndoEdit() {
 		super(0, Integer.MAX_VALUE);
 	}
 
@@ -40,22 +40,22 @@ public final class UndoEdit extends TextEdit {
 	/*
 	 * @see org.eclipse.text.edits.TextEdit#internalAdd(org.eclipse.text.edits.TextEdit)
 	 */
-	/* package */ void internalAdd(TextEdit child) throws MalformedTreeException {
+	void internalAdd(TextEdit child) throws MalformedTreeException {
 		throw new MalformedTreeException(null, this, TextEditMessages.getString("UndoEdit.no_children")); //$NON-NLS-1$
 	}
 
 	/*
 	 * @see org.eclipse.text.edits.MultiTextEdit#aboutToBeAdded(org.eclipse.text.edits.TextEdit)
 	 */
-	/* package */ void aboutToBeAdded(TextEdit parent) {
+	void aboutToBeAdded(TextEdit parent) {
 		throw new MalformedTreeException(parent, this, TextEditMessages.getString("UndoEdit.can_not_be_added")); //$NON-NLS-1$
 	}
 
-	/* package */ UndoEdit dispatchPerformEdits(TextEditProcessor processor) throws BadLocationException {
+	UndoEdit dispatchPerformEdits(TextEditProcessor processor) throws BadLocationException {
 		return processor.executeUndo();
 	}
 
-	/* package */ void dispatchCheckIntegrity(TextEditProcessor processor) throws MalformedTreeException {
+	void dispatchCheckIntegrity(TextEditProcessor processor) throws MalformedTreeException {
 		processor.checkIntegrityUndo();
 	}
 
@@ -79,12 +79,12 @@ public final class UndoEdit extends TextEdit {
 	/*
 	 * @see TextEdit#performDocumentUpdating
 	 */
-	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
+	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		fDelta= 0;
 		return fDelta;
 	}
 
-	/* package */ void add(ReplaceEdit edit) {
+	void add(ReplaceEdit edit) {
 		List children= internalGetChildren();
 		if (children == null) {
 			children= new ArrayList(2);
@@ -93,12 +93,12 @@ public final class UndoEdit extends TextEdit {
 		children.add(edit);
 	}
 
-	/* package */ void defineRegion(int offset, int length) {
+	void defineRegion(int offset, int length) {
 		internalSetOffset(offset);
 		internalSetLength(length);
 	}
 
-	/* package */ boolean deleteChildren() {
+	boolean deleteChildren() {
 		return false;
 	}
 }

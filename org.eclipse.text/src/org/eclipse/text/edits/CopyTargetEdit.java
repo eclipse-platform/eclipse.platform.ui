@@ -95,14 +95,14 @@ public final class CopyTargetEdit extends TextEdit {
 		}
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#doCopy
 	 */
 	protected TextEdit doCopy() {
 		return new CopyTargetEdit(this);
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#postProcessCopy
 	 */
 	protected void postProcessCopy(TextEditCopier copier) {
@@ -127,24 +127,24 @@ public final class CopyTargetEdit extends TextEdit {
 	/*
 	 * @see TextEdit#traverseConsistencyCheck
 	 */
-	/* package */ int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
+	int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
 		return super.traverseConsistencyCheck(processor, document, sourceEdits) + 1;
 	}
 
 	/*
 	 * @see TextEdit#performConsistencyCheck
 	 */
-	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
+	void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fSource == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopyTargetEdit.no_source")); //$NON-NLS-1$
 		if (fSource.getTargetEdit() != this)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopyTargetEdit.different_target")); //$NON-NLS-1$
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#performDocumentUpdating
 	 */
-	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
+	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		String source= fSource.getContent();
 		document.replace(getOffset(), getLength(), source);
 		fDelta= source.length() - getLength();
@@ -152,10 +152,10 @@ public final class CopyTargetEdit extends TextEdit {
 		return fDelta;
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#deleteChildren
 	 */
-	/* package */ boolean deleteChildren() {
+	boolean deleteChildren() {
 		return false;
 	}
 }

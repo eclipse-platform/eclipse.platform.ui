@@ -38,7 +38,7 @@ public final class RangeMarker extends TextEdit {
 		super(other);
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#copy
 	 */
 	protected TextEdit doCopy() {
@@ -58,15 +58,15 @@ public final class RangeMarker extends TextEdit {
 	/*
 	 * @see TextEdit#performDocumentUpdating
 	 */
-	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
+	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		fDelta= 0;
 		return fDelta;
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#deleteChildren
 	 */
-	/* package */ boolean deleteChildren() {
+	boolean deleteChildren() {
 		return false;
 	}
 }

@@ -21,7 +21,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 
-/* package */ class EditDocument implements IDocument {
+class EditDocument implements IDocument {
 
 	private StringBuffer fBuffer;
 

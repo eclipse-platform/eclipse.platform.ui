@@ -43,7 +43,7 @@ public final class CopyingRangeMarker extends TextEdit {
 		fText= other.fText;
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#doCopy
 	 */
 	protected TextEdit doCopy() {
@@ -60,19 +60,19 @@ public final class CopyingRangeMarker extends TextEdit {
 		}
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#performDocumentUpdating
 	 */
-	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
+	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		fText= document.get(getOffset(), getLength());
 		fDelta= 0;
 		return fDelta;
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#deleteChildren
 	 */
-	/* package */ boolean deleteChildren() {
+	boolean deleteChildren() {
 		return false;
 	}
 }

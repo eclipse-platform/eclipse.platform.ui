@@ -88,7 +88,7 @@ public class MultiTextEdit extends TextEdit {
 	/**
 	 * {@inheritDoc}
 	 */
-	/* package */ final boolean isDefined() {
+	final boolean isDefined() {
 		if (fDefined)
 			return true;
 		return hasChildren();
@@ -163,7 +163,7 @@ public class MultiTextEdit extends TextEdit {
 	 * @see org.eclipse.text.edits.TextEdit#adjustOffset(int)
 	 * @since 3.1
 	 */
-	/* package */ void adjustOffset(int delta) {
+	void adjustOffset(int delta) {
 		if (fDefined)
 			super.adjustOffset(delta);
 	}
@@ -172,7 +172,7 @@ public class MultiTextEdit extends TextEdit {
 	 * @see org.eclipse.text.edits.TextEdit#adjustLength(int)
 	 * @since 3.1
 	 */
-	/* package */ void adjustLength(int delta) {
+	void adjustLength(int delta) {
 		if (fDefined)
 			super.adjustLength(delta);
 	}
@@ -180,14 +180,14 @@ public class MultiTextEdit extends TextEdit {
 	/*
 	 * @see TextEdit#performConsistencyCheck
 	 */
-	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
+	void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		checkIntegrity();
 	}
 
 	/*
 	 * @see TextEdit#performDocumentUpdating
 	 */
-	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
+	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		fDelta= 0;
 		return fDelta;
 	}
@@ -195,15 +195,15 @@ public class MultiTextEdit extends TextEdit {
 	/*
 	 * @see TextEdit#deleteChildren
 	 */
-	/* package */ boolean deleteChildren() {
+	boolean deleteChildren() {
 		return false;
 	}
 
-	/* package */ void aboutToBeAdded(TextEdit parent) {
+	void aboutToBeAdded(TextEdit parent) {
 		defineRegion(parent.getOffset());
 	}
 
-	/* package */ void defineRegion(int parentOffset) {
+	void defineRegion(int parentOffset) {
 		if (fDefined)
 			return;
 		if (hasChildren()) {
