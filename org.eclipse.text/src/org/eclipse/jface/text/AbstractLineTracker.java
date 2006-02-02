@@ -32,6 +32,10 @@ import java.util.ListIterator;
  * <p>
  * This class must be subclassed.
  * </p>
+ * 
+ * @since 1.0
+ * @since 3.2 the implementation has been rewritten to use a binary tree instead of a linear list
+ * </p>
  */
 public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerExtension {
 	/*
