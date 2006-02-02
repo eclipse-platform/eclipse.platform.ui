@@ -20,7 +20,6 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.core.internal.filesystem.messages"; //$NON-NLS-1$
 
 	public static String copying;
-	public static String couldNotCreateFolder;
 	public static String couldnotDelete;
 	public static String couldnotDeleteReadOnly;
 	public static String couldNotLoadLibrary;
