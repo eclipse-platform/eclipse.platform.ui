@@ -17,7 +17,6 @@ import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.internal.databinding.viewers.StructuredViewerUpdatableValue;
-import org.eclipse.jface.internal.databinding.viewers.TableViewerUpdatableCollection;
 import org.eclipse.jface.internal.databinding.viewers.TableViewerUpdatableCollectionExtended;
 import org.eclipse.jface.internal.databinding.viewers.TreeViewerUpdatableTree;
 import org.eclipse.jface.internal.databinding.viewers.TreeViewerUpdatableTreeExtended;
@@ -86,7 +85,8 @@ final public class ViewersUpdatableFactory implements IUpdatableFactory {
 						(AbstractListViewer) object);
 			if (object instanceof TableViewer
 					&& ViewersProperties.CONTENT.equals(attribute)) {
-				return new TableViewerUpdatableCollection((TableViewer) object);
+//				return new TableViewerUpdatableCollection((TableViewer) object);
+				return new TableViewerUpdatableTable((TableViewer) object);
 			}
 			if (object instanceof TreeViewer
 					&& ViewersProperties.CONTENT.equals(attribute)) {

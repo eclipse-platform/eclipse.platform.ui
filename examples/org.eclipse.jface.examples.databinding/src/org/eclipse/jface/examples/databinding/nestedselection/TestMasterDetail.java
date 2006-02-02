@@ -177,7 +177,7 @@ public class TestMasterDetail {
       dbc.bind(state, new Property(selectedPerson, "state", String.class, Boolean.FALSE), null);
       
       TableViewer ordersViewer = new TableViewer(ordersTable);
-      dbc.bind(new TableViewerUpdatableTable(ordersViewer),
+      dbc.bind(new Property(ordersViewer, ViewersProperties.CONTENT),
 				new TableModelDescription(new Property(selectedPerson,
 						"orders", List.class, Boolean.TRUE), new Object[] {
 						"orderNumber", "date" }), null);
