@@ -12,12 +12,15 @@ package org.eclipse.ltk.internal.ui.refactoring.history;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -30,10 +33,16 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfigura
 
 /**
  * Control which is capable of selecting elements of a refactoring history.
+ * <p>
+ * This control exspects a control configuration with a checkable tree viewer.
+ * </p>
  * 
  * @since 3.2
  */
-public final class SelectRefactoringHistoryControl extends RefactoringHistoryControl {
+public class SelectRefactoringHistoryControl extends RefactoringHistoryControl {
+
+	/** The empty descriptors constant */
+	private static final RefactoringDescriptorProxy[] EMPTY_DESCRIPTORS= {};
 
 	/** The deselect all button, or <code>null</code> */
 	private Button fDeselectAllButton= null;
@@ -79,6 +88,13 @@ public final class SelectRefactoringHistoryControl extends RefactoringHistoryCon
 		data.widthHint= SWTUtil.getButtonWidthHint(fSelectAllButton);
 		fSelectAllButton.setLayoutData(data);
 
+		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
+
+			public final void widgetSelected(final SelectionEvent event) {
+				handleSelectAll();
+			}
+		});
+
 		fDeselectAllButton= new Button(composite, SWT.NONE);
 		fDeselectAllButton.setEnabled(false);
 		fDeselectAllButton.setText(RefactoringUIMessages.SelectRefactoringHistoryControl_deselect_all_label);
@@ -88,6 +104,13 @@ public final class SelectRefactoringHistoryControl extends RefactoringHistoryCon
 		data.verticalAlignment= GridData.BEGINNING;
 		data.widthHint= SWTUtil.getButtonWidthHint(fDeselectAllButton);
 		fDeselectAllButton.setLayoutData(data);
+
+		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
+
+			public final void widgetSelected(final SelectionEvent event) {
+				handleDeselectAll();
+			}
+		});
 
 		Dialog.applyDialogFont(parent);
 	}
@@ -126,10 +149,29 @@ public final class SelectRefactoringHistoryControl extends RefactoringHistoryCon
 	 */
 	protected void handleCheckStateChanged() {
 		super.handleCheckStateChanged();
-		final int checked= getCheckedDescriptors().length;
-		final int total= getInput().getDescriptors().length;
-		fSelectAllButton.setEnabled(checked < total);
-		fDeselectAllButton.setEnabled(checked > 0);
+		final RefactoringHistory history= getInput();
+		if (history != null) {
+			final int checked= getCheckedDescriptors().length;
+			final int total= history.getDescriptors().length;
+			fSelectAllButton.setEnabled(checked < total);
+			fDeselectAllButton.setEnabled(checked > 0);
+		}
+	}
+
+	/**
+	 * Handles the deselect all event.
+	 */
+	protected void handleDeselectAll() {
+		setCheckedDescriptors(EMPTY_DESCRIPTORS);
+	}
+
+	/**
+	 * Handles the select all event.
+	 */
+	protected void handleSelectAll() {
+		final RefactoringHistory history= getInput();
+		if (history != null)
+			setCheckedDescriptors(history.getDescriptors());
 	}
 
 	/**

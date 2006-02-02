@@ -36,7 +36,7 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfigura
  * 
  * @since 3.2
  */
-public final class ManageRefactoringHistoryControl extends RefactoringHistoryControl {
+public class ManageRefactoringHistoryControl extends RefactoringHistoryControl {
 
 	/** The delete all button, or <code>null</code> */
 	private Button fDeleteAllButton= null;
