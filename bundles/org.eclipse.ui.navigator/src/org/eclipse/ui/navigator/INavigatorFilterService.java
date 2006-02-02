@@ -36,8 +36,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * The activation of each filter should be persisted from session to session.
  * Clients of this interface have control over when the persistence occurs. In
  * particular, clients should call {@link  #persistFilterActivationState()}
- * after each call to {@link #setActiveFilterIds(String[])} or
- * {@link #deactivateFilters(String[])}.
+ * after each call to {@link #setActiveFilterIds(String[])}.
  * </p>
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -86,8 +85,8 @@ public interface INavigatorFilterService {
 	boolean isActive(String aFilterId);
 
 	/**
-	 * Activate the set of given filters. An 'active' filter will always be
-	 * returned from {@link #getVisibleFilterIds()}. An 'inactive' filter will
+	 * Activate the set of given filters. An <i>active</i> filter will always be
+	 * returned from {@link #getVisibleFilters(boolean)}. An <i>inactive</i> filter will
 	 * only be returned from {@link #getVisibleFilters(boolean)} when it is
 	 * called with <b>false</b>.
 	 * 

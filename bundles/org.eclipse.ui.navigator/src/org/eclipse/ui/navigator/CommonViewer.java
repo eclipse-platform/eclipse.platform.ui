@@ -71,9 +71,7 @@ public class CommonViewer extends TreeViewer {
 	 * 
 	 * @param aViewerId
 	 *            An id tied to the extensions that is used to focus specific
-	 *            content to a particular instance of the Common Navigator
-	 * @param aCommonViewerSite
-	 *            A valid site as created by the common viewer site factory.
+	 *            content to a particular instance of the Common Navigator 
 	 * @param aParent
 	 *            A Composite parent to contain the actual SWT widget
 	 * @param aStyle

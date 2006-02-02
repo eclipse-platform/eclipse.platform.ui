@@ -184,9 +184,7 @@ public final class NavigatorActionService extends ActionGroup implements
 	 * </p>
 	 * 
 	 * @param aMenu
-	 *            The menu being presented to the user.
-	 * @param aStructuredSelection
-	 *            The current selection from the viewer.
+	 *            The menu being presented to the user. 
 	 * @see ActionGroup#fillContextMenu(IMenuManager)
 	 */
 	public void fillContextMenu(IMenuManager aMenu) {
@@ -234,8 +232,8 @@ public final class NavigatorActionService extends ActionGroup implements
 					provider = getActionProviderInstance(providerDescriptors[i]);
 					provider.setContext(getContext());
 					provider.fillContextMenu(aMenu);
-				} catch (RuntimeException e) {
-					NavigatorPlugin.logError(0, e.getMessage(), e);
+				} catch (Throwable t) {
+					NavigatorPlugin.logError(0, t.getMessage(), t);
 				}
 			}
 		}
@@ -247,9 +245,7 @@ public final class NavigatorActionService extends ActionGroup implements
 	 * Providers that are interested in the given selection.
 	 * 
 	 * @param theActionBars
-	 *            The action bars in use by the current view site.
-	 * @param aStructuredSelection
-	 *            The current selection from the viewer.
+	 *            The action bars in use by the current view site. 
 	 * @see ActionGroup#fillActionBars(IActionBars)
 	 */
 	public void fillActionBars(IActionBars theActionBars) {

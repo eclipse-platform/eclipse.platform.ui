@@ -49,8 +49,8 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * elements to identify which wizards should be associated with what items in
  * your viewer or navigator.</li>
  * <li>If you are using Resources in your viewer and have bound the resource
- *  extension declared in <b>org.eclipse.ui.navigator.resources</b>, then you will
- *  get most of this functionality for free.</li>
+ * extension declared in <b>org.eclipse.ui.navigator.resources</b>, then you
+ * will get most of this functionality for free.</li>
  * <li>Otherwise, you may choose to build your own custom menu. In which case,
  * you may instantiate this class, and hand it the menu or submenu that you want
  * to list out the available wizard shortcuts via
@@ -60,12 +60,12 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * <p>
  * Clients may instantiate, but not subclass WizardActionGroup.
  * 
- * <p> 
+ * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
- * </p>  
+ * </p>
  * 
  * @see PlatformUI#getWorkbench()
  * @see IWorkbench#getNewWizardRegistry()
@@ -150,14 +150,15 @@ public final class WizardActionGroup extends ActionGroup {
 		Assert.isTrue(!disposed);
 
 		super.setContext(aContext);
-		if(aContext != null) {
-		ISelection selection = aContext.getSelection();
-		Object element = null;
-		if (!selection.isEmpty() && selection instanceof IStructuredSelection)
-			element = ((IStructuredSelection) selection).getFirstElement();
-		// null should be okay here
-		setWizardActionIds(CommonWizardDescriptorManager.getInstance()
-				.getEnabledCommonWizardDescriptorIds(element, type));
+		if (aContext != null) {
+			ISelection selection = aContext.getSelection();
+			Object element = null;
+			if (!selection.isEmpty()
+					&& selection instanceof IStructuredSelection)
+				element = ((IStructuredSelection) selection).getFirstElement();
+			// null should be okay here
+			setWizardActionIds(CommonWizardDescriptorManager.getInstance()
+					.getEnabledCommonWizardDescriptorIds(element, type));
 		} else {
 			setWizardActionIds(NO_IDS);
 		}
@@ -227,8 +228,9 @@ public final class WizardActionGroup extends ActionGroup {
 	}
 
 	/**
-	 * @param wizardActionIds
-	 *            The wizardActionIds to set.
+	 * @param theWizardActionIds
+	 *            The wizard action ids to set. These should be defined through
+	 *            <b>org.eclipse.ui.xxxWizards</b>
 	 */
 	protected void setWizardActionIds(String[] theWizardActionIds) {
 		Arrays.sort(theWizardActionIds);

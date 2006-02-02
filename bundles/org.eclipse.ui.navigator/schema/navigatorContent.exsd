@@ -513,7 +513,9 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
+         &lt;br&gt;
+&lt;h2&gt;Adding content&lt;/h2&gt;
+&lt;p&gt;
 The following example describes a content extension that 
 provides resource content. The &lt;b&gt;triggerPoints&lt;/b&gt; expression
 determines when this extension is initially invoked. If 
@@ -523,9 +525,9 @@ will be used, regardless of whether the root element
 matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression.   
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension  
-         point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt;
-      &lt;navigatorContent
+&lt;extension  
+		point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt;
+	&lt;navigatorContent
             name=&quot;%resource.extension.name&quot;
             priority=&quot;low&quot;
             icon=&quot;icons/full/eview16/resource_persp.gif&quot;
@@ -534,7 +536,7 @@ matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression.
                labelProvider=&quot;org.eclipse.ui.navigator.resources.internal.workbench.ResourceExtensionLabelProvider&quot;   
                sorter=&quot;org.eclipse.ui.navigator.resources.internal.workbench.ResourceSorter&quot;
             id=&quot;org.eclipse.ui.navigator.resourceContent&quot;&gt;         
-         &lt;triggerPoints&gt;
+		&lt;triggerPoints&gt;
            &lt;or&gt;         
               &lt;instanceof 
                     value=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt; 
@@ -543,8 +545,8 @@ matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression.
               &lt;instanceof  
                      value=&quot;org.eclipse.core.resources.IFolder&quot; /&gt; 
            &lt;/or&gt;
-         &lt;/triggerPoints&gt;
-         &lt;possibleChildren&gt;
+		&lt;/triggerPoints&gt;
+        &lt;possibleChildren&gt;
            &lt;or&gt;         
               &lt;instanceof 
                     value=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt; 
@@ -556,10 +558,133 @@ matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression.
                      value=&quot;org.eclipse.core.resources.IFolder&quot; /&gt;
               &lt;instanceof 
                      value=&quot;org.eclipse.core.resources.IFile&quot; /&gt; 
-           &lt;/or&gt;
-         &lt;/possibleChildren&gt;
-      &lt;/navigatorContent&gt;
-   &lt;/extension&gt;
+        	&lt;/or&gt;
+    	&lt;/possibleChildren&gt;
+	&lt;/navigatorContent&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;h2&gt;Adding Actions&lt;/h2&gt;
+&lt;p&gt;
+Clients may use object or viewer contributions (see &lt;b&gt;org.eclipse.ui.popupMenus&lt;/b&gt;) to provide
+actions for their view. Sometimes, clients require a greater degree of flexibility than either
+of these approaches allow, and therefore the Common Navigator framework supports adding 
+action providers. &quot;Action providers&quot; subclass &lt;code&gt;org.eclipse.ui.actions.ActionGroup&lt;/code&gt;
+and have opportunities to fill the action bars and the menus based on different events 
+(selection and right click respectively).
+&lt;/p&gt;
+&lt;p&gt;
+Clients may either associate one or more action providers with a particular
+content extension, or declare the action providers as top level contributions, unassociated
+with any particular content extension. Top level action provideers must be associated with
+a particular instance of vierwer using the &lt;b&gt;org.eclipse.ui.navigator.viewer/viewerActionBinding&lt;/b&gt;
+extension point. Nested action providers are automatically bound to a viewer based on whether
+their containing content extension is also bound to the viewer 
+(see &lt;b&gt;org.eclipse.ui.navigator/viewerContentBinding&lt;/b&gt;). 
+&lt;p&gt;
+&lt;p&gt;
+The following example demonstrates both approaches. The &quot;TestNestedActionProvider&quot; will be 
+given an opporunity to contribute to the menu and &lt;code&gt;org.eclipse.ui.IActionBars&lt;/code&gt; only
+when the &quot;org.eclipse.ui.tests.navigator.testContent&quot; extension is &lt;i&gt;visible&lt;/i&gt; and &lt;i&gt;active&lt;/i&gt;.
+If the user deactivates the test extension from the &quot;Available customizations&quot; dialog, then the
+nested action provider will no longer be given the opportunity to contribute. 
+&lt;pre&gt;
+&lt;extension  
+		point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt; 
+      &lt;navigatorContent 
+            id=&quot;org.eclipse.ui.tests.navigator.testContent&quot; 
+            name=&quot;%test.navigator.extension&quot;
+            contentProvider=&quot;org.eclipse.ui.tests.navigator.extension.TestContentProvider&quot;
+            labelProvider=&quot;org.eclipse.ui.tests.navigator.extension.TestLabelProvider&quot;
+            activeByDefault=&quot;true&quot;
+            priority=&quot;normal&quot;&gt;
+         &lt;triggerPoints&gt;
+            &lt;instanceof value=&quot;org.eclipse.core.resources.IProject&quot;/&gt;
+         &lt;/triggerPoints&gt; 
+      	 &lt;actionProvider
+            class=&quot;org.eclipse.ui.tests.navigator.extension.TestNestedActionProvider&quot;
+            id=&quot;org.eclipse.ui.tests.navigator.extension.TestNestedActionProvider&quot;&gt;
+         	&lt;enablement&gt;
+           		&lt;instanceof value=&quot;org.eclipse.core.resources.IResource&quot;/&gt;
+         	&lt;/enablement&gt;
+      	 &lt;/actionProvider&gt;
+      &lt;/navigatorContent&gt;		
+        &lt;actionProvider
+            	class=&quot;org.eclipse.ui.navigator.resources.internal.actions.NewActionProvider&quot;
+            	id=&quot;org.eclipse.ui.navigator.resources.NewActions&quot;&gt; 
+        	&lt;enablement&gt;
+				&lt;or&gt;
+					&lt;adapt type=&quot;org.eclipse.core.resources.IFile&quot; /&gt;	
+					&lt;adapt type=&quot;org.eclipse.core.resources.IFolder&quot; /&gt;
+         			&lt;adapt type=&quot;org.eclipse.core.resources.IProject&quot; /&gt; 
+               		&lt;adapt type=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt;	
+				&lt;/or&gt;
+	         &lt;/enablement&gt;
+		&lt;/actionProvider&gt;
+&lt;/extension&gt;		
+&lt;/pre&gt;
+&lt;/p&gt;
+
+
+&lt;p&gt;
+Clients may define filters using either subclasses of &lt;code&gt;org.eclipse.jface.viewers.ViewerFilter&lt;/code&gt; 
+or through Eclipse core expressions. The folowing example demonstrates both techniques. Clients may 
+only use of the two options. Extensions that specify both in error will result in only the core
+expression filter being respected. The name and description fields are translateable, and should externalized
+strings in real environments.
+
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension  
+		point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt;
+	&lt;commonFilter
+    		class=&quot;org.eclipse.ui.tests.navigator.extension.TestItemsThatEndIn3&quot;
+            description=&quot;Hide TestItem objects that end in the number &amp;quot;3&amp;quot;&quot;
+            id=&quot;org.eclipse.ui.tests.navigator.filters.TestItemsThatEndWith3&quot;
+            name=&quot;TestItems that end with &amp;quot;3&amp;quot;&quot;
+            activeByDefault=&quot;true&quot;
+            /&gt; 
+	&lt;commonFilter
+            description=&quot;Hides all instances of Test Item&quot;
+            id=&quot;org.eclipse.ui.tests.navigator.filters.AllTestItems&quot;
+            name=&quot;A TestItem Exp Filter (should be sorted alphab..)&quot;&gt;
+         &lt;filterExpression&gt;
+            &lt;instanceof value=&quot;org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData&quot;/&gt;
+         &lt;/filterExpression&gt;
+	&lt;/commonFilter&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;/p&gt;
+
+&lt;p&gt;
+A common sorter is determined for a set of children based on their parent. The sorter class
+must subclass the &lt;code&gt;org.eclipse.jface.viewers.ViewerSorter&lt;/code&gt;. 
+&lt;p&gt;
+&lt;pre&gt;
+
+&lt;extension  
+		point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt;
+	&lt;commonSorter
+    		class=&quot;org.eclipse.ui.navigator.resources.internal.workbench.ResourceExtensionSorter&quot;
+            id=&quot;org.eclipse.ui.navigator.resources.sorters.defaultSorter&quot;&gt;
+		&lt;parentExpression&gt;
+        	&lt;or&gt;         
+		    	&lt;instanceof 
+		        	value=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt; 
+		        &lt;instanceof
+		        	value=&quot;org.eclipse.core.resources.IProject&quot; /&gt; 
+		        &lt;instanceof 
+		        	value=&quot;org.eclipse.core.resources.IResource&quot; /&gt; 
+		        &lt;instanceof  
+		        	value=&quot;org.eclipse.core.resources.IFolder&quot; /&gt;
+		        &lt;instanceof 
+		        	value=&quot;org.eclipse.core.resources.IFile&quot; /&gt; 
+			&lt;/or&gt;
+		&lt;/parentExpression&gt;
+	&lt;/commonSorter&gt;
+&lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
@@ -568,11 +693,49 @@ The following example demonstrates how to add wizard shortcut actions for
 &quot;New Folder&quot; and &quot;New File&quot;, which are enabled on the specific subclasses 
 of org.eclipse.core.resources.IResource. Clients may use whatever parts of 
 the &lt;b&gt;org.eclipse.core.expressions&lt;/b&gt; that are necessary to describe when the 
-menu options should be available. For clients building their own viewers or
+menu options should be available. The wizardId specified below must correspond
+to one of the &lt;b&gt;org.eclipse.ui.xxxWizards&lt;/b&gt; extension points.
+&lt;/p&gt;
+&lt;p&gt;
+For clients building their own viewers or
 view parts, be sure to use &lt;code&gt;org.eclipse.ui.navigator.WizardActionGroup&lt;/code&gt;
 to correctly populate the menu. See that class for more documentation on
 using this feature.
+&lt;/p&gt;
 &lt;p&gt;
+&lt;pre&gt;
+
+&lt;extension  
+		point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt;
+	&lt;commonWizard
+    		type=&quot;new&quot;
+			wizardId=&quot;org.eclipse.ui.wizards.new.folder&quot;&gt;
+		&lt;enablement&gt;
+			&lt;or&gt;
+				&lt;adapt type=&quot;org.eclipse.core.resources.IFile&quot; /&gt;	
+				&lt;adapt type=&quot;org.eclipse.core.resources.IFolder&quot; /&gt;
+         		&lt;adapt type=&quot;org.eclipse.core.resources.IProject&quot; /&gt; 
+            	&lt;adapt type=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt;	
+			&lt;/or&gt;
+		&lt;/enablement&gt;
+	&lt;/commonWizard&gt;   
+	&lt;commonWizard
+            type=&quot;new&quot;
+            wizardId=&quot;org.eclipse.ui.wizards.new.file&quot;&gt;
+		&lt;enablement&gt;
+			&lt;or&gt;
+				&lt;adapt type=&quot;org.eclipse.core.resources.IFile&quot; /&gt;	
+				&lt;adapt type=&quot;org.eclipse.core.resources.IFolder&quot; /&gt;
+         		&lt;adapt type=&quot;org.eclipse.core.resources.IProject&quot; /&gt; 
+            	&lt;adapt type=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt;	
+			&lt;/or&gt;
+		&lt;/enablement&gt;
+	&lt;/commonWizard&gt;
+&lt;/extension&gt;	
+&lt;/pre&gt;
+&lt;/p&gt;
+
+
       </documentation>
    </annotation>
 
