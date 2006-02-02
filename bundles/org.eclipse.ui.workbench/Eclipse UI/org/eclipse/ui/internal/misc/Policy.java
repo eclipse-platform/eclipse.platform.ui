@@ -139,6 +139,13 @@ public class Policy {
      * at a time.
      */
     public static String DEBUG_HANDLERS_VERBOSE_COMMAND_ID = null;
+    
+    /**
+     * Whether experimental features in the rendering of commands into menus
+     * and toolbars should be enabled.  This is not guaranteed to provide a
+     * working workbench.
+     */
+    public static boolean EXPERIMENTAL_MENU = DEFAULT;
 
     static {
         if (getDebugOption("/debug")) { //$NON-NLS-1$
@@ -165,6 +172,7 @@ public class Policy {
                             + "/trace/handlers.verbose.commandId"); //$NON-NLS-1$
             DEBUG_DECLARED_IMAGES = getDebugOption("/debug/declaredImages"); //$NON-NLS-1$
             DEBUG_CONTRIBUTIONS = getDebugOption("/debug/contributions"); //$NON-NLS-1$
+            EXPERIMENTAL_MENU = getDebugOption("/experimental/menus"); //$NON-NLS-1$
         }
     }
 

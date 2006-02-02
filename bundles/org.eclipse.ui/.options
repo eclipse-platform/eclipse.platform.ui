@@ -111,6 +111,10 @@ org.eclipse.ui/trace/operations=false
 # Report verbose information about (undo) operations history changes.
 org.eclipse.ui/trace/operations.verbose=false
 
+# Turns on experimental code dealing with the rendering of menus.  This is not
+# guaranteed to provide a working workbench.
+org.eclipse.ui/experimental/menus=false
+
 # Enable logging of events fired from an IWorkbenchPage to an IPartListener
 org.eclipse.ui/listeners/IWorkbenchPage.IPartListener=false
 

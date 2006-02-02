@@ -1026,14 +1026,14 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @return a menu manager for this workbench window; never <code>null</code>.
 	 */
 	protected MenuManager createMenuManager() {
-		if (false) {
+		if (Policy.EXPERIMENTAL_MENU) {
 			final IMenuService menuService = (IMenuService) getService(IMenuService.class);
 			final SMenuLayout layout = menuService.getLayout();
 			final ILayoutNode layoutNode = layout.getMenuBar();
 			return new LegacyMenuManager(this, layoutNode);
-		} else {
-			return super.createMenuManager();
 		}
+
+		return super.createMenuManager();
 	}
 
 	/**
