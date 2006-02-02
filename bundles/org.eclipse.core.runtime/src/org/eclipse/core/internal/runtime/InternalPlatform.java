@@ -459,7 +459,7 @@ public final class InternalPlatform {
 	}
 
 	public String getNL() {
-		return System.getProperty(PROP_NL);
+		return getBundleContext().getProperty(PROP_NL);
 	}
 
 	/**
@@ -473,11 +473,11 @@ public final class InternalPlatform {
 	}
 
 	public String getOS() {
-		return System.getProperty(PROP_OS);
+		return getBundleContext().getProperty(PROP_OS);
 	}
 
 	public String getOSArch() {
-		return System.getProperty(PROP_ARCH);
+		return getBundleContext().getProperty(PROP_ARCH);
 	}
 
 	public PlatformAdmin getPlatformAdmin() {
@@ -706,7 +706,7 @@ public final class InternalPlatform {
 	}
 
 	public String getWS() {
-		return System.getProperty(PROP_WS);
+		return getBundleContext().getProperty(PROP_WS);
 	}
 
 	/**
