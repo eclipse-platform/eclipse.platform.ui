@@ -22,6 +22,7 @@ import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 
 /**
  * Interface for a refactoring history service. A refactoring history service
@@ -325,4 +326,30 @@ public interface IRefactoringHistoryService {
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
 	 */
 	public void writeRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, OutputStream stream, int flags, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Writes the specified refactoring session descriptor to the output stream.
+	 * 
+	 * @param descriptor
+	 *            the refactoring session descriptor
+	 * @param stream
+	 *            the output stream
+	 * @throws CoreException
+	 *             if an error occurs while writing to the output stream.
+	 *             Reasons include:
+	 *             <ul>
+	 *             <li>The refactoring descriptors have an illegal format,
+	 *             contain illegal arguments or otherwise illegal information.</li>
+	 *             <li>An I/O error occurs while writing the refactoring
+	 *             descriptors to the output stream.</li>
+	 *             </ul>
+	 * 
+	 * @see RefactoringDescriptor#NONE
+	 * @see RefactoringDescriptor#STRUCTURAL_CHANGE
+	 * @see RefactoringDescriptor#BREAKING_CHANGE
+	 * 
+	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
+	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
+	 */
+	public void writeRefactoringSession(RefactoringSessionDescriptor descriptor, OutputStream stream) throws CoreException;
 }

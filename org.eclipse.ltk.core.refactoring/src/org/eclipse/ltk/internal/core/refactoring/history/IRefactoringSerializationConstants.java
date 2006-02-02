@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring.history;
 
+import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
+
 /**
  * Interface for constants related to refactoring serialization.
  * 
@@ -39,7 +41,7 @@ public interface IRefactoringSerializationConstants {
 	public static final String ATTRIBUTE_VERSION= "version"; //$NON-NLS-1$
 
 	/** The current version tag */
-	public static final String CURRENT_VERSION= "1.0"; //$NON-NLS-1$
+	public static final String CURRENT_VERSION= RefactoringSessionDescriptor.VERSION_1_0;
 
 	/** The refactoring element */
 	public static final String ELEMENT_REFACTORING= "refactoring"; //$NON-NLS-1$

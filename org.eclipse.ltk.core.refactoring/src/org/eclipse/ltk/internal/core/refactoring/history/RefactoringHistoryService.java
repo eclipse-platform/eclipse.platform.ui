@@ -1277,4 +1277,13 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			disconnect();
 		}
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void writeRefactoringSession(final RefactoringSessionDescriptor descriptor, final OutputStream stream) throws CoreException {
+		Assert.isNotNull(descriptor);
+		Assert.isNotNull(stream);
+		RefactoringHistoryManager.writeRefactoringSession(stream, descriptor);
+	}
 }

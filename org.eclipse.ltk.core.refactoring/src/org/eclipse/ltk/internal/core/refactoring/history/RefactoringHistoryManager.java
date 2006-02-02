@@ -493,9 +493,24 @@ public final class RefactoringHistoryManager {
 	 *             if an error occurs while writing the descriptors
 	 */
 	public static void writeRefactoringDescriptors(final OutputStream stream, final RefactoringDescriptor[] descriptors) throws CoreException {
+		writeRefactoringSession(stream, new RefactoringSessionDescriptor(descriptors, IRefactoringSerializationConstants.CURRENT_VERSION, null));
+	}
+
+	/**
+	 * Writes refactoring session descriptor to the specified output stream.
+	 * 
+	 * @param stream
+	 *            the output stream where to write to
+	 * @param sess
+	 *            the refactoring session descriptors to write
+	 * @throws CoreException
+	 *             if an error occurs while writing the descriptor
+	 */
+	public static void writeRefactoringSession(final OutputStream stream, final RefactoringSessionDescriptor sess) throws CoreException {
 		final RefactoringSessionTransformer transformer= new RefactoringSessionTransformer();
+		final RefactoringDescriptor[] descriptors= sess.getRefactorings();
 		try {
-			transformer.beginSession(null);
+			transformer.beginSession(sess.getComment());
 			for (int index= 0; index < descriptors.length; index++) {
 				final RefactoringDescriptor descriptor= descriptors[index];
 				if (descriptor != null) {

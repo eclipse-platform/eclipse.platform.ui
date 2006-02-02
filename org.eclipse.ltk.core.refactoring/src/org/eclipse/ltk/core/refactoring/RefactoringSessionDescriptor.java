@@ -35,6 +35,9 @@ import org.eclipse.core.runtime.Assert;
  */
 public class RefactoringSessionDescriptor {
 
+	/** The version constant for v1.0 */
+	public static final String VERSION_1_0= "1.0"; //$NON-NLS-1$
+
 	/** The comment associated with this refactoring, or <code>null</code> */
 	private final String fComment;
 
