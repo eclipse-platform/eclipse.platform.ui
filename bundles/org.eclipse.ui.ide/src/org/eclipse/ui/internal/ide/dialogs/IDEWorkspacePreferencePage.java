@@ -1,5 +1,5 @@
  /****************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -70,6 +71,8 @@ public class IDEWorkspacePreferencePage extends PreferencePage
     //A boolean to indicate if the user settings were cleared.
 	private boolean clearUserSettings = false;
 
+	private RadioGroupFieldEditor openReferencesEditor;
+
     /*
      * (non-Javadoc)
      * 
@@ -83,7 +86,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage
         Composite composite = createComposite(parent);
 
 		PreferenceLinkArea area = new PreferenceLinkArea(composite, SWT.NONE,
-				"org.eclipse.ui.preferencePages.Startup", IDEWorkbenchMessages.IDEWorkspacePreferencePage_WorkbenchPreference_relatedLink,//$NON-NLS-1$
+				"org.eclipse.ui.preferencePages.Startup", IDEWorkbenchMessages.IDEWorkspacePreference_relatedLink,//$NON-NLS-1$
 				(IWorkbenchPreferenceContainer) getContainer(),null);
 
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
@@ -93,12 +96,14 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 		space.setLayoutData(new GridData());
 		
         createAutoBuildPref(composite);
+        createAutoRefreshControls(composite);
         createSaveAllBeforeBuildPref(composite);
         
         createSpace(composite);
         createSaveIntervalGroup(composite);
 		createSpace(composite);
-		createAutoRefreshControls(composite);
+		
+		createOpenPrefControls(composite);
 		
 		Composite lower = new Composite(composite,SWT.NONE);
 		GridLayout lowerLayout = new GridLayout();
@@ -116,7 +121,25 @@ public class IDEWorkspacePreferencePage extends PreferencePage
         return composite;
     }
 
-    protected void createSaveAllBeforeBuildPref(Composite composite) {
+    /**
+     * Creates controls for the preference to open required projects when
+     * opening a project.
+	 * @param parent The parent control
+	 */
+	private void createOpenPrefControls(Composite parent) {
+		String name = IDEInternalPreferences.OPEN_REQUIRED_PROJECTS;
+		String label = IDEWorkbenchMessages.IDEWorkspacePreference_openReferencedProjects;
+        String[][] namesAndValues = {
+                { IDEWorkbenchMessages.Always, IDEInternalPreferences.PSPM_ALWAYS },
+                { IDEWorkbenchMessages.Never, IDEInternalPreferences.PSPM_NEVER },
+                { IDEWorkbenchMessages.Prompt, IDEInternalPreferences.PSPM_PROMPT } };
+		openReferencesEditor = new RadioGroupFieldEditor(name, label, 3, namesAndValues, parent, true);
+		openReferencesEditor.setPreferenceStore(getIDEPreferenceStore());
+		openReferencesEditor.setPage(this);
+		openReferencesEditor.load();
+	}
+
+	protected void createSaveAllBeforeBuildPref(Composite composite) {
         autoSaveAllButton = new Button(composite, SWT.CHECK);
         autoSaveAllButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_savePriorToBuilding);
         autoSaveAllButton.setToolTipText(IDEWorkbenchMessages.IDEWorkspacePreference_savePriorToBuildingToolTip);
@@ -314,6 +337,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 		Collections.sort(encodings);
         encodingEditor.loadDefault();
 		lineSeparatorEditor.loadDefault();
+		openReferencesEditor.loadDefault();
 
         super.performDefaults();
     }
@@ -375,6 +399,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 			IDEEncoding.clearUserEncodings();
         encodingEditor.store();
 		lineSeparatorEditor.store();
+		openReferencesEditor.store();
         return super.performOk();
     }
 

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2005, 2006 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -228,7 +228,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String OpenResourceAction_dialogTitle;
 	public static String OpenResourceAction_problemMessage;
 	public static String OpenResourceAction_operationMessage;
-
+	public static String OpenResourceAction_openRequiredProjects;
+	
 	public static String CloseResourceAction_text;
 	public static String CloseResourceAction_warningForOne;
 	public static String CloseResourceAction_warningForMultiple;
@@ -497,6 +498,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkspacePreference_defaultLineDelim;
 	public static String IDEWorkspacePreference_defaultLineDelimProj;
 	public static String IDEWorkspacePreference_otherLineDelim;
+	public static String IDEWorkspacePreference_relatedLink;
+	public static String IDEWorkspacePreference_openReferencedProjects;
 
 	// --- Linked Resources ---
 	public static String LinkedResourcesPreference_explanation;
@@ -625,6 +628,9 @@ public class IDEWorkbenchMessages extends NLS {
 	// Dialogs
 	// ==============================================================================
 	public static String Question;
+	public static String Always;
+	public static String Never;
+	public static String Prompt;
 
 	public static String ContainerSelectionDialog_title;
 	public static String ContainerSelectionDialog_message;
@@ -839,7 +845,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEEditorsPreferencePage_WorkbenchPreference_viewsRelatedLink;
 	public static String IDEEditorsPreferencePage_WorkbenchPreference_FileEditorsRelatedLink;
     public static String IDEEditorsPreferencePage_WorkbenchPreference_contentTypesRelatedLink;
-	public static String IDEWorkspacePreferencePage_WorkbenchPreference_relatedLink;
 	public static String WorkbenchEncoding_invalidCharset;
 	public static String CopyProjectAction_confirm;
 	public static String CopyProjectAction_warning;

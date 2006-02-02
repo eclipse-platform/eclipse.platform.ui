@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,11 @@ public interface IDEInternalPreferences {
 
     // (String) Whether to open the preferred perspective when creating a new project
     public static final String PROJECT_SWITCH_PERSP_MODE = "SWITCH_PERSPECTIVE_ON_PROJECT_CREATION"; //$NON-NLS-1$
+
+    /**
+     * (String) Whether to open required projects when opening a project.
+     */ 
+    public static final String OPEN_REQUIRED_PROJECTS = "OPEN_REQUIRED_PROJECTS"; //$NON-NLS-1$
 
     public static final String PSPM_PROMPT = MessageDialogWithToggle.PROMPT;
 
