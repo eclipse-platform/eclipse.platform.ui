@@ -733,10 +733,9 @@ public final class InternalPlatform {
 	}
 
 	private void initializeLocationTrackers() {
-		final String FILTER_PREFIX = "(&(objectClass=org.eclipse.osgi.service.datalocation.Location)(type="; //$NON-NLS-1$
 		Filter filter = null;
 		try {
-			filter = context.createFilter(FILTER_PREFIX + PROP_CONFIG_AREA + "))"); //$NON-NLS-1$
+			filter = context.createFilter(Location.CONFIGURATION_FILTER);
 		} catch (InvalidSyntaxException e) {
 			// ignore this.  It should never happen as we have tested the above format.
 		}
@@ -744,7 +743,7 @@ public final class InternalPlatform {
 		configurationLocation.open();
 
 		try {
-			filter = context.createFilter(FILTER_PREFIX + PROP_USER_AREA + "))"); //$NON-NLS-1$
+			filter = context.createFilter(Location.USER_FILTER);
 		} catch (InvalidSyntaxException e) {
 			// ignore this.  It should never happen as we have tested the above format.
 		}
@@ -752,7 +751,7 @@ public final class InternalPlatform {
 		userLocation.open();
 
 		try {
-			filter = context.createFilter(FILTER_PREFIX + PROP_INSTANCE_AREA + "))"); //$NON-NLS-1$
+			filter = context.createFilter(Location.INSTANCE_FILTER);
 		} catch (InvalidSyntaxException e) {
 			// ignore this.  It should never happen as we have tested the above format.
 		}
@@ -760,7 +759,7 @@ public final class InternalPlatform {
 		instanceLocation.open();
 
 		try {
-			filter = context.createFilter(FILTER_PREFIX + PROP_INSTALL_AREA + "))"); //$NON-NLS-1$
+			filter = context.createFilter(Location.INSTALL_FILTER);
 		} catch (InvalidSyntaxException e) {
 			// ignore this.  It should never happen as we have tested the above format.
 		}

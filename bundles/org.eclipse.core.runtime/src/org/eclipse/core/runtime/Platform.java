@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1161,11 +1161,11 @@ public final class Platform {
 	 * <code>null</code> is returned if the platform is running without an instance location.
 	 * <p>
 	 * This method is equivalent to acquiring the <code>org.eclipse.osgi.service.datalocation.Location</code>
-	 * service with the property "type" = "osgi.instance.area".
+	 * service with the property "type" equal to {@link Location#INSTANCE_FILTER}.
 	 *</p>
 	 * @return the location of the platform's instance data area or <code>null</code> if none
 	 * @since 3.0
-	 * XXX refer to the constants in Location for the LDAP filter.
+	 * @see Location#INSTANCE_FILTER
 	 */
 	public static Location getInstanceLocation() {
 		return InternalPlatform.getDefault().getInstanceLocation();
@@ -1246,11 +1246,11 @@ public final class Platform {
 	 * <code>null</code> is returned if the platform is running without a configuration location.
 	 * <p>
 	 * This method is equivalent to acquiring the <code>org.eclipse.osgi.service.datalocation.Location</code>
-	 * service with the property "type" = "osgi.configuration.area".
+	 * service with the property "type" equal to {@link Location#CONFIGURATION_FILTER}.
 	 *</p>
 	 * @return the location of the platform's configuration data area or <code>null</code> if none
 	 * @since 3.0
-	 * XXX refer to the constants in Location for the LDAP filter.
+	 * @see Location#CONFIGURATION_FILTER
 	 */
 	public static Location getConfigurationLocation() {
 		return InternalPlatform.getDefault().getConfigurationLocation();
@@ -1263,11 +1263,11 @@ public final class Platform {
 	 * <code>null</code> is returned if the platform is running without an user location.
 	 * <p>
 	 * This method is equivalent to acquiring the <code>org.eclipse.osgi.service.datalocation.Location</code>
-	 * service with the property "type" = "osgi.user.area".
+	 * service with the property "type" equal to {@link Location#USER_FILTER}.
 	 *</p>
 	 * @return the location of the platform's user data area or <code>null</code> if none
 	 * @since 3.0
-	 * XXX refer to the constants in Location for the LDAP filter.
+	 * @see Location#USER_FILTER
 	 */
 	public static Location getUserLocation() {
 		return InternalPlatform.getDefault().getUserLocation();
@@ -1278,11 +1278,11 @@ public final class Platform {
 	 * <code>null</code> is returned if the platform is running without a configuration location.
 	 * <p>
 	 * This method is equivalent to acquiring the <code>org.eclipse.osgi.service.datalocation.Location</code>
-	 * service with the property "type" = "osgi.install.area".
+	 * service with the property "type" equal to {@link Location#INSTALL_FILTER}.
 	 *</p>
 	 * @return the location of the platform's installation area or <code>null</code> if none
 	 * @since 3.0
-	 * XXX refer to the constants in Location for the LDAP filter.
+	 * @see Location#INSTALL_FILTER
 	 */
 	public static Location getInstallLocation() {
 		return InternalPlatform.getDefault().getInstallLocation();
