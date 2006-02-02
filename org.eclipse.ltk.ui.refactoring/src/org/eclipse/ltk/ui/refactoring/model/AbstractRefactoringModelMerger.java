@@ -42,17 +42,16 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 
-import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryMergeWizard;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -65,7 +64,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
-import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
 
 /**
  * Partial implementation of a refactoring-aware resource mapping merger.
@@ -90,16 +88,16 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
  */
 public abstract class AbstractRefactoringModelMerger extends ResourceMappingMerger {
 
-	/** Refactoring history merge configuration */
-	private static final class RefactoringHistoryMergeConfiguration extends RefactoringHistoryControlConfiguration {
+	/** Refactoring history model merge configuration */
+	private static final class RefactoringHistoryModelMergeConfiguration extends RefactoringHistoryControlConfiguration {
 
 		/**
-		 * Creates a new refactoring history merge configuration.
+		 * Creates a new refactoring history model merge configuration.
 		 * 
 		 * @param project
 		 *            the project, or <code>null</code>
 		 */
-		public RefactoringHistoryMergeConfiguration(final IProject project) {
+		public RefactoringHistoryModelMergeConfiguration(final IProject project) {
 			super(project, false, false);
 		}
 
@@ -118,45 +116,14 @@ public abstract class AbstractRefactoringModelMerger extends ResourceMappingMerg
 		}
 	}
 
-	/** The refactoring history merge wizard */
-	private static final class RefactoringHistoryMergeWizard extends RefactoringHistoryWizard {
-
-		/** The refactoring descriptor, or <code>null</code> */
-		private RefactoringDescriptor fDescriptor;
+	/** The refactoring history model merge wizard */
+	private static final class RefactoringHistoryModelMergeWizard extends RefactoringHistoryMergeWizard {
 
 		/**
-		 * Creates a new refactoring history merge wizard.
+		 * Creates a new refactoring history model merge wizard.
 		 */
-		public RefactoringHistoryMergeWizard() {
+		public RefactoringHistoryModelMergeWizard() {
 			super(RefactoringUIMessages.RefactoringWizard_refactoring, RefactoringUIMessages.AbstractRefactoringModelMerger_wizard_title, RefactoringUIMessages.AbstractRefactoringModelMerger_wizard_description);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
-			Assert.isNotNull(descriptor);
-			fDescriptor= descriptor;
-			return super.aboutToPerformRefactoring(refactoring, descriptor, monitor);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		protected RefactoringStatus refactoringPerformed(final Refactoring refactoring, final IProgressMonitor monitor) {
-			Assert.isNotNull(monitor);
-			try {
-				monitor.beginTask("", 1); //$NON-NLS-1$
-				if (fDescriptor != null && !fDescriptor.isUnknown())
-					try {
-						RefactoringHistoryService.getInstance().mergeDescriptor(fDescriptor, new SubProgressMonitor(monitor, 1));
-					} catch (CoreException exception) {
-						RefactoringUIPlugin.log(exception);
-					}
-				return super.refactoringPerformed(refactoring, monitor);
-			} finally {
-				monitor.done();
-			}
 		}
 	}
 
@@ -269,10 +236,14 @@ public abstract class AbstractRefactoringModelMerger extends ResourceMappingMerg
 
 						public final void run() {
 							if (MessageDialog.openQuestion(shell, RefactoringUIMessages.RefactoringWizard_refactoring, RefactoringUIMessages.AbstractRefactoringModelMerger_accept_question)) {
-								final RefactoringHistoryWizard wizard= new RefactoringHistoryMergeWizard();
-								wizard.setConfiguration(new RefactoringHistoryMergeConfiguration((projects != null && projects.length == 1) ? projects[0] : null));
+								final RefactoringHistoryMergeWizard wizard= new RefactoringHistoryModelMergeWizard();
+								try {
+								wizard.setConfiguration(new RefactoringHistoryModelMergeConfiguration((projects != null && projects.length == 1) ? projects[0] : null));
 								wizard.setInput(history);
 								new WizardDialog(shell, wizard).open();
+								} finally {
+									wizard.resolveConflicts(context);
+								}
 							}
 						}
 					});
@@ -452,7 +423,7 @@ public abstract class AbstractRefactoringModelMerger extends ResourceMappingMerg
 			monitor= new NullProgressMonitor();
 		try {
 			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_merge_message, 200);
-//			status= aboutToPerformMerge(context, new SubProgressMonitor(monitor, 75));
+			// status= aboutToPerformMerge(context, new SubProgressMonitor(monitor, 75));
 			if (status.getSeverity() != IStatus.ERROR) {
 				final IDiff[] diffs= getDiffs(context);
 				status= createMergeStatus(context, context.merge(diffs, false, new SubProgressMonitor(monitor, 100)));
