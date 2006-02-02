@@ -42,7 +42,7 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfigura
 public class SelectRefactoringHistoryControl extends RefactoringHistoryControl {
 
 	/** The empty descriptors constant */
-	private static final RefactoringDescriptorProxy[] EMPTY_DESCRIPTORS= {};
+	protected static final RefactoringDescriptorProxy[] EMPTY_DESCRIPTORS= {};
 
 	/** The deselect all button, or <code>null</code> */
 	private Button fDeselectAllButton= null;

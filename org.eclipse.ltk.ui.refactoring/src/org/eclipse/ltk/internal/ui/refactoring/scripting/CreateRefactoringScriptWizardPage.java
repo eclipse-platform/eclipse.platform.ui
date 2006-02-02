@@ -14,7 +14,7 @@ import java.io.File;
 
 import org.eclipse.core.runtime.Assert;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
@@ -86,29 +86,26 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		final Composite composite= new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-		fHistoryControl= new SelectRefactoringHistoryControl(composite, new RefactoringHistoryControlConfiguration(null, true, true));
+		fHistoryControl= new SelectRefactoringHistoryControl(composite, new RefactoringHistoryControlConfiguration(null, true, true)) {
+
+			protected final void handleDeselectAll() {
+				super.handleDeselectAll();
+				fWizard.setRefactoringDescriptors(EMPTY_DESCRIPTORS);
+			}
+
+			protected final void handleSelectAll() {
+				super.handleSelectAll();
+				final RefactoringHistory history= getInput();
+				if (history != null)
+					fWizard.setRefactoringDescriptors(history.getDescriptors());
+			}
+		};
 		fHistoryControl.createControl();
 		fHistoryControl.setInput(fWizard.getRefactoringHistory());
 		fHistoryControl.addCheckStateListener(new ICheckStateListener() {
 
 			public void checkStateChanged(final CheckStateChangedEvent event) {
 				fWizard.setRefactoringDescriptors(fHistoryControl.getCheckedDescriptors());
-			}
-		});
-		fHistoryControl.getSelectAllButton().addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(final SelectionEvent event) {
-				final RefactoringDescriptorProxy[] descriptors= fHistoryControl.getInput().getDescriptors();
-				fHistoryControl.setCheckedDescriptors(descriptors);
-				fWizard.setRefactoringDescriptors(descriptors);
-			}
-		});
-		fHistoryControl.getDeselectAllButton().addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(final SelectionEvent event) {
-				final RefactoringDescriptorProxy[] descriptors= new RefactoringDescriptorProxy[0];
-				fHistoryControl.setCheckedDescriptors(descriptors);
-				fWizard.setRefactoringDescriptors(descriptors);
 			}
 		});
 		createLocationGroup(composite);
