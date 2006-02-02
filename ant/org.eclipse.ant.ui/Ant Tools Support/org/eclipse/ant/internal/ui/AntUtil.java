@@ -182,7 +182,7 @@ public final class AntUtil {
 	 * Returns a String specifying the Ant home to use for the build.
 	 *
 	 * @param configuration launch configuration
-	 * @return String specifying Ant home to use
+	 * @return String specifying Ant home to use or <code>null</code>
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String getAntHome(ILaunchConfiguration configuration) throws CoreException {
@@ -384,7 +384,7 @@ public final class AntUtil {
 	}
 	
 	/**
-	 * Returns the list of urls that define the custom classpath for the Ant
+	 * Returns the list of URLs that define the custom classpath for the Ant
 	 * build, or <code>null</code> if the global classpath is to be used.
 	 *
 	 * @param config launch configuration
