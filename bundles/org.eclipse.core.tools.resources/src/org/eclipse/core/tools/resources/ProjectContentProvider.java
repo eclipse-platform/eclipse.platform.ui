@@ -16,8 +16,7 @@ import org.eclipse.core.internal.events.BuilderPersistentInfo;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tools.AbstractTreeContentProvider;
 import org.eclipse.core.tools.TreeContentProviderNode;
 import org.eclipse.jface.util.SafeRunnable;
@@ -218,7 +217,7 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 	 * @param input the new input object - must not be null
 	 */
 	protected void rebuild(Viewer viewer, final Object input) {
-		Platform.run(new SafeRunnable() {
+		SafeRunner.run(new SafeRunnable() {
 			public void run() throws Exception {
 				extractInfo(((IResource) input).getProject());
 			}

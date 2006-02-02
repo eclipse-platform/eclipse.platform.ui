@@ -316,7 +316,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 	 * @param input the new input object - must not be null
 	 */
 	protected void rebuild(Viewer viewer, final Object input) {
-		Platform.run(new SafeRunnable() {
+		SafeRunner.run(new SafeRunnable() {
 			public void run() throws Exception {
 				extractInfo((IResource) input);
 			}
