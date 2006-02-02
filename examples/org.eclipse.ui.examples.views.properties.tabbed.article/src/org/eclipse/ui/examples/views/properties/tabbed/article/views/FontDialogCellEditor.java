@@ -17,6 +17,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * a new Font dialog cell editor.
+ * 
+ * @author Anthony Hunter
+ */
 public class FontDialogCellEditor
     extends DialogCellEditor {
 

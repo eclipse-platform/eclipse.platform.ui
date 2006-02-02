@@ -34,17 +34,12 @@ public class ButtonElement
     private Button ctl;
 
     /**
-     * Creates a new MarkElement and stores parent element and location in the
-     * text.
+     * Creates a new ButtonElement.
      * 
-     * @param parent
-     *            the parent of this element
+     * @param initBtn
+     *            the control of this element
      * @param heading
      *            text corresponding to the heading
-     * @param offset
-     *            the offset into the Readme text
-     * @param length
-     *            the length of the element
      */
     public ButtonElement(Button initBtn, String heading) {
         this.headingName = heading;
@@ -83,6 +78,11 @@ public class ButtonElement
         return null;
     }
 
+    /**
+     * Retrieve the control for this element.
+     * 
+     * @return the control for this element.
+     */
     public Button getControl() {
         return ctl;
     }

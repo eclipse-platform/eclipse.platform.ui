@@ -14,6 +14,11 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
+/**
+ * A font property descriptor.
+ * 
+ * @author Anthony Hunter
+ */
 public class FontPropertyDescriptor
     extends PropertyDescriptor {
 

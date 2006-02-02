@@ -16,17 +16,13 @@ public abstract class Element {
 
     private String name;
 
-    public Element(String name) {
+    public Element(String aName) {
         super();
-        this.name = name;
+        this.name = aName;
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public abstract Image getImage();

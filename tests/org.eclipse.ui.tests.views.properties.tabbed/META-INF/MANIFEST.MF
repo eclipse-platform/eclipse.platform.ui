@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Tabbed Properties Tests
+Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.tests.views.properties.tabbed;singleton:=true
 Bundle-Version: 3.2.0.qualifier
 Bundle-Activator: org.eclipse.ui.tests.views.properties.tabbed.Activator
@@ -11,5 +11,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.ui.views.properties.tabbed
 Eclipse-LazyStart: true
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: %Plugin.providerName
 Bundle-ClassPath: uitptests.jar

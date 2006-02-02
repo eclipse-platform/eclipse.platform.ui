@@ -32,8 +32,8 @@ public class TestsViewContentProvider
     /**
      * @param view
      */
-    TestsViewContentProvider(TestsView view) {
-        this.view = view;
+    TestsViewContentProvider(TestsView aView) {
+        this.view = aView;
     }
 
     private TreeNode invisibleRoot;

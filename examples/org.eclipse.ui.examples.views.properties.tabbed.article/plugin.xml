@@ -5,11 +5,11 @@
          point="org.eclipse.ui.views">
       <category
             name="%Views.category.name"
-            id="org.eclipse.ui.examples.views.properties.tabbed.views">
+            id="org.eclipse.ui.views.properties.tabbed">
       </category>
       <view
             name="%Views.example.name"
-            category="org.eclipse.ui.examples.views.properties.tabbed.views"
+            category="org.eclipse.ui.views.properties.tabbed"
             icon="icons/sample.gif"
             class="org.eclipse.ui.examples.views.properties.tabbed.article.views.SampleView"
             id="org.eclipse.ui.examples.views.properties.tabbed.article.views.SampleView">

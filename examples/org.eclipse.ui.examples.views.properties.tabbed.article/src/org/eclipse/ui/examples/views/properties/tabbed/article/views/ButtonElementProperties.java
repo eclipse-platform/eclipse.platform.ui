@@ -19,6 +19,11 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
+/**
+ * The property source provider for a button element.
+ * 
+ * @author Anthony Hunter
+ */
 public class ButtonElementProperties
     implements IPropertySource {
 
