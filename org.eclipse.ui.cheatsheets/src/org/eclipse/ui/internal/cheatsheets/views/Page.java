@@ -54,7 +54,9 @@ public abstract class Page {
 		CheatSheetStopWatch
 				.printLapTime(
 						"Page.createInfoArea()", "Time in Page.createInfoArea() after createScrolledForm(): "); //$NON-NLS-1$ //$NON-NLS-2$
-		form.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 10;
+		form.setLayoutData(gd);
 		CheatSheetStopWatch
 				.printLapTime(
 						"Page.createInfoArea()", "Time in Page.createInfoArea() after setLayoutData(): "); //$NON-NLS-1$ //$NON-NLS-2$

@@ -20,12 +20,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
@@ -40,6 +39,7 @@ import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetMo
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetSaveHelper;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
 import org.eclipse.ui.internal.cheatsheets.views.Page;
+import org.eclipse.ui.part.PageBook;
 
 /**
  * A page which represents a composite cheat sheet
@@ -52,8 +52,8 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	private static final String STARTED = "started"; //$NON-NLS-1$
 	private static final String TRUE = "true"; //$NON-NLS-1$
 	private ManagedForm mform;
-	private Composite explorerContainer;
-	private Composite taskEditorContainer;
+	private PageBook explorerContainer;
+	private PageBook taskEditorContainer;
 	private CompositeCheatSheetModel model;
 	private ITaskExplorer currentExplorer;
 	private ScrolledFormText descriptionPanel;
@@ -75,11 +75,15 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		form = toolkit.createScrolledForm(parent);		
 		form.setLayoutData(new GridData(GridData.FILL_BOTH));
 		mform = new ManagedForm(toolkit, form);
-		FillLayout flayout = new FillLayout();
+		GridLayout flayout = new GridLayout();
 		flayout.marginHeight = 0;
 		flayout.marginWidth = 0;
 		form.getBody().setLayout(flayout);
 		final SashForm sash = new SashForm(form.getBody(), SWT.NULL);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 10;
+		gd.heightHint = 10;
+		sash.setLayoutData(gd);
 		sash.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
 				Point size = sash.getSize();
@@ -90,16 +94,8 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 			}
 		});
 		//toolkit.adapt(sash, false, false);
-		explorerContainer = toolkit.createComposite(sash);
-		StackLayout layout = new StackLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		explorerContainer.setLayout(layout);
-		taskEditorContainer = toolkit.createComposite(sash);
-		layout = new StackLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		taskEditorContainer.setLayout(layout);
+		explorerContainer = new PageBook(sash, SWT.NULL);
+		taskEditorContainer = new PageBook(sash, SWT.NULL);
 	}
 
 	public void dispose() {
@@ -130,13 +126,11 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	private void setExplorerVisible(String id) {
 		Control [] excontrols = explorerContainer.getChildren();
 		ITaskExplorer explorer=null;
-		StackLayout layout = (StackLayout)explorerContainer.getLayout();
 		for (int i=0; i<excontrols.length; i++) {
 			Control excontrol = excontrols[i];
 			explorer = (ITaskExplorer)excontrol.getData(ICompositeCheatsheetTags.EXPLORER);
 			if (explorer.getId().equals(id)) {
-				layout.topControl = excontrol;
-				explorerContainer.layout();
+				explorerContainer.showPage(excontrol);
 				setCurrentExplorer(explorer);
 				return;
 			}
@@ -274,15 +268,13 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 				    editor.start(task);
 				    editor.getControl().setData(STARTED, TRUE);
 				}
-				setCurrentEditor(editor.getControl().getParent());
+				setCurrentEditor(editor.getControl());
 			}
 		}
 	}
 	
 	private void setCurrentEditor(Control c) {
-		StackLayout layout = (StackLayout)taskEditorContainer.getLayout();
-		layout.topControl = c;
-		taskEditorContainer.layout();
+		taskEditorContainer.showPage(c);
 	}
 	
 	private void showComplete(ICompositeCheatSheetTask task) {
@@ -333,14 +325,9 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		// Create a new editor using the extension point data
 		ITaskEditor editor = TaskEditorManager.getInstance().getEditor(task.getKind());
 		if (editor != null) {
-			Composite c = mform.getToolkit().createComposite(taskEditorContainer);
-			FillLayout layout = new FillLayout();
-			layout.marginHeight = 0;
-			layout.marginWidth = 0;
-			c.setLayout(layout);
-			editor.createControl(c, mform.getToolkit());
-			c.setData(TASK, task);
-			c.setData(EDITOR, editor);
+			editor.createControl(taskEditorContainer, mform.getToolkit());
+			editor.getControl().setData(TASK, task);
+			editor.getControl().setData(EDITOR, editor);
 		}
 		return editor;
 	}
