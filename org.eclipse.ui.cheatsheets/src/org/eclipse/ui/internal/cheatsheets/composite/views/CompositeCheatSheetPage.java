@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.cheatsheets.composite.views;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -22,19 +23,26 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.cheatsheets.ITaskEditor;
 import org.eclipse.ui.cheatsheets.ITaskExplorer;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.ScrolledFormText;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetSaveHelper;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
@@ -63,6 +71,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	
 	private static final String START_HREF = "__start__"; //$NON-NLS-1$
 	private ICompositeCheatSheetTask selectedTask;
+	
 	public CompositeCheatSheetPage(CompositeCheatSheetModel model) {
 		this.model = model;
 		saveHelper = new CompositeCheatSheetSaveHelper();
@@ -74,11 +83,18 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	    //////
 		form = toolkit.createScrolledForm(parent);		
 		form.setLayoutData(new GridData(GridData.FILL_BOTH));
+		FormColors colors = toolkit.getColors();
+		colors.initializeSectionToolBarColors();
+		Color gbg = colors.getColor(FormColors.TB_GBG);
+		Color bg = colors.getBackground();
+		form.getForm().setTextBackground(new Color[]{bg, gbg}, new int [] {100}, true);
+		form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
+		form.getForm().setSeparatorVisible(true);
 		mform = new ManagedForm(toolkit, form);
-		GridLayout flayout = new GridLayout();
-		flayout.marginHeight = 0;
-		flayout.marginWidth = 0;
-		form.getBody().setLayout(flayout);
+		GridLayout glayout = new GridLayout();
+		glayout.marginHeight = 0;
+		glayout.marginWidth = 0;
+		form.getBody().setLayout(glayout);
 		final SashForm sash = new SashForm(form.getBody(), SWT.NULL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 10;
@@ -91,11 +107,54 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 					sash.setOrientation(SWT.HORIZONTAL);
 				else
 					sash.setOrientation(SWT.VERTICAL);
+				updateSashPanelMargins(sash);
 			}
 		});
+		sash.setBackground(colors.getColor(FormColors.TB_GBG));
 		//toolkit.adapt(sash, false, false);
-		explorerContainer = new PageBook(sash, SWT.NULL);
-		taskEditorContainer = new PageBook(sash, SWT.NULL);
+		Composite explorerPanel = new Composite(sash, SWT.NULL);
+		explorerPanel.setBackground(colors.getColor(FormColors.TB_BORDER));
+		GridLayout playout = new GridLayout();
+		playout.marginWidth = 0;
+		playout.marginHeight = 0;
+		explorerPanel.setLayout(playout);
+		explorerContainer = new PageBook(explorerPanel, SWT.NULL);
+		explorerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Composite editorPanel = new Composite(sash, SWT.NULL);
+		playout = new GridLayout();
+		playout.marginWidth = 0;
+		playout.marginHeight = 0;
+		editorPanel.setLayout(playout);
+		editorPanel.setBackground(colors.getColor(FormColors.TB_BORDER));		
+		taskEditorContainer = new PageBook(editorPanel, SWT.NULL);
+		taskEditorContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+	}
+	
+	private void updateSashPanelMargins(SashForm sash) {
+		Control [] children = sash.getChildren();
+		int orientation = sash.getOrientation();
+		// update task explorer panel
+		GridLayout layout = (GridLayout)((Composite)children[0]).getLayout();
+		if (orientation==SWT.HORIZONTAL) {
+			layout.marginBottom = 0;
+			layout.marginRight = 1;
+		}
+		else {
+			layout.marginBottom = 1;
+			layout.marginRight = 0;
+		}
+		// update task editor panel
+		layout = (GridLayout)((Composite)children[1]).getLayout();
+		if (orientation==SWT.HORIZONTAL) {
+			layout.marginTop = 0;
+			layout.marginLeft = 1;
+		}
+		else {
+			layout.marginTop = 1;
+			layout.marginLeft = 0;
+		}
+		((Composite)children[0]).layout();
+		((Composite)children[1]).layout();
 	}
 
 	public void dispose() {
@@ -211,6 +270,11 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 			descriptionPanel = new ScrolledFormText(taskEditorContainer, false);
 			mform.getToolkit().adapt(descriptionPanel, false, false);			
 			FormText text = mform.getToolkit().createFormText(descriptionPanel, true);
+			text.marginWidth = 5;
+			text.marginHeight = 5;
+			text.setFont("header", JFaceResources.getHeaderFont()); //$NON-NLS-1$
+			text.setColor("title", mform.getToolkit().getColors().getColor(FormColors.TITLE)); //$NON-NLS-1$
+			text.setImage("start", CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_START)); //$NON-NLS-1$
 			descriptionPanel.setFormText(text);
 			text.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -225,6 +289,9 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		String desc = task.getDescription().trim();
 		StringBuffer buf = new StringBuffer();
 		buf.append("<form>"); //$NON-NLS-1$
+		buf.append("<p><span color=\"title\" font=\"header\">"); //$NON-NLS-1$
+		buf.append(task.getName());
+		buf.append("</span></p>"); //$NON-NLS-1$		
 		if (desc.charAt(0)!='<') {
 			buf.append("<p>"); //$NON-NLS-1$
 			buf.append(desc);
@@ -238,6 +305,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 				buf.append("<p><a href=\""); //$NON-NLS-1$
 				buf.append(START_HREF);
 				buf.append("\">"); //$NON-NLS-1$
+				buf.append("<img href=\"start\"/> "); //$NON-NLS-1$
 				buf.append("Start working on the task."); //$NON-NLS-1$
 				buf.append("</a></p>"); //$NON-NLS-1$
 			} else {
@@ -245,6 +313,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 				buf.append("<p>"); //$NON-NLS-1$
 				buf.append("This task cannot be started until all prerequisite tasks are completed."); //$NON-NLS-1$
 				buf.append("</p>"); //$NON-NLS-1$
+				//TODO compute the real dependency
 				buf.append("Task \"Create a java project\" is not complete."); //$NON-NLS-1$
 				buf.append("<p>"); //$NON-NLS-1$
 				buf.append("</p>");	 //$NON-NLS-1$
@@ -287,6 +356,9 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		String desc = task.getCompletionMessage().trim();
 		StringBuffer buf = new StringBuffer();
 		buf.append("<form>"); //$NON-NLS-1$
+		buf.append("<p><span color=\"title\" font=\"header\">"); //$NON-NLS-1$
+		buf.append(task.getName());
+		buf.append("</span></p>"); //$NON-NLS-1$	
 		if (desc.charAt(0)!='<') {
 			buf.append("<p>"); //$NON-NLS-1$
 			buf.append(desc);
