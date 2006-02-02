@@ -152,58 +152,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		}
 
 		/**
-		 * Merges the descriptor with the refactoring history.
-		 * 
-		 * @param descriptor
-		 *            the refactoring descriptor to merge
-		 * @param monitor
-		 *            the progress monitor to use
-		 * @throws CoreException
-		 *             if an error occurs while merging the descriptor
-		 */
-		private void mergeDescriptor(final RefactoringDescriptor descriptor, final IProgressMonitor monitor) throws CoreException {
-			Assert.isNotNull(descriptor);
-			Assert.isNotNull(monitor);
-			try {
-				monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 11);
-				final String description= descriptor.getDescription();
-				final IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 4);
-				try {
-					subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, fImplementation.size());
-					for (final Iterator iterator= fImplementation.iterator(); iterator.hasNext();) {
-						final RefactoringDescriptor existing= (RefactoringDescriptor) iterator.next();
-						subMonitor.worked(1);
-						if (description.equals(existing.getDescription())) {
-
-							break;
-						}
-					}
-				} finally {
-					subMonitor.done();
-				}
-				if (monitor.isCanceled())
-					throw new OperationCanceledException();
-				monitor.worked(1);
-				final String name= descriptor.getProject();
-				final IFileStore store= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER);
-				if (name != null && !"".equals(name)) {//$NON-NLS-1$
-					final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-					if (project.isAccessible()) {
-						if (hasSharedRefactoringHistory(project)) {
-							final URI uri= project.getLocationURI();
-							if (uri != null)
-								getManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).mergeDescriptor(descriptor, new SubProgressMonitor(monitor, 2));
-						} else
-							getManager(store.getChild(name), name).mergeDescriptor(descriptor, new SubProgressMonitor(monitor, 2));
-					}
-				} else
-					getManager(store.getChild(NAME_WORKSPACE_PROJECT), null).mergeDescriptor(descriptor, new SubProgressMonitor(monitor, 2));
-			} finally {
-				monitor.done();
-			}
-		}
-
-		/**
 		 * Returns the current descriptor on the top of the stack.
 		 * 
 		 * @return the current descriptor on top
@@ -417,7 +365,10 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						break;
 					case OperationHistoryEvent.DONE:
 						if (fDescriptor != null) {
-							fDescriptor.setTimeStamp(System.currentTimeMillis());
+							if (fOverrideTimeStamp >= 0)
+								fDescriptor.setTimeStamp(fOverrideTimeStamp);
+							else
+								fDescriptor.setTimeStamp(System.currentTimeMillis());
 							fUndoStack.push(fDescriptor);
 							fireRefactoringPerformedEvent(new RefactoringDescriptorProxyAdapter(fDescriptor));
 							fDescriptor= null;
@@ -562,6 +513,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 
 	/** The operation listener, or <code>null</code> */
 	private IOperationHistoryListener fOperationListener= null;
+
+	/** The override time stamp */
+	private long fOverrideTimeStamp= -1;
 
 	/** The redo refactoring descriptor queue, or <code>null</code> */
 	private LinkedList fRedoQueue= null;
@@ -1021,39 +975,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/**
-	 * Merges the specified refactoring descriptor with the refactoring history.
-	 * <p>
-	 * This method tries to find an existing refactoring descriptor considered
-	 * equal to the new one, except for time stamps. If an equal one is found,
-	 * its time stamp is adjusted. If not, the new descriptor is inserted into
-	 * the refactoring history.
-	 * </p>
-	 * 
-	 * @param descriptor
-	 *            the refactoring descriptor to merge
-	 * @param monitor
-	 *            the progress monitor to use, or <code>null</code>
-	 * @throws CoreException
-	 *             if an error occurs while merging the refactoring descriptor.
-	 *             Reasons include:
-	 *             <ul>
-	 *             <li>The refactoring history has an illegal format, contains
-	 *             illegal arguments or otherwise illegal information.</li>
-	 *             <li>An I/O error occurs while merging the refactoring
-	 *             descriptor with the refactoring history.</li>
-	 *             </ul>
-	 * 
-	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
-	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
-	 */
-	public void mergeDescriptor(final RefactoringDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
-		Assert.isNotNull(descriptor);
-		if (monitor == null)
-			monitor= new NullProgressMonitor();
-		fUndoStack.mergeDescriptor(descriptor, monitor);
-	}
-
-	/**
 	 * Reads refactoring descriptor proxies from the input stream.
 	 * <p>
 	 * Note that calling this method with a flag argument unequal to
@@ -1145,6 +1066,17 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		return fUndoStack.requestDescriptor(proxy, monitor);
+	}
+
+	/**
+	 * Sets the override time stamp for the next refactoring performed.
+	 * 
+	 * @param stamp
+	 *            the override time stamp, or <code>-1</code> to clear it
+	 */
+	public void setOverrideTimeStamp(final long stamp) {
+		Assert.isTrue(stamp == -1 || stamp >= 0);
+		fOverrideTimeStamp= stamp;
 	}
 
 	/**
