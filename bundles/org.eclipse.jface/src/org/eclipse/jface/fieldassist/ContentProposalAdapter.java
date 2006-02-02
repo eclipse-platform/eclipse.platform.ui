@@ -79,20 +79,21 @@ public class ContentProposalAdapter {
 				// shell is deactivating
 				if (e.type == SWT.FocusOut) {
 					scrollbarClicked = false;
-					// Ignore this event if it's only happening because focus
-					// is moving between the popup shell, control, or scrollbar.
-					// Do this in an async since the focus is not actually
-					// switched
-					// when this event is received.
+					/*
+					 * Ignore this event if it's only happening because focus is
+					 * moving between the popup shells, their controls, or a
+					 * scrollbar. Do this in an async since the focus is not
+					 * actually switched when this event is received.
+					 */
 					e.display.asyncExec(new Runnable() {
 						public void run() {
-							if (proposalTable != null && !proposalTable.isDisposed()) {
-								Control focusControl = e.display.getFocusControl();
-								if (focusControl == proposalTable
-										|| focusControl == proposalTable.getShell()
-										|| scrollbarClicked)
+							if (isValid()) {
+								if (scrollbarClicked
+										|| hasFocus()
+										|| (infoPopup != null && infoPopup
+												.hasFocus()))
 									return;
-								close();	
+								close();
 							}
 						}
 					});
@@ -112,14 +113,26 @@ public class ContentProposalAdapter {
 			// Install the listeners for events that need to be monitored for
 			// popup closure.
 			void installListeners() {
+				// Listeners on this popup's table and scroll bar
 				proposalTable.addListener(SWT.FocusOut, this);
 				ScrollBar scrollbar = proposalTable.getVerticalBar();
 				if (scrollbar != null)
 					scrollbar.addListener(SWT.Selection, this);
-				proposalTable.getShell().addListener(SWT.Deactivate, popupCloser);
-				proposalTable.getShell().addListener(SWT.Close, popupCloser);
-				control.getShell().addListener(SWT.Move, popupCloser);
-				control.getShell().addListener(SWT.Resize, popupCloser);
+
+				// Listeners on this popup's shell
+				getShell().addListener(SWT.Deactivate, this);
+				getShell().addListener(SWT.Close, this);
+
+				// Listeners on the target control
+				control.addListener(SWT.MouseDoubleClick, this);
+				control.addListener(SWT.MouseDown, this);
+				control.addListener(SWT.Dispose, this);
+				control.addListener(SWT.FocusOut, this);
+				// Listeners on the target control's shell
+				Shell controlShell = control.getShell();
+				controlShell.addListener(SWT.Move, this);
+				controlShell.addListener(SWT.Resize, this);
+
 			}
 
 			// Remove installed listeners
@@ -127,11 +140,19 @@ public class ContentProposalAdapter {
 				proposalTable.removeListener(SWT.FocusOut, this);
 				ScrollBar scrollbar = proposalTable.getVerticalBar();
 				if (scrollbar != null)
-					scrollbar.addListener(SWT.Selection, this);
-				proposalTable.getShell().removeListener(SWT.Deactivate, popupCloser);
-				proposalTable.getShell().removeListener(SWT.Close, popupCloser);
-				control.getShell().removeListener(SWT.Move, popupCloser);
-				control.getShell().removeListener(SWT.Resize, popupCloser);
+					scrollbar.removeListener(SWT.Selection, this);
+				
+				getShell().removeListener(SWT.Deactivate, this);
+				getShell().removeListener(SWT.Close, this);
+				
+				control.removeListener(SWT.MouseDoubleClick, this);
+				control.removeListener(SWT.MouseDown, this);
+				control.removeListener(SWT.Dispose, this);
+				control.removeListener(SWT.FocusOut, this);
+
+				Shell controlShell = control.getShell();
+				controlShell.removeListener(SWT.Move, this);
+				controlShell.removeListener(SWT.Resize, this);
 			}
 		}
 
@@ -333,6 +354,16 @@ public class ContentProposalAdapter {
 				if (text != null && !text.isDisposed()) {
 					text.setText(contents);
 				}
+			}
+
+			/*
+			 * Return whether the popup has focus.
+			 */
+			boolean hasFocus() {
+				if (text == null || text.isDisposed())
+					return false;
+				return text.getShell().isFocusControl()
+						|| text.isFocusControl();
 			}
 		}
 
@@ -590,6 +621,16 @@ public class ContentProposalAdapter {
 		 */
 		private boolean isValid() {
 			return proposalTable != null && !proposalTable.isDisposed();
+		}
+
+		/*
+		 * Return whether the receiver has focus.
+		 */
+		private boolean hasFocus() {
+			if (!isValid())
+				return false;
+			return getShell().isFocusControl()
+					|| proposalTable.isFocusControl();
 		}
 
 		/*
