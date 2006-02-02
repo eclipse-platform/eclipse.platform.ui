@@ -99,7 +99,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	
 	/**
 	 * Default weights for the SashForm that specify how wide the selection and
-	 * edit areas aree relative to each other.
+	 * edit areas are relative to each other.
 	 */
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] {11, 30};	
 	
@@ -156,7 +156,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public static final int LAUNCH_CONFIGURATION_DIALOG_REUSE_OPEN = 4;
 	
 	/**
-	 * Returns the currently visibile dialog
+	 * Returns the currently visible dialog
 	 * @return the currently visible launch dialog
 	 */
 	public static ILaunchConfigurationDialog getCurrentlyVisibleLaunchConfigurationDialog() {
@@ -238,7 +238,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private long fActiveRunningOperations = 0;
 	
 	/**
-	 * The launch groupd being displayed
+	 * The launch group being displayed
 	 */
 	private LaunchGroupExtension fGroup;
 	
@@ -607,7 +607,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Creates all of the actions for the toolbar
 	 * @param toolbar
-	 * @sicne 3.2
+	 * @since 3.2
 	 */
 	protected void createToolbarActions() {
 		ToolBarManager tmanager = new ToolBarManager(fToolbar);
@@ -901,7 +901,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
   	
 	/**
-	 * Gets the hlep context id
+	 * Gets the help context id
 	 * 
 	 * @return the help context id
 	 */
@@ -953,7 +953,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  	/**
 	 * Returns the appropriate text for the launch button - run or debug.
 	 * 
-	 * @return the laucnh button text
+	 * @return the launch button text
 	 */
 	protected String getLaunchButtonText() {
 		return DebugPlugin.getDefault().getLaunchManager().getLaunchMode(getMode()).getLabel();
@@ -1012,7 +1012,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  	}
 	
 	/**
-	 * returns the local prgress monitor part
+	 * returns the local progress monitor part
 	 * 
 	 * @return the local progress monitor part
 	 */
@@ -1514,7 +1514,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Captures and returns the enabled/disabled state of the wizard dialog's
 	 * buttons and the tree of controls for the currently showing page. All
-	 * these controls are disabled in the process, with the possible excepton of
+	 * these controls are disabled in the process, with the possible exception of
 	 * the Cancel button.
 	 *
 	 * @return a map containing the saved state suitable for restoring later
@@ -1579,7 +1579,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Sets the status to open the dialog on.
 	 * 
-	 * @param status the intial status for the dialog
+	 * @param status the initial status for the dialog
 	 */
 	public void setInitialStatus(IStatus status) {
 		fInitialStatus = status;
@@ -1830,7 +1830,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 
 	/**
 	 * Updates the state of a filter based on the state variable
-	 * @param state if the filter needs to be added or removed, true indicates add, false indicates sremove
+	 * @param state if the filter needs to be added or removed, true indicates add, false indicates remove
 	 * @param filter the filter to update
 	 */
 	private void updateFilter(boolean state, ViewerFilter filter) {
@@ -1911,7 +1911,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * finds the given parent item in the viewer, in this case the parent item will always be an
 	 * <code>ILaunchConfigurationType</code>
-	 * @param parent thep arent item to find
+	 * @param parent the parent item to find
 	 * @return the index of the parent item or -1 if not found
 	 * @since 3.2
 	 */
