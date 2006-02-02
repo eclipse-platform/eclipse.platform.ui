@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.text.source;
+package org.eclipse.jface.internal.text.source;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -23,6 +23,17 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.text.source.IAnnotationHover;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModelExtension;
+import org.eclipse.jface.text.source.IAnnotationModelListener;
+import org.eclipse.jface.text.source.IChangeRulerColumn;
+import org.eclipse.jface.text.source.ILineDiffInfo;
+import org.eclipse.jface.text.source.ILineDiffer;
+import org.eclipse.jface.text.source.ILineRange;
+import org.eclipse.jface.text.source.ISharedTextColors;
+import org.eclipse.jface.text.source.IVerticalRulerColumn;
 
 import org.eclipse.jface.internal.text.JFaceTextUtil;
 
@@ -32,7 +43,7 @@ import org.eclipse.jface.internal.text.JFaceTextUtil;
  * 
  * @since 3.2
  */
-final class DiffPainter {
+public final class DiffPainter {
 	/**
 	 * Internal listener class that will update the ruler when the underlying model changes.
 	 */
@@ -463,7 +474,7 @@ final class DiffPainter {
 	 * @param line the document line of interest
 	 * @return the display character for <code>line</code>
 	 */
-	String getDisplayCharacter(int line) {
+	public String getDisplayCharacter(int line) {
 		return getDisplayCharacter(getDiffInfo(line));
 	}
 

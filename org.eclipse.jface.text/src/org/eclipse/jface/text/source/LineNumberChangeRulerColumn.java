@@ -20,6 +20,7 @@ import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 
 import org.eclipse.jface.internal.text.revisions.RevisionPainter;
+import org.eclipse.jface.internal.text.source.DiffPainter;
 
 /**
  * A vertical ruler column displaying line numbers and serving as a UI for quick diff.
