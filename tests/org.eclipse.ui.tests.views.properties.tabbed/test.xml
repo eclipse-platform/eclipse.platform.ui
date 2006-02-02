@@ -23,7 +23,7 @@
   <!-- This target defines the tests that need to be run. -->
   <target name="suite">
     <property name="sniff-folder"
-              value="${eclipse-home}/navigator_sniff_folder"/>
+              value="${eclipse-home}/tabbedproperties_sniff_folder"/>
     <delete dir="${sniff-folder}" quiet="true"/>
     <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${sniff-folder}"/>
