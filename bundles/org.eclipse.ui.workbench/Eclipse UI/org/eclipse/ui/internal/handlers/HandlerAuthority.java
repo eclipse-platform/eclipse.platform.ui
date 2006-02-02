@@ -65,6 +65,12 @@ final class HandlerAuthority extends ExpressionAuthority {
 	private static final boolean DEBUG = Policy.DEBUG_HANDLERS;
 
 	/**
+	 * Whether the performance information should be printed about the
+	 * performance of the handler authority.
+	 */
+	private static final boolean DEBUG_PERFORMANCE = Policy.DEBUG_HANDLERS_PERFORMANCE;
+
+	/**
 	 * Whether the workbench command support should kick into verbose debugging
 	 * mode. This causes the resolvable handler conflicts to be printed to the
 	 * console.
@@ -334,6 +340,12 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 *            A bit mask of all the source priorities that have changed.
 	 */
 	protected final void sourceChanged(final int sourcePriority) {
+		// If tracing, then track how long it takes to process the activations.
+		long startTime = 0L;
+		if (DEBUG_PERFORMANCE) {
+			startTime = System.currentTimeMillis();
+		}
+		
 		/*
 		 * In this first phase, we cycle through all of the activations that
 		 * could have potentially changed. Each such activation is added to a
@@ -352,15 +364,6 @@ final class HandlerAuthority extends ExpressionAuthority {
 					}
 				}
 			}
-		}
-
-		/*
-		 * If tracing, then print out how many activations are about to be
-		 * recomputed.
-		 */
-		if (DEBUG) {
-			Tracing.printTrace(TRACING_COMPONENT, activationsToRecompute.size()
-					+ " activations to recompute"); //$NON-NLS-1$
 		}
 
 		/*
@@ -400,6 +403,16 @@ final class HandlerAuthority extends ExpressionAuthority {
 				updateCommand(commandId, activation);
 			} else {
 				updateCommand(commandId, null);
+			}
+		}
+		
+		// If tracing performance, then print the results.
+		if (DEBUG_PERFORMANCE) {
+			final long elapsedTime = System.currentTimeMillis() - startTime;
+			final int size = activationsToRecompute.size();
+			if (size > 0) {
+				Tracing.printTrace(TRACING_COMPONENT, size
+						+ " activations recomputed in " + elapsedTime + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

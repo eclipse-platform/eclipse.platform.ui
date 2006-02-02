@@ -59,6 +59,12 @@ final class ContextAuthority extends ExpressionAuthority {
 	private static final boolean DEBUG = Policy.DEBUG_CONTEXTS;
 
 	/**
+	 * Whether the performance information should be printed about the
+	 * performance of the context authority.
+	 */
+	private static final boolean DEBUG_PERFORMANCE = Policy.DEBUG_CONTEXTS_PERFORMANCE;
+
+	/**
 	 * The name of the data tag containing the dispose listener information.
 	 */
 	private static final String DISPOSE_LISTENER = "org.eclipse.ui.internal.contexts.ContextAuthority"; //$NON-NLS-1$
@@ -171,7 +177,7 @@ final class ContextAuthority extends ExpressionAuthority {
 		for (int i = 1; i <= 32; i++) {
 			if ((sourcePriority & (1 << i)) != 0) {
 				Set activations = activationsBySourcePriority[i];
-				if (activations == null) {
+				if (activations == null) { 
 					activations = new HashSet(1);
 					activationsBySourcePriority[i] = activations;
 				}
@@ -593,6 +599,12 @@ final class ContextAuthority extends ExpressionAuthority {
 	 *            A bit mask of all the source priorities that have changed.
 	 */
 	protected final void sourceChanged(final int sourcePriority) {
+		// If tracing, then track how long it takes to process the activations.
+		long startTime = 0L;
+		if (DEBUG_PERFORMANCE) {
+			startTime = System.currentTimeMillis();
+		}
+		
 		/*
 		 * In this first phase, we cycle through all of the activations that
 		 * could have potentially changed. Each such activation is added to a
@@ -611,15 +623,6 @@ final class ContextAuthority extends ExpressionAuthority {
 					}
 				}
 			}
-		}
-
-		/*
-		 * If tracing, then print out how many activations are about to be
-		 * recomputed.
-		 */
-		if (DEBUG) {
-			Tracing.printTrace(TRACING_COMPONENT, activationsToRecompute.size()
-					+ " activations to recompute"); //$NON-NLS-1$
 		}
 
 		/*
@@ -656,6 +659,16 @@ final class ContextAuthority extends ExpressionAuthority {
 				updateContext(contextId, containsActive((Collection) value));
 			} else {
 				updateContext(contextId, false);
+			}
+		}
+		
+		// If tracing performance, then print the results.
+		if (DEBUG_PERFORMANCE) {
+			final long elapsedTime = System.currentTimeMillis() - startTime;
+			final int size = activationsToRecompute.size();
+			if (size > 0) {
+				Tracing.printTrace(TRACING_COMPONENT, size
+						+ " activations recomputed in " + elapsedTime + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

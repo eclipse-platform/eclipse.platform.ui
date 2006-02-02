@@ -87,11 +87,17 @@ org.eclipse.ui/trace/commands=false
 # Report every change in the list of contexts.
 org.eclipse.ui/trace/contexts=false
 
+# Track the performance of context decision-making in the workbench.
+org.eclipse.ui/trace/contexts.performance=false
+
 # Report a bit of stack around every change in the list of contexts.
 org.eclipse.ui/trace/contexts.verbose=false
 
 # Report handler conflicts within the workbench
 org.eclipse.ui/trace/handlers=false
+
+# Track the performance of handler decision-making in the workbench.
+org.eclipse.ui/trace/handlers.performance=false
 
 # Report verbose information about changing handlers in the system.
 org.eclipse.ui/trace/handlers.verbose=false

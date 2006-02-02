@@ -72,6 +72,12 @@ public class Policy {
     public static boolean DEBUG_CONTEXTS = DEFAULT;
 
     /**
+     * Whether to print debugging information about the performance of context
+     * computations.
+     */
+    public static boolean DEBUG_CONTEXTS_PERFORMANCE = DEFAULT;
+
+    /**
      * Whether to print even more debugging information about the internal state
      * of the context support within the workbench.
      */
@@ -82,6 +88,12 @@ public class Policy {
      * command support (in relation to handlers) within the workbench.
      */
     public static boolean DEBUG_HANDLERS = DEFAULT;
+
+    /**
+     * Whether to print debugging information about the performance of handler
+     * computations.
+     */
+    public static boolean DEBUG_HANDLERS_PERFORMANCE = DEFAULT;
 
     /**
      * Whether to print out verbose information about changing handlers in the
@@ -139,8 +151,10 @@ public class Policy {
             DEBUG_TOOLBAR_DISPOSAL = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface/trace/toolbarDisposal")); //$NON-NLS-1$ //$NON-NLS-2$
             DEBUG_COMMANDS = getDebugOption("/trace/commands"); //$NON-NLS-1$
             DEBUG_CONTEXTS = getDebugOption("/trace/contexts"); //$NON-NLS-1$
+            DEBUG_CONTEXTS_PERFORMANCE = getDebugOption("/trace/contexts.performance"); //$NON-NLS-1$
             DEBUG_CONTEXTS_VERBOSE = getDebugOption("/trace/contexts.verbose"); //$NON-NLS-1$
             DEBUG_HANDLERS = getDebugOption("/trace/handlers"); //$NON-NLS-1$
+            DEBUG_HANDLERS_PERFORMANCE = getDebugOption("/trace/handlers.performance"); //$NON-NLS-1$
             DEBUG_HANDLERS_VERBOSE = getDebugOption("/trace/handlers.verbose"); //$NON-NLS-1$
             DEBUG_OPERATIONS = getDebugOption("/trace/operations"); //$NON-NLS-1$
             DEBUG_OPERATIONS_VERBOSE = getDebugOption("/trace/operations.verbose"); //$NON-NLS-1$
