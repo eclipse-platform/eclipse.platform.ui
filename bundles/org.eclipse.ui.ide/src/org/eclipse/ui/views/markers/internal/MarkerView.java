@@ -179,7 +179,7 @@ public abstract class MarkerView extends TableView {
 		 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
 		 */
 		public boolean shouldRun() {
-			return buildDone;
+			return buildDone && PlatformUI.isWorkbenchRunning();
 		}
 
 		/**
