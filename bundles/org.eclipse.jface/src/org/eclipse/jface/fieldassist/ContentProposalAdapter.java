@@ -93,15 +93,19 @@ public class ContentProposalAdapter {
 										|| (infoPopup != null && infoPopup
 												.hasFocus()))
 									return;
-								// Workaround a problem on X, whereby at this point, the
-								// focus control is not known.  Check the active shell.
+								// Workaround a problem on X, whereby at this
+								// point, the focus control is not known.
+								// Check the active shell.
+								// This may be related to bug #126138.
 								Shell activeShell = e.display.getActiveShell();
-								if (activeShell == getShell() || (infoPopup != null && infoPopup.getShell() == activeShell))
+								if (activeShell == getShell()
+										|| (infoPopup != null && infoPopup
+												.getShell() == activeShell))
 									return;
 								/*
-								System.out.println(e);
-								System.out.println(e.display.getFocusControl());
-								System.out.println(e.display.getActiveShell());
+								 * System.out.println(e);
+								 * System.out.println(e.display.getFocusControl());
+								 * System.out.println(e.display.getActiveShell());
 								 */
 								close();
 							}
@@ -109,7 +113,7 @@ public class ContentProposalAdapter {
 					});
 					return;
 				}
-				
+
 				// Scroll bar has been clicked. Remember this for focus event
 				// processing.
 				if (e.type == SWT.Selection) {
@@ -151,10 +155,10 @@ public class ContentProposalAdapter {
 				ScrollBar scrollbar = proposalTable.getVerticalBar();
 				if (scrollbar != null)
 					scrollbar.removeListener(SWT.Selection, this);
-				
+
 				getShell().removeListener(SWT.Deactivate, this);
 				getShell().removeListener(SWT.Close, this);
-				
+
 				control.removeListener(SWT.MouseDoubleClick, this);
 				control.removeListener(SWT.MouseDown, this);
 				control.removeListener(SWT.Dispose, this);
@@ -268,7 +272,7 @@ public class ContentProposalAdapter {
 
 				case SWT.BS:
 					// Backspace should back out of any stored filter text
-					if (filter) {
+					if (filterStyle != FILTER_NONE) {
 						// We have no filter to back out of, so do nothing
 						if (filterText.length() == 0)
 							return;
@@ -276,17 +280,21 @@ public class ContentProposalAdapter {
 						filterText = filterText.substring(0, filterText
 								.length() - 1);
 						recomputeProposals(filterText);
-						return;
 					}
+					break;
 
 				default:
 					// If the key is a defined unicode character, and not one of
-					// the
-					// special cases processed above, update the filter text and
-					// filter the proposals.
-					if (filter && Character.isDefined(key)) {
-						filterText = filterText + String.valueOf(key);
-						recomputeProposals(filterText);
+					// the special cases processed above, update the filter text
+					// and filter the proposals.
+					if (Character.isDefined(key)) {
+						if (filterStyle == FILTER_CUMULATIVE) {
+							filterText = filterText + String.valueOf(key);
+							recomputeProposals(filterText);
+						} else if (filterStyle == FILTER_CHARACTER) {
+							filterText = String.valueOf(key);
+							recomputeProposals(filterText);
+						}
 					}
 					break;
 				}
@@ -409,11 +417,6 @@ public class ContentProposalAdapter {
 		 */
 		private String filterText = EMPTY;
 
-		/*
-		 * Boolean that indicates whether we are filtering.
-		 */
-		private boolean filter = false;
-
 		/**
 		 * Constructs a new instance of this popup, specifying the control for
 		 * which this popup is showing content, and how the proposals should be
@@ -430,11 +433,10 @@ public class ContentProposalAdapter {
 		 *            a boolean indicating whether proposals should be filtered
 		 *            as keys are typed in the popup.
 		 */
-		ContentProposalPopup(String infoText, boolean filter) {
+		ContentProposalPopup(String infoText) {
 			super(control.getShell(), PopupDialog.INFOPOPUP_SHELLSTYLE, false,
 					false, false, false, null, infoText);
 			this.proposals = getProposals(filterText);
-			this.filter = filter;
 		}
 
 		/*
@@ -718,7 +720,7 @@ public class ContentProposalAdapter {
 					getControl());
 			IContentProposal[] proposals = proposalProvider.getProposals(
 					contents, position);
-			if (filter) {
+			if (filterStyle != FILTER_NONE) {
 				return filterProposals(proposals, filterString);
 			}
 			return proposals;
@@ -841,6 +843,24 @@ public class ContentProposalAdapter {
 	 */
 	public static final int PROPOSAL_IGNORE = 3;
 
+	/**
+	 * Indicates that there should be no filter applied as keys are typed in the
+	 * popup.
+	 */
+	public static final int FILTER_NONE = 1;
+
+	/**
+	 * Indicates that a single character filter applies as keys are typed in the
+	 * popup.
+	 */
+	public static final int FILTER_CHARACTER = 2;
+
+	/**
+	 * Indicates that a cumulative filter applies as keys are typed in the
+	 * popup. That is, each character typed will be added to the filter.
+	 */
+	public static final int FILTER_CUMULATIVE = 3;
+
 	/*
 	 * Set to <code>true</code> to use a Table with SWT.VIRTUAL. This is a
 	 * workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=98585#c40
@@ -914,10 +934,9 @@ public class ContentProposalAdapter {
 	private boolean propagateKeys;
 
 	/*
-	 * A boolean that indicates whether proposals should be filtered as keys are
-	 * typed when the popup is open.
+	 * Integer that indicates the filtering style.
 	 */
-	private boolean filterProposals;
+	private int filterStyle;
 
 	/*
 	 * The listener we install on the control.
@@ -983,9 +1002,11 @@ public class ContentProposalAdapter {
 	 *            a boolean that indicates whether key events (including
 	 *            auto-activation characters) should be propagated to the
 	 *            adapted control when the proposal popup is open.
-	 * @param filterProposals
-	 *            a boolean that indicates whether the proposal popup should
-	 *            filter its contents based on keys typed when it is open
+	 * @param filterStyle
+	 *            a constant indicating whether keystrokes in the proposal popup
+	 *            should filter the proposals shown <code>FILTER_NONE</code>,
+	 *            <code>FILTER_CUMULATIVE</code>, or
+	 *            <code>FILTER_CHARACTER</code>
 	 * @param acceptance
 	 *            a constant indicating how an accepted proposal should affect
 	 *            the control's content. Should be one of
@@ -998,7 +1019,7 @@ public class ContentProposalAdapter {
 			IContentProposalProvider proposalProvider,
 			ILabelProvider labelProvider, KeyStroke keyStroke,
 			char[] autoActivationCharacters, boolean propagateKeys,
-			boolean filterProposals, int acceptance) {
+			int filterStyle, int acceptance) {
 		super();
 		// We always assume the control and content adapter are valid.
 		Assert.isNotNull(control);
@@ -1013,7 +1034,7 @@ public class ContentProposalAdapter {
 		if (autoActivationCharacters != null)
 			this.autoActivateString = new String(autoActivationCharacters);
 		this.propagateKeys = propagateKeys;
-		this.filterProposals = filterProposals;
+		this.filterStyle = filterStyle;
 		this.acceptance = acceptance;
 		addControlListener(control);
 	}
@@ -1345,7 +1366,7 @@ public class ContentProposalAdapter {
 	 */
 	protected void openProposalPopup() {
 		if (popup == null) {
-			popup = new ContentProposalPopup(null, filterProposals);
+			popup = new ContentProposalPopup(null);
 			popup.open();
 			popup.getShell().addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent event) {

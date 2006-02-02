@@ -75,30 +75,23 @@ public class ContentAssistField extends DecoratedField {
 	 *            proposal. If specified, these characters will trigger
 	 *            auto-activation of the proposal popup, regardless of the
 	 *            specified command id.
-	 * @param propagateKeys
-	 *            a boolean that indicates whether key events (including
-	 *            auto-activation characters) should be propagated to the
-	 *            adapted control when the proposal popup is open.
-	 * @param filterProposals
-	 *            a boolean that indicates whether the proposal popup should
-	 *            filter its contents based on keys typed when it is open
 	 */
 	public ContentAssistField(Composite parent, int style,
 			IControlCreator controlCreator,
 			IControlContentAdapter controlContentAdapter,
 			IContentProposalProvider proposalProvider,
 			ILabelProvider labelProvider, String commandId,
-			char[] autoActivationCharacters, boolean propagateKeys,
-			boolean filterProposals) {
+			char[] autoActivationCharacters) {
 
 		super(parent, style, controlCreator);
 		adapter = new ContentAssistCommandAdapter(getControl(),
 				controlContentAdapter, proposalProvider, labelProvider,
-				commandId, autoActivationCharacters, propagateKeys,
-				filterProposals, ContentProposalAdapter.PROPOSAL_INSERT);
+				commandId, autoActivationCharacters, 
+				true /* propagate keystrokes */,
+				ContentProposalAdapter.FILTER_CHARACTER, 
+				ContentProposalAdapter.PROPOSAL_INSERT);
 
-		addFieldDecoration(getFieldDecoration(), SWT.LEFT | SWT.TOP,
-				true);
+		addFieldDecoration(getFieldDecoration(), SWT.LEFT | SWT.TOP, true);
 
 	}
 
@@ -119,7 +112,7 @@ public class ContentAssistField extends DecoratedField {
 		else
 			hideDecoration(getFieldDecoration());
 	}
-	
+
 	/*
 	 * Get a field decoration appropriate for cueing the user, including a
 	 * description of the active key binding.
@@ -149,7 +142,8 @@ public class ContentAssistField extends DecoratedField {
 				.getWorkbench().getAdapter(IBindingService.class);
 		dec.setDescription(NLS.bind(
 				WorkbenchMessages.ContentAssist_Cue_Description_Key,
-				bindingService.getBestActiveBindingFormattedFor(adapter.getCommandId())));
+				bindingService.getBestActiveBindingFormattedFor(adapter
+						.getCommandId())));
 
 		// Now return the field decoration
 		return dec;

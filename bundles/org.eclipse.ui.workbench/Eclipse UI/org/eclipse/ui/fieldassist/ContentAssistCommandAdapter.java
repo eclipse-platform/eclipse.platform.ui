@@ -96,9 +96,11 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 	 *            a boolean that indicates whether key events (including
 	 *            auto-activation characters) should be propagated to the
 	 *            adapted control when the proposal popup is open.
-	 * @param filterProposals
-	 *            a boolean that indicates whether the proposal popup should
-	 *            filter its contents based on keys typed when it is open
+	 * @param filterStyle
+	 *            a constant indicating whether keystrokes in the proposal popup
+	 *            should filter the proposals shown <code>FILTER_NONE</code>,
+	 *            <code>FILTER_CUMULATIVE</code>, or
+	 *            <code>FILTER_CHARACTER</code>
 	 * @param acceptance
 	 *            a constant indicating how an accepted proposal should affect
 	 *            the control's content. Should be one of
@@ -111,9 +113,9 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 			IContentProposalProvider proposalProvider,
 			ILabelProvider labelProvider, String commandId,
 			char[] autoActivationCharacters, boolean propagateKeys,
-			boolean filterProposals, int acceptance) {
+			int filterStyle, int acceptance) {
 		super(control, controlContentAdapter, proposalProvider, labelProvider,
-				null, autoActivationCharacters, propagateKeys, filterProposals,
+				null, autoActivationCharacters, propagateKeys, filterStyle,
 				acceptance);
 		this.commandId = commandId;
 		if (commandId == null)
@@ -167,7 +169,7 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 					handlerService.deactivateHandler(activeHandler);
 					activeHandler = null;
 				}
-				
+
 			}
 		});
 	}
