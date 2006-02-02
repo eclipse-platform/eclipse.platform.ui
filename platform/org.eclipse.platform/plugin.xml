@@ -100,6 +100,15 @@
             id="org.eclipse.platform.cheatsheet"
             class="org.eclipse.platform.internal.CheatSheetStandbyContent"
             pluginId="org.eclipse.platform"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.sharedConfig"
+            content="intro/overviewEx.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.sharedConfig"
+            content="intro/whatsnewEx1.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.sharedConfig"
+            content="intro/whatsnewEx2.xml"/>
    </extension>
    <!--
    <extension
