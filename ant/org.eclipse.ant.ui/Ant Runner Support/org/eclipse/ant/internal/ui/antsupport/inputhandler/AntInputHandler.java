@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.ant.internal.ui.antsupport.AntSupportMessages;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -64,7 +65,11 @@ public class AntInputHandler extends DefaultInputHandler {
 					}
 				};
 		
-				InputDialog dialog= new InputDialog(null, title, prompt, null, validator);
+				InputDialog dialog= new InputDialog(null, title, prompt, null, validator) {
+                    protected int getShellStyle() {
+                        return super.getShellStyle() | SWT.RESIZE;
+                    }
+                };
 				if (dialog.open() != Window.OK) {
 					problem[0]= new BuildException(AntSupportMessages.AntInputHandler_Unable_to_respond_to__input__request_4);
 				}
