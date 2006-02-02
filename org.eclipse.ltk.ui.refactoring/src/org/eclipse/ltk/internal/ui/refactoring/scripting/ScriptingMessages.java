@@ -54,6 +54,10 @@ public final class ScriptingMessages extends NLS {
 
 	public static String CreateRefactoringScriptWizard_description;
 
+	public static String CreateRefactoringScriptWizard_merge_button;
+
+	public static String CreateRefactoringScriptWizard_overwrite_button;
+
 	public static String CreateRefactoringScriptWizard_overwrite_query;
 
 	public static String CreateRefactoringScriptWizard_title;
