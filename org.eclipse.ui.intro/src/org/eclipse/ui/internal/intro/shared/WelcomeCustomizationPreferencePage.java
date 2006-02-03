@@ -6,7 +6,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -21,10 +21,16 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.intro.impl.Messages;
 
 
-public class WelcomeCustomizationPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IExecutableExtension {
+public class WelcomeCustomizationPreferencePage extends PreferencePage implements IWorkbenchPreferencePage,
+		IExecutableExtension {
+
 	private TabFolder tabFolder;
-	private TreeViewer extensionsTree;
-	
+	private Composite pageContainer;
+	private TableViewer available;
+	private TableViewer left;
+	private TableViewer right;
+	private TableViewer bottom;
+
 	public WelcomeCustomizationPreferencePage() {
 		super();
 	}
@@ -59,7 +65,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 
 	private void addPages() {
 		addRootPage();
-		createExtensionsTree();
+		createPageContainer();
 		addPage("Overview"); //$NON-NLS-1$
 		addPage("First Steps"); //$NON-NLS-1$
 		addPage("Tutorials"); //$NON-NLS-1$
@@ -69,8 +75,20 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		addPage("Migrate"); //$NON-NLS-1$
 	}
 
-	private void createExtensionsTree() {
-		extensionsTree = new TreeViewer(tabFolder);
+	private void createPageContainer() {
+		pageContainer = new Composite(tabFolder, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		Label label;
+		label = new Label(pageContainer, SWT.NULL);
+		label.setText("Available extensions:");
+		label = new Label(pageContainer, SWT.NULL);
+		label.setText("Left:");
+		label.setText("Right:");
+		available = new TableViewer(pageContainer, SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
+		gd.verticalSpan = 2;
+		available.getControl().setLayoutData(gd);
 	}
 
 	private void addRootPage() {
@@ -85,7 +103,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		label = new Label(container, SWT.NULL);
 		label.setText(Messages.WelcomeCustomizationPreferencePage_preview);
-		Combo combo = new Combo(container, SWT.DROP_DOWN|SWT.READ_ONLY);
+		Combo combo = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
 		combo.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		combo.add("item1"); //$NON-NLS-1$
 		combo.add("item2"); //$NON-NLS-1$
@@ -98,21 +116,22 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		label = new Label(container, SWT.NULL);
 		label.setText(Messages.WelcomeCustomizationPreferencePage_home_links);
 		gd = new GridData();
-		gd.horizontalSpan  = 2;
+		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 		CheckboxTableViewer ctable = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.FILL_VERTICAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		gd.horizontalSpan = 2;
 		ctable.getControl().setLayoutData(gd);
 		item.setControl(container);
 	}
 
-	private void addPage(String label) {
+	private void addPage(String name) {
 		TabItem item = new TabItem(tabFolder, SWT.NULL);
-		item.setText(label);
-		item.setControl(extensionsTree.getControl());
+		item.setText(name);
+		item.setControl(pageContainer);
 	}
 
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+			throws CoreException {
 	}
 }
