@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,11 +19,14 @@ import java.util.Map;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.LegacyHandlerSubmissionExpression;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.part.MultiPageEditorSite;
+import org.eclipse.ui.part.PageSite;
 
 /**
  * @since 3.2
@@ -30,7 +34,7 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public final class ProxyKeyBindingService implements IKeyBindingService {
 
-	private IServiceLocator fServiceLocator;
+	private IWorkbenchSite fSite;
 
 	private IContextService fContextService;
 
@@ -38,17 +42,22 @@ public final class ProxyKeyBindingService implements IKeyBindingService {
 
 	private Map fActiveHandlers = new HashMap();
 
+	private Collection fEnabledContexts = new ArrayList();
+
 	/**
 	 * Create the proxy key binding service.
 	 * 
 	 * @param site
 	 */
 	public ProxyKeyBindingService(IWorkbenchSite site) {
-		fServiceLocator = site;
-		fContextService = (IContextService) fServiceLocator
-				.getService(IContextService.class);
-		fHandlerService = (IHandlerService) fServiceLocator
-				.getService(IHandlerService.class);
+		fSite = site;
+
+		// get the global services ... this is necessary
+		// to replicate legacy behaviour.
+		fContextService = (IContextService) fSite.getWorkbenchWindow()
+				.getWorkbench().getService(IContextService.class);
+		fHandlerService = (IHandlerService) fSite.getWorkbenchWindow()
+				.getWorkbench().getService(IHandlerService.class);
 	}
 
 	/*
@@ -75,9 +84,26 @@ public final class ProxyKeyBindingService implements IKeyBindingService {
 		if (commandId != null) {
 			ActionHandler handler = new ActionHandler(action);
 			IHandlerActivation activation = fHandlerService.activateHandler(
-					commandId, handler);
+					commandId, handler, new LegacyHandlerSubmissionExpression(
+							null, null, getPartSite()));
 			fActiveHandlers.put(commandId, activation);
 		}
+	}
+
+	/**
+	 * This method implements a workaround because site is not known to the
+	 * workbench.
+	 * 
+	 * @return the correct part site for the handler expression
+	 */
+	private IWorkbenchPartSite getPartSite() {
+		if (fSite instanceof MultiPageEditorSite) {
+			return ((MultiPageEditorSite) fSite).getMultiPageEditor().getSite();
+		}
+		if (fSite instanceof PageSite) {
+			return ((PageSite) fSite).getParentSite();
+		}
+		return (IWorkbenchPartSite) fSite;
 	}
 
 	/*
@@ -86,8 +112,14 @@ public final class ProxyKeyBindingService implements IKeyBindingService {
 	 * @see org.eclipse.ui.IKeyBindingService#setScopes(java.lang.String[])
 	 */
 	public void setScopes(String[] scopes) {
+		if (!fEnabledContexts.isEmpty()) {
+			fContextService.deactivateContexts(fEnabledContexts);
+			fEnabledContexts.clear();
+		}
 		for (int i = 0; i < scopes.length; i++) {
-			fContextService.activateContext(scopes[i]);
+			fEnabledContexts.add(fContextService.activateContext(scopes[i],
+					new LegacyHandlerSubmissionExpression(null, null,
+							getPartSite())));
 		}
 	}
 
