@@ -86,9 +86,9 @@ public class ContentAssistField extends DecoratedField {
 		super(parent, style, controlCreator);
 		adapter = new ContentAssistCommandAdapter(getControl(),
 				controlContentAdapter, proposalProvider, labelProvider,
-				commandId, autoActivationCharacters, 
+				commandId, autoActivationCharacters,
 				true /* propagate keystrokes */,
-				ContentProposalAdapter.FILTER_NONE, 
+				ContentProposalAdapter.FILTER_NONE,
 				ContentProposalAdapter.PROPOSAL_INSERT);
 
 		addFieldDecoration(getFieldDecoration(), SWT.LEFT | SWT.TOP, true);
@@ -119,25 +119,24 @@ public class ContentAssistField extends DecoratedField {
 	 * 
 	 */
 	private FieldDecoration getFieldDecoration() {
+		FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();
 		// Look for a decoration installed for this command.
 		String decId = IWorkbenchFieldDecorationConstants.CONTENT_ASSIST_CUE
 				+ adapter.getCommandId();
-		FieldDecoration dec = FieldDecorationRegistry.getDefault()
-				.getFieldDecoration(decId);
+		FieldDecoration dec = registry.getFieldDecoration(decId);
 
 		// If there is not one, base it on the content assist decoration without
 		// a keybinding
 		if (dec == null) {
-			FieldDecoration originalDec = FieldDecorationRegistry
-					.getDefault()
-					.getFieldDecoration(
-							IWorkbenchFieldDecorationConstants.CONTENT_ASSIST_CUE);
-			dec = new FieldDecoration(originalDec.getImage(), null);
-			FieldDecorationRegistry.getDefault().addFieldDecoration(decId, dec);
-		}
+			FieldDecoration originalDec = registry
+					.getFieldDecoration(IWorkbenchFieldDecorationConstants.CONTENT_ASSIST_CUE);
 
-		// Update the description with the latest key binding, since it may
-		// have changed since the last activation.
+			registry.registerFieldDecoration(decId, null, originalDec
+					.getImage());
+			dec = registry.getFieldDecoration(decId);
+		}
+		// Always update the decoration text since the key binding may
+		// have changed since it was last retrieved.
 		IBindingService bindingService = (IBindingService) PlatformUI
 				.getWorkbench().getAdapter(IBindingService.class);
 		dec.setDescription(NLS.bind(
@@ -148,5 +147,4 @@ public class ContentAssistField extends DecoratedField {
 		// Now return the field decoration
 		return dec;
 	}
-
 }

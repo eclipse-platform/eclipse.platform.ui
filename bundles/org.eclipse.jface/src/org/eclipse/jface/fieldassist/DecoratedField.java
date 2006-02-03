@@ -415,42 +415,51 @@ public class DecoratedField {
 
 	/*
 	 * A decoration at the specified index has been added. Update the control's
-	 * attachments if it has not previously attached on that side.
+	 * attachments if it has not previously been attached on that side or if it
+	 * was attached to a decoration with a lesser width.
 	 */
 	private void updateControlAttachments(int index, FieldDecorationData decData) {
 		FormData formData = (FormData) control.getLayoutData();
+		int maxWidth = FieldDecorationRegistry.getDefault()
+				.geMaximumDecorationWidth();
 
 		switch (index) {
 		case LEFT_TOP:
-			if (decDatas[LEFT_BOTTOM] == null) {
+			if (decDatas[LEFT_BOTTOM] == null
+					|| decDatas[LEFT_BOTTOM].data.width < maxWidth) {
 				formData.left = new FormAttachment(decData.label);
 			} else
-				return;
+				formData = null;
 			break;
 		case LEFT_BOTTOM:
-			if (decDatas[LEFT_TOP] == null) {
+			if (decDatas[LEFT_TOP] == null
+					|| decDatas[LEFT_TOP].data.width < maxWidth) {
 				formData.left = new FormAttachment(decData.label);
 			} else
-				return;
+				formData = null;
 			break;
 		case RIGHT_TOP:
-			if (decDatas[RIGHT_BOTTOM] == null) {
+			if (decDatas[RIGHT_BOTTOM] == null
+					|| decDatas[RIGHT_BOTTOM].data.width < maxWidth) {
 				formData.right = new FormAttachment(decData.label);
 			} else
-				return;
+				formData = null;
 			break;
 		case RIGHT_BOTTOM:
-			if (decDatas[RIGHT_TOP] == null) {
+			if (decDatas[RIGHT_TOP] == null
+					|| decDatas[RIGHT_TOP].data.width < maxWidth) {
 				formData.right = new FormAttachment(decData.label);
 			} else
-				return;
+				formData = null;
 			break;
 		default:
 			return;
 		}
-		// Form data was updated.
-		control.setLayoutData(formData);
-		form.layout();
+		if (formData != null) {
+			// Form data was updated.
+			control.setLayoutData(formData);
+			form.layout();
+		}
 	}
 
 	/**
@@ -587,7 +596,7 @@ public class DecoratedField {
 			break;
 		}
 		data.width = FieldDecorationRegistry.getDefault()
-				.getReservedDecorationWidth();
+				.geMaximumDecorationWidth();
 		data.height = SWT.DEFAULT;
 
 		return data;

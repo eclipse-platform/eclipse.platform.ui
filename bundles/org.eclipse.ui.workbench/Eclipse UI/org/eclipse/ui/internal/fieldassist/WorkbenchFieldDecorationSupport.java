@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.fieldassist;
 
-import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.fieldassist.IWorkbenchFieldDecorationConstants;
@@ -32,16 +31,6 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public class WorkbenchFieldDecorationSupport {
 
-	/*
-	 * Reserved width for workbench field decorations
-	 */
-	private static int FIELD_DECORATION_WIDTH = 8;
-
-	/*
-	 * Reserved height for workbench field decorations
-	 */
-	private static int FIELD_DECORATION_HEIGHT = 8;
-
 	/**
 	 * Create the commonly used workbench field decorations and set them into
 	 * the JFace FieldDecorationRegistry. The images for the decorations are
@@ -53,8 +42,7 @@ public class WorkbenchFieldDecorationSupport {
 	 * @see FieldDecorationRegistry
 	 */
 	public static void initializeFieldDecorations() {
-		FieldDecorationRegistry registry = new FieldDecorationRegistry(
-				FIELD_DECORATION_WIDTH, FIELD_DECORATION_HEIGHT);
+		FieldDecorationRegistry registry = new FieldDecorationRegistry();
 		FieldDecorationRegistry.setDefault(registry);
 		declareDecorations(registry);
 	}
@@ -66,10 +54,10 @@ public class WorkbenchFieldDecorationSupport {
 	private static void declareDecorations(FieldDecorationRegistry registry) {
 
 		/*------------- Content Assist Cue ----------- */
-		registry.addFieldDecoration(
+		registry.registerFieldDecoration(
 				IWorkbenchFieldDecorationConstants.CONTENT_ASSIST_CUE,
-				new FieldDecoration(WorkbenchImages
-						.getImage(ISharedImages.IMG_DEC_CONTENT_PROPOSAL),
-						WorkbenchMessages.ContentAssist_Cue_Description));
+				WorkbenchMessages.ContentAssist_Cue_Description,
+				ISharedImages.IMG_DEC_CONTENT_PROPOSAL,
+				WorkbenchImages.getImageRegistry());
 	}
 }
