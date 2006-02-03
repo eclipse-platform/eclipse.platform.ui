@@ -41,7 +41,7 @@ public interface IModelProviderDescriptor {
 	/**
 	 * Returns the unique identifier of this model provider.
 	 * <p>
-	 * The model providers identifier is composed of the model provider's
+	 * The model provider identifier is composed of the model provider's
 	 * plug-in id and the simple id of the provider extension. For example, if
 	 * plug-in <code>"com.xyz"</code> defines a provider extension with id
 	 * <code>"myModelProvider"</code>, the unique model provider identifier will be
