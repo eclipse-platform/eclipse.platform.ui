@@ -15,7 +15,6 @@ import java.util.HashMap;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.provider.FileSystem;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.registry.RegistryFactory;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -47,7 +46,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	 */
 	private InternalFileSystemCore() {
 		super();
-		RegistryFactory.getRegistry().addRegistryChangeListener(this);
+		Platform.getExtensionRegistry().addRegistryChangeListener(this);
 	}
 	
 	/**
