@@ -12,11 +12,11 @@
 package org.eclipse.core.internal.runtime;
 
 import java.io.*;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
-import org.eclipse.core.internal.boot.*;
+import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.internal.preferences.*;
-import org.eclipse.core.internal.registry.eclipse.LegacyExtensionRegistry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -125,7 +125,6 @@ public final class InternalPlatform {
 	private ServiceTracker instanceLocation = null;
 	private boolean missingProductReported = false;
 	private IProduct product;
-	private IExtensionRegistry registry;
 	private AdapterManagerListener adapterManagerListener = null;
 
 	private Plugin runtimeInstance; // Keep track of the plugin object for runtime in case the backward compatibility is run.
@@ -621,7 +620,7 @@ public final class InternalPlatform {
 	}
 
 	public IExtensionRegistry getRegistry() {
-		return registry;
+		return RegistryFactory.getRegistry(); 
 	}
 
 	public ResourceBundle getResourceBundle(Bundle bundle) {
@@ -960,10 +959,6 @@ public final class InternalPlatform {
 		return converter == null ? url : converter.resolve(url);
 	}
 
-	public void setExtensionRegistry(IExtensionRegistry value) {
-		registry = value;
-	}
-
 	public void setOption(String option, String value) {
 		DebugOptions options = getDebugOptions();
 		if (options != null)
@@ -992,9 +987,6 @@ public final class InternalPlatform {
 		initializeAuthorizationHandler();
 		platformLog = new PlatformLogWriter(getFrameworkLog());
 		addLogListener(platformLog);
-
-		// start registry:
-		setExtensionRegistry(new LegacyExtensionRegistry());
 		adapterManagerListener = new AdapterManagerListener(); // after extension registry
 		startServices();
 	}
@@ -1009,7 +1001,6 @@ public final class InternalPlatform {
 		stopServices(); // should be done after preferences shutdown
 		if (adapterManagerListener != null)
 			adapterManagerListener.stop(); // before extension registry
-		stopRegistry();
 		RuntimeLog.removeLogListener(platformLog); // effectively turns the platform logging off
 		initialized = false;
 		closeOSGITrackers();
@@ -1061,16 +1052,6 @@ public final class InternalPlatform {
 		if (platformURLConverterService != null) {
 			platformURLConverterService.unregister();
 			platformURLConverterService = null;
-		}
-	}
-
-	/**
-	 * Stop extension registry
-	 */
-	private void stopRegistry() {
-		if (registry != null) {
-			((LegacyExtensionRegistry) registry).stop();
-			registry = null;
 		}
 	}
 

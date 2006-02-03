@@ -15,8 +15,6 @@ import java.io.InputStream;
 import java.util.*;
 import org.eclipse.core.internal.content.ContentMessages;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.registry.IConfigurationElement;
-import org.eclipse.equinox.registry.IExecutableExtension;
 import org.eclipse.osgi.util.NLS;
 
 /**

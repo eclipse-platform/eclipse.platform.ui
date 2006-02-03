@@ -54,26 +54,12 @@ public interface IExtensionPoint {
 	 */
 	public IConfigurationElement[] getConfigurationElements() throws InvalidRegistryObjectException;
 
-	/** 
-	 * Returns the descriptor of the plug-in that declares this extension point.
-	 *
-	 * @return the plug-in that declares this extension point
-	 * @throws InvalidRegistryObjectException if this extension point is no longer valid
-	 * @deprecated IPluginDescriptor is not part of the new runtime and its function
-	 * has been split over several parts of the new runtime.  This method
-	 * is not available (returns null) if the compatibility layer is not installed.  Use getNamespace()
-	 * to get the symbolic id of the declaring plugin.  See {@link IPluginDescriptor} to see how to 
-	 * update your use-cases.
-	 */
-	public IPluginDescriptor getDeclaringPluginDescriptor() throws InvalidRegistryObjectException;
-
 	/**
 	 * Returns the namespace for this extension point. This value can be used
 	 * in various global facilities to discover this extension point's provider.
 	 * 
 	 * @return the namespace for this extension point
 	 * @throws InvalidRegistryObjectException if this extension point is no longer valid
-	 * @see Platform#getBundle(String)
 	 * @see IExtensionRegistry
 	 * @since 3.0
 	 */
@@ -165,12 +151,16 @@ public interface IExtensionPoint {
 	 */
 	public boolean isValid();
 
-	/**
-	 * Converts this object into an equivalent Equinox registry object.
+	/** 
+	 * Returns the descriptor of the plug-in that declares this extension point.
 	 *
-	 * @return an Equinox extension point
-	 * @since org.eclipse.core.runtime 3.2
-	 * @see org.eclipse.equinox.registry.IExtensionPoint
+	 * @return the plug-in that declares this extension point
+	 * @throws InvalidRegistryObjectException if this extension point is no longer valid
+	 * @deprecated IPluginDescriptor is not part of the new runtime and its function
+	 * has been split over several parts of the new runtime.  This method
+	 * is not available (returns null) if the compatibility layer is not installed.  Use getNamespace()
+	 * to get the symbolic id of the declaring plugin.  See {@link IPluginDescriptor} to see how to 
+	 * update your use-cases.
 	 */
-	public org.eclipse.equinox.registry.IExtensionPoint toEquinox();
+	public IPluginDescriptor getDeclaringPluginDescriptor() throws InvalidRegistryObjectException;
 }

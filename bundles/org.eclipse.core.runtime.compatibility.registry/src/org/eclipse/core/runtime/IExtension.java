@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
-
 /**
  * An extension declared in a plug-in.
  * All information is obtained from the declaring plug-in's 
@@ -55,25 +54,11 @@ public interface IExtension {
 	public IConfigurationElement[] getConfigurationElements() throws InvalidRegistryObjectException;
 
 	/**
-	 * Returns the descriptor of the plug-in that declares this extension.
-	 * 
-	 * @return the plug-in that declares this extension
-	 * @throws InvalidRegistryObjectException if this extension is no longer valid
-	 * @deprecated IPluginDescriptor is not part of the new runtime and its function
-	 * has been split over several parts of the new runtime.  This method
-	 * is not available (returns <tt>null</tt>) if the compatibility layer is not installed.  Use getNamespace()
-	 * to get the symbolic id of the declaring plugin.  See {@link IPluginDescriptor} to see how to 
-	 * update your use-cases.
-	 */
-	public IPluginDescriptor getDeclaringPluginDescriptor() throws InvalidRegistryObjectException;
-
-	/**
 	 * Returns the namespace for this extension. This value can be used
 	 * in various global facilities to discover this extension's provider.
 	 * 
 	 * @return the namespace for this extension
 	 * @throws InvalidRegistryObjectException if this extension is no longer valid
-	 * @see Platform#getBundle(String)
 	 * @see IExtensionRegistry
 	 * @since 3.0
 	 */
@@ -127,12 +112,12 @@ public interface IExtension {
 	 * @throws InvalidRegistryObjectException if this extension is no longer valid
 	 */
 	public String getUniqueIdentifier() throws InvalidRegistryObjectException;
-	
+
 	/* (non-javadoc) 
 	 * @see Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o);
-	
+
 	/**
 	 * Returns whether this extension object is valid.
 	 * 
@@ -143,11 +128,15 @@ public interface IExtension {
 	public boolean isValid();
 	
 	/**
-	 * Converts this object into an equivalent Equinox registry object.
-	 *
-	 * @return an Equinox extension
-	 * @since org.eclipse.core.runtime 3.2
-	 * @see org.eclipse.equinox.registry.IExtension
+	 * Returns the descriptor of the plug-in that declares this extension.
+	 * 
+	 * @return the plug-in that declares this extension
+	 * @throws InvalidRegistryObjectException if this extension is no longer valid
+	 * @deprecated IPluginDescriptor is not part of the new runtime and its function
+	 * has been split over several parts of the new runtime.  This method
+	 * is not available (returns <tt>null</tt>) if the compatibility layer is not installed.  Use getNamespace()
+	 * to get the symbolic id of the declaring plugin.  See {@link IPluginDescriptor} to see how to 
+	 * update your use-cases.
 	 */
-	public org.eclipse.equinox.registry.IExtension toEquinox();
+	public IPluginDescriptor getDeclaringPluginDescriptor() throws InvalidRegistryObjectException;
 }

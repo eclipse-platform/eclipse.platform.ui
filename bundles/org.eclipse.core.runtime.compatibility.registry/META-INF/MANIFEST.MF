@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %fragmentName
+Bundle-SymbolicName: org.eclipse.core.runtime.compatibility.registry
+Bundle-Version: 1.0.0
+Bundle-Vendor: %providerName
+Fragment-Host: org.eclipse.equinox.registry
+Bundle-Localization: fragment-compatibility
+Require-Bundle: system.bundle
+Eclipse-PatchFragment: true

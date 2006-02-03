@@ -16,8 +16,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.core.internal.content.*;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.registry.IConfigurationElement;
-import org.eclipse.equinox.registry.IExecutableExtension;
 import org.eclipse.osgi.util.NLS;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

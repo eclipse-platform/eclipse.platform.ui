@@ -29,6 +29,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 		// -- new portion:
 		"org.eclipse.equinox.common@2:start", 
 		"org.eclipse.core.jobs@2:start", 
+		"org.eclipse.core.runtime.compatibility.registry",
 		"org.eclipse.equinox.registry@2:start", 
 		"org.eclipse.equinox.preferences", 
 		"org.eclipse.core.contenttype", 

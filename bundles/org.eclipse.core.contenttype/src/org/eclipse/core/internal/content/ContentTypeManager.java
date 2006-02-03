@@ -15,7 +15,6 @@ import java.io.Reader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.preferences.*;
-import org.eclipse.equinox.registry.*;
 
 public class ContentTypeManager extends ContentTypeMatcher implements IContentTypeManager, IRegistryChangeListener {
 	private static ContentTypeManager instance;
@@ -46,6 +45,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	public static void startup() {
 		instance = new ContentTypeManager();
 		RegistryFactory.getRegistry().addRegistryChangeListener(instance, IContentConstants.RUNTIME_NAME);
+		RegistryFactory.getRegistry().addRegistryChangeListener(instance, IContentConstants.CONTENT_NAME);
 	}
 
 	/**

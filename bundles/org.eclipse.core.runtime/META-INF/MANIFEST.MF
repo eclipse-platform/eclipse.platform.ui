@@ -8,10 +8,8 @@ Bundle-Activator: org.eclipse.core.internal.runtime.PlatformActivator
 Bundle-Localization: plugin
 Export-Package: org.eclipse.core.internal.boot;x-friends:="org.eclipse.core.resources,org.eclipse.core.runtime.compatibility,org.eclipse.pde.build",
  org.eclipse.core.internal.preferences;x-internal:=true,
- org.eclipse.core.internal.registry.eclipse;x-internal:=true,
  org.eclipse.core.internal.runtime;x-friends:="org.eclipse.core.runtime.compatibility",
- org.eclipse.core.runtime,
- org.eclipse.core.runtime.dynamichelpers
+ org.eclipse.core.runtime
 Require-Bundle: org.eclipse.equinox.registry;visibility:=reexport,
  org.eclipse.core.jobs;visibility:=reexport,
  org.eclipse.equinox.preferences;visibility:=reexport,
