@@ -22,11 +22,18 @@ public class TabbedPropertyViewPlugin
 
 	private static TabbedPropertyViewPlugin plugin;
 
+    /**
+     * Constructor for TabbedPropertyViewPlugin.
+     */
 	public TabbedPropertyViewPlugin() {
 		super();
 		plugin = this;
 	}
 
+    /**
+     * Retrieve the plug-in class for this plug-in.
+     * @return the plug-in class for this plug-in.
+     */
 	public static TabbedPropertyViewPlugin getPlugin() {
 		return plugin;
 	}

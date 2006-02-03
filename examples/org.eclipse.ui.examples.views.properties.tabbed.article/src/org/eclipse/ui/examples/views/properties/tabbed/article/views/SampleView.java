@@ -25,6 +25,12 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
+/**
+ * Sample view for the example.
+ * 
+ * @author Anthony Hunter
+ *
+ */
 public class SampleView
     extends ViewPart
     implements ITabbedPropertySheetPageContributor {

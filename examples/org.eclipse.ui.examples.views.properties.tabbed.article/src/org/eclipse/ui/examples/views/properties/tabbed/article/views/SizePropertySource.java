@@ -16,13 +16,24 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
+/**
+ * Property source for the size properties.
+ * 
+ * @author Anthony Hunter
+ */
 public class SizePropertySource
     implements IPropertySource {
 
     protected ButtonElement element;
 
+    /**
+     * The width.
+     */
     public static String ID_WIDTH = "Width"; //$NON-NLS-1$
 
+    /**
+     * The height.
+     */
     public static String ID_HEIGHT = "Height"; //$NON-NLS-1$
 
     protected static IPropertyDescriptor[] descriptors;
@@ -36,12 +47,26 @@ public class SizePropertySource
 
     protected Point point = null;
 
+    /**
+     * The constructor for SizePropertySource.
+     * 
+     * @param m_element
+     *            the button element.
+     * @param point
+     *            the size of the button element.
+     */
     public SizePropertySource(ButtonElement m_element, Point point) {
         this.point = new Point(point.x, point.y);
         element = m_element;
     }
 
-    protected void firePropertyChanged(String propName) {
+    /**
+     * Fire a property change event.
+     * 
+     * @param propName
+     *            the name of the property change.
+     */
+    protected void firePropertyChanged() {
         Control ctl = element.getControl();
 
         if (ctl == null) {
@@ -69,6 +94,11 @@ public class SizePropertySource
         return null;
     }
 
+    /**
+     * Retrieve the value of the size property.
+     * 
+     * @return the value of the size property.
+     */
     public Point getValue() {
         return new Point(point.x, point.y);
     }
@@ -95,7 +125,7 @@ public class SizePropertySource
             Integer newInt = new Integer((String) value);
             point.y = newInt.intValue();
         }
-        firePropertyChanged((String) propName);
+        firePropertyChanged();
     }
 
     public String toString() {

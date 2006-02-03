@@ -34,9 +34,9 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 public class SizeSection
     extends AbstractPropertySection {
 
-    Text widthText;
+    private Text widthText;
 
-    Text heightText;
+    private Text heightText;
 
     private ButtonElement buttonElement;
 

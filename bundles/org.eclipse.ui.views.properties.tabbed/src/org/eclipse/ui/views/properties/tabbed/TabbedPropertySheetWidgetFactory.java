@@ -29,100 +29,193 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * @author Anthony Hunter
  */
 public class TabbedPropertySheetWidgetFactory
-	extends FormToolkit {
+    extends FormToolkit {
 
-	/**
-	 * private constructor.
-	 */
-	public TabbedPropertySheetWidgetFactory() {
-		super(Display.getCurrent());
-	}
+    /**
+     * private constructor.
+     */
+    public TabbedPropertySheetWidgetFactory() {
+        super(Display.getCurrent());
+    }
 
-	public CTabFolder createTabFolder(Composite parent, int style) {
-		CTabFolder tabFolder = new CTabFolder(parent, style);
-		return tabFolder;
-	}
+    /**
+     * Creates the tab folder as a part of the form.
+     * 
+     * @param parent
+     *            the composite parent.
+     * @param style
+     *            the tab folder style.
+     * @return the tab folder
+     */
+    public CTabFolder createTabFolder(Composite parent, int style) {
+        CTabFolder tabFolder = new CTabFolder(parent, style);
+        return tabFolder;
+    }
 
-	public CTabItem createTabItem(CTabFolder tabFolder, int style) {
-		CTabItem tabItem = new CTabItem(tabFolder, style);
-		return tabItem;
-	}
+    /**
+     * Creates the tab item as a part of the tab folder.
+     * 
+     * @param tabFolder
+     *            the parent.
+     * @param style
+     *            the tab folder style.
+     * @return the tab item.
+     */
+    public CTabItem createTabItem(CTabFolder tabFolder, int style) {
+        CTabItem tabItem = new CTabItem(tabFolder, style);
+        return tabItem;
+    }
 
-	public List createList(Composite parent, int style) {
-		List list = new org.eclipse.swt.widgets.List(
-			parent, style);
-		return list;
-	}
+    /**
+     * Creates the list as a part of the form.
+     * 
+     * @param parent
+     *            the composite parent.
+     * @param style
+     *            the list style.
+     * @return the list.
+     */
+    public List createList(Composite parent, int style) {
+        List list = new org.eclipse.swt.widgets.List(parent, style);
+        return list;
+    }
 
-	public Composite createComposite(Composite parent, int style) {
-		Composite c = super.createComposite(parent, style);
-		paintBordersFor(c);
-		return c;
-	}
+    public Composite createComposite(Composite parent, int style) {
+        Composite c = super.createComposite(parent, style);
+        paintBordersFor(c);
+        return c;
+    }
 
-	public Composite createComposite(Composite parent) {
-		Composite c = createComposite(parent, SWT.NONE);
-		return c;
-	}
+    public Composite createComposite(Composite parent) {
+        Composite c = createComposite(parent, SWT.NONE);
+        return c;
+    }
 
-	public Composite createPlainComposite(Composite parent, int style) {
-		Composite c = super.createComposite(parent, style);
-		c.setBackground(parent.getBackground());
-		paintBordersFor(c);
-		return c;
-	}
+    /**
+     * Creates a plain composite as a part of the form.
+     * 
+     * @param parent
+     *            the composite parent.
+     * @param style
+     *            the composite style.
+     * @return the composite.
+     */
+    public Composite createPlainComposite(Composite parent, int style) {
+        Composite c = super.createComposite(parent, style);
+        c.setBackground(parent.getBackground());
+        paintBordersFor(c);
+        return c;
+    }
 
-	public ScrolledComposite createScrolledComposite(Composite parent, int style) {
-		ScrolledComposite scrolledComposite = new ScrolledComposite(parent,
-			style);
-		return scrolledComposite;
-	}
+    /**
+     * Creates a scrolled composite as a part of the form.
+     * 
+     * @param parent
+     *            the composite parent.
+     * @param style
+     *            the composite style.
+     * @return the composite.
+     */
+    public ScrolledComposite createScrolledComposite(Composite parent, int style) {
+        ScrolledComposite scrolledComposite = new ScrolledComposite(parent,
+            style);
+        return scrolledComposite;
+    }
 
-	public CCombo createCCombo(Composite parent, int comboStyle) {
-		CCombo combo = new CCombo(parent, comboStyle);
-		adapt(combo, true, false);
-		return combo;
-	}
+    /**
+     * Creates a combo box as a part of the form.
+     * 
+     * @param parent
+     *            the combo box parent.
+     * @param comboStyle
+     *            the combo box style.
+     * @return the combo box.
+     */
+    public CCombo createCCombo(Composite parent, int comboStyle) {
+        CCombo combo = new CCombo(parent, comboStyle);
+        adapt(combo, true, false);
+        return combo;
+    }
 
-	public CCombo createCCombo(Composite parent) {
-		return createCCombo(parent, SWT.FLAT | SWT.READ_ONLY);
-	}
+    /**
+     * Creates a combo box as a part of the form.
+     * 
+     * @param parent
+     *            the combo box parent.
+     * @return the combo box.
+     */
+    public CCombo createCCombo(Composite parent) {
+        return createCCombo(parent, SWT.FLAT | SWT.READ_ONLY);
+    }
 
-	public Group createGroup(Composite parent, String text) {
-		Group group = new Group(parent, SWT.SHADOW_NONE);
-		group.setText(text);
-		group.setBackground(getColors().getBackground());
-		group.setForeground(getColors().getForeground());
-		return group;
-	}
+    /**
+     * Creates a group as a part of the form.
+     * 
+     * @param parent
+     *            the group parent.
+     * @param text
+     *            the group title.
+     * @return the composite.
+     */
+    public Group createGroup(Composite parent, String text) {
+        Group group = new Group(parent, SWT.SHADOW_NONE);
+        group.setText(text);
+        group.setBackground(getColors().getBackground());
+        group.setForeground(getColors().getForeground());
+        return group;
+    }
 
-	public Composite createFlatFormComposite(Composite parent) {
-		Composite composite = createComposite(parent);
-		FormLayout layout = new FormLayout();
-		layout.marginWidth = ITabbedPropertyConstants.HSPACE + 2;
-		layout.marginHeight = ITabbedPropertyConstants.VSPACE;
-		layout.spacing = ITabbedPropertyConstants.VMARGIN + 1;
-		composite.setLayout(layout);
-		return composite;
-	}
+    /**
+     * Creates a flat form composite as a part of the form.
+     * 
+     * @param parent
+     *            the composite parent.
+     * @return the composite.
+     */
+    public Composite createFlatFormComposite(Composite parent) {
+        Composite composite = createComposite(parent);
+        FormLayout layout = new FormLayout();
+        layout.marginWidth = ITabbedPropertyConstants.HSPACE + 2;
+        layout.marginHeight = ITabbedPropertyConstants.VSPACE;
+        layout.spacing = ITabbedPropertyConstants.VMARGIN + 1;
+        composite.setLayout(layout);
+        return composite;
+    }
 
-	public CLabel createCLabel(Composite parent, String text) {
-		return createCLabel(parent, text, SWT.NONE);
-	}
+    /**
+     * Creates a label as a part of the form.
+     * 
+     * @param parent
+     *            the label parent.
+     * @param text
+     *            the label text.
+     * @return the label.
+     */
+    public CLabel createCLabel(Composite parent, String text) {
+        return createCLabel(parent, text, SWT.NONE);
+    }
 
-	public CLabel createCLabel(Composite parent, String text, int style) {
-		final CLabel label = new CLabel(parent, style);
-		label.setBackground(parent.getBackground());
-		label.setText(text);
-		return label;
-	}
-	
-	/**
-	 * @see org.eclipse.ui.forms.widgets.FormToolkit#dispose()
-	 */
-	public void dispose() {
-		if (getColors() != null) {
-			super.dispose();
-		}
-	}
+    /**
+     * Creates a label as a part of the form.
+     * 
+     * @param parent
+     *            the label parent.
+     * @param text
+     *            the label text.
+     * @param style
+     *            the label style.
+     * @return the label.
+     */
+    public CLabel createCLabel(Composite parent, String text, int style) {
+        final CLabel label = new CLabel(parent, style);
+        label.setBackground(parent.getBackground());
+        label.setText(text);
+        return label;
+    }
+
+    public void dispose() {
+        if (getColors() != null) {
+            super.dispose();
+        }
+    }
 }

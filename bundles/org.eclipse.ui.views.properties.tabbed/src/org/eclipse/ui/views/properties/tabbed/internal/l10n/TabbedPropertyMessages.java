@@ -30,14 +30,29 @@ public final class TabbedPropertyMessages
 		// private constructor
 	}
 
+    /**
+     * Message when a property section extension is in error.
+     */
 	public static String SectionDescriptor_Section_error;
 
+    /**
+     * Message when a property tab extension is in error.
+     */
 	public static String TabDescriptor_Tab_error;
 
+    /**
+     * Message when a non existing tab is found in a property section extension.
+     */
 	public static String TabbedPropertyRegistry_Non_existing_tab;
 
+    /**
+     * Message when a property contributor extension is in error.
+     */
 	public static String TabbedPropertyRegistry_contributor_error;
 
+    /**
+     * No properties available message.
+     */
 	public static String TabbedPropertyList_properties_not_available;
 
 	static {

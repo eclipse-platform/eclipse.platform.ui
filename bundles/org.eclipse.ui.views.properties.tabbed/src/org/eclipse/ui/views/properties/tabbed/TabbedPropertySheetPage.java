@@ -424,6 +424,7 @@ public class TabbedPropertySheetPage
 	 *            the contributor id.
 	 */
 	private void disposeContributor(String contributorId) {
+        assert contributor.getContributorId().equals(contributorId);
 		/**
 		 * If the current tab is about to be disposed we have to call
 		 * aboutToBeHidden
@@ -591,7 +592,7 @@ public class TabbedPropertySheetPage
 	 * disposed. If the current visible tab will not be reused (i.e. will be
 	 * disposed) we have to send it an aboutToBeHidden() message.
 	 */
-	private void updateTabs(TabDescriptor[] descriptors, Object input) {
+	protected void updateTabs(TabDescriptor[] descriptors) {
 		Map newTabs = new HashMap(descriptors.length * 2);
 		boolean disposingCurrentTab = (currentTab != null);
 		for (int i = 0; i < descriptors.length; i++) {
@@ -647,14 +648,14 @@ public class TabbedPropertySheetPage
 		this.currentSelection = selection;
 
 		// see if the selection provides a new contributor
-		validateRegistry(part, selection);
+		validateRegistry(selection);
 		TabDescriptor[] descriptors = registry.getTabDescriptors(part,
 			currentSelection);
 		// If there are no descriptors for the given input we do not need to
 		// touch the tab objects. We might reuse them for the next valid
 		// input.
 		if (descriptors.length > 0) {
-			updateTabs(descriptors, currentSelection);
+			updateTabs(descriptors);
 		}
 		// update tabs list
 		tabbedPropertyViewer.setInput(part, currentSelection);
@@ -778,12 +779,10 @@ public class TabbedPropertySheetPage
 	 * ITabbedPropertySheetPageContributor to provide a different contributor id
 	 * and thus a differenent registry.
 	 * 
-	 * @param part
-	 *            the active workbench part.
 	 * @param selection
 	 *            the current selection in the active workbench part.
 	 */
-	private void validateRegistry(IWorkbenchPart part, ISelection selection) {
+	private void validateRegistry(ISelection selection) {
 		if (selection == null) {
 			return;
 		}
