@@ -33,11 +33,15 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -157,6 +161,14 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
         //initialize idle handler
         idleHelper = new IDEIdleHelper(configurer);
+        
+        // show Help button in JFace dialogs
+		TrayDialog.setDialogHelpAvailable(true);
+		
+		// use this image for the help button in dialogs
+		ImageRegistry reg = JFaceResources.getImageRegistry();
+		reg.put(Dialog.DLG_IMG_HELP, IDEInternalWorkbenchImages.getImageDescriptor(
+				IDEInternalWorkbenchImages.IMG_LCL_LINKTO_HELP));
     }
 
 	/* (non-Javadoc)
@@ -536,6 +548,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
         declareWorkbenchImage(ideBundle,
                 IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEM_CATEGORY, PATH_ETOOL
                         + "problem_category.gif", true); //$NON-NLS-1$
+        declareWorkbenchImage(ideBundle,
+        		IDEInternalWorkbenchImages.IMG_LCL_LINKTO_HELP, PATH_ELOCALTOOL
+        				+ "linkto_help.gif", false); //$NON-NLS-1$
 
         // synchronization indicator objects
         //declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_WBET_STAT, PATH_OVERLAY+"wbet_stat.gif");

@@ -126,6 +126,8 @@ public final class IDEInternalWorkbenchImages {
 
     public final static String IMG_LCL_CLOSE_VIEW_HOVER = "IMG_LCL_CLOSE_VIEW_HOVER"; //$NON-NLS-1$	
 
+	public final static String IMG_LCL_LINKTO_HELP = "IMG_LCL_LINKTO_HELP"; //$NON-NLS-1$
+
     public final static String IMG_LCL_PIN_VIEW = "IMG_LCL_PIN_VIEW"; //$NON-NLS-1$
 
     public final static String IMG_LCL_PIN_VIEW_HOVER = "IMG_LCL_PIN_VIEW_HOVER"; //$NON-NLS-1$

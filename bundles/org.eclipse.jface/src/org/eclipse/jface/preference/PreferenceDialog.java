@@ -147,13 +147,6 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 
 	private DialogMessageArea messageArea;
 
-	/**
-	 * Indicates whether help is available; <code>false</code> by default.'
-	 * 
-	 * @see #setHelpAvailable
-	 */
-	private boolean isHelpAvailable = false;
-
 	private Point lastShellSize;
 
 	private IPreferenceNode lastSuccessfulNode;
@@ -323,9 +316,6 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		getShell().setDefaultButton(okButton);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-		if (isHelpAvailable) {
-			createButton(parent, IDialogConstants.HELP_ID, IDialogConstants.HELP_LABEL, false);
-		}
 	}
 
 	/*
@@ -951,21 +941,6 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 */
 	private void setLastTreeWidth(int width) {
 		lastTreeWidth = width;
-	}
-
-	/**
-	 * Sets whether a Help button is available for this dialog.
-	 * <p>
-	 * Clients must call this framework method before the dialog's control has
-	 * been created.
-	 * <p>
-	 * 
-	 * @param b
-	 *            <code>true</code> to include a Help button, and
-	 *            <code>false</code> to not include one (the default)
-	 */
-	public void setHelpAvailable(boolean b) {
-		isHelpAvailable = b;
 	}
 
 	/**

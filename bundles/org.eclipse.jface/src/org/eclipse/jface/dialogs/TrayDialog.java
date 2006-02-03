@@ -10,18 +10,29 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 /**
  * A <code>TrayDialog</code> is a specialized <code>Dialog</code> that can contain
@@ -42,6 +53,8 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.2
  */
 public abstract class TrayDialog extends Dialog {
+
+	private static boolean dialogHelpAvailable;
 
 	/*
 	 * The dialog's tray (null if none).
@@ -67,6 +80,11 @@ public abstract class TrayDialog extends Dialog {
 	 * The sash that allows the user to resize the tray.
 	 */
 	private Sash sash;
+	
+	/*
+	 * Whether or not help is available for this dialog.
+	 */
+	private boolean helpAvailable;
 
 	/**
 	 * Creates a tray dialog instance. Note that the window will have no visual
@@ -111,6 +129,118 @@ public abstract class TrayDialog extends Dialog {
 		shell.setBounds(bounds.x + ((getDefaultOrientation() == SWT.RIGHT_TO_LEFT) ? trayWidth : 0), bounds.y, bounds.width - trayWidth, bounds.height);
 	}
 	
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
+     */
+	protected Control createButtonBar(Composite parent) {
+    	Composite composite = new Composite(parent, SWT.NONE);
+    	GridLayout layout = new GridLayout();
+    	layout.marginWidth = 0;
+    	layout.marginHeight = 0;
+    	layout.horizontalSpacing = 0;
+    	composite.setLayout(layout);
+    	composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+    	composite.setFont(parent.getFont());
+
+		// create help control if needed
+        if (isHelpAvailable() || isDialogHelpAvailable()) {
+        	Control helpControl = createHelpControl(composite);
+        	((GridData) helpControl.getLayoutData()).horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		}
+        Control buttonSection = super.createButtonBar(composite);
+        ((GridData) buttonSection.getLayoutData()).grabExcessHorizontalSpace = true;
+        return composite;
+	}
+
+	/**
+	 * Creates a new help control that provides access to context help.
+	 * <p>
+	 * The <code>TrayDialog</code> implementation of this method creates
+	 * the control, registers it for selection events including selection,
+	 * Note that the parent's layout is assumed to be a <code>GridLayout</code>
+	 * and the number of columns in this layout is incremented. Subclasses may
+	 * override.
+	 * </p>
+	 * 
+	 * @param parent the parent composite
+	 * @return the help control
+	 */
+    protected Control createHelpControl(Composite parent) {
+		Image helpImage = JFaceResources.getImage(DLG_IMG_HELP);
+		if (helpImage != null) {
+			return createHelpImageButton(parent, helpImage);
+		}
+		return createHelpLink(parent);
+    }
+    
+    /*
+     * Creates a button with a help image. This is only used if there
+     * is an image available.
+     */
+	private ToolBar createHelpImageButton(Composite parent, Image image) {
+        ToolBar toolBar = new ToolBar(parent, SWT.FLAT | SWT.NO_FOCUS);
+        ((GridLayout) parent.getLayout()).numColumns++;
+		toolBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
+		final Cursor cursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
+		toolBar.setCursor(cursor);
+		toolBar.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				cursor.dispose();
+			}
+		});		
+        ToolItem item = new ToolItem(toolBar, SWT.NONE);
+		item.setImage(image);
+		item.setToolTipText(JFaceResources.getString("helpToolTip")); //$NON-NLS-1$
+		item.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+				helpPressed();
+            }
+        });
+		return toolBar;
+	}
+
+	/*
+	 * Creates a help link. This is used when there is no help image
+	 * available.
+	 */
+	private Link createHelpLink(Composite parent) {
+		Link link = new Link(parent, SWT.WRAP | SWT.NO_FOCUS);
+        ((GridLayout) parent.getLayout()).numColumns++;
+		link.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
+		link.setText("<a>"+IDialogConstants.HELP_LABEL+"</a>"); //$NON-NLS-1$ //$NON-NLS-2$
+		link.setToolTipText(IDialogConstants.HELP_LABEL);
+		link.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+				helpPressed();
+            }
+        });
+		return link;
+	}	
+	
+	/*
+	 * Returns whether or not the given layout can support the addition of a tray.
+	 */
+	private boolean isCompatibleLayout(Layout layout) {
+		if (layout != null && layout instanceof GridLayout) {
+			GridLayout grid = (GridLayout)layout;
+			return !grid.makeColumnsEqualWidth && (grid.horizontalSpacing == 0) &&
+					(grid.marginWidth == 0) && (grid.marginHeight == 0) &&
+					(grid.horizontalSpacing == 0) && (grid.numColumns == 5);
+		}
+		return false;
+	}
+
+	/**
+	 * Returns whether or not context help is available for this dialog. This
+	 * can affect whether or not the dialog will display additional help
+	 * mechanisms such as a help control in the button bar.
+	 * 
+	 * @return whether or not context help is available for this dialog
+	 */
+	public boolean isHelpAvailable() {
+		return helpAvailable;
+	}
+	
 	/**
 	 * The tray dialog's default layout is a modified version of the default
 	 * <code>Window</code> layout that can accomodate a tray, however it still
@@ -139,6 +269,25 @@ public abstract class TrayDialog extends Dialog {
 	 */
 	public DialogTray getTray() {
 		return tray;
+	}
+	
+	/*
+	 * Called when the help control is invoked. This emulates the keyboard
+	 * context help behavior (e.g. F1 on Windows). It traverses the widget
+	 * tree upward until it finds a widget that has a help listener on it,
+	 * then invokes a help event on that widget.
+	 */
+	private void helpPressed() {
+    	if (getShell() != null) {
+	    	Control c = getShell().getDisplay().getFocusControl();
+	    	while (c != null) {
+	    		if (c.isListening(SWT.Help)) {
+	    			c.notifyListeners(SWT.Help, new Event());
+	    			break;
+	    		}
+	    		c = c.getParent();
+	    	}
+    	}
 	}
 	
 	/**
@@ -190,16 +339,40 @@ public abstract class TrayDialog extends Dialog {
 		});
 	}
 	
-	/*
-	 * Returns whether or not the given layout can support the addition of a tray.
+	/**
+	 * Sets whether or not context help is available for this dialog. This
+	 * can affect whether or not the dialog will display additional help
+	 * mechanisms such as a help control in the button bar.
+	 * 
+	 * @param helpAvailable whether or not context help is available for the dialog
 	 */
-	private boolean isCompatibleLayout(Layout layout) {
-		if (layout != null && layout instanceof GridLayout) {
-			GridLayout grid = (GridLayout)layout;
-			return !grid.makeColumnsEqualWidth && (grid.horizontalSpacing == 0) &&
-					(grid.marginWidth == 0) && (grid.marginHeight == 0) &&
-					(grid.horizontalSpacing == 0) && (grid.numColumns == 5);
-		}
-		return false;
+	public void setHelpAvailable(boolean helpAvailable) {
+		this.helpAvailable = helpAvailable;
+	}
+	
+	/**
+	 * Tests if dialogs that have help control should show it
+	 * all the time or only when explicitly requested for
+	 * each dialog instance.
+	 * 
+	 * @return <code>true</code> if dialogs that support help
+	 * control should show it by default, <code>false</code> otherwise.
+	 * @since 3.2
+	 */
+	public static boolean isDialogHelpAvailable() {
+		return dialogHelpAvailable;
+	}
+	
+	/**
+	 * Sets whether JFace dialogs that support help control should
+	 * show the control by default. If set to <code>false</code>, 
+	 * help control can still be shown on a per-dialog basis.
+	 * 
+	 * @param helpAvailable <code>true</code> to show the help
+	 * control, <code>false</code> otherwise.
+	 * @since 3.2
+	 */
+	public static void setDialogHelpAvailable(boolean helpAvailable) {
+		dialogHelpAvailable = helpAvailable;
 	}
 }

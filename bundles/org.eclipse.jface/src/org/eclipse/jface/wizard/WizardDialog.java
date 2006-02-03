@@ -418,27 +418,17 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
     }
 
     /**
-     * Creates and returns the contents of this dialog's 
-     * button bar.
+     * Creates the buttons for this dialog's button bar.
      * <p>
      * The <code>WizardDialog</code> implementation of this framework method
-     * prevents the composite's columns from being made equal width in order
-     * to remove the margin between the Back and Next buttons.
+     * prevents the parent composite's columns from being made equal width in
+     * order to remove the margin between the Back and Next buttons.
      * </p>
      *
-     * @param parent the parent composite to contain the button bar
-     * @return the button bar control
-     */
-    protected Control createButtonBar(Composite parent) {
-        Composite composite = (Composite) super.createButtonBar(parent);
-        ((GridLayout) composite.getLayout()).makeColumnsEqualWidth = false;
-        return composite;
-    }
-
-    /* (non-Javadoc)
-     * Method declared on Dialog.
+     * @param parent the parent composite to contain the buttons
      */
     protected void createButtonsForButtonBar(Composite parent) {
+        ((GridLayout) parent.getLayout()).makeColumnsEqualWidth = false;
         if (wizard.isHelpAvailable()) {
             helpButton = createButton(parent, IDialogConstants.HELP_ID,
                     IDialogConstants.HELP_LABEL, false);

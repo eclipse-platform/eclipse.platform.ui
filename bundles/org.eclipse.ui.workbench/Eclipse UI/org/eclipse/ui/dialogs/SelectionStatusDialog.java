@@ -15,6 +15,8 @@ package org.eclipse.ui.dialogs;
 import java.util.Arrays;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -158,28 +160,55 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
         Font font = parent.getFont();
         Composite composite = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();
-        if (fStatusLineAboveButtons) {
-            layout.marginWidth = 5;
-        } else {
+        if (!fStatusLineAboveButtons) {
             layout.numColumns = 2;
         }
         layout.marginHeight = 0;
+        layout.marginLeft = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
         layout.marginWidth = 0;
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         composite.setFont(font);
 
+        if (!fStatusLineAboveButtons && (isHelpAvailable() || TrayDialog.isDialogHelpAvailable())) {
+        	createHelpControl(composite);
+        }
         fStatusLine = new MessageLine(composite);
         fStatusLine.setAlignment(SWT.LEFT);
-        fStatusLine.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        GridData statusData = new GridData(GridData.FILL_HORIZONTAL);
         fStatusLine.setErrorStatus(null);
         fStatusLine.setFont(font);
+        if (fStatusLineAboveButtons && (isHelpAvailable() || TrayDialog.isDialogHelpAvailable())) {
+        	statusData.horizontalSpan = 2;
+        	createHelpControl(composite);
+        }
+        fStatusLine.setLayoutData(statusData);
 
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalIndent = convertWidthInCharsToPixels(1);
-        fStatusLine.setLayoutData(gd);
-
-        super.createButtonBar(composite);
+		/*
+		 * This code is duplicated from Dialog#createButtonBar. We do not want
+		 * to call the TrayDialog implementation because it adds a help control.
+		 * Since this is a custom button bar, we explicitly added the help control
+		 * in an appropriate place above, and we use the Dialog implementation of
+		 * createButtonBar, which does not add a help control.
+		 */
+		Composite buttonComposite = new Composite(composite, SWT.NONE);
+		// create a layout with spacing and margins appropriate for the font
+		// size.
+		layout = new GridLayout();
+		layout.numColumns = 0; // this is incremented by createButton
+		layout.makeColumnsEqualWidth = true;
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		buttonComposite.setLayout(layout);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
+				| GridData.VERTICAL_ALIGN_CENTER);
+		buttonComposite.setLayoutData(data);
+		buttonComposite.setFont(composite.getFont());
+		
+		// Add the buttons to the button bar.
+		createButtonsForButtonBar(buttonComposite);
         return composite;
     }
 

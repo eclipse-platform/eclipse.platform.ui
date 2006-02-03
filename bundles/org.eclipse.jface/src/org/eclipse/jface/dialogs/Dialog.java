@@ -119,6 +119,14 @@ public abstract class Dialog extends Window {
 	public static final String DLG_IMG_MESSAGE_ERROR = "dialog_message_error_image"; //$NON-NLS-1$
 
 	/**
+	 * Image registry key for help image (value
+	 * <code>"dialog_help_image"</code>).
+	 * 
+	 * @since 3.2
+	 */
+	public static final String DLG_IMG_HELP = "dialog_help_image"; //$NON-NLS-1$
+
+	/**
 	 * The ellipsis is the string that is used to represent shortened text.
 	 * 
 	 * @since 3.0
