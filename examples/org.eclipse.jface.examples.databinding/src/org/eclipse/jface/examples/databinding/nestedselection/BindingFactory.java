@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Control;
  * 
  * @since 3.2
  */
-public class ExampleBinding {
+public class BindingFactory {
 
 	/**
 	 * Creates a data binding context whose lifecycle is bound to an SWT

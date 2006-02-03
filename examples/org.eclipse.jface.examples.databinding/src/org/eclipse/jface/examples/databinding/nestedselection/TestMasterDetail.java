@@ -163,7 +163,7 @@ public class TestMasterDetail {
    Model model = new Model();
 
    private void bind(Control parent) {
-      IDataBindingContext dbc = ExampleBinding.createContext(parent);
+      IDataBindingContext dbc = BindingFactory.createContext(parent);
       TableViewer peopleViewer = new TableViewer(personsTable);
       dbc.bind(new TableViewerUpdatableTable(peopleViewer),
 				new TableModelDescription(new Property(model, "personList"),
