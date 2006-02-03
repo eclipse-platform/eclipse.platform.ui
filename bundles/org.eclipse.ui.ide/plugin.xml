@@ -258,7 +258,7 @@
                definitionId="org.eclipse.ui.navigate.openResource"
                label="%OpenWorkspaceFileAction.label"
                helpContextId="org.eclipse.ui.open_workspace_file_action_context"
-               class="org.eclipse.ui.internal.ide.actions.OpenWorkspaceFileAction"
+               class="org.eclipse.ui.internal.ide.handlers.OpenResourceHandler"
                menubarPath="navigate/open.ext2"
                id="org.eclipse.ui.OpenWorkspaceFile">
          </action>
@@ -655,12 +655,20 @@
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.ui.navigate.goToResource">
       </command>
-      
+      <commandParameterType
+            converter="org.eclipse.ui.internal.ide.commands.ResourcePathConverter"
+            id="org.eclipse.ui.ide.resourcePath"
+            type="org.eclipse.core.resources.IResource"/>
       <command
             name="%command.openResource.name"
             description="%command.openResource.description"
             categoryId="org.eclipse.ui.category.navigate"
-            id="org.eclipse.ui.navigate.openResource">
+            id="org.eclipse.ui.navigate.openResource"
+            defaultHandler="org.eclipse.ui.internal.ide.handlers.OpenResourceHandler">
+         <commandParameter
+               id="filePath"
+               name="%commandParameter.openFileByPath.filePath.name"
+               typeId="org.eclipse.ui.ide.resourcePath"/>
       </command>
       <command
             name="%command.openProject.name"
@@ -754,6 +762,18 @@
             description="%command.findAndInstallUpdates.description"
             id="org.eclipse.ui.update.findAndInstallUpdates"
             name="%command.findAndInstallUpdates.name"/>
+      <command
+            categoryId="org.eclipse.ui.category.navigate"
+            defaultHandler="org.eclipse.ui.internal.ide.handlers.ShowResourceByPathHandler"
+            description="%command.showResourceByPath.description"
+            id="org.eclipse.ui.navigate.showResourceByPath"
+            name="%command.showResourceByPath.name">
+         <commandParameter
+               id="resourcePath"
+               name="%commandParameter.showResourceByPath.resourcePath.name"
+               optional="false"
+               typeId="org.eclipse.ui.ide.resourcePath"/>
+      </command>
    </extension>
    
    <extension
