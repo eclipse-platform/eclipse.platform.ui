@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.State;
+import org.eclipse.jface.commands.PersistentState;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
@@ -31,9 +32,25 @@ public class HandlerStateTest extends TestCase {
 	private static final String COMMAND_ID = "org.eclipse.ui.tests.commandWithState";
 
 	/**
-	 * The identifier of the state storing a simple object.
+	 * The identifier of the state with an initial value of <code>false</code>.
 	 */
-	private static final String STATE_ID = "STYLE";
+	private static final String FALSE_STATE_ID = "FALSE";
+
+	/**
+	 * The text after the handler state has been modified.
+	 */
+	private static final String MODIFIED_TEXT = "Rain rain go away come back again in april or may";
+
+	/**
+	 * The identifier of the text state with an initial value of
+	 * <code>null</code>.
+	 */
+	private static final String TEXT_STATE_ID = "TEXT";
+
+	/**
+	 * The identifier of the state with an initial value of <code>true</code>.
+	 */
+	private static final String TRUE_STATE_ID = "TRUE";
 
 	/**
 	 * Constructs a new instance of <code>HandlerStateTest</code>.
@@ -54,12 +71,27 @@ public class HandlerStateTest extends TestCase {
 		final ICommandService service = (ICommandService) workbench
 				.getService(ICommandService.class);
 		final Command command = service.getCommand(COMMAND_ID);
-		final State state = command.getState(STATE_ID);
-		final Boolean actual = (Boolean) state.getValue();
-		assertTrue("The initial value should be true", actual.booleanValue());
+		State state;
+		boolean actual;
 
-		// Change the value for the next run.
+		// Check the state that defaults to true.
+		state = command.getState(TRUE_STATE_ID);
+		actual = ((Boolean) state.getValue()).booleanValue();
+		assertTrue("The initial value should be true", actual);
 		state.setValue(Boolean.FALSE);
+
+		// Check the state that defaults to false.
+		state = command.getState(FALSE_STATE_ID);
+		actual = ((Boolean) state.getValue()).booleanValue();
+		assertTrue("The initial value should be false", !actual);
+		state.setValue(Boolean.TRUE);
+
+		// Check the text state.
+		state = command.getState(TEXT_STATE_ID);
+		final String text = (String) state.getValue();
+		assertNull("The initial value should be null", text);
+		((PersistentState) state).setShouldPersist(true);
+		state.setValue(MODIFIED_TEXT);
 	}
 
 	/**
@@ -70,8 +102,24 @@ public class HandlerStateTest extends TestCase {
 		final ICommandService service = (ICommandService) workbench
 				.getService(ICommandService.class);
 		final Command command = service.getCommand(COMMAND_ID);
-		final State state = command.getState(STATE_ID);
-		final Boolean actual = (Boolean) state.getValue();
-		assertTrue("The value should now be different", !actual.booleanValue());
+		State state;
+		boolean actual;
+
+		// Test the state that defaults to true is now false.
+		state = command.getState(TRUE_STATE_ID);
+		actual = ((Boolean) state.getValue()).booleanValue();
+		assertTrue("The value should now be different", !actual);
+
+		// Test the state that defaults to false is now true.
+		state = command.getState(FALSE_STATE_ID);
+		actual = ((Boolean) state.getValue()).booleanValue();
+		assertTrue("The value should now be different", actual);
+
+		// Test that the text state is now MODIFIED_TEXT.
+		state = command.getState(TEXT_STATE_ID);
+		((PersistentState) state).setShouldPersist(true);
+		final String text = (String) state.getValue();
+		assertEquals("The modified value was not persisted", MODIFIED_TEXT,
+				text);
 	}
 }

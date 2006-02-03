@@ -2248,7 +2248,13 @@
                id="OBJECT"/>
          <state
                class="org.eclipse.ui.handlers.RegistryToggleState:true"
-               id="STYLE"/>
+               id="TRUE"/>
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState"
+               id="FALSE"/>
+         <state
+               class="org.eclipse.jface.menus.TextState"
+               id="TEXT"/>
       </command>
    </extension>
    
