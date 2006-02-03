@@ -11,7 +11,6 @@
 package org.eclipse.debug.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IVariable;
 
 /**
