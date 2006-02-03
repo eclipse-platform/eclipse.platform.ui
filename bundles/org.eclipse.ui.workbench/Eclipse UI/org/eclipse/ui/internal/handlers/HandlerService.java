@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.handlers;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.Command;
@@ -163,8 +164,8 @@ public final class HandlerService implements IHandlerService {
 			final Event trigger) throws ExecutionException,
 			NotDefinedException, NotEnabledException, NotHandledException {
 		final Command command = commandService.getCommand(commandId);
-		final ExecutionEvent event = new ExecutionEvent(command, null, trigger,
-				getCurrentState());
+		final ExecutionEvent event = new ExecutionEvent(command,
+				Collections.EMPTY_MAP, trigger, getCurrentState());
 		return command.executeWithChecks(event);
 	}
 
