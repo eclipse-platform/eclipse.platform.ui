@@ -29,6 +29,7 @@ import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryMergeWiza
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 
 import org.eclipse.ui.PlatformUI;
@@ -127,6 +128,7 @@ public final class AcceptRefactoringsAction extends Action {
 	public void run() {
 		if (fProxies != null && fProxies.length > 0) {
 			final RefactoringHistoryMergeWizard wizard= new RefactoringHistoryAcceptWizard();
+			int result= Window.OK;
 			try {
 				final WizardDialog dialog= new WizardDialog(fShell, wizard);
 				IProject project= null;
@@ -140,9 +142,9 @@ public final class AcceptRefactoringsAction extends Action {
 				dialog.create();
 				dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT);
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IRefactoringHelpContextIds.REFACTORING_ACCEPT_REFACTORING_PAGE);
-				dialog.open();
+				result= dialog.open();
 			} finally {
-				if (fContext instanceof IMergeContext) {
+				if (result != Window.CANCEL && fContext instanceof IMergeContext) {
 					final IMergeContext context= (IMergeContext) fContext;
 					wizard.resolveConflicts(context);
 				}

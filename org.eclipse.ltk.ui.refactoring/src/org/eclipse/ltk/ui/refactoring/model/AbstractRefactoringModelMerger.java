@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 
 import org.eclipse.ui.IWorkbench;
@@ -237,12 +238,14 @@ public abstract class AbstractRefactoringModelMerger extends ResourceMappingMerg
 						public final void run() {
 							if (MessageDialog.openQuestion(shell, RefactoringUIMessages.RefactoringWizard_refactoring, RefactoringUIMessages.AbstractRefactoringModelMerger_accept_question)) {
 								final RefactoringHistoryMergeWizard wizard= new RefactoringHistoryModelMergeWizard();
+								int result= Window.OK;
 								try {
-								wizard.setConfiguration(new RefactoringHistoryModelMergeConfiguration((projects != null && projects.length == 1) ? projects[0] : null));
-								wizard.setInput(history);
-								new WizardDialog(shell, wizard).open();
+									wizard.setConfiguration(new RefactoringHistoryModelMergeConfiguration((projects != null && projects.length == 1) ? projects[0] : null));
+									wizard.setInput(history);
+									result= new WizardDialog(shell, wizard).open();
 								} finally {
-									wizard.resolveConflicts(context);
+									if (result != Window.CANCEL)
+										wizard.resolveConflicts(context);
 								}
 							}
 						}
