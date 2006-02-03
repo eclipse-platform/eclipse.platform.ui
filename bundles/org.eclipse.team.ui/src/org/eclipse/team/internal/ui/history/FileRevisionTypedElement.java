@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.history;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
@@ -53,7 +56,7 @@ public class FileRevisionTypedElement extends StorageTypedElement {
 	}
 
 	public boolean isEditable() {
-		return false;
+		return true;
 	}
 
 	public ITypedElement replace(ITypedElement dest, ITypedElement src) {
@@ -65,6 +68,34 @@ public class FileRevisionTypedElement extends StorageTypedElement {
 			return file.getName();
 		
 		return fileRevision.getContentIdentifier();
+	}
+	
+	public String getTimestamp() {
+		long date = 0;
+		if (file != null) {
+			date = file.getModificationStamp();
+		} else {
+			date = fileRevision.getTimestamp();
+		}
+		Date dateFromLong = new Date(date);
+		return DateFormat.getDateTimeInstance().format(dateFromLong);
+	}
+	
+	public String getComment() {
+		if (file != null)
+			return ""; //$NON-NLS-1$
+		
+		return fileRevision.getComment();
+	}
+	
+	/*
+	 * Can return either an IFile or an IFileRevision
+	 */
+	public Object getFileRevision(){
+		if (file != null)
+			return file;
+		
+		return fileRevision;
 	}
 
 }

@@ -34,6 +34,8 @@ import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.part.PluginTransfer;
+import org.eclipse.ui.part.PluginTransferData;
 
 /**
  * RepositoriesView is a view on a set of known CVS repositories
@@ -102,7 +104,16 @@ public class RepositoriesView extends RemoteViewPart {
                         return;
                     }
                 }
-            }
+            } else if (PluginTransfer.getInstance().isSupportedType(event.dataType)) {
+            	final Object[] array = selection.toArray();
+                 for (int i = 0; i < array.length; i++) {
+                     if (array[i] instanceof ICVSRemoteFile) {
+                         event.data = new PluginTransferData("org.eclipse.team.cvs.ui.cvsRemoteDrop", CVSResourceTransfer.getInstance().toByteArray((ICVSRemoteFile) array[i]));
+                         return;
+                     }
+                 }
+                
+             }
         }
         
         public void dragFinished( DragSourceEvent event) {
@@ -267,7 +278,7 @@ public class RepositoriesView extends RemoteViewPart {
         
         repositoryDragSourceListener = new RepositoryDragSourceListener();
         viewer.addDragSupport( DND.DROP_LINK | DND.DROP_DEFAULT, 
-                new Transfer[] { CVSResourceTransfer.getInstance()}, 
+                new Transfer[] { CVSResourceTransfer.getInstance(),PluginTransfer.getInstance()}, 
                 repositoryDragSourceListener);
 	}
 	

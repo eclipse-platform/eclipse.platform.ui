@@ -18,7 +18,6 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -26,6 +25,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ui.history.GenericHistoryView;
+import org.eclipse.team.ui.history.IHistoryPage;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
@@ -41,7 +42,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class AnnotateView extends ViewPart implements ISelectionChangedListener {
 
 	ITextEditor editor;
-	HistoryView historyView;
+	GenericHistoryView historyView;
 	IWorkbenchPage page;
 
 	ListViewer viewer;
@@ -154,8 +155,8 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 
 		// Get hook to the HistoryView
 				
-		historyView = (HistoryView) page.showView(HistoryView.VIEW_ID);
-		historyView.showHistory((ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsResource), false /* don't refetch */);
+		historyView = (GenericHistoryView) page.showView(GenericHistoryView.viewId);
+		historyView.showHistoryFor((ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsResource));
 	}
 	
 	protected void disconnect() {
@@ -287,9 +288,12 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		
 		// Select the revision in the history view.
 		if(historyView != null) {
-			historyView.selectRevision(listSelection.getRevision());
+			IHistoryPage historyPage = historyView.getHistoryPage();
+			if (historyPage instanceof CVSHistoryPage){
+				((CVSHistoryPage) historyPage).selectRevision(listSelection.getRevision());
+				lastSelectionWasText = false;	
+			}
 		}
-		lastSelectionWasText = false;			
 	}
 
 	/**

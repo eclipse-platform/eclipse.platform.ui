@@ -654,12 +654,19 @@
          <action
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareRevisionAction"
                enablesFor="2"
-               id="org.eclipse.team.ui.CompareRevisionAction"
+               id="org.eclipse.team.ccvs.ui.CompareRevisionAction"
                label="%HistoryView.Compare.label"/>
          <action
                class="org.eclipse.team.internal.ccvs.ui.actions.OpenRevisionAction"
-               id="org.eclipse.team.ui.FileRevisionsContribution"
+               id="org.eclipse.team.ccvs.ui.OpenRevisionAction"
                label="%HistoryView.Open.label"/>
+         <action
+               class="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
+               helpContextId="org.eclipse.team.cvs.ui.get_annotate_action_context"
+               icon="$nl$/icons/full/etool16/annotate.gif"
+               id="org.eclipse.team.ccvs.ui.AnnotateRevisionAction"
+               label="%ShowAnnotationAction.label"
+               tooltip="%ShowAnnotationAction.tooltip"/>
       </objectContribution>
    </extension>
    
@@ -875,7 +882,7 @@
          <view
                relative="org.eclipse.ui.views.TaskList"
                visible="false"
-               id="org.eclipse.team.ccvs.ui.HistoryView"
+               id="org.eclipse.team.ui.GenericHistoryView"
                relationship="stack">
          </view>
          <view
@@ -910,7 +917,7 @@
          <view
                relative="org.eclipse.ui.views.TaskList"
                visible="false"
-               id="org.eclipse.team.ccvs.ui.HistoryView"
+               id="org.eclipse.team.ui.GenericHistoryView"
                relationship="stack">
          </view>
          <view
@@ -1448,6 +1455,12 @@
             decoratedDirection="OUTGOING"
             decoratorId="org.eclipse.team.cvs.ui.decorator"
             repositoryId="org.eclipse.team.cvs.core.cvsnature"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.dropActions">
+      <action
+            class="org.eclipse.team.internal.ccvs.ui.CVSResourceDropAdapter"
+            id="org.eclipse.team.cvs.ui.cvsRemoteDrop"/>
    </extension>
    
 </plugin>

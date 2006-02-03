@@ -11,16 +11,24 @@
 package org.eclipse.team.ui.history;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormat;
+import java.util.Date;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.IFileState;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.internal.core.LocalFileRevision;
+import org.eclipse.team.internal.core.Messages;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
+import org.eclipse.team.internal.ui.history.TypedBufferedContent;
 import org.eclipse.team.ui.PageSaveablePart;
 import org.eclipse.ui.part.Page;
 
@@ -75,9 +83,50 @@ public class HistoryPageSaveablePart extends PageSaveablePart {
 	 * @see org.eclipse.team.ui.PageSaveablePart#prepareInput(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor) throws InvocationTargetException {
-		// Do nothing
+		initLabels(input);
+		hookContentChangeListener(input);
 	}
+
+	private void initLabels(ICompareInput input) {
+		CompareConfiguration cc = getCompareConfiguration();
+		cc.setLeftEditable(false);
+		cc.setRightEditable(false);
+		String leftLabel = getFileRevisionLabel(input.getLeft());
+		cc.setLeftLabel(leftLabel);
+		String rightLabel = getFileRevisionLabel(input.getRight());
+		cc.setRightLabel(rightLabel);
+	}
+
 	
+	private String getFileRevisionLabel(ITypedElement element) {
+		String label = null;
+
+		if (element instanceof TypedBufferedContent) {
+			//current revision
+			Date dateFromLong = new Date(((TypedBufferedContent) element).getModificationDate());
+			label = element.getName() + " " + Messages.LocalFileRevision_currentVersionTag + " " + DateFormat.getDateTimeInstance().format(dateFromLong);
+			getCompareConfiguration().setLeftEditable(true);
+			return label;
+
+		} else if (element instanceof FileRevisionTypedElement) {
+			Object fileObject = ((FileRevisionTypedElement) element).getFileRevision();
+
+			if (fileObject instanceof LocalFileRevision) {
+				try {
+					IStorage storage = ((LocalFileRevision) fileObject).getStorage(new NullProgressMonitor());
+					if (Utils.getAdapter(storage, IFileState.class) != null) {
+						//local revision
+						label = element.getName() + " " + Messages.LocalFileRevision_localRevisionTag + " " + ((FileRevisionTypedElement) element).getTimestamp();
+					}
+				} catch (CoreException e) {
+				}
+			} else {
+				label = element.getName() + " " + ((FileRevisionTypedElement) element).getContentIdentifier();
+			}
+		}
+		return label;
+	}
+		
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */

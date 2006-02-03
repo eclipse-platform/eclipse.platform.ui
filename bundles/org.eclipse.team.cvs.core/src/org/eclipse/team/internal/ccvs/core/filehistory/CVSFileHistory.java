@@ -40,7 +40,6 @@ public class CVSFileHistory extends FileHistory {
 	}
 
 	public void refresh(IProgressMonitor monitor) throws TeamException {
-		if (revisions == null){
 			monitor.beginTask("Refreshing CVS",300);
 			try{
 			ILogEntry[] entries = cvsFile.getLogEntries(new SubProgressMonitor(monitor, 200));
@@ -66,7 +65,6 @@ public class CVSFileHistory extends FileHistory {
 		} catch (CoreException e) {
 		} finally {
 			monitor.done();
-		}
 		}
 	}
 

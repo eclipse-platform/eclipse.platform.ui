@@ -19,6 +19,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
+import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -77,7 +78,7 @@ public class ShowAnnotationAction extends WorkspaceAction {
 		ICVSResource resource = getSingleSelectedCVSResource();
 		return (resource != null && ! resource.isFolder() && resource.isManaged());
 	}
-	
+
 	/**
 	 * This action is called from one of a Resource Navigator a CVS Resource
 	 * Navigator or a History Log Viewer. Return the selected resource as an
@@ -99,6 +100,14 @@ public class ShowAnnotationAction extends WorkspaceAction {
 			final ICVSRemoteFile cvsRemoteFile = aLogEntry.getRemoteFile();
 			return cvsRemoteFile;
 		}
+		
+		//Selected from the CVS History Page
+		final Object[] fileRevisions = getAdaptedSelection(CVSFileRevision.class);
+		if (fileRevisions.length == 1) {
+			final ICVSRemoteFile cvsRemoteFile =((CVSFileRevision) fileRevisions[0]).getCVSRemoteFile();
+			return cvsRemoteFile;
+		}
+		
 
 		// Selected from a Resource Navigator
 		final IResource[] resources = getSelectedResources();

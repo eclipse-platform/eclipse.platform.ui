@@ -77,7 +77,7 @@ public final class CVSResourceTransfer extends ByteArrayTransfer {
     }
 
     
-    private Object fromByteArray(byte[] bytes) {
+    public Object fromByteArray(byte[] bytes) {
         final DataInputStream in = new DataInputStream(new ByteArrayInputStream(bytes));
 
         try {
@@ -95,7 +95,7 @@ public final class CVSResourceTransfer extends ByteArrayTransfer {
         }
     }
 
-    private byte[] toByteArray(ICVSRemoteFile file) {
+    public byte[] toByteArray(ICVSRemoteFile file) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(bos);
         try {

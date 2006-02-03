@@ -26,6 +26,14 @@ import org.eclipse.team.core.history.IFileHistory;
 public interface IHistoryView {
 
 	/**
+	 * Returns the history page that is currently being displayed by the
+	 * history view.
+	 * TODO: Need to explain what page this is. Is it the visible page?
+	 * @return
+	 */
+	public IHistoryPage getHistoryPage();
+	
+	/**
 	 * Shows the history for the passed in object.
 	 * @param object
 	 */

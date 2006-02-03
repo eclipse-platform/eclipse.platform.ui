@@ -219,6 +219,14 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 
 		// add listener for selections
 		getSite().getPage().addSelectionListener(selectionListener);
+		
+	/*	// assign a number to this view instance
+		IPropertyChangeListener listener = new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				setPartName((String) event.getNewValue());
+			}
+		};
+		HistoryManagerInstanceManager.getManager().register(this, listener);*/
 	}
 
 	private void configureToolbars(IActionBars actionBars) {
@@ -558,6 +566,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		getSite().getPage().removePartListener(partListener2);
 		//Remove the selection listener
 		getSite().getPage().removeSelectionListener(selectionListener);
+		/*//Remove this history view instance from the multiple instance manager
+		HistoryManagerInstanceManager.getManager().deregister(this);*/
 	}
 
 	public void localItemDropped(IResource resource) {
@@ -570,5 +580,13 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 
 	public void showHistoryFor(Object object) {
 		itemDropped(object);
+	}
+
+	public IHistoryPage getHistoryPage() {
+		if (currentPageContainer != null &&
+			currentPageContainer.getPage() != null)
+			return (IHistoryPage) currentPageContainer.getPage();
+		
+		return (IHistoryPage) defaultPageContainer.getPage();
 	}
 }

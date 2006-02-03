@@ -370,9 +370,11 @@ public class TeamUIMessages extends NLS {
 	public static String GenericHistoryView_0;
 
 	public static String LocalHistoryTableProvider_localRevision;
-
 	public static String LocalHistoryPage_openRevision;
-
 	public static String LocalHistoryPage_fetchingLocalHistory;
 
+	public static String CompareFileRevisionEditorInput_compareResourceAndVersions;
+	public static String CompareFileRevisionEditorInput_repository;
+	public static String CompareFileRevisionEditorInput_workspace;
+	public static String CompareFileRevisionEditorInput_localRevision;
 }
