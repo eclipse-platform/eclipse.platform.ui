@@ -173,6 +173,7 @@ public final class CommandStateProxy extends PersistentState {
 			try {
 				state = (State) configurationElement
 						.createExecutableExtension(stateAttributeName);
+				state.setId(getId());
 				configurationElement = null;
 
 				// Try to load the persistent state, if possible.
@@ -225,6 +226,13 @@ public final class CommandStateProxy extends PersistentState {
 	public final void setPersisted(final boolean persisted) {
 		if (loadState() && state instanceof PersistentState) {
 			((PersistentState) state).setPersisted(persisted);
+		}
+	}
+	
+	public final void setId(final String id) {
+		super.setId(id);
+		if (state != null) {
+			state.setId(id);
 		}
 	}
 

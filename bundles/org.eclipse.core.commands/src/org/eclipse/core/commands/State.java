@@ -116,12 +116,13 @@ public class State extends EventManager {
 	}
 
 	/**
-	 * Sets the identifier for this object.
+	 * Sets the identifier for this object.  This method should only be called
+	 * by the command framework.  Clients should not call this method.
 	 * 
 	 * @param id
 	 *            The id; must not be <code>null</code>.
 	 */
-	final void setId(final String id) {
+	public void setId(final String id) {
 		this.id = id;
 	}
 
