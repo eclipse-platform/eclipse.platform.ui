@@ -598,20 +598,22 @@ class CompletionProposalPopup implements IContentAssistListener {
 				fMessageTextFont= new Font(display, fontDatas);
 			}
 			fMessageText.setFont(fMessageTextFont);
-			fMessageText.setCursor(fProposalShell.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
 			fMessageText.setBackground(getBackgroundColor(fProposalShell));
 			fMessageText.setForeground(getForegroundColor(fProposalShell));
-			
-			fMessageText.addMouseListener(new MouseAdapter() {
-				public void mouseUp(MouseEvent e) {
-					fLastCompletionOffset= fFilterOffset;
-					fProposalTable.setFocus();
-					handleRepeatedInvocation();
-				}
-				
-				public void mouseDown(MouseEvent e) {
-				}
-			});
+
+			if (fContentAssistant.isRepeatedInvocationMode()) {
+				fMessageText.setCursor(fProposalShell.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+				fMessageText.addMouseListener(new MouseAdapter() {
+					public void mouseUp(MouseEvent e) {
+						fLastCompletionOffset= fFilterOffset;
+						fProposalTable.setFocus();
+						handleRepeatedInvocation();
+					}
+
+					public void mouseDown(MouseEvent e) {
+					}
+				});
+			}
 		}
 	}
 
