@@ -328,6 +328,8 @@
             class="org.eclipse.team.internal.ui.TeamAdapterFactory">
          <adapter type="org.eclipse.team.core.mapping.IResourceMappingMerger"/>
          <adapter type="org.eclipse.team.ui.mapping.ICompareAdapter"/>
+         <adapter type="org.eclipse.team.ui.mapping.IResourceMappingPersistenceAdapter"/>
+         <adapter type="org.eclipse.team.core.mapping.IResourceMappingScopeParticipantFactory"/>
       </factory>
    </extension>
    <extension

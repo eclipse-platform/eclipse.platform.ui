@@ -14,15 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
-import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.ModelProviderAction;
 import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
@@ -46,7 +43,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * </p>
  * 
  * @since 3.2
- **/
+ */
 public class ModelSynchronizeParticipant extends
 		AbstractSynchronizeParticipant implements ISaveableModelSource {
 	
@@ -81,6 +78,10 @@ public class ModelSynchronizeParticipant extends
 	private final static String CTX_DEPTH = "depth"; //$NON-NLS-1$
 	private final static String CTX_RESOURCE= "resources"; //$NON-NLS-1$
 	private final static String CTX_RESOURCE_PATH = "resource_path"; //$NON-NLS-1$
+
+	private static final String CTX_PARTICIPANT_MAPPINGS = TeamUIPlugin.ID + ".MODEL_PARTICIPANT_MAPPINGS"; //$NON-NLS-1$
+	private static final String CTX_MODEL_PROVIDER_ID = "modelProviderId"; //$NON-NLS-1$
+	private static final String CTX_MODEL_PROVIDER_MAPPINGS = "mappings"; //$NON-NLS-1$
 	
 	private ISynchronizationContext context;
 	private IResourceMappingScopeManager manager;
@@ -391,60 +392,22 @@ public class ModelSynchronizeParticipant extends
 		if (description != null)
 			settings.putString(CTX_DESCRIPTION, description);
 		refreshSchedule.saveState(settings.createChild(CTX_REFRESH_SCHEDULE_SETTINGS));
-		CompoundResourceTraversal traversal = new CompoundResourceTraversal();
-		traversal.addTraversals(getContext().getScope().getTraversals());
-		saveTraversals(settings.createChild(CTX_PARTICIPANT_TRAVERSALS), traversal.asTraversals());
+		saveMappings(settings);
 	}
-	
-	private void saveTraversals(IMemento memento, ResourceTraversal[] traversals) {
-		for (int i = 0; i < traversals.length; i++) {
-			ResourceTraversal traversal = traversals[i];
-			IMemento traversalNode = memento.createChild(CTX_TRAVERSAL);
-			traversalNode.putInteger(CTX_DEPTH, traversal.getDepth());
-			IResource[] resources = traversal.getResources();
-			for (int j = 0; j < resources.length; j++) {
-				IResource resource = resources[j];
-				IMemento resourceNode = traversalNode.createChild(CTX_RESOURCE);
-				resourceNode.putString(CTX_RESOURCE_PATH, resource.getFullPath().toString());
+
+	private void saveMappings(IMemento settings) {
+		IResourceMappingScope inputScope = getScopeManager().getScope().asInputScope();
+		ModelProvider[] providers = inputScope.getModelProviders();
+		for (int i = 0; i < providers.length; i++) {
+			ModelProvider provider = providers[i];
+			IResourceMappingPersistenceAdapter adapter = (IResourceMappingPersistenceAdapter)Utils.getAdapter(provider, IResourceMappingPersistenceAdapter.class);
+			if (adapter != null) {
+				IMemento child = settings.createChild(CTX_PARTICIPANT_MAPPINGS);
+				String id = provider.getDescriptor().getId();
+				child.putString(CTX_MODEL_PROVIDER_ID, id);
+				adapter.save(inputScope.getMappings(id), child.createChild(CTX_MODEL_PROVIDER_MAPPINGS));
 			}
 		}
-	}
-	
-	private ResourceTraversal[] loadTraversals(IMemento memento) {
-		if (memento == null)
-			return null;
-		IMemento[] traversalNodes = memento.getChildren(CTX_TRAVERSAL);
-		if (traversalNodes == null)
-			return null;
-		List traversals = new ArrayList();
-		for (int i = 0; i < traversalNodes.length; i++) {
-			IMemento traversalNode = traversalNodes[i];
-			Integer depthInt = traversalNode.getInteger(CTX_DEPTH);
-			int depth;
-			if (depthInt == null) {
-				depth = IResource.DEPTH_INFINITE;
-			} else {
-				depth = depthInt.intValue();
-			}
-			IMemento[] resourceNodes = traversalNode.getChildren(CTX_RESOURCE);
-			List resources = new ArrayList();
-			if(resourceNodes != null) {
-				for (int j = 0; j < resourceNodes.length; j++) {
-					IMemento rootNode = resourceNodes[j];
-					IPath path = new Path(rootNode.getString(CTX_RESOURCE_PATH)); 
-					IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path, true /* include phantoms */);
-					if(resource != null) {
-						resources.add(resource);
-					}
-				}
-			}
-			if (!resources.isEmpty()) {
-				traversals.add(new ResourceTraversal((IResource[]) resources.toArray(new IResource[resources.size()]), depth, IResource.NONE));
-			}
-		}
-		if (traversals.size() == 0)
-			return null;
-		return (ResourceTraversal[]) traversals.toArray(new ResourceTraversal[traversals.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -454,10 +417,10 @@ public class ModelSynchronizeParticipant extends
 		super.init(secondaryId, memento);
 		if(memento != null) {
 			IMemento settings = memento.getChild(CTX_PARTICIPANT_SETTINGS);
-			ResourceTraversal[] traversals = loadTraversals(settings.getChild(CTX_PARTICIPANT_TRAVERSALS));
-			if (traversals == null)
-				throw new PartInitException("An error occurred");
-			initializeContext(traversals);
+			ResourceMapping[] mappings = loadMappings(settings);
+			if (mappings.length == 0)
+				throw new PartInitException(NLS.bind("{0} failed to initialize due to missing data during restore.", getId()));
+			initializeContext(mappings);
 			if(settings != null) {
 				SubscriberRefreshSchedule schedule = SubscriberRefreshSchedule.init(settings.getChild(CTX_REFRESH_SCHEDULE_SETTINGS), createRefreshable());
 				description = settings.getString(CTX_DESCRIPTION);
@@ -466,22 +429,34 @@ public class ModelSynchronizeParticipant extends
 		}
 	}
 	
-	/*
-	 * Initialize the content of this participant based on the provided traversals.
-	 * This method is invoked when a persisted participant is restored. By default,
-	 * a <code>PartInitException</code> si thrown. Subclasses that have indicated that
-	 * they are persistable must override this methd to recreate the context of the
-	 * participant and can call {@link #initializeContext(ISynchronizationContext)}
-	 * to set it.
-	 * @param traversals the saved traversals
-	 * @throws PartInitException
-	 */
-	private void initializeContext(ResourceTraversal[] traversals) throws PartInitException {
-		CompoundResourceTraversal traversal = new CompoundResourceTraversal();
-		traversal.addTraversals(traversals);
+	private ResourceMapping[] loadMappings(IMemento settings) throws PartInitException {
+		List result = new ArrayList();
+		IMemento[] children = settings.getChildren(CTX_PARTICIPANT_MAPPINGS);
+		for (int i = 0; i < children.length; i++) {
+			IMemento memento = children[i];
+			String id = memento.getString(CTX_MODEL_PROVIDER_ID);
+			if (id != null) {
+				IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor(id);
+				try {
+					ModelProvider provider = desc.getModelProvider();
+					IResourceMappingPersistenceAdapter adapter = (IResourceMappingPersistenceAdapter)Utils.getAdapter(provider, IResourceMappingPersistenceAdapter.class);
+					if (adapter != null) {
+						ResourceMapping[] mappings = adapter.restore(memento.getChild(CTX_MODEL_PROVIDER_MAPPINGS));
+						for (int j = 0; j < mappings.length; j++) {
+							ResourceMapping mapping = mappings[j];
+							result.add(mapping);
+						}
+					}
+				} catch (CoreException e) {
+					TeamUIPlugin.log(e);
+				}
+			}
+		}
+		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
+	}
+
+	private void initializeContext(ResourceMapping[] mappings) throws PartInitException {
 		try {
-			// TODO: Need to restore mappings another way
-			ResourceMapping[] mappings = ResourceMappingScopeManager.getMappingsFromProviders(traversal.asTraversals(), ResourceMappingContext.LOCAL_CONTEXT, new NullProgressMonitor());
 			manager = createScopeManager(mappings);
 			IMergeContext context = restoreContext(manager);
 			initializeContext(context);

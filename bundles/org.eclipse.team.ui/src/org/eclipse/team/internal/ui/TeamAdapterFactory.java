@@ -14,7 +14,8 @@ import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.team.core.mapping.IResourceMappingMerger;
-import org.eclipse.team.internal.ui.mapping.DefaultResourceMappingMerger;
+import org.eclipse.team.core.mapping.IResourceMappingScopeParticipantFactory;
+import org.eclipse.team.internal.ui.mapping.*;
 import org.eclipse.team.internal.ui.synchronize.DiffNodeWorkbenchAdapter;
 import org.eclipse.team.ui.mapping.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -33,8 +34,19 @@ public class TeamAdapterFactory implements IAdapterFactory {
 		if(adaptableObject instanceof DiffNode && adapterType == IWorkbenchAdapter.class) {
 			return diffNodeAdapter;
 		}
-		if (adaptableObject instanceof ModelProvider && adapterType == IResourceMappingMerger.class) {
-			return new DefaultResourceMappingMerger((ModelProvider)adaptableObject);
+		if (adaptableObject instanceof ModelProvider) {
+			ModelProvider provider = (ModelProvider) adaptableObject;
+			if (provider.getDescriptor().getId().equals(ModelProvider.RESOURCE_MODEL_PROVIDER_ID)) {
+				if (adapterType == IResourceMappingMerger.class) {
+					return new DefaultResourceMappingMerger((ModelProvider)adaptableObject);
+				}
+				if (adapterType == IResourceMappingScopeParticipantFactory.class) {
+					return new ResourceScopeParticipantFactory((ModelProvider)adaptableObject);
+				}
+				if (adapterType == IResourceMappingPersistenceAdapter.class) {
+					return new ResourceModelPersistenceAdapter((ModelProvider)adaptableObject);
+				}
+			}
 		}
 		if (adaptableObject instanceof ModelProvider && adapterType == ICompareAdapter.class) {
 			return COMPARE_ADAPTER;
@@ -46,6 +58,9 @@ public class TeamAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[] {IWorkbenchAdapter.class, IResourceMappingMerger.class, ICompareAdapter.class};
+		return new Class[] { IWorkbenchAdapter.class,
+				IResourceMappingMerger.class, ICompareAdapter.class,
+				IResourceMappingPersistenceAdapter.class,
+				IResourceMappingScopeParticipantFactory.class };
 	}
 }
