@@ -74,11 +74,11 @@ public final class RegistryRadioState extends RadioState implements
 	 *            The string to parse; may be <code>null</code>.
 	 */
 	private final void readPersisted(final String persistedString) {
-		if ("true".equalsIgnoreCase(persistedString)) { //$NON-NLS-1$
-			setPersisted(true);
+		if ("false".equalsIgnoreCase(persistedString)) { //$NON-NLS-1$
+			setShouldPersist(false);
 		}
 
-		setPersisted(false);
+		setShouldPersist(true);
 	}
 
 	public final void setInitializationData(
@@ -86,7 +86,9 @@ public final class RegistryRadioState extends RadioState implements
 			final String propertyName, final Object data) {
 		if (data instanceof String) {
 			// This is the default value.
-			readDefault((String) data);
+			setRadioGroupIdentifier((String) data);
+			setValue(Boolean.FALSE);
+			setShouldPersist(true);
 
 		} else if (data instanceof Hashtable) {
 			final Hashtable parameters = (Hashtable) data;

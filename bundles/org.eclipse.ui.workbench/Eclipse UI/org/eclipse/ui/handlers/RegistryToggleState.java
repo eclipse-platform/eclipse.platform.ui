@@ -70,11 +70,11 @@ public final class RegistryToggleState extends ToggleState implements
 	 *            The string to parse; may be <code>null</code>.
 	 */
 	private final void readPersisted(final String persistedString) {
-		if ("true".equalsIgnoreCase(persistedString)) { //$NON-NLS-1$
-			setPersisted(true);
+		if ("false".equalsIgnoreCase(persistedString)) { //$NON-NLS-1$
+			setShouldPersist(false);
 		}
 
-		setPersisted(false);
+		setShouldPersist(true);
 	}
 
 	public final void setInitializationData(
@@ -83,6 +83,7 @@ public final class RegistryToggleState extends ToggleState implements
 		if (data instanceof String) {
 			// This is the default value.
 			readDefault((String) data);
+			setShouldPersist(true);
 
 		} else if (data instanceof Hashtable) {
 			final Hashtable parameters = (Hashtable) data;
