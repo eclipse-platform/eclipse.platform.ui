@@ -40,7 +40,7 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
 
 /**
- * Partial implementation of a refactoring history model wizard.
+ * Partial implementation of a refactoring history merge wizard.
  * <p>
  * This refactoring history wizard executes refactorings from a refactoring
  * history, but uses the time stamps of the refactoring history for the new
@@ -106,7 +106,7 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 	private final Set fRemovedFiles= new HashSet();
 
 	/**
-	 * Creates a new refactoring history model wizard.
+	 * Creates a new refactoring history merge wizard.
 	 * 
 	 * @param caption
 	 *            the caption of the wizard window
@@ -173,6 +173,7 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 	 */
 	protected RefactoringStatus historyPerformed(final IProgressMonitor monitor) {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(fListener);
+		RefactoringHistoryService.getInstance().setOverrideTimeStamp(-1);
 		fAddedFiles.clear();
 		fRemovedFiles.clear();
 		fChangedFiles.clear();
@@ -183,7 +184,6 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 	 * {@inheritDoc}
 	 */
 	protected RefactoringStatus refactoringPerformed(final Refactoring refactoring, final IProgressMonitor monitor) {
-		Assert.isNotNull(monitor);
 		RefactoringHistoryService.getInstance().setOverrideTimeStamp(-1);
 		return super.refactoringPerformed(refactoring, monitor);
 	}
