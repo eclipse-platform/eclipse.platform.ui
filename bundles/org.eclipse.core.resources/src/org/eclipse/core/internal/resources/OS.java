@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,10 +57,17 @@ public abstract class OS {
 		if (name.equals(".") || name.equals("..")) //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		if (INSTALLED_PLATFORM.equals(Platform.OS_WIN32)) {
-			// filenames ending in dot are not valid
-			if (name.charAt(name.length()-1) == '.')
+			//empty names are not valid
+			final int length = name.length();
+			if (length == 0)
 				return false;
-			
+			final char lastChar = name.charAt(length-1);
+			// filenames ending in dot are not valid
+			if (lastChar == '.')
+				return false;
+			// file names ending with whitespace are truncated (bug 118997)
+			if (Character.isWhitespace(lastChar))
+				return false;
 			int dot = name.indexOf('.');
 			//on windows, filename suffixes are not relevant to name validity
 			name = dot == -1 ? name : name.substring(0, dot);
