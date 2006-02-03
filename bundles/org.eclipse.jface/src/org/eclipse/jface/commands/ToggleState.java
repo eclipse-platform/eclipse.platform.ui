@@ -47,7 +47,7 @@ public class ToggleState extends PersistentState {
 
 	public final void load(final IPreferenceStore store,
 			final String preferenceKey) {
-		if (isPersisted()) {
+		if (shouldPersist()) {
 			final boolean value = store.getBoolean(preferenceKey);
 			setValue(value ? Boolean.TRUE : Boolean.FALSE);
 		}
@@ -55,7 +55,7 @@ public class ToggleState extends PersistentState {
 
 	public final void save(final IPreferenceStore store,
 			final String preferenceKey) {
-		if (isPersisted()) {
+		if (shouldPersist()) {
 			final Object value = getValue();
 			if (value instanceof Boolean) {
 				store.setValue(preferenceKey, ((Boolean) value).booleanValue());

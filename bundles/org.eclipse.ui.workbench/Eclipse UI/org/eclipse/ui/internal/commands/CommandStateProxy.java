@@ -125,7 +125,7 @@ public final class CommandStateProxy extends PersistentState {
 			state.dispose();
 			if (state instanceof PersistentState) {
 				final PersistentState persistableState = (PersistentState) state;
-				if (persistableState.isPersisted() && preferenceStore != null
+				if (persistableState.shouldPersist() && preferenceStore != null
 						&& preferenceKey != null) {
 					persistableState.save(preferenceStore, preferenceKey);
 				}
@@ -141,19 +141,11 @@ public final class CommandStateProxy extends PersistentState {
 		return null;
 	}
 
-	public final boolean isPersisted() {
-		if (loadState() && state instanceof PersistentState) {
-			return ((PersistentState) state).isPersisted();
-		}
-
-		return false;
-	}
-
 	public final void load(final IPreferenceStore store,
 			final String preferenceKey) {
 		if (loadState() && state instanceof PersistentState) {
 			final PersistentState persistableState = (PersistentState) state;
-			if (persistableState.isPersisted() && preferenceStore != null
+			if (persistableState.shouldPersist() && preferenceStore != null
 					&& preferenceKey != null) {
 				persistableState.load(preferenceStore, preferenceKey);
 			}
@@ -223,12 +215,6 @@ public final class CommandStateProxy extends PersistentState {
 		}
 	}
 
-	public final void setPersisted(final boolean persisted) {
-		if (loadState() && state instanceof PersistentState) {
-			((PersistentState) state).setPersisted(persisted);
-		}
-	}
-	
 	public final void setId(final String id) {
 		super.setId(id);
 		if (state != null) {
@@ -236,10 +222,24 @@ public final class CommandStateProxy extends PersistentState {
 		}
 	}
 
+	public final void setShouldPersist(final boolean persisted) {
+		if (loadState() && state instanceof PersistentState) {
+			((PersistentState) state).setShouldPersist(persisted);
+		}
+	}
+	
 	public final void setValue(final Object value) {
 		if (loadState()) {
 			state.setValue(value);
 		}
+	}
+
+	public final boolean shouldPersist() {
+		if (loadState() && state instanceof PersistentState) {
+			return ((PersistentState) state).shouldPersist();
+		}
+
+		return false;
 	}
 
 	public final String toString() {

@@ -39,17 +39,6 @@ public abstract class PersistentState extends State {
 	private boolean persisted;
 
 	/**
-	 * Whether this state should be persisted. Subclasses should check this
-	 * method before loading or saving.
-	 * 
-	 * @return <code>true</code> if this state should be persisted;
-	 *         <code>false</code> otherwise.
-	 */
-	public boolean isPersisted() {
-		return persisted;
-	}
-
-	/**
 	 * Loads this state from the preference store, given the location at which
 	 * to look. This method must be symmetric with a call to
 	 * {@link IPersistableState#save(IPreferenceStore, String)}.
@@ -84,7 +73,18 @@ public abstract class PersistentState extends State {
 	 * @param persisted
 	 *            Whether this state should be persisted.
 	 */
-	public void setPersisted(final boolean persisted) {
+	public void setShouldPersist(final boolean persisted) {
 		this.persisted = persisted;
+	}
+
+	/**
+	 * Whether this state should be persisted. Subclasses should check this
+	 * method before loading or saving.
+	 * 
+	 * @return <code>true</code> if this state should be persisted;
+	 *         <code>false</code> otherwise.
+	 */
+	public boolean shouldPersist() {
+		return persisted;
 	}
 }

@@ -57,8 +57,8 @@ public interface IObjectWithState {
 	/**
 	 * Gets the identifiers for all of the state associated with this object.
 	 * 
-	 * @return All of the state identifiers; may be <code>null</code> if there
-	 *         is no state associated with this object.
+	 * @return All of the state identifiers; may be empty, but never
+	 *         <code>null</code>.
 	 */
 	public String[] getStateIds();
 
