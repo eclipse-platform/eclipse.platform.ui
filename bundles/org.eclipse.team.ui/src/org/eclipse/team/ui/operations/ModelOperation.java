@@ -18,9 +18,7 @@ import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
-import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
+import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.dialogs.AdditionalMappingsDialog;
@@ -45,9 +43,8 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public abstract class ModelOperation extends TeamOperation {
 	
-	private final ResourceMapping[] selectedMappings;
-	private IResourceMappingScope scope;
 	private boolean previewRequested;
+	private IResourceMappingScopeManager manager;
 	
 	/**
 	 * Return the list of provides sorted by their extends relationship.
@@ -87,37 +84,38 @@ public abstract class ModelOperation extends TeamOperation {
 	}
 	
 	/**
-	 * Create a model operation for the given selected mappings.
-	 * The scope will be generated when the operation is executed.
-	 * @param part the workbench part from which the merge was launched or <code>null</code>
-	 * @param selectedMappings the selected mappings
-	 */
-	protected ModelOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings) {
-		super(part);
-		this.selectedMappings = selectedMappings;
-	}
-
-	/**
 	 * Create a model operation that operates on the given scope.
 	 * @param part the workbench part from which the merge was launched or <code>null</code>
-	 * @param scope the scope of this operation
+	 * @param manager the scope manager for this operation
 	 */
-	protected ModelOperation(IWorkbenchPart part, IResourceMappingScope scope) {
-		this(part, scope.getInputMappings());
-		this.scope = scope;
+	protected ModelOperation(IWorkbenchPart part, IResourceMappingScopeManager manager) {
+		super(part);
+		this.manager = manager;
 	}
 	
 	/**
 	 * Run the operation. This method first ensures that the scope is built
-	 * by calling {@link #prepareScope(IProgressMonitor)} and then invokes the 
+	 * by calling {@link #initializeScope(IProgressMonitor)} and then invokes the 
 	 * {@link #execute(IProgressMonitor)} method.
 	 * @param monitor a progress monitor
 	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void run(IProgressMonitor monitor) throws InvocationTargetException,
+	public final void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
-		prepareScope(monitor);
-		execute(monitor);
+		try {
+			beginOperation(monitor);
+			execute(monitor);
+		} finally {
+			endOperation(monitor);
+		}
+	}
+	
+	protected void beginOperation(IProgressMonitor monitor) throws InvocationTargetException {
+		initializeScope(monitor);
+	}
+
+	protected void endOperation(IProgressMonitor monitor) {
+		// Do nothing by deafult
 	}
 
 	/**
@@ -139,35 +137,34 @@ public abstract class ModelOperation extends TeamOperation {
 	 * the {@link #getScopeManager()} to return a custom scope manager.
 	 * @param monitor a progress monitor
 	 */
-	protected final void prepareScope(IProgressMonitor monitor) throws InvocationTargetException {
-		if (scope == null) {
-			try {
-				ResourceMappingScopeManager manager = getScopeManager();
-				scope = manager.prepareScope(selectedMappings, isUseLocalContext(), monitor);
+	protected final void initializeScope(IProgressMonitor monitor) throws InvocationTargetException {
+		try {
+			if (!manager.isInitialized()) {
+				manager.initialize(monitor);
 				promptIfInputChange(monitor);
-			} catch (CoreException e) {
-				throw new InvocationTargetException(e);
 			}
+		} catch (CoreException e) {
+			throw new InvocationTargetException(e);
 		}
 	}
 
 	/**
 	 * Prompt the user by calling {@link #promptForInputChange(String, IProgressMonitor)}
 	 * if the scope of the operation was expanded (as described in 
-	 * {@link #prepareScope(IProgressMonitor)}).
+	 * {@link #initializeScope(IProgressMonitor)}).
 	 * @param monitor a progress monitor
 	 */
 	protected void promptIfInputChange(IProgressMonitor monitor) {
 		IResourceMappingScope inputScope = getScope().asInputScope();
-		if (scope.hasAdditionalMappings()) {
+		if (getScope().hasAdditionalMappings()) {
 			boolean prompt = false;
 			// There are additional mappings so we may need to prompt
 			ModelProvider[] inputModelProviders = inputScope.getModelProviders();
-			if (hasAdditionalMappingsFromIndependantModel(inputModelProviders, scope.getModelProviders())) {
+			if (hasAdditionalMappingsFromIndependantModel(inputModelProviders, getScope().getModelProviders())) {
 				// Prompt if the is a new model provider in the scope that is independant
 				// of any of the input mappings
 				prompt = true;
-			} else if (scope.hasAdditonalResources()) {
+			} else if (getScope().hasAdditonalResources()) {
 				// We definitely need to prompt to indicate that additional resources
 				prompt = true;
 			} else if (inputModelProviders.length == 1) {
@@ -175,7 +172,7 @@ public abstract class ModelOperation extends TeamOperation {
 				// We need to prompt if the additional mappings are from the same model as
 				// the input or if they are from a model that has no relationship to the input model
 				String modelProviderId = inputModelProviders[0].getDescriptor().getId();
-				ResourceMapping[] mappings = scope.getMappings();
+				ResourceMapping[] mappings = getScope().getMappings();
 				for (int i = 0; i < mappings.length; i++) {
 					ResourceMapping mapping = mappings[i];
 					if (inputScope.getTraversals(mapping) == null) {
@@ -197,7 +194,7 @@ public abstract class ModelOperation extends TeamOperation {
 					ModelProvider provider = inputModelProviders[i];
 					String id = provider.getDescriptor().getId();
 					ResourceMapping[] inputMappings = inputScope.getMappings(id);
-					ResourceMapping[] scopeMappings = scope.getMappings(id);
+					ResourceMapping[] scopeMappings = getScope().getMappings(id);
 					if (inputMappings.length != scopeMappings.length) {
 						// There are more mappings for this provider.
 						// We need to see if any of the new ones overlap the old ones.
@@ -209,7 +206,7 @@ public abstract class ModelOperation extends TeamOperation {
 								// We need to prompt if the traversal for this mapping overlaps with
 								// the input mappings for the model provider
 								// TODO could check for project overlap first
-								ResourceTraversal[] scopeTraversals = scope.getTraversals(mapping);
+								ResourceTraversal[] scopeTraversals = getScope().getTraversals(mapping);
 								ResourceTraversal[] inputModelTraversals = getTraversals(inputScope, inputMappings);
 								if (overlaps(scopeTraversals, inputModelTraversals)) {
 									prompt = true;
@@ -225,17 +222,6 @@ public abstract class ModelOperation extends TeamOperation {
 				previewRequested = promptForInputChange(previewMessage, monitor);
 			}
 		}
-	}
-
-	/**
-	 * Indicate whether the local context should be used when preparing the scope.
-	 * Subclasses may wish to do this when initial creation of the
-	 * scope cannot be log running but they will perform future refreshes on the
-	 * scope that can be.
-	 * @return whether the local context should be used when preparing the scope
-	 */
-	protected boolean isUseLocalContext() {
-		return false;
 	}
 
 	/**
@@ -364,23 +350,6 @@ public abstract class ModelOperation extends TeamOperation {
 	}
 
 	/**
-	 * Return the scope manager used to build the scope of this
-	 * operation from the input mappings. By default, this method passes
-	 * the resource mapping context and the result of {@link #consultModelsWhenGeneratingScope()}
-	 * to the scope builder constructor.
-	 * <p>
-	 * This method can be overridden by subclasses.
-	 * 
-	 * @return the scope builder used to build the scope of this
-	 * operation from the input mappings.
-	 */
-	protected ResourceMappingScopeManager getScopeManager() {
-		if (scope != null)
-			return ((ResourceMappingScope)scope).getManager();
-		return new ResourceMappingScopeManager(getResourceMappingContext(), consultModelsWhenGeneratingScope());
-	}
-
-	/**
 	 * Prompt the user to inform them that additional resource mappings
 	 * have been included in the operations.
 	 * @param requestPreviewMessage message to be displayed for the option to force a preview
@@ -439,7 +408,7 @@ public abstract class ModelOperation extends TeamOperation {
 	 * @return the scope of this operation
 	 */
 	public IResourceMappingScope getScope() {
-		return scope;
+		return manager.getScope();
 	}
 
 	/**
@@ -451,32 +420,13 @@ public abstract class ModelOperation extends TeamOperation {
 	public boolean isPreviewRequested() {
 		return previewRequested;
 	}
-	
+
 	/**
-	 * Return whether the model providers should be consulted
-	 * when generating the scope. When <code>true</code>, the scope
-	 * generation process will consult any model providers to determine
-	 * if additional mappings, and hence additional resources, need to
-	 * be included in the operation. If <code>false</code>, the models
-	 * are not consulted and only the input mappings are included in the 
-	 * scope. a value of <code>true</code> is returned by default.
-	 * @return whether the model providers should be consulted
-	 * when generating the scope
+	 * Return the scope manager for this operation.
+	 * @return the scope manager for this operation.
 	 */
-	protected boolean consultModelsWhenGeneratingScope() {
-		return true;
-	}
-	
-	/**
-	 * Return the resource mapping context used during the 
-	 * scope generation and refresh process to determine
-	 * what resources are to be included in the resulting
-	 * synchronization context.
-	 * Subclasses may override.
-	 * @return the resource mapping context
-	 */
-	protected ResourceMappingContext getResourceMappingContext() {
-		return ResourceMappingContext.LOCAL_CONTEXT;
+	public IResourceMappingScopeManager getScopeManager() {
+		return manager;
 	}
 	
 }

@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
 import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -39,10 +39,12 @@ public abstract class SubscriberMergeContext extends MergeContext {
 
 	private Subscriber subscriber;
 	private SubscriberDiffTreeEventHandler handler;
+	private final IResourceMappingScopeManager manager;
 	
-	protected SubscriberMergeContext(Subscriber subscriber, IResourceMappingScope scope) {
-		super(scope, getType(subscriber), new ResourceDiffTree());
+	protected SubscriberMergeContext(Subscriber subscriber, IResourceMappingScopeManager manager) {
+		super(manager.getScope(), getType(subscriber), new ResourceDiffTree());
 		this.subscriber = subscriber;
+		this.manager = manager;
 	}
 
 	private static int getType(Subscriber subscriber) {
@@ -53,17 +55,12 @@ public abstract class SubscriberMergeContext extends MergeContext {
 	/**
 	 * Initialize the diff tree of this context. This method must
 	 * be called before the context is given to clients.
-	 * @param monitor a progress monitor
-	 * @param refresh indicate whether the subscriber should be refreshed
 	 * @throws CoreException
 	 */
-	protected void initialize(IProgressMonitor monitor, boolean refresh) throws CoreException {
-		handler = new SubscriberDiffTreeEventHandler(subscriber, getScope(), (ResourceDiffTree)getDiffTree());
+	protected void initialize() {
+		handler = new SubscriberDiffTreeEventHandler(subscriber, manager, (ResourceDiffTree)getDiffTree());
 		handler.setJobFamily(this);
 		handler.start();
-		if (refresh) {
-			refresh(getScope().getTraversals(), IResource.NONE, monitor);
-		}
 	}
 	
 	/* (non-Javadoc)
@@ -72,7 +69,6 @@ public abstract class SubscriberMergeContext extends MergeContext {
 	public void refresh(ResourceTraversal[] traversals, int flags,
 			IProgressMonitor monitor) throws CoreException {
 		subscriber.refresh(traversals, monitor);
-		handler.waitUntilIdle(monitor);
 	}
 	
 	/* (non-Javadoc)

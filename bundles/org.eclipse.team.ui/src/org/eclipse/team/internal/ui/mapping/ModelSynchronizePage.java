@@ -61,11 +61,7 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 	 * @see org.eclipse.team.internal.ui.synchronize.AbstractSynchronizePage#updateMode(int)
 	 */
 	protected void updateMode(int mode) {
-		if (isThreeWay()) {
-			CommonViewerAdvisor advisor = (CommonViewerAdvisor)getConfiguration().getProperty(SynchronizePageConfiguration.P_ADVISOR);
-			if (advisor != null)
-				advisor.setExtentionProperty(ISynchronizePageConfiguration.P_MODE, mode);
-		}
+		// Nothing to do
 	}
 
 	/**

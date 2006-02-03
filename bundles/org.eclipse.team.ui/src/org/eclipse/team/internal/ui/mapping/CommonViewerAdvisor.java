@@ -114,7 +114,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	 * @return a newly created common viewer
 	 */
 	private static CommonViewer createViewer(Composite parent, ISynchronizePageConfiguration configuration, IEmptyTreeListener listener) {
-		CommonViewer v = new NavigableCommonViewer(configuration.getViewerId(), parent, SWT.NONE, listener);
+		CommonViewer v = new NavigableCommonViewer(configuration.getViewerId(), parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, listener);
 		v.getNavigatorContentService().bindExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
 		v.getNavigatorContentService().activateExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
 		configuration.getSite().setSelectionProvider(v);
@@ -203,19 +203,6 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 
 	private ModelSynchronizeParticipant getParticipant() {
 		return (ModelSynchronizeParticipant)getConfiguration().getParticipant();
-	}
-
-	/**
-	 * Set the given property for all active extensions.
-	 * @param property the property
-	 * @param value the value
-	 */
-	public void setExtentionProperty(String property, int value) {
-		properties.put(property, new Integer(value));
-		for (Iterator iter = extensions.iterator(); iter.hasNext();) {
-			INavigatorContentExtension extension = (INavigatorContentExtension) iter.next();
-			extension.getStateModel().setIntProperty(property, value);
-		}
 	}
 	
 	/* (non-Javadoc)

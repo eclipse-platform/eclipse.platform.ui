@@ -35,7 +35,7 @@ public class TagLocalAction extends TagAction {
 					final boolean[] keepGoing = new boolean[] { true };
 					Display.getDefault().syncExec(new Runnable() {
 						public void run() {
-							OutgoingChangesDialog dialog = new OutgoingChangesDialog(getShell(), tagOperation.getScope(), 
+							OutgoingChangesDialog dialog = new OutgoingChangesDialog(getShell(), tagOperation.getScopeManager(), 
 									CVSUIMessages.TagLocalAction_2, 
 									CVSUIMessages.TagLocalAction_0, 
 									CVSUIMessages.TagLocalAction_1);

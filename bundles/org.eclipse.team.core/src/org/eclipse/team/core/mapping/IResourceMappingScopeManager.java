@@ -12,6 +12,8 @@ package org.eclipse.team.core.mapping;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.provider.IResourceMappingScopeParticipant;
 import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
 
@@ -49,6 +51,11 @@ public interface IResourceMappingScopeManager {
 	
 	/**
 	 * Return the projects that apply to this manager.
+	 * The projects returned will depend on the type of context used
+	 * to generate this scope. If the context is a local context,
+	 * all workspace projects are returned. If it is a remote context,
+	 * the projects are the same as those returned from
+	 * {@link RemoteResourceMappingContext#getProjects()}
 	 * @return the projects that apply to this manager
 	 */
 	IProject[] getProjects();
@@ -64,28 +71,44 @@ public interface IResourceMappingScopeManager {
 	 * uses to obtain traversals from resource mappings
 	 */
 	ResourceMappingContext getContext();
+
+	/**
+	 * Return whether the scope has been initialized.
+	 * @return whether the scope has been initialized.
+	 */
+	boolean isInitialized();
 	
 	/**
-	 * Add a listener to this scope. Listeners will be notified whenever the
-	 * list of projects that apply to this scope change. Events will also be
-	 * issued if the resource mapping context of this manager is a
-	 * {@link RemoteResourceMappingContext} and the remote state of a resource
-	 * that is a child of the projects.
+	 * Build the scope that is used to determine the complete set of resource
+	 * mappings, and hence resources, that an operation should be performed on.
 	 * <p>
-	 * Participants that wich toknow if the contents of the scope chaneg can add
-	 * a property change listener to the scope using
-	 * {@link ISynchronizationScope#addPropertyChangeListener(IPropertyChangeListener)}.
+	 * This method obtaines a lock on the workspace root to avoid workspace
+	 * changes while calculating the scope.
+	 * @param monitor a progress monitor
+	 * when building the scope
 	 * 
-	 * @param listener
-	 *            a change listener
+	 * @throws CoreException
 	 */
-	void addListener(IScopeContextChangeListener listener);
+	void initialize(IProgressMonitor monitor) throws CoreException;
 	
 	/**
-	 * Remov the listener from the manager. Removing a listener that
-	 * is not present has no effect.
-	 * @param listener the listener
+	 * Refresh the scope of this manager for the given mappings.
+	 * Changes in the scope will be reported as a property change
+	 * event fired from the scope. Clients should call this method
+	 * when a change in the workspace or a change issued from this
+	 * manager have resulted in a change in the resources that 
+	 * should be included in the scope.
+	 * @param mappings the mappings to be refreshed
+	 * @param monitor a progress monitor
+	 * @return a set of traversals that cover the given mappings
+	 * @throws CoreException
 	 */
-	void removeListener(IScopeContextChangeListener listener);
+	ResourceTraversal[] refresh(ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Method to be invoked when the scope of this
+	 * manager is no longer needed.
+	 */
+	void dispose();
 
 }

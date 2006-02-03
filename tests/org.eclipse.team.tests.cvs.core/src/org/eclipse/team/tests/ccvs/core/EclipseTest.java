@@ -23,7 +23,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
@@ -248,22 +247,18 @@ public class EclipseTest extends ResourceTest {
         if (options == null)
             options = Command.NO_LOCAL_OPTIONS;
         if (options == Command.NO_LOCAL_OPTIONS) {
-	        executeHeadless(new ModelUpdateOperation(null, mappings, SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber())) {
+	        executeHeadless(new ModelUpdateOperation(null, mappings, false) {
 	        	protected boolean isAttemptHeadlessMerge() {
 	        		return true;
 	        	}
-	        	protected void showPreview(IProgressMonitor monitor) {
+	        	protected void handlePreviewRequest() {
 	        		// Don't preview anything
-	        		getContext().dispose();
 	        	}
-	        	protected void promptForNoChanges() {
+	        	protected void handleNoChanges() {
 	        		// Do nothing
 	        	}
-	        	protected boolean consultModelsWhenGeneratingScope() {
-	        		return false;
-	        	}
-	        	protected void promptForMergeFailure(IStatus status) {
-	        		// Don't prompt
+	        	protected void handleValidationFailure(IStatus status) {
+	        		// Do nothing
 	        	}
 	        });
         } else {
@@ -282,21 +277,17 @@ public class EclipseTest extends ResourceTest {
 	}
 	
     protected void replace(ResourceMapping[] mappings) throws CVSException {
-        executeHeadless(new ModelReplaceOperation(null, mappings, SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber())) {
+        executeHeadless(new ModelReplaceOperation(null, mappings, false) {
         	protected boolean promptForOverwrite() {
         		return true;
         	}
-        	protected void showPreview(IProgressMonitor monitor) {
-        		// Don't show a preview. If the repalce failed, the sync tests will detect the failure
-        		getContext().dispose();
+        	protected void handlePreviewRequest() {
+        		// Don't prompt
         	}
-        	protected void promptForNoChanges() {
-        		// Do nothing
+        	protected void handleMergeFailure(IStatus status) {
+        		// Don't prompt
         	}
-        	protected boolean consultModelsWhenGeneratingScope() {
-        		return false;
-        	}
-        	protected void promptForMergeFailure(IStatus status) {
+        	protected void handleValidationFailure(IStatus status) {
         		// Don't prompt
         	}
         });

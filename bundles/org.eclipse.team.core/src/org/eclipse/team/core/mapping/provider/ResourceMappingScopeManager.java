@@ -14,9 +14,10 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.mapping.*;
 
@@ -28,20 +29,24 @@ import org.eclipse.team.internal.core.mapping.*;
  * Here's a summary of the scope generation algorithm:
  * <ol>
  * <li>Obtain selected mappings
- * <li>Project mappings onto resources using the appropriate
- * context(s) in order to obtain a set of ResourceTraverals
+ * <li>Project mappings onto resources using the appropriate context(s) in
+ * order to obtain a set of ResourceTraverals
  * <li>Determine what model providers are interested in the targeted resources
  * <li>From those model providers, obtain the set of affected resource mappings
  * <li>If the original set is the same as the new set, we are done.
- * <li>if the set differs from the original selection, rerun the mapping process
- * for any new mappings
- *     <ul>
- *     <li>Only need to query model providers for mappings for new resources
- *     <li>If new mappings are obtained, 
- *     ask model provider to compress the mappings?
- *     <li>keep repeating until no new mappings or resources are added
- *     </ul> 
- * </ol> 
+ * <li>if the set differs from the original selection, rerun the mapping
+ * process for any new mappings
+ * <ul>
+ * <li>Only need to query model providers for mappings for new resources
+ * <li>keep repeating until no new mappings or resources are added
+ * </ul>
+ * </ol>
+ * <p>
+ * This implementation does not involve participants in the scope management
+ * process. It is up to subclasses that wish to support a longer life cycle for
+ * scopes to provide for participation. For example, the
+ * {@link SubscriberScopeManager} class includes participates in the scope
+ * management process.
  * <p>
  * This class is can be subclasses by clients.
  * 
@@ -53,6 +58,7 @@ import org.eclipse.team.internal.core.mapping.*;
  * </p>
  * 
  * @see org.eclipse.core.resources.mapping.ResourceMapping
+ * @see SubscriberScopeManager
  * 
  * @since 3.2
  */
@@ -62,6 +68,7 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 	private final ResourceMappingContext context;
 	private final boolean consultModels;
 	private IResourceMappingScope scope;
+	private boolean initialized;
 
 	/**
 	 * Convenience method for obtaining the set of resource
@@ -104,48 +111,73 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 	 * If <code>consultModels</code> is <code>true</code> then
 	 * the moel providers will be queried in order to determine if
 	 * additional mappings should be included in the scope
+	 * @param inputMappings the input mappings
 	 * @param resourceMappingContext a resource mapping context
 	 * @param consultModels whether modle providers should be consulted
 	 */
-	public ResourceMappingScopeManager(ResourceMappingContext resourceMappingContext, boolean consultModels) {
+	public ResourceMappingScopeManager(ResourceMapping[] inputMappings, ResourceMappingContext resourceMappingContext, boolean consultModels) {
 		this.context = resourceMappingContext;
 		this.consultModels = consultModels;
+		scope = createScope(inputMappings);
 	}
 
-	/**
-	 * Build the scope that is used to determine the complete set of resource
-	 * mappings, and hence resources, that an operation should be performed on.
-	 * If <code>useLocalContext</code> is <code>true</code> then the 
-	 * {@link ResourceMappingContext#LOCAL_CONTEXT} is used to prepare the scope instead
-	 * of the context associatd with the manager. Clients may wish to do this
-	 * when long running operations should not occur.
-	 * 
-	 * @param selectedMappings the selected set of resource mappings
-	 * @param useLocalContext indicates that the localcontext should be used
-	 * when building the scope
-	 * @param monitor a progress monitor
-	 * @return a scope that defines the complete set of resources to be operated
-	 *         on
-	 * @throws CoreException
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingScopeManager#isInitialized()
 	 */
-	public IResourceMappingScope prepareScope(
-			ResourceMapping[] selectedMappings,
-			boolean useLocalContext,
+	public boolean isInitialized() {
+		return initialized;
+	}
+	
+	/**
+	 * Return the scheduling rule that is used when initializing
+	 * and refreshing the scope. By default, it is the 
+	 * workspace root.
+	 * @return the scheduling rule that is used when initializing
+	 * and refreshing the scope
+	 */
+	public ISchedulingRule getSchedulingRule() {
+		return ResourcesPlugin.getWorkspace().getRoot();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingScopeManager#initialize(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void initialize(
 			IProgressMonitor monitor) throws CoreException {
+		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				internalPrepareContext(monitor);
+			}
+		}, getSchedulingRule(), IResource.NONE, monitor);
+	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingScopeManager#refresh(org.eclipse.core.resources.mapping.ResourceMapping[], org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public ResourceTraversal[] refresh(final ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
+		// We need to lock the workspace when building the scope
+		final ResourceTraversal[][] traversals = new ResourceTraversal[][] { new ResourceTraversal[0] };
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		workspace.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				traversals[0] = internalRefreshScope(mappings, monitor);
+			}
+		}, getSchedulingRule(), IResource.NONE, monitor);
+		return traversals[0];
+	}
+	
+	private void internalPrepareContext(IProgressMonitor monitor) throws CoreException {
+		if (initialized)
+			return;
 		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
-
-		// Create the scope
-		scope = createScope(selectedMappings);
-
 		// Accumulate the initial set of mappings we need traversals for
-		ResourceMapping[] targetMappings = selectedMappings;
+		ResourceMapping[] targetMappings = scope.getInputMappings();
 		ResourceTraversal[] newTraversals;
 		boolean firstTime = true;
 		boolean hasAdditionalResources = false;
 		int count = 0;
 		do {
-			newTraversals = addMappingsToScope(targetMappings, useLocalContext,
+			newTraversals = addMappingsToScope(targetMappings,
 					Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 			if (newTraversals.length > 0 && consultModels) {
 				ResourceTraversal[] adjusted = adjustInputTraversals(newTraversals);
@@ -161,26 +193,8 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 		} while (consultModels & newTraversals.length != 0 && count++ < MAX_ITERATION);
 		setHasAdditionalMappings(scope, consultModels && internalHasAdditionalMappings());
 		setHasAdditionalResources(consultModels && hasAdditionalResources);
-		return scope;
-	}
-
-	/**
-	 * Refresh the scope of this manager for the given mappings.
-	 * @param mappings the mappings to be refreshed
-	 * @param monitor a progress monitor
-	 * @return a set of traversals that cover the given mappings
-	 * @throws CoreException 
-	 */
-	public ResourceTraversal[] refreshScope(final ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
-		// We need to lock the workspace when building the scope
-		final ResourceTraversal[][] traversals = new ResourceTraversal[][] { new ResourceTraversal[0] };
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		workspace.run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				traversals[0] = internalRefreshScope(mappings, monitor);
-			}
-		}, workspace.getRoot(), IResource.NONE, monitor);
-		return traversals[0];
+		monitor.done();
+		initialized = true;
 	}
 
 	private ResourceTraversal[] internalRefreshScope(ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
@@ -254,7 +268,7 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 			ResourceTraversal[] adjusted = adjustInputTraversals(newTraversals);
 			targetMappings = getMappingsFromProviders(adjusted,
 					context, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
-			newTraversals = addMappingsToScope(targetMappings, false,
+			newTraversals = addMappingsToScope(targetMappings,
 					Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 		} while (newTraversals.length != 0 && count++ < MAX_ITERATION);
 		if (!scope.hasAdditionalMappings()) {
@@ -315,7 +329,7 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 	 */
 	protected final IResourceMappingScope createScope(
 			ResourceMapping[] inputMappings) {
-		return new ResourceMappingScope(this, inputMappings);
+		return new ResourceMappingScope(inputMappings);
 	}
 
 	/**
@@ -338,11 +352,9 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 
 	private ResourceTraversal[] addMappingsToScope(
 			ResourceMapping[] targetMappings,
-			boolean useLocalContext, IProgressMonitor monitor) throws CoreException {
+			IProgressMonitor monitor) throws CoreException {
 		CompoundResourceTraversal result = new CompoundResourceTraversal();
 		ResourceMappingContext context = this.context;
-		if (useLocalContext)
-			context = ResourceMappingContext.LOCAL_CONTEXT;
 		for (int i = 0; i < targetMappings.length; i++) {
 			ResourceMapping mapping = targetMappings[i];
 			if (scope.getTraversals(mapping) == null) {
@@ -389,21 +401,8 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 		return true;
 	}
 
-	/**
-	 * Return whether the model providers should be consulted in
-	 * order to see if the scope needs to be expanded.
-	 * @return whether the model providers should be consulted
-	 */
-	public boolean isConsultModels() {
-		return consultModels;
-	}
-
-	/**
-	 * Return the resource mapping context used during the scope 
-	 * generation process in order to determine what resources
-	 * are to be included in the scope.
-	 * @return the resource mapping context used during the scope 
-	 * generation process
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingScopeManager#getContext()
 	 */
 	public ResourceMappingContext getContext() {
 		return context;
@@ -415,16 +414,6 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 	public IResourceMappingScope getScope() {
 		return scope;
 	}
-
-	public void addListener(IScopeContextChangeListener listener) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void removeListener(IScopeContextChangeListener listener) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.IResourceMappingScopeManager#getProjects()
@@ -435,5 +424,12 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 			return rrmc.getProjects();
 		}
 		return ResourcesPlugin.getWorkspace().getRoot().getProjects();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingScopeManager#dispose()
+	 */
+	public void dispose() {
+		// Do nothing, by default
 	}
 }

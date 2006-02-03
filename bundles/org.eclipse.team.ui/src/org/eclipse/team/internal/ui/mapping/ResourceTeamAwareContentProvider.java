@@ -101,13 +101,12 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#getChildrenInContext(org.eclipse.team.core.mapping.ISynchronizationContext, java.lang.Object, java.lang.Object[])
 	 */
 	protected Object[] getChildrenInContext(ISynchronizationContext context, Object parent, Object[] children) {
-		Object[] objects = super.getChildrenInContext(context, parent, children);
 		if (parent instanceof IResource) {
 			IResource resource = (IResource) parent;
 			
 			Set result = new HashSet();
-			for (int i = 0; i < objects.length; i++) {
-				Object object = objects[i];
+			for (int i = 0; i < children.length; i++) {
+				Object object = children[i];
 				result.add(object);
 			}
 			IPath[] childPaths = context.getDiffTree().getChildren(resource.getFullPath());
@@ -129,9 +128,9 @@ public class ResourceTeamAwareContentProvider extends SynchronizationContentProv
 					result.add(child);
 				}
 			}
-			return result.toArray(new Object[result.size()]);
+			return super.getChildrenInContext(context, parent, result.toArray(new Object[result.size()]));
 		}
-		return children;
+		return super.getChildrenInContext(context, parent, children);
 	}
 
 	protected ResourceTraversal[] getTraversals(ISynchronizationContext context, Object object) {

@@ -17,9 +17,7 @@ import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceMappingContext;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -29,6 +27,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IFileContentManager;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
+import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
 import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -37,7 +37,6 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
-import org.eclipse.team.ui.operations.ModelOperation;
 import org.eclipse.team.ui.synchronize.ResourceScope;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -333,26 +332,18 @@ public class CommitWizard extends ResizableWizard {
 	}
     
     public static IResourceMappingScope buildScope(IWorkbenchPart part, ResourceMapping[] mappings, IProgressMonitor monitor) throws InterruptedException, CVSException {
-		ModelOperation op = new ModelOperation(part, mappings) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.team.ui.operations.ResourceMappingOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				// No need to do anything. We just wanted to build the scope
-			}
-			
-			protected ResourceMappingContext getResourceMappingContext() {
-				// TODO: Could use a context built using the source sync-context
-				return SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
-			}
-		};
-		// Run the operation to build the scope
+		IResourceMappingScopeManager manager = new ResourceMappingScopeManager(mappings, 
+				SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber()), 
+				true);
 		try {
-			op.run(monitor);
-		} catch (InvocationTargetException e) {
+			manager.initialize(monitor);
+			return manager.getScope();
+		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
+		} finally {
+			if (manager != null)
+				manager.dispose();
 		}
-		return op.getScope();
     }
 
 	private IWorkbenchPart getPart() {

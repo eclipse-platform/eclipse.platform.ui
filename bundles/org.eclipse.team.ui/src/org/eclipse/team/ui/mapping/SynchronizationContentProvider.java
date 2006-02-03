@@ -126,7 +126,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 			return new Object[0];
 		}
 		if (parent == getModelProvider()) {
-			if (!isInitialized(context)) {
+			if (context != null && !isInitialized(context)) {
 				return new Object[0];
 			}
 			parent = getModelRoot();
@@ -266,6 +266,9 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		stateModel.removePropertyChangeListener(this);
 		if (context != null)
 			context.getDiffTree().removeDiffChangeListener(this);
+		ISynchronizePageConfiguration configuration = getConfiguration();
+		if (configuration != null)
+			configuration.removePropertyChangeListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -282,6 +285,9 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	public void init(IExtensionStateModel aStateModel, IMemento aMemento) {
 		stateModel = aStateModel;
 		stateModel.addPropertyChangeListener(this);
+		ISynchronizePageConfiguration configuration = getConfiguration();
+		if (configuration != null)
+			configuration.addPropertyChangeListener(this);
 		scope = (IResourceMappingScope)aStateModel.getProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE);
 		context = (ISynchronizationContext)aStateModel.getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT);
 		ITreeContentProvider provider = getDelegateContentProvider();
@@ -317,7 +323,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 *         included in the contents
 	 */
 	protected boolean includeDirection(int direction) {
-		int mode = stateModel.getIntProperty(ISynchronizePageConfiguration.P_MODE);
+		int mode = getConfiguration().getMode();
 		switch (mode) {
 		case ISynchronizePageConfiguration.BOTH_MODE:
 			return true;

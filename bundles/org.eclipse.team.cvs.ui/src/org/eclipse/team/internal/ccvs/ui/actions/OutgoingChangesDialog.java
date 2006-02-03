@@ -12,17 +12,15 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceSubscriberContext;
@@ -31,20 +29,19 @@ import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ParticipantPagePane;
-import org.eclipse.ui.PlatformUI;
 
 public class OutgoingChangesDialog extends DetailsDialog {
 
 	private final String message;
 	private ParticipantPagePane pane;
-	private final IResourceMappingScope scope;
 	private ModelSynchronizeParticipant participant;
 	private final String title;
 	private final String detailsMessage;
+	private final IResourceMappingScopeManager manager;
 
-	public OutgoingChangesDialog(Shell parentShell, IResourceMappingScope scope, String title, String message, String detailsMessage) {
+	public OutgoingChangesDialog(Shell parentShell, IResourceMappingScopeManager manager, String title, String message, String detailsMessage) {
 		super(parentShell, title);
-		this.scope = scope;
+		this.manager = manager;
 		this.title = title;
 		this.message = message;
 		this.detailsMessage = detailsMessage;
@@ -109,23 +106,15 @@ public class OutgoingChangesDialog extends DetailsDialog {
 	}
 
 	private ModelSynchronizeParticipant createParticipant() throws InvocationTargetException, InterruptedException {
-		ISynchronizationContext context = createSynchronizationContext(scope);
-		ModelSynchronizeParticipant participant = ModelSynchronizeParticipant.createParticipant(context, title);
+		ISynchronizationContext context = createSynchronizationContext(manager);
+		ModelSynchronizeParticipant participant = ModelSynchronizeParticipant.createParticipant(manager, context, title);
 		participant.setMergingEnabled(false);
 		return participant;
 	}
 
-	private ISynchronizationContext createSynchronizationContext(final IResourceMappingScope scope) throws InvocationTargetException, InterruptedException {
+	private ISynchronizationContext createSynchronizationContext(final IResourceMappingScopeManager manager) throws InvocationTargetException, InterruptedException {
 		final ISynchronizationContext[] context = new ISynchronizationContext[] { null };
-		PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					context[0] = WorkspaceSubscriberContext.createContext(scope, false, ISynchronizationContext.THREE_WAY, monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		});
+		context[0] = WorkspaceSubscriberContext.createContext(manager, ISynchronizationContext.THREE_WAY);
 		return context[0];
 	}
 	

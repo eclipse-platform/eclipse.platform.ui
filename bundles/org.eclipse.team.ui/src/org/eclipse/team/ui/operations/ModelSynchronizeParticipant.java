@@ -83,6 +83,7 @@ public class ModelSynchronizeParticipant extends
 	private final static String CTX_RESOURCE_PATH = "resource_path"; //$NON-NLS-1$
 	
 	private ISynchronizationContext context;
+	private IResourceMappingScopeManager manager;
 	private boolean mergingEnabled = true;
 	protected SubscriberRefreshSchedule refreshSchedule;
 	private String description;
@@ -100,11 +101,12 @@ public class ModelSynchronizeParticipant extends
 
 	/**
 	 * Create a participant for the given context
+	 * @param manager the scope manager
 	 * @param context the synchronization context
 	 * @param name the name of the participant
 	 */
-	public static ModelSynchronizeParticipant createParticipant(ISynchronizationContext context, String name) {
-		return new ModelSynchronizeParticipant(context, name);
+	public static ModelSynchronizeParticipant createParticipant(IResourceMappingScopeManager manager, ISynchronizationContext context, String name) {
+		return new ModelSynchronizeParticipant(manager, context, name);
 	}
 	
 	/*
@@ -112,7 +114,8 @@ public class ModelSynchronizeParticipant extends
 	 * @param context the synchronization context
 	 * @param name the name of the participant
 	 */
-	private ModelSynchronizeParticipant(ISynchronizationContext context, String name) {
+	private ModelSynchronizeParticipant(IResourceMappingScopeManager manager, ISynchronizationContext context, String name) {
+		this.manager = manager;
 		initializeContext(context);
 		try {
 			setInitializationData(TeamUI.getSynchronizeManager().getParticipantDescriptor("org.eclipse.team.ui.synchronization_context_synchronize_participant")); //$NON-NLS-1$
@@ -128,7 +131,8 @@ public class ModelSynchronizeParticipant extends
 	 * Create a participant for the given context
 	 * @param context the synchronization context
 	 */
-	public ModelSynchronizeParticipant(ISynchronizationContext context) {
+	public ModelSynchronizeParticipant(IResourceMappingScopeManager manager, ISynchronizationContext context) {
+		this.manager = manager;
 		initializeContext(context);
 		refreshSchedule = new SubscriberRefreshSchedule(createRefreshable());
 	}
@@ -221,6 +225,7 @@ public class ModelSynchronizeParticipant extends
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#dispose()
 	 */
 	public void dispose() {
+		manager.dispose();
 		context.dispose();
 		Platform.getJobManager().cancel(this);
 		refreshSchedule.dispose();
@@ -475,11 +480,10 @@ public class ModelSynchronizeParticipant extends
 		CompoundResourceTraversal traversal = new CompoundResourceTraversal();
 		traversal.addTraversals(traversals);
 		try {
-			// When restoring, we can't do anything long running so we'll need to use the local content for everything
-			NullProgressMonitor monitor = new NullProgressMonitor();
-			ResourceMapping[] mappings = ResourceMappingScopeManager.getMappingsFromProviders(traversal.asTraversals(), ResourceMappingContext.LOCAL_CONTEXT, monitor);
-			IResourceMappingScope scope = createScopeManager().prepareScope(mappings, true, monitor);
-			IMergeContext context = restoreContext(scope, monitor);
+			// TODO: Need to restore mappings another way
+			ResourceMapping[] mappings = ResourceMappingScopeManager.getMappingsFromProviders(traversal.asTraversals(), ResourceMappingContext.LOCAL_CONTEXT, new NullProgressMonitor());
+			manager = createScopeManager(mappings);
+			IMergeContext context = restoreContext(manager);
 			initializeContext(context);
 		} catch (CoreException e) {
 			TeamUIPlugin.log(e);
@@ -491,12 +495,11 @@ public class ModelSynchronizeParticipant extends
 	 * Recreate the context for this participant. This method is invoked when
 	 * the participant is restored after a restart. Although it is provided
 	 * with a progress monitor, long running operations should be avoided.
-	 * @param scope the restored scope
-	 * @param monitor a progress monitor
+	 * @param manager the restored scope
 	 * @return the context for this participant
 	 * @throws CoreException
 	 */
-	protected IMergeContext restoreContext(IResourceMappingScope scope, IProgressMonitor monitor) throws CoreException {
+	protected IMergeContext restoreContext(IResourceMappingScopeManager manager) throws CoreException {
 		throw new PartInitException(NLS.bind("Participant {0} is not capable of restoring its context", getId()));
 	}
 
@@ -506,11 +509,12 @@ public class ModelSynchronizeParticipant extends
 	 * returns a scope manager that uses the local content.
 	 * This method can be overridden by subclasses.
 	 * 
+	 * @param mappings the restored mappings
 	 * @return a scope manager that can be used to build the scope of this
 	 * participant when it is restored after a restart
 	 */
-	protected ResourceMappingScopeManager createScopeManager() {
-		return new ResourceMappingScopeManager(ResourceMappingContext.LOCAL_CONTEXT, true);
+	protected IResourceMappingScopeManager createScopeManager(ResourceMapping[] mappings) {
+		return new ResourceMappingScopeManager(mappings, ResourceMappingContext.LOCAL_CONTEXT, true);
 	}
 	
 	/* private */ void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
@@ -572,6 +576,10 @@ public class ModelSynchronizeParticipant extends
 		}
 		setCurrentModel(targetBuffer);
 		return true;
+	}
+
+	public IResourceMappingScopeManager getScopeManager() {
+		return manager;
 	}
 	
 }

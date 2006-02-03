@@ -11,21 +11,23 @@
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceMappingContext;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.subscribers.SubscriberScopeManager;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class ModelUpdateOperation extends AbstractModelMergeOperation {
 	
-	public ModelUpdateOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext context) {
-		super(part, selectedMappings, context);
+	public ModelUpdateOperation(IWorkbenchPart targetPart, ResourceMapping[] selectedResourceMappings, boolean consultModels) {
+		super(targetPart, new SubscriberScopeManager(selectedResourceMappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), consultModels), true);
 	}
 	
+	public ModelUpdateOperation(IWorkbenchPart targetPart, ResourceMapping[] resourceMappings) {
+		this(targetPart, resourceMappings, true);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.TeamOperation#getJobName()
 	 */
@@ -43,16 +45,6 @@ public class ModelUpdateOperation extends AbstractModelMergeOperation {
 	protected boolean isAttemptHeadlessMerge() {
 		return CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_UPDATE_HANDLING).equals(ICVSUIConstants.PREF_UPDATE_HANDLING_PERFORM);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.operations.ResourceMappingMergeOperation#buildMergeContext(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected IMergeContext buildMergeContext(IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(null, 100);
-		IMergeContext context = WorkspaceSubscriberContext.createContext(getScope(), true /* refresh */, getMergeType(), Policy.subMonitorFor(monitor, 50));
-		monitor.done();
-		return context;
-	}
 
 	/**
 	 * Return the merge type associated with this operation.
@@ -66,6 +58,13 @@ public class ModelUpdateOperation extends AbstractModelMergeOperation {
 	 * @see org.eclipse.team.ui.operations.ResourceMappingMergeOperation#createParticipant()
 	 */
 	protected ModelSynchronizeParticipant createParticipant() {
-		return new WorkspaceModelParticipant(getContext(), getJobName());
+		return new WorkspaceModelParticipant(getScopeManager(), createMergeContext(), getJobName());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.operations.ModelParticipantMergeOperation#createMergeContext()
+	 */
+	protected ISynchronizationContext createMergeContext() {
+		return WorkspaceSubscriberContext.createContext(getScopeManager(), getMergeType());
 	}
 }

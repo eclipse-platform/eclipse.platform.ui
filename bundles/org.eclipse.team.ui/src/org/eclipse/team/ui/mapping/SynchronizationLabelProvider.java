@@ -150,7 +150,8 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 		String text = super.getText(element);
 		if (contentProvider instanceof SynchronizationContentProvider) {
 			SynchronizationContentProvider scp = (SynchronizationContentProvider) contentProvider;
-			if (!scp.isInitialized(getContext())) {
+			ISynchronizationContext context = getContext();
+			if (context != null && !scp.isInitialized(context)) {
 				return NLS.bind("{0} Initializing", text);
 			}
 		}

@@ -13,18 +13,37 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.mappings.ModelReplaceOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
 
 public class ReplaceWithRemoteAction extends WorkspaceTraversalAction {
     
 	public void execute(IAction action)  throws InvocationTargetException, InterruptedException {
-        IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-	    new ModelReplaceOperation(getTargetPart(), getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext()).run();
+		
+		final ReplaceOperation replaceOperation = new ReplaceOperation(getTargetPart(), getCVSResourceMappings(), null);
+		if (hasOutgoingChanges(replaceOperation)) {
+			final boolean[] keepGoing = new boolean[] { true };
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					OutgoingChangesDialog dialog = new OutgoingChangesDialog(getShell(), replaceOperation.getScopeManager(), 
+							CVSUIMessages.ReplaceWithTagAction_2, 
+							CVSUIMessages.ReplaceWithTagAction_0, 
+							CVSUIMessages.ReplaceWithTagAction_1);
+					int result = dialog.open();
+					keepGoing[0] = result == Window.OK;
+				}
+			});
+			if (!keepGoing[0])
+				return;
+		}
+		replaceOperation.run();
+		// TODO: Involve models in the replace
+	    //new ModelReplaceOperation(getTargetPart(), getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext()).run();
 	}
 	
 	/**

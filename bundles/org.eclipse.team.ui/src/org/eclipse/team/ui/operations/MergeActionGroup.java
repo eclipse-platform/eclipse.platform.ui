@@ -191,7 +191,8 @@ public class MergeActionGroup extends SynchronizePageActionGroup {
 	}
 	
 	public void dispose() {
-		modelPicker.dispose();
+		if (modelPicker != null)
+			modelPicker.dispose();
 		super.dispose();
 	}
 }

@@ -14,14 +14,11 @@ import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceMappingContext;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
 import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
 import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
 import org.eclipse.team.tests.core.TeamTest;
@@ -33,12 +30,27 @@ public class ScopeBuildingTests extends TeamTest {
 	protected static final String TEST_MODEL_PROVIDER_ID = "id1";
 
 	private class TestResourceMappingOperation extends ModelOperation {
-		
-		private ResourceMapping[] additionalMappings;
 
-		protected TestResourceMappingOperation(ResourceMapping[] selectedMappings, ResourceMapping[] additionalMappings) {
-			super(null, selectedMappings);
-			this.additionalMappings = additionalMappings;
+		protected TestResourceMappingOperation(ResourceMapping[] selectedMappings, final ResourceMapping[] additionalMappings) {
+			super(null, new ResourceMappingScopeManager(selectedMappings, ResourceMappingContext.LOCAL_CONTEXT, false) {	
+				public void initialize(
+						IProgressMonitor monitor) throws CoreException {
+					super.initialize(monitor);
+					// Add the additional test mappings to the scope
+					for (int i = 0; i < additionalMappings.length; i++) {
+						ResourceMapping mapping = additionalMappings[i];
+						ResourceTraversal[] traversals = mapping.getTraversals(getContext(), monitor);
+						((ResourceMappingScope)getScope()).addMapping(mapping, traversals);
+						// TODO: The additional mappings and additional resources boolean will not be set
+						// TODO: This may bring in mappings from the resources modle provider
+					}
+				}
+			});
+		}
+		protected void endOperation(IProgressMonitor monitor) {
+			IResourceMappingScopeManager manager= getScopeManager();
+			manager.dispose();
+			super.endOperation(monitor);
 		}
 
 		protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -49,29 +61,8 @@ public class ScopeBuildingTests extends TeamTest {
 			// Throw an exception to indicate that a prompt was requested
 			throw PROMPT_EXCEPTION;
 		}
-		
-		protected ResourceMappingScopeManager getScopeManager() {
-			return new ResourceMappingScopeManager(getResourceMappingContext(), false) {	
-				public IResourceMappingScope prepareScope(
-						ResourceMapping[] selectedMappings,
-						boolean useLocalContext,
-						IProgressMonitor monitor) throws CoreException {
-					
-					IResourceMappingScope resourceMappingScope = super.prepareScope(selectedMappings, useLocalContext, monitor);
-					// Add the additional test mappings to the scope
-					for (int i = 0; i < additionalMappings.length; i++) {
-						ResourceMapping mapping = additionalMappings[i];
-						ResourceTraversal[] traversals = mapping.getTraversals(getContext(), monitor);
-						((ResourceMappingScope)resourceMappingScope).addMapping(mapping, traversals);
-						// TODO: The additional mappings and additional resources boolean will not be set
-						// TODO: This may bring in mappings from the resources modle provider
-					}
-					return resourceMappingScope;
-				}
-			};
-		}
-		
 	}
+	
 	public static Test suite() {
 		return suite(ScopeBuildingTests.class);
 	}
@@ -118,7 +109,7 @@ public class ScopeBuildingTests extends TeamTest {
 			public String getModelProviderId() {
 				return TEST_MODEL_PROVIDER_ID;
 			}
-		    public boolean isAncestorOf(ResourceMapping mapping) {
+		    public boolean contains(ResourceMapping mapping) {
 		    	return false;
 		    }
 		

@@ -38,15 +38,15 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 
 	private final int type;
 
-	public static IMergeContext createContext(IResourceMappingScope scope, boolean refresh, int type, IProgressMonitor monitor) throws CoreException {
+	public static IMergeContext createContext(IResourceMappingScopeManager manager, int type) {
 		Subscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
-		WorkspaceSubscriberContext mergeContext = new WorkspaceSubscriberContext(subscriber, scope, type);
-		mergeContext.initialize(monitor, refresh);
+		WorkspaceSubscriberContext mergeContext = new WorkspaceSubscriberContext(subscriber, manager, type);
+		mergeContext.initialize();
 		return mergeContext;
 	}
 	
-	protected WorkspaceSubscriberContext(Subscriber subscriber, IResourceMappingScope scope, int type) {
-		super(subscriber, scope);
+	protected WorkspaceSubscriberContext(Subscriber subscriber, IResourceMappingScopeManager manager, int type) {
+		super(subscriber, manager);
 		this.type = type;
 	}
 

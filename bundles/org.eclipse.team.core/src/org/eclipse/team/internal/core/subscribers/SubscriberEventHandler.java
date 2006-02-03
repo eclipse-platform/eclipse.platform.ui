@@ -130,7 +130,7 @@ public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 	 * @param newTraversals the new traversals
 	 */
 	protected synchronized void reset(ResourceTraversal[] oldTraversals, ResourceTraversal[] newTraversals) {
-		reset(scope.getRoots(), SubscriberEvent.CHANGE);
+		reset(newTraversals, SubscriberEvent.CHANGE);
 	}
 
 	/**
@@ -141,8 +141,8 @@ public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 		// Set the started flag to enable event queuing.
 		// We are guaranteed to be the first since this method is synchronized.
 		started = true;
-		IResource[] resources = scope.getRoots();
-		reset(resources, SubscriberEvent.INITIALIZE);
+		ResourceTraversal[] traversals = scope.getTraversals();
+		reset(traversals, SubscriberEvent.INITIALIZE);
 		initializing = false;
 	}
 
@@ -302,10 +302,13 @@ public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 	 * @param type can be Event.CHANGE to recalculate all states or Event.INITIALIZE to perform the
 	 *   optimized recalculation if supported by the subscriber.
 	 */
-	protected void reset(IResource[] roots, int type) {
-		IResource[] resources = roots;
-		for (int i = 0; i < resources.length; i++) {
-			queueEvent(new SubscriberEvent(resources[i], type, IResource.DEPTH_INFINITE), false);
+	protected void reset(ResourceTraversal[] traversals, int type) {
+		for (int i = 0; i < traversals.length; i++) {
+			ResourceTraversal traversal = traversals[i];
+			IResource[] resources = traversal.getResources();
+			for (int j = 0; j < resources.length; j++) {
+				queueEvent(new SubscriberEvent(resources[j], type, traversal.getDepth()), false);
+			}
 		}
 	}
 

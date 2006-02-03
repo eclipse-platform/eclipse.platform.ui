@@ -11,30 +11,39 @@
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.mapping.IMergeContext;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
+import org.eclipse.team.core.subscribers.SubscriberScopeManager;
+import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class ModelMergeOperation extends AbstractModelMergeOperation {
 
 	private final Subscriber subscriber;
-
-	public ModelMergeOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, Subscriber subscriber) {
-		super(part, selectedMappings, SubscriberResourceMappingContext.createContext(subscriber));
+	
+	/**
+	 * Create a merge operation for the given subscriber. The merge operation will cancel the subscriber
+	 * when it is no longer needed.
+	 * @param part the part
+	 * @param mappings the mappings
+	 * @param subscriber the subscriber
+	 */
+	public ModelMergeOperation(IWorkbenchPart part, ResourceMapping[] mappings, final CVSMergeSubscriber subscriber) {
+		super(part, new SubscriberScopeManager(mappings, subscriber, true){
+			public void dispose() {
+				subscriber.cancel();
+				super.dispose();
+			}
+		}, true);
 		this.subscriber = subscriber;
 	}
 
-	protected IMergeContext buildMergeContext(IProgressMonitor monitor)
-			throws CoreException {
-		monitor.beginTask(null, 100);
-		IMergeContext context = MergeSubscriberContext.createContext(getScope(), subscriber, Policy.subMonitorFor(monitor, 50));
-		monitor.done();
-		return context;
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.operations.ModelParticipantMergeOperation#createMergeContext()
+	 */
+	protected ISynchronizationContext createMergeContext() {
+		return MergeSubscriberContext.createContext(getScopeManager(), subscriber);
 	}
 	
 	/* (non-Javadoc)

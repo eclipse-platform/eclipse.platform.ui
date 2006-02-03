@@ -47,7 +47,7 @@ public class SyncAction extends WorkspaceTraversalAction {
 			showSingleFileComparison(getShell(), CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), resources[0], getTargetPage());
 		}else if (isShowModelSync()) {
 			try {
-				new ModelUpdateOperation(getTargetPart(), getCVSResourceMappings(), getResourceMappingContext()) {
+				new ModelUpdateOperation(getTargetPart(), getCVSResourceMappings()) {
 					protected boolean isAttemptHeadlessMerge() {
 						return false;
 					}

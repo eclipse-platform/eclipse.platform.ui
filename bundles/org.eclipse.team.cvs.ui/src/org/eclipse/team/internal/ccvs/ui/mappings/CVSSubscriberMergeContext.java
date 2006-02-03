@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberMergeContext;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -24,8 +24,8 @@ import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 
 public abstract class CVSSubscriberMergeContext extends SubscriberMergeContext {
 
-	protected CVSSubscriberMergeContext(Subscriber subscriber, IResourceMappingScope scope) {
-		super(subscriber, scope);
+	protected CVSSubscriberMergeContext(Subscriber subscriber, IResourceMappingScopeManager manager) {
+		super(subscriber, manager);
 	}
 	
 	/* (non-Javadoc)

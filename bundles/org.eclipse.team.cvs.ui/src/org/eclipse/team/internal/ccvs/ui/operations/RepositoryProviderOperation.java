@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.eclipse.core.resources.IProject;
@@ -22,6 +21,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
+import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
@@ -29,7 +30,6 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.ui.operations.ModelOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -44,7 +44,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 	 */
 	public static boolean consultModelsWhenBuildingScope = true;
 	
-	private IResourceMappingScope scope;
+	private IResourceMappingScopeManager manager;
 	private final ResourceMapping[] selectedMappings;
 	
     /**
@@ -203,41 +203,24 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
         } catch (CoreException e) {
             throw CVSException.wrapException(e);
         } finally {
+        	if (manager != null) {
+        		manager.dispose();
+        		manager = null;
+        	}
             monitor.done();
         }
 	}
 
     public IResourceMappingScope buildScope(IProgressMonitor monitor) throws InterruptedException, CVSException {
-    	if (scope == null) {
-			ModelOperation op = new ModelOperation(getPart(), selectedMappings) {
-				/* (non-Javadoc)
-				 * @see org.eclipse.team.ui.operations.ResourceMappingOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-				 */
-				protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					// No need to do anything. We just wanted to build the scope
-				}
-				/* (non-Javadoc)
-				 * @see org.eclipse.team.ui.operations.ResourceMappingOperation#consultModelsWhenGeneratingScope()
-				 */
-				protected boolean consultModelsWhenGeneratingScope() {
-					if (!consultModelsWhenBuildingScope)
-						return false;
-					return RepositoryProviderOperation.this.consultModelsForMappings();
-				}
-				
-				protected ResourceMappingContext getResourceMappingContext() {
-					return RepositoryProviderOperation.this.getResourceMappingContext();
-				}
-			};
-			// Run the operation to build the scope
+    	if (manager == null) {
+    		manager = new ResourceMappingScopeManager(selectedMappings, getResourceMappingContext(), consultModelsWhenBuildingScope && consultModelsForMappings());
 			try {
-				op.run(monitor);
-			} catch (InvocationTargetException e) {
+				manager.initialize(monitor);
+			} catch (CoreException e) {
 				throw CVSException.wrapException(e);
 			}
-			scope = op.getScope();
     	}
-    	return scope;
+    	return manager.getScope();
 	}
 
 	private void execute(Map providerTraversal, IProgressMonitor monitor) throws CVSException, InterruptedException {
@@ -317,11 +300,11 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 	 */
 	private Map getProviderTraversalMapping(IProgressMonitor monitor) throws CoreException {
 		Map result = new HashMap();
-		ResourceMapping[] mappings = scope.getMappings();
+		ResourceMapping[] mappings = getScope().getMappings();
         for (int j = 0; j < mappings.length; j++) {
             ResourceMapping mapping = mappings[j];
             IProject[] projects = mapping.getProjects();
-            ResourceTraversal[] traversals = scope.getTraversals(mapping);
+            ResourceTraversal[] traversals = getScope().getTraversals(mapping);
             for (int k = 0; k < projects.length; k++) {
                 IProject project = projects[k];
                 RepositoryProvider provider = RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
@@ -473,7 +456,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
      * @throws CoreException
      */
     public ResourceTraversal[] getTraversals() {
-        return scope.getTraversals();
+        return getScope().getTraversals();
     }
     
     public boolean consultModelsForMappings() {
@@ -485,6 +468,10 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 	}
 
 	public IResourceMappingScope getScope() {
-		return scope;
+		return manager.getScope();
+	}
+
+	public IResourceMappingScopeManager getScopeManager() {
+		return manager;
 	}
 }

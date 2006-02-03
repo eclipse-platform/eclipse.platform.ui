@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
 import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
-import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
+import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
@@ -28,6 +27,14 @@ import org.eclipse.team.ui.operations.MergeActionGroup;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
+/**
+ * @author MValenta
+ *
+ */
+/**
+ * @author MValenta
+ *
+ */
 public class WorkspaceModelParticipant extends
 		ModelSynchronizeParticipant {
 
@@ -137,8 +144,8 @@ public class WorkspaceModelParticipant extends
 	public WorkspaceModelParticipant() {
 	}
 	
-	public WorkspaceModelParticipant(ISynchronizationContext context, String name) {
-		super(context);
+	public WorkspaceModelParticipant(IResourceMappingScopeManager manager, ISynchronizationContext context, String name) {
+		super(manager, context);
 		try {
 			setInitializationData(TeamUI.getSynchronizeManager().getParticipantDescriptor("org.eclipse.team.cvs.ui.workspace-participant")); //$NON-NLS-1$
 		} catch (CoreException e) {
@@ -165,15 +172,15 @@ public class WorkspaceModelParticipant extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.operations.ModelSynchronizeParticipant#restoreContext(org.eclipse.team.core.mapping.IResourceMappingScope, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IMergeContext restoreContext(IResourceMappingScope scope, IProgressMonitor monitor) throws CoreException {
-		return WorkspaceSubscriberContext.createContext(scope, false /* refresh */, ISynchronizationContext.THREE_WAY, monitor);
+	protected IMergeContext restoreContext(IResourceMappingScopeManager manager) {
+		return WorkspaceSubscriberContext.createContext(manager, ISynchronizationContext.THREE_WAY);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.operations.ModelSynchronizeParticipant#createScopeGenerator()
+	 * @see org.eclipse.team.ui.operations.ModelSynchronizeParticipant#createScopeManager(org.eclipse.core.resources.mapping.ResourceMapping[])
 	 */
-	protected ResourceMappingScopeManager createScopeManager() {
-		return new ResourceMappingScopeManager(new SubscriberResourceMappingContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), true), true);
+	protected IResourceMappingScopeManager createScopeManager(ResourceMapping[] mappings) {
+		return new SubscriberScopeManager(mappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), true);
 	}
 	
 }

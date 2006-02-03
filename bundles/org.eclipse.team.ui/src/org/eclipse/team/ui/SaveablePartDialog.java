@@ -88,4 +88,12 @@ public class SaveablePartDialog extends ResizableDialog {
 			});		
 		}
 	}
+
+	/**
+	 * Return the input to the dialog.
+	 * @return the input to the dialog
+	 */
+	protected ISaveableWorkbenchPart getInput() {
+		return input;
+	}
 }

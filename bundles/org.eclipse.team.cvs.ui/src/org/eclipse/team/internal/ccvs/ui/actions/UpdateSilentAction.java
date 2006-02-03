@@ -48,7 +48,7 @@ public class UpdateSilentAction extends WorkspaceTraversalAction {
 		if (CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_UPDATE_HANDLING).equals(ICVSUIConstants.PREF_UPDATE_HANDLING_TRADITIONAL)) {
 			new UpdateOperation(getTargetPart(), getCVSResourceMappings(), Command.NO_LOCAL_OPTIONS, null /* no tag */).run();
 		} else {
-	    	new ModelUpdateOperation(getTargetPart(), getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext()).run();
+	    	new ModelUpdateOperation(getTargetPart(), getSelectedResourceMappings(CVSProviderPlugin.getTypeId())).run();
 	    }
 	}
 	

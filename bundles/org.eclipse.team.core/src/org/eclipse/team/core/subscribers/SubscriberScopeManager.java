@@ -1,0 +1,174 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.team.core.subscribers;
+
+import java.util.*;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
+import org.eclipse.team.core.mapping.IResourceMappingScopeParticipantFactory;
+import org.eclipse.team.core.mapping.provider.IResourceMappingScopeParticipant;
+import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
+
+/**
+ * A {@link IResourceMappingScopeManager} that uses a {@link Subscriber} to provide 
+ * a {@link RemoteResourceMappingContext} and to notify participants when the
+ * remote state of resources change.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ * @since 3.2
+ */
+public class SubscriberScopeManager extends ResourceMappingScopeManager implements ISubscriberChangeListener {
+
+	private final Subscriber subscriber;
+	private Map participants = new HashMap();
+
+	/**
+	 * Create a manager for the given subscriber and input.
+	 * @param inputMappings the input mappings
+	 * @param subscriber the subscriber
+	 * @param consultModels whether models should be consulted when calculating the scope
+	 */
+	public SubscriberScopeManager(ResourceMapping[] inputMappings, Subscriber subscriber, boolean consultModels) {
+		this(inputMappings, subscriber, SubscriberResourceMappingContext.createContext(subscriber), consultModels);
+	}
+
+	/**
+	 * Create a manager for the given subscriber and input.
+	 * @param inputMappings the input mappings
+	 * @param subscriber the subscriber
+	 * @param context a remote resource mapping conext for the subscriber
+	 * @param consultModels whether models should be consulted when calculating the scope
+	 */
+	public SubscriberScopeManager(ResourceMapping[] inputMappings, Subscriber subscriber, RemoteResourceMappingContext context, boolean consultModels) {
+		super(inputMappings, context, consultModels);
+		this.subscriber = subscriber;
+	}
+
+	/**
+	 * Return the subscriber for this manager.
+	 * @return the subscriber for this manager
+	 */
+	protected Subscriber getSubscriber() {
+		return subscriber;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingScopeManager#dispose()
+	 */
+	public void dispose() {
+		for (Iterator iter = participants.values().iterator(); iter.hasNext();) {
+			IResourceMappingScopeParticipant p = (IResourceMappingScopeParticipant) iter.next();
+			p.dispose();
+		}
+		super.dispose();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager#initialize(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void initialize(IProgressMonitor monitor) throws CoreException {
+		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				SubscriberScopeManager.super.initialize(monitor);
+				hookupParticipants();
+				getSubscriber().addListener(SubscriberScopeManager.this);
+			}
+		}, getSchedulingRule(), IResource.NONE, monitor);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager#refresh(org.eclipse.core.resources.mapping.ResourceMapping[], org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public ResourceTraversal[] refresh(final ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
+		final List result = new ArrayList(1);
+		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				result.add(SubscriberScopeManager.super.refresh(mappings, monitor));
+				hookupParticipants();
+			}
+		}, getSchedulingRule(), IResource.NONE, monitor);
+		if (result.isEmpty())
+			return new ResourceTraversal[0];
+		return (ResourceTraversal[])result.get(0);
+	}
+	
+	/*
+	 * Hookup the participants for the participating models.
+	 * This is done to ensure that future local and remote changes to 
+	 * resources will update the resources contained in the scope 
+	 * appropriately
+	 */
+	/* private */ void hookupParticipants() {
+		ModelProvider[] providers = getScope().getModelProviders();
+		for (int i = 0; i < providers.length; i++) {
+			ModelProvider provider = providers[i];
+			if (!participants.containsKey(provider)) {
+				IResourceMappingScopeParticipant p = createParticipant(provider);
+				if (p != null) {
+					participants.put(provider, p);
+				}
+			}
+		}
+	}
+	
+	/*
+	 * Obtain a participant through the factory which is obtained using IAdaptable
+	 */
+	private IResourceMappingScopeParticipant createParticipant(ModelProvider provider) {
+		Object factoryObject = provider.getAdapter(IResourceMappingScopeParticipantFactory.class);
+		if (factoryObject instanceof IResourceMappingScopeParticipantFactory) {
+			IResourceMappingScopeParticipantFactory factory = (IResourceMappingScopeParticipantFactory) factoryObject;
+			return factory.createParticipant(provider, this);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.ISubscriberChangeListener#subscriberResourceChanged(org.eclipse.team.core.subscribers.ISubscriberChangeEvent[])
+	 */
+	public void subscriberResourceChanged(ISubscriberChangeEvent[] deltas) {
+		List changedResources = new ArrayList();
+		List changedProjects = new ArrayList();
+		for (int i = 0; i < deltas.length; i++) {
+			ISubscriberChangeEvent event = deltas[i];
+			if ((event.getFlags() & (ISubscriberChangeEvent.ROOT_ADDED | ISubscriberChangeEvent.ROOT_REMOVED)) != 0) {
+				changedProjects.add(event.getResource().getProject());
+			}
+			if ((event.getFlags() & ISubscriberChangeEvent.SYNC_CHANGED) != 0) {
+				changedResources.add(event.getResource());
+			}
+		}
+		fireChange((IResource[]) changedResources.toArray(new IResource[changedResources.size()]), (IProject[]) changedProjects.toArray(new IProject[changedProjects.size()]));
+	}
+
+	private void fireChange(final IResource[] resources, final IProject[] projects) {
+		IResourceMappingScopeParticipant[] handlers = (IResourceMappingScopeParticipant[]) participants.values().toArray(new IResourceMappingScopeParticipant[participants.size()]);
+		for (int i = 0; i < handlers.length; i++) {
+			final IResourceMappingScopeParticipant participant = handlers[i];
+			Platform.run(new ISafeRunnable() {
+				public void run() throws Exception {
+					participant.handleContextChange(SubscriberScopeManager.this, resources, projects);
+				}
+				public void handleException(Throwable exception) {
+					// Handled by platform
+				}
+			});
+		}
+	}
+
+}

@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -27,8 +26,8 @@ public class ModelReplaceOperation extends ModelUpdateOperation {
 	
 	boolean hasPrompted = false;
 
-	public ModelReplaceOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext context) {
-		super(part, selectedMappings, context);
+	public ModelReplaceOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, boolean consultModels) {
+		super(part, selectedMappings, consultModels);
 	}
 	
 	/* (non-Javadoc)
@@ -64,7 +63,6 @@ public class ModelReplaceOperation extends ModelUpdateOperation {
 	 * @see org.eclipse.team.ui.operations.ResourceMappingMergeOperation#performMerge(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IStatus performMerge(IProgressMonitor monitor) throws CoreException {
-		// TODO: cancel must free context to avoid leaking
 		if (!hasLocalChanges() || promptForOverwrite()) {
 			return super.performMerge(monitor);
 		}

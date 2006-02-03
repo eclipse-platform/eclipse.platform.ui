@@ -17,7 +17,6 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.team.core.mapping.IResourceMappingScope;
 import org.eclipse.team.core.mapping.PropertyChangeEvent;
-import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
 
 /**
  * Concrete implementation of the {@link IResourceMappingScope}
@@ -42,7 +41,6 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	private final Map mappingsToTraversals = new HashMap();
 	private boolean hasAdditionalMappings;
 	private boolean hasAdditionalResources;
-	private final ResourceMappingScopeManager manager;
 	private final CompoundResourceTraversal compoundTraversal = new CompoundResourceTraversal();
 	
 	public static ResourceTraversal[] combineTraversals(ResourceTraversal[] allTraversals) {
@@ -76,8 +74,7 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 		return (ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]);
 	}
 	
-	public ResourceMappingScope(ResourceMappingScopeManager manager, ResourceMapping[] selectedMappings) {
-		this.manager = manager;
+	public ResourceMappingScope(ResourceMapping[] selectedMappings) {
 		inputMappings = selectedMappings;
 	}
 	
@@ -105,6 +102,8 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	 * @see org.eclipse.team.ui.mapping.IResourceMappingOperationScope#getMappings()
 	 */
 	public ResourceMapping[] getMappings() {
+		if (mappingsToTraversals.isEmpty())
+			return inputMappings;
 		return (ResourceMapping[]) mappingsToTraversals.keySet().toArray(new ResourceMapping[mappingsToTraversals.size()]);
 	}
 
@@ -152,10 +151,6 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	 */
 	public boolean hasAdditonalResources() {
 		return hasAdditionalResources;
-	}
-
-	public ResourceMappingScopeManager getManager() {
-		return manager;
 	}
 	
 	public void fireTraversalsChangedEvent(ResourceTraversal[] oldTraversals) {

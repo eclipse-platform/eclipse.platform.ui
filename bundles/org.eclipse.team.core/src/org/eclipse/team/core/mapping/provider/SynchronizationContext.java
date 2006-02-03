@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.mapping.DiffCache;
-import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
 
 /**
  * Abstract implementation of the {@link ISynchronizationContext} interface.
@@ -98,24 +97,16 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	 */
 	public void refresh(ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 100);
-		ResourceMappingScopeManager manager = getScopeManager();
+		ResourceMappingScopeManager manager = null; //getScopeManager();
 		if (manager == null) {
 			// The scope manager is missing so just refresh everything
 			refresh(scope.getTraversals(), IResource.NONE, Policy.subMonitorFor(monitor, 50));
 		} else {
-			ResourceTraversal[] traversals = manager.refreshScope(mappings, Policy.subMonitorFor(monitor, 50));
+			ResourceTraversal[] traversals = manager.refresh(mappings, Policy.subMonitorFor(monitor, 50));
 			if (traversals.length > 0)
 				refresh(traversals, IResource.NONE, Policy.subMonitorFor(monitor, 50));
 		}
 		monitor.done();
-	}
-
-	private ResourceMappingScopeManager getScopeManager() {
-		if (scope instanceof ResourceMappingScope) {
-			ResourceMappingScope rms = (ResourceMappingScope) scope;
-			rms.getManager();
-		}
-		return null;
 	}
 
 }

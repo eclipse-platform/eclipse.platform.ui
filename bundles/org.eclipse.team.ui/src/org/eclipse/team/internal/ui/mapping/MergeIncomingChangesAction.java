@@ -18,6 +18,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.ISaveableCompareModel;
 import org.eclipse.team.ui.mapping.SynchronizationOperation;
@@ -53,17 +54,20 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 			new SynchronizationOperation(getConfiguration(), getContext().getScope().getMappings()) {
 				public void execute(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
-					new ModelMergeOperation(getPart(), context) {
-						protected IMergeContext buildMergeContext(IProgressMonitor monitor) throws CoreException {
-							return context;
-						}
+					new ModelMergeOperation(getPart(), ((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getScopeManager()) {
 						public boolean isPreviewRequested() {
 							return false;
 						}
-						protected void showPreview(IProgressMonitor monitor) {
-							// Do nothing since this action was launched from a preview
+						protected void initializeContext(IProgressMonitor monitor) throws CoreException {
+							// Context is already initialized
+						}
+						protected ISynchronizationContext getContext() {
+							return context;
 						}
 					}.run(monitor);
+				}
+				protected boolean canRunAsJob() {
+					return true;
 				}
 			}.run();
 		} catch (InvocationTargetException e) {

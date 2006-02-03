@@ -11,18 +11,16 @@
 package org.eclipse.team.internal.core.subscribers;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffVisitor;
-import org.eclipse.team.core.mapping.IResourceDiffTree;
-import org.eclipse.team.core.mapping.ISynchronizationScope;
-import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
+import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.provider.*;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.internal.core.Policy;
 
 /**
  * A subscriber event handler whose output is a diff tree
@@ -31,6 +29,7 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 
 	private ResourceDiffTree tree;
 	private SubscriberDiffCollector collector;
+	private IResourceMappingScopeManager manager;
 	private Object family;
 
 	/*
@@ -85,10 +84,35 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	 * @param scope the scope of the handler
 	 * @param tree the tree to be populated by this handler
 	 */
-	public SubscriberDiffTreeEventHandler(Subscriber subscriber, ISynchronizationScope scope, ResourceDiffTree tree) {
-		super(subscriber, scope);
+	public SubscriberDiffTreeEventHandler(Subscriber subscriber, IResourceMappingScopeManager manager, ResourceDiffTree tree) {
+		super(subscriber, manager.getScope());
+		this.manager = manager;
 		this.tree = tree;
 		this.collector = new SubscriberDiffCollector(subscriber);
+	}
+
+	protected void reset(ResourceTraversal[] traversals, int type) {
+		if (type == SubscriberEvent.INITIALIZE && traversals.length == 0) {
+			// This means the scope has not been initialized
+			queueEvent(new RunnableEvent(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					prepareScope(monitor);
+				}
+			}, true), true);
+		} else {
+			super.reset(traversals, type);
+		}
+	}
+	
+	protected void prepareScope(IProgressMonitor monitor) {
+		try {
+			manager.initialize(monitor);
+		} catch (CoreException e) {
+			handleException(e);
+		}
+		ResourceTraversal[] traversals = manager.getScope().getTraversals();
+		if (traversals.length > 0)
+			reset(traversals, SubscriberEvent.INITIALIZE);
 	}
 
 	/* (non-Javadoc)
@@ -172,20 +196,6 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 		return tree;
 	}
 	
-	public void waitUntilIdle(IProgressMonitor monitor) {
-		monitor.worked(1);
-		// wait for the event handler to process changes.
-		while(getEventHandlerJob().getState() != Job.NONE) {
-			monitor.worked(1);
-			try {
-				Thread.sleep(10);		
-			} catch (InterruptedException e) {
-			}
-			Policy.checkCanceled(monitor);
-		}
-		monitor.worked(1);
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.core.subscribers.SubscriberEventHandler#getSubscriber()
 	 */
@@ -201,9 +211,17 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 		super.shutdown();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.BackgroundEventHandler#getJobFamiliy()
+	 */
 	protected Object getJobFamiliy() {
 		return family;
 	}
+	
+	/**
+	 * Set the family of this handler to the given object
+	 * @param family the family of the handler's job
+	 */
 	public void setJobFamily(Object family) {
 		this.family = family;
 	}

@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.core.subscribers;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.RemoteResourceMappingContext;

@@ -105,12 +105,6 @@ public abstract class SynchronizationOperation extends TeamOperation {
 	public boolean shouldRun() {
 		return super.shouldRun();
 	}
-
-	public boolean belongsTo(Object family) {
-		if (family == getContext())
-			return true;
-		return super.belongsTo(family);
-	}
 	
 	/**
 	 * Return the buffer that this operation will write its results
