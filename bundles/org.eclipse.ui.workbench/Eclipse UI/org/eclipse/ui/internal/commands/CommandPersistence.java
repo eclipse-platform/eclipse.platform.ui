@@ -64,11 +64,6 @@ final class CommandPersistence extends RegistryPersistence {
 	private static final int INDEX_PARAMETER_TYPE_DEFINITIONS = 2;
 
 	/**
-	 * The preference key prefix for all handler state.
-	 */
-	private static final String PREFERENCE_KEY_PREFIX = "org.eclipse.ui.handlers/state"; //$NON-NLS-1$
-
-	/**
 	 * Reads all of the category definitions from the commands extension point.
 	 * 
 	 * @param configurationElements
@@ -197,7 +192,7 @@ final class CommandPersistence extends RegistryPersistence {
 			// Read out the parameters.
 			final Parameter[] parameters = readParameters(configurationElement,
 					warningsToLog, commandService);
-			
+
 			// Read out the returnTypeId.
 			final String returnTypeId = readOptional(configurationElement,
 					ATTRIBUTE_RETURN_TYPE_ID);
@@ -211,7 +206,7 @@ final class CommandPersistence extends RegistryPersistence {
 						configurationElement, commandId,
 						"categoryId", categoryId); //$NON-NLS-1$
 			}
-			
+
 			final ParameterType returnType;
 			if (returnTypeId == null) {
 				returnType = null;
@@ -417,11 +412,9 @@ final class CommandPersistence extends RegistryPersistence {
 
 			if (checkClass(stateElement, warningsToLog,
 					"State must have an associated class", id)) { //$NON-NLS-1$
-				final String preferenceKey = PREFERENCE_KEY_PREFIX + '/'
-						+ command.getId() + '/' + id;
 				final State state = new CommandStateProxy(stateElement,
 						ATTRIBUTE_CLASS, PrefUtil.getInternalPreferenceStore(),
-						preferenceKey);
+						CommandService.createPreferenceKey(command, id));
 				command.addState(id, state);
 			}
 		}

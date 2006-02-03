@@ -19,8 +19,11 @@ import org.eclipse.core.commands.IExecutionListener;
 import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.jface.commands.PersistentState;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * <p>
@@ -31,6 +34,28 @@ import org.eclipse.ui.commands.ICommandService;
  * @since 3.1
  */
 public final class CommandService implements ICommandService {
+
+	/**
+	 * The preference key prefix for all handler state.
+	 */
+	private static final String PREFERENCE_KEY_PREFIX = "org.eclipse.ui.commands/state"; //$NON-NLS-1$
+
+	/**
+	 * Creates a preference key for the given piece of state on the given
+	 * command.
+	 * 
+	 * @param command
+	 *            The command for which the preference key should be created;
+	 *            must not be <code>null</code>.
+	 * @param stateId
+	 *            The identifier of the state for which the preference key
+	 *            should be created; must not be <code>null</code>.
+	 * @return A suitable preference key; never <code>null</code>.
+	 */
+	static final String createPreferenceKey(final Command command,
+			final String stateId) {
+		return PREFERENCE_KEY_PREFIX + '/' + command.getId() + '/' + stateId;
+	}
 
 	/**
 	 * The command manager that supports this service. This value is never
@@ -76,6 +101,31 @@ public final class CommandService implements ICommandService {
 
 	public final void dispose() {
 		commandPersistence.dispose();
+
+		/*
+		 * All state on all commands neeeds to be disposed. This is so that the
+		 * state has a chance to persist any changes.
+		 */
+		final Command[] commands = commandManager.getAllCommands();
+		for (int i = 0; i < commands.length; i++) {
+			final Command command = commands[i];
+			if ("org.eclipse.ui.tests.commandWithState".equals(command.getId())) { //$NON-NLS-1$
+				System.out.println();
+			}
+			final String[] stateIds = command.getStateIds();
+			for (int j = 0; j < stateIds.length; j++) {
+				final String stateId = stateIds[j];
+				final State state = command.getState(stateId);
+				if (state instanceof PersistentState) {
+					final PersistentState persistentState = (PersistentState) state;
+					if (persistentState.shouldPersist()) {
+						persistentState.save(PrefUtil
+								.getInternalPreferenceStore(),
+								createPreferenceKey(command, stateId));
+					}
+				}
+			}
+		}
 	}
 
 	public final Category getCategory(final String categoryId) {
@@ -101,15 +151,15 @@ public final class CommandService implements ICommandService {
 	public final Command[] getDefinedCommands() {
 		return commandManager.getDefinedCommands();
 	}
-	
+
 	public Collection getDefinedParameterTypeIds() {
 		return commandManager.getDefinedParameterTypeIds();
 	}
-	
+
 	public ParameterType[] getDefinedParameterTypes() {
 		return commandManager.getDefinedParameterTypes();
 	}
-	
+
 	public ParameterType getParameterType(final String parameterTypeId) {
 		return commandManager.getParameterType(parameterTypeId);
 	}
