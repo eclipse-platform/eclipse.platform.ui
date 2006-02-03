@@ -2246,6 +2246,9 @@
          <state
                class="org.eclipse.core.commands.State"
                id="OBJECT"/>
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:true"
+               id="STYLE"/>
       </command>
    </extension>
    

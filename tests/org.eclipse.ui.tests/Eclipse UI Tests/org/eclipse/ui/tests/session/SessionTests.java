@@ -19,15 +19,6 @@ import junit.framework.TestSuite;
 public class SessionTests extends TestSuite {
 
 	/**
-	 * 
-	 */
-	public SessionTests() {
-		addIntroTests();
-		addEditorTests();
-		addViewStateTests();
-	}
-
-	/**
 	 * @return
 	 */
 	public static Test suite() {
@@ -35,11 +26,13 @@ public class SessionTests extends TestSuite {
 	}
 
 	/**
-	 * Adds intro related session tests.
+	 * 
 	 */
-	private void addIntroTests() {
-		addTest(new WorkbenchSessionTest("introSessionTests",
-				IntroSessionTests.class));
+	public SessionTests() {
+		addHandlerStateTests();
+		addIntroTests();
+		addEditorTests();
+		addViewStateTests();
 	}
 
 	/**
@@ -51,10 +44,28 @@ public class SessionTests extends TestSuite {
 	}
 
 	/**
+	 * Adds tests related to command and handler state.
+	 * 
+	 * @since 3.2
+	 */
+	private void addHandlerStateTests() {
+		addTest(new WorkbenchSessionTest("editorSessionTests",
+				HandlerStateTest.class));
+	}
+
+	/**
+	 * Adds intro related session tests.
+	 */
+	private void addIntroTests() {
+		addTest(new WorkbenchSessionTest("introSessionTests",
+				IntroSessionTests.class));
+	}
+
+	/**
 	 * Add a view state test that involves state from one session to the other.
 	 * 
-	 * BTW: the <b>editorSessionTests</b> is the zip file to grab the
-	 * default workspace for these particular session tests.
+	 * BTW: the <b>editorSessionTests</b> is the zip file to grab the default
+	 * workspace for these particular session tests.
 	 */
 	private void addViewStateTests() {
 		addTest(new WorkbenchSessionTest("editorSessionTests",
