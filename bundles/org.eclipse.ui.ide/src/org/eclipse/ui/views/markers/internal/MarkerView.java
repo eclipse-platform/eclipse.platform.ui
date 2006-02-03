@@ -349,8 +349,6 @@ public abstract class MarkerView extends TableView {
 			if (addedMarkers.size() > 0 || removedMarkers.size() > 0) {
 				markerProcessJob.add(addedMarkers);
 				markerProcessJob.remove(removedMarkers);
-
-				scheduleMarkerUpdate();
 			}
 
 		}
