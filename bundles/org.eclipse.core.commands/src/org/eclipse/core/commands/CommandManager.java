@@ -471,6 +471,17 @@ public final class CommandManager extends HandleObjectManager implements
 	}
 
 	/**
+	 * Returns all of the commands known by this manager -- defined and
+	 * undefined.
+	 * 
+	 * @return All of the commands; may be empty, but never <code>null</code>.
+	 */
+	public final Command[] getAllCommands() {
+		return (Command[]) handleObjectsById.values().toArray(
+				new Command[handleObjectsById.size()]);
+	}
+
+	/**
 	 * Gets the category with the given identifier. If no such category
 	 * currently exists, then the category will be created (but be undefined).
 	 * 
