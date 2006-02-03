@@ -161,6 +161,20 @@ public final class CommandStateProxy extends PersistentState {
 	 *         <code>false</code> otherwise.
 	 */
 	private final boolean loadState() {
+		return loadState(false);
+	}
+
+	/**
+	 * Loads the state, if possible. If the state is loaded, then the member
+	 * variables are updated accordingly and the state is told to load its value
+	 * from the preference store.
+	 * 
+	 * @param readPersistence
+	 *            Whether the persistent state for this object should be read.
+	 * @return <code>true</code> if the state is now non-null;
+	 *         <code>false</code> otherwise.
+	 */
+	private final boolean loadState(final boolean readPersistence) {
 		if (state == null) {
 			try {
 				state = (State) configurationElement
@@ -169,6 +183,10 @@ public final class CommandStateProxy extends PersistentState {
 				configurationElement = null;
 
 				// Try to load the persistent state, if possible.
+				if (readPersistence && state instanceof PersistentState) {
+					final PersistentState persistentState = (PersistentState) state;
+					persistentState.setShouldPersist(true);
+				}
 				load(preferenceStore, preferenceKey);
 
 				// Transfer the local listeners to the real state.
@@ -223,11 +241,11 @@ public final class CommandStateProxy extends PersistentState {
 	}
 
 	public final void setShouldPersist(final boolean persisted) {
-		if (loadState() && state instanceof PersistentState) {
+		if (loadState(persisted) && state instanceof PersistentState) {
 			((PersistentState) state).setShouldPersist(persisted);
 		}
 	}
-	
+
 	public final void setValue(final Object value) {
 		if (loadState()) {
 			state.setValue(value);
