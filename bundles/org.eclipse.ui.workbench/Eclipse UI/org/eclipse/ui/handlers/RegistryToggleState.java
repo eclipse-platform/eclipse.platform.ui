@@ -97,6 +97,9 @@ public final class RegistryToggleState extends ToggleState implements
 				readPersisted((String) persistedObject);
 			}
 
+		} else {
+			setShouldPersist(true);
+			
 		}
 	}
 }

@@ -108,6 +108,9 @@ public final class RegistryRadioState extends RadioState implements
 				setRadioGroupIdentifier((String) idObject);
 			}
 
+		} else {
+			setShouldPersist(true);
+			
 		}
 	}
 }
