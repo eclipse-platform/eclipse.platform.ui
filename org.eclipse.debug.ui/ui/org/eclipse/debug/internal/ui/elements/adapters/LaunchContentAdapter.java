@@ -18,24 +18,14 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class LaunchContentAdapter extends AsynchronousContentAdapter {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
-	 */
 	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 		return ((ILaunch) parent).getChildren();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#hasChildren(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
-	 */
 	protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
 		return ((ILaunch)element).hasChildren();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#supportsPartId(java.lang.String)
-	 */
 	protected boolean supportsPartId(String id) {
 		return IDebugUIConstants.ID_DEBUG_VIEW.equals(id);
 	}	

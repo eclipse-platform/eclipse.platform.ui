@@ -21,9 +21,6 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
  */
 public class ExpressionContentAdapter extends VariableContentAdapter {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
-     */
     protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
         if (parent instanceof IErrorReportingExpression) {
             IErrorReportingExpression expression = (IErrorReportingExpression) parent;
@@ -43,9 +40,6 @@ public class ExpressionContentAdapter extends VariableContentAdapter {
         return EMPTY;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#hasChildren(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
-     */
     protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
         if (element instanceof IErrorReportingExpression) {
             IErrorReportingExpression expression = (IErrorReportingExpression) element;

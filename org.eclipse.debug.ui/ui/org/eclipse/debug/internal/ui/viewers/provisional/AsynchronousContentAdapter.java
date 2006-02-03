@@ -29,8 +29,9 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
 	
 	protected static final Object[] EMPTY = new Object[0];
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.viewers.IAsynchronousTreeContentAdapter#retrieveChildren(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext, org.eclipse.debug.ui.viewers.IChildrenRequestMonitor)
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter#retrieveChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor)
      */
     public void retrieveChildren(final Object parent, final IPresentationContext context, final IChildrenRequestMonitor result) {
 		Job job = new Job("Retrieving Children") { //$NON-NLS-1$
@@ -45,8 +46,10 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
 		job.schedule();
 	}
     
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.viewers.IAsynchronousTreeContentAdapter#isContainer(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext, org.eclipse.debug.ui.viewers.IContainerRequestMonitor)
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter#isContainer(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.provisional.IContainerRequestMonitor)
      */
     public void isContainer(final Object element, final IPresentationContext context, final IContainerRequestMonitor result) {
 		Job job = new Job("Computing hasChildren") { //$NON-NLS-1$

@@ -31,9 +31,6 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public class VariableContentAdapter extends AsynchronousContentAdapter {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
-     */
     protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
         IVariable variable = (IVariable) parent;
         IValue value = variable.getValue();
@@ -43,9 +40,6 @@ public class VariableContentAdapter extends AsynchronousContentAdapter {
         return EMPTY;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#hasChildren(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
-     */
     protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
         IValue value = ((IVariable)element).getValue();
         return value.hasVariables();
@@ -200,9 +194,6 @@ public class VariableContentAdapter extends AsynchronousContentAdapter {
         return 100;
     }
     
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#supportsPartId(java.lang.String)
-	 */
 	protected boolean supportsPartId(String id) {
         return id.equals(IDebugUIConstants.ID_EXPRESSION_VIEW) || id.equals(IDebugUIConstants.ID_VARIABLE_VIEW) || id.equals(IDebugUIConstants.ID_REGISTER_VIEW);
 	}   	    

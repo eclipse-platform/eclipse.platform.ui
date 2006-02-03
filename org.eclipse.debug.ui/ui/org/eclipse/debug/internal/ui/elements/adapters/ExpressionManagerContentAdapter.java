@@ -19,23 +19,14 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class ExpressionManagerContentAdapter extends AsynchronousContentAdapter {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugTreeContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.internal.ui.treeviewer.IPresentationContext)
-	 */
-	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
+    protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 		return ((IExpressionManager) parent).getExpressions();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugTreeContentAdapter#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.treeviewer.IPresentationContext)
-	 */
 	protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
 		return ((IExpressionManager)element).hasExpressions();
 	}
     
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#supportsPartId(java.lang.String)
-	 */
 	protected boolean supportsPartId(String id) {
 		return id.equals(IDebugUIConstants.ID_EXPRESSION_VIEW);
 	}  

@@ -21,9 +21,11 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class DebugTargetContentAdapter extends AsynchronousContentAdapter {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
-	 */
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
+     */
 	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 		String id = context.getPart().getSite().getId();
 		if (id.equals(IDebugUIConstants.ID_DEBUG_VIEW))
@@ -38,9 +40,10 @@ public class DebugTargetContentAdapter extends AsynchronousContentAdapter {
 		return EMPTY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#hasChildren(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
-	 */
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
+     */
 	protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
 		String id = context.getPart().getSite().getId();
 		if (id.equals(IDebugUIConstants.ID_DEBUG_VIEW))
@@ -56,9 +59,11 @@ public class DebugTargetContentAdapter extends AsynchronousContentAdapter {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#supportsPartId(java.lang.String)
-	 */
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#supportsPartId(java.lang.String)
+     */
 	protected boolean supportsPartId(String id) {
 		return IDebugUIConstants.ID_DEBUG_VIEW.equals(id) || IDebugUIConstants.ID_MEMORY_VIEW.equals(id);
 	}
