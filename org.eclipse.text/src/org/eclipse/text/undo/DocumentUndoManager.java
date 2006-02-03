@@ -53,9 +53,6 @@ import org.eclipse.jface.text.TextUtilities;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
- * <p>
- * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
- * </p>
  * 
  * @see IDocumentUndoManager
  * @see DocumentUndoManagerRegistry

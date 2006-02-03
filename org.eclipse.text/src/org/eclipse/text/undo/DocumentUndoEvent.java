@@ -19,9 +19,6 @@ import org.eclipse.jface.text.IDocument;
  * <p>
  * Clients are not supposed to subclass or create instances of this class.
  * </p>
- * <p>
- * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
- * </p>
  * 
  * @see IDocumentUndoManager
  * @see IDocumentUndoListener

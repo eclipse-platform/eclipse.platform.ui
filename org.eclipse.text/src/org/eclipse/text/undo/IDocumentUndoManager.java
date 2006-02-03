@@ -30,9 +30,6 @@ import org.eclipse.core.commands.operations.IUndoContext;
  * <p>
  * Clients may implement this interface.
  * </p>
- * <p>
- * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
- * </p>
  * 
  * @see DocumentUndoManagerRegistry
  * @see IDocumentUndoListener
