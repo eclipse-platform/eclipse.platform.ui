@@ -26,7 +26,6 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.MultiPageEditorSite;
-import org.eclipse.ui.part.PageSite;
 
 /**
  * @since 3.2
@@ -97,11 +96,13 @@ public final class ProxyKeyBindingService implements IKeyBindingService {
 	 * @return the correct part site for the handler expression
 	 */
 	private IWorkbenchPartSite getPartSite() {
+		/*
+		 * TODO This only works for a single level of MultiPageEditorSites. I
+		 * don't believe it will work if there is a multi-page editor site
+		 * within a multi-page editor site.
+		 */
 		if (fSite instanceof MultiPageEditorSite) {
 			return ((MultiPageEditorSite) fSite).getMultiPageEditor().getSite();
-		}
-		if (fSite instanceof PageSite) {
-			return ((PageSite) fSite).getParentSite();
 		}
 		return (IWorkbenchPartSite) fSite;
 	}
