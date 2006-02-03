@@ -321,10 +321,13 @@ public class DiffApplierTest extends TestCase {
 	 */
 	private boolean waitForSynchronization() throws InterruptedException {
 		synchronized (fDiffer) {
-			if (fDiffer.isSynchronized())
-				return true;
-			fDiffer.wait(MAX_WAIT);
-			return fDiffer.isSynchronized();
+			long start= System.currentTimeMillis();
+			do {
+				if (fDiffer.isSynchronized())
+					return true;
+				fDiffer.wait(MAX_WAIT);
+			} while (System.currentTimeMillis() - start < MAX_WAIT);
+			return false;
 		}
 	}
 	private static final long MAX_WAIT= 10000; // wait 10 seconds at most
