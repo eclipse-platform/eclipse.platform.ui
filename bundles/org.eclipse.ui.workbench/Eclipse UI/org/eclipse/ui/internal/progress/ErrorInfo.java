@@ -56,7 +56,7 @@ public class ErrorInfo extends JobTreeElement {
      * @see org.eclipse.ui.internal.progress.JobTreeElement#getChildren()
      */
     Object[] getChildren() {
-        return null;
+        return ProgressManagerUtil.EMPTY_OBJECT_ARRAY;
     }
 
     /* (non-Javadoc)

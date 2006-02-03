@@ -45,6 +45,12 @@ public class ProgressManagerUtil {
      * too short to show progress.
      */
     public static long SHORT_OPERATION_TIME = 250;
+    
+    static final QualifiedName KEEP_PROPERTY = IProgressConstants.KEEP_PROPERTY;
+
+	static final QualifiedName KEEPONE_PROPERTY = IProgressConstants.KEEPONE_PROPERTY;
+
+	static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
 
     private static String ellipsis = ProgressMessages.ProgressFloatingWindow_EllipsisValue;
 
@@ -370,8 +376,4 @@ public class ProgressManagerUtil {
 			}
 		};
 	}
-
-	static final QualifiedName KEEP_PROPERTY = IProgressConstants.KEEP_PROPERTY;
-
-	static final QualifiedName KEEPONE_PROPERTY = IProgressConstants.KEEPONE_PROPERTY;
 }

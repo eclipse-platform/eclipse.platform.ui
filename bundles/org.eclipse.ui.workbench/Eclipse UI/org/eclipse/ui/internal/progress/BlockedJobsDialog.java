@@ -70,8 +70,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 
 	private JobTreeElement blockedElement = new BlockedUIElement();
 	
-	static Object[] EMPTY_ARRAY = new Object[0];
-
 	/**
 	 * The BlockedUIElement is the JobTreeElement that represents the blocked
 	 * job in the dialog.
@@ -84,7 +82,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		 * @see org.eclipse.ui.internal.progress.JobTreeElement#getChildren()
 		 */
 		Object[] getChildren() {
-			return EMPTY_ARRAY;
+			return ProgressManagerUtil.EMPTY_OBJECT_ARRAY;
 		}
 
 		/*
