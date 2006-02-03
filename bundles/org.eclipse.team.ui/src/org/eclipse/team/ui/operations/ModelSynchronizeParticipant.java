@@ -57,11 +57,6 @@ public class ModelSynchronizeParticipant extends
 	private static final String CTX_PARTICIPANT_SETTINGS = TeamUIPlugin.ID + ".MODEL_PARTICIPANT_SETTINGS"; //$NON-NLS-1$
 	
 	/*
-	 * Key for traversals in memento
-	 */
-	private static final String CTX_PARTICIPANT_TRAVERSALS = TeamUIPlugin.ID + ".MODEL_PARTICIPANT_TRAVERSALS"; //$NON-NLS-1$
-	
-	/*
 	 * Key for schedule in memento
 	 */
 	private static final String CTX_REFRESH_SCHEDULE_SETTINGS = TeamUIPlugin.ID + ".MODEL_PARTICIPANT_REFRESH_SCHEDULE"; //$NON-NLS-1$
@@ -74,11 +69,6 @@ public class ModelSynchronizeParticipant extends
 	/*
 	 * Constants used to save and restore this scope
 	 */
-	private final static String CTX_TRAVERSAL = "traversals"; //$NON-NLS-1$
-	private final static String CTX_DEPTH = "depth"; //$NON-NLS-1$
-	private final static String CTX_RESOURCE= "resources"; //$NON-NLS-1$
-	private final static String CTX_RESOURCE_PATH = "resource_path"; //$NON-NLS-1$
-
 	private static final String CTX_PARTICIPANT_MAPPINGS = TeamUIPlugin.ID + ".MODEL_PARTICIPANT_MAPPINGS"; //$NON-NLS-1$
 	private static final String CTX_MODEL_PROVIDER_ID = "modelProviderId"; //$NON-NLS-1$
 	private static final String CTX_MODEL_PROVIDER_MAPPINGS = "mappings"; //$NON-NLS-1$
