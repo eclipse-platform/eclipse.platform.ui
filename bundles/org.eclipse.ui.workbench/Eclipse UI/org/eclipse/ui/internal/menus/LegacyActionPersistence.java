@@ -19,8 +19,8 @@ import java.util.List;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.IState;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -386,7 +386,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			// TODO Decide the command state.
 			final String style = readOptional(element, ATTRIBUTE_STYLE);
 			if (STYLE_RADIO.equals(style)) {
-				final IState state = new RadioState();
+				final State state = new RadioState();
 				// TODO How to set the id?
 				final boolean checked = readBoolean(element, ATTRIBUTE_STATE,
 						false);
@@ -394,7 +394,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 				command.addState(IMenuStateIds.STYLE, state);
 
 			} else if (STYLE_TOGGLE.equals(style)) {
-				final IState state = new ToggleState();
+				final State state = new ToggleState();
 				final boolean checked = readBoolean(element, ATTRIBUTE_STATE,
 						false);
 				state.setValue((checked) ? Boolean.TRUE : Boolean.FALSE);

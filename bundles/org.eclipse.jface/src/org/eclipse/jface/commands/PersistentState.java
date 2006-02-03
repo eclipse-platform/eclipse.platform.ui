@@ -11,7 +11,8 @@
 
 package org.eclipse.jface.commands;
 
-import org.eclipse.core.commands.AbstractState;
+import org.eclipse.core.commands.State;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * <p>
@@ -19,7 +20,7 @@ import org.eclipse.core.commands.AbstractState;
  * that might (or might not) be persisted.
  * </p>
  * <p>
- * Clients may implement, but must not extend this interface.
+ * Clients may extend this class.
  * </p>
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -30,8 +31,7 @@ import org.eclipse.core.commands.AbstractState;
  * 
  * @since 3.2
  */
-public abstract class AbstractPersistentState extends AbstractState implements
-		IPersistableState {
+public abstract class PersistentState extends State {
 
 	/**
 	 * Whether this state should be persisted.
@@ -45,9 +45,38 @@ public abstract class AbstractPersistentState extends AbstractState implements
 	 * @return <code>true</code> if this state should be persisted;
 	 *         <code>false</code> otherwise.
 	 */
-	public final boolean isPersisted() {
+	public boolean isPersisted() {
 		return persisted;
 	}
+
+	/**
+	 * Loads this state from the preference store, given the location at which
+	 * to look. This method must be symmetric with a call to
+	 * {@link IPersistableState#save(IPreferenceStore, String)}.
+	 * 
+	 * @param store
+	 *            The store from which to read; must not be <code>null</code>.
+	 * @param preferenceKey
+	 *            The key at which the state is stored; must not be
+	 *            <code>null</code>.
+	 */
+	public abstract void load(final IPreferenceStore store,
+			final String preferenceKey);
+
+	/**
+	 * Saves this state to the preference store, given the location at which to
+	 * write. This method must be symmetric with a call to
+	 * {@link IPersistableState#load(IPreferenceStore, String)}.
+	 * 
+	 * @param store
+	 *            The store to which the state should be written; must not be
+	 *            <code>null</code>.
+	 * @param preferenceKey
+	 *            The key at which the state should be stored; must not be
+	 *            <code>null</code>.
+	 */
+	public abstract void save(final IPreferenceStore store,
+			final String preferenceKey);
 
 	/**
 	 * Sets whether this state should be persisted.
@@ -55,7 +84,7 @@ public abstract class AbstractPersistentState extends AbstractState implements
 	 * @param persisted
 	 *            Whether this state should be persisted.
 	 */
-	public final void setPersisted(final boolean persisted) {
+	public void setPersisted(final boolean persisted) {
 		this.persisted = persisted;
 	}
 }

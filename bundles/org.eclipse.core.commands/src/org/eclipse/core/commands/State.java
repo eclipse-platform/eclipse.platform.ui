@@ -11,6 +11,9 @@
 
 package org.eclipse.core.commands;
 
+import org.eclipse.core.commands.common.EventManager;
+import org.eclipse.core.internal.commands.util.Util;
+
 /**
  * <p>
  * A piece of state information that can be shared between objects, and might be
@@ -24,7 +27,7 @@ package org.eclipse.core.commands;
  * of the application.
  * </p>
  * <p>
- * Clients may implement or extend this interface.
+ * Clients may instantiate or extend this class.
  * </p>
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -33,10 +36,20 @@ package org.eclipse.core.commands;
  * consulting with the Platform/UI team.
  * </p>
  * 
- * @see AbstractState
  * @since 3.2
  */
-public interface IState {
+public class State extends EventManager {
+
+	/**
+	 * The identifier of the state; may be <code>null</code> if it has not
+	 * been initialized.
+	 */
+	private String id;
+
+	/**
+	 * The value held by this state; may be anything at all.
+	 */
+	private Object value;
 
 	/**
 	 * Adds a listener to changes for this state.
@@ -44,13 +57,40 @@ public interface IState {
 	 * @param listener
 	 *            The listener to add; must not be <code>null</code>.
 	 */
-	public void addListener(IStateListener listener);
+	public void addListener(final IStateListener listener) {
+		addListenerObject(listener);
+	}
 
 	/**
 	 * Disposes of this state. This allows the state to unregister itself with
 	 * any managers or as a listener.
 	 */
-	public void dispose();
+	public void dispose() {
+		// The default implementation does nothing.
+	}
+
+	/**
+	 * Notifies listeners to this state that it has changed in some way.
+	 * 
+	 * @param oldValue
+	 *            The old value; may be anything.
+	 */
+	protected final void fireStateChanged(final Object oldValue) {
+		final Object[] listeners = getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			final IStateListener listener = (IStateListener) listeners[i];
+			listener.handleStateChange(this, oldValue);
+		}
+	}
+
+	/**
+	 * Returns the identifier for this state.
+	 * 
+	 * @return The id; may be <code>null</code>.
+	 */
+	public final String getId() {
+		return id;
+	}
 
 	/**
 	 * The current value associated with this state. This can be any type of
@@ -59,15 +99,10 @@ public interface IState {
 	 * 
 	 * @return The current value; may be anything.
 	 */
-	public Object getValue();
 
-	/**
-	 * Sets the value for this state object.
-	 * 
-	 * @param value
-	 *            The value to set; may be anything.
-	 */
-	public void setValue(Object value);
+	public Object getValue() {
+		return value;
+	}
 
 	/**
 	 * Removes a listener to changes from this state.
@@ -75,5 +110,32 @@ public interface IState {
 	 * @param listener
 	 *            The listener to remove; must not be <code>null</code>.
 	 */
-	public void removeListener(IStateListener listener);
+
+	public void removeListener(final IStateListener listener) {
+		removeListenerObject(listener);
+	}
+
+	/**
+	 * Sets the identifier for this object.
+	 * 
+	 * @param id
+	 *            The id; must not be <code>null</code>.
+	 */
+	final void setId(final String id) {
+		this.id = id;
+	}
+
+	/**
+	 * Sets the value for this state object.
+	 * 
+	 * @param value
+	 *            The value to set; may be anything.
+	 */
+	public void setValue(final Object value) {
+		if (!Util.equals(this.value, value)) {
+			final Object oldValue = this.value;
+			this.value = value;
+			fireStateChanged(oldValue);
+		}
+	}
 }

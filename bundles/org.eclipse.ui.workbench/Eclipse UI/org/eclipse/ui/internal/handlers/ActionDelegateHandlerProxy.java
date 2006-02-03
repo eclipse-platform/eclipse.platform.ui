@@ -15,8 +15,8 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.core.commands.IObjectWithState;
-import org.eclipse.core.commands.IState;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -221,7 +221,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		listenerList.add(handlerListener);
 	}
 
-	public void addState(String id, IState state) {
+	public void addState(String id, State state) {
 		// TODO Auto-generated method stub
 
 	}
@@ -305,7 +305,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		return delegate;
 	}
 
-	public IState getState(String stateId) {
+	public State getState(String stateId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -315,7 +315,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		return null;
 	}
 
-	public final void handleStateChange(final IState state,
+	public final void handleStateChange(final State state,
 			final Object oldValue) {
 		// TODO What should we do here?
 	}

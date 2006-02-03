@@ -14,11 +14,11 @@ package org.eclipse.ui.internal.commands;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.AbstractParameterValueConverter;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.AbstractParameterValueConverter;
-import org.eclipse.core.commands.IState;
 import org.eclipse.core.commands.ParameterType;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.commands.common.HandleObject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
@@ -419,7 +419,7 @@ final class CommandPersistence extends RegistryPersistence {
 					"State must have an associated class", id)) { //$NON-NLS-1$
 				final String preferenceKey = PREFERENCE_KEY_PREFIX + '/'
 						+ command.getId() + '/' + id;
-				final IState state = new CommandStateProxy(stateElement,
+				final State state = new CommandStateProxy(stateElement,
 						ATTRIBUTE_CLASS, PrefUtil.getInternalPreferenceStore(),
 						preferenceKey);
 				command.addState(id, state);

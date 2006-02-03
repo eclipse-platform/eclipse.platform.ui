@@ -16,8 +16,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.commands.IState;
 import org.eclipse.core.commands.IStateListener;
+import org.eclipse.core.commands.State;
 import org.eclipse.jface.menus.IMenuStateIds;
 
 /**
@@ -108,7 +108,7 @@ public class RadioState extends ToggleState {
 				}
 			}
 
-			public final void handleStateChange(final IState state,
+			public final void handleStateChange(final State state,
 					final Object oldValue) {
 				final Object newValue = state.getValue();
 				if (newValue instanceof Boolean) {

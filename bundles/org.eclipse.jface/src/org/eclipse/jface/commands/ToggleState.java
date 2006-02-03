@@ -35,7 +35,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * 
  * @since 3.2
  */
-public class ToggleState extends AbstractPersistentState {
+public class ToggleState extends PersistentState {
 
 	/**
 	 * Constructs a new <code>ToggleState</code>. By default, the toggle is

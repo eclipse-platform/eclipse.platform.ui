@@ -12,7 +12,7 @@
 package org.eclipse.jface.menus;
 
 import org.eclipse.core.commands.INamedHandleStateIds;
-import org.eclipse.jface.commands.AbstractPersistentState;
+import org.eclipse.jface.commands.PersistentState;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
@@ -40,7 +40,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * @since 3.2
  * @see INamedHandleStateIds
  */
-public class TextState extends AbstractPersistentState {
+public class TextState extends PersistentState {
 
 	public final void load(final IPreferenceStore store,
 			final String preferenceKey) {

@@ -11,14 +11,13 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.core.commands.IState;
 import org.eclipse.core.commands.IStateListener;
-import org.eclipse.core.commands.common.EventManager;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.commands.IPersistableState;
+import org.eclipse.jface.commands.PersistentState;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -43,8 +42,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.2
  */
-public final class CommandStateProxy extends EventManager implements
-		IPersistableState {
+public final class CommandStateProxy extends PersistentState {
 
 	/**
 	 * The configuration element from which the state can be created. This value
@@ -68,7 +66,7 @@ public final class CommandStateProxy extends EventManager implements
 	 * forced to load the real state. At this point, the configuration element
 	 * is converted, nulled out, and this state gains a reference.
 	 */
-	private IState state = null;
+	private State state = null;
 
 	/**
 	 * The name of the configuration element attribute which contains the
@@ -125,8 +123,8 @@ public final class CommandStateProxy extends EventManager implements
 	public final void dispose() {
 		if (state != null) {
 			state.dispose();
-			if (state instanceof IPersistableState) {
-				final IPersistableState persistableState = (IPersistableState) state;
+			if (state instanceof PersistentState) {
+				final PersistentState persistableState = (PersistentState) state;
 				if (persistableState.isPersisted() && preferenceStore != null
 						&& preferenceKey != null) {
 					persistableState.save(preferenceStore, preferenceKey);
@@ -144,8 +142,8 @@ public final class CommandStateProxy extends EventManager implements
 	}
 
 	public final boolean isPersisted() {
-		if (loadState() && state instanceof IPersistableState) {
-			return ((IPersistableState) state).isPersisted();
+		if (loadState() && state instanceof PersistentState) {
+			return ((PersistentState) state).isPersisted();
 		}
 
 		return false;
@@ -153,8 +151,12 @@ public final class CommandStateProxy extends EventManager implements
 
 	public final void load(final IPreferenceStore store,
 			final String preferenceKey) {
-		if (loadState() && state instanceof IPersistableState) {
-			((IPersistableState) state).load(store, preferenceKey);
+		if (loadState() && state instanceof PersistentState) {
+			final PersistentState persistableState = (PersistentState) state;
+			if (persistableState.isPersisted() && preferenceStore != null
+					&& preferenceKey != null) {
+				persistableState.load(preferenceStore, preferenceKey);
+			}
 		}
 	}
 
@@ -169,18 +171,12 @@ public final class CommandStateProxy extends EventManager implements
 	private final boolean loadState() {
 		if (state == null) {
 			try {
-				state = (IState) configurationElement
+				state = (State) configurationElement
 						.createExecutableExtension(stateAttributeName);
 				configurationElement = null;
 
 				// Try to load the persistent state, if possible.
-				if (state instanceof IPersistableState) {
-					final IPersistableState persistableState = (IPersistableState) state;
-					if (persistableState.isPersisted()
-							&& preferenceStore != null && preferenceKey != null) {
-						persistableState.load(preferenceStore, preferenceKey);
-					}
-				}
+				load(preferenceStore, preferenceKey);
 
 				// Transfer the local listeners to the real state.
 				final Object[] listenerArray = getListeners();
@@ -221,14 +217,14 @@ public final class CommandStateProxy extends EventManager implements
 
 	public final void save(final IPreferenceStore store,
 			final String preferenceKey) {
-		if (loadState() && state instanceof IPersistableState) {
-			((IPersistableState) state).load(store, preferenceKey);
+		if (loadState() && state instanceof PersistentState) {
+			((PersistentState) state).load(store, preferenceKey);
 		}
 	}
 
 	public final void setPersisted(final boolean persisted) {
-		if (loadState() && state instanceof IPersistableState) {
-			((IPersistableState) state).setPersisted(persisted);
+		if (loadState() && state instanceof PersistentState) {
+			((PersistentState) state).setPersisted(persisted);
 		}
 	}
 

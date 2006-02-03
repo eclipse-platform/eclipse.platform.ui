@@ -90,7 +90,7 @@ public final class Command extends NamedHandleObjectWithState implements
 	 * is undefined. It may also be empty.
 	 */
 	private IParameter[] parameters = null;
-	
+
 	/**
 	 * The type of the return value of this command. This value may be
 	 * <code>null</code> if the command does not declare a return type.
@@ -153,6 +153,10 @@ public final class Command extends NamedHandleObjectWithState implements
 	 * Adds a state to this command. This will add this state to the active
 	 * handler, if the active handler is an instance of {@link IObjectWithState}.
 	 * </p>
+	 * <p>
+	 * A single instance of {@link State} cannot be registered with multiple
+	 * commands. Each command requires its own unique instance.
+	 * </p>
 	 * 
 	 * @param id
 	 *            The identifier of the state to add; must not be
@@ -160,8 +164,9 @@ public final class Command extends NamedHandleObjectWithState implements
 	 * @param state
 	 *            The state to add; must not be <code>null</code>.
 	 */
-	public void addState(final String id, final IState state) {
+	public void addState(final String id, final State state) {
 		super.addState(id, state);
+		state.setId(id);
 		if (handler instanceof IObjectWithState) {
 			((IObjectWithState) handler).addState(id, state);
 		}
@@ -201,7 +206,7 @@ public final class Command extends NamedHandleObjectWithState implements
 		}
 		return compareTo;
 	}
-	
+
 	/**
 	 * <p>
 	 * Defines this command by giving it a name, and possibly a description as
@@ -281,7 +286,7 @@ public final class Command extends NamedHandleObjectWithState implements
 		final boolean parametersChanged = !Util.equals(this.parameters,
 				parameters);
 		this.parameters = parameters;
-		
+
 		final boolean returnTypeChanged = !Util.equals(this.returnType,
 				returnType);
 		this.returnType = returnType;
@@ -664,7 +669,7 @@ public final class Command extends NamedHandleObjectWithState implements
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the {@link ParameterType} for the return value of this command or
 	 * <code>null</code> if this command does not declare a return value
@@ -682,7 +687,7 @@ public final class Command extends NamedHandleObjectWithState implements
 			throw new NotDefinedException(
 					"Cannot get the return type of an undefined command"); //$NON-NLS-1$
 		}
-		
+
 		return returnType;
 	}
 
@@ -797,7 +802,7 @@ public final class Command extends NamedHandleObjectWithState implements
 					((IObjectWithState) this.handler).removeState(stateId);
 				}
 				if (handler instanceof IObjectWithState) {
-					final IState stateToAdd = getState(stateId);
+					final State stateToAdd = getState(stateId);
 					((IObjectWithState) handler).addState(stateId, stateToAdd);
 				}
 			}
@@ -884,7 +889,7 @@ public final class Command extends NamedHandleObjectWithState implements
 
 		final boolean parametersChanged = parameters != null;
 		parameters = null;
-		
+
 		final boolean returnTypeChanged = returnType != null;
 		returnType = null;
 
@@ -896,14 +901,14 @@ public final class Command extends NamedHandleObjectWithState implements
 					final String stateId = stateIds[i];
 					handlerWithState.removeState(stateId);
 
-					final IState state = getState(stateId);
+					final State state = getState(stateId);
 					removeState(stateId);
 					state.dispose();
 				}
 			} else {
 				for (int i = 0; i < stateIds.length; i++) {
 					final String stateId = stateIds[i];
-					final IState state = getState(stateId);
+					final State state = getState(stateId);
 					removeState(stateId);
 					state.dispose();
 				}

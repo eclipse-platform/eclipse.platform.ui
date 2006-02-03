@@ -374,9 +374,6 @@ The default handler for this command.  If no other handler is active, this handl
             &lt;p&gt;
 State information shared between all handlers, and potentially persisted between sessions.  This is typically something like a check box state or the label of a handler.  The state is simply a class that is loaded to look after the state.  See the API Information for more details.
 &lt;/p&gt;
-&lt;p&gt;
-By default, all commands can be assumed to have one piece of state with the &lt;code&gt;id&lt;/code&gt; set to &lt;code&gt;org.eclipse.core.commands.INamedHandleStateIds.NAME&lt;/code&gt;.
-&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Since: 3.2&lt;/em&gt;&lt;/p&gt;
          </documentation>
       </annotation>
@@ -387,7 +384,7 @@ By default, all commands can be assumed to have one piece of state with the &lt;
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  The class that can be loaded to store the state of this command.  State is shared amongst handlers, and can be persisted between sessions.  This class must implement &lt;code&gt;org.eclipse.core.commands.IState&lt;/code&gt;.  Please see API Information.
+                  The class that can be loaded to store the state of this command.  State is shared amongst handlers, and can be persisted between sessions.  This class must implement &lt;code&gt;org.eclipse.core.commands.State&lt;/code&gt;.  Please see API Information.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -398,7 +395,7 @@ By default, all commands can be assumed to have one piece of state with the &lt;
             <annotation>
                <documentation>
                   &lt;p&gt;
-A unique identifier for this state.  This is used for persisting the state between sessions (if the state implements &lt;code&gt;org.eclipse.jface.commands.IPersistableState&lt;/code&gt;).  Certain common identifiers (see &lt;code&gt;org.eclipse.jface.menus.IMenuStateIds&lt;/code&gt;) are understood when the command is being renderer in the menus or tool bars.
+A unique identifier for this state.  This is used for persisting the state between sessions (if the state is an instance of &lt;code&gt;org.eclipse.jface.commands.PersistentState&lt;/code&gt;).  Certain common identifiers (see &lt;code&gt;org.eclipse.jface.menus.IMenuStateIds&lt;/code&gt;) are understood when the command is being rendered in the menus or tool bars.  The identifier only needs to be unique within the command defining the state.
 &lt;/p&gt;
                </documentation>
             </annotation>
@@ -415,7 +412,7 @@ A unique identifier for this state.  This is used for persisting the state betwe
             &lt;p&gt;
 The class that can be loaded to store the state of this command.  This element is used if you wish to pass multiple parameters to an &lt;code&gt;org.eclipse.core.runtime.IExecutableExtension&lt;/code&gt;.
 &lt;/p&gt;
-&lt;p&gt;&lt;em&gt;Since: 3.1&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Since: 3.2&lt;/em&gt;&lt;/p&gt;
          </documentation>
       </annotation>
       <complexType>
@@ -425,7 +422,7 @@ The class that can be loaded to store the state of this command.  This element i
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The class that can be loaded to store the state of this command.  State is shared amongst handlers, and can be persisted between sessions.  This class must implement &lt;code&gt;org.eclipse.core.commands.IState&lt;/code&gt;.  Please see API Information.
+                  The class that can be loaded to store the state of this command.  State is shared amongst handlers, and can be persisted between sessions.  This class must implement &lt;code&gt;org.eclipse.core.commands.State&lt;/code&gt;.  Please see API Information.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>

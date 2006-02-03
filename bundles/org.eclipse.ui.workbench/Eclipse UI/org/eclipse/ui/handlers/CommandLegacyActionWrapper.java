@@ -17,9 +17,9 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.ICommandListener;
 import org.eclipse.core.commands.INamedHandleStateIds;
-import org.eclipse.core.commands.IState;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.action.AbstractAction;
 import org.eclipse.jface.action.IAction;
@@ -248,7 +248,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 
 	public final int getStyle() {
 		// TODO Pulldown. This does not currently support the pulldown style.
-		final IState state = command.getCommand().getState(IMenuStateIds.STYLE);
+		final State state = command.getCommand().getState(IMenuStateIds.STYLE);
 		if (state instanceof RadioState) {
 			return IAction.AS_RADIO_BUTTON;
 		} else if (state instanceof ToggleState) {
@@ -271,7 +271,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	public final boolean isChecked() {
-		final IState state = command.getCommand().getState(IMenuStateIds.STYLE);
+		final State state = command.getCommand().getState(IMenuStateIds.STYLE);
 		if (state instanceof ToggleState) {
 			final Boolean currentValue = (Boolean) state.getValue();
 			return currentValue.booleanValue();
@@ -413,7 +413,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	public final void setChecked(final boolean checked) {
-		final IState state = command.getCommand().getState(IMenuStateIds.STYLE);
+		final State state = command.getCommand().getState(IMenuStateIds.STYLE);
 		if (state instanceof ToggleState) {
 			final Boolean currentValue = (Boolean) state.getValue();
 			if (checked != currentValue.booleanValue()) {
@@ -427,7 +427,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	public final void setDescription(final String text) {
-		final IState state = command.getCommand().getState(
+		final State state = command.getCommand().getState(
 				INamedHandleStateIds.DESCRIPTION);
 		if (state instanceof TextState) {
 			final String currentValue = (String) state.getValue();
@@ -485,7 +485,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	public final void setText(final String text) {
-		final IState state = command.getCommand().getState(
+		final State state = command.getCommand().getState(
 				INamedHandleStateIds.NAME);
 		if (state instanceof TextState) {
 			final String currentValue = (String) state.getValue();
