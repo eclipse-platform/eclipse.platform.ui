@@ -211,15 +211,4 @@ public class PageSite implements IPageSite, INestable {
 	public void deactivate() {
 		serviceLocator.deactivate();
 	}
-	
-	/**
-	 * Return the parent site for this page site. A necessary work around for
-	 * the legacy keybinding service.
-	 * 
-	 * @return the pages parent site.
-	 * @since 3.2
-	 */
-	public IWorkbenchPartSite getParentSite() {
-		return parentSite;
-	}
 }
