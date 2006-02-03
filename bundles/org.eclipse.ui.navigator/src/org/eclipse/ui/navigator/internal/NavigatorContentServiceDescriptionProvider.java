@@ -18,7 +18,6 @@ import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 import org.eclipse.ui.navigator.INavigatorContentService;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorManager;
 
 /**
  * 
@@ -32,11 +31,8 @@ import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorMa
  *
  */
 public final class NavigatorContentServiceDescriptionProvider implements
-		IDescriptionProvider {
+		IDescriptionProvider { 
 	
-
-	private static final NavigatorContentDescriptorManager CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorManager.getInstance();
- 
 	private final INavigatorContentService contentService;
 
 	public NavigatorContentServiceDescriptionProvider(INavigatorContentService aContentService) { 

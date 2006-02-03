@@ -97,7 +97,7 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 				NavigatorPlugin.logError(0, e.getMessage(), e);
 			}
 		}
-		return false;
+		return true;
 	}
 
 	/**

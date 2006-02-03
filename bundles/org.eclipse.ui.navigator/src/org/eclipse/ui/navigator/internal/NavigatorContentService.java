@@ -26,8 +26,6 @@ import java.util.WeakHashMap;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -352,7 +350,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see org.eclipse.ui.navigator.INavigatorContentService#findEnabledContentDescriptors(java.lang.Object)
 	 */
 	public Set findEnabledContentDescriptors(Object anElement) {
-		return getEnabledDescriptors(anElement);
+		return findDescriptorsByTriggerPoint(anElement);
 	}
 
 	public IExtensionStateModel findStateModel(String anExtensionId) {
@@ -362,7 +360,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	public ITreeContentProvider[] findParentContentProviders(Object anElement) {
-		NavigatorContentExtension[] resultInstances = findRelevantContentExtensions(anElement);
+		NavigatorContentExtension[] resultInstances = findContentExtensionsByTriggerPoint(anElement);
 		return extractContentProviders(resultInstances);
 	}
 
@@ -385,36 +383,67 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	public ITreeContentProvider[] findRelevantContentProviders(Object anElement) {
-		NavigatorContentExtension[] resultInstances = findRelevantContentExtensions(anElement);
+		NavigatorContentExtension[] resultInstances = findContentExtensionsByTriggerPoint(anElement);
 		return extractContentProviders(resultInstances);
 	}
 
 	public ILabelProvider[] findRelevantLabelProviders(Object anElement) {
-		NavigatorContentExtension[] resultInstances = findRelevantContentExtensions(
+		NavigatorContentExtension[] resultInstances = findContentExtensionsWithPossibleChild(
 				anElement, false);
 		return extractLabelProviders(resultInstances);
 	}
 
-	public NavigatorContentExtension[] findRelevantContentExtensions(
+
+	/**
+	 * 
+	 * @param anElement The element from the viewer or to be added to the viewer
+	 * @return An array of content extensions that describe the object in their <b>triggerPoints</b> expression.
+	 */	
+	public NavigatorContentExtension[] findContentExtensionsByTriggerPoint(
 			Object anElement) {
-		return findRelevantContentExtensions(anElement, true);
+		return findContentExtensionsByTriggerPoint(anElement, true);
 	}
 
-	public NavigatorContentExtension[] findRelevantContentExtensions(
+	/**
+	 * 
+	 * @param anElement The element from the viewer or to be added to the viewer
+	 * @param toLoadIfNecessary True will force the load of the extension, False will not
+	 * @return An array of content extensions that describe the object in their <b>triggerPoints</b> expression.
+	 */	
+	public NavigatorContentExtension[] findContentExtensionsByTriggerPoint(
 			Object anElement, boolean toLoadIfNecessary) {
-		Set enabledDescriptors = getEnabledDescriptors(anElement);
+		Set enabledDescriptors = findDescriptorsByTriggerPoint(anElement);
+		return extractDescriptorInstances(enabledDescriptors, toLoadIfNecessary);
+	}
+	   
+	
+	/**
+	 * 
+	 * @param anElement The element from the viewer or to be added to the viewer	 * 
+	 * @return An array of content extensions that describe the object in their <b>possibleChildren</b> expression.
+	 */
+	public NavigatorContentExtension[] findContentExtensionsWithPossibleChild(
+			Object anElement) {
+		return findContentExtensionsWithPossibleChild(anElement, true);
+	}
+
+	/**
+	 * 
+	 * @param anElement The element from the viewer or to be added to the viewer
+	 * @param toLoadIfNecessary True will force the load of the extension, False will not
+	 * @return An array of content extensions that describe the object in their <b>possibleChildren</b> expression.
+	 */
+	public NavigatorContentExtension[] findContentExtensionsWithPossibleChild(
+			Object anElement, boolean toLoadIfNecessary) {
+		Set enabledDescriptors = findDescriptorsWithPossibleChild(anElement);
 		return extractDescriptorInstances(enabledDescriptors, toLoadIfNecessary);
 	}
 
-	public NavigatorContentExtension[] findRelevantContentExtensions(
-			IStructuredSelection aSelection) {
-		Set contentDescriptors = getEnabledDescriptors(aSelection);
-		if (contentDescriptors.size() == 0)
-			return NO_CONTENT_EXTENSIONS;
-		return extractDescriptorInstances(contentDescriptors);
-
-	}
-
+	/**
+	 * Remember that the elements in the given array came from the given source
+	 * @param source The descriptor of the extension that contributed the set of elements.
+	 * @param elements An array of elements from the given source.
+	 */
 	public synchronized void rememberContribution(
 			NavigatorContentDescriptor source, Object[] elements) {
 
@@ -423,12 +452,23 @@ public class NavigatorContentService implements IExtensionActivationListener,
 				getContributionMemory().put(elements[i], source);
 	}
 
+	/**
+	 * Remember that the elements in the given array came from the given source
+	 * @param source The descriptor of the extension that contributed the set of elements.
+	 * @param element An element from the given source.
+	 */
 	public synchronized void rememberContribution(
 			NavigatorContentDescriptor source, Object element) {
 		if (source != null && element != null)
 			getContributionMemory().put(element, source);
 	}
 
+	/**
+	 * 
+	 * @param element The element contributed by the descriptor to be returned
+	 * @return The descriptor that contributed the element or null.
+	 * @see #findContentExtensionsWithPossibleChild(Object)
+	 */
 	public NavigatorContentDescriptor getSourceOfContribution(Object element) {
 		return (NavigatorContentDescriptor) getContributionMemory()
 				.get(element);
@@ -448,29 +488,30 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return contributionMemory;
 	}
 
-	private Set getEnabledDescriptors(Object anElement) {
-		Set enabledByExpression = CONTENT_DESCRIPTOR_REGISTRY
-				.getEnabledContentDescriptors(anElement, assistant);
+	public Set findDescriptorsByTriggerPoint(Object anElement) {
+
 		NavigatorContentDescriptor descriptor = getSourceOfContribution(anElement);
+		Set result = new HashSet();
 		if (descriptor != null)
-			enabledByExpression.add(descriptor);
-		return enabledByExpression;
+			result.add(descriptor);  
+		result.addAll(CONTENT_DESCRIPTOR_REGISTRY
+				.findDescriptorsForTriggerPoint(anElement, assistant));
+		return result;
 	}
+	
 
-	private Set getEnabledDescriptors(IStructuredSelection aSelection) {
-		return CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(
-				aSelection, assistant);
+	// update registry to use possibleChildren expression
+	public Set findDescriptorsWithPossibleChild(Object anElement) {
+
+		NavigatorContentDescriptor descriptor = getSourceOfContribution(anElement);
+		Set result = new HashSet();
+		if (descriptor != null)
+			result.add(descriptor);
+		result.addAll(CONTENT_DESCRIPTOR_REGISTRY
+				.findDescriptorsForPossibleChild(anElement, assistant));
+		return result;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.internal.INavigatorContentService#initialize(org.eclipse.jface.viewers.IStructuredContentProvider)
-	 */
-	public boolean initialize(IStructuredContentProvider aContentProvider) {
-		return structuredViewerManager.initialize(aContentProvider);
-	}
-
+ 
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -502,22 +543,17 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return viewerDescriptor.getViewerId();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.eclipse.ui.navigator.internal.INavigatorContentService#getExtension(org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor)
+	 * @param aDescriptorKey A descriptor
+	 * @return The cached NavigatorContentExtension from the descriptor
 	 */
 	public final NavigatorContentExtension getExtension(
 			NavigatorContentDescriptor aDescriptorKey) {
 		return getExtension(aDescriptorKey, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.internal.INavigatorContentService#getExtension(org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor,
-	 *      boolean)
-	 */
+	
 	public final NavigatorContentExtension getExtension(
 			NavigatorContentDescriptor aDescriptorKey, boolean toLoadIfNecessary) {
 		/* Query and return the relevant descriptor instance */
@@ -632,7 +668,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 					.toArray((resultInstances = new NavigatorContentExtension[resultInstancesList
 							.size()]));
 		} else
-			resultInstances = findRelevantContentExtensions(anElement);
+			resultInstances = findContentExtensionsByTriggerPoint(anElement);
 		return resultInstances;
 	}
 
@@ -728,11 +764,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 						.getContentProvider());
 		return (ITreeContentProvider[]) resultProvidersList
 				.toArray(new ITreeContentProvider[resultProvidersList.size()]);
-	}
-
-	private NavigatorContentExtension[] extractDescriptorInstances(
-			Set theDescriptors) {
-		return extractDescriptorInstances(theDescriptors, true);
 	}
 
 	private NavigatorContentExtension[] extractDescriptorInstances(

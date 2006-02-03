@@ -114,7 +114,7 @@ public class NavigatorFilterService implements INavigatorFilterService,
 					.getVisibleExtensions();
 
 			for (int i = 0; i < visibleExtensions.length; i++) {
-				if (Utilities.isActive(contentService.getViewerId(), visibleExtensions[i].getId())) {
+				if (contentService.isActive(visibleExtensions[i].getId())) {
 					NavigatorContentExtension extension = contentService
 							.getExtension(
 									(NavigatorContentDescriptor) visibleExtensions[i],

@@ -77,6 +77,25 @@
 		                  	value="org.eclipse.core.resources.IFile" /> 
 		         </or>
          </enablement>
+         
+        <commonSorter
+              class="org.eclipse.ui.navigator.resources.internal.workbench.ResourceExtensionSorter"
+              id="org.eclipse.ui.navigator.resources.sorters.defaultSorter">
+           <parentExpression>
+           		  <or>         
+		            <instanceof 
+		                  value="org.eclipse.core.resources.IWorkspaceRoot" /> 
+		            <instanceof
+		                  value="org.eclipse.core.resources.IProject" /> 
+		            <instanceof 
+		                  	value="org.eclipse.core.resources.IResource" /> 
+		            <instanceof  
+		                  	value="org.eclipse.core.resources.IFolder" />
+		            <instanceof 
+		                  	value="org.eclipse.core.resources.IFile" /> 
+		         </or>
+		   </parentExpression>
+        </commonSorter>
       </navigatorContent>
       
       <!-- Action Providers -->
@@ -179,24 +198,6 @@
 				</or>
 	         </enablement>
 		</commonWizard>
-        <commonSorter
-              class="org.eclipse.ui.navigator.resources.internal.workbench.ResourceExtensionSorter"
-              id="org.eclipse.ui.navigator.resources.sorters.defaultSorter">
-           <parentExpression>
-           		  <or>         
-		            <instanceof 
-		                  value="org.eclipse.core.resources.IWorkspaceRoot" /> 
-		            <instanceof
-		                  value="org.eclipse.core.resources.IProject" /> 
-		            <instanceof 
-		                  	value="org.eclipse.core.resources.IResource" /> 
-		            <instanceof  
-		                  	value="org.eclipse.core.resources.IFolder" />
-		            <instanceof 
-		                  	value="org.eclipse.core.resources.IFile" /> 
-		         </or>
-		   </parentExpression>
-        </commonSorter>
    </extension>
 <!-- Handle Resource drag and drop -->
    <extension

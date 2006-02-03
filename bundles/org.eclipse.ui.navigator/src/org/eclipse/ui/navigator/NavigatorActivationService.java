@@ -328,7 +328,7 @@ public final class NavigatorActivationService {
 			INavigatorContentDescriptor[] contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY
 					.getAllContentDescriptors();
 			for (int i = 0; i < contentDescriptors.length; i++)
-				if (contentDescriptors[i].isEnabledByDefault())
+				if (contentDescriptors[i].isActiveByDefault())
 					activatedExtensions
 							.add(getExtensionActivationPreferenceKey(contentDescriptors[i]
 									.getId()));

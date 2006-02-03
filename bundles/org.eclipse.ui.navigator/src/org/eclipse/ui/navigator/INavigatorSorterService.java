@@ -38,10 +38,23 @@ public interface INavigatorSorterService {
 	/**
 	 * Return a {@link ViewerSorter} from an extension which is visible to the
 	 * associated {@link INavigatorContentService} and whose <b>parentExpression</b>
-	 * matches
+	 * matches the given parent.
 	 * 
 	 * @param aParent An element from the tree
 	 * @return An applicable ViewerSorter or simple {@link ViewerSorter} if no sorter is found.
 	 */
 	ViewerSorter findSorterForParent(Object aParent);
+	
+	/**
+	 * Return a {@link ViewerSorter} from an extension which is visible to the
+	 * associated {@link INavigatorContentService} and whose <b>parentExpression</b>
+	 * matches the given parent.
+	 * 
+	 * @param source The source of the element.
+	 * @param parent An element from the tree
+	 * @param lvalue An element from the tree
+	 * @param rvalue An element from the tree
+	 * @return An applicable ViewerSorter or simple {@link ViewerSorter} if no sorter is found.
+	 */
+	ViewerSorter findSorter(INavigatorContentDescriptor source, Object parent, Object lvalue, Object rvalue);	
 }

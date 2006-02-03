@@ -21,7 +21,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
@@ -91,37 +90,7 @@ public class NavigatorContentDescriptorManager {
 		Arrays.sort(finalDescriptors, EXTENSION_COMPARATOR);
 		return finalDescriptors;
 	}
-
-	/**
-	 * 
-	 * Returns all content descriptor(s) which enable for the given element.
-	 * 
-	 * @param aStructuredSelection
-	 *            The element to return the best content descriptor for
-	 * @param aVisibilityAssistant
-	 *            The relevant viewer assistant; used to filter out unbound
-	 *            content descriptors.
-	 * @return the best content descriptor for the given element.
-	 */
-	public Set getEnabledContentDescriptors(
-			IStructuredSelection aStructuredSelection,
-			VisibilityAssistant aVisibilityAssistant) {
-		Set descriptors = new HashSet();
-
-		/* Find other ContentProviders which enable for this object */
-		for (Iterator contentDescriptorsItr = contentDescriptors.values()
-				.iterator(); contentDescriptorsItr.hasNext();) {
-			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) contentDescriptorsItr
-					.next();
-
-			if (aVisibilityAssistant.isApplicable(descriptor,
-					aStructuredSelection))
-				descriptors.add(descriptor);
-		}
-		// Collections.sort(descriptors, EXTENSION_COMPARATOR);
-
-		return descriptors;
-	}
+ 
 
 	/**
 	 * 
@@ -135,7 +104,7 @@ public class NavigatorContentDescriptorManager {
 	 *            content descriptors.
 	 * @return the best content descriptor for the given element.
 	 */
-	public Set getEnabledContentDescriptors(Object anElement,
+	public Set findDescriptorsForTriggerPoint(Object anElement,
 			VisibilityAssistant aVisibilityAssistant) {
 		Set descriptors = new HashSet();
 
@@ -145,7 +114,42 @@ public class NavigatorContentDescriptorManager {
 			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) contentDescriptorsItr
 					.next();
 
-			if (aVisibilityAssistant.isApplicable(descriptor, anElement))
+			if (aVisibilityAssistant.isActive(descriptor) && 
+					aVisibilityAssistant.isVisible(descriptor) && 
+					descriptor.isTriggerPoint(anElement))
+				descriptors.add(descriptor);
+		}
+		// Collections.sort(descriptors, EXTENSION_COMPARATOR);
+
+		return descriptors;
+	}
+	
+
+	/**
+	 * 
+	 * Returns all content descriptor(s) which enable for the given element.
+	 * 
+	 * @param anElement
+	 *            the element to return the best content descriptor for
+	 * 
+	 * @param aVisibilityAssistant
+	 *            The relevant viewer assistant; used to filter out unbound
+	 *            content descriptors.
+	 * @return the best content descriptor for the given element.
+	 */
+	public Set findDescriptorsForPossibleChild(Object anElement,
+			VisibilityAssistant aVisibilityAssistant) {
+		Set descriptors = new HashSet();
+
+		/* Find other ContentProviders which enable for this object */
+		for (Iterator contentDescriptorsItr = contentDescriptors.values()
+				.iterator(); contentDescriptorsItr.hasNext();) {
+			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) contentDescriptorsItr
+					.next();
+
+			if (aVisibilityAssistant.isActive(descriptor) && 
+					aVisibilityAssistant.isVisible(descriptor) && 
+					descriptor.isPossibleChild(anElement))
 				descriptors.add(descriptor);
 		}
 		// Collections.sort(descriptors, EXTENSION_COMPARATOR);

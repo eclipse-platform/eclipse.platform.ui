@@ -7,7 +7,7 @@
  * 
  * Contributors:
  * IBM Corporation - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.ui.tests.navigator.extension;
 
 import org.eclipse.jface.action.Action;
@@ -23,8 +23,14 @@ public class TestAction extends Action implements IAction {
 		super("Test Action");
 		shell = aShell;
 	}
-	
+
+	public TestAction(Shell aShell, String label) {
+		super(label);
+		shell = aShell;
+	}
+
 	public void run() {
-		MessageDialog.openInformation(shell, "Shell", "The test action ran!");
+		MessageDialog.openInformation(shell, "Shell", "The " + getText()
+				+ " ran!");
 	}
 }

@@ -12,7 +12,6 @@ package org.eclipse.ui.navigator.internal.extensions;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.expressions.ElementHandler;
@@ -20,12 +19,10 @@ import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
-import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
@@ -57,7 +54,7 @@ public final class NavigatorContentDescriptor implements
 	private static final ViewerFilter[] NO_VIEWER_FILTERS = new ViewerFilter[0];
 
 	private static final IConfigurationElement[] NO_DUPLICATE_CONTENT_FILTERS = new IConfigurationElement[0];
- 
+
 	private String id;
 
 	private String name;
@@ -78,7 +75,7 @@ public final class NavigatorContentDescriptor implements
 
 	private String declaringPluginId;
 
-	private boolean enabledByDefault;
+	private boolean activeByDefault;
 
 	private IPluginContribution contribution;
 
@@ -108,43 +105,14 @@ public final class NavigatorContentDescriptor implements
 	}
 
 	/**
-	 * Determine if this content extension is enabled for the given selection.
-	 * The content extension is enabled for the selection if and only if it is
-	 * enabled for each element in the selection.
-	 * 
-	 * @param aStructuredSelection
-	 *            The selection from the viewer
-	 * @return True if and only if the extension is enabled for each element in
-	 *         the selection.
-	 */
-	public boolean isEnabledFor(IStructuredSelection aStructuredSelection) {
-		if (enablement == null)
-			return false;
-
-		IEvaluationContext context = null;
-
-		Iterator elements = aStructuredSelection.iterator();
-		while (elements.hasNext()) {
-			context = new EvaluationContext(null, elements.next());
-			try {
-				if (enablement.evaluate(context) == EvaluationResult.FALSE)
-					return false;
-			} catch (CoreException e) {
-				NavigatorPlugin.logError( 0, e.getMessage(), e);
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Determine if this content extension is enabled for the given element.
+	 * Determine if this content extension would be able to provide children for
+	 * the given element.
 	 * 
 	 * @param anElement
 	 *            The element that should be used for the evaluation.
 	 * @return True if and only if the extension is enabled for the element.
 	 */
-	public boolean isEnabledFor(Object anElement) {
+	public boolean isTriggerPoint(Object anElement) {
 
 		if (enablement == null || anElement == null)
 			return false;
@@ -152,10 +120,11 @@ public final class NavigatorContentDescriptor implements
 		try {
 			return (enablement.evaluate(new EvaluationContext(null, anElement)) == EvaluationResult.TRUE);
 		} catch (CoreException e) {
-			NavigatorPlugin.logError( 0, e.getMessage(), e);
+			NavigatorPlugin.logError(0, e.getMessage(), e);
 		}
 		return false;
 	}
+ 
 
 	/**
 	 * Determine if this content extension could provide the given element as a
@@ -185,7 +154,7 @@ public final class NavigatorContentDescriptor implements
 				return (enablement.evaluate(new EvaluationContext(null,
 						anElement)) == EvaluationResult.TRUE);
 		} catch (CoreException e) {
-			NavigatorPlugin.logError( 0, e.getMessage(), e);
+			NavigatorPlugin.logError(0, e.getMessage(), e);
 		}
 		return false;
 	}
@@ -255,9 +224,9 @@ public final class NavigatorContentDescriptor implements
 
 		declaringPluginId = configElement.getDeclaringExtension()
 				.getNamespace();
-		String enabledByDefaultString = configElement
+		String activeByDefaultString = configElement
 				.getAttribute(ATT_ACTIVE_BY_DEFAULT);
-		enabledByDefault = (enabledByDefaultString != null && enabledByDefaultString
+		activeByDefault = (activeByDefaultString != null && activeByDefaultString
 				.length() > 0) ? Boolean.valueOf(
 				configElement.getAttribute(ATT_ACTIVE_BY_DEFAULT))
 				.booleanValue() : true;
@@ -265,8 +234,10 @@ public final class NavigatorContentDescriptor implements
 		if (priorityString != null) {
 			try {
 				Priority p = Priority.get(priorityString);
-				priority = p != null ? p.getValue() : -1;
+				priority = p != null ? p.getValue()
+						: Priority.LOW_PRIORITY_VALUE;
 			} catch (NumberFormatException exception) {
+				priority = Priority.LOW_PRIORITY_VALUE;
 			}
 		}
 		if (id == null) {
@@ -378,8 +349,8 @@ public final class NavigatorContentDescriptor implements
 	 * 
 	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor#isEnabledByDefault()
 	 */
-	public boolean isEnabledByDefault() {
-		return enabledByDefault;
+	public boolean isActiveByDefault() {
+		return activeByDefault;
 	}
 
 	/**
@@ -460,7 +431,7 @@ public final class NavigatorContentDescriptor implements
 		return (ILabelProvider) configElement
 				.createExecutableExtension(ATT_LABEL_PROVIDER);
 	}
-  
+
 	/**
 	 * Extensions may or may not define a comparator. Without a comparator,
 	 * items are sorted in the same order they are returned from the content

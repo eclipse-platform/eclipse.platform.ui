@@ -37,7 +37,6 @@ consulting with the Platform/UI team.
                <element ref="actionProvider" minOccurs="0" maxOccurs="1"/>
                <element ref="commonWizard" minOccurs="0" maxOccurs="1"/>
                <element ref="commonFilter" minOccurs="0" maxOccurs="1"/>
-               <element ref="commonSorter" minOccurs="0" maxOccurs="1"/>
             </choice>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -86,6 +85,7 @@ Optionally, clients may also provide an action provider which can provide menu c
                </sequence>
             </choice>
             <element ref="actionProvider" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="commonSorter" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="duplicateContentFilter" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
@@ -526,8 +526,8 @@ matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression.
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension  
-		point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt;
-	&lt;navigatorContent
+  point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt;
+ &lt;navigatorContent
             name=&quot;%resource.extension.name&quot;
             priority=&quot;low&quot;
             icon=&quot;icons/full/eview16/resource_persp.gif&quot;
@@ -536,7 +536,7 @@ matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression.
                labelProvider=&quot;org.eclipse.ui.navigator.resources.internal.workbench.ResourceExtensionLabelProvider&quot;   
                sorter=&quot;org.eclipse.ui.navigator.resources.internal.workbench.ResourceSorter&quot;
             id=&quot;org.eclipse.ui.navigator.resourceContent&quot;&gt;         
-		&lt;triggerPoints&gt;
+  &lt;triggerPoints&gt;
            &lt;or&gt;         
               &lt;instanceof 
                     value=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt; 
@@ -545,7 +545,7 @@ matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression.
               &lt;instanceof  
                      value=&quot;org.eclipse.core.resources.IFolder&quot; /&gt; 
            &lt;/or&gt;
-		&lt;/triggerPoints&gt;
+  &lt;/triggerPoints&gt;
         &lt;possibleChildren&gt;
            &lt;or&gt;         
               &lt;instanceof 
@@ -558,9 +558,9 @@ matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression.
                      value=&quot;org.eclipse.core.resources.IFolder&quot; /&gt;
               &lt;instanceof 
                      value=&quot;org.eclipse.core.resources.IFile&quot; /&gt; 
-        	&lt;/or&gt;
-    	&lt;/possibleChildren&gt;
-	&lt;/navigatorContent&gt;
+         &lt;/or&gt;
+     &lt;/possibleChildren&gt;
+ &lt;/navigatorContent&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -591,7 +591,7 @@ If the user deactivates the test extension from the &quot;Available customizatio
 nested action provider will no longer be given the opportunity to contribute. 
 &lt;pre&gt;
 &lt;extension  
-		point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt; 
+  point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt; 
       &lt;navigatorContent 
             id=&quot;org.eclipse.ui.tests.navigator.testContent&quot; 
             name=&quot;%test.navigator.extension&quot;
@@ -602,27 +602,27 @@ nested action provider will no longer be given the opportunity to contribute.
          &lt;triggerPoints&gt;
             &lt;instanceof value=&quot;org.eclipse.core.resources.IProject&quot;/&gt;
          &lt;/triggerPoints&gt; 
-      	 &lt;actionProvider
+        &lt;actionProvider
             class=&quot;org.eclipse.ui.tests.navigator.extension.TestNestedActionProvider&quot;
             id=&quot;org.eclipse.ui.tests.navigator.extension.TestNestedActionProvider&quot;&gt;
-         	&lt;enablement&gt;
-           		&lt;instanceof value=&quot;org.eclipse.core.resources.IResource&quot;/&gt;
-         	&lt;/enablement&gt;
-      	 &lt;/actionProvider&gt;
-      &lt;/navigatorContent&gt;		
+          &lt;enablement&gt;
+             &lt;instanceof value=&quot;org.eclipse.core.resources.IResource&quot;/&gt;
+          &lt;/enablement&gt;
+        &lt;/actionProvider&gt;
+      &lt;/navigatorContent&gt;  
         &lt;actionProvider
-            	class=&quot;org.eclipse.ui.navigator.resources.internal.actions.NewActionProvider&quot;
-            	id=&quot;org.eclipse.ui.navigator.resources.NewActions&quot;&gt; 
-        	&lt;enablement&gt;
-				&lt;or&gt;
-					&lt;adapt type=&quot;org.eclipse.core.resources.IFile&quot; /&gt;	
-					&lt;adapt type=&quot;org.eclipse.core.resources.IFolder&quot; /&gt;
-         			&lt;adapt type=&quot;org.eclipse.core.resources.IProject&quot; /&gt; 
-               		&lt;adapt type=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt;	
-				&lt;/or&gt;
-	         &lt;/enablement&gt;
-		&lt;/actionProvider&gt;
-&lt;/extension&gt;		
+             class=&quot;org.eclipse.ui.navigator.resources.internal.actions.NewActionProvider&quot;
+             id=&quot;org.eclipse.ui.navigator.resources.NewActions&quot;&gt; 
+         &lt;enablement&gt;
+    &lt;or&gt;
+     &lt;adapt type=&quot;org.eclipse.core.resources.IFile&quot; /&gt; 
+     &lt;adapt type=&quot;org.eclipse.core.resources.IFolder&quot; /&gt;
+            &lt;adapt type=&quot;org.eclipse.core.resources.IProject&quot; /&gt; 
+                 &lt;adapt type=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt; 
+    &lt;/or&gt;
+          &lt;/enablement&gt;
+  &lt;/actionProvider&gt;
+&lt;/extension&gt;  
 &lt;/pre&gt;
 &lt;/p&gt;
 
@@ -637,22 +637,22 @@ strings in real environments.
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension  
-		point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt;
-	&lt;commonFilter
-    		class=&quot;org.eclipse.ui.tests.navigator.extension.TestItemsThatEndIn3&quot;
+  point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt;
+ &lt;commonFilter
+      class=&quot;org.eclipse.ui.tests.navigator.extension.TestItemsThatEndIn3&quot;
             description=&quot;Hide TestItem objects that end in the number &amp;quot;3&amp;quot;&quot;
             id=&quot;org.eclipse.ui.tests.navigator.filters.TestItemsThatEndWith3&quot;
             name=&quot;TestItems that end with &amp;quot;3&amp;quot;&quot;
             activeByDefault=&quot;true&quot;
             /&gt; 
-	&lt;commonFilter
+ &lt;commonFilter
             description=&quot;Hides all instances of Test Item&quot;
             id=&quot;org.eclipse.ui.tests.navigator.filters.AllTestItems&quot;
             name=&quot;A TestItem Exp Filter (should be sorted alphab..)&quot;&gt;
          &lt;filterExpression&gt;
             &lt;instanceof value=&quot;org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData&quot;/&gt;
          &lt;/filterExpression&gt;
-	&lt;/commonFilter&gt;
+ &lt;/commonFilter&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
@@ -665,25 +665,25 @@ must subclass the &lt;code&gt;org.eclipse.jface.viewers.ViewerSorter&lt;/code&gt
 &lt;pre&gt;
 
 &lt;extension  
-		point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt;
-	&lt;commonSorter
-    		class=&quot;org.eclipse.ui.navigator.resources.internal.workbench.ResourceExtensionSorter&quot;
+  point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt;
+ &lt;commonSorter
+      class=&quot;org.eclipse.ui.navigator.resources.internal.workbench.ResourceExtensionSorter&quot;
             id=&quot;org.eclipse.ui.navigator.resources.sorters.defaultSorter&quot;&gt;
-		&lt;parentExpression&gt;
-        	&lt;or&gt;         
-		    	&lt;instanceof 
-		        	value=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt; 
-		        &lt;instanceof
-		        	value=&quot;org.eclipse.core.resources.IProject&quot; /&gt; 
-		        &lt;instanceof 
-		        	value=&quot;org.eclipse.core.resources.IResource&quot; /&gt; 
-		        &lt;instanceof  
-		        	value=&quot;org.eclipse.core.resources.IFolder&quot; /&gt;
-		        &lt;instanceof 
-		        	value=&quot;org.eclipse.core.resources.IFile&quot; /&gt; 
-			&lt;/or&gt;
-		&lt;/parentExpression&gt;
-	&lt;/commonSorter&gt;
+  &lt;parentExpression&gt;
+         &lt;or&gt;         
+       &lt;instanceof 
+           value=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt; 
+          &lt;instanceof
+           value=&quot;org.eclipse.core.resources.IProject&quot; /&gt; 
+          &lt;instanceof 
+           value=&quot;org.eclipse.core.resources.IResource&quot; /&gt; 
+          &lt;instanceof  
+           value=&quot;org.eclipse.core.resources.IFolder&quot; /&gt;
+          &lt;instanceof 
+           value=&quot;org.eclipse.core.resources.IFile&quot; /&gt; 
+   &lt;/or&gt;
+  &lt;/parentExpression&gt;
+ &lt;/commonSorter&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -706,36 +706,34 @@ using this feature.
 &lt;pre&gt;
 
 &lt;extension  
-		point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt;
-	&lt;commonWizard
-    		type=&quot;new&quot;
-			wizardId=&quot;org.eclipse.ui.wizards.new.folder&quot;&gt;
-		&lt;enablement&gt;
-			&lt;or&gt;
-				&lt;adapt type=&quot;org.eclipse.core.resources.IFile&quot; /&gt;	
-				&lt;adapt type=&quot;org.eclipse.core.resources.IFolder&quot; /&gt;
-         		&lt;adapt type=&quot;org.eclipse.core.resources.IProject&quot; /&gt; 
-            	&lt;adapt type=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt;	
-			&lt;/or&gt;
-		&lt;/enablement&gt;
-	&lt;/commonWizard&gt;   
-	&lt;commonWizard
+  point=&quot;org.eclipse.ui.navigator.navigatorContent&quot;&gt;
+ &lt;commonWizard
+      type=&quot;new&quot;
+   wizardId=&quot;org.eclipse.ui.wizards.new.folder&quot;&gt;
+  &lt;enablement&gt;
+   &lt;or&gt;
+    &lt;adapt type=&quot;org.eclipse.core.resources.IFile&quot; /&gt; 
+    &lt;adapt type=&quot;org.eclipse.core.resources.IFolder&quot; /&gt;
+           &lt;adapt type=&quot;org.eclipse.core.resources.IProject&quot; /&gt; 
+             &lt;adapt type=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt; 
+   &lt;/or&gt;
+  &lt;/enablement&gt;
+ &lt;/commonWizard&gt;   
+ &lt;commonWizard
             type=&quot;new&quot;
             wizardId=&quot;org.eclipse.ui.wizards.new.file&quot;&gt;
-		&lt;enablement&gt;
-			&lt;or&gt;
-				&lt;adapt type=&quot;org.eclipse.core.resources.IFile&quot; /&gt;	
-				&lt;adapt type=&quot;org.eclipse.core.resources.IFolder&quot; /&gt;
-         		&lt;adapt type=&quot;org.eclipse.core.resources.IProject&quot; /&gt; 
-            	&lt;adapt type=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt;	
-			&lt;/or&gt;
-		&lt;/enablement&gt;
-	&lt;/commonWizard&gt;
-&lt;/extension&gt;	
+  &lt;enablement&gt;
+   &lt;or&gt;
+    &lt;adapt type=&quot;org.eclipse.core.resources.IFile&quot; /&gt; 
+    &lt;adapt type=&quot;org.eclipse.core.resources.IFolder&quot; /&gt;
+           &lt;adapt type=&quot;org.eclipse.core.resources.IProject&quot; /&gt; 
+             &lt;adapt type=&quot;org.eclipse.core.resources.IWorkspaceRoot&quot; /&gt; 
+   &lt;/or&gt;
+  &lt;/enablement&gt;
+ &lt;/commonWizard&gt;
+&lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
-
-
       </documentation>
    </annotation>
 

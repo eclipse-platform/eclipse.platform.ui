@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
@@ -69,27 +68,10 @@ public class VisibilityAssistant {
 	 *         <i>visible</i> for the viewer descriptor and enabled for the
 	 *         given element.
 	 */
-	public boolean isApplicable(INavigatorContentDescriptor aContentDescriptor,
-			Object anElement) {
-		return isActive(aContentDescriptor) && isVisible(aContentDescriptor)
-				&& isEnabled(aContentDescriptor, anElement);
+	public boolean isVisibleAndActive(INavigatorContentDescriptor aContentDescriptor) {
+		return isActive(aContentDescriptor) && isVisible(aContentDescriptor);
 	}
-
-	/**
-	 * 
-	 * @param aContentDescriptor
-	 *            The content descriptor of inquiry
-	 * @param aSelection
-	 *            The selection from the viewer
-	 * @return True if and only if the content descriptor is <i>active</i> and
-	 *         <i>visible</i> for the viewer descriptor and enabled for the
-	 *         given selection.
-	 */
-	public boolean isApplicable(INavigatorContentDescriptor aContentDescriptor,
-			IStructuredSelection aSelection) {
-		return isActive(aContentDescriptor) && isVisible(aContentDescriptor)
-				&& isEnabled(aContentDescriptor, aSelection);
-	}
+ 
 
 	/**
 	 * 
@@ -164,32 +146,6 @@ public class VisibilityAssistant {
 		return programmaticRootBindings.contains(aContentExtensionId)
 			|| viewerDescriptor
 				.isRootExtension(aContentExtensionId);
-	}
-	/**
-	 * 
-	 * @param aContentDescriptor
-	 *            The content descriptor of inquiry
-	 * @param anElement
-	 *            The element from the viewer
-	 * @return True if and only if the given content extension is enabled for
-	 *         the given element.
-	 */
-	public boolean isEnabled(INavigatorContentDescriptor aContentDescriptor,
-			Object anElement) {
-		return aContentDescriptor.isEnabledFor(anElement);
-	}
-
-	/**
-	 * 
-	 * @param aContentDescriptor
-	 *            The content descriptor of inquiry
-	 * @param aSelection
-	 *            The selection from the viewer
-	 * @return True if and only if the given content extension is enabled for
-	 *         the given selection.
-	 */
-	public boolean isEnabled(INavigatorContentDescriptor aContentDescriptor,
-			IStructuredSelection aSelection) {
-		return aContentDescriptor.isEnabledFor(aSelection);
-	}
+	} 
+ 
 }

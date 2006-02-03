@@ -24,10 +24,12 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -52,10 +54,16 @@ public class TestContentProvider implements ITreeContentProvider,
 	}
 
 	public Object[] getChildren(Object parentElement) {
+		
+		
+		
+		if (parentElement instanceof TestExtensionTreeData) {
+			TestExtensionTreeData data = (TestExtensionTreeData) parentElement;
+			return data.getChildren();
+		} else {
 
-		if (parentElement instanceof IProject) {
-			IProject project = (IProject) parentElement;
-			if (project.isAccessible()) {
+			IProject project = adaptToProject(parentElement);  
+			if (project != null && project.isAccessible()) {
 				IFile modelFile = project.getFile(MODEL_FILE_PATH);
 				if (rootElements.containsKey(modelFile)) {
 					TestExtensionTreeData model = (TestExtensionTreeData) rootElements
@@ -66,11 +74,22 @@ public class TestContentProvider implements ITreeContentProvider,
 					return model != null ? model.getChildren() : NO_CHILDREN;
 				}
 			}
-		} else if (parentElement instanceof TestExtensionTreeData) {
-			TestExtensionTreeData data = (TestExtensionTreeData) parentElement;
-			return data.getChildren();
-		}
+		}  
 		return NO_CHILDREN;
+	}
+
+	/**
+	 * @param parentElement
+	 * @param class1
+	 * @return
+	 */
+	private IProject adaptToProject(Object parentElement) {
+		if(parentElement instanceof IProject)
+			return (IProject) parentElement;
+		else if(parentElement instanceof IAdaptable)
+			return (IProject) ((IAdaptable) parentElement).getAdapter(IProject.class);
+		else 
+			return (IProject) Platform.getAdapterManager().getAdapter(parentElement, IProject.class); 
 	}
 
 	/**

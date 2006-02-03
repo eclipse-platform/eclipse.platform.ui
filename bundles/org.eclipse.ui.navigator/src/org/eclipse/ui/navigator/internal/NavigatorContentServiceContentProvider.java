@@ -219,7 +219,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public synchronized boolean hasChildren(Object anElement) {
-		NavigatorContentExtension[] resultInstances = contentService.findRelevantContentExtensions(anElement);
+		NavigatorContentExtension[] resultInstances = contentService.findContentExtensionsByTriggerPoint(anElement);
 
 		for (int i = 0; i < resultInstances.length; i++) {
 			if (!resultInstances[i].isLoaded())

@@ -19,8 +19,29 @@
             activeByDefault="true"
             priority="normal">
          <triggerPoints>
-            <instanceof value="org.eclipse.core.resources.IProject"/>
-         </triggerPoints>
+			<adapt type="org.eclipse.core.resources.IProject"/>
+         </triggerPoints> 
+         
+         <possibleChildren>
+			<adapt type="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
+         </possibleChildren> 
+      	 <actionProvider
+            class="org.eclipse.ui.tests.navigator.extension.TestNestedActionProvider"
+            id="org.eclipse.ui.tests.navigator.extension.TestNestedActionProvider">
+         	<enablement>
+           		<instanceof value="org.eclipse.core.resources.IResource"/>
+         	</enablement>
+      	 </actionProvider>
+        <commonSorter
+              class="org.eclipse.ui.tests.navigator.extension.TestDataSorter"
+              id="org.eclipse.ui.tests.navigator.commonSorter">
+           <parentExpression>
+              <or>
+                 <adapt type="org.eclipse.core.resources.IProject"/>
+                 <instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
+              </or>
+           </parentExpression>
+        </commonSorter>
       </navigatorContent>
       <actionProvider
             class="org.eclipse.ui.tests.navigator.extension.TestActionProvider"

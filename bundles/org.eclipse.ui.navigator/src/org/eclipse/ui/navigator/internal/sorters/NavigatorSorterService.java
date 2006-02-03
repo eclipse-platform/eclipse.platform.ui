@@ -15,8 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.ui.navigator.INavigatorContentService;
+import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorSorterService;
+import org.eclipse.ui.navigator.internal.NavigatorContentService;
 
 /**
  * 
@@ -27,7 +28,7 @@ import org.eclipse.ui.navigator.INavigatorSorterService;
  */
 public class NavigatorSorterService implements INavigatorSorterService {
 
-	private final INavigatorContentService contentService;
+	private final NavigatorContentService contentService;
 
 	/* A map of (CommonSorterDescriptor, ViewerSorter)-pairs */
 	private final Map sorters = new HashMap();
@@ -39,7 +40,7 @@ public class NavigatorSorterService implements INavigatorSorterService {
 	 *            The content service used by the viewer that will use this
 	 *            sorter service.
 	 */
-	public NavigatorSorterService(INavigatorContentService aContentService) {
+	public NavigatorSorterService(NavigatorContentService aContentService) {
 		contentService = aContentService;
 	}
 
@@ -67,7 +68,23 @@ public class NavigatorSorterService implements INavigatorSorterService {
 				sorters.put(descriptor, sorter = descriptor.createSorter());
 		}
 		return sorter;
-
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.navigator.INavigatorSorterService#findSorterForParent(org.eclipse.ui.navigator.INavigatorContentDescriptor,
+	 *      java.lang.Object, java.lang.Object, java.lang.Object)
+	 */
+	public ViewerSorter findSorter(INavigatorContentDescriptor source, 
+			Object parent, Object lvalue, Object rvalue) { 
+
+		CommonSorterDescriptor[] descriptors = CommonSorterDescriptorManager
+				.getInstance().findApplicableSorters(contentService, source, parent, lvalue, rvalue);
+		if(descriptors.length > 0) 
+			return getSorter(descriptors[0]); 
+		return null;
+	}
+	 
 
 }

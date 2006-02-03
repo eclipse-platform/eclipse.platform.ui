@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
-import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
  * 
@@ -79,7 +78,7 @@ public interface INavigatorContentDescriptor {
 	 * 
 	 * @return true if the extension is enabled by default.
 	 */
-	public abstract boolean isEnabledByDefault();
+	public abstract boolean isActiveByDefault();
 
 	/**
 	 * 
@@ -102,19 +101,7 @@ public interface INavigatorContentDescriptor {
 	 *         type as a child.
 	 */
 	public boolean isPossibleChild(Object anElement);
-
-	/**
-	 * Determine if this content extension is enabled for the given selection.
-	 * The content extension is enabled for the selection if and only if it is
-	 * enabled for each element in the selection.
-	 * 
-	 * @param aStructuredSelection
-	 *            The selection from the viewer
-	 * @return True if and only if the extension is enabled for each element in
-	 *         the selection.
-	 */
-	public boolean isEnabledFor(IStructuredSelection aStructuredSelection);
-
+ 
 	/**
 	 * Determine if this content extension is enabled for the given element.
 	 * 
@@ -122,6 +109,6 @@ public interface INavigatorContentDescriptor {
 	 *            The element that should be used for the evaluation.
 	 * @return True if and only if the extension is enabled for the element.
 	 */
-	public boolean isEnabledFor(Object anElement);
+	public boolean isTriggerPoint(Object anElement);
 
 }

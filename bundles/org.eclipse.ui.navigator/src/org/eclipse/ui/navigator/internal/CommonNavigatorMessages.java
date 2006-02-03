@@ -144,6 +144,10 @@ public class CommonNavigatorMessages extends NLS {
 
 	public static String CommonFilterSelectionDialog_Available_customization_;
 
+	public static String CommonSorterDescriptorManager_A_navigatorContent_extesnion_in_0_;
+
+	public static String CommonSorterDescriptorManager_A_navigatorContent_extension_does_n_;
+
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CommonNavigatorMessages.class);

@@ -159,10 +159,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 		for (int i = 0; i < visibleFilters.length; i++)
 			commonViewer.addFilter(visibleFilters[i]);
 
-		/*
-		 * no sorter is necessary as the commonViewer defaults to the
-		 * commonSorter automagically.
-		 */
+		commonViewer.setSorter(new CommonViewerSorter());
 
 		/*
 		 * make sure input is set after sorters and filters to avoid unnecessary
@@ -320,6 +317,16 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 		return getCommonViewer().getNavigatorContentService();
 	}
 
+	/**
+	 * Returns an object which is an instance of the given class
+	 * associated with this object. Returns <code>null</code> if
+	 * no such object can be found.
+	 *
+	 * @param adapter the adapter class to look up
+	 * @return a object castable to the given class, 
+	 *    or <code>null</code> if this object does not
+	 *    have an adapter for the given class
+	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == CommonViewer.class)
 			return getCommonViewer();
@@ -404,7 +411,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 * <p>
 	 * The Common Navigator Manager handles the setup of the Common Navigator
 	 * Menu, manages updates to the ActionBars from
-	 * {@link ICommonActionProvider}&nbsp; extensions as the user's selection
+	 * {@link CommonActionProvider}&nbsp; extensions as the user's selection
 	 * changes, and also updates the status bar based on the current selection.
 	 * 
 	 * @return The Common Navigator Manager class which handles menu population
