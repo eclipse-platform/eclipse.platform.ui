@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IState;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -56,6 +55,7 @@ import org.eclipse.jface.menus.SReference;
 import org.eclipse.jface.menus.SWidget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandImageService;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -208,10 +208,10 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	private final CommandImageManager commandImageManager;
 
 	/**
-	 * The command manager which is providing the commands for the workbench;
+	 * The command service which is providing the commands for the workbench;
 	 * must not be <code>null</code>.
 	 */
-	private final CommandManager commandManager;
+	private final ICommandService commandService;
 
 	/**
 	 * The menu contributions that have come from the registry. This is used to
@@ -230,7 +230,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * Constructs a new instance of {@link LegacyActionPersistence}.
 	 * 
 	 * @param commandManager
-	 *            The command manager which is providing the commands for the
+	 *            The command service which is providing the commands for the
 	 *            workbench; must not be <code>null</code>.
 	 * @param bindingManager
 	 *            The binding manager which should be populated with bindings
@@ -242,11 +242,11 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 *            The menu service which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
 	 */
-	public LegacyActionPersistence(final CommandManager commandManager,
+	public LegacyActionPersistence(final ICommandService commandService,
 			final BindingManager bindingManager,
 			final CommandImageManager commandImageManager,
 			final IMenuService menuService) {
-		this.commandManager = commandManager;
+		this.commandService = commandService;
 		this.bindingManager = bindingManager;
 		this.commandImageManager = commandImageManager;
 		this.menuService = menuService;
@@ -352,7 +352,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		String commandId = readOptional(element, ATTRIBUTE_DEFINITION_ID);
 		Command command = null;
 		if (commandId != null) {
-			command = commandManager.getCommand(commandId);
+			command = commandService.getCommand(commandId);
 		}
 
 		String label = null;
@@ -377,8 +377,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final String tooltip = readOptional(element, ATTRIBUTE_TOOLTIP);
 
 			// Define the command.
-			command = commandManager.getCommand(commandId);
-			final Category category = commandManager.getCategory(null);
+			command = commandService.getCommand(commandId);
+			final Category category = commandService.getCategory(null);
 			final String name = LegacyActionTools.removeAcceleratorText(Action
 					.removeMnemonics(label));
 			command.define(name, tooltip, category, null);
