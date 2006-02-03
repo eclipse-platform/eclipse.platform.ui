@@ -20,10 +20,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISources;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
@@ -97,10 +97,10 @@ final class HandlerAuthority extends ExpressionAuthority {
 	private final Set[] activationsBySourcePriority = new Set[33];
 
 	/**
-	 * The command manager that should be updated when the handlers are
-	 * changing.
+	 * The command service that should be updated when the handlers are
+	 * changing. This value is never <code>null</code>.
 	 */
-	private final CommandManager commandManager;
+	private final ICommandService commandService;
 
 	/**
 	 * This is a map of handler activations (<code>Collection</code> of
@@ -115,17 +115,17 @@ final class HandlerAuthority extends ExpressionAuthority {
 	/**
 	 * Constructs a new instance of <code>HandlerAuthority</code>.
 	 * 
-	 * @param commandManager
-	 *            The command manager from which commands can be retrieved (to
+	 * @param commandService
+	 *            The command service from which commands can be retrieved (to
 	 *            update their handlers); must not be <code>null</code>.
 	 */
-	HandlerAuthority(final CommandManager commandManager) {
-		if (commandManager == null) {
+	HandlerAuthority(final ICommandService commandService) {
+		if (commandService == null) {
 			throw new NullPointerException(
-					"The handler authority needs a command manager"); //$NON-NLS-1$
+					"The handler authority needs a command service"); //$NON-NLS-1$
 		}
 
-		this.commandManager = commandManager;
+		this.commandService = commandService;
 	}
 
 	/**
@@ -345,7 +345,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 		if (DEBUG_PERFORMANCE) {
 			startTime = System.currentTimeMillis();
 		}
-		
+
 		/*
 		 * In this first phase, we cycle through all of the activations that
 		 * could have potentially changed. Each such activation is added to a
@@ -405,7 +405,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 				updateCommand(commandId, null);
 			}
 		}
-		
+
 		// If tracing performance, then print the results.
 		if (DEBUG_PERFORMANCE) {
 			final long elapsedTime = System.currentTimeMillis() - startTime;
@@ -429,7 +429,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 */
 	private final void updateCommand(final String commandId,
 			final IHandlerActivation activation) {
-		final Command command = commandManager.getCommand(commandId);
+		final Command command = commandService.getCommand(commandId);
 		if (activation == null) {
 			command.setHandler(null);
 		} else {

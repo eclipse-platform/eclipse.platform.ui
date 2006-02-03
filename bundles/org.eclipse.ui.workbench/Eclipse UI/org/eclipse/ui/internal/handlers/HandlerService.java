@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
@@ -29,6 +28,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.misc.Policy;
@@ -49,10 +49,10 @@ public final class HandlerService implements IHandlerService {
 	}
 
 	/**
-	 * The command manager for this handler service. This value is never
+	 * The command service for this handler service. This value is never
 	 * <code>null</code>.
 	 */
-	private final CommandManager commandManager;
+	private final ICommandService commandService;
 
 	/**
 	 * The central authority for determining which handler we should use.
@@ -68,16 +68,16 @@ public final class HandlerService implements IHandlerService {
 	 * Constructs a new instance of <code>CommandService</code> using a
 	 * command manager.
 	 * 
-	 * @param commandManager
-	 *            The command manager to use; must not be <code>null</code>.
+	 * @param commandService
+	 *            The command service to use; must not be <code>null</code>.
 	 */
-	public HandlerService(final CommandManager commandManager) {
-		if (commandManager == null) {
+	public HandlerService(final ICommandService commandService) {
+		if (commandService == null) {
 			throw new NullPointerException(
-					"A handler service requires a command manager"); //$NON-NLS-1$
+					"A handler service requires a command service"); //$NON-NLS-1$
 		}
-		this.commandManager = commandManager;
-		this.handlerAuthority = new HandlerAuthority(commandManager);
+		this.commandService = commandService;
+		this.handlerAuthority = new HandlerAuthority(commandService);
 		this.handlerPersistence = new HandlerPersistence(this);
 	}
 
@@ -162,7 +162,7 @@ public final class HandlerService implements IHandlerService {
 	public final Object executeCommand(final String commandId,
 			final Event trigger) throws ExecutionException,
 			NotDefinedException, NotEnabledException, NotHandledException {
-		final Command command = commandManager.getCommand(commandId);
+		final Command command = commandService.getCommand(commandId);
 		final ExecutionEvent event = new ExecutionEvent(command, null, trigger,
 				getCurrentState());
 		return command.executeWithChecks(event);

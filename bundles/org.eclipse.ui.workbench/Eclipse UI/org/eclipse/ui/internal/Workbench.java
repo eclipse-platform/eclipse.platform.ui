@@ -1135,7 +1135,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		serviceLocator.registerService(IContextService.class, contextService);
 		
 		final IHandlerService handlerService = new HandlerService(
-				commandManager);
+				commandService);
 		handlerService.readRegistry();
 		serviceLocator.registerService(IHandlerService.class, handlerService);
 		
