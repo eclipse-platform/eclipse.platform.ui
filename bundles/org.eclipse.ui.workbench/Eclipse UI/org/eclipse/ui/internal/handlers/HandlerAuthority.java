@@ -290,6 +290,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 			if (bestActivation == null) {
 				bestActivation = currentActivation;
 				conflict = false;
+				continue;
 			}
 
 			// Compare the two handlers.
