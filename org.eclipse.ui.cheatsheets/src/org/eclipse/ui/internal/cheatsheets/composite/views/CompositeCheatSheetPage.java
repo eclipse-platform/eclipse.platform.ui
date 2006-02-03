@@ -341,6 +341,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 
 		text.setText(buf.toString(), true, false);
 		descriptionPanel.setData(ICompositeCheatsheetTags.TASK, task);
+		descriptionPanel.reflow(true);
 		setCurrentEditor(descriptionPanel);
 	}
 	
@@ -400,6 +401,8 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 			FormText text = mform.getToolkit().createFormText(completePanel, true);
 			text.marginWidth = 5;
 			text.marginHeight = 5;
+			text.setFont("header", JFaceResources.getHeaderFont()); //$NON-NLS-1$
+			text.setColor("title", mform.getToolkit().getColors().getColor(FormColors.TITLE)); //$NON-NLS-1$		
 			completePanel.setFormText(text);
 			text.addHyperlinkListener(new CompletionHyperlinkAdapter());
 		}
@@ -435,6 +438,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 				
 		buf.append("</form>"); //$NON-NLS-1$
 		completePanel.setText(buf.toString());
+		completePanel.reflow(true);
 		setCurrentEditor(completePanel);
 	}
 	
