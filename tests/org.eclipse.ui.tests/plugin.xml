@@ -2258,6 +2258,31 @@
       </command>
    </extension>
    
+   <!-- for bug 125792 -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.eclipse.ui.tests.commands.bug125792"
+            name="Bug 125792 Test"
+            >
+         <commandParameter
+               id="param1"
+               name="Param1"
+               optional="true"
+               />
+         <commandParameter
+               id="param2"
+               name="Param2"
+               optional="true"
+               />
+         <commandParameter
+               id="param3"
+               name="Param3"
+               optional="true"/>
+      </command>
+   </extension>
+   
+   
 	<!--malformed activity definitions -->
    <extension
          name="Actvities for PersistanceTest"

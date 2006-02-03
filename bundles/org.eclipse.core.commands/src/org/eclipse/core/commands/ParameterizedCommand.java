@@ -143,11 +143,11 @@ public final class ParameterizedCommand implements Comparable {
 	 *            The parameters in to process; must not be <code>null</code>.
 	 * @return A collection (<code>Collection</code>) of combinations (<code>List</code>
 	 *         of <code>Parameterization</code>).
-	 * 
 	 */
 	private static final Collection expandParameters(final int startIndex,
 			final IParameter[] parameters) {
-		final boolean noMoreParameters = (startIndex + 1 >= parameters.length);
+		final int nextIndex = startIndex + 1;
+		final boolean noMoreParameters = (nextIndex >= parameters.length);
 
 		final IParameter parameter = parameters[startIndex];
 		final List parameterizations = new ArrayList();
@@ -163,7 +163,8 @@ public final class ParameterizedCommand implements Comparable {
 				return parameterizations;
 			}
 
-			return expandParameters(startIndex, parameters);
+			// Make recursive call
+			return expandParameters(nextIndex, parameters);
 		}
 		final Map parameterValues = values.getParameterValues();
 		final Iterator parameterValueItr = parameterValues.entrySet()
@@ -190,7 +191,7 @@ public final class ParameterizedCommand implements Comparable {
 		}
 
 		// Make recursive call
-		final Collection suffixes = expandParameters(startIndex + 1, parameters);
+		final Collection suffixes = expandParameters(nextIndex, parameters);
 		if (suffixes.isEmpty()) {
 			// This is it, so just return the current parameterizations.
 			for (int i = 0; i < parameterizationCount; i++) {
