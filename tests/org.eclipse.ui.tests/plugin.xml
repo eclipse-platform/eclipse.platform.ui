@@ -2244,9 +2244,6 @@
             id="org.eclipse.ui.tests.commandWithState"
             name="Command Wtih State">
          <state
-               class="org.eclipse.ui.handlers.RegistryToggleState:true"
-               id="STYLE"/>
-         <state
                class="org.eclipse.core.commands.State"
                id="OBJECT"/>
       </command>
