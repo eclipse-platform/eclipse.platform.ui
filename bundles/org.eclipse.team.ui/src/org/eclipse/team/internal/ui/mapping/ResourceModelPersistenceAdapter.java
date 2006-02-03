@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.IResourceMappingPersistenceAdapter;
-import org.eclipse.ui.IMemento;
+import org.eclipse.ui.*;
 
 public class ResourceModelPersistenceAdapter implements
 		IResourceMappingPersistenceAdapter {
@@ -29,6 +29,8 @@ public class ResourceModelPersistenceAdapter implements
 	private static final String RESOURCES = "resources"; //$NON-NLS-1$
 	private static final String RESOURCE_PATH = "resourcePath"; //$NON-NLS-1$
 	private static final String RESOURCE_TYPE = "resourceType"; //$NON-NLS-1$
+	private static final String WORKING_SETS = "workingSets"; //$NON-NLS-1$
+	private static final String WORKING_SET_NAME = "workingSetName"; //$NON-NLS-1$
 	
 	private final ModelProvider provider;
 
@@ -45,8 +47,10 @@ public class ResourceModelPersistenceAdapter implements
 				IMemento child = memento.createChild(RESOURCES);
 				child.putInteger(RESOURCE_TYPE, resource.getType());
 				child.putString(RESOURCE_PATH, resource.getFullPath().toString());
-			} else {
-				// TODO: Should we try and persist non-resource objects like working sets
+			} else if (object instanceof IWorkingSet) {
+				IWorkingSet ws = (IWorkingSet) object;
+				IMemento child = memento.createChild(WORKING_SETS);
+				child.putString(WORKING_SET_NAME, ws.getName());
 			}
 		}
 	}
@@ -87,6 +91,19 @@ public class ResourceModelPersistenceAdapter implements
 				if (mapping != null) {
 					result.add(mapping);
 				}
+			}
+		}
+		children = memento.getChildren(WORKING_SETS);
+		for (int i = 0; i < children.length; i++) {
+			IMemento child = children[i];
+			String name = child.getString(WORKING_SET_NAME);
+			if (name == null)
+				break;
+			IWorkingSet set = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
+			if (set != null) {
+				ResourceMapping mapping = Utils.getResourceMapping(set);
+				if (mapping != null)
+					result.add(mapping);
 			}
 		}
 		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
