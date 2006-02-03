@@ -17,7 +17,6 @@ import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.beans.TableModelDescription;
-import org.eclipse.jface.databinding.viewers.TableViewerUpdatableTable;
 import org.eclipse.jface.databinding.viewers.ViewersProperties;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -165,11 +164,12 @@ public class TestMasterDetail {
    private void bind(Control parent) {
       IDataBindingContext dbc = BindingFactory.createContext(parent);
       TableViewer peopleViewer = new TableViewer(personsTable);
-      dbc.bind(new TableViewerUpdatableTable(peopleViewer),
+      dbc.bind(new Property(peopleViewer, ViewersProperties.CONTENT),
 				new TableModelDescription(new Property(model, "personList"),
 						new Object[] { "name", "state" }), null);
       
-      IUpdatable selectedPerson = dbc.createUpdatable(new Property(peopleViewer, ViewersProperties.SINGLE_SELECTION));
+      IUpdatable selectedPerson = dbc.createUpdatable(new Property(
+				peopleViewer, ViewersProperties.SINGLE_SELECTION));
       
       dbc.bind(name, new Property(selectedPerson, "name", String.class, Boolean.FALSE), null);
       dbc.bind(address, new Property(selectedPerson, "address", String.class, Boolean.FALSE), null);
