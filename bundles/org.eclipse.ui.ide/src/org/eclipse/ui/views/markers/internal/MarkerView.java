@@ -152,25 +152,11 @@ public abstract class MarkerView extends TableView {
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		protected IStatus run(IProgressMonitor monitor) {
-			synchronized (updateKey) {
-				
-				// If we don't have any yet then refresh it all
-				if (getMarkerAdapter().hasNoMarkers() || adds.size() == 0 || removes.size() == 0)
-					updateJob.refreshAll();
-				else {
-					MarkerList current = getCurrentMarkers();
-					current.updateMarkers(getAddedMarkers(adds),
-							getExistingMarkers(removes));
-					updateJob.refresh(refreshes);
-
-				}
-
-				adds.clear();
-				removes.clear();
-				refreshes.clear();
+			synchronized (updateKey) {				
+				updateJob.refreshAll();
+				updateForContentsRefresh(monitor);
+				return Status.OK_STATUS;
 			}
-			updateForContentsRefresh(monitor);
-			return Status.OK_STATUS;
 		}
 
 		/*
@@ -182,59 +168,6 @@ public abstract class MarkerView extends TableView {
 			return buildDone && PlatformUI.isWorkbenchRunning();
 		}
 
-		/**
-		 * Get the collection of Markers to remove.
-		 * 
-		 * @param existingMarkers
-		 * @return Collection of ConcreteMarker
-		 */
-		private Collection getExistingMarkers(Collection existingMarkers) {
-			if (existingMarkers.isEmpty())
-				return Util.EMPTY_COLLECTION;
-
-			Collection toRemove = new ArrayList();
-
-			MarkerList currentList = getCurrentMarkers();
-			Iterator removes = existingMarkers.iterator();
-			while (removes.hasNext()) {
-				Object next = currentList.getMarker((IMarker) removes.next());
-				if (next != null)
-					toRemove.add(next);
-			}
-
-			return toRemove;
-		}
-
-		/**
-		 * Get the ConcreteMarkers being added after filtering.
-		 * 
-		 * @param addedMarkers
-		 *            Collection of IMarker
-		 * @return Collection of ConcreteMarker
-		 */
-		private Collection getAddedMarkers(Collection addedMarkers) {
-			if (addedMarkers.isEmpty())
-				return Util.EMPTY_COLLECTION;
-
-			List toAdd = new ArrayList();
-
-			Iterator added = addedMarkers.iterator();
-			MarkerFilter[] filters = getEnabledFilters();
-			while (added.hasNext()) {
-				ConcreteMarker newMarker;
-				try {
-					newMarker = MarkerList.createMarker((IMarker) added.next());
-					for (int i = 0; i < filters.length; i++) {
-						if (filters[i].select(newMarker))
-							toAdd.add(newMarker);
-					}
-				} catch (CoreException e) {
-					IDEWorkbenchPlugin.getDefault().getLog().log(e.getStatus());
-				}
-			}
-
-			return toAdd;
-		}
 
 		/**
 		 * Refresh all of the contents of changed.
@@ -410,7 +343,6 @@ public abstract class MarkerView extends TableView {
 				if (changed.getItemCount() > 0) {
 					changed.refresh();
 					markerProcessJob.refresh(changed.asList());
-					scheduleMarkerUpdate();
 				}
 			}
 
