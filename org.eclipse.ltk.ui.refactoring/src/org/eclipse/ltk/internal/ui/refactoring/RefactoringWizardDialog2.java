@@ -76,10 +76,6 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	private static final String WIDTH= "width"; //$NON-NLS-1$
 	private static final String HEIGHT= "height"; //$NON-NLS-1$
 	
-	private static final Image INFO= RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_INFO);
-	private static final Image WARNING= RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_WARNING);
-	private static final Image ERROR= RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_ERROR);
-	
 	private static class MessageBox extends Composite {
 		private Label fImage;
 		private Label fText;
@@ -89,7 +85,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			layout.numColumns= 2;
 			setLayout(layout);
 			fImage= new Label(this, SWT.NONE);
-			fImage.setImage(INFO);
+			fImage.setImage(RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_INFO));
 			Point size= fImage.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			GridData gd= new GridData();
 			gd.verticalAlignment= SWT.TOP;			
@@ -117,20 +113,20 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			Image image= null;
 			switch (type) {
 				case IMessageProvider.INFORMATION:
-					image= INFO;
+					image= RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_INFO);
 					break;
 				case IMessageProvider.WARNING:
-					image= WARNING;
+					image= RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_WARNING);
 					break;
 				case IMessageProvider.ERROR:
-					image= ERROR;
+					image= RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_ERROR);
 					break;
 			}
 			if (msg == null)
 				msg= ""; //$NON-NLS-1$
 			fText.setText(escapeAmpersands(msg));
 			if (image == null && msg.length() > 0)
-				image= INFO;
+				image= RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_INFO);
 			fImage.setImage(image);
 		}
 		private String escapeAmpersands(String message) {
