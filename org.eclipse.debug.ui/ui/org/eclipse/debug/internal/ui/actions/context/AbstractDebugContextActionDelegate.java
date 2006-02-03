@@ -51,7 +51,7 @@ public abstract class AbstractDebugContextActionDelegate implements IWorkbenchWi
 	private IViewPart fViewPart;
 
 	/**
-	 * Cache of the most recent seletion
+	 * Cache of the most recent selection
 	 */
 	private IStructuredSelection fSelection = StructuredSelection.EMPTY;
 
@@ -280,7 +280,7 @@ public abstract class AbstractDebugContextActionDelegate implements IWorkbenchWi
 	/**
 	 * Sets the most recent selection
 	 * 
-	 * @parm selection structured selection
+	 * @param selection structured selection
 	 */
 	private void setContext(IStructuredSelection context) {
 		fSelection = context;
@@ -346,7 +346,7 @@ public abstract class AbstractDebugContextActionDelegate implements IWorkbenchWi
 	
 	/**
 	 * Translates the selected object to the target to operate
-	 * on as required. For example, an adpater on the selection.
+	 * on as required. For example, an adapter on the selection.
 	 *  
 	 * @param selectee
 	 * @return target to operate/enable action on
