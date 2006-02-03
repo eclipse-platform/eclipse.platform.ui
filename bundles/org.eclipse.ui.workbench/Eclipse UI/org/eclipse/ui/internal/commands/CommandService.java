@@ -109,9 +109,6 @@ public final class CommandService implements ICommandService {
 		final Command[] commands = commandManager.getAllCommands();
 		for (int i = 0; i < commands.length; i++) {
 			final Command command = commands[i];
-			if ("org.eclipse.ui.tests.commandWithState".equals(command.getId())) { //$NON-NLS-1$
-				System.out.println();
-			}
 			final String[] stateIds = command.getStateIds();
 			for (int j = 0; j < stateIds.length; j++) {
 				final String stateId = stateIds[j];
