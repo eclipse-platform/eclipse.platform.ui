@@ -117,6 +117,6 @@ public class Property {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return "PropertyDescription(" + object.getClass().getName() + ", " + propertyID.toString() + ", ...)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return "Property(" + object.getClass().getName() + ", " + propertyID.toString() + ", ...)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }
