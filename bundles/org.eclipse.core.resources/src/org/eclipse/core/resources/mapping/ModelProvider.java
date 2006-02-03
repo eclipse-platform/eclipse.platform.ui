@@ -84,6 +84,22 @@ public abstract class ModelProvider extends PlatformObject {
 	public final IModelProviderDescriptor getDescriptor() {
 		return descriptor;
 	}
+	
+	/**
+	 * Returns the unique identifier of this model provider.
+	 * <p>
+	 * The model provider identifier is composed of the model provider's
+	 * plug-in id and the simple id of the provider extension. For example, if
+	 * plug-in <code>"com.xyz"</code> defines a provider extension with id
+	 * <code>"myModelProvider"</code>, the unique model provider identifier will be
+	 * <code>"com.xyz.myModelProvider"</code>.
+	 * </p>
+	 * 
+	 * @return the unique model provider identifier
+	 */
+	public final String getId() {
+		return descriptor.getId();
+	}
 
 	/**
 	 * Return the resource mappings that cover the given resource.
