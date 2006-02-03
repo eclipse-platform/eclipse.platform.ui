@@ -11,8 +11,7 @@ Export-Package: org.eclipse.ltk.core.refactoring,
  org.eclipse.ltk.core.refactoring.model,
  org.eclipse.ltk.core.refactoring.participants,
  org.eclipse.ltk.internal.core.refactoring;x-friends:="org.eclipse.ltk.ui.refactoring",
- org.eclipse.ltk.internal.core.refactoring.history;x-friends:="org.eclipse.ltk.ui.refactoring",
- org.eclipse.ltk.internal.core.refactoring.model;x-internal:=true
+ org.eclipse.ltk.internal.core.refactoring.history;x-friends:="org.eclipse.ltk.ui.refactoring"
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.expressions,
  org.eclipse.core.filesystem;bundle-version="[1.0.0,4.0.0)",
