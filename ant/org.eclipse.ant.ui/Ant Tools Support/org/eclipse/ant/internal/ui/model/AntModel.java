@@ -1439,10 +1439,9 @@ public class AntModel implements IAntModel {
         try {
             offset= computeOffset(lineNumber, columnNumber, "-->"); //$NON-NLS-1$
         } catch (BadLocationException e) {
-        //TODO bug 107813
-            //commentNode.setExternal(true);
-            //commentNode.setExternalInfo(lineNumber, columnNumber);
-            //offset= length-1;
+            commentNode.setExternal(true);
+            commentNode.setExternalInfo(lineNumber, columnNumber);
+            offset= length-1;
         }
         commentNode.setOffset(offset - length);
         commentNode.setLength(length);
