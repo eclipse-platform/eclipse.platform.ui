@@ -889,7 +889,8 @@ public class AntModel implements IAntModel {
             || taskName.equalsIgnoreCase("loadfile") //$NON-NLS-1$
             || taskName.equalsIgnoreCase("pathconvert") //$NON-NLS-1$
             || taskName.equalsIgnoreCase("uptodate") //$NON-NLS-1$
-            || taskName.equalsIgnoreCase("xmlproperty"); //$NON-NLS-1$
+            || taskName.equalsIgnoreCase("xmlproperty") //$NON-NLS-1$
+            || taskName.equalsIgnoreCase("loadproperties"); //$NON-NLS-1$
     }
 
     private boolean isNodeExternal(String fileName) {
@@ -1438,7 +1439,10 @@ public class AntModel implements IAntModel {
         try {
             offset= computeOffset(lineNumber, columnNumber, "-->"); //$NON-NLS-1$
         } catch (BadLocationException e) {
-            AntUIPlugin.log(e);
+        //TODO bug 107813
+            //commentNode.setExternal(true);
+            //commentNode.setExternalInfo(lineNumber, columnNumber);
+            //offset= length-1;
         }
         commentNode.setOffset(offset - length);
         commentNode.setLength(length);
@@ -1654,7 +1658,7 @@ public class AntModel implements IAntModel {
         if (nodeText != null) {
             if (nodeText.equals(newNodeText)) {
                 node.setNeedsToBeConfigured(false);
-                //update the datastructures for the new node as the offset may have changed.
+                //update the data structures for the new node as the offset may have changed.
                 List tasks= (List) fDefinerNodeIdentifierToDefinedTasks.get(nodeIdentifier);
                 if (tasks != null) {
                     for (Iterator iter = tasks.iterator(); iter.hasNext(); ) {

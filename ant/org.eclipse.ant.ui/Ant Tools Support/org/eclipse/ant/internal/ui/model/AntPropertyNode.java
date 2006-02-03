@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,13 @@ public class AntPropertyNode extends AntTaskNode {
          			label = attributes.getValue(IAntModelConstants.ATTR_ENVIRONMENT);
          			if (label != null) {
          				label= "environment=" + label; //$NON-NLS-1$
-         			}
+         			} else {
+         			    label = attributes.getValue("srcFile"); //$NON-NLS-1$
+         			    if (label != null) {
+         			        fReferencedName= label;
+         			        label= "srcFile=" + label; //$NON-NLS-1$
+         			    } 
+                    }
          		}
          	}
          } else {
@@ -134,7 +140,7 @@ public class AntPropertyNode extends AntTaskNode {
 			String textToSearch= getAntModel().getText(getOffset(), offset - getOffset());
 			if (textToSearch != null && textToSearch.length() != 0) {
 				String attributeString = AntEditorCompletionProcessor.getAttributeStringFromDocumentStringToPrefix(textToSearch);
-				if ("file".equals(attributeString) || "resource".equals(attributeString)) {  //$NON-NLS-1$//$NON-NLS-2$
+				if ("file".equals(attributeString) || "resource".equals(attributeString) || "srcFile".equals(attributeString)) {  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 					return fReferencedName;
 				}
 			}
