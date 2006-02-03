@@ -12,8 +12,12 @@ package org.eclipse.ltk.internal.ui.refactoring.actions;
 
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.scripting.CreateRefactoringScriptWizard;
+import org.eclipse.ltk.internal.ui.refactoring.scripting.ScriptingMessages;
+
+import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -58,7 +62,13 @@ public final class CreateRefactoringScriptAction implements IWorkbenchWindowActi
 	public void run(final IAction action) {
 		if (fWindow != null) {
 			final IWizard wizard= new CreateRefactoringScriptWizard();
-			final WizardDialog dialog= new WizardDialog(fWindow.getShell(), wizard);
+			final WizardDialog dialog= new WizardDialog(fWindow.getShell(), wizard) {
+
+				protected final void createButtonsForButtonBar(final Composite parent) {
+					super.createButtonsForButtonBar(parent);
+					getButton(IDialogConstants.FINISH_ID).setText(ScriptingMessages.CreateRefactoringScriptAction_finish_button_label);
+				}
+			};
 			dialog.create();
 			dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IRefactoringHelpContextIds.REFACTORING_CREATE_SCRIPT_PAGE);

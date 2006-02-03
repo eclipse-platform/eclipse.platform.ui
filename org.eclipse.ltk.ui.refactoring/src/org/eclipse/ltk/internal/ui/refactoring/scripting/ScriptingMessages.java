@@ -50,6 +50,8 @@ public final class ScriptingMessages extends NLS {
 
 	private static final String BUNDLE_NAME= "org.eclipse.ltk.internal.ui.refactoring.scripting.ScriptingMessages"; //$NON-NLS-1$
 
+	public static String CreateRefactoringScriptAction_finish_button_label;
+
 	public static String CreateRefactoringScriptWizard_caption;
 
 	public static String CreateRefactoringScriptWizard_description;
