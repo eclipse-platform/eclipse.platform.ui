@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,15 @@ package org.eclipse.search.core.text;
 
 import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.MultiStatus;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
+import org.eclipse.search.internal.core.text.FilesOfScopeCalculator;
 
 /**
  * A {@link TextSearchScope} defines the scope of a search. The scope consists of all workbench resources that are accepted
@@ -68,6 +72,16 @@ public abstract class TextSearchScope {
 	 */
 	public abstract boolean contains(IResourceProxy proxy);
 
+	
+	/**
+	 * Evaluates all files in this scope.
+	 * 
+	 * @param status a {@link MultiStatus} to collect the error status that occurred while collecting resources.
+	 * @return returns the files in the scope.
+	 */
+	public IFile[] evaluateFilesInScope(MultiStatus status) {
+		return new FilesOfScopeCalculator(this, status).process();
+	}
 
 	
 }
