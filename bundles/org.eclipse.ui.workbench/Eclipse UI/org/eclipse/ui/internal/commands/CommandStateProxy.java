@@ -211,7 +211,7 @@ public final class CommandStateProxy extends PersistentState {
 	public final void save(final IPreferenceStore store,
 			final String preferenceKey) {
 		if (loadState() && state instanceof PersistentState) {
-			((PersistentState) state).load(store, preferenceKey);
+			((PersistentState) state).save(store, preferenceKey);
 		}
 	}
 
