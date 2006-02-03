@@ -8,14 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.core.refactoring;
+package org.eclipse.ltk.internal.core.refactoring;
 
 /**
  * Constants for refactoring preferences keys.
- * <p>
- * This class is NOT official API. It is used by the refactoring UI plug-in to
- * access refactoring preferences.
- * </p>
  * 
  * @since 3.2
  */
