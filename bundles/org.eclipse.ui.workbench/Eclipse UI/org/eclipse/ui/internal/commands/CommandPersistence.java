@@ -420,7 +420,7 @@ final class CommandPersistence extends RegistryPersistence {
 				final String preferenceKey = PREFERENCE_KEY_PREFIX + '/'
 						+ command.getId() + '/' + id;
 				final IState state = new CommandStateProxy(stateElement,
-						ELEMENT_STATE, PrefUtil.getInternalPreferenceStore(),
+						ATTRIBUTE_CLASS, PrefUtil.getInternalPreferenceStore(),
 						preferenceKey);
 				command.addState(id, state);
 			}
