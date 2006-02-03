@@ -12,13 +12,14 @@
 package org.eclipse.ui.internal.cheatsheets.composite.explorer;
 
 
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheet;
+import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.cheatsheets.ITaskExplorer;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
@@ -61,5 +62,9 @@ public class TreeTaskExplorer implements ITaskExplorer {
 
 	public void dispose() {
 		viewer.getLabelProvider().dispose();		
+	}
+
+	public void setSelection(ISelection selection, boolean reveal) {
+		viewer.setSelection(selection, reveal);
 	}
 }

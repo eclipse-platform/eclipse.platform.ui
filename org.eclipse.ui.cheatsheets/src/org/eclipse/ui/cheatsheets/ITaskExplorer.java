@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.cheatsheets;
 
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -80,4 +81,15 @@ public interface ITaskExplorer {
 	 * @param task
 	 */
 	void taskUpdated(ICompositeCheatSheetTask task);
+
+	/**
+	 * Called to set the provided selection and optionally reveal it
+	 * if the scroll bars are active and the selected tasks
+	 * are partially or fully hidden.
+	 * 
+	 * @param selection the new selection
+	 * @param reveal if <code>true</code>, expose the task if hidden;
+	 * otherwise, just select.
+	 */	
+	void setSelection(ISelection selection, boolean reveal);
 }

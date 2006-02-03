@@ -388,8 +388,8 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 				String next = ref.substring(NEXT_TASK_TAG.length());
 				CheatSheetTask nextTask =
 				    model.getDependencies().getTask(next);
-				currentExplorer.getSelectionProvider().setSelection
-				    (new StructuredSelection(nextTask));				
+				currentExplorer.setSelection
+				    (new StructuredSelection(nextTask), true);				
 			}
 		}
 	}
