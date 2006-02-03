@@ -11,8 +11,8 @@
 	<extension-point name="%searchPages" id="searchPages" schema="schema/searchPages.exsd"/>
 	<extension-point name="%searchResultSorters" id="searchResultSorters" schema="schema/searchResultSorters.exsd"/>
   	<extension-point name="%searchResultViewPages" id="searchResultViewPages" schema="schema/searchResultViewPages.exsd"/>
-    <extension-point name="%textFileScanner" id="textFileScanner" schema="schema/textFileScanner.exsd"/>
-    <extension-point id="textSearchEngine" name="%textSearchEngine" schema="schema/textSearchEngine.exsd"/>
+    <extension-point name="%textSearchMatchInformationProvider" id="textSearchMatchInformationProvider" schema="schema/textSearchMatchInformationProvider"/>
+    <extension-point name="%textSearchEngine" id="textSearchEngine" schema="schema/textSearchEngine.exsd"/>
 	
 	
 	<!-- Extensions -->
@@ -383,8 +383,8 @@
 	</extension>
 	<extension
     		id="java-scanner"
-         	point="org.eclipse.search.textFileScanner">
- 		<textFileScanner
+         	point="org.eclipse.search.textSearchMatchInformationProvider">
+ 		<textSearchMatchInformationProvider
         	    class="org.eclipse.search2.internal.ui.text2.JavaScanner"
             	contentTypeIDs="org.eclipse.jdt.core.javaSource"
 	            fileExtensions=".java"

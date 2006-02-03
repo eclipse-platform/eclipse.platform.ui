@@ -11,7 +11,7 @@
 
 package org.eclipse.search2.internal.ui.text2;
 
-import org.eclipse.search.core.text.AbstractTextFileScanner;
+import org.eclipse.search.ui.text.SearchMatchInformationProvider;
 
 interface IRetrieverKeys {
 	final String KEY_EXT_COMBO_CONTENT= ".combo"; //$NON-NLS-1$
@@ -61,6 +61,6 @@ interface IRetrieverKeys {
 
 	final String SECTION_SCOPE= "scope"; //$NON-NLS-1$
 
-	final int ALL_LOCATIONS= (1 << AbstractTextFileScanner.LOCATION_OTHER) | (1 << AbstractTextFileScanner.LOCATION_COMMENT) | (1 << AbstractTextFileScanner.LOCATION_FUNCTION) | (1 << AbstractTextFileScanner.LOCATION_IMPORT_OR_INCLUDE_STATEMENT) | (1 << AbstractTextFileScanner.LOCATION_PREPROCESSOR_DIRECTIVE) | (1 << AbstractTextFileScanner.LOCATION_STRING_LITERAL);
+	final int ALL_LOCATIONS= (1 << SearchMatchInformationProvider.LOCATION_OTHER) | (1 << SearchMatchInformationProvider.LOCATION_COMMENT) | (1 << SearchMatchInformationProvider.LOCATION_FUNCTION) | (1 << SearchMatchInformationProvider.LOCATION_IMPORT_OR_INCLUDE_STATEMENT) | (1 << SearchMatchInformationProvider.LOCATION_PREPROCESSOR_DIRECTIVE) | (1 << SearchMatchInformationProvider.LOCATION_STRING_LITERAL);
 
 }

@@ -11,13 +11,14 @@
 
 package org.eclipse.search2.internal.ui.text2;
 
-import org.eclipse.search.core.text.AbstractTextFileScanner;
+import org.eclipse.search.ui.text.AbstractSearchMatchInformationProvider;
+
 import org.eclipse.search.core.text.TextSearchMatchAccess;
 
 /**
  * The minimal scanner that figures out the line-numbers only.
  */
-public class LineNumberScanner extends AbstractTextFileScanner {
+public class LineNumberScanner extends AbstractSearchMatchInformationProvider {
 	public void scanFile(TextSearchMatchAccess matchAccess) {
 		int length= matchAccess.getFileContentLength();
 		addLineOffset(0);

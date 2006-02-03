@@ -3,17 +3,17 @@
 <schema targetNamespace="org.eclipse.search">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.search" id="textFileScanner" name="Text File Scanner"/>
+         <meta.schema plugin="org.eclipse.search" id="textSearchMatchInformationProvider" name="Text Search Match Information Provider"/>
       </appInfo>
       <documentation>
-         The extension point allows to register a scanner that categorizes text-matches.
+         The extension point allows to register a provider of more information for text search matches
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="textFileScanner" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="textSearchMatchInformationProvider" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -32,64 +32,64 @@
       </complexType>
    </element>
 
-   <element name="textFileScanner">
+   <element name="textSearchMatchInformationProvider">
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Class of the scanner that will be created, must extend org.eclipse.search.core.text.AbstractTextFileScanner.
+                  Class of the scanner that will be created, must extend org.eclipse.search.ui.text.SearchMatchInformationProvider.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.search.core.text.AbstractTextFileScanner"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.search.ui.text.SearchMatchInformationProvider"/>
                </appInfo>
             </annotation>
          </attribute>
          <attribute name="fileExtensions" type="string">
             <annotation>
                <documentation>
-                  Comma separated list of file-extensions for which the scanner shall be applied.  E.g. &apos;.c,.h,.cpp&apos;. In case an extension does not start with a dot, a match against the complete file-name will be attempted. E.g. &apos;Makefile,.mk&apos;
+                  Comma separated list of file-extensions for which the information provider shall be applied.  E.g. &apos;.c,.h,.cpp&apos;. In case an extension does not start with a dot, a match against the complete file-name will be attempted. E.g. &apos;Makefile,.mk&apos;
                </documentation>
             </annotation>
          </attribute>
          <attribute name="contentTypeIDs" type="string">
             <annotation>
                <documentation>
-                  A comma-separated list of content type ids for which the supplied scanner shall be used. E.g.: &apos;org.eclipse.cdt.core.cSource,org.eclipse.cdt.core.cppSource&apos;
+                  A comma-separated list of content type ids for which the supplied information provider shall be used. E.g.: &apos;org.eclipse.cdt.core.cSource,org.eclipse.cdt.core.cppSource&apos;
                </documentation>
             </annotation>
          </attribute>
          <attribute name="supportsComments" type="boolean">
             <annotation>
                <documentation>
-                  True, if the scanner can detect comments. False, otherwise.
+                  True, if the information provider can detect comments. False, otherwise.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="supportsStrings" type="boolean">
             <annotation>
                <documentation>
-                  True, if the scanner can detect string literals False, otherwise.
+                  True, if the information provider can detect string literals False, otherwise.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="supportsIncludes" type="boolean">
             <annotation>
                <documentation>
-                  True, if the scanner can detect include or import statements. False, otherwise.
+                  True, if the information provider can detect include or import statements. False, otherwise.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="supportsPreprocessor" type="boolean">
             <annotation>
                <documentation>
-                  True, if the scanner can detect preprocessor directives. False, otherwise.
+                  True, if the information provider can detect preprocessor directives. False, otherwise.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="supportsFunctions" type="boolean">
             <annotation>
                <documentation>
-                  True, if the scanner can detect function bodies. False, otherwise.
+                  True, if the information provider can detect function bodies. False, otherwise.
                </documentation>
             </annotation>
          </attribute>
@@ -115,8 +115,8 @@
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension id=&quot;JavaScanner&quot;
-      point=&quot;org.eclipse.search.textFileScanner&quot;&gt;
-   &lt;textFileScanner
+      point=&quot;org.eclipse.search.textSearchMatchInformationProvider&quot;&gt;
+   &lt;textSearchMatchInformationProvider
          class=&quot;org.eclipse.search2.internal.ui.text2.JavaScanner&quot;
          contentTypeIDs=&quot;org.eclipse.jdt.core.javaSource&quot;
          fileExtensions=&quot;.java&quot;
@@ -134,7 +134,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The contributed class must implement &lt;code&gt;org.eclipse.search.core.text.AbstractTextFileScanner&lt;/code&gt;
+         The contributed class must implement &lt;code&gt;org.eclipse.search.ui.text.SearchMatchInformationProvider&lt;/code&gt;
       </documentation>
    </annotation>
 

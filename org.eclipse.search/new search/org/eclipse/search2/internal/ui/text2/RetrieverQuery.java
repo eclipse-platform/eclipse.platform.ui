@@ -12,6 +12,7 @@
 package org.eclipse.search2.internal.ui.text2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.regex.Pattern;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 
@@ -29,15 +31,17 @@ import org.eclipse.ui.IWorkbenchPage;
 
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.search.ui.text.SearchMatchInformationProvider;
+import org.eclipse.search.ui.text.SearchMatchInformationProvider.LineInformation;
 
-import org.eclipse.search.core.text.AbstractTextFileScanner;
 import org.eclipse.search.core.text.TextSearchEngine;
 import org.eclipse.search.core.text.TextSearchMatchAccess;
 import org.eclipse.search.core.text.TextSearchRequestor;
 import org.eclipse.search.core.text.TextSearchScope;
-import org.eclipse.search.core.text.AbstractTextFileScanner.LineInformation;
 
 import org.eclipse.search.internal.core.text.PatternConstructor;
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.text.SearchResultUpdater;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
@@ -56,7 +60,7 @@ public class RetrieverQuery implements ISearchQuery, IRetrieverKeys {
 	private RetrieverResult fResult;
 	private ArrayList fLinesOfCurrentFile;
 	private IWorkbenchPage fWorkbenchPage;
-	private AbstractTextFileScanner fScanner;
+	private SearchMatchInformationProvider fScanner;
 	private Comparator fSearchOrder;
 
 
@@ -130,16 +134,20 @@ public class RetrieverQuery implements ISearchQuery, IRetrieverKeys {
 
 	private IStatus performSearch(IProgressMonitor monitor, TextSearchScope scope) {
 		TextSearchEngine engine= TextSearchEngine.create();
-		engine.setSearchOrderHint(fSearchOrder);
 		TextSearchRequestor requestor= createRequestor();
 		Pattern searchPattern= createSearchPattern();
 
 		if (fResult != null) {
 			fResult.setComplete(false);
 		}
-
-		IStatus status= engine.search(scope, requestor, searchPattern, monitor);
-		return status;
+		MultiStatus resStatus= new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, "Problems searching the view", null);
+		IFile[] files= scope.evaluateFilesInScope(resStatus);
+		if (fSearchOrder != null) {
+			Arrays.sort(files, fSearchOrder);
+		}
+		IStatus status= engine.search(files, requestor, searchPattern, monitor);
+		resStatus.addAll(status);
+		return resStatus;
 	}
 
 	Pattern createSearchPattern() {
@@ -270,10 +278,11 @@ public class RetrieverQuery implements ISearchQuery, IRetrieverKeys {
 		}
 	}
 
-	private AbstractTextFileScanner selectScanner(TextSearchMatchAccess matchAccess) {
-		AbstractTextFileScanner scanner= TextFileScannerRegistry.getInstance().findScanner(matchAccess.getFile());
+	private SearchMatchInformationProvider selectScanner(TextSearchMatchAccess matchAccess) {
+		SearchMatchInformationProviderRegistry registry= SearchPlugin.getDefault().getSearchMatchInformationProviderRegistry();
+		SearchMatchInformationProvider scanner= registry.findScanner(matchAccess.getFile());
 		if (scanner == null) {
-			scanner= TextFileScannerRegistry.getInstance().getLineNumberScanner();
+			scanner= registry.getLineNumberScanner();
 		}
 		return scanner;
 	}

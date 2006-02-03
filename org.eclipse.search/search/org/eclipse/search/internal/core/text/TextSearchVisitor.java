@@ -13,8 +13,6 @@ package org.eclipse.search.internal.core.text;
 import java.io.IOException;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -106,7 +104,7 @@ public class TextSearchVisitor {
 	
 	private Map fDocumentsInEditors;
 		
-	private final IProgressMonitor fProgressMonitor;
+	private IProgressMonitor fProgressMonitor;
 
 	private int fNumberOfScannedFiles;
 	private int fNumberOfFilesToScan;
@@ -118,9 +116,8 @@ public class TextSearchVisitor {
 	
 	private final ReusableMatchAccess fMatchAccess;
 	
-	public TextSearchVisitor(TextSearchRequestor collector, Pattern searchPattern, IProgressMonitor monitor) {
+	public TextSearchVisitor(TextSearchRequestor collector, Pattern searchPattern) {
 		fCollector= collector;
-		fProgressMonitor= monitor == null ? new NullProgressMonitor() : monitor;
 		fStatus= new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, SearchMessages.TextSearchEngine_statusMessage, null);
 		
 		fMatcher= searchPattern.pattern().length() == 0 ? null : searchPattern.matcher(new String());
@@ -128,9 +125,9 @@ public class TextSearchVisitor {
 		fFileCharSequenceProvider= new FileCharSequenceProvider();
 		fMatchAccess= new ReusableMatchAccess();
 	}
-		
-	public IStatus search(TextSearchScope scope, Comparator searchOrder) {
-        IFile[] files= new FilesOfScopeCalculator(scope, fStatus).process();
+	
+	public IStatus search(IFile[] files, IProgressMonitor monitor) {
+		fProgressMonitor= monitor == null ? new NullProgressMonitor() : monitor;
         fNumberOfScannedFiles= 0;
         fNumberOfFilesToScan= files.length;
         try {
@@ -140,30 +137,26 @@ public class TextSearchVisitor {
                 fProgressMonitor.setTaskName(Messages.format(SearchMessages.TextSearchEngine_scanning, args)); 
             }
             fCollector.beginReporting();
-            processFiles(files, searchOrder);
+            processFiles(files);
             return fStatus;
         } finally {
             fProgressMonitor.done();
             fCollector.endReporting();
         }
-        
+	}
+		
+	public IStatus search(TextSearchScope scope, IProgressMonitor monitor) {
+		return search(new FilesOfScopeCalculator(scope, fStatus).process(), monitor);
     }
     
-	private void processFiles(IFile[] files, Comparator searchOrder) {
+	private void processFiles(IFile[] files) {
 		fDocumentsInEditors= evalNonFileBufferDocuments();
-        if (searchOrder != null) {
-        	Arrays.sort(files, searchOrder);
-        }
         for (int i= 0; i < files.length; i++) {
             processFile(files[i]);
 		}
 		fDocumentsInEditors= null;
 	}
 	
-	public IStatus getStatus() {
-		return fStatus;
-	}
-
 	/**
 	 * @return returns a map from IFile to IDocument for all open, dirty editors
 	 */

@@ -11,15 +11,16 @@
 
 package org.eclipse.search2.internal.ui.text2;
 
-import org.eclipse.search.core.text.AbstractTextFileScanner;
+import org.eclipse.search.ui.text.AbstractSearchMatchInformationProvider;
+
 import org.eclipse.search.core.text.TextSearchMatchAccess;
 
 /**
- * Scanner for java files, contributed via the org.eclipse.search.textFileScanner
+ * Scanner for java files, contributed via the org.eclipse.search.textSearchMatchInformationProvider
  * extension-point.
  * Detects comments, string literals and import statements.
  */
-public class JavaScanner extends AbstractTextFileScanner {
+public class JavaScanner extends AbstractSearchMatchInformationProvider {
 
 	private static final char[] IMPORT_CHARS= "import".toCharArray(); //$NON-NLS-1$
 	private TextSearchMatchAccess fMatchAccess;

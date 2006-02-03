@@ -31,7 +31,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
-import org.eclipse.search.core.text.AbstractTextFileScanner;
+import org.eclipse.search.ui.text.SearchMatchInformationProvider;
+
+import org.eclipse.search.internal.ui.SearchPlugin;
+
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
@@ -97,7 +100,8 @@ public class RetrieverFilterTab implements IRetrieverKeys {
 		fIncludeFilter= new Button(locationGroup, SWT.CHECK);
 		fIncludeFilter.setText(SearchMessages.RetrieverFilterTab_Import_text);
 
-		if (TextFileScannerRegistry.getInstance().hasPreprocessorSupport()) {
+		SearchMatchInformationProviderRegistry registry= SearchPlugin.getDefault().getSearchMatchInformationProviderRegistry();
+		if (registry.hasPreprocessorSupport()) {
 			fPrepFilter= new Button(locationGroup, SWT.CHECK);
 			fPrepFilter.setText(SearchMessages.RetrieverFilterTab_Preprocessor_text);
 		} else {
@@ -107,7 +111,7 @@ public class RetrieverFilterTab implements IRetrieverKeys {
 		fStringFilter= new Button(locationGroup, SWT.CHECK);
 		fStringFilter.setText(SearchMessages.RetrieverFilterTab_String_text);
 
-		if (TextFileScannerRegistry.getInstance().hasFunctionSupport()) {
+		if (registry.hasFunctionSupport()) {
 			fFunctionFilter= new Button(locationGroup, SWT.CHECK);
 			fFunctionFilter.setText(SearchMessages.RetrieverFilterTab_FunctionBody_text);
 		}
@@ -226,22 +230,22 @@ public class RetrieverFilterTab implements IRetrieverKeys {
 		if (fUseLocationFilter.getSelection()) {
 			acceptLocations= 0;
 			if (fStringFilter.getSelection()) {
-				acceptLocations|= (1 << AbstractTextFileScanner.LOCATION_STRING_LITERAL);
+				acceptLocations|= (1 << SearchMatchInformationProvider.LOCATION_STRING_LITERAL);
 			}
 			if (fCommentFilter.getSelection()) {
-				acceptLocations|= (1 << AbstractTextFileScanner.LOCATION_COMMENT);
+				acceptLocations|= (1 << SearchMatchInformationProvider.LOCATION_COMMENT);
 			}
 			if (fIncludeFilter.getSelection()) {
-				acceptLocations|= (1 << AbstractTextFileScanner.LOCATION_IMPORT_OR_INCLUDE_STATEMENT);
+				acceptLocations|= (1 << SearchMatchInformationProvider.LOCATION_IMPORT_OR_INCLUDE_STATEMENT);
 			}
 			if (fPrepFilter == null || fPrepFilter.getSelection()) {
-				acceptLocations|= (1 << AbstractTextFileScanner.LOCATION_PREPROCESSOR_DIRECTIVE);
+				acceptLocations|= (1 << SearchMatchInformationProvider.LOCATION_PREPROCESSOR_DIRECTIVE);
 			}
 			if (fFunctionFilter == null || fFunctionFilter.getSelection()) {
-				acceptLocations|= (1 << AbstractTextFileScanner.LOCATION_FUNCTION);
+				acceptLocations|= (1 << SearchMatchInformationProvider.LOCATION_FUNCTION);
 			}
 			if (fOtherFilter.getSelection()) {
-				acceptLocations|= (1 << AbstractTextFileScanner.LOCATION_OTHER);
+				acceptLocations|= (1 << SearchMatchInformationProvider.LOCATION_OTHER);
 			}
 		}
 		return acceptLocations;
@@ -402,12 +406,12 @@ public class RetrieverFilterTab implements IRetrieverKeys {
 		fUseStringFilter.setSelection(es);
 
 		if (el) {
-			setButton(fCommentFilter, loc, AbstractTextFileScanner.LOCATION_COMMENT);
-			setButton(fStringFilter, loc, AbstractTextFileScanner.LOCATION_STRING_LITERAL);
-			setButton(fIncludeFilter, loc, AbstractTextFileScanner.LOCATION_IMPORT_OR_INCLUDE_STATEMENT);
-			setButton(fPrepFilter, loc, AbstractTextFileScanner.LOCATION_PREPROCESSOR_DIRECTIVE);
-			setButton(fFunctionFilter, loc, AbstractTextFileScanner.LOCATION_FUNCTION);
-			setButton(fOtherFilter, loc, AbstractTextFileScanner.LOCATION_OTHER);
+			setButton(fCommentFilter, loc, SearchMatchInformationProvider.LOCATION_COMMENT);
+			setButton(fStringFilter, loc, SearchMatchInformationProvider.LOCATION_STRING_LITERAL);
+			setButton(fIncludeFilter, loc, SearchMatchInformationProvider.LOCATION_IMPORT_OR_INCLUDE_STATEMENT);
+			setButton(fPrepFilter, loc, SearchMatchInformationProvider.LOCATION_PREPROCESSOR_DIRECTIVE);
+			setButton(fFunctionFilter, loc, SearchMatchInformationProvider.LOCATION_FUNCTION);
+			setButton(fOtherFilter, loc, SearchMatchInformationProvider.LOCATION_OTHER);
 		}
 		if (es) {
 			fEnableString= true;
