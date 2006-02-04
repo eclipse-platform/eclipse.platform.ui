@@ -11,6 +11,7 @@
 package org.eclipse.team.core.mapping;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * The purpose of this interface is to provide support for model level
@@ -91,6 +92,20 @@ public interface IResourceMappingMerger {
 	 */
     public IStatus merge(IMergeContext mergeContext,
             IProgressMonitor monitor) throws CoreException;
+    
+    /**
+     * Return the scheduling rule that is required to merge
+     * all the changes that apply to this merger in the given 
+     * context. When calling {@link #merge(IMergeContext, IProgressMonitor)},
+     * lients must ensure that they either have obtained
+     * a rule that covers the rule returned by this method or
+     * they must not hold any rule.
+     * @param context the context that contains the changes to be merged
+     * @return the scheduling rule required by this merger to merge all
+     * the changes in the gibven context belonging to the merger's
+     * model provider.
+     */
+    public ISchedulingRule getMergeRule(IMergeContext context);
     
     /**
      * Validate an auto-merge for the given context. This 

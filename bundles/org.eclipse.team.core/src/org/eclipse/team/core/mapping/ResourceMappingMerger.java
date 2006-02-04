@@ -13,12 +13,14 @@ package org.eclipse.team.core.mapping;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.provider.MergeStatus;
 import org.eclipse.team.internal.core.Policy;
-
 
 /**
  * Abstract implementation of {@link IResourceMappingMerger}. This merger
@@ -55,6 +57,35 @@ public abstract class ResourceMappingMerger implements IResourceMappingMerger {
 	 * @return Return the model provider associated with this merger.
 	 */
 	protected abstract ModelProvider getModelProvider();
+	
+	/**
+	 * Return the scheduling rule required to merge all the 
+	 * changes in the context for the model provider of this merger.
+	 * By default, return a rule that covers all the projects for the mappings
+	 * that belong to the model provider of this merger.
+     * @param context the context that contains the changes to be merged
+     * @return the scheduling rule required by this merger to merge all
+     * the changes in the gibven context belonging to the merger's
+     * model provider.
+	 * @see org.eclipse.team.core.mapping.IResourceMappingMerger#getMergeRule(org.eclipse.team.core.mapping.IMergeContext)
+	 */
+	public ISchedulingRule getMergeRule(IMergeContext context) {
+		ResourceMapping[] mappings = context.getScope().getMappings(getModelProvider().getId());
+		ISchedulingRule rule = null;
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping mapping = mappings[i];
+			IProject[] mappingProjects = mapping.getProjects();
+			for (int j = 0; j < mappingProjects.length; j++) {
+				IProject project = mappingProjects[j];
+				if (rule == null) {
+					rule = project;
+				} else {
+					rule = MultiRule.combine(rule, project);
+				}
+			}
+		}
+		return rule;
+	}
 	
 	/**
 	 * A default implementation of merge that attempts to merge all the mappings
