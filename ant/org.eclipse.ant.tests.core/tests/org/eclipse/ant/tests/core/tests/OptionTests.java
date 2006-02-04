@@ -143,7 +143,9 @@ public class OptionTests extends AbstractAntTest {
 			}
 			assertTrue("File should have started with Buildfile", buffer.toString().startsWith("Buildfile"));
 		} finally {
-			in.close();
+            if (in != null) {
+                in.close();
+            }
 			stream.close();
 		}
 		
