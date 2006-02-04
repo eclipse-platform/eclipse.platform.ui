@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.eclipse.core.resources.IProject;
@@ -30,6 +31,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ui.mapping.BuildScopeOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -214,9 +216,10 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
     public IResourceMappingScope buildScope(IProgressMonitor monitor) throws InterruptedException, CVSException {
     	if (manager == null) {
     		manager = new ResourceMappingScopeManager(selectedMappings, getResourceMappingContext(), consultModelsWhenBuildingScope && consultModelsForMappings());
+    		BuildScopeOperation op = new BuildScopeOperation(getPart(), manager);
 			try {
-				manager.initialize(monitor);
-			} catch (CoreException e) {
+				op.run(monitor);
+			} catch (InvocationTargetException e) {
 				throw CVSException.wrapException(e);
 			}
     	}
