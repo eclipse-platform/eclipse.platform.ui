@@ -63,6 +63,7 @@ public class UIListenerLogging {
     public final static String WPE_PAGE_CLOSED = "pageClosed"; //$NON-NLS-1$ 
     
     // IPerspectiveListener events
+    public static final String PLE_PERSP_PRE_DEACTIVATE = "perspectivePreDeactivate"; //$NON-NLS-1$
     public static final String PLE_PERSP_DEACTIVATED = "perspectiveDeactivated"; //$NON-NLS-1$
     public static final String PLE_PERSP_ACTIVATED = "perspectiveActivated"; //$NON-NLS-1$
     public static final String PLE_PERSP_OPENED = "perspectiveOpened"; //$NON-NLS-1$

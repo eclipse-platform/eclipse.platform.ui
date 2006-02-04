@@ -3006,6 +3006,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         window.largeUpdateStart();
         try {
+	        if (oldPersp != null) {
+	        	// fire the pre-deactivate
+				window.firePerspectivePreDeactivate(this, oldPersp.getDesc());
+	        }
 	        
 	        if (newPersp != null) {
 	            IStatus status = newPersp.restoreState();
@@ -3020,10 +3024,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	
 	        // Deactivate the old layout
 	        if (oldPersp != null) {
-	            oldPersp.onDeactivate();
-                
-                // Notify listeners of deactivation
-                window.firePerspectiveDeactivated(this, oldPersp.getDesc());
+				oldPersp.onDeactivate();
+
+				// Notify listeners of deactivation
+				window.firePerspectiveDeactivated(this, oldPersp.getDesc());
 	        }
 	
 	        // Activate the new layout

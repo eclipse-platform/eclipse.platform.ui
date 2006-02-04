@@ -23,9 +23,10 @@ package org.eclipse.ui;
  * @see org.eclipse.ui.IPerspectiveListener
  * @see org.eclipse.ui.IPerspectiveListener2
  * @see org.eclipse.ui.IPerspectiveListener3
+ * @see org.eclipse.ui.IPerspectiveListener4
  * @since 3.1
  */
-public class PerspectiveAdapter implements IPerspectiveListener3 {
+public class PerspectiveAdapter implements IPerspectiveListener4 {
 
 	/*
 	 * (non-Javadoc)
@@ -105,6 +106,17 @@ public class PerspectiveAdapter implements IPerspectiveListener3 {
 	public void perspectiveSavedAs(IWorkbenchPage page,
 			IPerspectiveDescriptor oldPerspective,
 			IPerspectiveDescriptor newPerspective) {
+		// do nothing
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IPerspectiveListener4#perspectivePreDeactivate(org.eclipse.ui.IWorkbenchPage,
+	 *      org.eclipse.ui.IPerspectiveDescriptor)
+	 */
+	public void perspectivePreDeactivate(IWorkbenchPage page,
+			IPerspectiveDescriptor perspective) {
 		// do nothing
 	}
 }

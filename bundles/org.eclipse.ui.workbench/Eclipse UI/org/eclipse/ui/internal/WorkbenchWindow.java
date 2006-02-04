@@ -1186,6 +1186,18 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	/**
 	 * Fires perspective deactivated.
 	 * 
+	 * @since 3.2
+	 */
+	void firePerspectivePreDeactivate(IWorkbenchPage page,
+			IPerspectiveDescriptor perspective) {
+		UIListenerLogging.logPerspectiveEvent(this, page, perspective,
+				UIListenerLogging.PLE_PERSP_PRE_DEACTIVATE);
+		perspectiveListeners.firePerspectivePreDeactivate(page, perspective);
+	}
+	
+	/**
+	 * Fires perspective deactivated.
+	 * 
 	 * @since 3.1
 	 */
 	void firePerspectiveDeactivated(IWorkbenchPage page,

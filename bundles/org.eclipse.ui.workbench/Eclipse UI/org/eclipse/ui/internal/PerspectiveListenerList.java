@@ -17,6 +17,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IPerspectiveListener2;
 import org.eclipse.ui.IPerspectiveListener3;
+import org.eclipse.ui.IPerspectiveListener4;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -72,6 +73,26 @@ public class PerspectiveListenerList extends EventManager {
                     l.perspectiveActivated(page, perspective);
                 }
             }, l, perspective, "activated::"); //$NON-NLS-1$
+        }
+    }
+
+    /**
+     * Notifies the listener that a perspective has been deactivated.
+     * 
+     * @since 3.2
+     */
+    public void firePerspectivePreDeactivate(final IWorkbenchPage page,
+            final IPerspectiveDescriptor perspective) {
+        Object[] array = getListeners();
+        for (int nX = 0; nX < array.length; nX++) {
+            if (array[nX] instanceof IPerspectiveListener4) {
+                final IPerspectiveListener4 l4 = (IPerspectiveListener4) array[nX];
+                fireEvent(new SafeRunnable() {
+                    public void run() {
+                        l4.perspectivePreDeactivate(page, perspective);
+                    }
+                }, l4, perspective, "pre-deactivate::"); //$NON-NLS-1$
+            }
         }
     }
 
