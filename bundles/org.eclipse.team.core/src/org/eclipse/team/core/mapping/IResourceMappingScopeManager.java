@@ -107,8 +107,19 @@ public interface IResourceMappingScopeManager {
 
 	/**
 	 * Method to be invoked when the scope of this
-	 * manager is no longer needed.
+	 * manager is no longer needed. It is typically the
+	 * reponsibility of the client that creates a scope manager 
+	 * to dispose of it.
 	 */
 	void dispose();
+
+	/**
+	 * Refresh the given mapping asynchronously. This method
+	 * is called by {@link IResourceMappingScopeParticipant}
+	 * instances when they detect changes that require the scope
+	 * to be adjusted.
+	 * @param mappings the mappings to be refeshed.
+	 */
+	void refresh(ResourceMapping[] mappings);
 
 }

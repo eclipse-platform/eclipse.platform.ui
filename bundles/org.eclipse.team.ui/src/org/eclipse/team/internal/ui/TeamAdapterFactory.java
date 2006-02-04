@@ -41,7 +41,7 @@ public class TeamAdapterFactory implements IAdapterFactory {
 					return new DefaultResourceMappingMerger((ModelProvider)adaptableObject);
 				}
 				if (adapterType == IResourceMappingScopeParticipantFactory.class) {
-					return new ResourceScopeParticipantFactory((ModelProvider)adaptableObject);
+					return new ResourceModelScopeParticipantFactory((ModelProvider)adaptableObject);
 				}
 				if (adapterType == IResourceMappingPersistenceAdapter.class) {
 					return new ResourceModelPersistenceAdapter((ModelProvider)adaptableObject);

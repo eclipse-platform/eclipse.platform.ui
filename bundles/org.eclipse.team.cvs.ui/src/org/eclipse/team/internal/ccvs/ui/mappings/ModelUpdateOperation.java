@@ -58,7 +58,7 @@ public class ModelUpdateOperation extends AbstractModelMergeOperation {
 	 * @see org.eclipse.team.ui.operations.ResourceMappingMergeOperation#createParticipant()
 	 */
 	protected ModelSynchronizeParticipant createParticipant() {
-		return new WorkspaceModelParticipant(getScopeManager(), createMergeContext(), getJobName());
+		return new WorkspaceModelParticipant(getScopeManager(), createMergeContext());
 	}
 
 	/* (non-Javadoc)

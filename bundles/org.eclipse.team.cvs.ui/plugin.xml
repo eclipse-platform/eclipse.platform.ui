@@ -13,6 +13,12 @@
             class="org.eclipse.team.internal.ccvs.ui.subscriber.CVSSynchronizeWizard"
             id="org.eclipse.team.ccvs.ui.SynchronizeWizard">
       </wizard>
+      <wizard
+            class="org.eclipse.team.internal.ccvs.ui.mappings.ModelSynchronizeWizard"
+            name="CVS (Experimental)"
+            description="%WorkspaceSynchronizeWizard.description"
+            icon="$nl$/icons/full/eview16/cvs_persp.gif"
+            id="org.eclipse.team.cvs.ui.ModelSynchronizeWizard"/>
    </extension>
 <!-- *************** Console Factory **************** -->
    <extension

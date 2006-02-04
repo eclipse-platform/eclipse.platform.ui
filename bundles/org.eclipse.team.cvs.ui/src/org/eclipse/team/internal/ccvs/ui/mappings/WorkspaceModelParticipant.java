@@ -45,6 +45,8 @@ public class WorkspaceModelParticipant extends
 	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_2 = "overrideActions"; //$NON-NLS-1$
 	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_3 = "otherActions1"; //$NON-NLS-1$
 	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_4 = "otherActions2"; //$NON-NLS-1$
+
+	public static final String ID = "org.eclipse.team.cvs.ui.workspace-participant"; //$NON-NLS-1$
 	
 	/**
 	 * CVS workspace action contribution
@@ -144,7 +146,7 @@ public class WorkspaceModelParticipant extends
 	public WorkspaceModelParticipant() {
 	}
 	
-	public WorkspaceModelParticipant(IResourceMappingScopeManager manager, ISynchronizationContext context, String name) {
+	public WorkspaceModelParticipant(IResourceMappingScopeManager manager, ISynchronizationContext context) {
 		super(manager, context);
 		try {
 			setInitializationData(TeamUI.getSynchronizeManager().getParticipantDescriptor("org.eclipse.team.cvs.ui.workspace-participant")); //$NON-NLS-1$

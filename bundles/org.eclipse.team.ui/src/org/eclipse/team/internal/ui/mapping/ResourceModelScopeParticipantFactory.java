@@ -11,21 +11,25 @@
 package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.core.resources.mapping.ModelProvider;
+import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
 import org.eclipse.team.core.mapping.IResourceMappingScopeParticipantFactory;
 import org.eclipse.team.core.mapping.provider.IResourceMappingScopeParticipant;
-import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
 
-public class ResourceScopeParticipantFactory implements
+public class ResourceModelScopeParticipantFactory implements
 		IResourceMappingScopeParticipantFactory {
 
-	public ResourceScopeParticipantFactory(ModelProvider provider) {
-		// TODO Auto-generated constructor stub
+	private final ModelProvider provider;
+
+	public ResourceModelScopeParticipantFactory(ModelProvider provider) {
+		this.provider = provider;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingScopeParticipantFactory#createParticipant(org.eclipse.core.resources.mapping.ModelProvider, org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager)
+	 */
 	public IResourceMappingScopeParticipant createParticipant(
-			ModelProvider provider, ResourceMappingScopeManager manager) {
-		// TODO Auto-generated method stub
-		return null;
+			ModelProvider provider, IResourceMappingScopeManager manager) {
+		return new ResourceModelScopeParticipant(this.provider, manager);
 	}
 
 }

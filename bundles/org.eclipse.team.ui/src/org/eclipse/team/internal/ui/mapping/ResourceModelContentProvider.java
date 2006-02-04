@@ -35,7 +35,7 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  * have a model provider registered (this may be considered an error case).
  *
  */
-public class ResourceTeamAwareContentProvider extends SynchronizationContentProvider {
+public class ResourceModelContentProvider extends SynchronizationContentProvider {
 
 	private WorkbenchContentProvider provider;
 

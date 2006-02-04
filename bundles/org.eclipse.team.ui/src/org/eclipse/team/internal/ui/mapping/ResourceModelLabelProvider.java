@@ -29,11 +29,11 @@ public class ResourceModelLabelProvider extends
 		SynchronizationLabelProvider implements IFontProvider, IResourceChangeListener {
 
 	private ILabelProvider provider = new ResourceMappingLabelProvider();
-	private ResourceTeamAwareContentProvider contentProvider;
+	private ResourceModelContentProvider contentProvider;
 
 	public void init(IExtensionStateModel aStateModel, ITreeContentProvider aContentProvider) {
-		if (aContentProvider instanceof ResourceTeamAwareContentProvider) {
-			contentProvider = (ResourceTeamAwareContentProvider) aContentProvider;
+		if (aContentProvider instanceof ResourceModelContentProvider) {
+			contentProvider = (ResourceModelContentProvider) aContentProvider;
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		}
 		super.init(aStateModel, aContentProvider);

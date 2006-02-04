@@ -69,6 +69,7 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 	private final boolean consultModels;
 	private IResourceMappingScope scope;
 	private boolean initialized;
+	private ScopeManagerEventHandler handler;
 
 	/**
 	 * Convenience method for obtaining the set of resource
@@ -430,6 +431,20 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 	 * @see org.eclipse.team.core.mapping.IResourceMappingScopeManager#dispose()
 	 */
 	public void dispose() {
-		// Do nothing, by default
+		if (handler != null)
+			handler.shutdown();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceMappingScopeManager#refresh(org.eclipse.core.resources.mapping.ResourceMapping[])
+	 */
+	public void refresh(ResourceMapping[] mappings) {
+		getHandler().refresh(mappings);
+	}
+
+	private synchronized ScopeManagerEventHandler getHandler() {
+		if (handler == null)
+			handler = new ScopeManagerEventHandler(this);
+		return handler;
 	}
 }

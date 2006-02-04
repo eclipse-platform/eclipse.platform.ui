@@ -157,17 +157,25 @@ public class SubscriberScopeManager extends ResourceMappingScopeManager implemen
 	}
 
 	private void fireChange(final IResource[] resources, final IProject[] projects) {
+		final Set result = new HashSet();
 		IResourceMappingScopeParticipant[] handlers = (IResourceMappingScopeParticipant[]) participants.values().toArray(new IResourceMappingScopeParticipant[participants.size()]);
 		for (int i = 0; i < handlers.length; i++) {
 			final IResourceMappingScopeParticipant participant = handlers[i];
 			Platform.run(new ISafeRunnable() {
 				public void run() throws Exception {
-					participant.handleContextChange(SubscriberScopeManager.this, resources, projects);
+					ResourceMapping[] mappings = participant.handleContextChange(SubscriberScopeManager.this, resources, projects);
+					for (int j = 0; j < mappings.length; j++) {
+						ResourceMapping mapping = mappings[j];
+						result.add(mapping);
+					}
 				}
 				public void handleException(Throwable exception) {
 					// Handled by platform
 				}
 			});
+		}
+		if (!result.isEmpty()) {
+			refresh((ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]));
 		}
 	}
 

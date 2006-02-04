@@ -17,9 +17,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.wizards.CheckoutWizard;
 import org.eclipse.team.internal.ui.synchronize.SubscriberParticipantWizard;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
-import org.eclipse.team.ui.synchronize.ISynchronizeScope;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.*;
 
 /**
  * This is the class registered with the org.eclipse.team.ui.synchronizeWizard

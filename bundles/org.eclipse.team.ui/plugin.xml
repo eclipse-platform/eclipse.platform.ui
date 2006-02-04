@@ -335,7 +335,7 @@
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
-            contentProvider="org.eclipse.team.internal.ui.mapping.ResourceTeamAwareContentProvider"
+            contentProvider="org.eclipse.team.internal.ui.mapping.ResourceModelContentProvider"
             id="org.eclipse.team.ui.resourceContent"
             labelProvider="org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider"
             name="%ResourcesContentExtension"

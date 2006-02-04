@@ -14,7 +14,6 @@ import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.team.core.mapping.provider.IResourceMappingScopeParticipant;
-import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
 
 /**
  * Factory interface for creating a participant for use with an
@@ -46,6 +45,6 @@ public interface IResourceMappingScopeParticipantFactory {
 	 * @param manager the scope manager
 	 * @return a participant in the scope management process
 	 */
-	IResourceMappingScopeParticipant createParticipant(ModelProvider provider, ResourceMappingScopeManager manager);
+	IResourceMappingScopeParticipant createParticipant(ModelProvider provider, IResourceMappingScopeManager manager);
 
 }
