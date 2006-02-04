@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.*;
@@ -24,24 +22,23 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
 import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
-import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.internal.ui.synchronize.GlobalRefreshElementSelectionPage;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
-import org.eclipse.ui.navigator.*;
+import org.eclipse.ui.navigator.INavigatorContentService;
+import org.eclipse.ui.navigator.NavigatorContentServiceFactory;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
 public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage {
-
-	private final IResource[] roots;
+	
 	private INavigatorContentService service;
 	private IResourceMappingScopeManager manager;
 
 	protected ModelElementSelectionPage(IResource[] roots) {
 		super("elementSelection"); //$NON-NLS-1$
-		this.roots = roots;
 		setDescription(TeamUIMessages.GlobalRefreshResourceSelectionPage_2); 
 		setTitle(TeamUIMessages.GlobalRefreshResourceSelectionPage_3);
 		List result = new ArrayList();
@@ -83,13 +80,41 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 	}
 	
 	public ResourceMapping[] getSelectedMappings() {
+		if (isWorkingSetSelected()) {
+			List result = new ArrayList();
+			IWorkingSet[] sets = getWorkingSets();
+			for (int i = 0; i < sets.length; i++) {
+				IWorkingSet set = sets[i];
+				result.add(Utils.getResourceMapping(set));
+			}
+			return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
+		}
+		if (isWorkspaceSelected()) {
+			ResourceMapping[] mappings = manager.getScope().getMappings(ModelProvider.RESOURCE_MODEL_PROVIDER_ID);
+			try {
+				ModelProvider provider = ModelProvider.getModelProviderDescriptor(ModelProvider.RESOURCE_MODEL_PROVIDER_ID).getModelProvider();
+				return new ResourceMapping[] {new CompositeResourceMapping(ModelProvider.RESOURCE_MODEL_PROVIDER_ID, provider, mappings) };
+			} catch (CoreException e) {
+				// Shouldn't happen
+				TeamUIPlugin.log(e);
+			}
+		}
 		List result = new ArrayList();
 		Object[] objects = getRootElement();
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			ResourceMapping mapping = Utils.getResourceMapping(object);
 			if (mapping == null) {
-				// TODO: handle selected model provider
+				// For model providers, add a composite resource mapping
+				if (object instanceof ModelProvider) {
+					ModelProvider provider = (ModelProvider) object;
+					Set projects = new HashSet();
+					ResourceMapping[] mappings = manager.getScope().getMappings(provider.getId());
+					if (mappings.length > 0) {
+						mapping = new CompositeResourceMapping(ModelProvider.RESOURCE_MODEL_PROVIDER_ID, provider, mappings);
+						result.add(mapping);
+					}
+				}
 			} else {
 				result.add(mapping);
 			}

@@ -14,13 +14,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.mapping.ModelProvider;
-import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
 import org.eclipse.team.core.mapping.provider.IResourceMappingScopeParticipant;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.*;
 
@@ -83,6 +84,7 @@ public class ResourceModelScopeParticipant implements
 		ResourceMapping[] mappings = manager.getScope().getMappings(provider.getDescriptor().getId());
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
+			boolean refresh = false;
 			Object modelObject = mapping.getModelObject();
 			if (modelObject instanceof IWorkingSet) {
 				IWorkingSet set = (IWorkingSet)modelObject;
@@ -94,15 +96,31 @@ public class ResourceModelScopeParticipant implements
 					for (int k = 0; k < p.length; k++) {
 						IProject mp = p[k];
 						if (mp.equals(project)) {
-							result.add(m);
+							refresh = true;
+							break;
 						}
 					}
+					if (refresh)
+						break;
 				}
 			} else if (modelObject instanceof IResource) {
 				IResource resource = (IResource) modelObject;
 				if (resource.getType() == IResource.ROOT) {
-					result.add(Utils.getResourceMapping(resource));
+					refresh = true;
 				}
+			} else if (modelObject instanceof ModelProvider) {
+				ModelProvider mp = (ModelProvider) modelObject;
+				try {
+					ResourceMapping[] list = mp.getMappings(project, ResourceMappingContext.LOCAL_CONTEXT, null);
+					if (list.length > 0) {
+						refresh = true;
+					}
+				} catch (CoreException e) {
+					TeamUIPlugin.log(e);
+				}
+			}
+			if (refresh) {
+				result.add(mapping);
 			}
 		}
 	}

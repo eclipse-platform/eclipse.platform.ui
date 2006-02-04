@@ -17,6 +17,7 @@ import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.diff.IDiff;
@@ -216,6 +217,10 @@ public class AbstractCompareAdapter implements ICompareAdapter {
 		IResource resource = Utils.getResource(object);
 		if (resource != null)
 			return resource.getName();
+		if (object instanceof ModelProvider) {
+			ModelProvider provider = (ModelProvider) object;
+			return provider.getDescriptor().getLabel();
+		}
 		return ""; //$NON-NLS-1$
 	}
 	
