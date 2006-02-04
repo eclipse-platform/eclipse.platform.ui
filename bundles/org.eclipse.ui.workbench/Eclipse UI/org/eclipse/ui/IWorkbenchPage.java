@@ -28,7 +28,7 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  * The number of views and editors within a page is restricted to simplify part
  * management for the user. In particular:
  * <ul>
- * <li>Unless a view explicitly allows for multiple instances in its plugin 
+ * <li>Unless a view explicitly allows for multiple instances in its plugin
  * declaration there will be only one instance in a given workbench page.</li>
  * <li>Only one editor can exist for each editor input within a page.
  * <li>
@@ -43,567 +43,585 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  * @see IViewPart
  */
 public interface IWorkbenchPage extends IPartService, ISelectionService,
-        ICompatibleWorkbenchPage {
-    /**
-     * An optional attribute within a workspace marker (<code>IMarker</code>)
-     * which identifies the preferred editor type to be opened when <code>openEditor</code>
-     * is called.
-     * 
-     * @see #openEditor(IEditorInput, String)
-     * @see #openEditor(IEditorInput, String, boolean)
-     * @deprecated in 3.0 since the notion of markers this is not generally
-     *             applicable. Use the IDE-specific constant <code>IDE.EDITOR_ID_ATTR</code>.
-     */
-    public static final String EDITOR_ID_ATTR = "org.eclipse.ui.editorID"; //$NON-NLS-1$
+		ICompatibleWorkbenchPage {
+	/**
+	 * An optional attribute within a workspace marker (<code>IMarker</code>)
+	 * which identifies the preferred editor type to be opened when
+	 * <code>openEditor</code> is called.
+	 * 
+	 * @see #openEditor(IEditorInput, String)
+	 * @see #openEditor(IEditorInput, String, boolean)
+	 * @deprecated in 3.0 since the notion of markers this is not generally
+	 *             applicable. Use the IDE-specific constant
+	 *             <code>IDE.EDITOR_ID_ATTR</code>.
+	 */
+	public static final String EDITOR_ID_ATTR = "org.eclipse.ui.editorID"; //$NON-NLS-1$
 
-    /**
-     * Change event id when the perspective is reset to its original state.
-     * 
-     * @see IPerspectiveListener
-     */
-    public static final String CHANGE_RESET = "reset"; //$NON-NLS-1$
+	/**
+	 * Change event id when the perspective is reset to its original state.
+	 * 
+	 * @see IPerspectiveListener
+	 */
+	public static final String CHANGE_RESET = "reset"; //$NON-NLS-1$
 
-    /**
-     * Change event id when the perspective has completed a reset to its original state.
-     * 
-     * @since 3.0
-     * @see IPerspectiveListener
-     */
-    public static final String CHANGE_RESET_COMPLETE = "resetComplete"; //$NON-NLS-1$
+	/**
+	 * Change event id when the perspective has completed a reset to its
+	 * original state.
+	 * 
+	 * @since 3.0
+	 * @see IPerspectiveListener
+	 */
+	public static final String CHANGE_RESET_COMPLETE = "resetComplete"; //$NON-NLS-1$
 
-    /**
-     * Change event id when one or more views are shown in a perspective.
-     * 
-     * @see IPerspectiveListener
-     */
-    public static final String CHANGE_VIEW_SHOW = "viewShow"; //$NON-NLS-1$
+	/**
+	 * Change event id when one or more views are shown in a perspective.
+	 * 
+	 * @see IPerspectiveListener
+	 */
+	public static final String CHANGE_VIEW_SHOW = "viewShow"; //$NON-NLS-1$
 
-    /**
-     * Change event id when one or more views are hidden in a perspective.
-     * 
-     * @see IPerspectiveListener
-     */
-    public static final String CHANGE_VIEW_HIDE = "viewHide"; //$NON-NLS-1$
+	/**
+	 * Change event id when one or more views are hidden in a perspective.
+	 * 
+	 * @see IPerspectiveListener
+	 */
+	public static final String CHANGE_VIEW_HIDE = "viewHide"; //$NON-NLS-1$
 
-    /**
-     * Change event id when one or more editors are opened in a perspective.
-     * 
-     * @see IPerspectiveListener
-     */
-    public static final String CHANGE_EDITOR_OPEN = "editorOpen"; //$NON-NLS-1$
+	/**
+	 * Change event id when one or more editors are opened in a perspective.
+	 * 
+	 * @see IPerspectiveListener
+	 */
+	public static final String CHANGE_EDITOR_OPEN = "editorOpen"; //$NON-NLS-1$
 
-    /**
-     * Change event id when one or more editors are closed in a perspective.
-     * 
-     * @see IPerspectiveListener
-     */
-    public static final String CHANGE_EDITOR_CLOSE = "editorClose"; //$NON-NLS-1$
+	/**
+	 * Change event id when one or more editors are closed in a perspective.
+	 * 
+	 * @see IPerspectiveListener
+	 */
+	public static final String CHANGE_EDITOR_CLOSE = "editorClose"; //$NON-NLS-1$
 
-    /**
-     * Change event id when the editor area is shown in a perspective.
-     * 
-     * @see IPerspectiveListener
-     */
-    public static final String CHANGE_EDITOR_AREA_SHOW = "editorAreaShow"; //$NON-NLS-1$
+	/**
+	 * Change event id when the editor area is shown in a perspective.
+	 * 
+	 * @see IPerspectiveListener
+	 */
+	public static final String CHANGE_EDITOR_AREA_SHOW = "editorAreaShow"; //$NON-NLS-1$
 
-    /**
-     * Change event id when the editor area is hidden in a perspective.
-     * 
-     * @see IPerspectiveListener
-     */
-    public static final String CHANGE_EDITOR_AREA_HIDE = "editorAreaHide"; //$NON-NLS-1$
+	/**
+	 * Change event id when the editor area is hidden in a perspective.
+	 * 
+	 * @see IPerspectiveListener
+	 */
+	public static final String CHANGE_EDITOR_AREA_HIDE = "editorAreaHide"; //$NON-NLS-1$
 
-    /**
-     * Change event id when an action set is shown in a perspective.
-     * 
-     * @see IPerspectiveListener
-     */
-    public static final String CHANGE_ACTION_SET_SHOW = "actionSetShow"; //$NON-NLS-1$
+	/**
+	 * Change event id when an action set is shown in a perspective.
+	 * 
+	 * @see IPerspectiveListener
+	 */
+	public static final String CHANGE_ACTION_SET_SHOW = "actionSetShow"; //$NON-NLS-1$
 
-    /**
-     * Change event id when an action set is hidden in a perspective.
-     * 
-     * @see IPerspectiveListener
-     */
-    public static final String CHANGE_ACTION_SET_HIDE = "actionSetHide"; //$NON-NLS-1$
+	/**
+	 * Change event id when an action set is hidden in a perspective.
+	 * 
+	 * @see IPerspectiveListener
+	 */
+	public static final String CHANGE_ACTION_SET_HIDE = "actionSetHide"; //$NON-NLS-1$
 
-    /**
-     * Change event id when a fast view is added in a perspective.
-     * 
-     * @see IPerspectiveListener
-     */
-    public static final String CHANGE_FAST_VIEW_ADD = "fastViewAdd"; //$NON-NLS-1$
+	/**
+	 * Change event id when a fast view is added in a perspective.
+	 * 
+	 * @see IPerspectiveListener
+	 */
+	public static final String CHANGE_FAST_VIEW_ADD = "fastViewAdd"; //$NON-NLS-1$
 
-    /**
-     * Change event id when a fast view is removed in a perspective.
-     * 
-     * @see IPerspectiveListener
-     */
-    public static final String CHANGE_FAST_VIEW_REMOVE = "fastViewRemove"; //$NON-NLS-1$
+	/**
+	 * Change event id when a fast view is removed in a perspective.
+	 * 
+	 * @see IPerspectiveListener
+	 */
+	public static final String CHANGE_FAST_VIEW_REMOVE = "fastViewRemove"; //$NON-NLS-1$
 
-    /**
-     * Change event id when the page working set was replaced
-     * 
-     * @see IPropertyChangeListener
-     */
-    public static final String CHANGE_WORKING_SET_REPLACE = "workingSetReplace"; //$NON-NLS-1$	 
+	/**
+	 * Change event id when the page working set was replaced
+	 * 
+	 * @see IPropertyChangeListener
+	 */
+	public static final String CHANGE_WORKING_SET_REPLACE = "workingSetReplace"; //$NON-NLS-1$	 
 
-    /**
-     * Change event id when the page working set list was replaced
-     * 
-     * @see IPropertyChangeListener
-     * @since 3.2
-     */
-    public static final String CHANGE_WORKING_SETS_REPLACE = "workingSetsReplace"; //$NON-NLS-1$	 
+	/**
+	 * Change event id when the page working set list was replaced
+	 * 
+	 * @see IPropertyChangeListener
+	 * @since 3.2
+	 */
+	public static final String CHANGE_WORKING_SETS_REPLACE = "workingSetsReplace"; //$NON-NLS-1$	 
 
-    
-    /**
-     * Show view mode that indicates the view should be made visible and 
-     * activated.  Use of this mode has the same effect as calling 
-     * {@link #showView(String)}.
-     * 
-     * @since 3.0
-     */
-    public static final int VIEW_ACTIVATE = 1;
+	/**
+	 * Show view mode that indicates the view should be made visible and
+	 * activated. Use of this mode has the same effect as calling
+	 * {@link #showView(String)}.
+	 * 
+	 * @since 3.0
+	 */
+	public static final int VIEW_ACTIVATE = 1;
 
-    /**
-     * Show view mode that indicates the view should be made visible.  If the
-     * view is opened in the container that contains the active view then this 
-     * has the same effect as <code>VIEW_CREATE</code>.
-     * 
-     * @since 3.0
-     */
-    public static final int VIEW_VISIBLE = 2;
+	/**
+	 * Show view mode that indicates the view should be made visible. If the
+	 * view is opened in the container that contains the active view then this
+	 * has the same effect as <code>VIEW_CREATE</code>.
+	 * 
+	 * @since 3.0
+	 */
+	public static final int VIEW_VISIBLE = 2;
 
-    /**
-     * Show view mode that indicates the view should be made created but not 
-     * necessarily be made visible.  It will only be made visible in the event 
-     * that it is opened in its own container.  In other words, only if it is 
-     * not stacked with another view.
-     * 
-     * @since 3.0
-     */
-    public static final int VIEW_CREATE = 3;
+	/**
+	 * Show view mode that indicates the view should be made created but not
+	 * necessarily be made visible. It will only be made visible in the event
+	 * that it is opened in its own container. In other words, only if it is not
+	 * stacked with another view.
+	 * 
+	 * @since 3.0
+	 */
+	public static final int VIEW_CREATE = 3;
 
-    /**
-     * Editor opening match mode specifying that no matching against existing
-     * editors should be done.
-     * 
-     * @since 3.2
-     */
+	/**
+	 * Editor opening match mode specifying that no matching against existing
+	 * editors should be done.
+	 * 
+	 * @since 3.2
+	 */
 	public static final int MATCH_NONE = 0;
-	
-    /**
-     * Editor opening match mode specifying that the editor input should be
-     * considered when matching against existing editors.
-     * 
-     * @since 3.2
-     */
+
+	/**
+	 * Editor opening match mode specifying that the editor input should be
+	 * considered when matching against existing editors.
+	 * 
+	 * @since 3.2
+	 */
 	public static final int MATCH_INPUT = 1;
 
-    /**
-     * Editor opening match mode specifying that the editor id should be
-     * considered when matching against existing editors.
-     * 
-     * @since 3.2
-     */
+	/**
+	 * Editor opening match mode specifying that the editor id should be
+	 * considered when matching against existing editors.
+	 * 
+	 * @since 3.2
+	 */
 	public static final int MATCH_ID = 2;
-	
+
 	/**
 	 * State of a view in a given page when the view stack is minimized.
 	 * 
 	 * @since 3.2
 	 */
-    public static final int STATE_MINIMIZED = IStackPresentationSite.STATE_MINIMIZED;
+	public static final int STATE_MINIMIZED = IStackPresentationSite.STATE_MINIMIZED;
 
-    /**
-     * State of a view in a given page when the page is zoomed in on the view stack.
-     * 
-     * @since 3.2
-     */
-    public static final int STATE_MAXIMIZED = IStackPresentationSite.STATE_MAXIMIZED;
+	/**
+	 * State of a view in a given page when the page is zoomed in on the view
+	 * stack.
+	 * 
+	 * @since 3.2
+	 */
+	public static final int STATE_MAXIMIZED = IStackPresentationSite.STATE_MAXIMIZED;
 
-    /**
-     * State of a view in a given page when the view stack is in it's normal state.
-     * 
-     * @since 3.2
-     */
-    public static final int STATE_RESTORED = IStackPresentationSite.STATE_RESTORED;
+	/**
+	 * State of a view in a given page when the view stack is in it's normal
+	 * state.
+	 * 
+	 * @since 3.2
+	 */
+	public static final int STATE_RESTORED = IStackPresentationSite.STATE_RESTORED;
 
-	
-    /**
-     * Activates the given part. The part will be brought to the front and
-     * given focus. The part must belong to this page.
-     * 
-     * @param part
-     *            the part to activate
-     */
-    public void activate(IWorkbenchPart part);
+	/**
+	 * Activates the given part. The part will be brought to the front and given
+	 * focus. The part must belong to this page.
+	 * 
+	 * @param part
+	 *            the part to activate
+	 */
+	public void activate(IWorkbenchPart part);
 
-    /**
-     * Adds a property change listener.
-     * 
-     * @param listener
-     *            the property change listener to add
-     * @since 2.0
-     */
-    public void addPropertyChangeListener(IPropertyChangeListener listener);
+	/**
+	 * Adds a property change listener.
+	 * 
+	 * @param listener
+	 *            the property change listener to add
+	 * @since 2.0
+	 */
+	public void addPropertyChangeListener(IPropertyChangeListener listener);
 
-    /**
-     * Moves the given part forward in the Z order of this page so as to make
-     * it visible, without changing which part has focus. The part must belong
-     * to this page.
-     * 
-     * @param part
-     *            the part to bring forward
-     */
-    public void bringToTop(IWorkbenchPart part);
+	/**
+	 * Moves the given part forward in the Z order of this page so as to make it
+	 * visible, without changing which part has focus. The part must belong to
+	 * this page.
+	 * 
+	 * @param part
+	 *            the part to bring forward
+	 */
+	public void bringToTop(IWorkbenchPart part);
 
-    /**
-     * Closes this workbench page. If this page is the active one, this honor
-     * is passed along to one of the window's other pages if possible.
-     * <p>
-     * If the page has an open editor with unsaved content, the user will be
-     * given the opportunity to save it.
-     * </p>
-     * 
-     * @return <code>true</code> if the page was successfully closed, and
-     *         <code>false</code> if it is still open
-     */
-    public boolean close();
+	/**
+	 * Closes this workbench page. If this page is the active one, this honor is
+	 * passed along to one of the window's other pages if possible.
+	 * <p>
+	 * If the page has an open editor with unsaved content, the user will be
+	 * given the opportunity to save it.
+	 * </p>
+	 * 
+	 * @return <code>true</code> if the page was successfully closed, and
+	 *         <code>false</code> if it is still open
+	 */
+	public boolean close();
 
-    /**
-     * Closes all of the editors belonging to this workbench page.
-     * <p>
-     * If the page has open editors with unsaved content and <code>save</code>
-     * is <code>true</code>, the user will be given the opportunity to save
-     * them.
-     * </p>
-     * @param save
-     * 
-     * @return <code>true</code> if all editors were successfully closed, and
-     *         <code>false</code> if at least one is still open
-     */
-    public boolean closeAllEditors(boolean save);
+	/**
+	 * Closes all of the editors belonging to this workbench page.
+	 * <p>
+	 * If the page has open editors with unsaved content and <code>save</code>
+	 * is <code>true</code>, the user will be given the opportunity to save
+	 * them.
+	 * </p>
+	 * 
+	 * @param save
+	 * 
+	 * @return <code>true</code> if all editors were successfully closed, and
+	 *         <code>false</code> if at least one is still open
+	 */
+	public boolean closeAllEditors(boolean save);
 
-    /**
-     * Closes the given <code>Array</code> of editor references. The editors must 
-     * belong to this workbench page.  
-     * <p>
-     * If any of the editors have unsaved content and <code>save</code> is <code>true</code>,
-     * the user will be given the opportunity to save them.
-     * </p>
-     * 
-     * @param editorRefs
-     *            the editors to close
-     * @param save
-     *            <code>true</code> to save the editor contents if required
-     *            (recommended), and <code>false</code> to discard any
-     *            unsaved changes
-     * @return <code>true</code> if the editors were successfully closed, and
-     *         <code>false</code> if the editors are still open
-     * @since 3.0
-     */
-    public boolean closeEditors(IEditorReference[] editorRefs, boolean save);
+	/**
+	 * Closes the given <code>Array</code> of editor references. The editors
+	 * must belong to this workbench page.
+	 * <p>
+	 * If any of the editors have unsaved content and <code>save</code> is
+	 * <code>true</code>, the user will be given the opportunity to save
+	 * them.
+	 * </p>
+	 * 
+	 * @param editorRefs
+	 *            the editors to close
+	 * @param save
+	 *            <code>true</code> to save the editor contents if required
+	 *            (recommended), and <code>false</code> to discard any unsaved
+	 *            changes
+	 * @return <code>true</code> if the editors were successfully closed, and
+	 *         <code>false</code> if the editors are still open
+	 * @since 3.0
+	 */
+	public boolean closeEditors(IEditorReference[] editorRefs, boolean save);
 
-    /**
-     * Closes the given editor. The editor must belong to this workbench page.
-     * <p>
-     * If the editor has unsaved content and <code>save</code> is <code>true</code>,
-     * the user will be given the opportunity to save it.
-     * </p>
-     * 
-     * @param editor
-     *            the editor to close
-     * @param save
-     *            <code>true</code> to save the editor contents if required
-     *            (recommended), and <code>false</code> to discard any
-     *            unsaved changes
-     * @return <code>true</code> if the editor was successfully closed, and
-     *         <code>false</code> if the editor is still open
-     */
-    public boolean closeEditor(IEditorPart editor, boolean save);
+	/**
+	 * Closes the given editor. The editor must belong to this workbench page.
+	 * <p>
+	 * If the editor has unsaved content and <code>save</code> is
+	 * <code>true</code>, the user will be given the opportunity to save it.
+	 * </p>
+	 * 
+	 * @param editor
+	 *            the editor to close
+	 * @param save
+	 *            <code>true</code> to save the editor contents if required
+	 *            (recommended), and <code>false</code> to discard any unsaved
+	 *            changes
+	 * @return <code>true</code> if the editor was successfully closed, and
+	 *         <code>false</code> if the editor is still open
+	 */
+	public boolean closeEditor(IEditorPart editor, boolean save);
 
-    /**
-     * Returns the view in this page with the specified id. There is at most
-     * one view in the page with the specified id.
-     * 
-     * @param viewId
-     *            the id of the view extension to use
-     * @return the view, or <code>null</code> if none is found
-     */
-    public IViewPart findView(String viewId);
+	/**
+	 * Returns the view in this page with the specified id. There is at most one
+	 * view in the page with the specified id.
+	 * 
+	 * @param viewId
+	 *            the id of the view extension to use
+	 * @return the view, or <code>null</code> if none is found
+	 */
+	public IViewPart findView(String viewId);
 
-    /**
-     * Returns the view reference with the specified id. 
-     * 
-     * @param viewId
-     *            the id of the view extension to use
-     * @return the view reference, or <code>null</code> if none is found
-     * @since 3.0
-     */
-    public IViewReference findViewReference(String viewId);
+	/**
+	 * Returns the view reference with the specified id.
+	 * 
+	 * @param viewId
+	 *            the id of the view extension to use
+	 * @return the view reference, or <code>null</code> if none is found
+	 * @since 3.0
+	 */
+	public IViewReference findViewReference(String viewId);
 
-    /**
-     * Returns the view reference with the specified id and secondary id. 
-     * 
-     * @param viewId
-     *            the id of the view extension to use
-     * @param secondaryId
-     *            the secondary id to use, or <code>null</code> for no secondary id
-     * @return the view reference, or <code>null</code> if none is found
-     * @since 3.0
-     */
-    public IViewReference findViewReference(String viewId, String secondaryId);
+	/**
+	 * Returns the view reference with the specified id and secondary id.
+	 * 
+	 * @param viewId
+	 *            the id of the view extension to use
+	 * @param secondaryId
+	 *            the secondary id to use, or <code>null</code> for no
+	 *            secondary id
+	 * @return the view reference, or <code>null</code> if none is found
+	 * @since 3.0
+	 */
+	public IViewReference findViewReference(String viewId, String secondaryId);
 
-    /**
-     * Returns the active editor open in this page.
-     * <p>
-     * This is the visible editor on the page, or, if there is more than one
-     * visible editor, this is the one most recently brought to top.
-     * </p>
-     * 
-     * @return the active editor, or <code>null</code> if no editor is active
-     */
-    public IEditorPart getActiveEditor();
+	/**
+	 * Returns the active editor open in this page.
+	 * <p>
+	 * This is the visible editor on the page, or, if there is more than one
+	 * visible editor, this is the one most recently brought to top.
+	 * </p>
+	 * 
+	 * @return the active editor, or <code>null</code> if no editor is active
+	 */
+	public IEditorPart getActiveEditor();
 
-    /**
-     * Returns the editor with the specified input. Returns null if there is no
-     * opened editor with that input.
-     * 
-     * @param input the editor input
-     * @return an editor with input equals to <code>input</code>
-     */
-    public IEditorPart findEditor(IEditorInput input);
+	/**
+	 * Returns the editor with the specified input. Returns null if there is no
+	 * opened editor with that input.
+	 * 
+	 * @param input
+	 *            the editor input
+	 * @return an editor with input equals to <code>input</code>
+	 */
+	public IEditorPart findEditor(IEditorInput input);
 
-    /**
-     * Returns an array of editor references that match the given input and/or editor id,
-     * as specified by the given match flags. 
-     * Returns an empty array if there are no matching editors, or if matchFlags is MATCH_NONE.
-     * 
-     * @param input the editor input, or <code>null</code> if MATCH_INPUT is not specified in matchFlags
-     * @param editorId the editor id, or <code>null</code> if MATCH_ID is not specified in matchFlags
-	 * @param matchFlags a bit mask consisting of zero or more of the MATCH_* constants OR-ed together
-     * @return the references for the matching editors
-     * 
+	/**
+	 * Returns an array of editor references that match the given input and/or
+	 * editor id, as specified by the given match flags. Returns an empty array
+	 * if there are no matching editors, or if matchFlags is MATCH_NONE.
+	 * 
+	 * @param input
+	 *            the editor input, or <code>null</code> if MATCH_INPUT is not
+	 *            specified in matchFlags
+	 * @param editorId
+	 *            the editor id, or <code>null</code> if MATCH_ID is not
+	 *            specified in matchFlags
+	 * @param matchFlags
+	 *            a bit mask consisting of zero or more of the MATCH_* constants
+	 *            OR-ed together
+	 * @return the references for the matching editors
+	 * 
 	 * @see #MATCH_NONE
 	 * @see #MATCH_INPUT
 	 * @see #MATCH_ID
-     * @since 3.2
-     */
-    public IEditorReference[] findEditors(IEditorInput input, String editorId, int matchFlags);
-    
-    /**
-     * Returns a list of the editors open in this page.
-     * <p>
-     * Note that each page has its own editors; editors are never shared
-     * between pages.
-     * </p>
-     * 
-     * @return a list of open editors
-     * 
-     * @deprecated use #getEditorReferences() instead
-     */
-    public IEditorPart[] getEditors();
+	 * @since 3.2
+	 */
+	public IEditorReference[] findEditors(IEditorInput input, String editorId,
+			int matchFlags);
 
-    /**
-     * Returns an array of references to open editors in this page.
-     * <p>
-     * Note that each page has its own editors; editors are never shared
-     * between pages.
-     * </p>
-     * 
-     * @return a list of open editors
-     */
-    public IEditorReference[] getEditorReferences();
+	/**
+	 * Returns a list of the editors open in this page.
+	 * <p>
+	 * Note that each page has its own editors; editors are never shared between
+	 * pages.
+	 * </p>
+	 * 
+	 * @return a list of open editors
+	 * 
+	 * @deprecated use #getEditorReferences() instead
+	 */
+	public IEditorPart[] getEditors();
 
-    /**
-     * Returns a list of dirty editors in this page.
-     * 
-     * @return a list of dirty editors
-     */
-    public IEditorPart[] getDirtyEditors();
+	/**
+	 * Returns an array of references to open editors in this page.
+	 * <p>
+	 * Note that each page has its own editors; editors are never shared between
+	 * pages.
+	 * </p>
+	 * 
+	 * @return a list of open editors
+	 */
+	public IEditorReference[] getEditorReferences();
 
-    /**
-     * Returns the input for this page.
-     * 
-     * @return the input for this page, or <code>null</code> if none
-     */
-    public IAdaptable getInput();
+	/**
+	 * Returns a list of dirty editors in this page.
+	 * 
+	 * @return a list of dirty editors
+	 */
+	public IEditorPart[] getDirtyEditors();
 
-    /**
-     * Returns the page label. This will be a unique identifier within the
-     * containing workbench window.
-     * 
-     * @return the page label
-     */
-    public String getLabel();
+	/**
+	 * Returns the input for this page.
+	 * 
+	 * @return the input for this page, or <code>null</code> if none
+	 */
+	public IAdaptable getInput();
 
-    /**
-     * Returns the current perspective descriptor for this page, or 
-     * <code>null</code> if there is no current perspective.
-     * 
-     * @return the current perspective descriptor or <code>null</code>
-     * @see #setPerspective
-     * @see #savePerspective
-     */
-    public IPerspectiveDescriptor getPerspective();
+	/**
+	 * Returns the page label. This will be a unique identifier within the
+	 * containing workbench window.
+	 * 
+	 * @return the page label
+	 */
+	public String getLabel();
 
-    /**
-     * Returns a list of the reference to views visible on this page.
-     * <p>
-     * Note that each page has its own views; views are never shared between
-     * pages.
-     * </p>
-     * 
-     * @return a list of references to visible views
-     */
-    public IViewReference[] getViewReferences();
+	/**
+	 * Returns the current perspective descriptor for this page, or
+	 * <code>null</code> if there is no current perspective.
+	 * 
+	 * @return the current perspective descriptor or <code>null</code>
+	 * @see #setPerspective
+	 * @see #savePerspective
+	 */
+	public IPerspectiveDescriptor getPerspective();
 
-    /**
-     * Returns a list of the views visible on this page.
-     * <p>
-     * Note that each page has its own views; views are never shared between
-     * pages.
-     * </p>
-     * 
-     * @return a list of visible views
-     * 
-     * @deprecated use #getViewReferences() instead.
-     */
-    public IViewPart[] getViews();
+	/**
+	 * Returns a list of the reference to views visible on this page.
+	 * <p>
+	 * Note that each page has its own views; views are never shared between
+	 * pages.
+	 * </p>
+	 * 
+	 * @return a list of references to visible views
+	 */
+	public IViewReference[] getViewReferences();
 
-    /**
-     * Returns the workbench window of this page.
-     * 
-     * @return the workbench window
-     */
-    public IWorkbenchWindow getWorkbenchWindow();
+	/**
+	 * Returns a list of the views visible on this page.
+	 * <p>
+	 * Note that each page has its own views; views are never shared between
+	 * pages.
+	 * </p>
+	 * 
+	 * @return a list of visible views
+	 * 
+	 * @deprecated use #getViewReferences() instead.
+	 */
+	public IViewPart[] getViews();
 
-    /**
-     * Returns the working set of this page.
-     * 
-     * @return the working set of this page.
-     * @since 2.0
-     * @deprecated individual views should store a working set if needed
-     */
-    public IWorkingSet getWorkingSet();
+	/**
+	 * Returns the workbench window of this page.
+	 * 
+	 * @return the workbench window
+	 */
+	public IWorkbenchWindow getWorkbenchWindow();
 
-    /**
-     * Hides an action set in this page.
-     * <p>
-     * In most cases where this method is used the caller is tightly coupled to
-     * a particular action set. They define it in the registry and may make it
-     * visible in certain scenarios by calling <code>showActionSet</code>. A
-     * static variable is often used to identify the action set id in caller
-     * code.
-     * </p>
-     * @param actionSetID the action set to hide
-     */
-    public void hideActionSet(String actionSetID);
+	/**
+	 * Returns the working set of this page.
+	 * 
+	 * @return the working set of this page.
+	 * @since 2.0
+	 * @deprecated individual views should store a working set if needed
+	 */
+	public IWorkingSet getWorkingSet();
 
-    /**
-     * Hides the given view. The view must belong to this page.
-     * 
-     * @param view
-     *            the view to hide
-     */
-    public void hideView(IViewPart view);
+	/**
+	 * Hides an action set in this page.
+	 * <p>
+	 * In most cases where this method is used the caller is tightly coupled to
+	 * a particular action set. They define it in the registry and may make it
+	 * visible in certain scenarios by calling <code>showActionSet</code>. A
+	 * static variable is often used to identify the action set id in caller
+	 * code.
+	 * </p>
+	 * 
+	 * @param actionSetID
+	 *            the action set to hide
+	 */
+	public void hideActionSet(String actionSetID);
 
-    /**
-     * Hides the given view that belongs to the reference, if any.
-     * 
-     * @param view
-     *            the references whos view is to be hidden
-     * @since 3.0
-     */
-    public void hideView(IViewReference view);
+	/**
+	 * Hides the given view. The view must belong to this page.
+	 * 
+	 * @param view
+	 *            the view to hide
+	 */
+	public void hideView(IViewPart view);
 
-    /**
-     * Returns whether the specified part is visible.
-     * 
-     * @param part the part to test
-     * @return boolean <code>true</code> if part is visible
-     */
-    public boolean isPartVisible(IWorkbenchPart part);
+	/**
+	 * Hides the given view that belongs to the reference, if any.
+	 * 
+	 * @param view
+	 *            the references whos view is to be hidden
+	 * @since 3.0
+	 */
+	public void hideView(IViewReference view);
 
-    /**
-     * Returns whether the page's current perspective is showing the editor
-     * area.
-     * 
-     * @return <code>true</code> when editor area visible, <code>false</code>
-     *         otherwise
-     */
-    public boolean isEditorAreaVisible();
+	/**
+	 * Returns whether the specified part is visible.
+	 * 
+	 * @param part
+	 *            the part to test
+	 * @return boolean <code>true</code> if part is visible
+	 */
+	public boolean isPartVisible(IWorkbenchPart part);
 
-    /**
-     * Reuses the specified editor by setting its new input.
-     * 
-     * @param editor
-     *            the editor to be reused
-     * @param input
-     *            the new input for the reusable editor
-     */
-    public void reuseEditor(IReusableEditor editor, IEditorInput input);
+	/**
+	 * Returns whether the page's current perspective is showing the editor
+	 * area.
+	 * 
+	 * @return <code>true</code> when editor area visible, <code>false</code>
+	 *         otherwise
+	 */
+	public boolean isEditorAreaVisible();
 
-    /**
-     * Opens an editor on the given input.
-     * <p>
-     * If this page already has an editor open on the target input that editor
-     * is activated; otherwise, a new editor is opened. Two editor inputs,
-     * input1 and input2, are considered the same if
-     * 
-     * <pre>
-     *  input1.equals(input2) == true</pre>.
-     * </p>
-     * <p>
-     * The editor type is determined by mapping <code>editorId</code> to an
-     * editor extension registered with the workbench. An editor id is passed
-     * rather than an editor object to prevent the accidental creation of more
-     * than one editor for the same input. It also guarantees a consistent
-     * lifecycle for editors, regardless of whether they are created by the
-     * user or restored from saved data.
-     * </p>
-     * 
-     * @param input
-     *            the editor input
-     * @param editorId
-     *            the id of the editor extension to use
-     * @return an open and active editor, or <code>null</code> if an external
-     *         editor was opened
-     * @exception PartInitException
-     *                if the editor could not be created or initialized
-     */
-    public IEditorPart openEditor(IEditorInput input, String editorId)
-            throws PartInitException;
+	/**
+	 * Reuses the specified editor by setting its new input.
+	 * 
+	 * @param editor
+	 *            the editor to be reused
+	 * @param input
+	 *            the new input for the reusable editor
+	 */
+	public void reuseEditor(IReusableEditor editor, IEditorInput input);
 
-    /**
-     * Opens an editor on the given input.
-     * <p>
-     * If this page already has an editor open on the target input that editor
-     * is brought to the front; otherwise, a new editor is opened. Two editor
-     * inputs are considered the same if they equal. See <code>Object.equals(Object)<code>
-     * and <code>IEditorInput</code>. If <code>activate == true</code> the editor
-     * will be activated.  
-     * </p><p>
-     * The editor type is determined by mapping <code>editorId</code> to an editor
-     * extension registered with the workbench.  An editor id is passed rather than
-     * an editor object to prevent the accidental creation of more than one editor
-     * for the same input. It also guarantees a consistent lifecycle for editors,
-     * regardless of whether they are created by the user or restored from saved 
-     * data.
-     * </p>
-     * 
-     * @param input the editor input
-     * @param editorId the id of the editor extension to use
-     * @param activate if <code>true</code> the editor will be activated
-     * @return an open editor, or <code>null</code> if an external editor was opened
-     * @exception PartInitException if the editor could not be created or initialized
-     */
-    public IEditorPart openEditor(IEditorInput input, String editorId,
-            boolean activate) throws PartInitException;
+	/**
+	 * Opens an editor on the given input.
+	 * <p>
+	 * If this page already has an editor open on the target input that editor
+	 * is activated; otherwise, a new editor is opened. Two editor inputs,
+	 * input1 and input2, are considered the same if
+	 * 
+	 * <pre>
+	 * input1.equals(input2) == true
+	 * </pre>.
+	 * </p>
+	 * <p>
+	 * The editor type is determined by mapping <code>editorId</code> to an
+	 * editor extension registered with the workbench. An editor id is passed
+	 * rather than an editor object to prevent the accidental creation of more
+	 * than one editor for the same input. It also guarantees a consistent
+	 * lifecycle for editors, regardless of whether they are created by the user
+	 * or restored from saved data.
+	 * </p>
+	 * 
+	 * @param input
+	 *            the editor input
+	 * @param editorId
+	 *            the id of the editor extension to use
+	 * @return an open and active editor, or <code>null</code> if an external
+	 *         editor was opened
+	 * @exception PartInitException
+	 *                if the editor could not be created or initialized
+	 */
+	public IEditorPart openEditor(IEditorInput input, String editorId)
+			throws PartInitException;
 
-    /**
+	/**
+	 * Opens an editor on the given input.
+	 * <p>
+	 * If this page already has an editor open on the target input that editor
+	 * is brought to the front; otherwise, a new editor is opened. Two editor
+	 * inputs are considered the same if they equal. See
+	 * <code>Object.equals(Object)<code>
+	 * and <code>IEditorInput</code>. If <code>activate == true</code> the editor
+	 * will be activated.  
+	 * </p><p>
+	 * The editor type is determined by mapping <code>editorId</code> to an editor
+	 * extension registered with the workbench.  An editor id is passed rather than
+	 * an editor object to prevent the accidental creation of more than one editor
+	 * for the same input. It also guarantees a consistent lifecycle for editors,
+	 * regardless of whether they are created by the user or restored from saved 
+	 * data.
+	 * </p>
+	 * 
+	 * @param input the editor input
+	 * @param editorId the id of the editor extension to use
+	 * @param activate if <code>true</code> the editor will be activated
+	 * @return an open editor, or <code>null</code> if an external editor was opened
+	 * @exception PartInitException if the editor could not be created or initialized
+	 */
+	public IEditorPart openEditor(IEditorInput input, String editorId,
+			boolean activate) throws PartInitException;
+
+	/**
 	 * Opens an editor on the given input.
 	 * <p>
 	 * If this page already has an editor open that matches the given input
@@ -634,158 +652,162 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * @see #MATCH_ID
 	 * @since 3.2
 	 */
-    public IEditorPart openEditor(final IEditorInput input,
+	public IEditorPart openEditor(final IEditorInput input,
 			final String editorId, final boolean activate, final int matchFlags)
 			throws PartInitException;
-    		
-    /**
-     * Removes the property change listener.
-     * 
-     * @param listener
-     *            the property change listener to remove
-     * @since 2.0
-     */
-    public void removePropertyChangeListener(IPropertyChangeListener listener);
 
-    /**
-     * Changes the visible views, their layout, and the visible action sets
-     * within the page to match the current perspective descriptor. This is a
-     * rearrangement of components and not a replacement. The contents of the
-     * current perspective descriptor are unaffected.
-     * <p>
-     * For more information on perspective change see <code>setPerspective()</code>.
-     * </p>
-     */
-    public void resetPerspective();
+	/**
+	 * Removes the property change listener.
+	 * 
+	 * @param listener
+	 *            the property change listener to remove
+	 * @since 2.0
+	 */
+	public void removePropertyChangeListener(IPropertyChangeListener listener);
 
-    /**
-     * Saves the contents of all dirty editors belonging to this workbench
-     * page. If there are no dirty editors this method returns without effect.
-     * <p>
-     * If <code>confirm</code> is <code>true</code> the user is prompted to
-     * confirm the command.
-     * </p>
-     * 
-     * @param confirm
-     *            <code>true</code> to ask the user before saving unsaved
-     *            changes (recommended), and <code>false</code> to save
-     *            unsaved changes without asking
-     * @return <code>true</code> if the command succeeded, and <code>false</code>
-     *         if at least one editor with unsaved changes was not saved
-     */
-    public boolean saveAllEditors(boolean confirm);
+	/**
+	 * Changes the visible views, their layout, and the visible action sets
+	 * within the page to match the current perspective descriptor. This is a
+	 * rearrangement of components and not a replacement. The contents of the
+	 * current perspective descriptor are unaffected.
+	 * <p>
+	 * For more information on perspective change see
+	 * <code>setPerspective()</code>.
+	 * </p>
+	 */
+	public void resetPerspective();
 
-    /**
-     * Saves the contents of the given editor if dirty. If not, this method
-     * returns without effect.
-     * <p>
-     * If <code>confirm</code> is <code>true</code> the user is prompted to
-     * confirm the command. Otherwise, the save happens without prompt.
-     * </p>
-     * <p>
-     * The editor must belong to this workbench page.
-     * </p>
-     * 
-     * @param editor
-     *            the editor to close
-     * @param confirm
-     *            <code>true</code> to ask the user before saving unsaved
-     *            changes (recommended), and <code>false</code> to save
-     *            unsaved changes without asking
-     * @return <code>true</code> if the command succeeded, and <code>false</code>
-     *         if the editor was not saved
-     */
-    public boolean saveEditor(IEditorPart editor, boolean confirm);
+	/**
+	 * Saves the contents of all dirty editors belonging to this workbench page.
+	 * If there are no dirty editors this method returns without effect.
+	 * <p>
+	 * If <code>confirm</code> is <code>true</code> the user is prompted to
+	 * confirm the command.
+	 * </p>
+	 * 
+	 * @param confirm
+	 *            <code>true</code> to ask the user before saving unsaved
+	 *            changes (recommended), and <code>false</code> to save
+	 *            unsaved changes without asking
+	 * @return <code>true</code> if the command succeeded, and
+	 *         <code>false</code> if at least one editor with unsaved changes
+	 *         was not saved
+	 */
+	public boolean saveAllEditors(boolean confirm);
 
-    /**
-     * Saves the visible views, their layout, and the visible action sets for
-     * this page to the current perspective descriptor. The contents of the
-     * current perspective descriptor are overwritten.
-     */
-    public void savePerspective();
+	/**
+	 * Saves the contents of the given editor if dirty. If not, this method
+	 * returns without effect.
+	 * <p>
+	 * If <code>confirm</code> is <code>true</code> the user is prompted to
+	 * confirm the command. Otherwise, the save happens without prompt.
+	 * </p>
+	 * <p>
+	 * The editor must belong to this workbench page.
+	 * </p>
+	 * 
+	 * @param editor
+	 *            the editor to close
+	 * @param confirm
+	 *            <code>true</code> to ask the user before saving unsaved
+	 *            changes (recommended), and <code>false</code> to save
+	 *            unsaved changes without asking
+	 * @return <code>true</code> if the command succeeded, and
+	 *         <code>false</code> if the editor was not saved
+	 */
+	public boolean saveEditor(IEditorPart editor, boolean confirm);
 
-    /**
-     * Saves the visible views, their layout, and the visible action sets for
-     * this page to the given perspective descriptor. The contents of the given
-     * perspective descriptor are overwritten and it is made the current one
-     * for this page.
-     * 
-     * @param perspective
-     *            the perspective descriptor to save to
-     */
-    public void savePerspectiveAs(IPerspectiveDescriptor perspective);
+	/**
+	 * Saves the visible views, their layout, and the visible action sets for
+	 * this page to the current perspective descriptor. The contents of the
+	 * current perspective descriptor are overwritten.
+	 */
+	public void savePerspective();
 
-    /**
-     * Show or hide the editor area for the page's active perspective.
-     * 
-     * @param showEditorArea
-     *            <code>true</code> to show the editor area, <code>false</code>
-     *            to hide the editor area
-     */
-    public void setEditorAreaVisible(boolean showEditorArea);
+	/**
+	 * Saves the visible views, their layout, and the visible action sets for
+	 * this page to the given perspective descriptor. The contents of the given
+	 * perspective descriptor are overwritten and it is made the current one for
+	 * this page.
+	 * 
+	 * @param perspective
+	 *            the perspective descriptor to save to
+	 */
+	public void savePerspectiveAs(IPerspectiveDescriptor perspective);
 
-    /**
-     * Changes the visible views, their layout, and the visible action sets
-     * within the page to match the given perspective descriptor. This is a
-     * rearrangement of components and not a replacement. The contents of the
-     * old perspective descriptor are unaffected.
-     * <p>
-     * When a perspective change occurs the old perspective is deactivated
-     * (hidden) and cached for future reference. Then the new perspective is
-     * activated (shown). The views within the page are shared by all existing
-     * perspectives to make it easy for the user to switch between one
-     * perspective and another quickly without loss of context.
-     * </p>
-     * <p>
-     * During activation the action sets are modified. If an action set is
-     * specified in the new perspective which is not visible in the old one it
-     * will be created. If an old action set is not specified in the new
-     * perspective it will be disposed.
-     * </p>
-     * <p>
-     * The visible views and their layout within the page also change. If a
-     * view is specified in the new perspective which is not visible in the old
-     * one a new instance of the view will be created. If an old view is not
-     * specified in the new perspective it will be hidden. This view may
-     * reappear if the user selects it from the View menu or if they switch to
-     * a perspective (which may be the old one) where the view is visible.
-     * </p>
-     * <p>
-     * The open editors are not modified by this method.
-     * </p>
-     * 
-     * @param perspective
-     *            the perspective descriptor
-     */
-    public void setPerspective(IPerspectiveDescriptor perspective);
+	/**
+	 * Show or hide the editor area for the page's active perspective.
+	 * 
+	 * @param showEditorArea
+	 *            <code>true</code> to show the editor area,
+	 *            <code>false</code> to hide the editor area
+	 */
+	public void setEditorAreaVisible(boolean showEditorArea);
 
-    /**
-     * Shows an action set in this page.
-     * <p>
-     * In most cases where this method is used the caller is tightly coupled to
-     * a particular action set. They define it in the registry and may make it
-     * visible in certain scenarios by calling <code>showActionSet</code>. A
-     * static variable is often used to identify the action set id in caller
-     * code.
-     * </p>
-     * @param actionSetID the action set to show
-     */
-    public void showActionSet(String actionSetID);
+	/**
+	 * Changes the visible views, their layout, and the visible action sets
+	 * within the page to match the given perspective descriptor. This is a
+	 * rearrangement of components and not a replacement. The contents of the
+	 * old perspective descriptor are unaffected.
+	 * <p>
+	 * When a perspective change occurs the old perspective is deactivated
+	 * (hidden) and cached for future reference. Then the new perspective is
+	 * activated (shown). The views within the page are shared by all existing
+	 * perspectives to make it easy for the user to switch between one
+	 * perspective and another quickly without loss of context.
+	 * </p>
+	 * <p>
+	 * During activation the action sets are modified. If an action set is
+	 * specified in the new perspective which is not visible in the old one it
+	 * will be created. If an old action set is not specified in the new
+	 * perspective it will be disposed.
+	 * </p>
+	 * <p>
+	 * The visible views and their layout within the page also change. If a view
+	 * is specified in the new perspective which is not visible in the old one a
+	 * new instance of the view will be created. If an old view is not specified
+	 * in the new perspective it will be hidden. This view may reappear if the
+	 * user selects it from the View menu or if they switch to a perspective
+	 * (which may be the old one) where the view is visible.
+	 * </p>
+	 * <p>
+	 * The open editors are not modified by this method.
+	 * </p>
+	 * 
+	 * @param perspective
+	 *            the perspective descriptor
+	 */
+	public void setPerspective(IPerspectiveDescriptor perspective);
 
-    /**
-     * Shows the view identified by the given view id in this page and gives it 
-     * focus.  If there is a view identified by the given view id (and with no 
-     * secondary id) already open in this page, it is given focus.
-     * 
-     * @param viewId
-     *            the id of the view extension to use
-     * @return the shown view
-     * @exception PartInitException
-     *                if the view could not be initialized
-     */
-    public IViewPart showView(String viewId) throws PartInitException;
+	/**
+	 * Shows an action set in this page.
+	 * <p>
+	 * In most cases where this method is used the caller is tightly coupled to
+	 * a particular action set. They define it in the registry and may make it
+	 * visible in certain scenarios by calling <code>showActionSet</code>. A
+	 * static variable is often used to identify the action set id in caller
+	 * code.
+	 * </p>
+	 * 
+	 * @param actionSetID
+	 *            the action set to show
+	 */
+	public void showActionSet(String actionSetID);
 
-    /**
+	/**
+	 * Shows the view identified by the given view id in this page and gives it
+	 * focus. If there is a view identified by the given view id (and with no
+	 * secondary id) already open in this page, it is given focus.
+	 * 
+	 * @param viewId
+	 *            the id of the view extension to use
+	 * @return the shown view
+	 * @exception PartInitException
+	 *                if the view could not be initialized
+	 */
+	public IViewPart showView(String viewId) throws PartInitException;
+
+	/**
 	 * Shows a view in this page with the given id and secondary id. The
 	 * behaviour of this method varies based on the supplied mode. If
 	 * <code>VIEW_ACTIVATE</code> is supplied, the view is focus. If
@@ -815,137 +837,143 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 *                if the supplied mode is not valid
 	 * @since 3.0
 	 */
-    public IViewPart showView(String viewId, String secondaryId, int mode)
-            throws PartInitException;
+	public IViewPart showView(String viewId, String secondaryId, int mode)
+			throws PartInitException;
 
-    /**
+	/**
 	 * Returns <code>true</code> if the editor is pinned and should not be
 	 * reused.
 	 * 
-	 * @param editor the editor to test
+	 * @param editor
+	 *            the editor to test
 	 * @return boolean whether the editor is pinned
 	 */
-    public boolean isEditorPinned(IEditorPart editor);
+	public boolean isEditorPinned(IEditorPart editor);
 
-    /**
-     * Returns the number of open editors before reusing editors.
-     * 
-     * @return a int
-     * 
-     * @deprecated
-     */
-    public int getEditorReuseThreshold();
+	/**
+	 * Returns the number of open editors before reusing editors.
+	 * 
+	 * @return a int
+	 * 
+	 * @deprecated
+	 */
+	public int getEditorReuseThreshold();
 
-    /**
-     * Set the number of open editors before reusing editors. If
-     * < 0 the user preference settings will be used.
-     * 
-     * @param openEditors the threshold
-     * @deprecated use IPageLayout.setEditorReuseThreshold(int openEditors)
-     *             instead.
-     */
-    public void setEditorReuseThreshold(int openEditors);
+	/**
+	 * Set the number of open editors before reusing editors. If < 0 the user
+	 * preference settings will be used.
+	 * 
+	 * @param openEditors
+	 *            the threshold
+	 * @deprecated use IPageLayout.setEditorReuseThreshold(int openEditors)
+	 *             instead.
+	 */
+	public void setEditorReuseThreshold(int openEditors);
 
-    /**
-     * Returns the navigation history which manages a list of entries keeping
-     * the history of places (positions, selection and editors) the user
-     * visited making it easier to the user to move back and forward without
-     * losing context.
-     * 
-     * @return the navigation history
-     * @since 2.1
-     */
-    public INavigationHistory getNavigationHistory();
-    
-    /**
-     * Returns an array of IViewParts that are stacked with the given part.
-     * 
-     * @param part the part to test
-     * @return the parts that are stacked with this part, including the part in question.  
-     * <code>null</code> is returned if the part does not belong to this page.
-     * @since 3.0
-     */
-    IViewPart[] getViewStack(IViewPart part);
-    
-    /**
-     * Returns the new wizard shortcuts associated with the current perspective.
-     * Returns an empty array if there is no current perspective.
-     * 
-     * @see IPageLayout#addNewWizardShortcut(String)
-     * @return an array of wizard identifiers
-     * @since 3.1
-     */
-    public String[] getNewWizardShortcuts();
+	/**
+	 * Returns the navigation history which manages a list of entries keeping
+	 * the history of places (positions, selection and editors) the user visited
+	 * making it easier to the user to move back and forward without losing
+	 * context.
+	 * 
+	 * @return the navigation history
+	 * @since 2.1
+	 */
+	public INavigationHistory getNavigationHistory();
 
-    /**
-     * Returns the perspective shortcuts associated with the current perspective.
-     * Returns an empty array if there is no current perspective.
-     * 
-     * @see IPageLayout#addPerspectiveShortcut(String)
-     * @return an array of perspective identifiers
-     * @since 3.1
-     */
-    public String[] getPerspectiveShortcuts();
-    
-    /**
-     * Returns the show view shortcuts associated with the current perspective.
-     * Returns an empty array if there is no current perspective.
-     * 
-     * @see IPageLayout#addShowViewShortcut(String)
-     * @return an array of view identifiers
-     * @since 3.1
-     */
-    public String[] getShowViewShortcuts();
-    
-    /**
-     * Returns the descriptors for the perspectives that are open in this
-     * page, in the order in which they were opened.
-     * 
-     * @return the open perspective descriptors, in order of opening
-     * @since 3.1
-     */
-    public IPerspectiveDescriptor[] getOpenPerspectives();
-    
-    /**
-     * Returns the descriptors for the perspectives that are open in this
-     * page, in the order in which they were activated (oldest first).
-     * 
-     * @return the open perspective descriptors, in order of activation
-     * @since 3.1
-     */
-    public IPerspectiveDescriptor[] getSortedPerspectives();
-    
-    /**
-     * Closes the specified perspective in this page.
-     * If the last perspective in this page is closed, then all editors are closed, 
-     * prompting to save any unsaved changes if <code>saveEditors</code> is <code>true</code>,
-     * and the page itself is closed if <code>closePage</code> is <code>true</code>. 
-     * 
-     * @param desc
-     *            the descriptor of the perspective to be closed
-     * @param saveEditors
-     *            whether the page's editors should be saved if last perspective
-     * @param closePage
-     *            whether the page itself should be closed if last perspective
-     * @since 3.1            
-     */
-    public void closePerspective(IPerspectiveDescriptor desc, boolean saveEditors, boolean closePage);
+	/**
+	 * Returns an array of IViewParts that are stacked with the given part.
+	 * 
+	 * @param part
+	 *            the part to test
+	 * @return the parts that are stacked with this part, including the part in
+	 *         question. <code>null</code> is returned if the part does not
+	 *         belong to this page.
+	 * @since 3.0
+	 */
+	IViewPart[] getViewStack(IViewPart part);
 
-    /**
-     * Closes all perspectives in this page.
-     * All editors are closed, prompting to save any unsaved changes if <code>saveEditors</code> is <code>true</code>.
-     * The page itself is closed if <code>closePage</code> is <code>true</code>. 
-     * 
-     * @param saveEditors
-     *            whether the page's editors should be saved
-     * @param closePage
-     *            whether the page itself should be closed
-     * @since 3.1            
-     */
-    public void closeAllPerspectives(boolean saveEditors, boolean closePage);
+	/**
+	 * Returns the new wizard shortcuts associated with the current perspective.
+	 * Returns an empty array if there is no current perspective.
+	 * 
+	 * @see IPageLayout#addNewWizardShortcut(String)
+	 * @return an array of wizard identifiers
+	 * @since 3.1
+	 */
+	public String[] getNewWizardShortcuts();
 
-    
-    /**
+	/**
+	 * Returns the perspective shortcuts associated with the current
+	 * perspective. Returns an empty array if there is no current perspective.
+	 * 
+	 * @see IPageLayout#addPerspectiveShortcut(String)
+	 * @return an array of perspective identifiers
+	 * @since 3.1
+	 */
+	public String[] getPerspectiveShortcuts();
+
+	/**
+	 * Returns the show view shortcuts associated with the current perspective.
+	 * Returns an empty array if there is no current perspective.
+	 * 
+	 * @see IPageLayout#addShowViewShortcut(String)
+	 * @return an array of view identifiers
+	 * @since 3.1
+	 */
+	public String[] getShowViewShortcuts();
+
+	/**
+	 * Returns the descriptors for the perspectives that are open in this page,
+	 * in the order in which they were opened.
+	 * 
+	 * @return the open perspective descriptors, in order of opening
+	 * @since 3.1
+	 */
+	public IPerspectiveDescriptor[] getOpenPerspectives();
+
+	/**
+	 * Returns the descriptors for the perspectives that are open in this page,
+	 * in the order in which they were activated (oldest first).
+	 * 
+	 * @return the open perspective descriptors, in order of activation
+	 * @since 3.1
+	 */
+	public IPerspectiveDescriptor[] getSortedPerspectives();
+
+	/**
+	 * Closes the specified perspective in this page. If the last perspective in
+	 * this page is closed, then all editors are closed, prompting to save any
+	 * unsaved changes if <code>saveEditors</code> is <code>true</code>,
+	 * and the page itself is closed if <code>closePage</code> is
+	 * <code>true</code>.
+	 * 
+	 * @param desc
+	 *            the descriptor of the perspective to be closed
+	 * @param saveEditors
+	 *            whether the page's editors should be saved if last perspective
+	 * @param closePage
+	 *            whether the page itself should be closed if last perspective
+	 * @since 3.1
+	 */
+	public void closePerspective(IPerspectiveDescriptor desc,
+			boolean saveEditors, boolean closePage);
+
+	/**
+	 * Closes all perspectives in this page. All editors are closed, prompting
+	 * to save any unsaved changes if <code>saveEditors</code> is
+	 * <code>true</code>. The page itself is closed if <code>closePage</code>
+	 * is <code>true</code>.
+	 * 
+	 * @param saveEditors
+	 *            whether the page's editors should be saved
+	 * @param closePage
+	 *            whether the page itself should be closed
+	 * @since 3.1
+	 */
+	public void closeAllPerspectives(boolean saveEditors, boolean closePage);
+
+	/**
 	 * <p>
 	 * Return the extension tracker for the workbench. This tracker may be used
 	 * by plug-ins to ensure responsiveness to changes to the plug-in registry.
@@ -955,15 +983,15 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * elements that only exist over the lifespan of a page. For example,
 	 * <code>ViewPart</code> objects fall into this category.
 	 * </p>
-     * 
+	 * 
 	 * @return the extension tracker
 	 * @see IWorkbench#getExtensionTracker()
 	 * @see IWorkbenchWindow#getExtensionTracker()
 	 * @since 3.1
-	 */    
-    public IExtensionTracker getExtensionTracker();
-    
-    /**
+	 */
+	public IExtensionTracker getExtensionTracker();
+
+	/**
 	 * Return the visible working sets for this page. Please note that this
 	 * array is not filtered by activities. Clients should attempt to ensure
 	 * that any use of this method is consistant with the currently enabled
@@ -993,7 +1021,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * @since 3.2
 	 */
 	public void setWorkingSets(IWorkingSet[] sets);
-	
+
 	/**
 	 * Return a working set that contains all of the elements contained in the
 	 * array of working sets provided by {@link #getWorkingSets()}. Should this
@@ -1013,12 +1041,9 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * the contents of the aggregate either become empty or non-empty.
 	 * </p>
 	 * <p>
-	 * Example: 
-	 * <br/>
-	 * Here we have pseudocode showing how some workingset utilizing component
-	 * could react to changes in aggregate working sets.
-	 * <br/>
-	 * <code>
+	 * Example: <br/> Here we have pseudocode showing how some workingset
+	 * utilizing component could react to changes in aggregate working sets.
+	 * <br/> <code>
 	 * private IWorkingSet myWorkingSet;
 	 * 
 	 * IPropertyChangeListener workingSetListener = new IPropertyChangeListener() {
@@ -1054,7 +1079,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * @since 3.2
 	 */
 	public IWorkingSet getAggregateWorkingSet();
-	
+
 	/**
 	 * Returns the page "zoomed" state.
 	 * 
@@ -1063,6 +1088,14 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * @since 3.2
 	 */
 	public boolean isPageZoomed();
+
+	/**
+	 * Zooms out the zoomed-in part. If the page does not have a zoomed part, it
+	 * does nothing.
+	 * 
+	 * @since 3.2
+	 */
+	public void zoomOut();
 
 	/**
 	 * Zoom the page in on a part. If the part is already in zoom then zoom out.

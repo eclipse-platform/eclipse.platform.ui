@@ -2195,7 +2195,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see org.eclipse.ui.IWorkbenchPage#isPageZoomed()
      */
     public boolean isPageZoomed() {
-    	return isPageZoomed();
+    	return isZoomed();
     }
     
     /**
@@ -3450,11 +3450,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
     }
 
-    /**
-     * Zooms out a zoomed in part.
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPage#zoomOut()
      */
-    /* package */
-    void zoomOut() {
+    public void zoomOut() {
         Perspective persp = getActivePerspective();
         if (persp != null)
             persp.getPresentation().zoomOut();
