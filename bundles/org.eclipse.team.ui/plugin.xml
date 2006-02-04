@@ -339,7 +339,7 @@
             id="org.eclipse.team.ui.resourceContent"
             labelProvider="org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider"
             name="%ResourcesContentExtension"
-            sorter="org.eclipse.team.internal.ui.mapping.ResourceModelSorter">
+            priority="lowest">
          <enablement>
            <or>         
             <instanceof value="org.eclipse.core.internal.resources.mapping.ResourceModelProvider"/>
@@ -349,24 +349,10 @@
            </or>
          </enablement>
          <actionProvider class="org.eclipse.team.internal.ui.mapping.ResourceModelActionProvider"/>
-       </navigatorContent>
-      <commonSorter
-            class="org.eclipse.team.internal.ui.mapping.ModelProviderViewerSorter"
-            id="org.eclipse.team.ui.modelProviderSorter">
-         <parentExpression>
-         	<instanceof value="org.eclipse.core.resources.mapping.ModelProvider"/>
-         </parentExpression>
-      </commonSorter>
-      <commonSorter
+         <commonSorter
             class="org.eclipse.team.internal.ui.mapping.ResourceModelSorter"
-            id="org.eclipse.team.ui.resourceSorter">
-         <parentExpression>
-           <or>         
-            <instanceof value="org.eclipse.core.internal.resources.mapping.ResourceModelProvider"/>
-            <instanceof value="org.eclipse.core.resources.IResource"/>
-           </or>
-         </parentExpression>
-      </commonSorter>
+            id="org.eclipse.team.ui.resourceSorter"/>
+       </navigatorContent>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.viewer">

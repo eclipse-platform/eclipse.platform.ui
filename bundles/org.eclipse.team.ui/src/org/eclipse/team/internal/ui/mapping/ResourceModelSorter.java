@@ -10,24 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import java.util.Comparator;
-
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
  * Sorter for use by Common Navigator
  */
-public class ResourceModelSorter extends ResourceSorter implements Comparator {
+public class ResourceModelSorter extends ResourceSorter {
 
 	public ResourceModelSorter() {
 		super(TYPE);
-	}
-
-	/* (non-Javadoc)
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-	 */
-	public int compare(Object o1, Object o2) {
-		return compare(null, o1, o2);
 	}
 
 }

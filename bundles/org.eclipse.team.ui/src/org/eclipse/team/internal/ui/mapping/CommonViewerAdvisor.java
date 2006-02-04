@@ -115,6 +115,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	 */
 	private static CommonViewer createViewer(Composite parent, ISynchronizePageConfiguration configuration, IEmptyTreeListener listener) {
 		CommonViewer v = new NavigableCommonViewer(configuration.getViewerId(), parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, listener);
+		v.setSorter(new CommonViewerSorter());
 		v.getNavigatorContentService().bindExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
 		v.getNavigatorContentService().activateExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
 		configuration.getSite().setSelectionProvider(v);

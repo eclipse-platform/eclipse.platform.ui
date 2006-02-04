@@ -55,11 +55,8 @@ public class ResourceMappingHierarchyArea extends DialogArea implements INavigat
         if (description != null)
             createWrappingLabel(composite, description, 1);
         
-        viewer = new CommonViewer(TEAM_NAVIGATOR_CONTENT, composite, SWT.BORDER) {
-        	protected org.eclipse.jface.viewers.ILabelProvider wrapLabelProvider(org.eclipse.jface.viewers.ILabelProvider provider) {
-        		return provider;
-        	};
-        };
+        viewer = new CommonViewer(TEAM_NAVIGATOR_CONTENT, composite, SWT.BORDER);
+        viewer.setSorter(new CommonViewerSorter());
         viewer.getNavigatorContentService().bindExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
         viewer.getNavigatorContentService().activateExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
         GridData data = new GridData(GridData.FILL_BOTH);

@@ -32,17 +32,6 @@ public class TeamContentProviderManager {
 		return instance;
 	}
 	
-	public boolean isTeamContentProvider(String id) {
-		TeamContentProviderDescriptor[] descs = getDescriptors();
-		for (int i = 0; i < descs.length; i++) {
-			TeamContentProviderDescriptor descriptor = descs[i];
-			if (descriptor.getContentExtensionId().equals(id)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	public TeamContentProviderDescriptor[] getDescriptors() {
 		lazyInitialize();
 		return (TeamContentProviderDescriptor[]) descriptors.toArray(new TeamContentProviderDescriptor[descriptors.size()]);

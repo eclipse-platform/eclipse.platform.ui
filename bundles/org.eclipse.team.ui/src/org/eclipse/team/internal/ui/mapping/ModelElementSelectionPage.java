@@ -30,8 +30,7 @@ import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.internal.ui.synchronize.GlobalRefreshElementSelectionPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
-import org.eclipse.ui.navigator.INavigatorContentService;
-import org.eclipse.ui.navigator.NavigatorContentServiceFactory;
+import org.eclipse.ui.navigator.*;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
 public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage {
