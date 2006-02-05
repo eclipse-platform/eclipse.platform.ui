@@ -315,7 +315,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 				if ((remote == null || !remote.exists()) && file.exists()) {
 					file.delete(false, true, monitor);
 				} else if (remote != null) {
-					ensureParentsExist(file);
+					ensureParentsExist(file, monitor);
 					InputStream stream = remote.getStorage(monitor).getContents();
 					stream = new BufferedInputStream(stream);
 					try {
@@ -339,19 +339,25 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	}
 
 	/**
-	 * Ensure that the parent folders of the given resource exist 
+	 * Ensure that the parent folders of the given resource exist.
+	 * This method is invoked from {@link #performReplace(IDiff, IProgressMonitor)}
+	 * for files that are being merged that do not exist locally.
+	 * By default, this method creates the parents using
+	 * {@link IFolder#create(boolean, boolean, IProgressMonitor)}.
+	 * Subclasses may override.
 	 * @param resource a resource
-	 * @throws CoreException 
+	 * @param monitor a progress monitor
+	 * @throws CoreException if an error occurs
 	 */
-	protected void ensureParentsExist(IResource resource) throws CoreException {
+	protected void ensureParentsExist(IResource resource, IProgressMonitor monitor) throws CoreException {
 		IContainer parent = resource.getParent();
 		if (parent.getType() != IResource.FOLDER) {
 			// this method will only create folders
 			return;
 		}
 		if (!parent.exists()) {
-			ensureParentsExist(parent);
-			((IFolder)parent).create(false, true, null);
+			ensureParentsExist(parent, monitor);
+			((IFolder)parent).create(false, true, monitor);
 		}
 	}
 	
@@ -373,6 +379,9 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 		return getDiffTree().getResource(node);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IMergeContext#getMergeRule(org.eclipse.team.core.diff.IDiff[])
+	 */
 	public ISchedulingRule getMergeRule(IDiff[] deltas) {
 		ISchedulingRule result = null;
 		for (int i = 0; i < deltas.length; i++) {
