@@ -26,11 +26,11 @@ import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * An abstract operation that uses a set of input mappings to create
- * an operation scope that includes the complete set of mappings
- * that must be included in the operation to ensure model consistency.
- * The scope generation phase will prompt the user if additional resources
- * have been added to the scope.
+ * An abstract operation that uses an {@link ISynchronizationScopeManager} to
+ * create an operation scope that includes the complete set of mappings that
+ * must be included in the operation to ensure model consistency. The scope
+ * generation phase will prompt the user if additional resources have been added
+ * to the scope.
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -110,11 +110,29 @@ public abstract class ModelOperation extends TeamOperation {
 		}
 	}
 	
+	/**
+	 * Method called from {@link #run(IProgressMonitor)} before
+	 * the {@link #execute(IProgressMonitor)} method is invoked.
+	 * This is done to give the operation a chance to initialize
+	 * any state required to execute. By default, the 
+	 * {@link ISynchronizationScopeManager} for this operation
+	 * is initialized if it was not previously initialized.
+	 * @param monitor a progress monitor
+	 * @throws InvocationTargetException
+	 */
 	protected void beginOperation(IProgressMonitor monitor) throws InvocationTargetException {
 		initializeScope(monitor);
 	}
 
-	protected void endOperation(IProgressMonitor monitor) {
+	/**
+	 * Method called from {@link #run(IProgressMonitor)} after the
+	 * {@link #execute(IProgressMonitor)} completes of if an exception
+	 * is thrown from the {@link #beginOperation(IProgressMonitor)}
+	 * or the {@link #execute(IProgressMonitor)}. By default,
+	 * this method does nothing. Subclasses may override.
+	 * @param monitor a progress monitor
+	 */
+	protected void endOperation(IProgressMonitor monitor) throws InvocationTargetException {
 		// Do nothing by deafult
 	}
 

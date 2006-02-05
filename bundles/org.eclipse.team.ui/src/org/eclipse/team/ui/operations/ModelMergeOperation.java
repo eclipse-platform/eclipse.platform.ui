@@ -111,6 +111,15 @@ public abstract class ModelMergeOperation extends ModelOperation {
 		super(part, manager);
 	}
 	
+	/**
+	 * Perform a merge. First {@link #initializeContext(IProgressMonitor)} is called
+	 * to determine the set of resource changes. If there are changes, they will be validating
+	 * by calling {@link #validateMerge(IMergeContext, IProgressMonitor)}. If there
+	 * are no validation problems, {@link #performMerge(IProgressMonitor)} will
+	 * then be called to perform the merge. If there are problems encounted or
+	 * if a preview was requested, {@link #handlePreviewRequest()} is called.
+	 * @parem monitor a progress monitor
+	 */
 	protected void execute(IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
 		try {

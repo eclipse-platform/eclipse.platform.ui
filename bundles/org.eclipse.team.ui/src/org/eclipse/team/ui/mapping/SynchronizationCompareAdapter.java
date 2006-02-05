@@ -246,13 +246,18 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 		return new Path(getName(mapping));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter#save(org.eclipse.core.resources.mapping.ResourceMapping[], org.eclipse.ui.IMemento)
+	 */
 	public void save(ResourceMapping[] mappings, IMemento memento) {
-		// TODO Auto-generated method stub
+		// Do nothing by default
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter#restore(org.eclipse.ui.IMemento)
+	 */
 	public ResourceMapping[] restore(IMemento memento) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ResourceMapping[0];
 	}
 }

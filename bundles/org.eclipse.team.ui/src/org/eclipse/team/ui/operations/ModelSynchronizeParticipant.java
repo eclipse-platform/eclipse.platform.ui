@@ -390,7 +390,7 @@ public class ModelSynchronizeParticipant extends
 		ModelProvider[] providers = inputScope.getModelProviders();
 		for (int i = 0; i < providers.length; i++) {
 			ModelProvider provider = providers[i];
-			IResourceMappingPersistenceAdapter adapter = (IResourceMappingPersistenceAdapter)Utils.getAdapter(provider, IResourceMappingPersistenceAdapter.class);
+			ISynchronizationCompareAdapter adapter = (ISynchronizationCompareAdapter)Utils.getAdapter(provider, ISynchronizationCompareAdapter.class);
 			if (adapter != null) {
 				IMemento child = settings.createChild(CTX_PARTICIPANT_MAPPINGS);
 				String id = provider.getDescriptor().getId();
@@ -429,7 +429,7 @@ public class ModelSynchronizeParticipant extends
 				IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor(id);
 				try {
 					ModelProvider provider = desc.getModelProvider();
-					IResourceMappingPersistenceAdapter adapter = (IResourceMappingPersistenceAdapter)Utils.getAdapter(provider, IResourceMappingPersistenceAdapter.class);
+					ISynchronizationCompareAdapter adapter = (ISynchronizationCompareAdapter)Utils.getAdapter(provider, ISynchronizationCompareAdapter.class);
 					if (adapter != null) {
 						ResourceMapping[] mappings = adapter.restore(memento.getChild(CTX_MODEL_PROVIDER_MAPPINGS));
 						for (int j = 0; j < mappings.length; j++) {
